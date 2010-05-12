@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+(c) 2004 Microsoft Corporation, Inc. All rights reserved.
+The Web Services Dynamic Discovery Schema, a/k/a WS-Discovery Schema (the "Document"), 
+was developed by Microsoft, with the assistance of BEA Systems, Canon, Inc, and Intel 
+(collectively, the "Co-Developers"). 
+
+The copyright is owned by Microsoft, and Microsoft hereby grants you permission to copy and 
+display the Document, in any medium without fee or royalty, provided that you include 
+the following on ALL copies of the Document, or portions thereof, that you make: 
+1.	A link or URL to the Document at this location: 
+http://schemas.xmlsoap.org/ws/2004/02/discovery/discovery.xsd 
+2.	The copyright notice as shown in the Document. 
+
+EXCEPT FOR THE COPYRIGHT LICENSE GRANTED ABOVE, MICROSOFT AND THE CO-DEVELOPERS DO NOT GRANT, 
+EITHER EXPRESSLY OR IMPLIEDLY, A LICENSE TO ANY INTELLECTUAL PROPERTY, INCLUDING PATENTS, 
+THEY, OR ANY OTHER THIRD PARTIES, OWN OR CONTROL.  TITLE TO THE COPYRIGHT IN THE DOCUMENT 
+WILL AT ALL TIMES REMAIN WITH MICROSOFT. 
+
+THE DOCUMENT IS PROVIDED "AS IS," MICROSOFT AND THE CO-DEVELOPERS MAKE NO REPRESENTATIONS 
+OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF THE 
+DOCUMENT ARE SUITABLE FOR ANY PURPOSE; NOR THAT THE IMPLEMENTATION OF SUCH CONTENTS WILL 
+NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS. 
+
+MICROSOFT AND THE CO-DEVELOPERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL 
+OR CONSEQUENTIAL DAMAGES ARISING OUT OF OR RELATING TO ANY USE OR DISTRIBUTION OF THE 
+DOCUMENT. 
+
+The Document may change before final release and you are cautioned against relying on the 
+content of this Document. 
+
+No other rights are granted by implication, estoppel or otherwise.
+-->
+<xs:schema
+    targetNamespace='http://schemas.xmlsoap.org/ws/2004/02/discovery'
+    xmlns:tns='http://schemas.xmlsoap.org/ws/2004/02/discovery'
+    xmlns:wsa='http://schemas.xmlsoap.org/ws/2003/03/addressing'
+    xmlns:xs='http://www.w3.org/2001/XMLSchema'
+    elementFormDefault='qualified'
+    blockDefault='#all' >
+
+  <xs:import
+      namespace='http://schemas.xmlsoap.org/ws/2003/03/addressing'
+      schemaLocation='http://schemas.xmlsoap.org/ws/2003/03/addressing' />
+
+  <!-- //////////////////// WS-Discovery //////////////////// -->
+
+  <!-- Messages -->
+
+  <xs:element name='Hello' type='tns:DiscoveryReferenceType' />
+
+  <xs:complexType name='DiscoveryReferenceType' >
+    <xs:sequence>
+      <xs:element ref='wsa:EndpointReference' />
+      <xs:element ref='tns:Types' minOccurs='0' />
+      <xs:element ref='tns:Scopes' minOccurs='0' />
+      <xs:element ref='tns:MetadataVersion' />
+      <xs:any namespace='##other'
+              processContents='lax'
+              minOccurs='0'
+              maxOccurs='unbounded' />
+    </xs:sequence>
+    <xs:anyAttribute namespace='##other' processContents='lax' />
+  </xs:complexType>
+
+  <xs:element name='Bye' >
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref='wsa:EndpointReference' />
+        <xs:any namespace='##any'
+                processContents='lax'
+                minOccurs='0'
+                maxOccurs='unbounded' />
+        <!-- ##any allows simplifying an implementation to
+             send the same children in Bye as in Hello -->
+      </xs:sequence>
+      <xs:anyAttribute namespace='##other' processContents='lax' />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name='Probe' >
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref='tns:Types' minOccurs='0' />
+        <xs:element ref='tns:Scope' minOccurs='0' />
+        <xs:any namespace='##other'
+                processContents='lax'
+                minOccurs='0'
+                maxOccurs='unbounded' />
+      </xs:sequence>
+      <xs:anyAttribute namespace='##other' processContents='lax' />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name='ProbeMatch' type='tns:DiscoveryReferenceType' />
+
+  <!-- No body defined for Resolve -->
+
+  <xs:element name='ResolveMatch' type='tns:DiscoveryReferenceType' />
+
+  <!-- Shared global elements -->
+
+  <xs:element name='Types' >
+    <xs:simpleType>
+      <xs:list itemType='xs:QName' />
+    </xs:simpleType>
+  </xs:element>
+
+  <xs:element name='Scope' >
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base='xs:anyURI' >
+          <xs:attribute name='MatchBy' type='xs:anyURI' />
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name='Scopes' >
+    <xs:simpleType>
+      <xs:list itemType='xs:anyURI' />
+    </xs:simpleType>
+  </xs:element>
+
+  <xs:element name='MetadataVersion' type='xs:nonNegativeInteger' />
+
+  <!-- //////////////////// General Headers //////////////////// -->
+
+  <xs:element name='AppSequence' >
+   <xs:complexType>
+    <xs:complexContent>
+     <xs:restriction base='xs:anyType' >
+      <xs:attribute name='InstanceId'
+                    type='xs:positiveInteger'
+                    use='required' />
+      <xs:attribute name='SequenceId' type='xs:anyURI' />
+      <xs:attribute name='MessageNumber'
+                    type='xs:positiveInteger'
+                    use='required' />
+     </xs:restriction>
+    </xs:complexContent>
+   </xs:complexType>
+  </xs:element>
+
+  <!-- //////////////////// Policy Assertions //////////////////// -->
+
+  <xs:element name='SoapHttpRequestReplyAddress' >
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base='xs:anyURI' >
+          <xs:anyAttribute namespace='##other' processContents='lax' />
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

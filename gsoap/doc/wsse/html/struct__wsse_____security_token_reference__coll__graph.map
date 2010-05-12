@@ -1,0 +1,4 @@
+base referer
+rect $struct__wsse_____embedded.html 7,17 137,44
+rect $struct__wsse_____key_identifier.html 161,17 300,44
+rect $struct__wsse_____reference.html 324,17 449,44

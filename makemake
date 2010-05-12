@@ -1,0 +1,13 @@
+#! /bin/sh
+
+aclocal
+autoheader
+automake --add-missing
+autoconf
+automake
+./configure --enable-samples
+
+echo "Please run the following command now:"
+echo "make"
+
+

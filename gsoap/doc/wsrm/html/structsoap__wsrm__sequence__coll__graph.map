@@ -1,0 +1,4 @@
+base referer
+rect $structsoap__wsrm__message.html 6,124 150,150
+rect $structsoap__wsrm__content.html 13,17 144,44
+rect $structsoap__wsrm__range.html 224,124 346,150

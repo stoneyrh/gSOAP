@@ -1,0 +1,5 @@
+base referer
+rect $structds_____key_value_type.html 6,17 134,44
+rect $structds_____retrieval_method_type.html 158,17 324,44
+rect $struct__wsse_____security_token_reference.html 348,17 558,44
+rect $structds_____x509_data_type.html 605,17 736,44
