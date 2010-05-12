@@ -1,0 +1,5 @@
+base referer
+rect $structwsrm_____offer_type.html 256,199 371,225
+rect $structwsa5_____endpoint_reference_type.html 119,108 319,135
+rect $structwsa5_____reference_parameters_type.html 7,17 225,44
+rect $structwsa5_____metadata_type.html 249,17 393,44

@@ -1,0 +1,6258 @@
+Terminals which are not used
+
+   BREAK
+   ELSE
+   SWITCH
+   CASE
+   CONTINUE
+   FOR
+   DEFAULT
+   GOTO
+   DO
+   IF
+   WHILE
+   USING
+   RESTRICT
+   NONE
+   LAB
+
+
+State 62 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: prog $end
+
+    1 prog: s1 exts
+
+    2 s1: /* empty */
+
+    3 exts: NAMESPACE ID '{' exts1 '}'
+    4     | exts1
+
+    5 exts1: /* empty */
+    6      | exts1 ext
+
+    7 ext: dclrs ';'
+    8    | pragma
+    9    | error ';'
+   10    | t1
+   11    | t2
+
+   12 pragma: PRAGMA
+
+   13 decls: /* empty */
+   14      | dclrs ';' decls
+   15      | PRIVATE ':' t3 decls
+   16      | PROTECTED ':' t4 decls
+   17      | PUBLIC ':' t5 decls
+   18      | t1 decls t2 decls
+   19      | error ';'
+
+   20 t1: '['
+
+   21 t2: ']'
+
+   22 t3: /* empty */
+
+   23 t4: /* empty */
+
+   24 t5: /* empty */
+
+   25 dclrs: spec
+   26      | spec dclr
+   27      | spec fdclr func
+   28      | constr func
+   29      | destr func
+   30      | dclrs ',' dclr
+   31      | dclrs ',' fdclr func
+
+   32 dclr: ptrs ID arrayck tag occurs init
+
+   33 fdclr: ptrs name
+
+   34 id: ID
+   35   | TYPE
+
+   36 name: ID
+   37     | OPERATOR '!'
+   38     | OPERATOR '~'
+   39     | OPERATOR '='
+   40     | OPERATOR PA
+   41     | OPERATOR NA
+   42     | OPERATOR TA
+   43     | OPERATOR DA
+   44     | OPERATOR MA
+   45     | OPERATOR AA
+   46     | OPERATOR XA
+   47     | OPERATOR OA
+   48     | OPERATOR LA
+   49     | OPERATOR RA
+   50     | OPERATOR OR
+   51     | OPERATOR AN
+   52     | OPERATOR '|'
+   53     | OPERATOR '^'
+   54     | OPERATOR '&'
+   55     | OPERATOR EQ
+   56     | OPERATOR NE
+   57     | OPERATOR '<'
+   58     | OPERATOR LE
+   59     | OPERATOR '>'
+   60     | OPERATOR GE
+   61     | OPERATOR LS
+   62     | OPERATOR RS
+   63     | OPERATOR '+'
+   64     | OPERATOR '-'
+   65     | OPERATOR '*'
+   66     | OPERATOR '/'
+   67     | OPERATOR '%'
+   68     | OPERATOR PP
+   69     | OPERATOR NN
+   70     | OPERATOR AR
+   71     | OPERATOR '[' ']'
+   72     | OPERATOR '(' ')'
+   73     | OPERATOR texp
+
+   74 constr: TYPE
+
+   75 destr: virtual '~' TYPE
+
+   76 func: fname '(' s6 fargso ')' constobj abstract
+
+   77 fname: /* empty */
+
+   78 fargso: /* empty */
+   79       | fargs
+
+   80 fargs: farg
+   81      | farg ',' fargs
+
+   82 farg: tspec ptrs arg arrayck occurs init
+
+   83 arg: /* empty */
+   84    | ID
+
+   85 texp: tspec ptrs array
+   86     | tspec ptrs ID array
+
+   87 spec: /* empty */
+   88     | store spec
+   89     | type spec
+
+   90 tspec: store
+   91      | type
+   92      | store tspec
+   93      | type tspec
+
+   94 type: VOID
+   95     | BOOL
+   96     | CHAR
+   97     | WCHAR
+   98     | SHORT
+   99     | INT
+  100     | LONG
+  101     | LLONG
+  102     | ULLONG
+  103     | SIZE
+  104     | FLOAT
+  105     | DOUBLE
+  106     | SIGNED
+  107     | UNSIGNED
+  108     | UCHAR
+  109     | USHORT
+  110     | UINT
+  111     | ULONG
+  112     | TIME
+  113     | TEMPLATE '<' tname id '>' CLASS id
+  114     | CLASS '{' s2 decls '}'
+  115     | class '{' s2 decls '}'
+  116     | class ':' base '{' s2 decls '}'
+  117     | class
+  118     | class ':' base
+  119     | STRUCT '{' s2 decls '}'
+  120     | struct '{' s2 decls '}'
+  121     | STRUCT ID
+  122     | STRUCT TYPE
+  123     | UNION '{' s3 decls '}'
+  124     | UNION id '{' s3 decls '}'
+  125     | UNION ID
+  126     | UNION TYPE
+  127     | ENUM '{' s2 dclrs s5 '}'
+  128     | enum '{' s2 dclrs s5 '}'
+  129     | ENUM '*' id '{' s4 dclrs s5 '}'
+  130     | ENUM ID
+  131     | ENUM TYPE
+  132     | TYPE
+  133     | TYPE '<' texp '>'
+  134     | CLASS error '}'
+  135     | STRUCT error '}'
+  136     | UNION error '}'
+  137     | ENUM error '}'
+
+  138 struct: STRUCT id
+
+  139 class: CLASS id
+
+  140 enum: ENUM id
+
+  141 tname: CLASS
+  142      | TYPENAME
+
+  143 base: PROTECTED base
+  144     | PRIVATE base
+  145     | PUBLIC base
+  146     | TYPE
+  147     | STRUCT ID
+
+  148 s2: /* empty */
+
+  149 s3: /* empty */
+
+  150 s4: /* empty */
+
+  151 s5: /* empty */
+  152   | ','
+
+  153 s6: /* empty */
+
+  154 store: AUTO
+  155      | REGISTER
+  156      | STATIC
+  157      | EXPLICIT
+  158      | EXTERN
+  159      | TYPEDEF
+  160      | VIRTUAL
+  161      | CONST
+  162      | FRIEND
+  163      | INLINE
+  164      | MUSTUNDERSTAND
+  165      | RETURN
+  166      | '@'
+  167      | '$'
+  168      | VOLATILE
+
+  169 constobj: /* empty */
+  170         | CONST
+
+  171 abstract: /* empty */
+  172         | '=' LNG
+
+  173 virtual: /* empty */
+  174        | VIRTUAL
+
+  175 ptrs: /* empty */
+  176     | ptrs '*'
+  177     | ptrs '&'
+
+  178 array: /* empty */
+  179      | '[' cexp ']' array
+  180      | '[' ']' array
+
+  181 arrayck: array
+
+  182 init: /* empty */
+  183     | '=' cexp
+
+  184 tag: /* empty */
+  185    | '<' ID '>'
+
+  186 occurs: patt
+  187       | patt cint
+  188       | patt cint ':'
+  189       | patt cint ':' cint
+  190       | patt ':' cint
+
+  191 patt: /* empty */
+  192     | STR
+
+  193 cint: LNG
+  194     | '+' LNG
+  195     | '-' LNG
+
+  196 expr: expr ',' expr
+  197     | cexp
+
+  198 cexp: obex '?' qexp ':' cexp
+  199     | oexp
+
+  200 qexp: expr
+
+  201 oexp: obex OR aexp
+  202     | aexp
+
+  203 obex: oexp
+
+  204 aexp: abex AN rexp
+  205     | rexp
+
+  206 abex: aexp
+
+  207 rexp: rexp '|' rexp
+  208     | rexp '^' rexp
+  209     | rexp '&' rexp
+  210     | rexp EQ rexp
+  211     | rexp NE rexp
+  212     | rexp '<' rexp
+  213     | rexp LE rexp
+  214     | rexp '>' rexp
+  215     | rexp GE rexp
+  216     | rexp LS rexp
+  217     | rexp RS rexp
+  218     | rexp '+' rexp
+  219     | rexp '-' rexp
+  220     | rexp '*' rexp
+  221     | rexp '/' rexp
+  222     | rexp '%' rexp
+  223     | lexp
+
+  224 lexp: '!' lexp
+  225     | '~' lexp
+  226     | '-' lexp
+  227     | '+' lexp
+  228     | '*' lexp
+  229     | '&' lexp
+  230     | SIZEOF '(' texp ')'
+  231     | pexp
+
+  232 pexp: '(' expr ')'
+  233     | ID
+  234     | LNG
+  235     | null
+  236     | DBL
+  237     | CHR
+  238     | STR
+  239     | CFALSE
+  240     | CTRUE
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'!' (33) 37 224
+'$' (36) 167
+'%' (37) 67 222
+'&' (38) 54 177 209 229
+'(' (40) 72 76 230 232
+')' (41) 72 76 230 232
+'*' (42) 65 129 176 220 228
+'+' (43) 63 194 218 227
+',' (44) 30 31 81 152 196
+'-' (45) 64 195 219 226
+'/' (47) 66 221
+':' (58) 15 16 17 116 118 188 189 190 198
+';' (59) 7 9 14 19
+'<' (60) 57 113 133 185 212
+'=' (61) 39 172 183
+'>' (62) 59 113 133 185 214
+'?' (63) 198
+'@' (64) 166
+'[' (91) 20 71 179 180
+']' (93) 21 71 179 180
+'^' (94) 53 208
+'{' (123) 3 114 115 116 119 120 123 124 127 128 129
+'|' (124) 52 207
+'}' (125) 3 114 115 116 119 120 123 124 127 128 129 134 135 136 137
+'~' (126) 38 75 225
+error (256) 9 19 134 135 136 137
+PRAGMA (258) 12
+AUTO (259) 154
+DOUBLE (260) 105
+INT (261) 99
+STRUCT (262) 119 121 122 135 138 147
+BREAK (263)
+ELSE (264)
+LONG (265) 100
+SWITCH (266)
+CASE (267)
+ENUM (268) 127 129 130 131 137 140
+REGISTER (269) 155
+TYPEDEF (270) 159
+CHAR (271) 96
+EXTERN (272) 158
+RETURN (273) 165
+UNION (274) 123 124 125 126 136
+CONST (275) 161 170
+FLOAT (276) 104
+SHORT (277) 98
+UNSIGNED (278) 107
+CONTINUE (279)
+FOR (280)
+SIGNED (281) 106
+VOID (282) 94
+DEFAULT (283)
+GOTO (284)
+SIZEOF (285) 230
+VOLATILE (286) 168
+DO (287)
+IF (288)
+STATIC (289) 156
+WHILE (290)
+CLASS (291) 113 114 134 139 141
+PRIVATE (292) 15 144
+PROTECTED (293) 16 143
+PUBLIC (294) 17 145
+VIRTUAL (295) 160 174
+INLINE (296) 163
+OPERATOR (297) 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54
+    55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73
+LLONG (298) 101
+BOOL (299) 95
+CFALSE (300) 239
+CTRUE (301) 240
+WCHAR (302) 97
+TIME (303) 112
+USING (304)
+NAMESPACE (305) 3
+ULLONG (306) 102
+MUSTUNDERSTAND (307) 164
+SIZE (308) 103
+FRIEND (309) 162
+TEMPLATE (310) 113
+EXPLICIT (311) 157
+TYPENAME (312) 142
+RESTRICT (313)
+null (314) 235
+UCHAR (315) 108
+USHORT (316) 109
+UINT (317) 110
+ULONG (318) 111
+NONE (319)
+ID (320) 3 32 34 36 84 86 121 125 130 147 185 233
+LAB (321)
+TYPE (322) 35 74 75 122 126 131 132 133 146
+LNG (323) 172 193 194 195 234
+DBL (324) 236
+CHR (325) 237
+STR (326) 192 238
+RA (327) 49
+LA (328) 48
+OA (329) 47
+XA (330) 46
+AA (331) 45
+MA (332) 44
+DA (333) 43
+TA (334) 42
+NA (335) 41
+PA (336) 40
+OR (337) 50 201
+AN (338) 51 204
+NE (339) 56 211
+EQ (340) 55 210
+GE (341) 60 215
+LE (342) 58 213
+RS (343) 62 217
+LS (344) 61 216
+AR (345) 70
+PP (346) 68
+NN (347) 69
+
+
+Nonterminals, with rules where they appear
+
+$accept (118)
+    on left: 0
+prog (119)
+    on left: 1, on right: 0
+s1 (120)
+    on left: 2, on right: 1
+exts (121)
+    on left: 3 4, on right: 1
+exts1 (122)
+    on left: 5 6, on right: 3 4 6
+ext (123)
+    on left: 7 8 9 10 11, on right: 6
+pragma (124)
+    on left: 12, on right: 8
+decls (125)
+    on left: 13 14 15 16 17 18 19, on right: 14 15 16 17 18 114 115
+    116 119 120 123 124
+t1 (126)
+    on left: 20, on right: 10 18
+t2 (127)
+    on left: 21, on right: 11 18
+t3 (128)
+    on left: 22, on right: 15
+t4 (129)
+    on left: 23, on right: 16
+t5 (130)
+    on left: 24, on right: 17
+dclrs (131)
+    on left: 25 26 27 28 29 30 31, on right: 7 14 30 31 127 128 129
+dclr (132)
+    on left: 32, on right: 26 30
+fdclr (133)
+    on left: 33, on right: 27 31
+id (134)
+    on left: 34 35, on right: 113 124 129 138 139 140
+name (135)
+    on left: 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53
+    54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73,
+    on right: 33
+constr (136)
+    on left: 74, on right: 28
+destr (137)
+    on left: 75, on right: 29
+func (138)
+    on left: 76, on right: 27 28 29 31
+fname (139)
+    on left: 77, on right: 76
+fargso (140)
+    on left: 78 79, on right: 76
+fargs (141)
+    on left: 80 81, on right: 79 81
+farg (142)
+    on left: 82, on right: 80 81
+arg (143)
+    on left: 83 84, on right: 82
+texp (144)
+    on left: 85 86, on right: 73 133 230
+spec (145)
+    on left: 87 88 89, on right: 25 26 27 88 89
+tspec (146)
+    on left: 90 91 92 93, on right: 82 85 86 92 93
+type (147)
+    on left: 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108
+    109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124
+    125 126 127 128 129 130 131 132 133 134 135 136 137,
+    on right: 89 91 93
+struct (148)
+    on left: 138, on right: 120
+class (149)
+    on left: 139, on right: 115 116 117 118
+enum (150)
+    on left: 140, on right: 128
+tname (151)
+    on left: 141 142, on right: 113
+base (152)
+    on left: 143 144 145 146 147, on right: 116 118 143 144 145
+s2 (153)
+    on left: 148, on right: 114 115 116 119 120 127 128
+s3 (154)
+    on left: 149, on right: 123 124
+s4 (155)
+    on left: 150, on right: 129
+s5 (156)
+    on left: 151 152, on right: 127 128 129
+s6 (157)
+    on left: 153, on right: 76
+store (158)
+    on left: 154 155 156 157 158 159 160 161 162 163 164 165 166 167
+    168, on right: 88 90 92
+constobj (159)
+    on left: 169 170, on right: 76
+abstract (160)
+    on left: 171 172, on right: 76
+virtual (161)
+    on left: 173 174, on right: 75
+ptrs (162)
+    on left: 175 176 177, on right: 32 33 82 85 86 176 177
+array (163)
+    on left: 178 179 180, on right: 85 86 179 180 181
+arrayck (164)
+    on left: 181, on right: 32 82
+init (165)
+    on left: 182 183, on right: 32 82
+tag (166)
+    on left: 184 185, on right: 32
+occurs (167)
+    on left: 186 187 188 189 190, on right: 32 82
+patt (168)
+    on left: 191 192, on right: 186 187 188 189 190
+cint (169)
+    on left: 193 194 195, on right: 187 188 189 190
+expr (170)
+    on left: 196 197, on right: 196 200 232
+cexp (171)
+    on left: 198 199, on right: 179 183 197 198
+qexp (172)
+    on left: 200, on right: 198
+oexp (173)
+    on left: 201 202, on right: 199 203
+obex (174)
+    on left: 203, on right: 198 201
+aexp (175)
+    on left: 204 205, on right: 201 202 206
+abex (176)
+    on left: 206, on right: 204
+rexp (177)
+    on left: 207 208 209 210 211 212 213 214 215 216 217 218 219 220
+    221 222 223, on right: 204 205 207 208 209 210 211 212 213 214
+    215 216 217 218 219 220 221 222
+lexp (178)
+    on left: 224 225 226 227 228 229 230 231, on right: 223 224 225
+    226 227 228 229
+pexp (179)
+    on left: 232 233 234 235 236 237 238 239 240, on right: 231
+
+
+state 0
+
+    0 $accept: . prog $end
+
+    $default  reduce using rule 2 (s1)
+
+    prog  go to state 1
+    s1    go to state 2
+
+
+state 1
+
+    0 $accept: prog . $end
+
+    $end  shift, and go to state 3
+
+
+state 2
+
+    1 prog: s1 . exts
+
+    NAMESPACE  shift, and go to state 4
+
+    $default  reduce using rule 5 (exts1)
+
+    exts   go to state 5
+    exts1  go to state 6
+
+
+state 3
+
+    0 $accept: prog $end .
+
+    $default  accept
+
+
+state 4
+
+    3 exts: NAMESPACE . ID '{' exts1 '}'
+
+    ID  shift, and go to state 7
+
+
+state 5
+
+    1 prog: s1 exts .
+
+    $default  reduce using rule 1 (prog)
+
+
+state 6
+
+    4 exts: exts1 .
+    6 exts1: exts1 . ext
+
+    error           shift, and go to state 8
+    PRAGMA          shift, and go to state 9
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    ']'             shift, and go to state 49
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    $end      reduce using rule 4 (exts)
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    ';'       reduce using rule 87 (spec)
+    '~'       reduce using rule 173 (virtual)
+
+    ext      go to state 52
+    pragma   go to state 53
+    t1       go to state 54
+    t2       go to state 55
+    dclrs    go to state 56
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 7
+
+    3 exts: NAMESPACE ID . '{' exts1 '}'
+
+    '{'  shift, and go to state 66
+
+
+state 8
+
+    9 ext: error . ';'
+
+    ';'  shift, and go to state 67
+
+
+state 9
+
+   12 pragma: PRAGMA .
+
+    $default  reduce using rule 12 (pragma)
+
+
+state 10
+
+  154 store: AUTO .
+
+    $default  reduce using rule 154 (store)
+
+
+state 11
+
+  105 type: DOUBLE .
+
+    $default  reduce using rule 105 (type)
+
+
+state 12
+
+   99 type: INT .
+
+    $default  reduce using rule 99 (type)
+
+
+state 13
+
+  119 type: STRUCT . '{' s2 decls '}'
+  121     | STRUCT . ID
+  122     | STRUCT . TYPE
+  135     | STRUCT . error '}'
+  138 struct: STRUCT . id
+
+    error  shift, and go to state 68
+    ID     shift, and go to state 69
+    TYPE   shift, and go to state 70
+    '{'    shift, and go to state 71
+
+    id  go to state 72
+
+
+state 14
+
+  100 type: LONG .
+
+    $default  reduce using rule 100 (type)
+
+
+state 15
+
+  127 type: ENUM . '{' s2 dclrs s5 '}'
+  129     | ENUM . '*' id '{' s4 dclrs s5 '}'
+  130     | ENUM . ID
+  131     | ENUM . TYPE
+  137     | ENUM . error '}'
+  140 enum: ENUM . id
+
+    error  shift, and go to state 73
+    ID     shift, and go to state 74
+    TYPE   shift, and go to state 75
+    '*'    shift, and go to state 76
+    '{'    shift, and go to state 77
+
+    id  go to state 78
+
+
+state 16
+
+  155 store: REGISTER .
+
+    $default  reduce using rule 155 (store)
+
+
+state 17
+
+  159 store: TYPEDEF .
+
+    $default  reduce using rule 159 (store)
+
+
+state 18
+
+   96 type: CHAR .
+
+    $default  reduce using rule 96 (type)
+
+
+state 19
+
+  158 store: EXTERN .
+
+    $default  reduce using rule 158 (store)
+
+
+state 20
+
+  165 store: RETURN .
+
+    $default  reduce using rule 165 (store)
+
+
+state 21
+
+  123 type: UNION . '{' s3 decls '}'
+  124     | UNION . id '{' s3 decls '}'
+  125     | UNION . ID
+  126     | UNION . TYPE
+  136     | UNION . error '}'
+
+    error  shift, and go to state 79
+    ID     shift, and go to state 80
+    TYPE   shift, and go to state 81
+    '{'    shift, and go to state 82
+
+    id  go to state 83
+
+
+state 22
+
+  161 store: CONST .
+
+    $default  reduce using rule 161 (store)
+
+
+state 23
+
+  104 type: FLOAT .
+
+    $default  reduce using rule 104 (type)
+
+
+state 24
+
+   98 type: SHORT .
+
+    $default  reduce using rule 98 (type)
+
+
+state 25
+
+  107 type: UNSIGNED .
+
+    $default  reduce using rule 107 (type)
+
+
+state 26
+
+  106 type: SIGNED .
+
+    $default  reduce using rule 106 (type)
+
+
+state 27
+
+   94 type: VOID .
+
+    $default  reduce using rule 94 (type)
+
+
+state 28
+
+  168 store: VOLATILE .
+
+    $default  reduce using rule 168 (store)
+
+
+state 29
+
+  156 store: STATIC .
+
+    $default  reduce using rule 156 (store)
+
+
+state 30
+
+  114 type: CLASS . '{' s2 decls '}'
+  134     | CLASS . error '}'
+  139 class: CLASS . id
+
+    error  shift, and go to state 84
+    ID     shift, and go to state 85
+    TYPE   shift, and go to state 86
+    '{'    shift, and go to state 87
+
+    id  go to state 88
+
+
+state 31
+
+  160 store: VIRTUAL .
+  174 virtual: VIRTUAL .
+
+    '~'       reduce using rule 174 (virtual)
+    $default  reduce using rule 160 (store)
+
+
+state 32
+
+  163 store: INLINE .
+
+    $default  reduce using rule 163 (store)
+
+
+state 33
+
+  101 type: LLONG .
+
+    $default  reduce using rule 101 (type)
+
+
+state 34
+
+   95 type: BOOL .
+
+    $default  reduce using rule 95 (type)
+
+
+state 35
+
+   97 type: WCHAR .
+
+    $default  reduce using rule 97 (type)
+
+
+state 36
+
+  112 type: TIME .
+
+    $default  reduce using rule 112 (type)
+
+
+state 37
+
+  102 type: ULLONG .
+
+    $default  reduce using rule 102 (type)
+
+
+state 38
+
+  164 store: MUSTUNDERSTAND .
+
+    $default  reduce using rule 164 (store)
+
+
+state 39
+
+  103 type: SIZE .
+
+    $default  reduce using rule 103 (type)
+
+
+state 40
+
+  162 store: FRIEND .
+
+    $default  reduce using rule 162 (store)
+
+
+state 41
+
+  113 type: TEMPLATE . '<' tname id '>' CLASS id
+
+    '<'  shift, and go to state 89
+
+
+state 42
+
+  157 store: EXPLICIT .
+
+    $default  reduce using rule 157 (store)
+
+
+state 43
+
+  108 type: UCHAR .
+
+    $default  reduce using rule 108 (type)
+
+
+state 44
+
+  109 type: USHORT .
+
+    $default  reduce using rule 109 (type)
+
+
+state 45
+
+  110 type: UINT .
+
+    $default  reduce using rule 110 (type)
+
+
+state 46
+
+  111 type: ULONG .
+
+    $default  reduce using rule 111 (type)
+
+
+state 47
+
+   74 constr: TYPE .
+  132 type: TYPE .
+  133     | TYPE . '<' texp '>'
+
+    '<'  shift, and go to state 90
+
+    '('       reduce using rule 74 (constr)
+    $default  reduce using rule 132 (type)
+
+
+state 48
+
+   20 t1: '[' .
+
+    $default  reduce using rule 20 (t1)
+
+
+state 49
+
+   21 t2: ']' .
+
+    $default  reduce using rule 21 (t2)
+
+
+state 50
+
+  166 store: '@' .
+
+    $default  reduce using rule 166 (store)
+
+
+state 51
+
+  167 store: '$' .
+
+    $default  reduce using rule 167 (store)
+
+
+state 52
+
+    6 exts1: exts1 ext .
+
+    $default  reduce using rule 6 (exts1)
+
+
+state 53
+
+    8 ext: pragma .
+
+    $default  reduce using rule 8 (ext)
+
+
+state 54
+
+   10 ext: t1 .
+
+    $default  reduce using rule 10 (ext)
+
+
+state 55
+
+   11 ext: t2 .
+
+    $default  reduce using rule 11 (ext)
+
+
+state 56
+
+    7 ext: dclrs . ';'
+   30 dclrs: dclrs . ',' dclr
+   31      | dclrs . ',' fdclr func
+
+    ','  shift, and go to state 91
+    ';'  shift, and go to state 92
+
+
+state 57
+
+   28 dclrs: constr . func
+
+    $default  reduce using rule 77 (fname)
+
+    func   go to state 93
+    fname  go to state 94
+
+
+state 58
+
+   29 dclrs: destr . func
+
+    $default  reduce using rule 77 (fname)
+
+    func   go to state 95
+    fname  go to state 94
+
+
+state 59
+
+   25 dclrs: spec .
+   26      | spec . dclr
+   27      | spec . fdclr func
+
+    ','       reduce using rule 25 (dclrs)
+    '}'       reduce using rule 25 (dclrs)
+    ';'       reduce using rule 25 (dclrs)
+    $default  reduce using rule 175 (ptrs)
+
+    dclr   go to state 96
+    fdclr  go to state 97
+    ptrs   go to state 98
+
+
+state 60
+
+   89 spec: type . spec
+
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 99
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 100
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    $default  reduce using rule 87 (spec)
+
+    spec    go to state 101
+    type    go to state 60
+    struct  go to state 61
+    class   go to state 62
+    enum    go to state 63
+    store   go to state 64
+
+
+state 61
+
+  120 type: struct . '{' s2 decls '}'
+
+    '{'  shift, and go to state 102
+
+
+state 62
+
+  115 type: class . '{' s2 decls '}'
+  116     | class . ':' base '{' s2 decls '}'
+  117     | class .
+  118     | class . ':' base
+
+    ':'  shift, and go to state 103
+    '{'  shift, and go to state 104
+
+    ':'       [reduce using rule 117 (type)]
+    $default  reduce using rule 117 (type)
+
+
+state 63
+
+  128 type: enum . '{' s2 dclrs s5 '}'
+
+    '{'  shift, and go to state 105
+
+
+state 64
+
+   88 spec: store . spec
+
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 99
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 100
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    $default  reduce using rule 87 (spec)
+
+    spec    go to state 106
+    type    go to state 60
+    struct  go to state 61
+    class   go to state 62
+    enum    go to state 63
+    store   go to state 64
+
+
+state 65
+
+   75 destr: virtual . '~' TYPE
+
+    '~'  shift, and go to state 107
+
+
+state 66
+
+    3 exts: NAMESPACE ID '{' . exts1 '}'
+
+    $default  reduce using rule 5 (exts1)
+
+    exts1  go to state 108
+
+
+state 67
+
+    9 ext: error ';' .
+
+    $default  reduce using rule 9 (ext)
+
+
+state 68
+
+  135 type: STRUCT error . '}'
+
+    '}'  shift, and go to state 109
+
+
+state 69
+
+   34 id: ID .
+  121 type: STRUCT ID .
+
+    '{'       reduce using rule 34 (id)
+    $default  reduce using rule 121 (type)
+
+
+state 70
+
+   35 id: TYPE .
+  122 type: STRUCT TYPE .
+
+    '{'       reduce using rule 35 (id)
+    $default  reduce using rule 122 (type)
+
+
+state 71
+
+  119 type: STRUCT '{' . s2 decls '}'
+
+    $default  reduce using rule 148 (s2)
+
+    s2  go to state 110
+
+
+state 72
+
+  138 struct: STRUCT id .
+
+    $default  reduce using rule 138 (struct)
+
+
+state 73
+
+  137 type: ENUM error . '}'
+
+    '}'  shift, and go to state 111
+
+
+state 74
+
+   34 id: ID .
+  130 type: ENUM ID .
+
+    '{'       reduce using rule 34 (id)
+    $default  reduce using rule 130 (type)
+
+
+state 75
+
+   35 id: TYPE .
+  131 type: ENUM TYPE .
+
+    '{'       reduce using rule 35 (id)
+    $default  reduce using rule 131 (type)
+
+
+state 76
+
+  129 type: ENUM '*' . id '{' s4 dclrs s5 '}'
+
+    ID    shift, and go to state 85
+    TYPE  shift, and go to state 86
+
+    id  go to state 112
+
+
+state 77
+
+  127 type: ENUM '{' . s2 dclrs s5 '}'
+
+    $default  reduce using rule 148 (s2)
+
+    s2  go to state 113
+
+
+state 78
+
+  140 enum: ENUM id .
+
+    $default  reduce using rule 140 (enum)
+
+
+state 79
+
+  136 type: UNION error . '}'
+
+    '}'  shift, and go to state 114
+
+
+state 80
+
+   34 id: ID .
+  125 type: UNION ID .
+
+    '{'       reduce using rule 34 (id)
+    $default  reduce using rule 125 (type)
+
+
+state 81
+
+   35 id: TYPE .
+  126 type: UNION TYPE .
+
+    '{'       reduce using rule 35 (id)
+    $default  reduce using rule 126 (type)
+
+
+state 82
+
+  123 type: UNION '{' . s3 decls '}'
+
+    $default  reduce using rule 149 (s3)
+
+    s3  go to state 115
+
+
+state 83
+
+  124 type: UNION id . '{' s3 decls '}'
+
+    '{'  shift, and go to state 116
+
+
+state 84
+
+  134 type: CLASS error . '}'
+
+    '}'  shift, and go to state 117
+
+
+state 85
+
+   34 id: ID .
+
+    $default  reduce using rule 34 (id)
+
+
+state 86
+
+   35 id: TYPE .
+
+    $default  reduce using rule 35 (id)
+
+
+state 87
+
+  114 type: CLASS '{' . s2 decls '}'
+
+    $default  reduce using rule 148 (s2)
+
+    s2  go to state 118
+
+
+state 88
+
+  139 class: CLASS id .
+
+    $default  reduce using rule 139 (class)
+
+
+state 89
+
+  113 type: TEMPLATE '<' . tname id '>' CLASS id
+
+    CLASS     shift, and go to state 119
+    TYPENAME  shift, and go to state 120
+
+    tname  go to state 121
+
+
+state 90
+
+  133 type: TYPE '<' . texp '>'
+
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 99
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 100
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    texp    go to state 122
+    tspec   go to state 123
+    type    go to state 124
+    struct  go to state 61
+    class   go to state 62
+    enum    go to state 63
+    store   go to state 125
+
+
+state 91
+
+   30 dclrs: dclrs ',' . dclr
+   31      | dclrs ',' . fdclr func
+
+    $default  reduce using rule 175 (ptrs)
+
+    dclr   go to state 126
+    fdclr  go to state 127
+    ptrs   go to state 98
+
+
+state 92
+
+    7 ext: dclrs ';' .
+
+    $default  reduce using rule 7 (ext)
+
+
+state 93
+
+   28 dclrs: constr func .
+
+    $default  reduce using rule 28 (dclrs)
+
+
+state 94
+
+   76 func: fname . '(' s6 fargso ')' constobj abstract
+
+    '('  shift, and go to state 128
+
+
+state 95
+
+   29 dclrs: destr func .
+
+    $default  reduce using rule 29 (dclrs)
+
+
+state 96
+
+   26 dclrs: spec dclr .
+
+    $default  reduce using rule 26 (dclrs)
+
+
+state 97
+
+   27 dclrs: spec fdclr . func
+
+    $default  reduce using rule 77 (fname)
+
+    func   go to state 129
+    fname  go to state 94
+
+
+state 98
+
+   32 dclr: ptrs . ID arrayck tag occurs init
+   33 fdclr: ptrs . name
+  176 ptrs: ptrs . '*'
+  177     | ptrs . '&'
+
+    OPERATOR  shift, and go to state 130
+    ID        shift, and go to state 131
+    '&'       shift, and go to state 132
+    '*'       shift, and go to state 133
+
+    name  go to state 134
+
+
+state 99
+
+  160 store: VIRTUAL .
+
+    $default  reduce using rule 160 (store)
+
+
+state 100
+
+  132 type: TYPE .
+  133     | TYPE . '<' texp '>'
+
+    '<'  shift, and go to state 90
+
+    $default  reduce using rule 132 (type)
+
+
+state 101
+
+   89 spec: type spec .
+
+    $default  reduce using rule 89 (spec)
+
+
+state 102
+
+  120 type: struct '{' . s2 decls '}'
+
+    $default  reduce using rule 148 (s2)
+
+    s2  go to state 135
+
+
+state 103
+
+  116 type: class ':' . base '{' s2 decls '}'
+  118     | class ':' . base
+
+    STRUCT     shift, and go to state 136
+    PRIVATE    shift, and go to state 137
+    PROTECTED  shift, and go to state 138
+    PUBLIC     shift, and go to state 139
+    TYPE       shift, and go to state 140
+
+    base  go to state 141
+
+
+state 104
+
+  115 type: class '{' . s2 decls '}'
+
+    $default  reduce using rule 148 (s2)
+
+    s2  go to state 142
+
+
+state 105
+
+  128 type: enum '{' . s2 dclrs s5 '}'
+
+    $default  reduce using rule 148 (s2)
+
+    s2  go to state 143
+
+
+state 106
+
+   88 spec: store spec .
+
+    $default  reduce using rule 88 (spec)
+
+
+state 107
+
+   75 destr: virtual '~' . TYPE
+
+    TYPE  shift, and go to state 144
+
+
+state 108
+
+    3 exts: NAMESPACE ID '{' exts1 . '}'
+    6 exts1: exts1 . ext
+
+    error           shift, and go to state 8
+    PRAGMA          shift, and go to state 9
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '}'             shift, and go to state 145
+    '['             shift, and go to state 48
+    ']'             shift, and go to state 49
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    ';'       reduce using rule 87 (spec)
+    '~'       reduce using rule 173 (virtual)
+
+    ext      go to state 52
+    pragma   go to state 53
+    t1       go to state 54
+    t2       go to state 55
+    dclrs    go to state 56
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 109
+
+  135 type: STRUCT error '}' .
+
+    $default  reduce using rule 135 (type)
+
+
+state 110
+
+  119 type: STRUCT '{' s2 . decls '}'
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 87 (spec)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 150
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 111
+
+  137 type: ENUM error '}' .
+
+    $default  reduce using rule 137 (type)
+
+
+state 112
+
+  129 type: ENUM '*' id . '{' s4 dclrs s5 '}'
+
+    '{'  shift, and go to state 153
+
+
+state 113
+
+  127 type: ENUM '{' s2 . dclrs s5 '}'
+
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    '~'       reduce using rule 173 (virtual)
+    $default  reduce using rule 87 (spec)
+
+    dclrs    go to state 154
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 114
+
+  136 type: UNION error '}' .
+
+    $default  reduce using rule 136 (type)
+
+
+state 115
+
+  123 type: UNION '{' s3 . decls '}'
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 87 (spec)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 155
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 116
+
+  124 type: UNION id '{' . s3 decls '}'
+
+    $default  reduce using rule 149 (s3)
+
+    s3  go to state 156
+
+
+state 117
+
+  134 type: CLASS error '}' .
+
+    $default  reduce using rule 134 (type)
+
+
+state 118
+
+  114 type: CLASS '{' s2 . decls '}'
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 87 (spec)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 157
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 119
+
+  141 tname: CLASS .
+
+    $default  reduce using rule 141 (tname)
+
+
+state 120
+
+  142 tname: TYPENAME .
+
+    $default  reduce using rule 142 (tname)
+
+
+state 121
+
+  113 type: TEMPLATE '<' tname . id '>' CLASS id
+
+    ID    shift, and go to state 85
+    TYPE  shift, and go to state 86
+
+    id  go to state 158
+
+
+state 122
+
+  133 type: TYPE '<' texp . '>'
+
+    '>'  shift, and go to state 159
+
+
+state 123
+
+   85 texp: tspec . ptrs array
+   86     | tspec . ptrs ID array
+
+    $default  reduce using rule 175 (ptrs)
+
+    ptrs  go to state 160
+
+
+state 124
+
+   91 tspec: type .
+   93      | type . tspec
+
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 99
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 100
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    $default  reduce using rule 91 (tspec)
+
+    tspec   go to state 161
+    type    go to state 124
+    struct  go to state 61
+    class   go to state 62
+    enum    go to state 63
+    store   go to state 125
+
+
+state 125
+
+   90 tspec: store .
+   92      | store . tspec
+
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 99
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 100
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    $default  reduce using rule 90 (tspec)
+
+    tspec   go to state 162
+    type    go to state 124
+    struct  go to state 61
+    class   go to state 62
+    enum    go to state 63
+    store   go to state 125
+
+
+state 126
+
+   30 dclrs: dclrs ',' dclr .
+
+    $default  reduce using rule 30 (dclrs)
+
+
+state 127
+
+   31 dclrs: dclrs ',' fdclr . func
+
+    $default  reduce using rule 77 (fname)
+
+    func   go to state 163
+    fname  go to state 94
+
+
+state 128
+
+   76 func: fname '(' . s6 fargso ')' constobj abstract
+
+    $default  reduce using rule 153 (s6)
+
+    s6  go to state 164
+
+
+state 129
+
+   27 dclrs: spec fdclr func .
+
+    $default  reduce using rule 27 (dclrs)
+
+
+state 130
+
+   37 name: OPERATOR . '!'
+   38     | OPERATOR . '~'
+   39     | OPERATOR . '='
+   40     | OPERATOR . PA
+   41     | OPERATOR . NA
+   42     | OPERATOR . TA
+   43     | OPERATOR . DA
+   44     | OPERATOR . MA
+   45     | OPERATOR . AA
+   46     | OPERATOR . XA
+   47     | OPERATOR . OA
+   48     | OPERATOR . LA
+   49     | OPERATOR . RA
+   50     | OPERATOR . OR
+   51     | OPERATOR . AN
+   52     | OPERATOR . '|'
+   53     | OPERATOR . '^'
+   54     | OPERATOR . '&'
+   55     | OPERATOR . EQ
+   56     | OPERATOR . NE
+   57     | OPERATOR . '<'
+   58     | OPERATOR . LE
+   59     | OPERATOR . '>'
+   60     | OPERATOR . GE
+   61     | OPERATOR . LS
+   62     | OPERATOR . RS
+   63     | OPERATOR . '+'
+   64     | OPERATOR . '-'
+   65     | OPERATOR . '*'
+   66     | OPERATOR . '/'
+   67     | OPERATOR . '%'
+   68     | OPERATOR . PP
+   69     | OPERATOR . NN
+   70     | OPERATOR . AR
+   71     | OPERATOR . '[' ']'
+   72     | OPERATOR . '(' ')'
+   73     | OPERATOR . texp
+
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 99
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 100
+    '='             shift, and go to state 165
+    RA              shift, and go to state 166
+    LA              shift, and go to state 167
+    OA              shift, and go to state 168
+    XA              shift, and go to state 169
+    AA              shift, and go to state 170
+    MA              shift, and go to state 171
+    DA              shift, and go to state 172
+    TA              shift, and go to state 173
+    NA              shift, and go to state 174
+    PA              shift, and go to state 175
+    OR              shift, and go to state 176
+    AN              shift, and go to state 177
+    '|'             shift, and go to state 178
+    '^'             shift, and go to state 179
+    '&'             shift, and go to state 180
+    NE              shift, and go to state 181
+    EQ              shift, and go to state 182
+    '<'             shift, and go to state 183
+    '>'             shift, and go to state 184
+    GE              shift, and go to state 185
+    LE              shift, and go to state 186
+    RS              shift, and go to state 187
+    LS              shift, and go to state 188
+    '+'             shift, and go to state 189
+    '-'             shift, and go to state 190
+    '*'             shift, and go to state 191
+    '/'             shift, and go to state 192
+    '%'             shift, and go to state 193
+    AR              shift, and go to state 194
+    PP              shift, and go to state 195
+    NN              shift, and go to state 196
+    '['             shift, and go to state 197
+    '!'             shift, and go to state 198
+    '~'             shift, and go to state 199
+    '('             shift, and go to state 200
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    texp    go to state 201
+    tspec   go to state 123
+    type    go to state 124
+    struct  go to state 61
+    class   go to state 62
+    enum    go to state 63
+    store   go to state 125
+
+
+state 131
+
+   32 dclr: ptrs ID . arrayck tag occurs init
+   36 name: ID .
+
+    '['  shift, and go to state 202
+
+    '('       reduce using rule 36 (name)
+    $default  reduce using rule 178 (array)
+
+    array    go to state 203
+    arrayck  go to state 204
+
+
+state 132
+
+  177 ptrs: ptrs '&' .
+
+    $default  reduce using rule 177 (ptrs)
+
+
+state 133
+
+  176 ptrs: ptrs '*' .
+
+    $default  reduce using rule 176 (ptrs)
+
+
+state 134
+
+   33 fdclr: ptrs name .
+
+    $default  reduce using rule 33 (fdclr)
+
+
+state 135
+
+  120 type: struct '{' s2 . decls '}'
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 87 (spec)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 205
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 136
+
+  147 base: STRUCT . ID
+
+    ID  shift, and go to state 206
+
+
+state 137
+
+  144 base: PRIVATE . base
+
+    STRUCT     shift, and go to state 136
+    PRIVATE    shift, and go to state 137
+    PROTECTED  shift, and go to state 138
+    PUBLIC     shift, and go to state 139
+    TYPE       shift, and go to state 140
+
+    base  go to state 207
+
+
+state 138
+
+  143 base: PROTECTED . base
+
+    STRUCT     shift, and go to state 136
+    PRIVATE    shift, and go to state 137
+    PROTECTED  shift, and go to state 138
+    PUBLIC     shift, and go to state 139
+    TYPE       shift, and go to state 140
+
+    base  go to state 208
+
+
+state 139
+
+  145 base: PUBLIC . base
+
+    STRUCT     shift, and go to state 136
+    PRIVATE    shift, and go to state 137
+    PROTECTED  shift, and go to state 138
+    PUBLIC     shift, and go to state 139
+    TYPE       shift, and go to state 140
+
+    base  go to state 209
+
+
+state 140
+
+  146 base: TYPE .
+
+    $default  reduce using rule 146 (base)
+
+
+state 141
+
+  116 type: class ':' base . '{' s2 decls '}'
+  118     | class ':' base .
+
+    '{'  shift, and go to state 210
+
+    $default  reduce using rule 118 (type)
+
+
+state 142
+
+  115 type: class '{' s2 . decls '}'
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 87 (spec)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 211
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 143
+
+  128 type: enum '{' s2 . dclrs s5 '}'
+
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    '~'       reduce using rule 173 (virtual)
+    $default  reduce using rule 87 (spec)
+
+    dclrs    go to state 212
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 144
+
+   75 destr: virtual '~' TYPE .
+
+    $default  reduce using rule 75 (destr)
+
+
+state 145
+
+    3 exts: NAMESPACE ID '{' exts1 '}' .
+
+    $default  reduce using rule 3 (exts)
+
+
+state 146
+
+   19 decls: error . ';'
+
+    ';'  shift, and go to state 213
+
+
+state 147
+
+   15 decls: PRIVATE . ':' t3 decls
+
+    ':'  shift, and go to state 214
+
+
+state 148
+
+   16 decls: PROTECTED . ':' t4 decls
+
+    ':'  shift, and go to state 215
+
+
+state 149
+
+   17 decls: PUBLIC . ':' t5 decls
+
+    ':'  shift, and go to state 216
+
+
+state 150
+
+  119 type: STRUCT '{' s2 decls . '}'
+
+    '}'  shift, and go to state 217
+
+
+state 151
+
+   18 decls: t1 . decls t2 decls
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    ';'       reduce using rule 87 (spec)
+    ']'       reduce using rule 13 (decls)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 218
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 152
+
+   14 decls: dclrs . ';' decls
+   30 dclrs: dclrs . ',' dclr
+   31      | dclrs . ',' fdclr func
+
+    ','  shift, and go to state 91
+    ';'  shift, and go to state 219
+
+
+state 153
+
+  129 type: ENUM '*' id '{' . s4 dclrs s5 '}'
+
+    $default  reduce using rule 150 (s4)
+
+    s4  go to state 220
+
+
+state 154
+
+   30 dclrs: dclrs . ',' dclr
+   31      | dclrs . ',' fdclr func
+  127 type: ENUM '{' s2 dclrs . s5 '}'
+
+    ','  shift, and go to state 221
+
+    $default  reduce using rule 151 (s5)
+
+    s5  go to state 222
+
+
+state 155
+
+  123 type: UNION '{' s3 decls . '}'
+
+    '}'  shift, and go to state 223
+
+
+state 156
+
+  124 type: UNION id '{' s3 . decls '}'
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 87 (spec)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 224
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 157
+
+  114 type: CLASS '{' s2 decls . '}'
+
+    '}'  shift, and go to state 225
+
+
+state 158
+
+  113 type: TEMPLATE '<' tname id . '>' CLASS id
+
+    '>'  shift, and go to state 226
+
+
+state 159
+
+  133 type: TYPE '<' texp '>' .
+
+    $default  reduce using rule 133 (type)
+
+
+state 160
+
+   85 texp: tspec ptrs . array
+   86     | tspec ptrs . ID array
+  176 ptrs: ptrs . '*'
+  177     | ptrs . '&'
+
+    ID   shift, and go to state 227
+    '&'  shift, and go to state 132
+    '*'  shift, and go to state 133
+    '['  shift, and go to state 202
+
+    $default  reduce using rule 178 (array)
+
+    array  go to state 228
+
+
+state 161
+
+   93 tspec: type tspec .
+
+    $default  reduce using rule 93 (tspec)
+
+
+state 162
+
+   92 tspec: store tspec .
+
+    $default  reduce using rule 92 (tspec)
+
+
+state 163
+
+   31 dclrs: dclrs ',' fdclr func .
+
+    $default  reduce using rule 31 (dclrs)
+
+
+state 164
+
+   76 func: fname '(' s6 . fargso ')' constobj abstract
+
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 99
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 100
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    $default  reduce using rule 78 (fargso)
+
+    fargso  go to state 229
+    fargs   go to state 230
+    farg    go to state 231
+    tspec   go to state 232
+    type    go to state 124
+    struct  go to state 61
+    class   go to state 62
+    enum    go to state 63
+    store   go to state 125
+
+
+state 165
+
+   39 name: OPERATOR '=' .
+
+    $default  reduce using rule 39 (name)
+
+
+state 166
+
+   49 name: OPERATOR RA .
+
+    $default  reduce using rule 49 (name)
+
+
+state 167
+
+   48 name: OPERATOR LA .
+
+    $default  reduce using rule 48 (name)
+
+
+state 168
+
+   47 name: OPERATOR OA .
+
+    $default  reduce using rule 47 (name)
+
+
+state 169
+
+   46 name: OPERATOR XA .
+
+    $default  reduce using rule 46 (name)
+
+
+state 170
+
+   45 name: OPERATOR AA .
+
+    $default  reduce using rule 45 (name)
+
+
+state 171
+
+   44 name: OPERATOR MA .
+
+    $default  reduce using rule 44 (name)
+
+
+state 172
+
+   43 name: OPERATOR DA .
+
+    $default  reduce using rule 43 (name)
+
+
+state 173
+
+   42 name: OPERATOR TA .
+
+    $default  reduce using rule 42 (name)
+
+
+state 174
+
+   41 name: OPERATOR NA .
+
+    $default  reduce using rule 41 (name)
+
+
+state 175
+
+   40 name: OPERATOR PA .
+
+    $default  reduce using rule 40 (name)
+
+
+state 176
+
+   50 name: OPERATOR OR .
+
+    $default  reduce using rule 50 (name)
+
+
+state 177
+
+   51 name: OPERATOR AN .
+
+    $default  reduce using rule 51 (name)
+
+
+state 178
+
+   52 name: OPERATOR '|' .
+
+    $default  reduce using rule 52 (name)
+
+
+state 179
+
+   53 name: OPERATOR '^' .
+
+    $default  reduce using rule 53 (name)
+
+
+state 180
+
+   54 name: OPERATOR '&' .
+
+    $default  reduce using rule 54 (name)
+
+
+state 181
+
+   56 name: OPERATOR NE .
+
+    $default  reduce using rule 56 (name)
+
+
+state 182
+
+   55 name: OPERATOR EQ .
+
+    $default  reduce using rule 55 (name)
+
+
+state 183
+
+   57 name: OPERATOR '<' .
+
+    $default  reduce using rule 57 (name)
+
+
+state 184
+
+   59 name: OPERATOR '>' .
+
+    $default  reduce using rule 59 (name)
+
+
+state 185
+
+   60 name: OPERATOR GE .
+
+    $default  reduce using rule 60 (name)
+
+
+state 186
+
+   58 name: OPERATOR LE .
+
+    $default  reduce using rule 58 (name)
+
+
+state 187
+
+   62 name: OPERATOR RS .
+
+    $default  reduce using rule 62 (name)
+
+
+state 188
+
+   61 name: OPERATOR LS .
+
+    $default  reduce using rule 61 (name)
+
+
+state 189
+
+   63 name: OPERATOR '+' .
+
+    $default  reduce using rule 63 (name)
+
+
+state 190
+
+   64 name: OPERATOR '-' .
+
+    $default  reduce using rule 64 (name)
+
+
+state 191
+
+   65 name: OPERATOR '*' .
+
+    $default  reduce using rule 65 (name)
+
+
+state 192
+
+   66 name: OPERATOR '/' .
+
+    $default  reduce using rule 66 (name)
+
+
+state 193
+
+   67 name: OPERATOR '%' .
+
+    $default  reduce using rule 67 (name)
+
+
+state 194
+
+   70 name: OPERATOR AR .
+
+    $default  reduce using rule 70 (name)
+
+
+state 195
+
+   68 name: OPERATOR PP .
+
+    $default  reduce using rule 68 (name)
+
+
+state 196
+
+   69 name: OPERATOR NN .
+
+    $default  reduce using rule 69 (name)
+
+
+state 197
+
+   71 name: OPERATOR '[' . ']'
+
+    ']'  shift, and go to state 233
+
+
+state 198
+
+   37 name: OPERATOR '!' .
+
+    $default  reduce using rule 37 (name)
+
+
+state 199
+
+   38 name: OPERATOR '~' .
+
+    $default  reduce using rule 38 (name)
+
+
+state 200
+
+   72 name: OPERATOR '(' . ')'
+
+    ')'  shift, and go to state 234
+
+
+state 201
+
+   73 name: OPERATOR texp .
+
+    $default  reduce using rule 73 (name)
+
+
+state 202
+
+  179 array: '[' . cexp ']' array
+  180      | '[' . ']' array
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    ']'     shift, and go to state 248
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    cexp  go to state 252
+    oexp  go to state 253
+    obex  go to state 254
+    aexp  go to state 255
+    abex  go to state 256
+    rexp  go to state 257
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 203
+
+  181 arrayck: array .
+
+    $default  reduce using rule 181 (arrayck)
+
+
+state 204
+
+   32 dclr: ptrs ID arrayck . tag occurs init
+
+    '<'  shift, and go to state 260
+
+    $default  reduce using rule 184 (tag)
+
+    tag  go to state 261
+
+
+state 205
+
+  120 type: struct '{' s2 decls . '}'
+
+    '}'  shift, and go to state 262
+
+
+state 206
+
+  147 base: STRUCT ID .
+
+    $default  reduce using rule 147 (base)
+
+
+state 207
+
+  144 base: PRIVATE base .
+
+    $default  reduce using rule 144 (base)
+
+
+state 208
+
+  143 base: PROTECTED base .
+
+    $default  reduce using rule 143 (base)
+
+
+state 209
+
+  145 base: PUBLIC base .
+
+    $default  reduce using rule 145 (base)
+
+
+state 210
+
+  116 type: class ':' base '{' . s2 decls '}'
+
+    $default  reduce using rule 148 (s2)
+
+    s2  go to state 263
+
+
+state 211
+
+  115 type: class '{' s2 decls . '}'
+
+    '}'  shift, and go to state 264
+
+
+state 212
+
+   30 dclrs: dclrs . ',' dclr
+   31      | dclrs . ',' fdclr func
+  128 type: enum '{' s2 dclrs . s5 '}'
+
+    ','  shift, and go to state 221
+
+    $default  reduce using rule 151 (s5)
+
+    s5  go to state 265
+
+
+state 213
+
+   19 decls: error ';' .
+
+    $default  reduce using rule 19 (decls)
+
+
+state 214
+
+   15 decls: PRIVATE ':' . t3 decls
+
+    $default  reduce using rule 22 (t3)
+
+    t3  go to state 266
+
+
+state 215
+
+   16 decls: PROTECTED ':' . t4 decls
+
+    $default  reduce using rule 23 (t4)
+
+    t4  go to state 267
+
+
+state 216
+
+   17 decls: PUBLIC ':' . t5 decls
+
+    $default  reduce using rule 24 (t5)
+
+    t5  go to state 268
+
+
+state 217
+
+  119 type: STRUCT '{' s2 decls '}' .
+
+    $default  reduce using rule 119 (type)
+
+
+state 218
+
+   18 decls: t1 decls . t2 decls
+
+    ']'  shift, and go to state 49
+
+    t2  go to state 269
+
+
+state 219
+
+   14 decls: dclrs ';' . decls
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 87 (spec)
+    ']'       reduce using rule 13 (decls)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 270
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 220
+
+  129 type: ENUM '*' id '{' s4 . dclrs s5 '}'
+
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    '~'       reduce using rule 173 (virtual)
+    $default  reduce using rule 87 (spec)
+
+    dclrs    go to state 271
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 221
+
+   30 dclrs: dclrs ',' . dclr
+   31      | dclrs ',' . fdclr func
+  152 s5: ',' .
+
+    '}'       reduce using rule 152 (s5)
+    $default  reduce using rule 175 (ptrs)
+
+    dclr   go to state 126
+    fdclr  go to state 127
+    ptrs   go to state 98
+
+
+state 222
+
+  127 type: ENUM '{' s2 dclrs s5 . '}'
+
+    '}'  shift, and go to state 272
+
+
+state 223
+
+  123 type: UNION '{' s3 decls '}' .
+
+    $default  reduce using rule 123 (type)
+
+
+state 224
+
+  124 type: UNION id '{' s3 decls . '}'
+
+    '}'  shift, and go to state 273
+
+
+state 225
+
+  114 type: CLASS '{' s2 decls '}' .
+
+    $default  reduce using rule 114 (type)
+
+
+state 226
+
+  113 type: TEMPLATE '<' tname id '>' . CLASS id
+
+    CLASS  shift, and go to state 274
+
+
+state 227
+
+   86 texp: tspec ptrs ID . array
+
+    '['  shift, and go to state 202
+
+    $default  reduce using rule 178 (array)
+
+    array  go to state 275
+
+
+state 228
+
+   85 texp: tspec ptrs array .
+
+    $default  reduce using rule 85 (texp)
+
+
+state 229
+
+   76 func: fname '(' s6 fargso . ')' constobj abstract
+
+    ')'  shift, and go to state 276
+
+
+state 230
+
+   79 fargso: fargs .
+
+    $default  reduce using rule 79 (fargso)
+
+
+state 231
+
+   80 fargs: farg .
+   81      | farg . ',' fargs
+
+    ','  shift, and go to state 277
+
+    $default  reduce using rule 80 (fargs)
+
+
+state 232
+
+   82 farg: tspec . ptrs arg arrayck occurs init
+
+    $default  reduce using rule 175 (ptrs)
+
+    ptrs  go to state 278
+
+
+state 233
+
+   71 name: OPERATOR '[' ']' .
+
+    $default  reduce using rule 71 (name)
+
+
+state 234
+
+   72 name: OPERATOR '(' ')' .
+
+    $default  reduce using rule 72 (name)
+
+
+state 235
+
+  230 lexp: SIZEOF . '(' texp ')'
+
+    '('  shift, and go to state 279
+
+
+state 236
+
+  239 pexp: CFALSE .
+
+    $default  reduce using rule 239 (pexp)
+
+
+state 237
+
+  240 pexp: CTRUE .
+
+    $default  reduce using rule 240 (pexp)
+
+
+state 238
+
+  235 pexp: null .
+
+    $default  reduce using rule 235 (pexp)
+
+
+state 239
+
+  233 pexp: ID .
+
+    $default  reduce using rule 233 (pexp)
+
+
+state 240
+
+  234 pexp: LNG .
+
+    $default  reduce using rule 234 (pexp)
+
+
+state 241
+
+  236 pexp: DBL .
+
+    $default  reduce using rule 236 (pexp)
+
+
+state 242
+
+  237 pexp: CHR .
+
+    $default  reduce using rule 237 (pexp)
+
+
+state 243
+
+  238 pexp: STR .
+
+    $default  reduce using rule 238 (pexp)
+
+
+state 244
+
+  229 lexp: '&' . lexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    lexp  go to state 280
+    pexp  go to state 259
+
+
+state 245
+
+  227 lexp: '+' . lexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    lexp  go to state 281
+    pexp  go to state 259
+
+
+state 246
+
+  226 lexp: '-' . lexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    lexp  go to state 282
+    pexp  go to state 259
+
+
+state 247
+
+  228 lexp: '*' . lexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    lexp  go to state 283
+    pexp  go to state 259
+
+
+state 248
+
+  180 array: '[' ']' . array
+
+    '['  shift, and go to state 202
+
+    $default  reduce using rule 178 (array)
+
+    array  go to state 284
+
+
+state 249
+
+  224 lexp: '!' . lexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    lexp  go to state 285
+    pexp  go to state 259
+
+
+state 250
+
+  225 lexp: '~' . lexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    lexp  go to state 286
+    pexp  go to state 259
+
+
+state 251
+
+  232 pexp: '(' . expr ')'
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    expr  go to state 287
+    cexp  go to state 288
+    oexp  go to state 253
+    obex  go to state 254
+    aexp  go to state 255
+    abex  go to state 256
+    rexp  go to state 257
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 252
+
+  179 array: '[' cexp . ']' array
+
+    ']'  shift, and go to state 289
+
+
+state 253
+
+  199 cexp: oexp .
+  203 obex: oexp .
+
+    '?'       reduce using rule 203 (obex)
+    OR        reduce using rule 203 (obex)
+    $default  reduce using rule 199 (cexp)
+
+
+state 254
+
+  198 cexp: obex . '?' qexp ':' cexp
+  201 oexp: obex . OR aexp
+
+    '?'  shift, and go to state 290
+    OR   shift, and go to state 291
+
+
+state 255
+
+  202 oexp: aexp .
+  206 abex: aexp .
+
+    AN        reduce using rule 206 (abex)
+    $default  reduce using rule 202 (oexp)
+
+
+state 256
+
+  204 aexp: abex . AN rexp
+
+    AN  shift, and go to state 292
+
+
+state 257
+
+  205 aexp: rexp .
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    '|'  shift, and go to state 293
+    '^'  shift, and go to state 294
+    '&'  shift, and go to state 295
+    NE   shift, and go to state 296
+    EQ   shift, and go to state 297
+    '<'  shift, and go to state 298
+    '>'  shift, and go to state 299
+    GE   shift, and go to state 300
+    LE   shift, and go to state 301
+    RS   shift, and go to state 302
+    LS   shift, and go to state 303
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 205 (aexp)
+
+
+state 258
+
+  223 rexp: lexp .
+
+    $default  reduce using rule 223 (rexp)
+
+
+state 259
+
+  231 lexp: pexp .
+
+    $default  reduce using rule 231 (lexp)
+
+
+state 260
+
+  185 tag: '<' . ID '>'
+
+    ID  shift, and go to state 309
+
+
+state 261
+
+   32 dclr: ptrs ID arrayck tag . occurs init
+
+    STR  shift, and go to state 310
+
+    $default  reduce using rule 191 (patt)
+
+    occurs  go to state 311
+    patt    go to state 312
+
+
+state 262
+
+  120 type: struct '{' s2 decls '}' .
+
+    $default  reduce using rule 120 (type)
+
+
+state 263
+
+  116 type: class ':' base '{' s2 . decls '}'
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 87 (spec)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 313
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 264
+
+  115 type: class '{' s2 decls '}' .
+
+    $default  reduce using rule 115 (type)
+
+
+state 265
+
+  128 type: enum '{' s2 dclrs s5 . '}'
+
+    '}'  shift, and go to state 314
+
+
+state 266
+
+   15 decls: PRIVATE ':' t3 . decls
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 87 (spec)
+    ']'       reduce using rule 13 (decls)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 315
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 267
+
+   16 decls: PROTECTED ':' t4 . decls
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 87 (spec)
+    ']'       reduce using rule 13 (decls)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 316
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 268
+
+   17 decls: PUBLIC ':' t5 . decls
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 87 (spec)
+    ']'       reduce using rule 13 (decls)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 317
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 269
+
+   18 decls: t1 decls t2 . decls
+
+    error           shift, and go to state 146
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 147
+    PROTECTED       shift, and go to state 148
+    PUBLIC          shift, and go to state 149
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 47
+    '['             shift, and go to state 48
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    OPERATOR  reduce using rule 87 (spec)
+    ID        reduce using rule 87 (spec)
+    ','       reduce using rule 87 (spec)
+    '&'       reduce using rule 87 (spec)
+    '*'       reduce using rule 87 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 87 (spec)
+    ']'       reduce using rule 13 (decls)
+    '~'       reduce using rule 173 (virtual)
+
+    decls    go to state 318
+    t1       go to state 151
+    dclrs    go to state 152
+    constr   go to state 57
+    destr    go to state 58
+    spec     go to state 59
+    type     go to state 60
+    struct   go to state 61
+    class    go to state 62
+    enum     go to state 63
+    store    go to state 64
+    virtual  go to state 65
+
+
+state 270
+
+   14 decls: dclrs ';' decls .
+
+    $default  reduce using rule 14 (decls)
+
+
+state 271
+
+   30 dclrs: dclrs . ',' dclr
+   31      | dclrs . ',' fdclr func
+  129 type: ENUM '*' id '{' s4 dclrs . s5 '}'
+
+    ','  shift, and go to state 221
+
+    $default  reduce using rule 151 (s5)
+
+    s5  go to state 319
+
+
+state 272
+
+  127 type: ENUM '{' s2 dclrs s5 '}' .
+
+    $default  reduce using rule 127 (type)
+
+
+state 273
+
+  124 type: UNION id '{' s3 decls '}' .
+
+    $default  reduce using rule 124 (type)
+
+
+state 274
+
+  113 type: TEMPLATE '<' tname id '>' CLASS . id
+
+    ID    shift, and go to state 85
+    TYPE  shift, and go to state 86
+
+    id  go to state 320
+
+
+state 275
+
+   86 texp: tspec ptrs ID array .
+
+    $default  reduce using rule 86 (texp)
+
+
+state 276
+
+   76 func: fname '(' s6 fargso ')' . constobj abstract
+
+    CONST  shift, and go to state 321
+
+    $default  reduce using rule 169 (constobj)
+
+    constobj  go to state 322
+
+
+state 277
+
+   81 fargs: farg ',' . fargs
+
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 99
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 100
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    fargs   go to state 323
+    farg    go to state 231
+    tspec   go to state 232
+    type    go to state 124
+    struct  go to state 61
+    class   go to state 62
+    enum    go to state 63
+    store   go to state 125
+
+
+state 278
+
+   82 farg: tspec ptrs . arg arrayck occurs init
+  176 ptrs: ptrs . '*'
+  177     | ptrs . '&'
+
+    ID   shift, and go to state 324
+    '&'  shift, and go to state 132
+    '*'  shift, and go to state 133
+
+    $default  reduce using rule 83 (arg)
+
+    arg  go to state 325
+
+
+state 279
+
+  230 lexp: SIZEOF '(' . texp ')'
+
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    VIRTUAL         shift, and go to state 99
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    UCHAR           shift, and go to state 43
+    USHORT          shift, and go to state 44
+    UINT            shift, and go to state 45
+    ULONG           shift, and go to state 46
+    TYPE            shift, and go to state 100
+    '@'             shift, and go to state 50
+    '$'             shift, and go to state 51
+
+    texp    go to state 326
+    tspec   go to state 123
+    type    go to state 124
+    struct  go to state 61
+    class   go to state 62
+    enum    go to state 63
+    store   go to state 125
+
+
+state 280
+
+  229 lexp: '&' lexp .
+
+    $default  reduce using rule 229 (lexp)
+
+
+state 281
+
+  227 lexp: '+' lexp .
+
+    $default  reduce using rule 227 (lexp)
+
+
+state 282
+
+  226 lexp: '-' lexp .
+
+    $default  reduce using rule 226 (lexp)
+
+
+state 283
+
+  228 lexp: '*' lexp .
+
+    $default  reduce using rule 228 (lexp)
+
+
+state 284
+
+  180 array: '[' ']' array .
+
+    $default  reduce using rule 180 (array)
+
+
+state 285
+
+  224 lexp: '!' lexp .
+
+    $default  reduce using rule 224 (lexp)
+
+
+state 286
+
+  225 lexp: '~' lexp .
+
+    $default  reduce using rule 225 (lexp)
+
+
+state 287
+
+  196 expr: expr . ',' expr
+  232 pexp: '(' expr . ')'
+
+    ','  shift, and go to state 327
+    ')'  shift, and go to state 328
+
+
+state 288
+
+  197 expr: cexp .
+
+    $default  reduce using rule 197 (expr)
+
+
+state 289
+
+  179 array: '[' cexp ']' . array
+
+    '['  shift, and go to state 202
+
+    $default  reduce using rule 178 (array)
+
+    array  go to state 329
+
+
+state 290
+
+  198 cexp: obex '?' . qexp ':' cexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    expr  go to state 330
+    cexp  go to state 288
+    qexp  go to state 331
+    oexp  go to state 253
+    obex  go to state 254
+    aexp  go to state 255
+    abex  go to state 256
+    rexp  go to state 257
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 291
+
+  201 oexp: obex OR . aexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    aexp  go to state 332
+    abex  go to state 256
+    rexp  go to state 257
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 292
+
+  204 aexp: abex AN . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 333
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 293
+
+  207 rexp: rexp '|' . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 334
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 294
+
+  208 rexp: rexp '^' . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 335
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 295
+
+  209 rexp: rexp '&' . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 336
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 296
+
+  211 rexp: rexp NE . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 337
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 297
+
+  210 rexp: rexp EQ . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 338
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 298
+
+  212 rexp: rexp '<' . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 339
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 299
+
+  214 rexp: rexp '>' . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 340
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 300
+
+  215 rexp: rexp GE . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 341
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 301
+
+  213 rexp: rexp LE . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 342
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 302
+
+  217 rexp: rexp RS . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 343
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 303
+
+  216 rexp: rexp LS . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 344
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 304
+
+  218 rexp: rexp '+' . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 345
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 305
+
+  219 rexp: rexp '-' . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 346
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 306
+
+  220 rexp: rexp '*' . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 347
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 307
+
+  221 rexp: rexp '/' . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 348
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 308
+
+  222 rexp: rexp '%' . rexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    rexp  go to state 349
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 309
+
+  185 tag: '<' ID . '>'
+
+    '>'  shift, and go to state 350
+
+
+state 310
+
+  192 patt: STR .
+
+    $default  reduce using rule 192 (patt)
+
+
+state 311
+
+   32 dclr: ptrs ID arrayck tag occurs . init
+
+    '='  shift, and go to state 351
+
+    $default  reduce using rule 182 (init)
+
+    init  go to state 352
+
+
+state 312
+
+  186 occurs: patt .
+  187       | patt . cint
+  188       | patt . cint ':'
+  189       | patt . cint ':' cint
+  190       | patt . ':' cint
+
+    LNG  shift, and go to state 353
+    ':'  shift, and go to state 354
+    '+'  shift, and go to state 355
+    '-'  shift, and go to state 356
+
+    $default  reduce using rule 186 (occurs)
+
+    cint  go to state 357
+
+
+state 313
+
+  116 type: class ':' base '{' s2 decls . '}'
+
+    '}'  shift, and go to state 358
+
+
+state 314
+
+  128 type: enum '{' s2 dclrs s5 '}' .
+
+    $default  reduce using rule 128 (type)
+
+
+state 315
+
+   15 decls: PRIVATE ':' t3 decls .
+
+    $default  reduce using rule 15 (decls)
+
+
+state 316
+
+   16 decls: PROTECTED ':' t4 decls .
+
+    $default  reduce using rule 16 (decls)
+
+
+state 317
+
+   17 decls: PUBLIC ':' t5 decls .
+
+    $default  reduce using rule 17 (decls)
+
+
+state 318
+
+   18 decls: t1 decls t2 decls .
+
+    $default  reduce using rule 18 (decls)
+
+
+state 319
+
+  129 type: ENUM '*' id '{' s4 dclrs s5 . '}'
+
+    '}'  shift, and go to state 359
+
+
+state 320
+
+  113 type: TEMPLATE '<' tname id '>' CLASS id .
+
+    $default  reduce using rule 113 (type)
+
+
+state 321
+
+  170 constobj: CONST .
+
+    $default  reduce using rule 170 (constobj)
+
+
+state 322
+
+   76 func: fname '(' s6 fargso ')' constobj . abstract
+
+    '='  shift, and go to state 360
+
+    $default  reduce using rule 171 (abstract)
+
+    abstract  go to state 361
+
+
+state 323
+
+   81 fargs: farg ',' fargs .
+
+    $default  reduce using rule 81 (fargs)
+
+
+state 324
+
+   84 arg: ID .
+
+    $default  reduce using rule 84 (arg)
+
+
+state 325
+
+   82 farg: tspec ptrs arg . arrayck occurs init
+
+    '['  shift, and go to state 202
+
+    $default  reduce using rule 178 (array)
+
+    array    go to state 203
+    arrayck  go to state 362
+
+
+state 326
+
+  230 lexp: SIZEOF '(' texp . ')'
+
+    ')'  shift, and go to state 363
+
+
+state 327
+
+  196 expr: expr ',' . expr
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    expr  go to state 364
+    cexp  go to state 288
+    oexp  go to state 253
+    obex  go to state 254
+    aexp  go to state 255
+    abex  go to state 256
+    rexp  go to state 257
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 328
+
+  232 pexp: '(' expr ')' .
+
+    $default  reduce using rule 232 (pexp)
+
+
+state 329
+
+  179 array: '[' cexp ']' array .
+
+    $default  reduce using rule 179 (array)
+
+
+state 330
+
+  196 expr: expr . ',' expr
+  200 qexp: expr .
+
+    ','  shift, and go to state 327
+
+    $default  reduce using rule 200 (qexp)
+
+
+state 331
+
+  198 cexp: obex '?' qexp . ':' cexp
+
+    ':'  shift, and go to state 365
+
+
+state 332
+
+  201 oexp: obex OR aexp .
+  206 abex: aexp .
+
+    AN        reduce using rule 206 (abex)
+    $default  reduce using rule 201 (oexp)
+
+
+state 333
+
+  204 aexp: abex AN rexp .
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    '|'  shift, and go to state 293
+    '^'  shift, and go to state 294
+    '&'  shift, and go to state 295
+    NE   shift, and go to state 296
+    EQ   shift, and go to state 297
+    '<'  shift, and go to state 298
+    '>'  shift, and go to state 299
+    GE   shift, and go to state 300
+    LE   shift, and go to state 301
+    RS   shift, and go to state 302
+    LS   shift, and go to state 303
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 204 (aexp)
+
+
+state 334
+
+  207 rexp: rexp . '|' rexp
+  207     | rexp '|' rexp .
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    '^'  shift, and go to state 294
+    '&'  shift, and go to state 295
+    NE   shift, and go to state 296
+    EQ   shift, and go to state 297
+    '<'  shift, and go to state 298
+    '>'  shift, and go to state 299
+    GE   shift, and go to state 300
+    LE   shift, and go to state 301
+    RS   shift, and go to state 302
+    LS   shift, and go to state 303
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 207 (rexp)
+
+
+state 335
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  208     | rexp '^' rexp .
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    '&'  shift, and go to state 295
+    NE   shift, and go to state 296
+    EQ   shift, and go to state 297
+    '<'  shift, and go to state 298
+    '>'  shift, and go to state 299
+    GE   shift, and go to state 300
+    LE   shift, and go to state 301
+    RS   shift, and go to state 302
+    LS   shift, and go to state 303
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 208 (rexp)
+
+
+state 336
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  209     | rexp '&' rexp .
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    NE   shift, and go to state 296
+    EQ   shift, and go to state 297
+    '<'  shift, and go to state 298
+    '>'  shift, and go to state 299
+    GE   shift, and go to state 300
+    LE   shift, and go to state 301
+    RS   shift, and go to state 302
+    LS   shift, and go to state 303
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 209 (rexp)
+
+
+state 337
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  211     | rexp NE rexp .
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    '<'  shift, and go to state 298
+    '>'  shift, and go to state 299
+    GE   shift, and go to state 300
+    LE   shift, and go to state 301
+    RS   shift, and go to state 302
+    LS   shift, and go to state 303
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 211 (rexp)
+
+
+state 338
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  210     | rexp EQ rexp .
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    '<'  shift, and go to state 298
+    '>'  shift, and go to state 299
+    GE   shift, and go to state 300
+    LE   shift, and go to state 301
+    RS   shift, and go to state 302
+    LS   shift, and go to state 303
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 210 (rexp)
+
+
+state 339
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  212     | rexp '<' rexp .
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    RS   shift, and go to state 302
+    LS   shift, and go to state 303
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 212 (rexp)
+
+
+state 340
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  214     | rexp '>' rexp .
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    RS   shift, and go to state 302
+    LS   shift, and go to state 303
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 214 (rexp)
+
+
+state 341
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  215     | rexp GE rexp .
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    RS   shift, and go to state 302
+    LS   shift, and go to state 303
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 215 (rexp)
+
+
+state 342
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  213     | rexp LE rexp .
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    RS   shift, and go to state 302
+    LS   shift, and go to state 303
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 213 (rexp)
+
+
+state 343
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  217     | rexp RS rexp .
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 217 (rexp)
+
+
+state 344
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  216     | rexp LS rexp .
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    '+'  shift, and go to state 304
+    '-'  shift, and go to state 305
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 216 (rexp)
+
+
+state 345
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  218     | rexp '+' rexp .
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 218 (rexp)
+
+
+state 346
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  219     | rexp '-' rexp .
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    '*'  shift, and go to state 306
+    '/'  shift, and go to state 307
+    '%'  shift, and go to state 308
+
+    $default  reduce using rule 219 (rexp)
+
+
+state 347
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  220     | rexp '*' rexp .
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+
+    $default  reduce using rule 220 (rexp)
+
+
+state 348
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  221     | rexp '/' rexp .
+  222     | rexp . '%' rexp
+
+    $default  reduce using rule 221 (rexp)
+
+
+state 349
+
+  207 rexp: rexp . '|' rexp
+  208     | rexp . '^' rexp
+  209     | rexp . '&' rexp
+  210     | rexp . EQ rexp
+  211     | rexp . NE rexp
+  212     | rexp . '<' rexp
+  213     | rexp . LE rexp
+  214     | rexp . '>' rexp
+  215     | rexp . GE rexp
+  216     | rexp . LS rexp
+  217     | rexp . RS rexp
+  218     | rexp . '+' rexp
+  219     | rexp . '-' rexp
+  220     | rexp . '*' rexp
+  221     | rexp . '/' rexp
+  222     | rexp . '%' rexp
+  222     | rexp '%' rexp .
+
+    $default  reduce using rule 222 (rexp)
+
+
+state 350
+
+  185 tag: '<' ID '>' .
+
+    $default  reduce using rule 185 (tag)
+
+
+state 351
+
+  183 init: '=' . cexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    cexp  go to state 366
+    oexp  go to state 253
+    obex  go to state 254
+    aexp  go to state 255
+    abex  go to state 256
+    rexp  go to state 257
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 352
+
+   32 dclr: ptrs ID arrayck tag occurs init .
+
+    $default  reduce using rule 32 (dclr)
+
+
+state 353
+
+  193 cint: LNG .
+
+    $default  reduce using rule 193 (cint)
+
+
+state 354
+
+  190 occurs: patt ':' . cint
+
+    LNG  shift, and go to state 353
+    '+'  shift, and go to state 355
+    '-'  shift, and go to state 356
+
+    cint  go to state 367
+
+
+state 355
+
+  194 cint: '+' . LNG
+
+    LNG  shift, and go to state 368
+
+
+state 356
+
+  195 cint: '-' . LNG
+
+    LNG  shift, and go to state 369
+
+
+state 357
+
+  187 occurs: patt cint .
+  188       | patt cint . ':'
+  189       | patt cint . ':' cint
+
+    ':'  shift, and go to state 370
+
+    $default  reduce using rule 187 (occurs)
+
+
+state 358
+
+  116 type: class ':' base '{' s2 decls '}' .
+
+    $default  reduce using rule 116 (type)
+
+
+state 359
+
+  129 type: ENUM '*' id '{' s4 dclrs s5 '}' .
+
+    $default  reduce using rule 129 (type)
+
+
+state 360
+
+  172 abstract: '=' . LNG
+
+    LNG  shift, and go to state 371
+
+
+state 361
+
+   76 func: fname '(' s6 fargso ')' constobj abstract .
+
+    $default  reduce using rule 76 (func)
+
+
+state 362
+
+   82 farg: tspec ptrs arg arrayck . occurs init
+
+    STR  shift, and go to state 310
+
+    $default  reduce using rule 191 (patt)
+
+    occurs  go to state 372
+    patt    go to state 312
+
+
+state 363
+
+  230 lexp: SIZEOF '(' texp ')' .
+
+    $default  reduce using rule 230 (lexp)
+
+
+state 364
+
+  196 expr: expr . ',' expr
+  196     | expr ',' expr .
+
+    $default  reduce using rule 196 (expr)
+
+
+state 365
+
+  198 cexp: obex '?' qexp ':' . cexp
+
+    SIZEOF  shift, and go to state 235
+    CFALSE  shift, and go to state 236
+    CTRUE   shift, and go to state 237
+    null    shift, and go to state 238
+    ID      shift, and go to state 239
+    LNG     shift, and go to state 240
+    DBL     shift, and go to state 241
+    CHR     shift, and go to state 242
+    STR     shift, and go to state 243
+    '&'     shift, and go to state 244
+    '+'     shift, and go to state 245
+    '-'     shift, and go to state 246
+    '*'     shift, and go to state 247
+    '!'     shift, and go to state 249
+    '~'     shift, and go to state 250
+    '('     shift, and go to state 251
+
+    cexp  go to state 373
+    oexp  go to state 253
+    obex  go to state 254
+    aexp  go to state 255
+    abex  go to state 256
+    rexp  go to state 257
+    lexp  go to state 258
+    pexp  go to state 259
+
+
+state 366
+
+  183 init: '=' cexp .
+
+    $default  reduce using rule 183 (init)
+
+
+state 367
+
+  190 occurs: patt ':' cint .
+
+    $default  reduce using rule 190 (occurs)
+
+
+state 368
+
+  194 cint: '+' LNG .
+
+    $default  reduce using rule 194 (cint)
+
+
+state 369
+
+  195 cint: '-' LNG .
+
+    $default  reduce using rule 195 (cint)
+
+
+state 370
+
+  188 occurs: patt cint ':' .
+  189       | patt cint ':' . cint
+
+    LNG  shift, and go to state 353
+    '+'  shift, and go to state 355
+    '-'  shift, and go to state 356
+
+    $default  reduce using rule 188 (occurs)
+
+    cint  go to state 374
+
+
+state 371
+
+  172 abstract: '=' LNG .
+
+    $default  reduce using rule 172 (abstract)
+
+
+state 372
+
+   82 farg: tspec ptrs arg arrayck occurs . init
+
+    '='  shift, and go to state 351
+
+    $default  reduce using rule 182 (init)
+
+    init  go to state 375
+
+
+state 373
+
+  198 cexp: obex '?' qexp ':' cexp .
+
+    $default  reduce using rule 198 (cexp)
+
+
+state 374
+
+  189 occurs: patt cint ':' cint .
+
+    $default  reduce using rule 189 (occurs)
+
+
+state 375
+
+   82 farg: tspec ptrs arg arrayck occurs init .
+
+    $default  reduce using rule 82 (farg)

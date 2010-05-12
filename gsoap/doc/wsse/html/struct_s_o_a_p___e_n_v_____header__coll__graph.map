@@ -1,0 +1,9 @@
+base referer
+rect $struct__wsse_____security.html 360,199 472,225
+rect $structds_____signature_type.html 84,108 209,135
+rect $structds_____signed_info_type.html 7,17 140,44
+rect $structds_____key_info_type.html 164,17 279,44
+rect $struct__wsse_____binary_security_token.html 233,108 417,135
+rect $struct__wsse_____username_token.html 441,108 601,135
+rect $struct__wsse_____password.html 460,17 583,44
+rect $struct__wsu_____timestamp.html 625,108 748,135

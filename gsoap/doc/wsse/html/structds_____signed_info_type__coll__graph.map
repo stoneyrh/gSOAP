@@ -1,0 +1,8 @@
+base referer
+rect $structds_____reference_type.html 184,300 314,326
+rect $structds_____digest_method_type.html 6,209 158,236
+rect $structds_____transforms_type.html 182,209 316,236
+rect $structds_____transform_type.html 168,108 296,134
+rect $struct__c14n_____inclusive_namespaces.html 242,17 437,44
+rect $structds_____canonicalization_method_type.html 340,158 550,185
+rect $structds_____signature_method_type.html 454,300 625,326

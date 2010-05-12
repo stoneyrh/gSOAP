@@ -1,0 +1,298 @@
+libgsoapssl_a-stdsoap2_ssl.o libgsoapssl_a-stdsoap2_ssl.o:  \
+ stdsoap2_ssl.c stdsoap2.h ../config.h /usr/include/stdlib.h \
+  /usr/include/Availability.h /usr/include/AvailabilityInternal.h \
+  /usr/include/_types.h /usr/include/sys/_types.h \
+  /usr/include/sys/cdefs.h /usr/include/machine/_types.h \
+  /usr/include/i386/_types.h /usr/include/sys/wait.h \
+  /usr/include/sys/signal.h /usr/include/sys/appleapiopts.h \
+  /usr/include/machine/signal.h /usr/include/i386/signal.h \
+  /usr/include/i386/_structs.h /usr/include/sys/_structs.h \
+  /usr/include/machine/_structs.h /usr/include/mach/i386/_structs.h \
+  /usr/include/sys/resource.h /usr/include/machine/endian.h \
+  /usr/include/i386/endian.h /usr/include/sys/_endian.h \
+  /usr/include/libkern/_OSByteOrder.h \
+  /usr/include/libkern/i386/_OSByteOrder.h /usr/include/alloca.h \
+  /usr/include/machine/types.h /usr/include/i386/types.h \
+  /usr/include/i386/_types.h /usr/include/stdio.h \
+  /usr/include/secure/_stdio.h /usr/include/secure/_common.h \
+  /usr/include/string.h /usr/include/secure/_string.h \
+  /usr/include/ctype.h /usr/include/runetype.h \
+  /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/limits.h \
+  /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/syslimits.h \
+  /usr/include/limits.h /usr/include/machine/limits.h \
+  /usr/include/i386/limits.h /usr/include/i386/_limits.h \
+  /usr/include/sys/syslimits.h /usr/include/poll.h \
+  /usr/include/sys/poll.h /usr/include/errno.h /usr/include/sys/errno.h \
+  /usr/include/sys/types.h /usr/include/sys/timeb.h /usr/include/time.h \
+  /usr/include/_structs.h /usr/include/sys/socket.h \
+  /usr/include/machine/_param.h /usr/include/i386/_param.h \
+  /usr/include/strings.h /usr/include/sys/time.h \
+  /usr/include/sys/_select.h /usr/include/netinet/in.h \
+  /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdint.h \
+  /usr/include/netinet6/in6.h /usr/include/netinet/tcp.h \
+  /usr/include/arpa/inet.h /usr/include/netdb.h /usr/include/unistd.h \
+  /usr/include/sys/unistd.h /usr/include/sys/select.h \
+  /usr/include/fcntl.h /usr/include/sys/fcntl.h \
+  /usr/include/openssl/bio.h /usr/include/openssl/e_os2.h \
+  /usr/include/openssl/opensslconf.h \
+  /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdarg.h \
+  /usr/include/openssl/crypto.h /usr/include/openssl/stack.h \
+  /usr/include/openssl/safestack.h /usr/include/openssl/opensslv.h \
+  /usr/include/openssl/ossl_typ.h /usr/include/openssl/symhacks.h \
+  /usr/include/openssl/err.h /usr/include/openssl/lhash.h \
+  /usr/include/openssl/rand.h /usr/include/openssl/ssl.h \
+  /usr/include/openssl/comp.h /usr/include/openssl/x509.h \
+  /usr/include/openssl/buffer.h \
+  /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stddef.h \
+  /usr/include/openssl/evp.h /usr/include/openssl/objects.h \
+  /usr/include/openssl/obj_mac.h /usr/include/openssl/asn1.h \
+  /usr/include/openssl/bn.h /usr/include/openssl/ec.h \
+  /usr/include/openssl/ecdsa.h /usr/include/openssl/ecdh.h \
+  /usr/include/openssl/rsa.h /usr/include/openssl/dsa.h \
+  /usr/include/openssl/dh.h /usr/include/openssl/sha.h \
+  /usr/include/openssl/x509_vfy.h /usr/include/openssl/pkcs7.h \
+  /usr/include/openssl/pem.h /usr/include/openssl/pem2.h \
+  /usr/include/openssl/hmac.h /usr/include/openssl/kssl.h \
+  /usr/include/openssl/ssl2.h /usr/include/openssl/ssl3.h \
+  /usr/include/openssl/pq_compat.h /usr/include/openssl/tls1.h \
+  /usr/include/openssl/dtls1.h /usr/include/openssl/pqueue.h \
+  /usr/include/openssl/ssl23.h /usr/include/openssl/x509v3.h \
+  /usr/include/openssl/conf.h /usr/include/zlib.h /usr/include/zconf.h \
+  /usr/include/math.h /usr/include/architecture/i386/math.h \
+  /usr/include/AvailabilityMacros.h
+
+stdsoap2.h:
+
+../config.h:
+
+/usr/include/stdlib.h:
+
+/usr/include/Availability.h:
+
+/usr/include/AvailabilityInternal.h:
+
+/usr/include/_types.h:
+
+/usr/include/sys/_types.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/machine/_types.h:
+
+/usr/include/i386/_types.h:
+
+/usr/include/sys/wait.h:
+
+/usr/include/sys/signal.h:
+
+/usr/include/sys/appleapiopts.h:
+
+/usr/include/machine/signal.h:
+
+/usr/include/i386/signal.h:
+
+/usr/include/i386/_structs.h:
+
+/usr/include/sys/_structs.h:
+
+/usr/include/machine/_structs.h:
+
+/usr/include/mach/i386/_structs.h:
+
+/usr/include/sys/resource.h:
+
+/usr/include/machine/endian.h:
+
+/usr/include/i386/endian.h:
+
+/usr/include/sys/_endian.h:
+
+/usr/include/libkern/_OSByteOrder.h:
+
+/usr/include/libkern/i386/_OSByteOrder.h:
+
+/usr/include/alloca.h:
+
+/usr/include/machine/types.h:
+
+/usr/include/i386/types.h:
+
+/usr/include/i386/_types.h:
+
+/usr/include/stdio.h:
+
+/usr/include/secure/_stdio.h:
+
+/usr/include/secure/_common.h:
+
+/usr/include/string.h:
+
+/usr/include/secure/_string.h:
+
+/usr/include/ctype.h:
+
+/usr/include/runetype.h:
+
+/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/limits.h:
+
+/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/syslimits.h:
+
+/usr/include/limits.h:
+
+/usr/include/machine/limits.h:
+
+/usr/include/i386/limits.h:
+
+/usr/include/i386/_limits.h:
+
+/usr/include/sys/syslimits.h:
+
+/usr/include/poll.h:
+
+/usr/include/sys/poll.h:
+
+/usr/include/errno.h:
+
+/usr/include/sys/errno.h:
+
+/usr/include/sys/types.h:
+
+/usr/include/sys/timeb.h:
+
+/usr/include/time.h:
+
+/usr/include/_structs.h:
+
+/usr/include/sys/socket.h:
+
+/usr/include/machine/_param.h:
+
+/usr/include/i386/_param.h:
+
+/usr/include/strings.h:
+
+/usr/include/sys/time.h:
+
+/usr/include/sys/_select.h:
+
+/usr/include/netinet/in.h:
+
+/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdint.h:
+
+/usr/include/netinet6/in6.h:
+
+/usr/include/netinet/tcp.h:
+
+/usr/include/arpa/inet.h:
+
+/usr/include/netdb.h:
+
+/usr/include/unistd.h:
+
+/usr/include/sys/unistd.h:
+
+/usr/include/sys/select.h:
+
+/usr/include/fcntl.h:
+
+/usr/include/sys/fcntl.h:
+
+/usr/include/openssl/bio.h:
+
+/usr/include/openssl/e_os2.h:
+
+/usr/include/openssl/opensslconf.h:
+
+/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdarg.h:
+
+/usr/include/openssl/crypto.h:
+
+/usr/include/openssl/stack.h:
+
+/usr/include/openssl/safestack.h:
+
+/usr/include/openssl/opensslv.h:
+
+/usr/include/openssl/ossl_typ.h:
+
+/usr/include/openssl/symhacks.h:
+
+/usr/include/openssl/err.h:
+
+/usr/include/openssl/lhash.h:
+
+/usr/include/openssl/rand.h:
+
+/usr/include/openssl/ssl.h:
+
+/usr/include/openssl/comp.h:
+
+/usr/include/openssl/x509.h:
+
+/usr/include/openssl/buffer.h:
+
+/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stddef.h:
+
+/usr/include/openssl/evp.h:
+
+/usr/include/openssl/objects.h:
+
+/usr/include/openssl/obj_mac.h:
+
+/usr/include/openssl/asn1.h:
+
+/usr/include/openssl/bn.h:
+
+/usr/include/openssl/ec.h:
+
+/usr/include/openssl/ecdsa.h:
+
+/usr/include/openssl/ecdh.h:
+
+/usr/include/openssl/rsa.h:
+
+/usr/include/openssl/dsa.h:
+
+/usr/include/openssl/dh.h:
+
+/usr/include/openssl/sha.h:
+
+/usr/include/openssl/x509_vfy.h:
+
+/usr/include/openssl/pkcs7.h:
+
+/usr/include/openssl/pem.h:
+
+/usr/include/openssl/pem2.h:
+
+/usr/include/openssl/hmac.h:
+
+/usr/include/openssl/kssl.h:
+
+/usr/include/openssl/ssl2.h:
+
+/usr/include/openssl/ssl3.h:
+
+/usr/include/openssl/pq_compat.h:
+
+/usr/include/openssl/tls1.h:
+
+/usr/include/openssl/dtls1.h:
+
+/usr/include/openssl/pqueue.h:
+
+/usr/include/openssl/ssl23.h:
+
+/usr/include/openssl/x509v3.h:
+
+/usr/include/openssl/conf.h:
+
+/usr/include/zlib.h:
+
+/usr/include/zconf.h:
+
+/usr/include/math.h:
+
+/usr/include/architecture/i386/math.h:
+
+/usr/include/AvailabilityMacros.h:

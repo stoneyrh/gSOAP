@@ -1,0 +1,4 @@
+base referer
+rect $wsrmapi_8h.html 7,92 76,118
+rect $wsrmapi_8c.html 7,17 76,44
+rect $wsaapi_8c.html 100,92 161,118
