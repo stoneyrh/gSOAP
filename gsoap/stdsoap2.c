@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.7.17
+	stdsoap2.c[pp] 2.8.0
 
 	gSOAP runtime engine
 
@@ -83,10 +83,10 @@ when locally allocated data exceeds 64K.
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.7.17 2010-05-10 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.0 2010-07-01 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.7.17 2010-05-10 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.0 2010-07-01 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -172,12 +172,31 @@ static int soap_getgziphdr(struct soap*);
 #endif
 
 #ifdef WITH_OPENSSL
-int soap_ssl_init_done = 0;
-
+# ifndef SOAP_SSL_RSA_BITS
+#  define SOAP_SSL_RSA_BITS 2048
+# endif
+static int soap_ssl_init_done = 0;
 static int ssl_auth_init(struct soap*);
 static int ssl_verify_callback(int, X509_STORE_CTX*);
 static int ssl_verify_callback_allow_expired_certificate(int, X509_STORE_CTX*);
 static int ssl_password(char*, int, int, void *);
+#endif
+
+#ifdef WITH_GNUTLS
+# ifndef SOAP_SSL_RSA_BITS
+#  define SOAP_SSL_RSA_BITS 2048
+# endif
+static int soap_ssl_init_done = 0;
+static const char *ssl_verify(struct soap *soap, const char *host);
+# if defined(HAVE_PTHREAD_H)
+#  include <pthread.h>
+   /* make GNUTLS thread safe with pthreads */
+   GCRY_THREAD_OPTION_PTHREAD_IMPL;
+# elif defined(HAVE_PTH_H)
+   #include <pth.h>
+   /* make GNUTLS thread safe with PTH */
+   GCRY_THREAD_OPTION_PTH_IMPL;
+# endif
 #endif
 
 #if !defined(WITH_NOHTTP) || !defined(WITH_LEANER)
@@ -530,6 +549,11 @@ fsend(struct soap *soap, const char *s, size_t n)
             r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_ALL, soap->send_timeout);
           else
 #endif
+#ifdef WITH_GNUTLS
+          if (soap->session)
+            r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_ALL, soap->send_timeout);
+          else
+#endif
             r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, soap->send_timeout);
           if (r > 0)
             break;
@@ -547,6 +571,11 @@ fsend(struct soap *soap, const char *s, size_t n)
         nwritten = SSL_write(soap->ssl, s, (int)n);
       else if (soap->bio)
         nwritten = BIO_write(soap->bio, s, (int)n);
+      else
+#endif
+#ifdef WITH_GNUTLS
+      if (soap->session)
+        nwritten = gnutls_record_send(soap->session, s, n);
       else
 #endif
 #ifndef WITH_LEAN
@@ -595,16 +624,26 @@ fsend(struct soap *soap, const char *s, size_t n)
           return SOAP_EOF;
         }
 #endif
+#ifdef WITH_GNUTLS
+	if (soap->session)
+        { if (nwritten == GNUTLS_E_INTERRUPTED)
+	    err = SOAP_EINTR;
+	  else if (nwritten == GNUTLS_E_AGAIN)
+	    err = SOAP_EAGAIN;
+	}
+#endif
         if (err == SOAP_EWOULDBLOCK || err == SOAP_EAGAIN)
         {
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL)
           if (soap->ssl && r == SSL_ERROR_WANT_READ)
             r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, soap->send_timeout ? soap->send_timeout : -10000);
           else
-            r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, soap->send_timeout ? soap->send_timeout : -10000);
-#else
-          r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, soap->send_timeout ? soap->send_timeout : -10000);
+#elif defined(WITH_GNUTLS)
+          if (soap->session && !gnutls_record_get_direction(soap->session))
+            r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, soap->send_timeout ? soap->send_timeout : -10000);
+          else
 #endif
+            r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, soap->send_timeout ? soap->send_timeout : -10000);
 	  if (!r && soap->send_timeout)
             return SOAP_EOF;
 	  if (r < 0 && soap->errnum != SOAP_EINTR)
@@ -868,6 +907,14 @@ frecv(struct soap *soap, char *s, size_t n)
       }
       else
 #endif
+#ifdef WITH_GNUTLS
+      if (soap->session)
+      { r = (int)gnutls_record_recv(soap->session, s, n);
+        if (r >= 0)
+	  return (size_t)r;
+      }
+      else
+#endif
       { 
 #ifndef WITH_LEAN
         if ((soap->omode & SOAP_IO_UDP))
@@ -893,23 +940,25 @@ frecv(struct soap *soap, char *s, size_t n)
           return 0;
         }
       }
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL)
       if (soap->ssl && err == SSL_ERROR_WANT_WRITE)
          r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, soap->recv_timeout ? soap->recv_timeout : 5);
-       else
-         r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, soap->recv_timeout ? soap->recv_timeout : 5);
-#else
-       r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, soap->recv_timeout ? soap->recv_timeout : 5);
+      else
+#elif defined(WITH_GNUTLS)
+      if (soap->session && gnutls_record_get_direction(soap->session))
+         r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, soap->recv_timeout ? soap->recv_timeout : 5);
+      else
 #endif
-       if (!r && soap->recv_timeout)
-         return 0;
-       if (r < 0)
-       { r = soap->errnum;
-         if (r != SOAP_EINTR && r != SOAP_EAGAIN && r != SOAP_EWOULDBLOCK)
-           return 0;
-       }
-       if (retries-- <= 0)
-         return 0;
+        r = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, soap->recv_timeout ? soap->recv_timeout : 5);
+      if (!r && soap->recv_timeout)
+        return 0;
+      if (r < 0)
+      { r = soap->errnum;
+        if (r != SOAP_EINTR && r != SOAP_EAGAIN && r != SOAP_EWOULDBLOCK)
+          return 0;
+      }
+      if (retries-- <= 0)
+        return 0;
 #ifdef PALM
       r = soap_socket_errno(soap->socket);
       if (r != SOAP_EINTR && retries-- <= 0)
@@ -2706,7 +2755,7 @@ soap_match_namespace(struct soap *soap, const char *id1, const char *id2, size_t
     return SOAP_OK;
   }
   if (n1 == 0)
-    return SOAP_NAMESPACE;
+    return (soap->mode & SOAP_XML_IGNORENS) ? SOAP_OK : SOAP_NAMESPACE;
   if ((n1 == 3 && n1 == n2 && !strncmp(id1, "xml", 3) && !strncmp(id1, id2, 3))
    || (soap->mode & SOAP_XML_IGNORENS))
     return SOAP_OK;
@@ -2880,7 +2929,7 @@ soap_rand()
 #endif
 
 /******************************************************************************/
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
 #ifndef PALM_2
 SOAP_FMAC1
 int
@@ -2892,22 +2941,63 @@ soap_ssl_server_context(struct soap *soap, unsigned short flags, const char *key
   soap->cafile = cafile;
   soap->capath = capath;
   soap->crlfile = NULL;
+#ifdef WITH_OPENSSL
   soap->dhfile = dhfile;
   soap->randfile = randfile;
+#endif
   soap->ssl_flags = flags | (dhfile == NULL ? SOAP_SSL_RSA : 0);
-  if (!(err = soap->fsslauth(soap)))
+#ifdef WITH_GNUTLS
+  if (dhfile)
+  { char *s;
+    int n = (int)soap_strtoul(dhfile, &s, 10);
+    if (!soap->dh_params)
+      gnutls_dh_params_init(&soap->dh_params);
+    /* if dhfile is numeric, treat it as a key length to generate DH params which can take a while */
+    if (n >= 512 && s && *s == '\0')
+      gnutls_dh_params_generate2(soap->dh_params, (unsigned int)n);
+    else
+    { unsigned int dparams_len;
+      unsigned char dparams_buf[1024];
+      FILE *fd = fopen(dhfile, "r");
+      if (!fd)
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Invalid DH file", SOAP_SSL_ERROR);
+      dparams_len = (unsigned int)fread(dparams_buf, 1, sizeof(dparams_buf), fd);
+      fclose(fd);
+      gnutls_datum_t dparams = { dparams_buf, dparams_len };
+      if (gnutls_dh_params_import_pkcs3(soap->dh_params, &dparams, GNUTLS_X509_FMT_PEM))
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Invalid DH file", SOAP_SSL_ERROR);
+    }
+  }
+  else
+  { if (!soap->rsa_params)
+      gnutls_rsa_params_init(&soap->rsa_params);
+    gnutls_rsa_params_generate2(soap->rsa_params, SOAP_SSL_RSA_BITS);
+  }
+  if (soap->session)
+  { gnutls_deinit(soap->session);
+    soap->session = NULL;
+  }
+  if (soap->xcred)
+  { gnutls_certificate_free_credentials(soap->xcred);
+    soap->xcred = NULL;
+  }
+#endif
+  err = soap->fsslauth(soap);
+#ifdef WITH_OPENSSL
+  if (!err)
   { if (sid)
       SSL_CTX_set_session_id_context(soap->ctx, (unsigned char*)sid, (unsigned int)strlen(sid));
     else
       SSL_CTX_set_session_cache_mode(soap->ctx, SSL_SESS_CACHE_OFF);
   }
+#endif
   return err; 
 }
 #endif
 #endif
 
 /******************************************************************************/
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
 #ifndef PALM_2
 SOAP_FMAC1
 int
@@ -2917,17 +3007,29 @@ soap_ssl_client_context(struct soap *soap, unsigned short flags, const char *key
   soap->password = password;
   soap->cafile = cafile;
   soap->capath = capath;
+  soap->ssl_flags = SOAP_SSL_CLIENT | flags;
+#ifdef WITH_OPENSSL
   soap->dhfile = NULL;
-  soap->ssl_flags = flags;
   soap->randfile = randfile;
   soap->fsslverify = (flags & SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE) == 0 ? ssl_verify_callback : ssl_verify_callback_allow_expired_certificate;
+#endif
+#ifdef WITH_GNUTLS
+  if (soap->session)
+  { gnutls_deinit(soap->session);
+    soap->session = NULL;
+  }
+  if (soap->xcred)
+  { gnutls_certificate_free_credentials(soap->xcred);
+    soap->xcred = NULL;
+  }
+#endif
   return soap->fsslauth(soap);
 }
 #endif
 #endif
 
 /******************************************************************************/
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
 #ifndef PALM_2
 SOAP_FMAC1
 void
@@ -2936,6 +3038,7 @@ soap_ssl_init()
 { /* Note: for MT systems, the main program MUST call soap_ssl_init() before any threads are started */
   if (!soap_ssl_init_done)
   { soap_ssl_init_done = 1;
+#ifdef WITH_OPENSSL
     SSL_library_init();
 #ifndef WITH_LEAN
     SSL_load_error_strings();
@@ -2948,19 +3051,31 @@ soap_ssl_init()
         RAND_seed(&r, sizeof(int));
       }
     }
+#endif
+#ifdef WITH_GNUTLS
+# if defined(HAVE_PTHREAD_H)
+    gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread);
+# elif defined(HAVE_PTH_H)
+    gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pth);
+# endif
+    gcry_control(GCRYCTL_ENABLE_QUICK_RANDOM, 0);
+    gnutls_global_init();
+#endif
   }
 }
 #endif
 #endif
 
 /******************************************************************************/
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
 #ifndef PALM_1
 SOAP_FMAC1
 const char *
 SOAP_FMAC2
 soap_ssl_error(struct soap *soap, int ret)
-{ int err = SSL_get_error(soap->ssl, ret);
+{
+#ifdef WITH_OPENSSL
+  int err = SSL_get_error(soap->ssl, ret);
   const char *msg = soap_code_str(h_ssl_error_codes, err);
   if (msg)
     strcpy(soap->msgbuf, msg);
@@ -2983,35 +3098,29 @@ soap_ssl_error(struct soap *soap, int ret)
     }
   }
   return soap->msgbuf;
+#endif
+#ifdef WITH_GNUTLS
+  return gnutls_strerror(ret);
+#endif
 }
 #endif
 #endif
 
 /******************************************************************************/
-#ifdef WITH_OPENSSL
-#ifndef PALM_1
-static int
-ssl_password(char *buf, int num, int rwflag, void *userdata)
-{ if (num < (int)strlen((char*)userdata) + 1)
-    return 0;
-  return (int)strlen(strcpy(buf, (char*)userdata));
-}
-#endif
-#endif
-
-/******************************************************************************/
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
 #ifndef PALM_1
 static int
 ssl_auth_init(struct soap *soap)
-{ long flags;
+{
+#ifdef WITH_OPENSSL
+  long flags;
   int mode;
   if (!soap_ssl_init_done)
     soap_ssl_init();
   ERR_clear_error();
   if (!soap->ctx)
   { if (!(soap->ctx = SSL_CTX_new(SSLv23_method())))
-      return soap_set_receiver_error(soap, "SSL error", "Can't setup context", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't setup context", SOAP_SSL_ERROR);
     /* The following alters the behavior of SSL read/write: */
 #if 0
     SSL_CTX_set_mode(soap->ctx, SSL_MODE_ENABLE_PARTIAL_WRITE | SSL_MODE_AUTO_RETRY);
@@ -3019,28 +3128,28 @@ ssl_auth_init(struct soap *soap)
   }
   if (soap->randfile)
   { if (!RAND_load_file(soap->randfile, -1))
-      return soap_set_receiver_error(soap, "SSL error", "Can't load randomness", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't load randomness", SOAP_SSL_ERROR);
   }
   if (soap->cafile || soap->capath)
   { if (!SSL_CTX_load_verify_locations(soap->ctx, soap->cafile, soap->capath))
-      return soap_set_receiver_error(soap, "SSL error", "Can't read CA file and directory", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CA file", SOAP_SSL_ERROR);
     if (soap->cafile && (soap->ssl_flags & SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION))
       SSL_CTX_set_client_CA_list(soap->ctx, SSL_load_client_CA_file(soap->cafile));
   }
   if (!(soap->ssl_flags & SOAP_SSL_NO_DEFAULT_CA_PATH))
   { if (!SSL_CTX_set_default_verify_paths(soap->ctx))
-      return soap_set_receiver_error(soap, "SSL error", "Can't read default CA file and/or directory", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read default CA file and/or directory", SOAP_SSL_ERROR);
   }
 /* This code assumes a typical scenario, see alternative code below */
   if (soap->keyfile)
   { if (!SSL_CTX_use_certificate_chain_file(soap->ctx, soap->keyfile))
-      return soap_set_receiver_error(soap, "SSL error", "Can't read certificate key file", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read certificate key file", SOAP_SSL_ERROR);
     if (soap->password)
     { SSL_CTX_set_default_passwd_cb_userdata(soap->ctx, (void*)soap->password);
       SSL_CTX_set_default_passwd_cb(soap->ctx, ssl_password);
     }
     if (!SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM))
-      return soap_set_receiver_error(soap, "SSL error", "Can't read key file", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read key file", SOAP_SSL_ERROR);
   }
 /* Suggested alternative approach to check the key file for certs (cafile=NULL):*/
 #if 0
@@ -3051,18 +3160,18 @@ ssl_auth_init(struct soap *soap)
   if (!soap->cafile || !SSL_CTX_use_certificate_chain_file(soap->ctx, soap->cafile))
   { if (soap->keyfile)
     { if (!SSL_CTX_use_certificate_chain_file(soap->ctx, soap->keyfile))
-        return soap_set_receiver_error(soap, "SSL error", "Can't read certificate or key file", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read certificate or key file", SOAP_SSL_ERROR);
       if (!SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM))
-        return soap_set_receiver_error(soap, "SSL error", "Can't read key file", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read key file", SOAP_SSL_ERROR);
     }
   }
 #endif
   if ((soap->ssl_flags & SOAP_SSL_RSA))
-  { RSA *rsa = RSA_generate_key(1024, RSA_F4, NULL, NULL);
+  { RSA *rsa = RSA_generate_key(SOAP_SSL_RSA_BITS, RSA_F4, NULL, NULL);
     if (!SSL_CTX_set_tmp_rsa(soap->ctx, rsa))
     { if (rsa)
         RSA_free(rsa);
-      return soap_set_receiver_error(soap, "SSL error", "Can't set RSA key", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set RSA key", SOAP_SSL_ERROR);
     }
     RSA_free(rsa);
   }
@@ -3077,14 +3186,14 @@ ssl_auth_init(struct soap *soap)
     { BIO *bio;
       bio = BIO_new_file(soap->dhfile, "r");
       if (!bio)
-        return soap_set_receiver_error(soap, "SSL error", "Can't read DH file", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read DH file", SOAP_SSL_ERROR);
       dh = PEM_read_bio_DHparams(bio, NULL, NULL, NULL);
       BIO_free(bio);
     }
     if (!dh || DH_check(dh, &n) != 1 || SSL_CTX_set_tmp_dh(soap->ctx, dh) < 0)
     { if (dh)
         DH_free(dh);
-      return soap_set_receiver_error(soap, "SSL error", "Can't set DH parameters", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set DH parameters", SOAP_SSL_ERROR);
     }
     DH_free(dh);
   }
@@ -3111,7 +3220,72 @@ ssl_auth_init(struct soap *soap)
 #else
   SSL_CTX_set_verify_depth(soap->ctx, 9); 
 #endif  
+#endif
+#ifdef WITH_GNUTLS
+  int ret;
+  if (!soap_ssl_init_done)
+    soap_ssl_init();
+  if (!soap->xcred)
+  { gnutls_certificate_allocate_credentials(&soap->xcred);
+    if (soap->cafile)
+    { if (gnutls_certificate_set_x509_trust_file(soap->xcred, soap->cafile, GNUTLS_X509_FMT_PEM) < 0)
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CA file", SOAP_SSL_ERROR);
+    }
+    if (soap->crlfile)
+    { if (gnutls_certificate_set_x509_crl_file(soap->xcred, soap->crlfile, GNUTLS_X509_FMT_PEM) < 0)
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CRL file", SOAP_SSL_ERROR);
+    }
+    if (soap->keyfile)
+    { if (gnutls_certificate_set_x509_key_file(soap->xcred, soap->keyfile, soap->keyfile, GNUTLS_X509_FMT_PEM) < 0) /* TODO: GNUTLS need to concat cert and key in single key file */
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read key file", SOAP_SSL_ERROR);
+    }
+  }
+  if ((soap->ssl_flags & SOAP_SSL_CLIENT))
+  { gnutls_init(&soap->session, GNUTLS_CLIENT);
+    if (soap->cafile || soap->crlfile || soap->keyfile)
+    { ret = gnutls_priority_set_direct(soap->session, "PERFORMANCE", NULL);
+      if (ret < 0)
+        return soap_set_receiver_error(soap, soap_ssl_error(soap, ret), "SSL/TLS set priority error", SOAP_SSL_ERROR);
+      gnutls_credentials_set(soap->session, GNUTLS_CRD_CERTIFICATE, soap->xcred);
+    }
+    else
+    { if (!soap->acred)
+        gnutls_anon_allocate_client_credentials(&soap->acred);
+      gnutls_init(&soap->session, GNUTLS_CLIENT);
+      gnutls_priority_set_direct(soap->session, "PERFORMANCE:+ANON-DH:!ARCFOUR-128", NULL);
+      gnutls_credentials_set(soap->session, GNUTLS_CRD_ANON, soap->acred);
+    }
+  }
+  else
+  { if (!soap->keyfile)
+      return soap_set_receiver_error(soap, "SSL/TLS error", "No key file: anonymous server authentication not supported in this release", SOAP_SSL_ERROR);
+    if ((soap->ssl_flags & SOAP_SSL_RSA) && soap->rsa_params)
+      gnutls_certificate_set_rsa_export_params(soap->xcred, soap->rsa_params);
+    else if (soap->dh_params)
+      gnutls_certificate_set_dh_params(soap->xcred, soap->dh_params);
+    if (!soap->cache)
+      gnutls_priority_init(&soap->cache, "NORMAL", NULL);
+    gnutls_init(&soap->session, GNUTLS_SERVER);
+    gnutls_priority_set(soap->session, soap->cache);
+    gnutls_credentials_set(soap->session, GNUTLS_CRD_CERTIFICATE, soap->xcred);
+    if ((soap->ssl_flags & SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION))
+      gnutls_certificate_server_set_request(soap->session, GNUTLS_CERT_REQUEST);
+    gnutls_session_enable_compatibility_mode(soap->session);
+  }
+#endif
   return SOAP_OK;
+}
+#endif
+#endif
+
+/******************************************************************************/
+#ifdef WITH_OPENSSL
+#ifndef PALM_1
+static int
+ssl_password(char *buf, int num, int rwflag, void *userdata)
+{ if (num < (int)strlen((char*)userdata) + 1)
+    return 0;
+  return (int)strlen(strcpy(buf, (char*)userdata));
 }
 #endif
 #endif
@@ -3133,7 +3307,7 @@ ssl_verify_callback(int ok, X509_STORE_CTX *store)
     fprintf(stderr, "certificate subject %s\n", data);
   }
 #endif
-  /* Note: return 1 to continue, but unsafe progress will be terminated by SSL */
+  /* Note: return 1 to continue, but unsafe progress will be terminated by OpenSSL */
   return ok;
 }
 #endif
@@ -3160,49 +3334,97 @@ ssl_verify_callback_allow_expired_certificate(int ok, X509_STORE_CTX *store)
 #endif
 
 /******************************************************************************/
-#ifdef WITH_OPENSSL
+#ifdef WITH_GNUTLS
+static const char *
+ssl_verify(struct soap *soap, const char *host)
+{ unsigned int status;
+  const char *err = NULL;
+  int r = gnutls_certificate_verify_peers2(soap->session, &status); 
+  if (r < 0)
+    err = "Certificate verify error";
+  else if ((status & GNUTLS_CERT_INVALID))
+    err = "The certificate is not trusted";
+  else if ((status & GNUTLS_CERT_SIGNER_NOT_FOUND))
+    err = "The certificate hasn't got a known issuer";
+  else if ((status & GNUTLS_CERT_REVOKED))
+    err = "The certificate has been revoked";
+  else if (gnutls_certificate_type_get(soap->session) == GNUTLS_CRT_X509)
+  { gnutls_x509_crt_t cert;
+    const gnutls_datum_t *cert_list;
+    unsigned int cert_list_size;
+    if (gnutls_x509_crt_init(&cert) < 0)
+      err = "Could not get X509 certificates";
+    else if ((cert_list = gnutls_certificate_get_peers(soap->session, &cert_list_size)) == NULL)
+      err = "Could not get X509 certificates";
+    else if (gnutls_x509_crt_import(cert, &cert_list[0], GNUTLS_X509_FMT_DER) < 0)
+      err = "Error parsing X509 certificate";
+    else if (!(soap->ssl_flags & SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE) && gnutls_x509_crt_get_expiration_time(cert) < time(NULL))
+      err = "The certificate has expired";
+    else if (!(soap->ssl_flags & SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE) && gnutls_x509_crt_get_activation_time(cert) > time(NULL))
+      err = "The certificate is not yet activated";
+    else if (host && !(soap->ssl_flags & SOAP_SSL_SKIP_HOST_CHECK))
+    { if (!gnutls_x509_crt_check_hostname(cert, host))
+        err = "Certificate host name mismatch";
+    }
+    gnutls_x509_crt_deinit(cert);
+  }
+  return err;
+}
+#endif
+
+/******************************************************************************/
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
 #ifndef WITH_NOIO
 #ifndef PALM_1
 SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_ssl_accept(struct soap *soap)
-{ BIO *bio;
+{ SOAP_SOCKET fd = soap->socket;
+#ifdef WITH_OPENSSL
+  BIO *bio;
   int retries, r, s;
-  if (!soap_valid_socket(soap->socket))
-    return soap_set_receiver_error(soap, "SSL error", "No socket in soap_ssl_accept()", SOAP_SSL_ERROR);
+  if (!soap_valid_socket(fd))
+    return soap_set_receiver_error(soap, "SSL/TLS error", "No socket in soap_ssl_accept()", SOAP_SSL_ERROR);
+  soap->ssl_flags &= ~SOAP_SSL_CLIENT;
   if (!soap->ctx && (soap->error = soap->fsslauth(soap)))
-    return SOAP_SSL_ERROR;
+    return soap->error;
   if (!soap->ssl)
   { soap->ssl = SSL_new(soap->ctx);
     if (!soap->ssl)
-      return soap_set_receiver_error(soap, "SSL error", "SSL_new() failed in soap_ssl_accept()", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "SSL_new() failed in soap_ssl_accept()", SOAP_SSL_ERROR);
   }
   else
     SSL_clear(soap->ssl);
   soap->imode |= SOAP_ENC_SSL;
   soap->omode |= SOAP_ENC_SSL;
-  /* Set SSL sockets to non-blocking */
-  SOAP_SOCKNONBLOCK(soap->socket)
-  bio = BIO_new_socket((int)soap->socket, BIO_NOCLOSE);
+  bio = BIO_new_socket((int)fd, BIO_NOCLOSE);
   SSL_set_bio(soap->ssl, bio, bio);
-  retries = 100; /* SSL_accept timeout: 10 sec retries, 100 times 0.1 sec */
+  /* Set SSL sockets to non-blocking */
+  retries = 0;
+  if (soap->accept_timeout)
+  { SOAP_SOCKNONBLOCK(fd)
+    retries = 10*soap->accept_timeout;
+  }
+  if (retries <= 0)
+    retries = 100; /* timeout: 10 sec retries, 100 times 0.1 sec */
   while ((r = SSL_accept(soap->ssl)) <= 0)
-  { int err = SSL_get_error(soap->ssl, r);
+  { int err;
+    if (retries-- <= 0)
+      break;
+    err = SSL_get_error(soap->ssl, r);
     if (err == SSL_ERROR_WANT_ACCEPT || err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
     { if (err == SSL_ERROR_WANT_READ)
-        s = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, -100000);
+        s = tcp_select(soap, fd, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, -100000);
       else
-        s = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, -100000);
+        s = tcp_select(soap, fd, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, -100000);
       if (s < 0 && soap->errnum != SOAP_EINTR)
         break;
     }
     else
-    { soap->errnum = soap_socket_errno(soap->socket);
+    { soap->errnum = soap_socket_errno(fd);
       break;
     }
-    if (retries-- <= 0)
-      break;
   }
   if (r <= 0)
   { soap_set_receiver_error(soap, soap_ssl_error(soap, r), "SSL_accept() failed in soap_ssl_accept()", SOAP_SSL_ERROR);
@@ -3219,10 +3441,62 @@ soap_ssl_accept(struct soap *soap)
     peer = SSL_get_peer_certificate(soap->ssl);
     if (!peer)
     { soap_closesock(soap);
-      return soap_set_sender_error(soap, "SSL error", "No SSL certificate was presented by the peer in soap_ssl_accept()", SOAP_SSL_ERROR);
+      return soap_set_sender_error(soap, "SSL/TLS error", "No SSL certificate was presented by the peer in soap_ssl_accept()", SOAP_SSL_ERROR);
     }
     X509_free(peer);
   }
+#endif
+#ifdef WITH_GNUTLS
+  int retries = 0, r;
+  if (!soap_valid_socket(fd))
+    return soap_set_receiver_error(soap, "SSL/TLS error", "No socket in soap_ssl_accept()", SOAP_SSL_ERROR);
+  soap->ssl_flags &= ~SOAP_SSL_CLIENT;
+  if (!soap->session && (soap->error = soap->fsslauth(soap)))
+  { soap_closesock(soap);
+    return soap->error;
+  }
+  gnutls_transport_set_ptr(soap->session, (gnutls_transport_ptr_t)(long)fd);
+  /* Set SSL sockets to non-blocking */
+  if (soap->accept_timeout)
+  { SOAP_SOCKNONBLOCK(fd)
+    retries = 10*soap->accept_timeout;
+  }
+  if (retries <= 0)
+    retries = 100; /* timeout: 10 sec retries, 100 times 0.1 sec */
+  while ((r = gnutls_handshake(soap->session)))
+  { int s;
+    /* GNUTLS repeat handhake when GNUTLS_E_AGAIN */
+    if (retries-- <= 0)
+      break;
+    if (r == GNUTLS_E_AGAIN || r == GNUTLS_E_INTERRUPTED)
+    { if (!gnutls_record_get_direction(soap->session))
+        s = tcp_select(soap, fd, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, -100000);
+      else
+        s = tcp_select(soap, fd, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, -100000);
+      if (s < 0 && soap->errnum != SOAP_EINTR)
+        break;
+    }
+    else
+    { soap->errnum = soap_socket_errno(fd);
+      break;
+    }
+  }
+  if (r)
+  { soap_closesock(soap);
+    return soap_set_receiver_error(soap, soap_ssl_error(soap, r), "SSL/TLS handshake failed", SOAP_SSL_ERROR);
+  }
+  if ((soap->ssl_flags & SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION))
+  { const char *err = ssl_verify(soap, NULL);
+    if (err)
+    { soap_closesock(soap);
+      return soap_set_receiver_error(soap, "SSL/TLS error", err, SOAP_SSL_ERROR);
+    }
+  }
+#endif
+  if (soap->recv_timeout || soap->send_timeout)
+    SOAP_SOCKNONBLOCK(fd)
+  else
+    SOAP_SOCKBLOCK(fd)
   return SOAP_OK;
 }
 #endif
@@ -3370,7 +3644,7 @@ tcp_connect(struct soap *soap, const char *endpoint, const char *host, int port)
   int len = SOAP_BUFLEN;
   int set = 1;
 #endif
-#if !defined(WITH_LEAN) || defined(WITH_OPENSSL)
+#if !defined(WITH_LEAN) || defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
   int retries;
 #endif
   if (soap_valid_socket(soap->socket))
@@ -3696,17 +3970,15 @@ again:
   soap->peerlen = 0; /* IPv6: already connected so use send() */
   freeaddrinfo(ressave);
 #endif
-  if (soap->recv_timeout || soap->send_timeout)
-    SOAP_SOCKNONBLOCK(fd)
-  else
-    SOAP_SOCKBLOCK(fd)
   soap->socket = fd;
   soap->imode &= ~SOAP_ENC_SSL;
   soap->omode &= ~SOAP_ENC_SSL;
   if (!soap_tag_cmp(endpoint, "https:*"))
   {
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
 #ifdef WITH_OPENSSL
     BIO *bio;
+#endif
     int r;
     if (soap->proxy_host)
     { soap_mode m = soap->mode; /* preserve settings */
@@ -3759,9 +4031,10 @@ again:
         strncpy(soap->endpoint, endpoint, sizeof(soap->endpoint)-1); /* restore */
       soap->mode = m;
     }
+#ifdef WITH_OPENSSL
+    soap->ssl_flags |= SOAP_SSL_CLIENT;
     if (!soap->ctx && (soap->error = soap->fsslauth(soap)))
-    { soap_set_sender_error(soap, "SSL error", "SSL authentication failed in tcp_connect(): check password, key file, and ca file.", SOAP_SSL_ERROR);
-      soap->fclosesocket(soap, fd);
+    { soap->fclosesocket(soap, fd);
       return SOAP_INVALID_SOCKET;
     }
     if (!soap->ssl)
@@ -3784,18 +4057,16 @@ again:
     soap->omode |= SOAP_ENC_SSL;
     bio = BIO_new_socket((int)fd, BIO_NOCLOSE);
     SSL_set_bio(soap->ssl, bio, bio);
-    retries = 0;
-#ifndef WITH_LEAN
     /* Connect timeout: set SSL sockets to non-blocking */
+    retries = 0;
     if (soap->connect_timeout)
     { SOAP_SOCKNONBLOCK(fd)
       retries = 10*soap->connect_timeout;
     }
     else
       SOAP_SOCKBLOCK(fd)
-#endif
     if (retries <= 0)
-      retries = 100; /* SSL connect timeout: 10 sec retries, 100 x 0.1 sec */
+      retries = 100; /* timeout: 10 sec retries, 100 times 0.1 sec */
     /* Try connecting until success or timeout (when nonblocking) */
     do
     { if ((r = SSL_connect(soap->ssl)) <= 0)
@@ -3803,9 +4074,9 @@ again:
         if (err == SSL_ERROR_WANT_CONNECT || err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
         { register int s;
 	  if (err == SSL_ERROR_WANT_READ)
-            s = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, -100000);
+            s = tcp_select(soap, fd, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, -100000);
           else
-            s = tcp_select(soap, soap->socket, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, -100000);
+            s = tcp_select(soap, fd, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, -100000);
           if (s < 0 && soap->errnum != SOAP_EINTR)
           { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL_connect/select error in tcp_connect\n"));
             soap_set_sender_error(soap, soap_ssl_error(soap, r), "SSL_connect failed in tcp_connect()", SOAP_TCP_ERROR);
@@ -3813,8 +4084,8 @@ again:
             return SOAP_INVALID_SOCKET;
           }
 	  if (s == 0 && retries-- <= 0)
-          { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL connect timeout\n"));
-            soap_set_sender_error(soap, "Timeout", "SSL connect failed in tcp_connect()", SOAP_TCP_ERROR);
+          { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL/TLS connect timeout\n"));
+            soap_set_sender_error(soap, "Timeout", "SSL_connect failed in tcp_connect()", SOAP_TCP_ERROR);
             soap->fclosesocket(soap, fd);
             return SOAP_INVALID_SOCKET;
           }
@@ -3832,7 +4103,7 @@ again:
     if ((soap->ssl_flags & SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION))
     { int err;
       if ((err = SSL_get_verify_result(soap->ssl)) != X509_V_OK)
-      { soap_set_sender_error(soap, X509_verify_cert_error_string(err), "SSL certificate presented by peer cannot be verified in tcp_connect()", SOAP_SSL_ERROR);
+      { soap_set_sender_error(soap, X509_verify_cert_error_string(err), "SSL/TLS certificate presented by peer cannot be verified in tcp_connect()", SOAP_SSL_ERROR);
         soap->fclosesocket(soap, fd);
         return SOAP_INVALID_SOCKET;
       }
@@ -3843,7 +4114,7 @@ again:
         X509 *peer;
         peer = SSL_get_peer_certificate(soap->ssl);
         if (!peer)
-        { soap_set_sender_error(soap, "SSL error", "No SSL certificate was presented by the peer in tcp_connect()", SOAP_SSL_ERROR);
+        { soap_set_sender_error(soap, "SSL/TLS error", "No SSL/TLS certificate was presented by the peer in tcp_connect()", SOAP_SSL_ERROR);
           soap->fclosesocket(soap, fd);
           return SOAP_INVALID_SOCKET;
         }
@@ -3932,18 +4203,71 @@ again:
         }
         X509_free(peer);
         if (!ok)
-        { soap_set_sender_error(soap, "SSL error", "SSL certificate host name mismatch in tcp_connect()", SOAP_SSL_ERROR);
+        { soap_set_sender_error(soap, "SSL/TLS error", "SSL/TLS certificate host name mismatch in tcp_connect()", SOAP_SSL_ERROR);
           soap->fclosesocket(soap, fd);
           return SOAP_INVALID_SOCKET;
         }
       }
     }
+#endif
+#ifdef WITH_GNUTLS
+    soap->ssl_flags |= SOAP_SSL_CLIENT;
+    if (!soap->session && (soap->error = soap->fsslauth(soap)))
+    { soap->fclosesocket(soap, fd);
+      return SOAP_INVALID_SOCKET;
+    }
+    gnutls_transport_set_ptr(soap->session, (gnutls_transport_ptr_t)(long)fd);
+    /* Set SSL sockets to non-blocking */
+    if (soap->connect_timeout)
+    { SOAP_SOCKNONBLOCK(fd)
+      retries = 10*soap->connect_timeout;
+    }
+    else
+      SOAP_SOCKBLOCK(fd)
+    if (retries <= 0)
+      retries = 100; /* timeout: 10 sec retries, 100 times 0.1 sec */
+    while ((r = gnutls_handshake(soap->session)))
+    { int s;
+      /* GNUTLS repeat handhake when GNUTLS_E_AGAIN */
+      if (retries-- <= 0)
+        break;
+      if (r == GNUTLS_E_AGAIN || r == GNUTLS_E_INTERRUPTED)
+      { if (!gnutls_record_get_direction(soap->session))
+          s = tcp_select(soap, fd, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, -100000);
+        else
+          s = tcp_select(soap, fd, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, -100000);
+        if (s < 0 && soap->errnum != SOAP_EINTR)
+          break;
+      }
+      else
+      { soap->errnum = soap_socket_errno(fd);
+        break;
+      }
+    }
+    if (r)
+    { soap_set_sender_error(soap, soap_ssl_error(soap, r), "SSL/TLS handshake failed", SOAP_SSL_ERROR);
+      soap->fclosesocket(soap, fd);
+      return SOAP_INVALID_SOCKET;
+    }
+    if ((soap->ssl_flags & SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION))
+    { const char *err = ssl_verify(soap, host);
+      if (err)
+      { soap->fclosesocket(soap, fd);
+        soap->error = soap_set_sender_error(soap, "SSL/TLS error", err, SOAP_SSL_ERROR);
+        return SOAP_INVALID_SOCKET;
+      }
+    }
+#endif
 #else
     soap->fclosesocket(soap, fd);
     soap->error = SOAP_SSL_ERROR;
     return SOAP_INVALID_SOCKET;
 #endif
   }
+  if (soap->recv_timeout || soap->send_timeout)
+    SOAP_SOCKNONBLOCK(fd)
+  else
+    SOAP_SOCKBLOCK(fd)
   return fd;
 }
 #endif
@@ -4098,7 +4422,7 @@ tcp_disconnect(struct soap *soap)
     }
     if (r == 0)
     { if (soap_valid_socket(soap->socket))
-      { if (!soap->fshutdownsocket(soap, soap->socket, 1))
+      { if (!soap->fshutdownsocket(soap, soap->socket, SOAP_SHUT_WR))
         {
 #ifndef WITH_LEAN
 	  /*
@@ -4138,8 +4462,15 @@ tcp_disconnect(struct soap *soap)
     ERR_remove_state(0);
   }
 #endif
+#ifdef WITH_GNUTLS
+  if (soap->session)
+  { gnutls_bye(soap->session, GNUTLS_SHUT_RDWR);
+    gnutls_deinit(soap->session);
+    soap->session = NULL;
+  }
+#endif
   if (soap_valid_socket(soap->socket) && !(soap->omode & SOAP_IO_UDP))
-  { soap->fshutdownsocket(soap, soap->socket, 2);
+  { soap->fshutdownsocket(soap, soap->socket, SOAP_SHUT_RDWR);
     soap->fclosesocket(soap, soap->socket);
     soap->socket = SOAP_INVALID_SOCKET;
   }
@@ -4183,13 +4514,8 @@ soap_bind(struct soap *soap, const char *host, int port, int backlog)
   struct addrinfo hints;
   struct addrinfo res;
   int err;
-#ifdef WITH_IPV6_V6ONLY
+#ifdef WITH_NO_IPV6_V6ONLY
   int unset = 0;
-#ifdef SOL_IP
-  int level = SOL_IP;
-#else
-  int level = IPPROTO_IPV6;
-#endif
 #endif
 #endif
 #ifndef WITH_LEAN
@@ -4287,7 +4613,14 @@ soap_bind(struct soap *soap, const char *host, int port, int backlog)
 #endif
 #ifdef WITH_IPV6
 #ifdef WITH_IPV6_V6ONLY
-  if (setsockopt(soap->master, level, IPV6_V6ONLY, (char*)&unset, sizeof(int)))
+  if (setsockopt(soap->master, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&set, sizeof(int)))
+  { soap->errnum = soap_socket_errno(soap->master);
+    soap_set_receiver_error(soap, tcp_error(soap), "setsockopt IPV6_V6ONLY failed in soap_bind()", SOAP_TCP_ERROR);
+    return SOAP_INVALID_SOCKET;
+  }
+#endif
+#ifdef WITH_NO_IPV6_V6ONLY
+  if (setsockopt(soap->master, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&unset, sizeof(int)))
   { soap->errnum = soap_socket_errno(soap->master);
     soap_set_receiver_error(soap, tcp_error(soap), "setsockopt IPV6_V6ONLY failed in soap_bind()", SOAP_TCP_ERROR);
     return SOAP_INVALID_SOCKET;
@@ -4433,7 +4766,7 @@ soap_accept(struct soap *soap)
 	  }
         }
       }
-      if (soap->accept_timeout || soap->send_timeout || soap->recv_timeout)
+      if (soap->accept_timeout)
         SOAP_SOCKNONBLOCK(soap->master)
       else
         SOAP_SOCKBLOCK(soap->master)
@@ -4499,6 +4832,10 @@ soap_accept(struct soap *soap)
 #endif
 #endif
         soap->keep_alive = (((soap->imode | soap->omode) & SOAP_IO_KEEPALIVE) != 0);
+        if (soap->send_timeout || soap->recv_timeout)
+          SOAP_SOCKNONBLOCK(soap->socket)
+        else
+          SOAP_SOCKBLOCK(soap->socket)
         return soap->socket;
       }
       err = soap_socket_errno(soap->socket);
@@ -4671,9 +5008,35 @@ soap_done(struct soap *soap)
       soap->ctx = NULL;
     }
   }
-#endif
-#ifdef WITH_OPENSSL
   ERR_remove_state(0);
+#endif
+#ifdef WITH_GNUTLS
+  if (soap->state == SOAP_INIT)
+  { if (soap->xcred)
+    { gnutls_certificate_free_credentials(soap->xcred);
+      soap->xcred = NULL;
+    }
+    if (soap->acred)
+    { gnutls_anon_free_client_credentials(soap->acred);
+      soap->acred = NULL;
+    }
+    if (soap->cache)
+    { gnutls_priority_deinit(soap->cache);
+      soap->cache = NULL;
+    }
+    if (soap->dh_params)
+    { gnutls_dh_params_deinit(soap->dh_params);
+      soap->dh_params = NULL;
+    }
+    if (soap->rsa_params)
+    { gnutls_rsa_params_deinit(soap->rsa_params);
+      soap->rsa_params = NULL;
+    }
+  }
+  if (soap->session)
+  { gnutls_deinit(soap->session);
+    soap->session = NULL;
+  }
 #endif
 #ifdef WITH_C_LOCALE
   freelocale(soap->c_locale);
@@ -4841,10 +5204,10 @@ http_parse(struct soap *soap)
   /* Status 201 (Created), 202 (Accepted), ... and HTTP 400 and 500 errors
      may not have a body. When content length, content type, or chunking is
      used assume there is a message to parse, either XML or HTTP.
-  This version allows parsing of content when length=0:
-  if (soap->length > 0 || soap->http_content || (soap->imode & SOAP_IO) == SOAP_IO_CHUNK)
-  */
+  This version limits parsing of content only when length>0 or chunking:
   if (soap->length > 0 || (soap->imode & SOAP_IO) == SOAP_IO_CHUNK)
+  */
+  if (soap->length > 0 || soap->http_content || (soap->imode & SOAP_IO) == SOAP_IO_CHUNK)
   { if (((soap->status > 200 && soap->status <= 299) || soap->status == 400 || soap->status == 500))
       return SOAP_OK;
     /* force close afterwards in soap_closesock() */
@@ -7468,10 +7831,10 @@ soap_end_send(struct soap *soap)
 #ifdef WITH_TCPFIN
 #ifdef WITH_OPENSSL
   if (!soap->ssl && soap_valid_socket(soap->socket) && !soap->keep_alive && !(soap->omode & SOAP_IO_UDP))
-    soap->fshutdownsocket(soap, soap->socket, 1); /* Send TCP FIN */
+    soap->fshutdownsocket(soap, soap->socket, SOAP_SHUT_WR); /* Send TCP FIN */
 #else
   if (soap_valid_socket(soap->socket) && !soap->keep_alive && !(soap->omode & SOAP_IO_UDP))
-    soap->fshutdownsocket(soap, soap->socket, 1); /* Send TCP FIN */
+    soap->fshutdownsocket(soap, soap->socket, SOAP_SHUT_WR); /* Send TCP FIN */
 #endif
 #endif
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End of send phase\n"));
@@ -7809,6 +8172,9 @@ soap_copy_context(struct soap *copy, const struct soap *soap)
     copy->ssl = NULL;
     copy->session = NULL;
 #endif
+#ifdef WITH_GNUTLS
+    copy->session = NULL;
+#endif
 #ifdef WITH_ZLIB
     copy->d_stream = (z_stream*)SOAP_MALLOC(copy, sizeof(z_stream));
     copy->d_stream->zalloc = Z_NULL;
@@ -7890,6 +8256,9 @@ soap_copy_stream(struct soap *copy, struct soap *soap)
   copy->ssl = soap->ssl;
   copy->ctx = soap->ctx;
 #endif
+#ifdef WITH_GNUTLS
+  copy->session = soap->session; /* TODO: GNUTLS provides a dup? */
+#endif
 #ifdef WITH_ZLIB
   copy->zlib_state = soap->zlib_state;
   copy->zlib_in = soap->zlib_in;
@@ -7923,6 +8292,14 @@ soap_free_stream(struct soap *soap)
 #ifdef WITH_OPENSSL
   soap->bio = NULL;
   soap->ssl = NULL;
+#endif
+#ifdef WITH_GNUTLS
+  soap->xcred = NULL;
+  soap->acred = NULL;
+  soap->cache = NULL;
+  soap->session = NULL; /* TODO: GNUTLS free (when dupped)? */
+  soap->dh_params = NULL;
+  soap->rsa_params = NULL;
 #endif
 #ifdef WITH_ZLIB
   if (soap->d_stream)
@@ -8133,15 +8510,33 @@ soap_init(struct soap *soap)
   soap->bio = NULL;
   soap->ssl = NULL;
   soap->ctx = NULL;
+  soap->session = NULL;
   soap->ssl_flags = SOAP_SSL_DEFAULT;
   soap->keyfile = NULL;
   soap->password = NULL;
-  soap->dhfile = NULL;
   soap->cafile = NULL;
   soap->capath = NULL;
   soap->crlfile = NULL;
+  soap->dhfile = NULL;
   soap->randfile = NULL;
+#endif
+#ifdef WITH_GNUTLS
+  if (!soap_ssl_init_done)
+    soap_ssl_init();
+  soap->fsslauth = ssl_auth_init;
+  soap->fsslverify = NULL;
+  soap->xcred = NULL;
+  soap->acred = NULL;
+  soap->cache = NULL;
   soap->session = NULL;
+  soap->ssl_flags = SOAP_SSL_DEFAULT;
+  soap->keyfile = NULL;
+  soap->password = NULL;
+  soap->cafile = NULL;
+  soap->capath = NULL;
+  soap->crlfile = NULL;
+  soap->dh_params = NULL;
+  soap->rsa_params = NULL;
 #endif
 #ifdef WITH_C_LOCALE
   soap->c_locale = newlocale(LC_ALL_MASK, "C", NULL);
@@ -8967,14 +9362,13 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_element_null(struct soap *soap, const char *tag, int id, const char *type)
-{ struct soap_attribute *tp;
+{ struct soap_attribute *tp = NULL;
   for (tp = soap->attributes; tp; tp = tp->next)
     if (tp->visible)
       break;
   if (tp || (soap->version == 2 && soap->position > 0) || id > 0 || (soap->mode & SOAP_XML_NIL))
-  { if (soap_element(soap, tag, id, type))
-      return soap->error;
-    if (!tp && soap_attribute(soap, "xsi:nil", "true"))
+  { if (soap_element(soap, tag, id, type)
+     || (!tp && soap_attribute(soap, "xsi:nil", "true")))
       return soap->error;
     return soap_element_start_end_out(soap, tag);
   }
@@ -8982,6 +9376,19 @@ soap_element_null(struct soap *soap, const char *tag, int id, const char *type)
   soap->position = 0;
   soap->mustUnderstand = 0;
   return SOAP_OK;
+}
+#endif
+
+/******************************************************************************/
+#ifndef PALM_1
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_element_nil(struct soap *soap, const char *tag)
+{ if (soap_element(soap, tag, -1, NULL)
+   || soap_attribute(soap, "xsi:nil", "true"))
+    return soap->error;
+  return soap_element_start_end_out(soap, tag);
 }
 #endif
 
@@ -10502,8 +10909,17 @@ soap_wstring_out(struct soap *soap, const wchar_t *s, int flag)
         if (soap_send_raw(soap, &tmp, 1))
           return soap->error;
       }
-      else if (soap_pututf8(soap, (unsigned long)c))
-        return soap->error;
+      else /* check UTF16 encoding when wchar_t is too small to hold UCS */
+      { if (sizeof(wchar_t) < 4 && (c & 0xD800) == 0xD800)
+	{ /* http://unicode.org/faq/utf_bom.html#utf16-2 */
+          if ((*s & 0xD800) == 0xD800)
+	    c = (c << 10) + *s++ + 0x10000 - (0xD800 << 10) - 0xDC00;
+	  else
+	    c = 0xFFFD; /* Malformed */
+        }
+        if (soap_pututf8(soap, (unsigned long)c))
+          return soap->error;
+      }
       continue;
     }
     if (soap_send(soap, t))
@@ -10640,6 +11056,14 @@ soap_wstring_in(struct soap *soap, int flag, long minlen, long maxlen)
       default:
         if ((int)c == EOF)
           goto end;
+	if (sizeof(wchar_t) < 4 && c > 0xFFFF)
+	{ wchar_t c1, c2;
+	  /* http://unicode.org/faq/utf_bom.html#utf16-2 */
+	  c1 = 0xD800 - (0x10000 >> 10) + (c >> 10);
+	  c2 = 0xDC00 + (c & 0x3FF);
+	  c = c1;
+	  soap_unget(soap, c2);
+	}
         *s++ = (wchar_t)c & 0x7FFFFFFF;
       }
       l++;
@@ -14721,7 +15145,7 @@ soap_set_fault(struct soap *soap)
       break;
     case SOAP_SSL_ERROR:
 #ifdef WITH_OPENSSL
-      *s = "SSL error";
+      *s = "SSL/TLS error";
 #else
       *s = "OpenSSL not installed: recompile with -DWITH_OPENSSL";
 #endif

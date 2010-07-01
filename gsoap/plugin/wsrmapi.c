@@ -1569,7 +1569,7 @@ void
 soap_wsrm_seq_free(struct soap *soap, soap_wsrm_sequence_handle seq)
 { struct soap_wsrm_data *data;
   struct soap_wsrm_sequence **q;
-  time_t now;
+  time_t now = (time_t)0;
   DBGFUN("soap_wsrm_seq_free");
   data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
   if (!data)
@@ -2652,7 +2652,7 @@ soap_wsrm_process_ack(struct soap *soap, struct _wsrm__SequenceAcknowledgement *
       }
       else
       { for (p = seq->messages; p; p = p->next)
-        { if (ack->AcknowledgementRange[i].Lower <= p->num && p->num <= ack->AcknowledgementRange[i].Upper)
+        { if (p->state != SOAP_WSRM_ACK && ack->AcknowledgementRange[i].Lower <= p->num && p->num <= ack->AcknowledgementRange[i].Upper)
           { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Ack="SOAP_LONG_FORMAT"\n", p->num));
             p->state = SOAP_WSRM_ACK;
             if (p->list)
@@ -2775,7 +2775,7 @@ soap_wsrm_add_acks(struct soap *soap)
     }
     soap->header->__sizeSequenceAcknowledgement = numack;
     soap->header->wsrm__SequenceAcknowledgement = ack;
-    soap->header->wsa5__Action = SOAP_NAMESPACE_OF_wsrm"/SequenceAcknowledgement";
+    soap->header->wsa5__Action = (char*)SOAP_NAMESPACE_OF_wsrm"/SequenceAcknowledgement";
   }
   soap->header->__sizeAckRequested = 0;
 #if 0
@@ -3217,7 +3217,7 @@ soap_wsrm_msg_new(struct soap *soap, struct soap_wsrm_sequence *seq, ULONG64 num
 
 /**
 @fn void soap_wsrm_msg_free(struct soap *soap, struct soap_wsrm_message *p)
-@brief Internal function to deallocate all cached messages ranges from a
+@brief Internal function to deallocate all cached message content from a
 sequence state.
 @param soap context
 @param p pointer to message (in a sequence state)
@@ -3228,6 +3228,8 @@ soap_wsrm_msg_free(struct soap *soap, struct soap_wsrm_message *p)
   DBGFUN1("soap_wsrm_msg_free", "num="SOAP_ULONG_FORMAT, p->num);
   for (q = p->list; q; q = r)
   { r = q->next;
+    if (q->buf)
+      free((void*)q->buf);
     free((void*)q);
   }
   p->list = p->last = NULL;
