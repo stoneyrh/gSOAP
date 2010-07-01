@@ -11,6 +11,9 @@ init2.c		Compiler symbol table initialization
 soapcpp2_lex.l	Flex/Lex tokens
 soapcpp2_yacc.y	Yacc/Bison grammar
 
+LICENSING
+Please see LICENSE.txt in root directory of the package.
+
 BUILD NOTES
 
 QNX
