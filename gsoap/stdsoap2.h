@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.7.17
+	stdsoap2.h 2.8.0
 
 	gSOAP runtime engine
 
@@ -619,7 +619,15 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # define SOAP_WINSOCKINT size_t
 #endif
 
-#ifdef WITH_IPV6_V6ONLY
+#ifdef WITH_IPV6
+# ifdef IPV6_V6ONLY
+#  if !defined(WITH_NO_IPV6_V6ONLY) && !defined(WITH_IPV6_V6ONLY)
+#   define WITH_NO_IPV6_V6ONLY /* turn on IPv6-IPv4 switching */
+#  endif
+# endif
+#endif
+
+#if defined(WITH_IPV6_V6ONLY) || defined(WITH_NO_IPV6_V6ONLY)
 # ifndef WITH_IPV6
 #  define WITH_IPV6
 # endif
@@ -667,6 +675,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef WITH_OPENSSL
+# undef WITH_GNUTLS
 # define OPENSSL_NO_KRB5
 # include <openssl/bio.h>
 # include <openssl/err.h>
@@ -682,6 +691,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #ifdef WITH_GNUTLS
 # include <gnutls/gnutls.h>
+# include <gnutls/x509.h>
+# include <gcrypt.h>
+# ifndef HAVE_PTHREAD_H
+#  ifdef _POSIX_THREADS
+#   define HAVE_PTHREAD_H /* make GNUTLS thread safe */
+#  endif
+# endif
 #endif
 
 #ifdef WITH_GZIP
@@ -741,6 +757,9 @@ extern "C" {
 
 #define SOAP_INVALID_SOCKET ((SOAP_SOCKET)-1)
 #define soap_valid_socket(n) ((n) != SOAP_INVALID_SOCKET)
+
+#define SOAP_SHUT_WR 1
+#define SOAP_SHUT_RDWR 2
 
 #ifndef SOAP_GAI_STRERROR
 # define SOAP_GAI_STRERROR gai_strerror
@@ -1199,6 +1218,7 @@ typedef soap_int32 soap_mode;
 #define SOAP_SSLv3				0x40	/* SSL v3 only */
 #define SOAP_TLSv1				0x80	/* TLS v1 only */
 #define SOAP_SSLv3_TLSv1			0x00	/* SSL v3 and TLS v1 support by default (no SSL v1/v2) */
+#define SOAP_SSL_CLIENT				0x100	/* client context */
 
 #define SOAP_SSL_DEFAULT			(SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION | SOAP_SSLv3_TLSv1)
 
@@ -1256,7 +1276,7 @@ typedef soap_int32 soap_mode;
 #endif
 
 #ifndef SOAP_NEW			/* use C++ new operator */
-# if __GNUC__ < 2
+# if __GNUC__ <= 2
 #  define SOAP_NEW(type) new type	/* old form w/o parenthesis */
 # else
 #  define SOAP_NEW(type) new (type)	/* with parenthesis */
@@ -1857,6 +1877,17 @@ struct SOAP_STD_API soap
   SSL *ssl;
   SSL_CTX *ctx;
   SSL_SESSION *session;
+  const char *dhfile;
+  const char *randfile;
+#elif defined(WITH_GNUTLS)		/* GNUTLS */
+  int (*fsslauth)(struct soap*);
+  void *fsslverify;
+  gnutls_certificate_credentials_t xcred;	/* cert pointer */
+  gnutls_anon_client_credentials_t acred;	/* anon pointer */
+  gnutls_priority_t cache;			/* priority cache pointer */
+  gnutls_session_t session;			/* session pointer */
+  gnutls_dh_params_t dh_params;
+  gnutls_rsa_params_t rsa_params;
 #else				/* No SSL/TLS */
   void *fsslauth;		/* dummy members, to preserve struct size */
   void *fsslverify;
@@ -1864,15 +1895,15 @@ struct SOAP_STD_API soap
   void *ssl;
   void *ctx;
   void *session;
+  void *dh_params;
+  void *rsa_params;
 #endif
   unsigned short ssl_flags;
   const char *keyfile;
   const char *password;
-  const char *dhfile;
   const char *cafile;
   const char *capath;
   const char *crlfile;
-  const char *randfile;
   char session_host[SOAP_TAGLEN];
   int session_port;
 #ifdef WITH_C_LOCALE
@@ -1907,7 +1938,7 @@ struct SOAP_STD_API soap
   soap(const struct soap&);
   virtual ~soap();
 #else
-  void (*dummy)();
+  void (*dummy)(void);
 #endif
 };
 
@@ -2030,7 +2061,7 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_serializefault(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_putfault(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_getfault(struct soap*);
 
-SOAP_FMAC1 void SOAP_FMAC2 soap_ssl_init();
+SOAP_FMAC1 void SOAP_FMAC2 soap_ssl_init(void);
 SOAP_FMAC1 int SOAP_FMAC2 soap_poll(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_connect_command(struct soap*, int, const char*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_connect(struct soap*, const char*, const char*);
@@ -2185,6 +2216,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_array_begin_out(struct soap*, const char *tag, in
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_ref(struct soap*, const char *tag, int id, int href);
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_href(struct soap*, const char *tag, int id, const char *ref, const char *val);
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_null(struct soap*, const char *tag, int id, const char *type);
+SOAP_FMAC1 int SOAP_FMAC2 soap_element_nil(struct soap*, const char *tag);
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_id(struct soap*, const char *tag, int id, const void *p, const struct soap_array *a, int d, const char *type, int n);
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_result(struct soap*, const char *tag);
 SOAP_FMAC1 void SOAP_FMAC2 soap_check_result(struct soap*, const char *tag);
