@@ -254,7 +254,7 @@ value::operator char*()
     return (char*)ref;
   if (__any)
     return __any;
-  return "";
+  return (char*)"";
 }
 
 value::operator const char*() const

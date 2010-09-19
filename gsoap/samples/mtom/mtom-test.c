@@ -86,7 +86,7 @@ int run_serve(int port)
     } 
   }
   ret = soap->error;
-  soap_free(soap);
+  soap_free(soap); /* done and free */
   return ret;
 }
 

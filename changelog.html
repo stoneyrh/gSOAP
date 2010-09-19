@@ -777,6 +777,18 @@ without OpenSSL.</li>
 <li>Fixed enum translation of enum symbols with colons.</li>
 <li>Fixed std::wstring used as XML attribute value UTF8 encoding (internal stdsoap2 API changed).</li>
 </ul>
+<li>Version 2.8.0 (09/20/2010)</li>
+<ul>
+<li>Added wsdl2h option -W: suppress warnings.</li>
+<li>Added wsdl2h option -i: for advanced uses only to skip schema imports.</li>
+<li>Added automatic xsi:nil output for NULL pointer members when minOccurs&gt;0 (member has '1' occurence annotation).</li>
+<li>Improved wstring and wchar_t* handling when wchar_t is &lt; 4 bytes.</li>
+<li>Improved use of custom serializers in builds.</li>
+<li>Fixed wsdl2h type mapping of nested xs:sequence and xs:choice.<li>
+<li>Fixed soapcpp2 handling of extension base qualified elements and derived type unqualified elements.<li>
+<li>Fixed WSRM message resend buffer leak.</li>
+<li>Licensing change for reasons of consistency and transparency: the soapcpp2 tool (2.8.0 and up) is licensed under the same conditions as the wsdl2h tool, which means that soapcpp2 is no longer covered by the gSOAP public license.</li>
+</ul>
 </ul>
 
 </body>

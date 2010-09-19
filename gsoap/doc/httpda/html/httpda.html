@@ -17,7 +17,7 @@ soap.passed = <span class="stringliteral">"&lt;passwd&gt;"</span>;
 </pre></div><p>
 HTTP Basic Authentication should never be used over plain HTTP, because the user ID and password are sent in the clear. It is safe(r) to use over HTTPS, because the HTTP headers and body are encrypted.<p>
 The better alternative is to use HTTP Digest Authentication, which uses the digest (hash value) of the credentials and avoids a plain-text password exchange.<p>
-To use HTTP Disgest Authentication with gSOAP, register the http_da plugin:<p>
+To use HTTP Digest Authentication with gSOAP, register the http_da plugin:<p>
 <div class="fragment"><pre><span class="preprocessor">#include "<a class="code" href="httpda_8h.html">httpda.h</a>"</span>
 soap_register_plugin(&amp;soap, http_da);
 </pre></div><p>
@@ -27,7 +27,7 @@ To make a client-side service call:<p>
 <span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))
   ... <span class="comment">// error</span>
 </pre></div><p>
-The "&lt;authrealm&gt;" is a string that is associated with the server's realm. It can be obtained after an unsuccesful non-authenticated call:<p>
+The "&lt;authrealm&gt;" is a string that is associated with the server's realm. It can be obtained after an unsuccessful non-authenticated call:<p>
 <div class="fragment"><pre><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))
 {
   <span class="keywordflow">if</span> (soap.error == 401) <span class="comment">// HTTP authentication is required</span>
@@ -62,7 +62,7 @@ soap_destroy(&amp;soap);
 soap_end(&amp;soap);
 soap_done(&amp;soap);
 </pre></div><h2><a class="anchor" name="httpda_2">
-Client Eample</a></h2>
+Client Example</a></h2>
 <div class="fragment"><pre>soap_register_plugin(&amp;soap, http_da);
 <span class="comment">// try calling without authenticating</span>
 <span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))
@@ -92,7 +92,7 @@ soap_serve(&amp;soap);
 ...
 int ns__method(<span class="keyword">struct</span> soap *soap, ...)
 {
-  <span class="keywordflow">if</span> (!soap-&gt;userid || !soap-&gt;passwd || strcmp(soap-&gt;userid, <span class="stringliteral">"&lt;userid&gt;"</span>) || strmp(soap-&gt;passwd, <span class="stringliteral">"&lt;passwd&gt;"</span>))
+  <span class="keywordflow">if</span> (!soap-&gt;userid || !soap-&gt;passwd || strcmp(soap-&gt;userid, <span class="stringliteral">"&lt;userid&gt;"</span>) || strcmp(soap-&gt;passwd, <span class="stringliteral">"&lt;passwd&gt;"</span>))
     <span class="keywordflow">return</span> 401; <span class="comment">// HTTP authentication required</span>
   ...
 }
@@ -153,7 +153,7 @@ int ns__method(<span class="keyword">struct</span> soap *soap, ...)
 }
 </pre></div><h2><a class="anchor" name="httpda_5">
 HTTP Digest Authentication Limitations</a></h2>
-HTTP Digest Authentication cannot be used with streaming MTOM/MIME/DIME attachments. Streaming is turned off by the plugin and attachment data is buffered. Non-streaming MTOM/MIME/DIME attachments are handled. <hr size="1"><address style="align: right;"><small>Generated on Thu Apr 22 14:08:23 2010 for gSOAP HTTP Digest Authentication by
+HTTP Digest Authentication cannot be used with streaming MTOM/MIME/DIME attachments. Streaming is turned off by the plugin and attachment data is buffered rather than streamed. Non-streaming MTOM/MIME/DIME attachments are handled just fine. <hr size="1"><address style="align: right;"><small>Generated on Fri Sep 3 13:23:34 2010 for gSOAP HTTP Digest Authentication by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.8 </small></address>
 </body>

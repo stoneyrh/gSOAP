@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2008, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2001-2010, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -47,8 +47,8 @@ class xs__simpleType;			// forward declaration
 class xs__complexType;			// forward declaration
 class xs__extension;			// forward declaration
 class xs__restriction;			// forward declaration
-class xs__sequence;			// forward declaration
-class xs__choice;			// forward declaration
+class xs__seqchoice;			// forward declaration
+class xs__group;			// forward declaration
 class xs__list;				// forward declaration
 class xs__union;			// forward declaration
 
@@ -152,14 +152,45 @@ class xs__any
   	int				traverse(xs__schema&);
 };
 
+class xs__contents
+{ public:
+	$int				__union;			
+	union				xs__union_content
+	{	xs__element		*element;
+		xs__group		*group;
+		xs__seqchoice		*choice;
+		xs__seqchoice		*sequence;
+		xs__any			*any;
+	}				__content;
+  public:
+  	int				traverse(xs__schema&);
+};
+
+class xs__seqchoice
+{ public:
+	@xsd__string			minOccurs;		// xsd:nonNegativeInteger
+	@xsd__string			maxOccurs;		// xsd:nonNegativeInteger|unbounded
+	xs__annotation			*annotation;
+	std::vector<xs__contents>	__contents;
+  private:
+	xs__schema			*schemaRef;		// schema to which this belongs
+  public:
+					xs__seqchoice();
+  	int				traverse(xs__schema&);
+	void				schemaPtr(xs__schema*);
+	xs__schema			*schemaPtr() const;
+};
+
 class xs__group
 { public:
 	@xsd__NCName			name;
 	@xsd__QName			ref;
+	@xsd__string			minOccurs;		// xsd:nonNegativeInteger
+	@xsd__string			maxOccurs;		// xsd:nonNegativeInteger|unbounded
 	xs__annotation			*annotation;
-	xs__all				*all;			// choice
-	xs__choice			*choice;		// choice
-	xs__sequence			*sequence;		// choice
+	xs__all				*all;
+	xs__seqchoice			*choice;
+	xs__seqchoice			*sequence;
   private:
 	xs__schema			*schemaRef;		// schema to which this belongs
   	xs__group			*groupRef;		// traverse() finds ref
@@ -170,39 +201,6 @@ class xs__group
 	void				groupPtr(xs__group*);
 	xs__schema			*schemaPtr() const;
 	xs__group			*groupPtr() const;
-};
-
-class xs__choice
-{ public:
-	@xsd__string			minOccurs;		// xsd:nonNegativeInteger
-	@xsd__string			maxOccurs;		// xsd:nonNegativeInteger|unbounded
-	std::vector<xs__group>		group;
-	std::vector<xs__choice>		choice;
-	std::vector<xs__sequence*>	sequence;
-	std::vector<xs__element>	element;
-	std::vector<xs__any>		any;
-	xs__annotation			*annotation;
-  private:
-	xs__schema			*schemaRef;		// schema to which this belongs
-  public:
-					xs__choice();
-  	int				traverse(xs__schema&);
-	void				schemaPtr(xs__schema*);
-	xs__schema			*schemaPtr() const;
-};
-
-class xs__sequence
-{ public:
-	@xsd__string			minOccurs;		// xsd:nonNegativeInteger
-	@xsd__string			maxOccurs;		// xsd:nonNegativeInteger|unbounded
-	std::vector<xs__group>		group;
-	std::vector<xs__choice>		choice;
-	std::vector<xs__sequence*>	sequence;
-	std::vector<xs__element>	element;
-	std::vector<xs__any>		any;
-	xs__annotation			*annotation;
-  public:
-  	int				traverse(xs__schema&);
 };
 
 class xs__anyAttribute
@@ -278,8 +276,8 @@ class xs__extension
 	@xsd__QName			base;
 	xs__group			*group;
 	xs__all				*all;
-	xs__choice			*choice;
-	xs__sequence			*sequence;
+	xs__seqchoice			*choice;
+	xs__seqchoice			*sequence;
 	std::vector<xs__attribute>	attribute;
 	std::vector<xs__attributeGroup>	attributeGroup;
 	xs__anyAttribute		*anyAttribute;
@@ -299,6 +297,7 @@ class xs__length
 { public:
 	@xsd__string			value;
 	@xsd__boolean			fixed;
+	xs__annotation			*annotation;
 };
 
 class xs__whiteSpace
@@ -311,8 +310,8 @@ class xs__restriction
 	@xsd__QName			base;
 	xs__group			*group;		// not used in <simpleType><restriction>
 	xs__all				*all;		// not used in <simpleType><restriction>
-	xs__choice			*choice;	// not used in <simpleType><restriction>
-	xs__sequence			*sequence;	// not used in <simpleType><restriction>
+	xs__seqchoice			*choice;	// not used in <simpleType><restriction>
+	xs__seqchoice			*sequence;	// not used in <simpleType><restriction>
 	std::vector<xs__attribute>	attribute;	// not used in <simpleType><restriction>
 	xs__anyAttribute		*anyAttribute;	// not used in <simpleType><restriction>
 	std::vector<xs__enumeration>	enumeration;
@@ -382,8 +381,8 @@ class xs__complexType
 	xs__simpleContent		*simpleContent;
 	xs__complexContent		*complexContent;
 	xs__all				*all;
-	xs__choice			*choice;
-	xs__sequence			*sequence;
+	xs__seqchoice			*choice;
+	xs__seqchoice			*sequence;
 	xs__any				*any;
 	std::vector<xs__attribute>	attribute;
 	std::vector<xs__attributeGroup>	attributeGroup;

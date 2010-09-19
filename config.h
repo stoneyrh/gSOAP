@@ -28,6 +28,9 @@
 /* Define to 1 if you have the `gmtime_r' function. */
 #define HAVE_GMTIME_R 1
 
+/* Define to 1 if you have the <gnutls/gnutls.h> header file. */
+#define HAVE_GNUTLS_GNUTLS_H 1
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
@@ -97,6 +100,9 @@
 
 /* Define to 1 if you have the `strerror' function. */
 #define HAVE_STRERROR 1
+
+/* Define to 1 if you have the `strerror_r' function. */
+#define HAVE_STRERROR_R 1
 
 /* Define to 1 if you have the `strftime' function. */
 #define HAVE_STRFTIME 1
@@ -183,13 +189,13 @@
 #define PACKAGE_NAME "gsoap"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "gsoap 2.7"
+#define PACKAGE_STRING "gsoap 2.8"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gsoap"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.7"
+#define PACKAGE_VERSION "2.8"
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
@@ -204,7 +210,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "2.7"
+#define VERSION "2.8"
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */

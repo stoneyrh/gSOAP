@@ -141,24 +141,9 @@ imported XSD files local (rather than http addresses to download)
 14.	echoUnqualifiedLocalAttributes: skipped
 15.	echoUnqualifiedLocalElements: skipped
 
-Some errors could not be corrected and are indicated by "skipped". These
-patterns are also skipped in the W3C working group interoperability report due
-to the inherent problematic nature.
-
-The following last remaining issue will be corrected in the 2.8 releases:
-
-16.	reordering problem with nested choice and element in a sequence:
-	  <sequence>
-	    <choice>...
-	    <element>...
-	  </sequence>
-	where the wsdl2h maps this to
-	  <sequence>
-	    <element>...
-	    <choice>...
-	  </sequence>
-	The temporaty work-around is to edit the generated .h file to
-	interchange the struct/class members.
+Some errors in the working group's patterns could not be corrected and are
+indicated by "skipped". These patterns are also skipped in the W3C working
+group interoperability reports due to the inherent problematic nature.
 
 For more information, please visit:
 

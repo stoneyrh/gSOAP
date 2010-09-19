@@ -42,7 +42,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #undef VERSION
-#define VERSION "1.2.17"
+#define VERSION "2.8.0"
 
 #include <utility>
 #include <iterator>
@@ -96,6 +96,7 @@ extern int _flag,
 	   uflag,
 	   vflag,
 	   wflag,
+	   Wflag,
 	   xflag,
 	   yflag,
 	   zflag;

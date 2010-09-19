@@ -212,6 +212,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #   undef WITH_OPENSSL
 #  endif
 # endif
+# if defined(WITH_GNUTLS)
+#  ifndef HAVE_GNUTLS_GNUTLS_H
+#   undef WITH_GNUTLS
+#  endif
+# endif
 # if defined(WITH_ZLIB) || defined(WITH_GZIP)
 #  ifndef HAVE_ZLIB_H
 #   undef WITH_ZLIB
@@ -249,6 +254,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
 #  define HAVE_LOCALTIME_R
+#  define HAVE_STRERROR_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 # elif defined(__APPLE__)
@@ -265,6 +271,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
 #  define HAVE_LOCALTIME_R
+#  define HAVE_STRERROR_R
 #  define HAVE_TIMEGM
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
@@ -304,6 +311,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
 #  define HAVE_LOCALTIME_R
+#  define HAVE_STRERROR_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 # elif defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD)
@@ -323,6 +331,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
 #  define HAVE_LOCALTIME_R
+#  define HAVE_STRERROR_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 #  define SOAP_LONG_FORMAT "%qd"
@@ -359,6 +368,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
 #  define HAVE_LOCALTIME_R
+#  define HAVE_STRERROR_R
 #  define HAVE_TIMEGM
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
@@ -396,6 +406,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_GETHOSTBYNAME_R
 #  define HAVE_GMTIME_R
 #  define HAVE_LOCALTIME_R
+#  define HAVE_STRERROR_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 # elif defined(PALM)
@@ -470,6 +481,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_GETHOSTBYNAME_R
 #  define HAVE_GMTIME_R
 #  define HAVE_LOCALTIME_R
+#  define HAVE_STRERROR_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 #  define LONG64 long
@@ -490,6 +502,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_GETHOSTBYNAME_R
 #  define HAVE_GMTIME_R
 #  define HAVE_LOCALTIME_R
+#  define HAVE_STRERROR_R
 #  ifdef MB_LEN_MAX
 #   define HAVE_WCTOMB
 #   define HAVE_MBTOWC
@@ -511,6 +524,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #ifdef __VMS
 # ifndef SOAP_BUFLEN
 #  define SOAP_BUFLEN (65535)
+# endif
+#endif
+
+/* if we have xlocale.h we use it to avoid decimal point conversion issues */
+#ifdef HAVE_XLOCALE_H
+# ifndef WITH_C_LOCALE
+#  define WITH_C_LOCALE
 # endif
 #endif
 
@@ -912,7 +932,7 @@ extern "C" {
 # ifndef WITH_LEAN
 #  define SOAP_TAGLEN  (1024) /* maximum length of XML element tag/attribute name or host/path name + 1 */
 # else
-#  define SOAP_TAGLEN    (64)
+#  define SOAP_TAGLEN    (128)
 # endif
 #endif
 #ifndef SOAP_HDRLEN
@@ -1081,8 +1101,8 @@ extern const struct soap_double_nan { unsigned int n1, n2; } soap_double_nan;
 #define SOAP_NO_DATA			14
 #define SOAP_GET_METHOD			15
 #define SOAP_PUT_METHOD			16
-#define SOAP_DEL_METHOD			17
-#define SOAP_HEAD_METHOD		18
+#define SOAP_DEL_METHOD			17	/* deprecated */
+#define SOAP_HEAD_METHOD		18	/* deprecated */
 #define SOAP_HTTP_METHOD		19
 #define SOAP_EOM			20
 #define SOAP_MOE			21
@@ -1719,11 +1739,12 @@ struct SOAP_STD_API soap
   const char *userid;		/* HTTP Basic authorization userid */
   const char *passwd;		/* HTTP Basic authorization passwd */
   int (*fpost)(struct soap*, const char*, const char*, int, const char*, const char*, size_t);
-  int (*fget)(struct soap*);
-  int (*fput)(struct soap*);
-  int (*fdel)(struct soap*);
-  int (*fhead)(struct soap*);
-  int (*fform)(struct soap*);
+  int (*fget)(struct soap*);	/* HTTP GET hook (not set by default) */
+  int (*fput)(struct soap*);	/* HTTP PUT hook (handled as POST) */
+  int (*fdel)(struct soap*);	/* HTTP DELETE hook (not set by default) */
+  int (*fopt)(struct soap*);	/* HTTP OPTIONS hook (not set by default) */
+  int (*fhead)(struct soap*);	/* HTTP HEAD hook (not set by default) */
+  int (*fform)(struct soap*);	/* HTTP/HTML form handler for plugins */
   int (*fposthdr)(struct soap*, const char*, const char*);
   int (*fresponse)(struct soap*, int, size_t);
   int (*fparse)(struct soap*);
@@ -2272,6 +2293,8 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_end_block(struct soap*, struct soap_blist*);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_begin_out(struct soap*);
 SOAP_FMAC1 int soap_envelope_end_out(struct soap*);
+
+SOAP_FMAC1 char * SOAP_FMAC2 soap_get_http_body(struct soap*);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_begin_in(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_end_in(struct soap*);

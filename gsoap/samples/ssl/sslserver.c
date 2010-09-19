@@ -75,13 +75,28 @@ int main()
   }
   /* init gsoap context and SSL */
   soap_init(&soap);
+  /* The supplied server certificate "server.pem" assumes that the server is
+    running on 'localhost', so clients can only connect from the same host when
+    verifying the server's certificate.
+    To verify the certificates of third-party services, they must provide a
+    certificate issued by Verisign or another trusted CA. At the client-side,
+    the capath parameter should point to a directory that contains these
+    trusted (root) certificates or the cafile parameter should refer to one
+    file will all certificates. To help you out, the supplied "cacerts.pem"
+    file contains the certificates issued by various CAs. You should use this
+    file for the cafile parameter instead of "cacert.pem" to connect to trusted
+    servers. Note that the client may fail to connect if the server's
+    credentials have problems (e.g. expired).
+    Note 1: the password and capath are not used with GNUTLS
+    Note 2: setting capath may not work on Windows.
+  */
   if (soap_ssl_server_context(&soap,
     SOAP_SSL_DEFAULT,	/* use SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION to verify clients: client must provide a key file e.g. "client.pem" and "password" */
     "server.pem",	/* keyfile (cert+key): see SSL docs to create this file */
     "password",		/* password to read the private key in the key file */
     "cacert.pem",	/* cacert file to store trusted certificates (to authenticate clients) */
     NULL,		/* capath */
-    "dh512.pem",	/* DH file name or DH param key len bits (e.g. "1024"), if NULL use RSA */
+    "dh512.pem",	/* DH file name or DH param key len bits (e.g. "1024"), if NULL use RSA 2048 bits (SOAP_SSL_RSA_BITS) */
     NULL,		/* if randfile!=NULL: use a file with random data to seed randomness */ 
     "sslserver"		/* server identification for SSL session cache (unique server name, e.g. use argv[0]) */
   ))
@@ -230,7 +245,7 @@ void CRYPTO_thread_cleanup()
 
 #else
 
-/* OpenSSL not used */
+/* OpenSSL not used, e.g. GNUTLS is used */
 
 int CRYPTO_thread_setup()
 { return SOAP_OK;

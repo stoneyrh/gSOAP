@@ -84,7 +84,7 @@ The better alternative is to use HTTP Digest Authentication, which uses the
 digest (hash value) of the credentials and avoids a plain-text password
 exchange.
 
-To use HTTP Disgest Authentication with gSOAP, register the http_da plugin:
+To use HTTP Digest Authentication with gSOAP, register the http_da plugin:
 
 @code
 #include "httpda.h"
@@ -101,7 +101,7 @@ if (soap_call_ns__method(&soap, ...))
 @endcode
 
 The "<authrealm>" is a string that is associated with the server's realm. It
-can be obtained after an unsuccesful non-authenticated call:
+can be obtained after an unsuccessful non-authenticated call:
 
 @code
 if (soap_call_ns__method(&soap, ...))
@@ -143,7 +143,7 @@ soap_end(&soap);
 soap_done(&soap);
 @endcode
 
-@section httpda_2 Client Eample
+@section httpda_2 Client Example
 
 @code
 soap_register_plugin(&soap, http_da);
@@ -179,7 +179,7 @@ soap_serve(&soap);
 ...
 int ns__method(struct soap *soap, ...)
 {
-  if (!soap->userid || !soap->passwd || strcmp(soap->userid, "<userid>") || strmp(soap->passwd, "<passwd>"))
+  if (!soap->userid || !soap->passwd || strcmp(soap->userid, "<userid>") || strcmp(soap->passwd, "<passwd>"))
     return 401; // HTTP authentication required
   ...
 }
@@ -252,7 +252,8 @@ int ns__method(struct soap *soap, ...)
 
 HTTP Digest Authentication cannot be used with streaming MTOM/MIME/DIME
 attachments. Streaming is turned off by the plugin and attachment data is
-buffered. Non-streaming MTOM/MIME/DIME attachments are handled.
+buffered rather than streamed. Non-streaming MTOM/MIME/DIME attachments are
+handled just fine.
 
 */
 
@@ -448,7 +449,7 @@ static int http_da_parse(struct soap *soap)
 
   data->qop = NULL;
 
-  if (data->fparse(soap))
+  if ((soap->error = data->fparse(soap)))
     return soap->error;
 
   if (data->qop && !soap_tag_cmp(data->qop, "auth-int"))

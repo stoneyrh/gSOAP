@@ -314,43 +314,49 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
             return soap->error;
         }
       }
-      if (*tag != '-' && soap_element_start_end_out(soap, NULL))
-        return soap->error;
-      if (node->data)
-      { if (soap_string_out(soap, node->data, 0))
-          return soap->error;
-      }
-      else if (node->wide)
-      { if (soap_wstring_out(soap, node->wide, 0))
-          return soap->error;
-      }
-      for (elt = node->elts; elt; elt = elt->next)
-      { if (soap_out_xsd__anyType(soap, tag, 0, elt, NULL))
-          return soap->error;
-      }
-      if (node->tail && soap_send(soap, node->tail))
-        return soap->error;
-      if (!prefix || !*prefix)
-      { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End of DOM node '%s'\n", tag + colon));
-        if (soap_element_end_out(soap, tag + colon))
+      if ((soap->mode & SOAP_DOM_ASIS) && !node->data && !node->wide && !node->elts && !node->tail)
+      { if (*tag != '-' && soap_element_start_end_out(soap, tag))
           return soap->error;
       }
       else
-      { char *s;
-        if (strlen(prefix) + strlen(tag + colon) < sizeof(soap->msgbuf))
-	  s = soap->msgbuf;
-	else
-	{ s = (char*)SOAP_MALLOC(soap, strlen(prefix) + strlen(tag + colon) + 2);
-          if (!s)
-            return soap->error = SOAP_EOM;
-	}
-        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End of DOM node '%s'\n", tag));
-	sprintf(s, "%s:%s", prefix, tag + colon);
-	soap_pop_namespace(soap);
-        if (soap_element_end_out(soap, s))
+      { if (*tag != '-' && soap_element_start_end_out(soap, NULL))
           return soap->error;
-        if (s != soap->msgbuf)
-	  SOAP_FREE(soap, s);
+        if (node->data)
+        { if (soap_string_out(soap, node->data, 0))
+            return soap->error;
+        }
+        else if (node->wide)
+        { if (soap_wstring_out(soap, node->wide, 0))
+            return soap->error;
+        }
+        for (elt = node->elts; elt; elt = elt->next)
+        { if (soap_out_xsd__anyType(soap, tag, 0, elt, NULL))
+            return soap->error;
+        }
+        if (node->tail && soap_send(soap, node->tail))
+          return soap->error;
+        if (!prefix || !*prefix)
+        { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End of DOM node '%s'\n", tag + colon));
+          if (soap_element_end_out(soap, tag + colon))
+            return soap->error;
+        }
+        else
+        { char *s;
+          if (strlen(prefix) + strlen(tag + colon) < sizeof(soap->msgbuf))
+	    s = soap->msgbuf;
+	  else
+	  { s = (char*)SOAP_MALLOC(soap, strlen(prefix) + strlen(tag + colon) + 2);
+            if (!s)
+              return soap->error = SOAP_EOM;
+	  }
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End of DOM node '%s'\n", tag));
+	  sprintf(s, "%s:%s", prefix, tag + colon);
+	  soap_pop_namespace(soap);
+          if (soap_element_end_out(soap, s))
+            return soap->error;
+          if (s != soap->msgbuf)
+	    SOAP_FREE(soap, s);
+        }
       }
     }
   }

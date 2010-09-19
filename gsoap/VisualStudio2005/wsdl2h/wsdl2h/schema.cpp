@@ -130,11 +130,14 @@ int xs__schema::preprocess()
 int xs__schema::insert(xs__schema& schema)
 { bool found;
   if (targetNamespace && schema.targetNamespace && strcmp(targetNamespace, schema.targetNamespace))
-    fprintf(stderr, "Warning: attempt to include schema with mismatching targetNamespace '%s' in schema '%s'\n", schema.targetNamespace, targetNamespace);
+    if (!Wflag)
+      fprintf(stderr, "Warning: attempt to include schema with mismatching targetNamespace '%s' in schema '%s'\n", schema.targetNamespace, targetNamespace);
   if (elementFormDefault != schema.elementFormDefault)
-    fprintf(stderr, "Warning: attempt to include schema with mismatching elementFormDefault in schema '%s'\n", targetNamespace?targetNamespace:"");
+    if (!Wflag)
+      fprintf(stderr, "Warning: attempt to include schema with mismatching elementFormDefault in schema '%s'\n", targetNamespace?targetNamespace:"");
   if (attributeFormDefault != schema.attributeFormDefault)
-    fprintf(stderr, "Warning: attempt to include schema with mismatching attributeFormDefault in schema '%s'\n", targetNamespace?targetNamespace:"");
+    if (!Wflag)
+      fprintf(stderr, "Warning: attempt to include schema with mismatching attributeFormDefault in schema '%s'\n", targetNamespace?targetNamespace:"");
   // insert imports, but only add imports with new namespace
   for (vector<xs__import>::const_iterator im = schema.import.begin(); im != schema.import.end(); ++im)
   { found = false;
@@ -157,7 +160,8 @@ int xs__schema::insert(xs__schema& schema)
       { if ((*a).name && !strcmp((*at).name, (*a).name))
         { found = true;
           if ((*at).type && (*a).type && strcmp((*at).type, (*a).type))
-            fprintf(stderr, "Warning: attempt to redefine attribute '%s' with type '%s' in schema '%s'\n", (*at).name, (*at).type, targetNamespace?targetNamespace:"");
+            if (!Wflag)
+	      fprintf(stderr, "Warning: attempt to redefine attribute '%s' with type '%s' in schema '%s'\n", (*at).name, (*at).type, targetNamespace?targetNamespace:"");
           break;
         }
       }
@@ -175,7 +179,8 @@ int xs__schema::insert(xs__schema& schema)
       { if ((*e).name && !strcmp((*el).name, (*e).name))
         { found = true;
           if ((*el).type && (*e).type && strcmp((*el).type, (*e).type))
-            fprintf(stderr, "Warning: attempt to redefine element '%s' with type '%s' in schema '%s'\n", (*el).name, (*el).type, targetNamespace?targetNamespace:"");
+            if (!Wflag)
+	      fprintf(stderr, "Warning: attempt to redefine element '%s' with type '%s' in schema '%s'\n", (*el).name, (*el).type, targetNamespace?targetNamespace:"");
           break;
         }
       }
@@ -283,7 +288,8 @@ int xs__schema::traverse()
     if ((*st).name)
     { for (vector<xs__complexType>::iterator ct = complexType.begin(); ct != complexType.end(); ++ct)
         if ((*ct).name && !strcmp((*st).name, (*ct).name))
-          fprintf(stderr, "Warning: top-level simpleType name and complexType name '%s' clash in schema '%s'\n", (*st).name, targetNamespace?targetNamespace:"");
+          if (!Wflag)
+	    fprintf(stderr, "Warning: top-level simpleType name and complexType name '%s' clash in schema '%s'\n", (*st).name, targetNamespace?targetNamespace:"");
     }
   }
   // process complexTypes
@@ -579,7 +585,8 @@ int xs__import::traverse(xs__schema &schema)
       }
     }
     else
-      fprintf(stderr, "Warning: no namespace in <import>\n");
+      if (!Wflag)
+        fprintf(stderr, "Warning: no namespace in <import>\n");
     if (!found && !iflag) // don't import any of the schemas in the .nsmap table (or when -i option is used)
     { const char *s = schemaLocation;
       if (!s)
@@ -597,7 +604,8 @@ int xs__import::traverse(xs__schema &schema)
       { if (!schemaRef->targetNamespace || !*schemaRef->targetNamespace)
           schemaRef->targetNamespace = namespace_;
         else if (!namespace_ || strcmp(schemaRef->targetNamespace, namespace_))
-          fprintf(stderr, "Warning: schema import '%s' with schema targetNamespace '%s' mismatch\n", namespace_?namespace_:"", schemaRef->targetNamespace);
+          if (!Wflag)
+	    fprintf(stderr, "Warning: schema import '%s' with schema targetNamespace '%s' mismatch\n", namespace_?namespace_:"", schemaRef->targetNamespace);
       }
     }
   }
@@ -697,13 +705,15 @@ int xs__attribute::traverse(xs__schema &schema)
     { if (is_builtin_qname(ref))
         schema.builtinAttribute(ref);
       else
-        cerr << "Warning: could not find attribute '" << (name?name:"") << "' ref '" << ref << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+        if (!Wflag)
+	  cerr << "Warning: could not find attribute '" << (name?name:"") << "' ref '" << ref << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
     }
     else if (type)
     { if (is_builtin_qname(type))
         schema.builtinType(type);
       else
-        cerr << "Warning: could not find attribute '" << (name?name:"") << "' type '" << type << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+        if (!Wflag)
+	  cerr << "Warning: could not find attribute '" << (name?name:"") << "' type '" << type << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
     }
   }
   return SOAP_OK;
@@ -880,13 +890,15 @@ int xs__element::traverse(xs__schema &schema)
     { if (is_builtin_qname(ref))
         schema.builtinElement(ref);
       else
-        cerr << "Warning: could not find element '" << (name?name:"") << "' ref '" << ref << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+        if (!Wflag)
+	  cerr << "Warning: could not find element '" << (name?name:"") << "' ref '" << ref << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
     }
     else if (type)
     { if (is_builtin_qname(type))
         schema.builtinType(type);
       else
-        cerr << "Warning: could not find element '" << (name?name:"") << "' type '" << type << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+        if (!Wflag)
+	  cerr << "Warning: could not find element '" << (name?name:"") << "' type '" << type << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
     }
   }
   return SOAP_OK;
@@ -974,7 +986,7 @@ int xs__simpleType::baseLevel()
       level = 1;
   }
   else if (level < 0)
-  { cerr << "Warning: cyclic simpleType restriction/extension base dependency in '" << (name?name:"") << "'" << endl;
+  { cerr << "Error: cyclic simpleType restriction/extension base dependency in '" << (name?name:"") << "'" << endl;
   }
   return level;
 }
@@ -1061,7 +1073,7 @@ int xs__complexType::baseLevel()
       level = 1;
   }
   else if (level < 0)
-  { cerr << "Warning: cyclic complexType restriction/extension base dependency in '" << (name?name:"") << "'" << endl;
+  { cerr << "Error: cyclic complexType restriction/extension base dependency in '" << (name?name:"") << "'" << endl;
   }
   return level;
 }
@@ -1173,7 +1185,8 @@ int xs__extension::traverse(xs__schema &schema)
     { if (is_builtin_qname(base))
         schema.builtinType(base);
       else
-        cerr << "Warning: could not find extension base type '" << base << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+        if (!Wflag)
+	  cerr << "Warning: could not find extension base type '" << base << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
     }
     else
       cerr << "Extension has no base" << endl;
@@ -1288,7 +1301,8 @@ int xs__restriction::traverse(xs__schema &schema)
     { if (is_builtin_qname(base))
         schema.builtinType(base);
       else
-        cerr << "Warning: could not find restriction base type '" << base << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+        if (!Wflag)
+	  cerr << "Warning: could not find restriction base type '" << base << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
     }
     else
       cerr << "Restriction has no base" << endl;
@@ -1358,7 +1372,8 @@ int xs__list::traverse(xs__schema &schema)
   { if (is_builtin_qname(itemType))
       schema.builtinType(itemType);
     else
-      cerr << "Warning: could not find list itemType '" << itemType << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+      if (!Wflag)
+        cerr << "Warning: could not find list itemType '" << itemType << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
   }
   return SOAP_OK;
 }
@@ -1387,49 +1402,51 @@ int xs__all::traverse(xs__schema &schema)
   return SOAP_OK;
 }
 
-xs__choice::xs__choice()
+int xs__contents::traverse(xs__schema &schema)
+{ switch (__union)
+  { case SOAP_UNION_xs__union_content_element:
+      if (__content.element)
+        __content.element->traverse(schema);
+      break;
+    case SOAP_UNION_xs__union_content_group:
+      if (__content.group)
+        __content.group->traverse(schema);
+      break;
+    case SOAP_UNION_xs__union_content_choice:
+      if (__content.choice)
+        __content.choice->traverse(schema);
+      break;
+    case SOAP_UNION_xs__union_content_sequence:
+      if (__content.sequence)
+        __content.sequence->traverse(schema);
+      break;
+    case SOAP_UNION_xs__union_content_any:
+      if (__content.any)
+        __content.any->traverse(schema);
+      break;
+  }
+  return SOAP_OK;
+}
+
+xs__seqchoice::xs__seqchoice()
 { schemaRef = NULL;
 }
 
-int xs__choice::traverse(xs__schema &schema)
+int xs__seqchoice::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema choice" << endl;
+    cerr << "Analyzing schema sequence/choice" << endl;
   schemaRef = &schema;
-  for (vector<xs__group>::iterator gp = group.begin(); gp != group.end(); ++gp)
-    (*gp).traverse(schema);
-  for (vector<xs__choice>::iterator ch = choice.begin(); ch != choice.end(); ++ch)
-    (*ch).traverse(schema);
-  for (vector<xs__sequence*>::iterator sq = sequence.begin(); sq != sequence.end(); ++sq)
-    (*sq)->traverse(schema);
-  for (vector<xs__element>::iterator el = element.begin(); el != element.end(); ++el)
-    (*el).traverse(schema);
-  for (vector<xs__any>::iterator an = any.begin(); an != any.end(); ++an)
-    (*an).traverse(schema);
+  for (vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); ++c)
+    (*c).traverse(schema);
   return SOAP_OK;
 }
 
-void xs__choice::schemaPtr(xs__schema *schema)
+void xs__seqchoice::schemaPtr(xs__schema *schema)
 { schemaRef = schema;
 }
 
-xs__schema *xs__choice::schemaPtr() const
+xs__schema *xs__seqchoice::schemaPtr() const
 { return schemaRef;
-}
-
-int xs__sequence::traverse(xs__schema &schema)
-{ if (vflag)
-    cerr << "Analyzing schema sequence" << endl;
-  for (vector<xs__element>::iterator el = element.begin(); el != element.end(); ++el)
-    (*el).traverse(schema);
-  for (vector<xs__group>::iterator gp = group.begin(); gp != group.end(); ++gp)
-    (*gp).traverse(schema);
-  for (vector<xs__choice>::iterator ch = choice.begin(); ch != choice.end(); ++ch)
-    (*ch).traverse(schema);
-  for (vector<xs__sequence*>::iterator sq = sequence.begin(); sq != sequence.end(); ++sq)
-    (*sq)->traverse(schema);
-  for (vector<xs__any>::iterator an = any.begin(); an != any.end(); ++an)
-    (*an).traverse(schema);
-  return SOAP_OK;
 }
 
 xs__attributeGroup::xs__attributeGroup()
@@ -1478,7 +1495,8 @@ int xs__attributeGroup::traverse(xs__schema& schema)
       }
     }
     if (!attributeGroupRef)
-      cerr << "Warning: could not find attributeGroup '" << (name?name:"") << "' ref '" << (ref?ref:"") << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+      if (!Wflag)
+        cerr << "Warning: could not find attributeGroup '" << (name?name:"") << "' ref '" << (ref?ref:"") << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
   }
   return SOAP_OK;
 }
@@ -1555,7 +1573,8 @@ int xs__group::traverse(xs__schema &schema)
       }
     }
     if (!groupRef)
-      cerr << "Warning: could not find group '" << (name?name:"") << "' ref '" << (ref?ref:"") << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+      if (!Wflag)
+        cerr << "Warning: could not find group '" << (name?name:"") << "' ref '" << (ref?ref:"") << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
   }
   return SOAP_OK;
 }

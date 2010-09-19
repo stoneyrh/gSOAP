@@ -3,13 +3,13 @@
 
 	Example stand-alone gSOAP Web server based on the gSOAP HTTP GET plugin.
 	This is a small but fully functional (embedded) Web server for serving
-	static and dynamic pages and SOAP/XML responses.
+	static and dynamic pages and SOAP/XML responses over HTTP/HTTPS.
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2009, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2001-2010, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
-GPL or Genivia's license for commercial use.
+GPL OR Genivia's license for commercial use.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -37,6 +37,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	a simple calculator XML Web service for demonstration purposes (the
 	service responds with SOAP/XML).
 
+	HTTPS (SSL/TLS) connectivity is supported. However, some browsers do
+	not allow self-signed certificates. The example certificate server.pem
+	included here is self signed. You can import the cacert.pem certificate
+	into the browser to validate the web server.
+
 	This application requires Zlib and Pthreads (you can replace Pthreads
 	with another thread library, but you need to study the OpenSSL thread
 	changes in the OpenSSL documentation).
@@ -52,11 +57,17 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	Customize your COOKIE_DOMAIN in this file
 	gcc -DWITH_COOKIES -DWITH_ZLIB -o webserver webserver.c options.c plugin/httpget.c plugin/httpform.c plugin/logging.c stdsoap2.c soapC.c soapClient.c soapServer.c -lpthread -lz
 
-	Compile with OpenSSL:
+	Compile with OpenSSL (also enables HTTP Digest Authentication):
 	soapcpp2 -c -n -popt opt.h
 	soapcpp2 -c webserver.h
 	Customize your COOKIE_DOMAIN in this file
-	gcc -DWITH_OPENSSL -DWITH_COOKIES -DWITH_ZLIB -o webserver webserver.c options.c plugin/httpget.c plugin/httpform.c plugin/logging.c stdsoap2.c soapC.c soapClient.c soapServer.c -lpthread -lz -lssl -lcrypto
+	gcc -DWITH_OPENSSL -DWITH_COOKIES -DWITH_ZLIB -o webserver webserver.c options.c plugin/httpget.c plugin/httpform.c plugin/logging.c plugin/threads.c plugin/httpda.c plugin/md5evp.c stdsoap2.c soapC.c soapClient.c soapServer.c -lpthread -lz -lssl -lcrypto
+
+	Compile with GNUTLS:
+	soapcpp2 -c -n -popt opt.h
+	soapcpp2 -c webserver.h
+	Customize your COOKIE_DOMAIN in this file
+	gcc -DWITH_GNUTLS -DWITH_COOKIES -DWITH_ZLIB -o webserver webserver.c options.c plugin/httpget.c plugin/httpform.c plugin/logging.c stdsoap2.c soapC.c soapClient.c soapServer.c -lpthread -lz -lgnutls -lgcrypt
 
 	Use (HTTP GET):
 	Compile the web server as explained above
@@ -123,8 +134,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "httpform.h"
 #include "logging.h"
 #include "threads.h"
+#ifdef WITH_OPENSSL
 #include "httpda.h" 	/* optionally enable HTTP Digest Authentication */
-#include <signal.h>	/* defines SIGPIPE */
+#endif
+#include <signal.h>	/* need SIGPIPE */
 
 #define BACKLOG (100)
 
@@ -224,13 +237,6 @@ int info(struct soap*);
 int html_hbar(struct soap*, const char*, size_t, size_t, unsigned long);
 int html_hist(struct soap*, const char*, size_t, size_t, size_t, const char**, size_t*, size_t);
 void sigpipe_handle(int); /* SIGPIPE handler: Unix/Linux only */
-
-/******************************************************************************\
- *
- *	OpenSSL
- *
-\******************************************************************************/
-
 int CRYPTO_thread_setup();
 void CRYPTO_thread_cleanup();
 
@@ -269,13 +275,27 @@ int main(int argc, char **argv)
 
   soap_init2(&soap, SOAP_IO_KEEPALIVE, SOAP_IO_DEFAULT);
 
-#ifdef WITH_OPENSSL
   if (CRYPTO_thread_setup())
   {
     fprintf(stderr, "Cannot setup thread mutex\n");
     exit(1);
   }
-  /* SSL (to enable: compile all sources with -DWITH_OPENSSL) */
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
+ /* The supplied server certificate "server.pem" assumes that the server is
+    running on 'localhost', so clients can only connect from the same host when
+    verifying the server's certificate.
+    To verify the certificates of third-party services, they must provide a
+    certificate issued by Verisign or another trusted CA. At the client-side,
+    the capath parameter should point to a directory that contains these
+    trusted (root) certificates or the cafile parameter should refer to one
+    file will all certificates. To help you out, the supplied "cacerts.pem"
+    file contains the certificates issued by various CAs. You should use this
+    file for the cafile parameter instead of "cacert.pem" to connect to trusted
+    servers. Note that the client may fail to connect if the server's
+    credentials have problems (e.g. expired).
+    Note 1: the password and capath are not used with GNUTLS
+    Note 2: setting capath may not work on Windows.
+  */
   if (secure && soap_ssl_server_context(&soap,
     SOAP_SSL_DEFAULT,
     "server.pem",	/* keyfile: see SSL docs on how to obtain this file */
@@ -324,9 +344,7 @@ int main(int argc, char **argv)
   free_options(options);
   soap_end(&soap);
   soap_done(&soap);
-#ifdef WITH_OPENSSL
   CRYPTO_thread_cleanup();
-#endif
   THREAD_EXIT;
   return 0;
 }
@@ -455,7 +473,7 @@ void server_loop(struct soap *soap)
       }
       else
       {
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
         if (secure && soap_ssl_accept(soap))
         {
 	  soap_print_fault(soap, stderr);
@@ -511,7 +529,7 @@ void *process_request(void *soap)
 
   THREAD_DETACH(THREAD_ID);
 
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
   if (secure && soap_ssl_accept(tsoap))
   {
     soap_print_fault(tsoap, stderr);
@@ -530,6 +548,7 @@ void *process_request(void *soap)
   }
   else if (options[OPTION_v].selected)
     fprintf(stderr, "Thread %d completed\n", (int)(long)tsoap->user);
+
   soap_destroy((struct soap*)soap);
   soap_end(tsoap);
   soap_done(tsoap);
@@ -557,7 +576,7 @@ void *process_queue(void *soap)
       break;
     }
 
-#ifdef WITH_OPENSSL
+#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
     if (secure && soap_ssl_accept(tsoap))
     {
       soap_print_fault(tsoap, stderr);
@@ -1027,7 +1046,7 @@ int info(struct soap *soap)
     if (soap->imode & SOAP_ENC_SSL)
       t4 = "<td align='center' bgcolor='green'>PASS</td>";
     else
-      t4 = "<td align='center' bgcolor='red'><blink>FAIL</blink></td>";
+      t4 = "<td align='center' bgcolor='red'>FAIL</td>";
   }
   else
   { t3 = "<td align='center' bgcolor='red'>NO</td>";
@@ -1328,6 +1347,17 @@ void CRYPTO_thread_cleanup()
   free(mutex_buf);
   mutex_buf = NULL;
 }
+
+#else
+
+/* OpenSSL not used, no need to these */
+
+int CRYPTO_thread_setup()
+{ return SOAP_OK;
+}
+
+void CRYPTO_thread_cleanup()
+{ }
 
 #endif
 

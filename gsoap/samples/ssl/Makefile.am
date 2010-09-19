@@ -12,8 +12,8 @@ SOAP_NS = $(SOAP_NS_DEF)
 
 sslclient_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
 sslclient_SOURCES = sslclient.c $(SOAPHEADER) $(SOAP_C_CLIENT)
-sslclient_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz -lpthread
+sslclient_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS) -lpthread
 
 sslserver_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
 sslserver_SOURCES = sslserver.c $(SOAPHEADER) $(SOAP_C_SERVER) ../../plugin/threads.c
-sslserver_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz -lpthread
+sslserver_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS) -lpthread

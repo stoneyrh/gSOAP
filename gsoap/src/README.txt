@@ -1,7 +1,7 @@
 The soapcpp2 compiler source distribution contains the following files:
 
 README.txt	This file
-Makefile	Unix/linux makefile
+MakefileManual	Extra makefile when autoconf/automake fail to produce one
 soapcpp2.h	Main header file
 soapcpp2.c	Main application
 symbol2.c	Symbol table handling and code generation module
@@ -15,6 +15,10 @@ LICENSING
 Please see LICENSE.txt in root directory of the package.
 
 BUILD NOTES
+
+To build soapcpp2 when autoconf/automake fail, use:
+
+	make -f MakefileManual
 
 QNX
 ===

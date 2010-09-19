@@ -318,7 +318,8 @@ again:
         vector<xs__schema*>::const_iterator j;
         if (!(*i)->targetNamespace)
         { (*i)->targetNamespace = targetNamespace;
-          cerr << "Warning: schema without namespace, assigning " << (targetNamespace?targetNamespace:"?") << endl;
+          if (!Wflag)
+	    cerr << "Warning: schema without namespace, assigning " << (targetNamespace?targetNamespace:"?") << endl;
         }
         for (j = types->xs__schema_.begin(); j != types->xs__schema_.end(); ++j)
         { if ((*j)->targetNamespace && !strcmp((*i)->targetNamespace, (*j)->targetNamespace))
@@ -485,7 +486,8 @@ int wsdl__port::traverse(wsdl__definitions& definitions)
     }
   }
   if (!bindingRef)
-    cerr << "Warning: no port '" << (name?name:"") << "' binding '" << (binding?binding:"") << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
+    if (!Wflag)
+      cerr << "Warning: no port '" << (name?name:"") << "' binding '" << (binding?binding:"") << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
   if (wsp__Policy_)
     wsp__Policy_->traverse(definitions);
   if (wsp__PolicyReference_)
@@ -539,7 +541,8 @@ int wsdl__binding::traverse(wsdl__definitions& definitions)
     }
   }
   if (!portTypeRef)
-    cerr << "Warning: no binding '" << (name?name:"") << "' portType '" << (type?type:"") << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
+    if (!Wflag)
+      cerr << "Warning: no binding '" << (name?name:"") << "' portType '" << (type?type:"") << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
   for (vector<wsdl__binding_operation>::iterator i = operation.begin(); i != operation.end(); ++i)
     (*i).traverse(definitions, portTypeRef);
   for (vector<wsp__Policy>::iterator p = wsp__Policy_.begin(); p != wsp__Policy_.end(); ++p)
@@ -584,7 +587,9 @@ int wsdl__binding_operation::traverse(wsdl__definitions& definitions, wsdl__port
     }
   }
   if (!operationRef)
-    cerr << "Warning: no matching portType operation '" << (name?name:"") << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
+  { if (!Wflag)
+      cerr << "Warning: no matching portType operation '" << (name?name:"") << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
+  }
   else
   { for (vector<wsdl__ext_fault>::iterator i = fault.begin(); i != fault.end(); ++i)
     { if ((*i).name)
@@ -608,7 +613,8 @@ int wsdl__binding_operation::traverse(wsdl__definitions& definitions, wsdl__port
         }
       }
       if (!(*i).messagePtr())
-        cerr << "Warning: no soap:fault message in WSDL definitions '" << (definitions.name?definitions.name:"") << "' operation '" << (name?name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
+        if (!Wflag)
+	  cerr << "Warning: no soap:fault message in WSDL definitions '" << (definitions.name?definitions.name:"") << "' operation '" << (name?name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
     }
   }
   if (wsp__Policy_)
@@ -743,7 +749,8 @@ int wsdl__input::traverse(wsdl__definitions& definitions)
     }
   }
   if (!messageRef)
-    cerr << "Warning: no input '" << (name?name:"") << "' message '" << (message?message:"") << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
+    if (!Wflag)
+      cerr << "Warning: no input '" << (name?name:"") << "' message '" << (message?message:"") << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
   if (wsp__Policy_)
     wsp__Policy_->traverse(definitions);
   if (wsp__PolicyReference_)
@@ -797,7 +804,8 @@ int wsdl__output::traverse(wsdl__definitions& definitions)
     }
   }
   if (!messageRef)
-    cerr << "Warning: no output '" << (name?name:"") << "' message '" << (message?message:"") << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
+    if (!Wflag)
+      cerr << "Warning: no output '" << (name?name:"") << "' message '" << (message?message:"") << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
   if (wsp__Policy_)
     wsp__Policy_->traverse(definitions);
   if (wsp__PolicyReference_)
@@ -851,7 +859,8 @@ int wsdl__fault::traverse(wsdl__definitions& definitions)
     }
   }
   if (!messageRef)
-    cerr << "Warning: no fault '" << (name?name:"") << "' message '" << (message?message:"") << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
+    if (!Wflag)
+      cerr << "Warning: no fault '" << (name?name:"") << "' message '" << (message?message:"") << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
   if (wsp__Policy_)
     wsp__Policy_->traverse(definitions);
   if (wsp__PolicyReference_)
@@ -933,16 +942,19 @@ int wsdl__part::traverse(wsdl__definitions& definitions)
     { if (is_builtin_qname(element))
         definitions.builtinElement(element);
       else
-        cerr << "Warning: no part '" << (name?name:"") << "' element '" << element << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
+        if (!Wflag)
+	  cerr << "Warning: no part '" << (name?name:"") << "' element '" << element << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
     }
     else if (type)
     { if (is_builtin_qname(type))
         definitions.builtinType(type);
       else
-        cerr << "Warning: no part '" << (name?name:"") << "' type '" << type << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
+        if (!Wflag)
+	  cerr << "Warning: no part '" << (name?name:"") << "' type '" << type << "' in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
     }
     else
-      cerr << "Warning: no part '" << (name?name:"") << "' element or type in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
+      if (!Wflag)
+        cerr << "Warning: no part '" << (name?name:"") << "' element or type in WSDL definitions '" << (definitions.name?definitions.name:"") << "' namespace " << (definitions.targetNamespace?definitions.targetNamespace:"?") << endl;
   }
   return SOAP_OK;
 }
@@ -1093,7 +1105,8 @@ int wsdl__types::traverse(wsdl__definitions& definitions)
           cerr << "Schema import namespace " << (*import).namespace_ << " refers to a known external Schema" << endl;
       }
       else
-        cerr << "Warning: schema import " << ((*import).schemaLocation ? (*import).schemaLocation : "") << " has no namespace" << endl;
+        if (!Wflag)
+	  cerr << "Warning: schema import " << ((*import).schemaLocation ? (*import).schemaLocation : "") << " has no namespace" << endl;
     }
   }
   // traverse the schemas
@@ -1234,10 +1247,11 @@ int warn_ignore(struct soap *soap, const char *tag)
 { // We don't warn if the omitted element was an annotation or a documentation in an unexpected place
   if (soap->mustUnderstand)
     fprintf(stderr, "Error: element '%s' at level %d must be understood\n", tag, soap->level);
-  if (soap_match_tag(soap, tag, "xs:annotation")
+  if (!Wflag
+   && soap_match_tag(soap, tag, "xs:annotation")
    && soap_match_tag(soap, tag, "xs:documentation")
    && soap_match_tag(soap, tag, "xs:appinfo"))
-    fprintf(stderr, "Warning: element '%s' at level %d was not recognized and will be ignored\n", tag, soap->level);
+    fprintf(stderr, "Warning: unexpected element '%s' at level %d is skipped (safe to ignore)\n", tag, soap->level);
   if (soap->body && !soap_string_in(soap, 0, -1, -1))
     return soap->error;
   return SOAP_OK;

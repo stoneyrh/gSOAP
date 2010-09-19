@@ -146,6 +146,7 @@ COMMAND LINE OPTIONS
 -f      generate flat C++ class hierarchy
 -g      generate global top-level element declarations
 -h      display help info
+-i      don't import (advanced option)
 -Ipath  use path to find files
 -j	don't generate SOAP_ENV__Header and SOAP_ENV__Detail definitions
 -k	don't generate SOAP_ENV__Header mustUnderstand qualifiers
@@ -164,6 +165,7 @@ COMMAND LINE OPTIONS
 -u      don't generate unions
 -v      verbose output
 -w      always wrap response parameters in a response struct (<=1.1.4 behavior)
+-W      suppress warnings
 -x      don't generate _XML any/anyAttribute extensibility elements
 -y      generate typedef synonyms for structs and enums
 -z1     compatibility with 2.7.6e: generate pointer-based arrays

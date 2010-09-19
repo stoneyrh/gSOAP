@@ -255,7 +255,7 @@ Grammar
   183     | '=' cexp
 
   184 tag: /* empty */
-  185    | '<' ID '>'
+  185    | TAG
 
   186 occurs: patt
   187       | patt cint
@@ -342,9 +342,9 @@ $end (0) 0
 '/' (47) 66 221
 ':' (58) 15 16 17 116 118 188 189 190 198
 ';' (59) 7 9 14 19
-'<' (60) 57 113 133 185 212
+'<' (60) 57 113 133 212
 '=' (61) 39 172 183
-'>' (62) 59 113 133 185 214
+'>' (62) 59 113 133 214
 '?' (63) 198
 '@' (64) 166
 '[' (91) 20 71 179 180
@@ -418,171 +418,172 @@ USHORT (316) 109
 UINT (317) 110
 ULONG (318) 111
 NONE (319)
-ID (320) 3 32 34 36 84 86 121 125 130 147 185 233
-LAB (321)
-TYPE (322) 35 74 75 122 126 131 132 133 146
-LNG (323) 172 193 194 195 234
-DBL (324) 236
-CHR (325) 237
-STR (326) 192 238
-RA (327) 49
-LA (328) 48
-OA (329) 47
-XA (330) 46
-AA (331) 45
-MA (332) 44
-DA (333) 43
-TA (334) 42
-NA (335) 41
-PA (336) 40
-OR (337) 50 201
-AN (338) 51 204
-NE (339) 56 211
-EQ (340) 55 210
-GE (341) 60 215
-LE (342) 58 213
-RS (343) 62 217
-LS (344) 61 216
-AR (345) 70
-PP (346) 68
-NN (347) 69
+ID (320) 3 32 34 36 84 86 121 125 130 147 233
+TAG (321) 185
+LAB (322)
+TYPE (323) 35 74 75 122 126 131 132 133 146
+LNG (324) 172 193 194 195 234
+DBL (325) 236
+CHR (326) 237
+STR (327) 192 238
+RA (328) 49
+LA (329) 48
+OA (330) 47
+XA (331) 46
+AA (332) 45
+MA (333) 44
+DA (334) 43
+TA (335) 42
+NA (336) 41
+PA (337) 40
+OR (338) 50 201
+AN (339) 51 204
+NE (340) 56 211
+EQ (341) 55 210
+GE (342) 60 215
+LE (343) 58 213
+RS (344) 62 217
+LS (345) 61 216
+AR (346) 70
+PP (347) 68
+NN (348) 69
 
 
 Nonterminals, with rules where they appear
 
-$accept (118)
+$accept (119)
     on left: 0
-prog (119)
+prog (120)
     on left: 1, on right: 0
-s1 (120)
+s1 (121)
     on left: 2, on right: 1
-exts (121)
+exts (122)
     on left: 3 4, on right: 1
-exts1 (122)
+exts1 (123)
     on left: 5 6, on right: 3 4 6
-ext (123)
+ext (124)
     on left: 7 8 9 10 11, on right: 6
-pragma (124)
+pragma (125)
     on left: 12, on right: 8
-decls (125)
+decls (126)
     on left: 13 14 15 16 17 18 19, on right: 14 15 16 17 18 114 115
     116 119 120 123 124
-t1 (126)
+t1 (127)
     on left: 20, on right: 10 18
-t2 (127)
+t2 (128)
     on left: 21, on right: 11 18
-t3 (128)
+t3 (129)
     on left: 22, on right: 15
-t4 (129)
+t4 (130)
     on left: 23, on right: 16
-t5 (130)
+t5 (131)
     on left: 24, on right: 17
-dclrs (131)
+dclrs (132)
     on left: 25 26 27 28 29 30 31, on right: 7 14 30 31 127 128 129
-dclr (132)
+dclr (133)
     on left: 32, on right: 26 30
-fdclr (133)
+fdclr (134)
     on left: 33, on right: 27 31
-id (134)
+id (135)
     on left: 34 35, on right: 113 124 129 138 139 140
-name (135)
+name (136)
     on left: 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53
     54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73,
     on right: 33
-constr (136)
+constr (137)
     on left: 74, on right: 28
-destr (137)
+destr (138)
     on left: 75, on right: 29
-func (138)
+func (139)
     on left: 76, on right: 27 28 29 31
-fname (139)
+fname (140)
     on left: 77, on right: 76
-fargso (140)
+fargso (141)
     on left: 78 79, on right: 76
-fargs (141)
+fargs (142)
     on left: 80 81, on right: 79 81
-farg (142)
+farg (143)
     on left: 82, on right: 80 81
-arg (143)
+arg (144)
     on left: 83 84, on right: 82
-texp (144)
+texp (145)
     on left: 85 86, on right: 73 133 230
-spec (145)
+spec (146)
     on left: 87 88 89, on right: 25 26 27 88 89
-tspec (146)
+tspec (147)
     on left: 90 91 92 93, on right: 82 85 86 92 93
-type (147)
+type (148)
     on left: 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108
     109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124
     125 126 127 128 129 130 131 132 133 134 135 136 137,
     on right: 89 91 93
-struct (148)
+struct (149)
     on left: 138, on right: 120
-class (149)
+class (150)
     on left: 139, on right: 115 116 117 118
-enum (150)
+enum (151)
     on left: 140, on right: 128
-tname (151)
+tname (152)
     on left: 141 142, on right: 113
-base (152)
+base (153)
     on left: 143 144 145 146 147, on right: 116 118 143 144 145
-s2 (153)
+s2 (154)
     on left: 148, on right: 114 115 116 119 120 127 128
-s3 (154)
+s3 (155)
     on left: 149, on right: 123 124
-s4 (155)
+s4 (156)
     on left: 150, on right: 129
-s5 (156)
+s5 (157)
     on left: 151 152, on right: 127 128 129
-s6 (157)
+s6 (158)
     on left: 153, on right: 76
-store (158)
+store (159)
     on left: 154 155 156 157 158 159 160 161 162 163 164 165 166 167
     168, on right: 88 90 92
-constobj (159)
+constobj (160)
     on left: 169 170, on right: 76
-abstract (160)
+abstract (161)
     on left: 171 172, on right: 76
-virtual (161)
+virtual (162)
     on left: 173 174, on right: 75
-ptrs (162)
+ptrs (163)
     on left: 175 176 177, on right: 32 33 82 85 86 176 177
-array (163)
+array (164)
     on left: 178 179 180, on right: 85 86 179 180 181
-arrayck (164)
+arrayck (165)
     on left: 181, on right: 32 82
-init (165)
+init (166)
     on left: 182 183, on right: 32 82
-tag (166)
+tag (167)
     on left: 184 185, on right: 32
-occurs (167)
+occurs (168)
     on left: 186 187 188 189 190, on right: 32 82
-patt (168)
+patt (169)
     on left: 191 192, on right: 186 187 188 189 190
-cint (169)
+cint (170)
     on left: 193 194 195, on right: 187 188 189 190
-expr (170)
+expr (171)
     on left: 196 197, on right: 196 200 232
-cexp (171)
+cexp (172)
     on left: 198 199, on right: 179 183 197 198
-qexp (172)
+qexp (173)
     on left: 200, on right: 198
-oexp (173)
+oexp (174)
     on left: 201 202, on right: 199 203
-obex (174)
+obex (175)
     on left: 203, on right: 198 201
-aexp (175)
+aexp (176)
     on left: 204 205, on right: 201 202 206
-abex (176)
+abex (177)
     on left: 206, on right: 204
-rexp (177)
+rexp (178)
     on left: 207 208 209 210 211 212 213 214 215 216 217 218 219 220
     221 222 223, on right: 204 205 207 208 209 210 211 212 213 214
     215 216 217 218 219 220 221 222
-lexp (178)
+lexp (179)
     on left: 224 225 226 227 228 229 230 231, on right: 223 224 225
     226 227 228 229
-pexp (179)
+pexp (180)
     on left: 232 233 234 235 236 237 238 239 240, on right: 231
 
 
@@ -3357,7 +3358,7 @@ state 204
 
    32 dclr: ptrs ID arrayck . tag occurs init
 
-    '<'  shift, and go to state 260
+    TAG  shift, and go to state 260
 
     $default  reduce using rule 184 (tag)
 
@@ -4080,21 +4081,21 @@ state 259
 
 state 260
 
-  185 tag: '<' . ID '>'
+  185 tag: TAG .
 
-    ID  shift, and go to state 309
+    $default  reduce using rule 185 (tag)
 
 
 state 261
 
    32 dclr: ptrs ID arrayck tag . occurs init
 
-    STR  shift, and go to state 310
+    STR  shift, and go to state 309
 
     $default  reduce using rule 191 (patt)
 
-    occurs  go to state 311
-    patt    go to state 312
+    occurs  go to state 310
+    patt    go to state 311
 
 
 state 262
@@ -4163,7 +4164,7 @@ state 263
     ';'       reduce using rule 87 (spec)
     '~'       reduce using rule 173 (virtual)
 
-    decls    go to state 313
+    decls    go to state 312
     t1       go to state 151
     dclrs    go to state 152
     constr   go to state 57
@@ -4188,7 +4189,7 @@ state 265
 
   128 type: enum '{' s2 dclrs s5 . '}'
 
-    '}'  shift, and go to state 314
+    '}'  shift, and go to state 313
 
 
 state 266
@@ -4251,7 +4252,7 @@ state 266
     ']'       reduce using rule 13 (decls)
     '~'       reduce using rule 173 (virtual)
 
-    decls    go to state 315
+    decls    go to state 314
     t1       go to state 151
     dclrs    go to state 152
     constr   go to state 57
@@ -4325,7 +4326,7 @@ state 267
     ']'       reduce using rule 13 (decls)
     '~'       reduce using rule 173 (virtual)
 
-    decls    go to state 316
+    decls    go to state 315
     t1       go to state 151
     dclrs    go to state 152
     constr   go to state 57
@@ -4399,7 +4400,7 @@ state 268
     ']'       reduce using rule 13 (decls)
     '~'       reduce using rule 173 (virtual)
 
-    decls    go to state 317
+    decls    go to state 316
     t1       go to state 151
     dclrs    go to state 152
     constr   go to state 57
@@ -4473,7 +4474,7 @@ state 269
     ']'       reduce using rule 13 (decls)
     '~'       reduce using rule 173 (virtual)
 
-    decls    go to state 318
+    decls    go to state 317
     t1       go to state 151
     dclrs    go to state 152
     constr   go to state 57
@@ -4504,7 +4505,7 @@ state 271
 
     $default  reduce using rule 151 (s5)
 
-    s5  go to state 319
+    s5  go to state 318
 
 
 state 272
@@ -4528,7 +4529,7 @@ state 274
     ID    shift, and go to state 85
     TYPE  shift, and go to state 86
 
-    id  go to state 320
+    id  go to state 319
 
 
 state 275
@@ -4542,11 +4543,11 @@ state 276
 
    76 func: fname '(' s6 fargso ')' . constobj abstract
 
-    CONST  shift, and go to state 321
+    CONST  shift, and go to state 320
 
     $default  reduce using rule 169 (constobj)
 
-    constobj  go to state 322
+    constobj  go to state 321
 
 
 state 277
@@ -4594,7 +4595,7 @@ state 277
     '@'             shift, and go to state 50
     '$'             shift, and go to state 51
 
-    fargs   go to state 323
+    fargs   go to state 322
     farg    go to state 231
     tspec   go to state 232
     type    go to state 124
@@ -4610,13 +4611,13 @@ state 278
   176 ptrs: ptrs . '*'
   177     | ptrs . '&'
 
-    ID   shift, and go to state 324
+    ID   shift, and go to state 323
     '&'  shift, and go to state 132
     '*'  shift, and go to state 133
 
     $default  reduce using rule 83 (arg)
 
-    arg  go to state 325
+    arg  go to state 324
 
 
 state 279
@@ -4664,7 +4665,7 @@ state 279
     '@'             shift, and go to state 50
     '$'             shift, and go to state 51
 
-    texp    go to state 326
+    texp    go to state 325
     tspec   go to state 123
     type    go to state 124
     struct  go to state 61
@@ -4727,8 +4728,8 @@ state 287
   196 expr: expr . ',' expr
   232 pexp: '(' expr . ')'
 
-    ','  shift, and go to state 327
-    ')'  shift, and go to state 328
+    ','  shift, and go to state 326
+    ')'  shift, and go to state 327
 
 
 state 288
@@ -4746,7 +4747,7 @@ state 289
 
     $default  reduce using rule 178 (array)
 
-    array  go to state 329
+    array  go to state 328
 
 
 state 290
@@ -4770,9 +4771,9 @@ state 290
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    expr  go to state 330
+    expr  go to state 329
     cexp  go to state 288
-    qexp  go to state 331
+    qexp  go to state 330
     oexp  go to state 253
     obex  go to state 254
     aexp  go to state 255
@@ -4803,7 +4804,7 @@ state 291
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    aexp  go to state 332
+    aexp  go to state 331
     abex  go to state 256
     rexp  go to state 257
     lexp  go to state 258
@@ -4831,7 +4832,7 @@ state 292
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 333
+    rexp  go to state 332
     lexp  go to state 258
     pexp  go to state 259
 
@@ -4857,7 +4858,7 @@ state 293
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 334
+    rexp  go to state 333
     lexp  go to state 258
     pexp  go to state 259
 
@@ -4883,7 +4884,7 @@ state 294
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 335
+    rexp  go to state 334
     lexp  go to state 258
     pexp  go to state 259
 
@@ -4909,7 +4910,7 @@ state 295
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 336
+    rexp  go to state 335
     lexp  go to state 258
     pexp  go to state 259
 
@@ -4935,7 +4936,7 @@ state 296
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 337
+    rexp  go to state 336
     lexp  go to state 258
     pexp  go to state 259
 
@@ -4961,7 +4962,7 @@ state 297
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 338
+    rexp  go to state 337
     lexp  go to state 258
     pexp  go to state 259
 
@@ -4987,7 +4988,7 @@ state 298
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 339
+    rexp  go to state 338
     lexp  go to state 258
     pexp  go to state 259
 
@@ -5013,7 +5014,7 @@ state 299
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 340
+    rexp  go to state 339
     lexp  go to state 258
     pexp  go to state 259
 
@@ -5039,7 +5040,7 @@ state 300
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 341
+    rexp  go to state 340
     lexp  go to state 258
     pexp  go to state 259
 
@@ -5065,7 +5066,7 @@ state 301
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 342
+    rexp  go to state 341
     lexp  go to state 258
     pexp  go to state 259
 
@@ -5091,7 +5092,7 @@ state 302
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 343
+    rexp  go to state 342
     lexp  go to state 258
     pexp  go to state 259
 
@@ -5117,7 +5118,7 @@ state 303
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 344
+    rexp  go to state 343
     lexp  go to state 258
     pexp  go to state 259
 
@@ -5143,7 +5144,7 @@ state 304
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 345
+    rexp  go to state 344
     lexp  go to state 258
     pexp  go to state 259
 
@@ -5169,7 +5170,7 @@ state 305
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 346
+    rexp  go to state 345
     lexp  go to state 258
     pexp  go to state 259
 
@@ -5195,7 +5196,7 @@ state 306
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 347
+    rexp  go to state 346
     lexp  go to state 258
     pexp  go to state 259
 
@@ -5221,7 +5222,7 @@ state 307
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 348
+    rexp  go to state 347
     lexp  go to state 258
     pexp  go to state 259
 
@@ -5247,37 +5248,30 @@ state 308
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    rexp  go to state 349
+    rexp  go to state 348
     lexp  go to state 258
     pexp  go to state 259
 
 
 state 309
 
-  185 tag: '<' ID . '>'
-
-    '>'  shift, and go to state 350
-
-
-state 310
-
   192 patt: STR .
 
     $default  reduce using rule 192 (patt)
 
 
-state 311
+state 310
 
    32 dclr: ptrs ID arrayck tag occurs . init
 
-    '='  shift, and go to state 351
+    '='  shift, and go to state 349
 
     $default  reduce using rule 182 (init)
 
-    init  go to state 352
+    init  go to state 350
 
 
-state 312
+state 311
 
   186 occurs: patt .
   187       | patt . cint
@@ -5285,105 +5279,105 @@ state 312
   189       | patt . cint ':' cint
   190       | patt . ':' cint
 
-    LNG  shift, and go to state 353
-    ':'  shift, and go to state 354
-    '+'  shift, and go to state 355
-    '-'  shift, and go to state 356
+    LNG  shift, and go to state 351
+    ':'  shift, and go to state 352
+    '+'  shift, and go to state 353
+    '-'  shift, and go to state 354
 
     $default  reduce using rule 186 (occurs)
 
-    cint  go to state 357
+    cint  go to state 355
 
 
-state 313
+state 312
 
   116 type: class ':' base '{' s2 decls . '}'
 
-    '}'  shift, and go to state 358
+    '}'  shift, and go to state 356
 
 
-state 314
+state 313
 
   128 type: enum '{' s2 dclrs s5 '}' .
 
     $default  reduce using rule 128 (type)
 
 
-state 315
+state 314
 
    15 decls: PRIVATE ':' t3 decls .
 
     $default  reduce using rule 15 (decls)
 
 
-state 316
+state 315
 
    16 decls: PROTECTED ':' t4 decls .
 
     $default  reduce using rule 16 (decls)
 
 
-state 317
+state 316
 
    17 decls: PUBLIC ':' t5 decls .
 
     $default  reduce using rule 17 (decls)
 
 
-state 318
+state 317
 
    18 decls: t1 decls t2 decls .
 
     $default  reduce using rule 18 (decls)
 
 
-state 319
+state 318
 
   129 type: ENUM '*' id '{' s4 dclrs s5 . '}'
 
-    '}'  shift, and go to state 359
+    '}'  shift, and go to state 357
 
 
-state 320
+state 319
 
   113 type: TEMPLATE '<' tname id '>' CLASS id .
 
     $default  reduce using rule 113 (type)
 
 
-state 321
+state 320
 
   170 constobj: CONST .
 
     $default  reduce using rule 170 (constobj)
 
 
-state 322
+state 321
 
    76 func: fname '(' s6 fargso ')' constobj . abstract
 
-    '='  shift, and go to state 360
+    '='  shift, and go to state 358
 
     $default  reduce using rule 171 (abstract)
 
-    abstract  go to state 361
+    abstract  go to state 359
 
 
-state 323
+state 322
 
    81 fargs: farg ',' fargs .
 
     $default  reduce using rule 81 (fargs)
 
 
-state 324
+state 323
 
    84 arg: ID .
 
     $default  reduce using rule 84 (arg)
 
 
-state 325
+state 324
 
    82 farg: tspec ptrs arg . arrayck occurs init
 
@@ -5392,17 +5386,17 @@ state 325
     $default  reduce using rule 178 (array)
 
     array    go to state 203
-    arrayck  go to state 362
+    arrayck  go to state 360
 
 
-state 326
+state 325
 
   230 lexp: SIZEOF '(' texp . ')'
 
-    ')'  shift, and go to state 363
+    ')'  shift, and go to state 361
 
 
-state 327
+state 326
 
   196 expr: expr ',' . expr
 
@@ -5423,7 +5417,7 @@ state 327
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    expr  go to state 364
+    expr  go to state 362
     cexp  go to state 288
     oexp  go to state 253
     obex  go to state 254
@@ -5434,38 +5428,38 @@ state 327
     pexp  go to state 259
 
 
-state 328
+state 327
 
   232 pexp: '(' expr ')' .
 
     $default  reduce using rule 232 (pexp)
 
 
-state 329
+state 328
 
   179 array: '[' cexp ']' array .
 
     $default  reduce using rule 179 (array)
 
 
-state 330
+state 329
 
   196 expr: expr . ',' expr
   200 qexp: expr .
 
-    ','  shift, and go to state 327
+    ','  shift, and go to state 326
 
     $default  reduce using rule 200 (qexp)
 
 
-state 331
+state 330
 
   198 cexp: obex '?' qexp . ':' cexp
 
-    ':'  shift, and go to state 365
+    ':'  shift, and go to state 363
 
 
-state 332
+state 331
 
   201 oexp: obex OR aexp .
   206 abex: aexp .
@@ -5474,7 +5468,7 @@ state 332
     $default  reduce using rule 201 (oexp)
 
 
-state 333
+state 332
 
   204 aexp: abex AN rexp .
   207 rexp: rexp . '|' rexp
@@ -5514,7 +5508,7 @@ state 333
     $default  reduce using rule 204 (aexp)
 
 
-state 334
+state 333
 
   207 rexp: rexp . '|' rexp
   207     | rexp '|' rexp .
@@ -5553,7 +5547,7 @@ state 334
     $default  reduce using rule 207 (rexp)
 
 
-state 335
+state 334
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5591,7 +5585,7 @@ state 335
     $default  reduce using rule 208 (rexp)
 
 
-state 336
+state 335
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5628,7 +5622,7 @@ state 336
     $default  reduce using rule 209 (rexp)
 
 
-state 337
+state 336
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5663,7 +5657,7 @@ state 337
     $default  reduce using rule 211 (rexp)
 
 
-state 338
+state 337
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5698,7 +5692,7 @@ state 338
     $default  reduce using rule 210 (rexp)
 
 
-state 339
+state 338
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5729,7 +5723,7 @@ state 339
     $default  reduce using rule 212 (rexp)
 
 
-state 340
+state 339
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5760,7 +5754,7 @@ state 340
     $default  reduce using rule 214 (rexp)
 
 
-state 341
+state 340
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5791,7 +5785,7 @@ state 341
     $default  reduce using rule 215 (rexp)
 
 
-state 342
+state 341
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5822,7 +5816,7 @@ state 342
     $default  reduce using rule 213 (rexp)
 
 
-state 343
+state 342
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5851,7 +5845,7 @@ state 343
     $default  reduce using rule 217 (rexp)
 
 
-state 344
+state 343
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5880,7 +5874,7 @@ state 344
     $default  reduce using rule 216 (rexp)
 
 
-state 345
+state 344
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5907,7 +5901,7 @@ state 345
     $default  reduce using rule 218 (rexp)
 
 
-state 346
+state 345
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5934,7 +5928,7 @@ state 346
     $default  reduce using rule 219 (rexp)
 
 
-state 347
+state 346
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5957,7 +5951,7 @@ state 347
     $default  reduce using rule 220 (rexp)
 
 
-state 348
+state 347
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -5980,7 +5974,7 @@ state 348
     $default  reduce using rule 221 (rexp)
 
 
-state 349
+state 348
 
   207 rexp: rexp . '|' rexp
   208     | rexp . '^' rexp
@@ -6003,14 +5997,7 @@ state 349
     $default  reduce using rule 222 (rexp)
 
 
-state 350
-
-  185 tag: '<' ID '>' .
-
-    $default  reduce using rule 185 (tag)
-
-
-state 351
+state 349
 
   183 init: '=' . cexp
 
@@ -6031,7 +6018,7 @@ state 351
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    cexp  go to state 366
+    cexp  go to state 364
     oexp  go to state 253
     obex  go to state 254
     aexp  go to state 255
@@ -6041,104 +6028,104 @@ state 351
     pexp  go to state 259
 
 
-state 352
+state 350
 
    32 dclr: ptrs ID arrayck tag occurs init .
 
     $default  reduce using rule 32 (dclr)
 
 
-state 353
+state 351
 
   193 cint: LNG .
 
     $default  reduce using rule 193 (cint)
 
 
-state 354
+state 352
 
   190 occurs: patt ':' . cint
 
-    LNG  shift, and go to state 353
-    '+'  shift, and go to state 355
-    '-'  shift, and go to state 356
+    LNG  shift, and go to state 351
+    '+'  shift, and go to state 353
+    '-'  shift, and go to state 354
 
-    cint  go to state 367
+    cint  go to state 365
 
 
-state 355
+state 353
 
   194 cint: '+' . LNG
 
-    LNG  shift, and go to state 368
+    LNG  shift, and go to state 366
 
 
-state 356
+state 354
 
   195 cint: '-' . LNG
 
-    LNG  shift, and go to state 369
+    LNG  shift, and go to state 367
 
 
-state 357
+state 355
 
   187 occurs: patt cint .
   188       | patt cint . ':'
   189       | patt cint . ':' cint
 
-    ':'  shift, and go to state 370
+    ':'  shift, and go to state 368
 
     $default  reduce using rule 187 (occurs)
 
 
-state 358
+state 356
 
   116 type: class ':' base '{' s2 decls '}' .
 
     $default  reduce using rule 116 (type)
 
 
-state 359
+state 357
 
   129 type: ENUM '*' id '{' s4 dclrs s5 '}' .
 
     $default  reduce using rule 129 (type)
 
 
-state 360
+state 358
 
   172 abstract: '=' . LNG
 
-    LNG  shift, and go to state 371
+    LNG  shift, and go to state 369
 
 
-state 361
+state 359
 
    76 func: fname '(' s6 fargso ')' constobj abstract .
 
     $default  reduce using rule 76 (func)
 
 
-state 362
+state 360
 
    82 farg: tspec ptrs arg arrayck . occurs init
 
-    STR  shift, and go to state 310
+    STR  shift, and go to state 309
 
     $default  reduce using rule 191 (patt)
 
-    occurs  go to state 372
-    patt    go to state 312
+    occurs  go to state 370
+    patt    go to state 311
 
 
-state 363
+state 361
 
   230 lexp: SIZEOF '(' texp ')' .
 
     $default  reduce using rule 230 (lexp)
 
 
-state 364
+state 362
 
   196 expr: expr . ',' expr
   196     | expr ',' expr .
@@ -6146,7 +6133,7 @@ state 364
     $default  reduce using rule 196 (expr)
 
 
-state 365
+state 363
 
   198 cexp: obex '?' qexp ':' . cexp
 
@@ -6167,7 +6154,7 @@ state 365
     '~'     shift, and go to state 250
     '('     shift, and go to state 251
 
-    cexp  go to state 373
+    cexp  go to state 371
     oexp  go to state 253
     obex  go to state 254
     aexp  go to state 255
@@ -6177,81 +6164,81 @@ state 365
     pexp  go to state 259
 
 
-state 366
+state 364
 
   183 init: '=' cexp .
 
     $default  reduce using rule 183 (init)
 
 
-state 367
+state 365
 
   190 occurs: patt ':' cint .
 
     $default  reduce using rule 190 (occurs)
 
 
-state 368
+state 366
 
   194 cint: '+' LNG .
 
     $default  reduce using rule 194 (cint)
 
 
-state 369
+state 367
 
   195 cint: '-' LNG .
 
     $default  reduce using rule 195 (cint)
 
 
-state 370
+state 368
 
   188 occurs: patt cint ':' .
   189       | patt cint ':' . cint
 
-    LNG  shift, and go to state 353
-    '+'  shift, and go to state 355
-    '-'  shift, and go to state 356
+    LNG  shift, and go to state 351
+    '+'  shift, and go to state 353
+    '-'  shift, and go to state 354
 
     $default  reduce using rule 188 (occurs)
 
-    cint  go to state 374
+    cint  go to state 372
 
 
-state 371
+state 369
 
   172 abstract: '=' LNG .
 
     $default  reduce using rule 172 (abstract)
 
 
-state 372
+state 370
 
    82 farg: tspec ptrs arg arrayck occurs . init
 
-    '='  shift, and go to state 351
+    '='  shift, and go to state 349
 
     $default  reduce using rule 182 (init)
 
-    init  go to state 375
+    init  go to state 373
 
 
-state 373
+state 371
 
   198 cexp: obex '?' qexp ':' cexp .
 
     $default  reduce using rule 198 (cexp)
 
 
-state 374
+state 372
 
   189 occurs: patt cint ':' cint .
 
     $default  reduce using rule 189 (occurs)
 
 
-state 375
+state 373
 
    82 farg: tspec ptrs arg arrayck occurs init .
 

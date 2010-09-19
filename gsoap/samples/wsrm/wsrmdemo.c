@@ -331,7 +331,7 @@ int main(int argc, char **argv)
       soap->userid = userid; soap->passwd = passwd;
       /* just send the message without retry loop */
       /* UDP may timeout when no UDP response message is sent by the server */
-      if (soap_call_ns__wsrmdemo(soap, soap_wsrm_to(seq), RequestAction, "Second Message", &res))
+      if (soap_call_ns__wsrmdemo(soap, soap_wsrm_to(seq), RequestAction, (char*)"Second Message", &res))
       { if (soap->error == 202)
           printf("\n**** Request was accepted\n");
         else if (soap->error == SOAP_NO_TAG) /* empty <Body> */
@@ -367,7 +367,7 @@ int main(int argc, char **argv)
       soap->userid = userid; soap->passwd = passwd;
       /* just send the message without retry loop */
       /* UDP may timeout when no UDP response message is sent by the server */
-      if (soap_call_ns__wsrmdemo(soap, soap_wsrm_to(seq), RequestAction, "Third Message", &res))
+      if (soap_call_ns__wsrmdemo(soap, soap_wsrm_to(seq), RequestAction, (char*)"Third Message", &res))
       { if (soap->error == 202)
           printf("\n**** Request was accepted\n");
         else if (soap->error == SOAP_NO_TAG) /* empty <Body> */
@@ -445,12 +445,12 @@ void *process_request(void *soap)
   }
 #endif
   if (soap_serve((struct soap*)soap))
-  { soap_print_fault(soap, stderr);
-    soap_print_fault_location(soap, stderr);
+  { soap_print_fault((struct soap*)soap, stderr);
+    soap_print_fault_location((struct soap*)soap, stderr);
   }
   else
     printf("\n**** Request served by thread\n");
-  soap_wsrm_dump(soap, stdout);
+  soap_wsrm_dump((struct soap*)soap, stdout);
   soap_destroy((struct soap*)soap);
   soap_end((struct soap*)soap);
   soap_free((struct soap*)soap);
