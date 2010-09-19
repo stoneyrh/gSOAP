@@ -155,7 +155,7 @@ Pragma	**pp;
 /* */
 %token	NONE
 /* identifiers (TYPE = typedef identifier) */
-%token	<sym> ID LAB TYPE
+%token	<sym> ID TAG LAB TYPE
 /* constants */
 %token	<i> LNG
 %token	<r> DBL
@@ -1371,7 +1371,7 @@ init	: /* empty */   { $$.hasval = False; }
 			}
 	;
 tag	: /* empty */	{ }
-	| '<' ID '>'	{ /* empty for now */ }
+	| TAG		{ /* empty for now */ }
 	;
 occurs	: patt
 			{ $$.minOccurs = -1;

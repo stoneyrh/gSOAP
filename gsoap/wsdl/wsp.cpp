@@ -85,13 +85,15 @@ void wsp__Content::generate(Types& types, int indent) const
   if (!All.empty())
   { fprintf(stream, "%s- All of the following:\n", tabs);
     for (vector<wsp__Content*>::const_iterator p = All.begin(); p != All.end(); ++p)
-      (*p)->generate(types, indent + 1);
+      if (*p)
+        (*p)->generate(types, indent + 1);
   }
   // WS-Policy ExactlyOne
   if (!ExactlyOne.empty())
   { fprintf(stream, "%s- Exactly one of the following:\n", tabs);
     for (vector<wsp__Content*>::const_iterator p = ExactlyOne.begin(); p != ExactlyOne.end(); ++p)
-      (*p)->generate(types, indent + 1);
+      if (*p)
+        (*p)->generate(types, indent + 1);
   }
   // WS-SecurityPolicy Parts (TODO: need vectors of these)
   for (vector<sp__Parts>::const_iterator sp = sp__SignedParts.begin(); sp != sp__SignedParts.end(); ++sp)
@@ -386,7 +388,7 @@ void wsp__Content::generate(Types& types, int indent) const
   if (sp__ProtectTokens)
     fprintf(stream, "%s- WS-Security Token Protection%s required\n", tabs, sp__ProtectTokens->Optional ? " (optional)" : sp__ProtectTokens->Ignorable ? " (ignorable)" : "");
   if (sp__OnlySignEntireHeadersAndBody)
-  { fprintf(stream, "%s- WS-Security Sign Entire Headers and Body%s:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_wsse_set_wsu_id(soap, \"<ns:tagname1> <ns:tagname2> ...\"); // list each ns:tagname used in SOAP Header\n\tsoap_wsse_sign_body(soap, <algorithm>, <key>, <keylen>);\n\t@endcode", tabs, sp__OnlySignEntireHeadersAndBody->Optional ? " (optional)" : sp__OnlySignEntireHeadersAndBody->Ignorable ? " (ignorable)" : "");
+  { fprintf(stream, "%s- WS-Security Sign Entire Headers and Body%s:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_wsse_set_wsu_id(soap, \"<ns:tagname1> <ns:tagname2> ...\"); // list each ns:tagname used in SOAP Header\n\tsoap_wsse_sign_body(soap, <algorithm>, <key>, <keylen>);\n\t@endcode\n", tabs, sp__OnlySignEntireHeadersAndBody->Optional ? " (optional)" : sp__OnlySignEntireHeadersAndBody->Ignorable ? " (ignorable)" : "");
   }
   if (sp__Strict)
     fprintf(stream, "%s- WS-Security headers 'declare before use' required (gSOAP default)\n", tabs);

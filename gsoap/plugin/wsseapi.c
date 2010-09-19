@@ -1550,14 +1550,11 @@ soap_wsse_add_SignedInfo_SignatureMethod(struct soap *soap, const char *method, 
 { ds__SignedInfoType *signedInfo = soap_wsse_add_SignedInfo(soap);
   DBGFUN2("soap_wsse_add_SignedInfo_SignatureMethod", "method=%s", method?method:"", "canonical=%d", canonical);
   /* if signed in exc-c14n form, populate CanonicalizationMethod element */
+  signedInfo->CanonicalizationMethod = (ds__CanonicalizationMethodType*)soap_malloc(soap, sizeof(ds__CanonicalizationMethodType));
+  soap_default_ds__CanonicalizationMethodType(soap, signedInfo->CanonicalizationMethod);
   if (canonical)
-  { signedInfo->CanonicalizationMethod = (ds__CanonicalizationMethodType*)soap_malloc(soap, sizeof(ds__CanonicalizationMethodType));
-    soap_default_ds__CanonicalizationMethodType(soap, signedInfo->CanonicalizationMethod);
-    signedInfo->CanonicalizationMethod->Algorithm = (char*)c14n_URI;
-    /* TODO: check c14n:InclusiveNamespaces/PrefixList requirements. It seems
-     * that the WS-Security spec is at odds with the EXC C14N spec on this
-     * issue?
-     *
+  { signedInfo->CanonicalizationMethod->Algorithm = (char*)c14n_URI;
+    /* 
     signedInfo->CanonicalizationMethod->c14n__InclusiveNamespaces = (_c14n__InclusiveNamespaces*)soap_malloc(soap, sizeof(_c14n__InclusiveNamespaces));
     soap_default__c14n__InclusiveNamespaces(soap, signedInfo->CanonicalizationMethod->c14n__InclusiveNamespaces);
     signedInfo->CanonicalizationMethod->c14n__InclusiveNamespaces->PrefixList = "SOAP-ENV wsse";

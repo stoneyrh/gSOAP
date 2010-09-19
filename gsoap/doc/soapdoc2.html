@@ -16,13 +16,13 @@
 
 
 
-<title> gSOAP 2.7.17 User Guide</title>
+<title> gSOAP 2.8.0 User Guide</title>
     
-<h1 align="center">gSOAP 2.7.17 User Guide </h1>
+<h1 align="center">gSOAP 2.8.0 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">May  9, 2010
+<h3 align="center">Sep 18, 2010
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -109,7 +109,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc7.3"
 >7.3&nbsp; <font color="#0000FF">Asynchronous One-Way Message Passing</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc7.4"
->7.4&nbsp; <font color="#0000FF">Synchronous One-Way Message Passing over HTTP</font></a><br />
+>7.4&nbsp; <font color="#0000FF">Implementing Synchronous One-Way Message Passing over HTTP</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc7.5"
 >7.5&nbsp; <font color="#0000FF">How to Use the SOAP Serializers and Deserializers to Save and Load Application Data using XML Data Bindings</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc7.5.1"
@@ -397,7 +397,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.21"
 >19.21&nbsp; <font color="#0000FF">SSL Authentication Callback</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.22"
->19.22&nbsp; <font color="#0000FF">SSL Certificates</font></a><br />
+>19.22&nbsp; <font color="#0000FF">SSL Certificates and Key Files</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.23"
 >19.23&nbsp; <font color="#0000FF">SSL Hardware Acceleration</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.24"
@@ -3575,14 +3575,24 @@ main() <br />
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc7.4">
-7.4</a>&nbsp;&nbsp;<font color="#0000FF">Synchronous One-Way Message Passing over HTTP</font></h3><a name="sec:oneway2">
+7.4</a>&nbsp;&nbsp;<font color="#0000FF">Implementing Synchronous One-Way Message Passing over HTTP</font></h3><a name="sec:oneway2">
 </a>
 
 <div class="p"><!----></div>
-One-way SOAP message passing over HTTP as defined by the SOAP specification and Basic Profile 1.0 is synchrounous, meaning that the server must respond with an HTTP OK header and an empty body. To implement synchrounous one-way messaging, the same setup for asynchrounous one-way messaing discussed in Section&nbsp;<a href="#sec:oneway1">7.3</a> is used, but with one simple addition at the client and server side.
+One-way SOAP message passing over HTTP as defined by the SOAP specification and
+Basic Profile 1.0 is synchrounous, meaning that the server must respond with an
+HTTP OK header (or HTTP 202 Accepted) and an empty body. To implement
+synchrounous one-way messaging, the same setup for asynchrounous one-way
+messaing discussed in Section&nbsp;<a href="#sec:oneway1">7.3</a> is used, but with one simple
+addition at the client and server side for HTTP transfer.
 
 <div class="p"><!----></div>
-At the server side, we need to return an empty HTTP OK response. This is accomplished as follows. For each one-way operation implemented in C/C++, we replace the <i><b>return</b>&nbsp;SOAP_OK</i> with:
+At the server side, we have to return an empty HTTP OK response. Normally with
+one-way messaging the gSOAP engine closes the socket when the service operation
+is finished, which is not desirable for synchronous one-way message exchanges
+over HTTP: an HTTP response should be send. This is accomplished as follows.
+For each one-way operation implemented in C/C++, we
+replace the <i><b>return</b>&nbsp;SOAP_OK</i> with:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>int</b>&nbsp;ns__event(<b>struct</b>&nbsp;soap *soap, <b>int</b>&nbsp;eventNo) <br />
 { <br />
@@ -4690,6 +4700,7 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td><i>-f</i>      </td><td>generate flat C++ class hierarchy for schema extensions </td></tr>
 <tr><td><i>-g</i>	</td><td>generate global top-level element declarations </td></tr>
 <tr><td><i>-h</i>      </td><td>print help information </td></tr>
+<tr><td><i>-i</i>      </td><td>don't import </td></tr>
 <tr><td><i>-I path</i>	</td><td>use path to locate source files for <i>#import</i> </td></tr>
 <tr><td><i>-j</i>	</td><td>don't generate <i>SOAP_ENV__Header</i> and <i>SOAP_ENV__Detail</i> definitions </td></tr>
 <tr><td><i>-k</i>	</td><td>don't generate <i>SOAP_ENV__Header</i> <i>mustUnderstand</i> qualifiers </td></tr>
@@ -4708,6 +4719,7 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td><i>-u</i>	</td><td>don't generate unions </td></tr>
 <tr><td><i>-v</i>      </td><td>verbose output </td></tr>
 <tr><td><i>-w</i>      </td><td>always wrap response parameters in a response struct </td></tr>
+<tr><td><i>-W</i>	</td><td>suppress warnings </td></tr>
 <tr><td><i>-x</i>	</td><td>don't generate <i>_XML any/anyAttribute</i> extensibility elements </td></tr>
 <tr><td><i>-y</i>	</td><td>generate typedef synonyms for structs and enums </td></tr>
 <tr><td><i>-z1</i>     </td><td>compatibility with 2.7.6e: generate pointer-based arrays</td></tr>
@@ -5085,7 +5097,8 @@ The following example header file refers to <i>ostream</i> by including <i> &lt;
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 #include  &lt; ostream &gt;  <br />
 #define WITH_COOKIES // use HTTP cookie support (you must compile stdsoap2.cpp with -DWITH_COOKIES) <br />
-#define WITH_OPENSSL // enable HTTPS (SSL) support (you must compile stdsoap2.cpp with -DWITH_OPENSSL) <br />
+#define WITH_OPENSSL // enable HTTPS/SSL support (you must compile stdsoap2.cpp with -DWITH_OPENSSL) <br />
+#define WITH_GNUTLS // enable HTTPS/SSL support (you must compile stdsoap2.cpp with -DWITH_GNUTLS) <br />
 #define SOAP_DEFAULT_float FLT_NAN // use NaN instead of 0.0 <br />
 <b>extern</b>&nbsp;<b>class</b>&nbsp;ostream; // ostream can't be (de)serialized, but need to be declared to make it visible to gSOAP <br />
 <b>class</b>&nbsp;ns__myClass <br />
@@ -5098,7 +5111,7 @@ This example also uses <i>#define</i> directives for various settings in the tar
 
 <div class="p"><!----></div>
 <font color="#FF0000"><b>Caution</b></font>: Note that the use of <i>#define</i> in the header file does not automatically result in compiling
-<i>stdsoap2.cpp</i> with these directives. You MUST use the <i>-DWITH_COOKIES</i> and <i>-DWITH_OPENSSL</i> options when
+<i>stdsoap2.cpp</i> with these directives. You MUST use the <i>-DWITH_COOKIES</i> and <i>-DWITH_OPENSSL</i> (or <i>-DWITH_GNUTLS</i> options when
 compiling <i>stdsoap2.cpp</i> before linking the object file with your codes. As an alternative, you can use <i>#define
 WITH_SOAPDEFS_H</i> and put the <i>#define</i> directives in the <i>soapdefs.h</i> file.
 
@@ -5269,7 +5282,10 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td><i>WITH_SOAPDEFS_H</i>	</td><td>includes the <i>soapdefs.h</i> file for custom settings, see Section&nbsp;<a href="#sec:soapdefs">9.3</a> </td></tr>
 <tr><td><i>WITH_COOKIES</i>	</td><td>enables HTTP cookies, see Sections&nbsp;<a href="#sec:clientcookie">19.26</a>&nbsp;<a href="#sec:servercookie">19.27</a> </td></tr>
 <tr><td><i>WITH_OPENSSL</i>	</td><td>enables OpenSSL, see Sections&nbsp;<a href="#sec:clientopenssl">19.20</a>&nbsp;<a href="#sec:serveropenssl">19.19</a> </td></tr>
-<tr><td><i>WITH_IPV6</i>	</td><td>enables IPv6 support (you MUST compile all your sources with this macro set)</td></tr>
+<tr><td><i>WITH_GNUTLS</i>	</td><td>enables GNUTLS, see Sections&nbsp;<a href="#sec:clientopenssl">19.20</a>&nbsp;<a href="#sec:serveropenssl">19.19</a> </td></tr>
+<tr><td><i>WITH_IPV6</i>	</td><td>enables IPv6 support (you MUST compile all sources with this macro set)</td></tr>
+<tr><td><i>WITH_IPV6_V6ONLY</i></td><td>sets IPv6-only server option (compile all sources with this macro set)</td></tr>
+<tr><td><i>WITH_NO_IPV6_V6ONLY</i></td><td>resets IPv6-only server option (compile all sources with this macro set)</td></tr>
 <tr><td><i>WITH_TCPFIN</i>	</td><td>use TCP FIN after sends when socket is ready to close </td></tr>
 <tr><td><i>WITH_FASTCGI</i>	</td><td>enables FastCGI, see Sections&nbsp;<a href="#sec:fastcgi">19.29</a> </td></tr>
 <tr><td><i>WITH_GZIP</i>	</td><td>enables gzip and deflate compression, see Section&nbsp;<a href="#sec:compression">19.25</a> </td></tr>
@@ -5293,8 +5309,33 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td><i>WITH_CASEINSENSITIVETAGS</i>	</td><td>enable case insensitive XML parsing </td></tr></table>
 
 </td></tr></table><br></span>
-<font color="#FF0000"><b>Caution</b></font>: it is important that the macros MUST be consistently defined to
-compile the sources, such as <i>stdsoap2.cpp</i>, <i>soapC.cpp</i>,
+Other compile-time flags:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+
+<table>
+<tr><td><font color="#FF0000"><b>Macro</b></font> </td><td><font color="#FF0000"><b>Description</b></font> </td></tr>
+<tr><td>SOCKET_CLOSE_ON_EXIT </td><td>prevents a server port from staying in listening mode after exit </td></tr>
+<tr><td></td><td>by internally setting <i>fcntl(sock, F_SETFD, FD_CLOEXEC)</i> </td></tr></table>
+
+</td></tr></table><br></span>
+
+<div class="p"><!----></div>
+Compile-time flags to change the default engine settings:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+
+<table>
+<tr><td><font color="#FF0000"><b>Macro</b></font> </td><td><font color="#FF0000"><b>Description</b></font> </td></tr>
+<tr><td>SOAP_BUFLEN </td><td>the length of the internal message buffer (affects socket comms) </td></tr>
+<tr><td>SOAP_TAGLEN </td><td>maximum length of XML tags and URL domain names (buffering) </td></tr>
+<tr><td>SOAP_SSL_RSA_BITS </td><td>the length of the RSA key (2048 by default) </td></tr>
+<tr><td>SOAP_UNKNOWN_CHAR </td><td>an 8 bit code that represents a character that could not be converted </td></tr>
+<tr><td></td><td>to an ASCII <i><b>char</b></i> (e.g.&nbsp;from Unicode, applicable when SOAP_C_UTFSTRING is off) </td></tr></table>
+
+</td></tr></table><br></span>
+
+<div class="p"><!----></div>
+<font color="#FF0000"><b>Caution</b></font>: it is important that all of these macros MUST be consistently defined to
+compile all sources, such as <i>stdsoap2.cpp</i>, <i>soapC.cpp</i>,
 <i>soapClient.cpp</i>, <i>soapServer.cpp</i>, and all application sources that
 include <i>stdsoap2.h</i> or <i>soapH.h</i>. If the macros are not consistently
 used, the application will crash due to a mismatches in the declaration and
@@ -13054,14 +13095,14 @@ Note that multiple socket options can be explicitly set with <i>setsockopt</i> a
 <div class="p"><!----></div>
 When a Web Service is installed as CGI, it uses standard I/O that is encrypted/decrypted by the Web server that runs the CGI
 application.
-Therefore, HTTPS/SSL support must be configured for the Web server (not CGI-based Web Service application itself).
+HTTPS/SSL support must be configured for the Web server (not CGI-based Web Service application itself).
 
 <div class="p"><!----></div>
-To enable OpenSSL, first install OpenSSL and use option <i>-DWITH_OPENSSL</i> to compile the sources with your C or C++ compiler, for example:
+To enable SSL for stand-alone gSOAP servers, first install OpenSSL and use option <i>-DWITH_OPENSSL</i> to compile the sources with your C or C++ compiler (or use <i>-DWITH_GNUTLS</i> if you prefer GNUTLS), for example:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 <i> &gt;  c++ -DWITH_OPENSSL -o myprog myprog.cpp stdsoap2.cpp soapC.cpp soapServer.cpp -lssl -lcrypto</i>
 </td></tr></table><br></span>
-SSL support for stand-alone gSOAP Web services is enabled by calling <i>soap_ssl_accept</i> after <i>soap_accept</i>.
+SSL support for stand-alone gSOAP Web services is enabled by calling <i>soap_ssl_accept</i> to perform the SSL/TLS handshake after <i>soap_accept</i>.
 In addition, a key file, a CA file (or path to certificates), DH file (if RSA is not used), and password need to be supplied. Instructions on how to do this can be found in the
 OpenSSL documentation <i>http://www.openssl.org</i>. See also Section&nbsp;<a href="#sec:ssl">19.22</a>.
 
@@ -13075,7 +13116,7 @@ multi-threaded stand-alone SOAP Web Service:
 &nbsp;&nbsp;&nbsp;pthread_t tid; <br />
 &nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;soap soap, *tsoap; <br />
 &nbsp;&nbsp;&nbsp;soap_ssl_init(); /* init OpenSSL (just once) */<br />
-&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(CRYPTO_thread_setup()) <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(CRYPTO_thread_setup()) // OpenSSL <br />
 &nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, "Cannot setup thread mutex\n"); <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit(1); <br />
@@ -13084,7 +13125,7 @@ multi-threaded stand-alone SOAP Web Service:
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(soap_ssl_server_context(&amp;soap, <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SOAP_SSL_DEFAULT, <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"server.pem",	/* keyfile: required when server must authenticate to clients (see SSL docs on how to obtain this file) */ <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"password",	/* password to read the key file */ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"password",	/* password to read the key file (not used with GNUTLS) */ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"cacert.pem",	/* optional cacert file to store trusted certificates */ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL,		/* optional capath to directory with trusted certificates */ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"dh512.pem",	/* DH file name or DH key len bits (minimum is 512, e.g. "512") to generate DH param, if NULL use RSA */ <br />
@@ -13117,7 +13158,7 @@ multi-threaded stand-alone SOAP Web Service:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pthread_create(&amp;tid, NULL, &amp;process_request, (<b>void</b>*)tsoap); <br />
 &nbsp;&nbsp;&nbsp;} <br />
 &nbsp;&nbsp;&nbsp;soap_done(&amp;soap); /* deallocates SSL context */<br />
-&nbsp;&nbsp;&nbsp;CRYPTO_thread_cleanup(); <br />
+&nbsp;&nbsp;&nbsp;CRYPTO_thread_cleanup(); // OpenSSL <br />
 &nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;0; <br />
 }  <br />
 <b>void</b>&nbsp;*process_request(<b>void</b>&nbsp;*soap) <br />
@@ -13133,10 +13174,15 @@ multi-threaded stand-alone SOAP Web Service:
 &nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;NULL; <br />
 }
 </td></tr></table><br></i>
-The <i>soap_ssl_server_context</i> function initializes the server-side SSL context. The <i>server.pem</i> key file is the server's private key. The <i>cacert.pem</i> is used to authenticate clients and contains the client certificates. Alternatively a directory name can be specified. This directory is assumed to contain the certificates. The <i>dh512.pem</i> file specifies that DH will be used for key agreement instead of RSA. A numeric value greater than 512 can be provided instead as a string constant (e.g. <i>"512"</i>) to allow the engine to generate the DH parameters on the fly (this can take a while) rather than retrieving them from a file. The randfile entry can be used to seed the PRNG. The last entry enable server-side session caching. A unique server name is required.
+The <i>soap_ssl_server_context</i> function initializes the server-side SSL context. The <i>server.pem</i> key file is the server's private key concatenated with its certificate. The <i>cacert.pem</i> is used to authenticate clients and contains the client certificates. Alternatively a directory name can be specified. This directory is assumed to contain the certificates. The <i>dh512.pem</i> file specifies that DH will be used for key agreement instead of RSA. A numeric value greater than 512 can be provided instead as a string constant (e.g. <i>"512"</i>) to allow the engine to generate the DH parameters on the fly (this can take a while) rather than retrieving them from a file. The randfile entry can be used to seed the PRNG. The last entry enable server-side session caching. A unique server name is required.
 
 <div class="p"><!----></div>
-The <i>CRYPTO_thread_setup()</i> and <i>CRYPTO_thread_cleanup()</i> routines can be found in <i>openssl/crypto/threads/th-lock.c</i>. These routines are required to setup locks for multi-threaded applications that use SSL.
+The GNUTLS mutex lock setup is automatically peformed in the gSOAP engine, but only when POSIX threads are detected and available.
+
+<div class="p"><!----></div>
+OpenSSL requires mutex locks to be explicitly setup in your code for multithreaded applications, for which we need to call <i>CRYPTO_thread_setup()</i> and <i>CRYPTO_thread_cleanup()</i>. These routines can be found in <i>openssl/crypto/threads/th-lock.c</i> and are also used in the SSL example codes <i>samples/ssl</i>. These routines are required to setup locks for multi-threaded applications that use SSL.
+
+<div class="p"><!----></div>
 We give a Windows and POSIX threads implementation of these here:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 #include  &lt; unistd.h &gt; 		/* defines _POSIX_THREADS if pthreads are available */ <br />
@@ -13254,7 +13300,7 @@ This requires each client to authenticate with its certificate.
 
 <div class="p"><!----></div>
 The <i>cacert</i> file and <i>capath</i> are optional. Either one can be
-specified when clients must run on non-trusted systems. We want to avoid
+specified when clients must run on non-trusted systems (<i>capath</i> is not used with GNUTLS). We want to avoid
 storing trusted certificates in the default location on the file system when
 that is not secure. Therefore, a flat <i>cacert.pem</i> file or directory can be
 specified to store trusted certificates.
@@ -13268,6 +13314,13 @@ CAs.
 <div class="p"><!----></div>
 The <i>cacert.pem</i>, <i>client.pem</i>, and <i>server.pem</i> files in the gSOAP
 distribution are examples of self-signed certificates.
+The <i>client.pem</i> and <i>server.pem</i> contain the client/server private key
+concatenated with the certificate. The keyfiles (<i>client.pem</i> and
+<i>server.pem</i>) are created by concatenating the private key PEM with the
+certificate PEM. The keyfile SHOULD NEVER be shared with any party. With
+OpenSSL, you can encrypt the keyfiles with a password to offer some protection
+and the password is used in the client/server code to read the keyfile. GNUTLS
+does not support this feature and cannot encrypt or decrypt a keyfile.
 
 <div class="p"><!----></div>
 <font color="#FF0000"><b>Caution</b></font>: it is important that the <i>WITH_OPENSSL</i> macro MUST be consistently defined to
@@ -13283,8 +13336,8 @@ access of the gSOAP context.
 </a>
 
 <div class="p"><!----></div>
-You need to install the OpenSSL library on your platform to enable secure SOAP clients to utilize HTTPS/SSL.
-After installation, compile all the sources of your application with option <i>-DWITH_OPENSSL</i>. For example on Linux:
+To utilize HTTPS/SSL, you need to install the OpenSSL library on your platform or GNUTLS for a light-weight SSL/TLS library.
+After installation, compile all the sources of your application with option <i>-DWITH_OPENSSL</i> (or <i>-DWITH_GNUTLS</i> when using GNUTLS). For example on Linux:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 <i> &gt;  c++ -DWITH_OPENSSL myclient.cpp stdsoap.cpp soapC.cpp soapClient.cpp -lssl -lcrypto</i>
 </td></tr></table><br></span>
@@ -13304,9 +13357,9 @@ soap_ssl_init(); /* init OpenSSL (just once) */<br />
 <b>if</b>&nbsp;(soap_ssl_client_context(&amp;soap, <br />
 &nbsp;&nbsp;&nbsp;SOAP_SSL_DEFAULT, <br />
 &nbsp;&nbsp;&nbsp;"client.pem",	/* keyfile: required only when client must authenticate to server (see SSL docs on how to obtain this file) */ <br />
-&nbsp;&nbsp;&nbsp;"password",		/* password to read the key file */ <br />
+&nbsp;&nbsp;&nbsp;"password",		/* password to read the key file (not used with GNUTLS) */ <br />
 &nbsp;&nbsp;&nbsp;"cacerts.pem", 	/* cacert file to store trusted certificates (needed to verify server) */
-&nbsp;&nbsp;&nbsp;NULL,		/* capath to direcoty with trusted certificates */ <br />
+&nbsp;&nbsp;&nbsp;NULL,		/* capath to directory with trusted certificates */ <br />
 &nbsp;&nbsp;&nbsp;NULL		/* if randfile!=NULL: use a file with random data to seed randomness */  <br />
 )) <br />
 { <br />
@@ -13318,7 +13371,7 @@ soap_call_ns__mymethod(&amp;soap, "https://domain/path/secure.cgi", "", ...);
 
 <div class="p"><!----></div>
 By default, server authentication is enabled and the <i>cacerts.pem</i> or
-<i>capath</i> must be set so that the CA certificates of the server(s) are
+<i>capath</i> (not used with GNUTLS) must be set so that the CA certificates of the server(s) are
 accessible at run time. The <i>cacert.pem</i> file included in the package
 contains the certificates of common CAs. This file must be supplied with the
 client, if server authentication is required. Althernatively, you can use the
@@ -13336,9 +13389,9 @@ soap_ssl_init(); /* init OpenSSL (just once) */<br />
 &nbsp;&nbsp;&nbsp;| SOAP_SSL_SKIP_HOST_CHECK, <br />
 &nbsp;&nbsp;&nbsp;| SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE, <br />
 &nbsp;&nbsp;&nbsp;"client.pem",	/* keyfile: required only when client must authenticate to server (see SSL docs on how to obtain this file) */ <br />
-&nbsp;&nbsp;&nbsp;"password",		/* password to read the key file */ <br />
+&nbsp;&nbsp;&nbsp;"password",		/* password to read the key file (not used with GNUTLS) */ <br />
 &nbsp;&nbsp;&nbsp;"cacerts.pem", 	/* cacert file to store trusted certificates (needed to verify server) */
-&nbsp;&nbsp;&nbsp;NULL,		/* capath to direcoty with trusted certificates */ <br />
+&nbsp;&nbsp;&nbsp;NULL,		/* capath to directory with trusted certificates */ <br />
 &nbsp;&nbsp;&nbsp;NULL		/* if randfile!=NULL: use a file with random data to seed randomness */  <br />
 )) <br />
 { <br />
@@ -13405,7 +13458,7 @@ and initialization of the RNG.  Should return a gSOAP error code or
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc19.22">
-19.22</a>&nbsp;&nbsp;<font color="#0000FF">SSL Certificates</font></h3><a name="sec:ssl">
+19.22</a>&nbsp;&nbsp;<font color="#0000FF">SSL Certificates and Key Files</font></h3><a name="sec:ssl">
 </a>
 
 <div class="p"><!----></div>
@@ -13426,7 +13479,7 @@ For systems based on Microsoft windows, the WinInet module can be used instead, 
 
 <div class="p"><!----></div>
 The other <i>.pem</i> files in the gSOAP distribution are examples
-of self-signed certificates for testing purposes (<i>cacert.pem</i>, <i>client.pem</i>, <i>server.pem</i>).
+of self-signed certificates for testing purposes (<i>cacert.pem</i>, <i>client.pem</i>, <i>server.pem</i>). The <i>client.pem</i> and <i>server.pem</i> contain the private key and certificate of the client or server, respectively. The keyfiles (<i>client.pem</i> and <i>server.pem</i>) are created by concatenating the private key PEM with the certificate PEM. The keyfile SHOULD NEVER be shared with any party. With OpenSSL, you can encrypt the keyfiles with a password to offer some protection and the password is used in the client/server code to read the keyfile. GNUTLS does not support this feature and cannot encrypt or decrypt a keyfile.
 
 <div class="p"><!----></div>
 You can also create your own self-signed certificates.  There is more than one
@@ -14820,5 +14873,5 @@ This imports the SOAP header elements required by WS-Security.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.39.<br />On  9 May 2010, 11:09.</small>
+version 3.39.<br />On 18 Sep 2010, 13:45.</small>
 </html>

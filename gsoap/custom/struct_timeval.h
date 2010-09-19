@@ -64,6 +64,3 @@ extern typedef volatile struct timeval
 { extern long tv_sec;	// transient member: don't serialize
   extern long tv_usec;	// transient member: don't serialize
 } xsd__dateTime;
-
-extern const char *soap_xsd__dateTime2s(struct soap*, const xsd__dateTime);
-extern int soap_s2xsd__dateTime(struct soap*, const char*, xsd__dateTime*);

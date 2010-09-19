@@ -81,10 +81,11 @@ static void module(const char *name, const char *fullname);
 static void import(const char *file);
 static int magic(const char *name);
 %}
-ws		[ \t\v\n\f\r\x1A\xA0]
+ws		[ \t\v\r\f\n\x1A\xA0]
 digit		[0-9]
 alpha		[a-zA-Z_]
 id		({alpha}|:{alpha})({alpha}|{digit}|::|:{alpha})*
+tag		-<[^ \t\v\r\f\n>]+>-
 int		{digit}+
 hex		0[xX][0-9a-fA-F]+
 num		{int}(\.{int}([Ee][+-]?{int})?|(\.{int})?[Ee][+-]?{int})
@@ -125,6 +126,7 @@ import		#import{ws}+.*\n
 "->"			{ return AR; }
 [;,:=|^&<>+\-*/%!?~(){}\[\].@$]	{ return yytext[0]; }
 {id}			{ return install_id(); }
+{tag}			{ return TAG; }
 {int}			{ return install_int(); }
 {hex}			{ return install_hex(); }
 {num}			{ return install_num(); }

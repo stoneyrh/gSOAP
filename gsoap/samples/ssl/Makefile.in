@@ -52,7 +52,8 @@ am_sslclient_OBJECTS = sslclient-sslclient.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_3)
 sslclient_OBJECTS = $(am_sslclient_OBJECTS)
 am__DEPENDENCIES_1 =
-sslclient_DEPENDENCIES = $(SOAP_C_LIB_SSL) $(am__DEPENDENCIES_1)
+sslclient_DEPENDENCIES = $(SOAP_C_LIB_SSL) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 sslclient_LINK = $(CCLD) $(sslclient_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am__objects_4 = sslserver-soapC.$(OBJEXT)
@@ -60,7 +61,8 @@ am__objects_5 = sslserver-soapServer.$(OBJEXT) $(am__objects_4)
 am_sslserver_OBJECTS = sslserver-sslserver.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_5) sslserver-threads.$(OBJEXT)
 sslserver_OBJECTS = $(am_sslserver_OBJECTS)
-sslserver_DEPENDENCIES = $(SOAP_C_LIB_SSL) $(am__DEPENDENCIES_1)
+sslserver_DEPENDENCIES = $(SOAP_C_LIB_SSL) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 sslserver_LINK = $(CCLD) $(sslserver_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I. -I$(top_builddir)@am__isrc@
@@ -128,6 +130,7 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
 SAMPLE_DIRS = @SAMPLE_DIRS@
 SAMPLE_EXTRA_LIBS = @SAMPLE_EXTRA_LIBS@
+SAMPLE_SSL_LIBS = @SAMPLE_SSL_LIBS@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SOAPCPP2_DEBUG = @SOAPCPP2_DEBUG@
@@ -224,10 +227,10 @@ CLEANFILES = $(SOAP_C_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h 
 SOAP_NS = $(SOAP_NS_DEF)
 sslclient_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
 sslclient_SOURCES = sslclient.c $(SOAPHEADER) $(SOAP_C_CLIENT)
-sslclient_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz -lpthread
+sslclient_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS) -lpthread
 sslserver_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
 sslserver_SOURCES = sslserver.c $(SOAPHEADER) $(SOAP_C_SERVER) ../../plugin/threads.c
-sslserver_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz -lpthread
+sslserver_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS) -lpthread
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

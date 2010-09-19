@@ -78,8 +78,9 @@ int main()
     servers.  Note that the client may fail to connect if the server's
     credentials have problems (e.g. expired). Use SOAP_SSL_NO_AUTHENTICATION
     and set cacert to NULL to encrypt messages if you don't care about the
-    trustworthyness of the server.  Note: setting capath may not work on
-    Windows.
+    trustworthyness of the server.
+    Note 1: the password and capath are not used with GNUTLS
+    Note 2: setting capath may not work on Windows.
   */
   if (soap_ssl_client_context(&soap,
     /* SOAP_SSL_NO_AUTHENTICATION, */ /* for encryption w/o authentication */
@@ -203,7 +204,7 @@ void CRYPTO_thread_cleanup()
 
 #else
 
-/* OpenSSL not used */
+/* OpenSSL not used, e.g. GNUTLS is used */
 
 int CRYPTO_thread_setup()
 { return SOAP_OK;

@@ -102,33 +102,34 @@
      ULONG = 318,
      NONE = 319,
      ID = 320,
-     LAB = 321,
-     TYPE = 322,
-     LNG = 323,
-     DBL = 324,
-     CHR = 325,
-     STR = 326,
-     RA = 327,
-     LA = 328,
-     OA = 329,
-     XA = 330,
-     AA = 331,
-     MA = 332,
-     DA = 333,
-     TA = 334,
-     NA = 335,
-     PA = 336,
-     OR = 337,
-     AN = 338,
-     NE = 339,
-     EQ = 340,
-     GE = 341,
-     LE = 342,
-     RS = 343,
-     LS = 344,
-     AR = 345,
-     PP = 346,
-     NN = 347
+     TAG = 321,
+     LAB = 322,
+     TYPE = 323,
+     LNG = 324,
+     DBL = 325,
+     CHR = 326,
+     STR = 327,
+     RA = 328,
+     LA = 329,
+     OA = 330,
+     XA = 331,
+     AA = 332,
+     MA = 333,
+     DA = 334,
+     TA = 335,
+     NA = 336,
+     PA = 337,
+     OR = 338,
+     AN = 339,
+     NE = 340,
+     EQ = 341,
+     GE = 342,
+     LE = 343,
+     RS = 344,
+     LS = 345,
+     AR = 346,
+     PP = 347,
+     NN = 348
    };
 #endif
 /* Tokens.  */
@@ -195,40 +196,41 @@
 #define ULONG 318
 #define NONE 319
 #define ID 320
-#define LAB 321
-#define TYPE 322
-#define LNG 323
-#define DBL 324
-#define CHR 325
-#define STR 326
-#define RA 327
-#define LA 328
-#define OA 329
-#define XA 330
-#define AA 331
-#define MA 332
-#define DA 333
-#define TA 334
-#define NA 335
-#define PA 336
-#define OR 337
-#define AN 338
-#define NE 339
-#define EQ 340
-#define GE 341
-#define LE 342
-#define RS 343
-#define LS 344
-#define AR 345
-#define PP 346
-#define NN 347
+#define TAG 321
+#define LAB 322
+#define TYPE 323
+#define LNG 324
+#define DBL 325
+#define CHR 326
+#define STR 327
+#define RA 328
+#define LA 329
+#define OA 330
+#define XA 331
+#define AA 332
+#define MA 333
+#define DA 334
+#define TA 335
+#define NA 336
+#define PA 337
+#define OR 338
+#define AN 339
+#define NE 340
+#define EQ 341
+#define GE 342
+#define LE 343
+#define RS 344
+#define LS 345
+#define AR 346
+#define PP 347
+#define NN 348
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 138 "soapcpp2_yacc.y"
+#line 125 "soapcpp2_yacc.y"
 {	Symbol	*sym;
 	LONG64	i;
 	double	r;
@@ -240,7 +242,7 @@ typedef union YYSTYPE
 	Entry	*e;
 }
 /* Line 1529 of yacc.c.  */
-#line 244 "soapcpp2_yacc.tab.h"
+#line 246 "soapcpp2_yacc.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

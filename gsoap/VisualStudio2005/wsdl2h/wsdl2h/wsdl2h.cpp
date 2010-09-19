@@ -73,6 +73,7 @@ int _flag = 0,
     uflag = 0,
     vflag = 0,
     wflag = 0,
+    Wflag = 0,
     xflag = 0,
     yflag = 0,
     zflag = 0;
@@ -115,7 +116,7 @@ const char serviceformat[]       = "//gsoap %-4s service %s:\t%s %s\n";
 const char paraformat[]          = "    %-35s%s%s%s";
 const char anonformat[]          = "    %-35s%s_%s%s";
 
-const char copyrightnotice[] = "\n**  The gSOAP WSDL/Schema processor for C and C++, wsdl2h release "VERSION"\n**  Copyright (C) 2000-2010 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool is released under one of the following two licenses:\n**  GPL or the commercial license by Genivia Inc. Use option -l for more info.\n\n";
+const char copyrightnotice[] = "\n**  The gSOAP WSDL/Schema processor for C and C++, wsdl2h release "VERSION"\n**  Copyright (C) 2000-2010 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool is released under one of the following two licenses:\n**  GPL or the commercial license by Genivia Inc. Use option -l for details.\n\n";
 
 const char licensenotice[]   = "\
 --------------------------------------------------------------------------------\n\
@@ -163,7 +164,7 @@ int main(int argc, char **argv)
   { fclose(stream);
     fprintf(stderr, "\nTo complete the process, compile with:\n> soapcpp2 %s\n", outfile);
     if (!cflag)
-      fprintf(stderr, "or to generate service proxy/object classes:\n> soapcpp2 -i %s\n", outfile);
+      fprintf(stderr, "or to generate C++ proxy/object classes:\n> soapcpp2 -i %s\n", outfile);
     fprintf(stderr, "\n");
   }
   return 0;
@@ -354,6 +355,9 @@ static void options(int argc, char **argv)
 	  case 'w':
 	    wflag = 1;
 	    break;
+	  case 'W':
+	    Wflag = 1;
+	    break;
 	  case 'x':
 	    xflag = 1;
 	    break;
@@ -372,7 +376,7 @@ static void options(int argc, char **argv)
 	    break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-j] [-k] [-l] [-m] [-n name] [-N name] [-p|-P] [-q name] [-r proxyhost[:port[:uid:pwd]]] [-s] [-t typemapfile] [-u] [-v] [-w] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-n name] [-N name] [-p|-P] [-q name] [-r proxyhost[:port[:uid:pwd]]] [-s] [-t typemapfile] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -c      generate C source code\n\
@@ -381,6 +385,7 @@ static void options(int argc, char **argv)
 -f      generate flat C++ class hierarchy\n\
 -g      generate global top-level element declarations\n\
 -h      display help info\n\
+-i      don't import (advanced option)\n\
 -Ipath  use path to find files\n\
 -j	don't generate SOAP_ENV__Header and SOAP_ENV__Detail definitions\n\
 -k	don't generate SOAP_ENV__Header mustUnderstand qualifiers\n\
@@ -399,6 +404,7 @@ static void options(int argc, char **argv)
 -u      don't generate unions\n\
 -v      verbose output\n\
 -w      always wrap response parameters in a response struct (<=1.1.4 behavior)\n\
+-W      suppress warnings\n\
 -x      don't generate _XML any/anyAttribute extensibility elements\n\
 -y      generate typedef synonyms for structs and enums\n\
 -z1     compatibility with 2.7.6e: generate pointer-based arrays\n\
@@ -471,12 +477,12 @@ struct Namespace namespaces[] =
   {"dime", "http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/", "http://schemas.xmlsoap.org/ws/*/dime/wsdl/"},
   {"sp", "http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702", "http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"},
   {"wsdl", "http://schemas.xmlsoap.org/wsdl/"},
-  {"wsa", "http://www.w3.org/2005/08/addressing"},
+  {"wsa_", "http://www.w3.org/2005/08/addressing"},
   {"wsam", "http://www.w3.org/2007/05/addressing/metadata"},
   {"wsrmp", "http://docs.oasis-open.org/ws-rx/wsrmp/200702"},
   {"wsp", "http://www.w3.org/ns/ws-policy", "http://schemas.xmlsoap.org/ws/2004/09/policy"},
   {"wst", "http://docs.oasis-open.org/ws-sx/ws-trust/200512"},
-  {"wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"},
+  {"wsu_", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"},
   {"gwsdl", "http://www.gridforum.org/namespaces/2003/03/gridWSDLExtensions"},
   {NULL, NULL}
 };

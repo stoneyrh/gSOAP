@@ -181,21 +181,26 @@ void Definitions::analyze(const wsdl__definitions &definitions)
                   s->type = types.aname(NULL, NULL, (*binding).portTypePtr()->name);
                 else
                   s->type = NULL;
+                // collect policies for the bindings
                 for (vector<wsp__Policy>::const_iterator p = (*binding).wsp__Policy_.begin(); p != (*binding).wsp__Policy_.end(); ++p)
                   s->policy.push_back(&(*p));
                 for (vector<wsp__PolicyReference>::const_iterator r = (*binding).wsp__PolicyReference_.begin(); r != (*binding).wsp__PolicyReference_.end(); ++r)
                   s->policy.push_back((*r).policyPtr());
+                // collect policies for the service endpoints
+                for (vector<wsdl__service>::const_iterator service = definitions.service.begin(); service != definitions.service.end(); ++service)
+                { for (vector<wsp__Policy>::const_iterator p = (*service).wsp__Policy_.begin(); p != (*service).wsp__Policy_.end(); ++p)
+                    s->policy.push_back(&(*p));
+                  for (vector<wsp__PolicyReference>::const_iterator r = (*service).wsp__PolicyReference_.begin(); r != (*service).wsp__PolicyReference_.end(); ++r)
+                    s->policy.push_back((*r).policyPtr());
+	        }
               }
               for (vector<wsdl__service>::const_iterator service = definitions.service.begin(); service != definitions.service.end(); ++service)
-              { // collect policies for the service and endpoints
-                for (vector<wsp__Policy>::const_iterator p = (*service).wsp__Policy_.begin(); p != (*service).wsp__Policy_.end(); ++p)
-                  s->policy.push_back(&(*p));
-                for (vector<wsp__PolicyReference>::const_iterator r = (*service).wsp__PolicyReference_.begin(); r != (*service).wsp__PolicyReference_.end(); ++r)
-                  s->policy.push_back((*r).policyPtr());
-                for (vector<wsdl__port>::const_iterator port = (*service).port.begin(); port != (*service).port.end(); ++port)
+              { for (vector<wsdl__port>::const_iterator port = (*service).port.begin(); port != (*service).port.end(); ++port)
                 { if ((*port).bindingPtr() == &(*binding))
                   { if ((*port).soap__address_)
                       s->location.insert((*port).soap__address_->location);
+		    else if ((*port).wsa__EndpointReference && (*port).wsa__EndpointReference->Address)
+                      s->location.insert((*port).wsa__EndpointReference->Address);
                     // TODO: HTTP address for HTTP operations
                     // if ((*port).http__address_)
                       // http__address_location = http__address_->location;
@@ -483,13 +488,17 @@ void Definitions::analyze(const wsdl__definitions &definitions)
     	          o->fault.push_back(f);
     	          s->fault[f->name] = f;
     	        }
-    	        else
+    	        else if ((*ext_fault).soap__fault_ && (*ext_fault).soap__fault_->name)
+    	          fprintf(stderr, "Error: no wsdl:definitions/binding/operation/fault/soap:fault '%s'\n", (*ext_fault).soap__fault_->name);
+		else
     	          fprintf(stderr, "Error: no wsdl:definitions/binding/operation/fault/soap:fault\n");
     	      }
     	      s->operation.push_back(o);
             }
     	    else
-    	      fprintf(stderr, "Warning: no SOAP RPC operation namespace, operations will be ignored\n");
+    	    { if (!Wflag)
+	        fprintf(stderr, "Warning: no SOAP RPC operation namespace, operations will be ignored\n");
+	    }
           }
           else
             fprintf(stderr, "Error: no wsdl:definitions/binding/operation/input/soap:body\n");
@@ -546,14 +555,14 @@ void Definitions::compile(const wsdl__definitions& definitions)
   { bool found = false;
     size_t n = strlen(*u);
     for (SetOfString::const_iterator i = definitions.builtinTypes().begin(); i != definitions.builtinTypes().end(); ++i)
-    { if (**i == '"' && !strncmp(*u, *i + 1, n))
+    { if (**i == '"' && !strncmp(*u, *i + 1, n) && (*i)[n+1] == '"')
       { found = true;
         break;
       }
     }
     if (!found)
     { for (SetOfString::const_iterator j = definitions.builtinElements().begin(); j != definitions.builtinElements().end(); ++j)
-      { if (**j == '"' && !strncmp(*u, *j + 1, n))
+      { if (**j == '"' && !strncmp(*u, *j + 1, n) && (*j)[n+1] == '"')
         { found = true;
           break;
         }
@@ -561,7 +570,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
     }
     if (!found)
     { for (SetOfString::const_iterator k = definitions.builtinAttributes().begin(); k != definitions.builtinAttributes().end(); ++k)
-      { if (**k == '"' && !strncmp(*u, *k + 1, n))
+      { if (**k == '"' && !strncmp(*u, *k + 1, n) && (*k)[n+1] == '"')
         { found = true;
           break;
         }
@@ -617,7 +626,8 @@ void Definitions::compile(const wsdl__definitions& definitions)
     }
   }
   if (dflag && pflag && !Pflag)
-  { fprintf(stderr, "\nWarning -d option: -p option disabled and xsd__anyType base class removed.\nUse run-time SOAP_DOM_NODE flag to deserialize class instances into DOM nodes.\n");
+  { if (!Wflag)
+      fprintf(stderr, "\nWarning -d option: -p option disabled and xsd__anyType base class removed.\nUse run-time SOAP_DOM_NODE flag to deserialize class instances into DOM nodes.\n");
     fprintf(stream, "\n/*\nWarning -d option used: -p option disabled and xsd:anyType base class removed.\nUse run-time SOAP_DOM_NODE flag to deserialize class instances into DOM nodes.\nA DOM node is represented by the xsd__anyType object implemented in dom.cpp.\n*/\n\n");
     pflag = 0;
   }
@@ -663,7 +673,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
           fprintf(stream, "\n/// Built-in type \"%s\".\n", *i);
         if (mflag)
           fprintf(stream, "//  (declaration of %s removed by option -m)\n", t);
-        else
+        else if (!iflag)
           types.format(s);
       }
       s = types.usetypemap[t];
@@ -678,7 +688,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
     { if (!mflag)
       { if (**i == '"')
           fprintf(stream, "\n// Imported type %s defined by %s\n", *i, t);
-        else
+        else if (!iflag)
         { s = types.tname(NULL, NULL, "xsd:string");
           fprintf(stream, "\n/// Primitive built-in type \"%s\"\n", *i);
           fprintf(stream, "typedef %s %s;\n", s, t);
@@ -717,7 +727,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
           fprintf(stream, "\n/// Built-in element \"%s\".\n", *j);
         if (mflag)
           fprintf(stream, "//  (declaration of %s removed by option -m)\n", t);
-        else
+        else if (!iflag)
           types.format(s);
       }
       s = types.usetypemap[t];
@@ -732,7 +742,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
     { if (!mflag)
       { if (**j == '"')
           fprintf(stream, "\n// Imported element %s declared as %s\n", *j, t);
-        else
+        else if (!iflag)
         { fprintf(stream, "\n/// Built-in element \"%s\".\n", *j);
           fprintf(stream, "typedef _XML %s;\n", t);
           types.deftname(TYPEDEF, NULL, true, "_", NULL, *j);	// already pointer
@@ -760,7 +770,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
           fprintf(stream, "\n/// Built-in attribute \"%s\".\n", *k);
         if (mflag)
           fprintf(stream, "//  (declaration of %s removed by option -m)\n", t);
-        else
+        else if (!iflag)
           types.format(s);
       }
       s = types.usetypemap[t];
@@ -776,7 +786,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       if (!mflag)
       { if (**k == '"')
           fprintf(stream, "\n// Imported attribute %s declared as %s\n", *k, t);
-        else
+        else if (!iflag)
         { fprintf(stream, "\n/// Built-in attribute \"%s\".\n", *k);
           fprintf(stream, "typedef %s %s;\n", s, t);
         }
@@ -1898,7 +1908,8 @@ static void gen_policy(const vector<const wsp__Policy*>& policy, const char *tex
 { if (!policy.empty())
   { fprintf(stream, "\n  - WS-Policy applicable to the %s:\n", text);
     for (vector<const wsp__Policy*>::const_iterator p = policy.begin(); p != policy.end(); ++p)
-      (*p)->generate(types, 0);
+      if (*p)
+        (*p)->generate(types, 0);
     fprintf(stream, "\n  - WS-Policy enablers:\n");
     fprintf(stream, "    - WS-Addressing 1.0 (2005/08, accepts 2004/08):\n\t@code\n\t#import \"import/wsa5.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsaapi.h\"\n\tsoap_register_plugin(soap, soap_wsa); // register the wsa plugin in your code\n\t// See the user guide gsoap/doc/wsa/html/index.html\n\t@endcode\n");
     fprintf(stream, "    - WS-Addressing (2004/08):\n\t@code\n\t#import \"import/wsa.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsaapi.h\"\n\tsoap_register_plugin(soap, soap_wsa); // register the wsa plugin in your code\n\t// See the user guide gsoap/doc/wsa/html/index.html\n\t@endcode\n");

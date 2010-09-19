@@ -15,8 +15,8 @@ http://gsoap2.sourceforge.net for project status and latest news.
   engine are stable since version release 2.1.3.
 
 * The gSOAP 'wsdl2h' WSDL/schema parser and code generator is stable since
-  wsdl2h version release 1.1.0. The 'wsdl2h' tool fully supports WSDL 1.1 and
-  XML schemas.
+  wsdl2h version release 1.1.0. The 'wsdl2h' tool fully supports WSDL 1.1,
+  XML schemas, WS-Policy, and other WS-* protocols (details in the fact sheet).
 
 The software is provided "as is", without any warranty. However, gSOAP
 has received a lot of support from users and has been extensively tested
@@ -65,121 +65,10 @@ To configure and build the toolkit binaries and libraries, please see the
 installation instructions in the 'INSTALLATION' section below.
 
 ================================================================================
-INSTALLATION
-================================================================================
-
-This part explains how gSOAP is built on your platform.
-
-Requirements to configure and build the package:
-
-1. Automake tools (make and GNU m4) to configure and build
-2. Bison http://www.gnu.org/software/bison or the alternative Yacc
-3. Flex http://flex.sourceforge.net 
-4. OpenSSL (for optional HTTPS) http://www.openssl.org
-5. Zlib (for optional compression) http://www.zlib.net
-6. Pthreads or win32 threads (optional)
-
-The open source licenses for these tools are compatible with gSOAP licensing
-under GPL and commercial licensing.
-
-Some example applications won't compile without OpenSSL and Pthreads.
-
-Win32 binaries and project code is included in this package. Win32 users can
-start right away without autoconf/automake. The 'soapcpp2.exe' binary compiler
-and 'wsdl2h.exe' WSDL parser are included in 'gsoap/bin/win32', see also the
-'gsoap/VisualStudio2005' folder for the tool project files. The 'soapcpp2.exe'
-and 'wsdl2h.exe' tools are command-line based and should be invoked from within
-the IDE to process WSDL, XSD, and gSOAP service specification header files:
-
-.wsdl .xsd --> wsdl2h.exe --> .h (special .h formatted with gSOAP annotations)
-                              .h --> soapcpp2.exe --> .h .c .cpp .xml ...
-
-Symbian instructions and example code is located in 'gsoap/Symbian'.
-
-Palm OS support is no longer available for this release. The latest stable
-release with Palm OS support is gSOAP 2.7.8c.
-
-To build gSOAP on your platform using autoconf/automake, please enter the
-following commands:
-
-	$ ./configure
-	$ make
-	$ make install
-
-This will install the executables and libraries on your system (and you need
-root access to do so).
-
-To build without OpenSSL support, use:
-
-	$ ./configure --disable-openssl
-	$ make
-	$ make install
-
-To configure and build the examples, use the --enable-samples option:
-
-	$ ./configure --enable-samples
-
-To configure and build the libraries in DEBUG mode, which produces 'SENT.log',
-'RECV.log' and 'TEST.log' files for message logs and gSOAP engine event logs,
-use:
-
-	$ ./configure --enable-debug
-
-If you want to install the executables in your local folder, enter:
-
-	$ ./configure
-	$ make
-	$ make install exec_prefix=$HOME
-
-To build your projects, you need the following executables:
-
-	soapcpp2	the gSOAP stub/skeleton generator
-	wsdl2h		the gSOAP WSDL/schema parser and code generator
-
-These are created after 'make' in 'gsoap/src' and 'gsoap/wsdl'. Note that
-pre-built executables for select platforms can be found in 'gsoap/bin'.
-
-You also need the following libraries (build from stdsoap2.c[pp]):
-
-	libgsoap++.a		C++ runtime
-	libgsoapck++.a		C++ runtime with HTTP cookie support
-	libgsoapssl++.a		C++ runtime with cookies, zlib, and SSL
-	libgsoap.a		C runtime
-	libgsoapck.a		C runtime with HTTP cookie support
-	libgsoapssl.a		C runtime with cookies, zlib, and SSL
-
-This version of gSOAP requires SSL support with OpenSSL 0.9.6 or later.
-
-Alternatively, you can use the stdsoap2.c[pp] source code to build your project
-instead of the libraries (libraries are all derived from stdsoap2.c[pp]). See
-the gSOAP documentation on how to enable HTTP cookies, Zlib compression, and
-SSL support in stdsoap2.c[pp].
-
-For developers: there is a command file ./makemake
-It can be used to generate the required ./configure script.
-This will create the Makefiles:
-
-	$ ./makemake
-	$ make
-
-You can also execute the following steps from the commandline:
-
-	$ aclocal
-	$ autoheader
-	$ automake --add-missing
-	$ autoconf
-	$ automake
-	$ ./configure --enable-samples
-	$ make
-
-If the above fails, try the following:
-
-	* remove autom4te.cache
-	* get the latest config.guess and config.sub from GNU
-
-================================================================================
 GETTING STARTED
 ================================================================================
+
+Follow the installation instructions in INSTALL.txt first.
 
 The gSOAP 'wsdl2h' tool converts WSDLs into a gSOAP header file for processing
 with the gSOAP stub/skeleton generator 'soapcpp2' to generate XML
@@ -290,7 +179,7 @@ COPYRIGHT
 ================================================================================
 
 gSOAP is copyrighted by Robert A. van Engelen, Genivia, Inc.
-Copyright (C) 2000-2008 Robert A. van Engelen, Genivia, Inc.
+Copyright (C) 2000-2010 Robert A. van Engelen, Genivia, Inc.
 All Rights Reserved.
 
 ================================================================================

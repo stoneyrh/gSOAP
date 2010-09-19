@@ -452,6 +452,7 @@ int m__PutData(struct soap *soap, struct x__DataSet *data, struct m__PutDataResp
 
 int m__GetData(struct soap *soap, struct x__Keys *keys, struct m__GetDataResponse *response)
 { int i;
+  char *file = soap_malloc(soap, strlen(TMPDIR) + 80);
   if ((soap->omode & SOAP_IO) == SOAP_IO_STORE)
     soap->omode = (soap->omode & ~SOAP_IO) | SOAP_IO_BUFFER;
   if (!keys)
@@ -460,7 +461,13 @@ int m__GetData(struct soap *soap, struct x__Keys *keys, struct m__GetDataRespons
   response->x__data.__size = keys->__size;
   response->x__data.item = soap_malloc(soap, keys->__size*sizeof(struct x__Data));
   for (i = 0; i < keys->__size; ++i)
-    open_data(soap, keys->key[i], &response->x__data.item[i]);
+  { strcpy(file, TMPDIR);
+    strcat(file, "/");
+    if (strncmp(keys->key[i], "data", 4))
+      strcat(file, "data");
+    strcat(file, keys->key[i]);
+    open_data(soap, file, &response->x__data.item[i]);
+  }
   return SOAP_OK;
 }
 

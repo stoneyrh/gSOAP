@@ -72,6 +72,3 @@ extern typedef volatile struct tm
 	int	tm_isdst;	// is summer time in effect?
 	char*	tm_zone;	// abbreviation of timezone
 } xsd__dateTime;
-
-extern const char *soap_xsd__dateTime2s(struct soap*, const xsd__dateTime);
-extern int soap_s2xsd__dateTime(struct soap*, const char*, xsd__dateTime*);

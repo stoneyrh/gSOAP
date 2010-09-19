@@ -32,8 +32,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = i386-apple-darwin10.3.0
-host_triplet = i386-apple-darwin10.3.0
+build_triplet = i386-apple-darwin10.4.0
+host_triplet = i386-apple-darwin10.4.0
 subdir = gsoap
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -75,11 +75,13 @@ libgsoapck_a_OBJECTS = $(am_libgsoapck_a_OBJECTS)
 libgsoapssl___a_AR = $(AR) $(ARFLAGS)
 libgsoapssl___a_LIBADD =
 am_libgsoapssl___a_OBJECTS =  \
-	libgsoapssl___a-stdsoap2_ssl_cpp.$(OBJEXT)
+	libgsoapssl___a-stdsoap2_ssl_cpp.$(OBJEXT) \
+	libgsoapssl___a-dom.$(OBJEXT)
 libgsoapssl___a_OBJECTS = $(am_libgsoapssl___a_OBJECTS)
 libgsoapssl_a_AR = $(AR) $(ARFLAGS)
 libgsoapssl_a_LIBADD =
-am_libgsoapssl_a_OBJECTS = libgsoapssl_a-stdsoap2_ssl.$(OBJEXT)
+am_libgsoapssl_a_OBJECTS = libgsoapssl_a-stdsoap2_ssl.$(OBJEXT) \
+	libgsoapssl_a-dom.$(OBJEXT)
 libgsoapssl_a_OBJECTS = $(am_libgsoapssl_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -116,11 +118,11 @@ ETAGS = etags
 CTAGS = ctags
 DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /Users/engelen/Projects/gsoap/gsoap-2.7/missing --run aclocal-1.10
-AMTAR = ${SHELL} /Users/engelen/Projects/gsoap/gsoap-2.7/missing --run tar
-AUTOCONF = ${SHELL} /Users/engelen/Projects/gsoap/gsoap-2.7/missing --run autoconf
-AUTOHEADER = ${SHELL} /Users/engelen/Projects/gsoap/gsoap-2.7/missing --run autoheader
-AUTOMAKE = ${SHELL} /Users/engelen/Projects/gsoap/gsoap-2.7/missing --run automake-1.10
+ACLOCAL = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing --run aclocal-1.10
+AMTAR = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing --run tar
+AUTOCONF = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing --run autoconf
+AUTOHEADER = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing --run autoheader
+AUTOMAKE = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing --run automake-1.10
 AWK = awk
 BISON_DEFINE = -DWITH_BISON
 CC = gcc
@@ -156,26 +158,27 @@ LIBOBJS =  ${LIBOBJDIR}mktime$U.o
 LIBS = 
 LN_S = ln -s
 LTLIBOBJS =  ${LIBOBJDIR}mktime$U.lo
-MAKEINFO = ${SHELL} /Users/engelen/Projects/gsoap/gsoap-2.7/missing --run makeinfo
+MAKEINFO = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing --run makeinfo
 MKDIR_P = .././install-sh -c -d
 OBJEXT = o
 PACKAGE = gsoap
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = gsoap
-PACKAGE_STRING = gsoap 2.7
+PACKAGE_STRING = gsoap 2.8
 PACKAGE_TARNAME = gsoap
-PACKAGE_VERSION = 2.7
+PACKAGE_VERSION = 2.8
 PATH_SEPARATOR = :
 RANLIB = ranlib
-SAMPLE_DIRS = . samples
+SAMPLE_DIRS = 
 SAMPLE_EXTRA_LIBS = 
+SAMPLE_SSL_LIBS = -lssl -lcrypto -lz
 SET_MAKE = 
 SHELL = /bin/sh
 SOAPCPP2_DEBUG = 
 SOAPCPP2_IMPORTPATH = -DSOAPCPP_IMPORT_PATH="\"${datarootdir}/gsoap/import\""
 SOAPCPP2_NONAMESPACES = 
 STRIP = 
-VERSION = 2.7
+VERSION = 2.8
 WSDL2H_EXTRA_FLAGS = -DWITH_OPENSSL -DWITH_GZIP
 WSDL2H_EXTRA_LIBS = -lssl -lcrypto -lz
 WSDL2H_IMPORTPATH = -DWSDL_IMPORT_PATH="\"${datarootdir}/gsoap/WS\""
@@ -183,10 +186,10 @@ WSDL2H_SOAP_CPP_LIB = libgsoapssl++.a
 YACC = bison -y
 YACC_LIB = 
 YFLAGS = 
-abs_builddir = /Users/engelen/Projects/gsoap/gsoap-2.7/gsoap
-abs_srcdir = /Users/engelen/Projects/gsoap/gsoap-2.7/gsoap
-abs_top_builddir = /Users/engelen/Projects/gsoap/gsoap-2.7
-abs_top_srcdir = /Users/engelen/Projects/gsoap/gsoap-2.7
+abs_builddir = /Users/engelen/Projects/gsoap/packages/gsoap-2.8/gsoap
+abs_srcdir = /Users/engelen/Projects/gsoap/packages/gsoap-2.8/gsoap
+abs_top_builddir = /Users/engelen/Projects/gsoap/packages/gsoap-2.8
+abs_top_srcdir = /Users/engelen/Projects/gsoap/packages/gsoap-2.8
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 am__include = include
@@ -195,10 +198,10 @@ am__quote =
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = i386-apple-darwin10.3.0
+build = i386-apple-darwin10.4.0
 build_alias = 
 build_cpu = i386
-build_os = darwin10.3.0
+build_os = darwin10.4.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -206,15 +209,15 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = i386-apple-darwin10.3.0
+host = i386-apple-darwin10.4.0
 host_alias = 
 host_cpu = i386
-host_os = darwin10.3.0
+host_os = darwin10.4.0
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = $(SHELL) /Users/engelen/Projects/gsoap/gsoap-2.7/install-sh
+install_sh = $(SHELL) /Users/engelen/Projects/gsoap/packages/gsoap-2.8/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -235,7 +238,7 @@ target_alias =
 top_builddir = ..
 top_srcdir = ..
 AUTOMAKE_OPTIONS = foreign 1.4
-SUBDIRS = . src wsdl . samples
+SUBDIRS = . src wsdl 
 CLEANFILES = soapcpp2 wsdl2h stdsoap2_cpp.cpp stdsoap2_ck.c stdsoap2_ck_cpp.cpp stdsoap2_ssl.c stdsoap2_ssl_cpp.cpp
 AM_CXXFLAGS = $(SOAPCPP2_DEBUG) -D$(platform)
 AM_CFLAGS = $(SOAPCPP2_DEBUG) -D$(platform)
@@ -251,10 +254,10 @@ libgsoapck_a_SOURCES = stdsoap2_ck.c
 libgsoapck_a_CFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) -D$(platform) -DWITH_COOKIES
 libgsoapck___a_SOURCES = stdsoap2_ck_cpp.cpp
 libgsoapck___a_CXXFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) -D$(platform) -DWITH_COOKIES
-libgsoapssl_a_SOURCES = stdsoap2_ssl.c
-libgsoapssl_a_CFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) -D$(platform) -DWITH_OPENSSL -DWITH_DOM -DWITH_GZIP
-libgsoapssl___a_SOURCES = stdsoap2_ssl_cpp.cpp
-libgsoapssl___a_CXXFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) -D$(platform) -DWITH_OPENSSL -DWITH_DOM -DWITH_GZIP
+libgsoapssl_a_SOURCES = stdsoap2_ssl.c dom.c
+libgsoapssl_a_CFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) -D$(platform) $(WSDL2H_EXTRA_FLAGS) -DWITH_DOM
+libgsoapssl___a_SOURCES = stdsoap2_ssl_cpp.cpp dom.cpp
+libgsoapssl___a_CXXFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) -D$(platform) $(WSDL2H_EXTRA_FLAGS) -DWITH_DOM
 BUILT_SOURCES = stdsoap2_cpp.cpp $(lib_LIBRARIES)
 include_HEADERS = stdsoap2.h
 all: $(BUILT_SOURCES)
@@ -355,7 +358,9 @@ include ./$(DEPDIR)/libgsoap___a-stdsoap2_cpp.Po
 include ./$(DEPDIR)/libgsoap_a-stdsoap2.Po
 include ./$(DEPDIR)/libgsoapck___a-stdsoap2_ck_cpp.Po
 include ./$(DEPDIR)/libgsoapck_a-stdsoap2_ck.Po
+include ./$(DEPDIR)/libgsoapssl___a-dom.Po
 include ./$(DEPDIR)/libgsoapssl___a-stdsoap2_ssl_cpp.Po
+include ./$(DEPDIR)/libgsoapssl_a-dom.Po
 include ./$(DEPDIR)/libgsoapssl_a-stdsoap2_ssl.Po
 
 .c.o:
@@ -414,6 +419,20 @@ libgsoapssl_a-stdsoap2_ssl.obj: stdsoap2_ssl.c
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsoapssl_a_CFLAGS) $(CFLAGS) -c -o libgsoapssl_a-stdsoap2_ssl.obj `if test -f 'stdsoap2_ssl.c'; then $(CYGPATH_W) 'stdsoap2_ssl.c'; else $(CYGPATH_W) '$(srcdir)/stdsoap2_ssl.c'; fi`
 
+libgsoapssl_a-dom.o: dom.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsoapssl_a_CFLAGS) $(CFLAGS) -MT libgsoapssl_a-dom.o -MD -MP -MF $(DEPDIR)/libgsoapssl_a-dom.Tpo -c -o libgsoapssl_a-dom.o `test -f 'dom.c' || echo '$(srcdir)/'`dom.c
+	mv -f $(DEPDIR)/libgsoapssl_a-dom.Tpo $(DEPDIR)/libgsoapssl_a-dom.Po
+#	source='dom.c' object='libgsoapssl_a-dom.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsoapssl_a_CFLAGS) $(CFLAGS) -c -o libgsoapssl_a-dom.o `test -f 'dom.c' || echo '$(srcdir)/'`dom.c
+
+libgsoapssl_a-dom.obj: dom.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsoapssl_a_CFLAGS) $(CFLAGS) -MT libgsoapssl_a-dom.obj -MD -MP -MF $(DEPDIR)/libgsoapssl_a-dom.Tpo -c -o libgsoapssl_a-dom.obj `if test -f 'dom.c'; then $(CYGPATH_W) 'dom.c'; else $(CYGPATH_W) '$(srcdir)/dom.c'; fi`
+	mv -f $(DEPDIR)/libgsoapssl_a-dom.Tpo $(DEPDIR)/libgsoapssl_a-dom.Po
+#	source='dom.c' object='libgsoapssl_a-dom.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsoapssl_a_CFLAGS) $(CFLAGS) -c -o libgsoapssl_a-dom.obj `if test -f 'dom.c'; then $(CYGPATH_W) 'dom.c'; else $(CYGPATH_W) '$(srcdir)/dom.c'; fi`
+
 .cpp.o:
 	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
 	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
@@ -469,6 +488,20 @@ libgsoapssl___a-stdsoap2_ssl_cpp.obj: stdsoap2_ssl_cpp.cpp
 #	source='stdsoap2_ssl_cpp.cpp' object='libgsoapssl___a-stdsoap2_ssl_cpp.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsoapssl___a_CXXFLAGS) $(CXXFLAGS) -c -o libgsoapssl___a-stdsoap2_ssl_cpp.obj `if test -f 'stdsoap2_ssl_cpp.cpp'; then $(CYGPATH_W) 'stdsoap2_ssl_cpp.cpp'; else $(CYGPATH_W) '$(srcdir)/stdsoap2_ssl_cpp.cpp'; fi`
+
+libgsoapssl___a-dom.o: dom.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsoapssl___a_CXXFLAGS) $(CXXFLAGS) -MT libgsoapssl___a-dom.o -MD -MP -MF $(DEPDIR)/libgsoapssl___a-dom.Tpo -c -o libgsoapssl___a-dom.o `test -f 'dom.cpp' || echo '$(srcdir)/'`dom.cpp
+	mv -f $(DEPDIR)/libgsoapssl___a-dom.Tpo $(DEPDIR)/libgsoapssl___a-dom.Po
+#	source='dom.cpp' object='libgsoapssl___a-dom.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsoapssl___a_CXXFLAGS) $(CXXFLAGS) -c -o libgsoapssl___a-dom.o `test -f 'dom.cpp' || echo '$(srcdir)/'`dom.cpp
+
+libgsoapssl___a-dom.obj: dom.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsoapssl___a_CXXFLAGS) $(CXXFLAGS) -MT libgsoapssl___a-dom.obj -MD -MP -MF $(DEPDIR)/libgsoapssl___a-dom.Tpo -c -o libgsoapssl___a-dom.obj `if test -f 'dom.cpp'; then $(CYGPATH_W) 'dom.cpp'; else $(CYGPATH_W) '$(srcdir)/dom.cpp'; fi`
+	mv -f $(DEPDIR)/libgsoapssl___a-dom.Tpo $(DEPDIR)/libgsoapssl___a-dom.Po
+#	source='dom.cpp' object='libgsoapssl___a-dom.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsoapssl___a_CXXFLAGS) $(CXXFLAGS) -c -o libgsoapssl___a-dom.obj `if test -f 'dom.cpp'; then $(CYGPATH_W) 'dom.cpp'; else $(CYGPATH_W) '$(srcdir)/dom.cpp'; fi`
 install-nobase_pkgdataDATA: $(nobase_pkgdata_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"

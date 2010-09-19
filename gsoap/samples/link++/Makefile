@@ -1,6 +1,6 @@
 # Simple Makefile for C++ example with muliple client proxy linkage
 WSDL2H=../../wsdl/wsdl2h
-GSOAP=../../src/soapcpp2
+GSOAP=../../src/soapcpp2 -I../..
 SOAPH=../../stdsoap2.h
 SOAPC=../../stdsoap2.c
 SOAPCPP=../../stdsoap2.cpp
@@ -11,7 +11,7 @@ CPP=g++
 LIBS=
 COFLAGS=-O2
 CWFLAGS=-Wall
-CIFLAGS=-I.. -I../..
+CIFLAGS=-I. -I.. -I../..
 CMFLAGS=
 CFLAGS= $(CWFLAGS) $(COFLAGS) $(CIFLAGS) $(CMFLAGS)
 all:		xmas
@@ -23,11 +23,12 @@ envC.o:		env.h header.h fault.h
 		$(GSOAP) -CS -penv env.h
 		$(CPP) $(CFLAGS) -c envC.cpp
 gmtProxy.cpp:	gmt.h
-		$(GSOAP) -i -C -qgmt gmt.h
+		$(GSOAP) -i -w -C -qgmt gmt.h
 gmtProxy.o:	gmtProxy.cpp
 		$(CPP) $(CFLAGS) -c gmtProxy.cpp
 calccalcProxy.cpp:	calc.h
-		$(GSOAP) -i -C -qcalc calc.h
+		$(GSOAP) -i -w -C -qcalc calc.h
+		cp calcH.h soapH.h
 calccalcProxy.o:	calccalcProxy.cpp
 		$(CPP) $(CFLAGS) -c calccalcProxy.cpp
 xmasmashupService.cpp:	xmas.hpp
@@ -38,8 +39,8 @@ xmas.hpp:	xmas.wsdl
 		$(WSDL2H) -s -o xmas.hpp xmas.wsdl
 .PHONY: clean distclean
 clean:
-		rm -f *.o soapH.h soapStub.h soapC.cpp soapClient.cpp soapServer.cpp soapClientLib.cpp soapServerLib.cpp soap*Proxy.h soap*Proxy.cpp soap*Service.h soap*Service.cpp
+		rm -f *.o *H.h *Stub.h *C.cpp *Client.cpp *Server.cpp *ClientLib.cpp *ServerLib.cpp *Proxy.h *Proxy.cpp *Service.h *Service.cpp
 distclean:
-		rm -f *.o soapH.h soapStub.h soapC.cpp soapClient.cpp soapServer.cpp soapClientLib.cpp soapServerLib.cpp soap*Proxy.h soap*Proxy.cpp soap*Service.h soap*Service.cpp
+		rm -f *.o *H.h *Stub.h *C.cpp *Client.cpp *Server.cpp *ClientLib.cpp *ServerLib.cpp *Proxy.h *Proxy.cpp *Service.h *Service.cpp
 		rm -f *.xsd *.xml *.nsmap *.log
 		rm -f xmas

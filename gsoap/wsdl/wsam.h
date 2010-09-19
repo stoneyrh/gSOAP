@@ -43,6 +43,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 class wsa__EndpointReferenceType
 { public:
-	@xsd__anyURI			Address;
+	xsd__anyURI			Address;
+	_XML				__any;
 };
 
