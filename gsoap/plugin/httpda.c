@@ -363,6 +363,8 @@ static int http_da_copy(struct soap *soap, struct soap_plugin *dst, struct soap_
 
 static void http_da_delete(struct soap *soap, struct soap_plugin *p)
 {
+  if (((struct http_da_data*)p->data)->context)
+    md5_handler(soap, &((struct http_da_data*)p->data)->context, MD5_DELETE, NULL, 0);
   if (p->data)
     SOAP_FREE(soap, p->data);
 }

@@ -51,15 +51,16 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #ifndef WSSEAPI_H
 #define WSSEAPI_H
 
-#include "soapH.h"
+#include "soapH.h"	/* replace with soapcpp2-generated *H.h file */
 #include "smdevp.h"
+#include "mecevp.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /** plugin identification for plugin registry */
-#define SOAP_WSSE_ID "SOAP-WSSE-1.1"
+#define SOAP_WSSE_ID "SOAP-WSSE-1.2"
 
 /** plugin identification for plugin registry */
 extern const char soap_wsse_id[];
@@ -72,18 +73,28 @@ The signature key (private) and verification key (public) are kept in the
 plugin data, together with other info.
 */
 struct soap_wsse_data
-{ int sign_alg;			/**< The digest or signature algorithm used */
+{ char *sigid;			/**< string with wsu:Id names to sign */
+  char *encid;			/**< string with wsu:Id names to encrypt */
+  int sign_alg;			/**< The digest or signature algorithm used */
   const void *sign_key;		/**< EVP_PKEY or key string for HMAC */
   int sign_keylen;		/**< HMAC key length */
   int vrfy_alg;			/**< The signature verify algorithm used */
   const void *vrfy_key;		/**< EVP_PKEY or key string for HMAC verify */
   int vrfy_keylen;		/**< HMAC key length */
+  int enco_alg;			/**< encrypt algorithm used */
+  const void *enco_key;		/**< EVP_PKEY or secret key */
+  int enco_keylen;		/**< secret key length */
+  int deco_alg;			/**< decrypt algorithm used */
+  const void *deco_key;		/**< EVP_PKEY or secret key */
+  int deco_keylen;		/**< secret key length */
   struct soap_wsse_digest *digest;	/**< List of ID-hash pairs */
   int (*fpreparesend)(struct soap*, const char*, size_t);
   int (*fpreparefinalsend)(struct soap*);
   int (*fpreparefinalrecv)(struct soap*);
+  int (*fheader)(struct soap*);
+  struct soap_mec_data *mec;
   X509_STORE *store;
-  const void *(*security_token_handler)(struct soap *soap, int alg, int *keylen);
+  const void *(*security_token_handler)(struct soap *soap, int alg, const char *keyname, int *keylen);
 };
 
 /**
@@ -191,6 +202,26 @@ int soap_wsse_verify_done(struct soap *soap);
 size_t soap_wsse_verify_element(struct soap *soap, const char *URI, const char *tag);
 int soap_wsse_verify_body(struct soap *soap);
 int soap_wsse_set_wsu_id(struct soap *soap, const char *tags);
+int soap_wsse_sign_only(struct soap *soap, const char *ids);
+int soap_wsse_encrypt_only(struct soap *soap, const char *ids);
+
+int soap_wsse_add_EncryptedKey(struct soap *soap, const char *URI, X509 *cert, const char *subjectkeyid);
+int soap_wsse_verify_EncryptedKey(struct soap *soap);
+void soap_wsse_delete_EncryptedKey(struct soap *soap);
+struct xenc__EncryptedKeyType* soap_wsse_EncryptedKey(struct soap *soap);
+
+int soap_wsse_add_EncryptedKey_DataReferenceURI(struct soap *soap, const char *URI);
+int soap_wsse_add_DataReferenceURI(struct soap *soap, const char *URI);
+
+int soap_wsse_encrypt_body(struct soap *soap, int alg, const void *key, int keylen);
+int soap_wsse_encrypt(struct soap *soap, int alg, const void *key, int keylen);
+int soap_wsse_decrypt_auto(struct soap *soap, int alg, const void *key, int keylen);
+
+int soap_wsse_encrypt_begin(struct soap *soap, const char *id, const char *URI, const char *keyname, const unsigned char *key);
+int soap_wsse_encrypt_end(struct soap *soap);
+
+int soap_wsse_decrypt_begin(struct soap *soap, const unsigned char *key);
+int soap_wsse_decrypt_end(struct soap *soap);
 
 #ifdef __cplusplus
 }

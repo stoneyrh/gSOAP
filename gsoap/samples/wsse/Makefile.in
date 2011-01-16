@@ -53,7 +53,7 @@ am__objects_4 = $(am__objects_3) wssedemo-soapServer.$(OBJEXT) \
 am_wssedemo_OBJECTS = wssedemo-wssedemo.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_4) wssedemo-stdsoap2.$(OBJEXT) \
 	wssedemo-dom.$(OBJEXT) wssedemo-wsseapi.$(OBJEXT) \
-	wssedemo-smdevp.$(OBJEXT)
+	wssedemo-smdevp.$(OBJEXT) wssedemo-mecevp.$(OBJEXT)
 wssedemo_OBJECTS = $(am_wssedemo_OBJECTS)
 am__DEPENDENCIES_1 =
 wssedemo_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -220,7 +220,7 @@ BUILT_SOURCES = $(SOAP_C_SRC)
 CLEANFILES = $(SOAP_C_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.c soapClient.c soapClientLib.c soapServer.c soapServerLib.c *~
 SOAP_NS = wssedemo.nsmap wssedemo.wsdl
 wssedemo_CFLAGS = -DWITH_DOM -DWITH_OPENSSL -DWITH_GZIP
-wssedemo_SOURCES = wssedemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../dom.c ../../plugin/wsseapi.c ../../plugin/smdevp.c
+wssedemo_SOURCES = wssedemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../dom.c ../../plugin/wsseapi.c ../../plugin/smdevp.c ../../plugin/mecevp.c
 wssedemo_LDADD = $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -270,6 +270,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-dom.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-mecevp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-smdevp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-soapC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-soapClient.Po@am__quote@
@@ -403,6 +404,20 @@ wssedemo-smdevp.obj: ../../plugin/smdevp.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../../plugin/smdevp.c' object='wssedemo-smdevp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wssedemo_CFLAGS) $(CFLAGS) -c -o wssedemo-smdevp.obj `if test -f '../../plugin/smdevp.c'; then $(CYGPATH_W) '../../plugin/smdevp.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/smdevp.c'; fi`
+
+wssedemo-mecevp.o: ../../plugin/mecevp.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wssedemo_CFLAGS) $(CFLAGS) -MT wssedemo-mecevp.o -MD -MP -MF $(DEPDIR)/wssedemo-mecevp.Tpo -c -o wssedemo-mecevp.o `test -f '../../plugin/mecevp.c' || echo '$(srcdir)/'`../../plugin/mecevp.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/wssedemo-mecevp.Tpo $(DEPDIR)/wssedemo-mecevp.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../../plugin/mecevp.c' object='wssedemo-mecevp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wssedemo_CFLAGS) $(CFLAGS) -c -o wssedemo-mecevp.o `test -f '../../plugin/mecevp.c' || echo '$(srcdir)/'`../../plugin/mecevp.c
+
+wssedemo-mecevp.obj: ../../plugin/mecevp.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wssedemo_CFLAGS) $(CFLAGS) -MT wssedemo-mecevp.obj -MD -MP -MF $(DEPDIR)/wssedemo-mecevp.Tpo -c -o wssedemo-mecevp.obj `if test -f '../../plugin/mecevp.c'; then $(CYGPATH_W) '../../plugin/mecevp.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/mecevp.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/wssedemo-mecevp.Tpo $(DEPDIR)/wssedemo-mecevp.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../../plugin/mecevp.c' object='wssedemo-mecevp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wssedemo_CFLAGS) $(CFLAGS) -c -o wssedemo-mecevp.obj `if test -f '../../plugin/mecevp.c'; then $(CYGPATH_W) '../../plugin/mecevp.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/mecevp.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

@@ -43,7 +43,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-#define VERSION "2.8.0" /* Current version */
+#define VERSION "2.8.1" /* Current version */
 #endif
 
 #ifdef WIN32
@@ -56,10 +56,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 /* #define DEBUG */ /* uncomment to debug */
 
 #ifdef DEBUG
-#define	check(expr, msg) ((expr) ? 1 : progerror(msg, __FILE__, __LINE__))
+#define	check(expr, msg) (void)((expr) ? 0 : (progerror(msg, __FILE__, __LINE__), 0))
 #define DBGLOG(DBGCMD) { DBGCMD; }
 #else
-#define check(expr, msg) (expr, 1)
+#define check(expr, msg) (void)(expr)
 #define DBGLOG(DBGCMD)
 #endif
 
@@ -222,6 +222,7 @@ typedef	struct Tnode
 	const char *imported;
 	struct	Tnode *next;
         Bool	generated;
+        Bool	classed;	/* class qualified */
         Bool	wsdl;
 	int	num;
 	char	*pattern;
@@ -247,6 +248,7 @@ typedef	struct IDinfo {
 
 typedef	struct Entry {
 	Symbol	*sym;
+	Symbol	*tag;
 	IDinfo	info;
 	Level	level;
 	int	lineno;
@@ -362,6 +364,7 @@ extern int wflag;
 extern int cflag;
 extern int Cflag;
 extern int eflag;
+extern unsigned long fflag;
 extern int iflag;
 extern int mflag;
 extern int nflag;

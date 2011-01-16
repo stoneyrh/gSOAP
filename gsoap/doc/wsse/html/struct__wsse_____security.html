@@ -12,13 +12,12 @@
 <p>
 Collaboration diagram for _wsse__Security:<p><center><img src="struct__wsse_____security__coll__graph.png" border="0" usemap="#__wsse_____security__coll__map" alt="Collaboration graph"></center>
 <map name="__wsse_____security__coll__map">
-<area href="structds_____signature_type.html" shape="rect" coords="84,108,209,134" alt="">
-<area href="structds_____signed_info_type.html" shape="rect" coords="7,17,140,44" alt="">
-<area href="structds_____key_info_type.html" shape="rect" coords="164,17,279,44" alt="">
-<area href="struct__wsse_____binary_security_token.html" shape="rect" coords="233,108,417,134" alt="">
-<area href="struct__wsse_____username_token.html" shape="rect" coords="441,108,601,134" alt="">
-<area href="struct__wsse_____password.html" shape="rect" coords="460,17,583,44" alt="">
-<area href="struct__wsu_____timestamp.html" shape="rect" coords="625,108,748,134" alt="">
+<area href="structds_____signature_type.html" shape="rect" coords="325,9,451,36" alt="">
+<area href="structxenc_____encrypted_key_type.html" shape="rect" coords="304,132,472,159" alt="">
+<area href="struct__xenc_____reference_list.html" shape="rect" coords="17,100,164,127" alt="">
+<area href="struct__wsse_____binary_security_token.html" shape="rect" coords="296,188,480,215" alt="">
+<area href="struct__wsse_____username_token.html" shape="rect" coords="308,252,468,279" alt="">
+<area href="struct__wsu_____timestamp.html" shape="rect" coords="327,316,449,343" alt="">
 </map>
 <center><font size="2">[<a href="graph_legend.html">legend</a>]</font></center><a href="struct__wsse_____security-members.html">List of all members.</a><table border=0 cellpadding=0 cellspacing=0>
 <tr><td></td></tr>
@@ -29,11 +28,15 @@ Collaboration diagram for _wsse__Security:<p><center><img src="struct__wsse_____
 
 <tr><td class="memItemLeft" nowrap align=right valign=top><a class="el" href="struct__wsse_____binary_security_token.html">_wsse__BinarySecurityToken</a> *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="struct__wsse_____security.html#o2">BinarySecurityToken</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top><a class="el" href="structds_____signature_type.html">ds__SignatureType</a> *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="struct__wsse_____security.html#o3">ds__Signature</a></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="el" href="structxenc_____encrypted_key_type.html">xenc__EncryptedKeyType</a> *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="struct__wsse_____security.html#o3">xenc__EncryptedKey</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>char *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="struct__wsse_____security.html#o4">SOAP_ENV__actor</a></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="el" href="struct__xenc_____reference_list.html">_xenc__ReferenceList</a> *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="struct__wsse_____security.html#o4">xenc__ReferenceList</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>char *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="struct__wsse_____security.html#o5">SOAP_ENV__role</a></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="el" href="structds_____signature_type.html">ds__SignatureType</a> *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="struct__wsse_____security.html#o5">ds__Signature</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>char *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="struct__wsse_____security.html#o6">SOAP_ENV__actor</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>char *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="struct__wsse_____security.html#o7">SOAP_ENV__role</a></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -65,13 +68,13 @@ Element "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-sece
     </td>
   </tr>
 </table>
-<a class="anchor" name="o3" doxytag="_wsse__Security::ds__Signature" ></a><p>
+<a class="anchor" name="o5" doxytag="_wsse__Security::ds__Signature" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> struct <a class="el" href="structds_____signature_type.html">ds__SignatureType</a>* <a class="el" href="struct__wsse_____security.html#o3">_wsse__Security::ds__Signature</a>          </td>
+          <td class="md" nowrap valign="top"> struct <a class="el" href="structds_____signature_type.html">ds__SignatureType</a>* <a class="el" href="struct__wsse_____security.html#o5">_wsse__Security::ds__Signature</a>          </td>
         </tr>
       </table>
     </td>
@@ -88,13 +91,13 @@ Element "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-sece
     </td>
   </tr>
 </table>
-<a class="anchor" name="o4" doxytag="_wsse__Security::SOAP_ENV__actor" ></a><p>
+<a class="anchor" name="o6" doxytag="_wsse__Security::SOAP_ENV__actor" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> char* <a class="el" href="struct__wsse_____security.html#o4">_wsse__Security::SOAP_ENV__actor</a>          </td>
+          <td class="md" nowrap valign="top"> char* <a class="el" href="struct__wsse_____security.html#o6">_wsse__Security::SOAP_ENV__actor</a>          </td>
         </tr>
       </table>
     </td>
@@ -111,13 +114,13 @@ Element "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-sece
     </td>
   </tr>
 </table>
-<a class="anchor" name="o5" doxytag="_wsse__Security::SOAP_ENV__role" ></a><p>
+<a class="anchor" name="o7" doxytag="_wsse__Security::SOAP_ENV__role" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> char* <a class="el" href="struct__wsse_____security.html#o5">_wsse__Security::SOAP_ENV__role</a>          </td>
+          <td class="md" nowrap valign="top"> char* <a class="el" href="struct__wsse_____security.html#o7">_wsse__Security::SOAP_ENV__role</a>          </td>
         </tr>
       </table>
     </td>
@@ -180,9 +183,55 @@ Element "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-sece
     </td>
   </tr>
 </table>
+<a class="anchor" name="o3" doxytag="_wsse__Security::xenc__EncryptedKey" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> struct <a class="el" href="structxenc_____encrypted_key_type.html">xenc__EncryptedKeyType</a>* <a class="el" href="struct__wsse_____security.html#o3">_wsse__Security::xenc__EncryptedKey</a>          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="o4" doxytag="_wsse__Security::xenc__ReferenceList" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> struct <a class="el" href="struct__xenc_____reference_list.html">_xenc__ReferenceList</a>* <a class="el" href="struct__wsse_____security.html#o4">_wsse__Security::xenc__ReferenceList</a>          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+    </td>
+  </tr>
+</table>
 <hr>The documentation for this struct was generated from the following file:<ul>
 <li>/Users/engelen/Projects/gsoap/import/<a class="el" href="wsse_8h.html">wsse.h</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Apr 5 18:00:12 2010 for gSOAP WS-Security by
+<hr size="1"><address style="align: right;"><small>Generated on Fri Jan 14 09:45:24 2011 for gSOAP WS-Security by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.8 </small></address>
 </body>

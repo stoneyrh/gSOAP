@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 
 int cgi_serve()
 { /* CGI-style: serve request from stdin */
-  return soap_serve(soap_new1(SOAP_ENC_MTOM)); /* enable MTOM XOP attachments */
+  return soap_serve(soap_new1(SOAP_XML_INDENT | SOAP_ENC_MTOM)); /* enable MTOM XOP attachments (and XML indent) */
 }
 
 int run_serve(int port)

@@ -1,3 +1,4 @@
 base referer
-rect $structsoap__wsse__digest.html 7,108 132,134
-rect $structsoap__smd__data.html 15,17 124,44
+rect $structsoap__mec__data.html 7,108 116,134
+rect $structsoap__wsse__digest.html 140,108 265,134
+rect $structsoap__smd__data.html 148,17 257,44

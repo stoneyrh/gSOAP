@@ -14,6 +14,14 @@ wsseapi.*	WS-Security (wsse) plugin, see doc/wsse
 
 Supporting modules:
 
-smdevp.*	EVP-based (signed) message digest engine
+smdevp.*	EVP-based streaming (signed) message digest engine
+mecevp.*	EVP-based streaming message encryption engine
 md5evp.*	MD5 EVP interface for httpda and httpmd5
 threads.*	Threads, mutex, and condition variables
+
+C versus C++:
+
+All files are suitable for C and C++ compilation and C++ checks are included in
+the source code whenever applicable. If necessary, rename the .c file(s) to
+.cpp for your project.
+

@@ -63,14 +63,9 @@ wsdl2h-schema.o wsdl2h-schema.o: schema.cpp wsdlH.h wsdlStub.h \
   /usr/include/c++/4.2.1/bits/stl_vector.h \
   /usr/include/c++/4.2.1/bits/stl_bvector.h \
   /usr/include/c++/4.2.1/bits/vector.tcc includes.h \
-  ../../gsoap/stdsoap2.h ../../config.h /usr/include/xlocale.h \
-  /usr/include/_xlocale.h /usr/include/xlocale/_ctype.h \
-  /usr/include/xlocale/__wctype.h /usr/include/xlocale/_stdio.h \
-  /usr/include/xlocale/_stdlib.h /usr/include/xlocale/_string.h \
-  /usr/include/xlocale/_time.h /usr/include/xlocale/_wchar.h \
-  /usr/include/poll.h /usr/include/sys/poll.h \
-  /usr/include/c++/4.2.1/string /usr/include/c++/4.2.1/bits/char_traits.h \
-  /usr/include/c++/4.2.1/memory \
+  ../../gsoap/stdsoap2.h ../../config.h /usr/include/poll.h \
+  /usr/include/sys/poll.h /usr/include/c++/4.2.1/string \
+  /usr/include/c++/4.2.1/bits/char_traits.h /usr/include/c++/4.2.1/memory \
   /usr/include/c++/4.2.1/bits/stl_raw_storage_iter.h \
   /usr/include/c++/4.2.1/limits \
   /usr/include/c++/4.2.1/bits/ostream_insert.h \
@@ -92,7 +87,6 @@ wsdl2h-schema.o wsdl2h-schema.o: schema.cpp wsdlH.h wsdlStub.h \
   /usr/include/c++/4.2.1/bits/streambuf_iterator.h \
   /usr/include/c++/4.2.1/bits/locale_facets.h \
   /usr/include/c++/4.2.1/cwctype /usr/include/wctype.h \
-  /usr/include/xlocale/_wctype.h \
   /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/ctype_base.h \
   /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/ctype_inline.h \
   /usr/include/c++/4.2.1/bits/codecvt.h \
@@ -347,24 +341,6 @@ includes.h:
 
 ../../config.h:
 
-/usr/include/xlocale.h:
-
-/usr/include/_xlocale.h:
-
-/usr/include/xlocale/_ctype.h:
-
-/usr/include/xlocale/__wctype.h:
-
-/usr/include/xlocale/_stdio.h:
-
-/usr/include/xlocale/_stdlib.h:
-
-/usr/include/xlocale/_string.h:
-
-/usr/include/xlocale/_time.h:
-
-/usr/include/xlocale/_wchar.h:
-
 /usr/include/poll.h:
 
 /usr/include/sys/poll.h:
@@ -424,8 +400,6 @@ includes.h:
 /usr/include/c++/4.2.1/cwctype:
 
 /usr/include/wctype.h:
-
-/usr/include/xlocale/_wctype.h:
 
 /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/ctype_base.h:
 

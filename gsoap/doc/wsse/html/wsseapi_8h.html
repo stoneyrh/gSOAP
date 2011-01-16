@@ -7,11 +7,13 @@
 <div class="qindex"><a class="qindex" href="index.html">Main&nbsp;Page</a> | <a class="qindex" href="annotated.html">Class&nbsp;List</a> | <a class="qindex" href="files.html">File&nbsp;List</a> | <a class="qindex" href="functions.html">Class&nbsp;Members</a> | <a class="qindex" href="globals.html">File&nbsp;Members</a> | <a class="qindex" href="pages.html">Related&nbsp;Pages</a></div>
 <h1>/Users/engelen/Projects/gsoap/plugin/wsseapi.h File Reference</h1><code>#include "soapH.h"</code><br>
 <code>#include "<a class="el" href="smdevp_8h.html">smdevp.h</a>"</code><br>
+<code>#include "<a class="el" href="mecevp_8h.html">mecevp.h</a>"</code><br>
 
 <p>
 Include dependency graph for wsseapi.h:<p><center><img src="wsseapi_8h__incl.png" border="0" usemap="#wsseapi.h_map" alt="Include dependency graph"></center>
 <map name="wsseapi.h_map">
 <area href="smdevp_8h.html" shape="rect" coords="89,92,156,118" alt="">
+<area href="mecevp_8h.html" shape="rect" coords="180,92,247,118" alt="">
 </map>
 
 <p>
@@ -29,7 +31,7 @@ This graph shows which files directly or indirectly include this file:<p><center
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Digest dictionary: linked list of ID-hash pairs.  <a href="structsoap__wsse__digest.html#_details">More...</a><br></td></tr>
 <tr><td colspan=2><br><h2>Defines</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align=right valign=top>#define&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a0">SOAP_WSSE_ID</a>&nbsp;&nbsp;&nbsp;"SOAP-WSSE-1.1"</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>#define&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a0">SOAP_WSSE_ID</a>&nbsp;&nbsp;&nbsp;"SOAP-WSSE-1.2"</td></tr>
 
 <tr><td colspan=2><br><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align=right valign=top><a class="el" href="struct__wsse_____security.html">_wsse__Security</a> *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a14">soap_wsse_add_Security</a> (struct soap *soap)</td></tr>
@@ -198,19 +200,63 @@ This graph shows which files directly or indirectly include this file:<p><center
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Terminates the automatic verification of signatures.  <a href="#a68"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align=right valign=top>size_t&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a69">soap_wsse_verify_element</a> (struct soap *soap, const char *URI, const char *tag)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Post-checks the presence of signed element(s). Does not verify the signature of these elements, which is done with soap_wee_verify_auto.  <a href="#a69"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Post-checks the presence of signed element(s). Does not verify the signature of these elements, which is done with <a class="el" href="wsseapi_8c.html#a100">soap_wsse_verify_auto</a>.  <a href="#a69"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a70">soap_wsse_verify_body</a> (struct soap *soap)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Post-checks the presence of signed SOAP Body. Does not verify the signature of the Body, which is done with soap_wee_verify_auto.  <a href="#a70"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Post-checks the presence of signed SOAP Body. Does not verify the signature of the Body, which is done with <a class="el" href="wsseapi_8c.html#a100">soap_wsse_verify_auto</a>.  <a href="#a70"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a71">soap_wsse_set_wsu_id</a> (struct soap *soap, const char *tags)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set to the string value of the tag's QName.  <a href="#a71"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align=right valign=top>SOAP_FMAC1 void SOAP_FMAC2&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a72">soap_default_xsd__anyType</a> (struct soap *, struct soap_dom_element *node)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set to the string value of the tag's QName by replacing colons with hyphens to produce an xsd:ID value.  <a href="#a71"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a72">soap_wsse_sign_only</a> (struct soap *soap, const char *ids)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>SOAP_FMAC1 int SOAP_FMAC2&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a73">soap_out_xsd__anyType</a> (struct soap *soap, const char *tag, int id, const struct soap_dom_element *node, const char *type)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Filters only the specified wsu:Id names for signing. Can be used with <a class="el" href="wsseapi_8h.html#a71">soap_wsse_set_wsu_id()</a> and if so should use the element tag names.  <a href="#a72"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a73">soap_wsse_encrypt_only</a> (struct soap *soap, const char *ids)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a74">soap_wsse_add_EncryptedKey</a> (struct soap *soap, const char *URI, X509 *cert, const char *subjectkeyid)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds EncryptedKey header element.  <a href="#a74"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a75">soap_wsse_verify_EncryptedKey</a> (struct soap *soap)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Verifies the EncryptedKey header information (certificate validity requires soap-&gt;cacert to be set). Retrieves the decryption key from the token handler callback to decrypt the decryption key.  <a href="#a75"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>void&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a76">soap_wsse_delete_EncryptedKey</a> (struct soap *soap)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Deletes EncryptedKey header element.  <a href="#a76"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="el" href="structxenc_____encrypted_key_type.html">xenc__EncryptedKeyType</a> *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a77">soap_wsse_EncryptedKey</a> (struct soap *soap)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns EncryptedKey header element if present.  <a href="#a77"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a78">soap_wsse_add_EncryptedKey_DataReferenceURI</a> (struct soap *soap, const char *URI)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds a DataReference URI to the EncryptedKey header element.  <a href="#a78"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a79">soap_wsse_add_DataReferenceURI</a> (struct soap *soap, const char *URI)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds a DataReference URI to the WS-Security header element.  <a href="#a79"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a80">soap_wsse_encrypt_body</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption.  <a href="#a80"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a81">soap_wsse_encrypt</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Start encryption. This function is supposed to be used internally only. The algorithm should be SOAP_MEC_ENC_DES_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption.  <a href="#a81"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a82">soap_wsse_decrypt_auto</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Start automatic decryption when needed using the specified key. This function should be used just once. The algorithm should be SOAP_MEC_ENV_DEC_DES_CBC for public key encryption/decryption and SOAP_MEC_DEC_DES_CBC for symmetric shared secret keys.  <a href="#a82"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a83">soap_wsse_encrypt_begin</a> (struct soap *soap, const char *id, const char *URI, const char *keyname, const unsigned char *key)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Emit XML encryption tags and start encryption of the XML element content.  <a href="#a83"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a84">soap_wsse_encrypt_end</a> (struct soap *soap)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Emit XML encryption end tags and stop encryption of the XML element content.  <a href="#a84"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a85">soap_wsse_decrypt_begin</a> (struct soap *soap, const unsigned char *key)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check for XML encryption tags and start decryption of the XML element content. If the KeyInfo element is present, the security_token_handler callback will be used to obtain a decryption key based on the key name. Otherwise the current decryption key will be used.  <a href="#a85"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a86">soap_wsse_decrypt_end</a> (struct soap *soap)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check for XML encryption ending tags and stop decryption of the XML element content.  <a href="#a86"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>SOAP_FMAC1 void SOAP_FMAC2&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a87">soap_default_xsd__anyType</a> (struct soap *, struct soap_dom_element *node)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>SOAP_FMAC1 int SOAP_FMAC2&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a88">soap_out_xsd__anyType</a> (struct soap *soap, const char *tag, int id, const struct soap_dom_element *node, const char *type)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align=right valign=top>SOAP_FMAC1 struct soap_dom_element <br>
-*SOAP_FMAC2&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a74">soap_in_xsd__anyType</a> (struct soap *soap, const char *tag, struct soap_dom_element *node, const char *type)</td></tr>
+*SOAP_FMAC2&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a89">soap_in_xsd__anyType</a> (struct soap *soap, const char *tag, struct soap_dom_element *node, const char *type)</td></tr>
 
 <tr><td colspan=2><br><h2>Variables</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align=right valign=top>const char&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="wsseapi_8h.html#a1">soap_wsse_id</a> []</td></tr>
@@ -247,7 +293,7 @@ This graph shows which files directly or indirectly include this file:<p><center
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> #define SOAP_WSSE_ID&nbsp;&nbsp;&nbsp;"SOAP-WSSE-1.1"          </td>
+          <td class="md" nowrap valign="top"> #define SOAP_WSSE_ID&nbsp;&nbsp;&nbsp;"SOAP-WSSE-1.2"          </td>
         </tr>
       </table>
     </td>
@@ -265,7 +311,7 @@ plugin identification for plugin registry     </td>
   </tr>
 </table>
 <hr><h2>Function Documentation</h2>
-<a class="anchor" name="a72" doxytag="wsseapi.h::soap_default_xsd__anyType" ></a><p>
+<a class="anchor" name="a87" doxytag="wsseapi.h::soap_default_xsd__anyType" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
@@ -302,7 +348,7 @@ plugin identification for plugin registry     </td>
     </td>
   </tr>
 </table>
-<a class="anchor" name="a74" doxytag="wsseapi.h::soap_in_xsd__anyType" ></a><p>
+<a class="anchor" name="a89" doxytag="wsseapi.h::soap_in_xsd__anyType" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
@@ -351,7 +397,7 @@ plugin identification for plugin registry     </td>
     </td>
   </tr>
 </table>
-<a class="anchor" name="a73" doxytag="wsseapi.h::soap_out_xsd__anyType" ></a><p>
+<a class="anchor" name="a88" doxytag="wsseapi.h::soap_out_xsd__anyType" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
@@ -630,6 +676,158 @@ Adds BinarySecurityToken element with X509 certificate.
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK or SOAP_EOM</dd></dl>
 This function uses i2d_X509 from the the OpenSSL library to convert an X509 object to binary DER format.     </td>
+  </tr>
+</table>
+<a class="anchor" name="a79" doxytag="wsseapi.h::soap_wsse_add_DataReferenceURI" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int soap_wsse_add_DataReferenceURI           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname" nowrap> <em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const char *&nbsp;</td>
+          <td class="mdname" nowrap> <em>URI</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Adds a DataReference URI to the WS-Security header element. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>URI</em>&nbsp;</td><td>value of the URI ID </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="a74" doxytag="wsseapi.h::soap_wsse_add_EncryptedKey" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> <a class="el" href="structxenc_____encrypted_key_type.html">xenc__EncryptedKeyType</a> * soap_wsse_add_EncryptedKey           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname" nowrap> <em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const char *&nbsp;</td>
+          <td class="mdname" nowrap> <em>URI</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>X509 *&nbsp;</td>
+          <td class="mdname" nowrap> <em>cert</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const char *&nbsp;</td>
+          <td class="mdname" nowrap> <em>subjectkeyid</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Adds EncryptedKey header element. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>URI</em>&nbsp;</td><td>a unique identifier for the key, required for interoperability </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>cert</em>&nbsp;</td><td>the X509 certificate with public key or NULL </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>subjectkeyid</em>&nbsp;</td><td>string identification of the subject which when set to non-NULL is used instead of embedding the public key in the message </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd><a class="el" href="structxenc_____encrypted_key_type.html">xenc__EncryptedKeyType</a> object</dd></dl>
+This function adds the encrypted key or subject key ID to the WS-Security header and initiates encryption of the SOAP Body. An X509 certificate must be provided. The certificate is embedded in the WS-Security EncryptedKey header. If the subjectkeyid string is non-NULL the subject key ID is used in the EncryptedKey header instead of the X509 certificate content.     </td>
+  </tr>
+</table>
+<a class="anchor" name="a78" doxytag="wsseapi.h::soap_wsse_add_EncryptedKey_DataReferenceURI" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int soap_wsse_add_EncryptedKey_DataReferenceURI           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname" nowrap> <em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const char *&nbsp;</td>
+          <td class="mdname" nowrap> <em>URI</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Adds a DataReference URI to the EncryptedKey header element. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>URI</em>&nbsp;</td><td>value of the URI ID </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+    </td>
   </tr>
 </table>
 <a class="anchor" name="a45" doxytag="wsseapi.h::soap_wsse_add_KeyInfo" ></a><p>
@@ -1487,6 +1685,183 @@ Returns BinarySecurityToken element if present.
     </td>
   </tr>
 </table>
+<a class="anchor" name="a82" doxytag="wsseapi.h::soap_wsse_decrypt_auto" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int soap_wsse_decrypt_auto           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname" nowrap> <em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>int&nbsp;</td>
+          <td class="mdname" nowrap> <em>alg</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const void *&nbsp;</td>
+          <td class="mdname" nowrap> <em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>int&nbsp;</td>
+          <td class="mdname" nowrap> <em>keylen</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Start automatic decryption when needed using the specified key. This function should be used just once. The algorithm should be SOAP_MEC_ENV_DEC_DES_CBC for public key encryption/decryption and SOAP_MEC_DEC_DES_CBC for symmetric shared secret keys. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>alg</em>&nbsp;</td><td>the decryption algorithm, </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>key</em>&nbsp;</td><td>the decryption key for the algorithm, a private RSA key or a shared secret key </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>keylen</em>&nbsp;</td><td>use 0 for public-key encryption/decryption or the shared secret decryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK or error code</dd></dl>
+This function can be called once before multiple messages are received with WS-Security encrypted content, where only one key is used for encryption (public key or shared secret key). The default decryption key is set. If multiple decryption keys should be used, do NOT use this function but set the security_token_handler callback of the wsse plugin. See <a class="el" href="wsse.html#wsse_9_2">Decrypting Message Parts</a>. Use a NULL key to remove the default decryption key.     </td>
+  </tr>
+</table>
+<a class="anchor" name="a85" doxytag="wsseapi.h::soap_wsse_decrypt_begin" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int soap_wsse_decrypt_begin           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname" nowrap> <em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const unsigned char *&nbsp;</td>
+          <td class="mdname" nowrap> <em>key</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Check for XML encryption tags and start decryption of the XML element content. If the KeyInfo element is present, the security_token_handler callback will be used to obtain a decryption key based on the key name. Otherwise the current decryption key will be used. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>key</em>&nbsp;</td><td>optional triple DES key for decryption (to override the current key) </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="a86" doxytag="wsseapi.h::soap_wsse_decrypt_end" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int soap_wsse_decrypt_end           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>soap</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Check for XML encryption ending tags and stop decryption of the XML element content. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="a76" doxytag="wsseapi.h::soap_wsse_delete_EncryptedKey" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> void soap_wsse_delete_EncryptedKey           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>soap</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Deletes EncryptedKey header element. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+  </table>
+</dl>
+    </td>
+  </tr>
+</table>
 <a class="anchor" name="a16" doxytag="wsseapi.h::soap_wsse_delete_Security" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
@@ -1554,6 +1929,302 @@ Deletes Signature header element.
     <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
   </table>
 </dl>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="a81" doxytag="wsseapi.h::soap_wsse_encrypt" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int soap_wsse_encrypt           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname" nowrap> <em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>int&nbsp;</td>
+          <td class="mdname" nowrap> <em>alg</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const void *&nbsp;</td>
+          <td class="mdname" nowrap> <em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>int&nbsp;</td>
+          <td class="mdname" nowrap> <em>keylen</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Start encryption. This function is supposed to be used internally only. The algorithm should be SOAP_MEC_ENC_DES_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>alg</em>&nbsp;</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>key</em>&nbsp;</td><td>the encryption key, a DES CBC 160-bit key </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>keylen</em>&nbsp;</td><td>the encryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="a83" doxytag="wsseapi.h::soap_wsse_encrypt_begin" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int soap_wsse_encrypt_begin           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname" nowrap> <em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const char *&nbsp;</td>
+          <td class="mdname" nowrap> <em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const char *&nbsp;</td>
+          <td class="mdname" nowrap> <em>URI</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const char *&nbsp;</td>
+          <td class="mdname" nowrap> <em>keyname</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const unsigned char *&nbsp;</td>
+          <td class="mdname" nowrap> <em>key</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Emit XML encryption tags and start encryption of the XML element content. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>id</em>&nbsp;</td><td>string for the EncryptedData element Id attribute </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>URI</em>&nbsp;</td><td>string for the encrypted element wsu:Id attribute </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>keyname</em>&nbsp;</td><td>optional subject key name </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>key</em>&nbsp;</td><td>optional triple DES key for encryption (to override the current key) </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="a80" doxytag="wsseapi.h::soap_wsse_encrypt_body" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int soap_wsse_encrypt_body           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname" nowrap> <em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>int&nbsp;</td>
+          <td class="mdname" nowrap> <em>alg</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const void *&nbsp;</td>
+          <td class="mdname" nowrap> <em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>int&nbsp;</td>
+          <td class="mdname" nowrap> <em>keylen</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>alg</em>&nbsp;</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>key</em>&nbsp;</td><td>the encryption key, a DES CBC 160-bit key </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>keylen</em>&nbsp;</td><td>the encryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK or error code</dd></dl>
+This function initiates the encryption of the SOAP Body using an RSA public key or a symmetric shared secret key. No WS-Security EncryptedKey header will be set. Use soap_wsse_add_EncryptedKey instead for public key encryption.     </td>
+  </tr>
+</table>
+<a class="anchor" name="a84" doxytag="wsseapi.h::soap_wsse_encrypt_end" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int soap_wsse_encrypt_end           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>soap</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Emit XML encryption end tags and stop encryption of the XML element content. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="a73" doxytag="wsseapi.h::soap_wsse_encrypt_only" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int soap_wsse_encrypt_only           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname" nowrap> <em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const char *&nbsp;</td>
+          <td class="mdname" nowrap> <em>ids</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="a77" doxytag="wsseapi.h::soap_wsse_EncryptedKey" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> <a class="el" href="structxenc_____encrypted_key_type.html">xenc__EncryptedKeyType</a> * soap_wsse_EncryptedKey           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>soap</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Returns EncryptedKey header element if present. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd><a class="el" href="structxenc_____encrypted_key_type.html">xenc__EncryptedKeyType</a> object or NULL </dd></dl>
     </td>
   </tr>
 </table>
@@ -2018,7 +2689,7 @@ Returns UsernameToken/username string or wsse:FailedAuthentication fault.
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>UsernameToken/username string or NULL with wsse:FailedAuthentication fault error set </dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="wsseapi_8c.html#a45">soap_wsse_verify_Password</a></dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="wsseapi_8c.html#a52">soap_wsse_verify_Password</a></dd></dl>
 The returned username should be used to lookup the user's password in a dictionary or database for server-side authentication with soap_wsse_verify_Password.     </td>
   </tr>
 </table>
@@ -2354,7 +3025,7 @@ Sets sender SOAP Fault (sub)code for server fault response.
     <td>
 
 <p>
-Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set to the string value of the tag's QName. 
+Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set to the string value of the tag's QName by replacing colons with hyphens to produce an xsd:ID value. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -2484,6 +3155,52 @@ Uses the wsse plugin to sign all wsu:Id attributed elements, including the SOAP 
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK</dd></dl>
 This function does not actually sign the message, but initiates the plugin's signature algorithm to sign the message upon message transfer.     </td>
+  </tr>
+</table>
+<a class="anchor" name="a72" doxytag="wsseapi.h::soap_wsse_sign_only" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int soap_wsse_sign_only           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname" nowrap> <em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>const char *&nbsp;</td>
+          <td class="mdname" nowrap> <em>ids</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Filters only the specified wsu:Id names for signing. Can be used with <a class="el" href="wsseapi_8h.html#a71">soap_wsse_set_wsu_id()</a> and if so should use the element tag names. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+    <tr><td><tt>[in]</tt>&nbsp;</td><td valign=top><em>ids</em>&nbsp;</td><td>string of space-separated id names </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK </dd></dl>
+    </td>
   </tr>
 </table>
 <a class="anchor" name="a20" doxytag="wsseapi.h::soap_wsse_Signature" ></a><p>
@@ -2725,7 +3442,7 @@ This function does not actually verify the message, but initiates the plugin's a
     <td>
 
 <p>
-Post-checks the presence of signed SOAP Body. Does not verify the signature of the Body, which is done with soap_wee_verify_auto. 
+Post-checks the presence of signed SOAP Body. Does not verify the signature of the Body, which is done with <a class="el" href="wsseapi_8c.html#a100">soap_wsse_verify_auto</a>. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -2879,7 +3596,7 @@ Terminates the automatic verification of signatures.
     <td>
 
 <p>
-Post-checks the presence of signed element(s). Does not verify the signature of these elements, which is done with soap_wee_verify_auto. 
+Post-checks the presence of signed element(s). Does not verify the signature of these elements, which is done with <a class="el" href="wsseapi_8c.html#a100">soap_wsse_verify_auto</a>. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -2891,8 +3608,44 @@ Post-checks the presence of signed element(s). Does not verify the signature of 
 <dl compact><dt><b>Returns:</b></dt><dd>number of matching elements signed.</dd></dl>
 This function does not actually verify the signature of each element, but checks whether the elements are signed and thus their integrity is preserved. Signed element nesting rules are obeyed, so if the matching element is a descendent of a signed element, it is signed as well. Thus, the verification process follows nesting rules.<p>
 Client should call this function after invocation. Services should call this function inside a service operation. This function traverses the entire DOM, so performance is determined by the size of a message.<p>
-To check the SOAP Body (either using SOAP 1.1 or 1.2), <a class="el" href="wsseapi_8c.html#a88">soap_wsse_verify_element</a>(soap, namespaces[0].ns, "Body"). To check whether the Timestamp was signed (assuming it is present and message expiration checked with <a class="el" href="wsseapi_8c.html#a40">soap_wsse_verify_Timestamp</a>), use <a class="el" href="wsseapi_8c.html#a88">soap_wsse_verify_element</a>(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp").<p>
+To check the SOAP Body (either using SOAP 1.1 or 1.2), <a class="el" href="wsseapi_8c.html#a102">soap_wsse_verify_element</a>(soap, namespaces[0].ns, "Body"). To check whether the Timestamp was signed (assuming it is present and message expiration checked with <a class="el" href="wsseapi_8c.html#a47">soap_wsse_verify_Timestamp</a>), use <a class="el" href="wsseapi_8c.html#a102">soap_wsse_verify_element</a>(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp").<p>
 Note: for future releases XPath queries (or forms of these) will be considered.     </td>
+  </tr>
+</table>
+<a class="anchor" name="a75" doxytag="wsseapi.h::soap_wsse_verify_EncryptedKey" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int soap_wsse_verify_EncryptedKey           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">struct soap *&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>soap</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Verifies the EncryptedKey header information (certificate validity requires soap-&gt;cacert to be set). Retrieves the decryption key from the token handler callback to decrypt the decryption key. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>soap</em>&nbsp;</td><td>context </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+    </td>
   </tr>
 </table>
 <a class="anchor" name="a66" doxytag="wsseapi.h::soap_wsse_verify_init" ></a><p>
@@ -3162,7 +3915,7 @@ This is an expensive operation. Whenever a new soap context is created, the cafi
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> const char* <a class="el" href="wsseapi_8c.html#a15">c14n_URI</a>          </td>
+          <td class="md" nowrap valign="top"> const char* <a class="el" href="wsseapi_8c.html#a17">c14n_URI</a>          </td>
         </tr>
       </table>
     </td>
@@ -3277,7 +4030,7 @@ This is an expensive operation. Whenever a new soap context is created, the cafi
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> const char* <a class="el" href="wsseapi_8c.html#a14">ds_URI</a>          </td>
+          <td class="md" nowrap valign="top"> const char* <a class="el" href="wsseapi_8c.html#a16">ds_URI</a>          </td>
         </tr>
       </table>
     </td>
@@ -3438,7 +4191,7 @@ Plugin identification for plugin registry     </td>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> const char* <a class="el" href="wsseapi_8c.html#a16">wsu_URI</a>          </td>
+          <td class="md" nowrap valign="top"> const char* <a class="el" href="wsseapi_8c.html#a18">wsu_URI</a>          </td>
         </tr>
       </table>
     </td>
@@ -3455,7 +4208,7 @@ Plugin identification for plugin registry     </td>
     </td>
   </tr>
 </table>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Apr 5 18:00:12 2010 for gSOAP WS-Security by
+<hr size="1"><address style="align: right;"><small>Generated on Fri Jan 14 09:45:24 2011 for gSOAP WS-Security by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.8 </small></address>
 </body>

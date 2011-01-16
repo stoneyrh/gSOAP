@@ -164,3 +164,7 @@ Bug fix.
 
 17 March 2009: Brodie Thiesfield (code@jellycan.com)
 Clean up and re-release.
+
+8 October 2010: Robert van Engelen (engelen@acm.org)
+Fix for error handling.
+

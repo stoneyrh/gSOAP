@@ -1,10 +1,9 @@
 libgsoapssl___a-stdsoap2_ssl_cpp.o libgsoapssl___a-stdsoap2_ssl_cpp.o:  \
- stdsoap2_ssl_cpp.cpp stdsoap2.h ../config.h /usr/include/xlocale.h \
-  /usr/include/sys/cdefs.h /usr/include/_locale.h /usr/include/_types.h \
-  /usr/include/sys/_types.h /usr/include/machine/_types.h \
-  /usr/include/i386/_types.h /usr/include/_xlocale.h \
-  /usr/include/stdlib.h /usr/include/Availability.h \
-  /usr/include/AvailabilityInternal.h /usr/include/sys/wait.h \
+ stdsoap2_ssl_cpp.cpp stdsoap2.h ../config.h /usr/include/stdlib.h \
+  /usr/include/Availability.h /usr/include/AvailabilityInternal.h \
+  /usr/include/_types.h /usr/include/sys/_types.h \
+  /usr/include/sys/cdefs.h /usr/include/machine/_types.h \
+  /usr/include/i386/_types.h /usr/include/sys/wait.h \
   /usr/include/sys/signal.h /usr/include/sys/appleapiopts.h \
   /usr/include/machine/signal.h /usr/include/i386/signal.h \
   /usr/include/i386/_structs.h /usr/include/sys/_structs.h \
@@ -14,11 +13,8 @@ libgsoapssl___a-stdsoap2_ssl_cpp.o libgsoapssl___a-stdsoap2_ssl_cpp.o:  \
   /usr/include/libkern/_OSByteOrder.h \
   /usr/include/libkern/i386/_OSByteOrder.h /usr/include/alloca.h \
   /usr/include/machine/types.h /usr/include/i386/types.h \
-  /usr/include/i386/_types.h /usr/include/xlocale/_stdlib.h \
-  /usr/include/stdio.h /usr/include/xlocale/_stdio.h \
-  /usr/include/string.h /usr/include/xlocale/_string.h \
+  /usr/include/i386/_types.h /usr/include/stdio.h /usr/include/string.h \
   /usr/include/ctype.h /usr/include/runetype.h \
-  /usr/include/xlocale/_ctype.h \
   /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/limits.h \
   /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/syslimits.h \
   /usr/include/limits.h /usr/include/machine/limits.h \
@@ -39,18 +35,17 @@ libgsoapssl___a-stdsoap2_ssl_cpp.o libgsoapssl___a-stdsoap2_ssl_cpp.o:  \
   /usr/include/c++/4.2.1/iosfwd \
   /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/c++locale.h \
   /usr/include/c++/4.2.1/clocale /usr/include/locale.h \
-  /usr/include/c++/4.2.1/cstdio /usr/include/c++/4.2.1/cstdarg \
+  /usr/include/_locale.h /usr/include/c++/4.2.1/cstdio \
+  /usr/include/c++/4.2.1/cstdarg \
   /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdarg.h \
   /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/c++io.h \
   /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/gthr.h \
   /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/gthr-default.h \
   /usr/include/pthread.h /usr/include/pthread_impl.h /usr/include/sched.h \
   /usr/include/time.h /usr/include/_structs.h \
-  /usr/include/xlocale/_time.h /usr/include/c++/4.2.1/cctype \
-  /usr/include/c++/4.2.1/bits/postypes.h /usr/include/c++/4.2.1/cwchar \
-  /usr/include/c++/4.2.1/ctime /usr/include/wchar.h \
-  /usr/include/_wctype.h /usr/include/xlocale/__wctype.h \
-  /usr/include/xlocale/_wchar.h \
+  /usr/include/c++/4.2.1/cctype /usr/include/c++/4.2.1/bits/postypes.h \
+  /usr/include/c++/4.2.1/cwchar /usr/include/c++/4.2.1/ctime \
+  /usr/include/wchar.h /usr/include/_wctype.h \
   /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdint.h \
   /usr/include/c++/4.2.1/bits/functexcept.h \
   /usr/include/c++/4.2.1/exception_defines.h \
@@ -90,7 +85,6 @@ libgsoapssl___a-stdsoap2_ssl_cpp.o libgsoapssl___a-stdsoap2_ssl_cpp.o:  \
   /usr/include/c++/4.2.1/bits/streambuf_iterator.h \
   /usr/include/c++/4.2.1/bits/locale_facets.h \
   /usr/include/c++/4.2.1/cwctype /usr/include/wctype.h \
-  /usr/include/xlocale/_wctype.h \
   /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/ctype_base.h \
   /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/ctype_inline.h \
   /usr/include/c++/4.2.1/bits/codecvt.h \
@@ -137,27 +131,21 @@ stdsoap2.h:
 
 ../config.h:
 
-/usr/include/xlocale.h:
-
-/usr/include/sys/cdefs.h:
-
-/usr/include/_locale.h:
-
-/usr/include/_types.h:
-
-/usr/include/sys/_types.h:
-
-/usr/include/machine/_types.h:
-
-/usr/include/i386/_types.h:
-
-/usr/include/_xlocale.h:
-
 /usr/include/stdlib.h:
 
 /usr/include/Availability.h:
 
 /usr/include/AvailabilityInternal.h:
+
+/usr/include/_types.h:
+
+/usr/include/sys/_types.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/machine/_types.h:
+
+/usr/include/i386/_types.h:
 
 /usr/include/sys/wait.h:
 
@@ -197,21 +185,13 @@ stdsoap2.h:
 
 /usr/include/i386/_types.h:
 
-/usr/include/xlocale/_stdlib.h:
-
 /usr/include/stdio.h:
 
-/usr/include/xlocale/_stdio.h:
-
 /usr/include/string.h:
-
-/usr/include/xlocale/_string.h:
 
 /usr/include/ctype.h:
 
 /usr/include/runetype.h:
-
-/usr/include/xlocale/_ctype.h:
 
 /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/limits.h:
 
@@ -271,6 +251,8 @@ stdsoap2.h:
 
 /usr/include/locale.h:
 
+/usr/include/_locale.h:
+
 /usr/include/c++/4.2.1/cstdio:
 
 /usr/include/c++/4.2.1/cstdarg:
@@ -293,8 +275,6 @@ stdsoap2.h:
 
 /usr/include/_structs.h:
 
-/usr/include/xlocale/_time.h:
-
 /usr/include/c++/4.2.1/cctype:
 
 /usr/include/c++/4.2.1/bits/postypes.h:
@@ -306,10 +286,6 @@ stdsoap2.h:
 /usr/include/wchar.h:
 
 /usr/include/_wctype.h:
-
-/usr/include/xlocale/__wctype.h:
-
-/usr/include/xlocale/_wchar.h:
 
 /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdint.h:
 
@@ -402,8 +378,6 @@ stdsoap2.h:
 /usr/include/c++/4.2.1/cwctype:
 
 /usr/include/wctype.h:
-
-/usr/include/xlocale/_wctype.h:
 
 /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/ctype_base.h:
 

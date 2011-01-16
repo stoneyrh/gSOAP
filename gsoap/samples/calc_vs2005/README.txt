@@ -5,7 +5,7 @@ To create a new gSOAP-based VS2005 project, follow these additional steps:
 Add a custom-build step to invoke soapcpp2 on the gSOAP header file (xyz.h):
 Right-button select xyz.h and select Properties
 In Configuration Propertes select Custom Build Step
-  Command Line: soapcpp2.exe -i -C $(InputFileName)
+  Command Line: soapcpp2.exe -i -wx -C $(InputFileName)
   Outputs: soapH.h soapStub.h soapC.cpp
 
 Notes:

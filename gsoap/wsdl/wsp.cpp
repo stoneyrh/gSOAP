@@ -384,7 +384,7 @@ void wsp__Content::generate(Types& types, int indent) const
   if (sp__EncryptBeforeSigning)
     fprintf(stream, "%s- WS-Security Encrypt Before Signing%s (gSOAP unsupported)\n", tabs, sp__EncryptBeforeSigning->Optional ? " (optional)" : sp__EncryptBeforeSigning->Ignorable ? " (ignorable)" : "");
   if (sp__EncryptSignature)
-    fprintf(stream, "%s- WS-Security Encrypt Signature%s (gSOAP unsupported)\n", tabs, sp__EncryptSignature->Optional ? " (optional)" : sp__EncryptSignature->Ignorable ? " (ignorable)" : "");
+    fprintf(stream, "%s- WS-Security Encrypt Signature%s\n", tabs, sp__EncryptSignature->Optional ? " (optional)" : sp__EncryptSignature->Ignorable ? " (ignorable)" : "");
   if (sp__ProtectTokens)
     fprintf(stream, "%s- WS-Security Token Protection%s required\n", tabs, sp__ProtectTokens->Optional ? " (optional)" : sp__ProtectTokens->Ignorable ? " (ignorable)" : "");
   if (sp__OnlySignEntireHeadersAndBody)
