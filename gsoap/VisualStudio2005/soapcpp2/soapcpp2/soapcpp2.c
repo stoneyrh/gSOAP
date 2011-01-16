@@ -54,6 +54,7 @@ int cflag = 0;		/* when set, generate files with .c extension */
 int aflag = 0;		/* when set, use value of SOAP Action to dispatch method at server side */
 int bflag = 0;		/* when set, serialize byte arrays char[N] as string */
 int eflag = 0;		/* when set, use SOAP RPC encoding by default */
+unsigned long fflag = 0;/* multi-file split for each bundle of -fN defs */
 int iflag = 0;		/* when set, generate new style proxy/object classes inherited from soap struct */
 int mflag = 0;		/* when set, generate code that requires array/binary classes to explicitly remove malloced array */
 int nflag = 0;		/* when set, names the namespaces global struct '%NAME%_namespaces */
@@ -121,6 +122,18 @@ main(int argc, char **argv)
 					case 'e':
 						eflag = 1;
 						break;
+					case 'f':
+						a++;
+						g = 0;
+						if (*a)
+							fflag = strtoul(a, NULL, 10);
+						else if (i < argc && argv[++i])
+							fflag = strtoul(argv[i], NULL, 10);
+						if (!fflag)
+							execerror("Option -f requires a value");
+						if (fflag < 10)
+						  fflag = 10;
+						break;
 					case 'a':
 						aflag = 1;
 						break;
@@ -129,7 +142,7 @@ main(int argc, char **argv)
 						break;
 					case '?':
 					case 'h':
-						fprintf(stderr, "Usage: soapcpp2 [-1|-2] [-C|-S] [-T] [-L] [-a] [-b] [-c] [-d path] [-e] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-l] [-m] [-n] [-p name] [-s] [-t] [-v] [-w] [-x] [infile]\n\n");
+						fprintf(stderr, "Usage: soapcpp2 [-1|-2] [-C|-S] [-T] [-L] [-a] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-l] [-m] [-n] [-p name] [-s] [-t] [-v] [-w] [-x] [infile]\n\n");
 						fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
@@ -142,6 +155,7 @@ main(int argc, char **argv)
 -c      generate C source code\n\
 -dpath  use path to save files\n\
 -e	generate SOAP RPC encoding style bindings\n\
+-fN	file split of N XML serializer implementations per file (N>=10)\n\
 -h	display help info\n\
 -i      generate service proxies and objects inherited from soap struct\n\
 -Ipath  use path(s) for #import\n\

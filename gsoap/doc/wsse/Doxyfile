@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = "gSOAP WS-Security"
-PROJECT_NUMBER         = "2.7"
+PROJECT_NUMBER         = "2.8 Stable"
 OUTPUT_DIRECTORY       = 
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -77,7 +77,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ../../plugin/wsseapi.h ../../plugin/wsseapi.c ../../plugin/smdevp.h ../../plugin/smdevp.c ../../import/wsse.h ../../import/ds.h ../../import/wsu.h ../../import/c14n.h
+INPUT                  = ../../plugin/wsseapi.h ../../plugin/wsseapi.c ../../plugin/smdevp.h ../../plugin/smdevp.c ../../plugin/mecevp.h ../../plugin/mecevp.c ../../plugin/threads.h ../../plugin/threads.c ../../import/wsse.h ../../import/ds.h ../../import/xenc.h ../../import/wsu.h ../../import/c14n.h
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \

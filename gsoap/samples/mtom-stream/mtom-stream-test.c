@@ -6,10 +6,6 @@
 	Copyright (C) 2000-2006 Robert A. van Engelen, Genivia, Inc.
 	All Rights Reserved.
 
-	Usage (CGI server):
-
-		Install as CGI application, e.g. under cgi-bin
-
 	Usage (server):
 
 	mtom-stream-test 8085 &
@@ -428,9 +424,9 @@ int m__PutData(struct soap *soap, struct x__DataSet *data, struct m__PutDataResp
   /* Set up array of keys to return a key for each data item saved */
   response->x__keys.__size = data->__size;
   response->x__keys.key = soap_malloc(soap, data->__size*sizeof(char**));
-  /* Each key is stored in the mime_server_handle object, set by the callbacks and accessible through the data __ptr */
+  /* Each key is stored in the mime_server_handle object, set by the callbacks and accessible through the data __ptr, where .type must be set as this indicates the presence of an attachment with a type */
   for (i = 0; i < data->__size; i++)
-  { if (data->item[i].xop__Include.__ptr)
+  { if (data->item[i].xop__Include.__ptr && data->item[i].xop__Include.type)
     { const char *key = ((struct mime_server_handle*)(data->item[i].xop__Include.__ptr))->key;
       const char *s;
       if (!key)

@@ -48,7 +48,7 @@ typedef struct ds__SignatureType
 	char*					SignatureValue;
 	struct ds__KeyInfoType*			KeyInfo;
 	@char*					Id;
-} ds__SignatureType;
+} ds__SignatureType, _ds__Signature;
 
 /// Imported complexType "http://www.w3.org/2000/09/xmldsig#":SignatureValueType from typemap WS/WS-typemap.dat.
 /// complexType definition intentionally left blank.
@@ -74,7 +74,7 @@ typedef struct ds__TransformType
 {	_c14n__InclusiveNamespaces*             c14n__InclusiveNamespaces;
 	_XML					__any;
 	@char*					Algorithm;
-} ds__TransformType;
+} ds__TransformType, _ds__Transform;
 
 /// Typedef synonym for struct ds__DigestMethodType.
 typedef struct ds__DigestMethodType ds__DigestMethodType;
@@ -87,7 +87,7 @@ typedef struct ds__KeyInfoType
 	struct ds__X509DataType*		X509Data;
 	struct _wsse__SecurityTokenReference*	wsse__SecurityTokenReference;
 	@char*					Id;
-} ds__KeyInfoType;
+} ds__KeyInfoType, _ds__KeyInfo;
 
 /// Typedef synonym for struct ds__KeyValueType.
 typedef struct ds__KeyValueType ds__KeyValueType;

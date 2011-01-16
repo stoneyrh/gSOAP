@@ -41,6 +41,7 @@ static const char *utf8(char *t, const char *s);
 static const char *cstring(const char *s);
 static const char *xstring(const char *s);
 static bool is_integer(const char *s);
+static LONG64 to_integer(const char *s);
 static void documentation(const char *text);
 
 static int comment_nest = 0; /* keep track of block comments to avoid nesting */
@@ -1144,43 +1145,75 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           fprintf(stream, "\"");
         }
         // add range info only when type is numeric
-        bool is_numeric = false;
+        bool is_numeric = false, is_float = false;
         if (!strncmp(s, "unsigned ", 9))
           s += 9;
-        if (strstr("char short int LONG64 float double ", s))
+        else if (!strncmp(s, "xsd__unsigned", 13))
+          s += 13;
+        else if (!strncmp(s, "xsd__", 5))
+          s += 5;
+        if (!strcmp(s, "double")
+         || !strcmp(s, "float"))
+          is_numeric = is_float = true;
+        else if (!strcmp(s, "bool")
+         || !strcmp(s, "byte")
+         || !strcmp(s, "Byte")
+         || !strcmp(s, "char")
+         || !strcmp(s, "double")
+         || !strcmp(s, "float")
+         || !strcmp(s, "int")
+         || !strcmp(s, "Int")
+         || !strcmp(s, "long")
+         || !strcmp(s, "Long")
+         || !strcmp(s, "LONG64")
+         || !strcmp(s, "short")
+         || !strcmp(s, "Short")
+         || !strcmp(s, "ULONG64"))
           is_numeric = true;
         if (!anonymous
-	 && simpleType.restriction->minLength
-	 && simpleType.restriction->minLength->value)
+         && simpleType.restriction->minLength
+         && simpleType.restriction->minLength->value)
           fprintf(stream, " %s", simpleType.restriction->minLength->value);
         else if (is_numeric
-	      && !anonymous
-	      && simpleType.restriction->minInclusive
-	      && simpleType.restriction->minInclusive->value
-	      && is_integer(simpleType.restriction->minInclusive->value))
+              && !anonymous
+              && simpleType.restriction->minInclusive
+              && simpleType.restriction->minInclusive->value
+              && is_integer(simpleType.restriction->minInclusive->value))
           fprintf(stream, " %s", simpleType.restriction->minInclusive->value);
-        else if (is_numeric
-	      && !anonymous
-	      && simpleType.restriction->minExclusive
-	      && simpleType.restriction->minExclusive->value
-	      && is_integer(simpleType.restriction->minExclusive->value))
+        else if (is_float
+              && !anonymous
+              && simpleType.restriction->minExclusive
+              && simpleType.restriction->minExclusive->value
+              && is_integer(simpleType.restriction->minExclusive->value))
           fprintf(stream, " %s", simpleType.restriction->minExclusive->value);
+        else if (is_numeric
+              && !anonymous
+              && simpleType.restriction->minExclusive
+              && simpleType.restriction->minExclusive->value
+              && is_integer(simpleType.restriction->minExclusive->value))
+          fprintf(stream, " "SOAP_LONG_FORMAT, to_integer(simpleType.restriction->minExclusive->value)+1);
         if (!anonymous
-	 && simpleType.restriction->maxLength
-	 && simpleType.restriction->maxLength->value)
+         && simpleType.restriction->maxLength
+         && simpleType.restriction->maxLength->value)
           fprintf(stream, ":%s", simpleType.restriction->maxLength->value);
         else if (is_numeric
-	      && !anonymous
-	      && simpleType.restriction->maxInclusive
-	      && simpleType.restriction->maxInclusive->value
-	      && is_integer(simpleType.restriction->maxInclusive->value))
+              && !anonymous
+              && simpleType.restriction->maxInclusive
+              && simpleType.restriction->maxInclusive->value
+              && is_integer(simpleType.restriction->maxInclusive->value))
           fprintf(stream, ":%s", simpleType.restriction->maxInclusive->value);
-        else if (is_numeric
-	      && !anonymous
-	      && simpleType.restriction->maxExclusive
-	      && simpleType.restriction->maxExclusive->value
-	      && is_integer(simpleType.restriction->maxExclusive->value))
+        else if (is_float
+              && !anonymous
+              && simpleType.restriction->maxExclusive
+              && simpleType.restriction->maxExclusive->value
+              && is_integer(simpleType.restriction->maxExclusive->value))
           fprintf(stream, ":%s", simpleType.restriction->maxExclusive->value);
+        else if (is_numeric
+              && !anonymous
+              && simpleType.restriction->maxExclusive
+              && simpleType.restriction->maxExclusive->value
+              && is_integer(simpleType.restriction->maxExclusive->value))
+          fprintf(stream, ":"SOAP_LONG_FORMAT, to_integer(simpleType.restriction->maxExclusive->value)-1);
         if (!anonymous)
         { fprintf(stream, ";\n");
           if (pflag && simpleType.name)
@@ -1920,14 +1953,23 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
     if (t)
     { if (!strncmp(t, "unsigned ", 9))
         t += 9;
+      else if (!strncmp(t, "xsd__unsigned", 13))
+        t += 13;
+      else if (!strncmp(t, "xsd__", 5))
+        t += 5;
       if (!strcmp(t, "bool")
+       || !strcmp(t, "byte")
+       || !strcmp(t, "Byte")
        || !strcmp(t, "char")
        || !strcmp(t, "double")
        || !strcmp(t, "float")
        || !strcmp(t, "int")
+       || !strcmp(t, "Int")
        || !strcmp(t, "long")
+       || !strcmp(t, "Long")
        || !strcmp(t, "LONG64")
        || !strcmp(t, "short")
+       || !strcmp(t, "Short")
        || !strcmp(t, "ULONG64"))
         fprintf(stream, " = %s", value);
       else if (!strncmp(t, "enum ", 5))
@@ -2043,17 +2085,24 @@ void Types::gen(const char *URI, const xs__seqchoice& sequence)
     s = strstr(s, "__");
     if (!s)
       s = t;
-    fprintf(stream, sizeformat, "int", s + 1);
-    if (!fake_union && sequence.minOccurs)
-      fprintf(stream, " %s", sequence.minOccurs);
-    if (sequence.maxOccurs
-     && strcmp(sequence.maxOccurs, "1")
-     && is_integer(sequence.maxOccurs))
-      fprintf(stream, ":%s", sequence.maxOccurs);
-    if (cflag)
-      fprintf(stream, ";\n    struct %s\n    {\n", t);
+    if (cflag || sflag || zflag == 2)
+    { fprintf(stream, sizeformat, "int", s + 1);
+      if (!fake_union && sequence.minOccurs)
+        fprintf(stream, " %s", sequence.minOccurs);
+      if (sequence.maxOccurs
+       && strcmp(sequence.maxOccurs, "1")
+       && is_integer(sequence.maxOccurs))
+        fprintf(stream, ":%s", sequence.maxOccurs);
+      fprintf(stream, ";\n");
+    }
     else
-      fprintf(stream, ";\n    class %s\n    {\n", t);
+    { fprintf(stream, elementformat, "std::vector<", "");
+      fprintf(stream, "\n");
+    }
+    if (cflag)
+      fprintf(stream, "    struct %s\n    {\n", t);
+    else
+      fprintf(stream, "    class %s\n    {\n", t);
   }
   else
   { if (fake_union)
@@ -2062,7 +2111,17 @@ void Types::gen(const char *URI, const xs__seqchoice& sequence)
   }
   gen(URI, sequence.__contents);
   if (s)
-  { fprintf(stream, pointerformat, "}", s);
+  { if (cflag || sflag || zflag == 2)
+      fprintf(stream, pointerformat, "}", s);
+    else
+    { fprintf(stream, elementformat, "}>", s);
+      if (!fake_union && sequence.minOccurs)
+        fprintf(stream, " %s", sequence.minOccurs);
+      if (sequence.maxOccurs
+       && strcmp(sequence.maxOccurs, "1")
+       && is_integer(sequence.maxOccurs))
+        fprintf(stream, ":%s", sequence.maxOccurs);
+    }
     fprintf(stream, ";\n");
   }
   if (s || fake_union)
@@ -2304,14 +2363,23 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
       { const char *t = tname(NULL, typeURI?typeURI:URI, type);
         if (!strncmp(t, "unsigned ", 9))
           t += 9;
+        else if (!strncmp(t, "xsd__unsigned", 13))
+          t += 13;
+        else if (!strncmp(t, "xsd__", 5))
+          t += 5;
         if (!strcmp(t, "bool")
+         || !strcmp(t, "byte")
+         || !strcmp(t, "Byte")
          || !strcmp(t, "char")
          || !strcmp(t, "double")
          || !strcmp(t, "float")
          || !strcmp(t, "int")
+         || !strcmp(t, "Int")
          || !strcmp(t, "long")
+         || !strcmp(t, "Long")
          || !strcmp(t, "LONG64")
          || !strcmp(t, "short")
+         || !strcmp(t, "Short")
          || !strcmp(t, "ULONG64"))
           fprintf(stream, " = %s", value);
         else if (!strncmp(t, "enum ", 5))
@@ -2404,31 +2472,31 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice)
       }
     }
   }
+  t = uname(URI);
+  s = strstr(t, "__union");
+  if (s)
+    r = s + 7;
+  if (!r || !*r)
+  { r = t;
+    s = "__union";
+  }
+  if (choice.maxOccurs && strcmp(choice.maxOccurs, "1"))
+  { if (with_union)
+    { // Generate a wrapper when we need a union within a union
+      wrap_union = true;
+      fprintf(stream, "    struct __%s\n    {\n", t);
+    }
+    fprintf(stream, sizeformat, "int", r);
+    fprintf(stream, " %s", choice.minOccurs ? choice.minOccurs : "0");
+    if (is_integer(choice.maxOccurs))
+      fprintf(stream, ":%s", choice.maxOccurs);
+    if (cflag)
+      fprintf(stream, ";\n    struct _%s\n    {\n", t);
+    else
+      fprintf(stream, ";\n    class _%s\n    {\n", t);
+  }
   if (use_union)
-  { t = uname(URI);
-    s = strstr(t, "__union");
-    if (s)
-      r = s + 7;
-    if (!r || !*r)
-    { r = t;
-      s = "__union";
-    }
-    if (choice.maxOccurs && strcmp(choice.maxOccurs, "1"))
-    { if (with_union)
-      { // Generate a wrapper when we need a union within a union
-        wrap_union = true;
-        fprintf(stream, "    struct __%s\n    {\n", t);
-      }
-      fprintf(stream, sizeformat, "int", r);
-      fprintf(stream, " %s", choice.minOccurs ? choice.minOccurs : "0");
-      if (choice.maxOccurs && strcmp(choice.maxOccurs, "1") && is_integer(choice.maxOccurs))
-        fprintf(stream, ":%s", choice.maxOccurs);
-      if (cflag)
-        fprintf(stream, ";\n    struct _%s\n    {\n", t);
-      else
-        fprintf(stream, ";\n    class _%s\n    {\n", t);
-    }
-    if (!with_union || wrap_union)
+  { if (!with_union || wrap_union)
     { fprintf(stream, choiceformat, "int", r);
       if (choice.minOccurs)
         fprintf(stream, " %s", choice.minOccurs);
@@ -2449,18 +2517,19 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice)
   { with_union = tmp_union;
     if (!with_union || wrap_union)
       fprintf(stream, elementformat, "}", s+2);
-    if (choice.maxOccurs && strcmp(choice.maxOccurs, "1"))
-    { fprintf(stream, ";\n");
-      fprintf(stream, pointerformat, "}", s);
-    }
-    fprintf(stream, ";\n");
-    if (wrap_union)
-    { fprintf(stream, elementformat, "}", s);
-      fprintf(stream, ";\n");
-    }
   }
   else
     fake_union = tmp_union;
+  if (choice.maxOccurs && strcmp(choice.maxOccurs, "1"))
+  { if (use_union)
+      fprintf(stream, ";\n");
+    fprintf(stream, pointerformat, "}", s);
+  }
+  fprintf(stream, ";\n");
+  if (wrap_union)
+  { fprintf(stream, elementformat, "}", s);
+    fprintf(stream, ";\n");
+  }
   fprintf(stream, "//  END OF CHOICE\n");
 }
 
@@ -2946,10 +3015,23 @@ static const char *xstring(const char *s)
   return r;
 }
 
+static LONG64 to_integer(const char *s)
+{ LONG64 n;
+#ifdef HAVE_STRTOLL
+  char *r;
+  n = strtoll(s, &r, 10);
+#else
+# ifdef HAVE_SSCANF
+  sscanf(s, SOAP_LONG_FORMAT, &n);
+# endif
+#endif
+  return n;
+}
+
 static bool is_integer(const char *s)
 { if ((*s == '-' || *s == '+') && s[1])
     s++;
-  if (!*s || strlen(s) > 9)
+  if (!*s || strlen(s) > 20)
     return false;
   while (*s && isdigit(*s))
     s++;

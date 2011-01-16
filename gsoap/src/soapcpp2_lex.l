@@ -957,7 +957,14 @@ static void import(const char *file)
         { strcpy(buf, s);
           s = NULL;
 	}
+#ifdef __VMS
+        { size_t len = strlen(buf) - 1;
+          if (buf[len] != ']' && buf[len] != ':')
+            strcat(buf, ":");
+        }
+#else
         strcat(buf, "/");
+#endif
         strcat(buf, file);
         yyin = fopen(buf, "r");
       }

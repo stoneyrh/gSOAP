@@ -169,11 +169,12 @@ typedef struct _wsse__SecurityTokenReference
 /// Element "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.1.xsd":Security of complexType "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.1.xsd":SecurityHeaderType.
 /// @brief This element defines the wsse:Security SOAP header element per Section 4.
 /// Imported element _wsse__Security from typemap WS/WS-typemap.dat.
-#import "ds.h"
+#import "xenc.h"
 typedef struct _wsse__Security
 {	struct _wsu__Timestamp*			wsu__Timestamp;
 	struct _wsse__UsernameToken*		UsernameToken;
 	struct _wsse__BinarySecurityToken*	BinarySecurityToken;
+	struct xenc__EncryptedKeyType*		xenc__EncryptedKey;
 	struct ds__SignatureType*		ds__Signature;
 	@char*					SOAP_ENV__actor;
 	@char*					SOAP_ENV__role;

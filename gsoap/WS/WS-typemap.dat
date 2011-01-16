@@ -224,11 +224,13 @@ wsse__SecurityHeaderType =
 
 # But use wsse:Security element with additional content
 _wsse__Security =\
-#import "ds.h"\n\
+#import "xenc.h"\n\
 typedef struct _wsse__Security\n\
 {	struct _wsu__Timestamp*			wsu__Timestamp;\n\
 	struct _wsse__UsernameToken*		UsernameToken;\n\
 	struct _wsse__BinarySecurityToken*	BinarySecurityToken;\n\
+	struct xenc__EncryptedKeyType*		xenc__EncryptedKey;\n\
+	struct _xenc__ReferenceList*		xenc__ReferenceList;\n\
 	struct ds__SignatureType*		ds__Signature;\n\
 	@char*					SOAP_ENV__actor;\n\
 	@char*					SOAP_ENV__role;\n\
@@ -251,7 +253,7 @@ typedef struct ds__TransformType\n\
 {	_c14n__InclusiveNamespaces*		c14n__InclusiveNamespaces;\n\
         _XML					__any;\n\
 	@char*					Algorithm;\n\
-} ds__TransformType;
+} ds__TransformType, _ds__Transform;
 
 ds__KeyInfoType =\
 typedef struct ds__KeyInfoType\n\
@@ -261,7 +263,7 @@ typedef struct ds__KeyInfoType\n\
 	struct ds__X509DataType*		X509Data;\n\
 	struct _wsse__SecurityTokenReference*	wsse__SecurityTokenReference;\n\
 	@char*					Id;\n\
-} ds__KeyInfoType;
+} ds__KeyInfoType, _ds__KeyInfo;
 
 ds__SignatureType =\
 typedef struct ds__SignatureType\n\
@@ -269,7 +271,7 @@ typedef struct ds__SignatureType\n\
 	char*					SignatureValue;\n\
 	struct ds__KeyInfoType*			KeyInfo;\n\
 	@char*					Id;\n\
-} ds__SignatureType;
+} ds__SignatureType, _ds__Signature;
 
 # Add c14n:InclusiveNamespaces element to ds:CanonicalizationMethodType
 ds__CanonicalizationMethodType = $\
@@ -289,6 +291,20 @@ ds__SignaturePropertiesType =
 ds__PGPDataType =
 
 ds__SPKIDataType =
+
+################################################################################
+#
+#	xenc redefinitions
+#
+################################################################################
+
+xenc__EncryptionPropertyType =\
+typedef struct xenc__EncryptionPropertyType\n\
+{	@char*					Target;\n\
+	@char*					Id;\n\
+} xenc__EncryptionPropertyType;
+
+xenc__KeySizeType = | int
 
 ################################################################################
 #

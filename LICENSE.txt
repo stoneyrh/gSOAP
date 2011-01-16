@@ -8,13 +8,13 @@ The gSOAP 2.8.0 (and 2.8.x updates) software is distributed under:
   - wsdl2h tool and its source code output, 
   - soapcpp2 tool and its source code output,
   - UDDI code,
-  - the webserver example code in samples/webserver,
-  - and several other example applications in the samples directory.
+  - the webserver example code in gsoap/samples/webserver,
+  - and several other example applications in the gsoap/samples directory.
   For details, see the note below. The gSOAP public license is included in the
   package: gsoap/license.pdf
 
 * GPL (GNU Public License, a common open-source software license) covers all of
-  the gSOAP software for non-commercial and educational use only.  The software
+  the gSOAP software for non-commercial and educational use only. The software
   is offered under GPL terms and conditions to allow the software to be used
   with open source GPL projects, educational use, and so on. We do not accept
   third-party GPL contributions to avoid having to fork the code base in GPL

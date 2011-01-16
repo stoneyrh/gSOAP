@@ -49,7 +49,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "soapH.h"
 #include "factorytest.nsmap"
 
-#include <iostream.h>
+#include <iostream>
 
 // default factory service endpoint:
 const char *factory = "http://localhost:18085";
@@ -167,7 +167,7 @@ void Counter::inc()
 int main(int argc, char **argv)
 { if (argc > 1)
     factory = argv[1];			// use factory from command line arg by default
-  cout << "Connecting to factory " << factory << endl;
+  std::cout << "Connecting to factory " << factory << std::endl;
   Adder adder;				// create unique new remote adder object
   Counter counter1((char*)"myCounter");	// new counter object "myCounter" (created if not exists)
   Counter counter2((char*)"myCounter");	// lookup and use counter "myCounter" (this is an alias to counter1!)
@@ -175,22 +175,22 @@ int main(int argc, char **argv)
   counter1.set(adder.get());
   adder.add(3.0);
   counter1.inc();
-  cout << "Adder=" << adder.get() << endl;
-  cout << "Counter=" << counter2.get() << endl;		// counter2 is an alias for counter1 so this prints the value of counter1
-  cout << "Sleep for 90 seconds to test factory server purging objects:" << endl;
+  std::cout << "Adder=" << adder.get() << std::endl;
+  std::cout << "Counter=" << counter2.get() << std::endl;		// counter2 is an alias for counter1 so this prints the value of counter1
+  std::cout << "Sleep for 90 seconds to test factory server purging objects:" << std::endl;
   // counter is periodically incremented which keeps it alive
   sleep(30);
   counter1.inc();
-  cout << "Counter=" << counter2.get() << endl;
+  std::cout << "Counter=" << counter2.get() << std::endl;
   sleep(30);
   counter1.inc();
-  cout << "Counter=" << counter2.get() << endl;
+  std::cout << "Counter=" << counter2.get() << std::endl;
   sleep(30);
   counter1.inc();
-  cout << "Counter=" << counter2.get() << endl;
+  std::cout << "Counter=" << counter2.get() << std::endl;
   // after 90 secs, the adder should be gone
-  cout << "Adder is no longer available:" << endl;
+  std::cout << "Adder is no longer available:" << std::endl;
   adder.add(3.0);
-  cout << "Adder status = " << adder.status << endl;
+  std::cout << "Adder status = " << adder.status << std::endl;
   return 0;
 }

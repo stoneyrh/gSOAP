@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
  *
 \******************************************************************************/
 
-void *process_request(void*);
+void *process_request(struct soap*);
 int CRYPTO_thread_setup();
 void CRYPTO_thread_cleanup();
 void sigpipe_handle(int);
@@ -62,7 +62,7 @@ void sigpipe_handle(int);
 \******************************************************************************/
 
 int main()
-{ int m, s; /* master and slave sockets */
+{ SOAP_SOCKET m;
 #if defined(_POSIX_THREADS) || defined(_SC_THREADS)
   pthread_t tid;
 #endif
@@ -106,14 +106,14 @@ int main()
   soap.accept_timeout = 60;	/* server times out after 1 minute inactivity */
   soap.send_timeout = soap.recv_timeout = 30;	/* if I/O stalls, then timeout after 30 seconds */
   m = soap_bind(&soap, NULL, 18081, 100);
-  if (m < 0)
+  if (!soap_valid_socket(m))
   { soap_print_fault(&soap, stderr);
     exit(1);
   }
   fprintf(stderr, "Bind successful: socket = %d\n", m);
   for (;;)
-  { s = soap_accept(&soap);
-    if (s < 0)
+  { SOAP_SOCKET s = soap_accept(&soap);
+    if (!soap_valid_socket(s))
     { if (soap.errnum)
         soap_print_fault(&soap, stderr);
       else
@@ -127,9 +127,9 @@ int main()
       continue;
     }
 #if defined(_POSIX_THREADS) || defined(_SC_THREADS)
-    pthread_create(&tid, NULL, &process_request, (void*)tsoap);
+    pthread_create(&tid, NULL, (void*(*)(void*))&process_request, tsoap);
 #else
-    process_request((void*)tsoap);
+    process_request(tsoap);
 #endif
   }
   soap_destroy(&soap);
@@ -139,21 +139,21 @@ int main()
   return 0;
 } 
 
-void *process_request(void *soap)
+void *process_request(struct soap *soap)
 {
 #if defined(_POSIX_THREADS) || defined(_SC_THREADS)
   pthread_detach(pthread_self());
 #endif
-  if (soap_ssl_accept((struct soap*)soap) != SOAP_OK)
+  if (soap_ssl_accept(soap) != SOAP_OK)
   { /* when soap_ssl_accept() fails, socket is closed and SSL data reset */
-    soap_print_fault((struct soap*)soap, stderr);
+    soap_print_fault(soap, stderr);
     fprintf(stderr, "SSL request failed, continue with next call...\n");
   }
   else
-    soap_serve((struct soap*)soap);
-  soap_destroy((struct soap*)soap); /* for C++ */
-  soap_end((struct soap*)soap);
-  soap_free((struct soap*)soap);
+    soap_serve(soap);
+  soap_destroy(soap); /* for C++ */
+  soap_end(soap);
+  soap_free(soap);
   return NULL;
 }
 

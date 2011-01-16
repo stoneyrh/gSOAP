@@ -35,7 +35,7 @@ Compile:
 
 wsdl2h -c -t typemap.dat wssedemo.wsdl
 soapcpp2 -I import wssedemo.h
-cc -DWITH_OPENSSL -DWITH_DOM -o wssedemo wssedemo.c wsseapi.c smdevp.c dom.c stdsoap2.c soapC.c soapClient.c soapServer.c -lcrypto -lssl
+cc -DWITH_OPENSSL -DWITH_DOM -o wssedemo wssedemo.c wsseapi.c smdevp.c mecevp.c dom.c stdsoap2.c soapC.c soapClient.c soapServer.c -lcrypto -lssl
 
 Other required files:
 
@@ -44,17 +44,19 @@ cacert.pem
 
 Note:
 
-The wsse.h, wsu.h, ds.h, c14n.h files are located in 'import'.
-The smdevp.* and wsseapi.* files are located in 'plugin'.
+The wsse.h, wsu.h, ds.h, xenc.h c14n.h files are located in 'import'.
+The smdevp.*, mecevp.* and wsseapi.* files are located in 'plugin'.
 
-Usage: wssedemo cinhkst [port]
+Usage: wssedemo abcdehiknstxyz [port]
 
 with options:
 
 a sign the ns:add operation in the SOAP Body (use option b to remove Body sig)
 b don't sign the entire SOAP Body (signed by default)
 c use chunked HTTP
-h use hmac symmetric key
+d use triple DES secret key to encrypt SOAP Body
+e encrypt the SOAP Body using RSA public key
+h use hmac secret key
 i indent XML
 k don't use keys
 n canonical XML
@@ -96,15 +98,40 @@ X509 *cert = NULL;
 EVP_PKEY *rsa_privk = NULL, *rsa_pubk = NULL;
 
 /* The secret HMAC key is shared between client and server */
-static char hmac_key[16] = /* Not-so-random HMAC key for testing */
-{ 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,
-  0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00 };
+static char hmac_key[16] = /* Dummy HMAC key for signature test */
+{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+
+/* The secret triple DES secret key shared between client and server for message encryption */
+static char des_key[20] = /* Dummy 160-bit triple DES key for encryption test */
+{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
 
 int addsig = 0;
 int nobody = 0;
 int hmac = 0;
 int nokey = 0;
 int nohttp = 0;
+int des = 0;
+int enc = 0;
+
+/** Optional user-defined key lookup function, see WSSE docs */
+static const void *token_handler(struct soap *soap, int alg, const char *keyname, int *keylen)
+{ switch (alg)
+  { case SOAP_SMD_VRFY_DSA_SHA1:
+    case SOAP_SMD_VRFY_RSA_SHA1:
+      return (const void*)cert; /* signature verification with public cert */
+    case SOAP_SMD_HMAC_SHA1:
+      *keylen = sizeof(hmac_key);
+      return (const void*)hmac_key; /* signature verification with secret key */
+    case SOAP_MEC_ENV_DEC_DES_CBC:
+      /* should inquire keyname (contains key name or subject name/key id) */
+      return (const void*)rsa_privk; /* envelope decryption with private key */
+    case SOAP_MEC_DEC_DES_CBC:
+      /* should inquire keyname (contains key name or subject name/key id) */
+      *keylen = sizeof(des_key);
+      return (const void*)des_key; /* decryption with secret key */
+  }
+  return NULL; /* fail */
+}
 
 int main(int argc, char **argv)
 { struct soap *soap;
@@ -117,7 +144,7 @@ int main(int argc, char **argv)
   /* create context */
   soap = soap_new();
   /* register wsse plugin */
-  soap_register_plugin(soap, soap_wsse);
+  soap_register_plugin_arg(soap, soap_wsse, token_handler);
   /* options */
   if (argc >= 2)
   { if (strchr(argv[1], 'c'))
@@ -128,6 +155,10 @@ int main(int argc, char **argv)
       soap_set_omode(soap, SOAP_XML_INDENT);
     if (strchr(argv[1], 'n'))
       soap_set_omode(soap, SOAP_XML_CANONICAL);
+    if (strchr(argv[1], 'd'))
+      des = 1;
+    if (strchr(argv[1], 'e'))
+      enc = 1;
     if (strchr(argv[1], 'h'))
       hmac = 1;
     if (strchr(argv[1], 'k'))
@@ -179,7 +210,8 @@ int main(int argc, char **argv)
   /* port argument */
   if (argc >= 3)
     port = atoi(argv[2]);
-  /* need cacert to verify certificate */
+  /* need cacert to verify certificates (cacert.pem for testing and cacerts.pem
+     for production, which contains the trusted CA certificates) */
   soap->cafile = "cacert.pem";
   /* server or client/ */
   if (server)
@@ -202,6 +234,8 @@ int main(int argc, char **argv)
           soap_print_fault(soap, stderr);
           soap_print_fault_location(soap, stderr);
         }
+	soap_destroy(soap);
+	soap_end(soap);
       }
       soap_print_fault(soap, stderr);
       exit(1);
@@ -214,11 +248,17 @@ int main(int argc, char **argv)
         soap_wsse_verify_auto(soap, SOAP_SMD_VRFY_RSA_SHA1, rsa_pubk, 0);
       else
         soap_wsse_verify_auto(soap, SOAP_SMD_NONE, NULL, 0);
+      if (des)
+        soap_wsse_decrypt_auto(soap, SOAP_MEC_DEC_DES_CBC, des_key, sizeof(des_key));
+      else if (enc)
+        soap_wsse_decrypt_auto(soap, SOAP_MEC_ENV_DEC_DES_CBC, rsa_privk, 0);
       if (soap_serve(soap))
       { soap_wsse_delete_Security(soap);
         soap_print_fault(soap, stderr);
         soap_print_fault_location(soap, stderr);
       }
+      soap_destroy(soap);
+      soap_end(soap);
     }
   }
   else /* client */
@@ -230,13 +270,24 @@ int main(int argc, char **argv)
       strcpy(endpoint, "");
     else
       strcpy(endpoint, "http://");
-    /* message lifetime of 10 seconds */
-    soap_wsse_add_Timestamp(soap, "Time", 10);
+    /* message lifetime of 60 seconds */
+    soap_wsse_add_Timestamp(soap, "Time", 60);
     /* add user name with text or digest password */
     if (text)
       soap_wsse_add_UsernameTokenText(soap, "User", user, "userPass");
     else
       soap_wsse_add_UsernameTokenDigest(soap, "User", user, "userPass");
+    if (des)
+    { if (soap_wsse_encrypt_body(soap, SOAP_MEC_ENC_DES_CBC, des_key, sizeof(des_key)))
+        soap_print_fault(soap, stderr);
+      soap_wsse_decrypt_auto(soap, SOAP_MEC_DEC_DES_CBC, des_key, sizeof(des_key));
+    }
+    else if (enc)
+    { const char *SubjectKeyId = NULL; /* set to non-NULL to use SubjectKeyIdentifier in Header rather than a full cert key */
+      if (soap_wsse_add_EncryptedKey(soap, "Cert", cert, SubjectKeyId))
+        soap_print_fault(soap, stderr);
+      soap_wsse_decrypt_auto(soap, SOAP_MEC_ENV_DEC_DES_CBC, rsa_privk, 0);
+    }
     if (hmac)
     { if (nobody)
         soap_wsse_sign(soap, SOAP_SMD_HMAC_SHA1, hmac_key, sizeof(hmac_key));
@@ -264,7 +315,9 @@ int main(int argc, char **argv)
       soap_wsse_verify_auto(soap, SOAP_SMD_NONE, NULL, 0);
     /* sign the response message in unsigned body? If so, set wsu:Id */
     if (addsig)
-      soap_wsse_set_wsu_id(soap, "ns1:add");
+    { soap_wsse_set_wsu_id(soap, "ns1:add");
+      soap_wsse_sign_only(soap, "User ns1:add");
+    }
     /* invoke the server. You can choose add, sub, mul, or div operations
      * that show different security aspects for demonstration purposes
      * (see server operations below) */
@@ -302,6 +355,7 @@ int main(int argc, char **argv)
   if (cert)
     X509_free(cert);
   /* clean up gSOAP engine */
+  soap_destroy(soap);
   soap_end(soap);
   soap_done(soap);
   free(soap);
@@ -346,6 +400,14 @@ int ns1__add(struct soap *soap, double a, double b, double *result)
   /* sign the response message in unsigned body? If so, set wsu:Id */
   if (addsig)
     soap_wsse_set_wsu_id(soap, "ns1:addResponse");
+  if (des)
+  { if (soap_wsse_encrypt_body(soap, SOAP_MEC_ENC_DES_CBC, des_key, sizeof(des_key)))
+      soap_print_fault(soap, stderr);
+  }
+  else if (enc)
+  { if (soap_wsse_add_EncryptedKey(soap, "Cert", cert, NULL))
+      soap_print_fault(soap, stderr);
+  }
   *result = a + b;
   return SOAP_OK;
 }

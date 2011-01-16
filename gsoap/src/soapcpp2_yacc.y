@@ -165,7 +165,7 @@ Pragma	**pp;
 %type	<typ> type
 %type	<sto> store virtual constobj abstract
 %type	<e> fname struct class base enum
-%type	<sym> id arg name
+%type	<sym> id tag arg name
 %type	<s> patt
 %type	<i> cint
 /* expressions and statements */
@@ -334,6 +334,7 @@ dclr	: ptrs ID arrayck tag occurs init
 			  }
 			  else
 			  {	p = enter(sp->table, $2);
+			  	p->tag = $4;
 			  	p->info.typ = $3.typ;
 			  	p->info.sto = ($3.sto | permission);
 				if ($6.hasval)
@@ -1370,8 +1371,8 @@ init	: /* empty */   { $$.hasval = False; }
 			  }
 			}
 	;
-tag	: /* empty */	{ }
-	| TAG		{ /* empty for now */ }
+tag	: /* empty */	{ $$ = NULL; }
+	| TAG		{ $$ = $1; }
 	;
 occurs	: patt
 			{ $$.minOccurs = -1;
@@ -1752,14 +1753,14 @@ add_fault(Table *gt)
     }
     else
       p2->info.typ->ref = t;
+    p3 = enter(t, lookup("__any"));
+    p3->info.typ = xml;
+    p3->info.minOccurs = 0;
     p3 = enter(t, lookup("__type"));
     p3->info.typ = mkint();
     p3->info.minOccurs = 0;
     p3 = enter(t, lookup("fault"));
     p3->info.typ = mkpointer(mkvoid());
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("__any"));
-    p3->info.typ = xml;
     p3->info.minOccurs = 0;
     custom_fault = 0;
   }

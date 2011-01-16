@@ -16,13 +16,13 @@
 
 
 
-<title> gSOAP 2.8.0 User Guide</title>
+<title> gSOAP 2.8.1 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.0 User Guide </h1>
+<h1 align="center">gSOAP 2.8.1 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Sep 18, 2010
+<h3 align="center">Jan 16, 2011
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -350,6 +350,8 @@
 >18.5&nbsp; <font color="#0000FF">Client-side Request-Response Multicast</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc18.6"
 >18.6&nbsp; <font color="#0000FF">SOAP-over-UDP Server</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc18.7"
+>18.7&nbsp; <font color="#0000FF">SOAP-over-UDP Multicast Receiving Server</font></a><br />
 <a href="#tth_sEc19"
 >19&nbsp; <font color="#0000FF">Advanced Features</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.1"
@@ -4885,11 +4887,12 @@ The compiler supports the following options:
 <tr><td><i>-S</i>	</td><td>Generate server-side code only </td></tr>
 <tr><td><i>-T</i>	</td><td>Generate server auto-test code </td></tr>
 <tr><td><i>-L</i>	</td><td>Do not generate soapClientLib/soapServerLib </td></tr>
-<tr><td><i>-a</i>	</td><td>use value of SOAPAction HTTP header to dispatch method at server side </td></tr>
+<tr><td><i>-a</i>	</td><td>Use value of SOAPAction HTTP header to dispatch method at server side </td></tr>
 <tr><td><i>-b</i>	</td><td>serialize byte arrays <i>char[N]</i> as string </td></tr>
 <tr><td><i>-c</i>	</td><td>Generate pure C code </td></tr>
 <tr><td><i>-d  &lt; path &gt; </i>	</td><td>Save sources in directory specified by <i> &lt; path &gt; </i> </td></tr>
 <tr><td><i>-e</i>	</td><td>Generate SOAP RPC encoding style bindings </td></tr>
+<tr><td><i>-f N</i>	</td><td>File split of N XML serializer implementations per file </td></tr>
 <tr><td><i>-h</i>	</td><td>Print a brief usage message </td></tr>
 <tr><td><i>-i</i>	</td><td>Generate service proxies and objects inherited from soap struct </td></tr>
 <tr><td><i>-I  &lt; path &gt; </i>	</td><td>Use <i> &lt; path &gt; </i> (or paths separated with `:') for <i>#import</i> </td></tr>
@@ -6655,7 +6658,7 @@ type can also be declared as a string and the encoding will be string-based:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>typedef</b>&nbsp;<b>char</b>&nbsp;*xsd__base64Binary;
 </td></tr></table><br></i>
-With this approach, it is solely the responsibility of the application to make sure the string content is according to the Base64 Content-Transfer-Encoding defined in Section 6.8 of RFC 2045.</dd>
+With this approach, it is the responsibility of the application to make sure the string content is according to the Base64 Content-Transfer-Encoding defined in Section 6.8 of RFC 2045.</dd>
  <dt><b><tt>xsd:boolean</tt></b></dt>
 	<dd>
 For declaring an <tt>xsd:boolean</tt> XSD Schema type, the use of a bool is <b>strongly</b> recommended.
@@ -9927,7 +9930,7 @@ http://msdn.microsoft.com/library/en-us/dnglobspec/html/draft-nielsen-dime-02.tx
 
 <div class="p"><!----></div>
 Applications developed with gSOAP can transmit binary DIME attachments with or
-without streaming. Without streaming, all data is stored and retrieved in
+without streaming messages. Without streaming, all data is stored and retrieved in
 memory, which can be prohibitive when transmitting large files on small
 devices. In contrast, with DIME streaming, data handlers are used to pass the
 data to and from a resource, such as a file or device.  With DIME output
@@ -11520,7 +11523,8 @@ implemented as request-response operations at the server side.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc18.6">
-18.6</a>&nbsp;&nbsp;<font color="#0000FF">SOAP-over-UDP Server</font></h3>
+18.6</a>&nbsp;&nbsp;<font color="#0000FF">SOAP-over-UDP Server</font></h3><a name="sec:soapoverudp">
+</a>
 
 <div class="p"><!----></div>
 The following example code illustrates a SOAP-over-UDP server for one-way <i>sendString</i> and request-response <i>echoString</i> messages.
@@ -11591,6 +11595,34 @@ loop.  Because UDP does not have the equivalent of an accept the messages
 cannot be dispatched to threads, the <i>soap_serve</i> waits for a message and
 immediately accepts it. You can use a receive timeout to make <i>soap_serve</i>
 non-blocking.
+
+<div class="p"><!----></div>
+	     <h3><a name="tth_sEc18.7">
+18.7</a>&nbsp;&nbsp;<font color="#0000FF">SOAP-over-UDP Multicast Receiving Server</font></h3>
+
+<div class="p"><!----></div>
+For UDP multicast support, follow the suggestions in
+Section&nbsp;<a href="#sec:soapoverudp">18.6</a> and change the initialization parts of the code
+to enable UDP multicast port binding by to telliing the kernel which multicast
+groups you are interested in:
+
+<div class="p"><!----></div>
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+main() <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;soap soap; <br />
+&nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;ip_mreq mcast; <br />
+&nbsp;&nbsp;&nbsp;soap_init1(&amp;soap, SOAP_IO_UDP);
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(!soap_valid_socket(soap_bind(&amp;soap, host, port, 100))) <br />
+&nbsp;&nbsp;&nbsp;{ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_print_fault(&amp;soap, stderr); <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit(1); <br />
+&nbsp;&nbsp;&nbsp;} <br />
+&nbsp;&nbsp;&nbsp;mcast.imr_multiaddr.s_addr = inet_addr("<tt>put IP multicast address of group here</tt>"); <br />
+&nbsp;&nbsp;&nbsp;mcast.imr_interface.s_addr = htonl(INADDR_ANY); <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(setsockopt(soap.master, IPPROTO_IP, IP_ADD_MEMBERSHIP, &amp;mcast, sizeof(mcast))&lt;0) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... error ...
+</td></tr></table><br></i>
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc19">
@@ -14787,7 +14819,7 @@ soap_serve(&amp;soap); <br />
 
 <div class="p"><!----></div>
 The WSA WS-Addressing plug-in and the source code are extensively documented in
-the <i>doc</i> directory of the gSOAP package. Please refer to the documentation
+the <i>doc/wsa</i> directory of the gSOAP package. Please refer to the documentation
 included in the package.
 
 <div class="p"><!----></div>
@@ -14810,7 +14842,7 @@ This imports the SOAP header elements required by WS-Addressing.
 
 <div class="p"><!----></div>
 The WSRM WS-ReliableMessaging plug-in and the source code are extensively documented in
-the <i>doc</i> directory of the gSOAP package. Please refer to the documentation
+the <i>doc/wsrm</i> directory of the gSOAP package. Please refer to the documentation
 included in the package.
 
 <div class="p"><!----></div>
@@ -14841,8 +14873,8 @@ This imports the SOAP header elements required by WS-ReliableMessaging.
 
 <div class="p"><!----></div>
 The WSSE WS-Security plug-in and the source code are extensively documented in
-the <i>doc</i> directory of the gSOAP package. Please refer to the documentation
-included in the package.
+the <i>doc/wsse</i> directory of the gSOAP package. Please refer to the
+documentation included in the package for details.
 
 <div class="p"><!----></div>
 The plug-in code is located in the <i>plugin</i> directory:
@@ -14856,7 +14888,8 @@ Also needed are:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
 <table>
-<tr><td><i>smdevp.h</i> and <i>smdevp.c</i> </td><td>Signature and message digest support </td></tr>
+<tr><td><i>smdevp.h</i> and <i>smdevp.c</i> </td><td>Streaming XML signature and message digest engine </td></tr>
+<tr><td><i>mecevp.h</i> and <i>mecevp.c</i> </td><td>Streaming XML encryption engine </td></tr>
 <tr><td><i>threads.h</i> and <i>threads.c</i> </td><td>Multithreading and locking support </td></tr></table>
 
 </td></tr></table><br></span>
@@ -14873,5 +14906,5 @@ This imports the SOAP header elements required by WS-Security.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.39.<br />On 18 Sep 2010, 13:45.</small>
+version 3.39.<br />On 16 Jan 2011, 10:29.</small>
 </html>

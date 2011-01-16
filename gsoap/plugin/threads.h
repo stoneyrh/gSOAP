@@ -1,10 +1,10 @@
 /*
 	threads.h
 
-	Posix and Windows threads interface
+	Portable threads and locks API
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2005, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2005, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -44,6 +44,34 @@ compiling, linking, and/or using OpenSSL is allowed.
 --------------------------------------------------------------------------------
 A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
+*/
+
+/**
+
+@page threads Portable threads and locking support
+
+The threads.h and threads.c code define the following portable API:
+
+- THREAD_TYPE            portable thread type
+- THREAD_ID              returns current thread ID of type THREAD_TYPE*
+- THREAD_CREATE(t,f,a)   start a thread (THREAD_TYPE*)t that calls f(a)
+- THREAD_DETACH(t)       detach thread (THREAD_TYPE*)t
+- THREAD_JOIN(t)         wait to join (THREAD_TYPE*)t
+- THREAD_EXIT            exit the current thread
+
+- MUTEX_TYPE             portable mutex type
+- MUTEX_INITIALIZER      global initializer value for static locks
+- MUTEX_SETUP(m)         setup lock (MUTEX_TYPE*)m
+- MUTEX_CLEANUP(m)       cleanup lock (MUTEX_TYPE*)m
+- MUTEX_LOCK(m)          acquire lock (MUTEX_TYPE*)m
+- MUTEX_UNLOCK(m)        release lock (MUTEX_TYPE*)m
+
+- COND_TYPE		 portable condition variable type
+- COND_SETUP(c)          setup condition variable (COND_TYPE*)c
+- COND_CLEANUP(c)        cleanup condition variable (COND_TYPE*)c
+- COND_SIGNAL(c)         signal condition variable (COND_TYPE*)c
+- COND_WAIT(c,m)         wait on variable (COND_TYPE*)c in mutex (MUTEX_TYPE*)m
+
 */
 
 #ifndef THREADS_H

@@ -4,7 +4,7 @@
 	gSOAP interface for (signed) message digest
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2005, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2005, Robert van Engelen, Genivia, Inc., All Rights Reserved.
+Copyright (C) 2000-2010, Robert van Engelen, Genivia, Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -77,23 +77,26 @@ extern "C" {
 
 #define SOAP_SMD_NONE		(0)
 /** MD5 digest algorithm */
-#define SOAP_SMD_DGST_MD5	(1)
+#define SOAP_SMD_DGST_MD5	(0x1)
 /** SHA1 digest algorithm */
-#define SOAP_SMD_DGST_SHA1	(2)
+#define SOAP_SMD_DGST_SHA1	(0x2)
 /** HMAC-SHA1 shared key signature algorithm */
-#define SOAP_SMD_HMAC_SHA1	(3)
+#define SOAP_SMD_HMAC_SHA1	(0x3)
 /** DSA-SHA1 secret key signature algorithm */
-#define SOAP_SMD_SIGN_DSA_SHA1	(4)
+#define SOAP_SMD_SIGN_DSA_SHA1	(0x4)
 /** RSA-SHA1 secret key signature algorithm */
-#define SOAP_SMD_SIGN_RSA_SHA1	(5)
+#define SOAP_SMD_SIGN_RSA_SHA1	(0x5)
 /** DSA-SHA1 secret key signature verification algorithm */
-#define SOAP_SMD_VRFY_DSA_SHA1	(6)
+#define SOAP_SMD_VRFY_DSA_SHA1	(0x6)
 /** RSA-SHA1 secret key signature verification algorithm */
-#define SOAP_SMD_VRFY_RSA_SHA1	(7)
+#define SOAP_SMD_VRFY_RSA_SHA1	(0x7)
+
+/** Additional flag: msg sends will pass through digest/signature algorithm */
+#define SOAP_SMD_PASSTHRU	(0x8)
 
 /**
 @struct soap_smd_data
-@brief The smdevp engine context data
+@brief The smdevp engine context data, which is hooked up to soap->data[0]
 */
 struct soap_smd_data
 { int alg;		/**< The digest or signature algorithm used */
@@ -101,8 +104,7 @@ struct soap_smd_data
   const void *key;	/**< EVP_PKEY */
   int (*fsend)(struct soap*, const char*, size_t);
   size_t (*frecv)(struct soap*, char*, size_t);
-  soap_mode mode;
-  void *user;
+  soap_mode mode;	/**< to preserve soap->mode value */
 };
 
 /******************************************************************************\

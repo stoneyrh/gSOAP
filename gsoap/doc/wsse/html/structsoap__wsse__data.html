@@ -12,35 +12,56 @@
 <p>
 Collaboration diagram for soap_wsse_data:<p><center><img src="structsoap__wsse__data__coll__graph.png" border="0" usemap="#soap__wsse__data__coll__map" alt="Collaboration graph"></center>
 <map name="soap__wsse__data__coll__map">
-<area href="structsoap__wsse__digest.html" shape="rect" coords="7,108,132,134" alt="">
-<area href="structsoap__smd__data.html" shape="rect" coords="15,17,124,44" alt="">
+<area href="structsoap__mec__data.html" shape="rect" coords="7,108,116,134" alt="">
+<area href="structsoap__wsse__digest.html" shape="rect" coords="140,108,265,134" alt="">
+<area href="structsoap__smd__data.html" shape="rect" coords="148,17,257,44" alt="">
 </map>
 <center><font size="2">[<a href="graph_legend.html">legend</a>]</font></center><a href="structsoap__wsse__data-members.html">List of all members.</a><table border=0 cellpadding=0 cellspacing=0>
 <tr><td></td></tr>
 <tr><td colspan=2><br><h2>Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o0">sign_alg</a></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>char *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o0">sigid</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>const void *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o1">sign_key</a></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>char *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o1">encid</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o2">sign_keylen</a></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o2">sign_alg</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o3">vrfy_alg</a></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>const void *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o3">sign_key</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>const void *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o4">vrfy_key</a></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o4">sign_keylen</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o5">vrfy_keylen</a></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o5">vrfy_alg</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top><a class="el" href="structsoap__wsse__digest.html">soap_wsse_digest</a> *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o6">digest</a></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>const void *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o6">vrfy_key</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int(*&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o7">fpreparesend</a> )(struct soap *, const char *, size_t)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o7">vrfy_keylen</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int(*&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o8">fpreparefinalsend</a> )(struct soap *)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o8">enco_alg</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int(*&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o9">fdisconnect</a> )(struct soap *)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>const void *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o9">enco_key</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>X509_STORE *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o10">store</a></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o10">enco_keylen</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>const void *(*&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o11">security_token_handler</a> )(struct soap *soap, int alg, int *keylen)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o11">deco_alg</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>const void *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o12">deco_key</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o13">deco_keylen</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="el" href="structsoap__wsse__digest.html">soap_wsse_digest</a> *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o14">digest</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>int(*&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o15">fpreparesend</a> )(struct soap *, const char *, size_t)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>int(*&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o16">fpreparefinalsend</a> )(struct soap *)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>int(*&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o17">fpreparefinalrecv</a> )(struct soap *)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>int(*&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o18">fheader</a> )(struct soap *)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o19">mec</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>X509_STORE *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o20">store</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>const void *(*&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="structsoap__wsse__data.html#o21">security_token_handler</a> )(struct soap *soap, int alg, const char *keyname, int *keylen)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -49,13 +70,82 @@ wsseapi plugin data
 The signature key (private) and verification key (public) are kept in the plugin data, together with other info. 
 <p>
 <hr><h2>Member Data Documentation</h2>
-<a class="anchor" name="o6" doxytag="soap_wsse_data::digest" ></a><p>
+<a class="anchor" name="o11" doxytag="soap_wsse_data::deco_alg" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> struct <a class="el" href="structsoap__wsse__digest.html">soap_wsse_digest</a>* <a class="el" href="structsoap__wsse__data.html#o6">soap_wsse_data::digest</a>          </td>
+          <td class="md" nowrap valign="top"> int <a class="el" href="structsoap__wsse__data.html#o11">soap_wsse_data::deco_alg</a>          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+decrypt algorithm used     </td>
+  </tr>
+</table>
+<a class="anchor" name="o12" doxytag="soap_wsse_data::deco_key" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> const void* <a class="el" href="structsoap__wsse__data.html#o12">soap_wsse_data::deco_key</a>          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+EVP_PKEY or secret key     </td>
+  </tr>
+</table>
+<a class="anchor" name="o13" doxytag="soap_wsse_data::deco_keylen" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int <a class="el" href="structsoap__wsse__data.html#o13">soap_wsse_data::deco_keylen</a>          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+secret key length     </td>
+  </tr>
+</table>
+<a class="anchor" name="o14" doxytag="soap_wsse_data::digest" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> struct <a class="el" href="structsoap__wsse__digest.html">soap_wsse_digest</a>* <a class="el" href="structsoap__wsse__data.html#o14">soap_wsse_data::digest</a>          </td>
         </tr>
       </table>
     </td>
@@ -72,13 +162,105 @@ The signature key (private) and verification key (public) are kept in the plugin
 List of ID-hash pairs     </td>
   </tr>
 </table>
-<a class="anchor" name="o9" doxytag="soap_wsse_data::fdisconnect" ></a><p>
+<a class="anchor" name="o1" doxytag="soap_wsse_data::encid" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int(* <a class="el" href="structsoap__wsse__data.html#o9">soap_wsse_data::fdisconnect</a>)(struct soap *)          </td>
+          <td class="md" nowrap valign="top"> char* <a class="el" href="structsoap__wsse__data.html#o1">soap_wsse_data::encid</a>          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+string with wsu:Id names to encrypt     </td>
+  </tr>
+</table>
+<a class="anchor" name="o8" doxytag="soap_wsse_data::enco_alg" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int <a class="el" href="structsoap__wsse__data.html#o8">soap_wsse_data::enco_alg</a>          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+encrypt algorithm used     </td>
+  </tr>
+</table>
+<a class="anchor" name="o9" doxytag="soap_wsse_data::enco_key" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> const void* <a class="el" href="structsoap__wsse__data.html#o9">soap_wsse_data::enco_key</a>          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+EVP_PKEY or secret key     </td>
+  </tr>
+</table>
+<a class="anchor" name="o10" doxytag="soap_wsse_data::enco_keylen" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int <a class="el" href="structsoap__wsse__data.html#o10">soap_wsse_data::enco_keylen</a>          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+secret key length     </td>
+  </tr>
+</table>
+<a class="anchor" name="o18" doxytag="soap_wsse_data::fheader" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int(* <a class="el" href="structsoap__wsse__data.html#o18">soap_wsse_data::fheader</a>)(struct soap *)          </td>
         </tr>
       </table>
     </td>
@@ -95,13 +277,13 @@ List of ID-hash pairs     </td>
     </td>
   </tr>
 </table>
-<a class="anchor" name="o8" doxytag="soap_wsse_data::fpreparefinalsend" ></a><p>
+<a class="anchor" name="o17" doxytag="soap_wsse_data::fpreparefinalrecv" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int(* <a class="el" href="structsoap__wsse__data.html#o8">soap_wsse_data::fpreparefinalsend</a>)(struct soap *)          </td>
+          <td class="md" nowrap valign="top"> int(* <a class="el" href="structsoap__wsse__data.html#o17">soap_wsse_data::fpreparefinalrecv</a>)(struct soap *)          </td>
         </tr>
       </table>
     </td>
@@ -118,13 +300,13 @@ List of ID-hash pairs     </td>
     </td>
   </tr>
 </table>
-<a class="anchor" name="o7" doxytag="soap_wsse_data::fpreparesend" ></a><p>
+<a class="anchor" name="o16" doxytag="soap_wsse_data::fpreparefinalsend" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int(* <a class="el" href="structsoap__wsse__data.html#o7">soap_wsse_data::fpreparesend</a>)(struct soap *, const char *, size_t)          </td>
+          <td class="md" nowrap valign="top"> int(* <a class="el" href="structsoap__wsse__data.html#o16">soap_wsse_data::fpreparefinalsend</a>)(struct soap *)          </td>
         </tr>
       </table>
     </td>
@@ -141,13 +323,13 @@ List of ID-hash pairs     </td>
     </td>
   </tr>
 </table>
-<a class="anchor" name="o11" doxytag="soap_wsse_data::security_token_handler" ></a><p>
+<a class="anchor" name="o15" doxytag="soap_wsse_data::fpreparesend" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> const void*(* <a class="el" href="structsoap__wsse__data.html#o11">soap_wsse_data::security_token_handler</a>)(struct soap *soap, int alg, int *keylen)          </td>
+          <td class="md" nowrap valign="top"> int(* <a class="el" href="structsoap__wsse__data.html#o15">soap_wsse_data::fpreparesend</a>)(struct soap *, const char *, size_t)          </td>
         </tr>
       </table>
     </td>
@@ -164,13 +346,82 @@ List of ID-hash pairs     </td>
     </td>
   </tr>
 </table>
-<a class="anchor" name="o0" doxytag="soap_wsse_data::sign_alg" ></a><p>
+<a class="anchor" name="o19" doxytag="soap_wsse_data::mec" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int <a class="el" href="structsoap__wsse__data.html#o0">soap_wsse_data::sign_alg</a>          </td>
+          <td class="md" nowrap valign="top"> struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a>* <a class="el" href="structsoap__wsse__data.html#o19">soap_wsse_data::mec</a>          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="o21" doxytag="soap_wsse_data::security_token_handler" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> const void*(* <a class="el" href="structsoap__wsse__data.html#o21">soap_wsse_data::security_token_handler</a>)(struct soap *soap, int alg, const char *keyname, int *keylen)          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+    </td>
+  </tr>
+</table>
+<a class="anchor" name="o0" doxytag="soap_wsse_data::sigid" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> char* <a class="el" href="structsoap__wsse__data.html#o0">soap_wsse_data::sigid</a>          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+string with wsu:Id names to sign     </td>
+  </tr>
+</table>
+<a class="anchor" name="o2" doxytag="soap_wsse_data::sign_alg" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> int <a class="el" href="structsoap__wsse__data.html#o2">soap_wsse_data::sign_alg</a>          </td>
         </tr>
       </table>
     </td>
@@ -187,13 +438,13 @@ List of ID-hash pairs     </td>
 The digest or signature algorithm used     </td>
   </tr>
 </table>
-<a class="anchor" name="o1" doxytag="soap_wsse_data::sign_key" ></a><p>
+<a class="anchor" name="o3" doxytag="soap_wsse_data::sign_key" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> const void* <a class="el" href="structsoap__wsse__data.html#o1">soap_wsse_data::sign_key</a>          </td>
+          <td class="md" nowrap valign="top"> const void* <a class="el" href="structsoap__wsse__data.html#o3">soap_wsse_data::sign_key</a>          </td>
         </tr>
       </table>
     </td>
@@ -210,13 +461,13 @@ The digest or signature algorithm used     </td>
 EVP_PKEY or key string for HMAC     </td>
   </tr>
 </table>
-<a class="anchor" name="o2" doxytag="soap_wsse_data::sign_keylen" ></a><p>
+<a class="anchor" name="o4" doxytag="soap_wsse_data::sign_keylen" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int <a class="el" href="structsoap__wsse__data.html#o2">soap_wsse_data::sign_keylen</a>          </td>
+          <td class="md" nowrap valign="top"> int <a class="el" href="structsoap__wsse__data.html#o4">soap_wsse_data::sign_keylen</a>          </td>
         </tr>
       </table>
     </td>
@@ -233,13 +484,13 @@ EVP_PKEY or key string for HMAC     </td>
 HMAC key length     </td>
   </tr>
 </table>
-<a class="anchor" name="o10" doxytag="soap_wsse_data::store" ></a><p>
+<a class="anchor" name="o20" doxytag="soap_wsse_data::store" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> X509_STORE* <a class="el" href="structsoap__wsse__data.html#o10">soap_wsse_data::store</a>          </td>
+          <td class="md" nowrap valign="top"> X509_STORE* <a class="el" href="structsoap__wsse__data.html#o20">soap_wsse_data::store</a>          </td>
         </tr>
       </table>
     </td>
@@ -256,13 +507,13 @@ HMAC key length     </td>
     </td>
   </tr>
 </table>
-<a class="anchor" name="o3" doxytag="soap_wsse_data::vrfy_alg" ></a><p>
+<a class="anchor" name="o5" doxytag="soap_wsse_data::vrfy_alg" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int <a class="el" href="structsoap__wsse__data.html#o3">soap_wsse_data::vrfy_alg</a>          </td>
+          <td class="md" nowrap valign="top"> int <a class="el" href="structsoap__wsse__data.html#o5">soap_wsse_data::vrfy_alg</a>          </td>
         </tr>
       </table>
     </td>
@@ -279,13 +530,13 @@ HMAC key length     </td>
 The signature verify algorithm used     </td>
   </tr>
 </table>
-<a class="anchor" name="o4" doxytag="soap_wsse_data::vrfy_key" ></a><p>
+<a class="anchor" name="o6" doxytag="soap_wsse_data::vrfy_key" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> const void* <a class="el" href="structsoap__wsse__data.html#o4">soap_wsse_data::vrfy_key</a>          </td>
+          <td class="md" nowrap valign="top"> const void* <a class="el" href="structsoap__wsse__data.html#o6">soap_wsse_data::vrfy_key</a>          </td>
         </tr>
       </table>
     </td>
@@ -302,13 +553,13 @@ The signature verify algorithm used     </td>
 EVP_PKEY or key string for HMAC verify     </td>
   </tr>
 </table>
-<a class="anchor" name="o5" doxytag="soap_wsse_data::vrfy_keylen" ></a><p>
+<a class="anchor" name="o7" doxytag="soap_wsse_data::vrfy_keylen" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int <a class="el" href="structsoap__wsse__data.html#o5">soap_wsse_data::vrfy_keylen</a>          </td>
+          <td class="md" nowrap valign="top"> int <a class="el" href="structsoap__wsse__data.html#o7">soap_wsse_data::vrfy_keylen</a>          </td>
         </tr>
       </table>
     </td>
@@ -327,7 +578,7 @@ HMAC key length     </td>
 </table>
 <hr>The documentation for this struct was generated from the following file:<ul>
 <li>/Users/engelen/Projects/gsoap/plugin/<a class="el" href="wsseapi_8h.html">wsseapi.h</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Apr 5 18:00:12 2010 for gSOAP WS-Security by
+<hr size="1"><address style="align: right;"><small>Generated on Fri Jan 14 09:45:25 2011 for gSOAP WS-Security by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.8 </small></address>
 </body>
