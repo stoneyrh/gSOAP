@@ -2263,7 +2263,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
     }
     else
     { fprintf(stream, "/// Element %s of type %s.\n", name, type);
-      fprintf(stream, elementformat, pname((with_union && !cflag && !is_basetypeforunion(URI, type)) || fake_union || is_nillable(element), NULL, URI, type), aname(nameprefix, nameURI, name));
+      fprintf(stream, elementformat, pname((with_union && !cflag && !is_basetypeforunion(URI, type)) || (fake_union && !element.default_) || is_nillable(element), NULL, URI, type), aname(nameprefix, nameURI, name));
     }
   }
   else if (name && element.simpleTypePtr())
@@ -2278,9 +2278,9 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
     }
     gen(URI, name, *element.simpleTypePtr(), true);
     if (is_nillable(element)
-     || element.maxOccurs && strcmp(element.maxOccurs, "1") // maxOccurs != "1"
+     || (element.maxOccurs && strcmp(element.maxOccurs, "1")) // maxOccurs != "1"
      || (with_union && !cflag)
-     || fake_union)
+     || (fake_union && !element.default_))
       fprintf(stream, pointerformat, "", aname(nameprefix, nameURI, name));
     else
       fprintf(stream, elementformat, "", aname(nameprefix, nameURI, name));
@@ -2296,9 +2296,9 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
     }
     gen(URI, name, *element.complexTypePtr(), true);
     if (is_nillable(element)
-     || element.maxOccurs && strcmp(element.maxOccurs, "1") // maxOccurs != "1"
+     || (element.maxOccurs && strcmp(element.maxOccurs, "1")) // maxOccurs != "1"
      || (with_union && !cflag)
-     || fake_union)
+     || (fake_union && !element.default_))
       fprintf(stream, pointerformat, "}", aname(nameprefix, nameURI, name));
     else
       fprintf(stream, elementformat, "}", aname(nameprefix, nameURI, name));

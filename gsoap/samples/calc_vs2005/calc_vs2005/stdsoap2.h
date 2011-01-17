@@ -1807,8 +1807,8 @@ struct SOAP_STD_API soap
   void *is;		/* preserve struct size */
 #endif
 #ifndef UNDER_CE
-  int sendfd;
-  int recvfd;
+  int sendfd;		/* WinCE FD to send */
+  int recvfd;		/* WinCE FD to receive */
 #else
   FILE *sendfd;
   FILE *recvfd;
