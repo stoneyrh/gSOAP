@@ -12,7 +12,7 @@
 
 #include "wsdlH.h"
 
-SOAP_SOURCE_STAMP("@(#) wsdlC.cpp ver 2.8.1 2011-01-16 16:00:20 GMT")
+SOAP_SOURCE_STAMP("@(#) wsdlC.cpp ver 2.8.1 2011-01-16 21:41:24 GMT")
 
 
 #ifndef WITH_NOGLOBAL

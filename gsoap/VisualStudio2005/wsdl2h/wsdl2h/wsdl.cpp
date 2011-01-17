@@ -246,6 +246,7 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
       types = soap_new_wsdl__types(soap, -1);
       types->documentation = NULL;
       types->xs__schema_.push_back(schema);
+      types->preprocess(*this);
     }
     // check HTTP redirect (socket was closed)
     else if ((soap->error >= 301 && soap->error <= 303) || soap->error == 307)
@@ -1102,11 +1103,10 @@ int wsdl__types::traverse(wsdl__definitions& definitions)
           }
         }
         if (!found && vflag)
-          cerr << "Schema import namespace " << (*import).namespace_ << " refers to a known external Schema" << endl;
+          cerr << "Schema import namespace " << (*import).namespace_ << " refers to an unknown Schema" << endl;
       }
-      else
-        if (!Wflag)
-	  cerr << "Warning: schema import " << ((*import).schemaLocation ? (*import).schemaLocation : "") << " has no namespace" << endl;
+      else if (!Wflag)
+	cerr << "Warning: schema import " << ((*import).schemaLocation ? (*import).schemaLocation : "") << " has no namespace" << endl;
     }
   }
   // traverse the schemas
@@ -1141,7 +1141,7 @@ int wsdl__import::preprocess(wsdl__definitions& definitions)
   { // parse imported definitions
     const char *source = definitions.sourceLocation();
     if (vflag)
-      cerr << "Importing wsdl for " << (source?source:"") << endl;
+      cerr << "Importing wsdl for " << (source?source:"(source location not set)") << endl;
     definitionsRef = new wsdl__definitions(definitions.soap, source, location);
     if (!definitionsRef)
       return SOAP_EOF;

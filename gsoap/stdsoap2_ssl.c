@@ -602,7 +602,7 @@ fsend(struct soap *soap, const char *s, size_t n)
             udp_repeat = 3; /* SOAP-over-UDP MULTICAST_UDP_REPEAT - 1 */
           else
             udp_repeat = 1; /* SOAP-over-UDP UNICAST_UDP_REPEAT - 1 */
-          udp_delay = (soap_random % 201) + 50; /* UDP_MIN_DELAY .. UDP_MAX_DELAY */
+          udp_delay = ((unsigned int)soap_random % 201) + 50; /* UDP_MIN_DELAY .. UDP_MAX_DELAY */
           do
           { tcp_select(soap, soap->socket, SOAP_TCP_SELECT_ERR, -1000 * udp_delay);
             if (soap->peerlen)

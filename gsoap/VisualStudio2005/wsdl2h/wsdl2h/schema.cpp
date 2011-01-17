@@ -584,9 +584,8 @@ int xs__import::traverse(xs__schema &schema)
         }
       }
     }
-    else
-      if (!Wflag)
-        fprintf(stderr, "Warning: no namespace in <import>\n");
+    else if (!Wflag)
+      fprintf(stderr, "Warning: no namespace in <import>\n");
     if (!found && !iflag) // don't import any of the schemas in the .nsmap table (or when -i option is used)
     { const char *s = schemaLocation;
       if (!s)
