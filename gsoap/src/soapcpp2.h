@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL OR Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -43,72 +43,72 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-#define VERSION "2.8.1" /* Current version */
+# define VERSION "2.8.2" /* Current version */
 #endif
 
 #ifdef WIN32
-#pragma warning(disable : 4996)
-#ifndef WITH_BISON
-#define WITH_BISON
-#endif
+# pragma warning(disable : 4996)
+# ifndef WITH_BISON
+#  define WITH_BISON
+# endif
 #endif
 
 /* #define DEBUG */ /* uncomment to debug */
 
 #ifdef DEBUG
-#define	check(expr, msg) (void)((expr) ? 0 : (progerror(msg, __FILE__, __LINE__), 0))
-#define DBGLOG(DBGCMD) { DBGCMD; }
+# define	check(expr, msg) (void)((expr) ? 0 : (progerror(msg, __FILE__, __LINE__), 0))
+# define DBGLOG(DBGCMD) { DBGCMD; }
 #else
-#define check(expr, msg) (void)(expr)
-#define DBGLOG(DBGCMD)
+# define check(expr, msg) (void)(expr)
+# define DBGLOG(DBGCMD)
 #endif
 
 #ifdef WIN32
-#ifdef WITH_BISON
-#ifdef WIN32_WITHOUT_SOLARIS_FLEX
-#define yyparse soapcpp2parse
-#define yylex soapcpp2lex
-#define yyerror soapcpp2error
-#define yylval soapcpp2lval
-#define yychar soapcpp2char
-#define yydebug soapcpp2debug
-#define yynerrs soapcpp2nerrs
-#define yylineno soapcpp2lineno
-#define yytext soapcpp2text
-#define yyin soapcpp2in
-#define yywrap soapcpp2wrap
-#endif
-#endif
+# ifdef WITH_BISON
+#  ifdef WIN32_WITHOUT_SOLARIS_FLEX
+#   define yyparse soapcpp2parse
+#   define yylex soapcpp2lex
+#   define yyerror soapcpp2error
+#   define yylval soapcpp2lval
+#   define yychar soapcpp2char
+#   define yydebug soapcpp2debug
+#   define yynerrs soapcpp2nerrs
+#   define yylineno soapcpp2lineno
+#   define yytext soapcpp2text
+#   define yyin soapcpp2in
+#   define yywrap soapcpp2wrap
+#  endif
+# endif
 #endif
 
 #ifdef WIN32
-#define SOAP_PATHCAT "\\"
-#define SOAP_PATHSEP ";"
-#define LONG64 __int64
+# define SOAP_PATHCAT "\\"
+# define SOAP_PATHSEP ";"
+# define LONG64 __int64
 #else
-#define SOAP_PATHCAT "/"
-#define SOAP_PATHSEP ":"
-#define LONG64 long long
+# define SOAP_PATHCAT "/"
+# define SOAP_PATHSEP ":"
+# define LONG64 long long
 #endif
 
 #if defined(WIN32)
-#define SOAP_LONG_FORMAT "%I64d"
-#define SOAP_ULONG_FORMAT "%I64u"
-#define SOAP_XLONG_FORMAT "%I64x"
+# define SOAP_LONG_FORMAT "%I64d"
+# define SOAP_ULONG_FORMAT "%I64u"
+# define SOAP_XLONG_FORMAT "%I64x"
 #elif defined(TRU64)
-#define SOAP_LONG_FORMAT "%ld"
-#define SOAP_ULONG_FORMAT "%lu"
-#define SOAP_XLONG_FORMAT "%lx"
+# define SOAP_LONG_FORMAT "%ld"
+# define SOAP_ULONG_FORMAT "%lu"
+# define SOAP_XLONG_FORMAT "%lx"
 #endif
 
 #ifndef SOAP_LONG_FORMAT
-#define SOAP_LONG_FORMAT "%lld"		/* printf format for 64 bit ints */
+# define SOAP_LONG_FORMAT "%lld"	/* printf format for 64 bit ints */
 #endif
 #ifndef SOAP_ULONG_FORMAT
-#define SOAP_ULONG_FORMAT "%llu"	/* printf format for unsigned 64 bit ints */
+# define SOAP_ULONG_FORMAT "%llu"	/* printf format for unsigned 64 bit ints */
 #endif
 #ifndef SOAP_XLONG_FORMAT
-#define SOAP_XLONG_FORMAT "%llx"	/* printf format for unsigned 64 bit hex ints */
+# define SOAP_XLONG_FORMAT "%llx"	/* printf format for unsigned 64 bit hex ints */
 #endif
 
 extern int yylineno;
@@ -202,6 +202,9 @@ typedef	enum Level { INTERNAL, GLOBAL, PARAM, LOCAL } Level;
 #define	mkfun(t)	mktype(Tfun,      t,    0)
 #define mkstring()	mkpointer(mkchar())
 
+#define MINLONG64 (0x8000000000000000LL)
+#define MAXLONG64 (0x7FFFFFFFFFFFFFFFLL)
+
 typedef struct Symbol
 {	char	*name;
 	Token	token;
@@ -226,8 +229,8 @@ typedef	struct Tnode
         Bool	wsdl;
 	int	num;
 	char	*pattern;
-	long	minLength;
-	long	maxLength;
+	LONG64	minLength;
+	LONG64	maxLength;
 } Tnode;
 
 typedef	union Value {
@@ -242,8 +245,8 @@ typedef	struct IDinfo {
 	Bool	hasval;		/* if true, identifier is constant */
 	Value	val;		/* ... with this value */
 	int	offset;
-	long	minOccurs;
-	long	maxOccurs;
+	LONG64	minOccurs;
+	LONG64	maxOccurs;
 } IDinfo;
 
 typedef	struct Entry {
@@ -267,15 +270,16 @@ typedef struct FNinfo {
 	Table	*args;
 } FNinfo;
 
-
 typedef	struct Node {
 	Tnode	*typ;
 	Storage	sto;
 	Bool	hasval;		/* if true, this node has a constant value */
 	Value	val;		/* ... this is the value */
-	long	minOccurs;
-	long	maxOccurs;
+	LONG64	minOccurs;
+	LONG64	maxOccurs;
 	char	*pattern;
+	LONG64	minLength;
+	LONG64	maxLength;
 } Node;
 
 #define ACTION		0
@@ -293,7 +297,7 @@ typedef	struct Node {
 typedef struct Data
 {	struct Data *next;
 	char *name;
-	char *part;
+	char *text;
 } Data;
 
 typedef struct Method
@@ -366,6 +370,7 @@ extern int Cflag;
 extern int eflag;
 extern unsigned long fflag;
 extern int iflag;
+extern int jflag;
 extern int mflag;
 extern int nflag;
 extern int nflag;
@@ -375,6 +380,7 @@ extern int sflag;
 extern int Sflag;
 extern int Tflag;
 extern int tflag;
+extern int uflag;
 extern int xflag;
 extern int zflag;
 extern char dirpath[1024];

@@ -4,6 +4,7 @@
 	WS-ReliableMessaging and WS-Addressing demo service and client.
 
 	See the wsrmdemo.h header file for build and usage details.
+	See gsoap/doc/wsrm for the WS-RM plugin user guide.
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
@@ -86,7 +87,10 @@ const char *AcksToAddress  = TARGET"//localhost:11002";
 const char *ReplyToAddress = TARGET"//localhost:11003";
 const char *FaultToAddress = TARGET"//localhost:11004";
 
-/* HTTP Basic Authentication (when applicable, only use over HTTPS!) */
+/* HTTP Basic Authentication (when applicable, only use over HTTPS!)
+   Use the HTTP Digest Authentication plugin for secure auth over HTTP:
+   #include "httpda.h" // see gsoap/doc/httpda for instructions in HTML
+   */
 #if defined(HTTP_USERID) && defined(HTTP_PASSWD)
 const char *userid = HTTP_USERID;
 const char *passwd = HTTP_PASSWD;
@@ -528,7 +532,7 @@ int ns__wsrmdemoResponse(struct soap *soap, char *out)
 
   printf("\n**** Received Response = %s\n", out?out:"(null)");
 
-  // TODO: should send back ack when requested!
+  /* TODO: may want to send back ack when requested */
   return soap_send_empty_response(soap, SOAP_OK); /* HTTP 202 Accepted */
 }
 

@@ -71,7 +71,7 @@ The practical aspects of message sequence creation, the message exchanges, the m
 Client-side Usage</a></h2>
 <h3><a class="anchor" name="wsrm_4_1">
 Creating, Closing, and Terminating Message Sequences</a></h3>
-A sequence is created, closed, terminated, and cleaned-up on the client side as follows:<p>
+A sequence is created, closed, terminated, and cleaned-up on the client side as follows, using a 'soap' context struct (use one 'soap' context per thread):<p>
 <div class="fragment"><pre><span class="keyword">struct </span>soap *soap = soap_new(); <span class="comment">// Note: can use C++ proxy instead of 'soap'</span>
 soap_register_plugin(soap, soap_wsa);
 soap_register_plugin(soap, soap_wsrm);
@@ -114,12 +114,13 @@ As usual, the context can release all its temporary and deserialized data with t
 soap_end(soap);
 </pre></div><p>
 This cleanup of memory resources may be performed at any time in the sequence of message exchange or afterwards when desired. The sequence state is maintained independent of these cleanup operations.<p>
-The sequence termination may fail when the delivery of a sequence of messages is incomplete or when the lifetime of the sequence expired (see <a class="el" href="wsrmapi_8h.html#a2">SOAP_WSRM_MAX_SEC_TO_EXPIRE</a>). The WS-RM destination determines the failure based on the final sequence state and the sequence behavior. The behavior is set to NoDiscard by default, which means that the sequence is not discared when transmission gaps appeared in the messages and the sequence is incomplete. The desired behavior can be specified with a sequence creation offer as explained in the next section.<h3><a class="anchor" name="wsrm_4_2">
+The sequence termination may fail when the delivery of a sequence of messages is incomplete or when the lifetime of the sequence expired (see <a class="el" href="wsrmapi_8h.html#a2">SOAP_WSRM_MAX_SEC_TO_EXPIRE</a>). The WS-RM destination determines the failure based on the final sequence state and the sequence behavior. The behavior is set to NoDiscard by default, which means that the sequence is not discarded when transmission gaps appeared in the messages and the sequence is incomplete. The desired behavior can be specified with a sequence creation offer as explained in the next section.<h3><a class="anchor" name="wsrm_4_2">
 Creating a Sequence with an Offer</a></h3>
 To enable a destination server to produce a reliable message response sequence, you need to create a sequence with an offer. Otherwise, response messages are not tracked and delivery not verified. Two-way messaging should use the offer mechanism, but if all messages are one-way then this is not needed. A sequence is created with an offer of sequence lifetime and behavior parameters as follows:<p>
-<div class="fragment"><pre>ULONG64 expires = 60000;       <span class="comment">// 1 minute = 60,000 milliseconds</span>
-<span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keywordtype">id</span> = NULL;         <span class="comment">// id = NULL: generate a temp sequence ID</span>
-<span class="keyword">const</span> <span class="keywordtype">char</span> *opt_msg_id = NULL; <span class="comment">// WS-Addressing message ID</span>
+<div class="fragment"><pre>ULONG64 expires = 60000;         <span class="comment">// 1 minute = 60,000 milliseconds</span>
+<span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keywordtype">id</span> = NULL;           <span class="comment">// id = NULL: generate a temp sequence ID</span>
+<span class="keyword">const</span> <span class="keywordtype">char</span> *opt_msg_id = NULL;   <span class="comment">// WS-Addressing message ID</span>
+<a class="code" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence_handle</a> seq;   <span class="comment">// a local handle to the sequence state</span>
 
 <span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a18">soap_wsrm_create_offer</a>(soap, destination, acksto, <span class="keywordtype">id</span>, expires, DiscardEntireSequence, opt_msg_id, &amp;seq))
 { <span class="keywordflow">if</span> (seq)
@@ -559,7 +560,7 @@ In addition, we need to dispatch the wsrm service operations when received. Supp
   soap_copy_stream(&amp;wsrm, &amp;service);   <span class="comment">// copy open connection</span>
   wsrm.dispatch();                     <span class="comment">// process WS-RM request</span>
 }
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Sat Oct 16 17:32:03 2010 for gSOAP WS-ReliableMessaging by
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Sun Apr 17 17:08:16 2011 for gSOAP WS-ReliableMessaging by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.8 </small></address>
 </body>

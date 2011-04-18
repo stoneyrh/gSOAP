@@ -306,7 +306,7 @@ side first and then for each of the four types of destination servers.
 @subsection wsrm_4_1 Creating, Closing, and Terminating Message Sequences
 
 A sequence is created, closed, terminated, and cleaned-up on the client side as
-follows:
+follows, using a 'soap' context struct (use one 'soap' context per thread):
 
 @code
 struct soap *soap = soap_new(); // Note: can use C++ proxy instead of 'soap'
@@ -364,7 +364,7 @@ is incomplete or when the lifetime of the sequence expired
 (see @ref SOAP_WSRM_MAX_SEC_TO_EXPIRE). The WS-RM destination determines the
 failure based on the final sequence state and the sequence behavior. The
 behavior is set to NoDiscard by default, which means that the sequence is not
-discared when transmission gaps appeared in the messages and the sequence is
+discarded when transmission gaps appeared in the messages and the sequence is
 incomplete. The desired behavior can be specified with a sequence creation
 offer as explained in the next section.
 
@@ -378,9 +378,10 @@ is created with an offer of sequence lifetime and behavior parameters as
 follows:
 
 @code
-ULONG64 expires = 60000;       // 1 minute = 60,000 milliseconds
-const char *id = NULL;         // id = NULL: generate a temp sequence ID
-const char *opt_msg_id = NULL; // WS-Addressing message ID
+ULONG64 expires = 60000;         // 1 minute = 60,000 milliseconds
+const char *id = NULL;           // id = NULL: generate a temp sequence ID
+const char *opt_msg_id = NULL;   // WS-Addressing message ID
+soap_wsrm_sequence_handle seq;   // a local handle to the sequence state
 
 if (soap_wsrm_create_offer(soap, destination, acksto, id, expires, DiscardEntireSequence, opt_msg_id, &seq))
 { if (seq)
@@ -1490,10 +1491,10 @@ soap_wsrm_close(struct soap *soap, soap_wsrm_sequence_handle seq, const char *ws
   if (seq->acksid && soap->header && soap->header->wsrm__Sequence && !strcmp(soap->header->wsrm__Sequence->Identifier, seq->acksid))
   { if (soap_wsrm_num_lookup(soap, seq, soap->header->wsrm__Sequence->MessageNumber))
     { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Response message already received\n"));
-      /* TODO: error? */
+      /* No error? */
     }
     if (seq->behavior == DiscardFollowingFirstGap && soap->header->wsrm__Sequence->MessageNumber != seq->lastnum + 1)
-      return soap_wsrm_error(soap, seq, wsrm__SequenceClosed); /* close or term */
+      return soap_wsrm_error(soap, seq, wsrm__SequenceClosed); /* close or terminate */
     seq->lastnum = soap->header->wsrm__Sequence->MessageNumber;
     MUTEX_LOCK(soap_wsrm_session_lock);
     if (soap_wsrm_num_insert(soap, seq, seq->lastnum))
@@ -1516,7 +1517,7 @@ soap_wsrm_close(struct soap *soap, soap_wsrm_sequence_handle seq, const char *ws
     req.LastMsgNumber = &seq->num;
   else
     req.LastMsgNumber = NULL;
-  data->state = SOAP_WSRM_OFF; /* disable caching*/
+  data->state = SOAP_WSRM_OFF; /* disable caching */
   if (soap_call___wsrm__CloseSequence(soap, seq->to, soap->header->wsa5__Action, &req, &res))
     return soap->error;
   seq->state = SOAP_WSRM_CLOSED;
@@ -1579,7 +1580,8 @@ soap_wsrm_seq_free(struct soap *soap, soap_wsrm_sequence_handle seq)
   MUTEX_LOCK(soap_wsrm_session_lock);
   q = &soap_wsrm_session;
   while (*q)
-  { if ((!seq && !(*q)->handle && (*q)->expires < now) || *q == seq)
+  { if ((!seq && !(*q)->handle && (*q)->expires < now)
+     || *q == seq)
     { struct soap_wsrm_message *p, *r;
       struct soap_wsrm_sequence *t = *q;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Deleting sequence %s\n", t->id?t->id:"(null)"));
@@ -1836,7 +1838,7 @@ normally (and allow the response to be relayed).
 int
 soap_wsrm_reply_request_acks(struct soap *soap, const char *wsa_id, const char *wsa_action)
 { DBGFUN("soap_wsrm_reply_request_acks");
-  if (soap_wsrm_reply_num(soap))
+   if (soap_wsrm_reply_num(soap))
     return soap->error;
   if (soap->header->wsrm__Sequence)
   { if (!soap->header->wsrm__AckRequested && !(soap->header->wsrm__AckRequested = (_wsrm__AckRequested*)soap_malloc(soap, sizeof(_wsrm__AckRequested))))
@@ -2123,12 +2125,32 @@ when the WS-Addressing FaultTo header was set by the sender.
 int
 soap_wsrm_fault_subcode(struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail)
 { if (soap->header && soap->header->wsrm__Sequence)
-  { struct soap_wsrm_data *data;
-    data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
-    if (data)
-    { struct soap_wsrm_sequence *seq = soap_wsrm_seq_lookup_ack(data, soap->header->wsrm__Sequence->Identifier);
-      seq->state = SOAP_WSRM_TERMINATED;
+  { int err;
+    _wsrm__Sequence* Sequence = soap->header->wsrm__Sequence;
+    int __sizeAckRequested = soap->header->__sizeAckRequested;
+    _wsrm__AckRequested* AckRequested = soap->header->wsrm__AckRequested;
+    int __sizeSequenceAcknowledgement = soap->header->__sizeSequenceAcknowledgement;
+    struct _wsrm__SequenceAcknowledgement* SequenceAcknowledgement = soap->header->wsrm__SequenceAcknowledgement;
+    if (soap_wsrm_reply_num(soap))
+      return soap->error;
+    if (soap->header->wsrm__Sequence)
+    { struct soap_wsrm_data *data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
+      if (data)
+      { struct soap_wsrm_sequence *seq;
+        MUTEX_LOCK(soap_wsrm_session_lock);
+        seq = soap_wsrm_seq_lookup_ack(data, soap->header->wsrm__Sequence->Identifier);
+        if (seq)
+          seq->state = SOAP_WSRM_TERMINATED;
+        MUTEX_UNLOCK(soap_wsrm_session_lock);
+      }
     }
+    err = soap_wsa_fault_subcode(soap, flag, faultsubcode, faultstring, faultdetail);
+    soap->header->wsrm__Sequence = Sequence;
+    soap->header->__sizeAckRequested = __sizeAckRequested;
+    soap->header->wsrm__AckRequested = AckRequested;
+    soap->header->__sizeSequenceAcknowledgement = __sizeSequenceAcknowledgement;
+    soap->header->wsrm__SequenceAcknowledgement = SequenceAcknowledgement;
+    return err;
   }
   return soap_wsa_fault_subcode(soap, flag, faultsubcode, faultstring, faultdetail);
 }

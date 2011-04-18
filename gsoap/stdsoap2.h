@@ -1,10 +1,10 @@
 /*
-	stdsoap2.h 2.8.1
+	stdsoap2.h 2.8.2
 
 	gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -292,6 +292,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_LOCALTIME_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
+#  define HAVE_ISNAN
+#  define HAVE_ISINF
 # elif defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD)
 #  define HAVE_POLL
 #  define HAVE_SNPRINTF
@@ -314,6 +316,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_MBTOWC
 #  define SOAP_LONG_FORMAT "%qd"
 #  define SOAP_ULONG_FORMAT "%qu"
+#  define HAVE_ISNAN
+#  define HAVE_ISINF
 # elif defined(__VMS)
 #  include <ioctl.h>
 #  define HAVE_SNPRINTF
@@ -352,6 +356,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 #  define HAVE_ISNAN
+#  define HAVE_ISINF
 # elif defined(TRU64)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -538,6 +543,39 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # undef HAVE_SPRINTF_L
 #endif
 
+#ifdef TANDEM
+# define SOAP_BUFLEN (32767)
+/*# define WITH_NOSTDLIB */ /* uncommment to remove stdlib dependences */
+# define WITH_NOIO      /* no IO dependences, e.g. remove TCP/IP */
+# define int32_t int
+# define int64_t long long
+# define LONG64 long long
+# define ULONG64 long long
+# define DBL_PINFTY (1.1579208923716189e77)
+# define WITH_NOEMPTYSTRUCT
+# undef HAVE_WCTOMB
+# undef HAVE_MBTOWC
+# undef HAVE_GMTIME_R
+# undef HAVE_LOCALTIME_R
+# undef HAVE_SNPRINTF
+# define SOAP_BUFLEN (32767)
+# define SOAP_SOCKET short
+#pragma nolist
+# include <sys\param.h>
+# include <sys\socket.h>
+# include <netinet\in.h>
+# include <netdb.h>
+# include <stdio.h>
+# include <fcntl.h>                                           
+# include <string.h>                                          
+# include <stdlib.h>                                          
+# include <memory.h>                                          
+# include <errno.h>                                           
+# include <cextdecs.h(TIME,FILE_CLOSE_,AWAITIOX,DELAY,FILEINFO,FILE_GETINFO_)>
+# define INET_ERROR 4294967295                                
+#pragma list                                                  
+#endif                                                        
+
 #ifndef WITH_NOSTDLIB
 # include <stdlib.h>
 # ifndef PALM
@@ -653,18 +691,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  include <io.h>
 #  include <fcntl.h>
 # endif
-# ifdef WITH_IPV6
 #  include <winsock2.h> /* Visual Studio 2005 users: you must install the Platform SDK (R2) */
 #  include <ws2tcpip.h>
 #  include <wspiapi.h>
+# ifdef WITH_IPV6
 #  define SOAP_GAI_STRERROR gai_strerrorA
-# else
-#  ifndef __BORLANDC__
-#   include <winsock.h> /* Visual Studio 2005 users: you must install the Platform SDK (R2) */
-/* # include <winsock2.h> */ /* Alternative: use winsock2 (not available with eVC), enable this line and comment out the line above */
-#  else
-#   include <winsock2.h> /* Borland C */
-#  endif
 # endif
 #else
 # ifdef VXWORKS
@@ -994,7 +1025,11 @@ extern "C" {
 # ifndef HAVE_ISNAN
 #  define HAVE_ISNAN
 # endif
-# define soap_isnan(num) _isnan(num)
+# define soap_isnan(n) _isnan(n)
+# ifndef HAVE_ISINF
+#  define HAVE_ISINF
+# endif
+# define soap_isinf(n) (!_finite(n))
 #endif
 
 #ifdef SUN_OS
@@ -1005,16 +1040,23 @@ extern "C" {
 # ifdef __cplusplus
 #  ifndef isnan
 extern "C" int isnan(double);
+extern "C" int isinf(double);
 #  endif
 # endif
-# define HAVE_ISNAN
+# ifndef HAVE_ISNAN
+#  define HAVE_ISNAN
+# endif
+# ifndef HAVE_ISINF
+#  define HAVE_ISINF
+# endif
 #endif
 
 #if !defined(HAVE_ISNAN) && (defined(_MATH_H) || defined(_MATH_INCLUDED))
 # define HAVE_ISNAN
 #endif
 
-extern const struct soap_double_nan { unsigned int n1, n2; } soap_double_nan;
+union soap_double_nan {struct {unsigned int n1, n2;} iv; double dv; float fv;};
+extern const union soap_double_nan soap_double_nan;
 extern const char soap_base64o[], soap_base64i[];
 
 #ifdef VXWORKS
@@ -1027,7 +1069,7 @@ extern const char soap_base64o[], soap_base64i[];
 #endif
 
 #ifndef FLT_NAN
-# define FLT_NAN (*(float*)(void*)&soap_double_nan)
+# define FLT_NAN (soap_double_nan.fv)
 #endif
 
 #ifndef FLT_PINFTY
@@ -1049,7 +1091,7 @@ extern const char soap_base64o[], soap_base64i[];
 #endif
 
 #ifndef DBL_NAN
-# define DBL_NAN (*(double*)(void*)&soap_double_nan)
+# define DBL_NAN (soap_double_nan.dv)
 #endif
 
 #ifndef DBL_PINFTY
@@ -1074,14 +1116,22 @@ extern const char soap_base64o[], soap_base64i[];
 # ifdef HAVE_ISNAN
 #  define soap_isnan(n) isnan(n)
 # else
-#  define soap_isnan(n) (0)
+#  define soap_isnan(n) ((n) != (n))
 # endif
 #endif
 
-#define soap_ispinfd(n) ((n) >= DBL_PINFTY)
-#define soap_ispinff(n) ((n) >= FLT_PINFTY)
-#define soap_isninfd(n) ((n) <= DBL_NINFTY)
-#define soap_isninff(n) ((n) <= FLT_NINFTY)
+#ifndef soap_isinf
+# ifdef HAVE_ISINF
+#  define soap_isinf(n) isinf(n)
+# else
+#  define soap_isinf(n) (!soap_isnan(n) && soap_isnan((n) - (n)))
+# endif
+#endif
+
+#define soap_ispinfd(n) ((n) > 0 && soap_isinf(n))
+#define soap_ispinff(n) ((n) > 0 && soap_isinf(n))
+#define soap_isninfd(n) ((n) < 0 && soap_isinf(n))
+#define soap_isninff(n) ((n) < 0 && soap_isinf(n))
 
 /* gSOAP error codes */
 
@@ -2177,6 +2227,7 @@ SOAP_FMAC1 long SOAP_FMAC2 soap_code_bits(const struct soap_code_map*, const cha
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_code_list(struct soap*, const struct soap_code_map*, long);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_getline(struct soap*, char*, int);
+SOAP_FMAC1 int SOAP_FMAC2 soap_begin_serve(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_begin_recv(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_end_recv(struct soap*);
 

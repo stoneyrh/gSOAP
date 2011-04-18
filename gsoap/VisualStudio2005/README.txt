@@ -1,7 +1,7 @@
 
 Visual Studio 2005 Solution files for soapcpp2 and wsdl2h.
 
-If not already installed, install the Platform SDK (R2) for winsock.h
+If not already installed, install the Platform SDK (R2) for winsock2.h
 
 To build soapcpp2, first install Bison and Flex (in the default dirs):
 	http://gnuwin32.sourceforge.net/packages/bison.htm

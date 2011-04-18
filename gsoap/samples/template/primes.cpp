@@ -1,8 +1,9 @@
 /*
 	primes.cpp
 
-	Prime sieve example that uses the simple_vector container and
-	auto-generated code to display the container contents in XML.
+	Prime sieve example that demsontrates the use of a user-defined
+	simple_vector container and auto-generated code to display the
+	container contents in XML.
 
 	Build:
 	> soapcpp2 -CS primes.h
@@ -13,7 +14,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2010, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2001-2011, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -43,21 +44,27 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "soapH.h"
 
 int main()
-{ primes p;     // also instantiates the 'soap' context
+{
+  primes p;     // also instantiates the 'soap' context
   p.sieve(100); // sieve primes
   p.write();    // write them in XML
+
   return 0;
 }
 
 // sieving primes in the simple_vector<> container:
 void primes::sieve(int n)
-{ prime.clear();
+{
+  prime.clear();
   prime.insert(prime.end(), 1);
   prime.insert(prime.end(), 2);
   for (int i = 3; i <= n; i += 2)
-  { bool composite = false;
+  {
+    bool composite = false;
+
     for (simple_vector<int>::const_iterator j = prime.begin(); j != prime.end(); ++j)
-    { if (*j != 1 && i % *j == 0)
+    {
+      if (*j != 1 && i % *j == 0)
       { composite = true;
 	break;
       }
@@ -69,17 +76,17 @@ void primes::sieve(int n)
 
 // the writer uses the fact that the primes class inherits the context:
 void primes::write()
-{ soap_set_omode(this, SOAP_XML_INDENT);
+{
+  soap_set_omode(this, SOAP_XML_INDENT); // show with indentation please
   soap_write_primes(this, this); // soap_write_prime is generated
 }
 
 // the destructor cleans up the 'soap' context
 primes::~primes()
-{ soap_destroy(this);
+{
+ soap_destroy(this);
   soap_end(this);
 }
 
 // we need a dummy namespace table, even though we don't use XML namespaces:
-SOAP_NMAC struct Namespace namespaces[] =
-{ {NULL, NULL, NULL, NULL}
-};
+SOAP_NMAC struct Namespace namespaces[] = { {NULL, NULL, NULL, NULL} };

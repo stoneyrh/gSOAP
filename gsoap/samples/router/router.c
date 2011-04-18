@@ -235,13 +235,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 #include "soapH.h"
-
 #include <sys/stat.h>	/* need fstat */
-
-#include <unistd.h>
-#if defined(_POSIX_THREADS) || defined(_SC_THREADS)
-#include <pthread.h>    /* use Pthreads */
-#endif
+#include "threads.h"	/* plugin/threads.h for portable threads+mutex */
 
 /* Maximum request backlog */
 #define BACKLOG (100)
@@ -293,9 +288,7 @@ main(int argc, char **argv)
 { options(argc, argv);
   if (port_number)
   { /* run server on port */
-#if defined(_POSIX_THREADS) || defined(_SC_THREADS)
-    pthread_t tid;
-#endif
+    THREAD_TYPE tid;
     struct soap soap, *tsoap;
     int m, s, i;
     soap_init(&soap);
@@ -317,11 +310,7 @@ main(int argc, char **argv)
       }
       fprintf(stderr, "Thread %d accepts socket %d connection from IP %d.%d.%d.%d\n", i, s, (int)(soap.ip>>24)&0xFF, (int)(soap.ip>>16)&0xFF, (int)(soap.ip>>8)&0xFF, (int)soap.ip&0xFF);
       tsoap = soap_copy(&soap);
-#if defined(_POSIX_THREADS) || defined(_SC_THREADS)
-      pthread_create(&tid, NULL, (void*(*)(void*))process_request, (void*)tsoap);
-#else
-      process_request((void*)tsoap);
-#endif
+      THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap);
     }
   }
   else /* run as stand-alone or CGI */
@@ -487,9 +476,7 @@ void*
 process_request(void *soap)
 { struct soap *client = (struct soap*)soap, server;
   soap_wchar c;
-#if defined(_POSIX_THREADS) || defined(_SC_THREADS)
-  pthread_detach(pthread_self());
-#endif
+  THREAD_DETACH(THREAD_ID);
   soap_init(&server);
   soap_begin(client);
   c = soap_get0(client);
@@ -551,24 +538,26 @@ lookup(struct t__RoutingTable *route, const char *key, const char *userid, const
     { if (routing_table.__ptr)
         *route = routing_table; /* table is already cached in memory */
       else if (routing_file) /* else read table from file */
-      { struct soap soap;
-        soap_init(&soap);
+      { static struct soap soap = { SOAP_NONE };
+	MUTEX_TYPE lock;
+	MUTEX_LOCK(lock);
+        if (soap.state == SOAP_NONE)
+	  soap_init(&soap);
         soap.recvfd = open(routing_file, O_RDONLY);
         if (soap.recvfd < 0) /* no routing file: silently stop */
-	{ soap_done(&soap);
+	{ MUTEX_UNLOCK(lock);
 	  break;
 	}
         if (!soap_begin_recv(&soap))
 	  if (!soap_get_t__RoutingTable(&soap, &routing_table, "router", NULL))
 	  { close(soap.recvfd);
-	    soap_done(&soap);
+	    MUTEX_UNLOCK(lock);
 	    break;
 	  }
 	soap_end_recv(&soap);
 	close(soap.recvfd);
-	/* do not invoke soap_end() to keep table data permanently */
-	soap_done(&soap);
 	*route = routing_table;
+	MUTEX_UNLOCK(lock);
       }
     }
     else

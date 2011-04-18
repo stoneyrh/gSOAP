@@ -66,9 +66,11 @@ SOAP_FMAC1 struct soap_dom_attribute * SOAP_FMAC2 soap_in_xsd__anyAttribute(stru
 extern "C" {
 #endif
 
+#ifndef WITH_NOIDREF
 SOAP_FMAC1 void SOAP_FMAC2 soap_markelement(struct soap*, const void*, int);
 SOAP_FMAC1 int SOAP_FMAC2 soap_putelement(struct soap*, const void*, const char*, int, int);
 SOAP_FMAC1 void *SOAP_FMAC2 soap_getelement(struct soap*, int*);
+#endif
 
 #ifdef __cplusplus
 }
@@ -409,7 +411,20 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
 { register struct soap_attribute *tp;
   register struct soap_dom_attribute **att;
   if (soap_peek_element(soap))
-    return NULL;
+  { if (soap->error != SOAP_NO_TAG)
+      return NULL;
+    if (!node)
+    { if (!(node = (struct soap_dom_element*)soap_malloc(soap, sizeof(struct soap_dom_element))))
+      { soap->error = SOAP_EOM;
+        return NULL;
+      }
+    }
+    soap_default_xsd__anyType(soap, node);
+    if (!(node->data = soap_string_in(soap, 1, -1, -1)) || !*node->data)
+      return NULL;
+    soap->error = SOAP_OK;
+    return node;
+  }
   if (!node)
   { if (!(node = (struct soap_dom_element*)soap_malloc(soap, sizeof(struct soap_dom_element))))
     { soap->error = SOAP_EOM;

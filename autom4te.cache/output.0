@@ -2356,9 +2356,11 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
+# AC_CONFIG_HEADERS([config.h])
 ac_config_headers="$ac_config_headers config.h"
 
 
+# we use subdirs.
 { echo "$as_me:$LINENO: checking whether ${MAKE-make} sets \$(MAKE)" >&5
 echo $ECHO_N "checking whether ${MAKE-make} sets \$(MAKE)... $ECHO_C" >&6; }
 set x ${MAKE-make}; ac_make=`echo "$2" | sed 's/+/p/g; s/[^a-zA-Z0-9_]/_/g'`
@@ -3951,6 +3953,132 @@ else
 fi
 
 
+if test "x$CC" != xcc; then
+  { echo "$as_me:$LINENO: checking whether $CC and cc understand -c and -o together" >&5
+echo $ECHO_N "checking whether $CC and cc understand -c and -o together... $ECHO_C" >&6; }
+else
+  { echo "$as_me:$LINENO: checking whether cc understands -c and -o together" >&5
+echo $ECHO_N "checking whether cc understands -c and -o together... $ECHO_C" >&6; }
+fi
+set dummy $CC; ac_cc=`echo $2 |
+		      sed 's/[^a-zA-Z0-9_]/_/g;s/^[0-9]/_/'`
+if { as_var=ac_cv_prog_cc_${ac_cc}_c_o; eval "test \"\${$as_var+set}\" = set"; }; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+# Make sure it works both with $CC and with simple cc.
+# We do the test twice because some compilers refuse to overwrite an
+# existing .o file with -o, though they will create one.
+ac_try='$CC -c conftest.$ac_ext -o conftest2.$ac_objext >&5'
+rm -f conftest2.*
+if { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+   test -f conftest2.$ac_objext && { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); };
+then
+  eval ac_cv_prog_cc_${ac_cc}_c_o=yes
+  if test "x$CC" != xcc; then
+    # Test first that cc exists at all.
+    if { ac_try='cc -c conftest.$ac_ext >&5'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+      ac_try='cc -c conftest.$ac_ext -o conftest2.$ac_objext >&5'
+      rm -f conftest2.*
+      if { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 test -f conftest2.$ac_objext && { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); };
+      then
+	# cc works too.
+	:
+      else
+	# cc exists but doesn't like -o.
+	eval ac_cv_prog_cc_${ac_cc}_c_o=no
+      fi
+    fi
+  fi
+else
+  eval ac_cv_prog_cc_${ac_cc}_c_o=no
+fi
+rm -f -r core conftest*
+
+fi
+if eval test \$ac_cv_prog_cc_${ac_cc}_c_o = yes; then
+  { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+else
+  { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+  
+cat >>confdefs.h <<\_ACEOF
+@%:@define NO_MINUS_C_MINUS_O 1
+_ACEOF
+
+fi
+
+# FIXME: we rely on the cache variable name because
+# there is no other way.
+set dummy $CC
+ac_cc=`echo $2 | sed 's/[^a-zA-Z0-9_]/_/g;s/^[0-9]/_/'`
+if eval "test \"`echo '$ac_cv_prog_cc_'${ac_cc}_c_o`\" != yes"; then
+   # Losing compiler, so override with the script.
+   # FIXME: It is wrong to rewrite CC.
+   # But if we don't then we get into trouble of one sort or another.
+   # A longer-term fix would be to have automake use am__CC in this case,
+   # and then we could set am__CC="\$(top_srcdir)/compile \$(CC)"
+   CC="$am_aux_dir/compile $CC"
+fi
+
+
 
 for ac_prog in flex lex
 do
@@ -4667,6 +4795,7 @@ test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
 SAMPLE_EXTRA_LIBS=
 
+# Platform-specific Makefile setup
 case "${host}" in
         *-*-solaris*)   platform=SUN_OS 
 			SAMPLE_EXTRA_LIBS="-lxnet -lsocket -lnsl"
@@ -4678,6 +4807,11 @@ case "${host}" in
 	                SAMPLE_EXTRA_LIBS="-lsocket"
 			;;
         *-*-linux*)     platform=LINUX
+#			if test x$debug = xtrue; then 
+#			    CFLAGS="-g" #don't want the -O2 for debugging.
+#			else
+#			    CFLAGS="-O2" #don't want the -g for release compile.
+#			fi			
 			;;
 	*-*-cygwin*)	platform=CYGWIN ;;
 	*-*-mingw*)	platform=MINGW
@@ -6434,6 +6568,314 @@ fi
 done
 
 
+# Checks for isnan and isinf
+{ echo "$as_me:$LINENO: checking for isnan" >&5
+echo $ECHO_N "checking for isnan... $ECHO_C" >&6; }
+if test "${ac_cv_func_isnan+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define isnan to an innocuous variant, in case <limits.h> declares isnan.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define isnan innocuous_isnan
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char isnan (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef isnan
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char isnan ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined __stub_isnan || defined __stub___isnan
+choke me
+#endif
+
+int
+main ()
+{
+return isnan ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_func_isnan=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_func_isnan=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_func_isnan" >&5
+echo "${ECHO_T}$ac_cv_func_isnan" >&6; }
+if test $ac_cv_func_isnan = yes; then
+  has_isnan=1; 
+cat >>confdefs.h <<\_ACEOF
+@%:@define HAVE_ISNAN 1
+_ACEOF
+
+else
+  has_isnan=0
+fi
+
+{ echo "$as_me:$LINENO: checking for isinf" >&5
+echo $ECHO_N "checking for isinf... $ECHO_C" >&6; }
+if test "${ac_cv_func_isinf+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define isinf to an innocuous variant, in case <limits.h> declares isinf.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define isinf innocuous_isinf
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char isinf (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef isinf
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char isinf ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined __stub_isinf || defined __stub___isinf
+choke me
+#endif
+
+int
+main ()
+{
+return isinf ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_func_isinf=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_func_isinf=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_func_isinf" >&5
+echo "${ECHO_T}$ac_cv_func_isinf" >&6; }
+if test $ac_cv_func_isinf = yes; then
+  has_isinf=1; 
+cat >>confdefs.h <<\_ACEOF
+@%:@define HAVE_ISINF 1
+_ACEOF
+
+else
+  has_isinf=0
+fi
+
+
+# check for macro isnan in math
+if test $has_isnan = 0; then
+  { echo "$as_me:$LINENO: checking for macro isnan" >&5
+echo $ECHO_N "checking for macro isnan... $ECHO_C" >&6; }
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <cmath>
+int
+main ()
+{
+{ int foo; foo = isnan(0); }
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  has_isnan=1
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	has_isnan=0 
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+  if test $has_isnan = 1; then
+    { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+    
+cat >>confdefs.h <<\_ACEOF
+@%:@define HAVE_ISNAN 1
+_ACEOF
+
+  else
+    { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+  fi
+fi
+
+# check for macro isinf in math
+if test $has_isinf = 0; then
+  { echo "$as_me:$LINENO: checking for macro isinf" >&5
+echo $ECHO_N "checking for macro isinf... $ECHO_C" >&6; }
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <cmath>
+int
+main ()
+{
+{ int foo; foo = isinf(0); }
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  has_isinf=1
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	has_isinf=0 
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+  if test $has_isinf = 1; then
+    { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+    
+cat >>confdefs.h <<\_ACEOF
+@%:@define HAVE_ISINF 1
+_ACEOF
+
+  else
+    { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+  fi
+fi
+
+# Function test depending on platform
+# AIX Has incompatible gethostbyname_r
 if test $platform != AIX -a $platform != TRU64; then
   
 for ac_func in gethostbyname_r
@@ -6761,6 +7203,7 @@ fi
 
 fi
 
+# the debug build options adds symbols to compiler output (-g for g++)
 # Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then
   enableval=$enable_debug; case "${enableval}" in
@@ -6789,14 +7232,18 @@ else
 fi			
 
 
+# set the default soapcpp2 import path
 SOAPCPP2_IMPORTPATH="-DSOAPCPP_IMPORT_PATH=\"\\\"${datadir}/gsoap/import\\\"\""
 #SOAPCPP2_IMPORTPATH="-DSOAPCPP2_IMPORT_PATH=\"\\\"`pwd`/gsoap/import\\\"\""
 
 
+# set the default wsdl2h import path
 WSDL2H_IMPORTPATH="-DWSDL_IMPORT_PATH=\"\\\"${datadir}/gsoap/WS\\\"\""
 #WSDL2H_IMPORTPATH="-DWSDL2H_IMPORT_PATH=\"\\\"`pwd`/gsoap/WS\\\"\""
 
 
+# the disable-namespaces option adds the -DWITH_NONAMESPACES to the
+# library compilation thus disabling namespaces
 # Check whether --enable-namespaces was given.
 if test "${enable_namespaces+set}" = set; then
   enableval=$enable_namespaces; with_namespaces="$enable_ns"
@@ -6817,6 +7264,7 @@ echo "${ECHO_T}yes" >&6; }
 fi
 
 
+# the disable-ssl option removes the dependence on OpenSSL
 # Check whether --enable-ssl was given.
 if test "${enable_ssl+set}" = set; then
   enableval=$enable_ssl; with_openssl="$enable_openssl"
@@ -6825,6 +7273,7 @@ else
 fi
 
 
+# the enable-gnutls option enables GNUTLS in favor of OpenSSL
 # Check whether --enable-gnutls was given.
 if test "${enable_gnutls+set}" = set; then
   enableval=$enable_gnutls; with_gnutls="yes"
@@ -6844,8 +7293,8 @@ echo $ECHO_N "checking for enable gnutls in library... $ECHO_C" >&6; }
     { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
     WSDL2H_EXTRA_FLAGS="-DWITH_GNUTLS -DWITH_GZIP"
-    WSDL2H_EXTRA_LIBS="-lgnutls -lgcrypt -lz"
-    SAMPLE_SSL_LIBS="-lgnutls -lgcrypt -lz"
+    WSDL2H_EXTRA_LIBS="-lgnutls -lgcrypt -lgpg-error -lz"
+    SAMPLE_SSL_LIBS="-lgnutls -lgcrypt -lgpg-error -lz"
     WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
   else
     { echo "$as_me:$LINENO: result: no" >&5
@@ -6868,6 +7317,7 @@ fi
 
 
 
+# enable the compile of the samples
 # Check whether --enable-samples was given.
 if test "${enable_samples+set}" = set; then
   enableval=$enable_samples; case "${enableval}" in
@@ -6911,6 +7361,7 @@ fi
 
 
 
+# check if we must define -DWITH_BISON
 if test "$YACC" = "bison -y"; then
    BISON_DEFINE=-DWITH_BISON
    YACC_LIB=
@@ -6921,7 +7372,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile gsoap.pc gsoap++.pc gsoapck.pc gsoapck++.pc gsoapssl.pc gsoapssl++.pc gsoap/Makefile gsoap/src/Makefile gsoap/wsdl/Makefile gsoap/samples/Makefile gsoap/samples/autotest/Makefile gsoap/samples/calc/Makefile gsoap/samples/calc++/Makefile gsoap/samples/databinding/Makefile gsoap/samples/dime/Makefile gsoap/samples/dom/Makefile gsoap/samples/oneway/Makefile gsoap/samples/oneway++/Makefile gsoap/samples/factory/Makefile gsoap/samples/factorytest/Makefile gsoap/samples/gmt/Makefile gsoap/samples/googleapi/Makefile gsoap/samples/hello/Makefile gsoap/samples/httpcookies/Makefile gsoap/samples/lu/Makefile gsoap/samples/magic/Makefile gsoap/samples/mashup/Makefile gsoap/samples/mashup++/Makefile gsoap/samples/mtom/Makefile gsoap/samples/mtom-stream/Makefile gsoap/samples/polytest/Makefile gsoap/samples/roll/Makefile gsoap/samples/router/Makefile gsoap/samples/rss/Makefile gsoap/samples/ssl/Makefile gsoap/samples/template/Makefile gsoap/samples/udp/Makefile gsoap/samples/varparam/Makefile gsoap/samples/wsa/Makefile gsoap/samples/wsrm/Makefile gsoap/samples/wsse/Makefile gsoap/samples/xml-rpc/Makefile"
+ac_config_files="$ac_config_files Makefile gsoap.pc gsoap++.pc gsoapck.pc gsoapck++.pc gsoapssl.pc gsoapssl++.pc gsoap/Makefile gsoap/src/Makefile gsoap/wsdl/Makefile gsoap/samples/Makefile gsoap/samples/autotest/Makefile gsoap/samples/calc/Makefile gsoap/samples/calc++/Makefile gsoap/samples/chaining++/Makefile gsoap/samples/databinding/Makefile gsoap/samples/dime/Makefile gsoap/samples/dom/Makefile gsoap/samples/oneway/Makefile gsoap/samples/oneway++/Makefile gsoap/samples/factory/Makefile gsoap/samples/factorytest/Makefile gsoap/samples/gmt/Makefile gsoap/samples/googleapi/Makefile gsoap/samples/hello/Makefile gsoap/samples/httpcookies/Makefile gsoap/samples/lu/Makefile gsoap/samples/magic/Makefile gsoap/samples/mashup/Makefile gsoap/samples/mashup++/Makefile gsoap/samples/mtom/Makefile gsoap/samples/mtom-stream/Makefile gsoap/samples/polytest/Makefile gsoap/samples/primes/Makefile gsoap/samples/roll/Makefile gsoap/samples/router/Makefile gsoap/samples/rss/Makefile gsoap/samples/ssl/Makefile gsoap/samples/template/Makefile gsoap/samples/udp/Makefile gsoap/samples/varparam/Makefile gsoap/samples/wsa/Makefile gsoap/samples/wsrm/Makefile gsoap/samples/wsse/Makefile gsoap/samples/xml-rpc/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -7537,6 +7988,7 @@ do
     "gsoap/samples/autotest/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/autotest/Makefile" ;;
     "gsoap/samples/calc/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/calc/Makefile" ;;
     "gsoap/samples/calc++/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/calc++/Makefile" ;;
+    "gsoap/samples/chaining++/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/chaining++/Makefile" ;;
     "gsoap/samples/databinding/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/databinding/Makefile" ;;
     "gsoap/samples/dime/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/dime/Makefile" ;;
     "gsoap/samples/dom/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/dom/Makefile" ;;
@@ -7555,6 +8007,7 @@ do
     "gsoap/samples/mtom/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/mtom/Makefile" ;;
     "gsoap/samples/mtom-stream/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/mtom-stream/Makefile" ;;
     "gsoap/samples/polytest/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/polytest/Makefile" ;;
+    "gsoap/samples/primes/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/primes/Makefile" ;;
     "gsoap/samples/roll/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/roll/Makefile" ;;
     "gsoap/samples/router/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/router/Makefile" ;;
     "gsoap/samples/rss/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/rss/Makefile" ;;

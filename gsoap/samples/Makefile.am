@@ -7,5 +7,6 @@ SUBDIRS = \
 	autotest calc calc++ databinding dime dom oneway oneway++ \
 	factory factorytest \
 	gmt googleapi hello httpcookies lu magic mashup mashup++ \
+	chaining++ primes \
 	mtom mtom-stream polytest roll router rss ssl template udp varparam \
 	wsa wsrm wsse xml-rpc

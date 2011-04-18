@@ -10,5 +10,5 @@ include ../Makefile.defines
 include ../Makefile.cpp_rules
 SOAP_NS =
 
-dom2calc_SOURCES = $(SOAPHEADER) dom2calc.cpp $(SOAP_CPP_CORE) ../../dom.cpp
+dom2calc_SOURCES = $(SOAPHEADER) dom2calc.cpp $(SOAP_CPP_CORE)
 dom2calc_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)

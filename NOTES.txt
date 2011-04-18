@@ -4,7 +4,7 @@ DISTRIBUTION NOTES
 To install gSOAP, unpack the archive. You will get the following files:
 
 README.txt	read this first
-LICENSE.txt	licensing information
+LICENSE.txt	licensing information, please read
 INSTALL.txt	installation instructions
 NOTES.txt	this file
 license.pdf	gSOAP public license (PDF), see LICENSE.txt

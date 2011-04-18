@@ -8,7 +8,7 @@ SOAPHEADER = mashup.h
 
 include ../Makefile.defines
 include ../Makefile.c_rules
-SOAP_NS = mashup.nsmap mashup.wsdl
+SOAP_NS = mashup.nsmap
 
 mashupclient_SOURCES = mashupclient.c $(SOAPHEADER) $(SOAP_C_CLIENT)
 mashupclient_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)

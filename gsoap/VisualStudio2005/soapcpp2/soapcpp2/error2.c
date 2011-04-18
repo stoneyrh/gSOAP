@@ -129,7 +129,7 @@ void progerror(const char *s, const char *f, int l)
 /*
 errstat - show error statistics
 */
-int errstat()
+int errstat(void)
 {	if (!lexerrno && !synerrno && !semerrno)
 	{	fprintf(stderr, "\nCompilation successful ");
 		if (semwarno)

@@ -8,7 +8,7 @@ SOAPHEADER = mashup.hpp
 
 include ../Makefile.defines
 include ../Makefile.cpp_proxy_rules
-SOAP_NS = mashup.nsmap mashup.wsdl
+SOAP_NS = mashup.nsmap
 
 mashupclient_SOURCES = mashupclient.cpp $(SOAPHEADER) $(SOAP_CPP_CORE) soapmashupProxy.cpp
 mashupclient_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)

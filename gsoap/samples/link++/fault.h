@@ -3,7 +3,6 @@
 	Defines optional SOAP Fault derail data structures
 
 	Copyright (C) 2000-2004 Robert A. van Engelen. All Rights Reserved.
-
 */
 
 /*

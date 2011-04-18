@@ -69,9 +69,12 @@ else if (output.empty())
 else if (output.size() > 1)
   printf("More than one response data\n");
 else if (output[0].is_array() && !((_array)output[0]).empty())
-  ... = output[0][0];
+  for (int i = 0; i < ((_array)output[0]).size())
+    ... = output[0][i];
 else if (output[0].is_struct())
-  ... = output[0]["membername"];
+{ ... = output[0]["membername1"];
+  ... = output[0]["membername2"];
+}
 else if (output[0].is_base64())
   _base64 raw = output[0];
 else if (output[0].is_bool())
@@ -139,5 +142,152 @@ soapcpp2 -c xml-rpc.h
 
 As a consequence, all message manipulation is done at a very low-level.
 
-See xml-rpc-currentTime.c for example C code.
+An XML RPC call is made using the following function you can defined for
+convenience::
+
+int methodCall(struct soap *soap, const char *URL, struct methodCall *m, struct methodResponse *r)
+{ /* no namespaces */
+  soap->namespaces = NULL;
+  /* no SOAP encodingStyle */
+  soap->encodingStyle = NULL;
+  /* connect, send request, and receive response */
+  if (soap_connect(soap, URL, NULL)
+   || soap_begin_send(soap)
+   || soap_put_methodCall(soap, m, "methodCall", NULL)
+   || soap_end_send(soap)
+   || soap_begin_recv(soap)
+   || !soap_get_methodResponse(soap, r, "methodResponse", NULL)
+   || soap_end_recv(soap))
+    return soap_closesock(soap); /* closes socket and returns soap->error */
+  soap_closesock(soap);
+  return SOAP_OK;
+}
+
+Use this XML RPC method caller in C as follows:
+
+  struct soap *soap = soap_new();
+  struct methodCall m;
+  struct methodResponse r;
+  struct param p[4];  /* method has four parameters to send */
+  int n;              /* an int */
+  double x;           /* a float */
+  struct _struct s;   /* a struct ... */
+  struct member f[2]; /* ... with 2 members */
+  struct _array a;    /* an array ... */
+  struct value v[2];  /* ... with 2 values */
+  _boolean False = 0, True = 1;
+  /* Set up method call */
+  m.methodName = "methodXMLTagName";
+  /* set the four parameters */
+  m.params.__size = 4;
+  m.params.param = p;
+  memset(p, 0, sizeof(p));
+  p[0].value.__type = SOAP_TYPE__string;
+  p[0].value.ref = "a string parameter";
+  p[1].value.__type = SOAP_TYPE__int;
+  p[1].value.ref = &n;
+  n = 123;
+  p[2].value.__type = SOAP_TYPE__double;
+  p[2].value.ref = &x;
+  x = 4.56;
+  p[3].value.__type = SOAP_TYPE__struct;
+  p[3].value.ref = &s;
+  memset(&s, 0, sizeof(s));
+  s.__size = 2;
+  s.member = f;
+  memset(f, 0, sizeof(f));
+  f[0].name = "memberName1";
+  f[0].value.__type = SOAP_TYPE__boolean;
+  f[0].value.ref = &True;
+  f[1].name = "memberName2";
+  f[0].value.__type = SOAP_TYPE__array;
+  f[0].value.ref = &a;
+  memset(&a, 0, sizeof(a));
+  a.data.__size = 2;
+  a.data.value = v;
+  memset(v, 0, sizeof(v));
+  v[0].__type = SOAP_TYPE__string;
+  v[0].ref = "hello";
+  v[1].__type = SOAP_TYPE__string;
+  v[1].ref = "world";
+  /* connect, send request, and receive response */
+  if (methodCall(soap, "http://domain/path/service", &m, &r))
+  { soap_print_fault(soap, stderr);
+    exit(soap->error);
+  }
+  if (r.fault)
+  { /* print fault on stdout */
+    soap_begin_send(soap);
+    soap_put_fault(soap, r.fault, "fault", NULL);
+    soap_end_send(soap);
+  }
+  else
+  { /* print response parameters */
+    int i;
+    for (i = 0; i < r.params->__size; i++)
+    { printf("Return parameter %d = ", i+1);
+      display(&r.params->param[i].value); /* SEE BELOW */
+      printf("\n");
+    }
+  }
+
+To dynamically allocate data for automatic deallocation by the gSOAP engine,
+use (instead of for example struct value v[2]):
+
+  struct value *v = soap_malloc(soap, 2 * sizeof(struct value));
+  memset(v, 0, 2 * sizeof(struct value));
+  ...
+  soap_end(soap); /* deallocate all */
+
+See xml-rpc-currentTime.c and xml-rpc-weblogs.c for example C code.
+
+A convenient way to display XML RPC data can be implemented as follows:
+
+void display(struct value *v)
+{ int i;
+  switch (v->__type)
+  { case SOAP_TYPE__boolean:
+      printf(*((char*)v->ref) ? "TRUE" : "FALSE");
+      break;
+    case SOAP_TYPE__double:
+      printf("%g", *((double*)v->ref));
+      break;
+    case SOAP_TYPE__i4:
+    case SOAP_TYPE__int:
+      printf("%d", *((int*)v->ref));
+      break;
+    case SOAP_TYPE__dateTime_DOTiso8601:
+      printf("%s", (char*)v->ref);
+      break;
+    case SOAP_TYPE__string:
+      printf("\"%s\"", (char*)v->ref);
+      break;
+    case SOAP_TYPE__base64:
+      printf("[%d bytes of raw data at %p]", ((struct _base64*)v->ref)->__size, ((struct _base64*)v->ref)->__ptr);
+      break;
+    case SOAP_TYPE__struct:
+      printf("{struct\n");
+      for (i = 0; i < ((struct _struct*)v->ref)->__size; i++)
+      { printf("[%s]=", ((struct _struct*)v->ref)->member[i].name);
+        display(&((struct _struct*)v->ref)->member[i].value);
+        printf("\n");
+      }
+      printf("}\n");
+      break;
+    case SOAP_TYPE__array:
+      printf("{array\n");
+      for (i = 0; i < ((struct _array*)v->ref)->data.__size; i++)
+      { printf("[%d]=", i);
+        display(&((struct _array*)v->ref)->data.value[i]);
+        printf("\n");
+      }
+      printf("}\n");
+      break;
+    default:
+      if (!v->__type)
+        printf("\"%s\"", v->__any);
+      else
+        printf("{?}");
+  }
+}
 
