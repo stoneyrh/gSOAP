@@ -47,8 +47,11 @@ int main()
   /* two parameters with string content */
   m.params.__size = 2;
   m.params.param = p;
-  p[0].value.__any = "Scripting News";
-  p[1].value.__any = "http://www.scripting.com/";
+  memset(p, 0, sizeof(p));
+  p[0].value.__type = SOAP_TYPE__string;
+  p[0].value.ref = "Scripting News";
+  p[1].value.__type = SOAP_TYPE__string;
+  p[1].value.ref = "http://www.scripting.com/";
   /* connect, send request, and receive response */
   if (methodCall(soap, "http://rpc.weblogs.com/RPC2", &m, &r))
   { soap_print_fault(soap, stderr);
@@ -73,22 +76,22 @@ int main()
 	    else
 	      printf("Weblog ping failed\n");
 	  else 
-	    printf("XML-RPC message format error: boolean value expected\n");
+	    printf("XML-RPC response message format error: boolean value expected\n");
 	else 
-	  printf("XML-RPC message format error: string value \"flerror\" expected\n");
+	  printf("XML-RPC response message format error: string value \"flerror\" expected\n");
         if (!strcmp(s->member[1].name, "message"))
 	  if (s->member[1].value.__any)
 	    printf("%s\n", s->member[1].value.__any);
 	  else
-	    printf("XML-RPC message format error: string value expected\n");
+	    printf("XML-RPC response message format error: string value expected\n");
 	else 
-	  printf("XML-RPC message format error: string value \"message\" expected\n");
+	  printf("XML-RPC response message format error: string value \"message\" expected\n");
       }
       else
-        printf("XML-RPC message format error: struct with two members expected\n");
+        printf("XML-RPC response message format error: struct with two members expected\n");
     }
     else
-      printf("XML-RPC message format error: struct expected\n");
+      printf("XML-RPC response message format error: struct expected\n");
   }
   soap_end(soap);
   soap_done(soap);

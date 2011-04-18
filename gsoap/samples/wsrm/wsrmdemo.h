@@ -121,6 +121,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	This service handles faults relayed from the main service.
 
 	In a new window, run the client:
+
 	> ./wsrmdemo hello
 	This example shows the main server returning "hello" to the client.
 	WS-RM message acknowledgements are also returned to the client as
@@ -202,16 +203,35 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	The fault is relayed to the FaultTo service. The error is considered
 	fatal, so the server terminates the sequence.
 
+	> ./wsrmdemo error ef
+	This example shows the main server simulating a server operation fault.
+	The fault is relayed to the FaultTo service. Accepts with acks are
+	returned (to the from address), so the sequence terminates normally.
+
 	> ./wsrmdemo fault
 	This example shows the main server simulating a server operation fault.
 	The message was received, so even though an error occurred the message
 	was successfully received and counts as part of the sequence.
 
-	> ./wsrmdemo fault e
+	> ./wsrmdemo fault a
 	This example shows the main server simulating a server operation fault.
-	The fault is relayed to the FaultTo service. The message was received,
-	so even though an error occurred the message was successfully received
-	and counts as part of the sequence.
+	The message was received, so even though an error occurred the message
+	was successfully received and counts as part of the sequence. WS-RM
+	message acknowledgements are send to the AcksTo server. The client does
+	not receive acks, so it issues more resends than stricly necessary.
+
+	> ./wsrmdemo fault n
+	This example shows the server accepting the message without reply. In
+	this case a fault is generated that is not fatal.
+
+	> ./wsrmdemo fault ef
+	This example shows the main server simulating a server operation fault.
+	The fault is relayed to the FaultTo service. Accepts with acks are
+	returned (to the from address), so the sequence terminates normally.
+
+	> ./wsrmdemo fault e
+	Similar to the above, but no acknowledgements are received and the
+	sequence will fail to terminate normally.
 
 	Note 1: when the ReplyTo service is down, the response cannot be
 	relayed and the client (or fault service) will be informed about the

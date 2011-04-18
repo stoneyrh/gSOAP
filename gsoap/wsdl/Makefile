@@ -32,8 +32,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = i386-apple-darwin10.5.0
-host_triplet = i386-apple-darwin10.5.0
+build_triplet = i386-apple-darwin10.7.0
+host_triplet = i386-apple-darwin10.7.0
 bin_PROGRAMS = wsdl2h$(EXEEXT)
 subdir = gsoap/wsdl
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -47,14 +47,15 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
+am__objects_1 = wsdl2h-wsdlC.$(OBJEXT)
 am_wsdl2h_OBJECTS = wsdl2h-wsdl2h.$(OBJEXT) wsdl2h-wsdl.$(OBJEXT) \
 	wsdl2h-schema.$(OBJEXT) wsdl2h-types.$(OBJEXT) \
 	wsdl2h-service.$(OBJEXT) wsdl2h-soap.$(OBJEXT) \
-	wsdl2h-mime.$(OBJEXT) wsdl2h-wsp.$(OBJEXT)
+	wsdl2h-mime.$(OBJEXT) wsdl2h-wsp.$(OBJEXT) $(am__objects_1)
 wsdl2h_OBJECTS = $(am_wsdl2h_OBJECTS)
 am__DEPENDENCIES_1 =
-wsdl2h_DEPENDENCIES = $(SOAP_CPP_SRC) $(SOAP_CPP_LIB) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+wsdl2h_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 wsdl2h_LINK = $(CXXLD) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
@@ -150,10 +151,10 @@ am__quote =
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = i386-apple-darwin10.5.0
+build = i386-apple-darwin10.7.0
 build_alias = 
 build_cpu = i386
-build_os = darwin10.5.0
+build_os = darwin10.7.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -161,10 +162,10 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = i386-apple-darwin10.5.0
+host = i386-apple-darwin10.7.0
 host_alias = 
 host_cpu = i386
-host_os = darwin10.5.0
+host_os = darwin10.7.0
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
@@ -190,19 +191,22 @@ target_alias =
 top_builddir = ../..
 top_srcdir = ../..
 AUTOMAKE_OPTIONS = foreign 1.4
-INCLUDES = -I$(top_srcdir)/gsoap
-AM_LDFLAGS = $(INCLUDES) -I$(srcdir) -L$(srcdir)
+
+# INCLUDES=-I$(top_srcdir)/gsoap
+# AM_LDFLAGS=$(INCLUDES) -I$(srcdir) -L$(srcdir)
+AM_LDFLAGS = -L$(srcdir)
+AM_CPPFLAGS = -I$(top_srcdir)/gsoap
 SOAP = $(top_builddir)/gsoap/src/soapcpp2
 SOAP_CPP_LIB = $(top_builddir)/gsoap/$(WSDL2H_SOAP_CPP_LIB)
 SOAP_CPP_SRC = wsdlC.cpp
 SOAPHEADER = $(srcdir)/wsdl.h
 SOAP_FLAGS = -SC -pwsdl -I$(srcdir) -I$(top_srcdir)/gsoap/import
 BUILT_SOURCES = $(SOAP_CPP_SRC)
-wsdl2h_CFLAGS = $(C_DEBUG_FLAGS) $(SOAPCPP2_NONAMESPACES) -D$(platform)
-wsdl2h_CPPFLAGS = $(C_DEBUG_FLAGS) $(SOAPCPP2_NONAMESPACES) -D$(platform)
-wsdl2h_CXXFLAGS = $(WSDL2H_EXTRA_FLAGS) $(WSDL2H_IMPORTPATH)
-wsdl2h_SOURCES = wsdl2h.cpp wsdl.cpp schema.cpp types.cpp service.cpp soap.cpp mime.cpp wsp.cpp
-wsdl2h_LDADD = $(SOAP_CPP_SRC) $(SOAP_CPP_LIB) $(WSDL2H_EXTRA_LIBS) $(SAMPLE_EXTRA_LIBS)
+wsdl2h_CFLAGS = $(C_DEBUG_FLAGS)
+wsdl2h_CXXFLAGS = $(C_DEBUG_FLAGS)
+wsdl2h_CPPFLAGS = $(AM_CPPFLAGS) $(SOAPCPP2_NONAMESPACES) -D$(platform)
+wsdl2h_SOURCES = wsdl2h.cpp wsdl.cpp schema.cpp types.cpp service.cpp soap.cpp mime.cpp wsp.cpp $(SOAP_CPP_SRC)
+wsdl2h_LDADD = $(SOAP_CPP_LIB) $(WSDL2H_EXTRA_LIBS) $(SAMPLE_EXTRA_LIBS)
 CLEANFILES = *~ *C.cpp *H.h *Stub.h *.nsmap
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -278,6 +282,7 @@ include ./$(DEPDIR)/wsdl2h-soap.Po
 include ./$(DEPDIR)/wsdl2h-types.Po
 include ./$(DEPDIR)/wsdl2h-wsdl.Po
 include ./$(DEPDIR)/wsdl2h-wsdl2h.Po
+include ./$(DEPDIR)/wsdl2h-wsdlC.Po
 include ./$(DEPDIR)/wsdl2h-wsp.Po
 
 .cpp.o:
@@ -405,6 +410,20 @@ wsdl2h-wsp.obj: wsp.cpp
 #	source='wsp.cpp' object='wsdl2h-wsp.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) -c -o wsdl2h-wsp.obj `if test -f 'wsp.cpp'; then $(CYGPATH_W) 'wsp.cpp'; else $(CYGPATH_W) '$(srcdir)/wsp.cpp'; fi`
+
+wsdl2h-wsdlC.o: wsdlC.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) -MT wsdl2h-wsdlC.o -MD -MP -MF $(DEPDIR)/wsdl2h-wsdlC.Tpo -c -o wsdl2h-wsdlC.o `test -f 'wsdlC.cpp' || echo '$(srcdir)/'`wsdlC.cpp
+	mv -f $(DEPDIR)/wsdl2h-wsdlC.Tpo $(DEPDIR)/wsdl2h-wsdlC.Po
+#	source='wsdlC.cpp' object='wsdl2h-wsdlC.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) -c -o wsdl2h-wsdlC.o `test -f 'wsdlC.cpp' || echo '$(srcdir)/'`wsdlC.cpp
+
+wsdl2h-wsdlC.obj: wsdlC.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) -MT wsdl2h-wsdlC.obj -MD -MP -MF $(DEPDIR)/wsdl2h-wsdlC.Tpo -c -o wsdl2h-wsdlC.obj `if test -f 'wsdlC.cpp'; then $(CYGPATH_W) 'wsdlC.cpp'; else $(CYGPATH_W) '$(srcdir)/wsdlC.cpp'; fi`
+	mv -f $(DEPDIR)/wsdl2h-wsdlC.Tpo $(DEPDIR)/wsdl2h-wsdlC.Po
+#	source='wsdlC.cpp' object='wsdl2h-wsdlC.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) -c -o wsdl2h-wsdlC.obj `if test -f 'wsdlC.cpp'; then $(CYGPATH_W) 'wsdlC.cpp'; else $(CYGPATH_W) '$(srcdir)/wsdlC.cpp'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

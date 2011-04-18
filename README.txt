@@ -22,6 +22,10 @@ The software is provided "as is", without any warranty. However, gSOAP
 has received a lot of support from users and has been extensively tested
 in the real world. We also continue to improve gSOAP and add new features.
 
+See NOTES.txt for distributed notes and an overview of the package contents.
+See INSTALL.txt for installation instructions.
+See LICENSE.txt for software licensing.
+
 ================================================================================
 WHAT'S COOL?
 ================================================================================
@@ -42,8 +46,9 @@ transient format and not buffered. Many optimizations have been applied to
 reduce resource requirements and to expedite XML parsing.
 
 The gSOAP toolkit provides stand-alone HTTP(S) web server functionality as well
-as Apache mod and IIS hooks. Also CGI and FastCGI is possible. A web server
-example demonstrating the stand-alone functionality is included in the package.
+as Apache mod and IIS hooks (located in gsoap/mod_gsoap). Also CGI and FastCGI
+are supported. A web server example demonstrating the stand-alone functionality
+is included in the package.
 
 ================================================================================
 PACKAGE

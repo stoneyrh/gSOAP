@@ -7,5 +7,5 @@ Name: GSoap
 Description: SOAP C++ Web Services
 Version: @VERSION@
 Requires:
-Libs: -L${libdir} -lgsoap++
+Libs: -L${libdir} -lgsoap++ @SAMPLE_EXTRA_LIBS@
 Cflags: -DWITH_DOM -I${includedir}

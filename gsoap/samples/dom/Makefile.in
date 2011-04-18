@@ -48,7 +48,7 @@ PROGRAMS = $(noinst_PROGRAMS)
 am__objects_1 =
 am__objects_2 = soapC.$(OBJEXT)
 am_dom2calc_OBJECTS = $(am__objects_1) dom2calc.$(OBJEXT) \
-	$(am__objects_2) dom.$(OBJEXT)
+	$(am__objects_2)
 dom2calc_OBJECTS = $(am_dom2calc_OBJECTS)
 am__DEPENDENCIES_1 =
 dom2calc_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1)
@@ -217,7 +217,7 @@ LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 BUILT_SOURCES = $(SOAP_CPP_SRC) 
 CLEANFILES = $(SOAP_CPP_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.cpp soap*Proxy.h soap*Proxy.cpp soap*Object.h soap*Service.h soap*Service.cpp soapClient.cpp soapServer.cpp soapClientLib.cpp soapServerLib.cpp *~
 SOAP_NS = 
-dom2calc_SOURCES = $(SOAPHEADER) dom2calc.cpp $(SOAP_CPP_CORE) ../../dom.cpp
+dom2calc_SOURCES = $(SOAPHEADER) dom2calc.cpp $(SOAP_CPP_CORE)
 dom2calc_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -266,7 +266,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dom2calc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapC.Po@am__quote@
 
@@ -283,20 +282,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-dom.o: ../../dom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dom.o -MD -MP -MF $(DEPDIR)/dom.Tpo -c -o dom.o `test -f '../../dom.cpp' || echo '$(srcdir)/'`../../dom.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/dom.Tpo $(DEPDIR)/dom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../../dom.cpp' object='dom.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dom.o `test -f '../../dom.cpp' || echo '$(srcdir)/'`../../dom.cpp
-
-dom.obj: ../../dom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dom.obj -MD -MP -MF $(DEPDIR)/dom.Tpo -c -o dom.obj `if test -f '../../dom.cpp'; then $(CYGPATH_W) '../../dom.cpp'; else $(CYGPATH_W) '$(srcdir)/../../dom.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/dom.Tpo $(DEPDIR)/dom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../../dom.cpp' object='dom.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dom.obj `if test -f '../../dom.cpp'; then $(CYGPATH_W) '../../dom.cpp'; else $(CYGPATH_W) '$(srcdir)/../../dom.cpp'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

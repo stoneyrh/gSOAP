@@ -651,7 +651,7 @@ const char *Types::tname(const char *prefix, const char *URI, const char *qname)
     s = usetypemap[t];
   else
   { s = t;
-    fprintf(stream, "\n// Warning: undefined QName '%s' for type '%s' (FIXME: check WSDL and schema definitions)\n", qname?qname:"", t);
+    fprintf(stream, "\n// Warning: undefined QName '%s' for type '%s' in namespace '%s' (FIXME: check WSDL and schema definitions)\n", qname?qname:"", t, URI?URI:"?");
     if (vflag)
       fprintf(stderr, "Warning: undefined QName '%s' for type '%s' in namespace '%s'\n", qname?qname:"", t, URI?URI:"?");
   }
@@ -709,7 +709,7 @@ const char *Types::pname(bool flag, const char *prefix, const char *URI, const c
     s = usetypemap[t];
   else
   { s = t;
-    fprintf(stream, "\n// Warning: undefined QName '%s' for type '%s' (FIXME: check WSDL and schema definitions)\n", qname, t);
+    fprintf(stream, "\n// Warning: undefined QName '%s' for type '%s' in namespace '%s' (FIXME: check WSDL and schema definitions)\n", qname, t, URI?URI:"?");
     if (vflag)
       fprintf(stderr, "Warning: undefined QName '%s' for type '%s' in namespace '%s'\n", qname, t, URI?URI:"?");
   }
@@ -758,7 +758,7 @@ const char *Types::deftname(enum Type type, const char *pointer, bool is_pointer
   if (pointer || is_pointer)
     ptrtypemap[t] = s;
   if (vflag)
-    fprintf(stderr, "Defined %s in namespace %s as %s\n", qname, URI?URI:(prefix?prefix:""), s);
+    fprintf(stderr, "Defined %s (%s in namespace %s) as %s\n", t, qname, URI?URI:(prefix?prefix:""), s);
   return t;
 }
 
@@ -898,15 +898,15 @@ bool Types::is_nillable(const xs__element& element)
 { return !element.default_ && (element.nillable || (element.minOccurs && !strcmp(element.minOccurs, "0")));
 }
 
-bool Types::is_basetypeforunion(const char *URI, const char *type)
-{ const char *t = tname(NULL, URI, type);
+bool Types::is_basetypeforunion(const char *prefix, const char *URI, const char *type)
+{ const char *t = tname(prefix, URI, type);
   if (!strcmp(t, "std::string") || !strcmp(t, "std::wstring"))
     return false;
-  return is_basetype(URI, type);
+  return is_basetype(prefix, URI, type);
 }
 
-bool Types::is_basetype(const char *URI, const char *type)
-{ const char *t = tname(NULL, URI, type);
+bool Types::is_basetype(const char *prefix, const char *URI, const char *type)
+{ const char *t = tname(prefix, URI, type);
   if (!strncmp(t, "enum ", 5))
     return true;
   if (strstr(t, "__") && strcmp(t, "xsd__byte"))
@@ -2219,7 +2219,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
     }
     else
     { fprintf(stream, "/// Element reference %s.\n", element.ref);
-      fprintf(stream, elementformat, pname((with_union && !cflag && !is_basetypeforunion(typeURI, type)) || fake_union || is_nillable(element), typeprefix, typeURI, type), aname(nameprefix, nameURI, name));
+      fprintf(stream, elementformat, pname((with_union && !cflag && !is_basetypeforunion(typeprefix, typeURI, type)) || fake_union || is_nillable(element), typeprefix, typeURI, type), aname(nameprefix, nameURI, name));
     }
   }
   else if (name && type)
@@ -2263,7 +2263,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
     }
     else
     { fprintf(stream, "/// Element %s of type %s.\n", name, type);
-      fprintf(stream, elementformat, pname((with_union && !cflag && !is_basetypeforunion(URI, type)) || (fake_union && !element.default_) || is_nillable(element), NULL, URI, type), aname(nameprefix, nameURI, name));
+      fprintf(stream, elementformat, pname((with_union && !cflag && !is_basetypeforunion(NULL, URI, type)) || (fake_union && !element.default_) || is_nillable(element), NULL, URI, type), aname(nameprefix, nameURI, name));
     }
   }
   else if (name && element.simpleTypePtr())
@@ -2308,7 +2308,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
     fprintf(stream, elementformat, pname((with_union && !cflag) || fake_union || is_nillable(element), "_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
   }
   else if (name)
-  { fprintf(stream, "/// Element '%s' has no type or ref: assuming XML content.\n", name?name:"");
+  { fprintf(stream, "/// Element '%s' has no type or ref (empty or with XML content).\n", name?name:"");
     if (element.maxOccurs && strcmp(element.maxOccurs, "1")) // maxOccurs != "1"
     { if (cflag || sflag)
       { fprintf(stream, sizeformat, "int", aname(NULL, NULL, name));
@@ -2331,7 +2331,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
       fprintf(stream, elementformat, "_XML", aname(NULL, nameURI, name));
   }
   else
-    fprintf(stream, "/// Element has no type or ref.");
+    fprintf(stream, "/// Element has no name, type, or ref.");
   if (!substok
    || (   !(element.elementPtr() && element.elementPtr()->abstract)
        && !(element.substitutionsPtr() && !element.substitutionsPtr()->empty())
@@ -2679,7 +2679,7 @@ void Types::gen_soap_array(const char *name, const char *t, const char *item, co
       fprintf(stream, ";\n");
     }
     else
-    { const char *s = pname(!is_basetype(NULL, tmp), NULL, NULL, tmp);
+    { const char *s = pname(!is_basetype(NULL, NULL, tmp), NULL, NULL, tmp);
       fprintf(stream, "/// Pointer to array of %s.\n", s);
       fprintf(stream, arrayformat, s, item ? aname(NULL, NULL, item) : "");
       fprintf(stream, ";\n");

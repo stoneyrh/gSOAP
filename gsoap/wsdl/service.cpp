@@ -198,7 +198,7 @@ void Definitions::analyze(const wsdl__definitions &definitions)
               for (vector<wsdl__service>::const_iterator service = definitions.service.begin(); service != definitions.service.end(); ++service)
               { for (vector<wsdl__port>::const_iterator port = (*service).port.begin(); port != (*service).port.end(); ++port)
                 { if ((*port).bindingPtr() == &(*binding))
-                  { if ((*port).soap__address_)
+                  { if ((*port).soap__address_ && (*port).soap__address_->location)
                       s->location.insert((*port).soap__address_->location);
 		    else if ((*port).wsa__EndpointReference && (*port).wsa__EndpointReference->Address)
                       s->location.insert((*port).wsa__EndpointReference->Address);
@@ -606,7 +606,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
     { const char *t = types.nsprefix(NULL, (*schema2)->targetNamespace);
       fprintf(stream, "\n");
       types.document((*schema2)->annotation);
-      fprintf(stream, "#define SOAP_NAMESPACE_OF_%s\t\"%s\"\n", t, (*schema2)->targetNamespace);
+      fprintf(stream, "#define SOAP_NAMESPACE_OF_%s\t\"%s\"\n", types.cname(NULL, NULL, t), (*schema2)->targetNamespace);
       fprintf(stream, schemaformat, t, "namespace", (*schema2)->targetNamespace);
       if ((*schema2)->elementFormDefault == (*schema2)->attributeFormDefault)
         fprintf(stream, schemaformat, types.nsprefix(NULL, (*schema2)->targetNamespace), "form", (*schema2)->elementFormDefault == qualified ? "qualified" : "unqualified");
@@ -1718,33 +1718,33 @@ void Message::generate(Types &types, const char *sep, bool anonymous, bool remar
           fprintf(stream, "\n");
         if ((*part).element)
         { if ((*part).elementPtr())
-          { const char *name, *type, *URI, *prefix = NULL;
+          { const char *name, *type, *nameURI = NULL, *typeURI = NULL, *prefix = NULL;
             if (style == rpc)
 	      name = (*part).name;
 	    else
-	      name = (*part).elementPtr()->name;
-            /* comment out to use a type that refers to an element defined with typedef */
+	    { name = (*part).elementPtr()->name;
+              if ((*part).elementPtr()->schemaPtr())
+                nameURI = (*part).elementPtr()->schemaPtr()->targetNamespace;
+	    }
             if ((*part).elementPtr()->type)
               type = (*part).elementPtr()->type;
             else
             { type = (*part).elementPtr()->name;
               prefix = "_";
+              if ((*part).elementPtr()->schemaPtr())
+                typeURI = (*part).elementPtr()->schemaPtr()->targetNamespace;
             }
-            if (style == document && (*part).elementPtr()->schemaPtr())
-              URI = (*part).elementPtr()->schemaPtr()->targetNamespace;
-            else
-              URI = NULL;
             if ((*part).elementPtr()->xmime__expectedContentTypes)
               fprintf(stream, "    /// MTOM attachment with content types %s\n", (*part).elementPtr()->xmime__expectedContentTypes);
             if (response)
-            { const char *t = types.tname(prefix, URI, type);
+            { const char *t = types.tname(prefix, typeURI, type);
               bool flag = (strchr(t, '*') && strcmp(t, "char*") && strcmp(t, "char *"));
-              fprintf(stream, anonymous ? anonformat : paraformat, t, flag ? " " : cflag ? "*" : "&", types.aname(NULL, URI, name), sep);
+              fprintf(stream, anonymous ? anonformat : paraformat, t, flag ? " " : cflag ? "*" : "&", types.aname(NULL, nameURI, name), sep);
               if (remark)
                 fprintf(stream, "\t///< Response parameter");
             }
             else
-            { fprintf(stream, anonymous ? anonformat : paraformat, types.pname(false, prefix, URI, type), " ", types.aname(NULL, URI, name), sep);
+            { fprintf(stream, anonymous ? anonformat : paraformat, types.pname(false, prefix, typeURI, type), " ", types.aname(NULL, nameURI, name), sep);
               if (remark && *sep == ',')
                 fprintf(stream, "\t///< Request parameter");
             }

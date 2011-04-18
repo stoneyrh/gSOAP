@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2009, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2001-2011, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -142,9 +142,19 @@ int wsdl__definitions::read(int num, char **loc)
 }
 
 int wsdl__definitions::read(const char *cwd, const char *loc)
-{ const char *cwd_temp;
+{ // only read from locations not read already, uses static std::map
+  static map<const char*, wsdl__definitions*, ltstr> included;
+  const char *cwd_temp;
   if (!cwd)
     cwd = cwd_path;
+  if (loc)
+  { if (included.find(loc) != included.end())
+    { if (vflag)
+        fprintf(stderr, "\nWSDL/XSD '%s' already imported\n", loc);
+      return SOAP_OK;
+    }
+    included[loc] = this;
+  }
   if (vflag)
     fprintf(stderr, "\nOpening WSDL/XSD '%s' from '%s'\n", loc?loc:"", cwd?cwd:"");
   if (loc)
@@ -153,7 +163,7 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
     if (!strncmp(loc, "http://", 7) || !strncmp(loc, "https://", 8))
 #else
     if (!strncmp(loc, "https://", 8))
-    { fprintf(stderr, "\nCannot connect to https site: no SSL support, please rebuild with SSL (default) or download the files and rerun wsdl2h\n");
+    { fprintf(stderr, "\nCannot connect to https site: no SSL support, please rebuild wsdl2h with SSL or download the files and rerun wsdl2h\n");
       exit(1);
     }
     else if (!strncmp(loc, "http://", 7))
@@ -266,8 +276,8 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
       exit(1);
     }
   }
-  fprintf(stderr, "Done reading '%s'\n", loc?loc:"");
   soap_end_recv(soap);
+  fprintf(stderr, "Done reading '%s'\n", loc?loc:"");
   if (soap->recvfd > 2)
   { close(soap->recvfd);
     soap->recvfd = -1;

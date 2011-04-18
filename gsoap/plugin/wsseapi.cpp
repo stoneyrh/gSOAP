@@ -3061,7 +3061,7 @@ soap_wsse_add_EncryptedKey_DataReferenceURI(struct soap *soap, const char *URI)
   if (!(ref->__union_ReferenceList = (struct __xenc__union_ReferenceList*)soap_malloc(soap, sizeof(struct __xenc__union_ReferenceList))))
     return soap->error = SOAP_EOM;
   soap_default___xenc__union_ReferenceList(soap, ref->__union_ReferenceList);
-  if (!(ref->__union_ReferenceList->DataReference = soap_malloc(soap, sizeof(struct xenc__ReferenceType))))
+  if (!(ref->__union_ReferenceList->DataReference = (struct xenc__ReferenceType*)soap_malloc(soap, sizeof(struct xenc__ReferenceType))))
     return soap->error = SOAP_EOM;
   soap_default_xenc__ReferenceType(soap, ref->__union_ReferenceList->DataReference);
   ref->__union_ReferenceList->DataReference->URI = soap_strdup(soap, URI);
@@ -3089,7 +3089,7 @@ soap_wsse_add_DataReferenceURI(struct soap *soap, const char *URI)
   if (!(ref->__union_ReferenceList = (struct __xenc__union_ReferenceList*)soap_malloc(soap, sizeof(struct __xenc__union_ReferenceList))))
     return soap->error = SOAP_EOM;
   soap_default___xenc__union_ReferenceList(soap, ref->__union_ReferenceList);
-  if (!(ref->__union_ReferenceList->DataReference = soap_malloc(soap, sizeof(struct xenc__ReferenceType))))
+  if (!(ref->__union_ReferenceList->DataReference = (struct xenc__ReferenceType*)soap_malloc(soap, sizeof(struct xenc__ReferenceType))))
     return soap->error = SOAP_EOM;
   soap_default_xenc__ReferenceType(soap, ref->__union_ReferenceList->DataReference);
   ref->__union_ReferenceList->DataReference->URI = soap_strdup(soap, URI);
@@ -3996,7 +3996,7 @@ soap_wsse_decrypt_begin(struct soap *soap, const unsigned char *key)
     { /* retrieve key from token handler callback */
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Getting shared secret key %s through security_token_handler callback\n", info.KeyName));
       if (info.KeyName)
-        key = data->security_token_handler(soap, SOAP_MEC_DEC_DES_CBC, info.KeyName, &keylen);
+        key = (const unsigned char*)data->security_token_handler(soap, SOAP_MEC_DEC_DES_CBC, info.KeyName, &keylen);
     }
   }
   if (soap_element_begin_in(soap, "xenc:CipherData", 0, NULL)

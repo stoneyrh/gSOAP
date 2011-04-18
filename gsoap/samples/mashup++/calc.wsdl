@@ -30,48 +30,48 @@
 </types>
 
 <message name="addRequest">
- <part name="a" type="xsd:double"/>
- <part name="b" type="xsd:double"/>
+ <part name="a" type="xsd:double"/><!-- ns__add::a -->
+ <part name="b" type="xsd:double"/><!-- ns__add::b -->
 </message>
 
 <message name="addResponse">
- <part name="result" type="xsd:double"/>
+ <part name="result" type="xsd:double"/><!-- ns__add::result -->
 </message>
 
 <message name="subRequest">
- <part name="a" type="xsd:double"/>
- <part name="b" type="xsd:double"/>
+ <part name="a" type="xsd:double"/><!-- ns__sub::a -->
+ <part name="b" type="xsd:double"/><!-- ns__sub::b -->
 </message>
 
 <message name="subResponse">
- <part name="result" type="xsd:double"/>
+ <part name="result" type="xsd:double"/><!-- ns__sub::result -->
 </message>
 
 <message name="mulRequest">
- <part name="a" type="xsd:double"/>
- <part name="b" type="xsd:double"/>
+ <part name="a" type="xsd:double"/><!-- ns__mul::a -->
+ <part name="b" type="xsd:double"/><!-- ns__mul::b -->
 </message>
 
 <message name="mulResponse">
- <part name="result" type="xsd:double"/>
+ <part name="result" type="xsd:double"/><!-- ns__mul::result -->
 </message>
 
 <message name="divRequest">
- <part name="a" type="xsd:double"/>
- <part name="b" type="xsd:double"/>
+ <part name="a" type="xsd:double"/><!-- ns__div::a -->
+ <part name="b" type="xsd:double"/><!-- ns__div::b -->
 </message>
 
 <message name="divResponse">
- <part name="result" type="xsd:double"/>
+ <part name="result" type="xsd:double"/><!-- ns__div::result -->
 </message>
 
 <message name="powRequest">
- <part name="a" type="xsd:double"/>
- <part name="b" type="xsd:double"/>
+ <part name="a" type="xsd:double"/><!-- ns__pow::a -->
+ <part name="b" type="xsd:double"/><!-- ns__pow::b -->
 </message>
 
 <message name="powResponse">
- <part name="result" type="xsd:double"/>
+ <part name="result" type="xsd:double"/><!-- ns__pow::result -->
 </message>
 
 <portType name="calcPortType">

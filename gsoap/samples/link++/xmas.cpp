@@ -64,8 +64,7 @@ int main()
 
 int xmas::mashupService::dtx(_XML x, struct _ns2__commingtotown *response)
 {
-  gmt::Proxy Time;
-  Time.soap_endpoint = "http://www.cs.fsu.edu/~engelen/gmtlitserver.cgi";
+  gmt::Proxy Time("http://www.cs.fsu.edu/~engelen/gmtlitserver.cgi");
 
   time_t now;
   if (Time.gmt(&now))

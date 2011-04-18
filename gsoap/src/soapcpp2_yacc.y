@@ -19,7 +19,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL OR Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -58,12 +58,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 #define YYINCLUDED_STDLIB_H
 #ifdef WIN32_WITHOUT_SOLARIS_FLEX
-extern int soapcpp2lex();
+extern int soapcpp2lex(void);
 #else
-extern int yylex();
+extern int yylex(void);
 #endif
 #else
-extern int yylex();
+extern int yylex(void);
 #endif
 
 extern int is_XML(Tnode*);
@@ -100,9 +100,9 @@ Tnode	*xml = NULL;
 static Entry	*undefined(Symbol*);
 static Tnode	*mgtype(Tnode*, Tnode*);
 static Node	op(const char*, Node, Node), iop(const char*, Node, Node), relop(const char*, Node, Node);
-static void	mkscope(Table*, int), enterscope(Table*, int), exitscope();
+static void	mkscope(Table*, int), enterscope(Table*, int), exitscope(void);
 static int	integer(Tnode*), real(Tnode*), numeric(Tnode*);
-static void	add_soap(), add_XML(), add_qname(), add_header(Table*), add_fault(Table*), add_response(Entry*, Entry*), add_result(Tnode*);
+static void	add_soap(void), add_XML(void), add_qname(void), add_header(Table*), add_fault(Table*), add_response(Entry*, Entry*), add_result(Tnode*);
 extern char	*c_storage(Storage), *c_type(Tnode*), *c_ident(Tnode*);
 extern int	is_primitive_or_string(Tnode*), is_stdstr(Tnode*), is_binary(Tnode*), is_external(Tnode*), is_mutable(Tnode*);
 
@@ -324,11 +324,8 @@ dclr	: ptrs ID arrayck tag occurs init
 						p->info.typ->transient = $3.typ->transient;
 			  		p->info.sto = $3.sto;
 					p->info.typ->pattern = $5.pattern;
-					if ($5.minOccurs != -1)
-					{	p->info.typ->minLength = $5.minOccurs;
-					}
-					if ($5.maxOccurs > 1)
-						p->info.typ->maxLength = $5.maxOccurs;
+					p->info.typ->minLength = $5.minLength;
+					p->info.typ->maxLength = $5.maxLength;
 				}
 				$2->token = TYPE;
 			  }
@@ -1377,26 +1374,36 @@ tag	: /* empty */	{ $$ = NULL; }
 occurs	: patt
 			{ $$.minOccurs = -1;
 			  $$.maxOccurs = 1;
+			  $$.minLength = MINLONG64;
+			  $$.maxLength = MAXLONG64;
 			  $$.pattern = $1;
 			}
 	| patt cint
-			{ $$.minOccurs = (long)$2;
+			{ $$.minOccurs = (LONG64)$2;
 			  $$.maxOccurs = 1;
+			  $$.minLength = (LONG64)$2;
+			  $$.maxLength = MAXLONG64;
 			  $$.pattern = $1;
 			}
 	| patt cint ':'
-			{ $$.minOccurs = (long)$2;
+			{ $$.minOccurs = (LONG64)$2;
 			  $$.maxOccurs = 1;
+			  $$.minLength = (LONG64)$2;
+			  $$.maxLength = MAXLONG64;
 			  $$.pattern = $1;
 			}
 	| patt cint ':' cint
-			{ $$.minOccurs = (long)$2;
-			  $$.maxOccurs = (long)$4;
+			{ $$.minOccurs = (LONG64)$2;
+			  $$.maxOccurs = (LONG64)$4;
+			  $$.minLength = (LONG64)$2;
+			  $$.maxLength = (LONG64)$4;
 			  $$.pattern = $1;
 			}
 	| patt ':' cint
 			{ $$.minOccurs = -1;
-			  $$.maxOccurs = (long)$3;
+			  $$.maxOccurs = (LONG64)$3;
+			  $$.minLength = MINLONG64;
+			  $$.maxLength = (LONG64)$3;
 			  $$.pattern = $1;
 			}
 	;
@@ -1548,7 +1555,7 @@ pexp	: '(' expr ')'	{ $$ = $2; }
  * ???
  */
 int
-yywrap()
+yywrap(void)
 {	return 1;
 }
 
@@ -1649,7 +1656,7 @@ enterscope(Table *table, int offset)
 exitscope - exit a scope by popping the table and offset from the stack
 */
 static void
-exitscope()
+exitscope(void)
 {	check(sp-- != stack, "exitscope() has no matching enterscope()");
 }
 
@@ -1821,7 +1828,7 @@ add_fault(Table *gt)
 }
 
 static void
-add_soap()
+add_soap(void)
 { Symbol *s = lookup("soap");
   p = enter(classtable, s);
   p->info.typ = mkstruct(NULL, 0);
@@ -1830,7 +1837,7 @@ add_soap()
 }
 
 static void
-add_XML()
+add_XML(void)
 { Symbol *s = lookup("_XML");
   p = enter(typetable, s);
   xml = p->info.typ = mksymtype(mkstring(), s);
@@ -1838,7 +1845,7 @@ add_XML()
 }
 
 static void
-add_qname()
+add_qname(void)
 { Symbol *s = lookup("_QName");
   p = enter(typetable, s);
   qname = p->info.typ = mksymtype(mkstring(), s);

@@ -17,9 +17,16 @@ Supporting modules:
 smdevp.*	EVP-based streaming (signed) message digest engine
 mecevp.*	EVP-based streaming message encryption engine
 md5evp.*	MD5 EVP interface for httpda and httpmd5
-threads.*	Threads, mutex, and condition variables
+threads.*	Portable threads, mutex, and condition variables
 
-C versus C++:
+Test programs for plugings:
+
+httpdatest.*	HTTP Digest Athentication test and example code
+httpgettest.*	HTTP GET test and example code
+httpposttest.*	HTTP POST test and example code
+httpmd5test.*	HTTP MD5 integrity protection test and example code
+
+C versus C++ usage:
 
 All files are suitable for C and C++ compilation and C++ checks are included in
 the source code whenever applicable. If necessary, rename the .c file(s) to

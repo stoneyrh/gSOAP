@@ -653,7 +653,7 @@ char *yytext_ptr;
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL OR Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -711,16 +711,16 @@ static YY_BUFFER_STATE instk[MAX_IMPORT_DEPTH];
 int imports = 0;
 char *imported = NULL;
 static void check_id(const char*);
-static Token install_id();
-static Token install_int();
-static Token install_hex();
-static Token install_num();
-static Token install_chr();
-static Token install_str();
-static Token install_pragma();
-static void directive(), option();
-static Token error_chr();
-static Token error_str();
+static Token install_id(void);
+static Token install_int(void);
+static Token install_hex(void);
+static Token install_num(void);
+static Token install_chr(void);
+static Token install_str(void);
+static Token install_pragma(void);
+static void directive(void), option(void);
+static Token error_chr(void);
+static Token error_str(void);
 static int convchar(int*);
 static int hexchar(int*);
 static int octchar(int*);
@@ -2345,7 +2345,7 @@ check_id(const char *s)
 	install_int - convert digits to integer and return LNG token.
 */
 static Token
-install_int()
+install_int(void)
 {
 	sscanf(yytext, SOAP_ULONG_FORMAT, &yylval.i);
 	return LNG;
@@ -2355,7 +2355,7 @@ install_int()
 	install_hex - convert hexadecimal digits to integer and return LNG
 */
 static Token
-install_hex()
+install_hex(void)
 {
 	sscanf(yytext, SOAP_XLONG_FORMAT, &yylval.i);
 	return LNG;
@@ -2365,7 +2365,7 @@ install_hex()
 	install_num - convert digits to floating point number and return DBL
 */
 static Token
-install_num()
+install_num(void)
 {	sscanf(yytext, "%lf", &yylval.r);
 	return DBL;
 }
@@ -2374,7 +2374,7 @@ install_num()
 	install_chr - convert character constant and return CHR.
 */
 static Token
-install_chr()
+install_chr(void)
 {	int i = 2;
 	if (yytext[1] == '\\')
 		yylval.c = convchar(&i);
@@ -2388,7 +2388,7 @@ install_chr()
 	install_str - convert and store string in memory. Return STR.
 */
 static Token
-install_str()
+install_str(void)
 {	int i, j = 0;
 	yylval.s = emalloc(yyleng-1);	/* yyleng = length(yytext) */
 	for (i = 1; i < yyleng-1; i++)
@@ -2408,14 +2408,14 @@ install_str()
 	install_pragma - store pragma in string. Return PRAGMA.
 */
 static Token
-install_pragma()
+install_pragma(void)
 {	yylval.s = emalloc(yyleng);	/* yyleng = length(yytext) */
 	strncpy(yylval.s, yytext, strlen(yytext)-1);
 	yylval.s[strlen(yytext)-1] = '\0';
 	return PRAGMA;
 }
 
-static void directive()
+static void directive(void)
 {	int i, j, k;
 	char *s;
 	Service *sp;
@@ -2858,7 +2858,7 @@ static void directive()
 		else if (!strncmp(yytext+i, "type-documentation:", 19))
 		{	d = (Data*)emalloc(sizeof(Data));
 			d->name = s;
-			d->part = NULL;
+			d->text = NULL;
 			d->next = sp->data;
 			sp->data = d;
 			for (j = k; yytext[j]; j++)
@@ -2872,7 +2872,7 @@ static void directive()
 			s = (char*)emalloc(k-j+1);
 			strncpy(s, yytext+j, k-j);
 			s[k-j] = '\0';
-			d->part = s;
+			d->text = s;
 		}
 		else
                 {	sprintf(errbuf, "unrecognized gsoap directive: %s", yytext+i);
@@ -2885,7 +2885,7 @@ static void directive()
 	}
 }
 
-static void option()
+static void option(void)
 {	int i;
 	if (imports)
         {	sprintf(errbuf, "options directive: %s ignored in imported file(s)", yytext);
@@ -2929,7 +2929,7 @@ static void option()
 	allow parsing to continue
 */
 static Token
-error_chr()
+error_chr(void)
 {	lexerror("Ending-' missing in character constant");
 	yylval.c = '\0';
 	return CHR;
@@ -2940,7 +2940,7 @@ error_chr()
 	parsing to continue
 */
 static Token
-error_str()
+error_str(void)
 {	lexerror("Ending-\" missing in string");
 	yylval.s = "";
 	return STR;

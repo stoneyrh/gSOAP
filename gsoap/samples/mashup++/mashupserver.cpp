@@ -54,8 +54,7 @@ int main(int argc, char **argv)
 
 int mashupService::dtx(_XML x, struct _ns3__commingtotown *response)
 {
-  ServiceProxy Time;
-  Time.soap_endpoint = "http://www.cs.fsu.edu/~engelen/gmtlitserver.cgi";
+  ServiceProxy Time("http://www.cs.fsu.edu/~engelen/gmtlitserver.cgi");
 
   _ns1__gmt gmt;
   _ns1__gmtResponse gmtResponse;

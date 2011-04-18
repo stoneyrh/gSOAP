@@ -49,4 +49,4 @@ extern void compliancewarn(const char *);
 extern void typerror(const char*);
 extern void execerror(const char*);
 extern void progerror(const char*, const char*, int);
-extern int errstat();
+extern int errstat(void);

@@ -4,7 +4,7 @@
 	Main compiler and code generator batch program.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL OR Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -39,8 +39,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #define SOAPCPP2_IMPORT_PATH (NULL)
 #endif
 
-extern void init();
-extern int yyparse();
+extern void init(void);
+extern int yyparse(void);
 extern FILE *yyin;
 
 extern char *ns_cname(char*, char*);
@@ -56,6 +56,7 @@ int bflag = 0;		/* when set, serialize byte arrays char[N] as string */
 int eflag = 0;		/* when set, use SOAP RPC encoding by default */
 unsigned long fflag = 0;/* multi-file split for each bundle of -fN defs */
 int iflag = 0;		/* when set, generate new style proxy/object classes inherited from soap struct */
+int jflag = 0;		/* when set, generate new style proxy/object classes */
 int mflag = 0;		/* when set, generate code that requires array/binary classes to explicitly remove malloced array */
 int nflag = 0;		/* when set, names the namespaces global struct '%NAME%_namespaces */
 int lflag = 0;		/* when set, create library */
@@ -64,6 +65,7 @@ int sflag = 0;		/* when set, generate strict validation checks */
 int Sflag = 0;		/* when set, generate only files for servers */
 int Tflag = 0;		/* when set, generates server auto-test code */
 int tflag = 0;		/* when set, generates typed messsages (with xsi:type attributes) */
+int uflag = 0;		/* when set, uncomment WSDL and schema output */
 int xflag = 0;		/* when set, excludes imported types */
 int zflag = 0;		/* not used: reserved */
 
@@ -142,7 +144,7 @@ main(int argc, char **argv)
 						break;
 					case '?':
 					case 'h':
-						fprintf(stderr, "Usage: soapcpp2 [-1|-2] [-C|-S] [-T] [-L] [-a] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-l] [-m] [-n] [-p name] [-s] [-t] [-v] [-w] [-x] [infile]\n\n");
+						fprintf(stderr, "Usage: soapcpp2 [-1|-2] [-C|-S] [-T] [-L] [-a] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [infile]\n\n");
 						fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
@@ -157,7 +159,8 @@ main(int argc, char **argv)
 -e	generate SOAP RPC encoding style bindings\n\
 -fN	file split of N XML serializer implementations per file (N>=10)\n\
 -h	display help info\n\
--i      generate service proxies and objects inherited from soap struct\n\
+-i      generate C++ service proxies and objects inherited from soap struct\n\
+-j      generate C++ service proxies and objects that share a soap struct\n\
 -Ipath  use path(s) for #import\n\
 -l      generate linkable modules (experimental)\n\
 -m      generate Matlab(tm) code for MEX compiler\n\
@@ -166,6 +169,7 @@ main(int argc, char **argv)
 -qname  use name as the C++ namespace of all declarations\n\
 -s      generate deserialization code with strict XML validation checks\n\
 -t      generate code for fully xsi:type typed SOAP/XML messaging\n\
+-u	uncomment comments in WSDL/schema output by suppressing XML comments\n\
 -v	display version info\n\
 -w	don't generate WSDL and schema files\n\
 -x	don't generate sample XML message files\n\
@@ -195,6 +199,9 @@ infile	header file to parse (or stdin)\n\
 					case 'i':
 						iflag = 1;
 						break;
+					case 'j':
+						jflag = 1;
+						break;
 					case 'm':
 						mflag = 1;
 						break;
@@ -220,6 +227,9 @@ infile	header file to parse (or stdin)\n\
 						break;
 					case 't':
 						tflag = 1;
+						break;
+					case 'u':
+						uflag = 1;
 						break;
 					case 'w':
 						wflag = 1;
@@ -273,7 +283,7 @@ infile	header file to parse (or stdin)\n\
 		else
 			strcpy(filename, argv[i]);
 	}
-	fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release "VERSION"\n**  Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool is released under one of the following two licenses:\n**  GPL or the commercial license by Genivia Inc.\n\n");
+	fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release "VERSION"\n**  Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool is released under one of the following two licenses:\n**  GPL or the commercial license by Genivia Inc.\n\n");
 	if (stop_flag)
 	  exit(0);
 	init();

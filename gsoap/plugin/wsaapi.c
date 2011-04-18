@@ -770,6 +770,7 @@ soap_wsa_reply(struct soap *soap, const char *id, const char *action)
   else
     newheader->SOAP_WSA(To) = (char*)soap_wsa_anonymousURI;
   soap->header = newheader;
+  soap->action = newheader->SOAP_WSA(Action);
   return SOAP_OK;
 }
 

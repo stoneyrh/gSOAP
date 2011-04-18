@@ -50,7 +50,7 @@ int main()
 {
   soap *ctx = soap_new();
   // define the weblogsUpdates.ping method
-  methodCall ping(ctx, ENDPOINT, "weblogsUpdates.ping");
+  methodCall ping(ctx, ENDPOINT, "weblogUpdates.ping");
   // set the two parameters of the method
   ping[0] = "Scripting News";
   ping[1] = "http://www.scripting.com/";

@@ -81,12 +81,12 @@
 ]
 
 #	Uncomment the line below to use struct tm instead of time_t xsd:dateTime
-#	Must compile and link custom/struc_tm.c with the project
+#	Must compile and link custom/struct_tm.c with the project
 #
 # xsd__dateTime = #import "custom/struct_tm.h" | xsd__dateTime
 
 #	Uncomment the line below to use timeval with usec precision xsd:dateTime
-#	Must compile and link custom/struc_timeval.c with the project
+#	Must compile and link custom/struct_timeval.c with the project
 #
 # xsd__dateTime = #import "custom/struct_timeval.h" | xsd__dateTime
 

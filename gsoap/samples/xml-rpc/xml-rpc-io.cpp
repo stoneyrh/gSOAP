@@ -62,7 +62,7 @@ std::ostream& operator<<(std::ostream& o, const struct value& v)
       o << (int)v;
       break;
     case SOAP_TYPE__string: 
-      o << (const char*)v;
+      o << "\"" << (const char*)v << "\"";
       break;
     case SOAP_TYPE__struct: 
       o << "{struct" << std::endl;
@@ -72,7 +72,7 @@ std::ostream& operator<<(std::ostream& o, const struct value& v)
       break;
     default:
       if (v.__any)
-        o << v.__any;
+        o << "\"" << v.__any << "\"";
       else
         o << "{?}";
   }

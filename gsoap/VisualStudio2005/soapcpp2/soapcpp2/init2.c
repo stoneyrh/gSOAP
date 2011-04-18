@@ -199,7 +199,7 @@ static Keyword keywords[] =
 /*
 init - initialize symbol table with predefined keywords
 */
-void init()
+void init(void)
 { struct Keyword *k;
   for (k = keywords; k->s; k++)
     install(k->s, k->t);

@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2008, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2001-2011, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -467,7 +467,7 @@ xs__include::xs__include()
 
 int xs__include::preprocess(xs__schema &schema)
 { if (!schemaRef && schemaLocation)
-  { // only read when not read already, uses global static std::map
+  { // only read from include locations not read already, uses static std::map
     static map<const char*, xs__schema*, ltstr> included;
     map<const char*, xs__schema*, ltstr>::iterator i = included.find(schemaLocation);
     if (i == included.end())
@@ -590,7 +590,7 @@ int xs__import::traverse(xs__schema &schema)
     { const char *s = schemaLocation;
       if (!s)
         s = namespace_;
-      // only read when not read already, uses global static std::map
+      // only read from import locations not read already, uses static std::map
       static map<const char*, xs__schema*, ltstr> included;
       map<const char*, xs__schema*, ltstr>::iterator i = included.find(s);
       if (i == included.end())
@@ -602,9 +602,10 @@ int xs__import::traverse(xs__schema &schema)
       if (schemaRef)
       { if (!schemaRef->targetNamespace || !*schemaRef->targetNamespace)
           schemaRef->targetNamespace = namespace_;
-        else if (!namespace_ || strcmp(schemaRef->targetNamespace, namespace_))
-          if (!Wflag)
-	    fprintf(stderr, "Warning: schema import '%s' with schema targetNamespace '%s' mismatch\n", namespace_?namespace_:"", schemaRef->targetNamespace);
+        else
+	  if (!namespace_ || strcmp(schemaRef->targetNamespace, namespace_))
+            if (!Wflag)
+	      fprintf(stderr, "Warning: schema import '%s' with schema targetNamespace '%s' mismatch\n", namespace_?namespace_:"", schemaRef->targetNamespace);
       }
     }
   }
@@ -703,16 +704,14 @@ int xs__attribute::traverse(xs__schema &schema)
   { if (ref)
     { if (is_builtin_qname(ref))
         schema.builtinAttribute(ref);
-      else
-        if (!Wflag)
-	  cerr << "Warning: could not find attribute '" << (name?name:"") << "' ref '" << ref << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+      else if (!Wflag)
+	cerr << "Warning: could not find attribute '" << (name?name:"") << "' ref '" << ref << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
     }
     else if (type)
     { if (is_builtin_qname(type))
         schema.builtinType(type);
-      else
-        if (!Wflag)
-	  cerr << "Warning: could not find attribute '" << (name?name:"") << "' type '" << type << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+      else if (!Wflag)
+	cerr << "Warning: could not find attribute '" << (name?name:"") << "' type '" << type << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
     }
   }
   return SOAP_OK;
@@ -888,16 +887,14 @@ int xs__element::traverse(xs__schema &schema)
   { if (ref)
     { if (is_builtin_qname(ref))
         schema.builtinElement(ref);
-      else
-        if (!Wflag)
-	  cerr << "Warning: could not find element '" << (name?name:"") << "' ref '" << ref << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+      else if (!Wflag)
+	cerr << "Warning: could not find element '" << (name?name:"") << "' ref '" << ref << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
     }
     else if (type)
     { if (is_builtin_qname(type))
         schema.builtinType(type);
-      else
-        if (!Wflag)
-	  cerr << "Warning: could not find element '" << (name?name:"") << "' type '" << type << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+      else if (!Wflag)
+	cerr << "Warning: could not find element '" << (name?name:"") << "' type '" << type << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
     }
   }
   return SOAP_OK;
@@ -1183,9 +1180,8 @@ int xs__extension::traverse(xs__schema &schema)
   { if (base)
     { if (is_builtin_qname(base))
         schema.builtinType(base);
-      else
-        if (!Wflag)
-	  cerr << "Warning: could not find extension base type '" << base << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+      else if (!Wflag)
+	cerr << "Warning: could not find extension base type '" << base << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
     }
     else
       cerr << "Extension has no base" << endl;
@@ -1299,9 +1295,8 @@ int xs__restriction::traverse(xs__schema &schema)
   { if (base)
     { if (is_builtin_qname(base))
         schema.builtinType(base);
-      else
-        if (!Wflag)
-	  cerr << "Warning: could not find restriction base type '" << base << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+      else if (!Wflag)
+	cerr << "Warning: could not find restriction base type '" << base << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
     }
     else
       cerr << "Restriction has no base" << endl;
@@ -1370,9 +1365,8 @@ int xs__list::traverse(xs__schema &schema)
   if (itemType && !itemTypeRef)
   { if (is_builtin_qname(itemType))
       schema.builtinType(itemType);
-    else
-      if (!Wflag)
-        cerr << "Warning: could not find list itemType '" << itemType << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+    else if (!Wflag)
+      cerr << "Warning: could not find list itemType '" << itemType << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
   }
   return SOAP_OK;
 }

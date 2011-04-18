@@ -71,7 +71,7 @@ extern const char soap_wsrm_id[];
 
 /** Max seconds to expire a non-terminated sequence and reclaim its resources */
 #ifndef SOAP_WSRM_MAX_SEC_TO_EXPIRE
-# define SOAP_WSRM_MAX_SEC_TO_EXPIRE 3600
+# define SOAP_WSRM_MAX_SEC_TO_EXPIRE 600	/* 10 minutes */
 #endif
 
 /** Seconds to timeout when sending ack messages to independent acksto server */
