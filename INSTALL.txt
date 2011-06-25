@@ -114,6 +114,19 @@ use:
 
 	$ ./configure --enable-debug
 
+To enable IPV6 support, use:
+
+	$ ./configure --enable-ipv6
+
+If you do not want the libraries to depend on a global namespace table (.nsmap
+file content), use:
+
+	$ ./configure --disable-namespaces
+
+However, you MUST set a namespace table at runtime with soap_set_namespaces()
+right after initialization with soap_init() or soap_new() to ensure that a
+namespace mapping table is used by the engine context.
+
 If you want to install the executables in your local folder, enter:
 
 	$ ./configure

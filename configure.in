@@ -176,6 +176,29 @@ else
 fi
 AC_SUBST(SOAPCPP2_NONAMESPACES)
 
+# the enable-ipv6 option adds the -DWITH_IPV6 to the
+# library compilation thus enabling IPv6
+AC_ARG_ENABLE(ipv6,
+              [AC_HELP_STRING([--enable-ipv6],
+                              [compile library with IPv6 support])],
+              [with_ipv6="yes"],
+              [with_ipv6="$disable_ipv6"])
+
+AC_MSG_CHECKING(for enable ipv6 in library)
+if test "x$with_ipv6" = "xyes"; then
+  AC_MSG_RESULT(yes)
+  SOAPCPP2_IPV6="-DWITH_IPV6" ##define to add IPv6 support
+else
+  AC_MSG_RESULT(no)
+fi
+AC_SUBST(SOAPCPP2_IPV6)
+
+# the OpenSSL installation prefix path
+AC_ARG_WITH([openssl],
+            AS_HELP_STRING([--with-openssl=DIR],
+                           [openssl installation prefix]),
+            [OPENSSL=$withval],)
+
 # the disable-ssl option removes the dependence on OpenSSL
 AC_ARG_ENABLE(ssl,
               [AC_HELP_STRING([--disable-ssl],
@@ -188,7 +211,7 @@ AC_ARG_ENABLE(gnutls,
               [AC_HELP_STRING([--enable-gnutls],
                               [build with GNUTLS SSL/TLS])],
               [with_gnutls="yes"],
-              [with_gnutls="$enable_gnutls"])
+              [with_gnutls="$disable_gnutls"])
 
 AC_MSG_CHECKING(for disable openssl in library)
 if test "x$with_openssl" = "xyes"; then
@@ -206,6 +229,11 @@ if test "x$with_openssl" = "xyes"; then
     WSDL2H_EXTRA_LIBS="-lssl -lcrypto -lz"
     SAMPLE_SSL_LIBS="-lssl -lcrypto -lz"
     WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
+  fi
+  if test -n "$OPENSSL"; then
+    WSDL2H_EXTRA_FLAGS="-I${OPENSSL}/include ${WSDL2H_EXTRA_FLAGS}"
+    WSDL2H_EXTRA_LIBS="-L${OPENSSL}/lib ${WSDL2H_EXTRA_LIBS}"
+    SAMPLE_SSL_LIBS="-L${OPENSSL}/lib ${SAMPLE_SSL_LIBS}"
   fi
 else
   AC_MSG_RESULT(yes)
@@ -299,6 +327,6 @@ AC_CONFIG_FILES([ Makefile \
     gsoap/samples/wsa/Makefile \
     gsoap/samples/wsrm/Makefile \
     gsoap/samples/wsse/Makefile \
-    gsoap/samples/xml-rpc/Makefile
+    gsoap/samples/xml-rpc-json/Makefile
 ])
 AC_OUTPUT

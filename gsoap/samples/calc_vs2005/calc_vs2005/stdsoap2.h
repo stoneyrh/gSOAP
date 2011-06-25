@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.2
+	stdsoap2.h 2.8.3
 
 	gSOAP runtime engine
 
@@ -520,6 +520,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # define WITH_NOEMPTYSTRUCT
 #endif
 
+#ifdef WITH_PURE_VIRTUAL
+# define SOAP_PURE_VIRTUAL = 0
+#else
+# define SOAP_PURE_VIRTUAL
+#endif
+
 #ifdef HP_UX
 # undef HAVE_STRTOLL
 # undef HAVE_STRTOULL
@@ -691,9 +697,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  include <io.h>
 #  include <fcntl.h>
 # endif
-#  include <winsock2.h> /* Visual Studio 2005 users: you must install the Platform SDK (R2) */
-#  include <ws2tcpip.h>
-#  include <wspiapi.h>
+# include <winsock2.h> /* Visual Studio 2005 users: you must install the Platform SDK (R2) */
+# include <ws2tcpip.h>
+// # define _WSPIAPI_COUNTOF /* DEV NOTE: fixes problem with VC6 */
+// # include <wspiapi.h>
+# include <ws2spi.h> /* DEV NOTE: replaces older wspiapi.h */
 # ifdef WITH_IPV6
 #  define SOAP_GAI_STRERROR gai_strerrorA
 # endif
@@ -1184,6 +1192,7 @@ extern const char soap_base64o[], soap_base64i[];
 #define SOAP_OCCURS			44
 #define SOAP_LENGTH			45
 #define SOAP_FD_EXCEEDED		46
+#define SOAP_UTF_ERROR			47
 
 #define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_NULL || (e) == SOAP_HREF)
 #define soap_soap_error_check(e) ((e) == SOAP_CLI_FAULT || (e) == SOAP_SVR_FAULT || (e) == SOAP_VERSIONMISMATCH || (e) == SOAP_MUSTUNDERSTAND || (e) == SOAP_FAULT || (e) == SOAP_NO_METHOD)
@@ -1354,6 +1363,10 @@ typedef soap_int32 soap_mode;
 # else
 #  define SOAP_NEW(type) new (type)		/* prefer with parenthesis */
 # endif
+#endif
+
+#ifndef SOAP_PLACEMENT_NEW
+# define SOAP_PLACEMENT_NEW(buf, type) new (buf) type
 #endif
 
 #ifndef SOAP_NEW_COPY			/* use C++ new operator for ::copy() */

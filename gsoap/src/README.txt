@@ -1,4 +1,22 @@
-The soapcpp2 compiler source distribution contains the following files:
+The gSOAP 'soapcpp2' source-to-source code compiler
+
+INSTRUCTIONS
+
+The gSOAP soapcpp2 tool translates annotated C/C++ header files with interface
+defitions for services and clients to service and client implementation code.
+It also maps the C/C++ types to XML types, with the ability to generate XML
+schema and WSDL documents.
+
+When starting from WSDL and/or XML schemas, first use the gSOAP 'wsdl2h' tool
+to translate these into C/C++ header file with interface definitions. Then use
+'soapcpp2' to translate these into implementation code.
+
+See also the README.txt in the 'wsdl' directory and documentation on the use of
+'wsdl2h' with 'soapcpp2'.
+
+CONTENTS
+
+This part of the distribution contains the following files:
 
 README.txt	This file
 MakefileManual	Extra makefile when autoconf/automake fail to produce one
@@ -11,17 +29,16 @@ init2.c		Compiler symbol table initialization
 soapcpp2_lex.l	Flex/Lex tokens
 soapcpp2_yacc.y	Yacc/Bison grammar
 
-LICENSING
-Please see LICENSE.txt in root directory of the package.
+INSTALLATION
 
-BUILD NOTES
+Use './configure' and 'make' in the root directory, as explained in the
+installation instructions.
 
-To build soapcpp2 when autoconf/automake fail, use:
+To build 'soapcpp2' when autoconf/automake fail, use:
 
 	make -f MakefileManual
 
-QNX
-===
+QNX INSTALLATION
 
 On QNX the bison.simple file is located in $QNX_HOST/usr/share/bison.simple
 Update your .profile to include:
@@ -29,8 +46,7 @@ Update your .profile to include:
 export BISON_SIMPLE=$QNX_HOST/usr/share/bison/bison.simple 
 export BISON_HAIRY=$QNX_HOST/usr/share/bison/bison.hairy 
 
-WIN32
-=====
+WIN32 INSTALLATION
 
 You need to install Flex and Bison to build soapcpp2.
 
@@ -41,3 +57,49 @@ http://msdn.microsoft.com/en-us/library/aa730877(VS.80).aspx#vccustombr_topic3
 The older Bison v1.6 can crash on Win32 systems if YYINITDEPTH is too small:
 Compile with /DYYINITDEPTH=5000
 
+COMMAND LINE OPTIONS
+
+-1      generate SOAP 1.1 bindings
+-2      generate SOAP 1.2 bindings
+-C	generate client-side code only
+-S	generate server-side code only
+-T	generate server auto-test code
+-L	don't generate soapClientLib/soapServerLib
+-a	use SOAPAction HTTP/WSA header to invoke server-side operations
+-b	serialize byte arrays char[N] as string
+-c      generate C source code
+-dpath  use path to save files
+-e	generate SOAP RPC encoding style bindings
+-fN	file split of N XML serializer implementations per file (N>=10)
+-h	display help info
+-i      generate C++ service proxies and objects inherited from soap struct
+-j      generate C++ service proxies and objects that share a soap struct
+-Ipath  use path(s) for #import
+-l      generate linkable modules (experimental)
+-m      generate Matlab(tm) code for MEX compiler
+-n      use service name to rename service functions and namespace table
+-pname  save files with new prefix name instead of 'soap'
+-qname  use name as the C++ namespace of all declarations
+-s      generate deserialization code with strict XML validation checks
+-t      generate code for fully xsi:type typed SOAP/XML messaging
+-u	uncomment comments in WSDL/schema output by suppressing XML comments
+-v	display version info
+-w	don't generate WSDL and schema files
+-x	don't generate sample XML message files
+-y	include C/C++ type access information in sample XML messages
+infile	header file to parse (or stdin)
+
+DOCUMENTATION
+
+See soapdoc2.pdf for documentation.
+
+LICENSE
+
+The gSOAP 'soapcpp2' tool and (generated) source code are released under GPL or
+a commercial license. The commercial license is available from Genivia.
+Please visit http://genivia.com/Products/gsoap/contract.html
+
+COPYRIGHT NOTICE
+
+gSOAP XML Web services tools
+Copyright (C) 2000-2011, Robert van Engelen, Genivia, Inc. All Rights Reserved.

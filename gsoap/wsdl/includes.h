@@ -42,7 +42,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #undef VERSION
-#define VERSION "2.8.2"
+#define VERSION "2.8.3"
 
 #include <utility>
 #include <iterator>
@@ -119,6 +119,7 @@ extern const char *schema_prefix;
 extern const char elementformat[];
 extern const char pointerformat[];
 extern const char attributeformat[];
+extern const char vectorformat_open[];
 extern const char vectorformat[];
 extern const char pointervectorformat[];
 extern const char arrayformat[];
