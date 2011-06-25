@@ -80,15 +80,21 @@ or contact us at Genivia Inc:
 
 	contact@genivia.com
 
-OPENSSL
+GPL and OPENSSL
 
-Parts of this program are released under the GPL with the additional exemption
-that compiling, linking, and/or using OpenSSL is allowed.
+This program is released under the GPL with the additional exemption that
+compiling, linking, and/or using OpenSSL is allowed.
+
+GPL and the gSOAP public license
+
+This program is released under the GPL with the additional exemption that
+compiling, linking, and/or using software released under the gSOAP public
+license is allowed.
 
 COPYRIGHT
 
 gSOAP is copyrighted by Robert A. van Engelen, Genivia, Inc.
-Copyright (C) 2000-2010 Robert A. van Engelen, Genivia, Inc.
+Copyright (C) 2000-2011 Robert A. van Engelen, Genivia, Inc.
 All Rights Reserved.
 
 USE RESTRICTIONS

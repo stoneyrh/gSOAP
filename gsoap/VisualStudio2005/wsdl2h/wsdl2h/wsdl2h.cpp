@@ -101,20 +101,21 @@ extern struct Namespace namespaces[];
 const char *service_prefix = NULL;
 const char *schema_prefix = "ns";
 
-const char elementformat[]       = "    %-35s  %-30s";
-const char pointerformat[]       = "    %-35s *%-30s";
-const char attributeformat[]     = "   @%-35s  %-30s";
-const char vectorformat[]        = "    std::vector<%-23s> %-30s";
-const char pointervectorformat[] = "    std::vector<%-22s> *%-30s";
-const char arrayformat[]         = "    %-35s *__ptr%-25s";
-const char arraysizeformat[]     = "    %-35s  __size%-24s";
-const char arrayoffsetformat[]   = "//  %-35s  __offset%-22s";
-const char sizeformat[]          = "   $%-35s  __size%-24s";
-const char choiceformat[]        = "   $%-35s  __union%-23s";
-const char schemaformat[]        = "//gsoap %-5s schema %s:\t%s\n";
-const char serviceformat[]       = "//gsoap %-4s service %s:\t%s %s\n";
-const char paraformat[]          = "    %-35s%s%s%s";
-const char anonformat[]          = "    %-35s%s_%s%s";
+const char elementformat[]             = "    %-35s  %-30s";
+const char pointerformat[]             = "    %-35s *%-30s";
+const char attributeformat[]           = "   @%-35s  %-30s";
+const char vectorformat[]              = "    std::vector<%-23s> %-30s";
+const char pointervectorformat[]       = "    std::vector<%-22s> *%-30s";
+const char vectorformat_open[]         = "    std::vector<%s";
+const char arrayformat[]               = "    %-35s *__ptr%-25s";
+const char arraysizeformat[]           = "    %-35s  __size%-24s";
+const char arrayoffsetformat[]         = "//  %-35s  __offset%-22s";
+const char sizeformat[]                = "   $%-35s  __size%-24s";
+const char choiceformat[]              = "   $%-35s  __union%-23s";
+const char schemaformat[]              = "//gsoap %-5s schema %s:\t%s\n";
+const char serviceformat[]             = "//gsoap %-4s service %s:\t%s %s\n";
+const char paraformat[]                = "    %-35s%s%s%s";
+const char anonformat[]                = "    %-35s%s_%s%s";
 
 const char copyrightnotice[] = "\n**  The gSOAP WSDL/Schema processor for C and C++, wsdl2h release "VERSION"\n**  Copyright (C) 2000-2011 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool is released under one of the following two licenses:\n**  GPL or the commercial license by Genivia Inc. Use option -l for details.\n\n";
 
@@ -143,6 +144,9 @@ Place, Suite 330, Boston, MA 02111-1307 USA\n\
 \n\
 Author contact information:\n\
 engelen@genivia.com / engelen@acm.org\n\
+\n\
+This program is released under the GPL with the additional exemption that\n\
+compiling, linking, and/or using OpenSSL is allowed.\n\
 --------------------------------------------------------------------------------\n\
 2) A commercial-use license is available from Genivia, Inc., contact@genivia.com\n\
 --------------------------------------------------------------------------------\n";

@@ -44,6 +44,9 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 
 Author contact information:
 engelen@genivia.com / engelen@acm.org
+
+This program is released under the GPL with the additional exemption that
+compiling, linking, and/or using OpenSSL is allowed.
 --------------------------------------------------------------------------------
 A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
@@ -52,11 +55,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 //gsoap xop schema import: http://www.w3.org/2004/08/xop/include
 
 struct _xop__Include
-{ unsigned char *__ptr;
-  int __size;
-  char *id;
-  char *type;
-  char *options;
+{ unsigned char *__ptr; ///< pointer to binary data
+  int __size;           ///< size of binary data
+  char *id;             ///< NULL to generate an id, or set to a unique UUID
+  char *type;           ///< MIME type of the data
+  char *options;        ///< optional description of MIME attachment
 };
 
 typedef struct _xop__Include _xop__Include;

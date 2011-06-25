@@ -389,7 +389,7 @@ soap_out_xsd__anyAttribute(struct soap *soap, const char *tag, int id, const str
     { if (node->nstr && !(soap->mode & SOAP_DOM_ASIS) && strncmp(node->name, "xml", 3) && !strchr(node->name, ':'))
       { const char *p;
         p = soap_lookup_ns_prefix(soap, node->nstr);
-        if (!p && (p = soap_push_ns_prefix(soap, NULL, node->nstr, 1)) == NULL)
+	if (!p && !(p = soap_push_ns_prefix(soap, NULL, node->nstr, 1)))
           return soap->error;
         if (out_attribute(soap, p, node->name, node->data, node->wide, 1))
           return soap->error;

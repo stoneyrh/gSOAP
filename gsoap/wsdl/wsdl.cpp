@@ -153,7 +153,7 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
         fprintf(stderr, "\nWSDL/XSD '%s' already imported\n", loc);
       return SOAP_OK;
     }
-    included[loc] = this;
+    included[soap_strdup(soap, loc)] = this;
   }
   if (vflag)
     fprintf(stderr, "\nOpening WSDL/XSD '%s' from '%s'\n", loc?loc:"", cwd?cwd:"");

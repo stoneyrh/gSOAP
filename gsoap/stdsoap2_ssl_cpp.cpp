@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.2
+	stdsoap2.c[pp] 2.8.3
 
 	gSOAP runtime engine
 
@@ -83,10 +83,10 @@ when locally allocated data exceeds 64K.
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.2 2011-04-17 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.3 2011-06-24 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.2 2011-04-17 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.3 2011-06-24 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -8260,6 +8260,8 @@ soap_copy_context(struct soap *copy, const struct soap *soap)
     soap_set_sent_logfile(copy, soap->logfile[SOAP_INDEX_SENT]);
     soap_set_recv_logfile(copy, soap->logfile[SOAP_INDEX_RECV]);
 #endif
+    copy->local_namespaces = NULL;
+    soap_set_namespaces(copy, soap->local_namespaces);
 #ifdef WITH_C_LOCALE
     copy->c_locale = duplocale(soap->c_locale);
 #else
@@ -9146,7 +9148,7 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
       return soap->error;
   }
   if (type && *type && soap->part != SOAP_IN_HEADER) /* TODO: filter Header? */
-  { if (soap_attribute(soap, "xsi:type", type))
+  { if (soap->attributes ? soap_set_attr(soap, "xsi:type", type, 1) : soap_attribute(soap, "xsi:type", type))
       return soap->error;
 #ifndef WITH_LEAN
     if (soap->mode & SOAP_XML_CANONICAL)
@@ -10085,9 +10087,16 @@ soap_peek_element(struct soap *soap)
   soap->position = 0;
   soap->null = 0;
   soap->mustUnderstand = 0;
-  /* skip BOM */
-  if ((c = soap_getchar(soap)) != 0xEF || (c = soap_get1(soap)) != 0xBB || (c = soap_get1(soap)) != 0xBF)
+  /* UTF-8 BOM? */
+  if ((c = soap_getchar(soap)) == 0xEF && (c = soap_get1(soap)) == 0xBB && (c = soap_get1(soap)) == 0xBF)
+    soap->mode &= ~SOAP_ENC_LATIN;
+  else
+  { /* UTF-16 BOM? */
+    if ((c == 0xFE && soap_get0(soap) == 0xFF)  /* UTF-16 BE */
+     || (c == 0xFF && soap_get0(soap) == 0xFE)) /* UTF-16 LE */
+      return soap->error = SOAP_UTF_ERROR;
     soap_unget(soap, c);
+  }
   c = soap_get(soap);
 #ifdef WITH_DOM
   /* whitespace leading to tag is not insignificant for DOM */
@@ -10536,7 +10545,7 @@ soap_string_out(struct soap *soap, const char *s, int flag)
       if (soap->mode & SOAP_C_MBSTRING)
       { wchar_t wc;
         register int m = mbtowc(&wc, t - 1, MB_CUR_MAX);
-        if (m > 0 && (soap_wchar)wc != c)
+        if (m > 0 && !((soap_wchar)wc == c && m == 1 && c < 0x80))
         { if (soap_send_raw(soap, s, t - s - 1) || soap_pututf8(soap, wc))
             return soap->error;
           s = t += m - 1;
@@ -14433,8 +14442,16 @@ soap_begin_recv(struct soap *soap)
   else
 #endif
   { /* skip BOM */
-    if (c == 0xEF && (c = soap_getchar(soap)) == 0xBB && (c = soap_getchar(soap)) == 0xBF)
+    if (c == 0xEF && (c = soap_get1(soap)) == 0xBB && (c = soap_get1(soap)) == 0xBF)
+    { soap->mode &= ~SOAP_ENC_LATIN;
       c = soap_getchar(soap);
+    }
+    else
+    { /* UTF-16 BOM? */
+      if ((c == 0xFE && soap_get1(soap) == 0xFF)  /* UTF-16 BE */
+       || (c == 0xFF && soap_get1(soap) == 0xFE)) /* UTF-16 LE */
+        return soap->error = SOAP_UTF_ERROR;
+    }
     /* skip space */
     while (soap_blank(c))
       c = soap_getchar(soap);
@@ -14959,6 +14976,7 @@ soap_try_connect_command(struct soap *soap, int http_command, const char *endpoi
   }
   else
 #endif
+  soap->action = soap_strdup(soap, action);
   if (soap->fopen && *soap->host)
   { if (!soap->keep_alive || !soap_valid_socket(soap->socket) || strcmp(soap->host, host) || soap->port != port || !soap->fpoll || soap->fpoll(soap))
     { soap->error = SOAP_OK;
@@ -14984,7 +15002,6 @@ soap_try_connect_command(struct soap *soap, int http_command, const char *endpoi
     soap->mode |= SOAP_IO_BUFFER;
   }
 #ifndef WITH_NOHTTP
-  soap->action = soap_strdup(soap, action);
   if ((soap->mode & SOAP_IO) != SOAP_IO_STORE && !(soap->mode & SOAP_ENC_XML) && endpoint)
   { unsigned int k = soap->mode;
     soap->mode &= ~(SOAP_IO | SOAP_ENC_ZLIB);
@@ -15464,6 +15481,9 @@ soap_set_fault(struct soap *soap)
       break;
     case SOAP_FD_EXCEEDED:
       *s = "Maximum number of open connections was reached (no define HAVE_POLL): increase FD_SETSIZE";
+      break;
+    case SOAP_UTF_ERROR:
+      *s = "UTF content encoding error";
       break;
     case SOAP_STOP:
       *s = "Stopped: no response to be sent or received (informative)";

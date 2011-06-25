@@ -173,15 +173,19 @@ COMMAND LINE OPTIONS
 -_      don't generate _USCORE (replace with UNICODE _x005f)
 infile.wsdl infile.xsd http://www... list of input sources (if none use stdin)
 
+INSTALLATION
+
+
+Use './configure' and 'make' in the root directory, as explained in the 
+installation instructions.
+
+To build 'wsdl2h' when autoconf/automake fail, use:
+
+	make -f MakefileManual
+
 DOCUMENTATION
 
 See soapdoc2.pdf for documentation.
-
-INSTALLATION
-
-Type 'make' in the 'wsdl' directory to build wsdl2h. You must first install the
-gSOAP package and build the gSOAP compiler soapcpp2 to rebuild the wsdl2h WSDL
-parser.
 
 USING SSL FOR HTTPS TRANSFER OF WSDL FILES
 
@@ -201,4 +205,4 @@ Please visit http://genivia.com/Products/gsoap/contract.html
 COPYRIGHT NOTICE
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2010, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2011, Robert van Engelen, Genivia, Inc. All Rights Reserved.

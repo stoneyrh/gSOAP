@@ -25,20 +25,6 @@
   elementFormDefault="unqualified"
   attributeFormDefault="unqualified">
   <import namespace="http://schemas.xmlsoap.org/soap/encoding/" schemaLocation="http://schemas.xmlsoap.org/soap/encoding/"/>
-  <complexType name="tm">
-   <sequence>
-     <element name="tm-sec" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-     <element name="tm-min" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-     <element name="tm-hour" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-     <element name="tm-mday" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-     <element name="tm-mon" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-     <element name="tm-year" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-     <element name="tm-wday" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-     <element name="tm-yday" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-     <element name="tm-isdst" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-     <element name="tm-zone" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
-   </sequence>
-  </complexType>
   <!-- operation request element -->
   <element name="gmt">
    <complexType>
@@ -50,7 +36,7 @@
   <element name="gmtResponse">
    <complexType>
     <sequence>
-     <element name="arg" type="xsd:dateTime" minOccurs="1" maxOccurs="1"/>
+     <element name="param-1" type="xsd:dateTime" minOccurs="0" maxOccurs="1" nillable="true"/><!-- t__gmt::_param_1 -->
     </sequence>
    </complexType>
   </element>
@@ -58,8 +44,8 @@
 
 </types>
 
-<message name="gmt">
- <part name="parameters" element="t:gmt"/>
+<message name="gmtRequest">
+ <part name="parameters" element="t:gmt"/><!-- t__gmt::t__gmt -->
 </message>
 
 <message name="gmtResponse">
@@ -69,7 +55,7 @@
 <portType name="ServicePortType">
  <operation name="gmt">
   <documentation>Service definition of function t__gmt</documentation>
-  <input message="tns:gmt"/>
+  <input message="tns:gmtRequest"/>
   <output message="tns:gmtResponse"/>
  </operation>
 </portType>
@@ -88,7 +74,7 @@
 </binding>
 
 <service name="Service">
- <documentation>gSOAP 2.8.0 generated service definition</documentation>
+ <documentation>gSOAP 2.8.3 generated service definition</documentation>
  <port name="Service" binding="tns:Service">
   <SOAP:address location="http://localhost:80"/>
  </port>

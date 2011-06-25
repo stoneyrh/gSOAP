@@ -1880,7 +1880,7 @@ soap_wsse_get_BinarySecurityToken(struct soap *soap, const char *id, char **valu
 X509*
 soap_wsse_get_BinarySecurityTokenX509(struct soap *soap, const char *id)
 { X509 *cert = NULL;
-  char *valueType;
+  char *valueType = NULL;
 #if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
   const unsigned char *data;
 #else

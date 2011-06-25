@@ -2267,41 +2267,58 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
     }
   }
   else if (name && element.simpleTypePtr())
-  { document(element.simpleTypePtr()->annotation);
+  { const char *s = "";
+    document(element.simpleTypePtr()->annotation);
     if (element.maxOccurs && strcmp(element.maxOccurs, "1")) // maxOccurs != "1"
-    { fprintf(stream, "/// Size of %s array is %s..%s\n", name, element.minOccurs ? element.minOccurs : "1", element.maxOccurs);
-      fprintf(stream, sizeformat, "int", aname(NULL, NULL, name));
-      fprintf(stream, " %s", fake_union ? "0" : element.minOccurs ? element.minOccurs : "1");
-      if (is_integer(element.maxOccurs))
-        fprintf(stream, ":%s", element.maxOccurs);
-      fprintf(stream, ";\n");
+    { if (cflag || sflag)
+      { fprintf(stream, "/// Size of %s array is %s..%s\n", name, element.minOccurs ? element.minOccurs : "1", element.maxOccurs);
+        fprintf(stream, sizeformat, "int", aname(NULL, NULL, name));
+        fprintf(stream, " %s", fake_union ? "0" : element.minOccurs ? element.minOccurs : "1");
+        if (is_integer(element.maxOccurs))
+          fprintf(stream, ":%s", element.maxOccurs);
+        fprintf(stream, ";\n");
+      }
+      else
+      { s = ">";
+        fprintf(stream, "/// Vector %s with length %s..%s\n", name, element.minOccurs ? element.minOccurs : "1", element.maxOccurs);
+        fprintf(stream, vectorformat_open, "\n");
+      }
     }
     gen(URI, name, *element.simpleTypePtr(), true);
     if (is_nillable(element)
-     || (element.maxOccurs && strcmp(element.maxOccurs, "1")) // maxOccurs != "1"
+     || ((cflag || sflag ) && element.maxOccurs && strcmp(element.maxOccurs, "1")) // maxOccurs != "1"
      || (with_union && !cflag)
      || (fake_union && !element.default_))
-      fprintf(stream, pointerformat, "", aname(nameprefix, nameURI, name));
+      fprintf(stream, pointerformat, s, aname(nameprefix, nameURI, name));
     else
-      fprintf(stream, elementformat, "", aname(nameprefix, nameURI, name));
+      fprintf(stream, elementformat, s, aname(nameprefix, nameURI, name));
   }
   else if (name && element.complexTypePtr())
-  { if (element.maxOccurs && strcmp(element.maxOccurs, "1")) // maxOccurs != "1"
-    { fprintf(stream, "/// Size of %s array is %s..%s\n", name, element.minOccurs ? element.minOccurs : "1", element.maxOccurs);
-      fprintf(stream, sizeformat, "int", aname(NULL, NULL, name));
-      fprintf(stream, " %s", fake_union ? "0" : element.minOccurs ? element.minOccurs : "1");
-      if (is_integer(element.maxOccurs))
-        fprintf(stream, ":%s", element.maxOccurs);
-      fprintf(stream, ";\n");
+  { const char *s = "}";
+    document(element.complexTypePtr()->annotation);
+    if (element.maxOccurs && strcmp(element.maxOccurs, "1")) // maxOccurs != "1"
+    { if (cflag || sflag)
+      { fprintf(stream, "/// Size of %s array is %s..%s\n", name, element.minOccurs ? element.minOccurs : "1", element.maxOccurs);
+        fprintf(stream, sizeformat, "int", aname(NULL, NULL, name));
+        fprintf(stream, " %s", fake_union ? "0" : element.minOccurs ? element.minOccurs : "1");
+        if (is_integer(element.maxOccurs))
+          fprintf(stream, ":%s", element.maxOccurs);
+        fprintf(stream, ";\n");
+      }
+      else
+      { s = "}>";
+        fprintf(stream, "/// Vector %s with length %s..%s\n", name, element.minOccurs ? element.minOccurs : "1", element.maxOccurs);
+        fprintf(stream, vectorformat_open, "\n");
+      }
     }
     gen(URI, name, *element.complexTypePtr(), true);
     if (is_nillable(element)
-     || (element.maxOccurs && strcmp(element.maxOccurs, "1")) // maxOccurs != "1"
+     || ((cflag || sflag ) && element.maxOccurs && strcmp(element.maxOccurs, "1")) // maxOccurs != "1"
      || (with_union && !cflag)
      || (fake_union && !element.default_))
-      fprintf(stream, pointerformat, "}", aname(nameprefix, nameURI, name));
+      fprintf(stream, pointerformat, s, aname(nameprefix, nameURI, name));
     else
-      fprintf(stream, elementformat, "}", aname(nameprefix, nameURI, name));
+      fprintf(stream, elementformat, s, aname(nameprefix, nameURI, name));
   }
   else if (element.ref)
   { fprintf(stream, "/// Imported element reference %s.\n", element.ref);
@@ -2907,10 +2924,10 @@ static const char *fill(char *t, int n, const char *s, int e)
 
 static const char *utf8(char *t, const char *s)
 { unsigned int c = 0;
-  int c1, c2, c3, c4;
+  unsigned int c1, c2, c3, c4;
   c = (unsigned char)*s;
   if (c >= 0x80)
-  { c1 = *++s;
+  { c1 = (unsigned char)*++s;
     if (c1 < 0x80)
       s--;
     else
@@ -2918,15 +2935,15 @@ static const char *utf8(char *t, const char *s)
       if (c < 0xE0)
         c = ((c & 0x1F) << 6) | c1;
       else
-      { c2 = *++s & 0x3F;
+      { c2 = (unsigned char)*++s & 0x3F;
         if (c < 0xF0)
           c = ((c & 0x0F) << 12) | (c1 << 6) | c2;
         else
-        { c3 = *++s & 0x3F;
+        { c3 = (unsigned char)*++s & 0x3F;
           if (c < 0xF8)
             c = ((c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | c3;
           else
-          { c4 = *++s & 0x3F;
+          { c4 = (unsigned char)*++s & 0x3F;
             if (c < 0xFC)
               c = ((c & 0x03) << 24) | (c1 << 18) | (c2 << 12) | (c3 << 6) | c4;
             else

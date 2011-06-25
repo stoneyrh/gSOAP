@@ -43,7 +43,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.2" /* Current version */
+# define VERSION "2.8.3" /* Current version */
 #endif
 
 #ifdef WIN32
@@ -382,6 +382,7 @@ extern int Tflag;
 extern int tflag;
 extern int uflag;
 extern int xflag;
+extern int yflag;
 extern int zflag;
 extern char dirpath[1024];
 extern char filename[1024];

@@ -16,13 +16,13 @@
 
 
 
-<title> gSOAP 2.8.2 User Guide</title>
+<title> gSOAP 2.8.3 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.2 User Guide </h1>
+<h1 align="center">gSOAP 2.8.3 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Apr 17, 2011
+<h3 align="center">Jun 24, 2011
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -1005,16 +1005,26 @@ routines to (de)serialize native and user-defined C and C++ data structures.<br 
 
 <li>
 Support WSDL 1.1, SOAP 1.1, SOAP 1.2, SOAP RPC encoding style, and document/literal style.
-gSOAP is one of the few SOAP toolkits that support the full range of SOAP 1.1
+gSOAP is one of the few SOAP toolkits that support the <b>full</b> range of SOAP 1.1
 RPC encoding features including sparse multi-dimensional arrays and polymorphic
 types. For example, a service operation with a base class parameter may accept
 derived class instances from a client. Derived class instances keep their
-identity through dynamic binding.<br /><br /></li>
+identity through dynamic binding. The toolkit also supports <b>all XSD
+schema type</b> constructs and has been tested against the W3C XML Schema Patterns
+for Databinding Interoperability working group and of gSOAP release 2.8.x
+passes all tests.<br /><br /></li>
 
 <li>
 Supports WS-Security, WS-Addressing, WS-ReliableMessaging, C14N exclusive
-canonicalization, and can be used to generate messaging protocols for other
-WS-* protocols.<br /><br /></li>
+canonicalization. The protocols are implemented using code generation with
+wsdl2h and soapcpp2. The gSOAP tools can be used to generate messaging
+protocols for other WS-* protocols.<br /><br /></li>
+
+<li>
+gSOAP supports XML-RPC and RSS protocols. Examples are provided.<br /><br /></li>
+
+<li> JSON support is included in the XML-RPC library to switch between XML-RPC
+and JSON protocols.<br /><br /></li>
 
 <li>
 The <i>wsdl2h</i> tool supports WS-Policy. Policy assertions are included in
@@ -4117,7 +4127,7 @@ soap_init(&amp;soap); // initialize <br />
 soap_begin(&amp;soap); // start new (de)serialization phase <br />
 soap_set_omode(&amp;soap, SOAP_XML_GRAPH); <br />
 obj.serialize(&amp;soap); <br />
-soap.os = cout; // send to cout <br />
+soap.os = &amp;cout; // send to cout <br />
 soap_begin_send(&amp;soap); <br />
 obj.put(&amp;soap, "<font size="+1"><span class="roman">[</span></font>namespace-prefix:<font size="+1"><span class="roman">]</span></font>element-name1", "<font size="+1"><span class="roman">[</span></font>namespace-prefix:<font size="+1"><span class="roman">]</span></font>type-name1"); <br />
 soap_end_send(&amp;soap); // flush <br />
@@ -4271,7 +4281,7 @@ You can deserialize class instances from a stream as follows:
 myClass obj; <br />
 <b>struct</b>&nbsp;soap soap; <br />
 soap_init(&amp;soap); // initialize <br />
-soap.is = cin; // read from cin <br />
+soap.is = &amp;cin; // read from cin <br />
 soap_begin_recv(&amp;soap); // if HTTP header is present, parse it <br />
 <b>if</b>&nbsp;(soap_get_myClass(&amp;soap, &amp;obj, "myClass", NULL) == NULL) <br />
 &nbsp;&nbsp;&nbsp;... error ... <br />
@@ -4286,7 +4296,7 @@ This can be abbreviated to:
 myClass obj; <br />
 <b>struct</b>&nbsp;soap soap; <br />
 soap_init(&amp;soap); // initialize <br />
-soap.is = cin; // read from cin <br />
+soap.is = &amp;cin; // read from cin <br />
 <b>if</b>&nbsp;(soap_read_myClass(&amp;soap, &amp;obj, NULL) != SOAP_OK) <br />
 &nbsp;&nbsp;&nbsp;... error ... <br />
 ... <br />
@@ -4960,7 +4970,8 @@ The compiler supports the following options:
 <tr><td><i>-u</i>	</td><td>uncomment comments in WSDL/schema output by suppressing XML comments </td></tr>
 <tr><td><i>-v</i>	</td><td>Display version info</td></tr>
 <tr><td><i>-w</i>	</td><td>Do not generate WSDL and schema files </td></tr>
-<tr><td><i>-x</i>	</td><td>Do not generate sample XML message files </td></tr></table>
+<tr><td><i>-x</i>	</td><td>Do not generate sample XML message files </td></tr>
+<tr><td><i>-y</i>	</td><td>include C/C++ type access information in sample XML messages </td></tr></table>
 
 </td></tr></table><br></span>
 For example
@@ -5338,9 +5349,9 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td><i>WITH_COOKIES</i>	</td><td>enables HTTP cookies, see Sections&nbsp;<a href="#sec:clientcookie">19.26</a>&nbsp;<a href="#sec:servercookie">19.27</a> </td></tr>
 <tr><td><i>WITH_OPENSSL</i>	</td><td>enables OpenSSL, see Sections&nbsp;<a href="#sec:clientopenssl">19.20</a>&nbsp;<a href="#sec:serveropenssl">19.19</a> </td></tr>
 <tr><td><i>WITH_GNUTLS</i>	</td><td>enables GNUTLS, see Sections&nbsp;<a href="#sec:clientopenssl">19.20</a>&nbsp;<a href="#sec:serveropenssl">19.19</a> </td></tr>
-<tr><td><i>WITH_IPV6</i>	</td><td>enables IPv6 support (you MUST compile all sources with this macro set)</td></tr>
-<tr><td><i>WITH_IPV6_V6ONLY</i></td><td>sets IPv6-only server option (compile all sources with this macro set)</td></tr>
-<tr><td><i>WITH_NO_IPV6_V6ONLY</i></td><td>resets IPv6-only server option (compile all sources with this macro set)</td></tr>
+<tr><td><i>WITH_IPV6</i>	</td><td>enables IPv6 support (compile ALL sources with this macro set)</td></tr>
+<tr><td><i>WITH_IPV6_V6ONLY</i></td><td>IPv6-only server option (compile ALL sources with this macro set)</td></tr>
+<tr><td><i>WITH_NO_IPV6_V6ONLY</i></td><td>resets IPv6-only server option (compile ALL sources with this macro set)</td></tr>
 <tr><td><i>WITH_TCPFIN</i>	</td><td>use TCP FIN after sends when socket is ready to close </td></tr>
 <tr><td><i>WITH_FASTCGI</i>	</td><td>enables FastCGI, see Sections&nbsp;<a href="#sec:fastcgi">19.29</a> </td></tr>
 <tr><td><i>WITH_GZIP</i>	</td><td>enables gzip and deflate compression, see Section&nbsp;<a href="#sec:compression">19.25</a> </td></tr>
@@ -5352,10 +5363,11 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td><i>WITH_LEAN</i>	</td><td>creates a small-footprint executable, see Section&nbsp;<a href="#sec:lean">19.30</a> </td></tr>
 <tr><td><i>WITH_LEANER</i>	</td><td>creates an even smaller footprint executable, see Section&nbsp;<a href="#sec:lean">19.30</a> </td></tr>
 <tr><td><i>WITH_COMPAT</i>	</td><td>removes dependency on C++ stream libraries, eliminating C++ exceptions </td></tr>
-<tr><td><i>WITH_NONAMESPACES</i></td><td>omit initialization of soap struct with global <i>namespaces</i> table </td></tr>
-<tr><td></td><td>and you MUST explicitly initialize <i>soap.namespaces</i> to point to a table </td></tr>
+<tr><td><i>WITH_NONAMESPACES</i></td><td>removes dependence on global <i>namespaces</i> table, MUST set it </td></tr>
+<tr><td></td><td>explicitly with <i>soap_set_.namespaces()</i> </td></tr>
 <tr><td></td><td>see also Section&nbsp;<a href="#sec:nstable">10.4</a> </td></tr>
-<tr><td><i>WITH_NOEMPTYSTRUCT</i>	</td><td>inserts a dummy member in empty structs to enable compilation </td></tr>
+<tr><td><i>WITH_PURE_VIRTUAL</i>	</td><td>for C++ abstract service classes with pure virtual methods </td></tr>
+<tr><td><i>WITH_NOEMPTYSTRUCT</i>	</td><td>inserts a dummy member in empty structs to allow compilation </td></tr>
 <tr><td><i>WITH_NOGLOBAL</i>	</td><td>omit SOAP Header and Fault serialization code </td></tr>
 <tr><td><i>WITH_NOCDATA</i>	</td><td>do not retain the parsed CDATA sections in literal XML strings (no conversion) </td></tr>
 <tr><td><i>WITH_CDATA</i>	</td><td>retain the parsed CDATA sections in literal XML strings (no conversion, by default) </td></tr>
@@ -14981,5 +14993,5 @@ This imports the SOAP header elements required by WS-Security.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.39.<br />On 17 Apr 2011, 19:55.</small>
+version 3.39.<br />On 24 Jun 2011, 10:47.</small>
 </html>

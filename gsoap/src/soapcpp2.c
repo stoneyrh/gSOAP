@@ -66,7 +66,8 @@ int Sflag = 0;		/* when set, generate only files for servers */
 int Tflag = 0;		/* when set, generates server auto-test code */
 int tflag = 0;		/* when set, generates typed messsages (with xsi:type attributes) */
 int uflag = 0;		/* when set, uncomment WSDL and schema output */
-int xflag = 0;		/* when set, excludes imported types */
+int xflag = 0;		/* when set, don't generate sample XML message files */
+int yflag = 0;		/* when set, add C/C++ info in sample XML messages */
 int zflag = 0;		/* not used: reserved */
 
 int stop_flag = 0;
@@ -144,7 +145,7 @@ main(int argc, char **argv)
 						break;
 					case '?':
 					case 'h':
-						fprintf(stderr, "Usage: soapcpp2 [-1|-2] [-C|-S] [-T] [-L] [-a] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [infile]\n\n");
+						fprintf(stderr, "Usage: soapcpp2 [-1|-2] [-C|-S] [-T] [-L] [-a] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [infile]\n\n");
 						fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
@@ -173,6 +174,7 @@ main(int argc, char **argv)
 -v	display version info\n\
 -w	don't generate WSDL and schema files\n\
 -x	don't generate sample XML message files\n\
+-y	include C/C++ type access information in sample XML messages\n\
 infile	header file to parse (or stdin)\n\
 \n");
 						exit(0);
@@ -236,6 +238,9 @@ infile	header file to parse (or stdin)\n\
 						break;
 					case 'x':
 						xflag = 1;
+						break;
+					case 'y':
+						yflag = 1;
 						break;
 					case 'p':
 						a++;

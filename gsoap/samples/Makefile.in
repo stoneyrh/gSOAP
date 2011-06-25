@@ -113,6 +113,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SOAPCPP2_DEBUG = @SOAPCPP2_DEBUG@
 SOAPCPP2_IMPORTPATH = @SOAPCPP2_IMPORTPATH@
+SOAPCPP2_IPV6 = @SOAPCPP2_IPV6@
 SOAPCPP2_NONAMESPACES = @SOAPCPP2_NONAMESPACES@
 STRIP = @STRIP@
 VERSION = @VERSION@
@@ -183,7 +184,7 @@ SUBDIRS = \
 	gmt googleapi hello httpcookies lu magic mashup mashup++ \
 	chaining++ primes \
 	mtom mtom-stream polytest roll router rss ssl template udp varparam \
-	wsa wsrm wsse xml-rpc
+	wsa wsrm wsse xml-rpc-json
 
 all: all-recursive
 
