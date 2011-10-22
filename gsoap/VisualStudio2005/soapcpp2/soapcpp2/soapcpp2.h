@@ -43,7 +43,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.3" /* Current version */
+# define VERSION "2.8.4" /* Current version */
 #endif
 
 #ifdef WIN32
@@ -236,7 +236,7 @@ typedef	struct Tnode
 typedef	union Value {
 	LONG64	i;
 	double	r;
-	char	*s;
+	const char *s;
 } Value;
 
 typedef	struct IDinfo {
@@ -282,17 +282,19 @@ typedef	struct Node {
 	LONG64	maxLength;
 } Node;
 
-#define ACTION		0
-#define RESPONSE_ACTION	1
-#define HDRIN		2	
-#define HDROUT		4
-#define MIMEIN		8
-#define MIMEOUT		16
-#define COMMENT		32
-#define ENCODING	64
-#define RESPONSE_ENCODING 128
-#define STYLE		256
-#define FAULT		512
+#define ACTION		        0x00
+#define REQUEST_ACTION	        0x01
+#define RESPONSE_ACTION	        0x02
+#define FAULT_ACTION	        0x04
+#define HDRIN		        0x10	
+#define HDROUT		        0x20
+#define MIMEIN		        0x40
+#define MIMEOUT		        0x80
+#define COMMENT		        0x100
+#define ENCODING	        0x200
+#define RESPONSE_ENCODING       0x400
+#define STYLE		        0x800
+#define FAULT		        0x1000
 
 typedef struct Data
 {	struct Data *next;
@@ -324,6 +326,7 @@ typedef struct Service
 	char *WSDL;
 	char *style;
 	char *encoding;
+	int xsi_type;
 	char *elementForm;
 	char *attributeForm;
 	char *documentation;
@@ -371,6 +374,7 @@ extern int eflag;
 extern unsigned long fflag;
 extern int iflag;
 extern int jflag;
+extern int kflag;
 extern int mflag;
 extern int nflag;
 extern int nflag;

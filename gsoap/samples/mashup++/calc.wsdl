@@ -24,7 +24,7 @@
   xmlns="http://www.w3.org/2001/XMLSchema"
   elementFormDefault="unqualified"
   attributeFormDefault="unqualified">
-  <import namespace="http://schemas.xmlsoap.org/soap/encoding/" schemaLocation="http://schemas.xmlsoap.org/soap/encoding/"/>
+  <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
  </schema>
 
 </types>

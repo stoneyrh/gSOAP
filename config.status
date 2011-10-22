@@ -598,16 +598,16 @@ s,@am__leading_dot@,|#_!!_#|.,g
 s,@AMTAR@,|#_!!_#|${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing --run tar,g
 s,@am__tar@,|#_!!_#|${AMTAR} chof - "$$tardir",g
 s,@am__untar@,|#_!!_#|${AMTAR} xf -,g
-s,@build@,|#_!!_#|i386-apple-darwin10.7.0,g
+s,@build@,|#_!!_#|i386-apple-darwin11.2.0,g
 s,@build_cpu@,|#_!!_#|i386,g
 s,@build_vendor@,|#_!!_#|apple,g
-s,@build_os@,|#_!!_#|darwin10.7.0,g
-s,@host@,|#_!!_#|i386-apple-darwin10.7.0,g
+s,@build_os@,|#_!!_#|darwin11.2.0,g
+s,@host@,|#_!!_#|i386-apple-darwin11.2.0,g
 s,@host_cpu@,|#_!!_#|i386,g
 s,@host_vendor@,|#_!!_#|apple,g
-s,@host_os@,|#_!!_#|darwin10.7.0,g
+s,@host_os@,|#_!!_#|darwin11.2.0,g
 s,@CXX@,|#_!!_#|g++,g
-s,@CXXFLAGS@,|#_!!_#|-g -O2,g
+s,@CXXFLAGS@,|#_!!_#|-Wno-deprecated-declarations,g
 s,@LDFLAGS@,|#_!!_#|,g
 s,@CPPFLAGS@,|#_!!_#|,g
 s,@ac_ct_CXX@,|#_!!_#|g++,g
@@ -623,7 +623,7 @@ s,@CXXDEPMODE@,|#_!!_#|depmode=gcc3,g
 s,@am__fastdepCXX_TRUE@,|#_!!_#|,g
 s,@am__fastdepCXX_FALSE@,|#_!!_#|#,g
 s,@CC@,|#_!!_#|gcc,g
-s,@CFLAGS@,|#_!!_#|-g -O2,g
+s,@CFLAGS@,|#_!!_#|-Wno-deprecated-declarations,g
 s,@ac_ct_CC@,|#_!!_#|gcc,g
 s,@CCDEPMODE@,|#_!!_#|depmode=gcc3,g
 s,@am__fastdepCC_TRUE@,|#_!!_#|,g
@@ -916,7 +916,7 @@ which seems to be undefined.  Please make sure it is defined." >&2;}
   #
     # First, check the format of the line:
     cat >"$tmp/defines.sed" <<\CEOF
-/^[	 ]*#[	 ]*undef[	 ][	 ]*[_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]*[	 ]*$/b def
+/^[	 ]*#[	 ]*undef[	 ][	 ]*[_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]*[	 ]*/b def
 /^[	 ]*#[	 ]*define[	 ][	 ]*[_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]*[(	 ]/b def
 b
 :def
@@ -974,7 +974,7 @@ CEOF
     sed -f "$tmp/defines.sed" $ac_file_inputs >"$tmp/out1"
     # First, check the format of the line:
     cat >"$tmp/defines.sed" <<\CEOF
-/^[	 ]*#[	 ]*undef[	 ][	 ]*[_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]*[	 ]*$/b def
+/^[	 ]*#[	 ]*undef[	 ][	 ]*[_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]*[	 ]*/b def
 /^[	 ]*#[	 ]*define[	 ][	 ]*[_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]*[(	 ]/b def
 b
 :def

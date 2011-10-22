@@ -1,4 +1,5 @@
-base referer
-rect $wsseapi_8h.html 57,92 126,118
-rect $wsseapi_8c.html 21,17 90,44
-rect $smdevp_8c.html 150,92 220,118
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$wsseapi_8h.html" title="/Users/engelen/Projects/gsoap/plugin/wsseapi.h" alt="" coords="5,83,309,111"/>
+<area shape="rect" id="node5" href="$wsseapi_8c.html" title="/Users/engelen/Projects/gsoap/plugin/wsseapi.c" alt="" coords="100,161,404,189"/>
+<area shape="rect" id="node8" href="$smdevp_8c.html" title="/Users/engelen/Projects/gsoap/plugin/smdevp.c" alt="" coords="385,83,687,111"/>
+</map>

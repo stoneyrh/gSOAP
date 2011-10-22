@@ -1,9 +1,11 @@
 soapcpp2-symbol2.o soapcpp2-symbol2.o: symbol2.c soapcpp2.h \
-  /usr/include/stdio.h /usr/include/_types.h /usr/include/sys/_types.h \
-  /usr/include/sys/cdefs.h /usr/include/machine/_types.h \
+  /usr/include/stdio.h /usr/include/sys/cdefs.h \
+  /usr/include/sys/_symbol_aliasing.h \
+  /usr/include/sys/_posix_availability.h /usr/include/Availability.h \
+  /usr/include/AvailabilityInternal.h /usr/include/_types.h \
+  /usr/include/sys/_types.h /usr/include/machine/_types.h \
   /usr/include/i386/_types.h /usr/include/secure/_stdio.h \
   /usr/include/secure/_common.h /usr/include/stdlib.h \
-  /usr/include/Availability.h /usr/include/AvailabilityInternal.h \
   /usr/include/sys/wait.h /usr/include/sys/signal.h \
   /usr/include/sys/appleapiopts.h /usr/include/machine/signal.h \
   /usr/include/i386/signal.h /usr/include/i386/_structs.h \
@@ -14,7 +16,7 @@ soapcpp2-symbol2.o soapcpp2-symbol2.o: symbol2.c soapcpp2.h \
   /usr/include/libkern/i386/_OSByteOrder.h /usr/include/alloca.h \
   /usr/include/machine/types.h /usr/include/i386/types.h \
   /usr/include/i386/_types.h /usr/include/errno.h \
-  /usr/include/sys/errno.h /usr/include/string.h \
+  /usr/include/sys/errno.h /usr/include/string.h /usr/include/strings.h \
   /usr/include/secure/_string.h /usr/include/ctype.h \
   /usr/include/runetype.h /usr/include/time.h /usr/include/_structs.h \
   error2.h soapcpp2_yacc.h
@@ -23,11 +25,19 @@ soapcpp2.h:
 
 /usr/include/stdio.h:
 
+/usr/include/sys/cdefs.h:
+
+/usr/include/sys/_symbol_aliasing.h:
+
+/usr/include/sys/_posix_availability.h:
+
+/usr/include/Availability.h:
+
+/usr/include/AvailabilityInternal.h:
+
 /usr/include/_types.h:
 
 /usr/include/sys/_types.h:
-
-/usr/include/sys/cdefs.h:
 
 /usr/include/machine/_types.h:
 
@@ -38,10 +48,6 @@ soapcpp2.h:
 /usr/include/secure/_common.h:
 
 /usr/include/stdlib.h:
-
-/usr/include/Availability.h:
-
-/usr/include/AvailabilityInternal.h:
 
 /usr/include/sys/wait.h:
 
@@ -86,6 +92,8 @@ soapcpp2.h:
 /usr/include/sys/errno.h:
 
 /usr/include/string.h:
+
+/usr/include/strings.h:
 
 /usr/include/secure/_string.h:
 

@@ -168,7 +168,7 @@ int main(int argc, char **argv)
   { fclose(stream);
     fprintf(stderr, "\nTo complete the process, compile with:\n> soapcpp2 %s\n", outfile);
     if (!cflag)
-      fprintf(stderr, "or to generate C++ proxy/object classes:\n> soapcpp2 -i %s\n", outfile);
+      fprintf(stderr, "or to generate C++ proxy and object classes:\n> soapcpp2 -j %s\n", outfile);
     fprintf(stderr, "\n");
   }
   return 0;

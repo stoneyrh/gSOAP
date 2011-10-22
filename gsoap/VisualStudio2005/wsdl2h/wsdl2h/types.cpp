@@ -622,7 +622,7 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
   if (lookup == LOOKUP)
   { qnames[Pair(p,name)] = t;
     if (vflag)
-      cerr << "Mapping " << p << ":" << name << " to " << t << endl;
+      cerr << "Mapping '" << p << ":" << name << "' to '" << t << "'" << endl;
     /*
     for (MapOfPairToString::const_iterator i = qnames.begin(); i != qnames.end(); ++i)
       cerr << "(" << (*i).first.first << "," << (*i).first.second << ") = " << (*i).second << endl;
@@ -701,7 +701,7 @@ const char *Types::pname(bool flag, const char *prefix, const char *URI, const c
         s = p;
       }
       if (vflag)
-        fprintf(stderr, "Mapping pointer to %s to %s\n", t, s);
+        cerr << "Mapping pointer to '" << t << "' to '" << s << "'" << endl;
       ptrtypemap[t] = s;
     }
   }
@@ -758,7 +758,7 @@ const char *Types::deftname(enum Type type, const char *pointer, bool is_pointer
   if (pointer || is_pointer)
     ptrtypemap[t] = s;
   if (vflag)
-    fprintf(stderr, "Defined %s (%s in namespace %s) as %s\n", t, qname, URI?URI:(prefix?prefix:""), s);
+    cerr <<  "Defined '" << t << "' ('" << qname << "' in namespace '" << (URI?URI:prefix?prefix:"") << "') as '" << s << endl;
   return t;
 }
 
@@ -1329,7 +1329,11 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
         }
       }
       else
-      { const char *s = tname(NULL, NULL, "xsd:string");
+      { const char *s;
+        if (!strcmp(simpleType.list->itemType, "xs:QName"))
+	  s = tname(NULL, NULL, "xsd:QName");
+	else
+	  s = tname(NULL, NULL, "xsd:string");
         if (!anonymous)
         { fprintf(stream, "\n/// \"%s\":%s is a simpleType containing a whitespace separated list of %s.\n", URI?URI:"", name, simpleType.list->itemType);
           t = deftname(TYPEDEF, NULL, strchr(s, '*') != NULL, prefix, URI, name);

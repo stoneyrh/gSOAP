@@ -81,20 +81,20 @@ int main(int argc, char **argv)
 #ifdef _POSIX_THREADS
     pthread_t tid;
 #endif
-    int m, s;
+    SOAP_SOCKET m, s;
  // soap.accept_timeout = 60; // die if no requests are made within 1 minute
     int port = atoi(argv[1]);
     // register a HTTP GET handler
     soap.fget = http_get;
     m = soap_bind(&soap, NULL, port, 100);
-    if (m < 0)
+    if (!soap_valid_socket(m))
     { soap_print_fault(&soap, stderr);
       exit(1);
     }
     fprintf(stderr, "Socket connection successful %d\n", m);
     for (int i = 1; ; i++)
     { s = soap_accept(&soap);
-      if (s < 0)
+      if (!soap_valid_socket(s))
       { if (soap.errnum)
           soap_print_fault(&soap, stderr);
 	else

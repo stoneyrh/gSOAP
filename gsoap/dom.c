@@ -49,6 +49,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "stdsoap2.h"
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_xsd__anyType(struct soap*, struct soap_dom_element const*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_traverse_xsd__anyType(struct soap*, struct soap_dom_element*, const char*, soap_walker, soap_walker);
 SOAP_FMAC1 void SOAP_FMAC2 soap_default_xsd__anyType(struct soap*, struct soap_dom_element *);
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__anyType(struct soap*, const struct soap_dom_element *, const char*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_out_xsd__anyType(struct soap*, const char*, int, const struct soap_dom_element *, const char*);
@@ -56,6 +57,7 @@ SOAP_FMAC3 struct soap_dom_element * SOAP_FMAC4 soap_get_xsd__anyType(struct soa
 SOAP_FMAC1 struct soap_dom_element * SOAP_FMAC2 soap_in_xsd__anyType(struct soap*, const char*, struct soap_dom_element *, const char*);
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_xsd__anyAttribute(struct soap*, struct soap_dom_attribute const*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_traverse_xsd__anyAttribute(struct soap*, struct soap_dom_attribute*, const char*, soap_walker, soap_walker);
 SOAP_FMAC1 void SOAP_FMAC2 soap_default_xsd__anyAttribute(struct soap*, struct soap_dom_attribute *);
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__anyAttribute(struct soap*, const struct soap_dom_attribute *, const char*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_out_xsd__anyAttribute(struct soap*, const char*, int, const struct soap_dom_attribute *, const char*);
@@ -107,12 +109,26 @@ soap_serialize_xsd__anyType(struct soap *soap, const struct soap_dom_element *no
   }
 }
 
+SOAP_FMAC3
+void
+SOAP_FMAC4
+soap_traverse_xsd__anyType(struct soap *soap, struct soap_dom_element *node, const char *s, soap_walker p, soap_walker q)
+{ 
+}
+
 /******************************************************************************/
 
 SOAP_FMAC1
 void
 SOAP_FMAC2
 soap_serialize_xsd__anyAttribute(struct soap *soap, const struct soap_dom_attribute *node)
+{
+}
+
+SOAP_FMAC1
+void
+SOAP_FMAC2
+soap_traverse_xsd__anyAttribute(struct soap *soap, struct soap_dom_attribute *node, const char *s, soap_walker p, soap_walker q)
 {
 }
 

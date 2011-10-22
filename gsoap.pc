@@ -8,4 +8,4 @@ Description: SOAP C Web Services
 Version: 2.8
 Requires:
 Libs: -L${libdir} -lgsoap 
-Cflags: -DWITH_DOM -I${includedir}
+Cflags:  -DWITH_DOM -I${includedir}

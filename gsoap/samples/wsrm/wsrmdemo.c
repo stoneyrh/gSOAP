@@ -161,7 +161,7 @@ int main(int argc, char **argv)
       }
 #endif
 
-      soap->bind_flags = SO_REUSEADDR;
+      soap->bind_flags = SO_REUSEADDR;	/* allow immediate port rebinding */
       if (!soap_valid_socket(soap_bind(soap, NULL, port, 100)))
       { soap_print_fault(soap, stderr);
         exit(1);

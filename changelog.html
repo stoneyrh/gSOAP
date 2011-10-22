@@ -809,7 +809,17 @@ without OpenSSL.</li>
 <li>Added soapcpp2 -y option to generate C/C++ type access information to the generted sample XML messages, allowing for the verification of C/C++ data access to the actual XML content.</li>
 <li>Added JSON serialization support in place of XML-RPC serialization, see the XML-RPC content in the samples folder.</li>
 <li>Improved DOM processing (an optional feature).</li>
-<li>Fixed minor bugs, compilation and porting issues.</li>
+<li>Fixed bugs, compilation and porting issues.</li>
+</ul>
+<li>Version 2.8.4 (10/24/2011)</li>
+<ul>
+<li>Added NTLM support (enabled with -DWITH_NTLM, requires libntlm).</li>
+<li>Added WS-Discovery 1.1 support (see doc/wsdd and plugin/wsddapi.h and wsddapi.c).</li>
+<li>Added //gsoap typed directive to control xsi:type attribuation per namespace.</li>
+<li>Added SOAP_XML_NOTYPE flag to disable xsi:type attributes.</li>
+<li>Improved WS-Security encryption (AES, soap_wsse_add_EncryptedKey_encrypt_only).</li>
+<li>Improved HTTP proxy authentication support (digest and NTLM).</li>
+<li>Fixed bugs and portability issues.</li>
 </ul>
 </ul>
 

@@ -482,7 +482,10 @@ void server_loop(struct soap *soap)
           continue;
         }
 #endif
-	/* Keep-alive: frequent EOF faults occur related to KA-timeouts */
+	/* Keep-alive: frequent EOF faults occur related to KA-timeouts:
+           timeout: soap->error == SOAP_EOF && soap->errnum == 0
+           error:   soap->error != SOAP_OK
+        */
         if (soap_serve(soap) && (soap->error != SOAP_EOF || (soap->errnum != 0 && !(soap->omode & SOAP_IO_KEEPALIVE))))
 	{
 	  fprintf(stderr, "Request #%d completed with failure %d\n", req, soap->error);
@@ -511,8 +514,7 @@ void server_loop(struct soap *soap)
       fprintf(stderr, "Waiting for thread %d to terminate... ", job);
       THREAD_JOIN(tids[job]);
       fprintf(stderr, "terminated\n");
-      soap_done(soap_thr[job]);
-      free(soap_thr[job]);
+      soap_free(soap_thr[job]);
     }
   }
 }

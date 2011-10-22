@@ -24,7 +24,7 @@
   xmlns="http://www.w3.org/2001/XMLSchema"
   elementFormDefault="unqualified"
   attributeFormDefault="unqualified">
-  <import namespace="http://schemas.xmlsoap.org/soap/encoding/" schemaLocation="http://schemas.xmlsoap.org/soap/encoding/"/>
+  <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
  </schema>
 
 </types>
@@ -60,7 +60,7 @@
 </binding>
 
 <service name="ssl">
- <documentation>gSOAP 2.8.3 generated service definition</documentation>
+ <documentation>gSOAP 2.8.4 generated service definition</documentation>
  <port name="ssl" binding="tns:ssl">
   <SOAP:address location="https://localhost:18081"/>
  </port>

@@ -109,6 +109,7 @@ class wsdl__input
 { public:
 	@xsd__NMTOKEN			name;
 	@xsd__QName			message;
+	@xsd__anyURI			wsa__Action;
 	@xsd__anyURI			wsam__Action;
 	xsd__string			documentation;		// <wsdl:documentation>?
 	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
@@ -126,6 +127,7 @@ class wsdl__output
 { public:
 	@xsd__NMTOKEN			name;
 	@xsd__QName			message;
+	@xsd__anyURI			wsa__Action;
 	@xsd__anyURI			wsam__Action;
 	xsd__string			documentation;		// <wsdl:documentation>?
 	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
@@ -143,6 +145,7 @@ class wsdl__fault
 { public:
 	@xsd__NMTOKEN			name;
 	@xsd__QName			message;
+	@xsd__anyURI			wsa__Action;
 	@xsd__anyURI			wsam__Action;
 	xsd__string			documentation;		// <wsdl:documentation>?
 	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?

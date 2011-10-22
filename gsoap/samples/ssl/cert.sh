@@ -3,7 +3,8 @@
 if [ "$#" = 1 ]
 then
 
-  echo "* Create certificate ${1}.pem signed by the root CA"
+  echo "* This utility create certificate ${1}.pem signed by the root CA"
+  echo "* Before using this utility, create a root CA root.pem using root.sh"
   echo "* Store the ${1}.pem key file locally with your client/server application"
   echo "* Enter a secret pass phrase when requested"
   echo "* The pass phrase is used to access ${1}.pem in your application"

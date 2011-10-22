@@ -48,7 +48,7 @@ static void gen_parts(const sp__Parts& parts, Types& types, const char *name, in
 
 int wsp__Content::traverse(wsdl__definitions& definitions)
 { if (vflag)
-    cerr << "Analyzing wsp Policy" << endl;
+    cerr << "  Analyzing wsp Policy" << endl;
   if (Policy)
     Policy->traverse(definitions);
   if (PolicyReference)
@@ -95,7 +95,7 @@ void wsp__Content::generate(Types& types, int indent) const
       if (*p)
         (*p)->generate(types, indent + 1);
   }
-  // WS-SecurityPolicy Parts (TODO: need vectors of these)
+  // WS-SecurityPolicy Parts (TODO: need vectors of these?)
   for (vector<sp__Parts>::const_iterator sp = sp__SignedParts.begin(); sp != sp__SignedParts.end(); ++sp)
     gen_parts(*sp, types, "[4.1.1] WS-Security Signed Parts", indent);
   for (vector<sp__Parts>::const_iterator ep = sp__EncryptedParts.begin(); ep != sp__EncryptedParts.end(); ++ep)

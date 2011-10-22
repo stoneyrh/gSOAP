@@ -45,7 +45,7 @@ extern const char *qname_token(const char*, const char*);
 
 int soap__header::traverse(wsdl__definitions& definitions)
 { if (vflag)
-    cerr << "Analyzing soap header " << endl;
+    cerr << "    Analyzing soap header in wsdl namespace '" << (definitions.targetNamespace?definitions.targetNamespace:"") << "'" << endl;
   messageRef = NULL;
   partRef = NULL;
   const char *token = qname_token(message, definitions.targetNamespace);
@@ -54,7 +54,7 @@ int soap__header::traverse(wsdl__definitions& definitions)
     { if ((*message).name && !strcmp((*message).name, token))
       { messageRef = &(*message);
         if (vflag)
-	  cerr << "Found header part " << (part?part:"") << " message " << (token?token:"") << endl;
+	  cerr << "     Found soap header part '" << (part?part:"") << "' message '" << (token?token:"") << "'" << endl;
         break;
       }
     }
@@ -69,7 +69,7 @@ int soap__header::traverse(wsdl__definitions& definitions)
           { if ((*message).name && !strcmp((*message).name, token))
             { messageRef = &(*message);
               if (vflag)
-	        cerr << "Found header part " << (part?part:"") << " message " << (token?token:"") << endl;
+	        cerr << "     Found soap header part '" << (part?part:"") << "' message '" << (token?token:"") << "'" << endl;
               break;
             }
           }
@@ -86,10 +86,10 @@ int soap__header::traverse(wsdl__definitions& definitions)
         }
     }
     if (!partRef)
-      cerr << "Warning: soap header has no matching part in message " << (message?message:"") << " in WSDL definitions " << definitions.name << " namespace " << (definitions.targetNamespace?definitions.targetNamespace:"") << endl;
+      cerr << "Warning: soap header has no matching part in message '" << (message?message:"") << "' in wsdl definitions '" << definitions.name << "' namespace '" << (definitions.targetNamespace?definitions.targetNamespace:"") << "'" << endl;
   }
   else
-    cerr << "Warning: could not find header part " << (part?part:"") << " message " << (message?message:"") << " in WSDL definitions " << definitions.name << " namespace " << (definitions.targetNamespace?definitions.targetNamespace:"") << endl;
+    cerr << "Warning: could not find soap header part '" << (part?part:"") << "' message '" << (message?message:"") << "' in wsdl definitions '" << definitions.name << "' namespace '" << (definitions.targetNamespace?definitions.targetNamespace:"") << "'" << endl;
   for (vector<soap__headerfault>::iterator i = headerfault.begin(); i != headerfault.end(); ++i)
     (*i).traverse(definitions);
   return SOAP_OK;
@@ -119,7 +119,7 @@ wsdl__part *soap__header::partPtr() const
 
 int soap__headerfault::traverse(wsdl__definitions& definitions)
 { if (vflag)
-    cerr << "Analyzing soap headerfault " << endl;
+    cerr << "    Analyzing soap headerfault in wsdl namespace '" << (definitions.targetNamespace?definitions.targetNamespace:"") << "'" << endl;
   messageRef = NULL;
   partRef = NULL;
   const char *token = qname_token(message, definitions.targetNamespace);
@@ -128,7 +128,7 @@ int soap__headerfault::traverse(wsdl__definitions& definitions)
     { if ((*message).name && !strcmp((*message).name, token))
       { messageRef = &(*message);
         if (vflag)
-	  cerr << "Found headerfault part " << (part?part:"") << " message " << (token?token:"") << endl;
+	  cerr << "     Found soap headerfault part '" << (part?part:"") << "' message '" << (token?token:"") << "'" << endl;
         break;
       }
     }
@@ -143,7 +143,7 @@ int soap__headerfault::traverse(wsdl__definitions& definitions)
           { if ((*message).name && !strcmp((*message).name, token))
             { messageRef = &(*message);
               if (vflag)
-	        cerr << "Found headerfault part " << (part?part:"") << " message " << (token?token:"") << endl;
+	        cerr << "     Found soap headerfault part '" << (part?part:"") << "' message '" << (token?token:"") << "'" << endl;
               break;
             }
           }
@@ -160,10 +160,10 @@ int soap__headerfault::traverse(wsdl__definitions& definitions)
         }
     }
     if (!partRef)
-      cerr << "Warning: soap headerfault has no matching part in message " << (message?message:"") << " in WSDL definitions " << definitions.name << " namespace " << (definitions.targetNamespace?definitions.targetNamespace:"") << endl;
+      cerr << "Warning: soap headerfault has no matching part in message '" << (message?message:"") << "' in wsdl definitions '" << definitions.name << "' namespace '" << (definitions.targetNamespace?definitions.targetNamespace:"") << "'" << endl;
   }
   else
-    cerr << "Warning: could not find headerfault part " << (part?part:"") << " message " << (message?message:"") << " in WSDL definitions " << definitions.name << " namespace " << (definitions.targetNamespace?definitions.targetNamespace:"") << endl;
+    cerr << "Warning: could not find soap headerfault part '" << (part?part:"") << "' message '" << (message?message:"") << "' in wSDL definitions '" << definitions.name << "' namespace '" << (definitions.targetNamespace?definitions.targetNamespace:"") << "'" << endl;
   return SOAP_OK;
 }
 

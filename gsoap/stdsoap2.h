@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.3
+	stdsoap2.h 2.8.4
 
 	gSOAP runtime engine
 
@@ -472,6 +472,19 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define ULONG64 unsigned LONG64
 #  define SOAP_LONG_FORMAT "%ld"
 #  define SOAP_ULONG_FORMAT "%lu"
+# elif defined(SUN_OS)
+#  define HAVE_SNPRINTF
+#  define HAVE_STRRCHR
+#  define HAVE_STRTOD
+#  define HAVE_SSCANF
+#  define HAVE_STRTOL
+#  define HAVE_STRTOUL
+#  define HAVE_SYS_TIMEB_H
+#  define HAVE_FTIME
+#  define HAVE_RAND_R
+#  define HAVE_GETHOSTBYNAME_R
+#  define HAVE_GMTIME_R
+#  define HAVE_LOCALTIME_R
 # else
 /* Default assumptions for supported functions */
 #  define HAVE_SNPRINTF
@@ -592,6 +605,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # include <limits.h>
 #endif
 
+#ifdef WITH_NTLM
+# include <ntlm.h>
+#endif
+
 #ifdef HAVE_POLL
 # include <poll.h>
 #endif
@@ -678,14 +695,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # define SOAP_WINSOCKINT size_t
 #endif
 
-#ifdef WITH_IPV6
-# ifdef IPV6_V6ONLY
-#  if !defined(WITH_NO_IPV6_V6ONLY) && !defined(WITH_IPV6_V6ONLY)
-#   define WITH_NO_IPV6_V6ONLY /* turn on IPv6-IPv4 switching */
-#  endif
-# endif
-#endif
-
 #if defined(WITH_IPV6_V6ONLY) || defined(WITH_NO_IPV6_V6ONLY)
 # ifndef WITH_IPV6
 #  define WITH_IPV6
@@ -699,9 +708,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 # include <winsock2.h> /* Visual Studio 2005 users: you must install the Platform SDK (R2) */
 # include <ws2tcpip.h>
-// # define _WSPIAPI_COUNTOF /* DEV NOTE: fixes problem with VC6 */
+// # define _WSPIAPI_COUNTOF /* DEV NOTE: enble to fix problems with VC6 */
 // # include <wspiapi.h>
-# include <ws2spi.h> /* DEV NOTE: replaces older wspiapi.h */
+# include <ws2spi.h> /* DEV NOTE: replaces older wspiapi.h above */
 # ifdef WITH_IPV6
 #  define SOAP_GAI_STRERROR gai_strerrorA
 # endif
@@ -830,6 +839,12 @@ extern "C" {
 # define FD_SETSIZE (1024)
 #endif
 
+#ifdef WITH_LEAN
+# define SOAP_CHK_EOF SOAP_EOF
+#else
+# define SOAP_CHK_EOF (soap->error ? soap->error : SOAP_EOF)
+#endif
+
 #if defined(SYMBIAN)
 # define LONG64 long
 # define ULONG64 unsigned LONG64
@@ -882,7 +897,6 @@ extern "C" {
 #elif defined(PALM)
 # define soap_int32 Int32
 #elif defined(_AIX)
-# define SOAP_NEW(type) new type	/* AIX compilers don't like new (t) */
 # if defined(_AIX43)
 #  define soap_int32 int32_t
 # else
@@ -1193,6 +1207,7 @@ extern const char soap_base64o[], soap_base64i[];
 #define SOAP_LENGTH			45
 #define SOAP_FD_EXCEEDED		46
 #define SOAP_UTF_ERROR			47
+#define SOAP_NTLM_ERROR			48
 
 #define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_NULL || (e) == SOAP_HREF)
 #define soap_soap_error_check(e) ((e) == SOAP_CLI_FAULT || (e) == SOAP_SVR_FAULT || (e) == SOAP_VERSIONMISMATCH || (e) == SOAP_MUSTUNDERSTAND || (e) == SOAP_FAULT || (e) == SOAP_NO_METHOD)
@@ -1217,6 +1232,7 @@ extern const char soap_base64o[], soap_base64i[];
 #define SOAP_POST		2000	/* POST request */
 #define SOAP_POST_FILE		2001	/* Custom file-based POST request */
 #define SOAP_GET		2002	/* GET request */
+#define SOAP_CONNECT		2003	/* CONNECT request */
 
 /* gSOAP DIME */
 
@@ -1263,21 +1279,22 @@ typedef soap_int32 soap_mode;
 #define SOAP_XML_DEFAULTNS	0x00008000	/* out: emit xmlns="..." */
 #define SOAP_XML_CANONICAL	0x00010000	/* out: excC14N canonical XML */
 #define SOAP_XML_TREE		0x00020000	/* out: XML tree (no id/ref) */
-#define SOAP_XML_GRAPH		0x00040000	/* see DOM manual */
-#define SOAP_XML_NIL		0x00080000	/* out: NULLs as xsi:nil */
+#define SOAP_XML_NIL		0x00040000	/* out: NULLs as xsi:nil */
+#define SOAP_XML_NOTYPE		0x00080000	/* out: NULLs as xsi:nil */
 
-#define SOAP_C_NOIOB		0x00100000	/* don't fault on array index out of bounds (just ignore) */
-#define SOAP_C_UTFSTRING	0x00200000	/* (de)serialize strings with UTF8 content */
-#define SOAP_C_MBSTRING		0x00400000	/* (de)serialize strings with multi-byte content */
-#define SOAP_C_NILSTRING	0x00800000	/* serialize empty strings as nil (omitted) */
+#define SOAP_DOM_TREE		0x00100000      /* see DOM manual */
+#define SOAP_DOM_NODE		0x00200000
+#define SOAP_DOM_ASIS		0x00400000
 
-#define SOAP_XML_DOM		0x01000000
+#define SOAP_C_NOIOB		0x01000000	/* don't fault on array index out of bounds (just ignore) */
+#define SOAP_C_UTFSTRING	0x02000000	/* (de)serialize strings with UTF8 content */
+#define SOAP_C_MBSTRING		0x04000000	/* (de)serialize strings with multi-byte content */
+#define SOAP_C_NILSTRING	0x08000000	/* serialize empty strings as nil (omitted) */
 
-#define SOAP_DOM_TREE		0x02000000
-#define SOAP_DOM_NODE		0x04000000
-#define SOAP_DOM_ASIS		0x08000000
+#define SOAP_XML_DOM		0x10000000      /* enable internal DOM */
+#define SOAP_XML_GRAPH		0x20000000	/* id-ref graph in DOM */
 
-#define SOAP_MIME_POSTCHECK	0x10000000	/* MIME flag (internal) */
+#define SOAP_MIME_POSTCHECK	0x40000000	/* MIME flag (internal) */
 
 #define SOAP_SEC_WSUID		0x80000000	/* Add Body wsu:Id */
 
@@ -1358,7 +1375,7 @@ typedef soap_int32 soap_mode;
 #endif
 
 #ifndef SOAP_NEW				/* use C++ new operator */
-# if (__GNUC__ <= 2) && !defined(__BORLANDC__)	/* Borland uses GNU C? */
+# if (defined(__GNUC__) && (__GNUC__ <= 2) && !defined(__BORLANDC__)) || defined(__clang__) || defined(_AIX)
 #  define SOAP_NEW(type) new type		/* old form w/o parenthesis */
 # else
 #  define SOAP_NEW(type) new (type)		/* prefer with parenthesis */
@@ -1805,9 +1822,15 @@ struct SOAP_STD_API soap
   struct soap_plugin *plugins;	/* linked list of plug-in data */
   const char *userid;		/* HTTP Basic authorization userid */
   const char *passwd;		/* HTTP Basic authorization passwd */
+  const char *authrealm;	/* HTTP authentication realm (NTLM domain) */
+#if !defined(WITH_LEAN) || defined(WITH_NTLM)
+  const char *ntlm_challenge;	/* HTTP NTLM challenge key string */
+  short	ntlm_auth;		/* HTTP NTLM authentication type */
+  short	ntlm_stage;		/* HTTP NTLM stage 0..3 */
+#endif
   int (*fpost)(struct soap*, const char*, const char*, int, const char*, const char*, size_t);
   int (*fget)(struct soap*);	/* HTTP GET hook (not set by default) */
-  int (*fput)(struct soap*);	/* HTTP PUT hook (handled as POST) */
+  int (*fput)(struct soap*);	/* HTTP PUT hook (handled as POST by default) */
   int (*fdel)(struct soap*);	/* HTTP DELETE hook (not set by default) */
   int (*fopt)(struct soap*);	/* HTTP OPTIONS hook (not set by default) */
   int (*fhead)(struct soap*);	/* HTTP HEAD hook (not set by default) */
@@ -1916,7 +1939,6 @@ struct SOAP_STD_API soap
   char path[SOAP_TAGLEN];
   char host[SOAP_TAGLEN];
   char *action;
-  char *authrealm;		/* HTTP authentication realm */
   char *prolog;			/* XML declaration prolog */
   unsigned long ip;		/* IP number */
   int port;			/* port number */
@@ -2089,10 +2111,11 @@ soap_wchar soap_get1(struct soap*);
 #define soap_revget1(soap) ((soap)->bufidx--)
 #define soap_unget(soap, c) ((soap)->ahead = c)
 #define soap_register_plugin(soap, plugin) soap_register_plugin_arg(soap, plugin, NULL)
-#define soap_imode(soap, n) ((soap)->mode = (soap)->imode = (n))
+#define soap_mode(soap, n) ((soap)->mode = (soap)->imode = (soap)->omode = (n))
+#define soap_imode(soap, n) ((soap)->imode = (n))
+#define soap_omode(soap, n) ((soap)->omode = (n))
 #define soap_set_imode(soap, n) ((soap)->imode |= (n))
 #define soap_clr_imode(soap, n) ((soap)->imode &= ~(n))
-#define soap_omode(soap, n) ((soap)->mode = (soap)->omode = (n))
 #define soap_set_omode(soap, n) ((soap)->omode |= (n))
 #define soap_clr_omode(soap, n) ((soap)->omode &= ~(n))
 #define soap_set_mode(soap, n) ((soap)->imode |= (n), (soap)->omode |= (n))
@@ -2143,6 +2166,9 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_rand(void);
 # define soap_putelement(s, p, t, i, n) (0)
 # define soap_markelement(s, p, n) (0)
 #endif
+
+/* soap_traverse() traversal/walker routines take walker function arguments */
+typedef void soap_walker(struct soap*, void*, int, const char*, const char*);
 
 SOAP_FMAC1 void SOAP_FMAC2 soap_header(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_fault(struct soap*);
@@ -2247,7 +2273,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_end_recv(struct soap*);
 SOAP_FMAC1 void* SOAP_FMAC2 soap_malloc(struct soap*, size_t);
 SOAP_FMAC1 void SOAP_FMAC2 soap_dealloc(struct soap*, void*);
 SOAP_FMAC1 struct soap_clist * SOAP_FMAC2 soap_link(struct soap*, void*, int, int, int (*fdelete)(struct soap_clist*));
-SOAP_FMAC1 void SOAP_FMAC2 soap_unlink(struct soap*, const void*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_unlink(struct soap*, const void*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_free_temp(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_del(struct soap*);
 
@@ -2275,6 +2301,7 @@ SOAP_FMAC1 char* SOAP_FMAC2 soap_putoffset(struct soap*, int);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_putoffsets(struct soap*, const int *, int);
  
 SOAP_FMAC1 int SOAP_FMAC2 soap_closesock(struct soap*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_force_closesock(struct soap*);
 
 SOAP_FMAC1 struct soap *SOAP_FMAC2 soap_new(void);
 SOAP_FMAC1 struct soap *SOAP_FMAC2 soap_new1(soap_mode);
@@ -2366,6 +2393,7 @@ SOAP_FMAC1 char* SOAP_FMAC2 soap_next_block(struct soap*, struct soap_blist*);
 SOAP_FMAC1 size_t SOAP_FMAC2 soap_block_size(struct soap*, struct soap_blist*);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_save_block(struct soap*, struct soap_blist*, char*, int);
 SOAP_FMAC1 void SOAP_FMAC2 soap_end_block(struct soap*, struct soap_blist*);
+SOAP_FMAC1 void SOAP_FMAC2 soap_update_pointers(struct soap *soap, char *start, char *end, char *p1, char *p2);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_begin_out(struct soap*);
 SOAP_FMAC1 int soap_envelope_end_out(struct soap*);

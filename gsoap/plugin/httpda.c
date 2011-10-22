@@ -5,7 +5,7 @@
 	Supports both Basic and Digest authentication.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2005, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2005, Robert van Engelen, Genivia, Inc., All Rights Reserved.
+Copyright (C) 2000-2011, Robert van Engelen, Genivia, Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -143,7 +143,36 @@ soap_end(&soap);
 soap_done(&soap);
 @endcode
 
+For HTTP proxies requiring HTTP Digest Authenticaiton, use the 'proxy'
+functions:
+
+@code
+struct http_da_info info;
+
+http_da_proxy_save(&soap, &info, "<authrealm>", "<userid>", "<passwd>");
+if (soap_call_ns__method(&soap, ...))
+  ... // error
+
+http_da_proxy_restore(&soap, &info);
+if (soap_call_ns__method(&soap, ...))
+  ... // error
+
+soap_destroy(&soap); // okay to dealloc data
+soap_end(&soap);     // okay to dealloc data
+
+http_da_proxy_restore(&soap, &info);
+if (soap_call_ns__method(&soap, ...))
+  ... // error
+
+http_da_proxy_release(&soap, &info);
+soap_destroy(&soap);
+soap_end(&soap);
+soap_done(&soap);
+@endcode
+
 @section httpda_2 Client Example
+
+A client authenticating against a server:
 
 @code
 soap_register_plugin(&soap, http_da);
@@ -166,6 +195,31 @@ if (soap_call_ns__method(&soap, ...))
         if (!soap_call_ns__method(&soap, ...) == SOAP_OK)
 	  ... // error
         http_da_release(&soap, &info); // free data and remove userid and passwd
+@endcode
+
+A client authenticating against a proxy:
+
+@code
+soap_register_plugin(&soap, http_da);
+// try calling without authenticating
+if (soap_call_ns__method(&soap, ...))
+{
+  if (soap.error == 407) // HTTP authentication is required
+  {
+    if (!strcmp(soap.authrealm, authrealm)) // check authentication realm
+    {
+      struct http_da_info info; // to store userid and passwd
+      http_da_proxy_save(&soap, &info, authrealm, userid, passwd);
+      // call again, now with credentials
+      if (soap_call_ns__method(&soap, ...) == SOAP_OK)
+      {
+        ... // process response data
+        soap_end(&soap);
+	... // userid and passwd were deallocated (!)
+        http_da_proxy_restore(&soap, &info); // get userid and passwd after soap_end()
+        if (!soap_call_ns__method(&soap, ...) == SOAP_OK)
+	  ... // error
+        http_da_proxy_release(&soap, &info); // free data and remove userid and passwd
 @endcode
 
 @section httpda_3 Server-Side Usage
@@ -383,17 +437,19 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
     return SOAP_PLUGIN_ERROR;
 
   /* client's HTTP Authorization response */
-  if (key && !strcmp(key, "Authorization"))
+  if (key && (!strcmp(key, "Authorization") || !strcmp(key, "Proxy-Authorization")))
   {
     char HA1[33], entityHAhex[33], response[33];
     char cnonce[HTTP_DA_NONCELEN];
     char ncount[9];
-    char *qop, *method;
+    const char *qop, *method;
+    const char *userid = (*key == 'A' ? soap->userid : soap->proxy_userid);
+    const char *passwd = (*key == 'A' ? soap->passwd : soap->proxy_passwd);
 
     md5_handler(soap, &data->context, MD5_FINAL, data->digest, 0);
 
     http_da_calc_nonce(soap, cnonce);
-    http_da_calc_HA1(soap, &data->context, data->alg, soap->userid, soap->authrealm, soap->passwd, data->nonce, cnonce, HA1);
+    http_da_calc_HA1(soap, &data->context, data->alg, userid, soap->authrealm, passwd, data->nonce, cnonce, HA1);
 
     if (data->qop && !soap_tag_cmp(data->qop, "*auth-int*"))
     {
@@ -407,6 +463,8 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
 
     if (soap->status == SOAP_GET)
       method = "GET";
+    else if (soap->status == SOAP_CONNECT)
+      method = "CONNECT";
     else
       method = "POST";
 
@@ -414,7 +472,7 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
 
     http_da_calc_response(soap, &data->context, HA1, data->nonce, ncount, cnonce, qop, method, soap->path, entityHAhex, response);
 
-    sprintf(soap->tmpbuf, "Digest realm=\"%s\", username=\"%s\", nonce=\"%s\", uri=\"%s\", nc=%s, cnonce=\"%s\", response=\"%s\"", soap->authrealm, soap->userid, data->nonce, soap->path, ncount, cnonce, response);
+    sprintf(soap->tmpbuf, "Digest realm=\"%s\", username=\"%s\", nonce=\"%s\", uri=\"%s\", nc=%s, cnonce=\"%s\", response=\"%s\"", soap->authrealm, userid, data->nonce, soap->path, ncount, cnonce, response);
     if (data->opaque)
       sprintf(soap->tmpbuf + strlen(soap->tmpbuf), ", opaque=\"%s\"", data->opaque);
     if (qop)
@@ -424,7 +482,7 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
   }
 
   /* server's HTTP Authorization response */
-  if (key && !strcmp(key, "WWW-Authenticate"))
+  if (key && (!strcmp(key, "WWW-Authenticate") || !strcmp(key, "Proxy-Authenticate")))
   {
     char nonce[HTTP_DA_NONCELEN];
     char opaque[HTTP_DA_OPAQUELEN];
@@ -450,6 +508,10 @@ static int http_da_parse(struct soap *soap)
     return SOAP_PLUGIN_ERROR;
 
   data->qop = NULL;
+
+  /* HTTP GET w/o body with qop=auth-int still requires a digest */
+  md5_handler(soap, &data->context, MD5_INIT, NULL, 0);
+  md5_handler(soap, &data->context, MD5_FINAL, data->digest, 0);
 
   if ((soap->error = data->fparse(soap)))
     return soap->error;
@@ -496,7 +558,7 @@ static int http_da_parse_header(struct soap *soap, const char *key, const char *
   }
 
   /* check if client received WWW-Authenticate Digest HTTP header from server */
-  if (!soap_tag_cmp(key, "WWW-Authenticate") && !soap_tag_cmp(val, "Digest *"))
+  if ((!soap_tag_cmp(key, "WWW-Authenticate") || !soap_tag_cmp(key, "Proxy-Authenticate")) && !soap_tag_cmp(val, "Digest *"))
   {
     soap->authrealm = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "realm"));
     data->nonce = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "nonce"));
@@ -521,13 +583,14 @@ static int http_da_prepareinitsend(struct soap *soap)
     return SOAP_PLUGIN_ERROR;
 
   if ((soap->mode & SOAP_IO) != SOAP_IO_STORE && (soap->mode & (SOAP_ENC_DIME | SOAP_ENC_MIME)))
-  { /* TODO: how to handle streaming attachments? Does not work yet */
+  { /* TODO: how to handle streaming MIME/DIME attachments? Does not work yet */
     soap->mode &= ~SOAP_IO;
     soap->mode |= SOAP_IO_STORE;
   }
   else
   {
-    if (soap->userid && soap->passwd)
+    if ((soap->userid && soap->passwd)
+     || (soap->proxy_userid && soap->proxy_passwd))
     {
       md5_handler(soap, &data->context, MD5_INIT, NULL, 0);
       if (soap->fpreparesend != http_da_preparesend)
@@ -625,11 +688,28 @@ void http_da_save(struct soap *soap, struct http_da_info *info, const char *real
   if (!data)
     return;
 
-  info->authrealm = soap->authrealm = soap_strdup(NULL, realm);
+  soap->authrealm = info->authrealm = soap_strdup(NULL, realm);
   info->userid = soap_strdup(NULL, userid);
   soap->userid = info->userid;
   info->passwd = soap_strdup(NULL, passwd);
   soap->passwd = info->passwd;
+  info->nonce = soap_strdup(NULL, data->nonce);
+  info->opaque = soap_strdup(NULL, data->opaque);
+  info->qop = soap_strdup(NULL, data->qop);
+  info->alg = soap_strdup(NULL, data->alg);
+}
+
+void http_da_proxy_save(struct soap *soap, struct http_da_info *info, const char *realm, const char *userid, const char *passwd)
+{
+  struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
+  if (!data)
+    return;
+
+  soap->authrealm = info->authrealm = soap_strdup(NULL, realm);
+  info->userid = soap_strdup(NULL, userid);
+  soap->proxy_userid = info->userid;
+  info->passwd = soap_strdup(NULL, passwd);
+  soap->proxy_passwd = info->passwd;
   info->nonce = soap_strdup(NULL, data->nonce);
   info->opaque = soap_strdup(NULL, data->opaque);
   info->qop = soap_strdup(NULL, data->qop);
@@ -644,6 +724,20 @@ void http_da_restore(struct soap *soap, struct http_da_info *info)
   soap->authrealm = info->authrealm;
   soap->userid = info->userid;
   soap->passwd = info->passwd;
+  data->nonce = info->nonce;
+  data->opaque = info->opaque;
+  data->qop = info->qop;
+  data->alg = info->alg;
+}
+
+void http_da_proxy_restore(struct soap *soap, struct http_da_info *info)
+{
+  struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
+  if (!data)
+    return;
+  soap->authrealm = info->authrealm;
+  soap->proxy_userid = info->userid;
+  soap->proxy_passwd = info->passwd;
   data->nonce = info->nonce;
   data->opaque = info->opaque;
   data->qop = info->qop;
@@ -667,39 +761,47 @@ void http_da_release(struct soap *soap, struct http_da_info *info)
 
   if (info->authrealm)
   {
-    free(info->authrealm);
+    free((void*)info->authrealm);
     info->authrealm = NULL;
   }
   if (info->userid)
   {
-    free(info->userid);
+    free((void*)info->userid);
     info->userid = NULL;
   }
   if (info->passwd)
   {
-    free(info->passwd);
+    free((void*)info->passwd);
     info->passwd = NULL;
   }
   if (info->nonce)
   {
-    free(info->nonce);
+    free((void*)info->nonce);
     info->nonce = NULL;
   }
   if (info->opaque)
   {
-    free(info->opaque);
+    free((void*)info->opaque);
     info->opaque = NULL;
   }
   if (info->qop)
   {
-    free(info->qop);
+    free((void*)info->qop);
     info->qop = NULL;
   }
   if (info->alg)
   {
-    free(info->alg);
+    free((void*)info->alg);
     info->alg = NULL;
   }
+}
+
+void http_da_proxy_release(struct soap *soap, struct http_da_info *info)
+{
+  soap->proxy_userid = NULL;
+  soap->proxy_passwd = NULL;
+
+  http_da_release(soap, info);
 }
 
 /******************************************************************************\
@@ -747,7 +849,7 @@ static int http_da_verify_method(struct soap *soap, char *method, char *passwd)
   http_da_calc_response(soap, &data->context, HA1, data->nonce, data->ncount, data->cnonce, data->qop, method, soap->path, entityHAhex, response);
 
 #ifdef SOAP_DEBUG
-  fprintf(stderr, "Debug message: verifying client response=%s with calculated digest=%s\n", data->response, response);
+  fprintf(stderr, "Debug message: verifying client response=%s with calculated digest=%s qop=%s\n", data->response, response, data->qop);
 #endif
 
   /* check digest response values */
@@ -852,14 +954,14 @@ static void http_da_session_cleanup()
 #endif
 
       if (p->realm)
-        free(p->realm);
+        free((void*)p->realm);
       if (p->nonce)
-        free(p->nonce);
+        free((void*)p->nonce);
       if (p->opaque)
-        free(p->opaque);
+        free((void*)p->opaque);
 
       *session = p->next;
-      free(p);
+      free((void*)p);
     }
     else
       session = &(*session)->next;
@@ -925,7 +1027,7 @@ static void http_da_calc_response(struct soap *soap, void **context, char HA1hex
   md5_handler(soap, context, MD5_UPDATE, (char*)method, strlen(method));
   md5_handler(soap, context, MD5_UPDATE, ":", 1);
   md5_handler(soap, context, MD5_UPDATE, (char*)uri, strlen(uri));
-  if (!soap_tag_cmp(qop, "auth-int"))
+  if (qop && !soap_tag_cmp(qop, "auth-int"))
   { 
     md5_handler(soap, context, MD5_UPDATE, ":", 1);
     md5_handler(soap, context, MD5_UPDATE, entityHAhex, 32);

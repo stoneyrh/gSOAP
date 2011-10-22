@@ -132,6 +132,10 @@ void http_da_save(struct soap *soap, struct http_da_info *info, const char *real
 void http_da_restore(struct soap *soap, struct http_da_info *info);
 void http_da_release(struct soap *soap, struct http_da_info *info);
 
+void http_da_proxy_save(struct soap *soap, struct http_da_info *info, const char *realm, const char *userid, const char *passwd);
+void http_da_proxy_restore(struct soap *soap, struct http_da_info *info);
+void http_da_proxy_release(struct soap *soap, struct http_da_info *info);
+
 #ifdef __cplusplus
 }
 #endif
