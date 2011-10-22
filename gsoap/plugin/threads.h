@@ -58,6 +58,7 @@ The threads.h and threads.c code define the following portable API:
 - THREAD_DETACH(t)       detach thread (THREAD_TYPE*)t
 - THREAD_JOIN(t)         wait to join (THREAD_TYPE*)t
 - THREAD_EXIT            exit the current thread
+- THREAD_CANCEL(t)       kill a thread, dangerous, use only in extreme cases!
 
 - MUTEX_TYPE             portable mutex type
 - MUTEX_INITIALIZER      global initializer value for static locks
@@ -104,12 +105,13 @@ The threads.h and threads.c code define the following portable API:
 # define THREAD_DETACH(x)	
 # define THREAD_JOIN(x)		WaitForSingleObject((x), INFINITE)
 # define THREAD_EXIT		_endthread()
+# define THREAD_CANCEL(x)       TerminateThread(x, 0)
 # define MUTEX_TYPE		HANDLE
-# define MUTEX_INITIALIZER	CreateMutex(NULL, FALSE, NULL)
+# define MUTEX_INITIALIZER	NULL
 # define MUTEX_SETUP(x)		(x) = CreateMutex(NULL, FALSE, NULL)
-# define MUTEX_CLEANUP(x)	CloseHandle(x)
-# define MUTEX_LOCK(x)		WaitForSingleObject((x), INFINITE)
-# define MUTEX_UNLOCK(x)	ReleaseMutex(x)
+# define MUTEX_CLEANUP(x)	(CloseHandle(x) == 0)
+# define MUTEX_LOCK(x)		emulate_pthread_mutex_lock(&(x))
+# define MUTEX_UNLOCK(x)	(ReleaseMutex(x) == 0)
 # define COND_SETUP(x)		emulate_pthread_cond_init(&(x))
 # define COND_CLEANUP(x)	emulate_pthread_cond_destroy(&(x))
 # define COND_SIGNAL(x)		emulate_pthread_cond_signal(&(x))
@@ -122,6 +124,7 @@ typedef struct
 #ifdef __cplusplus
 extern "C" {
 #endif
+int emulate_pthread_mutex_lock(MUTEX_TYPE*);
 int emulate_pthread_cond_init(COND_TYPE*);
 int emulate_pthread_cond_destroy(COND_TYPE*);
 int emulate_pthread_cond_signal(COND_TYPE*);
@@ -136,6 +139,7 @@ int emulate_pthread_cond_wait(COND_TYPE*, MUTEX_TYPE*);
 # define THREAD_DETACH(x)	pthread_detach((x))
 # define THREAD_JOIN(x)		pthread_join((x), NULL)
 # define THREAD_EXIT		pthread_exit(NULL)
+# define THREAD_CANCEL(x)	pthread_cancel(x)
 # define MUTEX_TYPE		pthread_mutex_t
 # define MUTEX_INITIALIZER	PTHREAD_MUTEX_INITIALIZER
 # define MUTEX_SETUP(x)		pthread_mutex_init(&(x), NULL)

@@ -1,158 +1,230 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-(c) 2004 Microsoft Corporation, Inc. All rights reserved.
-The Web Services Dynamic Discovery Schema, a/k/a WS-Discovery Schema (the "Document"), 
-was developed by Microsoft, with the assistance of BEA Systems, Canon, Inc, and Intel 
-(collectively, the "Co-Developers"). 
+<!--
+Copyright (c) OASIS(r) 2009. All Rights Reserved.
 
-The copyright is owned by Microsoft, and Microsoft hereby grants you permission to copy and 
-display the Document, in any medium without fee or royalty, provided that you include 
-the following on ALL copies of the Document, or portions thereof, that you make: 
-1.	A link or URL to the Document at this location: 
-http://schemas.xmlsoap.org/ws/2004/02/discovery/discovery.xsd 
-2.	The copyright notice as shown in the Document. 
+All capitalized terms in the following text have the meanings assigned to them in the OASIS Intellectual Property Rights Policy (the "OASIS IPR Policy"). The full Policy may be found at the OASIS website.
 
-EXCEPT FOR THE COPYRIGHT LICENSE GRANTED ABOVE, MICROSOFT AND THE CO-DEVELOPERS DO NOT GRANT, 
-EITHER EXPRESSLY OR IMPLIEDLY, A LICENSE TO ANY INTELLECTUAL PROPERTY, INCLUDING PATENTS, 
-THEY, OR ANY OTHER THIRD PARTIES, OWN OR CONTROL.  TITLE TO THE COPYRIGHT IN THE DOCUMENT 
-WILL AT ALL TIMES REMAIN WITH MICROSOFT. 
+This document and translations of it may be copied and furnished to others, and derivative works that comment on or otherwise explain it or assist in its implementation may be prepared, copied, published, and distributed, in whole or in part, without restriction of any kind, provided that the above copyright notice and this section are included on all such copies and derivative works. However, this document itself may not be modified in any way, including by removing the copyright notice or references to OASIS, except as needed for the purpose of developing any document or deliverable produced by an OASIS Technical Committee (in which case the rules applicable to copyrights, as set forth in the OASIS IPR Policy, must be followed) or as required to translate it into languages other than English.
 
-THE DOCUMENT IS PROVIDED "AS IS," MICROSOFT AND THE CO-DEVELOPERS MAKE NO REPRESENTATIONS 
-OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF THE 
-DOCUMENT ARE SUITABLE FOR ANY PURPOSE; NOR THAT THE IMPLEMENTATION OF SUCH CONTENTS WILL 
-NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS. 
+The limited permissions granted above are perpetual and will not be revoked by OASIS or its successors or assigns.
 
-MICROSOFT AND THE CO-DEVELOPERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL 
-OR CONSEQUENTIAL DAMAGES ARISING OUT OF OR RELATING TO ANY USE OR DISTRIBUTION OF THE 
-DOCUMENT. 
+This document and the information contained herein is provided on an "AS IS" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY OWNERSHIP RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 
-The Document may change before final release and you are cautioned against relying on the 
-content of this Document. 
+OASIS requests that any OASIS Party or any other party that believes it has patent claims that would necessarily be infringed by implementations of this OASIS Committee Specification or OASIS Standard, to notify OASIS TC Administrator and provide an indication of its willingness to grant patent licenses to such patent claims in a manner consistent with the IPR Mode of the OASIS Technical Committee that produced this specification.
 
-No other rights are granted by implication, estoppel or otherwise.
+OASIS invites any party to contact the OASIS TC Administrator if it is aware of a claim of ownership of any patent claims that would necessarily be infringed by implementations of this specification by a patent holder that is not willing to provide a license to such patent claims in a manner consistent with the IPR Mode of the OASIS Technical Committee that produced this specification. OASIS may include such claims on its website, but disclaims any obligation to do so.
+
+OASIS takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any effort to identify any such rights. Information on OASIS' procedures with respect to rights in any document or deliverable produced by an OASIS Technical Committee can be found on the OASIS website. Copies of claims of rights made available for publication and any assurances of licenses to be made available, or the result of an attempt made to obtain a general license or permission for the use of such proprietary rights by implementers or users of this OASIS Committee Specification or OASIS Standard, can be obtained from the OASIS TC Administrator. OASIS makes no representation that any information or list of intellectual property rights will at any time be complete, or that any claims in such list are, in fact, Essential Claims.
+
+The name "OASIS" is trademarks of OASIS, the owner and developer of this specification, and should be used only to refer to the organization and its official outputs. OASIS welcomes reference to, and implementation and use of, specifications, while reserving the right to enforce its marks against misleading uses. Please see http://www.oasis-open.org/who/trademark.php for above guidance.
 -->
 <xs:schema
-    targetNamespace='http://schemas.xmlsoap.org/ws/2004/02/discovery'
-    xmlns:tns='http://schemas.xmlsoap.org/ws/2004/02/discovery'
-    xmlns:wsa='http://schemas.xmlsoap.org/ws/2003/03/addressing'
-    xmlns:xs='http://www.w3.org/2001/XMLSchema'
-    elementFormDefault='qualified'
-    blockDefault='#all' >
+    targetNamespace="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01"
+    xmlns:tns="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01"
+    xmlns:wsa="http://www.w3.org/2005/08/addressing"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    blockDefault="#all" >
 
   <xs:import
-      namespace='http://schemas.xmlsoap.org/ws/2003/03/addressing'
-      schemaLocation='http://schemas.xmlsoap.org/ws/2003/03/addressing' />
+      namespace="http://www.w3.org/2005/08/addressing"
+      schemaLocation="http://www.w3.org/2006/03/addressing/ws-addr.xsd" />
 
-  <!-- //////////////////// WS-Discovery //////////////////// -->
+  <!-- //////////////////// Discovery Messages //////////////////// -->
 
-  <!-- Messages -->
-
-  <xs:element name='Hello' type='tns:DiscoveryReferenceType' />
-
-  <xs:complexType name='DiscoveryReferenceType' >
+  <xs:element name="Hello" type="tns:HelloType" />
+  <xs:complexType name="HelloType" >
     <xs:sequence>
-      <xs:element ref='wsa:EndpointReference' />
-      <xs:element ref='tns:Types' minOccurs='0' />
-      <xs:element ref='tns:Scopes' minOccurs='0' />
-      <xs:element ref='tns:MetadataVersion' />
-      <xs:any namespace='##other'
-              processContents='lax'
-              minOccurs='0'
-              maxOccurs='unbounded' />
+      <xs:element ref="wsa:EndpointReference" />
+      <xs:element ref="tns:Types" minOccurs="0" />
+      <xs:element ref="tns:Scopes" minOccurs="0" />
+      <xs:element ref="tns:XAddrs" minOccurs="0" />
+      <xs:element ref="tns:MetadataVersion" />
+      <xs:any namespace="##other"
+              processContents="lax"
+              minOccurs="0"
+              maxOccurs="unbounded" />
     </xs:sequence>
-    <xs:anyAttribute namespace='##other' processContents='lax' />
+    <xs:anyAttribute namespace="##other" processContents="lax" />
   </xs:complexType>
 
-  <xs:element name='Bye' >
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element ref='wsa:EndpointReference' />
-        <xs:any namespace='##any'
-                processContents='lax'
-                minOccurs='0'
-                maxOccurs='unbounded' />
-        <!-- ##any allows simplifying an implementation to
-             send the same children in Bye as in Hello -->
-      </xs:sequence>
-      <xs:anyAttribute namespace='##other' processContents='lax' />
-    </xs:complexType>
-  </xs:element>
+  <xs:element name="Bye" type="tns:ByeType" />
+  <xs:complexType name="ByeType" >
+    <xs:sequence>
+      <xs:element ref="wsa:EndpointReference" />
+      <xs:element ref="tns:Types" minOccurs="0" />
+      <xs:element ref="tns:Scopes" minOccurs="0" />
+      <xs:element ref="tns:XAddrs" minOccurs="0" />
+      <xs:element ref="tns:MetadataVersion" minOccurs="0" />
+      <xs:any namespace="##other"
+              processContents="lax"
+              minOccurs="0"
+              maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax" />
+  </xs:complexType>
 
-  <xs:element name='Probe' >
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element ref='tns:Types' minOccurs='0' />
-        <xs:element ref='tns:Scope' minOccurs='0' />
-        <xs:any namespace='##other'
-                processContents='lax'
-                minOccurs='0'
-                maxOccurs='unbounded' />
-      </xs:sequence>
-      <xs:anyAttribute namespace='##other' processContents='lax' />
-    </xs:complexType>
-  </xs:element>
+  <xs:element name="Probe" type="tns:ProbeType" />
+  <xs:complexType name="ProbeType" >
+    <xs:sequence>
+      <xs:element ref="tns:Types" minOccurs="0" />
+      <xs:element ref="tns:Scopes" minOccurs="0" />
+      <xs:any namespace="##other"
+              processContents="lax"
+              minOccurs="0"
+              maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax" />
+  </xs:complexType>
 
-  <xs:element name='ProbeMatch' type='tns:DiscoveryReferenceType' />
+  <xs:element name="ProbeMatches" type="tns:ProbeMatchesType" />
+  <xs:complexType name="ProbeMatchesType" >
+    <xs:sequence>
+      <xs:element name="ProbeMatch"
+                  type="tns:ProbeMatchType"
+                  minOccurs="0"
+                  maxOccurs="unbounded" >
+      </xs:element>
+      <xs:any namespace="##other"
+              processContents="lax"
+              minOccurs="0"
+              maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax" />
+  </xs:complexType>
+  <xs:complexType name="ProbeMatchType" >
+    <xs:sequence>
+      <xs:element ref="wsa:EndpointReference" />
+      <xs:element ref="tns:Types" minOccurs="0" />
+      <xs:element ref="tns:Scopes" minOccurs="0" />
+      <xs:element ref="tns:XAddrs" minOccurs="0" />
+      <xs:element ref="tns:MetadataVersion" />
+      <xs:any namespace="##other"
+              processContents="lax"
+              minOccurs="0"
+              maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax" />
+  </xs:complexType>
 
-  <!-- No body defined for Resolve -->
+  <xs:element name="Resolve" type="tns:ResolveType" />
+  <xs:complexType name="ResolveType" >
+    <xs:sequence>
+      <xs:element ref="wsa:EndpointReference" />
+      <xs:any namespace="##other"
+              processContents="lax"
+              minOccurs="0"
+              maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax" />
+  </xs:complexType>
 
-  <xs:element name='ResolveMatch' type='tns:DiscoveryReferenceType' />
+  <xs:element name="ResolveMatches" type="tns:ResolveMatchesType" />
+  <xs:complexType name="ResolveMatchesType" >
+    <xs:sequence>
+      <xs:element name="ResolveMatch" 
+                  type="tns:ResolveMatchType"
+                  minOccurs="0" />
+      <xs:any namespace="##other"
+              processContents="lax"
+              minOccurs="0"
+              maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax" />
+  </xs:complexType>
+  <xs:complexType name="ResolveMatchType" >
+    <xs:sequence>
+      <xs:element ref="wsa:EndpointReference" />
+      <xs:element ref="tns:Types" minOccurs="0" />
+      <xs:element ref="tns:Scopes" minOccurs="0" />
+      <xs:element ref="tns:XAddrs" minOccurs="0" />
+      <xs:element ref="tns:MetadataVersion" />
+      <xs:any namespace="##other"
+              processContents="lax"
+              minOccurs="0"
+              maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax" />
+  </xs:complexType>
 
-  <!-- Shared global elements -->
+  <xs:element name="Types" type="tns:QNameListType" />
+  <xs:simpleType name="QNameListType" >
+    <xs:list itemType="xs:QName" />
+  </xs:simpleType>
 
-  <xs:element name='Types' >
-    <xs:simpleType>
-      <xs:list itemType='xs:QName' />
-    </xs:simpleType>
-  </xs:element>
+  <xs:element name="Scopes" type="tns:ScopesType" />
+  <xs:complexType name="ScopesType" >
+    <xs:simpleContent>
+      <xs:extension base="tns:UriListType" >
+        <xs:attribute name="MatchBy" type="xs:anyURI" />
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
-  <xs:element name='Scope' >
-    <xs:complexType>
-      <xs:simpleContent>
-        <xs:extension base='xs:anyURI' >
-          <xs:attribute name='MatchBy' type='xs:anyURI' />
-        </xs:extension>
-      </xs:simpleContent>
-    </xs:complexType>
-  </xs:element>
+  <xs:element name="XAddrs" type="tns:UriListType" />
+  <xs:simpleType name="UriListType" >
+    <xs:list itemType="xs:anyURI" />
+  </xs:simpleType>
 
-  <xs:element name='Scopes' >
-    <xs:simpleType>
-      <xs:list itemType='xs:anyURI' />
-    </xs:simpleType>
-  </xs:element>
+  <xs:element name="MetadataVersion" type="xs:unsignedInt" />
 
-  <xs:element name='MetadataVersion' type='xs:nonNegativeInteger' />
+  <!-- //////////////////// Faults //////////////////// -->
+
+  <xs:simpleType name="FaultCodeType" >
+	<xs:restriction base="xs:QName" >
+	  <xs:enumeration value="tns:MatchingRuleNotSupported" />
+	</xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="FaultCodeOpenType" >
+    <xs:union memberTypes="tns:FaultCodeType xs:QName" />
+  </xs:simpleType>
+
+  <xs:element name="SupportedMatchingRules" type="tns:UriListType" />
+
+  <!-- //////////////////// Compact Signature //////////////////// -->
+
+  <xs:attribute name="Id" type="xs:ID"/>
+
+  <xs:element name="Security" type="tns:SecurityType" />
+  <xs:complexType name="SecurityType" >
+    <xs:sequence>
+      <xs:element ref="tns:Sig" minOccurs="0" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="lax" />
+  </xs:complexType> 
+
+  <xs:element name="Sig" type="tns:SigType" />
+  <xs:complexType name="SigType" >
+    <xs:sequence>
+      <xs:any namespace="##other"
+              processContents="lax"
+              minOccurs="0"
+              maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="Scheme" type="xs:anyURI" use="required" />
+    <xs:attribute name="KeyId" type="xs:base64Binary" />
+    <xs:attribute name="Refs" type="xs:IDREFS" use="required" />
+    <xs:attribute name="Sig" type="xs:base64Binary" use="required" />
+    <xs:anyAttribute namespace="##other" processContents="lax" />
+  </xs:complexType> 
 
   <!-- //////////////////// General Headers //////////////////// -->
 
-  <xs:element name='AppSequence' >
-   <xs:complexType>
+  <xs:element name="AppSequence" type="tns:AppSequenceType" />
+  <xs:complexType name="AppSequenceType" >
     <xs:complexContent>
-     <xs:restriction base='xs:anyType' >
-      <xs:attribute name='InstanceId'
-                    type='xs:positiveInteger'
-                    use='required' />
-      <xs:attribute name='SequenceId' type='xs:anyURI' />
-      <xs:attribute name='MessageNumber'
-                    type='xs:positiveInteger'
-                    use='required' />
-     </xs:restriction>
+      <xs:restriction base="xs:anyType" >
+        <xs:attribute name="InstanceId"
+                      type="xs:unsignedInt"
+                      use="required" />
+        <xs:attribute name="SequenceId" type="xs:anyURI" />
+        <xs:attribute name="MessageNumber"
+                      type="xs:unsignedInt"
+                      use="required" />
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+      </xs:restriction>
     </xs:complexContent>
-   </xs:complexType>
-  </xs:element>
-
-  <!-- //////////////////// Policy Assertions //////////////////// -->
-
-  <xs:element name='SoapHttpRequestReplyAddress' >
-    <xs:complexType>
-      <xs:simpleContent>
-        <xs:extension base='xs:anyURI' >
-          <xs:anyAttribute namespace='##other' processContents='lax' />
-        </xs:extension>
-      </xs:simpleContent>
-    </xs:complexType>
-  </xs:element>
+  </xs:complexType>
 
 </xs:schema>

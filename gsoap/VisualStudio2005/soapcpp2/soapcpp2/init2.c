@@ -186,8 +186,8 @@ static Keyword keywords[] =
 	{ "fault",		ID },
 	{ "__any",		ID },
 
-	{ "_QName",		TYPE },
-	{ "_XML",		TYPE },
+	{ "_QName",		ID },
+	{ "_XML",		ID },
 	{ "std::string",	TYPE },
 	{ "std::wstring",	TYPE },
 

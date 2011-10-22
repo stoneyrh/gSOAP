@@ -1,5 +1,9 @@
 Apache 2.x modules for gSOAP
 
+For a detailed walk-through, please visit
+
+http://techiebitsandpieces.blogspot.com/2011/03/all-things-modgsoap.html
+
 The modules are released under the gSOAP open source public license, see
 license.pdf in the gSOAP root dir of the package. The license allows commercial
 open source use and development with this package.

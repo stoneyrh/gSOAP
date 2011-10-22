@@ -1,5 +1,5 @@
 /*
-	wsse.h 1.0
+	wsse.h 1.0 and 1.1
 
 	Generated with:
 	wsdl2h -cegxy -o wsse.h -t WS/WS-typemap.dat WS/wsse.xsd

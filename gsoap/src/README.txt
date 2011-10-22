@@ -38,6 +38,12 @@ To build 'soapcpp2' when autoconf/automake fail, use:
 
 	make -f MakefileManual
 
+The above command assumes you have Bison and Flex installed. For Yacc, please
+edit MakefileManual and change as follows:
+
+YACC=yacc -d -v -s soapcpp2_yacc
+CMFLAGS=-DWITH_YACC -DWITH_FLEX
+
 QNX INSTALLATION
 
 On QNX the bison.simple file is located in $QNX_HOST/usr/share/bison.simple

@@ -13,7 +13,7 @@
 	use of a maxOccurs (class Y :10). Internally the conflict is resolved
 	in favor of a shift by Bison/Yacc, which leads to the correct parsing
 	behavior. Therefore, the warning can be ignored. If this leads to an
-	error, then please enable the following directive (around line 135):
+	error, then please enable the following directive (around line 121):
 
 %expect 1 // Bison: ignore one shift/reduce conflict
 
@@ -231,10 +231,8 @@ exts	: NAMESPACE ID '{' exts1 '}'
 	| exts1		{ }
 	;
 exts1	: /* empty */	{ add_soap();
-			  if (!lflag)
-			  {	add_qname();
-			  	add_XML();
-			  }
+			  add_qname();
+			  add_XML();
 			}
 	| exts1 ext	{ }
 	;
@@ -333,7 +331,7 @@ dclr	: ptrs ID arrayck tag occurs init
 			  {	p = enter(sp->table, $2);
 			  	p->tag = $4;
 			  	p->info.typ = $3.typ;
-			  	p->info.sto = ($3.sto | permission);
+			  	p->info.sto = (Storage)((int)$3.sto | permission);
 				if ($6.hasval)
 				{	p->info.hasval = True;
 					switch ($3.typ->type)
@@ -705,7 +703,7 @@ spec	: /*empty */	{ $$.typ = mkint();
 			  $$.sto = (Storage)((int)$1 | (int)$2.sto);
 			  if (($$.sto & Sattribute) && !is_primitive_or_string($2.typ) && !is_stdstr($2.typ) && !is_binary($2.typ) && !is_external($2.typ))
 			  {	semwarn("invalid attribute type");
-			  	$$.sto &= ~Sattribute;
+			  	$$.sto = (Storage)((int)$$.sto & ~Sattribute);
 			  }
 			  sp->node = $$;
 			  if ($1 & Sextern)
@@ -772,7 +770,7 @@ tspec	: store		{ $$.typ = mkint();
 			  $$.sto = (Storage)((int)$1 | (int)$2.sto);
 			  if (($$.sto & Sattribute) && !is_primitive_or_string($2.typ) && !is_stdstr($2.typ) && !is_binary($2.typ) && !is_external($2.typ))
 			  {	semwarn("invalid attribute type");
-			  	$$.sto &= ~Sattribute;
+			  	$$.sto = (Storage)((int)$$.sto & ~Sattribute);
 			  }
 			  sp->node = $$;
 			  if ($1 & Sextern)
@@ -1319,7 +1317,7 @@ virtual : /* empty */	{ $$ = Snone; }
 ptrs	: /* empty */	{ $$ = tmp = sp->node; }
 	| ptrs '*'	{ /* handle const pointers, such as const char* */
 			  if (/*tmp.typ->type == Tchar &&*/ (tmp.sto & Sconst))
-			  	tmp.sto = (tmp.sto & ~Sconst) | Sconstptr;
+			  	tmp.sto = (Storage)(((int)tmp.sto & ~Sconst) | Sconstptr);
 			  tmp.typ = mkpointer(tmp.typ);
 			  tmp.typ->transient = transient;
 			  $$ = tmp;
@@ -1839,6 +1837,7 @@ add_soap(void)
 static void
 add_XML(void)
 { Symbol *s = lookup("_XML");
+  s->token = TYPE;
   p = enter(typetable, s);
   xml = p->info.typ = mksymtype(mkstring(), s);
   p->info.sto = Stypedef;
@@ -1847,6 +1846,7 @@ add_XML(void)
 static void
 add_qname(void)
 { Symbol *s = lookup("_QName");
+  s->token = TYPE;
   p = enter(typetable, s);
   qname = p->info.typ = mksymtype(mkstring(), s);
   p->info.sto = Stypedef;

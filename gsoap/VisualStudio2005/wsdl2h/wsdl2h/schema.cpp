@@ -258,10 +258,10 @@ int xs__schema::insert(xs__schema& schema)
 }
 
 int xs__schema::traverse()
-{ if (vflag)
-    cerr << "Analyzing schema " << (targetNamespace?targetNamespace:"") << endl;
-  if (updated)
+{ if (updated)
     return SOAP_OK;
+  if (vflag)
+    cerr << "  Analyzing schema '" << (targetNamespace?targetNamespace:"") << "'" << endl;
   updated = true;
   if (!targetNamespace)
   { if (vflag)
@@ -302,7 +302,7 @@ int xs__schema::traverse()
   for (vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
     (*ag).traverse(*this);
   if (vflag)
-    cerr << "End of schema " << (targetNamespace?targetNamespace:"") << endl;
+    cerr << "  End of schema '" << (targetNamespace?targetNamespace:"") << "'" << endl;
   return SOAP_OK;
 }
 
@@ -472,13 +472,13 @@ int xs__include::preprocess(xs__schema &schema)
     map<const char*, xs__schema*, ltstr>::iterator i = included.find(schemaLocation);
     if (i == included.end())
     { if (vflag)
-        cerr << "Preprocessing schema include " << (schemaLocation?schemaLocation:"?") << " into schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+        cerr << "Preprocessing schema include '" << (schemaLocation?schemaLocation:"") << "' into schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
       included[schemaLocation] = schemaRef = new xs__schema(schema.soap);
       schemaRef->read(schema.sourceLocation(), schemaLocation);
     }
     else
     { if (vflag)
-        cerr << "Schema " << (schemaLocation?schemaLocation:"?") << " already included into schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+        cerr << "Schema '" << (schemaLocation?schemaLocation:"") << "' already included into schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
       schemaRef = (*i).second;
     }
   }
@@ -504,7 +504,7 @@ xs__redefine::xs__redefine()
 
 int xs__redefine::preprocess(xs__schema &schema)
 { if (vflag)
-    cerr << "Preprocessing schema redefine " << (schemaLocation?schemaLocation:"?") << " into schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+    cerr << "Preprocessing schema redefine '" << (schemaLocation?schemaLocation:"") << "' into schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
   if (!schemaRef)
   { if (schemaLocation)
     { schemaRef = new xs__schema(schema.soap, schema.sourceLocation(), schemaLocation);
@@ -573,7 +573,7 @@ xs__import::xs__import()
 
 int xs__import::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema import " << (namespace_?namespace_:"") << endl;
+    cerr << "   Analyzing schema import '" << (namespace_?namespace_:"") << "'" << endl;
   if (!schemaRef)
   { bool found = false;
     if (namespace_)
@@ -630,7 +630,7 @@ xs__attribute::xs__attribute()
 
 int xs__attribute::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema attribute " << (name?name:"") << endl;
+    cerr << "   Analyzing schema attribute '" << (name?name:"") << "'" << endl;
   schemaRef = &schema;
   const char *token = qname_token(ref, schema.targetNamespace);
   attributeRef = NULL;
@@ -639,7 +639,7 @@ int xs__attribute::traverse(xs__schema &schema)
       if (!strcmp((*i).name, token))
       { attributeRef = &(*i);
         if (vflag)
-          cerr << "Found attribute " << (name?name:"") << " ref " << (token?token:"") << endl;
+          cerr << "    Found attribute '" << (name?name:"") << "' ref '" << (token?token:"") << "'" << endl;
         break;
       }
   }
@@ -653,7 +653,7 @@ int xs__attribute::traverse(xs__schema &schema)
           { if (!strcmp((*j).name, token))
             { attributeRef = &(*j);
               if (vflag)
-                cerr << "Found attribute " << (name?name:"") << " ref " << (token?token:"") << endl;
+                cerr << "    Found attribute '" << (name?name:"") << "' ref '" << (token?token:"") << "'" << endl;
               break;
             }
 	  }
@@ -675,7 +675,7 @@ int xs__attribute::traverse(xs__schema &schema)
         if (!strcmp((*i).name, token))
         { simpleTypeRef = &(*i);
           if (vflag)
-            cerr << "Found attribute " << (name?name:"") << " type " << (token?token:"") << endl;
+            cerr << "    Found attribute '" << (name?name:"") << "' type '" << (token?token:"") << "'" << endl;
           break;
         }
     }
@@ -689,7 +689,7 @@ int xs__attribute::traverse(xs__schema &schema)
             { if (!strcmp((*j).name, token))
               { simpleTypeRef = &(*j);
                 if (vflag)
-                  cerr << "Found attribute " << (name?name:"") << " type " << (token?token:"") << endl;
+                  cerr << "    Found attribute '" << (name?name:"") << "' type '" << (token?token:"") << "'" << endl;
                 break;
               }
 	    }
@@ -705,13 +705,13 @@ int xs__attribute::traverse(xs__schema &schema)
     { if (is_builtin_qname(ref))
         schema.builtinAttribute(ref);
       else if (!Wflag)
-	cerr << "Warning: could not find attribute '" << (name?name:"") << "' ref '" << ref << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+	cerr << "Warning: could not find attribute '" << (name?name:"") << "' ref '" << ref << "' in schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
     }
     else if (type)
     { if (is_builtin_qname(type))
         schema.builtinType(type);
       else if (!Wflag)
-	cerr << "Warning: could not find attribute '" << (name?name:"") << "' type '" << type << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+	cerr << "Warning: could not find attribute '" << (name?name:"") << "' type '" << type << "' in schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
     }
   }
   return SOAP_OK;
@@ -750,7 +750,7 @@ xs__element::xs__element()
 
 int xs__element::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema element " << (name?name:"") << endl;
+    cerr << "   Analyzing schema element '" << (name?name:"") << "'" << endl;
   schemaRef = &schema;
   const char *token = qname_token(ref, schema.targetNamespace);
   elementRef = NULL;
@@ -759,7 +759,7 @@ int xs__element::traverse(xs__schema &schema)
       if (!strcmp((*i).name, token))
       { elementRef = &(*i);
         if (vflag)
-          cerr << "Found element " << (name?name:"") << " ref " << (token?token:"") << endl;
+          cerr << "    Found element '" << (name?name:"") << "' ref '" << (token?token:"") << "'" << endl;
         break;
       }
   }
@@ -773,7 +773,7 @@ int xs__element::traverse(xs__schema &schema)
           { if (!strcmp((*j).name, token))
             { elementRef = &(*j);
               if (vflag)
-                cerr << "Found element " << (name?name:"") << " ref " << (token?token:"") << endl;
+                cerr << "    Found element '" << (name?name:"") << "' ref '" << (token?token:"") << "'" << endl;
               break;
             }
           }
@@ -795,7 +795,7 @@ int xs__element::traverse(xs__schema &schema)
         if (!strcmp((*i).name, token))
         { simpleTypeRef = &(*i);
           if (vflag)
-            cerr << "Found element " << (name?name:"") << " simpleType " << (token?token:"") << endl;
+            cerr << "    Found element '" << (name?name:"") << "' simpleType '" << (token?token:"") << "'" << endl;
           break;
         }
     }
@@ -809,7 +809,7 @@ int xs__element::traverse(xs__schema &schema)
             { if (!strcmp((*j).name, token))
               { simpleTypeRef = &(*j);
                 if (vflag)
-                  cerr << "Found element " << (name?name:"") << " simpleType " << (token?token:"") << endl;
+                  cerr << "    Found element '" << (name?name:"") << "' simpleType '" << (token?token:"") << "'" << endl;
                 break;
               }
             }
@@ -832,7 +832,7 @@ int xs__element::traverse(xs__schema &schema)
         if (!strcmp((*i).name, token))
         { complexTypeRef = &(*i);
           if (vflag)
-            cerr << "Found element " << (name?name:"") << " complexType " << (token?token:"") << endl;
+            cerr << "    Found element '" << (name?name:"") << "' complexType '" << (token?token:"") << "'" << endl;
           break;
         }
     }
@@ -846,7 +846,7 @@ int xs__element::traverse(xs__schema &schema)
             { if (!strcmp((*j).name, token))
               { complexTypeRef = &(*j);
                 if (vflag)
-                  cerr << "Found element " << (name?name:"") << " complexType " << (token?token:"") << endl;
+                  cerr << "    Found element '" << (name?name:"") << "' complexType '" << (token?token:"") << "'" << endl;
                 break;
               }
             }
@@ -863,7 +863,7 @@ int xs__element::traverse(xs__schema &schema)
       if (!strcmp((*i).name, token))
       { (*i).substitutions.push_back(this);
         if (vflag)
-          cerr << "Found substitutionGroup element " << (name?name:"") << " for abstract element " << (token?token:"") << endl;
+          cerr << "    Found substitutionGroup element '" << (name?name:"") << "' for abstract element '" << (token?token:"") << "'" << endl;
         break;
       }
   }
@@ -876,7 +876,7 @@ int xs__element::traverse(xs__schema &schema)
         { if (!strcmp((*j).name, token))
           { (*j).substitutions.push_back(this);
             if (vflag)
-              cerr << "Found substitutionGroup element " << (name?name:"") << " for abstract element " << (token?token:"") << endl;
+              cerr << "    Found substitutionGroup element '" << (name?name:"") << "' for abstract element '" << (token?token:"") << "'" << endl;
             break;
           }
         }
@@ -888,13 +888,13 @@ int xs__element::traverse(xs__schema &schema)
     { if (is_builtin_qname(ref))
         schema.builtinElement(ref);
       else if (!Wflag)
-	cerr << "Warning: could not find element '" << (name?name:"") << "' ref '" << ref << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+	cerr << "Warning: could not find element '" << (name?name:"") << "' ref '" << ref << "' in schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
     }
     else if (type)
     { if (is_builtin_qname(type))
         schema.builtinType(type);
       else if (!Wflag)
-	cerr << "Warning: could not find element '" << (name?name:"") << "' type '" << type << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+	cerr << "Warning: could not find element '" << (name?name:"") << "' type '" << type << "' in schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
     }
   }
   return SOAP_OK;
@@ -943,7 +943,7 @@ xs__simpleType::xs__simpleType()
 
 int xs__simpleType::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema simpleType " << (name?name:"") << endl;
+    cerr << "   Analyzing schema simpleType '" << (name?name:"") << "'" << endl;
   schemaRef = &schema;
   if (list)
     list->traverse(schema);
@@ -994,7 +994,7 @@ xs__complexType::xs__complexType()
 
 int xs__complexType::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema complexType " << (name?name:"") << endl;
+    cerr << "   Analyzing schema complexType '" << (name?name:"") << "'" << endl;
   schemaRef = &schema;
   if (simpleContent)
     simpleContent->traverse(schema);
@@ -1076,7 +1076,7 @@ int xs__complexType::baseLevel()
 
 int xs__simpleContent::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema simpleContent" << endl;
+    cerr << "   Analyzing schema simpleContent" << endl;
   if (extension)
     extension->traverse(schema);
   else if (restriction)
@@ -1086,7 +1086,7 @@ int xs__simpleContent::traverse(xs__schema &schema)
 
 int xs__complexContent::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema complexContent" << endl;
+    cerr << "   Analyzing schema complexContent" << endl;
   if (extension)
     extension->traverse(schema);
   else if (restriction)
@@ -1101,7 +1101,7 @@ xs__extension::xs__extension()
 
 int xs__extension::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema extension " << (base?base:"") << endl;
+    cerr << "   Analyzing schema extension '" << (base?base:"") << "'" << endl;
   if (group)
     group->traverse(schema);
   else if (all)
@@ -1121,7 +1121,7 @@ int xs__extension::traverse(xs__schema &schema)
       if (!strcmp((*i).name, token))
       { simpleTypeRef = &(*i);
         if (vflag)
-          cerr << "Found extension base type " << (token?token:"") << endl;
+          cerr << "    Found extension base type '" << (token?token:"") << "'" << endl;
         break;
       }
   }
@@ -1135,7 +1135,7 @@ int xs__extension::traverse(xs__schema &schema)
           { if (!strcmp((*j).name, token))
             { simpleTypeRef = &(*j);
               if (vflag)
-                cerr << "Found extension base type " << (token?token:"") << endl;
+                cerr << "    Found extension base type '" << (token?token:"") << "'" << endl;
               break;
             }
 	  }
@@ -1152,7 +1152,7 @@ int xs__extension::traverse(xs__schema &schema)
       if (!strcmp((*i).name, token))
       { complexTypeRef = &(*i);
         if (vflag)
-          cerr << "Found extension base type " << (token?token:"") << endl;
+          cerr << "    Found extension base type '" << (token?token:"") << "'" << endl;
         break;
       }
   }
@@ -1166,7 +1166,7 @@ int xs__extension::traverse(xs__schema &schema)
           { if (!strcmp((*j).name, token))
             { complexTypeRef = &(*j);
               if (vflag)
-                cerr << "Found extension base type " << (token?token:"") << endl;
+                cerr << "    Found extension base type '" << (token?token:"") << "'" << endl;
               break;
             }
 	  }
@@ -1181,7 +1181,7 @@ int xs__extension::traverse(xs__schema &schema)
     { if (is_builtin_qname(base))
         schema.builtinType(base);
       else if (!Wflag)
-	cerr << "Warning: could not find extension base type '" << base << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+	cerr << "Warning: could not find extension base type '" << base << "' in schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
     }
     else
       cerr << "Extension has no base" << endl;
@@ -1212,7 +1212,7 @@ xs__restriction::xs__restriction()
 
 int xs__restriction::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema restriction " << (base?base:"") << endl;
+    cerr << "   Analyzing schema restriction '" << (base?base:"") << "'" << endl;
   if (group)
     group->traverse(schema);
   else if (all)
@@ -1236,7 +1236,7 @@ int xs__restriction::traverse(xs__schema &schema)
       if (!strcmp((*i).name, token))
       { simpleTypeRef = &(*i);
         if (vflag)
-          cerr << "Found restriction base type " << (token?token:"") << endl;
+          cerr << "    Found restriction base type '" << (token?token:"") << "'" << endl;
         break;
       }
   }
@@ -1250,7 +1250,7 @@ int xs__restriction::traverse(xs__schema &schema)
           { if (!strcmp((*j).name, token))
             { simpleTypeRef = &(*j);
               if (vflag)
-                cerr << "Found restriction base type " << (token?token:"") << endl;
+                cerr << "    Found restriction base type '" << (token?token:"") << "'" << endl;
               break;
             }
 	  }
@@ -1267,7 +1267,7 @@ int xs__restriction::traverse(xs__schema &schema)
       if (!strcmp((*i).name, token))
       { complexTypeRef = &(*i);
         if (vflag)
-          cerr << "Found restriction base type " << (token?token:"") << endl;
+          cerr << "    Found restriction base type '" << (token?token:"") << "'" << endl;
         break;
       }
   }
@@ -1281,7 +1281,7 @@ int xs__restriction::traverse(xs__schema &schema)
           { if (!strcmp((*j).name, token))
             { complexTypeRef = &(*j);
               if (vflag)
-                cerr << "Found restriction base type " << (token?token:"") << endl;
+                cerr << "    Found restriction base type '" << (token?token:"") << "'" << endl;
               break;
             }
 	  }
@@ -1296,7 +1296,7 @@ int xs__restriction::traverse(xs__schema &schema)
     { if (is_builtin_qname(base))
         schema.builtinType(base);
       else if (!Wflag)
-	cerr << "Warning: could not find restriction base type '" << base << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+	cerr << "Warning: could not find restriction base type '" << base << "' in schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
     }
     else
       cerr << "Restriction has no base" << endl;
@@ -1326,7 +1326,7 @@ xs__list::xs__list()
 
 int xs__list::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema list" << endl;
+    cerr << "   Analyzing schema list" << endl;
   if (restriction)
     restriction->traverse(schema);
   for (vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
@@ -1338,7 +1338,7 @@ int xs__list::traverse(xs__schema &schema)
       if (!strcmp((*i).name, token))
       { itemTypeRef = &(*i);
         if (vflag)
-          cerr << "Found list itemType " << (token?token:"") << endl;
+          cerr << "    Found list itemType '" << (token?token:"") << "'" << endl;
         break;
       }
   }
@@ -1352,7 +1352,7 @@ int xs__list::traverse(xs__schema &schema)
           { if (!strcmp((*j).name, token))
             { itemTypeRef = &(*j);
               if (vflag)
-                cerr << "Found list itemType " << (token?token:"") << endl;
+                cerr << "    Found list itemType '" << (token?token:"") << "'" << endl;
               break;
             }
 	  }
@@ -1366,7 +1366,7 @@ int xs__list::traverse(xs__schema &schema)
   { if (is_builtin_qname(itemType))
       schema.builtinType(itemType);
     else if (!Wflag)
-      cerr << "Warning: could not find list itemType '" << itemType << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+      cerr << "Warning: could not find list itemType '" << itemType << "' in schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
   }
   return SOAP_OK;
 }
@@ -1381,7 +1381,7 @@ xs__simpleType *xs__list::itemTypePtr() const
 
 int xs__union::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema union" << endl;
+    cerr << "   Analyzing schema union" << endl;
   for (vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
     (*i).traverse(schema);
   return SOAP_OK;
@@ -1389,7 +1389,7 @@ int xs__union::traverse(xs__schema &schema)
 
 int xs__all::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema all" << endl;
+    cerr << "   Analyzing schema all" << endl;
   for (vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
     (*i).traverse(schema);
   return SOAP_OK;
@@ -1427,7 +1427,7 @@ xs__seqchoice::xs__seqchoice()
 
 int xs__seqchoice::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema sequence/choice" << endl;
+    cerr << "   Analyzing schema sequence/choice" << endl;
   schemaRef = &schema;
   for (vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); ++c)
     (*c).traverse(schema);
@@ -1449,7 +1449,7 @@ xs__attributeGroup::xs__attributeGroup()
 
 int xs__attributeGroup::traverse(xs__schema& schema)
 { if (vflag)
-    cerr << "attributeGroup" << endl;
+    cerr << "   Analyzing schema attributeGroup" << endl;
   schemaRef = &schema;
   for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
     (*at).traverse(schema);
@@ -1463,7 +1463,7 @@ int xs__attributeGroup::traverse(xs__schema& schema)
         if (!strcmp((*i).name, token))
         { attributeGroupRef = &(*i);
           if (vflag)
-              cerr << "Found attributeGroup " << (name?name:"") << " ref " << (token?token:"") << endl;
+              cerr << "    Found attributeGroup '" << (name?name:"") << "' ref '" << (token?token:"") << "'" << endl;
           break;
         }
     }
@@ -1477,7 +1477,7 @@ int xs__attributeGroup::traverse(xs__schema& schema)
             { if (!strcmp((*j).name, token))
               { attributeGroupRef = &(*j);
                 if (vflag)
-                    cerr << "Found attribute Group " << (name?name:"") << " ref " << (token?token:"") << endl;
+                    cerr << "    Found attribute Group '" << (name?name:"") << "' ref '" << (token?token:"") << "'" << endl;
                 break;
               }
 	    }
@@ -1489,7 +1489,7 @@ int xs__attributeGroup::traverse(xs__schema& schema)
     }
     if (!attributeGroupRef)
       if (!Wflag)
-        cerr << "Warning: could not find attributeGroup '" << (name?name:"") << "' ref '" << (ref?ref:"") << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+        cerr << "Warning: could not find attributeGroup '" << (name?name:"") << "' ref '" << (ref?ref:"") << "' in schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
   }
   return SOAP_OK;
 }
@@ -1512,7 +1512,7 @@ xs__attributeGroup *xs__attributeGroup::attributeGroupPtr() const
 
 int xs__any::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema any" << endl;
+    cerr << "   Analyzing schema any" << endl;
   for (vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
     (*i).traverse(schema);
   return SOAP_OK;
@@ -1525,7 +1525,7 @@ xs__group::xs__group()
 
 int xs__group::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema group" << endl;
+    cerr << "   Analyzing schema group" << endl;
   schemaRef = &schema;
   if (all)
     all->traverse(schema);
@@ -1541,7 +1541,7 @@ int xs__group::traverse(xs__schema &schema)
         if (!strcmp((*i).name, token))
         { groupRef = &(*i);
           if (vflag)
-              cerr << "Found group " << (name?name:"") << " ref " << (token?token:"") << endl;
+              cerr << "    Found group '" << (name?name:"") << "' ref '" << (token?token:"") << "'" << endl;
           break;
         }
     }
@@ -1555,7 +1555,7 @@ int xs__group::traverse(xs__schema &schema)
             { if (!strcmp((*j).name, token))
               { groupRef = &(*j);
                 if (vflag)
-                    cerr << "Found group " << (name?name:"") << " ref " << (token?token:"") << endl;
+                    cerr << "    Found group '" << (name?name:"") << "' ref '" << (token?token:"") << "'" << endl;
                 break;
               }
 	    }
@@ -1567,7 +1567,7 @@ int xs__group::traverse(xs__schema &schema)
     }
     if (!groupRef)
       if (!Wflag)
-        cerr << "Warning: could not find group '" << (name?name:"") << "' ref '" << (ref?ref:"") << "' in schema " << (schema.targetNamespace?schema.targetNamespace:"") << endl;
+        cerr << "Warning: could not find group '" << (name?name:"") << "' ref '" << (ref?ref:"") << "' in schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
   }
   return SOAP_OK;
 }
@@ -1590,13 +1590,13 @@ xs__group* xs__group::groupPtr() const
 
 int xs__enumeration::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema enumeration" << endl;
+    cerr << "   Analyzing schema enumeration '" << (value?value:"") << "'" << endl;
   return SOAP_OK;
 }
 
 int xs__pattern::traverse(xs__schema &schema)
 { if (vflag)
-    cerr << "Analyzing schema pattern" << endl;
+    cerr << "   Analyzing schema pattern" << endl;
   return SOAP_OK;
 }
 

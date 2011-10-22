@@ -60,6 +60,19 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 extern "C" {
 #endif
 
+int emulate_pthread_mutex_lock(volatile MUTEX_TYPE *mx)
+{
+  if (*mx == NULL) /* static initializer? */
+  {
+    HANDLE p = CreateMutex(NULL, FALSE, NULL);
+
+    if (InterlockedCompareExchangePointer((PVOID*)mx, (PVOID)p, NULL) != NULL)
+      CloseHandle(p);
+  }
+
+  return WaitForSingleObject(*mx, INFINITE) == WAIT_FAILED;
+}
+
 int emulate_pthread_cond_init(COND_TYPE *cv)
 {
   cv->waiters_count_ = 0;

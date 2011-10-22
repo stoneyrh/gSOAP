@@ -87,9 +87,13 @@ ref     = <http://docs.oasis-open.org/wsrm/2004/06/reference-1.1.xsd>
 wsrm__MessageNumberType		= | ULONG64
 wsrm__DetailType		= | struct SOAP_ENV__Detail
 _wsrm__UnsupportedElement	= | _QName | _QName
-_wsrm__Identifier		= | char* /*URI*/
-_wsrm__Address			= | char* /*URI*/
+_wsrm__Identifier		= | char*
+_wsrm__Address			= | char*
 _wsrm__Expires			= #import "custom/duration.h" | xsd__duration
+
+#	wsdd bindings
+
+wsdd	= <http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01>
 
 ################################################################################
 #
@@ -347,6 +351,10 @@ xsd__base64Binary	= | char* /*base64*/
 #	Map xsd:boolean to xsd__boolean_ to avoid redefs
 
 xsd__boolean		= enum xsd__boolean_ { _false, _true }; | enum xsd__boolean_
+
+#	Map xsd:IDREFS to char*
+
+xsd__IDREFS		= | char* /*IDREFS*/
 
 #	Redeclare wsrp:action_t
 

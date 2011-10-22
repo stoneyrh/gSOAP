@@ -32,8 +32,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = i386-apple-darwin10.7.0
-host_triplet = i386-apple-darwin10.7.0
+build_triplet = i386-apple-darwin11.2.0
+host_triplet = i386-apple-darwin11.2.0
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -95,12 +95,12 @@ AWK = awk
 BISON_DEFINE = -DWITH_BISON
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -Wno-deprecated-declarations
 CPP = gcc -E
 CPPFLAGS = 
 CXX = g++
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O2
+CXXFLAGS = -Wno-deprecated-declarations
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
@@ -167,10 +167,10 @@ am__quote =
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = i386-apple-darwin10.7.0
+build = i386-apple-darwin11.2.0
 build_alias = 
 build_cpu = i386
-build_os = darwin10.7.0
+build_os = darwin11.2.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -178,10 +178,10 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = i386-apple-darwin10.7.0
+host = i386-apple-darwin11.2.0
 host_alias = 
 host_cpu = i386
-host_os = darwin10.7.0
+host_os = darwin11.2.0
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
@@ -476,7 +476,7 @@ distdir: $(DISTFILES)
 	      || exit 1; \
 	  fi; \
 	done
-	-find $(distdir) -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
+	-find $(distdir) -type d ! -perm -755 -exec chmod u+rwx,go+rx {} \; -o \
 	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
 	  ! -type d ! -perm -400 -exec chmod a+r {} \; -o \
 	  ! -type d ! -perm -444 -exec $(install_sh) -c -m a+r {} {} \; \

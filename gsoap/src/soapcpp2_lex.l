@@ -339,6 +339,7 @@ static void directive(void)
 		sp->WSDL = NULL;
 		sp->style = NULL;
 		sp->encoding = NULL;
+		sp->xsi_type = 0;
 		sp->elementForm = NULL;
 		sp->attributeForm = NULL;
 		sp->executable = NULL;
@@ -450,6 +451,9 @@ static void directive(void)
 		}
 		else if (!strncmp(yytext+i, "namespace2:", 11))
 		{	sp->URI2 = s;
+		}
+		else if (!strncmp(yytext+i, "typed:", 6))
+		{	sp->xsi_type = (*s == 'y');
 		}
 		else if (!strncmp(yytext+i, "form:", 5))
 		{	sp->elementForm = s;
@@ -578,10 +582,50 @@ static void directive(void)
 			s[k-j] = '\0';
 			m->part = s;
 		}
-		else if (!strncmp(yytext+i, "method-response-action:", 23))
+		else if (!strncmp(yytext+i, "method-input-action:", 20))
+		{	m = (Method*)emalloc(sizeof(Method));
+			m->name = s;
+			m->mess = REQUEST_ACTION;
+			m->part = NULL;
+			m->next = sp->list;
+			sp->list = m;
+			for (j = k; yytext[j]; j++)
+				if (yytext[j] > 32)
+					break;
+			for (k = j; yytext[k]; k++)
+				if (yytext[k] == 10 || yytext[k] == 13)
+					break;
+			if (j == k)
+				return;
+			s = (char*)emalloc(k-j+1);
+			strncpy(s, yytext+j, k-j);
+			s[k-j] = '\0';
+			m->part = s;
+		}
+		else if (!strncmp(yytext+i, "method-output-action:", 21))
 		{	m = (Method*)emalloc(sizeof(Method));
 			m->name = s;
 			m->mess = RESPONSE_ACTION;
+			m->part = NULL;
+			m->next = sp->list;
+			sp->list = m;
+			for (j = k; yytext[j]; j++)
+				if (yytext[j] > 32)
+					break;
+			for (k = j; yytext[k]; k++)
+				if (yytext[k] == 10 || yytext[k] == 13)
+					break;
+			if (j == k)
+				return;
+			s = (char*)emalloc(k-j+1);
+			strncpy(s, yytext+j, k-j);
+			s[k-j] = '\0';
+			m->part = s;
+		}
+		else if (!strncmp(yytext+i, "method-fault-action:", 20))
+		{	m = (Method*)emalloc(sizeof(Method));
+			m->name = s;
+			m->mess = FAULT_ACTION;
 			m->part = NULL;
 			m->next = sp->list;
 			sp->list = m;

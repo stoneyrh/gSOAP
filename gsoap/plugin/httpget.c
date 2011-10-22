@@ -110,6 +110,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 	  ... error ...
         else
 	  ... ok ...
+        soap_destroy(&soap);
         soap_end(&soap);
 	soap_done(&soap);
 
@@ -119,47 +120,22 @@ compiling, linking, and/or using OpenSSL is allowed.
 	To use general HTTP GET, for example to retrieve an HTML document, use:
 
 	struct soap soap;
+        char *response = NULL;
 	soap_init(&soap);
 	soap_register_plugin(&soap, http_get); // register plugin
 	if (soap_get_connect(&soap, endpoint, action)
 	 || soap_begin_recv(&soap))
 	  ... connect/recv error ...
 	else
-        { if ((soap.mode & SOAP_IO) == SOAP_IO_CHUNK
-#ifdef WITH_ZLIB
-           || soap.zlib_in != SOAP_ZLIB_NONE
-#endif
-          )
-        { soap_wchar c;
-          // This loop handles with chunked/compressed transfers
-          for (;;)
-          { if ((c = soap_getchar(&soap)) == (int)EOF)
-              break;
-            [... c is a 8-bit char ...]
-          }
-        }
-        else
-        { // This loop handles HTTP transfers (with HTTP content length set)
-          if (soap.length)
-          { size_t i;
-            for (i = soap.length; i; i--)
-            { soap_wchar c;
-              if ((c = soap_getchar(&soap)) == (int)EOF)
-              { soap.error = SOAP_EOF;
-                return NULL;
-              }
-              [... c is a 8-bit char ...]
-            }
-          }
-        }
+          response = soap_get_http_body(&soap);
         soap_end_recv(&soap);
+          ... use 'response'
         soap_destroy(&soap);
         soap_end(&soap);
 	soap_done(&soap);
 
-	A soap_http_body() function with similar code as the above that moves
-	HTTP body content into a buffer is available in the httppost.c plugin.
-
+        The soap_get_http_body() function above moves HTTP body content into a
+        buffer.
 */
 
 #include "httpget.h"

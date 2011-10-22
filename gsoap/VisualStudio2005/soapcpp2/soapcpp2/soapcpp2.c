@@ -57,6 +57,7 @@ int eflag = 0;		/* when set, use SOAP RPC encoding by default */
 unsigned long fflag = 0;/* multi-file split for each bundle of -fN defs */
 int iflag = 0;		/* when set, generate new style proxy/object classes inherited from soap struct */
 int jflag = 0;		/* when set, generate new style proxy/object classes */
+int kflag = 0;		/* when set, generate data traversal/walker routines */
 int mflag = 0;		/* when set, generate code that requires array/binary classes to explicitly remove malloced array */
 int nflag = 0;		/* when set, names the namespaces global struct '%NAME%_namespaces */
 int lflag = 0;		/* when set, create library */
@@ -145,7 +146,7 @@ main(int argc, char **argv)
 						break;
 					case '?':
 					case 'h':
-						fprintf(stderr, "Usage: soapcpp2 [-1|-2] [-C|-S] [-T] [-L] [-a] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [infile]\n\n");
+						fprintf(stderr, "Usage: soapcpp2 [-1|-2] [-C|-S] [-T] [-L] [-a] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-k] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [infile]\n\n");
 						fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
@@ -160,9 +161,10 @@ main(int argc, char **argv)
 -e	generate SOAP RPC encoding style bindings\n\
 -fN	file split of N XML serializer implementations per file (N>=10)\n\
 -h	display help info\n\
+-Ipath  use path(s) for #import\n\
 -i      generate C++ service proxies and objects inherited from soap struct\n\
 -j      generate C++ service proxies and objects that share a soap struct\n\
--Ipath  use path(s) for #import\n\
+-k      generate data structure walkers (experimental)\n\
 -l      generate linkable modules (experimental)\n\
 -m      generate Matlab(tm) code for MEX compiler\n\
 -n      use service name to rename service functions and namespace table\n\
@@ -203,6 +205,9 @@ infile	header file to parse (or stdin)\n\
 						break;
 					case 'j':
 						jflag = 1;
+						break;
+					case 'k':
+						kflag = 1;
 						break;
 					case 'm':
 						mflag = 1;

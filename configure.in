@@ -72,7 +72,11 @@ case "${host}" in
         *-*-osf*)	platform=TRU64
 			SAMPLE_EXTRA_LIBS="-lm"
 			;;
-        *-apple-*)	platform=MACOSX ;;
+        *-apple-*)	platform=MACOSX
+			# Appease 10.7 Lion (OpenSSL deprecated)
+			CXXFLAGS="-Wno-deprecated-declarations"
+			CFLAGS="-Wno-deprecated-declarations"
+			;;
 	*-nto-qnx)	platform=QNX
 			SAMPLE_EXTRA_LIBS="-lsocket"
 			;;

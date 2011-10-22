@@ -255,7 +255,16 @@ void Definitions::analyze(const wsdl__definitions &definitions)
               o->input->style = soap__operation_style;
               o->input->use = input_body->use;
               o->input->encodingStyle = input_body->encodingStyle;
-              o->input->action = input->wsam__Action;
+              if (input->wsa__Action)
+                o->input->action = input->wsa__Action;
+              else if (input->wsam__Action)
+                o->input->action = input->wsam__Action;
+              else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
+              { const char *name = input->name ? input->name : o->name;
+                char *tmp = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name) + 3);
+                sprintf(tmp, "%s/%s/%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name);
+                o->input->action = tmp;
+              }
               o->input->message = input->messagePtr();
               o->input->part = NULL;
               o->input->multipartRelated = ext_input->mime__multipartRelated_;
@@ -326,7 +335,16 @@ void Definitions::analyze(const wsdl__definitions &definitions)
                   else
                     o->output->URI = output_body->namespace_;
                   o->output->encodingStyle = output_body->encodingStyle;
-                  o->output->action = output->wsam__Action;
+                  if (output->wsa__Action)
+                    o->output->action = output->wsa__Action;
+                  else if (output->wsam__Action)
+                    o->output->action = output->wsam__Action;
+                  else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
+                  { const char *name = output->name ? output->name : o->name;
+                    char *tmp = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name) + 11);
+                    sprintf(tmp, "%s/%s/%s%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name, output->name ? "" : "Response");
+                    o->output->action = tmp;
+                  }
                   o->output->message = output->messagePtr();
                   o->output->part = NULL;
                   o->output->multipartRelated = ext_output->mime__multipartRelated_;
@@ -458,12 +476,25 @@ void Definitions::analyze(const wsdl__definitions &definitions)
     	      // collect faults
               for (vector<wsdl__ext_fault>::const_iterator ext_fault = (*operation).fault.begin(); ext_fault != (*operation).fault.end(); ++ext_fault)
     	      { if ((*ext_fault).soap__fault_ && (*ext_fault).messagePtr())
-    	        { Message *f = new Message();
+                { const wsdl__fault *fault = NULL;
+                  for (vector<wsdl__fault>::const_iterator ft = wsdl__operation_->fault.begin(); ft != wsdl__operation_->fault.end(); ++ft)
+                  { if ((*ft).messagePtr() == (*ext_fault).messagePtr())
+                    { fault = &(*ft);
+                      break;
+                    }
+                  }
+    	          Message *f = new Message();
     	          f->message = (*ext_fault).messagePtr();
                   f->body_parts = NULL;
     	          f->part = NULL;
     	          f->encodingStyle = (*ext_fault).soap__fault_->encodingStyle;
 		  f->action = NULL;
+                  if (fault)
+                  { if (fault->wsa__Action)
+                      f->action = fault->wsa__Action;
+                    else
+                      f->action = fault->wsam__Action;
+                  }
     	          f->URI = (*ext_fault).soap__fault_->namespace_;
 		  f->style = document;	// irrelevant
     	          f->use = (*ext_fault).soap__fault_->use;
@@ -476,12 +507,12 @@ void Definitions::analyze(const wsdl__definitions &definitions)
                   f->name = types.aname("_", f->URI, f->message->name);
     	          f->documentation = f->message->documentation;
                   // collect fault message policies
-                  /* TODO: collect fault (not just ext_fault) policy
-                  if (fault->wsp__Policy_)
-                    o->fault->policy.push_back(fault->wsp__Policy_);
-                  if (fault->wsp__PolicyReference_ && fault->wsp__PolicyReference_->policyPtr())
-                    o->fault->policy.push_back(fault->wsp__PolicyReference_->policyPtr());
-                  */
+                  if (fault)
+                  { if (fault->wsp__Policy_)
+                      f->policy.push_back(fault->wsp__Policy_);
+                    if (fault->wsp__PolicyReference_ && fault->wsp__PolicyReference_->policyPtr())
+                      f->policy.push_back(fault->wsp__PolicyReference_->policyPtr());
+                  }
                   if (ext_fault->wsp__Policy_)
                     f->policy.push_back(ext_fault->wsp__Policy_);
                   if (ext_fault->wsp__PolicyReference_ && ext_fault->wsp__PolicyReference_->policyPtr())
@@ -1394,15 +1425,15 @@ void Service::generate(Types& types)
       }
       if ((*op2)->soapAction)
       { if (*(*op2)->soapAction)
-          fprintf(stream, "\n  - SOAP action=\"%s\"\n", (*op2)->soapAction);
+          fprintf(stream, "\n  - SOAP action: \"%s\"\n", (*op2)->soapAction);
       }
       if ((*op2)->input)
       { if ((*op2)->input->action)
-          fprintf(stream, "\n  - Addressing action=\"%s\"\n", (*op2)->input->action);
+          fprintf(stream, "\n  - Addressing action: \"%s\"\n", (*op2)->input->action);
       }
       if ((*op2)->output)
       { if ((*op2)->output->action)
-          fprintf(stream, "\n  - Addressing response action=\"%s\"\n", (*op2)->output->action);
+          fprintf(stream, "\n  - Addressing response action: \"%s\"\n", (*op2)->output->action);
       }
       for (vector<Message*>::const_iterator message = (*op2)->fault.begin(); message != (*op2)->fault.end(); ++message)
       { if ((*message)->use == literal)
@@ -1415,6 +1446,8 @@ void Service::generate(Types& types)
         }
         else if ((*message)->message && (*message)->message->name)
           fprintf(stream, "\n  - SOAP Fault: %s\n", (*message)->name);
+        if ((*message)->message && (*message)->message->name && (*message)->action)
+          fprintf(stream, "    - SOAP Fault addressing action: \"%s\"\n", (*message)->action);
 	gen_policy((*message)->policy, "fault message", types);
       }
       if (!(*op2)->input->header.empty())
@@ -1600,9 +1633,9 @@ void Operation::generate(Types &types)
       fprintf(stream, serviceformat, prefix, "method-action", method_name, "\"\"");
   }
   else if (input && input->action)
-    fprintf(stream, serviceformat, prefix, "method-action", method_name, input->action);
-  else if (output && output->action)
-    fprintf(stream, serviceformat, prefix, "method-response-action", method_name, output->action);
+    fprintf(stream, serviceformat, prefix, "method-input-action", method_name, input->action);
+  if (output && output->action)
+    fprintf(stream, serviceformat, prefix, "method-output-action", method_name, output->action);
   for (vector<Message*>::const_iterator message = fault.begin(); message != fault.end(); ++message)
   { if ((*message)->use == literal)
     { for (vector<wsdl__part>::const_iterator part = (*message)->message->part.begin(); part != (*message)->message->part.end(); ++part)
@@ -1616,6 +1649,8 @@ void Operation::generate(Types &types)
     { if ((*message)->message && (*message)->message->name)
         fprintf(stream, serviceformat, prefix, "method-fault", method_name, (*message)->name);
     }
+    if ((*message)->message && (*message)->message->name && (*message)->action)
+      fprintf(stream, serviceformat, prefix, "method-fault-action", method_name, (*message)->action);
   }
   if (input->multipartRelated)
   { for (vector<mime__part>::const_iterator inputmime = input->multipartRelated->part.begin(); inputmime != input->multipartRelated->part.end(); ++inputmime)

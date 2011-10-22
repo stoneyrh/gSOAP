@@ -75,6 +75,11 @@ Palm
 Palm OS support is no longer available for this release. The latest stable
 release with Palm OS support is gSOAP 2.7.8c.
 
+Tandem NonStop
+--------------
+
+See gsoap/TandemNonStop for instructions.
+
 Installation Instructions
 -------------------------
 

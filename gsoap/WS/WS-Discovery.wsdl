@@ -1,106 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-From: http://schemas.xmlsoap.org/ws/2004/02/discovery/discovery.wsdl
+<!--
+Copyright (c) OASIS(r) 2009. All Rights Reserved.
 
-(c) 2004 Microsoft Corporation, Inc. All rights reserved.
-The Web Services Dynamic Discovery WSDL, a/k/a WS-Discovery WSDL (the "Document"), 
-was developed by Microsoft, with the assistance of BEA Systems, Canon, Inc, and Intel 
-(collectively, the "Co-Developers"). 
+All capitalized terms in the following text have the meanings assigned to them in the OASIS Intellectual Property Rights Policy (the "OASIS IPR Policy"). The full Policy may be found at the OASIS website.
 
-The copyright is owned by Microsoft, and Microsoft hereby grants you permission to copy and 
-display the Document, in any medium without fee or royalty, provided that you include 
-the following on ALL copies of the Document, or portions thereof, that you make: 
-1.	A link or URL to the Document at this location: 
-http://schemas.xmlsoap.org/ws/2004/02/discovery/discovery.wsdl 
-2.	The copyright notice as shown in the Document. 
+This document and translations of it may be copied and furnished to others, and derivative works that comment on or otherwise explain it or assist in its implementation may be prepared, copied, published, and distributed, in whole or in part, without restriction of any kind, provided that the above copyright notice and this section are included on all such copies and derivative works. However, this document itself may not be modified in any way, including by removing the copyright notice or references to OASIS, except as needed for the purpose of developing any document or deliverable produced by an OASIS Technical Committee (in which case the rules applicable to copyrights, as set forth in the OASIS IPR Policy, must be followed) or as required to translate it into languages other than English.
 
-EXCEPT FOR THE COPYRIGHT LICENSE GRANTED ABOVE, MICROSOFT AND THE CO-DEVELOPERS DO NOT GRANT, 
-EITHER EXPRESSLY OR IMPLIEDLY, A LICENSE TO ANY INTELLECTUAL PROPERTY, INCLUDING PATENTS, 
-THEY, OR ANY OTHER THIRD PARTIES, OWN OR CONTROL.  TITLE TO THE COPYRIGHT IN THE DOCUMENT 
-WILL AT ALL TIMES REMAIN WITH MICROSOFT. 
+The limited permissions granted above are perpetual and will not be revoked by OASIS or its successors or assigns.
 
-THE DOCUMENT IS PROVIDED "AS IS," MICROSOFT AND THE CO-DEVELOPERS MAKE NO REPRESENTATIONS 
-OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF THE 
-DOCUMENT ARE SUITABLE FOR ANY PURPOSE; NOR THAT THE IMPLEMENTATION OF SUCH CONTENTS WILL 
-NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS. 
+This document and the information contained herein is provided on an "AS IS" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY OWNERSHIP RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 
-MICROSOFT AND THE CO-DEVELOPERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL 
-OR CONSEQUENTIAL DAMAGES ARISING OUT OF OR RELATING TO ANY USE OR DISTRIBUTION OF THE 
-DOCUMENT. 
+OASIS requests that any OASIS Party or any other party that believes it has patent claims that would necessarily be infringed by implementations of this OASIS Committee Specification or OASIS Standard, to notify OASIS TC Administrator and provide an indication of its willingness to grant patent licenses to such patent claims in a manner consistent with the IPR Mode of the OASIS Technical Committee that produced this specification.
 
-The Document may change before final release and you are cautioned against relying on the 
-content of this Document. 
+OASIS invites any party to contact the OASIS TC Administrator if it is aware of a claim of ownership of any patent claims that would necessarily be infringed by implementations of this specification by a patent holder that is not willing to provide a license to such patent claims in a manner consistent with the IPR Mode of the OASIS Technical Committee that produced this specification. OASIS may include such claims on its website, but disclaims any obligation to do so.
 
-No other rights are granted by implication, estoppel or otherwise.
+OASIS takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any effort to identify any such rights. Information on OASIS' procedures with respect to rights in any document or deliverable produced by an OASIS Technical Committee can be found on the OASIS website. Copies of claims of rights made available for publication and any assurances of licenses to be made available, or the result of an attempt made to obtain a general license or permission for the use of such proprietary rights by implementers or users of this OASIS Committee Specification or OASIS Standard, can be obtained from the OASIS TC Administrator. OASIS makes no representation that any information or list of intellectual property rights will at any time be complete, or that any claims in such list are, in fact, Essential Claims.
+
+The name "OASIS" is trademarks of OASIS, the owner and developer of this specification, and should be used only to refer to the organization and its official outputs. OASIS welcomes reference to, and implementation and use of, specifications, while reserving the right to enforce its marks against misleading uses. Please see http://www.oasis-open.org/who/trademark.php for above guidance.
 -->
 <wsdl:definitions
-    targetNamespace='http://schemas.xmlsoap.org/ws/2004/02/discovery'
-    xmlns:tns='http://schemas.xmlsoap.org/ws/2004/02/discovery'
-    xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/' 
-    xmlns:xs='http://www.w3.org/2001/XMLSchema' >
-
+    targetNamespace="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01"
+    xmlns:tns="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01"
+    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" >
   <wsdl:types>
     <xs:schema>
       <xs:import
-          namespace='http://schemas.xmlsoap.org/ws/2004/02/discovery'
-          schemaLocation='discovery.xsd' />
+          namespace="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01"
+          schemaLocation="http://docs.oasis-open.org/ws-dd/discovery/1.1/os/wsdd-discovery-1.1-schema-os.xsd" />
     </xs:schema>
   </wsdl:types>
 
-  <wsdl:message name='HelloMsg' >
-    <wsdl:part name='body' element='tns:Hello' />
+  <wsdl:message name="HelloMessage" >
+    <wsdl:part name="parameters" element="tns:Hello" />
   </wsdl:message>
 
-  <wsdl:message name='ByeMsg' >
-    <wsdl:part name='body' element='tns:Bye' />
+  <wsdl:message name="ByeMessage" >
+    <wsdl:part name="parameters" element="tns:Bye" />
   </wsdl:message>
 
-  <wsdl:message name='ProbeMsg' >
-    <wsdl:part name='body' element='tns:Probe' />
+  <wsdl:message name="ProbeMessage" >
+    <wsdl:part name="parameters" element="tns:Probe" />
   </wsdl:message>
 
-  <wsdl:message name='ProbeMatchMsg' >
-    <wsdl:part name='body' element='tns:ProbeMatch' />
+  <wsdl:message name="ProbeMatchMessage" >
+    <wsdl:part name="parameters" element="tns:ProbeMatches" />
   </wsdl:message>
 
-  <wsdl:message name='ResolveMsg' />
-
-  <wsdl:message name='ResolveMatchMsg' >
-    <wsdl:part name='body' element='tns:ResolveMatch' />
+  <wsdl:message name="ResolveMessage" >
+    <wsdl:part name="parameters" element="tns:Resolve" />
   </wsdl:message>
 
-  <wsdl:portType name='Discovery' >
-    <wsdl:operation name='HelloOp' >
-      <wsdl:output message='tns:HelloMsg' />
+  <wsdl:message name="ResolveMatchMessage" >
+    <wsdl:part name="parameters" element="tns:ResolveMatches" />
+  </wsdl:message>
+
+  <wsdl:portType name="TargetService" >
+    <wsdl:operation name="HelloOp" >
+      <wsdl:output message="tns:HelloMessage"
+      wsaw:Action
+      ="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Hello"
+      />
     </wsdl:operation>
-    <wsdl:operation name='ByeOp' >
-      <wsdl:output message='tns:ByeMsg' />
+    <wsdl:operation name="ByeOp" >
+      <wsdl:output message="tns:ByeMessage"
+      wsaw:Action
+      ="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Bye"
+      />
     </wsdl:operation>
-    <wsdl:operation name='ProbeOp' >
-      <wsdl:input message='tns:ProbeMsg' />
+    <wsdl:operation name="ProbeOp" >
+      <wsdl:input message="tns:ProbeMessage"
+      wsaw:Action
+      ="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Probe"
+      />
     </wsdl:operation>
-    <wsdl:operation name='ProbeMatchOp' >
-      <wsdl:output message='tns:ProbeMatchMsg' />
+    <wsdl:operation name="ProbeMatchOp" >
+      <wsdl:output message="tns:ProbeMatchMessage"
+      wsaw:Action
+      ="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/ProbeMatches"
+      />
+    </wsdl:operation>
+    <wsdl:operation name="ResolveOp" >
+      <wsdl:input message="tns:ResolveMessage"
+      wsaw:Action
+      ="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Resolve"
+      />
+    </wsdl:operation>
+    <wsdl:operation name="ResolveMatchOp" >
+      <wsdl:output message="tns:ResolveMatchMessage"
+      wsaw:Action
+      ="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/ResolveMatches"
+      />
     </wsdl:operation>
   </wsdl:portType>
 
-  <wsdl:portType name='TargetService' >
-    <wsdl:operation name='ResolveOp' >
-      <wsdl:input message='tns:ResolveMsg' />
+  <!-- If this portType is included in Types, it indicates the 
+       Target Service is a Discovery Proxy operating in a managed mode. 
+       Discovery Proxies also implement tns:TargetService in an ad hoc mode.
+  -->
+  <wsdl:portType name="DiscoveryProxy">
+    <wsdl:operation name="HelloOp" >
+      <wsdl:input message="tns:HelloMessage"
+      wsaw:Action
+      ="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Hello"
+      />
     </wsdl:operation>
-    <wsdl:operation name='ResolveMatchOp' >
-      <wsdl:output message='tns:ResolveMatchMsg' />
+    <wsdl:operation name="ByeOp" >
+      <wsdl:input message="tns:ByeMessage"
+      wsaw:Action
+      ="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Bye"
+      />
+    </wsdl:operation>
+    <wsdl:operation name="ProbeOp" >
+      <wsdl:input message="tns:ProbeMessage"
+      wsaw:Action
+      ="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Probe"
+      />
+      <wsdl:output message="tns:ProbeMatchMessage"
+      wsaw:Action
+      ="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/ProbeMatches"
+      />
+    </wsdl:operation>
+    <wsdl:operation name="ResolveOp" >
+      <wsdl:input message="tns:ResolveMessage"
+      wsaw:Action
+      ="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/Resolve"
+      />
+      <wsdl:output message="tns:ResolveMatchMessage"
+      wsaw:Action
+      ="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/ResolveMatches"
+      />
     </wsdl:operation>
   </wsdl:portType>
-
-  <!-- If this portType is included in EndpointReference/Types, it
-       indicates the Target Service is a Discovery Proxy.  Because
-       this specification does not define proxy-specific operations,
-       no operations are defined within this portType; Discovery
-       Proxies implement other types that define proxy-specific
-       operations.  Discovery Proxies also implement
-       TargetService. -->
-  <wsdl:portType name='DiscoveryProxy' />
-
 </wsdl:definitions>

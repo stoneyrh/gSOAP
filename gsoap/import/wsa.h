@@ -1,20 +1,21 @@
 /*
 
-wsa.h
+	wsa.h
 
-Usage: See plugin/wsaapi.c
+	Usage: See plugin/wsaapi.c
 
-Generated with:
-wsdl2h -cgye -o wsa.h -t WS/WS-typemap.dat WS/WS-Addressing.xsd
+	Generated with:
+	wsdl2h -cgye -o wsa.h -t WS/WS-typemap.dat WS/WS-Addressing.xsd
 
-Modified by Robert van Engelen:
+	Modified by Robert van Engelen:
 
-- Removed //gsoapopt
-- Added the following directive to import WS-Addressing namespace:
-  //gsoap wsa schema import: http://schemas.xmlsoap.org/ws/2004/08/addressing
-  This ensures that the WS-Addressing schemas are not copied into the generated
-  WSDL by soapcpp2 but are referenced with schema import in the generated WSDL.
-- Added SOAP_ENV__Header struct
+	- Removed //gsoapopt
+	- Added the following directive to import WS-Addressing namespace:
+  	//gsoap wsa schema import: http://schemas.xmlsoap.org/ws/2004/08/addressing
+	This ensures that the WS-Addressing schemas are not copied into the
+	generated WSDL by soapcpp2 but are referenced with schema import in the
+	generated WSDL.
+	- Added SOAP_ENV__Header struct
 
 Usage:
 

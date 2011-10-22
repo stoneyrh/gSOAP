@@ -8,4 +8,4 @@ Description: SOAP C Web Services with Cookies Enabled
 Version: 2.8
 Requires:
 Libs: -L${libdir} -lgsoapck 
-Cflags: -DWITH_COOKIES -DWITH_DOM -I${includedir}
+Cflags:  -DWITH_COOKIES -DWITH_DOM -I${includedir}

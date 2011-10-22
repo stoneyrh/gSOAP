@@ -23,17 +23,23 @@ and the following folders:
 bin		binaries of wsdl2h and soapcpp2 for Linux, Mac OS, and Windows
 doc		documentation, including the user guide
 samples		examples
-extras		contributed extras
 import		#import-ed header files for soapcpp2 compiler
 plugin		plug-ins for advanced features
 custom		custom serializers for various data types
-mod_gsoap	contributed Apache mod_gsoap, IIS, and WinInet support
+mod_gsoap	Apache mod_gsoap, IIS, and WinInet support
+extras		contributed extras
 src		soapcpp2 tool source files
 wsdl		wsdl2h tool source files for WSDL and XSD translation
 WS		WS-typemap.dat and WS-* protocol schemas for plug-in development
 uddi2		UDDI v2
+Palm            Palm OS support
+Symbian         Symbian OS support
+TandemNonStop   Tandem NonStop OS support
+VisualStudio2005 Build soapcpp2 and wsdl2h for MS VS platforms 2005 and up
 
-All examples are available in the 'samples' subdirectory.
+The SOAP/XML client/server examples, XML-RPC, JSON, RSS, DOM parsing,
+WS-Security, SOAP/XML auto-testing services, XML databindings, and other
+examples of advanced features are available in the 'samples' subdirectory.
 
 The 'gsoap_mod' directory includes Apache 1.x and 2.0 mods for gSOAP, IIS, and
 WinInet support. WinInet allows gsoap to use the WinInet API instead of calls

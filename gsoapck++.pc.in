@@ -8,4 +8,4 @@ Description: SOAP C++ Web Services with Cookies Enabled
 Version: @VERSION@
 Requires:
 Libs: -L${libdir} -lgsoapck++ @SAMPLE_EXTRA_LIBS@
-Cflags: -DWITH_COOKIES -DWITH_DOM -I${includedir}
+Cflags: @SOAPCPP2_IPV6@ -DWITH_COOKIES -DWITH_DOM -I${includedir}

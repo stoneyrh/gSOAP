@@ -54,9 +54,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
  *
 \******************************************************************************/
 
-#define RequestMessageID  "WSA-DEMO-REQ" /* a unique message ID (use UUID) */
-#define ResponseMessageID "WSA-DEMO-RES" /* a unique message ID (use UUID) */
-
 const char *FromAddress    = "http://localhost:11000";
 const char *ToAddress      = "http://localhost:11001";
 const char *ReplyToAddress = "http://localhost:11002";
@@ -110,7 +107,9 @@ int main(int argc, char **argv)
     else
     { /* client */
       struct ns__wsademoResult res;
+      const char *RequestMessageID;
 
+      RequestMessageID = soap_wsa_rand_uuid(soap);
       soap_wsa_request(soap, RequestMessageID, ToAddress, RequestAction);
       if (argc >= 3)
       { if (strchr(argv[2], 'f'))
@@ -175,6 +174,7 @@ int main(int argc, char **argv)
 
 int ns__wsademo(struct soap *soap, char *in, struct ns__wsademoResult *result)
 {
+  const char *ResponseMessageID;
   if (soap_wsa_check(soap))
     return soap->error;
   printf("Received '%s'\n", in?in:"(null)");
@@ -195,6 +195,7 @@ int ns__wsademo(struct soap *soap, char *in, struct ns__wsademoResult *result)
     return soap_wsa_sender_fault(soap, "The demo service wsademo() operation returned a fault", NULL);
   }
   result->out = in;
+  ResponseMessageID = soap_wsa_rand_uuid(soap);
   return soap_wsa_reply(soap, ResponseMessageID, ResponseAction);
 }
 

@@ -4848,7 +4848,11 @@ case "${host}" in
         *-*-osf*)	platform=TRU64
 			SAMPLE_EXTRA_LIBS="-lm"
 			;;
-        *-apple-*)	platform=MACOSX ;;
+        *-apple-*)	platform=MACOSX
+			# Appease 10.7 Lion (OpenSSL deprecated)
+			CXXFLAGS="-Wno-deprecated-declarations"
+			CFLAGS="-Wno-deprecated-declarations"
+			;;
 	*-nto-qnx)	platform=QNX
 			SAMPLE_EXTRA_LIBS="-lsocket"
 			;;
@@ -8655,7 +8659,7 @@ do
     cat >>$CONFIG_STATUS <<_ACEOF
     # First, check the format of the line:
     cat >"\$tmp/defines.sed" <<\\CEOF
-/^[	 ]*#[	 ]*undef[	 ][	 ]*$ac_word_re[	 ]*\$/b def
+/^[	 ]*#[	 ]*undef[	 ][	 ]*$ac_word_re[	 ]*/b def
 /^[	 ]*#[	 ]*define[	 ][	 ]*$ac_word_re[(	 ]/b def
 b
 :def

@@ -51,20 +51,21 @@ Usage: wssedemo abcdehiknstxyz [port]
 
 with options:
 
-a sign the ns:add operation in the SOAP Body (use option b to remove Body sig)
+a sign the ns1:add operation in the SOAP Body (use option b to remove Body sig)
 b don't sign the entire SOAP Body (signed by default)
-c use chunked HTTP
-d use triple DES secret key to encrypt SOAP Body
-e encrypt the SOAP Body using RSA public key
-h use hmac secret key
+c enable chunked HTTP
+d use triple DES secret key for encryption instead of RSA
+e encrypt the SOAP Body
+f encrypt the <ns1:add> operation in the Body, rather than entire SOAP Body
+h use hmac shared secret key for digital signatures instead of RSA keys
 i indent XML
-k don't use keys
-n canonical XML
-s server
+k don't put signature keys in the WS-Security header
+n canonicalize XML (recommended!)
+s server (stand-alone)
 t use plain-text passwords (password digest by default)
 x use plain XML (no HTTP header), client only
 y buffered sends (experimental, not critical)
-z compressed sends/recv
+z enable compression
 
 For example, to generate a request message and store it in file 'wssedemo.xml':
 
@@ -106,6 +107,7 @@ static char des_key[20] = /* Dummy 160-bit triple DES key for encryption test */
 { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
 
 int addsig = 0;
+int addenc = 0;
 int nobody = 0;
 int hmac = 0;
 int nokey = 0;
@@ -159,6 +161,8 @@ int main(int argc, char **argv)
       des = 1;
     if (strchr(argv[1], 'e'))
       enc = 1;
+    if (strchr(argv[1], 'f'))
+      addenc = 1;
     if (strchr(argv[1], 'h'))
       hmac = 1;
     if (strchr(argv[1], 'k'))
@@ -263,6 +267,13 @@ int main(int argc, char **argv)
   }
   else /* client */
   { char endpoint[80];
+    /* ns1:test data */
+    struct ns1__add a;
+    struct ns1__sub b;
+    a.a = 123;
+    a.b = 456;
+    b.a = 789;
+    b.b = -99999;
     /* client sending messages to stdout or over port */
     if (port)
       sprintf(endpoint, "http://localhost:%d", port);
@@ -278,18 +289,30 @@ int main(int argc, char **argv)
     else
       soap_wsse_add_UsernameTokenDigest(soap, "User", user, "userPass");
     if (des)
-    { if (soap_wsse_encrypt_body(soap, SOAP_MEC_ENC_DES_CBC, des_key, sizeof(des_key)))
+    { /* symmetric encryption with DES */
+      if (soap_wsse_encrypt_body(soap, SOAP_MEC_ENC_DES_CBC, des_key, sizeof(des_key)))
         soap_print_fault(soap, stderr);
       soap_wsse_decrypt_auto(soap, SOAP_MEC_DEC_DES_CBC, des_key, sizeof(des_key));
     }
+    else if (addenc)
+    { /* RSA encryption of the <ns1:add> element */
+      const char *SubjectKeyId = NULL; /* set to non-NULL to use SubjectKeyIdentifier in Header rather than a full cert key */
+      /* MUST set wsu:Id of the elements to encrypt */
+      soap_wsse_set_wsu_id(soap, "ns1:add");
+      if (soap_wsse_add_EncryptedKey_encrypt_only(soap, "Cert", cert, SubjectKeyId, "ns1:add"))
+        soap_print_fault(soap, stderr);
+      soap_wsse_decrypt_auto(soap, SOAP_MEC_ENV_DEC_DES_CBC, rsa_privk, 0);
+    }
     else if (enc)
-    { const char *SubjectKeyId = NULL; /* set to non-NULL to use SubjectKeyIdentifier in Header rather than a full cert key */
+    { /* RSA encryption of the SOAP Body */
+      const char *SubjectKeyId = NULL; /* set to non-NULL to use SubjectKeyIdentifier in Header rather than a full cert key */
       if (soap_wsse_add_EncryptedKey(soap, "Cert", cert, SubjectKeyId))
         soap_print_fault(soap, stderr);
       soap_wsse_decrypt_auto(soap, SOAP_MEC_ENV_DEC_DES_CBC, rsa_privk, 0);
     }
     if (hmac)
-    { if (nobody)
+    { /* symmetric signature */
+      if (nobody)
         soap_wsse_sign(soap, SOAP_SMD_HMAC_SHA1, hmac_key, sizeof(hmac_key));
       else
         soap_wsse_sign_body(soap, SOAP_SMD_HMAC_SHA1, hmac_key, sizeof(hmac_key));
@@ -404,6 +427,12 @@ int ns1__add(struct soap *soap, double a, double b, double *result)
   { if (soap_wsse_encrypt_body(soap, SOAP_MEC_ENC_DES_CBC, des_key, sizeof(des_key)))
       soap_print_fault(soap, stderr);
   }
+  else if (addenc)
+  { /* MUST set wsu:Id of the elements to encrypt */
+    soap_wsse_set_wsu_id(soap, "ns1:addResponse");
+    if (soap_wsse_add_EncryptedKey_encrypt_only(soap, "Cert", cert, NULL, "ns:addResponse"))
+      soap_print_fault(soap, stderr);
+  }
   else if (enc)
   { if (soap_wsse_add_EncryptedKey(soap, "Cert", cert, NULL))
       soap_print_fault(soap, stderr);
@@ -500,4 +529,3 @@ int ns1__div(struct soap *soap, double a, double b, double *result)
   *result = a / b;
   return SOAP_OK;
 }
-

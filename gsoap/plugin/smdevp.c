@@ -530,11 +530,9 @@ soap_smd_final(struct soap *soap, struct soap_smd_data *data, char *buf, int *le
     if (len)
       *len = (int)n;
   }
-  /* cleanup and free the HMAC or EVP_MD context */
+  /* cleanup the HMAC_CTX (EVP_MD_CTX already cleaned up) */
   if ((data->alg & (SOAP_SMD_PASSTHRU-1)) == SOAP_SMD_HMAC_SHA1)
     HMAC_CTX_cleanup((HMAC_CTX*)data->ctx);
-  else
-    EVP_MD_CTX_cleanup((EVP_MD_CTX*)data->ctx);
   SOAP_FREE(soap, data->ctx);
   data->ctx = NULL;
   /* check and return */
