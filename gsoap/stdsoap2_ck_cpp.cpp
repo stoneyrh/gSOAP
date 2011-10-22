@@ -15490,12 +15490,12 @@ soap_puthttphdr(struct soap *soap, int status, size_t count)
       }
       s = soap->tmpbuf;
     }
-    if (status == SOAP_OK && soap->version == 2 && soap->action && strlen(soap->action) < sizeof(soap->tmpbuf) - 80)
-    { sprintf(soap->tmpbuf, "%s; action=\"%s\"", s, soap->action);
-      s = soap->tmpbuf;
-    }
+    else
+      s = strcpy(soap->tmpbuf, s);
+    if (status == SOAP_OK && soap->version == 2 && soap->action && strlen(soap->action) + strlen(s) < sizeof(soap->tmpbuf) - 80)
+      sprintf(soap->tmpbuf + strlen(s), "; action=\"%s\"", soap->action);
 #endif
-    if (s && (err = soap->fposthdr(soap, "Content-Type", s)))
+    if ((err = soap->fposthdr(soap, "Content-Type", s)))
       return err;
 #ifdef WITH_ZLIB
     if ((soap->omode & SOAP_ENC_ZLIB))
