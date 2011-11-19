@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.4
+	stdsoap2.h 2.8.5
 
 	gSOAP runtime engine
 
@@ -211,6 +211,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
+#  define HAVE_STRTOD_L
+#  define HAVE_SPRINTF_L
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
 #  define HAVE_SYS_TIMEB_H
@@ -553,8 +555,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 /* if we have xlocale.h we use it to avoid decimal point conversion issues */
 #ifdef WITH_C_LOCALE
-# include <locale.h>
-# include <xlocale.h>
+# ifdef WIN32
+#  include <locale.h>
+# else
+#  include <xlocale.h>
+# endif
 #else
 # undef HAVE_STRTOF_L
 # undef HAVE_STRTOD_L
@@ -2025,7 +2030,11 @@ struct SOAP_STD_API soap
   char session_host[SOAP_TAGLEN];
   int session_port;
 #ifdef WITH_C_LOCALE
+# ifdef WIN32
+  _locale_t c_locale;		/* set to C locale by default */
+# else
   locale_t c_locale;		/* set to C locale by default */
+# endif
 #else
   void *c_locale;
 #endif
@@ -2423,8 +2432,10 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_recv_fault(struct soap*, int check);
 SOAP_FMAC1 void SOAP_FMAC2 soap_print_fault(struct soap*, FILE*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_print_fault_location(struct soap*, FILE*);
 # ifndef WITH_LEAN
-#  ifdef __cplusplus
+#  ifndef WITH_COMPAT
+#   ifdef __cplusplus
 SOAP_FMAC1 void SOAP_FMAC2 soap_stream_fault(struct soap*, std::ostream&);
+#   endif
 #  endif
 SOAP_FMAC1 char* SOAP_FMAC2 soap_sprint_fault(struct soap*, char*, size_t);
 # endif

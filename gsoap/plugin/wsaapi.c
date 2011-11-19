@@ -565,11 +565,11 @@ static int soap_wsa_alloc_header(struct soap *soap);
 @brief Generates a random UUID (UUID algorithm version 4). Compile all source
 codes with -DWITH_OPENSSL for better randomness results.
 @param soap context
-@return UUID "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+@return UUID "urn:uuid:xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
 */
 const char*
 soap_wsa_rand_uuid(struct soap *soap)
-{ char *uuid = (char*)soap_malloc(soap, 37);
+{ char *uuid = (char*)soap_malloc(soap, 48);
   int r1, r2, r3, r4;
 #ifdef WITH_OPENSSL
   r1 = soap_random;
@@ -594,7 +594,7 @@ soap_wsa_rand_uuid(struct soap *soap)
 #endif
   r3 = soap_random;
   r4 = soap_random;
-  sprintf(uuid, "%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), (short)r2 >> 4, ((short)(r3 >> 16) & 0x3FFF) | 0x8000, (short)r3, r4);
+  sprintf(uuid, "urn:uuid:%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), (short)r2 >> 4, ((short)(r3 >> 16) & 0x3FFF) | 0x8000, (short)r3, r4);
   DBGFUN1("soap_wsa_rand_uuid", "%s", uuid);
   return uuid;
 }

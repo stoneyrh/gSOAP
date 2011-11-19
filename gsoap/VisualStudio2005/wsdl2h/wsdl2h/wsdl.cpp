@@ -134,8 +134,8 @@ int wsdl__definitions::read(int num, char **loc)
     return read((const char*)NULL, loc[0]);
   wsdl__import im;
   im.namespace_ = NULL;
-  name = soap_strdup(soap, "(unnamed)");
-  targetNamespace = soap_strdup(soap, "(default)");
+  name = soap_strdup(soap, "WSDL");
+  targetNamespace = soap_strdup(soap, "");;
   for (int i = 0; i < num; i++)
   { im.location = loc[i];
     import.push_back(im);
