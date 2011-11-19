@@ -64,6 +64,18 @@ the IDE to process WSDL, XSD, and gSOAP service specification header files:
 .wsdl .xsd --> wsdl2h.exe --> .h (special .h formatted with gSOAP annotations)
                               .h --> soapcpp2.exe --> .h .c .cpp .xml ...
 
+Win32 build needs "ws2_32.lib". To do this in Visual Studio C++ 6.0, go to
+"Project", "settings", select the "Link" tab (the project file needs to be
+selected in the file view) and add "ws2_32.lib" to the "Object/library modules"
+entry
+
+Visual Studio 2005: you must install the Platform SDK (R2)
+
+Dependences (see stdsoap2.h for further details):
+winsock2.h
+ws2tcpip.h
+ws2spi.h
+
 Symbian
 -------
 

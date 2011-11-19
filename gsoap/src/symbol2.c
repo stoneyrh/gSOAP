@@ -3689,7 +3689,9 @@ gen_proxy_header(FILE *fd, Table *table, Symbol *ns, char *name, char *URL, char
   fprintf(fd, "\n\t/// Print fault");
   fprintf(fd, "\n\tvirtual\tvoid soap_print_fault(FILE*);");
   fprintf(fd, "\n#ifndef WITH_LEAN\n\t/// Print fault to stream");
+  fprintf(fd, "\n#ifndef WITH_COMPAT");
   fprintf(fd, "\n\tvirtual\tvoid soap_stream_fault(std::ostream&);");
+  fprintf(fd, "\n#endif\n");
   fprintf(fd, "\n\t/// Put fault into buffer");
   fprintf(fd, "\n\tvirtual\tchar *soap_sprint_fault(char *buf, size_t len);\n#endif");
   for (method = table->list; method; method = method->next)
@@ -3762,7 +3764,7 @@ gen_proxy_code(FILE *fd, Table *table, Symbol *ns, char *name, char *URL, char *
   fprintf(fd, "\n\nint %s::soap_close_socket()\n{\treturn soap_closesock(%s);\n}", name, soap);
   fprintf(fd, "\n\nint %s::soap_force_close_socket()\n{\treturn soap_force_closesock(%s);\n}", name, soap);
   fprintf(fd, "\n\nvoid %s::soap_print_fault(FILE *fd)\n{\t::soap_print_fault(%s, fd);\n}", name, soap);
-  fprintf(fd, "\n\n#ifndef WITH_LEAN\nvoid %s::soap_stream_fault(std::ostream& os)\n{\t::soap_stream_fault(%s, os);\n}", name, soap);
+  fprintf(fd, "\n\n#ifndef WITH_LEAN\n#ifndef WITH_COMPAT\nvoid %s::soap_stream_fault(std::ostream& os)\n{\t::soap_stream_fault(%s, os);\n}\n#endif", name, soap);
   fprintf(fd, "\n\nchar *%s::soap_sprint_fault(char *buf, size_t len)\n{\treturn ::soap_sprint_fault(%s, buf, len);\n}\n#endif", name, soap);
   for (method = table->list; method; method = method->next)
     if (method->info.typ->type == Tfun && !(method->info.sto & Sextern) && !is_imported(method->info.typ) && has_ns_eq(ns->name, method->sym->name))
@@ -3822,7 +3824,9 @@ gen_object_header(FILE *fd, Table *table, Symbol *ns, char *name, char *URL, cha
   fprintf(fd, "\n\t/// Print fault");
   fprintf(fd, "\n\tvirtual\tvoid soap_print_fault(FILE*);");
   fprintf(fd, "\n#ifndef WITH_LEAN\n\t/// Print fault to stream");
+  fprintf(fd, "\n#ifndef WITH_COMPAT");
   fprintf(fd, "\n\tvirtual\tvoid soap_stream_fault(std::ostream&);");
+  fprintf(fd, "\n#endif");
   fprintf(fd, "\n\t/// Put fault into buffer");
   fprintf(fd, "\n\tvirtual\tchar *soap_sprint_fault(char *buf, size_t len);\n#endif");
   fprintf(fd, "\n\t/// Disables and removes SOAP Header from message");
@@ -4438,7 +4442,7 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, char *name, char *URL, char 
   fprintf(fd, "\n\nint %s::soap_receiverfault(const char *string, const char *detailXML)\n{\treturn ::soap_receiver_fault(%s, string, detailXML);\n}", name, soap);
   fprintf(fd, "\n\nint %s::soap_receiverfault(const char *subcodeQName, const char *string, const char *detailXML)\n{\treturn ::soap_receiver_fault_subcode(%s, subcodeQName, string, detailXML);\n}", name, soap);
   fprintf(fd, "\n\nvoid %s::soap_print_fault(FILE *fd)\n{\t::soap_print_fault(%s, fd);\n}", name, soap);
-  fprintf(fd, "\n\n#ifndef WITH_LEAN\nvoid %s::soap_stream_fault(std::ostream& os)\n{\t::soap_stream_fault(%s, os);\n}", name, soap);
+  fprintf(fd, "\n\n#ifndef WITH_LEAN\n#ifndef WITH_COMPAT\nvoid %s::soap_stream_fault(std::ostream& os)\n{\t::soap_stream_fault(%s, os);\n}\n#endif", name, soap);
   fprintf(fd, "\n\nchar *%s::soap_sprint_fault(char *buf, size_t len)\n{\treturn ::soap_sprint_fault(%s, buf, len);\n}\n#endif", name, soap);
   fprintf(fd, "\n\nvoid %s::soap_noheader()\n{\t%s->header = NULL;\n}", name, soap);
   if (!namespaceid)
@@ -5351,9 +5355,9 @@ soap_serve(Table *table)
               fprintf(fserver,"\n\tif (!soap_match_tag(soap, soap->tag, \"%s\")", ns_convert(param->sym->name));
             fprintf(fserver, ")\n\t\treturn soap_serve_%s(soap);", ident(method->sym->name));
 	  }
-	  else
-	    catch_method = method;
 	}
+	else
+	  catch_method = method;
       }
       else
       { if (action)
@@ -8092,7 +8096,7 @@ soap_serialize(Tnode *typ)
     return;
 
   if (typ->type != Tclass || !(typ->sym && (is_stdstring(typ) || is_stdwstring(typ)) && is_eq(typ->sym->name, "xsd__QName")) || is_external(typ) || is_imported(typ))
-    if (is_typedef(typ) && is_element(typ))
+    if (is_typedef(typ) && !is_external(typ))
     { if (typ->type == Tclass && !is_stdstring(typ) && !is_stdwstring(typ) && !is_volatile(typ))
         fprintf(fhead, "\n\n#define soap_serialize_%s(soap, a) (a)->soap_serialize(soap)\n",c_ident(typ));
       else if (typ->type == Tclass && is_eq(typ->sym->name, "xsd__QName"))
@@ -8507,7 +8511,7 @@ soap_default(Tnode* typ)
     return;
 
   if (typ->type != Tclass || !(typ->sym && (is_stdstring(typ) || is_stdwstring(typ)) && is_eq(typ->sym->name, "xsd__QName")) || is_external(typ) || is_imported(typ))
-  { if (is_typedef(typ) && is_element(typ))
+  { if (is_typedef(typ) && !is_external(typ))
     { if (typ->type == Tclass && !is_stdstring(typ) && !is_stdwstring(typ) && !is_volatile(typ))
         fprintf(fhead, "\n\n#define soap_default_%s(soap, a) (a)->%s::soap_default(soap)\n", c_ident(typ), t_ident(typ));
       else if (typ->type == Tclass && is_eq(typ->sym->name, "xsd__QName"))
@@ -8798,7 +8802,7 @@ soap_traverse(Tnode* typ)
     return;
   }
   if (typ->type != Tclass || !(typ->sym && (is_stdstring(typ) || is_stdwstring(typ)) && is_eq(typ->sym->name, "xsd__QName")) || is_external(typ) || is_imported(typ))
-    if (is_typedef(typ) && is_element(typ))
+    if (is_typedef(typ) && !is_external(typ))
     { if (typ->type == Tclass && !is_stdstring(typ) && !is_stdwstring(typ) && !is_volatile(typ))
         fprintf(fhead, "\n\n#define soap_traverse_%s(soap, a, s, p, q) (a)->soap_traverse(soap, s, p, q)\n",c_ident(typ));
       else if (typ->type == Tclass && is_eq(typ->sym->name, "xsd__QName"))

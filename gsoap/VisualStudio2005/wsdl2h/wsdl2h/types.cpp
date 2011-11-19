@@ -999,7 +999,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
     if (simpleType.restriction->simpleTypePtr() && simpleType.restriction->simpleTypePtr()->schemaPtr())
       baseURI = simpleType.restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
     if (!anonymous)
-      fprintf(stream, "\n/// \"%s\":%s is a simpleType restriction of %s.\n", URI?URI:"", name, simpleType.restriction->base);
+      fprintf(stream, "\n/// \"%s\":%s is a simpleType restriction of %s.\n", URI?URI:"", name, base);
     document(simpleType.annotation);
     document(simpleType.restriction->annotation);
     if (!simpleType.restriction->enumeration.empty())
@@ -1853,16 +1853,11 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
   type = attribute.type;
   bool is_optional = attribute.use != required && attribute.use != default_ && attribute.use != fixed_ && !attribute.default_;
   document(attribute.annotation);
-  if (!URI || strcmp(URI, attribute.schemaPtr()->targetNamespace))
-    if (attribute.schemaPtr()->attributeFormDefault == qualified)
-      nameURI = attribute.schemaPtr()->targetNamespace;
   if (!URI)
     URI = attribute.schemaPtr()->targetNamespace;
   if (attribute.form)
   { if (*attribute.form == qualified)
-    { if (!nameURI)
-        nameURI = URI;
-    }
+      nameURI = URI;
     else
     { nameURI = NULL;
       nameprefix = ":";
@@ -1878,10 +1873,10 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
     if (attribute.attributePtr()->schemaPtr())
     { typeURI = attribute.attributePtr()->schemaPtr()->targetNamespace;
       if (zflag == 2
-       || (attribute.form && *attribute.form == qualified)
        || !URI
        || !typeURI
-       || strcmp(URI, typeURI))
+       || (attribute.form && *attribute.form == qualified)
+       || (attribute.schemaPtr()->attributeFormDefault == qualified && strcmp(URI, typeURI)))
         nameURI = typeURI;
       else if (attribute.form && *attribute.form == unqualified)
         nameprefix = ":";
@@ -2143,18 +2138,13 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
   name = element.name;
   type = element.type;
   document(element.annotation);
-  if (!URI || strcmp(URI, element.schemaPtr()->targetNamespace))
-    if (element.schemaPtr()->elementFormDefault == qualified)
-      nameURI = element.schemaPtr()->targetNamespace;
   if (!URI)
     URI = element.schemaPtr()->targetNamespace;
   if (element.xmime__expectedContentTypes)
     fprintf(stream, "/// MTOM attachment with content types %s.\n", element.xmime__expectedContentTypes);
   if (element.form)
   { if (*element.form == qualified)
-    { if (!nameURI)
-        nameURI = URI;
-    }
+      nameURI = URI;
     else
     { nameURI = NULL;
       nameprefix = ":";
@@ -2170,10 +2160,10 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
     if (element.elementPtr()->schemaPtr())
     { typeURI = element.elementPtr()->schemaPtr()->targetNamespace;
       if (zflag == 2
-       || (element.form && *element.form == qualified)
        || !URI
        || !typeURI
-       || strcmp(URI, typeURI))
+       || (element.form && *element.form == qualified)
+       || (element.schemaPtr()->elementFormDefault == qualified && strcmp(URI, typeURI)))
         nameURI = typeURI;
       else if (element.form && *element.form == unqualified)
         nameprefix = ":";
@@ -2358,7 +2348,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
        && !(element.substitutionsPtr() && !element.substitutionsPtr()->empty())
        && !(element.elementPtr() && element.elementPtr()->substitutionsPtr() && !element.elementPtr()->substitutionsPtr()->empty())
       ))
-  { if (!fake_union && !element.minOccurs && !element.nillable && !element.default_)
+  { if (!fake_union && !element.minOccurs && !element.nillable && !element.default_ && !element.abstract)
       fprintf(stream, " 1");
     else if (!fake_union && element.minOccurs)
       fprintf(stream, " %s", element.minOccurs);
@@ -2794,12 +2784,14 @@ void Types::gen_substitutions(const char *URI, const xs__element &element)
   if (use_union)
   { with_union = tmp_union;
     if (!with_union || wrap_union)
-      fprintf(stream, elementformat, "}", s);
+    { fprintf(stream, elementformat, "}", s);
+      fprintf(stream, ";\n");
+    }
     if (element.maxOccurs && strcmp(element.maxOccurs, "1"))
     { fprintf(stream, ";\n");
       fprintf(stream, pointerformat, "}", s);
+      fprintf(stream, ";\n");
     }
-    fprintf(stream, ";\n");
     if (wrap_union)
     { fprintf(stream, elementformat, "}", s);
       fprintf(stream, ";\n");

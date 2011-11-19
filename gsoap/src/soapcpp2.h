@@ -43,7 +43,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.4" /* Current version */
+# define VERSION "2.8.5" /* Current version */
 #endif
 
 #ifdef WIN32
