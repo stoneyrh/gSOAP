@@ -108,6 +108,7 @@ static char des_key[20] = /* Dummy 160-bit triple DES key for encryption test */
 
 int addsig = 0;
 int addenc = 0;
+int addenca = 0;
 int nobody = 0;
 int hmac = 0;
 int nokey = 0;
@@ -163,6 +164,8 @@ int main(int argc, char **argv)
       enc = 1;
     if (strchr(argv[1], 'f'))
       addenc = 1;
+    if (strchr(argv[1], 'g'))
+      addenca = 1;
     if (strchr(argv[1], 'h'))
       hmac = 1;
     if (strchr(argv[1], 'k'))
@@ -294,13 +297,20 @@ int main(int argc, char **argv)
         soap_print_fault(soap, stderr);
       soap_wsse_decrypt_auto(soap, SOAP_MEC_DEC_DES_CBC, des_key, sizeof(des_key));
     }
-    else if (addenc)
+    else if (addenc || addenca)
     { /* RSA encryption of the <ns1:add> element */
       const char *SubjectKeyId = NULL; /* set to non-NULL to use SubjectKeyIdentifier in Header rather than a full cert key */
       /* MUST set wsu:Id of the elements to encrypt */
-      soap_wsse_set_wsu_id(soap, "ns1:add");
-      if (soap_wsse_add_EncryptedKey_encrypt_only(soap, "Cert", cert, SubjectKeyId, "ns1:add"))
-        soap_print_fault(soap, stderr);
+      if (addenc) /* encrypt element <ns1:add> */
+      { soap_wsse_set_wsu_id(soap, "ns1:add");
+        if (soap_wsse_add_EncryptedKey_encrypt_only(soap, "Cert", cert, SubjectKeyId, "ns1:add"))
+          soap_print_fault(soap, stderr);
+      }
+      else /* encrypt element <a> */
+      { soap_wsse_set_wsu_id(soap, "a");
+        if (soap_wsse_add_EncryptedKey_encrypt_only(soap, "Cert", cert, SubjectKeyId, "a"))
+          soap_print_fault(soap, stderr);
+      }
       soap_wsse_decrypt_auto(soap, SOAP_MEC_ENV_DEC_DES_CBC, rsa_privk, 0);
     }
     else if (enc)
@@ -324,7 +334,7 @@ int main(int argc, char **argv)
       { soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", cert);
         soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token");
       }
-      if (nobody)
+      if (nobody || addsig) /* do not sign body */
         soap_wsse_sign(soap, SOAP_SMD_SIGN_RSA_SHA1, rsa_privk, 0);
       else
         soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA1, rsa_privk, 0);
@@ -403,7 +413,7 @@ int ns1__add(struct soap *soap, double a, double b, double *result)
   soap_wsse_add_Timestamp(soap, "Time", 10);	/* lifetime of 10 seconds */
   soap_wsse_add_UsernameTokenDigest(soap, "User", "server", "serverPass");
   if (hmac)
-  { if (nobody)
+  { if (nobody || addsig)
       soap_wsse_sign(soap, SOAP_SMD_HMAC_SHA1, hmac_key, sizeof(hmac_key));
     else
       soap_wsse_sign_body(soap, SOAP_SMD_HMAC_SHA1, hmac_key, sizeof(hmac_key));
@@ -415,7 +425,7 @@ int ns1__add(struct soap *soap, double a, double b, double *result)
     { soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", cert);
       soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token");
     }
-    if (nobody)
+    if (nobody || addsig)
       soap_wsse_sign(soap, SOAP_SMD_SIGN_RSA_SHA1, rsa_privk, 0);
     else
       soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA1, rsa_privk, 0);

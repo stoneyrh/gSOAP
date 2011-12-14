@@ -164,9 +164,10 @@ _wsa5__To        = | | _wsa5__To
 wsrm	= <http://docs.oasis-open.org/ws-rx/wsrm/200702>
 wsrm4	= <http://docs.oasis-open.org/wsrm/2004/06/ws-reliability-1.1.xsd>
 
-#	WS-Discovery
+#	WS-Discovery 1.1 and 1.0
 
 wsdd	= <http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01>
+wsdd10	= <http://schemas.xmlsoap.org/ws/2005/04/discovery>
 
 #	WS-Policy
 

@@ -612,10 +612,10 @@ struct, automatically sign it, and send it as follows:
 The above example shows a wsu:Id attribute embedded (hardcoded) in a struct.
 When it is not possible to add the wsu__Id member, for example when the type is
 a string instead of a struct, it is suggested to specify the XML element to be
-signed with the soap_wsse_set_wsu_id(soap, "space-separated string of element
-names") function, to be used before each call or when returning from a service
-operation. This lets the engine add wsu:Id="tag" attribute-value pair to the
-element's tag name. For example:
+signed with the @ref soap_wsse_set_wsu_id(soap, "space-separated string of
+element names") function. Use it before each call or in the server operation
+(when returning XML data from a service operation). This lets the engine add
+wsu:Id="tag" attribute-value pair to the element's tag name. For example:
 
 @code
     soap_wsse_set_wsu_id(soap, "ns:myContract"); // <ns:myContract wsu:Id="ns:myContract">...
@@ -625,11 +625,28 @@ element's tag name. For example:
       ... // an error occurred
     soap_wsse_set_wsu_id(soap, NULL);
 @endcode
-This adds the wsu:Id="ns-myContract" to the ns:myContract element. Here, the
-wsu__Id value in the struct MUST NOT be set. Otherwise, two wsu:Id attributes
-are present which is invalid. Also, the element signed must be unique in the
-message. That is, there cannot be more than one matching element, otherwise the
-resulting signature is invalid.
+
+This code adds the wsu:Id="ns-myContract" to the ns:myContract element. Here,
+the wsu__Id value in the struct MUST NOT be set. Otherwise, two wsu:Id
+attributes are present which is invalid. Also, the element signed must be
+unique in the message. That is, there cannot be more than one matching element,
+otherwise the resulting signature is invalid.
+
+Note: to reset the automatic wsu:Id attributes addition, pass NULL to
+@ref soap_wsse_set_wsu_id as shown above. This is automatically performed when
+a new message is received (but not automatically in a sequence of one-way sends
+for example).
+
+WARNING:
+When signing parts of the body as outlined above, use @ref soap_wsse_sign
+(do NOT use @ref soap_wsse_sign_body).
+
+WARNING:
+Do not attempt to sign an element with a wsu:Id that is a subelement of another
+element with a wsu:Id, that is, do not sign inner nested wsu:Id elements. The
+element that you will try to sign will not be canonicalized and will lead to a
+failure of the signature verification. When elements with wsu:Id are nested,
+sign the outermost element.
 
 We recommend to sign the entire SOAP Body using soap_wsse_sign_body and
 reserve the use of soap_wsse_set_wsu_id for SOAP Header elements, such as
@@ -648,21 +665,19 @@ WS-Addressing elements. For example:
       ... // a transmission error occurred
     soap_wsse_set_wsu_id(soap, NULL);
 @endcode
-This signs the wsa5:To and wsa5:Action SOAP header elements (set with
+
+This code signs the wsa5:To and wsa5:Action SOAP header elements (set with
 soap_wsa_request, see the WS-Addressing "wsa" API in the gSOAP documentation
 for more information on the use of WS-Addressing). It is fine to specify more
-elements than present in the XML payload. The other WS-Addressing headers are
-not present and are not signed.
+elements with @ref soap_wsse_set_wsu_id than actually present in the XML
+payload. The other WS-Addressing headers are not present and are not signed.
 
-Note: @ref soap_wsse_set_wsu_id should only be set once for each @ref
-soap_wsse_sign or @ref soap_wsse_sign_body. Each new call overrides the
-previous.
+WARNING:
+@ref soap_wsse_set_wsu_id should only be set once for each @ref soap_wsse_sign
+or @ref soap_wsse_sign_body. Each new call overrides the previous setting.
 
-Note: to reset the automatic wsu:Id attributes addition, pass NULL to
-@ref soap_wsse_set_wsu_id. This is automatically performed when a new message
-is received (but not automatically in a sequence of one-way sends for example).
-
-Note: never use @ref soap_wsse_set_wsu_id to set the wsu:Id for an element that
+WARNING:
+Never use @ref soap_wsse_set_wsu_id to set the wsu:Id for an element that
 occurs more than once in the payload, since each will have the same wsu:Id
 attribute that may lead to a WS-Signature failure.
 
@@ -1324,12 +1339,12 @@ typedef struct _wsse__Security
 The _wsse__Security header is modified by a WS/WS-typemap.dat mapping rule to
 include additional details.
 
-@section wsse_13 Limitations
+@section wsse_13 Encryption Limitations
 
 - Individual encryption/decryption of simple content (CDATA content) with @ref
-  soap_wsse_add_EncryptedKey_encrypt_only is not supported. Encrypt the entire
-  SOAP Body or encrypt elements with complex content (elements that have sub
-  elements).
+  soap_wsse_add_EncryptedKey_encrypt_only IS NOT SUPPORTED. Encrypt the entire
+  SOAP Body or encrypt elements with complex content (complexType and
+  complexContent elements that have sub elements).
 
 - Encryption is performed after signing (likewise, signatures are verified
   after decryption). Signing after encryption is not supported.
@@ -2937,17 +2952,20 @@ subject key ID is used in the EncryptedKey header instead of the X509
 certificate content.
 
 WARNING:
-use only in combination with soap_wsse_set_wsu_id with the tag names of the
-elements to be encrypted. OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED
-AND WILL BE SENT IN THE CLEAR.
+Use @ref soap_wsse_add_EncryptedKey_encrypt_only only in combination with
+@ref soap_wsse_set_wsu_id with the tag names of the elements to be encrypted.
+OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED AND WILL BE SENT IN THE
+CLEAR.
 
 WARNING:
-The elements to encrypt MUST occur EXACTLY ONCE in the SOAP Body.
+The elements identified with @ref soap_wsse_set_wsu_id to encrypt MUST occur
+EXACTLY ONCE in the SOAP Body.
 
 WARNING:
-Decryption of simple content (CDATA content) is not supported. This means that
-elements you want to encrypt with this function must have complex content, that
-is only encrypt elements with sub elements.
+Encryption/decryption of elements with simple content (CDATA content) IS NOT
+SUPPORTED. This means that elements you want to encrypt with this function must
+have complex content. That is, only encrypt elements with sub elements or
+encrypt the entire SOAP Body.
 */
 int
 soap_wsse_add_EncryptedKey_encrypt_only(struct soap *soap, const char *URI, X509 *cert, const char *subjectkeyid, const char *tags)
@@ -3030,7 +3048,7 @@ soap_wsse_add_EncryptedKey_encrypt_only(struct soap *soap, const char *URI, X509
   data->enco_keylen = keylen;
   if (!(security->xenc__EncryptedKey->CipherData->CipherValue = soap_s2base64(soap, key, NULL, keylen)))
     return soap->error = SOAP_EOM;
-  data->encid = tags;
+  data->encid = soap_strdup(soap, tags);
   if (!tags)
   { soap->omode |= SOAP_SEC_WSUID;
     if (soap_wsse_add_EncryptedKey_DataReferenceURI(soap, "#Body"))
@@ -4005,7 +4023,7 @@ SOAP_MEC_ENC_DES_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey
 for public key encryption.
 @param soap context
 @param[in] alg the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC
-@param[in] key the encryption key, a DES CBC 160-bit key
+@param[in] key a persistent encryption key, a DES CBC 160-bit key
 @param[in] keylen the encryption key length, 20 bytes for a DES CBC 160-bit key
 @return SOAP_OK or error code
 
@@ -4035,7 +4053,7 @@ encryption. Use soap_wsse_add_EncryptedKey_encrypt_only for public key
 encryption.
 @param soap context
 @param[in] alg the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC
-@param[in] key the encryption key, a DES CBC 160-bit key
+@param[in] key a persistent encryption key, a DES CBC 160-bit key
 @param[in] keylen the encryption key length, 20 bytes for a DES CBC 160-bit key
 @param[in] tags string of space-separated qualified and unqualified tag names
 @return SOAP_OK or error code
@@ -4045,12 +4063,20 @@ shared secret key. No WS-Security EncryptedKey header will be set. Use
 soap_wsse_add_EncryptedKey instead for public key encryption.
 
 WARNING:
-use only in combination with soap_wsse_set_wsu_id with the tag names of the
-elements to be encrypted. OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED
-AND WILL BE SENT IN THE CLEAR.
+Use @ref soap_wsse_add_EncryptedKey_encrypt_only only in combination with
+@ref soap_wsse_set_wsu_id with the tag names of the elements to be encrypted.
+OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED AND WILL BE SENT IN THE
+CLEAR.
 
 WARNING:
-The elements to encrypt MUST occur EXACTLY ONCE in the SOAP Body.
+The elements identified with @ref soap_wsse_set_wsu_id to encrypt MUST occur
+EXACTLY ONCE in the SOAP Body.
+
+WARNING:
+Encryption/decryption of elements with simple content (CDATA content) IS NOT
+SUPPORTED. This means that elements you want to encrypt with this function must
+have complex content. That is, only encrypt elements with sub elements or
+encrypt the entire SOAP Body.
 */
 int
 soap_wsse_encrypt_only(struct soap *soap, int alg, const void *key, int keylen, const char *tags)
@@ -4058,7 +4084,7 @@ soap_wsse_encrypt_only(struct soap *soap, int alg, const void *key, int keylen, 
   DBGFUN2("soap_wsse_encrypt_only", "alg=%d", alg, "tags=%s", tags?tags:"(null)");
   if (!data)
     return soap_set_receiver_error(soap, "soap_wsse_encrypt_only", "Plugin not registered", SOAP_PLUGIN_ERROR);
-  data->encid = tags;
+  data->encid = soap_strdup(soap, tags);
   if (tags)
   { char *s, *t;
     /* make space to insert # to each id converted from a tag name */
@@ -4094,7 +4120,7 @@ The algorithm should be SOAP_MEC_ENC_DES_CBC for symmetric encryption. Use
 soap_wsse_add_EncryptedKey for public key encryption.
 @param soap context
 @param[in] alg the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC
-@param[in] key the encryption key, a DES CBC 160-bit key
+@param[in] key a persistent encryption key, a DES CBC 160-bit key
 @param[in] keylen the encryption key length, 20 bytes for a DES CBC 160-bit key
 @return SOAP_OK or error code
 */
@@ -4132,7 +4158,7 @@ SOAP_MEC_ENV_DEC_DES_CBC for public key encryption/decryption and
 SOAP_MEC_DEC_DES_CBC for symmetric shared secret keys.
 @param soap context
 @param[in] alg the decryption algorithm, 
-@param[in] key the decryption key for the algorithm, a private RSA key or a
+@param[in] key a persistent decryption key for the algorithm, a private RSA key or a
 shared secret key
 @param[in] keylen use 0 for public-key encryption/decryption
 or the shared secret decryption key length, 20 bytes for a DES CBC 160-bit key
@@ -4190,7 +4216,7 @@ soap_wsse_encrypt_begin(struct soap *soap, const char *id, const char *URI, cons
      || soap_element(soap, "wsse:Reference", 0, NULL)
      || soap_element_start_end_out(soap, NULL)
      || soap_element_end_out(soap, "wsse:Reference")
-     || soap_element_end_out(soap, "wsse:SecruityTokenReference")
+     || soap_element_end_out(soap, "wsse:SecurityTokenReference")
      || soap_element_end_out(soap, "ds:KeyInfo"))
       return soap->error;
   }
@@ -4478,36 +4504,29 @@ soap_wsse_preparesend(struct soap *soap, const char *buf, size_t len)
     return SOAP_PLUGIN_ERROR;
   /* the gSOAP engine signals the start of a wsu:Id element */
   if (soap->event == SOAP_SEC_BEGIN)
-  { /* start digest? */
-    if (!data->sigid || soap_tagsearch(data->sigid, soap->id))
+  { /* start new digest or continue? */
+    if (data->digest && data->digest->level)
+      soap->event = SOAP_SEC_SIGN;
+    else if (!data->sigid || soap_tagsearch(data->sigid, soap->id))
     { soap->event = SOAP_SEC_SIGN;
-      /* already computing digest? */
-      /* the state cannot change to BEGIN when currently in IN state any longer */
-      if (data->digest && data->digest->level)
-      { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Nested hashing for signature not possible, wsu:Id='%s' ignored\n", soap->id));
-      }
-      else
-      { /* initialize smdevp engine */
-        struct soap_wsse_digest *digest;
-        digest = (struct soap_wsse_digest*)SOAP_MALLOC(soap, sizeof(struct soap_wsse_digest) + strlen(soap->id) + 1);
-        digest->next = data->digest;
-        digest->level = soap->level;
-        soap_smd_init(soap, &digest->smd, SOAP_SMD_DGST_SHA1, NULL, 0);
-        memset(digest->hash, 0, sizeof(digest->hash));
-        digest->id[0] = '#';
-        strcpy(digest->id + 1, soap->id);
-        data->digest = digest;
-        /* omit indent for indented XML (next time around, we will catch '<') */
-        if (*buf != '<')
-          goto end;
-      }
+      /* initialize smdevp engine */
+      struct soap_wsse_digest *digest;
+      digest = (struct soap_wsse_digest*)SOAP_MALLOC(soap, sizeof(struct soap_wsse_digest) + strlen(soap->id) + 1);
+      digest->next = data->digest;
+      digest->level = soap->level;
+      soap_smd_init(soap, &digest->smd, SOAP_SMD_DGST_SHA1, NULL, 0);
+      memset(digest->hash, 0, sizeof(digest->hash));
+      digest->id[0] = '#';
+      strcpy(digest->id + 1, soap->id);
+      data->digest = digest;
+      /* omit indent for indented XML (next time around, we will catch '<') */
+      if (*buf != '<')
+        goto end;
     }
-    else
-      soap->event = 0;
   }
   if (soap->event == SOAP_SEC_SIGN)
   { /* update smdevp engine */
-    if (data->digest)
+    if (data->digest && data->digest->level)
     { soap_smd_update(soap, &data->digest->smd, buf, len);
       if (soap->level < data->digest->level)
       { soap->event = 0;
@@ -4569,19 +4588,22 @@ soap_wsse_preparefinalsend(struct soap *soap)
     if ((soap->mode & SOAP_IO) != SOAP_IO_CHUNK)
     { /* the code below ensures we increase the HTTP length counter */
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Counting the size of additional SOAP Header elements, mode=0x%x\n", soap->mode));
-      if (soap->mode & SOAP_XML_CANONICAL)
-      { soap->ns = 0; /* need namespaces for canonicalization */
-        if (soap->mode & SOAP_XML_INDENT)
-          soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
-      }
       if (signature_added)
       { soap->level = 3; /* indent level for XML Signature */
+        if (soap->mode & SOAP_XML_CANONICAL && soap->mode & SOAP_XML_INDENT)
+        { soap->ns = 0; /* need namespaces for canonicalization */
+          soap->count += 4; /* correction for soap->ns = 0: add \n+indent */
+	}
         soap_out_ds__SignatureType(soap, "ds:Signature", 0, signature, NULL);
       }
       else
       { const char *c14nexclude = soap->c14nexclude;
         soap->c14nexclude = "ds"; /* don't add xmlns:ds to count msg len */
         soap->level = 4; /* indent level for XML SignedInfo */
+        if (soap->mode & SOAP_XML_CANONICAL && soap->mode & SOAP_XML_INDENT)
+        { soap->ns = 0; /* need namespaces for canonicalization */
+          soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
+	}
         soap_out_ds__SignedInfoType(soap, "ds:SignedInfo", 0, signature->SignedInfo, NULL);
         soap_outstring(soap, "ds:SignatureValue", 0, &signature->SignatureValue, NULL, 0);
         soap->c14nexclude = c14nexclude;

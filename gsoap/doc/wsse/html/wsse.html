@@ -55,7 +55,7 @@ Security Header</h2>
 <li>Section 10 <a class="el" href="wsse.html#wsse_10">Security Timestamps</a></li>
 <li><a class="el" href="wsse.html#wsse_11">WS-Security and HTTPS</a></li>
 <li><a class="el" href="wsse.html#wsse_12">Miscellaneous</a></li>
-<li><a class="el" href="wsse.html#wsse_13">Limitations</a></li>
+<li><a class="el" href="wsse.html#wsse_13">Encryption Limitations</a></li>
 </ul>
 <p>The basic API is introduced below.</p>
 <p>To add an empty Security header block to the SOAP header, use:</p>
@@ -306,15 +306,18 @@ Signing Message Parts</h3>
       ... <span class="comment">// an error occurred</span>
     <span class="keywordflow">else</span> <span class="keywordflow">if</span> (soap_call_ns__myMethod(soap, contract, &amp;accept))
       ... <span class="comment">// a transmission error occurred</span>
-</pre></div><p>The above example shows a wsu:Id attribute embedded (hardcoded) in a struct. When it is not possible to add the wsu__Id member, for example when the type is a string instead of a struct, it is suggested to specify the XML element to be signed with the soap_wsse_set_wsu_id(soap, "space-separated string of element
-names") function, to be used before each call or when returning from a service operation. This lets the engine add wsu:Id="tag" attribute-value pair to the element's tag name. For example:</p>
+</pre></div><p>The above example shows a wsu:Id attribute embedded (hardcoded) in a struct. When it is not possible to add the wsu__Id member, for example when the type is a string instead of a struct, it is suggested to specify the XML element to be signed with the <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a>(soap, "space-separated string of
+element names") function. Use it before each call or in the server operation (when returning XML data from a service operation). This lets the engine add wsu:Id="tag" attribute-value pair to the element's tag name. For example:</p>
 <div class="fragment"><pre class="fragment">    <a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454" title="Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set...">soap_wsse_set_wsu_id</a>(soap, <span class="stringliteral">&quot;ns:myContract&quot;</span>); <span class="comment">// &lt;ns:myContract wsu:Id=&quot;ns:myContract&quot;&gt;...</span>
     <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a53075fb3cec4ec4e70fb11850fecb401" title="Adds BinarySecurityToken element with X509 certificate.">soap_wsse_add_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;X509Token&quot;</span>, cert)
      || <a class="code" href="wsseapi_8h.html#a72df80abd1d36cea516feda3a84672cf" title="Adds KeyInfo element with SecurityTokenReference URI to an X509 cert.">soap_wsse_add_KeyInfo_SecurityTokenReferenceX509</a>(soap, <span class="stringliteral">&quot;#X509Token&quot;</span>)
      || <a class="code" href="wsseapi_8h.html#aa3ac2afb86a25ec1e1d8e4515133e9ad" title="Uses the wsse plugin to sign all wsu:Id attributed elements.">soap_wsse_sign</a>(soap, <a class="code" href="smdevp_8h.html#acbb90951064d98a13af03724dbed2aa8">SOAP_SMD_SIGN_RSA_SHA1</a>, rsa_private_key, 0))
       ... <span class="comment">// an error occurred</span>
     <a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454" title="Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set...">soap_wsse_set_wsu_id</a>(soap, NULL);
-</pre></div><p> This adds the wsu:Id="ns-myContract" to the ns:myContract element. Here, the wsu__Id value in the struct MUST NOT be set. Otherwise, two wsu:Id attributes are present which is invalid. Also, the element signed must be unique in the message. That is, there cannot be more than one matching element, otherwise the resulting signature is invalid.</p>
+</pre></div><p>This code adds the wsu:Id="ns-myContract" to the ns:myContract element. Here, the wsu__Id value in the struct MUST NOT be set. Otherwise, two wsu:Id attributes are present which is invalid. Also, the element signed must be unique in the message. That is, there cannot be more than one matching element, otherwise the resulting signature is invalid.</p>
+<p>Note: to reset the automatic wsu:Id attributes addition, pass NULL to <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> as shown above. This is automatically performed when a new message is received (but not automatically in a sequence of one-way sends for example).</p>
+<p>WARNING: When signing parts of the body as outlined above, use <a class="el" href="wsseapi_8c.html#aa3ac2afb86a25ec1e1d8e4515133e9ad">soap_wsse_sign</a> (do NOT use <a class="el" href="wsseapi_8c.html#ab653754f1a287ba06bd808cf89548c38">soap_wsse_sign_body</a>).</p>
+<p>WARNING: Do not attempt to sign an element with a wsu:Id that is a subelement of another element with a wsu:Id, that is, do not sign inner nested wsu:Id elements. The element that you will try to sign will not be canonicalized and will lead to a failure of the signature verification. When elements with wsu:Id are nested, sign the outermost element.</p>
 <p>We recommend to sign the entire SOAP Body using soap_wsse_sign_body and reserve the use of soap_wsse_set_wsu_id for SOAP Header elements, such as WS-Addressing elements. For example:</p>
 <div class="fragment"><pre class="fragment"><span class="preprocessor">    #include &quot;wsaapi.h&quot;</span>
     ...
@@ -327,10 +330,9 @@ names") function, to be used before each call or when returning from a service o
     <span class="keywordflow">else</span> <span class="keywordflow">if</span> (soap_call_ns__myMethod(soap, ...))
       ... <span class="comment">// a transmission error occurred</span>
     <a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454" title="Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set...">soap_wsse_set_wsu_id</a>(soap, NULL);
-</pre></div><p> This signs the wsa5:To and wsa5:Action SOAP header elements (set with soap_wsa_request, see the WS-Addressing "wsa" API in the gSOAP documentation for more information on the use of WS-Addressing). It is fine to specify more elements than present in the XML payload. The other WS-Addressing headers are not present and are not signed.</p>
-<p>Note: <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> should only be set once for each <a class="el" href="wsseapi_8c.html#aa3ac2afb86a25ec1e1d8e4515133e9ad">soap_wsse_sign</a> or <a class="el" href="wsseapi_8c.html#ab653754f1a287ba06bd808cf89548c38">soap_wsse_sign_body</a>. Each new call overrides the previous.</p>
-<p>Note: to reset the automatic wsu:Id attributes addition, pass NULL to <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a>. This is automatically performed when a new message is received (but not automatically in a sequence of one-way sends for example).</p>
-<p>Note: never use <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> to set the wsu:Id for an element that occurs more than once in the payload, since each will have the same wsu:Id attribute that may lead to a WS-Signature failure.</p>
+</pre></div><p>This code signs the wsa5:To and wsa5:Action SOAP header elements (set with soap_wsa_request, see the WS-Addressing "wsa" API in the gSOAP documentation for more information on the use of WS-Addressing). It is fine to specify more elements with <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> than actually present in the XML payload. The other WS-Addressing headers are not present and are not signed.</p>
+<p>WARNING: <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> should only be set once for each <a class="el" href="wsseapi_8c.html#aa3ac2afb86a25ec1e1d8e4515133e9ad">soap_wsse_sign</a> or <a class="el" href="wsseapi_8c.html#ab653754f1a287ba06bd808cf89548c38">soap_wsse_sign_body</a>. Each new call overrides the previous setting.</p>
+<p>WARNING: Never use <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> to set the wsu:Id for an element that occurs more than once in the payload, since each will have the same wsu:Id attribute that may lead to a WS-Signature failure.</p>
 <h3><a class="anchor" id="wsse_8_3"></a>
 Signing Tokens</h3>
 <p>To sign security tokens such as user names, passwords, and binary security tokens, just assign their Id values with a unique string, such as "Time" for timestamps and "User" for user names. For example:</p>
@@ -757,15 +759,15 @@ Miscellaneous</h2>
 } <a class="code" href="wsse_8h.html#adea0e9370ef38183a230394959186a83" title="This element defines the wsse:Security SOAP header element per Section 4. Imported element _wsse__Sec...">_wsse__Security</a>;
 </pre></div><p>The <a class="el" href="struct__wsse_____security.html" title="This element defines the wsse:Security SOAP header element per Section 4. Imported element _wsse__Sec...">_wsse__Security</a> header is modified by a WS/WS-typemap.dat mapping rule to include additional details.</p>
 <h2><a class="anchor" id="wsse_13"></a>
-Limitations</h2>
+Encryption Limitations</h2>
 <ul>
-<li>Individual encryption/decryption of simple content (CDATA content) with <a class="el" href="wsseapi_8c.html#aac8dc04e8092bb3c15d3f35d206e2488">soap_wsse_add_EncryptedKey_encrypt_only</a> is not supported. Encrypt the entire SOAP Body or encrypt elements with complex content (elements that have sub elements).</li>
+<li>Individual encryption/decryption of simple content (CDATA content) with <a class="el" href="wsseapi_8c.html#aac8dc04e8092bb3c15d3f35d206e2488">soap_wsse_add_EncryptedKey_encrypt_only</a> IS NOT SUPPORTED. Encrypt the entire SOAP Body or encrypt elements with complex content (complexType and complexContent elements that have sub elements).</li>
 </ul>
 <ul>
 <li>Encryption is performed after signing (likewise, signatures are verified after decryption). Signing after encryption is not supported. </li>
 </ul>
 </div></div>
-<hr class="footer"/><address class="footer"><small>Generated on Sat Nov 19 2011 13:33:42 for gSOAP WS-Security by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Dec 12 2011 11:10:45 for gSOAP WS-Security by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

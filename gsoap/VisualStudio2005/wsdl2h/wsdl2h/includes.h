@@ -42,7 +42,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #undef VERSION
-#define VERSION "2.8.5"
+#define VERSION "2.8.6"
 
 #include <utility>
 #include <iterator>

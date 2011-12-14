@@ -34,6 +34,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "soapH.h"
 #include "udp.nsmap"
 
+#define SERVER "soap.udp://localhost:10000" // use NULL for address set in WSDL
+
 int main(int argc, char **argv)
 { struct soap soap;
   struct SOAP_ENV__Header header;
@@ -75,13 +77,13 @@ int main(int argc, char **argv)
   replyTo.Address = "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous";
 
   /* Set WS-Addressing elements for request-response unicast */
-  header.wsa__MessageID = mid1;
+  header.wsa__MessageID = mid1; /* or use soap_wsa_rand_uuid(soap) for UUID */
   header.wsa__To = "http://genivia.com/udp/server";
   header.wsa__Action = "http://genivia.com/udp/echoString";
   header.wsa__ReplyTo = &replyTo;
 
   /* Make request-response call */
-  if (soap_call_ns__echoString(&soap, NULL, NULL, "hello world!", &res))
+  if (soap_call_ns__echoString(&soap, SERVER, NULL, "hello world!", &res))
   { if (soap.error == SOAP_EOF && soap.errnum == 0)
       printf("Timeout: message probably already delivered\n");
     else
@@ -95,7 +97,7 @@ int main(int argc, char **argv)
   soap.header = &header;
 
   /* Set WS-Addressing elements for one-way unicast */
-  header.wsa__MessageID = mid2;
+  header.wsa__MessageID = mid2; /* or use soap_wsa_rand_uuid(soap) for UUID */
   header.wsa__To = "http://genivia.com/udp/server";
   header.wsa__Action = "http://genivia.com/udp/sendString";
 

@@ -308,6 +308,7 @@ class xs__whiteSpace
 class xs__restriction
 { public:
 	@xsd__QName			base;
+	xs__attributeGroup		*attributeGroup;// not used in <simpleType><restriction>
 	xs__group			*group;		// not used in <simpleType><restriction>
 	xs__all				*all;		// not used in <simpleType><restriction>
 	xs__seqchoice			*choice;	// not used in <simpleType><restriction>

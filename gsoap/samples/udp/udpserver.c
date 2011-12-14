@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2008, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2001-2011, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -43,16 +43,36 @@ int check_received(const char *id);
 
 int id_count = 1;
 
+#define MULTICAST_GROUP (NULL) /* use a group IP such as "225.0.0.37" */
+#define PORT 10000
+
 int main()
 { struct soap soap;
   init_received();
   soap_init1(&soap, SOAP_IO_UDP);
-  if (!soap_valid_socket(soap_bind(&soap, NULL, 10000, 100)))
+  /* reuse address */
+  soap.bind_flags = SO_REUSEADDR;
+  /* bind */
+  if (!soap_valid_socket(soap_bind(&soap, NULL, PORT, 100)))
   { soap_print_fault(&soap, stderr);
     exit(1);
   }
+  /* optionally join a multicast group */
+  if (MULTICAST_GROUP)
+  { struct ip_mreq mreq;
+    mreq.imr_multiaddr.s_addr = inet_addr(MULTICAST_GROUP);
+    mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+    if (setsockopt(soap.socket, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0)
+      exit(1);
+  }
+  /* serve requests */
   for (;;)
-  { printf("Accepting requests...\n");
+  { printf("Accepting requests\n");
+    /* accept (not really needed for UDP, so can be omitted) */
+    if (!soap_valid_socket(soap_accept(&soap)))
+    { soap_print_fault(&soap, stderr);
+      exit(1);
+    }
     if (soap_serve(&soap))
       soap_print_fault(&soap, stderr);
     soap_destroy(&soap);
@@ -101,7 +121,9 @@ int check_header(struct soap *soap)
 }
 
 int ns__echoString(struct soap *soap, char *str, char **res)
-{ /* Get Header info and setup response Header */
+{ char port[16];
+
+  /* Get Header info and setup response Header */
   if (check_header(soap))
   { printf("Malformed header\n");
     return SOAP_FAULT; /* there was a problem */
@@ -113,7 +135,10 @@ int ns__echoString(struct soap *soap, char *str, char **res)
     return SOAP_STOP;
   }
 
-  printf("Request message %s accepted\n", soap->header->wsa__MessageID);
+  /* Get name of client */
+  getnameinfo((struct sockaddr*)&soap->peer, soap->peerlen, soap->host, sizeof(soap->host), port, 16, NI_DGRAM | NI_NAMEREQD | NI_NUMERICSERV);
+
+  printf("Request message %s from %s:%s accepted\n", soap->header->wsa__MessageID, soap->host, port);
 
   /* Check ReplyTo has Address */
   if (!soap->header->wsa__ReplyTo || !soap->header->wsa__ReplyTo->Address)

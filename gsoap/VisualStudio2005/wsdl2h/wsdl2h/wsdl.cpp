@@ -144,19 +144,9 @@ int wsdl__definitions::read(int num, char **loc)
 }
 
 int wsdl__definitions::read(const char *cwd, const char *loc)
-{ // only read from locations not read already, uses static std::map
-  static map<const char*, wsdl__definitions*, ltstr> included;
-  const char *cwd_temp;
+{ const char *cwd_temp;
   if (!cwd)
     cwd = cwd_path;
-  if (loc)
-  { if (included.find(loc) != included.end())
-    { if (vflag)
-        fprintf(stderr, "\nWSDL/XSD '%s' already imported\n", loc);
-      return SOAP_OK;
-    }
-    included[soap_strdup(soap, loc)] = this;
-  }
   if (vflag)
     fprintf(stderr, "\nOpening WSDL/XSD '%s' from '%s'\n", loc?loc:"", cwd?cwd:"");
   if (loc)
@@ -292,7 +282,7 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
 
 int wsdl__definitions::preprocess()
 { if (vflag)
-    cerr << "Preprocessing wsdl definitions namespace '" << (targetNamespace?targetNamespace:"") << "'" << endl;
+    cerr << "Preprocessing wsdl definitions '" << (location?location:"") << "' namespace '" << (targetNamespace?targetNamespace:"") << "'" << endl;
   // process import
   for (vector<wsdl__import>::iterator im1 = import.begin(); im1 != import.end(); ++im1)
     (*im1).preprocess(*this);
@@ -301,19 +291,23 @@ again:
   for (vector<wsdl__import>::iterator im2 = import.begin(); im2 != import.end(); ++im2)
   { if ((*im2).definitionsPtr())
     { for (vector<wsdl__import>::iterator i = (*im2).definitionsPtr()->import.begin(); i != (*im2).definitionsPtr()->import.end(); ++i)
-      { bool found = false;
-        for (vector<wsdl__import>::iterator j = import.begin(); j != import.end(); ++j)
-        { if (((*i).definitionsPtr() == (*j).definitionsPtr())
-           || ((*i).location && (*j).location && !strcmp((*i).location, (*j).location)))
-          { found = true;
-            break;
+      { if ((*i).definitionsPtr())
+        { bool found = false;
+          if (vflag)
+            cerr << "Import WSDL '" << ((*i).location?(*i).location:"") << endl;
+          for (vector<wsdl__import>::iterator j = import.begin(); j != import.end(); ++j)
+          { if ((*i).definitionsPtr() == (*j).definitionsPtr()
+             || ((*i).location && (*j).location && !strcmp((*i).location, (*j).location)))
+            { found = true;
+              break;
+            }
           }
-        }
-        if (!found)
-        { if (vflag)
-            cerr << "Adding imported WSDL '" << ((*i).location?(*i).location:"") << "' to '" << (name?name:"") << "' namespace '" << (targetNamespace?targetNamespace:"") << "'" << endl;
-          import.push_back(*i);
-          goto again;
+          if (!found)
+          { if (vflag)
+              cerr << "Adding imported WSDL '" << ((*i).location?(*i).location:"") << "' to '" << (location?location:"") << "' ('" << (name?name:"") << "') namespace '" << (targetNamespace?targetNamespace:"") << "'" << endl;
+            import.push_back(*i);
+            goto again;
+          }
         }
       }
     }
@@ -354,6 +348,7 @@ again:
       }
     }
   }
+  // process the types
   if (types)
     types->preprocess(*this);
   return SOAP_OK;
@@ -594,8 +589,22 @@ int wsdl__binding_operation::traverse(wsdl__definitions& definitions, wsdl__port
   if (name && portTypeRef)
   { for (vector<wsdl__operation>::iterator i = portTypeRef->operation.begin(); i != portTypeRef->operation.end(); ++i)
     { if ((*i).name && !strcmp((*i).name, name))
-      { if ((!input || !input->name || ((*i).input && (*i).input->name && !strcmp((*i).input->name, input->name))) && (!output || !output->name || ((*i).output && (*i).output->name && !strcmp((*i).output->name, output->name))))
+      { if ((!input || !input->name || !(*i).input || !(*i).input->name || !strcmp((*i).input->name, input->name)) && (!output || !output->name || !(*i).output || !(*i).output->name || !strcmp((*i).output->name, output->name)))
         { operationRef = &(*i);
+          if (vflag)
+            cerr << "   Found operation '" << name << "'" << endl;
+          break;
+        }
+      }
+    }
+    if (!operationRef)
+    { for (vector<wsdl__operation>::iterator j = portTypeRef->operation.begin(); j != portTypeRef->operation.end(); ++j)
+      { if ((*j).name && !strcmp((*j).name, name))
+        { if (input && input->name && (*j).input && (*j).input->name && strcmp((*j).input->name, input->name))
+            cerr << "Warning: no matching portType operation input name '" << ((*j).input->name) << "' in wsdl definitions '" << (definitions.name?definitions.name:"") << "' namespace '" << (definitions.targetNamespace?definitions.targetNamespace:"") << "'" << endl;
+          if (output && output->name && (*j).output && (*j).output->name && strcmp((*j).output->name, output->name))
+            cerr << "Warning: no matching portType operation output name '" << ((*j).output->name) << "' in wsdl definitions '" << (definitions.name?definitions.name:"") << "' namespace '" << (definitions.targetNamespace?definitions.targetNamespace:"") << "'" << endl;
+          operationRef = &(*j);
           if (vflag)
             cerr << "   Found operation '" << name << "'" << endl;
           break;
@@ -904,7 +913,7 @@ wsdl__message *wsdl__fault::messagePtr() const
 
 int wsdl__message::traverse(wsdl__definitions& definitions)
 { if (vflag)
-    cerr << " Analyzing messages in wsdl namespace '" << (definitions.targetNamespace?definitions.targetNamespace:"") << "'" << endl;
+    cerr << " Analyzing message '" << (name?name:"") << "' in wsdl namespace '" << (definitions.targetNamespace?definitions.targetNamespace:"") << "'" << endl;
   for (vector<wsdl__part>::iterator i = part.begin(); i != part.end(); ++i)
     (*i).traverse(definitions);
   for (vector<wsp__Policy>::iterator p = wsp__Policy_.begin(); p != wsp__Policy_.end(); ++p)
@@ -1156,7 +1165,8 @@ int wsdl__types::traverse(wsdl__definitions& definitions)
 }
 
 int wsdl__import::preprocess(wsdl__definitions& definitions)
-{ bool found = false;
+{ static map<const char*, wsdl__definitions*, ltstr> included;
+  bool found = false;
   if (vflag)
     cerr << "Preprocess wsdl import '" << (location?location:"") << "'" << endl;
   definitionsRef = NULL;
@@ -1169,11 +1179,20 @@ int wsdl__import::preprocess(wsdl__definitions& definitions)
     }
   }
   if (!found && location)
+  { map<const char*, wsdl__definitions*, ltstr>::iterator i = included.find(location);
+    if (i != included.end())
+    { if (vflag)
+        fprintf(stderr, "\nWSDL/XSD '%s' already imported\n", location);
+      found = true;
+      definitionsRef = (*i).second;
+    }
+  }
+  if (!found && location)
   { // parse imported definitions
     const char *source = definitions.sourceLocation();
     if (vflag)
-      cerr << "Importing wsdl for '" << (source?source:"(source location not set)") << "'" << endl;
-    definitionsRef = new wsdl__definitions(definitions.soap, source, location);
+      cerr << "Importing '" << location << "' into '" << (source?source:"(source location not set)") << "'" << endl;
+    included[location] = definitionsRef = new wsdl__definitions(definitions.soap, source, location);
     if (!definitionsRef)
       return SOAP_EOF;
     if (!namespace_)
@@ -1183,8 +1202,8 @@ int wsdl__import::preprocess(wsdl__definitions& definitions)
     else if (strcmp(namespace_, definitionsRef->targetNamespace))
       cerr << "Error: wsdl definitions/import '" << location << "' namespace '" << namespace_ << "' does not match imported targetNamespace '" << definitionsRef->targetNamespace << "'" << endl;
   }
-  else if (!found)
-    cerr << "wsdl definitions/import has no location attribute" << endl;
+  else if (!location)
+    cerr << "Warning: wsdl definitions/import has no location attribute" << endl;
   return SOAP_OK;
 }
 
@@ -1194,22 +1213,22 @@ int wsdl__import::traverse(wsdl__definitions& definitions)
       cerr << " Analyzing imported wsdl namespace '" << (namespace_?namespace_:"") << "' in wsdl namespace '" << (definitions.targetNamespace?definitions.targetNamespace:"") << "'" << endl;
     // process import first
     for (vector<wsdl__import>::iterator im = definitionsRef->import.begin(); im != definitionsRef->import.end(); ++im)
-      (*im).traverse(*definitionsRef);
+      (*im).traverse(definitions);
     // then process the types
     if (definitionsRef->types)
-      definitionsRef->types->traverse(*definitionsRef);
+      definitionsRef->types->traverse(definitions);
     // process messages before portTypes
     for (vector<wsdl__message>::iterator mg = definitionsRef->message.begin(); mg != definitionsRef->message.end(); ++mg)
-      (*mg).traverse(*definitionsRef);
+      (*mg).traverse(definitions);
     // process portTypes before bindings
     for (vector<wsdl__portType>::iterator pt = definitionsRef->portType.begin(); pt != definitionsRef->portType.end(); ++pt)
-      (*pt).traverse(*definitionsRef);
+      (*pt).traverse(definitions);
     // process bindings
     for (vector<wsdl__binding>::iterator bg = definitionsRef->binding.begin(); bg != definitionsRef->binding.end(); ++bg)
-      (*bg).traverse(*definitionsRef);
+      (*bg).traverse(definitions);
     // process services
     for (vector<wsdl__service>::iterator sv = definitionsRef->service.begin(); sv != definitionsRef->service.end(); ++sv)
-      (*sv).traverse(*definitionsRef);
+      (*sv).traverse(definitions);
     if (vflag)
       cerr << " End of imported wsdl namespace '" << (namespace_?namespace_:"") << "'" << endl;
   }

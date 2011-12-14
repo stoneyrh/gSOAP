@@ -59,7 +59,7 @@ int soap__header::traverse(wsdl__definitions& definitions)
       }
     }
   }
-  else
+  if (!messageRef)
   { for (vector<wsdl__import>::iterator import = definitions.import.begin(); import != definitions.import.end(); ++import)
     { wsdl__definitions *importdefinitions = (*import).definitionsPtr();
       if (importdefinitions)
