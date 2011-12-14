@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.5 User Guide</title>
+<title>gSOAP 2.8.6 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.5 User Guide </h1>
+<h1 align="center">gSOAP 2.8.6 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Nov 19, 2011
+<h3 align="center">Dec 13, 2011
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -5487,6 +5487,7 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_ZLIB</i>	</td><td align="left">enables deflate compression only, see Section&nbsp;<a href="#sec:compression">19.27</a> </td></tr>
 <tr><td align="left"><i>WITH_FAST</i>	</td><td align="left">(obsolete) </td></tr>
 <tr><td align="left"><i>WITH_NOIO</i>	</td><td align="left">eliminates need for file IO and BSD socket library, see Section&nbsp;<a href="#sec:noio">19.33</a> </td></tr>
+<tr><td align="left"><i>WITH_NOIDREF</i>	</td><td align="left">eliminates href/ref and id attributes to (de)serialize multi-ref data</td></tr>
 <tr><td align="left"><i>WITH_NOHTTP</i>	</td><td align="left">eliminates HTTP stack to reduce code size </td></tr>
 <tr><td align="left"><i>WITH_NOZONE</i>	</td><td align="left">silently ignores the timezone in time conversions </td></tr>
 <tr><td align="left"><i>WITH_LEAN</i>	</td><td align="left">creates a small-footprint executable, see Section&nbsp;<a href="#sec:lean">19.32</a> </td></tr>
@@ -6276,8 +6277,8 @@ The error codes returned by the stub and skeleton routines are listed below.
 <tr><td align="right"><i>SOAP_EOM</i> </td><td align="left">Out of memory </td></tr>
 <tr><td align="right"><i>SOAP_MOE</i> </td><td align="left">Memory overflow/corruption error (DEBUG mode) </td></tr>
 <tr><td align="right"><i>SOAP_NULL</i> </td><td align="left">An element was null, while it is not supposed to be null </td></tr>
-<tr><td align="right"><i>SOAP_DUPLICATE_ID</i> </td><td align="left">Element's ID duplicated (SOAP encoding) </td></tr>
-<tr><td align="right"><i>SOAP_MISSING_ID</i> </td><td align="left">Element ID missing for an href/ref (SOAP encoding) </td></tr>
+<tr><td align="right"><i>SOAP_DUPLICATE_ID</i> </td><td align="left">Element's ID duplicated (multi-ref encoding) </td></tr>
+<tr><td align="right"><i>SOAP_MISSING_ID</i> </td><td align="left">Element ID missing for an href/ref (multi-ref encoding) </td></tr>
 <tr><td align="right"><i>SOAP_HREF</i> </td><td align="left">Reference to object is incompatible with the object refered to </td></tr>
 <tr><td align="right"><i>SOAP_UTF_ERROR</i> </td><td align="left">An UTF-encoded message decoding error occured </td></tr>
 <tr><td align="right"><i>SOAP_UDP_ERROR</i> </td><td align="left">Message too large to store in UDP packet </td></tr>
@@ -8534,10 +8535,10 @@ type pointed to.
 A data structure pointed to by more than one pointer is serialized as SOAP
 multi-reference data. This means that the data will be serialized only once and
 identified with a unique <tt>id</tt> attribute. The encoding of the pointers to
-the shared data is done through the use of <tt>href</tt> attributes to refer to
-the multi-reference data (also see Section&nbsp;<a href="#sec:flags">9.12</a> on options to
-control the serialization of multi-reference data).  Cyclic C/C++ data
-structures are encoded with multi-reference SOAP encoding.  Consider for
+the shared data is done through the use of <tt>href</tt> or <tt>ref</tt> attributes
+to refer to the multi-reference data. See Section&nbsp;<a href="#sec:flags">9.12</a> on
+options to control the serialization of multi-reference data. To turn multi-ref off, use <i>SOAP_XML_TREE</i> to process plain tree-based XML. To completely eliminate multi-ref (de)serialization use the <i>WITH_NOIDREF</i> compile-time flag to permanently disable id-href processing. Cyclic C/C++
+data structures are encoded with multi-reference SOAP encoding.  Consider for
 example the following a linked list data structure:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>typedef</b>&nbsp;<b>char</b>&nbsp;*xsd__string; <br />
@@ -15590,5 +15591,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 19 Nov 2011, 13:05.</small>
+version 4.00.<br />On 13 Dec 2011, 21:53.</small>
 </html>

@@ -743,9 +743,9 @@ Variables</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd><a class="el" href="structxenc_____encrypted_key_type.html" title="&quot;http://www.w3.org/2001/04/xmlenc#&quot;:EncryptedKeyType is a complexType with complexContent extension o...">xenc__EncryptedKeyType</a> object</dd></dl>
 <p>This function adds the encrypted key or subject key ID to the WS-Security header and initiates encryption of the elements given by the string of tag names. An X509 certificate must be provided. The certificate is embedded in the WS-Security EncryptedKey header. If the subjectkeyid string is non-NULL the subject key ID is used in the EncryptedKey header instead of the X509 certificate content.</p>
-<p>WARNING: use only in combination with soap_wsse_set_wsu_id with the tag names of the elements to be encrypted. OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED AND WILL BE SENT IN THE CLEAR.</p>
-<p>WARNING: The elements to encrypt MUST occur EXACTLY ONCE in the SOAP Body.</p>
-<p>WARNING: Decryption of simple content (CDATA content) is not supported. This means that elements you want to encrypt with this function must have complex content, that is only encrypt elements with sub elements. </p>
+<p>WARNING: Use <a class="el" href="wsseapi_8c.html#aac8dc04e8092bb3c15d3f35d206e2488">soap_wsse_add_EncryptedKey_encrypt_only</a> only in combination with <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> with the tag names of the elements to be encrypted. OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED AND WILL BE SENT IN THE CLEAR.</p>
+<p>WARNING: The elements identified with <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> to encrypt MUST occur EXACTLY ONCE in the SOAP Body.</p>
+<p>WARNING: Encryption/decryption of elements with simple content (CDATA content) IS NOT SUPPORTED. This means that elements you want to encrypt with this function must have complex content. That is, only encrypt elements with sub elements or encrypt the entire SOAP Body. </p>
 
 </div>
 </div>
@@ -1887,8 +1887,9 @@ Variables</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code</dd></dl>
 <p>This function initiates the encryption using an RSA public key or a symmetric shared secret key. No WS-Security EncryptedKey header will be set. Use soap_wsse_add_EncryptedKey instead for public key encryption.</p>
-<p>WARNING: use only in combination with soap_wsse_set_wsu_id with the tag names of the elements to be encrypted. OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED AND WILL BE SENT IN THE CLEAR.</p>
-<p>WARNING: The elements to encrypt MUST occur EXACTLY ONCE in the SOAP Body. </p>
+<p>WARNING: Use <a class="el" href="wsseapi_8c.html#aac8dc04e8092bb3c15d3f35d206e2488">soap_wsse_add_EncryptedKey_encrypt_only</a> only in combination with <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> with the tag names of the elements to be encrypted. OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED AND WILL BE SENT IN THE CLEAR.</p>
+<p>WARNING: The elements identified with <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> to encrypt MUST occur EXACTLY ONCE in the SOAP Body.</p>
+<p>WARNING: Encryption/decryption of elements with simple content (CDATA content) IS NOT SUPPORTED. This means that elements you want to encrypt with this function must have complex content. That is, only encrypt elements with sub elements or encrypt the entire SOAP Body. </p>
 
 </div>
 </div>
@@ -3444,7 +3445,7 @@ Variables</h2></td></tr>
 </div>
 </div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Sat Nov 19 2011 13:33:42 for gSOAP WS-Security by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Dec 12 2011 11:10:45 for gSOAP WS-Security by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

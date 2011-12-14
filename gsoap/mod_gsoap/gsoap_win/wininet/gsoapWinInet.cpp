@@ -2,15 +2,6 @@
 See the header file for details. This file is distributed under the MIT licence.
 */
 
-/* system */
-#include <windows.h>
-#include <crtdbg.h>
-#include <wininet.h>
-
-/* gsoap */
-#include <stdsoap2.h>
-
-/* local */
 #include "gsoapWinInet.h"
 
 /* ensure that the wininet library is linked */

@@ -91,9 +91,10 @@ _wsrm__Identifier		= | char*
 _wsrm__Address			= | char*
 _wsrm__Expires			= #import "custom/duration.h" | xsd__duration
 
-#	wsdd bindings
+#	wsdd bindings 1.1 and 1.0
 
 wsdd	= <http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01>
+wsdd10  = <http://schemas.xmlsoap.org/ws/2005/04/discovery>
 
 ################################################################################
 #

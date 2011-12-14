@@ -27,12 +27,12 @@
   elementFormDefault="unqualified"
   attributeFormDefault="unqualified">
   <import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" schemaLocation="http://schemas.xmlsoap.org/ws/2004/08/addressing"/>
-  <import namespace="http://schemas.xmlsoap.org/soap/encoding/" schemaLocation="http://schemas.xmlsoap.org/soap/encoding/"/>
+  <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
   <!-- operation request element -->
   <element name="echoString">
    <complexType>
     <sequence>
-     <element name="str" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+     <element name="str" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/><!-- ns__echoString::str -->
     </sequence>
    </complexType>
   </element>
@@ -40,7 +40,7 @@
   <element name="echoStringResponse">
    <complexType>
     <sequence>
-     <element name="res" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+     <element name="res" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/><!-- ns__echoString::res -->
     </sequence>
    </complexType>
   </element>
@@ -48,7 +48,7 @@
   <element name="sendString">
    <complexType>
     <sequence>
-     <element name="str" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+     <element name="str" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/><!-- ns__sendString::str -->
     </sequence>
    </complexType>
   </element>
@@ -57,7 +57,7 @@
 </types>
 
 <message name="echoStringRequest">
- <part name="parameters" element="ns:echoString"/>
+ <part name="parameters" element="ns:echoString"/><!-- ns__echoString::ns__echoString -->
 </message>
 
 <message name="echoStringResponse">
@@ -65,7 +65,7 @@
 </message>
 
 <message name="sendString">
- <part name="parameters" element="ns:sendString"/>
+ <part name="parameters" element="ns:sendString"/><!-- ns__sendString::ns__sendString -->
 </message>
 
 <message name="udpHeader">
@@ -121,7 +121,7 @@
 </binding>
 
 <service name="udp">
- <documentation>gSOAP 2.7.16 generated service definition</documentation>
+ <documentation>gSOAP 2.8.6 generated service definition</documentation>
  <port name="udp" binding="tns:udp">
   <SOAP:address location="soap.udp://localhost:10000"/>
  </port>

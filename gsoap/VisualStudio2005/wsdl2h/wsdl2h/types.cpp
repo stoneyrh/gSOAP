@@ -1876,7 +1876,8 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
        || !URI
        || !typeURI
        || (attribute.form && *attribute.form == qualified)
-       || (attribute.schemaPtr()->attributeFormDefault == qualified && strcmp(URI, typeURI)))
+       || attribute.schemaPtr()->attributeFormDefault == qualified
+       || strcmp(URI, typeURI))
         nameURI = typeURI;
       else if (attribute.form && *attribute.form == unqualified)
         nameprefix = ":";
@@ -2013,10 +2014,12 @@ void Types::gen(const char *URI, const vector<xs__attributeGroup>& attributeGrou
         gen(URI, *(*attributeGroup).attributeGroupPtr()->anyAttribute);
     }
     else
-    { gen(URI, (*attributeGroup).attribute);
+    { fprintf(stream, "/// Begin attributeGroup %s.\n", (*attributeGroup).name?(*attributeGroup).name:"");
+      gen(URI, (*attributeGroup).attribute);
       gen(URI, (*attributeGroup).attributeGroup);
       if ((*attributeGroup).anyAttribute)
         gen(URI, *(*attributeGroup).anyAttribute);
+      fprintf(stream, "/// End of attributeGroup %s.\n", (*attributeGroup).name?(*attributeGroup).name:"");
     }
   }
 }
@@ -2163,7 +2166,8 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
        || !URI
        || !typeURI
        || (element.form && *element.form == qualified)
-       || (element.schemaPtr()->elementFormDefault == qualified && strcmp(URI, typeURI)))
+       || element.schemaPtr()->elementFormDefault == qualified
+       || strcmp(URI, typeURI))
         nameURI = typeURI;
       else if (element.form && *element.form == unqualified)
         nameprefix = ":";
@@ -2435,7 +2439,8 @@ void Types::gen(const char *URI, const vector<xs__group>& groups)
 }
 
 void Types::gen(const char *URI, const xs__group& group)
-{ if (group.groupPtr())
+{ fprintf(stream, "/// Begin group %s.\n", group.name?group.name:"");
+  if (group.groupPtr())
   { if (group.schemaPtr() == group.groupPtr()->schemaPtr())
       gen(URI, *group.groupPtr());
     else
@@ -2447,6 +2452,7 @@ void Types::gen(const char *URI, const xs__group& group)
     gen(URI, NULL, *group.choice);
   else if (group.sequence)
     gen(URI, *group.sequence);
+  fprintf(stream, "/// End of group %s.\n", group.name?group.name:"");
 }
 
 void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice)

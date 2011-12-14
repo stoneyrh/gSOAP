@@ -2243,9 +2243,9 @@ FaultTo destination service) when a response is received.
 int
 soap_wsrm_check_fault(struct soap *soap, enum wsrm__FaultCodes *fault, const char **info)
 { if (soap->error && soap->fault && soap->fault->SOAP_ENV__Code)
-  { const char *code = *soap_faultsubcode(soap);
+  { const char *code = soap_check_faultsubcode(soap);
     if (info)
-      *info = *soap_faultdetail(soap);
+      *info = soap_check_faultdetail(soap);
     if (code)
       return soap_s2wsrm__FaultCodes(soap, code, fault);
   }

@@ -1220,6 +1220,8 @@ xs__restriction::xs__restriction()
 int xs__restriction::traverse(xs__schema &schema)
 { if (vflag)
     cerr << "   Analyzing schema restriction '" << (base?base:"") << "'" << endl;
+  if (attributeGroup)
+    attributeGroup->traverse(schema);
   if (group)
     group->traverse(schema);
   else if (all)

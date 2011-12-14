@@ -694,7 +694,27 @@ frecv(struct soap *psoap, char *pBuf, apr_size_t len)
             apr_table_do(send_header_to_gsoap, psoap, r->headers_in, NULL);
             pRqConf->headers_received = true;
         }
-        nRet = ap_get_client_block(r, pBuf, len > r->remaining ? r->remaining : len);
+        /*
+         * Steven Elliott <selliott4@austin.rr.com>:
+         * It's not obvious from Apache documentation documentation how
+         * exactly ap_get_client_block() should be called in both the chunked
+         * and non-chunked cases.  In the chunked case r->remaining is zero,
+         * so that can't be an upper bound to the number of bytes read.
+         * However, this site:
+         *   http://docstore.mik.ua/orelly/apache_mod/139.htm 
+         * cautions that "If you are handling non-chunked data, do not try to
+         * read more than the number of bytes declared in Content-length
+         * because this may cause the attempted read to block indefinitely."
+         * Consequently my best guess, with regard to what is safe, is in the
+         * non-chunked case continue doing as mod_gsoap has done in the past
+         * and limit the upper bound to r->remaining.  In the chunked case
+         * read "len", which almost certainly exceeds what was posted.
+         * Hopefully if ap_get_client_block() blocks it returns no later than 
+         * when the current post is complete regardless of chunking or
+         * keep-alive.
+         */
+        nRet = ap_get_client_block(r, pBuf,
+            r->read_chunked ? len : (len > r->remaining ? r->remaining : len));
     }
     return nRet;
 }

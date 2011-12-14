@@ -1033,7 +1033,7 @@ soap_wsa_receiver_fault(struct soap *soap, const char *faultstring, const char *
 int
 soap_wsa_check_fault(struct soap *soap, SOAP_WSA(FaultCodesType) *fault, const char **info)
 { if (soap->error && soap->fault && soap->fault->SOAP_ENV__Code)
-  { const char *code = *soap_faultsubcode(soap);
+  { const char *code = soap_check_faultsubcode(soap);
     if (code)
     { SOAP_WSA__(soap_s2,FaultCodesType)(soap, code, fault);
       if (info)
@@ -1091,7 +1091,7 @@ soap_wsa_check_fault(struct soap *soap, char **fault)
 int
 soap_wsa_check_fault(struct soap *soap, SOAP_WSA(FaultSubcodeValues) *fault)
 { if (soap->error && soap->fault && soap->fault->SOAP_ENV__Code)
-  { const char *code = *soap_faultsubcode(soap);
+  { const char *code = soap_check_faultsubcode(soap);
     if (code)
     { SOAP_WSA__(soap_s2,FaultSubcodeValues)(soap, code, fault);
       return soap->error;

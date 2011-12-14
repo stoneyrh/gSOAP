@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.5
+	stdsoap2.h 2.8.6
 
 	gSOAP runtime engine
 
@@ -530,7 +530,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #endif
 
-/* native Win and HP-UX compilers don't like empty structs */
+/* native Win, HP-UX, and AIX compilers don't like empty structs */
 #if defined(WIN32) || defined(HP_UX) || defined(_AIX41) || defined(_AIX43) || defined(VXWORKS)
 # define WITH_NOEMPTYSTRUCT
 #endif
@@ -1334,7 +1334,7 @@ typedef soap_int32 soap_mode;
 
 #define soap_check_state(soap) (!(soap) || ((soap)->state != SOAP_INIT && (soap)->state != SOAP_COPY))
 
-/* parts, states, and events */
+/* parts */
 
 #define SOAP_BEGIN		0
 #define SOAP_IN_ENVELOPE	2
@@ -1346,8 +1346,10 @@ typedef soap_int32 soap_mode;
 #define SOAP_END_ENVELOPE	8
 #define SOAP_END		9
 
-#define SOAP_SEC_BEGIN		10
-#define SOAP_SEC_SIGN		11
+/* events */
+
+#define SOAP_SEC_BEGIN		1
+#define SOAP_SEC_SIGN		2
 
 /* DEBUG macros */
 
@@ -1936,6 +1938,7 @@ struct SOAP_STD_API soap
   short ns;		/* when not set, output full xmlns bindings */
   short part;		/* SOAP part state (header or body) */
   short event;		/* engine events and states for use by plugins */
+  unsigned int evlev;	/* event level */
   short alloced;
   short peeked;
   size_t chunksize;
@@ -2185,6 +2188,8 @@ SOAP_FMAC1 const char** SOAP_FMAC2 soap_faultcode(struct soap*);
 SOAP_FMAC1 const char** SOAP_FMAC2 soap_faultsubcode(struct soap*);
 SOAP_FMAC1 const char** SOAP_FMAC2 soap_faultstring(struct soap*);
 SOAP_FMAC1 const char** SOAP_FMAC2 soap_faultdetail(struct soap*);
+SOAP_FMAC1 const char* SOAP_FMAC2 soap_check_faultsubcode(struct soap*);
+SOAP_FMAC1 const char* SOAP_FMAC2 soap_check_faultdetail(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_serializeheader(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_putheader(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_getheader(struct soap*);
