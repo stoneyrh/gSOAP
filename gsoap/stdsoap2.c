@@ -8545,8 +8545,16 @@ soap_copy_stream(struct soap *copy, struct soap *soap)
       SOAP_FREE(copy, nq);
     }
   }
-  copy->level = soap->level;
+  strcpy(copy->id, soap->id);
+  strcpy(copy->href, soap->href);
+  strcpy(copy->type, soap->type);
+  copy->other = soap->other;
+  copy->root = soap->root;
+  copy->null = soap->null;
   copy->body = soap->body;
+  copy->part = soap->part;
+  copy->mustUnderstand = soap->mustUnderstand;
+  copy->level = soap->level;
   copy->peeked = soap->peeked;
   memcpy(copy->tag, soap->tag, sizeof(copy->tag));
   /* copy attributes */
