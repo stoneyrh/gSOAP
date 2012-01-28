@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="quote"
+ targetNamespace="urn:xmethods-delayed-quotes"
+ xmlns:tns="urn:xmethods-delayed-quotes"
+ xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+ xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:ns="urn:xmethods-delayed-quotes"
+ xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
+ xmlns:MIME="http://schemas.xmlsoap.org/wsdl/mime/"
+ xmlns:DIME="http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/"
+ xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
+ xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+<types>
+
+ <schema targetNamespace="urn:xmethods-delayed-quotes"
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:ns="urn:xmethods-delayed-quotes"
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="unqualified"
+  attributeFormDefault="unqualified">
+  <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+ </schema>
+
+</types>
+
+<message name="getQuoteRequest">
+ <part name="symbol" type="xsd:string"/><!-- ns__getQuote::symbol -->
+</message>
+
+<message name="getQuoteResponse">
+ <part name="Result" type="xsd:float"/><!-- ns__getQuote::Result -->
+</message>
+
+<portType name="quotePortType">
+ <operation name="getQuote">
+  <documentation>Service definition of function ns__getQuote</documentation>
+  <input message="tns:getQuoteRequest"/>
+  <output message="tns:getQuoteResponse"/>
+ </operation>
+</portType>
+
+<binding name="quote" type="tns:quotePortType">
+ <SOAP:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+ <operation name="getQuote">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body use="encoded" namespace="urn:xmethods-delayed-quotes" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </input>
+  <output>
+     <SOAP:body use="encoded" namespace="urn:xmethods-delayed-quotes" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+  </output>
+ </operation>
+</binding>
+
+<service name="quote">
+ <documentation>gSOAP 2.8.6 generated service definition</documentation>
+ <port name="quote" binding="tns:quote">
+  <SOAP:address location="http://64.124.140.30:9090/soap"/>
+ </port>
+</service>
+
+</definitions>
