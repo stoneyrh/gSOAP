@@ -92,6 +92,7 @@ int has_external(Tnode *typ);
 int has_volatile(Tnode *typ);
 
 int is_invisible(const char *name);
+int is_invisible_empty(Tnode *p);
 
 int is_eq_nons(const char *s, const char *t);
 int is_eq(const char *s, const char *t);
@@ -4302,8 +4303,11 @@ gen_serve_method(FILE *fd, Table *table, Entry *param, char *name)
   }
   else if (!eflag)
     fprintf(fd, "\n\tsoap->encodingStyle = NULL;");
-  fprintf(fd,"\n\tif (!soap_get_%s(soap, &soap_tmp_%s, \"%s\", NULL))", ident(param->sym->name), ident(param->sym->name), ns_convert(param->sym->name));
-  fprintf(fd,"\n\t\treturn soap->error;");
+  q=entry(classtable, param->sym);
+  if (!is_invisible_empty(q->info.typ))
+  { fprintf(fd,"\n\tif (!soap_get_%s(soap, &soap_tmp_%s, \"%s\", NULL))", ident(param->sym->name), ident(param->sym->name), ns_convert(param->sym->name));
+    fprintf(fd,"\n\t\treturn soap->error;");
+  }
   fprintf(fd,"\n\tif (soap_body_end_in(soap)");
   fprintf(fd,"\n\t || soap_envelope_end_in(soap)");
   fprintf(fd,"\n\t || soap_end_recv(soap))\n\t\treturn soap->error;");
@@ -4316,7 +4320,6 @@ gen_serve_method(FILE *fd, Table *table, Entry *param, char *name)
   else
     fprintf(fd, "\n\tsoap->error = %s(soap", ident(param->sym->name));
   fflush(fd);
-  q=entry(classtable, param->sym);
   input=(Table*) q->info.typ->ref;
   for (pin = input->list; pin; pin = pin->next)
     fprintf(fd, "%ssoap_tmp_%s.%s", !name || pin != input->list ? ", " : "", ident(param->sym->name), ident(pin->sym->name));
@@ -5505,6 +5508,15 @@ is_unmatched(Symbol *sym)
 int
 is_invisible(const char *name)
 { return name[0] == '-' || (name[0] == '_' && name[1] == '_' && strncmp(name, "__ptr", 5));
+}
+
+int
+is_invisible_empty(Tnode *p)
+{ if (p->type == Tstruct || p->type == Tclass)
+    if (is_invisible(p->id->name))
+      if (!p->ref || !((Table*)p->ref)->list)
+        return 1;
+  return 0;
 }
 
 int
