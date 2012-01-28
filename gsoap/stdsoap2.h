@@ -567,7 +567,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # undef HAVE_SPRINTF_L
 #endif
 
-#ifdef TANDEM
+#ifdef TANDEM_NONSTOP
 # define SOAP_BUFLEN (32767)
 /*# define WITH_NOSTDLIB */ /* uncommment to remove stdlib dependences */
 # define WITH_NOIO      /* no IO dependences, e.g. remove TCP/IP */
