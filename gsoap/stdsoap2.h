@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.6
+	stdsoap2.h 2.8.7
 
 	gSOAP runtime engine
 
@@ -1928,9 +1928,9 @@ struct SOAP_STD_API soap
   char arraySize[SOAP_TAGLEN];
   char arrayOffset[SOAP_TAGLEN];
   short other;
-  short position;
-  int positions[SOAP_MAXDIMS];
   short root;
+  int position;
+  int positions[SOAP_MAXDIMS];
   struct soap_attribute *attributes;	/* attribute list */
   short encoding;	/* when set, output encodingStyle */
   short mustUnderstand;	/* a mustUnderstand element was parsed or is output */
