@@ -1340,7 +1340,7 @@ __wsdd__Resolve(struct soap *soap, struct wsdd__ResolveType *Resolve)
     int err;
     int (*fpost)(struct soap*, const char*, const char*, int, const char*, const char*, size_t);
     const char *MessageID = soap_wsa_rand_uuid(soap);
-    const char *Action = "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/ProbeMatches";
+    const char *Action = "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/ResolveMatches";
 
     /* SOAP Header */
     soap_wsdd_set_AppSequence(soap);

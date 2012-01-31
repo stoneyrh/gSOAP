@@ -64,14 +64,18 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 A Target Service MUST wait t (ms) to elapse before sending the message, where
 0 < t < APP_MAX_DELAY is randomly choosen. The default APP_MAX_DELAY is 500 ms.
 */
-#define SOAP_WSDD_APP_MAX_DELAY		(500)	/* ms delay */
+#ifndef SOAP_WSDD_APP_MAX_DELAY
+# define SOAP_WSDD_APP_MAX_DELAY	(500)	/* ms delay */
+#endif
 
 /**
 If the DP is unresponsive after DP_MAX_TIMEOUT, or if the Client finds the
 responses from the DP unsatisfactory, the Client reverts to using the multicast
 messages.
 */
-#define SOAP_WSDD_DP_MAX_TIMEOUT	(5000)	/* ms timeout */
+#ifdef SOAP_WSDD_DP_MAX_TIMEOUT
+# define SOAP_WSDD_DP_MAX_TIMEOUT	(5000)	/* ms timeout */
+#endif
 
 /**
 Managed or ad-hoc mode
