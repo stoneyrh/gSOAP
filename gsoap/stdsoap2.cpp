@@ -51,11 +51,16 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
+#define GSOAP_C_VERSION 20807
+
 #ifdef AS400
 # pragma convert(819)	/* EBCDIC to ASCII */
 #endif
 
 #include "stdsoap2.h"
+#if GSOAP_H_VERSION != GSOAP_C_VERSION
+# error "GSOAP VERSION MISMATCH: PLEASE REINSTALL PACKAGE"
+#endif
 
 #ifdef __BORLANDC__
 # pragma warn -8060
@@ -71,10 +76,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.7 2012-01-27 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.7 2012-02-02 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.7 2011-27-27 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.7 2011-02-02 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -6607,30 +6612,10 @@ soap_init_pht(struct soap *soap)
 SOAP_FMAC1
 struct soap*
 SOAP_FMAC2
-soap_new1(soap_mode mode)
-{ return soap_new2(mode, mode);
-}
-#endif
-
-/******************************************************************************/
-#ifndef PALM_1
-SOAP_FMAC1
-struct soap*
-SOAP_FMAC2
-soap_new()
-{ return soap_new2(SOAP_IO_DEFAULT, SOAP_IO_DEFAULT);
-}
-#endif
-
-/******************************************************************************/
-#ifndef PALM_1
-SOAP_FMAC1
-struct soap*
-SOAP_FMAC2
-soap_new2(soap_mode imode, soap_mode omode)
+soap_new0(int version, soap_mode imode, soap_mode omode)
 { struct soap *soap = (struct soap*)malloc(sizeof(struct soap));
   if (soap)
-    soap_init2(soap, imode, omode);
+    soap_init0(soap, version, imode, omode);
   return soap;
 }
 #endif
@@ -8607,10 +8592,15 @@ soap_free_stream(struct soap *soap)
 /******************************************************************************/
 #ifndef PALM_1
 SOAP_FMAC1
-void
+int
 SOAP_FMAC2
-soap_init(struct soap *soap)
+soap_init0(struct soap *soap, int version, soap_mode imode, soap_mode omode)
 { size_t i;
+  /* when the stdsoap2.h file has a different version then this file, abort */
+  if (version != GSOAP_C_VERSION)
+  { perror("GSOAP VERSION MISMATCH: source code incompatible with library, please rebuild and reinstall libraries");
+    abort();
+  }
   soap->state = SOAP_INIT;
 #ifdef SOAP_MEM_DEBUG
   soap_init_mht(soap);
@@ -8630,7 +8620,9 @@ soap_init(struct soap *soap)
 #endif
 #endif
   soap->version = 0;
-  soap_mode(soap, SOAP_IO_DEFAULT);
+  soap_mode(soap, imode);
+  soap_imode(soap, imode);
+  soap_omode(soap, omode);
   soap->plugins = NULL;
   soap->user = NULL;
   for (i = 0; i < sizeof(soap->data)/sizeof(*soap->data); i++)
@@ -8882,28 +8874,7 @@ soap_init(struct soap *soap)
   soap->level = 0;
   soap->endpoint[0] = '\0';
   soap->error = SOAP_OK;
-}
-#endif
-
-/******************************************************************************/
-#ifndef PALM_1
-SOAP_FMAC1
-void
-SOAP_FMAC2
-soap_init1(struct soap *soap, soap_mode mode)
-{ soap_init2(soap, mode, mode);
-}
-#endif
-
-/******************************************************************************/
-#ifndef PALM_1
-SOAP_FMAC1
-void
-SOAP_FMAC2
-soap_init2(struct soap *soap, soap_mode imode, soap_mode omode)
-{ soap_init(soap);
-  soap_mode(soap, omode);
-  soap_imode(soap, imode);
+  return GSOAP_C_VERSION;
 }
 #endif
 
