@@ -2126,9 +2126,9 @@ soap_wchar soap_get1(struct soap*);
 #define soap_init1(soap, mode) soap_init2(soap, mode, mode)
 #define soap_init2(soap, imode, omode) soap_init0(soap, GSOAP_H_VERSION, imode, omode)
 
-#define soap_new(soap) soap_new1(soap, SOAP_IO_DEFAULT)
-#define soap_new1(soap, mode) soap_new2(soap, mode, mode)
-#define soap_new2(soap, imode, omode) soap_new0(GSOAP_H_VERSION, imode, omode)
+#define soap_new() soap_new1(SOAP_IO_DEFAULT)
+#define soap_new1(mode) soap_new2(mode, mode)
+#define soap_new2(imode, omode) soap_new0(GSOAP_H_VERSION, imode, omode)
 
 #define soap_revget1(soap) ((soap)->bufidx--)
 #define soap_unget(soap, c) ((soap)->ahead = c)

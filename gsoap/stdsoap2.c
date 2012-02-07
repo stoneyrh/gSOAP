@@ -76,10 +76,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.7 2012-02-02 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.7 2012-02-07 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.7 2011-02-02 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.7 2012-02-07 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -8598,7 +8598,7 @@ soap_init0(struct soap *soap, int version, soap_mode imode, soap_mode omode)
 { size_t i;
   /* when the stdsoap2.h file has a different version then this file, abort */
   if (version != GSOAP_C_VERSION)
-  { perror("GSOAP VERSION MISMATCH: source code incompatible with library, please rebuild and reinstall libraries");
+  { fprintf(stderr, "GSOAP LIBRARY VERSION MISMATCH: source code incompatible with library, please rebuild and reinstall libraries");
     abort();
   }
   soap->state = SOAP_INIT;
@@ -8609,7 +8609,7 @@ soap_init0(struct soap *soap, int version, soap_mode imode, soap_mode omode)
   soap_init_logs(soap);
 #endif
 #ifdef SOAP_DEBUG
-#ifdef TANDEM
+#ifdef TANDEM_NONSTOP
   soap_set_test_logfile(soap, "TESTLOG");
   soap_set_sent_logfile(soap, "SENTLOG");
   soap_set_recv_logfile(soap, "RECVLOG");
