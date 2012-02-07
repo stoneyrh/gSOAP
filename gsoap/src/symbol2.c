@@ -2693,7 +2693,9 @@ gen_schema(FILE *fd, Table *t, char *ns1, char *ns, int all, int wsdl, char *URL
         if (m)
         { if (!uflag)
 	    fprintf(fd, "  <!-- fault element -->\n");
-          fprintf(fd, "  <element name=\"%s\" type=\"%s\"/>\n", ns_remove(p->sym->name), base_type(p->info.typ, ns1));
+          fprintf(fd, "  <element name=\"%s\" type=\"%s\">\n", ns_remove(p->sym->name), base_type(p->info.typ, ns1));
+          gen_type_documentation(fd, p, ns);
+          fprintf(fd, "  </element>\n");
           continue;
         }
         if (is_primitive_or_string(p->info.typ) || (p->info.typ->type == Tpointer && is_primitive_or_string((Tnode*)p->info.typ->ref)))
@@ -2815,7 +2817,9 @@ gen_schema(FILE *fd, Table *t, char *ns1, char *ns, int all, int wsdl, char *URL
       { if ((!has_ns(p->info.typ) && all) || has_ns_eq(ns, p->sym->name))
         { if (!uflag)
 	    fprintf(fd, "  <!-- fault element and type -->\n");
-          fprintf(fd, "  <element name=\"%s\" type=\"%s\"/>\n", ns_remove(p->sym->name), base_type(p->info.typ, ns1));
+          fprintf(fd, "  <element name=\"%s\" type=\"%s\">\n", ns_remove(p->sym->name), base_type(p->info.typ, ns1));
+          gen_type_documentation(fd, p, ns);
+          fprintf(fd, "  </element>\n");
 	}
       }
       if (p->info.typ->ref && is_binary(p->info.typ))
@@ -3254,7 +3258,8 @@ gen_schema_elements_attributes(FILE *fd, Table *t, char *ns, char *ns1, char *st
 	      { if (is_document(method_style))
                 { if (!uflag)
 		    fprintf(fd, "  <!-- operation response element -->\n");
-	          fprintf(fd, "  <element name=\"%sResponse\">\n   <complexType>\n    <sequence>\n", ns_remove(p->sym->name));
+	          fprintf(fd, "  <element name=\"%sResponse\">\n   <complexType>\n", ns_remove(p->sym->name));
+	          fprintf(fd, "    <sequence>\n");
 	          gen_schema_element(fd, p->info.typ, q, ns, ns1);
 	          fprintf(fd, "    </sequence>\n");
 	          fprintf(fd, "   </complexType>\n  </element>\n");
@@ -3283,7 +3288,8 @@ gen_schema_elements_attributes(FILE *fd, Table *t, char *ns, char *ns1, char *st
 		    if (!e)
                     { if (!uflag)
 		        fprintf(fd, "  <!-- operation response element -->\n");
-		      fprintf(fd, "  <element name=\"%s\">\n   <complexType>\n    <sequence>\n", ns_remove(((Tnode*)q->info.typ->ref)->id->name));
+		      fprintf(fd, "  <element name=\"%s\">\n   <complexType>\n", ns_remove(((Tnode*)q->info.typ->ref)->id->name));
+	              fprintf(fd, "    <sequence>\n");
 	              gen_schema_elements(fd, (Tnode*)q->info.typ->ref, ns, ns1);
 	              fprintf(fd, "    </sequence>\n");
 	              gen_schema_attributes(fd, (Tnode*)q->info.typ->ref, ns, ns1);
