@@ -721,6 +721,7 @@ compile(Table *table)
 	{ fprintf(fheader,"\n#ifndef WITH_NOGLOBAL\n#define WITH_NOGLOBAL\n#endif");
 	}
 	fprintf(fheader,"\n#include \"stdsoap2.h\"");
+	fprintf(fheader,"\n#if GSOAP_H_VERSION != %d\n# error \"GSOAP VERSION MISMATCH IN GENERATED CODE: PLEASE REINSTALL PACKAGE\"\n#endif\n", GSOAP_VERSION);
 	if (cflag)
 	  fprintf(fheader,"\n#ifdef __cplusplus\nextern \"C\" {\n#endif");
 	if (namespaceid)

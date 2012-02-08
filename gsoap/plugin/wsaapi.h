@@ -63,7 +63,7 @@ extern const char soap_wsa_id[];
 
 extern const char *soap_wsa_noneURI;
 extern const char *soap_wsa_anonymousURI;
-extern const char *soap_wsa_faultAction;;
+extern const char *soap_wsa_faultAction;
 
 #if defined(SOAP_WSA_2003)
 # define SOAP_WSA(member) wsa3__##member

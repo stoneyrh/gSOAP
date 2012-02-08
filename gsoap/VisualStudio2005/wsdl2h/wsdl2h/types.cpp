@@ -1872,17 +1872,16 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
     }
     if (attribute.attributePtr()->schemaPtr())
     { typeURI = attribute.attributePtr()->schemaPtr()->targetNamespace;
-      if (zflag == 2
-       || !URI
-       || !typeURI
-       || (attribute.form && *attribute.form == qualified)
-       || attribute.schemaPtr()->attributeFormDefault == qualified
-       || strcmp(URI, typeURI))
-        nameURI = typeURI;
-      else if (attribute.form && *attribute.form == unqualified)
+      if (attribute.form && *attribute.form == unqualified)
         nameprefix = ":";
-      else
+      else if (zflag == 3
+       && URI
+       && typeURI
+       && attribute.schemaPtr()->attributeFormDefault == unqualified
+       && !strcmp(URI, typeURI))
         nameprefix = NULL;
+      else
+        nameURI = typeURI;
     }
     fprintf(stream, "/// Attribute reference %s.\n", attribute.ref);
     document(attribute.attributePtr()->annotation);
@@ -2162,17 +2161,16 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
     }
     if (element.elementPtr()->schemaPtr())
     { typeURI = element.elementPtr()->schemaPtr()->targetNamespace;
-      if (zflag == 2
-       || !URI
-       || !typeURI
-       || (element.form && *element.form == qualified)
-       || element.schemaPtr()->elementFormDefault == qualified
-       || strcmp(URI, typeURI))
-        nameURI = typeURI;
-      else if (element.form && *element.form == unqualified)
+      if (element.form && *element.form == unqualified)
         nameprefix = ":";
+      else if (zflag == 3
+       && URI
+       && typeURI
+       && element.schemaPtr()->elementFormDefault == unqualified
+       && !strcmp(URI, typeURI))
+        nameprefix = NULL;
       else
-        nameprefix = NULL; // remove to replicate old behavior
+        nameURI = typeURI;
     }
     document(element.elementPtr()->annotation);
     if (element.elementPtr()->xmime__expectedContentTypes)

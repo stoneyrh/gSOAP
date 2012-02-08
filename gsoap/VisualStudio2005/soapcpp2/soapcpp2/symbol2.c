@@ -92,6 +92,7 @@ int has_external(Tnode *typ);
 int has_volatile(Tnode *typ);
 
 int is_invisible(const char *name);
+int is_invisible_empty(Tnode *p);
 
 int is_eq_nons(const char *s, const char *t);
 int is_eq(const char *s, const char *t);
@@ -720,6 +721,7 @@ compile(Table *table)
 	{ fprintf(fheader,"\n#ifndef WITH_NOGLOBAL\n#define WITH_NOGLOBAL\n#endif");
 	}
 	fprintf(fheader,"\n#include \"stdsoap2.h\"");
+	fprintf(fheader,"\n#if GSOAP_H_VERSION != %d\n# error \"GSOAP VERSION MISMATCH IN GENERATED CODE: PLEASE REINSTALL PACKAGE\"\n#endif\n", GSOAP_VERSION);
 	if (cflag)
 	  fprintf(fheader,"\n#ifdef __cplusplus\nextern \"C\" {\n#endif");
 	if (namespaceid)
@@ -2692,7 +2694,9 @@ gen_schema(FILE *fd, Table *t, char *ns1, char *ns, int all, int wsdl, char *URL
         if (m)
         { if (!uflag)
 	    fprintf(fd, "  <!-- fault element -->\n");
-          fprintf(fd, "  <element name=\"%s\" type=\"%s\"/>\n", ns_remove(p->sym->name), base_type(p->info.typ, ns1));
+          fprintf(fd, "  <element name=\"%s\" type=\"%s\">\n", ns_remove(p->sym->name), base_type(p->info.typ, ns1));
+          gen_type_documentation(fd, p, ns);
+          fprintf(fd, "  </element>\n");
           continue;
         }
         if (is_primitive_or_string(p->info.typ) || (p->info.typ->type == Tpointer && is_primitive_or_string((Tnode*)p->info.typ->ref)))
@@ -2814,7 +2818,9 @@ gen_schema(FILE *fd, Table *t, char *ns1, char *ns, int all, int wsdl, char *URL
       { if ((!has_ns(p->info.typ) && all) || has_ns_eq(ns, p->sym->name))
         { if (!uflag)
 	    fprintf(fd, "  <!-- fault element and type -->\n");
-          fprintf(fd, "  <element name=\"%s\" type=\"%s\"/>\n", ns_remove(p->sym->name), base_type(p->info.typ, ns1));
+          fprintf(fd, "  <element name=\"%s\" type=\"%s\">\n", ns_remove(p->sym->name), base_type(p->info.typ, ns1));
+          gen_type_documentation(fd, p, ns);
+          fprintf(fd, "  </element>\n");
 	}
       }
       if (p->info.typ->ref && is_binary(p->info.typ))
@@ -3253,7 +3259,8 @@ gen_schema_elements_attributes(FILE *fd, Table *t, char *ns, char *ns1, char *st
 	      { if (is_document(method_style))
                 { if (!uflag)
 		    fprintf(fd, "  <!-- operation response element -->\n");
-	          fprintf(fd, "  <element name=\"%sResponse\">\n   <complexType>\n    <sequence>\n", ns_remove(p->sym->name));
+	          fprintf(fd, "  <element name=\"%sResponse\">\n   <complexType>\n", ns_remove(p->sym->name));
+	          fprintf(fd, "    <sequence>\n");
 	          gen_schema_element(fd, p->info.typ, q, ns, ns1);
 	          fprintf(fd, "    </sequence>\n");
 	          fprintf(fd, "   </complexType>\n  </element>\n");
@@ -3282,7 +3289,8 @@ gen_schema_elements_attributes(FILE *fd, Table *t, char *ns, char *ns1, char *st
 		    if (!e)
                     { if (!uflag)
 		        fprintf(fd, "  <!-- operation response element -->\n");
-		      fprintf(fd, "  <element name=\"%s\">\n   <complexType>\n    <sequence>\n", ns_remove(((Tnode*)q->info.typ->ref)->id->name));
+		      fprintf(fd, "  <element name=\"%s\">\n   <complexType>\n", ns_remove(((Tnode*)q->info.typ->ref)->id->name));
+	              fprintf(fd, "    <sequence>\n");
 	              gen_schema_elements(fd, (Tnode*)q->info.typ->ref, ns, ns1);
 	              fprintf(fd, "    </sequence>\n");
 	              gen_schema_attributes(fd, (Tnode*)q->info.typ->ref, ns, ns1);
@@ -4302,8 +4310,11 @@ gen_serve_method(FILE *fd, Table *table, Entry *param, char *name)
   }
   else if (!eflag)
     fprintf(fd, "\n\tsoap->encodingStyle = NULL;");
-  fprintf(fd,"\n\tif (!soap_get_%s(soap, &soap_tmp_%s, \"%s\", NULL))", ident(param->sym->name), ident(param->sym->name), ns_convert(param->sym->name));
-  fprintf(fd,"\n\t\treturn soap->error;");
+  q=entry(classtable, param->sym);
+  if (!is_invisible_empty(q->info.typ))
+  { fprintf(fd,"\n\tif (!soap_get_%s(soap, &soap_tmp_%s, \"%s\", NULL))", ident(param->sym->name), ident(param->sym->name), ns_convert(param->sym->name));
+    fprintf(fd,"\n\t\treturn soap->error;");
+  }
   fprintf(fd,"\n\tif (soap_body_end_in(soap)");
   fprintf(fd,"\n\t || soap_envelope_end_in(soap)");
   fprintf(fd,"\n\t || soap_end_recv(soap))\n\t\treturn soap->error;");
@@ -4316,7 +4327,6 @@ gen_serve_method(FILE *fd, Table *table, Entry *param, char *name)
   else
     fprintf(fd, "\n\tsoap->error = %s(soap", ident(param->sym->name));
   fflush(fd);
-  q=entry(classtable, param->sym);
   input=(Table*) q->info.typ->ref;
   for (pin = input->list; pin; pin = pin->next)
     fprintf(fd, "%ssoap_tmp_%s.%s", !name || pin != input->list ? ", " : "", ident(param->sym->name), ident(pin->sym->name));
@@ -5505,6 +5515,15 @@ is_unmatched(Symbol *sym)
 int
 is_invisible(const char *name)
 { return name[0] == '-' || (name[0] == '_' && name[1] == '_' && strncmp(name, "__ptr", 5));
+}
+
+int
+is_invisible_empty(Tnode *p)
+{ if (p->type == Tstruct || p->type == Tclass)
+    if (is_invisible(p->id->name))
+      if (!p->ref || !((Table*)p->ref)->list)
+        return 1;
+  return 0;
 }
 
 int

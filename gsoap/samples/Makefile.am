@@ -9,4 +9,4 @@ SUBDIRS = \
 	gmt googleapi hello httpcookies lu magic mashup mashup++ \
 	chaining++ primes \
 	mtom mtom-stream polytest roll router rss ssl template udp varparam \
-	wsa wsrm wsse xml-rpc-json
+	wsa wsrm wsse xml-rpc-json rest

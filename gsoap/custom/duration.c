@@ -98,6 +98,8 @@ const char *soap_xsd__duration2s(struct soap *soap, LONG64 a)
     else
       sprintf(soap->tmpbuf + k, "T%dH%dM%dS", h, m, s);
   }
+  else if (!d)
+    strcpy(soap->tmpbuf + k, "T0S");
   return soap->tmpbuf;
 }
 

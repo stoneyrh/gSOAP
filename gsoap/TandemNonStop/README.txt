@@ -1,13 +1,17 @@
 
-Tandem NonStop bridge for gSOAP 2.8.0 and higher:
+The Tandem NonStop bridge enables the gSOAP toolkit for Tandem NonStop
+platforms. The bridge replaces the IO operation of the gSOAP engine with Tandem
+NonStop IO operations.
 
-  tandem.h	Tandem IO
-  tandem.c	Tandem blocking IO
-  tandem_nw.c	Tandem nonblocking IO (no wait)
+Tandem NonStop bridge source code for gSOAP 2.8.0 and higher:
+
+  tandem.h	Tandem IO bridge interface
+  tandem.c	Tandem blocking IO bridge
+  tandem_nw.c	Tandem nonblocking IO (no wait) bridge
 
 Usage:
 
-  Add to your client/server code the following set up:
+  Add to your client/server code the following:
 
   #include "tandem.h"
   struct soap *soap = soap_new();
@@ -37,7 +41,11 @@ Example:
     or
   cc -DTANDEM_NONSTOP -o calcserver calcserver.c soapC.c soapServer.c stdsoap2.c tandem_nw.c
 
+Copyright
+
+  Genivia Inc.
+
 Licensing
 
   GPL (GNU Public License)
-  Commercial-use license from Genivia Inc.
+  Or the Commercial-use license from Genivia Inc.

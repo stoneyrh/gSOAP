@@ -20,7 +20,7 @@ mecevp.*	EVP-based streaming message encryption engine
 md5evp.*	MD5 EVP interface for httpda and httpmd5
 threads.*	Portable threads, mutex, and condition variables
 
-Test programs for plugings:
+Test programs for plugins:
 
 httpdatest.*	HTTP Digest Athentication test and example code
 httpgettest.*	HTTP GET test and example code
