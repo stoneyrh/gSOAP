@@ -878,6 +878,21 @@ soap_dom_attribute::~soap_dom_attribute()
 
 /******************************************************************************/
 
+soap_dom_attribute &soap_dom_attribute::set(const char *nstr, const char *name)
+{ this->nstr = soap_strdup(soap, nstr);
+  this->name = soap_strdup(soap, name);
+  return *this;
+}
+
+/******************************************************************************/
+
+soap_dom_attribute &soap_dom_attribute::set(const char *data)
+{ this->data = soap_strdup(soap, name);
+  return *this;
+}
+
+/******************************************************************************/
+
 soap_dom_attribute_iterator soap_dom_attribute::begin()
 { soap_dom_attribute_iterator iter(this);
   return iter;

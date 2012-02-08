@@ -1,6 +1,15 @@
 
-REST Examples
-=============
+REST Examples for gSOAP
+=======================
+
+A set of plugins are available to support HTTP REST.
+
+In addition, XML can be serialized and deserialized over sockets, file FD, and
+C++ streams. See also the wsdl2h tool output .h file section "XML Data Binding"
+with readers/writers API calls for the XML root elements of a schema.
+
+HTTP REST Examples
+==================
 
   httpgettest.h		demonstrates HTTP GET
   httpgettest.c

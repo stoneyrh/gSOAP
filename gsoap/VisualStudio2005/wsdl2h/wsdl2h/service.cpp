@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2010, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2001-2012, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -1898,7 +1898,7 @@ static void ident()
   }
   else
     fprintf(stream, "(stdin) ");
-  fprintf(stream, "and %s\n   %s\n\n   DO NOT INCLUDE THIS FILE DIRECTLY INTO YOUR PROJECT BUILDS\n   USE THE soapcpp2-GENERATED SOURCE CODE FILES FOR YOUR PROJECT BUILDS\n\n   gSOAP XML Web services tools.\n   Copyright (C) 2001-2010 Robert van Engelen, Genivia Inc. All Rights Reserved.\n   Part of this software is released under one of the following licenses:\n   GPL or Genivia's license for commercial use.\n*/\n\n", mapfile, tmp);
+  fprintf(stream, "and %s\n   %s\n\n   DO NOT INCLUDE THIS FILE DIRECTLY INTO YOUR PROJECT BUILDS\n   USE THE soapcpp2-GENERATED SOURCE CODE FILES FOR YOUR PROJECT BUILDS\n\n   gSOAP XML Web services tools.\n   Copyright (C) 2001-2012 Robert van Engelen, Genivia Inc. All Rights Reserved.\n   Part of this software is released under one of the following licenses:\n   GPL or Genivia's license for commercial use.\n*/\n\n", mapfile, tmp);
 }
 
 void text(const char *text)

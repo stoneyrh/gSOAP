@@ -19,8 +19,8 @@ http://gsoap2.sourceforge.net for project status and latest news.
   XML schemas, WS-Policy, and other WS-* protocols (details in the fact sheet).
 
 The software is provided "as is", without any warranty. However, gSOAP
-has received a lot of support from users and has been extensively tested
-in the real world. We also continue to improve gSOAP and add new features.
+has been extensively field-tested in production-quality software development.
+We continue to improve gSOAP and add new features.
 
 See NOTES.txt for distributed notes and an overview of the package contents.
 See INSTALL.txt for installation instructions.
@@ -49,6 +49,48 @@ The gSOAP toolkit provides stand-alone HTTP(S) web server functionality as well
 as Apache mod and IIS hooks (located in gsoap/mod_gsoap). Also CGI and FastCGI
 are supported. A web server example demonstrating the stand-alone functionality
 is included in the package.
+
+================================================================================
+FEATURES
+================================================================================
+
+XML data binding tools for C/C++
+XSD schema <=> C/C++ type binding means XML and C/C++ data is type safe
+XML streaming auto-serialization of C/C++ data, with optional use of DOM
+XML-RPC from/to JSON from/to C/C++ serialization (also in streaming mode)
+WSDL 1.1, SOAP 1.1 & 1.2 compliant
+REST HTTP(S) 1.0/1.1 operations (GET,PUT,POST etc) for XML, JSON, etc
+Send and recieve XML over sockets, file FD, and C++ streams
+WS-I Basic Profile 1.0a, 1.1, and 1.2 compliant
+RSS 0.91, 0.92, 2.0 XML support
+MIME and MTOM attachment support (also in streaming mode)
+WS-Security XML authentication, signatures, encryption (also in streaming mode)
+WS-Policy 1.2, 1.5 and WS-SecurityPolicy 1.2 compliant
+WS-Addressing 2003/03, 2004/03, 2005/03 compliant
+WS-ReliableMessaging compliant
+WS-Discovery support
+UDDI v2 API
+NTLM authentication
+HTTP basic and digest authentication
+SSL/TLS communications with SSL session caching (OpenSSL or GNUTLS)
+Proxy and proxy authentication support
+Compression (HTTP(S) compression and zlib)
+IPv4 and IPv6 supported, TCP and UDP
+SOAP-over-UDP
+Apache 1.x and 2.0 modules
+IIS (ISAPI) and WinInet modules
+CGI and FastCGI support
+Stand-alone Web server included (multithreaded, SSL, compression)
+Integrated memory management with deallocation and leak detection
+Plug-ins for additional capabilities
+Internationalization/localization support (UTF8, UCS4, MB encodings, etc)
+WSDL/XSD conversion to C or C++ and vice versa
+Portable to small devices (WinCE, Palm, Symbian, VxWorks, Andriod, iPhone)
+Auto-test server code generation for (dummy) server testing
+Automatic XML document and message generation from WSDL and XSD
+C/C++ (cyclic) object graph auto-serialization (with SOAP id-href encoding)
+STL container auto-serialization and custom C++ container auto-serialization
+Over 40 example client and server applications included
 
 ================================================================================
 PACKAGE

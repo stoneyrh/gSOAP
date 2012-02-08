@@ -59,7 +59,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "stdsoap2.h"
 #if GSOAP_H_VERSION != GSOAP_C_VERSION
-# error "GSOAP VERSION MISMATCH: PLEASE REINSTALL PACKAGE"
+# error "GSOAP VERSION MISMATCH IN LIBRARY: PLEASE REINSTALL PACKAGE"
 #endif
 
 #ifdef __BORLANDC__

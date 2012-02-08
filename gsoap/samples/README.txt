@@ -30,6 +30,7 @@ mtom-stream:              MTOM streaming attachment client and server (C)
 oneway:                   One-way SOAP messaging event handling (C,pthreads)
 oneway++:                 One-way SOAP messaging event handling (C++,pthreads)
 polytest:                 Polymorphic object exchange (C++)
+rest:                     REST clients and services examples (C/C++)
 roll:                     One-liner roll of a dice service (C++)
 router:                   Router of HTTP messages over TCP/IP (C,pthreads)
 rss:                      RSS 0.91, 0.92, and 2.0 server (C)
@@ -41,7 +42,7 @@ webserver:                Stand-alone Web server (C,pthreads,OpenSSL,Zlib)
 wsa:                      WS-Addressing demo (C)
 wsrm:                     WS-ReliableMessaging demo (C)
 wsse:                     WS-Security demo (C,OpenSSL)
-xml-rpc:                  XML-RPC support and examples (C/C++)
+xml-rpc-json:             XML-RPC and JSON support and examples (C/C++)
 
 LIBRARY AND GSOAP PLUGIN SUPPORT
 

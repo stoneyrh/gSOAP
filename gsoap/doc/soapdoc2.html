@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.6 User Guide</title>
+<title>gSOAP 2.8.7 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.6 User Guide </h1>
+<h1 align="center">gSOAP 2.8.7 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Dec 13, 2011
+<h3 align="center">Feb  7, 2012
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -15120,7 +15120,7 @@ size_t hitstoday = httpgetdata<tt>-&gt;</tt>day[T<tt>-&gt;</tt>tm_yday];
 </td></tr></table><br></i>
 An HTTP GET handler can simply produce some HTML content, or any other type of content by sending data:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-<b>int</b>&nbsp;my_http_get_handler(<b>struct</b>&nbsp;soap) <br />
+<b>int</b>&nbsp;my_http_get_handler(<b>struct</b>&nbsp;*soap) <br />
 { <br />
 &nbsp;&nbsp;&nbsp;soap<tt>-&gt;</tt>http_content = "text/html"; <br />
 &nbsp;&nbsp;&nbsp;soap_response(soap, SOAP_FILE); <br />
@@ -15591,5 +15591,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 13 Dec 2011, 21:53.</small>
+version 4.00.<br />On  7 Feb 2012, 19:52.</small>
 </html>

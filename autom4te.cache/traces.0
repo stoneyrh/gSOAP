@@ -750,7 +750,7 @@ m4trace:configure.in:292: -1- m4_pattern_allow([^BISON_DEFINE$])
 m4trace:configure.in:293: -1- AC_SUBST([YACC_LIB])
 m4trace:configure.in:293: -1- AC_SUBST_TRACE([YACC_LIB])
 m4trace:configure.in:293: -1- m4_pattern_allow([^YACC_LIB$])
-m4trace:configure.in:335: -1- AC_CONFIG_FILES([ Makefile \
+m4trace:configure.in:336: -1- AC_CONFIG_FILES([ Makefile \
     gsoap.pc gsoap++.pc gsoapck.pc gsoapck++.pc gsoapssl.pc gsoapssl++.pc \
     gsoap/Makefile \
     gsoap/src/Makefile \
@@ -790,20 +790,21 @@ m4trace:configure.in:335: -1- AC_CONFIG_FILES([ Makefile \
     gsoap/samples/wsrm/Makefile \
     gsoap/samples/wsse/Makefile \
     gsoap/samples/xml-rpc-json/Makefile
+    gsoap/samples/rest/Makefile
 ])
-m4trace:configure.in:336: -1- AC_SUBST([LIB@&t@OBJS], [$ac_libobjs])
-m4trace:configure.in:336: -1- AC_SUBST_TRACE([LIB@&t@OBJS])
-m4trace:configure.in:336: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.in:336: -1- AC_SUBST([LTLIBOBJS], [$ac_ltlibobjs])
-m4trace:configure.in:336: -1- AC_SUBST_TRACE([LTLIBOBJS])
-m4trace:configure.in:336: -1- m4_pattern_allow([^LTLIBOBJS$])
-m4trace:configure.in:336: -1- AC_SUBST_TRACE([top_builddir])
-m4trace:configure.in:336: -1- AC_SUBST_TRACE([srcdir])
-m4trace:configure.in:336: -1- AC_SUBST_TRACE([abs_srcdir])
-m4trace:configure.in:336: -1- AC_SUBST_TRACE([top_srcdir])
-m4trace:configure.in:336: -1- AC_SUBST_TRACE([abs_top_srcdir])
-m4trace:configure.in:336: -1- AC_SUBST_TRACE([builddir])
-m4trace:configure.in:336: -1- AC_SUBST_TRACE([abs_builddir])
-m4trace:configure.in:336: -1- AC_SUBST_TRACE([abs_top_builddir])
-m4trace:configure.in:336: -1- AC_SUBST_TRACE([INSTALL])
-m4trace:configure.in:336: -1- AC_SUBST_TRACE([MKDIR_P])
+m4trace:configure.in:337: -1- AC_SUBST([LIB@&t@OBJS], [$ac_libobjs])
+m4trace:configure.in:337: -1- AC_SUBST_TRACE([LIB@&t@OBJS])
+m4trace:configure.in:337: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.in:337: -1- AC_SUBST([LTLIBOBJS], [$ac_ltlibobjs])
+m4trace:configure.in:337: -1- AC_SUBST_TRACE([LTLIBOBJS])
+m4trace:configure.in:337: -1- m4_pattern_allow([^LTLIBOBJS$])
+m4trace:configure.in:337: -1- AC_SUBST_TRACE([top_builddir])
+m4trace:configure.in:337: -1- AC_SUBST_TRACE([srcdir])
+m4trace:configure.in:337: -1- AC_SUBST_TRACE([abs_srcdir])
+m4trace:configure.in:337: -1- AC_SUBST_TRACE([top_srcdir])
+m4trace:configure.in:337: -1- AC_SUBST_TRACE([abs_top_srcdir])
+m4trace:configure.in:337: -1- AC_SUBST_TRACE([builddir])
+m4trace:configure.in:337: -1- AC_SUBST_TRACE([abs_builddir])
+m4trace:configure.in:337: -1- AC_SUBST_TRACE([abs_top_builddir])
+m4trace:configure.in:337: -1- AC_SUBST_TRACE([INSTALL])
+m4trace:configure.in:337: -1- AC_SUBST_TRACE([MKDIR_P])
