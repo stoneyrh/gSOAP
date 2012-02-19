@@ -57,11 +57,14 @@ compiling, linking, and/or using OpenSSL is allowed.
 	type and a the handler function:
 
 	struct http_post_handlers my_handlers[] =
-		{ { "image/jpg", jpeg_handler },
+		{ { "image/jpg",  jpeg_handler },
 		  { "image/ *",   image_handler },
-		  { "text/html", html_handler },
+		  { "text/html",  html_handler },
 		  { "text/ *",    text_handler },
 		  { "text/ *;*",  text_handler },
+		  { "POST",       generic_POST_handler },
+		  { "PUT",        generic_PUT_handler },
+		  { "DELETE",     generic_DELETE_handler },
 		  { NULL }
 		};
 	Note that '*' can be used as a wildcard and some media types may have
@@ -91,9 +94,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 	    return soap->error;
 	  // ... now process image in buf 
 	  // reply with empty HTTP OK response:
-	  soap_response(soap, SOAP_OK);
-	  soap_end_send(soap);
-	  return SOAP_OK;
+	  return soap_send_empty_response(soap, SOAP_OK);
 	}
 
 	This function should also produce a valid HTTP response, for example:
@@ -108,6 +109,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 	soap_send(soap, "<HTML>...</HTML>"); // example HTML
 	...
 	soap_end_send(soap);
+	soap_closesock(soap);	// close, but keep open only with HTTP keep-alive
 
 	The soap_send(soap, char*) and soap_send_raw(soap, char*, size_t) can
 	be used to return content from server.
@@ -126,6 +128,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 	 || soap_end_recv(&soap))
 	  ... error ...
 	// ... use buf[0..len-1]
+	soap_closesock(soap);	// close, but keep open only with HTTP keep-alive
 	soap_end(soap);		// also deletes buf content
 
 	The soap_send(soap, char*) and soap_send_raw(soap, char*, size_t) can
@@ -146,6 +149,9 @@ static void http_post_delete(struct soap *soap, struct soap_plugin *p);
 static int http_post_parse_header(struct soap *soap, const char*, const char*);
 static http_handler_t http_lookup_handler(struct soap *soap, const char *type, struct http_post_data *data);
 
+static int http_fput(struct soap *soap);
+static int http_fdel(struct soap *soap);
+
 int http_post(struct soap *soap, struct soap_plugin *p, void *arg)
 { p->id = http_post_id;
   p->data = (void*)malloc(sizeof(struct http_post_data));
@@ -161,12 +167,19 @@ int http_post(struct soap *soap, struct soap_plugin *p, void *arg)
 static int http_post_init(struct soap *soap, struct http_post_data *data, struct http_post_handlers *handlers)
 { data->fparsehdr = soap->fparsehdr; /* save old HTTP header parser callback */
   soap->fparsehdr = http_post_parse_header; /* replace HTTP header parser callback with ours */
+  data->fput = soap->fput;
+  soap->fput = http_fput;
+  data->fdel = soap->fdel;
+  soap->fdel = http_fdel;
   data->handlers = handlers;
   return SOAP_OK;
 }
 
 static void http_post_delete(struct soap *soap, struct soap_plugin *p)
-{ free(p->data); /* free allocated plugin data (this function is not called for shared plugin data, but only when the final soap_done() is invoked on the original soap struct) */
+{ soap->fparsehdr = ((struct http_post_data*)p->data)->fparsehdr;
+  soap->fput = ((struct http_post_data*)p->data)->fput;
+  soap->fdel = ((struct http_post_data*)p->data)->fdel;
+  free(p->data); /* free allocated plugin data (this function is not called for shared plugin data, but only when the final soap_done() is invoked on the original soap struct) */
 }
 
 static int http_post_parse_header(struct soap *soap, const char *key, const char *val)
@@ -178,6 +191,8 @@ static int http_post_parse_header(struct soap *soap, const char *key, const char
   { if (!soap_tag_cmp(key, "Content-Type"))
     { /* check content type */
       soap->fform = http_lookup_handler(soap, val, data);
+      if (!soap->fform)
+        soap->fform = http_lookup_handler(soap, "POST", data);
       if (soap->fform)
         return SOAP_FORM; /* calls soap->fform after processing the HTTP header */
     }
@@ -189,11 +204,31 @@ static http_handler_t http_lookup_handler(struct soap *soap, const char *type, s
 { struct http_post_handlers *p;
   for (p = data->handlers; p && p->type; p++)
   { if (!soap_tag_cmp(type, p->type))
-    { DBGLOG(TEST,SOAP_MESSAGE(fdebug, "Found POST handler for type '%s'\n", type));
+    { DBGLOG(TEST,SOAP_MESSAGE(fdebug, "Found HTTP POST plugin handler for '%s'\n", type));
       return p->handler;
     }
   }
   return NULL;
+}
+
+static int http_fput(struct soap *soap)
+{ struct http_post_data *data = (struct http_post_data*)soap_lookup_plugin(soap, http_post_id);
+  if (!data)
+    return SOAP_PLUGIN_ERROR;
+  soap->fform = http_lookup_handler(soap, "PUT", data);
+  if (soap->fform)
+    return SOAP_FORM;
+  return 405;
+}
+
+static int http_fdel(struct soap *soap)
+{ struct http_post_data *data = (struct http_post_data*)soap_lookup_plugin(soap, http_post_id);
+  if (!data)
+    return SOAP_PLUGIN_ERROR;
+  soap->fform = http_lookup_handler(soap, "DELETE", data);
+  if (soap->fform)
+    return SOAP_STOP;
+  return 405;
 }
 
 /******************************************************************************/
@@ -203,6 +238,20 @@ int soap_post_connect(struct soap *soap, const char *endpoint, const char *actio
     soap->omode = (soap->omode & ~SOAP_IO) | SOAP_IO_STORE;
   soap->http_content = type;
   return soap_connect_command(soap, SOAP_POST_FILE, endpoint, action);
+}
+
+int soap_put_connect(struct soap *soap, const char *endpoint, const char *action, const char *type)
+{ if ((soap->omode & SOAP_IO) != SOAP_IO_CHUNK) /* not chunking: store in buf */
+    soap->omode = (soap->omode & ~SOAP_IO) | SOAP_IO_STORE;
+  soap->http_content = type;
+  return soap_connect_command(soap, SOAP_PUT, endpoint, action);
+}
+
+int soap_delete_connect(struct soap *soap, const char *endpoint, const char *action, const char *type)
+{ if (soap_connect_command(soap, SOAP_DEL, endpoint, action)
+   || soap_end_send(soap))
+    return soap_closesock(soap);
+  return soap_closesock(soap);
 }
 
 int soap_http_body(struct soap *soap, char **buf, size_t *len)

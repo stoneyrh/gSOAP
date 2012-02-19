@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.7 User Guide</title>
+<title>gSOAP 2.8.8 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.7 User Guide </h1>
+<h1 align="center">gSOAP 2.8.8 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Feb  7, 2012
+<h3 align="center">Feb 19, 2012
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -363,7 +363,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.3"
 >19.3&nbsp; <font color="#0000FF">Transient Data Types</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.4"
->19.4&nbsp; <font color="#0000FF">Volatile Data Types</font></a><br />
+>19.4&nbsp; <font color="#0000FF">Serialization &#228;s is" with Volatile Data Types</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.5"
 >19.5&nbsp; <font color="#0000FF">How to Declare User-Defined Serializers and Deserializers</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.6"
@@ -4009,7 +4009,7 @@ Additional features and potential limitations:
 </li>
 
 <li> Types are denoted "volatile", which means that they are declared elsewhere
-  in the source code and should not be redeclared in the generated code:
+  in the source code and should not be redeclared in the generated code nor augmented by the <i>soapcpp2</i> tool:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>volatile</b> <b>class</b>&nbsp;name { ... }; // defined here just to generate the serializers
 </td></tr></table><br></i>
@@ -12372,17 +12372,16 @@ creating (de)serializers for the <i><b>char</b>[1024]</i> type. gSOAP will gener
 
 <div class="p"><!----></div>
 		     <h3><a name="tth_sEc19.4">
-19.4</a>&nbsp;&nbsp;<font color="#0000FF">Volatile Data Types</font></h3><a name="sec:volatile">
+19.4</a>&nbsp;&nbsp;<font color="#0000FF">Serialization &#228;s is" with Volatile Data Types</font></h3><a name="sec:volatile">
 </a>
 
 <div class="p"><!----></div>
-While transient data types are supposed to be hidden from gSOAP, volatile data
-types are visible to gSOAP but their declaration and implementation is assumed
-to be hidden. That is, volatile data types are assumed to be part of an
+Volatile-declared data types in gSOAP are assumed to be part of an
 existing non-modifiable software package, such as a built-in library. It would
-not make sense to redefine the data types in a gSOAP header file. When you need
-to (de)serialize such data types, you must declare them in a gSOAP header file
-and use the <i><b>volatile</b></i> qualifier.
+not make sense to redefine the data types in a gSOAP header file. In certain
+cases it could also be problematic to have classes augmented with serializer
+methods. When you need to (de)serialize such data types &#228;s is", you must
+declare them in a gSOAP header file and use the <i><b>volatile</b></i> qualifier.
 
 <div class="p"><!----></div>
 Consider for example <i><b>struct</b>&nbsp;tm</i>, declared in <i>time.h</i>. The structure may actually vary between platforms, but the tm structure includes at least the following fields:
@@ -12433,8 +12432,8 @@ tm</i>, because a schema name clash will occur with the latter since taking off
 the <i>time</i> prefix will result in the same name being used.
 
 <div class="p"><!----></div>
-Classes should be declared volatile to prevent modification of these classes by gSOAP.
-gSOAP adds serialization methods to classes to support polymorphism.  However,
+Classes should be declared volatile to prevent modification of these classes by ithe gSOAP <i>soapcpp2</i> source code output.
+Note that gSOAP adds serialization methods to classes to support polymorphism.  However,
 this is a problem when you can't modify class declarations because they are
 part of a non-modifiable software package.  The solution is to declare these
 classes <i><b>volatile</b></i>, similar to the tm structure example illustrated above. 
@@ -15174,8 +15173,8 @@ soap_done(&amp;soap);
 19.38.3</a>&nbsp;&nbsp;<font color="#0000FF">RESTful Interface: The HTTP POST Plug-in</font></h4>
 
 <div class="p"><!----></div>
-Client-side and server-side use of RESTful HTTP POST operations are supported
-with the HTTP POST plug-in <i>plugin/httppost.c</i>.
+Client-side and server-side use of RESTful HTTP POST, PUT, and DELETE
+operations are supported with the HTTP POST plug-in <i>plugin/httppost.c</i>.
 
 <div class="p"><!----></div>
 The HTTP POST plug-in allows your server to handle RESTful HTTP POST requests
@@ -15192,6 +15191,9 @@ To simplify the server-side handling of POST requests, handlers can be associate
 &nbsp;&nbsp;&nbsp;{ "text/html", html_handler }, <br />
 &nbsp;&nbsp;&nbsp;{ "text/ *",    text_handler }, <br />
 &nbsp;&nbsp;&nbsp;{ "text/ *;*",  text_handler }, <br />
+&nbsp;&nbsp;&nbsp;{ "POST",  generic_POST_handler }, <br />
+&nbsp;&nbsp;&nbsp;{ "PUT",  generic_PUT_handler }, <br />
+&nbsp;&nbsp;&nbsp;{ "DELETE",  generic_DELETE_handler }, <br />
 &nbsp;&nbsp;&nbsp;{ NULL } <br />
 };
 </td></tr></table><br></i>
@@ -15246,6 +15248,7 @@ size_t len; // length of data <br />
 // ... use buf[0..len-1] <br />
 soap_end(soap);
 </td></tr></table><br></i>
+Similarly, <i>soap_put_connect</i> and <i>soap_delete_connect</i> commands are provided for PUT and DELETE handling.
 
 <div class="p"><!----></div>
 		      <h4><a name="tth_sEc19.38.4">
@@ -15591,5 +15594,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On  7 Feb 2012, 19:52.</small>
+version 4.00.<br />On 19 Feb 2012, 16:59.</small>
 </html>
