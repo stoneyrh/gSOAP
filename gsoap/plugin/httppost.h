@@ -71,14 +71,22 @@ struct http_post_handlers
 /* This is the local plugin data shared among all copies of the soap struct: */
 struct http_post_data
 { int (*fparsehdr)(struct soap*, const char*, const char*); /* to save and call the internal HTTP header parser */
+  int (*fput)(struct soap*); /* to save */
+  int (*fdel)(struct soap*); /* to save */
   struct http_post_handlers *handlers; /* the server-side POST content type handlers */
 };
 
 /* the http post plugin, note: argument should be a table of type-handler pairs */
 int http_post(struct soap*, struct soap_plugin*, void*);
 
-/* a function to retrieve the HTTP body into an internal buffer */
+/* a function to send HTTP POST, should be followd by a soap_send to transmit and soap_get_http_body to retrieve the HTTP body returned into an internal buffer */
 int soap_post_connect(struct soap*, const char *endpoint, const char *action, const char *type);
+
+/* a function to send HTTP PUT, should be followed by a soap_send to transmit data */
+int soap_put_connect(struct soap*, const char *endpoint, const char *action, const char *type);
+
+/* a function to send HTTP DELETE */
+int soap_delete_connect(struct soap*, const char *endpoint, const char *action, const char *type);
 
 /* a function to retrieve the HTTP body into an internal buffer */
 int soap_http_body(struct soap*, char **buf, size_t *len);

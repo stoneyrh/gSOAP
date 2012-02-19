@@ -1,7 +1,7 @@
 /*
 	httpposttest.c
 
-	gSOAP HTTP GET plugin example application.
+	gSOAP HTTP POST plugin client and server example application.
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2009, Robert van Engelen, Genivia, Inc., All Rights Reserved.
@@ -56,9 +56,12 @@ cc -DWITH_OPENSSL -DWITH_GZIP -Iplugin -o httpposttest httpposttest.c soapC.c so
 #include "soapH.h"
 #include "httppost.h"
 
-int jpg_handler(struct soap *soap);
-int image_handler(struct soap *soap);
-int text_handler(struct soap *soap);
+int jpg_post_handler(struct soap *soap);
+int image_post_handler(struct soap *soap);
+int text_post_handler(struct soap *soap);
+int generic_POST_handler(struct soap *soap);
+int generic_PUT_handler(struct soap *soap);
+int generic_DELETE_handler(struct soap *soap);
 
 int main(int argc, char **argv)
 { char *buf;
@@ -72,11 +75,14 @@ int main(int argc, char **argv)
   if (argc < 2)
   { /* CGI server */
     struct http_post_handlers handlers[] =
-    { { "image/jpg", jpg_handler },
-      { "image/*",   image_handler },
-      { "image/*;*", image_handler },
-      { "text/*",    text_handler },
-      { "text/*;*",  text_handler },
+    { { "image/jpg", jpg_post_handler },
+      { "image/*",   image_post_handler },
+      { "image/*;*", image_post_handler },
+      { "text/*",    text_post_handler },
+      { "text/*;*",  text_post_handler },
+      { "POST",      generic_POST_handler },
+      { "PUT",       generic_PUT_handler },
+      { "DELETE",    generic_DELETE_handler },
       { NULL }
     };
     soap_register_plugin_arg(&soap, http_post, handlers); /* register plugin (server only) */
@@ -84,7 +90,7 @@ int main(int argc, char **argv)
     exit(0);
   }
 
-  /* client */
+  /* HTTP POST client */
   if (soap_post_connect(&soap, argv[1], NULL, "text/html")
    || soap_send(&soap, "<html>")
    || soap_send(&soap, argc == 2 ? "Hello" : argv[2])
@@ -93,13 +99,14 @@ int main(int argc, char **argv)
   { soap_print_fault(&soap, stderr);
     exit(1);
   }
-  /* after sending, receive body (note: POST handlers should not be set) */
+  /* after sending POST content, receive body (note: POST handlers should not be set for client) */
   if (soap_begin_recv(&soap)
    || soap_http_body(&soap, &buf, &len)
    || soap_end_recv(&soap))
   { soap_print_fault(&soap, stderr);
     exit(1);
   }
+  soap_closesock(&soap); /* close only when not keep-alive */
   printf("Received %lu bytes of type %s:\n", (unsigned long)len, soap.http_content?soap.http_content:"");
   soap_end(&soap);
   soap_done(&soap);
@@ -112,7 +119,7 @@ int ns__dummy(struct soap *soap)
 }
 
 /* the jpg handler just responds with HTTP OK */
-int jpg_handler(struct soap *soap)
+int jpg_post_handler(struct soap *soap)
 { char *buf;
   size_t len;
   soap_http_body(soap, &buf, &len);
@@ -122,7 +129,7 @@ int jpg_handler(struct soap *soap)
 }
 
 /* the image handler responds with HTTP OK and a text/html body */
-int image_handler(struct soap *soap)
+int image_post_handler(struct soap *soap)
 { char *buf;
   size_t len;
   soap_http_body(soap, &buf, &len);
@@ -133,7 +140,7 @@ int image_handler(struct soap *soap)
 }
 
 /* the text handler copies the message back */
-int text_handler(struct soap *soap)
+int text_post_handler(struct soap *soap)
 { char *buf;
   size_t len;
   soap_http_body(soap, &buf, &len);
@@ -142,6 +149,33 @@ int text_handler(struct soap *soap)
   soap_send_raw(soap, buf, len);
   soap_end_send(soap);
   return SOAP_OK;
+}
+
+/* the generic POST handler */
+int generic_POST_handler(struct soap *soap)
+{ char *buf;
+  size_t len;
+  soap_http_body(soap, &buf, &len);
+  fprintf(stderr, "Generic POST accepted URL=\"%s\" content=\"%s\"\n", soap->endpoint, soap->http_content);
+  soap_response(soap, SOAP_HTML);
+  soap_send(soap, "<html>Data received</html>");
+  soap_end_send(soap);
+  return SOAP_OK;
+}
+
+/* the generic PUT handler */
+int generic_PUT_handler(struct soap *soap)
+{ char *buf;
+  size_t len;
+  soap_http_body(soap, &buf, &len);
+  fprintf(stderr, "Generic PUT accepted URL=\"%s\" content=\"%s\"\n", soap->endpoint, soap->http_content);
+  return soap_send_empty_response(soap, 202); /* HTTP Accepted */
+}
+
+/* the generic DELETE handler */
+int generic_DELETE_handler(struct soap *soap)
+{ fprintf(stderr, "Generic DELETE accepted URL=\"%s\"\n", soap->endpoint);
+  return soap_send_empty_response(soap, 202); /* HTTP Accepted */
 }
 
 SOAP_NMAC struct Namespace namespaces[] =

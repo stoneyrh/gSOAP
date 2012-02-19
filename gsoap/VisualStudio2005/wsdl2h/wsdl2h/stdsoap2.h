@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.7
+	stdsoap2.h 2.8.8
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_H_VERSION 20807
+#define GSOAP_VERSION 20808
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -713,7 +713,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  include <io.h>
 #  include <fcntl.h>
 # endif
-# include <winsock2.h> /* Visual Studio 2005 users: you must install the Platform SDK (R2) */
+// When you get macro redefinition errors when compiling the code below:
+// try arrange your include list that <windows.h> is included after "stdsoap2.h"
+// or define _WINSOCKAPI_ first:
+// #define _WINSOCKAPI_    // stops windows.h including winsock.h
+// #include <windows.h>
+// #include "stdsoap2.h"
+# include <winsock2.h> /* Visual Studio 2005 users: install Platform SDK (R2) */
 # include <ws2tcpip.h>
 // # define _WSPIAPI_COUNTOF /* DEV NOTE: enble to fix problems with VC6 */
 // # include <wspiapi.h>
@@ -1230,7 +1236,7 @@ extern const char soap_base64o[], soap_base64i[];
 /* Exceptional gSOAP HTTP server response status codes >= 1000 */
 
 #define SOAP_STOP		1000	/* No HTTP response */
-#define SOAP_FORM		1001	/* Form request/response */
+#define SOAP_FORM		1001	/* Request (form) data is present, no HTTP response */
 #define SOAP_HTML		1002	/* Custom HTML response */
 #define SOAP_FILE		1003	/* Custom file-based response */
 
@@ -1239,7 +1245,9 @@ extern const char soap_base64o[], soap_base64i[];
 #define SOAP_POST		2000	/* POST request */
 #define SOAP_POST_FILE		2001	/* Custom file-based POST request */
 #define SOAP_GET		2002	/* GET request */
-#define SOAP_CONNECT		2003	/* CONNECT request */
+#define SOAP_PUT		2003	/* PUT request */
+#define SOAP_DEL		2004	/* DELETE request */
+#define SOAP_CONNECT		2005	/* CONNECT request */
 
 /* gSOAP DIME */
 
@@ -2122,13 +2130,17 @@ soap_wchar soap_get0(struct soap*);
 soap_wchar soap_get1(struct soap*);
 #endif
 
+#define soap_versioning_paste(name, ext) name##_LIBRARY_VERSION_REQUIRED_##ext
+#define soap_versioning_ext(name, ext) soap_versioning_paste(name, ext)
+#define soap_versioning(name) soap_versioning_ext(name, GSOAP_VERSION)
+
 #define soap_init(soap) soap_init1(soap, SOAP_IO_DEFAULT)
 #define soap_init1(soap, mode) soap_init2(soap, mode, mode)
-#define soap_init2(soap, imode, omode) soap_init0(soap, GSOAP_H_VERSION, imode, omode)
+#define soap_init2(soap, imode, omode) soap_versioning(soap_init)(soap, imode, omode)
 
 #define soap_new() soap_new1(SOAP_IO_DEFAULT)
 #define soap_new1(mode) soap_new2(mode, mode)
-#define soap_new2(imode, omode) soap_new0(GSOAP_H_VERSION, imode, omode)
+#define soap_new2(imode, omode) soap_versioning(soap_new)(imode, omode)
 
 #define soap_revget1(soap) ((soap)->bufidx--)
 #define soap_unget(soap, c) ((soap)->ahead = c)
@@ -2327,13 +2339,13 @@ SOAP_FMAC1 char* SOAP_FMAC2 soap_putoffsets(struct soap*, const int *, int);
 SOAP_FMAC1 int SOAP_FMAC2 soap_closesock(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_force_closesock(struct soap*);
 
-SOAP_FMAC1 struct soap *SOAP_FMAC2 soap_new0(int, soap_mode, soap_mode);
+SOAP_FMAC1 struct soap *SOAP_FMAC2 soap_versioning(soap_new)(soap_mode, soap_mode);
 SOAP_FMAC1 void SOAP_FMAC2 soap_free(struct soap*);
 SOAP_FMAC1 struct soap *SOAP_FMAC2 soap_copy(const struct soap*);
 SOAP_FMAC1 struct soap *SOAP_FMAC2 soap_copy_context(struct soap*, const struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_copy_stream(struct soap*, struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_free_stream(struct soap*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_init0(struct soap*, int, soap_mode, soap_mode);
+SOAP_FMAC1 void SOAP_FMAC2 soap_versioning(soap_init)(struct soap*, soap_mode, soap_mode);
 SOAP_FMAC1 void SOAP_FMAC2 soap_done(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_cleanup(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_begin(struct soap*);

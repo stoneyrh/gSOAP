@@ -8,7 +8,7 @@ SOAPHEADER = wssedemo.h
 
 include ../Makefile.defines
 include ../Makefile.c_rules
-SOAP_NS = wssedemo.nsmap wssedemo.wsdl
+SOAP_NS = wssedemo.nsmap
 
 wssedemo_CFLAGS = -DWITH_DOM -DWITH_OPENSSL -DWITH_GZIP
 wssedemo_SOURCES = wssedemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../dom.c ../../plugin/wsseapi.c ../../plugin/smdevp.c ../../plugin/mecevp.c

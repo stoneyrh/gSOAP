@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.7
+	stdsoap2.c[pp] 2.8.8
 
 	gSOAP runtime engine
 
@@ -51,14 +51,14 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_C_VERSION 20807
+#define GSOAP_LIB_VERSION 20808
 
 #ifdef AS400
 # pragma convert(819)	/* EBCDIC to ASCII */
 #endif
 
 #include "stdsoap2.h"
-#if GSOAP_H_VERSION != GSOAP_C_VERSION
+#if GSOAP_VERSION != GSOAP_LIB_VERSION
 # error "GSOAP VERSION MISMATCH IN LIBRARY: PLEASE REINSTALL PACKAGE"
 #endif
 
@@ -76,10 +76,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.7 2012-02-07 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.8 2012-02-20 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.7 2012-02-07 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.8 2012-02-20 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -203,7 +203,6 @@ static const char *soap_decode(char*, size_t, const char*, const char*);
 #ifndef PALM_1
 static soap_wchar soap_getchunkchar(struct soap*);
 static const char *http_error(struct soap*, int);
-static int http_put(struct soap*);
 static int http_get(struct soap*);
 static int http_405(struct soap*);
 static int http_200(struct soap*);
@@ -5027,8 +5026,8 @@ soap_done(struct soap *soap)
   soap->fmalloc = NULL;
 #ifndef WITH_NOHTTP
   soap->fpost = http_post;
-  soap->fput = http_put;
   soap->fget = http_get;
+  soap->fput = http_405;
   soap->fdel = http_405;
   soap->fopt = http_200;
   soap->fhead = http_200;
@@ -5577,15 +5576,6 @@ http_error(struct soap *soap, int status)
 #endif
 
 /******************************************************************************/
-#ifndef WITH_NOHTTP
-#ifndef PALM_1
-static int
-http_put(struct soap *soap)
-{ return http_parse(soap);
-}
-#endif
-#endif
-/******************************************************************************/
 
 #ifndef WITH_NOHTTP
 #ifndef PALM_1
@@ -5626,12 +5616,22 @@ static int
 http_post(struct soap *soap, const char *endpoint, const char *host, int port, const char *path, const char *action, size_t count)
 { register const char *s;
   register int err;
-  if (soap->status == SOAP_GET)
-    s = "GET";
-  else if (soap->status == SOAP_CONNECT)
-    s = "CONNECT";
-  else
-    s = "POST";
+  switch (soap->status)
+  { case SOAP_GET: 
+      s = "GET";
+      break;
+    case SOAP_PUT: 
+      s = "PUT";
+      break;
+    case SOAP_DEL: 
+      s = "DELETE";
+      break;
+    case SOAP_CONNECT:
+      s = "CONNECT";
+      break;
+    default:
+      s = "POST";
+  }
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "HTTP %s to %s\n", s, endpoint ? endpoint : "(null)"));
 #ifdef PALM
   if (!endpoint || (soap_tag_cmp(endpoint, "http:*") && soap_tag_cmp(endpoint, "https:*") && strncmp(endpoint, "httpg:", 6)) && strncmp(endpoint, "_beam:", 6) && strncmp(endpoint, "_local:", 7) && strncmp(endpoint, "_btobex:", 8))
@@ -5717,7 +5717,7 @@ http_post(struct soap *soap, const char *endpoint, const char *host, int port, c
     return soap->error;
 #endif
 #endif
-  if (action && soap->status != SOAP_GET)
+  if (action && soap->status != SOAP_GET && soap->status != SOAP_DEL)
   { sprintf(soap->tmpbuf, "\"%s\"", action && strlen(action) < sizeof(soap->tmpbuf) - 3 ? action : SOAP_STR_EOS);
     if ((err = soap->fposthdr(soap, "SOAPAction", soap->tmpbuf)))
       return err;
@@ -5779,7 +5779,7 @@ http_response(struct soap *soap, int status, size_t count)
     if (count || ((soap->omode & SOAP_IO) == SOAP_IO_CHUNK))
       s = "200 OK";
     else
-      s = "202 ACCEPTED";
+      s = "202 Accepted";
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Status = %s\n", s));
 #ifdef WMW_RPM_IO
     if (soap->rpmreqid || soap_valid_socket(soap->master) || soap_valid_socket(soap->socket)) /* RPM behaves as if standalone */
@@ -6612,10 +6612,10 @@ soap_init_pht(struct soap *soap)
 SOAP_FMAC1
 struct soap*
 SOAP_FMAC2
-soap_new0(int version, soap_mode imode, soap_mode omode)
+soap_versioning(soap_new)(soap_mode imode, soap_mode omode)
 { struct soap *soap = (struct soap*)malloc(sizeof(struct soap));
   if (soap)
-    soap_init0(soap, version, imode, omode);
+    soap_versioning(soap_init)(soap, imode, omode);
   return soap;
 }
 #endif
@@ -8592,15 +8592,10 @@ soap_free_stream(struct soap *soap)
 /******************************************************************************/
 #ifndef PALM_1
 SOAP_FMAC1
-int
+void
 SOAP_FMAC2
-soap_init0(struct soap *soap, int version, soap_mode imode, soap_mode omode)
+soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
 { size_t i;
-  /* when the stdsoap2.h file has a different version then this file, abort */
-  if (version != GSOAP_C_VERSION)
-  { fprintf(stderr, "GSOAP LIBRARY VERSION MISMATCH: source code incompatible with library, please rebuild and reinstall libraries");
-    abort();
-  }
   soap->state = SOAP_INIT;
 #ifdef SOAP_MEM_DEBUG
   soap_init_mht(soap);
@@ -8635,8 +8630,8 @@ soap_init0(struct soap *soap, int version, soap_mode imode, soap_mode omode)
 #endif
 #ifndef WITH_NOHTTP
   soap->fpost = http_post;
-  soap->fput = http_put;
   soap->fget = http_get;
+  soap->fput = http_405;
   soap->fdel = http_405;
   soap->fopt = http_200;
   soap->fhead = http_200;
@@ -8874,7 +8869,6 @@ soap_init0(struct soap *soap, int version, soap_mode imode, soap_mode omode)
   soap->level = 0;
   soap->endpoint[0] = '\0';
   soap->error = SOAP_OK;
-  return GSOAP_C_VERSION;
 }
 #endif
 
@@ -14502,6 +14496,7 @@ soap_begin_recv(struct soap *soap)
   soap->header = NULL;
   soap->fault = NULL;
   soap->status = 0;
+  soap->fform = NULL;
 #ifndef WITH_LEANER
   soap->dom = NULL;
   soap->dime.chunksize = 0;
@@ -14615,7 +14610,13 @@ soap_begin_recv(struct soap *soap)
       return soap->error;
     }
     if (soap->error == SOAP_STOP)
+    { if (soap->fform)
+      { soap->error = soap->fform(soap);
+        if (soap->error == SOAP_OK)
+          soap->error = SOAP_STOP; /* prevents further processing */
+      }
       return soap->error;
+    }
     soap->mode = soap->imode; /* if imode is changed, effectuate */
     soap->imode = m; /* restore imode */
 #ifdef WITH_ZLIB
@@ -15171,7 +15172,7 @@ soap_try_connect_command(struct soap *soap, int http_command, const char *endpoi
 #endif
     soap->mode = k;
   }
-  if (http_command == SOAP_GET)
+  if (http_command == SOAP_GET || http_command == SOAP_DEL)
     return soap_end_send(soap);
 #endif
   return SOAP_OK;
@@ -15444,13 +15445,13 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_puthttphdr(struct soap *soap, int status, size_t count)
-{ if (soap->status != SOAP_GET && soap->status != SOAP_CONNECT)
+{ if (soap->status != SOAP_GET && soap->status != SOAP_DEL && soap->status != SOAP_CONNECT)
   { register const char *s = "text/xml; charset=utf-8";
     register int err = SOAP_OK;
 #ifndef WITH_LEANER
     register const char *r = NULL;
 #endif
-    if ((status == SOAP_FILE || soap->status == SOAP_POST_FILE) && soap->http_content)
+    if ((status == SOAP_FILE || soap->status == SOAP_PUT || soap->status == SOAP_POST_FILE) && soap->http_content)
       s = soap->http_content;
     else if (status == SOAP_HTML)
       s = "text/html; charset=utf-8";
@@ -16133,7 +16134,7 @@ soap_sprint_fault(struct soap *soap, char *buf, size_t len)
 # endif
       (buf, len, "%s%d fault: %s [%s]\n\"%s\"\nDetail: %s\n", soap->version ? "SOAP 1." : "Error ", soap->version ? (int)soap->version : soap->error, *c, v ? v : "no subcode", s ? s : "[no reason]", d ? d : "[no detail]");
 #else
-    if (len > 40 + (v ? strlen(v) : 0) + (s ? strlen(s) : 0) + (d && *d ? strlen(*d) : 0))
+    if (len > 40 + (v ? strlen(v) : 0) + (s ? strlen(s) : 0) + (d ? strlen(d) : 0))
       sprintf(buf, "%s%d fault: %s [%s]\n\"%s\"\nDetail: %s\n", soap->version ? "SOAP 1." : "Error ", soap->version ? (int)soap->version : soap->error, *c, v ? v : "no subcode", s ? s : "[no reason]", d ? d : "[no detail]");
     else if (len > 40)
       sprintf(buf, "%s%d fault: %s\n", soap->version ? "SOAP 1." : "Error ", soap->version ? (int)soap->version : soap->error, *c);

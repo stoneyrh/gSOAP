@@ -2,25 +2,38 @@
 REST Examples for gSOAP
 =======================
 
-A set of plugins are available to support HTTP REST.
+1. HTTP REST via hooks: server-side hooks are provided with the gSOAP engine:
 
-In addition, XML can be serialized and deserialized over sockets, file FD, and
-C++ streams. See also the wsdl2h tool output .h file section "XML Data Binding"
-with readers/writers API calls for the XML root elements of a schema.
+  soap::fget(struct soap*)	HTTP GET
+  soap::fput(struct soap*)	HTTP PUT
+  soap::fdel(struct soap*)	HTTP DELETE
+  soap::fopt(struct soap*)	HTTP OPTIONS
+  soap::fhead(struct soap*)	HTTP HEAD
+
+  The function being invoked uses the soap.endpoint string to parse the URL.
+  The hook should return SOAP_OK or HTTP error code.
+
+2. HTTP REST via plugins: plugins are available for enhanced support for HTTP
+   REST GET and POST/PUT/DELETE. See below.
+
+3. In addition, XML can be serialized and deserialized over sockets, file FD,
+   and C++ streams. See also the wsdl2h tool output .h file section "XML Data
+   Binding" with readers/writers API calls for the XML root elements of a
+   schema.
 
 HTTP REST Examples
 ==================
 
   httpgettest.h		demonstrates HTTP GET
   httpgettest.c
-  httpposttest.h	demonstrates HTTP POST
+  httpposttest.h	demonstrates HTTP POST/PUT/DELETE
   httpposttest.c
 
 REST support is provided by the following plugins (plugin directory):
 
   httpget.h	HTTP GET
   httpget.c
-  httppost.h	HTTP POST
+  httppost.h	HTTP POST/PUT/DELETE
   httppost.c
   httpform.h	HTTP POST application/x-www-form-urlencoded
   httpform.c
