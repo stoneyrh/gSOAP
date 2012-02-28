@@ -9850,7 +9850,7 @@ soap_out(Tnode *typ)
   if (is_external(typ))
     fprintf(fhead, "\n\nSOAP_FMAC3S const char* SOAP_FMAC4S soap_%s2s(struct soap*, %s);", c_ident(typ), c_type(typ));
 
-  if (is_typedef(typ) && is_element(typ))
+  if (is_typedef(typ) && is_element(typ) && !is_external(typ))
   { fprintf(fhead, "\n\n#define soap_out_%s soap_out_%s\n", c_ident(typ), t_ident(typ));
     return;
   }
@@ -10663,7 +10663,7 @@ soap_in(Tnode *typ)
   if (is_external(typ))
     fprintf(fhead,"\n\nSOAP_FMAC3S int SOAP_FMAC4S soap_s2%s(struct soap*, const char*, %s);",c_ident(typ),c_type_id(typ, "*"));  
 
-  if (is_typedef(typ) && is_element(typ))
+  if (is_typedef(typ) && is_element(typ) && !is_external(typ))
   { fprintf(fhead, "\n\n#define soap_in_%s soap_in_%s\n", c_ident(typ), t_ident(typ));
     return;
   }
