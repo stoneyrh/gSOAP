@@ -90,7 +90,7 @@ void semerror(const char *s)
 semwarn - report semantic warning from static checking
 */
 void semwarn(const char *s)
-{	fprintf(stderr, "\n**WARNING**: %s (detected at line %d in %s)\n\n", s, yylineno, filename);
+{	fprintf(stderr, "\n%s(%d): *WARNING*: %s\n\n", filename, yylineno, s);
 	semwarno++;
 }
 
