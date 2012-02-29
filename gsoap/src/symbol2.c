@@ -9920,11 +9920,11 @@ soap_out(Tnode *typ)
   }
   switch(typ->type)
   { case Tstruct:
-      table=(Table*)typ->ref;
       if (is_external(typ))
       { fprintf(fhead,"\nSOAP_FMAC1 int SOAP_FMAC2 soap_out_%s(struct soap*, const char*, int, const %s, const char*);", c_ident(typ),c_type_id(typ, "*")); 
         return;
       }
+      table=(Table*)typ->ref;
       fprintf(fhead,"\nSOAP_FMAC3 int SOAP_FMAC4 soap_out_%s(struct soap*, const char*, int, const %s, const char*);", c_ident(typ),c_type_id(typ, "*")); 
       fprintf(fout,"\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_out_%s(struct soap *soap, const char *tag, int id, const %s, const char *type)\n{", c_ident(typ),c_type_id(typ, "*a")); 
       for (t = table; t; t = t->prev)
@@ -10053,6 +10053,10 @@ soap_out(Tnode *typ)
     break;
       
     case Tclass:
+      if (is_external(typ))
+      { fprintf(fhead,"\nSOAP_FMAC1 int SOAP_FMAC2 soap_out_%s(struct soap*, const char*, int, const %s, const char*);", c_ident(typ),c_type_id(typ, "*")); 
+        return;
+      }
       table=(Table*)typ->ref;
       if (!is_volatile(typ) && !is_typedef(typ))
       { 
