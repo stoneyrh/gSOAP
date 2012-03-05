@@ -15146,7 +15146,7 @@ soap_try_connect_command(struct soap *soap, int http_command, const char *endpoi
     }
   }
 #ifdef WITH_NTLM
-  if (soap_ntlm_handshake(soap, SOAP_GET, endpoint, host, port))
+  if (soap_ntlm_handshake(soap, SOAP_GET, endpoint, soap->host, soap->port))
     return soap->error;
 #endif
   count = soap_count_attachments(soap);
@@ -15187,12 +15187,14 @@ soap_ntlm_handshake(struct soap *soap, int command, const char *endpoint, const 
 { /* requires libntlm from http://www.nongnu.org/libntlm/ */
   const char *userid = (soap->proxy_userid ? soap->proxy_userid : soap->userid);
   const char *passwd = (soap->proxy_passwd ? soap->proxy_passwd : soap->passwd);
+  struct SOAP_ENV__Header *oldheader;
   if (soap->ntlm_challenge && userid && passwd && soap->authrealm)
   { tSmbNtlmAuthRequest req;  
     tSmbNtlmAuthResponse res;
     tSmbNtlmAuthChallenge ch;
     short k = soap->keep_alive;
     size_t l = soap->length;
+    size_t c = soap->count;
     soap_mode m = soap->mode, o = soap->omode;
     int s = soap->status;
     DBGLOG(TEST,SOAP_MESSAGE(fdebug, "NTLM '%s'\n", soap->ntlm_challenge));
@@ -15212,16 +15214,18 @@ soap_ntlm_handshake(struct soap *soap, int command, const char *endpoint, const 
         return soap->error;
       soap->keep_alive = 1;
       soap->status = command;
-      if (soap->fpost(soap, endpoint, host, port, NULL, NULL, 0)
+      if (soap->fpost(soap, endpoint, host, port, soap->path, soap->action, 0)
        || soap_end_send(soap))
         return soap->error;
       soap->mode = m;
       soap->keep_alive = k;
       DBGLOG(TEST,SOAP_MESSAGE(fdebug, "NTLM S->C Type 2: waiting on server NTLM response\n"));
+      oldheader = soap->header;
       if (soap_begin_recv(soap))
         if (soap->error == SOAP_EOF)
 	  return soap->error;
       soap_end_recv(soap);
+      soap->header = oldheader;
       soap->length = l;
       if (soap->status != 401 && soap->status != 407)
         return soap->error = SOAP_NTLM_ERROR;
@@ -15239,6 +15243,7 @@ soap_ntlm_handshake(struct soap *soap, int command, const char *endpoint, const 
     */
     soap->keep_alive = k;
     soap->length = l;
+    soap->count = c;
     soap->mode = m;
     soap->omode = o;
     soap->status = s;
