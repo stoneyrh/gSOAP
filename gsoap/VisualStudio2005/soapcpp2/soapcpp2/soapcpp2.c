@@ -52,6 +52,7 @@ int wflag = 0;		/* when set, don't generate WSDL and schema files */
 int Cflag = 0;		/* when set, generate only files for clients */
 int cflag = 0;		/* when set, generate files with .c extension */
 int aflag = 0;		/* when set, use value of SOAP Action to dispatch method at server side */
+int Aflag = 0;		/* when set, require SOAP Action to dispatch method at server side */
 int bflag = 0;		/* when set, serialize byte arrays char[N] as string */
 int eflag = 0;		/* when set, use SOAP RPC encoding by default */
 unsigned long fflag = 0;/* multi-file split for each bundle of -fN defs */
@@ -141,12 +142,16 @@ main(int argc, char **argv)
 					case 'a':
 						aflag = 1;
 						break;
+					case 'A':
+						aflag = 1;
+						Aflag = 1;
+						break;
 					case 'b':
 						bflag = 1;
 						break;
 					case '?':
 					case 'h':
-						fprintf(stderr, "Usage: soapcpp2 [-1|-2] [-C|-S] [-T] [-L] [-a] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-k] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [infile]\n\n");
+						fprintf(stderr, "Usage: soapcpp2 [-1|-2] [-C|-S] [-T] [-L] [-a] [-A] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-k] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [infile]\n\n");
 						fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
@@ -154,14 +159,15 @@ main(int argc, char **argv)
 -S	generate server-side code only\n\
 -T	generate server auto-test code\n\
 -L	don't generate soapClientLib/soapServerLib\n\
--a	use SOAPAction HTTP/WSA header to invoke server-side operations\n\
+-a	use SOAPAction with WS-Addressing to invoke server-side operations\n\
+-A	require SOAPAction to invoke server-side operations\n\
 -b	serialize byte arrays char[N] as string\n\
 -c      generate C source code\n\
 -dpath  use path to save files\n\
 -e	generate SOAP RPC encoding style bindings\n\
 -fN	file split of N XML serializer implementations per file (N>=10)\n\
 -h	display help info\n\
--Ipath  use path(s) for #import\n\
+-Ipath  use path(s) for #import (paths separated with '"SOAP_PATHSEP"')\n\
 -i      generate C++ service proxies and objects inherited from soap struct\n\
 -j      generate C++ service proxies and objects that share a soap struct\n\
 -k      generate data structure walkers (experimental)\n\

@@ -162,7 +162,9 @@ typedef struct _wsse__SecurityTokenReference
 {	struct _wsse__Reference*		Reference;
 	struct _wsse__KeyIdentifier*		KeyIdentifier;
 	struct _wsse__Embedded*			Embedded;
+	struct ds__X509DataType*		ds__X509Data;
 	@char*					wsu__Id;
+	@char*					wsc__Instance;
 	@char*					Usage;
 } _wsse__SecurityTokenReference;
 
@@ -170,12 +172,14 @@ typedef struct _wsse__SecurityTokenReference
 /// @brief This element defines the wsse:Security SOAP header element per Section 4.
 /// Imported element _wsse__Security from typemap WS/WS-typemap.dat.
 #import "xenc.h"
+#import "wsc.h"
 typedef struct _wsse__Security
 {	struct _wsu__Timestamp*			wsu__Timestamp;
 	struct _wsse__UsernameToken*		UsernameToken;
 	struct _wsse__BinarySecurityToken*	BinarySecurityToken;
 	struct xenc__EncryptedKeyType*		xenc__EncryptedKey;
 	struct _xenc__ReferenceList*		xenc__ReferenceList;
+	struct wsc__SecurityContextTokenType*	wsc__SecurityContextToken;
 	struct ds__SignatureType*		ds__Signature;
 	@char*					SOAP_ENV__actor;
 	@char*					SOAP_ENV__role;

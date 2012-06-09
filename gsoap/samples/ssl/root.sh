@@ -1,12 +1,16 @@
+#!/bin/sh
+
 # Create the self-signed root CA and root's certificate: root.pem cacert.pem
 
 echo "* This utility creates a self-signed private root CA and public certificate:"
 echo "  root.pem   - private root CA (keep this secret)"
 echo "  cacert.pem - public CA certificate (shared)"
 echo "* Distribute the cacert.pem to clients to authenticate your server"
+echo "* Use root.pem to sign certificates using the cert.sh utility"
+echo "*"
 echo "* Enter a (new) secret pass phrase when requested"
-echo "* Enter it again when prompted"
-echo "* You need the pass phrase later to sign the client and server key files"
+echo "* Enter it again when prompted to self-sign the CA root certificate"
+echo "* You also need the pass phrase later to sign the client and server key files"
 echo "* Enter your company name as the Common Name (e.g. genivia.com) when requested"
 echo "* The root CA will expire after three years (1095 days)"
 

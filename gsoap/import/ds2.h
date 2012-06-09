@@ -1,6 +1,6 @@
 /*
 
-ds.h
+ds2.h
 
 Generated with:
 wsdl2h -cuxy -o ds.h -t WS/WS-typemap.dat WS/ds.xsd
@@ -267,7 +267,7 @@ struct ds__X509IssuerSerialType
 /// Element X509IssuerName of type xs:string.
     char*                                X509IssuerName                 1;	///< Required element.
 /// Element X509SerialNumber of type xs:integer.
-    int                                  X509SerialNumber               1;	///< Required element.
+    char*                                X509SerialNumber               1;	///< Required element.
 };
 
 /// "http://www.w3.org/2000/09/xmldsig#":DSAKeyValueType is a complexType.

@@ -1,21 +1,18 @@
 /*
+	wsp.h
 
-wsp.h
+	Generated with:
+	wsdl2h -c -x -o wsp.h -t WS/WS-typemap.dat WS/WS-Policy.xsd
 
-Generated with:
-wsdl2h -c -x -o wsp.h -t WS/WS-typemap.dat WS/WS-Policy.xsd
-
-Modified by Robert van Engelen:
-
-- Removed //gsoapopt
-- Removed #import "wsu.h" since only wsu__Id is needed
-- Removed wsu__Id, since this type is defined in wsse.h
-- Removed enum xsd__boolean_
-- Added //gsoap wsu schema import: http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd
-- Added //gsoap wsp schema import: http://schemas.xmlsoap.org/ws/2004/09/policy
-- Added #import "wsse.h"
-- Modified wsp__union_1/_2/_3 to include wsse elements
-- Added wsse elements to wsp__union_1 and _2
+	- Removed //gsoapopt
+	- Removed #import "wsu.h" since only wsu__Id is needed
+	- Removed wsu__Id, since this type is defined in wsse.h
+	- Removed enum xsd__boolean_
+	- Added //gsoap wsu schema import: http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd
+	- Added //gsoap wsp schema import: http://schemas.xmlsoap.org/ws/2004/09/policy
+	- Added #import "wsse.h"
+	- Modified wsp__union_1/_2/_3 to include wsse elements
+	- Added wsse elements to wsp__union_1 and _2
 
 */
 

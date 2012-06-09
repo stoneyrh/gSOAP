@@ -412,7 +412,8 @@ static void options(int argc, char **argv)
 -x      don't generate _XML any/anyAttribute extensibility elements\n\
 -y      generate typedef synonyms for structs and enums\n\
 -z1     compatibility with 2.7.6e: generate pointer-based arrays\n\
--z2     compatibility with 2.7.15: qualify element/attribute referenced members\n\
+-z2     compatibility with 2.7.7 to 2.7.15: qualify element/attribute references\n\
+-z3     compatibility with 2.7.16 to 2.8.7: qualify element/attribute references\n\
 -_      don't generate _USCORE (replace with UNICODE _x005f)\n\
 infile.wsdl infile.xsd http://www... list of input sources (if none: use stdin)\n\
 \n");
@@ -482,8 +483,9 @@ struct Namespace namespaces[] =
   {"sp", "http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702", "http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"},
   {"wsdl", "http://schemas.xmlsoap.org/wsdl/"},
   {"wsa_", "http://www.w3.org/2005/08/addressing"},
+  {"wsaw", "http://www.w3.org/2006/05/addressing/wsdl"},
   {"wsam", "http://www.w3.org/2007/05/addressing/metadata"},
-  {"wsrmp", "http://docs.oasis-open.org/ws-rx/wsrmp/200702"},
+  {"wsrmp", "http://schemas.xmlsoap.org/ws/2005/02/rm/policy", "http://docs.oasis-open.org/ws-rx/wsrmp/*"},
   {"wsp", "http://www.w3.org/ns/ws-policy", "http://schemas.xmlsoap.org/ws/2004/09/policy"},
   {"wst", "http://docs.oasis-open.org/ws-sx/ws-trust/200512"},
   {"wsu_", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"},

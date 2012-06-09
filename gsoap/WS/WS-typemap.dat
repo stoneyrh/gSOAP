@@ -31,7 +31,16 @@
 
 wsrp	= "http://schemas.xmlsoap.org/rp/"
 wsen	= "http://schemas.xmlsoap.org/ws/2004/09/enumeration"
+
+#	wsp bindings
+
 wsp	= "http://schemas.xmlsoap.org/ws/2004/09/policy"
+
+#	wsp redeclarations, used in wst.h:
+
+_wsp__Policy		= | _XML | _XML
+_wsp__PolicyReference	= | _XML | _XML
+_wsp__AppliesTo		= | _XML | _XML
 
 #	wsa bindings
 
@@ -81,6 +90,7 @@ wsse2	= <http://schemas.xmlsoap.org/ws/2002/12/secext>
 #	wsrm bindings
 
 wsrm	= <http://docs.oasis-open.org/ws-rx/wsrm/200702>
+wsrm5	= <http://schemas.xmlsoap.org/ws/2005/02/rm>
 wsrm4	= <http://docs.oasis-open.org/wsrm/2004/06/ws-reliability-1.1.xsd>
 ref     = <http://docs.oasis-open.org/wsrm/2004/06/reference-1.1.xsd>
 
@@ -95,6 +105,74 @@ _wsrm__Expires			= #import "custom/duration.h" | xsd__duration
 
 wsdd	= <http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01>
 wsdd10  = <http://schemas.xmlsoap.org/ws/2005/04/discovery>
+
+#	wsc bindings
+
+wsc	= <http://schemas.xmlsoap.org/ws/2005/02/sc>
+
+#	wst bindings 1.0
+
+wst	= <http://schemas.xmlsoap.org/ws/2005/02/trust>
+
+################################################################################
+#
+#	wsc redefinitions
+#
+################################################################################
+
+_wsc__Identifier	= | char*
+_wsc__Instance		= | char*
+_wsc__Name		= | char*
+_wsc__Label		= | char*
+_wsc__Nonce		= | char*
+
+wsc__SecurityContextTokenType = $\
+    char*                                Identifier;
+wsc__SecurityContextTokenType = $\
+    char*                                Instance;
+
+################################################################################
+#
+#	wst redefinitions
+#
+################################################################################
+
+wst__RequestTypeEnum		=
+wst__BinarySecretTypeEnum	=
+wst__ComputedKeyEnum		=
+wst__StatusCodeEnum		=
+wst__KeyTypeEnum		=
+
+wst__RequestSecurityTokenType = $\
+    char*                                TokenType;
+wst__RequestSecurityTokenType = $\
+    wst__RequestTypeOpenEnum             RequestType;
+wst__RequestSecurityTokenType = $\
+    unsigned int*                        KeySize;
+wst__RequestSecurityTokenType = $\
+    struct wst__BinaryExchangeType*      BinaryExhange;
+
+wst__RequestSecurityTokenResponseType = $\
+    char*                                TokenType;
+wst__RequestSecurityTokenResponseType = $\
+    struct wst__RequestedSecurityTokenType*  RequestedSecurityToken;
+wst__RequestSecurityTokenResponseType = $\
+    struct wst__BinaryExchangeType*      BinaryExhange;
+
+wst__RequestedSecurityTokenType =\
+typedef struct wst__RequestedSecurityTokenType\n\
+{	_wsse__SecurityTokenReference *wsse__SecurityTokenReference;\n\
+} wst__RequestedSecurityTokenType;
+
+wst__EntropyType =\
+typedef struct wst__EntropyType\n\
+{	struct wst__BinarySecretType *BinarySecret;\n\
+} wst__EntropyType;
+
+wst__DelegatToeType =\
+typedef struct wst__DelegateToType\n\
+{	_wsse__SecurityTokenReference *wsse__SecurityTokenReference;\n\
+} wst__DelegateToType;
 
 ################################################################################
 #
@@ -181,7 +259,9 @@ typedef struct _wsse__SecurityTokenReference\n\
 {	struct _wsse__Reference*		Reference;\n\
 	struct _wsse__KeyIdentifier*		KeyIdentifier;\n\
 	struct _wsse__Embedded*			Embedded;\n\
+	struct ds__X509DataType*		ds__X509Data;\n\
 	@char*					wsu__Id;\n\
+	@char*					wsc__Instance;\n\
 	@char*					Usage;\n\
 } _wsse__SecurityTokenReference;
 
@@ -230,6 +310,7 @@ wsse__SecurityHeaderType =
 # But use wsse:Security element with additional content
 _wsse__Security =\
 #import "xenc.h"\n\
+#import "wsc.h"\n\
 typedef struct _wsse__Security\n\
 {	struct _wsu__Timestamp*			wsu__Timestamp;\n\
 	struct _wsse__UsernameToken*		UsernameToken;\n\
@@ -311,6 +392,9 @@ typedef struct xenc__EncryptionPropertyType\n\
 
 xenc__KeySizeType = | int
 
+xenc__EncryptionMethodType = $\
+    struct ds__DigestMethodType*         ds__DigestMethod;
+
 ################################################################################
 #
 #	Common definitions
@@ -339,11 +423,11 @@ xsd__QName		= | _QName | _QName
 
 #	Map xsd:integer to int
 
-xsd__integer		= | int
+xsd__integer		= | char*
 
 #	Map xsd:nonNegativeInteger to unsigned int
 
-xsd__nonNegativeInteger	= | unsigned int
+xsd__nonNegativeInteger	= | char*
 
 #	Map xsd:base64Binary to char* and manipulate base64 data internally
 
@@ -351,7 +435,7 @@ xsd__base64Binary	= | char* /*base64*/
 
 #	Map xsd:boolean to xsd__boolean_ to avoid redefs
 
-xsd__boolean		= enum xsd__boolean_ { _false, _true }; | enum xsd__boolean_
+xsd__boolean		= | char*
 
 #	Map xsd:IDREFS to char*
 

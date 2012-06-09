@@ -112,7 +112,7 @@ wsdl2h-wsp.o wsdl2h-wsp.o: wsp.cpp wsdlH.h wsdlStub.h \
   /usr/include/c++/4.2.1/bits/stl_set.h \
   /usr/include/c++/4.2.1/bits/stl_multiset.h /usr/include/c++/4.2.1/map \
   /usr/include/c++/4.2.1/bits/stl_map.h \
-  /usr/include/c++/4.2.1/bits/stl_multimap.h types.h
+  /usr/include/c++/4.2.1/bits/stl_multimap.h types.h service.h
 
 wsdlH.h:
 
@@ -471,3 +471,5 @@ includes.h:
 /usr/include/c++/4.2.1/bits/stl_multimap.h:
 
 types.h:
+
+service.h:

@@ -2201,7 +2201,7 @@ yyreduce:
 			  else if ((i = atoi((yyvsp[(1) - (1)].s)+2)) > 0)
 				yylineno = i;
 			  else
-			  {	sprintf(errbuf, "directive '%s' ignored (use #import to import files and/or use option -i)", (yyvsp[(1) - (1)].s));
+			  {	sprintf(errbuf, "directive '%s' ignored (use #import to import files)", (yyvsp[(1) - (1)].s));
 			  	semwarn(errbuf);
 			  }
 			}
@@ -3831,7 +3831,7 @@ yyreduce:
   case 177:
 #line 1318 "soapcpp2_yacc.y"
     { /* handle const pointers, such as const char* */
-			  if (/*tmp.typ->type == Tchar &&*/ (tmp.sto & Sconst))
+			  if ((tmp.sto & Sconst))
 			  	tmp.sto = (Storage)(((int)tmp.sto & ~Sconst) | Sconstptr);
 			  tmp.typ = mkpointer(tmp.typ);
 			  tmp.typ->transient = transient;

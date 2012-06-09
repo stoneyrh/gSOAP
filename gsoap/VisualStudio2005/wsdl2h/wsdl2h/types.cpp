@@ -200,34 +200,45 @@ int Types::read(const char *file)
     else if (*s && *s != '#')
     { s = fill(xsd, sizeof(xsd), s, '=');
       if (strstr(xsd, "__"))
-      { s = fill(def, sizeof(def), s, '|');
-        s = fill(use, sizeof(use), s, '|');
-        s = fill(ptr, sizeof(ptr), s, '|');
-        if (*xsd)
-        { s = estrdup(xsd);
-          if (*def == '$')
-          { const char *t = modtypemap[s];
-            if (t)
-            { char *r = (char*)emalloc(strlen(t) + strlen(def) + 1);
-              strcpy(r, t);
-              strcat(r, def);
-              free((void*)modtypemap[s]);
-              modtypemap[s] = r;
+      { if (s && *s == '=')
+        { s = fill(use, sizeof(use), s+1, '|');
+          if (*xsd && *use)
+          { s = estrdup(xsd);
+            eqvtypemap[s] = estrdup(use);
+	  }
+	}
+	else
+        { s = fill(def, sizeof(def), s, '|');
+          s = fill(use, sizeof(use), s, '|');
+          s = fill(ptr, sizeof(ptr), s, '|');
+          if (*xsd)
+          { s = estrdup(xsd);
+            if (*def == '$')
+            { const char *t = modtypemap[s];
+              if (t)
+              { char *r = (char*)emalloc(strlen(t) + strlen(def) + 1);
+                strcpy(r, t);
+                strcat(r, def);
+                free((void*)modtypemap[s]);
+                modtypemap[s] = r;
+              }
+              else
+                modtypemap[s] = estrdup(def);
             }
             else
-              modtypemap[s] = estrdup(def);
-          }
-          else
-          { if (*def)
-              deftypemap[s] = estrdup(def);
-            else
-              deftypemap[s] = "";
-            if (*use)
-              usetypemap[s] = estrdupf(use);
-            else
-              usetypemap[s] = estrdupf(xsd);
-            if (*ptr)
-              ptrtypemap[s] = estrdupf(ptr);
+	    { if (*def)
+              { if (strcmp(def, "..."))
+	          deftypemap[s] = estrdup(def);
+	      }
+              else
+                deftypemap[s] = "";
+              if (*use)
+                usetypemap[s] = estrdupf(use);
+              else
+                usetypemap[s] = estrdupf(xsd);
+              if (*ptr)
+                ptrtypemap[s] = estrdupf(ptr);
+            }
           }
         }
       }
@@ -539,96 +550,95 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
     p = s;
   else
     p = "";
+  s = NULL;
   if (lookup == LOOKUP)
-  { s = qnames[Pair(p,name)];
-    if (s)
-      return s;
-  }
-  t = buf;
-  if (!prefix || *prefix)
-  { s = p;
-    // no longer add '_' when URI != NULL, since nsprefix() will do this
-    if (prefix && *prefix == ':')
-      *t++ = ':';
-    else if (prefix && *prefix == '_')
-    { if (!URI)
-        *t++ = '_';
-      if (prefix[1] == '_') // ensures ns prefix starts with __
-      { strcpy(t, prefix + 1);
-        t += strlen(prefix + 1);
-      }
-    }
-    if (s && *s)
-    { for (; *s; s++)
-      { if (isalnum(*s))
-          *t++ = *s;
-        else if (*s == '-' && s != p)
+    s = qnames[Pair(p,name)];
+  if (!s)
+  { t = buf;
+    if (!prefix || *prefix)
+    { s = p;
+      // no longer add '_' when URI != NULL, since nsprefix() will do this
+      if (prefix && *prefix == ':')
+        *t++ = ':';
+      else if (prefix && *prefix == '_')
+      { if (!URI)
           *t++ = '_';
-        else if (*s == '_')
-        { if (s == p)
+        if (prefix[1] == '_') // ensures ns prefix starts with __
+        { strcpy(t, prefix + 1);
+          t += strlen(prefix + 1);
+        }
+      }
+      if (s && *s)
+      { for (; *s; s++)
+        { if (isalnum(*s))
+            *t++ = *s;
+          else if (*s == '-' && s != p)
             *t++ = '_';
-          else if (!_flag)
-          { strcpy(t, "_USCORE");
-            t += 7;
+          else if (*s == '_')
+          { if (s == p)
+              *t++ = '_';
+            else if (!_flag)
+            { strcpy(t, "_USCORE");
+              t += 7;
+            }
+            else
+            { s = utf8(t, s);
+              t += 6;
+            }
           }
           else
           { s = utf8(t, s);
             t += 6;
           }
         }
-        else
-        { s = utf8(t, s);
-          t += 6;
+        if (!prefix || *prefix != '*')
+        { *t++ = '_';
+          *t++ = '_';
         }
       }
-      if (!prefix || *prefix != '*')
-      { *t++ = '_';
+      else if (isdigit(*name))
         *t++ = '_';
-      }
     }
-    else if (isdigit(*name))
-      *t++ = '_';
-  }
-  for (s = name; *s; s++)
-  { if (isalnum(*s))
-      *t++ = *s;
-    else if (*s == '-' && s[1] != '\0' && s != name)
-      *t++ = '_';
-    else if (!_flag && *s == '_')
-    { strcpy(t, "_USCORE");
-      t += 7;
+    for (s = name; *s; s++)
+    { if (isalnum(*s))
+        *t++ = *s;
+      else if (*s == '-' && s[1] != '\0' && s != name)
+        *t++ = '_';
+      else if (!_flag && *s == '_')
+      { strcpy(t, "_USCORE");
+        t += 7;
+      }
+      else
+      { s = utf8(t, s);
+        t += 6;
+      }
+      if (t >= buf + sizeof(buf))
+        break;
+    }
+    *t = '\0';
+    while (knames.find(buf) != knames.end() || (reserved && reserved->find(buf) != reserved->end()))
+    { *t++ = '_';
+      *t = '\0';
+    }
+    if (isalpha(*buf) || *buf == '_' || *buf == ':')
+    { t = (char*)emalloc(strlen(buf) + 1);
+      strcpy(t, buf);
     }
     else
-    { s = utf8(t, s);
-      t += 6;
+    { t = (char*)emalloc(strlen(buf) + 2);
+      *t = '_';
+      strcpy(t + 1, buf);
     }
-    if (t >= buf + sizeof(buf))
-      break;
+    if (lookup == LOOKUP)
+    { qnames[Pair(p,name)] = t;
+      if (vflag)
+        cerr << "Mapping '" << p << ":" << name << "' to '" << t << "'" << endl;
+    }
+    s = t;
   }
-  *t = '\0';
-  while (knames.find(buf) != knames.end() || (reserved && reserved->find(buf) != reserved->end()))
-  { *t++ = '_';
-    *t = '\0';
-  }
-  if (isalpha(*buf) || *buf == '_' || *buf == ':')
-  { t = (char*)emalloc(strlen(buf) + 1);
-    strcpy(t, buf);
-  }
-  else
-  { t = (char*)emalloc(strlen(buf) + 2);
-    *t = '_';
-    strcpy(t + 1, buf);
-  }
-  if (lookup == LOOKUP)
-  { qnames[Pair(p,name)] = t;
-    if (vflag)
-      cerr << "Mapping '" << p << ":" << name << "' to '" << t << "'" << endl;
-    /*
-    for (MapOfPairToString::const_iterator i = qnames.begin(); i != qnames.end(); ++i)
-      cerr << "(" << (*i).first.first << "," << (*i).first.second << ") = " << (*i).second << endl;
-    */
-  }
-  return t;
+  if (eqvtypemap.find(s) != eqvtypemap.end())
+    s = eqvtypemap[s];
+  return s;
 }
 
 bool Types::is_defined(const char *prefix, const char *URI, const char *qname)
@@ -725,6 +735,11 @@ const char *Types::deftname(enum Type type, const char *pointer, bool is_pointer
   { if (vflag)
       fprintf(stderr, "Name %s already defined (probably in %s file)\n", qname, mapfile);
     return NULL;
+  }
+  if (usetypemap[t])
+  { if (vflag)
+      fprintf(stderr, "Name %s is mapped\n", qname);
+    return t;
   }
   switch (type)
   { case ENUM:
@@ -1874,6 +1889,12 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
     { typeURI = attribute.attributePtr()->schemaPtr()->targetNamespace;
       if (attribute.form && *attribute.form == unqualified)
         nameprefix = ":";
+      else if (zflag != 3 && zflag != 2
+       && URI
+       && typeURI
+       && attribute.schemaPtr()->elementFormDefault == qualified
+       && !strcmp(URI, typeURI))
+        nameprefix = NULL;
       else if (zflag == 3
        && URI
        && typeURI
@@ -2163,6 +2184,12 @@ void Types::gen(const char *URI, const xs__element& element, bool substok)
     { typeURI = element.elementPtr()->schemaPtr()->targetNamespace;
       if (element.form && *element.form == unqualified)
         nameprefix = ":";
+      else if (zflag != 3 && zflag != 2
+       && URI
+       && typeURI
+       && element.schemaPtr()->elementFormDefault == qualified
+       && !strcmp(URI, typeURI))
+        nameprefix = NULL;
       else if (zflag == 3
        && URI
        && typeURI

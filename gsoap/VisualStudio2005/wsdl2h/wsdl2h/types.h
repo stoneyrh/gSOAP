@@ -49,6 +49,7 @@ class Types
     MapOfStringToString deftypemap;
     MapOfStringToString usetypemap;
     MapOfStringToString ptrtypemap;
+    MapOfStringToString eqvtypemap;
     MapOfPairToString	qnames;	// (URI,name) -> name
     MapOfStringToString	uris;	// URI -> prefix
     MapOfStringToNum	syms;	// prefix -> count (ns1, ns2, ...)

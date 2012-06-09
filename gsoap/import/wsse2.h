@@ -161,7 +161,8 @@ typedef struct _wsse2__KeyIdentifier
 typedef struct _wsse2__SecurityTokenReference
 {	struct _wsse2__Reference*		Reference;
 	struct _wsse2__KeyIdentifier*		KeyIdentifier;
-	struct _wsse2__Embedded*			Embedded;
+	struct _wsse2__Embedded*		Embedded;
+	struct ds__X509DataType*		ds__X509Data;
 	@char*					wsu__Id;
 	@char*					Usage;
 } _wsse2__SecurityTokenReference;

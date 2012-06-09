@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2011, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2001-2012, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "stdsoap2.h"
 
-#define WSDL2H_VERSION "2.8.8"
+#define WSDL2H_VERSION "2.8.9"
 
 #ifdef WIN32
 # pragma warning(disable : 4996)
@@ -54,6 +54,14 @@ using namespace std;
 struct ltstr
 { bool operator()(const char *s1, const char *s2) const
   { return strcmp(s1, s2) < 0;
+  }
+}; 
+
+struct eqstr
+{ const char *s;
+  eqstr(const char *s) : s(s) { }
+  bool operator()(const char *t) const
+  { return strcmp(s, t) == 0;
   }
 }; 
 

@@ -6,6 +6,8 @@
 	Compilation in C (see samples/calc/calc.h):
 	$ soapcpp2 -c calc.h
 	$ cc -o calcclient calcclient.c stdsoap2.c soapC.c soapClient.c
+	where stdsoap2.c is in the 'gsoap' directory, or use libgsoap:
+	$ cc -o calcclient calcclient.c soapC.c soapClient.c -lgsoap
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools

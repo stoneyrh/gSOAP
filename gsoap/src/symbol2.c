@@ -870,20 +870,19 @@ compile(Table *table)
 	if (!lflag)
 	{ 
 	fprintf(fout,"\n\n#ifndef WITH_NOGLOBAL");
-        if ((p = entry(classtable, lookup("SOAP_ENV__Header"))) && p->info.typ->type == Tstruct)
-	  fprintf(fout,"\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_serializeheader(struct soap *soap)\n{\n\tif (soap->header)\n\t\tsoap_serialize_SOAP_ENV__Header(soap, soap->header);\n}");
-	else
-	  fprintf(fout,"\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_serializeheader(struct soap *soap)\n{\n\tif (soap->header)\n\t\tsoap->header->soap_serialize(soap);\n}");
+	fprintf(fout,"\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_getheader(struct soap *soap)\n{\n\tsoap->part = SOAP_IN_HEADER;\n\tsoap->header = soap_in_SOAP_ENV__Header(soap, \"SOAP-ENV:Header\", soap->header, NULL);\n\tsoap->part = SOAP_END_HEADER;\n\treturn soap->header == NULL;\n}");
 	fprintf(fout,"\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_putheader(struct soap *soap)\n{\n\tif (soap->header)\n\t{\tsoap->part = SOAP_IN_HEADER;\n\t\tif (soap_out_SOAP_ENV__Header(soap, \"SOAP-ENV:Header\", 0, soap->header, NULL))\n\t\t\treturn soap->error;\n\t\tsoap->part = SOAP_END_HEADER;\n\t}\n\treturn SOAP_OK;\n}");
-	fprintf(fout,"\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_getheader(struct soap *soap)\n{\n\tsoap->part = SOAP_IN_HEADER;\n\tsoap->header = soap_in_SOAP_ENV__Header(soap, \"SOAP-ENV:Header\", NULL, NULL);\n\tsoap->part = SOAP_END_HEADER;\n\treturn soap->header == NULL;\n}");
         if (cflag)
-	{ fprintf(fout,"\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap *soap)\n{\n\tif (!soap->header)\n\t{\tif ((soap->header = (struct SOAP_ENV__Header*)soap_malloc(soap, sizeof(struct SOAP_ENV__Header))))\n\t\t\tsoap_default_SOAP_ENV__Header(soap, soap->header);\n\t}\n}");
+	{ fprintf(fout,"\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_serializeheader(struct soap *soap)\n{\n\tif (soap->header)\n\t\tsoap_serialize_SOAP_ENV__Header(soap, soap->header);\n}");
+	  fprintf(fout,"\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap *soap)\n{\n\tif (!soap->header)\n\t{\tif ((soap->header = (struct SOAP_ENV__Header*)soap_malloc(soap, sizeof(struct SOAP_ENV__Header))))\n\t\t\tsoap_default_SOAP_ENV__Header(soap, soap->header);\n\t}\n}");
 	}
-        else if ((p = entry(classtable, lookup("SOAP_ENV__Fault"))) && p->info.typ->type == Tstruct)
-	{ fprintf(fout,"\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap *soap)\n{\n\tif (!soap->header)\n\t{\tif ((soap->header = soap_new_SOAP_ENV__Header(soap, -1)))\n\t\t\tsoap_default_SOAP_ENV__Header(soap, soap->header);\n\t}\n}");
+        else if ((p = entry(classtable, lookup("SOAP_ENV__Header"))) && p->info.typ->type == Tstruct)
+	{ fprintf(fout,"\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_serializeheader(struct soap *soap)\n{\n\tif (soap->header)\n\t\tsoap_serialize_SOAP_ENV__Header(soap, soap->header);\n}");
+	  fprintf(fout,"\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap *soap)\n{\n\tif (!soap->header)\n\t{\tif ((soap->header = soap_new_SOAP_ENV__Header(soap, -1)))\n\t\t\tsoap_default_SOAP_ENV__Header(soap, soap->header);\n\t}\n}");
 	}
 	else
-	{ fprintf(fout,"\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap *soap)\n{\n\tif (!soap->header)\n\t{\tif ((soap->header = soap_new_SOAP_ENV__Header(soap, -1)))\n\t\t\tsoap->header->soap_default(soap);\n\t}\n}");
+	{ fprintf(fout,"\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_serializeheader(struct soap *soap)\n{\n\tif (soap->header)\n\t\tsoap->header->soap_serialize(soap);\n}");
+	  fprintf(fout,"\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap *soap)\n{\n\tif (!soap->header)\n\t{\tif ((soap->header = soap_new_SOAP_ENV__Header(soap, -1)))\n\t\t\tsoap->header->soap_default(soap);\n\t}\n}");
 	}
         if (cflag)
 	{ fprintf(fout,"\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_fault(struct soap *soap)\n{\n\tif (!soap->fault)\n\t{\tsoap->fault = (struct SOAP_ENV__Fault*)soap_malloc(soap, sizeof(struct SOAP_ENV__Fault));\n\t\tif (!soap->fault)\n\t\t\treturn;\n\t\tsoap_default_SOAP_ENV__Fault(soap, soap->fault);\n\t}\n\tif (soap->version == 2 && !soap->fault->SOAP_ENV__Code)\n\t{\tsoap->fault->SOAP_ENV__Code = (struct SOAP_ENV__Code*)soap_malloc(soap, sizeof(struct SOAP_ENV__Code));\n\t\tsoap_default_SOAP_ENV__Code(soap, soap->fault->SOAP_ENV__Code);\n\t}\n\tif (soap->version == 2 && !soap->fault->SOAP_ENV__Reason)\n\t{\tsoap->fault->SOAP_ENV__Reason = (struct SOAP_ENV__Reason*)soap_malloc(soap, sizeof(struct SOAP_ENV__Reason));\n\t\tsoap_default_SOAP_ENV__Reason(soap, soap->fault->SOAP_ENV__Reason);\n\t}\n}");
@@ -1824,7 +1823,7 @@ generate_schema(Table *t)
 	    else
 	    { if (!Sflag && sp && sp->name)
 	      { sprintf(buf, "%s%s%s.h", dirpath, prefix, ns_cname(name, "Proxy"));
-	        fprintf(fmsg, "Saving %s client proxy\n", buf);
+	        fprintf(fmsg, "Saving %s simple client proxy\n", buf);
                 fd = fopen(buf, "w");
 	        if (!fd)
 	          execerror("Cannot write proxy file");
@@ -1835,7 +1834,7 @@ generate_schema(Table *t)
 	      }
 	      else if (!Sflag)
 	      { sprintf(buf, "%s%s.h", dirpath, ns_cname(prefix, "Proxy"));
-	        fprintf(fmsg, "Saving %s client proxy\n", buf);
+	        fprintf(fmsg, "Saving %s simple client proxy\n", buf);
                 fd = fopen(buf, "w");
 	        if (!fd)
 	          execerror("Cannot write proxy file");
@@ -1846,7 +1845,7 @@ generate_schema(Table *t)
 	      }
               if (!Cflag && sp && sp->name)
 	      { sprintf(buf, "%s%s%s.h", dirpath, prefix, ns_cname(name, "Object"));
-	        fprintf(fmsg, "Saving %s server object\n", buf);
+	        fprintf(fmsg, "Saving %s simple server object\n", buf);
                 fd = fopen(buf, "w");
 	        if (!fd)
 	          execerror("Cannot write server object file");
@@ -1857,7 +1856,7 @@ generate_schema(Table *t)
 	      }
 	      else if (!Cflag)
 	      { sprintf(buf, "%s%s.h", dirpath, ns_cname(prefix, "Object"));
-	        fprintf(fmsg, "Saving %s server object\n", buf);
+	        fprintf(fmsg, "Saving %s simple server object\n", buf);
                 fd = fopen(buf, "w");
 	        if (!fd)
 	          execerror("Cannot write server object file");
@@ -3606,6 +3605,10 @@ gen_object(FILE *fd, Table *table, Symbol *ns, char *name, char *URL, char *exec
   fprintf(fd, "\n\tvirtual\tSOAP_SOCKET bind(const char *host, int port, int backlog) { return soap_bind(this, host, port, backlog); };");
   fprintf(fd, "\n\t/// Accept next request (returns socket or SOAP_INVALID_SOCKET)");
   fprintf(fd, "\n\tvirtual\tSOAP_SOCKET accept() { return soap_accept(this); };");
+  fprintf(fd, "\n#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)");
+  fprintf(fd, "\n\t/// Then accept SSL handshake, when SSL is used");
+  fprintf(fd, "\n\tvirtual\tint ssl_accept() { return soap_ssl_accept(this); };");
+  fprintf(fd, "\n#endif");
   fprintf(fd, "\n\t/// Serve this request (returns error code or SOAP_OK)");
   if (nflag)
     fprintf(fd, "\n\tvirtual\tint serve() { return %s_serve(this); };", prefix);
@@ -3872,6 +3875,10 @@ gen_object_header(FILE *fd, Table *table, Symbol *ns, char *name, char *URL, cha
   fprintf(fd, "\n\tvirtual\tSOAP_SOCKET bind(const char *host, int port, int backlog);");
   fprintf(fd, "\n\t/// Accept next request (returns socket or SOAP_INVALID_SOCKET)");
   fprintf(fd, "\n\tvirtual\tSOAP_SOCKET accept();");
+  fprintf(fd, "\n#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)");
+  fprintf(fd, "\n\t/// Then accept SSL handshake, when SSL is used");
+  fprintf(fd, "\n\tvirtual\tint ssl_accept();");
+  fprintf(fd, "\n#endif");
   fprintf(fd, "\n\t/// Serve this request (returns error code or SOAP_OK)");
   fprintf(fd, "\n\tvirtual\tint serve();");
   fprintf(fd, "\n\t/// Used by serve() to dispatch a request (returns error code or SOAP_OK)");
@@ -4488,9 +4495,12 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, char *name, char *URL, char 
   }
   }
   fprintf(fd, "\n\nconst SOAP_ENV__Header *%s::soap_header()\n{\treturn %s->header;\n}", name, soap);
-  fprintf(fd, "\n\nint %s::run(int port)\n{\tif (soap_valid_socket(bind(NULL, port, 100)))\n\t{\tfor (;;)\n\t\t{\tif (!soap_valid_socket(accept()) || serve())\n\t\t\t\treturn %s->error;\n\t\t\tsoap_destroy(%s);\n\t\t\tsoap_end(%s);\n\t\t}\n\t}\n\telse\n\t\treturn %s->error;\n\treturn SOAP_OK;\n}", name, soap, soap, soap, soap);
+  fprintf(fd, "\n\nint %s::run(int port)\n{\tif (soap_valid_socket(%s->master) || soap_valid_socket(bind(NULL, port, 100)))\n\t{\tfor (;;)\n\t\t{\tif (!soap_valid_socket(accept()) || serve())\n\t\t\t\treturn %s->error;\n\t\t\tsoap_destroy(%s);\n\t\t\tsoap_end(%s);\n\t\t}\n\t}\n\telse\n\t\treturn %s->error;\n\treturn SOAP_OK;\n}", name, soap, soap, soap, soap, soap);
   fprintf(fd, "\n\nSOAP_SOCKET %s::bind(const char *host, int port, int backlog)\n{\treturn soap_bind(%s, host, port, backlog);\n}", name, soap);
   fprintf(fd, "\n\nSOAP_SOCKET %s::accept()\n{\treturn soap_accept(%s);\n}", name, soap);
+  fprintf(fd, "\n\n#if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)");
+  fprintf(fd, "\nint %s::ssl_accept()\n{\treturn soap_ssl_accept(%s);\n}", name, soap);
+  fprintf(fd, "\n#endif");
   fprintf(fd, "\n\nint %s::serve()", name);
   fprintf(fd, "\n{\n#ifndef WITH_FASTCGI\n\tunsigned int k = %s->max_keep_alive;\n#endif\n\tdo\n\t{", soap);
   fprintf(fd,"\n\n#ifndef WITH_FASTCGI\n\t\tif (%s->max_keep_alive > 0 && !--k)\n\t\t\t%s->keep_alive = 0;\n#endif", soap, soap);
@@ -4532,12 +4542,23 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, char *name, char *URL, char 
           if (param)
           { if (action)
             { if (*action == '"')
-	        fprintf(fd, "\n\tif ((!%s->action && !soap_match_tag(%s, %s->tag, \"%s\")) || (%s->action && !strcmp(%s->action, %s))", soap, soap, soap, ns_convert(param->sym->name), soap, soap, action);
+	      { fprintf(fd, "\n\tif (");
+	        if (!Aflag)
+	          fprintf(fd, "(!%s->action && !soap_match_tag(%s, %s->tag, \"%s\")) || ", soap, soap, soap, ns_convert(param->sym->name));
+	        fprintf(fd, "(%s->action && !strcmp(%s->action, %s))", soap, soap, action);
+	      }
               else
-	        fprintf(fd, "\n\tif ((!%s->action && !soap_match_tag(%s, %s->tag, \"%s\")) || (%s->action && !strcmp(%s->action, \"%s\"))", soap, soap, soap, ns_convert(param->sym->name), soap, soap, action);
+	      { fprintf(fd, "\n\tif (");
+	        if (!Aflag)
+	          fprintf(fd, "(!%s->action && !soap_match_tag(%s, %s->tag, \"%s\")) || ", soap, soap, soap, ns_convert(param->sym->name));
+	        fprintf(fd, "(%s->action && !strcmp(%s->action, \"%s\"))", soap, soap, action);
+	      }
 	    }
 	    else
+	    { if (Aflag)
+	        compliancewarn("Option -A requires a SOAPAction where none is defined");
               fprintf(fd, "\n\tif (!soap_match_tag(%s, %s->tag, \"%s\")", soap, soap, ns_convert(param->sym->name));
+	    }
             fprintf(fd, ")\n\t\treturn serve_%s(this);", ident(method->sym->name));
           }
 	  else
@@ -4549,12 +4570,23 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, char *name, char *URL, char 
       else
       { if (action)
         { if (*action == '"')
-	    fprintf(fd, "\n\tif ((!%s->action && !soap_match_tag(%s, %s->tag, \"%s\")) || (%s->action && !strcmp(%s->action, %s))", soap, soap, soap, ns_convert(method->sym->name), soap, soap, action);
+	  { fprintf(fd, "\n\tif (");
+	    if (!Aflag)
+	      fprintf(fd, "(!%s->action && !soap_match_tag(%s, %s->tag, \"%s\")) || ", soap, soap, soap, ns_convert(method->sym->name));
+	    fprintf(fd, "(%s->action && !strcmp(%s->action, %s))", soap, soap, action);
+	  }
           else
-	    fprintf(fd, "\n\tif ((!%s->action && !soap_match_tag(%s, %s->tag, \"%s\")) || (%s->action && !strcmp(%s->action, \"%s\"))", soap, soap, soap, ns_convert(method->sym->name), soap, soap, action);
+	  { fprintf(fd, "\n\tif (");
+	    if (!Aflag)
+	      fprintf(fd, "(!%s->action && !soap_match_tag(%s, %s->tag, \"%s\")) || ", soap, soap, soap, ns_convert(method->sym->name));
+	    fprintf(fd, "(%s->action && !strcmp(%s->action, \"%s\"))", soap, soap, action);
+	  }
 	}
 	else
+	{ if (Aflag)
+	    compliancewarn("Option -A requires a SOAPAction where none is defined");
           fprintf(fd, "\n\tif (!soap_match_tag(%s, %s->tag, \"%s\")", soap, soap, ns_convert(method->sym->name));
+	}
         fprintf(fd, ")\n\t\treturn serve_%s(this);", ident(method->sym->name));
       }
     }
@@ -5325,7 +5357,8 @@ emalloc(size_t n)
 
 void
 soap_serve(Table *table)
-{ Entry *method, *catch_method;
+{ Entry *method, *catch_method = NULL;
+  char *catch_action = NULL;
   if (!Cflag)
   {
   fprintf(fserver,"\n\nSOAP_FMAC5 int SOAP_FMAC6 %s_serve(struct soap *soap)", nflag?prefix:"soap"); 
@@ -5341,7 +5374,6 @@ soap_serve(Table *table)
 
   fprintf(fserver,"\n\n#ifndef WITH_NOSERVEREQUEST\nSOAP_FMAC5 int SOAP_FMAC6 %s_serve_request(struct soap *soap)\n{", nflag?prefix:"soap");
   fprintf(fserver, "\n\tsoap_peek_element(soap);");
-  catch_method = NULL;
   for (method = table->list; method; method = method->next)
   { char *action = NULL;
     if (method->info.typ->type == Tfun && !(method->info.sto & Sextern))
@@ -5363,36 +5395,79 @@ soap_serve(Table *table)
       { Entry *param = entry(classtable, method->sym);
 	if (param)
 	{ param = ((Table*)param->info.typ->ref)->list;
-	  if (param)
+	  if (param || (action && Aflag))
 	  { if (action)
-              if (*action == '"')
-	        fprintf(fserver, "\n\tif ((!soap->action && !soap_match_tag(soap, soap->tag, \"%s\")) || (soap->action && !strcmp(soap->action, %s))", ns_convert(param->sym->name), action);
+            { if (*action == '"')
+	      { fprintf(fserver, "\n\tif (");
+	        if (!Aflag)
+	          fprintf(fserver, "(!soap->action && !soap_match_tag(soap, soap->tag, \"%s\")) || ", ns_convert(param->sym->name));
+	        fprintf(fserver, "(soap->action && !strcmp(soap->action, %s))", action);
+	      }
               else
-	        fprintf(fserver, "\n\tif ((!soap->action && !soap_match_tag(soap, soap->tag, \"%s\")) || (soap->action && !strcmp(soap->action, \"%s\"))", ns_convert(param->sym->name), action);
+	      { fprintf(fserver, "\n\tif (");
+	        if (!Aflag)
+	          fprintf(fserver, "(!soap->action && !soap_match_tag(soap, soap->tag, \"%s\")) || ", ns_convert(param->sym->name));
+	        fprintf(fserver, "(soap->action && !strcmp(soap->action, \"%s\"))", action);
+	      }
+	    }
 	    else
-              fprintf(fserver,"\n\tif (!soap_match_tag(soap, soap->tag, \"%s\")", ns_convert(param->sym->name));
+	    { if (Aflag)
+	        compliancewarn("Option -A requires a SOAPAction where none is defined");
+              fprintf(fserver, "\n\tif (!soap_match_tag(soap, soap->tag, \"%s\")", ns_convert(param->sym->name));
+	    }
             fprintf(fserver, ")\n\t\treturn soap_serve_%s(soap);", ident(method->sym->name));
 	  }
 	  else
-	    catch_method = method;
+	  { catch_method = method;
+	    catch_action = action;
+	  }
 	}
 	else
-	  catch_method = method;
+	{ catch_method = method;
+	  catch_action = action;
+        }
       }
       else
       { if (action)
-          if (*action == '"')
-	    fprintf(fserver, "\n\tif ((!soap->action && !soap_match_tag(soap, soap->tag, \"%s\")) || (soap->action && !strcmp(soap->action, %s))", ns_convert(method->sym->name), action);
+        { if (*action == '"')
+	  { fprintf(fserver, "\n\tif (");
+	    if (!Aflag)
+	      fprintf(fserver, "(!soap->action && !soap_match_tag(soap, soap->tag, \"%s\")) || ", ns_convert(method->sym->name));
+	    fprintf(fserver, "(soap->action && !strcmp(soap->action, %s))", action);
+	  }
           else
-	    fprintf(fserver, "\n\tif ((!soap->action && !soap_match_tag(soap, soap->tag, \"%s\")) || (soap->action && !strcmp(soap->action, \"%s\"))", ns_convert(method->sym->name), action);
+	  { fprintf(fserver, "\n\tif (");
+	    if (!Aflag)
+	      fprintf(fserver, "(!soap->action && !soap_match_tag(soap, soap->tag, \"%s\")) || ", ns_convert(method->sym->name));
+	    fprintf(fserver, "(soap->action && !strcmp(soap->action, \"%s\"))", action);
+	  }
+	}
 	else
-          fprintf(fserver,"\n\tif (!soap_match_tag(soap, soap->tag, \"%s\")", ns_convert(method->sym->name));
+	{ if (Aflag)
+	    compliancewarn("Option -A requires a SOAPAction where none is defined");
+          fprintf(fserver, "\n\tif (!soap_match_tag(soap, soap->tag, \"%s\")", ns_convert(method->sym->name));
+	}
         fprintf(fserver, ")\n\t\treturn soap_serve_%s(soap);", ident(method->sym->name));
       }
     }
   }
   if (catch_method)
-    fprintf(fserver, "\n\treturn soap_serve_%s(soap);", ident(catch_method->sym->name));
+  { if (Aflag && catch_action)
+    { if (*catch_action == '"')
+      { fprintf(fserver, "\n\tif (");
+        fprintf(fserver, "(soap->action && !strcmp(soap->action, %s))", catch_action);
+        fprintf(fserver, ")\n\t\treturn soap_serve_%s(soap);", ident(catch_method->sym->name));
+      }
+      else
+      { fprintf(fserver, "\n\tif (");
+        fprintf(fserver, "(soap->action && !strcmp(soap->action, \"%s\"))", catch_action);
+        fprintf(fserver, ")\n\t\treturn soap_serve_%s(soap);", ident(catch_method->sym->name));
+      }
+      fprintf(fserver,"\n\treturn soap->error = SOAP_NO_METHOD;");
+    }
+    else
+      fprintf(fserver, "\n\treturn soap_serve_%s(soap);", ident(catch_method->sym->name));
+  }
   else
     fprintf(fserver,"\n\treturn soap->error = SOAP_NO_METHOD;");
 
@@ -9810,7 +9885,7 @@ soap_attr_value(Entry *p, char *obj, char *name, char *tag)
   if (typ->type == Tpointer)
   { if (!is_string(typ) && !is_wstring(typ) && !is_stdstr(typ->ref))
     { Tnode *ptr = (Tnode*)typ->ref;
-      if (!is_string(ptr) && !is_wstring(ptr))
+      if (ptr->type <= Tenum)
       { if (ptr->minLength != MINLONG64 && (ptr->minLength > 0 || ptr->type < Tuchar || ptr->type > Tullong))
           fprintf(fout,"\n\tif (%s->%s && *%s->%s < "SOAP_LONG_FORMAT")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", obj, name, obj, name, ptr->minLength);
         if (ptr->maxLength != MAXLONG64)
@@ -9818,7 +9893,7 @@ soap_attr_value(Entry *p, char *obj, char *name, char *tag)
       }
     }
   }
-  else if (!is_stdstr(typ))
+  else if (typ->type <= Tenum)
   { if (typ->minLength != MINLONG64 && (typ->minLength > 0 || typ->type < Tuchar || typ->type > Tullong))
       fprintf(fout,"\n\tif (%s->%s < "SOAP_LONG_FORMAT")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", obj, name, typ->minLength);
     if (typ->maxLength != MAXLONG64)
@@ -10723,10 +10798,12 @@ soap_in(Tnode *typ)
         fprintf(fout,"\n\tp = soap_in%s(soap, tag, a, type, %s);", c_type(typ), soap_type(typ));
       else
         fprintf(fout,"\n\tp = soap_in%s(soap, tag, a, type, %s);", the_type(typ), soap_type(typ));
-      if (typ->minLength != MINLONG64 && (typ->minLength > 0 || typ->type < Tuchar || typ->type > Tullong))
-        fprintf(fout,"\n\tif (p && *p < "SOAP_LONG_FORMAT")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->minLength);
-      if (typ->maxLength != MAXLONG64)
-        fprintf(fout,"\n\tif (p && *p > "SOAP_LONG_FORMAT")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->maxLength);
+      if (typ->type <= Tenum)
+      { if (typ->minLength != MINLONG64 && (typ->minLength > 0 || typ->type < Tuchar || typ->type > Tullong))
+          fprintf(fout,"\n\tif (p && *p < "SOAP_LONG_FORMAT")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->minLength);
+        if (typ->maxLength != MAXLONG64)
+          fprintf(fout,"\n\tif (p && *p > "SOAP_LONG_FORMAT")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->maxLength);
+      }
     }
     fprintf(fout,"\n\treturn p;\n}");
     fflush(fout);
@@ -11839,6 +11916,10 @@ soap_in(Tnode *typ)
 	fprintf(fout,"\n\tif (!a)\n\t\tif (!(a = (%s)soap_malloc(soap, sizeof(%s))))\n\t\t\treturn NULL;", c_type_id(typ, "*"), c_type(typ));
 	fprintf(fout,"\n\t*a = NULL;\n\tif (!soap->null && *soap->href != '#')");
 	fprintf(fout,"\n\t{\tsoap_revert(soap);");
+	if (((Tnode*)typ->ref)->type == Tstruct)
+	{ fprintf(fout,"\n\t\t*a = (%s)soap_malloc(soap, sizeof(%s));", c_type(typ), c_type((Tnode*)typ->ref));
+	  fprintf(fout,"\n\t\tsoap_default_%s(soap, *a);", c_ident((Tnode*)typ->ref));
+	}
 	fprintf(fout,"\n\t\tif (!(*a = soap_in_%s(soap, tag, *a, type)))", c_ident((Tnode*)typ->ref));
 	fprintf(fout,"\n\t\t\treturn NULL;");
 

@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.8 User Guide</title>
+<title>gSOAP 2.8.9 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.8 User Guide </h1>
+<h1 align="center">gSOAP 2.8.9 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Feb 19, 2012
+<h3 align="center">Jun  9, 2012
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -429,9 +429,11 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.36"
 >19.36&nbsp; <font color="#0000FF">How to Create Client/Server Libraries</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.36.1"
->19.36.1&nbsp; <font color="#0000FF">C++ Example</font></a><br />
+>19.36.1&nbsp; <font color="#0000FF">C++ Clients Example</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.36.2"
->19.36.2&nbsp; <font color="#0000FF">C Example</font></a><br />
+>19.36.2&nbsp; <font color="#0000FF">C Clients Example</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.36.3"
+>19.36.3&nbsp; <font color="#0000FF">C Services Chaining Example</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.37"
 >19.37&nbsp; <font color="#0000FF">How to Create DLLs</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.37.1"
@@ -4937,7 +4939,7 @@ information on installation and options to of the <i>wsdl2h</i> WSDL/schema impo
 </a>
 
 <div class="p"><!----></div>
-The <i>typemap.dat</i> file for the <i>wsdl2h</i> tool is intended to optimize
+The <i>typemap.dat</i> file for the <i>wsdl2h</i> tool is intended to customize or optimize
 the type bindings by mapping schema types to C/C++ types.  It contains custom
 XML Schema to C/C++ type bindings and a few bindings are defined for
 convenience.
@@ -4958,16 +4960,23 @@ Here is an example typemap file's content:
 #       default choice of ns1, ns2, ... prefixes. For example: <br />
  <br />
 i       = "http://www.soapinterop.org/" <br />
-s       = "http://www.soapinterop.org/xsd" <br />
- <br />
-#       Type definitions are of the form:
-#       type = declaration &#124; use &#124; pointer-use <br />
-#       where <br />
-#       type is the XML Schema type (or an application type in a namespace <br />
-#               that has a prefix definition given as above). <br />
-#       declaration is an optional C/C++ type declaration <br />
-#       use is how the type is referred to in code <br />
-#       pointer-use is how the type should be referred to as a pointer (opt) <br />
+s       = "http://www.soapinterop.org/xsd"
+</td></tr></table><br></tt>
+
+<div class="p"><!----></div>
+Type bindings can be provided to bind XML schema types to C/C++
+types for your project.
+Type bindings have four parts:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
+prefix__type = declaration &#124; use &#124; ptr-use
+</td></tr></table><br></tt>
+where 'prefix__type' is the C/C++-translation of the schema type,
+'declaration' introduces the C/C++ type in the header file, the optional
+'use' specifies how the type is used directly, and the optional
+'ptr-use' specifies how the type is used as a pointer type.
+
+<div class="p"><!----></div>
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
 #       Example XML Schema and C/C++ type bindings: <br />
  <br />
 xsd__int        = &#124; int <br />
@@ -4982,6 +4991,49 @@ ns__myClass     = $ ns__myClass(); <br />
 </td></tr></table><br></tt>
 The <i>i</i> and <i>s</i> prefixes are declared such that the header file output by the WSDL parser will use these to produce C/C++ code.
 XML Schema types are associated with an optional C/C++ type declaration, a use reference, and a pointer-use reference. The pointer-use reference of the <i>xsd__byte</i> type for example, is <i><b>int</b>*</i> because <i><b>char</b>*</i> is reserved for strings.
+
+<div class="p"><!----></div>
+When a type binding requires only the usage to be changed, the
+declaration part can be replaced by elipsis ..., as in:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
+prefix__type = ... &#124; use &#124; ptr-use
+</td></tr></table><br></tt>
+This ensure that the wsdl2h-generated type definition is preserved,
+while the use and ptr-use are remapped.
+For example, this is useful to map schema polymorphic types to C types,
+where we need to be able to both handle a base type and its extensions
+as per schema extensibility. Say base type ns:base allows derived
+extensions and we need to map this to C types as follows:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
+ns__base = ... &#124; int __type_base; void*
+</td></tr></table><br></tt>
+where <tt>__type_base</tt> and <tt>void*</tt> are used to (de)serialize any data type,
+including base and its derived types.
+
+<div class="p"><!----></div>
+Additional data and function members can be provided to extend a
+generated struct or class.
+Class and struct extensions are of the form:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
+prefix__type = $ member-declaration
+</td></tr></table><br></tt>
+For example, to add a constructor and destructor to class myns__record:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
+myns__record = $ myns__record();
+myns__record = $ ~myns__record();
+</td></tr></table><br></tt>
+
+<div class="p"><!----></div>
+Type remappings can be given to map a type to another type:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
+prefix__type1 == prefix__type2
+</td></tr></table><br></tt>
+which replaces <tt>prefix__type1</tt> by <tt>prefix__type2</tt> in the wsdl2h output.
+For example:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
+SOAP_ENC__boolean == xsd__boolean
+</td></tr></table><br></tt>
+where <tt>SOAP_ENC__boolean</tt> is mapped to <tt>xsd__boolean</tt>, which in turn may be mapped to a C <tt><b>enum</b>&nbsp;xsd__boolean</tt> type or C++ <tt>bool</tt> type.
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc9">
@@ -5075,7 +5127,8 @@ The <i>soapcpp2</i> source-to-source compiler supports the following command-lin
 <tr><td align="left"><i>-S</i>	</td><td align="left">Generate server-side code only </td></tr>
 <tr><td align="left"><i>-T</i>	</td><td align="left">Generate server auto-test code </td></tr>
 <tr><td align="left"><i>-L</i>	</td><td align="left">Do not generate soapClientLib/soapServerLib </td></tr>
-<tr><td align="left"><i>-a</i>	</td><td align="left">Use value of SOAPAction HTTP header to dispatch method at server side </td></tr>
+<tr><td align="left"><i>-a</i>	</td><td align="left">Use SOAPAction with WS-Addressing to invoke server-side operations </td></tr>
+<tr><td align="left"><i>-A</i>	</td><td align="left">Require SOAPAction to invoke server-side operations </td></tr>
 <tr><td align="left"><i>-b</i>	</td><td align="left">serialize byte arrays <i>char[N]</i> as string </td></tr>
 <tr><td align="left"><i>-c</i>	</td><td align="left">Generate pure C code </td></tr>
 <tr><td align="left"><i>-d  &lt; path &gt; </i>	</td><td align="left">Save sources in directory specified by <i> &lt; path &gt; </i> </td></tr>
@@ -9753,7 +9806,7 @@ The built-in <i><b>struct</b>&nbsp;SOAP_ENV__Fault</i> data structure is defined
 &nbsp;&nbsp;&nbsp;<b>char</b>&nbsp;*SOAP_ENV__Reason; <br />
 &nbsp;&nbsp;&nbsp;<b>char</b>&nbsp;*SOAP_ENV__Node; <br />
 &nbsp;&nbsp;&nbsp;<b>char</b>&nbsp;*SOAP_ENV__Role; <br />
-&nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;SOAP_ENV__Detail SOAP_ENV__Detail; // SOAP 1.2 detail field <br />
+&nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;SOAP_ENV__Detail *SOAP_ENV__Detail; // SOAP 1.2 detail field <br />
 };
 <b>struct</b>&nbsp;SOAP_ENV__Code <br />
 { <br />
@@ -12717,7 +12770,7 @@ Built-in gSOAP function: none.
 In addition, a <i><b>void</b>*user</i> field in the <i><b>struct</b>&nbsp;soap</i> data structure is available to pass user-defined data to the callbacks.
 
 <div class="p"><!----></div>
-The following example uses I/O function callbacks for customized serialization of data into a buffer and deserialization back into a
+The following example uses I/O function callbacks for customized serialization of data into a fixed-size buffer and deserialization back into a
 datastructure:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>char</b>&nbsp;buf[10000]; // XML buffer <br />
@@ -12771,6 +12824,58 @@ main() <br />
 &nbsp;&nbsp;&nbsp;soap_destroy(&amp;soap); <br />
 &nbsp;&nbsp;&nbsp;soap_end(&amp;soap); <br />
 &nbsp;&nbsp;&nbsp;soap_done(&amp;soap); // disable callbacks <br />
+}
+</td></tr></table><br></i>
+A fixed-size buffer to store the outbound message sent is not flexible to handle large content. To store the message in an expanding buffer, use for example:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>struct</b>&nbsp;buffer <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;size_t len; <br />
+&nbsp;&nbsp;&nbsp;size_t max; <br />
+&nbsp;&nbsp;&nbsp;<b>char</b>&nbsp;*buf; <br />
+}; <br />
+main() <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;buffer *h = malloc(<b>sizeof</b>(<b>struct</b>&nbsp;buffer)); <br />
+&nbsp;&nbsp;&nbsp;h<tt>-&gt;</tt>len = 0; <br />
+&nbsp;&nbsp;&nbsp;h<tt>-&gt;</tt>max = 0; <br />
+&nbsp;&nbsp;&nbsp;h<tt>-&gt;</tt>buf = NULL; <br />
+&nbsp;&nbsp;&nbsp;soap.user = (<b>void</b>&nbsp;*)h; // pass buffer as a handle to the callback <br />
+&nbsp;&nbsp;&nbsp;soap.fsend = mysend; // assign callback <br />
+&nbsp;&nbsp;&nbsp;... <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(h<tt>-&gt;</tt>len) <br />
+&nbsp;&nbsp;&nbsp;{ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... // use h<tt>-&gt;</tt>buf[0..h<tt>-&gt;</tt>len-1] content <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// then cleanup: <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h<tt>-&gt;</tt>len = 0; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h<tt>-&gt;</tt>max = 0; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(h<tt>-&gt;</tt>buf); <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h<tt>-&gt;</tt>buf = NULL; <br />
+&nbsp;&nbsp;&nbsp;} <br />
+&nbsp;&nbsp;&nbsp;... <br />
+} <br />
+<b>int</b>&nbsp;mysend(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*s, size_t n) <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;buffer *h = (<b>struct</b>&nbsp;buffer*)soap<tt>-&gt;</tt>user; // get buffer through handle <br />
+&nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;m = h<tt>-&gt;</tt>max, k = h<tt>-&gt;</tt>len + n; <br />
+&nbsp;&nbsp;&nbsp;// need to increase space? <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(m == 0) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m = 1024; <br />
+&nbsp;&nbsp;&nbsp;<b>else</b>&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>while</b>&nbsp;(k  &gt; = m) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m *= 2; <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(m != h<tt>-&gt;</tt>max) <br />
+&nbsp;&nbsp;&nbsp;{ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>char</b>&nbsp;*buf = malloc(m); <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;memcpy(buf, h<tt>-&gt;</tt>buf, h<tt>-&gt;</tt>len); <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h<tt>-&gt;</tt>max = m; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>(h<tt>-&gt;</tt>buf) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(h<tt>-&gt;</tt>buf); <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h<tt>-&gt;</tt>buf = buf; <br />
+&nbsp;&nbsp;&nbsp;} <br />
+&nbsp;&nbsp;&nbsp;memcpy(h<tt>-&gt;</tt>buf + h<tt>-&gt;</tt>len, s, n); <br />
+&nbsp;&nbsp;&nbsp;h<tt>-&gt;</tt>len += n; <br />
+&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;SOAP_OK; <br />
 }
 </td></tr></table><br></i>
 The <i>soap_done</i> function can be called to reset the callback to the default internal gSOAP I/O and HTTP handlers.
@@ -13319,6 +13424,11 @@ soap.ntlm_challenge = ""; // as was challenged by the "server" <br />
 When the authentication fails (stage 1 and 2), the service response with a SOAP
 Fault message and a HTTP error code "401 Unauthorized". The HTTP error codes
 are described in Section&nbsp;<a href="#sec:errcodes">10.2</a>.
+
+<div class="p"><!----></div>
+On windows, an alternative is to use the WinInet module, which has built-in
+NTLM support. The WinInet for gSOAP module is available in the <i>mod_gsoap</i>
+directory of the gSOAP package. API instructions are included in the source.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc19.16">
@@ -14565,7 +14675,7 @@ SOAP Header and Fault definitions.  You can leave this header file empty if you
 want to use the default SOAP Header and Fault. Then compile this header file
 with:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
-<i> &gt;  soapcpp2 -c -penv env.h</i>
+<i> &gt;  soapcpp2 -penv env.h</i>
 </td></tr></table><br></span>
 The generated <i>envC.cpp</i> file holds the SOAP Header and Fault serializers and you can
 create a (dynamic) library for it to link this code with your client or server application.
@@ -14616,7 +14726,7 @@ namespaces to avoid these link conflicts or rename the namespace prefixes used b
 
 <div class="p"><!----></div>
 		      <h4><a name="tth_sEc19.36.1">
-19.36.1</a>&nbsp;&nbsp;<font color="#0000FF">C++ Example</font></h4>
+19.36.1</a>&nbsp;&nbsp;<font color="#0000FF">C++ Clients Example</font></h4>
 
 <div class="p"><!----></div>
 As an example we will build a Delayed Stock Quote client library and a Currency Exchange Rate client library.
@@ -14754,13 +14864,15 @@ The example above serves requests over stdin/out. Use the bind and accept calls 
 
 <div class="p"><!----></div>
 		      <h4><a name="tth_sEc19.36.2">
-19.36.2</a>&nbsp;&nbsp;<font color="#0000FF">C Example</font></h4>
+19.36.2</a>&nbsp;&nbsp;<font color="#0000FF">C Clients Example</font></h4>
 
 <div class="p"><!----></div>
 This is the same example as above, but the clients are build with pure C.
 
 <div class="p"><!----></div>
-First, we create an empty header file (which may contain optional SOAP Header and Fault definitions), and compile it as follows:
+We create a <i>env.h</i> that contains the joint SOAP Header and SOAP Fault
+definitions. You may have to copy-paste these from the other header files.
+Then, compile it as follows:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 <i> &gt;  soapcpp2 -c -penv env.h</i> <br />
 <i> &gt;  cc -c envC.c</i> <br />
@@ -14838,6 +14950,66 @@ Compile and link this application with <i>stdsoap2.o</i>, <i>envC.o</i>, <i>quot
 
 <div class="p"><!----></div>
 To compile and link a server library is very similar. Assuming that the server is named "<i>calc</i>" (as specified with options <i>-n</i> and <i>-p</i>), the application needs to include the <i>calcStub.h</i> file, link the <i>calcServerLib.o</i> file, and call <i>calc_serve(&amp;soap)</i> function at run time.
+
+<div class="p"><!----></div>
+		      <h4><a name="tth_sEc19.36.3">
+19.36.3</a>&nbsp;&nbsp;<font color="#0000FF">C Services Chaining Example</font></h4>
+
+<div class="p"><!----></div>
+We build a C application for multiple services served on one port.
+
+<div class="p"><!----></div>
+We create a <i>env.h</i> that contains the joint SOAP Header and SOAP Fault
+definitions. You may have to copy-paste these from the other header files.
+Then, compile it as follows:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+<i> &gt;  soapcpp2 -c -penv env.h</i> <br />
+<i> &gt;  cc -c envC.c</i> <br />
+</td></tr></table><br></span>
+We also compile <i>stdsoap2.c</i> without namespaces:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+<i> &gt;  cc -c -DWITH_NONAMESPACES stdsoap2.c</i>
+</td></tr></table><br></span>
+Say we have a service definition in <i>quote.h</i>. We compile it as a library and we use options <i>-n</i> and <i>-p</i> to rename the namespace table to avoid link conflicts:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+<i> &gt;  soapcpp2 -c -n -pquote quote.h</i> <br />
+<i> &gt;  cc -c quoteClientLib.c</i>
+</td></tr></table><br></span>
+We do the same for a service definition in <i>rate.h</i>:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+<i> &gt;  soapcpp2 -c -n -prate rate.h</i> <br />
+<i> &gt;  cc -c rateClientLib.c</i>
+</td></tr></table><br></span>
+To serve both the quote and rate services on the same port, we chain the service dispatchers as follows:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>struct</b>&nbsp;soap *soap = soap_new(); <br />
+soap_bind(soap, NULL, 8080, 100); <br />
+soap_accept(soap); <br />
+<b>if</b>&nbsp;(soap_begin_serve(soap)) <br />
+&nbsp;&nbsp;&nbsp;... error <br />
+<b>else</b>&nbsp;<b>if</b>&nbsp;(quote_serve_request(s) == SOAP_NO_METHOD) <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(rate_serve_request())
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... error <br />
+} <br />
+soap_destroy(soap); <br />
+soap_end(soap); <br />
+soap_free(soap);
+</td></tr></table><br></i>
+This chaining can be arbitrarily deep. When the previous request fails with a <i>SOAP_NO_METHOD</i> then next request dispatcher can be tried.
+
+<div class="p"><!----></div>
+The server should also define the service operations:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>int</b>&nbsp;ns__getQuote(<b>struct</b>&nbsp;soap *soap, <b>char</b>&nbsp;*symbol, <b>float</b>&nbsp;*Result); <br />
+{ *Result = ... ; <br />
+  &nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;SOAP_OK; <br />
+} <br />
+<b>int</b>&nbsp;ns__getRate(<b>struct</b>&nbsp;soap *soap, <b>char</b>&nbsp;*country1, <b>char</b>&nbsp;*country2, <b>float</b>&nbsp;*Result); <br />
+{ *Result = ... ; <br />
+  &nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;SOAP_OK; <br />
+}
+</td></tr></table><br></i>
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc19.37">
@@ -15594,5 +15766,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 19 Feb 2012, 16:59.</small>
+version 4.00.<br />On  9 Jun 2012, 14:32.</small>
 </html>

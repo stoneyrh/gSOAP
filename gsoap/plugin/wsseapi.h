@@ -60,7 +60,10 @@ extern "C" {
 #endif
 
 /** plugin identification for plugin registry */
-#define SOAP_WSSE_ID "SOAP-WSSE-1.2"
+#define SOAP_WSSE_ID "SOAP-WSSE-1.3"
+
+/** to ignore extra/external SignedInfo/Reference/@URI */
+#define SOAP_WSSE_IGNORE_EXTRA_REFS (0x1000)
 
 /** plugin identification for plugin registry */
 extern const char soap_wsse_id[];
@@ -81,7 +84,8 @@ struct soap_wsse_data
   int vrfy_alg;			/**< The signature verify algorithm used */
   const void *vrfy_key;		/**< EVP_PKEY or key string for HMAC verify */
   int vrfy_keylen;		/**< HMAC key length */
-  int enco_alg;			/**< encrypt algorithm used */
+  int enco_alg;			/**< current encrypt algorithm used */
+  const char *enco_keyname;	/**< optional key name (id of symmetric key) */
   const void *enco_key;		/**< EVP_PKEY or secret key */
   int enco_keylen;		/**< secret key length */
   int deco_alg;			/**< decrypt algorithm used */
@@ -94,7 +98,7 @@ struct soap_wsse_data
   int (*fheader)(struct soap*);
   struct soap_mec_data *mec;
   X509_STORE *store;
-  const void *(*security_token_handler)(struct soap *soap, int alg, const char *keyname, int *keylen);
+  const void *(*security_token_handler)(struct soap *soap, int *alg, const char *keyname, int *keylen);
 };
 
 /**
@@ -122,9 +126,25 @@ extern const char *wsse_X509v3URI;
 extern const char *wsse_X509v3SubjectKeyIdentifierURI;
 
 extern const char *ds_sha1URI;
+extern const char *ds_sha256URI;
+extern const char *ds_sha512URI;
 extern const char *ds_hmac_sha1URI;
+extern const char *ds_hmac_sha256URI;
+extern const char *ds_hmac_sha512URI;
 extern const char *ds_dsa_sha1URI;
 extern const char *ds_rsa_sha1URI;
+extern const char *ds_rsa_sha256URI;
+extern const char *ds_rsa_sha512URI;
+
+extern const char *xenc_rsa15URI;
+extern const char *xenc_rsaesURI;
+extern const char *xenc_3desURI;
+extern const char *xenc_aes128URI;
+extern const char *xenc_aes192URI;
+extern const char *xenc_aes256URI;
+extern const char *xenc_aes512URI;
+extern const char *xenc_elementURI;
+extern const char *xenc_contentURI;
 
 extern const char *ds_URI;
 extern const char *c14n_URI;
@@ -156,9 +176,11 @@ struct _wsse__BinarySecurityToken *soap_wsse_BinarySecurityToken(struct soap *so
 int soap_wsse_get_BinarySecurityToken(struct soap *soap, const char *id, char **valueType, unsigned char **data, int *size);
 X509 *soap_wsse_get_BinarySecurityTokenX509(struct soap *soap, const char *id);
 int soap_wsse_verify_X509(struct soap *soap, X509 *cert);
+int soap_wsse_add_SecurityContextToken(struct soap *soap, const char *id, const char *identifier);
+const char * soap_wsse_get_SecurityContextToken(struct soap *soap);
 
 struct ds__SignedInfoType *soap_wsse_add_SignedInfo(struct soap *soap);
-int soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, const char *transform, const char *inclusiveNamespaces, const char *HA);
+int soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, const char *transform, const char *inclusiveNamespaces, int alg, const char *HA);
 int soap_wsse_add_SignedInfo_SignatureMethod(struct soap *soap, const char *method, int canonical);
 struct ds__SignedInfoType *soap_wsse_SignedInfo(struct soap *soap);
 int soap_wsse_get_SignedInfo_SignatureMethod(struct soap *soap, int *alg);
@@ -179,12 +201,15 @@ int soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(struct soap *soap, const ch
 const char *soap_wsse_get_KeyInfo_SecurityTokenReferenceURI(struct soap *soap);
 const char *soap_wsse_get_KeyInfo_SecurityTokenReferenceValueType(struct soap *soap);
 X509 *soap_wsse_get_KeyInfo_SecurityTokenReferenceX509(struct soap *soap);
+struct ds__X509IssuerSerialType *soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data(struct soap *soap);
 
 int soap_wsse_add_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, const char *id, const char *valueType, unsigned char *data, int size);
 const char *soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType(struct soap *soap);
 const unsigned char *soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, int *size);
 
 int soap_wsse_add_KeyInfo_SecurityTokenReferenceEmbedded(struct soap *soap, const char *id, const char *valueType);
+
+int soap_wsse_add_EncryptedData_KeyInfo_KeyName(struct soap *soap, const char *keyname);
 
 int soap_wsse_sender_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
 int soap_wsse_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
@@ -204,8 +229,8 @@ int soap_wsse_verify_body(struct soap *soap);
 int soap_wsse_set_wsu_id(struct soap *soap, const char *tags);
 int soap_wsse_sign_only(struct soap *soap, const char *tags);
 
-int soap_wsse_add_EncryptedKey(struct soap *soap, const char *URI, X509 *cert, const char *subjectkeyid);
-int soap_wsse_add_EncryptedKey_encrypt_only(struct soap *soap, const char *URI, X509 *cert, const char *subjectkeyid, const char *tags);
+int soap_wsse_add_EncryptedKey(struct soap *soap, int alg, const char *URI, X509 *cert, const char *subjectkeyid, const char *issuer, const char *serial);
+int soap_wsse_add_EncryptedKey_encrypt_only(struct soap *soap, int alg, const char *URI, X509 *cert, const char *subjectkeyid, const char *issuer, const char *serial, const char *tags);
 int soap_wsse_verify_EncryptedKey(struct soap *soap);
 void soap_wsse_delete_EncryptedKey(struct soap *soap);
 struct xenc__EncryptedKeyType* soap_wsse_EncryptedKey(struct soap *soap);
@@ -218,7 +243,7 @@ int soap_wsse_encrypt_only(struct soap *soap, int alg, const void *key, int keyl
 int soap_wsse_encrypt(struct soap *soap, int alg, const void *key, int keylen);
 int soap_wsse_decrypt_auto(struct soap *soap, int alg, const void *key, int keylen);
 
-int soap_wsse_encrypt_begin(struct soap *soap, const char *id, const char *URI, const char *keyname, const unsigned char *key);
+int soap_wsse_encrypt_begin(struct soap *soap, const char *id, int alg, const char *URI, const char *keyname, const unsigned char *key);
 int soap_wsse_encrypt_end(struct soap *soap);
 
 int soap_wsse_decrypt_begin(struct soap *soap, const unsigned char *key);

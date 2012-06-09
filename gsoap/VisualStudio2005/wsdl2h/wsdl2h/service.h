@@ -96,8 +96,10 @@ class Service
     MapOfStringToString port_documentation;
     MapOfStringToString binding_documentation;
     vector<const wsp__Policy*> policy;
+    VectorOfString imports;
     Service();
     void generate(Types&);
+    void add_import(const char*);
 };
 
 typedef map<const char*, Service*, ltstr> MapOfStringToService;
@@ -106,6 +108,7 @@ class Definitions
 { public:
     Types types;				// to process schema type information
     MapOfStringToService services;		// service information gathered
+    bool soap12;
     Definitions();
     void collect(const wsdl__definitions&);
     void compile(const wsdl__definitions&);

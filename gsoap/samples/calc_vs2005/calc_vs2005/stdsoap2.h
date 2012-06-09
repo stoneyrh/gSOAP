@@ -1,10 +1,10 @@
 /*
-	stdsoap2.h 2.8.8
+	stdsoap2.h 2.8.9
 
 	gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20808
+#define GSOAP_VERSION 20809
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -126,6 +126,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef _WIN32
+# ifndef WIN32
+#  define WIN32
+# endif
+#endif
+
+/* for legacy purposes we use WIN32 macro even though 64 bit is supported */
+#ifdef _WIN64
 # ifndef WIN32
 #  define WIN32
 # endif
@@ -1360,6 +1367,7 @@ typedef soap_int32 soap_mode;
 
 #define SOAP_SEC_BEGIN		1
 #define SOAP_SEC_SIGN		2
+#define SOAP_SEC_DECRYPT	3
 
 /* DEBUG macros */
 
@@ -1900,11 +1908,13 @@ struct SOAP_STD_API soap
   size_t (*fmimeread)(struct soap*, void*, char*, size_t);
   int (*fmimewrite)(struct soap*, void*, const char*, size_t);
 #endif
-  SOAP_SOCKET master;
-  SOAP_SOCKET socket;
+  SOAP_SOCKET master;	/* socket bound to TCP/IP port */
+  SOAP_SOCKET socket;	/* socket to send and receive */
+  SOAP_SOCKET sendsk;	/* socket to send (overrides ::socket) */
+  SOAP_SOCKET recvsk;	/* socket to receive (overrides ::socket) */
 #if defined(__cplusplus) && !defined(WITH_LEAN) && !defined(WITH_COMPAT)
-  std::ostream *os;
-  std::istream *is;
+  std::ostream *os;	/* stream to send */
+  std::istream *is;	/* stream to receive */
 #else
   void *os;		/* preserve struct size */
   void *is;		/* preserve struct size */
@@ -1913,8 +1923,8 @@ struct SOAP_STD_API soap
   int sendfd;		/* WinCE FD to send */
   int recvfd;		/* WinCE FD to receive */
 #else
-  FILE *sendfd;
-  FILE *recvfd;
+  FILE *sendfd;		/* FD to send */
+  FILE *recvfd;		/* FD to receive */
 #endif
   size_t bufidx;	/* index in soap.buf[] */
   size_t buflen;	/* length of soap.buf[] content */
@@ -2204,20 +2214,23 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_rand(void);
 /* soap_traverse() traversal/walker routines take walker function arguments */
 typedef void soap_walker(struct soap*, void*, int, const char*, const char*);
 
-SOAP_FMAC1 void SOAP_FMAC2 soap_header(struct soap*);
-SOAP_FMAC1 void SOAP_FMAC2 soap_fault(struct soap*);
-SOAP_FMAC1 const char** SOAP_FMAC2 soap_faultcode(struct soap*);
-SOAP_FMAC1 const char** SOAP_FMAC2 soap_faultsubcode(struct soap*);
-SOAP_FMAC1 const char** SOAP_FMAC2 soap_faultstring(struct soap*);
-SOAP_FMAC1 const char** SOAP_FMAC2 soap_faultdetail(struct soap*);
-SOAP_FMAC1 const char* SOAP_FMAC2 soap_check_faultsubcode(struct soap*);
-SOAP_FMAC1 const char* SOAP_FMAC2 soap_check_faultdetail(struct soap*);
-SOAP_FMAC1 void SOAP_FMAC2 soap_serializeheader(struct soap*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_putheader(struct soap*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_getheader(struct soap*);
-SOAP_FMAC1 void SOAP_FMAC2 soap_serializefault(struct soap*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_putfault(struct soap*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_getfault(struct soap*);
+SOAP_FMAC5 int SOAP_FMAC6 soap_serve(struct soap *soap);
+SOAP_FMAC5 int SOAP_FMAC6 soap_serve_request(struct soap *soap);
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_fault(struct soap*);
+SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultcode(struct soap*);
+SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultsubcode(struct soap*);
+SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultstring(struct soap*);
+SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultdetail(struct soap*);
+SOAP_FMAC3 const char* SOAP_FMAC4 soap_check_faultsubcode(struct soap*);
+SOAP_FMAC3 const char* SOAP_FMAC4 soap_check_faultdetail(struct soap*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serializeheader(struct soap*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_putheader(struct soap*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_getheader(struct soap*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serializefault(struct soap*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_putfault(struct soap*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_getfault(struct soap*);
 
 SOAP_FMAC1 void SOAP_FMAC2 soap_ssl_init(void);
 SOAP_FMAC1 int SOAP_FMAC2 soap_poll(struct soap*);

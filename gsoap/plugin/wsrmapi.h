@@ -153,6 +153,7 @@ enum soap_wsrm_state
 struct soap_wsrm_sequence
 { struct soap_wsrm_sequence *next;	/**< next sequence */
   short handle;		/**< sequence in use by source (has a handle) */
+  short ackreq;		/**< ack requested by dest */
   const char *id;	/**< sequence ID (from dest) */
   const char *acksid;	/**< sequence ID for ack requests (gen by source) */
   const char *to;	/**< to endpoint */
@@ -187,6 +188,15 @@ int soap_wsrm_close(struct soap *soap, soap_wsrm_sequence_handle seq, const char
 
 int soap_wsrm_terminate(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id);
 
+int soap_wsrm_acknowledgement(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id);
+
+soap_wsrm_sequence_handle soap_wsrm_seq(struct soap *soap);
+int soap_wsrm_seq_created(struct soap *soap, soap_wsrm_sequence_handle seq);
+int soap_wsrm_seq_terminated(struct soap *soap, soap_wsrm_sequence_handle seq);
+
+soap_wsrm_sequence_handle soap_wsrm_seq_lookup_id(struct soap *soap, const char *id);
+soap_wsrm_sequence_handle soap_wsrm_seq_lookup(struct soap *soap, const char *id);
+
 void soap_wsrm_seq_free(struct soap *soap, soap_wsrm_sequence_handle seq);
 
 void soap_wsrm_cleanup(struct soap *soap);
@@ -195,6 +205,7 @@ const char *soap_wsrm_to(soap_wsrm_sequence_handle seq);
 const char *soap_wsrm_acksto(soap_wsrm_sequence_handle seq);
 ULONG64 soap_wsrm_num(soap_wsrm_sequence_handle seq);
 ULONG64 soap_wsrm_nack(soap_wsrm_sequence_handle seq);
+ULONG64 soap_wsrm_msgs(struct soap *soap, const struct soap_wsrm_sequence *seq);
 
 int soap_wsrm_check(struct soap *soap);
 
@@ -216,5 +227,35 @@ void soap_wsrm_dump(struct soap *soap, FILE *fd);
 #ifdef __cplusplus
 }
 #endif
+
+/* Server-side generated operations from wsrm.h */
+
+int __wsrm__CreateSequence(struct soap *soap, struct wsrm__CreateSequenceType *req, struct wsrm__CreateSequenceResponseType *res);
+
+int __wsrm__CreateSequenceResponse(struct soap *soap, struct wsrm__CreateSequenceResponseType *res);
+
+int __wsrm__CloseSequence(struct soap *soap, struct wsrm__CloseSequenceType *req, struct wsrm__CloseSequenceResponseType *res);
+
+int __wsrm__CloseSequenceResponse(struct soap *soap, struct wsrm__CloseSequenceResponseType *res);
+
+int __wsrm__TerminateSequence(struct soap *soap, struct wsrm__TerminateSequenceType *req, struct wsrm__TerminateSequenceResponseType *res);
+
+int __wsrm__TerminateSequenceResponse(struct soap *soap, struct wsrm__TerminateSequenceResponseType *res);
+
+int __wsrm__SequenceAcknowledgement(struct soap *soap);
+
+/* Client-side generated operations from wsrm.h */
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_call___wsrm__CreateSequence(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct wsrm__CreateSequenceType *wsrm__CreateSequence, struct wsrm__CreateSequenceResponseType *wsrm__CreateSequenceResponse);
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_call___wsrm__CloseSequence(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct wsrm__CloseSequenceType *wsrm__CloseSequence, struct wsrm__CloseSequenceResponseType *wsrm__CloseSequenceResponse);
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_call___wsrm__TerminateSequence(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct wsrm__TerminateSequenceType *wsrm__TerminateSequence, struct wsrm__TerminateSequenceResponseType *wsrm__TerminateSequenceResponse);
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_send___wsrm__SequenceAcknowledgement(struct soap *soap, const char *soap_endpoint, const char *soap_action);
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_recv___wsrm__SequenceAcknowledgement(struct soap *soap, struct __wsrm__SequenceAcknowledgement *);
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_send___wsrm__LastMessage(struct soap *soap, const char *soap_endpoint, const char *soap_action);
 
 #endif

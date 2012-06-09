@@ -4,7 +4,7 @@
 	Usage: See import/wsrx.h and plugin/wsrmapi.c
 
 	Generated with:
-	wsdl2h -cgyex -o wsrm.h -t WS/WS-typemap.dat WS/WS-ReliableMessaging.xsd
+	wsdl2h -cyex -o wsrm.h -t WS/WS-typemap.dat WS/WS-ReliableMessaging.xsd
 
 	Modified by Robert van Engelen:
 
@@ -12,8 +12,11 @@
 	- Changed //gsoap wsrm schema namespace directive to import directive
 	- Added #import "wsrx.h" at the end of these definitions
         - Added _XML __any; to struct _wsrm__SequenceAcknowledgement
+	- Added #define SOAP_WSRM_2007
 
 */
+
+#define SOAP_WSRM_2007
 
 /******************************************************************************\
  *                                                                            *
@@ -466,34 +469,34 @@ struct _wsrm__UsesSequenceSSL
 
 
 /// Top-level root element "http://docs.oasis-open.org/ws-rx/wsrm/200702":Sequence of type "http://docs.oasis-open.org/ws-rx/wsrm/200702":SequenceType.
-typedef struct wsrm__SequenceType _wsrm__Sequence;
+/// Note: use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
 
 /// Top-level root element "http://docs.oasis-open.org/ws-rx/wsrm/200702":AckRequested of type "http://docs.oasis-open.org/ws-rx/wsrm/200702":AckRequestedType.
-typedef struct wsrm__AckRequestedType _wsrm__AckRequested;
+/// Note: use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
 
 /// Top-level root element "http://docs.oasis-open.org/ws-rx/wsrm/200702":SequenceFault of type "http://docs.oasis-open.org/ws-rx/wsrm/200702":SequenceFaultType.
-typedef struct wsrm__SequenceFaultType _wsrm__SequenceFault;
+/// Note: use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
 
 /// Top-level root element "http://docs.oasis-open.org/ws-rx/wsrm/200702":CreateSequence of type "http://docs.oasis-open.org/ws-rx/wsrm/200702":CreateSequenceType.
-typedef struct wsrm__CreateSequenceType _wsrm__CreateSequence;
+/// Note: use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
 
 /// Top-level root element "http://docs.oasis-open.org/ws-rx/wsrm/200702":CreateSequenceResponse of type "http://docs.oasis-open.org/ws-rx/wsrm/200702":CreateSequenceResponseType.
-typedef struct wsrm__CreateSequenceResponseType _wsrm__CreateSequenceResponse;
+/// Note: use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
 
 /// Top-level root element "http://docs.oasis-open.org/ws-rx/wsrm/200702":CloseSequence of type "http://docs.oasis-open.org/ws-rx/wsrm/200702":CloseSequenceType.
-typedef struct wsrm__CloseSequenceType _wsrm__CloseSequence;
+/// Note: use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
 
 /// Top-level root element "http://docs.oasis-open.org/ws-rx/wsrm/200702":CloseSequenceResponse of type "http://docs.oasis-open.org/ws-rx/wsrm/200702":CloseSequenceResponseType.
-typedef struct wsrm__CloseSequenceResponseType _wsrm__CloseSequenceResponse;
+/// Note: use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
 
 /// Top-level root element "http://docs.oasis-open.org/ws-rx/wsrm/200702":TerminateSequence of type "http://docs.oasis-open.org/ws-rx/wsrm/200702":TerminateSequenceType.
-typedef struct wsrm__TerminateSequenceType _wsrm__TerminateSequence;
+/// Note: use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
 
 /// Top-level root element "http://docs.oasis-open.org/ws-rx/wsrm/200702":TerminateSequenceResponse of type "http://docs.oasis-open.org/ws-rx/wsrm/200702":TerminateSequenceResponseType.
-typedef struct wsrm__TerminateSequenceResponseType _wsrm__TerminateSequenceResponse;
+/// Note: use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
 
 /// Top-level root element "http://docs.oasis-open.org/ws-rx/wsrm/200702":AcksTo of type "http://www.w3.org/2005/08/addressing":EndpointReferenceType.
-typedef wsa5__EndpointReferenceType _wsrm__AcksTo;
+/// Note: use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
 
 /******************************************************************************\
  *                                                                            *
@@ -541,13 +544,7 @@ XML content can be stored to:
 
 @section wsrm Top-level root elements of schema "http://docs.oasis-open.org/ws-rx/wsrm/200702"
 
-  - <wsrm:Sequence> @ref _wsrm__Sequence
-    @code
-    // Reader (returns SOAP_OK on success):
-    soap_read__wsrm__Sequence(struct soap*, _wsrm__Sequence*);
-    // Writer (returns SOAP_OK on success):
-    soap_write__wsrm__Sequence(struct soap*, _wsrm__Sequence*);
-    @endcode
+  - <wsrm:Sequence> (use wsdl2h option -g to auto-generate)
 
   - <wsrm:SequenceAcknowledgement> @ref _wsrm__SequenceAcknowledgement
     @code
@@ -557,93 +554,39 @@ XML content can be stored to:
     soap_write__wsrm__SequenceAcknowledgement(struct soap*, struct _wsrm__SequenceAcknowledgement*);
     @endcode
 
-  - <wsrm:AckRequested> @ref _wsrm__AckRequested
-    @code
-    // Reader (returns SOAP_OK on success):
-    soap_read__wsrm__AckRequested(struct soap*, _wsrm__AckRequested*);
-    // Writer (returns SOAP_OK on success):
-    soap_write__wsrm__AckRequested(struct soap*, _wsrm__AckRequested*);
-    @endcode
+  - <wsrm:AckRequested> (use wsdl2h option -g to auto-generate)
 
   - <wsrm:Identifier> @ref _wsrm__Identifier
     @code
     // Reader (returns SOAP_OK on success):
-    soap_read__wsrm__Identifier(struct soap*, char* );
+    soap_read__wsrm__Identifier(struct soap*, char*);
     // Writer (returns SOAP_OK on success):
-    soap_write__wsrm__Identifier(struct soap*, char* );
+    soap_write__wsrm__Identifier(struct soap*, char*);
     @endcode
 
   - <wsrm:Address> @ref _wsrm__Address
     @code
     // Reader (returns SOAP_OK on success):
-    soap_read__wsrm__Address(struct soap*, char* );
+    soap_read__wsrm__Address(struct soap*, char*);
     // Writer (returns SOAP_OK on success):
-    soap_write__wsrm__Address(struct soap*, char* );
+    soap_write__wsrm__Address(struct soap*, char*);
     @endcode
 
-  - <wsrm:SequenceFault> @ref _wsrm__SequenceFault
-    @code
-    // Reader (returns SOAP_OK on success):
-    soap_read__wsrm__SequenceFault(struct soap*, _wsrm__SequenceFault*);
-    // Writer (returns SOAP_OK on success):
-    soap_write__wsrm__SequenceFault(struct soap*, _wsrm__SequenceFault*);
-    @endcode
+  - <wsrm:SequenceFault> (use wsdl2h option -g to auto-generate)
 
-  - <wsrm:CreateSequence> @ref _wsrm__CreateSequence
-    @code
-    // Reader (returns SOAP_OK on success):
-    soap_read__wsrm__CreateSequence(struct soap*, _wsrm__CreateSequence*);
-    // Writer (returns SOAP_OK on success):
-    soap_write__wsrm__CreateSequence(struct soap*, _wsrm__CreateSequence*);
-    @endcode
+  - <wsrm:CreateSequence> (use wsdl2h option -g to auto-generate)
 
-  - <wsrm:CreateSequenceResponse> @ref _wsrm__CreateSequenceResponse
-    @code
-    // Reader (returns SOAP_OK on success):
-    soap_read__wsrm__CreateSequenceResponse(struct soap*, _wsrm__CreateSequenceResponse*);
-    // Writer (returns SOAP_OK on success):
-    soap_write__wsrm__CreateSequenceResponse(struct soap*, _wsrm__CreateSequenceResponse*);
-    @endcode
+  - <wsrm:CreateSequenceResponse> (use wsdl2h option -g to auto-generate)
 
-  - <wsrm:CloseSequence> @ref _wsrm__CloseSequence
-    @code
-    // Reader (returns SOAP_OK on success):
-    soap_read__wsrm__CloseSequence(struct soap*, _wsrm__CloseSequence*);
-    // Writer (returns SOAP_OK on success):
-    soap_write__wsrm__CloseSequence(struct soap*, _wsrm__CloseSequence*);
-    @endcode
+  - <wsrm:CloseSequence> (use wsdl2h option -g to auto-generate)
 
-  - <wsrm:CloseSequenceResponse> @ref _wsrm__CloseSequenceResponse
-    @code
-    // Reader (returns SOAP_OK on success):
-    soap_read__wsrm__CloseSequenceResponse(struct soap*, _wsrm__CloseSequenceResponse*);
-    // Writer (returns SOAP_OK on success):
-    soap_write__wsrm__CloseSequenceResponse(struct soap*, _wsrm__CloseSequenceResponse*);
-    @endcode
+  - <wsrm:CloseSequenceResponse> (use wsdl2h option -g to auto-generate)
 
-  - <wsrm:TerminateSequence> @ref _wsrm__TerminateSequence
-    @code
-    // Reader (returns SOAP_OK on success):
-    soap_read__wsrm__TerminateSequence(struct soap*, _wsrm__TerminateSequence*);
-    // Writer (returns SOAP_OK on success):
-    soap_write__wsrm__TerminateSequence(struct soap*, _wsrm__TerminateSequence*);
-    @endcode
+  - <wsrm:TerminateSequence> (use wsdl2h option -g to auto-generate)
 
-  - <wsrm:TerminateSequenceResponse> @ref _wsrm__TerminateSequenceResponse
-    @code
-    // Reader (returns SOAP_OK on success):
-    soap_read__wsrm__TerminateSequenceResponse(struct soap*, _wsrm__TerminateSequenceResponse*);
-    // Writer (returns SOAP_OK on success):
-    soap_write__wsrm__TerminateSequenceResponse(struct soap*, _wsrm__TerminateSequenceResponse*);
-    @endcode
+  - <wsrm:TerminateSequenceResponse> (use wsdl2h option -g to auto-generate)
 
-  - <wsrm:AcksTo> @ref _wsrm__AcksTo
-    @code
-    // Reader (returns SOAP_OK on success):
-    soap_read__wsrm__AcksTo(struct soap*, _wsrm__AcksTo*);
-    // Writer (returns SOAP_OK on success):
-    soap_write__wsrm__AcksTo(struct soap*, _wsrm__AcksTo*);
-    @endcode
+  - <wsrm:AcksTo> (use wsdl2h option -g to auto-generate)
 
   - <wsrm:Expires> @ref _wsrm__Expires
     @code
@@ -676,7 +619,6 @@ XML content can be stored to:
     // Writer (returns SOAP_OK on success):
     soap_write__wsrm__UnsupportedElement(struct soap*, _QName);
     @endcode
-
 */
 
 #import "wsrx.h"

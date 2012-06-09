@@ -34,11 +34,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "wsdlH.h"
 #include "includes.h"
 #include "types.h"
+#include "service.h"
 
 static wsp__Policy *search(const char *URI, wsdl__definitions& definitions);
 static wsp__Policy *search(const char *URI, wsp__Policy *policy);
 static wsp__Policy *search(const char *URI, wsp__Content *content);
-static void gen_parts(const sp__Parts& parts, Types& types, const char *name, int indent);
+static void gen_parts(const sp__Parts& parts, Types& types, const char *what, const char *name, int indent);
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -64,42 +65,36 @@ int wsp__Content::traverse(wsdl__definitions& definitions)
   return SOAP_OK;
 }
 
-void wsp__Content::generate(Types& types, int indent) const
-{ /*
-  struct soap *soap = soap_new1(SOAP_XML_INDENT);
-  soap->sendfd = fileno(stream);
-  soap_write_wsp__Content(soap, this);
-  soap_free(soap);
-  */
-  static const char stabs[] = "\t\t\t\t\t\t\t\t\t\t";
+void wsp__Content::generate(Service& service, Types& types, int indent) const
+{ static const char stabs[] = "\t\t\t\t\t\t\t\t\t\t";
   const char *tabs;
   if (indent > 8)
     indent = 8;
   tabs = stabs + 9 - indent;
   // Recursive policies and references
   if (Policy)
-    Policy->generate(types, indent);
+    Policy->generate(service, types, indent);
   if (PolicyReference && PolicyReference->policyPtr())
-    PolicyReference->policyPtr()->generate(types, indent);
+    PolicyReference->policyPtr()->generate(service, types, indent);
   // WS-Policy All
   if (!All.empty())
   { fprintf(stream, "%s- All of the following:\n", tabs);
     for (vector<wsp__Content*>::const_iterator p = All.begin(); p != All.end(); ++p)
       if (*p)
-        (*p)->generate(types, indent + 1);
+        (*p)->generate(service, types, indent + 1);
   }
   // WS-Policy ExactlyOne
   if (!ExactlyOne.empty())
   { fprintf(stream, "%s- Exactly one of the following:\n", tabs);
     for (vector<wsp__Content*>::const_iterator p = ExactlyOne.begin(); p != ExactlyOne.end(); ++p)
       if (*p)
-        (*p)->generate(types, indent + 1);
+        (*p)->generate(service, types, indent + 1);
   }
-  // WS-SecurityPolicy Parts (TODO: need vectors of these?)
+  // WS-SecurityPolicy Parts (TODO: do we need vectors of these?)
   for (vector<sp__Parts>::const_iterator sp = sp__SignedParts.begin(); sp != sp__SignedParts.end(); ++sp)
-    gen_parts(*sp, types, "[4.1.1] WS-Security Signed Parts", indent);
+    gen_parts(*sp, types, "sign", "[4.1.1] WS-Security Signed Parts", indent);
   for (vector<sp__Parts>::const_iterator ep = sp__EncryptedParts.begin(); ep != sp__EncryptedParts.end(); ++ep)
-    gen_parts(*ep, types, "[4.2.1] Security Encrypted Parts", indent);
+    gen_parts(*ep, types, "encrypt", "[4.2.1] Security Encrypted Parts", indent);
   for (vector<sp__Parts>::const_iterator rp = sp__RequiredParts.begin(); rp != sp__RequiredParts.end(); ++rp)
   { fprintf(stream, "%s- Required Header elements:", tabs);
     for (vector<sp__Header>::const_iterator h = (*rp).Header.begin(); h != (*rp).Header.end(); ++h)
@@ -134,6 +129,7 @@ void wsp__Content::generate(Types& types, int indent) const
       text(*s);
     }
     fprintf(stream, "%s  @endverbatim\n", tabs);
+    service.add_import("wsse.h");
   }
   // WS-SecurityPolicy Tokens
   sp__Token *token = NULL;
@@ -191,110 +187,120 @@ void wsp__Content::generate(Types& types, int indent) const
     if (token->IssuerName)
       fprintf(stream, "%s  -# Issuer Name  = %s\n", tabs, token->IssuerName);
     if (token->Policy)
-      token->Policy->generate(types, indent + 1);
+      token->Policy->generate(service, types, indent + 1);
     // TODO: add wst:Claims?
+    service.add_import("wsse.h");
   }
   // WS-SecurityPolicy
   if (sp__AlgorithmSuite)
   { fprintf(stream, "%s- [7.1] Security Binding Algorithm Suite requirements:\n", tabs);
     if (sp__AlgorithmSuite->Policy)
-      sp__AlgorithmSuite->Policy->generate(types, indent + 1);
+      sp__AlgorithmSuite->Policy->generate(service, types, indent + 1);
   }
   if (sp__Layout)
   { fprintf(stream, "%s- [7.2] WS-Security Header Layout requirements:\n", tabs);
     if (sp__Layout->Policy)
-      sp__Layout->Policy->generate(types, indent + 1);
+      sp__Layout->Policy->generate(service, types, indent + 1);
   }
   if (sp__TransportBinding)
   { fprintf(stream, "%s- [7.3] Transport Binding%s requirements:\n", tabs, sp__TransportBinding->Optional ? " (optional)" : sp__TransportBinding->Ignorable ? " (ignorable)" : "");
     if (sp__TransportBinding->Policy)
-      sp__TransportBinding->Policy->generate(types, indent + 1);
+      sp__TransportBinding->Policy->generate(service, types, indent + 1);
   }
   if (sp__TransportToken)
   { fprintf(stream, "%s- Transport%s requirements:\n", tabs, sp__TransportToken->Optional ? " (optional)" : sp__TransportToken->Ignorable ? " (ignorable)" : "");
     if (sp__TransportToken->Policy)
-      sp__TransportToken->Policy->generate(types, indent + 1);
+      sp__TransportToken->Policy->generate(service, types, indent + 1);
   }
   if (sp__SymmetricBinding)
   { fprintf(stream, "%s- [7.4] WS-Security Symmetric Binding%s requirements:\n", tabs, sp__SymmetricBinding->Optional ? " (optional)" : sp__SymmetricBinding->Ignorable ? " (ignorable)" : "");
     if (sp__SymmetricBinding->Policy)
-      sp__SymmetricBinding->Policy->generate(types, indent + 1);
+      sp__SymmetricBinding->Policy->generate(service, types, indent + 1);
+    service.add_import("wsse.h");
   }
   if (sp__ProtectionToken)
   { fprintf(stream, "%s- Symmetric Protection%s requirements:\n", tabs, sp__ProtectionToken->Optional ? " (optional)" : sp__ProtectionToken->Ignorable ? " (ignorable)" : "");
     if (sp__ProtectionToken->Policy)
-      sp__ProtectionToken->Policy->generate(types, indent + 1);
+      sp__ProtectionToken->Policy->generate(service, types, indent + 1);
   }
   if (sp__AsymmetricBinding)
   { fprintf(stream, "%s- [7.5] WS-Security Asymmetric Binding%s (public key) requirements:\n", tabs, sp__AsymmetricBinding->Optional ? " (optional)" : sp__AsymmetricBinding->Ignorable ? " (ignorable)" : "");
     if (sp__AsymmetricBinding->Policy)
-      sp__AsymmetricBinding->Policy->generate(types, indent + 1);
+      sp__AsymmetricBinding->Policy->generate(service, types, indent + 1);
+    service.add_import("wsse.h");
   }
   if (sp__InitiatorToken)
   { fprintf(stream, "%s- Initiator%s requirements:\n", tabs, sp__InitiatorToken->Optional ? " (optional)" : sp__InitiatorToken->Ignorable ? " (ignorable)" : "");
     if (sp__InitiatorToken->Policy)
-      sp__InitiatorToken->Policy->generate(types, indent + 1);
+      sp__InitiatorToken->Policy->generate(service, types, indent + 1);
   }
   if (sp__InitiatorSignatureToken)
   { fprintf(stream, "%s- Initiator Signature%s requirements:\n", tabs, sp__InitiatorSignatureToken->Optional ? " (optional)" : sp__InitiatorSignatureToken->Ignorable ? " (ignorable)" : "");
     if (sp__InitiatorSignatureToken->Policy)
-      sp__InitiatorSignatureToken->Policy->generate(types, indent + 1);
+      sp__InitiatorSignatureToken->Policy->generate(service, types, indent + 1);
   }
   if (sp__InitiatorEncryptionToken)
   { fprintf(stream, "%s- Initiator Encryption%s requirements:\n", tabs, sp__InitiatorEncryptionToken->Optional ? " (optional)" : sp__InitiatorEncryptionToken->Ignorable ? " (ignorable)" : "");
     if (sp__InitiatorEncryptionToken->Policy)
-      sp__InitiatorEncryptionToken->Policy->generate(types, indent + 1);
+      sp__InitiatorEncryptionToken->Policy->generate(service, types, indent + 1);
   }
   if (sp__RecipientToken)
   { fprintf(stream, "%s- Recipient%s requirements:\n", tabs, sp__RecipientToken->Optional ? " (optional)" : sp__RecipientToken->Ignorable ? " (ignorable)" : "");
     if (sp__RecipientToken->Policy)
-      sp__RecipientToken->Policy->generate(types, indent + 1);
+      sp__RecipientToken->Policy->generate(service, types, indent + 1);
   }
   if (sp__SupportingTokens)
   { fprintf(stream, "%s- [8.1] Supporting Tokens%s requirements:\n", tabs, sp__SupportingTokens->Optional ? " (optional)" : sp__SupportingTokens->Ignorable ? " (ignorable)" : "");
     if (sp__SupportingTokens->Policy)
-      sp__SupportingTokens->Policy->generate(types, indent + 1);
+      sp__SupportingTokens->Policy->generate(service, types, indent + 1);
   }
   if (sp__SignedSupportingTokens)
   { fprintf(stream, "%s- [8.2] Signed Supporting Tokens%s requirements:\n", tabs, sp__SignedSupportingTokens->Optional ? " (optional)" : sp__SignedSupportingTokens->Ignorable ? " (ignorable)" : "");
     if (sp__SignedSupportingTokens->Policy)
-      sp__SignedSupportingTokens->Policy->generate(types, indent + 1);
+      sp__SignedSupportingTokens->Policy->generate(service, types, indent + 1);
   }
   if (sp__EndorsingSupportingTokens)
   { fprintf(stream, "%s- [8.3] Endorsing Supporting Tokens%s requirements:\n", tabs, sp__EndorsingSupportingTokens->Optional ? " (optional)" : sp__EndorsingSupportingTokens->Ignorable ? " (ignorable)" : "");
     if (sp__EndorsingSupportingTokens->Policy)
-      sp__EndorsingSupportingTokens->Policy->generate(types, indent + 1);
+      sp__EndorsingSupportingTokens->Policy->generate(service, types, indent + 1);
   }
   if (sp__SignedEndorsingSupportingTokens)
   { fprintf(stream, "%s- [8.4] Signed Endorsing Supporting Tokens%s requirements:\n", tabs, sp__SignedEndorsingSupportingTokens->Optional ? " (optional)" : sp__SignedEndorsingSupportingTokens->Ignorable ? " (ignorable)" : "");
     if (sp__SignedEndorsingSupportingTokens->Policy)
-      sp__SignedEndorsingSupportingTokens->Policy->generate(types, indent + 1);
+      sp__SignedEndorsingSupportingTokens->Policy->generate(service, types, indent + 1);
   }
   if (sp__SignedEncryptedSupportingTokens)
   { fprintf(stream, "%s- [8.5] Signed Encrypted Supporting Tokens%s requirements:\n", tabs, sp__SignedEncryptedSupportingTokens->Optional ? " (optional)" : sp__SignedEncryptedSupportingTokens->Ignorable ? " (ignorable)" : "");
     if (sp__SignedEncryptedSupportingTokens->Policy)
-      sp__SignedEncryptedSupportingTokens->Policy->generate(types, indent + 1);
+      sp__SignedEncryptedSupportingTokens->Policy->generate(service, types, indent + 1);
   }
   if (sp__EncryptedSupportingTokens)
   { fprintf(stream, "%s- [8.6] Encrypted Supporting Tokens%s requirements:\n", tabs, sp__EncryptedSupportingTokens->Optional ? " (optional)" : sp__EncryptedSupportingTokens->Ignorable ? " (ignorable)" : "");
     if (sp__EncryptedSupportingTokens->Policy)
-      sp__EncryptedSupportingTokens->Policy->generate(types, indent + 1);
+      sp__EncryptedSupportingTokens->Policy->generate(service, types, indent + 1);
   }
   if (sp__EndorsingEncryptedSupportingTokens)
   { fprintf(stream, "%s- [8.7] Endorsing Encrypted Supporting Tokens%s requirements:\n", tabs, sp__EndorsingEncryptedSupportingTokens->Optional ? " (optional)" : sp__EndorsingEncryptedSupportingTokens->Ignorable ? " (ignorable)" : "");
     if (sp__EndorsingEncryptedSupportingTokens->Policy)
-      sp__EndorsingEncryptedSupportingTokens->Policy->generate(types, indent + 1);
+      sp__EndorsingEncryptedSupportingTokens->Policy->generate(service, types, indent + 1);
   }
   if (sp__SignedEndorsingEncryptedSupportingTokens)
   { fprintf(stream, "%s- [8.8] Signed Endorsing Encrypted Supporting Tokens%s requirements:\n", tabs, sp__SignedEndorsingEncryptedSupportingTokens->Optional ? " (optional)" : sp__SignedEndorsingEncryptedSupportingTokens->Ignorable ? " (ignorable)" : "");
     if (sp__SignedEndorsingEncryptedSupportingTokens->Policy)
-      sp__SignedEndorsingEncryptedSupportingTokens->Policy->generate(types, indent + 1);
+      sp__SignedEndorsingEncryptedSupportingTokens->Policy->generate(service, types, indent + 1);
   }
-  // Wss10
+  // Wss10 or Wss11
   if (sp__Wss10)
   { fprintf(stream, "%s- [9.1] WSS: SOAP Message Security 1.0%s options:\n", tabs, sp__Wss10->Optional ? " (optional)" : sp__Wss10->Ignorable ? " (ignorable)" : "");
     if (sp__Wss10->Policy)
-      sp__Wss10->Policy->generate(types, indent + 1);
+      sp__Wss10->Policy->generate(service, types, indent + 1);
+    service.add_import("wsse.h");
+  }
+  else if (sp__Wss11)
+  { fprintf(stream, "%s- [9.2] WSS: SOAP Message Security 1.1%s options:\n", tabs, sp__Wss11->Optional ? " (optional)" : sp__Wss11->Ignorable ? " (ignorable)" : "");
+    if (sp__Wss11->Policy)
+      sp__Wss11->Policy->generate(service, types, indent + 1);
+    service.add_import("wsse.h");
   }
   if (sp__MustSupportRefKeyIdentifier)
     fprintf(stream, "%s- Key Identifier References\n", tabs);
@@ -304,12 +310,6 @@ void wsp__Content::generate(Types& types, int indent) const
     fprintf(stream, "%s- External URI References\n", tabs);
   if (sp__MustSupportRefEmbeddedToken)
     fprintf(stream, "%s- Embedded Token References\n", tabs);
-  // Wss11
-  if (sp__Wss11)
-  { fprintf(stream, "%s- [9.2] WSS: SOAP Message Security 1.1%s options:\n", tabs, sp__Wss11->Optional ? " (optional)" : sp__Wss11->Ignorable ? " (ignorable)" : "");
-    if (sp__Wss11->Policy)
-      sp__Wss11->Policy->generate(types, indent + 1);
-  }
   if (sp__MustSupportRefThumbprint)
     fprintf(stream, "%s- Thumbprint References\n", tabs);
   if (sp__MustSupportRefEncryptedKey)
@@ -339,43 +339,67 @@ void wsp__Content::generate(Types& types, int indent) const
   else if (sp__HashPassword)
   { fprintf(stream, "%s- Client-side WS-Security password%s should be set:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_wsse_add_UsernameTokenDigest(soap, \"User\", \"<username>\", \"<password>\");\n\t@endcode\n", tabs, sp__HashPassword->Optional ? " (optional)" : sp__HashPassword->Ignorable ? " (ignorable)" : "");
     fprintf(stream, "%s- Server-side WS-Security password%s verified with:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tconst char *username = soap_wsse_get_Username(soap);\n\t...\n\tif (soap_wsse_verify_Password(soap, \"<password>\")) ...<error>...\n\t@endcode\n", tabs, sp__HashPassword->Optional ? " (optional)" : sp__HashPassword->Ignorable ? " (ignorable)" : "");
+    service.add_import("wsse.h");
   }
   if (sp__WssUsernameToken10)
   { fprintf(stream, "%s- Username token should be used as defined in UsernameTokenProfile1.0:\n", tabs);
     fprintf(stream, "%s  - Client-side WS-Security password should be set:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_wsse_add_UsernameTokenDigest(soap, \"User\", \"<username>\", \"<password>\");\n\t@endcode\n", tabs);
     fprintf(stream, "%s  - Server-side WS-Security password verified with:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tconst char *username = soap_wsse_get_Username(soap);\n\t...\n\tif (soap_wsse_verify_Password(soap, \"<password>\")) <error>\n\t@endcode\n", tabs);
+    service.add_import("wsse.h");
   }
   else if (sp__WssUsernameToken11)
   { fprintf(stream, "%s- Username token should be used as defined in UsernameTokenProfile1.1:\n", tabs);
     fprintf(stream, "%s  - Client-side WS-Security plain-text password should be set:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_wsse_add_UsernameToken(soap, \"User\", \"<username>\", \"<password>\");\n\t@endcode\n", tabs);
     fprintf(stream, "%s  - Client-side WS-Security digest password should be set:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_wsse_add_UsernameTokenDigest(soap, \"User\", \"<username>\", \"<password>\");\n\t@endcode\n", tabs);
     fprintf(stream, "%s  - Server-side WS-Security password verified with:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tconst char *username = soap_wsse_get_Username(soap);\n\t...\n\tif (soap_wsse_verify_Password(soap, \"<password>\")) ...\n\t@endcode\n", tabs);
+    service.add_import("wsse.h");
   }
   // WS-Trust
   if (sp__RequireExternalReference)
     fprintf(stream, "%s- WS-Trust external reference is required when referencing this token\n", tabs);
   else if (sp__RequireInternalReference)
     fprintf(stream, "%s- WS-Trust internal reference is required when referencing this token\n", tabs);
-  // WS-Trust 1.3
-  if (sp__Trust13)
+  // WS-Trust 1.0 and 1.3
+  if (sp__Trust10)
+  { fprintf(stream, "%s- [10.1] WS-Trust 1.0%s options:\n", tabs, sp__Trust10->Optional ? " (optional)" : sp__Trust10->Ignorable ? " (ignorable)" : "");
+    if (sp__Trust10->Policy)
+      sp__Trust10->Policy->generate(service, types, indent + 1);
+    service.add_import("wst.h");
+  }
+  else if (sp__Trust13)
   { fprintf(stream, "%s- [10.1] WS-Trust 1.3%s options:\n", tabs, sp__Trust13->Optional ? " (optional)" : sp__Trust13->Ignorable ? " (ignorable)" : "");
     if (sp__Trust13->Policy)
-      sp__Trust13->Policy->generate(types, indent + 1);
+      sp__Trust13->Policy->generate(service, types, indent + 1);
+    service.add_import("wst.h");
   }
   if (sp__MustSupportClientChallenge)
-    fprintf(stream, "%s- Client Challenge\n", tabs);
+  { fprintf(stream, "%s- Client Challenge\n", tabs);
+    service.add_import("wst.h");
+  }
   if (sp__MustSupportServerChallenge)
-    fprintf(stream, "%s- Server Challenge\n", tabs);
+  { fprintf(stream, "%s- Server Challenge\n", tabs);
+    service.add_import("wst.h");
+  }
   if (sp__RequireClientEntropy)
-    fprintf(stream, "%s- Client Entropy\n", tabs);
+  { fprintf(stream, "%s- Client Entropy\n", tabs);
+    service.add_import("wst.h");
+  }
   if (sp__RequireServerEntropy)
-    fprintf(stream, "%s- Server Entropy\n", tabs);
+  { fprintf(stream, "%s- Server Entropy\n", tabs);
+    service.add_import("wst.h");
+  }
   if (sp__MustSupportIssuedTokens)
-    fprintf(stream, "%s- Issued Tokens\n", tabs);
+  { fprintf(stream, "%s- Issued Tokens\n", tabs);
+    service.add_import("wst.h");
+  }
   if (sp__RequireRequestSecurityTokenCollection)
-    fprintf(stream, "%s- Collection\n", tabs);
+  { fprintf(stream, "%s- Collection\n", tabs);
+    service.add_import("wst.h");
+  }
   if (sp__RequireAppliesTo)
-    fprintf(stream, "%s-  STS requires the requestor to specify the scope for the issued token using wsp:AppliesTo in the RST\n", tabs);
+  { fprintf(stream, "%s-  STS requires the requestor to specify the scope for the issued token using wsp:AppliesTo in the RST\n", tabs);
+    service.add_import("wst.h");
+  }
   // WS-Security header layout
   if (sp__IncludeTimestamp)
   { fprintf(stream, "%s- WS-Security Timestamp%s should be set prior to send:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_wsse_add_Timestamp(soap, \"Timestamp\", <seconds>);\n\t@endcode\n", tabs, sp__IncludeTimestamp->Optional ? " (optional)" : sp__IncludeTimestamp->Ignorable ? " (ignorable)" : "");
@@ -384,7 +408,7 @@ void wsp__Content::generate(Types& types, int indent) const
   if (sp__EncryptBeforeSigning)
     fprintf(stream, "%s- WS-Security Encrypt Before Signing%s (gSOAP unsupported)\n", tabs, sp__EncryptBeforeSigning->Optional ? " (optional)" : sp__EncryptBeforeSigning->Ignorable ? " (ignorable)" : "");
   if (sp__EncryptSignature)
-    fprintf(stream, "%s- WS-Security Encrypt Signature%s\n", tabs, sp__EncryptSignature->Optional ? " (optional)" : sp__EncryptSignature->Ignorable ? " (ignorable)" : "");
+    fprintf(stream, "%s- WS-Security Encrypt Signature%s\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_wsse_add_EncryptedKey_encrypt_only(soap, <SOAP_MEC_ENV_ENC_xxx_CBC>, NULL, <cert>, NULL, <issuer>, <serial>, \"ds:Signature SOAP-ENV:Body\");\n\t@endcode\n", tabs, sp__EncryptSignature->Optional ? " (optional)" : sp__EncryptSignature->Ignorable ? " (ignorable)" : "");
   if (sp__ProtectTokens)
     fprintf(stream, "%s- WS-Security Token Protection%s required\n", tabs, sp__ProtectTokens->Optional ? " (optional)" : sp__ProtectTokens->Ignorable ? " (ignorable)" : "");
   if (sp__OnlySignEntireHeadersAndBody)
@@ -486,11 +510,21 @@ void wsp__Content::generate(Types& types, int indent) const
     fprintf(stream, "%s- A REL Version 1.0 token should be used as defined in RELTokenProfile1.1\n", tabs);
   else if (sp__WssRelV20Token11)
     fprintf(stream, "%s- A REL Version 2.0 token should be used as defined in RELTokenProfile1.1\n", tabs);
-  // WS-Addressing Policy
+  if (sp__BootstrapPolicy)
+  { fprintf(stream, "%s- SecureConversation BootstrapPolicy\n", tabs);
+    sp__BootstrapPolicy->generate(service, types, indent + 1);
+  }
+  // WS-Addressing WSDL Policy
+  if (wsaw__UsingAddressing)
+  { fprintf(stream, "%s- WS-Addressing is used\n", tabs);
+    service.add_import("wsa5.h");
+  }
+  // WS-Addressing Metadata Policy
   if (wsam__Addressing)
   { fprintf(stream, "%s- WS-Addressing%s is used\n", tabs, wsam__Addressing->Optional ? " (optional)" : wsam__Addressing->Ignorable ? " (ignorable)" : "");
     if (wsam__Addressing->Policy)
-      wsam__Addressing->Policy->generate(types, indent + 1);
+      wsam__Addressing->Policy->generate(service, types, indent + 1);
+    service.add_import("wsa5.h");
   }
   if (wsam__AnonymousResponses)
     fprintf(stream, "%s- WS-Addressing Anonymous Responses\n", tabs);
@@ -499,13 +533,23 @@ void wsp__Content::generate(Types& types, int indent) const
   // WS-ReliableMessaging Policy
   if (wsrmp__RMAssertion_)
   { fprintf(stream, "%s- WS-ReliableMessaging%s is used\n", tabs, wsrmp__RMAssertion_->Optional ? " (optional)" : wsrmp__RMAssertion_->Ignorable ? " (ignorable)" : "");
+    if (wsrmp__RMAssertion_->InactivityTimeout && wsrmp__RMAssertion_->InactivityTimeout->Milliseconds)
+      fprintf(stream, "%s  - Inactivity Timeout = %s (ms)\n", tabs, wsrmp__RMAssertion_->InactivityTimeout->Milliseconds);
+    if (wsrmp__RMAssertion_->BaseRetransmissionInterval && wsrmp__RMAssertion_->BaseRetransmissionInterval->Milliseconds)
+      fprintf(stream, "%s  - Base Retransmission Interval = %s (ms)\n", tabs, wsrmp__RMAssertion_->BaseRetransmissionInterval->Milliseconds);
+    if (wsrmp__RMAssertion_->AcknowledgementInterval && wsrmp__RMAssertion_->AcknowledgementInterval->Milliseconds)
+      fprintf(stream, "%s  - Acknowledgement Interval = %s (ms)\n", tabs, wsrmp__RMAssertion_->AcknowledgementInterval->Milliseconds);
+    if (wsrmp__RMAssertion_->ExponentialBackoff)
+      fprintf(stream, "%s  - ExponentialBackoff\n", tabs);
     if (wsrmp__RMAssertion_->Policy)
-      wsrmp__RMAssertion_->Policy->generate(types, indent + 1);
+      wsrmp__RMAssertion_->Policy->generate(service, types, indent + 1);
+    service.add_import("wsrm.h");
   }
   if (wsrmp__DeliveryAssurance)
   { fprintf(stream, "%s- WS-ReliableMessaging Delivery Assurance%s:\n", tabs, wsrmp__DeliveryAssurance->Optional ? " (optional)" : wsrmp__DeliveryAssurance->Ignorable ? " (ignorable)" : "");
     if (wsrmp__DeliveryAssurance->Policy)
-      wsrmp__DeliveryAssurance->Policy->generate(types, indent + 1);
+      wsrmp__DeliveryAssurance->Policy->generate(service, types, indent + 1);
+    service.add_import("wsrm.h");
   }
   if (wsrmp__AtLeastOnce)
     fprintf(stream, "%s- At Least Once\n", tabs);
@@ -525,7 +569,7 @@ void wsp__Content::generate(Types& types, int indent) const
   }
 }
 
-static void gen_parts(const sp__Parts& parts, Types& types, const char *name, int indent)
+static void gen_parts(const sp__Parts& parts, Types& types, const char *what, const char *name, int indent)
 { static const char stabs[] = "\t\t\t\t\t\t\t\t\t\t";
   const char *tabs;
   if (indent > 8)
@@ -533,7 +577,7 @@ static void gen_parts(const sp__Parts& parts, Types& types, const char *name, in
   tabs = stabs + 9 - indent;
   fprintf(stream, "%s- %s requirements:\n", tabs, name);
   if (parts.Body)
-    fprintf(stream, "%s  -# Body:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_wsse_sign_body(soap, <algorithm>, <key>, <keylen>);\n\t@endcode", tabs);
+    fprintf(stream, "%s  -# Body:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_wsse_%s_body(soap, <algorithm>, <key>, <keylen>);\n\t@endcode\n", tabs, what);
   if (!parts.Header.empty())
   { fprintf(stream, "%s  -# Header elements:\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_wsse_set_wsu_id(soap, \"", tabs);
     for (vector<sp__Header>::const_iterator h = parts.Header.begin(); h != parts.Header.end(); ++h)
@@ -542,7 +586,7 @@ static void gen_parts(const sp__Parts& parts, Types& types, const char *name, in
       else if ((*h).Namespace)
         fprintf(stream, "%s: ", types.nsprefix(NULL, (*h).Namespace));
     }
-    fprintf(stream, "\");\n\t@endcode");
+    fprintf(stream, "\");\n\t@endcode\n");
   }
   if (parts.Attachments)
     fprintf(stream, "%s  -# Attachments as defined in SwAProfile1.1\n", tabs);

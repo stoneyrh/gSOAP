@@ -847,7 +847,20 @@ without OpenSSL.</li>
 <li>Version 2.8.8 (02/20/2012)</li>
 <ul>
 <li>REST plugin (httppost.c) enhancements and examples.</li>
-<li>Additional static version checks to prevent linkage to old libraries that could fail.</li>
+<li>Additional static version checks to prevent linkage to old incompatible libraries that could lead to runtime failures.</li>
+</ul>
+<li>Version 2.8.9 (06/10/2012)</li>
+<ul>
+<li>Added examples to interoperate with WCF basicHttp, basicTransportSecurity, basicMessageSecurity, and wsDualHttp.</li>
+<li>Added soapcpp2 option -A for service dispatching based on Action values only.</li>
+<li>Added wsdl2h option -z3.</li>
+<li>Added wsse support for WS-SecureConversation.</li>
+<li>Added wsrm5 WS-ReliableMessaging 1.0 2005.</li>
+<li>Added iOS plugin with examples.</li>
+<li>Improved WS-Policy analysis and reporting.</li>
+<li>Fixed and improved wsse plugin for WS-Security interoperability with WCF and other implementations (required a small API change).</li>
+<li>Fixed HTTP headers for NTLM.</li>
+<li>Fixed httpda plugin OpenSSL init crash in md5evp.c.</li>
 </ul>
 </ul>
 

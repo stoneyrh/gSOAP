@@ -198,11 +198,11 @@ struct wsrp__fault_USCOREt
 /// Element found of type "http://schemas.xmlsoap.org/rp/":found_t.
     struct wsrp__found_USCOREt*          found                          0;	///< Optional element.
 /// Element maxsize of type xs:integer.
-    int*                                 maxsize                        0;	///< Optional element.
+    char*                                maxsize                        0;	///< Optional element.
 /// Element maxtime of type xs:integer.
-    int*                                 maxtime                        0;	///< Optional element.
+    char*                                maxtime                        0;	///< Optional element.
 /// Element retryAfter of type xs:integer.
-    int*                                 retryAfter                     0;	///< Optional element.
+    char*                                retryAfter                     0;	///< Optional element.
 /// TODO: <anyAttribute>
 ///       Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change and/or insert declarations.

@@ -76,7 +76,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	This example shows the server returning "hello" to the client.
 
 	> ./wsademo fault
-	This example shows the server returning a SOAP fault to the client.
+	This example shows the server returning a SOAP fault to the client:
+	"The demo service wsademo() operation returned a fault".
 
 	> ./wsademo hello r
 	This example shows the server returning "hello" to the return service.
@@ -85,10 +86,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	This example shows the server accepting the message without reply.
 
 	> ./wsademo error e
-	This example shows the server returning a wsa fault to fault service.
+	This example shows the server returning a wsa fault to fault service:
+	"The endpoint is unable to process the message at this time".
 
 	> ./wsademo fault e
 	This example shows the server returning a SOAP fault to fault service.
+	"The demo service wsademo() operation returned a fault".
 
 	Note: when the response service is down, the response cannot be relayed
 	and the client (or fault service) will be informed about the failure.
@@ -107,10 +110,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
  * Because a service operation input parameters has a corresponding struct, we
  * automatically generate the (original) SOAP_ENV__Fault struct on the fly!
  * Note: it is important to associate the wsa fault action with this operation
- * as defined below.
+ * as defined below. The action is version-dependent, here we use 2005/08.
  */ 
 
-//gsoap SOAP_ENV service method-action: Fault http://schemas.xmlsoap.org/ws/2004/08/addressing/fault
+//gsoap SOAP_ENV service method-action: Fault http://www.w3.org/2005/08/addressing/soap/fault
 int SOAP_ENV__Fault
 (       _QName			 faultcode,		// SOAP 1.1
         char			*faultstring,		// SOAP 1.1
@@ -150,6 +153,6 @@ int ns__wsademoResult(char *out, void);
 //gsoap ns service method-header-part:     wsademo wsa5__To
 //gsoap ns service method-header-part:     wsademo wsa5__Action
 //gsoap ns service method-action:          wsademo urn:wsademo/wsademoPort/wsademo
-//gsoap ns service method-response-action: wsademo urn:wsademo/wsademoPort/wsademoResponse
+//gsoap ns service method-output-action: wsademo urn:wsademo/wsademoPort/wsademoResponse
 //gsoap ns service method-documentation:   wsademo echos a string value and relays the response to the wsa replyTo address (if present)
 int ns__wsademo(char *in, struct ns__wsademoResult *result);

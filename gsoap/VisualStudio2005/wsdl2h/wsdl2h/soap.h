@@ -51,6 +51,7 @@ class soap__binding
 class soap__operation
 { public:
 	@xsd__anyURI			soapAction;
+	@xsd__boolean			soapActionRequired	= true;
 	@enum soap__styleChoice		*style;
 };
 

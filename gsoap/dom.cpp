@@ -195,13 +195,17 @@ out_element(struct soap *soap, const struct soap_dom_element *node, const char *
         return soap->error = SOAP_EOM;
     }
     sprintf(s, "%s:%s", prefix, name);
-    if (soap_element(soap, s, 0, NULL)) /* element() */
-      return soap->error;
+    soap_element(soap, s, 0, NULL); /* element() */
     if (s != soap->msgbuf)
       SOAP_FREE(soap, s);
   }
   else if (*name != '-')
-    return soap_element(soap, name, 0, NULL); /* element() */
+  { soap_mode m = soap->mode;
+    if ((soap->mode & SOAP_DOM_ASIS))
+      soap->mode &= ~SOAP_XML_INDENT;
+    soap_element(soap, name, 0, NULL); /* element() */
+    soap->mode = m;
+  }
   return soap->error;
 }
 
@@ -333,8 +337,11 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
         }
       }
       if ((soap->mode & SOAP_DOM_ASIS) && !node->data && !node->wide && !node->elts && !node->tail)
-      { if (*tag != '-' && soap_element_start_end_out(soap, tag))
+      { soap_mode m = soap->mode;
+        soap->mode &= ~SOAP_XML_INDENT;
+	if (*tag != '-' && soap_element_start_end_out(soap, tag))
           return soap->error;
+        soap->mode = m;
       }
       else
       { if (*tag != '-' && soap_element_start_end_out(soap, NULL))
@@ -354,9 +361,13 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
         if (node->tail && soap_send(soap, node->tail))
           return soap->error;
         if (!prefix || !*prefix)
-        { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End of DOM node '%s'\n", tag + colon));
+        { soap_mode m = soap->mode;
+	  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End of DOM node '%s'\n", tag + colon));
+          if ((soap->mode & SOAP_DOM_ASIS))
+	    soap->mode &= ~SOAP_XML_INDENT;
           if (soap_element_end_out(soap, tag + colon))
             return soap->error;
+	  soap->mode = m;
         }
         else
         { char *s;

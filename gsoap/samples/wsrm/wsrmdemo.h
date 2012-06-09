@@ -273,10 +273,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
  * Because a service operation input parameters has a corresponding struct, we
  * automatically generate the (original) SOAP_ENV__Fault struct on the fly!
  * Note: it is important to associate the wsa fault action with this operation
- * as defined below.
+ * as defined below. The action is version-dependent, here we use 2005/08.
  */ 
 
-//gsoap SOAP_ENV service method-action: Fault http://schemas.xmlsoap.org/ws/2004/08/addressing/fault
+//gsoap SOAP_ENV service method-action: Fault http://www.w3.org/2005/08/addressing/soap/fault
 int SOAP_ENV__Fault
 (       _QName			 faultcode,		// SOAP 1.1
         char			*faultstring,		// SOAP 1.1
@@ -322,6 +322,6 @@ int ns__wsrmdemoResponse(char *out, void);
 //gsoap ns service method-header-part:     wsrmdemo wsrm__AckRequested
 //gsoap ns service method-header-part:     wsrmdemo wsrm__SequenceAcknowledgement
 //gsoap ns service method-action:          wsrmdemo urn:wsrmdemo/wsrmdemoPort/wsrmdemo
-//gsoap ns service method-response-action: wsrmdemo urn:wsrmdemo/wsrmdemoPort/wsrmdemoResponse
+//gsoap ns service method-output-action:   wsrmdemo urn:wsrmdemo/wsrmdemoPort/wsrmdemoResponse
 //gsoap ns service method-documentation:   wsrmdemo echos a string value and relays the response to the wsa replyTo address (if present)
 int ns__wsrmdemo(char *in, struct ns__wsrmdemoResponse *result);

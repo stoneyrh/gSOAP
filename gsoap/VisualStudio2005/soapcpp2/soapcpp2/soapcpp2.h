@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.8" /* Current version */
-# define GSOAP_VERSION 20808
+# define VERSION "2.8.9" /* Current version */
+# define GSOAP_VERSION 20809
 #endif
 
 #ifdef WIN32
@@ -366,6 +366,7 @@ extern Entry *unlinklast(Table*);
 extern FILE *fmsg;
 
 extern int aflag;
+extern int Aflag;
 extern int bflag;
 extern int vflag;
 extern int wflag;

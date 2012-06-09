@@ -142,6 +142,8 @@ struct xenc__EncryptionMethodType
 ///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
 /// Attribute Algorithm of type xs:anyURI.
    @char*                                Algorithm                      1;	///< Required attribute.
+/// Member declared in WS/WS-typemap.dat
+       struct ds__DigestMethodType*         ds__DigestMethod;
 /// TODO: this mixed complexType is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).

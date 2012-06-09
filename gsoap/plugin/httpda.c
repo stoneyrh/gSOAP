@@ -1009,8 +1009,11 @@ static void http_da_calc_HA1(struct soap *soap, void **context, const char *alg,
   {
     md5_handler(soap, context, MD5_INIT, NULL, 0);
     md5_handler(soap, context, MD5_UPDATE, HA1, 16);
-    md5_handler(soap, context, MD5_UPDATE, ":", 1);
-    md5_handler(soap, context, MD5_UPDATE, (char*)nonce, strlen(nonce));
+    if (nonce)
+    {
+      md5_handler(soap, context, MD5_UPDATE, ":", 1);
+      md5_handler(soap, context, MD5_UPDATE, (char*)nonce, strlen(nonce));
+    }
     md5_handler(soap, context, MD5_UPDATE, ":", 1);
     md5_handler(soap, context, MD5_UPDATE, (char*)cnonce, strlen(cnonce));
     md5_handler(soap, context, MD5_FINAL, HA1, 0);
@@ -1038,8 +1041,11 @@ static void http_da_calc_response(struct soap *soap, void **context, char HA1hex
 
   md5_handler(soap, context, MD5_INIT, NULL, 0);
   md5_handler(soap, context, MD5_UPDATE, HA1hex, 32);
-  md5_handler(soap, context, MD5_UPDATE, ":", 1);
-  md5_handler(soap, context, MD5_UPDATE, (char*)nonce, strlen(nonce));
+  if (nonce)
+  {
+    md5_handler(soap, context, MD5_UPDATE, ":", 1);
+    md5_handler(soap, context, MD5_UPDATE, (char*)nonce, strlen(nonce));
+  }
   md5_handler(soap, context, MD5_UPDATE, ":", 1);
   if (qop && *qop)
   {
