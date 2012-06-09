@@ -68,6 +68,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#a04590479dd85a245d09c74c603df82c3">vrfy_key</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#ab0f9414e23e38f719df0fe0e47bbb645">vrfy_keylen</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#a7000d0fe006dda7014536a88b327a493">enco_alg</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#a17f78c08d6fef453d210e9c3bea9bf2c">enco_keyname</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#a5da0af853954edd555d50508192cea8b">enco_key</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#a08a3f960673bae22682f961672782aaf">enco_keylen</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#a459099378d0bacd4d51ddac73d2603a9">deco_alg</a></td></tr>
@@ -80,7 +81,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#a29648d9d8a2340bdc0cdb99418f3e9f9">fheader</a> )(struct soap *)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#ad1cb3f73b75afa9c773ad7c8329ed611">mec</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">X509_STORE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#ad9dafc222188ed3aba83c24b073a0021">store</a></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const void *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#a6be1f12eed375f6754575f5cdebd43a5">security_token_handler</a> )(struct soap *soap, int alg, const char *keyname, int *keylen)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const void *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#a522d1787d88523549bccec1f6ed34baa">security_token_handler</a> )(struct soap *soap, int *alg, const char *keyname, int *keylen)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>wsseapi plugin data </p>
@@ -166,7 +167,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>encrypt algorithm used </p>
+<p>current encrypt algorithm used </p>
 
 </div>
 </div>
@@ -195,6 +196,20 @@ Public Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 <p>secret key length </p>
+
+</div>
+</div>
+<a class="anchor" id="a17f78c08d6fef453d210e9c3bea9bf2c"></a><!-- doxytag: member="soap_wsse_data::enco_keyname" ref="a17f78c08d6fef453d210e9c3bea9bf2c" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="structsoap__wsse__data.html#a17f78c08d6fef453d210e9c3bea9bf2c">soap_wsse_data::enco_keyname</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>optional key name (id of symmetric key) </p>
 
 </div>
 </div>
@@ -263,12 +278,12 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6be1f12eed375f6754575f5cdebd43a5"></a><!-- doxytag: member="soap_wsse_data::security_token_handler" ref="a6be1f12eed375f6754575f5cdebd43a5" args=")(struct soap *soap, int alg, const char *keyname, int *keylen)" -->
+<a class="anchor" id="a522d1787d88523549bccec1f6ed34baa"></a><!-- doxytag: member="soap_wsse_data::security_token_handler" ref="a522d1787d88523549bccec1f6ed34baa" args=")(struct soap *soap, int *alg, const char *keyname, int *keylen)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const void*(* <a class="el" href="structsoap__wsse__data.html#a6be1f12eed375f6754575f5cdebd43a5">soap_wsse_data::security_token_handler</a>)(struct soap *soap, int alg, const char *keyname, int *keylen)</td>
+          <td class="memname">const void*(* <a class="el" href="structsoap__wsse__data.html#a522d1787d88523549bccec1f6ed34baa">soap_wsse_data::security_token_handler</a>)(struct soap *soap, int *alg, const char *keyname, int *keylen)</td>
         </tr>
       </table>
 </div>
@@ -391,7 +406,7 @@ Public Attributes</h2></td></tr>
 <li>/Users/engelen/Projects/gsoap/plugin/<a class="el" href="wsseapi_8h.html">wsseapi.h</a></li>
 </ul>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Mon Dec 12 2011 11:10:45 for gSOAP WS-Security by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Sat Jun 9 2012 14:03:55 for gSOAP WS-Security by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

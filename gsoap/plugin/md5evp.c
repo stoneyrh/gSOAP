@@ -59,9 +59,7 @@ int md5_handler(struct soap *soap, void **context, enum md5_action action, char 
   unsigned int size;
   switch (action)
   { case MD5_INIT:
-#ifdef WITH_OPENSSL
-      OpenSSL_add_all_digests();
-#endif
+      soap_ssl_init();
       if (!*context)
       { *context = (void*)SOAP_MALLOC(soap, sizeof(EVP_MD_CTX));
         EVP_MD_CTX_init((EVP_MD_CTX*)*context);

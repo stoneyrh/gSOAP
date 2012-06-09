@@ -38,6 +38,8 @@ TODO:	consider adding support for non-SOAP HTTP operations
 #include "types.h"
 #include "service.h"
 
+#include <algorithm>
+
 static bool imported(const char *tag);
 static void comment(const char *start, const char *middle, const char *end, const char *text);
 static void page(const char *page, const char *title, const char *text);
@@ -45,7 +47,8 @@ static void section(const char *section, const char *title, const char *text);
 static void banner(const char*);
 static void banner(const char*, const char*);
 static void ident();
-static void gen_policy(const vector<const wsp__Policy*>&, const char*, Types&);
+static void gen_policy(Service&, const vector<const wsp__Policy*>&, const char*, Types&);
+static void gen_policy_enablers(const Service&);
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -135,8 +138,14 @@ void Definitions::analyze(const wsdl__definitions &definitions)
       if (wsdl__operation_)
       { wsdl__input *input = wsdl__operation_->input;
         wsdl__output *output = wsdl__operation_->output;
+        // /definitions/binding/wsp:Policy and wsp:PolicyReference
+        const wsp__Policy *operation_policy = NULL;
+        if (wsdl__operation_->wsp__Policy_)
+          operation_policy = wsdl__operation_->wsp__Policy_;
+        if (wsdl__operation_->wsp__PolicyReference_)
+          operation_policy = wsdl__operation_->wsp__PolicyReference_->policyPtr();
         if (http__operation_)
-        { // TODO: HTTP operation
+        { // TODO: HTTP operation?
         }
         else if (input && ext_input)
         { soap__body *input_body = ext_input->soap__body_;
@@ -147,12 +156,6 @@ void Definitions::analyze(const wsdl__definitions &definitions)
                 break;
               }
           }
-          // /definitions/binding/wsp:Policy and wsp:PolicyReference
-          const wsp__Policy *operation_policy = NULL;
-          if (wsdl__operation_->wsp__Policy_)
-            operation_policy = wsdl__operation_->wsp__Policy_;
-          if (wsdl__operation_->wsp__PolicyReference_)
-            operation_policy = wsdl__operation_->wsp__PolicyReference_->policyPtr();
           // MUST have an input, otherwise can't generate a service operation
           if (input_body)
           { char *URI;
@@ -228,18 +231,13 @@ void Definitions::analyze(const wsdl__definitions &definitions)
               o->documentation = wsdl__operation_->documentation;
               o->operation_documentation = (*operation).documentation;
               o->parameterOrder = wsdl__operation_->parameterOrder;
+              o->soapAction = NULL;
               if ((*operation).soap__operation_)
-                o->soapAction = (*operation).soap__operation_->soapAction;
-              else
-              { o->soapAction = "";
-                // determine if we use SOAP 1.2 in which case soapAction is absent, this is a bit of a hack due to the lack of WSDL1.1/SOAP1.2 support and better alternatives
-                for (Namespace *p = definitions.soap->local_namespaces; p && p->id; p++)
-                { if (p->out && !strcmp(p->id, "soap") && !strcmp(p->out, "http://schemas.xmlsoap.org/wsdl/soap12/"))
-                  { o->soapAction = NULL;
-                    break;
-                  }
-                }
-              }
+              { if ((*operation).soap__operation_->soapActionRequired)
+	          o->soapAction = (*operation).soap__operation_->soapAction;
+	      }
+              else if (!soap12)
+                o->soapAction = "";
               if (operation_policy)
                 o->policy.push_back(operation_policy);
               if (binding_operation_policy)
@@ -535,8 +533,12 @@ void Definitions::analyze(const wsdl__definitions &definitions)
           else
             fprintf(stderr, "Error: no wsdl:definitions/binding/operation/input/soap:body\n");
         }
+        else if (output && ext_output)
+	{ // TODO
+          fprintf(stderr, "Error: TODO one-way message output\n");
+	}
         else
-          fprintf(stderr, "Error: no wsdl:definitions/portType/operation/input\n");
+          fprintf(stderr, "Error: no wsdl:definitions/portType/operation/input and output\n");
       }
       else
         fprintf(stderr, "Error: no wsdl:definitions/portType/operation\n");
@@ -615,16 +617,16 @@ void Definitions::compile(const wsdl__definitions& definitions)
     }
   }
   banner("Schema Namespaces");
-  // determine if we must use SOAP 1.2, this is a bit of a hack due to the lack of WSDL1.1/SOAP1.2 support and better alternatives
+  // Determine if bindings use SOAP 1.2
+  soap12 = false;
   for (Namespace *p = definitions.soap->local_namespaces; p && p->id; p++)
-  { // p->out is set to the actual namespace name that matches the p->in pattern
-    if (p->out && !strcmp(p->id, "soap") && !strcmp(p->out, "http://schemas.xmlsoap.org/wsdl/soap12/"))
-    { fprintf(stream, "// This service uses SOAP 1.2 namespaces:\n");
-      fprintf(stream, schemaformat, "SOAP-ENV", "namespace", "http://www.w3.org/2003/05/soap-envelope");
-      fprintf(stream, schemaformat, "SOAP-ENC", "namespace", "http://www.w3.org/2003/05/soap-encoding");
+  { if (p->out && !strcmp(p->id, "soap") && !strcmp(p->out, "http://schemas.xmlsoap.org/wsdl/soap12/"))
+    { soap12 = true;
       break;
     }
   }
+  if (soap12)
+    fprintf(stream, "// This service supports SOAP 1.2 namespaces:\n#import \"soap12.h\"\n");
   if (definitions.types)
   { fprintf(stream, "\n/* NOTE:\n\nIt is strongly recommended to customize the names of the namespace prefixes\ngenerated by wsdl2h. To do so, modify the prefix bindings below and add the\nmodified lines to typemap.dat to rerun wsdl2h:\n\n");
     if (definitions.targetNamespace && *definitions.targetNamespace)
@@ -716,7 +718,14 @@ void Definitions::compile(const wsdl__definitions& definitions)
           types.knames.insert(s);
       }
     }
-    else
+  }
+  for (SetOfString::const_iterator i = definitions.builtinTypes().begin(); i != definitions.builtinTypes().end(); ++i)
+  { const char *s, *t;
+    if (!cflag && !strcmp(*i, "xs:anyType"))
+      continue;
+    t = types.cname(NULL, NULL, *i);
+    s = types.deftypemap[t];
+    if (!s)
     { if (!mflag)
       { if (**i == '"')
           fprintf(stream, "\n// Imported type %s defined by %s\n", *i, t);
@@ -1104,7 +1113,8 @@ void Definitions::compile(const wsdl__definitions& definitions)
           fprintf(stream, "\n  - %s\n", *port);
         if (!sv->policy.empty())
         { section(sv->name, "_policy Policy of Binding ", sv->name);
-	  gen_policy(sv->policy, "service endpoint ports", types);
+          fprintf(stream, "\nSee Section @ref %s_policy_enablers\n", sv->name);
+	  gen_policy(*sv, sv->policy, "service endpoint ports", types);
         }
         fprintf(stream, "\nNote: use wsdl2h option -N to change the service binding prefix name\n\n*/\n");
       }
@@ -1387,10 +1397,10 @@ void Service::generate(Types& types)
           text((*op2)->output->ext_documentation);
         }
       }
-      gen_policy((*op2)->policy, "operation", types);
-      gen_policy((*op2)->input->policy, "request message", types);
+      gen_policy(*this, (*op2)->policy, "operation", types);
+      gen_policy(*this, (*op2)->input->policy, "request message", types);
       if ((*op2)->output)
-      { gen_policy((*op2)->output->policy, "response message", types);
+      { gen_policy(*this, (*op2)->output->policy, "response message", types);
         if ((*op2)->output->content)
         { fprintf(stream, "\n  - Response has MIME content");
           if ((*op2)->output->content->type)
@@ -1429,11 +1439,11 @@ void Service::generate(Types& types)
       }
       if ((*op2)->input)
       { if ((*op2)->input->action)
-          fprintf(stream, "\n  - Addressing action: \"%s\"\n", (*op2)->input->action);
+          fprintf(stream, "\n  - Addressing method action: \"%s\"\n", (*op2)->input->action);
       }
       if ((*op2)->output)
       { if ((*op2)->output->action)
-          fprintf(stream, "\n  - Addressing response action: \"%s\"\n", (*op2)->output->action);
+          fprintf(stream, "\n  - Addressing method output action: \"%s\"\n", (*op2)->output->action);
       }
       for (vector<Message*>::const_iterator message = (*op2)->fault.begin(); message != (*op2)->fault.end(); ++message)
       { if ((*message)->use == literal)
@@ -1448,7 +1458,7 @@ void Service::generate(Types& types)
           fprintf(stream, "\n  - SOAP Fault: %s\n", (*message)->name);
         if ((*message)->message && (*message)->message->name && (*message)->action)
           fprintf(stream, "    - SOAP Fault addressing action: \"%s\"\n", (*message)->action);
-	gen_policy((*message)->policy, "fault message", types);
+	gen_policy(*this, (*message)->policy, "fault message", types);
       }
       if (!(*op2)->input->header.empty())
         fprintf(stream, "\n  - Request message has mandatory header part(s) (see @ref SOAP_ENV__Header):\n");
@@ -1591,6 +1601,12 @@ void Service::generate(Types& types)
       (*op2)->generate(types);
     }
   }
+  gen_policy_enablers(*this);
+}
+
+void Service::add_import(const char *s)
+{ if (find_if(imports.begin(), imports.end(), eqstr(s)) == imports.end())
+    imports.push_back(s);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1951,18 +1967,31 @@ void text(const char *text)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-static void gen_policy(const vector<const wsp__Policy*>& policy, const char *text, Types& types)
+static void gen_policy(Service& service, const vector<const wsp__Policy*>& policy, const char *text, Types& types)
 { if (!policy.empty())
   { fprintf(stream, "\n  - WS-Policy applicable to the %s:\n", text);
     for (vector<const wsp__Policy*>::const_iterator p = policy.begin(); p != policy.end(); ++p)
       if (*p)
-        (*p)->generate(types, 0);
-    fprintf(stream, "\n  - WS-Policy enablers:\n");
-    fprintf(stream, "    - WS-Addressing 1.0 (2005/08, accepts 2004/08):\n\t@code\n\t#import \"import/wsa5.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsaapi.h\"\n\tsoap_register_plugin(soap, soap_wsa); // register the wsa plugin in your code\n\t// See the user guide gsoap/doc/wsa/html/index.html\n\t@endcode\n");
-    fprintf(stream, "    - WS-Addressing (2004/08):\n\t@code\n\t#import \"import/wsa.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsaapi.h\"\n\tsoap_register_plugin(soap, soap_wsa); // register the wsa plugin in your code\n\t// See the user guide gsoap/doc/wsa/html/index.html\n\t@endcode\n");
-    fprintf(stream, "    - WS-ReliableMessaging 1.1:\n\t@code\n\t#import \"import/wsrm.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsrmapi.h\"\n\tsoap_register_plugin(soap, soap_wsa); // register the wsa plugin in your code\n\tsoap_register_plugin(soap, soap_wsrm); // register the wsrm plugin in your code\n\t// See the user guide gsoap/doc/wsrm/html/index.html\n\t@endcode\n");
-    fprintf(stream, "    - WS-Security (SOAP Message Security) 1.1 (accepts 1.0):\n\t@code\n\t#import \"import/wsse11.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_register_plugin(soap, soap_wsse); // register the wsse plugin in your code\n\t// See the user guide gsoap/doc/wsse/html/index.html\n\t@endcode\n");
-    fprintf(stream, "    - WS-Security (SOAP Message Security) 1.0:\n\t@code\n\t#import \"import/wsse.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_register_plugin(soap, soap_wsse); // register the wsse plugin in your code\n\t// See the user guide gsoap/doc/wsse/html/index.html\n\t@endcode\n");
-    fprintf(stream, "    - HTTP Digest Authentication:\n\t@code\n\t#include \"plugin/httpda.h\"\n\tsoap_register_plugin(soap, soap_http_da); // register the HTTP DA plugin in your code\n\t// See the user guide gsoap/doc/httpda/html/index.html\n\t@endcode\n");
+        (*p)->generate(service, types, 0);
   }
+}
+
+static void gen_policy_enablers(const Service& service)
+{ fprintf(stream, "\n/**\n");
+  page(service.name, " Binding", service.name);
+  section(service.name, "_policy_enablers Policy Enablers of Binding ", service.name);
+  fprintf(stream, "\nBased on policies, this service imports");
+  for (VectorOfString::const_iterator i = service.imports.begin(); i != service.imports.end(); ++i)
+    fprintf(stream, " %s", *i); 
+  fprintf(stream, "\n\n  - WS-Policy reminders and enablers:\n");
+  fprintf(stream, "    - WS-Addressing 1.0 (2005/08, accepts 2004/08):\n\t@code\n\t#import \"wsa5.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsaapi.h\"\n\tsoap_register_plugin(soap, soap_wsa); // register the wsa plugin in your code\n\t// See the user guide gsoap/doc/wsa/html/index.html\n\t@endcode\n");
+  fprintf(stream, "    - WS-Addressing (2004/08):\n\t@code\n\t#import \"wsa.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsaapi.h\"\n\tsoap_register_plugin(soap, soap_wsa); // register the wsa plugin in your code\n\t// See the user guide gsoap/doc/wsa/html/index.html\n\t@endcode\n");
+  fprintf(stream, "    - WS-ReliableMessaging 1.0:\n\t@code\n\t#import \"wsrm5.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsrmapi.h\"\n\tsoap_register_plugin(soap, soap_wsa); // register the wsa plugin in your code\n\tsoap_register_plugin(soap, soap_wsrm); // register the wsrm plugin in your code\n\t// See the user guide gsoap/doc/wsrm/html/index.html\n\t@endcode\n");
+  fprintf(stream, "    - WS-ReliableMessaging 1.1:\n\t@code\n\t#import \"wsrm.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsrmapi.h\"\n\tsoap_register_plugin(soap, soap_wsa); // register the wsa plugin in your code\n\tsoap_register_plugin(soap, soap_wsrm); // register the wsrm plugin in your code\n\t// See the user guide gsoap/doc/wsrm/html/index.html\n\t@endcode\n");
+  fprintf(stream, "    - WS-Security (SOAP Message Security) 1.0 (accepts 1.1):\n\t@code\n\t#import \"wsse.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_register_plugin(soap, soap_wsse); // register the wsse plugin in your code\n\t// See the user guide gsoap/doc/wsse/html/index.html\n\t@endcode\n");
+  fprintf(stream, "    - WS-Security (SOAP Message Security) 1.1 (accepts 1.0):\n\t@code\n\t#import \"wsse11.h\" // to be added to this header file for the soapcpp2 build step\n\t@endcode\n\t@code\n\t#include \"plugin/wsseapi.h\"\n\tsoap_register_plugin(soap, soap_wsse); // register the wsse plugin in your code\n\t// See the user guide gsoap/doc/wsse/html/index.html\n\t@endcode\n");
+  fprintf(stream, "    - HTTP Digest Authentication:\n\t@code\n\t#include \"plugin/httpda.h\"\n\tsoap_register_plugin(soap, soap_http_da); // register the HTTP DA plugin in your code\n\t// See the user guide gsoap/doc/httpda/html/index.html\n\t@endcode\n");
+  fprintf(stream, "*/\n\n");
+  for (VectorOfString::const_iterator i = service.imports.begin(); i != service.imports.end(); ++i)
+    fprintf(stream, "#import \"%s\"\n", *i); 
 }

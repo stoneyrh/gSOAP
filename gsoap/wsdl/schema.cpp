@@ -313,7 +313,15 @@ int xs__schema::read(const char *cwd, const char *loc)
   if (vflag)
     fprintf(stderr, "\nOpening schema '%s' from '%s'\n", loc?loc:"", cwd?cwd:"");
   if (loc)
-  {
+  { if (soap->recvfd > 2)
+    { soap_end_recv(soap);
+      close(soap->recvfd);
+      soap->recvfd = -1;
+    }
+    else if (soap_valid_socket(soap->socket))
+    { soap_end_recv(soap);
+      soap_closesock(soap);
+    }
 #ifdef WITH_OPENSSL
     if (!strncmp(loc, "http://", 7) || !strncmp(loc, "https://", 8))
 #else

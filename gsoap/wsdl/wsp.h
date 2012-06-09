@@ -44,6 +44,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 class wsp__Policy;
 class wsp__Content;
 
+extern class Service;
 extern class Types;
 
 class wsp__PolicyReference
@@ -120,7 +121,12 @@ class wsp__Content
 	wsp__Assertion			*sp__SignedEndorsingEncryptedSupportingTokens;
 	wsp__Assertion			*sp__Wss10;
 	wsp__Assertion			*sp__Wss11;
+	wsp__Assertion			*sp__Trust10;
 	wsp__Assertion			*sp__Trust13;
+
+	wsp__Content			*sp__BootstrapPolicy;
+
+	xsd__string			wsaw__UsingAddressing;
 
 	wsp__Assertion			*wsam__Addressing;
 
@@ -235,7 +241,7 @@ class wsp__Content
 	std::vector<_XML>		__any;
   public:
 	int				traverse(wsdl__definitions&);
-	void				generate(Types& types, int indent) const;
+	void				generate(Service& service, Types& types, int indent) const;
 };
 
 class wsp__Policy : public wsp__Content

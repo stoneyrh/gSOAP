@@ -989,7 +989,8 @@ static void import(const char *file)
     { char *s, *t;
       s = importpath;
       do
-      { t = strstr(s, SOAP_PATHSEP);
+      { size_t n;
+        t = strstr(s, SOAP_PATHSEP);
         if (t)
         { if (t - s >= sizeof(buf))
 	    t = s + sizeof(buf) - 1;
@@ -1001,13 +1002,13 @@ static void import(const char *file)
         { strcpy(buf, s);
           s = NULL;
 	}
+        n = strlen(buf) - 1;
 #ifdef __VMS
-        { size_t len = strlen(buf) - 1;
-          if (buf[len] != ']' && buf[len] != ':')
+        if (buf[n] != ']' && buf[n] != ':')
             strcat(buf, ":");
-        }
 #else
-        strcat(buf, "/");
+        if (buf[n] != SOAP_PATHCAT[0])
+	  strcat(buf, SOAP_PATHCAT);
 #endif
         strcat(buf, file);
         yyin = fopen(buf, "r");
@@ -1015,7 +1016,7 @@ static void import(const char *file)
       while (s && !yyin);
     }
     if (!yyin)
-    { sprintf(errbuf, "#import: Cannot open file \"%s\" for reading.\nHint: use option -I<path> (you can define multiple paths separated with '"SOAP_PATHSEP"')", file);
+    { sprintf(errbuf, "#import: Cannot open file \"%s\" for reading.\nHint: use option -I<path> (for example -Igsoap/import"SOAP_PATHSEP"gsoap/custom:.)", file);
       execerror(errbuf);
     }
   }

@@ -3,8 +3,10 @@
 
 	Example calculator service client in C++
 
-	soapcpp2 -i calc.h
-	cc -o calcclient calcclient.cpp stdsoap2.cpp soapC.cpp soapcalcProxy.cpp
+	$ soapcpp2 -i calc.h
+	$ cc -o calcclient calcclient.cpp stdsoap2.cpp soapC.cpp soapcalcProxy.cpp
+	where stdsoap2.cpp is in the 'gsoap' directory, or use libgsoap++:
+	$ cc -o calcclient calcclient.cpp soapC.cpp soapcalcProxy.cpp -lgsoap++
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools

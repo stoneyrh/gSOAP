@@ -66,24 +66,24 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal callback function to override fdisconnect(). Turns caching off, sets the cached message to NACK, and resets the server-side handle, so sequence can be deallocated later.  <a href="#a37b48a2e189b15b873083802cafa745a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a3a1093d90de46a3170cfc9d980c728a1">soap_wsrm_process_ack</a> (struct soap *soap, struct <a class="el" href="struct__wsrm_____sequence_acknowledgement.html">_wsrm__SequenceAcknowledgement</a> *ack)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to purge acknowledged messages as given by wsrm:SequenceAcknowledgement header.  <a href="#a3a1093d90de46a3170cfc9d980c728a1"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#acfeb9cf37279d4bf6f436a2d0a591e6f">soap_wsrm_add_acks</a> (struct soap *soap)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to add SequenceAcknowledgement headers for AckRequested. Sends acknowledgements to the AcksTo destination service or back to the source. These sends can take SOAP_WSRM_TIMEOUT seconds time, with at most 10 retries performed.  <a href="#acfeb9cf37279d4bf6f436a2d0a591e6f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#aed2eeaf0ead74ae222d5d9eee78c3ed6">soap_wsrm_chk_acks</a> (struct soap *soap)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to check for AckRequested headers to update state.  <a href="#aed2eeaf0ead74ae222d5d9eee78c3ed6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a529d37e3ef10ff393df5fbe8eab019b0">soap_wsrm_add_acks</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to add SequenceAcknowledgement headers for AckRequested. Sends acknowledgements to the AcksTo destination service or back to the source related to the seq. These sends can take SOAP_WSRM_TIMEOUT seconds time, with at most 10 retries performed.  <a href="#a529d37e3ef10ff393df5fbe8eab019b0"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a101b336e539b0527bcf5bc1b2091d94f">soap_wsrm_set_ack</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq, struct <a class="el" href="struct__wsrm_____sequence_acknowledgement.html">_wsrm__SequenceAcknowledgement</a> *ack)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function called by <a class="el" href="wsrmapi_8c.html#acfeb9cf37279d4bf6f436a2d0a591e6f" title="Internal function to add SequenceAcknowledgement headers for AckRequested. Sends acknowledgements to ...">soap_wsrm_add_acks()</a> to populate the SequenceAcknowledgement header block.  <a href="#a101b336e539b0527bcf5bc1b2091d94f"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function called by <a class="el" href="wsrmapi_8c.html#a529d37e3ef10ff393df5fbe8eab019b0" title="Internal function to add SequenceAcknowledgement headers for AckRequested. Sends acknowledgements to ...">soap_wsrm_add_acks()</a> to populate the SequenceAcknowledgement header block.  <a href="#a101b336e539b0527bcf5bc1b2091d94f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#ad95f4acccaf87b7f2c9f460a5a2d992b">soap_wsrm_resend_seq</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq, ULONG64 lower, ULONG64 upper)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to resend unacknowledged messages of a sequence given a range of message numbers. Used by <a class="el" href="wsrmapi_8h.html#af0644e93628d1c450cb3c73fed5afd4f" title="Client-side call to resend all non-acknowledged messages that were automatically cached for this sequ...">soap_wsrm_resend()</a>.  <a href="#ad95f4acccaf87b7f2c9f460a5a2d992b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a52fd48a4b0e18498c7a7b64fd9f97c91">soap_wsrm_seq_newid</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to generate a new sequence identifier.  <a href="#a52fd48a4b0e18498c7a7b64fd9f97c91"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a41af4d5508da70c827b04c8e58907365">soap_wsrm_seq_lookup</a> (const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data, const char *id)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to look up sequence given its id.  <a href="#a41af4d5508da70c827b04c8e58907365"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a415c858b5e440becfed86f3055e0aaf2">soap_wsrm_seq_lookup_data</a> (const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data, const char *id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to look up sequence given its id.  <a href="#a415c858b5e440becfed86f3055e0aaf2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#ae8fd48312ea83f82957725d6080a17ac">soap_wsrm_seq_lookup_ack</a> (const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data, const char *id)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to look up sequence given its acksid.  <a href="#ae8fd48312ea83f82957725d6080a17ac"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a50f1196273d87a048697ae98a6e34f73">soap_wsrm_seq_insert</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to create a new local sequence state.  <a href="#a50f1196273d87a048697ae98a6e34f73"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#ab9a66b74f5a83ccd622d21761eee2cd8">soap_wsrm_msg_append</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data, const char *buf, size_t len)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function used by <a class="el" href="wsrmapi_8c.html#ac7ff6d902d415e409bd46096022e1eac" title="Internal callback function to override fsend(). When the wsrm plugin is enabled, saves the message to...">soap_wsrm_send()</a> to append message data to the current message being transmitted for the current sequence.  <a href="#ab9a66b74f5a83ccd622d21761eee2cd8"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a78a2fa23790452bac71a5f072f8b724f">soap_wsrm_seq_terminated</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to check if a sequence is terminated or needs to be terminated when expired.  <a href="#a78a2fa23790452bac71a5f072f8b724f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a65f6112c6e361533f7b6443baae09578">soap_wsrm_num_lookup</a> (struct soap *soap, const struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq, ULONG64 num)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to look up a message number in the sequence state.  <a href="#a65f6112c6e361533f7b6443baae09578"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a0438af9292fd010392709375126346ca">soap_wsrm_num_insert</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq, ULONG64 num)</td></tr>
@@ -114,6 +114,8 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Closes the sequence, but does not yet terminate it. No new messages should be send, but messages can be resend with <a class="el" href="wsrmapi_8h.html#af0644e93628d1c450cb3c73fed5afd4f" title="Client-side call to resend all non-acknowledged messages that were automatically cached for this sequ...">soap_wsrm_resend()</a> if desired.  <a href="#a663e39e46e4fb291ee0f9af8a0badac5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#aed55a951561e63b74699003f423e6e4d">soap_wsrm_terminate</a> (struct soap *soap, <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence_handle</a> seq, const char *wsa_id)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminates the sequence. No new messages should be send and no resends should be tried. Usually done after <a class="el" href="wsrmapi_8h.html#a663e39e46e4fb291ee0f9af8a0badac5" title="Closes the sequence, but does not yet terminate it. No new messages should be send, but messages can be resend with soap_wsrm_resend() if desired.">soap_wsrm_close()</a> or any time to terminate the sequence prematurely.  <a href="#aed55a951561e63b74699003f423e6e4d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#ac3fc1849fe2ecca83d6a5c95c314ecd3">soap_wsrm_acknowledgement</a> (struct soap *soap, <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence_handle</a> seq, const char *wsa_id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends acknowledgements.  <a href="#ac3fc1849fe2ecca83d6a5c95c314ecd3"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a21c32d0aaadf26d86170098a890c0e54">soap_wsrm_seq_free</a> (struct soap *soap, <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence_handle</a> seq)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Must be called to free the sequence allocated by <a class="el" href="wsrmapi_8h.html#a070f3ffaacb8c9b160a7d8a1246a6c9a" title="Creates a new sequence. Sequences are usually created by the sender (client) and confirmed by the rec...">soap_wsrm_create()</a> or by <a class="el" href="wsrmapi_8h.html#a426dbfc35357b39b0d84bd21fdbafa12" title="Creates a new sequence by offering suggested WS-RM parameters to the destination. Sequences are usual...">soap_wsrm_create_offer()</a>. Sequence handles are not automatically reclaimed by the engine.  <a href="#a21c32d0aaadf26d86170098a890c0e54"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a3ba123420e7bb4528588fbbc4a3795f8">soap_wsrm_to</a> (<a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence_handle</a> seq)</td></tr>
@@ -136,12 +138,22 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Cleans up all expired sequences and releases resources. To be used at the server side to periodically clean up WS-RM sequences. Server-side cleanup is automatic, as long as WS-RM is in use. Does not release client-side sequences allocated by <a class="el" href="wsrmapi_8h.html#a070f3ffaacb8c9b160a7d8a1246a6c9a" title="Creates a new sequence. Sequences are usually created by the sender (client) and confirmed by the rec...">soap_wsrm_create()</a> or <a class="el" href="wsrmapi_8h.html#a426dbfc35357b39b0d84bd21fdbafa12" title="Creates a new sequence by offering suggested WS-RM parameters to the destination. Sequences are usual...">soap_wsrm_create_offer()</a>.  <a href="#a1b16c06bd2a4cb938c1c66868b34d4b5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#afc3adfdfdc6c60dd2085f3adb541f7c3">__wsrm__CreateSequence</a> (struct soap *soap, struct <a class="el" href="structwsrm_____create_sequence_type.html">wsrm__CreateSequenceType</a> *req, struct <a class="el" href="structwsrm_____create_sequence_response_type.html">wsrm__CreateSequenceResponseType</a> *res)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">WS-RM CreateSequence service operation. Automatically invoked by the server to process a create sequence request (with or without offer). Creates a new local sequence state to keep track of messages.  <a href="#afc3adfdfdc6c60dd2085f3adb541f7c3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a7298a311f1c3574d5f7c5cd64fb15d10">__wsrm__CreateSequenceResponse</a> (struct soap *soap, struct <a class="el" href="structwsrm_____create_sequence_response_type.html">wsrm__CreateSequenceResponseType</a> *res)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">WS-RM CreateSequenceResponse one-way service operation. Automatically invoked by the server to process a create sequence response (with or without offer). Creates a new local sequence state to keep track of messages.  <a href="#a7298a311f1c3574d5f7c5cd64fb15d10"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a45392a369c8c0c545a8356958ffe8638">__wsrm__CloseSequence</a> (struct soap *soap, struct <a class="el" href="structwsrm_____close_sequence_type.html">wsrm__CloseSequenceType</a> *req, struct <a class="el" href="structwsrm_____close_sequence_response_type.html">wsrm__CloseSequenceResponseType</a> *res)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">WS-RM CloseSequence service operation. Automatically invoked by the server to process the close sequence request. Updates the server's local sequence state to closed.  <a href="#a45392a369c8c0c545a8356958ffe8638"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a72df090268eeb72e955abca12e44eae5">__wsrm__CloseSequenceResponse</a> (struct soap *soap, struct <a class="el" href="structwsrm_____close_sequence_response_type.html">wsrm__CloseSequenceResponseType</a> *res)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">WS-RM CloseSequenceResponse one-way service operation. Automatically invoked by the server to process the close sequence request. Updates the server's local sequence state to closed.  <a href="#a72df090268eeb72e955abca12e44eae5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#ad937d441ba6e8fe06b7c4b2d958512bb">__wsrm__TerminateSequence</a> (struct soap *soap, struct <a class="el" href="structwsrm_____terminate_sequence_type.html">wsrm__TerminateSequenceType</a> *req, struct <a class="el" href="structwsrm_____terminate_sequence_response_type.html">wsrm__TerminateSequenceResponseType</a> *res)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">WS-RM TerminateSequence service operation. Automatically invoked by the server to process the close sequence request. Updates the server's local sequence state to terminated.  <a href="#ad937d441ba6e8fe06b7c4b2d958512bb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a5bc329328d435539c15c56a011744a54">__wsrm__TerminateSequenceResponse</a> (struct soap *soap, struct <a class="el" href="structwsrm_____terminate_sequence_response_type.html">wsrm__TerminateSequenceResponseType</a> *res)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">WS-RM TerminateSequenceResponse one-way service operation. Automatically invoked by the server to process the terminate sequence request. Updates the server's local sequence state to terminated.  <a href="#a5bc329328d435539c15c56a011744a54"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a946176cad5228da0fdbc3b672535e054">__wsrm__SequenceAcknowledgement</a> (struct soap *soap)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">WS-RM SequenceAcknowledgement service operation of the AcksTo destination service for relayed acknowledgements. Invoked by the server. The AcksTo server maintains the messages that are acknowledged by updating its local sequence state information by registering message acknowledgement receipts.  <a href="#a946176cad5228da0fdbc3b672535e054"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">WS-RM SequenceAcknowledgement operation.  <a href="#a946176cad5228da0fdbc3b672535e054"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a3cf5dadf742182a542eeceea37486732">__wsrm__AckRequested</a> (struct soap *soap)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">WS-RM AckRequested operation.  <a href="#a3cf5dadf742182a542eeceea37486732"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a9e3a23667f653803002e67d095a37670">__wsrm__LastMessage</a> (struct soap *soap)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">WS-RM LastMessage operation (WS-RM 1.0).  <a href="#a9e3a23667f653803002e67d095a37670"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#addf7a38c3091d9e2f0151009d4bad14b">soap_wsrm_fault_subcode</a> (struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets sender/receiver SOAP Fault (sub)code for server faults (can be user defined faults). When called before <a class="el" href="wsrmapi_8h.html#a0304e1219b99929fa576cf12114206eb" title="Server-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP header...">soap_wsrm_check()</a> in the server operation, terminates the current sequence. Otherwise, the sequence is not terminated. In either case the fault is returned to sender (client) or to the FaultTo server when the WS-Addressing FaultTo header was set by the sender.  <a href="#addf7a38c3091d9e2f0151009d4bad14b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a94a53920fbe164b32905a34a73317ac6">soap_wsrm_sender_fault_subcode</a> (struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail)</td></tr>
@@ -160,15 +172,53 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Dumps the current sequences and details of the wsrm plugin for diagnotics purposes.  <a href="#a283b52421482f2afaf2bd44cf1372c91"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#aaf792b8e8eff0209f4d84e156d726231">soap_wsrm</a> (struct soap *soap, struct soap_plugin *p, void *arg)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Plugin registry function, used with soap_register_plugin.  <a href="#aaf792b8e8eff0209f4d84e156d726231"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a4cf30da78ce8219490ae6bf3419261c5">soap_wsrm_seq_lookup_id</a> (struct soap *soap, const char *id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to look up sequence given its id.  <a href="#a4cf30da78ce8219490ae6bf3419261c5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a4c3ba7e98b20cc44d969e6c673c92a8a">soap_wsrm_seq_lookup</a> (struct soap *soap, const char *id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to look up sequence given its id.  <a href="#a4c3ba7e98b20cc44d969e6c673c92a8a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#aaf7ce54ffe117f054f2e4f0401965b24">soap_wsrm_seq</a> (struct soap *soap)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Assuming a SOAP header is received, gets the sequence associated with the message.  <a href="#aaf7ce54ffe117f054f2e4f0401965b24"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#ad902ad24f3be482a11208b81ccb25c21">soap_wsrm_seq_created</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to check if a sequence is created.  <a href="#ad902ad24f3be482a11208b81ccb25c21"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#af2ab9324b4dc05ff51e1ab1ce6be5442">soap_wsrm_seq_terminated</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to check if a sequence is terminated or needs to be terminated when expired.  <a href="#af2ab9324b4dc05ff51e1ab1ce6be5442"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">ULONG64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a75f6f3db9a0a4dab2bcb507d878c3fca">soap_wsrm_msgs</a> (struct soap *soap, const struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of complete messages received, or 0 when there is a gap.  <a href="#a75f6f3db9a0a4dab2bcb507d878c3fca"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a2f5b88f6da2708c658e230610ca380ab">soap_wsrm_id</a> [] = SOAP_WSRM_ID</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a1b87a809162eab1f088457a69765dfa6">soap_wsrm_session</a> = NULL</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a3bbcb03227062fef356ef38dd45f0924">soap_wsrm_idname</a> = NULL</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#ac68843c070e732b20450b4e9bdfb91fe">soap_wsrm_idnum</a> = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a64b413c93faa278f185f742ee8d1da4c">soap_wsrm_idname</a> [40] = &quot;&quot;</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a29b7ed420cfa320543882a34238f55b8">soap_wsrm_idnum</a> = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static MUTEX_TYPE&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a1f675d133185cc7a40b0af8e0d5ffdcb">soap_wsrm_session_lock</a> = MUTEX_INITIALIZER</td></tr>
 </table>
 <hr/><h2>Function Documentation</h2>
+<a class="anchor" id="a3cf5dadf742182a542eeceea37486732"></a><!-- doxytag: member="wsrmapi.c::__wsrm__AckRequested" ref="a3cf5dadf742182a542eeceea37486732" args="(struct soap *soap)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __wsrm__AckRequested </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>WS-RM AckRequested operation. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a45392a369c8c0c545a8356958ffe8638"></a><!-- doxytag: member="wsrmapi.c::__wsrm__CloseSequence" ref="a45392a369c8c0c545a8356958ffe8638" args="(struct soap *soap, struct wsrm__CloseSequenceType *req, struct wsrm__CloseSequenceResponseType *res)" -->
 <div class="memitem">
 <div class="memproto">
@@ -206,6 +256,43 @@ Variables</h2></td></tr>
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">req</td><td>wsrm__CloseSequence request message </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">res</td><td>wsrm__CloseSequenceResponse response message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a72df090268eeb72e955abca12e44eae5"></a><!-- doxytag: member="wsrmapi.c::__wsrm__CloseSequenceResponse" ref="a72df090268eeb72e955abca12e44eae5" args="(struct soap *soap, struct wsrm__CloseSequenceResponseType *res)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __wsrm__CloseSequenceResponse </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structwsrm_____close_sequence_response_type.html">wsrm__CloseSequenceResponseType</a> *&#160;</td>
+          <td class="paramname"><em>res</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>WS-RM CloseSequenceResponse one-way service operation. Automatically invoked by the server to process the close sequence request. Updates the server's local sequence state to closed. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">res</td><td>wsrm__CloseSequenceResponse response message </td></tr>
   </table>
   </dd>
 </dl>
@@ -257,6 +344,69 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a7298a311f1c3574d5f7c5cd64fb15d10"></a><!-- doxytag: member="wsrmapi.c::__wsrm__CreateSequenceResponse" ref="a7298a311f1c3574d5f7c5cd64fb15d10" args="(struct soap *soap, struct wsrm__CreateSequenceResponseType *res)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __wsrm__CreateSequenceResponse </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structwsrm_____create_sequence_response_type.html">wsrm__CreateSequenceResponseType</a> *&#160;</td>
+          <td class="paramname"><em>res</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>WS-RM CreateSequenceResponse one-way service operation. Automatically invoked by the server to process a create sequence response (with or without offer). Creates a new local sequence state to keep track of messages. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">res</td><td>wsrm__CreateSequenceResponse response message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a9e3a23667f653803002e67d095a37670"></a><!-- doxytag: member="wsrmapi.c::__wsrm__LastMessage" ref="a9e3a23667f653803002e67d095a37670" args="(struct soap *soap)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __wsrm__LastMessage </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>WS-RM LastMessage operation (WS-RM 1.0). </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a946176cad5228da0fdbc3b672535e054"></a><!-- doxytag: member="wsrmapi.c::__wsrm__SequenceAcknowledgement" ref="a946176cad5228da0fdbc3b672535e054" args="(struct soap *soap)" -->
 <div class="memitem">
 <div class="memproto">
@@ -272,7 +422,7 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>WS-RM SequenceAcknowledgement service operation of the AcksTo destination service for relayed acknowledgements. Invoked by the server. The AcksTo server maintains the messages that are acknowledged by updating its local sequence state information by registering message acknowledgement receipts. </p>
+<p>WS-RM SequenceAcknowledgement operation. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>context </td></tr>
@@ -327,6 +477,43 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a5bc329328d435539c15c56a011744a54"></a><!-- doxytag: member="wsrmapi.c::__wsrm__TerminateSequenceResponse" ref="a5bc329328d435539c15c56a011744a54" args="(struct soap *soap, struct wsrm__TerminateSequenceResponseType *res)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __wsrm__TerminateSequenceResponse </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structwsrm_____terminate_sequence_response_type.html">wsrm__TerminateSequenceResponseType</a> *&#160;</td>
+          <td class="paramname"><em>res</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>WS-RM TerminateSequenceResponse one-way service operation. Automatically invoked by the server to process the terminate sequence request. Updates the server's local sequence state to terminated. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">res</td><td>wsrm__TerminateSequenceResponse response message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="aaf792b8e8eff0209f4d84e156d726231"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm" ref="aaf792b8e8eff0209f4d84e156d726231" args="(struct soap *soap, struct soap_plugin *p, void *arg)" -->
 <div class="memitem">
 <div class="memproto">
@@ -371,6 +558,50 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ac3fc1849fe2ecca83d6a5c95c314ecd3"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_acknowledgement" ref="ac3fc1849fe2ecca83d6a5c95c314ecd3" args="(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_wsrm_acknowledgement </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence_handle</a>&#160;</td>
+          <td class="paramname"><em>seq</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>wsa_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Sends acknowledgements. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">seq</td><td>sequence handle set by soap_wsrm_create or soap_wsrm_create_offer </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">wsa_id</td><td>WS-Addressing message ID (optional) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="aa9ecf7b23be8eb3c89a34a52ae8f3236"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_acksto" ref="aa9ecf7b23be8eb3c89a34a52ae8f3236" args="(soap_wsrm_sequence_handle seq)" -->
 <div class="memitem">
 <div class="memproto">
@@ -397,7 +628,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="acfeb9cf37279d4bf6f436a2d0a591e6f"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_add_acks" ref="acfeb9cf37279d4bf6f436a2d0a591e6f" args="(struct soap *soap)" -->
+<a class="anchor" id="a529d37e3ef10ff393df5fbe8eab019b0"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_add_acks" ref="a529d37e3ef10ff393df5fbe8eab019b0" args="(struct soap *soap, struct soap_wsrm_sequence *seq)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -405,17 +636,28 @@ Variables</h2></td></tr>
           <td class="memname">static int soap_wsrm_add_acks </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname"><em>soap</em></td><td>)</td>
-          <td><code> [static]</code></td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td>
+          <td class="paramname"><em>seq</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Internal function to add SequenceAcknowledgement headers for AckRequested. Sends acknowledgements to the AcksTo destination service or back to the source. These sends can take SOAP_WSRM_TIMEOUT seconds time, with at most 10 retries performed. </p>
+<p>Internal function to add SequenceAcknowledgement headers for AckRequested. Sends acknowledgements to the AcksTo destination service or back to the source related to the seq. These sends can take SOAP_WSRM_TIMEOUT seconds time, with at most 10 retries performed. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">seq</td><td>pointer to sequence </td></tr>
   </table>
   </dd>
 </dl>
@@ -527,6 +769,32 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK when retry is safe, error code otherwise </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aed2eeaf0ead74ae222d5d9eee78c3ed6"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_chk_acks" ref="aed2eeaf0ead74ae222d5d9eee78c3ed6" args="(struct soap *soap)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int soap_wsrm_chk_acks </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Internal function to check for AckRequested headers to update state. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
 
 </div>
 </div>
@@ -779,7 +1047,7 @@ Variables</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">expires</td><td>max sequence duration (its lifetime) in ms (use 0 for inifinite) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">behavior</td><td>offered DiscardEntireSequence, DiscardFollowingFirstGap, or NoDiscard, which specifies the WS-RM destination's action when a sequence is closed/terminated when it is incomplete, and notifies the source when failed. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">wsa_id</td><td>WS-Addressing message ID (optional, use NULL when omitted) </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">seq</td><td>sequence handle is set </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">seq</td><td>sequence handle is set or NULL when response is asynchronously send and the sequence is initialized upon receipt of the create response. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1160,6 +1428,43 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>pointer to msg </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a75f6f3db9a0a4dab2bcb507d878c3fca"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_msgs" ref="a75f6f3db9a0a4dab2bcb507d878c3fca" args="(struct soap *soap, const struct soap_wsrm_sequence *seq)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ULONG64 soap_wsrm_msgs </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td>
+          <td class="paramname"><em>seq</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the number of complete messages received, or 0 when there is a gap. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">seq</td><td>pointer to sequence </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>number of messages received or 0 </dd></dl>
 
 </div>
 </div>
@@ -2038,6 +2343,69 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="aaf7ce54ffe117f054f2e4f0401965b24"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_seq" ref="aaf7ce54ffe117f054f2e4f0401965b24" args="(struct soap *soap)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a>* soap_wsrm_seq </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em></td><td>)</td>
+          <td><code> [read]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Assuming a SOAP header is received, gets the sequence associated with the message. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>sequence handle (must be freed with soap_seq_free) </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ad902ad24f3be482a11208b81ccb25c21"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_seq_created" ref="ad902ad24f3be482a11208b81ccb25c21" args="(struct soap *soap, struct soap_wsrm_sequence *seq)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_wsrm_seq_created </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td>
+          <td class="paramname"><em>seq</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function to check if a sequence is created. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramname">seq</td><td>pointer to sequence </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>0 (not created) or 1 (created) </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a21c32d0aaadf26d86170098a890c0e54"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_seq_free" ref="a21c32d0aaadf26d86170098a890c0e54" args="(struct soap *soap, soap_wsrm_sequence_handle seq)" -->
 <div class="memitem">
 <div class="memproto">
@@ -2111,15 +2479,15 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a41af4d5508da70c827b04c8e58907365"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_seq_lookup" ref="a41af4d5508da70c827b04c8e58907365" args="(const struct soap_wsrm_data *data, const char *id)" -->
+<a class="anchor" id="a4c3ba7e98b20cc44d969e6c673c92a8a"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_seq_lookup" ref="a4c3ba7e98b20cc44d969e6c673c92a8a" args="(struct soap *soap, const char *id)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> * soap_wsrm_seq_lookup </td>
+          <td class="memname">struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a>* soap_wsrm_seq_lookup </td>
           <td>(</td>
-          <td class="paramtype">const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -2130,16 +2498,16 @@ Variables</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td><code> [static, read]</code></td>
+          <td></td><td><code> [read]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Internal function to look up sequence given its id. </p>
+<p>Function to look up sequence given its id. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">data</td><td>plugin </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>identifier string </td></tr>
   </table>
   </dd>
@@ -2185,6 +2553,80 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a415c858b5e440becfed86f3055e0aaf2"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_seq_lookup_data" ref="a415c858b5e440becfed86f3055e0aaf2" args="(const struct soap_wsrm_data *data, const char *id)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> * soap_wsrm_seq_lookup_data </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static, read]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Internal function to look up sequence given its id. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">data</td><td>plugin </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>identifier string </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>sequence or NULL </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4cf30da78ce8219490ae6bf3419261c5"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_seq_lookup_id" ref="a4cf30da78ce8219490ae6bf3419261c5" args="(struct soap *soap, const char *id)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a>* soap_wsrm_seq_lookup_id </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [read]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function to look up sequence given its id. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>identifier string </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>sequence or NULL </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a52fd48a4b0e18498c7a7b64fd9f97c91"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_seq_newid" ref="a52fd48a4b0e18498c7a7b64fd9f97c91" args="(struct soap *soap, struct soap_wsrm_data *data)" -->
 <div class="memitem">
 <div class="memproto">
@@ -2222,12 +2664,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a78a2fa23790452bac71a5f072f8b724f"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_seq_terminated" ref="a78a2fa23790452bac71a5f072f8b724f" args="(struct soap *soap, struct soap_wsrm_sequence *seq)" -->
+<a class="anchor" id="af2ab9324b4dc05ff51e1ab1ce6be5442"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_seq_terminated" ref="af2ab9324b4dc05ff51e1ab1ce6be5442" args="(struct soap *soap, struct soap_wsrm_sequence *seq)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static int soap_wsrm_seq_terminated </td>
+          <td class="memname">int soap_wsrm_seq_terminated </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -2241,13 +2683,13 @@ Variables</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td><code> [static]</code></td>
+          <td></td><td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Internal function to check if a sequence is terminated or needs to be terminated when expired. </p>
+<p>Function to check if a sequence is terminated or needs to be terminated when expired. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>context </td></tr>
@@ -2290,7 +2732,7 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Internal function called by <a class="el" href="wsrmapi_8c.html#acfeb9cf37279d4bf6f436a2d0a591e6f" title="Internal function to add SequenceAcknowledgement headers for AckRequested. Sends acknowledgements to ...">soap_wsrm_add_acks()</a> to populate the SequenceAcknowledgement header block. </p>
+<p>Internal function called by <a class="el" href="wsrmapi_8c.html#a529d37e3ef10ff393df5fbe8eab019b0" title="Internal function to add SequenceAcknowledgement headers for AckRequested. Sends acknowledgements to ...">soap_wsrm_add_acks()</a> to populate the SequenceAcknowledgement header block. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
@@ -2387,12 +2829,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3bbcb03227062fef356ef38dd45f0924"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_idname" ref="a3bbcb03227062fef356ef38dd45f0924" args="" -->
+<a class="anchor" id="a64b413c93faa278f185f742ee8d1da4c"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_idname" ref="a64b413c93faa278f185f742ee8d1da4c" args="[40]" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const char* <a class="el" href="wsrmapi_8c.html#a3bbcb03227062fef356ef38dd45f0924">soap_wsrm_idname</a> = NULL</td>
+          <td class="memname">char <a class="el" href="wsrmapi_8c.html#a64b413c93faa278f185f742ee8d1da4c">soap_wsrm_idname</a>[40] = &quot;&quot;</td>
         </tr>
       </table>
 </div>
@@ -2400,12 +2842,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ac68843c070e732b20450b4e9bdfb91fe"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_idnum" ref="ac68843c070e732b20450b4e9bdfb91fe" args="" -->
+<a class="anchor" id="a29b7ed420cfa320543882a34238f55b8"></a><!-- doxytag: member="wsrmapi.c::soap_wsrm_idnum" ref="a29b7ed420cfa320543882a34238f55b8" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned long <a class="el" href="wsrmapi_8c.html#ac68843c070e732b20450b4e9bdfb91fe">soap_wsrm_idnum</a> = 0</td>
+          <td class="memname">int <a class="el" href="wsrmapi_8c.html#a29b7ed420cfa320543882a34238f55b8">soap_wsrm_idnum</a> = 0</td>
         </tr>
       </table>
 </div>
@@ -2442,7 +2884,7 @@ Variables</h2></td></tr>
 </div>
 </div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Sat Oct 22 2011 15:04:50 for gSOAP WS-ReliableMessaging by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Sat Jun 9 2012 13:28:49 for gSOAP WS-ReliableMessaging by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

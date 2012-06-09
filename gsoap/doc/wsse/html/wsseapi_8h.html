@@ -71,7 +71,8 @@ Classes</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Digest dictionary: linked list of ID-hash pairs.  <a href="structsoap__wsse__digest.html#details">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="define-members"></a>
 Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a263bd9819133fc1daccc34458c991ff9">SOAP_WSSE_ID</a>&#160;&#160;&#160;&quot;SOAP-WSSE-1.2&quot;</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a263bd9819133fc1daccc34458c991ff9">SOAP_WSSE_ID</a>&#160;&#160;&#160;&quot;SOAP-WSSE-1.3&quot;</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ae6f973cd88cca2187640822dc86fcd9e">SOAP_WSSE_IGNORE_EXTRA_REFS</a>&#160;&#160;&#160;(0x1000)</td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct__wsse_____security.html">_wsse__Security</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#acdc56c76c1a39c3e6191580d491f9b8e">soap_wsse_add_Security</a> (struct soap *soap)</td></tr>
@@ -118,10 +119,14 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get X509 wsse:BinarySecurityToken certificate and verify its content.  <a href="#a2ec22f47b0c66b62ef3c96d8f7b31436"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a8f5879e7d5bd3580ea400ccd1982d747">soap_wsse_verify_X509</a> (struct soap *soap, X509 *cert)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies X509 certificate against soap-&gt;cafile, soap-&gt;capath, and soap-&gt;crlfile.  <a href="#a8f5879e7d5bd3580ea400ccd1982d747"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a4941ccab15e473e979ff4b3a926c04bb">soap_wsse_add_SecurityContextToken</a> (struct soap *soap, const char *id, const char *identifier)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds wsc:SecurityContextToken/Identifier and SecurityTokenReference to it.  <a href="#a4941ccab15e473e979ff4b3a926c04bb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#af64d7a9e7d03a291e1421459ca227254">soap_wsse_get_SecurityContextToken</a> (struct soap *soap)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns wsc:SecurityContextToken/Identifier string value or NULL.  <a href="#af64d7a9e7d03a291e1421459ca227254"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structds_____signed_info_type.html">ds__SignedInfoType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a0a0471df1dd7192cd6541c9eb5d58512">soap_wsse_add_SignedInfo</a> (struct soap *soap)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds SignedInfo element.  <a href="#a0a0471df1dd7192cd6541c9eb5d58512"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#afc50e18a5777eb58f1aed0833a02d477">soap_wsse_add_SignedInfo_Reference</a> (struct soap *soap, const char *URI, const char *transform, const char *inclusiveNamespaces, const char *HA)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds SignedInfo element with Reference URI, transform algorithm used, and digest value.  <a href="#afc50e18a5777eb58f1aed0833a02d477"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#aa5ea0bcecf8f77929b70b4603d5d6a0e">soap_wsse_add_SignedInfo_Reference</a> (struct soap *soap, const char *URI, const char *transform, const char *inclusiveNamespaces, int alg, const char *HA)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds SignedInfo element with Reference URI, transform algorithm used, and digest value.  <a href="#aa5ea0bcecf8f77929b70b4603d5d6a0e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a398f98d62dfba91d04cff19230fb6722">soap_wsse_add_SignedInfo_SignatureMethod</a> (struct soap *soap, const char *method, int canonical)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds SignedInfo element with SignatureMethod.  <a href="#a398f98d62dfba91d04cff19230fb6722"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structds_____signed_info_type.html">ds__SignedInfoType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a98940306a4dd6074efc2e3ff9c899ba9">soap_wsse_SignedInfo</a> (struct soap *soap)</td></tr>
@@ -154,6 +159,8 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a SecurityTokenReference ValueType if present.  <a href="#a53165ba9f316163972af9a839a84da1f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">X509 *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#aa35a9b6b69417f40c248cdae560a3dfc">soap_wsse_get_KeyInfo_SecurityTokenReferenceX509</a> (struct soap *soap)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a X509 certificate if present as a BinarySecurity token.  <a href="#aa35a9b6b69417f40c248cdae560a3dfc"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structds_____x509_issuer_serial_type.html">ds__X509IssuerSerialType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a2346304c77d35bd6fb849c8c0e8cea13">soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data</a> (struct soap *soap)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <a class="el" href="structds_____x509_issuer_serial_type.html" title="&quot;http://www.w3.org/2000/09/xmldsig#&quot;:X509IssuerSerialType is a complexType.">ds__X509IssuerSerialType</a> with non-NULL X509IssuerName and non-NULL X509SerialNumber of a X509Data element when present and set.  <a href="#a2346304c77d35bd6fb849c8c0e8cea13"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a83ad7822556d691020209fa12d1c79a7">soap_wsse_add_KeyInfo_SecurityTokenReferenceKeyIdentifier</a> (struct soap *soap, const char *id, const char *valueType, unsigned char *data, int size)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds KeyInfo element with SecurityTokenReference/KeyIdentifier binary data.  <a href="#a83ad7822556d691020209fa12d1c79a7"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a3c0ca763b2ccf35263bc4d6b5b122541">soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType</a> (struct soap *soap)</td></tr>
@@ -162,6 +169,8 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns KeyInfo/SecurityTokenReference/KeyIdentifier binary data.  <a href="#a6a65d95b3f7fa1df6064c1fea66ada98"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a8fcf5947eb011d73b6a6b1308123a536">soap_wsse_add_KeyInfo_SecurityTokenReferenceEmbedded</a> (struct soap *soap, const char *id, const char *valueType)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds KeyInfo element with Embedded SecurityTokenReference.  <a href="#a8fcf5947eb011d73b6a6b1308123a536"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a0569043138de574a8f61f45b608971ad">soap_wsse_add_EncryptedData_KeyInfo_KeyName</a> (struct soap *soap, const char *keyname)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds EncryptedData/ds:KeyInfo/Keyname elements.  <a href="#a0569043138de574a8f61f45b608971ad"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#aac4234bd51599c36aec7bf7888191fb0">soap_wsse_sender_fault_subcode</a> (struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets sender SOAP Fault (sub)code for server fault response.  <a href="#aac4234bd51599c36aec7bf7888191fb0"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a5cec82648247163c63a28d624b2b9fe8">soap_wsse_receiver_fault_subcode</a> (struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail)</td></tr>
@@ -192,10 +201,10 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set to the string value of the tag's QName by replacing colons with hyphens to produce an xsd:ID value.  <a href="#a9582748dda80d0307e253f1a86c0c454"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a16e38c1160a47ad2cb60d1b7d5dba777">soap_wsse_sign_only</a> (struct soap *soap, const char *tags)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Filters only the specified wsu:Id names for signing. Can be used with <a class="el" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454" title="Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set...">soap_wsse_set_wsu_id()</a> and if so should use the element tag names.  <a href="#a16e38c1160a47ad2cb60d1b7d5dba777"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a2823d314693f279d158ca49f16dcb74f">soap_wsse_add_EncryptedKey</a> (struct soap *soap, const char *URI, X509 *cert, const char *subjectkeyid)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds EncryptedKey header element and initiates the encryption of the SOAP Body.  <a href="#a2823d314693f279d158ca49f16dcb74f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a8829c3108d4309d36ebc36225869a8f4">soap_wsse_add_EncryptedKey_encrypt_only</a> (struct soap *soap, const char *URI, X509 *cert, const char *subjectkeyid, const char *tags)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds EncryptedKey header element and initiates encryption of the given XML elements specified in the tags string. Should be used in combination with soap_wsse_set_wsu_id to set wsu:Id for given XML element tags.  <a href="#a8829c3108d4309d36ebc36225869a8f4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a1ba85a8b14587cff0865ebc3e5e9e340">soap_wsse_add_EncryptedKey</a> (struct soap *soap, int alg, const char *URI, X509 *cert, const char *subjectkeyid, const char *issuer, const char *serial)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds EncryptedKey header element and initiates the encryption of the SOAP Body.  <a href="#a1ba85a8b14587cff0865ebc3e5e9e340"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#adef816d148bd8b1ce1c5a3d023712779">soap_wsse_add_EncryptedKey_encrypt_only</a> (struct soap *soap, int alg, const char *URI, X509 *cert, const char *subjectkeyid, const char *issuer, const char *serial, const char *tags)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds EncryptedKey header element and initiates encryption of the given XML elements specified in the tags string. Should be used in combination with soap_wsse_set_wsu_id to set wsu:Id for given XML element tags.  <a href="#adef816d148bd8b1ce1c5a3d023712779"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#afcfdd54e7c220fb90e11c75da3bbbe88">soap_wsse_verify_EncryptedKey</a> (struct soap *soap)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies the EncryptedKey header information (certificate validity requires soap-&gt;cacert to be set). Retrieves the decryption key from the token handler callback to decrypt the decryption key.  <a href="#afcfdd54e7c220fb90e11c75da3bbbe88"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ad276cfcbd007515a6dce80c646e23ef5">soap_wsse_delete_EncryptedKey</a> (struct soap *soap)</td></tr>
@@ -207,15 +216,15 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#acbd56e9f4e7da00b1db51bca3e4f226b">soap_wsse_add_DataReferenceURI</a> (struct soap *soap, const char *URI)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a DataReference URI to the WS-Security header element.  <a href="#acbd56e9f4e7da00b1db51bca3e4f226b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ac12c951db671e4e29810d0f0ae7f1b63">soap_wsse_encrypt_body</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption.  <a href="#ac12c951db671e4e29810d0f0ae7f1b63"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption.  <a href="#ac12c951db671e4e29810d0f0ae7f1b63"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a3c417c369946561cbf72566349041805">soap_wsse_encrypt_only</a> (struct soap *soap, int alg, const void *key, int keylen, const char *tags)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiates the encryption of XML elements specified in the tags string. Should be used in combination with soap_wsse_set_wsu_id to set wsu:Id for given XML element tags. The algorithm should be SOAP_MEC_ENC_DES_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey_encrypt_only for public key encryption.  <a href="#a3c417c369946561cbf72566349041805"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiates the encryption of XML elements specified in the tags string. Should be used in combination with soap_wsse_set_wsu_id to set wsu:Id for given XML element tags. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey_encrypt_only for public key encryption.  <a href="#a3c417c369946561cbf72566349041805"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ae783dfb65a01ad8d8e6e7ca1e5b3d805">soap_wsse_encrypt</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start encryption. This function is supposed to be used internally only. The algorithm should be SOAP_MEC_ENC_DES_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption.  <a href="#ae783dfb65a01ad8d8e6e7ca1e5b3d805"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start encryption. This function is supposed to be used internally only. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption.  <a href="#ae783dfb65a01ad8d8e6e7ca1e5b3d805"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc">soap_wsse_decrypt_auto</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start automatic decryption when needed using the specified key. This function should be used just once. The algorithm should be SOAP_MEC_ENV_DEC_DES_CBC for public key encryption/decryption and SOAP_MEC_DEC_DES_CBC for symmetric shared secret keys.  <a href="#a403569990cf3278a361552aecaf51ffc"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a6cf2cef0b56d9f537f8964d99ad4651a">soap_wsse_encrypt_begin</a> (struct soap *soap, const char *id, const char *URI, const char *keyname, const unsigned char *key)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit XML encryption tags and start encryption of the XML element content.  <a href="#a6cf2cef0b56d9f537f8964d99ad4651a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a398ebb03dbadb508185423b3c766aa8c">soap_wsse_encrypt_begin</a> (struct soap *soap, const char *id, int alg, const char *URI, const char *keyname, const unsigned char *key)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit XML encryption tags and start encryption of the XML element content.  <a href="#a398ebb03dbadb508185423b3c766aa8c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a67d96a5fbfb37797a1223155957111cb">soap_wsse_encrypt_end</a> (struct soap *soap)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit XML encryption end tags and stop encryption of the XML element content.  <a href="#a67d96a5fbfb37797a1223155957111cb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#adc905be8ab736b213c35fa9114eecfd9">soap_wsse_decrypt_begin</a> (struct soap *soap, const unsigned char *key)</td></tr>
@@ -235,9 +244,24 @@ Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ac07968b1c372e976758745ba7089c367">wsse_X509v3URI</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a88d310451ae729bbf0fdd149a9d7511c">wsse_X509v3SubjectKeyIdentifierURI</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a71140ac907117b2bbf37f14939166a15">ds_sha1URI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a99bf1005a6700b2e94cc400f799f4b93">ds_sha256URI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a752690ab049714713ae0d240c0a11350">ds_sha512URI</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a352a6e78890296ade9e25de397f1096c">ds_hmac_sha1URI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ab356216a1331e0ba33de2a62d1c8b5fb">ds_hmac_sha256URI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a73b877c9a2879fcc6bfd311150beccbd">ds_hmac_sha512URI</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a1f62c1715e0f49fd54ffc263e45a12eb">ds_dsa_sha1URI</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ad57129724eb01a743b6583afc522a131">ds_rsa_sha1URI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a739fd4e4c86b17b58877a672bec79bc3">ds_rsa_sha256URI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a6f17cf69547d2ead56934e89f10f3ba6">ds_rsa_sha512URI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a6c5bdcb80c33d0c3d35050091bd2cec5">xenc_rsa15URI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a43c42203ea88ef920b653d90307e6731">xenc_rsaesURI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a159d359ac83617f624b54d467db4e0b1">xenc_3desURI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a289552d8f69933dee3965bb4fc39882b">xenc_aes128URI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a04403c472eedb2abd47751086f6a2b37">xenc_aes192URI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a0ab2e6720de47922659747608b9c40e4">xenc_aes256URI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a30367bbed5c37ad3d556607aee6e30dd">xenc_aes512URI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a4fdac00892919c46ed53fa05b9cc0bdf">xenc_elementURI</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#abc58fc5b358c1f06737a623788dbfa0e">xenc_contentURI</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ad7aea4af6b24389f66019e8984d4b05c">ds_URI</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a4089697df0f14ecf44cf0fb6098f4f78">c14n_URI</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#adb66cffe8d95c5d511987189173a993c">wsu_URI</a></td></tr>
@@ -248,12 +272,26 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define SOAP_WSSE_ID&#160;&#160;&#160;&quot;SOAP-WSSE-1.2&quot;</td>
+          <td class="memname">#define SOAP_WSSE_ID&#160;&#160;&#160;&quot;SOAP-WSSE-1.3&quot;</td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 <p>plugin identification for plugin registry </p>
+
+</div>
+</div>
+<a class="anchor" id="ae6f973cd88cca2187640822dc86fcd9e"></a><!-- doxytag: member="wsseapi.h::SOAP_WSSE_IGNORE_EXTRA_REFS" ref="ae6f973cd88cca2187640822dc86fcd9e" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SOAP_WSSE_IGNORE_EXTRA_REFS&#160;&#160;&#160;(0x1000)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>to ignore extra/external SignedInfo/Reference/ </p>
 
 </div>
 </div>
@@ -598,15 +636,59 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a2823d314693f279d158ca49f16dcb74f"></a><!-- doxytag: member="wsseapi.h::soap_wsse_add_EncryptedKey" ref="a2823d314693f279d158ca49f16dcb74f" args="(struct soap *soap, const char *URI, X509 *cert, const char *subjectkeyid)" -->
+<a class="anchor" id="a0569043138de574a8f61f45b608971ad"></a><!-- doxytag: member="wsseapi.h::soap_wsse_add_EncryptedData_KeyInfo_KeyName" ref="a0569043138de574a8f61f45b608971ad" args="(struct soap *soap, const char *keyname)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structxenc_____encrypted_key_type.html">xenc__EncryptedKeyType</a> * soap_wsse_add_EncryptedKey </td>
+          <td class="memname">int soap_wsse_add_EncryptedData_KeyInfo_KeyName </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>keyname</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Adds EncryptedData/ds:KeyInfo/Keyname elements. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">keyname</td><td>name of the key </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code</dd></dl>
+<p>This function adds the name of the key to each EncryptedData element to identify the shared secret key used for encryption. </p>
+
+</div>
+</div>
+<a class="anchor" id="a1ba85a8b14587cff0865ebc3e5e9e340"></a><!-- doxytag: member="wsseapi.h::soap_wsse_add_EncryptedKey" ref="a1ba85a8b14587cff0865ebc3e5e9e340" args="(struct soap *soap, int alg, const char *URI, X509 *cert, const char *subjectkeyid, const char *issuer, const char *serial)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_wsse_add_EncryptedKey </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>alg</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -624,7 +706,19 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>subjectkeyid</em>&#160;</td>
+          <td class="paramname"><em>subjectkeyid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>issuer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>serial</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -639,14 +733,17 @@ Variables</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>algorithm to use, SOAP_MEC_ENV_ENC_DES_CBC or SOAP_MEC_ENV_ENC_AEAS256_CBC </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">URI</td><td>a unique identifier for the key, required for interoperability </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">cert</td><td>the X509 certificate with public key or NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">subjectkeyid</td><td>string identification of the subject which when set to non-NULL is used instead of embedding the public key in the message </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">issuer</td><td>string to include SecurityTokenReference/X509Data </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">serial</td><td>string to include SecurityTokenReference/X509Data </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd><a class="el" href="structxenc_____encrypted_key_type.html" title="&quot;http://www.w3.org/2001/04/xmlenc#&quot;:EncryptedKeyType is a complexType with complexContent extension o...">xenc__EncryptedKeyType</a> object</dd></dl>
-<p>This function adds the encrypted key or subject key ID to the WS-Security header and initiates encryption of the SOAP Body. An X509 certificate must be provided. The certificate is embedded in the WS-Security EncryptedKey header. If the subjectkeyid string is non-NULL the subject key ID is used in the EncryptedKey header instead of the X509 certificate content. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code</dd></dl>
+<p>This function adds the encrypted key or subject key ID to the WS-Security header and initiates encryption of the SOAP Body. An X509 certificate may be provided, or the subjectkeyid, or the issuer and serial number. The certificate is embedded in the WS-Security EncryptedKey header. If the subjectkeyid string is non-NULL the subject key ID is used in the EncryptedKey header instead of the X509 certificate content. </p>
 
 </div>
 </div>
@@ -687,15 +784,21 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8829c3108d4309d36ebc36225869a8f4"></a><!-- doxytag: member="wsseapi.h::soap_wsse_add_EncryptedKey_encrypt_only" ref="a8829c3108d4309d36ebc36225869a8f4" args="(struct soap *soap, const char *URI, X509 *cert, const char *subjectkeyid, const char *tags)" -->
+<a class="anchor" id="adef816d148bd8b1ce1c5a3d023712779"></a><!-- doxytag: member="wsseapi.h::soap_wsse_add_EncryptedKey_encrypt_only" ref="adef816d148bd8b1ce1c5a3d023712779" args="(struct soap *soap, int alg, const char *URI, X509 *cert, const char *subjectkeyid, const char *issuer, const char *serial, const char *tags)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structxenc_____encrypted_key_type.html">xenc__EncryptedKeyType</a> * soap_wsse_add_EncryptedKey_encrypt_only </td>
+          <td class="memname">int soap_wsse_add_EncryptedKey_encrypt_only </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>alg</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -719,6 +822,18 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>issuer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>serial</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>tags</em>&#160;</td>
         </tr>
         <tr>
@@ -734,16 +849,19 @@ Variables</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>algorithm to use, SOAP_MEC_ENV_ENC_DES_CBC or SOAP_MEC_ENV_ENC_AEAS256_CBC </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">URI</td><td>a unique identifier for the key, required for interoperability </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">cert</td><td>the X509 certificate with public key or NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">subjectkeyid</td><td>string identification of the subject which when set to non-NULL is used instead of embedding the public key in the message </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">issuer</td><td>string to include SecurityTokenReference/X509Data </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">serial</td><td>string to include SecurityTokenReference/X509Data </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tags</td><td>space-separated string of element tag names to encrypt </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd><a class="el" href="structxenc_____encrypted_key_type.html" title="&quot;http://www.w3.org/2001/04/xmlenc#&quot;:EncryptedKeyType is a complexType with complexContent extension o...">xenc__EncryptedKeyType</a> object</dd></dl>
-<p>This function adds the encrypted key or subject key ID to the WS-Security header and initiates encryption of the elements given by the string of tag names. An X509 certificate must be provided. The certificate is embedded in the WS-Security EncryptedKey header. If the subjectkeyid string is non-NULL the subject key ID is used in the EncryptedKey header instead of the X509 certificate content.</p>
-<p>WARNING: Use <a class="el" href="wsseapi_8c.html#aac8dc04e8092bb3c15d3f35d206e2488">soap_wsse_add_EncryptedKey_encrypt_only</a> only in combination with <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> with the tag names of the elements to be encrypted. OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED AND WILL BE SENT IN THE CLEAR.</p>
+<p>This function adds the encrypted key or subject key ID to the WS-Security header and initiates encryption of the SOAP Body. An X509 certificate may be provided, or the subjectkeyid, or the issuer and serial number. The certificate is embedded in the WS-Security EncryptedKey header. If the subjectkeyid string is non-NULL the subject key ID is used in the EncryptedKey header instead of the X509 certificate content. Only the XML elements given in the 'tags' string as wsu:Id attributed elements are encrypted.</p>
+<p>WARNING: Use <a class="el" href="wsseapi_8c.html#adef816d148bd8b1ce1c5a3d023712779">soap_wsse_add_EncryptedKey_encrypt_only</a> only in combination with <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> with the tag names of the elements to be encrypted. OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED AND WILL BE SENT IN THE CLEAR.</p>
 <p>WARNING: The elements identified with <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> to encrypt MUST occur EXACTLY ONCE in the SOAP Body.</p>
 <p>WARNING: Encryption/decryption of elements with simple content (CDATA content) IS NOT SUPPORTED. This means that elements you want to encrypt with this function must have complex content. That is, only encrypt elements with sub elements or encrypt the entire SOAP Body. </p>
 
@@ -1060,6 +1178,50 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a4941ccab15e473e979ff4b3a926c04bb"></a><!-- doxytag: member="wsseapi.h::soap_wsse_add_SecurityContextToken" ref="a4941ccab15e473e979ff4b3a926c04bb" args="(struct soap *soap, const char *id, const char *identifier)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_wsse_add_SecurityContextToken </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>identifier</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Adds wsc:SecurityContextToken/Identifier and SecurityTokenReference to it. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>string for signature reference </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">identifier</td><td>wsc:Identifier value </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a7bef911f7276f37c393172d9bf875ffd"></a><!-- doxytag: member="wsseapi.h::soap_wsse_add_Signature" ref="a7bef911f7276f37c393172d9bf875ffd" args="(struct soap *soap)" -->
 <div class="memitem">
 <div class="memproto">
@@ -1165,7 +1327,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="afc50e18a5777eb58f1aed0833a02d477"></a><!-- doxytag: member="wsseapi.h::soap_wsse_add_SignedInfo_Reference" ref="afc50e18a5777eb58f1aed0833a02d477" args="(struct soap *soap, const char *URI, const char *transform, const char *inclusiveNamespaces, const char *HA)" -->
+<a class="anchor" id="aa5ea0bcecf8f77929b70b4603d5d6a0e"></a><!-- doxytag: member="wsseapi.h::soap_wsse_add_SignedInfo_Reference" ref="aa5ea0bcecf8f77929b70b4603d5d6a0e" args="(struct soap *soap, const char *URI, const char *transform, const char *inclusiveNamespaces, int alg, const char *HA)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1196,6 +1358,12 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>alg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>HA</em>&#160;</td>
         </tr>
@@ -1215,7 +1383,8 @@ Variables</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">URI</td><td>reference </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">transform</td><td>string should be c14n_URI for exc-c14n or NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">inclusiveNamespaces</td><td>used by the exc-c14n transform or NULL </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">HA</td><td>is the SHA1 digest in binary form (length=SOAP_SMD_SHA1_SIZE) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is the digest algorithm used </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">HA</td><td>is the digest in binary form </td></tr>
   </table>
   </dd>
 </dl>
@@ -1496,7 +1665,7 @@ Variables</h2></td></tr>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the decryption algorithm, </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>the decryption key for the algorithm, a private RSA key or a shared secret key </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>a persistent decryption key for the algorithm, a private RSA key or a shared symmetric secret key </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>use 0 for public-key encryption/decryption or the shared secret decryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
   </table>
   </dd>
@@ -1681,13 +1850,13 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Start encryption. This function is supposed to be used internally only. The algorithm should be SOAP_MEC_ENC_DES_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption. </p>
+<p>Start encryption. This function is supposed to be used internally only. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>the encryption key, a DES CBC 160-bit key </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>the encryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>a certificate with public key for encryption, a DES CBC 160-bit key or AES key </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>the symmetric encryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
   </table>
   </dd>
 </dl>
@@ -1695,7 +1864,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6cf2cef0b56d9f537f8964d99ad4651a"></a><!-- doxytag: member="wsseapi.h::soap_wsse_encrypt_begin" ref="a6cf2cef0b56d9f537f8964d99ad4651a" args="(struct soap *soap, const char *id, const char *URI, const char *keyname, const unsigned char *key)" -->
+<a class="anchor" id="a398ebb03dbadb508185423b3c766aa8c"></a><!-- doxytag: member="wsseapi.h::soap_wsse_encrypt_begin" ref="a398ebb03dbadb508185423b3c766aa8c" args="(struct soap *soap, const char *id, int alg, const char *URI, const char *keyname, const unsigned char *key)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1710,6 +1879,12 @@ Variables</h2></td></tr>
           <td></td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>alg</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1743,9 +1918,10 @@ Variables</h2></td></tr>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>string for the EncryptedData element Id attribute </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>algorithm used, or SOAP_MEC_NONE to ignore </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">URI</td><td>string for the encrypted element wsu:Id attribute </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keyname</td><td>optional subject key name </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>optional triple DES key for encryption (to override the current key) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>optional DES/AES key for encryption (to override the current key) </td></tr>
   </table>
   </dd>
 </dl>
@@ -1790,13 +1966,13 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption. </p>
+<p>Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>the encryption key, a DES CBC 160-bit key </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>the encryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>a certificate with public key for encryption, a DES CBC 160-bit key or AES key </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>the symmetric encryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
   </table>
   </dd>
 </dl>
@@ -1874,20 +2050,20 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Initiates the encryption of XML elements specified in the tags string. Should be used in combination with soap_wsse_set_wsu_id to set wsu:Id for given XML element tags. The algorithm should be SOAP_MEC_ENC_DES_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey_encrypt_only for public key encryption. </p>
+<p>Initiates the encryption of XML elements specified in the tags string. Should be used in combination with soap_wsse_set_wsu_id to set wsu:Id for given XML element tags. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey_encrypt_only for public key encryption. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>the encryption key, a DES CBC 160-bit key </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>the encryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>a certificate with public key for encryption, a DES CBC 160-bit key or AES key </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>the symmetric encryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tags</td><td>string of space-separated qualified and unqualified tag names </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code</dd></dl>
 <p>This function initiates the encryption using an RSA public key or a symmetric shared secret key. No WS-Security EncryptedKey header will be set. Use soap_wsse_add_EncryptedKey instead for public key encryption.</p>
-<p>WARNING: Use <a class="el" href="wsseapi_8c.html#aac8dc04e8092bb3c15d3f35d206e2488">soap_wsse_add_EncryptedKey_encrypt_only</a> only in combination with <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> with the tag names of the elements to be encrypted. OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED AND WILL BE SENT IN THE CLEAR.</p>
+<p>WARNING: Use <a class="el" href="wsseapi_8c.html#adef816d148bd8b1ce1c5a3d023712779">soap_wsse_add_EncryptedKey_encrypt_only</a> only in combination with <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> with the tag names of the elements to be encrypted. OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED AND WILL BE SENT IN THE CLEAR.</p>
 <p>WARNING: The elements identified with <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> to encrypt MUST occur EXACTLY ONCE in the SOAP Body.</p>
 <p>WARNING: Encryption/decryption of elements with simple content (CDATA content) IS NOT SUPPORTED. This means that elements you want to encrypt with this function must have complex content. That is, only encrypt elements with sub elements or encrypt the entire SOAP Body. </p>
 
@@ -2225,6 +2401,58 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a2346304c77d35bd6fb849c8c0e8cea13"></a><!-- doxytag: member="wsseapi.h::soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data" ref="a2346304c77d35bd6fb849c8c0e8cea13" args="(struct soap *soap)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structds_____x509_issuer_serial_type.html">ds__X509IssuerSerialType</a> * soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em></td><td>)</td>
+          <td><code> [read]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns <a class="el" href="structds_____x509_issuer_serial_type.html" title="&quot;http://www.w3.org/2000/09/xmldsig#&quot;:X509IssuerSerialType is a complexType.">ds__X509IssuerSerialType</a> with non-NULL X509IssuerName and non-NULL X509SerialNumber of a X509Data element when present and set. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>pointer to <a class="el" href="structds_____x509_issuer_serial_type.html" title="&quot;http://www.w3.org/2000/09/xmldsig#&quot;:X509IssuerSerialType is a complexType.">ds__X509IssuerSerialType</a> struct or NULL </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af64d7a9e7d03a291e1421459ca227254"></a><!-- doxytag: member="wsseapi.h::soap_wsse_get_SecurityContextToken" ref="af64d7a9e7d03a291e1421459ca227254" args="(struct soap *soap)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * soap_wsse_get_SecurityContextToken </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns wsc:SecurityContextToken/Identifier string value or NULL. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>wsc:SecurityContextToken/Identifier string value value or NULL </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="afd4c4268cc8f9d667cc44586fb635b5d"></a><!-- doxytag: member="wsseapi.h::soap_wsse_get_SignedInfo_SignatureMethod" ref="afd4c4268cc8f9d667cc44586fb635b5d" args="(struct soap *soap, int *alg)" -->
 <div class="memitem">
 <div class="memproto">
@@ -2254,7 +2482,7 @@ Variables</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">alg</td><td>is SOAP_SMD_HMAC_SHA1, SOAP_SMD_VRFY_DSA_SHA1, or SOAP_SMD_VRFY_RSA_SHA1 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">alg</td><td>is a signature algorithm, such as SOAP_SMD_HMAC_SHA1, SOAP_SMD_VRFY_DSA_SHA1, or SOAP_SMD_VRFY_RSA_SHA1 </td></tr>
   </table>
   </dd>
 </dl>
@@ -2610,7 +2838,7 @@ Variables</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is the signature algorithm SOAP_SMD_HMAC_SHA1, SOAP_SMD_SIGN_DSA_SHA1, or SOAP_SMD_SIGN_RSA_SHA1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is the signature algorithm, such as SOAP_SMD_HMAC_SHA1, SOAP_SMD_SIGN_DSA_SHA1, or SOAP_SMD_SIGN_RSA_SHA1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>is the HMAC secret key or DSA/RSA private EVP_PKEY </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>is the HMAC key length </td></tr>
   </table>
@@ -2662,7 +2890,7 @@ Variables</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is the signature algorithm SOAP_SMD_HMAC_SHA1, SOAP_SMD_SIGN_DSA_SHA1, or SOAP_SMD_SIGN_RSA_SHA1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is the signature algorithm, such as SOAP_SMD_HMAC_SHA1, SOAP_SMD_SIGN_DSA_SHA1, or SOAP_SMD_SIGN_RSA_SHA1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>is the HMAC secret key or DSA/RSA private EVP_PKEY </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>is the HMAC key length </td></tr>
   </table>
@@ -2900,7 +3128,7 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK (signed) or SOAP_ERR</dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK (signed) or SOAP_FAULT</dd></dl>
 <p>This function does not actually verify the signature of the Body. It checks whether the Body is signed and thus its integrity is preserved. Clients should call this function after invocation. Services should call this function inside a service operation. This function traverses the entire DOM, so performance is determined by the size of a message. </p>
 
 </div>
@@ -3169,7 +3397,7 @@ Variables</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is SOAP_SMD_HMAC_SHA1, SOAP_SMD_VRFY_DSA_SHA1, or SOAP_SMD_VRFY_RSA_SHA1 determined by the SignedInfo/SignatureMethod </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is a signature algorith, such as SOAP_SMD_HMAC_SHA1, SOAP_SMD_VRFY_DSA_SHA1, or SOAP_SMD_VRFY_RSA_SHA1 determined by the SignedInfo/SignatureMethod </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>to use to verify (HMAC or EVP_PKEY) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>length of HMAC key </td></tr>
   </table>
@@ -3312,6 +3540,32 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ab356216a1331e0ba33de2a62d1c8b5fb"></a><!-- doxytag: member="wsseapi.h::ds_hmac_sha256URI" ref="ab356216a1331e0ba33de2a62d1c8b5fb" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#ab356216a1331e0ba33de2a62d1c8b5fb">ds_hmac_sha256URI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a73b877c9a2879fcc6bfd311150beccbd"></a><!-- doxytag: member="wsseapi.h::ds_hmac_sha512URI" ref="a73b877c9a2879fcc6bfd311150beccbd" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a73b877c9a2879fcc6bfd311150beccbd">ds_hmac_sha512URI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="ad57129724eb01a743b6583afc522a131"></a><!-- doxytag: member="wsseapi.h::ds_rsa_sha1URI" ref="ad57129724eb01a743b6583afc522a131" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -3325,12 +3579,64 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a739fd4e4c86b17b58877a672bec79bc3"></a><!-- doxytag: member="wsseapi.h::ds_rsa_sha256URI" ref="a739fd4e4c86b17b58877a672bec79bc3" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a739fd4e4c86b17b58877a672bec79bc3">ds_rsa_sha256URI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a6f17cf69547d2ead56934e89f10f3ba6"></a><!-- doxytag: member="wsseapi.h::ds_rsa_sha512URI" ref="a6f17cf69547d2ead56934e89f10f3ba6" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a6f17cf69547d2ead56934e89f10f3ba6">ds_rsa_sha512URI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a71140ac907117b2bbf37f14939166a15"></a><!-- doxytag: member="wsseapi.h::ds_sha1URI" ref="a71140ac907117b2bbf37f14939166a15" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a71140ac907117b2bbf37f14939166a15">ds_sha1URI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a99bf1005a6700b2e94cc400f799f4b93"></a><!-- doxytag: member="wsseapi.h::ds_sha256URI" ref="a99bf1005a6700b2e94cc400f799f4b93" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a99bf1005a6700b2e94cc400f799f4b93">ds_sha256URI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a752690ab049714713ae0d240c0a11350"></a><!-- doxytag: member="wsseapi.h::ds_sha512URI" ref="a752690ab049714713ae0d240c0a11350" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a752690ab049714713ae0d240c0a11350">ds_sha512URI</a></td>
         </tr>
       </table>
 </div>
@@ -3444,8 +3750,125 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a159d359ac83617f624b54d467db4e0b1"></a><!-- doxytag: member="wsseapi.h::xenc_3desURI" ref="a159d359ac83617f624b54d467db4e0b1" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a159d359ac83617f624b54d467db4e0b1">xenc_3desURI</a></td>
+        </tr>
+      </table>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Mon Dec 12 2011 11:10:45 for gSOAP WS-Security by&#160;
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a289552d8f69933dee3965bb4fc39882b"></a><!-- doxytag: member="wsseapi.h::xenc_aes128URI" ref="a289552d8f69933dee3965bb4fc39882b" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a289552d8f69933dee3965bb4fc39882b">xenc_aes128URI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a04403c472eedb2abd47751086f6a2b37"></a><!-- doxytag: member="wsseapi.h::xenc_aes192URI" ref="a04403c472eedb2abd47751086f6a2b37" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a04403c472eedb2abd47751086f6a2b37">xenc_aes192URI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a0ab2e6720de47922659747608b9c40e4"></a><!-- doxytag: member="wsseapi.h::xenc_aes256URI" ref="a0ab2e6720de47922659747608b9c40e4" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a0ab2e6720de47922659747608b9c40e4">xenc_aes256URI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a30367bbed5c37ad3d556607aee6e30dd"></a><!-- doxytag: member="wsseapi.h::xenc_aes512URI" ref="a30367bbed5c37ad3d556607aee6e30dd" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a30367bbed5c37ad3d556607aee6e30dd">xenc_aes512URI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="abc58fc5b358c1f06737a623788dbfa0e"></a><!-- doxytag: member="wsseapi.h::xenc_contentURI" ref="abc58fc5b358c1f06737a623788dbfa0e" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#abc58fc5b358c1f06737a623788dbfa0e">xenc_contentURI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a4fdac00892919c46ed53fa05b9cc0bdf"></a><!-- doxytag: member="wsseapi.h::xenc_elementURI" ref="a4fdac00892919c46ed53fa05b9cc0bdf" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a4fdac00892919c46ed53fa05b9cc0bdf">xenc_elementURI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a6c5bdcb80c33d0c3d35050091bd2cec5"></a><!-- doxytag: member="wsseapi.h::xenc_rsa15URI" ref="a6c5bdcb80c33d0c3d35050091bd2cec5" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a6c5bdcb80c33d0c3d35050091bd2cec5">xenc_rsa15URI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a43c42203ea88ef920b653d90307e6731"></a><!-- doxytag: member="wsseapi.h::xenc_rsaesURI" ref="a43c42203ea88ef920b653d90307e6731" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsseapi_8c.html#a43c42203ea88ef920b653d90307e6731">xenc_rsaesURI</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+</div>
+<hr class="footer"/><address class="footer"><small>Generated on Sat Jun 9 2012 14:03:55 for gSOAP WS-Security by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

@@ -142,6 +142,7 @@ organizationalUnitName		= Organizational Unit Name (eg, section)
 #organizationalUnitName_default	=
 
 commonName			= Common Name (eg, YOUR name)
+commonName_default		= localhost
 commonName_max			= 64
 
 emailAddress			= Email Address
@@ -163,7 +164,9 @@ unstructuredName		= An optional company name
 # This goes against PKIX guidelines but some CAs do it and some software
 # requires this to avoid interpreting an end user certificate as a CA.
 
-basicConstraints=CA:FALSE
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth, clientAuth
 
 # Here are some examples of the usage of nsCertType. If it is omitted
 # the certificate can be used for anything *except* object signing.
@@ -212,10 +215,10 @@ authorityKeyIdentifier=keyid,issuer:always
 # Extensions to add to a certificate request
 
 basicConstraints = CA:FALSE
-keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth,clientAuth
 
 [ v3_ca ]
-
 
 # Extensions for a typical CA
 

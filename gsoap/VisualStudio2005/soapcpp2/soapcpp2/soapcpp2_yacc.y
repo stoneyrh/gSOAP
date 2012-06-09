@@ -259,7 +259,7 @@ pragma	: PRAGMA	{ if ($1[1] >= 'a' && $1[1] <= 'z')
 			  else if ((i = atoi($1+2)) > 0)
 				yylineno = i;
 			  else
-			  {	sprintf(errbuf, "directive '%s' ignored (use #import to import files and/or use option -i)", $1);
+			  {	sprintf(errbuf, "directive '%s' ignored (use #import to import files)", $1);
 			  	semwarn(errbuf);
 			  }
 			}
@@ -1316,7 +1316,7 @@ virtual : /* empty */	{ $$ = Snone; }
 	;
 ptrs	: /* empty */	{ $$ = tmp = sp->node; }
 	| ptrs '*'	{ /* handle const pointers, such as const char* */
-			  if (/*tmp.typ->type == Tchar &&*/ (tmp.sto & Sconst))
+			  if ((tmp.sto & Sconst))
 			  	tmp.sto = (Storage)(((int)tmp.sto & ~Sconst) | Sconstptr);
 			  tmp.typ = mkpointer(tmp.typ);
 			  tmp.typ->transient = transient;

@@ -3,11 +3,16 @@ The Tandem NonStop bridge enables the gSOAP toolkit for Tandem NonStop
 platforms. The bridge replaces the IO operation of the gSOAP engine with Tandem
 NonStop IO operations.
 
+The approach requires the code to be generated on any platform with the wsdl2h
+and soapcpp2 tools. The generated code can be compiled an run on Tandem using
+the bridge with the gSOAP engine (implemented in stdsoap2.c/.cpp). The wsdl2h
+and soapcpp2 tools will not run on Tandem, which would not be necessary.
+
 Tandem NonStop bridge source code for gSOAP 2.8.0 and higher:
 
   tandem.h	Tandem IO bridge interface
   tandem.c	Tandem blocking IO bridge
-  tandem_nw.c	Tandem nonblocking IO (no wait) bridge
+  tandemnw.c	Tandem nonblocking IO (no wait) bridge
 
 Usage:
 
@@ -23,23 +28,35 @@ Usage:
   tandem_done(soap);
   soap_free(soap);
 
-Compile flags for C/C++:
+Compile flags for compiling the gSOAP software:
 
   -DTANDEM_NONSTOP
 
 Linkage requirements:
 
-  Compile and link with tandem.c or tandem_nw.c
+  Compile and link with tandem.c or tandemnw.c, and stdsoap2.c
 
-Example:
+Use soapcpp2 option -p to generate shorter file names, for example:
 
-  cc -DTANDEM_NONSTOP -o calcclient calcclient.c soapC.c soapClient.c stdsoap2.c tandem.c
+  soapcpp2 -c -L -pT calc.h
+
+generates
+
+TStub.h
+TH.h
+TC.c
+TClient.c
+TServer.c
+
+To compile the examples:
+
+  cc -DTANDEM_NONSTOP -o client client.c TC.c TClient.c stdsoap2.c tandem.c
     or
-  cc -DTANDEM_NONSTOP -o calcclient calcclient.c soapC.c soapClient.c stdsoap2.c tandem_nw.c
+  cc -DTANDEM_NONSTOP -o client client.c TC.c TClient.c stdsoap2.c tandemnw.c
 
-  cc -DTANDEM_NONSTOP -o calcserver calcserver.c soapC.c soapServer.c stdsoap2.c tandem.c
+  cc -DTANDEM_NONSTOP -o server server.c TC.c TServer.c stdsoap2.c tandem.c
     or
-  cc -DTANDEM_NONSTOP -o calcserver calcserver.c soapC.c soapServer.c stdsoap2.c tandem_nw.c
+  cc -DTANDEM_NONSTOP -o server server.c TC.c TServer.c stdsoap2.c tandemnw.c
 
 Copyright
 

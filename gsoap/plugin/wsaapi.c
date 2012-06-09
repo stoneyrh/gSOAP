@@ -539,6 +539,9 @@ const char *soap_wsa_noneURI = "addressing/none not supported";
 const char *soap_wsa_faultAction = "http://schemas.xmlsoap.org/ws/2004/08/addressing/fault";
 #endif
 
+/** anonymous URI of 2004 and 2005 schemas */
+const char *soap_wsa_allAnonymousURI = "http://schemas.xmlsoap.org/ws/2004/03/addressing/role/anonymous http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous http://www.w3.org/2005/08/addressing/anonymous";
+
 /******************************************************************************\
  *
  *	Static protos
@@ -624,14 +627,15 @@ soap_wsa_request(struct soap *soap, const char *id, const char *to, const char *
   if (soap_wsa_alloc_header(soap))
     return soap->error;
   soap->header->SOAP_WSA(MessageID) = soap_strdup(soap, id);
-  if (!to)
-    to = (char*)soap_wsa_anonymousURI;
-  soap->header->SOAP_WSA(To) = soap_strdup(soap, to);
+  if (to)
+    soap->header->SOAP_WSA(To) = soap_strdup(soap, to);
+  else /* this is optional */
+    soap->header->SOAP_WSA(To) = (char*)soap_wsa_anonymousURI;
   soap->header->SOAP_WSA(Action) = soap_strdup(soap, action);
   soap->header->SOAP_WSA(RelatesTo) = NULL;
   soap->header->SOAP_WSA(From) = NULL;
-  soap->header->SOAP_WSA(ReplyTo) = NULL;
   soap->header->SOAP_WSA(FaultTo) = NULL;
+  soap_wsa_add_ReplyTo(soap, NULL);
   return soap_wsa_check(soap);
 }
 
@@ -673,7 +677,7 @@ soap_wsa_add_NoReply(struct soap *soap)
 @fn int soap_wsa_add_ReplyTo(struct soap *soap, const char *replyTo)
 @brief Sets WS-Addressing ReplyTo header for request message.
 @param soap context
-@param[in] replyTo endpoint URI 
+@param[in] replyTo endpoint URI or NULL for anonymous
 @return SOAP_OK or SOAP_ERR
 
 Use soap_wsa_request to populate the WS-Addressing header.
@@ -682,11 +686,11 @@ int
 soap_wsa_add_ReplyTo(struct soap *soap, const char *replyTo)
 { if (!soap->header)
     return SOAP_ERR;
-  if (replyTo)
-  { soap->header->SOAP_WSA(ReplyTo) = (SOAP_WSA_(,ReplyTo)*)soap_malloc(soap, sizeof(SOAP_WSA_(,ReplyTo)));
-    SOAP_WSA_(soap_default,EndpointReferenceType)(soap, soap->header->SOAP_WSA(ReplyTo));
-    soap->header->SOAP_WSA(ReplyTo)->Address = soap_strdup(soap, replyTo);
-  }
+  if (!replyTo)
+    replyTo = soap_wsa_anonymousURI;
+  soap->header->SOAP_WSA(ReplyTo) = (SOAP_WSA_(,ReplyTo)*)soap_malloc(soap, sizeof(SOAP_WSA_(,ReplyTo)));
+  SOAP_WSA_(soap_default,EndpointReferenceType)(soap, soap->header->SOAP_WSA(ReplyTo));
+  soap->header->SOAP_WSA(ReplyTo)->Address = soap_strdup(soap, replyTo);
   return SOAP_OK;
 }
 
@@ -694,7 +698,7 @@ soap_wsa_add_ReplyTo(struct soap *soap, const char *replyTo)
 @fn int soap_wsa_add_FaultTo(struct soap *soap, const char *faultTo)
 @brief Sets WS-Addressing FaultTo header for request message.
 @param soap context
-@param[in] faultTo endpoint URI 
+@param[in] faultTo endpoint URI or NULL for remove faultTo
 @return SOAP_OK or SOAP_ERR
 
 Use soap_wsa_request to populate the WS-Addressing header first.
@@ -708,6 +712,8 @@ soap_wsa_add_FaultTo(struct soap *soap, const char *faultTo)
     SOAP_WSA_(soap_default,EndpointReferenceType)(soap, soap->header->SOAP_WSA(FaultTo));
     soap->header->SOAP_WSA(FaultTo)->Address = soap_strdup(soap, faultTo);
   }
+  else
+    soap->header->SOAP_WSA(FaultTo) = NULL;
   return SOAP_OK;
 }
 
@@ -730,6 +736,58 @@ soap_wsa_add_RelatesTo(struct soap *soap, const char *relatesTo)
     soap->header->SOAP_WSA(RelatesTo)->__item = soap_strdup(soap, relatesTo);
   }
   return SOAP_OK;
+}
+
+/**
+@fn const char *soap_wsa_From(struct soap *soap)
+@brief Returns WS-Addressing From header.
+@param soap context
+@return From string or NULL
+*/
+const char*
+soap_wsa_From(struct soap *soap)
+{ if (!soap->header || !soap->header->SOAP_WSA(From))
+    return NULL;
+  return soap->header->SOAP_WSA(From)->Address;
+}
+
+/**
+@fn const char *soap_wsa_ReplyTo(struct soap *soap)
+@brief Returns WS-Addressing ReplyTo header.
+@param soap context
+@return From string or NULL
+*/
+const char*
+soap_wsa_ReplyTo(struct soap *soap)
+{ if (!soap->header || !soap->header->SOAP_WSA(ReplyTo))
+    return NULL;
+  return soap->header->SOAP_WSA(ReplyTo)->Address;
+}
+
+/**
+@fn const char *soap_wsa_FaultTo(struct soap *soap)
+@brief Returns WS-Addressing FaultTo header.
+@param soap context
+@return From string or NULL
+*/
+const char*
+soap_wsa_FaultTo(struct soap *soap)
+{ if (!soap->header || !soap->header->SOAP_WSA(FaultTo))
+    return NULL;
+  return soap->header->SOAP_WSA(FaultTo)->Address;
+}
+
+/**
+@fn const char *soap_wsa_RelatesTo(struct soap *soap)
+@brief Returns WS-Addressing RelatesTo header.
+@param soap context
+@return From string or NULL
+*/
+const char*
+soap_wsa_RelatesTo(struct soap *soap)
+{ if (!soap->header || !soap->header->SOAP_WSA(RelatesTo))
+    return NULL;
+  return soap->header->SOAP_WSA(RelatesTo)->__item;
 }
 
 /******************************************************************************\
@@ -800,7 +858,7 @@ soap_wsa_reply(struct soap *soap, const char *id, const char *action)
     SOAP_WSA_(soap_default_,RelatesTo)(soap, newheader->SOAP_WSA(RelatesTo));
     newheader->SOAP_WSA(RelatesTo)->__item = oldheader->SOAP_WSA(MessageID);
   }
-  if (oldheader && oldheader->SOAP_WSA(ReplyTo) && oldheader->SOAP_WSA(ReplyTo)->Address && strcmp(oldheader->SOAP_WSA(ReplyTo)->Address, soap_wsa_anonymousURI))
+  if (oldheader && oldheader->SOAP_WSA(ReplyTo) && oldheader->SOAP_WSA(ReplyTo)->Address && !soap_tagsearch(soap_wsa_allAnonymousURI, oldheader->SOAP_WSA(ReplyTo)->Address))
   { newheader->SOAP_WSA(To) = oldheader->SOAP_WSA(ReplyTo)->Address;
     /* (re)connect to ReplyTo endpoint if From != ReplyTo */
     if (!oldheader->SOAP_WSA(From) || !oldheader->SOAP_WSA(From)->Address || strcmp(oldheader->SOAP_WSA(From)->Address, oldheader->SOAP_WSA(ReplyTo)->Address))
@@ -904,7 +962,7 @@ soap_wsa_fault_subcode_action(struct soap *soap, int flag, const char *faultsubc
   }
   /* header->wsa__MessageID = "..."; */
   newheader->SOAP_WSA(Action) = (char*)soap_wsa_faultAction;
-  if (oldheader && oldheader->SOAP_WSA(FaultTo) && oldheader->SOAP_WSA(FaultTo)->Address && strcmp(oldheader->SOAP_WSA(FaultTo)->Address, soap_wsa_anonymousURI))
+  if (oldheader && oldheader->SOAP_WSA(FaultTo) && oldheader->SOAP_WSA(FaultTo)->Address && !soap_tagsearch(soap_wsa_allAnonymousURI, oldheader->SOAP_WSA(FaultTo)->Address))
   { newheader->SOAP_WSA(To) = oldheader->SOAP_WSA(FaultTo)->Address;
     /* (re)connect to FaultTo endpoint if From != FaultTo */
     if (!oldheader->SOAP_WSA(From) || !oldheader->SOAP_WSA(From)->Address || strcmp(oldheader->SOAP_WSA(From)->Address, oldheader->SOAP_WSA(FaultTo)->Address))

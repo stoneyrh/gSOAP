@@ -76,6 +76,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # define TARGET "https:"    /* Test HTTPS */
 # define HTTP_USERID "foo"  /* using Basic Auth */
 # define HTTP_PASSWD "bar"  /* using Basic Auth */
+# define HTTP_REALM  "svc"  /* using Digest Auth */
 #else
 # define TARGET "http:"
 #endif
@@ -87,10 +88,15 @@ const char *AcksToAddress  = TARGET"//localhost:11002";
 const char *ReplyToAddress = TARGET"//localhost:11003";
 const char *FaultToAddress = TARGET"//localhost:11004";
 
+#if defined(WITH_OPENSSL)
 /* HTTP Basic Authentication (when applicable, only use over HTTPS!)
-   Use the HTTP Digest Authentication plugin for secure auth over HTTP:
-   #include "httpda.h" // see gsoap/doc/httpda for instructions in HTML
-   */
+   Use the HTTP Digest Authentication plugin for secure auth over HTTP.
+   Compile and link with plugin/httpda.c and plugin/md5evp.c,
+   use OpenSSL to compile with -DWITH_OPENSSL:
+#include "httpda.h"
+*/
+#endif
+
 #if defined(HTTP_USERID) && defined(HTTP_PASSWD)
 const char *userid = HTTP_USERID;
 const char *passwd = HTTP_PASSWD;
@@ -118,6 +124,12 @@ void CRYPTO_thread_cleanup();
 int main(int argc, char **argv)
 {
   struct soap *soap = soap_new1(SOAP_XML_INDENT | SOAP_XML_STRICT);
+#ifdef HTTPDA_H
+  /* Use HTTP Digest Authentication, see gsoap/doc/httpda/html/index.html */
+  struct http_da_info info;
+  soap_register_plugin(soap, http_da);
+  http_da_save(soap, &info, HTTP_REALM, HTTP_USERID, HTTP_PASSWD);
+#endif
   soap_register_plugin(soap, soap_wsa);
   soap_register_plugin(soap, soap_wsrm);
   if (argc < 2)
@@ -259,8 +271,16 @@ int main(int argc, char **argv)
 
       printf("\n**** Creating a Sequence\n");
 
+#ifdef HTTPDA_H
+      /* Digest Auth */
+      http_da_restore(soap, &info);
+#else
       /* Basic Auth */
       soap->userid = userid; soap->passwd = passwd;
+#endif
+      /* We can also use a random UUID:
+         RequestMessageID = soap_wsa_rand_uuid(soap); */
+
       if (offer)
         soap_wsrm_create_offer(soap, ToAddress, acksto, NULL, expires, DiscardEntireSequence, OptRequestMessageID"0", &seq);
       else
@@ -289,8 +309,13 @@ int main(int argc, char **argv)
         soap_wsa_add_ReplyTo(soap, replyto);
       if (faultto)
         soap_wsa_add_FaultTo(soap, faultto);
+#ifdef HTTPDA_H
+      /* Digest Auth */
+      http_da_restore(soap, &info);
+#else
       /* Basic Auth */
       soap->userid = userid; soap->passwd = passwd;
+#endif
       /* this shows how to use a retry loop to improve message delivery */
       /* UDP may timeout when no UDP response message is sent by the server */
       while (soap_call_ns__wsrmdemo(soap, soap_wsrm_to(seq), RequestAction, argv[1], &res))
@@ -331,8 +356,13 @@ int main(int argc, char **argv)
         soap_wsa_add_ReplyTo(soap, replyto);
       if (faultto)
         soap_wsa_add_FaultTo(soap, faultto);
+#ifdef HTTPDA_H
+      /* Digest Auth */
+      http_da_restore(soap, &info);
+#else
       /* Basic Auth */
       soap->userid = userid; soap->passwd = passwd;
+#endif
       /* just send the message without retry loop */
       /* UDP may timeout when no UDP response message is sent by the server */
       if (soap_call_ns__wsrmdemo(soap, soap_wsrm_to(seq), RequestAction, (char*)"Second Message", &res))
@@ -367,8 +397,13 @@ int main(int argc, char **argv)
         soap_wsa_add_ReplyTo(soap, replyto);
       if (faultto)
         soap_wsa_add_FaultTo(soap, faultto);
+#ifdef HTTPDA_H
+      /* Digest Auth */
+      http_da_restore(soap, &info);
+#else
       /* Basic Auth */
       soap->userid = userid; soap->passwd = passwd;
+#endif
       /* just send the message without retry loop */
       /* UDP may timeout when no UDP response message is sent by the server */
       if (soap_call_ns__wsrmdemo(soap, soap_wsrm_to(seq), RequestAction, (char*)"Third Message", &res))
@@ -386,8 +421,13 @@ int main(int argc, char **argv)
 
       printf("\n**** Closing the Sequence\n");
 
+#ifdef HTTPDA_H
+      /* Digest Auth */
+      http_da_restore(soap, &info);
+#else
       /* Basic Auth */
       soap->userid = userid; soap->passwd = passwd;
+#endif
       /* close the sequence */
       if (soap_wsrm_close(soap, seq, OptRequestMessageID"4"))
       { soap_print_fault(soap, stderr);
@@ -403,8 +443,13 @@ int main(int argc, char **argv)
 
       printf("\n**** Terminating the Sequence\n");
 
+#ifdef HTTPDA_H
+      /* Digest Auth */
+      http_da_restore(soap, &info);
+#else
       /* Basic Auth */
       soap->userid = userid; soap->passwd = passwd;
+#endif
       /* termination fails if the server did not get all messages */
       if (soap_wsrm_terminate(soap, seq, OptRequestMessageID"5"))
       { soap_print_fault(soap, stderr);
@@ -478,13 +523,18 @@ ns__wsrmdemo(struct soap *soap, char *in, struct ns__wsrmdemoResponse *result)
     return soap_wsrm_sender_fault(soap, "The demo service wsrmdemo() operation encountered a fatal fault", NULL);
   }
 
-  /* check Basic Auth, when enabled */
+  /* check Basic/Digest Auth, when enabled */
   if (userid && passwd)
   { if (!soap->userid
      || !soap->passwd
      || strcmp(userid, soap->userid)
      || strcmp(passwd, soap->passwd))
+    {
+#ifdef HTTPDA_H
+      soap->authrealm = HTTP_REALM;
+#endif
       return 401; /* HTTP Unauthorized */
+    }
   }
 
   /* check for WS-RM/WSA and set WS-RM/WSA return headers */

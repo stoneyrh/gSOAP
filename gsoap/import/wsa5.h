@@ -55,10 +55,6 @@
 \******************************************************************************/
 
 
-/// Built-in type "xs:boolean".
-// enum xsd__boolean_ { _false, _true };
-
-
 /// Typedef synonym for struct wsa5__EndpointReferenceType.
 typedef struct wsa5__EndpointReferenceType wsa5__EndpointReferenceType;
 

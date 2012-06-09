@@ -113,6 +113,17 @@ To print the contents of a PEM file:
 
 openssl x509 -text -in file.pem
 
+How to convert certificates to CER format for MS Windows
+--------------------------------------------------------
+
+To convert certificate cacert.pem to CER format:
+
+openssl x509 -in cacert.pem -outform der -out cacert.cer
+
+Install the certificate on MS Windows by opening it and then select "Install
+Certificate". Client applications running on MS Windows can now connect to the
+server. The server authenticates to the client by means of the certificate.
+
 How to create self-signed certificates with GNUTLS
 --------------------------------------------------
 

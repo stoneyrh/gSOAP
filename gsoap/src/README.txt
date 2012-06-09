@@ -71,7 +71,8 @@ COMMAND LINE OPTIONS
 -S	generate server-side code only
 -T	generate server auto-test code
 -L	don't generate soapClientLib/soapServerLib
--a	use SOAPAction HTTP/WSA header to invoke server-side operations
+-a	use SOAPAction with WS-Addressing to invoke server-side operations
+-A	require SOAPAction to invoke server-side operations
 -b	serialize byte arrays char[N] as string
 -c      generate C source code
 -dpath  use path to save files

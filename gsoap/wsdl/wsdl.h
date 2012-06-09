@@ -321,6 +321,7 @@ class wsdl__definitions
 	std::vector<gwsdl__portType>	gwsdl__portType_;	// <gwsdl:portType>* For the moment, we will hardcode this which makes it easier to access. WSDL 1.1 does not allow this to be extended anyway
 	struct soap			*soap;
   private:
+	bool				soap12;
 	bool				updated;
 	char*				location;
 	int				redirs;

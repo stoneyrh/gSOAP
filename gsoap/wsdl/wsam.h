@@ -41,6 +41,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 //gsoap wsam schema elementForm:	qualified
 //gsoap wsam schema attributeForm:	unqualified
 
+//gsoap wsaw schema documentation:	WS-Addressing WSDL
+//gsoap wsaw schema namespace:		http://www.w3.org/2006/05/addressing/wsdl
+//gsoap wsaw schema elementForm:	qualified
+//gsoap wsaw schema attributeForm:	unqualified
+
 class wsa__EndpointReferenceType
 { public:
 	xsd__anyURI			Address;

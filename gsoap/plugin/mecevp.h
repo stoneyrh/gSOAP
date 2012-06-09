@@ -74,49 +74,62 @@ extern "C" {
 /** Cipher type (triple DES CBC) */
 #define SOAP_MEC_DES_CBC		(0x0010)
 
-/** Cipher type (AES128) */
-#define SOAP_MEC_AES128 		(0x0020)
+/** Cipher type (AES128 CBC) */
+#define SOAP_MEC_AES128_CBC 		(0x0020)
 
-/** Cipher type (AES256) */
-#define SOAP_MEC_AES256 		(0x0040)
+/** Cipher type (AES192 CBC) */
+#define SOAP_MEC_AES192_CBC 		(0x0040)
 
-/** Cipher type (AES512) */
-#define SOAP_MEC_AES512 		(0x0080)
+/** Cipher type (AES256 CBC) */
+#define SOAP_MEC_AES256_CBC 		(0x0080)
 
-/** Encode or decode mode */
+/** Cipher type (AES512 CBC) */
+#define SOAP_MEC_AES512_CBC 		(0x0100)
+
+/** Encode mode */
 #define SOAP_MEC_ENC			(0x1000)
 
 /** Envelope mode */
 #define SOAP_MEC_ENV			(0x2000)
 
+/** Mask */
+#define SOAP_MEC_MASK			(0xFFFF)
+
 /** Enable store (in buffer) instead of streaming mode */
-#define SOAP_MEC_STORE			(0x8000)
+#define SOAP_MEC_STORE			(0x010000)
+
+/** RSA-OAEP padding */
+#define SOAP_MEC_OAEP			(0x020000)
 
 /* Encode and decode types */
 
 /** Symmetric secret key encryption */
-#define SOAP_MEC_ENC_DES_CBC		(SOAP_MEC_DES_CBC | SOAP_MEC_ENC)
-#define SOAP_MEC_ENC_AES128		(SOAP_MEC_AES128  | SOAP_MEC_ENC)
-#define SOAP_MEC_ENC_AES256		(SOAP_MEC_AES256  | SOAP_MEC_ENC)
-#define SOAP_MEC_ENC_AES512		(SOAP_MEC_AES512  | SOAP_MEC_ENC)
+#define SOAP_MEC_ENC_DES_CBC		(SOAP_MEC_DES_CBC    | SOAP_MEC_ENC)
+#define SOAP_MEC_ENC_AES128_CBC		(SOAP_MEC_AES128_CBC | SOAP_MEC_ENC)
+#define SOAP_MEC_ENC_AES192_CBC		(SOAP_MEC_AES192_CBC | SOAP_MEC_ENC)
+#define SOAP_MEC_ENC_AES256_CBC		(SOAP_MEC_AES256_CBC | SOAP_MEC_ENC)
+#define SOAP_MEC_ENC_AES512_CBC		(SOAP_MEC_AES512_CBC | SOAP_MEC_ENC)
 /** Symmetric secret key decryption */
 #define SOAP_MEC_DEC_DES_CBC		(SOAP_MEC_DES_CBC)
-#define SOAP_MEC_DEC_AES128		(SOAP_MEC_AES128)
-#define SOAP_MEC_DEC_AES256		(SOAP_MEC_AES256)
-#define SOAP_MEC_DEC_AES512		(SOAP_MEC_AES512)
+#define SOAP_MEC_DEC_AES128_CBC		(SOAP_MEC_AES128_CBC)
+#define SOAP_MEC_DEC_AES192_CBC		(SOAP_MEC_AES192_CBC)
+#define SOAP_MEC_DEC_AES256_CBC		(SOAP_MEC_AES256_CBC)
+#define SOAP_MEC_DEC_AES512_CBC		(SOAP_MEC_AES512_CBC)
 
 /* Envelope types */
 
 /** Envelope (using RSA public key) encryption */
-#define SOAP_MEC_ENV_ENC_DES_CBC	(SOAP_MEC_ENC_DES_CBC | SOAP_MEC_ENV)
-#define SOAP_MEC_ENV_ENC_AES128         (SOAP_MEC_ENC_AES128  | SOAP_MEC_ENV)
-#define SOAP_MEC_ENV_ENC_AES256         (SOAP_MEC_ENC_AES256  | SOAP_MEC_ENV)
-#define SOAP_MEC_ENV_ENC_AES512         (SOAP_MEC_ENC_AES512  | SOAP_MEC_ENV)
+#define SOAP_MEC_ENV_ENC_DES_CBC	(SOAP_MEC_ENC_DES_CBC    | SOAP_MEC_ENV)
+#define SOAP_MEC_ENV_ENC_AES128_CBC	(SOAP_MEC_ENC_AES128_CBC | SOAP_MEC_ENV)
+#define SOAP_MEC_ENV_ENC_AES192_CBC	(SOAP_MEC_ENC_AES192_CBC | SOAP_MEC_ENV)
+#define SOAP_MEC_ENV_ENC_AES256_CBC	(SOAP_MEC_ENC_AES256_CBC | SOAP_MEC_ENV)
+#define SOAP_MEC_ENV_ENC_AES512_CBC	(SOAP_MEC_ENC_AES512_CBC | SOAP_MEC_ENV)
 /** Envelope (using RSA private key) decryption */
-#define SOAP_MEC_ENV_DEC_DES_CBC	(SOAP_MEC_DEC_DES_CBC | SOAP_MEC_ENV)
-#define SOAP_MEC_ENV_DEC_AES128 	(SOAP_MEC_DEC_AES128  | SOAP_MEC_ENV)
-#define SOAP_MEC_ENV_DEC_AES256 	(SOAP_MEC_DEC_AES256  | SOAP_MEC_ENV)
-#define SOAP_MEC_ENV_DEC_AES512 	(SOAP_MEC_DEC_AES512  | SOAP_MEC_ENV)
+#define SOAP_MEC_ENV_DEC_DES_CBC	(SOAP_MEC_DEC_DES_CBC    | SOAP_MEC_ENV)
+#define SOAP_MEC_ENV_DEC_AES128_CBC 	(SOAP_MEC_DEC_AES128_CBC | SOAP_MEC_ENV)
+#define SOAP_MEC_ENV_DEC_AES192_CBC 	(SOAP_MEC_DEC_AES192_CBC | SOAP_MEC_ENV)
+#define SOAP_MEC_ENV_DEC_AES256_CBC 	(SOAP_MEC_DEC_AES256_CBC | SOAP_MEC_ENV)
+#define SOAP_MEC_ENV_DEC_AES512_CBC 	(SOAP_MEC_DEC_AES512_CBC | SOAP_MEC_ENV)
 
 /** Decryption engine states */
 enum SOAP_MEC_STATE { SOAP_MEC_STATE_NONE, SOAP_MEC_STATE_INIT, SOAP_MEC_STATE_IV, SOAP_MEC_STATE_DECRYPT, SOAP_MEC_STATE_FINAL, SOAP_MEC_STATE_FLUSH };
@@ -153,6 +166,7 @@ struct soap_mec_data
 \******************************************************************************/
 
 int soap_mec_begin(struct soap *soap, struct soap_mec_data *data, int alg, SOAP_MEC_KEY_TYPE *pkey, unsigned char *key, int *keylen);
+int soap_mec_start_alg(struct soap *soap, int alg, const unsigned char *key);
 int soap_mec_start(struct soap *soap, const unsigned char *key);
 int soap_mec_stop(struct soap *soap);
 int soap_mec_end(struct soap *soap, struct soap_mec_data *data);

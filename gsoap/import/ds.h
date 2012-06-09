@@ -217,9 +217,9 @@ struct ds__KeyValueType
 {
 /// CHOICE OF ELEMENTS <choice>
 /// Element reference "http://www.w3.org/2000/09/xmldsig#":DSAKeyValue.
-    struct ds__DSAKeyValueType*          DSAKeyValue                    1;	///< Required element.
+    struct ds__DSAKeyValueType*          DSAKeyValue                    0;	///< Required element.
 /// Element reference "http://www.w3.org/2000/09/xmldsig#":RSAKeyValue.
-    struct ds__RSAKeyValueType*          RSAKeyValue                    1;	///< Required element.
+    struct ds__RSAKeyValueType*          RSAKeyValue                    0;	///< Required element.
 /// TODO: <any namespace="##other">
 ///       Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change and/or insert declarations.
@@ -244,15 +244,15 @@ struct ds__X509DataType
 {
 /// CHOICE OF ELEMENTS <choice>
 /// Element X509IssuerSerial of type "http://www.w3.org/2000/09/xmldsig#":X509IssuerSerialType.
-    struct ds__X509IssuerSerialType*     X509IssuerSerial               1;	///< Required element.
+    struct ds__X509IssuerSerialType*     X509IssuerSerial               0;	///< Required element.
 /// Element X509SKI of type xs:base64Binary.
-    char* /*base64*/                     X509SKI                        1;	///< Required element.
+    char* /*base64*/                     X509SKI                        0;	///< Required element.
 /// Element X509SubjectName of type xs:string.
-    char*                                X509SubjectName                1;	///< Required element.
+    char*                                X509SubjectName                0;	///< Required element.
 /// Element X509Certificate of type xs:base64Binary.
-    char* /*base64*/                     X509Certificate                1;	///< Required element.
+    char* /*base64*/                     X509Certificate                0;	///< Required element.
 /// Element X509CRL of type xs:base64Binary.
-    char* /*base64*/                     X509CRL                        1;	///< Required element.
+    char* /*base64*/                     X509CRL                        0;	///< Required element.
 /// TODO: <any namespace="##other">
 ///       Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change and/or insert declarations.
@@ -267,7 +267,7 @@ struct ds__X509IssuerSerialType
 /// Element X509IssuerName of type xs:string.
     char*                                X509IssuerName                 1;	///< Required element.
 /// Element X509SerialNumber of type xs:integer.
-    int                                  X509SerialNumber               1;	///< Required element.
+    char*                                X509SerialNumber               1;	///< Required element.
 };
 
 /// "http://www.w3.org/2000/09/xmldsig#":DSAKeyValueType is a complexType.

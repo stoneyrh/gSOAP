@@ -12,6 +12,7 @@ wsaapi.*	WS-Addressing (wsa) plugin, see doc/wsa
 wsrmapi.*	WS-ReliableMessaging (wsrm) plugin, see doc/wsrm
 wsseapi.*	WS-Security (wsse) plugin, see doc/wsse
 wsddapi.*	WS-Discovery (wsdd) library, see doc/wsdd
+wstapi.*	WS-Trust (wst) library, see doc/wst
 
 Supporting modules:
 

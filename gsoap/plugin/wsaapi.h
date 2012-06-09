@@ -106,6 +106,10 @@ int soap_wsa_add_NoReply(struct soap *soap);
 int soap_wsa_add_ReplyTo(struct soap *soap, const char *endpoint);
 int soap_wsa_add_FaultTo(struct soap *soap, const char *endpoint);
 int soap_wsa_add_RelatesTo(struct soap *soap, const char *endpoint);
+const char *soap_wsa_From(struct soap *soap);
+const char *soap_wsa_ReplyTo(struct soap *soap);
+const char *soap_wsa_FaultTo(struct soap *soap);
+const char *soap_wsa_RelatesTo(struct soap *soap);
 
 int soap_wsa_check(struct soap *soap);
 int soap_wsa_reply(struct soap *soap, const char *id, const char *action);

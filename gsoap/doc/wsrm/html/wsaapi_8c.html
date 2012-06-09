@@ -78,6 +78,14 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets WS-Addressing FaultTo header for request message.  <a href="#af3c0cd2df48371729a9016684529c5c2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8c.html#a620dbd738394db999101583a0a145288">soap_wsa_add_RelatesTo</a> (struct soap *soap, const char *relatesTo)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets WS-Addressing RelatesTo header.  <a href="#a620dbd738394db999101583a0a145288"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8c.html#aa00788375c5b1a5ce2b72ff2a5cf559d">soap_wsa_From</a> (struct soap *soap)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns WS-Addressing From header.  <a href="#aa00788375c5b1a5ce2b72ff2a5cf559d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8c.html#ad6d9c1656b9f8513b1f0ad422f704842">soap_wsa_ReplyTo</a> (struct soap *soap)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns WS-Addressing ReplyTo header.  <a href="#ad6d9c1656b9f8513b1f0ad422f704842"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8c.html#a42046d0321062ca8374eb5f959c47619">soap_wsa_FaultTo</a> (struct soap *soap)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns WS-Addressing FaultTo header.  <a href="#a42046d0321062ca8374eb5f959c47619"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8c.html#ab6550717687ec8d2bc6f17b967df067c">soap_wsa_RelatesTo</a> (struct soap *soap)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns WS-Addressing RelatesTo header.  <a href="#ab6550717687ec8d2bc6f17b967df067c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8c.html#a35f9b1c46ea38b271b8d26bf8b051640">soap_wsa_check</a> (struct soap *soap)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks the presence and validity of WS-Addressing information headers.  <a href="#a35f9b1c46ea38b271b8d26bf8b051640"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8c.html#a54fda97d2591acd5e2385cc110a50b30">soap_wsa_reply</a> (struct soap *soap, const char *id, const char *action)</td></tr>
@@ -110,6 +118,7 @@ Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8c.html#ab92aaeb39211ba90fac538ea2229dcaa">soap_wsa_anonymousURI</a> = &quot;http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous&quot;</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8c.html#a527b8f505aea8759a9541815373ad3b1">soap_wsa_noneURI</a> = &quot;addressing/none not supported&quot;</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8c.html#a07d15a52cb8f9af248879e5f976951bb">soap_wsa_faultAction</a> = &quot;http://schemas.xmlsoap.org/ws/2004/08/addressing/fault&quot;</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8c.html#a8a30464dd52dad8125adb12bfab55243">soap_wsa_allAnonymousURI</a> = &quot;http://schemas.xmlsoap.org/ws/2004/03/addressing/role/anonymous http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous http://www.w3.org/2005/08/addressing/anonymous&quot;</td></tr>
 </table>
 <hr/><h2>Function Documentation</h2>
 <a class="anchor" id="aa013e3760b97c2efcc71d29b57394501"></a><!-- doxytag: member="wsaapi.c::soap_wsa" ref="aa013e3760b97c2efcc71d29b57394501" args="(struct soap *soap, struct soap_plugin *p, void *arg)" -->
@@ -185,7 +194,7 @@ Variables</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">faultTo</td><td>endpoint URI </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">faultTo</td><td>endpoint URI or NULL for remove faultTo </td></tr>
   </table>
   </dd>
 </dl>
@@ -327,7 +336,7 @@ Variables</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">replyTo</td><td>endpoint URI </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">replyTo</td><td>endpoint URI or NULL for anonymous </td></tr>
   </table>
   </dd>
 </dl>
@@ -622,6 +631,58 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a42046d0321062ca8374eb5f959c47619"></a><!-- doxytag: member="wsaapi.c::soap_wsa_FaultTo" ref="a42046d0321062ca8374eb5f959c47619" args="(struct soap *soap)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* soap_wsa_FaultTo </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns WS-Addressing FaultTo header. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>From string or NULL </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa00788375c5b1a5ce2b72ff2a5cf559d"></a><!-- doxytag: member="wsaapi.c::soap_wsa_From" ref="aa00788375c5b1a5ce2b72ff2a5cf559d" args="(struct soap *soap)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* soap_wsa_From </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns WS-Addressing From header. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>From string or NULL </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a6e22f3358931181a1207f41f4c50f4cc"></a><!-- doxytag: member="wsaapi.c::soap_wsa_header" ref="a6e22f3358931181a1207f41f4c50f4cc" args="(struct soap *soap)" -->
 <div class="memitem">
 <div class="memproto">
@@ -708,7 +769,7 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>UUID "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx" </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>UUID "urn:uuid:xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx" </dd></dl>
 
 </div>
 </div>
@@ -865,6 +926,32 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ab6550717687ec8d2bc6f17b967df067c"></a><!-- doxytag: member="wsaapi.c::soap_wsa_RelatesTo" ref="ab6550717687ec8d2bc6f17b967df067c" args="(struct soap *soap)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* soap_wsa_RelatesTo </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns WS-Addressing RelatesTo header. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>From string or NULL </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a54fda97d2591acd5e2385cc110a50b30"></a><!-- doxytag: member="wsaapi.c::soap_wsa_reply" ref="a54fda97d2591acd5e2385cc110a50b30" args="(struct soap *soap, const char *id, const char *action)" -->
 <div class="memitem">
 <div class="memproto">
@@ -906,6 +993,32 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or fault </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ad6d9c1656b9f8513b1f0ad422f704842"></a><!-- doxytag: member="wsaapi.c::soap_wsa_ReplyTo" ref="ad6d9c1656b9f8513b1f0ad422f704842" args="(struct soap *soap)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* soap_wsa_ReplyTo </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns WS-Addressing ReplyTo header. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>From string or NULL </dd></dl>
 
 </div>
 </div>
@@ -1201,6 +1314,20 @@ Variables</h2></td></tr>
 </div>
 </div>
 <hr/><h2>Variable Documentation</h2>
+<a class="anchor" id="a8a30464dd52dad8125adb12bfab55243"></a><!-- doxytag: member="wsaapi.c::soap_wsa_allAnonymousURI" ref="a8a30464dd52dad8125adb12bfab55243" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* <a class="el" href="wsaapi_8c.html#a8a30464dd52dad8125adb12bfab55243">soap_wsa_allAnonymousURI</a> = &quot;http://schemas.xmlsoap.org/ws/2004/03/addressing/role/anonymous http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous http://www.w3.org/2005/08/addressing/anonymous&quot;</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>anonymous URI of 2004 and 2005 schemas </p>
+
+</div>
+</div>
 <a class="anchor" id="ab92aaeb39211ba90fac538ea2229dcaa"></a><!-- doxytag: member="wsaapi.c::soap_wsa_anonymousURI" ref="ab92aaeb39211ba90fac538ea2229dcaa" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -1257,7 +1384,7 @@ Variables</h2></td></tr>
 </div>
 </div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Sat Oct 22 2011 15:04:50 for gSOAP WS-ReliableMessaging by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Sat Jun 9 2012 13:28:49 for gSOAP WS-ReliableMessaging by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>
