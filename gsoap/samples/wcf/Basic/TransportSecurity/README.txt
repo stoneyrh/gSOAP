@@ -6,9 +6,10 @@ You should have:
 
   C:\WF_WCF_Samples\WCF\Basic\Binding\Basic\TransportSecurity\CS
 
-Open the Basic TransportSecurity WCF C# example client and service.
+Open the Basic TransportSecurity WCF C# example client and service project in
+Visual Studio. Modify the configuration and source code as described below.
 
-Note:
+Notes:
 
   C:> denotes the Windows command line
 
@@ -84,7 +85,10 @@ namespace ...
         smb.HttpGetEnabled = true;
         serviceHost.Description.Behaviors.Add(smb);
   
-        servicehost.Open();
+        serviceHost.Open();
+
+        Console.WriteLine("Press <ENTER> to terminate service.");
+        Console.ReadLine();
       }
     }
   }

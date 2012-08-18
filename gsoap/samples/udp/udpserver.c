@@ -166,3 +166,26 @@ int ns__sendString(struct soap *soap, char *str)
     printf("One-way message %s accepted and serviced\n", soap->header->wsa__MessageID);
   return SOAP_OK;
 }
+
+int SOAP_ENV__Fault(struct soap *soap, char *faultcode, char *faultstring, char *faultactor, struct SOAP_ENV__Detail *detail, struct SOAP_ENV__Code *SOAP_ENV__Code, struct SOAP_ENV__Reason *SOAP_ENV__Reason, char *SOAP_ENV__Node, char *SOAP_ENV__Role, struct SOAP_ENV__Detail *SOAP_ENV__Detail)
+{
+  printf("Received one-way SOAP Fault message:\n");
+  /* populate the fault struct from the operation arguments to print it */
+  soap_fault(soap);
+  /* SOAP 1.1 */
+  soap->fault->faultcode = faultcode;
+  soap->fault->faultstring = faultstring;
+  soap->fault->faultactor = faultactor;
+  soap->fault->detail = detail;
+  /* SOAP 1.2 */
+  soap->fault->SOAP_ENV__Code = SOAP_ENV__Code;
+  soap->fault->SOAP_ENV__Reason = SOAP_ENV__Reason;
+  soap->fault->SOAP_ENV__Node = SOAP_ENV__Node;
+  soap->fault->SOAP_ENV__Role = SOAP_ENV__Role;
+  soap->fault->SOAP_ENV__Detail = SOAP_ENV__Detail;
+  /* set error */
+  soap->error = SOAP_FAULT;
+  soap_print_fault(soap, stdout);
+  return soap_send_empty_response(soap, SOAP_OK); /* HTTP 202 Accepted */
+}
+

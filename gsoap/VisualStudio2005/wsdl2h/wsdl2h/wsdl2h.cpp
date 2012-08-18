@@ -58,6 +58,7 @@ static void options(int argc, char **argv);
 
 int _flag = 0,
     aflag = 0,
+    bflag = 0,
     cflag = 0,
     dflag = 0,
     eflag = 0,
@@ -216,6 +217,9 @@ static void options(int argc, char **argv)
        	    break;
           case 'a':
             aflag = 1;
+       	    break;
+          case 'b':
+            bflag = 1;
        	    break;
           case 'c':
             cflag = 1;
@@ -380,35 +384,36 @@ static void options(int argc, char **argv)
 	    break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-n name] [-N name] [-p|-P] [-q name] [-r proxyhost[:port[:uid:pwd]]] [-s] [-t typemapfile] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-n name] [-N name] [-p|-P] [-q name] [-r proxyhost[:port[:uid:pwd]]] [-s] [-t typemapfile] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
+-b	bi-directional operations to serve one-way response messages (duplex)\n\
 -c      generate C source code\n\
 -d      use DOM to populate xs:any, xs:anyType, and xs:anyAttribute\n\
 -e      don't qualify enum names\n\
 -f      generate flat C++ class hierarchy\n\
 -g      generate global top-level element declarations\n\
 -h      display help info\n\
--i      don't import (advanced option)\n\
 -Ipath  use path to find files\n\
--j	don't generate SOAP_ENV__Header and SOAP_ENV__Detail definitions\n\
--k	don't generate SOAP_ENV__Header mustUnderstand qualifiers\n\
+-i      don't import (advanced option)\n\
+-j      don't generate SOAP_ENV__Header and SOAP_ENV__Detail definitions\n\
+-k      don't generate SOAP_ENV__Header mustUnderstand qualifiers\n\
 -l      display license information\n\
 -m      use xsd.h module to import primitive types\n\
--nname  use name as the base namespace prefix instead of 'ns'\n\
 -Nname  use name as the base namespace prefix for service namespaces\n\
+-nname  use name as the base namespace prefix instead of 'ns'\n\
 -ofile  output to file\n\
--p      create polymorphic types with C++ inheritance from base xsd__anyType\n\
 -P      don't create polymorphic types with C++ inheritance from xsd__anyType\n\
--qname	use name for the C++ namespace of all declarations\n\
+-p      create polymorphic types with C++ inheritance from base xsd__anyType\n\
+-qname  use name for the C++ namespace of all declarations\n\
 -rhost[:port[:uid:pwd]]\n\
         connect via proxy host, port, and proxy credentials\n\
 -s      don't generate STL code (no std::string and no std::vector)\n\
 -tfile  use type map file instead of the default file typemap.dat\n\
 -u      don't generate unions\n\
 -v      verbose output\n\
--w      always wrap response parameters in a response struct (<=1.1.4 behavior)\n\
 -W      suppress warnings\n\
+-w      always wrap response parameters in a response struct (<=1.1.4 behavior)\n\
 -x      don't generate _XML any/anyAttribute extensibility elements\n\
 -y      generate typedef synonyms for structs and enums\n\
 -z1     compatibility with 2.7.6e: generate pointer-based arrays\n\

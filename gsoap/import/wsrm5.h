@@ -1,5 +1,5 @@
 /*
-	wsrm.h
+	wsrm5.h
 
 	Usage: See import/wsrx.h and plugin/wsrmapi.c
 
@@ -12,11 +12,13 @@
 	- Changed //gsoap wsrm schema namespace to 2005 namespace for interoperability
 	- Changed #define SOAP_NAMESPACE_OF_wsrm to 2005 namespace for interoperability
 	- Changed //gsoap wsrm schema namespace directive to import directive
+	- Changed wsrm__SequenceClosed to wsrm__LastMessageNumberExceeded
 	- Added //gsoap wsrm  schema namespace2: http://docs.oasis-open.org/ws-rx/wsrm/200702
 	- Added #import "wsrx5.h" at the end of these definitions
         - Added _XML __any; to struct _wsrm__SequenceAcknowledgement
 	- Added #define SOAP_WSRM_2005
 	- Added LastMessage to wsrm__SequenceType
+	- Added LastMsgNumber to wsrm__TerminateSequenceResponseType
 
 */
 
@@ -101,7 +103,7 @@ typedef struct _wsrm__SequenceAcknowledgement _wsrm__SequenceAcknowledgement;
 
 /// Imported complexType "http://docs.oasis-open.org/ws-rx/wsrm/200702":Identifier from typemap /Users/engelen/Projects/gsoap/WS/WS-typemap.dat.
 /// @brief This type is for elements whose [children] is an anyURI and can have arbitrary attributes.
-// complexType definition intentionally left blank.
+typedef char *_wsrm__Identifier;
 
 /// Imported complexType "http://docs.oasis-open.org/ws-rx/wsrm/200702":Address from typemap /Users/engelen/Projects/gsoap/WS/WS-typemap.dat.
 // complexType definition intentionally left blank.
@@ -133,8 +135,8 @@ enum wsrm__FaultCodes
 	wsrm__UnknownSequence,	///< xs:QName value=""http://docs.oasis-open.org/ws-rx/wsrm/200702":UnknownSequence"
 	wsrm__InvalidAcknowledgement,	///< xs:QName value=""http://docs.oasis-open.org/ws-rx/wsrm/200702":InvalidAcknowledgement"
 	wsrm__MessageNumberRollover,	///< xs:QName value=""http://docs.oasis-open.org/ws-rx/wsrm/200702":MessageNumberRollover"
+	wsrm__LastMessageNumberExceeded,	///< xs:QName value=""http://docs.oasis-open.org/ws-rx/wsrm/200702":wsrm__LastMessageNumberExceeded"
 	wsrm__CreateSequenceRefused,	///< xs:QName value=""http://docs.oasis-open.org/ws-rx/wsrm/200702":CreateSequenceRefused"
-	wsrm__SequenceClosed,	///< xs:QName value=""http://docs.oasis-open.org/ws-rx/wsrm/200702":SequenceClosed"
 	wsrm__WSRMRequired,	///< xs:QName value=""http://docs.oasis-open.org/ws-rx/wsrm/200702":WSRMRequired"
 };
 /// Typedef synonym for enum wsrm__FaultCodes.
@@ -320,6 +322,8 @@ struct wsrm__TerminateSequenceResponseType
 {
 /// Element reference "http://docs.oasis-open.org/ws-rx/wsrm/200702":Identifier.
     char*                                Identifier                     1;	///< Required element.
+/// Element LastMsgNumber of type "http://docs.oasis-open.org/ws-rx/wsrm/200702":MessageNumberType.
+    ULONG64*                             LastMsgNumber                  0;	///< Optional element.
 /// TODO: <any namespace="##other" minOccurs="0" maxOccurs="unbounded">
 /// TODO: Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.

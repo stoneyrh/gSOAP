@@ -59,7 +59,7 @@ extern "C" {
 #endif
 
 /** Plugin identification for plugin registry */
-#define SOAP_WSRM_ID "WS-RM-1.1"
+#define SOAP_WSRM_ID "WS-RM-1.2"
 
 /** Plugin identification for plugin registry */
 extern const char soap_wsrm_id[];
@@ -71,7 +71,7 @@ extern const char soap_wsrm_id[];
 
 /** Max seconds to expire a non-terminated sequence and reclaim its resources */
 #ifndef SOAP_WSRM_MAX_SEC_TO_EXPIRE
-# define SOAP_WSRM_MAX_SEC_TO_EXPIRE 600	/* 10 minutes */
+# define SOAP_WSRM_MAX_SEC_TO_EXPIRE 600	/* 600 sec = 10 minutes */
 #endif
 
 /** Seconds to timeout when sending ack messages to independent acksto server */
@@ -100,9 +100,9 @@ struct soap_wsrm_data
 
 /**
 @enum soap_wsrm_message_state
-@brief Message state (init, nack or ack)
+@brief Message state (nack or ack)
 */
-enum soap_wsrm_message_state { SOAP_WSRM_INIT, SOAP_WSRM_NACK, SOAP_WSRM_ACK };
+enum soap_wsrm_message_state { SOAP_WSRM_NACK, SOAP_WSRM_ACK };
 
 /**
 @struct soap_wsrm_message
@@ -152,6 +152,7 @@ enum soap_wsrm_state
 */
 struct soap_wsrm_sequence
 { struct soap_wsrm_sequence *next;	/**< next sequence */
+  size_t refs;		/**< #refs to sequence */
   short handle;		/**< sequence in use by source (has a handle) */
   short ackreq;		/**< ack requested by dest */
   const char *id;	/**< sequence ID (from dest) */
@@ -173,8 +174,9 @@ typedef struct soap_wsrm_sequence *soap_wsrm_sequence_handle;
 
 int soap_wsrm(struct soap *soap, struct soap_plugin *plugin, void *arg);
 
-int soap_wsrm_create(struct soap *soap, const char *to, const char *acksto, LONG64 expires, const char *wsa_id, soap_wsrm_sequence_handle *seq);
-int soap_wsrm_create_offer(struct soap *soap, const char *to, const char *acksto, const char *id, LONG64 expires, enum wsrm__IncompleteSequenceBehaviorType behavior, const char *wsa_id, soap_wsrm_sequence_handle *seq);
+int soap_wsrm_create(struct soap *soap, const char *to, const char *replyto, LONG64 expires, const char *wsa_id, soap_wsrm_sequence_handle *seq);
+int soap_wsrm_create_offer(struct soap *soap, const char *to, const char *replyto, const char *id, LONG64 expires, enum wsrm__IncompleteSequenceBehaviorType behavior, const char *wsa_id, soap_wsrm_sequence_handle *seq);
+int soap_wsrm_create_offer_acksto(struct soap *soap, const char *to, const char *replyto, const char *acksto, const char *id, LONG64 expires, enum wsrm__IncompleteSequenceBehaviorType behavior, const char *wsa_id, soap_wsrm_sequence_handle *seq);
 
 int soap_wsrm_request_num(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id, const char *wsa_action, ULONG64 num);
 int soap_wsrm_request(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id, const char *wsa_action);
@@ -188,11 +190,13 @@ int soap_wsrm_close(struct soap *soap, soap_wsrm_sequence_handle seq, const char
 
 int soap_wsrm_terminate(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id);
 
+int soap_wsrm_pulse(struct soap *soap, int timeout);
 int soap_wsrm_acknowledgement(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id);
 
 soap_wsrm_sequence_handle soap_wsrm_seq(struct soap *soap);
+void soap_wsrm_seq_release(struct soap *soap, soap_wsrm_sequence_handle seq);
 int soap_wsrm_seq_created(struct soap *soap, soap_wsrm_sequence_handle seq);
-int soap_wsrm_seq_terminated(struct soap *soap, soap_wsrm_sequence_handle seq);
+int soap_wsrm_seq_valid(struct soap *soap, soap_wsrm_sequence_handle seq);
 
 soap_wsrm_sequence_handle soap_wsrm_seq_lookup_id(struct soap *soap, const char *id);
 soap_wsrm_sequence_handle soap_wsrm_seq_lookup(struct soap *soap, const char *id);
@@ -209,7 +213,7 @@ ULONG64 soap_wsrm_msgs(struct soap *soap, const struct soap_wsrm_sequence *seq);
 
 int soap_wsrm_check(struct soap *soap);
 
-int soap_wsrm_reply_num(struct soap *soap);
+int soap_wsrm_reply_num(struct soap *soap, int flag);
 int soap_wsrm_reply(struct soap *soap, const char *wsa_id, const char *wsa_action);
 int soap_wsrm_reply_request_acks(struct soap *soap, const char *wsa_id, const char *wsa_action);
 
@@ -238,7 +242,11 @@ int __wsrm__CloseSequence(struct soap *soap, struct wsrm__CloseSequenceType *req
 
 int __wsrm__CloseSequenceResponse(struct soap *soap, struct wsrm__CloseSequenceResponseType *res);
 
+#ifdef SOAP_WSRM_2005
+int __wsrm__TerminateSequence(struct soap *soap, struct wsrm__TerminateSequenceType *req, struct wsrm__TerminateSequenceType *res);
+#else
 int __wsrm__TerminateSequence(struct soap *soap, struct wsrm__TerminateSequenceType *req, struct wsrm__TerminateSequenceResponseType *res);
+#endif
 
 int __wsrm__TerminateSequenceResponse(struct soap *soap, struct wsrm__TerminateSequenceResponseType *res);
 

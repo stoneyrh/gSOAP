@@ -96,7 +96,7 @@ typedef struct _wsrm__SequenceAcknowledgement _wsrm__SequenceAcknowledgement;
 
 /// Imported complexType "http://docs.oasis-open.org/ws-rx/wsrm/200702":Identifier from typemap /Users/engelen/Projects/gsoap/WS/WS-typemap.dat.
 /// @brief This type is for elements whose [children] is an anyURI and can have arbitrary attributes.
-// complexType definition intentionally left blank.
+typedef char *_wsrm__Identifier;
 
 /// Imported complexType "http://docs.oasis-open.org/ws-rx/wsrm/200702":Address from typemap /Users/engelen/Projects/gsoap/WS/WS-typemap.dat.
 // complexType definition intentionally left blank.

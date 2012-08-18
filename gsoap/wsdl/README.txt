@@ -140,23 +140,24 @@ generated gSOAP source code output when you purchased a commercial license.
 COMMAND LINE OPTIONS
 
 -a      generate indexed struct names for local elements with anonymous types
+-b	bi-directional operations to serve one-way response messages (duplex)
 -c      generate C source code
 -d      use DOM to populate xs:any and xsd:anyType elements
 -e      don't qualify enum names
 -f      generate flat C++ class hierarchy
 -g      generate global top-level element declarations
 -h      display help info
--i      don't import (advanced option)
 -Ipath  use path to find files
+-i      don't import (advanced option)
 -j	don't generate SOAP_ENV__Header and SOAP_ENV__Detail definitions
 -k	don't generate SOAP_ENV__Header mustUnderstand qualifiers
 -l      include license information in output
 -m      use xsd.h module to import primitive types
--nname  use name as the base namespace prefix instead of 'ns'
 -Nname  use name as the base namespace prefix for service namespaces
+-nname  use name as the base namespace prefix instead of 'ns'
 -ofile  output to file
--p      create polymorphic types with C++ inheritance from base xsd__anyType
 -P      don't create polymorphic types with C++ inheritance from xsd__anyType
+-p      create polymorphic types with C++ inheritance from base xsd__anyType
 -qname  use name for the C++ namespace for all service declarations
 -rhost[:port[:uid:pwd]]
         connect via proxy host, port, and proxy credentials
@@ -164,12 +165,13 @@ COMMAND LINE OPTIONS
 -tfile  use type map file instead of the default file typemap.dat
 -u      don't generate unions
 -v      verbose output
--w      always wrap response parameters in a response struct (<=1.1.4 behavior)
 -W      suppress warnings
+-w      always wrap response parameters in a response struct (<=1.1.4 behavior)
 -x      don't generate _XML any/anyAttribute extensibility elements
 -y      generate typedef synonyms for structs and enums
 -z1     compatibility with 2.7.6e: generate pointer-based arrays
 -z2     compatibility with 2.7.15: qualify element/attribute referenced members
+-z3     compatibility with 2.7.16 to 2.8.7: qualify element/attribute references
 -_      don't generate _USCORE (replace with UNICODE _x005f)
 infile.wsdl infile.xsd http://www... list of input sources (if none use stdin)
 

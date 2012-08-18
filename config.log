@@ -30,8 +30,8 @@ Kernel configured for up to 4 processors.
 Processor type: i486 (Intel 80486)
 Processors active: 0 1 2 3
 Primary memory available: 4.00 gigabytes
-Default processor set: 123 tasks, 577 threads, 4 processors
-Load average: 2.66, Mach factor: 1.35
+Default processor set: 117 tasks, 572 threads, 4 processors
+Load average: 0.32, Mach factor: 3.67
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -40,12 +40,19 @@ PATH: /sw/bin
 PATH: /sw/sbin
 PATH: /opt/local/bin
 PATH: /opt/local/sbin
+PATH: /opt/local/bin
+PATH: /opt/local/sbin
 PATH: /usr/bin
 PATH: /bin
 PATH: /usr/sbin
 PATH: /sbin
 PATH: /usr/local/bin
 PATH: /usr/X11/bin
+PATH: /usr/X11R6/bin
+PATH: /Users/engelen/bin
+PATH: /usr/texbin
+PATH: /usr/local/bin
+PATH: /opt/local/bin
 PATH: /usr/X11R6/bin
 PATH: /Users/engelen/bin
 PATH: /usr/texbin
@@ -189,8 +196,8 @@ configure:4184: checking lex library
 configure:4203: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in cclEPiCI.o
-      _main in cclEPiCI.o
+      _yylex in ccQSW4zi.o
+      _main in ccQSW4zi.o
 ld: symbol(s) not found for architecture x86_64
 collect2: ld returned 1 exit status
 configure:4209: $? = 1
@@ -2699,7 +2706,7 @@ configure:6895: checking for gethostbyname_r
 configure:6951: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in ccqGstk2.o
+      _main in cc6ksQL9.o
 ld: symbol(s) not found for architecture x86_64
 collect2: ld returned 1 exit status
 configure:6957: $? = 1

@@ -97,7 +97,7 @@ ref     = <http://docs.oasis-open.org/wsrm/2004/06/reference-1.1.xsd>
 wsrm__MessageNumberType		= | ULONG64
 wsrm__DetailType		= | struct SOAP_ENV__Detail
 _wsrm__UnsupportedElement	= | _QName | _QName
-_wsrm__Identifier		= | char*
+_wsrm__Identifier		= typedef char *_wsrm__Identifier; | char*
 _wsrm__Address			= | char*
 _wsrm__Expires			= #import "custom/duration.h" | xsd__duration
 

@@ -100,6 +100,7 @@ class Service
     Service();
     void generate(Types&);
     void add_import(const char*);
+    void del_import(const char*);
 };
 
 typedef map<const char*, Service*, ltstr> MapOfStringToService;
@@ -114,6 +115,8 @@ class Definitions
     void compile(const wsdl__definitions&);
   private:
     void analyze(const wsdl__definitions&);
+    void analyze_headers(Service*, wsdl__ext_input*, wsdl__ext_output*);
+    void analyze_faults(Service*, Operation*, vector<wsdl__binding_operation>::const_iterator&);
     void generate();
 };
 
