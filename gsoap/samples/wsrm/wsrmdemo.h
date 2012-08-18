@@ -7,7 +7,7 @@
 	See usage comments below.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2010 Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2012 Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -55,7 +55,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	finally terminated. Sequences can expire, to allow local resources to
 	be reclaimed.
 
-	WS-ReliableMessaging is not useful to improve the reliability of
+	WS-ReliableMessaging may not be useful to improve the reliability of
 	request-response message exchanges between two parties over HTTP, since
 	receiving a response obviously indicates successful delivery of the
 	request.
@@ -77,13 +77,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	messages should be resend. Acknowledgements can also be send to a
 	destination, the AcksTo destination server.
 
-	This example also uses WS-Addressing to indicate the ReplyTo and
-	FaultTo destinations. WS-Addressing enables forwarding/relaying of
-	service responses (ReplyTo) and faults (FaultTo) to other services. At
-	the client side, a relayed response or fault will not be received and
-	an HTTP ACCEPTED (code 202) is delivered instead, indicating that the
-	relay was successful.
-
 	This header file illustrates two gSOAP soapcpp2 tooling tricks to
 	enable services to accept SOAP Fault messages (the SOAP_ENV__Fault
 	message definition below) and to create a one-way service operation to
@@ -99,26 +92,15 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	Alternative compile step, to use SOAP-over-UDP testing (no HTTP!):
 	cc -Iplugin -DWITH_UDP -o wsrmdemo_udp wsrmdemo.c stdsoap2.c soapC.c soapClient.c soapServer.c plugin/wsaapi.c plugin/wsrmapi.c custom/duration.c
 
-	Alternative compile step, to use HTTPS and Basic Authentication:
+	Alternative compile step, to use OpenSSL for HTTPS:
 	cc -Iplugin -DWITH_OPENSSL -o wsrmdemo_ssl wsrmdemo.c stdsoap2.c soapC.c soapClient.c soapServer.c plugin/wsaapi.c plugin/wsrmapi.c custom/duration.c -lssl -l crypto
+	With SSL enabled, please make sure that server.pem, cacert.pem, and
+	client.pem are copied with your executable.
 
 	Usage:
 
-	After compilation, start the main server at port 11001:
-	> ./wsrmdemo 11001
-
-	In a new window, start an ack service (AcksTo) at port 11002:
-	> ./wsrmdemo 11002
-	This service accepts WS-RM acknowledgements from the main server when
-	the client uses option 'a' to redirect acks (this is the AcksTo server)
-
-	In a new window, start a reply service (ReplyTo) at port 11003:
-	> ./wsrmdemo 11003
-	This service accepts relayed response messages from the main service.
-
-	In a new window, start a fault service (FaultTo) at port 11004:
-	> ./wsrmdemo 11004
-	This service handles faults relayed from the main service.
+	After compilation, start the main server:
+	> ./wsrmdemo
 
 	In a new window, run the client:
 
@@ -128,114 +110,28 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	piggy-backed headers, so the client keeps track of ack'ed messages that
 	do not need to be resend.
 
-	> ./wsrmdemo hello f
-	This example shows the main server returning "hello" to the client.
-	The WS-Addressing From, ReplyTo, and WS-RM Acksto headers are set to
-	the client's address. Thus, the behavior is the same as above with the
-	response with the piggy-backed WS-RM message acknowledgements is
-	returned to the client.
-
-	> ./wsrmdemo hello a
-	This example shows the main server returning "hello" to the client.
-	WS-RM message acknowledgements are send to the AcksTo server. The
-	client does not receive acks, so it issues more resends than stricly
-	necessary.
-
-	> ./wsrmdemo hello fa
-	Same as above, but also sets the WS-Addessing From header and sets the
-	Reply header to the client's address. This has no effect on the relayed
-	WS-RM message acknowledgement messages to the AcksTo server.
-
-	> ./wsrmdemo hello r
-	This example shows the main server returning "hello" to the ReplyTo
-	service. WS-RM message acknowledgements are returned to the client.
-	The client receives WS-RM message acknowledgements and can keep track
-	of ack'ed messages that do not need to be resend. Note on
-	SOAP-over-UDP: the client's first message will timeout because it uses
-	two-way messages. An ack is returned for the second message.
-
-	> ./wsrmdemo hello fr
-	Same as above, but also sets the WS-Addessing From header. This has no
-	effect on the relayed response and acknowledgement messages.
-
-	> ./wsrmdemo hello ra
-	This example shows the main server returning "hello" to the ReplyTo
-	service. WS-RM message acknowledgements are send to the AcksTo server.
-	The client does not receive acks, so it issues more resends than
-	stricly necessary. Note on SOAP-over-UDP: the client will timeout
-	because it uses two-way messages and no response is received.
-	
-	> ./wsrmdemo hello fra
-	Same as above, but also sets the WS-Addessing From header. This has no
-	effect on the relayed response and acknowledgement messages.
-
-	> ./wsrmdemo hello n
-	This example shows the server accepting the message without reply.
-	WS-RM message acknowledgements are returned to the client. Note on
-	SOAP-over-UDP: the client's first message will timeout because it
-	expects two-way messages. An ack is returned for the second message.
-	Because no reply is produced (messages are one-way), the client uses
-	soap_wsrm_create() without offer.
-
-	> ./wsrmdemo hello fn
-	Same as above, but also sets the WS-Addessing From header. This has no
-	effect on the relayed acknowledgement messages.
-
-	> ./wsrmdemo hello na
-	This example shows the server accepting the message without reply.
-	WS-RM message acknowledgements are send to the AcksTo server. The
-	client does not receive acks, so it issues more resends than stricly
-	necessary. Note on SOAP-over-UDP: the client will timeout because it
-	exects two-way messages and no response is received. An ack is returned
-	for the second message. Because no reply is produced (messages are
-	one-way), the client uses soap_wsrm_create() without offer.
-
-	> ./wsrmdemo hello fna
-	Same as above, but also sets the WS-Addessing From header. This has no
-	effect on the relayed acknowledgement messages.
-
-	> ./wsrmdemo error
-	This example shows the main server simulating a server operation fault.
-	The error is considered fatal, so the server terminates the sequence.
-
-	> ./wsrmdemo error e
-	This example shows the main server simulating a server operation fault.
-	The fault is relayed to the FaultTo service. The error is considered
-	fatal, so the server terminates the sequence.
-
-	> ./wsrmdemo error ef
-	This example shows the main server simulating a server operation fault.
-	The fault is relayed to the FaultTo service. Accepts with acks are
-	returned (to the from address), so the sequence terminates normally.
+	> ./wsrmdemo hello d
+	This example shows the main server returning "hello" to the client in
+	duplex mode. The client uses a callback service to accept response
+	messages on a port.
 
 	> ./wsrmdemo fault
-	This example shows the main server simulating a server operation fault.
-	The message was received, so even though an error occurred the message
-	was successfully received and counts as part of the sequence.
+	Simulates a fault generated by the server. The fault is non-fatal and
+	processing resumes until the sequence is terminated.
 
-	> ./wsrmdemo fault a
-	This example shows the main server simulating a server operation fault.
-	The message was received, so even though an error occurred the message
-	was successfully received and counts as part of the sequence. WS-RM
-	message acknowledgements are send to the AcksTo server. The client does
-	not receive acks, so it issues more resends than stricly necessary.
+	> ./wsrmdemo fault d
+	Same, in duplex mode.
 
-	> ./wsrmdemo fault n
-	This example shows the server accepting the message without reply. In
-	this case a fault is generated that is not fatal.
+	> ./wsrmdemo error
+	Simulates an error generated by the server. The error is fatal and
+	further processing is refused by the server.
 
-	> ./wsrmdemo fault ef
-	This example shows the main server simulating a server operation fault.
-	The fault is relayed to the FaultTo service. Accepts with acks are
-	returned (to the from address), so the sequence terminates normally.
-
-	> ./wsrmdemo fault e
-	Similar to the above, but no acknowledgements are received and the
-	sequence will fail to terminate normally.
+	> ./wsrmdemo error d
+	Same, in duplex mode.
 
 	Note 1: when the ReplyTo service is down, the response cannot be
-	relayed and the client (or fault service) will be informed about the
-	failure.
+	relayed and the client (or the fault service when FaultTo is set) will
+	be informed about the failure.
 
 	Note 2: HTTP Basic authentication can be enabled by setting the
 	following values in wsrmdemo.c:
@@ -256,45 +152,23 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	messaging is not demonstrated. This also leads to timeouts at the
 	client side when no response is received (and no acks or faults). To
 	implement one-way messaging, please refer to the documentation.
-
 */
 
 #import "soap12.h"
 #import "wsrm.h"
 #import "wsa5.h"
 
-//gsoap ns service name:	wsrmdemo demonstrates WS-Addressing capabilities
+//gsoap ns service name:	wsrmdemo demonstrates WS-ReliableMessaging capabilities
 //gsoap ns service port:	http://localhost:11001
 //gsoap ns service type:	wsrmdemoPort
 //gsoap ns service namespace:	urn:wsrmdemo
 
-/* STEP 1: generate SOAP-ENV:Fault struct via a one-way service operation.
- * This allows us to implement a one-way service operation that accepts Faults.
- * Because a service operation input parameters has a corresponding struct, we
- * automatically generate the (original) SOAP_ENV__Fault struct on the fly!
- * Note: it is important to associate the wsa fault action with this operation
- * as defined below. The action is version-dependent, here we use 2005/08.
- */ 
-
-//gsoap SOAP_ENV service method-action: Fault http://www.w3.org/2005/08/addressing/soap/fault
-int SOAP_ENV__Fault
-(       _QName			 faultcode,		// SOAP 1.1
-        char			*faultstring,		// SOAP 1.1
-        char			*faultactor,		// SOAP 1.1
-        struct SOAP_ENV__Detail	*detail,		// SOAP 1.1
-        struct SOAP_ENV__Code	*SOAP_ENV__Code,	// SOAP 1.2
-        struct SOAP_ENV__Reason	*SOAP_ENV__Reason,	// SOAP 1.2
-        char			*SOAP_ENV__Node,	// SOAP 1.2
-        char			*SOAP_ENV__Role,	// SOAP 1.2
-        struct SOAP_ENV__Detail	*SOAP_ENV__Detail,	// SOAP 1.2
-	void
-);
-
-/* STEP 2: for the server side we need to generate a response struct for each
- * operation to implement one-way service response operations that can be
- * relayed. Because the service operation has a corresponding struct, we can
- * use that struct as a response parameter for the second two-way service
- * operation. This step is required to implement a wsa-capable server.
+/* We need to generate a response struct for each operation to implement
+ * one-way service response operations that can be relayed. Because the service
+ * operation has a corresponding struct, we can use that struct as a response
+ * parameter for the second two-way service operation. This step is required to
+ * implement a wsa-capable server. Future changes to wsdl2h will make manual
+ * addition of these one-way operations unnecessary and automated.
  */
 
 //gsoap ns service method-header-part:     wsrmdemoResponse wsa5__MessageID

@@ -15,6 +15,7 @@ COFLAGS=-O2
 CWFLAGS=-Wall -Wno-deprecated-declarations
 CIFLAGS=-I. -I../../../.. -I../../../../plugin
 CMFLAGS=-DWITH_DOM -DWITH_OPENSSL
+#CMFLAGS=-DDEBUG -DWITH_DOM -DWITH_OPENSSL
 CFLAGS= $(CWFLAGS) $(COFLAGS) $(CIFLAGS) $(CMFLAGS)
 all:		cacert.cer calculator
 calculator:	calculator.h calculator.cpp $(SOAPH) $(SOAPC)
@@ -29,5 +30,5 @@ clean:
 		rm -f *.o soapH.h soapStub.h soapC.* soapClient.* soapServer.* soap*Proxy.* soap*Service.* soap*Object.*
 distclean:
 		rm -f *.o soapH.h soapStub.h soapC.* soapClient.* soapServer.* soap*Proxy.* soap*Service.* soap*Object.*
-		rm -f *.wsdl *.xsd *.xml *.nsmap *.log
+		rm -f *.xml *.nsmap *.log
 		rm -f calculator

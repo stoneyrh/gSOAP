@@ -63,6 +63,7 @@ int mflag = 0;		/* when set, generate code that requires array/binary classes to
 int nflag = 0;		/* when set, names the namespaces global struct '%NAME%_namespaces */
 int lflag = 0;		/* when set, create library */
 int Lflag = 0;		/* when set, don't generate soapClientLib/soapServerLib */
+int Qflag = 0;		/* when set, use C++ namespaces for custom serializers */
 int sflag = 0;		/* when set, generate strict validation checks */
 int Sflag = 0;		/* when set, generate only files for servers */
 int Tflag = 0;		/* when set, generates server auto-test code */
@@ -175,7 +176,8 @@ main(int argc, char **argv)
 -m      generate Matlab(tm) code for MEX compiler\n\
 -n      use service name to rename service functions and namespace table\n\
 -pname  save files with new prefix name instead of 'soap'\n\
--qname  use name as the C++ namespace of all declarations\n\
+-Qname  use name as the C++ namespace for declarations, including custom serializers\n\
+-qname  use name as the C++ namespace for declarations, excluding custom serializers\n\
 -s      generate deserialization code with strict XML validation checks\n\
 -t      generate code for fully xsi:type typed SOAP/XML messaging\n\
 -u	uncomment comments in WSDL/schema output by suppressing XML comments\n\
@@ -263,6 +265,9 @@ infile	header file to parse (or stdin)\n\
 						else
 							execerror("Option -p requires an output file name prefix");
 						break;
+					case 'Q':
+						Qflag = 1;
+						/* fall through */
 					case 'q':
 						a++;
 						g = 0;

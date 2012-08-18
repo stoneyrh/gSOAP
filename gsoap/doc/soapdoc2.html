@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.9 User Guide</title>
+<title>gSOAP 2.8.10 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.9 User Guide </h1>
+<h1 align="center">gSOAP 2.8.10 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Jun  9, 2012
+<h3 align="center">Aug 18, 2012
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -191,7 +191,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc11.3.1"
 >11.3.1&nbsp; <font color="#0000FF">How to Use Multiple C/C++ Types for a Single Primitive XSD Type</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc11.3.2"
->11.3.2&nbsp; <font color="#0000FF">How to use Wrapper Classes to Specify Polymorphic Primitive Types</font></a><br />
+>11.3.2&nbsp; <font color="#0000FF">How to use C++ Wrapper Classes to Specify Polymorphic Primitive Types</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc11.3.3"
 >11.3.3&nbsp; <font color="#0000FF">XSD Schema Type Decoding Rules</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc11.3.4"
@@ -4892,6 +4892,7 @@ The <i>wsdl2h</i> command-line options are:
 <table>
 <tr><td align="left"><font color="#FF0000"><b>Option</b></font>	</td><td align="left"><font color="#FF0000"><b>Description</b></font> </td></tr>
 <tr><td align="left"><i>-a</i>	</td><td align="left">generate indexed struct names for local elements with anonymous types </td></tr>
+<tr><td align="left"><i>-b</i>	</td><td align="left">bi-directional operations to serve one-way response messages (duplex)</td></tr>
 <tr><td align="left"><i>-c</i>	</td><td align="left">generate C source code </td></tr>
 <tr><td align="left"><i>-d</i>	</td><td align="left">use DOM to populate xs:any and xsd:anyType elements </td></tr>
 <tr><td align="left"><i>-e</i>	</td><td align="left">don't qualify enum names </td></tr>
@@ -4900,17 +4901,17 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td align="left"><i>-f</i>      </td><td align="left">generate flat C++ class hierarchy for schema extensions </td></tr>
 <tr><td align="left"><i>-g</i>	</td><td align="left">generate global top-level element declarations </td></tr>
 <tr><td align="left"><i>-h</i>      </td><td align="left">print help information </td></tr>
-<tr><td align="left"><i>-i</i>      </td><td align="left">don't import </td></tr>
 <tr><td align="left"><i>-I path</i>	</td><td align="left">use path to locate source files for <i>#import</i> </td></tr>
+<tr><td align="left"><i>-i</i>      </td><td align="left">don't import (advanced option)</td></tr>
 <tr><td align="left"><i>-j</i>	</td><td align="left">don't generate <i>SOAP_ENV__Header</i> and <i>SOAP_ENV__Detail</i> definitions </td></tr>
 <tr><td align="left"><i>-k</i>	</td><td align="left">don't generate <i>SOAP_ENV__Header</i> <i>mustUnderstand</i> qualifiers </td></tr>
 <tr><td align="left"><i>-l</i>	</td><td align="left">include license information in output </td></tr>
 <tr><td align="left"><i>-m</i>	</td><td align="left">use xsd.h module to import primitive types </td></tr>
-<tr><td align="left"><i>-n name</i>	</td><td align="left">use <i>name</i> as the base namespace prefix name instead of <i>ns</i> </td></tr>
 <tr><td align="left"><i>-N name</i>	</td><td align="left">use <i>name</i> as the base namespace prefix name for service namespaces </td></tr>
+<tr><td align="left"><i>-n name</i>	</td><td align="left">use <i>name</i> as the base namespace prefix name instead of <i>ns</i> </td></tr>
 <tr><td align="left"><i>-o file</i>  </td><td align="left">output to file </td></tr>
-<tr><td align="left"><i>-p</i>      </td><td align="left">create polymorphic types with C++ inheritance hierarchy from base <i>xsd__anyType</i> </td></tr>
 <tr><td align="left"><i>-P</i>      </td><td align="left">don't create polymorphic types with C++ inheritance hierarchy from <i>xsd__anyType</i> </td></tr>
+<tr><td align="left"><i>-p</i>      </td><td align="left">create polymorphic types with C++ inheritance hierarchy from base <i>xsd__anyType</i> </td></tr>
 <tr><td align="left"></td><td align="left">This is automatically performed when WSDL contains polymorphic definitions </td></tr>
 <tr><td align="left"><i>-q name</i>	</td><td align="left">use <i>name</i> for the C++ namespace of all declarations </td></tr>
 <tr><td align="left"><i>-r host[:port[:uid:pwd]]</i>      </td><td align="left">connect via proxy host, port, and proxy credentials </td></tr>
@@ -4918,12 +4919,13 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td align="left"><i>-t file</i>  </td><td align="left">use type map file instead of the default file typemap.dat </td></tr>
 <tr><td align="left"><i>-u</i>	</td><td align="left">don't generate unions </td></tr>
 <tr><td align="left"><i>-v</i>      </td><td align="left">verbose output </td></tr>
-<tr><td align="left"><i>-w</i>      </td><td align="left">always wrap response parameters in a response struct </td></tr>
 <tr><td align="left"><i>-W</i>	</td><td align="left">suppress warnings </td></tr>
+<tr><td align="left"><i>-w</i>      </td><td align="left">always wrap response parameters in a response struct </td></tr>
 <tr><td align="left"><i>-x</i>	</td><td align="left">don't generate <i>_XML any/anyAttribute</i> extensibility elements </td></tr>
 <tr><td align="left"><i>-y</i>	</td><td align="left">generate typedef synonyms for structs and enums </td></tr>
 <tr><td align="left"><i>-z1</i>     </td><td align="left">compatibility with 2.7.6e: generate pointer-based arrays</td></tr>
 <tr><td align="left"><i>-z2</i>	</td><td align="left">compatibility with 2.7.15: qualify element/attribute referenced members</td></tr>
+<tr><td align="left"><i>-z3</i>     </td><td align="left">compatibility with 2.7.16 to 2.8.7: qualify element/attribute references</td></tr>
 <tr><td align="left"><i>-_</i>	</td><td align="left">don't generate <i>_USCORE</i> (replace with UNICODE _x005f) </td></tr>
 <tr><td align="left"><i>-?</i>      </td><td align="left">print help information </td></tr></table>
 
@@ -4994,21 +4996,70 @@ XML Schema types are associated with an optional C/C++ type declaration, a use r
 
 <div class="p"><!----></div>
 When a type binding requires only the usage to be changed, the
-declaration part can be replaced by elipsis ..., as in:
+declaration part can be given by an elipsis ..., as in:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
 prefix__type = ... &#124; use &#124; ptr-use
 </td></tr></table><br></tt>
-This ensure that the wsdl2h-generated type definition is preserved,
+This ensures that the wsdl2h-generated type definition is preserved,
 while the use and ptr-use are remapped.
-For example, this is useful to map schema polymorphic types to C types,
-where we need to be able to both handle a base type and its extensions
-as per schema extensibility. Say base type ns:base allows derived
-extensions and we need to map this to C types as follows:
+
+<div class="p"><!----></div>
+This method is useful to serialize dynamic types in C, where elements types int
+XML carry the <tt>xsi:type</tt> attribute.
+
+<div class="p"><!----></div>
+The following example illustrates an &#228;ny" type mapping for the
+<tt>ns:sometype</tt> XSD type in a schema. This type will be replaced with a &#228;ny"
+type wrapper that supports dynamic serialization with <tt>xsi:type</tt>:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
-ns__base = ... &#124; int __type_base; void*
+[ <br />
+struct __any <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;int __type; <br />
+&nbsp;&nbsp;&nbsp;void *__item; <br />
+} <br />
+] <br />
+xsd__anyType = ... &#124; struct __any &#124; struct __any
 </td></tr></table><br></tt>
-where <tt>__type_base</tt> and <tt>void*</tt> are used to (de)serialize any data type,
-including base and its derived types.
+where <tt>__type</tt> and <tt>__item</tt> are used to (de)serialize any data type in the wrapper,
+including base and its derived types based on <tt>xsi:type</tt> attribuation.
+
+<div class="p"><!----></div>
+To support complexType extensions that are dynamically bound in C code, i.e.
+polymorphic types based on inheritance hierarchies, we can redeclare the base
+type of a hierarchy as a wrapper type and use the <i>__type</i> to serialize
+base or derived types. One addition is needed to support base type
+serialization without the use of <tt>xsi:type</tt> attributes. The absence of this attribute requires the serialization of the base type.
+
+<div class="p"><!----></div>
+Basically, we need to be able to both handle a base type and its extensions
+as per schema extensibility. Say base type <tt>ns:base</tt> is a complexType that is extended by several other complexTypes. To implement dynamic binding in C to serialize the base type and derived types, we define:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
+[ <br />
+struct __ns__base <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;int __type; <br />
+&nbsp;&nbsp;&nbsp;void *__item; <br />
+&nbsp;&nbsp;&nbsp;struct ns__base *__self; <br />
+} <br />
+] <br />
+ns__base = ... &#124; struct __ns__base &#124; struct __ns__base
+</td></tr></table><br></tt>
+The <tt>__self</tt> field refers to the element tag (basically a struct member name)
+to which the <tt>ns:base</tt> type is associated. So for example, we see in the soapcpp2-generated output:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>struct</b>&nbsp;ns__data <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;... <br />
+&nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;__ns__base name; <br />
+&nbsp;&nbsp;&nbsp;... <br />
+};
+</td></tr></table><br></i>
+where <i>__item</i> represents <i>name</i> when the <i>__ns__base</i> is
+serialized with an <tt>xsi:type</tt> attribute, and <i>__self</i> represents
+<i>name</i> when the <i>__ns__base</i> is serialized wwithout an <tt>xsi:type</tt>
+attribute. Therefore, the dynamic binding defaults to <i><b>struct</b>&nbsp;ns__base
+*__self</i> when no dynamic type information in XML is available.
 
 <div class="p"><!----></div>
 Additional data and function members can be provided to extend a
@@ -7263,7 +7314,7 @@ multiple declarations for a single XML Schema type.
 
 <div class="p"><!----></div>
 		      <h4><a name="tth_sEc11.3.2">
-11.3.2</a>&nbsp;&nbsp;<font color="#0000FF">How to use Wrapper Classes to Specify Polymorphic Primitive Types</font></h4><a name="sec:primclass">
+11.3.2</a>&nbsp;&nbsp;<font color="#0000FF">How to use C++ Wrapper Classes to Specify Polymorphic Primitive Types</font></h4><a name="sec:primclass">
 </a>
 
 <div class="p"><!----></div>
@@ -9383,7 +9434,7 @@ elements in a container.
 
 <div class="p"><!----></div>
 Polymorphic arrays (arrays of polymorphic element types) can be encoded when
-declared as an array of pointers to class instances.  and lists.  For example:
+declared as an array of pointers to class instances. For example:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>class</b>&nbsp;ns__Object <br />
 {<br />
@@ -9401,11 +9452,38 @@ declared as an array of pointers to class instances.  and lists.  For example:
 &nbsp;&nbsp;&nbsp;ns__Object **__ptr; // pointer to array of pointers to Objects <br />
 &nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;__size; // number of Objects pointed to <br />
 &nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;__offset; // optional SOAP 1.1 array offset <br />
-}; 
+}; <br />
+<b>class</b>&nbsp;ns__Objects <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>public</b>: <br />
+&nbsp;&nbsp;&nbsp;std::vector &lt; ns__Object* &gt;  objects; // vector of pointers to objects <br />
+};
 </td></tr></table><br></i>
 The pointers in the array can point to the <i>ns__Object</i> base class or
 <i>ns__Data</i> derived class instances which will be serialized and
 deserialized accordingly in SOAP.  That is, the array elements are polymorphic.
+
+<div class="p"><!----></div>
+Since we can't use dynamic binding to support polymorphism in C, another
+mechanism is available based on the serialization of void pointers, that is, dynamic serialization of data referenced by void pointers, see Section&nbsp;<a href="#sec:void">11.9</a>.
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>struct</b>&nbsp;__wrapper <br />
+{<br />
+&nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;__type; // type T represented by SOAP_TYPE_T <br />
+&nbsp;&nbsp;&nbsp;<b>void</b>&nbsp;*__item; // pointer to data of type T <br />
+}; <br />
+<b>struct</b>&nbsp;ArrayOfObject <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;__wrapper __ptr; // pointer to array of pointers to Objects <br />
+&nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;__size; // number of Objects pointed to <br />
+&nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;__offset; // optional SOAP 1.1 array offset <br />
+}; <br />
+<b>struct</b>&nbsp;ns__Objects <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;__size; <br />
+&nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;__wrapper *objects; // array of pointers to wrapped types <br />
+};
+</td></tr></table><br></i>
 
 <div class="p"><!----></div>
 		      <h4><a name="tth_sEc11.11.10">
@@ -11760,7 +11838,10 @@ one-way messages in the header file:
 //gsoap ns service method-header-part:          bcastStringResponse wsa__RelatesTo <br />
 <b>int</b>&nbsp;ns__bcastStringResponse(<b>char</b>&nbsp;*res, <b>void</b>);
 </td></tr></table><br></i>
-The cliend code includes a loop to receive response messages until a timeout occurs:
+To obtain response one-way operations, use the wsdl2h <i>-b</i> option.
+
+<div class="p"><!----></div>
+The client code includes a loop to receive response messages until a timeout occurs:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>struct</b>&nbsp;soap soap; <br />
 <b>struct</b>&nbsp;SOAP_ENV__Header header; <br />
@@ -11873,6 +11954,9 @@ loop.  Because UDP does not have the equivalent of an accept the messages
 cannot be dispatched to threads, the <i>soap_serve</i> waits for a message and
 immediately accepts it. You can use a receive timeout to make <i>soap_serve</i>
 non-blocking.
+
+<div class="p"><!----></div>
+To obtain response one-way operations from a WSDL, use the wsdl2h <i>-b</i> option. This produces additional one-way operations to support asynchronous handling of response messages in the same way requests are handled.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc18.7">
@@ -15766,5 +15850,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On  9 Jun 2012, 14:32.</small>
+version 4.00.<br />On 18 Aug 2012, 14:57.</small>
 </html>

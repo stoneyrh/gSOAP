@@ -93,7 +93,7 @@ void Definitions::analyze(const wsdl__definitions &definitions)
     soap__styleChoice soap__binding_style = rpc;
     if (soap__binding_ && soap__binding_->style)
       soap__binding_style = *soap__binding_->style;
-    // TODO: need to find the Policy of portType
+    // TODO: need to find the Policy of portType, though never used...
     // const wsp__Policy *portType_policy = NULL;
     // /definitions/binding/wsp:Policy and wsp:PolicyReference
     /*
@@ -174,132 +174,132 @@ void Definitions::analyze(const wsdl__definitions &definitions)
             if (URI)
             { const char *prefix = types.nsprefix(service_prefix, URI);
               const char *name = types.aname(NULL, NULL, (*binding).name); // name of service is binding name
-              Service *s = services[prefix];
-              if (!s)
-              { s = services[prefix] = new Service();
-                s->prefix = prefix;
-                s->URI = URI;
-                s->name = name;
-                s->transport = soap__binding_transport;
+              Service *service = services[prefix];
+              if (!service)
+              { service = services[prefix] = new Service();
+                service->prefix = prefix;
+                service->URI = URI;
+                service->name = name;
+                service->transport = soap__binding_transport;
                 if ((*binding).portTypePtr())
-                  s->type = types.aname(NULL, NULL, (*binding).portTypePtr()->name);
+                  service->type = types.aname(NULL, NULL, (*binding).portTypePtr()->name);
                 else
-                  s->type = NULL;
+                  service->type = NULL;
                 // collect policies for the bindings
                 for (vector<wsp__Policy>::const_iterator p = (*binding).wsp__Policy_.begin(); p != (*binding).wsp__Policy_.end(); ++p)
-                  s->policy.push_back(&(*p));
+                  service->policy.push_back(&(*p));
                 for (vector<wsp__PolicyReference>::const_iterator r = (*binding).wsp__PolicyReference_.begin(); r != (*binding).wsp__PolicyReference_.end(); ++r)
-                  s->policy.push_back((*r).policyPtr());
+                  service->policy.push_back((*r).policyPtr());
                 // collect policies for the service endpoints
-                for (vector<wsdl__service>::const_iterator service = definitions.service.begin(); service != definitions.service.end(); ++service)
-                { for (vector<wsp__Policy>::const_iterator p = (*service).wsp__Policy_.begin(); p != (*service).wsp__Policy_.end(); ++p)
-                    s->policy.push_back(&(*p));
-                  for (vector<wsp__PolicyReference>::const_iterator r = (*service).wsp__PolicyReference_.begin(); r != (*service).wsp__PolicyReference_.end(); ++r)
-                    s->policy.push_back((*r).policyPtr());
+                for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
+                { for (vector<wsp__Policy>::const_iterator p = (*s).wsp__Policy_.begin(); p != (*s).wsp__Policy_.end(); ++p)
+                    service->policy.push_back(&(*p));
+                  for (vector<wsp__PolicyReference>::const_iterator r = (*s).wsp__PolicyReference_.begin(); r != (*s).wsp__PolicyReference_.end(); ++r)
+                    service->policy.push_back((*r).policyPtr());
 	        }
               }
-              for (vector<wsdl__service>::const_iterator service = definitions.service.begin(); service != definitions.service.end(); ++service)
-              { for (vector<wsdl__port>::const_iterator port = (*service).port.begin(); port != (*service).port.end(); ++port)
+              for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
+              { for (vector<wsdl__port>::const_iterator port = (*s).port.begin(); port != (*s).port.end(); ++port)
                 { if ((*port).bindingPtr() == &(*binding))
                   { if ((*port).soap__address_ && (*port).soap__address_->location)
-                      s->location.insert((*port).soap__address_->location);
+                      service->location.insert((*port).soap__address_->location);
 		    else if ((*port).wsa__EndpointReference && (*port).wsa__EndpointReference->Address)
-                      s->location.insert((*port).wsa__EndpointReference->Address);
+                      service->location.insert((*port).wsa__EndpointReference->Address);
                     // TODO: HTTP address for HTTP operations
                     // if ((*port).http__address_)
                       // http__address_location = http__address_->location;
                     // collect service documentation
-                    if ((*service).documentation)
-                      s->service_documentation[(*service).name] = (*service).documentation;
+                    if ((*s).documentation)
+                      service->service_documentation[(*service).name] = (*s).documentation;
                     if ((*port).documentation && (*port).name)
-                      s->port_documentation[(*port).name] = (*port).documentation;
+                      service->port_documentation[(*port).name] = (*port).documentation;
                     if (binding_documentation)
-                      s->binding_documentation[(*binding).name] = binding_documentation;
+                      service->binding_documentation[(*binding).name] = binding_documentation;
                     // collect policies for the service and endpoints
                     if ((*port).wsp__Policy_)
-                      s->policy.push_back((*port).wsp__Policy_);
+                      service->policy.push_back((*port).wsp__Policy_);
                     if ((*port).wsp__PolicyReference_ && (*port).wsp__PolicyReference_->policyPtr())
-                      s->policy.push_back((*port).wsp__PolicyReference_->policyPtr());
+                      service->policy.push_back((*port).wsp__PolicyReference_->policyPtr());
                   }
                 }
               }
-              Operation *o = new Operation();
-              o->name = types.aname(NULL, NULL, wsdl__operation_->name);
-              o->prefix = prefix;
-              o->URI = URI;
-              o->style = soap__operation_style;
-              o->documentation = wsdl__operation_->documentation;
-              o->operation_documentation = (*operation).documentation;
-              o->parameterOrder = wsdl__operation_->parameterOrder;
-              o->soapAction = NULL;
+              Operation *op = new Operation();
+              op->name = types.aname(NULL, NULL, wsdl__operation_->name);
+              op->prefix = prefix;
+              op->URI = URI;
+              op->style = soap__operation_style;
+              op->documentation = wsdl__operation_->documentation;
+              op->operation_documentation = (*operation).documentation;
+              op->parameterOrder = wsdl__operation_->parameterOrder;
+              op->soapAction = NULL;
               if ((*operation).soap__operation_)
               { if ((*operation).soap__operation_->soapActionRequired)
-	          o->soapAction = (*operation).soap__operation_->soapAction;
+	          op->soapAction = (*operation).soap__operation_->soapAction;
 	      }
               else if (!soap12)
-                o->soapAction = "";
+                op->soapAction = "";
               if (operation_policy)
-                o->policy.push_back(operation_policy);
+                op->policy.push_back(operation_policy);
               if (binding_operation_policy)
-                o->policy.push_back(binding_operation_policy);
-              o->input = new Message();
-              o->input->name = (*operation).name; // RPC uses operation/@name
+                op->policy.push_back(binding_operation_policy);
+              op->input = new Message();
+              op->input->name = (*operation).name; // RPC uses operation/@name
               if (soap__operation_style == rpc && !input_body->namespace_)
-              { o->input->URI = "";
+              { op->input->URI = "";
                 fprintf(stderr, "Error: no soap:body namespace attribute\n");
               }
               else
-                o->input->URI = input_body->namespace_;
-              o->input->style = soap__operation_style;
-              o->input->use = input_body->use;
-              o->input->encodingStyle = input_body->encodingStyle;
+                op->input->URI = input_body->namespace_;
+              op->input->style = soap__operation_style;
+              op->input->use = input_body->use;
+              op->input->encodingStyle = input_body->encodingStyle;
               if (input->wsa__Action)
-                o->input->action = input->wsa__Action;
+                op->input->action = input->wsa__Action;
               else if (input->wsam__Action)
-                o->input->action = input->wsam__Action;
+                op->input->action = input->wsam__Action;
               else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
-              { const char *name = input->name ? input->name : o->name;
+              { const char *name = input->name ? input->name : op->name;
                 char *tmp = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name) + 3);
                 sprintf(tmp, "%s/%s/%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name);
-                o->input->action = tmp;
+                op->input->action = tmp;
               }
-              o->input->message = input->messagePtr();
-              o->input->part = NULL;
-              o->input->multipartRelated = ext_input->mime__multipartRelated_;
-              o->input->content = NULL;
+              op->input->message = input->messagePtr();
+              op->input->part = NULL;
+              op->input->multipartRelated = ext_input->mime__multipartRelated_;
+              op->input->content = NULL;
               if (ext_input->mime__multipartRelated_ && !ext_input->mime__multipartRelated_->part.empty())
-                o->input->header = ext_input->mime__multipartRelated_->part.front().soap__header_;
+                op->input->header = ext_input->mime__multipartRelated_->part.front().soap__header_;
               else
-                o->input->header = ext_input->soap__header_;
+                op->input->header = ext_input->soap__header_;
               if (ext_input->mime__multipartRelated_ && !ext_input->mime__multipartRelated_->part.empty() && ext_input->mime__multipartRelated_->part.front().soap__body_)
-                o->input->body_parts = ext_input->mime__multipartRelated_->part.front().soap__body_->parts;
+                op->input->body_parts = ext_input->mime__multipartRelated_->part.front().soap__body_->parts;
               else
-                o->input->body_parts = input_body->parts;
+                op->input->body_parts = input_body->parts;
               if (ext_input->dime__message_)
-                o->input->layout = ext_input->dime__message_->layout;
+                op->input->layout = ext_input->dime__message_->layout;
               else
-                o->input->layout = NULL;
-              o->input->documentation = input->documentation;
-              o->input->ext_documentation = ext_input->documentation;
+                op->input->layout = NULL;
+              op->input->documentation = input->documentation;
+              op->input->ext_documentation = ext_input->documentation;
               // collect input message policies
-	      if (o->input->message)
-              { for (vector<wsp__Policy>::const_iterator p = o->input->message->wsp__Policy_.begin(); p != o->input->message->wsp__Policy_.end(); ++p)
-                  o->input->policy.push_back(&(*p));
-                for (vector<wsp__PolicyReference>::const_iterator r = o->input->message->wsp__PolicyReference_.begin(); r != o->input->message->wsp__PolicyReference_.end(); ++r)
-                  o->input->policy.push_back((*r).policyPtr());
+	      if (op->input->message)
+              { for (vector<wsp__Policy>::const_iterator p = op->input->message->wsp__Policy_.begin(); p != op->input->message->wsp__Policy_.end(); ++p)
+                  op->input->policy.push_back(&(*p));
+                for (vector<wsp__PolicyReference>::const_iterator r = op->input->message->wsp__PolicyReference_.begin(); r != op->input->message->wsp__PolicyReference_.end(); ++r)
+                  op->input->policy.push_back((*r).policyPtr());
 	      }
               if (input->wsp__Policy_)
-                o->input->policy.push_back(input->wsp__Policy_);
+                op->input->policy.push_back(input->wsp__Policy_);
               if (input->wsp__PolicyReference_ && input->wsp__PolicyReference_->policyPtr())
-                o->input->policy.push_back(input->wsp__PolicyReference_->policyPtr());
+                op->input->policy.push_back(input->wsp__PolicyReference_->policyPtr());
               if (ext_input->wsp__Policy_)
-                o->input->policy.push_back(ext_input->wsp__Policy_);
+                op->input->policy.push_back(ext_input->wsp__Policy_);
               if (ext_input->wsp__PolicyReference_ && ext_input->wsp__PolicyReference_->policyPtr())
-                o->input->policy.push_back(ext_input->wsp__PolicyReference_->policyPtr());
+                op->input->policy.push_back(ext_input->wsp__PolicyReference_->policyPtr());
               if (soap__operation_style == document)
-                o->input_name = types.oname("__", o->URI, o->input->name);
+                op->input_name = types.oname("__", op->URI, op->input->name);
               else
-                o->input_name = types.oname(NULL, o->input->URI, o->input->name);
+                op->input_name = types.oname(NULL, op->input->URI, op->input->name);
               if (output && ext_output)
               { soap__body *output_body = ext_output->soap__body_;
                 if (ext_output->mime__multipartRelated_)
@@ -310,220 +310,88 @@ void Definitions::analyze(const wsdl__definitions &definitions)
                     }
         	}
         	if (ext_output->mime__content_)
-                { o->output = new Message();
-                  o->output->name = NULL;
-                  o->output->URI = NULL;
-                  o->output->encodingStyle = NULL;
-                  o->output->action = NULL;
-                  o->output->body_parts = NULL;
-                  o->output->part = NULL;
-                  o->output->multipartRelated = NULL;
-                  o->output->content = ext_output->mime__content_;
-                  o->output->message = output->messagePtr();
-                  o->output->layout = NULL;
+                { op->output = new Message();
+                  op->output->name = NULL;
+                  op->output->URI = NULL;
+                  op->output->encodingStyle = NULL;
+                  op->output->action = NULL;
+                  op->output->body_parts = NULL;
+                  op->output->part = NULL;
+                  op->output->multipartRelated = NULL;
+                  op->output->content = ext_output->mime__content_;
+                  op->output->message = output->messagePtr();
+                  op->output->layout = NULL;
         	}
         	else if (output_body)
-                { o->output = new Message();
-                  o->output->name = (*operation).name; // RPC uses operation/@name with suffix 'Response' as set below
-                  o->output->style = soap__operation_style;
-                  o->output->use = output_body->use;
+                { op->output = new Message();
+                  op->output->name = (*operation).name; // RPC uses operation/@name with suffix 'Response' as set below
+                  op->output->style = soap__operation_style;
+                  op->output->use = output_body->use;
                   // the code below is a hack around the RPC encoded response message element tag mismatch with Axis:
                   if (!output_body->namespace_ || output_body->use == encoded)
-                    o->output->URI = o->input->URI; // encoded seems (?) to require the request's namespace
+                    op->output->URI = op->input->URI; // encoded seems (?) to require the request's namespace
                   else
-                    o->output->URI = output_body->namespace_;
-                  o->output->encodingStyle = output_body->encodingStyle;
+                    op->output->URI = output_body->namespace_;
+                  op->output->encodingStyle = output_body->encodingStyle;
                   if (output->wsa__Action)
-                    o->output->action = output->wsa__Action;
+                    op->output->action = output->wsa__Action;
                   else if (output->wsam__Action)
-                    o->output->action = output->wsam__Action;
+                    op->output->action = output->wsam__Action;
                   else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
-                  { const char *name = output->name ? output->name : o->name;
+                  { const char *name = output->name ? output->name : op->name;
                     char *tmp = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name) + 11);
                     sprintf(tmp, "%s/%s/%s%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name, output->name ? "" : "Response");
-                    o->output->action = tmp;
+                    op->output->action = tmp;
                   }
-                  o->output->message = output->messagePtr();
-                  o->output->part = NULL;
-                  o->output->multipartRelated = ext_output->mime__multipartRelated_;
-                  o->output->content = NULL;
+                  op->output->message = output->messagePtr();
+                  op->output->part = NULL;
+                  op->output->multipartRelated = ext_output->mime__multipartRelated_;
+                  op->output->content = NULL;
                   if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty())
-                    o->output->header = ext_output->mime__multipartRelated_->part.front().soap__header_;
+                    op->output->header = ext_output->mime__multipartRelated_->part.front().soap__header_;
                   else
-                    o->output->header = ext_output->soap__header_;
+                    op->output->header = ext_output->soap__header_;
                   if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty() && ext_output->mime__multipartRelated_->part.front().soap__body_)
-                    o->output->body_parts = ext_output->mime__multipartRelated_->part.front().soap__body_->parts;
+                    op->output->body_parts = ext_output->mime__multipartRelated_->part.front().soap__body_->parts;
                   else
-                    o->output->body_parts = output_body->parts;
+                    op->output->body_parts = output_body->parts;
                   if (ext_output->dime__message_)
-                    o->output->layout = ext_output->dime__message_->layout;
+                    op->output->layout = ext_output->dime__message_->layout;
                   else
-                    o->output->layout = NULL;
-                  char *s = (char*)soap_malloc(definitions.soap, strlen(o->output->name) + 9);
-                  strcpy(s, o->output->name);
+                    op->output->layout = NULL;
+                  char *s = (char*)soap_malloc(definitions.soap, strlen(op->output->name) + 9);
+                  strcpy(s, op->output->name);
                   strcat(s, "Response");
                   if (soap__operation_style == document)
-                    o->output_name = types.oname("__", o->URI, s);
+                    op->output_name = types.oname("__", op->URI, s);
                   else
-                    o->output_name = types.oname(NULL, o->output->URI, s);
+                    op->output_name = types.oname(NULL, op->output->URI, s);
                 }
-                o->output->documentation = output->documentation;
-                o->output->ext_documentation = ext_output->documentation;
+                op->output->documentation = output->documentation;
+                op->output->ext_documentation = ext_output->documentation;
                 // collect output message policies
-	        if (o->output->message)
-                { for (vector<wsp__Policy>::const_iterator p = o->output->message->wsp__Policy_.begin(); p != o->output->message->wsp__Policy_.end(); ++p)
-                    o->output->policy.push_back(&(*p));
-                  for (vector<wsp__PolicyReference>::const_iterator r = o->output->message->wsp__PolicyReference_.begin(); r != o->output->message->wsp__PolicyReference_.end(); ++r)
-                    o->output->policy.push_back((*r).policyPtr());
+	        if (op->output->message)
+                { for (vector<wsp__Policy>::const_iterator p = op->output->message->wsp__Policy_.begin(); p != op->output->message->wsp__Policy_.end(); ++p)
+                    op->output->policy.push_back(&(*p));
+                  for (vector<wsp__PolicyReference>::const_iterator r = op->output->message->wsp__PolicyReference_.begin(); r != op->output->message->wsp__PolicyReference_.end(); ++r)
+                    op->output->policy.push_back((*r).policyPtr());
 	        }
                 if (output->wsp__Policy_)
-                  o->output->policy.push_back(output->wsp__Policy_);
+                  op->output->policy.push_back(output->wsp__Policy_);
                 if (output->wsp__PolicyReference_ && output->wsp__PolicyReference_->policyPtr())
-                  o->output->policy.push_back(output->wsp__PolicyReference_->policyPtr());
+                  op->output->policy.push_back(output->wsp__PolicyReference_->policyPtr());
                 if (ext_output->wsp__Policy_)
-                  o->output->policy.push_back(ext_output->wsp__Policy_);
+                  op->output->policy.push_back(ext_output->wsp__Policy_);
                 if (ext_output->wsp__PolicyReference_ && ext_output->wsp__PolicyReference_->policyPtr())
-                  o->output->policy.push_back(ext_output->wsp__PolicyReference_->policyPtr());
+                  op->output->policy.push_back(ext_output->wsp__PolicyReference_->policyPtr());
               }
               else
-              { o->output_name = NULL;
-                o->output = NULL;
+              { op->output_name = NULL;
+                op->output = NULL;
               }
-              // collect input headers and headerfaults
-              if (ext_input)
-              { const vector<soap__header> *soap__header_ = NULL;
-        	// check if soap header is in mime:multipartRelated
-                if (ext_input->mime__multipartRelated_)
-                { for (vector<mime__part>::const_iterator part = ext_input->mime__multipartRelated_->part.begin(); part != ext_input->mime__multipartRelated_->part.end(); ++part)
-                  if (!(*part).soap__header_.empty())
-                  { soap__header_ = &(*part).soap__header_;
-        	    break;
-        	  }
-        	}
-        	if (!soap__header_)
-        	  soap__header_ = &ext_input->soap__header_;
-                for (vector<soap__header>::const_iterator header = soap__header_->begin(); header != soap__header_->end(); ++header)
-                { Message *h = new Message();
-                  h->message = (*header).messagePtr();
-                  h->body_parts = NULL;
-                  h->part = (*header).partPtr();
-                  h->URI = (*header).namespace_;
-                  if (h->part && h->part->element)
-                    h->name = types.aname(NULL, NULL, h->part->element);
-                  else if (h->URI && h->part && h->part->name && h->part->type)
-                    h->name = types.aname(NULL, h->URI, h->part->name);
-                  else
-                  { fprintf(stderr, "Error in SOAP Header part definition: input part '%s' missing?\n", h->part && h->part->name ? h->part->name : "?");
-                    h->name = "";
-                  }
-                  h->encodingStyle = (*header).encodingStyle;
-		  h->style = document;	// irrelevant
-                  h->use = (*header).use;
-        	  h->multipartRelated = NULL;
-        	  h->content = NULL;
-        	  h->layout = NULL;
-                  h->ext_documentation = NULL;	// TODO: add document content
-                  h->documentation = NULL;	// TODO: add document content
-                  s->header[h->name] = h;
-                  for (vector<soap__headerfault>::const_iterator headerfault = (*header).headerfault.begin(); headerfault != (*header).headerfault.end(); ++headerfault)
-                  { // TODO: headerfault processing. This is rarely used.
-                  }
-                }
-              }
-              // collect output headers and headerfaults
-              if (ext_output)
-              { const vector<soap__header> *soap__header_ = NULL;
-        	// check if soap header is in mime:multipartRelated
-                if (ext_output->mime__multipartRelated_)
-                { for (vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
-                  if (!(*part).soap__header_.empty())
-                  { soap__header_ = &(*part).soap__header_;
-        	    break;
-        	  }
-        	}
-        	if (!soap__header_)
-        	  soap__header_ = &ext_output->soap__header_;
-                for (vector<soap__header>::const_iterator header = soap__header_->begin(); header != soap__header_->end(); ++header)
-                { Message *h = new Message();
-                  h->message = (*header).messagePtr();
-                  h->body_parts = NULL;
-    	          h->part = (*header).partPtr();
-    	          h->URI = (*header).namespace_;
-    	          if (h->part && h->part->element)
-    	            h->name = types.aname(NULL, NULL, h->part->element);
-    	          else if (h->URI && h->part && h->part->name && h->part->type)
-    	            h->name = types.aname(NULL, h->URI, h->part->name);
-    	          else
-                  { fprintf(stderr, "Error in SOAP Header part definition: output part '%s' missing?\n", h->part && h->part->name ? h->part->name : "?");
-    	            h->name = "";
-    	          }
-    	          h->encodingStyle = (*header).encodingStyle;
-		  h->style = document;	// irrelevant
-    	          h->use = (*header).use;
-        	  h->multipartRelated = NULL;
-        	  h->content = NULL;
-        	  h->layout = NULL;
-    	          h->ext_documentation = NULL;	// TODO: add document content?
-    	          h->documentation = NULL;	// TODO: add document content?
-    	          s->header[h->name] = h;
-    	          for (vector<soap__headerfault>::const_iterator headerfault = (*header).headerfault.begin(); headerfault != (*header).headerfault.end(); ++headerfault)
-    	          { // TODO: headerfault processing. This is practically never used
-    	          }
-    	        }
-    	      }
-    	      // collect faults
-              for (vector<wsdl__ext_fault>::const_iterator ext_fault = (*operation).fault.begin(); ext_fault != (*operation).fault.end(); ++ext_fault)
-    	      { if ((*ext_fault).soap__fault_ && (*ext_fault).messagePtr())
-                { const wsdl__fault *fault = NULL;
-                  for (vector<wsdl__fault>::const_iterator ft = wsdl__operation_->fault.begin(); ft != wsdl__operation_->fault.end(); ++ft)
-                  { if ((*ft).messagePtr() == (*ext_fault).messagePtr())
-                    { fault = &(*ft);
-                      break;
-                    }
-                  }
-    	          Message *f = new Message();
-    	          f->message = (*ext_fault).messagePtr();
-                  f->body_parts = NULL;
-    	          f->part = NULL;
-    	          f->encodingStyle = (*ext_fault).soap__fault_->encodingStyle;
-		  f->action = NULL;
-                  if (fault)
-                  { if (fault->wsa__Action)
-                      f->action = fault->wsa__Action;
-                    else
-                      f->action = fault->wsam__Action;
-                  }
-    	          f->URI = (*ext_fault).soap__fault_->namespace_;
-		  f->style = document;	// irrelevant
-    	          f->use = (*ext_fault).soap__fault_->use;
-		  if (f->use == literal && !f->URI)
-		    f->URI = s->URI; // must have a unique URI
-        	  f->multipartRelated = NULL;
-        	  f->content = NULL;
-        	  f->layout = NULL;
-    	          f->ext_documentation = (*ext_fault).documentation;
-                  f->name = types.aname("_", f->URI, f->message->name);
-    	          f->documentation = f->message->documentation;
-                  // collect fault message policies
-                  if (fault)
-                  { if (fault->wsp__Policy_)
-                      f->policy.push_back(fault->wsp__Policy_);
-                    if (fault->wsp__PolicyReference_ && fault->wsp__PolicyReference_->policyPtr())
-                      f->policy.push_back(fault->wsp__PolicyReference_->policyPtr());
-                  }
-                  if (ext_fault->wsp__Policy_)
-                    f->policy.push_back(ext_fault->wsp__Policy_);
-                  if (ext_fault->wsp__PolicyReference_ && ext_fault->wsp__PolicyReference_->policyPtr())
-                    f->policy.push_back(ext_fault->wsp__PolicyReference_->policyPtr());
-    	          o->fault.push_back(f);
-    	          s->fault[f->name] = f;
-    	        }
-    	        else if ((*ext_fault).soap__fault_ && (*ext_fault).soap__fault_->name)
-    	          fprintf(stderr, "Error: no wsdl:definitions/binding/operation/fault/soap:fault '%s'\n", (*ext_fault).soap__fault_->name);
-		else
-    	          fprintf(stderr, "Error: no wsdl:definitions/binding/operation/fault/soap:fault\n");
-    	      }
-    	      s->operation.push_back(o);
+              analyze_headers(service, ext_input, ext_output);
+              analyze_faults(service, op, operation);
+    	      service->operation.push_back(op);
             }
     	    else
     	    { if (!Wflag)
@@ -534,15 +402,318 @@ void Definitions::analyze(const wsdl__definitions &definitions)
             fprintf(stderr, "Error: no wsdl:definitions/binding/operation/input/soap:body\n");
         }
         else if (output && ext_output)
-	{ // TODO
-          fprintf(stderr, "Error: TODO one-way message output\n");
-	}
+	{ // This part is similar to the previous clause, limited to one-way output operations
+          soap__body *output_body = ext_output->soap__body_;
+          if (ext_output->mime__multipartRelated_)
+          { for (vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
+              if ((*part).soap__body_)
+              { output_body = (*part).soap__body_;
+                break;
+              }
+          }
+          if (output_body)
+          { char *URI;
+            if (soap__operation_style == rpc)
+              URI = output_body->namespace_;
+            else if (binding_count == 1)
+              URI = definitions.targetNamespace;
+            else
+            { // multiple service bidings are used, each needs a unique new URI
+              URI = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen((*binding).name) + 2);
+              strcpy(URI, definitions.targetNamespace);
+              if (*URI && URI[strlen(URI)-1] != '/')
+                strcat(URI, "/");
+              strcat(URI, (*binding).name);
+            }
+            if (URI)
+            { const char *prefix = types.nsprefix(service_prefix, URI);
+              const char *name = types.aname(NULL, NULL, (*binding).name); // name of service is binding name
+              Service *service = services[prefix];
+              if (!service)
+              { service = services[prefix] = new Service();
+                service->prefix = prefix;
+                service->URI = URI;
+                service->name = name;
+                service->transport = soap__binding_transport;
+                if ((*binding).portTypePtr())
+                  service->type = types.aname(NULL, NULL, (*binding).portTypePtr()->name);
+                else
+                  service->type = NULL;
+                // collect policies for the bindings
+                for (vector<wsp__Policy>::const_iterator p = (*binding).wsp__Policy_.begin(); p != (*binding).wsp__Policy_.end(); ++p)
+                  service->policy.push_back(&(*p));
+                for (vector<wsp__PolicyReference>::const_iterator r = (*binding).wsp__PolicyReference_.begin(); r != (*binding).wsp__PolicyReference_.end(); ++r)
+                  service->policy.push_back((*r).policyPtr());
+                // collect policies for the service endpoints
+                for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
+                { for (vector<wsp__Policy>::const_iterator p = (*s).wsp__Policy_.begin(); p != (*s).wsp__Policy_.end(); ++p)
+                    service->policy.push_back(&(*p));
+                  for (vector<wsp__PolicyReference>::const_iterator r = (*s).wsp__PolicyReference_.begin(); r != (*s).wsp__PolicyReference_.end(); ++r)
+                    service->policy.push_back((*r).policyPtr());
+	        }
+              }
+              for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
+              { for (vector<wsdl__port>::const_iterator port = (*s).port.begin(); port != (*s).port.end(); ++port)
+                { if ((*port).bindingPtr() == &(*binding))
+                  { if ((*port).soap__address_ && (*port).soap__address_->location)
+                      service->location.insert((*port).soap__address_->location);
+		    else if ((*port).wsa__EndpointReference && (*port).wsa__EndpointReference->Address)
+                      service->location.insert((*port).wsa__EndpointReference->Address);
+                    // TODO: HTTP address for HTTP operations
+                    // if ((*port).http__address_)
+                      // http__address_location = http__address_->location;
+                    // collect service documentation
+                    if ((*s).documentation)
+                      service->service_documentation[(*service).name] = (*s).documentation;
+                    if ((*port).documentation && (*port).name)
+                      service->port_documentation[(*port).name] = (*port).documentation;
+                    if (binding_documentation)
+                      service->binding_documentation[(*binding).name] = binding_documentation;
+                    // collect policies for the service and endpoints
+                    if ((*port).wsp__Policy_)
+                      service->policy.push_back((*port).wsp__Policy_);
+                    if ((*port).wsp__PolicyReference_ && (*port).wsp__PolicyReference_->policyPtr())
+                      service->policy.push_back((*port).wsp__PolicyReference_->policyPtr());
+                  }
+                }
+              }
+              Operation *op = new Operation();
+              op->input_name = NULL;
+              op->input = NULL;
+              op->name = types.aname(NULL, NULL, wsdl__operation_->name);
+              op->prefix = prefix;
+              op->URI = URI;
+              op->style = soap__operation_style;
+              op->documentation = wsdl__operation_->documentation;
+              op->operation_documentation = (*operation).documentation;
+              op->parameterOrder = wsdl__operation_->parameterOrder;
+              op->soapAction = NULL;
+              if ((*operation).soap__operation_)
+              { if ((*operation).soap__operation_->soapActionRequired)
+	          op->soapAction = (*operation).soap__operation_->soapAction;
+	      }
+              else if (!soap12)
+                op->soapAction = "";
+              if (operation_policy)
+                op->policy.push_back(operation_policy);
+              if (binding_operation_policy)
+                op->policy.push_back(binding_operation_policy);
+              op->output = new Message(); // one-way output operation
+              op->output->name = (*operation).name; // RPC uses operation/@name
+              if (soap__operation_style == rpc && !output_body->namespace_)
+              { op->output->URI = "";
+                fprintf(stderr, "Error: no soap:body namespace attribute\n");
+              }
+              else
+                op->output->URI = output_body->namespace_;
+              op->output->style = soap__operation_style;
+              op->output->use = output_body->use;
+              op->output->encodingStyle = output_body->encodingStyle;
+              if (output->wsa__Action)
+                op->output->action = output->wsa__Action;
+              else if (output->wsam__Action)
+                op->output->action = output->wsam__Action;
+              else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
+              { const char *name = output->name ? output->name : op->name;
+                char *tmp = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name) + 3);
+                sprintf(tmp, "%s/%s/%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name);
+                op->output->action = tmp;
+              }
+              op->output->message = output->messagePtr();
+              op->output->part = NULL;
+              op->output->multipartRelated = ext_output->mime__multipartRelated_;
+              op->output->content = NULL;
+              if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty())
+                op->output->header = ext_output->mime__multipartRelated_->part.front().soap__header_;
+              else
+                op->output->header = ext_output->soap__header_;
+              if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty() && ext_output->mime__multipartRelated_->part.front().soap__body_)
+                op->output->body_parts = ext_output->mime__multipartRelated_->part.front().soap__body_->parts;
+              else
+                op->output->body_parts = output_body->parts;
+              if (ext_output->dime__message_)
+                op->output->layout = ext_output->dime__message_->layout;
+              else
+                op->output->layout = NULL;
+              op->output->documentation = output->documentation;
+              op->output->ext_documentation = ext_output->documentation;
+              // collect output message policies
+	      if (op->output->message)
+              { for (vector<wsp__Policy>::const_iterator p = op->output->message->wsp__Policy_.begin(); p != op->output->message->wsp__Policy_.end(); ++p)
+                  op->output->policy.push_back(&(*p));
+                for (vector<wsp__PolicyReference>::const_iterator r = op->output->message->wsp__PolicyReference_.begin(); r != op->output->message->wsp__PolicyReference_.end(); ++r)
+                  op->output->policy.push_back((*r).policyPtr());
+	      }
+              if (output->wsp__Policy_)
+                op->output->policy.push_back(output->wsp__Policy_);
+              if (output->wsp__PolicyReference_ && output->wsp__PolicyReference_->policyPtr())
+                op->output->policy.push_back(output->wsp__PolicyReference_->policyPtr());
+              if (ext_output->wsp__Policy_)
+                op->output->policy.push_back(ext_output->wsp__Policy_);
+              if (ext_output->wsp__PolicyReference_ && ext_output->wsp__PolicyReference_->policyPtr())
+                op->output->policy.push_back(ext_output->wsp__PolicyReference_->policyPtr());
+              if (soap__operation_style == document)
+                op->output_name = types.oname("__", op->URI, op->output->name);
+              else
+                op->output_name = types.oname(NULL, op->output->URI, op->output->name);
+              analyze_headers(service, ext_input, ext_output);
+              analyze_faults(service, op, operation);
+    	      service->operation.push_back(op);
+            }
+    	    else
+    	    { if (!Wflag)
+	        fprintf(stderr, "Warning: no SOAP RPC operation namespace, operations will be ignored\n");
+	    }
+          }
+          else
+            fprintf(stderr, "Error: no wsdl:definitions/binding/operation/output/soap:body\n");
+        }
         else
           fprintf(stderr, "Error: no wsdl:definitions/portType/operation/input and output\n");
       }
       else
         fprintf(stderr, "Error: no wsdl:definitions/portType/operation\n");
     }
+  }
+}
+
+void Definitions::analyze_headers(Service *service, wsdl__ext_input *ext_input, wsdl__ext_output *ext_output)
+{ // collect input headers and headerfaults
+  if (ext_input)
+  { const vector<soap__header> *soap__header_ = NULL;
+    // check if soap header is in mime:multipartRelated
+    if (ext_input->mime__multipartRelated_)
+    { for (vector<mime__part>::const_iterator part = ext_input->mime__multipartRelated_->part.begin(); part != ext_input->mime__multipartRelated_->part.end(); ++part)
+      if (!(*part).soap__header_.empty())
+      { soap__header_ = &(*part).soap__header_;
+        break;
+      }
+    }
+    if (!soap__header_)
+      soap__header_ = &ext_input->soap__header_;
+    for (vector<soap__header>::const_iterator header = soap__header_->begin(); header != soap__header_->end(); ++header)
+    { Message *h = new Message();
+      h->message = (*header).messagePtr();
+      h->body_parts = NULL;
+      h->part = (*header).partPtr();
+      h->URI = (*header).namespace_;
+      if (h->part && h->part->element)
+        h->name = types.aname(NULL, NULL, h->part->element);
+      else if (h->URI && h->part && h->part->name && h->part->type)
+        h->name = types.aname(NULL, h->URI, h->part->name);
+      else
+      { fprintf(stderr, "Error in SOAP Header part definition: input part '%s' missing?\n", h->part && h->part->name ? h->part->name : "?");
+        h->name = "";
+      }
+      h->encodingStyle = (*header).encodingStyle;
+      h->style = document;	// irrelevant
+      h->use = (*header).use;
+      h->multipartRelated = NULL;
+      h->content = NULL;
+      h->layout = NULL;
+      h->ext_documentation = NULL;	// TODO: add document content
+      h->documentation = NULL;	// TODO: add document content
+      service->header[h->name] = h;
+      for (vector<soap__headerfault>::const_iterator headerfault = (*header).headerfault.begin(); headerfault != (*header).headerfault.end(); ++headerfault)
+      { // TODO: headerfault processing. This is practically never used...
+      }
+    }
+  }
+  // collect output headers and headerfaults
+  if (ext_output)
+  { const vector<soap__header> *soap__header_ = NULL;
+    // check if soap header is in mime:multipartRelated
+    if (ext_output->mime__multipartRelated_)
+    { for (vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
+      if (!(*part).soap__header_.empty())
+      { soap__header_ = &(*part).soap__header_;
+        break;
+      }
+    }
+    if (!soap__header_)
+      soap__header_ = &ext_output->soap__header_;
+    for (vector<soap__header>::const_iterator header = soap__header_->begin(); header != soap__header_->end(); ++header)
+    { Message *h = new Message();
+      h->message = (*header).messagePtr();
+      h->body_parts = NULL;
+      h->part = (*header).partPtr();
+      h->URI = (*header).namespace_;
+      if (h->part && h->part->element)
+        h->name = types.aname(NULL, NULL, h->part->element);
+      else if (h->URI && h->part && h->part->name && h->part->type)
+        h->name = types.aname(NULL, h->URI, h->part->name);
+      else
+      { fprintf(stderr, "Error in SOAP Header part definition: output part '%s' missing?\n", h->part && h->part->name ? h->part->name : "?");
+        h->name = "";
+      }
+      h->encodingStyle = (*header).encodingStyle;
+      h->style = document;	// irrelevant
+      h->use = (*header).use;
+      h->multipartRelated = NULL;
+      h->content = NULL;
+      h->layout = NULL;
+      h->ext_documentation = NULL;	// TODO: add document content?
+      h->documentation = NULL;	// TODO: add document content?
+      service->header[h->name] = h;
+      for (vector<soap__headerfault>::const_iterator headerfault = (*header).headerfault.begin(); headerfault != (*header).headerfault.end(); ++headerfault)
+      { // TODO: headerfault processing. This is practically never used...
+      }
+    }
+  }
+}
+
+void Definitions::analyze_faults(Service *service, Operation *op, vector<wsdl__binding_operation>::const_iterator& operation)
+{ wsdl__operation *wsdl__operation_ = (*operation).operationPtr();
+  for (vector<wsdl__ext_fault>::const_iterator ext_fault = (*operation).fault.begin(); ext_fault != (*operation).fault.end(); ++ext_fault)
+  { if ((*ext_fault).soap__fault_ && (*ext_fault).messagePtr())
+    { const wsdl__fault *fault = NULL;
+      for (vector<wsdl__fault>::const_iterator ft = wsdl__operation_->fault.begin(); ft != wsdl__operation_->fault.end(); ++ft)
+      { if ((*ft).messagePtr() == (*ext_fault).messagePtr())
+        { fault = &(*ft);
+          break;
+        }
+      }
+      Message *f = new Message();
+      f->message = (*ext_fault).messagePtr();
+      f->body_parts = NULL;
+      f->part = NULL;
+      f->encodingStyle = (*ext_fault).soap__fault_->encodingStyle;
+      f->action = NULL;
+      if (fault)
+      { if (fault->wsa__Action)
+          f->action = fault->wsa__Action;
+        else
+          f->action = fault->wsam__Action;
+      }
+      f->URI = (*ext_fault).soap__fault_->namespace_;
+      f->style = document;	// irrelevant
+      f->use = (*ext_fault).soap__fault_->use;
+      if (f->use == literal && !f->URI)
+        f->URI = service->URI; // must have a unique URI
+      f->multipartRelated = NULL;
+      f->content = NULL;
+      f->layout = NULL;
+      f->ext_documentation = (*ext_fault).documentation;
+      f->name = types.aname("_", f->URI, f->message->name);
+      f->documentation = f->message->documentation;
+      // collect fault message policies
+      if (fault)
+      { if (fault->wsp__Policy_)
+          f->policy.push_back(fault->wsp__Policy_);
+        if (fault->wsp__PolicyReference_ && fault->wsp__PolicyReference_->policyPtr())
+          f->policy.push_back(fault->wsp__PolicyReference_->policyPtr());
+      }
+      if (ext_fault->wsp__Policy_)
+        f->policy.push_back(ext_fault->wsp__Policy_);
+      if (ext_fault->wsp__PolicyReference_ && ext_fault->wsp__PolicyReference_->policyPtr())
+        f->policy.push_back(ext_fault->wsp__PolicyReference_->policyPtr());
+      op->fault.push_back(f);
+      service->fault[f->name] = f;
+    }
+    else if ((*ext_fault).soap__fault_ && (*ext_fault).soap__fault_->name)
+      fprintf(stderr, "Error: no wsdl:definitions/binding/operation/fault/soap:fault '%s'\n", (*ext_fault).soap__fault_->name);
+    else
+      fprintf(stderr, "Error: no wsdl:definitions/binding/operation/fault/soap:fault\n");
   }
 }
 
@@ -1107,6 +1278,8 @@ void Definitions::compile(const wsdl__definitions& definitions)
         for (vector<Operation*>::const_iterator op = sv->operation.begin(); op != sv->operation.end(); ++op)
         { if (*op && (*op)->input_name)
             fprintf(stream, "\n  - @ref %s\n", (*op)->input_name);
+          else if (*op && (*op)->output_name)
+            fprintf(stream, "\n  - @ref %s\n", (*op)->output_name);
         }
         section(sv->name, "_ports Endpoints of Binding ", sv->name);
         for (SetOfString::const_iterator port = sv->location.begin(); port != sv->location.end(); ++port)
@@ -1368,13 +1541,22 @@ void Service::generate(Types& types)
             if ((*part).element && !strcmp((*part).element, (*(*op2)->output->message->part.begin()).element))
               flag = false;
         if (!flag)
-        { fprintf(stream, "/// Operation response struct \"%s\" of service binding \"%s\" operation \"%s\"\n", (*op2)->output_name, name, (*op2)->input_name);
+        { if (bflag)
+	  { fprintf(stream, "/// Operation response \"%s\" of service binding \"%s\" operation \"%s\"\n", (*op2)->output_name, name, (*op2)->input_name);
+            fprintf(stream, "int %s\n(", (*op2)->output_name);
+            (*op2)->output->generate(types, ",", anonymous, true, false);
+            fprintf(stream, "\n    void\t///< One-way message\n);\n");
+	    fprintf(stream, "/* soapcpp2 generates the following struct automatically:\n");
+	  }
+	  fprintf(stream, "/// Operation response struct \"%s\" of service binding \"%s\" operation \"%s\"\n", (*op2)->output_name, name, (*op2)->input_name);
           fprintf(stream, "struct %s\n{", (*op2)->output_name);
-          (*op2)->output->generate(types, ";", anonymous, true, false);
+          (*op2)->output->generate(types, ";", anonymous, false, false);
           fprintf(stream, "\n};\n");
+	  if (bflag)
+	    fprintf(stream, "*/\n");
         }
       }
-      fprintf(stream, "\n/// Operation \"%s\" of service binding \"%s\"\n\n/**\n\nOperation details:\n\n", (*op2)->input_name, name);
+      fprintf(stream, "\n/// Operation \"%s\" of service binding \"%s\"\n\n/**\n\nOperation details:\n", (*op2)->input_name, name);
       if ((*op2)->documentation)
         text((*op2)->documentation);
       if ((*op2)->operation_documentation)
@@ -1412,7 +1594,7 @@ void Service::generate(Types& types)
         }
       }
       else
-        fprintf(stream, "\n  - One-way message\n");
+        fprintf(stream, "\n  - One-way service input message request\n");
       if ((*op2)->style == document)
         fprintf(stream, "\n  - SOAP document/literal style messaging\n");
       else
@@ -1554,11 +1736,11 @@ void Service::generate(Types& types)
       }
       if ((*op2)->output && (*op2)->output_name && (*op2)->output->layout)
         fprintf(stream, "\n  - Response message has DIME attachments in compliance with %s\n", (*op2)->output->layout);
-      fprintf(stream, "\nC stub function (defined in soapClient.c[pp] generated by soapcpp2):\n@code\n  int soap_call_%s(\n    struct soap *soap,\n    NULL, // char *endpoint = NULL selects default endpoint for this operation\n    NULL, // char *action = NULL selects default action for this operation\n    // request parameters:", (*op2)->input_name);
+      fprintf(stream, "\nC stub function (defined in soapClient.c[pp] generated by soapcpp2):\n@code\n  int soap_%s_%s(\n    struct soap *soap,\n    NULL, // char *endpoint = NULL selects default endpoint for this operation\n    NULL, // char *action = NULL selects default action for this operation\n    // request parameters:", (*op2)->output?"call":"send", (*op2)->input_name);
       (*op2)->input->generate(types, ",", false, false, false);
-      fprintf(stream, "\n    // response parameters:");
       if ((*op2)->output && (*op2)->output_name)
-      { if (flag)
+      { fprintf(stream, "\n    // response parameters:");
+        if (flag)
         { if ((*op2)->style == document)
           { // Shortcut: do not generate wrapper struct
             (*op2)->output->generate(types, "", false, false, true);
@@ -1592,10 +1774,127 @@ void Service::generate(Types& types)
       if (!cflag)
       { fprintf(stream, "C++ proxy class (defined in soap%sProxy.h):\n", name);
         fprintf(stream, "@code\n  class %sProxy;\n@endcode\n", name);
-        fprintf(stream, "Important: use soapcpp2 option '-i' to generate greatly improved and easy-to-use proxy classes;\n\n");
+        fprintf(stream, "Important: use soapcpp2 option '-j' (or '-i') to generate greatly improved and easy-to-use proxy classes;\n\n");
         fprintf(stream, "C++ service class (defined in soap%sService.h):\n", name);
         fprintf(stream, "@code\n  class %sService;\n@endcode\n", name);
-        fprintf(stream, "Important: use soapcpp2 option '-i' to generate greatly improved and easy-to-use service classes;\n\n");
+        fprintf(stream, "Important: use soapcpp2 option '-j' (or '-i') to generate greatly improved and easy-to-use service classes;\n\n");
+      }
+      fprintf(stream, "*/\n\n");
+      (*op2)->generate(types);
+    }
+    else if (*op2 && (*op2)->output)
+    { banner("Service Operation", (*op2)->output_name);
+      fprintf(stream, "\n/// Operation \"%s\" of service binding \"%s\"\n\n/**\n\nOperation details:\n", (*op2)->output_name, name);
+      if ((*op2)->documentation)
+        text((*op2)->documentation);
+      if ((*op2)->operation_documentation)
+        text((*op2)->operation_documentation);
+      if ((*op2)->output->documentation)
+      { fprintf(stream, "Output response:\n");
+        text((*op2)->output->documentation);
+      }
+      if ((*op2)->output->ext_documentation)
+      { fprintf(stream, "Output response:\n");
+        text((*op2)->output->ext_documentation);
+      }
+      gen_policy(*this, (*op2)->policy, "operation", types);
+      gen_policy(*this, (*op2)->output->policy, "response message", types);
+      fprintf(stream, "\n  - One-way service output response message\n");
+      if ((*op2)->style == document)
+        fprintf(stream, "\n  - SOAP document/literal style messaging\n");
+      else
+      { if ((*op2)->output->use == literal)
+          fprintf(stream, "\n  - SOAP RPC literal messaging\n");
+        else if ((*op2)->output->encodingStyle)
+          fprintf(stream, "\n  - SOAP RPC encodingStyle=\"%s\"\n", (*op2)->output->encodingStyle);
+        else
+          fprintf(stream, "\n  - SOAP RPC encoded messaging\n");
+      }
+      if ((*op2)->soapAction)
+      { if (*(*op2)->soapAction)
+          fprintf(stream, "\n  - SOAP action: \"%s\"\n", (*op2)->soapAction);
+      }
+      if ((*op2)->output)
+      { if ((*op2)->output->action)
+          fprintf(stream, "\n  - Addressing method action: \"%s\"\n", (*op2)->output->action);
+      }
+      if ((*op2)->output)
+      { if ((*op2)->output->action)
+          fprintf(stream, "\n  - Addressing method output action: \"%s\"\n", (*op2)->output->action);
+      }
+      for (vector<Message*>::const_iterator message = (*op2)->fault.begin(); message != (*op2)->fault.end(); ++message)
+      { if ((*message)->use == literal)
+        { for (vector<wsdl__part>::const_iterator part = (*message)->message->part.begin(); part != (*message)->message->part.end(); ++part)
+          { if ((*part).element)
+              fprintf(stream, "\n  - SOAP Fault: %s (literal)\n", (*part).element);
+            else if ((*part).name && (*part).type)
+              fprintf(stream, "\n  - SOAP Fault: %s (literal)\n", (*part).name);
+          }
+        }
+        else if ((*message)->message && (*message)->message->name)
+          fprintf(stream, "\n  - SOAP Fault: %s\n", (*message)->name);
+        if ((*message)->message && (*message)->message->name && (*message)->action)
+          fprintf(stream, "    - SOAP Fault addressing action: \"%s\"\n", (*message)->action);
+	gen_policy(*this, (*message)->policy, "fault message", types);
+      }
+      if (!(*op2)->output->header.empty())
+        fprintf(stream, "\n  - Response message has mandatory header part(s) (see @ref SOAP_ENV__Header):\n");
+      for (vector<soap__header>::const_iterator outputheader = (*op2)->output->header.begin(); outputheader != (*op2)->output->header.end(); ++outputheader)
+      { if ((*outputheader).part)
+        { if ((*outputheader).use == encoded && (*outputheader).namespace_)
+            fprintf(stream, "    - %s\n", types.aname(NULL, (*outputheader).namespace_, (*outputheader).part));
+          else if ((*outputheader).partPtr() && (*outputheader).partPtr()->element)
+            fprintf(stream, "    - %s\n", types.aname(NULL, NULL, (*outputheader).partPtr()->element));
+        }
+      }
+      if ((*op2)->output->multipartRelated)
+      { int k = 2;
+        fprintf(stream, "\n  - Response message has MIME multipart/related attachments:\n");
+        for (vector<mime__part>::const_iterator part = (*op2)->output->multipartRelated->part.begin(); part != (*op2)->output->multipartRelated->part.end(); ++part)
+        { if ((*part).soap__body_)
+          { fprintf(stream, "    -# MIME attachment with SOAP Body and mandatory header part(s):\n");
+            for (vector<soap__header>::const_iterator header = (*part).soap__header_.begin(); header != (*part).soap__header_.end(); ++header)
+            { if ((*header).part)
+              { if ((*header).use == encoded && (*header).namespace_)
+                  fprintf(stream, "       - %s\n", types.aname(NULL, (*header).namespace_, (*header).part));
+                else if ((*header).partPtr() && (*header).partPtr()->element)
+                  fprintf(stream, "       - %s\n", types.aname(NULL, NULL, (*header).partPtr()->element));
+              }
+            }
+          }
+          else
+          { fprintf(stream, "    -# MIME attachment %d:\n", k++);
+            for (vector<mime__content>::const_iterator content = (*part).content.begin(); content != (*part).content.end(); ++content)
+            { fprintf(stream, "       -");
+              if ((*content).part)
+              { fprintf(stream, " part=\"");
+                text((*content).part);
+                fprintf(stream, "\"");
+              }
+              if ((*content).type)
+              { fprintf(stream, " type=\"");
+                text((*content).type);
+                fprintf(stream, "\"");
+              }
+              fprintf(stream, "\n");
+            }
+          }
+        }
+      }
+      if ((*op2)->output->layout)
+        fprintf(stream, "\n  - Response message has DIME attachments in compliance with %s\n", (*op2)->output->layout);
+      fprintf(stream, "\nC stub function (defined in soapClient.c[pp] generated by soapcpp2):\n@code\n  int soap_send_%s(\n    struct soap *soap,\n    NULL, // char *endpoint = NULL selects default endpoint for this operation\n    NULL, // char *action = NULL selects default action for this operation\n    // parameters:", (*op2)->output_name);
+      (*op2)->output->generate(types, ",", false, false, false);
+      fprintf(stream, "\n  );\n@endcode\n\nC server function (called from the service dispatcher defined in soapServer.c[pp]):\n@code\n  int %s(\n    struct soap *soap,\n    // parameters:", (*op2)->output_name);
+      (*op2)->output->generate(types, ",", false, false, false);
+      fprintf(stream, "\n  );\n@endcode\n\n");
+      if (!cflag)
+      { fprintf(stream, "C++ proxy class (defined in soap%sProxy.h):\n", name);
+        fprintf(stream, "@code\n  class %sProxy;\n@endcode\n", name);
+        fprintf(stream, "Important: use soapcpp2 option '-j' (or '-i') to generate greatly improved and easy-to-use proxy classes;\n\n");
+        fprintf(stream, "C++ service class (defined in soap%sService.h):\n", name);
+        fprintf(stream, "@code\n  class %sService;\n@endcode\n", name);
+        fprintf(stream, "Important: use soapcpp2 option '-j' (or '-i') to generate greatly improved and easy-to-use service classes;\n\n");
       }
       fprintf(stream, "*/\n\n");
       (*op2)->generate(types);
@@ -1609,6 +1908,12 @@ void Service::add_import(const char *s)
     imports.push_back(s);
 }
 
+void Service::del_import(const char *s)
+{ VectorOfString::iterator i = find_if(imports.begin(), imports.end(), eqstr(s));
+  if (i != imports.end())
+    imports.erase(i);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 //	Operation methods
@@ -1617,138 +1922,207 @@ void Service::add_import(const char *s)
 
 void Operation::generate(Types &types)
 { bool flag = false, anonymous = ((style != document) && parameterOrder != NULL);
-  const char *method_name = strstr(input_name + 1, "__") + 2;
-  if (!method_name)
-    method_name = input_name;
-  if (style == document)
-    fprintf(stream, serviceformat, prefix, "method-style", method_name, "document");
-  else
-    fprintf(stream, serviceformat, prefix, "method-style", method_name, "rpc");
-  if (input->use == literal)
-    fprintf(stream, serviceformat, prefix, "method-encoding", method_name, "literal");
-  else if (input->encodingStyle)
-    fprintf(stream, serviceformat, prefix, "method-encoding", method_name, input->encodingStyle);
-  else
-    fprintf(stream, serviceformat, prefix, "method-encoding", method_name, "encoded");
-  if (output)
-  { if (input->use != output->use)
-    { if (output->use == literal)
-        fprintf(stream, serviceformat, prefix, "method-response-encoding", method_name, "literal");
-      else if (output->encodingStyle)
-        fprintf(stream, serviceformat, prefix, "method-response-encoding", method_name, output->encodingStyle);
-      else
-        fprintf(stream, serviceformat, prefix, "method-response-encoding", method_name, "encoded");
-    }
-    if (style == rpc && input->URI && output->URI && strcmp(input->URI, output->URI))
-      fprintf(stream, schemaformat, types.nsprefix(NULL, output->URI), "namespace", output->URI);
-  }
-  if (soapAction)
-  { if (*soapAction)
-      fprintf(stream, serviceformat, prefix, "method-action", method_name, soapAction);
+  const char *method_name = NULL;
+  if (input)
+  { method_name = strstr(input_name + 1, "__") + 2;
+    if (!method_name)
+      method_name = input_name;
+    if (style == document)
+      fprintf(stream, serviceformat, prefix, "method-style", method_name, "document");
     else
-      fprintf(stream, serviceformat, prefix, "method-action", method_name, "\"\"");
-  }
-  else if (input && input->action)
-    fprintf(stream, serviceformat, prefix, "method-input-action", method_name, input->action);
-  if (output && output->action)
-    fprintf(stream, serviceformat, prefix, "method-output-action", method_name, output->action);
-  for (vector<Message*>::const_iterator message = fault.begin(); message != fault.end(); ++message)
-  { if ((*message)->use == literal)
-    { for (vector<wsdl__part>::const_iterator part = (*message)->message->part.begin(); part != (*message)->message->part.end(); ++part)
-      { if ((*part).element)
-          fprintf(stream, serviceformat, prefix, "method-fault", method_name, types.aname(NULL, NULL, (*part).element));
-        else if ((*part).type)
-          fprintf(stream, serviceformat, prefix, "method-fault", method_name, types.aname(NULL, (*message)->URI, (*part).name));
+      fprintf(stream, serviceformat, prefix, "method-style", method_name, "rpc");
+    if (input->use == literal)
+      fprintf(stream, serviceformat, prefix, "method-encoding", method_name, "literal");
+    else if (input->encodingStyle)
+      fprintf(stream, serviceformat, prefix, "method-encoding", method_name, input->encodingStyle);
+    else
+      fprintf(stream, serviceformat, prefix, "method-encoding", method_name, "encoded");
+    if (output)
+    { if (input->use != output->use)
+      { if (output->use == literal)
+          fprintf(stream, serviceformat, prefix, "method-response-encoding", method_name, "literal");
+        else if (output->encodingStyle)
+          fprintf(stream, serviceformat, prefix, "method-response-encoding", method_name, output->encodingStyle);
+        else
+          fprintf(stream, serviceformat, prefix, "method-response-encoding", method_name, "encoded");
       }
+      if (style == rpc && input->URI && output->URI && strcmp(input->URI, output->URI))
+        fprintf(stream, schemaformat, types.nsprefix(NULL, output->URI), "namespace", output->URI);
     }
-    else
-    { if ((*message)->message && (*message)->message->name)
-        fprintf(stream, serviceformat, prefix, "method-fault", method_name, (*message)->name);
+    if (soapAction)
+    { if (*soapAction)
+        fprintf(stream, serviceformat, prefix, "method-action", method_name, soapAction);
+      else
+        fprintf(stream, serviceformat, prefix, "method-action", method_name, "\"\"");
     }
-    if ((*message)->message && (*message)->message->name && (*message)->action)
-      fprintf(stream, serviceformat, prefix, "method-fault-action", method_name, (*message)->action);
-  }
-  if (input->multipartRelated)
-  { for (vector<mime__part>::const_iterator inputmime = input->multipartRelated->part.begin(); inputmime != input->multipartRelated->part.end(); ++inputmime)
-    { for (vector<soap__header>::const_iterator inputheader = (*inputmime).soap__header_.begin(); inputheader != (*inputmime).soap__header_.end(); ++inputheader)
-      { if ((*inputheader).part)
-        { if ((*inputheader).use == encoded && (*inputheader).namespace_)
-            fprintf(stream, serviceformat, prefix, "method-input-header-part", method_name, types.aname(NULL, (*inputheader).namespace_, (*inputheader).part));
-          else if ((*inputheader).partPtr() && (*inputheader).partPtr()->element)
-            fprintf(stream, serviceformat, prefix, "method-input-header-part", method_name, types.aname(NULL, NULL, (*inputheader).partPtr()->element));
+    else if (input && input->action)
+      fprintf(stream, serviceformat, prefix, "method-input-action", method_name, input->action);
+    if (output && output->action)
+      fprintf(stream, serviceformat, prefix, "method-output-action", method_name, output->action);
+    for (vector<Message*>::const_iterator message = fault.begin(); message != fault.end(); ++message)
+    { if ((*message)->use == literal)
+      { for (vector<wsdl__part>::const_iterator part = (*message)->message->part.begin(); part != (*message)->message->part.end(); ++part)
+        { if ((*part).element)
+            fprintf(stream, serviceformat, prefix, "method-fault", method_name, types.aname(NULL, NULL, (*part).element));
+          else if ((*part).type)
+            fprintf(stream, serviceformat, prefix, "method-fault", method_name, types.aname(NULL, (*message)->URI, (*part).name));
         }
       }
-      for (vector<mime__content>::const_iterator content = (*inputmime).content.begin(); content != (*inputmime).content.end(); ++content)
-        if ((*content).type)
-          fprintf(stream, serviceformat, prefix, "method-input-mime-type", method_name, (*content).type);
+      else
+      { if ((*message)->message && (*message)->message->name)
+          fprintf(stream, serviceformat, prefix, "method-fault", method_name, (*message)->name);
+      }
+      if ((*message)->message && (*message)->message->name && (*message)->action)
+        fprintf(stream, serviceformat, prefix, "method-fault-action", method_name, (*message)->action);
     }
-  }
-  // TODO: add headerfault directives
-  for (vector<soap__header>::const_iterator inputheader = input->header.begin(); inputheader != input->header.end(); ++inputheader)
-  { if ((*inputheader).part)
-    { if ((*inputheader).use == encoded && (*inputheader).namespace_)
-        fprintf(stream, serviceformat, prefix, "method-input-header-part", method_name, types.aname(NULL, (*inputheader).namespace_, (*inputheader).part));
-      else if ((*inputheader).partPtr() && (*inputheader).partPtr()->element)
-        fprintf(stream, serviceformat, prefix, "method-input-header-part", method_name, types.aname(NULL, NULL, (*inputheader).partPtr()->element));
+    if (input->multipartRelated)
+    { for (vector<mime__part>::const_iterator inputmime = input->multipartRelated->part.begin(); inputmime != input->multipartRelated->part.end(); ++inputmime)
+      { for (vector<soap__header>::const_iterator inputheader = (*inputmime).soap__header_.begin(); inputheader != (*inputmime).soap__header_.end(); ++inputheader)
+        { if ((*inputheader).part)
+          { if ((*inputheader).use == encoded && (*inputheader).namespace_)
+              fprintf(stream, serviceformat, prefix, "method-input-header-part", method_name, types.aname(NULL, (*inputheader).namespace_, (*inputheader).part));
+            else if ((*inputheader).partPtr() && (*inputheader).partPtr()->element)
+              fprintf(stream, serviceformat, prefix, "method-input-header-part", method_name, types.aname(NULL, NULL, (*inputheader).partPtr()->element));
+          }
+        }
+        for (vector<mime__content>::const_iterator content = (*inputmime).content.begin(); content != (*inputmime).content.end(); ++content)
+          if ((*content).type)
+            fprintf(stream, serviceformat, prefix, "method-input-mime-type", method_name, (*content).type);
+      }
     }
+    // TODO: add headerfault directives
+    for (vector<soap__header>::const_iterator inputheader = input->header.begin(); inputheader != input->header.end(); ++inputheader)
+    { if ((*inputheader).part)
+      { if ((*inputheader).use == encoded && (*inputheader).namespace_)
+          fprintf(stream, serviceformat, prefix, "method-input-header-part", method_name, types.aname(NULL, (*inputheader).namespace_, (*inputheader).part));
+        else if ((*inputheader).partPtr() && (*inputheader).partPtr()->element)
+          fprintf(stream, serviceformat, prefix, "method-input-header-part", method_name, types.aname(NULL, NULL, (*inputheader).partPtr()->element));
+      }
+    }
+    if (output)
+    { if (output->multipartRelated)
+      { for (vector<mime__part>::const_iterator outputmime = output->multipartRelated->part.begin(); outputmime != output->multipartRelated->part.end(); ++outputmime)
+        { for (vector<soap__header>::const_iterator outputheader = (*outputmime).soap__header_.begin(); outputheader != (*outputmime).soap__header_.end(); ++outputheader)
+          { if ((*outputheader).part)
+            { if ((*outputheader).use == encoded && (*outputheader).namespace_)
+                fprintf(stream, serviceformat, prefix, "method-output-header-part", method_name, types.aname(NULL, (*outputheader).namespace_, (*outputheader).part));
+              else if ((*outputheader).partPtr() && (*outputheader).partPtr()->element)
+                fprintf(stream, serviceformat, prefix, "method-output-header-part", method_name, types.aname(NULL, NULL, (*outputheader).partPtr()->element));
+            }
+          }
+          for (vector<mime__content>::const_iterator content = (*outputmime).content.begin(); content != (*outputmime).content.end(); ++content)
+            if ((*content).type)
+              fprintf(stream, serviceformat, prefix, "method-output-mime-type", method_name, (*content).type);
+        }
+      }
+      for (vector<soap__header>::const_iterator outputheader = output->header.begin(); outputheader != output->header.end(); ++outputheader)
+      { if ((*outputheader).part)
+        { if ((*outputheader).use == encoded && (*outputheader).namespace_)
+            fprintf(stream, serviceformat, prefix, "method-output-header-part", method_name, types.aname(NULL, (*outputheader).namespace_, (*outputheader).part));
+          else if ((*outputheader).partPtr() && (*outputheader).partPtr()->element)
+            fprintf(stream, serviceformat, prefix, "method-output-header-part", method_name, types.aname(NULL, NULL, (*outputheader).partPtr()->element));
+        }
+      }
+    }
+    if (output_name)
+    { if (style == document)
+        flag = output->message && output->message->part.size() == 1;
+      else if (!wflag)
+        flag = output->message && output->use == encoded && output->message->part.size() == 1 && !(*output->message->part.begin()).simpleTypePtr() && !(*output->message->part.begin()).complexTypePtr();
+      if (flag && input->message && (*output->message->part.begin()).element)
+        for (vector<wsdl__part>::const_iterator part = input->message->part.begin(); part != input->message->part.end(); ++part)
+          if ((*part).element && !strcmp((*part).element, (*output->message->part.begin()).element))
+            flag = false;
+    }
+    fprintf(stream, "int %s(", input_name);
+    input->generate(types, ",", anonymous, true, false);
+    if (output_name)
+    { if (flag)
+      { if (style == document)
+        { // Shortcut: do not generate wrapper struct
+          output->generate(types, "", false, true, true);
+        }
+        else if ((*output->message->part.begin()).name)
+        { fprintf(stream, "\n");
+          fprintf(stream, anonymous ? anonformat : paraformat, types.tname(NULL, NULL, (*output->message->part.begin()).type), cflag ? "*" : "&", types.aname(NULL, NULL, (*output->message->part.begin()).name), "");
+          fprintf(stream, "\t///< Response parameter");
+        }
+      }
+      else
+      { fprintf(stream, "\n    struct %-28s%s", output_name, cflag ? "*" : "&");
+        fprintf(stream, "\t///< Response struct parameter");
+      }
+      fprintf(stream, "\n);\n");
+    }
+    else
+      fprintf(stream, "\n    void\t///< One-way message: no response parameter\n);\n");
   }
-  if (output)
-  { if (output->multipartRelated)
+  else if (output)
+  { method_name = strstr(output_name + 1, "__") + 2;
+    if (!method_name)
+      method_name = output_name;
+    if (style == document)
+      fprintf(stream, serviceformat, prefix, "method-style", method_name, "document");
+    else
+      fprintf(stream, serviceformat, prefix, "method-style", method_name, "rpc");
+    if (output->use == literal)
+      fprintf(stream, serviceformat, prefix, "method-encoding", method_name, "literal");
+    else if (output->encodingStyle)
+      fprintf(stream, serviceformat, prefix, "method-encoding", method_name, output->encodingStyle);
+    else
+      fprintf(stream, serviceformat, prefix, "method-encoding", method_name, "encoded");
+    if (soapAction)
+    { if (*soapAction)
+        fprintf(stream, serviceformat, prefix, "method-action", method_name, soapAction);
+      else
+        fprintf(stream, serviceformat, prefix, "method-action", method_name, "\"\"");
+    }
+    else if (output && output->action)
+      fprintf(stream, serviceformat, prefix, "method-action", method_name, output->action);
+    for (vector<Message*>::const_iterator message = fault.begin(); message != fault.end(); ++message)
+    { if ((*message)->use == literal)
+      { for (vector<wsdl__part>::const_iterator part = (*message)->message->part.begin(); part != (*message)->message->part.end(); ++part)
+        { if ((*part).element)
+            fprintf(stream, serviceformat, prefix, "method-fault", method_name, types.aname(NULL, NULL, (*part).element));
+          else if ((*part).type)
+            fprintf(stream, serviceformat, prefix, "method-fault", method_name, types.aname(NULL, (*message)->URI, (*part).name));
+        }
+      }
+      else
+      { if ((*message)->message && (*message)->message->name)
+          fprintf(stream, serviceformat, prefix, "method-fault", method_name, (*message)->name);
+      }
+      if ((*message)->message && (*message)->message->name && (*message)->action)
+        fprintf(stream, serviceformat, prefix, "method-fault-action", method_name, (*message)->action);
+    }
+    if (output->multipartRelated)
     { for (vector<mime__part>::const_iterator outputmime = output->multipartRelated->part.begin(); outputmime != output->multipartRelated->part.end(); ++outputmime)
       { for (vector<soap__header>::const_iterator outputheader = (*outputmime).soap__header_.begin(); outputheader != (*outputmime).soap__header_.end(); ++outputheader)
         { if ((*outputheader).part)
           { if ((*outputheader).use == encoded && (*outputheader).namespace_)
-              fprintf(stream, serviceformat, prefix, "method-output-header-part", method_name, types.aname(NULL, (*outputheader).namespace_, (*outputheader).part));
+              fprintf(stream, serviceformat, prefix, "method-header-part", method_name, types.aname(NULL, (*outputheader).namespace_, (*outputheader).part));
             else if ((*outputheader).partPtr() && (*outputheader).partPtr()->element)
-              fprintf(stream, serviceformat, prefix, "method-output-header-part", method_name, types.aname(NULL, NULL, (*outputheader).partPtr()->element));
+              fprintf(stream, serviceformat, prefix, "method-header-part", method_name, types.aname(NULL, NULL, (*outputheader).partPtr()->element));
           }
         }
         for (vector<mime__content>::const_iterator content = (*outputmime).content.begin(); content != (*outputmime).content.end(); ++content)
           if ((*content).type)
-            fprintf(stream, serviceformat, prefix, "method-output-mime-type", method_name, (*content).type);
+            fprintf(stream, serviceformat, prefix, "method-mime-type", method_name, (*content).type);
       }
     }
+    // TODO: add headerfault directives
     for (vector<soap__header>::const_iterator outputheader = output->header.begin(); outputheader != output->header.end(); ++outputheader)
     { if ((*outputheader).part)
       { if ((*outputheader).use == encoded && (*outputheader).namespace_)
-          fprintf(stream, serviceformat, prefix, "method-output-header-part", method_name, types.aname(NULL, (*outputheader).namespace_, (*outputheader).part));
+          fprintf(stream, serviceformat, prefix, "method-header-part", method_name, types.aname(NULL, (*outputheader).namespace_, (*outputheader).part));
         else if ((*outputheader).partPtr() && (*outputheader).partPtr()->element)
-          fprintf(stream, serviceformat, prefix, "method-output-header-part", method_name, types.aname(NULL, NULL, (*outputheader).partPtr()->element));
+          fprintf(stream, serviceformat, prefix, "method-header-part", method_name, types.aname(NULL, NULL, (*outputheader).partPtr()->element));
       }
     }
+    fprintf(stream, "int %s(", output_name);
+    output->generate(types, ",", anonymous, true, false);
+    fprintf(stream, "\n    void\t///< One-way message\n);\n");
   }
-  if (output_name)
-  { if (style == document)
-      flag = output->message && output->message->part.size() == 1;
-    else if (!wflag)
-      flag = output->message && output->use == encoded && output->message->part.size() == 1 && !(*output->message->part.begin()).simpleTypePtr() && !(*output->message->part.begin()).complexTypePtr();
-    if (flag && input->message && (*output->message->part.begin()).element)
-      for (vector<wsdl__part>::const_iterator part = input->message->part.begin(); part != input->message->part.end(); ++part)
-        if ((*part).element && !strcmp((*part).element, (*output->message->part.begin()).element))
-          flag = false;
-  }
-  fprintf(stream, "int %s(", input_name);
-  input->generate(types, ",", anonymous, true, false);
-  if (output_name)
-  { if (flag)
-    { if (style == document)
-      { // Shortcut: do not generate wrapper struct
-        output->generate(types, "", false, true, true);
-      }
-      else if ((*output->message->part.begin()).name)
-      { fprintf(stream, "\n");
-        fprintf(stream, anonymous ? anonformat : paraformat, types.tname(NULL, NULL, (*output->message->part.begin()).type), cflag ? "*" : "&", types.aname(NULL, NULL, (*output->message->part.begin()).name), "");
-        fprintf(stream, "\t///< Response parameter");
-      }
-    }
-    else
-    { fprintf(stream, "\n    struct %-28s%s", output_name, cflag ? "*" : "&");
-      fprintf(stream, "\t///< Response struct parameter");
-    }
-    fprintf(stream, "\n);\n");
-  }
-  else
-    fprintf(stream, "\n    void\t///< One-way message: no response parameter\n);\n");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

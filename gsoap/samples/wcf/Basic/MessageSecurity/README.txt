@@ -7,9 +7,10 @@ You should have:
 
   C:\WF_WCF_Samples\WCF\Basic\Binding\Basic\MessageSecurity\CS
 
-Open the Basic MessageSecurity WCF C# example client and service.
+Open the Basic MessageSecurity WCF C# example client and service project in
+Visual Studio. Modify the configuration and source code as described below.
 
-Note:
+Notes:
 
   C:> denotes the Windows command line
 

@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.9
+	stdsoap2.h 2.8.10
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20809
+#define GSOAP_VERSION 20810
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -224,6 +224,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_SPRINTF_L
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
+#  if _MSC_VER >= 1300
+#   define HAVE_STRTOLL		// use _strtoi64
+#   define HAVE_STRTOULL	// use _strtoui64
+#  endif
 #  define HAVE_SYS_TIMEB_H
 #  define HAVE_FTIME
 #  define HAVE_GMTIME
@@ -304,7 +308,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 #  define HAVE_ISNAN
-#  define HAVE_ISINF
 # elif defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD)
 #  define HAVE_POLL
 #  define HAVE_SNPRINTF
@@ -827,9 +830,9 @@ extern "C" {
 # endif
 #elif defined(SOCKLEN_T)
 # define SOAP_SOCKLEN_T SOCKLEN_T
-#elif defined(__socklen_t_defined) || defined(_SOCKLEN_T) || defined(CYGWIN) || defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD) || defined(__QNX__) || defined(QNX) || defined(OS390) || defined(HP_UX)
+#elif defined(__socklen_t_defined) || defined(_SOCKLEN_T) || defined(CYGWIN) || defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD) || defined(__QNX__) || defined(QNX) || defined(OS390)
 # define SOAP_SOCKLEN_T socklen_t
-#elif defined(IRIX) || defined(WIN32) || defined(__APPLE__) || defined(SUN_OS) || defined(OPENSERVER) || defined(TRU64) || defined(VXWORKS)
+#elif defined(IRIX) || defined(WIN32) || defined(__APPLE__) || defined(SUN_OS) || defined(OPENSERVER) || defined(TRU64) || defined(VXWORKS) || defined(HP_UX)
 # define SOAP_SOCKLEN_T int
 #else
 # define SOAP_SOCKLEN_T size_t
@@ -1174,6 +1177,14 @@ extern const char soap_base64o[], soap_base64i[];
 #define soap_ispinff(n) ((n) > 0 && soap_isinf(n))
 #define soap_isninfd(n) ((n) < 0 && soap_isinf(n))
 #define soap_isninff(n) ((n) < 0 && soap_isinf(n))
+
+#ifdef HAVE_SNPRINTF
+# ifdef WIN32
+#  define soap_snprintf _snprintf
+# else
+#  define soap_snprintf snprintf
+# endif
+#endif
 
 /* gSOAP error codes */
 
@@ -2184,6 +2195,18 @@ soap_wchar soap_get1(struct soap*);
  SOAP_FMAC1 unsigned long SOAP_FMAC2 soap_strtoul(const char *s, char **t, int b);
 #endif
 
+#ifdef WIN32
+# define soap_strtoll _strtoi64
+#else
+# define soap_strtoll strtoll
+#endif
+
+#ifdef WIN32
+# define soap_strtoull _strtoui64
+#else
+# define soap_strtoull strtoull
+#endif
+
 #if defined(WITH_OPENSSL)
 # define soap_random soap_rand()
 SOAP_FMAC1 int SOAP_FMAC2 soap_rand(void);
@@ -2217,6 +2240,7 @@ typedef void soap_walker(struct soap*, void*, int, const char*, const char*);
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve(struct soap *soap);
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_request(struct soap *soap);
 
+#ifndef WITH_NOGLOBAL
 SOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_fault(struct soap*);
 SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultcode(struct soap*);
@@ -2225,12 +2249,14 @@ SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultstring(struct soap*);
 SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultdetail(struct soap*);
 SOAP_FMAC3 const char* SOAP_FMAC4 soap_check_faultsubcode(struct soap*);
 SOAP_FMAC3 const char* SOAP_FMAC4 soap_check_faultdetail(struct soap*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_serializeheader(struct soap*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_putheader(struct soap*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_getheader(struct soap*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serializefault(struct soap*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_putfault(struct soap*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_getfault(struct soap*);
+#endif
+
+SOAP_FMAC1 void SOAP_FMAC2 soap_serializeheader(struct soap*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_getheader(struct soap*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_putheader(struct soap*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_getfault(struct soap*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_putfault(struct soap*);
 
 SOAP_FMAC1 void SOAP_FMAC2 soap_ssl_init(void);
 SOAP_FMAC1 int SOAP_FMAC2 soap_poll(struct soap*);

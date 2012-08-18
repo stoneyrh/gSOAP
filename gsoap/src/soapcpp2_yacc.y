@@ -699,8 +699,11 @@ spec	: /*empty */	{ $$.typ = mkint();
 			  $$.sto = Snone;
 			  sp->node = $$;
 			}
-	| store spec	{ $$.typ = $2.typ;
-			  $$.sto = (Storage)((int)$1 | (int)$2.sto);
+	| store spec	{ if (($1 & Stypedef) && is_external($2.typ) && $2.typ->type != Tstruct && $2.typ->type != Tclass)
+			  	$$.typ = mktype($2.typ->type, $2.typ->ref, $2.typ->width);
+			  else
+			  	$$.typ = $2.typ;
+			  $$.sto = (Storage)((int)$1 | ((int)($2.sto)));
 			  if (($$.sto & Sattribute) && !is_primitive_or_string($2.typ) && !is_stdstr($2.typ) && !is_binary($2.typ) && !is_external($2.typ))
 			  {	semwarn("invalid attribute type");
 			  	$$.sto = (Storage)((int)$$.sto & ~Sattribute);
@@ -1139,7 +1142,7 @@ type	: VOID		{ $$ = mkvoid(); }
 			  }
 			}
 	| TYPE		{ if ((p = entry(typetable, $1)))
-				$$ = p->info.typ;
+			  	$$ = p->info.typ;
 			  else if ((p = entry(classtable, $1)))
 			  	$$ = p->info.typ;
 			  else if ((p = entry(enumtable, $1)))

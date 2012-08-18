@@ -37,7 +37,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "stdsoap2.h"
 
-#define WSDL2H_VERSION "2.8.9"
+#define WSDL2H_VERSION "2.8.10"
 
 #ifdef WIN32
 # pragma warning(disable : 4996)
@@ -88,6 +88,7 @@ typedef vector<const char*> VectorOfString;
 
 extern int _flag,
            aflag,
+           bflag,
 	   cflag,
 	   dflag,
 	   eflag,

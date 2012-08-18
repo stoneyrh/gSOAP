@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.9
+	stdsoap2.c[pp] 2.8.10
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20809
+#define GSOAP_LIB_VERSION 20810
 
 #ifdef AS400
 # pragma convert(819)	/* EBCDIC to ASCII */
@@ -76,10 +76,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.9 2012-06-10 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.10 2012-08-16 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.8 2012-06-10 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.10 2012-08-16 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -3133,7 +3133,11 @@ soap_ssl_error(struct soap *soap, int ret)
         strcpy(soap->msgbuf, "EOF was observed that violates the protocol. The client probably provided invalid authentication information.");
         break;
       case -1:
+#ifdef HAVE_SNPRINTF
+        soap_snprintf(soap->msgbuf, sizeof(soap->msgbuf), "Error observed by underlying BIO: %s", strerror(errno));
+#else
         sprintf(soap->msgbuf, "Error observed by underlying BIO: %s", strerror(errno));
+#endif
         break;
     }
   }
@@ -4097,7 +4101,9 @@ again:
 #ifdef WITH_OPENSSL
     soap->ssl_flags |= SOAP_SSL_CLIENT;
     if (!soap->ctx && (soap->error = soap->fsslauth(soap)))
-    { soap->fclosesocket(soap, sk);
+    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL required, but no ctx set\n"));
+      soap->fclosesocket(soap, sk);
+      soap->error = SOAP_SSL_ERROR;
       return SOAP_INVALID_SOCKET;
     }
     if (!soap->ssl)
@@ -5658,7 +5664,7 @@ http_post(struct soap *soap, const char *endpoint, const char *host, int port, c
 #endif
     return SOAP_OK;
   if (strlen(endpoint) + strlen(soap->http_version) > sizeof(soap->tmpbuf) - 80)
-    return soap->error = SOAP_EOM;
+    return soap->error = SOAP_EOM; /* prevent overrun */
   if (soap->status == SOAP_CONNECT)
     sprintf(soap->tmpbuf, "%s %s:%d HTTP/%s", s, soap->host, soap->port, soap->http_version);
   else if (soap->proxy_host && endpoint)
@@ -8452,6 +8458,7 @@ soap_copy_stream(struct soap *copy, struct soap *soap)
   copy->mode = soap->mode;
   copy->imode = soap->imode;
   copy->omode = soap->omode;
+  copy->master = soap->master;
   copy->socket = soap->socket;
   copy->sendsk = soap->sendsk;
   copy->recvsk = soap->recvsk;
@@ -8484,18 +8491,12 @@ soap_copy_stream(struct soap *copy, struct soap *soap)
   memcpy(copy->endpoint, soap->endpoint, sizeof(soap->endpoint));
 #endif
 #ifdef WITH_OPENSSL
-  copy->bio = NULL;
-  if (soap->state == SOAP_COPY)
-    copy->ctx = soap->ctx;
-  else
-    copy->ctx = NULL;
-  if (soap->ssl)
-    copy->ssl = SSL_dup(soap->ssl);
-  else
-    copy->ssl = NULL;
+  copy->bio = soap->bio;
+  copy->ctx = soap->ctx;
+  copy->ssl = soap->ssl;
 #endif
 #ifdef WITH_GNUTLS
-  copy->session = soap->session; /* TODO: Oops, GNUTLS provides a dup? */
+  copy->session = soap->session;
 #endif
 #ifdef WITH_ZLIB
   copy->zlib_state = soap->zlib_state;
@@ -8550,9 +8551,10 @@ soap_copy_stream(struct soap *copy, struct soap *soap)
       SOAP_FREE(copy, nq);
     }
   }
-  strcpy(copy->id, soap->id);
-  strcpy(copy->href, soap->href);
-  strcpy(copy->type, soap->type);
+  memcpy(copy->tag, soap->tag, sizeof(copy->tag));
+  memcpy(copy->id, soap->id, sizeof(copy->id));
+  memcpy(copy->href, soap->href, sizeof(copy->href));
+  memcpy(copy->type, soap->type, sizeof(copy->type));
   copy->other = soap->other;
   copy->root = soap->root;
   copy->null = soap->null;
@@ -8561,7 +8563,6 @@ soap_copy_stream(struct soap *copy, struct soap *soap)
   copy->mustUnderstand = soap->mustUnderstand;
   copy->level = soap->level;
   copy->peeked = soap->peeked;
-  memcpy(copy->tag, soap->tag, sizeof(copy->tag));
   /* copy attributes */
   for (tq = soap->attributes; tq; tq = tq->next)
   { struct soap_attribute *tr = tp;
@@ -8591,15 +8592,14 @@ soap_free_stream(struct soap *soap)
   soap->recvsk = SOAP_INVALID_SOCKET;
 #ifdef WITH_OPENSSL
   soap->bio = NULL;
-  if (soap->ssl)
-    SSL_free(soap->ssl);
+  soap->ctx = NULL;
   soap->ssl = NULL;
 #endif
 #ifdef WITH_GNUTLS
   soap->xcred = NULL;
   soap->acred = NULL;
   soap->cache = NULL;
-  soap->session = NULL; /* TODO: GNUTLS free here when dupped */
+  soap->session = NULL;
   soap->dh_params = NULL;
   soap->rsa_params = NULL;
 #endif
@@ -10408,6 +10408,7 @@ soap_peek_element(struct soap *soap)
           return soap->error;
         if (tp->value)
           SOAP_FREE(soap, tp->value);
+        tp->value = NULL;
         for (;;)
         { if (soap_getattrval(soap, soap->labbuf + soap->labidx, soap->lablen - soap->labidx, c))
           { if (soap->error != SOAP_EOM)
@@ -11667,7 +11668,7 @@ soap_s2LONG64(struct soap *soap, const char *s, LONG64 *p)
     soap_reset_errno;
 #endif
 #endif
-    *p = strtoll(s, &r, 10);
+    *p = soap_strtoll(s, &r, 10);
     if (s == r || *r
 #ifndef WITH_NOIO
 #ifndef WITH_LEAN
@@ -12485,7 +12486,7 @@ soap_s2ULONG64(struct soap *soap, const char *s, ULONG64 *p)
     soap_reset_errno;
 #endif
 #endif
-    *p = strtoull(s, &r, 10);
+    *p = soap_strtoull(s, &r, 10);
     if ((s == r && (soap->mode & SOAP_XML_STRICT)) || *r
 #ifndef WITH_NOIO
 #ifndef WITH_LEAN
@@ -15562,9 +15563,17 @@ soap_puthttphdr(struct soap *soap, int status, size_t count)
 static const char*
 soap_set_validation_fault(struct soap *soap, const char *s, const char *t)
 { if (*soap->tag)
+#ifdef HAVE_SNPRINTF
+    soap_snprintf(soap->msgbuf, sizeof(soap->msgbuf), "Validation constraint violation: %s%s in element '%s'", s, t ? t : SOAP_STR_EOS, soap->tag);
+#else
     sprintf(soap->msgbuf, "Validation constraint violation: %s%s in element '%s'", s, t ? t : SOAP_STR_EOS, soap->tag);
+#endif
   else
+#ifdef HAVE_SNPRINTF
+    soap_snprintf(soap->msgbuf, sizeof(soap->msgbuf), "Validation constraint violation: %s%s", s, t ? t : SOAP_STR_EOS);
+#else
     sprintf(soap->msgbuf, "Validation constraint violation: %s%s", s, t ? t : SOAP_STR_EOS);
+#endif
   return soap->msgbuf;
 }
 #endif
@@ -15610,7 +15619,11 @@ soap_set_fault(struct soap *soap)
       break;
     case SOAP_MUSTUNDERSTAND:
       *c = "SOAP-ENV:MustUnderstand";
+#ifdef HAVE_SNPRINTF
+      soap_snprintf(soap->msgbuf, sizeof(soap->msgbuf), "The data in element '%s' must be understood but cannot be handled", soap->tag);
+#else
       sprintf(soap->msgbuf, "The data in element '%s' must be understood but cannot be handled", soap->tag);
+#endif
       *s = soap->msgbuf;
       break;
     case SOAP_VERSIONMISMATCH:
@@ -15631,7 +15644,11 @@ soap_set_fault(struct soap *soap)
       *s = "Fatal error";
       break;
     case SOAP_NO_METHOD:
+#ifdef HAVE_SNPRINTF
+      soap_snprintf(soap->msgbuf, sizeof(soap->msgbuf), "Method '%s' not implemented: method name or namespace not recognized", soap->tag);
+#else
       sprintf(soap->msgbuf, "Method '%s' not implemented: method name or namespace not recognized", soap->tag);
+#endif
       *s = soap->msgbuf;
       break;
     case SOAP_NO_DATA:
@@ -15723,7 +15740,11 @@ soap_set_fault(struct soap *soap)
       break;
     case SOAP_ZLIB_ERROR:
 #ifdef WITH_ZLIB
+#ifdef HAVE_SNPRINTF
+      soap_snprintf(soap->msgbuf, sizeof(soap->msgbuf), "Zlib/gzip error: '%s'", soap->d_stream->msg ? soap->d_stream->msg : SOAP_STR_EOS);
+#else
       sprintf(soap->msgbuf, "Zlib/gzip error: '%s'", soap->d_stream->msg ? soap->d_stream->msg : SOAP_STR_EOS);
+#endif
       *s = soap->msgbuf;
 #else
       *s = "Zlib/gzip not installed for (de)compression: recompile with -DWITH_GZIP";
@@ -15770,7 +15791,12 @@ soap_set_fault(struct soap *soap)
 #ifndef WITH_NOHTTP
 #ifndef WITH_LEAN
       if (soap->error > 200 && soap->error < 600)
-      { sprintf(soap->msgbuf, "HTTP Error: %d %s", soap->error, http_error(soap, soap->error));
+      { 
+#ifdef HAVE_SNPRINTF
+        soap_snprintf(soap->msgbuf, sizeof(soap->msgbuf), "HTTP Error: %d %s", soap->error, http_error(soap, soap->error));
+#else
+        sprintf(soap->msgbuf, "HTTP Error: %d %s", soap->error, http_error(soap, soap->error));
+#endif
         *s = soap->msgbuf;
       }
       else
@@ -15899,12 +15925,14 @@ int
 SOAP_FMAC2
 soap_send_empty_response(struct soap *soap, int httpstatuscode)
 { register soap_mode m = soap->omode;
-  soap->count = 0;
-  if ((m & SOAP_IO) == SOAP_IO_CHUNK)
-    soap->omode = (m & ~SOAP_IO) | SOAP_IO_BUFFER;
-  if (!soap_response(soap, httpstatuscode) && !soap_end_send(soap))
-    soap->error = SOAP_STOP; /* stops the server's processing of request */
-  soap->omode = m;
+  if (!(m & SOAP_IO_UDP))
+  { soap->count = 0;
+    if ((m & SOAP_IO) == SOAP_IO_CHUNK)
+      soap->omode = (m & ~SOAP_IO) | SOAP_IO_BUFFER;
+    if (!soap_response(soap, httpstatuscode) && !soap_end_send(soap))
+      soap->error = SOAP_STOP; /* stops the server's processing of request */
+    soap->omode = m;
+  }
   return soap_closesock(soap);
 }
 #endif
@@ -15917,10 +15945,12 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_recv_empty_response(struct soap *soap)
-{ if (!soap_begin_recv(soap))
-    soap_end_recv(soap);
-  else if (soap->error == SOAP_NO_DATA || soap->error == 202)
-    soap->error = SOAP_OK;
+{ if (!(soap->omode & SOAP_IO_UDP))
+  { if (!soap_begin_recv(soap))
+      soap_end_recv(soap);
+    else if (soap->error == SOAP_NO_DATA || soap->error == 202)
+      soap->error = SOAP_OK;
+  }
   return soap_closesock(soap);
 }
 #endif
@@ -16156,12 +16186,7 @@ soap_sprint_fault(struct soap *soap, char *buf, size_t len)
     s = *soap_faultstring(soap);
     d = soap_check_faultdetail(soap);
 #ifdef HAVE_SNPRINTF
-# ifdef WIN32
-    _snprintf
-# else
-    snprintf
-# endif
-      (buf, len, "%s%d fault: %s [%s]\n\"%s\"\nDetail: %s\n", soap->version ? "SOAP 1." : "Error ", soap->version ? (int)soap->version : soap->error, *c, v ? v : "no subcode", s ? s : "[no reason]", d ? d : "[no detail]");
+    soap_snprintf(buf, len, "%s%d fault: %s [%s]\n\"%s\"\nDetail: %s\n", soap->version ? "SOAP 1." : "Error ", soap->version ? (int)soap->version : soap->error, *c, v ? v : "no subcode", s ? s : "[no reason]", d ? d : "[no detail]");
 #else
     if (len > 40 + (v ? strlen(v) : 0) + (s ? strlen(s) : 0) + (d ? strlen(d) : 0))
       sprintf(buf, "%s%d fault: %s [%s]\n\"%s\"\nDetail: %s\n", soap->version ? "SOAP 1." : "Error ", soap->version ? (int)soap->version : soap->error, *c, v ? v : "no subcode", s ? s : "[no reason]", d ? d : "[no detail]");

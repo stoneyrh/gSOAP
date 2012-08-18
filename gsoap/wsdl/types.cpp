@@ -3063,7 +3063,7 @@ static LONG64 to_integer(const char *s)
 { LONG64 n;
 #ifdef HAVE_STRTOLL
   char *r;
-  n = strtoll(s, &r, 10);
+  n = soap_strtoll(s, &r, 10);
 #else
 # ifdef HAVE_SSCANF
   sscanf(s, SOAP_LONG_FORMAT, &n);

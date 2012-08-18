@@ -105,13 +105,14 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 //gsoap ns service type:	wsademoPort
 //gsoap ns service namespace:	urn:wsademo
 
-/* STEP 1: generate SOAP-ENV:Fault struct via a one-way service operation.
+/* To generate SOAP-ENV:Fault struct via a one-way service operation.
  * This allows us to implement a one-way service operation that accepts Faults.
  * Because a service operation input parameters has a corresponding struct, we
  * automatically generate the (original) SOAP_ENV__Fault struct on the fly!
  * Note: it is important to associate the wsa fault action with this operation
  * as defined below. The action is version-dependent, here we use 2005/08.
- */ 
+ * This declaration is now part of the wsa5.h imported specification and hereby
+ * removed from this code.
 
 //gsoap SOAP_ENV service method-action: Fault http://www.w3.org/2005/08/addressing/soap/fault
 int SOAP_ENV__Fault
@@ -126,8 +127,9 @@ int SOAP_ENV__Fault
         struct SOAP_ENV__Detail	*SOAP_ENV__Detail,	// SOAP 1.2
 	void
 );
+*/
 
-/* STEP 2: for the server side we need to generate a response struct for each
+/* For the server side we need to generate a response struct for each
  * operation to implement one-way service response operations that can be
  * relayed. Because the service operation has a corresponding struct, we can
  * use that struct as a response parameter for the second two-way service

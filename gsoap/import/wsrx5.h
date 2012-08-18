@@ -1,15 +1,16 @@
 /*
-	wsrx.h
+	wsrx5.h
 
 	WS-ReliableMessaging definitions:
 	SOAP Header definitions for WS-RM 1.0 2005
 	WS-RM Operations for CreateSequence, CloseSequence, TerminateSequence
 	WS-RM SequenceAcknowledgement server operation (RM dest for AcksTo)
+	Note: changed TerminateSequenceResponse to TerminateSequence
 
-	Imported by import/wsrm.h
+	Imported by import/wsrm5.h
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -24,7 +25,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -97,10 +98,10 @@ int __wsrm__CloseSequence(
 //gsoap wsrm service method-header-part:     TerminateSequence wsa5__To
 //gsoap wsrm service method-header-part:     TerminateSequence wsa5__Action
 //gsoap wsrm service method-action:          TerminateSequence http://schemas.xmlsoap.org/ws/2005/02/rm/TerminateSequence
-//gsoap wsrm service method-output-action:   TerminateSequence http://schemas.xmlsoap.org/ws/2005/02/rm/TerminateSequenceResponse
+//gsoap wsrm service method-output-action:   TerminateSequence http://schemas.xmlsoap.org/ws/2005/02/rm/TerminateSequence
 int __wsrm__TerminateSequence(
   struct wsrm__TerminateSequenceType         *wsrm__TerminateSequence,
-  struct wsrm__TerminateSequenceResponseType *wsrm__TerminateSequenceResponse);
+  struct wsrm__TerminateSequenceResponseType *wsrm__TerminateSequence_);
 
 //gsoap wsrm service method-header-part:     CreateSequenceResponse wsa5__MessageID
 //gsoap wsrm service method-header-part:     CreateSequenceResponse wsa5__RelatesTo

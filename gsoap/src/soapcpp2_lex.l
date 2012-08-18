@@ -444,7 +444,7 @@ static void directive(void)
 					semwarn("option -1 or -2 overrides SOAP-ENC namespace");
 				else
 					encURI = s;
-				sp->URI = encURI = s;
+				sp->URI = encURI;
 			}
 			else
 				sp->URI = s;
