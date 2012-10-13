@@ -201,6 +201,23 @@ The following C/C++ types are supported in the header file:
   possible by enabling the SOAP_C_UTFSTRING flag. When enabled, all std::string
   and char* strings MUST contain UTF8.
 
+Removing SOAP namespaces
+------------------------
+
+The soapcpp2 tool generates a .nsmap file that includes two bindings for SOAP
+namespaces. You can remove all SOAP namespaces (and SOAP processing logic) by
+simply setting the two entries to NULL:
+
+SOAP_NMAC struct Namespace namespaces[] =
+{
+  {"SOAP-ENV", NULL, NULL, NULL},
+  {"SOAP-ENC", NULL, NULL, NULL},
+  ...
+
+Note that once the .nsmap is generated, you can copy-paste the content into you
+project code. However, if you rerun wsdl2h on updated WSDL/XSD files or
+typemap.dat declarations then you need to use the updated table.
+
 Project Files
 -------------
 

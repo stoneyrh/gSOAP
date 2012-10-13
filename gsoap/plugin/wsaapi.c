@@ -599,7 +599,7 @@ soap_wsa_rand_uuid(struct soap *soap)
 #endif
   r3 = soap_random;
   r4 = soap_random;
-  sprintf(uuid, "urn:uuid:%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), (short)r2 >> 4, ((short)(r3 >> 16) & 0x3FFF) | 0x8000, (short)r3, r4);
+  sprintf(uuid, "urn:uuid:%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), ((short)r2 >> 4) & 0x0FFF, ((short)(r3 >> 16) & 0x3FFF) | 0x8000, (short)r3, r4);
   DBGFUN1("soap_wsa_rand_uuid", "%s", uuid);
   return uuid;
 }
@@ -875,8 +875,8 @@ soap_wsa_reply(struct soap *soap, const char *id, const char *action)
       { soap_copy_stream(reply_soap, soap);
 	soap_free_stream(soap); /* prevents close in soap_connect() below */
         if (soap_connect(soap, newheader->SOAP_WSA(To), newheader->SOAP_WSA(Action)))
-        { int err; 
-          soap_copy_stream(soap, reply_soap);
+        { int err;
+	  soap_copy_stream(soap, reply_soap);
 	  soap_free_stream(reply_soap);
           soap_end(reply_soap);
           soap_free(reply_soap);

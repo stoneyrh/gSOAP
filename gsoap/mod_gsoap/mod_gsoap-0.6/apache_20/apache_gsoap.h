@@ -4,6 +4,8 @@
 #ifndef _APACHE_GSOAP_H_INCLUDED
 #define _APACHE_GSOAP_H_INCLUDED
 
+#undef HAVE_TIMEGM /* stop complaining */
+
 /*
  * need to include httpd.h for request rec definition 
  */
@@ -21,33 +23,27 @@ extern "C" {
     /*
      * calls soap_serve inside shared library 
      */
-    typedef SOAP_FMAC1 void (SOAP_FMAC2 * apache_soap_init_fn) (struct soap *,
-                                                                request_rec *);
+    typedef SOAP_FMAC1 void (SOAP_FMAC2 * apache_soap_init_fn) (struct soap *, request_rec *);
 
     /*
      * calls soap_init inside shared library
      */
-    typedef SOAP_FMAC1 int (SOAP_FMAC2 * apache_soap_serve_fn) (struct soap *,
-                                                                request_rec *);
+    typedef SOAP_FMAC1 int (SOAP_FMAC2 * apache_soap_serve_fn) (struct soap *, request_rec *);
 
     /*
      * calls soap_destroy inside shared library 
      */
-    typedef SOAP_FMAC1 void (SOAP_FMAC2 *
-                             apache_soap_destroy_fn) (struct soap *,
-                                                      request_rec *);
+    typedef SOAP_FMAC1 void (SOAP_FMAC2 * apache_soap_destroy_fn) (struct soap *, request_rec *);
 
     /*
      * calls soap_end inside shared library 
      */
-    typedef SOAP_FMAC1 void (SOAP_FMAC2 * apache_soap_end_fn) (struct soap *,
-                                                               request_rec *);
+    typedef SOAP_FMAC1 void (SOAP_FMAC2 * apache_soap_end_fn) (struct soap *, request_rec *);
 
     /*
      * calls soap_done inside shared library 
      */
-    typedef SOAP_FMAC1 void (SOAP_FMAC2 * apache_soap_done_fn) (struct soap *,
-                                                                request_rec *);
+    typedef SOAP_FMAC1 void (SOAP_FMAC2 * apache_soap_done_fn) (struct soap *, request_rec *);
 
     typedef SOAP_FMAC1 int (SOAP_FMAC2 *
                             apache_soap_register_plugin_fn) (struct soap *,
@@ -69,16 +65,11 @@ extern "C" {
     /*
      * the callbacks normally used in the apache_soap_interface 
      */
-    SOAP_FMAC1 void SOAP_FMAC2 apache_soap_soap_destroy(struct soap *,
-                                                        request_rec * r);
-    SOAP_FMAC1 void SOAP_FMAC2 apache_default_soap_init(struct soap *soap,
-                                                        request_rec * r);
-    SOAP_FMAC1 int SOAP_FMAC2 apache_default_soap_serve(struct soap *soap,
-                                                        request_rec * r);
-    SOAP_FMAC1 void SOAP_FMAC2 apache_default_soap_end(struct soap *soap,
-                                                       request_rec * r);
-    SOAP_FMAC1 void SOAP_FMAC2 apache_default_soap_done(struct soap *soap,
-                                                        request_rec * r);
+    SOAP_FMAC1 void SOAP_FMAC2 apache_soap_soap_destroy(struct soap *, request_rec * r);
+    SOAP_FMAC1 void SOAP_FMAC2 apache_default_soap_init(struct soap *soap, request_rec * r);
+    SOAP_FMAC1 int SOAP_FMAC2 apache_default_soap_serve(struct soap *soap, request_rec * r);
+    SOAP_FMAC1 void SOAP_FMAC2 apache_default_soap_end(struct soap *soap, request_rec * r);
+    SOAP_FMAC1 void SOAP_FMAC2 apache_default_soap_done(struct soap *soap, request_rec * r);
     SOAP_FMAC1 int SOAP_FMAC2 apache_default_soap_register_plugin_arg(struct
                                                                       soap *, int
                                                                        (*fcreate)
@@ -99,7 +90,7 @@ extern "C" {
                                                                   r);
 
     struct apache_soap_interface {
-        unsigned int len;       ///< length of this struct in bytes (for version control).
+        unsigned int len;       /* length of this struct in bytes (for version control). */
         unsigned int interface_version;
         apache_soap_init_fn fsoap_init;
         apache_soap_serve_fn fsoap_serve;
@@ -108,7 +99,7 @@ extern "C" {
         apache_soap_done_fn fsoap_done;
         apache_soap_register_plugin_fn fsoap_register_plugin_arg;
         apache_soap_lookup_plugin_fn fsoap_lookup_plugin;
-        void *reserved;         ///< variable reserved for apache module, must not be changed by server shared library.
+        void *reserved;         /* variable reserved for apache module, must not be changed by server shared library. */
         struct Namespace *namespaces;
         void (*soap_serializeheader) (struct soap * soap);
         int (*soap_putheader) (struct soap * soap);
@@ -126,28 +117,25 @@ extern "C" {
         void *(*soap_getelement) (struct soap *, int *);
     };
 
-    typedef void (*apache_init_soap_interface_fn) (struct apache_soap_interface
-                                                   *, request_rec *);
+    typedef void (*apache_init_soap_interface_fn) (struct apache_soap_interface*, request_rec*);
 
     /*
      * exported shared library function called by mod_gsoap from within apache http server 
      *  This function fills the members of the apache_soap_interface struct. 
      */
-    SOAP_FMAC1 void SOAP_FMAC2 apache_init_soap_interface(struct
-                                                          apache_soap_interface
-                                                          *, request_rec * r);
+    SOAP_FMAC1 void SOAP_FMAC2 apache_init_soap_interface(struct apache_soap_interface*, request_rec*);
 
 #define IMPLEMENT_GSOAP_SERVER() \
  SOAP_FMAC1 void SOAP_FMAC2 apache_soap_soap_destroy(struct soap *soap, request_rec *r) \
-    {return soap_destroy(soap);}\
+    {soap_destroy(soap);}\
  SOAP_FMAC1 void SOAP_FMAC2 apache_default_soap_init(struct soap *soap, request_rec *r) \
-    {return soap_init(soap);}\
+    {soap_init(soap);}\
  SOAP_FMAC1 int SOAP_FMAC2 apache_default_soap_serve(struct soap *soap, request_rec *r) \
     {return soap_serve(soap);}\
  SOAP_FMAC1 void SOAP_FMAC2 apache_default_soap_end(struct soap *soap, request_rec *r) \
-    {return soap_end(soap);}\
+    {soap_end(soap);}\
  SOAP_FMAC1 void SOAP_FMAC2 apache_default_soap_done(struct soap *soap, request_rec *r) \
-    {return soap_done(soap);}\
+    {soap_done(soap);}\
  SOAP_FMAC1 int SOAP_FMAC2 apache_default_soap_register_plugin_arg(struct soap *soap, int (*fcreate)(struct soap *, struct soap_plugin *, void *), void *arg, request_rec *r) \
     {return soap_register_plugin_arg(soap, fcreate, arg);}\
  SOAP_FMAC1 void* SOAP_FMAC2 apache_default_soap_lookup_plugin(struct soap *soap, const char *plugin, request_rec *r) \
@@ -181,5 +169,5 @@ void apache_init_soap_interface(struct apache_soap_interface *pInt, request_rec 
 
 #ifdef __cplusplus
 }
-#endif                          //__cplusplus
-#endif                          //_APACHE_GSOAP_H_INCLUDED
+#endif                          /*__cplusplus */
+#endif                          /*_APACHE_GSOAP_H_INCLUDED */

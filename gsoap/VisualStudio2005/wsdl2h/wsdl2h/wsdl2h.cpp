@@ -85,7 +85,7 @@ char *infile[MAXINFILES],
      *proxy_host = NULL,
      *proxy_userid = NULL,
      *proxy_passwd = NULL;
-extern const char
+const char
      *mapfile = WSDL_TYPEMAP_FILE,
      *import_path = WSDL2H_IMPORT_PATH,
      *cwd_path = NULL,
@@ -118,7 +118,7 @@ const char serviceformat[]             = "//gsoap %-4s service %s:\t%s %s\n";
 const char paraformat[]                = "    %-35s%s%s%s";
 const char anonformat[]                = "    %-35s%s_%s%s";
 
-const char copyrightnotice[] = "\n**  The gSOAP WSDL/Schema processor for C and C++, wsdl2h release "WSDL2H_VERSION"\n**  Copyright (C) 2000-2012 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool is released under one of the following two licenses:\n**  GPL or the commercial license by Genivia Inc. Use option -l for details.\n\n";
+const char copyrightnotice[] = "\n**  The gSOAP WSDL/Schema processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2012 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool is released under one of the following two licenses:\n**  GPL or the commercial license by Genivia Inc. Use option -l for details.\n\n";
 
 const char licensenotice[]   = "\
 --------------------------------------------------------------------------------\n\
@@ -384,7 +384,7 @@ static void options(int argc, char **argv)
 	    break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-n name] [-N name] [-p|-P] [-q name] [-r proxyhost[:port[:uid:pwd]]] [-s] [-t typemapfile] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-N name] [-n name] [-P|-p] [-q name] [-r proxyhost[:port[:uid:pwd]]] [-s] [-t typemapfile] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -b	bi-directional operations to serve one-way response messages (duplex)\n\
@@ -400,7 +400,7 @@ static void options(int argc, char **argv)
 -k      don't generate SOAP_ENV__Header mustUnderstand qualifiers\n\
 -l      display license information\n\
 -m      use xsd.h module to import primitive types\n\
--Nname  use name as the base namespace prefix for service namespaces\n\
+-Nname  use name for service namespace prefixes and multiple bindings\n\
 -nname  use name as the base namespace prefix instead of 'ns'\n\
 -ofile  output to file\n\
 -P      don't create polymorphic types with C++ inheritance from xsd__anyType\n\

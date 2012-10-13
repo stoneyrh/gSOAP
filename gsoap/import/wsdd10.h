@@ -9,7 +9,7 @@
         - Removed //gsoapopt
         - Changed //gsoap wssd schema namespace directive to import directive
 	- Changed to WS-Addressing 2004/08 protocol
-	- Changed namespace to WS-Discovery 2005/04 protocol
+	- Changed namespace to WS-Discovery 2005/04 protocol with wsdd10
         - Added #import "wsdx.h" at the end of these definitions
 */
 

@@ -84,7 +84,7 @@ void primes::write()
 // the destructor cleans up the 'soap' context
 primes::~primes()
 {
- soap_destroy(this);
+  soap_destroy(this);
   soap_end(this);
 }
 

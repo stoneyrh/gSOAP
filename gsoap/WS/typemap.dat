@@ -116,22 +116,23 @@
 
 xsd__duration = #import "custom/duration.h" | xsd__duration
 
+#	SOAP-ENV mapping (note: SOAP Body content is mapped to an XML string)
+
+SOAP_ENV__Envelope	= struct SOAP_ENV__Envelope { struct SOAP_ENV__Header *SOAP_ENV__Header; _XML SOAP_ENV__Body; }; | struct SOAP_ENV__Envelope
+SOAP_ENV__Header	= | struct SOAP_ENV__Header
+SOAP_ENV__Fault		= | struct SOAP_ENV__Fault
+SOAP_ENV__Detail	= | struct SOAP_ENV__Detail
+SOAP_ENV__Code		= | struct SOAP_ENV__Code
+SOAP_ENV__Subcode	= | struct SOAP_ENV__Subcode
+SOAP_ENV__Reason	= | struct SOAP_ENV__Reason
+
 #	Temporary URI
 
 tempuri	= "http://tempuri.org/"
 
-#	Prefix bindings for WhiteMesa interoperability testing round 2:
+#	Empty URI
 
-i	= "http://soapinterop.org/"
-s	= "http://soapinterop.org/xsd"
-
-#	Prefix binding for Amazon Web Services:
-
-aws	= "urn:PI/DevCentral/SoapService"
-
-#	Prefix binding for Mappoint Web services:
-
-mpt	= "http://s.mappoint.net/mappoint-30/"
+empty	= ""
 
 #	.NET WCF DataContract Serialization Schema
 
@@ -246,6 +247,19 @@ wsrm4	= <http://docs.oasis-open.org/wsrm/2004/06/ws-reliability-1.1.xsd>
 wsdd	= <http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01>
 wsdd10	= <http://schemas.xmlsoap.org/ws/2005/04/discovery>
 
+wsdd10__HelloType		= | wsdd__HelloType
+wsdd10__ByeType			= | wsdd__ByeType
+wsdd10__ProbeType		= | wsdd__ProbeType
+wsdd10__ProbeMatchesType	= | wsdd__ProbeMatchesType
+wsdd10__ProbeMatchType		= | wsdd__ProbeMatchType
+wsdd10__ResolveType		= | wsdd__ResolveType
+wsdd10__ResolveMatchesType	= | wsdd__ResolveMatchesType
+wsdd10__ResolveMatchType	= | wsdd__ResolveMatchType
+wsdd10__ScopesType		= | wsdd__ScopesType
+wsdd10__SecurityType		= | wsdd__SecurityType
+wsdd10__SigType			= | wsdd__SigType
+wsdd10__AppSequenceType		= | wsdd__AppSequenceType
+
 #	WS-Policy
 
 wsp	= <http://schemas.xmlsoap.org/ws/2004/09/policy>
@@ -317,3 +331,59 @@ wsrp	= <http://schemas.xmlsoap.org/rp/>
 # xsd__boolean = enum xsd__boolean { false_, true_ }; | enum xsd__boolean
 
 # xsd__base64Binary = class xsd__base64Binary { unsigned char *__ptr; int __size; }; | xsd__base64Binary | xsd__base64Binary
+
+#	ONVIF recommended prefixes as per 8/20/12
+#	http://www.onvif.org/onvif/ver10/device/wsdl/devicemgmt.wsdl
+#	http://www.onvif.org/onvif/ver10/event/wsdl/event.wsdl
+#	http://www.onvif.org/onvif/ver10/display.wsdl
+#	http://www.onvif.org/onvif/ver10/deviceio.wsdl
+#	http://www.onvif.org/onvif/ver20/imaging/wsdl/imaging.wsdl
+#	http://www.onvif.org/onvif/ver10/media/wsdl/media.wsdl
+#	http://www.onvif.org/onvif/ver20/ptz/wsdl/ptz.wsdl
+#	http://www.onvif.org/onvif/ver10/receiver.wsdl
+#	http://www.onvif.org/onvif/ver10/recording.wsdl
+#	http://www.onvif.org/onvif/ver10/search.wsdl
+#	http://www.onvif.org/onvif/ver10/network/wsdl/remotediscovery.wsdl
+#	http://www.onvif.org/onvif/ver10/replay.wsdl
+#	http://www.onvif.org/onvif/ver20/analytics/wsdl/analytics.wsdl
+#	http://www.onvif.org/onvif/ver10/analyticsdevice.wsdl	
+#	http://www.onvif.org/onvif/ver10/schema/onvif.xsd
+
+tds	= "http://www.onvif.org/ver10/device/wsdl"
+tev	= "http://www.onvif.org/ver10/events/wsdl"
+tls	= "http://www.onvif.org/ver10/display/wsdl"
+tmd	= "http://www.onvif.org/ver10/deviceIO/wsdl"
+timg	= "http://www.onvif.org/ver20/imaging/wsdl"
+trt	= "http://www.onvif.org/ver10/media/wsdl"
+tptz	= "http://www.onvif.org/ver20/ptz/wsdl"
+trv	= "http://www.onvif.org/ver10/receiver/wsdl"
+trc	= "http://www.onvif.org/ver10/recording/wsdl"
+tse	= "http://www.onvif.org/ver10/search/wsdl"
+trp	= "http://www.onvif.org/ver10/replay/wsdl"
+tan	= "http://www.onvif.org/ver20/analytics/wsdl"
+tad	= "http://www.onvif.org/ver10/analyticsdevice/wsdl"
+tdn	= "http://www.onvif.org/ver10/network/wsdl"
+tt	= "http://www.onvif.org/ver10/schema"
+
+#	OASIS recommended prefixes
+
+wsnt	= "http://docs.oasis-open.org/wsn/b-2"
+wsntw	= "http://docs.oasis-open.org/wsn/bw-2"
+wsrfbf	= "http://docs.oasis-open.org/wsrf/bf-2"
+wsrfr	= "http://docs.oasis-open.org/wsrf/r-2"
+wsrfrw  = "http://docs.oasis-open.org/wsrf/rw-2"
+wstop	= "http://docs.oasis-open.org/wsn/t-1"
+
+#	Prefix bindings for WhiteMesa interoperability testing round 2:
+
+i	= "http://soapinterop.org/"
+s	= "http://soapinterop.org/xsd"
+
+#	Prefix binding for Amazon Web Services:
+
+aws	= "urn:PI/DevCentral/SoapService"
+
+#	Prefix binding for Mappoint Web services:
+
+mpt	= "http://s.mappoint.net/mappoint-30/"
+

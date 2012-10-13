@@ -2225,15 +2225,15 @@ soap_wsse_verify_X509(struct soap *soap, X509 *cert)
 @fn int soap_wsse_add_SecurityContextToken(struct soap *soap, const char *id, const char *identifier)
 @brief Adds wsc:SecurityContextToken/Identifier and SecurityTokenReference to it
 @param soap context
-@param[in] id string for signature reference
-@param[in] identifier wsc:Identifier value
+@param[in] id string for signature reference (required)
+@param[in] identifier wsc:Identifier value (required)
 @return SOAP_OK or error code
 */
 int
 soap_wsse_add_SecurityContextToken(struct soap *soap, const char *id, const char *identifier)
 { char *URI;
   _wsse__Security *security = soap_wsse_add_Security(soap);
-  DBGFUN2("soap_wsse_add_SecurityContextToken", "id=%s", id?id:"", "identifier=%s", identifier?identifier:"");
+  DBGFUN2("soap_wsse_add_SecurityContextToken", "id=%s", id, "identifier=%s", identifier?identifier:"");
   /* allocate wsc:SecurityContextToken if we don't already have one */
   if (!security->wsc__SecurityContextToken)
   { if (!(security->wsc__SecurityContextToken = (struct wsc__SecurityContextTokenType*)soap_malloc(soap, sizeof(struct wsc__SecurityContextTokenType))))

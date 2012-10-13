@@ -179,11 +179,11 @@ static const struct option default_options[] =
   { "k.keepalive", NULL, },
   { "i.iterative", NULL, },
   { "v.verbose", NULL, },
-  { "o.pool", "threads", 6, "none"},
-  { "t.ioTimeout", "seconds", 6, "5"},
-  { "s.serverTimeout", "seconds", 6, "3600"},
-  { "d.cookieDomain", "host", 20, "127.0.0.1"},
-  { "p.cookiePath", "path", 20, "/"},
+  { "o.pool", "threads", 6, (char*)"none"},
+  { "t.ioTimeout", "seconds", 6, (char*)"5"},
+  { "s.serverTimeout", "seconds", 6, (char*)"3600"},
+  { "d.cookieDomain", "host", 20, (char*)"127.0.0.1"},
+  { "p.cookiePath", "path", 20, (char*)"/"},
   { "l.logging", "none inbound outbound both", },
   { "", "port", },		/* takes the rest of command line args */
   { NULL },			/* must be NULL terminated */
@@ -785,7 +785,7 @@ int check_authentication(struct soap *soap)
 #ifdef HTTPDA_H
   else if (soap->authrealm && soap->userid)
   { if (!strcmp(soap->authrealm, AUTH_REALM) && !strcmp(soap->userid, AUTH_USERID))
-      if (!http_da_verify_get(soap, AUTH_PASSWD))
+      if (!http_da_verify_get(soap, (char*)AUTH_PASSWD))
         return SOAP_OK;
   }
 #endif

@@ -16,66 +16,84 @@ apache_gsoap.h			mod_gsoap module for Apache v2.x
 mod_gsoap.c			mod_gsoap module for Apache v2.x
 mod_gsoap.vcproj		MSVC project
 
+To use the Apache extension mechanism your platform has to support the DSO
+feature and your Apache httpd binary has to be built with the mod_so module.
+The apxs tool automatically complains if this is not the case. You can check
+this yourself by manually running the command
+
+$ httpd -l
+
+The module mod_so should be part of the displayed list.
+
 Here's how to compile mod_gsoap for apache 2.x:
 
-/usr/local/apache2/bin/apxs -a -i -c -I/path/to/gsoap/installation mod_gsoap.c
-
-The URI query ?wsdl returns the WSDL, e.g. "http://domain/path/calc?wsdl" which
-pulls the file calc.wsdl from the current location of the service.
-
-To change the path to the WSDL files, modify mod_gsoap.c:
-
-#define GSOAP_GET_WSDL_PATH ""
+$ apxs -a -i -c -I/path/to/gsoap/installation mod_gsoap.c
 
 SETTING UP HTTPD
 
 Download and build Apache httpd:
 
-mkdir testbuild
-cd testbuild
-tar -xjf httpd-2.2.17.tar.bz2
-cd httpd-2.2.17
-./configure --prefix=`pwd`/.. --with-mpm=worker --enable-mods-shared=most
-make -j4
-make install
+$ mkdir testbuild
+$ cd testbuild
+$ tar -xjf httpd-2.2.17.tar.bz2
+$ cd httpd-2.2.17
+$ ./configure --prefix=`pwd`/.. --with-mpm=worker --enable-mods-shared=most
+$ make -j4
+$ make install
 
 SETTING UP MOD_GSOAP
 
-cd gsoap/mod_gsoap/mod_gsoap-0.6/apache_20
-apxs -a -i -c -I testbuild/include mod_gsoap.c
-cp apache_gsoap.h testbuild/include
+$ cd gsoap/mod_gsoap/mod_gsoap-0.6/apache_20
+$ apxs -a -i -c -I testbuild/include mod_gsoap.c
+$ cp apache_gsoap.h testbuild/include
+
+This will install libraries in /usr/libexec/apache2
 
 BUILDING AN EXAMPLE MOD_GSOAP SERVICE
 
 Copy the calculator example:
 
-cp gsoap/samples/calc/* testbuild
+$ cd testbuild
+$ cp gsoap/samples/calc/* .
+$ cp gsoap/stdsoap2.* .
 
 Edit calcserver.c by removing main() and replace with:
 
-include "apache_gsoap.h"
+#include "apache_gsoap.h"
 IMPLEMENT_GSOAP_SERVER()
 
 Then compile and build:
 
-soapcpp2 -c -L -x calc.h
-apxs -a -c calcserver.c soapC.c soapServer.c -lgsoap
+$ soapcpp2 -c -SL -wx calc.h
+$ apxs -a -c calcserver.c soapC.c soapServer.c stdsoap2.c
 
-To deploy our service, we need to add to httpd.conf (e.g. at the end):
+This creates .libs/calcserver.so service module.
+
+Make sure the .so file is universally readible:
+
+-rwxr-xr-x  1 root  staff  304172 Aug 30 14:51 calcserver.so*
+
+and make sure it is readible through the entire path testuser/testbuild/.libs.
+
+To deploy your service, we need to add to httpd.conf (e.g. at the end):
 
 <IfModule mod_gsoap.c>
-<Location /soap>
-SetHandler gsoap_handler
-SOAPLibrary /home/testuser/apachegsoap/gsoap-2.8/gsoap/samples/calc/.libs/calcserver.so
-Order allow,deny
-Allow from all
-</Location>
+ <Location /soap>
+  SetHandler gsoap_handler
+  SOAPLibrary /home/testuser/testbuild/.libs/calcserver.so
+  Order allow,deny
+  Allow from all
+ </Location>
 </IfModule>
+
+The httpd.conf file is usually found under
+
+/private/etc/apache2/httpd.conf
 
 To start the service:
 
-cd testbuild
-bin/apacectl start
+$ cd testbuild
+$ bin/apacectl start
 
 Point your browser to http://localhost:9080 and the page should show "It works!"
 
@@ -85,11 +103,15 @@ const char server[] = "http://localhost:9080/soap";
 
 To build the client:
 
-gcc -o calcclient calcclient.c soapC.c soapClient.c -lgsoap
+$ gcc -o calcclient calcclient.c soapC.c soapClient.c stdsoap2.c
 
 and test it:
 
-./calcclient add 2 3
+$ ./calcclient add 2 3
+
+By default, the URI query ?wsdl returns the WSDL, e.g.
+"http://domain/path/calc?wsdl" which pulls the file calc.wsdl from the current
+location of the service. You need to copy the calc.wsdl file there.
 
 USING DYNAMIC LIBRARIES
 

@@ -9,6 +9,7 @@ SOAPHEADER = primes.h
 include ../Makefile.defines
 include ../Makefile.cpp_rules
 SOAP_NS =
+SOAP_FLAGS=-0 -CS
 
 primes_SOURCES = $(SOAPHEADER) primes.cpp simple_vector.h $(SOAP_CPP_CORE)
 primes_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)

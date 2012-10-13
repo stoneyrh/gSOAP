@@ -152,10 +152,11 @@ main(int argc, char **argv)
 						break;
 					case '?':
 					case 'h':
-						fprintf(stderr, "Usage: soapcpp2 [-1|-2] [-C|-S] [-T] [-L] [-a] [-A] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-k] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [infile]\n\n");
+						fprintf(stderr, "Usage: soapcpp2 [-1|-2|-0] [-C|-S] [-T] [-L] [-a] [-A] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-k] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [infile]\n\n");
 						fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
+-0      remove SOAP bindings (when not explicitly set by directives)\n\
 -C	generate client-side code only\n\
 -S	generate server-side code only\n\
 -T	generate server auto-test code\n\
@@ -176,8 +177,8 @@ main(int argc, char **argv)
 -m      generate Matlab(tm) code for MEX compiler\n\
 -n      use service name to rename service functions and namespace table\n\
 -pname  save files with new prefix name instead of 'soap'\n\
--Qname  use name as the C++ namespace for declarations, including custom serializers\n\
--qname  use name as the C++ namespace for declarations, excluding custom serializers\n\
+-Qname  use name as the C++ namespace for decls, including custom serializers\n\
+-qname  use name as the C++ namespace for decls, excluding custom serializers\n\
 -s      generate deserialization code with strict XML validation checks\n\
 -t      generate code for fully xsi:type typed SOAP/XML messaging\n\
 -u	uncomment comments in WSDL/schema output by suppressing XML comments\n\
@@ -277,6 +278,9 @@ infile	header file to parse (or stdin)\n\
 							namespaceid = ns_cname(argv[i], NULL);
 						else
 							execerror("Option -q requires a namespace name");
+						break;
+					case '0':
+						vflag = -1;
 						break;
 					case '1':
 						vflag = 1;

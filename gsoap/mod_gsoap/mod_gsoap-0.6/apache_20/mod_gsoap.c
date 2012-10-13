@@ -1,13 +1,12 @@
 /** Apache gSOAP module for Apache 2.0
  * @file mod_gsoap.c
  *
- * author Christian Aberger (http://www.aberger.at)
- * ported to 2.0 Mick Wall (mick@mickandwendy.com)
+ * originator: Christian Aberger (http://www.aberger.at)
+ * ported to Apache 2.0 by Mick Wall (mick@mickandwendy.com)
  * updated by Robert van Engelen (engelen@acm.org)
  * updated by David Viner (dviner@apache.org)
  * updated by Ryan Troll (patch removed)
- * updated by La Cam Chung and Robert van Engelen (HTTP GET ?wsdl to return WSDL)
- * updated by Robert van Engelen
+ * updated by La Cam Chung and Robert van Engelen (HTTP GET ?wsdl to get WSDL)
  *
  * Contributed to the gSOAP package under the terms and conditions of the gSOAP
  * open source public license.
@@ -24,7 +23,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-//#include <ltdl.h>
+/* #include <ltdl.h> */
 #include <dlfcn.h>
 #include "apr_strings.h"
 #include "apr_fnmatch.h"
@@ -44,15 +43,16 @@
 #include "http_protocol.h"
 #include "http_request.h"
 #include "util_script.h"
-#include "stdsoap2.h"           // standard header for gsoap
+#undef HAVE_TIMEGM		/* stop complaining */
+#include "stdsoap2.h"           /* standard header for gsoap */
 #include "apache_gsoap.h"
 
-typedef int bool;
+typedef int Bool;
 
-#define false 0
-#define true ((int)0xffff)
+#define FALSE 0
+#define TRUE ((int)0xffff)
 #define IOBUF_CHUNK_SIZE 8192
-#define GSOAP_ID "Apache 2.0 mod_gsoap gsoap httpd extension 0.0.8"
+#define GSOAP_ID "Apache 2.0 mod_gsoap gsoap httpd extension 0.0.9"
 
 static char mod_gsoap_id[] = GSOAP_ID;
 
@@ -67,10 +67,10 @@ typedef struct SoapSharedLibrary_S {
 #else
 #define DLSYM(a,b) dlsym(a,b)
 #define DLOPEN(a,b) dlopen(a,b)
-    void *m_hLibrary;           ///< handle of the loaded libray.
+    void *m_hLibrary;           /* handle of the loaded libray */
 #endif
-    const char *m_pszPath;      ///< the path of the library, including the name.
-    bool m_bIsSOAPLibrary;      ///< is this library a SOAP library that contains the server factory entry point?
+    const char *m_pszPath;      /* the path of the library, including the name */
+    Bool m_bIsSOAPLibrary;      /* is this library a SOAP library that contains the server factory entry point? */
 } SoapSharedLibrary;
 
 /** Table of shared libraries that are already loaded.
@@ -78,20 +78,20 @@ typedef struct SoapSharedLibrary_S {
  */
 typedef struct SoapSharedLibraries_S {
     apr_pool_t *m_pPool;
-    SoapSharedLibrary *m_pSOAPLibrary;  ///< the main SOAP library that will serve our requests
-    apr_array_header_t *m_pLibraries;   ///< the array where we store our libraries.
+    SoapSharedLibrary *m_pSOAPLibrary;  /* the main SOAP library that will serve our requests */
+    apr_array_header_t *m_pLibraries;   /* the array where we store our libraries. */
     apache_init_soap_interface_fn m_pfnEntryPoint;
     struct apache_soap_interface *m_pIntf;
-    bool m_bAllLibrariesLoaded; ///< have all libraries in our libraries collection been already successfully loaded?
+    Bool m_bAllLibrariesLoaded; /* have all libraries in our libraries collection been already successfully loaded? */
 } SoapSharedLibraries;
 
 /** Environment to which record applies (directory,
  * server, or combination).
  */
 typedef enum enConfigurationType {
-    ct_server = 1,              ///< used for per-server configuration
-    ct_directory = 2,           ///< used for per-directory configuration
-    ct_both = 3                 ///< used for both
+    ct_server = 1,              /* used for per-server configuration */
+    ct_directory = 2,           /* used for per-directory configuration */
+    ct_both = 3                 /* used for both */
 } ConfigurationType;
 
 /** Store the configuration information set in the Apache Server configuration directives.
@@ -110,22 +110,22 @@ typedef enum enConfigurationType {
  */
 typedef struct gsoapConfiguration_S {
     SoapSharedLibraries *m_pLibraries;
-    ConfigurationType m_Type;   ///< the type of configuration environment
+    ConfigurationType m_Type;   /* the type of configuration environment */
 } gsoapConfiguration;
 
 /** Our internal per request soap configuration
  */
 typedef struct gsoapRequestConfiguration_S {
-    request_rec *r;             ///< the current request record.
-    char *m_pszAllHeaders;      ///< all headers received as a string, this is returned to gsoap's http_parse function before we return the body.
-    const char *m_pszCurrentHeaderReadingPosition;  ///< the position where the next header read operation will start.
-    unsigned int m_nHeaderLength;   ///< total length of all headers concatenated as string 
-    char *m_pOutBuf;            ///< output buffer
-    size_t m_nOutBufLength;     ///< allocated length of output buffer
-    size_t m_nOutBufCount;      ///< bytes in output buffer
-    int headers_sent;           ///< have http - headers already been sent to client us?
-    int headers_received;       ///< have the request headers already been passed to gsoap ? 
-    int (*http_parse) (struct soap *);  ///< the original gsoap parsing function.
+    request_rec *r;             /* the current request record. */
+    char *m_pszAllHeaders;      /* all headers received as a string, this is returned to gsoap's http_parse function before we return the body. */
+    const char *m_pszCurrentHeaderReadingPosition;  /* the position where the next header read operation will start. */
+    unsigned int m_nHeaderLength;   /* total length of all headers concatenated as string */
+    char *m_pOutBuf;            /* output buffer */
+    size_t m_nOutBufLength;     /* allocated length of output buffer */
+    size_t m_nOutBufCount;      /* bytes in output buffer */
+    int headers_sent;           /* have http - headers already been sent to client us? */
+    int headers_received;       /* have the request headers already been passed to gsoap ?  */
+    int (*http_parse) (struct soap *);  /* the original gsoap parsing function. */
     struct apache_soap_interface *pIntf;
 } gsoapRequestConfiguration;
 
@@ -169,7 +169,7 @@ SoapSharedLibrary_init2(SoapSharedLibrary *This, apr_pool_t *p, const char *pszP
     This->m_pPool = p;
     This->m_hLibrary = NULL;
     This->m_pszPath = apr_pstrdup(p, pszPath);
-    This->m_bIsSOAPLibrary = false;
+    This->m_bIsSOAPLibrary = FALSE;
 }
 
 static void
@@ -178,7 +178,7 @@ SoapSharedLibrary_clear(SoapSharedLibrary *This, apr_pool_t *p)
     This->m_pPool = p;
     This->m_hLibrary = NULL;
     This->m_pszPath = NULL;
-    This->m_bIsSOAPLibrary = false;
+    This->m_bIsSOAPLibrary = FALSE;
 }
 
 static SoapSharedLibrary *
@@ -213,7 +213,7 @@ SoapSharedLibrary_load(SoapSharedLibrary *This, apr_pool_t *pTempPool)
     {
         LPVOID lpMsgBuf;
 
-        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), /* Default language */
                       (LPTSTR) & lpMsgBuf, 0, NULL);
         pszError =
             apr_psprintf(NULL == pTempPool ? This->m_pPool : pTempPool,
@@ -264,7 +264,7 @@ SoapSharedLibraries_init(SoapSharedLibraries *This, apr_pool_t *p)
     This->m_pPool = p;
     This->m_pSOAPLibrary = NULL;
     This->m_pLibraries = apr_array_make(p, 0, sizeof(SoapSharedLibrary **));
-    This->m_bAllLibrariesLoaded = false;
+    This->m_bAllLibrariesLoaded = FALSE;
     This->m_pfnEntryPoint = NULL;
     This->m_pIntf = (struct apache_soap_interface *)apr_pcalloc(p, sizeof(struct apache_soap_interface));
 }
@@ -287,11 +287,11 @@ SoapSharedLibraries_getLibrary(SoapSharedLibraries *This, unsigned nIndex)
 /**
  * @param pszPath the operating system name of the library.
  */
-static bool
+static Bool
 SoapSharedLibraries_contains(SoapSharedLibraries *This, const char *pszPath)
 {
     int i = 0;
-    bool bContains = false;
+    Bool bContains = FALSE;
 
     for (i = 0; i < This->m_pLibraries->nelts && !bContains; i++)
     {
@@ -300,7 +300,7 @@ SoapSharedLibraries_contains(SoapSharedLibraries *This, const char *pszPath)
         assert(NULL != pLib);
         if (0 == strcmp(pszPath, pLib->m_pszPath))
         {
-            bContains = true;
+            bContains = TRUE;
         }
     }
     return bContains;
@@ -310,11 +310,10 @@ static void
 SoapSharedLibraries_addLibrary(SoapSharedLibraries *This, SoapSharedLibrary *pLibrary)
 {
     assert(NULL != pLibrary);
-    This->m_bAllLibrariesLoaded = false;
+    This->m_bAllLibrariesLoaded = FALSE;
     if (!SoapSharedLibraries_contains(This, pLibrary->m_pszPath))
     {
-        SoapSharedLibrary **ppNewLib =
-            (SoapSharedLibrary **) apr_array_push(This->m_pLibraries);
+        SoapSharedLibrary **ppNewLib = (SoapSharedLibrary **) apr_array_push(This->m_pLibraries);
         *ppNewLib = pLibrary;
         if (pLibrary->m_bIsSOAPLibrary)
         {
@@ -338,9 +337,9 @@ static const char * SoapSharedLibraries_getEntryPoints(SoapSharedLibraries *This
 static const char *
 SoapSharedLibraries_loadAllLibraries(SoapSharedLibraries *This, apr_pool_t *pTempPool, request_rec *r)
 {
-    bool bAllLibrariesLoaded = false;
+    Bool bAllLibrariesLoaded = FALSE;
     const char *pszError = NULL;
-    bool bRetry = false;
+    Bool bRetry = FALSE;
     int i = 0;
     int nRetry = 0;
 
@@ -355,62 +354,50 @@ SoapSharedLibraries_loadAllLibraries(SoapSharedLibraries *This, apr_pool_t *pTem
         do
         {
             pszError = NULL;
-            bRetry = false;     // don't try it again.
-            bAllLibrariesLoaded = true;
+            bRetry = FALSE;     /* don't try it again. */
+            bAllLibrariesLoaded = TRUE;
             for (i = 0; i < This->m_pLibraries->nelts; i++)
             {
-                SoapSharedLibrary *pLib =
-                    SoapSharedLibraries_getLibrary(This, i);
-                if (NULL == pLib->m_hLibrary)
+                SoapSharedLibrary *pLib = SoapSharedLibraries_getLibrary(This, i);
+	        if (NULL != pLib && NULL == pLib->m_hLibrary)
                 {
                     pszError = SoapSharedLibrary_load(pLib, pTempPool);
                     if (NULL == pszError)
                     {
                         assert(NULL != pLib->m_hLibrary);
-                        bRetry = true;  ///< we loaded one, lets retry with all others, maybe they depend on that.
+                        bRetry = TRUE;  /* we loaded one, lets retry with all others, maybe they depend on that */
                     }
                     else
                     {
-                        bAllLibrariesLoaded = false;
+                        bAllLibrariesLoaded = FALSE;
                     }
                     if (NULL != pLib->m_hLibrary && pLib->m_bIsSOAPLibrary)
                     {
-                        void *pfun = (void *)DLSYM(pLib->m_hLibrary,
-                                                   APACHE_HTTPSERVER_ENTRY_POINT);
+                        void *pfun = (void *)DLSYM(pLib->m_hLibrary, APACHE_HTTPSERVER_ENTRY_POINT);
 
                         if (NULL == pfun)
                         {
-                            pszError = apr_psprintf(pTempPool,
-                                                    "gsoap: load library \"%s\" success, but failed to find the \"%s\" entry point",
-                                                    pLib->m_pszPath,
-                                                    APACHE_HTTPSERVER_ENTRY_POINT);
+                            pszError = apr_psprintf(pTempPool, "gsoap: httpd.conf module mod_gsoap.c SOAPLibrary load \"%s\" success, but failed to find the \"%s\" function entry point defined by IMPLEMENT_GSOAP_SERVER()", pLib->m_pszPath, APACHE_HTTPSERVER_ENTRY_POINT);
                             return pszError;
                         }
                         else
                         {
-                            This->m_pfnEntryPoint =
-                                (apache_init_soap_interface_fn) pfun;
+                            This->m_pfnEntryPoint = (apache_init_soap_interface_fn) pfun;
+                            pszError = SoapSharedLibraries_getEntryPoints(This, pLib, pTempPool, r);
                             pszError =
-                                SoapSharedLibraries_getEntryPoints(This, pLib,
-                                                                   pTempPool,
-                                                                   r);
-                            pszError =
-                                apr_psprintf(NULL ==
-                                             pTempPool ? This->
-                                             m_pPool : pTempPool,
-                                             "mod_gsoap: has got entrypoint %s from library",
+                                apr_psprintf(NULL == pTempPool ? This->m_pPool : pTempPool,
+                                             "mod_gsoap: got entrypoint %s from library",
                                              APACHE_HTTPSERVER_ENTRY_POINT);
-
                         }
                     }
                 }
             }
         }
-        while(bRetry);
+        while (bRetry);
     }
     if (bAllLibrariesLoaded)
     {
-        This->m_bAllLibrariesLoaded = true;
+        This->m_bAllLibrariesLoaded = TRUE;
         pszError = NULL;
     }
     return pszError;
@@ -422,7 +409,7 @@ SoapSharedLibraries_unloadAllLibraries(SoapSharedLibraries *This)
     const char *pszError = NULL;
     int i = 0; 
     assert(NULL != This);
-    This->m_bAllLibrariesLoaded = false;
+    This->m_bAllLibrariesLoaded = FALSE;
     for (i = 0; i < This->m_pLibraries->nelts && NULL == pszError; i++)
     {
         SoapSharedLibrary *pLib = SoapSharedLibraries_getLibrary(This, i);
@@ -460,7 +447,7 @@ SoapSharedLibraries_merge(SoapSharedLibraries *This, SoapSharedLibraries *pLibs)
     {
         return;
     }
-    This->m_bAllLibrariesLoaded = false;
+    This->m_bAllLibrariesLoaded = FALSE;
     for (i = 0; i < pLibs->m_pLibraries->nelts; i++)
     {
         SoapSharedLibrary *pLib = SoapSharedLibraries_getLibrary(pLibs, i);
@@ -516,7 +503,7 @@ static void *gsoap_merge_dir_config(apr_pool_t *p, void *parent_conf, void *newl
 static void *gsoap_create_server_config(apr_pool_t *p, server_rec *s);
 static void *gsoap_merge_server_config(apr_pool_t *p, void *server1_conf, void *server2_conf);
 
-static bool AddSharedLibrary(gsoapConfiguration *pConfig, const char *pszPath, const bool bIsSOAPLibrary);
+static Bool AddSharedLibrary(gsoapConfiguration *pConfig, const char *pszPath, const Bool bIsSOAPLibrary);
 
 /*
  * *
@@ -546,7 +533,7 @@ cmd_SoapLibrary(cmd_parms * cmd, void *mconfig, const char *pszPath)
 {
     gsoapConfiguration *pConfig = (gsoapConfiguration *) mconfig;
 
-    AddSharedLibrary(pConfig, pszPath, true);
+    AddSharedLibrary(pConfig, pszPath, TRUE);
     return NULL;
 }
 
@@ -560,7 +547,7 @@ cmd_SupportLibrary(cmd_parms * cmd, void *mconfig, const char *pszPath)
 {
     gsoapConfiguration *pConfig = (gsoapConfiguration *) mconfig;
 
-    AddSharedLibrary(pConfig, pszPath, false);
+    AddSharedLibrary(pConfig, pszPath, FALSE);
     return NULL;
 }
 
@@ -569,17 +556,17 @@ typedef const char *(*command_function_interface) ();
 /** List of directives specific to our module.
  */
 static const command_rec gsoap_cmds[] = {
-    AP_INIT_TAKE1("SOAPLibrary",    ///< directive name
-                  (command_function_interface) cmd_SoapLibrary, ///< config action routine
-                  NULL,         ///< argument to include in call
-                  ACCESS_CONF,  ///< where available
-                  "SOAP shared Library that will be dynamically loaded. - 1 argument (path)"    ///< directive description
+    AP_INIT_TAKE1("SOAPLibrary",    /* directive name */
+                  (command_function_interface) cmd_SoapLibrary, /* config action routine */
+                  NULL,         /* argument to include in call */
+                  ACCESS_CONF,  /* where available */
+                  "SOAP shared library that will be dynamically loaded. - 1 argument (path)"    /* directive description */
         ),
-    AP_INIT_TAKE1("SupportLibrary", ///< directive name
-                  (command_function_interface) cmd_SupportLibrary,  ///< config action routine
-                  NULL,         ///< argument to include in call
-                  ACCESS_CONF,  ///< where available
-                  "additional library that must be dynamically loaded - 1 argument (path)"  ///< directive description
+    AP_INIT_TAKE1("SupportLibrary", /* directive name */
+                  (command_function_interface) cmd_SupportLibrary,  /* config action routine */
+                  NULL,         /* argument to include in call */
+                  ACCESS_CONF,  /* where available */
+                  "additional library that must be dynamically loaded - 1 argument (path)"  /* directive description */
         ),
     {NULL}
 };
@@ -607,12 +594,12 @@ static const command_rec gsoap_cmds[] = {
 static void
 gsoap_hooks(apr_pool_t *p)
 {
-    // I think this is the call to make to register a handler for method calls (GET PUT et. al.).
-    // We will ask to be last so that the comment has a higher tendency to
-    // go at the end.
+    /* I think this is the call to make to register a handler for method calls (GET PUT et. al.). */
+    /* We will ask to be last so that the comment has a higher tendency to */
+    /* go at the end. */
     ap_hook_handler(gsoap_handler, NULL, NULL, APR_HOOK_LAST);
 
-    //Register a handler for post config processing 
+    /* Register a handler for post config processing */
     ap_hook_post_config(gsoap_init, NULL, NULL, APR_HOOK_MIDDLE);
 }
 
@@ -624,7 +611,7 @@ module AP_MODULE_DECLARE_DATA gsoap_module = {
     gsoap_create_server_config, /* server config creator */
     gsoap_merge_server_config,  /* server config merger */
     gsoap_cmds,                 /* command table */
-    gsoap_hooks,                /*hooks */
+    gsoap_hooks,                /* hooks */
 };
 
 /** helper to write out the headers */
@@ -654,12 +641,12 @@ SendErrorMessage(request_rec * r, const char *pszError)
     ap_rputs(DOCTYPE_HTML_3_2, r);
     ap_rputs("<HTML>\n", r);
     ap_rputs(" <HEAD>\n", r);
-    ap_rputs("  <TITLE>Apache Soap Handler\n", r);
+    ap_rputs("  <TITLE>Apache mod_gsoap Handler\n", r);
     ap_rputs("  </TITLE>\n", r);
     ap_rputs(" </HEAD>\n", r);
     ap_rputs(" <BODY>\n", r);
     ap_rputs("  <H1>mod_gsoap Apache SOAP Server Error</H1>\n", r);
-    ap_rprintf(r, "<p><strong>%s</strong><br>Please see the documentation at <a href=\"http://www.webware.at/SOAP\">WebWare</a> for details.</p>", pszError);
+    ap_rprintf(r, "<p><strong>%s</strong><br>Please see the README instructions with the mod_gsoap package for details.</p>", pszError);
  
     ap_rputs("  <H2>Content headers of the request</H2>\n", r);
     ListHeaders(r);
@@ -668,7 +655,7 @@ SendErrorMessage(request_rec * r, const char *pszError)
 
 /* This is to handle HTTP GET request -- La Cam Chung & R. van Engelen */
 static void
-HTTPGet_SendWSDL(request_rec *r, char *path)
+HTTPGet_SendWSDL(request_rec *r, const char *path)
 {
     FILE *fd = NULL;
     char *file;
@@ -780,7 +767,7 @@ frecv(struct soap *psoap, char *pBuf, apr_size_t len)
         if (!pRqConf->headers_received)
         {
             apr_table_do(send_header_to_gsoap, psoap, r->headers_in, NULL);
-            pRqConf->headers_received = true;
+            pRqConf->headers_received = TRUE;
         }
         /*
          * Steven Elliott <selliott4@austin.rr.com>:
@@ -819,8 +806,8 @@ fsend(struct soap *psoap, const char *pBuf, apr_size_t len)
 
         if (!pRqConf->headers_sent)
         {
-            //          ap_send_http_header(r);
-            pRqConf->headers_sent = true;
+            /*          ap_send_http_header(r); */
+            pRqConf->headers_sent = TRUE;
         }
         nRet = ap_rwrite(pBuf, len, r) == len ? SOAP_OK : SOAP_FAULT;
     }
@@ -858,10 +845,12 @@ mod_gsoap_plugin_copy(struct soap *soap, struct soap_plugin *dst,
     *dst = *src;
     return SOAP_OK;
 }
+
 static void
 mod_gsoap_delete(struct soap *soap, struct soap_plugin *p)
 {
 }
+
 static int
 mod_gsoap_plugin(struct soap *soap, struct soap_plugin *p, void *arg)
 {
@@ -871,9 +860,9 @@ mod_gsoap_plugin(struct soap *soap, struct soap_plugin *p, void *arg)
     p->fdelete = mod_gsoap_delete;
     return SOAP_OK;
 }
+
 static void
-set_callbacks(request_rec * r, gsoapRequestConfiguration * pRqConf,
-              struct soap *psoap)
+set_callbacks(request_rec * r, gsoapRequestConfiguration * pRqConf, struct soap *psoap)
 {
     gsoapConfiguration *pConfig = getConfiguration(r);
     struct apache_soap_interface *pIntf = pConfig->m_pLibraries->m_pIntf;
@@ -888,8 +877,7 @@ set_callbacks(request_rec * r, gsoapRequestConfiguration * pRqConf,
     psoap->fpoll = fpoll;
     if (NULL != pIntf->fsoap_init)
     {
-        (*pIntf->fsoap_register_plugin_arg) (psoap, mod_gsoap_plugin,
-                                             (void *)pRqConf, r);
+        (*pIntf->fsoap_register_plugin_arg)(psoap, mod_gsoap_plugin, (void *)pRqConf, r);
     }
     else
     {
@@ -957,12 +945,12 @@ gsoap_handler(request_rec * r)
     ap_set_last_modified(r);
     if (NULL != pszError)
     {
-        static bool bFirstTime = true;
+        static Bool bFirstTime = TRUE;
 
         if (bFirstTime)
         {
-            ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server, pszError);
-            bFirstTime = false;
+            ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server, "mod_gsoap: %s", pszError);
+            bFirstTime = FALSE;
         }
     }
 
@@ -975,8 +963,8 @@ gsoap_handler(request_rec * r)
     if (NULL == pszError)
     {
         pRqConf->r = r;
-        pRqConf->headers_sent = false;
-        pRqConf->headers_received = false;
+        pRqConf->headers_sent = FALSE;
+        pRqConf->headers_received = FALSE;
         pRqConf->m_pszAllHeaders = NULL;
         pRqConf->m_nHeaderLength = strlen(r->the_request) + 2;
         pRqConf->m_pszCurrentHeaderReadingPosition = NULL;
@@ -1039,7 +1027,7 @@ gsoap_handler(request_rec * r)
 
     if (NULL != pszError)
     {
-        ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server, pszError);
+        ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server, "mod_gsoap: %s", pszError);
         SendErrorMessage(r, pszError);
         return OK;
     }
@@ -1060,7 +1048,7 @@ gsoap_handler(request_rec * r)
         }
         if (NULL != pIntf->fsoap_destroy)
         {
-            pIntf->fsoap_destroy(psoap, r); // not an error in 2.1.10 any more.
+            pIntf->fsoap_destroy(psoap, r); /* not an error in 2.1.10 anymore */
         }
         if (NULL != pIntf->fsoap_end)
         {
@@ -1158,7 +1146,7 @@ static void gsoap_child_init(server_rec *s, apr_pool_t*p)
 
 static void gsoap_child_exit(server_rec *s, apr_pool_t*p)
 {
-    //gsoapConfiguration::getLibraries()->clear();
+    /* gsoapConfiguration::getLibraries()->clear(); */
 }
 
 /*
@@ -1254,11 +1242,10 @@ gsoap_merge_server_config(apr_pool_t * p, void *server1_conf, void *server2_conf
  * @param bIsSOAPLibrary true if it is a shared library containing a SOAP server.
  * @return true if the library was added, false if it was aleady in the collection.
  */
-static bool
-AddSharedLibrary(gsoapConfiguration * pConfig, const char *pszPath,
-                 const bool bIsSOAPLibrary)
+static Bool
+AddSharedLibrary(gsoapConfiguration * pConfig, const char *pszPath, const Bool bIsSOAPLibrary)
 {
-    bool bAdded = false;
+    Bool bAdded = FALSE;
     apr_pool_t *pPool = gsoapConfiguration_getModulePool();
 
     if (!SoapSharedLibraries_contains(pConfig->m_pLibraries, pszPath))
@@ -1268,7 +1255,7 @@ AddSharedLibrary(gsoapConfiguration * pConfig, const char *pszPath,
         SoapSharedLibrary_init2(pLibrary, pPool, apr_pstrdup(pPool, pszPath));
         pLibrary->m_bIsSOAPLibrary = bIsSOAPLibrary;
         SoapSharedLibraries_addLibrary(pConfig->m_pLibraries, pLibrary);
-        bAdded = true;
+        bAdded = TRUE;
     }
 
     return bAdded;

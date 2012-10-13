@@ -1,10 +1,10 @@
 /*
 	dom.c[pp]
 
-	gSOAP DOM implementation v2
+	gSOAP DOM implementation v3
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2009, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2012, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2009 Robert A. van Engelen, Genivia inc. All Rights Reserved.
+Copyright (C) 2000-2012 Robert A. van Engelen, Genivia inc. All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -346,8 +346,12 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
       else
       { if (*tag != '-' && soap_element_start_end_out(soap, NULL))
           return soap->error;
-        if (node->data)
+        if (*tag != '-' && node->data)
         { if (soap_string_out(soap, node->data, 0))
+            return soap->error;
+        }
+        else if (node->data)
+        { if (soap_send(soap, node->data))
             return soap->error;
         }
         else if (node->wide)
@@ -355,7 +359,7 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
             return soap->error;
         }
         for (elt = node->elts; elt; elt = elt->next)
-        { if (soap_out_xsd__anyType(soap, tag, 0, elt, NULL))
+        { if (soap_out_xsd__anyType(soap, NULL, 0, elt, NULL))
             return soap->error;
         }
         if (node->tail && soap_send(soap, node->tail))
@@ -449,6 +453,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
     soap_default_xsd__anyType(soap, node);
     if (!(node->data = soap_string_in(soap, 1, -1, -1)) || !*node->data)
       return NULL;
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node with cdata\n"));
     soap->error = SOAP_OK;
     return node;
   }
@@ -469,7 +474,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
     else
       node->name = soap_strdup(soap, soap->tag);
   }
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node '%s' parsed in namespace '%s'\n", node->name, node->nstr?node->nstr:""));
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node '%s' start xmlns='%s'\n", node->name, node->nstr?node->nstr:""));
   if ((soap->mode & SOAP_DOM_NODE) || (!(soap->mode & SOAP_DOM_TREE) && *soap->id))
   { if ((node->node = soap_getelement(soap, &node->type)))
     { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node contains type %d from xsi:type\n", node->type));
@@ -483,7 +488,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
   att = &node->atts;
   for (tp = soap->attributes; tp; tp = tp->next)
   { if (tp->visible)
-    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node attribute='%s' parsed\n", tp->name));
+    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node attribute='%s'\n", tp->name));
       *att = (struct soap_dom_attribute*)soap_malloc(soap, sizeof(struct soap_dom_attribute));
       if (!*att)
       { soap->error = SOAP_EOM;
@@ -541,7 +546,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
       return NULL;
     if (soap_element_end_in(soap, node->name))
       return NULL;
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End of DOM node '%s'\n", node->name));
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node end '%s'\n", node->name));
   }
   return node;
 }
@@ -645,7 +650,7 @@ soap_push_ns_prefix(struct soap *soap, const char *id, const char *ns, int flag)
   if (!id)
   { struct Namespace *n;
     for (n = soap->local_namespaces; n && n->id; n++)
-    { if (n->ns == ns || !strcmp(n->ns, ns))
+    { if (n->ns && !strcmp(n->ns, ns))
       { id = n->id;
         break;
       }
@@ -838,7 +843,7 @@ void soap_dom_element::unlink()
   if (elts)
     elts->unlink();
   if (atts)
-    elts->unlink();
+    atts->unlink();
   if (next)
     next->unlink();
   node = NULL;
