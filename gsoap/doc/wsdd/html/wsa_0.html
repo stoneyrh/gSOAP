@@ -234,7 +234,7 @@ soap-&gt;bind_flags = SO_REUSEADDR;
 }
 </pre></div><h2><a class="anchor" id="wsa_5"></a>
 Implementing a Server for Handling ReplyTo Response Messages</h2>
-<p>To implement a separate server for handling relayed SOAP response messages based on the ReplyTo information header in the request message, the gSOAP header file should include a one-way service operation for the response message.</p>
+<p>To implement a separate server for handling relayed SOAP response messages based on the ReplyTo information header in the request message, the gSOAP header file should include a one-way service operation for the response message. These one-way response service operations are automatically generated with wsdl2h option -b.</p>
 <p>For example, suppose a service operation returns an exampleResponse message. We declare the one-way exampleResponse operation as follows:</p>
 <div class="fragment"><pre class="fragment"><span class="preprocessor">#import &quot;wsa.h&quot;</span>
 
@@ -259,9 +259,9 @@ Implementing a Server for Handling ReplyTo Response Messages</h2>
 Implementing a Server for Handling FaultTo Fault Messages</h2>
 <p>To implement a separate server for handling relayed SOAP fault messages based on the FaultTo information header in the request message, the gSOAP header file for soapcpp2 should include a SOAP fault service operation. This operation accepts fault messages that are relayed by other services.</p>
 <p>Basically, we use a trick to generate the SOAP-ENV:Fault struct via a one-way service operation. This allows us both to implement a one-way service operation that accepts faults and to automatically generate the fault struct for fault data storage and manipulation.</p>
-<p>The fault operation in the header file should be declared as follows (for the 2004/08 standard):</p>
+<p>The fault operation in the WS-Addressing files (<a class="el" href="wsa5_8h.html">wsa5.h</a> etc.) is declared as follows (here shown for the 2004/08 standard):</p>
 <div class="fragment"><pre class="fragment"><span class="comment">//gsoap SOAP_ENV service method-action: Fault http://schemas.xmlsoap.org/ws/2004/08/addressing/fault</span>
-<span class="keywordtype">int</span> SOAP_ENV__Fault
+<span class="keywordtype">int</span> <a class="code" href="wsa5_8h.html#af1f0af3d70354401b6969aa0b689a5dc">SOAP_ENV__Fault</a>
 (       _QName                   faultcode,             <span class="comment">// SOAP 1.1</span>
         <span class="keywordtype">char</span>                    *faultstring,           <span class="comment">// SOAP 1.1</span>
         <span class="keywordtype">char</span>                    *faultactor,            <span class="comment">// SOAP 1.1</span>
@@ -274,9 +274,9 @@ Implementing a Server for Handling FaultTo Fault Messages</h2>
         <span class="keywordtype">void</span>
 );
 </pre></div><p>Because each service operation has a struct to hold its input parameters, we automatically generate the (original) SOAP_ENV__Fault struct on the fly!</p>
-<p>Note: it is important to associate the wsa fault action with this operation as shown above.</p>
-<p>The implementation of the service operation in the server code is:</p>
-<div class="fragment"><pre class="fragment"><span class="keywordtype">int</span> SOAP_ENV__Fault(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">char</span> *faultcode, <span class="keywordtype">char</span> *faultstring, <span class="keywordtype">char</span> *faultactor, <span class="keyword">struct</span> SOAP_ENV__Detail *detail, <span class="keyword">struct</span> SOAP_ENV__Code *SOAP_ENV__Code, <span class="keyword">struct</span> SOAP_ENV__Reason *SOAP_ENV__Reason, <span class="keywordtype">char</span> *SOAP_ENV__Node, <span class="keywordtype">char</span> *SOAP_ENV__Role, <span class="keyword">struct</span> SOAP_ENV__Detail *SOAP_ENV__Detail)
+<p>It is important to associate the wsa fault action with this operation as shown above.</p>
+<p>The implementation of the Fault service operation in your server code should be something like:</p>
+<div class="fragment"><pre class="fragment"><span class="keywordtype">int</span> <a class="code" href="wsa5_8h.html#af1f0af3d70354401b6969aa0b689a5dc">SOAP_ENV__Fault</a>(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">char</span> *faultcode, <span class="keywordtype">char</span> *faultstring, <span class="keywordtype">char</span> *faultactor, <span class="keyword">struct</span> SOAP_ENV__Detail *detail, <span class="keyword">struct</span> SOAP_ENV__Code *SOAP_ENV__Code, <span class="keyword">struct</span> SOAP_ENV__Reason *SOAP_ENV__Reason, <span class="keywordtype">char</span> *SOAP_ENV__Node, <span class="keywordtype">char</span> *SOAP_ENV__Role, <span class="keyword">struct</span> SOAP_ENV__Detail *SOAP_ENV__Detail)
 { 
   ... = faultcode; <span class="comment">// SOAP 1.1 fault code string (QName)</span>
   ... = faultstring; <span class="comment">// SOAP 1.1 fault string</span>
@@ -291,7 +291,7 @@ Implementing a Server for Handling FaultTo Fault Messages</h2>
 }
 </pre></div><p>Note that SOAP 1.1 or SOAP 1.2 parameters are set based on the 1.1/1.2 messaging requirements. </p>
 </div></div>
-<hr class="footer"/><address class="footer"><small>Generated on Tue Dec 6 2011 09:32:11 for gSOAP WS-Discovery by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Sat Aug 18 2012 23:55:08 for gSOAP WS-Discovery by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

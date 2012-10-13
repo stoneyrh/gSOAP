@@ -66,7 +66,6 @@ This graph shows which files directly or indirectly include this file:</div>
 Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsddapi_8h.html#a7d6e6b95f6edd07ccafd14802f8793aa">WSSDDPI_H</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsddapi_8h.html#a7f11dbab2cf855d8c508305c7082d53b">SOAP_WSDD_APP_MAX_DELAY</a>&#160;&#160;&#160;(500)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsddapi_8h.html#a8d1dc163bfbd8affd3ebe01ec4473005">SOAP_WSDD_DP_MAX_TIMEOUT</a>&#160;&#160;&#160;(5000)</td></tr>
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">typedef enum <a class="el" href="wsddapi_8h.html#a4d8f41b14eeb3500631fd39cad15b4a7">soap_wsdd_mode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsddapi_8h.html#a089c2cc861af78d1c5db0b4587cf1692">soap_wsdd_mode</a></td></tr>
@@ -156,20 +155,6 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8d1dc163bfbd8affd3ebe01ec4473005"></a><!-- doxytag: member="wsddapi.h::SOAP_WSDD_DP_MAX_TIMEOUT" ref="a8d1dc163bfbd8affd3ebe01ec4473005" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SOAP_WSDD_DP_MAX_TIMEOUT&#160;&#160;&#160;(5000)</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>If the DP is unresponsive after DP_MAX_TIMEOUT, or if the Client finds the responses from the DP unsatisfactory, the Client reverts to using the multicast messages. </p>
-
-</div>
-</div>
 <a class="anchor" id="a7d6e6b95f6edd07ccafd14802f8793aa"></a><!-- doxytag: member="wsddapi.h::WSSDDPI_H" ref="a7d6e6b95f6edd07ccafd14802f8793aa" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -194,7 +179,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Managed or ad-hoc mode </p>
+<p>If the DP is unresponsive after DP_MAX_TIMEOUT, or if the Client finds the responses from the DP unsatisfactory, the Client reverts to using the multicast messages. Managed or ad-hoc mode </p>
 
 </div>
 </div>
@@ -223,7 +208,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Managed or ad-hoc mode </p>
+<p>If the DP is unresponsive after DP_MAX_TIMEOUT, or if the Client finds the responses from the DP unsatisfactory, the Client reverts to using the multicast messages. Managed or ad-hoc mode </p>
 <dl><dt><b>Enumerator: </b></dt><dd><table border="0" cellspacing="2" cellpadding="0">
 <tr><td valign="top"><em><a class="anchor" id="a4d8f41b14eeb3500631fd39cad15b4a7a06282f02ad809feed167d23a3cf5ac46"></a><!-- doxytag: member="SOAP_WSDD_MANAGED" ref="a4d8f41b14eeb3500631fd39cad15b4a7a06282f02ad809feed167d23a3cf5ac46" args="" -->SOAP_WSDD_MANAGED</em>&nbsp;</td><td>
 </td></tr>
@@ -2068,7 +2053,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Tue Dec 6 2011 09:32:11 for gSOAP WS-Discovery by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Sat Aug 18 2012 23:55:08 for gSOAP WS-Discovery by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

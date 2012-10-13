@@ -34,7 +34,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 */
 
-#define SOAP_NOGLOBAL
+#define WITH_NOGLOBAL
 #define SOAP_FMAC3 static
 #include "optC.c"
 #include "options.h"

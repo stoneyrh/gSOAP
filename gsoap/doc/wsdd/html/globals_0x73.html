@@ -50,6 +50,7 @@
       <li><a href="globals.html#index__"><span>_</span></a></li>
       <li><a href="globals_0x68.html#index_h"><span>h</span></a></li>
       <li class="current"><a href="globals_0x73.html#index_s"><span>s</span></a></li>
+      <li><a href="globals_0x74.html#index_t"><span>t</span></a></li>
       <li><a href="globals_0x77.html#index_w"><span>w</span></a></li>
     </ul>
   </div>
@@ -58,6 +59,9 @@
 <div class="textblock">Here is a list of all file members with links to the files they belong to:</div>
 
 <h3><a class="anchor" id="index_s"></a>- s -</h3><ul>
+<li>SOAP_ENV__Fault()
+: <a class="el" href="wsa5_8h.html#af1f0af3d70354401b6969aa0b689a5dc">wsa5.h</a>
+</li>
 <li>SOAP_NAMESPACE_OF_wsdd
 : <a class="el" href="wsdd_8h.html#af3d34d4209bf9b4f330c2d7609fdbdd7">wsdd.h</a>
 </li>
@@ -98,13 +102,11 @@
 : <a class="el" href="wsddapi_8h.html#aceb13e1f303b6f0d41b84a865e387d54">wsddapi.h</a>
 </li>
 <li>soap_wsa()
-: <a class="el" href="wsaapi_8c.html#aa013e3760b97c2efcc71d29b57394501">wsaapi.c</a>
+: <a class="el" href="wsaapi_8h.html#aa013e3760b97c2efcc71d29b57394501">wsaapi.h</a>
+, <a class="el" href="wsaapi_8c.html#aa013e3760b97c2efcc71d29b57394501">wsaapi.c</a>
 </li>
 <li>SOAP_WSA
 : <a class="el" href="wsaapi_8h.html#a93917ecfd7c197590b838a08ab3b1ba1">wsaapi.h</a>
-</li>
-<li>soap_wsa()
-: <a class="el" href="wsaapi_8h.html#aa013e3760b97c2efcc71d29b57394501">wsaapi.h</a>
 </li>
 <li>SOAP_WSA_
 : <a class="el" href="wsaapi_8h.html#abe22e62a4c7e229d129fb7bcde78c85e">wsaapi.h</a>
@@ -135,12 +137,15 @@
 : <a class="el" href="wsaapi_8h.html#a8b4871953a687b6f360b04c4bddeb49c">wsaapi.h</a>
 , <a class="el" href="wsaapi_8c.html#a563bfa655f47dde32716a8cfe4207e43">wsaapi.c</a>
 </li>
+<li>soap_wsa_allAnonymousURI
+: <a class="el" href="wsaapi_8c.html#a8a30464dd52dad8125adb12bfab55243">wsaapi.c</a>
+</li>
 <li>soap_wsa_alloc_header()
 : <a class="el" href="wsaapi_8c.html#a2f8b7b94ed4fcbccf5c61e1ab94df3a0">wsaapi.c</a>
 </li>
 <li>soap_wsa_anonymousURI
-: <a class="el" href="wsaapi_8c.html#ab92aaeb39211ba90fac538ea2229dcaa">wsaapi.c</a>
-, <a class="el" href="wsaapi_8h.html#ab92aaeb39211ba90fac538ea2229dcaa">wsaapi.h</a>
+: <a class="el" href="wsaapi_8h.html#ab92aaeb39211ba90fac538ea2229dcaa">wsaapi.h</a>
+, <a class="el" href="wsaapi_8c.html#ab92aaeb39211ba90fac538ea2229dcaa">wsaapi.c</a>
 </li>
 <li>soap_wsa_check()
 : <a class="el" href="wsaapi_8h.html#a35f9b1c46ea38b271b8d26bf8b051640">wsaapi.h</a>
@@ -169,6 +174,14 @@
 : <a class="el" href="wsaapi_8h.html#a07d15a52cb8f9af248879e5f976951bb">wsaapi.h</a>
 , <a class="el" href="wsaapi_8c.html#a07d15a52cb8f9af248879e5f976951bb">wsaapi.c</a>
 </li>
+<li>soap_wsa_FaultTo()
+: <a class="el" href="wsaapi_8h.html#ab5f1c44b15b11562febc45bf5195646d">wsaapi.h</a>
+, <a class="el" href="wsaapi_8c.html#a42046d0321062ca8374eb5f959c47619">wsaapi.c</a>
+</li>
+<li>soap_wsa_From()
+: <a class="el" href="wsaapi_8h.html#a75218c4fcfbc2368dd4f84214d6c1e88">wsaapi.h</a>
+, <a class="el" href="wsaapi_8c.html#aa00788375c5b1a5ce2b72ff2a5cf559d">wsaapi.c</a>
+</li>
 <li>soap_wsa_header()
 : <a class="el" href="wsaapi_8c.html#a6e22f3358931181a1207f41f4c50f4cc">wsaapi.c</a>
 </li>
@@ -195,20 +208,28 @@
 , <a class="el" href="wsaapi_8c.html#ad53bf1b057c0facee6f4b94ab7d13045">wsaapi.c</a>
 </li>
 <li>soap_wsa_receiver_fault_subcode()
-: <a class="el" href="wsaapi_8h.html#a8dfeadb13617174364cdd67c0bd18448">wsaapi.h</a>
-, <a class="el" href="wsaapi_8c.html#a8dfeadb13617174364cdd67c0bd18448">wsaapi.c</a>
+: <a class="el" href="wsaapi_8c.html#a8dfeadb13617174364cdd67c0bd18448">wsaapi.c</a>
+, <a class="el" href="wsaapi_8h.html#a8dfeadb13617174364cdd67c0bd18448">wsaapi.h</a>
 </li>
 <li>soap_wsa_receiver_fault_subcode_action()
 : <a class="el" href="wsaapi_8h.html#a2afdf00b160b0ac32d0cd413c4086df5">wsaapi.h</a>
 , <a class="el" href="wsaapi_8c.html#a2afdf00b160b0ac32d0cd413c4086df5">wsaapi.c</a>
 </li>
+<li>soap_wsa_RelatesTo()
+: <a class="el" href="wsaapi_8h.html#a8e0e1aaef637583b71045fdb1176b62c">wsaapi.h</a>
+, <a class="el" href="wsaapi_8c.html#ab6550717687ec8d2bc6f17b967df067c">wsaapi.c</a>
+</li>
 <li>soap_wsa_reply()
 : <a class="el" href="wsaapi_8h.html#a54fda97d2591acd5e2385cc110a50b30">wsaapi.h</a>
 , <a class="el" href="wsaapi_8c.html#a54fda97d2591acd5e2385cc110a50b30">wsaapi.c</a>
 </li>
+<li>soap_wsa_ReplyTo()
+: <a class="el" href="wsaapi_8c.html#ad6d9c1656b9f8513b1f0ad422f704842">wsaapi.c</a>
+, <a class="el" href="wsaapi_8h.html#aa6f0b6c1f497b9843a703fb12f6a4215">wsaapi.h</a>
+</li>
 <li>soap_wsa_request()
-: <a class="el" href="wsaapi_8c.html#a3cbfe63b812df21c0bc2c8a129a1dc99">wsaapi.c</a>
-, <a class="el" href="wsaapi_8h.html#a3cbfe63b812df21c0bc2c8a129a1dc99">wsaapi.h</a>
+: <a class="el" href="wsaapi_8h.html#a3cbfe63b812df21c0bc2c8a129a1dc99">wsaapi.h</a>
+, <a class="el" href="wsaapi_8c.html#a3cbfe63b812df21c0bc2c8a129a1dc99">wsaapi.c</a>
 </li>
 <li>soap_wsa_response()
 : <a class="el" href="wsaapi_8c.html#a1c8c61ffc8ab8bd204fdb862e84daa45">wsaapi.c</a>
@@ -239,14 +260,11 @@
 : <a class="el" href="wsddapi_8h.html#a7f11dbab2cf855d8c508305c7082d53b">wsddapi.h</a>
 </li>
 <li>soap_wsdd_Bye()
-: <a class="el" href="wsddapi_8h.html#a5912eb51290b18adb51cfa80e8c55671">wsddapi.h</a>
-, <a class="el" href="wsddapi_8c.html#a5912eb51290b18adb51cfa80e8c55671">wsddapi.c</a>
+: <a class="el" href="wsddapi_8c.html#a5912eb51290b18adb51cfa80e8c55671">wsddapi.c</a>
+, <a class="el" href="wsddapi_8h.html#a5912eb51290b18adb51cfa80e8c55671">wsddapi.h</a>
 </li>
 <li>soap_wsdd_delay()
 : <a class="el" href="wsddapi_8c.html#a18fd43daaac6bca9cee35c3ce075a9ab">wsddapi.c</a>
-</li>
-<li>SOAP_WSDD_DP_MAX_TIMEOUT
-: <a class="el" href="wsddapi_8h.html#a8d1dc163bfbd8affd3ebe01ec4473005">wsddapi.h</a>
 </li>
 <li>soap_wsdd_Hello()
 : <a class="el" href="wsddapi_8h.html#a4468038ee56dc4709e1550f57dadb0c4">wsddapi.h</a>
@@ -256,15 +274,15 @@
 : <a class="el" href="wsddapi_8c.html#aa05222ab0716c8012ba6c90cc6625c0c">wsddapi.c</a>
 </li>
 <li>soap_wsdd_init_ProbeMatches()
-: <a class="el" href="wsddapi_8c.html#ad3a76f8ee99b6a2d5a6e30d2d1d3badd">wsddapi.c</a>
-, <a class="el" href="wsddapi_8h.html#ad3a76f8ee99b6a2d5a6e30d2d1d3badd">wsddapi.h</a>
+: <a class="el" href="wsddapi_8h.html#ad3a76f8ee99b6a2d5a6e30d2d1d3badd">wsddapi.h</a>
+, <a class="el" href="wsddapi_8c.html#ad3a76f8ee99b6a2d5a6e30d2d1d3badd">wsddapi.c</a>
 </li>
 <li>soap_wsdd_InstanceId
 : <a class="el" href="wsddapi_8c.html#ad7a263593c58cc89ab28c35625a8ef9f">wsddapi.c</a>
 </li>
 <li>soap_wsdd_listen()
-: <a class="el" href="wsddapi_8c.html#aeaf4e9c91f54ffcf09534b68b5ee6778">wsddapi.c</a>
-, <a class="el" href="wsddapi_8h.html#aeaf4e9c91f54ffcf09534b68b5ee6778">wsddapi.h</a>
+: <a class="el" href="wsddapi_8h.html#aeaf4e9c91f54ffcf09534b68b5ee6778">wsddapi.h</a>
+, <a class="el" href="wsddapi_8c.html#aeaf4e9c91f54ffcf09534b68b5ee6778">wsddapi.c</a>
 </li>
 <li>SOAP_WSDD_MANAGED
 : <a class="el" href="wsddapi_8h.html#a4d8f41b14eeb3500631fd39cad15b4a7a06282f02ad809feed167d23a3cf5ac46">wsddapi.h</a>
@@ -273,11 +291,11 @@
 : <a class="el" href="wsddapi_8c.html#a8767d1b85737e66a447b73b2bebddd0a">wsddapi.c</a>
 </li>
 <li>soap_wsdd_mode
-: <a class="el" href="wsddapi_8h.html#a089c2cc861af78d1c5db0b4587cf1692">wsddapi.h</a>
+: <a class="el" href="wsddapi_8h.html#a4d8f41b14eeb3500631fd39cad15b4a7">wsddapi.h</a>
 </li>
 <li>soap_wsdd_Probe()
-: <a class="el" href="wsddapi_8h.html#a79d93ab49aba655b6b767b28d0aff6ad">wsddapi.h</a>
-, <a class="el" href="wsddapi_8c.html#a79d93ab49aba655b6b767b28d0aff6ad">wsddapi.c</a>
+: <a class="el" href="wsddapi_8c.html#a79d93ab49aba655b6b767b28d0aff6ad">wsddapi.c</a>
+, <a class="el" href="wsddapi_8h.html#a79d93ab49aba655b6b767b28d0aff6ad">wsddapi.h</a>
 </li>
 <li>soap_wsdd_ProbeMatches()
 : <a class="el" href="wsddapi_8c.html#ac1fd8fdfb24767d214f68659bfbe4187">wsddapi.c</a>
@@ -287,8 +305,8 @@
 : <a class="el" href="wsddapi_8c.html#a0a96a2617badd7c1071a863dc4e938fd">wsddapi.c</a>
 </li>
 <li>soap_wsdd_Resolve()
-: <a class="el" href="wsddapi_8h.html#acfcc0ff137be16fd9706f21faaeb7b23">wsddapi.h</a>
-, <a class="el" href="wsddapi_8c.html#acfcc0ff137be16fd9706f21faaeb7b23">wsddapi.c</a>
+: <a class="el" href="wsddapi_8c.html#acfcc0ff137be16fd9706f21faaeb7b23">wsddapi.c</a>
+, <a class="el" href="wsddapi_8h.html#acfcc0ff137be16fd9706f21faaeb7b23">wsddapi.h</a>
 </li>
 <li>soap_wsdd_ResolveMatches()
 : <a class="el" href="wsddapi_8c.html#a6a9722eaaef27e3655714b7592aa3af9">wsddapi.c</a>
@@ -316,8 +334,8 @@
 : <a class="el" href="wsddapi_8c.html#a0efe316113c369b7be33ccb0686aba77">wsddapi.c</a>
 </li>
 <li>soap_wsdd_serve_request()
-: <a class="el" href="wsddapi_8c.html#a09041e905e925b15cde1a36b76d26143">wsddapi.c</a>
-, <a class="el" href="wsddapi_8h.html#a09041e905e925b15cde1a36b76d26143">wsddapi.h</a>
+: <a class="el" href="wsddapi_8h.html#a09041e905e925b15cde1a36b76d26143">wsddapi.h</a>
+, <a class="el" href="wsddapi_8c.html#a09041e905e925b15cde1a36b76d26143">wsddapi.c</a>
 </li>
 <li>soap_wsdd_set_AppSequence()
 : <a class="el" href="wsddapi_8c.html#a9c6ddb7a633c8d3724445cb67460aa1a">wsddapi.c</a>
@@ -334,7 +352,7 @@
 : <a class="el" href="wsddapi_8c.html#a6fb0d90412dfd5b20b1964b97dbf3b82">wsddapi.c</a>
 </li>
 <li>soap_wsdd_to
-: <a class="el" href="wsddapi_8h.html#adcd746964993574992fa2bafa83aed5c">wsddapi.h</a>
+: <a class="el" href="wsddapi_8h.html#ad2afcbdc0ad2f8a379b7f64a6b6acbc1">wsddapi.h</a>
 </li>
 <li>SOAP_WSDD_TO_DP
 : <a class="el" href="wsddapi_8h.html#adcd746964993574992fa2bafa83aed5ca679dc4dd44e15e83c37723ae7a25c676">wsddapi.h</a>
@@ -344,7 +362,7 @@
 </li>
 </ul>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Tue Dec 6 2011 09:32:11 for gSOAP WS-Discovery by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Sat Aug 18 2012 23:55:09 for gSOAP WS-Discovery by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

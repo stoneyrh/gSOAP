@@ -153,7 +153,7 @@ COMMAND LINE OPTIONS
 -k	don't generate SOAP_ENV__Header mustUnderstand qualifiers
 -l      include license information in output
 -m      use xsd.h module to import primitive types
--Nname  use name as the base namespace prefix for service namespaces
+-Nname  use name for service namespace prefixes and multiple bindings
 -nname  use name as the base namespace prefix instead of 'ns'
 -ofile  output to file
 -P      don't create polymorphic types with C++ inheritance from xsd__anyType

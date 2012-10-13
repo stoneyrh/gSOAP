@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 struct SOAP_ENV__Header
 {
-  wsdd__AppSequenceType           *wsdd__AppSequence             0;
+  struct wsdd__AppSequenceType           *wsdd__AppSequence             0;
 };
 
 //gsoap wsdd service name: wsdd

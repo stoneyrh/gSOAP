@@ -478,7 +478,7 @@ int Service::AddTo(_mssadh__AddTo *req)
     equation << " + " << *req->n;
   }
   else
-    return soap_sender_fault(soap, "Invalid data", NULL);
+    return soap_wsrm_sender_fault(soap, "Invalid data", NULL);
 
   /* this is a one-way operation over HTTP, so we're done with client */
   soap_send_empty_response(soap, 202);
@@ -519,7 +519,7 @@ int Service::SubtractFrom(_mssadh__SubtractFrom *req)
     equation << " - " << *req->n;
   }
   else
-    return soap_sender_fault(soap, "Invalid data", NULL);
+    return soap_wsrm_sender_fault(soap, "Invalid data", NULL);
 
   /* this is a one-way operation over HTTP, so we're done with client */
   soap_send_empty_response(soap, 202);
@@ -560,7 +560,7 @@ int Service::MultiplyBy(_mssadh__MultiplyBy *req)
     equation << " * " << *req->n;
   }
   else
-    return soap_sender_fault(soap, "Invalid data", NULL);
+    return soap_wsrm_sender_fault(soap, "Invalid data", NULL);
 
   /* this is a one-way operation over HTTP, so we're done with client */
   soap_send_empty_response(soap, 202);
@@ -601,7 +601,7 @@ int Service::DivideBy(_mssadh__DivideBy *req)
     equation << " / " << *req->n;
   }
   else
-    return soap_sender_fault(soap, "Invalid data", NULL);
+    return soap_wsrm_sender_fault(soap, "Invalid data", NULL);
 
   /* this is a one-way operation over HTTP, so we're done with client */
   soap_send_empty_response(soap, 202);

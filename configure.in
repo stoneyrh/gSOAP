@@ -52,20 +52,23 @@ case "${host}" in
         *-*-openbsd*)   platform=OPENBSD ;;
         *-*-irix*)      platform=IRIX ;;
         *-*-aix*)       platform=AIX
-                      case "${host}" in
-                         *-*-aix4.1*)   osver=AIX41;;
-                         *-*-aix4.2*)   osver=AIX42;;
-                         *-*-aix4.3*)   osver=AIX43;;
-                         *-*-aix4.*)    osver=AIX43;;
-                         *-*-aix5.3)    osver=AIX53;;
-                      esac;;
+                        case "${host}" in
+                            *-*-aix4.1*)   osver=AIX41;;
+                            *-*-aix4.2*)   osver=AIX42;;
+                            *-*-aix4.3*)   osver=AIX43;;
+                            *-*-aix4.*)    osver=AIX43;;
+                            *-*-aix5.3)    osver=AIX53;;
+                        esac
+			;;
         *-sequent-*)    platform=PTX ;;
         *-*-hp*)        platform=HP_UX ;
                         case "${host}" in
                             *-*-hpux11*)  osver=HPUX11;;
                             *-*-hpux10*)  osver=HPUX10;;
                             *)            osver=HPUX11;;
-                        esac;;
+                        esac
+			SAMPLE_EXTRA_LIBS="-lm"
+			;;
         *-*-mvs*)       platform=OS390 ;;
         *-*-os400*)     platform=OS400 ;;
         *-*-OS400*)     platform=OS400 ;;

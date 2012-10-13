@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.10
+	stdsoap2.c[pp] 2.8.11
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20810
+#define GSOAP_LIB_VERSION 20811
 
 #ifdef AS400
 # pragma convert(819)	/* EBCDIC to ASCII */
@@ -76,10 +76,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.10 2012-08-16 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.11 2012-10-14 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.10 2012-08-16 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.11 2012-10-14 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -614,6 +614,14 @@ fsend(struct soap *soap, const char *s, size_t n)
           }
           while (nwritten < 0 && --udp_repeat > 0);
         }
+	if (nwritten < 0)
+        { err = soap_socket_errno(sk);
+	  if (err && err != SOAP_EINTR)
+	  { soap->errnum = err;
+	    return SOAP_EOF;
+	  }
+          nwritten = 0; /* and call write() again */
+	}
       }
       else
 #endif
@@ -809,7 +817,7 @@ soap_flush_raw(struct soap *soap, const char *s, size_t n)
 #ifndef WITH_LEANER
   if ((soap->mode & SOAP_IO) == SOAP_IO_CHUNK)
   { char t[16];
-    sprintf(t, "\r\n%lX\r\n" + (soap->chunksize ? 0 : 2), (unsigned long)n);
+    sprintf(t, &"\r\n%lX\r\n"[soap->chunksize ? 0 : 2], (unsigned long)n);
     DBGMSG(SENT, t, strlen(t));
     if ((soap->error = soap->fsend(soap, t, strlen(t))))
       return soap->error;
@@ -4071,7 +4079,7 @@ again:
       soap->status = SOAP_CONNECT;
       soap->keep_alive = 1;
       if ((soap->error = soap->fpost(soap, endpoint, host, port, NULL, NULL, 0))
-       || soap_end_send(soap))
+       || soap_end_send_flush(soap))
       { soap->fclosesocket(soap, sk);
         return SOAP_INVALID_SOCKET;
       }
@@ -4971,11 +4979,13 @@ soap_closesock(struct soap *soap)
     soap->keep_alive = 0;
   }
 #ifdef WITH_ZLIB
-  if (soap->zlib_state == SOAP_ZLIB_DEFLATE)
-    deflateEnd(soap->d_stream);
-  else if (soap->zlib_state == SOAP_ZLIB_INFLATE)
-    inflateEnd(soap->d_stream);
-  soap->zlib_state = SOAP_ZLIB_NONE;
+  if (!(soap->mode & SOAP_MIME_POSTCHECK))
+  { if (soap->zlib_state == SOAP_ZLIB_DEFLATE)
+      deflateEnd(soap->d_stream);
+    else if (soap->zlib_state == SOAP_ZLIB_INFLATE)
+      inflateEnd(soap->d_stream);
+    soap->zlib_state = SOAP_ZLIB_NONE;
+  }
 #endif
   return soap->error = status;
 }
@@ -5034,6 +5044,8 @@ soap_done(struct soap *soap)
   if (soap->state == SOAP_INIT)
     soap->omode &= ~SOAP_IO_UDP; /* to force close the socket */
   soap->keep_alive = 0; /* to force close the socket */
+  if (soap->master == soap->socket) /* do not close twice */
+    soap->master = SOAP_INVALID_SOCKET;
   soap_closesock(soap);
 #ifdef WITH_COOKIES
   soap_free_cookies(soap);
@@ -5687,7 +5699,14 @@ http_post(struct soap *soap, const char *endpoint, const char *host, int port, c
       sprintf(soap->tmpbuf, "%s:%d", host, port);
   }
   else
-    strcpy(soap->tmpbuf, host);
+  {
+#ifdef WITH_IPV6
+    if (*host != '[' && strchr(host, ':'))
+      sprintf(soap->tmpbuf, "[%s]", host); /* RFC 2732 */
+    else
+#endif
+      strcpy(soap->tmpbuf, host);
+  }
   if ((err = soap->fposthdr(soap, "Host", soap->tmpbuf)))
     return err;
   if ((err = soap->fposthdr(soap, "User-Agent", "gSOAP/2.8")))
@@ -7950,7 +7969,17 @@ soap_end_send(struct soap *soap)
   if (err)
     return err;
 #endif
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End send mode=0x%x\n", soap->mode));
+  return soap_end_send_flush(soap);
+}
+#endif
+
+/******************************************************************************/
+#ifndef PALM_1
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_end_send_flush(struct soap *soap)
+{ DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End send mode=0x%x\n", soap->mode));
   if (soap->mode & SOAP_IO) /* need to flush the remaining data in buffer */
   { if (soap_flush(soap))
 #ifdef WITH_ZLIB
@@ -9034,7 +9063,7 @@ soap_set_local_namespaces(struct soap *soap)
       if (ns2[0].ns)
       { if (!strcmp(ns2[0].ns, soap_env1))
           soap->version = 1;
-        else
+        else if (!strcmp(ns2[0].ns, soap_env2))
           soap->version = 2;
       }
       soap->local_namespaces = ns2;
@@ -9268,17 +9297,29 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
   }
 #endif
   if (!soap->ns)
-  { struct Namespace *ns;
+  { struct Namespace *ns = soap->local_namespaces;
     int k = -1;
+    if (ns)
+    {
 #ifndef WITH_LEAN
-    if ((soap->mode & SOAP_XML_DEFAULTNS))
-      k = 4; /* only produce the first four required entries */
+      if ((soap->mode & SOAP_XML_DEFAULTNS))
+      { if (soap->version)
+          k = 4; /* first four required entries */
+        else if (!(soap->mode & SOAP_XML_NOTYPE))
+        { ns += 2;
+          k = 2; /* next two entries */
+        }
+        else
+          k = 0; /* no entries */
+      }
 #endif
-    for (ns = soap->local_namespaces; ns && ns->id && k; ns++, k--)
-    { if (*ns->id && (ns->out || ns->ns))
-      { sprintf(soap->tmpbuf, "xmlns:%s", ns->id);
-        if (soap_attribute(soap, soap->tmpbuf, ns->out ? ns->out : ns->ns))
-          return soap->error;
+      while (k-- && ns->id)
+      { if (*ns->id && (ns->out || ns->ns))
+        { sprintf(soap->tmpbuf, "xmlns:%s", ns->id);
+          if (soap_attribute(soap, soap->tmpbuf, ns->out ? ns->out : ns->ns))
+            return soap->error;
+        }
+        ns++;
       }
     }
   }
@@ -9534,7 +9575,10 @@ soap_element_start_end_out(struct soap *soap, const char *tag)
     }
     for (np = soap->nlist; np; np = np->next)
     { if (np->index == 1 && np->ns)
-      { sprintf(soap->tmpbuf, *(np->id) ? "xmlns:%s" : "xmlns", np->id);
+      { if (*(np->id))
+          sprintf(soap->tmpbuf, "xmlns:%s", np->id);
+	else
+          strcpy(soap->tmpbuf, "xmlns");
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Enabling utilized binding (level=%u) %s='%s'\n", np->level, soap->tmpbuf, np->ns));
         soap_set_attr(soap, soap->tmpbuf, np->ns, 1);
         np->index = 2;
@@ -10271,7 +10315,7 @@ soap_peek_element(struct soap *soap)
   { *soap->tag = '\0';
     if ((int)c == EOF)
       return soap->error = SOAP_CHK_EOF;
-    soap_unget(soap, c > 0 ? c | 0x80000000 : c);
+    soap_unget(soap, c);
 #ifdef WITH_DOM
     /* whitespace leading to end tag is significant for DOM */
     if ((soap->mode & SOAP_XML_DOM) && soap->dom)
@@ -10810,7 +10854,7 @@ soap_string_in(struct soap *soap, int flag, long minlen, long maxlen)
           { soap_unget(soap, c);
             c = soap_getutf8(soap);
           }
-          if ((c & 0x7FFFFFFF) >= 0x80 && (soap->mode & SOAP_C_UTFSTRING))
+          if ((c & 0x7FFFFFFF) >= 0x80 && (!flag || (soap->mode & SOAP_C_UTFSTRING)))
           { c &= 0x7FFFFFFF;
             t = buf;
             if (c < 0x0800)
@@ -11039,7 +11083,9 @@ soap_string_in(struct soap *soap, int flag, long minlen, long maxlen)
         m--;
         continue;
       }
-      if (soap->mode & SOAP_C_UTFSTRING)
+      if (!flag)
+        c = soap_getchar(soap);
+      else if ((soap->mode & SOAP_C_UTFSTRING))
       { if (((c = soap_get(soap)) & 0x80000000) && c >= -0x7FFFFF80 && c < SOAP_AP)
         { c &= 0x7FFFFFFF;
           t = buf;
@@ -12676,11 +12722,19 @@ soap_QName2s(struct soap *soap, const char *s)
         n++;
       /* normal prefix: pass string as is */
       if (*s != '"')
-      { soap_append_lab(soap, s, n);
+      {
 #ifndef WITH_LEAN
         if ((soap->mode & SOAP_XML_CANONICAL))
           soap_utilize_ns(soap, s);
+        if ((soap->mode & SOAP_XML_DEFAULTNS))
+        { const char *r = strchr(s, ':');
+          if (r && soap->nlist && !strncmp(soap->nlist->id, s, r-s) && !soap->nlist->id[r-s])
+	  { n -= r-s + 1;
+            s = r + 1;
+	  }
+        }
 #endif
+        soap_append_lab(soap, s, n);
       }
       else /* URL-based string prefix */
       { const char *q;
@@ -12700,7 +12754,13 @@ soap_QName2s(struct soap *soap, const char *s)
           }
           /* URL is in the namespace table? */
           if (p && p->id)
-          { soap_append_lab(soap, p->id, strlen(p->id));
+	  { const char *r = p->id;
+#ifndef WITH_LEAN
+            if ((soap->mode & SOAP_XML_DEFAULTNS) && soap->nlist && !strcmp(soap->nlist->id, r))
+	      q++;
+	    else
+#endif
+              soap_append_lab(soap, r, strlen(r));
           }
           else /* not in namespace table: create xmlns binding */
           { char *r = soap_strdup(soap, s);
@@ -14653,8 +14713,10 @@ soap_begin_recv(struct soap *soap)
       soap->chunksize = 0;
     }
     /* Note: fparse should not use soap_unget to push back last char */
+    if (soap->status && soap->length == 0 && !soap->http_content && (soap->imode & SOAP_IO) != SOAP_IO_CHUNK)
+      return soap->error = soap->status;
     if (soap_get0(soap) == (int)EOF)
-    { if (soap->status == 200)
+    { if (soap->status == 0 || soap->status == 200)
         return soap->error = SOAP_NO_DATA; /* HTTP OK: always expect data */
       return soap->error = soap->status;
     }
@@ -15198,7 +15260,7 @@ soap_try_connect_command(struct soap *soap, int http_command, const char *endpoi
     soap->mode = k;
   }
   if (http_command == SOAP_GET || http_command == SOAP_DEL)
-    return soap_end_send(soap);
+    return soap_end_send_flush(soap);
 #endif
   return SOAP_OK;
 }
@@ -15240,7 +15302,7 @@ soap_ntlm_handshake(struct soap *soap, int command, const char *endpoint, const 
       soap->keep_alive = 1;
       soap->status = command;
       if (soap->fpost(soap, endpoint, host, port, soap->path, soap->action, 0)
-       || soap_end_send(soap))
+       || soap_end_send_flush(soap))
         return soap->error;
       soap->mode = m;
       soap->keep_alive = k;
@@ -15774,14 +15836,13 @@ soap_set_fault(struct soap *soap)
 #endif
     case SOAP_EOF:
 #ifndef WITH_NOIO
-      strcpy(soap->msgbuf, soap_strerror(soap));
+      *s = soap_strerror(soap); /* *s = soap->msgbuf */
 #ifndef WITH_LEAN
       if (strlen(soap->msgbuf) + 25 < sizeof(soap->msgbuf))
       { memmove(soap->msgbuf + 25, soap->msgbuf, strlen(soap->msgbuf) + 1);
         memcpy(soap->msgbuf, "End of file or no input: ", 25);
       }
 #endif
-      *s = soap->msgbuf;
       break;
 #else
       *s = "End of file or no input";

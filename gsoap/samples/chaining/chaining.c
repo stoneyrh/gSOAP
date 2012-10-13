@@ -60,8 +60,10 @@ int main()
 	{
 		soap_set_namespaces(soap, c_namespaces);
 		if (c_serve_request(soap))
-			soap_print_fault(soap, stderr);
+			soap_send_fault(soap);
 	}
+	else if (soap->error)
+		soap_send_fault(soap);
 	soap_destroy(soap);
 	soap_end(soap);
 	soap_free(soap);

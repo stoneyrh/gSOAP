@@ -60,16 +60,13 @@ int main()
 	else if (quote.dispatch() == SOAP_NO_METHOD)
 	{
 		soap_copy_stream(&calc, &quote);
-		if (calc.dispatch() == SOAP_NO_METHOD)
-		{
-			std::cerr << "No method" << std::endl;
-		}
-		else if (calc.error)
-			calc.soap_stream_fault(std::cerr);
+		if (calc.dispatch())
+			soap_send_fault(&calc);
 		soap_free_stream(&calc);
 	}
 	else if (quote.error)
-		quote.soap_stream_fault(std::cerr);
+		soap_send_fault(&quote);
+
 	quote.destroy();
 	calc.destroy();
 	return 0;

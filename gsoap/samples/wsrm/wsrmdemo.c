@@ -130,9 +130,8 @@ int clientPort = 8001;
 int callback_poll(struct soap *soap, int timeout);
 void *callback_server(void *soap);
 
-#ifdef THREADS_H
 void *process_request(void *soap);
-#endif
+
 int CRYPTO_thread_setup();
 void CRYPTO_thread_cleanup();
 
@@ -196,7 +195,9 @@ int main(int argc, char **argv)
           soap_print_fault(soap, stderr);
         else /* timeout, send acknowledgements to all peers */
 	{ soap_wsrm_pulse(soap, -10000); /* 10 ms */
+#ifdef WITH_UDP
 	  sleep(1); /* optional, needed for UDP: accept() ruturns immediately */
+#endif
 	}
         continue;
       }
@@ -330,7 +331,7 @@ int main(int argc, char **argv)
     soap->userid = userid; soap->passwd = passwd;
 #endif
 
-    if (soap_wsrm_create_offer(soap, serverURI, replyto, NULL, expires, DiscardEntireSequence, soap_wsa_rand_uuid(soap), &seq))
+    if (soap_wsrm_create_offer(soap, serverURI, replyto, NULL, expires, DiscardEntireSequence, NULL, &seq))
     { if (soap->error == 202)
         printf("\n**** Create request was accepted\n");
       else if (!duplex) /* if not duplex, error is fatal */
@@ -343,7 +344,7 @@ int main(int argc, char **argv)
     if (duplex)
     { for (retry = 10; retry && !soap_wsrm_seq_created(soap, seq); retry--)
       { if (server)
-          sleep(1);
+          sleep(1); /* wait for callback server to receive response */
 	else if (callback_poll(callback, 1)) /* poll for 1 sec */
           return callback->error;
       }
@@ -366,7 +367,11 @@ int main(int argc, char **argv)
 #endif
     /* this shows how to use a retry loop to improve message delivery */
     /* UDP may timeout when no UDP response message is sent by the server */
-    while (!soap_wsrm_request(soap, seq, soap_wsa_rand_uuid(soap), RequestAction) && soap_call_ns__wsrmdemo(soap, soap_wsrm_to(seq), RequestAction, "First Message", &res))
+    if (soap_wsrm_request(soap, seq, soap_wsa_rand_uuid(soap), RequestAction))
+    { soap_print_fault(soap, stderr);
+      return soap->error;
+    }
+    while (soap_call_ns__wsrmdemo(soap, soap_wsrm_to(seq), RequestAction, "First Message", &res))
     { if (soap->error == 202)
       { printf("\n**** Request was accepted\n");
         break;
@@ -597,9 +602,12 @@ void *process_request(void *ctx)
 #endif
   if (soap_serve(soap) && soap->error != SOAP_STOP && soap->error != SOAP_EOF)
     soap_print_fault(soap, stderr);
-  else if (soap->error != SOAP_EOF || soap->errnum)
-    printf("\n**** Request served by thread\n");
-  soap_wsrm_dump(soap, stdout);
+  else if (soap->error == SOAP_EOF && soap->errnum == 0)
+    printf("\n**** Thread timed out\n");
+  else
+  { printf("\n**** Request served by thread\n");
+    soap_wsrm_dump(soap, stdout);
+  }
   soap_destroy(soap);
   soap_end(soap);
   soap_free(soap);
@@ -690,8 +698,7 @@ int callback_poll(struct soap *soap, int timeout)
  *
 \******************************************************************************/
 
-int
-ns__wsrmdemo(struct soap *soap, char *in, struct ns__wsrmdemoResponse *result)
+int ns__wsrmdemo(struct soap *soap, char *in, struct ns__wsrmdemoResponse *result)
 {
   /* check Basic/Digest Auth, when enabled */
   if (userid && passwd)

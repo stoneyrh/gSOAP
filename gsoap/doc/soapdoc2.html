@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.10 User Guide</title>
+<title>gSOAP 2.8.11 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.10 User Guide </h1>
+<h1 align="center">gSOAP 2.8.11 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Aug 18, 2012
+<h3 align="center">Oct 13, 2012
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -3330,12 +3330,18 @@ abc.accept(); <br />
 &nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_copy_stream(&amp;xyz, &amp;uvw); <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(xyz.dispatch()) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_send_fault(&amp;xyz); // send fault to client <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xyz.soap_stream_fault(std::cerr); <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_free_stream(&amp;xyz); // free the copy <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xyz.destroy(); <br />
 &nbsp;&nbsp;&nbsp;} <br />
 &nbsp;&nbsp;&nbsp;<b>else</b><br />
+&nbsp;&nbsp;&nbsp;{ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_send_fault(&amp;uvw); // send fault to client <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uvw.soap_stream_fault(std::cerr); <br />
+&nbsp;&nbsp;&nbsp;} <br />
 &nbsp;&nbsp;&nbsp;soap_free_stream(&amp;uvw); // free the copy <br />
 &nbsp;&nbsp;&nbsp;uvw.destroy(); <br />
 } <br />
@@ -3349,7 +3355,9 @@ operations, unless there is no matching operation and <i>SOAP_NO_METHOD</i> is
 returned. The <i>soap_copy_stream</i> ensures that the service object uses the
 currently open socket. The copied streams are freed with
 <i>soap_free_stream</i>. Do not enable keep-alive support, as the socket may
-stay open indefinitely afterwards as a consequence.
+stay open indefinitely afterwards as a consequence. Also, the <i>dispatch</i>
+method does not send a fault to the client, which has to be explicitly done
+with the <i>soap_send_fault</i> operation when an error occurs.
 
 <div class="p"><!----></div>
 In this way, multiple services can be chained to accept messages on the same port. This approach also works with SSL for HTTPS services.
@@ -3594,7 +3602,7 @@ the Web to retrieve the quote after which it will print the quote on the
 terminal.
 
 <div class="p"><!----></div>
-The header file input to the gSOAP <i>soapcpp2</i> compiler is given below:
+The header file input to the gSOAP <i>soapcpp2</i> compiler is given below. The example is for illustrative purposes only (the XMethods services are not operational):
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 // Contents of file "quotex.h": <br />
 <b>int</b>&nbsp;ns1__getQuote(<b>char</b>&nbsp;*symbol, <b>float</b>&nbsp;&amp;result); // XMethods delayed stock quote service service operation <br />
@@ -5172,8 +5180,9 @@ The <i>soapcpp2</i> source-to-source compiler supports the following command-lin
 
 <table>
 <tr><td align="left"><font color="#FF0000"><b>Option</b></font> </td><td align="left"><font color="#FF0000"><b>Description</b></font> </td></tr>
-<tr><td align="left"><i>-1</i>	</td><td align="left">Use SOAP 1.1 namespaces and encodings (default) </td></tr>
-<tr><td align="left"><i>-2</i>	</td><td align="left">Use SOAP 1.2 namespaces and encodings </td></tr>
+<tr><td align="left"><i>-1</i>	</td><td align="left">Generate SOAP 1.1 bindings </td></tr>
+<tr><td align="left"><i>-2</i>	</td><td align="left">Generate SOAP 1.2 bindings </td></tr>
+<tr><td align="left"><i>-0</i>	</td><td align="left">remove SOAP bindings (when not explicitly set by directives)</td></tr>
 <tr><td align="left"><i>-C</i>	</td><td align="left">Generate client-side code only </td></tr>
 <tr><td align="left"><i>-S</i>	</td><td align="left">Generate server-side code only </td></tr>
 <tr><td align="left"><i>-T</i>	</td><td align="left">Generate server auto-test code </td></tr>
@@ -15070,12 +15079,14 @@ To serve both the quote and rate services on the same port, we chain the service
 soap_bind(soap, NULL, 8080, 100); <br />
 soap_accept(soap); <br />
 <b>if</b>&nbsp;(soap_begin_serve(soap)) <br />
-&nbsp;&nbsp;&nbsp;... error <br />
-<b>else</b>&nbsp;<b>if</b>&nbsp;(quote_serve_request(s) == SOAP_NO_METHOD) <br />
+&nbsp;&nbsp;&nbsp;soap_send_fault(&amp;abc); // send fault to client <br />
+<b>else</b>&nbsp;<b>if</b>&nbsp;(quote_serve_request(soap) == SOAP_NO_METHOD) <br />
 { <br />
-&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(rate_serve_request())
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... error <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(rate_serve_request(soap))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_send_fault(soap); // send fault to client <br />
 } <br />
+<b>else</b>&nbsp;<b>if</b>&nbsp;(soap.error) <br />
+&nbsp;&nbsp;&nbsp;soap_send_fault(soap); // send fault to client <br />
 soap_destroy(soap); <br />
 soap_end(soap); <br />
 soap_free(soap);
@@ -15850,5 +15861,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 18 Aug 2012, 14:57.</small>
+version 4.00.<br />On 13 Oct 2012, 16:50.</small>
 </html>

@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.10
+	stdsoap2.h 2.8.11
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20810
+#define GSOAP_VERSION 20811
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -1313,7 +1313,7 @@ typedef soap_int32 soap_mode;
 #define SOAP_XML_CANONICAL	0x00010000	/* out: excC14N canonical XML */
 #define SOAP_XML_TREE		0x00020000	/* out: XML tree (no id/ref) */
 #define SOAP_XML_NIL		0x00040000	/* out: NULLs as xsi:nil */
-#define SOAP_XML_NOTYPE		0x00080000	/* out: NULLs as xsi:nil */
+#define SOAP_XML_NOTYPE		0x00080000	/* out: do not add xsi:type */
 
 #define SOAP_DOM_TREE		0x00100000      /* see DOM manual */
 #define SOAP_DOM_NODE		0x00200000
@@ -1410,11 +1410,27 @@ typedef soap_int32 soap_mode;
 # define SOAP_FREE(soap, ptr) free(ptr)
 #endif
 
-#ifndef SOAP_NEW				/* use C++ new operator */
-# if (defined(__GNUC__) && (__GNUC__ <= 2) && !defined(__BORLANDC__)) || defined(__clang__) || defined(_AIX)
-#  define SOAP_NEW(type) new type		/* old form w/o parenthesis */
-# else
-#  define SOAP_NEW(type) new (type)		/* prefer with parenthesis */
+#if !defined(WITH_LEAN) && !defined(WITH_COMPAT)
+# define SOAP_NOTHROW (std::nothrow)
+#else
+# define SOAP_NOTHROW
+#endif
+
+#if (defined(__GNUC__) && (__GNUC__ <= 2) && !defined(__BORLANDC__)) || defined(__clang__) || defined(_AIX)
+/* old form w/o parenthesis */
+# ifndef SOAP_NEW
+#  define SOAP_NEW(type) new SOAP_NOTHROW type
+# endif
+# ifndef SOAP_NEW_ARRAY
+#  define SOAP_NEW_ARRAY(type, n) new SOAP_NOTHROW type[n]
+# endif
+#else
+/* new form with parenthesis */
+# ifndef SOAP_NEW
+#  define SOAP_NEW(type) new SOAP_NOTHROW (type)
+# endif
+# ifndef SOAP_NEW_ARRAY
+#  define SOAP_NEW_ARRAY(type, n) new SOAP_NOTHROW (type[n])
 # endif
 #endif
 
@@ -1423,7 +1439,7 @@ typedef soap_int32 soap_mode;
 #endif
 
 #ifndef SOAP_NEW_COPY			/* use C++ new operator for ::copy() */
-# define SOAP_NEW_COPY(clas) new clas	/* prefer w/o parenthesis */
+# define SOAP_NEW_COPY(clas) new SOAP_NOTHROW clas
 #endif
 
 #ifndef SOAP_DELETE			/* use C++ delete operator */
@@ -1819,7 +1835,7 @@ extern "C" {
 
 struct SOAP_STD_API soap
 { short state;			/* 0 = uninitialized, 1 = initialized, 2 = copy of another soap struct */
-  short version;		/* 1 = SOAP1.1 and 2 = SOAP1.2 (set automatically from namespace URI in nsmap table) */
+  short version;		/* 1 = SOAP1.1 and 2 = SOAP1.2 (set automatically from namespace URI in nsmap table), 0 indicates non-SOAP content */
   soap_mode mode;
   soap_mode imode;
   soap_mode omode;
@@ -1846,10 +1862,12 @@ struct SOAP_STD_API soap
   struct soap_blist *blist;	/* block allocation stack */
   struct soap_clist *clist;	/* class instance allocation list */
   void *alist;			/* memory allocation (malloc) list */
+#if !defined(WITH_LEAN) || !defined(WITH_NOIDREF)
   struct soap_ilist *iht[SOAP_IDHASH];
   struct soap_plist *pht[SOAP_PTRHASH];
   struct soap_pblk *pblk;	/* plist block allocation */
   short pidx;			/* plist block allocation */
+#endif
   struct SOAP_ENV__Header *header;
   struct SOAP_ENV__Fault *fault;
   int idnum;
@@ -2333,6 +2351,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_begin_count(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_end_count(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_begin_send(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_end_send(struct soap*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_end_send_flush(struct soap*);
 
 SOAP_FMAC1 const struct soap_code_map* SOAP_FMAC2 soap_code(const struct soap_code_map*, const char*);
 SOAP_FMAC1 long SOAP_FMAC2 soap_code_int(const struct soap_code_map*, const char*, long);

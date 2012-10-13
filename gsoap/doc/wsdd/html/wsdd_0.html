@@ -189,9 +189,23 @@ Generating C++ Server Objects</h2>
 Miscellaneous</h2>
 <p>You MUST generate client-side operations that the WSDD library expects to be linked with, by executing:</p>
 <div class="fragment"><pre class="fragment">&gt; soapcpp2 -CL -Iimport <span class="keyword">import</span>/wsdd.h
-</pre></div><p>Then compile and link the generated soapClient.cpp code with your project. </p>
-</div></div>
-<hr class="footer"/><address class="footer"><small>Generated on Tue Dec 6 2011 09:32:11 for gSOAP WS-Discovery by&#160;
+</pre></div><p>Then compile and link the generated soapClient.cpp code with your project.</p>
+<p>Because WS-Addressing may relay faults to a FaultTo service, you need to defined a SOAP Fault service operation to accept and handle these:</p>
+<div class="fragment"><pre class="fragment"><span class="keywordtype">int</span> <a class="code" href="wsa5_8h.html#af1f0af3d70354401b6969aa0b689a5dc">SOAP_ENV__Fault</a>(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">char</span> *faultcode, <span class="keywordtype">char</span> *faultstring, <span class="keywordtype">char</span> *faultactor, <span class="keyword">struct</span> SOAP_ENV__Detail *detail, <span class="keyword">struct</span> SOAP_ENV__Code *SOAP_ENV__Code, <span class="keyword">struct</span> SOAP_ENV__Reason *SOAP_ENV__Reason, <span class="keywordtype">char</span> *SOAP_ENV__Node, <span class="keywordtype">char</span> *SOAP_ENV__Role, <span class="keyword">struct</span> SOAP_ENV__Detail *SOAP_ENV__Detail)
+{ 
+  ... = faultcode; <span class="comment">// SOAP 1.1 fault code string (QName)</span>
+  ... = faultstring; <span class="comment">// SOAP 1.1 fault string</span>
+  ... = faultactor; <span class="comment">// SOAP 1.1 fault actor string</span>
+  ... = detail; <span class="comment">// SOAP 1.1 fault detail struct</span>
+  ... = SOAP_ENV__Code; <span class="comment">// SOAP 1.2 fault code struct</span>
+  ... = SOAP_ENV__Reason; <span class="comment">// SOAP 1.2 reason struct</span>
+  ... = SOAP_ENV__Node; <span class="comment">// SOAP 1.2 node string</span>
+  ... = SOAP_ENV__Role; <span class="comment">// SOAP 1.2 role string</span>
+  ... = SOAP_ENV__Detail; <span class="comment">// SOAP 1.2 detail struct</span>
+  <span class="keywordflow">return</span> SOAP_OK;
+}
+</pre></div> </div></div>
+<hr class="footer"/><address class="footer"><small>Generated on Sat Aug 18 2012 23:55:08 for gSOAP WS-Discovery by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

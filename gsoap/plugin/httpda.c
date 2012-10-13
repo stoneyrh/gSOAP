@@ -347,7 +347,7 @@ static int http_da_preparesend(struct soap *soap, const char *buf, size_t len);
 static int http_da_preparerecv(struct soap *soap, const char *buf, size_t len);
 static int http_da_preparefinalrecv(struct soap *soap);
 
-static int http_da_verify_method(struct soap *soap, char *method, char *passwd);
+static int http_da_verify_method(struct soap *soap, const char *method, char *passwd);
 static void http_da_session_start(const char *realm, const char *nonce, const char *opaque);
 static int http_da_session_update(const char *realm, const char *nonce, const char *opaque, const char *cnonce, const char *ncount);
 static void http_da_session_cleanup();
@@ -820,7 +820,7 @@ int http_da_verify_get(struct soap *soap, char *passwd)
   return http_da_verify_method(soap, "GET", passwd);
 }
 
-static int http_da_verify_method(struct soap *soap, char *method, char *passwd)
+static int http_da_verify_method(struct soap *soap, const char *method, char *passwd)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
   char HA1[33], entityHAhex[33], response[33];
@@ -999,9 +999,9 @@ static void http_da_calc_HA1(struct soap *soap, void **context, const char *alg,
 
   md5_handler(soap, context, MD5_INIT, NULL, 0);
   md5_handler(soap, context, MD5_UPDATE, (char*)userid, strlen(userid));
-  md5_handler(soap, context, MD5_UPDATE, ":", 1);
+  md5_handler(soap, context, MD5_UPDATE, (char*)":", 1);
   md5_handler(soap, context, MD5_UPDATE, (char*)realm, strlen(realm));
-  md5_handler(soap, context, MD5_UPDATE, ":", 1);
+  md5_handler(soap, context, MD5_UPDATE, (char*)":", 1);
   md5_handler(soap, context, MD5_UPDATE, (char*)passwd, strlen(passwd));
   md5_handler(soap, context, MD5_FINAL, HA1, 0);
 
@@ -1011,10 +1011,10 @@ static void http_da_calc_HA1(struct soap *soap, void **context, const char *alg,
     md5_handler(soap, context, MD5_UPDATE, HA1, 16);
     if (nonce)
     {
-      md5_handler(soap, context, MD5_UPDATE, ":", 1);
+      md5_handler(soap, context, MD5_UPDATE, (char*)":", 1);
       md5_handler(soap, context, MD5_UPDATE, (char*)nonce, strlen(nonce));
     }
-    md5_handler(soap, context, MD5_UPDATE, ":", 1);
+    md5_handler(soap, context, MD5_UPDATE, (char*)":", 1);
     md5_handler(soap, context, MD5_UPDATE, (char*)cnonce, strlen(cnonce));
     md5_handler(soap, context, MD5_FINAL, HA1, 0);
   };
@@ -1028,11 +1028,11 @@ static void http_da_calc_response(struct soap *soap, void **context, char HA1hex
 
   md5_handler(soap, context, MD5_INIT, NULL, 0);
   md5_handler(soap, context, MD5_UPDATE, (char*)method, strlen(method));
-  md5_handler(soap, context, MD5_UPDATE, ":", 1);
+  md5_handler(soap, context, MD5_UPDATE, (char*)":", 1);
   md5_handler(soap, context, MD5_UPDATE, (char*)uri, strlen(uri));
   if (qop && !soap_tag_cmp(qop, "auth-int"))
   { 
-    md5_handler(soap, context, MD5_UPDATE, ":", 1);
+    md5_handler(soap, context, MD5_UPDATE, (char*)":", 1);
     md5_handler(soap, context, MD5_UPDATE, entityHAhex, 32);
   }
   md5_handler(soap, context, MD5_FINAL, HA2, 0);
@@ -1043,18 +1043,18 @@ static void http_da_calc_response(struct soap *soap, void **context, char HA1hex
   md5_handler(soap, context, MD5_UPDATE, HA1hex, 32);
   if (nonce)
   {
-    md5_handler(soap, context, MD5_UPDATE, ":", 1);
+    md5_handler(soap, context, MD5_UPDATE, (char*)":", 1);
     md5_handler(soap, context, MD5_UPDATE, (char*)nonce, strlen(nonce));
   }
-  md5_handler(soap, context, MD5_UPDATE, ":", 1);
+  md5_handler(soap, context, MD5_UPDATE, (char*)":", 1);
   if (qop && *qop)
   {
     md5_handler(soap, context, MD5_UPDATE, (char*)ncount, strlen(ncount));
-    md5_handler(soap, context, MD5_UPDATE, ":", 1);
+    md5_handler(soap, context, MD5_UPDATE, (char*)":", 1);
     md5_handler(soap, context, MD5_UPDATE, (char*)cnonce, strlen(cnonce));
-    md5_handler(soap, context, MD5_UPDATE, ":", 1);
+    md5_handler(soap, context, MD5_UPDATE, (char*)":", 1);
     md5_handler(soap, context, MD5_UPDATE, (char*)qop, strlen(qop));
-    md5_handler(soap, context, MD5_UPDATE, ":", 1);
+    md5_handler(soap, context, MD5_UPDATE, (char*)":", 1);
   }
   md5_handler(soap, context, MD5_UPDATE, HA2hex, 32);
   md5_handler(soap, context, MD5_FINAL, responseHA, 0);
