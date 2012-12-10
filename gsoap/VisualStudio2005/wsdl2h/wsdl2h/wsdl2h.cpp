@@ -387,7 +387,7 @@ static void options(int argc, char **argv)
             fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-N name] [-n name] [-P|-p] [-q name] [-r proxyhost[:port[:uid:pwd]]] [-s] [-t typemapfile] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
--b	bi-directional operations to serve one-way response messages (duplex)\n\
+-b	bi-directional operations (duplex ops) to serve one-way response messages\n\
 -c      generate C source code\n\
 -d      use DOM to populate xs:any, xs:anyType, and xs:anyAttribute\n\
 -e      don't qualify enum names\n\
@@ -403,8 +403,8 @@ static void options(int argc, char **argv)
 -Nname  use name for service namespace prefixes and multiple bindings\n\
 -nname  use name as the base namespace prefix instead of 'ns'\n\
 -ofile  output to file\n\
--P      don't create polymorphic types with C++ inheritance from xsd__anyType\n\
--p      create polymorphic types with C++ inheritance from base xsd__anyType\n\
+-P      don't create polymorphic types inherited from xsd__anyType\n\
+-p      create polymorphic types inherited from base xsd__anyType\n\
 -qname  use name for the C++ namespace of all declarations\n\
 -rhost[:port[:uid:pwd]]\n\
         connect via proxy host, port, and proxy credentials\n\
@@ -419,6 +419,7 @@ static void options(int argc, char **argv)
 -z1     compatibility with 2.7.6e: generate pointer-based arrays\n\
 -z2     compatibility with 2.7.7 to 2.7.15: qualify element/attribute references\n\
 -z3     compatibility with 2.7.16 to 2.8.7: qualify element/attribute references\n\
+-z4     compatibility up to 2.8.11: don't generate union structs in std::vector\n\
 -_      don't generate _USCORE (replace with UNICODE _x005f)\n\
 infile.wsdl infile.xsd http://www... list of input sources (if none: use stdin)\n\
 \n");
@@ -486,7 +487,12 @@ struct Namespace namespaces[] =
   {"xmime", "http://www.w3.org/2005/05/xmlmime"},
   {"dime", "http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/", "http://schemas.xmlsoap.org/ws/*/dime/wsdl/"},
   {"sp", "http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702", "http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"},
-  {"wsdl", "http://schemas.xmlsoap.org/wsdl/"},
+  {"wsdl", "http://schemas.xmlsoap.org/wsdl/", "http://www.w3.org/ns/wsdl"},
+  {"wsdli", "http://www.w3.org/ns/wsdl-instance"},
+  {"wsdlx", "http://www.w3.org/ns/wsdl-extensions"},
+  {"wsoap", "http://www.w3.org/ns/wsdl/soap"},
+  {"whttp", "http://www.w3.org/ns/wsdl/http"},
+  {"wrpc", "http://www.w3.org/ns/wsdl/rpc"},
   {"wsa_", "http://www.w3.org/2005/08/addressing"},
   {"wsaw", "http://www.w3.org/2006/05/addressing/wsdl"},
   {"wsam", "http://www.w3.org/2007/05/addressing/metadata"},

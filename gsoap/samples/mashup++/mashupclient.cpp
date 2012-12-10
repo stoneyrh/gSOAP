@@ -40,7 +40,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 int main()
 {
   mashupProxy proxy;
-  _ns3__commingtotown response;
+  _ns5__commingtotown response;
 
   if (proxy.dtx((char*)"", &response))
     proxy.soap_stream_fault(std::cerr);

@@ -52,7 +52,7 @@ int main(int argc, char **argv)
  *
 \******************************************************************************/
 
-int mashupService::dtx(_XML x, struct _ns3__commingtotown *response)
+int mashupService::dtx(_XML x, struct _ns5__commingtotown *response)
 {
   ServiceProxy Time("http://www.cs.fsu.edu/~engelen/gmtlitserver.cgi");
 

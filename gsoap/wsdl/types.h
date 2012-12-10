@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2009, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -79,6 +79,8 @@ class Types
     const char *gname(const char *URI, const char *name);
     const char *uname(const char *URI);
     const char *nsprefix(const char *prefix, const char *URI);
+    const char *prefix(const char *name);
+    const char *uri(const char *name);
     const char *deftname(enum Type type, const char *pointer, bool is_pointer, const char *prefix, const char *URI, const char *qname);
     bool is_defined(const char *prefix, const char *URI, const char *qname);
     bool is_nillable(const xs__element& element);

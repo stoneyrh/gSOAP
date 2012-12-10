@@ -43,6 +43,7 @@ static const char *xstring(const char *s);
 static bool is_integer(const char *s);
 static LONG64 to_integer(const char *s);
 static void documentation(const char *text);
+static void operations(const char *t);
 
 static int comment_nest = 0; /* keep track of block comments to avoid nesting */
 
@@ -110,6 +111,7 @@ static const char *keywords[] =
   "signed",
   "size_t",
   "sizeof",
+  "soap",
   "static",
   "static_cast",
   "struct",
@@ -503,6 +505,52 @@ const char *Types::nsprefix(const char *prefix, const char *URI)
       s = t;
     }
     return s;
+  }
+  return NULL;
+}
+
+const char *Types::prefix(const char *name)
+{ const char *s;
+  char *t;
+  if (*name == '"')
+  { s = strchr(name + 1, '"');
+    t = (char*)emalloc(s - name);
+    strncpy(t, name + 1, s - name - 1);
+    t[s - name - 1] = '\0';
+    return nsprefix(NULL, t);
+  }
+  s = strchr(name, ':');
+  if (s)
+  { t = (char*)emalloc(s - name + 1);
+    strncpy(t, name, s - name);
+    t[s - name] = '\0';
+    return t;
+  }
+  return NULL;
+}
+
+const char *Types::uri(const char *name)
+{ const char *s;
+  char *t;
+  if (*name == '"')
+  { s = strchr(name + 1, '"');
+    t = (char*)emalloc(s - name);
+    strncpy(t, name + 1, s - name - 1);
+    t[s - name - 1] = '\0';
+    return t;
+  }
+  s = strchr(name, ':');
+  if (s)
+  { struct Namespace *p = namespaces;
+    if (p)
+    { for (p += 6; p->id; p++)
+      { if (!strncmp(p->id, name, s - name) && !p->id[s - name])
+        { if (p->in && *p->in)
+            return p->in;
+          return p->ns;
+        }
+      }
+    }
   }
   return NULL;
 }
@@ -1319,7 +1367,6 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
                 fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration).value_, true), p->restriction->base, (*enumeration).value_);
               else
                 fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration).value, false), p->restriction->base, (*enumeration).value);
-
 	    }
             else
               fprintf(stream, "//\tunrecognized: bitmask enumeration '%s' has no value\n", t);
@@ -1469,6 +1516,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
   { if (!anonymous)
       fprintf(stream, "\n/// \"%s\":%s is a%s complexType with simpleContent.\n", URI?URI:"", name, complexType.abstract?"n abstract":"");
     document(complexType.annotation);
+    operations(t);
     if (complexType.simpleContent->restriction)
     { if (anonymous)
       { if (cflag)
@@ -1664,6 +1712,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
     { if (!anonymous)
         fprintf(stream, "\n/// \"%s\":%s is a%s complexType with complexContent restriction of %s.\n", URI?URI:"", name, complexType.abstract?"n abstract":"", complexType.complexContent->restriction->base);
       document(complexType.annotation);
+      operations(t);
       if (!strcmp(complexType.complexContent->restriction->base, "SOAP-ENC:Array"))
       { char *item = NULL, *type = NULL;
         if (!complexType.complexContent->restriction->attribute.empty())
@@ -1762,6 +1811,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       if (!anonymous)
         fprintf(stream, "\n/// \"%s\":%s is a%s complexType with complexContent extension of %s.\n", URI?URI:"", name, complexType.abstract?"n abstract":"", base);
       document(complexType.annotation);
+      operations(t);
       if (anonymous)
       { if (cflag)
           fprintf(stream, "    struct %s\n    {\n", t);
@@ -1800,6 +1850,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
   { if (!anonymous)
       fprintf(stream, "\n/// \"%s\":%s is a%s complexType.\n", URI?URI:"", name, complexType.abstract?"n abstract":"");
     document(complexType.annotation);
+    operations(t);
     if (anonymous)
     { if (cflag)
         fprintf(stream, "    struct %s\n    {\n", t);
@@ -2220,8 +2271,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     else if (substok
           && element.elementPtr()->substitutionsPtr()
 	  && !element.elementPtr()->substitutionsPtr()->empty())
-    { fprintf(stream, "/// Warning: element ref '%s' stands as the head of a substitutionGroup but is not declared abstract.\n", element.ref);
-      if (vflag)
+    { if (vflag)
         fprintf(stderr, "Warning: element ref '%s' stands as the head of a substitutionGroup but is not declared abstract\n", element.ref);
       gen_substitutions(URI, element);
     }
@@ -2264,8 +2314,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     else if (substok
           && element.substitutionsPtr()
 	  && !element.substitutionsPtr()->empty())
-    { fprintf(stream, "/// Warning: element '%s' stands as the head of a substitutionGroup but is not declared abstract.\n", name);
-      if (vflag)
+    { if (vflag)
         fprintf(stderr, "Warning: element '%s' stands as the head of a substitutionGroup but is not declared abstract\n", name);
       gen_substitutions(URI, element);
     }
@@ -2314,7 +2363,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       }
       else
       { s = ">";
-        fprintf(stream, "/// Vector %s with length %s..%s\n", name, minOccurs ? minOccurs : "1", maxOccurs);
+        fprintf(stream, "/// Vector of %s with length %s..%s\n", name, minOccurs ? minOccurs : "1", maxOccurs);
         fprintf(stream, vectorformat_open, "\n");
       }
     }
@@ -2341,7 +2390,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       }
       else
       { s = "}>";
-        fprintf(stream, "/// Vector %s with length %s..%s\n", name, minOccurs ? minOccurs : "1", maxOccurs);
+        fprintf(stream, "/// Vector of %s with length %s..%s\n", name, minOccurs ? minOccurs : "1", maxOccurs);
         fprintf(stream, vectorformat_open, "\n");
       }
     }
@@ -2367,7 +2416,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
         fprintf(stream, pointerformat, pname(true, "_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
       }
       else
-      { fprintf(stream, "/// Vector %s with length %s..%s\n", name, minOccurs ? minOccurs : "1", maxOccurs);
+      { fprintf(stream, "/// Vector of %s with length %s..%s\n", element.ref, minOccurs ? minOccurs : "1", maxOccurs);
         fprintf(stream, vectorformat, pname(false, "_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
       }
     }
@@ -2473,7 +2522,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
         fprintf(stream, ";\t///< Fixed required value=\"%s\".\n", value);
     }
     else if (element.nillable)
-      fprintf(stream, ";\t///< Nullable pointer.\n");
+      fprintf(stream, ";\t///< Nillable pointer.\n");
     else if (!fake_union && (!minOccurs || !strcmp(minOccurs, "1")) && (!maxOccurs || !strcmp(maxOccurs, "1")))
       fprintf(stream, ";\t///< Required element.\n");
     else if (element.fixed)
@@ -2575,10 +2624,11 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
     fprintf(stream, " %s", minOccurs ? minOccurs : "0");
     if (is_integer(maxOccurs))
       fprintf(stream, ":%s", maxOccurs);
+    fprintf(stream, ";\n");
     if (cflag)
-      fprintf(stream, ";\n    struct _%s\n    {\n", t);
+      fprintf(stream, "    struct _%s\n    {\n", t);
     else
-      fprintf(stream, ";\n    class _%s\n    {\n", t);
+      fprintf(stream, "    class _%s\n    {\n", t);
   }
   if (use_union)
   { if (!with_union || wrap_union)
@@ -2803,11 +2853,15 @@ void Types::gen_substitutions(const char *URI, const xs__element &element)
   { name = element.elementPtr()->name;
     substitutions = element.elementPtr()->substitutionsPtr();
     abstract = element.elementPtr()->abstract;
+    if (!abstract && element.elementPtr()->complexTypePtr())
+      abstract = element.elementPtr()->complexTypePtr()->abstract;
   }
   else
   { name = element.name;
     substitutions = element.substitutionsPtr();
     abstract = element.abstract;
+    if (!abstract && element.complexTypePtr())
+      abstract = element.complexTypePtr()->abstract;
   }
   fprintf(stream, "/// CHOICE OF SUBSTITUTIONS <xs:element substitutionGroup=\"%s\"", name);
   if (element.minOccurs)
@@ -2816,7 +2870,7 @@ void Types::gen_substitutions(const char *URI, const xs__element &element)
     fprintf(stream, " maxOccurs=\"%s\"", element.maxOccurs);
   fprintf(stream, "> with elements");
   for (std::vector<xs__element*>::const_iterator i1 = substitutions->begin(); i1 != substitutions->end(); ++i1)
-    fprintf(stream, " %s", (*i1)->name);
+    fprintf(stream, " <%s>", (*i1)->name);
   fprintf(stream, "\n");
   if (use_union)
   { const char *t = uname(URI);
@@ -2833,12 +2887,13 @@ void Types::gen_substitutions(const char *URI, const xs__element &element)
       }
       fprintf(stream, sizeformat, "int", r);
       fprintf(stream, " %s", element.minOccurs ? element.minOccurs : "0");
-      if (element.maxOccurs && strcmp(element.maxOccurs, "1") && is_integer(element.maxOccurs))
+      if (is_integer(element.maxOccurs))
         fprintf(stream, ":%s", element.maxOccurs);
+      fprintf(stream, ";\n");
       if (cflag)
-        fprintf(stream, ";\n    struct _%s\n    {\n", t);
+        fprintf(stream, "    struct _%s\n    {\n", t);
       else
-        fprintf(stream, ";\n    class _%s\n    {\n", t);
+        fprintf(stream, "    class _%s\n    {\n", t);
     }
     if (!with_union || wrap_union)
     { fprintf(stream, choiceformat, "int", r);
@@ -3152,6 +3207,11 @@ static void documentation(const char *text)
     s++;
   }
   fputc('\n', stream);
+}
+
+static void operations(const char *t)
+{ if (!cflag)
+    fprintf(stream, "/// class %s operations:\n/// - soap_new_%s(soap*) allocate\n/// - soap_new_%s(soap*, int num) allocate array\n/// - soap_new_req_%s(soap*, ...) allocate, set required members\n/// - soap_new_set_%s(soap*, ...) allocate, set all public members\n/// - int soap_read_%s(soap*, %s*) deserialize from a stream\n/// - int soap_write_%s(soap, %s*) serialize to a stream\n", t, t, t, t, t, t, t, t, t);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -30,8 +30,8 @@ Kernel configured for up to 4 processors.
 Processor type: i486 (Intel 80486)
 Processors active: 0 1 2 3
 Primary memory available: 4.00 gigabytes
-Default processor set: 106 tasks, 483 threads, 4 processors
-Load average: 0.83, Mach factor: 3.16
+Default processor set: 111 tasks, 500 threads, 4 processors
+Load average: 0.25, Mach factor: 3.74
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -196,8 +196,8 @@ configure:4184: checking lex library
 configure:4203: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in ccWNDUS7.o
-      _main in ccWNDUS7.o
+      _yylex in ccZhjtGj.o
+      _main in ccZhjtGj.o
 ld: symbol(s) not found for architecture x86_64
 collect2: ld returned 1 exit status
 configure:4209: $? = 1
@@ -2706,7 +2706,7 @@ configure:6898: checking for gethostbyname_r
 configure:6954: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in ccboDpEQ.o
+      _main in ccsyQuL6.o
 ld: symbol(s) not found for architecture x86_64
 collect2: ld returned 1 exit status
 configure:6960: $? = 1

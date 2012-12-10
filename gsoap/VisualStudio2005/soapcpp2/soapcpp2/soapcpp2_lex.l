@@ -90,7 +90,7 @@ int		{digit}+
 hex		0[xX][0-9a-fA-F]+
 num		{int}(\.{int}([Ee][+-]?{int})?|(\.{int})?[Ee][+-]?{int})
 chr		'(\\'|[^'\n])*'
-str		\"(\\\"|\\\n|[^"])*\"
+str		L?\"(\\\"|\\\n|[^"])*\"
 module		#module{ws}+.*\n
 import		#import{ws}+.*\n
 %x MLCOMMENT
@@ -100,8 +100,8 @@ import		#import{ws}+.*\n
 <MLCOMMENT>.|\n		{ }
 <MLCOMMENT>"*/"		{ BEGIN(INITIAL); }
 <MLCOMMENT><<EOF>>	{ execerror("Unclosed multiline comment at the end of file"); }
-"//gsoapopt".*\n	{ option(); }
-"//gsoap".*\n		{ directive(); }
+"//"\/*"gsoapopt".*\n	{ option(); }
+"//"\/*"gsoap".*\n	{ directive(); }
 "//".*\n		{ /* skip single line comment */ }
 "+="			{ return PA; }
 "-="			{ return NA; }
@@ -274,7 +274,7 @@ static Token
 install_str(void)
 {	int i, j = 0;
 	yylval.s = emalloc(yyleng-1);	/* yyleng = length(yytext) */
-	for (i = 1; i < yyleng-1; i++)
+	for (i = 1 + (yytext[0] == 'L'); i < yyleng-1; i++)
 		if (yytext[i] == '\\')
 		{	if (yytext[++i] != '\n')
 			{	yylval.s[j++] = convchar(&i);
@@ -388,9 +388,7 @@ static void directive(void)
 			s[k-j] = '\0';
 			sp->documentation = s;
 		}
-		else if (!strncmp(yytext+i, "type:", 5))
-			sp->porttype = s;
-		else if (!strncmp(yytext+i, "portType:", 9))
+		else if (!strncmp(yytext+i, "type:", 5) || !strncmp(yytext+i, "portType:", 9) || !strncmp(yytext+i, "interface:", 10))
 			sp->porttype = s;
 		else if (!strncmp(yytext+i, "portName:", 9))
 			sp->portname = s;
@@ -411,7 +409,7 @@ static void directive(void)
 		}
 		else if (!strncmp(yytext+i, "transport:", 10))
 			sp->transport = s;
-		else if (!strncmp(yytext+i, "location:", 9) || !strncmp(yytext+i, "port:", 5))
+		else if (!strncmp(yytext+i, "location:", 9) || !strncmp(yytext+i, "endpoint:", 9) || !strncmp(yytext+i, "port:", 5))
 		{	if (sp->URL)
 			{	char *t = (char*)emalloc(strlen(sp->URL) + strlen(s) + 2);
 				strcpy(t, sp->URL);
@@ -476,6 +474,26 @@ static void directive(void)
 		}
 		else if (!strncmp(yytext+i, "style:", 6))
 			sp->style = s;
+		else if (!strncmp(yytext+i, "method-protocol:", 16))
+		{	m = (Method*)emalloc(sizeof(Method));
+			m->name = s;
+			m->mess = TRANSPORT;
+			m->part = NULL;
+			m->next = sp->list;
+			sp->list = m;
+			for (j = k; yytext[j]; j++)
+				if (yytext[j] > 32)
+					break;
+			for (k = j; yytext[k]; k++)
+				if (yytext[k] == 10 || yytext[k] == 13)
+					break;
+			if (j == k)
+				return;
+			s = (char*)emalloc(k-j+1);
+			strncpy(s, yytext+j, k-j);
+			s[k-j] = '\0';
+			m->part = s;
+		}
 		else if (!strncmp(yytext+i, "method-style:", 13))
 		{	m = (Method*)emalloc(sizeof(Method));
 			m->name = s;

@@ -48,7 +48,7 @@ int main(int argc, char **argv)
  *
 \******************************************************************************/
 
-int __ns5__dtx(struct soap *soap, _XML x, struct _ns3__commingtotown *response)
+int __ns6__dtx(struct soap *soap, _XML x, struct _ns5__commingtotown *response)
 {
   struct soap *csoap = soap_copy(soap);
   struct _ns1__gmt gmt;
@@ -57,7 +57,7 @@ int __ns5__dtx(struct soap *soap, _XML x, struct _ns3__commingtotown *response)
   time_t *now, xmas;
   double sec, days;
 
-  if (soap_call___ns4__gmt(csoap, "http://www.cs.fsu.edu/~engelen/gmtlitserver.cgi", NULL, &gmt, &gmtResponse))
+  if (soap_call___ns2__gmt(csoap, "http://www.cs.fsu.edu/~engelen/gmtlitserver.cgi", NULL, &gmt, &gmtResponse))
   {
     soap_end(csoap);
     soap_free(csoap);
@@ -88,7 +88,7 @@ int __ns5__dtx(struct soap *soap, _XML x, struct _ns3__commingtotown *response)
 
   sec = difftime(xmas, *now);
   
-  if (soap_call_ns2__div(csoap, NULL, NULL, sec, 86400, &days))
+  if (soap_call_ns3__div(csoap, NULL, NULL, sec, 86400, &days))
   {
     soap_end(csoap);
     soap_free(csoap);
@@ -111,10 +111,10 @@ int __ns5__dtx(struct soap *soap, _XML x, struct _ns3__commingtotown *response)
  *
 \******************************************************************************/
 
-int ns2__add(struct soap *soap, double a, double b, double *r) { return SOAP_NO_METHOD; }
-int ns2__sub(struct soap *soap, double a, double b, double *r) { return SOAP_NO_METHOD; }
-int ns2__mul(struct soap *soap, double a, double b, double *r) { return SOAP_NO_METHOD; }
-int ns2__div(struct soap *soap, double a, double b, double *r) { return SOAP_NO_METHOD; }
-int ns2__pow(struct soap *soap, double a, double b, double *r) { return SOAP_NO_METHOD; }
+int ns3__add(struct soap *soap, double a, double b, double *r) { return SOAP_NO_METHOD; }
+int ns3__sub(struct soap *soap, double a, double b, double *r) { return SOAP_NO_METHOD; }
+int ns3__mul(struct soap *soap, double a, double b, double *r) { return SOAP_NO_METHOD; }
+int ns3__div(struct soap *soap, double a, double b, double *r) { return SOAP_NO_METHOD; }
+int ns3__pow(struct soap *soap, double a, double b, double *r) { return SOAP_NO_METHOD; }
 
-int __ns4__gmt(struct soap *soap, struct _ns1__gmt *a, struct _ns1__gmtResponse *r) { return SOAP_NO_METHOD; }
+int __ns2__gmt(struct soap *soap, struct _ns1__gmt *a, struct _ns1__gmtResponse *r) { return SOAP_NO_METHOD; }

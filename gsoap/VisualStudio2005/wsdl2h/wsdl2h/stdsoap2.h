@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.11
+	stdsoap2.h 2.8.12
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20811
+#define GSOAP_VERSION 20812
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -1186,7 +1186,9 @@ extern const char soap_base64o[], soap_base64i[];
 # endif
 #endif
 
-/* gSOAP error codes */
+/* gSOAP status/error codes */
+
+typedef soap_int32 soap_status;
 
 #define SOAP_EOF			EOF
 #define SOAP_ERR			EOF
@@ -1844,7 +1846,7 @@ struct SOAP_STD_API soap
   const char *dime_id_format;	/* user-definable format string for integer DIME id (<SOAP_TAGLEN chars) */
   const char *http_version;	/* HTTP version used "1.0" or "1.1" */
   const char *http_content;	/* optional custom response content type (with SOAP_FILE) */
-  const char *encodingStyle;	/* default = NULL which means that SOAP encoding is used */
+  const char *encodingStyle;	/* default = "" which means that SOAP encoding is used */
   const char *actor;		/* SOAP-ENV:actor or role attribute value */
   const char *lang;		/* xml:lang attribute value of SOAP-ENV:Text */
   int recv_timeout;		/* when > 0, gives socket recv timeout in seconds, < 0 in usec */
@@ -1959,7 +1961,7 @@ struct SOAP_STD_API soap
   size_t buflen;	/* length of soap.buf[] content */
   soap_wchar ahead;	/* parser lookahead */
   short cdata;		/* CDATA parser state */
-  short body;		/* parsed XML element has a body or not */
+  short body;		/* HTTP or XML element has a body (1) or not (0) */
   unsigned int level;	/* XML nesting level */
   size_t count;		/* message length counter */
   size_t length;	/* message length as set by HTTP header */
@@ -2035,7 +2037,7 @@ struct SOAP_STD_API soap
   int cookie_max;
 #endif
 #ifndef WITH_NOIO
-  int ipv6_multicast_if; /* in6addr->sin6_scope_id IPv6 value */
+  unsigned int ipv6_multicast_if; /* in_addr_t in6addr->sin6_scope_id IPv6 value */
   char* ipv4_multicast_if; /* IP_MULTICAST_IF IPv4 setsockopt interface_addr */
   unsigned char ipv4_multicast_ttl; /* IP_MULTICAST_TTL value 0..255 */
 #ifdef WITH_IPV6
@@ -2462,6 +2464,7 @@ SOAP_FMAC1 wchar_t* SOAP_FMAC2 soap_wstring_in(struct soap*, int, long, long);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_match_namespace(struct soap*, const char *, const char*, size_t n1, size_t n2);
 
+SOAP_FMAC1 void SOAP_FMAC2 soap_set_version(struct soap*, short);
 SOAP_FMAC1 int SOAP_FMAC2 soap_set_namespaces(struct soap*, const struct Namespace*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_set_local_namespaces(struct soap*);
 
@@ -2486,7 +2489,7 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_end_block(struct soap*, struct soap_blist*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_update_pointers(struct soap *soap, char *start, char *end, char *p1, char *p2);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_begin_out(struct soap*);
-SOAP_FMAC1 int soap_envelope_end_out(struct soap*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_end_out(struct soap*);
 
 SOAP_FMAC1 char * SOAP_FMAC2 soap_get_http_body(struct soap*);
 

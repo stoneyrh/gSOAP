@@ -19,6 +19,9 @@
 	- Added #define SOAP_WSA_2005
 	- Added SOAP_ENV__Header struct
 	- Added SOAP_ENV__Fault one-way operation
+	- Added //gsoap chan schema import: http://schemas.microsoft.com/ws/2005/02/duplex
+	- Added chan__ChannelInstance to wsa5__ReferenceParametersType
+	- Added chan__ChannelInstanceType and chan__ChannelInstance to Header
 
 */
 
@@ -139,6 +142,8 @@ struct wsa5__EndpointReferenceType
 /// "http://www.w3.org/2005/08/addressing":ReferenceParametersType is a complexType.
 struct wsa5__ReferenceParametersType
 {
+// Added
+    int                                 *chan__ChannelInstance          0;
 /// TODO: <any namespace="##any" minOccurs="0" maxOccurs="unbounded">
 ///       Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
@@ -244,7 +249,15 @@ typedef struct wsa5__ProblemActionType _wsa5__ProblemAction;
 
 /// Attribute "http://www.w3.org/2005/08/addressing":IsReferenceParameter of simpleType xs:boolean.
 /// Imported attribute _wsa5__IsReferenceParameter from typemap WS/WS-typemap.dat.
-typedef enum _wsa5__IsReferenceParameter { wsa5__false, wsa5__true } _wsa5__IsReferenceParameter;
+typedef enum _wsa5__IsReferenceParameter { _wsa5__IsReferenceParameter__false, _wsa5__IsReferenceParameter__true } _wsa5__IsReferenceParameter;
+
+// Added
+//gsoap chan schema import: http://schemas.microsoft.com/ws/2005/02/duplex
+/// "http://schemas.microsoft.com/ws/2005/02/duplex":ChannelInstanceType is a complexType.
+struct chan__ChannelInstanceType
+{   int __item;
+    @_wsa5__IsReferenceParameter wsa5__IsReferenceParameter = _wsa5__IsReferenceParameter__false;
+};
 
 /// Added
 struct SOAP_ENV__Header
@@ -256,6 +269,7 @@ struct SOAP_ENV__Header
   mustUnderstand _wsa5__FaultTo   *wsa5__FaultTo   0;
   mustUnderstand _wsa5__To         wsa5__To        0;
   mustUnderstand _wsa5__Action     wsa5__Action    0;
+                 struct chan__ChannelInstanceType *chan__ChannelInstance 0;
 };
 
 // Added

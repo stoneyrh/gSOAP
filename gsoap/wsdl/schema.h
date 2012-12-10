@@ -155,7 +155,7 @@ class xs__any
 class xs__contents
 { public:
 	$int				__union;			
-	union				xs__union_content
+	union xs__union_content
 	{	xs__element		*element;
 		xs__group		*group;
 		xs__seqchoice		*choice;

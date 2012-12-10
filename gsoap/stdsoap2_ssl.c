@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.11
+	stdsoap2.c[pp] 2.8.12
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20811
+#define GSOAP_LIB_VERSION 20812
 
 #ifdef AS400
 # pragma convert(819)	/* EBCDIC to ASCII */
@@ -76,10 +76,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.11 2012-10-14 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.12 2012-12-08 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.11 2012-10-14 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.12 2012-12-08 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -1705,9 +1705,9 @@ soap_pututf8(struct soap *soap, register unsigned long c)
     *t++ = (char)(0x80 | (c & 0x3F));
     *t = '\0';
   }
-#else
-  sprintf(tmp, "&#%lu;", c);
+  else
 #endif
+    sprintf(tmp, "&#%lu;", c);
   return soap_send(soap, tmp);
 }
 #endif
@@ -2909,6 +2909,11 @@ soap_match_tag(struct soap *soap, const char *tag1, const char *tag2)
         return err;
       }
     }
+    else if (!t[1])
+    { err = soap_match_namespace(soap, tag1, tag2, 0, t - tag2);
+      if (err == SOAP_NAMESPACE)
+        return SOAP_TAG_MISMATCH;
+    }
     else if (SOAP_STRCMP(tag1, t + 1))
     { return SOAP_TAG_MISMATCH;
     }
@@ -4065,7 +4070,7 @@ again:
       short keep_alive = soap->keep_alive; /* save the KA status */
       soap->omode &= ~SOAP_ENC; /* mask IO and ENC */
       soap->omode |= SOAP_IO_BUFFER;
-      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Connecting to %s proxy server\n", soap->proxy_http_version));
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Connecting to %s proxy server %s for destination endpoint %s\n", soap->proxy_http_version, soap->proxy_host, endpoint));
 #ifdef WITH_NTLM
       if (soap->ntlm_challenge)
       { if (soap_ntlm_handshake(soap, SOAP_CONNECT, endpoint, host, port))
@@ -4186,15 +4191,20 @@ again:
       }
       if (!(soap->ssl_flags & SOAP_SSL_SKIP_HOST_CHECK))
       { X509_NAME *subj;
+        STACK_OF(CONF_VALUE) *val = NULL;
+#if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
+        GENERAL_NAMES *names = NULL;
+#else
         int ext_count;
+#endif
         int ok = 0;
-        X509 *peer;
-        peer = SSL_get_peer_certificate(soap->ssl);
+        X509 *peer = SSL_get_peer_certificate(soap->ssl);
         if (!peer)
         { soap_set_sender_error(soap, "SSL/TLS error", "No SSL/TLS certificate was presented by the peer in tcp_connect()", SOAP_SSL_ERROR);
           soap->fclosesocket(soap, sk);
           return SOAP_INVALID_SOCKET;
         }
+#if (OPENSSL_VERSION_NUMBER < 0x0090800fL)
         ext_count = X509_get_ext_count(peer);
         if (ext_count > 0)
         { int i;
@@ -4203,36 +4213,42 @@ again:
             const char *ext_str = OBJ_nid2sn(OBJ_obj2nid(X509_EXTENSION_get_object(ext)));
             if (ext_str && !strcmp(ext_str, "subjectAltName"))
             { X509V3_EXT_METHOD *meth = (X509V3_EXT_METHOD*)X509V3_EXT_get(ext);
-              void *ext_data;
-#if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
-              const unsigned char *data;
-#else
               unsigned char *data;
-#endif
-              STACK_OF(CONF_VALUE) *val;
-              int j;
               if (!meth)
                 break;
               data = ext->value->data;
+              if (data)
+              {
 #if (OPENSSL_VERSION_NUMBER > 0x00907000L)
-              if (meth->it)
-                ext_data = ASN1_item_d2i(NULL, &data, ext->value->length, ASN1_ITEM_ptr(meth->it));
-              else
-              { /* OpenSSL not perfectly portable at this point (?):
-                   Some compilers appear to prefer
-                     meth->d2i(NULL, (const unsigned char**)&data, ...
-                   and others prefer
-                     meth->d2i(NULL, &data, ext->value->length);
-                */
-                ext_data = meth->d2i(NULL, &data, ext->value->length);
-              }
+                void *ext_data;
+                if (meth->it)
+                  ext_data = ASN1_item_d2i(NULL, &data, ext->value->length, ASN1_ITEM_ptr(meth->it));
+                else
+                { /* OpenSSL is not portable at this point (?):
+                     Some compilers appear to prefer
+                       meth->d2i(NULL, (const unsigned char**)&data, ...
+                     and others prefer
+                       meth->d2i(NULL, &data, ext->value->length);
+                  */
+                  ext_data = meth->d2i(NULL, &data, ext->value->length);
+                }
+                if (ext_data)
+                  val = meth->i2v(meth, ext_data, NULL);
+		else
+		  val = NULL;
+                if (meth->it)
+                  ASN1_item_free((ASN1_VALUE*)ext_data, ASN1_ITEM_ptr(meth->it));
+                else
+                  meth->ext_free(ext_data);
 #else
-              ext_data = meth->d2i(NULL, &data, ext->value->length);
+                void *ext_data = meth->d2i(NULL, &data, ext->value->length);
+                if (ext_data)
+                  val = meth->i2v(meth, ext_data, NULL);
+                meth->ext_free(ext_data);
 #endif
-              if (ext_data)
-              { val = meth->i2v(meth, ext_data, NULL);
         	if (val)
-                { for (j = 0; j < sk_CONF_VALUE_num(val); j++)
+                { int j;
+                  for (j = 0; j < sk_CONF_VALUE_num(val); j++)
                   { CONF_VALUE *nval = sk_CONF_VALUE_value(val, j);
                     if (nval && !strcmp(nval->name, "DNS") && !strcmp(nval->value, host))
                     { ok = 1;
@@ -4241,20 +4257,30 @@ again:
                   }
                   sk_CONF_VALUE_pop_free(val, X509V3_conf_free);
                 }
-#if (OPENSSL_VERSION_NUMBER > 0x00907000L)
-                if (meth->it)
-                  ASN1_item_free((ASN1_VALUE*)ext_data, ASN1_ITEM_ptr(meth->it));
-                else
-                  meth->ext_free(ext_data);
-#else
-                meth->ext_free(ext_data);
-#endif
-              }
+	      }
             }
             if (ok)
               break;
           }
         }
+#else
+        names = (GENERAL_NAMES*)X509_get_ext_d2i(peer, NID_subject_alt_name, NULL, NULL);
+        if (names)
+	{ i2v_GENERAL_NAMES(NULL, names, val);
+          sk_GENERAL_NAME_pop_free(names, GENERAL_NAME_free);
+        }
+        if (val)
+        { int j;
+          for (j = 0; j < sk_CONF_VALUE_num(val); j++)
+          { CONF_VALUE *nval = sk_CONF_VALUE_value(val, j);
+            if (nval && !strcmp(nval->name, "DNS") && !strcmp(nval->value, host))
+            { ok = 1;
+              break;
+            }
+          }
+          sk_CONF_VALUE_pop_free(val, X509V3_conf_free);
+        }
+#endif
         if (!ok && (subj = X509_get_subject_name(peer)))
         { int i = -1;
           do
@@ -5228,6 +5254,7 @@ http_parse(struct soap *soap)
   soap->http_content = NULL;
   soap->action = NULL;
   soap->status = 0;
+  soap->body = 1;
   do
   { if (soap_getline(soap, soap->msgbuf, sizeof(soap->msgbuf)))
     { if (soap->error == SOAP_EOF)
@@ -5341,18 +5368,15 @@ http_parse(struct soap *soap)
       return soap->error = status;
     else if (s)
       return soap->error = 405;
-  }
-  /* Status OK (HTTP 200) */
-  if (soap->status == 0 || soap->status == 200)
     return SOAP_OK;
-  /* Status 201 (Created), 202 (Accepted), ... and HTTP 400 and 500 errors
-     may not have a body. When content length, content type, or chunking is
-     used assume there is a message to parse, either XML or HTTP.
-  */
+  }
+#if 0
   if (soap->length > 0 || (soap->http_content && (!soap->keep_alive || soap->recv_timeout)) || (soap->imode & SOAP_IO) == SOAP_IO_CHUNK)
-  { if ((soap->status > 200 && soap->status <= 299)
-     || soap->status == 400
-     || soap->status == 500)
+#endif
+  if (soap->body)
+  { if ((soap->status >= 200 && soap->status <= 299) /* OK, Accepted, etc */
+     || soap->status == 400                          /* Bad Request */
+     || soap->status == 500)                         /* Internal Server Error */
       return SOAP_OK;
     /* force close afterwards in soap_closesock() */
     soap->keep_alive = 0;
@@ -5363,6 +5387,8 @@ http_parse(struct soap *soap)
       return soap_set_receiver_error(soap, soap->msgbuf, s, soap->status);
 #endif
   }
+  else if (soap->status >= 200 && soap->status <= 299)
+    return soap->error = soap->status;
   DBGLOG(TEST,SOAP_MESSAGE(fdebug, "HTTP error %d\n", soap->status));
   return soap_set_receiver_error(soap, "HTTP Error", soap->msgbuf, soap->status);
 }
@@ -5410,6 +5436,8 @@ http_parse_header(struct soap *soap, const char *key, const char *val)
 #endif
   else if (!soap_tag_cmp(key, "Content-Length"))
   { soap->length = soap_strtoul(val, NULL, 10);
+    if (!soap->length)
+      soap->body = 0;
   }
   else if (!soap_tag_cmp(key, "Content-Encoding"))
   { if (!soap_tag_cmp(val, "deflate"))
@@ -8411,12 +8439,10 @@ soap_copy_context(struct soap *copy, const struct soap *soap)
     soap_set_sent_logfile(copy, soap->logfile[SOAP_INDEX_SENT]);
     soap_set_recv_logfile(copy, soap->logfile[SOAP_INDEX_RECV]);
 #endif
-    copy->namespaces = NULL;
+    copy->namespaces = soap->local_namespaces;
     copy->local_namespaces = NULL;
-    if (soap->local_namespaces)
-      soap_set_namespaces(copy, soap->local_namespaces);
-    else
-      soap_set_namespaces(copy, soap->namespaces);
+    soap_set_local_namespaces(copy); /* copies soap->local_namespaces */
+    copy->namespaces = soap->namespaces; /* point to shared namespaces table */
 #ifdef WITH_C_LOCALE
 # ifdef WIN32
     copy->c_locale = _create_locale(LC_ALL, "C");
@@ -8553,6 +8579,7 @@ soap_copy_stream(struct soap *copy, struct soap *soap)
   /* copy XML parser state */
   soap_free_ns(copy);
   soap_set_local_namespaces(copy);
+  copy->version = soap->version;
   if (soap->nlist && soap->local_namespaces)
   { register struct soap_nlist *np = NULL, *nq;
     /* copy reversed nlist */
@@ -8696,8 +8723,8 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
   soap->fconnect = NULL;
   soap->fdisconnect = NULL;
 #ifndef WITH_NOIO
-  soap->ipv6_multicast_if = 0;
-  soap->ipv4_multicast_if = NULL;
+  soap->ipv6_multicast_if = 0; /* in_addr_t value */
+  soap->ipv4_multicast_if = NULL; /* points to struct in_addr or in_addr_t */
   soap->ipv4_multicast_ttl = 0; /* 0: use default */
 #ifndef WITH_IPV6
   soap->fresolve = tcp_gethost;
@@ -8985,6 +9012,27 @@ soap_end(struct soap *soap)
 #ifdef PALM
   palmNetLibClose();
 #endif
+}
+#endif
+
+/******************************************************************************/
+#ifndef PALM_1
+SOAP_FMAC1
+void
+SOAP_FMAC2
+soap_set_version(struct soap *soap, short version)
+{ soap_set_local_namespaces(soap);
+  if (soap->version != version)
+  { if (version == 1)
+    { soap->local_namespaces[0].ns = soap_env1;
+      soap->local_namespaces[1].ns = soap_enc1;
+    }
+    else if (version == 2)
+    { soap->local_namespaces[0].ns = soap_env2;
+      soap->local_namespaces[1].ns = soap_enc2;
+    }
+  }
+  soap->version = version;
 }
 #endif
 
@@ -9305,7 +9353,7 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
       if ((soap->mode & SOAP_XML_DEFAULTNS))
       { if (soap->version)
           k = 4; /* first four required entries */
-        else if (!(soap->mode & SOAP_XML_NOTYPE))
+        else if (!(soap->mode & SOAP_XML_NOTYPE) || (soap->mode & SOAP_XML_NIL))
         { ns += 2;
           k = 2; /* next two entries */
         }
@@ -9758,7 +9806,7 @@ int
 SOAP_FMAC2
 soap_element_nil(struct soap *soap, const char *tag)
 { if (soap_element(soap, tag, -1, NULL)
-   || soap_attribute(soap, "xsi:nil", "true"))
+   || ((soap->mode & SOAP_XML_NIL) && soap_attribute(soap, "xsi:nil", "true")))
     return soap->error;
   return soap_element_start_end_out(soap, tag);
 }
@@ -10738,7 +10786,7 @@ soap_string_out(struct soap *soap, const char *s, int flag)
       { wchar_t wc;
         register int m = mbtowc(&wc, t - 1, MB_CUR_MAX);
         if (m > 0 && !((soap_wchar)wc == c && m == 1 && c < 0x80))
-        { if (soap_send_raw(soap, s, t - s - 1) || soap_pututf8(soap, wc))
+        { if (soap_send_raw(soap, s, t - s - 1) || soap_pututf8(soap, (unsigned long)wc))
             return soap->error;
           s = t += m - 1;
           continue;
@@ -11321,11 +11369,12 @@ soap_wstring_out(struct soap *soap, const wchar_t *s, int flag)
         if (soap_send_raw(soap, &tmp, 1))
           return soap->error;
       }
-      else /* check UTF16 encoding when wchar_t is too small to hold UCS */
-      { if (sizeof(wchar_t) < 4 && (c & 0xD800) == 0xD800)
-        { /* http://unicode.org/faq/utf_bom.html#utf16-2 */
-          if ((*s & 0xD800) == 0xD800)
-            c = (c << 10) + *s++ + 0x10000 - (0xD800 << 10) - 0xDC00;
+      else
+      { /* check for UTF16 encoding when wchar_t is too small to hold UCS */
+        if (sizeof(wchar_t) < 4 && (c & 0xFC00) == 0xD800)
+        { register soap_wchar d = *s++;
+	  if ((d & 0xFC00) == 0xDC00)
+            c = ((c - 0xD800) << 10) + (d - 0xDC00) + 0x10000;
           else
             c = 0xFFFD; /* Malformed */
         }
@@ -11468,9 +11517,9 @@ soap_wstring_in(struct soap *soap, int flag, long minlen, long maxlen)
       default:
         if ((int)c == EOF)
           goto end;
+        /* use UTF16 encoding when wchar_t is too small to hold UCS */
         if (sizeof(wchar_t) < 4 && c > 0xFFFF)
-        { soap_wchar c1, c2;
-          /* http://unicode.org/faq/utf_bom.html#utf16-2 */
+        { register soap_wchar c1, c2;
           c1 = 0xD800 - (0x10000 >> 10) + (c >> 10);
           c2 = 0xDC00 + (c & 0x3FF);
           c = c1;
@@ -12636,8 +12685,8 @@ soap_s2QName(struct soap *soap, const char *s, char **t, long minlen, long maxle
       while (s[n] && !soap_blank((soap_wchar)s[n]))
         n++;
       np = soap->nlist;
-      /* if there is no namespace stack, or prefix is "xml" then copy string */
-      if (!np || !strncmp(s, "xml:", 4))
+      /* if there is no namespace stack, or prefix is "#" or "xml" then copy string */
+      if (!np || *s == '#' || !strncmp(s, "xml:", 4))
       { soap_append_lab(soap, s, n);
       }
       else /* we normalize the QName by replacing its prefix */
@@ -14048,7 +14097,9 @@ soap_get_mime_attachment(struct soap *soap, void *handle)
       { if (!flag)
         { c = soap_get1(soap);
           if ((int)c == EOF)
-          { soap->error = SOAP_CHK_EOF;
+	  { if (content->ptr && soap->fmimewriteclose)
+              soap->fmimewriteclose(soap, (void*)content->ptr);
+            soap->error = SOAP_CHK_EOF;
             return NULL;
           }
         }
@@ -14061,7 +14112,9 @@ soap_get_mime_attachment(struct soap *soap, void *handle)
           do c = soap_getchar(soap);
           while (c == *t++);
           if ((int)c == EOF)
-          { soap->error = SOAP_CHK_EOF;
+	  { if (content->ptr && soap->fmimewriteclose)
+              soap->fmimewriteclose(soap, (void*)content->ptr);
+            soap->error = SOAP_CHK_EOF;
             return NULL;
           }
           if (!*--t)
@@ -14573,6 +14626,7 @@ soap_begin_recv(struct soap *soap)
   soap->level = 0;
   soap->part = SOAP_BEGIN;
   soap->alloced = 0;
+  soap->body = 1;
   soap->count = 0;
   soap->length = 0;
   soap->cdata = 0;
@@ -14713,7 +14767,10 @@ soap_begin_recv(struct soap *soap)
       soap->chunksize = 0;
     }
     /* Note: fparse should not use soap_unget to push back last char */
-    if (soap->status && soap->length == 0 && !soap->http_content && (soap->imode & SOAP_IO) != SOAP_IO_CHUNK)
+#if 0
+    if (soap->status > 200 && soap->length == 0 && !(soap->http_content && (!soap->keep_alive || soap->recv_timeout)) && (soap->imode & SOAP_IO) != SOAP_IO_CHUNK)
+#endif
+    if (soap->status && !soap->body)
       return soap->error = soap->status;
     if (soap_get0(soap) == (int)EOF)
     { if (soap->status == 0 || soap->status == 200)
@@ -14853,6 +14910,8 @@ soap_envelope_begin_out(struct soap *soap)
       return soap->error;
   }
 #endif
+  if (soap->version == 0)
+    return SOAP_OK;
   soap->part = SOAP_IN_ENVELOPE;
   return soap_element_begin_out(soap, "SOAP-ENV:Envelope", 0, NULL);
 }
@@ -14864,7 +14923,9 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_envelope_end_out(struct soap *soap)
-{ if (soap_element_end_out(soap, "SOAP-ENV:Envelope")
+{ if (soap->version == 0)
+    return SOAP_OK;
+  if (soap_element_end_out(soap, "SOAP-ENV:Envelope")
    || soap_send_raw(soap, "\r\n", 2))	/* 2.8: always emit \r\n */
     return soap->error;
 #ifndef WITH_LEANER
@@ -14965,9 +15026,13 @@ soap_envelope_begin_in(struct soap *soap)
 { register struct Namespace *p;
   soap->part = SOAP_IN_ENVELOPE;
   if (soap_element_begin_in(soap, "SOAP-ENV:Envelope", 0, NULL))
-  { if (soap->error == SOAP_TAG_MISMATCH
-     && !soap_element_begin_in(soap, "Envelope", 0, NULL))
-      soap->error = SOAP_VERSIONMISMATCH;
+  { if (soap->error == SOAP_TAG_MISMATCH)
+    { if (!soap_element_begin_in(soap, "Envelope", 0, NULL))
+        soap->error = SOAP_VERSIONMISMATCH;
+      else if (soap->status)
+        soap->error = soap->status;
+      return SOAP_OK;
+    }
     else if (soap->status)
       soap->error = soap->status;
     return soap->error;
@@ -15002,7 +15067,9 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_envelope_end_in(struct soap *soap)
-{ soap->part = SOAP_END_ENVELOPE;
+{ if (soap->version == 0)
+    return SOAP_OK;
+  soap->part = SOAP_END_ENVELOPE;
   return soap_element_end_in(soap, "SOAP-ENV:Envelope");
 }
 #endif
@@ -15013,13 +15080,15 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_body_begin_out(struct soap *soap)
-{ soap->part = SOAP_IN_BODY;
-  if (soap->version == 1)
+{ if (soap->version == 1)
     soap->encoding = 1;
 #ifndef WITH_LEAN
   if ((soap->mode & SOAP_SEC_WSUID) && soap_set_attr(soap, "wsu:Id", "Body", 1))
     return soap->error;
 #endif
+  if (soap->version == 0)
+    return SOAP_OK;
+  soap->part = SOAP_IN_BODY;
   return soap_element_begin_out(soap, "SOAP-ENV:Body", 0, NULL);
 }
 #endif
@@ -15030,7 +15099,9 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_body_end_out(struct soap *soap)
-{ if (soap_element_end_out(soap, "SOAP-ENV:Body"))
+{ if (soap->version == 0)
+    return SOAP_OK;
+  if (soap_element_end_out(soap, "SOAP-ENV:Body"))
     return soap->error;
   soap->part = SOAP_END_BODY;
   return SOAP_OK;
@@ -15043,7 +15114,9 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_body_begin_in(struct soap *soap)
-{ soap->part = SOAP_IN_BODY;
+{ if (soap->version == 0)
+    return SOAP_OK;
+  soap->part = SOAP_IN_BODY;
   if (soap_element_begin_in(soap, "SOAP-ENV:Body", 0, NULL))
     return soap->error;
   if (!soap->body)
@@ -15058,7 +15131,9 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_body_end_in(struct soap *soap)
-{ if (soap->part == SOAP_NO_BODY)
+{ if (soap->version == 0)
+    return SOAP_OK;
+  if (soap->part == SOAP_NO_BODY)
     return soap->error = SOAP_OK;
   soap->part = SOAP_END_BODY;
   return soap_element_end_in(soap, "SOAP-ENV:Body");
@@ -15938,6 +16013,8 @@ int
 SOAP_FMAC2
 soap_recv_fault(struct soap *soap, int check)
 { register int status = soap->error;
+  if (soap->version == 0)
+    return SOAP_OK;
   DBGLOG(TEST,SOAP_MESSAGE(fdebug, "Check if receiving SOAP Fault\n"));
   if (!check)
   { /* try getfault when no tag or tag mismatched at level 2, otherwise ret */

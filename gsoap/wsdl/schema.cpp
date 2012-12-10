@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2011, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -771,12 +771,13 @@ int xs__element::traverse(xs__schema &schema)
   elementRef = NULL;
   if (token)
   { for (vector<xs__element>::iterator i = schema.element.begin(); i != schema.element.end(); ++i)
-      if (!strcmp((*i).name, token))
+    { if ((*i).name && !strcmp((*i).name, token))
       { elementRef = &(*i);
         if (vflag)
           cerr << "    Found element '" << (name?name:"") << "' ref '" << (token?token:"") << "'" << endl;
         break;
       }
+    }
   }
   if (!elementRef)
   { for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
@@ -785,7 +786,7 @@ int xs__element::traverse(xs__schema &schema)
       { token = qname_token(ref, s->targetNamespace);
         if (token)
         { for (vector<xs__element>::iterator j = s->element.begin(); j != s->element.end(); ++j)
-          { if (!strcmp((*j).name, token))
+          { if ((*j).name && !strcmp((*j).name, token))
             { elementRef = &(*j);
               if (vflag)
                 cerr << "    Found element '" << (name?name:"") << "' ref '" << (token?token:"") << "'" << endl;
@@ -807,7 +808,7 @@ int xs__element::traverse(xs__schema &schema)
     simpleTypeRef = NULL;
     if (token)
     { for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
-        if (!strcmp((*i).name, token))
+        if ((*i).name && !strcmp((*i).name, token))
         { simpleTypeRef = &(*i);
           if (vflag)
             cerr << "    Found element '" << (name?name:"") << "' simpleType '" << (token?token:"") << "'" << endl;
@@ -821,7 +822,7 @@ int xs__element::traverse(xs__schema &schema)
         { token = qname_token(type, s->targetNamespace);
           if (token)
           { for (vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
-            { if (!strcmp((*j).name, token))
+            { if ((*j).name && !strcmp((*j).name, token))
               { simpleTypeRef = &(*j);
                 if (vflag)
                   cerr << "    Found element '" << (name?name:"") << "' simpleType '" << (token?token:"") << "'" << endl;
@@ -844,7 +845,7 @@ int xs__element::traverse(xs__schema &schema)
     complexTypeRef = NULL;
     if (token)
     { for (vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
-        if (!strcmp((*i).name, token))
+        if ((*i).name && !strcmp((*i).name, token))
         { complexTypeRef = &(*i);
           if (vflag)
             cerr << "    Found element '" << (name?name:"") << "' complexType '" << (token?token:"") << "'" << endl;
@@ -858,7 +859,7 @@ int xs__element::traverse(xs__schema &schema)
         { token = qname_token(type, s->targetNamespace);
           if (token)
           { for (vector<xs__complexType>::iterator j = s->complexType.begin(); j != s->complexType.end(); ++j)
-            { if (!strcmp((*j).name, token))
+            { if ((*j).name && !strcmp((*j).name, token))
               { complexTypeRef = &(*j);
                 if (vflag)
                   cerr << "    Found element '" << (name?name:"") << "' complexType '" << (token?token:"") << "'" << endl;
@@ -1164,7 +1165,7 @@ int xs__extension::traverse(xs__schema &schema)
   complexTypeRef = NULL;
   if (token)
   { for (vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
-      if (!strcmp((*i).name, token))
+      if ((*i).name && !strcmp((*i).name, token))
       { complexTypeRef = &(*i);
         if (vflag)
           cerr << "    Found extension base type '" << (token?token:"") << "'" << endl;
@@ -1178,7 +1179,7 @@ int xs__extension::traverse(xs__schema &schema)
       { token = qname_token(base, s->targetNamespace);
         if (token)
         { for (vector<xs__complexType>::iterator j = s->complexType.begin(); j != s->complexType.end(); ++j)
-          { if (!strcmp((*j).name, token))
+          { if ((*j).name && !strcmp((*j).name, token))
             { complexTypeRef = &(*j);
               if (vflag)
                 cerr << "    Found extension base type '" << (token?token:"") << "'" << endl;
@@ -1281,7 +1282,7 @@ int xs__restriction::traverse(xs__schema &schema)
   complexTypeRef = NULL;
   if (token)
   { for (vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
-      if (!strcmp((*i).name, token))
+      if ((*i).name && !strcmp((*i).name, token))
       { complexTypeRef = &(*i);
         if (vflag)
           cerr << "    Found restriction base type '" << (token?token:"") << "'" << endl;
@@ -1295,7 +1296,7 @@ int xs__restriction::traverse(xs__schema &schema)
       { token = qname_token(base, s->targetNamespace);
         if (token)
         { for (vector<xs__complexType>::iterator j = s->complexType.begin(); j != s->complexType.end(); ++j)
-          { if (!strcmp((*j).name, token))
+          { if ((*j).name && !strcmp((*j).name, token))
             { complexTypeRef = &(*j);
               if (vflag)
                 cerr << "    Found restriction base type '" << (token?token:"") << "'" << endl;
