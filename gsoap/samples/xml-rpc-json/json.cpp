@@ -92,7 +92,7 @@ int json_send(struct soap *soap, const struct value& v)
 { bool f;
   switch (v.__type)
   { case SOAP_TYPE__array: 
-      if (soap_send_raw(soap, "[", 1))
+      if (soap_send_raw(soap, "["/*]*/, 1))
         return soap->error;
       f = false;
       for (_array::iterator i = ((struct _array)v).begin(); i != ((struct _array)v).end(); ++i, f = true)
@@ -102,7 +102,7 @@ int json_send(struct soap *soap, const struct value& v)
 	if (json_send(soap, (*i)))
           return soap->error;
       }
-      return soap_send_raw(soap, "]", 1);
+      return soap_send_raw(soap, /*[*/"]", 1);
     case SOAP_TYPE__boolean: 
       if (v.is_true())
         return soap_send_raw(soap, "true", 4);
@@ -117,7 +117,7 @@ int json_send(struct soap *soap, const struct value& v)
     case SOAP_TYPE__base64: 
       return jsstrout(soap, (_string)v);
     case SOAP_TYPE__struct: 
-      if (soap_send_raw(soap, "{", 1))
+      if (soap_send_raw(soap, "{"/*}*/, 1))
         return soap->error;
       f = false;
       for (_struct::iterator i = ((struct _struct)v).begin(); i != ((struct _struct)v).end(); ++i, f = true)
@@ -129,7 +129,7 @@ int json_send(struct soap *soap, const struct value& v)
 	 || json_send(soap, (*i)))
           return soap->error;
       }
-      return soap_send_raw(soap, "}", 1);
+      return soap_send_raw(soap, /*{*/"}", 1);
     default:
       if (v.__any)
         return jsstrout(soap, (_string)v.__any);

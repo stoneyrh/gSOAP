@@ -1,11 +1,11 @@
 /*
 	wsdl.h
 
-	WSDL 1.1 binding schema interface
+	WSDL 1.1 and WSDL 2.0 schemas
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2010, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2001-2012, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -33,8 +33,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 //gsoapopt w
 
-//gsoap wsdl schema documentation:	WSDL 1.1 binding schema
+//gsoap wsdl schema documentation:	WSDL 1.1/2.0 binding schema
 //gsoap wsdl schema namespace:		http://schemas.xmlsoap.org/wsdl/
+//gsoap wsdl schema namespace2:		http://www.w3.org/ns/wsdl
 //gsoap wsdl schema elementForm:	qualified
 //gsoap wsdl schema attributeForm:	unqualified
 
@@ -64,7 +65,7 @@ class wsdl__import
 	wsdl__definitions		*definitionsPtr() const;
 };
 
-class wsdl__types
+class wsdl__types : public xs__schema				// WSDL 2.0 <types> inlined schema
 { public:
 	xsd__string			documentation;		// <wsdl:documentation>?
 	std::vector<xs__schema*>	xs__schema_; 		// <xs:schema>*
@@ -105,10 +106,12 @@ class wsdl__message
   	int				traverse(wsdl__definitions&);
 };
 
-class wsdl__input
+class wsdl__ioput
 { public:
 	@xsd__NMTOKEN			name;
 	@xsd__QName			message;
+	@xsd__NMTOKEN			messageLabel;		// WSDL 2.0
+	@xsd__QName			element;		// WSDL 2.0
 	@xsd__anyURI			wsa__Action;
 	@xsd__anyURI			wsam__Action;
 	xsd__string			documentation;		// <wsdl:documentation>?
@@ -116,35 +119,23 @@ class wsdl__input
 	wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
   private:
   	wsdl__message			*messageRef;		// traverse() finds message
+  	xs__element			*elementRef;		// traverse() finds element WSDL 2.0
   public:
-  					wsdl__input();
+  					wsdl__ioput();
   	int				traverse(wsdl__definitions&);
 	void				messagePtr(wsdl__message*);
 	wsdl__message			*messagePtr() const;
-};
-
-class wsdl__output
-{ public:
-	@xsd__NMTOKEN			name;
-	@xsd__QName			message;
-	@xsd__anyURI			wsa__Action;
-	@xsd__anyURI			wsam__Action;
-	xsd__string			documentation;		// <wsdl:documentation>?
-	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
-	wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
-  private:
-  	wsdl__message			*messageRef;		// traverse() finds message
-  public:
-					wsdl__output();
-  	int				traverse(wsdl__definitions&);
-	void				messagePtr(wsdl__message*);
-	wsdl__message			*messagePtr() const;
+	void				elementPtr(xs__element*);
+	xs__element			*elementPtr() const;
 };
 
 class wsdl__fault
 { public:
 	@xsd__NMTOKEN			name;
 	@xsd__QName			message;
+	@xsd__QName			ref;			// WSDL 2.0
+	@xsd__NMTOKEN			messageLabel;		// WSDL 2.0
+	@xsd__QName			element;		// WSDL 2.0
 	@xsd__anyURI			wsa__Action;
 	@xsd__anyURI			wsam__Action;
 	xsd__string			documentation;		// <wsdl:documentation>?
@@ -152,41 +143,63 @@ class wsdl__fault
 	wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
   private:
   	wsdl__message			*messageRef;		// traverse() finds message
+  	xs__element			*elementRef;		// traverse() finds element WSDL 2.0
   public:
   					wsdl__fault();
   	int				traverse(wsdl__definitions&);
 	void				messagePtr(wsdl__message*);
 	wsdl__message			*messagePtr() const;
+	void				elementPtr(xs__element*);
+	xs__element			*elementPtr() const;
 };
 
 class wsdl__operation
 { public:
 	@xsd__NMTOKEN			name;
+	@xsd__anyURI			pattern;		// WSDL 2.0
+	@xsd__anyURI			style;			// WSDL 2.0
+	@xsd__string			wrpc__signature;	// WSDL 2.0
 	@xsd__string			parameterOrder;
 	xsd__string			documentation;		// <wsdl:documentation>?
 	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
 	wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
-	wsdl__input			*input;			// <wsdl:input>?
-	wsdl__output			*output;		// <wsdl:output>?
+	$int				__union1;
+	union wsdl__union_ioput					// <wsdl:input>|<wsdl:output>
+	{	wsdl__ioput		*input;
+		wsdl__ioput		*output;
+	}				__ioput1;
+	$int				__union2;
+	union wsdl__union_ioput 	__ioput2;		// <wsdl:input>|<wsdl:output>
 	std::vector<wsdl__fault>	fault;			// <wsdl:fault>*
+	std::vector<wsdl__fault>	infault;		// <wsdl:infault>* WSDL 2.0
+	std::vector<wsdl__fault>	outfault;		// <wsdl:outfault>* WSDL 2.0
   public:
   	int				traverse(wsdl__definitions&);
 };
 
-class wsdl__portType
+class wsdl__portType			// ... and WSDL 2.0 interface
 { public:
 	@xsd__NMTOKEN			name;
+	@xsd__QName			extends;		// WSDL 2.0
+	@xsd__anyURI			styleDefault;		// WSDL 2.0
 	xsd__string			documentation;		// <wsdl:documentation>?
 	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
 	wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
+	std::vector<wsdl__fault>	fault;			// <wsdl:fault>* WSDL 2.0
 	std::vector<wsdl__operation>	operation;		// <wsdl:operation>*
+  private:
+	wsdl__definitions		*definitionsRef;
   public:
+					wsdl__portType();
   	int				traverse(wsdl__definitions&);
+	void				definitionsPtr(wsdl__definitions*);
+	wsdl__definitions		*definitionsPtr() const;
 };	
 
-class wsdl__ext_input			// extensibility element
+class wsdl__ext_ioput			// binding extensibility element
 { public:
 	@xsd__NMTOKEN			name;
+	@xsd__NMTOKEN			messageLabel;		// WSDL 2.0
 	xsd__string			documentation;		// <wsdl:documentation>?
 	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
 	wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
@@ -197,58 +210,55 @@ class wsdl__ext_input			// extensibility element
 	mime__content			*mime__content_;	// <mime:content>?
 	mime__mimeXml			*mime__mimeXml_;	// <mime:mimeXml>?
 	std::vector<soap__header>	soap__header_;		// <soap:header>*
+	std::vector<wsoap__module>	wsoap__module_;		// <wsoap:module>* WSDL 2.0
+	std::vector<wsoap__header>	wsoap__header_;		// <wsoap:header>* WSDL 2.0
+	std::vector<whttp__header>	whttp__header_;		// <whttp:header>* WSDL 2.0
   public:
   	int				traverse(wsdl__definitions&);
 };
 
-class wsdl__ext_output			// extensibility element
+class wsdl__ext_fault			// binding extensibility element
 { public:
 	@xsd__NMTOKEN			name;
-	xsd__string			documentation;		// <wsdl:documentation>?
-	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
-	wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
-	dime__message			*dime__message_;	// <dime:message>?
-	soap__body			*soap__body_;		// <soap:body>?
-	xsd__string			http__urlEncoded;	// <http:urlEncoded>?
-	mime__multipartRelated		*mime__multipartRelated_;// <mime:multipartRelated>?
-	mime__content			*mime__content_;	// <mime:content>?
-	mime__mimeXml			*mime__mimeXml_;	// <mime:mimeXml>?
-	std::vector<soap__header>	soap__header_;		// <soap:header>*
-  public:
-  	int				traverse(wsdl__definitions&);
-};
-
-class wsdl__ext_fault			// extensibility element
-{ public:
-	@xsd__NMTOKEN			name;
+	@xsd__QName			ref;			// WSDL 2.0
+	@xsd__NMTOKEN			messageLabel;		// WSDL 2.0
+	@xsd__QName			wsoap__code;		// WSDL 2.0
+	@xsd__QName			wsoap__subcodes;	// WSDL 2.0
 	xsd__string			documentation;		// <wsdl:documentation>?
 	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
 	wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
 	soap__fault			*soap__fault_;		// <soap:fault>?
+	std::vector<wsoap__module>	wsoap__module_;		// <wsoap:module>* WSDL 2.0
   private:
-  	wsdl__message			*messageRef;
+	wsdl__fault			*faultRef;
   public:
   					wsdl__ext_fault();
-  	int				traverse(wsdl__definitions&);
-	void				messagePtr(wsdl__message*);
-	wsdl__message			*messagePtr() const;
+  	int				traverse(wsdl__definitions&, wsdl__portType*);
+	void				faultPtr(wsdl__fault*);
+	wsdl__fault			*faultPtr() const;
 };
 
-class wsdl__binding_operation
+class wsdl__ext_operation		// binding extensibility element
 { public:
 	@xsd__NMTOKEN			name;
+	@xsd__QName			ref;			// WSDL 2.0
+	@xsd__anyURI			wsoap__mep;		// WSDL 2.0
+	@xsd__anyURI			wsoap__action;		// WSDL 2.0
+	@xsd__string			whttp__method;		// WSDL 2.0
 	xsd__string			documentation;		// <wsdl:documentation>?
 	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
 	wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
 	soap__operation			*soap__operation_;	// <soap:operation>?
 	http__operation			*http__operation_;	// <http:operation>?
-	wsdl__ext_input			*input;			// <wsdl:input>?
-	wsdl__ext_output		*output;		// <wsdl:output>?
+	wsdl__ext_ioput			*input;			// <wsdl:input>?
+	wsdl__ext_ioput			*output;		// <wsdl:output>?
 	std::vector<wsdl__ext_fault>	fault;			// <wsdl:fault>*
+	std::vector<wsdl__ext_fault>	infault;		// <wsdl:infault>* WSDL 2.0
+	std::vector<wsdl__ext_fault>	outfault;		// <wsdl:outfault>* WSDL 2.0
   private:
-  	wsdl__operation			*operationRef;		// traverse() finds operation in <wsdl:portType>
+  	wsdl__operation			*operationRef;		// traverse() finds operation
   public:
-  					wsdl__binding_operation();
+  					wsdl__ext_operation();
   	int				traverse(wsdl__definitions&, wsdl__portType*);
 	void				operationPtr(wsdl__operation*);
 	wsdl__operation			*operationPtr() const;
@@ -258,15 +268,23 @@ class wsdl__binding
 { public:
 	@xsd__NMTOKEN			name;
 	@xsd__QName			type;
+	@xsd__anyURI			type_;			// WSDL 2.0
+	@xsd__QName			interface_;		// WSDL 2.0
+	@xsd__boolean			whttp__cookies = false;	// WSDL 2.0
+	@xsd__string			wsoap__version;		// WSDL 2.0
+	@xsd__anyURI			wsoap__protocol;	// WSDL 2.0
+	@xsd__anyURI			wsoap__mepDefault;	// WSDL 2.0
+	@xsd__string			whttp__methodDefault;	// WSDL 2.0
 	xsd__string			documentation;		// <wsdl:documentation>?
 	std::vector<wsp__Policy>	wsp__Policy_;		// <wsp:Policy>*
 	std::vector<wsp__PolicyReference> wsp__PolicyReference_;// <wsp:PolicyReference>*
 	soap__binding			*soap__binding_;	// <soap:binding>?
 	http__binding			*http__binding_;	// <http:binding>?
-	std::vector<wsdl__binding_operation>
-					operation;		// <wsdl:operation>*
+	std::vector<wsoap__module>	wsoap__module_;		// <wsoap:module>* WSDL 2.0
+	std::vector<wsdl__ext_fault>	fault;			// <wsdl:fault>* WSDL 2.0
+	std::vector<wsdl__ext_operation> operation;		// <wsdl:operation>*
   private:
-	wsdl__portType			*portTypeRef;		// traverse() finds portType
+	wsdl__portType			*portTypeRef;		// traverse() finds portType/interface
   public:
 					wsdl__binding();
 	int				traverse(wsdl__definitions&);
@@ -274,10 +292,13 @@ class wsdl__binding
 	wsdl__portType			*portTypePtr() const;
 };
 
-class wsdl__port
+class wsdl__port			// ... and WSDL 2.0 endpoint
 { public:
 	@xsd__NMTOKEN			name;
 	@xsd__QName			binding;
+	@xsd__anyURI			address;		// WSDL 2.0
+	@xsd__NMTOKEN			whttp__authenticationScheme; // WSDL 2.0
+	@xsd__NMTOKEN			whttp__authenticationRealm; // WSDL 2.0
 	xsd__string			documentation;		// <wsdl:documentation>?
 	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
 	wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
@@ -296,10 +317,12 @@ class wsdl__port
 class wsdl__service
 { public:
 	@xsd__NMTOKEN			name;
+	@xsd__QName			interface_;		// WSDL 2.0
 	xsd__string			documentation;		// <wsdl:documentation>?
 	std::vector<wsp__Policy>	wsp__Policy_;		// <wsp:Policy>*
 	std::vector<wsp__PolicyReference> wsp__PolicyReference_;// <wsp:PolicyReference>*
-	std::vector<wsdl__port>		port;			// <wsdl:port>*
+	std::vector<wsdl__port>		port;			// <wsdl:port>* WSDL 1.1
+	std::vector<wsdl__port>		endpoint;		// <wsdl:port>* WSDL 2.0
   public:
 	int				traverse(wsdl__definitions&);
 };
@@ -315,7 +338,8 @@ class wsdl__definitions
 	std::vector<wsp__Policy>	wsp__Policy_;		// <wsp:Policy>*
 	wsdl__types			*types;			// <wsdl:types>?
 	std::vector<wsdl__message>	message;		// <wsdl:message>*
-	std::vector<wsdl__portType>	portType;		// <wsdl:portType>*
+	std::vector<wsdl__portType>	portType;		// <wsdl:portType>* WSDL 1.1
+	std::vector<wsdl__portType>	interface_;		// <wsdl:interface>* WSDL 2.0
 	std::vector<wsdl__binding>	binding;		// <wsdl:binding>*
 	std::vector<wsdl__service>	service;		// <wsdl:service>*
 	std::vector<gwsdl__portType>	gwsdl__portType_;	// <gwsdl:portType>* For the moment, we will hardcode this which makes it easier to access. WSDL 1.1 does not allow this to be extended anyway

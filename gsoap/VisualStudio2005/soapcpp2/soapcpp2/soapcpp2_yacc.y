@@ -368,7 +368,7 @@ dclr	: ptrs ID arrayck tag occurs init
 							break;
 						default:
 							if ($3.typ->type == Tpointer
-							 && ((Tnode*)$3.typ->ref)->type == Tchar
+							 && (((Tnode*)$3.typ->ref)->type == Tchar || ((Tnode*)$3.typ->ref)->type == Twchar)
 							 && $6.typ->type == Tpointer
 							 && ((Tnode*)$6.typ->ref)->type == Tchar)
 								p->info.val.s = $6.val.s;
@@ -386,9 +386,9 @@ dclr	: ptrs ID arrayck tag occurs init
 									p->info.val.s = $6.val.s;
 							}
 							else if ($3.typ->type == Tpointer
-							      && ((Tnode*)$3.typ->ref)->id == lookup("std::string"))
+							      && (((Tnode*)$3.typ->ref)->id == lookup("std::string") || ((Tnode*)$3.typ->ref)->id == lookup("std::wstring")))
 							      	p->info.val.s = $6.val.s;
-							else if ($3.typ->id == lookup("std::string"))
+							else if ($3.typ->id == lookup("std::string") || $3.typ->id == lookup("std::wstring"))
 							      	p->info.val.s = $6.val.s;
 							else if ($3.typ->type == Tpointer
 							      && $6.typ->type == Tint
@@ -638,14 +638,14 @@ farg	: tspec ptrs arg arrayck occurs init
 						break;
 					default:
 						if ($4.typ->type == Tpointer
-						 && ((Tnode*)$4.typ->ref)->type == Tchar
+						 && (((Tnode*)$4.typ->ref)->type == Tchar || ((Tnode*)$4.typ->ref)->type == Twchar)
 						 && $6.typ->type == Tpointer
 						 && ((Tnode*)$6.typ->ref)->type == Tchar)
 							p->info.val.s = $6.val.s;
 						else if ($4.typ->type == Tpointer
-						      && ((Tnode*)$4.typ->ref)->id == lookup("std::string"))
+						      && (((Tnode*)$4.typ->ref)->id == lookup("std::string") || ((Tnode*)$4.typ->ref)->id == lookup("std::wstring")))
 						      	p->info.val.s = $6.val.s;
-						else if ($4.typ->id == lookup("std::string"))
+						else if ($4.typ->id == lookup("std::string") || $4.typ->id == lookup("std::wstring"))
 						      	p->info.val.s = $6.val.s;
 						else if ($4.typ->type == Tpointer
 						      && $6.typ->type == Tint

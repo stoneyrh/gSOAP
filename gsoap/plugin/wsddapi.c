@@ -68,8 +68,8 @@ To use the wsdd library:
 -# Define WS-Discovery event handlers in your code, see Section @ref wsdd_2.
 -# Use the wsdd API functions as described below.
 -# (Re-)compile and link stdsoap2.c/pp or libgsoap, (dom.c/.cpp when needed),
-   wsddapi.c and the soapcpp2-generated source files. Compile and link with
-   plugin/threads.c when needed.
+   wsddapi.c, wsaapi.c and the soapcpp2-generated source files. Compile and link
+   with plugin/threads.c when needed.
 
 The material in this document pertains to the WS-Discovery protocol and model
 and assumes that the reader is familiar with the WS-Discovery protocol, its
@@ -172,11 +172,35 @@ soap_wsdd_Hello(soap,
   75965);               // MDVersion
 @endcode
 
-Note that the Types is a string with namespace-qualified names (QNames). These
+Note that Types is a string with namespace-qualified names (QNames). These
 should be qualified as in "namespace":name or you can use a namespace prefix
 that is part of your namespace table (in the .nsmap). So you can use
 "wsdd:DiscoveryPRoxy" as a QName in Types because wsdd is a namespace prefix
 with a defined binding in the namespace table.
+
+For UDP multicast, use
+
+@code
+soap.connect_flags = SO_BROADCAST;
+@endcode
+
+and optionally set the interface and TTL settings:
+
+@code
+in_addr_t addr = inet_addr("1.2.3.4");
+soap.ipv4_multicast_if = &addr; // see setsockopt IPPROTO_IP IP_MULTICAST_IF
+soap.ipv6_multicast_if = addr; // multicast sin6_scope_id
+soap.ipv4_multicast_ttl = 1; // see setsockopt IPPROTO_IP, IP_MULTICAST_TTL
+@endcode
+
+Please refer to the socket options for IPPROTO_IP IP_MULTICAST_IF to specify
+the default interface for multicast datagrams to be sent from. Otherwise,
+the default interface set by the system administrator will be used (if any).
+
+Please refer to the socket options for IPPROTO_IP IP_MULTICAST_TTL to limit
+the lifetime of the packet. Multicast datagrams are sent with a default value
+of 1, to prevent them to be forwarded beyond the local network. This parameter
+can be set between 1 to 255.
 
 To send a Bye message by to leave a network:
 

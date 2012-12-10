@@ -68,7 +68,7 @@ const char *soap_xsd__dateTime2s(struct soap *soap, const struct timeval a)
   n = strlen(s);
   if (s[n-1] == 'Z')
     n--;
-  sprintf(s + n, ".%0.6dZ", a.tv_usec);
+  sprintf(s + n, ".%.6dZ", a.tv_usec);
   return s;
 }
 
@@ -105,10 +105,12 @@ int soap_s2xsd__dateTime(struct soap *soap, const char *s, struct timeval *a)
     tm.tm_isdst = 0;
     if (*rest)
     { if (*rest == '.')
-      { for (s = rest + 1; *s; s++)
+      { double f = 0;
+        for (s = rest + 1; *s; s++)
           if (*s < '0' || *s > '9')
             break;
-        a->tv_usec = (long)atol(rest + 1);
+	sscanf(rest, "%lg", &f);
+        a->tv_usec = (int)(f*1000000.0);
       }
       else
       { s = rest;

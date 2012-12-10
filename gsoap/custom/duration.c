@@ -167,7 +167,7 @@ int soap_s2xsd__duration(struct soap *soap, const char *s, LONG64 *a)
 	  break;
 	case '.':
 	  S = n;
-	  if (sscanf(s, "%f", &f) != 1)
+	  if (sscanf(s, "%g", &f) != 1)
 	    return soap->error = SOAP_TYPE;
 	  s = NULL;
 	  continue;
@@ -180,7 +180,7 @@ int soap_s2xsd__duration(struct soap *soap, const char *s, LONG64 *a)
       s++;
     }
     /* convert Y-M-D H:N:S.f to signed long long int */
-    *a = sign * ((((((((((((Y * 12) + M) * 30) + D) * 24) + H) * 60) + N) * 60) + S) * 1000) + (long)(1000 * f));
+    *a = sign * ((((((((((((Y * 12) + M) * 30) + D) * 24) + H) * 60) + N) * 60) + S) * 1000) + (long)(1000.0 * f));
   }
   return soap->error;
 }

@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.11" /* Current version */
-# define GSOAP_VERSION 20811
+# define VERSION "2.8.12" /* Current version */
+# define GSOAP_VERSION 20812
 #endif
 
 #ifdef WIN32
@@ -283,19 +283,20 @@ typedef	struct Node {
 	LONG64	maxLength;
 } Node;
 
-#define ACTION		        0x00
-#define REQUEST_ACTION	        0x01
-#define RESPONSE_ACTION	        0x02
-#define FAULT_ACTION	        0x04
-#define HDRIN		        0x10	
-#define HDROUT		        0x20
-#define MIMEIN		        0x40
-#define MIMEOUT		        0x80
-#define COMMENT		        0x100
-#define ENCODING	        0x200
-#define RESPONSE_ENCODING       0x400
-#define STYLE		        0x800
-#define FAULT		        0x1000
+#define ACTION		        0x0000
+#define REQUEST_ACTION	        0x0001
+#define RESPONSE_ACTION	        0x0002
+#define FAULT_ACTION	        0x0004
+#define HDRIN		        0x0010	
+#define HDROUT		        0x0020
+#define MIMEIN		        0x0040
+#define MIMEOUT		        0x0080
+#define COMMENT		        0x0100
+#define ENCODING	        0x0200
+#define RESPONSE_ENCODING       0x0400
+#define STYLE                   0x0800
+#define FAULT                   0x1000
+#define TRANSPORT               0x2000
 
 typedef struct Data
 {	struct Data *next;

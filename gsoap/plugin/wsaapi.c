@@ -866,6 +866,33 @@ soap_wsa_reply(struct soap *soap, const char *id, const char *action)
     SOAP_WSA_(soap_default_,RelatesTo)(soap, newheader->SOAP_WSA(RelatesTo));
     newheader->SOAP_WSA(RelatesTo)->__item = oldheader->SOAP_WSA(MessageID);
   }
+#ifdef SOAP_WSA_2005 
+  /* WCF Interoperability:
+     ChannelInstance is required when the WCF Application hosts multiple
+     Callback Channels within the same application. The
+     ReferenceParameters->ChannelInstance element serves as a hint to the WCF
+     Client dispatcher, as to which WCF callback instance a received SOAP
+     Envelope belongs to ChannelInstance is declared as a pointer, so it is
+     essentially an optional element. Tests with Applications not requiring
+     ChannelInstance have also been done for the following fix.
+  */
+  if (oldheader && oldheader->SOAP_WSA(ReplyTo) && oldheader->SOAP_WSA(ReplyTo)->ReferenceParameters && oldheader->SOAP_WSA(ReplyTo)->ReferenceParameters->chan__ChannelInstance)
+  { if (newheader)
+    { if (!newheader->chan__ChannelInstance)
+      { newheader->chan__ChannelInstance = (struct chan__ChannelInstanceType*)soap_malloc(soap, sizeof(struct chan__ChannelInstanceType));
+        if (newheader->chan__ChannelInstance)
+	{ soap_default_chan__ChannelInstanceType(soap, newheader->chan__ChannelInstance);
+          newheader->chan__ChannelInstance->__item = *(oldheader->SOAP_WSA(ReplyTo)->ReferenceParameters->chan__ChannelInstance);
+          newheader->chan__ChannelInstance->wsa5__IsReferenceParameter = _wsa5__IsReferenceParameter__true;
+        }
+      }
+      else
+      { newheader->chan__ChannelInstance->__item = *(oldheader->SOAP_WSA(ReplyTo)->ReferenceParameters->chan__ChannelInstance);
+        newheader->chan__ChannelInstance->wsa5__IsReferenceParameter = _wsa5__IsReferenceParameter__true;
+      }
+    }
+  }
+#endif
   if (oldheader && oldheader->SOAP_WSA(ReplyTo) && oldheader->SOAP_WSA(ReplyTo)->Address && !soap_tagsearch(soap_wsa_allAnonymousURI, oldheader->SOAP_WSA(ReplyTo)->Address))
   { newheader->SOAP_WSA(To) = oldheader->SOAP_WSA(ReplyTo)->Address;
     /* (re)connect to ReplyTo endpoint if From != ReplyTo */

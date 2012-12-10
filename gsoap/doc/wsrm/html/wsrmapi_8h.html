@@ -151,7 +151,7 @@ Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">ULONG64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8h.html#a75f6f3db9a0a4dab2bcb507d878c3fca">soap_wsrm_msgs</a> (struct soap *soap, const struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of complete messages received, or 0 when there is a gap.  <a href="#a75f6f3db9a0a4dab2bcb507d878c3fca"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8h.html#a0304e1219b99929fa576cf12114206eb">soap_wsrm_check</a> (struct soap *soap)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Server-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP header. Also prepares the return WS-RM header. This function should be called in the each service operation that supports WS-RM. Do not use this function in a ReplyTo response-accepting destination service operation.  <a href="#a0304e1219b99929fa576cf12114206eb"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Server-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP header, checks for protocol errors, and rejects duplicate messages. Also prepares the return WS-RM header. This function should be called in the each service operation that supports WS-RM. Do not use this function in a ReplyTo response-accepting destination service operation.  <a href="#a0304e1219b99929fa576cf12114206eb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8h.html#a12748409763500ea6907ff1225bc5c83">soap_wsrm_reply_num</a> (struct soap *soap, int flag)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepares reply from service. When flag is set, adds a WS-RM sequence message number to the next message transmitted. No acks are requested. No WS-Addressing relay.  <a href="#a12748409763500ea6907ff1225bc5c83"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8h.html#af7ab54d15beca0118bdffc64520b6589">soap_wsrm_reply</a> (struct soap *soap, const char *wsa_id, const char *wsa_action)</td></tr>
@@ -971,14 +971,14 @@ Variables</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Server-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP header. Also prepares the return WS-RM header. This function should be called in the each service operation that supports WS-RM. Do not use this function in a ReplyTo response-accepting destination service operation. </p>
+<p>Server-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP header, checks for protocol errors, and rejects duplicate messages. Also prepares the return WS-RM header. This function should be called in the each service operation that supports WS-RM. Do not use this function in a ReplyTo response-accepting destination service operation. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>context </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or error code (and server operation must return this value) </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>SOAP_OK or SOAP_STOP (duplicate message error, should be returned by the service operation executing the soap_wsrm_check) or an error code (and server operation should also return this value) </dd></dl>
 
 </div>
 </div>
@@ -1264,7 +1264,7 @@ Variables</h2></td></tr>
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">to</td><td>endpoint address of the WS-RM destination server (required) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">replyto</td><td>endpoint address of the WS-RM source to reply/ack to (optional) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>offered WS-RM sequence identifier (optional, generate when NULL) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>offered WS-RM sequence identifier (optional, generate with NULL) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">expires</td><td>max sequence duration (its lifetime) in ms (use 0 for inifinite) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">behavior</td><td>offered DiscardEntireSequence, DiscardFollowingFirstGap, or NoDiscard, which specifies the WS-RM destination's action when a sequence is closed/terminated when it is incomplete, and notifies the source when failed. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">wsa_id</td><td>WS-Addressing message ID (optional, use NULL when omitted) </td></tr>
@@ -1350,7 +1350,7 @@ Variables</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">to</td><td>endpoint address of the WS-RM destination server (required) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">replyto</td><td>endpoint address of the WS-RM source (optional) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">acksto</td><td>endpoint address for WS-RM acknowledgements (optional) (optional, use NULL when acks are piggy-backed on response messages to the source) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>offered WS-RM sequence identifier (optional, generate when NULL) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>offered WS-RM sequence identifier (optional, generate with NULL) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">expires</td><td>max sequence duration (its lifetime) in ms (use 0 for inifinite) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">behavior</td><td>offered DiscardEntireSequence, DiscardFollowingFirstGap, or NoDiscard, which specifies the WS-RM destination's action when a sequence is closed/terminated when it is incomplete, and notifies the source when failed. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">wsa_id</td><td>WS-Addressing message ID (optional, use NULL when omitted) </td></tr>
@@ -1618,6 +1618,7 @@ Variables</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramname">timeout</td><td>seconds (positive value) or microseconds (negative value) </td></tr>
   </table>
   </dd>
 </dl>
@@ -2453,7 +2454,7 @@ Variables</h2></td></tr>
 </div>
 </div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Sat Aug 18 2012 14:01:38 for gSOAP WS-ReliableMessaging by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Sun Dec 9 2012 19:57:44 for gSOAP WS-ReliableMessaging by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

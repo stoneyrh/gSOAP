@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2008, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -31,8 +31,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-//gsoap soap schema documentation:	WSDL/SOAP binding schema
+//gsoap soap schema documentation:	WSDL 1.1 SOAP binding schema
 //gsoap soap schema namespace:		http://schemas.xmlsoap.org/wsdl/soap/
+
+//gsoap wsoap schema documentation:	WSDL 2.0 SOAP binding schema
+//gsoap wsoap schema namespace:		http://www.w3.org/ns/wsdl/soap
 
 #import "imports.h"
 
@@ -114,3 +117,24 @@ class soap__address
 { public:
 	@xsd__anyURI			location;
 };
+
+class wsoap__module
+{ public:
+	@xsd__anyURI			ref;
+	@xsd__boolean			required = false;
+};
+
+class wsoap__header
+{ public:
+	@xsd__QName			element;
+	@xsd__boolean			mustUnderstand_ = false;
+	@xsd__boolean			required = false;
+  private:
+  	xs__element			*elementRef;
+  public:
+  	int				traverse(wsdl__definitions&);
+	void				elementPtr(xs__element*);
+	xs__element			*elementPtr() const;
+};
+
+

@@ -37,15 +37,21 @@ xml-rpc-io.cpp:
 For JSON over HTTP (JSON REST method), please use the plugin/httppost.c plugin.
 See JSON over HTTP explanation below.
 
-Examples
---------
+Note that soapH.h, soapStub.h and soapC.cpp are required for XML-RPC and JSON.
+To create these execute:
 
-Examples are provided in the software package, using a C and C++ interface:
+  > soapcpp2 -CSL xml-rpc.h
 
-  xml-rpc-currentTime.c		client in C
+Also compile and link with stdsoap2.cpp (or libgsoap++.a installed by the
+package).
+
+C++ Examples
+------------
+
+Examples are provided in the software package:
+
   xml-rpc-currentTime.cpp	client in C++, also uses JSON to display time
   xml-rpc-currentTimeServer.cpp	server in C++
-  xml-rpc-weblogs.c		client in C
   xml-rpc-weblogs.cpp		client in C++
   xml-rpc-json.cpp		XML-RPC <=> JSON serialization example
 
@@ -380,8 +386,36 @@ samples/webserver.c):
   // free context
   soap_free(ctx);
 
-C API
------
+C API for XML-RPC with JSON Support
+-----------------------------------
+
+The following source files are provided for XML-RPC support in C:
+
+  xml-rpc.h            XML-RPC bindings (gSOAP specification file for soapcpp2)
+
+For JSON serialization, use the following files instead of xml-rpc-io.h and
+xml-rpc-io.cpp:
+
+  json_c.h             C JSON serializer
+  json_c.c             C JSON serializer
+
+For JSON over HTTP (JSON REST method), please use the plugin/httppost.c plugin.
+See JSON over HTTP explanation below.
+
+Note that soapH.h and soapC.c are required for XML-RPC and JSON. To create
+these execute:
+
+  > soapcpp2 -c -CSL xml-rpc.h
+
+Also compile and link with stdsoap2.c (or libgsoap.a installed by the package).
+
+C Examples
+----------
+
+Examples are provided in the software package:
+
+  xml-rpc-currentTime.c		client in C
+  xml-rpc-weblogs.c		client in C
 
 For C code, only the xml-rpc.h file is needed. To generate the XML-RPC bindings
 in C, use:
@@ -537,4 +571,64 @@ A convenient way to display XML RPC data can be implemented as follows:
           printf("{?}");
     }
   }
+
+C JSON Serialization
+--------------------
+
+To display values in JSON format or parse JSON data, use the json_c.h and
+json_c.c JSON serializers. It is also possible to send and receive JSON data
+over HTTP.
+
+You can dump the XML-RPC data in JSON or populate XML-RPC from JSON data,
+because the data stored in C is independent of XML-RPC and JSON formats.
+
+For example:
+
+  #include "json_c.h" // also compile and link json.cpp for JSON serialization
+  ...
+  struct soap *ctx = soap_new();
+  struct value v;
+  soap->recvfd = ...;           // set file descriptor
+  json_recv(soap, &v);          // parse JSON, store as XML-PRC data
+  ...
+  soap->sendfd = ...;           // set file descriptor
+  json_send(soap, &v);          // output JSON value
+
+The JSON protocol has fewer data types than XML-RPC, so type information is
+lost when serializing to JSON. XML-RPC distinguishes ints from floats while
+JSON does not. XML-RPC also has a dateTime type and a raw binary data type
+(base64) that JSON lacks. DateTime information is serialized as a string in
+JSON and binary data is serialized as a base64-formatted string. Unicode is
+stored in UTF8 format in strings. For compatibility with XML-RPC serialization
+of UTF8-encoded strings, use the SOAP_C_UTFSTRING flag.
+
+C JSON over HTTP (REST method)
+------------------------------
+
+To serialize JSON over HTTP as a client application, use the plugin/httppost.c:
+
+  #include "plugin/httppost.h"  // also compile and link plugin/httppost.c
+  #include "json_c.h"           // also compile and link json_c.c
+  ...
+  struct soap *ctx = soap_new();
+  struct value request;
+  // now populate the 'request' data to send
+  ...                           
+  if (soap_post_connect(ctx, "URL", NULL, "application/json")
+   || json_send(ctx, request)
+   || soap_end_send(ctx))
+    ... // error
+  struct value response;
+  if (soap_begin_recv(ctx)
+   || json_recv(ctx, response)
+   || soap_end_recv(ctx))
+    ... // error
+  // use the 'response' data response
+  ...
+  // dealloc objects and temp data
+  soap_end(ctx);
+  // make other calls etc.
+  ...
+  // dealloc context
+  soap_free(ctx);
 

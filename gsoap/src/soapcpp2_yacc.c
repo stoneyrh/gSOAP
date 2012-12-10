@@ -2367,7 +2367,7 @@ yyreduce:
 							break;
 						default:
 							if ((yyvsp[(3) - (6)].rec).typ->type == Tpointer
-							 && ((Tnode*)(yyvsp[(3) - (6)].rec).typ->ref)->type == Tchar
+							 && (((Tnode*)(yyvsp[(3) - (6)].rec).typ->ref)->type == Tchar || ((Tnode*)(yyvsp[(3) - (6)].rec).typ->ref)->type == Twchar)
 							 && (yyvsp[(6) - (6)].rec).typ->type == Tpointer
 							 && ((Tnode*)(yyvsp[(6) - (6)].rec).typ->ref)->type == Tchar)
 								p->info.val.s = (yyvsp[(6) - (6)].rec).val.s;
@@ -2385,9 +2385,9 @@ yyreduce:
 									p->info.val.s = (yyvsp[(6) - (6)].rec).val.s;
 							}
 							else if ((yyvsp[(3) - (6)].rec).typ->type == Tpointer
-							      && ((Tnode*)(yyvsp[(3) - (6)].rec).typ->ref)->id == lookup("std::string"))
+							      && (((Tnode*)(yyvsp[(3) - (6)].rec).typ->ref)->id == lookup("std::string") || ((Tnode*)(yyvsp[(3) - (6)].rec).typ->ref)->id == lookup("std::wstring")))
 							      	p->info.val.s = (yyvsp[(6) - (6)].rec).val.s;
-							else if ((yyvsp[(3) - (6)].rec).typ->id == lookup("std::string"))
+							else if ((yyvsp[(3) - (6)].rec).typ->id == lookup("std::string") || (yyvsp[(3) - (6)].rec).typ->id == lookup("std::wstring"))
 							      	p->info.val.s = (yyvsp[(6) - (6)].rec).val.s;
 							else if ((yyvsp[(3) - (6)].rec).typ->type == Tpointer
 							      && (yyvsp[(6) - (6)].rec).typ->type == Tint
@@ -2824,14 +2824,14 @@ yyreduce:
 						break;
 					default:
 						if ((yyvsp[(4) - (6)].rec).typ->type == Tpointer
-						 && ((Tnode*)(yyvsp[(4) - (6)].rec).typ->ref)->type == Tchar
+						 && (((Tnode*)(yyvsp[(4) - (6)].rec).typ->ref)->type == Tchar || ((Tnode*)(yyvsp[(4) - (6)].rec).typ->ref)->type == Twchar)
 						 && (yyvsp[(6) - (6)].rec).typ->type == Tpointer
 						 && ((Tnode*)(yyvsp[(6) - (6)].rec).typ->ref)->type == Tchar)
 							p->info.val.s = (yyvsp[(6) - (6)].rec).val.s;
 						else if ((yyvsp[(4) - (6)].rec).typ->type == Tpointer
-						      && ((Tnode*)(yyvsp[(4) - (6)].rec).typ->ref)->id == lookup("std::string"))
+						      && (((Tnode*)(yyvsp[(4) - (6)].rec).typ->ref)->id == lookup("std::string") || ((Tnode*)(yyvsp[(4) - (6)].rec).typ->ref)->id == lookup("std::wstring")))
 						      	p->info.val.s = (yyvsp[(6) - (6)].rec).val.s;
-						else if ((yyvsp[(4) - (6)].rec).typ->id == lookup("std::string"))
+						else if ((yyvsp[(4) - (6)].rec).typ->id == lookup("std::string") || (yyvsp[(4) - (6)].rec).typ->id == lookup("std::wstring"))
 						      	p->info.val.s = (yyvsp[(6) - (6)].rec).val.s;
 						else if ((yyvsp[(4) - (6)].rec).typ->type == Tpointer
 						      && (yyvsp[(6) - (6)].rec).typ->type == Tint

@@ -76,7 +76,12 @@ wsa5__AttributedUnsignedLongType	= | ULONG64
 
 #	wsa:IsReferenceParameter is a boolean, redefined here to avoid clashes:
 
-_wsa5__IsReferenceParameter	= typedef enum _wsa5__IsReferenceParameter { wsa5__false, wsa5__true } _wsa5__IsReferenceParameter; | _wsa5__IsReferenceParameter;
+_wsa5__IsReferenceParameter	= typedef enum _wsa5__IsReferenceParameter { _wsa5__IsReferenceParameter__false, _wsa5__IsReferenceParameter__true } _wsa5__IsReferenceParameter; | _wsa5__IsReferenceParameter;
+
+#	wsa5 imports chan WCF ChannelInstance
+
+wsa5__ReferenceParametersType = $\
+    int                                 *chan__ChannelInstance;
 
 #	wsse, wsu, ds, and xenc bindings
 

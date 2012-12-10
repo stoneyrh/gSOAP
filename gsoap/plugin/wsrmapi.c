@@ -6,7 +6,7 @@
 	Implements the WS-RM 1.0 and 1.1 logic for import/wsrm.h import/wsrm5.h
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -964,7 +964,7 @@ int ns__example(struct soap *soap, char *in, struct ns__exampleResponse *respons
   if (!database) // suppose we need a database, if there is none terminate
     return soap_wsrm_receiver_fault(soap, "No database!", NULL);
 
-  // check for WS-RM/WSA and set WS-RM/WSA return headers
+  // check for WS-RM/WSA and set WS-RM/WSA return headers and protocol errors
   if (soap_wsrm_check(soap))
     return soap->error;
 
@@ -1024,7 +1024,7 @@ The server operation implementation is for example:
 @code
 int ns__exampleResponse(struct soap *soap, char *out)
 {
-  // check WS-RM/WSA headers
+  // check WS-RM/WSA headers and protocol errors
   if (soap_wsrm_check(soap))
     return soap->error;
   ... // process
@@ -1391,6 +1391,16 @@ soap_wsrm_create_offer_acksto(struct soap *soap, const char *to, const char *rep
   if (!acksto)
     acksto = replyto;
   soap_wsa_add_ReplyTo(soap, replyto);
+#ifdef WITH_WCF
+  if (strcmp(replyto, soap_wsa_anonymousURI)) /* only with ReplyTo set */
+  { char *xml = "<ChannelInstance xmlns=\"http://schemas.microsoft.com/ws/2005/02/duplex\">2</ChannelInstance>";
+    struct wsa5__ReferenceParametersType rp;
+    soap_default_wsa5__ReferenceParametersType(soap, &rp);
+    rp.__size = 1;
+    rp.__any = &xml;
+    soap->header->wsa5__ReplyTo->ReferenceParameters = &rp;
+  }
+#endif
   req.AcksTo.Address = (char*)acksto;
   if (expires)
   { req.Expires = (xsd__duration*)soap_malloc(soap, sizeof(xsd__duration));
@@ -1866,17 +1876,20 @@ soap_wsrm_acknowledgement(struct soap *soap, soap_wsrm_sequence_handle seq, cons
   DBGFUN1("soap_wsrm_acknowledgement", "wsa_id=%s", wsa_id?wsa_id:"(null)");
   if (!data)
     return soap->error = SOAP_PLUGIN_ERROR;
+  to = seq->acksto;
+  if (!to || !strcmp(to, soap_wsa_anonymousURI))
+  { to = seq->to;
+    if (!to || !strcmp(to, soap_wsa_anonymousURI))
+      return SOAP_OK;
+  }
   soap->header = NULL;
-  if (soap_wsa_request(soap, wsa_id, seq->to, SOAP_NAMESPACE_OF_wsrm"/SequenceAcknowledgement"))
+  if (soap_wsa_request(soap, wsa_id, to, SOAP_NAMESPACE_OF_wsrm"/SequenceAcknowledgement"))
     return soap->error;
   /* force adding acks */
   if (soap_wsrm_add_acks(soap, seq, 1))
     return soap->error;
   data->state = SOAP_WSRM_OFF; /* disable caching */
   seq->ackreq = 0;
-  to = seq->acksto;
-  if (!to || !strcmp(to, soap_wsa_anonymousURI))
-    to = seq->to;
   if (soap_send___wsrm__SequenceAcknowledgement(soap, to, soap->header->wsa5__Action))
     return soap->error;
   return soap_recv_empty_response(soap);
@@ -2000,11 +2013,14 @@ soap_wsrm_nack(soap_wsrm_sequence_handle seq)
 /**
 @fn int soap_wsrm_check(struct soap *soap)
 @brief Server-side check for the presence of WS-Addressing and WS-RM header
-blocks in the SOAP header. Also prepares the return WS-RM header. This function
-should be called in the each service operation that supports WS-RM. Do not use
+blocks in the SOAP header, checks for protocol errors, and rejects duplicate
+messages. Also prepares the return WS-RM header. This function should be called
+in the each service operation that supports WS-RM. Do not use
 this function in a ReplyTo response-accepting destination service operation.
 @param soap context
-@return SOAP_OK or error code (and server operation must return this value)
+@return SOAP_OK or SOAP_STOP (duplicate message error, should be returned by
+the service operation executing the soap_wsrm_check) or an error code (and
+server operation should also return this value)
 */
 int
 soap_wsrm_check(struct soap *soap)
@@ -3503,6 +3519,8 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, ULONG64 
   DBGFUN2("soap_wsrm_resend_seq", "lower="SOAP_LONG_FORMAT, lower, "upper="SOAP_LONG_FORMAT, upper);
   if (!data)
     return soap->error = SOAP_PLUGIN_ERROR;
+  if (seq->state == SOAP_WSRM_TERMINATED)
+    return SOAP_OK;
   data->state = SOAP_WSRM_OFF; /* disable caching */
   for (p = seq->messages; p; p = p->next)
   { if (p->num >= lower && (upper == 0 || p->num <= upper))
