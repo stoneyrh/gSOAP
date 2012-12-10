@@ -65,7 +65,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 void soap_default_xsd__duration(struct soap *soap, LONG64 *a)
 { (void)soap; /* appease -Wall -Werror */
-  a = 0;
+  *a = 0;
 }
 
 const char *soap_xsd__duration2s(struct soap *soap, LONG64 a)
