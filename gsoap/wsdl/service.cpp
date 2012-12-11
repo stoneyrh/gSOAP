@@ -82,7 +82,7 @@ void Definitions::analyze(const wsdl__definitions &definitions)
       }
     }
   }
-  if (!binding_count)
+  if (!binding_count && (!definitions.portType.empty() || !definitions.interface_.empty()))
     fprintf(stderr, "Warning: WSDL \"%s\" has no bindings to define operations\n", definitions.targetNamespace ? definitions.targetNamespace : "");
   if (!service_prefix)
     binding_count = 1; // Put all operations under a single binding
@@ -173,17 +173,31 @@ void Definitions::analyze(const wsdl__definitions &definitions)
       wsdl__ext_ioput *ext_output = (*operation).output;
       // /definitions/portType/operation
       if (wsdl__operation_)
-      { wsdl__ioput *input = NULL;
+      { bool reversed = false;
+        wsdl__ioput *input = NULL;
         wsdl__ioput *output = NULL;
 	// normalize input/output order for solicit-response operations
 	if (wsdl__operation_->__union1 == SOAP_UNION_wsdl__union_ioput_input)
           input = wsdl__operation_->__ioput1.input;
 	else if (wsdl__operation_->__union1 == SOAP_UNION_wsdl__union_ioput_output)
+	{ reversed = true;
           input = wsdl__operation_->__ioput1.output;
+	}
 	if (wsdl__operation_->__union2 == SOAP_UNION_wsdl__union_ioput_input)
+	{ reversed = true;
           output = wsdl__operation_->__ioput2.input;
+	}
 	else if (wsdl__operation_->__union2 == SOAP_UNION_wsdl__union_ioput_output)
           output = wsdl__operation_->__ioput2.output;
+	else // one input only or one output only (or none)
+	{ reversed = false;
+	  input = NULL;
+	  output = NULL;
+	  if (wsdl__operation_->__union1 == SOAP_UNION_wsdl__union_ioput_input)
+            input = wsdl__operation_->__ioput1.input;
+	  else if (wsdl__operation_->__union1 == SOAP_UNION_wsdl__union_ioput_output)
+            output = wsdl__operation_->__ioput1.output;
+	}
 	if (wsdl__operation_->pattern && !strstr(wsdl__operation_->pattern, "out"))
 	  output = NULL;
 	if (wsdl__operation_->pattern) // WSDL 2.0
@@ -203,10 +217,20 @@ void Definitions::analyze(const wsdl__definitions &definitions)
         }
         else if (input)
         { soap__body *input_body = NULL;
-	  if (ext_input)
+	  if (!reversed && ext_input)
 	  { input_body = ext_input->soap__body_;
             if (ext_input->mime__multipartRelated_)
             { for (vector<mime__part>::const_iterator part = ext_input->mime__multipartRelated_->part.begin(); part != ext_input->mime__multipartRelated_->part.end(); ++part)
+                if ((*part).soap__body_)
+                { input_body = (*part).soap__body_;
+                  break;
+                }
+	    }
+          }
+	  else if (ext_output)
+	  { input_body = ext_output->soap__body_;
+            if (ext_output->mime__multipartRelated_)
+            { for (vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
                 if ((*part).soap__body_)
                 { input_body = (*part).soap__body_;
                   break;
@@ -549,10 +573,20 @@ void Definitions::analyze(const wsdl__definitions &definitions)
         else if (output)
 	{ // This part is similar to the previous clause, limited to one-way output operations
           soap__body *output_body = NULL;
-	  if (ext_output)
+	  if (!reversed && ext_output)
 	  { output_body = ext_output->soap__body_;
             if (ext_output->mime__multipartRelated_)
             { for (vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
+                if ((*part).soap__body_)
+                { output_body = (*part).soap__body_;
+                  break;
+                }
+            }
+	  }
+	  else if (ext_input)
+	  { output_body = ext_input->soap__body_;
+            if (ext_input->mime__multipartRelated_)
+            { for (vector<mime__part>::const_iterator part = ext_input->mime__multipartRelated_->part.begin(); part != ext_input->mime__multipartRelated_->part.end(); ++part)
                 if ((*part).soap__body_)
                 { output_body = (*part).soap__body_;
                   break;
@@ -2384,7 +2418,7 @@ void Operation::generate(Types &types, Service &service)
     }
     else if (output && output->action)
       fprintf(stream, serviceformat, prefix, "method-action", method_name, output->action);
-    for (vector<Message*>::const_iterator message = infault.begin(); message != infault.end(); ++message)
+    for (vector<Message*>::const_iterator message = outfault.begin(); message != outfault.end(); ++message)
     { if ((*message)->message)
       { if ((*message)->use == literal)
         { for (vector<wsdl__part>::const_iterator part = (*message)->message->part.begin(); part != (*message)->message->part.end(); ++part)

@@ -104,7 +104,7 @@ static void	mkscope(Table*, int), enterscope(Table*, int), exitscope(void);
 static int	integer(Tnode*), real(Tnode*), numeric(Tnode*);
 static void	add_soap(void), add_XML(void), add_qname(void), add_header(Table*), add_fault(Table*), add_response(Entry*, Entry*), add_result(Tnode*);
 extern char	*c_storage(Storage), *c_type(Tnode*), *c_ident(Tnode*);
-extern int	is_primitive_or_string(Tnode*), is_stdstr(Tnode*), is_binary(Tnode*), is_external(Tnode*), is_mutable(Tnode*);
+extern int	is_primitive_or_string(Tnode*), is_stdstr(Tnode*), is_binary(Tnode*), is_external(Tnode*), is_mutable(Tnode*), has_attachment(Tnode*);
 
 /* Temporaries used in semantic rules */
 int	i;
@@ -1161,7 +1161,12 @@ type	: VOID		{ $$ = mkvoid(); }
 			}
 	| TYPE '<' texp '>'
 			{ if ((p = entry(templatetable, $1)))
-				$$ = mktemplate($3.typ, $1);
+			  {	$$ = mktemplate($3.typ, $1);
+			  	if (has_attachment($3.typ))
+				{	sprintf(errbuf, "template type '%s<%s>' of attachment objects may lead to deserialization failures, use '%s<*%s>' instead", $1->name, $3.typ->id ? $3.typ->id->name : "", $1->name, $3.typ->id ? $3.typ->id->name : "");
+					semwarn(errbuf);
+				}
+			  }
 			  else
 			  {	sprintf(errbuf, "invalid template '%s'", $1->name);
 				semerror(errbuf);

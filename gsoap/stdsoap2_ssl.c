@@ -7666,6 +7666,22 @@ soap_delegate_deletion(struct soap *soap, struct soap *soap_to)
   *q = (char*)soap_to->alist;
   soap_to->alist = soap->alist;
   soap->alist = NULL;
+#ifdef SOAP_MEM_DEBUG
+  cp = soap->clist;
+  while (cp)
+  { h = soap_hash_ptr(cp);
+    for (mp = &soap->mht[h]; *mp; mp = &(*mp)->next)
+    { if ((*mp)->ptr == cp)
+      { mq = *mp;
+        *mp = mq->next;
+        mq->next = soap_to->mht[h];
+        soap_to->mht[h] = mq;
+        break;
+      }
+    }
+    cp = cp->next;
+  }
+#endif
   cp = soap_to->clist;
   if (cp)
   { while (cp->next)
