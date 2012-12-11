@@ -15,7 +15,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 
 #include "wsdlH.h"
 
-SOAP_SOURCE_STAMP("@(#) wsdlC.cpp ver 2.8.12 2012-12-10 01:35:11 GMT")
+SOAP_SOURCE_STAMP("@(#) wsdlC.cpp ver 2.8.12 2012-12-10 20:17:29 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -19415,7 +19415,7 @@ SOAP_FMAC3 union wsdl__union_ioput * SOAP_FMAC4 soap_in_wsdl__union_ioput(struct
 	{	*choice = SOAP_UNION_wsdl__union_ioput_output;
 		return a;
 	}
-	*choice = 0;
+	*choice = -1;
 	if (!soap->error)
 		soap->error = SOAP_TAG_MISMATCH;
 	return NULL;
@@ -19493,7 +19493,7 @@ SOAP_FMAC3 union xs__union_content * SOAP_FMAC4 soap_in_xs__union_content(struct
 	{	*choice = SOAP_UNION_xs__union_content_any;
 		return a;
 	}
-	*choice = 0;
+	*choice = -1;
 	if (!soap->error)
 		soap->error = SOAP_TAG_MISMATCH;
 	return NULL;

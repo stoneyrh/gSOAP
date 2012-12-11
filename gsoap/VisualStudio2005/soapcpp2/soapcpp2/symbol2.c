@@ -87,6 +87,7 @@ int is_imported(Tnode* typ);
 int is_template(Tnode* typ);
 int is_mask(Tnode* typ);
 int is_attachment(Tnode* typ);
+int has_attachment(Tnode* typ);
 int is_void(Tnode* typ);
 int has_external(Tnode *typ);
 int has_volatile(Tnode *typ);
@@ -9758,6 +9759,22 @@ is_attachment(Tnode *typ)
 }
 
 int
+has_attachment(Tnode *typ)
+{ if (is_attachment(typ))
+    return 1;
+  if (typ->type == Tstruct || typ->type == Tclass) 
+  { Entry *p;
+    Table *t;
+    for (t = (Table*)typ->ref; t; t = t->prev)
+    { for (p = t->list; p; p = p->next)
+        if (has_attachment(p->info.typ))
+          return 1;
+    }
+  }
+  return 0;
+}
+
+int
 is_mutable(Tnode *typ)
 { return is_header_or_fault(typ);
 }
@@ -12029,7 +12046,7 @@ soap_in(Tnode *typ)
 	    fflush(fout);
 	  }
         }
-      fprintf(fout, "\n\t*choice = 0;\n\tif (!soap->error)\n\t\tsoap->error = SOAP_TAG_MISMATCH;\n\treturn NULL;\n}");
+      fprintf(fout, "\n\t*choice = -1;\n\tif (!soap->error)\n\t\tsoap->error = SOAP_TAG_MISMATCH;\n\treturn NULL;\n}");
       break;
  
     case Tpointer:
