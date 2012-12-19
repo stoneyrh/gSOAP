@@ -2329,14 +2329,14 @@ void Operation::generate(Types &types, Service &service)
       fprintf(stream, serviceformat, prefix, "method-encoding", method_name, output->encodingStyle);
     else
       fprintf(stream, serviceformat, prefix, "method-encoding", method_name, "encoded");
-    if (action)
+    if (output && output->action)
+      fprintf(stream, serviceformat, prefix, "method-action", method_name, output->action);
+    else if (action)
     { if (*action)
         fprintf(stream, serviceformat, prefix, "method-action", method_name, action);
       else
         fprintf(stream, serviceformat, prefix, "method-action", method_name, "\"\"");
     }
-    else if (output && output->action)
-      fprintf(stream, serviceformat, prefix, "method-action", method_name, output->action);
     for (vector<Message*>::const_iterator message = outfault.begin(); message != outfault.end(); ++message)
     { if ((*message)->message)
       { if ((*message)->use == literal)
@@ -2410,14 +2410,14 @@ void Operation::generate(Types &types, Service &service)
       fprintf(stream, serviceformat, prefix, "method-encoding", method_name, output->encodingStyle);
     else
       fprintf(stream, serviceformat, prefix, "method-encoding", method_name, "encoded");
-    if (action)
+    if (output && output->action)
+      fprintf(stream, serviceformat, prefix, "method-action", method_name, output->action);
+    else if (action)
     { if (*action)
         fprintf(stream, serviceformat, prefix, "method-action", method_name, action);
       else
         fprintf(stream, serviceformat, prefix, "method-action", method_name, "\"\"");
     }
-    else if (output && output->action)
-      fprintf(stream, serviceformat, prefix, "method-action", method_name, output->action);
     for (vector<Message*>::const_iterator message = outfault.begin(); message != outfault.end(); ++message)
     { if ((*message)->message)
       { if ((*message)->use == literal)
@@ -2510,14 +2510,14 @@ void Operation::generate(Types &types, Service &service)
       if (style == rpc && (!input || (input->URI && output->URI && strcmp(input->URI, output->URI))))
         fprintf(stream, schemaformat, types.nsprefix(NULL, output->URI), "namespace", output->URI);
     }
-    if (action)
+    if (input && input->action)
+      fprintf(stream, serviceformat, prefix, "method-input-action", method_name, input->action);
+    else if (action)
     { if (*action)
         fprintf(stream, serviceformat, prefix, "method-action", method_name, action);
       else
         fprintf(stream, serviceformat, prefix, "method-action", method_name, "\"\"");
     }
-    else if (input && input->action)
-      fprintf(stream, serviceformat, prefix, "method-input-action", method_name, input->action);
     if (output && output->action)
       fprintf(stream, serviceformat, prefix, "method-output-action", method_name, output->action);
     for (vector<Message*>::const_iterator message = outfault.begin(); message != outfault.end(); ++message)
