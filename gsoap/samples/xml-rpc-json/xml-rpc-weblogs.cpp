@@ -64,9 +64,9 @@ int main()
   else
   { if (output[0].is_struct())
     { if (output[0]["flerror"].is_false())
-        cout << "Success: ";
+        cout << "Success:" << endl;
       else
-        cout << "Failure: ";
+        cout << "Failure:" << endl;
       cout << output[0]["message"] << endl;
     }
     else

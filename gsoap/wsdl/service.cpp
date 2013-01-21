@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -82,8 +82,8 @@ void Definitions::analyze(const wsdl__definitions &definitions)
       }
     }
   }
-  if (!binding_count && (!definitions.portType.empty() || !definitions.interface_.empty()))
-    fprintf(stderr, "Warning: WSDL \"%s\" has no bindings to define operations\n", definitions.targetNamespace ? definitions.targetNamespace : "");
+  if (!binding_count && definitions.name && (!definitions.portType.empty() || !definitions.interface_.empty()))
+    fprintf(stderr, "Warning: WSDL \"%s\" has no bindings to implement operations\n", definitions.name);
   if (!service_prefix)
     binding_count = 1; // Put all operations under a single binding
   // Analyze and collect service data
@@ -167,10 +167,8 @@ void Definitions::analyze(const wsdl__definitions &definitions)
       // const char *http__operation_location = NULL;
       // if (http__operation_)
         // http__operation_location = http__operation_->location;
-      // /definitions/binding/operation/input
-      wsdl__ext_ioput *ext_input = (*operation).input;
-      // /definitions/binding/operation/output
-      wsdl__ext_ioput *ext_output = (*operation).output;
+      // /definitions/binding/operation/input and output
+      wsdl__ext_ioput *ext_input, *ext_output;
       // /definitions/portType/operation
       if (wsdl__operation_)
       { bool reversed = false;
@@ -197,6 +195,14 @@ void Definitions::analyze(const wsdl__definitions &definitions)
             input = wsdl__operation_->__ioput1.input;
 	  else if (wsdl__operation_->__union1 == SOAP_UNION_wsdl__union_ioput_output)
             output = wsdl__operation_->__ioput1.output;
+	}
+	if (!reversed)
+        { ext_input = (*operation).input;
+          ext_output = (*operation).output;
+	}
+	else
+        { ext_input = (*operation).output;
+          ext_output = (*operation).input;
 	}
 	if (wsdl__operation_->pattern && !strstr(wsdl__operation_->pattern, "out"))
 	  output = NULL;
@@ -392,6 +398,8 @@ void Definitions::analyze(const wsdl__definitions &definitions)
                 op->input->action = input->wsa__Action;
               else if (input->wsam__Action)
                 op->input->action = input->wsam__Action;
+              else if (op->action)
+                op->input->action = op->action;
               else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
               { const char *name = input->name ? input->name : op->name;
                 char *tmp = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name) + 3);
@@ -495,6 +503,13 @@ void Definitions::analyze(const wsdl__definitions &definitions)
                     op->output->action = output->wsa__Action;
                   else if (output->wsam__Action)
                     op->output->action = output->wsam__Action;
+                  else if (op->action)
+                  { const char *name = op->action;
+                    char *tmp = (char*)soap_malloc(definitions.soap, strlen(name) + 9);
+		    strcpy(tmp, name);
+		    strcat(tmp, "Response");
+                    op->output->action = tmp;
+		  }
                   else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
                   { const char *name = output->name ? output->name : op->name;
                     char *tmp = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name) + 11);
@@ -509,32 +524,34 @@ void Definitions::analyze(const wsdl__definitions &definitions)
                   op->output->layout = NULL;
                   op->output->ext_documentation = NULL;
                   op->output->mustUnderstand = false;
-		  if (ext_output)
-                  { op->output->multipartRelated = ext_output->mime__multipartRelated_;
-                    if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty())
-                      op->output->header = ext_output->mime__multipartRelated_->part.front().soap__header_;
-                    else if (!ext_output->soap__header_.empty())
-                      op->output->header = ext_output->soap__header_;
-                    else if (!ext_output->wsoap__header_.empty())
-                      op->output->wheader = ext_output->wsoap__header_;
-                    if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty() && ext_output->mime__multipartRelated_->part.front().soap__body_)
-                      op->output->body_parts = ext_output->mime__multipartRelated_->part.front().soap__body_->parts;
-                    else if (output_body)
-                      op->output->body_parts = output_body->parts;
-                    if (ext_output->dime__message_)
-                      op->output->layout = ext_output->dime__message_->layout;
-                    else
-                      op->output->layout = NULL;
-                    op->output->ext_documentation = ext_output->documentation;
-		  }
-                  char *s = (char*)soap_malloc(definitions.soap, strlen(op->output->name) + 9);
+		}
+		if (ext_output)
+                { op->output->multipartRelated = ext_output->mime__multipartRelated_;
+                  if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty())
+                    op->output->header = ext_output->mime__multipartRelated_->part.front().soap__header_;
+                  else if (!ext_output->soap__header_.empty())
+                    op->output->header = ext_output->soap__header_;
+                  else if (!ext_output->wsoap__header_.empty())
+                    op->output->wheader = ext_output->wsoap__header_;
+                  if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty() && ext_output->mime__multipartRelated_->part.front().soap__body_)
+                    op->output->body_parts = ext_output->mime__multipartRelated_->part.front().soap__body_->parts;
+                  else if (output_body)
+                    op->output->body_parts = output_body->parts;
+                  if (ext_output->dime__message_)
+                    op->output->layout = ext_output->dime__message_->layout;
+                  else
+                    op->output->layout = NULL;
+                  op->output->ext_documentation = ext_output->documentation;
+                }
+		if (op->output->name)
+                { char *s = (char*)soap_malloc(definitions.soap, strlen(op->output->name) + 9);
                   strcpy(s, op->output->name);
                   strcat(s, "Response");
                   if (soap__operation_style == document)
                     op->output_name = types.oname("__", op->URI, s);
                   else
                     op->output_name = types.oname(NULL, op->output->URI, s);
-                }
+		}
                 op->output->documentation = output->documentation;
                 // collect output message policies
 	        if (op->output->message)
@@ -725,6 +742,8 @@ void Definitions::analyze(const wsdl__definitions &definitions)
                 op->output->action = output->wsa__Action;
               else if (output->wsam__Action)
                 op->output->action = output->wsam__Action;
+              else if (op->action)
+                op->output->action = op->action;
               else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
               { const char *name = output->name ? output->name : op->name;
                 char *tmp = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name) + 3);
@@ -1613,7 +1632,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
   { banner("XML Data Binding");
     fprintf(stream, "\n/**\n");
     page("page_XMLDataBinding", " XML Data Binding", NULL);
-    fprintf(stream, "\nSOAP/XML services use data bindings contractually bound by WSDL and auto-\ngenerated by wsdl2h and soapcpp2 (see Service Bindings). Plain data bindings\nare adopted from XML schemas as part of the WSDL types section or when running\nwsdl2h on a set of schemas to produce non-SOAP-based XML data bindings.\n\nThe following readers and writers are C/C++ data type (de)serializers auto-\ngenerated by wsdl2h and soapcpp2. Run soapcpp2 on this file to generate the\n(de)serialization code, which is stored in soapC.c[pp]. Include \"soapH.h\" in\nyour code to import these data type and function declarations. Only use the\nsoapcpp2-generated files in your project build. Do not include the wsdl2h-\ngenerated .h file in your code.\n\nXML content can be retrieved from:\n  - a file descriptor, using soap->recvfd = fd\n  - a socket, using soap->socket = ...\n  - a C++ stream, using soap->is = ...\n  - a buffer, using the soap->frecv() callback\n\nXML content can be stored to:\n  - a file descriptor, using soap->sendfd = fd\n  - a socket, using soap->socket = ...\n  - a C++ stream, using soap->os = ...\n  - a buffer, using the soap->fsend() callback\n\n");
+    fprintf(stream, "\nSOAP/XML services use data bindings contractually bound by WSDL and auto-\ngenerated by wsdl2h and soapcpp2 (see Service Bindings). Plain data bindings\nare adopted from XML schemas as part of the WSDL types section or when running\nwsdl2h on a set of schemas to produce non-SOAP-based XML data bindings.\n\nThe following readers and writers are C/C++ data type (de)serializers auto-\ngenerated by wsdl2h and soapcpp2. Run soapcpp2 on this file to generate the\n(de)serialization code, which is stored in soapC.c[pp]. Include \"soapH.h\" in\nyour code to import these data type and function declarations. Only use the\nsoapcpp2-generated files in your project build. Do not include the wsdl2h-\ngenerated .h file in your code.\n\nData can be read in XML and deserialized from:\n  - a file descriptor, using soap->recvfd = fd\n  - a socket, using soap->socket = ...\n  - a C++ stream, using soap->is = ...\n  - a buffer, using the soap->frecv() callback\n\nData can be serialized in XML and written to:\n  - a file descriptor, using soap->sendfd = fd\n  - a socket, using soap->socket = ...\n  - a C++ stream, using soap->os = ...\n  - a buffer, using the soap->fsend() callback\n\nThe following options are available for (de)serialization control:\n  - soap->encodingStyle = NULL; to remove SOAP 1.1/1.2 encodingStyle\n  - soap_mode(soap, SOAP_XML_TREE); XML without id-ref (no cycles!)\n  - soap_mode(soap, SOAP_XML_GRAPH); XML with id-ref (including cycles)\n  - soap_set_namespaces(soap, struct Namespace *nsmap); to set xmlns bindings\n\n");
     for (vector<xs__schema*>::const_iterator schema5 = definitions.types->xs__schema_.begin(); schema5 != definitions.types->xs__schema_.end(); ++schema5)
     { const char *prefix = types.nsprefix(NULL, (*schema5)->targetNamespace);
       fprintf(stream, "\n@section %s Top-level root elements of schema \"%s\"\n", prefix, (*schema5)->targetNamespace);
@@ -1957,7 +1976,7 @@ void Service::generate(Types& types)
       }
       if ((*op2)->output)
       { if ((*op2)->output->action)
-          fprintf(stream, "\n  - Addressing input output action: \"%s\"\n", (*op2)->output->action);
+          fprintf(stream, "\n  - Addressing output action: \"%s\"\n", (*op2)->output->action);
       }
       for (vector<Message*>::const_iterator infault = (*op2)->infault.begin(); infault != (*op2)->infault.end(); ++infault)
       { if ((*infault)->message)
@@ -2185,10 +2204,6 @@ void Service::generate(Types& types)
       }
       if ((*op2)->output)
       { if ((*op2)->output->action)
-          fprintf(stream, "\n  - Addressing input action: \"%s\"\n", (*op2)->output->action);
-      }
-      if ((*op2)->output)
-      { if ((*op2)->output->action)
           fprintf(stream, "\n  - Addressing output action: \"%s\"\n", (*op2)->output->action);
       }
       for (vector<Message*>::const_iterator outfault = (*op2)->outfault.begin(); outfault != (*op2)->outfault.end(); ++outfault)
@@ -2306,15 +2321,19 @@ void Operation::generate(Types &types, Service &service)
         if ((*part).element && !strcmp((*part).element, (*output->message->part.begin()).element))
           flag = false;
   }
-  if (output && bflag) // (output && (!input || bflag))
-  { if (input && bflag)
-    { method_name = strstr(output_name + 1, "__") + 2;
-      if (!method_name)
+  if (output && output_name && bflag) // (output && (!input || bflag))
+  { if (input)
+    { method_name = strstr(output_name + 1, "__");
+      if (method_name)
+        method_name += 2;
+      else
         method_name = output_name;
     }
     else
-    { method_name = strstr(input_name + 1, "__") + 2;
-      if (!method_name)
+    { method_name = strstr(input_name + 1, "__");
+      if (method_name)
+        method_name += 2;
+      else
         method_name = input_name;
     }
     if (protocol)
@@ -2329,7 +2348,7 @@ void Operation::generate(Types &types, Service &service)
       fprintf(stream, serviceformat, prefix, "method-encoding", method_name, output->encodingStyle);
     else
       fprintf(stream, serviceformat, prefix, "method-encoding", method_name, "encoded");
-    if (output && output->action)
+    if (output && output->action && *output->action)
       fprintf(stream, serviceformat, prefix, "method-action", method_name, output->action);
     else if (action)
     { if (*action)
@@ -2385,7 +2404,7 @@ void Operation::generate(Types &types, Service &service)
     { if ((*outputwheader).element)
         fprintf(stream, serviceformat, prefix, "method-header-part", method_name, types.aname(NULL, NULL, (*outputwheader).element));
     }
-    if (input && bflag)
+    if (input)
     { fprintf(stream, "/// Operation response \"%s\" of operation \"%s\"\n", output_name, input_name);
       fprintf(stream, "int %s(", output_name);
     }
@@ -2394,9 +2413,11 @@ void Operation::generate(Types &types, Service &service)
     output->generate(types, ",", anonymous, true, false, false);
     fprintf(stream, "\n    void\t///< One-way message: no output parameter\n);\n");
   }
-  if (!input && output) // (!input && output && bflag)
-  { method_name = strstr(output_name + 1, "__") + 2;
-    if (!method_name)
+  if (!input && output && output_name) // (!input && output && bflag)
+  { method_name = strstr(output_name + 1, "__");
+    if (method_name)
+      method_name += 2;
+    else
       method_name = output_name;
     if (protocol)
       fprintf(stream, serviceformat, prefix, "method-protocol", method_name, protocol);
@@ -2410,7 +2431,7 @@ void Operation::generate(Types &types, Service &service)
       fprintf(stream, serviceformat, prefix, "method-encoding", method_name, output->encodingStyle);
     else
       fprintf(stream, serviceformat, prefix, "method-encoding", method_name, "encoded");
-    if (output && output->action)
+    if (output && output->action && *output->action)
       fprintf(stream, serviceformat, prefix, "method-action", method_name, output->action);
     else if (action)
     { if (*action)
@@ -2482,9 +2503,11 @@ void Operation::generate(Types &types, Service &service)
     }
     fprintf(stream, "\n);\n");
   }
-  if (input)
-  { method_name = strstr(input_name + 1, "__") + 2;
-    if (!method_name)
+  if (input && input_name)
+  { method_name = strstr(input_name + 1, "__");
+    if (method_name)
+      method_name += 2;
+    else
       method_name = input_name;
     if (protocol)
       fprintf(stream, serviceformat, prefix, "method-protocol", method_name, protocol);
@@ -2510,7 +2533,7 @@ void Operation::generate(Types &types, Service &service)
       if (style == rpc && (!input || (input->URI && output->URI && strcmp(input->URI, output->URI))))
         fprintf(stream, schemaformat, types.nsprefix(NULL, output->URI), "namespace", output->URI);
     }
-    if (input && input->action)
+    if (input && input->action && *input->action)
       fprintf(stream, serviceformat, prefix, "method-input-action", method_name, input->action);
     else if (action)
     { if (*action)
@@ -2518,7 +2541,7 @@ void Operation::generate(Types &types, Service &service)
       else
         fprintf(stream, serviceformat, prefix, "method-action", method_name, "\"\"");
     }
-    if (output && output->action)
+    if (output && output->action && *output->action)
       fprintf(stream, serviceformat, prefix, "method-output-action", method_name, output->action);
     for (vector<Message*>::const_iterator message = outfault.begin(); message != outfault.end(); ++message)
     { if ((*message)->message)
@@ -2855,7 +2878,7 @@ static void ident()
   }
   else
     fprintf(stream, "(stdin) ");
-  fprintf(stream, "and %s\n   %s\n\n   DO NOT INCLUDE THIS FILE DIRECTLY INTO YOUR PROJECT BUILDS\n   USE THE soapcpp2-GENERATED SOURCE CODE FILES FOR YOUR PROJECT BUILDS\n\n   gSOAP XML Web services tools.\n   Copyright (C) 2000-2012 Robert van Engelen, Genivia Inc. All Rights Reserved.\n   Part of this software is released under one of the following licenses:\n   GPL or Genivia's license for commercial use.\n*/\n\n", mapfile, tmp);
+  fprintf(stream, "and %s\n   %s\n\n   DO NOT INCLUDE THIS FILE DIRECTLY INTO YOUR PROJECT BUILDS\n   USE THE soapcpp2-GENERATED SOURCE CODE FILES FOR YOUR PROJECT BUILDS\n\n   gSOAP XML Web services tools.\n   Copyright (C) 2000-2013 Robert van Engelen, Genivia Inc. All Rights Reserved.\n   Part of this software is released under one of the following licenses:\n   GPL or Genivia's license for commercial use.\n*/\n\n", mapfile, tmp);
 }
 
 void text(const char *text)

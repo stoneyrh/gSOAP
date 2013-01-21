@@ -70,9 +70,10 @@ extern "C" {
 
 #ifndef WITH_NOIDREF
 SOAP_FMAC1 void SOAP_FMAC2 soap_markelement(struct soap*, const void*, int);
+#endif
+
 SOAP_FMAC1 int SOAP_FMAC2 soap_putelement(struct soap*, const void*, const char*, int, int);
 SOAP_FMAC1 void *SOAP_FMAC2 soap_getelement(struct soap*, int*);
-#endif
 
 #ifdef __cplusplus
 }

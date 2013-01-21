@@ -54,8 +54,7 @@ am_wsdl2h_OBJECTS = wsdl2h-wsdl2h.$(OBJEXT) wsdl2h-wsdl.$(OBJEXT) \
 	wsdl2h-mime.$(OBJEXT) wsdl2h-wsp.$(OBJEXT) $(am__objects_1)
 wsdl2h_OBJECTS = $(am_wsdl2h_OBJECTS)
 am__DEPENDENCIES_1 =
-wsdl2h_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+wsdl2h_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1)
 wsdl2h_LINK = $(CXXLD) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
@@ -123,7 +122,7 @@ PACKAGE_VERSION = 2.8
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SAMPLE_DIRS = 
-SAMPLE_EXTRA_LIBS = 
+SAMPLE_EXTRA_LIBS = -lm
 SAMPLE_SSL_LIBS = -lssl -lcrypto -lz
 SET_MAKE = 
 SHELL = /bin/sh
@@ -203,11 +202,11 @@ SOAP_CPP_SRC = wsdlC.cpp
 SOAPHEADER = $(srcdir)/wsdl.h
 SOAP_FLAGS = -SC -pwsdl -I$(srcdir) -I$(top_srcdir)/gsoap/import
 BUILT_SOURCES = $(SOAP_CPP_SRC)
-wsdl2h_CFLAGS = $(C_DEBUG_FLAGS)
-wsdl2h_CXXFLAGS = $(C_DEBUG_FLAGS)
+wsdl2h_CFLAGS = $(C_DEBUG_FLAGS) $(WSDL2H_EXTRA_FLAGS)
+wsdl2h_CXXFLAGS = $(C_DEBUG_FLAGS) $(WSDL2H_EXTRA_FLAGS)
 wsdl2h_CPPFLAGS = $(AM_CPPFLAGS) $(SOAPCPP2_NONAMESPACES) -D$(platform)
 wsdl2h_SOURCES = wsdl2h.cpp wsdl.cpp schema.cpp types.cpp service.cpp soap.cpp mime.cpp wsp.cpp $(SOAP_CPP_SRC)
-wsdl2h_LDADD = $(SOAP_CPP_LIB) $(WSDL2H_EXTRA_LIBS) $(SAMPLE_EXTRA_LIBS)
+wsdl2h_LDADD = $(SOAP_CPP_LIB) $(WSDL2H_EXTRA_LIBS)
 CLEANFILES = *~ *C.cpp *H.h *Stub.h *.nsmap
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am

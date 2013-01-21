@@ -202,9 +202,12 @@ asynchronous messaging, for unreliable data gram messaging (SOAP-over-UDP), or
 to improve reliable delivery of responses relayed to other destinations, such
 as response messages that are relayed to destinations indicated by the
 WS-Addressing ReplyTo header. The protocol is also useful when multiple sources
-are sending messages that arrive in different order or must be flagged as an
+are sending messages that arrive out of order or must be flagged as an
 incomplete message collection when messages are missing as defined by the
-notion of a collection of related messages.
+notion of a collection of related messages. Messages delivered out-of-order are
+not internally reordered. The application logic should be designed to be robust
+to out-of-order delivery effects, for example by using a vector to collect the
+data elements received before the data is processed.
 
 WS-ReliableMessaging is not essential to improve the reliability of
 request-response message exchanges between two parties over HTTP, since a
@@ -216,7 +219,7 @@ messages. A WS-ReliableMessaging message sequence is created after which the
 sequence of messages is sent. The sequence is closed and terminated by the
 client after the last message. Either the message sequence is complete or not,
 and the resulting action to discard the incomplete message sequence or not
-depends on the chosen behavior.  Duplicate messages (e.g. resulting from
+depends on the chosen behavior. Duplicate messages (e.g. resulting from
 resends) are always discarded.
 
 To create a new sequence, a client (WS-RM source) requests from the
@@ -226,12 +229,13 @@ such as the expiration time of the sequence and the behavior implemented when a
 sequence was received incomplete:
 
 - NoDiscard means that the sequence of messages is not discarded by the
-  destination server when one or more messages are missing; 
+  destination server when one or more messages are missing (or unacknowledged).
+  That is, unacknowledged messages in the sequence are allowed to be discarded.
 - DiscardFollowingFirstGap means that the initial messages of the sequence are
   retained by the destination up to the first gap (a missing message) in the
-  sequence;
+  sequence. Does not allow for out-of-order message delivery.
 - DiscardEntireSequence means that the entire sequence of messages will be
-  discarded when a single message is missing.
+  discarded when a one or more messages are missing.
 
 When the client terminates the sequence, it first sends a sequence close
 request (or a last message with the older WS-RM 1.0) and then a sequence
@@ -1519,7 +1523,7 @@ soap_wsrm_request_num(struct soap *soap, soap_wsrm_sequence_handle seq, const ch
   if (!data)
     return soap->error = SOAP_PLUGIN_ERROR;
   /* process response message sequence ID */
-  /* TODO: move this to preparefinalrecv() for client-side only */
+  /* TODO: look into moving this to preparefinalrecv() for client-side only */
   if (seq->acksid && soap->header && soap->header->wsrm__Sequence && !strcmp(soap->header->wsrm__Sequence->Identifier, seq->acksid))
   { if (soap_wsrm_num_lookup(soap, seq, soap->header->wsrm__Sequence->MessageNumber))
     { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Response message already received\n"));
@@ -1719,7 +1723,7 @@ soap_wsrm_close(struct soap *soap, soap_wsrm_sequence_handle seq, const char *ws
   if (seq->state == SOAP_WSRM_TERMINATED)
     return soap_wsrm_error(soap, seq, wsrm__SequenceTerminated);
   /* process previous response message sequence ID */
-  /* TODO: move this to preparefinalrecv() */
+  /* TODO: look into moving this to preparefinalrecv() */
   if (seq->acksid && soap->header && soap->header->wsrm__Sequence && !strcmp(soap->header->wsrm__Sequence->Identifier, seq->acksid))
   { if (soap_wsrm_num_lookup(soap, seq, soap->header->wsrm__Sequence->MessageNumber))
     { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Response message already received\n"));
@@ -3137,7 +3141,7 @@ soap_wsrm_preparefinalrecv(struct soap *soap)
   if (data->fpreparefinalrecv && data->fpreparefinalrecv(soap))
     return soap->error;
 #if 0
-  /* record service response message num for acks (client side) */
+  /* TODO: (optional) record service response message num for acks (client side) */
   if (soap->header && soap->header->wsrm__Sequence)
   { struct soap_wsrm_sequence *seq;
     seq = soap_wsrm_seq_lookup_ack(data, soap->header->wsrm__Sequence->Identifier);

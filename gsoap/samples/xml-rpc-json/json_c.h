@@ -1,5 +1,5 @@
 /*
-	jsonC.h
+	json_c.h
 	
 	Stream JSON from/to XML-RPC values
 	Robert van Engelen with C mods by David Butler
@@ -34,6 +34,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 extern _boolean False, True;
 
+/** Send a value in JSON format to current stream or socket */
 int json_send(struct soap*, const struct value*);
 
+/** Receive a value in JSON format from current stream or socket */
 int json_recv(struct soap*, struct value*);

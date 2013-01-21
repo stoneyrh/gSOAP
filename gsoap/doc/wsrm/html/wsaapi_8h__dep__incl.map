@@ -1,4 +1,5 @@
-base referer
-rect $wsrmapi_8h.html 7,92 76,118
-rect $wsrmapi_8c.html 7,17 76,44
-rect $wsaapi_8c.html 100,92 161,118
+<map id="/Users/engelen/Projects/gsoap/plugin/wsaapi.h" name="/Users/engelen/Projects/gsoap/plugin/wsaapi.h">
+<area shape="rect" id="node3" href="$wsrmapi_8h.html" title="/Users/engelen/Projects\l/gsoap/plugin/wsrmapi.h" alt="" coords="4,99,168,143"/>
+<area shape="rect" id="node7" href="$wsaapi_8c.html" title="/Users/engelen/Projects\l/gsoap/plugin/wsaapi.c" alt="" coords="193,99,356,143"/>
+<area shape="rect" id="node5" href="$wsrmapi_8c.html" title="/Users/engelen/Projects\l/gsoap/plugin/wsrmapi.c" alt="" coords="4,193,168,237"/>
+</map>

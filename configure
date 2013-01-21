@@ -4663,7 +4663,7 @@ else
   RANLIB="$ac_cv_prog_RANLIB"
 fi
 
-#AC_PROG_LIBTOOL
+#AM_PROG_LIBTOOL
 { echo "$as_me:$LINENO: checking whether ln -s works" >&5
 echo $ECHO_N "checking whether ln -s works... $ECHO_C" >&6; }
 LN_S=$as_ln_s
@@ -4800,18 +4800,18 @@ test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
 # AC_DECL_YYTEXT
 
-SAMPLE_EXTRA_LIBS=
+SAMPLE_EXTRA_LIBS="-lm"
 
 # Platform-specific Makefile setup
 case "${host}" in
         *-*-solaris*)   platform=SUN_OS
-			SAMPLE_EXTRA_LIBS="-lxnet -lsocket -lnsl"
+			SAMPLE_EXTRA_LIBS="-lxnet -lsocket -lnsl -lm"
 			;;
         *-*-sysv5*)     platform=UNIXWARE ;;
         *-*-UnixWare*)  platform=UNIXWARE ;;
         *-*-unixware*)  platform=UNIXWARE ;;
 	*-*-sco3.2v5*)  platform=OPENSERVER
-	                SAMPLE_EXTRA_LIBS="-lsocket"
+	                SAMPLE_EXTRA_LIBS="-lsocket -lm"
 			;;
         *-*-linux*)     platform=LINUX
 #			if test x$debug = xtrue; then
@@ -4822,7 +4822,7 @@ case "${host}" in
 			;;
 	*-*-cygwin*)	platform=CYGWIN ;;
 	*-*-mingw*)	platform=MINGW
-			SAMPLE_EXTRA_LIBS="-lws2_32 -lkernel32 -luser32 -lgdi32"
+			SAMPLE_EXTRA_LIBS="-lws2_32 -lkernel32 -luser32 -lgdi32 -lm"
 			;;
         *-*-freebsd*)   platform=FREEBSD ;;
         *-*-openbsd*)   platform=OPENBSD ;;
@@ -4843,21 +4843,18 @@ case "${host}" in
                             *-*-hpux10*)  osver=HPUX10;;
                             *)            osver=HPUX11;;
                         esac
-			SAMPLE_EXTRA_LIBS="-lm"
 			;;
         *-*-mvs*)       platform=OS390 ;;
         *-*-os400*)     platform=OS400 ;;
         *-*-OS400*)     platform=OS400 ;;
-        *-*-osf*)	platform=TRU64
-			SAMPLE_EXTRA_LIBS="-lm"
-			;;
+        *-*-osf*)	platform=TRU64 ;;
         *-apple-*)	platform=MACOSX
 			# Appease 10.7 Lion (OpenSSL deprecated)
 			CXXFLAGS="-Wno-deprecated-declarations"
 			CFLAGS="-Wno-deprecated-declarations"
 			;;
 	*-nto-qnx)	platform=QNX
-			SAMPLE_EXTRA_LIBS="-lsocket"
+			SAMPLE_EXTRA_LIBS="-lsocket -lm"
 			;;
         *)              platform=UNKNOWN ;;
 esac
@@ -5292,7 +5289,9 @@ done
 
 
 
-for ac_header in arpa/inet.h xlocale.h errno.h fcntl.h limits.h netdb.h netinet/in.h stdlib.h string.h strings.h stdint.h sys/socket.h sys/types.h sys/time.h sys/timeb.h unistd.h poll.h openssl/ssl.h gnutls/gnutls.h zlib.h
+
+
+for ac_header in arpa/inet.h xlocale.h errno.h fcntl.h limits.h netdb.h netinet/in.h stdlib.h string.h strings.h stdint.h inttypes.h sys/inttypes.h sys/socket.h sys/types.h sys/time.h sys/timeb.h unistd.h poll.h openssl/ssl.h gnutls/gnutls.h zlib.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then

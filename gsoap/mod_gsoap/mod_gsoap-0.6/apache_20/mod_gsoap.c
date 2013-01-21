@@ -47,6 +47,10 @@
 #include "stdsoap2.h"           /* standard header for gsoap */
 #include "apache_gsoap.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef int Bool;
 
 #define FALSE 0
@@ -58,7 +62,8 @@ static char mod_gsoap_id[] = GSOAP_ID;
 
 /** A shared library containing a SOAP server.
  */
-typedef struct SoapSharedLibrary_S {
+typedef struct SoapSharedLibrary_S
+{
     apr_pool_t *m_pPool;
 #ifdef WIN32
 #define DLSYM(a,b) GetProcAddress(a,b)
@@ -76,7 +81,8 @@ typedef struct SoapSharedLibrary_S {
 /** Table of shared libraries that are already loaded.
  * a singleton.
  */
-typedef struct SoapSharedLibraries_S {
+typedef struct SoapSharedLibraries_S
+{
     apr_pool_t *m_pPool;
     SoapSharedLibrary *m_pSOAPLibrary;  /* the main SOAP library that will serve our requests */
     apr_array_header_t *m_pLibraries;   /* the array where we store our libraries. */
@@ -88,7 +94,8 @@ typedef struct SoapSharedLibraries_S {
 /** Environment to which record applies (directory,
  * server, or combination).
  */
-typedef enum enConfigurationType {
+typedef enum enConfigurationType
+{
     ct_server = 1,              /* used for per-server configuration */
     ct_directory = 2,           /* used for per-directory configuration */
     ct_both = 3                 /* used for both */
@@ -108,14 +115,16 @@ typedef enum enConfigurationType {
  * are handed a record that applies to the current location by implication or
  * inheritance, and modifying it will change the rules for other locations.
  */
-typedef struct gsoapConfiguration_S {
+typedef struct gsoapConfiguration_S
+{
     SoapSharedLibraries *m_pLibraries;
     ConfigurationType m_Type;   /* the type of configuration environment */
 } gsoapConfiguration;
 
 /** Our internal per request soap configuration
  */
-typedef struct gsoapRequestConfiguration_S {
+typedef struct gsoapRequestConfiguration_S
+{
     request_rec *r;             /* the current request record. */
     char *m_pszAllHeaders;      /* all headers received as a string, this is returned to gsoap's http_parse function before we return the body. */
     const char *m_pszCurrentHeaderReadingPosition;  /* the position where the next header read operation will start. */
@@ -147,7 +156,7 @@ gsoapConfiguration_getModulePool()
     return the_gsoapPool;
 }
 
-static gsoapConfiguration *getConfiguration(request_rec * r);
+static gsoapConfiguration *getConfiguration(request_rec *r);
 static gsoapRequestConfiguration *getRequestConfiguration(struct soap *);
 
 /**
@@ -602,7 +611,6 @@ gsoap_hooks(apr_pool_t *p)
     /* Register a handler for post config processing */
     ap_hook_post_config(gsoap_init, NULL, NULL, APR_HOOK_MIDDLE);
 }
-
 
 module AP_MODULE_DECLARE_DATA gsoap_module = {
     STANDARD20_MODULE_STUFF,
@@ -1433,3 +1441,8 @@ soap_getelement(struct soap *soap, int *a)
 }
 
 */
+
+#ifdef __cplusplus
+}
+#endif
+

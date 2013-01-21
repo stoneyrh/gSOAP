@@ -59,10 +59,10 @@ int main()
   ctx->os = &cout;
   soap_write_value(ctx, &v);
   // let's change v's values:
-  v[0][0] = "a";
-  v[0][1] = "b";
-  v[0][2] = "c";
-  v[0].size(3); // reset size to 3 to remove last entry
+  v[0][0] = (char*)v[0][0];   // convert int 1 to string "1"
+  v[0][1] = (int)v[0][1];     // convert string "2" to int 2
+  v[0][2] = (int)v[0][2];     // truncate 3.14 to int 3
+  v[0].size(3);               // reset size to 3 to remove last entry
   v[1]["name"] = "mary";
   v[1]["age"] = 21;
   v[1]["married"] = true;

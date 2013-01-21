@@ -155,6 +155,9 @@
 /* Define to 1 if you have the `strtoull' function. */
 #define HAVE_STRTOULL 1
 
+/* Define to 1 if you have the <sys/inttypes.h> header file. */
+/* #undef HAVE_SYS_INTTYPES_H */
+
 /* Define to 1 if you have the <sys/socket.h> header file. */
 #define HAVE_SYS_SOCKET_H 1
 

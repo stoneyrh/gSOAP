@@ -2,6 +2,8 @@
 	ser.h
 
 	.NET DataContract Serialization Schema
+
+	From type bindings in typemap.dat
 */
 
 //gsoap ser schema import: http://schemas.microsoft.com/2003/10/Serialization/

@@ -1,7 +1,7 @@
 /*
 	json.cpp
 
-	Stream JSON from/to XML-RPC values
+	JSON C++ support & stream JSON from/to XML-RPC
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -36,17 +36,18 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 static int jsstrout(struct soap *soap, const char *s)
 { int c;
+  char buf[8];
   if (soap_send_raw(soap, "\"", 1))
     return soap->error;
   while ((c = *s++))
   { switch (c)
     { case '"':
       case '\\':
-        soap->tmpbuf[0] = '\\';
-        soap->tmpbuf[1]  = c;
-        if (soap_send_raw(soap, soap->tmpbuf, 2))
-	  return soap->error;
-	break;
+        buf[0] = '\\';
+        buf[1]  = c;
+        if (soap_send_raw(soap, buf, 2))
+          return soap->error;
+        break;
       default:
         if (c < 32 && c > 0)
         { switch (c)
@@ -67,20 +68,34 @@ static int jsstrout(struct soap *soap, const char *s)
               break;
           }
           if (c > 32)
-          { soap->tmpbuf[0] = '\\';
-            soap->tmpbuf[1]  = c;
-            if (soap_send_raw(soap, soap->tmpbuf, 2))
-	      return soap->error;
+          { buf[0] = '\\';
+            buf[1]  = c;
+            if (soap_send_raw(soap, buf, 2))
+              return soap->error;
           }
           else
-	  { sprintf(soap->tmpbuf, "\\u%4x", c);
-	    if (soap_send_raw(soap, soap->tmpbuf, 6))
-	      return soap->error;
+          { sprintf(buf, "\\u%4x", c);
+            if (soap_send_raw(soap, buf, 6))
+              return soap->error;
           }
-	}
-	else
-        { soap->tmpbuf[0] = c;
-          if (soap_send_raw(soap, soap->tmpbuf, 1))
+        }
+        else if ((c & 0x80) && (soap->omode & SOAP_ENC_LATIN) && (soap->omode & SOAP_C_UTFSTRING)) // utf8 to ISO 8859-1
+        { if (c < 0xE0 && (c & 0x1F) <= 0x03)
+            buf[0] = ((c & 0x1F) << 6) | (*s++ & 0x3F);
+          else
+            buf[0] = '?';
+          if (soap_send_raw(soap, buf, 1))
+            return soap->error;
+        }
+        else if ((c & 0x80) && !(soap->omode & SOAP_ENC_LATIN) && !(soap->omode & SOAP_C_UTFSTRING)) // ISO 8859-1 to utf8
+        { buf[0] = (char)(0xC0 | ((c >> 6) & 0x1F));
+          buf[1] = (char)(0x80 | (c & 0x3F));
+          if (soap_send_raw(soap, buf, 2))
+            return soap->error;
+        }
+        else
+        { buf[0] = c;
+          if (soap_send_raw(soap, buf, 1))
             return soap->error;
         }
     }
@@ -97,9 +112,9 @@ int json_send(struct soap *soap, const struct value& v)
       f = false;
       for (_array::iterator i = ((struct _array)v).begin(); i != ((struct _array)v).end(); ++i, f = true)
       { if (f)
-	  if (soap_send_raw(soap, ", ", 2))
+          if (soap_send_raw(soap, ", ", 2))
             return soap->error;
-	if (json_send(soap, (*i)))
+        if (json_send(soap, (*i)))
           return soap->error;
       }
       return soap_send_raw(soap, /*[*/"]", 1);
@@ -124,9 +139,9 @@ int json_send(struct soap *soap, const struct value& v)
       { if (f)
           if (soap_send_raw(soap, ", ", 2))
             return soap->error;
-	if (jsstrout(soap, i.index())
+        if (jsstrout(soap, i.index())
          || soap_send_raw(soap, ": ", 2)
-	 || json_send(soap, (*i)))
+         || json_send(soap, (*i)))
           return soap->error;
       }
       return soap_send_raw(soap, /*{*/"}", 1);
@@ -251,10 +266,27 @@ int json_recv(struct soap *soap, struct value& v)
                     c = *t++;
                     if (!*t)
                       t = NULL;
-                    // fall through default
                 }
-              default:
                 *s++ = c;
+                break;
+              default:
+                if ((c & 0x80) && (soap->imode & SOAP_ENC_LATIN) && (soap->imode & SOAP_C_UTFSTRING)) // ISO 8859-1 to utf8
+                { *s++ = (char)(0xC0 | ((c >> 6) & 0x1F));
+                  soap->tmpbuf[0] = (0x80 | (c & 0x3F));
+                  soap->tmpbuf[1] = '\0';
+                  t = soap->tmpbuf;
+                }
+                else if ((c & 0x80) && !(soap->imode & SOAP_ENC_LATIN) && !(soap->imode & SOAP_C_UTFSTRING)) // utf8 to ISO 8859-1
+                { soap_wchar c1 = soap_getchar(soap);
+                  if (c1 == SOAP_EOF)
+                    return soap->error = SOAP_EOF;
+                  if (c < 0xE0 && (c & 0x1F) <= 0x03)
+                    *s++ = ((c & 0x1F) << 6) | (c1 & 0x3F);
+                  else
+                    *s++ = '?';
+                }
+                else
+                  *s++ = c;
             }
           }
         }
@@ -264,16 +296,16 @@ int json_recv(struct soap *soap, struct value& v)
       do
       { *s++ = c;
         c = soap_getchar(soap);
-      } while (isalnum((int)c) || (int)c == '.' || (int)c == '+' || (int)c == '-');
+      } while ((isalnum((int)c) || (int)c == '.' || (int)c == '+' || (int)c == '-') && s - soap->tmpbuf < (int)sizeof(soap->tmpbuf));
       *s = '\0';
       soap_unget(soap, c);
       if (soap->tmpbuf[0] == '-' || isdigit(soap->tmpbuf[0]))
       { double n;
         soap_s2double(soap, soap->tmpbuf, &n);
-	if (n == (int)n)
-	  v = (int)n;
-	else
-	  v = n;
+        if (n == (int)n)
+          v = (int)n;
+        else
+          v = n;
       }
       else if (!strcmp(soap->tmpbuf, "true"))
         v = true;
@@ -294,3 +326,17 @@ std::istream& operator>>(std::istream& i, struct value& v)
   return i;
 }
 
+int json_call(struct soap *soap, const char *endpoint, const struct value& in, struct value& out)
+{ soap->http_content = "application/json; charset=utf-8";
+  if (soap_begin_count(soap)
+   || ((soap->mode & SOAP_IO_LENGTH) && json_send(soap, in))
+   || soap_end_count(soap)
+   || soap_connect_command(soap, SOAP_POST_FILE, endpoint, NULL)
+   || json_send(soap, in)
+   || soap_end_send(soap)
+   || soap_begin_recv(soap)
+   || json_recv(soap, out)
+   || soap_end_recv(soap))
+    return soap_closesock(soap);
+  return SOAP_OK;
+}

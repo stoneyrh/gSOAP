@@ -68,24 +68,26 @@ int main()
     if (r.params->param[0].value.__type == SOAP_TYPE__struct)
     { /* it is a struct with two members */
       struct _struct *s = r.params->param[0].value.ref;
-      if (s->__size == 2)
-      { if (!strcmp(s->member[0].name, "flerror"))
-	  if (s->member[0].value.__type == SOAP_TYPE__boolean)
-	    if ((*(_boolean*)s->member[0].value.ref) == 0)
-	      printf("Weblog ping successful\n");
+      if (s->__size >= 2)
+      { int i;
+        for (i = 0; i < s->__size; i++)
+        { if (!strcmp(s->member[i].name, "flerror"))
+	  { if (s->member[i].value.__type == SOAP_TYPE__boolean)
+	    { if ((*(_boolean*)s->member[i].value.ref) == 0)
+	        printf("Weblog ping successful\n");
+	      else
+	        printf("Weblog ping failed\n");
+	    }
+	    else 
+	      printf("XML-RPC response message format error: boolean value expected\n");
+	  }
+          if (!strcmp(s->member[i].name, "message"))
+	  { if (s->member[i].value.__any)
+	      printf("%s\n", s->member[i].value.__any);
 	    else
-	      printf("Weblog ping failed\n");
-	  else 
-	    printf("XML-RPC response message format error: boolean value expected\n");
-	else 
-	  printf("XML-RPC response message format error: string value \"flerror\" expected\n");
-        if (!strcmp(s->member[1].name, "message"))
-	  if (s->member[1].value.__any)
-	    printf("%s\n", s->member[1].value.__any);
-	  else
-	    printf("XML-RPC response message format error: string value expected\n");
-	else 
-	  printf("XML-RPC response message format error: string value \"message\" expected\n");
+	      printf("XML-RPC response message format error: string value expected\n");
+	  }
+        }
       }
       else
         printf("XML-RPC response message format error: struct with two members expected\n");

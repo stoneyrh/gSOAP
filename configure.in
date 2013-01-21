@@ -17,25 +17,25 @@ AM_PROG_LEX
 AC_PROG_YACC
 AC_PROG_CPP
 AC_PROG_RANLIB
-#AC_PROG_LIBTOOL
+#AM_PROG_LIBTOOL
 AC_PROG_LN_S
 AC_PROG_AWK
 AC_PROG_INSTALL
 
 # AC_DECL_YYTEXT
 
-SAMPLE_EXTRA_LIBS=
+SAMPLE_EXTRA_LIBS="-lm"
 
 # Platform-specific Makefile setup
 case "${host}" in
         *-*-solaris*)   platform=SUN_OS 
-			SAMPLE_EXTRA_LIBS="-lxnet -lsocket -lnsl"
+			SAMPLE_EXTRA_LIBS="-lxnet -lsocket -lnsl -lm"
 			;;
         *-*-sysv5*)     platform=UNIXWARE ;;
         *-*-UnixWare*)  platform=UNIXWARE ;;
         *-*-unixware*)  platform=UNIXWARE ;;
 	*-*-sco3.2v5*)  platform=OPENSERVER
-	                SAMPLE_EXTRA_LIBS="-lsocket"
+	                SAMPLE_EXTRA_LIBS="-lsocket -lm"
 			;;
         *-*-linux*)     platform=LINUX
 #			if test x$debug = xtrue; then 
@@ -46,7 +46,7 @@ case "${host}" in
 			;;
 	*-*-cygwin*)	platform=CYGWIN ;;
 	*-*-mingw*)	platform=MINGW
-			SAMPLE_EXTRA_LIBS="-lws2_32 -lkernel32 -luser32 -lgdi32"
+			SAMPLE_EXTRA_LIBS="-lws2_32 -lkernel32 -luser32 -lgdi32 -lm"
 			;;
         *-*-freebsd*)   platform=FREEBSD ;;
         *-*-openbsd*)   platform=OPENBSD ;;
@@ -67,21 +67,18 @@ case "${host}" in
                             *-*-hpux10*)  osver=HPUX10;;
                             *)            osver=HPUX11;;
                         esac
-			SAMPLE_EXTRA_LIBS="-lm"
 			;;
         *-*-mvs*)       platform=OS390 ;;
         *-*-os400*)     platform=OS400 ;;
         *-*-OS400*)     platform=OS400 ;;
-        *-*-osf*)	platform=TRU64
-			SAMPLE_EXTRA_LIBS="-lm"
-			;;
+        *-*-osf*)	platform=TRU64 ;;
         *-apple-*)	platform=MACOSX
 			# Appease 10.7 Lion (OpenSSL deprecated)
 			CXXFLAGS="-Wno-deprecated-declarations"
 			CFLAGS="-Wno-deprecated-declarations"
 			;;
 	*-nto-qnx)	platform=QNX
-			SAMPLE_EXTRA_LIBS="-lsocket"
+			SAMPLE_EXTRA_LIBS="-lsocket -lm"
 			;;
         *)              platform=UNKNOWN ;;
 esac
@@ -91,7 +88,7 @@ AC_SUBST(platform)
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([arpa/inet.h xlocale.h errno.h fcntl.h limits.h netdb.h netinet/in.h stdlib.h string.h strings.h stdint.h sys/socket.h sys/types.h sys/time.h sys/timeb.h unistd.h poll.h openssl/ssl.h gnutls/gnutls.h zlib.h])
+AC_CHECK_HEADERS([arpa/inet.h xlocale.h errno.h fcntl.h limits.h netdb.h netinet/in.h stdlib.h string.h strings.h stdint.h inttypes.h sys/inttypes.h sys/socket.h sys/types.h sys/time.h sys/timeb.h unistd.h poll.h openssl/ssl.h gnutls/gnutls.h zlib.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

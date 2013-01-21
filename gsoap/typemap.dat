@@ -152,6 +152,7 @@ empty	= ""
 #	.NET WCF DataContract Serialization Schema
 
 ser	= <http://schemas.microsoft.com/2003/10/Serialization/>
+arr	= "http://schemas.microsoft.com/2003/10/Serialization/Arrays"
 
 #	.NET WCF DataContract Serialization Schema remappings
 

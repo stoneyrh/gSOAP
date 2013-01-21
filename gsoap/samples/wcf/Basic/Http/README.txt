@@ -1,6 +1,7 @@
 INSTRUCTIONS
 
-Install the WCF samples.
+Install the WCF samples: Windows Communication Foundation (WCF) and Windows
+Workflow Foundation (WF) Samples for .NET Framework 4.
 
 You should have:
 

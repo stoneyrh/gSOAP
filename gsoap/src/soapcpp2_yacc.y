@@ -155,18 +155,18 @@ Pragma	**pp;
 /* */
 %token	NONE
 /* identifiers (TYPE = typedef identifier) */
-%token	<sym> ID TAG LAB TYPE
+%token	<sym> ID LAB TYPE
 /* constants */
 %token	<i> LNG
 %token	<r> DBL
 %token	<c> CHR
-%token	<s> STR
+%token	<s> TAG STR
 /* types and related */
 %type	<typ> type
 %type	<sto> store virtual constobj abstract
 %type	<e> fname struct class base enum
-%type	<sym> id tag arg name
-%type	<s> patt
+%type	<sym> id arg name
+%type	<s> tag patt
 %type	<i> cint
 /* expressions and statements */
 %type	<rec> expr cexp oexp obex aexp abex rexp lexp pexp init spec tspec ptrs array arrayck texp qexp occurs
@@ -1882,12 +1882,18 @@ add_response(Entry *fun, Entry *ret)
 { Table *t;
   Entry *p, *q;
   Symbol *s;
-  size_t n = strlen(fun->sym->name);
-  char *r = (char*)emalloc(n+9);
+  size_t i = 0, j, n = strlen(fun->sym->name);
+  char *r = (char*)emalloc(n+100);
   strcpy(r, fun->sym->name);
   strcat(r, "Response");
-  if (!(s = lookup(r)))
-    s = install(r, ID);
+  do
+  { for (j = 0; j < i; j++)
+      r[n+j+8] = '_';
+    r[n+i+8] = '\0';
+    if (!(s = lookup(r)))
+      s = install(r, ID);
+    i++;
+  } while (entry(classtable, s));
   free(r);
   t = mktable((Table*)0);
   q = enter(t, ret->sym);

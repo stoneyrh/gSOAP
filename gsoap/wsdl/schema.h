@@ -308,6 +308,7 @@ class xs__whiteSpace
 class xs__restriction
 { public:
 	@xsd__QName			base;
+	xs__simpleType			*simpleType;    // used in <simpleType><restriction>
 	xs__attributeGroup		*attributeGroup;// not used in <simpleType><restriction>
 	xs__group			*group;		// not used in <simpleType><restriction>
 	xs__all				*all;		// not used in <simpleType><restriction>
@@ -486,6 +487,7 @@ class xs__schema
 	const SetOfString&		builtinTypes() const;
 	const SetOfString&		builtinElements() const;
 	const SetOfString&		builtinAttributes() const;
+	bool				empty() const;
 	friend ostream&			operator<<(ostream&, const xs__schema&);
 	friend istream&			operator>>(istream&, xs__schema&);
 };

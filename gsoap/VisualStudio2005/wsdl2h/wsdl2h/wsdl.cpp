@@ -1202,8 +1202,10 @@ xs__complexType *wsdl__part::complexTypePtr() const
 int wsdl__types::preprocess(wsdl__definitions& definitions)
 { if (vflag)
     cerr << "Preprocessing wsdl types" << endl;
-  targetNamespace = definitions.targetNamespace;
-  xs__schema_.push_back(this);
+  if (!empty()) // WSDL 2.0 <types>
+  { targetNamespace = definitions.targetNamespace;
+    xs__schema_.push_back(this);
+  }
   // set the location of each schema in <types> to the WSDL's location
   for (vector<xs__schema*>::iterator schema0 = xs__schema_.begin(); schema0 != xs__schema_.end(); ++schema0)
   { if (!(*schema0)->sourceLocation())
@@ -1213,7 +1215,7 @@ again:
   // link imported schemas, need to repeat when <types> is extended with new imported schema (from inside another schema, etc.)
   for (vector<xs__schema*>::iterator schema1 = xs__schema_.begin(); schema1 != xs__schema_.end(); ++schema1)
   { for (vector<xs__import>::iterator import = (*schema1)->import.begin(); import != (*schema1)->import.end(); ++import)
-    { if ((*import).namespace_ && !(*import).schemaPtr())
+    { if ((*import).namespace_ && !(*import).schemaPtr() && strcmp((*import).namespace_, targetNamespace))
       { for (vector<xs__schema*>::const_iterator schema2 = xs__schema_.begin(); schema2 != xs__schema_.end(); ++schema2)
         { if (schema2 != schema1 && (*schema2)->targetNamespace && !strcmp((*import).namespace_, (*schema2)->targetNamespace))
           { (*import).schemaPtr(*schema2);
@@ -1234,7 +1236,7 @@ again:
       if (!found && (*import).namespace_)
       { if ((*import).schemaPtr())
           found = true;
-        else
+        else if (strcmp((*import).namespace_, targetNamespace))
         { for (vector<xs__schema*>::const_iterator schema3 = xs__schema_.begin(); schema3 != xs__schema_.end(); ++schema3)
           { if (schema3 != schema2 && (*schema3)->targetNamespace && !strcmp((*import).namespace_, (*schema3)->targetNamespace))
             { found = true;
@@ -1276,13 +1278,15 @@ again:
           else if ((*import).namespace_ && strcmp(importschema->targetNamespace, (*import).namespace_))
             cerr << "Schema import namespace '" << ((*import).namespace_?(*import).namespace_:"") << "' does not correspond to imported namespace '" << importschema->targetNamespace << "'" << endl;
         }
-        for (vector<xs__schema*>::const_iterator schema3 = xs__schema_.begin(); schema3 != xs__schema_.end(); ++schema3)
-        { if (schema3 != schema2 && (*schema3)->targetNamespace && !strcmp((*import).namespace_, (*schema3)->targetNamespace))
-          { found = true;
-            (*import).schemaPtr(*schema3);
-            break;
+	if (strcmp((*import).namespace_, targetNamespace))
+        { for (vector<xs__schema*>::const_iterator schema3 = xs__schema_.begin(); schema3 != xs__schema_.end(); ++schema3)
+          { if (schema3 != schema2 && (*schema3)->targetNamespace && !strcmp((*import).namespace_, (*schema3)->targetNamespace))
+            { found = true;
+              (*import).schemaPtr(*schema3);
+              break;
+            }
           }
-        }
+	}
         if (!found)
         { (*import).schemaPtr(importschema);
           xs__schema_.push_back(importschema);

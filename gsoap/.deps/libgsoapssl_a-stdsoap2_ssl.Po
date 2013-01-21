@@ -21,8 +21,6 @@ libgsoapssl_a-stdsoap2_ssl.o libgsoapssl_a-stdsoap2_ssl.o:  \
   /usr/include/runetype.h \
   /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h \
   /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h \
-  /Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h \
-  /Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h \
   /usr/include/limits.h /usr/include/machine/limits.h \
   /usr/include/i386/limits.h /usr/include/i386/_limits.h \
   /usr/include/sys/syslimits.h /usr/include/poll.h \
@@ -61,7 +59,8 @@ libgsoapssl_a-stdsoap2_ssl.o libgsoapssl_a-stdsoap2_ssl.o:  \
   /usr/include/openssl/dtls1.h /usr/include/openssl/pqueue.h \
   /usr/include/openssl/ssl23.h /usr/include/openssl/x509v3.h \
   /usr/include/openssl/conf.h /usr/include/zlib.h /usr/include/zconf.h \
-  /usr/include/math.h /usr/include/architecture/i386/math.h
+  /usr/include/math.h /usr/include/architecture/i386/math.h \
+  /usr/include/inttypes.h
 
 stdsoap2.h:
 
@@ -144,10 +143,6 @@ stdsoap2.h:
 /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h:
 
 /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h:
-
-/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h:
-
-/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h:
 
 /usr/include/limits.h:
 
@@ -308,3 +303,5 @@ stdsoap2.h:
 /usr/include/math.h:
 
 /usr/include/architecture/i386/math.h:
+
+/usr/include/inttypes.h:

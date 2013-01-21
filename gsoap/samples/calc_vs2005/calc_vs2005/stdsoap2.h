@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.12
+	stdsoap2.h 2.8.13
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20812
+#define GSOAP_VERSION 20813
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -724,16 +724,17 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  include <fcntl.h>
 # endif
 // When you get macro redefinition errors when compiling the code below:
-// try arrange your include list that <windows.h> is included after "stdsoap2.h"
-// or define _WINSOCKAPI_ first:
-// #define _WINSOCKAPI_    // stops windows.h including winsock.h
-// #include <windows.h>
-// #include "stdsoap2.h"
-# include <winsock2.h> /* Visual Studio 2005 users: install Platform SDK (R2) */
+// a) try arrange your includes so <windows.h> is included after "stdsoap2.h"
+// b) or define _WINSOCKAPI_ first:
+//    #define _WINSOCKAPI_    // stops windows.h including winsock.h
+//    #include <windows.h>
+//    #include "stdsoap2.h"
+// c) or compile with the -DWIN32_LEAN_AND_MEAN switch
+# include <winsock2.h> // Visual Studio 2005 users: install Platform SDK (R2)
 # include <ws2tcpip.h>
-// # define _WSPIAPI_COUNTOF /* DEV NOTE: enble to fix problems with VC6 */
+// # define _WSPIAPI_COUNTOF // DEV NOTE: enble to fix problems with VC6
 // # include <wspiapi.h>
-# include <ws2spi.h> /* DEV NOTE: replaces older wspiapi.h above */
+# include <ws2spi.h> // DEV NOTE: replaces older wspiapi.h above
 # ifdef WITH_IPV6
 #  define SOAP_GAI_STRERROR gai_strerrorA
 # endif
@@ -868,12 +869,27 @@ extern "C" {
 # define SOAP_CHK_EOF (soap->error ? soap->error : SOAP_EOF)
 #endif
 
+#ifdef __cplusplus
+# ifndef __STDC_FORMAT_MACROS
+#  define __STDC_FORMAT_MACROS
+# endif
+#endif
+
 #if defined(SYMBIAN)
 # define LONG64 long
 # define ULONG64 unsigned LONG64
 #elif !defined(WIN32) || defined(CYGWIN) || defined(__GLIBC__) || defined(__GNU__)
 # ifndef LONG64
-#  if defined(HAVE_STDINT_H)
+#  if defined(HAVE_INTTYPES_H)
+#   include <stdint.h>
+#   include <inttypes.h>
+#   define LONG64 int64_t
+#   define ULONG64 uint64_t
+#  elif defined(HAVE_SYS_INTTYPES_H)
+#   include <sys/inttypes.h>
+#   define LONG64 int64_t
+#   define ULONG64 uint64_t
+#  elif defined(HAVE_STDINT_H)
 #   include <stdint.h>
 #   define LONG64 int64_t
 #   define ULONG64 uint64_t
@@ -903,6 +919,18 @@ extern "C" {
 #elif defined(__BORLANDC__)
 # define LONG64 __int64
 # define ULONG64 unsigned LONG64
+#endif
+
+#ifdef PRId64
+# ifndef SOAP_LONG_FORMAT
+#  define SOAP_LONG_FORMAT PRId64
+# endif
+#endif
+
+#ifdef PRIu64
+# ifndef SOAP_ULONG_FORMAT
+#  define SOAP_ULONG_FORMAT PRIu64
+# endif
 #endif
 
 #ifndef SOAP_LONG_FORMAT
@@ -1308,12 +1336,12 @@ typedef soap_int32 soap_mode;
 #define SOAP_ENC_ZLIB		0x00000400
 #define SOAP_ENC_SSL		0x00000800
 
-#define SOAP_XML_STRICT		0x00001000	/* in: strict validation */
+#define SOAP_XML_STRICT		0x00001000	/* in:  strict validation */
 #define SOAP_XML_INDENT		0x00002000	/* out: emit indented XML */
-#define SOAP_XML_IGNORENS	0x00004000	/* in: ignore namespaces */
+#define SOAP_XML_IGNORENS	0x00004000	/* in:  ignore namespaces */
 #define SOAP_XML_DEFAULTNS	0x00008000	/* out: emit xmlns="..." */
 #define SOAP_XML_CANONICAL	0x00010000	/* out: excC14N canonical XML */
-#define SOAP_XML_TREE		0x00020000	/* out: XML tree (no id/ref) */
+#define SOAP_XML_TREE		0x00020000	/* in/out: XML tree (no id/ref) */
 #define SOAP_XML_NIL		0x00040000	/* out: NULLs as xsi:nil */
 #define SOAP_XML_NOTYPE		0x00080000	/* out: do not add xsi:type */
 
@@ -1327,7 +1355,7 @@ typedef soap_int32 soap_mode;
 #define SOAP_C_NILSTRING	0x08000000	/* serialize empty strings as nil (omitted) */
 
 #define SOAP_XML_DOM		0x10000000      /* enable internal DOM */
-#define SOAP_XML_GRAPH		0x20000000	/* id-ref graph in DOM */
+#define SOAP_XML_GRAPH		0x20000000	/* force id-ref XML graph */
 
 #define SOAP_MIME_POSTCHECK	0x40000000	/* MIME flag (internal) */
 
@@ -1412,7 +1440,7 @@ typedef soap_int32 soap_mode;
 # define SOAP_FREE(soap, ptr) free(ptr)
 #endif
 
-#if !defined(WITH_LEAN) && !defined(WITH_COMPAT)
+#if !defined(WITH_LEAN) && !defined(WITH_COMPAT) && !defined(SOAP_NOTHROW)
 # define SOAP_NOTHROW (std::nothrow)
 #else
 # define SOAP_NOTHROW
@@ -1551,7 +1579,7 @@ struct soap_plist
   const struct soap_array *array;
   int type;
   int id;
-  char mark1;
+  char mark1; /* 0=single-ref, 1=embedded-multi-ref (SOAP1.1), 2=multi-ref, 3=attachment */
   char mark2;
 };
 
@@ -2077,6 +2105,7 @@ struct SOAP_STD_API soap
 #endif
   unsigned short ssl_flags;
   const char *keyfile;
+  const char *keyid;
   const char *password;
   const char *cafile;
   const char *capath;
@@ -2249,8 +2278,6 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_rand(void);
 # define soap_lookup_type(s, i) (0)
 # define soap_getindependent(s) (0)
 # define soap_putindependent(s) (0)
-# define soap_getelement(s, n) (n)
-# define soap_putelement(s, p, t, i, n) (0)
 # define soap_markelement(s, p, n) (0)
 #endif
 
@@ -2260,7 +2287,6 @@ typedef void soap_walker(struct soap*, void*, int, const char*, const char*);
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve(struct soap *soap);
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_request(struct soap *soap);
 
-#ifndef WITH_NOGLOBAL
 SOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_fault(struct soap*);
 SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultcode(struct soap*);
@@ -2270,7 +2296,6 @@ SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultdetail(struct soap*);
 SOAP_FMAC3 const char* SOAP_FMAC4 soap_check_faultsubcode(struct soap*);
 SOAP_FMAC3 const char* SOAP_FMAC4 soap_check_faultdetail(struct soap*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serializefault(struct soap*);
-#endif
 
 SOAP_FMAC1 void SOAP_FMAC2 soap_serializeheader(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_getheader(struct soap*);
@@ -2287,8 +2312,16 @@ SOAP_FMAC1 SOAP_SOCKET SOAP_FMAC2 soap_accept(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_accept(struct soap*);
 SOAP_FMAC1 const char * SOAP_FMAC2 soap_ssl_error(struct soap*, int);
 
-SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_server_context(struct soap*, unsigned short, const char*, const char*, const char*, const char*, const char*, const char*, const char*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_client_context(struct soap*, unsigned short, const char*, const char*, const char*, const char*, const char*);
+#if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)
+SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_server_context(struct soap *soap, unsigned short flags, const char *keyfile, const char *keyid, const char *password, const char *cafile, const char *capath, const char *dhfile, const char *randfile, const char *sid);
+#else
+SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_server_context(struct soap *soap, unsigned short flags, const char *keyfile, const char *password, const char *cafile, const char *capath, const char *dhfile, const char *randfile, const char *sid);
+#endif
+#if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)
+SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_client_context(struct soap *soap, unsigned short flags, const char *keyfile, const char *keyid, const char *password, const char *cafile, const char *capath, const char *randfile);
+#else
+SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_client_context(struct soap *soap, unsigned short flags, const char *keyfile, const char *password, const char *cafile, const char *capath, const char *randfile);
+#endif
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_puthttphdr(struct soap*, int status, size_t count);
 

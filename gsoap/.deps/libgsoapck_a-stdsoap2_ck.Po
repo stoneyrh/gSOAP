@@ -21,8 +21,6 @@ libgsoapck_a-stdsoap2_ck.o libgsoapck_a-stdsoap2_ck.o: stdsoap2_ck.c \
   /usr/include/runetype.h \
   /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h \
   /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h \
-  /Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h \
-  /Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h \
   /usr/include/limits.h /usr/include/machine/limits.h \
   /usr/include/i386/limits.h /usr/include/i386/_limits.h \
   /usr/include/sys/syslimits.h /usr/include/poll.h \
@@ -37,7 +35,7 @@ libgsoapck_a-stdsoap2_ck.o libgsoapck_a-stdsoap2_ck.o: stdsoap2_ck.c \
   /usr/include/netdb.h /usr/include/unistd.h /usr/include/sys/unistd.h \
   /usr/include/sys/select.h /usr/include/fcntl.h /usr/include/sys/fcntl.h \
   /usr/include/math.h /usr/include/architecture/i386/math.h \
-  /usr/include/AvailabilityMacros.h
+  /usr/include/AvailabilityMacros.h /usr/include/inttypes.h
 
 stdsoap2.h:
 
@@ -121,10 +119,6 @@ stdsoap2.h:
 
 /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h:
 
-/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h:
-
-/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h:
-
 /usr/include/limits.h:
 
 /usr/include/machine/limits.h:
@@ -190,3 +184,5 @@ stdsoap2.h:
 /usr/include/architecture/i386/math.h:
 
 /usr/include/AvailabilityMacros.h:
+
+/usr/include/inttypes.h:

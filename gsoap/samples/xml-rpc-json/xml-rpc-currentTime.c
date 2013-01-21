@@ -54,7 +54,7 @@ int main()
   /* no SOAP encodingStyle */
   soap->encodingStyle = NULL;
   /* connect, send request, and receive response */
-  if (methodCall(soap, "http://time.xmlrpc.com/RPC2", &m, &r))
+  if (methodCall(soap, "http://www.cs.fsu.edu/~engelen/currentTime.cgi", &m, &r))
   { soap_print_fault(soap, stderr);
     exit(soap->error);
   }

@@ -468,6 +468,10 @@ const SetOfString& xs__schema::builtinAttributes() const
 { return builtinAttributeSet;
 }
 
+bool xs__schema::empty() const
+{ return include.empty() && redefine.empty() && import.empty() && attribute.empty() && element.empty() && group.empty() && attributeGroup.empty() && simpleType.empty() && complexType.empty();
+}
+
 xs__include::xs__include()
 { schemaLocation = NULL;
   schemaRef = NULL;
@@ -1229,6 +1233,8 @@ xs__restriction::xs__restriction()
 int xs__restriction::traverse(xs__schema &schema)
 { if (vflag)
     cerr << "   Analyzing schema restriction '" << (base?base:"") << "'" << endl;
+  if (simpleType)
+    simpleType->traverse(schema);
   if (attributeGroup)
     attributeGroup->traverse(schema);
   if (group)
@@ -1316,7 +1322,7 @@ int xs__restriction::traverse(xs__schema &schema)
       else if (!Wflag)
 	cerr << "Warning: could not find restriction base type '" << base << "' in schema '" << (schema.targetNamespace?schema.targetNamespace:"") << "'" << endl;
     }
-    else
+    else if (!simpleType)
       cerr << "Restriction has no base" << endl;
   }
   return SOAP_OK;

@@ -1,6 +1,7 @@
 INSTRUCTIONS
 
-Install the WCF samples.
+Install the WCF samples: Windows Communication Foundation (WCF) and Windows
+Workflow Foundation (WF) Samples for .NET Framework 4.
 
 You should have:
 
@@ -96,6 +97,10 @@ namespace ...
 
 Under Project Properties change the Output type to Console Application to
 generate a service.exe.
+
+Compile and run the WCF service:
+
+  C:\WF_WCF_Samples\WCF\Basic\Binding\Basic\TransportSecurity\CS\service> bin\service.exe
 
 Use a web browser to access the service at
   https://10.0.1.5:8000/ServiceModelSamples/service

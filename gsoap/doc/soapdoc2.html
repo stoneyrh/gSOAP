@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.12 User Guide</title>
+<title>gSOAP 2.8.13 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.12 User Guide </h1>
+<h1 align="center">gSOAP 2.8.13 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Dec  9, 2012
+<h3 align="center">Jan 21, 2013
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -721,7 +721,7 @@ is a simple mechanism. This is not the preferred deployment mechanism. Because
 CGI is slow and stateless, we recommend the development of a stand-alone gSOAP
 HTTP/HTTPS server (see comments at the end of this section) or the use of
 Apache module or IIS (included in the gSOAP package under
-<i>gsoap/mod_gsoap</i>).
+<i>gsoap/mod_gsoap</i> with instructions).
 
 <div class="p"><!----></div>
 Suppose we implement a CGI-based service that returns the time in GMT. The
@@ -1013,7 +1013,7 @@ data structures (including cyclic graphs), structs/classes, unions, enums, STL
 containers, and even special data types such as <i>struct tm</i>. Therefore, the toolkit works in two directions: from WSDL/schema to C/C++ and from C/C++ to WSDL/schema.
 
 <div class="p"><!----></div>
-The toolkit also handles multiple schemas defined in multiple namespaces. Normally the namespace prefixes of XML namespaces are added to the C/C++ type
+The gSOAP toolkit also handles multiple schemas defined in multiple namespaces. Normally the namespace prefixes of XML namespaces are added to the C/C++ type
 definitions to ensure type uniqueness. For example, if we would combine two
 schemas in the same application where both schemas define a <i>book</i> object,
 we need to resolve this conflict. In gSOAP this is done using namespace
@@ -1021,6 +1021,16 @@ prefixes, rather than C++ namespaces (research has pointed out that XML
 namespaces are not equivalent to C++ namespaces). Thus, the <i>book</i> class
 might actually be bound to an XML namespace and the class would be named
 <i>ns__book</i>, where <i>ns</i> is bound to the corresponding namespace.
+
+<div class="p"><!----></div>
+The following options are available to control serialization:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+soap-&#62;encodingStyle = NULL; // to remove SOAP 1.1/1.2 encodingStyle<br />
+soap_mode(soap, SOAP_XML_TREE); // XML without id-ref (no cycles!)<br />
+soap_mode(soap, SOAP_XML_GRAPH); // XML with id-ref (including cycles)<br />
+soap_set_namespaces(soap, <b>struct</b>&nbsp;Namespace *nsmap); //to set xmlns bindings
+</td></tr></table><br></i>
+Other flags can be used to format XML, see Section&nbsp;<a href="#sec:flags">9.12</a>.
 
 <div class="p"><!----></div>
 More information on XML databinding support for C and C++, see Section&nbsp;<a href="#sec:bindings">7.5</a>.
@@ -3937,7 +3947,7 @@ the serializers for these types. See Section&nbsp;<a href="#sec:mapping">1.4</a>
 7.5.2</a>&nbsp;&nbsp;<font color="#0000FF">Mapping C/C++ to XML Schema with soapcpp2</font></h4>
 
 <div class="p"><!----></div>
-Command to generate code, WSDL/schemas, and example WSDL messages:
+To generate serialization code, execute:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 <i> &gt;  soapcpp2 [options] header_file.h</i>
 </td></tr></table><br></span>
@@ -4043,6 +4053,9 @@ import or load data stored in XML format.
 </a>
 
 <div class="p"><!----></div>
+We assume that the <i>wsdl2h</i> tool was used to map XML schema types to C/C++ data types. The <i>soapcpp2</i> tool then generates the (de)serializers for the C/C++ types. You can also use <i>soapcpp2</i> directly on a header file that declares annotated C/C++ data types to serialize.
+
+<div class="p"><!----></div>
 The following attributes can be set to control the destination and source for serialization and deserialization:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -4070,6 +4083,13 @@ These operations do not open or close the connections. The application should op
 When <i>soap.socket</i> &lt; 0 and none of the streams and descriptors are set, then the standard input and output will be used.
 
 <div class="p"><!----></div>
+The following options are available to control serialization:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+soap-&#62;encodingStyle = NULL; // to remove SOAP 1.1/1.2 encodingStyle<br />
+soap_mode(soap, SOAP_XML_TREE); // XML without id-ref (no cycles!)<br />
+soap_mode(soap, SOAP_XML_GRAPH); // XML with id-ref (including cycles)<br />
+soap_set_namespaces(soap, <b>struct</b>&nbsp;Namespace *nsmap); //to set xmlns bindings
+</td></tr></table><br></i>
 See also Section&nbsp;<a href="#sec:flags">9.12</a> to control the I/O buffering and content encoding such as compression and DIME encoding.
 
 <div class="p"><!----></div>
@@ -4083,7 +4103,7 @@ are required to encode the data and if cycles are present the object graph.
 The second function, <i>soap_put</i>, produces the XML output on a stream.
 
 <div class="p"><!----></div>
-The <i>soap_serialize</i> and <i>soap_put</i> (and combined <i>soap_write</i>) functions are statically generated specific to a
+The <i>soap_serialize</i> and <i>soap_put</i> (and both combined by <i>soap_write</i>) functions are statically generated specific to a
 data type. For example, <i>soap_serialize_float(&amp;soap, &amp;d)</i> is called to
 serialize an <i><b>float</b></i> value and <i>soap_put_float(&amp;soap, &amp;d,
 "number", NULL)</i> is called to output the floating point value in SOAP tagged
@@ -4141,7 +4161,7 @@ gSOAP <i>soapcpp2</i> compiler:
 soap_serialize_PointerTons__Person(&amp;soap, &amp;p);
 </td></tr></table><br></i>
 The <b>address of</b> <i>p</i> is passed, so the serializer can determine whether
-<i>p</i> was already serialized and to discover cycles in graph data structures.
+<i>p</i> was already serialized and to discover co-referenced objects and cycles in graph data structures that require SOAP encoding with id-ref serialization.
 To generate the output, the address of <i>p</i> is passed to the function
 <i>soap_put_PointerTons__Person</i> together with the name of an XML element
 and an optional type string (to omit a type, use <i>NULL</i>):
@@ -4200,7 +4220,8 @@ referenced in XML using id-refs attributes.
 The actual id-refs used depend on the SOAP encoding. To turn off SOAP encoding,
 remove or avoid using the SOAP-ENV and SOAP-ENC namespace bindings in the namespace table.
 In addition, the <i>SOAP_XML_TREE</i> and <i>SOAP_XML_GRAPH</i> flags can be used
-to control the output.
+to control the output by restricting serialization to XML trees or by enabling
+multi-ref graph serialization with id-ref attribuation.
 
 <div class="p"><!----></div>
 To save the data as an XML tree (with one root) without any id-ref attributes, use the
@@ -4358,10 +4379,10 @@ The gSOAP generated deserializer for this data type will be able to accurately r
 </a>
 
 <div class="p"><!----></div>
-We assume that the <i>wsdl2h</i> tool was used to map XML schema types to C/C++ data types. The <i>soapcpp2</i> tool then generates the (de)serializers for the C/C++ types.
+We assume that the <i>wsdl2h</i> tool was used to map XML schema types to C/C++ data types. The <i>soapcpp2</i> tool then generates the (de)serializers for the C/C++ types. You can also use <i>soapcpp2</i> directly on a header file that declares annotated C/C++ data types to serialize.
 
 <div class="p"><!----></div>
-To deserialize a data type from XML, the <i>soap_get</i> (or combined <i>soap_read</i>) function for the data type to be deserialized is used. The outline of a program that deserializes two variables <i>var1</i> and <i>var2</i> is for example:
+To deserialize a data type from XML, the <i>soap_get</i> (or the simpler <i>soap_read</i>) function for the data type to be deserialized is used. The outline of a program that deserializes two variables <i>var1</i> and <i>var2</i> is for example:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <u><span class="roman">T1</span></u> var1; <br />
 <u><span class="roman">T2</span></u> var2; <br />
@@ -5201,7 +5222,8 @@ The <i>soapcpp2</i> source-to-source compiler supports the following command-lin
 <tr><td align="left"><i>-v</i>	</td><td align="left">Display version info</td></tr>
 <tr><td align="left"><i>-w</i>	</td><td align="left">Do not generate WSDL and schema files </td></tr>
 <tr><td align="left"><i>-x</i>	</td><td align="left">Do not generate sample XML message files </td></tr>
-<tr><td align="left"><i>-y</i>	</td><td align="left">include C/C++ type access information in sample XML messages </td></tr></table>
+<tr><td align="left"><i>-y</i>	</td><td align="left">include C/C++ type access information in sample XML messages </td></tr>
+<tr><td align="left"><i>-z1</i>	</td><td align="left">generate deprecated old-style C++ service proxies and objects </td></tr></table>
 
 </td></tr></table><br></span>
 For example
@@ -5588,7 +5610,8 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_ZLIB</i>	</td><td align="left">enables deflate compression only, see Section&nbsp;<a href="#sec:compression">19.27</a> </td></tr>
 <tr><td align="left"><i>WITH_FAST</i>	</td><td align="left">(obsolete) </td></tr>
 <tr><td align="left"><i>WITH_NOIO</i>	</td><td align="left">eliminates need for file IO and BSD socket library, see Section&nbsp;<a href="#sec:noio">19.33</a> </td></tr>
-<tr><td align="left"><i>WITH_NOIDREF</i>	</td><td align="left">eliminates href/ref and id attributes to (de)serialize multi-ref data</td></tr>
+<tr><td align="left"><i>WITH_NOIDREF</i>	</td><td align="left">eliminates href/ref and id attributes to (de)serialize multi-ref data,</td></tr>
+<tr><td align="left"></td><td align="left">or alternatively use the <i>SOAP_XML_TREE</i> runtime flag </td></tr>
 <tr><td align="left"><i>WITH_NOHTTP</i>	</td><td align="left">eliminates HTTP stack to reduce code size </td></tr>
 <tr><td align="left"><i>WITH_NOZONE</i>	</td><td align="left">silently ignores the timezone in time conversions </td></tr>
 <tr><td align="left"><i>WITH_LEAN</i>	</td><td align="left">creates a small-footprint executable, see Section&nbsp;<a href="#sec:lean">19.32</a> </td></tr>
@@ -5658,7 +5681,7 @@ specification, which gSOAP automatically supports when handling with SOAP 1.2
 messages.
 
 <div class="p"><!----></div>
-To set and clear the flags for inbound message processing use:
+To set and clear flags for inbound message processing use:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 <i>soap_set_imode(soap, inflag);</i> <br />
 <i>soap_clr_imode(soap, inflag);</i> <br />
@@ -6440,8 +6463,7 @@ denotes an exception. The exception details can be assigned with the
 <i>soap</i> is a variable that contains the current runtime context, see
 Section&nbsp;<a href="#sec:fault">12</a>.
 A receiver error indicates that the service can't handle the request, but can possibly recover from the error.
-To return an unrecoverable error, use <i>soap_receiver_fault(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*faultstring,
-<b>const</b>&nbsp;<b>char</b>&nbsp;*detail)</i>.
+To return an unrecoverable SOAP 1.1/1.2 error, use <i>soap_sender_fault(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*faultstring, <b>const</b>&nbsp;<b>char</b>&nbsp;*detail)</i>.
 
 <div class="p"><!----></div>
 To return a HTTP error code a service method can simply return the HTTP error code number.
@@ -6617,7 +6639,7 @@ If explicit qualification is needed, this can be done using the prefix conventio
 which ensures that there cannot be any name clashes between members of the same name defined in different schemas (consider for example <i>name</i> and <i>y__name</i>), but this can clutter the representation when clashes do not occur.
 
 <div class="p"><!----></div>
-An alternative to the prefix convention is the use of "colon notation" in the
+An alternative to the prefix convention is the use of "<b>colon notation</b>" in the
 gSOAP header file. This deviation from the C/C++ syntax allows you to bind
 type names and struct and class members to qualified and unqualified XML tag names explicitly,
 thus bypassing the default mechanism that automatically qualifies or
@@ -6682,6 +6704,23 @@ while prefixing with double underscores never lead to clashes:
 Also note that colon notation has a very different role than the C++ scope
 operator <i>::</i>. The scope operator cannot be used in places where we need
 colon notation, such as struct/class member fields.
+
+<div class="p"><!----></div>
+The default mechanism that associates XML tag names with the names of struct
+and class member fields can be overriden by "<b>retagging</b>" names with the
+annotation of <i>`<i>tag</i>`</i> placed next to the member field name. This is particularly useful to support legacy code for which the fixed naming of member fields cannot be easily changed. For example:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+//gsoap x schema namespace: urn:x <br />
+//gsoap x schema form: qualified <br />
+<b>struct</b>&nbsp;x:record <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;@<b>char</b>&nbsp;* t`type`;  <br />
+&nbsp;&nbsp;&nbsp;<b>char</b>&nbsp;* s`full-name`;  <br />
+};
+</td></tr></table><br></i>
+This maps the <i>t</i> member to the <tt>x:type</tt> XML attribute tag and <i>s</i>
+member to the <tt>x:full-name</tt> XML element tag. Note that both tags are namespace
+qualified as per schema declaration.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc10.4">
@@ -11509,8 +11548,8 @@ Here, the <i>ns__record</i> struct is serialized with qualified element <i>name<
 &nbsp;&nbsp;&nbsp;&lt;ns:name&#62;...&lt;/ns:name&#62; <br />
 &lt;/ns:record&#62;
 </td></tr></table><br></tt>
-The colon notation for struct/class/union member fields is used to override
-element and attribute qualified or unqualified forms. 
+The "colon notation" for struct/class/union member field names is used to
+override element and attribute qualified or unqualified forms. 
 To override the form for individual members that represent elements and attributes, use a namespace prefix and colon with the member name:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 //gsoap ns schema elementForm: qualified <br />
@@ -13566,7 +13605,7 @@ are described in Section&nbsp;<a href="#sec:errcodes">10.2</a>.
 <div class="p"><!----></div>
 On windows, an alternative is to use the WinInet module, which has built-in
 NTLM support. The WinInet for gSOAP module is available in the <i>mod_gsoap</i>
-directory of the gSOAP package. API instructions are included in the source.
+directory of the gSOAP package. Instructions for WinInet use are included there.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc19.16">
@@ -15909,5 +15948,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On  9 Dec 2012, 22:47.</small>
+version 4.00.<br />On 21 Jan 2013, 09:43.</small>
 </html>
