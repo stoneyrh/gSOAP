@@ -8,7 +8,7 @@
 
 	Compile:
 	soapcpp2 xml-rpc.h
-	cc -o xml-rpc-currentTimeServer xml-rpc-currentTimeServer.cpp xml-rpc.cpp xml-rpc-io.cpp stdsoap2.cpp soapC.cpp
+	c++ -o xml-rpc-currentTimeServer xml-rpc-currentTimeServer.cpp xml-rpc.cpp xml-rpc-io.cpp stdsoap2.cpp soapC.cpp
 	Install as CGI on Web server
 	Or run as stand-alone server (e.g. on port 18000):
 	./xml-rpc-currentTimeServer 18000
@@ -42,7 +42,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 #include "soapH.h"
-#include "xml-rpc-io.h"
 
 #include <unistd.h>
 #ifdef _POSIX_THREADS
@@ -59,8 +58,8 @@ int serve_request(soap*);
 int main(int argc, char **argv)
 {
   soap *ctx = soap_new1(SOAP_IO_KEEPALIVE | SOAP_XML_INDENT);
-  ctx->send_timeout = 5; // 5 sec
-  ctx->recv_timeout = 5; // 5 sec
+  ctx->send_timeout = 10; // 10 sec
+  ctx->recv_timeout = 10; // 10 sec
 
   if (argc < 2)
     return serve_request(ctx);
@@ -99,8 +98,6 @@ int main(int argc, char **argv)
 
 int serve_request(soap* ctx)
 {
-  fprintf(stderr, "Started... ");
-
   methodCall m(ctx);
 
 #ifdef _POSIX_THREADS
@@ -121,7 +118,7 @@ int serve_request(soap* ctx)
     {
       methodResponse r(ctx);
   
-    if (!strcmp(m.name(), "currentTime.getCurrentTime"))
+      if (!strcmp(m.name(), "currentTime.getCurrentTime"))
         // method name matches: first parameter of response is time
         r[0] = time(0);
       else
@@ -146,8 +143,6 @@ int serve_request(soap* ctx)
   // free the ctx copy for this thread
   soap_free(ctx);
 #endif
-
-  fprintf(stderr, "done\n");
 
   return err;
 }

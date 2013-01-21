@@ -102,12 +102,12 @@
      ULONG = 318,
      NONE = 319,
      ID = 320,
-     TAG = 321,
-     LAB = 322,
-     TYPE = 323,
-     LNG = 324,
-     DBL = 325,
-     CHR = 326,
+     LAB = 321,
+     TYPE = 322,
+     LNG = 323,
+     DBL = 324,
+     CHR = 325,
+     TAG = 326,
      STR = 327,
      RA = 328,
      LA = 329,
@@ -196,12 +196,12 @@
 #define ULONG 318
 #define NONE 319
 #define ID 320
-#define TAG 321
-#define LAB 322
-#define TYPE 323
-#define LNG 324
-#define DBL 325
-#define CHR 326
+#define LAB 321
+#define TYPE 322
+#define LNG 323
+#define DBL 324
+#define CHR 325
+#define TAG 326
 #define STR 327
 #define RA 328
 #define LA 329

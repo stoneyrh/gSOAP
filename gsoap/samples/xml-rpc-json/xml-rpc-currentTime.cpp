@@ -7,7 +7,7 @@
 
 	Compile:
 	soapcpp2 xml-rpc.h
-	cc xml-rpc-currentTime.cpp xml-rpc.cpp xml-rpc-io.cpp stdsoap2.cpp soapC.cpp -lpthread
+	c++ xml-rpc-currentTime.cpp xml-rpc.cpp xml-rpc-io.cpp stdsoap2.cpp soapC.cpp
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -49,7 +49,7 @@ int main()
   ctx->recv_timeout = 10; // 10 sec, stop if server does not respond in time
 
   // set up the method call
-  methodCall m(ctx, "http://time.xmlrpc.com/RPC2", "currentTime.getCurrentTime");
+  methodCall m(ctx, "http://www.cs.fsu.edu/~engelen/currentTime.cgi", "currentTime.getCurrentTime");
   // make the call and get response params
   params r = m();
   // error?

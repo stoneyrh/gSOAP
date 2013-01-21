@@ -1,11 +1,14 @@
 /*
 	xml-rpc.cpp
 
-	XML-RPC definitions for C++
+	C++ API for XML-RPC/JSON data management
 
 	Note: 
-	XML-RPC declarations are given in the gSOAP header file xml-rpc.h
-	Iterators are declared in xml-rpc-iters.h
+	XML-RPC declarations are given in the gSOAP header file xml-rpc.h,
+	which is used to generate XML-RPC serializers (soapH.h, soapStub.h, and
+	soapC.cpp) with:
+	> soapcpp2 -CSL xml-rpc.h
+	Iterators to walk the tree data are declared in xml-rpc-iters.h
 
 	Client XML-RPC calling sequence
 	-------------------------------
@@ -113,17 +116,12 @@
 	Unicode strings
 	---------------
 
-	Two methods:
-	
-	1) Use SOAP_C_UTFSTRING flag to enable UTF8-encoded char* strings:
-	   soap *ctx = soap_new1(SOAP_XML_INDENT | SOAP_C_UTFSTRING);
-
-	2) Change xml-rpc.h _string type to wchar_t*:
-	   typedef wchar_t* _string;
+	Use SOAP_C_UTFSTRING flag to enable UTF8-encoded char* strings:
+	soap *ctx = soap_new1(SOAP_XML_INDENT | SOAP_C_UTFSTRING);
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2011, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2001-2012, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -151,8 +149,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "soapH.h"
 
-char* s_copy_l(struct soap *soap, char *s);
-wchar_t* s_copy_l(struct soap *soap, wchar_t *s);
+static char* s_copy_l(struct soap *soap, const char *s);
+static char* s_copy_l(struct soap *soap, const wchar_t *s);
+static int size2k(int n);
 
 value::value()
 { }
@@ -202,16 +201,31 @@ value::value(struct soap *soap, struct _struct &r)
 }
 
 void value::size(int n)
-{ if (__type != SOAP_TYPE__array)
-    ((_array)(*this))[n];
-  else
+{ if (__type == SOAP_TYPE__array)
     ((_array*)ref)->size(n);
+  else
+  { __type = SOAP_TYPE__array;
+    __any = NULL;
+    ref = soap_malloc(soap, sizeof(struct _array));
+    soap_default__array(soap, (_array*)ref);
+    ((_array*)ref)->size(n);
+  }
 }
 
 int value::size() const
 { if (__type == SOAP_TYPE__array)
     return ((_array)(*this)).size();
+  if (__type == SOAP_TYPE__struct)
+    return ((_struct)(*this)).size();
   return 0;
+}
+
+bool value::empty() const
+{ if (__type == SOAP_TYPE__array)
+    return ((_array&)(*this)).empty();
+  if (__type == SOAP_TYPE__struct)
+    return ((_struct&)(*this)).empty();
+  return false;
 }
 
 bool value::is_array() const
@@ -273,39 +287,74 @@ value::operator const struct _array&() const
 value::operator struct _base64&()
 { if (__type == SOAP_TYPE__base64)
     return *(struct _base64*)ref;
+  char *s = *this;
   struct _base64 *base64 = soap_new__base64(soap, -1);
   soap_default__base64(soap, base64);
+  base64->__ptr = (unsigned char*)s;
+  base64->__size = (int)strlen(s);
   return *base64;
 }
 
 value::operator const struct _base64&() const
 { if (__type == SOAP_TYPE__base64)
     return *(const struct _base64*)ref;
+  const char *s = *this;
   struct _base64 *base64 = soap_new__base64(soap, -1);
   soap_default__base64(soap, base64);
+  base64->__ptr = (unsigned char*)s;
+  base64->__size = (int)strlen(s);
   return *base64;
 }
 
-value::operator _string() const
+value::operator char*() const
 { if (__type == SOAP_TYPE__string || __type == SOAP_TYPE__dateTime_DOTiso8601)
-    return (_string)ref;
+    return (char*)ref;
   if (__type == SOAP_TYPE__base64)
-    return (_string)soap_s2base64(soap, (unsigned char*)((_base64*)ref)->ptr(), NULL, ((_base64*)ref)->size());
+    return (char*)soap_s2base64(soap, (unsigned char*)((_base64*)ref)->ptr(), NULL, ((_base64*)ref)->size());
   if (__type == SOAP_TYPE__i4 || __type == SOAP_TYPE__int)
-    return (_string)soap_strdup(soap, soap_int2s(soap, (int)*(int*)ref));
+    return (char*)soap_strdup(soap, soap_int2s(soap, (int)*(int*)ref));
   if (__type == SOAP_TYPE__double)
-    return (_string)soap_strdup(soap, soap_double2s(soap, (double)*(double*)ref));
+    return (char*)soap_strdup(soap, soap_double2s(soap, (double)*(double*)ref));
   if (__type == SOAP_TYPE__boolean)
-    return (_string)(is_true() ? "true" : "false");
+    return (char*)(is_true() ? "true" : "false");
   if (__any)
-    return (_string)__any;
-  return (_string)"";
+    return (char*)__any;
+  return (char*)"";
+}
+
+value::operator std::string() const
+{ const char *s = *this;
+  return std::string(s);
+}
+
+value::operator wchar_t*() const
+{ const char *s = *this;
+  wchar_t *t = NULL;
+  soap_s2wchar(soap, s, &t, 0, 0);
+  soap->error = SOAP_OK;
+  return t;
+}
+
+value::operator std::wstring() const
+{ const char *s = *this;
+  wchar_t *t = NULL;
+  soap_s2wchar(soap, s, &t, 0, 0);
+  soap->error = SOAP_OK;
+  return std::wstring(t);
 }
 
 value::operator double() const
-{ if (__type == SOAP_TYPE__double)
+{ if (__type == SOAP_TYPE__int)
+    return (double)*(_int*)ref;
+  if (__type == SOAP_TYPE__i4)
+    return (double)*(_i4*)ref;
+  if (__type == SOAP_TYPE__double)
     return (double)*(_double*)ref;
-  return 0.0;
+  double r = 0.0;
+  const char *s = *this;
+  soap_s2double(soap, s, &r);
+  soap->error = SOAP_OK;
+  return r;
 }
 
 value::operator int() const
@@ -313,13 +362,23 @@ value::operator int() const
     return (int)*(_int*)ref;
   if (__type == SOAP_TYPE__i4)
     return (int)*(_i4*)ref;
-  return 0;
+  if (__type == SOAP_TYPE__double)
+    return (int)(*(_double*)ref);
+  int r = 0;
+  const char *s = *this;
+  soap_s2int(soap, s, &r);
+  soap->error = SOAP_OK;
+  return r;
 }
 
 value::operator time_t() const
 { time_t t = 0;
-  if (__type == SOAP_TYPE__dateTime_DOTiso8601)
-    soap_s2dateTime(soap, (const char*)ref, &t);
+  if (__type == SOAP_TYPE__string || __type == SOAP_TYPE__dateTime_DOTiso8601)
+  { if (soap_s2dateTime(soap, (const char*)ref, &t))
+    { soap->error = SOAP_OK;
+      return 0;
+    }
+  }
   return t;
 }
 
@@ -355,20 +414,20 @@ struct value& value::operator[](const char *s)
   return r[s];
 }
 
-struct _array& value::operator=(struct _array& a)
+struct _array& value::operator=(const struct _array& a)
 { __type = SOAP_TYPE__array;
   __any = NULL;
   ref = soap_malloc(soap, sizeof(struct _array));
   *(_array*)ref = a;
-  return a;
+  return *(_array*)ref;
 }
 
-_base64& value::operator=(_base64& b)
+_base64& value::operator=(const _base64& b)
 { __type = SOAP_TYPE__base64;
   __any = NULL;
   ref = soap_malloc(soap, sizeof(struct _base64));
   *(_base64*)ref = b;
-  return b;
+  return *(_base64*)ref;
 }
 
 bool value::operator=(bool b)
@@ -379,29 +438,60 @@ bool value::operator=(bool b)
   return b;
 }
 
-char* s_copy_l(struct soap *soap, char *s)
+static char* s_copy_l(struct soap *soap, const char *s)
 { return soap_strdup(soap, s);
 }
 
-wchar_t* s_copy_l(struct soap *soap, wchar_t *s)
-{ size_t n = sizeof(wchar_t) * (wcslen(s) + 1);
+static char* s_copy_l(struct soap *soap, const wchar_t *s)
+{ return (char*)soap_wchar2s(soap, s);
+#if 0
+  size_t n = sizeof(wchar_t) * (wcslen(s) + 1);
   wchar_t *t = (wchar_t*)soap_malloc(soap, n);
   wcscpy(t, s);
   return t;
+#endif
 }
 
 const char* value::operator=(const char* s)
 { __type = SOAP_TYPE__string;
   __any = NULL;
-  ref = s_copy_l(soap, (char*)s);
+  ref = s_copy_l(soap, s);
   return s;
 }
 
-_string value::operator=(_string s)
+char* value::operator=(char* s)
 { __type = SOAP_TYPE__string;
   __any = NULL;
   ref = s_copy_l(soap, s);
   return s;
+}
+
+char* value::operator=(const std::string& s)
+{ __type = SOAP_TYPE__string;
+  __any = NULL;
+  ref = s_copy_l(soap, s.c_str());
+  return (char*)ref;
+}
+
+const char* value::operator=(const wchar_t* s)
+{ __type = SOAP_TYPE__string;
+  __any = NULL;
+  ref = s_copy_l(soap, s);
+  return (char*)ref;
+}
+
+char* value::operator=(wchar_t* s)
+{ __type = SOAP_TYPE__string;
+  __any = NULL;
+  ref = s_copy_l(soap, s);
+  return (char*)ref;
+}
+
+char* value::operator=(const std::wstring& s)
+{ __type = SOAP_TYPE__string;
+  __any = NULL;
+  ref = s_copy_l(soap, s.c_str());
+  return (char*)ref;
 }
 
 double value::operator=(double d)
@@ -420,12 +510,12 @@ int value::operator=(int n)
   return n;
 }
 
-struct _struct& value::operator=(struct _struct& r)
+struct _struct& value::operator=(const struct _struct& r)
 { __type = SOAP_TYPE__struct;
   __any = NULL;
   ref = soap_malloc(soap, sizeof(struct _struct));
   *(_struct*)ref = r;
-  return r;
+  return *(_struct*)ref;
 }
 
 time_t value::operator=(time_t t)
@@ -461,24 +551,34 @@ int _struct::size() const
 struct value& _struct::operator[](const char *s)
 { int i = 0;
   if (!member)
-  { __size = 1;
-    member = soap_new_member(soap, __size);
-    soap_default_member(soap, member);
+  { int newsize = size2k(__size = 1);
+    member = soap_new_member(soap, newsize);
+    s2k = 1;
+    for (i = 0; i < newsize; i++)
+      soap_default_member(soap, &member[i]);
   }
   else
   { for (i = 0; i < __size; i++)
     { if (!strcmp(member[i].name, s))
         return member[i].value;
     }
-    __size++;
-    struct member *newmember = soap_new_member(soap, __size);
-    for (i = 0; i < __size - 1; i++)
-      newmember[i] = member[i];
-    soap_default_member(soap, &newmember[__size - 1]);
-    soap_unlink(soap, member);
-    delete[] member;
-    member = newmember;
+    int oldsize = __size;
+    int newsize = size2k(++__size);
+    if (s2k)
+      oldsize = size2k(oldsize);
+    if (oldsize < newsize)
+    { struct member *newmember = soap_new_member(soap, newsize);
+      for (i = 0; i < oldsize; i++)
+        newmember[i] = member[i];
+      for (; i < newsize; i++)
+        soap_default_member(soap, &newmember[i]);
+      soap_unlink(soap, member);
+      delete[] member;
+      member = newmember;
+      s2k = 1;
+    }
   }
+  i = __size - 1;
   member[i].name = soap_strdup(soap, s);
   soap_default_value(soap, &member[i].value);
   return member[i].value;
@@ -527,23 +627,29 @@ void _array::size(int n)
 
 struct value& _array::operator[](int n)
 { if (!data.value)
-  { data.__size = n + 1;
-    data.value = soap_new_value(soap, data.__size);
-    for (int i = 0; i < data.__size; i++)
+  { int newsize = size2k(data.__size = n + 1);
+    data.value = soap_new_value(soap, newsize);
+    data.s2k = 1;
+    for (int i = 0; i < newsize; i++)
       soap_default_value(soap, &data.value[i]);
   }
   else if (data.__size <= n)
   { int oldsize = data.__size;
-    data.__size = n + 1;
-    struct value *newvalue = soap_new_value(soap, data.__size);
-    int i;
-    for (i = 0; i < oldsize; i++)
-      newvalue[i] = data.value[i];
-    for (; i < data.__size; i++)
-      soap_default_value(soap, &newvalue[i]);
-    soap_unlink(soap, data.value);
-    delete[] data.value;
-    data.value = newvalue;
+    int newsize = size2k(data.__size = n + 1);
+    if (data.s2k)
+      oldsize = size2k(oldsize);
+    if (oldsize < newsize)
+    { struct value *newvalue = soap_new_value(soap, newsize);
+      int i;
+      for (i = 0; i < oldsize; i++)
+        newvalue[i] = data.value[i];
+      for (; i < newsize; i++)
+        soap_default_value(soap, &newvalue[i]);
+      soap_unlink(soap, data.value);
+      delete[] data.value;
+      data.value = newvalue;
+      data.s2k = 1;
+    }
   }
   return data.value[n];
 }
@@ -613,23 +719,29 @@ int params::size() const
 
 struct value& params::operator[](int n)
 { if (!param)
-  { __size = n + 1;
-    param = soap_new_param(soap, __size);
-    for (int i = 0; i < __size; i++)
+  { int newsize = size2k(__size = n + 1);
+    param = soap_new_param(soap, newsize);
+    s2k = 1;
+    for (int i = 0; i < newsize; i++)
       soap_default_param(soap, &param[i]);
   }
   else if (__size <= n)
   { int oldsize = __size;
-    __size = n + 1;
-    struct param *newparam = soap_new_param(soap, __size);
-    int i;
-    for (i = 0; i < oldsize; i++)
-      newparam[i] = param[i];
-    for (; i < __size; i++)
-      soap_default_param(soap, &newparam[i]);
-    soap_unlink(soap, param);
-    delete[] param;
-    param = newparam;
+    int newsize = size2k(__size = n + 1);
+    if (s2k)
+      oldsize = size2k(oldsize);
+    if (oldsize < newsize)
+    { struct param *newparam = soap_new_param(soap, newsize);
+      int i;
+      for (i = 0; i < oldsize; i++)
+        newparam[i] = param[i];
+      for (; i < newsize; i++)
+        soap_default_param(soap, &newparam[i]);
+      soap_unlink(soap, param);
+      delete[] param;
+      param = newparam;
+      s2k = 1;
+    }
   }
   return param[n].value;
 }
@@ -903,4 +1015,11 @@ params_iterator& params_iterator::operator++()
 params_iterator& params_iterator::operator+=(int step)
 { param += step;
   return *this;
+}
+
+static int size2k(int n)
+{ int k = 2;
+  while (k < n)
+    k *= 2;
+  return k;
 }

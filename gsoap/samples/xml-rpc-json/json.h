@@ -1,11 +1,11 @@
 /*
 	json.h
 	
-	Stream JSON from/to XML-RPC values
+	JSON C++ support & stream JSON from/to XML-RPC
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2011, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2001-2012, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -31,8 +31,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-/// print a value in JSON format
+/// Send a value in JSON format to a stream
 extern std::ostream& operator<<(std::ostream&, const struct value&);
+extern int json_send(struct soap *soap, const struct value& v);
 
-/// parse a value in JSON format
+/// Receive a value in JSON format from a stream
 extern std::istream& operator>>(std::istream&, struct value&);
+extern int json_recv(struct soap *soap, struct value& v);
+
+/// Client-side JSON-RPC call
+extern int json_call(struct soap *soap, const char *endpoint, const struct value& in, struct value& out);

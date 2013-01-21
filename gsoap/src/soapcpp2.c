@@ -4,7 +4,7 @@
 	Main compiler and code generator batch program.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL OR Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ int tflag = 0;		/* when set, generates typed messsages (with xsi:type attributes
 int uflag = 0;		/* when set, uncomment WSDL and schema output */
 int xflag = 0;		/* when set, don't generate sample XML message files */
 int yflag = 0;		/* when set, add C/C++ info in sample XML messages */
-int zflag = 0;		/* not used: reserved */
+int zflag = 0;		/* when set, use backward compatibility option */
 
 int stop_flag = 0;
 
@@ -152,7 +152,7 @@ main(int argc, char **argv)
 						break;
 					case '?':
 					case 'h':
-						fprintf(stderr, "Usage: soapcpp2 [-1|-2|-0] [-C|-S] [-T] [-L] [-a] [-A] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-k] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [infile]\n\n");
+						fprintf(stderr, "Usage: soapcpp2 [-1|-2|-0] [-C|-S] [-T] [-L] [-a] [-A] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-k] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
 						fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
@@ -186,6 +186,7 @@ main(int argc, char **argv)
 -w	don't generate WSDL and schema files\n\
 -x	don't generate sample XML message files\n\
 -y	include C/C++ type access information in sample XML messages\n\
+-z1	generate deprecated old-style C++ service proxies and objects\n\
 infile	header file to parse (or stdin)\n\
 \n");
 						exit(0);
@@ -296,6 +297,16 @@ infile	header file to parse (or stdin)\n\
 					case 'v':
 						stop_flag = 1;
 						break;
+					case 'z':
+						a++;
+						g = 0;
+						if (*a)
+							zflag = *a - '0';
+						else if (i < argc && argv[++i])
+							zflag = *argv[i] - '0';
+						else
+							execerror("Option -z requires a digit");
+						break;
 					default:
             					fprintf(stderr, "soapcpp2: Unknown option %s\n", a);
             					exit(1);
@@ -308,7 +319,7 @@ infile	header file to parse (or stdin)\n\
 		else
 			strcpy(filename, argv[i]);
 	}
-	fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release "VERSION"\n**  Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool is released under one of the following two licenses:\n**  GPL or the commercial license by Genivia Inc.\n\n");
+	fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release "VERSION"\n**  Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool is released under one of the following two licenses:\n**  GPL or the commercial license by Genivia Inc.\n\n");
 	if (stop_flag)
 	  exit(0);
 	init();

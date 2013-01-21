@@ -68,7 +68,7 @@ struct http_get_data
   size_t stat_fail; /* HTTP failure statistics */
   size_t min[60]; /* Hits by the minute */
   size_t hour[24]; /* Hits by the hour */
-  size_t day[365]; /* Hits by day */
+  size_t day[366]; /* Hits by day */
 };
 
 int http_get(struct soap*, struct soap_plugin*, void*);

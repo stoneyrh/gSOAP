@@ -1,7 +1,8 @@
 
 INSTRUCTIONS
 
-Install the WCF samples.
+Install the WCF samples: Windows Communication Foundation (WCF) and Windows
+Workflow Foundation (WF) Samples for .NET Framework 4.
 
 You should have:
 
@@ -73,7 +74,8 @@ as described above, and convert the key and certificate to PEM format:
 To connect a WCF client to a gSOAP service
 ------------------------------------------
 
-In App.config of the WCF client, change the <endpoint>, <message>, and <defaultCertificate> elements:
+In App.config of the WCF client, change the <endpoint>, <message>, and
+<defaultCertificate> elements:
 
   <client>
     <endpoint address="http://10.0.1.5:8000/ServiceModelSamples/service" ... />

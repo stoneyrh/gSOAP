@@ -49,12 +49,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /*
-	To build, run soapcpp2 twice, first for the WS-RM logic and then for
-	the app logic:
+	To build with C++ service objects (proxies, services, and callback
+	service objects), run soapcpp2 twice, first for the WS-RM logic and
+	then for the app logic:
 	$ soapcpp2 -L -I../../../../import -I../../../.. -A -pwsrx ../../../../import/wsrm5.h
 	$ soapcpp2 -L -I../../../../import -I../../../.. -a -j calculator.h
 	then compile:
-	$ cc -o calculator calculator.cpp soapC.cpp soapWSDualHttpBinding_USCOREICalculatorDuplexService.cpp soapWSDualHttpBinding_USCOREICalculatorDuplexProxy.cpp wsrxClient.cpp wsrxServer.cpp ../../../../plugin/wsrmapi.c ../../../../plugin/wsaapi.c ../../../../custom/duration.c ../../../../dom.cpp ../../../../stdsoap2.cpp
+	$ c++ -o calculator calculator.cpp soapC.cpp soapWSDualHttpBinding_USCOREICalculatorDuplexService.cpp soapWSDualHttpBinding_USCOREICalculatorDuplexProxy.cpp wsrxClient.cpp wsrxServer.cpp ../../../../plugin/wsrmapi.c ../../../../plugin/wsaapi.c ../../../../custom/duration.c ../../../../dom.cpp ../../../../stdsoap2.cpp
 
 	Run service on port 8000:
 	$ ./calculator 8000
@@ -155,12 +156,13 @@ class Client : public WSDualHttpBinding_USCOREICalculatorDuplexProxy
       destroy();
       callback.destroy();
     }
+    int run();
     int poll(int timeout);
 };
 
 int main(int argc, char **argv)
 {
-  // Command line argument? yes, then run the service on a port
+  // Command line argument? If yes, then run the service on a port
   if (argc >= 2)
   {
     int port = atoi(argv[1]);
@@ -170,144 +172,149 @@ int main(int argc, char **argv)
   else
   {
     Client client(serverURI);
-
-    // Create a reliable messaging sequence handle for client-initiated session
-    soap_wsrm_sequence_handle seq;
-
-    xsd__duration expires = 30000; /* 30000 ms = 30 seconds to expire */
-    const char *id = soap_wsa_rand_uuid(client.soap);
-    double n;
-    int retry;
-
-    printf("\n**** Creating the Sequence\n");
-
-    // Reliable messaging create session and init sequence handle
-    if (soap_wsrm_create_offer(client.soap, serverURI, clientURI, id, expires, NoDiscard, soap_wsa_rand_uuid(client.soap), &seq))
-    {
-      client.soap_stream_fault(std::cerr);
-      soap_wsrm_seq_free(client.soap, seq);
-      return client.soap->error;
-    }
-
-    // poll 10 times for 1 second until created
-    for (retry = 10; retry && !soap_wsrm_seq_created(client.soap, seq); retry--)
-    {
-      // callback polling: 10 ms polling cycle
-      if (client.poll(1))
-        return client.soap->error;
-    }
-    if (!retry)
-    {
-      fprintf(stderr, "CANNOT CREATE SEQUENCE - SERVER NOT RESPONDING\n");
-      exit(1);
-    }
-
-    // Reliable messaging request message
-    if (soap_wsrm_request_acks(client.soap, seq, soap_wsa_rand_uuid(client.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/AddTo"))
-    {
-      client.soap_stream_fault(std::cerr);
-      return client.soap->error;
-    }
-
-    n = 3.14;
-
-    _mssadh__AddTo addTo;
-    addTo.n = &n;
-    if (client.send_AddTo(&addTo) == SOAP_OK || client.soap->error == 202)
-      std::cout << std::endl << "**** AddTo(" << *addTo.n << ")" << std::endl;
-    else
-      client.soap_stream_fault(std::cerr);
+    client.run();
     client.destroy();
-
-    // callback polling: 500 ms polling cycle
-    if (client.poll(-500000))
-      return client.soap->error;
-
-    // Reliable messaging request message
-    if (soap_wsrm_request_acks(client.soap, seq, soap_wsa_rand_uuid(client.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/SubtractFrom"))
-    {
-      client.soap_stream_fault(std::cerr);
-      return client.soap->error;
-    }
-
-    n = 1.41;
-
-    _mssadh__SubtractFrom subtractFrom;
-    subtractFrom.n = &n;
-    if (client.send_SubtractFrom(&subtractFrom) == SOAP_OK || client.soap->error == 202)
-      std::cout << std::endl << "**** SubtractFrom(" << *subtractFrom.n << ")" << std::endl;
-    else
-      client.soap_stream_fault(std::cerr);
-    client.destroy();
-
-    // callback polling: 500 ms polling cycle
-    if (client.poll(-500000))
-      return client.soap->error;
-
-    // Reliable messaging request message
-    if (soap_wsrm_request_acks(client.soap, seq, soap_wsa_rand_uuid(client.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Clear"))
-    {
-      client.soap_stream_fault(std::cerr);
-      return client.soap->error;
-    }
-
-    _mssadh__Clear clear;
-    if (client.send_Clear(&clear) == SOAP_OK || client.soap->error == 202)
-      std::cout << std::endl << "**** Clear()" << std::endl;
-    else
-      client.soap_stream_fault(std::cerr);
-    client.destroy();
-
-    // callback polling: 500 ms polling cycle
-    if (client.poll(-500000))
-      return client.soap->error;
-
-    printf("\n**** Closing the Sequence\n");
-
-    if (soap_wsrm_close(client.soap, seq, soap_wsa_rand_uuid(client.soap)))
-    {
-      client.soap_stream_fault(std::cerr);
-      soap_wsrm_seq_free(client.soap, seq);
-      return client.soap->error;
-    }
-
-    // callback polling: 500 ms polling cycle
-    if (client.poll(-500000))
-      return client.soap->error;
-
-    // Resend messages marked as non-acked (as an option)
-    for (retry = 2; retry && soap_wsrm_nack(seq); retry--)
-    {
-      printf("\n**** Incomplete Messages - Calculation Discarded\n");
-
-      // In this case resending would not help to correct the problem, since
-      // the calculation will be off by the wrong message order anyway:
-      printf("\n**** Resending "SOAP_ULONG_FORMAT" Non-Acked Messages\n", soap_wsrm_nack(seq));
-      soap_wsrm_resend(client.soap, seq, 0, 0); /* 0 0 means full range of msg nums */
-
-      // callback polling: 500 ms polling cycle
-      if (client.poll(-500000))
-        return client.soap->error;
-    }
-
-    printf("\n**** Terminating the Sequence\n");
-
-    // Termination fails if the server did not get all messages
-    if (soap_wsrm_terminate(client.soap, seq, soap_wsa_rand_uuid(client.soap)))
-    {
-      client.soap_stream_fault(std::cerr);
-      soap_wsrm_seq_free(client.soap, seq);
-      return client.soap->error;
-    }
-
-    // callback polling: 500 ms polling cycle
-    if (client.poll(-500000))
-      return client.soap->error;
-
-    // Delete the reliable messaging session sequence
-    soap_wsrm_seq_free(client.soap, seq);
-
   }
+}
+
+int Client::run()
+{
+  // Create a reliable messaging sequence handle for client-initiated session
+  soap_wsrm_sequence_handle seq;
+
+  xsd__duration expires = 30000; /* 30000 ms = 30 seconds to expire */
+  const char *id = soap_wsa_rand_uuid(soap);
+  double n;
+  int retry;
+
+  printf("\n**** Creating the Sequence\n");
+
+  // Create session for in-order messaging, init sequence handle
+  if (soap_wsrm_create_offer(soap, serverURI, clientURI, id, expires, DiscardFollowingFirstGap, soap_wsa_rand_uuid(soap), &seq))
+  {
+    soap_stream_fault(std::cerr);
+    soap_wsrm_seq_free(soap, seq);
+    return soap->error;
+  }
+
+  // poll 10 times for 1 second until created
+  for (retry = 10; retry && !soap_wsrm_seq_created(soap, seq); retry--)
+  {
+    // callback polling: 10 ms polling cycle
+    if (poll(1))
+      return soap->error;
+  }
+  if (!retry)
+  {
+    fprintf(stderr, "CANNOT CREATE SEQUENCE - SERVER NOT RESPONDING\n");
+    exit(1);
+  }
+
+  // Reliable messaging request message
+  if (soap_wsrm_request_acks(soap, seq, soap_wsa_rand_uuid(soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/AddTo"))
+  {
+    soap_stream_fault(std::cerr);
+    return soap->error;
+  }
+
+  n = 3.14;
+
+  _mssadh__AddTo addTo;
+  addTo.n = &n;
+  if (send_AddTo(&addTo) == SOAP_OK || soap->error == 202)
+    std::cout << std::endl << "**** AddTo(" << *addTo.n << ")" << std::endl;
+  else
+    soap_stream_fault(std::cerr);
+  destroy();
+
+  // callback polling: 500 ms polling cycle
+  if (poll(-500000))
+    return soap->error;
+
+  // Reliable messaging request message
+  if (soap_wsrm_request_acks(soap, seq, soap_wsa_rand_uuid(soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/SubtractFrom"))
+  {
+    soap_stream_fault(std::cerr);
+    return soap->error;
+  }
+
+  n = 1.41;
+
+  _mssadh__SubtractFrom subtractFrom;
+  subtractFrom.n = &n;
+  if (send_SubtractFrom(&subtractFrom) == SOAP_OK || soap->error == 202)
+    std::cout << std::endl << "**** SubtractFrom(" << *subtractFrom.n << ")" << std::endl;
+  else
+    soap_stream_fault(std::cerr);
+  destroy();
+
+  // callback polling: 500 ms polling cycle
+  if (poll(-500000))
+    return soap->error;
+
+  // Reliable messaging request message
+  if (soap_wsrm_request_acks(soap, seq, soap_wsa_rand_uuid(soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Clear"))
+  {
+    soap_stream_fault(std::cerr);
+    return soap->error;
+  }
+
+  _mssadh__Clear clear;
+  if (send_Clear(&clear) == SOAP_OK || soap->error == 202)
+    std::cout << std::endl << "**** Clear()" << std::endl;
+  else
+    soap_stream_fault(std::cerr);
+  destroy();
+
+  // callback polling: 500 ms polling cycle
+  if (poll(-500000))
+    return soap->error;
+
+  printf("\n**** Closing the Sequence\n");
+
+  if (soap_wsrm_close(soap, seq, soap_wsa_rand_uuid(soap)))
+  {
+    soap_stream_fault(std::cerr);
+    soap_wsrm_seq_free(soap, seq);
+    return soap->error;
+  }
+
+  // callback polling: 500 ms polling cycle
+  if (poll(-500000))
+    return soap->error;
+
+  // Resend messages marked as non-acked (as an option)
+  for (retry = 2; retry && soap_wsrm_nack(seq); retry--)
+  {
+    printf("\n**** Incomplete Messages - Calculation Discarded\n");
+
+    // In this case resending would not help to correct the problem, since
+    // the calculation will be off by the wrong message order anyway:
+    printf("\n**** Resending "SOAP_ULONG_FORMAT" Non-Acked Messages\n", soap_wsrm_nack(seq));
+    soap_wsrm_resend(soap, seq, 0, 0); /* 0 0 means full range of msg nums */
+
+    // callback polling: 500 ms polling cycle
+    if (poll(-500000))
+      return soap->error;
+  }
+
+  printf("\n**** Terminating the Sequence\n");
+
+  // Termination fails if the server did not get all messages
+  if (soap_wsrm_terminate(soap, seq, soap_wsa_rand_uuid(soap)))
+  {
+    soap_stream_fault(std::cerr);
+    soap_wsrm_seq_free(soap, seq);
+    return soap->error;
+  }
+
+  // callback polling: 500 ms polling cycle
+  if (poll(-500000))
+    return soap->error;
+
+  // Delete the reliable messaging session sequence
+  soap_wsrm_seq_free(soap, seq);
+
   return 0;
 }
 

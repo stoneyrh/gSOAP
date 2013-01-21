@@ -39,15 +39,16 @@ _boolean False = 0, True = 1; /* so we can take the address of these consts */
 
 static int jsstrout(struct soap *soap, const char *s)
 { int c;
+  char buf[8];
   if (soap_send_raw(soap, "\"", 1))
     return soap->error;
   while ((c = *s++))
   { switch (c)
     { case '"':
       case '\\':
-        soap->tmpbuf[0] = '\\';
-        soap->tmpbuf[1] = c;
-        if (soap_send_raw(soap, soap->tmpbuf, 2))
+        buf[0] = '\\';
+        buf[1] = c;
+        if (soap_send_raw(soap, buf, 2))
 	  return soap->error;
 	break;
       default:
@@ -70,20 +71,34 @@ static int jsstrout(struct soap *soap, const char *s)
               break;
           }
           if (c > 32)
-          { soap->tmpbuf[0] = '\\';
-            soap->tmpbuf[1] = c;
-            if (soap_send_raw(soap, soap->tmpbuf, 2))
+          { buf[0] = '\\';
+            buf[1] = c;
+            if (soap_send_raw(soap, buf, 2))
 	      return soap->error;
           }
           else
-	  { sprintf(soap->tmpbuf, "\\u%4x", c);
-	    if (soap_send_raw(soap, soap->tmpbuf, 6))
+	  { sprintf(buf, "\\u%4x", c);
+	    if (soap_send_raw(soap, buf, 6))
 	      return soap->error;
           }
 	}
-	else
-        { soap->tmpbuf[0] = c;
-          if (soap_send_raw(soap, soap->tmpbuf, 1))
+        else if ((c & 0x80) && (soap->omode & SOAP_ENC_LATIN) && (soap->omode & SOAP_C_UTFSTRING)) // utf8 to ISO 8859-1
+        { if (c < 0xE0 && (c & 0x1F) <= 0x03)
+            buf[0] = ((c & 0x1F) << 6) | (*s++ & 0x3F);
+          else
+            buf[0] = '?';
+          if (soap_send_raw(soap, buf, 1))
+            return soap->error;
+        }
+        else if ((c & 0x80) && !(soap->omode & SOAP_ENC_LATIN) && !(soap->omode & SOAP_C_UTFSTRING)) // ISO 8859-1 to utf8
+        { buf[0] = (char)(0xC0 | ((c >> 6) & 0x1F));
+          buf[1] = (char)(0x80 | (c & 0x3F));
+          if (soap_send_raw(soap, buf, 2))
+            return soap->error;
+        }
+        else
+        { buf[0] = c;
+          if (soap_send_raw(soap, buf, 1))
             return soap->error;
         }
     }
@@ -277,7 +292,9 @@ int json_recv(struct soap *soap, struct value *v)
                     c = 9;
                     break;               
                   case 'u':
-                  { char *h; wchar_t wc[2]; int i;
+                  { char *h;
+		    wchar_t wc[2];
+		    int i;
                     /* hex to utf8 conversion */
                     h = soap->tmpbuf;
                     for (i = 0; i < 4; i++)
@@ -291,11 +308,28 @@ int json_recv(struct soap *soap, struct value *v)
                     c = *t++;
                     if (!*t)
                       t = NULL;
-                    /* fall through default */
                   }
                 }
-              default:
                 *s++ = c;
+		break;
+              default:
+                if ((c & 0x80) && (soap->imode & SOAP_ENC_LATIN) && (soap->imode & SOAP_C_UTFSTRING)) // ISO 8859-1 to utf8
+                { *s++ = (char)(0xC0 | ((c >> 6) & 0x1F));
+                  soap->tmpbuf[0] = (0x80 | (c & 0x3F));
+                  soap->tmpbuf[1] = '\0';
+                  t = soap->tmpbuf;
+                }
+                else if ((c & 0x80) && !(soap->imode & SOAP_ENC_LATIN) && !(soap->imode & SOAP_C_UTFSTRING)) // utf8 to ISO 8859-1
+                { soap_wchar c1 = soap_getchar(soap);
+                  if (c1 == SOAP_EOF)
+                    return soap->error = SOAP_EOF;
+                  if (c < 0xE0 && (c & 0x1F) <= 0x03)
+                    *s++ = ((c & 0x1F) << 6) | (c1 & 0x3F);
+                  else
+                    *s++ = '?';
+                }
+		else
+                  *s++ = c;
             }
           }
         }
@@ -305,7 +339,7 @@ int json_recv(struct soap *soap, struct value *v)
       do
       { *s++ = c;
         c = soap_getchar(soap);
-      } while (isalnum((int)c) || (int)c == '.' || (int)c == '+' || (int)c == '-');
+      } while ((isalnum((int)c) || (int)c == '.' || (int)c == '+' || (int)c == '-') && s - soap->tmpbuf < (int)sizeof(soap->tmpbuf));
       *s = '\0';
       soap_unget(soap, c);
       if (soap->tmpbuf[0] == '-' || isdigit(soap->tmpbuf[0]))

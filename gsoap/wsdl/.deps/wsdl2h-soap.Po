@@ -18,8 +18,6 @@ wsdl2h-soap.o wsdl2h-soap.o: soap.cpp wsdlH.h wsdlStub.h \
   /usr/include/c++/4.2.1/climits \
   /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h \
   /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h \
-  /Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h \
-  /Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h \
   /usr/include/limits.h /usr/include/machine/limits.h \
   /usr/include/i386/limits.h /usr/include/i386/_limits.h \
   /usr/include/sys/syslimits.h /usr/include/c++/4.2.1/cstdlib \
@@ -105,8 +103,31 @@ wsdl2h-soap.o wsdl2h-soap.o: soap.cpp wsdlH.h wsdlStub.h \
   /usr/include/netinet/in.h /usr/include/netinet6/in6.h \
   /usr/include/netinet/tcp.h /usr/include/arpa/inet.h \
   /usr/include/netdb.h /usr/include/fcntl.h /usr/include/sys/fcntl.h \
-  /usr/include/math.h /usr/include/architecture/i386/math.h \
-  /usr/include/AvailabilityMacros.h /usr/include/c++/4.2.1/iterator \
+  /usr/include/openssl/bio.h /usr/include/AvailabilityMacros.h \
+  /usr/include/openssl/e_os2.h /usr/include/openssl/opensslconf.h \
+  /usr/include/openssl/crypto.h /usr/include/openssl/stack.h \
+  /usr/include/openssl/safestack.h /usr/include/openssl/opensslv.h \
+  /usr/include/openssl/ossl_typ.h /usr/include/openssl/symhacks.h \
+  /usr/include/openssl/err.h /usr/include/openssl/lhash.h \
+  /usr/include/openssl/rand.h /usr/include/openssl/ssl.h \
+  /usr/include/openssl/comp.h /usr/include/openssl/x509.h \
+  /usr/include/openssl/buffer.h /usr/include/openssl/evp.h \
+  /usr/include/openssl/objects.h /usr/include/openssl/obj_mac.h \
+  /usr/include/openssl/asn1.h /usr/include/openssl/bn.h \
+  /usr/include/openssl/ec.h /usr/include/openssl/ecdsa.h \
+  /usr/include/openssl/ecdh.h /usr/include/openssl/rsa.h \
+  /usr/include/openssl/dsa.h /usr/include/openssl/dh.h \
+  /usr/include/openssl/sha.h /usr/include/openssl/x509_vfy.h \
+  /usr/include/openssl/pkcs7.h /usr/include/openssl/pem.h \
+  /usr/include/openssl/pem2.h /usr/include/openssl/hmac.h \
+  /usr/include/openssl/kssl.h /usr/include/openssl/ssl2.h \
+  /usr/include/openssl/ssl3.h /usr/include/openssl/pq_compat.h \
+  /usr/include/openssl/tls1.h /usr/include/openssl/dtls1.h \
+  /usr/include/openssl/pqueue.h /usr/include/openssl/ssl23.h \
+  /usr/include/openssl/x509v3.h /usr/include/openssl/conf.h \
+  /usr/include/zlib.h /usr/include/zconf.h /usr/include/math.h \
+  /usr/include/architecture/i386/math.h /usr/include/inttypes.h \
+  /usr/include/c++/4.2.1/iterator \
   /usr/include/c++/4.2.1/bits/stream_iterator.h \
   /usr/include/c++/4.2.1/set /usr/include/c++/4.2.1/bits/stl_tree.h \
   /usr/include/c++/4.2.1/bits/stl_set.h \
@@ -177,10 +198,6 @@ wsdlStub.h:
 /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h:
 
 /usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h:
-
-/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/limits.h:
-
-/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/syslimits.h:
 
 /usr/include/limits.h:
 
@@ -446,11 +463,103 @@ includes.h:
 
 /usr/include/sys/fcntl.h:
 
+/usr/include/openssl/bio.h:
+
+/usr/include/AvailabilityMacros.h:
+
+/usr/include/openssl/e_os2.h:
+
+/usr/include/openssl/opensslconf.h:
+
+/usr/include/openssl/crypto.h:
+
+/usr/include/openssl/stack.h:
+
+/usr/include/openssl/safestack.h:
+
+/usr/include/openssl/opensslv.h:
+
+/usr/include/openssl/ossl_typ.h:
+
+/usr/include/openssl/symhacks.h:
+
+/usr/include/openssl/err.h:
+
+/usr/include/openssl/lhash.h:
+
+/usr/include/openssl/rand.h:
+
+/usr/include/openssl/ssl.h:
+
+/usr/include/openssl/comp.h:
+
+/usr/include/openssl/x509.h:
+
+/usr/include/openssl/buffer.h:
+
+/usr/include/openssl/evp.h:
+
+/usr/include/openssl/objects.h:
+
+/usr/include/openssl/obj_mac.h:
+
+/usr/include/openssl/asn1.h:
+
+/usr/include/openssl/bn.h:
+
+/usr/include/openssl/ec.h:
+
+/usr/include/openssl/ecdsa.h:
+
+/usr/include/openssl/ecdh.h:
+
+/usr/include/openssl/rsa.h:
+
+/usr/include/openssl/dsa.h:
+
+/usr/include/openssl/dh.h:
+
+/usr/include/openssl/sha.h:
+
+/usr/include/openssl/x509_vfy.h:
+
+/usr/include/openssl/pkcs7.h:
+
+/usr/include/openssl/pem.h:
+
+/usr/include/openssl/pem2.h:
+
+/usr/include/openssl/hmac.h:
+
+/usr/include/openssl/kssl.h:
+
+/usr/include/openssl/ssl2.h:
+
+/usr/include/openssl/ssl3.h:
+
+/usr/include/openssl/pq_compat.h:
+
+/usr/include/openssl/tls1.h:
+
+/usr/include/openssl/dtls1.h:
+
+/usr/include/openssl/pqueue.h:
+
+/usr/include/openssl/ssl23.h:
+
+/usr/include/openssl/x509v3.h:
+
+/usr/include/openssl/conf.h:
+
+/usr/include/zlib.h:
+
+/usr/include/zconf.h:
+
 /usr/include/math.h:
 
 /usr/include/architecture/i386/math.h:
 
-/usr/include/AvailabilityMacros.h:
+/usr/include/inttypes.h:
 
 /usr/include/c++/4.2.1/iterator:
 

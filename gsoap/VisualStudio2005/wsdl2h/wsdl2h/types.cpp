@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2012, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2001-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -620,7 +620,7 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
       { for (; *s; s++)
         { if (isalnum(*s))
             *t++ = *s;
-          else if (*s == '-' && s != p)
+          else if (*s == '-' && s[1] != '-' && s != p)
             *t++ = '_';
           else if (*s == '_')
           { if (s == p)
@@ -650,7 +650,7 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
     for (s = name; *s; s++)
     { if (isalnum(*s))
         *t++ = *s;
-      else if (*s == '-' && s[1] != '\0' && s != name)
+      else if (*s == '-' && s[1] != '-' && s[1] != '\0' && s != name)
         *t++ = '_';
       else if (!_flag && *s == '_')
       { strcpy(t, "_USCORE");
@@ -1056,229 +1056,70 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       return;
     }
   }
-  if (simpleType.restriction && simpleType.restriction->base)
+  if (simpleType.restriction)
   { const char *base = simpleType.restriction->base;
-    const char *baseURI = NULL;
-    if (simpleType.restriction->simpleTypePtr() && simpleType.restriction->simpleTypePtr()->schemaPtr())
-      baseURI = simpleType.restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
-    if (!anonymous)
-      fprintf(stream, "\n/// \"%s\":%s is a simpleType restriction of %s.\n", URI?URI:"", name, base);
-    document(simpleType.annotation);
-    document(simpleType.restriction->annotation);
-    if (!simpleType.restriction->enumeration.empty())
-    { bool is_numeric = true; // check if all enumeration values are numeric
-      bool is_qname = !strcmp(base, "xs:QName");
-      if (!anonymous)
-      { t = deftname(ENUM, NULL, false, prefix, URI, name);
-        if (t && !eflag)
-          fprintf(stream, "/// Note: enum values are prefixed with '%s' to avoid name clashes, please use wsdl2h option -e to omit this prefix\n", t);
-      }
-      if (!t)
-        t = gname(URI, name);
-      if (!anonymous)
-        fprintf(stream, "enum %s\n{\n", t);
-      else
-        fprintf(stream, "    enum %s\n    {\n", t);
-      for (vector<xs__enumeration>::const_iterator enumeration1 = simpleType.restriction->enumeration.begin(); enumeration1 != simpleType.restriction->enumeration.end(); ++enumeration1)
-      { const char *s;
-        if ((s = (*enumeration1).value))
-          is_numeric &= is_integer(s);
-      }
-      SetOfString enumvals;
-      for (vector<xs__enumeration>::const_iterator enumeration2 = simpleType.restriction->enumeration.begin(); enumeration2 != simpleType.restriction->enumeration.end(); ++enumeration2)
-      { const char *s;
-        document((*enumeration2).annotation);
-        if ((s = (*enumeration2).value))
-        { if (!enumvals.count(s))
-          { enumvals.insert(s);
-            if (is_numeric)
-              fprintf(stream, "\t%s = %s,\t///< %s value=\"%s\"\n", ename(t, s, false), s, base, s);
-            else if (is_qname && (*enumeration2).value_)
-              fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration2).value_, true), base, (*enumeration2).value_);
-            else
-              fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, s, false), base, s);
-          }
+    if (!base && simpleType.restriction->simpleType)
+    { if (!anonymous)
+      { if (simpleType.restriction->simpleType->list && simpleType.restriction->length && simpleType.restriction->length->value)
+        { fprintf(stream, "\n/// \"%s\":%s is a simpleType restriction list with length %s.", URI?URI:"", name, simpleType.restriction->length->value);
+          document(simpleType.restriction->length->annotation);
         }
-        else
-          fprintf(stream, "//\tunrecognized: enumeration '%s' has no value\n", name?name:"");
+	else
+          fprintf(stream, "\n/// \"%s\":%s is a simpleType restriction.", URI?URI:"", name);
       }
-      if (!anonymous)
-      { fprintf(stream, "};\n");
-        if (yflag)
-          fprintf(stream, "/// Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
-        if (pflag && simpleType.name)
-        { const char *s = aname(prefix, URI, name);
-          knames.insert(s);
-          s = aname(prefix, URI, name);
-          fprintf(stream, "\n/// Class wrapper\n");
-          fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", s);
-          fprintf(stream, elementformat, tname(prefix, URI, name), "__item;");
-          modify(s);
-          fprintf(stream, "\n};\n");
-        }
-      }
-      else
-        fprintf(stream, "    }\n");
+      gen(URI, name, *simpleType.restriction->simpleType, anonymous);
     }
     else
-    { if (simpleType.restriction->length && simpleType.restriction->length->value)
-      { fprintf(stream, "/// Length of this string is exactly %s characters\n", simpleType.restriction->length->value);
-        document(simpleType.restriction->length->annotation);
-      }
-      else
-      { const char *a = NULL, *b = NULL;
-        if (simpleType.restriction->minLength)
-        { a = simpleType.restriction->minLength->value;
-          document(simpleType.restriction->minLength->annotation);
-	}
-        if (simpleType.restriction->maxLength)
-        { b = simpleType.restriction->maxLength->value;
-          document(simpleType.restriction->maxLength->annotation);
-	}
-        if (a || b)
-          fprintf(stream, "/// Length of this string is within %s..%s characters\n", a?a:"0", b?b:"");
-      }
-      if (simpleType.restriction->precision && simpleType.restriction->precision->value)
-        fprintf(stream, "/// %sprecision is %s (note: not automatically enforced)\n", simpleType.restriction->precision->fixed?"fixed ":"", simpleType.restriction->precision->value);
-      if (simpleType.restriction->scale && simpleType.restriction->scale->value)
-        fprintf(stream, "/// %sscale is %s (note: not automatically enforced)\n", simpleType.restriction->scale->fixed?"fixed ":"", simpleType.restriction->scale->value);
-      if (simpleType.restriction->totalDigits && simpleType.restriction->totalDigits->value)
-        fprintf(stream, "/// %snumber of total digits is %s (note: not automatically enforced)\n", simpleType.restriction->totalDigits->fixed?"fixed ":"", simpleType.restriction->totalDigits->value);
-      if (simpleType.restriction->fractionDigits && simpleType.restriction->fractionDigits->value)
-        fprintf(stream, "/// %snumber of fraction digits is %s (note: not automatically enforced)\n", simpleType.restriction->fractionDigits->fixed?"fixed ":"", simpleType.restriction->fractionDigits->value);
-      for (vector<xs__pattern>::const_iterator pattern1 = simpleType.restriction->pattern.begin(); pattern1 != simpleType.restriction->pattern.end(); ++pattern1)
-        fprintf(stream, "/// Content pattern is \"%s\" (note: not automatically enforced)\n", xstring((*pattern1).value));
-      const char *ai = NULL, *ae = NULL, *bi = NULL, *be = NULL;
-      if (simpleType.restriction->minInclusive)
-      { ai = simpleType.restriction->minInclusive->value;
-        document(simpleType.restriction->minInclusive->annotation);
-      }
-      else if (simpleType.restriction->minExclusive)
-      { ae = simpleType.restriction->minExclusive->value;
-        document(simpleType.restriction->minExclusive->annotation);
-      }
-      if (simpleType.restriction->maxInclusive)
-      { bi = simpleType.restriction->maxInclusive->value;
-        document(simpleType.restriction->maxInclusive->annotation);
-      }
-      else if (simpleType.restriction->maxExclusive)
-      { be = simpleType.restriction->maxExclusive->value;
-        document(simpleType.restriction->maxExclusive->annotation);
-      }
-      if (ai || ae || bi || be)
-      { fprintf(stream, "/// Value range is ");
-        if (ai)
-          fprintf(stream, "[%s..", ai);
-        else if (ae)
-          fprintf(stream, "(%s..", ae);
-        else
-          fprintf(stream, "[..");
-        if (bi)
-          fprintf(stream, "%s]\n", bi);
-        else if (be)
-          fprintf(stream, "%s)\n", be);
-        else
-          fprintf(stream, "]\n");
-      }
-      if (!simpleType.restriction->attribute.empty())
-      { if (!Wflag)
-          fprintf(stderr, "\nWarning: simpleType '%s' should not have attributes\n", name?name:"");
-      }
-      const char *s = tname(NULL, baseURI, base);
+    { if (!base)
+        base = "xsd:string";
+      const char *baseURI = NULL;
+      if (simpleType.restriction->simpleTypePtr() && simpleType.restriction->simpleTypePtr()->schemaPtr())
+        baseURI = simpleType.restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
       if (!anonymous)
-      { bool is_ptr = false;
-        is_ptr = (strchr(s, '*') != NULL) || (s == pname(true, NULL, baseURI, base));
-        t = deftname(TYPEDEF, NULL, is_ptr, prefix, URI, name);
-        if (t)
-          fprintf(stream, "typedef %s %s", s, t);
-      }
-      else
-      { t = "";
-        fprintf(stream, elementformat, s, "");
-        fprintf(stream, "\n");
-      }
-      if (t)
-      { if (!anonymous && !simpleType.restriction->pattern.empty())
-        { fprintf(stream, " \"");
-          for (vector<xs__pattern>::const_iterator pattern2 = simpleType.restriction->pattern.begin(); pattern2 != simpleType.restriction->pattern.end(); ++pattern2)
-          { if (pattern2 != simpleType.restriction->pattern.begin())
-              fprintf(stream, "|");
-            fprintf(stream, "%s", xstring((*pattern2).value));
-          }
-          fprintf(stream, "\"");
-        }
-        // add range info only when type is numeric
-        bool is_numeric = false, is_float = false;
-        if (!strncmp(s, "unsigned ", 9))
-          s += 9;
-        else if (!strncmp(s, "xsd__unsigned", 13))
-          s += 13;
-        else if (!strncmp(s, "xsd__", 5))
-          s += 5;
-        if (!strcmp(s, "double")
-         || !strcmp(s, "float"))
-          is_numeric = is_float = true;
-        else if (!strcmp(s, "bool")
-         || !strcmp(s, "byte")
-         || !strcmp(s, "Byte")
-         || !strcmp(s, "char")
-         || !strcmp(s, "double")
-         || !strcmp(s, "float")
-         || !strcmp(s, "int")
-         || !strcmp(s, "Int")
-         || !strcmp(s, "long")
-         || !strcmp(s, "Long")
-         || !strcmp(s, "LONG64")
-         || !strcmp(s, "short")
-         || !strcmp(s, "Short")
-         || !strcmp(s, "ULONG64"))
-          is_numeric = true;
-        if (!anonymous
-         && simpleType.restriction->minLength
-         && simpleType.restriction->minLength->value)
-          fprintf(stream, " %s", simpleType.restriction->minLength->value);
-        else if (is_numeric
-              && !anonymous
-              && simpleType.restriction->minInclusive
-              && simpleType.restriction->minInclusive->value
-              && is_integer(simpleType.restriction->minInclusive->value))
-          fprintf(stream, " %s", simpleType.restriction->minInclusive->value);
-        else if (is_float
-              && !anonymous
-              && simpleType.restriction->minExclusive
-              && simpleType.restriction->minExclusive->value
-              && is_integer(simpleType.restriction->minExclusive->value))
-          fprintf(stream, " %s", simpleType.restriction->minExclusive->value);
-        else if (is_numeric
-              && !anonymous
-              && simpleType.restriction->minExclusive
-              && simpleType.restriction->minExclusive->value
-              && is_integer(simpleType.restriction->minExclusive->value))
-          fprintf(stream, " " SOAP_LONG_FORMAT, to_integer(simpleType.restriction->minExclusive->value)+1);
-        if (!anonymous
-         && simpleType.restriction->maxLength
-         && simpleType.restriction->maxLength->value)
-          fprintf(stream, ":%s", simpleType.restriction->maxLength->value);
-        else if (is_numeric
-              && !anonymous
-              && simpleType.restriction->maxInclusive
-              && simpleType.restriction->maxInclusive->value
-              && is_integer(simpleType.restriction->maxInclusive->value))
-          fprintf(stream, ":%s", simpleType.restriction->maxInclusive->value);
-        else if (is_float
-              && !anonymous
-              && simpleType.restriction->maxExclusive
-              && simpleType.restriction->maxExclusive->value
-              && is_integer(simpleType.restriction->maxExclusive->value))
-          fprintf(stream, ":%s", simpleType.restriction->maxExclusive->value);
-        else if (is_numeric
-              && !anonymous
-              && simpleType.restriction->maxExclusive
-              && simpleType.restriction->maxExclusive->value
-              && is_integer(simpleType.restriction->maxExclusive->value))
-          fprintf(stream, ":" SOAP_LONG_FORMAT, to_integer(simpleType.restriction->maxExclusive->value)-1);
+        fprintf(stream, "\n/// \"%s\":%s is a simpleType restriction of %s.\n", URI?URI:"", name, base);
+      document(simpleType.annotation);
+      document(simpleType.restriction->annotation);
+      if (!simpleType.restriction->enumeration.empty())
+      { bool is_numeric = true; // check if all enumeration values are numeric
+        bool is_qname = !strcmp(base, "xs:QName");
         if (!anonymous)
-        { fprintf(stream, ";\n");
+        { t = deftname(ENUM, NULL, false, prefix, URI, name);
+          if (t && !eflag)
+            fprintf(stream, "/// Note: enum values are prefixed with '%s' to avoid name clashes, please use wsdl2h option -e to omit this prefix\n", t);
+        }
+        if (!t)
+          t = gname(URI, name);
+        if (!anonymous)
+          fprintf(stream, "enum %s\n{\n", t);
+        else
+          fprintf(stream, "    enum %s\n    {\n", t);
+        for (vector<xs__enumeration>::const_iterator enumeration1 = simpleType.restriction->enumeration.begin(); enumeration1 != simpleType.restriction->enumeration.end(); ++enumeration1)
+        { const char *s;
+          if ((s = (*enumeration1).value))
+            is_numeric &= is_integer(s);
+        }
+        SetOfString enumvals;
+        for (vector<xs__enumeration>::const_iterator enumeration2 = simpleType.restriction->enumeration.begin(); enumeration2 != simpleType.restriction->enumeration.end(); ++enumeration2)
+        { const char *s;
+          document((*enumeration2).annotation);
+          if ((s = (*enumeration2).value))
+          { if (!enumvals.count(s))
+            { enumvals.insert(s);
+              if (is_numeric)
+                fprintf(stream, "\t%s = %s,\t///< %s value=\"%s\"\n", ename(t, s, false), s, base, s);
+              else if (is_qname && (*enumeration2).value_)
+                fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration2).value_, true), base, (*enumeration2).value_);
+              else
+                fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, s, false), base, s);
+            }
+          }
+          else
+            fprintf(stream, "//\tunrecognized: enumeration '%s' has no value\n", name?name:"");
+        }
+        if (!anonymous)
+        { fprintf(stream, "};\n");
+          if (yflag)
+            fprintf(stream, "/// Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
           if (pflag && simpleType.name)
           { const char *s = aname(prefix, URI, name);
             knames.insert(s);
@@ -1288,6 +1129,180 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             fprintf(stream, elementformat, tname(prefix, URI, name), "__item;");
             modify(s);
             fprintf(stream, "\n};\n");
+          }
+        }
+        else
+          fprintf(stream, "    }\n");
+      }
+      else
+      { if (simpleType.restriction->length && simpleType.restriction->length->value)
+        { fprintf(stream, "/// Length of this string is exactly %s characters\n", simpleType.restriction->length->value);
+          document(simpleType.restriction->length->annotation);
+        }
+        else
+        { const char *a = NULL, *b = NULL;
+          if (simpleType.restriction->minLength)
+          { a = simpleType.restriction->minLength->value;
+            document(simpleType.restriction->minLength->annotation);
+	  }
+          if (simpleType.restriction->maxLength)
+          { b = simpleType.restriction->maxLength->value;
+            document(simpleType.restriction->maxLength->annotation);
+	  }
+          if (a || b)
+            fprintf(stream, "/// Length of this string is within %s..%s characters\n", a?a:"0", b?b:"");
+        }
+        if (simpleType.restriction->precision && simpleType.restriction->precision->value)
+          fprintf(stream, "/// %sprecision is %s (note: not automatically enforced)\n", simpleType.restriction->precision->fixed?"fixed ":"", simpleType.restriction->precision->value);
+        if (simpleType.restriction->scale && simpleType.restriction->scale->value)
+          fprintf(stream, "/// %sscale is %s (note: not automatically enforced)\n", simpleType.restriction->scale->fixed?"fixed ":"", simpleType.restriction->scale->value);
+        if (simpleType.restriction->totalDigits && simpleType.restriction->totalDigits->value)
+          fprintf(stream, "/// %snumber of total digits is %s (note: not automatically enforced)\n", simpleType.restriction->totalDigits->fixed?"fixed ":"", simpleType.restriction->totalDigits->value);
+        if (simpleType.restriction->fractionDigits && simpleType.restriction->fractionDigits->value)
+          fprintf(stream, "/// %snumber of fraction digits is %s (note: not automatically enforced)\n", simpleType.restriction->fractionDigits->fixed?"fixed ":"", simpleType.restriction->fractionDigits->value);
+        for (vector<xs__pattern>::const_iterator pattern1 = simpleType.restriction->pattern.begin(); pattern1 != simpleType.restriction->pattern.end(); ++pattern1)
+          fprintf(stream, "/// Content pattern is \"%s\" (note: not automatically enforced)\n", xstring((*pattern1).value));
+        const char *ai = NULL, *ae = NULL, *bi = NULL, *be = NULL;
+        if (simpleType.restriction->minInclusive)
+        { ai = simpleType.restriction->minInclusive->value;
+          document(simpleType.restriction->minInclusive->annotation);
+        }
+        else if (simpleType.restriction->minExclusive)
+        { ae = simpleType.restriction->minExclusive->value;
+          document(simpleType.restriction->minExclusive->annotation);
+        }
+        if (simpleType.restriction->maxInclusive)
+        { bi = simpleType.restriction->maxInclusive->value;
+          document(simpleType.restriction->maxInclusive->annotation);
+        }
+        else if (simpleType.restriction->maxExclusive)
+        { be = simpleType.restriction->maxExclusive->value;
+          document(simpleType.restriction->maxExclusive->annotation);
+        }
+        if (ai || ae || bi || be)
+        { fprintf(stream, "/// Value range is ");
+          if (ai)
+            fprintf(stream, "[%s..", ai);
+          else if (ae)
+            fprintf(stream, "(%s..", ae);
+          else
+            fprintf(stream, "[..");
+          if (bi)
+            fprintf(stream, "%s]\n", bi);
+          else if (be)
+            fprintf(stream, "%s)\n", be);
+          else
+            fprintf(stream, "]\n");
+        }
+        if (!simpleType.restriction->attribute.empty())
+        { if (!Wflag)
+            fprintf(stderr, "\nWarning: simpleType '%s' should not have attributes\n", name?name:"");
+        }
+        const char *s = tname(NULL, baseURI, base);
+        if (!anonymous)
+        { bool is_ptr = false;
+          is_ptr = (strchr(s, '*') != NULL) || (s == pname(true, NULL, baseURI, base));
+          t = deftname(TYPEDEF, NULL, is_ptr, prefix, URI, name);
+          if (t)
+            fprintf(stream, "typedef %s %s", s, t);
+        }
+        else
+        { t = "";
+          fprintf(stream, elementformat, s, "");
+          fprintf(stream, "\n");
+        }
+        if (t)
+        { if (!anonymous && !simpleType.restriction->pattern.empty())
+          { fprintf(stream, " \"");
+            for (vector<xs__pattern>::const_iterator pattern2 = simpleType.restriction->pattern.begin(); pattern2 != simpleType.restriction->pattern.end(); ++pattern2)
+            { if (pattern2 != simpleType.restriction->pattern.begin())
+                fprintf(stream, "|");
+              fprintf(stream, "%s", xstring((*pattern2).value));
+            }
+            fprintf(stream, "\"");
+          }
+          // add range info only when type is numeric
+          bool is_numeric = false, is_float = false;
+          if (!strncmp(s, "unsigned ", 9))
+            s += 9;
+          else if (!strncmp(s, "xsd__unsigned", 13))
+            s += 13;
+          else if (!strncmp(s, "xsd__", 5))
+            s += 5;
+          if (!strcmp(s, "double")
+           || !strcmp(s, "float"))
+            is_numeric = is_float = true;
+          else if (!strcmp(s, "bool")
+           || !strcmp(s, "byte")
+           || !strcmp(s, "Byte")
+           || !strcmp(s, "char")
+           || !strcmp(s, "double")
+           || !strcmp(s, "float")
+           || !strcmp(s, "int")
+           || !strcmp(s, "Int")
+           || !strcmp(s, "long")
+           || !strcmp(s, "Long")
+           || !strcmp(s, "LONG64")
+           || !strcmp(s, "short")
+           || !strcmp(s, "Short")
+           || !strcmp(s, "ULONG64"))
+            is_numeric = true;
+          if (!anonymous
+           && simpleType.restriction->minLength
+           && simpleType.restriction->minLength->value)
+            fprintf(stream, " %s", simpleType.restriction->minLength->value);
+          else if (is_numeric
+                && !anonymous
+                && simpleType.restriction->minInclusive
+                && simpleType.restriction->minInclusive->value
+                && is_integer(simpleType.restriction->minInclusive->value))
+            fprintf(stream, " %s", simpleType.restriction->minInclusive->value);
+          else if (is_float
+                && !anonymous
+                && simpleType.restriction->minExclusive
+                && simpleType.restriction->minExclusive->value
+                && is_integer(simpleType.restriction->minExclusive->value))
+            fprintf(stream, " %s", simpleType.restriction->minExclusive->value);
+          else if (is_numeric
+                && !anonymous
+                && simpleType.restriction->minExclusive
+                && simpleType.restriction->minExclusive->value
+                && is_integer(simpleType.restriction->minExclusive->value))
+            fprintf(stream, " " SOAP_LONG_FORMAT, to_integer(simpleType.restriction->minExclusive->value)+1);
+          if (!anonymous
+           && simpleType.restriction->maxLength
+           && simpleType.restriction->maxLength->value)
+            fprintf(stream, ":%s", simpleType.restriction->maxLength->value);
+          else if (is_numeric
+                && !anonymous
+                && simpleType.restriction->maxInclusive
+                && simpleType.restriction->maxInclusive->value
+                && is_integer(simpleType.restriction->maxInclusive->value))
+            fprintf(stream, ":%s", simpleType.restriction->maxInclusive->value);
+          else if (is_float
+                && !anonymous
+                && simpleType.restriction->maxExclusive
+                && simpleType.restriction->maxExclusive->value
+                && is_integer(simpleType.restriction->maxExclusive->value))
+            fprintf(stream, ":%s", simpleType.restriction->maxExclusive->value);
+          else if (is_numeric
+                && !anonymous
+                && simpleType.restriction->maxExclusive
+                && simpleType.restriction->maxExclusive->value
+                && is_integer(simpleType.restriction->maxExclusive->value))
+            fprintf(stream, ":" SOAP_LONG_FORMAT, to_integer(simpleType.restriction->maxExclusive->value)-1);
+          if (!anonymous)
+          { fprintf(stream, ";\n");
+            if (pflag && simpleType.name)
+            { const char *s = aname(prefix, URI, name);
+              knames.insert(s);
+              s = aname(prefix, URI, name);
+              fprintf(stream, "\n/// Class wrapper\n");
+              fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", s);
+              fprintf(stream, elementformat, tname(prefix, URI, name), "__item;");
+              modify(s);
+              fprintf(stream, "\n};\n");
+            }
           }
         }
       }
@@ -2088,12 +2103,12 @@ void Types::gen(const char *URI, const vector<xs__attributeGroup>& attributeGrou
         gen(URI, *(*attributeGroup).attributeGroupPtr()->anyAttribute);
     }
     else
-    { fprintf(stream, "/// Begin attributeGroup %s.\n", (*attributeGroup).name?(*attributeGroup).name:"");
+    { fprintf(stream, "/// Begin attributeGroup %s.\n", (*attributeGroup).name?(*attributeGroup).name:(*attributeGroup).ref?(*attributeGroup).ref:"");
       gen(URI, (*attributeGroup).attribute);
       gen(URI, (*attributeGroup).attributeGroup);
       if ((*attributeGroup).anyAttribute)
         gen(URI, *(*attributeGroup).anyAttribute);
-      fprintf(stream, "/// End of attributeGroup %s.\n", (*attributeGroup).name?(*attributeGroup).name:"");
+      fprintf(stream, "/// End of attributeGroup %s.\n", (*attributeGroup).name?(*attributeGroup).name:(*attributeGroup).ref?(*attributeGroup).ref:"");
     }
   }
 }
@@ -3238,7 +3253,7 @@ char *estrdup(const char *s)
 char *estrdupf(const char *s)
 { char *t = (char*)emalloc(strlen(s) + 1);
   char *p;
-  for (p = t; *s; p++, s++)
+  for (p = t; *s; s++)
   { if (s[0] == '/' && s[1] == '*')
     { for (s += 2; s[0] && s[1]; s++)
       { if (s[0] == '*' && s[1] == '/')
@@ -3248,7 +3263,7 @@ char *estrdupf(const char *s)
       }
       continue;
     }
-    *p = *s;
+    *p++ = *s;
   }
   *p = '\0';
   return t;

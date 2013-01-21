@@ -877,7 +877,7 @@ without OpenSSL.</li>
 <li>Fixed httpda plugin crash.</li>
 <li>Fixed wsdl2h processing of xs:group maxOccurs=unbounded.</li>
 <li>Fixed mod_gsoap plugin compilation issues.</li>
-<li>Fixed literal XML UTF8 (UTF8 is now retained).</li>
+<li>Fixed literal XML UTF8 (UTF8 is now retained with SOAP_C_UTFSTRING).</li>
 </ul>
 <li>Version 2.8.12 (12/8/2012)</li>
 <ul>
@@ -889,6 +889,15 @@ without OpenSSL.</li>
 <li>Improved WCF WS-Addressing interop (duplex) channel.</li>
 <li>Changed code to normalize in/out MEP for solicit-response messaging.</li>
 <li>Fixed client-side OpenSSL host check that is known to crash in OpenSSL.</li>
+</ul>
+<li>Version 2.8.13 (1/21/2013)</li>
+<ul>
+<li>Improved XML-RPC/JSON API and documentation, with one change: now must use SOAP_C_UTFSTRING to hold UTF8 in 8-bit strings.</li>
+<li>Improved VxWorks compatibility.</li>
+<li>Updated soap_read_X and soap_write_X to serialize object graphs with SOAP encoding enabled: use soap_set_version(soap, V) with V=0 (no SOAP), V=1 (SOAP1.1), V=2 (SOAP1.2).</li>
+<li>Fixed broken WSDL &lt;types&gt; nested schema XSD import.</li>
+<li>Fixed operation action overriding by input/output SOAP action.</li>
+<li>Deprecated old-style C++ service proxies and objects (use soapcpp2 -z1 flag to generate).</li>
 </ul>
 </ul>
 

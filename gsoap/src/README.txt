@@ -94,6 +94,7 @@ COMMAND LINE OPTIONS
 -w	don't generate WSDL and schema files
 -x	don't generate sample XML message files
 -y	include C/C++ type access information in sample XML messages
+-z1	generate deprecated old-style C++ service proxies and objects
 infile	header file to parse (or stdin)
 
 DOCUMENTATION

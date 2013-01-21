@@ -36,6 +36,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #ifdef __cplusplus
 
+/// iterates over _struct
+
 class _struct_iterator
 {
 private:
@@ -45,11 +47,13 @@ public:
   			_struct_iterator(const struct _struct*);
   bool			operator==(const _struct_iterator&) const;
   bool			operator!=(const _struct_iterator&) const;
-  const char*		index() const;
-  struct value&		operator*() const;
+  const char*		index() const;		///< get member name
+  struct value&		operator*() const;	///< get member value
   _struct_iterator&	operator++();
   _struct_iterator&	operator+=(int);
 };
+
+/// iterates over _array
 
 class _array_iterator
 {
@@ -61,11 +65,13 @@ public:
   			_array_iterator(const struct _array*);
   bool			operator==(const _array_iterator&) const;
   bool			operator!=(const _array_iterator&) const;
-  int 			index() const;
-  struct value&		operator*() const;
+  int 			index() const;		///< get array index
+  struct value&		operator*() const;	///< get array value
   _array_iterator&	operator++();
   _array_iterator&	operator+=(int);
 };
+
+/// iterates over params
 
 class params_iterator
 {
@@ -77,8 +83,8 @@ public:
   			params_iterator(const struct params*);
   bool			operator==(const params_iterator&) const;
   bool			operator!=(const params_iterator&) const;
-  int			index() const;
-  struct value&		operator*() const;
+  int			index() const;		///< get parameter index
+  struct value&		operator*() const;	///< get parameter value
   params_iterator&	operator++();
   params_iterator&	operator+=(int);
 };

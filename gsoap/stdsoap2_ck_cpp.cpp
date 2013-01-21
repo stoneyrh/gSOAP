@@ -1,10 +1,10 @@
 /*
-	stdsoap2.c[pp] 2.8.12
+	stdsoap2.c[pp] 2.8.13
 
 	gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -51,13 +51,16 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20812
+#define GSOAP_LIB_VERSION 20813
 
 #ifdef AS400
 # pragma convert(819)	/* EBCDIC to ASCII */
 #endif
 
 #include "stdsoap2.h"
+#if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)
+#include <ipcom_key_db.h>
+#endif
 #if GSOAP_VERSION != GSOAP_LIB_VERSION
 # error "GSOAP VERSION MISMATCH IN LIBRARY: PLEASE REINSTALL PACKAGE"
 #endif
@@ -76,10 +79,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.12 2012-12-08 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.13 2013-01-21 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.12 2012-12-08 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.13 2013-01-21 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -2983,9 +2986,16 @@ soap_rand()
 SOAP_FMAC1
 int
 SOAP_FMAC2
+#if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)
+soap_ssl_server_context(struct soap *soap, unsigned short flags, const char *keyfile, const char *keyid, const char *password, const char *cafile, const char *capath, const char *dhfile, const char *randfile, const char *sid)
+#else
 soap_ssl_server_context(struct soap *soap, unsigned short flags, const char *keyfile, const char *password, const char *cafile, const char *capath, const char *dhfile, const char *randfile, const char *sid)
+#endif
 { int err;
   soap->keyfile = keyfile;
+#if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)
+  soap->keyid = keyid;
+#endif
   soap->password = password;
   soap->cafile = cafile;
   soap->capath = capath;
@@ -3051,8 +3061,15 @@ soap_ssl_server_context(struct soap *soap, unsigned short flags, const char *key
 SOAP_FMAC1
 int
 SOAP_FMAC2
+#if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)
+soap_ssl_client_context(struct soap *soap, unsigned short flags, const char *keyfile, const char *keyid, const char *password, const char *cafile, const char *capath, const char *randfile)
+#else
 soap_ssl_client_context(struct soap *soap, unsigned short flags, const char *keyfile, const char *password, const char *cafile, const char *capath, const char *randfile)
+#endif
 { soap->keyfile = keyfile;
+#if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)
+  soap->keyid = keyid;
+#endif
   soap->password = password;
   soap->cafile = cafile;
   soap->capath = capath;
@@ -3172,6 +3189,9 @@ ssl_auth_init(struct soap *soap)
 #ifdef WITH_OPENSSL
   long flags;
   int mode;
+#if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)
+  EVP_PKEY* pkey;
+#endif
   if (!soap_ssl_init_done)
     soap_ssl_init();
   ERR_clear_error();
@@ -3207,7 +3227,17 @@ ssl_auth_init(struct soap *soap)
     }
     if (!SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM))
       return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read key file", SOAP_SSL_ERROR);
+#ifndef WM_SECURE_KEY_STORAGE
+    if (!SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM))
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read key file", SOAP_SSL_ERROR);
+#endif
   }
+#if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)
+  if (NULL == (pkey = ipcom_key_db_pkey_get(soap->keyid)))
+    return soap_set_receiver_error(soap, "SSL error", "Can't find key", SOAP_SSL_ERROR);
+  if (0 == SSL_CTX_use_PrivateKey(soap->ctx, pkey))
+    return soap_set_receiver_error(soap, "SSL error", "Can't read key", SOAP_SSL_ERROR);
+#endif
 /* Suggested alternative approach to check the key file for certs (cafile=NULL):*/
 #if 0
   if (soap->password)
@@ -3238,7 +3268,11 @@ ssl_auth_init(struct soap *soap)
     int n = (int)soap_strtoul(soap->dhfile, &s, 10);
     /* if dhfile is numeric, treat it as a key length to generate DH params which can take a while */
     if (n >= 512 && s && *s == '\0')
+#if defined(VXWORKS)
+      DH_generate_parameters_ex(dh, n, 2/*or 5*/, NULL);
+#else
       dh = DH_generate_parameters(n, 2/*or 5*/, NULL, NULL);
+#endif
     else
     { BIO *bio;
       bio = BIO_new_file(soap->dhfile, "r");
@@ -5018,6 +5052,7 @@ soap_closesock(struct soap *soap)
 #endif
 
 /******************************************************************************/
+#ifndef WITH_NOIO
 #ifndef PALM_1
 SOAP_FMAC1
 int
@@ -5028,6 +5063,7 @@ soap_force_closesock(struct soap *soap)
     return soap_closesocket(soap->socket);
   return SOAP_OK;
 }
+#endif
 #endif
 
 /******************************************************************************/
@@ -5657,8 +5693,8 @@ http_get(struct soap *soap)
 #ifndef PALM_1
 static int
 http_405(struct soap *soap)
-{ return 405;
-  (void)soap;
+{ (void)soap;
+  return 405;
 }
 #endif
 #endif
@@ -6741,6 +6777,7 @@ SOAP_FMAC2
 soap_embed(struct soap *soap, const void *p, const struct soap_array *a, int n, const char *tag, int type)
 { register int i;
   struct soap_plist *pp;
+  (void)soap;
   if (soap->version == 2)
     soap->encoding = 1;
   if (a)
@@ -6754,7 +6791,6 @@ soap_embed(struct soap *soap, const void *p, const struct soap_array *a, int n, 
     soap_set_embedded(soap, pp);
   }
   return i;
-  (void)soap;
 }
 #endif
 #endif
@@ -6792,6 +6828,7 @@ SOAP_FMAC2
 soap_pointer_enter(struct soap *soap, const void *p, const struct soap_array *a, int n, int type, struct soap_plist **ppp)
 { register size_t h;
   register struct soap_plist *pp;
+  (void)n;
   if (!soap->pblk || soap->pidx >= SOAP_PTRBLK)
   { register struct soap_pblk *pb = (struct soap_pblk*)SOAP_MALLOC(soap, sizeof(struct soap_pblk));
     if (!pb)
@@ -6817,7 +6854,6 @@ soap_pointer_enter(struct soap *soap, const void *p, const struct soap_array *a,
   soap->pht[h] = pp;
   pp->id = ++soap->idnum;
   return pp->id;
-  (void)n;
 }
 #endif
 #endif
@@ -6887,8 +6923,6 @@ soap_begin_count(struct soap *soap)
       soap->mode |= SOAP_IO_STORE;
   }
 #endif
-  if (!soap->encodingStyle && !(soap->mode & SOAP_XML_GRAPH))
-    soap->mode |= SOAP_XML_TREE;
 #ifndef WITH_LEANER
   if ((soap->mode & SOAP_ENC_MTOM) && (soap->mode & SOAP_ENC_DIME))
     soap->mode |= SOAP_ENC_MIME;
@@ -6975,8 +7009,6 @@ soap_begin_send(struct soap *soap)
       return soap->error;
   if (!(soap->mode & SOAP_IO_KEEPALIVE))
     soap->keep_alive = 0;
-  if (!soap->encodingStyle && !(soap->mode & SOAP_XML_GRAPH))
-    soap->mode |= SOAP_XML_TREE;
 #ifndef WITH_LEANER
   if ((soap->mode & SOAP_ENC_MTOM) && (soap->mode & SOAP_ENC_DIME))
   { soap->mode |= SOAP_ENC_MIME;
@@ -7083,7 +7115,7 @@ int
 SOAP_FMAC2
 soap_reference(struct soap *soap, const void *p, int t)
 { struct soap_plist *pp;
-  if (!p || (soap->mode & SOAP_XML_TREE))
+  if (!p || (!soap->encodingStyle && !(soap->omode & SOAP_XML_GRAPH)) || (soap->omode & SOAP_XML_TREE))
     return 1;
   if (soap_pointer_lookup(soap, p, t, &pp))
   { if (pp->mark1 == 0)
@@ -7091,11 +7123,7 @@ soap_reference(struct soap *soap, const void *p, int t)
       pp->mark2 = 2;
     }
   }
-  else if (soap_pointer_enter(soap, p, NULL, 0, t, &pp))
-  { pp->mark1 = 0;
-    pp->mark2 = 0;
-  }
-  else
+  else if (!soap_pointer_enter(soap, p, NULL, 0, t, &pp))
     return 1;
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Reference %p type=%d (%d %d)\n", p, t, (int)pp->mark1, (int)pp->mark2));
   return pp->mark1;
@@ -7110,12 +7138,10 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_array_reference(struct soap *soap, const void *p, const struct soap_array *a, int n, int t)
-{ register int i;
-  struct soap_plist *pp;
-  if (!p || !a->__ptr)
+{ struct soap_plist *pp;
+  if (!p || !a->__ptr || (!soap->encodingStyle && !(soap->omode & SOAP_XML_GRAPH)) || (soap->omode & SOAP_XML_TREE))
     return 1;
-  i = soap_array_pointer_lookup(soap, p, a, n, t, &pp);
-  if (i)
+  if (soap_array_pointer_lookup(soap, p, a, n, t, &pp))
   { if (pp->mark1 == 0)
     { pp->mark1 = 2;
       pp->mark2 = 2;
@@ -7123,10 +7149,6 @@ soap_array_reference(struct soap *soap, const void *p, const struct soap_array *
   }
   else if (!soap_pointer_enter(soap, p, a, n, t, &pp))
     return 1;
-  else
-  { pp->mark1 = 0;
-    pp->mark2 = 0;
-  }
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Array reference %p ptr=%p dim=%d type=%d (%d %d)\n", p, a->__ptr, n, t, (int)pp->mark1, (int)pp->mark2));
   return pp->mark1;
 }
@@ -7141,10 +7163,10 @@ int
 SOAP_FMAC2
 soap_embedded_id(struct soap *soap, int id, const void *p, int t)
 { struct soap_plist *pp = NULL;
-  if (soap->mode & SOAP_XML_TREE)
+  if (!id || (!soap->encodingStyle && !(soap->omode & SOAP_XML_GRAPH)) || (soap->omode & SOAP_XML_TREE))
     return id;
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Embedded_id %p type=%d id=%d\n", p, t, id));
-  if (soap->version == 1 && soap->encodingStyle && !(soap->mode & SOAP_XML_GRAPH) && soap->part != SOAP_IN_HEADER)
+  if (soap->version == 1 && soap->part != SOAP_IN_HEADER)
   { if (id < 0)
     { id = soap_pointer_lookup(soap, p, t, &pp);
       if (id)
@@ -8907,6 +8929,7 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
   soap->session = NULL;
   soap->ssl_flags = SOAP_SSL_DEFAULT;
   soap->keyfile = NULL;
+  soap->keyid = NULL;
   soap->password = NULL;
   soap->cafile = NULL;
   soap->capath = NULL;
@@ -8925,6 +8948,7 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
   soap->session = NULL;
   soap->ssl_flags = SOAP_SSL_DEFAULT;
   soap->keyfile = NULL;
+  soap->keyid = NULL;
   soap->password = NULL;
   soap->cafile = NULL;
   soap->capath = NULL;
@@ -9394,7 +9418,11 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
 #endif
   if (id > 0)
   { sprintf(soap->tmpbuf, "_%d", id);
-    if (soap_attribute(soap, "id", soap->tmpbuf))
+    if (soap->version == 2)
+    { if (soap_attribute(soap, "SOAP-ENC:id", soap->tmpbuf))
+        return soap->error;
+    }
+    else if (soap_attribute(soap, "id", soap->tmpbuf))
       return soap->error;
   }
   if (type && *type && !(soap->mode & SOAP_XML_NOTYPE) && soap->part != SOAP_IN_HEADER)
@@ -9434,7 +9462,7 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
     soap->mustUnderstand = 0;
   }
   if (soap->encoding)
-  { if (soap->encodingStyle && soap->local_namespaces)
+  { if (soap->encodingStyle && soap->local_namespaces && soap->local_namespaces[0].id && soap->local_namespaces[1].id)
     { if (!*soap->encodingStyle)
       { if (soap->local_namespaces[1].out)
           soap->encodingStyle = soap->local_namespaces[1].out;
@@ -9444,6 +9472,8 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
       if (soap->encodingStyle && soap_attribute(soap, "SOAP-ENV:encodingStyle", soap->encodingStyle))
         return soap->error;
     }
+    else
+      soap->encodingStyle = NULL;
     soap->encoding = 0;
   }
   soap->null = 0;
@@ -9766,12 +9796,14 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_element_ref(struct soap *soap, const char *tag, int id, int href)
-{ register int n = 0;
-  const char *s = "href";
-  if (soap->version == 2)
-  { s = "SOAP-ENC:ref";
-    n = 1;
+{ register const char *s = "ref";
+  register int n = 1;
+  if (soap->version == 1)
+  { s = "href";
+    n = 0;
   }
+  else if (soap->version == 2)
+    s = "SOAP-ENC:ref";
   sprintf(soap->href, "#_%d", href);
   return soap_element_href(soap, tag, id, s, soap->href + n);
 }
@@ -9839,7 +9871,7 @@ soap_element_id(struct soap *soap, const char *tag, int id, const void *p, const
     return -1;
   }
 #ifndef WITH_NOIDREF
-  if (soap->mode & SOAP_XML_TREE)
+  if ((!soap->encodingStyle && !(soap->omode & SOAP_XML_GRAPH)) || (soap->omode & SOAP_XML_TREE))
     return 0;
   if (id < 0)
   { struct soap_plist *pp;
@@ -10611,7 +10643,7 @@ soap_peek_element(struct soap *soap)
     {
 #ifndef WITH_NOIDREF
       if (!strcmp(tp->name, "id"))
-      { if ((soap->version > 0 && !(soap->mode & SOAP_XML_TREE))
+      { if ((soap->version > 0 && !(soap->imode & SOAP_XML_TREE))
          || (soap->mode & SOAP_XML_GRAPH))
         { *soap->id = '#';
           strncpy(soap->id + 1, tp->value, sizeof(soap->id) - 2);
@@ -10619,11 +10651,19 @@ soap_peek_element(struct soap *soap)
         }
       }
       else if (!strcmp(tp->name, "href"))
-      { if (soap->version == 1
+      { if ((soap->version == 1 && !(soap->imode & SOAP_XML_TREE))
          || (soap->mode & SOAP_XML_GRAPH)
          || (soap->mode & SOAP_ENC_MTOM)
          || (soap->mode & SOAP_ENC_DIME))
         { strncpy(soap->href, tp->value, sizeof(soap->href) - 1);
+          soap->href[sizeof(soap->href)-1] = '\0';
+        }
+      }
+      else if (!strcmp(tp->name, "ref"))
+      { if ((soap->version == 2 && !(soap->imode & SOAP_XML_TREE))
+         || (soap->mode & SOAP_XML_GRAPH))
+        { *soap->href = '#';
+          strncpy(soap->href + (*tp->value != '#'), tp->value, sizeof(soap->href) - 2);
           soap->href[sizeof(soap->href)-1] = '\0';
         }
       }
@@ -10670,10 +10710,14 @@ soap_peek_element(struct soap *soap)
       else if (soap->version == 2)
       {
 #ifndef WITH_NOIDREF
-        if (!strcmp(tp->name, "ref")
-         || !soap_match_tag(soap, tp->name, "SOAP-ENC:ref"))
+        if (!soap_match_tag(soap, tp->name, "SOAP-ENC:id"))
+        { *soap->id = '#';
+          strncpy(soap->id + 1, tp->value, sizeof(soap->id) - 2);
+          soap->id[sizeof(soap->id)-1] = '\0';
+        }
+        else if (!soap_match_tag(soap, tp->name, "SOAP-ENC:ref"))
         { *soap->href = '#';
-          strncpy(soap->href + 1, tp->value, sizeof(soap->href) - 2);
+          strncpy(soap->href + (*tp->value != '#'), tp->value, sizeof(soap->href) - 2);
           soap->href[sizeof(soap->href)-1] = '\0';
         }
         else
@@ -13332,7 +13376,7 @@ soap_outliteral(struct soap *soap, const char *tag, char *const*p, const char *t
     }
   }
   if (p && *p)
-  { if (soap_send(soap, *p))
+  { if (soap_send(soap, *p)) /* send as-is */
       return soap->error;
   }
   if (t)
@@ -13409,7 +13453,7 @@ soap_outwliteral(struct soap *soap, const char *tag, wchar_t *const*p, const cha
   { wchar_t c;
     const wchar_t *s = *p;
     while ((c = *s++))
-    { if (soap_pututf8(soap, (unsigned long)c))
+    { if (soap_pututf8(soap, (unsigned long)c)) /* send as-is in UTF8 */
         return soap->error;
     }
   }
@@ -14755,8 +14799,8 @@ soap_begin_recv(struct soap *soap)
     return soap->error = SOAP_CHK_EOF;
   soap_unget(soap, c);
 #ifndef WITH_NOHTTP
-  /* if not XML or MIME/DIME/ZLIB, assume HTTP header */
-  if (c != '<' && !(soap->mode & (SOAP_ENC_MIME | SOAP_ENC_DIME | SOAP_ENC_ZLIB)))
+  /* if not XML/MIME/DIME/ZLIB, assume HTTP method or status line */
+  if (((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) && !(soap->mode & (SOAP_ENC_MIME | SOAP_ENC_DIME | SOAP_ENC_ZLIB | SOAP_ENC_XML)))
   { soap_mode m = soap->imode;
     soap->mode &= ~SOAP_IO;
     soap->error = soap->fparse(soap);
@@ -15832,7 +15876,7 @@ soap_set_fault(struct soap *soap)
       *s = soap_set_validation_fault(soap, "nil not allowed", NULL);
       break;
     case SOAP_DUPLICATE_ID:
-      *s = soap_set_validation_fault(soap, "multiple definitions (use the SOAP_XML_TREE flag) of the same id ", soap->id);
+      *s = soap_set_validation_fault(soap, "multiple elements (use the SOAP_XML_TREE flag) with duplicate id ", soap->id);
       if (soap->version == 2)
         *soap_faultsubcode(soap) = "SOAP-ENC:DuplicateID";
       break;
@@ -15842,7 +15886,7 @@ soap_set_fault(struct soap *soap)
         *soap_faultsubcode(soap) = "SOAP-ENC:MissingID";
       break;
     case SOAP_HREF:
-      *s = soap_set_validation_fault(soap, "incompatible object type ref/id pair ", soap->id);
+      *s = soap_set_validation_fault(soap, "incompatible object type id-ref ", soap->id);
       break;
     case SOAP_FAULT:
       break;
