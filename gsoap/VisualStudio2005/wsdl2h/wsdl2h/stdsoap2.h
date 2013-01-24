@@ -1,10 +1,10 @@
 /*
-	stdsoap2.h 2.8.13
+	stdsoap2.h 2.8.13 (update)
 
 	gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -923,13 +923,13 @@ extern "C" {
 
 #ifdef PRId64
 # ifndef SOAP_LONG_FORMAT
-#  define SOAP_LONG_FORMAT PRId64
+#  define SOAP_LONG_FORMAT "%" PRId64
 # endif
 #endif
 
 #ifdef PRIu64
 # ifndef SOAP_ULONG_FORMAT
-#  define SOAP_ULONG_FORMAT PRIu64
+#  define SOAP_ULONG_FORMAT "%" PRIu64
 # endif
 #endif
 

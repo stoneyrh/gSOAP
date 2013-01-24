@@ -82,10 +82,12 @@ void Definitions::analyze(const wsdl__definitions &definitions)
       }
     }
   }
-  if (!binding_count && definitions.name && (!definitions.portType.empty() || !definitions.interface_.empty()))
-    fprintf(stderr, "Warning: WSDL \"%s\" has no bindings to implement operations\n", definitions.name);
-  if (!service_prefix)
-    binding_count = 1; // Put all operations under a single binding
+  if (binding_count == 0 && definitions.name && (!definitions.portType.empty() || !definitions.interface_.empty()))
+    fprintf(stderr, "\nWarning: WSDL \"%s\" has no bindings to implement operations\n", definitions.name);
+  else if (binding_count > 1 && !service_prefix)
+  { // This puts all operations under a single binding
+    fprintf(stderr, "\nWarning: %d service bindings found, but stored in one service (use option -Nname to produce multiple service bindings)\n", binding_count);
+  }
   // Analyze and collect service data
   for (vector<wsdl__binding>::const_iterator binding = definitions.binding.begin(); binding != definitions.binding.end(); ++binding)
   { // /definitions/binding/documentation
@@ -248,7 +250,7 @@ void Definitions::analyze(const wsdl__definitions &definitions)
           { char *URI;
             if (input_body && soap__operation_style == rpc)
               URI = input_body->namespace_;
-            else if (binding_count == 1)
+            else if (binding_count == 1 || !service_prefix)
               URI = definitions.targetNamespace;
             else
             { // multiple service bidings are used, each needs a unique new URI
@@ -383,7 +385,7 @@ void Definitions::analyze(const wsdl__definitions &definitions)
               op->input->name = wsdl__operation_->name;
               if (input_body && soap__operation_style == rpc && !input_body->namespace_)
               { op->input->URI = "";
-                fprintf(stderr, "Error: no soap:body namespace attribute\n");
+                fprintf(stderr, "\nError: no soap:body namespace attribute\n");
               }
               else if (input_body)
                 op->input->URI = urienc(definitions.soap, input_body->namespace_);
@@ -581,11 +583,11 @@ void Definitions::analyze(const wsdl__definitions &definitions)
             }
     	    else
     	    { if (!Wflag)
-	        fprintf(stderr, "Warning: no SOAP RPC operation namespace, operations will be ignored\n");
+	        fprintf(stderr, "\nWarning: no SOAP RPC operation namespace, operations will be ignored\n");
 	    }
           }
           else
-            fprintf(stderr, "Error: no wsdl:definitions/binding/operation/input/soap:body\n");
+            fprintf(stderr, "\nError: no wsdl:definitions/binding/operation/input/soap:body\n");
         }
         else if (output)
 	{ // This part is similar to the previous clause, limited to one-way output operations
@@ -614,7 +616,7 @@ void Definitions::analyze(const wsdl__definitions &definitions)
           { char *URI;
             if (output_body && soap__operation_style == rpc)
               URI = output_body->namespace_;
-            else if (binding_count == 1)
+            else if (binding_count == 1 || !service_prefix)
               URI = definitions.targetNamespace;
             else
             { // multiple service bidings are used, each needs a unique new URI
@@ -727,7 +729,7 @@ void Definitions::analyze(const wsdl__definitions &definitions)
               op->output->name = wsdl__operation_->name; // RPC uses operation/@name
               if (output_body && soap__operation_style == rpc && !output_body->namespace_)
               { op->output->URI = "";
-                fprintf(stderr, "Error: no soap:body namespace attribute\n");
+                fprintf(stderr, "\nError: no soap:body namespace attribute\n");
               }
               else if (output_body)
                 op->output->URI = urienc(definitions.soap, output_body->namespace_);
@@ -812,17 +814,17 @@ void Definitions::analyze(const wsdl__definitions &definitions)
             }
     	    else
     	    { if (!Wflag)
-	        fprintf(stderr, "Warning: no SOAP RPC operation namespace, operations will be ignored\n");
+	        fprintf(stderr, "\nWarning: no SOAP RPC operation namespace, operations will be ignored\n");
 	    }
           }
           else
-            fprintf(stderr, "Error: no wsdl:definitions/binding/operation/output/soap:body\n");
+            fprintf(stderr, "\nError: no wsdl:definitions/binding/operation/output/soap:body\n");
         }
         else
-          fprintf(stderr, "Error: no wsdl:definitions/portType/operation/input and output\n");
+          fprintf(stderr, "\nError: no wsdl:definitions/portType/operation/input and output\n");
       }
       else
-        fprintf(stderr, "Error: no wsdl:definitions/portType/operation\n");
+        fprintf(stderr, "\nError: no wsdl:definitions/portType/operation\n");
     }
   }
 }
@@ -853,7 +855,7 @@ void Definitions::analyze_headers(const wsdl__definitions &definitions, Service 
       else if (h->URI && h->part && h->part->name && h->part->type)
         h->name = types.aname(NULL, h->URI, h->part->name);
       else
-      { fprintf(stderr, "Error in SOAP Header part definition: input part '%s' missing?\n", h->part && h->part->name ? h->part->name : "?");
+      { fprintf(stderr, "\nError in SOAP Header part definition: input part '%s' missing?\n", h->part && h->part->name ? h->part->name : "?");
         h->name = "";
       }
       h->encodingStyle = (*header).encodingStyle;
@@ -915,7 +917,7 @@ void Definitions::analyze_headers(const wsdl__definitions &definitions, Service 
       else if (h->URI && h->part && h->part->name && h->part->type)
         h->name = types.aname(NULL, h->URI, h->part->name);
       else
-      { fprintf(stderr, "Error in SOAP Header part definition: output part '%s' missing?\n", h->part && h->part->name ? h->part->name : "?");
+      { fprintf(stderr, "\nError in SOAP Header part definition: output part '%s' missing?\n", h->part && h->part->name ? h->part->name : "?");
         h->name = "";
       }
       h->encodingStyle = (*header).encodingStyle;
@@ -1035,9 +1037,9 @@ Message *Definitions::analyze_fault(const wsdl__definitions &definitions, Servic
       f->policy.push_back(ext_fault.wsp__PolicyReference_->policyPtr());
   }
   else if (ext_fault.soap__fault_ && ext_fault.soap__fault_->name)
-    fprintf(stderr, "Error: no wsdl:definitions/binding/operation/fault/soap:fault '%s'\n", ext_fault.soap__fault_->name);
+    fprintf(stderr, "\nError: no wsdl:definitions/binding/operation/fault/soap:fault '%s'\n", ext_fault.soap__fault_->name);
   else
-    fprintf(stderr, "Error: no wsdl:definitions/binding/operation/fault/soap:fault\n");
+    fprintf(stderr, "\nError: no wsdl:definitions/binding/operation/fault/soap:fault\n");
   return f;
 }
 
@@ -1049,7 +1051,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
   else
     defs = "Service";
   ident();
-  fprintf(stream, "/** @page page_notes Usage Notes\n\nNOTE:\n\n - Run soapcpp2 on %s to generate the SOAP/XML processing logic.\n   Use soapcpp2 option -I to specify paths for #import\n   To build with STL, 'stlvector.h' is imported from 'import' dir in package.\n   Use soapcpp2 option -i to generate improved proxy and server classes.\n - Use wsdl2h options -c and -s to generate pure C code or C++ code without STL.\n - Use 'typemap.dat' to control namespace bindings and type mappings.\n   It is strongly recommended to customize the names of the namespace prefixes\n   generated by wsdl2h. To do so, modify the prefix bindings in the Namespaces\n   section below and add the modified lines to 'typemap.dat' to rerun wsdl2h.\n - Use Doxygen (www.doxygen.org) on this file to generate documentation.\n - Use wsdl2h options -nname and -Nname to globally rename the prefix 'ns'.\n - Use wsdl2h option -d to enable DOM support for xsd:anyType.\n - Use wsdl2h option -g to auto-generate readers and writers for root elements.\n - Use wsdl2h option -b to auto-generate bi-directional operations (duplex ops).\n - Struct/class members serialized as XML attributes are annotated with a '@'.\n - Struct/class members that have a special role are annotated with a '$'.\n\nWARNING:\n\n   DO NOT INCLUDE THIS ANNOTATED FILE DIRECTLY IN YOUR PROJECT SOURCE CODE.\n   USE THE FILES GENERATED BY soapcpp2 FOR YOUR PROJECT'S SOURCE CODE:\n   THE soapStub.h FILE CONTAINS THIS CONTENT WITHOUT ANNOTATIONS.\n\n", outfile?outfile:"this file");
+  fprintf(stream, "/** @page page_notes Usage Notes\n\nNOTE:\n\n - Run soapcpp2 on %s to generate the SOAP/XML processing logic.\n   Use soapcpp2 -I to specify paths for #import\n   To build with STL, 'stlvector.h' is imported from 'import' dir in package.\n   Use soapcpp2 -j to generate improved proxy and server classes.\n - Use wsdl2h -c and -s to generate pure C code or C++ code without STL.\n - Use 'typemap.dat' to control namespace bindings and type mappings.\n   It is strongly recommended to customize the names of the namespace prefixes\n   generated by wsdl2h. To do so, modify the prefix bindings in the Namespaces\n   section below and add the modified lines to 'typemap.dat' to rerun wsdl2h.\n - Use Doxygen (www.doxygen.org) on this file to generate documentation.\n - Use wsdl2h -nname to use name as the base namespace prefix instead of 'ns'.\n - Use wsdl2h -Nname for service prefix and produce multiple service bindings\n - Use wsdl2h -d to enable DOM support for xsd:anyType.\n - Use wsdl2h -g to auto-generate readers and writers for root elements.\n - Use wsdl2h -b to auto-generate bi-directional operations (duplex ops).\n - Struct/class members serialized as XML attributes are annotated with a '@'.\n - Struct/class members that have a special role are annotated with a '$'.\n\nWARNING:\n\n   DO NOT INCLUDE THIS ANNOTATED FILE DIRECTLY IN YOUR PROJECT SOURCE CODE.\n   USE THE FILES GENERATED BY soapcpp2 FOR YOUR PROJECT'S SOURCE CODE:\n   THE soapStub.h FILE CONTAINS THIS CONTENT WITHOUT ANNOTATIONS.\n\n", outfile?outfile:"this file");
   fprintf(stream, "LICENSE:\n\n@verbatim\n%s@endverbatim\n\n*/\n\n", licensenotice);
   // gsoap compiler options: 'w' disables WSDL/schema output to avoid file collisions
   if (cflag)
@@ -1176,7 +1178,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       }
     }
     else
-    { fprintf(stderr, "Error: no xsd__anyType defined in type map\n");
+    { fprintf(stderr, "\nError: no xsd__anyType defined in type map\n");
       pflag = 0;
     }
   }
@@ -1623,7 +1625,9 @@ void Definitions::compile(const wsdl__definitions& definitions)
           fprintf(stream, "\nSee Section @ref %s_policy_enablers\n", sv->name);
 	  gen_policy(*sv, sv->policy, "service endpoint ports", types);
         }
-        fprintf(stream, "\nNote: use wsdl2h option -N to change the service binding prefix name\n\n*/\n");
+	if (!service_prefix)
+          fprintf(stream, "\nNote: use wsdl2h option -Nname to change the service binding prefix name\n");
+        fprintf(stream, "\n\n*/\n");
       }
     }
   }
@@ -2659,7 +2663,7 @@ void Message::generate(Types &types, const char *sep, bool anonymous, bool remar
 { if (message)
   { for (vector<wsdl__part>::const_iterator part = message->part.begin(); part != message->part.end(); ++part)
     { if (!(*part).name)
-        fprintf(stderr, "Error: no part name in message '%s'\n", message->name?message->name:"");
+        fprintf(stderr, "\nError: no part name in message '%s'\n", message->name?message->name:"");
       else if (!body_parts || soap_tagsearch(body_parts, (*part).name))
       { if (remark && (*part).documentation)
           comment("", (*part).name, "parameter", (*part).documentation);
@@ -2719,7 +2723,7 @@ void Message::generate(Types &types, const char *sep, bool anonymous, bool remar
           }
         }
         else
-          fprintf(stderr, "Error: no wsdl:definitions/message/part/@type in part '%s'\n", (*part).name);
+          fprintf(stderr, "\nError: no wsdl:definitions/message/part/@type in part '%s'\n", (*part).name);
       }
     }
   }
