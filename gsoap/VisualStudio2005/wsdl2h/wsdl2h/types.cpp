@@ -711,7 +711,7 @@ const char *Types::tname(const char *prefix, const char *URI, const char *qname)
   { s = t;
     fprintf(stream, "\n// Warning: undefined QName '%s' for type '%s' in namespace '%s' (FIXME: check WSDL and schema definitions)\n", qname?qname:"", t, URI?URI:"?");
     if (vflag)
-      fprintf(stderr, "Warning: undefined QName '%s' for type '%s' in namespace '%s'\n", qname?qname:"", t, URI?URI:"?");
+      fprintf(stderr, "\nWarning: undefined QName '%s' for type '%s' in namespace '%s'\n", qname?qname:"", t, URI?URI:"?");
   }
   return s;
 }
@@ -744,7 +744,7 @@ const char *Types::pname(bool flag, const char *prefix, const char *URI, const c
       { s = t;
         fprintf(stream, "\n// Warning: undefined QName '%s' for pointer to type '%s' (FIXME: check WSDL and schema definitions)\n", qname, t);
         if (vflag)
-          fprintf(stderr, "Warning: undefined QName '%s' for pointer to type '%s' in namespace '%s'\n", qname, t, URI?URI:"?");
+          fprintf(stderr, "\nWarning: undefined QName '%s' for pointer to type '%s' in namespace '%s'\n", qname, t, URI?URI:"?");
       }
       r = s;
       while (r && *r)
@@ -769,7 +769,7 @@ const char *Types::pname(bool flag, const char *prefix, const char *URI, const c
   { s = t;
     fprintf(stream, "\n// Warning: undefined QName '%s' for type '%s' in namespace '%s' (FIXME: check WSDL and schema definitions)\n", qname, t, URI?URI:"?");
     if (vflag)
-      fprintf(stderr, "Warning: undefined QName '%s' for type '%s' in namespace '%s'\n", qname, t, URI?URI:"?");
+      fprintf(stderr, "\nWarning: undefined QName '%s' for type '%s' in namespace '%s'\n", qname, t, URI?URI:"?");
   }
   return s;
 }
@@ -2287,7 +2287,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
           && element.elementPtr()->substitutionsPtr()
 	  && !element.elementPtr()->substitutionsPtr()->empty())
     { if (vflag)
-        fprintf(stderr, "Warning: element ref '%s' stands as the head of a substitutionGroup but is not declared abstract\n", element.ref);
+        fprintf(stderr, "\nWarning: element ref '%s' stands as the head of a substitutionGroup but is not declared abstract\n", element.ref);
       gen_substitutions(URI, element);
     }
     else if (maxOccurs && strcmp(maxOccurs, "1")) // maxOccurs != "1"
@@ -2330,7 +2330,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
           && element.substitutionsPtr()
 	  && !element.substitutionsPtr()->empty())
     { if (vflag)
-        fprintf(stderr, "Warning: element '%s' stands as the head of a substitutionGroup but is not declared abstract\n", name);
+        fprintf(stderr, "\nWarning: element '%s' stands as the head of a substitutionGroup but is not declared abstract\n", name);
       gen_substitutions(URI, element);
     }
     else if (maxOccurs && strcmp(maxOccurs, "1")) // maxOccurs != "1"
@@ -3238,7 +3238,7 @@ static void operations(const char *t)
 void *emalloc(size_t size)
 { void *p = malloc(size);
   if (!p)
-  { fprintf(stderr, "Error: Malloc failed\n");
+  { fprintf(stderr, "\nError: Malloc failed\n");
     exit(1);
   }
   return p;

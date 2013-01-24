@@ -17,7 +17,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 extern "C" {
 #endif
 
-SOAP_SOURCE_STAMP("@(#) qServer.c ver 2.8.13 2013-01-21 17:23:55 GMT")
+SOAP_SOURCE_STAMP("@(#) qServer.c ver 2.8.13 2013-01-24 14:37:07 GMT")
 
 
 SOAP_FMAC5 int SOAP_FMAC6 q_serve(struct soap *soap)

@@ -400,7 +400,7 @@ static void options(int argc, char **argv)
 -k      don't generate SOAP_ENV__Header mustUnderstand qualifiers\n\
 -l      display license information\n\
 -m      use xsd.h module to import primitive types\n\
--Nname  use name for service namespace prefixes and multiple bindings\n\
+-Nname  use name for service prefixes and to produce multiple service bindings\n\
 -nname  use name as the base namespace prefix instead of 'ns'\n\
 -ofile  output to file\n\
 -P      don't create polymorphic types inherited from xsd__anyType\n\
