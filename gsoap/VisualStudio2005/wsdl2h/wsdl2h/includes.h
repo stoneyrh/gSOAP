@@ -37,7 +37,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "stdsoap2.h"
 
-#define WSDL2H_VERSION "2.8.13"
+#define WSDL2H_VERSION "2.8.14"
 
 #ifdef WIN32
 # pragma warning(disable : 4996)

@@ -2112,6 +2112,12 @@ soap_wsrm_check(struct soap *soap)
     MUTEX_UNLOCK(soap_wsrm_session_lock);
     return soap->error;
   }
+#ifdef SOAP_WSRM_MESSAGEORDERING
+  if (seq->behavior == NoDiscard && num != seq->lastnum + 1)
+  { MUTEX_UNLOCK(soap_wsrm_session_lock);
+    return soap->error = SOAP_STOP;
+  }
+#endif
   if (num > seq->lastnum)
     seq->lastnum = num;
   if (soap_wsrm_num_insert(soap, seq, num))

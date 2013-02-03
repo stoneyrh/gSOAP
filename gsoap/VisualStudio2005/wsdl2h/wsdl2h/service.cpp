@@ -86,7 +86,7 @@ void Definitions::analyze(const wsdl__definitions &definitions)
     fprintf(stderr, "\nWarning: WSDL \"%s\" has no bindings to implement operations\n", definitions.name);
   else if (binding_count > 1 && !service_prefix)
   { // This puts all operations under a single binding
-    fprintf(stderr, "\nWarning: %d service bindings found, but stored in one service (use option -Nname to produce multiple service bindings)\n", binding_count);
+    fprintf(stderr, "\nWarning: %d service bindings found, but collected as one service (use option -Nname to produce a service for each binding)\n", binding_count);
   }
   // Analyze and collect service data
   for (vector<wsdl__binding>::const_iterator binding = definitions.binding.begin(); binding != definitions.binding.end(); ++binding)
