@@ -126,9 +126,9 @@ gSOAP XML Web services tools\n\
 Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
 \n\
 This software is released under one of the following two licenses:\n\
-1) GPL or 2) Genivia's license for commercial use.\n\
+GPL or Genivia's license for commercial use.\n\
 --------------------------------------------------------------------------------\n\
-1) GPL license.\n\
+GPL license.\n\
 \n\
 This program is free software; you can redistribute it and/or modify it under\n\
 the terms of the GNU General Public License as published by the Free Software\n\
@@ -149,7 +149,7 @@ engelen@genivia.com / engelen@acm.org\n\
 This program is released under the GPL with the additional exemption that\n\
 compiling, linking, and/or using OpenSSL is allowed.\n\
 --------------------------------------------------------------------------------\n\
-2) A commercial-use license is available from Genivia, Inc., contact@genivia.com\n\
+A commercial-use license is available from Genivia, Inc., contact@genivia.com\n\
 --------------------------------------------------------------------------------\n";
 
 int main(int argc, char **argv)
@@ -400,7 +400,7 @@ static void options(int argc, char **argv)
 -k      don't generate SOAP_ENV__Header mustUnderstand qualifiers\n\
 -l      display license information\n\
 -m      use xsd.h module to import primitive types\n\
--Nname  use name for service prefixes and to produce multiple service bindings\n\
+-Nname  use name for service prefixes to produce a service for each binding\n\
 -nname  use name as the base namespace prefix instead of 'ns'\n\
 -ofile  output to file\n\
 -P      don't create polymorphic types inherited from xsd__anyType\n\

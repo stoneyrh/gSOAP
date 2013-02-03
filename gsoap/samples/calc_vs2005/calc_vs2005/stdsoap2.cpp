@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.13
+	stdsoap2.c[pp] 2.8.14
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20813
+#define GSOAP_LIB_VERSION 20814
 
 #ifdef AS400
 # pragma convert(819)	/* EBCDIC to ASCII */
@@ -79,10 +79,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.13 2013-01-21 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.14 2013-02-04 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.13 2013-01-21 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.14 2013-02-04 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -7115,7 +7115,7 @@ int
 SOAP_FMAC2
 soap_reference(struct soap *soap, const void *p, int t)
 { struct soap_plist *pp;
-  if (!p || (!soap->encodingStyle && !(soap->omode & SOAP_XML_GRAPH)) || (soap->omode & SOAP_XML_TREE))
+  if (!p || (!soap->encodingStyle && !(soap->mode & (SOAP_ENC_DIME|SOAP_ENC_MIME|SOAP_ENC_MTOM|SOAP_XML_GRAPH))) || (soap->mode & SOAP_XML_TREE))
     return 1;
   if (soap_pointer_lookup(soap, p, t, &pp))
   { if (pp->mark1 == 0)
@@ -7139,7 +7139,7 @@ int
 SOAP_FMAC2
 soap_array_reference(struct soap *soap, const void *p, const struct soap_array *a, int n, int t)
 { struct soap_plist *pp;
-  if (!p || !a->__ptr || (!soap->encodingStyle && !(soap->omode & SOAP_XML_GRAPH)) || (soap->omode & SOAP_XML_TREE))
+  if (!p || !a->__ptr || (!soap->encodingStyle && !(soap->mode & (SOAP_ENC_DIME|SOAP_ENC_MIME|SOAP_ENC_MTOM|SOAP_XML_GRAPH))) || (soap->mode & SOAP_XML_TREE))
     return 1;
   if (soap_array_pointer_lookup(soap, p, a, n, t, &pp))
   { if (pp->mark1 == 0)
