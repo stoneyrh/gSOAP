@@ -109,8 +109,8 @@ struct http_da_session
 
 int http_da(struct soap *soap, struct soap_plugin *p, void *arg);
 
-int http_da_verify_post(struct soap *soap, char *passwd);
-int http_da_verify_get(struct soap *soap, char *passwd);
+int http_da_verify_post(struct soap *soap, const char *passwd);
+int http_da_verify_get(struct soap *soap, const char *passwd);
 
 /**
 @struct http_da_info

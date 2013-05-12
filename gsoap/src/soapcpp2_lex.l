@@ -352,6 +352,7 @@ static void directive(void)
 		sp->WSDL = NULL;
 		sp->style = NULL;
 		sp->encoding = NULL;
+		sp->protocol = NULL;
 		sp->xsi_type = 0;
 		sp->elementForm = NULL;
 		sp->attributeForm = NULL;
@@ -444,14 +445,14 @@ static void directive(void)
 				sp->WSDL = s;
 			}
 			else if (!strcmp(sp->ns, "SOAP-ENV"))
-			{	if (vflag)
+			{	if (vflag > 0)
 					semwarn("option -1 or -2 overrides SOAP-ENV namespace");
 				else
 					envURI = s;
 				sp->URI = envURI;
 			}
 			else if (!strcmp(sp->ns, "SOAP-ENC"))
-			{	if (vflag)
+			{	if (vflag > 0)
 					semwarn("option -1 or -2 overrides SOAP-ENC namespace");
 				else
 					encURI = s;
@@ -487,10 +488,12 @@ static void directive(void)
 		}
 		else if (!strncmp(yytext+i, "style:", 6))
 			sp->style = s;
+		else if (!strncmp(yytext+i, "protocol:", 9))
+			sp->protocol = s;
 		else if (!strncmp(yytext+i, "method-protocol:", 16))
 		{	m = (Method*)emalloc(sizeof(Method));
 			m->name = s;
-			m->mess = TRANSPORT;
+			m->mess = PROTOCOL;
 			m->part = NULL;
 			m->next = sp->list;
 			sp->list = m;

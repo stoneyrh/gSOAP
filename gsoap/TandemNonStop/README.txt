@@ -8,7 +8,9 @@ and soapcpp2 tools. The generated code can be compiled an run on Tandem using
 the bridge with the gSOAP engine (implemented in stdsoap2.c/.cpp). The wsdl2h
 and soapcpp2 tools will not run on Tandem, which would not be necessary.
 
-Tandem NonStop bridge source code for gSOAP 2.8.0 and higher:
+When your environment supports OSS sockets then this bridge is not required.
+
+Tandem NonStop bridge for gSOAP 2.8.0 and higher to support Guardian sockets:
 
   tandem.h	Tandem IO bridge interface
   tandem.c	Tandem blocking IO bridge
@@ -57,6 +59,8 @@ To compile the examples:
   cc -DTANDEM_NONSTOP -o server server.c TC.c TServer.c stdsoap2.c tandem.c
     or
   cc -DTANDEM_NONSTOP -o server server.c TC.c TServer.c stdsoap2.c tandemnw.c
+
+where 'cc' refers to your C compiler.
 
 Copyright
 

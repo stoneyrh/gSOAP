@@ -2403,7 +2403,7 @@ yyreduce:
 				else
 					p->info.val.i = sp->val;
 			        if ((yyvsp[(5) - (6)].rec).minOccurs < 0)
-			        {	if (((yyvsp[(3) - (6)].rec).sto & Sattribute) || (yyvsp[(3) - (6)].rec).typ->type == Tpointer || (yyvsp[(3) - (6)].rec).typ->type == Ttemplate || !strncmp((yyvsp[(2) - (6)].sym)->name, "__size", 6))
+			        {	if ((yyvsp[(6) - (6)].rec).hasval || ((yyvsp[(3) - (6)].rec).sto & Sattribute) || (yyvsp[(3) - (6)].rec).typ->type == Tpointer || (yyvsp[(3) - (6)].rec).typ->type == Ttemplate || !strncmp((yyvsp[(2) - (6)].sym)->name, "__size", 6))
 			        		p->info.minOccurs = 0;
 			        	else
 			        		p->info.minOccurs = 1;
@@ -2718,7 +2718,7 @@ yyreduce:
 					}
 				}
 			  	else
-			  	{	sprintf(errbuf, "last output parameter of remote method function prototype '%s' is a return parameter and must be a pointer or reference, or use %s(void) for no return parameter", (yyvsp[(1) - (7)].e)->sym->name, (yyvsp[(1) - (7)].e)->sym->name);
+			  	{	sprintf(errbuf, "last output parameter of remote method function prototype '%s' is a return parameter and must be a pointer or reference, or use %s(..., void) for one-way sends", (yyvsp[(1) - (7)].e)->sym->name, (yyvsp[(1) - (7)].e)->sym->name);
 					semerror(errbuf);
 			  	}
 				if (!((yyvsp[(1) - (7)].e)->info.sto & Sextern))
@@ -2782,7 +2782,7 @@ yyreduce:
 			  p->info.typ = (yyvsp[(4) - (6)].rec).typ;
 			  p->info.sto = (yyvsp[(4) - (6)].rec).sto;
 			  if ((yyvsp[(5) - (6)].rec).minOccurs < 0)
-			  {	if (((yyvsp[(4) - (6)].rec).sto & Sattribute) || (yyvsp[(4) - (6)].rec).typ->type == Tpointer)
+			  {	if ((yyvsp[(6) - (6)].rec).hasval || ((yyvsp[(4) - (6)].rec).sto & Sattribute) || (yyvsp[(4) - (6)].rec).typ->type == Tpointer)
 			        	p->info.minOccurs = 0;
 			       	else
 			        	p->info.minOccurs = 1;
@@ -2868,7 +2868,7 @@ yyreduce:
 
   case 85:
 #line 678 "soapcpp2_yacc.y"
-    { if (vflag != 1 && *(yyvsp[(1) - (1)].sym)->name == '_' && sp->table->level == GLOBAL)
+    { if (vflag == 2 && *(yyvsp[(1) - (1)].sym)->name == '_' && sp->table->level == GLOBAL)
 			  { sprintf(errbuf, "SOAP 1.2 does not support anonymous parameters '%s'", (yyvsp[(1) - (1)].sym)->name);
 			    semwarn(errbuf);
 			  }

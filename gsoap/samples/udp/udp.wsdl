@@ -9,6 +9,7 @@
  xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
  xmlns:ns="urn:gsoap-udp-demo"
  xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
+ xmlns:HTTP="http://schemas.xmlsoap.org/wsdl/http/"
  xmlns:MIME="http://schemas.xmlsoap.org/wsdl/mime/"
  xmlns:DIME="http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/"
  xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
@@ -57,15 +58,15 @@
 </types>
 
 <message name="echoStringRequest">
- <part name="parameters" element="ns:echoString"/><!-- ns__echoString::ns__echoString -->
+ <part name="Body" element="ns:echoString"/><!-- ns__echoString::ns__echoString -->
 </message>
 
 <message name="echoStringResponse">
- <part name="parameters" element="ns:echoStringResponse"/>
+ <part name="Body" element="ns:echoStringResponse"/>
 </message>
 
 <message name="sendString">
- <part name="parameters" element="ns:sendString"/><!-- ns__sendString::ns__sendString -->
+ <part name="Body" element="ns:sendString"/><!-- ns__sendString::ns__sendString -->
 </message>
 
 <message name="udpHeader">
@@ -95,13 +96,13 @@
  <operation name="echoString">
   <SOAP:operation soapAction=""/>
   <input>
-     <SOAP:body parts="parameters" use="literal"/>
+     <SOAP:body parts="Body" use="literal"/>
      <SOAP:header use="literal" message="tns:udpHeader" part="Action"/>
      <SOAP:header use="literal" message="tns:udpHeader" part="To"/>
      <SOAP:header use="literal" message="tns:udpHeader" part="MessageID"/>
   </input>
   <output>
-     <SOAP:body parts="parameters" use="literal"/>
+     <SOAP:body parts="Body" use="literal"/>
      <SOAP:header use="literal" message="tns:udpHeader" part="RelatesTo"/>
      <SOAP:header use="literal" message="tns:udpHeader" part="Action"/>
      <SOAP:header use="literal" message="tns:udpHeader" part="To"/>
@@ -111,7 +112,7 @@
  <operation name="sendString">
   <SOAP:operation soapAction=""/>
   <input>
-     <SOAP:body parts="parameters" use="literal"/>
+     <SOAP:body parts="Body" use="literal"/>
      <SOAP:header use="literal" message="tns:udpHeader" part="Action"/>
      <SOAP:header use="literal" message="tns:udpHeader" part="To"/>
      <SOAP:header use="literal" message="tns:udpHeader" part="MessageID"/>
@@ -121,7 +122,7 @@
 </binding>
 
 <service name="udp">
- <documentation>gSOAP 2.8.14 generated service definition</documentation>
+ <documentation>gSOAP 2.8.15 generated service definition</documentation>
  <port name="udp" binding="tns:udp">
   <SOAP:address location="soap.udp://localhost:10000"/>
  </port>

@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.14" /* Current version */
-# define GSOAP_VERSION 20814
+# define VERSION "2.8.15" /* Current version */
+# define GSOAP_VERSION 20815
 #endif
 
 #ifdef WIN32
@@ -296,7 +296,7 @@ typedef	struct Node {
 #define RESPONSE_ENCODING       0x0400
 #define STYLE                   0x0800
 #define FAULT                   0x1000
-#define TRANSPORT               0x2000
+#define PROTOCOL                0x2000
 
 typedef struct Data
 {	struct Data *next;
@@ -328,6 +328,7 @@ typedef struct Service
 	char *WSDL;
 	char *style;
 	char *encoding;
+	char *protocol;
 	int xsi_type;
 	char *elementForm;
 	char *attributeForm;

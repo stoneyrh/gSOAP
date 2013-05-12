@@ -4806,6 +4806,7 @@ SAMPLE_EXTRA_LIBS="-lm"
 case "${host}" in
         *-*-solaris*)   platform=SUN_OS
 			SAMPLE_EXTRA_LIBS="-lxnet -lsocket -lnsl -lm"
+			WSDL2H_EXTRA_LIBS="-lssl -lcrypto -lz -lsocket -lxnet -lnsl -lrt"
 			;;
         *-*-sysv5*)     platform=UNIXWARE ;;
         *-*-UnixWare*)  platform=UNIXWARE ;;
@@ -4823,6 +4824,7 @@ case "${host}" in
 	*-*-cygwin*)	platform=CYGWIN ;;
 	*-*-mingw*)	platform=MINGW
 			SAMPLE_EXTRA_LIBS="-lws2_32 -lkernel32 -luser32 -lgdi32 -lm"
+			WSDL2H_EXTRA_LIBS="-lssl -lcrypto -lws2_32 -lkernel32 -luser32 -lgdi32 -lm"
 			;;
         *-*-freebsd*)   platform=FREEBSD ;;
         *-*-openbsd*)   platform=OPENBSD ;;
@@ -4833,7 +4835,9 @@ case "${host}" in
                             *-*-aix4.2*)   osver=AIX42;;
                             *-*-aix4.3*)   osver=AIX43;;
                             *-*-aix4.*)    osver=AIX43;;
+                            *-*-aix5.2)    osver=AIX52;;
                             *-*-aix5.3)    osver=AIX53;;
+                            *-*-aix6.1)    osver=AIX61;;
                         esac
 			;;
         *-sequent-*)    platform=PTX ;;

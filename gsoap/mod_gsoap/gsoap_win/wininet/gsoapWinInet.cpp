@@ -273,14 +273,12 @@ wininet_connect(
     DWORD           dwFlags;
     HINTERNET       hConnection  = NULL;
     HINTERNET       hHttpRequest = NULL;
+    const char *    pszVerb;
+    INTERNET_PORT   nPort;
     struct wininet_data * pData = 
         (struct wininet_data *) soap_lookup_plugin( soap, wininet_id );
 
     soap->error = SOAP_OK;
-
-    /* we parse the URL ourselves so we don't use these parameters */
-    UNUSED_ARG( a_pszHost );
-    UNUSED_ARG( a_nPort );
 
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
         "wininet %p: connect, endpoint = '%s'\n", soap, a_pszEndpoint ));
@@ -308,10 +306,12 @@ wininet_connect(
         return SOAP_INVALID_SOCKET;
     }
 
+    nPort = urlComponents.nPort;
+
     /* connect to the target url, if we haven't connected yet 
        or if it was dropped */
     hConnection = InternetConnectA( pData->hInternet, 
-        szHost, urlComponents.nPort, "", "", INTERNET_SERVICE_HTTP, 
+        szHost, nPort, "", "", INTERNET_SERVICE_HTTP, 
         0, (DWORD_PTR) soap );
     if ( !hConnection )
     {
@@ -337,8 +337,35 @@ wininet_connect(
     {
         dwFlags |= INTERNET_FLAG_SECURE;
     }
+
+    /* proxy requires full endpoint URL */
+    if ( soap->proxy_host )
+    {
+        strncpy(szUrlPath, a_pszEndpoint, MAX_PATH);
+    }
+
+    /* status determines the HTTP verb */
+    switch ( soap->status )
+    {
+      case SOAP_GET: 
+          pszVerb = "GET";
+          break;
+      case SOAP_PUT: 
+          pszVerb = "PUT";
+          break;
+      case SOAP_DEL: 
+          pszVerb = "DELETE";
+          break;
+      case SOAP_CONNECT:
+          pszVerb = "CONNECT";
+	  _snprintf(szUrlPath, MAX_PATH, "%s:%d", a_pszHost, a_nPort);
+          break;
+      default:
+          pszVerb = "POST";
+    }
+
     hHttpRequest = HttpOpenRequestA(
-        hConnection, "POST", szUrlPath, "HTTP/1.1", NULL, NULL, 
+        hConnection, pszVerb, szUrlPath, "HTTP/1.1", NULL, NULL, 
         dwFlags, (DWORD_PTR) soap );
     if ( !hHttpRequest )
     {
@@ -1031,7 +1058,7 @@ wininet_set_timeout(
     return 0;
 }
 
-/*
+#if 0
 static BOOL
 wininet_flag_set_option(
     HINTERNET   a_hHttpRequest,
@@ -1065,7 +1092,7 @@ wininet_flag_set_option(
 #endif
     return bSuccess;
 }
-*/
+#endif
 
 static BOOL
 wininet_resolve_send_error( 

@@ -94,8 +94,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	https://127.0.0.1:8081
 	and type userid 'admin' and passwd 'guest' to gain access
 	Open the location:
-	https://127.0.0.1:8081/calc.html
-	and enter an expression
+	https://127.0.0.1:8081/calcform1.html
+	and enter an expression to calculate
 	Open the locations:
 	https://127.0.0.1:8081/test.html
 	https://127.0.0.1:8081/webserver.wsdl
@@ -128,7 +128,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 #include "soapH.h"
-#include "webserver.nsmap"
+#include "webserver.nsmap"	/* namespaces updated 4/4/13 */
 #include "options.h"
 #include "httpget.h"
 #include "httpform.h"
@@ -536,6 +536,7 @@ void *process_request(void *soap)
   {
     soap_print_fault(tsoap, stderr);
     fprintf(stderr, "SSL request failed, continue with next call...\n");
+    soap_destroy(tsoap);
     soap_end(tsoap);
     soap_done(tsoap);
     free(tsoap);
@@ -551,7 +552,7 @@ void *process_request(void *soap)
   else if (options[OPTION_v].selected)
     fprintf(stderr, "Thread %d completed\n", (int)(long)tsoap->user);
 
-  soap_destroy((struct soap*)soap);
+  soap_destroy(tsoap);
   soap_end(tsoap);
   soap_done(tsoap);
   free(soap);
@@ -583,6 +584,7 @@ void *process_queue(void *soap)
     {
       soap_print_fault(tsoap, stderr);
       fprintf(stderr, "SSL request failed, continue with next call...\n");
+      soap_destroy(tsoap);
       soap_end(tsoap);
       continue;
     }

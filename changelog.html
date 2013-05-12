@@ -905,6 +905,16 @@ without OpenSSL.</li>
 <li>Fixed PRId64 formatting.</li>
 <li>Fixed broken MIME with doc/lit (when SOAP encodingStyle is not used).</li>
 </ul>
+<li>Version 2.8.15 (5/12/2013)</li>
+<ul>
+<li>Added wsdl2h option -R for auto-generation of REST-based service operations (also added examples/rest example).</li>
+<li>Change soap_read_X() and soap_write_X() to prevent removal of HTTP headers after calling soap_connect().</li>
+<li>Fixed automatic detection of DIME/MIME transfers.</li>
+<li>Fixed HTTP 1.0 chunking issue.</li>
+<li>Fixed HTTP digest authentication with DIME/MIME transfers.</li>
+<li>Fixed OpenSSL subject alt name check.</li>
+<li>Fixed HTTP 100 message handling issue.</li>
+</ul>
 </ul>
 
 </body>

@@ -41,6 +41,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "calc.nsmap"
 
 const char server[] = "http://websrv.cs.fsu.edu/~engelen/calcserver.cgi";
+/* = "http://localhost:8080"; to test against samples/webserver */
 
 int main(int argc, char **argv)
 { struct soap soap;

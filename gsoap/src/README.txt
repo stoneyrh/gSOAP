@@ -67,6 +67,7 @@ COMMAND LINE OPTIONS
 
 -1      generate SOAP 1.1 bindings
 -2      generate SOAP 1.2 bindings
+-0      remove SOAP bindings, use REST
 -C	generate client-side code only
 -S	generate server-side code only
 -T	generate server auto-test code
@@ -79,13 +80,15 @@ COMMAND LINE OPTIONS
 -e	generate SOAP RPC encoding style bindings
 -fN	file split of N XML serializer implementations per file (N>=10)
 -h	display help info
+-Ipath  use path(s) for #import
 -i      generate C++ service proxies and objects inherited from soap struct
 -j      generate C++ service proxies and objects that share a soap struct
--Ipath  use path(s) for #import
+-k      generate data structure walkers (experimental)
 -l      generate linkable modules (experimental)
 -m      generate Matlab(tm) code for MEX compiler
 -n      use service name to rename service functions and namespace table
 -pname  save files with new prefix name instead of 'soap'
+-Qname  use name as the C++ namespace for decls, including custom serializers
 -qname  use name as the C++ namespace of all declarations
 -s      generate deserialization code with strict XML validation checks
 -t      generate code for fully xsi:type typed SOAP/XML messaging

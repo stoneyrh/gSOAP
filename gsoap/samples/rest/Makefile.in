@@ -32,7 +32,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = httpgettest$(EXEEXT) httpposttest$(EXEEXT)
+noinst_PROGRAMS = calcrest$(EXEEXT) httpgettest$(EXEEXT) \
+	httpposttest$(EXEEXT)
 DIST_COMMON = $(srcdir)/../Makefile.c_rules \
 	$(srcdir)/../Makefile.defines $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -45,17 +46,25 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
-am__objects_1 =
-am__objects_2 = soapC.$(OBJEXT)
+am__objects_1 = soapC.$(OBJEXT)
+am__objects_2 = soapClient.$(OBJEXT) $(am__objects_1)
+am__objects_3 =
+am__objects_4 = $(am__objects_3)
+am__objects_5 = $(am__objects_2) soapServer.$(OBJEXT) $(am__objects_3) \
+	$(am__objects_4)
+am_calcrest_OBJECTS = calcrest.$(OBJEXT) $(am__objects_5)
+calcrest_OBJECTS = $(am_calcrest_OBJECTS)
+calcrest_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+calcrest_DEPENDENCIES = $(SOAP_C_LIB) $(am__DEPENDENCIES_1)
 am_httpgettest_OBJECTS = httpgettest.$(OBJEXT) $(am__objects_1) \
-	$(am__objects_2) httpget.$(OBJEXT)
+	httpget.$(OBJEXT)
 httpgettest_OBJECTS = $(am_httpgettest_OBJECTS)
 httpgettest_LDADD = $(LDADD)
-am__DEPENDENCIES_1 =
 httpgettest_DEPENDENCIES = $(SOAP_C_LIB) $(am__DEPENDENCIES_1)
-am__objects_3 = soapServer.$(OBJEXT) $(am__objects_2)
-am_httpposttest_OBJECTS = httpposttest.$(OBJEXT) $(am__objects_1) \
-	$(am__objects_3) httppost.$(OBJEXT)
+am__objects_6 = soapServer.$(OBJEXT) $(am__objects_1)
+am_httpposttest_OBJECTS = httpposttest.$(OBJEXT) $(am__objects_6) \
+	httppost.$(OBJEXT)
 httpposttest_OBJECTS = $(am_httpposttest_OBJECTS)
 httpposttest_LDADD = $(LDADD)
 httpposttest_DEPENDENCIES = $(SOAP_C_LIB) $(am__DEPENDENCIES_1)
@@ -66,8 +75,10 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(httpgettest_SOURCES) $(httpposttest_SOURCES)
-DIST_SOURCES = $(httpgettest_SOURCES) $(httpposttest_SOURCES)
+SOURCES = $(calcrest_SOURCES) $(httpgettest_SOURCES) \
+	$(httpposttest_SOURCES)
+DIST_SOURCES = $(calcrest_SOURCES) $(httpgettest_SOURCES) \
+	$(httpposttest_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -194,7 +205,7 @@ top_srcdir = @top_srcdir@
 
 ####### This is the input file for automake, which will generate Makefile.in ##########
 AUTOMAKE_OPTIONS = foreign 1.4
-SOAPHEADER = httpposttest.h
+SOAPHEADER = calcrest.h
 AM_CFLAGS = -D$(platform)
 AM_CXXFLAGS = -D$(platform)
 INCLUDES = -I$(top_srcdir)/gsoap -I$(top_srcdir)/gsoap/plugin
@@ -220,8 +231,9 @@ LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
 BUILT_SOURCES = $(SOAP_C_SRC) 
 CLEANFILES = $(SOAP_C_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.c soapClient.c soapClientLib.c soapServer.c soapServerLib.c *~
 SOAP_NS = $(SOAP_NS_DEF)
-httpgettest_SOURCES = httpgettest.c $(SOAPHEADER) $(SOAP_C_CORE) ../../plugin/httpget.c
-httpposttest_SOURCES = httpposttest.c $(SOAPHEADER) $(SOAP_C_SERVER) ../../plugin/httppost.c
+calcrest_SOURCES = calcrest.c calcrest.h $(SOAP_C_SRC)
+httpgettest_SOURCES = httpgettest.c httpgettest.h $(SOAP_C_CORE) ../../plugin/httpget.c
+httpposttest_SOURCES = httpposttest.c httpposttest.h $(SOAP_C_SERVER) ../../plugin/httppost.c
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -259,6 +271,9 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 
 clean-noinstPROGRAMS:
 	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+calcrest$(EXEEXT): $(calcrest_OBJECTS) $(calcrest_DEPENDENCIES) 
+	@rm -f calcrest$(EXEEXT)
+	$(LINK) $(calcrest_OBJECTS) $(calcrest_LDADD) $(LIBS)
 httpgettest$(EXEEXT): $(httpgettest_OBJECTS) $(httpgettest_DEPENDENCIES) 
 	@rm -f httpgettest$(EXEEXT)
 	$(LINK) $(httpgettest_OBJECTS) $(httpgettest_LDADD) $(LIBS)
@@ -272,11 +287,13 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/calcrest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/httpget.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/httpgettest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/httppost.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/httpposttest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapC.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapServer.Po@am__quote@
 
 .c.o:

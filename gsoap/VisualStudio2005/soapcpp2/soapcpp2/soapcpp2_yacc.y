@@ -404,7 +404,7 @@ dclr	: ptrs ID arrayck tag occurs init
 				else
 					p->info.val.i = sp->val;
 			        if ($5.minOccurs < 0)
-			        {	if (($3.sto & Sattribute) || $3.typ->type == Tpointer || $3.typ->type == Ttemplate || !strncmp($2->name, "__size", 6))
+			        {	if ($6.hasval || ($3.sto & Sattribute) || $3.typ->type == Tpointer || $3.typ->type == Ttemplate || !strncmp($2->name, "__size", 6))
 			        		p->info.minOccurs = 0;
 			        	else
 			        		p->info.minOccurs = 1;
@@ -551,7 +551,7 @@ func	: fname '(' s6 fargso ')' constobj abstract
 					}
 				}
 			  	else
-			  	{	sprintf(errbuf, "last output parameter of remote method function prototype '%s' is a return parameter and must be a pointer or reference, or use %s(void) for no return parameter", $1->sym->name, $1->sym->name);
+			  	{	sprintf(errbuf, "last output parameter of remote method function prototype '%s' is a return parameter and must be a pointer or reference, or use %s(..., void) for one-way sends", $1->sym->name, $1->sym->name);
 					semerror(errbuf);
 			  	}
 				if (!($1->info.sto & Sextern))
@@ -596,7 +596,7 @@ farg	: tspec ptrs arg arrayck occurs init
 			  p->info.typ = $4.typ;
 			  p->info.sto = $4.sto;
 			  if ($5.minOccurs < 0)
-			  {	if (($4.sto & Sattribute) || $4.typ->type == Tpointer)
+			  {	if ($6.hasval || ($4.sto & Sattribute) || $4.typ->type == Tpointer)
 			        	p->info.minOccurs = 0;
 			       	else
 			        	p->info.minOccurs = 1;
@@ -675,7 +675,7 @@ arg	: /* empty */	{ if (sp->table->level != PARAM)
 			  else
 				$$ = gensym("_param");
 			}
-	| ID		{ if (vflag != 1 && *$1->name == '_' && sp->table->level == GLOBAL)
+	| ID		{ if (vflag == 2 && *$1->name == '_' && sp->table->level == GLOBAL)
 			  { sprintf(errbuf, "SOAP 1.2 does not support anonymous parameters '%s'", $1->name);
 			    semwarn(errbuf);
 			  }

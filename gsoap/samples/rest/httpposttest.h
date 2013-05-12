@@ -53,5 +53,6 @@ cc -DWITH_OPENSSL -DWITH_GZIP -o httpposttest httpposttest.c soapC.c soapServer.
 
 */
 
-// dummy server operation, need at least one to generate soapServer.c
-int ns__dummy(void);
+// Implements the REST calculator service
+
+#import "calcrest.h"

@@ -8,6 +8,7 @@
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
  xmlns:ns="urn:ssl"
  xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
+ xmlns:HTTP="http://schemas.xmlsoap.org/wsdl/http/"
  xmlns:MIME="http://schemas.xmlsoap.org/wsdl/mime/"
  xmlns:DIME="http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/"
  xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
@@ -60,7 +61,7 @@
 </binding>
 
 <service name="ssl">
- <documentation>gSOAP 2.8.14 generated service definition</documentation>
+ <documentation>gSOAP 2.8.15 generated service definition</documentation>
  <port name="ssl" binding="tns:ssl">
   <SOAP:address location="https://localhost:18081"/>
  </port>

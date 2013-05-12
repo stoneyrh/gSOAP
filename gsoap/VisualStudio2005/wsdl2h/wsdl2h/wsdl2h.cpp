@@ -70,6 +70,7 @@ int _flag = 0,
     mflag = 0,
     pflag = 0,
     Pflag = 0,
+    Rflag = 0,
     sflag = 0,
     uflag = 0,
     vflag = 0,
@@ -341,6 +342,9 @@ static void options(int argc, char **argv)
 	      }
 	    }
 	    break;
+	  case 'R':
+	    Rflag = 1;
+	    break;
 	  case 's':
 	    sflag = 1;
 	    break;
@@ -384,7 +388,7 @@ static void options(int argc, char **argv)
 	    break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-N name] [-n name] [-P|-p] [-q name] [-r proxyhost[:port[:uid:pwd]]] [-s] [-t typemapfile] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-s] [-t typemapfile] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -b	bi-directional operations (duplex ops) added to serve one-way responses\n\
@@ -406,6 +410,7 @@ static void options(int argc, char **argv)
 -P      don't create polymorphic types inherited from xsd__anyType\n\
 -p      create polymorphic types inherited from base xsd__anyType\n\
 -qname  use name for the C++ namespace of all declarations\n\
+-R      generate REST operations for REST bindings in the WSDL\n\
 -rhost[:port[:uid:pwd]]\n\
         connect via proxy host, port, and proxy credentials\n\
 -s      don't generate STL code (no std::string and no std::vector)\n\

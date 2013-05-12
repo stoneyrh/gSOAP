@@ -161,6 +161,7 @@ COMMAND LINE OPTIONS
 -qname  use name for the C++ namespace for all service declarations
 -rhost[:port[:uid:pwd]]
         connect via proxy host, port, and proxy credentials
+-R      generate REST operations for REST bindings in the WSDL
 -s      don't generate STL code (no std::string and no std::vector)
 -tfile  use type map file instead of the default file typemap.dat
 -u      don't generate unions
@@ -172,11 +173,11 @@ COMMAND LINE OPTIONS
 -z1     compatibility with 2.7.6e: generate pointer-based arrays
 -z2     compatibility with 2.7.15: qualify element/attribute referenced members
 -z3     compatibility with 2.7.16 to 2.8.7: qualify element/attribute references
+-z4     compatibility up to 2.8.11: don't generate union structs in std::vector
 -_      don't generate _USCORE (replace with UNICODE _x005f)
 infile.wsdl infile.xsd http://www... list of input sources (if none use stdin)
 
 INSTALLATION
-
 
 Use './configure' and 'make' in the root directory, as explained in the 
 installation instructions.

@@ -37,7 +37,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "stdsoap2.h"
 
-#define WSDL2H_VERSION "2.8.14"
+#define WSDL2H_VERSION "2.8.15"
 
 #ifdef WIN32
 # pragma warning(disable : 4996)
@@ -72,9 +72,9 @@ typedef pair<const char*, const char*> Pair;
 struct ltpair
 { bool operator()(Pair s1, Pair s2) const
   { int cmp = strcmp(s1.first, s2.first);
-    if (cmp)
-      return cmp < 0;
-    return strcmp(s1.second, s2.second) < 0;
+    if (cmp == 0)
+      cmp = strcmp(s1.second, s2.second);
+    return cmp < 0;
   }
 };
 
@@ -100,6 +100,7 @@ extern int _flag,
 	   mflag,
 	   pflag,
 	   Pflag,
+	   Rflag,
 	   sflag,
 	   uflag,
 	   vflag,

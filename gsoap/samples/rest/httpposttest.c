@@ -113,9 +113,30 @@ int main(int argc, char **argv)
   return 0;
 }
 
-/* dummy SOAP service operation */
-int ns__dummy(struct soap *soap)
-{ return SOAP_NO_METHOD;
+/* Calculator service operations */
+int __ns1__add(struct soap *soap, struct ns2__pair *in, double *out)
+{ *out = in->a + in->b;
+  return SOAP_OK;
+}
+
+int __ns1__sub(struct soap *soap, struct ns2__pair *in, double *out)
+{ *out = in->a - in->b;
+  return SOAP_OK;
+}
+
+int __ns1__mul(struct soap *soap, struct ns2__pair *in, double *out)
+{ *out = in->a * in->b;
+  return SOAP_OK;
+}
+
+int __ns1__div(struct soap *soap, struct ns2__pair *in, double *out)
+{ *out = in->a / in->b;
+  return SOAP_OK;
+}
+
+int __ns1__pow(struct soap *soap, struct ns2__pair *in, double *out)
+{ *out = pow(in->a, in->b);
+  return SOAP_OK;
 }
 
 /* the jpg handler just responds with HTTP OK */

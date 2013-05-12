@@ -1,4 +1,5 @@
-base referer
-rect $httpda_8h.html 64,167 120,193
-rect $md5evp_8h.html 57,92 127,119
-rect $threads_8h.html 151,92 215,119
+<map id="/Users/engelen/Projects/gsoap/plugin/httpda.c" name="/Users/engelen/Projects/gsoap/plugin/httpda.c">
+<area shape="rect" id="node3" href="$httpda_8h.html" title="httpda.h" alt="" coords="52,99,121,127"/>
+<area shape="rect" id="node7" href="$md5evp_8h.html" title="md5evp.h" alt="" coords="47,177,125,205"/>
+<area shape="rect" id="node10" href="$threads_8h.html" title="threads.h" alt="" coords="151,177,227,205"/>
+</map>

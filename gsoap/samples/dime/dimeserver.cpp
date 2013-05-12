@@ -123,7 +123,7 @@ struct dime_write_handle
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-static char *TMPDIR = ".";
+static const char *TMPDIR = ".";
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -289,7 +289,7 @@ int ns__getImage(struct soap *soap, char *name, ns__Data& image)
     return soap_sender_fault(soap, "Name required", NULL);
   if (getdata(soap, name, image))
     return soap_sender_fault(soap, "Access denied", NULL);
-  image.type = "image/jpeg";
+  image.type = (char*)"image/jpeg";
   image.options = soap_dime_option(soap, 0, name);
   return SOAP_OK;
 }
@@ -337,7 +337,7 @@ static int getdata(struct soap *soap, const char *name, ns__Data& data)
     fclose(fd);
     data.__size = i;
   }
-  data.type = ""; // specify non-NULL id or type to enable DIME
+  data.type = (char*)""; // specify non-NULL id or type to enable DIME
   data.options = soap_dime_option(soap, 0, name);
   return SOAP_OK;
 }

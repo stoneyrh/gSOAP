@@ -328,11 +328,11 @@ void Types::init()
     ptrtypemap["xsd__anyAttribute"] = "_XML";
   }
   if (cflag)
-  { deftypemap["xsd__base64Binary"] = "struct xsd__base64Binary\n{\tunsigned char *__ptr;\n\tint __size;\n\tchar *id, *type, *options; // NOTE: for DIME and MTOM XOP attachments only\n};";
+  { deftypemap["xsd__base64Binary"] = "struct xsd__base64Binary\n{\tunsigned char *__ptr;\n\tint __size;\n\tchar *id, *type, *options; // NOTE: non-NULL for DIMEM/MIME/MTOM XOP attachments only\n};";
     usetypemap["xsd__base64Binary"] = "struct xsd__base64Binary";
   }
   else
-  { deftypemap["xsd__base64Binary"] = "class xsd__base64Binary\n{\tunsigned char *__ptr;\n\tint __size;\n\tchar *id, *type, *options; // NOTE: for DIME and MTOM XOP attachments only\n\tstruct soap *soap;\n};";
+  { deftypemap["xsd__base64Binary"] = "class xsd__base64Binary\n{\tunsigned char *__ptr;\n\tint __size;\n\tchar *id, *type, *options; // NOTE: non-NULL for DIMEM/MIME/MTOM XOP attachments only\n\tstruct soap *soap;\n};";
     usetypemap["xsd__base64Binary"] = "xsd__base64Binary";
   }
   if (cflag)
@@ -600,7 +600,9 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
     p = "";
   s = NULL;
   if (lookup == LOOKUP)
-    s = qnames[Pair(p,name)];
+  { if (qnames.find(Pair(p,name)) != qnames.end())
+      s = qnames[Pair(p,name)];
+  }
   if (!s)
   { t = buf;
     if (!prefix || *prefix)
@@ -680,7 +682,12 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
     if (lookup == LOOKUP)
     { qnames[Pair(p,name)] = t;
       if (vflag)
-        cerr << "Mapping '" << p << ":" << name << "' to '" << t << "'" << endl;
+      { cerr << "Mapping '" << p << ":" << name << "' to '" << t << "'" << endl;
+#ifdef DEBUG
+        for (MapOfPairToString::const_iterator i = qnames.begin(); i != qnames.end(); ++i)
+          cerr << "Map[" << (*i).first.first << ":" << (*i).first.second << "]='" << (*i).second << "'" << endl;
+#endif
+      }
     }
     s = t;
   }
@@ -706,7 +713,10 @@ const char *Types::tname(const char *prefix, const char *URI, const char *qname)
 { const char *s, *t;
   t = cname(prefix, URI, qname);
   if (usetypemap.find(t) != usetypemap.end())
-    s = usetypemap[t];
+  { s = usetypemap[t];
+    if (vflag)
+      cerr << "Mapping use of '" << t << "' to '" << s << "'" << endl;
+  }
   else
   { s = t;
     fprintf(stream, "\n// Warning: undefined QName '%s' for type '%s' in namespace '%s' (FIXME: check WSDL and schema definitions)\n", qname?qname:"", t, URI?URI:"?");
@@ -1757,7 +1767,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
                 type = element.complexTypePtr()->complexContent->restriction->base;
             }
           }
-          item = element.name;
+          item = element.name; // <sequence><element name="item" type="..."/></sequence>
         }
         gen_soap_array(name, t, item, type);
       }
@@ -1910,6 +1920,8 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       fprintf(stream, "0;\t///< Catch mixed content in XML string\n");
     }
   }
+  if (t)
+    modify(t);
   if (!anonymous)
   { if (!cflag
      && !(pflag && complexType.name)
@@ -1920,7 +1932,6 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
         fprintf(stream, ";\n");
       }
     }
-    modify(t);
     fprintf(stream, "};\n");
   }
   scope.pop_back();
@@ -2850,8 +2861,6 @@ void Types::gen_soap_array(const char *name, const char *t, const char *item, co
   { // TODO: how to handle generic SOAP array? E.g. as an array of anyType?
     fprintf(stream, "// TODO: add declarations to handle generic SOAP-ENC:Array (array of anyType)\n");
   }
-  if (tmp)
-    free(tmp);
 }
 
 void Types::gen_substitutions(const char *URI, const xs__element &element)

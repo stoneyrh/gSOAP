@@ -54,7 +54,7 @@ class Message
     vector<soap__header> header;
     vector<wsoap__header> wheader;
     mime__multipartRelated *multipartRelated;	// MIME
-    mime__content *content;			// MIME
+    mime__content *content;			// REST/MIME
     const char *layout;				// DIME
     const char *documentation;
     const char *ext_documentation;

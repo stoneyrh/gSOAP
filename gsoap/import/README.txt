@@ -19,6 +19,7 @@ wsrm4.h		WS-ReliableMessaging (2004, deprecated)
 wsrm.h		WS-ReliableMessaging schema definitions
 wsrx.h		WS-ReliableMessaging operation (see plugin/wsrmapi.c)
 wsse.h		WS-Security (see plugin/wsseapi.c)
+wsse2.h		WS-Security (2002 version, requires wsc2.h)
 wsdd10.h	WS-Discovery 1.0 schema definitions
 wsdd.h		WS-Discovery 1.1 schema definitions
 wsdx.h		WS-Discovery (see plugin/wsddapi.c)

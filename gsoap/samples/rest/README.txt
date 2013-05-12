@@ -1,6 +1,29 @@
 
-REST Examples for gSOAP
-=======================
+HTTP REST Examples for gSOAP
+============================
+
+  calcrest.wsdl		WSDL with REST calc operations
+  calcrest.c		REST-based calculator client and CGI server in C
+  httpgettest.h		demonstrates HTTP GET hook
+  httpgettest.c
+  httpposttest.h	demonstrates HTTP POST/PUT/DELETE hooks
+  httpposttest.c
+
+REST-Based Calculator
+=====================
+
+Build steps:
+
+$ wsdl2h -R -c calcrest.wsdl
+$ soapcpp2 -0 -L calcrest.h
+$ cc -o calcrest calcrest.c soapC.c soapClient.c soapServer.c stdsoap2.c
+
+Example run:
+
+$ ./calcrest add 1 2
+
+HTTP REST Hooks
+===============
 
 1. HTTP REST via hooks: server-side hooks are provided with the gSOAP engine:
 
@@ -20,14 +43,6 @@ REST Examples for gSOAP
    and C++ streams. See also the wsdl2h tool output .h file section "XML Data
    Binding" with readers/writers API calls for the XML root elements of a
    schema.
-
-HTTP REST Examples
-==================
-
-  httpgettest.h		demonstrates HTTP GET
-  httpgettest.c
-  httpposttest.h	demonstrates HTTP POST/PUT/DELETE
-  httpposttest.c
 
 REST support is provided by the following plugins (plugin directory):
 
@@ -57,15 +72,15 @@ XML-RPC and JSON examples with HTTP POST:
 
   samples/xml-rpc-json
 
-HTTP GET
-========
+HTTP GET Hooks
+==============
 
 The HTTP GET plug-in allows your server to handle RESTful HTTP GET requests and
 at the same time still serve SOAP-based POST requests. The plug-in provides
 support to client applications to issue HTTP GET operations to a server.
 
-Example HTTP GET Clients
-------------------------
+Example Client with the GET Hook
+--------------------------------
 
 To get the HTTP body as a string:
 
@@ -128,8 +143,8 @@ Note: if binary data is to be received in a buffer, rather than a string, use:
   soap_http_body(soap, &buf, &len)
 which is available in httppost.h and httppost.c
 
-Example HTTP GET Server
------------------------
+Example Server with the GET Hook
+--------------------------------
 
 To extend a SOAP server with GET capability (see also samples/webserver):
 
@@ -178,16 +193,16 @@ To return JSON content, use:
       return SOAP_OK;
     }
 
-HTTP POST
-=========
+HTTP POST Hooks
+===============
 
 The HTTP POST plug-in allows your server to handle RESTful HTTP POST requests
 and at the same time still serve SOAP-based POST requests. The plug-in also 
 provides support for client applications to issue HTTP POST operations to a 
 server.
 
-Example HTTP POST Clients
--------------------------
+Example Clients with the POST Hook
+----------------------------------
 
 To send and receive data over HTTP POST, say HTML content:
 
@@ -237,8 +252,8 @@ To send and receive JSON over HTTP (see samples/xml-rpc-json):
   // dealloc context
   soap_free(ctx);
 
-Example HTTP POST Server
-------------------------
+Example Server with the POST Hook
+---------------------------------
 
 At the server side you need to register the plugin with handlers for MIME
 types:

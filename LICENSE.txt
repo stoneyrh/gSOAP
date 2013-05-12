@@ -63,9 +63,23 @@ source license, then an alternate proprietary software license for gSOAP which
 will remove the aforementioned requirement is available from Genivia Inc.
 
 The gSOAP software does not include any third-party GPL code. All software was
-build from the ground up. Note that the GNU Bison and Flex tools are used to
-generate source code for the gSOAP soapcpp2 compiler. However, the
-Bison/Flex-generated source code is not restricted by the GPL or LGPL terms.
+written from the ground up since 2003 and is owned and copyrighted by Genivia
+Inc. This allows Genivia to dual license the gSOAP software under GPLv2 and
+under the Genivia commercial-use licenses.
+
+The Ohloh site by Black Duck includes an analysis of the gSOAP GPLv2 open
+source repository:
+
+https://www.ohloh.net/p/gsoap
+
+Please note that "Black Duck Scans" will detect the use of GPL gSOAP software
+in your project builds when you are using the gSOAP source code. The
+commercial-use licenses by Genivia explicitly grant the use of the gSOAP
+software for non-GPL use and inclusion.
+
+Note that the GNU Bison and Flex tools are used to generate source code for the
+gSOAP soapcpp2 compiler. The Bison/Flex-generated source code is not restricted
+by the GPL or LGPL terms for this particular use.
 
 Non-GPL third-party contributions are included in the 'extras' directory in the
 package and you are free to use these contributions. Suggested changes and
@@ -80,7 +94,7 @@ or contact us at Genivia Inc:
 
 	contact@genivia.com
 
-GPL and OPENSSL
+GPL and OpenSSL
 
 This program is released under the GPL with the additional exemption that
 compiling, linking, and/or using OpenSSL is allowed.

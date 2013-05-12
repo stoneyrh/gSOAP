@@ -147,20 +147,35 @@ files for your project:
 
 To compile a client, all you need to do is to compile and link 'soapC.cpp',
 'soapClient.cpp', and 'stdsoap2.cpp' (or the installed libgsoap++, see
-INSTALLATION below) with your code. In your source code, add:
+INSTALLATION) with your code. To access the service in your code:
 
 	#include "soapH.h"
 	#include "calc.nsmap"
+        main()
+	{ struct soap *soap = soap_new(); // alloc 'soap' engine context
+	  double result;
+	  if (soap_call_ns2__add(soap, NULL, NULL, 1.0, 2.0, result) == SOAP_OK)
+	    std::cout << "The sum of 1.0 and 2.0 is " << result << std::endl;
+	  else
+	    soap_stream_fault(soap, std::cerr);
+	  soap_destroy(soap); // dealloc serialization data
+	  soap_end(soap);     // dealloc temp data
+	  soap_free(soap);    // dealloc 'soap' engine context
+	}
 
-This imports all soapcpp-generated definitions and the namespace mapping table.
+First, this imports all soapcpp-generated definitions and the namespace mapping
+table. Then the soap_call_ns2__add() invokes the service. This function is
+generated from the calc.h file by soapcpp2. The calc.h file includes
+instructions on what functions to call.
 
-To develop a C++ client application based on proxies, use 'soapcpp2' option -i:
+To develop a C++ client application based on C++ proxy objects rather than
+C-like functions, use 'soapcpp2' option -i:
 
 	$ wsdl2h -s -o calc.h http://www.cs.fsu.edu/~engelen/calc.wsdl
 	$ soapcpp2 -i calc.h
 
 This generates 'soapcalcProxy.h' and 'soapcalcProxy.cpp' with a calcProxy
-class you can use to invoke the service. For example:
+class with service methods that you can use to invoke services. For example:
 
 	#include "soapcalcProxy.h"
 	#include "calc.nsmap"
@@ -171,9 +186,11 @@ class you can use to invoke the service. For example:
 	    std::cout << "The sum of 1.0 and 2.0 is " << result << std::endl;
   	  else
 	    service.soap_stream_fault(std::cerr);
+	  service.destroy(); // dealloc serialization and temp data
 	}
 
-Compile and link with 'soapC.cpp' and 'stdsoap2.cpp' (or -lgsoap++).
+Compile the above program and link with 'soapC.cpp', 'soapcalcProxy.cpp', and
+'stdsoap2.cpp' (or -lgsoap++).
 
 To develop a C client, use 'wsdl2h' option -c to generate pure C code.
 

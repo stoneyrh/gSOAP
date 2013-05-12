@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.14
+	stdsoap2.h 2.8.15
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20814
+#define GSOAP_VERSION 20815
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -543,7 +543,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 /* native Win, HP-UX, and AIX compilers don't like empty structs */
-#if defined(WIN32) || defined(HP_UX) || defined(_AIX41) || defined(_AIX43) || defined(VXWORKS)
+#if defined(WIN32) || defined(HP_UX) || defined(_AIX) || defined(AIX) || defined(VXWORKS)
 # define WITH_NOEMPTYSTRUCT
 #endif
 
@@ -579,7 +579,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # undef HAVE_SPRINTF_L
 #endif
 
-#ifdef TANDEM_NONSTOP
+#ifdef TANDEM_NONSTOP /* Support for Guardian */
 # define SOAP_BUFLEN (32767)
 /*# define WITH_NOSTDLIB */ /* uncommment to remove stdlib dependences */
 # define WITH_NOIO      /* no IO dependences, e.g. remove TCP/IP */
@@ -610,6 +610,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # include <cextdecs.h(TIME,FILE_CLOSE_,AWAITIOX,DELAY,FILEINFO,FILE_GETINFO_)>
 # define INET_ERROR 4294967295                                
 #pragma list                                                  
+#elif defined(__TANDEM) /* Support for OSS */
+# define int32_t int
+# define SOAP_BUFLEN (32767)
 #endif                                                        
 
 #ifndef WITH_NOSTDLIB
@@ -823,7 +826,7 @@ extern "C" {
 #endif
 
 /* Portability: define SOAP_SOCKLEN_T */
-#if defined(_AIX)
+#if defined(_AIX) || defined(AIX)
 # if defined(_AIX43)
 #  define SOAP_SOCKLEN_T socklen_t
 # else
@@ -881,7 +884,9 @@ extern "C" {
 #elif !defined(WIN32) || defined(CYGWIN) || defined(__GLIBC__) || defined(__GNU__)
 # ifndef LONG64
 #  if defined(HAVE_INTTYPES_H)
-#   include <stdint.h>
+#   ifdef HAVE_STDINT_H
+#    include <stdint.h>
+#   endif
 #   include <inttypes.h>
 #   define LONG64 int64_t
 #   define ULONG64 uint64_t
@@ -947,7 +952,7 @@ extern "C" {
 # define soap_int32 long
 #elif defined(PALM)
 # define soap_int32 Int32
-#elif defined(_AIX)
+#elif defined(_AIX) || defined(AIX)
 # if defined(_AIX43)
 #  define soap_int32 int32_t
 # else
@@ -1446,7 +1451,7 @@ typedef soap_int32 soap_mode;
 # define SOAP_NOTHROW
 #endif
 
-#if (defined(__GNUC__) && (__GNUC__ <= 2) && !defined(__BORLANDC__)) || defined(__clang__) || defined(_AIX)
+#if (defined(__GNUC__) && (__GNUC__ <= 2) && !defined(__BORLANDC__)) || defined(__clang__) || defined(_AIX) || defined(AIX)
 /* old form w/o parenthesis */
 # ifndef SOAP_NEW
 #  define SOAP_NEW(type) new SOAP_NOTHROW type
@@ -2188,9 +2193,7 @@ struct soap_plugin
   void (*fdelete)(struct soap *soap, struct soap_plugin *p); /* should delete fields of plugin only and not free(p) */
 };
 
-#ifndef WITH_NONAMESPACES
 extern SOAP_NMAC struct Namespace namespaces[];
-#endif
 
 #ifndef WITH_LEAN
 # define soap_get0(soap) (((soap)->bufidx>=(soap)->buflen && soap_recv(soap)) ? EOF : (unsigned char)(soap)->buf[(soap)->bufidx])
@@ -2244,13 +2247,13 @@ soap_wchar soap_get1(struct soap*);
  SOAP_FMAC1 unsigned long SOAP_FMAC2 soap_strtoul(const char *s, char **t, int b);
 #endif
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
 # define soap_strtoll _strtoi64
 #else
 # define soap_strtoll strtoll
 #endif
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
 # define soap_strtoull _strtoui64
 #else
 # define soap_strtoull strtoull
@@ -2683,9 +2686,11 @@ SOAP_FMAC1 const char* SOAP_FMAC2 soap_attr_value(struct soap *soap, const char 
 SOAP_FMAC1 int SOAP_FMAC2 soap_set_attr(struct soap *soap, const char *name, const char *value, int flag);
 SOAP_FMAC1 void SOAP_FMAC2 soap_clr_attr(struct soap *soap);
 
+SOAP_FMAC1 const char* SOAP_FMAC2 soap_url(struct soap *soap, const char*, const char*);
+SOAP_FMAC1 size_t SOAP_FMAC2 soap_encode_url(const char*, char*, size_t);
+SOAP_FMAC1 const char* SOAP_FMAC2 soap_encode_url_string(struct soap*, const char*);
 #ifdef WITH_COOKIES
 SOAP_FMAC1 void SOAP_FMAC2 soap_getcookies(struct soap *soap, const char *val);
-SOAP_FMAC1 size_t SOAP_FMAC2 soap_encode_cookie(const char*, char*, size_t);
 SOAP_FMAC1 extern struct soap_cookie* SOAP_FMAC2 soap_set_cookie(struct soap*, const char*, const char*, const char*, const char*);
 SOAP_FMAC1 extern struct soap_cookie* SOAP_FMAC2 soap_cookie(struct soap*, const char*, const char*, const char*);
 SOAP_FMAC1 extern char* SOAP_FMAC2 soap_cookie_value(struct soap*, const char*, const char*, const char*);

@@ -245,6 +245,7 @@ class wsdl__ext_operation		// binding extensibility element
 	@xsd__anyURI			wsoap__mep;		// WSDL 2.0
 	@xsd__anyURI			wsoap__action;		// WSDL 2.0
 	@xsd__string			whttp__method;		// WSDL 2.0
+	@xsd__string			whttp__location;	// WSDL 2.0
 	xsd__string			documentation;		// <wsdl:documentation>?
 	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
 	wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
