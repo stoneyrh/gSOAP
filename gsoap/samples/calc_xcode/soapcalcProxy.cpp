@@ -157,6 +157,8 @@ int calcProxy::add(const char *endpoint, const char *soap_action, double a, doub
 	if (soap_recv_fault(soap, 1))
 		return soap->error;
 	soap_tmp_ns__addResponse = soap_get_ns__addResponse(soap, NULL, "", "");
+	if (!soap_tmp_ns__addResponse || soap->error)
+		return soap_recv_fault(soap, 0);
 	if (soap_body_end_in(soap)
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
@@ -213,6 +215,8 @@ int calcProxy::sub(const char *endpoint, const char *soap_action, double a, doub
 	if (soap_recv_fault(soap, 1))
 		return soap->error;
 	soap_tmp_ns__subResponse = soap_get_ns__subResponse(soap, NULL, "", "");
+	if (!soap_tmp_ns__subResponse || soap->error)
+		return soap_recv_fault(soap, 0);
 	if (soap_body_end_in(soap)
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
@@ -269,6 +273,8 @@ int calcProxy::mul(const char *endpoint, const char *soap_action, double a, doub
 	if (soap_recv_fault(soap, 1))
 		return soap->error;
 	soap_tmp_ns__mulResponse = soap_get_ns__mulResponse(soap, NULL, "", "");
+	if (!soap_tmp_ns__mulResponse || soap->error)
+		return soap_recv_fault(soap, 0);
 	if (soap_body_end_in(soap)
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
@@ -325,6 +331,8 @@ int calcProxy::div(const char *endpoint, const char *soap_action, double a, doub
 	if (soap_recv_fault(soap, 1))
 		return soap->error;
 	soap_tmp_ns__divResponse = soap_get_ns__divResponse(soap, NULL, "", "");
+	if (!soap_tmp_ns__divResponse || soap->error)
+		return soap_recv_fault(soap, 0);
 	if (soap_body_end_in(soap)
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
@@ -381,6 +389,8 @@ int calcProxy::pow(const char *endpoint, const char *soap_action, double a, doub
 	if (soap_recv_fault(soap, 1))
 		return soap->error;
 	soap_tmp_ns__powResponse = soap_get_ns__powResponse(soap, NULL, "", "");
+	if (!soap_tmp_ns__powResponse || soap->error)
+		return soap_recv_fault(soap, 0);
 	if (soap_body_end_in(soap)
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))

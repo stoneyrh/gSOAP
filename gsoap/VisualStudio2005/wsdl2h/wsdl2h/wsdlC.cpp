@@ -15,7 +15,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 
 #include "wsdlH.h"
 
-SOAP_SOURCE_STAMP("@(#) wsdlC.cpp ver 2.8.15 2013-05-12 18:32:45 GMT")
+SOAP_SOURCE_STAMP("@(#) wsdlC.cpp ver 2.8.15 2013-05-13 14:58:48 GMT")
 
 
 #ifndef WITH_NOGLOBAL

@@ -4445,6 +4445,7 @@ gen_call_method(FILE *fd, Table *table, Entry *method, char *name)
   }
   if (response)
   { fprintf(fd,"\n\tsoap_tmp_%s = soap_get_%s(soap, NULL, \"%s\", \"%s\");", c_ident(response->info.typ), c_ident(response->info.typ), xtag, xtyp);
+    fprintf(fd,"\n\tif (!soap_tmp_%s || soap->error)\n\t\treturn soap_recv_fault(soap, 0);", c_ident(response->info.typ));
   }
   else if ((result->info.typ->type == Treference || result->info.typ->type == Tpointer) && !is_invisible_empty(result->info.typ->ref))
   { if (result->info.typ->type == Treference && ((Tnode *) result->info.typ->ref)->type == Tclass && !is_external((Tnode*)result->info.typ->ref) && !is_volatile((Tnode*)result->info.typ->ref) && !is_dynamic_array((Tnode*)result->info.typ->ref))
