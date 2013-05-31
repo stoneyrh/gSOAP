@@ -1445,7 +1445,9 @@ typedef soap_int32 soap_mode;
 # define SOAP_FREE(soap, ptr) free(ptr)
 #endif
 
-#if !defined(WITH_LEAN) && !defined(WITH_COMPAT) && !defined(SOAP_NOTHROW)
+#if defined(__GNUC__) && (__GNUC__ <= 2)
+# define SOAP_NOTHROW
+#elif !defined(WITH_LEAN) && !defined(WITH_COMPAT) && !defined(SOAP_NOTHROW)
 # define SOAP_NOTHROW (std::nothrow)
 #else
 # define SOAP_NOTHROW
@@ -1459,6 +1461,9 @@ typedef soap_int32 soap_mode;
 # ifndef SOAP_NEW_ARRAY
 #  define SOAP_NEW_ARRAY(type, n) new SOAP_NOTHROW type[n]
 # endif
+# ifndef SOAP_PLACEMENT_NEW
+#  define SOAP_PLACEMENT_NEW(buf, type) new (buf) type
+# endif
 #else
 /* new form with parenthesis */
 # ifndef SOAP_NEW
@@ -1467,10 +1472,9 @@ typedef soap_int32 soap_mode;
 # ifndef SOAP_NEW_ARRAY
 #  define SOAP_NEW_ARRAY(type, n) new SOAP_NOTHROW (type[n])
 # endif
-#endif
-
-#ifndef SOAP_PLACEMENT_NEW
-# define SOAP_PLACEMENT_NEW(buf, type) new (buf) type
+# ifndef SOAP_PLACEMENT_NEW
+#  define SOAP_PLACEMENT_NEW(buf, type) new (buf) (type)
+# endif
 #endif
 
 #ifndef SOAP_NEW_COPY			/* use C++ new operator for ::copy() */
@@ -2203,6 +2207,9 @@ soap_wchar soap_get0(struct soap*);
 soap_wchar soap_get1(struct soap*);
 #endif
 
+#define SOAP_XSTRINGIFY(s) SOAP_STRINGIFY(s)
+#define SOAP_STRINGIFY(s) #s
+
 #define soap_versioning_paste(name, ext) name##_LIBRARY_VERSION_REQUIRED_##ext
 #define soap_versioning_ext(name, ext) soap_versioning_paste(name, ext)
 #define soap_versioning(name) soap_versioning_ext(name, GSOAP_VERSION)
@@ -2442,6 +2449,7 @@ SOAP_FMAC1 struct soap *SOAP_FMAC2 soap_copy_context(struct soap*, const struct 
 SOAP_FMAC1 void SOAP_FMAC2 soap_copy_stream(struct soap*, struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_free_stream(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_versioning(soap_init)(struct soap*, soap_mode, soap_mode);
+SOAP_FMAC1 void SOAP_FMAC2 soap_initialize(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_done(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_cleanup(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_begin(struct soap*);

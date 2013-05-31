@@ -8753,6 +8753,16 @@ soap_free_stream(struct soap *soap)
 SOAP_FMAC1
 void
 SOAP_FMAC2
+soap_initialize(struct soap *soap)
+{ soap_versioning(soap_init)(soap, SOAP_IO_DEFAULT, SOAP_IO_DEFAULT);
+}
+#endif
+
+/******************************************************************************/
+#ifndef PALM_1
+SOAP_FMAC1
+void
+SOAP_FMAC2
 soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
 { size_t i;
   soap->state = SOAP_INIT;
@@ -13489,8 +13499,6 @@ soap_outwliteral(struct soap *soap, const char *tag, wchar_t *const*p, const cha
       if (soap_element_begin_out(soap, t, 0, type))
         return soap->error;
     }
-    if(soap_send(soap, soap->tmpbuf))
-      return soap->error;
   }
   if (p)
   { wchar_t c;
