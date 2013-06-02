@@ -5,32 +5,25 @@
 #include "soapH.h"
 #include "calc.nsmap"
 
-int main(int argc, char **argv)
-{ int m, s; /* master and slave sockets */
-  struct soap soap;
-  soap_init(&soap);
-  if (argc < 2)
-    soap_serve(&soap);	/* serve as CGI application */
-  else
-  { m = soap_bind(&soap, NULL, atoi(argv[1]), 100);
-    if (m < 0)
-    { soap_print_fault(&soap, stderr);
-      exit(-1);
-    }
-    fprintf(stderr, "Socket connection successful: master socket = %d\n", m);
-    for ( ; ; )
-    { s = soap_accept(&soap);
-      fprintf(stderr, "Socket connection successful: slave socket = %d\n", s);
-      if (s < 0)
-      { soap_print_fault(&soap, stderr);
-        exit(-1);
-      } 
-      soap_serve(&soap);
-      soap_end(&soap);
-    }
-  }
-  return 0;
-} 
+
+extern "C" {
+
+/** This function is called by mod_gsoap after the dll was successfully loaded and before processing begins.
+	You can do any one-time initialization here.
+*/
+int mod_gsoap_init() {
+	// todo: add your initialization code here 
+	return SOAP_OK;
+}
+/** This function is called after all processing was done before dll is unloaded.
+	You can do any cleanup here.
+*/
+int mod_gsoap_terminate() {
+	// todo: add your termination code here 
+	return SOAP_OK;
+}
+
+}
 
 int ns__add(struct soap *soap, double a, double b, double *result)
 { *result = a + b;

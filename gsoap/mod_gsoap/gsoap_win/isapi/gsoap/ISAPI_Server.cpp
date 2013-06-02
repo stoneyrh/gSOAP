@@ -52,7 +52,7 @@ public:
     size_t SupplyRequestHeaders(char *pBuf, const size_t len); // send input request headers to gsoap.
     void BuildHeaders(); ///< build the headers that must be sent to gsoap.
 public:
-    soap *_soap;
+    struct soap *_soap;
     std::string _header; ///< header part returned to client e.g. "200 OK".
 	std::string _request_header; ///< the (remaining part of ) the first line of the request.
     DWORD _dwReturnCode; ///< the return code for the HttpExtensionProc.
@@ -234,13 +234,16 @@ static DWORD serve(
 {
 	assert(NULL != pInterface && pInterface->linked());
 
-	soap soap;
-	(*pInterface->fsoap_init)(&soap);
-    SoapTransaction trans(&soap);
+	struct soap *soap = (struct soap*)malloc(sizeof(struct soap));
+
+	assert(NULL != soap);
+
+	(*pInterface->fsoap_init)(soap);
+    SoapTransaction trans(soap);
     if (NULL != pInterface->fsoap_register_plugin_arg) {
-		(*pInterface->fsoap_register_plugin_arg)(&soap, mod_gsoap_plugin, (void *)&trans);
+		(*pInterface->fsoap_register_plugin_arg)(soap, mod_gsoap_plugin, (void *)&trans);
 	}
-    //soap.user = &trans;
+    //soap->user = &trans;
     trans._interface = pInterface;
     trans._istream = &is;
     trans._request = &req;
@@ -250,29 +253,30 @@ static DWORD serve(
 
 #ifdef WITH_ZLIB
 	//	always allow gzip in -- but only allow it out if the client can handle it
-	soap_set_imode(&soap, SOAP_ENC_ZLIB); 	
+	soap_set_imode(soap, SOAP_ENC_ZLIB); 	
 
 	string	str = req.getContentHeaders()["Accept-Encoding"];
 	if (strstr(str.c_str(), "gzip"))
 	{	
-		soap_set_omode(&soap, SOAP_ENC_ZLIB); 		
-		http_post_header( &soap, "Content-Encoding", "gzip" );	
+		soap_set_omode(soap, SOAP_ENC_ZLIB); 		
+		http_post_header(soap, "Content-Encoding", "gzip" );	
 	}
 
 #endif
 
     // set callback functions:
-    soap.frecv = frecv;
-    soap.fsend = fsend;
-    soap.fresponse = http_response;
-	soap.fposthdr = http_post_header;
+    soap->frecv = frecv;
+    soap->fsend = fsend;
+    soap->fresponse = http_response;
+	soap->fposthdr = http_post_header;
 
-	(*pInterface->fsoap_serve)(&soap);
+	(*pInterface->fsoap_serve)(soap);
 	if (NULL != pInterface->fsoap_delete) {
-		(*pInterface->fsoap_delete)(&soap, NULL);
+		(*pInterface->fsoap_delete)(soap, NULL);
 	}
-	(*pInterface->fsoap_done)(&soap);
-	(*pInterface->fsoap_end)(&soap);
+	(*pInterface->fsoap_end)(soap);
+	(*pInterface->fsoap_done)(soap);
+	free(soap);
 
     return trans._dwReturnCode;
 }

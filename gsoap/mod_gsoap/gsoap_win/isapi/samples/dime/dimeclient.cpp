@@ -25,22 +25,22 @@ static size_t dime_read(struct soap*, void*, char*, size_t);
 
 
 static int getImage(const char *name, const char *url, const char *outputfile) {
-	struct soap soap;
+	struct soap *soap = soap_new();
 	xsd__base64Binary image;
-	soap_init(&soap);
-    soap.user = (void*)outputfile;
-    soap.fdimewriteopen = dime_write_open;
-    soap.fdimewriteclose = dime_write_close;
-    soap.fdimewrite = dime_write;
-	soap.connect_timeout = 10;
-	int nRet = soap_call_ns__getImage(&soap, url, "", (char *)name, image);
+    soap->user = (void*)outputfile;
+    soap->fdimewriteopen = dime_write_open;
+    soap->fdimewriteclose = dime_write_close;
+    soap->fdimewrite = dime_write;
+	soap->connect_timeout = 10;
+	int nRet = soap_call_ns__getImage(soap, url, "", (char *)name, image);
 	if (nRet != SOAP_OK) {
-		soap_print_fault(&soap, stderr);
+		soap_print_fault(soap, stderr);
 	} else {
 		printf("got an image, I suppose\n");
 	}
-	soap_destroy(&soap);
-	soap_end(&soap);
+	soap_destroy(soap);
+	soap_end(soap);
+	soap_free(soap);
 	return nRet;
 }
 static int putImage(const char *name, const char *url, const char *inputfile) {
@@ -55,30 +55,31 @@ static int putImage(const char *name, const char *url, const char *inputfile) {
 		return 4;
 
 	}
-	struct soap soap;
-	soap_init(&soap);
-	xsd__base64Binary *pimage = soap_new_xsd__base64Binary(&soap, -1);
-    soap.user = (void *)inputfile;
-	soap.fdimereadopen = dime_read_open;
-	soap.fdimereadclose = dime_read_close;
-	soap.fdimeread = dime_read;
+	struct soap *soap = soap_new();
+	xsd__base64Binary *pimage = soap_new_xsd__base64Binary(soap, -1);
+    soap->user = (void *)inputfile;
+	soap->fdimereadopen = dime_read_open;
+	soap->fdimereadclose = dime_read_close;
+	soap->fdimeread = dime_read;
 	pimage->__ptr = (unsigned char*)fd; 
 	pimage->__size = sb.st_size; // must set size
     pimage->type = "image/jpeg";
-	pimage->options = soap_dime_option(&soap, 0, "My sent picture");
-	soap.connect_timeout = 10;
+	pimage->options = soap_dime_option(soap, 0, "My sent picture");
+	soap->connect_timeout = 10;
 
 	int nStatus = 0;
-	int nRet = soap_call_ns__putImage(&soap, url, "", (char *)name, pimage, nStatus);
+	int nRet = soap_call_ns__putImage(soap, url, "", (char *)name, pimage, nStatus);
 	if (nRet != SOAP_OK) {
-		soap_print_fault(&soap, stderr);
+		soap_print_fault(soap, stderr);
 	} else {
 		printf("sent an image, I suppose");
 	}
-	soap_destroy(&soap);
-	soap_end(&soap);
+	soap_destroy(soap);
+	soap_end(soap);
+	soap_free(soap);
 	return nRet;
 }
+
 int main(const int argc, const char *const *const argv) { 
 	if (4 != argc) {
 		printf("usage: %s imagename outputfilename\n", argv[0]);

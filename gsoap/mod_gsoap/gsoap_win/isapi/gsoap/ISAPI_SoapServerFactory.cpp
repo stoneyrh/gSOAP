@@ -149,7 +149,7 @@ bool SoapDll::GetEntryPoints(const char *pszPath) {
 	assert(NULL != m_hDll);
 	
 	string strTmp;
-	m_interface.fsoap_init    = GetFunction(m_hDll, "soap_init", m_strLastError, pszPath);
+	m_interface.fsoap_init    = GetFunction(m_hDll, "soap_initialize", m_strLastError, pszPath);
 	m_interface.fsoap_serve   = GetFunction(m_hDll, "soap_serve", m_strLastError, pszPath);
 	m_interface.fsoap_delete  = (isapi_soap_delete_fn)GetFunction(m_hDll, "soap_delete", strTmp, pszPath); // soap_delete may be missing for non - cpp
 	m_interface.fsoap_done    = GetFunction(m_hDll, "soap_done", m_strLastError, pszPath);
