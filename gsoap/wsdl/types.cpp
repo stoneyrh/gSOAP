@@ -6,7 +6,7 @@
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
 Copyright (C) 2001-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
-This software is released under one of the following two licenses:
+This software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
 GPL license.
@@ -1954,10 +1954,10 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
   { if (*attribute.form == qualified)
       nameURI = URI;
     else
-    { nameURI = NULL;
       nameprefix = ":";
-    }
   }
+  if (URI && attribute.schemaPtr() && attribute.schemaPtr()->targetNamespace && strcmp(URI,  attribute.schemaPtr()->targetNamespace))
+    nameURI = attribute.schemaPtr()->targetNamespace; // handles attributeGroup defined in another namespace
   if (attribute.attributePtr()) // attribute ref
   { name = attribute.attributePtr()->name;
     type = attribute.attributePtr()->type;
@@ -2107,20 +2107,15 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
 
 void Types::gen(const char *URI, const vector<xs__attributeGroup>& attributeGroups)
 { for (vector<xs__attributeGroup>::const_iterator attributeGroup = attributeGroups.begin(); attributeGroup != attributeGroups.end(); ++attributeGroup)
-  { if ((*attributeGroup).attributeGroupPtr()) // attributeGroup ref
-    { gen(URI, (*attributeGroup).attributeGroupPtr()->attribute);
-      gen(URI, (*attributeGroup).attributeGroupPtr()->attributeGroup);
-      if ((*attributeGroup).attributeGroupPtr()->anyAttribute)
-        gen(URI, *(*attributeGroup).attributeGroupPtr()->anyAttribute);
-    }
-    else
-    { fprintf(stream, "/// Begin attributeGroup %s.\n", (*attributeGroup).name?(*attributeGroup).name:(*attributeGroup).ref?(*attributeGroup).ref:"");
-      gen(URI, (*attributeGroup).attribute);
-      gen(URI, (*attributeGroup).attributeGroup);
-      if ((*attributeGroup).anyAttribute)
-        gen(URI, *(*attributeGroup).anyAttribute);
-      fprintf(stream, "/// End of attributeGroup %s.\n", (*attributeGroup).name?(*attributeGroup).name:(*attributeGroup).ref?(*attributeGroup).ref:"");
-    }
+  { const xs__attributeGroup *ag = &*attributeGroup;
+    if (ag->attributeGroupPtr()) // attributeGroup ref
+      ag = ag->attributeGroupPtr();
+    fprintf(stream, "/// Begin attributeGroup %s.\n", ag->name?ag->name:ag->ref?ag->ref:"");
+    gen(URI, ag->attribute);
+    gen(URI, ag->attributeGroup);
+    if (ag->anyAttribute)
+      gen(URI, *ag->anyAttribute);
+    fprintf(stream, "/// End of attributeGroup %s.\n", ag->name?ag->name:ag->ref?ag->ref:"");
   }
 }
 
@@ -2257,9 +2252,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
   { if (*element.form == qualified)
       nameURI = URI;
     else
-    { nameURI = NULL;
       nameprefix = ":";
-    }
   }
   if (element.elementPtr()) // element ref
   { name = element.elementPtr()->name;
