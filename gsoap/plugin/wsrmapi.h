@@ -79,6 +79,9 @@ extern const char soap_wsrm_id[];
 # define SOAP_WSRM_TIMEOUT 10
 #endif
 
+/** WCF channel instance default value (no channel) */
+#define SOAP_WSRM_NOCHAN 0x7FFFFFFF
+
 /**
 @enum soap_wsrm_state
 @brief wsrm engine state
@@ -158,6 +161,7 @@ struct soap_wsrm_sequence
   const char *id;	/**< sequence ID (from dest) */
   const char *acksid;	/**< sequence ID for ack requests (gen by source) */
   const char *to;	/**< to endpoint */
+  const char *repto;	/**< reply to endpoint */
   const char *acksto;	/**< ack to endpoint */
   time_t expires;	/**< date/time of expiration */
   int retry;		/**< retry count */
@@ -168,6 +172,7 @@ struct soap_wsrm_sequence
   enum soap_wsrm_state state;		/**< sequence state */
   struct soap_wsrm_message *messages;	/**< stores msg content */
   struct soap_wsrm_range *ranges;	/**< ranges of received messages */
+  int channel;		/**< callback WCF channel instance */
 };
 
 typedef struct soap_wsrm_sequence *soap_wsrm_sequence_handle;
