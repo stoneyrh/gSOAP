@@ -457,15 +457,17 @@ int Service::Clear(_mssadh__Clear *req)
 
   equation << " = " << result;
 
-  _mssadh__Equation eqn;
-  std::string s = equation.str();
-  eqn.eqn = &s;
-  if (callback.send_Equation(&eqn) == SOAP_OK || callback.soap->error == 202)
-    std::cout << "Equation(" << s << ")" << std::endl;
-  else
-    callback.soap_stream_fault(std::cerr);
-  callback.destroy();
-
+  if (callback.soap_endpoint)
+  {
+    _mssadh__Equation eqn;
+    std::string s = equation.str();
+    eqn.eqn = &s;
+    if (callback.send_Equation(&eqn) == SOAP_OK || callback.soap->error == 202)
+      std::cout << "Equation(" << s << ")" << std::endl;
+    else
+      callback.soap_stream_fault(std::cerr);
+    callback.destroy();
+  }
   result = 0.0;
   equation.str("");
   equation << 0.0;
@@ -495,20 +497,23 @@ int Service::AddTo(_mssadh__AddTo *req)
   /* get the handle to the current sequence of the inbound message */
   soap_wsrm_sequence_handle seq = soap_wsrm_seq(soap);
   callback.soap_endpoint = soap_wsrm_to(seq);
-  if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
-  { 
-    callback.soap_stream_fault(std::cerr);
+  if (callback.soap_endpoint)
+  {
+    if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
+    { 
+      callback.soap_stream_fault(std::cerr);
+      soap_wsrm_seq_release(soap, seq);
+      return callback.soap->error;
+    }
     soap_wsrm_seq_release(soap, seq);
-    return callback.soap->error;
-  }
-  soap_wsrm_seq_release(soap, seq);
 
-  _mssadh__Result res;
-  res.result = &result;
-  if (callback.send_Result(&res) == SOAP_OK || callback.soap->error == 202)
-    std::cout << "Result(" << result << ")" << std::endl;
-  else
-    callback.soap_stream_fault(std::cerr);
+    _mssadh__Result res;
+    res.result = &result;
+    if (callback.send_Result(&res) == SOAP_OK || callback.soap->error == 202)
+      std::cout << "Result(" << result << ")" << std::endl;
+    else
+      callback.soap_stream_fault(std::cerr);
+  }
   callback.destroy();
 
   return SOAP_OK;
@@ -536,20 +541,23 @@ int Service::SubtractFrom(_mssadh__SubtractFrom *req)
   /* get the handle to the current sequence of the inbound message */
   soap_wsrm_sequence_handle seq = soap_wsrm_seq(soap);
   callback.soap_endpoint = soap_wsrm_to(seq);
-  if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
-  { 
-    callback.soap_stream_fault(std::cerr);
+  if (callback.soap_endpoint)
+  {
+    if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
+    { 
+      callback.soap_stream_fault(std::cerr);
+      soap_wsrm_seq_release(soap, seq);
+      return callback.soap->error;
+    }
     soap_wsrm_seq_release(soap, seq);
-    return callback.soap->error;
-  }
-  soap_wsrm_seq_release(soap, seq);
 
-  _mssadh__Result res;
-  res.result = &result;
-  if (callback.send_Result(&res) == SOAP_OK || callback.soap->error == 202)
-    std::cout << "Result(" << result << ")" << std::endl;
-  else
-    callback.soap_stream_fault(std::cerr);
+    _mssadh__Result res;
+    res.result = &result;
+    if (callback.send_Result(&res) == SOAP_OK || callback.soap->error == 202)
+      std::cout << "Result(" << result << ")" << std::endl;
+    else
+      callback.soap_stream_fault(std::cerr);
+  }
   callback.destroy();
 
   return SOAP_OK;
@@ -577,20 +585,23 @@ int Service::MultiplyBy(_mssadh__MultiplyBy *req)
   /* get the handle to the current sequence of the inbound message */
   soap_wsrm_sequence_handle seq = soap_wsrm_seq(soap);
   callback.soap_endpoint = soap_wsrm_to(seq);
-  if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
-  { 
-    callback.soap_stream_fault(std::cerr);
+  if (callback.soap_endpoint)
+  {
+    if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
+    { 
+      callback.soap_stream_fault(std::cerr);
+      soap_wsrm_seq_release(soap, seq);
+      return callback.soap->error;
+    }
     soap_wsrm_seq_release(soap, seq);
-    return callback.soap->error;
-  }
-  soap_wsrm_seq_release(soap, seq);
 
-  _mssadh__Result res;
-  res.result = &result;
-  if (callback.send_Result(&res) == SOAP_OK || callback.soap->error == 202)
-    std::cout << "Result(" << result << ")" << std::endl;
-  else
-    callback.soap_stream_fault(std::cerr);
+    _mssadh__Result res;
+    res.result = &result;
+    if (callback.send_Result(&res) == SOAP_OK || callback.soap->error == 202)
+      std::cout << "Result(" << result << ")" << std::endl;
+    else
+      callback.soap_stream_fault(std::cerr);
+  }
   callback.destroy();
 
   return SOAP_OK;
@@ -618,20 +629,23 @@ int Service::DivideBy(_mssadh__DivideBy *req)
   /* get the handle to the current sequence of the inbound message */
   soap_wsrm_sequence_handle seq = soap_wsrm_seq(soap);
   callback.soap_endpoint = soap_wsrm_to(seq);
-  if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
-  { 
-    callback.soap_stream_fault(std::cerr);
+  if (callback.soap_endpoint)
+  {
+    if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
+    { 
+      callback.soap_stream_fault(std::cerr);
+      soap_wsrm_seq_release(soap, seq);
+      return callback.soap->error;
+    }
     soap_wsrm_seq_release(soap, seq);
-    return callback.soap->error;
-  }
-  soap_wsrm_seq_release(soap, seq);
 
-  _mssadh__Result res;
-  res.result = &result;
-  if (callback.send_Result(&res) == SOAP_OK || callback.soap->error == 202)
-    std::cout << "Result(" << result << ")" << std::endl;
-  else
-    callback.soap_stream_fault(std::cerr);
+    _mssadh__Result res;
+    res.result = &result;
+    if (callback.send_Result(&res) == SOAP_OK || callback.soap->error == 202)
+      std::cout << "Result(" << result << ")" << std::endl;
+    else
+      callback.soap_stream_fault(std::cerr);
+  }
   callback.destroy();
 
   return SOAP_OK;
