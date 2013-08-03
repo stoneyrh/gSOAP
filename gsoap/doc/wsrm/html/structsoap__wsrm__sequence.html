@@ -79,6 +79,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ae1fe1566af80f1b0f7f24a6018707986"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3711c98f013355c967790c0e26a973ae"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a3711c98f013355c967790c0e26a973ae">to</a></td></tr>
 <tr class="separator:a3711c98f013355c967790c0e26a973ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae517f21431d821a463e268a064711cac"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#ae517f21431d821a463e268a064711cac">repto</a></td></tr>
+<tr class="separator:ae517f21431d821a463e268a064711cac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6be238361452632509a253bd52e035c5"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a6be238361452632509a253bd52e035c5">acksto</a></td></tr>
 <tr class="separator:a6be238361452632509a253bd52e035c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0745f8c3e0bebb50d2ca01f0088e9535"><td class="memItemLeft" align="right" valign="top">time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a0745f8c3e0bebb50d2ca01f0088e9535">expires</a></td></tr>
@@ -100,6 +102,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a4dcd5bdd34e82224c3acca1f66fa6ddd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab122f27f2af3dbf98613bb06348d7b7"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__wsrm__range.html">soap_wsrm_range</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#aab122f27f2af3dbf98613bb06348d7b7">ranges</a></td></tr>
 <tr class="separator:aab122f27f2af3dbf98613bb06348d7b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20346ea8e84e19ccb510a64a034ab0cf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a20346ea8e84e19ccb510a64a034ab0cf">channel</a></td></tr>
+<tr class="separator:a20346ea8e84e19ccb510a64a034ab0cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Linked list of currently active message sequences. </p>
@@ -152,6 +156,19 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a20346ea8e84e19ccb510a64a034ab0cf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_wsrm_sequence::channel</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>callback WCF channel instance </p>
 
 </div>
 </div>
@@ -285,6 +302,19 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ae517f21431d821a463e268a064711cac"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* soap_wsrm_sequence::repto</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>reply to endpoint </p>
+
+</div>
+</div>
 <a class="anchor" id="abe1f48185aeb7762eff38f26eebaced3"></a>
 <div class="memitem">
 <div class="memproto">
@@ -330,7 +360,7 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jan 21 2013 09:45:21 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Aug 3 2013 11:45:31 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

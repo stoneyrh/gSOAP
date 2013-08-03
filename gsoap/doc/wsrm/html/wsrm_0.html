@@ -286,30 +286,32 @@ Exchanging Messages in a Sequence</h2>
 <p>For example, consider the 'example' operation defined previously and suppose we invoke the 'example' operation in a sequence (after creation and before closing):</p>
 <div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *exampleRequestAction = <span class="stringliteral">&quot;urn:example/examplePort/example&quot;</span>;</div>
 <div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *exampleRequestMessageID = NULL; <span class="comment">// optional WS-Addressing ID</span></div>
-<div class="line"></div>
 <div class="line"><span class="keyword">struct </span>ns__exampleResponse response;</div>
 <div class="line"></div>
-<div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a05857d4bed3b3052e6878f490330277f" title="Adds a WS-RM sequence message number to the next message transmitted to the WS-RM destination and inc...">soap_wsrm_request</a>(soap, seq, exampleRequestMessageID, exampleRequestAction))</div>
-<div class="line">  ... <span class="comment">// error: out of memory</span></div>
+<div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *endpoint = <a class="code" href="wsrmapi_8h.html#a6b6ce73440955d04712c6acb429f536b" title="Returns the endpoint address of the destination service that serves the sequence. Initially set with ...">soap_wsrm_to</a>(seq);</div>
+<div class="line"><span class="keywordflow">if</span> (endpoint)</div>
+<div class="line">{ <span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a05857d4bed3b3052e6878f490330277f" title="Adds a WS-RM sequence message number to the next message transmitted to the WS-RM destination and inc...">soap_wsrm_request</a>(soap, seq, exampleRequestMessageID, exampleRequestAction))</div>
+<div class="line">    ... <span class="comment">// error: out of memory</span></div>
 <div class="line"></div>
-<div class="line"><span class="keywordflow">if</span> (soap_call_ns__example(soap, <a class="code" href="wsrmapi_8h.html#a6b6ce73440955d04712c6acb429f536b" title="Returns the endpoint address of the destination service that serves the sequence. Initially set with ...">soap_wsrm_to</a>(seq), exampleRequestAction, &amp;response))</div>
-<div class="line">  soap_print_fault(soap, stderr); <span class="comment">// an error occurred</span></div>
-<div class="line"><span class="keywordflow">else</span></div>
-<div class="line">  ... <span class="comment">// process the response</span></div>
+<div class="line">  <span class="keywordflow">if</span> (soap_call_ns__example(soap, endpoint, exampleRequestAction, &amp;response))</div>
+<div class="line">    soap_print_fault(soap, stderr); <span class="comment">// an error occurred</span></div>
+<div class="line">  <span class="keywordflow">else</span></div>
+<div class="line">    ... <span class="comment">// process the response</span></div>
+<div class="line">}</div>
 </div><!-- fragment --><p>To generate WS-Addressing message IDs, use <a class="el" href="wsaapi_8c.html#a56d565b1a21fde1ea7d96404ff710325">soap_wsa_rand_uuid</a>, for example:</p>
 <div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *exampleRequestAction = <span class="stringliteral">&quot;urn:example/examplePort/example&quot;</span>;</div>
 <div class="line"></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a05857d4bed3b3052e6878f490330277f" title="Adds a WS-RM sequence message number to the next message transmitted to the WS-RM destination and inc...">soap_wsrm_request</a>(soap, seq, <a class="code" href="wsaapi_8h.html#ac2b81c42093fc9fcadcf86e7d801e03b" title="Generates a random UUID (UUID algorithm version 4). Compile all source codes with -DWITH_OPENSSL for ...">soap_wsa_rand_uuid</a>(soap), exampleRequestAction))</div>
 <div class="line">  ... <span class="comment">// error: out of memory</span></div>
 </div><!-- fragment --><p>The <a class="el" href="wsrmapi_8c.html#a05857d4bed3b3052e6878f490330277f">soap_wsrm_request</a> takes the sequence handle and optional WS-Addressing message ID and mandatory WS-Addressing action string (this string must match the method-action defined in the gSOAP service definition header file). It produces a WS-RM header block with the message number incremented by one for the invocation. Messages are enumerated from one and included in the WS-RM header to allow the destination to determine which messages were received in the sequence (for acknowledgements) and to ignore duplicate messages.</p>
-<p>The remote invocation soap_call_ns__example() uses soap_wsrm_to(seq) for the WS-RM destination address, which was set by <a class="el" href="wsrmapi_8h.html#ae1351fd2ece8ddd1a8da40e7ebe6b36f" title="Creates a new sequence. Sequences are usually created by the sender (client) and confirmed by the rec...">soap_wsrm_create()</a> or <a class="el" href="wsrmapi_8c.html#a54cb27e4c3139e5197a30d15686cadca">soap_wsrm_create_offer</a>. Because the address may change due to a redirect, we encourage the use of <a class="el" href="wsrmapi_8c.html#a3ba123420e7bb4528588fbbc4a3795f8">soap_wsrm_to</a> for the WS-RM destination address.</p>
+<p>The remote invocation soap_call_ns__example() uses the endpoint provided by soap_wsrm_to(seq) for the WS-RM destination address, which was set by <a class="el" href="wsrmapi_8c.html#ae1351fd2ece8ddd1a8da40e7ebe6b36f">soap_wsrm_create</a> or <a class="el" href="wsrmapi_8c.html#a54cb27e4c3139e5197a30d15686cadca">soap_wsrm_create_offer</a>. Because the address may change due to a redirect, we encourage the use of <a class="el" href="wsrmapi_8c.html#a3ba123420e7bb4528588fbbc4a3795f8">soap_wsrm_to</a> for the WS-RM destination address. When used at the server side, soap_wsrm_to(seq) is the ReplyTo address provided by the client's request message, which may be none (NULL) for a one-way call. Therefore, it is wise to check the return value of soap_wsrm_to(seq).</p>
 <p>A C++ proxy object (generated by soapcpp2 option -i) that invokes a service operation should reset the destination address explicitly by setting the 'soap_endpoint' member string before each operation invocation.</p>
 <h2><a class="anchor" id="wsrm_4_4"></a>
 Exchanging Messages with Acknowledgements in a Sequence</h2>
 <p>Before sending a message, a WS-RM request should be issued using <a class="el" href="wsrmapi_8c.html#a7292b4a8e24e767b538e0fb2993a6864">soap_wsrm_request_acks</a>. This informs the WS-RM destination to return message delivery acknowledgements back to the sender (piggy-backed in the header of the response message), unless the AcksTo is set to target an acknowledgement service endpoint in which case the acknowledgements are sent to.</p>
 <div class="fragment"><div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a7292b4a8e24e767b538e0fb2993a6864" title="Adds a WS-RM sequence message number to the next message transmitted to the WS-RM destination and inc...">soap_wsrm_request_acks</a>(soap, seq, opt_msg_id, exampleRequestAction))</div>
 <div class="line">  ... <span class="comment">// error</span></div>
-<div class="line"><span class="keywordflow">if</span> (soap_call_ns__example(soap, <a class="code" href="wsrmapi_8h.html#a6b6ce73440955d04712c6acb429f536b" title="Returns the endpoint address of the destination service that serves the sequence. Initially set with ...">soap_wsrm_to</a>(seq), exampleRequestAction, &amp;response))</div>
+<div class="line"><span class="keywordflow">if</span> (soap_call_ns__example(soap, endpoint, exampleRequestAction, &amp;response))</div>
 <div class="line">  <span class="keywordflow">if</span> (soap-&gt;error != 202) <span class="comment">// Error != HTTP Accepted</span></div>
 <div class="line">    ... <span class="comment">// error</span></div>
 </div><!-- fragment --><p>When duplex messaging is used via a callback, a polling operation will be needed afterwards:</p>
@@ -325,7 +327,7 @@ Resending Non-Acknowledged Messages</h2>
 </div><!-- fragment --><p>Or all messages after message number 3:</p>
 <div class="fragment"><div class="line"><a class="code" href="wsrmapi_8h.html#af0644e93628d1c450cb3c73fed5afd4f" title="Client-side call to resend all non-acknowledged messages that were automatically cached for this sequ...">soap_wsrm_resend</a>(soap, seq, 3, 0);</div>
 </div><!-- fragment --><p>Resends should be used with care, since in the worst case when no acknowledgements have been received all messages up to the last will be resend (and ignored by the WS-RM destination when a message is received more than once).</p>
-<p>Note that when an AcksTo destination service address was set with <a class="el" href="wsrmapi_8c.html#a070f3ffaacb8c9b160a7d8a1246a6c9a">soap_wsrm_create</a> or <a class="el" href="wsrmapi_8c.html#a54cb27e4c3139e5197a30d15686cadca">soap_wsrm_create_offer</a>, then the acknowledgements will not be returned to the sender (client). In this case message resends are performed for all messages sent, since these have not been acknowledged.</p>
+<p>Note that when an AcksTo destination service address was set with <a class="el" href="wsrmapi_8c.html#ae1351fd2ece8ddd1a8da40e7ebe6b36f">soap_wsrm_create</a> or <a class="el" href="wsrmapi_8c.html#a54cb27e4c3139e5197a30d15686cadca">soap_wsrm_create_offer</a>, then the acknowledgements will not be returned to the sender (client). In this case message resends are performed for all messages sent, since these have not been acknowledged.</p>
 <p>It is permitted to issue resends between creation and termination of a sequence, including after a sequence close (as long as no new messages are sent after close). The sequence close provides acknowledgement information to limit the number of messages that need to be resend.</p>
 <p>To find out if none, some, or all messages have been acknowledged, use:</p>
 <div class="fragment"><div class="line">ULONG64 nack = <a class="code" href="wsrmapi_8h.html#a2ceeeb0b560422f249524024ec37160b" title="Returns the number of non-acknowledged messages sent.">soap_wsrm_nack</a>(seq);</div>
@@ -341,16 +343,19 @@ Relaying Response and Fault Messages with WS-Addressing</h2>
 <p>The ReplyTo and FaultTo destination service endpoints can be specified for each message as follows:</p>
 <div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *replyto = source; <span class="comment">// endpoint of WS-RM source</span></div>
 <div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *faultto = <span class="stringliteral">&quot;...&quot;</span>; <span class="comment">// endpoint of fault processing service</span></div>
+<div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *endpoint = <a class="code" href="wsrmapi_8h.html#a6b6ce73440955d04712c6acb429f536b" title="Returns the endpoint address of the destination service that serves the sequence. Initially set with ...">soap_wsrm_to</a>(seq);</div>
 <div class="line"></div>
-<div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a7292b4a8e24e767b538e0fb2993a6864" title="Adds a WS-RM sequence message number to the next message transmitted to the WS-RM destination and inc...">soap_wsrm_request_acks</a>(soap, seq, NULL, exampleRequestAction)</div>
-<div class="line"> || <a class="code" href="wsaapi_8h.html#a8b4871953a687b6f360b04c4bddeb49c" title="Sets WS-Addressing ReplyTo header for request message.">soap_wsa_add_ReplyTo</a>(soap, replyto)</div>
-<div class="line"> || <a class="code" href="wsaapi_8h.html#afc91d81e9eec6b9bc39efbd5e715a18a" title="Sets WS-Addressing FaultTo header for request message.">soap_wsa_add_FaultTo</a>(soap, faultto))</div>
-<div class="line">  ... <span class="comment">// error: out of memory</span></div>
-<div class="line"><span class="keywordflow">if</span> (soap_call_ns__example(soap, <a class="code" href="wsrmapi_8h.html#a6b6ce73440955d04712c6acb429f536b" title="Returns the endpoint address of the destination service that serves the sequence. Initially set with ...">soap_wsrm_to</a>(seq), exampleRequestAction, &amp;response))</div>
-<div class="line">{ <span class="keywordflow">if</span> (soap-&gt;error != 202)</div>
-<div class="line">    ... <span class="comment">// error</span></div>
+<div class="line"><span class="keywordflow">if</span> (endpoint)</div>
+<div class="line">{ <span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a7292b4a8e24e767b538e0fb2993a6864" title="Adds a WS-RM sequence message number to the next message transmitted to the WS-RM destination and inc...">soap_wsrm_request_acks</a>(soap, seq, NULL, exampleRequestAction)</div>
+<div class="line">   || <a class="code" href="wsaapi_8h.html#a8b4871953a687b6f360b04c4bddeb49c" title="Sets WS-Addressing ReplyTo header for request message.">soap_wsa_add_ReplyTo</a>(soap, replyto)</div>
+<div class="line">   || <a class="code" href="wsaapi_8h.html#afc91d81e9eec6b9bc39efbd5e715a18a" title="Sets WS-Addressing FaultTo header for request message.">soap_wsa_add_FaultTo</a>(soap, faultto))</div>
+<div class="line">    ... <span class="comment">// error: out of memory</span></div>
+<div class="line">  <span class="keywordflow">if</span> (soap_call_ns__example(soap, endpoint, exampleRequestAction, &amp;response))</div>
+<div class="line">  { <span class="keywordflow">if</span> (soap-&gt;error != 202)</div>
+<div class="line">      ... <span class="comment">// error</span></div>
+<div class="line">  }</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>An optional source address information header can be added with soap_wsa_add_From:</p>
+</div><!-- fragment --><p>An optional source address information header can be added with <a class="el" href="wsaapi_8h.html#a173c7beac1825c49f5d3b446ccdbc6b8">soap_wsa_add_From()</a>:</p>
 <div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *from = <span class="stringliteral">&quot;...&quot;</span>; <span class="comment">// endpoint of the client (could be any URI)</span></div>
 <div class="line"></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a7292b4a8e24e767b538e0fb2993a6864" title="Adds a WS-RM sequence message number to the next message transmitted to the WS-RM destination and inc...">soap_wsrm_request_acks</a>(soap, seq, NULL, exampleRequestAction)</div>
@@ -362,9 +367,10 @@ Using Retry Loops to Improve Robustness of Message Sends</h2>
 <p>A potential problem with reliable message delivery with resends can fail when the initial send was not successful and message ordering is relevant. Resending will lead to an unordered message delivery.</p>
 <p>Also, the wsrm plugin records all sent messages when the send operation was not interrupted. A problem occurs when the message cache contains incomplete messages and these messages cannot be resend. This section presents an additional mechanism to ensure messages are cached properly for automatic retransmission.</p>
 <p>Besides network failues, a request-response message exchange can also appear to fail due to a non SOAP_OK returned, such as a benign HTTP 202 Accept To distinguish fatal send errors from errors returned by the peer, the <a class="el" href="wsrmapi_8c.html#a091a66f982799656bf39cf713ff29eff">soap_wsrm_check_retry</a> function can be used as follows to only retry the message exchange (or send) when needed:</p>
-<div class="fragment"><div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a7292b4a8e24e767b538e0fb2993a6864" title="Adds a WS-RM sequence message number to the next message transmitted to the WS-RM destination and inc...">soap_wsrm_request_acks</a>(soap, seq, NULL, exampleRequestAction))</div>
+<div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *endpoint = NULL;</div>
+<div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a7292b4a8e24e767b538e0fb2993a6864" title="Adds a WS-RM sequence message number to the next message transmitted to the WS-RM destination and inc...">soap_wsrm_request_acks</a>(soap, seq, NULL, exampleRequestAction))</div>
 <div class="line">  ... <span class="comment">// error</span></div>
-<div class="line"><span class="keywordflow">while</span> (soap_call_ns__example(soap, <a class="code" href="wsrmapi_8h.html#a6b6ce73440955d04712c6acb429f536b" title="Returns the endpoint address of the destination service that serves the sequence. Initially set with ...">soap_wsrm_to</a>(seq), exampleRequestAction, &amp;response))</div>
+<div class="line"><span class="keywordflow">while</span> ((endpoint = <a class="code" href="wsrmapi_8h.html#a6b6ce73440955d04712c6acb429f536b" title="Returns the endpoint address of the destination service that serves the sequence. Initially set with ...">soap_wsrm_to</a>(seq)) != NULL &amp;&amp; soap_call_ns__example(soap, endpoint, exampleRequestAction, &amp;response))</div>
 <div class="line">{ <span class="keywordflow">if</span> (soap-&gt;error == 202)</div>
 <div class="line">  { <span class="comment">// request was accepted by destination (HTTP 202 Accept)</span></div>
 <div class="line">    <span class="keywordflow">break</span>;</div>
@@ -407,7 +413,7 @@ Example Client</h2>
 <div class="line"></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a7292b4a8e24e767b538e0fb2993a6864" title="Adds a WS-RM sequence message number to the next message transmitted to the WS-RM destination and inc...">soap_wsrm_request_acks</a>(soap, seq, NULL, exampleRequestAction))</div>
 <div class="line">  ... <span class="comment">// error</span></div>
-<div class="line"><span class="keywordflow">while</span> (soap_call_ns__example(soap, <a class="code" href="wsrmapi_8h.html#a6b6ce73440955d04712c6acb429f536b" title="Returns the endpoint address of the destination service that serves the sequence. Initially set with ...">soap_wsrm_to</a>(seq), exampleRequestAction, &amp;response))</div>
+<div class="line"><span class="keywordflow">while</span> (soap_call_ns__example(soap, destination, exampleRequestAction, &amp;response))</div>
 <div class="line">{ <span class="keywordflow">if</span> (soap-&gt;error == 202)</div>
 <div class="line">  { <span class="comment">// request was accepted by destination (HTTP 202 Accept)</span></div>
 <div class="line">    <span class="keywordflow">break</span>;</div>
@@ -480,7 +486,7 @@ Example Client</h2>
 <div class="line"></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a7292b4a8e24e767b538e0fb2993a6864" title="Adds a WS-RM sequence message number to the next message transmitted to the WS-RM destination and inc...">soap_wsrm_request_acks</a>(soap, seq, NULL, exampleRequestAction))</div>
 <div class="line">  ... <span class="comment">// error</span></div>
-<div class="line"><span class="keywordflow">while</span> (soap_call_ns__example(soap, <a class="code" href="wsrmapi_8h.html#a6b6ce73440955d04712c6acb429f536b" title="Returns the endpoint address of the destination service that serves the sequence. Initially set with ...">soap_wsrm_to</a>(seq), exampleRequestAction, &amp;response))</div>
+<div class="line"><span class="keywordflow">while</span> (soap_call_ns__example(soap, destination, exampleRequestAction, &amp;response))</div>
 <div class="line">{ <span class="keywordflow">if</span> (soap-&gt;error == 202)</div>
 <div class="line">  { <span class="comment">// request was accepted by destination (HTTP 202 Accept)</span></div>
 <div class="line">    <span class="keywordflow">break</span>;</div>
@@ -576,7 +582,7 @@ Setting up a WS-RM Destination Service</h2>
 <div class="line">    <span class="keywordflow">return</span> <a class="code" href="wsrmapi_8h.html#a65c7a86eaf7366b9cb9c4759c1f7c061" title="Sets receiver SOAP Fault for server faults (can be user defined faults). When called before soap_wsrm...">soap_wsrm_receiver_fault</a>(soap, <span class="stringliteral">&quot;No database!&quot;</span>, NULL);</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// check for WS-RM/WSA and set WS-RM/WSA return headers and protocol errors</span></div>
-<div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a0304e1219b99929fa576cf12114206eb" title="Server-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP header...">soap_wsrm_check</a>(soap))</div>
+<div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a0304e1219b99929fa576cf12114206eb" title="Receiver (server)-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP he...">soap_wsrm_check</a>(soap))</div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error;</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// check for non-fatal service operation-specific errors</span></div>
@@ -612,7 +618,7 @@ Handling Duplex Callback Service Operations</h2>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> ns__exampleResponse(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">char</span> *out)</div>
 <div class="line">{</div>
 <div class="line">  <span class="comment">// check WS-RM/WSA headers and protocol errors</span></div>
-<div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a0304e1219b99929fa576cf12114206eb" title="Server-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP header...">soap_wsrm_check</a>(soap))</div>
+<div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a0304e1219b99929fa576cf12114206eb" title="Receiver (server)-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP he...">soap_wsrm_check</a>(soap))</div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error;</div>
 <div class="line">  ... <span class="comment">// process</span></div>
 <div class="line">  <span class="keywordflow">return</span> SOAP_OK;</div>
@@ -641,7 +647,7 @@ WS-ReliableMessaging over HTTPS with Basic Authentication</h1>
 <div class="line">soap-&gt;passwd = <span class="stringliteral">&quot;...&quot;</span>; <span class="comment">// Basic Auth password</span></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a7292b4a8e24e767b538e0fb2993a6864" title="Adds a WS-RM sequence message number to the next message transmitted to the WS-RM destination and inc...">soap_wsrm_request_acks</a>(soap, seq, NULL, exampleRequestAction)</div>
 <div class="line">  ... <span class="comment">// error: out of memory</span></div>
-<div class="line"><span class="keywordflow">if</span> (soap_call_ns__example(soap, <a class="code" href="wsrmapi_8h.html#a6b6ce73440955d04712c6acb429f536b" title="Returns the endpoint address of the destination service that serves the sequence. Initially set with ...">soap_wsrm_to</a>(seq), exampleRequestAction, &amp;response))</div>
+<div class="line"><span class="keywordflow">if</span> (soap_call_ns__example(soap, endpoint, exampleRequestAction, &amp;response))</div>
 <div class="line">{ <span class="keywordflow">if</span> (soap-&gt;error == 401)</div>
 <div class="line">    ... <span class="comment">// authentication failed for the userid/passwd pair</span></div>
 <div class="line">  else</div>
@@ -653,7 +659,7 @@ WS-ReliableMessaging over HTTPS with Basic Authentication</h1>
 <div class="line">  { soap-&gt;authrealm = <span class="stringliteral">&quot;...&quot;</span>; <span class="comment">// optional to set HTTP WWW-Authenticate: Basic realm=&quot;...&quot;</span></div>
 <div class="line">    <span class="keywordflow">return</span> 401; <span class="comment">// HTTP 401 Unauthorized</span></div>
 <div class="line">  }</div>
-<div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a0304e1219b99929fa576cf12114206eb" title="Server-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP header...">soap_wsrm_check</a>(soap))</div>
+<div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#a0304e1219b99929fa576cf12114206eb" title="Receiver (server)-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP he...">soap_wsrm_check</a>(soap))</div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error;</div>
 </div><!-- fragment --><p>Here, we check only one userid-passwd pair though normally we could search for valid credentials in an authentication store.</p>
 <p>Note: never use Basic Authentication over HTTP because the password is sent in the clear. You must use HTTPS to encrypt the HTTP authentication information and message content. HTTP Digest Auth is preferred for this reason, because Digest Auth verifies the digest of a userid-passwd rather than require the password to be exchanged or stored in cleartext.</p>
@@ -746,7 +752,7 @@ The wsrm Plugin and C++ Server Objects</h1>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jan 21 2013 09:45:21 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Aug 3 2013 11:45:31 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>
