@@ -328,11 +328,13 @@ Important: to dispatch service operations based on the WS-Addressing wsa:Action
 information header, you must use soapcpp2 option -a. The generates a new
 dispatcher (in soapServer.c) based on the action value.
 
-A service operation implementation should use soap_wsa_check() to verify the
-validity of the WS-Addressing information headers in the SOAP request message.
-To allow response message to be automatically relayed based on the ReplyTo
-information header, the service operation should return soap_wsa_reply() with
-an optional message UUID string and a mandatory response action string.
+A service operation implementation should use soap_wsa_check() at the start of
+its execution to verify the validity of the WS-Addressing information headers
+in the SOAP request message. To allow response message to be automatically
+relayed based on the ReplyTo information header, the service operation should
+return soap_wsa_reply() with an optional message UUID string and a mandatory
+response action string. The response action string is documented in the
+wsdl2h-generated .h file for this service operation.
 
 For example:
 
@@ -556,6 +558,7 @@ static void soap_wsa_delete(struct soap *soap, struct soap_plugin *p);
 static int soap_wsa_header(struct soap *soap);
 static void soap_wsa_set_error(struct soap *soap, const char **c, const char **s);
 static int soap_wsa_response(struct soap *soap, int status, size_t count);
+static int soap_wsa_disconnect(struct soap *soap);
 
 static int soap_wsa_alloc_header(struct soap *soap);
 
@@ -574,7 +577,8 @@ codes with -DWITH_OPENSSL for better randomness results.
 */
 const char*
 soap_wsa_rand_uuid(struct soap *soap)
-{ char *uuid = (char*)soap_malloc(soap, 48);
+{ const int uuidlen = 48;
+  char *uuid = (char*)soap_malloc(soap, uuidlen);
   int r1, r2, r3, r4;
 #ifdef WITH_OPENSSL
   r1 = soap_random;
@@ -599,7 +603,11 @@ soap_wsa_rand_uuid(struct soap *soap)
 #endif
   r3 = soap_random;
   r4 = soap_random;
+#ifdef HAVE_SNPRINTF
+  soap_snprintf(uuid, uuidlen, "urn:uuid:%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), ((short)r2 >> 4) & 0x0FFF, ((short)(r3 >> 16) & 0x3FFF) | 0x8000, (short)r3, r4);
+#else
   sprintf(uuid, "urn:uuid:%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), ((short)r2 >> 4) & 0x0FFF, ((short)(r3 >> 16) & 0x3FFF) | 0x8000, (short)r3, r4);
+#endif
   DBGFUN1("soap_wsa_rand_uuid", "%s", uuid);
   return uuid;
 }
@@ -843,7 +851,7 @@ soap_wsa_reply(struct soap *soap, const char *id, const char *action)
     return soap->error = SOAP_PLUGIN_ERROR;
   oldheader = soap->header;
   soap->header = NULL;
-  /* if endpoint address for reply is 'none' return immediately */
+  /* if endpoint address for reply is 'none' return immediately and STOP engine */
   if (oldheader && oldheader->SOAP_WSA(ReplyTo) && oldheader->SOAP_WSA(ReplyTo)->Address && !strcmp(oldheader->SOAP_WSA(ReplyTo)->Address, soap_wsa_noneURI))
     return soap_send_empty_response(soap, SOAP_OK);
   /* allocate a new header */
@@ -901,6 +909,7 @@ soap_wsa_reply(struct soap *soap, const char *id, const char *action)
       if (reply_soap)
       { soap_copy_stream(reply_soap, soap);
 	soap_free_stream(soap); /* prevents close in soap_connect() below */
+	soap->omode |= SOAP_ENC_XML; /* omit HTTP header ("encode XML body only") */
         if (soap_connect(soap, newheader->SOAP_WSA(To), newheader->SOAP_WSA(Action)))
         { int err;
 	  soap_copy_stream(soap, reply_soap);
@@ -921,6 +930,7 @@ soap_wsa_reply(struct soap *soap, const char *id, const char *action)
         if (soap_valid_socket(reply_soap->socket))
           soap_send_empty_response(reply_soap, SOAP_OK);	/* HTTP ACCEPTED */
         soap->header = newheader;
+	soap->omode &= ~SOAP_ENC_XML; /* HTTP header required */
         soap_end(reply_soap);
         soap_free(reply_soap);
         data->fresponse = soap->fresponse;
@@ -1381,6 +1391,8 @@ soap_wsa_init(struct soap *soap, struct soap_wsa_data *data)
   data->fseterror = soap->fseterror;
   soap->fheader = soap_wsa_header;
   soap->fseterror = soap_wsa_set_error;
+  data->fresponse = NULL;
+  data->fdisconnect = NULL;
   return SOAP_OK;
 }
 
@@ -1468,7 +1480,24 @@ soap_wsa_response(struct soap *soap, int status, size_t count)
   if (!data)
     return SOAP_PLUGIN_ERROR;
   soap->fresponse = data->fresponse;	/* reset (HTTP response) */
+  data->fdisconnect = soap->fdisconnect;
+  soap->fdisconnect = soap_wsa_disconnect; /* to accept HTTP 202 */
   return soap->fpost(soap, soap_strdup(soap, soap->endpoint), soap->host, soap->port, soap->path, soap->action, count);
+}
+
+/**
+@fn int soap_wsa_disconnect(struct soap *soap)
+@brief Accepts HTTP 202 response upon HTTP POST response relay
+@param soap context
+*/
+static int
+soap_wsa_disconnect(struct soap *soap)
+{ struct soap_wsa_data *data = (struct soap_wsa_data*)soap_lookup_plugin(soap, soap_wsa_id);
+  DBGFUN("soap_wsa_disconnect");
+  if (!data)
+    return SOAP_PLUGIN_ERROR;
+  soap->fdisconnect = data->fdisconnect; /* reset */
+  return soap_recv_empty_response(soap);
 }
 
 /******************************************************************************\

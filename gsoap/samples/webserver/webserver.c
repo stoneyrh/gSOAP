@@ -745,7 +745,7 @@ int http_get_handler(struct soap *soap)
 #endif
   /* Use soap->path (from request URL) to determine request: */
   if (options[OPTION_v].selected)
-    fprintf(stderr, "HTTP GET Request: %s\n", soap->endpoint);
+    fprintf(stderr, "HTTP GET Request '%s' to host '%s' path '%s'\n", soap->endpoint, soap->host, soap->path);
   /* Note: soap->path always starts with '/' */
   if (strchr(soap->path + 1, '/') || strchr(soap->path + 1, '\\'))	/* we don't like snooping in dirs */
     return 403; /* HTTP forbidden */

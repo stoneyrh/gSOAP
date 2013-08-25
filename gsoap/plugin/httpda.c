@@ -510,15 +510,31 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
     else
       method = "POST";
 
+#ifdef HAVE_SNPRINTF
+    soap_snprintf(ncount, sizeof(ncount), "%8.8lx", data->nc++);
+#else
     sprintf(ncount, "%8.8lx", data->nc++);
+#endif
 
     http_da_calc_response(soap, &data->context, HA1, data->nonce, ncount, cnonce, qop, method, soap->path, entityHAhex, response);
 
+#ifdef HAVE_SNPRINTF
+    soap_snprintf(soap->tmpbuf, sizeof(soap->tmpbuf), "Digest realm=\"%s\", username=\"%s\", nonce=\"%s\", uri=\"%s\", nc=%s, cnonce=\"%s\", response=\"%s\"", soap->authrealm, userid, data->nonce, soap->path, ncount, cnonce, response);
+#else
     sprintf(soap->tmpbuf, "Digest realm=\"%s\", username=\"%s\", nonce=\"%s\", uri=\"%s\", nc=%s, cnonce=\"%s\", response=\"%s\"", soap->authrealm, userid, data->nonce, soap->path, ncount, cnonce, response);
+#endif
     if (data->opaque)
+#ifdef HAVE_SNPRINTF
+      soap_snprintf(soap->tmpbuf + strlen(soap->tmpbuf), sizeof(soap->tmpbuf) - strlen(soap->tmpbuf), ", opaque=\"%s\"", data->opaque);
+#else
       sprintf(soap->tmpbuf + strlen(soap->tmpbuf), ", opaque=\"%s\"", data->opaque);
+#endif
     if (qop)
+#ifdef HAVE_SNPRINTF
+      soap_snprintf(soap->tmpbuf + strlen(soap->tmpbuf), sizeof(soap->tmpbuf) - strlen(soap->tmpbuf), ", qop=\"%s\"", qop);
+#else
       sprintf(soap->tmpbuf + strlen(soap->tmpbuf), ", qop=\"%s\"", qop);
+#endif
 
     return data->fposthdr(soap, key, soap->tmpbuf);
   }
@@ -534,7 +550,11 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
 
     http_da_session_start(soap->authrealm, nonce, opaque);
 
+#ifdef HAVE_SNPRINTF
+    soap_snprintf(soap->tmpbuf, sizeof(soap->tmpbuf), "Digest realm=\"%s\", qop=\"auth,auth-int\", nonce=\"%s\", opaque=\"%s\"", soap->authrealm, nonce, opaque);
+#else
     sprintf(soap->tmpbuf, "Digest realm=\"%s\", qop=\"auth,auth-int\", nonce=\"%s\", opaque=\"%s\"", soap->authrealm, nonce, opaque);
+#endif
 
     return data->fposthdr(soap, key, soap->tmpbuf);
   }
@@ -1027,12 +1047,20 @@ static void http_da_session_cleanup()
 void http_da_calc_nonce(struct soap *soap, char nonce[HTTP_DA_NONCELEN])
 {
   static short count = 0xCA53;
+#ifdef HAVE_SNPRINTF
+  soap_snprintf(nonce, sizeof(nonce), "%8.8x%4.4hx%8.8x", (int)time(NULL), count++, soap_random);
+#else
   sprintf(nonce, "%8.8x%4.4hx%8.8x", (int)time(NULL), count++, soap_random);
+#endif
 }
 
 void http_da_calc_opaque(struct soap *soap, char opaque[HTTP_DA_OPAQUELEN])
 {
+#ifdef HAVE_SNPRINTF
+  soap_snprintf(opaque, sizeof(opaque), "%8.8x", soap_random);
+#else
   sprintf(opaque, "%8.8x", soap_random);
+#endif
 }
 
 /******************************************************************************\

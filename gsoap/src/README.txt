@@ -80,7 +80,7 @@ COMMAND LINE OPTIONS
 -e	generate SOAP RPC encoding style bindings
 -fN	file split of N XML serializer implementations per file (N>=10)
 -h	display help info
--Ipath  use path(s) for #import
+-Ipath  use path(s) for #import (paths separated with ':', or ';' for windows)
 -i      generate C++ service proxies and objects inherited from soap struct
 -j      generate C++ service proxies and objects that share a soap struct
 -k      generate data structure walkers (experimental)

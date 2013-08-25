@@ -154,6 +154,12 @@
 /* Define to 1 if you have the `strtoull' function. */
 #undef HAVE_STRTOULL
 
+/* Define to 1 if `tm_gmtoff' is member of `struct tm'. */
+#undef HAVE_STRUCT_TM_TM_GMTOFF
+
+/* Define to 1 if `__tm_gmtoff' is member of `struct tm'. */
+#undef HAVE_STRUCT_TM___TM_GMTOFF
+
 /* Define to 1 if you have the <sys/inttypes.h> header file. */
 #undef HAVE_SYS_INTTYPES_H
 
@@ -174,6 +180,9 @@
 
 /* Define to 1 if you have the `timegm' function. */
 #undef HAVE_TIMEGM
+
+/* Define to 1 if you have the <time.h> header file. */
+#undef HAVE_TIME_H
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H

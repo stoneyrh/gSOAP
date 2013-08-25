@@ -953,6 +953,7 @@ s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_STRING_H\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_STRINGS_H\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_STDINT_H\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_INTTYPES_H\)[	 (].*,\1define\2 1 ,
+s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_TIME_H\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_SYS_SOCKET_H\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_SYS_TYPES_H\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_SYS_TIME_H\)[	 (].*,\1define\2 1 ,
@@ -963,6 +964,7 @@ s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_OPENSSL_SSL_H\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_GNUTLS_GNUTLS_H\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_ZLIB_H\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*TIME_WITH_SYS_TIME\)[	 (].*,\1define\2 1 ,
+s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_STRUCT_TM_TM_GMTOFF\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_SYS_TIME_H\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_UNISTD_H\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_ALARM\)[	 (].*,\1define\2 1 ,
@@ -970,8 +972,6 @@ s,^\([	 #]*\)[^	 ]*\([	 ]*RETSIGTYPE\)[	 (].*,\1define\2 void ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_STRFTIME\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_RANDOM\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_GETTIMEOFDAY\)[	 (].*,\1define\2 1 ,
-s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_FTIME\)[	 (].*,\1define\2 1 ,
-s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_LOCALTIME_R\)[	 (].*,\1define\2 1 ,
 CEOF
     sed -f "$tmp/defines.sed" $ac_file_inputs >"$tmp/out1"
     # First, check the format of the line:
@@ -980,6 +980,8 @@ CEOF
 /^[	 ]*#[	 ]*define[	 ][	 ]*[_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]*[(	 ]/b def
 b
 :def
+s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_FTIME\)[	 (].*,\1define\2 1 ,
+s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_LOCALTIME_R\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_TIMEGM\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_GMTIME\)[	 (].*,\1define\2 1 ,
 s,^\([	 #]*\)[^	 ]*\([	 ]*HAVE_GMTIME_R\)[	 (].*,\1define\2 1 ,

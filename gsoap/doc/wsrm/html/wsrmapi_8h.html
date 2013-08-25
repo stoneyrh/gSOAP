@@ -217,10 +217,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:a12748409763500ea6907ff1225bc5c83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepares reply from service. When flag is set, adds a WS-RM sequence message number to the next message transmitted. No acks are requested. No WS-Addressing message relay.  <a href="#a12748409763500ea6907ff1225bc5c83"></a><br/></td></tr>
 <tr class="separator:a12748409763500ea6907ff1225bc5c83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7ab54d15beca0118bdffc64520b6589"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8h.html#af7ab54d15beca0118bdffc64520b6589">soap_wsrm_reply</a> (struct soap *soap, const char *wsa_id, const char *wsa_action)</td></tr>
-<tr class="memdesc:af7ab54d15beca0118bdffc64520b6589"><td class="mdescLeft">&#160;</td><td class="mdescRight">Server-side server operation reply to be performed when the service operation returns. Server operations that support WS-Addressing and WS-RM must call this function to return normally (and allow the response to be relayed).  <a href="#af7ab54d15beca0118bdffc64520b6589"></a><br/></td></tr>
+<tr class="memdesc:af7ab54d15beca0118bdffc64520b6589"><td class="mdescLeft">&#160;</td><td class="mdescRight">Server-side server operation reply to be performed when the service operation returns. Server operations that support WS-Addressing and WS-RM must call this function to return normally (and/or allow the response message to be relayed as per WS-Addressing).  <a href="#af7ab54d15beca0118bdffc64520b6589"></a><br/></td></tr>
 <tr class="separator:af7ab54d15beca0118bdffc64520b6589"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad88bd9d375279ec59cbb82ba0e76caf2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8h.html#ad88bd9d375279ec59cbb82ba0e76caf2">soap_wsrm_reply_request_acks</a> (struct soap *soap, const char *wsa_id, const char *wsa_action)</td></tr>
-<tr class="memdesc:ad88bd9d375279ec59cbb82ba0e76caf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Server-side server operation reply to be performed when the service operation returns. Message acks for the current sequence are requested, but only when client made a create sequence offer. Server operations that support WS-Addressing and WS-RM must call this function or <a class="el" href="wsrmapi_8h.html#af7ab54d15beca0118bdffc64520b6589" title="Server-side server operation reply to be performed when the service operation returns. Server operations that support WS-Addressing and WS-RM must call this function to return normally (and allow the response to be relayed).">soap_wsrm_reply()</a> to return normally (and allow the response to be relayed).  <a href="#ad88bd9d375279ec59cbb82ba0e76caf2"></a><br/></td></tr>
+<tr class="memdesc:ad88bd9d375279ec59cbb82ba0e76caf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Server-side server operation reply to be performed when the service operation returns. Message acks for the current sequence are requested, but only when client made a create sequence offer. Server operations that support WS-Addressing and WS-RM must call this function or call <a class="el" href="wsrmapi_8h.html#af7ab54d15beca0118bdffc64520b6589" title="Server-side server operation reply to be performed when the service operation returns. Server operations that support WS-Addressing and WS-RM must call this function to return normally (and/or allow the response message to be relayed as per WS-Addressing).">soap_wsrm_reply()</a> to return normally (and/or allow the response message to be relayed as per WS-Addressing).  <a href="#ad88bd9d375279ec59cbb82ba0e76caf2"></a><br/></td></tr>
 <tr class="separator:ad88bd9d375279ec59cbb82ba0e76caf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:addf7a38c3091d9e2f0151009d4bad14b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8h.html#addf7a38c3091d9e2f0151009d4bad14b">soap_wsrm_fault_subcode</a> (struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail)</td></tr>
 <tr class="memdesc:addf7a38c3091d9e2f0151009d4bad14b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets sender/receiver SOAP Fault (sub)code for server faults (can be user defined faults). When called before <a class="el" href="wsrmapi_8h.html#a0304e1219b99929fa576cf12114206eb" title="Receiver (server)-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP he...">soap_wsrm_check()</a> in the server operation, terminates the current sequence. Otherwise, the sequence is not terminated. In either case the fault is returned to sender (client) or to the FaultTo server when the WS-Addressing FaultTo header was set by the sender.  <a href="#addf7a38c3091d9e2f0151009d4bad14b"></a><br/></td></tr>
@@ -1412,7 +1412,7 @@ Variables</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">to</td><td>endpoint address of the WS-RM destination server (required) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">replyto</td><td>endpoint address of the WS-RM source (optional) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">acksto</td><td>endpoint address for WS-RM acknowledgements (optional) (optional, use NULL when acks are piggy-backed on response messages to the source) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>offered WS-RM sequence identifier (optional, generate with NULL) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>offered WS-RM sequence identifier (optional, generate when NULL) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">expires</td><td>max sequence duration (its lifetime) in ms (use 0 for infinite, subject to server policy) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">behavior</td><td>offered DiscardEntireSequence, DiscardFollowingFirstGap, or NoDiscard, which specifies the WS-RM destination's action when a sequence is closed/terminated when it is incomplete, and notifies the source when failed. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">wsa_id</td><td>WS-Addressing message ID (optional, use NULL when omitted) </td></tr>
@@ -1804,7 +1804,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Server-side server operation reply to be performed when the service operation returns. Server operations that support WS-Addressing and WS-RM must call this function to return normally (and allow the response to be relayed). </p>
+<p>Server-side server operation reply to be performed when the service operation returns. Server operations that support WS-Addressing and WS-RM must call this function to return normally (and/or allow the response message to be relayed as per WS-Addressing). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
@@ -1883,7 +1883,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Server-side server operation reply to be performed when the service operation returns. Message acks for the current sequence are requested, but only when client made a create sequence offer. Server operations that support WS-Addressing and WS-RM must call this function or <a class="el" href="wsrmapi_8h.html#af7ab54d15beca0118bdffc64520b6589" title="Server-side server operation reply to be performed when the service operation returns. Server operations that support WS-Addressing and WS-RM must call this function to return normally (and allow the response to be relayed).">soap_wsrm_reply()</a> to return normally (and allow the response to be relayed). </p>
+<p>Server-side server operation reply to be performed when the service operation returns. Message acks for the current sequence are requested, but only when client made a create sequence offer. Server operations that support WS-Addressing and WS-RM must call this function or call <a class="el" href="wsrmapi_8h.html#af7ab54d15beca0118bdffc64520b6589" title="Server-side server operation reply to be performed when the service operation returns. Server operations that support WS-Addressing and WS-RM must call this function to return normally (and/or allow the response message to be relayed as per WS-Addressing).">soap_wsrm_reply()</a> to return normally (and/or allow the response message to be relayed as per WS-Addressing). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
@@ -2515,7 +2515,7 @@ Variables</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Aug 3 2013 11:45:31 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Aug 25 2013 18:55:01 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

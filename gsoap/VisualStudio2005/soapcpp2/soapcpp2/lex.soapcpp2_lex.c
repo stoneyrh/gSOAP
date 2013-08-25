@@ -46,6 +46,7 @@ typedef int16_t flex_int16_t;
 typedef uint16_t flex_uint16_t;
 typedef int32_t flex_int32_t;
 typedef uint32_t flex_uint32_t;
+typedef uint64_t flex_uint64_t;
 #else
 typedef signed char flex_int8_t;
 typedef short int flex_int16_t;
@@ -367,7 +368,7 @@ static void yy_fatal_error (yyconst char msg[]  );
  */
 #define YY_DO_BEFORE_ACTION \
 	(yytext_ptr) = yy_bp; \
-	yyleng = (size_t) (yy_cp - yy_bp); \
+	yyleng = (yy_size_t) (yy_cp - yy_bp); \
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	if ( yyleng + (yy_more_offset) >= YYLMAX ) \
@@ -657,7 +658,7 @@ char *yytext_ptr;
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -733,7 +734,7 @@ static void module(const char *name, const char *fullname);
 static void import(const char *file);
 static int magic(const char *name);
 
-#line 737 "lex.yy.c"
+#line 738 "lex.yy.c"
 
 #define INITIAL 0
 #define MLCOMMENT 1
@@ -918,7 +919,7 @@ YY_DECL
     
 #line 98 "soapcpp2_lex.l"
 
-#line 922 "lex.yy.c"
+#line 923 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -1317,7 +1318,7 @@ YY_RULE_SETUP
 #line 182 "soapcpp2_lex.l"
 ECHO;
 	YY_BREAK
-#line 1321 "lex.yy.c"
+#line 1322 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -3160,7 +3161,7 @@ static void import(const char *file)
         n = strlen(buf) - 1;
 #ifdef __VMS
         if (buf[n] != ']' && buf[n] != ':')
-            strcat(buf, ":");
+          strcat(buf, ":");
 #else
         if (buf[n] != SOAP_PATHCAT[0])
 	  strcat(buf, SOAP_PATHCAT);

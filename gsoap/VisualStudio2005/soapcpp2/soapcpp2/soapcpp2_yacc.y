@@ -1214,7 +1214,7 @@ struct	: STRUCT id	{ if ((p = entry(classtable, $2)))
 class	: CLASS id	{ if ((p = entry(classtable, $2)))
 			  {	if (p->info.typ->ref)
 			   	{	if (!is_mutable(p->info.typ))
-					{	sprintf(errbuf, "class '%s' already declared at line %d", $2->name, p->lineno);
+					{	sprintf(errbuf, "class '%s' already declared at line %d (redundant 'class' specifier here?)", $2->name, p->lineno);
 						semerror(errbuf);
 					}
 				}

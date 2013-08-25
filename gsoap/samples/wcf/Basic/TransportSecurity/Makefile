@@ -1,6 +1,6 @@
 URL=http://192.168.2.2:8000/ServiceModelSamples/service
-WSDL=../../../../bin/wsdl2h
-GSOAP=../../../../bin/soapcpp2
+WSDL=../../../../wsdl/wsdl2h
+GSOAP=../../../../src/soapcpp2
 SOAPH=../../../../stdsoap2.h
 SOAPC=../../../../stdsoap2.c
 SOAPCPP=../../../../stdsoap2.cpp

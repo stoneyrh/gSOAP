@@ -1373,7 +1373,7 @@ success.
 @param[in] acksto endpoint address for WS-RM acknowledgements (optional)
 (optional, use NULL when acks are piggy-backed on response messages to the
 source)
-@param[in] id offered WS-RM sequence identifier (optional, generate with NULL)
+@param[in] id offered WS-RM sequence identifier (optional, generate when NULL)
 @param[in] expires max sequence duration (its lifetime) in ms (use 0 for infinite, subject to server policy)
 @param[in] behavior offered DiscardEntireSequence, DiscardFollowingFirstGap, or
 NoDiscard, which specifies the WS-RM destination's action when a sequence is
@@ -1427,13 +1427,17 @@ soap_wsrm_create_offer_acksto(struct soap *soap, const char *to, const char *rep
       return soap->error;
     soap_default_wsrm__OfferType(soap, req.Offer);
     if (!id)
-    { MUTEX_LOCK(soap_wsrm_session_lock);
-      id = soap_wsrm_seq_newid(soap, data);
+    { const char *s;
+      MUTEX_LOCK(soap_wsrm_session_lock);
+      s = soap_wsrm_seq_newid(soap, data);
       MUTEX_UNLOCK(soap_wsrm_session_lock);
-      if (!id)
+      if (!s)
         return soap->error;
+      id = req.Offer->Identifier = soap_strdup(soap, s); /* required */
+      free((void*)s);
     }
-    req.Offer->Identifier = soap_strdup(soap, id); /* required */
+    else
+      req.Offer->Identifier = soap_strdup(soap, id); /* required */
 #ifdef SOAP_WSRM_2007
     req.Offer->Endpoint.Address = (char*)replyto; /* required: use acksto endpoint */
     if (expires)
@@ -2235,7 +2239,8 @@ soap_wsrm_reply_num(struct soap *soap, int flag)
 @fn int soap_wsrm_reply(struct soap *soap, const char *wsa_id, const char *wsa_action)
 @brief Server-side server operation reply to be performed when the service
 operation returns. Server operations that support WS-Addressing and WS-RM must
-call this function to return normally (and allow the response to be relayed).
+call this function to return normally (and/or allow the response message to be
+relayed as per WS-Addressing).
 @param soap context
 @param[in] wsa_id WS-Addressing message ID (optional)
 @param[in] wsa_action mandatory WS-Addressing action of the response
@@ -2254,8 +2259,9 @@ soap_wsrm_reply(struct soap *soap, const char *wsa_id, const char *wsa_action)
 @brief Server-side server operation reply to be performed when the service
 operation returns. Message acks for the current sequence are requested, but
 only when client made a create sequence offer. Server operations that support
-WS-Addressing and WS-RM must call this function or soap_wsrm_reply() to return
-normally (and allow the response to be relayed).
+WS-Addressing and WS-RM must call this function or call soap_wsrm_reply() to
+return normally (and/or allow the response message to be relayed as per
+WS-Addressing).
 @param soap context
 @param[in] wsa_id WS-Addressing message ID (optional)
 @param[in] wsa_action mandatory WS-Addressing action of the response
@@ -3629,14 +3635,19 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, ULONG64 
 */
 static const char *
 soap_wsrm_seq_newid(struct soap *soap, struct soap_wsrm_data *data)
-{ char *s;
-  s = (char*)malloc(strlen(soap_wsrm_idname) + 9);
-  if (!s)
+{ size_t idlen = strlen(soap_wsrm_idname) + 9;
+  char *id;
+  id = (char*)malloc(idlen);
+  if (!id)
   { soap->error = SOAP_EOM;
     return NULL;
   }
-  sprintf(s, "%s%8.8x", soap_wsrm_idname, soap_wsrm_idnum++);
-  return s;
+#ifdef HAVE_SNPRINTF
+  soap_snprintf(id, idlen, "%s%8.8x", soap_wsrm_idname, soap_wsrm_idnum++);
+#else
+  sprintf(id, "%s%8.8x", soap_wsrm_idname, soap_wsrm_idnum++);
+#endif
+  return id;
 }
 
 /**

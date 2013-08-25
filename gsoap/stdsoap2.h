@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.15
+	stdsoap2.h 2.8.16
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20815
+#define GSOAP_VERSION 20816
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -225,8 +225,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
 #  if _MSC_VER >= 1300
-#   define HAVE_STRTOLL		// use _strtoi64
-#   define HAVE_STRTOULL	// use _strtoui64
+#   define HAVE_STRTOLL		/* use _strtoi64 */
+#   define HAVE_STRTOULL	/* use _strtoui64 */
 #  endif
 #  define HAVE_SYS_TIMEB_H
 #  define HAVE_FTIME
@@ -264,6 +264,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_STRTOUL
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
+#  define HAVE_TM_GMTOFF
+#  define HAVE_GETTIMEOFDAY
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
 #  define HAVE_TIMEGM
@@ -482,10 +484,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_STRERROR_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
-#  define LONG64 long
-#  define ULONG64 unsigned LONG64
-#  define SOAP_LONG_FORMAT "%ld"
-#  define SOAP_ULONG_FORMAT "%lu"
 # elif defined(SUN_OS)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -726,7 +724,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  include <io.h>
 #  include <fcntl.h>
 # endif
-// When you get macro redefinition errors when compiling the code below:
+// When you get macro redefinition errors when compiling the code below, then:
 // a) try arrange your includes so <windows.h> is included after "stdsoap2.h"
 // b) or define _WINSOCKAPI_ first:
 //    #define _WINSOCKAPI_    // stops windows.h including winsock.h
@@ -819,7 +817,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #endif
 
-/* #define DEBUG */ /* Uncomment to debug sending (in file SENT.log) receiving (in file RECV.log) and messages (in file TEST.log) */
+/* #define DEBUG */ /* Uncomment to debug sending (in file SENT.log) receiving (in file RECV.log) and internal operations (in file TEST.log) */
+
+/* #define DEBUG_STAMP */ /* Uncomment to debug sending (in file SENT.log) receiving (in file RECV.log) and time-stamped operations (in file TEST.log) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -834,7 +834,7 @@ extern "C" {
 # endif
 #elif defined(SOCKLEN_T)
 # define SOAP_SOCKLEN_T SOCKLEN_T
-#elif defined(__socklen_t_defined) || defined(_SOCKLEN_T) || defined(CYGWIN) || defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD) || defined(__QNX__) || defined(QNX) || defined(OS390)
+#elif defined(__socklen_t_defined) || defined(_SOCKLEN_T) || defined(CYGWIN) || defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD) || defined(__QNX__) || defined(QNX) || defined(OS390) || defined(__ANDROID__)
 # define SOAP_SOCKLEN_T socklen_t
 #elif defined(IRIX) || defined(WIN32) || defined(__APPLE__) || defined(SUN_OS) || defined(OPENSERVER) || defined(TRU64) || defined(VXWORKS) || defined(HP_UX)
 # define SOAP_SOCKLEN_T int
@@ -1080,6 +1080,14 @@ extern "C" {
 # define SOAP_MAXARRAYSIZE (1000000)
 #endif
 
+/* Trusted max size of inbound DIME data.
+   Increase if necessary to allow larger attachments, or decrease when server
+   resources are limited.
+*/
+#ifndef SOAP_MAXDIMESIZE
+# define SOAP_MAXDIMESIZE (8388608) /* 8 MB */
+#endif
+
 #ifdef VXWORKS
 # ifdef WMW_RPM_IO
 #  include "httpLib.h"
@@ -1213,7 +1221,7 @@ extern const char soap_base64o[], soap_base64i[];
 
 #ifdef HAVE_SNPRINTF
 # ifdef WIN32
-#  define soap_snprintf _snprintf
+#  define soap_snprintf(buf, len, ...) (_snprintf((buf), (len), __VA_ARGS__), (buf)[(len)-1] = '\0')
 # else
 #  define soap_snprintf snprintf
 # endif
@@ -1418,6 +1426,11 @@ typedef soap_int32 soap_mode;
 /* DEBUG macros */
 
 #ifndef WITH_LEAN
+# ifdef DEBUG_STAMP
+#  ifndef DEBUG
+#   define DEBUG
+#  endif
+# endif
 # ifdef DEBUG
 #  ifndef SOAP_DEBUG
 #   define SOAP_DEBUG
@@ -1494,7 +1507,42 @@ typedef soap_int32 soap_mode;
 #  define SOAP_MESSAGE fprintf
 # endif
 # ifndef DBGLOG
-#  define DBGLOG(DBGFILE, CMD) \
+#  ifdef DEBUG_STAMP
+#   ifdef WIN32
+#    define DBGLOG(DBGFILE, CMD) \
+{ if (soap)\
+  { if (!soap->fdebug[SOAP_INDEX_##DBGFILE])\
+      soap_open_logfile((struct soap*)soap, SOAP_INDEX_##DBGFILE);\
+    if (soap->fdebug[SOAP_INDEX_##DBGFILE])\
+    { FILE *fdebug = soap->fdebug[SOAP_INDEX_##DBGFILE];\
+      SYSTEMTIME _localTime;\
+      ::GetLocalTime(&_localTime); \
+      fprintf(fdebug, "%02d%02d%02d %02d:%02d:%02d.%03d|", _localTime.wYear%100, _localTime.wMonth, _localTime.wDay, _localTime.wHour, _localTime.wMinute, _localTime.wSecond, _localTime.wMilliseconds);\
+      CMD;\
+      fflush(fdebug);\
+    }\
+  }\
+}
+#   else
+#    define DBGLOG(DBGFILE, CMD) \
+{ if (soap)\
+  { if (!soap->fdebug[SOAP_INDEX_##DBGFILE])\
+      soap_open_logfile((struct soap*)soap, SOAP_INDEX_##DBGFILE);\
+    if (soap->fdebug[SOAP_INDEX_##DBGFILE])\
+    { FILE *fdebug = soap->fdebug[SOAP_INDEX_##DBGFILE];\
+      struct timeval _tv;\
+      struct tm _tm;\
+      gettimeofday(&_tv, NULL);\
+      localtime_r(&_tv.tv_sec, &_tm);\
+      fprintf(fdebug, "%02d%02d%02d %02d:%02d:%02d.%06d|", _tm.tm_year%100, _tm.tm_mon, _tm.tm_mday, _tm.tm_hour, _tm.tm_min, _tm.tm_sec, _tv.tv_usec);\
+      CMD;\
+      fflush(fdebug);\
+    }\
+  }\
+}
+#   endif
+#  else
+#   define DBGLOG(DBGFILE, CMD) \
 { if (soap)\
   { if (!soap->fdebug[SOAP_INDEX_##DBGFILE])\
       soap_open_logfile((struct soap*)soap, SOAP_INDEX_##DBGFILE);\
@@ -1505,6 +1553,7 @@ typedef soap_int32 soap_mode;
     }\
   }\
 }
+#  endif
 # endif
 # ifndef DBGMSG
 #  define DBGMSG(DBGFILE, MSG, LEN) \
@@ -2664,7 +2713,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_outwliteral(struct soap*, const char *tag, wchar_
 
 #ifndef WITH_LEANER
 SOAP_FMAC1 int SOAP_FMAC2 soap_attachment(struct soap *, const char*, int, const void*, const struct soap_array*, const char*, const char*, const char*, int, const char*, int);
-SOAP_FMAC1 int SOAP_FMAC2 soap_move(struct soap*, long);
+SOAP_FMAC1 int SOAP_FMAC2 soap_move(struct soap*, size_t);
 SOAP_FMAC1 size_t SOAP_FMAC2 soap_tell(struct soap*);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_dime_option(struct soap*, unsigned short, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_getdimehdr(struct soap*);

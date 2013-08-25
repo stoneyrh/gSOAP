@@ -3594,7 +3594,7 @@ yyreduce:
     { if ((p = entry(classtable, (yyvsp[(2) - (2)].sym))))
 			  {	if (p->info.typ->ref)
 			   	{	if (!is_mutable(p->info.typ))
-					{	sprintf(errbuf, "class '%s' already declared at line %d", (yyvsp[(2) - (2)].sym)->name, p->lineno);
+					{	sprintf(errbuf, "class '%s' already declared at line %d (redundant 'class' specifier here?)", (yyvsp[(2) - (2)].sym)->name, p->lineno);
 						semerror(errbuf);
 					}
 				}

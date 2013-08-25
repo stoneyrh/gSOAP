@@ -94,6 +94,8 @@ struct soap_wsa_data
   void (*fseterror)(struct soap*, const char**, const char**);
   /** fresponse callback is used to change a HTTP response into a HTTP POST */
   int (*fresponse)(struct soap*, int, size_t);
+  /** fdisconnect callback is used to accept HTTP 202 */
+  int (*fdisconnect)(struct soap*);
 };
 
 int soap_wsa(struct soap *soap, struct soap_plugin *p, void *arg);

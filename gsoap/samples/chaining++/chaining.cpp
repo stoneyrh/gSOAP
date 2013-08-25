@@ -3,6 +3,7 @@
 
 	Example chaining of C++ service classes into one service application,
 	assuming they are built with soapcpp2 option -i
+	NOTE: option -j is preferred, see chaining2.cpp
 
 	To generate non-client-server header and fault handlers:
 	$ soapcpp2 -CS -penv env.h

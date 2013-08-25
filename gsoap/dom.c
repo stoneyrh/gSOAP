@@ -477,7 +477,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
   }
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node '%s' start xmlns='%s'\n", node->name, node->nstr?node->nstr:""));
   if ((soap->mode & SOAP_DOM_NODE) || (!(soap->mode & SOAP_DOM_TREE) && *soap->id))
-  { if ((node->node = soap_getelement(soap, &node->type)))
+  { if ((node->node = soap_getelement(soap, &node->type)) && node->type)
     { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node contains type %d from xsi:type\n", node->type));
       return node;
     }

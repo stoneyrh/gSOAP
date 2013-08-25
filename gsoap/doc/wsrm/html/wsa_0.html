@@ -198,7 +198,7 @@ Server-side Usage</h1>
 <div class="fragment"><div class="line">soap_register_plugin(soap, <a class="code" href="wsaapi_8h.html#aa013e3760b97c2efcc71d29b57394501" title="Plugin registry function, used with soap_register_plugin.">soap_wsa</a>);</div>
 </div><!-- fragment --><p>Once the plugin is registered, the soap_bind(), soap_accept(), and soap_serve() functions can be called to process requests and semi-automatically handle the WS-Addressing header blocks.</p>
 <p>Important: to dispatch service operations based on the WS-Addressing wsa:Action information header, you must use soapcpp2 option -a. The generates a new dispatcher (in soapServer.c) based on the action value.</p>
-<p>A service operation implementation should use <a class="el" href="wsaapi_8h.html#a35f9b1c46ea38b271b8d26bf8b051640" title="Checks the presence and validity of WS-Addressing information headers.">soap_wsa_check()</a> to verify the validity of the WS-Addressing information headers in the SOAP request message. To allow response message to be automatically relayed based on the ReplyTo information header, the service operation should return <a class="el" href="wsaapi_8h.html#a54fda97d2591acd5e2385cc110a50b30" title="Sets WS-Addressing header fields for server response. Automatically relays the response to the ReplyT...">soap_wsa_reply()</a> with an optional message UUID string and a mandatory response action string.</p>
+<p>A service operation implementation should use <a class="el" href="wsaapi_8h.html#a35f9b1c46ea38b271b8d26bf8b051640" title="Checks the presence and validity of WS-Addressing information headers.">soap_wsa_check()</a> at the start of its execution to verify the validity of the WS-Addressing information headers in the SOAP request message. To allow response message to be automatically relayed based on the ReplyTo information header, the service operation should return <a class="el" href="wsaapi_8h.html#a54fda97d2591acd5e2385cc110a50b30" title="Sets WS-Addressing header fields for server response. Automatically relays the response to the ReplyT...">soap_wsa_reply()</a> with an optional message UUID string and a mandatory response action string. The response action string is documented in the wsdl2h-generated .h file for this service operation.</p>
 <p>For example:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> ns__example(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">char</span> *in, <span class="keyword">struct</span> ns__exampleResponse *out)</div>
 <div class="line">{ <span class="keywordflow">if</span> (<a class="code" href="wsaapi_8h.html#a35f9b1c46ea38b271b8d26bf8b051640" title="Checks the presence and validity of WS-Addressing information headers.">soap_wsa_check</a>(soap))</div>
@@ -300,7 +300,7 @@ Implementing a Server for Handling FaultTo Fault Messages</h1>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Aug 3 2013 11:45:31 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Aug 25 2013 18:55:01 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

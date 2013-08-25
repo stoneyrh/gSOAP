@@ -52,7 +52,7 @@ cc -DWITH_OPENSSL -o httpdatest httpdatest.c soapC.c soapClient.c soapServer.c h
 
 Run server:
 
-./httpdatest
+./httpdatest 8080
 
 Run client test:
 
@@ -72,7 +72,7 @@ int run_tests(int,char**);
 int main(int argc, char **argv)
 {
   if (argc < 2)
-    return run_serve(8080);
+    return soap_serve(soap_new1(SOAP_XML_INDENT));
   else if (argc < 3)
     return run_serve(atoi(argv[1]));
   else

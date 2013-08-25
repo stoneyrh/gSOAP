@@ -592,7 +592,7 @@ Setting up a WS-RM Destination Service</h2>
 <div class="line">  response-&gt;out = ...</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// return normally, relaying the response to the ReplyTo service when needed</span></div>
-<div class="line">  <span class="keywordflow">return</span> <a class="code" href="wsrmapi_8h.html#af7ab54d15beca0118bdffc64520b6589" title="Server-side server operation reply to be performed when the service operation returns. Server operations that support WS-Addressing and WS-RM must call this function to return normally (and allow the response to be relayed).">soap_wsrm_reply</a>(soap, NULL, ResponseAction);</div>
+<div class="line">  <span class="keywordflow">return</span> <a class="code" href="wsrmapi_8h.html#af7ab54d15beca0118bdffc64520b6589" title="Server-side server operation reply to be performed when the service operation returns. Server operations that support WS-Addressing and WS-RM must call this function to return normally (and/or allow the response message to be relayed as per WS-Addressing).">soap_wsrm_reply</a>(soap, NULL, ResponseAction);</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>An error produced by <a class="el" href="wsrmapi_8c.html#af2bcd68f3810d632bef61ecfe86e1e5f">soap_wsrm_sender_fault</a> or <a class="el" href="wsrmapi_8c.html#a65c7a86eaf7366b9cb9c4759c1f7c061">soap_wsrm_receiver_fault</a> before <a class="el" href="wsrmapi_8c.html#a0304e1219b99929fa576cf12114206eb">soap_wsrm_check</a> is considered fatal, it will terminate the sequence and the sender (client) will not be able to continue the sequence transmissions. While the faults preduced after <a class="el" href="wsrmapi_8c.html#a0304e1219b99929fa576cf12114206eb">soap_wsrm_check</a> allow the sequence to continue.</p>
 <h2><a class="anchor" id="wsrm_5_2"></a>
@@ -752,7 +752,7 @@ The wsrm Plugin and C++ Server Objects</h1>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Aug 3 2013 11:45:31 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Aug 25 2013 18:55:01 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

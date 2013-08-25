@@ -107,7 +107,7 @@
 	receive timeout AFTER the connection was established.
 
 	6.
-	cat request.soap | router -e http://domain/path | more
+	cat request.soap | router -c -e http://domain/path | more
 	When request.soap does not contain an HTTP header, the router computes
 	the HTTP content length by buffering the entire request message which
 	allows you to use it as a filter as in this example. (fstat() is

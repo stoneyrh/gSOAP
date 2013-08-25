@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -1039,7 +1039,7 @@ static void import(const char *file)
         n = strlen(buf) - 1;
 #ifdef __VMS
         if (buf[n] != ']' && buf[n] != ':')
-            strcat(buf, ":");
+          strcat(buf, ":");
 #else
         if (buf[n] != SOAP_PATHCAT[0])
 	  strcat(buf, SOAP_PATHCAT);

@@ -147,7 +147,7 @@ int main(int argc, char **argv)
   soap_register_plugin(soap, soap_wsa);
   soap_register_plugin(soap, soap_wsrm);
   if (argc < 2) /* no args: server */
-  {
+  { soap_set_mode(soap, SOAP_IO_KEEPALIVE | SOAP_IO_CHUNK);
 #if !defined(WITH_UDP) && defined(THREADS_H)
     THREAD_TYPE tid;
 #endif
@@ -238,7 +238,9 @@ int main(int argc, char **argv)
     const char *replyto = NULL;
     struct soap *callback = NULL;
     int duplex = 0; /* duplex mode */
-    int server = 0; /* use callback server in duplex */
+    int server = 0; /* use callback server with duplex mode */
+    int alive = 0; /* keep-alive callback port */
+    const char *to = NULL; /* service endpoint */
 #ifdef THREADS_H
     THREAD_TYPE tid;
 #endif
@@ -282,12 +284,19 @@ int main(int argc, char **argv)
         fprintf(stderr, "Warning: SSL requires a callback server for duplex mode, because the client waits for the HTTP Accepted response while server is sending a message to the callback: deadlock will occur\n");
 #endif
       }
+      if (strchr(argv[2], 'a'))
+        alive = 1;
     }
+
+    if (alive)
+      soap_set_mode(soap, SOAP_IO_KEEPALIVE | SOAP_IO_CHUNK);
 
     if (duplex)
     { /* set up the callback for duplex communication */
       replyto = clientURI;
       callback = soap_new1(SOAP_XML_INDENT | SOAP_XML_STRICT);
+      if (alive)
+        soap_set_mode(callback, SOAP_IO_KEEPALIVE | SOAP_IO_CHUNK);
       soap_register_plugin(callback, soap_wsa);
       soap_register_plugin(callback, soap_wsrm);
 #if defined(WITH_UDP)
@@ -371,7 +380,7 @@ int main(int argc, char **argv)
     { soap_print_fault(soap, stderr);
       return soap->error;
     }
-    while (soap_call_ns__wsrmdemo(soap, soap_wsrm_to(seq), RequestAction, "First Message", &res))
+    while ((to = soap_wsrm_to(seq)) != NULL && soap_call_ns__wsrmdemo(soap, to, RequestAction, "First Message", &res))
     { if (soap->error == 202)
       { printf("\n**** Request was accepted\n");
         break;
@@ -405,10 +414,6 @@ int main(int argc, char **argv)
 
     printf("\n**** Sending second message, requesting acks\n");
 
-    if (soap_wsrm_request_acks(soap, seq, soap_wsa_rand_uuid(soap), RequestAction))
-    { soap_print_fault(soap, stderr);
-      return soap->error;
-    }
 #ifdef HTTPDA_H
     /* Digest Auth */
     http_da_restore(soap, &info);
@@ -416,29 +421,36 @@ int main(int argc, char **argv)
     /* Basic Auth */
     soap->userid = userid; soap->passwd = passwd;
 #endif
-    /* just send the message without retry loop */
+    /* here we just send the message without retry loop */
     /* UDP may timeout when no UDP response message is sent by the server */
-    if (soap_call_ns__wsrmdemo(soap, soap_wsrm_to(seq), RequestAction, (char*)"Second Message", &res))
-    { if (soap->error == 202)
-        printf("\n**** Request was accepted\n");
-      else if (soap->error == SOAP_NO_TAG) /* empty <Body> */
-        printf("\n**** Request was accepted, acks received\n");
-      else if (!duplex)
-        soap_print_fault(soap, stderr);
-    }
-    else
-      printf("\n**** Response OK\n");
+    to = soap_wsrm_to(seq);
+    if (to)
+    { if (soap_wsrm_request_acks(soap, seq, soap_wsa_rand_uuid(soap), RequestAction))
+      { soap_print_fault(soap, stderr);
+        return soap->error;
+      }
+      if (soap_call_ns__wsrmdemo(soap, to, RequestAction, (char*)"Second Message", &res))
+      { if (soap->error == 202)
+          printf("\n**** Request was accepted\n");
+        else if (soap->error == SOAP_NO_TAG) /* empty <Body> */
+          printf("\n**** Request was accepted, acks received\n");
+        else if (!duplex)
+          soap_print_fault(soap, stderr);
+      }
+      else
+        printf("\n**** Response OK\n");
 
-    if (duplex)
-    { if (server)
-        sleep(1);
-      else if (callback_poll(callback, -200000)) /* poll for 200 ms */
-        return callback->error;
+      if (duplex)
+      { if (server)
+          sleep(1);
+        else if (callback_poll(callback, -200000)) /* poll for 200 ms */
+          return callback->error;
+      }
     }
-
+    /* check for any non-acked messages, and resend these */
     if (soap_wsrm_nack(seq))
     { printf("\n**** Resending "SOAP_ULONG_FORMAT" Non-Acked Messages\n", soap_wsrm_nack(seq));
-      soap_wsrm_resend(soap, seq, 0, 0); /* 0 0 means full range of msg nums */
+      soap_wsrm_resend(soap, seq, 0, 0); /* 0 0 means full range of msg nums of non-acked message to resend */
       if (duplex)
       { if (server)
           sleep(1);
@@ -451,10 +463,6 @@ int main(int argc, char **argv)
 
     printf("\n**** Sending third message\n");
 
-    if (soap_wsrm_request(soap, seq, soap_wsa_rand_uuid(soap), RequestAction))
-    { soap_print_fault(soap, stderr);
-      return soap->error;
-    }
 #ifdef HTTPDA_H
     /* Digest Auth */
     http_da_restore(soap, &info);
@@ -462,27 +470,34 @@ int main(int argc, char **argv)
     /* Basic Auth */
     soap->userid = userid; soap->passwd = passwd;
 #endif
-    /* in this case we just send the message without retry loop */
+    /* here we show how to just send the message without retry loop */
     /* UDP may timeout when no UDP response message is sent by the server */
-    if (soap_call_ns__wsrmdemo(soap, soap_wsrm_to(seq), RequestAction, argv[1], &res))
-    { if (soap->error == 202)
-        printf("\n**** Request was accepted\n");
-      else if (soap->error == SOAP_NO_TAG) /* empty <Body> */
-        printf("\n**** Request was accepted, acks received\n");
-      else if (!duplex)
-        soap_print_fault(soap, stderr);
-    }
-    else
-      printf("\n**** Response OK\n");
+    to = soap_wsrm_to(seq);
+    if (to)
+    { if (soap_wsrm_request(soap, seq, soap_wsa_rand_uuid(soap), RequestAction))
+      { soap_print_fault(soap, stderr);
+        return soap->error;
+      }
+      if (soap_call_ns__wsrmdemo(soap, to, RequestAction, argv[1], &res))
+      { if (soap->error == 202)
+          printf("\n**** Request was accepted\n");
+        else if (soap->error == SOAP_NO_TAG) /* empty <Body> */
+          printf("\n**** Request was accepted, acks received\n");
+        else if (!duplex)
+          soap_print_fault(soap, stderr);
+      }
+      else
+        printf("\n**** Response OK\n");
 
-    if (duplex)
-    { if (server)
-        sleep(1); /* allows to get messages before closing */
-      else if (callback_poll(callback, -200000)) /* poll for 200 ms */
-        return callback->error;
-    }
+      if (duplex)
+      { if (server)
+          sleep(1); /* allows to get messages before closing */
+        else if (callback_poll(callback, -200000)) /* poll for 200 ms */
+          return callback->error;
+      }
 
-    soap_wsrm_dump(soap, stdout);
+      soap_wsrm_dump(soap, stdout);
+    }
 
     printf("\n**** Closing the Sequence\n");
 
@@ -644,7 +659,7 @@ void *callback_server(void *ctx)
     if (soap_serve(soap) && soap->error != SOAP_STOP && soap->error != SOAP_EOF)
       soap_print_fault(soap, stderr);
     else if (soap->error == SOAP_EOF && !soap->errnum)
-      break; /* timed out */
+      continue; /* messaging IO timed out */
     else
       soap_wsrm_dump(soap, stdout);
   }
@@ -743,14 +758,14 @@ int ns__wsrmdemo(struct soap *soap, char *in, struct ns__wsrmdemoResponse *resul
   /* to just respond without requesting acks for response messages: */
   return soap_wsrm_reply(soap, soap_wsa_rand_uuid(soap), ResponseAction);
 #else
-  /* to request acks for response messages (only when offer was made): */
+  /* to request acks for response messages (only when WS-RM "create offer" was made): */
   return soap_wsrm_reply_request_acks(soap, soap_wsa_rand_uuid(soap), ResponseAction);
 #endif
 }
 
 /******************************************************************************\
  *
- *	Response Callback Service Operation
+ *	Client-Side Callback Operation to Receive Service Responses
  *
 \******************************************************************************/
 

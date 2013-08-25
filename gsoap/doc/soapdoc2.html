@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.15 User Guide</title>
+<title>gSOAP 2.8.16 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.15 User Guide </h1>
+<h1 align="center">gSOAP 2.8.16 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">May 12, 2013
+<h3 align="center">Aug 25, 2013
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -391,7 +391,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.17"
 >19.17&nbsp; <font color="#0000FF">HTTP Proxy Basic Authentication</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.18"
->19.18&nbsp; <font color="#0000FF">Speed Improvement Tips</font></a><br />
+>19.18&nbsp; <font color="#0000FF">Messaging Speed and Performance Improvement Tips</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.19"
 >19.19&nbsp; <font color="#0000FF">Timeout Management for Non-Blocking Operations</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.20"
@@ -592,7 +592,7 @@ The gSOAP packages contain numerous examples in the <i>samples</i> directory.
 Run <i>make</i> to build the example applications. The examples are also meant
 to demonstrate different features of gSOAP.
 A streaming MTOM attachment server and client application
-demonstrate efficient file exchanges in <i>samples/mtom-streaming</i>. An SSL-secure Web
+demonstrate efficient file exchanges in <i>samples/mtom-stream</i>. An SSL-secure Web
 server application demonstrates the generation of dynamic content for Web
 browsing and Web services functionality at the same time, see
 <i>samples/webservice</i>. And much more.
@@ -3793,6 +3793,12 @@ At the client side, the empty response header must be parsed as follows:
 The synchronous (and asynchronous) one-way messaging supports HTTP keep-alive and chunking.
 
 <div class="p"><!----></div>
+Note: <i>soap_send_empty_response</i> returns the error code <i>SOAP_STOP</i>
+to force the engine to stop producing a response message after the service
+operation completed, which allows <i>soap_send_empty_response</i> to be used
+with any service operation that should return HTTP 202.
+
+<div class="p"><!----></div>
 	     <h3><a name="tth_sEc7.5">
 7.5</a>&nbsp;&nbsp;<font color="#0000FF">How to Use the SOAP Serializers and Deserializers to Save and Load Application Data using XML Data Bindings</font></h3><a name="sec:bindings">
 </a>
@@ -4955,6 +4961,7 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td align="left"><i>-z2</i>	</td><td align="left">compatibility with 2.7.15: qualify element/attribute referenced members</td></tr>
 <tr><td align="left"><i>-z3</i>     </td><td align="left">compatibility with 2.7.16 to 2.8.7: qualify element/attribute references</td></tr>
 <tr><td align="left"><i>-z4</i>     </td><td align="left">compatibility up to 2.8.11: don't generate union structs in std::vector </td></tr>
+<tr><td align="left"><i>-z5</i>     </td><td align="left">compatibility up to 2.8.15 </td></tr>
 <tr><td align="left"><i>-_</i>	</td><td align="left">don't generate <i>_USCORE</i> (replace with UNICODE _x005f) </td></tr></table>
 
 </td></tr></table><br></span>
@@ -5217,7 +5224,7 @@ The <i>soapcpp2</i> source-to-source compiler supports the following command-lin
 <tr><td align="left"><i>-h</i>	</td><td align="left">Print a brief usage message </td></tr>
 <tr><td align="left"><i>-i</i>	</td><td align="left">Generate service proxies and objects inherited from soap struct </td></tr>
 <tr><td align="left"><i>-j</i>	</td><td align="left">Generate C++ service proxies and objects that can share a soap struct </td></tr>
-<tr><td align="left"><i>-I  &lt; path &gt; </i>	</td><td align="left">Use <i> &lt; path &gt; </i> (or paths separated with `:') for <i>#import</i> </td></tr>
+<tr><td align="left"><i>-I  &lt; path &gt; </i>	</td><td align="left">Use <i> &lt; path &gt; </i> for <i>#import</i> (paths separated with ':' or ';' for windows) </td></tr>
 <tr><td align="left"><i>-k</i>	</td><td align="left">generate data structure walkers (experimental) </td></tr>
 <tr><td align="left"><i>-l</i>	</td><td align="left">Generate linkable modules (experimental) </td></tr>
 <tr><td align="left"><i>-m</i>	</td><td align="left">Generate Matlab<sup><span class="roman">tm</span></sup> code for MEX compiler </td></tr>
@@ -5634,8 +5641,8 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_PURE_VIRTUAL</i>	</td><td align="left">for C++ abstract service classes with pure virtual methods </td></tr>
 <tr><td align="left"><i>WITH_NOEMPTYSTRUCT</i>	</td><td align="left">inserts a dummy member in empty structs to allow compilation </td></tr>
 <tr><td align="left"><i>WITH_NOGLOBAL</i>	</td><td align="left">omit SOAP Header and Fault serialization code </td></tr>
-<tr><td align="left"><i>WITH_NOCDATA</i>	</td><td align="left">do not retain the parsed CDATA sections in literal XML strings (no conversion) </td></tr>
-<tr><td align="left"><i>WITH_CDATA</i>	</td><td align="left">retain the parsed CDATA sections in literal XML strings (no conversion, by default) </td></tr>
+<tr><td align="left"><i>WITH_NOCDATA</i>	</td><td align="left">do not retain the parsed CDATA sections in literal XML strings (convert) </td></tr>
+<tr><td align="left"><i>WITH_CDATA</i>	</td><td align="left">retain the parsed CDATA sections in literal XML strings (no conversion, default) </td></tr>
 <tr><td align="left"><i>WITH_C_LOCALE</i>	</td><td align="left">use locale functions when available to ensure locale-independent </td></tr>
 <tr><td align="left"></td><td align="left">number conversions (force the use of C locale) </td></tr>
 <tr><td align="left"><i>WITH_CASEINSENSITIVETAGS</i>	</td><td align="left">enable case insensitive XML parsing </td></tr></table>
@@ -6107,8 +6114,15 @@ class instances.
 9.14</a>&nbsp;&nbsp;<font color="#0000FF">Debugging</font></h3>
 
 <div class="p"><!----></div>
-To activate message logging for debugging, un-comment the <i>#define DEBUG</i> directive in <i>stdsoap2.h</i>. Compile the client and/or
-server applications as described above (or simply use <i>c++ -DDEBUG ...</i> to compile with debugging activated). When the client and server applications run, they will log their activity in three
+To activate debugging and message logging, set the <i>#define DEBUG</i> macro
+on the compiler's command line (typically as a compiler option <i>-DDEBUG</i>)
+or in <i>stdsoap2.h</i>, and recompile your code together with <i>stdsoap2.c</i>
+or <i>stdsoap2.cpp</i> (instead of <i>libgsoap</i>). When using
+<i>libgsoap</i> and <i>libgsoap++</i>, reinstall the software with
+<i>\.configure</i> using option <i>-enable-debug</i>.
+
+<div class="p"><!----></div>
+When your client and server applications run, they will log their activity in three
 separate files:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -6120,6 +6134,11 @@ separate files:
 
 </td></tr></table><br></span>
 <font color="#FF0000"><b>Caution</b></font>: The client and server applications may run slow due to the logging activity.
+
+<div class="p"><!----></div>
+<font color="#FF0000"><b>Hint</b></font>: Set macro <i>DEBUG_STAMP</i> instead of <i>DEBUG</i> to add time
+stamps to <i>TEST.log</i>. This works on platforms supporting the
+<i>gettimeofday</i> function.
 
 <div class="p"><!----></div>
 <font color="#FF0000"><b>Caution</b></font>: When installing a CGI application on the Web with debugging activated, the log files may sometimes not be created due to file
@@ -6430,7 +6449,7 @@ The error codes returned by the stub and skeleton routines are listed below.
 <tr><td align="right"><i>SOAP_MIME_ERROR</i> </td><td align="left">MIME parsing error </td></tr>
 <tr><td align="right"><i>SOAP_MIME_HREF</i> </td><td align="left">MIME attachment has no href from SOAP body error </td></tr>
 <tr><td align="right"><i>SOAP_MIME_END</i> </td><td align="left">End of MIME attachments protocol error </td></tr>
-<tr><td align="right"><i>SOAP_DIME_ERROR</i> </td><td align="left">DIME parsing error </td></tr>
+<tr><td align="right"><i>SOAP_DIME_ERROR</i> </td><td align="left">DIME formatting error or DIME size exceeds SOAP_MAXDIMESIZE </td></tr>
 <tr><td align="right"><i>SOAP_DIME_END</i> </td><td align="left">End of DIME attachments protocol error </td></tr>
 <tr><td align="right"><i>SOAP_DIME_HREF</i> </td><td align="left">DIME attachment has no href from SOAP body </td></tr>
 <tr><td align="right"></td><td align="left">(and no DIME callbacks were defined to save the attachment) </td></tr>
@@ -10327,7 +10346,7 @@ http://msdn.microsoft.com/library/en-us/dnglobspec/html/draft-nielsen-dime-02.tx
 Applications developed with gSOAP can transmit binary DIME attachments with or
 without streaming messages. Without streaming, all data is stored and retrieved in
 memory, which can be prohibitive when transmitting large files on small
-devices. In contrast, with DIME streaming, data handlers are used to pass the
+devices. The maximum DIME attachment size is limited to 8 MB by default as set with <i>SOAP_MAXDIMESIZE</i> in <i>stdsoap2.h</i>. In contrast, with DIME streaming, data handlers are used to pass the
 data to and from a resource, such as a file or device.  With DIME output
 streaming, raw binary data is send from a data source in chunks on the fly
 without buffering the entire content to save memory. With DIME input streaming,
@@ -11192,6 +11211,68 @@ automatically revert to buffering (<i>SOAP_IO_STORE</i> flag is set).  You can
 check this flag with <i>(soap-&#62;omode &amp; SOAP_IO) == SOAP_IO_CHUNK</i> to see
 if the client accepts chunking. More information about streaming chunked MTOM/MIME
 can be found in Section&nbsp;<a href="#sec:mimechunking">16.5</a>.
+
+<div class="p"><!----></div>
+Note that the example above for <i>mime_read</i> uses a handle that points to the open file
+<i>FILE*</i>.
+The simple example above is not recommended when the
+platform imposes a limit on the number of open file descriptors.
+You can use the handle to pass along more information than just
+the file descriptor. So for example, when the number of open file descriptors
+is limited on your platform, you should let the handle point to a structure
+with file-related information. The C++ example below illustrates this:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+file.xop__Include = soap_new__xop__Include(soap); <br />
+file.xop__Include-&#62;id = NULL; <br />
+file.xop__Include-&#62;type = type; <br />
+file.xop__Include-&#62;options = NULL; <br />
+<br />
+file.xmime5__contentType = type; <br />
+file.filename = filename; <br />
+<br />
+// The object holding all information to read data <br />
+FileStreamIn *ins = <b>new</b>&nbsp;FileStreamIn(errorhandler); <br />
+ins<tt>-&gt;</tt>setFilePath(path); <br />
+ins<tt>-&gt;</tt>setFileName(filename); <br />
+<br />
+file.xop__Include<tt>-&gt;</tt>__size = size; <br />
+file.xop__Include<tt>-&gt;</tt>__ptr = (<b>unsigned</b>&nbsp;<b>char</b>*)ins;
+</td></tr></table><br></i>
+To read the MTOM data for transmission:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>void</b>&nbsp;*mime_read_open(<b>struct</b>&nbsp;soap *soap, <b>void</b>&nbsp;*handle, <b>const</b>&nbsp;<b>char</b>&nbsp;*id, <b>const</b>&nbsp;<b>char</b>&nbsp;*type, <b>const</b>&nbsp;<b>char</b>&nbsp;*description) <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(!handle) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;NULL; <br />
+&nbsp;&nbsp;&nbsp;FileStreamIn *ins = (FileStreamIn*)handle; <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(!ins<tt>-&gt;</tt>open()) <br />
+&nbsp;&nbsp;&nbsp;{ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap<tt>-&gt;</tt>error = SOAP_ERR; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;NULL; <br />
+&nbsp;&nbsp;&nbsp;} <br />
+&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;handle; <br />
+} <br />
+<b>void</b>&nbsp;mime_read_close(<b>struct</b>&nbsp;soap *soap, <b>void</b>&nbsp;*handle) <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(!handle) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>; <br />
+&nbsp;&nbsp;&nbsp;FileStreamIn *ins = (FileStreamIn*)handle; <br />
+&nbsp;&nbsp;&nbsp;<b>delete</b>&nbsp;ins; <br />
+} <br />
+size_t mime_read(<b>struct</b>&nbsp;soap *soap, <b>void</b>&nbsp;*handle, <b>char</b>&nbsp;*buf, size_t len) <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(!handle) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;0; <br />
+&nbsp;&nbsp;&nbsp;FileStreamIn *ins = (FileStreamIn*)handle; <br />
+&nbsp;&nbsp;&nbsp;size_t nread = ins<tt>-&gt;</tt>read(buf, len); <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(ins<tt>-&gt;</tt>streamError()) <br />
+&nbsp;&nbsp;&nbsp;{ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap<tt>-&gt;</tt>error = ins<tt>-&gt;</tt>streamError(); <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;0; <br />
+&nbsp;&nbsp;&nbsp;} <br />
+&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;nread; <br />
+}
+</td></tr></table><br></i>
 
 <div class="p"><!----></div>
 		     <h3><a name="tth_sEc16.4">
@@ -13540,8 +13621,8 @@ Here is an example service method implementation that enforced client authentica
 { <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(!soap<tt>-&gt;</tt>.userid <tt>||</tt> !soap<tt>-&gt;</tt>.passwd <tt>||</tt>
 strcmp(soap<tt>-&gt;</tt>.userid, "guest") <tt>||</tt>
-strcmp(soap<tt>-&gt;</tt>.passwd, "visit"))
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;401;
+strcmp(soap<tt>-&gt;</tt>.passwd, "visit")) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;401; <br />
 ... <br />
 }
 </td></tr></table><br></i>
@@ -13570,12 +13651,12 @@ Here is an example client code fragment to set the NTLM authentication username 
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>struct</b>&nbsp;soap soap; <br />
 soap_init1(&amp;soap, SOAP_IO_KEEPALIVE); <br />
-<b>if</b>&nbsp;(soap_call_ns__method(&amp;soap, ...))
-{ <b>if</b>&nbsp;(soap.error == 401)
+<b>if</b>&nbsp;(soap_call_ns__method(&amp;soap, ...)) <br />
+{ <b>if</b>&nbsp;(soap.error == 401) <br />
 &nbsp;&nbsp;&nbsp;{ soap.userid = "Zaphod"; <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap.passwd = "Beeblebrox"; <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap.authrealm = "Ursa-Minor"; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(soap_call_ns__method(&amp;soap, ...))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(soap_call_ns__method(&amp;soap, ...)) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...
 </td></tr></table><br></i>
 The following NTLM handshake between the client C and server S is performed:
@@ -13616,7 +13697,7 @@ soap.userid = "Zaphod"; <br />
 soap.passwd = "Beeblebrox"; <br />
 soap.authrealm = "Ursa-Minor"; <br />
 soap.ntlm_challenge = ""; <br />
-<b>if</b>&nbsp;(soap_call_ns__method(&amp;soap, ...))
+<b>if</b>&nbsp;(soap_call_ns__method(&amp;soap, ...)) <br />
 &nbsp;&nbsp;&nbsp;...
 </td></tr></table><br></i>
 
@@ -13659,7 +13740,7 @@ soap.proxy_userid = "Zaphod"; <br />
 soap.proxy_passwd = "Beeblebrox"; <br />
 soap.authrealm = "Ursa-Minor"; <br />
 soap.ntlm_challenge = ""; <br />
-<b>if</b>&nbsp;(soap_call_ns__method(&amp;soap, ...))
+<b>if</b>&nbsp;(soap_call_ns__method(&amp;soap, ...)) <br />
 &nbsp;&nbsp;&nbsp;...
 </td></tr></table><br></i>
 
@@ -13710,7 +13791,7 @@ Host HTTP header with the CONNECT protocol.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc19.18">
-19.18</a>&nbsp;&nbsp;<font color="#0000FF">Speed Improvement Tips</font></h3>
+19.18</a>&nbsp;&nbsp;<font color="#0000FF">Messaging Speed and Performance Improvement Tips</font></h3>
 
 <div class="p"><!----></div>
 Here are some tips you can use to speed up gSOAP. gSOAP's default settings are choosen to maximize portability and compatibility. The settings can be tweaked to optimize the performance as follows:
@@ -13728,7 +13809,19 @@ Here are some tips you can use to speed up gSOAP. gSOAP's default settings are c
 <div class="p"><!----></div>
 </li>
 
-<li> Do NOT use gzip compression, even when transferring data over a modem connection. Modems already compress data transfers.
+<li> Do NOT use gzip compression, since the overhead of compression is typically higher than the bandwidth gains.
+<div class="p"><!----></div>
+</li>
+
+<li> Set the <i>SOAP_XML_TREE</i> flag to disable id-ref multi-ref object (de)serialization. This boosts performance significantly and works with SOAP document/literal style (i.e. no id-ref graph serialization as required with SOAP encoding style).
+<div class="p"><!----></div>
+</li>
+
+<li> Compile <i>stdsoap2.c</i> and <i>stdsoap2.cpp</i> with <i>-DWITH_NOIDREF</i> to improve performance even better by permanently disabling id-ref multi-ref object (de)serialization.
+<div class="p"><!----></div>
+</li>
+
+<li> Do NOT use DEBUG mode, since the overhead of logging is significant.
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -15975,5 +16068,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 12 May 2013, 14:41.</small>
+version 4.00.<br />On 25 Aug 2013, 11:55.</small>
 </html>

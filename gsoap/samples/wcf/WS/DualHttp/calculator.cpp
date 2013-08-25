@@ -69,6 +69,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 	on the same host.
 
 	See README.txt for custimizations and instructions for WCF.
+
+	When comppiled with -DCB_THREAD, the client will start a callback
+	server to accept incoming messages instead of using a polling method.
 */
 
 #include "soapWSDualHttpBinding_USCOREICalculatorDuplexService.h"
@@ -77,15 +80,19 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 // Set to the service URI:
 const char *serverURI = "http://localhost:8000";
-// const char *serverURI = "http://192.168.2.2:8000/ServiceModelSamples/service";
+//const char *serverURI = "http://192.168.2.2:8000/ServiceModelSamples/service";
 
 // Set to the client callback URI and port:
 const char *clientURI = "http://localhost:8001";
-// const char *clientURI = "http://10.0.1.8:8001";
+//const char *clientURI = "http://10.0.1.7:8001";
 int clientPort = 8001;
 
 #include <sstream>
 #include "wsrmapi.h"
+
+#ifdef CB_THREAD
+void *callback_server(void*);
+#endif
 
 class Service : public WSDualHttpBinding_USCOREICalculatorDuplexService
 {
@@ -130,6 +137,9 @@ class Client : public WSDualHttpBinding_USCOREICalculatorDuplexProxy
     WSDualHttpBinding_USCOREICalculatorDuplexService callback;
 
   public:
+#ifdef CB_THREAD
+    THREAD_TYPE tid; // callback service thread
+#endif
     Client(const char *serverURI)
     {
       soap_set_mode(soap, SOAP_XML_INDENT);
@@ -150,10 +160,16 @@ class Client : public WSDualHttpBinding_USCOREICalculatorDuplexProxy
         callback.soap_stream_fault(std::cerr);
         exit(1);
       }
+#ifdef CB_THREAD
+      THREAD_CREATE(&tid, (void*(*)(void*))callback_server, (void*)&callback);
+#endif
     }
     ~Client()
     {
       destroy();
+#ifdef CB_THREAD
+      THREAD_JOIN(tid);
+#endif
       callback.destroy();
     }
     int run();
@@ -200,7 +216,6 @@ int Client::run()
   // poll 10 times for 1 second until created
   for (retry = 10; retry && !soap_wsrm_seq_created(soap, seq); retry--)
   {
-    // callback polling: 10 ms polling cycle
     if (poll(1))
       return soap->error;
   }
@@ -221,7 +236,7 @@ int Client::run()
 
   _mssadh__AddTo addTo;
   addTo.n = &n;
-  if (send_AddTo(&addTo) == SOAP_OK || soap->error == 202)
+  if (AddTo(&addTo) == SOAP_OK)
     std::cout << std::endl << "**** AddTo(" << *addTo.n << ")" << std::endl;
   else
     soap_stream_fault(std::cerr);
@@ -242,7 +257,7 @@ int Client::run()
 
   _mssadh__SubtractFrom subtractFrom;
   subtractFrom.n = &n;
-  if (send_SubtractFrom(&subtractFrom) == SOAP_OK || soap->error == 202)
+  if (SubtractFrom(&subtractFrom) == SOAP_OK)
     std::cout << std::endl << "**** SubtractFrom(" << *subtractFrom.n << ")" << std::endl;
   else
     soap_stream_fault(std::cerr);
@@ -260,7 +275,7 @@ int Client::run()
   }
 
   _mssadh__Clear clear;
-  if (send_Clear(&clear) == SOAP_OK || soap->error == 202)
+  if (Clear(&clear) == SOAP_OK)
     std::cout << std::endl << "**** Clear()" << std::endl;
   else
     soap_stream_fault(std::cerr);
@@ -326,6 +341,14 @@ int Client::run()
 
 int Client::poll(int timeout)
 {
+#ifdef CB_THREAD
+  // We leave the acceptance of messages to the callback server thread
+  if (timeout < 0)
+    timeout = 1;
+  sleep(timeout); // but we want to wait some until these messages arrive
+
+#else
+
   callback.soap->accept_timeout = timeout;
 
   printf("\n**** Callback Polling\n");
@@ -348,9 +371,46 @@ int Client::poll(int timeout)
     }
     soap_wsrm_dump(callback.soap, stdout);
   }
+#endif
 
   return SOAP_OK;
 }
+
+/******************************************************************************\
+ *
+ *	Optional Client-Side Threaded Callback Server
+ *
+\******************************************************************************/
+
+#ifdef CB_THREAD
+void *callback_server(void *ctx)
+{
+  WSDualHttpBinding_USCOREICalculatorDuplexService *callback = (WSDualHttpBinding_USCOREICalculatorDuplexService*)ctx;
+
+  callback->soap->accept_timeout = 10; /* server quits after 10 seconds of inactivity */
+
+  printf("\n**** Callback Server Running\n");
+
+  while (soap_valid_socket(callback->accept()))
+  {
+    /* chain the WSRM operations after callback operations */
+    if (soap_begin_serve(callback->soap) == SOAP_OK)
+      if (callback->dispatch() == SOAP_NO_METHOD)
+        soap_serve_request(callback->soap);
+
+    if (callback->soap->error != SOAP_STOP && callback->soap->error != SOAP_EOF)
+      callback->soap_stream_fault(std::cerr);
+    else if (callback->soap->error == SOAP_EOF && !callback->soap->errnum)
+      continue; /* messaging IO timed out */
+    else
+      soap_wsrm_dump(callback->soap, stdout);
+  }
+
+  printf("\n**** Callback Server Terminated\n");
+
+  return NULL;
+}
+#endif
 
 /******************************************************************************\
  *
@@ -462,7 +522,7 @@ int Service::Clear(_mssadh__Clear *req)
     _mssadh__Equation eqn;
     std::string s = equation.str();
     eqn.eqn = &s;
-    if (callback.send_Equation(&eqn) == SOAP_OK || callback.soap->error == 202)
+    if (callback.Equation(&eqn) == SOAP_OK)
       std::cout << "Equation(" << s << ")" << std::endl;
     else
       callback.soap_stream_fault(std::cerr);
@@ -509,7 +569,7 @@ int Service::AddTo(_mssadh__AddTo *req)
 
     _mssadh__Result res;
     res.result = &result;
-    if (callback.send_Result(&res) == SOAP_OK || callback.soap->error == 202)
+    if (callback.Result(&res) == SOAP_OK)
       std::cout << "Result(" << result << ")" << std::endl;
     else
       callback.soap_stream_fault(std::cerr);
@@ -553,7 +613,7 @@ int Service::SubtractFrom(_mssadh__SubtractFrom *req)
 
     _mssadh__Result res;
     res.result = &result;
-    if (callback.send_Result(&res) == SOAP_OK || callback.soap->error == 202)
+    if (callback.Result(&res) == SOAP_OK)
       std::cout << "Result(" << result << ")" << std::endl;
     else
       callback.soap_stream_fault(std::cerr);
@@ -597,7 +657,7 @@ int Service::MultiplyBy(_mssadh__MultiplyBy *req)
 
     _mssadh__Result res;
     res.result = &result;
-    if (callback.send_Result(&res) == SOAP_OK || callback.soap->error == 202)
+    if (callback.Result(&res) == SOAP_OK)
       std::cout << "Result(" << result << ")" << std::endl;
     else
       callback.soap_stream_fault(std::cerr);
@@ -641,7 +701,7 @@ int Service::DivideBy(_mssadh__DivideBy *req)
 
     _mssadh__Result res;
     res.result = &result;
-    if (callback.send_Result(&res) == SOAP_OK || callback.soap->error == 202)
+    if (callback.send_Result(&res) == SOAP_OK)
       std::cout << "Result(" << result << ")" << std::endl;
     else
       callback.soap_stream_fault(std::cerr);

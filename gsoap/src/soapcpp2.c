@@ -5,7 +5,7 @@
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
-This part of the software is released under ONE of the following licenses:
+This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
 GPL license.
@@ -319,7 +319,7 @@ infile	header file to parse (or stdin)\n\
 		else
 			strcpy(filename, argv[i]);
 	}
-	fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release "VERSION"\n**  Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool is released under one of the following two licenses:\n**  GPL or the commercial license by Genivia Inc.\n\n");
+	fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release "VERSION"\n**  Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool is released under one of the following licenses:\n**  GPL or the commercial license by Genivia Inc.\n\n");
 	if (stop_flag)
 	  exit(0);
 	init();

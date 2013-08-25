@@ -207,9 +207,9 @@ int Types::read(const char *file)
           if (*xsd && *use)
           { s = estrdup(xsd);
             eqvtypemap[s] = estrdup(use);
-	  }
-	}
-	else
+          }
+        }
+        else
         { s = fill(def, sizeof(def), s, '|');
           s = fill(use, sizeof(use), s, '|');
           s = fill(ptr, sizeof(ptr), s, '|');
@@ -228,10 +228,10 @@ int Types::read(const char *file)
                 modtypemap[s] = estrdup(def);
             }
             else
-	    { if (*def)
+            { if (*def)
               { if (strcmp(def, "..."))
-	          deftypemap[s] = estrdup(def);
-	      }
+                  deftypemap[s] = estrdup(def);
+              }
               else
                 deftypemap[s] = "";
               if (*use)
@@ -1074,7 +1074,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
         { fprintf(stream, "\n/// \"%s\":%s is a simpleType restriction list with length %s.", URI?URI:"", name, simpleType.restriction->length->value);
           document(simpleType.restriction->length->annotation);
         }
-	else
+        else
           fprintf(stream, "\n/// \"%s\":%s is a simpleType restriction.", URI?URI:"", name);
       }
       gen(URI, name, *simpleType.restriction->simpleType, anonymous);
@@ -1154,11 +1154,11 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           if (simpleType.restriction->minLength)
           { a = simpleType.restriction->minLength->value;
             document(simpleType.restriction->minLength->annotation);
-	  }
+          }
           if (simpleType.restriction->maxLength)
           { b = simpleType.restriction->maxLength->value;
             document(simpleType.restriction->maxLength->annotation);
-	  }
+          }
           if (a || b)
             fprintf(stream, "/// Length of this string is within %s..%s characters\n", a?a:"0", b?b:"");
         }
@@ -1392,7 +1392,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
                 fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration).value_, true), p->restriction->base, (*enumeration).value_);
               else
                 fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration).value, false), p->restriction->base, (*enumeration).value);
-	    }
+            }
             else
               fprintf(stream, "//\tunrecognized: bitmask enumeration '%s' has no value\n", t);
           }
@@ -1418,9 +1418,9 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       else
       { const char *s;
         if (!strcmp(simpleType.list->itemType, "xs:QName"))
-	  s = tname(NULL, NULL, "xsd:QName");
-	else
-	  s = tname(NULL, NULL, "xsd:string");
+          s = tname(NULL, NULL, "xsd:QName");
+        else
+          s = tname(NULL, NULL, "xsd:string");
         if (!anonymous)
         { fprintf(stream, "\n/// \"%s\":%s is a simpleType containing a whitespace separated list of %s.\n", URI?URI:"", name, simpleType.list->itemType);
           t = deftname(TYPEDEF, NULL, strchr(s, '*') != NULL, prefix, URI, name);
@@ -1457,7 +1457,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
                   fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration).value_, true), (*simple).restriction->base, (*enumeration).value_);
                 else
                   fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration).value, false), (*simple).restriction->base, (*enumeration).value);
-	      }
+              }
               else
                 fprintf(stream, "//\tunrecognized: bitmask enumeration '%s' has no value\n", t);
             }
@@ -1595,11 +1595,11 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
           break;
         if (p->simpleContent->restriction)
         { // TODO: should only generate attribute when name is different?
-	  gen(URI, p->simpleContent->restriction->attribute);
+          gen(URI, p->simpleContent->restriction->attribute);
           if (p->simpleContent->restriction->anyAttribute && flag)
           { gen(URI, *p->simpleContent->restriction->anyAttribute);
-	    flag = false;
-	  }
+            flag = false;
+          }
           if (p->simpleContent->restriction->complexTypePtr())
             p = p->simpleContent->restriction->complexTypePtr();
           else
@@ -1745,7 +1745,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
           if (attribute.wsdl__arrayType)
             type = attribute.wsdl__arrayType;
         }
-	xs__seqchoice *s = complexType.complexContent->restriction->sequence;
+        xs__seqchoice *s = complexType.complexContent->restriction->sequence;
         if (s
          && !s->__contents.empty()
          && s->__contents.front().__union == SOAP_UNION_xs__union_content_element
@@ -1791,21 +1791,35 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
         if (complexType.complexContent->restriction->sequence)
           gen(URI, *complexType.complexContent->restriction->sequence, NULL, NULL);
         if (complexType.complexContent->restriction->choice)
-           gen(URI, name, *complexType.complexContent->restriction->choice, NULL, NULL);
-        const xs__complexType *p = &complexType; 
-        bool flag = true;
-        do
-        { if (p->complexContent && p->complexContent->restriction)
-          { // TODO: should only generate attribute when name is different?
-	    gen(URI, p->complexContent->restriction->attribute);
+          gen(URI, name, *complexType.complexContent->restriction->choice, NULL, NULL);
+        gen(URI, complexType.complexContent->restriction->attribute);
+	bool flag = true;
+        if (complexType.complexContent->restriction->anyAttribute)
+        { gen(URI, *complexType.complexContent->restriction->anyAttribute);
+	  flag = false;
+	}
+        const xs__complexType *p = complexType.complexContent->restriction->complexTypePtr();
+        while (p)
+        { const char *pURI;
+	  if (p->schemaPtr())
+            pURI = p->schemaPtr()->targetNamespace;
+          else
+            pURI = URI;
+          const char *b = cname(NULL, pURI, p->name);
+          if (zflag && zflag <= 5)
+            fprintf(stream, "/// RESTRICTED FROM %s:\n", b);
+          else if (comment_nest == 0)
+            fprintf(stream, "/*  RESTRICTED FROM %s:\n", b);
+          else
+            fprintf(stream, "    RESTRICTED FROM %s:\n", b);
+          comment_nest++;
+          if (p->complexContent && p->complexContent->restriction)
+          { gen(URI, p->complexContent->restriction->attribute);
             if (p->complexContent->restriction->anyAttribute && flag)
             { gen(URI, *p->complexContent->restriction->anyAttribute);
-	      flag = false;
-	    }
-            if (p->complexContent->restriction->complexTypePtr())
-              p = p->complexContent->restriction->complexTypePtr();
-            else
-              break;
+              flag = false;
+            }
+            p = p->complexContent->restriction->complexTypePtr();
           }
           else if (p->complexContent && p->complexContent->extension)
           { gen(URI, p->complexContent->extension->attribute);
@@ -1814,20 +1828,23 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
             { gen(URI, *p->complexContent->extension->anyAttribute);
               flag = false;
             }
-            if (p->complexContent->extension->complexTypePtr())
-              p = p->complexContent->extension->complexTypePtr();
-            else
-              break;
+            p = p->complexContent->extension->complexTypePtr();
           }
           else
           { gen(URI, p->attribute);
             gen(URI, p->attributeGroup);
             if (p->anyAttribute && flag)
               gen(URI, *p->anyAttribute);
-            break;
+            p = NULL;
           }
+	  comment_nest--;
+          if (zflag && zflag <= 5)
+            fprintf(stream, "//  END OF RESTRICTED FROM %s\n", b);
+          else if (comment_nest == 0)
+            fprintf(stream, "    END OF RESTRICTED FROM %s */\n", b);
+          else
+            fprintf(stream, "    END OF RESTRICTED FROM %s\n", b);
         }
-        while (p);
       }
     }
     else if (complexType.complexContent->extension)
@@ -2033,18 +2050,18 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
     { if (attribute.simpleTypePtr()->restriction && attribute.simpleTypePtr()->restriction->base)
       { if (!attribute.simpleTypePtr()->restriction->enumeration.empty())
         { const char *s;
-	  if (is_integer(value))
-	    fprintf(stream, " = %s", value);
-	  else if (!*value)
+          if (is_integer(value))
+            fprintf(stream, " = %s", value);
+          else if (!*value)
             fprintf(stream, " = 0");
-	  else if ((s = enames[Pair(gname(URI, name),value)]))
-	    fprintf(stream, " = %s", s);
+          else if ((s = enames[Pair(gname(URI, name),value)]))
+            fprintf(stream, " = %s", s);
         }
-	else
+        else
         { const char *baseURI = NULL;
-	  if (attribute.simpleTypePtr()->restriction->simpleTypePtr() && attribute.simpleTypePtr()->restriction->simpleTypePtr()->schemaPtr())
-	    baseURI = attribute.simpleTypePtr()->restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
-	  t = tname(NULL, baseURI, attribute.simpleTypePtr()->restriction->base);
+          if (attribute.simpleTypePtr()->restriction->simpleTypePtr() && attribute.simpleTypePtr()->restriction->simpleTypePtr()->schemaPtr())
+            baseURI = attribute.simpleTypePtr()->restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
+          t = tname(NULL, baseURI, attribute.simpleTypePtr()->restriction->base);
         }
       }
     }
@@ -2075,11 +2092,11 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
       else if (!strncmp(t, "enum ", 5))
       { const char *s;
         if (is_integer(value))
-	  fprintf(stream, " = %s", value);
-	else if (!*value)
+          fprintf(stream, " = %s", value);
+        else if (!*value)
           fprintf(stream, " = 0");
-	else if ((s = enames[Pair(t + 5,value)]))
-	  fprintf(stream, " = %s", s);
+        else if ((s = enames[Pair(t + 5,value)]))
+          fprintf(stream, " = %s", s);
       }
       else if (!strcmp(t, "char*")
             || !strcmp(t, "char *")	// not elegant
@@ -2289,7 +2306,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     }
     else if (substok
           && element.elementPtr()->substitutionsPtr()
-	  && !element.elementPtr()->substitutionsPtr()->empty())
+          && !element.elementPtr()->substitutionsPtr()->empty())
     { if (vflag)
         fprintf(stderr, "\nWarning: element ref '%s' stands as the head of a substitutionGroup but is not declared abstract\n", element.ref);
       gen_substitutions(URI, element);
@@ -2332,7 +2349,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     }
     else if (substok
           && element.substitutionsPtr()
-	  && !element.substitutionsPtr()->empty())
+          && !element.substitutionsPtr()->empty())
     { if (vflag)
         fprintf(stderr, "\nWarning: element '%s' stands as the head of a substitutionGroup but is not declared abstract\n", name);
       gen_substitutions(URI, element);
@@ -2519,13 +2536,13 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
           fprintf(stream, " = %s", value);
         else if (!strncmp(t, "enum ", 5))
         { const char *s;
-	  if (is_integer(value))
-	    fprintf(stream, " = %s", value);
-	  else if (!*value)
+          if (is_integer(value))
+            fprintf(stream, " = %s", value);
+          else if (!*value)
             fprintf(stream, " = 0");
-	  else if ((s = enames[Pair(t + 5, value)]))
+          else if ((s = enames[Pair(t + 5, value)]))
             fprintf(stream, " = %s", s);
-	}
+        }
         else if (!strcmp(t, "char*")
               || !strcmp(t, "char *")	// not elegant
               || !strcmp(t, "std::string")
@@ -2713,8 +2730,8 @@ void Types::gen(const char *URI, const xs__any& any, const char *minOccurs, cons
         { fprintf(stream, sizeformat, "int", "");
           fprintf(stream, "0;\n");
           fprintf(stream, elementformat, pname(true, NULL, NULL, "xsd:any"), "__any");
-	}
-	else
+        }
+        else
           fprintf(stream, elementformat, tname(NULL, NULL, "xsd:any"), "__any");
       }
       else if (with_union)
@@ -3259,8 +3276,8 @@ char *estrdupf(const char *s)
   { if (s[0] == '/' && s[1] == '*')
     { for (s += 2; s[0] && s[1]; s++)
       { if (s[0] == '*' && s[1] == '/')
-	{ s++;
-	  break;
+        { s++;
+          break;
         }
       }
       continue;
