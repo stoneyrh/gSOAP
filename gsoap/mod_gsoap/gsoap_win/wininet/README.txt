@@ -64,6 +64,10 @@ For example:
      ...
      soap_done(&soap);
 
+IMPORTANT: make sure to compile all sources in C++ compilation mode. If you
+migrate to a project file .vcproj, please set CompileAs="2" in your .vcproj
+file.
+
 -------------------------------------------------------------------------------
 Notes
 -------------------------------------------------------------------------------

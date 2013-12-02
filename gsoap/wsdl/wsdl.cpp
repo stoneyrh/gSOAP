@@ -80,6 +80,9 @@ int show_ignore(struct soap*, const char*);
 
 wsdl__definitions::wsdl__definitions()
 { soap = soap_new1(SOAP_XML_TREE | SOAP_C_UTFSTRING);
+#ifdef HTTPDA_H
+  soap_register_plugin(soap, http_da);
+#endif
 #ifdef WITH_OPENSSL
   soap_ssl_client_context(soap, SOAP_SSL_NO_AUTHENTICATION, NULL, NULL, NULL, NULL, NULL);
 #endif
@@ -188,7 +191,7 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
         *s = '\0';
       strcat(location, "/");
       strcat(location, loc);
-      fprintf(stderr, "\nConnecting to '%s' to retrieve relative '%s' WSDL/XSD...\n", location, loc);
+      fprintf(stderr, "\nConnecting to '%s' to retrieve relative path '%s' WSDL/XSD...\n", location, loc);
       if (soap_connect_command(soap, SOAP_GET, location, NULL))
       { fprintf(stderr, "Connection failed\n");
         exit(1);
@@ -248,7 +251,8 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
       if (soap->error)
       { fprintf(stderr, "\nAn error occurred while parsing WSDL or XSD from '%s'\n", loc?loc:"");
         soap_print_fault(soap, stderr);
-        soap_print_fault_location(soap, stderr);
+        if (soap->error < 200)
+          soap_print_fault_location(soap, stderr);
         exit(1);
       }
       name = NULL;
@@ -271,10 +275,33 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
       redirs--;
       return r;
     }
+    else if (soap->error == 401)
+    { int r = SOAP_ERR;
+      fprintf(stderr, "Authenticating to '%s' realm '%s'...\n", loc, soap->authrealm);
+      if (auth_userid && auth_passwd && redirs++ < 1)
+      { 
+#ifdef HTTPDA_H
+        struct http_da_info info;
+        http_da_save(soap, &info, soap->authrealm, auth_userid, auth_passwd);
+#else
+        soap->userid = auth_userid;
+        soap->passwd = auth_passwd;
+#endif
+        r = read(cwd, loc);
+#ifdef HTTPDA_H
+        http_da_release(soap, &info);
+#endif
+        redirs--;
+      }
+      else
+        fprintf(stderr, "Authentication failed, use option -r:uid:pwd and (re)build with OpenSSL to enable digest authentication\n");
+      return r;
+    }
     else
     { fprintf(stderr, "\nAn error occurred while parsing WSDL from '%s'\n", loc?loc:"");
       soap_print_fault(soap, stderr);
-      soap_print_fault_location(soap, stderr);
+      if (soap->error < 200)
+        soap_print_fault_location(soap, stderr);
       exit(1);
     }
   }
@@ -413,7 +440,8 @@ int wsdl__definitions::error()
 
 void wsdl__definitions::print_fault()
 { soap_print_fault(soap, stderr);
-  soap_print_fault_location(soap, stderr);
+  if (soap->error < 200)
+    soap_print_fault_location(soap, stderr);
 }
 
 void wsdl__definitions::builtinType(const char *type)

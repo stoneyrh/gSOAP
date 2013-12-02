@@ -90,9 +90,10 @@ compiling, linking, and/or using OpenSSL is allowed.
 	  // if necessary, check type in soap->http_content
 	  if (soap->http_content && !soap_tag_cmp(soap->http_content, "image/gif")
 	    return 404;
-	  if (soap_get_http_body(soap, &buf, &len) != SOAP_OK)
+	  if (!(buf = soap_get_http_body(soap, &len))
 	    return soap->error;
-	  // ... now process image in buf 
+	  soap_end_recv(soap);
+	  // ... process image in buf[0..len-1]
 	  // reply with empty HTTP OK response:
 	  return soap_send_empty_response(soap, SOAP_OK);
 	}

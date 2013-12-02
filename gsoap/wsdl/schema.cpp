@@ -52,6 +52,9 @@ extern int is_builtin_qname(const char*);
 
 xs__schema::xs__schema()
 { soap = soap_new1(SOAP_XML_TREE | SOAP_C_UTFSTRING);
+#ifdef HTTPDA_H
+  soap_register_plugin(soap, http_da);
+#endif
 #ifdef WITH_OPENSSL
   soap_ssl_client_context(soap, SOAP_SSL_NO_AUTHENTICATION, NULL, NULL, NULL, NULL, NULL);
 #endif
@@ -348,7 +351,7 @@ int xs__schema::read(const char *cwd, const char *loc)
         *s = '\0';
       strcat(location, "/");
       strcat(location, loc);
-      fprintf(stderr, "\nConnecting to '%s' to retrieve relative '%s' schema...\n", location, loc);
+      fprintf(stderr, "\nConnecting to '%s' to retrieve relative path '%s' schema...\n", location, loc);
       if (soap_connect_command(soap, SOAP_GET, location, NULL))
       { fprintf(stderr, "\nConnection failed\n");
         exit(1);
@@ -408,10 +411,33 @@ int xs__schema::read(const char *cwd, const char *loc)
     redirs--;
     return r;
   }
+  else if (soap->error == 401)
+  { int r = SOAP_ERR;
+    fprintf(stderr, "Authenticating to '%s' realm '%s'...\n", loc, soap->authrealm);
+    if (auth_userid && auth_passwd && redirs++ < 1)
+    { 
+#ifdef HTTPDA_H
+      struct http_da_info info;
+      http_da_save(soap, &info, soap->authrealm, auth_userid, auth_passwd);
+#else
+      soap->userid = auth_userid;
+      soap->passwd = auth_passwd;
+#endif
+      r = read(cwd, loc);
+#ifdef HTTPDA_H
+      http_da_release(soap, &info);
+#endif
+      redirs--;
+    }
+    else
+      fprintf(stderr, "Authentication failed, use option -r:uid:pwd and (re)build with OpenSSL to enable digest authentication\n");
+    return r;
+  }
   if (soap->error)
   { fprintf(stderr, "\nAn error occurred while parsing schema from '%s'\n", loc?loc:"");
     soap_print_fault(soap, stderr);
-    soap_print_fault_location(soap, stderr);
+    if (soap->error < 200)
+      soap_print_fault_location(soap, stderr);
     fprintf(stderr, "\nIf this schema namespace is considered \"built-in\", then add\n  namespaceprefix = <namespaceURI>\nto typemap.dat.\n");
     exit(1);
   }
@@ -441,7 +467,8 @@ int xs__schema::error()
 
 void xs__schema::print_fault()
 { soap_print_fault(soap, stderr);
-  soap_print_fault_location(soap, stderr);
+  if (soap->error < 200)
+    soap_print_fault_location(soap, stderr);
 }
 
 void xs__schema::builtinType(const char *type)

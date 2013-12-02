@@ -161,6 +161,8 @@ COMMAND LINE OPTIONS
 -qname  use name for the C++ namespace for all service declarations
 -rhost[:port[:uid:pwd]]
         connect via proxy host, port, and proxy credentials
+-r:uid:pwd
+        connect with authentication credentials (digest auth requires SSL)
 -R      generate REST operations for REST bindings in the WSDL
 -s      don't generate STL code (no std::string and no std::vector)
 -tfile  use type map file instead of the default file typemap.dat
@@ -178,6 +180,10 @@ COMMAND LINE OPTIONS
 -_      don't generate _USCORE (replace with UNICODE _x005f)
 infile.wsdl infile.xsd http://www... list of input sources (if none use stdin)
 
+DOCUMENTATION
+
+See soapdoc2.pdf for documentation.
+
 INSTALLATION
 
 Use './configure' and 'make' in the root directory, as explained in the 
@@ -187,14 +193,11 @@ To build 'wsdl2h' when autoconf/automake fail, use:
 
 	make -f MakefileManual
 
-DOCUMENTATION
+ENABLING HTTPS SSL/TLS CONNECTIVITY AND HTTP DIGEST AUTHENTICATION
 
-See soapdoc2.pdf for documentation.
+To build 'wsdl2h' with secure features, use:
 
-USING SSL FOR HTTPS TRANSFER OF WSDL FILES
-
-You must build the WSDL parser with 'make secure' to build an SSL-enabled
-version of wsdl2h that can access HTTPS secure sites.
+	make -f MakefileManual secure
 
 If you don't have OpenSSL installed, you cannot build an SSL-secure version of
 wsdl2h. In that case we recommend downloading the WSDL and schema files for
@@ -209,4 +212,4 @@ Please visit http://genivia.com/Products/gsoap/contract.html
 COPYRIGHT NOTICE
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2011, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia, Inc. All Rights Reserved.

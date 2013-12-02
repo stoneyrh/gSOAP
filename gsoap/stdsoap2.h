@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.16
+	stdsoap2.h 2.8.17
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20816
+#define GSOAP_VERSION 20817
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -216,7 +216,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define WITH_LEAN
 #  define HAVE_SSCANF
 # elif defined(WIN32)
-#  define HAVE_SNPRINTF
+#  if _MSC_VER >= 1400
+#   define HAVE_SNPRINTF
+#  endif
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -271,6 +273,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_TIMEGM
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
+#  define HAVE_INTTYPES_H
 # elif defined(_AIX43)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -1068,6 +1071,12 @@ extern "C" {
 # define SOAP_INDEX_TEST  (2)
 #endif
 
+/* Max number of EINTR while poll/select on a socket */
+/* Each EINTR can lengthen the I/O blocking time by at most one second */
+#ifndef SOAP_MAXEINTR
+# define SOAP_MAXEINTR (10)
+#endif
+
 /* Max iterations in soap_serve() to keep server connection alive */
 #ifndef SOAP_MAXKEEPALIVE
 # define SOAP_MAXKEEPALIVE (100)
@@ -1483,7 +1492,7 @@ typedef soap_int32 soap_mode;
 #  define SOAP_NEW(type) new SOAP_NOTHROW (type)
 # endif
 # ifndef SOAP_NEW_ARRAY
-#  define SOAP_NEW_ARRAY(type, n) new SOAP_NOTHROW (type[n])
+#  define SOAP_NEW_ARRAY(type, n) new SOAP_NOTHROW type[n]
 # endif
 # ifndef SOAP_PLACEMENT_NEW
 #  define SOAP_PLACEMENT_NEW(buf, type) new (buf) (type)
@@ -1534,7 +1543,7 @@ typedef soap_int32 soap_mode;
       struct tm _tm;\
       gettimeofday(&_tv, NULL);\
       localtime_r(&_tv.tv_sec, &_tm);\
-      fprintf(fdebug, "%02d%02d%02d %02d:%02d:%02d.%06d|", _tm.tm_year%100, _tm.tm_mon, _tm.tm_mday, _tm.tm_hour, _tm.tm_min, _tm.tm_sec, _tv.tv_usec);\
+      fprintf(fdebug, "%02d%02d%02d %02d:%02d:%02d.%06d|", _tm.tm_year%100, _tm.tm_mon+1, _tm.tm_mday, _tm.tm_hour, _tm.tm_min, _tm.tm_sec, _tv.tv_usec);\
       CMD;\
       fflush(fdebug);\
     }\
@@ -1569,9 +1578,9 @@ typedef soap_int32 soap_mode;
 # endif
 # ifndef DBGFUN
 #  define DBGFUN(FNAME) DBGLOG(TEST, SOAP_MESSAGE(fdebug, "%s(%d): %s()\n", __FILE__, __LINE__, FNAME))
-#  define DBGFUN1(FNAME, FMT, ARG) DBGLOG(TEST, SOAP_MESSAGE(fdebug, "%s(%d): %s("FMT")\n", __FILE__, __LINE__, FNAME, (ARG)))
-#  define DBGFUN2(FNAME, FMT1, ARG1, FMT2, ARG2) DBGLOG(TEST, SOAP_MESSAGE(fdebug, "%s(%d): %s("FMT1", "FMT2")\n", __FILE__, __LINE__, FNAME, (ARG1), (ARG2)))
-#  define DBGFUN3(FNAME, FMT1, ARG1, FMT2, ARG2, FMT3, ARG3) DBGLOG(TEST, SOAP_MESSAGE(fdebug, "%s(%d): %s("FMT1", "FMT2", "FMT3")\n", __FILE__, __LINE__, FNAME, (ARG1), (ARG2), (ARG3)))
+#  define DBGFUN1(FNAME, FMT, ARG) DBGLOG(TEST, SOAP_MESSAGE(fdebug, "%s(%d): %s(" FMT ")\n", __FILE__, __LINE__, FNAME, (ARG)))
+#  define DBGFUN2(FNAME, FMT1, ARG1, FMT2, ARG2) DBGLOG(TEST, SOAP_MESSAGE(fdebug, "%s(%d): %s(" FMT1 ", " FMT2 ")\n", __FILE__, __LINE__, FNAME, (ARG1), (ARG2)))
+#  define DBGFUN3(FNAME, FMT1, ARG1, FMT2, ARG2, FMT3, ARG3) DBGLOG(TEST, SOAP_MESSAGE(fdebug, "%s(%d): %s(" FMT1 ", " FMT2 ", " FMT3 ")\n", __FILE__, __LINE__, FNAME, (ARG1), (ARG2), (ARG3)))
 # endif
 # ifndef DBGHEX
 #  define DBGHEX(DBGFILE, MSG, LEN) \
@@ -2584,7 +2593,7 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_update_pointers(struct soap *soap, char *start, 
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_begin_out(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_end_out(struct soap*);
 
-SOAP_FMAC1 char * SOAP_FMAC2 soap_get_http_body(struct soap*);
+SOAP_FMAC1 char * SOAP_FMAC2 soap_get_http_body(struct soap*, size_t *len);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_begin_in(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_end_in(struct soap*);

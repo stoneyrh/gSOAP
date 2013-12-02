@@ -30,8 +30,8 @@ Kernel configured for up to 4 processors.
 Processor type: i486 (Intel 80486)
 Processors active: 0 1 2 3
 Primary memory available: 4.00 gigabytes
-Default processor set: 121 tasks, 576 threads, 4 processors
-Load average: 0.81, Mach factor: 3.18
+Default processor set: 112 tasks, 498 threads, 4 processors
+Load average: 0.99, Mach factor: 3.07
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -196,8 +196,8 @@ configure:4184: checking lex library
 configure:4203: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in ccYXWGdu.o
-      _main in ccYXWGdu.o
+      _yylex in ccypLYBr.o
+      _main in ccypLYBr.o
 ld: symbol(s) not found for architecture x86_64
 collect2: ld returned 1 exit status
 configure:4209: $? = 1
@@ -2972,7 +2972,7 @@ configure:7121: checking for gethostbyname_r
 configure:7177: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in ccJ8Uhe5.o
+      _main in ccDu7dO2.o
 ld: symbol(s) not found for architecture x86_64
 collect2: ld returned 1 exit status
 configure:7183: $? = 1
@@ -3115,7 +3115,7 @@ configure:7552: checking for disable openssl in library
 configure:7555: result: no
 configure:7557: checking for enable gnutls in library
 configure:7567: result: no
-configure:7784: creating ./config.status
+configure:7786: creating ./config.status
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -3384,7 +3384,7 @@ SOAPCPP2_NONAMESPACES=''
 STRIP=''
 VERSION='2.8'
 WSDL2H_EXTRA_FLAGS='-DWITH_OPENSSL -DWITH_GZIP'
-WSDL2H_EXTRA_LIBS='-lssl -lcrypto -lz'
+WSDL2H_EXTRA_LIBS='../plugin/httpda.c ../plugin/md5evp.c -lssl -lcrypto -lz'
 WSDL2H_IMPORTPATH='-DWSDL_IMPORT_PATH="\"${datarootdir}/gsoap/WS\""'
 WSDL2H_SOAP_CPP_LIB='libgsoapssl++.a'
 YACC='bison -y'

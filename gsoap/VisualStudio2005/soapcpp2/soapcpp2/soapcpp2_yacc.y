@@ -1151,7 +1151,10 @@ type	: VOID		{ $$ = mkvoid(); }
 			  {	p = enter(classtable, $1);
 				$$ = p->info.typ = mkclass((Table*)0, 0);
 			  	p->info.typ->id = $1;
-			  	p->info.typ->transient = -2;
+				if (cflag)
+			  		p->info.typ->transient = 1;	/* make std::string transient in C */
+				else
+			  		p->info.typ->transient = -2;
 			  }
 			  else
 			  {	sprintf(errbuf, "unknown type '%s'", $1->name);
@@ -1339,7 +1342,7 @@ array	: /* empty */ 	{ $$ = tmp;	/* tmp is inherited */
 			}
 	| '[' cexp ']' array
 			{ if (!bflag && $4.typ->type == Tchar)
-			  {	sprintf(errbuf, "char["SOAP_LONG_FORMAT"] will be serialized as an array of "SOAP_LONG_FORMAT" bytes: use soapcpp2 option -b to enable char[] string serialization or use char* for strings", $2.val.i, $2.val.i);
+			  {	sprintf(errbuf, "char[" SOAP_LONG_FORMAT "] will be serialized as an array of " SOAP_LONG_FORMAT " bytes: use soapcpp2 option -b to enable char[] string serialization or use char* for strings", $2.val.i, $2.val.i);
 			  	semwarn(errbuf);
 			  }
 			  if ($2.hasval && $2.typ->type == Tint && $2.val.i > 0 && $4.typ->width > 0)

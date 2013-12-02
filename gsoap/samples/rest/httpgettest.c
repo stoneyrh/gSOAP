@@ -74,7 +74,7 @@ int main(int argc, char **argv)
   }
   if (soap.http_content)
     printf("HTTP Content Type: %s\n", soap.http_content);
-  body = soap_get_http_body(&soap);
+  body = soap_get_http_body(&soap, NULL);
   soap_end_recv(&soap);
   if (body)
     printf("HTTP Body:\n%s\n", body);

@@ -14,8 +14,7 @@ GSFLAGS=-L -I../../../../import -I../../../..
 COFLAGS=-O2
 CWFLAGS=-Wall -Wno-deprecated-declarations
 CIFLAGS=-I. -I../../../.. -I../../../../plugin
-CMFLAGS=-DWITH_DOM -DWITH_OPENSSL
-#CMFLAGS=-DDEBUG_STAMP -DWITH_DOM -DWITH_OPENSSL
+CMFLAGS=-DCB_THREAD -DWITH_WCF -DWITH_DOM -DWITH_OPENSSL
 CFLAGS= $(CWFLAGS) $(COFLAGS) $(CIFLAGS) $(CMFLAGS)
 all:		calculator
 calculator:	calculator.h calculator.cpp $(SOAPH) $(SOAPC) wsrxClient.cpp

@@ -751,9 +751,7 @@ int http_get_handler(struct soap *soap)
     return 403; /* HTTP forbidden */
   if (!soap_tag_cmp(soap->path, "*.html"))
     return copy_file(soap, soap->path + 1, "text/html");
-  if (!soap_tag_cmp(soap->path, "*.xml")
-   || !soap_tag_cmp(soap->path, "*.xsd")
-   || !soap_tag_cmp(soap->path, "*.wsdl"))
+  if (!soap_tag_cmp(soap->path, "*.xml"))
     return copy_file(soap, soap->path + 1, "text/xml");
   if (!soap_tag_cmp(soap->path, "*.jpg"))
     return copy_file(soap, soap->path + 1, "image/jpeg");
@@ -773,6 +771,10 @@ int http_get_handler(struct soap *soap)
   /* Check requestor's authentication: */
   if (check_authentication(soap))
     return 401; /* HTTP not authorized */
+  /* For example, we can put WSDL and XSD files behind authentication wall */
+  if (!soap_tag_cmp(soap->path, "*.xsd")
+   || !soap_tag_cmp(soap->path, "*.wsdl"))
+    return copy_file(soap, soap->path + 1, "text/xml");
   /* Return Web server status */
   if (soap->path[1] == '\0' || soap->path[1] == '?')
     return info(soap);

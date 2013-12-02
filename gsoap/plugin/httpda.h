@@ -59,7 +59,7 @@ extern "C" {
 #endif
 
 /** pluging identification for plugin registry */
-#define HTTP_DA_ID "HTTP-DA-1.1"
+#define HTTP_DA_ID "HTTP-DA-1.2"
 
 /** pluging identification for plugin registry */
 extern const char http_da_id[];

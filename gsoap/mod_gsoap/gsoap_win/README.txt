@@ -9,3 +9,6 @@ information server (IIS) through ISAPI.
 The WinInet module enables a seamless client-side integration of gSOAP client
 applications in MS Windows environments.
 
+IMPORTANT: make sure to compile all sources in C++ compilation mode. If you
+migrate to a project file .vcproj, please set CompileAs="2" in your .vcproj
+file.

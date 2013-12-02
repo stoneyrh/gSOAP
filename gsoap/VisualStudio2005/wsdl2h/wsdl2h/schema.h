@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2010, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -79,6 +79,7 @@ class xs__element
 	xs__annotation			*annotation;
 	xs__simpleType			*simpleType;		// choice
 	xs__complexType			*complexType;		// choice
+	xsd__string			unique;			// dummy, not used
   private:
 	xs__schema			*schemaRef;		// schema to which this belongs
   	xs__element			*elementRef;		// traverse() finds ref

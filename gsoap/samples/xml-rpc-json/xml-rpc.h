@@ -33,9 +33,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "xml-rpc-iters.h"	// deferred to C++ compiler
 
-/// make std::string and std::wstring non-serializable (classes used in methods)
-extern class std::string;
-extern class std::wstring;
+// make std::string and std::wstring non-serializable (classes used in methods)
+// Obsoleted in 2.8.17, no need to declare strings transient to avoid C errors
+// extern class std::string;
+// extern class std::wstring;
 
 /// for C++ only: external iterator class for structs
 extern class _struct_iterator;

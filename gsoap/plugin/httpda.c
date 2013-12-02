@@ -5,7 +5,7 @@
 	Supports both Basic and Digest authentication.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2011, Robert van Engelen, Genivia, Inc., All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia, Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -493,7 +493,7 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
     http_da_calc_nonce(soap, cnonce);
     http_da_calc_HA1(soap, &data->context, data->alg, userid, soap->authrealm, passwd, data->nonce, cnonce, HA1);
 
-    if (data->qop && !soap_tag_cmp(data->qop, "*auth-int*"))
+    if (soap->status != SOAP_GET && soap->status != SOAP_CONNECT && data->qop && !soap_tag_cmp(data->qop, "*auth-int*"))
     {
       qop = "auth-int";
       soap_s2hex(soap, (unsigned char*)data->digest, entityHAhex, 16);

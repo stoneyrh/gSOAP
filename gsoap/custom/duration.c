@@ -89,7 +89,7 @@ const char *soap_xsd__duration2s(struct soap *soap, LONG64 a)
   h = a % 24;
   d = a / 24;
   if (d)
-    sprintf(soap->tmpbuf + k, SOAP_LONG_FORMAT"D", d);
+    sprintf(soap->tmpbuf + k, SOAP_LONG_FORMAT "D", d);
   if (h || m || s || f)
   { if (d)
       k = strlen(soap->tmpbuf);
@@ -129,7 +129,7 @@ int soap_s2xsd__duration(struct soap *soap, const char *s, LONG64 *a)
       { s++;
 	break;
       }
-      if (sscanf(s, SOAP_LONG_FORMAT"%c", &n, &k) != 2)
+      if (sscanf(s, SOAP_LONG_FORMAT "%c", &n, &k) != 2)
 	return soap->error = SOAP_TYPE;
       s = strchr(s, k);
       if (!s)
@@ -153,7 +153,7 @@ int soap_s2xsd__duration(struct soap *soap, const char *s, LONG64 *a)
     while (s && *s)
     { LONG64 n;
       char k;
-      if (sscanf(s, SOAP_LONG_FORMAT"%c", &n, &k) != 2)
+      if (sscanf(s, SOAP_LONG_FORMAT "%c", &n, &k) != 2)
 	return soap->error = SOAP_TYPE;
       s = strchr(s, k);
       if (!s)

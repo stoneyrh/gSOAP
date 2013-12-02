@@ -92,6 +92,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a09cee084988b28dc5563021e493c2b2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71b70576b982e022af7fcbad83670766"><td class="memItemLeft" align="right" valign="top">ULONG64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a71b70576b982e022af7fcbad83670766">num</a></td></tr>
 <tr class="separator:a71b70576b982e022af7fcbad83670766"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ab15e2f387070385a6ad208aa2b3a4a"><td class="memItemLeft" align="right" valign="top">ULONG64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a3ab15e2f387070385a6ad208aa2b3a4a">recvnum</a></td></tr>
+<tr class="separator:a3ab15e2f387070385a6ad208aa2b3a4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a496375d13b56e33b1017fa51356041"><td class="memItemLeft" align="right" valign="top">ULONG64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a1a496375d13b56e33b1017fa51356041">lastnum</a></td></tr>
 <tr class="separator:a1a496375d13b56e33b1017fa51356041"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9259ba4ae18f3f7c129370a6bc65fc5f"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="wsrm_8h.html#a74a1b26ed97040d29fb3ad5b1e88a3c8">wsrm__FaultCodes</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a9259ba4ae18f3f7c129370a6bc65fc5f">fault</a></td></tr>
@@ -233,7 +235,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>last num received </p>
+<p>TODO: last message num received upon closing </p>
 
 </div>
 </div>
@@ -272,7 +274,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>current message num </p>
+<p>message sequence num sent </p>
 
 </div>
 </div>
@@ -286,6 +288,19 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>ranges of received messages </p>
+
+</div>
+</div>
+<a class="anchor" id="a3ab15e2f387070385a6ad208aa2b3a4a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ULONG64 soap_wsrm_sequence::recvnum</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>TODO: message num received (used to be lastnum) </p>
 
 </div>
 </div>
@@ -360,7 +375,7 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Aug 25 2013 18:55:01 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Dec 1 2013 14:39:21 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

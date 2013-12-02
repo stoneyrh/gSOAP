@@ -37,7 +37,11 @@ The Makefile builds the WS-RM logic and then the app logic with soapcpp2:
 
   $ soapcpp2 -L -I../../../../import -I../../../.. -A -pwsrx ../../../../import/wsrm5.h
   $ soapcpp2 -L -I../../../../import -I../../../.. -a -j calculator.h
-  $ cc -o calculator calculator.cpp soapC.cpp soapWSDualHttpBinding_USCOREICalculatorDuplexService.cpp soapWSDualHttpBinding_USCOREICalculatorDuplexProxy.cpp wsrxClient.cpp wsrxServer.cpp ../../../../plugin/wsrmapi.c ../../../../plugin/wsaapi.c ../../../../custom/duration.c ../../../../dom.cpp ../../../../stdsoap2.cpp
+  $ cc -o calculator -DCB_THREAD -DWITH_WCF -DWITH_OPENSSL calculator.cpp soapC.cpp soapWSDualHttpBinding_USCOREICalculatorDuplexService.cpp soapWSDualHttpBinding_USCOREICalculatorDuplexProxy.cpp wsrxClient.cpp wsrxServer.cpp ../../../../plugin/wsrmapi.c ../../../../plugin/wsaapi.c ../../../../custom/duration.c ../../../../dom.cpp ../../../../stdsoap2.cpp
+
+The -DWITH_WCF def ensures WS-RM plugin compatibility with WCF.
+To enable the gSOAP client-side threaded callback server, use -DCB_THREAD.
+Debugging is enabled with -DDEBUG or -DDEBUG_STAMP to timestamp the logs.
 
 To connect a WCF client to a gSOAP service
 ------------------------------------------
@@ -64,10 +68,9 @@ Compile and run the WCF client:
 
   C:\WF_WCF_Samples\WCF\Basic\Binding\WS\DualHttp\CS\client> bin\client.exe
 
-When running the WCF client, the WCF client-side callback (a server) in a
-self-hosted context will operate VERY SLOW when HTTP keep-alive is enabled in
-the gSOAP server (with the gSOAP server invoking the WCF client callback).
-Therefore, SOAP_IO_KEEPALIVE is not recommended.
+The gSOAP server in this example is an iterative server. Therefore,
+SOAP_IO_KEEPALIVE is not recommended since this leads to messages being blocked
+on the server port.
 
 To self-host a WCF service
 --------------------------
@@ -159,7 +162,4 @@ Compile and run:
   C:\WF_WCF_Samples\WCF\Basic\Binding\WS\DualHttp\CS\service> bin\service.exe
 
   $ ./calculator
-
-To enable the gSOAP client-side threaded callback server, compile
-calculator.cpp with -DCB_THREAD (enables callback_server over polling).
 

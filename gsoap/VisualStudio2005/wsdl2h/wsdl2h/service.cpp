@@ -1806,7 +1806,7 @@ void Definitions::generate()
   else if (!jflag && !faults.empty())
   { SetOfString fault_elements;
     banner("SOAP Fault Detail");
-    fprintf(stream, "/**\n\nThe SOAP Fault is part of the gSOAP context and its content is accessed\nthrough the soap.fault->detail variable (SOAP 1.1) or the\nsoap.fault->SOAP_ENV__Detail variable (SOAP 1.2).\nUse option -j to omit.\n\n*/\n");
+    fprintf(stream, "/**\n\nThe SOAP Fault is part of the gSOAP context and its content is accessed\nthrough the soap.fault->detail variable (SOAP 1.1) or the\nsoap.fault->SOAP_ENV__Detail variable (SOAP 1.2).\nUse wsdl2h option -j to omit these declarations.\n\n*/\n");
     fprintf(stream, "struct SOAP_ENV__Detail\n{\n");
     if (dflag)
     { const char *t = types.tname(NULL, NULL, "xsd:anyAttribute");

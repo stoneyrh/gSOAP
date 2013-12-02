@@ -85,7 +85,9 @@ char *infile[MAXINFILES],
      *outfile = NULL,
      *proxy_host = NULL,
      *proxy_userid = NULL,
-     *proxy_passwd = NULL;
+     *proxy_passwd = NULL,
+     *auth_userid = NULL,
+     *auth_passwd = NULL;
 const char
      *mapfile = WSDL_TYPEMAP_FILE,
      *import_path = WSDL2H_IMPORT_PATH,
@@ -321,7 +323,7 @@ static void options(int argc, char **argv)
             else if (i < argc && argv[++i])
               proxy_host = argv[i];
             else
-              fprintf(stderr, "wsdl2h: Option -r requires a proxy host:port argument\n");
+              fprintf(stderr, "wsdl2h: Option -r requires proxy host:port:userid:passwd or :userid:passwd authentication argument\n");
             if (proxy_host)
 	    { char *s = (char*)emalloc(strlen(proxy_host + 1));
 	      strcpy(s, proxy_host);
@@ -329,14 +331,26 @@ static void options(int argc, char **argv)
 	      s = strchr(proxy_host, ':');
 	      if (s)
 	      { *s = '\0';
-	        proxy_port = soap_strtol(s + 1, &s, 10);
-		if (s && *s == ':')
-	        { *s = '\0';
-		  proxy_userid = s + 1;
-		  s = strchr(proxy_userid, ':');
+		if (*proxy_host)
+	        { proxy_port = soap_strtol(s + 1, &s, 10);
+		  if (s && *s == ':')
+	          { *s = '\0';
+		    proxy_userid = s + 1;
+		    s = strchr(proxy_userid, ':');
+		    if (s && *s == ':')
+		    { *s = '\0';
+		      proxy_passwd = s + 1;
+		    }
+		  }
+	        }
+		else
+		{ s = proxy_host;
+		  proxy_host = NULL;
+		  auth_userid = s + 1;
+                  s = strchr(auth_userid, ':');
 		  if (s && *s == ':')
 		  { *s = '\0';
-		    proxy_passwd = s + 1;
+		    auth_passwd = s + 1;
 		  }
 		}
 	      }
@@ -388,7 +402,7 @@ static void options(int argc, char **argv)
 	    break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-s] [-t typemapfile] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-t typemapfile] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -b	bi-directional operations (duplex ops) added to serve one-way responses\n\
@@ -413,6 +427,8 @@ static void options(int argc, char **argv)
 -R      generate REST operations for REST bindings in the WSDL\n\
 -rhost[:port[:uid:pwd]]\n\
         connect via proxy host, port, and proxy credentials\n\
+-r:uid:pwd\n\
+        connect with authentication credentials (digest auth requires SSL)\n\
 -s      don't generate STL code (no std::string and no std::vector)\n\
 -tfile  use type map file instead of the default file typemap.dat\n\
 -u      don't generate unions\n\

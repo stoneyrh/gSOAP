@@ -40,10 +40,11 @@ The gSOAP 2.8.0 (and 2.8.x updates) software is distributed under:
    code base in GPL and non-GPL.
 
 3) Proprietary commercial software development licenses for the standard
-   edition. The standard edition is identical to the open source version of
-   gSOAP and includes all software components, but without the GPL licensing
-   requirements for your project. There is also an enterprise edition that
-   offers the gold standard toolset licensing arrangement.
+   edition and enterprise level licensing. The standard edition is identical to
+   the open source version of gSOAP and includes all software components, but
+   without the open source GPL licensing requirements for your project. There
+   is also an enterprise edition that offers the gold standard toolset
+   licensing arrangement.
 
 IMPORTANT NOTE
 

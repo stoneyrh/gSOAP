@@ -26,7 +26,7 @@ COFLAGS=-O1
 #	COFLAGS=-g
 CWFLAGS=-Wall
 #
-CIFLAGS=-I..
+CIFLAGS=-I.. -I../plugin
 #
 CMFLAGS=
 #
@@ -55,7 +55,7 @@ wsp.o:		wsp.h wsp.cpp includes.h imports.h
 		$(CPP) -c $(CFLAGS) wsp.cpp
 secure:
 		rm -f *.o
-		make CMFLAGS=-DWITH_OPENSSL LIBS="-lcrypto -lssl" wsdl2h
+		make CMFLAGS=-DWITH_OPENSSL LIBS="../plugin/httpda.c ../plugin/md5evp.c -lcrypto -lssl -lm" wsdl2h
 .PHONY:		clean distclean
 clean:		
 		rm -f *.o wsdlH.h wsdlStub.h wsdlC.cpp wsdlClient.cpp wsdlServer.cpp wsdlClientLib.cpp wsdlServerLib.cpp

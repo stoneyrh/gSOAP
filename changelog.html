@@ -699,7 +699,7 @@ dir).</li>
 <li>Added new wsseapi signature verification API functions.</li>
 <li>Added mutability property of SOAP_ENV__Header and SOAP_ENV__Fault struct
 to allow consistent redefinitions and on-the-fly member additions.</li>
-<li>Added wsdl2h -r option parameters.</li>
+<li>Added wsdl2h -r option parameter for web proxy access.</li>
 <li>Added MINGW portability.</li>
 <li>Added configure option --disable-openssl to build wsdl2h and libraries
 without OpenSSL.</li>
@@ -873,7 +873,7 @@ without OpenSSL.</li>
 <li>Added soapcpp2 -0 option to remove SOAP bindings when applicable.</li>
 <li>Changed wsdl2h output for the few cases that multiple service bindings are defined, use wsdl2h -Nns for backward compatibility.</li>
 <li>Improved DOM processing.</li>
-<li>Fixed C++11 compatibility.</li>
+<li>Improved C++0x/C++11 compatibility.</li>
 <li>Fixed httpda plugin crash.</li>
 <li>Fixed wsdl2h processing of xs:group maxOccurs=unbounded.</li>
 <li>Fixed mod_gsoap plugin compilation issues.</li>
@@ -924,6 +924,14 @@ without OpenSSL.</li>
 <li>Fixed use of sprintf's that trigger Valgrind and Fortify warnings.</li>
 <li>Fixed parsing character strings from CDATA sections ending in ']'.</li>
 <li>Fixed DOM output for SOAP_XML_CANONICAL c14n normalization of xmlns namespace bindings.</li>
+</ul>
+<li>Version 2.8.17 (12/1/2013)</li>
+<ul>
+<li>Added WS-RM message queueing option for WS-RM NoDiscard.</li>
+<li>Added wsdl2h option -r for authorized web access and proxy access.</li>
+<li>Improved C++11 compatibility.</li>
+<li>Improved ISO compatibility (compile -pedantic).</li>
+<li>Improved I/O timeouts timing accuracy in the presence of EINTR interrupts (set SOAP_MAXEINTR).</li>
 </ul>
 </ul>
 

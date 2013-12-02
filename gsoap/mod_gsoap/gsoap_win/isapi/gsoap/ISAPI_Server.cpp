@@ -169,7 +169,7 @@ static int fsend(soap *soap, const char *pBuf, size_t len) {
     return SOAP_OK;
 }
 size_t SoapTransaction::SupplyRequestHeaders(char *pBuf, const size_t len) {
-    int nLen = 0;
+    size_t nLen = 0;
     if (!_headers_supplied) {
 		if (!_request_header.empty()) { // we must send 1st line so that gsoap parses everything correctly.
 			nLen = _request_header.length();

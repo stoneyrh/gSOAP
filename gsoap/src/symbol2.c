@@ -1315,7 +1315,7 @@ gen_class(FILE *fd, Entry *p)
 	    fprintf(fd, "\t/* mustUnderstand */");
 	  else if (!is_dynamic_array(typ) && is_repetition(Eptr))
           { if (Eptr->info.maxOccurs > 1)
-	      fprintf(fd, "\t/* sequence of "SOAP_LONG_FORMAT" to "SOAP_LONG_FORMAT" elements <%s> */", Eptr->info.minOccurs, Eptr->info.maxOccurs, ns_convert(Eptr->next->sym->name));
+	      fprintf(fd, "\t/* sequence of " SOAP_LONG_FORMAT " to " SOAP_LONG_FORMAT " elements <%s> */", Eptr->info.minOccurs, Eptr->info.maxOccurs, ns_convert(Eptr->next->sym->name));
 	    else
 	      fprintf(fd, "\t/* sequence of elements <%s> */", ns_convert(Eptr->next->sym->name));
 	  }
@@ -1325,7 +1325,7 @@ gen_class(FILE *fd, Entry *p)
 	    fprintf(fd, "\t/* union discriminant (of union defined below) */");
 	  else if (Eptr->info.typ->type != Tfun && !(Eptr->info.sto & (Sconst | Sprivate | Sprotected)) && !(Eptr->info.sto & Sattribute) && !is_transient(Eptr->info.typ) && !is_external(Eptr->info.typ) && strncmp(Eptr->sym->name, "__", 2))
 	  { if (Eptr->info.maxOccurs > 1)
-	      fprintf(fd, "\t/* sequence of "SOAP_LONG_FORMAT" to "SOAP_LONG_FORMAT" elements of type %s */", Eptr->info.minOccurs, Eptr->info.maxOccurs, wsdl_type(Eptr->info.typ, ""));
+	      fprintf(fd, "\t/* sequence of " SOAP_LONG_FORMAT " to " SOAP_LONG_FORMAT " elements of type %s */", Eptr->info.minOccurs, Eptr->info.maxOccurs, wsdl_type(Eptr->info.typ, ""));
 	    else if (Eptr->info.minOccurs >= 1)
 	      fprintf(fd, "\t/* required element of type %s */", wsdl_type(Eptr->info.typ, ""));
             else
@@ -1347,7 +1347,7 @@ gen_class(FILE *fd, Entry *p)
 	  }
 	}
         if (!cflag && !is_transient(typ) && !is_volatile(typ))
-        { fprintf(fd,"\npublic:\n\tint soap_type() const { return %d; } /* = unique id %s */", typ->num, soap_type(typ));
+        { fprintf(fd,"\npublic:\n\tint soap_type() const { return %d; } /* = unique type id %s */", typ->num, soap_type(typ));
 #if 0
 	  /* ctor not allowed in unions, so keep things simple for structs */
 	  if (!has_constructor(typ))
@@ -1422,7 +1422,7 @@ gen_class(FILE *fd, Entry *p)
 	   fprintf(fd, "\t/* mustUnderstand */");
 	 else if (!is_dynamic_array(typ) && is_repetition(Eptr))
          { if (Eptr->info.maxOccurs > 1)
-	     fprintf(fd, "\t/* sequence of "SOAP_LONG_FORMAT" to "SOAP_LONG_FORMAT" elements <%s> */", Eptr->info.minOccurs, Eptr->info.maxOccurs, ns_convert(Eptr->next->sym->name));
+	     fprintf(fd, "\t/* sequence of " SOAP_LONG_FORMAT " to " SOAP_LONG_FORMAT " elements <%s> */", Eptr->info.minOccurs, Eptr->info.maxOccurs, ns_convert(Eptr->next->sym->name));
 	   else
 	     fprintf(fd, "\t/* sequence of elements <%s> */", ns_convert(Eptr->next->sym->name));
 	 }
@@ -1432,7 +1432,7 @@ gen_class(FILE *fd, Entry *p)
 	   fprintf(fd, "\t/* union discriminant (of union defined below) */");
 	 else if (Eptr->info.typ->type != Tfun && !(Eptr->info.sto & (Sconst | Sprivate | Sprotected)) && !(Eptr->info.sto & Sattribute) && !is_transient(Eptr->info.typ) && !is_external(Eptr->info.typ) && strncmp(Eptr->sym->name, "__", 2))
 	 { if (Eptr->info.maxOccurs > 1)
-	     fprintf(fd, "\t/* sequence of "SOAP_LONG_FORMAT" to "SOAP_LONG_FORMAT" elements */", Eptr->info.minOccurs, Eptr->info.maxOccurs);
+	     fprintf(fd, "\t/* sequence of " SOAP_LONG_FORMAT " to " SOAP_LONG_FORMAT " elements */", Eptr->info.minOccurs, Eptr->info.maxOccurs);
 	   else if (Eptr->info.minOccurs >= 1)
 	     fprintf(fd, "\t/* required element of type %s */", wsdl_type(Eptr->info.typ, ""));
            else
@@ -1454,7 +1454,7 @@ gen_class(FILE *fd, Entry *p)
 	 }
       }
       if (!is_transient(typ) && !is_volatile(typ))
-      { fprintf(fd,"\npublic:\n\tvirtual int soap_type() const { return %d; } /* = unique id %s */", typ->num, soap_type(typ));
+      { fprintf(fd,"\npublic:\n\tvirtual int soap_type() const { return %d; } /* = unique type id %s */", typ->num, soap_type(typ));
         fprintf(fd,"\n\tvirtual void soap_default(struct soap*);");
         fprintf(fd,"\n\tvirtual void soap_serialize(struct soap*) const;");
 	if (kflag)
@@ -1551,9 +1551,9 @@ generate_header(Table *t)
       { const char *c = "";
         for (q = ((Table*)p->info.typ->ref)->list; q; q = q->next)
         { if (q->info.val.i <= 0x7FFFLL && q->info.val.i >= -0x8000LL)
-	    fprintf(fheader, "%s%s = "SOAP_LONG_FORMAT, c, ident(q->sym->name), q->info.val.i);
+	    fprintf(fheader, "%s%s = " SOAP_LONG_FORMAT, c, ident(q->sym->name), q->info.val.i);
 	  else
-	    fprintf(fheader, "%s%s = "SOAP_LONG_FORMAT"LL", c, ident(q->sym->name), q->info.val.i);
+	    fprintf(fheader, "%s%s = " SOAP_LONG_FORMAT "LL", c, ident(q->sym->name), q->info.val.i);
 	  c = ", ";
         }
       }
@@ -2711,7 +2711,7 @@ default_value(Entry *e, const char *a)
       case Tllong:
       case Tulong:
       case Tullong:
-        sprintf(buf, " %s=\""SOAP_LONG_FORMAT"\"", a, e->info.val.i);
+        sprintf(buf, " %s=\"" SOAP_LONG_FORMAT "\"", a, e->info.val.i);
 	break;
       case Tfloat:
       case Tdouble:
@@ -2836,18 +2836,18 @@ gen_schema(FILE *fd, Table *t, char *ns1, char *ns, int all, int wsdl, char *URL
             fprintf(fd, "    <pattern value=\"%s\"/>\n", p->info.typ->pattern);
           if (is_primitive(p->info.typ) || (p->info.typ->type == Tpointer && is_primitive((Tnode*)p->info.typ->ref) && !is_string(p->info.typ) && !is_wstring(p->info.typ)))
 	  { if (p->info.typ->minLength != MINLONG64)
-              fprintf(fd, "    <minInclusive value=\""SOAP_LONG_FORMAT"\"/>\n", p->info.typ->minLength);
+              fprintf(fd, "    <minInclusive value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->minLength);
 	    if (p->info.typ->maxLength != MAXLONG64)
-              fprintf(fd, "    <maxInclusive value=\""SOAP_LONG_FORMAT"\"/>\n", p->info.typ->maxLength);
+              fprintf(fd, "    <maxInclusive value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->maxLength);
 	  }
 	  else
 	  { if (p->info.typ->maxLength > 0 && p->info.typ->minLength == p->info.typ->maxLength)
-              fprintf(fd, "    <length value=\""SOAP_LONG_FORMAT"\"/>\n", p->info.typ->minLength);
+              fprintf(fd, "    <length value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->minLength);
 	    else
 	    { if (p->info.typ->minLength > 0)
-                fprintf(fd, "    <minLength value=\""SOAP_LONG_FORMAT"\"/>\n", p->info.typ->minLength);
+                fprintf(fd, "    <minLength value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->minLength);
 	      if (p->info.typ->maxLength != MAXLONG64)
-                fprintf(fd, "    <maxLength value=\""SOAP_LONG_FORMAT"\"/>\n", p->info.typ->maxLength);
+                fprintf(fd, "    <maxLength value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->maxLength);
 	    }
 	  }
           fprintf(fd, "   </restriction>\n  </simpleType>\n");
@@ -2885,7 +2885,7 @@ gen_schema(FILE *fd, Table *t, char *ns1, char *ns, int all, int wsdl, char *URL
 	      if (gen_member_documentation(fd, p->sym, q, ns))
                 fprintf(fd, "     </enumeration>");
               if (!uflag)
-	        fprintf(fd, "    <!-- = "SOAP_LONG_FORMAT" -->", q->info.val.i);
+	        fprintf(fd, "    <!-- = " SOAP_LONG_FORMAT " -->", q->info.val.i);
 	      fprintf(fd, "\n");
 	    }
 	  }
@@ -2910,7 +2910,7 @@ gen_schema(FILE *fd, Table *t, char *ns1, char *ns, int all, int wsdl, char *URL
 	      if (gen_member_documentation(fd, p->sym, q, ns))
                 fprintf(fd, "    </enumeration>");
               if (!uflag)
-	        fprintf(fd, "    <!-- = "SOAP_LONG_FORMAT" -->", q->info.val.i);
+	        fprintf(fd, "    <!-- = " SOAP_LONG_FORMAT " -->", q->info.val.i);
               fprintf(fd, "\n");
 	    }
 	  }
@@ -2968,12 +2968,12 @@ gen_schema(FILE *fd, Table *t, char *ns1, char *ns, int all, int wsdl, char *URL
 	    gen_type_documentation(fd, p, ns);
 	    fprintf(fd, "   <restriction base=\"xsd:base64Binary\">\n");
 	    if (p->info.typ->maxLength > 0 && p->info.typ->minLength == p->info.typ->maxLength)
-              fprintf(fd, "    <length value=\""SOAP_LONG_FORMAT"\"/>\n", p->info.typ->minLength);
+              fprintf(fd, "    <length value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->minLength);
 	    else
 	    { if (p->info.typ->minLength > 0)
-                fprintf(fd, "    <minLength value=\""SOAP_LONG_FORMAT"\"/>\n", p->info.typ->minLength);
+                fprintf(fd, "    <minLength value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->minLength);
 	      if (p->info.typ->maxLength != MAXLONG64)
-                fprintf(fd, "    <maxLength value=\""SOAP_LONG_FORMAT"\"/>\n", p->info.typ->maxLength);
+                fprintf(fd, "    <maxLength value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->maxLength);
 	    }
             fprintf(fd, "   </restriction>\n  </simpleType>\n");
 	  }
@@ -3021,7 +3021,7 @@ gen_schema(FILE *fd, Table *t, char *ns1, char *ns, int all, int wsdl, char *URL
 		if (q->info.maxOccurs == 1)
 	          fprintf(fd, "  <complexType name=\"%s\">\n   <complexContent>\n    <restriction base=\"SOAP-ENC:Array\">\n     <sequence>\n      <element name=\"%s\" type=\"%s\" minOccurs=\"0\" maxOccurs=\"unbounded\" nillable=\"%s\"/>\n     </sequence>\n     <attribute ref=\"SOAP-ENC:arrayType\" WSDL:arrayType=\"%s[%s]\"/>\n    </restriction>\n   </complexContent>\n  </complexType>\n", wsdl_type(p->info.typ, NULL), q->sym->name[5]?ns_remove(q->sym->name+5):"item", wsdl_type(q->info.typ, ns1), nillable((Tnode*)q->info.typ->ref), wsdl_type(q->info.typ, ns1), cbuf);
                 else
-	          fprintf(fd, "  <complexType name=\"%s\">\n   <complexContent>\n    <restriction base=\"SOAP-ENC:Array\">\n     <sequence>\n      <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\" nillable=\"%s\"/>\n     </sequence>\n     <attribute ref=\"SOAP-ENC:arrayType\" WSDL:arrayType=\"%s[%s]\"/>\n    </restriction>\n   </complexContent>\n  </complexType>\n", wsdl_type(p->info.typ, NULL), q->sym->name[5]?ns_remove(q->sym->name+5):"item", wsdl_type(q->info.typ, ns1), q->info.minOccurs, q->info.maxOccurs, nillable((Tnode*)q->info.typ->ref), wsdl_type(q->info.typ, ns1), cbuf);
+	          fprintf(fd, "  <complexType name=\"%s\">\n   <complexContent>\n    <restriction base=\"SOAP-ENC:Array\">\n     <sequence>\n      <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\" nillable=\"%s\"/>\n     </sequence>\n     <attribute ref=\"SOAP-ENC:arrayType\" WSDL:arrayType=\"%s[%s]\"/>\n    </restriction>\n   </complexContent>\n  </complexType>\n", wsdl_type(p->info.typ, NULL), q->sym->name[5]?ns_remove(q->sym->name+5):"item", wsdl_type(q->info.typ, ns1), q->info.minOccurs, q->info.maxOccurs, nillable((Tnode*)q->info.typ->ref), wsdl_type(q->info.typ, ns1), cbuf);
 	    }
           }
 	  else if (p->info.typ->ref && ((Table*)p->info.typ->ref)->prev && !is_transient(entry(classtable, ((Table*)p->info.typ->ref)->prev->sym)->info.typ) && strncmp(((Table*)p->info.typ->ref)->prev->sym->name, "xsd__anyType", 12))
@@ -3038,7 +3038,7 @@ gen_schema(FILE *fd, Table *t, char *ns1, char *ns, int all, int wsdl, char *URL
             { fprintf(fd, "  <complexType name=\"%s\">", ns_remove(p->sym->name));
 	      gen_type_documentation(fd, p, ns);
               fprintf(fd, "   <complexContent>\n    <extension base=\"%s\">\n     <sequence>\n", ns_convert(((Table*)p->info.typ->ref)->prev->sym->name));
-	      fprintf(fd, "      <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\" nillable=\"%s\"/>\n", q->sym->name[5]?ns_remove(q->sym->name+5):"item", wsdl_type(q->info.typ, ns1), q->info.minOccurs, q->info.maxOccurs, nillable((Tnode*)q->info.typ->ref));
+	      fprintf(fd, "      <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\" nillable=\"%s\"/>\n", q->sym->name[5]?ns_remove(q->sym->name+5):"item", wsdl_type(q->info.typ, ns1), q->info.minOccurs, q->info.maxOccurs, nillable((Tnode*)q->info.typ->ref));
               fprintf(fd, "     </sequence>\n    </extension>\n   </complexContent>\n");
 	      gen_schema_attributes(fd, p->info.typ, ns, ns1);
               fprintf(fd, "  </complexType>\n");
@@ -3053,7 +3053,7 @@ gen_schema(FILE *fd, Table *t, char *ns1, char *ns, int all, int wsdl, char *URL
             else
 	    { fprintf(fd, "  <complexType name=\"%s\">", ns_remove(p->sym->name));
 	      gen_type_documentation(fd, p, ns);
-	      fprintf(fd, "   <sequence>\n    <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\" nillable=\"%s\"/>\n   </sequence>\n  </complexType>\n", q->sym->name[5]?ns_remove(q->sym->name+5):"item", wsdl_type(q->info.typ, ns1), q->info.minOccurs, q->info.maxOccurs, nillable((Tnode*)q->info.typ->ref));
+	      fprintf(fd, "   <sequence>\n    <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\" nillable=\"%s\"/>\n   </sequence>\n  </complexType>\n", q->sym->name[5]?ns_remove(q->sym->name+5):"item", wsdl_type(q->info.typ, ns1), q->info.minOccurs, q->info.maxOccurs, nillable((Tnode*)q->info.typ->ref));
 	    }
 	  }
 	}
@@ -3141,13 +3141,13 @@ gen_schema_element(FILE *fd, Tnode *p, Entry *q, char *ns, char *ns1)
         else if ((s = strchr(t+1, ':')) && (!strchr(q->next->sym->name+1, ':') || !has_ns_eq(ns, q->next->sym->name)))
 	{ if (((Tnode*)q->next->info.typ->ref)->type == Tpointer)
             if (q->info.maxOccurs == 1)
-	      fprintf(fd, "     <element ref=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\"unbounded\"", t, q->info.minOccurs);
+	      fprintf(fd, "     <element ref=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"unbounded\"", t, q->info.minOccurs);
             else
-	      fprintf(fd, "     <element ref=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\"", t, q->info.minOccurs, q->info.maxOccurs);
+	      fprintf(fd, "     <element ref=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\"", t, q->info.minOccurs, q->info.maxOccurs);
           else if (q->info.maxOccurs == 1)
-              fprintf(fd, "     <element ref=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\"unbounded\"", t, q->info.minOccurs);
+              fprintf(fd, "     <element ref=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"unbounded\"", t, q->info.minOccurs);
 	    else
-              fprintf(fd, "     <element ref=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\"", t, q->info.minOccurs, q->info.maxOccurs);
+              fprintf(fd, "     <element ref=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\"", t, q->info.minOccurs, q->info.maxOccurs);
 	  if (gen_member_documentation(fd, p->id, q, ns))
             fprintf(fd, "     </element>\n");
 	}
@@ -3166,13 +3166,13 @@ gen_schema_element(FILE *fd, Tnode *p, Entry *q, char *ns, char *ns1)
 	  }
 	  if (((Tnode*)q->next->info.typ->ref)->type == Tpointer)
             if (q->info.maxOccurs == 1)
-	      fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\"unbounded\" nillable=\"true\"%s", s, wsdl_type((Tnode*)q->next->info.typ->ref, ns1), q->info.minOccurs, form);
+	      fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"unbounded\" nillable=\"true\"%s", s, wsdl_type((Tnode*)q->next->info.typ->ref, ns1), q->info.minOccurs, form);
             else
-	      fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\" nillable=\"true\"%s", s, wsdl_type((Tnode*)q->next->info.typ->ref, ns1), q->info.minOccurs, q->info.maxOccurs, form);
+	      fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\" nillable=\"true\"%s", s, wsdl_type((Tnode*)q->next->info.typ->ref, ns1), q->info.minOccurs, q->info.maxOccurs, form);
           else if (q->info.maxOccurs == 1)
-              fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\"unbounded\"%s", s, wsdl_type((Tnode*)q->next->info.typ->ref, ns1), q->info.minOccurs, form);
+              fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"unbounded\"%s", s, wsdl_type((Tnode*)q->next->info.typ->ref, ns1), q->info.minOccurs, form);
 	    else
-              fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\"%s", s, wsdl_type((Tnode*)q->next->info.typ->ref, ns1), q->info.minOccurs, q->info.maxOccurs, form);
+              fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\"%s", s, wsdl_type((Tnode*)q->next->info.typ->ref, ns1), q->info.minOccurs, q->info.maxOccurs, form);
 	  if (gen_member_documentation(fd, p->id, q, ns))
             fprintf(fd, "     </element>\n");
 	}
@@ -3185,13 +3185,13 @@ gen_schema_element(FILE *fd, Tnode *p, Entry *q, char *ns, char *ns1)
         else if ((s = strchr(t+1, ':')) && (!strchr(q->sym->name+1, ':') || !has_ns_eq(ns, q->sym->name)))
 	{ if (((Tnode*)q->info.typ->ref)->type == Tpointer)
             if (q->info.maxOccurs == 1)
-	      fprintf(fd, "     <element ref=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\"unbounded\"", t, q->info.minOccurs);
+	      fprintf(fd, "     <element ref=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"unbounded\"", t, q->info.minOccurs);
             else
-	      fprintf(fd, "     <element ref=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\"", t, q->info.minOccurs, q->info.maxOccurs);
+	      fprintf(fd, "     <element ref=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\"", t, q->info.minOccurs, q->info.maxOccurs);
           else if (q->info.maxOccurs == 1)
-              fprintf(fd, "     <element ref=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\"unbounded\"", t, q->info.minOccurs);
+              fprintf(fd, "     <element ref=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"unbounded\"", t, q->info.minOccurs);
 	    else
-              fprintf(fd, "     <element ref=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\"", t, q->info.minOccurs, q->info.maxOccurs);
+              fprintf(fd, "     <element ref=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\"", t, q->info.minOccurs, q->info.maxOccurs);
 	  if (gen_member_documentation(fd, p->id, q, ns))
             fprintf(fd, "     </element>\n");
 	}
@@ -3210,19 +3210,19 @@ gen_schema_element(FILE *fd, Tnode *p, Entry *q, char *ns, char *ns1)
 	  }
 	  if (((Tnode*)q->info.typ->ref)->type == Tpointer)
             if (q->info.maxOccurs == 1)
-	      fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\"unbounded\" nillable=\"true\"%s", s, wsdl_type((Tnode*)q->info.typ->ref, ns1), q->info.minOccurs, form);
+	      fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"unbounded\" nillable=\"true\"%s", s, wsdl_type((Tnode*)q->info.typ->ref, ns1), q->info.minOccurs, form);
             else
-	      fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\" nillable=\"true\"%s", s, wsdl_type((Tnode*)q->info.typ->ref, ns1), q->info.minOccurs, q->info.maxOccurs, form);
+	      fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\" nillable=\"true\"%s", s, wsdl_type((Tnode*)q->info.typ->ref, ns1), q->info.minOccurs, q->info.maxOccurs, form);
           else if (q->info.maxOccurs == 1)
-              fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\"unbounded\"%s", s, wsdl_type((Tnode*)q->info.typ->ref, ns1), q->info.minOccurs, form);
+              fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"unbounded\"%s", s, wsdl_type((Tnode*)q->info.typ->ref, ns1), q->info.minOccurs, form);
 	    else
-              fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\"%s", s, wsdl_type((Tnode*)q->info.typ->ref, ns1), q->info.minOccurs, q->info.maxOccurs, form);
+              fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\"%s", s, wsdl_type((Tnode*)q->info.typ->ref, ns1), q->info.minOccurs, q->info.maxOccurs, form);
 	  if (gen_member_documentation(fd, p->id, q, ns))
             fprintf(fd, "     </element>\n");
 	}
       }
       else if (is_anytype(q)) /* ... maybe need to show all possible types rather than xsd:anyType */
-      { fprintf(fd, "     <element name=\"%s\" type=\"xsd:anyType\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\" nillable=\"true\"/>\n", ns_convert(q->next->sym->name), q->info.minOccurs, q->info.maxOccurs);
+      { fprintf(fd, "     <element name=\"%s\" type=\"xsd:anyType\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\" nillable=\"true\"/>\n", ns_convert(q->next->sym->name), q->info.minOccurs, q->info.maxOccurs);
         return 1;
       }
       else if (is_choice(q))
@@ -3253,9 +3253,9 @@ gen_schema_element(FILE *fd, Tnode *p, Entry *q, char *ns, char *ns1)
 	  fprintf(fd, "     <any processContents=\"lax\" minOccurs=\"0\" maxOccurs=\"1\"/><!-- %s -->\n", q->sym->name);
         else if ((s = strchr(t+1, ':')) && (!strchr(q->sym->name+1, ':') || !has_ns_eq(ns, q->sym->name)))
 	{ if (q->info.typ->type == Tpointer || q->info.typ->type == Tarray || is_dynamic_array(q->info.typ))
-            fprintf(fd, "     <element ref=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\"", t, q->info.minOccurs, q->info.maxOccurs);
+            fprintf(fd, "     <element ref=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\"", t, q->info.minOccurs, q->info.maxOccurs);
           else
-            fprintf(fd, "     <element ref=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\"", t, q->info.minOccurs, q->info.maxOccurs);
+            fprintf(fd, "     <element ref=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\"", t, q->info.minOccurs, q->info.maxOccurs);
 	  if (gen_member_documentation(fd, p->id, q, ns))
             fprintf(fd, "     </element>\n");
 	}
@@ -3273,9 +3273,9 @@ gen_schema_element(FILE *fd, Tnode *p, Entry *q, char *ns, char *ns1)
 	    form = " form=\"qualified\"";
 	  }
 	  if (q->info.typ->type == Tpointer || q->info.typ->type == Tarray || is_dynamic_array(q->info.typ))
-            fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\" nillable=\"true\"%s%s", s, wsdl_type(q->info.typ, ns1), q->info.minOccurs, q->info.maxOccurs, default_value(q, "default"), form);
+            fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\" nillable=\"true\"%s%s", s, wsdl_type(q->info.typ, ns1), q->info.minOccurs, q->info.maxOccurs, default_value(q, "default"), form);
           else
-            fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\""SOAP_LONG_FORMAT"\" maxOccurs=\""SOAP_LONG_FORMAT"\"%s%s", s, wsdl_type(q->info.typ, ns1), q->info.minOccurs, q->info.maxOccurs, default_value(q, "default"), form);
+            fprintf(fd, "     <element name=\"%s\" type=\"%s\" minOccurs=\"" SOAP_LONG_FORMAT "\" maxOccurs=\"" SOAP_LONG_FORMAT "\"%s%s", s, wsdl_type(q->info.typ, ns1), q->info.minOccurs, q->info.maxOccurs, default_value(q, "default"), form);
 	  if (gen_member_documentation(fd, p->id, q, ns))
             fprintf(fd, "     </element>\n");
         }
@@ -4570,15 +4570,15 @@ gen_serve_method(FILE *fd, Table *table, Entry *param, char *name)
       fprintf(fd,"\n\tsoap_default_%s(soap, &soap_tmp_%s);", c_ident(response->info.typ), c_ident(response->info.typ));
     }
     else if (((Tnode *)pout->info.typ->ref)->type == Tclass && !is_stdstring((Tnode*)pout->info.typ->ref) && !is_stdwstring((Tnode*)pout->info.typ->ref) && (is_external((Tnode*)pout->info.typ->ref) || is_volatile((Tnode*)pout->info.typ->ref) || is_typedef((Tnode*)pout->info.typ->ref)) && !is_dynamic_array((Tnode*)pout->info.typ->ref))
-    { fprintf(fd, "\n\t%s;", c_type_id((Tnode*)pout->info.typ->ref, pout->sym->name));
+    { fprintf(fd, "\n\t%s %s;", c_type((Tnode*)pout->info.typ->ref), ident(pout->sym->name));
       fprintf(fd,"\n\tsoap_default_%s(soap, &%s);", c_ident((Tnode*)pout->info.typ->ref), ident(pout->sym->name));
     }
     else if (((Tnode *)pout->info.typ->ref)->type == Tclass && !is_stdstring((Tnode*)pout->info.typ->ref) && !is_stdwstring((Tnode*)pout->info.typ->ref) && !is_dynamic_array((Tnode*)pout->info.typ->ref))
-    { fprintf(fd, "\n\t%s;", c_type_id((Tnode*)pout->info.typ->ref, pout->sym->name));
+    { fprintf(fd, "\n\t%s %s;", c_type((Tnode*)pout->info.typ->ref), ident(pout->sym->name));
       fprintf(fd,"\n\t%s.soap_default(soap);", ident(pout->sym->name));
     }
     else if (((Tnode *)pout->info.typ->ref)->type == Tstruct && !is_dynamic_array((Tnode*)pout->info.typ->ref))
-    { fprintf(fd, "\n\t%s;", c_type_id((Tnode*)pout->info.typ->ref, pout->sym->name));
+    { fprintf(fd, "\n\t%s %s;", c_type((Tnode*)pout->info.typ->ref), ident(pout->sym->name));
       fprintf(fd,"\n\tsoap_default_%s(soap, &%s);", c_ident((Tnode *)pout->info.typ->ref), ident(pout->sym->name));
     }
     else
@@ -4591,7 +4591,7 @@ gen_serve_method(FILE *fd, Table *table, Entry *param, char *name)
   }
   fprintf(fd,"\n\tsoap_default_%s(soap, &soap_tmp_%s);", ident(param->sym->name), ident(param->sym->name));
   fflush(fd);
-  q=entry(classtable, param->sym);
+  q = entry(classtable, param->sym);
   if (!is_invisible_empty(q->info.typ))
   { fprintf(fd,"\n\tif (!soap_get_%s(soap, &soap_tmp_%s, \"%s\", NULL))", ident(param->sym->name), ident(param->sym->name), ns_convert(param->sym->name));
     fprintf(fd,"\n\t\treturn soap->error;");
@@ -4608,7 +4608,7 @@ gen_serve_method(FILE *fd, Table *table, Entry *param, char *name)
   else
     fprintf(fd, "\n\tsoap->error = %s(soap", ident(param->sym->name));
   fflush(fd);
-  input=(Table*) q->info.typ->ref;
+  input = (Table*) q->info.typ->ref;
   for (pin = input->list; pin; pin = pin->next)
     fprintf(fd, "%ssoap_tmp_%s.%s", !name || pin != input->list ? ", " : "", ident(param->sym->name), ident(pin->sym->name));
   if (is_transient(pout->info.typ))
@@ -4628,21 +4628,20 @@ gen_serve_method(FILE *fd, Table *table, Entry *param, char *name)
       fprintf(fd, "&soap_tmp_%s);", c_ident((Tnode*)pout->info.typ->ref));
   }
   fprintf(fd,"\n\tif (soap->error)\n\t\treturn soap->error;");
-  
-  if (sp && sp->URI && method_response_encoding)
-  {     if (is_literal(method_response_encoding))
-          fprintf(fd, "\n\tsoap->encodingStyle = NULL;");
-        else if (sp->encoding)
-          fprintf(fd, "\n\tsoap->encodingStyle = \"%s\";", sp->encoding);
-	else if (method_response_encoding)
-	  fprintf(fd, "\n\tsoap->encodingStyle = \"%s\";", method_response_encoding);
-        else if (!eflag)
-          fprintf(fd, "\n\tsoap->encodingStyle = NULL;");
-  }
-  else if (!eflag)
-    fprintf(fd, "\n\tsoap->encodingStyle = NULL;");
   if (!is_transient(pout->info.typ))
-  { fprintf(fd,"\n\tsoap_serializeheader(soap);");
+  { if (sp && sp->URI && method_response_encoding)
+    { if (is_literal(method_response_encoding))
+        fprintf(fd, "\n\tsoap->encodingStyle = NULL;");
+      else if (sp->encoding)
+        fprintf(fd, "\n\tsoap->encodingStyle = \"%s\";", sp->encoding);
+      else if (method_response_encoding)
+        fprintf(fd, "\n\tsoap->encodingStyle = \"%s\";", method_response_encoding);
+      else if (!eflag)
+        fprintf(fd, "\n\tsoap->encodingStyle = NULL;");
+    }
+    else if (!eflag)
+      fprintf(fd, "\n\tsoap->encodingStyle = NULL;");
+    fprintf(fd,"\n\tsoap_serializeheader(soap);");
     if (pout->info.typ->type == Tarray && response)
       fprintf(fd, "\n\tsoap_serialize_%s(soap, &soap_tmp_%s);", c_ident(response->info.typ), c_ident(response->info.typ));
     else if (response)
@@ -4739,7 +4738,7 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, char *name, char *URL, char 
   }
   fprintf(fd, "\n\nvoid %s::%s_init(soap_mode imode, soap_mode omode)\n{\tsoap_imode(%s, imode);\n\tsoap_omode(%s, omode);\n\tstatic const struct Namespace namespaces[] =\n", name, name, soap, soap);
   gen_nsmap(fd, ns, URI);
-  fprintf(fd, "\tsoap_set_namespaces(%s, namespaces);\n};", soap);
+  fprintf(fd, "\tsoap_set_namespaces(%s, namespaces);\n}", soap);
   fprintf(fd, "\n\nvoid %s::destroy()\n{\tsoap_destroy(%s);\n\tsoap_end(%s);\n}", name, soap, soap);
   fprintf(fd, "\n\nvoid %s::reset()\n{\tdestroy();\n\tsoap_done(%s);\n\tsoap_initialize(%s);\n\t%s_init(SOAP_IO_DEFAULT, SOAP_IO_DEFAULT);\n}", name, soap, soap, name);
   if (iflag)
@@ -5114,7 +5113,7 @@ gen_field(FILE *fd, int n, Entry *p, char *nse, char *nsa, char *encoding)
         if (yflag)
           fprintf(fd, "%*s<!-- %s -->\n", n, "", c_type_id(p->info.typ, p->sym->name));
 	gen_element_begin(fd, n, ns_add(p, nse), "SOAP-ENC:Array");
-	fprintf(fd, " SOAP-ENC:arrayType=\"%s["SOAP_LONG_FORMAT"]\">", xsi_type_Tarray(p->info.typ), i);
+	fprintf(fd, " SOAP-ENC:arrayType=\"%s[" SOAP_LONG_FORMAT "]\">", xsi_type_Tarray(p->info.typ), i);
         fflush(fd);
 	gen_val(fd, n, p->info.typ, nse, nsa, encoding);
       }
@@ -5140,7 +5139,7 @@ gen_field(FILE *fd, int n, Entry *p, char *nse, char *nsa, char *encoding)
             fprintf(fd, "%*s<!-- %s -->\n", n, "", c_type_id(p->info.typ, p->sym->name));
 	  gen_element_begin(fd, n, ns_add(p, nse), "SOAP-ENC:Array");
 	  if (((Table*)p->info.typ->ref)->list->info.minOccurs > 0)
-	    fprintf(fd, " SOAP-ENC:arrayType=\"%s["SOAP_LONG_FORMAT"%s]\">", wsdl_type(((Table*)p->info.typ->ref)->list->info.typ, ""), ((Table*)p->info.typ->ref)->list->info.minOccurs, tmp);
+	    fprintf(fd, " SOAP-ENC:arrayType=\"%s[" SOAP_LONG_FORMAT "%s]\">", wsdl_type(((Table*)p->info.typ->ref)->list->info.typ, ""), ((Table*)p->info.typ->ref)->list->info.minOccurs, tmp);
 	  else
 	    fprintf(fd, " SOAP-ENC:arrayType=\"%s[1%s]\">", wsdl_type(((Table*)p->info.typ->ref)->list->info.typ, ""), tmp);
 	}
@@ -5169,7 +5168,7 @@ gen_field(FILE *fd, int n, Entry *p, char *nse, char *nsa, char *encoding)
             fprintf(fd, "%*s<!-- %s -->\n", n, "", c_type_id(p->info.typ, p->sym->name));
 	  gen_element_begin(fd, n, ns_add(p, nse), "SOAP-ENC:Array");
 	  if ((((Tnode*)p->info.typ->ref)->type == Tstruct || ((Tnode*)p->info.typ->ref)->type == Tclass) && ((Table*)((Tnode*)p->info.typ->ref)->ref)->list->info.minOccurs > 0)
-	    fprintf(fd, " SOAP-ENC:arrayType=\"%s["SOAP_LONG_FORMAT"%s]\">", wsdl_type(((Table*)((Tnode*)p->info.typ->ref)->ref)->list->info.typ, ""), ((Table*)((Tnode*)p->info.typ->ref)->ref)->list->info.minOccurs, tmp);
+	    fprintf(fd, " SOAP-ENC:arrayType=\"%s[" SOAP_LONG_FORMAT "%s]\">", wsdl_type(((Table*)((Tnode*)p->info.typ->ref)->ref)->list->info.typ, ""), ((Table*)((Tnode*)p->info.typ->ref)->ref)->list->info.minOccurs, tmp);
 	  else
 	    fprintf(fd, " SOAP-ENC:arrayType=\"%s[1%s]\">", wsdl_type(((Table*)((Tnode*)p->info.typ->ref)->ref)->list->info.typ, ""), tmp);
 	}
@@ -6632,6 +6631,10 @@ res_remove(char *tag)
 { char *s, *t;
   if (!(s = strchr(tag, ':')))
     return tag;
+  if (s[1] != ':')
+    tag = s + 1;
+  if (!strchr(tag, ':'))
+    return tag;
   s = emalloc(strlen(tag) + 1);
   strcpy(s, tag);
   while ((t = strchr(s, ':')))
@@ -7323,19 +7326,19 @@ c_init(Entry *e)
       case Tint:
       case Tuint:
       case Ttime:
-        sprintf(buf, " = "SOAP_LONG_FORMAT, e->info.val.i);
+        sprintf(buf, " = " SOAP_LONG_FORMAT, e->info.val.i);
 	break;
       case Tlong:
-        sprintf(buf, " = "SOAP_LONG_FORMAT"L", e->info.val.i);
+        sprintf(buf, " = " SOAP_LONG_FORMAT "L", e->info.val.i);
 	break;
       case Tulong:
-        sprintf(buf, " = "SOAP_LONG_FORMAT"UL", e->info.val.i);
+        sprintf(buf, " = " SOAP_LONG_FORMAT "UL", e->info.val.i);
 	break;
       case Tllong:
-        sprintf(buf, " = "SOAP_LONG_FORMAT"LL", e->info.val.i);
+        sprintf(buf, " = " SOAP_LONG_FORMAT "LL", e->info.val.i);
 	break;
       case Tullong:
-        sprintf(buf, " = "SOAP_LONG_FORMAT"ULL", e->info.val.i);
+        sprintf(buf, " = " SOAP_LONG_FORMAT "ULL", e->info.val.i);
 	break;
       case Tfloat:
       case Tdouble:
@@ -7346,9 +7349,9 @@ c_init(Entry *e)
 	break;
       case Tenum:
 	if (e->info.val.i <= 0x7FFFLL && e->info.val.i >= -0x8000LL)
-          sprintf(buf, " = (%s)"SOAP_LONG_FORMAT, c_type(e->info.typ), e->info.val.i);
+          sprintf(buf, " = (%s)" SOAP_LONG_FORMAT, c_type(e->info.typ), e->info.val.i);
 	else
-          sprintf(buf, " = (%s)"SOAP_LONG_FORMAT"LL", c_type(e->info.typ), e->info.val.i);
+          sprintf(buf, " = (%s)" SOAP_LONG_FORMAT "LL", c_type(e->info.typ), e->info.val.i);
 	break;
       default:
 	if (is_stdstring(e->info.typ) && e->info.val.s && strlen(e->info.val.s) < sizeof(buf)-6)
@@ -7367,9 +7370,7 @@ c_init(Entry *e)
   return buf;
 }
 
-/* c_type_id returns the arraytype to be used in parameter declaration
-   Allows you to specify the identifier that acts acts as teh name of teh
-   type of array */
+/* c_type_id returns the type to be used in parameter declaration */
 char *
 c_type_id(Tnode *typ, char *name)
 {
@@ -10468,17 +10469,17 @@ soap_attr_value(Entry *p, char *obj, char *name, char *tag)
     { Tnode *ptr = (Tnode*)typ->ref;
       if (ptr->type <= Tenum)
       { if (ptr->minLength != MINLONG64 && (ptr->minLength > 0 || ptr->type < Tuchar || ptr->type > Tullong))
-          fprintf(fout,"\n\tif (%s->%s && *%s->%s < "SOAP_LONG_FORMAT")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", obj, name, obj, name, ptr->minLength);
+          fprintf(fout,"\n\tif (%s->%s && *%s->%s < " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", obj, name, obj, name, ptr->minLength);
         if (ptr->maxLength != MAXLONG64)
-          fprintf(fout,"\n\tif (%s->%s && *%s->%s > "SOAP_LONG_FORMAT")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", obj, name, obj, name, ptr->maxLength);
+          fprintf(fout,"\n\tif (%s->%s && *%s->%s > " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", obj, name, obj, name, ptr->maxLength);
       }
     }
   }
   else if (typ->type <= Tenum)
   { if (typ->minLength != MINLONG64 && (typ->minLength > 0 || typ->type < Tuchar || typ->type > Tullong))
-      fprintf(fout,"\n\tif (%s->%s < "SOAP_LONG_FORMAT")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", obj, name, typ->minLength);
+      fprintf(fout,"\n\tif (%s->%s < " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", obj, name, typ->minLength);
     if (typ->maxLength != MAXLONG64)
-      fprintf(fout,"\n\tif (%s->%s > "SOAP_LONG_FORMAT")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", obj, name, typ->maxLength);
+      fprintf(fout,"\n\tif (%s->%s > " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", obj, name, typ->maxLength);
   }
 }
 
@@ -11397,9 +11398,9 @@ soap_in(Tnode *typ)
         fprintf(fout,"\n\tp = soap_in%s(soap, tag, a, type, %s);", the_type(typ), soap_type(typ));
       if (typ->type <= Tenum)
       { if (typ->minLength != MINLONG64 && (typ->minLength > 0 || typ->type < Tuchar || typ->type > Tullong))
-          fprintf(fout,"\n\tif (p && *p < "SOAP_LONG_FORMAT")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->minLength);
+          fprintf(fout,"\n\tif (p && *p < " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->minLength);
         if (typ->maxLength != MAXLONG64)
-          fprintf(fout,"\n\tif (p && *p > "SOAP_LONG_FORMAT")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->maxLength);
+          fprintf(fout,"\n\tif (p && *p > " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->maxLength);
       }
     }
     fprintf(fout,"\n\treturn p;\n}");
@@ -11471,7 +11472,7 @@ soap_in(Tnode *typ)
 		  p = p->next;
 		}
 		else
-	          fprintf(fout,"\n\tsize_t soap_flag_%s = "SOAP_LONG_FORMAT";", ident(p->sym->name), p->info.maxOccurs);
+	          fprintf(fout,"\n\tsize_t soap_flag_%s = " SOAP_LONG_FORMAT ";", ident(p->sym->name), p->info.maxOccurs);
 	      }
 	    }
 	  }
@@ -11749,66 +11750,66 @@ soap_in(Tnode *typ)
 	      if (is_anytype(p))
 	        p = p->next;
 	      if (a==0)
-	      { fprintf(fout,"\n\tif (%s(soap_flag_%s > "SOAP_LONG_FORMAT"", strict_check(), ident(p->sym->name), p->info.maxOccurs - p->info.minOccurs);
+	      { fprintf(fout,"\n\tif (%s(soap_flag_%s > " SOAP_LONG_FORMAT "", strict_check(), ident(p->sym->name), p->info.maxOccurs - p->info.minOccurs);
 	        a=1;
               }
 	      else
-	        fprintf(fout," || soap_flag_%s > "SOAP_LONG_FORMAT"", ident(p->sym->name), p->info.maxOccurs - p->info.minOccurs);
+	        fprintf(fout," || soap_flag_%s > " SOAP_LONG_FORMAT "", ident(p->sym->name), p->info.maxOccurs - p->info.minOccurs);
 	    }
 	    else if (is_template(p->info.typ))
 	    { if (p->info.minOccurs > 0)
 	      { if (p->info.typ->type == Tpointer)
 	        { if (a==0)
-	          { fprintf(fout,"\n\tif (%s(!a->%s || a->%s->size() < "SOAP_LONG_FORMAT"", strict_check(), ident(p->sym->name), ident(p->sym->name), p->info.minOccurs);
+	          { fprintf(fout,"\n\tif (%s(!a->%s || a->%s->size() < " SOAP_LONG_FORMAT, strict_check(), ident(p->sym->name), ident(p->sym->name), p->info.minOccurs);
 	            a=1;
                   }
 	          else
-	            fprintf(fout," || !a->%s || a->%s->size() < "SOAP_LONG_FORMAT"", ident(p->sym->name), ident(p->sym->name), p->info.minOccurs);
+	            fprintf(fout," || !a->%s || a->%s->size() < " SOAP_LONG_FORMAT, ident(p->sym->name), ident(p->sym->name), p->info.minOccurs);
 	        }
 	        else
 	        { if (a==0)
-	          { fprintf(fout,"\n\tif (%s(a->%s.size() < "SOAP_LONG_FORMAT"", strict_check(), ident(p->sym->name), p->info.minOccurs);
+	          { fprintf(fout,"\n\tif (%s(a->%s.size() < " SOAP_LONG_FORMAT, strict_check(), ident(p->sym->name), p->info.minOccurs);
 	            a=1;
                   }
 	          else
-	            fprintf(fout," || a->%s.size() < "SOAP_LONG_FORMAT"", ident(p->sym->name), p->info.minOccurs);
+	            fprintf(fout," || a->%s.size() < " SOAP_LONG_FORMAT, ident(p->sym->name), p->info.minOccurs);
 	        }
 	      }
 	      if ( p->info.maxOccurs > 1)
 	      { if (p->info.typ->type == Tpointer)
 	        { if (a==0)
-	          { fprintf(fout,"\n\tif (%s((a->%s && a->%s->size() > "SOAP_LONG_FORMAT")", strict_check(), ident(p->sym->name), ident(p->sym->name), p->info.maxOccurs);
+	          { fprintf(fout,"\n\tif (%s((a->%s && a->%s->size() > " SOAP_LONG_FORMAT ")", strict_check(), ident(p->sym->name), ident(p->sym->name), p->info.maxOccurs);
 	            a=1;
                   }
 	          else
-	            fprintf(fout," || (a->%s && a->%s->size() > "SOAP_LONG_FORMAT")", ident(p->sym->name), ident(p->sym->name), p->info.maxOccurs);
+	            fprintf(fout," || (a->%s && a->%s->size() > " SOAP_LONG_FORMAT ")", ident(p->sym->name), ident(p->sym->name), p->info.maxOccurs);
 	        }
 		else
 	        { if (a==0)
-	          { fprintf(fout,"\n\tif (%s(a->%s.size() > "SOAP_LONG_FORMAT"", strict_check(), ident(p->sym->name), p->info.maxOccurs);
+	          { fprintf(fout,"\n\tif (%s(a->%s.size() > " SOAP_LONG_FORMAT, strict_check(), ident(p->sym->name), p->info.maxOccurs);
 	            a=1;
                   }
 	          else
-	            fprintf(fout," || a->%s.size() > "SOAP_LONG_FORMAT"", ident(p->sym->name), p->info.maxOccurs);
+	            fprintf(fout," || a->%s.size() > " SOAP_LONG_FORMAT, ident(p->sym->name), p->info.maxOccurs);
 	        }
 	      }
 	    }
 	    else if (is_repetition(p))
 	    { if (p->info.minOccurs > 0)
 	      { if (a==0)
-	        { fprintf(fout,"\n\tif (%s(a->%s < "SOAP_LONG_FORMAT"", strict_check(), ident(p->sym->name), p->info.minOccurs);
+	        { fprintf(fout,"\n\tif (%s(a->%s < " SOAP_LONG_FORMAT, strict_check(), ident(p->sym->name), p->info.minOccurs);
 	          a=1;
                 }
 	        else
-	          fprintf(fout," || a->%s < "SOAP_LONG_FORMAT"", ident(p->sym->name), p->info.minOccurs);
+	          fprintf(fout," || a->%s < " SOAP_LONG_FORMAT, ident(p->sym->name), p->info.minOccurs);
 	      }
 	      if (p->info.maxOccurs > 1)
 	      { if (a==0)
-	        { fprintf(fout,"\n\tif (%s(a->%s > "SOAP_LONG_FORMAT"", strict_check(), ident(p->sym->name), p->info.maxOccurs);
+	        { fprintf(fout,"\n\tif (%s(a->%s > " SOAP_LONG_FORMAT, strict_check(), ident(p->sym->name), p->info.maxOccurs);
 	          a=1;
                 }
 	        else
-	          fprintf(fout," || a->%s > "SOAP_LONG_FORMAT"", ident(p->sym->name), p->info.maxOccurs);
+	          fprintf(fout," || a->%s > " SOAP_LONG_FORMAT, ident(p->sym->name), p->info.maxOccurs);
 	      }
 	      p = p->next;
 	    }
@@ -11943,7 +11944,7 @@ soap_in(Tnode *typ)
 		  p = p->next;
 		}
 		else
-	          fprintf(fout,"\n\tsize_t soap_flag_%s%d = "SOAP_LONG_FORMAT";", ident(p->sym->name), i, p->info.maxOccurs);
+	          fprintf(fout,"\n\tsize_t soap_flag_%s%d = " SOAP_LONG_FORMAT ";", ident(p->sym->name), i, p->info.maxOccurs);
 	    }
 	  }
       }
@@ -12240,66 +12241,66 @@ soap_in(Tnode *typ)
 	      if (is_anytype(p))
 	        p = p->next;
 	      if (a==0)
-	      { fprintf(fout,"\n\tif (%s(soap_flag_%s%d > "SOAP_LONG_FORMAT"", strict_check(), ident(p->sym->name), i, p->info.maxOccurs - p->info.minOccurs);
+	      { fprintf(fout,"\n\tif (%s(soap_flag_%s%d > " SOAP_LONG_FORMAT, strict_check(), ident(p->sym->name), i, p->info.maxOccurs - p->info.minOccurs);
 	        a=1;
               }
 	      else
-	        fprintf(fout," || soap_flag_%s%d > "SOAP_LONG_FORMAT"", ident(p->sym->name), i, p->info.maxOccurs - p->info.minOccurs);
+	        fprintf(fout," || soap_flag_%s%d > " SOAP_LONG_FORMAT, ident(p->sym->name), i, p->info.maxOccurs - p->info.minOccurs);
 	    }
 	    else if (is_template(p->info.typ))
 	    { if (p->info.minOccurs > 0)
 	      { if (p->info.typ->type == Tpointer)
 	        { if (a==0)
-	          { fprintf(fout,"\n\tif (%s(!a->%s::%s || a->%s::%s->size() < "SOAP_LONG_FORMAT"", strict_check(), ident(t->sym->name), ident(p->sym->name), ident(t->sym->name), ident(p->sym->name), p->info.minOccurs);
+	          { fprintf(fout,"\n\tif (%s(!a->%s::%s || a->%s::%s->size() < " SOAP_LONG_FORMAT, strict_check(), ident(t->sym->name), ident(p->sym->name), ident(t->sym->name), ident(p->sym->name), p->info.minOccurs);
 	            a=1;
                   }
 	          else
-	            fprintf(fout," || !a->%s::%s || a->%s::%s->size() < "SOAP_LONG_FORMAT"", ident(t->sym->name), ident(p->sym->name), ident(t->sym->name), ident(p->sym->name), p->info.minOccurs);
+	            fprintf(fout," || !a->%s::%s || a->%s::%s->size() < " SOAP_LONG_FORMAT, ident(t->sym->name), ident(p->sym->name), ident(t->sym->name), ident(p->sym->name), p->info.minOccurs);
 	        }
 	        else
 	        { if (a==0)
-	          { fprintf(fout,"\n\tif (%s(a->%s::%s.size() < "SOAP_LONG_FORMAT"", strict_check(), ident(t->sym->name), ident(p->sym->name), p->info.minOccurs);
+	          { fprintf(fout,"\n\tif (%s(a->%s::%s.size() < " SOAP_LONG_FORMAT, strict_check(), ident(t->sym->name), ident(p->sym->name), p->info.minOccurs);
 	            a=1;
                   }
 	          else
-	            fprintf(fout," || a->%s::%s.size() < "SOAP_LONG_FORMAT"", ident(t->sym->name), ident(p->sym->name), p->info.minOccurs);
+	            fprintf(fout," || a->%s::%s.size() < " SOAP_LONG_FORMAT, ident(t->sym->name), ident(p->sym->name), p->info.minOccurs);
 	        }
 	      }
 	      if ( p->info.maxOccurs > 1)
 	      { if (p->info.typ->type == Tpointer)
 	        { if (a==0)
-	          { fprintf(fout,"\n\tif (%s((a->%s::%s && a->%s::%s->size() > "SOAP_LONG_FORMAT")", strict_check(), ident(t->sym->name), ident(p->sym->name), ident(t->sym->name), ident(p->sym->name), p->info.maxOccurs);
+	          { fprintf(fout,"\n\tif (%s((a->%s::%s && a->%s::%s->size() > " SOAP_LONG_FORMAT ")", strict_check(), ident(t->sym->name), ident(p->sym->name), ident(t->sym->name), ident(p->sym->name), p->info.maxOccurs);
 	            a=1;
                   }
 	          else
-	            fprintf(fout," || (a->%s::%s && a->%s::%s->size() > "SOAP_LONG_FORMAT")", ident(t->sym->name), ident(p->sym->name), ident(t->sym->name), ident(p->sym->name), p->info.maxOccurs);
+	            fprintf(fout," || (a->%s::%s && a->%s::%s->size() > " SOAP_LONG_FORMAT ")", ident(t->sym->name), ident(p->sym->name), ident(t->sym->name), ident(p->sym->name), p->info.maxOccurs);
 	        }
 		else
 	        { if (a==0)
-	          { fprintf(fout,"\n\tif (%s(a->%s::%s.size() > "SOAP_LONG_FORMAT"", strict_check(), ident(t->sym->name), ident(p->sym->name), p->info.maxOccurs);
+	          { fprintf(fout,"\n\tif (%s(a->%s::%s.size() > " SOAP_LONG_FORMAT, strict_check(), ident(t->sym->name), ident(p->sym->name), p->info.maxOccurs);
 	            a=1;
                   }
 	          else
-	            fprintf(fout," || a->%s::%s.size() > "SOAP_LONG_FORMAT"", ident(t->sym->name), ident(p->sym->name), p->info.maxOccurs);
+	            fprintf(fout," || a->%s::%s.size() > " SOAP_LONG_FORMAT, ident(t->sym->name), ident(p->sym->name), p->info.maxOccurs);
 	        }
 	      }
 	    }
 	    else if (is_repetition(p))
 	    { if (p->info.minOccurs > 0)
 	      { if (a==0)
-	        { fprintf(fout,"\n\tif (%s(a->%s::%s < "SOAP_LONG_FORMAT"", strict_check(), ident(t->sym->name), ident(p->sym->name), p->info.minOccurs);
+	        { fprintf(fout,"\n\tif (%s(a->%s::%s < " SOAP_LONG_FORMAT, strict_check(), ident(t->sym->name), ident(p->sym->name), p->info.minOccurs);
 	          a=1;
                 }
 	        else
-	          fprintf(fout," || a->%s::%s < "SOAP_LONG_FORMAT"", ident(t->sym->name), ident(p->sym->name), p->info.minOccurs);
+	          fprintf(fout," || a->%s::%s < " SOAP_LONG_FORMAT, ident(t->sym->name), ident(p->sym->name), p->info.minOccurs);
 	      }
 	      if (p->info.maxOccurs > 1)
 	      { if (a==0)
-	        { fprintf(fout,"\n\tif (%s(a->%s::%s > "SOAP_LONG_FORMAT"", strict_check(), ident(t->sym->name), ident(p->sym->name), p->info.maxOccurs);
+	        { fprintf(fout,"\n\tif (%s(a->%s::%s > " SOAP_LONG_FORMAT, strict_check(), ident(t->sym->name), ident(p->sym->name), p->info.maxOccurs);
 	          a=1;
                 }
 	        else
-	          fprintf(fout," || a->%s::%s > "SOAP_LONG_FORMAT"", ident(t->sym->name), ident(p->sym->name), p->info.maxOccurs);
+	          fprintf(fout," || a->%s::%s > " SOAP_LONG_FORMAT, ident(t->sym->name), ident(p->sym->name), p->info.maxOccurs);
 	      }
 	      p = p->next;
 	    }
@@ -12745,9 +12746,9 @@ soap_in_Darray(Tnode *typ)
       else
         fprintf(fout,"\n\t\tn -= j = soap_getoffsets(soap->arrayOffset, a->__size, NULL, %d);", d);
       if (p->info.minOccurs > 0)
-        fprintf(fout,"\n\t\tif (%sn >= 0 && n < "SOAP_LONG_FORMAT")\n\t\t{\tsoap->error = SOAP_OCCURS;\n\t\t\treturn NULL;\n\t\t}", strict_check(), p->info.minOccurs);
+        fprintf(fout,"\n\t\tif (%sn >= 0 && n < " SOAP_LONG_FORMAT ")\n\t\t{\tsoap->error = SOAP_OCCURS;\n\t\t\treturn NULL;\n\t\t}", strict_check(), p->info.minOccurs);
       if (p->info.maxOccurs > 1)
-        fprintf(fout,"\n\t\tif (%sn > "SOAP_LONG_FORMAT")\n\t\t{\tsoap->error = SOAP_OCCURS;\n\t\t\treturn NULL;\n\t\t}", strict_check(), p->info.maxOccurs);
+        fprintf(fout,"\n\t\tif (%sn > " SOAP_LONG_FORMAT ")\n\t\t{\tsoap->error = SOAP_OCCURS;\n\t\t\treturn NULL;\n\t\t}", strict_check(), p->info.maxOccurs);
       fprintf(fout,"\n\t\tif (n >= 0)");
       if (((Tnode*)p->info.typ->ref)->type == Tclass
        || (((Tnode*)p->info.typ->ref)->type == Tstruct && !cflag))
@@ -12792,9 +12793,9 @@ soap_in_Darray(Tnode *typ)
       { fprintf(fout,"\n\t\ta->__offset = j;");
       }
       if (p->info.minOccurs > 0)
-        fprintf(fout,"\n\t\tif (%sa->__size >= 0 && a->__size < "SOAP_LONG_FORMAT")\n\t\t{\tsoap->error = SOAP_OCCURS;\n\t\t\treturn NULL;\n\t\t}", strict_check(), p->info.minOccurs);
+        fprintf(fout,"\n\t\tif (%sa->__size >= 0 && a->__size < " SOAP_LONG_FORMAT ")\n\t\t{\tsoap->error = SOAP_OCCURS;\n\t\t\treturn NULL;\n\t\t}", strict_check(), p->info.minOccurs);
       if (p->info.maxOccurs > 1)
-        fprintf(fout,"\n\t\tif (%sa->__size > "SOAP_LONG_FORMAT")\n\t\t{\tsoap->error = SOAP_OCCURS;\n\t\t\treturn NULL;\n\t\t}", strict_check(), p->info.maxOccurs);
+        fprintf(fout,"\n\t\tif (%sa->__size > " SOAP_LONG_FORMAT ")\n\t\t{\tsoap->error = SOAP_OCCURS;\n\t\t\treturn NULL;\n\t\t}", strict_check(), p->info.maxOccurs);
       fprintf(fout,"\n\t\tif (a->__size >= 0)");
       if (((Tnode*)p->info.typ->ref)->type == Tclass
        || (((Tnode*)p->info.typ->ref)->type == Tstruct && !cflag))
@@ -12832,9 +12833,9 @@ soap_in_Darray(Tnode *typ)
     fprintf(fout,"\n\t\t{\tif (soap_new_block(soap) == NULL)\n\t\t\t\treturn NULL;");
     if (p->info.maxOccurs > 1)
     { if (d)
-        fprintf(fout,"\n\t\t\tfor (a->__size[0] = 0; a->__size[0] <= "SOAP_LONG_FORMAT"; a->__size[0]++)", p->info.maxOccurs);
+        fprintf(fout,"\n\t\t\tfor (a->__size[0] = 0; a->__size[0] <= " SOAP_LONG_FORMAT "; a->__size[0]++)", p->info.maxOccurs);
       else
-        fprintf(fout,"\n\t\t\tfor (a->__size = 0; a->__size <= "SOAP_LONG_FORMAT"; a->__size++)", p->info.maxOccurs);
+        fprintf(fout,"\n\t\t\tfor (a->__size = 0; a->__size <= " SOAP_LONG_FORMAT "; a->__size++)", p->info.maxOccurs);
     }
     else
     { if (d)
@@ -12864,9 +12865,9 @@ soap_in_Darray(Tnode *typ)
     fprintf(fout,"\n\t\t\t}");
     fprintf(fout,"\n\t\t\tsoap_pop_block(soap, NULL);");
     if (p->info.minOccurs > 0)
-      fprintf(fout,"\n\t\t\tif (%sa->__size < "SOAP_LONG_FORMAT")\n\t\t\t{\tsoap->error = SOAP_OCCURS;\n\t\t\t\treturn NULL;\n\t\t\t}", strict_check(), p->info.minOccurs);
+      fprintf(fout,"\n\t\t\tif (%sa->__size < " SOAP_LONG_FORMAT ")\n\t\t\t{\tsoap->error = SOAP_OCCURS;\n\t\t\t\treturn NULL;\n\t\t\t}", strict_check(), p->info.minOccurs);
     if (p->info.maxOccurs > 1)
-      fprintf(fout,"\n\t\t\tif (%sa->__size > "SOAP_LONG_FORMAT")\n\t\t\t{\tsoap->error = SOAP_OCCURS;\n\t\t\t\treturn NULL;\n\t\t\t}", strict_check(), p->info.maxOccurs);
+      fprintf(fout,"\n\t\t\tif (%sa->__size > " SOAP_LONG_FORMAT ")\n\t\t\t{\tsoap->error = SOAP_OCCURS;\n\t\t\t\treturn NULL;\n\t\t\t}", strict_check(), p->info.maxOccurs);
     if (((Tnode*)p->info.typ->ref)->type == Tclass
      || has_class((Tnode*)p->info.typ->ref)
      || (((Tnode*)p->info.typ->ref)->type == Tstruct && !cflag))

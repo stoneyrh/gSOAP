@@ -654,7 +654,7 @@ s,@WSDL2H_IMPORTPATH@,|#_!!_#|-DWSDL_IMPORT_PATH="\\"${datarootdir}/gsoap/WS\\""
 s,@SOAPCPP2_NONAMESPACES@,|#_!!_#|,g
 s,@SOAPCPP2_IPV6@,|#_!!_#|,g
 s,@WSDL2H_EXTRA_FLAGS@,|#_!!_#|-DWITH_OPENSSL -DWITH_GZIP,g
-s,@WSDL2H_EXTRA_LIBS@,|#_!!_#|-lssl -lcrypto -lz,g
+s,@WSDL2H_EXTRA_LIBS@,|#_!!_#|../plugin/httpda.c ../plugin/md5evp.c -lssl -lcrypto -lz,g
 s,@SAMPLE_SSL_LIBS@,|#_!!_#|-lssl -lcrypto -lz,g
 s,@WSDL2H_SOAP_CPP_LIB@,|#_!!_#|libgsoapssl++.a,g
 s,@ENABLE_SAMPLES_TRUE@,|#_!!_#|#,g

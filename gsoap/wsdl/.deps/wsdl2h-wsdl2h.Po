@@ -125,6 +125,8 @@ wsdl2h-wsdl2h.o wsdl2h-wsdl2h.o: wsdl2h.cpp includes.h \
   /usr/include/openssl/x509v3.h /usr/include/openssl/conf.h \
   /usr/include/zlib.h /usr/include/zconf.h /usr/include/math.h \
   /usr/include/architecture/i386/math.h /usr/include/inttypes.h \
+  ../../gsoap/plugin/httpda.h ../../gsoap/stdsoap2.h \
+  ../../gsoap/plugin/md5evp.h ../../gsoap/plugin/threads.h \
   /usr/include/c++/4.2.1/iterator \
   /usr/include/c++/4.2.1/bits/stream_iterator.h \
   /usr/include/c++/4.2.1/vector /usr/include/c++/4.2.1/bits/stl_vector.h \
@@ -554,6 +556,14 @@ includes.h:
 /usr/include/architecture/i386/math.h:
 
 /usr/include/inttypes.h:
+
+../../gsoap/plugin/httpda.h:
+
+../../gsoap/stdsoap2.h:
+
+../../gsoap/plugin/md5evp.h:
+
+../../gsoap/plugin/threads.h:
 
 /usr/include/c++/4.2.1/iterator:
 

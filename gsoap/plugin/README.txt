@@ -7,12 +7,12 @@ httpform.*	HTTP POST application/x-www-form-urlencoded support
 httppost.*	HTTP POST method support for example non-SOAP requests
 httpmd5.*	HTTP MD5 checksums
 logging.*	Message logging (selective inbound/outbound)
+mq.*		Message queueing (for WS-RM message queueing support)
 plugin.*	Example plugin for aspiring plugin developers
 wsaapi.*	WS-Addressing (wsa) plugin, see doc/wsa
 wsrmapi.*	WS-ReliableMessaging (wsrm) plugin, see doc/wsrm
 wsseapi.*	WS-Security (wsse) plugin, see doc/wsse
 wsddapi.*	WS-Discovery (wsdd) library, see doc/wsdd
-wstapi.*	WS-Trust (wst) library, see doc/wst
 
 Supporting modules:
 
@@ -34,3 +34,6 @@ All files are suitable for C and C++ compilation and C++ checks are included in
 the source code whenever applicable. If necessary, rename the .c file(s) to
 .cpp for your project.
 
+IMPORTANT FOR VISUAL STUDIO USERS: make sure to compile all sources in C++
+compilation mode. If you migrate to a project file .vcproj, please set
+CompileAs="2" in your .vcproj file.

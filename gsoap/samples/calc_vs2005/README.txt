@@ -8,6 +8,10 @@ In Configuration Propertes select Custom Build Step
   Command Line: soapcpp2.exe -i -wx -C $(InputFileName)
   Outputs: soapH.h soapStub.h soapC.cpp
 
+IMPORTANT: make sure to compile all sources in C++ compilation mode. If you
+migrate to a project file .vcproj, please set CompileAs="2" in your .vcproj
+file.
+
 Notes:
 
 1. soapcpp2.exe must be installed as an executable, or you need to copy it to

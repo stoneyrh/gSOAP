@@ -904,7 +904,7 @@ soap_dom_attribute &soap_dom_attribute::set(const char *nstr, const char *name)
 /******************************************************************************/
 
 soap_dom_attribute &soap_dom_attribute::set(const char *data)
-{ this->data = soap_strdup(soap, name);
+{ this->data = soap_strdup(soap, data);
   return *this;
 }
 

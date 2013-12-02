@@ -19,7 +19,7 @@ LIBS=/usr/lib/libfl.a
 #	LIBS=/usr/lib/libl.a
 COFLAGS=-O1
 #       For static linking use:
-#       COFLAGS=-O1 -static
+#	COFLAGS=-O1 -static
 #       For debugging use:
 #	COFLAGS=-g
 CWFLAGS=-Wall

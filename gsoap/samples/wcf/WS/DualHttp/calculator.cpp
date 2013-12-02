@@ -84,7 +84,7 @@ const char *serverURI = "http://localhost:8000";
 
 // Set to the client callback URI and port:
 const char *clientURI = "http://localhost:8001";
-//const char *clientURI = "http://10.0.1.7:8001";
+//const char *clientURI = "http://10.0.1.8:8001";
 int clientPort = 8001;
 
 #include <sstream>
@@ -92,6 +92,10 @@ int clientPort = 8001;
 
 #ifdef CB_THREAD
 void *callback_server(void*);
+void *callback_thread(void *ctx);
+#define CB_WAIT (1) /* threaded callback service operation may block for up to 1s with NoDiscard */
+#else
+#define CB_WAIT (0) /* callback polling service operations should not block with NoDiscard */
 #endif
 
 class Service : public WSDualHttpBinding_USCOREICalculatorDuplexService
@@ -189,7 +193,6 @@ int main(int argc, char **argv)
   {
     Client client(serverURI);
     client.run();
-    client.destroy();
   }
 }
 
@@ -206,17 +209,17 @@ int Client::run()
   printf("\n**** Creating the Sequence\n");
 
   // Create session for in-order messaging, init sequence handle
-  if (soap_wsrm_create_offer(soap, serverURI, clientURI, id, expires, DiscardFollowingFirstGap, soap_wsa_rand_uuid(soap), &seq))
+  if (soap_wsrm_create_offer(soap, serverURI, clientURI, id, expires, NoDiscard, soap_wsa_rand_uuid(soap), &seq))
   {
     soap_stream_fault(std::cerr);
     soap_wsrm_seq_free(soap, seq);
     return soap->error;
   }
 
-  // poll 10 times for 1 second until created
-  for (retry = 10; retry && !soap_wsrm_seq_created(soap, seq); retry--)
+  // poll 100 times for .1 second until created
+  for (retry = 100; retry && !soap_wsrm_seq_created(soap, seq); retry--)
   {
-    if (poll(1))
+    if (poll(-100000))
       return soap->error;
   }
   if (!retry)
@@ -242,9 +245,11 @@ int Client::run()
     soap_stream_fault(std::cerr);
   destroy();
 
+#ifndef CB_THREAD
   // callback polling: 500 ms polling cycle
   if (poll(-500000))
     return soap->error;
+#endif
 
   // Reliable messaging request message
   if (soap_wsrm_request_acks(soap, seq, soap_wsa_rand_uuid(soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/SubtractFrom"))
@@ -263,9 +268,11 @@ int Client::run()
     soap_stream_fault(std::cerr);
   destroy();
 
+#ifndef CB_THREAD
   // callback polling: 500 ms polling cycle
   if (poll(-500000))
     return soap->error;
+#endif
 
   // Reliable messaging request message
   if (soap_wsrm_request_acks(soap, seq, soap_wsa_rand_uuid(soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Clear"))
@@ -281,9 +288,11 @@ int Client::run()
     soap_stream_fault(std::cerr);
   destroy();
 
+#ifndef CB_THREAD
   // callback polling: 500 ms polling cycle
   if (poll(-500000))
     return soap->error;
+#endif
 
   printf("\n**** Closing the Sequence\n");
 
@@ -294,23 +303,34 @@ int Client::run()
     return soap->error;
   }
 
-  // callback polling: 500 ms polling cycle
-  if (poll(-500000))
-    return soap->error;
-
-  // Resend messages marked as non-acked (as an option)
-  for (retry = 2; retry && soap_wsrm_nack(seq); retry--)
+  for (retry = 10; retry; retry--)
   {
-    printf("\n**** Incomplete Messages - Calculation Discarded\n");
+    // Receive more messages when last not yet received
+    if (soap_wsrm_lastnum(seq) == 0)
+    {
+#ifdef CB_THREAD
+      // we want to pulse here to send acks for incoming messages to keep flow going
+      soap_wsrm_pulse(soap, -500000); /* 500 ms */
+#endif
+      printf("\n**** Receiving Messages Until Last\n");
 
-    // In this case resending would not help to correct the problem, since
-    // the calculation will be off by the wrong message order anyway:
-    printf("\n**** Resending "SOAP_ULONG_FORMAT" Non-Acked Messages\n", soap_wsrm_nack(seq));
-    soap_wsrm_resend(soap, seq, 0, 0); /* 0 0 means full range of msg nums */
+      // callback polling or delay: 500 ms polling cycle
+      if (poll(-500000))
+        return soap->error;
+    }
 
-    // callback polling: 500 ms polling cycle
-    if (poll(-500000))
-      return soap->error;
+    // Resend messages marked as non-acked (as an option)
+    if (soap_wsrm_nack(seq))
+    {
+      printf("\n**** Resending "SOAP_ULONG_FORMAT" Non-Acked Messages\n", soap_wsrm_nack(seq));
+      soap_wsrm_resend(soap, seq, 0, 0); /* 0 0 means full range of msg nums */
+    }
+  }
+
+  if (soap_wsrm_nack(seq) || soap_wsrm_lastnum(seq) == 0)
+  {
+    printf("\n**** Incomplete Sequence\n");
+    soap_wsrm_dump(soap, stdout);
   }
 
   printf("\n**** Terminating the Sequence\n");
@@ -323,11 +343,17 @@ int Client::run()
     return soap->error;
   }
 
-  // callback polling: 500 ms polling cycle
-  if (poll(-500000))
+#ifdef CB_THREAD
+
+  soap_wsrm_dump(soap, stdout);
+
+#endif
+
+  // callback polling: 1 s polling cycle
+  if (poll(1))
     return soap->error;
 
-  // Delete the reliable messaging session sequence
+  // Delete the reliable messaging session sequence (assuming no more inbound messages)
   soap_wsrm_seq_free(soap, seq);
 
   return 0;
@@ -342,6 +368,7 @@ int Client::run()
 int Client::poll(int timeout)
 {
 #ifdef CB_THREAD
+
   // We leave the acceptance of messages to the callback server thread
   if (timeout < 0)
     timeout = 1;
@@ -359,6 +386,8 @@ int Client::poll(int timeout)
     if (soap_begin_serve(callback.soap) == SOAP_OK)
       if (callback.dispatch() == SOAP_NO_METHOD)
         soap_serve_request(callback.soap);
+    if (callback.soap->error)
+      soap_send_fault(callback.soap);
 
     soap->error = callback.soap->error;
 
@@ -386,27 +415,39 @@ int Client::poll(int timeout)
 void *callback_server(void *ctx)
 {
   WSDualHttpBinding_USCOREICalculatorDuplexService *callback = (WSDualHttpBinding_USCOREICalculatorDuplexService*)ctx;
+  THREAD_TYPE tid;
 
   callback->soap->accept_timeout = 10; /* server quits after 10 seconds of inactivity */
 
   printf("\n**** Callback Server Running\n");
 
   while (soap_valid_socket(callback->accept()))
-  {
-    /* chain the WSRM operations after callback operations */
-    if (soap_begin_serve(callback->soap) == SOAP_OK)
-      if (callback->dispatch() == SOAP_NO_METHOD)
-        soap_serve_request(callback->soap);
-
-    if (callback->soap->error != SOAP_STOP && callback->soap->error != SOAP_EOF)
-      callback->soap_stream_fault(std::cerr);
-    else if (callback->soap->error == SOAP_EOF && !callback->soap->errnum)
-      continue; /* messaging IO timed out */
-    else
-      soap_wsrm_dump(callback->soap, stdout);
-  }
+    THREAD_CREATE(&tid, (void*(*)(void*))callback_thread, (void*)callback->copy());
 
   printf("\n**** Callback Server Terminated\n");
+
+  return NULL;
+}
+
+void *callback_thread(void *ctx)
+{
+  WSDualHttpBinding_USCOREICalculatorDuplexService *callback = (WSDualHttpBinding_USCOREICalculatorDuplexService*)ctx;
+  THREAD_DETACH(THREAD_ID);
+
+  /* chain the WSRM operations after callback operations */
+  if (soap_begin_serve(callback->soap) == SOAP_OK)
+    if (callback->dispatch() == SOAP_NO_METHOD)
+      soap_serve_request(callback->soap);
+  if (callback->soap->error)
+    soap_send_fault(callback->soap);
+
+  if (callback->soap->error != SOAP_STOP && callback->soap->error != SOAP_EOF)
+    callback->soap_stream_fault(std::cerr);
+  else if (callback->soap->error != SOAP_EOF || callback->soap->errnum)
+    soap_wsrm_dump(callback->soap, stdout);
+
+  callback->destroy();
+  delete callback;
 
   return NULL;
 }
@@ -420,28 +461,26 @@ void *callback_server(void *ctx)
 
 int WSDualHttpBinding_USCOREICalculatorDuplexService::Result(_mssadh__Result *req)
 {
-  /* check for WS-RM/WSA and set WS-RM/WSA return headers */
-  if (soap_wsrm_check(soap))
+  /* check for WS-RM/WSA, send empty response (this is a one-way operation over HTTP) */
+  if (soap_wsrm_check_send_empty_response_and_wait(soap, CB_WAIT))
     return soap->error;
 
   if (req->result)
     std::cout << std::endl << "**** Result(" << *req->result << ")" << std::endl;
 
-  /* this is a one-way operation over HTTP */
-  return soap_send_empty_response(soap, 202);
+  return SOAP_OK;
 }
 
 int WSDualHttpBinding_USCOREICalculatorDuplexService::Equation(_mssadh__Equation *req)
 {
-  /* check for WS-RM/WSA and set WS-RM/WSA return headers */
-  if (soap_wsrm_check(soap))
+  /* check for WS-RM/WSA, send empty response (this is a one-way operation over HTTP) */
+  if (soap_wsrm_check_send_empty_response_and_wait(soap, CB_WAIT))
     return soap->error;
 
   if (req->eqn)
     std::cout << std::endl << "**** Equation(" << *req->eqn << ")" << std::endl;
 
-  /* this is a one-way operation over HTTP */
-  return soap_send_empty_response(soap, 202);
+  return SOAP_OK;
 }
 
 /******************************************************************************\
@@ -459,12 +498,29 @@ int Service::start(int port)
   }
   std::cerr << "Server Running" << std::endl;
 
-  /* optional: set accept timeout to pulse acks every 10 sec, see below */
-  soap->accept_timeout = 10;
+  /* optional: set accept timeout to pulse acks every 500 ms, see below */
+  soap->accept_timeout = -500000;
 
   for (;;)
   {
-    if (!soap_valid_socket(accept()))
+    if (soap_valid_socket(accept()))
+    { 
+      /* with iterative servers asynchronous messaging deadlock scenarios exist! */
+      /* chain the WSRM service operations after the main service operations */
+      if (soap_begin_serve(soap) == SOAP_OK)
+        if (dispatch() == SOAP_NO_METHOD)
+          soap_serve_request(soap);
+      if (soap->error)
+        soap_send_fault(soap);
+      if (soap->error && soap->error != SOAP_STOP)
+        soap_stream_fault(std::cerr);
+
+      destroy();
+      callback.destroy();
+
+      soap_wsrm_dump(soap, stdout);
+    }
+    else
     {
       /* error or timeout? */
       if (soap->errnum)
@@ -472,23 +528,9 @@ int Service::start(int port)
         soap_stream_fault(std::cerr);
         exit(1);
       }
-      /* timeout occurs after 200 ms */
+      /* timeout occurs after 1 sec */
       /* send acks to peers (optional), 10 ms per message timeout */
       soap_wsrm_pulse(soap, -10000); /* 10 ms */
-    }
-    else
-    { /* chain the WSRM service operations after the main service operations */
-      if (soap_begin_serve(soap) == SOAP_OK)
-      {
-        if (dispatch() == SOAP_NO_METHOD)
-          if (soap_serve_request(soap) != SOAP_OK)
-	    soap_send_fault(soap);
-        if (soap->error && soap->error != SOAP_STOP)
-          soap_stream_fault(std::cerr);
-      }
-      destroy();
-      callback.destroy();
-      soap_wsrm_dump(soap, stdout);
     }
   }
   return SOAP_OK;
@@ -496,16 +538,16 @@ int Service::start(int port)
 
 int Service::Clear(_mssadh__Clear *req)
 {
-  /* check for WS-RM/WSA and set WS-RM/WSA return headers */
-  if (soap_wsrm_check(soap))
+  /* check for WS-RM/WSA, send empty response (this is a one-way operation over HTTP) */
+  if (soap_wsrm_check_send_empty_response(soap))
     return soap->error;
 
-  /* this is a one-way operation over HTTP, so we're done with client */
-  soap_send_empty_response(soap, 202);
-
-  /* callback operation, to send back the result */
   /* get the handle to the current sequence of the inbound message */
   soap_wsrm_sequence_handle seq = soap_wsrm_seq(soap);
+
+  /* TODO: send acknowledgement(s) immediately? */
+  /* soap_wsrm_acknowledgement(soap, seq, NULL); */
+
   if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Equation"))
   { 
     callback.soap_stream_fault(std::cerr);
@@ -526,8 +568,9 @@ int Service::Clear(_mssadh__Clear *req)
       std::cout << "Equation(" << s << ")" << std::endl;
     else
       callback.soap_stream_fault(std::cerr);
-    callback.destroy();
   }
+  callback.destroy();
+
   result = 0.0;
   equation.str("");
   equation << 0.0;
@@ -537,7 +580,7 @@ int Service::Clear(_mssadh__Clear *req)
 
 int Service::AddTo(_mssadh__AddTo *req)
 {
-  /* check for WS-RM/WSA and set WS-RM/WSA return headers */
+  /* check for WS-RM/WSA */
   if (soap_wsrm_check(soap))
     return soap->error;
 
@@ -547,26 +590,28 @@ int Service::AddTo(_mssadh__AddTo *req)
     equation << " + " << *req->n;
   }
   else
-    return soap_wsrm_sender_fault(soap, "Invalid data", NULL);
+    return soap_wsrm_sender_fault(soap, "Invalid data in AddTo", NULL);
 
   /* this is a one-way operation over HTTP, so we're done with client */
   soap_send_empty_response(soap, 202);
 
-  /* callback operation, to send back the result */
-
   /* get the handle to the current sequence of the inbound message */
   soap_wsrm_sequence_handle seq = soap_wsrm_seq(soap);
+
+  /* TODO: send acknowledgement(s) immediately? */
+  /* soap_wsrm_acknowledgement(soap, seq, NULL); */
+
+  if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
+  { 
+    callback.soap_stream_fault(std::cerr);
+    soap_wsrm_seq_release(soap, seq);
+    return callback.soap->error;
+  }
   callback.soap_endpoint = soap_wsrm_to(seq);
+  soap_wsrm_seq_release(soap, seq);
+
   if (callback.soap_endpoint)
   {
-    if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
-    { 
-      callback.soap_stream_fault(std::cerr);
-      soap_wsrm_seq_release(soap, seq);
-      return callback.soap->error;
-    }
-    soap_wsrm_seq_release(soap, seq);
-
     _mssadh__Result res;
     res.result = &result;
     if (callback.Result(&res) == SOAP_OK)
@@ -581,7 +626,7 @@ int Service::AddTo(_mssadh__AddTo *req)
 
 int Service::SubtractFrom(_mssadh__SubtractFrom *req)
 {
-  /* check for WS-RM/WSA and set WS-RM/WSA return headers */
+  /* check for WS-RM/WSA */
   if (soap_wsrm_check(soap))
     return soap->error;
 
@@ -591,26 +636,28 @@ int Service::SubtractFrom(_mssadh__SubtractFrom *req)
     equation << " - " << *req->n;
   }
   else
-    return soap_wsrm_sender_fault(soap, "Invalid data", NULL);
+    return soap_wsrm_sender_fault(soap, "Invalid data in SubtractFrom", NULL);
 
   /* this is a one-way operation over HTTP, so we're done with client */
   soap_send_empty_response(soap, 202);
 
-  /* callback operation, to send back the result */
-
   /* get the handle to the current sequence of the inbound message */
   soap_wsrm_sequence_handle seq = soap_wsrm_seq(soap);
+
+  /* TODO: send acknowledgement(s) immediately? */
+  /* soap_wsrm_acknowledgement(soap, seq, NULL); */
+
+  if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
+  { 
+    callback.soap_stream_fault(std::cerr);
+    soap_wsrm_seq_release(soap, seq);
+    return callback.soap->error;
+  }
   callback.soap_endpoint = soap_wsrm_to(seq);
+  soap_wsrm_seq_release(soap, seq);
+
   if (callback.soap_endpoint)
   {
-    if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
-    { 
-      callback.soap_stream_fault(std::cerr);
-      soap_wsrm_seq_release(soap, seq);
-      return callback.soap->error;
-    }
-    soap_wsrm_seq_release(soap, seq);
-
     _mssadh__Result res;
     res.result = &result;
     if (callback.Result(&res) == SOAP_OK)
@@ -625,7 +672,7 @@ int Service::SubtractFrom(_mssadh__SubtractFrom *req)
 
 int Service::MultiplyBy(_mssadh__MultiplyBy *req)
 {
-  /* check for WS-RM/WSA and set WS-RM/WSA return headers */
+  /* check for WS-RM/WSA */
   if (soap_wsrm_check(soap))
     return soap->error;
 
@@ -635,26 +682,28 @@ int Service::MultiplyBy(_mssadh__MultiplyBy *req)
     equation << " * " << *req->n;
   }
   else
-    return soap_wsrm_sender_fault(soap, "Invalid data", NULL);
+    return soap_wsrm_sender_fault(soap, "Invalid data in MultiplyBy", NULL);
 
   /* this is a one-way operation over HTTP, so we're done with client */
   soap_send_empty_response(soap, 202);
 
-  /* callback operation, to send back the result */
-
   /* get the handle to the current sequence of the inbound message */
   soap_wsrm_sequence_handle seq = soap_wsrm_seq(soap);
+
+  /* TODO: send acknowledgement(s) immediately? */
+  /* soap_wsrm_acknowledgement(soap, seq, NULL); */
+
+  if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
+  { 
+    callback.soap_stream_fault(std::cerr);
+    soap_wsrm_seq_release(soap, seq);
+    return callback.soap->error;
+  }
   callback.soap_endpoint = soap_wsrm_to(seq);
+  soap_wsrm_seq_release(soap, seq);
+
   if (callback.soap_endpoint)
   {
-    if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
-    { 
-      callback.soap_stream_fault(std::cerr);
-      soap_wsrm_seq_release(soap, seq);
-      return callback.soap->error;
-    }
-    soap_wsrm_seq_release(soap, seq);
-
     _mssadh__Result res;
     res.result = &result;
     if (callback.Result(&res) == SOAP_OK)
@@ -669,7 +718,7 @@ int Service::MultiplyBy(_mssadh__MultiplyBy *req)
 
 int Service::DivideBy(_mssadh__DivideBy *req)
 {
-  /* check for WS-RM/WSA and set WS-RM/WSA return headers */
+  /* check for WS-RM/WSA */
   if (soap_wsrm_check(soap))
     return soap->error;
 
@@ -679,26 +728,28 @@ int Service::DivideBy(_mssadh__DivideBy *req)
     equation << " / " << *req->n;
   }
   else
-    return soap_wsrm_sender_fault(soap, "Invalid data", NULL);
+    return soap_wsrm_sender_fault(soap, "Invalid data in DivideBy", NULL);
 
   /* this is a one-way operation over HTTP, so we're done with client */
   soap_send_empty_response(soap, 202);
 
-  /* callback operation, to send back the result */
-
   /* get the handle to the current sequence of the inbound message */
   soap_wsrm_sequence_handle seq = soap_wsrm_seq(soap);
+
+  /* TODO: send acknowledgement(s) immediately? */
+  /* soap_wsrm_acknowledgement(soap, seq, NULL); */
+
+  if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
+  { 
+    callback.soap_stream_fault(std::cerr);
+    soap_wsrm_seq_release(soap, seq);
+    return callback.soap->error;
+  }
   callback.soap_endpoint = soap_wsrm_to(seq);
+  soap_wsrm_seq_release(soap, seq);
+
   if (callback.soap_endpoint)
   {
-    if (soap_wsrm_request_acks(callback.soap, seq, soap_wsa_rand_uuid(callback.soap), "http://Microsoft.Samples.DualHttp/ICalculatorDuplex/Result"))
-    { 
-      callback.soap_stream_fault(std::cerr);
-      soap_wsrm_seq_release(soap, seq);
-      return callback.soap->error;
-    }
-    soap_wsrm_seq_release(soap, seq);
-
     _mssadh__Result res;
     res.result = &result;
     if (callback.send_Result(&res) == SOAP_OK)

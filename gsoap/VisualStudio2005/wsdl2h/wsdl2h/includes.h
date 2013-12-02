@@ -37,7 +37,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "stdsoap2.h"
 
-#define WSDL2H_VERSION "2.8.16"
+#ifdef WITH_OPENSSL
+#include "httpda.h"
+#endif
+
+#define WSDL2H_VERSION "2.8.17"
 
 #ifdef WIN32
 # pragma warning(disable : 4996)
@@ -117,7 +121,7 @@ extern SetOfString exturis;
 #define MAXINFILES (1000)
 
 extern int infiles;
-extern char *infile[MAXINFILES], *outfile, *proxy_host, *proxy_userid, *proxy_passwd;
+extern char *infile[MAXINFILES], *outfile, *proxy_host, *proxy_userid, *proxy_passwd, *auth_userid, *auth_passwd;
 extern const char *mapfile, *import_path, *cwd_path, *cppnamespace;
 
 extern int proxy_port;

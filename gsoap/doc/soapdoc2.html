@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.16 User Guide</title>
+<title>gSOAP 2.8.17 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.16 User Guide </h1>
+<h1 align="center">gSOAP 2.8.17 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Aug 25, 2013
+<h3 align="center">Dec  1, 2013
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -651,6 +651,9 @@ To build a pure C application, use option <i>-c</i>:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 <i> &gt;  wsdl2h -c -o calc.h http://www.genivia.com/calc.wsdl</i>
 </td></tr></table><br></span>
+<font color="#FF0000"><b>Important</b></font>: Visual Studio users shopuld make sure to compile all gSOAP
+source files in C++ compilation mode. If you migrate to a project file
+<i>.vcproj</i>, please set <tt>CompileAs="2"</tt> in your <i>.vcproj</i> file.
 We have not yet generated the stubs for the C/C++ API. To do so, run the <i>soapcpp2</i> compiler:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 <i> &gt;  soapcpp2 -i -C -Iimport calc.h</i>
@@ -2586,7 +2589,7 @@ The following example specifies three service operations to be implemented by a 
 <b>int</b>&nbsp;ns__sqrt(xsd__double a, xsd__double &amp;result); <br />
 </td></tr></table><br></i>
 The <i>add</i> and <i>sub</i> methods are intended to add and subtract two double floating point numbers stored in input parameters
-<i>a</i> and <i>b</i> and should return the result of the operation in the <i>result</i> output parameter. The <i>qsrt</i> method is
+<i>a</i> and <i>b</i> and should return the result of the operation in the <i>result</i> output parameter. The <i>sqrt</i> method is
 intended to take the square root of input parameter <i>a</i> and to return the result in the output parameter <i>result</i>.
 The <i>xsd__double</i> type is recognized by the gSOAP <i>soapcpp2</i> compiler as the <tt>xsd:double</tt> XSD Schema data type.
 The use of <i><b>typedef</b></i> is a convenient way to associate primitive C types with primitive XML Schema data types.
@@ -4948,6 +4951,7 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td align="left"></td><td align="left">This is automatically performed when WSDL contains polymorphic definitions </td></tr>
 <tr><td align="left"><i>-q name</i>	</td><td align="left">use <i>name</i> for the C++ namespace of all declarations </td></tr>
 <tr><td align="left"><i>-r host[:port[:uid:pwd]]</i>      </td><td align="left">connect via proxy host, port, and proxy credentials </td></tr>
+<tr><td align="left"><i>-r:uid:pwd</i>      </td><td align="left">connect with authentication credentials (digest auth requires SSL) </td></tr>
 <tr><td align="left"><i>-R</i>      </td><td align="left">generate REST operations for REST bindings in the WSDL </td></tr>
 <tr><td align="left"><i>-s</i>      </td><td align="left">don't generate STL code (no std::string and no std::vector) </td></tr>
 <tr><td align="left"><i>-t file</i>  </td><td align="left">use type map file instead of the default file typemap.dat </td></tr>
@@ -13878,8 +13882,16 @@ soap.recv_timeout = 20 mSec;
 The macros improve readability.
 
 <div class="p"><!----></div>
-<font color="#FF0000"><b>Caution</b></font>: Many Linux versions do not support non-blocking <i>connect()</i>. Therefore, setting <i>soap.connect_timeout</i> for
-non-blocking <i>soap_call_ns__method</i> calls may not work under Linux.
+<font color="#FF0000"><b>Caution</b></font>: many Linux versions do not support non-blocking <i>connect()</i>.
+Therefore, setting <i>soap.connect_timeout</i> for non-blocking
+<i>soap_call_ns__method</i> calls may not work under Linux.
+
+<div class="p"><!----></div>
+<font color="#FF0000"><b>Caution</b></font>: interrupts (EINTR) can affect the blocking time in I/O operations.
+The maximum number of EINTR that will not trigger an error is set by
+<i>SOAP_MAXEINTR</i> in <i>stdsoap2.h</i>, which is 10 by default. Each EINTR
+may increase the blocking time by up to one second, up to <i>SOAP_MAXEINTR</i>
+seconds total.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc19.20">
@@ -14207,7 +14219,7 @@ soap_call_ns__mymethod(&amp;soap, "https://domain/path/secure.cgi", "", ...);
 <div class="p"><!----></div>
 By default, server authentication is enabled and the <i>cacerts.pem</i> or
 <i>capath</i> (not used with GNUTLS) must be set so that the CA certificates of the server(s) are
-accessible at run time. The <i>cacert.pem</i> file included in the package
+accessible at run time. The <i>cacerts.pem</i> file included in the package
 contains the certificates of common CAs. This file must be supplied with the
 client, if server authentication is required. Althernatively, you can use the
 <i>plugin/cacerts.h</i> and <i>plugin/cacerts.c</i> code to embed CA certificates
@@ -14327,8 +14339,11 @@ and <i>http://sial.org/howto/openssl/self-signed/</i> on how to setup self-signe
 test certificates.
 
 <div class="p"><!----></div>
-It is also possible to convert IIS-generated certificates to PEM format, for
-more details and a walk-through see <i>http://www.icewarp.com/Knowledgebase/617.htm</i>.
+It is possible to convert IIS-generated certificates to PEM format with the openssl library and openssl command-line tool:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+openssl x509 -in mycert.cer -inform DER -out mycert.pem -outform PEM
+</td></tr></table><br></i>
+This converts the CRT-formatted mycert.cer to PEM-formatted mycert.pem.
 
 <div class="p"><!----></div>
 Here is the simplest way to setup self-signed certificates. First you need to create a private Certificate Authority (CA).  The CA is used in SSL to verify the authenticity of a given
@@ -16068,5 +16083,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 25 Aug 2013, 11:55.</small>
+version 4.00.<br />On  1 Dec 2013, 22:08.</small>
 </html>

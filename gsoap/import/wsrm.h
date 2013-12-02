@@ -11,8 +11,10 @@
 	- Removed //gsoapopt
 	- Changed //gsoap wsrm schema namespace directive to import directive
 	- Added #import "wsrx.h" at the end of these definitions
-        - Added _XML __any; to struct _wsrm__SequenceAcknowledgement
 	- Added #define SOAP_WSRM_2007
+	- Added //gsoap netrm schema namespace: http://schemas.microsoft.com/ws/2006/05/rm
+                Int*                        netrm__BufferRemaining;
+        - Added _XML __any; to struct _wsrm__SequenceAcknowledgement
 
 */
 
@@ -412,12 +414,13 @@ struct _wsrm__SequenceAcknowledgement
 //  END OF CHOICE
 //  END OF SEQUENCE
 //  END OF CHOICE
-/// TODO: <any namespace="##other" minOccurs="0" maxOccurs="unbounded">
 /// TODO: Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
 ///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
-    _XML                                 __any; // netrm extensibility
+//gsoap netrm schema namespace: http://schemas.microsoft.com/ws/2006/05/rm
+    int                                 *netrm__BufferRemaining; ///< WCF netrm BufferRemaining
+    _XML                                 __any; // extensibility
 /// <anyAttribute namespace="##other">
 /// TODO: Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.

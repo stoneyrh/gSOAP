@@ -120,16 +120,17 @@ compiling, linking, and/or using OpenSSL is allowed.
 	To use general HTTP GET, for example to retrieve an HTML document, use:
 
 	struct soap soap;
-        char *response = NULL;
+        char *buf = NULL;
+	size_t len;
 	soap_init(&soap);
 	soap_register_plugin(&soap, http_get); // register plugin
 	if (soap_get_connect(&soap, endpoint, action)
 	 || soap_begin_recv(&soap))
 	  ... connect/recv error ...
 	else
-          response = soap_get_http_body(&soap);
+          buf = soap_get_http_body(&soap, &len);
         soap_end_recv(&soap);
-          ... use 'response'
+	... process data in buf[0..len-1]
         soap_destroy(&soap);
         soap_end(&soap);
 	soap_done(&soap);

@@ -4916,9 +4916,9 @@ soap_wsse_preparesend(struct soap *soap, const char *buf, size_t len)
     if (data->digest && data->digest->level)
       soap->event = SOAP_SEC_SIGN;
     else if (!data->sigid || soap_tagsearch(data->sigid, soap->id))
-    { soap->event = SOAP_SEC_SIGN;
-      /* initialize smdevp engine */
+    { /* initialize smdevp engine */
       struct soap_wsse_digest *digest;
+      soap->event = SOAP_SEC_SIGN;
       digest = (struct soap_wsse_digest*)SOAP_MALLOC(soap, sizeof(struct soap_wsse_digest) + strlen(soap->id) + 1);
       digest->next = data->digest;
       digest->level = soap->level;

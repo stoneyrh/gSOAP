@@ -185,7 +185,7 @@ SOAPCPP2_NONAMESPACES =
 STRIP = 
 VERSION = 2.8
 WSDL2H_EXTRA_FLAGS = -DWITH_OPENSSL -DWITH_GZIP
-WSDL2H_EXTRA_LIBS = -lssl -lcrypto -lz
+WSDL2H_EXTRA_LIBS = ../plugin/httpda.c ../plugin/md5evp.c -lssl -lcrypto -lz
 WSDL2H_IMPORTPATH = -DWSDL_IMPORT_PATH="\"${datarootdir}/gsoap/WS\""
 WSDL2H_SOAP_CPP_LIB = libgsoapssl++.a
 YACC = bison -y

@@ -239,7 +239,9 @@ if test "x$with_openssl" = "xyes"; then
   else
     AC_MSG_RESULT(no)
     WSDL2H_EXTRA_FLAGS="-DWITH_OPENSSL -DWITH_GZIP"
-    WSDL2H_EXTRA_LIBS="-lssl -lcrypto -lz"
+    # an ugly hack to get httpda and md5evp plugins to conditionally
+    # compile with wsdl2h when OPENSSL is available
+    WSDL2H_EXTRA_LIBS="../plugin/httpda.c ../plugin/md5evp.c -lssl -lcrypto -lz"
     SAMPLE_SSL_LIBS="-lssl -lcrypto -lz"
     WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
   fi

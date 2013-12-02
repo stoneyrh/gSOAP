@@ -77,7 +77,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ../../plugin/wsrmapi.h ../../plugin/wsrmapi.c ../../plugin/wsaapi.h ../../plugin/wsaapi.c ../../custom/duration.h ../../custom/duration.c ../../import/wsrm.h ../../import/wsrx.h ../../import/wsa5.h
+INPUT                  = ../../plugin/wsrmapi.h ../../plugin/wsrmapi.c ../../plugin/wsaapi.h ../../plugin/wsaapi.c ../../plugin/mq.h ../../plugin/mq.c ../../custom/duration.h ../../custom/duration.c ../../import/wsrm.h ../../import/wsrx.h ../../import/wsa5.h
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \

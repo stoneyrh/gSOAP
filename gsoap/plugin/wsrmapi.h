@@ -6,7 +6,7 @@
 	See wsrmapi.c for documentation and details.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ extern "C" {
 #endif
 
 /** Plugin identification for plugin registry */
-#define SOAP_WSRM_ID "WS-RM-1.2"
+#define SOAP_WSRM_ID "WS-RM-1.5"
 
 /** Plugin identification for plugin registry */
 extern const char soap_wsrm_id[];
@@ -76,15 +76,15 @@ extern const char soap_wsrm_id[];
 
 /** Seconds to timeout when sending ack messages to independent acksto server */
 #ifndef SOAP_WSRM_TIMEOUT
-# define SOAP_WSRM_TIMEOUT 10
+# define SOAP_WSRM_TIMEOUT 10	/* 10 sec */
 #endif
 
 /** WCF channel instance default value (no channel) */
 #define SOAP_WSRM_NOCHAN 0x7FFFFFFF
 
 /**
-@enum soap_wsrm_state
-@brief wsrm engine state
+@enum soap_wsrm_enable
+@brief wsrm engine state (on/off)
 */
 enum soap_wsrm_enable { SOAP_WSRM_OFF, SOAP_WSRM_ON };
 
@@ -103,9 +103,9 @@ struct soap_wsrm_data
 
 /**
 @enum soap_wsrm_message_state
-@brief Message state (nack or ack)
+@brief Message state (initial, explicit ack'ed, or explicit nack'ed)
 */
-enum soap_wsrm_message_state { SOAP_WSRM_NACK, SOAP_WSRM_ACK };
+enum soap_wsrm_message_state { SOAP_WSRM_INIT, SOAP_WSRM_ACK, SOAP_WSRM_NACK };
 
 /**
 @struct soap_wsrm_message
@@ -166,8 +166,9 @@ struct soap_wsrm_sequence
   time_t expires;	/**< date/time of expiration */
   int retry;		/**< retry count */
   enum wsrm__IncompleteSequenceBehaviorType behavior;
-  ULONG64 num;		/**< current message num */
-  ULONG64 lastnum;	/**< last num received */
+  ULONG64 num;		/**< message sequence num sent */
+  ULONG64 recvnum;	/**< TODO: message num received (used to be lastnum) */
+  ULONG64 lastnum;	/**< TODO: last message num received upon closing */
   enum wsrm__FaultCodes fault;		/**< sequence fault (use when error) */
   enum soap_wsrm_state state;		/**< sequence state */
   struct soap_wsrm_message *messages;	/**< stores msg content */
@@ -190,6 +191,7 @@ int soap_wsrm_request_acks(struct soap *soap, soap_wsrm_sequence_handle seq, con
 int soap_wsrm_check_retry(struct soap *soap, soap_wsrm_sequence_handle seq);
 
 int soap_wsrm_resend(struct soap *soap, soap_wsrm_sequence_handle seq, ULONG64 lower, ULONG64 upper);
+int soap_wsrm_resend_only_nacked(struct soap *soap, soap_wsrm_sequence_handle seq, ULONG64 lower, ULONG64 upper);
 
 int soap_wsrm_close(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id);
 
@@ -197,6 +199,7 @@ int soap_wsrm_terminate(struct soap *soap, soap_wsrm_sequence_handle seq, const 
 
 int soap_wsrm_pulse(struct soap *soap, int timeout);
 int soap_wsrm_acknowledgement(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id);
+int soap_wsrm_non_acknowledgement(struct soap *soap, soap_wsrm_sequence_handle seq, ULONG64 nack);
 
 soap_wsrm_sequence_handle soap_wsrm_seq(struct soap *soap);
 void soap_wsrm_seq_release(struct soap *soap, soap_wsrm_sequence_handle seq);
@@ -210,13 +213,18 @@ void soap_wsrm_seq_free(struct soap *soap, soap_wsrm_sequence_handle seq);
 
 void soap_wsrm_cleanup(struct soap *soap);
 
-const char *soap_wsrm_to(soap_wsrm_sequence_handle seq);
-const char *soap_wsrm_acksto(soap_wsrm_sequence_handle seq);
-ULONG64 soap_wsrm_num(soap_wsrm_sequence_handle seq);
-ULONG64 soap_wsrm_nack(soap_wsrm_sequence_handle seq);
-ULONG64 soap_wsrm_msgs(struct soap *soap, const struct soap_wsrm_sequence *seq);
+const char *soap_wsrm_to(const soap_wsrm_sequence_handle seq);
+const char *soap_wsrm_acksto(const soap_wsrm_sequence_handle seq);
+ULONG64 soap_wsrm_num(const soap_wsrm_sequence_handle seq);
+ULONG64 soap_wsrm_nack(const soap_wsrm_sequence_handle seq);
+ULONG64 soap_wsrm_msgs(const soap_wsrm_sequence_handle seq);
+ULONG64 soap_wsrm_recvnum(const soap_wsrm_sequence_handle seq);
+ULONG64 soap_wsrm_lastnum(const soap_wsrm_sequence_handle seq);
 
 int soap_wsrm_check(struct soap *soap);
+int soap_wsrm_check_and_wait(struct soap *soap, int timeout);
+int soap_wsrm_check_send_empty_response(struct soap *soap);
+int soap_wsrm_check_send_empty_response_and_wait(struct soap *soap, int timeout);
 
 int soap_wsrm_reply_num(struct soap *soap, int flag);
 int soap_wsrm_reply(struct soap *soap, const char *wsa_id, const char *wsa_action);
