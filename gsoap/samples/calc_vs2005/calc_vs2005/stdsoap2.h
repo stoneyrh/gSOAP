@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.17
+	stdsoap2.h 2.8.17r
 
 	gSOAP runtime engine
 

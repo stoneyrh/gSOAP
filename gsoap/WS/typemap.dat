@@ -391,4 +391,3 @@ aws	= "urn:PI/DevCentral/SoapService"
 #	Prefix binding for Mappoint Web services:
 
 mpt	= "http://s.mappoint.net/mappoint-30/"
-

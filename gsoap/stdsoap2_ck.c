@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.17
+	stdsoap2.c[pp] 2.8.17r
 
 	gSOAP runtime engine
 
@@ -79,10 +79,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.17 2013-12-01 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.17r 2013-12-18 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.17 2013-12-01 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.17r 2013-12-18 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -4551,6 +4551,8 @@ tcp_select(struct soap *soap, SOAP_SOCKET sk, int flags, int timeout)
   }
 #endif
 #endif
+  if (timeout > 0)
+    retries = timeout - 1;
   do
   { rfd = sfd = efd = NULL;
     if (flags & SOAP_TCP_SELECT_RCV)
@@ -4573,8 +4575,7 @@ tcp_select(struct soap *soap, SOAP_SOCKET sk, int flags, int timeout)
       tv.tv_usec = -timeout % 1000000;
     }
     else
-    { retries = timeout - 1;
-      tv.tv_sec = 1;
+    { tv.tv_sec = 1;
       tv.tv_usec = 0;
     }
     r = select((int)sk + 1, rfd, sfd, efd, &tv);
