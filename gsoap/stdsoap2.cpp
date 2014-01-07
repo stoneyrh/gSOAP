@@ -15412,11 +15412,12 @@ SOAP_FMAC1
 char*
 SOAP_FMAC2
 soap_get_http_body(struct soap *soap, size_t *len)
-{ if (len)
-    *len = 0;
+{
 #ifndef WITH_LEAN
   register size_t l = 0, n = 0;
   register char *s;
+  if (len)
+    *len = 0;
   /* get HTTP body length */
   if (!(soap->mode & SOAP_ENC_ZLIB) && (soap->mode & SOAP_IO) != SOAP_IO_CHUNK)
   { n = soap->length;
@@ -15468,6 +15469,8 @@ end:
 #endif
   return s;
 #else
+  if (len)
+    *len = 0;
   return NULL;
 #endif
 }
