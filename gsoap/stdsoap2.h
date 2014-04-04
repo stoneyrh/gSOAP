@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.17r
+	stdsoap2.h 2.8.17r upd
 
 	gSOAP runtime engine
 
@@ -1077,24 +1077,41 @@ extern "C" {
 # define SOAP_MAXEINTR (10)
 #endif
 
-/* Max iterations in soap_serve() to keep server connection alive */
+/* SOAP_MAXKEEPALIVE: Max iterations in soap_serve() to keep server connection alive */
 #ifndef SOAP_MAXKEEPALIVE
 # define SOAP_MAXKEEPALIVE (100)
 #endif
 
-/* Trusted max size of inbound SOAP array for compound array allocation.
-   Increase if necessary to allow larger arrays.
+/* SOAP_MAXARRAYSIZE: Trusted total max size of an inbound SOAP Array.
+   Arrays of larger size are not pre-allocated, but deserialized
+   on an element-by-element basis.
 */
 #ifndef SOAP_MAXARRAYSIZE
-# define SOAP_MAXARRAYSIZE (1000000)
+# define SOAP_MAXARRAYSIZE (100000)
 #endif
 
-/* Trusted max size of inbound DIME data.
+/* SOAP_MAXDIMESIZE: Trusted max size of inbound DIME data.
    Increase if necessary to allow larger attachments, or decrease when server
    resources are limited.
 */
 #ifndef SOAP_MAXDIMESIZE
-# define SOAP_MAXDIMESIZE (8388608) /* 8 MB */
+# define SOAP_MAXDIMESIZE (8*1048576) /* 8 MB */
+#endif
+
+/* SOAP_MAXDEFLATESIZE: Trusted deflated content size.
+   Larger content is subject to the SOAP_MINDEFLATERATIO constraint.
+   If SOAP_MINDEFLATERATIO is 1.0, SOAP_MAXDEFLATESIZE is always the max
+   size of uncompressed content.
+*/
+#ifndef SOAP_MAXDEFLATESIZE
+# define SOAP_MAXDEFLATESIZE (1*1048576) /* 1 MB */
+#endif
+
+/* SOAP_MINDEFLATERATIO: Trusted deflation ratio after SOAP_MAXDEFLATESIZE is reached.
+   Trust when compressed / deflated > SOAP_MINDEFLATERATIO
+*/
+#ifndef SOAP_MINDEFLATERATIO
+# define SOAP_MINDEFLATERATIO (0.1) /* ratio of compressed/deflated > 10% */
 #endif
 
 #ifdef VXWORKS

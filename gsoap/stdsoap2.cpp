@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.17r
+	stdsoap2.c[pp] 2.8.17r upd
 
 	gSOAP runtime engine
 
@@ -1084,6 +1084,10 @@ soap_recv_raw(struct soap *soap)
         }
         if (ret)
         { soap->count += ret;
+	  if (soap->count > SOAP_MAXDEFLATESIZE && soap->z_ratio_in < SOAP_MINDEFLATERATIO)
+	  { soap->d_stream->msg = (char*)"caught SOAP_MINDEFLATERATIO";
+	    return soap->error = SOAP_ZLIB_ERROR;
+	  }
           DBGLOG(RECV, SOAP_MESSAGE(fdebug, "\n---- decompressed ----\n"));
           DBGMSG(RECV, soap->buf, ret);
           DBGLOG(RECV, SOAP_MESSAGE(fdebug, "\n----\n"));
@@ -1209,6 +1213,10 @@ zlib_again:
       { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Inflated total %lu->%lu bytes\n", soap->d_stream->total_in, soap->d_stream->total_out));
         soap->z_ratio_in = (float)soap->d_stream->total_in / (float)soap->d_stream->total_out;
         soap->d_stream->next_out = Z_NULL;
+      }
+      if (soap->count + ret > SOAP_MAXDEFLATESIZE && soap->z_ratio_in < SOAP_MINDEFLATERATIO)
+      { soap->d_stream->msg = (char*)"caught SOAP_MINDEFLATERATIO";
+	return soap->error = SOAP_ZLIB_ERROR;
       }
       DBGLOG(RECV, SOAP_MESSAGE(fdebug, "\n---- decompressed ----\n"));
       DBGMSG(RECV, soap->buf, ret);
@@ -4347,8 +4355,8 @@ again:
                 }
                 if (ext_data)
                   val = meth->i2v(meth, ext_data, NULL);
-        	else
-        	  val = NULL;
+		else
+		  val = NULL;
                 if (meth->it)
                   ASN1_item_free((ASN1_VALUE*)ext_data, ASN1_ITEM_ptr(meth->it));
                 else
@@ -4359,7 +4367,7 @@ again:
                   val = meth->i2v(meth, ext_data, NULL);
                 meth->ext_free(ext_data);
 #endif
-        	if (val)
+		if (val)
                 { int j;
                   for (j = 0; j < sk_CONF_VALUE_num(val); j++)
                   { CONF_VALUE *nval = sk_CONF_VALUE_value(val, j);
@@ -6555,10 +6563,14 @@ soap_putcookies(struct soap *soap, const char *domain, const char *path, int sec
       if (!flag)
       { struct hostent *hostent = gethostbyname((char*)domain);
         if (hostent)
-        { const char *r = strchr(hostent->h_name, '.');
-          if (!r)
-            r = hostent->h_name;
+        { const char *r = hostent->h_name;
+	  if (*t == '.')
+	  { size_t k = strlen(hostent->h_name) ;
+	    if (k >= n)
+	      r = hostent->h_name + k - n;
+	  }
           flag = !strncmp(t, r, n);
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Domain cookie %s host %s (match=%d)\n", t, r, flag));
         }
       }
 #endif
