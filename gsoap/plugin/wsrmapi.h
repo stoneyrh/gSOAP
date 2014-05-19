@@ -59,7 +59,7 @@ extern "C" {
 #endif
 
 /** Plugin identification for plugin registry */
-#define SOAP_WSRM_ID "WS-RM-1.5"
+#define SOAP_WSRM_ID "WS-RM-1.7"
 
 /** Plugin identification for plugin registry */
 extern const char soap_wsrm_id[];
@@ -112,10 +112,8 @@ enum soap_wsrm_message_state { SOAP_WSRM_INIT, SOAP_WSRM_ACK, SOAP_WSRM_NACK };
 @brief Linked list of unacknowledged messages stored for retransmission.
 */
 struct soap_wsrm_message
-{ ULONG64 num;					/**< message number */
-  enum soap_wsrm_message_state state;		/**< (n)ack state */
+{ enum soap_wsrm_message_state state;		/**< (n)ack state */
   struct soap_wsrm_content *list, *last;	/**< list of content blocks */
-  struct soap_wsrm_message *next;		/**< next message in list */
 };
 
 /**
@@ -163,15 +161,16 @@ struct soap_wsrm_sequence
   const char *to;	/**< to endpoint */
   const char *repto;	/**< reply to endpoint */
   const char *acksto;	/**< ack to endpoint */
+  time_t timestamp;	/**< date/time of most recent update */
   time_t expires;	/**< date/time of expiration */
   int retry;		/**< retry count */
   enum wsrm__IncompleteSequenceBehaviorType behavior;
   ULONG64 num;		/**< message sequence num sent */
-  ULONG64 recvnum;	/**< TODO: message num received (used to be lastnum) */
-  ULONG64 lastnum;	/**< TODO: last message num received upon closing */
+  ULONG64 recvnum;	/**< message num received (used to be lastnum) */
+  ULONG64 lastnum;	/**< last message num received upon closing */
   enum wsrm__FaultCodes fault;		/**< sequence fault (use when error) */
   enum soap_wsrm_state state;		/**< sequence state */
-  struct soap_wsrm_message *messages;	/**< stores msg content */
+  struct soap_wsrm_message *messages;	/**< array [0 .. seq->num-1] with message content */
   struct soap_wsrm_range *ranges;	/**< ranges of received messages */
   int channel;		/**< callback WCF channel instance */
 };
