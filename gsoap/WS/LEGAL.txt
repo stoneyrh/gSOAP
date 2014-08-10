@@ -1,0 +1,26 @@
+The specifications included in this directory are available to the public
+without fee or royalty.
+
+W3C:
+
+Parts are governed by the W3C Software License [1] as described in the FAQ [2].
+
+[1] http://www.w3.org/Consortium/Legal/copyright-software-19980720
+[2] http://www.w3.org/Consortium/Legal/IPR-FAQ-20000620.html#DTD
+
+OASIS:
+
+Permission to copy, display, perform, modify and distribute the WS-*
+Specification, and to authorize others to do the foregoing, in any medium
+without fee or royalty is hereby granted for the purpose of developing and
+evaluating the WS-* Specification.
+
+Permission to copy and display the WS-* (the "Specification", which includes
+WSDL and schema documents), in any medium without fee or royalty is hereby
+granted, provided that you include the following on ALL copies of the
+Specification that you make:
+
+1. A link or URL to the Specification at one of the Co-Developers' websites.
+2. The copyright notice as shown in the Specification.
+
+
