@@ -2858,7 +2858,7 @@ yyreduce:
   case 84:
 #line 671 "soapcpp2_yacc.y"
     { if (sp->table->level != PARAM)
-			    (yyval.sym) = gensymidx("param", (int)++sp->val);
+				(yyval.sym) = gensymidx("param", (int)++sp->val);
 			  else if (eflag)
 				(yyval.sym) = gensymidx("_param", (int)++sp->val);
 			  else

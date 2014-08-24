@@ -1,10 +1,10 @@
 /*
-	stdsoap2.h 2.8.17r
+	stdsoap2.h 2.8.18
 
 	gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20817
+#define GSOAP_VERSION 20818
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -111,11 +111,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # define SOAP_SOURCE_STAMP(str)
 #endif
 
-/* gSOAP 2.7.4 and higher: fast look-aside buffering is stable */
-#ifndef WITH_FAST
-# define WITH_FAST
-#endif
-
 #ifndef STDSOAP_H
 #define STDSOAP_H
 
@@ -131,7 +126,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #endif
 
-/* for legacy purposes we use WIN32 macro even though 64 bit is supported */
+/* for legacy purposes we use WIN32 macro, even when WIN64 is supported */
 #ifdef _WIN64
 # ifndef WIN32
 #  define WIN32
@@ -190,6 +185,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #ifdef __MVS__
 # ifndef OS390
 #  define OS390
+# endif
+#endif
+
+#ifdef __sun
+# ifndef SUN_OS
+#  define SUN_OS
 # endif
 #endif
 
@@ -522,18 +523,21 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #endif
 
-/* gSOAP 2.7.15 and higher: always retain CDATA in literal XML, unless WITH_LEAN or WITH_NOCDATA */
+#ifdef WITH_LEANER
+# ifndef WITH_LEAN
+#  define WITH_LEAN
+# endif
+#endif
+
+/* gSOAP 2.7.15 and higher: always use FAST and retain CDATA in literal XML, unless WITH_LEAN or WITH_NOCDATA */
 #ifndef WITH_LEAN
+# ifndef WITH_FAST
+#  define WITH_FAST
+# endif
 # ifndef WITH_NOCDATA
 #  ifndef WITH_CDATA
 #   define WITH_CDATA
 #  endif
-# endif
-#endif
-
-#ifdef WITH_LEANER
-# ifndef WITH_LEAN
-#  define WITH_LEAN
 # endif
 #endif
 
@@ -634,9 +638,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # include <poll.h>
 #endif
 
-#if defined(__cplusplus) && !defined(WITH_LEAN) && !defined(WITH_COMPAT)
-# include <string>
-# include <iostream>
+#if defined(__cplusplus)
+# include <new>
+# if !defined(WITH_LEAN) && !defined(WITH_COMPAT)
+#  include <string>
+#  include <iostream>
+# endif
 #endif
 
 #ifdef WITH_NOHTTP
@@ -703,7 +710,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #   ifdef OS390
 #    include <netinet/tcp_var.h>
 #   else
-#    include <netinet/tcp.h>          /* TCP_NODELAY */
+#    include <netinet/tcp.h>          /* TCP_NODELAY, TCP_FASTOPEN */
 #   endif
 #   include <arpa/inet.h>
 #  endif
@@ -841,8 +848,15 @@ extern "C" {
 # define SOAP_SOCKLEN_T socklen_t
 #elif defined(IRIX) || defined(WIN32) || defined(__APPLE__) || defined(SUN_OS) || defined(OPENSERVER) || defined(TRU64) || defined(VXWORKS) || defined(HP_UX)
 # define SOAP_SOCKLEN_T int
-#else
+#elif !defined(SOAP_SOCKLEN_T)
 # define SOAP_SOCKLEN_T size_t
+#endif
+
+/* DCE threads portability: define SOAP_FUNC_R_ERR gmtim_r and localtime_r err ret val */
+#if defined(_AIX) || defined(AIX)
+# define SOAP_FUNC_R_ERR (-1)
+#elif !defined(SOAP_FUCN_R_ERR)
+# define SOAP_FUNC_R_ERR (NULL)
 #endif
 
 #ifndef SOAP_SOCKET
@@ -858,8 +872,8 @@ extern "C" {
 #define SOAP_INVALID_SOCKET ((SOAP_SOCKET)-1)
 #define soap_valid_socket(n) ((n) != SOAP_INVALID_SOCKET)
 
-#define SOAP_SHUT_WR 1
-#define SOAP_SHUT_RDWR 2
+#define SOAP_SHUT_WR (1)
+#define SOAP_SHUT_RDWR (2)
 
 #ifndef SOAP_GAI_STRERROR
 # define SOAP_GAI_STRERROR gai_strerror
@@ -972,11 +986,13 @@ extern "C" {
 # define SOAP_EWOULDBLOCK WSAEWOULDBLOCK
 # define SOAP_EINPROGRESS WSAEINPROGRESS
 # define SOAP_EADDRINUSE WSAEADDRINUSE
+# define SOAP_ECONNREFUSED WSAECONNREFUSED
 #else
 # define SOAP_ERANGE ERANGE
 # define SOAP_EINTR EINTR
 # define SOAP_EAGAIN EAGAIN
 # define SOAP_EADDRINUSE EADDRINUSE
+# define SOAP_ECONNREFUSED ECONNREFUSED
 # ifdef SYMBIAN
 #  define SOAP_EWOULDBLOCK 9898
 #  define SOAP_EINPROGRESS 9899
@@ -1071,30 +1087,57 @@ extern "C" {
 # define SOAP_INDEX_TEST  (2)
 #endif
 
+/* Tag name of multiref elements in SOAP 1.1 encoding */
+#ifndef SOAP_MULTIREFTAG
+# define SOAP_MULTIREFTAG "id"
+#endif
+
+/* href-id value base name in multiref SOAP encoding */
+#ifndef SOAP_BASEREFNAME
+# define SOAP_BASEREFNAME "_"
+#endif
+
 /* Max number of EINTR while poll/select on a socket */
 /* Each EINTR can lengthen the I/O blocking time by at most one second */
 #ifndef SOAP_MAXEINTR
 # define SOAP_MAXEINTR (10)
 #endif
 
-/* Max iterations in soap_serve() to keep server connection alive */
+/* SOAP_MAXKEEPALIVE: Max iterations in soap_serve() to keep server connection alive */
 #ifndef SOAP_MAXKEEPALIVE
 # define SOAP_MAXKEEPALIVE (100)
 #endif
 
-/* Trusted max size of inbound SOAP array for compound array allocation.
-   Increase if necessary to allow larger arrays.
+/* SOAP_MAXARRAYSIZE: Trusted total max size of an inbound SOAP Array.
+   Arrays of larger size are not pre-allocated, but deserialized
+   on an element-by-element basis.
 */
 #ifndef SOAP_MAXARRAYSIZE
-# define SOAP_MAXARRAYSIZE (1000000)
+# define SOAP_MAXARRAYSIZE (100000)
 #endif
 
-/* Trusted max size of inbound DIME data.
+/* SOAP_MAXDIMESIZE: Trusted max size of inbound DIME data.
    Increase if necessary to allow larger attachments, or decrease when server
    resources are limited.
 */
 #ifndef SOAP_MAXDIMESIZE
-# define SOAP_MAXDIMESIZE (8388608) /* 8 MB */
+# define SOAP_MAXDIMESIZE (8*1048576) /* 8 MB */
+#endif
+
+/* SOAP_MAXINFLATESIZE: Trusted inflated content size.
+   Larger content is subject to the SOAP_MINDEFLATERATIO constraint.
+   If SOAP_MINDEFLATERATIO is 1.0, SOAP_MAXINFLATESIZE is always the max
+   size of uncompressed content.
+*/
+#ifndef SOAP_MAXINFLATESIZE
+# define SOAP_MAXINFLATESIZE (1*1048576) /* 1 MB */
+#endif
+
+/* SOAP_MINDEFLATERATIO: Trusted deflation ratio after SOAP_MAXINFLATESIZE is reached.
+   Trust when compressed / deflated > SOAP_MINDEFLATERATIO
+*/
+#ifndef SOAP_MINDEFLATERATIO
+# define SOAP_MINDEFLATERATIO (0.1) /* ratio of deflated/inflated > 10% */
 #endif
 
 #ifdef VXWORKS
@@ -1467,12 +1510,14 @@ typedef soap_int32 soap_mode;
 # define SOAP_FREE(soap, ptr) free(ptr)
 #endif
 
-#if defined(__GNUC__) && (__GNUC__ <= 2)
-# define SOAP_NOTHROW
-#elif !defined(WITH_LEAN) && !defined(WITH_COMPAT) && !defined(SOAP_NOTHROW)
-# define SOAP_NOTHROW (std::nothrow)
-#else
-# define SOAP_NOTHROW
+#ifndef SOAP_NOTHROW
+# if defined(__GNUC__) && (__GNUC__ <= 2)
+#  define SOAP_NOTHROW
+# elif defined(WITH_LEAN) || defined(WITH_COMPAT)
+#  define SOAP_NOTHROW
+# else
+#  define SOAP_NOTHROW (std::nothrow)
+# endif
 #endif
 
 #if (defined(__GNUC__) && (__GNUC__ <= 2) && !defined(__BORLANDC__)) || defined(__clang__) || defined(_AIX) || defined(AIX)
@@ -1570,7 +1615,7 @@ typedef soap_int32 soap_mode;
   { if (!soap->fdebug[SOAP_INDEX_##DBGFILE])\
       soap_open_logfile((struct soap*)soap, SOAP_INDEX_##DBGFILE);\
     if (soap->fdebug[SOAP_INDEX_##DBGFILE])\
-    { fwrite((MSG), 1, (LEN), soap->fdebug[SOAP_INDEX_##DBGFILE]);\
+    { fwrite((void*)(MSG), 1, (size_t)(LEN), soap->fdebug[SOAP_INDEX_##DBGFILE]);\
       fflush(soap->fdebug[SOAP_INDEX_##DBGFILE]);\
     }\
   }\
@@ -2135,11 +2180,11 @@ struct SOAP_STD_API soap
   unsigned int ipv6_multicast_if; /* in_addr_t in6addr->sin6_scope_id IPv6 value */
   char* ipv4_multicast_if; /* IP_MULTICAST_IF IPv4 setsockopt interface_addr */
   unsigned char ipv4_multicast_ttl; /* IP_MULTICAST_TTL value 0..255 */
-#ifdef WITH_IPV6
-  struct sockaddr_storage peer;	/* IPv6: set by soap_accept and by UDP recv */
-#else
-  struct sockaddr_in peer;	/* IPv4: set by soap_connect/soap_accept and by UDP recv */
-#endif
+  union
+  { struct sockaddr addr;
+    struct sockaddr_in in;
+    struct sockaddr_storage storage;
+  } peer; /* set by soap_connect/soap_accept and by UDP recv */
 #endif
   size_t peerlen;
 #if defined(WITH_OPENSSL)	/* OpenSSL */
@@ -2312,13 +2357,13 @@ soap_wchar soap_get1(struct soap*);
  SOAP_FMAC1 unsigned long SOAP_FMAC2 soap_strtoul(const char *s, char **t, int b);
 #endif
 
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 # define soap_strtoll _strtoi64
 #else
 # define soap_strtoll strtoll
 #endif
 
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 # define soap_strtoull _strtoui64
 #else
 # define soap_strtoull strtoull

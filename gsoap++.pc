@@ -7,5 +7,6 @@ Name: GSoap
 Description: SOAP C++ Web Services
 Version: 2.8
 Requires:
-Libs: -L${libdir} -lgsoap++ -lm
+Libs: -L${libdir} -lgsoap++
+Libs.private: -lm
 Cflags:  -DWITH_DOM -I${includedir}

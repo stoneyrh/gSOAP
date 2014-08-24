@@ -60,7 +60,7 @@ Collaboration diagram for soap_wsrm_sequence:</div>
 <div class="dyncontent">
 <div class="center"><img src="structsoap__wsrm__sequence__coll__graph.png" border="0" usemap="#soap__wsrm__sequence_coll__map" alt="Collaboration graph"/></div>
 <map name="soap__wsrm__sequence_coll__map" id="soap__wsrm__sequence_coll__map">
-<area shape="rect" id="node3" href="structsoap__wsrm__message.html" title="Linked list of unacknowledged messages stored for retransmission." alt="" coords="4,115,155,143"/><area shape="rect" id="node5" href="structsoap__wsrm__content.html" title="Linked list of message content blocks." alt="" coords="10,6,149,34"/><area shape="rect" id="node9" href="structsoap__wsrm__range.html" title="soap_wsrm_range" alt="" coords="232,115,363,143"/></map>
+<area shape="rect" id="node3" href="structsoap__wsrm__message.html" title="Linked list of unacknowledged messages stored for retransmission." alt="" coords="4,115,155,143"/><area shape="rect" id="node5" href="structsoap__wsrm__content.html" title="Linked list of message content blocks." alt="" coords="10,6,149,34"/><area shape="rect" id="node8" href="structsoap__wsrm__range.html" title="soap_wsrm_range" alt="" coords="180,115,311,143"/></map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -83,6 +83,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ae517f21431d821a463e268a064711cac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6be238361452632509a253bd52e035c5"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a6be238361452632509a253bd52e035c5">acksto</a></td></tr>
 <tr class="separator:a6be238361452632509a253bd52e035c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ac4999b6ab04de936bd8388322b7cd4"><td class="memItemLeft" align="right" valign="top">time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a7ac4999b6ab04de936bd8388322b7cd4">timestamp</a></td></tr>
+<tr class="separator:a7ac4999b6ab04de936bd8388322b7cd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0745f8c3e0bebb50d2ca01f0088e9535"><td class="memItemLeft" align="right" valign="top">time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a0745f8c3e0bebb50d2ca01f0088e9535">expires</a></td></tr>
 <tr class="separator:a0745f8c3e0bebb50d2ca01f0088e9535"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe1f48185aeb7762eff38f26eebaced3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#abe1f48185aeb7762eff38f26eebaced3">retry</a></td></tr>
@@ -235,7 +237,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>TODO: last message num received upon closing </p>
+<p>last message num received upon closing </p>
 
 </div>
 </div>
@@ -248,7 +250,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>stores msg content </p>
+<p>array [0 .. seq-&gt;num-1] with message content </p>
 
 </div>
 </div>
@@ -300,7 +302,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>TODO: message num received (used to be lastnum) </p>
+<p>message num received (used to be lastnum) </p>
 
 </div>
 </div>
@@ -356,6 +358,19 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a7ac4999b6ab04de936bd8388322b7cd4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">time_t soap_wsrm_sequence::timestamp</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>date/time of most recent update </p>
+
+</div>
+</div>
 <a class="anchor" id="a3711c98f013355c967790c0e26a973ae"></a>
 <div class="memitem">
 <div class="memproto">
@@ -370,12 +385,12 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>/Users/engelen/Projects/gsoap/plugin/<a class="el" href="wsrmapi_8h.html">wsrmapi.h</a></li>
+<li><a class="el" href="wsrmapi_8h.html">wsrmapi.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Dec 1 2013 14:39:21 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Aug 24 2014 10:18:15 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

@@ -84,13 +84,13 @@ arguments of service operations. For example:
     #import "wsu.h"
     class ns__myProduct
     { public:
-	@char*               wsu__Id;
-	@xsd__anyAttribute   atts;
-	_wsu__Timestamp*     wsu__Timestamp;
+        @char*               wsu__Id;
+        @xsd__anyAttribute   atts;
+        _wsu__Timestamp*     wsu__Timestamp;
         char*                name;
-	int                  SKU;
-	double               price;
-	xsd__anyType*	     elts;
+        int                  SKU;
+        double               price;
+        xsd__anyType*	     elts;
                              ns__myProduct();
                              ~ns__myProduct();
     };
@@ -182,7 +182,7 @@ used (in fact, this declaration appears in wsu.h):
     typedef struct _wsu__Timestamp
     {	@char*	wsu__Id;
     	char*	Created;
-	char*	Expires;
+        xpires;
     } _wsu__Timestamp;
 @endcode
 
@@ -418,12 +418,12 @@ table, the rendition is
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:ns="http://domain/schemas/product.xsd"
   version="0.9" >
-	<ns:documentation>List of products</ns:documentation>
-	<ns:product>
-		<name>Ernie</name>
-		<SKU>123</SKU>
-		<price>9.95</price>
-	</ns:product>
+        <ns:documentation>List of products</ns:documentation>
+        <ns:product>
+        	<name>Ernie</name>
+        	<SKU>123</SKU>
+        	<price>9.95</price>
+        </ns:product>
 </ns:list>
 @endcode
 
@@ -445,12 +445,12 @@ context:
 
 @code
 <ns:list xmlns:ns="http://domain/schemas/product.xsd" version="0.9" >
-	<ns:documentation>List of products</ns:documentation>
-	<ns:product>
-		<name>Ernie</name>
-		<SKU>123</SKU>
-		<price>9.95</price>
-	</ns:product>
+        <ns:documentation>List of products</ns:documentation>
+        <ns:product>
+        	<name>Ernie</name>
+        	<SKU>123</SKU>
+        	<price>9.95</price>
+        </ns:product>
 </ns:list>
 @endcode
 

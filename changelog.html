@@ -704,6 +704,7 @@ to allow consistent redefinitions and on-the-fly member additions.</li>
 <li>Added configure option --disable-openssl to build wsdl2h and libraries
 without OpenSSL.</li>
 <li>Added WITH_C_LOCALE compilation flag to enable the use of c_locale and local-specific numeric conversion routines.</li>
+<li>Added WS-Addressing metadata (wsam) support.</li>
 <li>Fixed xml:lang in SOAP 1.2 SOAP-ENV:Text.</li>
 <li>Fixed XML literal strings with maxOccurs="unbounded"</li>
 <li>Fixed SSL connection engine issue.</li>
@@ -806,7 +807,7 @@ without OpenSSL.</li>
 </ul>
 <li>Version 2.8.3 (06/24/2011)</li>
 <ul>
-<li>Added soapcpp2 -y option to generate C/C++ type access information to the generted sample XML messages, allowing for the verification of C/C++ data access to the actual XML content.</li>
+<li>Added soapcpp2 -y option to generate C/C++ type access information to the generated sample XML messages, allowing for the verification of C/C++ data access to the actual XML content.</li>
 <li>Added JSON serialization support in place of XML-RPC serialization, see the XML-RPC content in the samples folder.</li>
 <li>Improved DOM processing (an optional feature).</li>
 <li>Fixed bugs, compilation and porting issues.</li>
@@ -838,7 +839,7 @@ without OpenSSL.</li>
 <li>Version 2.8.7 (02/07/2012)</li>
 <ul>
 <li>Added new REST examples.</li>
-<li>Added versioning checks to ensure project builds are consistent.<li>
+<li>Added versioning checks to ensure project builds are consistent.</li>
 <li>Improved interoperability of wsdl2h output wrt. to element qualification.</li>
 <li>Renamed TANDEM to TANDEM_NONSTOP to prevent naming conflicts.</li>
 <li>Fixed WS-Discovery URL.</li>
@@ -846,8 +847,8 @@ without OpenSSL.</li>
 </ul>
 <li>Version 2.8.8 (02/20/2012)</li>
 <ul>
-<li>REST plugin (httppost.c) enhancements and examples.</li>
-<li>Additional static version checks to prevent linkage to old incompatible libraries that could lead to runtime failures.</li>
+<li>Added REST plugin (httppost.c) enhancements and examples.</li>
+<li>Added static version checks to prevent linkage to old incompatible libraries that could lead to runtime failures.</li>
 </ul>
 <li>Version 2.8.9 (06/10/2012)</li>
 <ul>
@@ -933,6 +934,20 @@ without OpenSSL.</li>
 <li>Improved ISO compatibility (compile -pedantic).</li>
 <li>Improved I/O timeouts timing accuracy in the presence of EINTR interrupts (set SOAP_MAXEINTR).</li>
 <li>Fixed in 2.8.17r: fixed socket timeout issue.</li>
+</ul>
+<li>Version 2.8.18 (8/24/2014)</li>
+<ul>
+<li>Added xs:precision and xs:scale support.</li>
+<li>Added support for BPEL PartnerLink and VariableProperties to wsdl2h in support of BPEL projects.</li>
+<li>Added soapcpp -z2 flag for backward compatibility with to 2.7.x: omit XML output of elements for pointers that are NULL even when minOccurs=1 (required).</li>
+<li>Changed wsdl2h C++ output to always generate pass-by-reference response parameters (disable with -z6).</li>
+<li>Improved WS-RM interoperability.</li>
+<li>Fixed message part elements and types in default (xmlns="") namespace.</li>
+<li>Fixed &amp;#;-entity code conversion bug in XML attribute deserialization.</li>
+<li>Fixed wsdl2h nested simpleType restriction with itemTypes.</li>
+<li>Fixed wsdl2h substitutionGroup element in other namespace.</li>
+<li>Fixed &lt;xs:choice&gt; strict validation.</li>
+<li>Fixed timeout/EINTR issue.</li>
 </ul>
 </ul>
 

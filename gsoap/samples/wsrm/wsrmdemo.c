@@ -147,7 +147,7 @@ int main(int argc, char **argv)
   soap_register_plugin(soap, soap_wsa);
   soap_register_plugin(soap, soap_wsrm);
   if (argc < 2) /* no args: server */
-  { soap_set_mode(soap, SOAP_IO_KEEPALIVE | SOAP_IO_CHUNK);
+  { soap_set_mode(soap, SOAP_IO_KEEPALIVE);
 #if !defined(WITH_UDP) && defined(THREADS_H)
     THREAD_TYPE tid;
 #endif
@@ -289,14 +289,14 @@ int main(int argc, char **argv)
     }
 
     if (alive)
-      soap_set_mode(soap, SOAP_IO_KEEPALIVE | SOAP_IO_CHUNK);
+      soap_set_mode(soap, SOAP_IO_KEEPALIVE);
 
     if (duplex)
     { /* set up the callback for duplex communication */
       replyto = clientURI;
       callback = soap_new1(SOAP_XML_INDENT | SOAP_XML_STRICT);
       if (alive)
-        soap_set_mode(callback, SOAP_IO_KEEPALIVE | SOAP_IO_CHUNK);
+        soap_set_mode(callback, SOAP_IO_KEEPALIVE);
       soap_register_plugin(callback, soap_wsa);
       soap_register_plugin(callback, soap_wsrm);
 #if defined(WITH_UDP)

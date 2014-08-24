@@ -42,14 +42,14 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-static char *ckserver = "http://www.cs.fsu.edu/~engelen/ck.cgi";
+static const char *ckserver = "http://www.cs.fsu.edu/~engelen/ck.cgi";
 
 // To access a stand-alone server on a port, use:
-// char ckserver[] = "IP:PORT";
-// char ckserver[] = "http://IP:PORT";	// include HTTP header in request
-// char ckserver[] = "http://linprog1.cs.fsu.edu:18081";
-// char ckserver[] = ""; // use I/O redirect
-// char ckserver[] = "http://"; // use I/O redirect (includes HTTP headers)
+// const char ckserver[] = "IP:PORT";
+// const char ckserver[] = "http://IP:PORT";	// include HTTP header in request
+// const char ckserver[] = "http://www.domain.com:8008";
+// const char ckserver[] = ""; // use I/O redirect
+// const char ckserver[] = "http://"; // use I/O redirect (includes HTTP headers)
 
 int main(int argc, char **argv)
 { char *r;

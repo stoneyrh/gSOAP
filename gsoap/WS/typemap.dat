@@ -337,6 +337,14 @@ _xlink__type		= | char*
 
 wsrp	= <http://schemas.xmlsoap.org/rp/>
 
+#	BPEL 2.0
+
+bpel	= "http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+bpelabs = "http://docs.oasis-open.org/wsbpel/2.0/process/abstract"
+plnk	= "http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+sref	= "http://docs.oasis-open.org/wsbpel/2.0/serviceref"
+vprop	= "http://docs.oasis-open.org/wsbpel/2.0/varprop"
+
 #	ONVIF recommended prefixes as per 8/20/12
 #	http://www.onvif.org/onvif/ver10/device/wsdl/devicemgmt.wsdl
 #	http://www.onvif.org/onvif/ver10/event/wsdl/event.wsdl

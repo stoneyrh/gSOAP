@@ -59,7 +59,7 @@ extern "C" {
 #endif
 
 /** Plugin identification for plugin registry */
-#define SOAP_WSRM_ID "WS-RM-1.7"
+#define SOAP_WSRM_ID "WS-RM-1.10"
 
 /** Plugin identification for plugin registry */
 extern const char soap_wsrm_id[];

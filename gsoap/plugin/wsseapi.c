@@ -115,7 +115,8 @@ Adding an empty Security header block is not very useful. In the following, we
 present the higher-level functions of the wsse plugin to populate and verify
 Security header content.
 
-Note: The soap context includes an actor value soap.actor that is populated and
+@note
+The soap context includes an actor value soap.actor that is populated and
 rendered as the SOAP-ENV:actor (SOAP 1.1) or SOAP-ENV:role (SOAP 1.2) attribute
 in XML within the generic SOAP Header. The attribute is optional, but should be
 used to target a recipient such as an intermediate node to process the SOAP
@@ -333,6 +334,7 @@ typedef struct _wsse__Security
 {       struct _wsu__Timestamp*                 wsu__Timestamp;
         struct _wsse__UsernameToken*            UsernameToken;
         struct _wsse__BinarySecurityToken*      BinarySecurityToken;
+        struct _saml__Assertion*		saml__Assertion; // added
 	struct xenc__EncryptedKeyType*          xenc__EncryptedKey;
         struct ds__SignatureType*               ds__Signature;
         int					__size;
@@ -656,16 +658,17 @@ attributes are present which is invalid. Also, the element signed must be
 unique in the message. That is, there cannot be more than one matching element,
 otherwise the resulting signature is invalid.
 
-Note: to reset the automatic wsu:Id attributes addition, pass NULL to
-@ref soap_wsse_set_wsu_id as shown above. This is automatically performed when
-a new message is received (but not automatically in a sequence of one-way sends
-for example).
+@note
+To reset the automatic wsu:Id attributes addition, pass NULL to @ref
+soap_wsse_set_wsu_id as shown above. This is automatically performed when a new
+message is received (but not automatically in a sequence of one-way sends for
+example).
 
-WARNING:
+@note
 When signing parts of the body as outlined above, use @ref soap_wsse_sign
 (do NOT use @ref soap_wsse_sign_body).
 
-WARNING:
+@warning
 Do not attempt to sign an element with a wsu:Id that is a subelement of another
 element with a wsu:Id, that is, do not sign inner nested wsu:Id elements. The
 element that you will try to sign will not be canonicalized and will lead to a
@@ -696,11 +699,11 @@ for more information on the use of WS-Addressing). It is fine to specify more
 elements with @ref soap_wsse_set_wsu_id than actually present in the XML
 payload. The other WS-Addressing headers are not present and are not signed.
 
-WARNING:
+@note
 @ref soap_wsse_set_wsu_id should only be set once for each @ref soap_wsse_sign
 or @ref soap_wsse_sign_body. Each new call overrides the previous setting.
 
-WARNING:
+@warning
 Never use @ref soap_wsse_set_wsu_id to set the wsu:Id for an element that
 occurs more than once in the payload, since each will have the same wsu:Id
 attribute that may lead to a WS-Signature failure.
@@ -748,12 +751,13 @@ When using @ref soap_wsse_set_wsu_id we need to use the tag name with
     soap_wsse_sign_only(soap, "wsa5:To wsa5:From wsa5:ReplyTo wsa5:Action User Body");
 @endcode
 
-Note: @ref soap_wsse_sign_only should only be set once for each @ref
-soap_wsse_sign or @ref soap_wsse_sign_body. Each new call overrides the
-previous.
+@note
+@ref soap_wsse_sign_only should only be set once for each @ref soap_wsse_sign
+or @ref soap_wsse_sign_body. Each new call overrides the previous.
 
-Note: to reset the filtering of signed tokens and elements, pass NULL to
-@ref soap_wsse_sign_only. This is automatically performed when a new message is
+@note
+To reset the filtering of signed tokens and elements, pass NULL to @ref
+soap_wsse_sign_only. This is automatically performed when a new message is
 received (but not automatically in a sequence of one-way sends for example).
 
 @subsection wsse_8_4 Signature Validation
@@ -880,12 +884,13 @@ Other flags to consider:
 
 Encryption should be used in combination with signing. A signature ensures
 message integrity while encryption ensures confidentially. Encrypted messages
-can be tampered with unless integrity is ensured. Therefore, Section
-@ref wsse_8 should be followed to sign and verify message content.
+can be tampered with unless integrity is ensured. Therefore, the reader should
+be familiar with the material in Section @ref wsse_8 should to sign and verify
+message content.
 
-Messages are encrypted using either public key cryptography or a symmetric
-secret key. A symmetric secret key should only be shared between the sender and
-receiver (or any trusted communicating peer).
+Messages are encrypted using either public key cryptography or by using a
+symmetric secret key. A symmetric secret key should only be shared between the
+sender and receiver (or any trusted communicating peer).
 
 Encryption with public key cryptography uses an "envelope" process, where the
 public key of the recipient is used to encrypt a temporary (ephemeral) secret
@@ -922,8 +927,8 @@ The difference with the previous example where no subject key ID was specified
 is that the WS-Security header only contains the subject key ID and no longer
 the public key in base64 format.
 
-To exclude the encrypted key certificate from the message and include a X509Data element with
-IssuerName and SerialNumber:
+To exclude the encrypted key certificate from the message and include a
+X509Data element with IssuerName and SerialNumber:
 
 @code
     X509 *cert = ...;
@@ -1001,11 +1006,14 @@ To encrypt the SOAP Body and SOAP Header element(s), such as ds:Signature, use
       soap_print_fault(soap, stderr);
 @endcode
 
-WARNING:
-- The @ref soap_wsse_set_wsu_id MUST be used to specify all element tag names
-  to encrypt. Additional elements MAY be specified in @ref soap_wsse_set_wsu_id
-  (for example elements to digitally sign).
-- The elements to encrypt MUST occur EXACTLY ONCE in the SOAP Body.
+@note
+The @ref soap_wsse_set_wsu_id MUST be used to specify all element tag names to
+encrypt. Additional elements MAY be specified in @ref soap_wsse_set_wsu_id (for
+example elements to digitally sign).
+
+@note
+The elements identified by the tag names in @ref soap_wsse_set_wsu_id to
+encrypt MUST occur EXACTLY ONCE in the SOAP Body.
 
 For symmetric encryption with a shared secret key, generate a 160-bit triple
 DES key and make sure both the sender and reciever can use the key without it
@@ -1018,8 +1026,8 @@ being shared by any other party (key exchange problem). Then use the
       soap_print_fault(soap, stderr);
 @endcode
 
-Triple DES can be selected as above, but also AES128, AES256, or AES512, for
-example:
+Triple DES can be selected as shown above. Alternatively, AES128, AES256, or
+AES512, can be selected. For example:
 
 @code
     char aes256_key[32] = ...; // 32-byte (256-bit) AES256 shared secret key
@@ -1039,11 +1047,14 @@ entire SOAP Body, use @ref soap_wsse_encrypt_only in combination with
       soap_print_fault(soap, stderr);
 @endcode
 
-WARNING:
-- The @ref soap_wsse_set_wsu_id MUST be used to specify all element tag names
-  to encrypt. Additional elements MAY be specified in @ref soap_wsse_set_wsu_id
-  (for example elements to digitally sign).
-- The elements to encrypt MUST occur EXACTLY ONCE in the SOAP Body.
+@note
+The @ref soap_wsse_set_wsu_id MUST be used to specify all element tag names to
+encrypt. Additional elements MAY be specified in @ref soap_wsse_set_wsu_id (for
+example elements to digitally sign).
+
+@note
+The elements identified by the tag names in @ref soap_wsse_set_wsu_id to
+encrypt MUST occur EXACTLY ONCE in the SOAP Body.
 
 @subsection wsse_9_2 Decrypting Message Parts
 
@@ -1488,9 +1499,7 @@ reference to sign the token.
 */
 
 #include "wsseapi.h"
-#include "smdevp.h"
-#include "mecevp.h"
-#include "threads.h"	/* only need threads to enable mutex for MT */
+#include "threads.h"	/* need threads to enable mutex for MT */
 
 #if defined(SOAP_WSA_2003) || defined(SOAP_WSA_2004) || defined(SOAP_WSA_200408) || defined(SOAP_WSA_2005)
 #include "wsaapi.h"
@@ -1816,7 +1825,9 @@ soap_wsse_verify_Timestamp(struct soap *soap)
 @return SOAP_OK
 
 Passwords are sent in the clear, so transport-level encryption is required.
-Note: this release supports the use of at most one UsernameToken in the header.
+
+@note
+This release supports the use of at most one UsernameToken in the header.
 */
 int
 soap_wsse_add_UsernameTokenText(struct soap *soap, const char *id, const char *username, const char *password)
@@ -1853,7 +1864,9 @@ soap_wsse_add_UsernameTokenText(struct soap *soap, const char *id, const char *u
 
 Computes SHA1 digest of the time stamp, a nonce, and the password. The digest
 provides the authentication credentials. Passwords are NOT sent in the clear.
-Note: this release supports the use of at most one UsernameToken in the header.
+
+@note
+This release supports the use of at most one UsernameToken in the header.
 */
 int
 soap_wsse_add_UsernameTokenDigest(struct soap *soap, const char *id, const char *username, const char *password)
@@ -1889,7 +1902,8 @@ soap_wsse_add_UsernameTokenDigest(struct soap *soap, const char *id, const char 
 @param[in] id string of UsernameToken or NULL
 @return _wsse__UsernameToken object or NULL
 
-Note: this release supports the use of at most one UsernameToken in the header.
+@note
+This release supports the use of at most one UsernameToken in the header.
 */
 struct _wsse__UsernameToken*
 soap_wsse_UsernameToken(struct soap *soap, const char *id)
@@ -1934,7 +1948,9 @@ The verification supports both clear-text password verification and digest
 password authentication. For digest authentication a history mechanism with a
 digest authentication session database ensures protection against replay
 attacks.
-Note: this release supports the use of at most one UsernameToken in the header.
+
+@note
+This release supports the use of at most one UsernameToken in the header.
 */
 int
 soap_wsse_verify_Password(struct soap *soap, const char *password)
@@ -2306,7 +2322,9 @@ soap_wsse_add_SignedInfo(struct soap *soap)
 This function can be called to add more references to the wsse:SignedInfo
 element. A maximum number of SOAP_WSSE_MAX_REF references can be added. The
 digest method is always SHA1. 
-Note: XPath transforms cannot be specified in this release.
+
+@note
+XPath transforms cannot be specified in this release.
 */
 int
 soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, const char *transform, const char *inclusiveNamespaces, int alg, const char *HA)
@@ -2383,7 +2401,8 @@ soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, const cha
 @param[in] canonical flag indicating that SignedInfo is signed in exc-c14n form
 @return SOAP_OK
 
-Note: the c14n:InclusiveNamespaces/PrefixList is set to "SOAP-ENV wsse".
+@note
+The c14n:InclusiveNamespaces/PrefixList is set to "SOAP-ENV wsse".
 */
 int
 soap_wsse_add_SignedInfo_SignatureMethod(struct soap *soap, const char *method, int canonical)
@@ -2916,7 +2935,8 @@ soap_wsse_KeyInfo(struct soap *soap)
 @param[in] name string of the KeyName
 @return SOAP_OK
 
-Note: the recommended method to add Key information is to utilize KeyIdentifier
+@note
+The recommended method to add Key information is to utilize KeyIdentifier
 instead of KeyName. A KeyName is useful mainly for internal use.
 */
 int
@@ -3149,7 +3169,8 @@ soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, int
 @param[in] valueType string
 @return SOAP_OK
 
-Note: this function does not add embedded tokens automatically. See code for comments.
+@note
+This function does not add embedded tokens automatically. See code for comments.
 */
 int
 soap_wsse_add_KeyInfo_SecurityTokenReferenceEmbedded(struct soap *soap, const char *id, const char *valueType)
@@ -3230,17 +3251,17 @@ is non-NULL the subject key ID is used in the EncryptedKey header instead of
 the X509 certificate content. Only the XML elements given in the 'tags' string
 as wsu:Id attributed elements are encrypted.
 
-WARNING:
+@warning
 Use @ref soap_wsse_add_EncryptedKey_encrypt_only only in combination with
 @ref soap_wsse_set_wsu_id with the tag names of the elements to be encrypted.
 OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED AND WILL BE SENT IN THE
 CLEAR.
 
-WARNING:
+@warning
 The elements identified with @ref soap_wsse_set_wsu_id to encrypt MUST occur
 EXACTLY ONCE in the SOAP Body.
 
-WARNING:
+@warning
 Encryption/decryption of elements with simple content (CDATA content) IS NOT
 SUPPORTED. This means that elements you want to encrypt with this function must
 have complex content. That is, only encrypt elements with sub elements or
@@ -4240,7 +4261,8 @@ performance is determined by the size of a message.
 
 To check the SOAP Body (either using SOAP 1.1 or 1.2), @ref soap_wsse_verify_element(soap, namespaces[0].ns, "Body"). To check whether the Timestamp was signed (assuming it is present and message expiration checked with @ref soap_wsse_verify_Timestamp), use @ref soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp").
 
-Note: for future releases XPath queries (or forms of these) will be considered.
+@note
+For future releases, XPath queries (or forms of these) will be considered.
 */
 size_t
 soap_wsse_verify_element(struct soap *soap, const char *URI, const char *tag)
@@ -4403,17 +4425,17 @@ This function initiates the encryption using an RSA public key or a symmetric
 shared secret key. No WS-Security EncryptedKey header will be set. Use
 soap_wsse_add_EncryptedKey instead for public key encryption.
 
-WARNING:
+@warning
 Use @ref soap_wsse_add_EncryptedKey_encrypt_only only in combination with
 @ref soap_wsse_set_wsu_id with the tag names of the elements to be encrypted.
 OTHERWISE THE GIVEN XML ELEMENTS ARE NOT ENCRYPTED AND WILL BE SENT IN THE
 CLEAR.
 
-WARNING:
+@warning
 The elements identified with @ref soap_wsse_set_wsu_id to encrypt MUST occur
 EXACTLY ONCE in the SOAP Body.
 
-WARNING:
+@warning
 Encryption/decryption of elements with simple content (CDATA content) IS NOT
 SUPPORTED. This means that elements you want to encrypt with this function must
 have complex content. That is, only encrypt elements with sub elements or
@@ -4900,8 +4922,10 @@ soap_wsse_element_end_out(struct soap *soap, const char *tag)
 @return SOAP_OK or fault
 
 This callback is invoked to analyze a message (usually during the HTTP content
-length phase). Note: nested elements with wsu:Id attributes cannot be
-individually signed.
+length phase).
+
+@note
+Nested elements with wsu:Id attributes cannot be individually signed.
 */
 static int
 soap_wsse_preparesend(struct soap *soap, const char *buf, size_t len)

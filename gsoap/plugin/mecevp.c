@@ -59,15 +59,16 @@ An encryption and decryption algorithm and mode is selected with one of the
 following:
 
 - @ref SOAP_MEC_ENV_ENC_DES_CBC	envelope encryption with triple DES CBC
-- @ref SOAP_MEC_ENV_ENC_DES_CBC	envelope decryption with triple DES CBC
+- @ref SOAP_MEC_ENV_ENC_AES256_CBC	envelope encryption with AES256 CBC
 - @ref SOAP_MEC_ENC_DES_CBC		symmetric encryption with triple DES CBC
-- @ref SOAP_MEC_ENC_DES_CBC		symmetric decryption with triple DES CBC
-- @ref SOAP_MEC_ENV_ENC_AES256_CBC	envelope encryption with triple DES CBC
-- @ref SOAP_MEC_ENV_ENC_AES256_CBC	envelope decryption with triple DES CBC
-- @ref SOAP_MEC_ENC_AES256_CBC		symmetric encryption with triple DES CBC
-- @ref SOAP_MEC_ENC_AES256_CBC		symmetric decryption with triple DES CBC
+- @ref SOAP_MEC_ENC_AES256_CBC		symmetric encryption with AES256 CBC
+- @ref SOAP_MEC_ENV_DEC_DES_CBC	envelope decryption with triple DES CBC
+- @ref SOAP_MEC_ENV_DEC_AES256_CBC	envelope decryption with AES256 CBC
+- @ref SOAP_MEC_DEC_DES_CBC		symmetric decryption with triple DES CBC
+- @ref SOAP_MEC_DEC_AES256_CBC		symmetric decryption with AES256 CBC
 
-where AES256 can be replaced with any one of AES128, AES192, AES512.
+where, in the above, AES256 can be replaced with any choice of AES128, AES192,
+AES512.
 
 Algorithm options:
 
@@ -216,8 +217,9 @@ party besides the sender/writer and recipient/reader.
     }
 @endcode
 
-Note: the mecevp engine uses callbacks of the gSOAP engine that were introduced
-in version 2.8.1. Earlier gSOAP version releases are not compatible with the
+@note
+The mecevp engine uses callbacks of the gSOAP engine that were introduced in
+version 2.8.1. Earlier gSOAP version releases are not compatible with the
 mecevp plugin and engine.
 
 */

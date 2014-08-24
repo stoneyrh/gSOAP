@@ -1,5 +1,5 @@
 /* config.h.  Generated from config.h.in by configure.  */
-/* config.h.in.  Generated from configure.in by autoheader.  */
+/* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to 1 if you have the `alarm' function. */
 #define HAVE_ALARM 1
@@ -155,10 +155,10 @@
 /* Define to 1 if you have the `strtoull' function. */
 #define HAVE_STRTOULL 1
 
-/* Define to 1 if `tm_gmtoff' is member of `struct tm'. */
+/* Define to 1 if `tm_gmtoff' is a member of `struct tm'. */
 #define HAVE_STRUCT_TM_TM_GMTOFF 1
 
-/* Define to 1 if `__tm_gmtoff' is member of `struct tm'. */
+/* Define to 1 if `__tm_gmtoff' is a member of `struct tm'. */
 /* #undef HAVE_STRUCT_TM___TM_GMTOFF */
 
 /* Define to 1 if you have the <sys/inttypes.h> header file. */
@@ -197,9 +197,6 @@
 /* Define to 1 if you have the <zlib.h> header file. */
 #define HAVE_ZLIB_H 1
 
-/* Define to 1 if your C compiler doesn't accept -c and -o together. */
-/* #undef NO_MINUS_C_MINUS_O */
-
 /* Name of package */
 #define PACKAGE "gsoap"
 
@@ -214,6 +211,9 @@
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gsoap"
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "2.8"

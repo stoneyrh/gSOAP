@@ -67,7 +67,7 @@ COMMAND LINE OPTIONS
 
 -1      generate SOAP 1.1 bindings
 -2      generate SOAP 1.2 bindings
--0      remove SOAP bindings, use REST
+-0      no SOAP bindings, use REST
 -C	generate client-side code only
 -S	generate server-side code only
 -T	generate server auto-test code
@@ -77,7 +77,7 @@ COMMAND LINE OPTIONS
 -b	serialize byte arrays char[N] as string
 -c      generate C source code
 -dpath  use path to save files
--e	generate SOAP RPC encoding style bindings
+-e	generate SOAP RPC encoding style bindings (also use -1 or -2)
 -fN	file split of N XML serializer implementations per file (N>=10)
 -h	display help info
 -Ipath  use path(s) for #import (paths separated with ':', or ';' for windows)
@@ -98,6 +98,7 @@ COMMAND LINE OPTIONS
 -x	don't generate sample XML message files
 -y	include C/C++ type access information in sample XML messages
 -z1	generate deprecated old-style C++ service proxies and objects
+-z2	compatibility with 2.7.x: omit XML output for NULL pointers
 infile	header file to parse (or stdin)
 
 DOCUMENTATION

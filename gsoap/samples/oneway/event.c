@@ -111,7 +111,7 @@ int main()
       }
     }
   }
-  soap_closesock(&soap); /* soap_send operations keep the socket open to possibly accept responses, so we need to explicitly close the socket now */
+  soap_closesock(&soap); /* EVENT_Z has no HTTP response (fire and forget), so close the socket */
   soap_end(&soap); /* this will close the socket too (if keep alive is off), just in case */
   soap_done(&soap); /* detach environment (also closes sockets even with keep-alive) */
   return 0;

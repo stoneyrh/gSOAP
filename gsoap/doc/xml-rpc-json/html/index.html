@@ -63,6 +63,7 @@
 <p>See <a href="http://www.json.org">http://www.json.org</a> for more details.</p>
 <h1><a class="anchor" id="cpp"></a>
 C++ XML-RPC and JSON                                                      </h1>
+<p>XML-RPC and JSON data is largely interchangeable in this implementation. That is, XML-RPC data can be converted to/from JSON data by simply choosing the XML-RPC or the JSON serializer. Data is interchangeable with the exception of XML-RPC dateTime and XML-RPC base64-encoded data that have no JSON equivalents. Also, JSON only supports floats. Ints are converted to double floats by the JSON serializer. Developers should be aware of these limitations as a JSON receiver will never receive an int value, dateTime, and base64 raw data. This implementation sends ints as floats and dateTime and base64 data as string type content in JSON.</p>
 <p>The following source files are provided for XML-RPC support in C++:</p>
 <ul>
 <li><code>xml-rpc.cpp</code>: C++ XML-RPC implementation and data management</li>
@@ -71,15 +72,15 @@ C++ XML-RPC and JSON                                                      </h1>
 <li><code><a class="el" href="xml-rpc-iters_8h.html">xml-rpc-iters.h</a></code>: C++ iterators for structs, arrays, and parameters</li>
 <li><code><a class="el" href="xml-rpc_8h.html">xml-rpc.h</a></code>: XML-RPC binding as a gSOAP .h file for soapcpp2 (do not #include this file in your project builds)</li>
 </ul>
-<p>For JSON serialization in C++, use the following files instead of <code>xml-rpc-io.h</code> and <code>xml-rpc-io.cpp</code>:</p>
+<p>For JSON serialization in C++, use the following files:</p>
 <ul>
 <li><code><a class="el" href="json_8h.html">json.h</a></code>: C++ JSON serializer over streams</li>
 <li><code>json.cpp</code>: C++ JSON serializer over streams</li>
 </ul>
 <p>For JSON-RPC over HTTP (JSON REST method), please use the <code>plugin/httppost.c</code> plugin. See <a href="#cpp-jr">JSON-RPC over HTTP</a> explanation below.</p>
-<p>Auto-generated files: note that soapH.h, soapStub.h and soapC.cpp are required for XML-RPC and JSON. To generate these C++ files, you need to execute: </p>
+<p>Auto-generated files: note that <code>soapH.h</code>, <code>soapStub.h</code> and <code>soapC.cpp</code> are required for XML-RPC and JSON. To auto-generate these C++ files, execute: </p>
 <pre class="fragment">soapcpp2 -CSL xml-rpc.h
-</pre><p>Also compile and link with <code>stdsoap2.cpp</code> (or link with <code>libgsoap++.a</code> installed by the gSOAP package).</p>
+</pre><p>Then compile and link these files together with <code>stdsoap2.cpp</code> (or link with <code>libgsoap++.a</code> installed by the gSOAP package).</p>
 <h2><a class="anchor" id="cpp-ex"></a>
 C++ Examples                                                           </h2>
 <p>Examples are provided in the software package:</p>
@@ -91,7 +92,7 @@ C++ Examples                                                           </h2>
 <li><code>json-currentTime.cpp</code>: JSON client in C++</li>
 <li><code>json-currentTimeServer.cpp</code>: JSON server in C++</li>
 </ul>
-<p>See <code><a class="el" href="xml-rpc_8h.html">xml-rpc.h</a></code> for the C++ member functions to create XML-RPC messages and decode responses. These functions are intuitive casts, assignments, and indexing functions.</p>
+<p>See <code><a class="el" href="xml-rpc_8h.html">xml-rpc.h</a></code> for the C++ member functions to create XML-RPC messages and decode responses. These functions provide intuitive type casts, assignments, and indexing operations.</p>
 <p>An XML-RPC data value is created in C++ as follows, which requires a context <code>ctx</code> for the engine state (the soap struct) for communication, and managed data allocation/deallocation:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>soap *ctx = soap_new1(SOAP_C_UTFSTRING);</div>
 <div class="line"><a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a> v(ctx);</div>
@@ -146,22 +147,22 @@ C++ Examples                                                           </h2>
 <div class="line">v[0]</div>
 <div class="line">v[&quot;name&quot;]</div>
 </div><!-- fragment --><p>To access base64 binary raw data of a value <code>v</code>, use:</p>
-<div class="fragment"><div class="line"><a class="code" href="struct__base64.html" title="Represents the &lt;base64&gt; binary data element.">_base64</a> &amp;bin = v;</div>
+<div class="fragment"><div class="line"><a class="code" href="struct__base64.html" title="Represents the &lt;base64&gt; binary data element.">_base64</a>&amp; bin = v;</div>
 <div class="line"><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *raw = bin.<a class="code" href="struct__base64.html#accb75dbcdaf316a692d92d42783ffcb8" title="pointer to data">ptr</a>();</div>
 <div class="line"><span class="keywordtype">int</span> size = bin.<a class="code" href="struct__base64.html#a89555bd2f9d977fd17bc2823bef10230" title="byte size of data">size</a>();</div>
 </div><!-- fragment --><p>We can also use iterators to traverse a value <code>v</code> that is an array or a struct:</p>
 <div class="fragment"><div class="line"><span class="keywordflow">if</span> (v.is_array())</div>
-<div class="line">{   <a class="code" href="struct__array.html" title="Represents the &lt;array&gt; array of values element.">_array</a> &amp;vec = v;</div>
+<div class="line">{   <a class="code" href="struct__array.html" title="Represents the &lt;array&gt; array of values element.">_array</a>&amp; vec = v;</div>
 <div class="line">    <span class="keywordflow">for</span> (<a class="code" href="struct__array.html#a61e069daf5d5b31875a5d249216ac8d3">_array::iterator</a> i = vec.<a class="code" href="struct__array.html#ac15280959920d28bf27568d38ee7b6ba" title="array iterator begin">begin</a>(); i != vec.<a class="code" href="struct__array.html#a1f4d85181b117638a22d04925bb386f1" title="array iterator end">end</a>(); ++i)</div>
 <div class="line">    {   <span class="keyword">const</span> <span class="keywordtype">char</span> *member_name = i.index();</div>
-<div class="line">        <a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a> &amp;member_value = *i;</div>
+<div class="line">        <a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a>&amp; member_value = *i;</div>
 <div class="line">        ... <span class="comment">// use member_value</span></div>
 <div class="line">    }</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (v.is_struct())</div>
-<div class="line">{   <a class="code" href="struct__struct.html" title="Represents the &lt;struct&gt; record structure element.">_struct</a> &amp;rec = v;</div>
+<div class="line">{   <a class="code" href="struct__struct.html" title="Represents the &lt;struct&gt; record structure element.">_struct</a>&amp; rec = v;</div>
 <div class="line">    <span class="keywordflow">for</span> (<a class="code" href="struct__struct.html#a88edf40f7bb954061eddc160b1105ff3">_struct::iterator</a> i = rec.<a class="code" href="struct__struct.html#a69e6a472947d4aa911a82a153b9d867a" title="struct accessor iterator begin">begin</a>(); i != rec.<a class="code" href="struct__struct.html#aef253f058f1679add8210023c4f6f8bb" title="struct accessor iterator end">end</a>(); ++i)</div>
-<div class="line">    {   <a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a> &amp;array_value = *i;</div>
+<div class="line">    {   <a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a>&amp; array_value = *i;</div>
 <div class="line">        ... <span class="comment">// use array_value</span></div>
 <div class="line">    }</div>
 <div class="line">}</div>
@@ -172,7 +173,7 @@ C++ Examples                                                           </h2>
 <div class="line">request[1] = ...;           <span class="comment">// second request parameter</span></div>
 <div class="line"><a class="code" href="structparams.html" title="Represents the &lt;params&gt; of a &lt;methodCall&gt; request and response.">params</a> response = rpc(request);</div>
 <div class="line"><span class="keywordflow">for</span> (<a class="code" href="structparams.html#a42e515c9a4bc03a29382e63dddea8496">params::iterator</a> i = response.<a class="code" href="structparams.html#a21b28ad0796dba7d6e00abb4587f7ffa" title="parameter accessor iterator begin">begin</a>(); i != response.<a class="code" href="structparams.html#a4934efffe16d4d367203c1acd0e777ce" title="parameter accessor iterator end">end</a>(); ++i)</div>
-<div class="line">{   <a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a> &amp;param_value = *i;</div>
+<div class="line">{   <a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a>&amp; param_value = *i;</div>
 <div class="line">    ... <span class="comment">// use param_value of response params</span></div>
 <div class="line">}</div>
 </div><!-- fragment --><p>There are two additional methods to invoke on parameters:</p>
@@ -660,7 +661,7 @@ C JSON-RPC over HTTP (REST method)                                       </h2>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 17 2013 23:22:59 for gSOAP XML-RPC and JSON by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Aug 18 2014 13:27:50 for gSOAP XML-RPC and JSON by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

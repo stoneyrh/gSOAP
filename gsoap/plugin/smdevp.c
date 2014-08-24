@@ -51,8 +51,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 @page smdevp The smdevp signed message digest engine
 
 The gSOAP smdevp engine computes signed/unsigned message digests over any type
-of data using the EVP interface of OpenSSL. It currently supports MD5, SHA1,
-HMAC_SHA1, DSA_SHA1, and RSA_SHA1.
+of data using the EVP interface of OpenSSL. It currently supports MD5,
+SHA1/256/512, HMAC_SHA1/256/512, DSA_SHA1/256/512, and RSA_SHA1/256/512.
 
 A digest or signature algorithm is selected with one the following:
 
@@ -100,7 +100,7 @@ Compile all source codes with -DWITH_OPENSSL and link with ssl and crypto
 libraries.
 
 Here is an example to sign an XML serialized C++ object using an RSA private
-key applied to the SHA1 digest of the serialized object:
+key applied to the SHA digest of the serialized object:
 
 @code
     #include "smdevp.h"
@@ -248,10 +248,10 @@ must keep it secret) to sign and verify a message:
       ... // sig holds the signature
 @endcode
 
-Note: HMAC signature verification proceeds by recomputing the signature value
-for comparison.
+HMAC signature verification proceeds by recomputing the signature value for
+comparison.
 
-A digest is a hash value of an octet stream computed using the MD5 or SHA1
+A digest is a hash value of an octet stream computed using the MD5 or SHA
 algorithms:
 
 @code

@@ -60,7 +60,7 @@ extern "C" {
 #endif
 
 /** plugin identification for plugin registry */
-#define SOAP_WSSE_ID "SOAP-WSSE-1.3"
+#define SOAP_WSSE_ID "SOAP-WSSE-1.4"
 
 /** to ignore extra/external SignedInfo/Reference/@URI */
 #define SOAP_WSSE_IGNORE_EXTRA_REFS (0x1000)

@@ -4,7 +4,7 @@
 	Main compiler and code generator batch program.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "soapcpp2.h"
 
 #ifndef SOAPCPP2_IMPORT_PATH
-#define SOAPCPP2_IMPORT_PATH (NULL)
+# define SOAPCPP2_IMPORT_PATH (NULL)
 #endif
 
 extern void init(void);
@@ -78,7 +78,8 @@ int stop_flag = 0;
 char dirpath[1024];	/* directory path for generated source files */
 char *prefix = "soap";	/* file name prefix for generated source files */
 char filename[1024];	/* current file name */
-char *importpath = SOAPCPP2_IMPORT_PATH; /* default file import path */
+char *importpath = NULL; /* default file import path */
+char *defimportpath = SOAPCPP2_IMPORT_PATH; /* default file import path */
 
 /*
 IMPORTANT:
@@ -91,72 +92,76 @@ that is visible to users of the software.
 
 int
 main(int argc, char **argv)
-{	int i, g;
-	char *a, *s;
-	fmsg = stderr;
-	strcpy(filename, "<stdin>");
-	for (i = 1; i < argc; i++)
-	{	a = argv[i];
-		if (*a == '-'
+{
+  int i, g;
+  char *a, *s;
+  fmsg = stderr;
+  strcpy(filename, "<stdin>");
+  for (i = 1; i < argc; i++)
+  {
+    a = argv[i];
+    if (*a == '-'
 #ifdef WIN32
-		 || *a == '/'
+	|| *a == '/'
 #endif
-		)
-		{	g = 1;
-			while (g && *++a)
-				switch (*a)
-				{	case 'C':
-						Cflag = 1;
-						if (Sflag)
-            					  fprintf(stderr, "soapcpp2: using both options -C and -S omits client/server code\n");
-						break;
-					case 'c':
-						cflag = 1;
-						break;
-					case 'd':
-						a++;
-						g = 0;
-						if (*a)
-							strcpy(dirpath, a);
-						else if (i < argc && argv[++i])
-							strcpy(dirpath, argv[i]);
-						else
-							execerror("Option -d requires a directory path");
-						if (*dirpath && dirpath[strlen(dirpath)-1] != '/' && dirpath[strlen(dirpath)-1] != '\\')
-							strcat(dirpath, SOAP_PATHCAT);
-						break;
-					case 'e':
-						eflag = 1;
-						break;
-					case 'f':
-						a++;
-						g = 0;
-						if (*a)
-							fflag = strtoul(a, NULL, 10);
-						else if (i < argc && argv[++i])
-							fflag = strtoul(argv[i], NULL, 10);
-						if (!fflag)
-							execerror("Option -f requires a value");
-						if (fflag < 10)
-						  fflag = 10;
-						break;
-					case 'a':
-						aflag = 1;
-						break;
-					case 'A':
-						aflag = 1;
-						Aflag = 1;
-						break;
-					case 'b':
-						bflag = 1;
-						break;
-					case '?':
-					case 'h':
-						fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-L] [-a] [-A] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path"SOAP_PATHSEP"path"SOAP_PATHSEP"...] [-k] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
-						fprintf(stderr, "\
+       )
+    {
+      g = 1;
+      while (g && *++a)
+	switch (*a)
+	{
+	  case 'C':
+	    Cflag = 1;
+	    if (Sflag)
+	      fprintf(stderr, "soapcpp2: using both options -C and -S omits client/server code\n");
+	    break;
+	  case 'c':
+	    cflag = 1;
+	    break;
+	  case 'd':
+	    a++;
+	    g = 0;
+	    if (*a)
+	      strcpy(dirpath, a);
+	    else if (i < argc && argv[++i])
+	      strcpy(dirpath, argv[i]);
+	    else
+	      execerror("Option -d requires a directory path");
+	    if (*dirpath && dirpath[strlen(dirpath)-1] != '/' && dirpath[strlen(dirpath)-1] != '\\')
+	      strcat(dirpath, SOAP_PATHCAT);
+	    break;
+	  case 'e':
+	    eflag = 1;
+	    break;
+	  case 'f':
+	    a++;
+	    g = 0;
+	    if (*a)
+	      fflag = strtoul(a, NULL, 10);
+	    else if (i < argc && argv[++i])
+	      fflag = strtoul(argv[i], NULL, 10);
+	    if (!fflag)
+	      execerror("Option -f requires a value");
+	    if (fflag < 10)
+	      fflag = 10;
+	    break;
+	  case 'a':
+	    aflag = 1;
+	    break;
+	  case 'A':
+	    aflag = 1;
+	    Aflag = 1;
+	    break;
+	  case 'b':
+	    bflag = 1;
+	    break;
+	  case '?':
+	  case 'h':
+	    fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-L] [-a] [-A] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-k] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
+	    fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
--0      remove SOAP bindings, use REST\n\
+-0      no SOAP bindings, use REST\n\
 -C	generate client-side code only\n\
 -S	generate server-side code only\n\
 -T	generate server auto-test code\n\
@@ -166,10 +171,10 @@ main(int argc, char **argv)
 -b	serialize byte arrays char[N] as string\n\
 -c      generate C source code\n\
 -dpath  use path to save files\n\
--e	generate SOAP RPC encoding style bindings\n\
+-e	generate SOAP RPC encoding style bindings (also use -1 or -2)\n\
 -fN	file split of N XML serializer implementations per file (N>=10)\n\
 -h	display help info\n\
--Ipath  use path(s) for #import (paths separated with '"SOAP_PATHSEP"')\n\
+-Ipath  use path(s) for #import (paths separated with '" SOAP_PATHSEP "')\n\
 -i      generate C++ service proxies and objects inherited from soap struct\n\
 -j      generate C++ service proxies and objects that share a soap struct\n\
 -k      generate data structure walkers (experimental)\n\
@@ -186,144 +191,156 @@ main(int argc, char **argv)
 -w	don't generate WSDL and schema files\n\
 -x	don't generate sample XML message files\n\
 -y	include C/C++ type access information in sample XML messages\n\
--z1	generate deprecated old-style C++ service proxies and objects\n\
+-z1	compatibility: generate old-style C++ service proxies and objects\n\
+-z2	compatibility with 2.7.x: omit XML output for NULL pointers\n\
 infile	header file to parse (or stdin)\n\
 \n");
-						exit(0);
-					case 'I':
-						a++;
-						g = 0;
-						s = NULL;
-						if (*a)
-							s = a;
-						else if (i < argc && argv[++i])
-							s = argv[i];
-						else
-							execerror("Option -I requires an import path");
-						if (importpath && s)
-						{	char *t	= emalloc(strlen(importpath) + strlen(s) + 2);
-							strcpy(t, importpath);
-							strcat(t, SOAP_PATHSEP);
-							strcat(t, s);
-							importpath = t;
-						}
-						else
-							importpath = s;
-						break;
-					case 'i':
-						iflag = 1;
-						break;
-					case 'j':
-						jflag = 1;
-						break;
-					case 'k':
-						kflag = 1;
-						break;
-					case 'm':
-						mflag = 1;
-						break;
-					case 'n':
-						nflag = 1;
-						break;
-					case 'l':
-						lflag = 1;
-						break;
-					case 'L':
-						Lflag = 1;
-						break;
-					case 's':
-						sflag = 1;
-						break;
-					case 'S':
-						Sflag = 1;
-						if (Cflag)
-            					  fprintf(stderr, "soapcpp2: using both options -C and -S omits client/server code\n");
-						break;
-					case 'T':
-						Tflag = 1;
-						break;
-					case 't':
-						tflag = 1;
-						break;
-					case 'u':
-						uflag = 1;
-						break;
-					case 'w':
-						wflag = 1;
-						break;
-					case 'x':
-						xflag = 1;
-						break;
-					case 'y':
-						yflag = 1;
-						break;
-					case 'p':
-						a++;
-						g = 0;
-						if (*a)
-							prefix = ns_cname(a, NULL);
-						else if (i < argc && argv[++i])
-							prefix = ns_cname(argv[i], NULL);
-						else
-							execerror("Option -p requires an output file name prefix");
-						break;
-					case 'Q':
-						Qflag = 1;
-						/* fall through */
-					case 'q':
-						a++;
-						g = 0;
-						if (*a)
-							namespaceid = ns_cname(a, NULL);
-						else if (i < argc && argv[++i])
-							namespaceid = ns_cname(argv[i], NULL);
-						else
-							execerror("Option -q requires a namespace name");
-						break;
-					case '0':
-						vflag = -1;
-						break;
-					case '1':
-						vflag = 1;
-						envURI = "http://schemas.xmlsoap.org/soap/envelope/";
-						encURI = "http://schemas.xmlsoap.org/soap/encoding/";
-						break;
-					case '2':
-						vflag = 2;
-						envURI = "http://www.w3.org/2003/05/soap-envelope";
-						encURI = "http://www.w3.org/2003/05/soap-encoding";
-						rpcURI = "http://www.w3.org/2003/05/soap-rpc";
-						break;
-					case 'v':
-						stop_flag = 1;
-						break;
-					case 'z':
-						a++;
-						g = 0;
-						if (*a)
-							zflag = *a - '0';
-						else if (i < argc && argv[++i])
-							zflag = *argv[i] - '0';
-						else
-							execerror("Option -z requires a digit");
-						break;
-					default:
-            					fprintf(stderr, "soapcpp2: Unknown option %s\n", a);
-            					exit(1);
-				}
-		}
-		else if (!(yyin = fopen(argv[i], "r")))
-		{	sprintf(errbuf, "Cannot open file \"%s\" for reading", argv[i]);
-			execerror(errbuf);
-		}
-		else
-			strcpy(filename, argv[i]);
+	    exit(0);
+	  case 'I':
+	    a++;
+	    g = 0;
+	    s = NULL;
+	    if (*a)
+	      s = a;
+	    else if (i < argc && argv[++i])
+	      s = argv[i];
+	    else
+	      execerror("Option -I requires an import path");
+	    if (importpath && s)
+	    {
+	      char *t	= emalloc(strlen(importpath) + strlen(s) + 2);
+	      strcpy(t, importpath);
+	      strcat(t, SOAP_PATHSEP);
+	      strcat(t, s);
+	      importpath = t;
+	    }
+	    else
+	      importpath = s;
+	    break;
+	  case 'i':
+	    iflag = 1;
+	    break;
+	  case 'j':
+	    jflag = 1;
+	    break;
+	  case 'k':
+	    kflag = 1;
+	    break;
+	  case 'm':
+	    mflag = 1;
+	    break;
+	  case 'n':
+	    nflag = 1;
+	    break;
+	  case 'l':
+	    lflag = 1;
+	    break;
+	  case 'L':
+	    Lflag = 1;
+	    break;
+	  case 's':
+	    sflag = 1;
+	    break;
+	  case 'S':
+	    Sflag = 1;
+	    if (Cflag)
+	      fprintf(stderr, "soapcpp2: using both options -C and -S omits client/server code\n");
+	    break;
+	  case 'T':
+	    Tflag = 1;
+	    break;
+	  case 't':
+	    tflag = 1;
+	    break;
+	  case 'u':
+	    uflag = 1;
+	    break;
+	  case 'w':
+	    wflag = 1;
+	    break;
+	  case 'x':
+	    xflag = 1;
+	    break;
+	  case 'y':
+	    yflag = 1;
+	    break;
+	  case 'p':
+	    a++;
+	    g = 0;
+	    if (*a)
+	      prefix = ns_cname(a, NULL);
+	    else if (i < argc && argv[++i])
+	      prefix = ns_cname(argv[i], NULL);
+	    else
+	      execerror("Option -p requires an output file name prefix");
+	    break;
+	  case 'Q':
+	    Qflag = 1;
+	    /* fall through */
+	  case 'q':
+	    a++;
+	    g = 0;
+	    if (*a)
+	      namespaceid = ns_cname(a, NULL);
+	    else if (i < argc && argv[++i])
+	      namespaceid = ns_cname(argv[i], NULL);
+	    else
+	      execerror("Option -q requires a namespace name");
+	    break;
+	  case '0':
+	    vflag = -1;
+	    break;
+	  case '1':
+	    vflag = 1;
+	    envURI = "http://schemas.xmlsoap.org/soap/envelope/";
+	    encURI = "http://schemas.xmlsoap.org/soap/encoding/";
+	    break;
+	  case '2':
+	    vflag = 2;
+	    envURI = "http://www.w3.org/2003/05/soap-envelope";
+	    encURI = "http://www.w3.org/2003/05/soap-encoding";
+	    rpcURI = "http://www.w3.org/2003/05/soap-rpc";
+	    break;
+	  case 'v':
+	    stop_flag = 1;
+	    break;
+	  case 'z':
+	    a++;
+	    g = 0;
+	    if (*a)
+	      zflag = *a - '0';
+	    else if (i < argc && argv[++i])
+	      zflag = *argv[i] - '0';
+	    else
+	      execerror("Option -z requires a digit");
+	    break;
+	  default:
+	    fprintf(stderr, "soapcpp2: Unknown option %s\n", a);
+	    exit(1);
 	}
-	fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release "VERSION"\n**  Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool is released under one of the following licenses:\n**  GPL or the commercial license by Genivia Inc.\n\n");
-	if (stop_flag)
-	  exit(0);
-	init();
-	if (yyparse())
-		synerror("skipping the remaining part of the input");
-	return errstat();
+    }
+    else if (!(yyin = fopen(argv[i], "r")))
+    {
+      sprintf(errbuf, "Cannot open file \"%s\" for reading", argv[i]);
+      execerror(errbuf);
+    }
+    else
+      strcpy(filename, argv[i]);
+  }
+  if (importpath && defimportpath)
+  { char *t = emalloc(strlen(importpath) + strlen(defimportpath) + 2);
+    strcpy(t, importpath);
+    strcat(t, SOAP_PATHSEP);
+    strcat(t, defimportpath);
+    importpath = t;
+  }
+  else if (!importpath)
+    importpath = defimportpath;
+  fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release " VERSION "\n**  Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool is released under one of the following licenses:\n**  GPL or the commercial license by Genivia Inc.\n\n");
+  if (stop_flag)
+    exit(0);
+  init();
+  if (yyparse())
+    synerror("skipping the remaining part of the input");
+  return errstat();
 }

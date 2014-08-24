@@ -202,7 +202,7 @@ the lifetime of the packet. Multicast datagrams are sent with a default value
 of 1, to prevent them to be forwarded beyond the local network. This parameter
 can be set between 1 to 255.
 
-To send a Bye message by to leave a network:
+To send a Bye message to leave a network:
 
 @code
 soap_wsdd_Bye(soap,

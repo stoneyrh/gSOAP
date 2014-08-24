@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.3"/>
-<title>gSOAP WS-ReliableMessaging: /Users/engelen/Projects/gsoap/plugin/wsrmapi.c File Reference</title>
+<title>gSOAP WS-ReliableMessaging: wsrmapi.c File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -43,7 +43,7 @@
   </div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_9e51036813d6151dfecc72d5fa7c02b3.html">Users</a></li><li class="navelem"><a class="el" href="dir_0a0f8ba924895dca815c9251321b2ed8.html">engelen</a></li><li class="navelem"><a class="el" href="dir_45c1c16bdd42e9dbd43fb2ef24aa72df.html">Projects</a></li><li class="navelem"><a class="el" href="dir_40beb50dd19302fde1e1a9e8fffc3ac2.html">gsoap</a></li><li class="navelem"><a class="el" href="dir_7402d416b5a0ce7505d01fe0165c56d6.html">plugin</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_b4c3aec6cd8f28418150dce663061cfa.html">plugin</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -58,9 +58,9 @@
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for wsrmapi.c:</div>
 <div class="dyncontent">
-<div class="center"><img src="wsrmapi_8c__incl.png" border="0" usemap="#_2_users_2engelen_2_projects_2gsoap_2plugin_2wsrmapi_8c" alt=""/></div>
-<map name="_2_users_2engelen_2_projects_2gsoap_2plugin_2wsrmapi_8c" id="_2_users_2engelen_2_projects_2gsoap_2plugin_2wsrmapi_8c">
-<area shape="rect" id="node3" href="wsrmapi_8h.html" title="wsrmapi.h" alt="" coords="100,99,181,127"/><area shape="rect" id="node5" href="wsaapi_8h.html" title="wsaapi.h" alt="" coords="4,177,77,205"/></map>
+<div class="center"><img src="wsrmapi_8c__incl.png" border="0" usemap="#wsrmapi_8c" alt=""/></div>
+<map name="wsrmapi_8c" id="wsrmapi_8c">
+<area shape="rect" id="node3" href="wsrmapi_8h.html" title="wsrmapi.h" alt="" coords="100,83,181,111"/><area shape="rect" id="node5" href="wsaapi_8h.html" title="wsaapi.h" alt="" coords="4,161,77,189"/></map>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -104,9 +104,21 @@ Functions</h2></td></tr>
 <tr class="memitem:a52fd48a4b0e18498c7a7b64fd9f97c91"><td class="memItemLeft" align="right" valign="top">static const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a52fd48a4b0e18498c7a7b64fd9f97c91">soap_wsrm_seq_newid</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data)</td></tr>
 <tr class="memdesc:a52fd48a4b0e18498c7a7b64fd9f97c91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to generate a new sequence identifier.  <a href="#a52fd48a4b0e18498c7a7b64fd9f97c91"></a><br/></td></tr>
 <tr class="separator:a52fd48a4b0e18498c7a7b64fd9f97c91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd6aaf27bcf86fd232d2fdf5798e24fa"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#abd6aaf27bcf86fd232d2fdf5798e24fa">soap_wsrm_seq_insert_data</a> (const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq)</td></tr>
+<tr class="memdesc:abd6aaf27bcf86fd232d2fdf5798e24fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to insert seq id in hash table for fast lookup.  <a href="#abd6aaf27bcf86fd232d2fdf5798e24fa"></a><br/></td></tr>
+<tr class="separator:abd6aaf27bcf86fd232d2fdf5798e24fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ec39da76cdbde5168f215858356c823"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a3ec39da76cdbde5168f215858356c823">soap_wsrm_seq_delete_data</a> (const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq)</td></tr>
+<tr class="memdesc:a3ec39da76cdbde5168f215858356c823"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to delete seq id from hash table.  <a href="#a3ec39da76cdbde5168f215858356c823"></a><br/></td></tr>
+<tr class="separator:a3ec39da76cdbde5168f215858356c823"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a415c858b5e440becfed86f3055e0aaf2"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a415c858b5e440becfed86f3055e0aaf2">soap_wsrm_seq_lookup_data</a> (const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data, const char *id)</td></tr>
 <tr class="memdesc:a415c858b5e440becfed86f3055e0aaf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to look up sequence given its id.  <a href="#a415c858b5e440becfed86f3055e0aaf2"></a><br/></td></tr>
 <tr class="separator:a415c858b5e440becfed86f3055e0aaf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adccc7ad4fcd14db8a19ecc969902a964"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#adccc7ad4fcd14db8a19ecc969902a964">soap_wsrm_seq_insert_ack</a> (const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq)</td></tr>
+<tr class="memdesc:adccc7ad4fcd14db8a19ecc969902a964"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to insert acksid for fast lookup.  <a href="#adccc7ad4fcd14db8a19ecc969902a964"></a><br/></td></tr>
+<tr class="separator:adccc7ad4fcd14db8a19ecc969902a964"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace9220f1e5b55a931187f2f10c3b5e95"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#ace9220f1e5b55a931187f2f10c3b5e95">soap_wsrm_seq_delete_ack</a> (const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq)</td></tr>
+<tr class="memdesc:ace9220f1e5b55a931187f2f10c3b5e95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to delete acksid for fast lookup.  <a href="#ace9220f1e5b55a931187f2f10c3b5e95"></a><br/></td></tr>
+<tr class="separator:ace9220f1e5b55a931187f2f10c3b5e95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8fd48312ea83f82957725d6080a17ac"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#ae8fd48312ea83f82957725d6080a17ac">soap_wsrm_seq_lookup_ack</a> (const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *data, const char *id)</td></tr>
 <tr class="memdesc:ae8fd48312ea83f82957725d6080a17ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to look up sequence given its acksid.  <a href="#ae8fd48312ea83f82957725d6080a17ac"></a><br/></td></tr>
 <tr class="separator:ae8fd48312ea83f82957725d6080a17ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -123,13 +135,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:a0438af9292fd010392709375126346ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to insert a message number in the sequence state. Updates the sequence ranges.  <a href="#a0438af9292fd010392709375126346ca"></a><br/></td></tr>
 <tr class="separator:a0438af9292fd010392709375126346ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae505bc4b6468b034dddc6d5562d5d564"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#ae505bc4b6468b034dddc6d5562d5d564">soap_wsrm_num_size</a> (const struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq)</td></tr>
-<tr class="memdesc:ae505bc4b6468b034dddc6d5562d5d564"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function returns the number of message ranges in a sequence state.  <a href="#ae505bc4b6468b034dddc6d5562d5d564"></a><br/></td></tr>
+<tr class="memdesc:ae505bc4b6468b034dddc6d5562d5d564"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function returns the number of message ranges of the successfully received messages in a sequence state.  <a href="#ae505bc4b6468b034dddc6d5562d5d564"></a><br/></td></tr>
 <tr class="separator:ae505bc4b6468b034dddc6d5562d5d564"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab21e11870cb50f0a06b8f3b4bc4cf2ef"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#ab21e11870cb50f0a06b8f3b4bc4cf2ef">soap_wsrm_num_free</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq)</td></tr>
 <tr class="memdesc:ab21e11870cb50f0a06b8f3b4bc4cf2ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to deallocate all message number ranges from a sequence state.  <a href="#ab21e11870cb50f0a06b8f3b4bc4cf2ef"></a><br/></td></tr>
 <tr class="separator:ab21e11870cb50f0a06b8f3b4bc4cf2ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a259f8b53be93534e90ccc56a46d76c02"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structsoap__wsrm__message.html">soap_wsrm_message</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a259f8b53be93534e90ccc56a46d76c02">soap_wsrm_msg_new</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *seq, ULONG64 num)</td></tr>
-<tr class="memdesc:a259f8b53be93534e90ccc56a46d76c02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to allocate a new message for a sequence sequence state.  <a href="#a259f8b53be93534e90ccc56a46d76c02"></a><br/></td></tr>
+<tr class="memdesc:a259f8b53be93534e90ccc56a46d76c02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to allocate a new message in a sequence, updates message count seq-&gt;num.  <a href="#a259f8b53be93534e90ccc56a46d76c02"></a><br/></td></tr>
 <tr class="separator:a259f8b53be93534e90ccc56a46d76c02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e3f1f0d75b70c9ba5df7ec5935037c7"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a0e3f1f0d75b70c9ba5df7ec5935037c7">soap_wsrm_msg_free</a> (struct soap *soap, struct <a class="el" href="structsoap__wsrm__message.html">soap_wsrm_message</a> *p)</td></tr>
 <tr class="memdesc:a0e3f1f0d75b70c9ba5df7ec5935037c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to deallocate all cached message content from a sequence state.  <a href="#a0e3f1f0d75b70c9ba5df7ec5935037c7"></a><br/></td></tr>
@@ -171,7 +183,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:afb61518a4742df0e441dd100afd73693"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends acknowledgements for all open sessions to all peers. Must set send and recv timeouts to prevent blocking.  <a href="#afb61518a4742df0e441dd100afd73693"></a><br/></td></tr>
 <tr class="separator:afb61518a4742df0e441dd100afd73693"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3fc1849fe2ecca83d6a5c95c314ecd3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#ac3fc1849fe2ecca83d6a5c95c314ecd3">soap_wsrm_acknowledgement</a> (struct soap *soap, <a class="el" href="wsrmapi_8h.html#a881daeb2267f7765aeb13c1cf0d60c74">soap_wsrm_sequence_handle</a> seq, const char *wsa_id)</td></tr>
-<tr class="memdesc:ac3fc1849fe2ecca83d6a5c95c314ecd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends acknowledgements.  <a href="#ac3fc1849fe2ecca83d6a5c95c314ecd3"></a><br/></td></tr>
+<tr class="memdesc:ac3fc1849fe2ecca83d6a5c95c314ecd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends acknowledgements for all message sequences that require an acknowledgement (ack requested by peer)  <a href="#ac3fc1849fe2ecca83d6a5c95c314ecd3"></a><br/></td></tr>
 <tr class="separator:ac3fc1849fe2ecca83d6a5c95c314ecd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af293ea99286ff93a4319430e94ec3627"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#af293ea99286ff93a4319430e94ec3627">soap_wsrm_non_acknowledgement</a> (struct soap *soap, <a class="el" href="wsrmapi_8h.html#a881daeb2267f7765aeb13c1cf0d60c74">soap_wsrm_sequence_handle</a> seq, ULONG64 nack)</td></tr>
 <tr class="memdesc:af293ea99286ff93a4319430e94ec3627"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends nack non-acknowledgement for a message.  <a href="#af293ea99286ff93a4319430e94ec3627"></a><br/></td></tr>
@@ -296,6 +308,8 @@ Functions</h2></td></tr>
 <tr class="memitem:aa8456f4f9277bfebac9a03c41038d4a6"><td class="memItemLeft" align="right" valign="top">ULONG64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#aa8456f4f9277bfebac9a03c41038d4a6">soap_wsrm_lastnum</a> (const <a class="el" href="wsrmapi_8h.html#a881daeb2267f7765aeb13c1cf0d60c74">soap_wsrm_sequence_handle</a> seq)</td></tr>
 <tr class="memdesc:aa8456f4f9277bfebac9a03c41038d4a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the last message number upon sequence close or 0.  <a href="#aa8456f4f9277bfebac9a03c41038d4a6"></a><br/></td></tr>
 <tr class="separator:aa8456f4f9277bfebac9a03c41038d4a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16749a18a895060a7ad09c96fc9744bd"><td class="memItemLeft" align="right" valign="top">static unsigned short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8c.html#a16749a18a895060a7ad09c96fc9744bd">soap_wsrm_msb</a> (register ULONG64 n)</td></tr>
+<tr class="separator:a16749a18a895060a7ad09c96fc9744bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -696,7 +710,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Sends acknowledgements. </p>
+<p>Sends acknowledgements for all message sequences that require an acknowledgement (ack requested by peer) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
@@ -852,7 +866,7 @@ Variables</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramname">timeout</td><td>NoDiscard behavior: 0=discard messages out of sequence to immediately resume, &gt;0 wait (in seconds) until message sequence has resumed while sending Nacks every second to indicate messages are required to continue the flow of messages, &lt;0 wait (in ms) until message sequence has resumed, send one nack when timeout occurred. </td></tr>
+    <tr><td class="paramname">timeout</td><td>NoDiscard behavior: 0=discard messages out of sequence to immediately resume, &gt;0 wait (in seconds) until message sequence has resumed while sending Nacks every second to indicate messages are required to continue the flow of messages, &lt;0 wait (in microseconds) until message sequence has resumed, send one nack when timeout occurred. </td></tr>
   </table>
   </dd>
 </dl>
@@ -992,7 +1006,7 @@ Variables</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramname">timeout</td><td>NoDiscard behavior: 0=discard messages out of sequence to immediately resume, &gt;0 wait (in seconds) until message sequence has resumed while sending Nacks every second to indicate messages are required to continue the flow of messages, &lt;0 wait (in ms) until message sequence has resumed, send one nack when timeout occurred. </td></tr>
+    <tr><td class="paramname">timeout</td><td>NoDiscard behavior: 0=discard messages out of sequence to immediately resume, &gt;0 wait (in seconds) until message sequence has resumed while sending Nacks every second to indicate messages are required to continue the flow of messages, &lt;0 wait (in microseconds) until message sequence has resumed, send one nack when timeout occurred. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1042,7 +1056,7 @@ Variables</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramname">timeout</td><td>NoDiscard behavior: 0=discard messages out of sequence to immediately resume, &gt;0 wait (in seconds) until message sequence has resumed while sending Nacks every second to indicate messages are required to continue the flow of messages, &lt;0 wait (in ms) until message sequence has resumed, send one nack when timeout occurred. </td></tr>
+    <tr><td class="paramname">timeout</td><td>NoDiscard behavior: 0=discard messages out of sequence to immediately resume, &gt;0 wait (in seconds) until message sequence has resumed while sending Nacks every second to indicate messages are required to continue the flow of messages, &lt;0 wait (in microseconds) until message sequence has resumed, send one nack when timeout occurred. </td></tr>
     <tr><td class="paramname">flag</td><td>0=no response, 1=send empty response </td></tr>
   </table>
   </dd>
@@ -1717,6 +1731,30 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a16749a18a895060a7ad09c96fc9744bd"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static unsigned short soap_wsrm_msb </td>
+          <td>(</td>
+          <td class="paramtype">register ULONG64&#160;</td>
+          <td class="paramname"><em>n</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="ab9a66b74f5a83ccd622d21761eee2cd8"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1856,16 +1894,16 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Internal function to allocate a new message for a sequence sequence state. </p>
+<p>Internal function to allocate a new message in a sequence, updates message count seq-&gt;num. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramname">seq</td><td>sequence pointer </td></tr>
-    <tr><td class="paramname">num</td><td>message num </td></tr>
+    <tr><td class="paramname">num</td><td>message num (produces error when zero) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>pointer to msg </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>pointer to message struct or NULL when error </dd></dl>
 
 </div>
 </div>
@@ -2154,7 +2192,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Internal function returns the number of message ranges in a sequence state. </p>
+<p>Internal function returns the number of message ranges of the successfully received messages in a sequence state. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">seq</td><td>pointer to sequence </td></tr>
@@ -2274,7 +2312,7 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or error code </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or an error code when one or more peers fault (the last error code is returned) </dd></dl>
 
 </div>
 </div>
@@ -3053,6 +3091,92 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ace9220f1e5b55a931187f2f10c3b5e95"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void soap_wsrm_seq_delete_ack </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td>
+          <td class="paramname"><em>seq</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal function to delete acksid for fast lookup. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">data</td><td>plugin </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">seq</td><td>sequence </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a3ec39da76cdbde5168f215858356c823"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void soap_wsrm_seq_delete_data </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td>
+          <td class="paramname"><em>seq</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal function to delete seq id from hash table. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">data</td><td>plugin </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">seq</td><td>sequence </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a21c32d0aaadf26d86170098a890c0e54"></a>
 <div class="memitem">
 <div class="memproto">
@@ -3129,6 +3253,92 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>sequence or NULL </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="adccc7ad4fcd14db8a19ecc969902a964"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void soap_wsrm_seq_insert_ack </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td>
+          <td class="paramname"><em>seq</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal function to insert acksid for fast lookup. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">data</td><td>plugin </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">seq</td><td>sequence </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="abd6aaf27bcf86fd232d2fdf5798e24fa"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void soap_wsrm_seq_insert_data </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structsoap__wsrm__data.html">soap_wsrm_data</a> *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structsoap__wsrm__sequence.html">soap_wsrm_sequence</a> *&#160;</td>
+          <td class="paramname"><em>seq</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal function to insert seq id in hash table for fast lookup. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">data</td><td>plugin </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">seq</td><td>sequence </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -3631,7 +3841,7 @@ Variables</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Dec 1 2013 14:39:21 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Aug 24 2014 10:18:15 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

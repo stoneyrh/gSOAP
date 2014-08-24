@@ -669,7 +669,7 @@ farg	: tspec ptrs arg arrayck occurs init
 			}
 	;
 arg	: /* empty */	{ if (sp->table->level != PARAM)
-			    $$ = gensymidx("param", (int)++sp->val);
+				$$ = gensymidx("param", (int)++sp->val);
 			  else if (eflag)
 				$$ = gensymidx("_param", (int)++sp->val);
 			  else

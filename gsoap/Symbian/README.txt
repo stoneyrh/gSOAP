@@ -1,5 +1,12 @@
 This directory contains instructions and an example application for Symbian.
 
+NOTICE:
+
+THIS IS AN OBSOLETE PART OF THE GSOAP PACKAGE. NO WARRANTIES (IMPLIED OR
+OTHERWISE) OR GUARANTEES ON THE FUNCTIONALITY OF THE SOFTWARE ARE GIVEN.
+
+INSTRUCTIONS:
+
 The interop_all.h gSOAP header file defines the SOAP 1.1 RPC interop round 2
 A, B, and C test services.
 

@@ -80,11 +80,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 // Set to the service URI:
 const char *serverURI = "http://localhost:8000";
-//const char *serverURI = "http://192.168.2.2:8000/ServiceModelSamples/service";
+// const char *serverURI = "http://192.168.2.2:8000/ServiceModelSamples/service";
 
 // Set to the client callback URI and port:
 const char *clientURI = "http://localhost:8001";
-//const char *clientURI = "http://10.0.1.8:8001";
+// const char *clientURI = "http://10.0.1.3:8001";
 int clientPort = 8001;
 
 #include <sstream>
@@ -303,7 +303,7 @@ int Client::run()
     return soap->error;
   }
 
-  for (retry = 10; retry; retry--)
+  for (retry = 30; retry; retry--)
   {
     // Receive more messages when last not yet received
     if (soap_wsrm_lastnum(seq) == 0)
@@ -346,6 +346,8 @@ int Client::run()
 #ifdef CB_THREAD
 
   soap_wsrm_dump(soap, stdout);
+
+  printf("\n**** Waiting for Callback Server to Terminate\n");
 
 #endif
 
@@ -417,7 +419,7 @@ void *callback_server(void *ctx)
   WSDualHttpBinding_USCOREICalculatorDuplexService *callback = (WSDualHttpBinding_USCOREICalculatorDuplexService*)ctx;
   THREAD_TYPE tid;
 
-  callback->soap->accept_timeout = 10; /* server quits after 10 seconds of inactivity */
+  callback->soap->accept_timeout = 30; /* server quits after 30 seconds of inactivity */
 
   printf("\n**** Callback Server Running\n");
 

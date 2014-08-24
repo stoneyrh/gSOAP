@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.17 User Guide</title>
+<title>gSOAP 2.8.18 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.17 User Guide </h1>
+<h1 align="center">gSOAP 2.8.18 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Dec  1, 2013
+<h3 align="center">Aug 24, 2014
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -721,9 +721,9 @@ in the gSOAP package.
 <div class="p"><!----></div>
 Developing a service application is easy too. We will use CGI here because it
 is a simple mechanism. This is not the preferred deployment mechanism. Because
-CGI is slow and stateless, we recommend the development of a stand-alone gSOAP
-HTTP/HTTPS server (see comments at the end of this section) or the use of
-Apache module or IIS (included in the gSOAP package under
+CGI is slow and stateless. Faster services can be developed as a stand-alone
+gSOAP HTTP/HTTPS server (but see comments at the end of this section) or, as
+preferred, the use of Apache module or IIS (included in the gSOAP package under
 <i>gsoap/mod_gsoap</i> with instructions).
 
 <div class="p"><!----></div>
@@ -868,10 +868,13 @@ To run the server as a stand-alone iterative (non-multithreaded) server on port 
 <div class="p"><!----></div>
 To implement threaded services, please see Section&nbsp;<a href="#sec:mt">7.2.4</a>. These
 stand-alone Web Services that handle multiple SOAP requests by spawning a
-thread for each request. Thread pooling is also an option.
+thread for each request. Thread pooling is also an option. The use of Apache
+and IIS modules to deploy gSOAP services is preferred to ensure load balancing, access control, tracing, and so on.
 
 <div class="p"><!----></div>
-For more information on server-side service classes, see Section&nbsp;<a href="#sec:object">7.2.7</a>. For more information on client-side proxy classes, see Section&nbsp;<a href="#sec:proxy">7.1.4</a>.
+For more information on server-side service classes, see
+Section&nbsp;<a href="#sec:object">7.2.7</a>. For more information on client-side proxy classes,
+see Section&nbsp;<a href="#sec:proxy">7.1.4</a>.
 
 <div class="p"><!----></div>
      <h3><a name="tth_sEc1.4">
@@ -2739,9 +2742,12 @@ tab (the project file needs to be selected in the file view) and add
 </a>
 
 <div class="p"><!----></div>
-The deployment of a Web service as a CGI application is an easy means to provide your service on the Internet.
-gSOAP services can also run as stand-alone services on any port by utilizing the built-in HTTP and TCP/IP stacks.
-The stand-alone services can be run on port 80 thereby providing Web server capabilities restricted to SOAP RPC.
+The deployment of a Web service as a CGI application is an easy means to
+provide your service on the Internet. However, the performance of CGI is not
+great.  Also, gSOAP services can be run as stand-alone services on any port by
+utilizing the built-in HTTP and TCP/IP stacks.  However, the preferred
+mechanism to deploy a service is through an Apache module or IIS module. These
+servers and modules are designed for server load balancing and access control.
 
 <div class="p"><!----></div>
 To create a stand-alone service, only the <i>main</i> routine of the service needs to be modified as follows.  Instead of just calling the
@@ -2810,8 +2816,8 @@ See Section&nbsp;<a href="#sec:memory">9.13</a> for more details on memory manag
 <div class="p"><!----></div>
 A client application connects to this stand-alone service with the endpoint
 <i>machine.genivia.com:18083</i>.
-A client may use the <i>http://</i> prefix. When absent, no HTTP header is sent and no HTTP-based information will be communicated
-to the service.
+A client may use the <i>http://</i> prefix. When absent, no HTTP header is sent
+and no HTTP-based information will be communicated to the service.
 
 <div class="p"><!----></div>
 		      <h4><a name="tth_sEc7.2.4">
@@ -2819,13 +2825,16 @@ to the service.
 </a>
 
 <div class="p"><!----></div>
-Multi-threading a Web Service is essential when the response times for handling requests by the service are (potentially) long or when keep-alive is enabled, see Section&nbsp;<a href="#sec:keepalive">19.11</a>.
-In case of long response times, the latencies introduced by the unrelated requests may become prohibitive for a successful
-deployment of a stand-alone service. When HTTP keep-alive is enabled, a client may not close the socket on time, thereby preventing other clients from connecting.
+Stand-alone multi-threading a Web Service is essential when the response times for handling requests by the service are (potentially) long or when keep-alive is enabled, see Section&nbsp;<a href="#sec:keepalive">19.11</a>.
+In case of long response times, the latencies introduced by the unrelated
+requests may become prohibitive for a successful deployment of a stand-alone
+service. When HTTP keep-alive is enabled, a client may not close the socket on
+time, thereby preventing other clients from connecting.
 
 <div class="p"><!----></div>
-gSOAP 2.0 and higher is thread safe and supports the implementation of multi-threaded stand-alone services in which
-a thread is used to handle a request.
+However, the preferred mechanism to deploy a service is through an Apache
+module or IIS module. These servers and modules are designed for server load
+balancing and access control.
 
 <div class="p"><!----></div>
 The following example illustrates the use of threads to improve the quality of service by handling new requests in separate threads:
@@ -3105,16 +3114,16 @@ pthread_cond_t queue_cv; <br />
 &nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;next; <br />
 &nbsp;&nbsp;&nbsp;pthread_mutex_lock(&amp;queue_cs); <br />
 &nbsp;&nbsp;&nbsp;next = tail + 1; <br />
-&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(next  &gt; = MAX_QUEUE) <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(next <tt>&gt;=</tt> MAX_QUEUE) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;next = 0; <br />
-&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(next == head) <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(next <tt>==</tt> head) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status = SOAP_EOM; <br />
 &nbsp;&nbsp;&nbsp;<b>else</b><br />
 &nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;queue[tail] = sock; <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tail = next; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pthread_cond_signal(&amp;queue_cv); <br />
 &nbsp;&nbsp;&nbsp;} <br />
-&nbsp;&nbsp;&nbsp;pthread_cond_signal(&amp;queue_cv); <br />
 &nbsp;&nbsp;&nbsp;pthread_mutex_unlock(&amp;queue_cs); <br />
 &nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;status; <br />
 } <br />
@@ -3122,10 +3131,10 @@ SOAP_SOCKET dequeue() <br />
 { <br />
 &nbsp;&nbsp;&nbsp;SOAP_SOCKET sock; <br />
 &nbsp;&nbsp;&nbsp;pthread_mutex_lock(&amp;queue_cs); <br />
-&nbsp;&nbsp;&nbsp;<b>while</b>&nbsp;(head == tail)
+&nbsp;&nbsp;&nbsp;<b>while</b>&nbsp;(head == tail) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pthread_cond_wait(&amp;queue_cv, &amp;queue_cs); <br />
 &nbsp;&nbsp;&nbsp;sock = queue[head++]; <br />
-&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(head  &gt; = MAX_QUEUE) <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(head <tt>&gt;=</tt> MAX_QUEUE) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;head = 0; <br />
 &nbsp;&nbsp;&nbsp;pthread_mutex_unlock(&amp;queue_cs); <br />
 &nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;sock; <br />
@@ -3141,7 +3150,13 @@ or POSIX calls.
 7.2.5</a>&nbsp;&nbsp;<font color="#0000FF">How to Pass Application Data to Service Methods</font></h4>
 
 <div class="p"><!----></div>
-The <i><b>void</b>&nbsp;*soap.user</i> field can be used to pass application data to service methods. This field should be set before the <i>soap_serve()</i> call. The service method can access this field to use the application-dependent data. The following example shows how a non-static database handle is initialized and passed to the service methods:
+The <i><b>void</b>&nbsp;*soap.user</i> field can be used to pass application data to
+service methods. This field should be set before the <i>soap_serve()</i> call.
+The service method can access this field to use the application-dependent data.
+The following example shows how a non-static database handle is initialized and
+passed to the service methods:
+
+<div class="p"><!----></div>
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 { ... <br />
 &nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;soap soap; <br />
@@ -3200,7 +3215,8 @@ The same client header file specification issues apply to the specification and 
 </a>
 
 <div class="p"><!----></div>
-Server object classes for C++ server applications are automatically generated by the gSOAP <i>soapcpp2</i> compiler.
+Server object classes for C++ server applications are automatically generated
+by the gSOAP <i>soapcpp2</i> compiler.
 
 <div class="p"><!----></div>
 There are two modes for generating classes. Use <i>soapcpp2</i> option <i>-i</i>
@@ -3208,7 +3224,11 @@ There are two modes for generating classes. Use <i>soapcpp2</i> option <i>-i</i>
 functions are the service methods.
 
 <div class="p"><!----></div>
-The older examples (without the use of <i>soapcpp2</i> option <i>-i</i> and <i>-j</i>) use a C-like approach with globally defined service methods, which is illustated here with a calculator example:
+The older examples (without the use of <i>soapcpp2</i> option <i>-i</i> and
+<i>-j</i>) use a C-like approach with globally defined service methods,
+which is illustated here with a calculator example:
+
+<div class="p"><!----></div>
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 // Content of file <tt>"calc.h"</tt>: <br />
 //gsoap ns service name: Calculator <br />
@@ -3855,9 +3875,10 @@ The supported facets are:
   &lt;xs:maxInclusive&#62; <br />
   &lt;xs:minExclusive&#62; <br />
   &lt;xs:maxExclusive&#62; <br />
-  &lt;xs:precision&#62;	&nbsp;&nbsp;&nbsp;<span class="roman">maps to float/double, content not validated yet</span> <br />
-  &lt;xs:scale&#62;		&nbsp;&nbsp;&nbsp;<span class="roman">maps to float/double, content not validated yet</span> <br />
-  &lt;xs:totalDigits&#62;	&nbsp;&nbsp;&nbsp;<span class="roman">content not automatically validated yet</span> <br />
+  &lt;xs:precision&#62;	&nbsp;&nbsp;&nbsp;<span class="roman">maps to float/double with C formatted output</span> <br />
+  &lt;xs:scale&#62;		&nbsp;&nbsp;&nbsp;<span class="roman">maps to float/double with C formatted output</span> <br />
+  &lt;xs:totalDigits&#62;	&nbsp;&nbsp;&nbsp;<span class="roman">maps to float/double with C formatted output</span> <br />
+  &lt;xs:fractionDigits&#62;	&nbsp;&nbsp;&nbsp;<span class="roman">maps to float/double with C formatted output</span> <br />
   &lt;xs:pattern&#62;		&nbsp;&nbsp;&nbsp;<span class="roman">content not automatically validated yet</span> <br />
   &lt;xs:union&#62;		&nbsp;&nbsp;&nbsp;<span class="roman">maps to string, content not validated yet</span>
 </td></tr></table><br></tt>
@@ -4966,6 +4987,7 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td align="left"><i>-z3</i>     </td><td align="left">compatibility with 2.7.16 to 2.8.7: qualify element/attribute references</td></tr>
 <tr><td align="left"><i>-z4</i>     </td><td align="left">compatibility up to 2.8.11: don't generate union structs in std::vector </td></tr>
 <tr><td align="left"><i>-z5</i>     </td><td align="left">compatibility up to 2.8.15 </td></tr>
+<tr><td align="left"><i>-z5</i>     </td><td align="left">compatibility up to 2.8.17 </td></tr>
 <tr><td align="left"><i>-_</i>	</td><td align="left">don't generate <i>_USCORE</i> (replace with UNICODE _x005f) </td></tr></table>
 
 </td></tr></table><br></span>
@@ -5213,7 +5235,7 @@ The <i>soapcpp2</i> source-to-source compiler supports the following command-lin
 <tr><td align="left"><font color="#FF0000"><b>Option</b></font> </td><td align="left"><font color="#FF0000"><b>Description</b></font> </td></tr>
 <tr><td align="left"><i>-1</i>	</td><td align="left">Generate SOAP 1.1 bindings </td></tr>
 <tr><td align="left"><i>-2</i>	</td><td align="left">Generate SOAP 1.2 bindings </td></tr>
-<tr><td align="left"><i>-0</i>	</td><td align="left">Remove SOAP bindings, use plain REST</td></tr>
+<tr><td align="left"><i>-0</i>	</td><td align="left">No SOAP bindings, use REST</td></tr>
 <tr><td align="left"><i>-C</i>	</td><td align="left">Generate client-side code only </td></tr>
 <tr><td align="left"><i>-S</i>	</td><td align="left">Generate server-side code only </td></tr>
 <tr><td align="left"><i>-T</i>	</td><td align="left">Generate server auto-test code </td></tr>
@@ -5245,7 +5267,8 @@ The <i>soapcpp2</i> source-to-source compiler supports the following command-lin
 <tr><td align="left"><i>-w</i>	</td><td align="left">Do not generate WSDL and schema files </td></tr>
 <tr><td align="left"><i>-x</i>	</td><td align="left">Do not generate sample XML message files </td></tr>
 <tr><td align="left"><i>-y</i>	</td><td align="left">include C/C++ type access information in sample XML messages </td></tr>
-<tr><td align="left"><i>-z1</i>	</td><td align="left">generate deprecated old-style C++ service proxies and objects </td></tr></table>
+<tr><td align="left"><i>-z1</i>	</td><td align="left">compatibility: generate old-style C++ service proxies and objects </td></tr>
+<tr><td align="left"><i>-z2</i>	</td><td align="left">compatibility with 2.7.x: omit XML output for NULL pointers </td></tr></table>
 
 </td></tr></table><br></span>
 For example
@@ -5630,7 +5653,7 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_FASTCGI</i>	</td><td align="left">enables FastCGI, see Sections&nbsp;<a href="#sec:fastcgi">19.31</a> </td></tr>
 <tr><td align="left"><i>WITH_GZIP</i>	</td><td align="left">enables gzip and deflate compression, see Section&nbsp;<a href="#sec:compression">19.27</a> </td></tr>
 <tr><td align="left"><i>WITH_ZLIB</i>	</td><td align="left">enables deflate compression only, see Section&nbsp;<a href="#sec:compression">19.27</a> </td></tr>
-<tr><td align="left"><i>WITH_FAST</i>	</td><td align="left">(obsolete) </td></tr>
+<tr><td align="left"><i>WITH_FAST</i>	</td><td align="left">use faster memory allocation for <i>WITH_LEAN</i>/<i>WITH_LEANER</i> </td></tr>
 <tr><td align="left"><i>WITH_NOIO</i>	</td><td align="left">eliminates need for file IO and BSD socket library, see Section&nbsp;<a href="#sec:noio">19.33</a> </td></tr>
 <tr><td align="left"><i>WITH_NOIDREF</i>	</td><td align="left">eliminates href/ref and id attributes to (de)serialize multi-ref data,</td></tr>
 <tr><td align="left"></td><td align="left">or alternatively use the <i>SOAP_XML_TREE</i> runtime flag </td></tr>
@@ -5814,6 +5837,55 @@ handling inbound messages are <i>SOAP_IO_KEEPALIVE</i>, <i>SOAP_ENC_SSL</i>
 improve interoperability with SOAP implementations that are not fully SOAP 1.1
 compliant.  However, a tree serialization will duplicate data when necessary
 and will crash the serializer for cyclic data structures.
+
+<div class="p"><!----></div>
+Additional run-time flags to control sockets. 
+
+<div class="p"><!----></div>
+Use the following selection of flags that are OS dependent to control sockets for send/sendto/recv/recvfrom operations:
+
+<div class="p"><!----></div>
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+
+<table>
+<tr><td align="left"><font color="#FF0000"><b>socket_flags</b></font> </td><td align="left"><font color="#FF0000"><b>Description</b></font> </td></tr>
+<tr><td align="left"><i>MSG_NOSIGNAL</i> </td><td align="left">disables sigpipe (check your OS, this is not portable) </td></tr>
+<tr><td align="left"><i>MSG_DONTROUTE</i> </td><td align="left">bypass routing, use direct interface </td></tr></table>
+
+</td></tr></table><br></span>
+
+<div class="p"><!----></div>
+Use the following selection of flags to set client-side socket connection flags (setsockopt):
+
+<div class="p"><!----></div>
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+
+<table>
+<tr><td align="left"><font color="#FF0000"><b>connect_flags</b></font> </td><td align="left"><font color="#FF0000"><b>Description</b></font> </td></tr>
+<tr><td align="left"><i>SO_NOSIGPIPE</i> </td><td align="left">disables sigpipe (check your OS, this is not portable) </td></tr>
+<tr><td align="left"><i>SO_DEBUG</i> </td><td align="left">turns on recording of debugging information in the underlying protocol modules </td></tr>
+<tr><td align="left"><i>SO_BROADCAST</i> </td><td align="left">permits sending of broadcast messages (e.g. with UDP) when permitted </td></tr>
+<tr><td align="left"><i>SO_LINGER</i> </td><td align="left">set <i>soap.linger_time</i> (set this value as needed) </td></tr></table>
+
+</td></tr></table><br></span>
+
+<div class="p"><!----></div>
+Use the following selection of flags to set server-side socket connection accept flags (setsockopt):
+
+<div class="p"><!----></div>
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+
+<table>
+<tr><td align="left"><font color="#FF0000"><b>accept_flags</b></font> </td><td align="left"><font color="#FF0000"><b>Description</b></font> </td></tr>
+<tr><td align="left"><i>SO_NOSIGPIPE</i> </td><td align="left">disables sigpipe (check your OS, this is not portable) </td></tr>
+<tr><td align="left"><i>SO_DEBUG</i> </td><td align="left">turns on recording of debugging information in the underlying protocol modules </td></tr>
+<tr><td align="left"><i>SO_REUSEADDR</i> </td><td align="left">reuse bind address immediately (prevents bind reject) </td></tr>
+<tr><td align="left"><i>SO_LINGER</i> </td><td align="left">set <i>soap.linger_time</i> (set this value as needed) </td></tr></table>
+
+</td></tr></table><br></span>
+
+<div class="p"><!----></div>
+For example, <i>soap.accept_flags = (SO_NOSIGPIPE  -  SO_LINGER)</i> disables sigpipe signals and set linger time value given by <i>soap.linger_time</i> (zero by default).
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc9.13">
@@ -7739,7 +7811,33 @@ soap.float_format = "%.4f"; // redefine
 which causes all floats to be encoded with four digits precision.
 
 <div class="p"><!----></div>
-<font color="#FF0000"><b>Caution</b></font>: The format strings are not automatically reset before or after SOAP communications. An error in the format string may result in the incorrect encoding of floating point values.
+<font color="#FF0000"><b>Caution</b></font>: The format strings are not automatically reset before or after
+SOAP communications. An error in the format string may result in the incorrect
+encoding of floating point values.
+
+<div class="p"><!----></div>
+A special case for C format string patterns is introduced in gSOAP 2.8.18. A
+C format string that is used as a pattern for a typedef float or double in the
+gSOAP header file is used to format the output of the floating point value in
+XML. For example:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>typedef</b>&nbsp;<b>float</b>&nbsp;time__ratio "%5.2f";
+</td></tr></table><br></i>
+This will output the float with 5 digits total and 2 digits after the decimal
+point.
+
+<div class="p"><!----></div>
+When <tt>xs:totalDigits</tt> and <tt>xs:fractionDigits</tt> are given in a XSD file,
+then also a C format string is produced to output floating point values with
+the proper precision and scale. For example:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
+&lt;simpleType name="ratio"&#62; <br />
+&nbsp;&nbsp;&nbsp;&lt;restriction base="xsd:float"&#62; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;totalDigits value="5"/&#62; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fractionDigits value="2"/&#62; <br />
+&nbsp;&nbsp;&nbsp;&lt;/restriction&#62; <br />
+&lt;/simpleType&#62;
+</td></tr></table><br></tt>
 
 <div class="p"><!----></div>
 		      <h4><a name="tth_sEc11.3.8">
@@ -9460,7 +9558,7 @@ Here is in example user-defined container template class:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(!start) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start = finish = <b>new</b>&nbsp;value_type[length = 4]; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>else</b>&nbsp;<b>if</b>&nbsp;(finish  &gt; = start + length) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>else</b>&nbsp;<b>if</b>&nbsp;(finish <tt>&gt;=</tt> start + length) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iterator i = start; <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iterator j = <b>new</b>&nbsp;value_type[2 * length]; <br />
@@ -10377,7 +10475,7 @@ to a block of data in memory.
 <tr><td align="left">This function adds a new attachment to the list of attachments, where <i>ptr</i> and <i>size</i> refer to the block of memory that holds the attachment data (except when DIME streaming callback handlers are used as described in Section&nbsp;<a href="#sec:DIMEstreaming">15.4</a>. The <i>type</i> string parameter is the MIME type of the data. The <i>id</i> string parameter is the content ID of the DIME attachment. The <i>option</i> string parameter holds optional text (gSOAP supports DIME options, but it can send only one) and <i>optype</i> is a user-defined option type (as per DIME option specification format). All parameter values are copied, except <i>ptr</i>.
 The value <i>SOAP_OK</i> is returned when the attachment was added. Otherwise a gSOAP error code is returned.
 </td></tr>
-<tr><td align="left"><i><b>void</b>&nbsp;soap_clr_mime(<b>struct</b>&nbsp;soap *soap)</i> </td></tr>
+<tr><td align="left"><i><b>void</b>&nbsp;soap_clr_dime(<b>struct</b>&nbsp;soap *soap)</i> </td></tr>
 <tr><td align="left">Disables DIME attachments, unless the serialized SOAP message contains attachments for transmission.
 </td></tr></table>
 
@@ -11608,10 +11706,29 @@ This defines the following schema type in <i>time.xsd</i>:
 &lt;simpleType name="second"&#62; <br />
 &nbsp;&nbsp;&nbsp;&lt;restriction base="xsd:int"&#62; <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;pattern value="[1-5]?[0-9] - 60"/&#62; <br />
-&nbsp;&nbsp;&nbsp;&lt;/restriction base="xsd:int"/&#62; <br />
+&nbsp;&nbsp;&nbsp;&lt;/restriction&#62; <br />
 &lt;/simpleType&#62;
 </td></tr></table><br></tt>
 The pattern string MUST contain a valid regular expression.
+
+<div class="p"><!----></div>
+A special case for C format string patterns is introduced in gSOAP 2.8.18.
+When <tt>xs:totalDigits</tt> and <tt>xs:fractionDigits</tt> are given in a XSD file,
+then a C format string is produced to output floating point values with the
+proper precision and scale. For example:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
+&lt;simpleType name="ratio"&#62; <br />
+&nbsp;&nbsp;&nbsp;&lt;restriction base="xsd:float"&#62; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;totalDigits value="5"/&#62; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fractionDigits value="2"/&#62; <br />
+&nbsp;&nbsp;&nbsp;&lt;/restriction&#62; <br />
+&lt;/simpleType&#62;
+</td></tr></table><br></tt>
+produces:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>typedef</b>&nbsp;<b>float</b>&nbsp;time__ratio "%5.2f";
+</td></tr></table><br></i>
+The format string is used to format the output the floating point value in XML.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc17.3">
@@ -13147,7 +13264,7 @@ A fixed-size buffer to store the outbound message sent is not flexible to handle
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(m == 0) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m = 1024; <br />
 &nbsp;&nbsp;&nbsp;<b>else</b>&nbsp;<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>while</b>&nbsp;(k  &gt; = m) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>while</b>&nbsp;(k <tt>&gt;=</tt> m) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m *= 2; <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(m != h<tt>-&gt;</tt>max) <br />
 &nbsp;&nbsp;&nbsp;{ <br />
@@ -13493,7 +13610,7 @@ each thread handles the client connection:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit(1); <br />
 &nbsp;&nbsp;&nbsp;} <br />
 &nbsp;&nbsp;&nbsp;fprintf(stderr, <tt>"Socket&nbsp;connection&nbsp;successful&nbsp;%d\n"</tt>, m); <br />
-&nbsp;&nbsp;&nbsp;<b>for</b>&nbsp;(count = 0; count  &gt; = 0; count++) <br />
+&nbsp;&nbsp;&nbsp;<b>for</b>&nbsp;(count = 0; count <tt>&gt;=</tt> 0; count++) <br />
 &nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap.socket_flags = MSG_NOSIGNAL; // use this <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap.accept_flags = SO_NOSIGPIPE; // or this to prevent sigpipe <br />
@@ -13916,8 +14033,8 @@ The client-side flag <i>soap.connect_flags=SO_LINGER</i> is supported with value
 
 <div class="p"><!----></div>
 For example, to disable sigpipe signals on Unix/Linux platforms use: 
-<i>soap.socket_flags=MSG_NOSIGNAL</i> and/or
-<i>soap.connect_flags=SO_NOSIGPIPE</i> (i.e.&nbsp;client-side connect) depending
+<i>soap.socket_flags = MSG_NOSIGNAL</i> and/or
+<i>soap.connect_flags = SO_NOSIGPIPE</i> (i.e.&nbsp;client-side connect) depending
 on your platform.
 
 <div class="p"><!----></div>
@@ -14754,11 +14871,17 @@ When X-Forwarded-For headers are returned by the proxy, the header can be access
 </a>
 
 <div class="p"><!----></div>
-To enable FastCGI support, install FastCGI and compile <em>all</em> sources (including your application sources that use <i>stdsoap2.h</i>) with option <i>-DWITH_FASTCGI</i> or add
+To enable FastCGI support, install FastCGI and compile <em>all</em> sources (do
+not use <i>libgsoap</i> but compile <i>stdsoap2.c</i>) and your application
+sources with option <i>-DWITH_FASTCGI</i> or add
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 #define WITH_FASTCGI
 </td></tr></table><br></i>
-to <i>stdsoap2.h</i>.
+to <i>stdsoap2.h</i> and recompile the project code.
+
+<div class="p"><!----></div>
+<font color="#FF0000"><b>Caution</b></font>: Do not link against the <i>libgsoap</i> libraries as these are not
+suitable for FastCGI. Compile <i>stdsoap2.c</i> (or <i>stdsoap2.cpp</i>) instead.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc19.32">
@@ -14824,16 +14947,12 @@ non-essential features. The features that will be disabled are:
 <div class="p"><!----></div>
 </li>
 
-<li> No support for <i>LONG64</i>/<i>ULONG64</i> serialization (use <i><b>typedef</b>&nbsp;<b>long</b>&nbsp;xsd__long</i>)
-<div class="p"><!----></div>
-</li>
-
-<li> No support for <i>hexBinary</i> serialization (remap <i>hexBinary</i> to strings by adding a remap entry to typemap.dat)
+<li> No support for <i>hexBinary</i> XML attribute serialization (remap <i>hexBinary</i> to strings by adding a remap entry to typemap.dat)
 <div class="p"><!----></div>
 </li>
 </ul>
 Use <i>-DWITH_LEANER</i> to make the executable even smaller by removing DIME
-and MIME attachment handling, <i>wchar_t*</i> serialization, and support for XML DOM operations.
+and MIME attachment handling, <i>LONG64</i> (64 bit) serialization, <i>wchar_t*</i> serialization, and support for XML DOM operations.
 Note that DIME/MIME attachments are not essential to achieve
 SOAP/XML interoperability.  DIME attachments are a convenient way to exchange
 non-text-based (i.e.&nbsp;binary) content, but are not required for basic SOAP/XML
@@ -16083,5 +16202,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On  1 Dec 2013, 22:08.</small>
+version 4.00.<br />On 24 Aug 2014, 10:49.</small>
 </html>

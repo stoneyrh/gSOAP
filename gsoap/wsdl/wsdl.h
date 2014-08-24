@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -48,6 +48,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #import "gwsdl.h"
 #import "wsam.h"
 #import "wsp.h"
+#import "bpel.h"
 
 class wsdl__definitions;		// forward declaration
 
@@ -299,7 +300,7 @@ class wsdl__port			// ... and WSDL 2.0 endpoint
 	@xsd__QName			binding;
 	@xsd__anyURI			address;		// WSDL 2.0
 	@xsd__NMTOKEN			whttp__authenticationScheme; // WSDL 2.0
-	@xsd__NMTOKEN			whttp__authenticationRealm; // WSDL 2.0
+	@xsd__NMTOKEN			whttp__authenticationRealm;  // WSDL 2.0
 	xsd__string			documentation;		// <wsdl:documentation>?
 	wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
 	wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
@@ -335,15 +336,20 @@ class wsdl__definitions
 	@xsd__NMTOKEN			version;
 	std::vector<wsdl__import>	import;			// <wsdl:import>*
 	xsd__string			documentation;		// <wsdl:documentation>?
-	xsd__string			wsp__UsingPolicy;	// <wsp:UsingPolcy>?
-	std::vector<wsp__Policy>	wsp__Policy_;		// <wsp:Policy>*
 	wsdl__types			*types;			// <wsdl:types>?
 	std::vector<wsdl__message>	message;		// <wsdl:message>*
 	std::vector<wsdl__portType>	portType;		// <wsdl:portType>* WSDL 1.1
 	std::vector<wsdl__portType>	interface_;		// <wsdl:interface>* WSDL 2.0
 	std::vector<wsdl__binding>	binding;		// <wsdl:binding>*
 	std::vector<wsdl__service>	service;		// <wsdl:service>*
-	std::vector<gwsdl__portType>	gwsdl__portType_;	// <gwsdl:portType>* For the moment, we will hardcode this which makes it easier to access. WSDL 1.1 does not allow this to be extended anyway
+	xsd__string			wsp__UsingPolicy;	// <wsp:UsingPolcy>? WS-Policy 1.2/1.5
+	std::vector<wsp__Policy>	wsp__Policy_;		// <wsp:Policy>* WS-Policy 1.2/1.5
+	std::vector<plnk__tPartnerLinkType>
+					plnk__partnerLinkType;	// <plnk:partnerLinkType>* BPEL 2.0
+	std::vector<vprop__tProperty>	vprop__property;	// <vprop:property>* BPEL 2.0
+	std::vector<vprop__tPropertyAlias>
+					vprop__propertyAlias;	// <vprop:propertyAlias>* BPEL 2.0
+	std::vector<gwsdl__portType>	gwsdl__portType_;	// <gwsdl:portType>*
 	struct soap			*soap;
   private:
 	bool				soap12;
@@ -355,6 +361,7 @@ class wsdl__definitions
 	SetOfString			builtinAttributeSet;
   public:
 					wsdl__definitions();
+					wsdl__definitions(struct soap*);
 					wsdl__definitions(struct soap*, const char*, const char*);
 	virtual				~wsdl__definitions();
 	int				get(struct soap*);	// gSOAP getter is triggered after parsing
@@ -364,6 +371,7 @@ class wsdl__definitions
 	int				read(const char *cwd, const char*);
 	const char*			sourceLocation();
 	int				error();
+	bool				is_updated();
 	void				print_fault();
 	void				builtinType(const char*);
 	void				builtinTypes(const SetOfString&);

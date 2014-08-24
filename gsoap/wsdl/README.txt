@@ -177,6 +177,7 @@ COMMAND LINE OPTIONS
 -z3     compatibility with 2.7.16 to 2.8.7: qualify element/attribute references
 -z4     compatibility up to 2.8.11: don't generate union structs in std::vector
 -z5     compatibility up to 2.8.15
+-z5     compatibility up to 2.8.17
 -_      don't generate _USCORE (replace with UNICODE _x005f)
 infile.wsdl infile.xsd http://www... list of input sources (if none use stdin)
 

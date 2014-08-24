@@ -1,129 +1,108 @@
 libgsoapck___a-dom.o libgsoapck___a-dom.o: dom.cpp stdsoap2.h ../config.h \
-  /usr/include/stdlib.h /usr/include/machine/ansi.h \
-  /usr/include/ppc/ansi.h /usr/include/machine/types.h \
-  /usr/include/ppc/types.h /usr/include/sys/cdefs.h /usr/include/alloca.h \
-  /usr/include/stdio.h /usr/include/sys/types.h \
-  /usr/include/sys/appleapiopts.h /usr/include/machine/endian.h \
-  /usr/include/ppc/endian.h /usr/include/string.h /usr/include/ctype.h \
-  /usr/include/runetype.h /usr/include/limits.h \
-  /usr/include/gcc/darwin/3.3/machine/limits.h /usr/include/ppc/limits.h \
-  /usr/include/sys/syslimits.h /usr/include/gcc/darwin/3.3/c++/string \
-  /usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/c++config.h \
-  /usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/os_defines.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stringfwd.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/char_traits.h \
-  /usr/include/gcc/darwin/3.3/c++/cstring \
-  /usr/include/gcc/darwin/3.3/c++/cstddef /usr/include/stddef.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/fpos.h \
-  /usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/c++io.h \
-  /usr/include/gcc/darwin/3.3/c++/cstdio \
-  /usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/gthr.h \
-  /usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/gthr-default.h \
-  /usr/include/pthread.h /usr/include/pthread_impl.h /usr/include/errno.h \
-  /usr/include/sys/errno.h /usr/include/sched.h /usr/include/time.h \
-  /usr/include/unistd.h /usr/include/sys/unistd.h /usr/include/signal.h \
-  /usr/include/sys/signal.h /usr/include/machine/signal.h \
-  /usr/include/ppc/signal.h /usr/include/mach/mach_types.h \
-  /usr/include/gcc/darwin/3.3/stdint.h /usr/include/mach/host_info.h \
-  /usr/include/mach/vm_statistics.h /usr/include/mach/machine/vm_types.h \
-  /usr/include/mach/ppc/vm_types.h /usr/include/mach/machine.h \
-  /usr/include/mach/boolean.h /usr/include/mach/machine/boolean.h \
-  /usr/include/mach/ppc/boolean.h /usr/include/mach/time_value.h \
-  /usr/include/mach/host_notify.h /usr/include/mach/host_special_ports.h \
-  /usr/include/mach/memory_object_types.h /usr/include/mach/port.h \
-  /usr/include/mach/vm_types.h /usr/include/mach/exception_types.h \
-  /usr/include/mach/machine/exception.h /usr/include/mach/ppc/exception.h \
-  /usr/include/mach/thread_status.h \
-  /usr/include/mach/machine/thread_status.h \
-  /usr/include/mach/ppc/thread_status.h \
-  /usr/include/mach/machine/thread_state.h \
-  /usr/include/mach/ppc/thread_state.h /usr/include/mach/processor_info.h \
-  /usr/include/mach/machine/processor_info.h \
-  /usr/include/mach/ppc/processor_info.h /usr/include/mach/task_info.h \
-  /usr/include/mach/policy.h /usr/include/mach/task_policy.h \
-  /usr/include/mach/task_special_ports.h /usr/include/mach/thread_info.h \
-  /usr/include/mach/thread_policy.h \
-  /usr/include/mach/thread_special_ports.h \
-  /usr/include/mach/clock_types.h /usr/include/mach/vm_attributes.h \
-  /usr/include/mach/vm_inherit.h /usr/include/mach/vm_behavior.h \
-  /usr/include/mach/vm_prot.h /usr/include/mach/vm_sync.h \
-  /usr/include/mach/vm_region.h /usr/include/mach/kmod.h \
-  /usr/include/mach/kern_return.h /usr/include/mach/machine/kern_return.h \
-  /usr/include/mach/ppc/kern_return.h /usr/include/mach/std_types.h \
-  /usr/include/sys/time.h /usr/include/gcc/darwin/3.3/c++/cwchar \
-  /usr/include/gcc/darwin/3.3/c++/ctime /usr/include/wchar.h \
-  /usr/include/gcc/darwin/3.3/stdarg.h \
-  /usr/include/gcc/darwin/3.3/c++/memory \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_algobase.h \
-  /usr/include/gcc/darwin/3.3/c++/climits \
-  /usr/include/gcc/darwin/3.3/c++/cstdlib \
-  /usr/include/gcc/darwin/3.3/c++/new \
-  /usr/include/gcc/darwin/3.3/c++/exception \
-  /usr/include/gcc/darwin/3.3/c++/iosfwd \
-  /usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/c++locale.h \
-  /usr/include/gcc/darwin/3.3/c++/clocale /usr/include/locale.h \
-  /usr/include/gcc/darwin/3.3/c++/cctype \
-  /usr/include/gcc/darwin/3.3/c++/bits/functexcept.h \
-  /usr/include/gcc/darwin/3.3/c++/exception_defines.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_pair.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/type_traits.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_iterator_base_types.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_iterator_base_funcs.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/concept_check.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_iterator.h \
-  /usr/include/gcc/darwin/3.3/c++/debug/debug.h \
-  /usr/include/gcc/darwin/3.3/c++/debug/support.h \
-  /usr/include/gcc/darwin/3.3/c++/cassert \
-  /usr/include/gcc/darwin/3.3/assert.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_alloc.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_threads.h \
-  /usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/atomicity.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_construct.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_uninitialized.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_raw_storage_iter.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_function.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/basic_string.h \
-  /usr/include/gcc/darwin/3.3/c++/algorithm \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_algo.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_heap.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/stl_tempbuf.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/basic_string.tcc \
-  /usr/include/gcc/darwin/3.3/c++/iostream \
-  /usr/include/gcc/darwin/3.3/c++/ostream \
-  /usr/include/gcc/darwin/3.3/c++/ios \
-  /usr/include/gcc/darwin/3.3/c++/bits/localefwd.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/ios_base.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/locale_classes.h \
-  /usr/include/gcc/darwin/3.3/c++/streambuf \
-  /usr/include/gcc/darwin/3.3/c++/bits/streambuf.tcc \
-  /usr/include/gcc/darwin/3.3/c++/bits/basic_ios.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/streambuf_iterator.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/locale_facets.h \
-  /usr/include/gcc/darwin/3.3/c++/cwctype /usr/include/wctype.h \
-  /usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/ctype_base.h \
-  /usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/ctype_inline.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/codecvt.h \
-  /usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/codecvt_specializations.h \
-  /usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/time_members.h \
-  /usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/messages_members.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/basic_ios.tcc \
-  /usr/include/gcc/darwin/3.3/c++/bits/ostream.tcc \
-  /usr/include/gcc/darwin/3.3/c++/locale \
-  /usr/include/gcc/darwin/3.3/c++/bits/locale_facets.tcc \
-  /usr/include/gcc/darwin/3.3/c++/cerrno \
-  /usr/include/gcc/darwin/3.3/c++/cmath /usr/include/math.h \
-  /usr/include/architecture/ppc/math.h \
-  /usr/include/gcc/darwin/3.3/c++/bits/cmath.tcc \
-  /usr/include/gcc/darwin/3.3/c++/limits \
-  /usr/include/gcc/darwin/3.3/c++/typeinfo \
-  /usr/include/gcc/darwin/3.3/c++/istream \
-  /usr/include/gcc/darwin/3.3/c++/bits/istream.tcc \
+  /usr/include/stdlib.h /usr/include/Availability.h \
+  /usr/include/AvailabilityInternal.h /usr/include/_types.h \
+  /usr/include/sys/_types.h /usr/include/sys/cdefs.h \
+  /usr/include/machine/_types.h /usr/include/i386/_types.h \
+  /usr/include/sys/wait.h /usr/include/sys/signal.h \
+  /usr/include/sys/appleapiopts.h /usr/include/machine/signal.h \
+  /usr/include/i386/signal.h /usr/include/i386/_structs.h \
+  /usr/include/sys/_structs.h /usr/include/machine/_structs.h \
+  /usr/include/mach/i386/_structs.h /usr/include/sys/resource.h \
+  /usr/include/machine/endian.h /usr/include/i386/endian.h \
+  /usr/include/sys/_endian.h /usr/include/libkern/_OSByteOrder.h \
+  /usr/include/libkern/i386/_OSByteOrder.h /usr/include/alloca.h \
+  /usr/include/machine/types.h /usr/include/i386/types.h \
+  /usr/include/i386/_types.h /usr/include/stdio.h /usr/include/string.h \
+  /usr/include/ctype.h /usr/include/runetype.h \
+  /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/limits.h \
+  /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/syslimits.h \
+  /usr/include/limits.h /usr/include/machine/limits.h \
+  /usr/include/i386/limits.h /usr/include/i386/_limits.h \
+  /usr/include/sys/syslimits.h /usr/include/poll.h \
+  /usr/include/sys/poll.h /usr/include/c++/4.2.1/string \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/c++config.h \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/os_defines.h \
+  /usr/include/unistd.h /usr/include/sys/unistd.h \
+  /usr/include/sys/select.h /usr/include/sys/_select.h \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/cpu_defines.h \
+  /usr/include/c++/4.2.1/bits/stringfwd.h \
+  /usr/include/c++/4.2.1/bits/char_traits.h \
+  /usr/include/c++/4.2.1/cstring /usr/include/c++/4.2.1/cstddef \
+  /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stddef.h \
+  /usr/include/c++/4.2.1/bits/stl_algobase.h \
+  /usr/include/c++/4.2.1/climits /usr/include/c++/4.2.1/cstdlib \
+  /usr/include/c++/4.2.1/iosfwd \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/c++locale.h \
+  /usr/include/c++/4.2.1/clocale /usr/include/locale.h \
+  /usr/include/_locale.h /usr/include/c++/4.2.1/cstdio \
+  /usr/include/c++/4.2.1/cstdarg \
+  /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdarg.h \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/c++io.h \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/gthr.h \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/gthr-default.h \
+  /usr/include/pthread.h /usr/include/pthread_impl.h /usr/include/sched.h \
+  /usr/include/time.h /usr/include/_structs.h \
+  /usr/include/c++/4.2.1/cctype /usr/include/c++/4.2.1/bits/postypes.h \
+  /usr/include/c++/4.2.1/cwchar /usr/include/c++/4.2.1/ctime \
+  /usr/include/wchar.h /usr/include/_wctype.h \
+  /usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdint.h \
+  /usr/include/c++/4.2.1/bits/functexcept.h \
+  /usr/include/c++/4.2.1/exception_defines.h \
+  /usr/include/c++/4.2.1/bits/stl_pair.h \
+  /usr/include/c++/4.2.1/bits/cpp_type_traits.h \
+  /usr/include/c++/4.2.1/ext/type_traits.h /usr/include/c++/4.2.1/utility \
+  /usr/include/c++/4.2.1/bits/stl_relops.h \
+  /usr/include/c++/4.2.1/bits/stl_iterator_base_types.h \
+  /usr/include/c++/4.2.1/bits/stl_iterator_base_funcs.h \
+  /usr/include/c++/4.2.1/bits/concept_check.h \
+  /usr/include/c++/4.2.1/bits/stl_iterator.h \
+  /usr/include/c++/4.2.1/debug/debug.h /usr/include/c++/4.2.1/memory \
+  /usr/include/c++/4.2.1/bits/allocator.h \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/c++allocator.h \
+  /usr/include/c++/4.2.1/ext/new_allocator.h /usr/include/c++/4.2.1/new \
+  /usr/include/c++/4.2.1/exception \
+  /usr/include/c++/4.2.1/bits/stl_construct.h \
+  /usr/include/c++/4.2.1/bits/stl_uninitialized.h \
+  /usr/include/c++/4.2.1/bits/stl_raw_storage_iter.h \
+  /usr/include/c++/4.2.1/limits \
+  /usr/include/c++/4.2.1/bits/ostream_insert.h \
+  /usr/include/c++/4.2.1/bits/stl_function.h \
+  /usr/include/c++/4.2.1/bits/basic_string.h \
+  /usr/include/c++/4.2.1/ext/atomicity.h \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/atomic_word.h \
+  /usr/include/c++/4.2.1/algorithm /usr/include/c++/4.2.1/bits/stl_algo.h \
+  /usr/include/c++/4.2.1/bits/stl_heap.h \
+  /usr/include/c++/4.2.1/bits/stl_tempbuf.h \
+  /usr/include/c++/4.2.1/bits/basic_string.tcc \
+  /usr/include/c++/4.2.1/iostream /usr/include/c++/4.2.1/ostream \
+  /usr/include/c++/4.2.1/ios /usr/include/c++/4.2.1/bits/localefwd.h \
+  /usr/include/c++/4.2.1/bits/ios_base.h \
+  /usr/include/c++/4.2.1/bits/locale_classes.h \
+  /usr/include/c++/4.2.1/streambuf \
+  /usr/include/c++/4.2.1/bits/streambuf.tcc \
+  /usr/include/c++/4.2.1/bits/basic_ios.h \
+  /usr/include/c++/4.2.1/bits/streambuf_iterator.h \
+  /usr/include/c++/4.2.1/bits/locale_facets.h \
+  /usr/include/c++/4.2.1/cwctype /usr/include/wctype.h \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/ctype_base.h \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/ctype_inline.h \
+  /usr/include/c++/4.2.1/bits/codecvt.h \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/time_members.h \
+  /usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/messages_members.h \
+  /usr/include/c++/4.2.1/bits/basic_ios.tcc \
+  /usr/include/c++/4.2.1/bits/ostream.tcc /usr/include/c++/4.2.1/locale \
+  /usr/include/c++/4.2.1/bits/locale_facets.tcc \
+  /usr/include/c++/4.2.1/typeinfo /usr/include/c++/4.2.1/istream \
+  /usr/include/c++/4.2.1/bits/istream.tcc /usr/include/errno.h \
+  /usr/include/sys/errno.h /usr/include/sys/types.h \
   /usr/include/sys/timeb.h /usr/include/sys/socket.h \
-  /usr/include/machine/param.h /usr/include/ppc/param.h \
-  /usr/include/strings.h /usr/include/netinet/in.h \
-  /usr/include/netinet6/in6.h /usr/include/netinet/tcp.h \
-  /usr/include/arpa/inet.h /usr/include/sys/param.h /usr/include/netdb.h \
-  /usr/include/fcntl.h /usr/include/sys/fcntl.h
+  /usr/include/machine/_param.h /usr/include/i386/_param.h \
+  /usr/include/strings.h /usr/include/sys/time.h \
+  /usr/include/netinet/in.h /usr/include/netinet6/in6.h \
+  /usr/include/netinet/tcp.h /usr/include/arpa/inet.h \
+  /usr/include/netdb.h /usr/include/fcntl.h /usr/include/sys/fcntl.h \
+  /usr/include/math.h /usr/include/architecture/i386/math.h \
+  /usr/include/AvailabilityMacros.h
 
 stdsoap2.h:
 
@@ -131,27 +110,59 @@ stdsoap2.h:
 
 /usr/include/stdlib.h:
 
-/usr/include/machine/ansi.h:
+/usr/include/Availability.h:
 
-/usr/include/ppc/ansi.h:
+/usr/include/AvailabilityInternal.h:
 
-/usr/include/machine/types.h:
+/usr/include/_types.h:
 
-/usr/include/ppc/types.h:
+/usr/include/sys/_types.h:
 
 /usr/include/sys/cdefs.h:
 
-/usr/include/alloca.h:
+/usr/include/machine/_types.h:
 
-/usr/include/stdio.h:
+/usr/include/i386/_types.h:
 
-/usr/include/sys/types.h:
+/usr/include/sys/wait.h:
+
+/usr/include/sys/signal.h:
 
 /usr/include/sys/appleapiopts.h:
 
+/usr/include/machine/signal.h:
+
+/usr/include/i386/signal.h:
+
+/usr/include/i386/_structs.h:
+
+/usr/include/sys/_structs.h:
+
+/usr/include/machine/_structs.h:
+
+/usr/include/mach/i386/_structs.h:
+
+/usr/include/sys/resource.h:
+
 /usr/include/machine/endian.h:
 
-/usr/include/ppc/endian.h:
+/usr/include/i386/endian.h:
+
+/usr/include/sys/_endian.h:
+
+/usr/include/libkern/_OSByteOrder.h:
+
+/usr/include/libkern/i386/_OSByteOrder.h:
+
+/usr/include/alloca.h:
+
+/usr/include/machine/types.h:
+
+/usr/include/i386/types.h:
+
+/usr/include/i386/_types.h:
+
+/usr/include/stdio.h:
 
 /usr/include/string.h:
 
@@ -159,311 +170,233 @@ stdsoap2.h:
 
 /usr/include/runetype.h:
 
+/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/limits.h:
+
+/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/syslimits.h:
+
 /usr/include/limits.h:
 
-/usr/include/gcc/darwin/3.3/machine/limits.h:
+/usr/include/machine/limits.h:
 
-/usr/include/ppc/limits.h:
+/usr/include/i386/limits.h:
+
+/usr/include/i386/_limits.h:
 
 /usr/include/sys/syslimits.h:
 
-/usr/include/gcc/darwin/3.3/c++/string:
+/usr/include/poll.h:
 
-/usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/c++config.h:
+/usr/include/sys/poll.h:
 
-/usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/os_defines.h:
+/usr/include/c++/4.2.1/string:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stringfwd.h:
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/c++config.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/char_traits.h:
-
-/usr/include/gcc/darwin/3.3/c++/cstring:
-
-/usr/include/gcc/darwin/3.3/c++/cstddef:
-
-/usr/include/stddef.h:
-
-/usr/include/gcc/darwin/3.3/c++/bits/fpos.h:
-
-/usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/c++io.h:
-
-/usr/include/gcc/darwin/3.3/c++/cstdio:
-
-/usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/gthr.h:
-
-/usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/gthr-default.h:
-
-/usr/include/pthread.h:
-
-/usr/include/pthread_impl.h:
-
-/usr/include/errno.h:
-
-/usr/include/sys/errno.h:
-
-/usr/include/sched.h:
-
-/usr/include/time.h:
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/os_defines.h:
 
 /usr/include/unistd.h:
 
 /usr/include/sys/unistd.h:
 
-/usr/include/signal.h:
+/usr/include/sys/select.h:
 
-/usr/include/sys/signal.h:
+/usr/include/sys/_select.h:
 
-/usr/include/machine/signal.h:
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/cpu_defines.h:
 
-/usr/include/ppc/signal.h:
+/usr/include/c++/4.2.1/bits/stringfwd.h:
 
-/usr/include/mach/mach_types.h:
+/usr/include/c++/4.2.1/bits/char_traits.h:
 
-/usr/include/gcc/darwin/3.3/stdint.h:
+/usr/include/c++/4.2.1/cstring:
 
-/usr/include/mach/host_info.h:
+/usr/include/c++/4.2.1/cstddef:
 
-/usr/include/mach/vm_statistics.h:
+/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stddef.h:
 
-/usr/include/mach/machine/vm_types.h:
+/usr/include/c++/4.2.1/bits/stl_algobase.h:
 
-/usr/include/mach/ppc/vm_types.h:
+/usr/include/c++/4.2.1/climits:
 
-/usr/include/mach/machine.h:
+/usr/include/c++/4.2.1/cstdlib:
 
-/usr/include/mach/boolean.h:
+/usr/include/c++/4.2.1/iosfwd:
 
-/usr/include/mach/machine/boolean.h:
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/c++locale.h:
 
-/usr/include/mach/ppc/boolean.h:
-
-/usr/include/mach/time_value.h:
-
-/usr/include/mach/host_notify.h:
-
-/usr/include/mach/host_special_ports.h:
-
-/usr/include/mach/memory_object_types.h:
-
-/usr/include/mach/port.h:
-
-/usr/include/mach/vm_types.h:
-
-/usr/include/mach/exception_types.h:
-
-/usr/include/mach/machine/exception.h:
-
-/usr/include/mach/ppc/exception.h:
-
-/usr/include/mach/thread_status.h:
-
-/usr/include/mach/machine/thread_status.h:
-
-/usr/include/mach/ppc/thread_status.h:
-
-/usr/include/mach/machine/thread_state.h:
-
-/usr/include/mach/ppc/thread_state.h:
-
-/usr/include/mach/processor_info.h:
-
-/usr/include/mach/machine/processor_info.h:
-
-/usr/include/mach/ppc/processor_info.h:
-
-/usr/include/mach/task_info.h:
-
-/usr/include/mach/policy.h:
-
-/usr/include/mach/task_policy.h:
-
-/usr/include/mach/task_special_ports.h:
-
-/usr/include/mach/thread_info.h:
-
-/usr/include/mach/thread_policy.h:
-
-/usr/include/mach/thread_special_ports.h:
-
-/usr/include/mach/clock_types.h:
-
-/usr/include/mach/vm_attributes.h:
-
-/usr/include/mach/vm_inherit.h:
-
-/usr/include/mach/vm_behavior.h:
-
-/usr/include/mach/vm_prot.h:
-
-/usr/include/mach/vm_sync.h:
-
-/usr/include/mach/vm_region.h:
-
-/usr/include/mach/kmod.h:
-
-/usr/include/mach/kern_return.h:
-
-/usr/include/mach/machine/kern_return.h:
-
-/usr/include/mach/ppc/kern_return.h:
-
-/usr/include/mach/std_types.h:
-
-/usr/include/sys/time.h:
-
-/usr/include/gcc/darwin/3.3/c++/cwchar:
-
-/usr/include/gcc/darwin/3.3/c++/ctime:
-
-/usr/include/wchar.h:
-
-/usr/include/gcc/darwin/3.3/stdarg.h:
-
-/usr/include/gcc/darwin/3.3/c++/memory:
-
-/usr/include/gcc/darwin/3.3/c++/bits/stl_algobase.h:
-
-/usr/include/gcc/darwin/3.3/c++/climits:
-
-/usr/include/gcc/darwin/3.3/c++/cstdlib:
-
-/usr/include/gcc/darwin/3.3/c++/new:
-
-/usr/include/gcc/darwin/3.3/c++/exception:
-
-/usr/include/gcc/darwin/3.3/c++/iosfwd:
-
-/usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/c++locale.h:
-
-/usr/include/gcc/darwin/3.3/c++/clocale:
+/usr/include/c++/4.2.1/clocale:
 
 /usr/include/locale.h:
 
-/usr/include/gcc/darwin/3.3/c++/cctype:
+/usr/include/_locale.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/functexcept.h:
+/usr/include/c++/4.2.1/cstdio:
 
-/usr/include/gcc/darwin/3.3/c++/exception_defines.h:
+/usr/include/c++/4.2.1/cstdarg:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_pair.h:
+/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdarg.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/type_traits.h:
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/c++io.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_iterator_base_types.h:
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/gthr.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_iterator_base_funcs.h:
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/gthr-default.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/concept_check.h:
+/usr/include/pthread.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_iterator.h:
+/usr/include/pthread_impl.h:
 
-/usr/include/gcc/darwin/3.3/c++/debug/debug.h:
+/usr/include/sched.h:
 
-/usr/include/gcc/darwin/3.3/c++/debug/support.h:
+/usr/include/time.h:
 
-/usr/include/gcc/darwin/3.3/c++/cassert:
+/usr/include/_structs.h:
 
-/usr/include/gcc/darwin/3.3/assert.h:
+/usr/include/c++/4.2.1/cctype:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_alloc.h:
+/usr/include/c++/4.2.1/bits/postypes.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_threads.h:
+/usr/include/c++/4.2.1/cwchar:
 
-/usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/atomicity.h:
+/usr/include/c++/4.2.1/ctime:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_construct.h:
+/usr/include/wchar.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_uninitialized.h:
+/usr/include/_wctype.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_raw_storage_iter.h:
+/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stdint.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_function.h:
+/usr/include/c++/4.2.1/bits/functexcept.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/basic_string.h:
+/usr/include/c++/4.2.1/exception_defines.h:
 
-/usr/include/gcc/darwin/3.3/c++/algorithm:
+/usr/include/c++/4.2.1/bits/stl_pair.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_algo.h:
+/usr/include/c++/4.2.1/bits/cpp_type_traits.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_heap.h:
+/usr/include/c++/4.2.1/ext/type_traits.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/stl_tempbuf.h:
+/usr/include/c++/4.2.1/utility:
 
-/usr/include/gcc/darwin/3.3/c++/bits/basic_string.tcc:
+/usr/include/c++/4.2.1/bits/stl_relops.h:
 
-/usr/include/gcc/darwin/3.3/c++/iostream:
+/usr/include/c++/4.2.1/bits/stl_iterator_base_types.h:
 
-/usr/include/gcc/darwin/3.3/c++/ostream:
+/usr/include/c++/4.2.1/bits/stl_iterator_base_funcs.h:
 
-/usr/include/gcc/darwin/3.3/c++/ios:
+/usr/include/c++/4.2.1/bits/concept_check.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/localefwd.h:
+/usr/include/c++/4.2.1/bits/stl_iterator.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/ios_base.h:
+/usr/include/c++/4.2.1/debug/debug.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/locale_classes.h:
+/usr/include/c++/4.2.1/memory:
 
-/usr/include/gcc/darwin/3.3/c++/streambuf:
+/usr/include/c++/4.2.1/bits/allocator.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/streambuf.tcc:
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/c++allocator.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/basic_ios.h:
+/usr/include/c++/4.2.1/ext/new_allocator.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/streambuf_iterator.h:
+/usr/include/c++/4.2.1/new:
 
-/usr/include/gcc/darwin/3.3/c++/bits/locale_facets.h:
+/usr/include/c++/4.2.1/exception:
 
-/usr/include/gcc/darwin/3.3/c++/cwctype:
+/usr/include/c++/4.2.1/bits/stl_construct.h:
+
+/usr/include/c++/4.2.1/bits/stl_uninitialized.h:
+
+/usr/include/c++/4.2.1/bits/stl_raw_storage_iter.h:
+
+/usr/include/c++/4.2.1/limits:
+
+/usr/include/c++/4.2.1/bits/ostream_insert.h:
+
+/usr/include/c++/4.2.1/bits/stl_function.h:
+
+/usr/include/c++/4.2.1/bits/basic_string.h:
+
+/usr/include/c++/4.2.1/ext/atomicity.h:
+
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/atomic_word.h:
+
+/usr/include/c++/4.2.1/algorithm:
+
+/usr/include/c++/4.2.1/bits/stl_algo.h:
+
+/usr/include/c++/4.2.1/bits/stl_heap.h:
+
+/usr/include/c++/4.2.1/bits/stl_tempbuf.h:
+
+/usr/include/c++/4.2.1/bits/basic_string.tcc:
+
+/usr/include/c++/4.2.1/iostream:
+
+/usr/include/c++/4.2.1/ostream:
+
+/usr/include/c++/4.2.1/ios:
+
+/usr/include/c++/4.2.1/bits/localefwd.h:
+
+/usr/include/c++/4.2.1/bits/ios_base.h:
+
+/usr/include/c++/4.2.1/bits/locale_classes.h:
+
+/usr/include/c++/4.2.1/streambuf:
+
+/usr/include/c++/4.2.1/bits/streambuf.tcc:
+
+/usr/include/c++/4.2.1/bits/basic_ios.h:
+
+/usr/include/c++/4.2.1/bits/streambuf_iterator.h:
+
+/usr/include/c++/4.2.1/bits/locale_facets.h:
+
+/usr/include/c++/4.2.1/cwctype:
 
 /usr/include/wctype.h:
 
-/usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/ctype_base.h:
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/ctype_base.h:
 
-/usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/ctype_inline.h:
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/ctype_inline.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/codecvt.h:
+/usr/include/c++/4.2.1/bits/codecvt.h:
 
-/usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/codecvt_specializations.h:
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/time_members.h:
 
-/usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/time_members.h:
+/usr/include/c++/4.2.1/i686-apple-darwin10/x86_64/bits/messages_members.h:
 
-/usr/include/gcc/darwin/3.3/c++/ppc-darwin/bits/messages_members.h:
+/usr/include/c++/4.2.1/bits/basic_ios.tcc:
 
-/usr/include/gcc/darwin/3.3/c++/bits/basic_ios.tcc:
+/usr/include/c++/4.2.1/bits/ostream.tcc:
 
-/usr/include/gcc/darwin/3.3/c++/bits/ostream.tcc:
+/usr/include/c++/4.2.1/locale:
 
-/usr/include/gcc/darwin/3.3/c++/locale:
+/usr/include/c++/4.2.1/bits/locale_facets.tcc:
 
-/usr/include/gcc/darwin/3.3/c++/bits/locale_facets.tcc:
+/usr/include/c++/4.2.1/typeinfo:
 
-/usr/include/gcc/darwin/3.3/c++/cerrno:
+/usr/include/c++/4.2.1/istream:
 
-/usr/include/gcc/darwin/3.3/c++/cmath:
+/usr/include/c++/4.2.1/bits/istream.tcc:
 
-/usr/include/math.h:
+/usr/include/errno.h:
 
-/usr/include/architecture/ppc/math.h:
+/usr/include/sys/errno.h:
 
-/usr/include/gcc/darwin/3.3/c++/bits/cmath.tcc:
-
-/usr/include/gcc/darwin/3.3/c++/limits:
-
-/usr/include/gcc/darwin/3.3/c++/typeinfo:
-
-/usr/include/gcc/darwin/3.3/c++/istream:
-
-/usr/include/gcc/darwin/3.3/c++/bits/istream.tcc:
+/usr/include/sys/types.h:
 
 /usr/include/sys/timeb.h:
 
 /usr/include/sys/socket.h:
 
-/usr/include/machine/param.h:
+/usr/include/machine/_param.h:
 
-/usr/include/ppc/param.h:
+/usr/include/i386/_param.h:
 
 /usr/include/strings.h:
+
+/usr/include/sys/time.h:
 
 /usr/include/netinet/in.h:
 
@@ -473,10 +406,14 @@ stdsoap2.h:
 
 /usr/include/arpa/inet.h:
 
-/usr/include/sys/param.h:
-
 /usr/include/netdb.h:
 
 /usr/include/fcntl.h:
 
 /usr/include/sys/fcntl.h:
+
+/usr/include/math.h:
+
+/usr/include/architecture/i386/math.h:
+
+/usr/include/AvailabilityMacros.h:

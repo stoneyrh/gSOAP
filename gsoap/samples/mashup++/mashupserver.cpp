@@ -52,14 +52,14 @@ int main(int argc, char **argv)
  *
 \******************************************************************************/
 
-int mashupService::dtx(_XML x, struct _ns3__commingtotown *response)
+int mashupService::dtx(_XML x, _ns3__commingtotown &response)
 {
   ServiceProxy Time("http://www.cs.fsu.edu/~engelen/gmtlitserver.cgi");
 
   _ns1__gmt gmt;
   _ns1__gmtResponse gmtResponse;
 
-  if (Time.gmt(&gmt, &gmtResponse))
+  if (Time.gmt(&gmt, gmtResponse))
     return soap_receiverfault("Cannot connect to GMT server", NULL);
 
   time_t *now = gmtResponse.param_1;
@@ -94,7 +94,7 @@ int mashupService::dtx(_XML x, struct _ns3__commingtotown *response)
   if (Calc.div(sec, 86400.0, days))
     return soap_receiverfault("Cannot connect to calc server", NULL);
 
-  response->days = (int)days;
+  response.days = (int)days;
 
   soap_delegate_deletion(&Time, this); // Time data to be deleted by 'this'
   soap_delegate_deletion(&Calc, this); // Calc data to be deleted by 'this'

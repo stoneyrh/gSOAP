@@ -7,5 +7,6 @@ Name: GSoap
 Description: SOAP C Web Services with Cookies Enabled
 Version: 2.8
 Requires:
-Libs: -L${libdir} -lgsoapck -lm
+Libs: -L${libdir} -lgsoapck
+Libs.private: -lm
 Cflags:  -DWITH_COOKIES -DWITH_DOM -I${includedir}

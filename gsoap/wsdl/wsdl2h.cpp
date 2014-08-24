@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -121,12 +121,12 @@ const char serviceformat[]             = "//gsoap %-4s service %s:\t%s %s\n";
 const char paraformat[]                = "    %-35s%s%s%s";
 const char anonformat[]                = "    %-35s%s_%s%s";
 
-const char copyrightnotice[] = "\n**  The gSOAP WSDL/Schema processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2013 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool is released under one of the following licenses:\n**  GPL or the commercial license by Genivia Inc. Use option -l for details.\n\n";
+const char copyrightnotice[] = "\n**  The gSOAP WSDL/Schema processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2014 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool is released under one of the following licenses:\n**  GPL or the commercial license by Genivia Inc. Use option -l for details.\n\n";
 
 const char licensenotice[]   = "\
 --------------------------------------------------------------------------------\n\
 gSOAP XML Web services tools\n\
-Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
+Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
 \n\
 This software is released under one of the following licenses:\n\
 GPL or Genivia's license for commercial use.\n\
@@ -156,20 +156,23 @@ A commercial-use license is available from Genivia, Inc., contact@genivia.com\n\
 --------------------------------------------------------------------------------\n";
 
 int main(int argc, char **argv)
-{ init();
+{
+  init();
   fprintf(stderr, "%s", copyrightnotice);
   options(argc, argv);
   Definitions def;
   wsdl__definitions definitions;
   definitions.read(infiles, infile);
   if (definitions.error())
-  { definitions.print_fault();
+  {
+    definitions.print_fault();
     exit(1);
   }
   definitions.traverse();
   def.compile(definitions);
   if (outfile)
-  { fclose(stream);
+  {
+    fclose(stream);
     fprintf(stderr, "\nTo complete the process, compile with:\n> soapcpp2 %s\n", outfile);
     if (!cflag)
       fprintf(stderr, "or to generate C++ proxy and object classes:\n> soapcpp2 -j %s\n", outfile);
@@ -185,10 +188,13 @@ int main(int argc, char **argv)
 ////////////////////////////////////////////////////////////////////////////////
 
 static void init()
-{ struct Namespace *p = namespaces;
+{
+  struct Namespace *p = namespaces;
   if (p)
-  { for (; p->id; p++)
-    { if (p->in && *p->in)
+  {
+    for (; p->id; p++)
+    {
+      if (p->in && *p->in)
         exturis.insert(p->in);
       if (p->ns && *p->ns)
         exturis.insert(p->ns);
@@ -203,19 +209,24 @@ static void init()
 ////////////////////////////////////////////////////////////////////////////////
 
 static void options(int argc, char **argv)
-{ int i;
+{
+  int i;
   infiles = 0;
   for (i = 1; i < argc; i++)
-  { char *a = argv[i];
+  {
+    char *a = argv[i];
     if (*a == '-'
 #ifdef WIN32
      || *a == '/'
 #endif
     )
-    { int g = 1;
+    {
+      int g = 1;
       while (g && *++a)
-      { switch (*a)
-        { case '_':
+      {
+	switch (*a)
+        {
+	  case '_':
             _flag = 1;
        	    break;
           case 'a':
@@ -325,31 +336,38 @@ static void options(int argc, char **argv)
             else
               fprintf(stderr, "wsdl2h: Option -r requires proxy host:port:userid:passwd or :userid:passwd authentication argument\n");
             if (proxy_host)
-	    { char *s = (char*)emalloc(strlen(proxy_host + 1));
+	    {
+	      char *s = (char*)emalloc(strlen(proxy_host) + 1);
 	      strcpy(s, proxy_host);
 	      proxy_host = s;
 	      s = strchr(proxy_host, ':');
 	      if (s)
-	      { *s = '\0';
+	      {
+		*s = '\0';
 		if (*proxy_host)
-	        { proxy_port = soap_strtol(s + 1, &s, 10);
+	        {
+		  proxy_port = soap_strtol(s + 1, &s, 10);
 		  if (s && *s == ':')
-	          { *s = '\0';
+	          {
+		    *s = '\0';
 		    proxy_userid = s + 1;
 		    s = strchr(proxy_userid, ':');
 		    if (s && *s == ':')
-		    { *s = '\0';
+		    {
+		      *s = '\0';
 		      proxy_passwd = s + 1;
 		    }
 		  }
 	        }
 		else
-		{ s = proxy_host;
+		{
+		  s = proxy_host;
 		  proxy_host = NULL;
 		  auth_userid = s + 1;
                   s = strchr(auth_userid, ':');
 		  if (s && *s == ':')
-		  { *s = '\0';
+		  {
+		    *s = '\0';
 		    auth_passwd = s + 1;
 		  }
 		}
@@ -442,6 +460,7 @@ static void options(int argc, char **argv)
 -z3     compatibility with 2.7.16 to 2.8.7: qualify element/attribute references\n\
 -z4     compatibility up to 2.8.11: don't generate union structs in std::vector\n\
 -z5     compatibility up to 2.8.15\n\
+-z6     compatibility up to 2.8.17\n\
 -_      don't generate _USCORE (replace with UNICODE _x005f)\n\
 infile.wsdl infile.xsd http://www... list of input sources (if none: use stdin)\n\
 \n");
@@ -453,33 +472,42 @@ infile.wsdl infile.xsd http://www... list of input sources (if none: use stdin)\
       }
     }
     else
-    { infile[infiles++] = argv[i];
+    {
+      infile[infiles++] = argv[i];
       if (infiles >= MAXINFILES)
-      { fprintf(stderr, "wsdl2h: too many files\n");
+      {
+	fprintf(stderr, "wsdl2h: too many files\n");
         exit(1);
       }
     }
   }
   if (infiles)
-  { if (!outfile)
-    { if (strncmp(infile[0], "http://", 7) && strncmp(infile[0], "https://", 8))
-      { const char *s = strrchr(infile[0], '.');
+  {
+    if (!outfile)
+    {
+      if (strncmp(infile[0], "http://", 7) && strncmp(infile[0], "https://", 8))
+      {
+	const char *s = strrchr(infile[0], '.');
         if (s && (!soap_tag_cmp(s, ".wsdl") || !soap_tag_cmp(s, ".gwsdl") || !soap_tag_cmp(s, ".xsd")))
-        { outfile = estrdup(infile[0]);
+        {
+	  outfile = estrdup(infile[0]);
           outfile[s - infile[0] + 1] = 'h';
           outfile[s - infile[0] + 2] = '\0';
         }
         else
-        { outfile = (char*)emalloc(strlen(infile[0]) + 3);
+        {
+	  outfile = (char*)emalloc(strlen(infile[0]) + 3);
           strcpy(outfile, infile[0]);
           strcat(outfile, ".h");
         }
       }
     }
     if (outfile)
-    { stream = fopen(outfile, "w");
+    {
+      stream = fopen(outfile, "w");
       if (!stream)
-      { fprintf(stderr, "Cannot write to %s\n", outfile);
+      {
+	fprintf(stderr, "Cannot write to %s\n", outfile);
         exit(1);
       }
       if (cppnamespace)
@@ -523,5 +551,11 @@ struct Namespace namespaces[] =
   {"wst", "http://docs.oasis-open.org/ws-sx/ws-trust/200512"},
   {"wsu_", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"},
   {"gwsdl", "http://www.gridforum.org/namespaces/2003/03/gridWSDLExtensions"},
+  {"plnk","http://docs.oasis-open.org/wsbpel/2.0/plnktype"},
+  {"vprop","http://docs.oasis-open.org/wsbpel/2.0/varprop"},
+#ifdef WITH_BPEL
+  {"bpel","http://docs.oasis-open.org/wsbpel/2.0/process/executable"},
+  {"sref","http://docs.oasis-open.org/wsbpel/2.0/serviceref"},
+#endif
   {NULL, NULL}
 };

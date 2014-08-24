@@ -90,7 +90,7 @@ WS-ReliableMessaging Information Header Bindings</h1>
 <h1><a class="anchor" id="wsrm_3"></a>
 WS-ReliableMessaging Overview</h1>
 <p>In this section a brief overview of WS-ReliableMessaging is given. For more details please refer to the WS-ReliableMessaging protocol or tutorials on the subject. The following introduces the basic concepts of WS-ReliableMessaging from a practical point of view.</p>
-<p>WS-ReliableMessaging is useful to improve the reliability of one-way asynchronous messaging, for unreliable data gram messaging (SOAP-over-UDP), or to improve reliable delivery of responses relayed to other destinations, such as response messages that are relayed to destinations indicated by the WS-Addressing ReplyTo header. The protocol is also useful when multiple sources are sending messages that arrive out of order or must be flagged as an incomplete message collection when messages are missing as defined by the notion of a collection of related messages. Messages delivered out-of-order are not internally reordered. The application logic should be designed to be robust to out-of-order delivery effects, for example by using a vector to collect the data elements received before the data is processed.</p>
+<p>WS-ReliableMessaging is useful to improve the reliability of one-way asynchronous messaging, for unreliable data gram messaging (SOAP-over-UDP), or to improve reliable delivery of responses relayed to other destinations, such as response messages that are relayed to destinations indicated by the WS-Addressing ReplyTo header. The protocol is also useful when multiple sources are sending messages that arrive out of order or must be flagged as an incomplete message collection when messages are missing as defined by the notion of a collection of related messages. Messages delivered out-of-order are not internally reordered automatically. The application logic should be designed to be robust to out-of-order delivery effects, for example by using a vector to collect the data elements received before the data is processed. Alternatively, the server-side <a class="el" href="wsrmapi_8h.html#af8e440bcc087dbd943b30a112f476193" title="Receiver (server)-side check for the presence of WS-Addressing and WS-RM header blocks in the SOAP he...">soap_wsrm_check_and_wait()</a> calls can be used to let the current thread wait until preceding messages have been received and processed (by other threads). For single-thread processing with keep-alive, this will cause a performance bottleneck unless the message queue plugin is used. The message queue plugin (<a class="el" href="mq_8c.html">mq.c</a>) provides an approach to buffer inbound messages for in-order processing.</p>
 <p>WS-ReliableMessaging is not essential to improve the reliability of request-response message exchanges between two parties over HTTP, since a successful delivery of a request message can be inferred from the fact that a response was received for the request sent.</p>
 <p>WS-ReliableMessaging "protects" message sequences, i.e. a collection of related messages. A WS-ReliableMessaging message sequence is created after which the sequence of messages is sent. The sequence is closed and terminated by the client after the last message. Either the message sequence is complete or not, and the resulting action to discard the incomplete message sequence or not depends on the chosen behavior. Duplicate messages (e.g. resulting from resends) are always discarded.</p>
 <p>To create a new sequence, a client (WS-RM source) requests from the server (WS-RM destination) a unique (new) message sequence identification. The server responds with the identification to be used as well as other details, such as the expiration time of the sequence and the behavior implemented when a sequence was received incomplete:</p>
@@ -546,7 +546,7 @@ Server-side Usage</h1>
 <h2><a class="anchor" id="wsrm_5_1"></a>
 Setting up a WS-RM Destination Service</h2>
 <p>For duplex communications, it is advisable to send acknowledgements to the peer, which are normally piggy-backed on messages to the peer. If no messages are sent to the peer, explicit acknowledgements can be sent:</p>
-<div class="fragment"><div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#ac3fc1849fe2ecca83d6a5c95c314ecd3" title="Sends acknowledgements.">soap_wsrm_acknowledgement</a>(soap, seq, NULL))</div>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsrmapi_8h.html#ac3fc1849fe2ecca83d6a5c95c314ecd3" title="Sends acknowledgements for all message sequences that require an acknowledgement (ack requested by pe...">soap_wsrm_acknowledgement</a>(soap, seq, NULL))</div>
 <div class="line">  ... <span class="comment">// error</span></div>
 </div><!-- fragment --><p>To sent acknowledgements to all peers with open sequences, use:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> timeout = -10000; <span class="comment">// 10 ms</span></div>
@@ -753,10 +753,13 @@ The wsrm Plugin and C++ Server Objects</h1>
 <div class="line">  }</div>
 <div class="line">  service.destroy();</div>
 <div class="line">}</div>
-</div><!-- fragment --> </div></div><!-- contents -->
+</div><!-- fragment --><h1><a class="anchor" id="wsrm_10"></a>
+Speed improvements with large number of sequences</h1>
+<p>Compile <a class="el" href="wsrmapi_8c.html">wsrmapi.c</a> with -DSOAP_WSRM_FAST_LOOKUP to speed up sequence lookups for a large number of concurrent message sequences or sequences with a long time to live. An internal hash table is used, which will grow to accommodate the total number of concurrent sequences. The hash table entries are reused but (empty) entries are never deallocated to avoid allocation/deallocation overhead, which means that leak detectors may complain about space not being freed. </p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Dec 1 2013 14:39:21 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Aug 24 2014 10:18:15 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

@@ -1092,6 +1092,7 @@ soap_dom_attribute_iterator &soap_dom_attribute_iterator::operator++()
 \******************************************************************************/
 
 #ifndef UNDER_CE
+#ifndef WITH_COMPAT
 
 std::ostream &operator<<(std::ostream &o, const struct soap_dom_element &e)
 { if (!e.soap)
@@ -1137,6 +1138,7 @@ std::istream &operator>>(std::istream &i, struct soap_dom_element &e)
   return i;
 }
 
+#endif
 #endif
 
 #endif

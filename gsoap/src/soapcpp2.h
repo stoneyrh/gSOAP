@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.17r" /* Current version */
-# define GSOAP_VERSION 20817
+# define VERSION "2.8.18" /* Current version */
+# define GSOAP_VERSION 20818
 #endif
 
 #ifdef WIN32
@@ -337,6 +337,12 @@ typedef struct Service
 	struct Data *data;
 } Service;
 
+typedef struct XPath
+{	struct XPath *next;
+	char *name;
+	char *path;
+} XPath;
+
 typedef struct Pragma
 {	struct Pragma *next;
 	char *pragma;
@@ -401,6 +407,7 @@ extern int custom_header;
 extern int custom_fault;
 extern Pragma *pragmas;
 extern Service *services;
+extern XPath *xpaths;
 extern char *namespaceid;
 extern int transient;
 extern int imports;

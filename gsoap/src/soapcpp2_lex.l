@@ -72,7 +72,7 @@ static Token install_num(void);
 static Token install_chr(void);
 static Token install_str(void);
 static Token install_pragma(void);
-static void directive(void), option(void);
+static void directive(void), option(void), xpath(void);
 static Token error_chr(void);
 static Token error_str(void);
 static int convchar(int*);
@@ -103,6 +103,7 @@ import		#import{ws}+.*\n
 <MLCOMMENT><<EOF>>	{ execerror("Unclosed multiline comment at the end of file"); }
 "//"\/*"gsoapopt".*\n	{ option(); }
 "//"\/*"gsoap".*\n	{ directive(); }
+"//"\/*"xpath".*\n	{ xpath(); }
 "//".*\n		{ /* skip single line comment */ }
 "+="			{ return PA; }
 "-="			{ return NA; }
@@ -318,7 +319,10 @@ static void directive(void)
 	Method *m;
 	Data *d;
 	int service;
-	for (i = 7; yytext[i]; i++)
+	for (i = 0; yytext[i]; i++)
+		if (yytext[i] <= 32)
+			break;
+	for (; yytext[i]; i++)
 		if (yytext[i] > 32)
 			break;
 	for (j = i; yytext[j]; j++)
@@ -853,7 +857,10 @@ static void option(void)
 		semwarn(errbuf);
 		return;
 	}
-	for (i = 10; yytext[i]; i++)
+	for (i = 0; yytext[i]; i++)
+		if (yytext[i] <= 32)
+			break;
+	for (; yytext[i]; i++)
 		if (yytext[i] > 32)
 			break;
 	for (; yytext[i]; i++)
@@ -883,6 +890,43 @@ static void option(void)
 				if (yytext[i] <= 32)
 					return;
 		}
+}
+
+static void xpath(void)
+{	int i, j, k;
+	char *s;
+	XPath *xp;
+	for (i = 0; yytext[i]; i++)
+		if (yytext[i] <= 32)
+			break;
+	for (; yytext[i]; i++)
+		if (yytext[i] > 32)
+			break;
+	for (j = i; yytext[j]; j++)
+		if (yytext[j] <= 32)
+			break;
+	if (i == j)
+		return;
+	for (k = j; yytext[k]; k++)
+		if (yytext[k] > 32)
+			break;
+	s = (char*)emalloc(yyleng - i);
+	strncpy(s, yytext + i, j - i);
+	s[j - i] = '\0';
+	for (xp = xpaths; xp; xp = xp->next)
+		if (!strcmp(xp->name, s))
+			break;
+	if (!xp)
+	{	xp = (XPath*)emalloc(sizeof(XPath));
+		xp->next = xpaths;
+		xp->name = s;
+	}
+	s += j - i + 1;
+	strcpy(s, yytext + k);
+	xp->path = s;
+	while (*s > 32)
+	  s++;
+	*s = '\0';
 }
 
 /*

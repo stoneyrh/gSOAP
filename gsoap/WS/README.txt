@@ -1,5 +1,5 @@
-This directory contains a number of WS-* specs. It serves as a repository for
-generating header files stored in the 'import' directory.
+This directory contains a number of WS-* specifications. It serves as a
+repository for generating header files stored in the 'import' directory.
 
 The 'WS-typemap.dat' contains bindings for these WS-* specs to C (and C++).
 This file is used by wsdl2h to customize the generated bindings.

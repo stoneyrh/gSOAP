@@ -1048,7 +1048,7 @@ void http_da_calc_nonce(struct soap *soap, char nonce[HTTP_DA_NONCELEN])
 {
   static short count = 0xCA53;
 #ifdef HAVE_SNPRINTF
-  soap_snprintf(nonce, sizeof(nonce), "%8.8x%4.4hx%8.8x", (int)time(NULL), count++, soap_random);
+  soap_snprintf(nonce, HTTP_DA_NONCELEN, "%8.8x%4.4hx%8.8x", (int)time(NULL), count++, soap_random);
 #else
   sprintf(nonce, "%8.8x%4.4hx%8.8x", (int)time(NULL), count++, soap_random);
 #endif
@@ -1057,7 +1057,7 @@ void http_da_calc_nonce(struct soap *soap, char nonce[HTTP_DA_NONCELEN])
 void http_da_calc_opaque(struct soap *soap, char opaque[HTTP_DA_OPAQUELEN])
 {
 #ifdef HAVE_SNPRINTF
-  soap_snprintf(opaque, sizeof(opaque), "%8.8x", soap_random);
+  soap_snprintf(opaque, HTTP_DA_OPAQUELEN, "%8.8x", soap_random);
 #else
   sprintf(opaque, "%8.8x", soap_random);
 #endif

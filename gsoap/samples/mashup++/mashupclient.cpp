@@ -42,7 +42,7 @@ int main()
   mashupProxy proxy;
   _ns3__commingtotown response;
 
-  if (proxy.dtx((char*)"", &response))
+  if (proxy.dtx((char*)"", response))
     proxy.soap_stream_fault(std::cerr);
   else if (response.days == 0)
     std::cout << "Today is the day!" << std::endl;

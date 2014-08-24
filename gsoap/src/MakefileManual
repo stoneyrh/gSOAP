@@ -14,7 +14,7 @@ LEX=flex -l
 #       use YACC=bison or YACC=yacc -d -v -s soapcpp2_yacc
 YACC=bison
 #	For static linkage with Flex use:
-LIBS=/usr/lib/libfl.a
+#	LIBS=/usr/lib/libfl.a
 #	For static linkage with Lex use:
 #	LIBS=/usr/lib/libl.a
 COFLAGS=-O1

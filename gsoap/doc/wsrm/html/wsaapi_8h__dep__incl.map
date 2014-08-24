@@ -1,5 +1,5 @@
-<map id="/Users/engelen/Projects/gsoap/plugin/wsaapi.h" name="/Users/engelen/Projects/gsoap/plugin/wsaapi.h">
-<area shape="rect" id="node3" href="$wsrmapi_8h.html" title="/Users/engelen/Projects\l/gsoap/plugin/wsrmapi.h" alt="" coords="4,99,168,143"/>
-<area shape="rect" id="node7" href="$wsaapi_8c.html" title="/Users/engelen/Projects\l/gsoap/plugin/wsaapi.c" alt="" coords="193,99,356,143"/>
-<area shape="rect" id="node5" href="$wsrmapi_8c.html" title="/Users/engelen/Projects\l/gsoap/plugin/wsrmapi.c" alt="" coords="4,193,168,237"/>
+<map id="wsaapi.h" name="wsaapi.h">
+<area shape="rect" id="node3" href="$wsrmapi_8h.html" title="wsrmapi.h" alt="" coords="4,83,85,111"/>
+<area shape="rect" id="node7" href="$wsaapi_8c.html" title="wsaapi.c" alt="" coords="110,83,183,111"/>
+<area shape="rect" id="node5" href="$wsrmapi_8c.html" title="wsrmapi.c" alt="" coords="5,161,85,189"/>
 </map>

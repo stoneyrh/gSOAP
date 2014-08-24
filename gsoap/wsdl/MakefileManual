@@ -32,8 +32,8 @@ CMFLAGS=
 #
 CFLAGS= $(CWFLAGS) $(COFLAGS) $(CIFLAGS) $(CMFLAGS)
 #
-wsdl2h:		wsdlC.o wsdl.o schema.o soap.o mime.o wsp.o types.o service.o wsdl2h.cpp $(SOAPCPP)
-		$(CPP) $(CFLAGS) -o wsdl2h wsdl2h.cpp wsdlC.o wsdl.o schema.o soap.o mime.o wsp.o types.o service.o $(SOAPCPP) $(LIBS)
+wsdl2h:		wsdlC.o wsdl.o schema.o soap.o mime.o wsp.o bpel.o types.o service.o wsdl2h.cpp $(SOAPCPP)
+		$(CPP) $(CFLAGS) -o wsdl2h wsdl2h.cpp wsdlC.o wsdl.o schema.o soap.o mime.o wsp.o bpel.o types.o service.o $(SOAPCPP) $(LIBS)
 		cp -f wsdl2h ../bin
 wsdlC.o:	wsdlC.cpp
 		$(CPP) -c $(CFLAGS) wsdlC.cpp
@@ -53,6 +53,8 @@ mime.o:		mime.h mime.cpp includes.h imports.h
 		$(CPP) -c $(CFLAGS) mime.cpp
 wsp.o:		wsp.h wsp.cpp includes.h imports.h
 		$(CPP) -c $(CFLAGS) wsp.cpp
+bpel.o:		bpel.h bpel.cpp includes.h imports.h
+		$(CPP) -c $(CFLAGS) bpel.cpp
 secure:
 		rm -f *.o
 		make CMFLAGS=-DWITH_OPENSSL LIBS="../plugin/httpda.c ../plugin/md5evp.c -lcrypto -lssl -lm" wsdl2h

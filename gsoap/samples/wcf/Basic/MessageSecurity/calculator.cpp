@@ -290,7 +290,7 @@ static int chk_security(struct soap *soap)
   {
     fprintf(stderr, "Warning: certificate from %s is unknown\n", buf);
 
-    strncat(buf, ": unrecognized subject name", sizeof(buf));
+    strncat(buf, ": unrecognized subject name", sizeof(buf)-strlen(buf)-1);
     buf[sizeof(buf)-1] = '\0';
 
     return soap_wsse_fault(soap, wsse__InvalidSecurityToken, buf);
@@ -462,7 +462,7 @@ static const void *token_handler(struct soap *soap, int alg, const char *keyname
     case SOAP_SMD_HMAC_SHA1:
       /* WS-SecureConversation: get & check context token ID */
       if ((keyname && !strcmp(keyname, "Shared"))
-       || (ctxId = soap_wsse_get_SecurityContextToken(soap)) && !strcmp(ctxId, "Context"))
+       || ((ctxId = soap_wsse_get_SecurityContextToken(soap)) && !strcmp(ctxId, "Context")))
       { *keylen = sizeof(hmac_key);
         return (const void*)hmac_key; /* signature verification with secret key */
       }
@@ -477,7 +477,7 @@ static const void *token_handler(struct soap *soap, int alg, const char *keyname
     case SOAP_MEC_DEC_DES_CBC:
       /* WS-SecureConversation: get & check context token ID */
       if ((keyname && !strcmp(keyname, "Shared"))
-       || (ctxId = soap_wsse_get_SecurityContextToken(soap)) && !strcmp(ctxId, "Context"))
+       || ((ctxId = soap_wsse_get_SecurityContextToken(soap)) && !strcmp(ctxId, "Context")))
       { *keylen = sizeof(des_key);
         return (const void*)des_key; /* decryption with secret key */
       }

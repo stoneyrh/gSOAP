@@ -49,7 +49,6 @@ class Types
     MapOfStringToString deftypemap;
     MapOfStringToString usetypemap;
     MapOfStringToString ptrtypemap;
-    MapOfStringToString eqvtypemap;
     MapOfPairToString	qnames;	// (URI,name) -> name
     MapOfStringToString	uris;	// URI -> prefix
     MapOfStringToNum	syms;	// prefix -> count (ns1, ns2, ...)
@@ -72,6 +71,7 @@ class Types
     const char *cname(const char *prefix, const char *URI, const char *qname);
     const char *tname(const char *prefix, const char *URI, const char *qname);
     const char *tnameptr(bool, const char *prefix, const char *URI, const char *qname);
+    const char *tnamenoptr(const char *prefix, const char *URI, const char *qname);
     const char *pname(bool flag, const char *prefix, const char *URI, const char *qname);
     const char *oname(const char *prefix, const char *URI, const char *qname);
     const char *ename(const char *type, const char *value, bool isqname);
@@ -95,7 +95,7 @@ class Types
     void gen(const char *URI, const vector<xs__group>&);
     void gen(const char *URI, const vector<xs__any>&);
     void gen(const char *URI, const vector<xs__contents>&);
-    void gen(const char *URI, const char *name, const xs__simpleType&, bool anonymous);
+    void gen(const char *URI, const char *name, const xs__simpleType&, bool anonymous, bool nested_restriction);
     void gen(const char *URI, const char *name, const xs__complexType&, bool anonymous);
     void gen(const char *URI, const xs__attribute&);
     void gen(const char *URI, const xs__all&, const char *minOccurs, const char *maxOccurs);

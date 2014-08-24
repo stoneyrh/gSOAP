@@ -604,9 +604,9 @@ soap_wsa_rand_uuid(struct soap *soap)
   r3 = soap_random;
   r4 = soap_random;
 #ifdef HAVE_SNPRINTF
-  soap_snprintf(uuid, uuidlen, "urn:uuid:%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), ((short)r2 >> 4) & 0x0FFF, ((short)(r3 >> 16) & 0x3FFF) | 0x8000, (short)r3, r4);
+  soap_snprintf(uuid, uuidlen, "urn:uuid:%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), (short)(((short)r2 >> 4) & 0x0FFF), (short)(((short)(r3 >> 16) & 0x3FFF) | 0x8000), (short)r3, r4);
 #else
-  sprintf(uuid, "urn:uuid:%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), ((short)r2 >> 4) & 0x0FFF, ((short)(r3 >> 16) & 0x3FFF) | 0x8000, (short)r3, r4);
+  sprintf(uuid, "urn:uuid:%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), (short)(((short)r2 >> 4) & 0x0FFF), (short)(((short)(r3 >> 16) & 0x3FFF) | 0x8000), (short)r3, r4);
 #endif
   DBGFUN1("soap_wsa_rand_uuid", "%s", uuid);
   return uuid;
