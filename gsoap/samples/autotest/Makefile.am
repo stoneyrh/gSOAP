@@ -3,7 +3,7 @@
 
 ## not a GNU package. You can remove this line, if
 ## you have all needed files, that a GNU package needs
-AUTOMAKE_OPTIONS = foreign 1.4
+AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 
 CPPFLAGS=-I$(top_srcdir)/gsoap -I$(top_srcdir)/gsoap/plugin
 AM_LDFLAGS=$(CPPFLAGS) -I$(srcdir) -L$(srcdir)

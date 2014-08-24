@@ -299,7 +299,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 ####### This is the input file for automake, which will generate Makefile.in ##########
-AUTOMAKE_OPTIONS = foreign 1.4
+AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 SOAPHEADER = mashup.hpp
 AM_CFLAGS = -D$(platform)
 AM_CXXFLAGS = -D$(platform)

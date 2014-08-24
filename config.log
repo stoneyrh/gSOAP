@@ -30,8 +30,8 @@ Kernel configured for up to 4 processors.
 Processor type: i486 (Intel 80486)
 Processors active: 0 1 2 3
 Primary memory available: 4.00 gigabytes
-Default processor set: 239 tasks, 1098 threads, 4 processors
-Load average: 1.21, Mach factor: 2.78
+Default processor set: 219 tasks, 1085 threads, 4 processors
+Load average: 1.32, Mach factor: 2.67
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -205,8 +205,8 @@ configure:4605: checking lex library
 configure:4619: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in conftest-a74126.o
-      _main in conftest-a74126.o
+      _yylex in conftest-607167.o
+      _main in conftest-607167.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:4619: $? = 1
@@ -4932,7 +4932,7 @@ configure:5993: checking for gethostbyname_r
 configure:5993: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-2e32a0.o
+      _main in conftest-960187.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:5993: $? = 1
@@ -5143,7 +5143,6 @@ config.status:1007: creating gsoap/samples/wsse/Makefile
 config.status:1007: creating gsoap/samples/xml-rpc-json/Makefile
 config.status:1007: creating gsoap/samples/rest/Makefile
 config.status:1007: creating config.h
-config.status:1188: config.h is unchanged
 config.status:1236: executing depfiles commands
 
 ## ---------------- ##

@@ -1,7 +1,7 @@
 ## This is the input file for automake, which will generate Makefile.in ##
 ## not a GNU package. You can remove this line, if
 ## you have all needed files, that a GNU package needs
-AUTOMAKE_OPTIONS = foreign 1.4
+AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 
 SUBDIRS = . src wsdl @SAMPLE_DIRS@
 CLEANFILES = soapcpp2 wsdl2h stdsoap2_cpp.cpp stdsoap2_ck.c stdsoap2_ck_cpp.cpp stdsoap2_ssl.c stdsoap2_ssl_cpp.cpp dom_cpp.cpp

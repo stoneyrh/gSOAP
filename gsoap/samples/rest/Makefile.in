@@ -105,15 +105,14 @@ calcrest_OBJECTS = $(am_calcrest_OBJECTS)
 calcrest_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 calcrest_DEPENDENCIES = $(SOAP_C_LIB) $(am__DEPENDENCIES_1)
-am__dirstamp = $(am__leading_dot)dirstamp
 am_httpgettest_OBJECTS = httpgettest.$(OBJEXT) $(am__objects_1) \
-	../../plugin/httpget.$(OBJEXT)
+	httpget.$(OBJEXT)
 httpgettest_OBJECTS = $(am_httpgettest_OBJECTS)
 httpgettest_LDADD = $(LDADD)
 httpgettest_DEPENDENCIES = $(SOAP_C_LIB) $(am__DEPENDENCIES_1)
 am__objects_6 = soapServer.$(OBJEXT) $(am__objects_1)
 am_httpposttest_OBJECTS = httpposttest.$(OBJEXT) $(am__objects_6) \
-	../../plugin/httppost.$(OBJEXT)
+	httppost.$(OBJEXT)
 httpposttest_OBJECTS = $(am_httpposttest_OBJECTS)
 httpposttest_LDADD = $(LDADD)
 httpposttest_DEPENDENCIES = $(SOAP_C_LIB) $(am__DEPENDENCIES_1)
@@ -133,6 +132,10 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
@@ -372,20 +375,10 @@ clean-noinstPROGRAMS:
 calcrest$(EXEEXT): $(calcrest_OBJECTS) $(calcrest_DEPENDENCIES) $(EXTRA_calcrest_DEPENDENCIES) 
 	@rm -f calcrest$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(calcrest_OBJECTS) $(calcrest_LDADD) $(LIBS)
-../../plugin/$(am__dirstamp):
-	@$(MKDIR_P) ../../plugin
-	@: > ../../plugin/$(am__dirstamp)
-../../plugin/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) ../../plugin/$(DEPDIR)
-	@: > ../../plugin/$(DEPDIR)/$(am__dirstamp)
-../../plugin/httpget.$(OBJEXT): ../../plugin/$(am__dirstamp) \
-	../../plugin/$(DEPDIR)/$(am__dirstamp)
 
 httpgettest$(EXEEXT): $(httpgettest_OBJECTS) $(httpgettest_DEPENDENCIES) $(EXTRA_httpgettest_DEPENDENCIES) 
 	@rm -f httpgettest$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(httpgettest_OBJECTS) $(httpgettest_LDADD) $(LIBS)
-../../plugin/httppost.$(OBJEXT): ../../plugin/$(am__dirstamp) \
-	../../plugin/$(DEPDIR)/$(am__dirstamp)
 
 httpposttest$(EXEEXT): $(httpposttest_OBJECTS) $(httpposttest_DEPENDENCIES) $(EXTRA_httpposttest_DEPENDENCIES) 
 	@rm -f httpposttest$(EXEEXT)
@@ -393,35 +386,60 @@ httpposttest$(EXEEXT): $(httpposttest_OBJECTS) $(httpposttest_DEPENDENCIES) $(EX
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
-	-rm -f ../../plugin/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@../../plugin/$(DEPDIR)/httpget.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../../plugin/$(DEPDIR)/httppost.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/calcrest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/httpget.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/httpgettest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/httppost.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/httpposttest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapServer.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+httpget.o: ../../plugin/httpget.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT httpget.o -MD -MP -MF $(DEPDIR)/httpget.Tpo -c -o httpget.o `test -f '../../plugin/httpget.c' || echo '$(srcdir)/'`../../plugin/httpget.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/httpget.Tpo $(DEPDIR)/httpget.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/httpget.c' object='httpget.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o httpget.o `test -f '../../plugin/httpget.c' || echo '$(srcdir)/'`../../plugin/httpget.c
+
+httpget.obj: ../../plugin/httpget.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT httpget.obj -MD -MP -MF $(DEPDIR)/httpget.Tpo -c -o httpget.obj `if test -f '../../plugin/httpget.c'; then $(CYGPATH_W) '../../plugin/httpget.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/httpget.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/httpget.Tpo $(DEPDIR)/httpget.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/httpget.c' object='httpget.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o httpget.obj `if test -f '../../plugin/httpget.c'; then $(CYGPATH_W) '../../plugin/httpget.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/httpget.c'; fi`
+
+httppost.o: ../../plugin/httppost.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT httppost.o -MD -MP -MF $(DEPDIR)/httppost.Tpo -c -o httppost.o `test -f '../../plugin/httppost.c' || echo '$(srcdir)/'`../../plugin/httppost.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/httppost.Tpo $(DEPDIR)/httppost.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/httppost.c' object='httppost.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o httppost.o `test -f '../../plugin/httppost.c' || echo '$(srcdir)/'`../../plugin/httppost.c
+
+httppost.obj: ../../plugin/httppost.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT httppost.obj -MD -MP -MF $(DEPDIR)/httppost.Tpo -c -o httppost.obj `if test -f '../../plugin/httppost.c'; then $(CYGPATH_W) '../../plugin/httppost.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/httppost.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/httppost.Tpo $(DEPDIR)/httppost.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/httppost.c' object='httppost.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o httppost.obj `if test -f '../../plugin/httppost.c'; then $(CYGPATH_W) '../../plugin/httppost.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/httppost.c'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -538,8 +556,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-rm -f ../../plugin/$(DEPDIR)/$(am__dirstamp)
-	-rm -f ../../plugin/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -550,7 +566,7 @@ clean: clean-am
 clean-am: clean-generic clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ../../plugin/$(DEPDIR) ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -596,7 +612,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ../../plugin/$(DEPDIR) ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

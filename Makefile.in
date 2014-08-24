@@ -359,7 +359,7 @@ aclocal.m4 *.cache Makefile
 
 AUTOMAKE_OPTIONS = foreign 1.4
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = gsoap.pc gsoap++.pc gsoapck.pc gsoapck++.pc  gsoapssl.pc gsoapssl++.pc
+pkgconfig_DATA = gsoap.pc gsoap++.pc gsoapck.pc gsoapck++.pc gsoapssl.pc gsoapssl++.pc
 EXTRA_DIST = gsoap.pc.in gsoap++.pc.in gsoapck.pc.in gsoapck++.pc.in gsoapssl.pc.in gsoapssl++.pc.in
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

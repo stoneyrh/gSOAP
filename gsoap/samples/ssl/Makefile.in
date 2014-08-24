@@ -106,9 +106,8 @@ sslclient_LINK = $(CCLD) $(sslclient_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am__objects_4 = sslserver-soapC.$(OBJEXT)
 am__objects_5 = sslserver-soapServer.$(OBJEXT) $(am__objects_4)
-am__dirstamp = $(am__leading_dot)dirstamp
 am_sslserver_OBJECTS = sslserver-sslserver.$(OBJEXT) $(am__objects_1) \
-	$(am__objects_5) ../../plugin/sslserver-threads.$(OBJEXT)
+	$(am__objects_5) sslserver-threads.$(OBJEXT)
 sslserver_OBJECTS = $(am_sslserver_OBJECTS)
 sslserver_DEPENDENCIES = $(SOAP_C_LIB_SSL) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
@@ -374,15 +373,6 @@ clean-noinstPROGRAMS:
 sslclient$(EXEEXT): $(sslclient_OBJECTS) $(sslclient_DEPENDENCIES) $(EXTRA_sslclient_DEPENDENCIES) 
 	@rm -f sslclient$(EXEEXT)
 	$(AM_V_CCLD)$(sslclient_LINK) $(sslclient_OBJECTS) $(sslclient_LDADD) $(LIBS)
-../../plugin/$(am__dirstamp):
-	@$(MKDIR_P) ../../plugin
-	@: > ../../plugin/$(am__dirstamp)
-../../plugin/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) ../../plugin/$(DEPDIR)
-	@: > ../../plugin/$(DEPDIR)/$(am__dirstamp)
-../../plugin/sslserver-threads.$(OBJEXT):  \
-	../../plugin/$(am__dirstamp) \
-	../../plugin/$(DEPDIR)/$(am__dirstamp)
 
 sslserver$(EXEEXT): $(sslserver_OBJECTS) $(sslserver_DEPENDENCIES) $(EXTRA_sslserver_DEPENDENCIES) 
 	@rm -f sslserver$(EXEEXT)
@@ -390,31 +380,28 @@ sslserver$(EXEEXT): $(sslserver_OBJECTS) $(sslserver_DEPENDENCIES) $(EXTRA_sslse
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
-	-rm -f ../../plugin/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@../../plugin/$(DEPDIR)/sslserver-threads.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslclient-soapC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslclient-soapClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslclient-sslclient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslserver-soapC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslserver-soapServer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslserver-sslserver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sslserver-threads.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
@@ -503,19 +490,19 @@ sslserver-soapC.obj: soapC.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslserver_CFLAGS) $(CFLAGS) -c -o sslserver-soapC.obj `if test -f 'soapC.c'; then $(CYGPATH_W) 'soapC.c'; else $(CYGPATH_W) '$(srcdir)/soapC.c'; fi`
 
-../../plugin/sslserver-threads.o: ../../plugin/threads.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslserver_CFLAGS) $(CFLAGS) -MT ../../plugin/sslserver-threads.o -MD -MP -MF ../../plugin/$(DEPDIR)/sslserver-threads.Tpo -c -o ../../plugin/sslserver-threads.o `test -f '../../plugin/threads.c' || echo '$(srcdir)/'`../../plugin/threads.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) ../../plugin/$(DEPDIR)/sslserver-threads.Tpo ../../plugin/$(DEPDIR)/sslserver-threads.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/threads.c' object='../../plugin/sslserver-threads.o' libtool=no @AMDEPBACKSLASH@
+sslserver-threads.o: ../../plugin/threads.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslserver_CFLAGS) $(CFLAGS) -MT sslserver-threads.o -MD -MP -MF $(DEPDIR)/sslserver-threads.Tpo -c -o sslserver-threads.o `test -f '../../plugin/threads.c' || echo '$(srcdir)/'`../../plugin/threads.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sslserver-threads.Tpo $(DEPDIR)/sslserver-threads.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/threads.c' object='sslserver-threads.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslserver_CFLAGS) $(CFLAGS) -c -o ../../plugin/sslserver-threads.o `test -f '../../plugin/threads.c' || echo '$(srcdir)/'`../../plugin/threads.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslserver_CFLAGS) $(CFLAGS) -c -o sslserver-threads.o `test -f '../../plugin/threads.c' || echo '$(srcdir)/'`../../plugin/threads.c
 
-../../plugin/sslserver-threads.obj: ../../plugin/threads.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslserver_CFLAGS) $(CFLAGS) -MT ../../plugin/sslserver-threads.obj -MD -MP -MF ../../plugin/$(DEPDIR)/sslserver-threads.Tpo -c -o ../../plugin/sslserver-threads.obj `if test -f '../../plugin/threads.c'; then $(CYGPATH_W) '../../plugin/threads.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/threads.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) ../../plugin/$(DEPDIR)/sslserver-threads.Tpo ../../plugin/$(DEPDIR)/sslserver-threads.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/threads.c' object='../../plugin/sslserver-threads.obj' libtool=no @AMDEPBACKSLASH@
+sslserver-threads.obj: ../../plugin/threads.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslserver_CFLAGS) $(CFLAGS) -MT sslserver-threads.obj -MD -MP -MF $(DEPDIR)/sslserver-threads.Tpo -c -o sslserver-threads.obj `if test -f '../../plugin/threads.c'; then $(CYGPATH_W) '../../plugin/threads.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/threads.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sslserver-threads.Tpo $(DEPDIR)/sslserver-threads.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/threads.c' object='sslserver-threads.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslserver_CFLAGS) $(CFLAGS) -c -o ../../plugin/sslserver-threads.obj `if test -f '../../plugin/threads.c'; then $(CYGPATH_W) '../../plugin/threads.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/threads.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sslserver_CFLAGS) $(CFLAGS) -c -o sslserver-threads.obj `if test -f '../../plugin/threads.c'; then $(CYGPATH_W) '../../plugin/threads.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/threads.c'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -632,8 +619,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-rm -f ../../plugin/$(DEPDIR)/$(am__dirstamp)
-	-rm -f ../../plugin/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -644,7 +629,7 @@ clean: clean-am
 clean-am: clean-generic clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ../../plugin/$(DEPDIR) ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -690,7 +675,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ../../plugin/$(DEPDIR) ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

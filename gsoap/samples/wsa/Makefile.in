@@ -98,9 +98,8 @@ am__objects_2 = wsademo-soapC.$(OBJEXT)
 am__objects_3 = wsademo-soapClient.$(OBJEXT) $(am__objects_2)
 am__objects_4 = $(am__objects_3) wsademo-soapServer.$(OBJEXT) \
 	$(am__objects_1) $(am__objects_1)
-am__dirstamp = $(am__leading_dot)dirstamp
 am_wsademo_OBJECTS = wsademo-wsademo.$(OBJEXT) $(am__objects_1) \
-	$(am__objects_4) ../../plugin/wsademo-wsaapi.$(OBJEXT)
+	$(am__objects_4) wsademo-wsaapi.$(OBJEXT)
 wsademo_OBJECTS = $(am_wsademo_OBJECTS)
 am__DEPENDENCIES_1 =
 wsademo_DEPENDENCIES = $(SOAP_C_LIB_SSL) $(am__DEPENDENCIES_1)
@@ -360,14 +359,6 @@ $(am__aclocal_m4_deps):
 
 clean-noinstPROGRAMS:
 	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
-../../plugin/$(am__dirstamp):
-	@$(MKDIR_P) ../../plugin
-	@: > ../../plugin/$(am__dirstamp)
-../../plugin/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) ../../plugin/$(DEPDIR)
-	@: > ../../plugin/$(DEPDIR)/$(am__dirstamp)
-../../plugin/wsademo-wsaapi.$(OBJEXT): ../../plugin/$(am__dirstamp) \
-	../../plugin/$(DEPDIR)/$(am__dirstamp)
 
 wsademo$(EXEEXT): $(wsademo_OBJECTS) $(wsademo_DEPENDENCIES) $(EXTRA_wsademo_DEPENDENCIES) 
 	@rm -f wsademo$(EXEEXT)
@@ -375,29 +366,26 @@ wsademo$(EXEEXT): $(wsademo_OBJECTS) $(wsademo_DEPENDENCIES) $(EXTRA_wsademo_DEP
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
-	-rm -f ../../plugin/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@../../plugin/$(DEPDIR)/wsademo-wsaapi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wsademo-soapC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wsademo-soapClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wsademo-soapServer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wsademo-wsaapi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wsademo-wsademo.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
@@ -458,19 +446,19 @@ wsademo-soapServer.obj: soapServer.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wsademo_CFLAGS) $(CFLAGS) -c -o wsademo-soapServer.obj `if test -f 'soapServer.c'; then $(CYGPATH_W) 'soapServer.c'; else $(CYGPATH_W) '$(srcdir)/soapServer.c'; fi`
 
-../../plugin/wsademo-wsaapi.o: ../../plugin/wsaapi.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wsademo_CFLAGS) $(CFLAGS) -MT ../../plugin/wsademo-wsaapi.o -MD -MP -MF ../../plugin/$(DEPDIR)/wsademo-wsaapi.Tpo -c -o ../../plugin/wsademo-wsaapi.o `test -f '../../plugin/wsaapi.c' || echo '$(srcdir)/'`../../plugin/wsaapi.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) ../../plugin/$(DEPDIR)/wsademo-wsaapi.Tpo ../../plugin/$(DEPDIR)/wsademo-wsaapi.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/wsaapi.c' object='../../plugin/wsademo-wsaapi.o' libtool=no @AMDEPBACKSLASH@
+wsademo-wsaapi.o: ../../plugin/wsaapi.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wsademo_CFLAGS) $(CFLAGS) -MT wsademo-wsaapi.o -MD -MP -MF $(DEPDIR)/wsademo-wsaapi.Tpo -c -o wsademo-wsaapi.o `test -f '../../plugin/wsaapi.c' || echo '$(srcdir)/'`../../plugin/wsaapi.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wsademo-wsaapi.Tpo $(DEPDIR)/wsademo-wsaapi.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/wsaapi.c' object='wsademo-wsaapi.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wsademo_CFLAGS) $(CFLAGS) -c -o ../../plugin/wsademo-wsaapi.o `test -f '../../plugin/wsaapi.c' || echo '$(srcdir)/'`../../plugin/wsaapi.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wsademo_CFLAGS) $(CFLAGS) -c -o wsademo-wsaapi.o `test -f '../../plugin/wsaapi.c' || echo '$(srcdir)/'`../../plugin/wsaapi.c
 
-../../plugin/wsademo-wsaapi.obj: ../../plugin/wsaapi.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wsademo_CFLAGS) $(CFLAGS) -MT ../../plugin/wsademo-wsaapi.obj -MD -MP -MF ../../plugin/$(DEPDIR)/wsademo-wsaapi.Tpo -c -o ../../plugin/wsademo-wsaapi.obj `if test -f '../../plugin/wsaapi.c'; then $(CYGPATH_W) '../../plugin/wsaapi.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/wsaapi.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) ../../plugin/$(DEPDIR)/wsademo-wsaapi.Tpo ../../plugin/$(DEPDIR)/wsademo-wsaapi.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/wsaapi.c' object='../../plugin/wsademo-wsaapi.obj' libtool=no @AMDEPBACKSLASH@
+wsademo-wsaapi.obj: ../../plugin/wsaapi.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wsademo_CFLAGS) $(CFLAGS) -MT wsademo-wsaapi.obj -MD -MP -MF $(DEPDIR)/wsademo-wsaapi.Tpo -c -o wsademo-wsaapi.obj `if test -f '../../plugin/wsaapi.c'; then $(CYGPATH_W) '../../plugin/wsaapi.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/wsaapi.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wsademo-wsaapi.Tpo $(DEPDIR)/wsademo-wsaapi.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/wsaapi.c' object='wsademo-wsaapi.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wsademo_CFLAGS) $(CFLAGS) -c -o ../../plugin/wsademo-wsaapi.obj `if test -f '../../plugin/wsaapi.c'; then $(CYGPATH_W) '../../plugin/wsaapi.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/wsaapi.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wsademo_CFLAGS) $(CFLAGS) -c -o wsademo-wsaapi.obj `if test -f '../../plugin/wsaapi.c'; then $(CYGPATH_W) '../../plugin/wsaapi.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/wsaapi.c'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -587,8 +575,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-rm -f ../../plugin/$(DEPDIR)/$(am__dirstamp)
-	-rm -f ../../plugin/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -599,7 +585,7 @@ clean: clean-am
 clean-am: clean-generic clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ../../plugin/$(DEPDIR) ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -645,7 +631,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ../../plugin/$(DEPDIR) ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

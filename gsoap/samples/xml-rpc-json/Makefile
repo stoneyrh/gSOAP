@@ -289,7 +289,7 @@ top_builddir = ../../..
 top_srcdir = ../../..
 
 ####### This is the input file for automake, which will generate Makefile.in ##########
-AUTOMAKE_OPTIONS = foreign 1.4
+AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 SOAPHEADER = xml-rpc.h
 AM_CFLAGS = -D$(platform)
 AM_CXXFLAGS = -D$(platform)
