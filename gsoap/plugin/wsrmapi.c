@@ -21,7 +21,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -1965,7 +1965,7 @@ soap_wsrm_pulse(struct soap *soap, int timeout)
   int st = soap->send_timeout;
   int rt = soap->recv_timeout;
   int a = 1;
-  int err = SOAP_OK;
+  int err = SOAP_OK, errnum = 0;
   DBGFUN("soap_wsrm_pulse");
   soap->connect_timeout = soap->send_timeout = soap->recv_timeout = timeout;
   MUTEX_LOCK(soap_wsrm_session_lock);
@@ -1981,11 +1981,12 @@ soap_wsrm_pulse(struct soap *soap, int timeout)
     { if (seq->ackreq && seq->recvnum && soap_wsrm_seq_valid(soap, seq))
       { seq->refs++;
         MUTEX_UNLOCK(soap_wsrm_session_lock);
-	/* send acks for this sequence */
+        /* send acks for this sequence */
         if (soap_wsrm_acknowledgement(soap, seq, NULL))
-	{ err = soap->error;
-	  soap->error = SOAP_OK; /* must keep going, ignore peer-related problems */
-	}
+        { err = soap->error;
+	  errnum = soap->errnum;
+          soap->error = SOAP_OK; /* must keep going, ignore peer-related problems */
+        }
         soap_wsrm_seq_release(soap, seq);
         a = 1;
         break;
@@ -1997,6 +1998,8 @@ soap_wsrm_pulse(struct soap *soap, int timeout)
   soap->connect_timeout = ct;
   soap->send_timeout = st;
   soap->recv_timeout = rt;
+  soap->error = err;
+  soap->errnum = errnum;
   return err;
 }
 
@@ -3235,13 +3238,13 @@ soap_wsrm_error(struct soap *soap, struct soap_wsrm_sequence *seq, enum wsrm__Fa
     { soap_default_SOAP_ENV__Header(soap, soap->header);
       soap->header->wsrm__SequenceFault = (struct wsrm__SequenceFaultType*)soap_malloc(soap, sizeof(struct wsrm__SequenceFaultType));
       if (!soap->header->wsrm__SequenceFault)
-	return soap->error;
+        return soap->error;
       soap_default_wsrm__SequenceFaultType(soap, soap->header->wsrm__SequenceFault);
       soap->header->wsrm__SequenceFault->FaultCode = fault;
       soap->header->wsrm__SequenceFault->Detail = (struct SOAP_ENV__Detail*)soap_malloc(soap, sizeof(struct SOAP_ENV__Detail));
       if (soap->header->wsrm__SequenceFault->Detail)
       { soap_default_SOAP_ENV__Detail(soap, soap->header->wsrm__SequenceFault->Detail);
-	soap->header->wsrm__SequenceFault->Detail->__any = (char*)reason;
+        soap->header->wsrm__SequenceFault->Detail->__any = (char*)reason;
       }
     }
     if (seq && !seq->handle) /* server side: need to relay error */
@@ -3774,13 +3777,14 @@ soap_wsrm_add_acks(struct soap *soap, struct soap_wsrm_sequence *seq, ULONG64 na
         data->state = SOAP_WSRM_OFF; /* disable caching */
         /* send, retry when HTTP 307 at most 10 times */
         retry = 10;
-        while (soap_send___wsrm__SequenceAcknowledgement(acksto_soap, acksto, NULL))
-        { if (!soap->error)
-            soap_recv_empty_response(acksto_soap);
-          if (soap->error != 307 || retry-- == 0)
+        while (soap_send___wsrm__SequenceAcknowledgement(acksto_soap, acksto, NULL)
+            || soap_recv_empty_response(acksto_soap))
+        { if (acksto_soap->error != 307 || retry-- == 0)
             break;
           acksto = soap_strdup(acksto_soap, acksto_soap->endpoint);
         }
+	soap->error = acksto_soap->error;
+	soap->errnum = acksto_soap->errnum;
       }
       soap_end(acksto_soap);
       soap_free(acksto_soap);

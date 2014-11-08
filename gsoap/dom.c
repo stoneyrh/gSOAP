@@ -1,7 +1,7 @@
 /*
 	dom.c[pp]
 
-	gSOAP DOM implementation v3
+	gSOAP DOM implementation v4
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2012, Robert van Engelen, Genivia, Inc. All Rights Reserved.
@@ -452,7 +452,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
       }
     }
     soap_default_xsd__anyType(soap, node);
-    if (!(node->data = soap_string_in(soap, 1, -1, -1)) || !*node->data)
+    if (!(node->data = soap_string_in(soap, 1, -1, -1, NULL)) || !*node->data)
       return NULL;
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node with cdata\n"));
     soap->error = SOAP_OK;
@@ -537,10 +537,10 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
     else if (soap->error == SOAP_NO_TAG)
     { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node '%s' has cdata\n", node->name));
       if ((soap->mode & SOAP_C_UTFSTRING) || (soap->mode & SOAP_C_MBSTRING))
-      { if (!(node->data = soap_string_in(soap, 1, -1, -1)))
+      { if (!(node->data = soap_string_in(soap, 1, -1, -1, NULL)))
           return NULL;
       }
-      else if (!(node->wide = soap_wstring_in(soap, 1, -1, -1)))
+      else if (!(node->wide = soap_wstring_in(soap, 1, -1, -1, NULL)))
         return NULL;
     }
     else

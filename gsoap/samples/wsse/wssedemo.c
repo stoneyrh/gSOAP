@@ -89,6 +89,10 @@ And invoking it with a client:
 
 ./wssedemo in 8080
 
+To test multiple calls, add a single digit number of runs at the end of the options:
+
+./wssedemo in4 8080
+
 */
 
 #include "wsseapi.h"
@@ -208,8 +212,8 @@ int main(int argc, char **argv)
       nohttp = 1;
     if (strchr(argv[1], 'z'))
       soap_set_mode(soap, SOAP_ENC_ZLIB);
-    if (strchr(argv[1], '2'))
-    { runs = 2;
+    if (isdigit(argv[1][strlen(argv[1])-1]))
+    { runs = argv[1][strlen(argv[1])-1] - '0';
       soap_set_mode(soap, SOAP_IO_KEEPALIVE);
     }
   }
@@ -422,8 +426,8 @@ int main(int argc, char **argv)
       soap_wsse_sign_only(soap, "User ns1:add");
     }
     /* invoke the server. You can choose add, sub, mul, or div operations
-     * that show different security aspects for demonstration purposes
-     * (see server operations below) */
+     * that show different security aspects (intentional message rejections)
+     * for demonstration purposes (see server operations below) */
     if (!soap_call_ns1__add(soap, endpoint, NULL, 1.0, 2.0, &result))
     { if (!soap_wsse_verify_Timestamp(soap))
       { const char *servername = soap_wsse_get_Username(soap);
@@ -475,14 +479,19 @@ int ns1__add(struct soap *soap, double a, double b, double *result)
     fprintf(stderr, "Hello %s, want to add %g + %g = ?\n", username, a, b);
   if (soap_wsse_verify_Timestamp(soap)
    || soap_wsse_verify_Password(soap, "userPass"))
-  { soap_wsse_delete_Security(soap);
-    return soap->error;
+  { int err = soap->error; /* preserve error code */
+    soap_wsse_delete_Security(soap); /* remove WS-Security information */
+    /* the above suffices to return an unsigned fault, but here we show how to return a signed fault: */
+    soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", cert);
+    soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token");
+    soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_privk, 0);
+    return err;
   }
   if (soap_wsse_verify_element(soap, "http://www.genivia.com/schemas/wssetest.xsd", "add") == 0)
   { soap_wsse_delete_Security(soap);
     return soap_sender_fault(soap, "Service operation not signed", NULL);
   }
-  soap_wsse_delete_Security(soap);
+  soap_wsse_delete_Security(soap); /* remove WS-Security before setting new security information */
   soap_wsse_add_Timestamp(soap, "Time", 10);	/* lifetime of 10 seconds */
   soap_wsse_add_UsernameTokenDigest(soap, "User", "server", "serverPass");
   if (hmac)
@@ -490,7 +499,7 @@ int ns1__add(struct soap *soap, double a, double b, double *result)
       soap_wsse_sign(soap, SOAP_SMD_HMAC_SHA1, hmac_key, sizeof(hmac_key));
     else
       soap_wsse_sign_body(soap, SOAP_SMD_HMAC_SHA1, hmac_key, sizeof(hmac_key));
-    /* WS-SecureConversation contect token */
+    /* WS-SecureConversation context token */
     soap_wsse_add_SecurityContextToken(soap, "SCT", contextId);
   }
   else
@@ -505,14 +514,14 @@ int ns1__add(struct soap *soap, double a, double b, double *result)
     else
       soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_privk, 0);
   }
-  /* sign the response message in unsigned body? If so, set wsu:Id */
+  /* sign the response message inside the unsigned enveloping body? If so, set wsu:Id of the response */
   if (addsig)
     soap_wsse_set_wsu_id(soap, "ns1:addResponse");
   if (sym)
   { if (aes)
     { soap_wsse_add_EncryptedData_KeyInfo_KeyName(soap, "My AES Key");
       if (soap_wsse_encrypt_body(soap, SOAP_MEC_ENC_AES256_CBC, aes_key, sizeof(aes_key)))
-      soap_print_fault(soap, stderr);
+        soap_print_fault(soap, stderr);
     }
     else
     { soap_wsse_add_EncryptedData_KeyInfo_KeyName(soap, "My DES Key");
@@ -595,8 +604,8 @@ int ns1__mul(struct soap *soap, double a, double b, double *result)
   soap_wsse_delete_Security(soap);
   soap_wsse_add_Timestamp(soap, "Time", 10);	/* lifetime of 10 seconds */
   /* In this case we leave out the server name and password. Because the
-   * receiver check the presence of authentication information, the client will
-   * reject the response. */
+   * client receiver requires the presence of authentication information, the
+   * client will reject the response. */
   if (hmac)
   { soap_wsse_sign_body(soap, SOAP_SMD_HMAC_SHA1, hmac_key, sizeof(hmac_key));
     /* WS-SecureConversation contect token */
@@ -631,8 +640,7 @@ int ns1__div(struct soap *soap, double a, double b, double *result)
   soap_wsse_delete_Security(soap);
   soap_wsse_add_Timestamp(soap, "Time", 10);	/* lifetime of 10 seconds */
   soap_wsse_add_UsernameTokenDigest(soap, "User", "server", "serverPass");
-  /* In this case we leave out the signature and the receiver will reject this
-   * unsigned message. */
+  /* In this case we leave out the signature and the receiver will reject this unsigned message. */
   if (b == 0.0)
     return soap_sender_fault(soap, "Division by zero", NULL);
   *result = a / b;

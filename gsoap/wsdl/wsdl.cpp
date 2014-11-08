@@ -1805,7 +1805,7 @@ int warn_ignore(struct soap *soap, const char *tag)
    && soap_match_tag(soap, tag, "xs:documentation")
    && soap_match_tag(soap, tag, "xs:appinfo"))
     fprintf(stderr, "Warning: unexpected element '%s' at level %d is skipped (safe to ignore)\n", tag, soap->level);
-  if (soap->body && !soap_string_in(soap, 0, -1, -1))
+  if (soap->body && !soap_string_in(soap, 0, -1, -1, NULL))
     return soap->error;
   return SOAP_OK;
 }

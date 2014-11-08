@@ -213,32 +213,47 @@ authorize a request (e.g. within a Web service operation), use:
     { const char *username = soap_wsse_get_Username(soap);
       const char *password;
       if (!username)
-        return soap->error; // no username: return FailedAuthentication
+        return soap->error; // no username: return FailedAuthentication (from soap_wsse_get_Username)
       password = ...; // lookup password of username
       if (soap_wsse_verify_Password(soap, password))
-        return soap->error; // password verification failed: return FailedAuthentication
+      {	int err = soap->error;
+        soap_wsse_delete_Security(soap); // remove old security headers
+	// if it is required to return signed faults, then add the following six lines here:
+        if (soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", cert)
+         || soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token")
+         || soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_private_key, 0)
+        { soap_wsse_delete_Security(soap); // remove security headers (failed construction)
+          return soap->error;
+	}
+        return err; // password verification failed: return FailedAuthentication
+      }
       ... // process request, then sign the response message:
       if (soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", cert)
        || soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token")
        || soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_private_key, 0)
+      { soap_wsse_delete_Security(soap); // remove security headers (failed construction)
         return soap->error;
+      }
       return SOAP_OK;
     }
 @endcode
 
 Note that the @ref soap_wsse_get_Username functions sets the
-wsse:FailedAuthentication fault. It is common for the wsse plugin functions to
-return SOAP_OK or a wsse fault that should be passed to the sender by returning
-soap->error from service operations. The fault is displayed with the
-soap_print_fault() function.
+wsse:FailedAuthentication fault upon failure. It is common for the wsse plugin
+functions to return SOAP_OK or a wsse fault that should be passed to the sender
+by returning soap->error from service operations. The fault is displayed with
+the soap_print_fault() function. To return signed faults back to the client, a
+signature is constructed as shown in the code snippet above. When the signature
+construction itself fails, we delete the partially constructed signature and
+return the fault to the client.
 
 Password digest authentication prevents message replay attacks. The wsse plugin
-keeps a database of password digests to thwart replay attacks. This is the
-only part in the plugin code that requires mutex provided by threads.h.  Of
-course, this only works correctly if the server is persistent, such as a
-stand-alone service. Note that CGI-based services do not keep state. Machine
-clocks must be synchronized and clock skew should not exceed @ref
-SOAP_WSSE_CLKSKEW at the server side.
+keeps a database of password digests to thwart replay attacks. This is the only
+part in the plugin code that requires mutex provided by threads.h. Of course,
+this only works correctly if the server is persistent, such as a stand-alone
+service. Note that CGI-based services do not keep state. Machine clocks must be
+synchronized and clock skew should not exceed @ref SOAP_WSSE_CLKSKEW at the
+server side.
 
 @subsection wsse_6_3 Binary Security Tokens
 
@@ -1224,7 +1239,9 @@ where an example service operation could be:
        || soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token")
        || soap_wsse_add_EncryptedKey(soap, SOAP_MEC_ENV_ENC_DES_CBC, "Cert", cert, NULL, NULL, NULL)
        || soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_private_key, 0)
+      { soap_wsse_delete_Security(soap); // remove security headers (failed construction)
         return soap->error;
+      }
       return SOAP_OK;
     }
 @endcode
@@ -1480,7 +1497,16 @@ include additional details.
   complexContent elements that have sub elements).
 
 - Encryption is performed after signing (likewise, signatures are verified
-  after decryption). Signing after encryption is not supported.
+  after decryption). Signing after encryption is not supported in the current
+  plugin release.
+
+- Signing and encrypting XML containing QName content may lead to verification
+  issues, because the W3C C14N canonicalization protocol has known limitations
+  and not suited for QName content normalization (prefixes in QNames are
+  ignored, possibly resulting in missing xmlns bindings). We do not recommend
+  to use soapcpp2 option -t for this reason (xsi:type attributes are QNames).
+  Alternatively, disable c14n XML canonicalization, that is, do not use the
+  SOAP_XML_CANONICAL flag.
 
 @section wsse_wsc WS-SecureConversation
 
@@ -1786,9 +1812,9 @@ soap_wsse_Timestamp(struct soap *soap)
 @fn int soap_wsse_verify_Timestamp(struct soap *soap)
 @brief Verifies the Timestamp/Expires element against the current time.
 @param soap context
-@return SOAP_OK or SOAP_FAULT with wsse:FailedAuthentication fault
+@return SOAP_OK or SOAP_FAULT with wsu:MessageExpired fault
 
-Sets wsse:FailedAuthentication fault if wsu:Timestamp is expired. The
+Sets wsu:MessageExpired fault if wsu:Timestamp is expired. The
 SOAP_WSSE_CLKSKEW value is used as a margin to mitigate clock skew. Keeps
 silent when no timestamp is supplied or no expiration date is included in the
 wsu:Timestamp element.
@@ -2545,6 +2571,7 @@ soap_wsse_add_SignatureValue(struct soap *soap, int alg, const void *key, int ke
     return soap->error = SOAP_EOM;
   sig = soap->labbuf;
   /* we will serialize SignedInfo as it appears exactly in the SOAP Header */
+  soap->part = SOAP_IN_HEADER;
   /* set indent level for XML SignedInfo as it appears in the SOAP Header */
   soap->level = 4;
   /* prevent xmlns:ds namespace inclusion when non-exclusive is used */
@@ -2644,15 +2671,18 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
           /* TODO: consider moving this into dom.cpp */
 	  for (prt = elt->prnt; prt; prt = prt->prnt)
           { for (att = prt->atts; att; att = att->next)
+	    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM attribute = %s\n", att->name));
               if (!strncmp(att->name, "xmlns:", 6) && !soap_lookup_ns(soap, att->name + 6, strlen(att->name + 6)))
                 soap_attribute(soap, att->name, att->data);
-          }
+	    }
+	  }
 	  for (prt = elt->prnt; prt; prt = prt->prnt)
           { for (att = prt->atts; att; att = att->next)
-              if (!strcmp(att->name, "xmlns"))
+	    { if (!strcmp(att->name, "xmlns"))
 	      { soap_attribute(soap, att->name, att->data);
 	        break;
 	      }
+	    }
 	  }
 	}
 	else
@@ -2680,13 +2710,13 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
     }
     else
     { int err = SOAP_OK;
-      const char *c14nexclude;
-      soap_mode mode;
+      const char *c14nexclude = soap->c14nexclude;
+      soap_mode mode = soap->mode;
+      short part = soap->part;
       /* serialize the SignedInfo element as it appeared in the SOAP Header */
       soap->level = 4;
-      c14nexclude = soap->c14nexclude;
       soap->c14nexclude = "ds";
-      mode = soap->mode;
+      soap->part = SOAP_IN_HEADER; /* header encoding rules (literal) */
       if (signature->SignedInfo->CanonicalizationMethod)
         soap->mode |= SOAP_XML_CANONICAL;
       else
@@ -2702,6 +2732,7 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
         err = soap_out_ds__SignedInfoType(soap, "ds:SignedInfo", 0, signature->SignedInfo, NULL);
       soap->mode = mode;
       soap->c14nexclude = c14nexclude;
+      soap->part = part;
       if (soap_smd_end(soap, sig, &siglen) || err)
         return soap_wsse_fault(soap, wsse__FailedCheck, "The signed serialized SignedInfo SignatureValue is invalid");
       if ((alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
@@ -2839,10 +2870,9 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
       /* TODO: consider moving this into dom.cpp */
       for (prt = dom->prnt; prt; prt = prt->prnt)
       { for (att = prt->atts; att; att = att->next)
-        { if (!strncmp(att->name, "xmlns:", 6) && !soap_lookup_ns(soap, att->name + 6, strlen(att->name + 6)))
-          { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Attribute=%s\n", att->name));
+        { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM attribute = %s\n", att->name));
+          if (!strncmp(att->name, "xmlns:", 6) && !soap_lookup_ns(soap, att->name + 6, strlen(att->name + 6)))
             soap_attribute(soap, att->name, att->data);
-          }
         }
       }
       for (prt = dom->prnt; prt; prt = prt->prnt)
@@ -4158,7 +4188,7 @@ soap_wsse_sign(struct soap *soap, int alg, const void *key, int keylen)
 @param[in] alg is the signature algorithm, such as SOAP_SMD_HMAC_SHA1, SOAP_SMD_SIGN_DSA_SHA1, or SOAP_SMD_SIGN_RSA_SHA1
 @param[in] key is the HMAC secret key or DSA/RSA private EVP_PKEY
 @param[in] keylen is the HMAC key length
-@return SOAP_OK
+@return SOAP_OK or fault
 
 This function does not actually sign the message, but initiates the plugin's
 signature algorithm to sign the message upon message transfer.
@@ -5023,6 +5053,8 @@ soap_wsse_preparefinalsend(struct soap *soap)
     /* if non-chunked, adjust content length */
     if ((soap->mode & SOAP_IO) != SOAP_IO_CHUNK)
     { /* the code below ensures we increase the HTTP length counter */
+      short part = soap->part;
+      soap->part = SOAP_IN_HEADER; /* header encoding rules (literal) */
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Counting the size of additional SOAP Header elements, mode=0x%x\n", soap->mode));
       if (signature_added)
       { soap->level = 3; /* indent level for XML Signature */
@@ -5044,6 +5076,7 @@ soap_wsse_preparefinalsend(struct soap *soap)
         soap_outstring(soap, "ds:SignatureValue", 0, &signature->SignatureValue, NULL, 0);
         soap->c14nexclude = c14nexclude;
       }
+      soap->part = part;
     }
   }
   else /* Reset the callbacks and cleanup digests */

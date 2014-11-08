@@ -102,18 +102,30 @@ User Name Token</h2>
 <div class="line">{ <span class="keyword">const</span> <span class="keywordtype">char</span> *username = <a class="code" href="wsseapi_8h.html#aca3fe6fb7c1e5c103827b33f24292f47" title="Returns UsernameToken/username string or wsse:FailedAuthentication fault.">soap_wsse_get_Username</a>(soap);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keywordtype">char</span> *password;</div>
 <div class="line">  <span class="keywordflow">if</span> (!username)</div>
-<div class="line">    <span class="keywordflow">return</span> soap-&gt;error; <span class="comment">// no username: return FailedAuthentication</span></div>
+<div class="line">    <span class="keywordflow">return</span> soap-&gt;error; <span class="comment">// no username: return FailedAuthentication (from soap_wsse_get_Username)</span></div>
 <div class="line">  password = ...; <span class="comment">// lookup password of username</span></div>
 <div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#aeb0afd01a5036e4f1314a3cfe8575bd5" title="Verifies the supplied password or sets wsse:FailedAuthentication fault.">soap_wsse_verify_Password</a>(soap, password))</div>
-<div class="line">    <span class="keywordflow">return</span> soap-&gt;error; <span class="comment">// password verification failed: return FailedAuthentication</span></div>
+<div class="line">  { <span class="keywordtype">int</span> err = soap-&gt;error;</div>
+<div class="line">    <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c" title="Deletes Security header element.">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove old security headers</span></div>
+<div class="line">    <span class="comment">// if it is required to return signed faults, then add the following six lines here:</span></div>
+<div class="line">    <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a53075fb3cec4ec4e70fb11850fecb401" title="Adds BinarySecurityToken element with X509 certificate.">soap_wsse_add_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;X509Token&quot;</span>, cert)</div>
+<div class="line">     || <a class="code" href="wsseapi_8h.html#a72df80abd1d36cea516feda3a84672cf" title="Adds KeyInfo element with SecurityTokenReference URI to an X509 cert.">soap_wsse_add_KeyInfo_SecurityTokenReferenceX509</a>(soap, <span class="stringliteral">&quot;#X509Token&quot;</span>)</div>
+<div class="line">     || <a class="code" href="wsseapi_8h.html#ab653754f1a287ba06bd808cf89548c38" title="Uses the wsse plugin to sign all wsu:Id attributed elements, including the SOAP Body (by adding a wsu...">soap_wsse_sign_body</a>(soap, <a class="code" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a>, rsa_private_key, 0)</div>
+<div class="line">    { <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c" title="Deletes Security header element.">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove security headers (failed construction)</span></div>
+<div class="line">      <span class="keywordflow">return</span> soap-&gt;error;</div>
+<div class="line">    }</div>
+<div class="line">    <span class="keywordflow">return</span> err; <span class="comment">// password verification failed: return FailedAuthentication</span></div>
+<div class="line">  }</div>
 <div class="line">  ... <span class="comment">// process request, then sign the response message:</span></div>
 <div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a53075fb3cec4ec4e70fb11850fecb401" title="Adds BinarySecurityToken element with X509 certificate.">soap_wsse_add_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;X509Token&quot;</span>, cert)</div>
 <div class="line">   || <a class="code" href="wsseapi_8h.html#a72df80abd1d36cea516feda3a84672cf" title="Adds KeyInfo element with SecurityTokenReference URI to an X509 cert.">soap_wsse_add_KeyInfo_SecurityTokenReferenceX509</a>(soap, <span class="stringliteral">&quot;#X509Token&quot;</span>)</div>
 <div class="line">   || <a class="code" href="wsseapi_8h.html#ab653754f1a287ba06bd808cf89548c38" title="Uses the wsse plugin to sign all wsu:Id attributed elements, including the SOAP Body (by adding a wsu...">soap_wsse_sign_body</a>(soap, <a class="code" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a>, rsa_private_key, 0)</div>
+<div class="line">  { <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c" title="Deletes Security header element.">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove security headers (failed construction)</span></div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error;</div>
+<div class="line">  }</div>
 <div class="line">  <span class="keywordflow">return</span> SOAP_OK;</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>Note that the <a class="el" href="wsseapi_8c.html#a936a081cece9995f265b885e113ff5db">soap_wsse_get_Username</a> functions sets the wsse:FailedAuthentication fault. It is common for the wsse plugin functions to return SOAP_OK or a wsse fault that should be passed to the sender by returning soap-&gt;error from service operations. The fault is displayed with the soap_print_fault() function.</p>
+</div><!-- fragment --><p>Note that the <a class="el" href="wsseapi_8c.html#a936a081cece9995f265b885e113ff5db">soap_wsse_get_Username</a> functions sets the wsse:FailedAuthentication fault upon failure. It is common for the wsse plugin functions to return SOAP_OK or a wsse fault that should be passed to the sender by returning soap-&gt;error from service operations. The fault is displayed with the soap_print_fault() function. To return signed faults back to the client, a signature is constructed as shown in the code snippet above. When the signature construction itself fails, we delete the partially constructed signature and return the fault to the client.</p>
 <p>Password digest authentication prevents message replay attacks. The wsse plugin keeps a database of password digests to thwart replay attacks. This is the only part in the plugin code that requires mutex provided by <a class="el" href="threads_8h.html">threads.h</a>. Of course, this only works correctly if the server is persistent, such as a stand-alone service. Note that CGI-based services do not keep state. Machine clocks must be synchronized and clock skew should not exceed <a class="el" href="wsseapi_8c.html#a12d6f49d99323ae66d2a6ee154f90469">SOAP_WSSE_CLKSKEW</a> at the server side.</p>
 <h2><a class="anchor" id="wsse_6_3"></a>
 Binary Security Tokens</h2>
@@ -676,7 +688,9 @@ Example Combining Signing with Encryption/Decryption</h2>
 <div class="line">   || <a class="code" href="wsseapi_8h.html#a72df80abd1d36cea516feda3a84672cf" title="Adds KeyInfo element with SecurityTokenReference URI to an X509 cert.">soap_wsse_add_KeyInfo_SecurityTokenReferenceX509</a>(soap, <span class="stringliteral">&quot;#X509Token&quot;</span>)</div>
 <div class="line">   || <a class="code" href="wsseapi_8h.html#a1ba85a8b14587cff0865ebc3e5e9e340" title="Adds EncryptedKey header element and initiates the encryption of the SOAP Body.">soap_wsse_add_EncryptedKey</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL)</div>
 <div class="line">   || <a class="code" href="wsseapi_8h.html#ab653754f1a287ba06bd808cf89548c38" title="Uses the wsse plugin to sign all wsu:Id attributed elements, including the SOAP Body (by adding a wsu...">soap_wsse_sign_body</a>(soap, <a class="code" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a>, rsa_private_key, 0)</div>
+<div class="line">  { <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c" title="Deletes Security header element.">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove security headers (failed construction)</span></div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error;</div>
+<div class="line">  }</div>
 <div class="line">  <span class="keywordflow">return</span> SOAP_OK;</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>The service operation signs the message using a private key and encrypts the response message using a public key (from the certificate).</p>
@@ -866,7 +880,10 @@ Encryption Limitations</h1>
 <li>Individual encryption/decryption of simple content (CDATA content) with <a class="el" href="wsseapi_8c.html#adef816d148bd8b1ce1c5a3d023712779">soap_wsse_add_EncryptedKey_encrypt_only</a> IS NOT SUPPORTED. Encrypt the entire SOAP Body or encrypt elements with complex content (complexType and complexContent elements that have sub elements).</li>
 </ul>
 <ul>
-<li>Encryption is performed after signing (likewise, signatures are verified after decryption). Signing after encryption is not supported.</li>
+<li>Encryption is performed after signing (likewise, signatures are verified after decryption). Signing after encryption is not supported in the current plugin release.</li>
+</ul>
+<ul>
+<li>Signing and encrypting XML containing QName content may lead to verification issues, because the W3C C14N canonicalization protocol has known limitations and not suited for QName content normalization (prefixes in QNames are ignored, possibly resulting in missing xmlns bindings). We do not recommend to use soapcpp2 option -t for this reason (xsi:type attributes are QNames). Alternatively, disable c14n XML canonicalization, that is, do not use the SOAP_XML_CANONICAL flag.</li>
 </ul>
 <h1><a class="anchor" id="wsse_wsc"></a>
 WS-SecureConversation</h1>
@@ -877,7 +894,7 @@ WS-SecureConversation</h1>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Aug 24 2014 10:18:04 for gSOAP WS-Security by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Nov 5 2014 21:24:15 for gSOAP WS-Security by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

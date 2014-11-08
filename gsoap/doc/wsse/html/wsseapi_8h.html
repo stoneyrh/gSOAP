@@ -3052,7 +3052,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>SOAP_OK</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or fault</dd></dl>
 <p>This function does not actually sign the message, but initiates the plugin's signature algorithm to sign the message upon message transfer. </p>
 
 </div>
@@ -3630,8 +3630,8 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or SOAP_FAULT with wsse:FailedAuthentication fault</dd></dl>
-<p>Sets wsse:FailedAuthentication fault if wsu:Timestamp is expired. The SOAP_WSSE_CLKSKEW value is used as a margin to mitigate clock skew. Keeps silent when no timestamp is supplied or no expiration date is included in the wsu:Timestamp element. </p>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or SOAP_FAULT with wsu:MessageExpired fault</dd></dl>
+<p>Sets wsu:MessageExpired fault if wsu:Timestamp is expired. The SOAP_WSSE_CLKSKEW value is used as a margin to mitigate clock skew. Keeps silent when no timestamp is supplied or no expiration date is included in the wsu:Timestamp element. </p>
 
 </div>
 </div>
@@ -4014,7 +4014,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Aug 24 2014 10:18:04 for gSOAP WS-Security by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Nov 5 2014 21:24:15 for gSOAP WS-Security by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

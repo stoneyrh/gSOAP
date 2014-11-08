@@ -22,7 +22,7 @@ class _f__myData
 To return a fault from your service application:
 
 soap_sender_fault(soap, "An error occurred", NULL));	// set soap fault
-soap->fault->detail = (struct SOAP_ENV__Detail*)soap_malloc(soap, sizeof(struct SOAP_ENV__Fault));
+soap->fault->detail = (struct SOAP_ENV__Detail*)soap_malloc(soap, sizeof(struct SOAP_ENV__Detail));
 soap->fault->detail->__type = SOAP_TYPE__f__myData;
 soap->fault->detail->value = soap_new__f__myData(soap, -1);
 return SOAP_FAULT;

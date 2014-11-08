@@ -55,19 +55,28 @@ static int comment_nest = 0; /* keep track of block comments to avoid nesting */
 
 static const char *keywords[] =
 {
+  "alignas",
+  "alignof"
   "and",
+  "and_eq",
   "asm",
   "auto",
+  "bitand",
+  "bitor",
   "bool",
   "break",
   "case",
   "catch",
   "char",
+  "char16_t",
+  "char32_t",
   "class",
+  "compl",
   "const",
   "constexpr",
   "const_cast",
   "continue",
+  "decltype",
   "default",
   "delete",
   "do",
@@ -81,6 +90,7 @@ static const char *keywords[] =
   "extern",
   "false",
   "FILE",
+  "final",
   "float",
   "for",
   "friend",
@@ -98,9 +108,14 @@ static const char *keywords[] =
   "namespace",
   "new",
   "not",
+  "not_eq",
   "NULL",
+  "nullptr",
+  "nullptr_t",
   "operator",
   "or",
+  "or_eq",
+  "override",
   "private",
   "protected",
   "public",
@@ -115,14 +130,17 @@ static const char *keywords[] =
   "sizeof",
   "soap",
   "static",
+  "static_assert",
   "static_cast",
   "struct",
   "switch",
   "template",
   "this",
+  "thread_local",
   "throw",
   "time_t",
   "true",
+  "try",
   "typedef",
   "typeid",
   "typeof",
@@ -139,6 +157,7 @@ static const char *keywords[] =
   "XML",
   "_XML",
   "xor",
+  "xor_eq",
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1304,7 +1323,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
         {
           t = deftname(ENUM, NULL, false, prefix, URI, name);
           if (t && !eflag)
-            fprintf(stream, "/// @note The enum values are prefixed with \"%s\" to avoid name clashes, please use wsdl2h option -e to omit this prefix\n", t);
+            fprintf(stream, "/// @note The enum values are prefixed with \"%s__\" to avoid name clashes, please use wsdl2h option -e to omit this prefix\n", t);
         }
         if (!t)
           t = gname(URI, name);
@@ -1478,8 +1497,6 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             }
             fprintf(stream, "\"");
           }
-          if (*format)
-            fprintf(stream, " \"%%%sf\"", format);
           // add range info only when type is numeric
           bool is_numeric = false, is_float = false;
           if (!strncmp(s, "unsigned ", 9))
@@ -1506,6 +1523,8 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
            || !strcmp(s, "Short")
            || !strcmp(s, "ULONG64"))
             is_numeric = true;
+          if (!anonymous && is_float && *format)
+	    fprintf(stream, " \"%%%sf\"", format);
           if (!anonymous
            && simpleType.restriction->minLength
            && simpleType.restriction->minLength->value)
@@ -1721,7 +1740,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       {
         t = deftname(ENUM, NULL, false, prefix, URI, name);
         if (t && !eflag)
-          fprintf(stream, "/// @note The enum values are prefixed with \"%s\" to avoid name clashes, please use wsdl2h option -e to omit this prefix\n", t);
+          fprintf(stream, "/// @note The enum values are prefixed with \"%s__\" to avoid name clashes, please use wsdl2h option -e to omit this prefix\n", t);
       }
       else
         t = "";

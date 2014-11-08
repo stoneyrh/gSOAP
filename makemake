@@ -2,6 +2,7 @@
 
 aclocal
 autoheader
+rm -f missing
 automake --add-missing
 autoconf
 automake

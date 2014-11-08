@@ -21,7 +21,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -59,7 +59,7 @@ extern "C" {
 #endif
 
 /** Plugin identification for plugin registry */
-#define SOAP_WSRM_ID "WS-RM-1.10"
+#define SOAP_WSRM_ID "WS-RM-1.11"
 
 /** Plugin identification for plugin registry */
 extern const char soap_wsrm_id[];

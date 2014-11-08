@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.18
+	stdsoap2.h 2.8.19
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20818
+#define GSOAP_VERSION 20819
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -214,7 +214,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #else
 # if defined(UNDER_CE)
-#  define WITH_LEAN
+#  define SOAP_BUFLEN (2048)
+#  define SOAP_PTRHASH (32)
+#  define SOAP_IDHASH (19)
+#  define SOAP_BLKLEN (32)
+#  define SOAP_TAGLEN (128)
+#  define SOAP_HDRLEN (1024)
+#  define SOAP_MAXDIMS (4)
 #  define HAVE_SSCANF
 # elif defined(WIN32)
 #  if _MSC_VER >= 1400
@@ -852,10 +858,10 @@ extern "C" {
 # define SOAP_SOCKLEN_T size_t
 #endif
 
-/* DCE threads portability: define SOAP_FUNC_R_ERR gmtim_r and localtime_r err ret val */
-#if defined(_AIX) || defined(AIX)
+/* AIX DCE threads portability: define SOAP_FUNC_R_ERR gmtim_r and localtime_r err ret val as -1 */
+#ifdef _AIX32_THREADS
 # define SOAP_FUNC_R_ERR (-1)
-#elif !defined(SOAP_FUCN_R_ERR)
+#elif !defined(SOAP_FUNC_R_ERR)
 # define SOAP_FUNC_R_ERR (NULL)
 #endif
 
@@ -1331,11 +1337,12 @@ typedef soap_int32 soap_status;
 #define SOAP_PROHIBITED			43
 #define SOAP_OCCURS			44
 #define SOAP_LENGTH			45
-#define SOAP_FD_EXCEEDED		46
-#define SOAP_UTF_ERROR			47
-#define SOAP_NTLM_ERROR			48
+#define SOAP_PATTERN			46
+#define SOAP_FD_EXCEEDED		47
+#define SOAP_UTF_ERROR			48
+#define SOAP_NTLM_ERROR			49
 
-#define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_NULL || (e) == SOAP_HREF)
+#define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_PATTERN || (e) == SOAP_NULL || (e) == SOAP_HREF)
 #define soap_soap_error_check(e) ((e) == SOAP_CLI_FAULT || (e) == SOAP_SVR_FAULT || (e) == SOAP_VERSIONMISMATCH || (e) == SOAP_MUSTUNDERSTAND || (e) == SOAP_FAULT || (e) == SOAP_NO_METHOD)
 #define soap_tcp_error_check(e) ((e) == SOAP_EOF || (e) == SOAP_TCP_ERROR)
 #define soap_ssl_error_check(e) ((e) == SOAP_SSL_ERROR)
@@ -2053,6 +2060,8 @@ struct SOAP_STD_API soap
   void *(*fplugin)(struct soap*, const char*);
   void *(*fmalloc)(struct soap*, size_t);
 #ifndef WITH_LEANER
+  int (*fsvalidate)(struct soap*, const char*, const char*);
+  int (*fwvalidate)(struct soap*, const char*, const wchar_t*);
   int (*feltbegin)(struct soap*, const char*);
   int (*feltendin)(struct soap*, const char*, const char*);
   int (*feltbegout)(struct soap*, const char*);
@@ -2602,11 +2611,11 @@ SOAP_FMAC1 wchar_t* SOAP_FMAC2 soap_wstrdup(struct soap*, const wchar_t*);
 SOAP_FMAC1 const char * SOAP_FMAC2 soap_tagsearch(const char *big, const char *little);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_string_out(struct soap*, const char *s, int flag);
-SOAP_FMAC1 char* SOAP_FMAC2 soap_string_in(struct soap*, int, long, long);
+SOAP_FMAC1 char* SOAP_FMAC2 soap_string_in(struct soap*, int, long, long, const char*);
 
 #ifndef WITH_LEANER
 SOAP_FMAC1 int SOAP_FMAC2 soap_wstring_out(struct soap*, const wchar_t *s, int flag);
-SOAP_FMAC1 wchar_t* SOAP_FMAC2 soap_wstring_in(struct soap*, int, long, long);
+SOAP_FMAC1 wchar_t* SOAP_FMAC2 soap_wstring_in(struct soap*, int, long, long, const char*);
 #endif
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_match_namespace(struct soap*, const char *, const char*, size_t n1, size_t n2);
@@ -2728,7 +2737,7 @@ SOAP_FMAC1 unsigned short* SOAP_FMAC2 soap_inunsignedShort(struct soap*, const c
 SOAP_FMAC1 unsigned int* SOAP_FMAC2 soap_inunsignedInt(struct soap*, const char *tag, unsigned int *p, const char *, int);
 SOAP_FMAC1 unsigned long* SOAP_FMAC2 soap_inunsignedLong(struct soap*, const char *tag, unsigned long *p, const char *, int);
 SOAP_FMAC1 ULONG64* SOAP_FMAC2 soap_inULONG64(struct soap*, const char *tag, ULONG64 *p, const char *, int);
-SOAP_FMAC1 char** SOAP_FMAC2 soap_instring(struct soap*, const char *tag, char **p, const char *, int, int, long, long);
+SOAP_FMAC1 char** SOAP_FMAC2 soap_instring(struct soap*, const char *tag, char **p, const char *, int, int, long, long, const char*);
 SOAP_FMAC1 char** SOAP_FMAC2 soap_inliteral(struct soap*, const char *tag, char **p);
 
 #ifndef WITH_LEAN
@@ -2737,7 +2746,7 @@ SOAP_FMAC1 time_t SOAP_FMAC2 soap_timegm(struct tm*);
 #endif
 
 #ifndef WITH_LEANER
-SOAP_FMAC1 wchar_t** SOAP_FMAC2 soap_inwstring(struct soap*, const char *tag, wchar_t **p, const char *, int, long, long);
+SOAP_FMAC1 wchar_t** SOAP_FMAC2 soap_inwstring(struct soap*, const char *tag, wchar_t **p, const char *, int, long, long, const char*);
 SOAP_FMAC1 wchar_t** SOAP_FMAC2 soap_inwliteral(struct soap*, const char *tag, wchar_t **p);
 #endif
 

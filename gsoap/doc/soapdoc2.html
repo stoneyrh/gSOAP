@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.18 User Guide</title>
+<title>gSOAP 2.8.19 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.18 User Guide </h1>
+<h1 align="center">gSOAP 2.8.19 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Aug 24, 2014
+<h3 align="center">Nov  8, 2014
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -8733,7 +8733,7 @@ formed by:
 SOAP_UNION_<i>union-name</i>_<i>field-name</i>
 </td></tr></table><br></i>
 These selector values enumerate the <i><b>union</b></i> fields starting with 1. The
-value 0 can be assigned to omit the serialization of the <i><b>union</b></i>, but only
+value 0 (or any negative value) can be assigned to omit the serialization of the <i><b>union</b></i>, but only
 if explicitly allowed by validation rules, which requires <tt>minOccurs="0"</tt>
 for the <tt>xs:choice</tt> as follows:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
@@ -8774,8 +8774,11 @@ a crash of the gSOAP serializer because it will attempt to serialize an invalid
 
 <div class="p"><!----></div>
 For deserialization of <i><b>union</b></i> types, the selector will be
-set to 0 (when permitted) by the gSOAP deserializer or set to one of the
-<i><b>union</b></i> field selector values as determined by the XML payload.
+set to one of the
+<i><b>union</b></i> field selector values, as determined by the XML payload.
+The selector will be set to 0 or -1 when no union member was deserialized,
+where a negative value indicates that a member was required by validation rules.
+Strict validation enabled with <i>SOAP_XML_STRICT</i> results in a validation fault.
 
 <div class="p"><!----></div>
 When more than one <i><b>union</b></i> is used in a <i><b>struct</b></i> or <i><b>class</b></i>, the
@@ -13161,6 +13164,18 @@ Built-in gSOAP function: none.
 <div class="p"><!----></div>
 Built-in gSOAP function: none.
 </td></tr>
+<tr><td align="left"><i><b>void</b>&nbsp;(*soap.fsvalidate)(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*pattern, <b>const</b>&nbsp;<b>char</b>&nbsp;*string)</i> </td></tr>
+<tr><td align="left">Called to validate a non-NULL string against a non-NULL pattern. Patterns use XML schema regex syntax. Allows user-defined pattern validation. Should return <i>SOAP_OK</i> when the string matches the pattern or <i>SOAP_PATTERN</i> when the string does not match.
+
+<div class="p"><!----></div>
+Built-in gSOAP function: none.
+</td></tr>
+<tr><td align="left"><i><b>void</b>&nbsp;(*soap.fwvalidate)(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*pattern, <b>const</b>&nbsp;wchar_t *string)</i> </td></tr>
+<tr><td align="left">Called to validate a non-NULL wide string against a non-NULL pattern. Patterns use XML schema regex syntax. Allows user-defined pattern validation. Should return <i>SOAP_OK</i> when the string matches the pattern or <i>SOAP_PATTERN</i> when the string does not match.
+
+<div class="p"><!----></div>
+Built-in gSOAP function: none.
+</td></tr>
 <tr><td align="left"><i><b>void</b>&nbsp;(*soap.fseterror)(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;**code, <b>const</b>&nbsp;<b>char</b>&nbsp;**string)</i> </td></tr>
 <tr><td align="left">Called to set the SOAP Fault <i>code</i> and <i>string</i> values based on the value of <i>soap</i><tt>-&gt;</tt><i>error</i>. Allows user-defined messages to be associated with gSOAP error codes to override gSOAP's built-in error messages.
 
@@ -13206,18 +13221,19 @@ size_t myrecv(<b>struct</b>&nbsp;soap *soap, <b>char</b>&nbsp;*s, size_t n) <br 
 &nbsp;&nbsp;&nbsp;p.age = 25; <br />
 &nbsp;&nbsp;&nbsp;soap.fsend = mysend; // assign callback <br />
 &nbsp;&nbsp;&nbsp;soap.frecv = myrecv; // assign callback <br />
-&nbsp;&nbsp;&nbsp;soap_begin(&amp;soap); <br />
+&nbsp;&nbsp;&nbsp;soap_begin_send(&amp;soap); <br />
 &nbsp;&nbsp;&nbsp;soap_set_omode(&amp;soap, SOAP_XML_TREE); <br />
 &nbsp;&nbsp;&nbsp;soap_serialize_ns__person(&amp;soap, &amp;p); <br />
 &nbsp;&nbsp;&nbsp;soap_put_ns__person(&amp;soap, &amp;p, "ns:person", NULL); <br />
+&nbsp;&nbsp;&nbsp;soap_end_send(&amp;soap); <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(soap.error) <br />
 &nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_print_fault(&amp;soap, stdout); <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit(1); <br />
 &nbsp;&nbsp;&nbsp;} <br />
-&nbsp;&nbsp;&nbsp;soap_end(&amp;soap); <br />
-&nbsp;&nbsp;&nbsp;soap_begin(&amp;soap); <br />
+&nbsp;&nbsp;&nbsp;soap_begin_recv(&amp;soap); <br />
 &nbsp;&nbsp;&nbsp;soap_get_ns__person(&amp;soap, &amp;p, "ns:person", NULL); <br />
+&nbsp;&nbsp;&nbsp;soap_end_recv(&amp;soap); <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(soap.error) <br />
 &nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_print_fault(&amp;soap, stdout); <br />
@@ -16202,5 +16218,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 24 Aug 2014, 10:49.</small>
+version 4.00.<br />On  8 Nov 2014, 12:57.</small>
 </html>

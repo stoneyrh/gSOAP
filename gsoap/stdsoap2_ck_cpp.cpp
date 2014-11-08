@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.18
+	stdsoap2.c[pp] 2.8.19
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20818
+#define GSOAP_LIB_VERSION 20819
 
 #ifdef AS400
 # pragma convert(819)	/* EBCDIC to ASCII */
@@ -79,10 +79,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.18 2014-6-18 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.19 2014-11-08 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.18 2014-6-18 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.19 2014-11-08 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -1803,7 +1803,7 @@ soap_gethex(struct soap *soap, int *n)
 {
 #ifdef WITH_DOM
   if ((soap->mode & SOAP_XML_DOM) && soap->dom)
-  { soap->dom->data = soap_string_in(soap, 0, -1, -1);
+  { soap->dom->data = soap_string_in(soap, 0, -1, -1, NULL);
     return (unsigned char*)soap_hex2s(soap, soap->dom->data, NULL, 0, n);
   }
 #endif
@@ -1936,7 +1936,7 @@ soap_getbase64(struct soap *soap, int *n, int malloc_flag)
 { (void)malloc_flag;
 #ifdef WITH_DOM
   if ((soap->mode & SOAP_XML_DOM) && soap->dom)
-  { soap->dom->data = soap_string_in(soap, 0, -1, -1);
+  { soap->dom->data = soap_string_in(soap, 0, -1, -1, NULL);
     return (unsigned char*)soap_base642s(soap, soap->dom->data, NULL, 0, n);
   }
 #endif
@@ -3935,6 +3935,7 @@ again:
 #endif
     return SOAP_INVALID_SOCKET;
   }
+#ifndef UNDER_CE
   if ((soap->keep_alive || soap->tcp_keep_alive) && setsockopt(sk, SOL_SOCKET, SO_KEEPALIVE, (char*)&set, sizeof(int)))
   { soap->errnum = soap_socket_errno(sk);
     soap_set_sender_error(soap, tcp_error(soap), "setsockopt SO_KEEPALIVE failed in tcp_connect()", SOAP_TCP_ERROR);
@@ -4044,6 +4045,7 @@ again:
 #endif
     }
   }
+#endif
 #endif
 #endif
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Opening socket=%d to host='%s' port=%d\n", sk, host, port));
@@ -4848,6 +4850,7 @@ soap_bind(struct soap *soap, const char *host, int port, int backlog)
     soap_set_receiver_error(soap, tcp_error(soap), "setsockopt failed in soap_bind()", SOAP_TCP_ERROR);
     return SOAP_INVALID_SOCKET;
   }
+#ifndef UNDER_CE
   if (((soap->imode | soap->omode) & SOAP_IO_KEEPALIVE) && (!((soap->imode | soap->omode) & SOAP_IO_UDP)) && setsockopt(soap->master, SOL_SOCKET, SO_KEEPALIVE, (char*)&set, sizeof(int)))
   { soap->errnum = soap_socket_errno(soap->master);
     soap_set_receiver_error(soap, tcp_error(soap), "setsockopt SO_KEEPALIVE failed in soap_bind()", SOAP_TCP_ERROR);
@@ -4871,11 +4874,12 @@ soap_bind(struct soap *soap, const char *host, int port, int backlog)
   }
 #endif
 #ifdef TCP_FASTOPEN
-  if (setsockopt(soap->master, SOL_TCP, TCP_FASTOPEN, (char*)&set, sizeof(int)))
+  if (!(soap->omode & SOAP_IO_UDP) && setsockopt(soap->master, SOL_TCP, TCP_FASTOPEN, (char*)&set, sizeof(int)))
   { soap->errnum = soap_socket_errno(soap->master);
     soap_set_receiver_error(soap, tcp_error(soap), "setsockopt TCP_FASTOPEN failed in soap_bind()", SOAP_TCP_ERROR);
     return SOAP_INVALID_SOCKET;
   }
+#endif
 #endif
 #endif
 #ifdef WITH_IPV6
@@ -5087,6 +5091,7 @@ soap_accept(struct soap *soap)
         soap_closesock(soap);
         return SOAP_INVALID_SOCKET;
       }
+#ifndef UNDER_CE
       if (((soap->imode | soap->omode) & SOAP_IO_KEEPALIVE) && setsockopt(soap->socket, SOL_SOCKET, SO_KEEPALIVE, (char*)&set, sizeof(int)))
       { soap->errnum = soap_socket_errno(soap->socket);
         soap_set_receiver_error(soap, tcp_error(soap), "setsockopt SO_KEEPALIVE failed in soap_accept()", SOAP_TCP_ERROR);
@@ -5112,6 +5117,7 @@ soap_accept(struct soap *soap)
         soap_closesock(soap);
         return SOAP_INVALID_SOCKET;
       }
+#endif
 #endif
 #endif
       soap->keep_alive = (((soap->imode | soap->omode) & SOAP_IO_KEEPALIVE) != 0);
@@ -5274,6 +5280,8 @@ soap_done(struct soap *soap)
   soap->fpoll = NULL;
 #endif
 #ifndef WITH_LEANER
+  soap->fsvalidate = NULL;
+  soap->fwvalidate = NULL;
   soap->feltbegin = NULL;
   soap->feltendin = NULL;
   soap->feltbegout = NULL;
@@ -9069,6 +9077,8 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
   soap->fplugin = fplugin;
   soap->fmalloc = NULL;
 #ifndef WITH_LEANER
+  soap->fsvalidate = NULL;
+  soap->fwvalidate = NULL;
   soap->feltbegin = NULL;
   soap->feltendin = NULL;
   soap->feltbegout = NULL;
@@ -10247,7 +10257,7 @@ SOAP_FMAC2
 soap_check_result(struct soap *soap, const char *tag)
 { (void)tag;
   if (soap->version == 2 && soap->encodingStyle)
-  { soap_instring(soap, ":result", NULL, NULL, 0, 2, -1, -1);
+  { soap_instring(soap, ":result", NULL, NULL, 0, 2, -1, -1, NULL);
     /* just ignore content for compliance reasons, but should compare tag to element's QName value? */
   }
 }
@@ -10343,7 +10353,7 @@ soap_element_end_in(struct soap *soap, const char *tag)
 #ifdef WITH_DOM
   /* this whitespace or mixed content is significant for DOM */
   if ((soap->mode & SOAP_XML_DOM) && soap->dom)
-  { if (!soap->peeked && !soap_string_in(soap, 3, -1, -1))
+  { if (!soap->peeked && !soap_string_in(soap, 3, -1, -1, NULL))
       return soap->error;
     if (soap->dom->prnt)
       soap->dom = soap->dom->prnt;
@@ -11256,7 +11266,7 @@ soap_string_out(struct soap *soap, const char *s, int flag)
 SOAP_FMAC1
 char *
 SOAP_FMAC2
-soap_string_in(struct soap *soap, int flag, long minlen, long maxlen)
+soap_string_in(struct soap *soap, int flag, long minlen, long maxlen, const char *pattern)
 { register char *s;
   char *t = NULL;
   register size_t i;
@@ -11763,6 +11773,10 @@ end:
     soap->error = SOAP_LENGTH;
     return NULL;
   }
+#ifndef WITH_LEANER
+  if (pattern && soap->fsvalidate && (soap->error = soap->fsvalidate(soap, pattern, s)))
+    return NULL;
+#endif
 #ifdef WITH_DOM
   if ((soap->mode & SOAP_XML_DOM) && soap->dom)
   { if (flag == 3)
@@ -11870,7 +11884,7 @@ soap_wstring_out(struct soap *soap, const wchar_t *s, int flag)
 SOAP_FMAC1
 wchar_t *
 SOAP_FMAC2
-soap_wstring_in(struct soap *soap, int flag, long minlen, long maxlen)
+soap_wstring_in(struct soap *soap, int flag, long minlen, long maxlen, const char *pattern)
 { wchar_t *s;
   register int i, n = 0, f = 0;
   register long l = 0;
@@ -12018,6 +12032,10 @@ end:
     return NULL;
   }
   s = (wchar_t*)soap_save_block(soap, NULL, NULL, 0);
+#ifndef WITH_LEANER
+  if (pattern && soap->fwvalidate && (soap->error = soap->fwvalidate(soap, pattern, s)))
+    return NULL;
+#endif
 #ifdef WITH_DOM
   if ((soap->mode & SOAP_XML_DOM) && soap->dom)
     soap->dom->wide = s;
@@ -13545,7 +13563,7 @@ soap_outstring(struct soap *soap, const char *tag, int id, char *const*p, const 
 SOAP_FMAC1
 char **
 SOAP_FMAC2
-soap_instring(struct soap *soap, const char *tag, char **p, const char *type, int t, int flag, long minlen, long maxlen)
+soap_instring(struct soap *soap, const char *tag, char **p, const char *type, int t, int flag, long minlen, long maxlen, const char *pattern)
 { (void)type;
   if (soap_element_begin_in(soap, tag, 1, NULL))
   { if (!tag || *tag != '-' || soap->error != SOAP_NO_TAG)
@@ -13559,7 +13577,7 @@ soap_instring(struct soap *soap, const char *tag, char **p, const char *type, in
   if (soap->null)
     *p = NULL;
   else if (soap->body)
-  { *p = soap_string_in(soap, flag, minlen, maxlen);
+  { *p = soap_string_in(soap, flag, minlen, maxlen, pattern);
     if (!*p || !(char*)soap_id_enter(soap, soap->id, *p, t, sizeof(char*), 0, NULL, NULL, NULL))
       return NULL;
     if (!**p && tag && *tag == '-')
@@ -13612,7 +13630,7 @@ soap_outwstring(struct soap *soap, const char *tag, int id, wchar_t *const*p, co
 SOAP_FMAC1
 wchar_t **
 SOAP_FMAC2
-soap_inwstring(struct soap *soap, const char *tag, wchar_t **p, const char *type, int t, long minlen, long maxlen)
+soap_inwstring(struct soap *soap, const char *tag, wchar_t **p, const char *type, int t, long minlen, long maxlen, const char *pattern)
 { (void)type;
   if (soap_element_begin_in(soap, tag, 1, NULL))
   { if (!tag || *tag != '-' || soap->error != SOAP_NO_TAG)
@@ -13624,7 +13642,7 @@ soap_inwstring(struct soap *soap, const char *tag, wchar_t **p, const char *type
       return NULL;
   }
   if (soap->body)
-  { *p = soap_wstring_in(soap, 1, minlen, maxlen);
+  { *p = soap_wstring_in(soap, 1, minlen, maxlen, pattern);
     if (!*p || !(wchar_t*)soap_id_enter(soap, soap->id, *p, t, sizeof(wchar_t*), 0, NULL, NULL, NULL))
       return NULL;
     if (!**p && tag && *tag == '-')
@@ -13645,6 +13663,85 @@ soap_inwstring(struct soap *soap, const char *tag, wchar_t **p, const char *type
   if (soap->body && soap_element_end_in(soap, tag))
     return NULL;
   return p;
+}
+#endif
+#endif
+
+/******************************************************************************/
+#ifndef WITH_LEAN
+#ifdef UNDER_CE
+/* WinCE mktime (based on the mingw-runtime, public domain) */
+#define __FILETIME_to_ll(f) ((long long)(f).dwHighDateTime << 32 | (long long)(f).dwLowDateTime)
+static time_t
+mktime(struct tm *pt)
+{ SYSTEMTIME s, s1, s2;
+  FILETIME f, f1, f2;
+  long long diff;
+  GetSystemTime(&s1);
+  GetLocalTime(&s2);
+  SystemTimeToFileTime(&s1, &f1);
+  SystemTimeToFileTime(&s2, &f2);
+  diff = (__FILETIME_to_ll(f2) - __FILETIME_to_ll(f1)) / 10000000LL;
+  s.wYear = pt->tm_year + 1900;
+  s.wMonth = pt->tm_mon  + 1;
+  s.wDayOfWeek = pt->tm_wday;
+  s.wDay = pt->tm_mday;
+  s.wHour = pt->tm_hour;
+  s.wMinute = pt->tm_min;
+  s.wSecond = pt->tm_sec;
+  s.wMilliseconds = 0;
+  SystemTimeToFileTime(&s, &f);
+  return (time_t)((__FILETIME_to_ll(f) - 116444736000000000LL) / 10000000LL) - (time_t)diff;
+}
+#endif
+#endif
+
+/******************************************************************************/
+#ifndef WITH_LEAN
+#ifdef UNDER_CE
+/* WinCE gmtime_r (based on the mingw-runtime, public domain) */
+#define HAVE_GMTIME_R
+static struct tm*
+gmtime_r(const time_t *t, struct tm *pt)
+{ FILETIME f, f1, f2;
+  SYSTEMTIME s, s1 = {0};
+  long long time = (long long)(*t) * 10000000LL + 116444736000000000LL;
+  f.dwHighDateTime = (DWORD)((time >> 32) & 0x00000000FFFFFFFF);
+  f.dwLowDateTime = (DWORD)(time & 0x00000000FFFFFFFF);
+  FileTimeToSystemTime(&f, &s);
+  pt->tm_year = s.wYear - 1900;
+  pt->tm_mon = s.wMonth - 1;
+  pt->tm_wday = s.wDayOfWeek;
+  pt->tm_mday = s.wDay;
+  s1.wYear = s.wYear;
+  s1.wMonth = 1;
+  s1.wDayOfWeek = 1;
+  s1.wDay = 1;
+  SystemTimeToFileTime(&s1, &f1);
+  SystemTimeToFileTime(&s, &f2);
+  pt->tm_yday = (((__FILETIME_to_ll(f2) - __FILETIME_to_ll(f1)) / 10000000LL) / (60 * 60 * 24));
+  pt->tm_hour = s.wHour;
+  pt->tm_min = s.wMinute;
+  pt->tm_sec = s.wSecond;
+  pt->tm_isdst = 0;
+  return pt;
+}
+#endif
+#endif
+
+/******************************************************************************/
+#ifndef WITH_LEAN
+#ifdef UNDER_CE
+/* WinCE very simple strftime for format "%FT%TZ" */
+static size_t
+strftime(char *buf, size_t len, const char *format, const struct tm *pT)
+{ 
+#ifdef HAVE_SNPRINTF
+  soap_snprintf(buf, len, "%04d-%02d-%02dT%02d:%02d:%02dZ", pT->tm_year + 1900, pT->tm_mon + 1, pT->tm_mday, pT->tm_hour, pT->tm_min, pT->tm_sec);
+#else
+  sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02dZ", pT->tm_year + 1900, pT->tm_mon + 1, pT->tm_mday, pT->tm_hour, pT->tm_min, pT->tm_sec);
+#endif
+  return len;
 }
 #endif
 #endif
@@ -13688,20 +13785,20 @@ soap_dateTime2s(struct soap *soap, time_t n)
 { struct tm T, *pT = &T;
 #if defined(HAVE_GMTIME_R)
   if (gmtime_r(&n, pT) != SOAP_FUNC_R_ERR)
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%SZ", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%TZ", pT);
 #elif defined(HAVE_GMTIME)
   if ((pT = gmtime(&n)))
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%SZ", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%TZ", pT);
 #elif defined(HAVE_TM_GMTOFF) || defined(HAVE_STRUCT_TM_TM_GMTOFF) || defined(HAVE_STRUCT_TM___TM_GMTOFF)
 #if defined(HAVE_LOCALTIME_R)
   if (localtime_r(&n, pT) != SOAP_FUNC_R_ERR)
-  { strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S%z", pT);
+  { strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T%z", pT);
     memmove(soap->tmpbuf + 23, soap->tmpbuf + 22, 3); /* 2000-03-01T02:00:00+0300 */
     soap->tmpbuf[22] = ':';                           /* 2000-03-01T02:00:00+03:00 */
   }
 #else
   if ((pT = localtime(&n)))
-  { strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S%z", pT);
+  { strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T%z", pT);
     memmove(soap->tmpbuf + 23, soap->tmpbuf + 22, 3); /* 2000-03-01T02:00:00+0300 */
     soap->tmpbuf[22] = ':';                           /* 2000-03-01T02:00:00+03:00 */
   }
@@ -13713,7 +13810,7 @@ soap_dateTime2s(struct soap *soap, time_t n)
   if (localtime_r(&n, pT) != SOAP_FUNC_R_ERR)
   { struct timeval tv;
     gettimeofday(&tv, &tz);
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T", pT);
 #ifdef HAVE_SNPRINTF
     soap_snprintf(soap->tmpbuf + strlen(soap->tmpbuf), sizeof(soap->tmpbuf) - strlen(soap->tmpbuf), "%+03d:%02d", -tz.tz_minuteswest/60+(pT->tm_isdst!=0), abs(tz.tz_minuteswest)%60);
 #else
@@ -13724,7 +13821,7 @@ soap_dateTime2s(struct soap *soap, time_t n)
   if ((pT = localtime(&n)))
   { struct timeval tv;
     gettimeofday(&tv, &tz);
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T", pT);
 #ifdef HAVE_SNPRINTF
     soap_snprintf(soap->tmpbuf + strlen(soap->tmpbuf), sizeof(soap->tmpbuf) - strlen(soap->tmpbuf), "%+03d:%02d", -tz.tz_minuteswest/60+(pT->tm_isdst!=0), abs(tz.tz_minuteswest)%60);
 #else
@@ -13743,7 +13840,7 @@ soap_dateTime2s(struct soap *soap, time_t n)
 #else
     ftime(&t);
 #endif
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T", pT);
 #ifdef HAVE_SNPRINTF
     soap_snprintf(soap->tmpbuf + strlen(soap->tmpbuf), sizeof(soap->tmpbuf) - strlen(soap->tmpbuf), "%+03d:%02d", -t.timezone/60+(pT->tm_isdst!=0), abs(t.timezone)%60);
 #else
@@ -13758,7 +13855,7 @@ soap_dateTime2s(struct soap *soap, time_t n)
 #else
     ftime(&t);
 #endif
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T", pT);
 #ifdef HAVE_SNPRINTF
     soap_snprintf(soap->tmpbuf + strlen(soap->tmpbuf), sizeof(soap->tmpbuf) - strlen(soap->tmpbuf), "%+03d:%02d", -t.timezone/60+(pT->tm_isdst!=0), abs(t.timezone)%60);
 #else
@@ -13768,10 +13865,10 @@ soap_dateTime2s(struct soap *soap, time_t n)
 #endif
 #elif defined(HAVE_LOCALTIME_R)
   if (localtime_r(&n, pT) != SOAP_FUNC_R_ERR)
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T", pT);
 #else
   if ((pT = localtime(&n)))
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T", pT);
 #endif
   else
     strcpy(soap->tmpbuf, "1969-12-31T23:59:59Z");
@@ -13953,7 +14050,7 @@ soap_inliteral(struct soap *soap, const char *tag, char **p)
       return NULL;
   }
   if (soap->body || (tag && *tag == '-'))
-  { *p = soap_string_in(soap, 0, -1, -1);
+  { *p = soap_string_in(soap, 0, -1, -1, NULL);
     if (!*p)
       return NULL;
     if (!**p && tag && *tag == '-')
@@ -14034,7 +14131,7 @@ soap_inwliteral(struct soap *soap, const char *tag, wchar_t **p)
       return NULL;
   }
   if (soap->body)
-  { *p = soap_wstring_in(soap, 0, -1, -1);
+  { *p = soap_wstring_in(soap, 0, -1, -1, NULL);
     if (!*p)
       return NULL;
     if (!**p && tag && *tag == '-')
@@ -14612,7 +14709,7 @@ soap_getmimehdr(struct soap *soap)
         content->id = soap_strdup(soap, val);
       else if (!soap_tag_cmp(key, "Content-Location"))
         content->location = soap_strdup(soap, val);
-      else if (!soap_tag_cmp(key, "Content-Disposition"))
+      else if (!content->id && !soap_tag_cmp(key, "Content-Disposition"))
         content->id = soap_strdup(soap, soap_get_header_attribute(soap, val, "name"));
       else if (!soap_tag_cmp(key, "Content-Type"))
         content->type = soap_strdup(soap, val);
