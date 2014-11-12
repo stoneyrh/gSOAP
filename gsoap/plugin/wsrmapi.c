@@ -1984,7 +1984,7 @@ soap_wsrm_pulse(struct soap *soap, int timeout)
         /* send acks for this sequence */
         if (soap_wsrm_acknowledgement(soap, seq, NULL))
         { err = soap->error;
-	  errnum = soap->errnum;
+          errnum = soap->errnum;
           soap->error = SOAP_OK; /* must keep going, ignore peer-related problems */
         }
         soap_wsrm_seq_release(soap, seq);
@@ -3538,6 +3538,7 @@ soap_wsrm_disconnect(struct soap *soap)
   DBGFUN("soap_wsrm_disconnect");
   if (!data || (data->fdisconnect && data->fdisconnect(soap)))
     return soap->error;
+  MUTEX_LOCK(soap_wsrm_session_lock);
   if (data->seq && data->seq->refs)
     data->seq->refs--;
   data->seq = NULL;
@@ -3547,6 +3548,7 @@ soap_wsrm_disconnect(struct soap *soap)
       data->msg = NULL;
     }
   }
+  MUTEX_UNLOCK(soap_wsrm_session_lock);
   return SOAP_OK;
 }
 
@@ -3783,8 +3785,8 @@ soap_wsrm_add_acks(struct soap *soap, struct soap_wsrm_sequence *seq, ULONG64 na
             break;
           acksto = soap_strdup(acksto_soap, acksto_soap->endpoint);
         }
-	soap->error = acksto_soap->error;
-	soap->errnum = acksto_soap->errnum;
+        soap->error = acksto_soap->error;
+        soap->errnum = acksto_soap->errnum;
       }
       soap_end(acksto_soap);
       soap_free(acksto_soap);
@@ -3926,9 +3928,11 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, int all,
         return soap->error;
       DBGLOG(SENT, SOAP_MESSAGE(fdebug, "\n==== BEGIN RESEND ====\n"));
       for (q = p->list; q; q = q->next)
-      { DBGMSG(SENT, q->buf, q->len);
-        if (data->fsend(soap, q->buf, q->len))
-          return soap->error;
+      { if (q->buf)
+        { DBGMSG(SENT, q->buf, q->len);
+          if (data->fsend(soap, q->buf, q->len))
+            return soap->error;
+        }
       }
       if (soap_end_send(soap))
         return soap_closesock(soap);
@@ -4272,18 +4276,21 @@ soap_wsrm_msg_append(struct soap *soap, struct soap_wsrm_data *data, const char 
   p = (struct soap_wsrm_content*)malloc(sizeof(struct soap_wsrm_content));
   if (!p)
     return soap->error = SOAP_EOM;
-  p->buf = NULL;
+  p->buf = (char*)malloc(len);
+  if (p->buf)
+  { p->len = len;
+    memcpy(p->buf, buf, len);
+  }
   p->next = NULL;
+  MUTEX_LOCK(soap_wsrm_session_lock);
   if (!data->msg->list)
     data->msg->list = p;
   if (data->msg->last)
     data->msg->last->next = p;
   data->msg->last = p;
-  p->buf = (char*)malloc(len);
+  MUTEX_UNLOCK(soap_wsrm_session_lock);
   if (!p->buf)
     return soap->error = SOAP_EOM;
-  p->len = len;
-  memcpy(p->buf, buf, len);
   return SOAP_OK;
 }
 
