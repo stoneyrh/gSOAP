@@ -1271,9 +1271,8 @@ Compile wsrmapi.c with -DSOAP_WSRM_FAST_LOOKUP to speed up sequence lookups
 for a large number of concurrent message sequences or sequences with a long
 time to live. An internal hash table is used, which will grow to accommodate
 the total number of concurrent sequences. The hash table entries are reused but
-(empty) entries are never deallocated to avoid allocation/deallocation
-overhead, which means that leak detectors may complain about space not being
-freed.
+(temporary) empty entries are never deallocated to avoid allocation overhead,
+which means that leak detectors may complain about space not being freed.
 
 */
 
@@ -1439,7 +1438,7 @@ soap_wsrm_create_offer_acksto(struct soap *soap, const char *to, const char *rep
   struct wsrm__CreateSequenceResponseType res;
   struct soap_wsrm_data *data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
   const char *action = SOAP_NAMESPACE_OF_wsrm"/CreateSequence";
-  DBGFUN3("soap_wsrm_create_offer", "id=%s", id?id:"(null)", "to=%s", to?to:"(null)", "acksto=%s", acksto?acksto:"(null)");
+  DBGFUN3("soap_wsrm_create_offer", "id=%s", id ? id : "(null)", "to=%s", to ? to : "(null)", "acksto=%s", acksto ? acksto : "(null)");
   *seq = NULL;
   if (!data)
     return soap->error = SOAP_PLUGIN_ERROR;
@@ -1833,7 +1832,7 @@ soap_wsrm_close(struct soap *soap, soap_wsrm_sequence_handle seq, const char *ws
   struct wsrm__CloseSequenceResponseType res;
 #endif
   struct soap_wsrm_data *data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
-  DBGFUN1("soap_wsrm_close", "wsa_id=%s", wsa_id?wsa_id:"(null)");
+  DBGFUN1("soap_wsrm_close", "wsa_id=%s", wsa_id ? wsa_id : "(null)");
   if (!data)
     return soap->error = SOAP_PLUGIN_ERROR;
   if (seq->state == SOAP_WSRM_TERMINATED)
@@ -1912,7 +1911,7 @@ soap_wsrm_terminate(struct soap *soap, soap_wsrm_sequence_handle seq, const char
 { struct wsrm__TerminateSequenceType req;
   struct wsrm__TerminateSequenceResponseType res;
   struct soap_wsrm_data *data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
-  DBGFUN1("soap_wsrm_terminate", "wsa_id=%s", wsa_id?wsa_id:"(null)");
+  DBGFUN1("soap_wsrm_terminate", "wsa_id=%s", wsa_id ? wsa_id : "(null)");
   if (!data)
     return soap->error = SOAP_PLUGIN_ERROR;
   if (soap->header)
@@ -2069,7 +2068,10 @@ soap_wsrm_seq_free(struct soap *soap, soap_wsrm_sequence_handle seq)
   { if ((!(*q)->handle && !(*q)->refs && (*q)->expires < now)
      || *q == seq)
     { struct soap_wsrm_sequence *t = *q;
-      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Deleting sequence %s\n", t->id?t->id:"(null)"));
+#ifndef SOAP_WSRM_FAST_ALLOC
+      struct soap_wsrm_message *p, *r;
+#endif
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Deleting sequence %s\n", t->id ? t->id : "(null)"));
       if (t->id)
       { soap_wsrm_seq_delete_data(data, t);
         free((void*)t->id);
@@ -2085,12 +2087,22 @@ soap_wsrm_seq_free(struct soap *soap, soap_wsrm_sequence_handle seq)
       if (t->acksto)
         free((void*)t->acksto);
       soap_wsrm_num_free(soap, t);
+#ifdef SOAP_WSRM_FAST_ALLOC
       if (t->messages)
       { ULONG64 i;
         for (i = 0; i < t->num; i++)
-          soap_wsrm_msg_free(soap, &t->messages[i]);
-        free((void*)t->messages);
+        { soap_wsrm_msg_free(soap, t->messages[i]);
+          free((void*)t->messages[i]);
+	}
+	free((void*)t->messages);
       }
+#else
+      for (p = t->messages; p; p = r)
+      { r = p->next;
+        soap_wsrm_msg_free(soap, p);
+        free((void*)p);
+      }
+#endif
       *q = t->next;
       free((void*)t);
       if (seq)
@@ -2158,12 +2170,22 @@ soap_wsrm_num(const soap_wsrm_sequence_handle seq)
 */
 ULONG64
 soap_wsrm_nack(const soap_wsrm_sequence_handle seq)
-{ ULONG64 i, nack = 0;
+{ ULONG64 nack = 0;
+#ifdef SOAP_WSRM_FAST_ALLOC
+  ULONG64 i;
   MUTEX_LOCK(soap_wsrm_session_lock);
   for (i = 0; i < seq->num; i++)
-    if (seq->messages[i].state == SOAP_WSRM_NACK)
+    if (seq->messages[i]->state == SOAP_WSRM_NACK)
       nack++;
   MUTEX_UNLOCK(soap_wsrm_session_lock);
+#else
+  struct soap_wsrm_message *p;
+  MUTEX_LOCK(soap_wsrm_session_lock);
+  for (p = seq->messages; p; p = p->next)
+    if (p->state == SOAP_WSRM_NACK)
+      nack++;
+  MUTEX_UNLOCK(soap_wsrm_session_lock);
+#endif
   return nack;
 }
 
@@ -3058,7 +3080,7 @@ when the WS-Addressing FaultTo header was set by the sender.
 */
 int
 soap_wsrm_fault_subcode(struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail)
-{ DBGFUN2("soap_wsrm_fault_subcode", "code=%s", faultsubcode?faultsubcode:"(null)", "string=%s", faultstring?faultstring:"(null)");
+{ DBGFUN2("soap_wsrm_fault_subcode", "code=%s", faultsubcode ? faultsubcode : "(null)", "string=%s", faultstring ? faultstring : "(null)");
   soap_wsrm_reply_num(soap, 0);
   if (soap->header && soap->header->wsrm__Sequence && soap->header->wsrm__Sequence->Identifier)
   { char *id = soap->header->wsrm__Sequence->Identifier;
@@ -3188,7 +3210,7 @@ soap_wsrm_error(struct soap *soap, struct soap_wsrm_sequence *seq, enum wsrm__Fa
 { struct soap_wsrm_data *data;
   const char *code = soap_wsrm__FaultCodes2s(soap, fault);
   const char *reason = NULL;
-  DBGFUN1("soap_wsrm_error", "code=%s", code?code:"(null)");
+  DBGFUN1("soap_wsrm_error", "code=%s", code ? code : "(null)");
   data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
   if (data)
   { data->state = SOAP_WSRM_OFF; /* disable caching */
@@ -3275,8 +3297,7 @@ soap_wsrm_dump(struct soap *soap, FILE *fd)
   fprintf(fd, "\n**** %s PLUGIN STATE DUMP ****\n", SOAP_WSRM_ID);
   MUTEX_LOCK(soap_wsrm_session_lock);
   for (seq = soap_wsrm_session; seq; seq = seq->next)
-  { ULONG64 i;
-    struct soap_wsrm_range *r;
+  { struct soap_wsrm_range *r;
     switch (seq->state)
     { case SOAP_WSRM_UNKNOWN:
         fputs("UNKNOWN ", fd);
@@ -3313,25 +3334,50 @@ soap_wsrm_dump(struct soap *soap, FILE *fd)
       if (seq->messages)
       { char sep = ' ';
         int nack = 0;
+#ifdef SOAP_WSRM_FAST_ALLOC
+	ULONG64 i;
+#else
+	struct soap_wsrm_message *p;
+#endif
         fprintf(fd, "    ACKED  =");
+#ifdef SOAP_WSRM_FAST_ALLOC
         for (i = 0; i < seq->num; i++)
-        { if (seq->messages[i].state == SOAP_WSRM_ACK)
+        { if (seq->messages[i]->state == SOAP_WSRM_ACK)
           { fprintf(fd, "%c" SOAP_ULONG_FORMAT, sep, i + 1); 
             sep = ',';
           }
-          else if (seq->messages[i].state == SOAP_WSRM_NACK)
+          else if (seq->messages[i]->state == SOAP_WSRM_NACK)
             nack = 1;
         }
+#else
+	for (p = seq->messages; p; p = p->next)
+	{ if (p->state == SOAP_WSRM_ACK)
+	  { fprintf(fd, "%c" SOAP_ULONG_FORMAT, sep, p->num); 
+	    sep = ',';
+	  }
+	  else if (p->state == SOAP_WSRM_NACK)
+	    nack = 1;
+	}
+#endif
         fprintf(fd, "\n");
         if (nack)
         { fprintf(fd, "    NACKED =");
           sep = ' ';
+#ifdef SOAP_WSRM_FAST_ALLOC
           for (i = 0; i < seq->num; i++)
-          { if (seq->messages[i].state == SOAP_WSRM_NACK)
+          { if (seq->messages[i]->state == SOAP_WSRM_NACK)
             { fprintf(fd, "%c" SOAP_ULONG_FORMAT, sep, i + 1); 
               sep = ',';
             }
           }
+#else
+	  for (p = seq->messages; p; p = p->next)
+	  { if (p->state == SOAP_WSRM_NACK)
+	    { fprintf(fd, "%c" SOAP_ULONG_FORMAT, sep, p->num); 
+	      sep = ',';
+	    }
+	  }
+#endif
           fprintf(fd, "\n");
         }
       }
@@ -3423,7 +3469,7 @@ soap_wsrm_init(struct soap *soap, struct soap_wsrm_data *data, void *arg)
 
 /**
 @fn int soap_wsrm_copy(struct soap *soap, struct soap_plugin *p, struct soap_plugin *q)
-@brief Copy plugin data.
+@brief Copy plugin data (private thread data).
 @param soap context
 @param[out] p plugin
 @param[in] q plugin
@@ -3473,8 +3519,8 @@ soap_wsrm_resend().
 static int
 soap_wsrm_send(struct soap *soap, const char *buf, size_t len)
 { struct soap_wsrm_data *data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_wsrm_send state=%d\n", data->state));
-  if (data->state == SOAP_WSRM_ON)
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_wsrm_send state=%d\n", data ? data->state : 0));
+  if (data && data->state == SOAP_WSRM_ON)
     if (soap_wsrm_msg_append(soap, data, buf, len))
       return soap->error;
   return data->fsend(soap, buf, len); /* pass data on to next send callback */
@@ -3538,7 +3584,6 @@ soap_wsrm_disconnect(struct soap *soap)
   DBGFUN("soap_wsrm_disconnect");
   if (!data || (data->fdisconnect && data->fdisconnect(soap)))
     return soap->error;
-  MUTEX_LOCK(soap_wsrm_session_lock);
   if (data->seq && data->seq->refs)
     data->seq->refs--;
   data->seq = NULL;
@@ -3548,7 +3593,6 @@ soap_wsrm_disconnect(struct soap *soap)
       data->msg = NULL;
     }
   }
-  MUTEX_UNLOCK(soap_wsrm_session_lock);
   return SOAP_OK;
 }
 
@@ -3570,7 +3614,7 @@ static int
 soap_wsrm_process_ack(struct soap *soap, struct _wsrm__SequenceAcknowledgement *ack)
 { struct soap_wsrm_sequence *seq;
   struct soap_wsrm_data *data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
-  DBGFUN1("soap_wsrm_process_ack", "ack id=%s", ack->Identifier?ack->Identifier:"none");
+  DBGFUN1("soap_wsrm_process_ack", "ack id=%s", ack->Identifier ? ack->Identifier : "none");
   if (!data)
     return soap->error = SOAP_PLUGIN_ERROR;
   MUTEX_LOCK(soap_wsrm_session_lock);
@@ -3589,14 +3633,25 @@ soap_wsrm_process_ack(struct soap *soap, struct _wsrm__SequenceAcknowledgement *
   if (ack->__sizeNack)
   { int i;
     for (i = 0; i < ack->__sizeNack; i++)
-    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Nack=" SOAP_ULONG_FORMAT "\n", ack->Nack[i]));
+    {
+#ifndef SOAP_WSRM_FAST_ALLOC
+      struct soap_wsrm_message *p;
+#endif
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Nack=" SOAP_ULONG_FORMAT "\n", ack->Nack[i]));
       if (ack->Nack[i] == 0 || ack->Nack[i] > seq->num)
       { soap_wsrm_error(soap, seq, wsrm__InvalidAcknowledgement);
         MUTEX_UNLOCK(soap_wsrm_session_lock);
         return soap->error;
       }
+#ifdef SOAP_WSRM_FAST_ALLOC
       if (seq->messages)
-        seq->messages[ack->Nack[i] - 1].state = SOAP_WSRM_NACK;
+        seq->messages[ack->Nack[i] - 1]->state = SOAP_WSRM_NACK;
+#else
+      for (p = seq->messages; p; p = p->next)
+      { if (p->num == ack->Nack[i])
+          p->state = SOAP_WSRM_NACK;
+      }
+#endif
     }
   }
   else if (!ack->None) /* else free acked messages, unless None */
@@ -3610,10 +3665,23 @@ soap_wsrm_process_ack(struct soap *soap, struct _wsrm__SequenceAcknowledgement *
       if (seq->messages)
       { ULONG64 j;
         for (j = ack->AcknowledgementRange[i].Lower; j <= ack->AcknowledgementRange[i].Upper; j++)
-        { seq->messages[j - 1].state = SOAP_WSRM_ACK;
+        { 
+#ifdef SOAP_WSRM_FAST_ALLOC
+	  seq->messages[j - 1]->state = SOAP_WSRM_ACK;
           DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Ack=" SOAP_ULONG_FORMAT "\n", j));
-          if (seq->messages[j - 1].list)
-            soap_wsrm_msg_free(soap, &seq->messages[j - 1]);
+          if (seq->messages[j - 1]->list)
+            soap_wsrm_msg_free(soap, seq->messages[j - 1]);
+#else
+	  struct soap_wsrm_message *p;
+	  for (p = seq->messages; p; p = p->next)
+	  { if (p->state != SOAP_WSRM_ACK && ack->AcknowledgementRange[i].Lower <= p->num && p->num <= ack->AcknowledgementRange[i].Upper)
+	    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Ack=" SOAP_ULONG_FORMAT "\n", p->num));
+	      p->state = SOAP_WSRM_ACK;
+	      if (p->list)
+		soap_wsrm_msg_free(soap, p);
+	    }
+	  }
+#endif
         }
       }
     }
@@ -3906,7 +3974,9 @@ range of message numbers. Used by soap_wsrm_resend().
 */
 static int
 soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, int all, ULONG64 lower, ULONG64 upper)
-{ ULONG64 i;
+{
+#ifdef SOAP_WSRM_FAST_ALLOC
+  ULONG64 i;
   struct soap_wsrm_data *data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
   DBGFUN2("soap_wsrm_resend_seq", "lower=" SOAP_ULONG_FORMAT, lower, "upper=" SOAP_ULONG_FORMAT, upper);
   if (!data)
@@ -3919,7 +3989,7 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, int all,
   if (lower == 0)
     lower = 1;
   for (i = lower; i <= upper; i++)
-  { struct soap_wsrm_message *p = &seq->messages[i - 1];
+  { struct soap_wsrm_message *p = seq->messages[i - 1];
     if (((all && p->state != SOAP_WSRM_ACK) || p->state == SOAP_WSRM_NACK) && p->list) /* not acked */
     { struct soap_wsrm_content *q;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Resending message " SOAP_ULONG_FORMAT "\n", i));
@@ -3946,6 +4016,43 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, int all,
       soap_closesock(soap);
     }
   }
+#else
+  struct soap_wsrm_message *p;
+  struct soap_wsrm_data *data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
+  DBGFUN2("soap_wsrm_resend_seq", "lower=" SOAP_ULONG_FORMAT, lower, "upper=" SOAP_ULONG_FORMAT, upper);
+  if (!data)
+    return soap->error = SOAP_PLUGIN_ERROR;
+  if (!seq->to || seq->state == SOAP_WSRM_TERMINATED)
+    return SOAP_OK;
+  data->state = SOAP_WSRM_OFF; /* disable caching */
+  for (p = seq->messages; p; p = p->next)
+  { if (p->num >= lower && (upper == 0 || p->num <= upper))
+    { if (((all && p->state != SOAP_WSRM_ACK) || p->state == SOAP_WSRM_NACK) && p->list) /* not acked */
+      { struct soap_wsrm_content *q;
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Resending message " SOAP_ULONG_FORMAT "\n", p->num));
+	soap->omode |= SOAP_ENC_XML; /* disables HTTP */
+        if (soap_connect(soap, seq->to, NULL))
+          return soap->error;
+        DBGLOG(SENT, SOAP_MESSAGE(fdebug, "\n==== BEGIN RESEND ====\n"));
+        for (q = p->list; q; q = q->next)
+        { DBGMSG(SENT, q->buf, q->len);
+          if (data->fsend(soap, q->buf, q->len))
+            return soap->error;
+        }
+        if (soap_end_send(soap))
+          return soap_closesock(soap);
+        DBGLOG(SENT, SOAP_MESSAGE(fdebug, "\n==== END RESEND ====\n"));
+	soap->omode &= ~SOAP_ENC_XML; /* reenables HTTP */
+	if (!soap_begin_recv(soap))
+	  soap_ignore_element(soap); /* read content but ignore */
+	else if (soap->error != SOAP_NO_DATA && soap->error != 202)
+	  return soap_closesock(soap);
+	soap_end_recv(soap);
+	soap_closesock(soap);
+      }
+    }
+  }
+#endif
   return SOAP_OK;
 }
 
@@ -4259,7 +4366,7 @@ soap_wsrm_seq_insert(struct soap *soap, struct soap_wsrm_data *data)
 /**
 @fn int soap_wsrm_msg_append(struct soap *soap, struct soap_wsrm_data *data, const char *buf, size_t len)
 @brief Internal function used by soap_wsrm_send() to append message data to the
-current message being transmitted for the current sequence.
+current message being transmitted in the current sequence.
 @param soap context
 @param data plugin
 @param[in] buf message data
@@ -4270,27 +4377,24 @@ static int
 soap_wsrm_msg_append(struct soap *soap, struct soap_wsrm_data *data, const char *buf, size_t len)
 { struct soap_wsrm_content *p;
   DBGFUN1("soap_wsrm_msg_append", "len=%lu", (unsigned long)len);
-  /* a message must be present */
   if (!data->msg)
-    return soap->error = SOAP_PLUGIN_ERROR;
+    return SOAP_OK;
   p = (struct soap_wsrm_content*)malloc(sizeof(struct soap_wsrm_content));
   if (!p)
     return soap->error = SOAP_EOM;
   p->buf = (char*)malloc(len);
-  if (p->buf)
-  { p->len = len;
-    memcpy(p->buf, buf, len);
+  if (!p->buf)
+  { free((void*)p);
+    return soap->error = SOAP_EOM;
   }
+  p->len = len;
+  memcpy(p->buf, buf, len);
   p->next = NULL;
-  MUTEX_LOCK(soap_wsrm_session_lock);
   if (!data->msg->list)
     data->msg->list = p;
   if (data->msg->last)
     data->msg->last->next = p;
   data->msg->last = p;
-  MUTEX_UNLOCK(soap_wsrm_session_lock);
-  if (!p->buf)
-    return soap->error = SOAP_EOM;
   return SOAP_OK;
 }
 
@@ -4337,7 +4441,7 @@ soap_wsrm_seq_created(struct soap *soap, struct soap_wsrm_sequence *seq)
   if (!seq || seq->state != SOAP_WSRM_CREATED)
     return 0;
   if (seq->expires && seq->expires < time(NULL))
-  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Sequence %s has expired\n", seq->id?seq->id:"(null)"));
+  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Sequence %s has expired\n", seq->id ? seq->id : "(null)"));
     seq->state = SOAP_WSRM_TERMINATED;
     return 0;
   }
@@ -4358,7 +4462,7 @@ soap_wsrm_seq_valid(struct soap *soap, struct soap_wsrm_sequence *seq)
   if (!seq || (seq->state != SOAP_WSRM_CREATED && seq->state != SOAP_WSRM_CLOSED))
     return 0;
   if (seq->expires && seq->expires < time(NULL))
-  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Sequence %s has expired\n", seq->id?seq->id:"(null)"));
+  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Sequence %s has expired\n", seq->id ? seq->id : "(null)"));
     seq->state = SOAP_WSRM_TERMINATED;
     return 0;
   }
@@ -4520,6 +4624,7 @@ soap_wsrm_num_free(struct soap *soap, struct soap_wsrm_sequence *seq)
   seq->ranges = NULL;
 }
 
+#ifdef SOAP_WSRM_FAST_ALLOC
 /**
 @fn unsigned short soap_wsrm_msb(ULONG64 n)
 @brief Returns MSB(n)
@@ -4538,6 +4643,7 @@ soap_wsrm_msb(register ULONG64 n)
   if ((k = (n >>  1))) n = k, m +=  1;
   return m;
 }
+#endif
 
 /**
 @fn struct soap_wsrm_message *soap_wsrm_msg_new(struct soap *soap, struct soap_wsrm_sequence *seq, ULONG64 num)
@@ -4549,35 +4655,62 @@ soap_wsrm_msb(register ULONG64 n)
 */
 static struct soap_wsrm_message *
 soap_wsrm_msg_new(struct soap *soap, struct soap_wsrm_sequence *seq, ULONG64 num)
-{ struct soap_wsrm_message *p = seq->messages;
-  if (num == 0)
+{ if (num == 0)
   { soap_wsrm_error(soap, seq, wsrm__MessageNumberRollover);
     return NULL;
   }
-  if (!p || num > seq->num)
+#ifdef SOAP_WSRM_FAST_ALLOC
+  if (!seq->messages || num > seq->num)
   { ULONG64 i;
+    struct soap_wsrm_message **p = seq->messages;
     unsigned short m = soap_wsrm_msb(num);
     if (!p || seq->num == 0 || m > soap_wsrm_msb(seq->num))
     { ULONG64 n = (1 << (m + 1)) - 1;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Enlarging messages to " SOAP_ULONG_FORMAT " for num = " SOAP_ULONG_FORMAT "\n", n, num));
-      p = (struct soap_wsrm_message*)malloc(n * sizeof(struct soap_wsrm_message));
+      p = (struct soap_wsrm_message**)malloc(n * sizeof(struct soap_wsrm_message*));
       if (!p)
       { soap->error = SOAP_EOM;
         return NULL;
       }
       if (seq->messages)
-      { memcpy(p, seq->messages, seq->num * sizeof(struct soap_wsrm_message));
+      { memcpy(p, seq->messages, seq->num * sizeof(struct soap_wsrm_message*));
         free(seq->messages);
       }
       seq->messages = p;
     }
     for (i = seq->num; i < num; i++)
-    { p[i].state = SOAP_WSRM_INIT;
-      p[i].list = p[i].last = NULL;
-    }
+      p[i] = NULL;
     seq->num = num;
   }
-  return &p[num - 1];
+  if (!seq->messages[num - 1])
+  { struct soap_wsrm_message *p = (struct soap_wsrm_message*)malloc(sizeof(struct soap_wsrm_message));
+    if (!p)
+    { soap->error = SOAP_EOM;
+      return NULL;
+    }
+    p->state = SOAP_WSRM_INIT;
+    p->list = p->last = NULL;
+    seq->messages[num - 1] = p;
+  }
+  return seq->messages[num - 1];
+#else
+  struct soap_wsrm_message *p, **q;
+  p = (struct soap_wsrm_message*)malloc(sizeof(struct soap_wsrm_message));
+  if (!p)
+  { soap->error = SOAP_EOM;
+    return NULL;
+  }
+  p->next = NULL;
+  p->num = num;
+  p->state = SOAP_WSRM_INIT;
+  p->list = p->last = NULL;
+  for (q = &seq->messages; *q; q = &(*q)->next)
+    ;
+  *q = p;
+  if (num > seq->num)
+    seq->num = num;
+  return p;
+#endif
 }
 
 /**
@@ -4590,6 +4723,9 @@ sequence state.
 static void
 soap_wsrm_msg_free(struct soap *soap, struct soap_wsrm_message *p)
 { struct soap_wsrm_content *q, *r;
+#ifndef SOAP_WSRM_FAST_ALLOC
+  DBGFUN1("soap_wsrm_msg_free", "num=" SOAP_ULONG_FORMAT, p->num);
+#endif
   for (q = p->list; q; q = r)
   { r = q->next;
     if (q->buf)

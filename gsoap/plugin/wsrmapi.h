@@ -59,7 +59,10 @@ extern "C" {
 #endif
 
 /** Plugin identification for plugin registry */
-#define SOAP_WSRM_ID "WS-RM-1.11"
+#define SOAP_WSRM_ID "WS-RM-1.12"
+
+/** Use the new fast and improved message allocation and lookup method */
+#define SOAP_WSRM_FAST_ALLOC
 
 /** Plugin identification for plugin registry */
 extern const char soap_wsrm_id[];
@@ -114,6 +117,10 @@ enum soap_wsrm_message_state { SOAP_WSRM_INIT, SOAP_WSRM_ACK, SOAP_WSRM_NACK };
 struct soap_wsrm_message
 { enum soap_wsrm_message_state state;		/**< (n)ack state */
   struct soap_wsrm_content *list, *last;	/**< list of content blocks */
+#ifndef SOAP_WSRM_FAST_ALLOC
+  ULONG64 num;					/**< message number */
+  struct soap_wsrm_message *next;		/**< next message in list */
+#endif
 };
 
 /**
@@ -170,7 +177,11 @@ struct soap_wsrm_sequence
   ULONG64 lastnum;	/**< last message num received upon closing */
   enum wsrm__FaultCodes fault;		/**< sequence fault (use when error) */
   enum soap_wsrm_state state;		/**< sequence state */
-  struct soap_wsrm_message *messages;	/**< array [0 .. seq->num-1] with message content */
+#ifdef SOAP_WSRM_FAST_ALLOC
+  struct soap_wsrm_message **messages;	/**< array [0 .. seq->num-1] pointing to message content */
+#else
+  struct soap_wsrm_message *messages;	/**< linked list of messages */
+#endif
   struct soap_wsrm_range *ranges;	/**< ranges of received messages */
   int channel;		/**< callback WCF channel instance */
 };
