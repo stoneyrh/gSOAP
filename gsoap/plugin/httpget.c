@@ -185,7 +185,8 @@ static int http_get_copy(struct soap *soap, struct soap_plugin *dst, struct soap
 */
 
 static void http_get_delete(struct soap *soap, struct soap_plugin *p)
-{ free(p->data); /* free allocated plugin data (this function is not called for shared plugin data, but only when the final soap_done() is invoked on the original soap struct) */
+{ (void)soap;
+  free(p->data); /* free allocated plugin data (this function is not called for shared plugin data, but only when the final soap_done() is invoked on the original soap struct) */
 }
 
 static int http_get_parse(struct soap *soap)
@@ -247,6 +248,7 @@ char *query(struct soap *soap)
 
 char *query_key(struct soap *soap, char **s)
 { char *t = *s;
+  (void)soap;
   if (t && *t)
   { *s = (char*)soap_decode_string(t, strlen(t), t + 1);
     return t;
@@ -256,6 +258,7 @@ char *query_key(struct soap *soap, char **s)
 
 char *query_val(struct soap *soap, char **s)
 { char *t = *s;
+  (void)soap;
   if (t && *t == '=')
   { *s = (char*)soap_decode_string(t, strlen(t), t + 1);
     return t;

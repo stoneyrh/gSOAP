@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.19 User Guide</title>
+<title>gSOAP 2.8.20 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.19 User Guide </h1>
+<h1 align="center">gSOAP 2.8.20 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Nov  8, 2014
+<h3 align="center">Nov 30, 2014
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -397,9 +397,9 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.20"
 >19.20&nbsp; <font color="#0000FF">Socket Options and Flags</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.21"
->19.21&nbsp; <font color="#0000FF">Secure SOAP Web Services with HTTPS/SSL</font></a><br />
+>19.21&nbsp; <font color="#0000FF">Secure Web Services with HTTPS/SSL</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.22"
->19.22&nbsp; <font color="#0000FF">Secure SOAP Clients with HTTPS/SSL</font></a><br />
+>19.22&nbsp; <font color="#0000FF">Secure Clients with HTTPS/SSL</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.23"
 >19.23&nbsp; <font color="#0000FF">SSL Authentication Callback</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.24"
@@ -1118,7 +1118,7 @@ gSOAP supports Zlib deflate and gzip compression (for HTTP, TCP/IP, and XML file
 </li>
 
 <li>
-gSOAP supports SSL (HTTPS) using OpenSSL.
+gSOAP supports SSL (HTTPS) using OpenSSL and optionally using GNUTLS.
 <div class="p"><!----></div>
 </li>
 
@@ -14069,7 +14069,7 @@ Note that multiple socket options can be explicitly set with <i>setsockopt</i> a
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc19.21">
-19.21</a>&nbsp;&nbsp;<font color="#0000FF">Secure SOAP Web Services with HTTPS/SSL</font></h3>&nbsp;<a name="sec:serveropenssl">
+19.21</a>&nbsp;&nbsp;<font color="#0000FF">Secure Web Services with HTTPS/SSL</font></h3>&nbsp;<a name="sec:serveropenssl">
 </a>
 
 <div class="p"><!----></div>
@@ -14279,6 +14279,9 @@ By default, clients are not required to authenticate. To support client authenti
 This requires each client to authenticate with its certificate.
 
 <div class="p"><!----></div>
+Since release version 2.8.20 SSL v3 is disabled. To enable SSL v3 together with TLS v1 use <i>SOAP_SSLv3_TLSv1</i> in <i>soap_ssl_server_context</i>.
+
+<div class="p"><!----></div>
 The <i>cacert</i> file and <i>capath</i> are optional. Either one can be
 specified when clients must run on non-trusted systems (<i>capath</i> is not used with GNUTLS). We want to avoid
 storing trusted certificates in the default location on the file system when
@@ -14312,7 +14315,7 @@ access of the gSOAP context.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc19.22">
-19.22</a>&nbsp;&nbsp;<font color="#0000FF">Secure SOAP Clients with HTTPS/SSL</font></h3><a name="sec:clientopenssl">
+19.22</a>&nbsp;&nbsp;<font color="#0000FF">Secure Clients with HTTPS/SSL</font></h3><a name="sec:clientopenssl">
 </a>
 
 <div class="p"><!----></div>
@@ -14381,6 +14384,9 @@ soap_ssl_init(); /* init OpenSSL (just once) */<br />
 soap_call_ns__mymethod(&amp;soap, "https://domain/path/secure.cgi", "", ...);
 </td></tr></table><br></i>
 For systems based on Microsoft windows, the WinInet module can be used instead, see <i>mod_gsoap/gsoap_win/wininet</i>.
+
+<div class="p"><!----></div>
+Since release version 2.8.20 SSL v3 is disabled. To enable SSL v3 together with TLS v1 use <i>SOAP_SSLv3_TLSv1</i> in <i>soap_ssl_client_context</i>.
 
 <div class="p"><!----></div>
 To disable server authentication for testing purposes, use the following:
@@ -16218,5 +16224,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On  8 Nov 2014, 12:57.</small>
+version 4.00.<br />On 30 Nov 2014, 15:23.</small>
 </html>

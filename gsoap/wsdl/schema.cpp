@@ -115,6 +115,7 @@ xs__schema::~xs__schema()
 
 int xs__schema::get(struct soap *soap)
 {
+  (void)soap;
   return preprocess();
 }
 
@@ -617,6 +618,7 @@ int xs__include::preprocess(xs__schema &schema)
 
 int xs__include::traverse(xs__schema &schema)
 {
+  (void)schema;
   return SOAP_OK;
 }
 
@@ -708,6 +710,7 @@ int xs__redefine::preprocess(xs__schema &schema)
 
 int xs__redefine::traverse(xs__schema &schema)
 {
+  (void)schema;
   return SOAP_OK;
 }
 
@@ -2010,6 +2013,7 @@ xs__group* xs__group::groupPtr() const
 
 int xs__enumeration::traverse(xs__schema &schema)
 {
+  (void)schema;
   if (vflag)
     cerr << "   Analyzing schema enumeration '" << (value?value:"") << "'" << endl;
   return SOAP_OK;
@@ -2017,6 +2021,7 @@ int xs__enumeration::traverse(xs__schema &schema)
 
 int xs__pattern::traverse(xs__schema &schema)
 {
+  (void)schema;
   if (vflag)
     cerr << "   Analyzing schema pattern" << endl;
   return SOAP_OK;

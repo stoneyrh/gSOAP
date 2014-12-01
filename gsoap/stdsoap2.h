@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.19
+	stdsoap2.h 2.8.20
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20819
+#define GSOAP_VERSION 20820
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -553,8 +553,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #endif
 
-/* native Win, HP-UX, and AIX compilers don't like empty structs */
-#if defined(WIN32) || defined(HP_UX) || defined(_AIX) || defined(AIX) || defined(VXWORKS)
+/* allowing empty struct in C is a GNU extension */
+#if !defined(__GNU__)
 # define WITH_NOEMPTYSTRUCT
 #endif
 
@@ -599,7 +599,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # define LONG64 long long
 # define ULONG64 long long
 # define DBL_PINFTY (1.1579208923716189e77)
-# define WITH_NOEMPTYSTRUCT
 # undef HAVE_WCTOMB
 # undef HAVE_MBTOWC
 # undef HAVE_GMTIME_R
@@ -1450,11 +1449,11 @@ typedef soap_int32 soap_mode;
 #define SOAP_SSL_NO_DEFAULT_CA_PATH		0x10	/* don't use default_verify_paths */
 #define SOAP_SSL_RSA				0x20	/* use RSA */
 #define SOAP_SSLv3				0x40	/* SSL v3 only */
-#define SOAP_TLSv1				0x80	/* TLS v1 only */
-#define SOAP_SSLv3_TLSv1			0x00	/* SSL v3 and TLS v1 support by default (no SSL v1/v2) */
+#define SOAP_TLSv1				0x00	/* TLS v1 only (default) */
+#define SOAP_SSLv3_TLSv1			0x80	/* SSL v3 and TLS v1 support */
 #define SOAP_SSL_CLIENT				0x100	/* client context */
 
-#define SOAP_SSL_DEFAULT			(SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION | SOAP_SSLv3_TLSv1)
+#define SOAP_SSL_DEFAULT			(SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION | SOAP_TLSv1)
 
 /* state */
 
@@ -2147,7 +2146,7 @@ struct SOAP_STD_API soap
   char path[SOAP_TAGLEN];
   char host[SOAP_TAGLEN];
   char *action;
-  char *prolog;			/* XML declaration prolog */
+  const char *prolog;		/* XML declaration prolog */
   unsigned long ip;		/* IP number */
   int port;			/* port number */
   short keep_alive;		/* connection should be kept open */
@@ -2393,7 +2392,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_rand(void);
 # define soap_id_forward(s, h, p, len, st, tt, n, k, fc) (p)
 # define soap_reference(s, a, t) (1)
 # define soap_array_reference(s, p, a, n, t) (1)
-# define soap_embed(s, p, a, n, t, pp) (0)
+# define soap_embed(s, p, a, n, t) (0)
 # define soap_embedded_id(s, i, p, t) (i)
 # define soap_is_embedded(s, p) (0)
 # define soap_is_single(s, p) (1)
@@ -2475,6 +2474,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_send3(struct soap*, const char*, const char*, con
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_pututf8(struct soap*, unsigned long);
 SOAP_FMAC1 soap_wchar SOAP_FMAC2 soap_getutf8(struct soap*);
+SOAP_FMAC1 size_t SOAP_FMAC2 soap_utf8len(const char*);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_putbase64(struct soap*, const unsigned char*, int);
 SOAP_FMAC1 unsigned char* SOAP_FMAC2 soap_getbase64(struct soap*, int*, int);
@@ -2491,7 +2491,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_pointer_lookup_id(struct soap*, void *p, int t, s
 SOAP_FMAC1 int SOAP_FMAC2 soap_pointer_lookup(struct soap*, const void *p, int t, struct soap_plist**);
 SOAP_FMAC1 int SOAP_FMAC2 soap_pointer_enter(struct soap*, const void *p, const struct soap_array *a, int n, int t, struct soap_plist**);
 SOAP_FMAC1 int SOAP_FMAC2 soap_array_pointer_lookup(struct soap*, const void *p, const struct soap_array *a, int n, int t, struct soap_plist**);
-SOAP_FMAC1 int SOAP_FMAC2 soap_embed(struct soap *soap, const void *p, const struct soap_array *a, int n, const char *tag, int type);
+SOAP_FMAC1 int SOAP_FMAC2 soap_embed(struct soap *soap, const void *p, const struct soap_array *a, int n, int type);
 SOAP_FMAC1 struct soap_ilist* SOAP_FMAC2 soap_lookup(struct soap*, const char*);
 SOAP_FMAC1 struct soap_ilist* SOAP_FMAC2 soap_enter(struct soap*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_resolve(struct soap*);

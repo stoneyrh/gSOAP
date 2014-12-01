@@ -106,7 +106,7 @@ class Types
     void gen(const char *URI, const xs__any&, const char *minOccurs, const char *maxOccurs);
     void gen(const char *URI, const xs__anyAttribute&);
     void gen_inh(const char *URI, const xs__complexType *complexType, bool anonymous);
-    void gen_soap_array(const char *name, const char *t, const char *item, const char *type);
+    void gen_soap_array(const char *t, const char *item, const char *type);
     void gen_substitutions(const char *URI, const xs__element &element);
     void document(const xs__annotation*);
     void modify(const char *name);

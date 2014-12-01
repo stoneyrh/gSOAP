@@ -124,7 +124,8 @@ static int http_form_init(struct soap *soap, struct http_form_data *data, int (*
 }
 
 static void http_form_delete(struct soap *soap, struct soap_plugin *p)
-{ free(p->data); /* free allocated plugin data (this function is not called for shared plugin data, but only when the final soap_done() is invoked on the original soap struct) */
+{ (void)soap;
+  free(p->data); /* free allocated plugin data (this function is not called for shared plugin data, but only when the final soap_done() is invoked on the original soap struct) */
 }
 
 static int http_form_parse_header(struct soap *soap, const char *key, const char *val)

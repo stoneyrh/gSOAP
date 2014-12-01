@@ -1025,6 +1025,7 @@ soap_mec_put_base64(struct soap *soap, struct soap_mec_data *data, const unsigne
 { char *t;
   int i;
   unsigned long m;
+  (void)soap;
   if (!s || !n)
     return;
   t = data->buf + data->bufidx;
@@ -1051,7 +1052,8 @@ soap_mec_put_base64(struct soap *soap, struct soap_mec_data *data, const unsigne
 */
 static void
 soap_mec_end_base64(struct soap *soap, struct soap_mec_data *data)
-{ if (data->i)
+{ (void)soap;
+  if (data->i)
   { char *t;
     int i;
     unsigned long m;

@@ -1356,7 +1356,7 @@ void CRYPTO_thread_cleanup()
 
 #else
 
-/* OpenSSL not used, no need to these */
+/* OpenSSL not used */
 
 int CRYPTO_thread_setup()
 { return SOAP_OK;

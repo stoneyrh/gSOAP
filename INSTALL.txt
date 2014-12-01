@@ -38,6 +38,20 @@ make -f MakefileManual
 This compiles and installs the binaries in gsoap/bin. Move them to a bin
 directory or include them in your executable path.
 
+The above command assumes you have Bison and Flex installed. To use Yacc, please
+edit MakefileManual and change as follows:
+
+YACC=yacc -d -v -s soapcpp2_yacc
+CMFLAGS=-DWITH_YACC -DWITH_FLEX
+
+If you do not have the Bison tool, please download and install it from here:
+
+	http://www.gnu.org/software/bison/
+
+If you do not have the Flex tool, please download and install it from here:
+
+      	http://flex.sourceforge.net
+
 For your project builds, use the stdsoap2.c and stdsoap2.cpp sources rather
 than the libgsoap libs, as the libs are not built. To enable SSL, GZIP, HTTP
 cookies, IPv6 support, and/or force C locale usage, use the compiler flags:

@@ -71,7 +71,8 @@ static size_t logging_recv(struct soap *soap, char *buf, size_t len);
 
 /* plugin registry function, invoked by soap_register_plugin */
 int logging(struct soap *soap, struct soap_plugin *p, void *arg)
-{ p->id = logging_id;
+{ (void)arg;
+  p->id = logging_id;
   /* create local plugin data */
   p->data = (void*)SOAP_MALLOC(soap, sizeof(struct logging_data));
   /* register the destructor */

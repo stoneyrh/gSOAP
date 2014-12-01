@@ -1363,7 +1363,8 @@ soap_wsa_error(struct soap *soap, SOAP_WSA(FaultSubcodeValues) fault)
 */
 int
 soap_wsa(struct soap *soap, struct soap_plugin *p, void *arg)
-{ DBGFUN("soap_wsa");
+{ (void)arg;
+  DBGFUN("soap_wsa");
   p->id = soap_wsa_id;
   p->data = (void*)SOAP_MALLOC(soap, sizeof(struct soap_wsa_data));
   p->fcopy = NULL;

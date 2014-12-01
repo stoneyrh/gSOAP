@@ -1617,7 +1617,7 @@ static char* soap_wsse_ids(struct soap *soap, const char *tags);
 static int soap_wsse_session_verify(struct soap *soap, const char hash[SOAP_SMD_SHA1_SIZE], const char *created, const char *nonce);
 static void soap_wsse_session_cleanup(struct soap *soap);
 static void calc_digest(struct soap *soap, const char *created, const char *nonce, int noncelen, const char *password, char hash[SOAP_SMD_SHA1_SIZE]);
-static void calc_nonce(struct soap *soap, char nonce[SOAP_WSSE_NONCELEN]);
+static void calc_nonce(char nonce[SOAP_WSSE_NONCELEN]);
 
 static int soap_wsse_init(struct soap *soap, struct soap_wsse_data *data, const void *(*arg)(struct soap*, int*, const char*, int*));
 static int soap_wsse_copy(struct soap *soap, struct soap_plugin *dst, struct soap_plugin *src);
@@ -1903,7 +1903,7 @@ soap_wsse_add_UsernameTokenDigest(struct soap *soap, const char *id, const char 
   char nonce[SOAP_WSSE_NONCELEN], *nonceBase64;
   DBGFUN2("soap_wsse_add_UsernameTokenDigest", "id=%s", id?id:"", "username=%s", username?username:"");
   /* generate a nonce */
-  calc_nonce(soap, nonce);
+  calc_nonce(nonce);
   nonceBase64 = soap_s2base64(soap, (unsigned char*)nonce, NULL, SOAP_WSSE_NONCELEN);
   /* The specs are not clear: compute digest over binary nonce or base64 nonce? */
   /* compute SHA1(created, nonce, password) */
@@ -3917,13 +3917,12 @@ calc_digest(struct soap *soap, const char *created, const char *nonce, int nonce
 \******************************************************************************/
 
 /**
-@fn static void calc_nonce(struct soap *soap, char nonce[SOAP_WSSE_NONCELEN])
+@fn static void calc_nonce(char nonce[SOAP_WSSE_NONCELEN])
 @brief Calculates randomized nonce (also uses time() in case a poorly seeded PRNG is used)
-@param soap context
-@param[out] nonce value
+@param[out] nonce[0..SOAP_WSSE_NONCELEN-1] value
 */
 static void
-calc_nonce(struct soap *soap, char nonce[SOAP_WSSE_NONCELEN])
+calc_nonce(char nonce[SOAP_WSSE_NONCELEN])
 { int i;
   time_t r = time(NULL);
   memcpy(nonce, &r, 4);
@@ -4060,6 +4059,7 @@ soap_wsse_copy(struct soap *soap, struct soap_plugin *dst, struct soap_plugin *s
 static void
 soap_wsse_delete(struct soap *soap, struct soap_plugin *p)
 { struct soap_wsse_data *data = (struct soap_wsse_data*)soap_lookup_plugin(soap, soap_wsse_id);
+  (void)p;
   DBGFUN("soap_wsse_delete");
   if (data)
   { soap_wsse_preparecleanup(soap, data);

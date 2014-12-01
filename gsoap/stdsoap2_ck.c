@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.19
+	stdsoap2.c[pp] 2.8.20
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20819
+#define GSOAP_LIB_VERSION 20820
 
 #ifdef AS400
 # pragma convert(819)	/* EBCDIC to ASCII */
@@ -79,10 +79,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.19 2014-11-08 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.20 2014-11-30 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.19 2014-11-08 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.20 2014-11-30 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
@@ -1690,12 +1690,12 @@ int
 SOAP_FMAC2
 soap_pututf8(struct soap *soap, register unsigned long c)
 { char tmp[16];
-  if (c < 0x80 && c > 0)
+  if ((c < 0x7F && c > 0x1F))
   { *tmp = (char)c;
     return soap_send_raw(soap, tmp, 1);
   }
 #ifndef WITH_LEAN
-  if (c >= 0x80)
+  if (c > 0x9F)
   { register char *t = tmp;
     if (c < 0x0800)
       *t++ = (char)(0xC0 | ((c >> 6) & 0x1F));
@@ -1724,9 +1724,9 @@ soap_pututf8(struct soap *soap, register unsigned long c)
   else
 #endif
 #ifdef HAVE_SNPRINTF
-    soap_snprintf(tmp, sizeof(tmp), "&#%lu;", c);
+    soap_snprintf(tmp, sizeof(tmp), "&#x%lX;", c);
 #else
-    sprintf(tmp, "&#%lu;", c);
+    sprintf(tmp, "&#x%lX;", c);
 #endif
   return soap_send(soap, tmp);
 }
@@ -1764,6 +1764,20 @@ soap_getutf8(struct soap *soap)
   if (c < 0xFC)
     return ((soap_wchar)(c & 0x03) << 24) | (c1 << 18) | (c2 << 12) | (c3 << 6) | c4;
   return ((soap_wchar)(c & 0x01) << 30) | (c1 << 24) | (c2 << 18) | (c3 << 12) | (c4 << 6) | (soap_wchar)(soap_get1(soap) & 0x3F);
+}
+#endif
+
+/******************************************************************************/
+#ifndef PALM_1
+SOAP_FMAC1
+size_t
+SOAP_FMAC2
+soap_utf8len(const char *s)
+{ register size_t l = 0;
+  while (*s)
+    if ((*s++ & 0xC0) != 0x80)
+      l++;
+  return l;
 }
 #endif
 
@@ -3367,11 +3381,11 @@ ssl_auth_init(struct soap *soap)
     }
     DH_free(dh);
   }
-  flags = (SSL_OP_ALL | SSL_OP_NO_SSLv2); /* disable SSL v2 */
+  flags = (SSL_OP_ALL | SSL_OP_NO_SSLv2); /* disable SSL v2 by default */
   if ((soap->ssl_flags & SOAP_SSLv3))
     flags |= SSL_OP_NO_TLSv1;
-  if ((soap->ssl_flags & SOAP_TLSv1))
-    flags |= SSL_OP_NO_SSLv3;
+  else if (!(soap->ssl_flags & SOAP_SSLv3_TLSv1))
+    flags |= SSL_OP_NO_SSLv3; /* disable SSL v3 by default, unless SOAP_SSLv3 or SOAP_SSLv3_TLSv1 is set */
 #ifdef SSL_OP_NO_TICKET
   /* TLS extension is enabled by default in OPENSSL v0.9.8k
      Disable it by adding SSL_OP_NO_TICKET */
@@ -3458,7 +3472,8 @@ ssl_auth_init(struct soap *soap)
 #ifndef PALM_1
 static int
 ssl_password(char *buf, int num, int rwflag, void *userdata)
-{ if (num < (int)strlen((char*)userdata) + 1)
+{ (void)rwflag;
+  if (num < (int)strlen((char*)userdata) + 1)
     return 0;
   return (int)strlen(strcpy(buf, (char*)userdata));
 }
@@ -7034,10 +7049,9 @@ soap_free_pht(struct soap *soap)
 SOAP_FMAC1
 int
 SOAP_FMAC2
-soap_embed(struct soap *soap, const void *p, const struct soap_array *a, int n, const char *tag, int type)
+soap_embed(struct soap *soap, const void *p, const struct soap_array *a, int n, int type)
 { register int i;
   struct soap_plist *pp;
-  (void)soap;
   if (soap->version == 2)
     soap->encoding = 1;
   if (a)
@@ -8674,6 +8688,7 @@ void
 SOAP_FMAC2
 soap_set_recv_logfile(struct soap *soap, const char *logfile)
 {
+  (void)soap; (void)logfile;
 #ifdef SOAP_DEBUG
   soap_set_logfile(soap, SOAP_INDEX_RECV, logfile);
 #endif
@@ -8685,6 +8700,7 @@ void
 SOAP_FMAC2
 soap_set_sent_logfile(struct soap *soap, const char *logfile)
 {
+  (void)soap; (void)logfile;
 #ifdef SOAP_DEBUG
   soap_set_logfile(soap, SOAP_INDEX_SENT, logfile);
 #endif
@@ -8696,6 +8712,7 @@ void
 SOAP_FMAC2
 soap_set_test_logfile(struct soap *soap, const char *logfile)
 {
+  (void)soap; (void)logfile;
 #ifdef SOAP_DEBUG
   soap_set_logfile(soap, SOAP_INDEX_TEST, logfile);
 #endif
@@ -9177,7 +9194,7 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
   soap->proxy_port = 8080;
   soap->proxy_userid = NULL;
   soap->proxy_passwd = NULL;
-  soap->prolog = NULL;
+  soap->prolog = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 #ifdef WITH_ZLIB
   soap->zlib_state = SOAP_ZLIB_NONE;
   soap->zlib_in = SOAP_ZLIB_NONE;
@@ -9645,8 +9662,7 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
 #endif
 #ifndef WITH_LEAN
     if (!soap->ns)
-    { if (!(soap->mode & SOAP_XML_CANONICAL)
-       && soap_send(soap, soap->prolog ? soap->prolog : "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"))
+    { if (!(soap->mode & SOAP_XML_CANONICAL) && soap_send(soap, soap->prolog))
         return soap->error;
     }
     else if (soap->mode & SOAP_XML_INDENT)
@@ -11204,11 +11220,6 @@ soap_string_out(struct soap *soap, const char *s, int flag)
         s = t;
       }
       break;
-    case 0x0D:
-      if (soap_send_raw(soap, s, t - s - 1) || soap_send_raw(soap, "&#xD;", 5))
-        return soap->error;
-      s = t;
-      break;
     case '&':
       if (soap_send_raw(soap, s, t - s - 1) || soap_send_raw(soap, "&amp;", 5))
         return soap->error;
@@ -11233,6 +11244,11 @@ soap_string_out(struct soap *soap, const char *s, int flag)
         s = t;
       }
       break;
+    case 0x7F:
+      if (soap_send_raw(soap, s, t - s - 1) || soap_send_raw(soap, "&#x7F;", 6))
+        return soap->error;
+      s = t;
+      break;
     default:
 #ifndef WITH_LEANER
 #ifdef HAVE_MBTOWC
@@ -11249,7 +11265,7 @@ soap_string_out(struct soap *soap, const char *s, int flag)
 #endif
 #endif
 #ifndef WITH_NOSTRINGTOUTF8
-      if ((c & mask) || !(c & 0xFFFFFFE0UL))
+      if ((c & mask) || !(c & 0xFFFFFF60UL))
       { if (soap_send_raw(soap, s, t - s - 1) || soap_pututf8(soap, (unsigned char)c))
           return soap->error;
         s = t;
@@ -11590,40 +11606,46 @@ soap_string_in(struct soap *soap, int flag, long minlen, long maxlen, const char
         c = soap_getchar(soap);
       else
 #endif
-      if ((soap->mode & SOAP_C_UTFSTRING))
-      { if (((c = soap_get(soap)) & 0x80000000) && c >= -0x7FFFFF80 && c < SOAP_AP)
-        { c &= 0x7FFFFFFF;
-          t = buf;
-          if (c < 0x0800)
-            *t++ = (char)(0xC0 | ((c >> 6) & 0x1F));
-          else
-          { if (c < 0x010000)
-              *t++ = (char)(0xE0 | ((c >> 12) & 0x0F));
-            else
-            { if (c < 0x200000)
-                *t++ = (char)(0xF0 | ((c >> 18) & 0x07));
-              else
-              { if (c < 0x04000000)
-                  *t++ = (char)(0xF8 | ((c >> 24) & 0x03));
-                else
-                { *t++ = (char)(0xFC | ((c >> 30) & 0x01));
-                  *t++ = (char)(0x80 | ((c >> 24) & 0x3F));
-                }
-                *t++ = (char)(0x80 | ((c >> 18) & 0x3F));
-              }
-              *t++ = (char)(0x80 | ((c >> 12) & 0x3F));
-            }
-            *t++ = (char)(0x80 | ((c >> 6) & 0x3F));
-          }
-          *t++ = (char)(0x80 | (c & 0x3F));
-          m = (int)(t - buf) - 1;
-          t = buf;
-          *s++ = *t++;
-          continue;
-        }
+      { c = soap_getutf8(soap);
+	if ((soap->mode & SOAP_C_UTFSTRING))
+	{ if (c >= 0x80 || (c < SOAP_AP && c >= -0x7FFFFF80))
+	  { c &= 0x7FFFFFFF;
+	    t = buf;
+	    if (c < 0x0800)
+	      *t++ = (char)(0xC0 | ((c >> 6) & 0x1F));
+	    else
+	    { if (c < 0x010000)
+	      *t++ = (char)(0xE0 | ((c >> 12) & 0x0F));
+	      else
+	      { if (c < 0x200000)
+		*t++ = (char)(0xF0 | ((c >> 18) & 0x07));
+		else
+		{ if (c < 0x04000000)
+		  *t++ = (char)(0xF8 | ((c >> 24) & 0x03));
+		  else
+		  { *t++ = (char)(0xFC | ((c >> 30) & 0x01));
+		    *t++ = (char)(0x80 | ((c >> 24) & 0x3F));
+		  }
+		  *t++ = (char)(0x80 | ((c >> 18) & 0x3F));
+		}
+		*t++ = (char)(0x80 | ((c >> 12) & 0x3F));
+	      }
+	      *t++ = (char)(0x80 | ((c >> 6) & 0x3F));
+	    }
+	    *t++ = (char)(0x80 | (c & 0x3F));
+	    m = (int)(t - buf) - 1;
+	    t = buf;
+	    *s++ = *t++;
+	    l++;
+	    if (maxlen >= 0 && l > maxlen)
+	    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "String too long: maxlen=%ld\n", maxlen));
+	      soap->error = SOAP_LENGTH;
+	      return NULL;
+	    }
+	    continue;
+	  }
+	}
       }
-      else
-        c = soap_getutf8(soap);
       switch (c)
       {
       case SOAP_TT:
@@ -11715,20 +11737,20 @@ soap_string_in(struct soap *soap, int flag, long minlen, long maxlen, const char
           goto end;
 #ifndef WITH_CDATA
         if (c == '<' && !flag)
-        {   if (f && n == 0)
-              goto end;
-            c = soap_getchar(soap);
-            soap_unget(soap, c);
-            if (c == '/')
-            { c = SOAP_TT;
-              if (n == 0)
-                goto end;
-              n--;
-            }
-            else
-              n++;
-            *s++ = '<';
-            break;
+	{ if (f && n == 0)
+	    goto end;
+	  c = soap_getchar(soap);
+	  soap_unget(soap, c);
+	  if (c == '/')
+	  { c = SOAP_TT;
+	    if (n == 0)
+	      goto end;
+	    n--;
+	  }
+	  else
+	    n++;
+	  *s++ = '<';
+	  break;
         }
         else
 #endif
@@ -13157,9 +13179,15 @@ int
 SOAP_FMAC2
 soap_s2string(struct soap *soap, const char *s, char **t, long minlen, long maxlen)
 { if (s)
-  { long l = (long)strlen(s);
-    if ((maxlen >= 0 && l > maxlen) || l < minlen)
-      return soap->error = SOAP_LENGTH;
+  { if (minlen > 0 || maxlen >= 0)
+    { long l;
+      if ((soap->mode & SOAP_C_UTFSTRING))
+	l = (long)soap_utf8len(s);
+      else
+	l = (long)strlen(s);
+      if (l > maxlen || l < minlen)
+	return soap->error = SOAP_LENGTH;
+    }
     if (!(*t = soap_strdup(soap, s)))
       return soap->error = SOAP_EOM;
   }
@@ -13174,12 +13202,19 @@ int
 SOAP_FMAC2
 soap_s2QName(struct soap *soap, const char *s, char **t, long minlen, long maxlen)
 { if (s)
-  { long l = (long)strlen(s);
+  {
 #ifndef WITH_FAST
     char *b;
 #endif
-    if ((maxlen >= 0 && l > maxlen) || l < minlen)
-      return soap->error = SOAP_LENGTH;
+    if (minlen > 0 || maxlen >= 0)
+    { long l;
+      if ((soap->mode & SOAP_C_UTFSTRING))
+	l = (long)soap_utf8len(s);
+      else
+	l = (long)strlen(s);
+      if (l > maxlen || l < minlen)
+	return soap->error = SOAP_LENGTH;
+    }
 #ifdef WITH_FAST
     soap->labidx = 0;
 #else

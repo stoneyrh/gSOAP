@@ -133,6 +133,7 @@ int aes = 0;	/* use AES256 */
 static const void *token_handler(struct soap *soap, int *alg, const char *keyname, int *keylen)
 { const char *ctxId;
   /* we're not using keyname, which is from the ds:KeyInfo/KeyName content */
+  (void)keyname;
   switch (*alg)
   { case SOAP_SMD_VRFY_DSA_SHA1:
     case SOAP_SMD_VRFY_RSA_SHA1:

@@ -2118,7 +2118,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
           }
           item = element.name; // <sequence><element name="item" type="..."/></sequence>
         }
-        gen_soap_array(name, t, item, type);
+        gen_soap_array(t, item, type);
       }
       else
       {
@@ -3195,6 +3195,7 @@ void Types::gen(const char *URI, const vector<xs__any>& anys)
 
 void Types::gen(const char *URI, const xs__any& any, const char *minOccurs, const char *maxOccurs)
 {
+  (void)URI;
   fprintf(stream, "/// @todo <any");
   if (any.namespace_)
     fprintf(stream, " namespace=\"%s\"", any.namespace_);
@@ -3239,6 +3240,7 @@ void Types::gen(const char *URI, const xs__any& any, const char *minOccurs, cons
 
 void Types::gen(const char *URI, const xs__anyAttribute& anyAttribute)
 {
+  (void)URI;
   if (anyAttribute.namespace_)
     fprintf(stream, "/// @todo <anyAttribute namespace=\"%s\">.\n", anyAttribute.namespace_);
   fprintf(stream, "/// @todo Schema extensibility is user-definable.\n///       Consult the protocol documentation to change or insert declarations.\n///       Use wsdl2h option -x to remove this attribute.\n///       Use wsdl2h option -d for xsd__anyAttribute DOM (soap_dom_attribute).\n");
@@ -3317,7 +3319,7 @@ void Types::gen_inh(const char *URI, const xs__complexType *complexType, bool an
     fprintf(stream, "    END OF INHERITED FROM %s\n", b);
 }
 
-void Types::gen_soap_array(const char *name, const char *t, const char *item, const char *type)
+void Types::gen_soap_array(const char *t, const char *item, const char *type)
 {
   char *tmp = NULL, *dims = NULL, size[8];
   if (type)
@@ -3347,7 +3349,7 @@ void Types::gen_soap_array(const char *name, const char *t, const char *item, co
   {
     if (strchr(tmp, '[') != NULL)
     {
-      gen_soap_array(NULL, "", item, tmp);
+      gen_soap_array("", item, tmp);
       fprintf(stream, arrayformat, "}", item ? aname(NULL, NULL, item) : "");
       fprintf(stream, ";\n");
     }

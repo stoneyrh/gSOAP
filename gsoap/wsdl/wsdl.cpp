@@ -152,6 +152,7 @@ wsdl__definitions::~wsdl__definitions()
 
 int wsdl__definitions::get(struct soap *soap)
 {
+  (void)soap;
   return preprocess();
 }
 

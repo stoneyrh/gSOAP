@@ -114,7 +114,7 @@ SOAP_FMAC3
 void
 SOAP_FMAC4
 soap_traverse_xsd__anyType(struct soap *soap, struct soap_dom_element *node, const char *s, soap_walker p, soap_walker q)
-{ 
+{ (void)soap; (void)node; (void)s; (void)p; (void)q; 
 }
 
 /******************************************************************************/
@@ -123,14 +123,14 @@ SOAP_FMAC1
 void
 SOAP_FMAC2
 soap_serialize_xsd__anyAttribute(struct soap *soap, const struct soap_dom_attribute *node)
-{
+{ (void)soap; (void)node;
 }
 
 SOAP_FMAC1
 void
 SOAP_FMAC2
 soap_traverse_xsd__anyAttribute(struct soap *soap, struct soap_dom_attribute *node, const char *s, soap_walker p, soap_walker q)
-{
+{ (void)soap; (void)node; (void)s; (void)p; (void)q; 
 }
 
 /******************************************************************************/
@@ -256,7 +256,8 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct soap_dom_element *node, const char *type)
-{ if (node)
+{ (void)id; (void)type;
+  if (node)
   { const char *prefix; /* namespace prefix, if namespace is present */
     size_t colon;
     if (!(soap->mode & SOAP_DOM_ASIS))
@@ -403,7 +404,8 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_out_xsd__anyAttribute(struct soap *soap, const char *tag, int id, const struct soap_dom_attribute *node, const char *type)
-{ if (!(soap->mode & SOAP_DOM_ASIS))
+{ (void)tag; (void)id; (void)type;
+  if (!(soap->mode & SOAP_DOM_ASIS))
   { const struct soap_dom_attribute *att;
     for (att = node; att; att = att->next)
     { if (att->name && att->data && !strncmp(att->name, "xmlns:", 6))
@@ -442,6 +444,7 @@ SOAP_FMAC2
 soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element *node, const char *type)
 { register struct soap_attribute *tp;
   register struct soap_dom_attribute **att;
+  (void)tag; (void)type;
   if (soap_peek_element(soap))
   { if (soap->error != SOAP_NO_TAG)
       return NULL;
@@ -561,6 +564,7 @@ soap_in_xsd__anyAttribute(struct soap *soap, const char *tag, struct soap_dom_at
 { register struct soap_attribute *tp;
   struct soap_dom_attribute *tmp = node;
   struct soap_dom_attribute *att = node;
+  (void)tag; (void)type;
   for (tp = soap->attributes; tp; tp = tp->next)
   { if (tp->visible)
     { if (!att)

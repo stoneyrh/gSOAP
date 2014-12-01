@@ -38,11 +38,19 @@ To build 'soapcpp2' when autoconf/automake fail, use:
 
 	make -f MakefileManual
 
-The above command assumes you have Bison and Flex installed. For Yacc, please
+The above command assumes you have Bison and Flex installed. To use Yacc, please
 edit MakefileManual and change as follows:
 
 YACC=yacc -d -v -s soapcpp2_yacc
 CMFLAGS=-DWITH_YACC -DWITH_FLEX
+
+If you do not have the Bison tool, please download and install it from here:
+
+	http://www.gnu.org/software/bison/
+
+If you do not have the Flex tool, please download and install it from here:
+
+      	http://flex.sourceforge.net
 
 QNX INSTALLATION
 
