@@ -94,8 +94,10 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a0578c988308fdba3053e1aee6885e94d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8h.html#a0578c988308fdba3053e1aee6885e94d">SOAP_WSRM_ID</a>&#160;&#160;&#160;&quot;WS-RM-1.10&quot;</td></tr>
+<tr class="memitem:a0578c988308fdba3053e1aee6885e94d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8h.html#a0578c988308fdba3053e1aee6885e94d">SOAP_WSRM_ID</a>&#160;&#160;&#160;&quot;WS-RM-1.13&quot;</td></tr>
 <tr class="separator:a0578c988308fdba3053e1aee6885e94d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bc9c7ad22a0f34cac600971bcda6e98"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8h.html#a7bc9c7ad22a0f34cac600971bcda6e98">SOAP_WSRM_FAST_ALLOC</a></td></tr>
+<tr class="separator:a7bc9c7ad22a0f34cac600971bcda6e98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3da0baeeda3c64c796d02a833ccccbd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8h.html#af3da0baeeda3c64c796d02a833ccccbd">SOAP_WSRM_MAX_RETRIES</a>&#160;&#160;&#160;100</td></tr>
 <tr class="separator:af3da0baeeda3c64c796d02a833ccccbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac83eb613800acf73b54b37337868cf2c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsrmapi_8h.html#ac83eb613800acf73b54b37337868cf2c">SOAP_WSRM_MAX_SEC_TO_EXPIRE</a>&#160;&#160;&#160;600	/* 600 sec = 10 minutes */</td></tr>
@@ -309,12 +311,25 @@ Variables</h2></td></tr>
 <tr class="separator:a2f5b88f6da2708c658e230610ca380ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
+<a class="anchor" id="a7bc9c7ad22a0f34cac600971bcda6e98"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SOAP_WSRM_FAST_ALLOC</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Use the new fast O(1) message allocation/deallocation and lookup at the cost of stoting an array of pointers of length N per sequence, where N is the number of messages in the sequence </p>
+
+</div>
+</div>
 <a class="anchor" id="a0578c988308fdba3053e1aee6885e94d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define SOAP_WSRM_ID&#160;&#160;&#160;&quot;WS-RM-1.10&quot;</td>
+          <td class="memname">#define SOAP_WSRM_ID&#160;&#160;&#160;&quot;WS-RM-1.13&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -2770,7 +2785,7 @@ Variables</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Aug 24 2014 10:18:15 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Dec 4 2014 15:44:45 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

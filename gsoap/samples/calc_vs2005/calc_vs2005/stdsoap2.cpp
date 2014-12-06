@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.20
+	stdsoap2.c[pp] 2.8.21
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20820
+#define GSOAP_LIB_VERSION 20821
 
 #ifdef AS400
 # pragma convert(819)	/* EBCDIC to ASCII */
@@ -79,15 +79,22 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.20 2014-11-30 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.21 2014-12-05 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.20 2014-11-30 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.21 2014-12-05 00:00:00 GMT")
 #endif
 
-/* 8bit character representing unknown/nonrepresentable character data (e.g. not supported by current locale with multibyte support enabled) */
+/* 8bit character representing unknown character entity or multibyte data */
 #ifndef SOAP_UNKNOWN_CHAR
-#define SOAP_UNKNOWN_CHAR (127)
+# define SOAP_UNKNOWN_CHAR (0x7F)
+#endif
+
+/* unicode character representing unknown characters outside the XML 1.0 UTF8 unicode space */
+#ifdef WITH_REPLACE_ILLEGAL_UTF8
+# ifndef SOAP_UNKNOWN_UNICODE_CHAR
+#  define SOAP_UNKNOWN_UNICODE_CHAR (0xFFFD)
+# endif
 #endif
 
 /*      EOF=-1 */
@@ -1694,6 +1701,10 @@ soap_pututf8(struct soap *soap, register unsigned long c)
   { *tmp = (char)c;
     return soap_send_raw(soap, tmp, 1);
   }
+#ifdef WITH_REPLACE_ILLEGAL_UTF8
+  if (!(c == 0x09 || c == 0x0A || c == 0x0D || (c >= 0x80 && c <= 0xD7FF) || (c >= 0xE000 && c <= 0xFFFD) || (c >= 0x10000 && c <= 0x10FFFF)))
+    c = SOAP_UNKNOWN_UNICODE_CHAR;
+#endif
 #ifndef WITH_LEAN
   if (c > 0x9F)
   { register char *t = tmp;
@@ -3882,7 +3893,7 @@ tcp_connect(struct soap *soap, const char *endpoint, const char *host, int port)
     err = getaddrinfo(soap->proxy_host, soap_int2s(soap, soap->proxy_port), &hints, &res);
   else
     err = getaddrinfo(host, soap_int2s(soap, port), &hints, &res);
-  if (err)
+  if (err || !res)
   { soap_set_sender_error(soap, SOAP_GAI_STRERROR(err), "getaddrinfo failed in tcp_connect()", SOAP_TCP_ERROR);
     return SOAP_INVALID_SOCKET;
   }
@@ -4116,8 +4127,8 @@ again:
 #ifdef WITH_IPV6
       if (err == SOAP_ECONNREFUSED && res->ai_next)
       { soap->fclosesocket(soap, sk);
-	res = res->ai_next;
-	goto again;
+        res = res->ai_next;
+        goto again;
       }
 #endif
 #ifndef WITH_LEAN
@@ -4139,6 +4150,10 @@ again:
             soap_set_sender_error(soap, "Timeout", "connect failed in tcp_connect()", SOAP_TCP_ERROR);
             soap->fclosesocket(soap, sk);
 #ifdef WITH_IPV6
+	    if (res->ai_next)
+	    { res = res->ai_next;
+	      goto again;
+	    }
             freeaddrinfo(ressave);
 #endif
             return SOAP_INVALID_SOCKET;
@@ -4149,6 +4164,10 @@ again:
             soap_set_sender_error(soap, tcp_error(soap), "connect failed in tcp_connect()", SOAP_TCP_ERROR);
             soap->fclosesocket(soap, sk);
 #ifdef WITH_IPV6
+	    if (res->ai_next)
+	    { res = res->ai_next;
+	      goto again;
+	    }
             freeaddrinfo(ressave);
 #endif
             return SOAP_INVALID_SOCKET;
@@ -4163,6 +4182,10 @@ again:
         soap_set_sender_error(soap, tcp_error(soap), "connect failed in tcp_connect()", SOAP_TCP_ERROR);
         soap->fclosesocket(soap, sk);
 #ifdef WITH_IPV6
+	if (res->ai_next)
+	{ res = res->ai_next;
+	  goto again;
+	}
         freeaddrinfo(ressave);
 #endif
         return SOAP_INVALID_SOCKET;
@@ -4565,7 +4588,7 @@ tcp_select(struct soap *soap, SOAP_SOCKET sk, int flags, int timeout)
       if (r < 0 && (soap->errnum = soap_socket_errno(sk)) == SOAP_EINTR && eintr-- > 0)
         r = 0;
       else if (retries-- <= 0)
-	break;
+        break;
     } while (r == 0);
     if (r > 0)
     { r = 0;
@@ -9878,7 +9901,13 @@ soap_strtol(const char *s, char **t, int b)
       s++;
     while ((c = *s) && c >= '0' && c <= '9')
     { if (n >= 214748364 && (n > 214748364 || c >= '8'))
+      { if (neg && n == 214748364 && c == '8')
+	{ if (t)
+	    *t = (char*)(s + 1);
+	  return -2147483648;
+	}
         break;
+      }
       n *= 10;
       n += c - '0';
       s++;
@@ -11607,44 +11636,44 @@ soap_string_in(struct soap *soap, int flag, long minlen, long maxlen, const char
       else
 #endif
       { c = soap_getutf8(soap);
-	if ((soap->mode & SOAP_C_UTFSTRING))
-	{ if (c >= 0x80 || (c < SOAP_AP && c >= -0x7FFFFF80))
-	  { c &= 0x7FFFFFFF;
-	    t = buf;
-	    if (c < 0x0800)
-	      *t++ = (char)(0xC0 | ((c >> 6) & 0x1F));
-	    else
-	    { if (c < 0x010000)
-	      *t++ = (char)(0xE0 | ((c >> 12) & 0x0F));
-	      else
-	      { if (c < 0x200000)
-		*t++ = (char)(0xF0 | ((c >> 18) & 0x07));
-		else
-		{ if (c < 0x04000000)
-		  *t++ = (char)(0xF8 | ((c >> 24) & 0x03));
-		  else
-		  { *t++ = (char)(0xFC | ((c >> 30) & 0x01));
-		    *t++ = (char)(0x80 | ((c >> 24) & 0x3F));
-		  }
-		  *t++ = (char)(0x80 | ((c >> 18) & 0x3F));
-		}
-		*t++ = (char)(0x80 | ((c >> 12) & 0x3F));
-	      }
-	      *t++ = (char)(0x80 | ((c >> 6) & 0x3F));
-	    }
-	    *t++ = (char)(0x80 | (c & 0x3F));
-	    m = (int)(t - buf) - 1;
-	    t = buf;
-	    *s++ = *t++;
-	    l++;
-	    if (maxlen >= 0 && l > maxlen)
-	    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "String too long: maxlen=%ld\n", maxlen));
-	      soap->error = SOAP_LENGTH;
-	      return NULL;
-	    }
-	    continue;
-	  }
-	}
+        if ((soap->mode & SOAP_C_UTFSTRING))
+        { if (c >= 0x80 || (c < SOAP_AP && c >= -0x7FFFFF80))
+          { c &= 0x7FFFFFFF;
+            t = buf;
+            if (c < 0x0800)
+              *t++ = (char)(0xC0 | ((c >> 6) & 0x1F));
+            else
+            { if (c < 0x010000)
+              *t++ = (char)(0xE0 | ((c >> 12) & 0x0F));
+              else
+              { if (c < 0x200000)
+        	*t++ = (char)(0xF0 | ((c >> 18) & 0x07));
+        	else
+        	{ if (c < 0x04000000)
+        	  *t++ = (char)(0xF8 | ((c >> 24) & 0x03));
+        	  else
+        	  { *t++ = (char)(0xFC | ((c >> 30) & 0x01));
+        	    *t++ = (char)(0x80 | ((c >> 24) & 0x3F));
+        	  }
+        	  *t++ = (char)(0x80 | ((c >> 18) & 0x3F));
+        	}
+        	*t++ = (char)(0x80 | ((c >> 12) & 0x3F));
+              }
+              *t++ = (char)(0x80 | ((c >> 6) & 0x3F));
+            }
+            *t++ = (char)(0x80 | (c & 0x3F));
+            m = (int)(t - buf) - 1;
+            t = buf;
+            *s++ = *t++;
+            l++;
+            if (maxlen >= 0 && l > maxlen)
+            { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "String too long: maxlen=%ld\n", maxlen));
+              soap->error = SOAP_LENGTH;
+              return NULL;
+            }
+            continue;
+          }
+        }
       }
       switch (c)
       {
@@ -11737,20 +11766,20 @@ soap_string_in(struct soap *soap, int flag, long minlen, long maxlen, const char
           goto end;
 #ifndef WITH_CDATA
         if (c == '<' && !flag)
-	{ if (f && n == 0)
-	    goto end;
-	  c = soap_getchar(soap);
-	  soap_unget(soap, c);
-	  if (c == '/')
-	  { c = SOAP_TT;
-	    if (n == 0)
-	      goto end;
-	    n--;
-	  }
-	  else
-	    n++;
-	  *s++ = '<';
-	  break;
+        { if (f && n == 0)
+            goto end;
+          c = soap_getchar(soap);
+          soap_unget(soap, c);
+          if (c == '/')
+          { c = SOAP_TT;
+            if (n == 0)
+              goto end;
+            n--;
+          }
+          else
+            n++;
+          *s++ = '<';
+          break;
         }
         else
 #endif
@@ -13182,11 +13211,11 @@ soap_s2string(struct soap *soap, const char *s, char **t, long minlen, long maxl
   { if (minlen > 0 || maxlen >= 0)
     { long l;
       if ((soap->mode & SOAP_C_UTFSTRING))
-	l = (long)soap_utf8len(s);
+        l = (long)soap_utf8len(s);
       else
-	l = (long)strlen(s);
+        l = (long)strlen(s);
       if (l > maxlen || l < minlen)
-	return soap->error = SOAP_LENGTH;
+        return soap->error = SOAP_LENGTH;
     }
     if (!(*t = soap_strdup(soap, s)))
       return soap->error = SOAP_EOM;
@@ -13209,11 +13238,11 @@ soap_s2QName(struct soap *soap, const char *s, char **t, long minlen, long maxle
     if (minlen > 0 || maxlen >= 0)
     { long l;
       if ((soap->mode & SOAP_C_UTFSTRING))
-	l = (long)soap_utf8len(s);
+        l = (long)soap_utf8len(s);
       else
-	l = (long)strlen(s);
+        l = (long)strlen(s);
       if (l > maxlen || l < minlen)
-	return soap->error = SOAP_LENGTH;
+        return soap->error = SOAP_LENGTH;
     }
 #ifdef WITH_FAST
     soap->labidx = 0;
@@ -13369,7 +13398,7 @@ soap_QName2s(struct soap *soap, const char *s)
       if (!*s)
         break;
       /* find next QName */
-      n = 1;
+      n = 0;
       while (s[n] && !soap_blank((soap_wchar)s[n]))
         n++;
       /* normal prefix: pass string as is */
@@ -13380,14 +13409,14 @@ soap_QName2s(struct soap *soap, const char *s)
           soap_utilize_ns(soap, s);
         if ((soap->mode & SOAP_XML_DEFAULTNS))
         { r = strchr(s, ':');
-          if (r && soap->nlist && !strncmp(soap->nlist->id, s, r-s) && !soap->nlist->id[r-s])
-          { n -= r-s + 1;
+          if (r && soap->nlist && !strncmp(soap->nlist->id, s, r - s) && !soap->nlist->id[r - s])
+          { n -= r - s + 1;
             s = r + 1;
           }
         }
 #endif
         r = s;
-        m = n;
+        m = n + 1;
       }
       else /* URL-based string prefix */
       { s++;
@@ -13404,19 +13433,20 @@ soap_QName2s(struct soap *soap, const char *s)
                   break;
             }
           }
+	  q++;
           /* URL is in the namespace table? */
           if (p && p->id)
           { r = p->id;
 #ifndef WITH_LEAN
             if ((soap->mode & SOAP_XML_DEFAULTNS) && soap->nlist && !strcmp(soap->nlist->id, r))
-              q++;
-            else
+	      q++;
+	    else
 #endif
               m = strlen(r);
           }
           else /* not in namespace table: create xmlns binding */
           { char *x = soap_strdup(soap, s);
-            x[q-s] = '\0';
+            x[q - s - 1] = '\0';
 #ifdef HAVE_SNPRINTF
             soap_snprintf(soap->tmpbuf, sizeof(soap->tmpbuf), "xmlns:_%d", soap->idnum++);
 #else
@@ -13428,36 +13458,26 @@ soap_QName2s(struct soap *soap, const char *s)
           }
         }
       }
+      /* copy normalized QName into buffer, including the ending blank or NUL */
 #ifdef WITH_FAST
       if ((m && soap_append_lab(soap, r, m))
-       || (q && soap_append_lab(soap, q + 1, n - (q-s) - 1)))
+       || (q && soap_append_lab(soap, q, n - (q - s))))
         return NULL;
 #else
-      b = (char*)soap_push_block(soap, NULL, m + (q ? n - (q-s) - 1 : 0) + (s[n] != '\0'));
+      b = (char*)soap_push_block(soap, NULL, m + (q ? n - (q - s) : 0));
       memcpy(b, r, m);
       b += m;
       if (q)
-      { memcpy(b, q + 1, n - (q-s) - 1);
-        b += n - (q-s) - 1;
+      { memcpy(b, q, n - (q - s));
+        b += n - (q - s);
       }
 #endif
-      /* advance to next and add spacing */
+      /* advance to next */
       s += n;
-      if (*s)
-#ifdef WITH_FAST
-        soap_append_lab(soap, " ", 1);
-#else
-        *b = ' ';
-#endif
     }
 #ifdef WITH_FAST
-    soap_append_lab(soap, SOAP_STR_EOS, 1);
     t = soap_strdup(soap, soap->labbuf);
 #else
-    b = (char*)soap_push_block(soap, NULL, 1);
-    if (!b)
-      return NULL;
-    *b = '\0';
     t = (char*)soap_save_block(soap, NULL, NULL, 0);
 #endif
   }
@@ -13767,10 +13787,11 @@ gmtime_r(const time_t *t, struct tm *pt)
 /******************************************************************************/
 #ifndef WITH_LEAN
 #ifdef UNDER_CE
-/* WinCE very simple strftime for format "%FT%TZ" */
+/* WinCE very simple strftime for format "%Y-%m-%dT%H:%M:%SZ", note: %F and %T not supported by MS */
 static size_t
 strftime(char *buf, size_t len, const char *format, const struct tm *pT)
 { 
+  (void)len; (void)format;
 #ifdef HAVE_SNPRINTF
   soap_snprintf(buf, len, "%04d-%02d-%02dT%02d:%02d:%02dZ", pT->tm_year + 1900, pT->tm_mon + 1, pT->tm_mday, pT->tm_hour, pT->tm_min, pT->tm_sec);
 #else
@@ -13820,20 +13841,20 @@ soap_dateTime2s(struct soap *soap, time_t n)
 { struct tm T, *pT = &T;
 #if defined(HAVE_GMTIME_R)
   if (gmtime_r(&n, pT) != SOAP_FUNC_R_ERR)
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%TZ", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%SZ", pT);
 #elif defined(HAVE_GMTIME)
   if ((pT = gmtime(&n)))
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%TZ", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%SZ", pT);
 #elif defined(HAVE_TM_GMTOFF) || defined(HAVE_STRUCT_TM_TM_GMTOFF) || defined(HAVE_STRUCT_TM___TM_GMTOFF)
 #if defined(HAVE_LOCALTIME_R)
   if (localtime_r(&n, pT) != SOAP_FUNC_R_ERR)
-  { strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T%z", pT);
+  { strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S%z", pT);
     memmove(soap->tmpbuf + 23, soap->tmpbuf + 22, 3); /* 2000-03-01T02:00:00+0300 */
     soap->tmpbuf[22] = ':';                           /* 2000-03-01T02:00:00+03:00 */
   }
 #else
   if ((pT = localtime(&n)))
-  { strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T%z", pT);
+  { strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S%z", pT);
     memmove(soap->tmpbuf + 23, soap->tmpbuf + 22, 3); /* 2000-03-01T02:00:00+0300 */
     soap->tmpbuf[22] = ':';                           /* 2000-03-01T02:00:00+03:00 */
   }
@@ -13845,7 +13866,7 @@ soap_dateTime2s(struct soap *soap, time_t n)
   if (localtime_r(&n, pT) != SOAP_FUNC_R_ERR)
   { struct timeval tv;
     gettimeofday(&tv, &tz);
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", pT);
 #ifdef HAVE_SNPRINTF
     soap_snprintf(soap->tmpbuf + strlen(soap->tmpbuf), sizeof(soap->tmpbuf) - strlen(soap->tmpbuf), "%+03d:%02d", -tz.tz_minuteswest/60+(pT->tm_isdst!=0), abs(tz.tz_minuteswest)%60);
 #else
@@ -13856,7 +13877,7 @@ soap_dateTime2s(struct soap *soap, time_t n)
   if ((pT = localtime(&n)))
   { struct timeval tv;
     gettimeofday(&tv, &tz);
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", pT);
 #ifdef HAVE_SNPRINTF
     soap_snprintf(soap->tmpbuf + strlen(soap->tmpbuf), sizeof(soap->tmpbuf) - strlen(soap->tmpbuf), "%+03d:%02d", -tz.tz_minuteswest/60+(pT->tm_isdst!=0), abs(tz.tz_minuteswest)%60);
 #else
@@ -13875,7 +13896,7 @@ soap_dateTime2s(struct soap *soap, time_t n)
 #else
     ftime(&t);
 #endif
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", pT);
 #ifdef HAVE_SNPRINTF
     soap_snprintf(soap->tmpbuf + strlen(soap->tmpbuf), sizeof(soap->tmpbuf) - strlen(soap->tmpbuf), "%+03d:%02d", -t.timezone/60+(pT->tm_isdst!=0), abs(t.timezone)%60);
 #else
@@ -13890,7 +13911,7 @@ soap_dateTime2s(struct soap *soap, time_t n)
 #else
     ftime(&t);
 #endif
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", pT);
 #ifdef HAVE_SNPRINTF
     soap_snprintf(soap->tmpbuf + strlen(soap->tmpbuf), sizeof(soap->tmpbuf) - strlen(soap->tmpbuf), "%+03d:%02d", -t.timezone/60+(pT->tm_isdst!=0), abs(t.timezone)%60);
 #else
@@ -13900,10 +13921,10 @@ soap_dateTime2s(struct soap *soap, time_t n)
 #endif
 #elif defined(HAVE_LOCALTIME_R)
   if (localtime_r(&n, pT) != SOAP_FUNC_R_ERR)
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", pT);
 #else
   if ((pT = localtime(&n)))
-    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%FT%T", pT);
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%S", pT);
 #endif
   else
     strcpy(soap->tmpbuf, "1969-12-31T23:59:59Z");

@@ -69,14 +69,10 @@ int __ns5__dtx(struct soap *soap, _XML x, struct _ns3__commingtotown *response)
   if (!now)
     return soap_receiver_fault(soap, "Could not retrieve current time", NULL);
 
-  tm.tm_sec = 0;
-  tm.tm_min = 0;
-  tm.tm_hour = 0;
+  memset(&tm, 0, sizeof(struct tm));
   tm.tm_mday = 25;
   tm.tm_mon = 11;
   tm.tm_year = gmtime(now)->tm_year; /* this year */
-  tm.tm_isdst = 0;
-  tm.tm_zone = NULL;
 
   xmas = soap_timegm(&tm);
 

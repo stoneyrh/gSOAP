@@ -229,7 +229,7 @@ SOAPCPP2_NONAMESPACES =
 STRIP = 
 VERSION = 2.8
 WSDL2H_EXTRA_FLAGS = -DWITH_OPENSSL -DWITH_GZIP
-WSDL2H_EXTRA_LIBS =  ../plugin/httpda.c ../plugin/md5evp.c -lssl -lcrypto -lz
+WSDL2H_EXTRA_LIBS =  ../plugin/httpda.c ../plugin/md5evp.c ../plugin/threads.c -lssl -lcrypto -lz
 WSDL2H_IMPORTPATH = -DWSDL2H_IMPORT_PATH="\"${datarootdir}/gsoap/WS\""
 WSDL2H_SOAP_CPP_LIB = libgsoapssl++.a
 YACC = bison -y
@@ -296,8 +296,6 @@ AM_CXXFLAGS = -D$(platform)
 SOAP = $(top_srcdir)/gsoap/src/soapcpp2
 SOAP_NS_DEF = ns.nsmap ns.wsdl
 SOAP_H_FILES = soapH.h soapStub.h 
-
-# SOAP_FLAGS=
 SOAP_C_CORE = soapC.c
 SOAP_C_CLIENT = soapClient.c $(SOAP_C_CORE)
 SOAP_C_SERVER = soapServer.c $(SOAP_C_CORE)

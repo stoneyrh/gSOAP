@@ -9,7 +9,7 @@
  * updated by La Cam Chung and Robert van Engelen (HTTP GET ?wsdl to get WSDL)
  *
  * Contributed to the gSOAP package under the terms and conditions of the gSOAP
- * open source public license.
+ * public license.
  *
  */
 #if !defined(__GNUC__) || __GNUC__ < 2 || \

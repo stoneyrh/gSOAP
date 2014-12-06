@@ -102,8 +102,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a9259ba4ae18f3f7c129370a6bc65fc5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafae7fa201c57e3e25eb31468212ec22"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="wsrmapi_8h.html#a8bbf5f32482965a04eabbe9e3a29fc01">soap_wsrm_state</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#aafae7fa201c57e3e25eb31468212ec22">state</a></td></tr>
 <tr class="separator:aafae7fa201c57e3e25eb31468212ec22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4dcd5bdd34e82224c3acca1f66fa6ddd"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__wsrm__message.html">soap_wsrm_message</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a4dcd5bdd34e82224c3acca1f66fa6ddd">messages</a></td></tr>
-<tr class="separator:a4dcd5bdd34e82224c3acca1f66fa6ddd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab10cc70efddfa5f992dc75b7f66b6bfc"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__wsrm__message.html">soap_wsrm_message</a> **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#ab10cc70efddfa5f992dc75b7f66b6bfc">messages</a></td></tr>
+<tr class="separator:ab10cc70efddfa5f992dc75b7f66b6bfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab122f27f2af3dbf98613bb06348d7b7"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__wsrm__range.html">soap_wsrm_range</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#aab122f27f2af3dbf98613bb06348d7b7">ranges</a></td></tr>
 <tr class="separator:aab122f27f2af3dbf98613bb06348d7b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20346ea8e84e19ccb510a64a034ab0cf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsrm__sequence.html#a20346ea8e84e19ccb510a64a034ab0cf">channel</a></td></tr>
@@ -241,16 +241,16 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a4dcd5bdd34e82224c3acca1f66fa6ddd"></a>
+<a class="anchor" id="ab10cc70efddfa5f992dc75b7f66b6bfc"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">struct <a class="el" href="structsoap__wsrm__message.html">soap_wsrm_message</a>* soap_wsrm_sequence::messages</td>
+          <td class="memname">struct <a class="el" href="structsoap__wsrm__message.html">soap_wsrm_message</a>** soap_wsrm_sequence::messages</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>array [0 .. seq-&gt;num-1] with message content </p>
+<p>array [0 .. seq-&gt;num-1] pointing to message content </p>
 
 </div>
 </div>
@@ -390,7 +390,7 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Aug 24 2014 10:18:15 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Dec 4 2014 15:44:45 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

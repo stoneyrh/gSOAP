@@ -6196,7 +6196,7 @@ $as_echo "no" >&6; }
     WSDL2H_EXTRA_FLAGS="-DWITH_OPENSSL -DWITH_GZIP"
     # an ugly hack to get httpda and md5evp plugins to conditionally
     # compile with wsdl2h when OPENSSL is available
-    WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} ../plugin/httpda.c ../plugin/md5evp.c -lssl -lcrypto -lz"
+    WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} ../plugin/httpda.c ../plugin/md5evp.c ../plugin/threads.c -lssl -lcrypto -lz"
     SAMPLE_INCLUDES=
     SAMPLE_SSL_LIBS="-lssl -lcrypto -lz"
     WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"

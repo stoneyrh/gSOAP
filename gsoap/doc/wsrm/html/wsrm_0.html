@@ -755,11 +755,11 @@ The wsrm Plugin and C++ Server Objects</h1>
 <div class="line">}</div>
 </div><!-- fragment --><h1><a class="anchor" id="wsrm_10"></a>
 Speed improvements with large number of sequences</h1>
-<p>Compile <a class="el" href="wsrmapi_8c.html">wsrmapi.c</a> with -DSOAP_WSRM_FAST_LOOKUP to speed up sequence lookups for a large number of concurrent message sequences or sequences with a long time to live. An internal hash table is used, which will grow to accommodate the total number of concurrent sequences. The hash table entries are reused but (empty) entries are never deallocated to avoid allocation/deallocation overhead, which means that leak detectors may complain about space not being freed. </p>
+<p>Compile <a class="el" href="wsrmapi_8c.html">wsrmapi.c</a> with -DSOAP_WSRM_FAST_LOOKUP to speed up sequence lookups for a large number of concurrent message sequences or sequences with a long time to live. An internal hash table is used, which will grow to accommodate the total number of concurrent sequences. The hash table entries are reused but (temporary) empty entries are never deallocated to avoid allocation overhead, which means that leak detectors may complain about space not being freed. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Aug 24 2014 10:18:15 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Dec 4 2014 15:44:45 for gSOAP WS-ReliableMessaging by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

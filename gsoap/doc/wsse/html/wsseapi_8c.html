@@ -97,9 +97,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ae341110563279cc6f5cc57c22eaa7a8b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ae341110563279cc6f5cc57c22eaa7a8b">calc_digest</a> (struct soap *soap, const char *created, const char *nonce, int noncelen, const char *password, char hash[<a class="el" href="smdevp_8h.html#a6ba3b594687a71acfa875a5cc0a844be">SOAP_SMD_SHA1_SIZE</a>])</td></tr>
 <tr class="memdesc:ae341110563279cc6f5cc57c22eaa7a8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates digest value SHA1(created, nonce, password)  <a href="#ae341110563279cc6f5cc57c22eaa7a8b"></a><br/></td></tr>
 <tr class="separator:ae341110563279cc6f5cc57c22eaa7a8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c4fe3f38985fd0c526a03fdbafc2ad1"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a1c4fe3f38985fd0c526a03fdbafc2ad1">calc_nonce</a> (struct soap *soap, char nonce[<a class="el" href="wsseapi_8c.html#a65c55be8ba01ac63f64fddbe0e82b75b">SOAP_WSSE_NONCELEN</a>])</td></tr>
-<tr class="memdesc:a1c4fe3f38985fd0c526a03fdbafc2ad1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates randomized nonce (also uses time() in case a poorly seeded PRNG is used)  <a href="#a1c4fe3f38985fd0c526a03fdbafc2ad1"></a><br/></td></tr>
-<tr class="separator:a1c4fe3f38985fd0c526a03fdbafc2ad1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88a347b5879814212509d90ea82b1c9d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a88a347b5879814212509d90ea82b1c9d">calc_nonce</a> (char nonce[<a class="el" href="wsseapi_8c.html#a65c55be8ba01ac63f64fddbe0e82b75b">SOAP_WSSE_NONCELEN</a>])</td></tr>
+<tr class="memdesc:a88a347b5879814212509d90ea82b1c9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates randomized nonce (also uses time() in case a poorly seeded PRNG is used)  <a href="#a88a347b5879814212509d90ea82b1c9d"></a><br/></td></tr>
+<tr class="separator:a88a347b5879814212509d90ea82b1c9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9f8c9147cb058c0316f7f8c935a1b92"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ae9f8c9147cb058c0316f7f8c935a1b92">soap_wsse_init</a> (struct soap *soap, struct <a class="el" href="structsoap__wsse__data.html">soap_wsse_data</a> *data, const void *(*arg)(struct soap *, int *, const char *, int *))</td></tr>
 <tr class="memdesc:ae9f8c9147cb058c0316f7f8c935a1b92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes plugin data.  <a href="#ae9f8c9147cb058c0316f7f8c935a1b92"></a><br/></td></tr>
 <tr class="separator:ae9f8c9147cb058c0316f7f8c935a1b92"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -564,7 +564,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a1c4fe3f38985fd0c526a03fdbafc2ad1"></a>
+<a class="anchor" id="a88a347b5879814212509d90ea82b1c9d"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -574,19 +574,9 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">static void calc_nonce </td>
           <td>(</td>
-          <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname"><em>soap</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">char&#160;</td>
-          <td class="paramname"><em>nonce</em>[SOAP_WSSE_NONCELEN]&#160;</td>
-        </tr>
-        <tr>
+          <td class="paramname"><em>nonce</em>[SOAP_WSSE_NONCELEN]</td><td>)</td>
           <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -599,8 +589,7 @@ Variables</h2></td></tr>
 <p>Calculates randomized nonce (also uses time() in case a poorly seeded PRNG is used) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">nonce</td><td>value </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">nonce[0..SOAP_WSSE_NONCELEN-1]</td><td>value </td></tr>
   </table>
   </dd>
 </dl>
@@ -4884,7 +4873,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 5 2014 21:24:15 for gSOAP WS-Security by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Dec 4 2014 15:45:46 for gSOAP WS-Security by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

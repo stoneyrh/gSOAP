@@ -2,6 +2,7 @@
 	Contributed by Allan Kelly, June 17, 2002
 	Provides C++ alternatives for
 	soap_print_fault and soap_print_fault_location functions
+  	This contributed code is covered under the MPL 1.1 license
 
 	Note: soap_stream_fault in stdsoap2.cpp provides similar functionality
 */

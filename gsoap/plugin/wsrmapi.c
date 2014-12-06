@@ -3346,15 +3346,12 @@ soap_wsrm_dump(struct soap *soap, FILE *fd)
 #ifdef SOAP_WSRM_FAST_ALLOC
         for (i = 0; i < seq->num; i++)
         { p = seq->messages[i];
-	  if (p)
-	  {
-	    if (p->state == SOAP_WSRM_ACK)
-	    { fprintf(fd, "%c" SOAP_ULONG_FORMAT, sep, i + 1); 
-	      sep = ',';
-	    }
-	    else if (p->state == SOAP_WSRM_NACK)
-	      nack = 1;
+	  if (!p || p->state == SOAP_WSRM_ACK)
+	  { fprintf(fd, "%c" SOAP_ULONG_FORMAT, sep, i + 1); 
+	    sep = ',';
 	  }
+	  else if (p->state == SOAP_WSRM_NACK)
+	    nack = 1;
         }
 #else
 	for (p = seq->messages; p; p = p->next)
@@ -3677,20 +3674,22 @@ soap_wsrm_process_ack(struct soap *soap, struct _wsrm__SequenceAcknowledgement *
 #ifdef SOAP_WSRM_FAST_ALLOC
 	  p = seq->messages[j - 1];
 	  if (p)
-	  {
-	    p->state = SOAP_WSRM_ACK;
-            DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Ack=" SOAP_ULONG_FORMAT "\n", j));
-	    if (p->list)
-	      soap_wsrm_msg_free(soap, p);
+	  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Ack=" SOAP_ULONG_FORMAT "\n", j));
+	    soap_wsrm_msg_free(soap, p);
+	    free((void*)p);
+	    seq->messages[j - 1] = NULL;
 	  }
 #else
-	  for (p = seq->messages; p; p = p->next)
-	  { if (p->state != SOAP_WSRM_ACK && ack->AcknowledgementRange[i].Lower <= p->num && p->num <= ack->AcknowledgementRange[i].Upper)
+          struct soap_wsrm_message **q = &seq->messages;
+	  for (p = seq->messages; p; p = *q)
+	  { if (ack->AcknowledgementRange[i].Lower <= p->num && p->num <= ack->AcknowledgementRange[i].Upper)
 	    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Ack=" SOAP_ULONG_FORMAT "\n", p->num));
-	      p->state = SOAP_WSRM_ACK;
-	      if (p->list)
-		soap_wsrm_msg_free(soap, p);
+	      *q = p->next;
+	      soap_wsrm_msg_free(soap, p);
+	      free((void*)p);
 	    }
+	    else
+	      q = &p->next;
 	  }
 #endif
         }

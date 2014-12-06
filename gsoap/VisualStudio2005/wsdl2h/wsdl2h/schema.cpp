@@ -187,10 +187,7 @@ int xs__schema::insert(xs__schema& schema)
       }
     }
     if (!found)
-    {
       attribute.push_back(*at);
-      attribute.back().schemaPtr(this);
-    }
   }
   // insert elements, but only add elements with new name (limited conflict check)
   for (vector<xs__element>::const_iterator el = schema.element.begin(); el != schema.element.end(); ++el)
@@ -211,10 +208,7 @@ int xs__schema::insert(xs__schema& schema)
       }
     }
     if (!found)
-    {
       element.push_back(*el);
-      element.back().schemaPtr(this);
-    }
   }
   // insert groups, but only add groups with new name (no conflict check)
   for (vector<xs__group>::const_iterator gp = schema.group.begin(); gp != schema.group.end(); ++gp)
@@ -232,10 +226,7 @@ int xs__schema::insert(xs__schema& schema)
       }
     }
     if (!found)
-    {
       group.push_back(*gp);
-      group.back().schemaPtr(this);
-    }
   }
   // insert attributeGroups, but only add attributeGroups with new name (no conflict check)
   for (vector<xs__attributeGroup>::const_iterator ag = schema.attributeGroup.begin(); ag != schema.attributeGroup.end(); ++ag)
@@ -253,10 +244,7 @@ int xs__schema::insert(xs__schema& schema)
       }
     }
     if (!found)
-    {
       attributeGroup.push_back(*ag);
-      attributeGroup.back().schemaPtr(this);
-    }
   }
   // insert simpleTypes, but only add simpleTypes with new name (no conflict check)
   for (vector<xs__simpleType>::const_iterator st = schema.simpleType.begin(); st != schema.simpleType.end(); ++st)
@@ -274,10 +262,7 @@ int xs__schema::insert(xs__schema& schema)
       }
     }
     if (!found)
-    {
       simpleType.push_back(*st);
-      simpleType.back().schemaPtr(this);
-    }
   }
   // insert complexTypes, but only add complexTypes with new name (no conflict check)
   for (vector<xs__complexType>::const_iterator ct = schema.complexType.begin(); ct != schema.complexType.end(); ++ct)
@@ -295,10 +280,7 @@ int xs__schema::insert(xs__schema& schema)
       }
     }
     if (!found)
-    {
       complexType.push_back(*ct);
-      complexType.back().schemaPtr(this);
-    }
   }
   return SOAP_OK;
 }
