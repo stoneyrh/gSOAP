@@ -3033,7 +3033,7 @@ default_value(Entry *e, const char *a)
         {
           if (q->info.val.i == e->info.val.i)
           {
-            sprintf(buf, " %s=\"%s\"", a, ns_convert(q->sym->name));
+            sprintf(buf, " %s=\"%s\"", a, ns_remove2(q->sym->name, c_ident(e->info.typ)));
             break;
           }
         }
@@ -7739,7 +7739,7 @@ ns_remove2(char *tag, char *type)
 {
   size_t n;
   if (tag && type && !strncmp(tag, type, n = strlen(type)) && strlen(tag) > n + 2)
-    return ns_convert(tag + strlen(type) + 2);
+    return ns_convert(tag + n + 2);
   return ns_convert(tag);
 }
 
