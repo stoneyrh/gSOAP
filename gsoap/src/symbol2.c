@@ -11092,7 +11092,7 @@ soap_put(Tnode *typ)
     fprintf(fout, "\n\nSOAP_FMAC3 int SOAP_FMAC4 soap_put_%s(struct soap *soap, const %s, const char *tag, const char *type)\n{", ci,ctpa);
   }
   fflush(fout);
-  fprintf(fout, "\n\tregister int id = ");
+  fprintf(fout, "\n\tint id = ");
   if (is_invisible(typ->id->name))
     fprintf(fout, "0;");
   else if ((p = is_dynamic_array(typ)) != NULL)
@@ -12858,7 +12858,7 @@ soap_in(Tnode *typ)
         for (table = (Table*)typ->ref; table; table = table->prev)
         {
           p = table->list;
-          if (p && !is_item(p))
+          while (p && !is_item(p))
             p = p->next;
           if (p)
             break;
@@ -13152,7 +13152,9 @@ soap_in(Tnode *typ)
         	continue;
               }
               else if (is_invisible(p->sym->name)
-        	  && !(p->info.sto & (Sconst | Sprivate | Sprotected)) && !is_transient(p->info.typ) && !(p->info.sto & Sattribute))
+        	  && !(p->info.sto & (Sconst | Sprivate | Sprotected))
+		  && !is_transient(p->info.typ)
+		  && !(p->info.sto & Sattribute))
               {
         	f = 1;
         	if (is_string(p->info.typ) || is_wstring(p->info.typ) || is_stdstr(p->info.typ))
@@ -13378,7 +13380,7 @@ soap_in(Tnode *typ)
         for (table = (Table*)typ->ref; table; table = table->prev)
         {
           p = table->list;
-          if (p && !is_item(p))
+          while (p && !is_item(p))
             p = p->next;
           if (p)
             break;
@@ -13712,7 +13714,9 @@ soap_in(Tnode *typ)
         	continue;
               }
               else if (is_invisible(p->sym->name)
-        	  && !(p->info.sto & (Sconst | Sprivate | Sprotected)) && !is_transient(p->info.typ) && !(p->info.sto & Sattribute))
+        	  && !(p->info.sto & (Sconst | Sprivate | Sprotected))
+		  && !is_transient(p->info.typ)
+		  && !(p->info.sto & Sattribute))
               {
         	f = 1;
         	if (is_string(p->info.typ) || is_wstring(p->info.typ) || is_stdstr(p->info.typ))
