@@ -423,7 +423,7 @@ again:
         {
           (*i)->targetNamespace = targetNamespace;
           if (!Wflag)
-            cerr << "Warning: schema without namespace, assigning namespace '" << (targetNamespace?targetNamespace:"") << "'" << endl;
+            cerr << "Warning: schema imported without namespace, assigning namespace '" << (targetNamespace?targetNamespace:"") << "'" << endl;
         }
         for (j = types->xs__schema_.begin(); j != types->xs__schema_.end(); ++j)
         {
@@ -1555,9 +1555,7 @@ again:
           importschema = new xs__schema(definitions.soap, (*schema2)->sourceLocation(), s);
           if (!(*import).namespace_)
           {
-            if ((*schema2)->targetNamespace)
-              (*import).namespace_ = (*schema2)->targetNamespace;
-            else if (importschema->targetNamespace)
+	    if (importschema->targetNamespace)
               (*import).namespace_ = importschema->targetNamespace;
             else
               (*import).namespace_ = soap_strdup(definitions.soap, "");
