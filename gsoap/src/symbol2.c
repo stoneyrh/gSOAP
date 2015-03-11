@@ -14252,8 +14252,9 @@ soap_in(Tnode *typ)
       n = (Tnode*)typ->ref;
       fprintf(fout, "\n\tshort soap_flag;");
       fprintf(fout, "\n\t(void)type; /* appease -Wall -Werror */");
-      fprintf(fout, "\n\tfor (soap_flag = 0;; soap_flag = 1)\n\t{\t%s;", c_type_id(n, "n"));
-      fprintf(fout, "\n\t\tif (tag && *tag != '-')\n\t\t{\tif (soap_element_begin_in(soap, tag, 1, NULL))\n\t\t\t\tbreak;\n\t\t\tsoap_revert(soap);\n\t\t}\n\t\t");
+      fprintf(fout, "\n\tfor (soap_flag = 0;; soap_flag = 1)\n\t{");
+      fprintf(fout, "\n\t\tif (tag && *tag != '-')\n\t\t{\tif (soap_element_begin_in(soap, tag, 1, NULL))\n\t\t\t\tbreak;\n\t\t\tsoap_revert(soap);\n\t\t}");
+      fprintf(fout, "\n\t\t%s;\n\t\t", c_type_id(n, "n"));
       if (n->type == Tpointer)
         fprintf(fout, "n = NULL;");
       else if (n->type == Tarray)
@@ -14262,6 +14263,7 @@ soap_in(Tnode *typ)
         fprintf(fout, "n.soap_default(soap);");
       else if (n->type != Tfun && !is_void(n) && !is_XML(n))
         fprintf(fout, "soap_default_%s(soap, &n);", c_ident(n));
+      fprintf(fout, "\n\t\tif (!a && !(a = soap_new_%s(soap, -1)))\n\t\t\treturn NULL;", c_ident(typ));
       fprintf(fout, "\n\t\tif (tag && *tag != '-' && (*soap->id || *soap->href))");
       fprintf(fout, "\n\t\t{\tif (!soap_container_id_forward(soap, *soap->id?soap->id:soap->href, a, (size_t)a->size(), %s, %s, sizeof(%s), %d))\n\t\t\t\tbreak;\n\t\t\t", soap_type(reftype(n)), soap_type(typ), c_type(reftype(n)), reflevel(n));
       if (is_XML(n) && is_string(n))
@@ -14282,7 +14284,6 @@ soap_in(Tnode *typ)
       else if (n->type != Tfun && !is_void(n))
         fprintf(fout, "if (!soap_in_%s(soap, tag, &n, \"%s\"))", c_ident(n),xsi_type(n));
       fprintf(fout, "\n\t\t\tbreak;");
-      fprintf(fout, "\n\t\tif (!a && !(a = soap_new_%s(soap, -1)))\n\t\t\treturn NULL;", c_ident(typ));
       if ((!strcmp(typ->id->name, "std::vector") || !strcmp(typ->id->name, "std::deque")) && (is_primitive(n) || n->type == Tpointer))
         fprintf(fout, "\n\t\ta->push_back(n);");
       else
