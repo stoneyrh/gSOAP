@@ -430,10 +430,14 @@ soap_smd_init(struct soap *soap, struct soap_smd_data *data, int alg, const void
   /* allocate and init the OpenSSL HMAC or EVP_MD context */
   if ((alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
   { data->ctx = (void*)SOAP_MALLOC(soap, sizeof(HMAC_CTX));
+    if (!data->ctx)
+      return soap_set_receiver_error(soap, "soap_smd_init() failed", "No context", SOAP_SSL_ERROR);
     HMAC_CTX_init((HMAC_CTX*)data->ctx);
   }
   else
   { data->ctx = (void*)SOAP_MALLOC(soap, sizeof(EVP_MD_CTX));
+    if (!data->ctx)
+      return soap_set_receiver_error(soap, "soap_smd_init() failed", "No context", SOAP_SSL_ERROR);
     EVP_MD_CTX_init((EVP_MD_CTX*)data->ctx);
   }
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- SMD Init alg=%x (%p) --\n", alg, data->ctx));
@@ -531,10 +535,9 @@ soap_smd_final(struct soap *soap, struct soap_smd_data *data, char *buf, int *le
     switch (data->alg & SOAP_SMD_ALGO)
     { case SOAP_SMD_HMAC:
         HMAC_Final((HMAC_CTX*)data->ctx, (unsigned char*)buf, &n);
-        HMAC_CTX_cleanup((HMAC_CTX*)data->ctx);
         break;
       case SOAP_SMD_DGST:
-        EVP_DigestFinal((EVP_MD_CTX*)data->ctx, (unsigned char*)buf, &n);
+        EVP_DigestFinal_ex((EVP_MD_CTX*)data->ctx, (unsigned char*)buf, &n);
         break;
       case SOAP_SMD_SIGN:
         err = EVP_SignFinal((EVP_MD_CTX*)data->ctx, (unsigned char*)buf, &n, (EVP_PKEY*)data->key);
@@ -551,10 +554,15 @@ soap_smd_final(struct soap *soap, struct soap_smd_data *data, char *buf, int *le
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- SMD Final alg=%x (%p) %d bytes--\n", data->alg, data->ctx, n));
     DBGHEX(TEST, buf, n);
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n--"));
-    /* return length of digest or signature produced */
+    /* pass back length of digest or signature produced */
     if (len)
       *len = (int)n;
   }
+  /* cleanup */
+  if ((data->alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
+    HMAC_CTX_cleanup((HMAC_CTX*)data->ctx);
+  else
+    EVP_MD_CTX_cleanup((EVP_MD_CTX*)data->ctx);
   SOAP_FREE(soap, data->ctx);
   data->ctx = NULL;
   /* check and return */
