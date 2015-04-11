@@ -1,7 +1,7 @@
 /*
 	wsddapi.c
 
-	WS-Discovery 1.1 and 1.0 (WSDD) plugin API
+	WS-Discovery 1.0 and 1.1 (WSDD) plugin API
 
 	See gsoap/doc/wsdd for the WSDD plugin user guide.
 
@@ -58,7 +58,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 /**
 
-@page wsdd_0 The wsdd library for WS-Discovery 1.1 support
+@page wsdd_0 The wsdd library for WS-Discovery 1.0 and 1.1 support
 
 @section wsdd_1 WS-Discovery Setup
 
@@ -90,6 +90,13 @@ WS-Discovery ad-hoc and managed modes are supported by the wsdd library. In an
 ad-hoc mode discovery messages are sent multicast and response messages are
 sent unicast.  In a managed mode discovery messages are sent unicast to a
 Discovery Proxy.
+
+@note The wsdl2h tool uses typemap.dat to auto-generate a gSOAP service
+definitions header file that imports wsdd.h to support WS-Discovery 1.1 with
+WS-Addressing 2005/08. The tool imports wsdd5.h to support WS-Discovery 1.0
+with WS-Addressing 2005/08. To use WS-Discovery 1.0 with WS-Addressing 2004/08,
+you will need to change typemap.dat to let wsdl2h import wsdd10.h (see comments
+in typemap.dat).
 
 @section wsdd_2 WS-Discovery Event Handlers
 
@@ -330,9 +337,9 @@ int wsddService::ResolveProbeMatches(struct wsdd__ResolveMatchesType *matches)
 @endcode
 
 Another approach to generate the WSDD service operations is to run soapcpp2
-separately on wsdd.h (or wsdd10.h for WS-Discovery 1.0) by soapcpp2 -a -L
--pwsdd wsdd.h to generate wsddService.cpp. Then chain the service operations at
-the server side:
+separately on wsdd.h (or wsdd5.h or wsdd10.h for WS-Discovery 1.0) by soapcpp2
+-a -L -pwsdd wsdd.h to generate wsddService.cpp. Then chain the service
+operations at the server side:
 
 @code
 if (soap_begin_serve(service.soap) == SOAP_OK)
@@ -377,11 +384,11 @@ int SOAP_ENV__Fault(struct soap *soap, char *faultcode, char *faultstring, char 
 
 #include "wsddapi.h"
 
-#ifdef SOAP_WSA_2005
-/* WS-Discovery 1.0 */
+#ifdef SOAP_WSDD_2005
+/* WS-Discovery 1.0 2005 */
 const char *to_ts_URL = "urn:schemas-xmlsoap-org:ws:2005:04:discovery";
 #else
-/* WS-Discovery 1.1 */
+/* WS-Discovery 1.1 2009 */
 const char *to_ts_URL = "urn:docs-oasis-open-org:ws-dd:ns:discovery:2009:01";
 #endif
 
@@ -451,7 +458,7 @@ soap_wsdd_Hello(struct soap *soap, soap_wsdd_mode mode, const char *endpoint, co
     To = to_ts_URL;
   soap_wsa_request(soap, MessageID, To, Action);
   soap_wsa_add_RelatesTo(soap, RelatesTo);
-#ifdef SOAP_WSA_2005
+#ifdef SOAP_WSDD_2005
   soap_wsdd_set_AppSequence(soap);
 #else
   if (mode == SOAP_WSDD_ADHOC)
@@ -516,7 +523,7 @@ soap_wsdd_Bye(struct soap *soap, soap_wsdd_mode mode, const char *endpoint, cons
   if (mode == SOAP_WSDD_ADHOC)
     To = to_ts_URL;
   soap_wsa_request(soap, MessageID, To, Action);
-#ifdef SOAP_WSA_2005
+#ifdef SOAP_WSDD_2005
   soap_wsdd_set_AppSequence(soap);
 #else
   if (mode == SOAP_WSDD_ADHOC)
@@ -1551,6 +1558,6 @@ soap_wsdd_reset_AppSequence(struct soap *soap)
 static void
 soap_wsdd_delay(struct soap *soap)
 {
-  useconds_t delay = 1000*(soap_random % SOAP_WSDD_APP_MAX_DELAY);
+  useconds_t delay = 1000*((unsigned int)soap_random % SOAP_WSDD_APP_MAX_DELAY);
   usleep(delay);
 }
