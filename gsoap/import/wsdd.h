@@ -1,5 +1,5 @@
 /*
-	wsdd.h WS-Discovery 1.1 2009
+	wsdd.h WS-Discovery 1.1 2009 with WS-Addressing 2005/08
 
 	Generated with:
 	wsdl2h -cyex -o wsdd.h -t WS/WS-typemap.dat WS/discovery.xsd
@@ -9,7 +9,10 @@
         - Removed //gsoapopt
         - Changed //gsoap wssd schema namespace directive to import directive
         - Added #import "wsdx.h" at the end of these definitions
+	- Added #define SOAP_WSDD_2009
 */
+
+#define SOAP_WSDD_2009
 
 /******************************************************************************\
  *                                                                            *

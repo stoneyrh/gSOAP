@@ -1,8 +1,8 @@
 /*
-	wsdd10.h WS-Discovery 1.0 2005
+	wsdd10.h WS-Discovery 1.0 2005 with WS-Addressing 2004/08
 
 	Generated with:
-	wsdl2h -cyex -o wsdd.h -t WS/WS-typemap.dat WS/discovery.xsd
+	wsdl2h -cyex -o wsdd10.h -t WS/WS-typemap.dat WS/discovery.xsd
 
         Modified by Robert van Engelen:
 
@@ -11,7 +11,10 @@
 	- Changed to WS-Addressing 2004/08 protocol
 	- Changed namespace to WS-Discovery 2005/04 protocol with wsdd10
         - Added #import "wsdx.h" at the end of these definitions
+	- Added #define SOAP_WSDD_2005
 */
+
+#define SOAP_WSDD_2005
 
 /******************************************************************************\
  *                                                                            *

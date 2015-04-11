@@ -10,8 +10,11 @@
         - Changed //gsoap wssd schema namespace directive to import directive
 	- Changed namespace to WS-Discovery 2005/04 protocol with wsdd5
         - Added #import "wsdx.h" at the end of these definitions
+	- Added #define SOAP_WSDD_2005
 
 */
+
+#define SOAP_WSDD_2005
 
 /******************************************************************************\
  *                                                                            *
@@ -115,7 +118,7 @@ struct wsdd__HelloType
 /// Imported element reference "http://www.w3.org/2005/08/addressing":EndpointReference.
     _wsa5__EndpointReference             wsa5__EndpointReference        1;	///< Required element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Types.
-    wsdd__QNameListType*                 Types                          0;	///< Optional element.
+    wsdd__QNameListType                  Types                          0;	///< Optional element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Scopes.
     struct wsdd__ScopesType*             Scopes                         0;	///< Optional element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":XAddrs.
@@ -141,7 +144,7 @@ struct wsdd__ByeType
 /// Imported element reference "http://www.w3.org/2005/08/addressing":EndpointReference.
     _wsa5__EndpointReference             wsa5__EndpointReference        1;	///< Required element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Types.
-    wsdd__QNameListType*                 Types                          0;	///< Optional element.
+    wsdd__QNameListType                  Types                          0;	///< Optional element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Scopes.
     struct wsdd__ScopesType*             Scopes                         0;	///< Optional element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":XAddrs.
@@ -165,7 +168,7 @@ struct wsdd__ByeType
 struct wsdd__ProbeType
 {
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Types.
-    wsdd__QNameListType*                 Types                          0;	///< Optional element.
+    wsdd__QNameListType                  Types                          0;	///< Optional element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Scopes.
     struct wsdd__ScopesType*             Scopes                         0;	///< Optional element.
 /// @todo <any namespace="##other" minOccurs="0" maxOccurs="unbounded">
@@ -207,7 +210,7 @@ struct wsdd__ProbeMatchType
 /// Imported element reference "http://www.w3.org/2005/08/addressing":EndpointReference.
     _wsa5__EndpointReference             wsa5__EndpointReference        1;	///< Required element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Types.
-    wsdd__QNameListType*                 Types                          0;	///< Optional element.
+    wsdd__QNameListType                  Types                          0;	///< Optional element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Scopes.
     struct wsdd__ScopesType*             Scopes                         0;	///< Optional element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":XAddrs.
@@ -269,7 +272,7 @@ struct wsdd__ResolveMatchType
 /// Imported element reference "http://www.w3.org/2005/08/addressing":EndpointReference.
     _wsa5__EndpointReference             wsa5__EndpointReference        1;	///< Required element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Types.
-    wsdd__QNameListType*                 Types                          0;	///< Optional element.
+    wsdd__QNameListType                  Types                          0;	///< Optional element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Scopes.
     struct wsdd__ScopesType*             Scopes                         0;	///< Optional element.
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":XAddrs.
