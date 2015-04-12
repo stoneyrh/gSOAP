@@ -55,27 +55,29 @@ FEATURES
 ================================================================================
 
 XML data binding tools for C/C++
-XSD schema <=> C/C++ type binding means XML and C/C++ data is type safe
-XML streaming auto-serialization of C/C++ data, with optional use of DOM
+XML schema <=> C/C++ type binding means XML and C/C++ data is type safe
+XML streaming auto-serialization of C/C++ data (with optional use of DOM)
 XML-RPC from/to JSON from/to C/C++ serialization (also in streaming mode)
-WSDL 1.1, SOAP 1.1 & 1.2 compliant
+No need to alter C/C++ types for serialization (declare type as 'volatile')
+WSDL 1.1/2.0, XSD 1.0/1.1, SOAP 1.1/1.2 compliant
 REST HTTP(S) 1.0/1.1 operations (GET,PUT,POST etc) for XML, JSON, etc
 Send and recieve XML over sockets, file FD, and C++ streams
 WS-I Basic Profile 1.0a, 1.1, and 1.2 compliant
+W3C schema patterns for data binding full test pattern coverage
 RSS 0.91, 0.92, 2.0 XML support
 MIME and MTOM attachment support (also in streaming mode)
 WS-Security XML authentication, signatures, encryption (also in streaming mode)
 WS-Policy 1.2, 1.5 and WS-SecurityPolicy 1.2 compliant
 WS-Addressing 2003/03, 2004/03, 2005/03 compliant
-WS-ReliableMessaging compliant
-WS-Discovery support
+WS-ReliableMessaging 1.0 and 1.1 compliant
+WS-Discovery 1.0/1.1
 UDDI v2 API
 NTLM authentication
 HTTP basic and digest authentication
 SSL/TLS communications with SSL session caching (OpenSSL or GNUTLS)
 Proxy and proxy authentication support
-Compression (HTTP(S) compression and zlib)
-IPv4 and IPv6 supported, TCP and UDP
+Compression (HTTP compression and zlib)
+IPv4 and IPv6, including direct TCP and UDP data transfer
 SOAP-over-UDP
 Apache 1.x and 2.0 modules
 IIS (ISAPI) and WinInet modules
