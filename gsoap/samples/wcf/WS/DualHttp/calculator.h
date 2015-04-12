@@ -858,7 +858,7 @@ int __tempuri__Equation(
 
 @section WSDualHttpBinding_USCOREICalculatorDuplex_policy_enablers Policy Enablers of Binding  "WSDualHttpBinding_USCOREICalculatorDuplex"
 
-Based on policies, this service imports wsa5.h wsrm.h
+Based on policies, this service imports wsa5.h wsrm5.h
 
   - WS-Policy reminders and enablers:
     - WS-Addressing 1.0 (2005/08, accepts 2004/08):

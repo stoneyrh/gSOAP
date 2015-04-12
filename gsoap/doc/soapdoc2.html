@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.21 User Guide</title>
+<title>gSOAP 2.8.22 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.21 User Guide </h1>
+<h1 align="center">gSOAP 2.8.22 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
 
-<h3 align="center">Dec  6, 2014
+<h3 align="center">Apr 12, 2015
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -401,7 +401,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.22"
 >19.22&nbsp; <font color="#0000FF">Secure Clients with HTTPS/SSL</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.23"
->19.23&nbsp; <font color="#0000FF">SSL Authentication Callback</font></a><br />
+>19.23&nbsp; <font color="#0000FF">SSL Authentication Callbacks</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.24"
 >19.24&nbsp; <font color="#0000FF">SSL Certificates and Key Files</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.25"
@@ -482,13 +482,13 @@ data from XML using a vendor-specific API. This often leads to fragile
 solutions with little or no assurances for data consistency, type safety, and
 XML validation. By contrast, gSOAP provides a type-safe and transparent
 solution through the use of compiler technology that hides irrelevant WSDL-,
-SOAP-, and XML-specific details from the user, while automatically ensuring XML
-validity checking, memory management, and type-safe serialization. The gSOAP
-tools automatically map native and user-defined C and C++ data types to
-semantically equivalent XML data types and vice-versa.  As a result, full SOAP
-interoperability is achieved with a simple API relieving the user from the
-burden of WSDL/SOAP/XML details, thus enabling him or her to concentrate on the
-application-essential logic.
+SOAP-, REST-, and XML-specific protocol details from the user, while
+automatically ensuring XML validity checking, memory management, and type-safe
+serialization. The gSOAP tools automatically map native and user-defined C and
+C++ data types to semantically equivalent XML data types and vice-versa.  As a
+result, full SOAP/REST XML interoperability is achieved with a simple API
+relieving the user from the burden of WSDL/SOAP/XML details, thus enabling him
+or her to concentrate on the application-essential logic.
 
 <div class="p"><!----></div>
 The gSOAP tools support the integration of (legacy) C/C++
@@ -1055,15 +1055,15 @@ routines to (de)serialize native and user-defined C and C++ data structures.
 </li>
 
 <li>
-Support WSDL 1.1, WSDL 2.0, SOAP 1.1, SOAP 1.2, SOAP RPC encoding style, and document/literal style.
+Support WSDL 1.1, WSDL 2.0, REST, SOAP 1.1, SOAP 1.2, SOAP RPC encoding style, and document/literal style.
 gSOAP is one of the few SOAP toolkits that support the <b>full</b> range of SOAP 1.1
 RPC encoding features including sparse multi-dimensional arrays and polymorphic
 types. For example, a service operation with a base class parameter may accept
 derived class instances from a client. Derived class instances keep their
 identity through dynamic binding. The toolkit also supports <b>all XSD
-schema type</b> constructs and has been tested against the W3C XML Schema Patterns
-for Databinding Interoperability working group and of gSOAP release 2.8.x
-passes all tests.
+1.0 and 1.1 schema type</b> constructs and has been tested against the W3C XML
+Schema Patterns for Databinding Interoperability working group and of gSOAP
+release 2.8.x passes all tests.
 <div class="p"><!----></div>
 </li>
 
@@ -1152,7 +1152,7 @@ can be used to automatically implement echo message services for testing.
 </li>
 
 <li>
-The WSDL importer <i>wsld2h</i> (converts to gSOAP header files) for automated client and server development.
+The <i>wsdl2h</i> tool converts WSDL and XSD files to gSOAP header files for automated client and server development.
 <div class="p"><!----></div>
 </li>
 
@@ -14426,10 +14426,10 @@ access of the gSOAP context.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc19.23">
-19.23</a>&nbsp;&nbsp;<font color="#0000FF">SSL Authentication Callback</font></h3>
+19.23</a>&nbsp;&nbsp;<font color="#0000FF">SSL Authentication Callbacks</font></h3>
 
 <div class="p"><!----></div>
-gSOAP provides a callback function for authentication initialization:
+The <i>fsslauth</i> callback function controls OpenSSL/GNUTLS authentication initialization:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
 <table>
@@ -14439,6 +14439,33 @@ gSOAP provides a callback function for authentication initialization:
 certificate chain, password, read the key and/or DH file, generate an RSA key,
 and initialization of the RNG.  Should return a gSOAP error code or
 <i>SOAP_OK</i>.  Built-in gSOAP function: <i>ssl_auth_init</i>
+</td></tr></table>
+
+</td></tr></table><br></span>
+
+<div class="p"><!----></div>
+The <i>fsslverify</i> callback function controls OpenSSL peer certificate
+verification, via internally invoking <i>SSL_CTX_set_verify</i>:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+
+<table>
+<tr><td align="left"><font color="#FF0000"><b>Callback (function pointer)</b></font> </td></tr>
+<tr><td align="left"><i><b>int</b>&nbsp;(*soap.fssverify)(<b>int</b>&nbsp;ok, X509_STORE_CTX *store</i> </td></tr>
+<tr><td align="left">Used to control the certificate verification behaviour when the
+<i>SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION</i> or
+<i>SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION</i> flags are specified with
+<i>soap_ssl_client_context</i> and <i>soap_ssl_server_context</i>. It
+receives two arguments: <i>ok</i> indicates, whether the verification of the
+certificate in question was passed (<i>ok=1</i>) or not (]blkok=0).  If the
+callback returns 0, the verification process is immediately stopped with
+"verification failed" state. A verification failure alert is sent to the peer
+and the TLS/SSL handshake is terminated. If the callback returns 1, the
+verification process is continued.  Built-in gSOAP function:
+<i>ssl_verify_callback</i> and
+<i>ssl_verify_callback_allow_expired_certificate</i>. These functions are
+used when <i>fsslverify</i> is initially set to <i>NULL</i> and were not
+reassigned before <i>soap_ssl_client_context</i> or
+<i>soap_ssl_server_context</i> are called.
 </td></tr></table>
 
 </td></tr></table><br></span>
@@ -16225,5 +16252,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On  6 Dec 2014, 17:33.</small>
+version 4.00.<br />On 12 Apr 2015, 15:39.</small>
 </html>

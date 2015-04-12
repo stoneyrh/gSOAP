@@ -442,8 +442,8 @@ SOAP_FMAC1
 struct soap_dom_element *
 SOAP_FMAC2
 soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element *node, const char *type)
-{ register struct soap_attribute *tp;
-  register struct soap_dom_attribute **att;
+{ struct soap_attribute *tp;
+  struct soap_dom_attribute **att;
   (void)tag; (void)type;
   if (soap_peek_element(soap))
   { if (soap->error != SOAP_NO_TAG)
@@ -561,7 +561,7 @@ SOAP_FMAC1
 struct soap_dom_attribute *
 SOAP_FMAC2
 soap_in_xsd__anyAttribute(struct soap *soap, const char *tag, struct soap_dom_attribute *node, const char *type)
-{ register struct soap_attribute *tp;
+{ struct soap_attribute *tp;
   struct soap_dom_attribute *tmp = node;
   struct soap_dom_attribute *att = node;
   (void)tag; (void)type;
@@ -639,7 +639,7 @@ soap_dom_next_attribute(struct soap_dom_attribute *att)
 
 static const char *
 soap_lookup_ns_prefix(struct soap *soap, const char *ns)
-{ register struct soap_nlist *np;
+{ struct soap_nlist *np;
   for (np = soap->nlist; np; np = np->next)
   { if (np->ns && !strcmp(np->ns, ns)) 
       return np->id;
@@ -651,7 +651,7 @@ soap_lookup_ns_prefix(struct soap *soap, const char *ns)
 
 static const char *
 soap_push_ns_prefix(struct soap *soap, const char *id, const char *ns, int flag)
-{ register struct soap_nlist *np;
+{ struct soap_nlist *np;
   if (!id)
   { struct Namespace *n;
     for (n = soap->local_namespaces; n && n->id; n++)

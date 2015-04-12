@@ -7,6 +7,7 @@ SOAP_NMAC struct Namespace namespaces[] =
 	{"xsi", "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL},
 	{"xsd", "http://www.w3.org/2001/XMLSchema", "http://www.w3.org/*/XMLSchema", NULL},
 	{"xmime", "http://www.w3.org/2005/05/xmlmime", NULL, NULL},
+	{"vc", "http://tempuri.org/vc.xsd", NULL, NULL},
 	{"sd", "http://www.gridforum.org/namespaces/2003/03/serviceData", NULL, NULL},
 	{"wst", "http://docs.oasis-open.org/ws-sx/ws-trust/200512", NULL, NULL},
 	{"wsaw", "http://www.w3.org/2006/05/addressing/wsdl", NULL, NULL},

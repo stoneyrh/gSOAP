@@ -970,6 +970,18 @@ without OpenSSL.</li>
 <li>Fixed strftime %F and %T use (removed).</li>
 </ul>
 </ul>
+<li>Version 2.8.22 (4/12/2015)</li>
+<li>Added XSD 1.1 support (xs:override, xs:defaultAttributes, xs:targetNamespace on element and attribute declarations, and other additions).</li>
+<li>Added import/wsdd5.h to support WS-Discovery 1.0 with WS-Addressing 2005/08 (typemap.dat now sets wsdd5.h instead of wsdd10.h by default).</li>
+<li>Improved portability, including Solaris and AIX porting.</li>
+<li>Improved option -R is now required to enable REST WSDL bindings and non-HTTP transport (in addition to enabling REST WSDL operations).</li>
+<li>Fixed wsdl2h handling of xs:redefine.</li>
+<li>Fixed deep class inherited xsd__anyType deserializer issue causing serialization and validation errors.</li>
+<li>Fixed std::vector* deserialization bug that occurs under very specific circumstances.</li>
+<li>Fixed wsdd plugin SOAP_WSDD_APP_MAX_DELAY.</li>
+<li>Fixed wsse/smdevp memory leak.</li>
+<ul>
+</ul>
 
 </body>
 </html>

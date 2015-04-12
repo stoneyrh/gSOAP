@@ -12,6 +12,7 @@ plugin.*	Example plugin for aspiring plugin developers
 wsaapi.*	WS-Addressing (wsa) plugin, see doc/wsa
 wsrmapi.*	WS-ReliableMessaging (wsrm) plugin, see doc/wsrm
 wsseapi.*	WS-Security (wsse) plugin, see doc/wsse
+wsseapi-lite.*	WS-Security lite API, see doc/wsse-lite
 wsddapi.*	WS-Discovery (wsdd) library, see doc/wsdd
 
 Supporting modules:

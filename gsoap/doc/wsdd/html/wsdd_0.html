@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.3"/>
-<title>gSOAP WS-Discovery: The wsdd library for WS-Discovery 1.1 support</title>
+<title>gSOAP WS-Discovery: The wsdd library for WS-Discovery 1.0 and 1.1 support</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -38,7 +38,7 @@
 </div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">The wsdd library for WS-Discovery 1.1 support </div>  </div>
+<div class="title">The wsdd library for WS-Discovery 1.0 and 1.1 support </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="wsdd_1"></a>
@@ -53,6 +53,7 @@ WS-Discovery Setup</h1>
 <p>The material in this document pertains to the WS-Discovery protocol and model and assumes that the reader is familiar with the WS-Discovery protocol, its terms and definitions, and the WS-Discovery model. This document describes the WS-Discovery interface to invoke and handle WS-Discovery events, while the higher-level logic remains application-specific. Especially the mode of operation, ad-hoc or managed with a Discovery Proxy, depends on the application deployment and WS-Discovery support requirements.</p>
 <p>The following assumptions are made. A Client is an endpoint that searches for Target Service(s). A Target Service (TS) is and endpoint that makes itself available for discovery. A Discovery Proxy (DP) is an endpoint that facilitates discovery of Target Services by Clients. The interfaces defined in the wsdd library can be used to implement Client, Target Service, and Discovery Proxy operations.</p>
 <p>WS-Discovery ad-hoc and managed modes are supported by the wsdd library. In an ad-hoc mode discovery messages are sent multicast and response messages are sent unicast. In a managed mode discovery messages are sent unicast to a Discovery Proxy.</p>
+<dl class="section note"><dt>Note</dt><dd>The wsdl2h tool uses typemap.dat to auto-generate a gSOAP service definitions header file that imports <a class="el" href="wsdd_8h.html">wsdd.h</a> to support WS-Discovery 1.1 with WS-Addressing 2005/08. The tool imports wsdd10.h to support WS-Discovery 1.0 with WS-Addressing 2004/08. To use WS-Discovery 1.0 with WS-Addressing 2005/08, you will need to change typemap.dat to let wsdl2h import wsdd5.h (see comments in typemap.dat).</dd></dl>
 <h1><a class="anchor" id="wsdd_2"></a>
 WS-Discovery Event Handlers</h1>
 <p>The following event handlers MUST be defined by the user to handle inbound WS-Discovery messages. The event handlers receive notifications (Hello, Bye, ProbeMatches, and ResolveMatches) or receive requests to provide data (Probe and Resolve).</p>
@@ -201,7 +202,7 @@ Generating C++ Server Objects</h1>
 <div class="line"><span class="keywordtype">int</span> wsddService::ResolveProbeMatches(<span class="keyword">struct</span> <a class="code" href="structwsdd_____resolve_matches_type.html" title="&quot;http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01&quot;:ResolveMatchesType is a complexType.">wsdd__ResolveMatchesType</a> *matches)</div>
 <div class="line">{ <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#af1a35f73401918b02c3aa704cbb606ff" title="Internal WS-Discovery service operation.">__wsdd__ResolveMatches</a>(<span class="keyword">this</span>, matches);</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>Another approach to generate the WSDD service operations is to run soapcpp2 separately on <a class="el" href="wsdd_8h.html">wsdd.h</a> (or wsdd10.h for WS-Discovery 1.0) by soapcpp2 -a -L -pwsdd <a class="el" href="wsdd_8h.html">wsdd.h</a> to generate wsddService.cpp. Then chain the service operations at the server side:</p>
+</div><!-- fragment --><p>Another approach to generate the WSDD service operations is to run soapcpp2 separately on <a class="el" href="wsdd_8h.html">wsdd.h</a> (or wsdd5.h or wsdd10.h for WS-Discovery 1.0) by soapcpp2 -a -L -pwsdd <a class="el" href="wsdd_8h.html">wsdd.h</a> to generate wsddService.cpp. Then chain the service operations at the server side:</p>
 <div class="fragment"><div class="line"><span class="keywordflow">if</span> (soap_begin_serve(service.soap) == SOAP_OK)</div>
 <div class="line">  <span class="keywordflow">if</span> (service.dispatch() == SOAP_NO_METHOD)</div>
 <div class="line">    soap_serve_request(service.soap);</div>
@@ -228,7 +229,7 @@ Miscellaneous</h1>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Aug 18 2014 13:26:48 for gSOAP WS-Discovery by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Apr 11 2015 13:52:36 for gSOAP WS-Discovery by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

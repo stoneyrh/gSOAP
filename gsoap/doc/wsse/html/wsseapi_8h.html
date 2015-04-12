@@ -153,7 +153,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a7496da1dd76aa06e6657365b5c7dd76d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get wsse:BinarySecurityToken element token data in binary form.  <a href="#a7496da1dd76aa06e6657365b5c7dd76d"></a><br/></td></tr>
 <tr class="separator:a7496da1dd76aa06e6657365b5c7dd76d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ec22f47b0c66b62ef3c96d8f7b31436"><td class="memItemLeft" align="right" valign="top">X509 *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a2ec22f47b0c66b62ef3c96d8f7b31436">soap_wsse_get_BinarySecurityTokenX509</a> (struct soap *soap, const char *id)</td></tr>
-<tr class="memdesc:a2ec22f47b0c66b62ef3c96d8f7b31436"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get X509 wsse:BinarySecurityToken certificate and verify its content.  <a href="#a2ec22f47b0c66b62ef3c96d8f7b31436"></a><br/></td></tr>
+<tr class="memdesc:a2ec22f47b0c66b62ef3c96d8f7b31436"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get X509 wsse:BinarySecurityToken certificate and verify its content. This call must be followed by an X509_free to deallocate the X509 certificate data.  <a href="#a2ec22f47b0c66b62ef3c96d8f7b31436"></a><br/></td></tr>
 <tr class="separator:a2ec22f47b0c66b62ef3c96d8f7b31436"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f5879e7d5bd3580ea400ccd1982d747"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a8f5879e7d5bd3580ea400ccd1982d747">soap_wsse_verify_X509</a> (struct soap *soap, X509 *cert)</td></tr>
 <tr class="memdesc:a8f5879e7d5bd3580ea400ccd1982d747"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies X509 certificate against soap-&gt;cafile, soap-&gt;capath, and soap-&gt;crlfile.  <a href="#a8f5879e7d5bd3580ea400ccd1982d747"></a><br/></td></tr>
@@ -216,7 +216,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a53165ba9f316163972af9a839a84da1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a SecurityTokenReference ValueType if present.  <a href="#a53165ba9f316163972af9a839a84da1f"></a><br/></td></tr>
 <tr class="separator:a53165ba9f316163972af9a839a84da1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa35a9b6b69417f40c248cdae560a3dfc"><td class="memItemLeft" align="right" valign="top">X509 *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#aa35a9b6b69417f40c248cdae560a3dfc">soap_wsse_get_KeyInfo_SecurityTokenReferenceX509</a> (struct soap *soap)</td></tr>
-<tr class="memdesc:aa35a9b6b69417f40c248cdae560a3dfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a X509 certificate if present as a BinarySecurity token.  <a href="#aa35a9b6b69417f40c248cdae560a3dfc"></a><br/></td></tr>
+<tr class="memdesc:aa35a9b6b69417f40c248cdae560a3dfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a X509 certificate if present as a BinarySecurity token. This call must be followed by an X509_free to deallocate the X509 certificate data.  <a href="#aa35a9b6b69417f40c248cdae560a3dfc"></a><br/></td></tr>
 <tr class="separator:aa35a9b6b69417f40c248cdae560a3dfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2346304c77d35bd6fb849c8c0e8cea13"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structds_____x509_issuer_serial_type.html">ds__X509IssuerSerialType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a2346304c77d35bd6fb849c8c0e8cea13">soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:a2346304c77d35bd6fb849c8c0e8cea13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <a class="el" href="structds_____x509_issuer_serial_type.html" title="&quot;http://www.w3.org/2000/09/xmldsig#&quot;:X509IssuerSerialType is a complexType.">ds__X509IssuerSerialType</a> with non-NULL X509IssuerName and non-NULL X509SerialNumber of a X509Data element when present and set.  <a href="#a2346304c77d35bd6fb849c8c0e8cea13"></a><br/></td></tr>
@@ -2373,7 +2373,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
       </table>
 </div><div class="memdoc">
 
-<p>Get X509 wsse:BinarySecurityToken certificate and verify its content. </p>
+<p>Get X509 wsse:BinarySecurityToken certificate and verify its content. This call must be followed by an X509_free to deallocate the X509 certificate data. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
@@ -2535,7 +2535,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
       </table>
 </div><div class="memdoc">
 
-<p>Returns a X509 certificate if present as a BinarySecurity token. </p>
+<p>Returns a X509 certificate if present as a BinarySecurity token. This call must be followed by an X509_free to deallocate the X509 certificate data. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>context </td></tr>
@@ -4014,7 +4014,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 4 2014 15:45:46 for gSOAP WS-Security by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 9 2015 13:49:50 for gSOAP WS-Security by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

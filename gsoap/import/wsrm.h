@@ -1,5 +1,5 @@
 /*
-	wsrm.h
+	wsrm.h WS-ReliableMessaging 1.1 2007/02 and WS-Addressing 2005/08
 
 	Usage: See import/wsrx.h and plugin/wsrmapi.c
 

@@ -39,8 +39,9 @@ libgsoapck___a-stdsoap2_ck_cpp.o: stdsoap2_ck_cpp.cpp stdsoap2.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/limits.h \
   /usr/include/limits.h /usr/include/machine/limits.h \
   /usr/include/i386/limits.h /usr/include/i386/_limits.h \
-  /usr/include/sys/syslimits.h /usr/include/poll.h \
-  /usr/include/sys/poll.h \
+  /usr/include/sys/syslimits.h \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/float.h \
+  /usr/include/math.h /usr/include/poll.h /usr/include/sys/poll.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/new \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__config \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/exception \
@@ -144,8 +145,7 @@ libgsoapck___a-stdsoap2_ck_cpp.o: stdsoap2_ck_cpp.cpp stdsoap2.h \
   /usr/include/fcntl.h /usr/include/sys/fcntl.h \
   /usr/include/sys/_types/_o_sync.h /usr/include/sys/_types/_o_dsync.h \
   /usr/include/sys/_types/_s_ifmt.h /usr/include/sys/_types/_filesec_t.h \
-  /usr/include/math.h /usr/include/inttypes.h \
-  /usr/include/xlocale/_inttypes.h
+  /usr/include/inttypes.h /usr/include/xlocale/_inttypes.h
 
 stdsoap2.h:
 
@@ -298,6 +298,10 @@ stdsoap2.h:
 /usr/include/i386/_limits.h:
 
 /usr/include/sys/syslimits.h:
+
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/float.h:
+
+/usr/include/math.h:
 
 /usr/include/poll.h:
 
@@ -578,8 +582,6 @@ stdsoap2.h:
 /usr/include/sys/_types/_s_ifmt.h:
 
 /usr/include/sys/_types/_filesec_t.h:
-
-/usr/include/math.h:
 
 /usr/include/inttypes.h:
 

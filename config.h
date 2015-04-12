@@ -7,11 +7,17 @@
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #define HAVE_ARPA_INET_H 1
 
+/* Define to 1 if you have the <ctype.h> header file. */
+#define HAVE_CTYPE_H 1
+
 /* Define to 1 if you have the <errno.h> header file. */
 #define HAVE_ERRNO_H 1
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H 1
+
+/* Define to 1 if you have the <float.h> header file. */
+#define HAVE_FLOAT_H 1
 
 /* Define to 1 if you have the `ftime' function. */
 #define HAVE_FTIME 1
@@ -49,6 +55,9 @@
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */
 #define HAVE_MALLOC 1
+
+/* Define to 1 if you have the <math.h> header file. */
+#define HAVE_MATH_H 1
 
 /* Define to 1 if you have the `mbtowc' function. */
 #define HAVE_MBTOWC 1

@@ -78,7 +78,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = wssedemo$(EXEEXT)
+noinst_PROGRAMS = wssedemo$(EXEEXT) wsselite$(EXEEXT)
 DIST_COMMON = $(srcdir)/../Makefile.defines \
 	$(srcdir)/../Makefile.c_rules $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/mkinstalldirs \
@@ -107,6 +107,14 @@ am__DEPENDENCIES_1 =
 wssedemo_DEPENDENCIES = $(am__DEPENDENCIES_1)
 wssedemo_LINK = $(CCLD) $(wssedemo_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
+am__objects_5 = soapC.$(OBJEXT)
+am__objects_6 = soapClient.$(OBJEXT) $(am__objects_5)
+am__objects_7 = $(am__objects_6) soapServer.$(OBJEXT) $(am__objects_1) \
+	$(am__objects_1)
+am_wsselite_OBJECTS = wsselite.$(OBJEXT) $(am__objects_1) \
+	$(am__objects_7) stdsoap2.$(OBJEXT) wsseapi-lite.$(OBJEXT)
+wsselite_OBJECTS = $(am_wsselite_OBJECTS)
+wsselite_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -139,8 +147,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(wssedemo_SOURCES)
-DIST_SOURCES = $(wssedemo_SOURCES)
+SOURCES = $(wssedemo_SOURCES) $(wsselite_SOURCES)
+DIST_SOURCES = $(wssedemo_SOURCES) $(wsselite_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -319,6 +327,8 @@ SOAP_NS = wssedemo.nsmap
 wssedemo_CFLAGS = -DWITH_DOM -DWITH_OPENSSL -DWITH_GZIP
 wssedemo_SOURCES = wssedemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../dom.c ../../plugin/wsseapi.c ../../plugin/smdevp.c ../../plugin/mecevp.c
 wssedemo_LDADD = $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
+wsselite_SOURCES = wsselite.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../plugin/wsseapi-lite.c
+wsselite_LDADD = $(SAMPLE_EXTRA_LIBS)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -363,12 +373,21 @@ wssedemo$(EXEEXT): $(wssedemo_OBJECTS) $(wssedemo_DEPENDENCIES) $(EXTRA_wssedemo
 	@rm -f wssedemo$(EXEEXT)
 	$(AM_V_CCLD)$(wssedemo_LINK) $(wssedemo_OBJECTS) $(wssedemo_LDADD) $(LIBS)
 
+wsselite$(EXEEXT): $(wsselite_OBJECTS) $(wsselite_DEPENDENCIES) $(EXTRA_wsselite_DEPENDENCIES) 
+	@rm -f wsselite$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(wsselite_OBJECTS) $(wsselite_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapC.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapClient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapServer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stdsoap2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wsseapi-lite.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-dom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-mecevp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-smdevp.Po@am__quote@
@@ -378,6 +397,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-stdsoap2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-wsseapi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wssedemo-wssedemo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wsselite.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -518,6 +538,34 @@ wssedemo-mecevp.obj: ../../plugin/mecevp.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/mecevp.c' object='wssedemo-mecevp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wssedemo_CFLAGS) $(CFLAGS) -c -o wssedemo-mecevp.obj `if test -f '../../plugin/mecevp.c'; then $(CYGPATH_W) '../../plugin/mecevp.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/mecevp.c'; fi`
+
+stdsoap2.o: ../../stdsoap2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT stdsoap2.o -MD -MP -MF $(DEPDIR)/stdsoap2.Tpo -c -o stdsoap2.o `test -f '../../stdsoap2.c' || echo '$(srcdir)/'`../../stdsoap2.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stdsoap2.Tpo $(DEPDIR)/stdsoap2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../stdsoap2.c' object='stdsoap2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o stdsoap2.o `test -f '../../stdsoap2.c' || echo '$(srcdir)/'`../../stdsoap2.c
+
+stdsoap2.obj: ../../stdsoap2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT stdsoap2.obj -MD -MP -MF $(DEPDIR)/stdsoap2.Tpo -c -o stdsoap2.obj `if test -f '../../stdsoap2.c'; then $(CYGPATH_W) '../../stdsoap2.c'; else $(CYGPATH_W) '$(srcdir)/../../stdsoap2.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stdsoap2.Tpo $(DEPDIR)/stdsoap2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../stdsoap2.c' object='stdsoap2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o stdsoap2.obj `if test -f '../../stdsoap2.c'; then $(CYGPATH_W) '../../stdsoap2.c'; else $(CYGPATH_W) '$(srcdir)/../../stdsoap2.c'; fi`
+
+wsseapi-lite.o: ../../plugin/wsseapi-lite.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT wsseapi-lite.o -MD -MP -MF $(DEPDIR)/wsseapi-lite.Tpo -c -o wsseapi-lite.o `test -f '../../plugin/wsseapi-lite.c' || echo '$(srcdir)/'`../../plugin/wsseapi-lite.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wsseapi-lite.Tpo $(DEPDIR)/wsseapi-lite.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/wsseapi-lite.c' object='wsseapi-lite.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o wsseapi-lite.o `test -f '../../plugin/wsseapi-lite.c' || echo '$(srcdir)/'`../../plugin/wsseapi-lite.c
+
+wsseapi-lite.obj: ../../plugin/wsseapi-lite.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT wsseapi-lite.obj -MD -MP -MF $(DEPDIR)/wsseapi-lite.Tpo -c -o wsseapi-lite.obj `if test -f '../../plugin/wsseapi-lite.c'; then $(CYGPATH_W) '../../plugin/wsseapi-lite.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/wsseapi-lite.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wsseapi-lite.Tpo $(DEPDIR)/wsseapi-lite.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='../../plugin/wsseapi-lite.c' object='wsseapi-lite.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o wsseapi-lite.obj `if test -f '../../plugin/wsseapi-lite.c'; then $(CYGPATH_W) '../../plugin/wsseapi-lite.c'; else $(CYGPATH_W) '$(srcdir)/../../plugin/wsseapi-lite.c'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique

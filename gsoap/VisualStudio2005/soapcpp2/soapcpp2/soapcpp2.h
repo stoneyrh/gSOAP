@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.21" /* Current version */
-# define GSOAP_VERSION 20821
+# define VERSION "2.8.22" /* Current version */
+# define GSOAP_VERSION 20822
 #endif
 
 #ifdef WIN32
@@ -203,67 +203,67 @@ typedef	enum Level { INTERNAL, GLOBAL, PARAM, LOCAL } Level;
 #define	mkfun(t)	mktype(Tfun,      t,    0)
 #define mkstring()	mkpointer(mkchar())
 
-#define MINLONG64 (0x8000000000000000LL)
-#define MAXLONG64 (0x7FFFFFFFFFFFFFFFLL)
+#define MINLONG64 (LONG64)(0x8000000000000000LL)
+#define MAXLONG64 (LONG64)(0x7FFFFFFFFFFFFFFFLL)
 
 typedef struct Symbol
-{	char	*name;
-	Token	token;
-	struct	Symbol *next;
+{	char		*name;
+	Token		token;
+	struct Symbol	*next;
 } Symbol;
 
 Symbol	*install(const char*, Token), *lookup(const char*), *gensym(const char*), *gensymidx(const char*, int);
 
 typedef	struct Tnode
-{	Type	type;
-	void	*ref;
-	Symbol	*id;	/* struct/class/union/enum name */
-	Symbol	*base;	/* base class name */
-	Symbol	*sym;	/* typedef name */
-	struct	Entry *response; /* funcs only: points to response struct */
-	int	width;
-	int	transient;
-	const char *imported;
-	struct	Tnode *next;
-        Bool	generated;
-        Bool	classed;	/* class qualified */
-        Bool	wsdl;
-	int	num;
-	char	*pattern;
-	LONG64	minLength;
-	LONG64	maxLength;
+{	Type		type;
+	void		*ref;
+	Symbol		*id;	/* struct/class/union/enum name */
+	Symbol		*base;	/* base class name */
+	Symbol		*sym;	/* typedef name */
+	struct Entry	*response; /* funcs only: points to response struct */
+	int		width;
+	int		transient;
+	const char	*imported;
+	struct Tnode	*next;
+        Bool		generated;
+        Bool		classed;	/* class qualified */
+        Bool		wsdl;
+	int		num;
+	const char	*pattern;
+	LONG64		minLength;
+	LONG64		maxLength;
 } Tnode;
 
 typedef	union Value {
-	LONG64	i;
-	double	r;
-	const char *s;
+	LONG64		i;
+	double		r;
+	const char	*s;
 } Value;
 
 typedef	struct IDinfo {
-	Tnode	*typ;
-	Storage	sto;
-	Bool	hasval;		/* if true, identifier is constant */
-	Value	val;		/* ... with this value */
-	int	offset;
-	LONG64	minOccurs;
-	LONG64	maxOccurs;
+	Tnode		*typ;
+	Storage		sto;
+	Bool		hasval;		/* if true, identifier is constant */
+	Value		val;		/* ... with this value */
+	int		offset;
+	LONG64		minOccurs;
+	LONG64		maxOccurs;
 } IDinfo;
 
 typedef	struct Entry {
-	Symbol	*sym;
-	char	*tag;
-	IDinfo	info;
-	Level	level;
-	int	lineno;
-	struct	Entry *next;
+	Symbol		*sym;
+	const char	*tag;
+	IDinfo		info;
+	Level		level;
+	int		lineno;
+	struct Entry	*next;
 } Entry;
 
 typedef	struct Table {
-	Symbol	*sym;
-	Level	level;
-	Entry	*list;
-	struct	Table *prev;
+	Symbol		*sym;
+	Level		level;
+	Entry		*list;
+	struct Table 	*prev;
 } Table;
 
 typedef struct FNinfo {
@@ -272,15 +272,15 @@ typedef struct FNinfo {
 } FNinfo;
 
 typedef	struct Node {
-	Tnode	*typ;
-	Storage	sto;
-	Bool	hasval;		/* if true, this node has a constant value */
-	Value	val;		/* ... this is the value */
-	LONG64	minOccurs;
-	LONG64	maxOccurs;
-	char	*pattern;
-	LONG64	minLength;
-	LONG64	maxLength;
+	Tnode		*typ;
+	Storage		sto;
+	Bool		hasval;		/* if true, this node has a constant value */
+	Value		val;		/* ... this is the value */
+	LONG64		minOccurs;
+	LONG64		maxOccurs;
+	const char	*pattern;
+	LONG64		minLength;
+	LONG64		maxLength;
 } Node;
 
 #define ACTION		        0x0000
@@ -299,53 +299,53 @@ typedef	struct Node {
 #define PROTOCOL                0x2000
 
 typedef struct Data
-{	struct Data *next;
-	char *name;
-	char *text;
+{	struct Data	*next;
+	const char	*name;
+	const char	*text;
 } Data;
 
 typedef struct Method
-{	struct Method *next;
-	char *name;
-	short mess; /* see #defines above */
-	char *part;
+{	struct Method	*next;
+	const char	*name;
+	short		mess; /* see #defines above */
+	const char	*part;
 } Method;
 
 typedef struct Service
-{	struct Service *next;
-	char *ns;
-	char *name;
-	char *porttype;
-	char *portname;
-	char *binding;
-	char *definitions;
-	char *transport;
-	char *URL;
-	char *executable;
-	char *import;
-	char *URI;
-	char *URI2;
-	char *WSDL;
-	char *style;
-	char *encoding;
-	char *protocol;
-	int xsi_type;
-	char *elementForm;
-	char *attributeForm;
-	char *documentation;
-	struct Method *list;
-	struct Data *data;
+{	struct Service	*next;
+	const char	*ns;
+	const char	*name;
+	const char	*porttype;
+	const char	*portname;
+	const char	*binding;
+	const char	*definitions;
+	const char	*transport;
+	const char	*URL;
+	const char	*executable;
+	const char	*import;
+	const char	*URI;
+	const char	*URI2;
+	const char	*WSDL;
+	const char	*style;
+	const char	*encoding;
+	const char	*protocol;
+	int		xsi_type;
+	const char	*elementForm;
+	const char	*attributeForm;
+	const char	*documentation;
+	struct Method	*list;
+	struct Data	*data;
 } Service;
 
 typedef struct XPath
-{	struct XPath *next;
-	char *name;
-	char *path;
+{	struct XPath	*next;
+	const char	*name;
+	const char	*path;
 } XPath;
 
 typedef struct Pragma
-{	struct Pragma *next;
-	char *pragma;
+{	struct Pragma	*next;
+	const char	*pragma;
 } Pragma;
 
 extern Entry *enter(Table*, Symbol*), *entry(Table*, Symbol*), *reenter(Table*, Symbol*), *enumentry(Symbol*);
@@ -401,21 +401,21 @@ extern int yflag;
 extern int zflag;
 extern char dirpath[1024];
 extern char filename[1024];
-extern char *prefix;
-extern char *importpath;
+extern const char *prefix;
+extern const char *importpath;
 extern int custom_header;
 extern int custom_fault;
 extern Pragma *pragmas;
 extern Service *services;
 extern XPath *xpaths;
-extern char *namespaceid;
+extern const char *namespaceid;
 extern int transient;
 extern int imports;
-extern char *imported;
+extern const char *imported;
 extern int typeNO;
 
-extern char *envURI;
-extern char *encURI;
-extern char *rpcURI;
-extern char *xsiURI;
-extern char *xsdURI;
+extern const char *envURI;
+extern const char *encURI;
+extern const char *rpcURI;
+extern const char *xsiURI;
+extern const char *xsdURI;

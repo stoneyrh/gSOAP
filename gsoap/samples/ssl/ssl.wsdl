@@ -61,7 +61,7 @@
 </binding>
 
 <service name="ssl">
- <documentation>gSOAP 2.8.21 generated service definition</documentation>
+ <documentation>gSOAP 2.8.22 generated service definition</documentation>
  <port name="ssl" binding="tns:ssl">
   <SOAP:address location="https://localhost:18081"/>
  </port>

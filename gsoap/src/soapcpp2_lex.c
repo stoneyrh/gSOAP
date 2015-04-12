@@ -345,6 +345,9 @@ void yyfree (void *  );
 
 /* Begin user sect3 */
 
+#define yywrap(n) 1
+#define YY_SKIP_YYWRAP
+
 typedef unsigned char YY_CHAR;
 
 FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0;
@@ -668,7 +671,7 @@ char *yytext_ptr;
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -707,7 +710,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #ifdef WITH_BISON
 YYSTYPE yylval;
-#undef YY_INPUT
+#undef YY_NEED_STRLEN
 #define YY_INPUT(buf, result, max_size) \
 	{ \
 	int c = getc(yyin); \
@@ -720,11 +723,13 @@ YYSTYPE yylval;
 static struct importlist { struct importlist *next; char name[1]; } *importlist = NULL;
 static char fnstk[MAX_IMPORT_DEPTH][1024];
 static int lnstk[MAX_IMPORT_DEPTH];
-static char *imstk[MAX_IMPORT_DEPTH];
+static const char *imstk[MAX_IMPORT_DEPTH];
 static YY_BUFFER_STATE instk[MAX_IMPORT_DEPTH];
 #endif
+
 int imports = 0;
-char *imported = NULL;
+const char *imported = NULL;
+
 static void check_id(const char*);
 static Token install_id(void);
 static Token install_tag(void);
@@ -743,8 +748,9 @@ static int octchar(int*);
 static void module(const char *name, const char *fullname);
 static void import(const char *file);
 static int magic(const char *name);
+#define YY_NO_INPUT 1
 
-#line 748 "soapcpp2_lex.c"
+#line 754 "soapcpp2_lex.c"
 
 #define INITIAL 0
 #define MLCOMMENT 1
@@ -804,8 +810,6 @@ extern int yywrap (void );
 #endif
 #endif
 
-    static void yyunput (int c,char *buf_ptr  );
-    
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char *,yyconst char *,int );
 #endif
@@ -927,9 +931,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 98 "soapcpp2_lex.l"
+#line 103 "soapcpp2_lex.l"
 
-#line 933 "soapcpp2_lex.c"
+#line 937 "soapcpp2_lex.c"
 
 	if ( !(yy_init) )
 		{
@@ -1058,203 +1062,203 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 99 "soapcpp2_lex.l"
+#line 104 "soapcpp2_lex.l"
 { /* skip white space */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 100 "soapcpp2_lex.l"
+#line 105 "soapcpp2_lex.l"
 { BEGIN(MLCOMMENT); }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 101 "soapcpp2_lex.l"
+#line 106 "soapcpp2_lex.l"
 { }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 102 "soapcpp2_lex.l"
+#line 107 "soapcpp2_lex.l"
 { BEGIN(INITIAL); }
 	YY_BREAK
 case YY_STATE_EOF(MLCOMMENT):
-#line 103 "soapcpp2_lex.l"
+#line 108 "soapcpp2_lex.l"
 { execerror("Unclosed multiline comment at the end of file"); }
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 104 "soapcpp2_lex.l"
+#line 109 "soapcpp2_lex.l"
 { option(); }
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 105 "soapcpp2_lex.l"
+#line 110 "soapcpp2_lex.l"
 { directive(); }
 	YY_BREAK
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
-#line 106 "soapcpp2_lex.l"
+#line 111 "soapcpp2_lex.l"
 { xpath(); }
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 107 "soapcpp2_lex.l"
+#line 112 "soapcpp2_lex.l"
 { /* skip single line comment */ }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 108 "soapcpp2_lex.l"
+#line 113 "soapcpp2_lex.l"
 { return PA; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 109 "soapcpp2_lex.l"
+#line 114 "soapcpp2_lex.l"
 { return NA; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 110 "soapcpp2_lex.l"
+#line 115 "soapcpp2_lex.l"
 { return TA; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 111 "soapcpp2_lex.l"
+#line 116 "soapcpp2_lex.l"
 { return DA; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 112 "soapcpp2_lex.l"
+#line 117 "soapcpp2_lex.l"
 { return MA; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 113 "soapcpp2_lex.l"
+#line 118 "soapcpp2_lex.l"
 { return AA; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 114 "soapcpp2_lex.l"
+#line 119 "soapcpp2_lex.l"
 { return XA; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 115 "soapcpp2_lex.l"
+#line 120 "soapcpp2_lex.l"
 { return OA; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 116 "soapcpp2_lex.l"
+#line 121 "soapcpp2_lex.l"
 { return LA; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 117 "soapcpp2_lex.l"
+#line 122 "soapcpp2_lex.l"
 { return RA; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 118 "soapcpp2_lex.l"
+#line 123 "soapcpp2_lex.l"
 { return OR; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 119 "soapcpp2_lex.l"
+#line 124 "soapcpp2_lex.l"
 { return AN; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 120 "soapcpp2_lex.l"
+#line 125 "soapcpp2_lex.l"
 { return EQ; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 121 "soapcpp2_lex.l"
+#line 126 "soapcpp2_lex.l"
 { return NE; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 122 "soapcpp2_lex.l"
+#line 127 "soapcpp2_lex.l"
 { return LE; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 123 "soapcpp2_lex.l"
+#line 128 "soapcpp2_lex.l"
 { return GE; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 124 "soapcpp2_lex.l"
+#line 129 "soapcpp2_lex.l"
 { return LS; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 125 "soapcpp2_lex.l"
+#line 130 "soapcpp2_lex.l"
 { return RS; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 126 "soapcpp2_lex.l"
+#line 131 "soapcpp2_lex.l"
 { return PP; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 127 "soapcpp2_lex.l"
+#line 132 "soapcpp2_lex.l"
 { return NN; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 128 "soapcpp2_lex.l"
+#line 133 "soapcpp2_lex.l"
 { return AR; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 129 "soapcpp2_lex.l"
+#line 134 "soapcpp2_lex.l"
 { return yytext[0]; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 130 "soapcpp2_lex.l"
+#line 135 "soapcpp2_lex.l"
 { return install_id(); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 131 "soapcpp2_lex.l"
+#line 136 "soapcpp2_lex.l"
 { return install_tag(); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 132 "soapcpp2_lex.l"
+#line 137 "soapcpp2_lex.l"
 { return install_int(); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 133 "soapcpp2_lex.l"
+#line 138 "soapcpp2_lex.l"
 { return install_hex(); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 134 "soapcpp2_lex.l"
+#line 139 "soapcpp2_lex.l"
 { return install_num(); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 135 "soapcpp2_lex.l"
+#line 140 "soapcpp2_lex.l"
 { return install_chr(); }
 	YY_BREAK
 case 37:
 /* rule 37 can match eol */
 YY_RULE_SETUP
-#line 136 "soapcpp2_lex.l"
+#line 141 "soapcpp2_lex.l"
 { return install_str(); }
 	YY_BREAK
 case 38:
 /* rule 38 can match eol */
 YY_RULE_SETUP
-#line 137 "soapcpp2_lex.l"
+#line 142 "soapcpp2_lex.l"
 { char *s, *t, buf[1024];
 			  s = strchr(yytext, '"');
 			  if (!s)
@@ -1277,7 +1281,7 @@ YY_RULE_SETUP
 case 39:
 /* rule 39 can match eol */
 YY_RULE_SETUP
-#line 155 "soapcpp2_lex.l"
+#line 160 "soapcpp2_lex.l"
 { char *s, buf[1024];
 			  s = strchr(yytext, '"');
 			  if (s)
@@ -1293,28 +1297,28 @@ YY_RULE_SETUP
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 166 "soapcpp2_lex.l"
+#line 171 "soapcpp2_lex.l"
 { return install_pragma(); }
 	YY_BREAK
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 167 "soapcpp2_lex.l"
+#line 172 "soapcpp2_lex.l"
 { return error_chr(); }
 	YY_BREAK
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 168 "soapcpp2_lex.l"
+#line 173 "soapcpp2_lex.l"
 { return error_str(); }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 169 "soapcpp2_lex.l"
+#line 174 "soapcpp2_lex.l"
 { lexerror("Skipping unknown symbol"); }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 170 "soapcpp2_lex.l"
+#line 175 "soapcpp2_lex.l"
 { /* when Lex complains: remove this line and below */
 #ifndef WITH_LEX
 			  if (--imports < 0)
@@ -1331,10 +1335,10 @@ case YY_STATE_EOF(INITIAL):
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 183 "soapcpp2_lex.l"
+#line 188 "soapcpp2_lex.l"
 ECHO;
 	YY_BREAK
-#line 1338 "soapcpp2_lex.c"
+#line 1342 "soapcpp2_lex.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1625,47 +1629,6 @@ static int yy_get_next_buffer (void)
 		*(yy_state_ptr)++ = yy_current_state;
 
 	return yy_is_jam ? 0 : yy_current_state;
-}
-
-    static void yyunput (int c, register char * yy_bp )
-{
-	register char *yy_cp;
-    
-    yy_cp = (yy_c_buf_p);
-
-	/* undo effects of setting up yytext */
-	*yy_cp = (yy_hold_char);
-
-	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-		{ /* need to shift things up to make room */
-		/* +2 for EOB chars. */
-		register yy_size_t number_to_move = (yy_n_chars) + 2;
-		register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
-					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
-		register char *source =
-				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
-
-		while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
-			*--dest = *--source;
-
-		yy_cp += (int) (dest - source);
-		yy_bp += (int) (dest - source);
-		YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
-			(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
-
-		if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-			YY_FATAL_ERROR( "flex scanner push-back overflow" );
-		}
-
-	*--yy_cp = (char) c;
-
-    if ( c == '\n' ){
-        --yylineno;
-    }
-
-	(yytext_ptr) = yy_bp;
-	(yy_hold_char) = *yy_cp;
-	(yy_c_buf_p) = yy_cp;
 }
 
 #ifndef YY_NO_INPUT
@@ -2315,7 +2278,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 183 "soapcpp2_lex.l"
+#line 188 "soapcpp2_lex.l"
 
 
 
@@ -2334,7 +2297,7 @@ install_id()
 		/* [_](x|X)(m|M)(l|L).* is not OK */
 		/* .*__(x|X)(m|M)(l|L) is not OK */
 		/* .*::(x|X)(m|M)(l|L) is not OK */
-		for (i = 0; i < yyleng; i++)
+		for (i = 0; i < (int)yyleng; i++)
 		{	if ((yytext[i] == '_' && yytext[i+1] == '_')
 			 || (yytext[i] == ':' && yytext[i+1] == ':'))
 			{	flag = 1;
@@ -2354,7 +2317,7 @@ install_id()
 */ 
 static Token
 install_tag()
-{	yylval.s = emalloc(yyleng-1);	/* yyleng = length(yytext) */
+{	yylval.s = (char*)emalloc(yyleng-1);	/* yyleng = length(yytext) */
 	strcpy(yylval.s, yytext+1);
 	yylval.s[yyleng-2] = '\0';
 	return TAG;
@@ -2424,8 +2387,8 @@ install_chr(void)
 static Token
 install_str(void)
 {	int i, j = 0;
-	yylval.s = emalloc(yyleng-1);	/* yyleng = length(yytext) */
-	for (i = 1 + (yytext[0] == 'L'); i < yyleng-1; i++)
+	yylval.s = (char*)emalloc(yyleng - 1);	/* yyleng = length(yytext) */
+	for (i = 1 + (yytext[0] == 'L'); i < (int)yyleng - 1; i++)
 		if (yytext[i] == '\\')
 		{	if (yytext[++i] != '\n')
 			{	yylval.s[j++] = convchar(&i);
@@ -2443,7 +2406,7 @@ install_str(void)
 */
 static Token
 install_pragma(void)
-{	yylval.s = emalloc(yyleng);	/* yyleng = length(yytext) */
+{	yylval.s = (char*)emalloc(yyleng);	/* yyleng = length(yytext) */
 	strncpy(yylval.s, yytext, strlen(yytext)-1);
 	yylval.s[strlen(yytext)-1] = '\0';
 	return PRAGMA;
@@ -2590,14 +2553,14 @@ static void directive(void)
 					semwarn("option -1 or -2 overrides SOAP-ENV namespace");
 				else
 					envURI = s;
-				sp->URI = envURI;
+				sp->URI = (char*)envURI;
 			}
 			else if (!strcmp(sp->ns, "SOAP-ENC"))
 			{	if (vflag > 0)
 					semwarn("option -1 or -2 overrides SOAP-ENC namespace");
 				else
 					encURI = s;
-				sp->URI = encURI;
+				sp->URI = (char*)encURI;
 			}
 			else
 				sp->URI = s;
@@ -3136,11 +3099,12 @@ octchar(int *p)
 }
 
 static void module(const char *name, const char *fullname)
-{ if (!fullname)
+{ char *s;
+  if (!fullname)
     fullname = name;
   if (imports)
   { Pragma **pp;
-    char *s = emalloc(strlen(fullname)+15);
+    s = (char*)emalloc(strlen(fullname)+15);
     sprintf(s, "#include \"%sH.h\"", fullname);
     for (pp = &pragmas; *pp; pp = &(*pp)->next)
       if (!strcmp((*pp)->pragma, s))
@@ -3150,15 +3114,15 @@ static void module(const char *name, const char *fullname)
       (*pp)->pragma = s;
       (*pp)->next = NULL;
     }
-    imported = (char*)emalloc(strlen(fullname)+1);
-    strcpy(imported, fullname);
+    s = (char*)emalloc(strlen(fullname)+1);
+    imported = strcpy(s, fullname);
     fprintf(stderr, "Importing module '%s'\n\n", fullname);
   }
   else
   { lflag = 1;
     typeNO = magic(name);
-    prefix = (char*)emalloc(strlen(fullname)+1);
-    strcpy(prefix, fullname);
+    s = (char*)emalloc(strlen(fullname)+1);
+    prefix = strcpy(s, fullname);
     fprintf(stderr, "Compiling module '%s' (magic number = %d)\n\n", fullname, typeNO);
   }
 }
@@ -3201,13 +3165,13 @@ static void import(const char *file)
   imports++;
   if (!(yyin = fopen(file, "r")))
   { if (importpath)
-    { char *s, *t;
+    { const char *s, *t;
       s = importpath;
       do
       { size_t n;
         t = strstr(s, SOAP_PATHSEP);
         if (t)
-        { if (t - s >= sizeof(buf))
+        { if ((size_t)(t - s) >= sizeof(buf))
 	    t = s + sizeof(buf) - 1;
 	  strncpy(buf, s, t - s);
 	  buf[t - s] = '\0';

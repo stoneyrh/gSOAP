@@ -4,7 +4,7 @@
 	Main compiler and code generator batch program.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ extern void init(void);
 extern int yyparse(void);
 extern FILE *yyin;
 
-extern char *ns_cname(char*, char*);
+extern const char *ns_cname(const char*, const char*);
 
 FILE *fmsg;		/* fd to flush compiler messages */
 
@@ -76,10 +76,10 @@ int zflag = 0;		/* when set, use backward compatibility option */
 int stop_flag = 0;
 
 char dirpath[1024];	/* directory path for generated source files */
-char *prefix = "soap";	/* file name prefix for generated source files */
+const char *prefix = "soap";	/* file name prefix for generated source files */
 char filename[1024];	/* current file name */
-char *importpath = NULL; /* default file import path */
-char *defimportpath = SOAPCPP2_IMPORT_PATH; /* default file import path */
+const char *importpath = NULL; /* default file import path */
+const char *defimportpath = SOAPCPP2_IMPORT_PATH; /* default file import path */
 
 /*
 IMPORTANT:
@@ -208,7 +208,7 @@ infile	header file to parse (or stdin)\n\
 	      execerror("Option -I requires an import path");
 	    if (importpath && s)
 	    {
-	      char *t	= emalloc(strlen(importpath) + strlen(s) + 2);
+	      char *t = (char*)emalloc(strlen(importpath) + strlen(s) + 2);
 	      strcpy(t, importpath);
 	      strcat(t, SOAP_PATHSEP);
 	      strcat(t, s);
@@ -328,7 +328,7 @@ infile	header file to parse (or stdin)\n\
       strcpy(filename, argv[i]);
   }
   if (importpath && defimportpath)
-  { char *t = emalloc(strlen(importpath) + strlen(defimportpath) + 2);
+  { char *t = (char*)emalloc(strlen(importpath) + strlen(defimportpath) + 2);
     strcpy(t, importpath);
     strcat(t, SOAP_PATHSEP);
     strcat(t, defimportpath);
@@ -336,7 +336,7 @@ infile	header file to parse (or stdin)\n\
   }
   else if (!importpath)
     importpath = defimportpath;
-  fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release " VERSION "\n**  Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool is released under one of the following licenses:\n**  GPL or the commercial license by Genivia Inc.\n\n");
+  fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release " VERSION "\n**  Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool is released under one of the following licenses:\n**  GPL or the commercial license by Genivia Inc.\n\n");
   if (stop_flag)
     exit(0);
   init();

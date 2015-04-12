@@ -41,9 +41,11 @@ libgsoapssl_a-stdsoap2_ssl.o: stdsoap2_ssl.c stdsoap2.h ../config.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/limits.h \
   /usr/include/limits.h /usr/include/machine/limits.h \
   /usr/include/i386/limits.h /usr/include/i386/_limits.h \
-  /usr/include/sys/syslimits.h /usr/include/poll.h \
-  /usr/include/sys/poll.h /usr/include/errno.h /usr/include/sys/errno.h \
-  /usr/include/sys/types.h /usr/include/sys/_types/_blkcnt_t.h \
+  /usr/include/sys/syslimits.h \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/float.h \
+  /usr/include/math.h /usr/include/poll.h /usr/include/sys/poll.h \
+  /usr/include/errno.h /usr/include/sys/errno.h /usr/include/sys/types.h \
+  /usr/include/sys/_types/_blkcnt_t.h \
   /usr/include/sys/_types/_blksize_t.h /usr/include/sys/_types/_gid_t.h \
   /usr/include/sys/_types/_in_addr_t.h \
   /usr/include/sys/_types/_in_port_t.h /usr/include/sys/_types/_ino_t.h \
@@ -108,7 +110,7 @@ libgsoapssl_a-stdsoap2_ssl.o: stdsoap2_ssl.c stdsoap2.h ../config.h \
   /usr/include/openssl/dtls1.h /usr/include/openssl/pqueue.h \
   /usr/include/openssl/ssl23.h /usr/include/openssl/x509v3.h \
   /usr/include/openssl/conf.h /usr/include/zlib.h /usr/include/zconf.h \
-  /usr/include/math.h /usr/include/inttypes.h
+  /usr/include/inttypes.h
 
 stdsoap2.h:
 
@@ -267,6 +269,10 @@ stdsoap2.h:
 /usr/include/i386/_limits.h:
 
 /usr/include/sys/syslimits.h:
+
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/float.h:
+
+/usr/include/math.h:
 
 /usr/include/poll.h:
 
@@ -497,7 +503,5 @@ stdsoap2.h:
 /usr/include/zlib.h:
 
 /usr/include/zconf.h:
-
-/usr/include/math.h:
 
 /usr/include/inttypes.h:

@@ -14,7 +14,7 @@ hostname = rvengelen.local
 uname -m = x86_64
 uname -r = 13.4.0
 uname -s = Darwin
-uname -v = Darwin Kernel Version 13.4.0: Sun Aug 17 19:50:11 PDT 2014; root:xnu-2422.115.4~1/RELEASE_X86_64
+uname -v = Darwin Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64
 
 /usr/bin/uname -p = i386
 /bin/uname -X     = unknown
@@ -23,15 +23,15 @@ uname -v = Darwin Kernel Version 13.4.0: Sun Aug 17 19:50:11 PDT 2014; root:xnu-
 /usr/bin/arch -k       = unknown
 /usr/convex/getsysinfo = unknown
 /usr/bin/hostinfo      = Mach kernel version:
-	 Darwin Kernel Version 13.4.0: Sun Aug 17 19:50:11 PDT 2014; root:xnu-2422.115.4~1/RELEASE_X86_64
+	 Darwin Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64
 Kernel configured for up to 4 processors.
 2 processors are physically available.
 4 processors are logically available.
 Processor type: i486 (Intel 80486)
 Processors active: 0 1 2 3
 Primary memory available: 4.00 gigabytes
-Default processor set: 223 tasks, 1196 threads, 4 processors
-Load average: 1.19, Mach factor: 2.89
+Default processor set: 228 tasks, 1115 threads, 4 processors
+Load average: 1.24, Mach factor: 2.75
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -202,8 +202,8 @@ configure:4605: checking lex library
 configure:4619: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in conftest-5b444e.o
-      _main in conftest-5b444e.o
+      _yylex in conftest-951e9d.o
+      _main in conftest-951e9d.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:4619: $? = 1
@@ -3928,6 +3928,16 @@ configure:5333: $? = 0
 configure:5333: result: yes
 configure:5333: checking for fcntl.h
 configure:5333: result: yes
+configure:5333: checking ctype.h usability
+configure:5333: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5333: $? = 0
+configure:5333: result: yes
+configure:5333: checking ctype.h presence
+configure:5333: gcc -E  conftest.c
+configure:5333: $? = 0
+configure:5333: result: yes
+configure:5333: checking for ctype.h
+configure:5333: result: yes
 configure:5333: checking limits.h usability
 configure:5333: gcc -c -Wno-deprecated-declarations  conftest.c >&5
 configure:5333: $? = 0
@@ -3937,6 +3947,26 @@ configure:5333: gcc -E  conftest.c
 configure:5333: $? = 0
 configure:5333: result: yes
 configure:5333: checking for limits.h
+configure:5333: result: yes
+configure:5333: checking float.h usability
+configure:5333: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5333: $? = 0
+configure:5333: result: yes
+configure:5333: checking float.h presence
+configure:5333: gcc -E  conftest.c
+configure:5333: $? = 0
+configure:5333: result: yes
+configure:5333: checking for float.h
+configure:5333: result: yes
+configure:5333: checking math.h usability
+configure:5333: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5333: $? = 0
+configure:5333: result: yes
+configure:5333: checking math.h presence
+configure:5333: gcc -E  conftest.c
+configure:5333: $? = 0
+configure:5333: result: yes
+configure:5333: checking for math.h
 configure:5333: result: yes
 configure:5333: checking netdb.h usability
 configure:5333: gcc -c -Wno-deprecated-declarations  conftest.c >&5
@@ -3980,7 +4010,7 @@ configure:5333: checking for time.h
 configure:5333: result: yes
 configure:5333: checking sys/inttypes.h usability
 configure:5333: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-conftest.c:68:10: fatal error: 'sys/inttypes.h' file not found
+conftest.c:71:10: fatal error: 'sys/inttypes.h' file not found
 #include <sys/inttypes.h>
          ^
 1 error generated.
@@ -4010,7 +4040,10 @@ configure: failed program was:
 | #define HAVE_XLOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
+| #define HAVE_CTYPE_H 1
 | #define HAVE_LIMITS_H 1
+| #define HAVE_FLOAT_H 1
+| #define HAVE_MATH_H 1
 | #define HAVE_NETDB_H 1
 | #define HAVE_NETINET_IN_H 1
 | #define HAVE_STDLIB_H 1
@@ -4057,7 +4090,7 @@ configure: failed program was:
 configure:5333: result: no
 configure:5333: checking sys/inttypes.h presence
 configure:5333: gcc -E  conftest.c
-conftest.c:35:10: fatal error: 'sys/inttypes.h' file not found
+conftest.c:38:10: fatal error: 'sys/inttypes.h' file not found
 #include <sys/inttypes.h>
          ^
 1 error generated.
@@ -4087,7 +4120,10 @@ configure: failed program was:
 | #define HAVE_XLOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
+| #define HAVE_CTYPE_H 1
 | #define HAVE_LIMITS_H 1
+| #define HAVE_FLOAT_H 1
+| #define HAVE_MATH_H 1
 | #define HAVE_NETDB_H 1
 | #define HAVE_NETINET_IN_H 1
 | #define HAVE_STDLIB_H 1
@@ -4183,7 +4219,7 @@ configure:5426: checking for size_t
 configure:5426: gcc -c -Wno-deprecated-declarations  conftest.c >&5
 configure:5426: $? = 0
 configure:5426: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-conftest.c:80:21: error: expected expression
+conftest.c:83:21: error: expected expression
 if (sizeof ((size_t)))
                     ^
 1 error generated.
@@ -4213,7 +4249,10 @@ configure: failed program was:
 | #define HAVE_XLOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
+| #define HAVE_CTYPE_H 1
 | #define HAVE_LIMITS_H 1
+| #define HAVE_FLOAT_H 1
+| #define HAVE_MATH_H 1
 | #define HAVE_NETDB_H 1
 | #define HAVE_NETINET_IN_H 1
 | #define HAVE_STDLIB_H 1
@@ -4288,7 +4327,7 @@ configure:5507: $? = 0
 configure:5507: result: yes
 configure:5520: checking for struct tm.__tm_gmtoff
 configure:5520: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-conftest.c:55:13: error: no member named '__tm_gmtoff' in 'struct tm'; did you mean 'tm_gmtoff'?
+conftest.c:58:13: error: no member named '__tm_gmtoff' in 'struct tm'; did you mean 'tm_gmtoff'?
 if (ac_aggr.__tm_gmtoff)
             ^~~~~~~~~~~
             tm_gmtoff
@@ -4322,7 +4361,10 @@ configure: failed program was:
 | #define HAVE_XLOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
+| #define HAVE_CTYPE_H 1
 | #define HAVE_LIMITS_H 1
+| #define HAVE_FLOAT_H 1
+| #define HAVE_MATH_H 1
 | #define HAVE_NETDB_H 1
 | #define HAVE_NETINET_IN_H 1
 | #define HAVE_STDLIB_H 1
@@ -4358,7 +4400,7 @@ configure: failed program was:
 |   return 0;
 | }
 configure:5520: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-conftest.c:55:20: error: no member named '__tm_gmtoff' in 'struct tm'; did you mean 'tm_gmtoff'?
+conftest.c:58:20: error: no member named '__tm_gmtoff' in 'struct tm'; did you mean 'tm_gmtoff'?
 if (sizeof ac_aggr.__tm_gmtoff)
                    ^~~~~~~~~~~
                    tm_gmtoff
@@ -4392,7 +4434,10 @@ configure: failed program was:
 | #define HAVE_XLOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
+| #define HAVE_CTYPE_H 1
 | #define HAVE_LIMITS_H 1
+| #define HAVE_FLOAT_H 1
+| #define HAVE_MATH_H 1
 | #define HAVE_NETDB_H 1
 | #define HAVE_NETINET_IN_H 1
 | #define HAVE_STDLIB_H 1
@@ -4467,7 +4512,10 @@ configure: failed program was:
 | #define HAVE_XLOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
+| #define HAVE_CTYPE_H 1
 | #define HAVE_LIMITS_H 1
+| #define HAVE_FLOAT_H 1
+| #define HAVE_MATH_H 1
 | #define HAVE_NETDB_H 1
 | #define HAVE_NETINET_IN_H 1
 | #define HAVE_STDLIB_H 1
@@ -4685,7 +4733,7 @@ configure: failed program was:
 configure:5788: result: no
 configure:5799: checking return type of signal handlers
 configure:5817: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-conftest.c:55:8: error: indirection requires pointer operand ('void' invalid)
+conftest.c:58:8: error: indirection requires pointer operand ('void' invalid)
 return *(signal (0, 0)) (0) == 1;
        ^~~~~~~~~~~~~~~~~~~~
 1 error generated.
@@ -4715,7 +4763,10 @@ configure: failed program was:
 | #define HAVE_XLOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
+| #define HAVE_CTYPE_H 1
 | #define HAVE_LIMITS_H 1
+| #define HAVE_FLOAT_H 1
+| #define HAVE_MATH_H 1
 | #define HAVE_NETDB_H 1
 | #define HAVE_NETINET_IN_H 1
 | #define HAVE_STDLIB_H 1
@@ -4784,10 +4835,10 @@ configure:5890: $? = 0
 configure:5890: result: yes
 configure:5890: checking for memset
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:81:6: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
+conftest.c:84:6: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
 char memset ();
      ^
-conftest.c:81:6: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
+conftest.c:84:6: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
 1 warning generated.
 configure:5890: $? = 0
 configure:5890: result: yes
@@ -4801,28 +4852,28 @@ configure:5890: $? = 0
 configure:5890: result: yes
 configure:5890: checking for snprintf
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:84:6: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
+conftest.c:87:6: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
 char snprintf ();
      ^
-conftest.c:84:6: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
+conftest.c:87:6: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
 1 warning generated.
 configure:5890: $? = 0
 configure:5890: result: yes
 configure:5890: checking for strchr
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:85:6: warning: incompatible redeclaration of library function 'strchr' [-Wincompatible-library-redeclaration]
+conftest.c:88:6: warning: incompatible redeclaration of library function 'strchr' [-Wincompatible-library-redeclaration]
 char strchr ();
      ^
-conftest.c:85:6: note: 'strchr' is a builtin with type 'char *(const char *, int)'
+conftest.c:88:6: note: 'strchr' is a builtin with type 'char *(const char *, int)'
 1 warning generated.
 configure:5890: $? = 0
 configure:5890: result: yes
 configure:5890: checking for strerror
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:86:6: warning: incompatible redeclaration of library function 'strerror' [-Wincompatible-library-redeclaration]
+conftest.c:89:6: warning: incompatible redeclaration of library function 'strerror' [-Wincompatible-library-redeclaration]
 char strerror ();
      ^
-conftest.c:86:6: note: 'strerror' is a builtin with type 'char *(int)'
+conftest.c:89:6: note: 'strerror' is a builtin with type 'char *(int)'
 1 warning generated.
 configure:5890: $? = 0
 configure:5890: result: yes
@@ -4832,19 +4883,19 @@ configure:5890: $? = 0
 configure:5890: result: yes
 configure:5890: checking for strrchr
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:88:6: warning: incompatible redeclaration of library function 'strrchr' [-Wincompatible-library-redeclaration]
+conftest.c:91:6: warning: incompatible redeclaration of library function 'strrchr' [-Wincompatible-library-redeclaration]
 char strrchr ();
      ^
-conftest.c:88:6: note: 'strrchr' is a builtin with type 'char *(const char *, int)'
+conftest.c:91:6: note: 'strrchr' is a builtin with type 'char *(const char *, int)'
 1 warning generated.
 configure:5890: $? = 0
 configure:5890: result: yes
 configure:5890: checking for strstr
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:89:6: warning: incompatible redeclaration of library function 'strstr' [-Wincompatible-library-redeclaration]
+conftest.c:92:6: warning: incompatible redeclaration of library function 'strstr' [-Wincompatible-library-redeclaration]
 char strstr ();
      ^
-conftest.c:89:6: note: 'strstr' is a builtin with type 'char *(const char *, const char *)'
+conftest.c:92:6: note: 'strstr' is a builtin with type 'char *(const char *, const char *)'
 1 warning generated.
 configure:5890: $? = 0
 configure:5890: result: yes
@@ -4890,10 +4941,10 @@ configure:5890: $? = 0
 configure:5890: result: yes
 configure:5890: checking for sscanf
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:100:6: warning: incompatible redeclaration of library function 'sscanf' [-Wincompatible-library-redeclaration]
+conftest.c:103:6: warning: incompatible redeclaration of library function 'sscanf' [-Wincompatible-library-redeclaration]
 char sscanf ();
      ^
-conftest.c:100:6: note: 'sscanf' is a builtin with type 'int (const char *restrict, const char *restrict, ...)'
+conftest.c:103:6: note: 'sscanf' is a builtin with type 'int (const char *restrict, const char *restrict, ...)'
 1 warning generated.
 configure:5890: $? = 0
 configure:5890: result: yes
@@ -4929,7 +4980,7 @@ configure:5993: checking for gethostbyname_r
 configure:5993: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-4910c1.o
+      _main in conftest-0d7066.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:5993: $? = 1
@@ -4958,7 +5009,10 @@ configure: failed program was:
 | #define HAVE_XLOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
+| #define HAVE_CTYPE_H 1
 | #define HAVE_LIMITS_H 1
+| #define HAVE_FLOAT_H 1
+| #define HAVE_MATH_H 1
 | #define HAVE_NETDB_H 1
 | #define HAVE_NETINET_IN_H 1
 | #define HAVE_STDLIB_H 1
@@ -5092,56 +5146,56 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on rvengelen.local
 
-config.status:1007: creating Makefile
-config.status:1007: creating gsoap.pc
-config.status:1007: creating gsoap++.pc
-config.status:1007: creating gsoapck.pc
-config.status:1007: creating gsoapck++.pc
-config.status:1007: creating gsoapssl.pc
-config.status:1007: creating gsoapssl++.pc
-config.status:1007: creating gsoap/Makefile
-config.status:1007: creating gsoap/src/Makefile
-config.status:1007: creating gsoap/wsdl/Makefile
-config.status:1007: creating gsoap/samples/Makefile
-config.status:1007: creating gsoap/samples/autotest/Makefile
-config.status:1007: creating gsoap/samples/calc/Makefile
-config.status:1007: creating gsoap/samples/calc++/Makefile
-config.status:1007: creating gsoap/samples/chaining/Makefile
-config.status:1007: creating gsoap/samples/chaining++/Makefile
-config.status:1007: creating gsoap/samples/databinding/Makefile
-config.status:1007: creating gsoap/samples/dime/Makefile
-config.status:1007: creating gsoap/samples/dom/Makefile
-config.status:1007: creating gsoap/samples/oneway/Makefile
-config.status:1007: creating gsoap/samples/oneway++/Makefile
-config.status:1007: creating gsoap/samples/factory/Makefile
-config.status:1007: creating gsoap/samples/factorytest/Makefile
-config.status:1007: creating gsoap/samples/gmt/Makefile
-config.status:1007: creating gsoap/samples/googleapi/Makefile
-config.status:1007: creating gsoap/samples/hello/Makefile
-config.status:1007: creating gsoap/samples/httpcookies/Makefile
-config.status:1007: creating gsoap/samples/lu/Makefile
-config.status:1007: creating gsoap/samples/magic/Makefile
-config.status:1007: creating gsoap/samples/mashup/Makefile
-config.status:1007: creating gsoap/samples/mashup++/Makefile
-config.status:1007: creating gsoap/samples/mtom/Makefile
-config.status:1007: creating gsoap/samples/mtom-stream/Makefile
-config.status:1007: creating gsoap/samples/polytest/Makefile
-config.status:1007: creating gsoap/samples/primes/Makefile
-config.status:1007: creating gsoap/samples/roll/Makefile
-config.status:1007: creating gsoap/samples/router/Makefile
-config.status:1007: creating gsoap/samples/rss/Makefile
-config.status:1007: creating gsoap/samples/ssl/Makefile
-config.status:1007: creating gsoap/samples/template/Makefile
-config.status:1007: creating gsoap/samples/udp/Makefile
-config.status:1007: creating gsoap/samples/varparam/Makefile
-config.status:1007: creating gsoap/samples/wsa/Makefile
-config.status:1007: creating gsoap/samples/wsrm/Makefile
-config.status:1007: creating gsoap/samples/wsse/Makefile
-config.status:1007: creating gsoap/samples/xml-rpc-json/Makefile
-config.status:1007: creating gsoap/samples/rest/Makefile
-config.status:1007: creating config.h
-config.status:1188: config.h is unchanged
-config.status:1236: executing depfiles commands
+config.status:1010: creating Makefile
+config.status:1010: creating gsoap.pc
+config.status:1010: creating gsoap++.pc
+config.status:1010: creating gsoapck.pc
+config.status:1010: creating gsoapck++.pc
+config.status:1010: creating gsoapssl.pc
+config.status:1010: creating gsoapssl++.pc
+config.status:1010: creating gsoap/Makefile
+config.status:1010: creating gsoap/src/Makefile
+config.status:1010: creating gsoap/wsdl/Makefile
+config.status:1010: creating gsoap/samples/Makefile
+config.status:1010: creating gsoap/samples/autotest/Makefile
+config.status:1010: creating gsoap/samples/calc/Makefile
+config.status:1010: creating gsoap/samples/calc++/Makefile
+config.status:1010: creating gsoap/samples/chaining/Makefile
+config.status:1010: creating gsoap/samples/chaining++/Makefile
+config.status:1010: creating gsoap/samples/databinding/Makefile
+config.status:1010: creating gsoap/samples/dime/Makefile
+config.status:1010: creating gsoap/samples/dom/Makefile
+config.status:1010: creating gsoap/samples/oneway/Makefile
+config.status:1010: creating gsoap/samples/oneway++/Makefile
+config.status:1010: creating gsoap/samples/factory/Makefile
+config.status:1010: creating gsoap/samples/factorytest/Makefile
+config.status:1010: creating gsoap/samples/gmt/Makefile
+config.status:1010: creating gsoap/samples/googleapi/Makefile
+config.status:1010: creating gsoap/samples/hello/Makefile
+config.status:1010: creating gsoap/samples/httpcookies/Makefile
+config.status:1010: creating gsoap/samples/lu/Makefile
+config.status:1010: creating gsoap/samples/magic/Makefile
+config.status:1010: creating gsoap/samples/mashup/Makefile
+config.status:1010: creating gsoap/samples/mashup++/Makefile
+config.status:1010: creating gsoap/samples/mtom/Makefile
+config.status:1010: creating gsoap/samples/mtom-stream/Makefile
+config.status:1010: creating gsoap/samples/polytest/Makefile
+config.status:1010: creating gsoap/samples/primes/Makefile
+config.status:1010: creating gsoap/samples/roll/Makefile
+config.status:1010: creating gsoap/samples/router/Makefile
+config.status:1010: creating gsoap/samples/rss/Makefile
+config.status:1010: creating gsoap/samples/ssl/Makefile
+config.status:1010: creating gsoap/samples/template/Makefile
+config.status:1010: creating gsoap/samples/udp/Makefile
+config.status:1010: creating gsoap/samples/varparam/Makefile
+config.status:1010: creating gsoap/samples/wsa/Makefile
+config.status:1010: creating gsoap/samples/wsrm/Makefile
+config.status:1010: creating gsoap/samples/wsse/Makefile
+config.status:1010: creating gsoap/samples/xml-rpc-json/Makefile
+config.status:1010: creating gsoap/samples/rest/Makefile
+config.status:1010: creating config.h
+config.status:1191: config.h is unchanged
+config.status:1239: executing depfiles commands
 
 ## ---------------- ##
 ## Cache variables. ##
@@ -5219,11 +5273,14 @@ ac_cv_func_timegm=yes
 ac_cv_func_wctomb=yes
 ac_cv_func_working_mktime=no
 ac_cv_header_arpa_inet_h=yes
+ac_cv_header_ctype_h=yes
 ac_cv_header_errno_h=yes
 ac_cv_header_fcntl_h=yes
+ac_cv_header_float_h=yes
 ac_cv_header_gnutls_gnutls_h=yes
 ac_cv_header_inttypes_h=yes
 ac_cv_header_limits_h=yes
+ac_cv_header_math_h=yes
 ac_cv_header_memory_h=yes
 ac_cv_header_netdb_h=yes
 ac_cv_header_netinet_in_h=yes
@@ -5439,7 +5496,10 @@ target_alias=''
 #define HAVE_XLOCALE_H 1
 #define HAVE_ERRNO_H 1
 #define HAVE_FCNTL_H 1
+#define HAVE_CTYPE_H 1
 #define HAVE_LIMITS_H 1
+#define HAVE_FLOAT_H 1
+#define HAVE_MATH_H 1
 #define HAVE_NETDB_H 1
 #define HAVE_NETINET_IN_H 1
 #define HAVE_STDLIB_H 1

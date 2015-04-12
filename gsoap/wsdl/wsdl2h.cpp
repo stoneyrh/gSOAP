@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -121,12 +121,12 @@ const char serviceformat[]             = "//gsoap %-4s service %s:\t%s %s\n";
 const char paraformat[]                = "    %-35s%s%s%s";
 const char anonformat[]                = "    %-35s%s_%s%s";
 
-const char copyrightnotice[] = "\n**  The gSOAP WSDL/Schema processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2014 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool is released under one of the following licenses:\n**  GPL or the commercial license by Genivia Inc. Use option -l for details.\n\n";
+const char copyrightnotice[] = "\n**  The gSOAP WSDL/Schema processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2015 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool is released under one of the following licenses:\n**  GPL or the commercial license by Genivia Inc. Use option -l for details.\n\n";
 
 const char licensenotice[]   = "\
 --------------------------------------------------------------------------------\n\
 gSOAP XML Web services tools\n\
-Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
 \n\
 This software is released under one of the following licenses:\n\
 GPL or Genivia's license for commercial use.\n\
@@ -531,6 +531,7 @@ struct Namespace namespaces[] =
   {"xsd", "-"}, // http://www.w3.org/2001/XMLSchema"}, // don't use this, it might conflict with xs
   {"xml", "http://www.w3.org/XML/1998/namespace"},
   {"xs", "http://www.w3.org/2001/XMLSchema", "http://www.w3.org/*/XMLSchema" },
+  {"vc", "http://www.w3.org/2007/XMLSchema-versioning" },
   {"http", "http://schemas.xmlsoap.org/wsdl/http/"},
   {"soap", "http://schemas.xmlsoap.org/wsdl/soap/", "http://schemas.xmlsoap.org/wsdl/soap*/"},
   {"mime", "http://schemas.xmlsoap.org/wsdl/mime/"},

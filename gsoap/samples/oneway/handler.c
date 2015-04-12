@@ -151,6 +151,6 @@ int ns__handle(struct soap *soap, enum ns__event event)
     }
   }
   if (event != EVENT_Z && synchronous)
-    return soap_send_empty_response(soap, SOAP_OK);
+    return soap_send_empty_response(soap, SOAP_OK); /* HTTP 202 Accepted */
   return SOAP_OK;
 }

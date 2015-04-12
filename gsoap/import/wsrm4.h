@@ -1,8 +1,7 @@
 /*
+	wsrm4.h WS-ReliableMessaging 1.0 2004/06
 
-wsrm4.h
-
-This is an obsolete specification. It's superseded by WS-ReliableMessaging 2008.
+THIS IS AN OBSOLETE SPECIFICATION superseded by WS-ReliableMessaging 2005/08.
 Support for this version has ceased.
 
 Generated with:

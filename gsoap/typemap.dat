@@ -126,10 +126,15 @@
 #	remap the hexBinary type to a string as follows:
 # xsd__hexBinary = | char*
 
-#	Uncomment the line below to use LONG64 int for xsd:duration
-#	(with high ms precision)
+#	Uncomment the line below to use LONG64 int for xsd:duration instead of
+#	mapping xsd:duration to string (also comes with high ms precision)
 #	Must compile and link custom/duration.c with the project
 xsd__duration = #import "custom/duration.h" | xsd__duration
+
+#	Uncomment the line below to use long double for xsd:decimal instead of
+#	mapping xsd:decimal to string.
+#	Must compile and link custom/long_double.c with the project
+#xsd__decimal = #import "custom/long_double.h" | long double
 
 #	SOAP-ENV mapping (note: SOAP Body content is mapped to an XML string)
 
@@ -263,10 +268,25 @@ wsrm	= <http://docs.oasis-open.org/ws-rx/wsrm/200702>
 wsrm5	= <http://schemas.xmlsoap.org/ws/2005/02/rm>
 wsrm4	= <http://docs.oasis-open.org/wsrm/2004/06/ws-reliability-1.1.xsd>
 
-#	WS-Discovery 1.1 and 1.0
+#	WS-Discovery 1.1 (2009/01) and 1.0 (2004/08 with WS-Addressing)
+#	To upgrade WS-Discovery to WS-Addressing 2005/08, uncomment wsdd5:
 
 wsdd	= <http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01>
+#wsdd5	= <http://schemas.xmlsoap.org/ws/2005/04/discovery>
 wsdd10	= <http://schemas.xmlsoap.org/ws/2005/04/discovery>
+
+wsdd5__HelloType		= | wsdd__HelloType
+wsdd5__ByeType			= | wsdd__ByeType
+wsdd5__ProbeType		= | wsdd__ProbeType
+wsdd5__ProbeMatchesType		= | wsdd__ProbeMatchesType
+wsdd5__ProbeMatchType		= | wsdd__ProbeMatchType
+wsdd5__ResolveType		= | wsdd__ResolveType
+wsdd5__ResolveMatchesType	= | wsdd__ResolveMatchesType
+wsdd5__ResolveMatchType		= | wsdd__ResolveMatchType
+wsdd5__ScopesType		= | wsdd__ScopesType
+wsdd5__SecurityType		= | wsdd__SecurityType
+wsdd5__SigType			= | wsdd__SigType
+wsdd5__AppSequenceType		= | wsdd__AppSequenceType
 
 wsdd10__HelloType		= | wsdd__HelloType
 wsdd10__ByeType			= | wsdd__ByeType

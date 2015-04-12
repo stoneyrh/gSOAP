@@ -4,7 +4,7 @@
 	Error handling.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2008, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ char errbuf[1024];	/* to hold error messages */
 /*
 yyerror - called by parser from an error production with nonterminal `error'
 */
-void yyerror(char *s)
+void yyerror(const char *s)
 {
   fprintf(stderr, "%s(%d): %s\n", filename, yylineno, s);
 }

@@ -57,7 +57,7 @@
 </li>
 </ul>
 </div>
-<div class="textblock"><p>XML-RPC is a simple and effective messaging protocol. XML-RPC uses a generic XML format to compose XML messages for platform-neutral data interchange. XML-RPC serialization proceeds by marshaling parameters in predefined XML elements. A simple type system is provided to cover primitive types, structs, and arrays. That is, XML-RPC defines a collection of frequently used XML types with common programming language equivalents. XML-RPC does NOT provide a data binding to XML and does NOT support a validation mechanism to ensure that data content is validated against a data type or schema.</p>
+<div class="textblock"><p>XML-RPC is a simple and effective messaging protocol. XML-RPC uses a generic XML format to compose XML messages for platform-neutral data exchange. XML-RPC serialization proceeds by marshaling parameters in predefined XML elements. A simple type system is provided to cover primitive types, structs, and arrays. That is, XML-RPC defines a collection of frequently used XML types with common programming language equivalents. XML-RPC does NOT provide a data binding to XML and does NOT support a validation mechanism to ensure that data content is validated against a data type or schema.</p>
 <p>See <a href="http://www.xmlrpc.com">http://www.xmlrpc.com</a> for more details.</p>
 <p>JSON (JavaScript Object Notation) is an even simpler data format to support platform-neutral data interchange that is highly compatible across programming languages.</p>
 <p>See <a href="http://www.json.org">http://www.json.org</a> for more details.</p>
@@ -114,11 +114,17 @@ C++ Examples                                                           </h2>
 <div class="line"><a class="code" href="struct__base64.html" title="Represents the &lt;base64&gt; binary data element.">_base64</a> img(ctx, 100, ptr_to_rawimage100bytes);</div>
 <div class="line">v = img;                    <span class="comment">// a data block of 100 bytes in base64</span></div>
 </div><!-- fragment --><p>You can combine this syntax to create arrays of arrays, arrays of structs, and so on, for example:</p>
-<div class="fragment"><div class="line">v[0][<span class="stringliteral">&quot;name&quot;</span>] = <span class="stringliteral">&quot;bob&quot;</span>;</div>
+<div class="fragment"><div class="line"><a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a> v(ctx);</div>
+<div class="line">v[0][<span class="stringliteral">&quot;name&quot;</span>] = <span class="stringliteral">&quot;bob&quot;</span>;</div>
 <div class="line">v[0][<span class="stringliteral">&quot;toys&quot;</span>][0] = <span class="stringliteral">&quot;ball&quot;</span>;</div>
 <div class="line">v[0][<span class="stringliteral">&quot;toys&quot;</span>][1] = <span class="stringliteral">&quot;furby&quot;</span>;</div>
-</div><!-- fragment --><p>which creates a singleton array containing a struct with two members <code>name</code> set to <code>"bob"</code> and <code>toys</code> set to an array of <code>"ball"</code> and <code>"furby"</code>. In JSON format this would be represented by: </p>
-<pre class="fragment">[{"name": "bob", "toys": ["ball", "furby"]}]
+</div><!-- fragment --><p>which creates a singleton array containing a struct with two members: <code>name</code> set to <code>"bob"</code> and <code>toys</code> set to an array containing <code>"ball"</code> and <code>"furby"</code>. In JSON format this is represented as: </p>
+<pre class="fragment">           [ { "name": "bob", "toys": ["ball", "furby"] } ]
+           ^ ^ ^              ^
+           | | |              |
+  an array_/ | |              |
+ of 1 struct_/ |              |
+with 2 members_/______________/
 </pre><p>To check the type of a value, use the <code>is_type</code> methods:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#ae437ba0822eeec4bc1860040036ce8d1" title="true if value is int type">value::is_int</a>();</div>
 <div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a689089dd0cb6ac9649dbe33dd31e8199" title="true if value is double type">value::is_double</a>();</div>
@@ -134,6 +140,11 @@ C++ Examples                                                           </h2>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> <a class="code" href="structvalue.html#a2db9152a4f86289696a72bd13e26e7b9" title="get array/struct size">value::size</a>(<span class="keywordtype">int</span>);      <span class="comment">// (re)set array size or pre-allocate space</span></div>
 <div class="line"><span class="keywordtype">int</span> <a class="code" href="structvalue.html#a2db9152a4f86289696a72bd13e26e7b9" title="get array/struct size">value::size</a>();          <span class="comment">// get array/struct size</span></div>
 <div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a95f0f36dbb5dd05b3fb15a3006f4db36" title="true if empty array or struct">value::empty</a>();        <span class="comment">// empty array/struct</span></div>
+</div><!-- fragment --><p>For example, given the value <code>v</code> assigned the array shown above, we have:</p>
+<div class="fragment"><div class="line">v.is_array() == <span class="keyword">true</span>;</div>
+<div class="line">v.size() == 1;</div>
+<div class="line">v[0].is_struct() == <span class="keyword">true</span>;</div>
+<div class="line">v[0][<span class="stringliteral">&quot;name&quot;</span>].is_string() == <span class="keyword">true</span>;</div>
 </div><!-- fragment --><p>To extract data we can use casts and array/struct indexing on a value <code>v</code> as follows:</p>
 <div class="fragment"><div class="line">(int)v</div>
 <div class="line">(<span class="keywordtype">double</span>)v</div>
@@ -144,26 +155,30 @@ C++ Examples                                                           </h2>
 <div class="line">(<span class="keywordtype">bool</span>)v</div>
 <div class="line">(time_t)v</div>
 <div class="line">(<a class="code" href="struct__base64.html" title="Represents the &lt;base64&gt; binary data element.">_base64</a>)v</div>
-<div class="line">v[0]</div>
-<div class="line">v[&quot;name&quot;]</div>
 </div><!-- fragment --><p>To access base64 binary raw data of a value <code>v</code>, use:</p>
 <div class="fragment"><div class="line"><a class="code" href="struct__base64.html" title="Represents the &lt;base64&gt; binary data element.">_base64</a>&amp; bin = v;</div>
 <div class="line"><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *raw = bin.<a class="code" href="struct__base64.html#accb75dbcdaf316a692d92d42783ffcb8" title="pointer to data">ptr</a>();</div>
 <div class="line"><span class="keywordtype">int</span> size = bin.<a class="code" href="struct__base64.html#a89555bd2f9d977fd17bc2823bef10230" title="byte size of data">size</a>();</div>
-</div><!-- fragment --><p>We can also use iterators to traverse a value <code>v</code> that is an array or a struct:</p>
+</div><!-- fragment --><p>To traverse arrays and structs, we should use iterators. An iterator has an <code>index()</code> method to obtain the array index (an int) and struct member name (a string). Dereferencing the iterator gives the JSON value in the array or struct located at that index.</p>
+<p>For example, to traverse a value <code>v</code> that is an array or a struct:</p>
 <div class="fragment"><div class="line"><span class="keywordflow">if</span> (v.is_array())</div>
-<div class="line">{   <a class="code" href="struct__array.html" title="Represents the &lt;array&gt; array of values element.">_array</a>&amp; vec = v;</div>
+<div class="line">{</div>
+<div class="line">    <a class="code" href="struct__array.html" title="Represents the &lt;array&gt; array of values element.">_array</a>&amp; vec = v;</div>
 <div class="line">    <span class="keywordflow">for</span> (<a class="code" href="struct__array.html#a61e069daf5d5b31875a5d249216ac8d3">_array::iterator</a> i = vec.<a class="code" href="struct__array.html#ac15280959920d28bf27568d38ee7b6ba" title="array iterator begin">begin</a>(); i != vec.<a class="code" href="struct__array.html#a1f4d85181b117638a22d04925bb386f1" title="array iterator end">end</a>(); ++i)</div>
-<div class="line">    {   <span class="keyword">const</span> <span class="keywordtype">char</span> *member_name = i.index();</div>
-<div class="line">        <a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a>&amp; member_value = *i;</div>
-<div class="line">        ... <span class="comment">// use member_value</span></div>
+<div class="line">    {</div>
+<div class="line">        <span class="keywordtype">int</span> index = i.index();</div>
+<div class="line">        <a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a>&amp; array_value = *i;</div>
+<div class="line">        ... <span class="comment">// use index and array_value</span></div>
 <div class="line">    }</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (v.is_struct())</div>
-<div class="line">{   <a class="code" href="struct__struct.html" title="Represents the &lt;struct&gt; record structure element.">_struct</a>&amp; rec = v;</div>
+<div class="line">{</div>
+<div class="line">    <a class="code" href="struct__struct.html" title="Represents the &lt;struct&gt; record structure element.">_struct</a>&amp; rec = v;</div>
 <div class="line">    <span class="keywordflow">for</span> (<a class="code" href="struct__struct.html#a88edf40f7bb954061eddc160b1105ff3">_struct::iterator</a> i = rec.<a class="code" href="struct__struct.html#a69e6a472947d4aa911a82a153b9d867a" title="struct accessor iterator begin">begin</a>(); i != rec.<a class="code" href="struct__struct.html#aef253f058f1679add8210023c4f6f8bb" title="struct accessor iterator end">end</a>(); ++i)</div>
-<div class="line">    {   <a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a>&amp; array_value = *i;</div>
-<div class="line">        ... <span class="comment">// use array_value</span></div>
+<div class="line">    {</div>
+<div class="line">        <span class="keyword">const</span> <span class="keywordtype">char</span> *member_name = i.index();</div>
+<div class="line">        <a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a>&amp; member_value = *i;</div>
+<div class="line">        ... <span class="comment">// use member_name and member_value</span></div>
 <div class="line">    }</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>Parameter lists are similar to arrays and its values are indexed. We can also iterate over parameter content of XML-RPC remote methods:</p>
@@ -173,7 +188,9 @@ C++ Examples                                                           </h2>
 <div class="line">request[1] = ...;           <span class="comment">// second request parameter</span></div>
 <div class="line"><a class="code" href="structparams.html" title="Represents the &lt;params&gt; of a &lt;methodCall&gt; request and response.">params</a> response = rpc(request);</div>
 <div class="line"><span class="keywordflow">for</span> (<a class="code" href="structparams.html#a42e515c9a4bc03a29382e63dddea8496">params::iterator</a> i = response.<a class="code" href="structparams.html#a21b28ad0796dba7d6e00abb4587f7ffa" title="parameter accessor iterator begin">begin</a>(); i != response.<a class="code" href="structparams.html#a4934efffe16d4d367203c1acd0e777ce" title="parameter accessor iterator end">end</a>(); ++i)</div>
-<div class="line">{   <a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a>&amp; param_value = *i;</div>
+<div class="line">{</div>
+<div class="line">    <span class="keywordtype">int</span> index = i.index();</div>
+<div class="line">    <a class="code" href="structvalue.html" title="Represents the &lt;value&gt; container element.">value</a>&amp; param_value = *i;</div>
 <div class="line">    ... <span class="comment">// use param_value of response params</span></div>
 <div class="line">}</div>
 </div><!-- fragment --><p>There are two additional methods to invoke on parameters:</p>
@@ -220,21 +237,25 @@ C++ XML-RPC Client Example                                             </h2>
 <div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; response[0].<a class="code" href="structparams.html#a6e150e3958d176f05bd6579d5d14836c" title="number of parameters">size</a>())</div>
 <div class="line">        ... = response[0][i];</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (response[0].is_struct())</div>
-<div class="line">{   ... = response[0][<span class="stringliteral">&quot;membername1&quot;</span>];</div>
+<div class="line">{</div>
+<div class="line">    ... = response[0][<span class="stringliteral">&quot;membername1&quot;</span>];</div>
 <div class="line">    ... = response[0][<span class="stringliteral">&quot;membername2&quot;</span>];</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (response[0].is_base64())</div>
-<div class="line">{   <a class="code" href="struct__base64.html" title="Represents the &lt;base64&gt; binary data element.">_base64</a> raw&amp; = response[0];</div>
+<div class="line">{</div>
+<div class="line">    <a class="code" href="struct__base64.html" title="Represents the &lt;base64&gt; binary data element.">_base64</a> raw&amp; = response[0];</div>
 <div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *raw = bin.<a class="code" href="struct__base64.html#accb75dbcdaf316a692d92d42783ffcb8" title="pointer to data">ptr</a>();</div>
 <div class="line">    <span class="keywordtype">int</span> size = bin.<a class="code" href="struct__base64.html#a89555bd2f9d977fd17bc2823bef10230" title="byte size of data">size</a>();</div>
 <div class="line">    ... <span class="comment">// use raw[0..size-1] data</span></div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (response[0].is_bool())</div>
-<div class="line">{   <span class="keywordtype">bool</span> flag = response[0];</div>
+<div class="line">{</div>
+<div class="line">    <span class="keywordtype">bool</span> flag = response[0];</div>
 <div class="line">    ... <span class="comment">// use boolean flag</span></div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (response[0].is_int())</div>
-<div class="line">{   <span class="keywordtype">int</span> num = response[0];</div>
+<div class="line">{</div>
+<div class="line">    <span class="keywordtype">int</span> num = response[0];</div>
 <div class="line">    ... <span class="comment">// use integer</span></div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (response[0].is_double())</div>
@@ -242,7 +263,8 @@ C++ XML-RPC Client Example                                             </h2>
 <div class="line">    ... <span class="comment">// use double float</span></div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (response[0].is_string())</div>
-<div class="line">{   <span class="keyword">const</span> <span class="keywordtype">char</span> *str = response[0];</div>
+<div class="line">{</div>
+<div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span> *str = response[0];</div>
 <div class="line">    <span class="comment">// use string, note that also legal is:</span></div>
 <div class="line">    <span class="keyword">const</span> std::string&amp; st = response[0];</div>
 <div class="line">    <span class="comment">// and conversion from UTF8 to wide string unicode:</span></div>
@@ -250,7 +272,8 @@ C++ XML-RPC Client Example                                             </h2>
 <div class="line">    <span class="keyword">const</span> std::string&amp; ws = response[0];</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (response[0].is_dateTime())</div>
-<div class="line">{   time_t t = response[0];</div>
+<div class="line">{</div>
+<div class="line">    time_t t = response[0];</div>
 <div class="line">    ... <span class="comment">// use time</span></div>
 <div class="line">}</div>
 <div class="line"><span class="comment">// deallocate all</span></div>
@@ -300,17 +323,20 @@ C++ XML-RPC Server Example                                             </h2>
 <div class="line"><span class="keywordflow">if</span> (rpc.recv() != SOAP_OK)</div>
 <div class="line">    soap_print_fault(ctx, stderr);</div>
 <div class="line"><span class="keywordflow">else</span></div>
-<div class="line">{   <span class="comment">// create response</span></div>
+<div class="line">{</div>
+<div class="line">    <span class="comment">// create response</span></div>
 <div class="line">    <a class="code" href="structmethod_response.html" title="Represents the &lt;methodResponse&gt; element with response &lt;params&gt; and &lt;fault&gt;.">methodResponse</a> response(ctx);</div>
 <div class="line">    <span class="comment">// check method name</span></div>
 <div class="line">    <span class="keywordflow">if</span> (!strcmp(rpc.name(), <span class="stringliteral">&quot;methodName&quot;</span>))</div>
-<div class="line">    {   <span class="comment">// method name matches: populate response parameters with values:</span></div>
+<div class="line">    {</div>
+<div class="line">        <span class="comment">// method name matches: populate response parameters with values:</span></div>
 <div class="line">        response[0] = ...;</div>
 <div class="line">        response[1] = ...;</div>
 <div class="line">        ... <span class="comment">// add response data </span></div>
 <div class="line">    }</div>
 <div class="line">    <span class="keywordflow">else</span></div>
-<div class="line">    {   <span class="comment">// otherwise, set fault</span></div>
+<div class="line">    {</div>
+<div class="line">        <span class="comment">// otherwise, set fault</span></div>
 <div class="line">        response.set_fault(<span class="stringliteral">&quot;Wrong method&quot;</span>);</div>
 <div class="line">    }</div>
 <div class="line">    <span class="comment">// send response</span></div>
@@ -333,7 +359,8 @@ C++ XML-RPC Server Example                                             </h2>
 <div class="line">    ... <span class="comment">// error, stop</span></div>
 <div class="line"><span class="comment">// accept messages in server loop</span></div>
 <div class="line"><span class="keywordflow">for</span> (;;)</div>
-<div class="line">{   <span class="keywordflow">if</span> (!soap_valid_socket(soap_accept(ctx)))</div>
+<div class="line">{</div>
+<div class="line">    <span class="keywordflow">if</span> (!soap_valid_socket(soap_accept(ctx)))</div>
 <div class="line">        ... <span class="comment">// error, stop</span></div>
 <div class="line">    <span class="comment">// create a method object</span></div>
 <div class="line">    <a class="code" href="structmethod_call.html" title="Represents the &lt;methodCall&gt; element with &lt;methodName&gt; and request &lt;params&gt; for remote invocation...">methodCall</a> rpc(ctx);</div>
@@ -661,7 +688,7 @@ C JSON-RPC over HTTP (REST method)                                       </h2>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Aug 18 2014 13:27:50 for gSOAP XML-RPC and JSON by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Mar 20 2015 16:31:01 for gSOAP XML-RPC and JSON by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

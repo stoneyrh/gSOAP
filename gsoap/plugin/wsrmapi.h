@@ -59,12 +59,12 @@ extern "C" {
 #endif
 
 /** Plugin identification for plugin registry */
-#define SOAP_WSRM_ID "WS-RM-1.13"
+#define SOAP_WSRM_ID "WS-RM-1.14"
 
-/** Use the new fast O(1) message allocation/deallocation and lookup at the
-    cost of stoting an array of pointers of length N per sequence, where N is
-    the number of messages in the sequence */
-#define SOAP_WSRM_FAST_ALLOC
+/** Use fast O(1) message allocation/deallocation and lookup at the cost of
+    storing an array of N pointers per sequence, where N = 2^k >= is the number
+    of messages in the sequence */
+/* #define SOAP_WSRM_FAST_ALLOC */
 
 /** Plugin identification for plugin registry */
 extern const char soap_wsrm_id[];
@@ -182,7 +182,8 @@ struct soap_wsrm_sequence
 #ifdef SOAP_WSRM_FAST_ALLOC
   struct soap_wsrm_message **messages;	/**< array [0 .. seq->num-1] pointing to message content */
 #else
-  struct soap_wsrm_message *messages;	/**< linked list of messages */
+  struct soap_wsrm_message *messages;		/**< linked list of messages */
+  struct soap_wsrm_message *messageslast;	/**< back insertion in message list */
 #endif
   struct soap_wsrm_range *ranges;	/**< ranges of received messages */
   int channel;		/**< callback WCF channel instance */

@@ -1,7 +1,7 @@
 /*
 	wsrx.h
 
-	WS-ReliableMessaging definitions:
+	WS-ReliableMessaging 1.0/1.1 operation definitions:
 	SOAP Header definitions for WS-RM 1.1 2007
 	WS-RM Operations for CreateSequence, CloseSequence, TerminateSequence
 	WS-RM SequenceAcknowledgement server operation (RM dest for AcksTo)

@@ -34,7 +34,7 @@ struct SOAP_ENV__Detail
 { struct f__myDataType f__myData;
   int __type;
   void *value;
-  char *__any;
+  char *__any;		// or use '_XML __any' to store literal XML content
 };
  
 */

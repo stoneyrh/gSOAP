@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -96,6 +96,7 @@ static const char *keywords[] =
   "friend",
   "goto",
   "if",
+  "INFINITY",
   "inline",
   "int",
   "interface",
@@ -927,7 +928,7 @@ const char *Types::pname(bool flag, const char *prefix, const char *URI, const c
         if (r && *(r-1) != '/' && *(r+1) != '/')
           break;
       }
-      if (!r)	// already pointer?
+      if (!r && strcmp(s, "_QName") && strcmp(s, "_XML"))	// already pointer or _QName/_XML?
       {
         char *p = (char*)emalloc(strlen(s) + 2);
         strcpy(p, s);
@@ -1069,7 +1070,7 @@ const char *Types::sname(const char *URI, const char *name)
     s = fname("_", URI, t, &rnames, NOLOOKUP, true);
     rnames.insert(s);
   }
-  else if (URI)
+  else if (URI && *URI)
   {
     s = nsprefix(NULL, URI);
     t = (char*)emalloc(strlen(s) + 16);
@@ -1105,7 +1106,7 @@ const char *Types::uname(const char *URI)
     s = fname("_", URI, t, &rnames, NOLOOKUP, true);
     rnames.insert(s);
   }
-  else if (URI)
+  else if (URI && *URI)
   {
     s = nsprefix(NULL, URI);
     t = (char*)emalloc(strlen(s) + 16);
@@ -1142,7 +1143,7 @@ const char *Types::gname(const char *URI, const char *name)
     s = fname("_", URI, t, &rnames, LOOKUP, true);
     rnames.insert(s);
   }
-  else if (URI)
+  else if (URI && *URI)
   {
     s = nsprefix(NULL, URI);
     t = (char*)emalloc(strlen(s) + 16);
@@ -1320,6 +1321,11 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
         fprintf(stream, "/// @brief \"%s\":%s is a simpleType restriction of XSD type %s.\n///\n", URI ? URI : "", name, base);
       document(simpleType.annotation);
       document(simpleType.restriction->annotation);
+      if (simpleType.restriction->assertion && simpleType.restriction->assertion->test)
+      {
+	fprintf(stream, "/// Assertion:\n");
+	documentation(simpleType.restriction->assertion->test);
+      }
       if (!simpleType.restriction->enumeration.empty())
       {
         bool is_numeric = true; // check if all enumeration values are numeric
@@ -1392,7 +1398,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
         }
         else
         {
-          const char *a = NULL, *b = "unbounded";
+          const char *a = NULL, *b = NULL;
           if (simpleType.restriction->minLength)
           {
             a = simpleType.restriction->minLength->value;
@@ -1404,7 +1410,9 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             document(simpleType.restriction->maxLength->annotation);
           }
           if (a || b)
-            fprintf(stream, "/// Length of this string is %s..%s.\n", a ? a : "0", b ? b : "");
+	  {
+            fprintf(stream, "/// Length of this string is %s..%s.\n", a ? a : "0", b ? b : "unbounded");
+	  }
         }
         char format[16];
         format[0] = '\0';
@@ -1504,21 +1512,25 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           }
           // add range info only when type is numeric
           bool is_numeric = false, is_float = false;
-          if (!strncmp(s, "unsigned ", 9))
+          if (!strncmp(s, "signed ", 7))
+            s += 7;
+	  else if (!strncmp(s, "unsigned ", 9))
             s += 9;
-          else if (!strncmp(s, "xsd__unsigned", 13))
+	  if (!strncmp(s, "long ", 5))
+	    s += 5;
+	  else if (!strncmp(s, "short ", 6))
+	    s += 6;
+          if (!strncmp(s, "xsd__unsigned", 13))
             s += 13;
           else if (!strncmp(s, "xsd__", 5))
             s += 5;
-          if (!strcmp(s, "double")
-           || !strcmp(s, "float"))
+          if (!strcmp(s, "float")
+           || !strcmp(s, "double"))
             is_numeric = is_float = true;
           else if (!strcmp(s, "bool")
            || !strcmp(s, "byte")
            || !strcmp(s, "Byte")
            || !strcmp(s, "char")
-           || !strcmp(s, "double")
-           || !strcmp(s, "float")
            || !strcmp(s, "int")
            || !strcmp(s, "Int")
            || !strcmp(s, "long")
@@ -1528,8 +1540,13 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
            || !strcmp(s, "Short")
            || !strcmp(s, "ULONG64"))
             is_numeric = true;
-          if (!anonymous && is_float && *format)
-	    fprintf(stream, " \"%%%sf\"", format);
+          if (!anonymous && *format)
+	  {
+	    if (is_float)
+	      fprintf(stream, " \"%%%sf\"", format);
+	    else if (is_numeric)
+	      fprintf(stream, " \"%%%sd\"", format);
+	  }
           if (!anonymous
            && simpleType.restriction->minLength
            && simpleType.restriction->minLength->value)
@@ -1860,6 +1877,13 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
     if (!anonymous)
       fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with simpleContent.\n///\n", URI ? URI : "", name, complexType.abstract ? "n abstract" : "");
     document(complexType.annotation);
+    if (!complexType.assert.empty())
+    {
+      fprintf(stream, "/// Assertions:\n");
+      for (std::vector<xs__assert>::const_iterator a = complexType.assert.begin(); a != complexType.assert.end(); ++a)
+	if ((*a).test)
+	  documentation((*a).test);
+    }
     operations(t);
     if (complexType.simpleContent->restriction)
     {
@@ -2085,6 +2109,22 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       if (!anonymous)
         fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with complexContent restriction of XSD type %s.\n///\n", URI ? URI : "", name, complexType.abstract ? "n abstract" : "", complexType.complexContent->restriction->base);
       document(complexType.annotation);
+      document(complexType.complexContent->annotation);
+      document(complexType.complexContent->restriction->annotation);
+      if (!complexType.assert.empty())
+      {
+	fprintf(stream, "/// Assertions:\n");
+	for (std::vector<xs__assert>::const_iterator a = complexType.assert.begin(); a != complexType.assert.end(); ++a)
+	  if ((*a).test)
+	    documentation((*a).test);
+      }
+      if (!complexType.complexContent->restriction->assert.empty())
+      {
+	fprintf(stream, "/// Assertions on restriction:\n");
+	for (std::vector<xs__assert>::const_iterator a = complexType.complexContent->restriction->assert.begin(); a != complexType.complexContent->restriction->assert.end(); ++a)
+	  if ((*a).test)
+	    documentation((*a).test);
+      }
       operations(t);
       if (!strcmp(complexType.complexContent->restriction->base, "SOAP-ENC:Array"))
       {
@@ -2217,6 +2257,22 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       if (!anonymous)
         fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with complexContent extension of XSD type %s.\n///\n", URI ? URI : "", name, complexType.abstract ? "n abstract" : "", base);
       document(complexType.annotation);
+      document(complexType.complexContent->annotation);
+      document(complexType.complexContent->extension->annotation);
+      if (!complexType.assert.empty())
+      {
+	fprintf(stream, "/// Assertions:\n");
+	for (std::vector<xs__assert>::const_iterator a = complexType.assert.begin(); a != complexType.assert.end(); ++a)
+	  if ((*a).test)
+	    documentation((*a).test);
+      }
+      if (!complexType.complexContent->extension->assert.empty())
+      {
+	fprintf(stream, "/// Assertions on extension:\n");
+	for (std::vector<xs__assert>::const_iterator a = complexType.complexContent->extension->assert.begin(); a != complexType.complexContent->extension->assert.end(); ++a)
+	  if ((*a).test)
+	    documentation((*a).test);
+      }
       operations(t);
       if (anonymous)
       {
@@ -2282,6 +2338,17 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
     else if (complexType.any)
       gen(URI, *complexType.any, NULL, NULL);
   }
+  if (!(complexType.complexContent && complexType.complexContent->extension) && complexType.defaultAttributesApply && complexType.schemaPtr() && complexType.schemaPtr()->attributeGroupPtr())
+  {
+    fprintf(stream, "/// Default attributes \"%s\"\n", complexType.schemaPtr()->defaultAttributes);
+    xs__attributeGroup *a = complexType.schemaPtr()->attributeGroupPtr();
+    if (a->attributeGroupPtr())
+      a = a->attributeGroupPtr();
+    gen(URI, a->attribute);
+    gen(URI, a->attributeGroup);
+    if (a->anyAttribute)
+      gen(URI, *a->anyAttribute);
+  }
   gen(URI, complexType.attribute);
   gen(URI, complexType.attributeGroup);
   if (complexType.anyAttribute)
@@ -2343,17 +2410,24 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
   document(attribute.annotation);
   if (!URI)
     URI = attribute.schemaPtr()->targetNamespace;
-  if (attribute.form)
+  if (attribute.targetNamespace)
   {
-    if (*attribute.form == qualified)
-      nameURI = URI;
+    if ((attribute.form && *attribute.form == qualified) || attribute.schemaPtr()->attributeFormDefault == qualified)
+      nameURI = attribute.targetNamespace;
     else
       nameprefix = ":";
   }
-  if (!attribute.ref && URI && attribute.schemaPtr() && attribute.schemaPtr()->targetNamespace && strcmp(URI, attribute.schemaPtr()->targetNamespace))
+  else if (!attribute.ref && URI && attribute.schemaPtr() && attribute.schemaPtr()->targetNamespace && strcmp(URI, attribute.schemaPtr()->targetNamespace))
   {
-    if (attribute.schemaPtr()->attributeFormDefault == qualified)
+    if ((attribute.form && *attribute.form == qualified) || attribute.schemaPtr()->attributeFormDefault == qualified)
       nameURI = attribute.schemaPtr()->targetNamespace; // handles attributes defined in another namespace
+    else
+      nameprefix = ":";
+  }
+  else if (attribute.form)
+  {
+    if (*attribute.form == qualified)
+      nameURI = URI;
     else
       nameprefix = ":";
   }
@@ -2697,17 +2771,24 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     maxOccurs = element.maxOccurs;
   if (element.xmime__expectedContentTypes)
     fprintf(stream, "/// MTOM attachment with content types %s.\n", element.xmime__expectedContentTypes);
-  if (element.form)
+  if (element.targetNamespace)
   {
-    if (*element.form == qualified)
-      nameURI = URI;
+    if ((element.form && *element.form == qualified) || element.schemaPtr()->elementFormDefault == qualified)
+      nameURI = element.targetNamespace;
     else
       nameprefix = ":";
   }
-  if (!element.ref && URI && element.schemaPtr() && element.schemaPtr()->targetNamespace && strcmp(URI, element.schemaPtr()->targetNamespace))
+  else if (!element.ref && URI && element.schemaPtr() && element.schemaPtr()->targetNamespace && strcmp(URI, element.schemaPtr()->targetNamespace))
   {
-    if (element.schemaPtr()->elementFormDefault == qualified)
+    if ((element.form && *element.form == qualified) || element.schemaPtr()->elementFormDefault == qualified)
       nameURI = element.schemaPtr()->targetNamespace; // handles elements defined in another namespace
+    else
+      nameprefix = ":";
+  }
+  else if (element.form)
+  {
+    if (*element.form == qualified)
+      nameURI = URI;
     else
       nameprefix = ":";
   }
@@ -3143,8 +3224,16 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
     r = s + 7;
   if (!r || !*r)
   {
-    r = t;
-    s = "__union";
+    if (strncmp(t, "union", 5) == 0)
+    {
+      r = t + 5;
+      s = r;
+    }
+    else
+    {
+      r = t;
+      s = t;
+    }
   }
   if (maxOccurs && strcmp(maxOccurs, "1"))
   {
@@ -3189,17 +3278,18 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
   {
     with_union = tmp_union;
     if (!with_union || wrap_union)
-      fprintf(stream, elementformat, "}", s+2);
+    {
+      fprintf(stream, elementformat, "}", s[0] == '_' && s[1] == '_' ? s+2 : s);
+      fprintf(stream, ";\n");
+    }
   }
   else
     fake_union = tmp_union;
   if (maxOccurs && strcmp(maxOccurs, "1"))
   {
-    if (use_union)
-      fprintf(stream, ";\n");
     fprintf(stream, pointerformat, "}", s);
+    fprintf(stream, ";\n");
   }
-  fprintf(stream, ";\n");
   if (wrap_union)
   {
     fprintf(stream, elementformat, "}", s);
@@ -3325,6 +3415,16 @@ void Types::gen_inh(const char *URI, const xs__complexType *complexType, bool an
       gen(pURI, *p->sequence, NULL, NULL);
     else if (p->any)
       gen(pURI, *p->any, NULL, NULL);
+    if (p->defaultAttributesApply && p->schemaPtr() && p->schemaPtr()->attributeGroupPtr())
+    {
+      xs__attributeGroup *a = p->schemaPtr()->attributeGroupPtr();
+      if (a->attributeGroupPtr())
+	a = a->attributeGroupPtr();
+      gen(pURI, a->attribute);
+      gen(pURI, a->attributeGroup);
+      if (a->anyAttribute)
+	gen(pURI, *a->anyAttribute);
+    }
     gen(pURI, p->attribute);
     gen(pURI, p->attributeGroup);
     if (p->anyAttribute)

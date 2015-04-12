@@ -264,7 +264,7 @@ int soap_http_body(struct soap *soap, char **buf, size_t *len)
    || soap->zlib_in != SOAP_ZLIB_NONE
 #endif
    )
-  { register size_t k;
+  { size_t k;
     soap_wchar c = EOF;
     soap->labidx = 0;
     do

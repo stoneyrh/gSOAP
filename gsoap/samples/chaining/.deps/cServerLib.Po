@@ -41,9 +41,11 @@ cServerLib.o: cServerLib.c cC.c cH.h cStub.h ../../../gsoap/stdsoap2.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/limits.h \
   /usr/include/limits.h /usr/include/machine/limits.h \
   /usr/include/i386/limits.h /usr/include/i386/_limits.h \
-  /usr/include/sys/syslimits.h /usr/include/poll.h \
-  /usr/include/sys/poll.h /usr/include/errno.h /usr/include/sys/errno.h \
-  /usr/include/sys/types.h /usr/include/sys/_types/_blkcnt_t.h \
+  /usr/include/sys/syslimits.h \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/float.h \
+  /usr/include/math.h /usr/include/poll.h /usr/include/sys/poll.h \
+  /usr/include/errno.h /usr/include/sys/errno.h /usr/include/sys/types.h \
+  /usr/include/sys/_types/_blkcnt_t.h \
   /usr/include/sys/_types/_blksize_t.h /usr/include/sys/_types/_gid_t.h \
   /usr/include/sys/_types/_in_addr_t.h \
   /usr/include/sys/_types/_in_port_t.h /usr/include/sys/_types/_ino_t.h \
@@ -83,7 +85,7 @@ cServerLib.o: cServerLib.c cC.c cH.h cStub.h ../../../gsoap/stdsoap2.h \
   /usr/include/fcntl.h /usr/include/sys/fcntl.h \
   /usr/include/sys/_types/_o_sync.h /usr/include/sys/_types/_o_dsync.h \
   /usr/include/sys/_types/_s_ifmt.h /usr/include/sys/_types/_filesec_t.h \
-  /usr/include/math.h /usr/include/inttypes.h cServer.c
+  /usr/include/inttypes.h cServer.c
 
 cC.c:
 
@@ -249,6 +251,10 @@ cStub.h:
 
 /usr/include/sys/syslimits.h:
 
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/float.h:
+
+/usr/include/math.h:
+
 /usr/include/poll.h:
 
 /usr/include/sys/poll.h:
@@ -382,8 +388,6 @@ cStub.h:
 /usr/include/sys/_types/_s_ifmt.h:
 
 /usr/include/sys/_types/_filesec_t.h:
-
-/usr/include/math.h:
 
 /usr/include/inttypes.h:
 

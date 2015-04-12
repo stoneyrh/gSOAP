@@ -19,7 +19,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ Table	*classtable = (Table*)0,
 	*booltable = (Table*)0,
 	*templatetable = (Table*)0;
 
-char	*namespaceid = NULL;
+const char *namespaceid = NULL;
 int	transient = 0;
 int	permission = 0;
 int	custom_header = 1;
@@ -97,23 +97,25 @@ Tnode	*qname = NULL;
 Tnode	*xml = NULL;
 
 /* function prototypes for support routine section */
-static Entry	*undefined(Symbol*);
-static Tnode	*mgtype(Tnode*, Tnode*);
-static Node	op(const char*, Node, Node), iop(const char*, Node, Node), relop(const char*, Node, Node);
-static void	mkscope(Table*, int), enterscope(Table*, int), exitscope(void);
-static int	integer(Tnode*), real(Tnode*), numeric(Tnode*);
-static void	add_soap(void), add_XML(void), add_qname(void), add_header(Table*), add_fault(Table*), add_response(Entry*, Entry*), add_result(Tnode*);
-extern char	*c_storage(Storage), *c_type(Tnode*), *c_ident(Tnode*);
-extern int	is_primitive_or_string(Tnode*), is_stdstr(Tnode*), is_binary(Tnode*), is_external(Tnode*), is_mutable(Tnode*), has_attachment(Tnode*);
+static Entry		*undefined(Symbol*);
+static Tnode		*mgtype(Tnode*, Tnode*);
+static Node		op(const char*, Node, Node), iop(const char*, Node, Node), relop(const char*, Node, Node);
+static void		mkscope(Table*, int), enterscope(Table*, int), exitscope(void);
+static int		integer(Tnode*), real(Tnode*), numeric(Tnode*);
+static void		add_soap(void), add_XML(void), add_qname(void), add_header(void), add_fault(void), add_response(Entry*, Entry*), add_result(Tnode*);
+extern char		*c_storage(Storage);
+extern const char	*c_type(Tnode*);
+extern int		is_primitive_or_string(Tnode*), is_stdstr(Tnode*), is_binary(Tnode*), is_external(Tnode*), is_mutable(Tnode*), has_attachment(Tnode*);
 
 /* Temporaries used in semantic rules */
-int	i;
-char	*s, *s1, *s2;
-Symbol	*sym;
-Entry	*p, *q;
-Tnode	*t;
-Node	tmp, c;
-Pragma	**pp;
+int		i;
+char		*s, *s1;
+const char 	*s2;
+Symbol		*sym;
+Entry		*p, *q;
+Tnode		*t;
+Node		tmp, c;
+Pragma		**pp;
 
 %}
 
@@ -201,8 +203,8 @@ prog	: s1 exts	{ if (lflag)
     			  	custom_fault = 0;
 			  }
 			  else
-			  {	add_header(sp->table);
-			  	add_fault(sp->table);
+			  {	add_header();
+			  	add_fault();
 			  }
 			  compile(sp->table);
 			  freetable(classtable);
@@ -249,11 +251,13 @@ ext	: dclrs ';'	{ }
 	| t2		{ }
 	;
 pragma	: PRAGMA	{ if ($1[1] >= 'a' && $1[1] <= 'z')
-			  {	for (pp = &pragmas; *pp; pp = &(*pp)->next)
+			  {	char *s;
+				for (pp = &pragmas; *pp; pp = &(*pp)->next)
 			          ;
 				*pp = (Pragma*)emalloc(sizeof(Pragma));
-				(*pp)->pragma = (char*)emalloc(strlen($1)+1);
-				strcpy((*pp)->pragma, $1);
+				s = (char*)emalloc(strlen($1)+1);
+				strcpy(s, $1);
+				(*pp)->pragma = s;
 				(*pp)->next = NULL;
 			  }
 			  else if ((i = atoi($1+2)) > 0)
@@ -377,7 +381,7 @@ dclr	: ptrs ID arrayck tag occurs init
 							 && ((Tnode*)$3.typ->ref)->type == Tchar
 							 && $6.typ->type == Tpointer
 							 && ((Tnode*)$6.typ->ref)->type == Tchar)
-							{	if ($3.typ->width / ((Tnode*)$3.typ->ref)->width - 1 < strlen($6.val.s))
+							{	if ($3.typ->width / ((Tnode*)$3.typ->ref)->width - 1 < (int)strlen($6.val.s))
 								{	semerror("char[] initialization constant too long");
 									p->info.val.s = "";
 								}
@@ -1626,7 +1630,10 @@ relop(const char *op, Node p, Node q)
 	Tnode	*typ;
 	r.typ = mkint();
 	r.sto = Snone;
-	r.hasval = False;
+	r.hasval = True;
+	r.val.i = 1;
+	sprintf(errbuf, "comparison '%s' not evaluated and considered true", op);
+	semwarn(errbuf);
 	if (p.typ->type != Tpointer || p.typ != q.typ)
 		typ = mgtype(p.typ, q.typ);
 	return r;
@@ -1735,7 +1742,7 @@ numeric(Tnode *typ)
 }
 
 static void
-add_fault(Table *gt)
+add_fault(void)
 { Table *t;
   Entry *p1, *p2, *p3, *p4;
   Symbol *s1, *s2, *s3, *s4;
@@ -1864,7 +1871,7 @@ add_qname(void)
 }
 
 static void
-add_header(Table *gt)
+add_header(void)
 { Table *t;
   Entry *p;
   Symbol *s = lookup("SOAP_ENV__Header");

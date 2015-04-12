@@ -22,9 +22,9 @@ wsdl2h.exe:	wsdlC.obj wsdl.obj schema.obj soap.obj mime.obj wsp.obj bpel.obj typ
 secure:
 		touch wsdl2h.cpp
 		make wsdl2h_secure
-wsdl2h_secure:	wsdlC.obj wsdl.obj schema.cpp soap.obj mime.obj types.obj service.obj wsdl2h.obj stdsoap2.obj
+wsdl2h_secure:	wsdlC.obj wsdl.obj schema.cpp soap.obj mime.obj wsp.obj bpel.obj types.obj service.obj wsdl2h.obj httpda.obj md5evp.obj stdsoap2.obj
 		$(CPP) $(CFLAGS) -DWITH_OPENSSL -Fewsdl2h.exe wsdl2h.obj wsdlC.obj wsdl.obj \
-			schema.cpp soap.obj mime.obj types.obj service.obj stdsoap2.obj $(SECURE_LIBS)
+			schema.cpp soap.obj mime.obj wsp.obj bpel.obj types.obj service.obj httpda.obj md5evp.obj stdsoap2.obj $(SECURE_LIBS)
 
 wsdl2h.obj:	wsdl2h.cpp
 		$(CPP) -c $(CFLAGS) wsdl2h.cpp
@@ -48,6 +48,10 @@ wsp.obj:	wsp.h wsp.cpp includes.h imports.h
 		$(CPP) -c $(CFLAGS) wsp.cpp
 bpel.obj:	bpel.h bpel.cpp includes.h imports.h
 		$(CPP) -c $(CFLAGS) bpel.cpp
+httpda.obj:	../plugin/httpda.c
+		$(CC) -c -I../plugin $(CFLAGS) ../plugin/httpda.c
+md5evp.obj:	../plugin/md5evp.c
+		$(CC) -c -I../plugin $(CFLAGS) ../plugin/md5evp.c
 stdsoap2.obj:	$(SOAPCPP)
 		$(CPP) -c $(CFLAGS) $(SOAPCPP)
 

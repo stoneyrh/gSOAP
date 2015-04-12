@@ -93,9 +93,9 @@ Discovery Proxy.
 
 @note The wsdl2h tool uses typemap.dat to auto-generate a gSOAP service
 definitions header file that imports wsdd.h to support WS-Discovery 1.1 with
-WS-Addressing 2005/08. The tool imports wsdd5.h to support WS-Discovery 1.0
-with WS-Addressing 2005/08. To use WS-Discovery 1.0 with WS-Addressing 2004/08,
-you will need to change typemap.dat to let wsdl2h import wsdd10.h (see comments
+WS-Addressing 2005/08. The tool imports wsdd10.h to support WS-Discovery 1.0
+with WS-Addressing 2004/08. To use WS-Discovery 1.0 with WS-Addressing 2005/08,
+you will need to change typemap.dat to let wsdl2h import wsdd5.h (see comments
 in typemap.dat).
 
 @section wsdd_2 WS-Discovery Event Handlers

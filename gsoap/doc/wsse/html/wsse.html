@@ -135,9 +135,13 @@ Binary Security Tokens</h2>
 <div class="line">soap-&gt;capath = <span class="stringliteral">&quot;dir/to/certs&quot;</span>; <span class="comment">// and/or point to CA certs</span></div>
 <div class="line">soap-&gt;crlfile = <span class="stringliteral">&quot;revoked.pem&quot;</span>; <span class="comment">// use CRL (optional)</span></div>
 </div><!-- fragment --><p>The <a class="el" href="wsseapi_8c.html#a8f5879e7d5bd3580ea400ccd1982d747">soap_wsse_verify_X509</a> function checks the validity of a certificate. The check is automatically performed. The check is also performed when retrieving the certificate from a Security header block, either automatically by the wsse plugin's signature verification engine or manually as follows:</p>
-<div class="fragment"><div class="line">X509 *cert = <a class="code" href="wsseapi_8h.html#a2ec22f47b0c66b62ef3c96d8f7b31436" title="Get X509 wsse:BinarySecurityToken certificate and verify its content.">soap_wsse_get_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;Id&quot;</span>);</div>
+<div class="fragment"><div class="line">X509 *cert = <a class="code" href="wsseapi_8h.html#a2ec22f47b0c66b62ef3c96d8f7b31436" title="Get X509 wsse:BinarySecurityToken certificate and verify its content. This call must be followed by a...">soap_wsse_get_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;Id&quot;</span>);</div>
 </div><!-- fragment --><p>where Id is the identification string of the binary security token or NULL.</p>
-<p>The verification is an expensive process that will be optimized in future releases by caching the certificate chain.</p>
+<p>The X509 certificate returned by this function should be freed with X509_free to deallocate the certificate data:</p>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> (cert)</div>
+<div class="line">  X509_free(cert);</div>
+<div class="line">cert = NULL;</div>
+</div><!-- fragment --><p>The verification is an expensive process that will be optimized in future releases by caching the certificate chain.</p>
 <p>To attach a binary security token stored in a PEM file to a Security header block for transmission, use:</p>
 <div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#ad88d8317bcbbcda4cdc8d1bcfb2e0f18" title="Adds BinarySecurityToken element from a PEM file.">soap_wsse_add_BinarySecurityTokenPEM</a>(soap, NULL, <span class="stringliteral">&quot;mycert.pem&quot;</span>)</div>
 </div><!-- fragment --><p>A binary security token can be automatically signed by setting its Id attribute:</p>
@@ -894,7 +898,7 @@ WS-SecureConversation</h1>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 4 2014 15:45:46 for gSOAP WS-Security by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 9 2015 13:49:50 for gSOAP WS-Security by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3
 </small></address>

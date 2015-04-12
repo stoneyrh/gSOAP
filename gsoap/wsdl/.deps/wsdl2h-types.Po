@@ -39,8 +39,9 @@ wsdl2h-types.o: types.cpp types.h includes.h ../../gsoap/stdsoap2.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/limits.h \
   /usr/include/limits.h /usr/include/machine/limits.h \
   /usr/include/i386/limits.h /usr/include/i386/_limits.h \
-  /usr/include/sys/syslimits.h /usr/include/poll.h \
-  /usr/include/sys/poll.h \
+  /usr/include/sys/syslimits.h \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/float.h \
+  /usr/include/math.h /usr/include/poll.h /usr/include/sys/poll.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/new \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__config \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/exception \
@@ -166,10 +167,9 @@ wsdl2h-types.o: types.cpp types.h includes.h ../../gsoap/stdsoap2.h \
   /usr/include/openssl/tls1.h /usr/include/openssl/dtls1.h \
   /usr/include/openssl/pqueue.h /usr/include/openssl/ssl23.h \
   /usr/include/openssl/x509v3.h /usr/include/openssl/conf.h \
-  /usr/include/zlib.h /usr/include/zconf.h /usr/include/math.h \
-  /usr/include/inttypes.h /usr/include/xlocale/_inttypes.h \
-  ../../gsoap/plugin/httpda.h ../../gsoap/plugin/md5evp.h \
-  ../../gsoap/plugin/threads.h \
+  /usr/include/zlib.h /usr/include/zconf.h /usr/include/inttypes.h \
+  /usr/include/xlocale/_inttypes.h ../../gsoap/plugin/httpda.h \
+  ../../gsoap/plugin/md5evp.h ../../gsoap/plugin/threads.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__split_buffer \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/set \
@@ -332,6 +332,10 @@ includes.h:
 /usr/include/i386/_limits.h:
 
 /usr/include/sys/syslimits.h:
+
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/float.h:
+
+/usr/include/math.h:
 
 /usr/include/poll.h:
 
@@ -704,8 +708,6 @@ includes.h:
 /usr/include/zlib.h:
 
 /usr/include/zconf.h:
-
-/usr/include/math.h:
 
 /usr/include/inttypes.h:
 

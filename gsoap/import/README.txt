@@ -14,15 +14,17 @@ soap12.h	SOAP 1.2 namespaces
 wsa.h		WS-Addressing 2004/08 (see plugin/wsaapi.c)
 wsa3.h		WS-Addressing 2003/03 (see plugin/wsaapi.c)
 wsa4.h		WS-Addressing 2004/03 (see plugin/wsaapi.c)
-wsa5.h		WS-Addressing 2005/03 (see plugin/wsaapi.c)
-wsrm4.h		WS-ReliableMessaging (2004, deprecated)
-wsrm.h		WS-ReliableMessaging schema definitions
-wsrx.h		WS-ReliableMessaging operation (see plugin/wsrmapi.c)
+wsa5.h		WS-Addressing 2005/08 (see plugin/wsaapi.c)
+wsrm.h		WS-ReliableMessaging 1.1 schema with WS-Addressing 2005/08
+wsrm4.h		WS-ReliableMessaging 1.0 (2004, deprecated)
+wsrm5.h		WS-ReliableMessaging 1.0 schema with WS-Addressing 2005/08
+wsrx.h		WS-ReliableMessaging 1.0/1.1 operations (see plugin/wsrmapi.c)
 wsse.h		WS-Security (see plugin/wsseapi.c)
 wsse2.h		WS-Security (2002 version, requires wsc2.h)
-wsdd10.h	WS-Discovery 1.0 schema definitions
-wsdd.h		WS-Discovery 1.1 schema definitions
-wsdx.h		WS-Discovery (see plugin/wsddapi.c)
+wsdd.h		WS-Discovery 1.1 schema with WS-Addressing 2005/08
+wsdd5.h		WS-Discovery 1.0 schema with WS-Addressing 2005/08
+wsdd10.h	WS-Discovery 1.0 schema with WS-Addressing 2004/08
+wsdx.h		WS-Discovery 1.0/1.1 operations (see plugin/wsddapi.c)
 wsc.h		WS-SecureConversation
 wst.h		WS-Trust schema definitions
 wstx.h		WS-Trust operations (see plugin/wstapi.c)

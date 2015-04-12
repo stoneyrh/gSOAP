@@ -1,6 +1,5 @@
 /*
-
-	wsa.h
+	wsa.h WS-Addressing 2004/08
 
 	Usage: See plugin/wsaapi.c
 

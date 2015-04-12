@@ -162,7 +162,7 @@ char* form(struct soap *soap)
     if (soap_append_lab(soap, "?", 1))
       return NULL;
     do
-    { register size_t k;
+    { size_t k;
       if (soap_append_lab(soap, NULL, 0))
         return NULL;
       s = soap->labbuf + soap->labidx;

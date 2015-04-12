@@ -267,8 +267,8 @@ char *query_val(struct soap *soap, char **s)
 }
 
 int soap_encode_string(const char *s, char *t, size_t len)
-{ register int c;
-  register size_t n = len;
+{ int c;
+  size_t n = len;
   while ((c = *s++) && n-- > 1)
   { if (c == ' ') 
       *t++ = '+';

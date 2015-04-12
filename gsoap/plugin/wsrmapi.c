@@ -3660,29 +3660,33 @@ soap_wsrm_process_ack(struct soap *soap, struct _wsrm__SequenceAcknowledgement *
     }
   }
   else if (!ack->None) /* else free acked messages, unless None */
-  { int i;
-    for (i = 0; i < ack->__sizeAcknowledgementRange; i++)
-    { if (ack->AcknowledgementRange[i].Lower == 0 || ack->AcknowledgementRange[i].Upper > seq->num)
-      { soap_wsrm_error(soap, seq, wsrm__InvalidAcknowledgement);
-        MUTEX_UNLOCK(soap_wsrm_session_lock);
-        return soap->error;
-      }
-      if (seq->messages)
-      { ULONG64 j;
-        for (j = ack->AcknowledgementRange[i].Lower; j <= ack->AcknowledgementRange[i].Upper; j++)
-        { struct soap_wsrm_message *p;
+  { if (seq->messages)
+    { int i;
+      for (i = 0; i < ack->__sizeAcknowledgementRange; i++)
+      { ULONG64 lo = ack->AcknowledgementRange[i].Lower;
+	ULONG64 hi = ack->AcknowledgementRange[i].Upper;
+	if (lo == 0 || hi > seq->num)
+        { soap_wsrm_error(soap, seq, wsrm__InvalidAcknowledgement);
+          MUTEX_UNLOCK(soap_wsrm_session_lock);
+          return soap->error;
+        }
+	else
+	{
 #ifdef SOAP_WSRM_FAST_ALLOC
-	  p = seq->messages[j - 1];
-	  if (p)
-	  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Ack=" SOAP_ULONG_FORMAT "\n", j));
-	    soap_wsrm_msg_free(soap, p);
-	    free((void*)p);
-	    seq->messages[j - 1] = NULL;
+	  ULONG64 j;
+	  for (j = lo; j <= hi; j++)
+	  { struct soap_wsrm_message *p = seq->messages[j - 1];
+	    if (p)
+	    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Ack=" SOAP_ULONG_FORMAT "\n", j));
+	      soap_wsrm_msg_free(soap, p);
+	      free((void*)p);
+	      seq->messages[j - 1] = NULL;
+	    }
 	  }
 #else
-          struct soap_wsrm_message **q = &seq->messages;
-	  for (p = seq->messages; p; p = *q)
-	  { if (ack->AcknowledgementRange[i].Lower <= p->num && p->num <= ack->AcknowledgementRange[i].Upper)
+	  struct soap_wsrm_message *p, **q = &seq->messages;
+	  for (p = seq->messages; p && p->num <= hi; p = *q)
+	  { if (lo <= p->num)
 	    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Ack=" SOAP_ULONG_FORMAT "\n", p->num));
 	      *q = p->next;
 	      soap_wsrm_msg_free(soap, p);
@@ -3692,8 +3696,12 @@ soap_wsrm_process_ack(struct soap *soap, struct _wsrm__SequenceAcknowledgement *
 	      q = &p->next;
 	  }
 #endif
-        }
+	}
       }
+#ifndef SOAP_WSRM_FAST_ALLOC
+      if (!seq->messages)
+	seq->messageslast = NULL;
+#endif
     }
   }
   MUTEX_UNLOCK(soap_wsrm_session_lock);
@@ -4352,6 +4360,9 @@ soap_wsrm_seq_insert(struct soap *soap)
   seq->state = SOAP_WSRM_NONE;
   seq->retry = 0;
   seq->messages = NULL;
+#ifndef SOAP_WSRM_FAST_ALLOC
+  seq->messageslast = NULL;
+#endif
   seq->ranges = NULL;
   seq->next = soap_wsrm_session;
   seq->channel = SOAP_WSRM_NOCHAN;
@@ -4629,8 +4640,8 @@ soap_wsrm_num_free(struct soap *soap, struct soap_wsrm_sequence *seq)
 */
 inline static unsigned short
 soap_wsrm_msb(register ULONG64 n)
-{ register ULONG64 k;
-  register unsigned short m = 0;
+{ ULONG64 k;
+  unsigned short m = 0;
   if ((k = (n >> 32))) n = k, m += 32;
   if ((k = (n >> 16))) n = k, m += 16;
   if ((k = (n >>  8))) n = k, m +=  8;
@@ -4690,7 +4701,7 @@ soap_wsrm_msg_new(struct soap *soap, struct soap_wsrm_sequence *seq, ULONG64 num
   }
   return seq->messages[num - 1];
 #else
-  struct soap_wsrm_message *p, **q;
+  struct soap_wsrm_message *p;
   p = (struct soap_wsrm_message*)malloc(sizeof(struct soap_wsrm_message));
   if (!p)
   { soap->error = SOAP_EOM;
@@ -4700,9 +4711,11 @@ soap_wsrm_msg_new(struct soap *soap, struct soap_wsrm_sequence *seq, ULONG64 num
   p->num = num;
   p->state = SOAP_WSRM_INIT;
   p->list = p->last = NULL;
-  for (q = &seq->messages; *q; q = &(*q)->next)
-    ;
-  *q = p;
+  if (seq->messageslast)
+    seq->messageslast->next = p;
+  else
+    seq->messages = p;
+  seq->messageslast = p;
   if (num > seq->num)
     seq->num = num;
   return p;

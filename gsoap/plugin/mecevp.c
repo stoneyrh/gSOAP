@@ -311,7 +311,7 @@ soap_mec_init(struct soap *soap, struct soap_mec_data *data, int alg, SOAP_MEC_K
     case SOAP_MEC_ENV_ENC_DES_CBC:
       ok = EVP_CIPHER_CTX_rand_key(data->ctx, data->ekey);
       /* generate ephemeral secret key */
-#if (OPENSSL_VERSION_NUMBER >= 0x01000000L)
+#if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
       *keylen = EVP_PKEY_encrypt_old(key, data->ekey, EVP_CIPHER_CTX_key_length(data->ctx), pkey);
 #else
       *keylen = EVP_PKEY_encrypt(key, data->ekey, EVP_CIPHER_CTX_key_length(data->ctx), pkey);
@@ -1135,7 +1135,7 @@ soap_mec_get_base64(struct soap *soap, struct soap_mec_data *data, char *t, size
         return SOAP_OK;
       }
       if (c >= '+' && c <= '+' + 79)
-      { register int b = soap_base64i[c - '+'];
+      { int b = soap_base64i[c - '+'];
         if (b >= 64)
           return soap->error = SOAP_SSL_ERROR;
         m = (m << 6) + b;

@@ -287,6 +287,15 @@ by the wsse plugin's signature verification engine or manually as follows:
 
 where Id is the identification string of the binary security token or NULL.
 
+The X509 certificate returned by this function should be freed with X509_free
+to deallocate the certificate data:
+
+@code
+    if (cert)
+      X509_free(cert);
+    cert = NULL;
+@endcode
+
 The verification is an expensive process that will be optimized in future
 releases by caching the certificate chain.
 
@@ -2164,7 +2173,7 @@ soap_wsse_get_BinarySecurityToken(struct soap *soap, const char *id, char **valu
 
 /**
 @fn X509* soap_wsse_get_BinarySecurityTokenX509(struct soap *soap, const char *id)
-@brief Get X509 wsse:BinarySecurityToken certificate and verify its content.
+@brief Get X509 wsse:BinarySecurityToken certificate and verify its content. This call must be followed by an X509_free to deallocate the X509 certificate data.
 @param soap context
 @param[in] id string of token to get or NULL
 @return X509 certificate (dynamically allocated) or NULL with wsse:SecurityTokenUnavailable fault
@@ -2185,8 +2194,11 @@ soap_wsse_get_BinarySecurityTokenX509(struct soap *soap, const char *id)
    && !strcmp(valueType, wsse_X509v3URI))
     cert = d2i_X509(NULL, &data, size);
   /* verify the certificate */
-  if (!cert || soap_wsse_verify_X509(soap, cert))
-    return NULL;
+  if (cert && soap_wsse_verify_X509(soap, cert))
+  {
+    X509_free(cert);
+    cert = NULL;
+  }
   return cert;
 }
 
@@ -2664,7 +2676,7 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
           err = soap_smd_begin(soap, alg, key, keylen);
           /* emit all xmlns attributes of ancestors */
           while (soap->nlist)
-          { register struct soap_nlist *np = soap->nlist->next;
+          { struct soap_nlist *np = soap->nlist->next;
             SOAP_FREE(soap, soap->nlist);
             soap->nlist = np;
           }
@@ -2863,7 +2875,7 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
       err = soap_smd_begin(soap, alg, NULL, 0);
       /* emit all xmlns attributes of ancestors */
       while (soap->nlist)
-      { register struct soap_nlist *np = soap->nlist->next;
+      { struct soap_nlist *np = soap->nlist->next;
         SOAP_FREE(soap, soap->nlist);
         soap->nlist = np;
       }
@@ -3073,7 +3085,7 @@ soap_wsse_get_KeyInfo_SecurityTokenReferenceValueType(struct soap *soap)
 
 /**
 @fn X509* soap_wsse_get_KeyInfo_SecurityTokenReferenceX509(struct soap *soap)
-@brief Returns a X509 certificate if present as a BinarySecurity token.
+@brief Returns a X509 certificate if present as a BinarySecurity token. This call must be followed by an X509_free to deallocate the X509 certificate data.
 @param soap context
 @return X509 object or NULL with wsse:SecurityTokenUnavailable fault
 */
@@ -3919,7 +3931,7 @@ calc_digest(struct soap *soap, const char *created, const char *nonce, int nonce
 /**
 @fn static void calc_nonce(char nonce[SOAP_WSSE_NONCELEN])
 @brief Calculates randomized nonce (also uses time() in case a poorly seeded PRNG is used)
-@param[out] nonce[0..SOAP_WSSE_NONCELEN-1] value
+@param[out] nonce value [0..SOAP_WSSE_NONCELEN-1]
 */
 static void
 calc_nonce(char nonce[SOAP_WSSE_NONCELEN])

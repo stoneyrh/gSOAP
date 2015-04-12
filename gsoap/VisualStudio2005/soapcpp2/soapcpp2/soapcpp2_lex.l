@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #ifdef WITH_BISON
 YYSTYPE yylval;
-#undef YY_INPUT
+#undef YY_NEED_STRLEN
 #define YY_INPUT(buf, result, max_size) \
 	{ \
 	int c = getc(yyin); \
@@ -58,11 +58,13 @@ YYSTYPE yylval;
 static struct importlist { struct importlist *next; char name[1]; } *importlist = NULL;
 static char fnstk[MAX_IMPORT_DEPTH][1024];
 static int lnstk[MAX_IMPORT_DEPTH];
-static char *imstk[MAX_IMPORT_DEPTH];
+static const char *imstk[MAX_IMPORT_DEPTH];
 static YY_BUFFER_STATE instk[MAX_IMPORT_DEPTH];
 #endif
+
 int imports = 0;
-char *imported = NULL;
+const char *imported = NULL;
+
 static void check_id(const char*);
 static Token install_id(void);
 static Token install_tag(void);
@@ -94,6 +96,9 @@ chr		'(\\'|[^'\n])*'
 str		L?\"(\\\"|\\\n|[^"])*\"
 module		#module{ws}+.*\n
 import		#import{ws}+.*\n
+%option noyywrap
+%option noinput
+%option nounput
 %x MLCOMMENT
 %%
 {ws}			{ /* skip white space */ }
@@ -197,7 +202,7 @@ install_id()
 		/* [_](x|X)(m|M)(l|L).* is not OK */
 		/* .*__(x|X)(m|M)(l|L) is not OK */
 		/* .*::(x|X)(m|M)(l|L) is not OK */
-		for (i = 0; i < yyleng; i++)
+		for (i = 0; i < (int)yyleng; i++)
 		{	if ((yytext[i] == '_' && yytext[i+1] == '_')
 			 || (yytext[i] == ':' && yytext[i+1] == ':'))
 			{	flag = 1;
@@ -217,7 +222,7 @@ install_id()
 */ 
 static Token
 install_tag()
-{	yylval.s = emalloc(yyleng-1);	/* yyleng = length(yytext) */
+{	yylval.s = (char*)emalloc(yyleng-1);	/* yyleng = length(yytext) */
 	strcpy(yylval.s, yytext+1);
 	yylval.s[yyleng-2] = '\0';
 	return TAG;
@@ -287,8 +292,8 @@ install_chr(void)
 static Token
 install_str(void)
 {	int i, j = 0;
-	yylval.s = emalloc(yyleng-1);	/* yyleng = length(yytext) */
-	for (i = 1 + (yytext[0] == 'L'); i < yyleng-1; i++)
+	yylval.s = (char*)emalloc(yyleng - 1);	/* yyleng = length(yytext) */
+	for (i = 1 + (yytext[0] == 'L'); i < (int)yyleng - 1; i++)
 		if (yytext[i] == '\\')
 		{	if (yytext[++i] != '\n')
 			{	yylval.s[j++] = convchar(&i);
@@ -306,7 +311,7 @@ install_str(void)
 */
 static Token
 install_pragma(void)
-{	yylval.s = emalloc(yyleng);	/* yyleng = length(yytext) */
+{	yylval.s = (char*)emalloc(yyleng);	/* yyleng = length(yytext) */
 	strncpy(yylval.s, yytext, strlen(yytext)-1);
 	yylval.s[strlen(yytext)-1] = '\0';
 	return PRAGMA;
@@ -453,14 +458,14 @@ static void directive(void)
 					semwarn("option -1 or -2 overrides SOAP-ENV namespace");
 				else
 					envURI = s;
-				sp->URI = envURI;
+				sp->URI = (char*)envURI;
 			}
 			else if (!strcmp(sp->ns, "SOAP-ENC"))
 			{	if (vflag > 0)
 					semwarn("option -1 or -2 overrides SOAP-ENC namespace");
 				else
 					encURI = s;
-				sp->URI = encURI;
+				sp->URI = (char*)encURI;
 			}
 			else
 				sp->URI = s;
@@ -999,11 +1004,12 @@ octchar(int *p)
 }
 
 static void module(const char *name, const char *fullname)
-{ if (!fullname)
+{ char *s;
+  if (!fullname)
     fullname = name;
   if (imports)
   { Pragma **pp;
-    char *s = emalloc(strlen(fullname)+15);
+    s = (char*)emalloc(strlen(fullname)+15);
     sprintf(s, "#include \"%sH.h\"", fullname);
     for (pp = &pragmas; *pp; pp = &(*pp)->next)
       if (!strcmp((*pp)->pragma, s))
@@ -1013,15 +1019,15 @@ static void module(const char *name, const char *fullname)
       (*pp)->pragma = s;
       (*pp)->next = NULL;
     }
-    imported = (char*)emalloc(strlen(fullname)+1);
-    strcpy(imported, fullname);
+    s = (char*)emalloc(strlen(fullname)+1);
+    imported = strcpy(s, fullname);
     fprintf(stderr, "Importing module '%s'\n\n", fullname);
   }
   else
   { lflag = 1;
     typeNO = magic(name);
-    prefix = (char*)emalloc(strlen(fullname)+1);
-    strcpy(prefix, fullname);
+    s = (char*)emalloc(strlen(fullname)+1);
+    prefix = strcpy(s, fullname);
     fprintf(stderr, "Compiling module '%s' (magic number = %d)\n\n", fullname, typeNO);
   }
 }
@@ -1064,13 +1070,13 @@ static void import(const char *file)
   imports++;
   if (!(yyin = fopen(file, "r")))
   { if (importpath)
-    { char *s, *t;
+    { const char *s, *t;
       s = importpath;
       do
       { size_t n;
         t = strstr(s, SOAP_PATHSEP);
         if (t)
-        { if (t - s >= sizeof(buf))
+        { if ((size_t)(t - s) >= sizeof(buf))
 	    t = s + sizeof(buf) - 1;
 	  strncpy(buf, s, t - s);
 	  buf[t - s] = '\0';

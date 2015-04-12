@@ -1,10 +1,10 @@
 /*
-	stdsoap2.h 2.8.21
+	stdsoap2.h 2.8.22
 
 	gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20821
+#define GSOAP_VERSION 20822
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -188,7 +188,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #endif
 
-#ifdef __sun
+#if defined(__sun) && defined(__SVR4)
 # ifndef SUN_OS
 #  define SUN_OS
 # endif
@@ -631,8 +631,20 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  include <stdio.h>
 #  include <string.h>
 # endif
-# include <ctype.h>
-# include <limits.h>
+# if !defined(HAVE_CONFIG_H) || defined(HAVE_CTYPE_H)
+#  include <ctype.h>
+# endif
+# if !defined(HAVE_CONFIG_H) || defined(HAVE_LIMITS_H)
+#  include <limits.h>	/* for MB_LEN_MAX */
+# endif
+# if !defined(HAVE_CONFIG_H) || defined(HAVE_FLOAT_H)
+#  include <float.h>	/* for INFINITY */
+# endif
+# if !defined(HAVE_CONFIG_H) || defined(HAVE_MATH_H)
+#  ifndef PALM
+#   include <math.h>	/* for isnan() and isinf() */
+#  endif
+# endif
 #endif
 
 #ifdef WITH_NTLM
@@ -702,7 +714,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #   endif
 #   ifdef SUN_OS
 #    include <sys/stream.h>		/* SUN */
-#    include <sys/socketvar.h>		/* SUN < 2.8 (?) */
+#    include <sys/socketvar.h>		/* only needed with SUN < 2.8 ? */
 #   endif
 #   ifdef VXWORKS
 #    ifdef _WRS_KERNEL
@@ -810,6 +822,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #endif
 
+#ifdef WITH_SYSTEMSSL
+# include <gskssl.h>
+#endif
+
 #ifdef WITH_GZIP
 # ifndef WITH_ZLIB
 #  define WITH_ZLIB
@@ -826,12 +842,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # include <zlib.h>
 #endif
 
-#ifndef WITH_NOSTDLIB
-# ifndef PALM
-#  include <math.h>	/* for isnan() */
-# endif
-#endif
-
 /* #define DEBUG */ /* Uncomment to debug sending (in file SENT.log) receiving (in file RECV.log) and internal operations (in file TEST.log) */
 
 /* #define DEBUG_STAMP */ /* Uncomment to debug sending (in file SENT.log) receiving (in file RECV.log) and time-stamped operations (in file TEST.log) */
@@ -840,7 +850,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 extern "C" {
 #endif
 
-/* Portability: define SOAP_SOCKLEN_T */
+/* Portability (X/Open, BSD sockets etc): define SOAP_SOCKLEN_T as socklen_t or int or ... */
 #if defined(_AIX) || defined(AIX)
 # if defined(_AIX43)
 #  define SOAP_SOCKLEN_T socklen_t
@@ -849,7 +859,7 @@ extern "C" {
 # endif
 #elif defined(SOCKLEN_T)
 # define SOAP_SOCKLEN_T SOCKLEN_T
-#elif defined(__socklen_t_defined) || defined(_SOCKLEN_T) || defined(CYGWIN) || defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD) || defined(__QNX__) || defined(QNX) || defined(OS390) || defined(__ANDROID__)
+#elif defined(__socklen_t_defined) || defined(_SOCKLEN_T) || defined(CYGWIN) || defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD) || defined(__QNX__) || defined(QNX) || defined(OS390) || defined(__ANDROID__) || defined(_XOPEN_SOURCE)
 # define SOAP_SOCKLEN_T socklen_t
 #elif defined(IRIX) || defined(WIN32) || defined(__APPLE__) || defined(SUN_OS) || defined(OPENSERVER) || defined(TRU64) || defined(VXWORKS) || defined(HP_UX)
 # define SOAP_SOCKLEN_T int
@@ -857,7 +867,7 @@ extern "C" {
 # define SOAP_SOCKLEN_T size_t
 #endif
 
-/* AIX DCE threads portability: define SOAP_FUNC_R_ERR gmtim_r and localtime_r err ret val as -1 */
+/* AIX DCE threads portability: define SOAP_FUNC_R_ERR gmtime_r and localtime_r err ret val as -1 */
 #ifdef _AIX32_THREADS
 # define SOAP_FUNC_R_ERR (-1)
 #elif !defined(SOAP_FUNC_R_ERR)
@@ -1140,9 +1150,16 @@ extern "C" {
 
 /* SOAP_MINDEFLATERATIO: Trusted deflation ratio after SOAP_MAXINFLATESIZE is reached.
    Trust when compressed / deflated > SOAP_MINDEFLATERATIO
+   Sets a ratio > 0.00096899224806 (1032:1)
+   According to the zlib site: the limit (1032:1) comes from the fact that one
+   length/distance pair can represent at most 258 output bytes. A length
+   requires at least one bit and a distance requires at least one bit, so two
+   bits in can give 258 bytes out, or eight bits in give 1032 bytes out. A
+   dynamic block has no length restriction, so you could get arbitrarily close
+   to the limit of 1032:1.
 */
 #ifndef SOAP_MINDEFLATERATIO
-# define SOAP_MINDEFLATERATIO (0.1) /* ratio of deflated/inflated > 10% */
+# define SOAP_MINDEFLATERATIO (0.001) /* ratio of deflated/inflated > 0.1% */
 #endif
 
 #ifdef VXWORKS
@@ -1164,7 +1181,6 @@ extern "C" {
 #endif
 
 #ifdef WIN32 
-# include <float.h>
 # ifndef HAVE_ISNAN
 #  define HAVE_ISNAN
 # endif
@@ -1216,7 +1232,9 @@ extern const char soap_base64o[], soap_base64i[];
 #endif
 
 #ifndef FLT_PINFTY
-# if defined(FLT_MAX)
+# if defined(INFINITY)
+#  define FLT_PINFTY INFINITY
+# elif defined(FLT_MAX)
 #  define FLT_PINFTY FLT_MAX
 # elif defined(HUGE_VALF)
 #  define FLT_PINFTY (float)HUGE_VALF
@@ -1238,7 +1256,9 @@ extern const char soap_base64o[], soap_base64i[];
 #endif
 
 #ifndef DBL_PINFTY
-# if defined(DBL_MAX)
+# if defined(INFINITY)
+#  define DBL_PINFTY INFINITY
+# elif defined(DBL_MAX)
 #  define DBL_PINFTY DBL_MAX
 # elif defined(HUGE_VALF)
 #  define DBL_PINFTY (double)HUGE_VALF
@@ -1448,9 +1468,12 @@ typedef soap_int32 soap_mode;
 #define SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE	0x08	/* client does not check the expiration date of the host certificate */
 #define SOAP_SSL_NO_DEFAULT_CA_PATH		0x10	/* don't use default_verify_paths */
 #define SOAP_SSL_RSA				0x20	/* use RSA */
-#define SOAP_SSLv3				0x40	/* SSL v3 only */
-#define SOAP_TLSv1				0x00	/* TLS v1 only (default) */
-#define SOAP_SSLv3_TLSv1			0x80	/* SSL v3 and TLS v1 support */
+#if (OPENSSL_VERSION_NUMBER >= 0x0090708fL)
+# define SOAP_SSLv3				0x40	/* SSL v3 only */
+#endif
+#define SOAP_SSLv3_TLSv1			0x80	/* SSL v3 and TLS v1/1.1/1.2 support */
+#define SOAP_TLSv1				0x00	/* TLS v1/1.1/1.2 only (default protocols) */
+
 #define SOAP_SSL_CLIENT				0x100	/* client context */
 
 #define SOAP_SSL_DEFAULT			(SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION | SOAP_TLSv1)
@@ -2019,7 +2042,7 @@ struct SOAP_STD_API soap
   struct SOAP_ENV__Header *header;
   struct SOAP_ENV__Fault *fault;
   int idnum;
-  void *user;			/* for user to pass user-defined data */
+  void *user;			/* for user to pass user-defined data to callbacks */
   void *data[4];		/* extension data = {smdevp, mecevp, ...} */
   struct soap_plugin *plugins;	/* linked list of plug-in data */
   const char *userid;		/* HTTP Basic authorization userid */
@@ -2204,7 +2227,7 @@ struct SOAP_STD_API soap
   SSL_SESSION *session;
   const char *dhfile;
   const char *randfile;
-#elif defined(WITH_GNUTLS)		/* GNUTLS */
+#elif defined(WITH_GNUTLS)	/* GNUTLS */
   int (*fsslauth)(struct soap*);
   void *fsslverify;
   gnutls_certificate_credentials_t xcred;	/* cert pointer */
@@ -2213,6 +2236,15 @@ struct SOAP_STD_API soap
   gnutls_session_t session;			/* session pointer */
   gnutls_dh_params_t dh_params;
   gnutls_rsa_params_t rsa_params;
+#elif defined(WITH_SYSTEMSSL)	/* SYSTEM SSL */
+  int (*fsslauth)(struct soap*);
+  void *fsslverify;		/* N/A */
+  void *bio;			/* N/A */
+  gsk_handle ctx;		/* environment */
+  gsk_handle ssl;		/* ssl socket */
+  void *session;		/* N/A */
+  const char *dhfile;		/* N/A */
+  const char *randfile;		/* N/A */
 #else				/* No SSL/TLS */
   void *fsslauth;		/* dummy members, to preserve struct size */
   void *fsslverify;
@@ -2321,7 +2353,7 @@ soap_wchar soap_get1(struct soap*);
 #define SOAP_XSTRINGIFY(s) SOAP_STRINGIFY(s)
 #define SOAP_STRINGIFY(s) #s
 
-#define soap_versioning_paste(name, ext) name##_LIBRARY_VERSION_REQUIRED_##ext
+#define soap_versioning_paste(name, ext) name##_REQUIRE_lib_v##ext
 #define soap_versioning_ext(name, ext) soap_versioning_paste(name, ext)
 #define soap_versioning(name) soap_versioning_ext(name, GSOAP_VERSION)
 
