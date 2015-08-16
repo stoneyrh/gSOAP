@@ -305,13 +305,20 @@ wsdd10__AppSequenceType		= | wsdd__AppSequenceType
 
 wsp	= <http://schemas.xmlsoap.org/ws/2004/09/policy>
 
-#	WS-SecureConversation
+#	WS-SecureConversation 1.4
 
-wsc	= <http://schemas.xmlsoap.org/ws/2005/02/sc>
+wsc	= <http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512>
+wsc2	= <http://schemas.xmlsoap.org/ws/2005/02/sc>
 
-#	WS-Trust 1.0
+#	WS-Trust 1.2 and 1.3
 
-wst	= <http://schemas.xmlsoap.org/ws/2005/02/trust>
+wst	= <http://docs.oasis-open.org/ws-sx/ws-trust/200512/>
+wst12	= <http://schemas.xmlsoap.org/ws/2005/02/trust>
+
+#       SAML bindings
+
+saml1   = <urn:oasis:names:tc:SAML:1.0:assertion>
+saml2   = <urn:oasis:names:tc:SAML:2.0:assertion>
 
 #	WS-Security wsse 2004 v1.0 and 1.1 and old wsse 2002 schema
 

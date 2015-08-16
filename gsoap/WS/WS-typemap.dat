@@ -38,9 +38,9 @@ wsp	= "http://schemas.xmlsoap.org/ws/2004/09/policy"
 
 #	wsp redeclarations, used in wst.h:
 
-_wsp__Policy		= | _XML | _XML
-_wsp__PolicyReference	= | _XML | _XML
-_wsp__AppliesTo		= | _XML | _XML
+#_wsp__Policy		= | _XML | _XML
+#_wsp__PolicyReference	= | _XML | _XML
+_wsp__AppliesTo		= typedef struct _wsp__AppliesTo { wsa5__EndpointReferenceType *wsa5__EndpointReference; } _wsp__AppliesTo; | struct _wsp__AppliesTo
 
 #	wsa bindings
 
@@ -113,11 +113,18 @@ wsdd10  = <http://schemas.xmlsoap.org/ws/2005/04/discovery>
 
 #	wsc bindings
 
-wsc	= <http://schemas.xmlsoap.org/ws/2005/02/sc>
+wsc	= <http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512>
+wsc2	= <http://schemas.xmlsoap.org/ws/2005/02/sc>
 
-#	wst bindings 1.0
+#	wst bindings
 
-wst	= <http://schemas.xmlsoap.org/ws/2005/02/trust>
+wst	= <http://docs.oasis-open.org/ws-sx/ws-trust/200512/>
+wst12	= <http://schemas.xmlsoap.org/ws/2005/02/trust>
+
+#	SAML bindings
+
+saml1	= <urn:oasis:names:tc:SAML:1.0:assertion>
+saml2	= <urn:oasis:names:tc:SAML:2.0:assertion>
 
 ################################################################################
 #
@@ -164,9 +171,24 @@ wst__RequestSecurityTokenResponseType = $\
 wst__RequestSecurityTokenResponseType = $\
     struct wst__BinaryExchangeType*      BinaryExhange;
 
+# With WS-Policy AppliesTo:
+wst__RequestSecurityTokenResponseType = $\
+#import "wsp.h"
+wst__RequestSecurityTokenResponseType = $\
+    struct _wsp__AppliesTo*              wsp__AppliesTo;
+
+# Without SAML 1.1:
+#wst__RequestedSecurityTokenType =\
+#typedef struct wst__RequestedSecurityTokenType\n\
+#{	_wsse__SecurityTokenReference *wsse__SecurityTokenReference;\n\
+#} wst__RequestedSecurityTokenType;
+
+# With SAML 1.1:
 wst__RequestedSecurityTokenType =\
+#import "saml1.h"\n\
 typedef struct wst__RequestedSecurityTokenType\n\
-{	_wsse__SecurityTokenReference *wsse__SecurityTokenReference;\n\
+{	saml1__AssertionType *saml1__Assertion;\n\
+        _wsse__SecurityTokenReference *wsse__SecurityTokenReference;\n\
 } wst__RequestedSecurityTokenType;
 
 wst__EntropyType =\

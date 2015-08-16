@@ -18,7 +18,7 @@ isapistreambuf::isapistreambuf(EXTENSION_CONTROL_BLOCK *pECB)
     _ibuflen = pECB->cbAvailable > nMinBufSize ? pECB->cbAvailable : nMinBufSize;
     _ibuf = new char[_ibuflen + 1]; // we allocate it one byte more, adding a trailing '\0', then it is easier with strings
     memset(_ibuf, 0, _ibuflen + 1);
-    memcpy(_ibuf, pECB->lpbData, pECB->cbAvailable);
+    memcpy_s(_ibuf, _ibuflen + 1, pECB->lpbData, pECB->cbAvailable);
     _cbRead = pECB->cbAvailable;
     setg(_ibuf, _ibuf, _ibuf + _cbRead);
 }

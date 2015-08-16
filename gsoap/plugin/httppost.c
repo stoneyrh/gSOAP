@@ -257,7 +257,6 @@ int soap_delete_connect(struct soap *soap, const char *endpoint, const char *act
 
 int soap_http_body(struct soap *soap, char **buf, size_t *len)
 { char *s = *buf = NULL;
-  *len = 0;
   /* It is unlikely chunked and/or compressed POST messages are sent by browsers, but we need to handle them */
   if ((soap->mode & SOAP_IO) == SOAP_IO_CHUNK
 #ifdef WITH_ZLIB
@@ -265,6 +264,7 @@ int soap_http_body(struct soap *soap, char **buf, size_t *len)
 #endif
    )
   { size_t k;
+    size_t n;
     soap_wchar c = EOF;
     soap->labidx = 0;
     do
@@ -279,9 +279,11 @@ int soap_http_body(struct soap *soap, char **buf, size_t *len)
         *s++ = c;
       }
     } while (c != (int)EOF);
-    *len = soap->lablen - k - 1;
-    *buf = (char*)soap_malloc(soap, *len + 1);
-    memcpy(*buf, soap->labbuf, *len + 1);
+    n = soap->lablen - k - 1;
+    *buf = (char*)soap_malloc(soap, n + 1);
+    soap_memcpy(*buf, n + 1, soap->labbuf, n + 1);
+    if (len)
+      *len = n;
   }
   else
   { if (soap->length)
@@ -299,7 +301,8 @@ int soap_http_body(struct soap *soap, char **buf, size_t *len)
       }
     }
     *buf = s;
-    *len = soap->length;
+    if (len)
+      *len = soap->length;
   }
   return SOAP_OK;
 }

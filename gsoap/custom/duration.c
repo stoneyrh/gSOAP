@@ -18,7 +18,7 @@
 	Compile this file and link it with your code.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2009, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, the gSOAP public license, OR Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2009, Robert van Engelen, Genivia, Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -72,12 +72,12 @@ const char *soap_xsd__duration2s(struct soap *soap, LONG64 a)
 { LONG64 d;
   int k, h, m, s, f;
   if (a < 0)
-  { strcpy(soap->tmpbuf, "-P");
+  { soap_strcpy(soap->tmpbuf, sizeof(soap->tmpbuf), "-P");
     k = 2;
     a = -a;
   }
   else
-  { strcpy(soap->tmpbuf, "P");
+  { soap_strcpy(soap->tmpbuf, sizeof(soap->tmpbuf), "P");
     k = 1;
   }
   f = a % 1000;
@@ -89,17 +89,17 @@ const char *soap_xsd__duration2s(struct soap *soap, LONG64 a)
   h = a % 24;
   d = a / 24;
   if (d)
-    sprintf(soap->tmpbuf + k, SOAP_LONG_FORMAT "D", d);
+    (SOAP_SNPRINTF(soap->tmpbuf + k, sizeof(soap->tmpbuf) - k, 21), SOAP_LONG_FORMAT "D", d);
   if (h || m || s || f)
   { if (d)
       k = strlen(soap->tmpbuf);
     if (f)
-      sprintf(soap->tmpbuf + k, "T%dH%dM%d.%03dS", h, m, s, f);
+      (SOAP_SNPRINTF(soap->tmpbuf + k, sizeof(soap->tmpbuf) - k, 14), "T%02dH%02dM%02d.%03dS", h, m, s, f);
     else
-      sprintf(soap->tmpbuf + k, "T%dH%dM%dS", h, m, s);
+      (SOAP_SNPRINTF(soap->tmpbuf + k, sizeof(soap->tmpbuf) - k, 10), "T%02dH%02dM%02dS", h, m, s);
   }
   else if (!d)
-    strcpy(soap->tmpbuf + k, "T0S");
+    soap_strcpy(soap->tmpbuf + k, sizeof(soap->tmpbuf) - k, "T0S");
   return soap->tmpbuf;
 }
 
@@ -123,18 +123,17 @@ int soap_s2xsd__duration(struct soap *soap, const char *s, LONG64 *a)
       return soap->error = SOAP_TYPE;
     /* date part */
     while (s && *s)
-    { LONG64 n;
-      char k;
+    { char *r = NULL;
+      LONG64 n;
       if (*s == 'T')
       { s++;
 	break;
       }
-      if (sscanf(s, SOAP_LONG_FORMAT "%c", &n, &k) != 2)
+      n = soap_strtol(s, &r, 10);
+      if (!r)
 	return soap->error = SOAP_TYPE;
-      s = strchr(s, k);
-      if (!s)
-	return soap->error = SOAP_TYPE;
-      switch (k)
+      s = r;
+      switch (*s)
       { case 'Y':
 	  Y = n;
 	  break;
@@ -151,14 +150,13 @@ int soap_s2xsd__duration(struct soap *soap, const char *s, LONG64 *a)
     }
     /* time part */
     while (s && *s)
-    { LONG64 n;
-      char k;
-      if (sscanf(s, SOAP_LONG_FORMAT "%c", &n, &k) != 2)
+    { char *r = NULL;
+      LONG64 n;
+      n = soap_strtol(s, &r, 10);
+      if (!r)
 	return soap->error = SOAP_TYPE;
-      s = strchr(s, k);
-      if (!s)
-	return soap->error = SOAP_TYPE;
-      switch (k)
+      s = r;
+      switch (*s)
       { case 'H':
 	  H = n;
 	  break;
@@ -167,8 +165,19 @@ int soap_s2xsd__duration(struct soap *soap, const char *s, LONG64 *a)
 	  break;
 	case '.':
 	  S = n;
-	  if (sscanf(s, "%g", &f) != 1)
-	    return soap->error = SOAP_TYPE;
+#if defined(WITH_C_LOCALE) && defined(HAVE_STRTOD_L)
+# ifdef WIN32
+          f = (float)_strtod_l(s, NULL, SOAP_LOCALE(soap));
+# else
+          f = (float)strtod_l(s, NULL, SOAP_LOCALE(soap));
+# endif
+#elif defined(HAVE_STRTOD)
+          f = (float)strtod(s, NULL);
+#elif defined(WITH_C_LOCALE) && defined(HAVE_STRTOF_L)
+          f = strtof_l((char*)s, NULL, SOAP_LOCALE(soap));
+#elif defined(HAVE_STRTOF)
+          f = strtof((char*)s, NULL);
+#endif
 	  s = NULL;
 	  continue;
 	case 'S':
@@ -179,7 +188,7 @@ int soap_s2xsd__duration(struct soap *soap, const char *s, LONG64 *a)
       }
       s++;
     }
-    /* convert Y-M-D H:N:S.f to signed long long int */
+    /* convert Y-M-D H:N:S.f to signed long long int milliseconds */
     *a = sign * ((((((((((((Y * 12) + M) * 30) + D) * 24) + H) * 60) + N) * 60) + S) * 1000) + (long)(1000.0 * f));
   }
   return soap->error;

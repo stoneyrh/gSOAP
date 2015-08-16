@@ -7,7 +7,7 @@
 	Compile this file and link it with your code.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2007, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, the gSOAP public license, OR Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2007, Robert van Engelen, Genivia, Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -67,17 +67,21 @@ int soap_s2decimal(struct soap *soap, const char *s, long double *p)
       *p = (long double)DBL_NAN;
     else
     {
-#if defined(HAVE_STRTOLD_L)
+#if defined(WITH_C_LOCALE) && defined(HAVE_STRTOLD_L)
       char *r;
-      *p = strtold_l(s, &r, NULL);
+# ifdef WIN32
+      *p = _strtold_l(s, &r, SOAP_LOCALE(soap));
+# else
+      *p = strtold_l(s, &r, SOAP_LOCALE(soap));
+# endif
       if (*r)
 #elif defined(HAVE_STRTOLD)
       char *r;
       *p = strtold(s, &r);
       if (*r)
 #endif
-#if defined(HAVE_SSCANF_L)
-        if (sscanf_l(s, NULL, "%Lg", p) != 1)
+#if defined(WITH_C_LOCALE) && defined(HAVE_SSCANF_L)
+        if (sscanf_l(s, SOAP_LOCALE(soap), "%Lg", p) != 1)
           soap->error = SOAP_TYPE;
 #elif defined(HAVE_SSCANF)
         if (sscanf(s, "%Lg", p) != 1)
@@ -91,19 +95,25 @@ int soap_s2decimal(struct soap *soap, const char *s, long double *p)
 }
 
 const char *soap_decimal2s(struct soap *soap, long double n)
-{ char *s;
+{
+#if !defined(WITH_C_LOCALE) || !defined(HAVE_SPRINTF_L)
+  char *s;
+#endif
   if (soap_isnan(n))
     return "NaN";
   if (soap_ispinfd(n))
     return "INF";
   if (soap_isninfd(n))
     return "-INF";
-  s = soap->tmpbuf;
-#if defined(HAVE_SPRINTF_L)
-  sprintf_l(s, NULL, "%.*Lg", LDBL_DIG, n);
+#if defined(WITH_C_LOCALE) && defined(HAVE_SPRINTF_L)
+# ifdef WIN32
+  _sprintf_s_l(soap->tmpbuf, _countof(soap->tmpbuf), "%.*Lg", SOAP_LOCALE(soap), LDBL_DIG, n);
+# else
+  sprintf_l(soap->tmpbuf, SOAP_LOCALE(soap), "%.*Lg", LDBL_DIG, n);
+# endif
 #else
-  sprintf(s, "%.*Lg", LDBL_DIG, n);
-  s = strchr(s, ',');   /* convert decimal comma to DP */
+  (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), LDBL_DIG + 8), "%.*Lg", LDBL_DIG, n);
+  s = strchr(soap->tmpbuf, ',');	/* convert decimal comma to DP */
   if (s)
     *s = '.';
 #endif

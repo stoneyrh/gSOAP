@@ -42,7 +42,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-static const char *ckserver = "http://www.cs.fsu.edu/~engelen/ck.cgi";
+static const char *ckserver = "http://localhost:8080";
 
 // To access a stand-alone server on a port, use:
 // const char ckserver[] = "IP:PORT";

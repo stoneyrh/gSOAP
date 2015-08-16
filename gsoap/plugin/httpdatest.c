@@ -5,7 +5,7 @@ httpdatest.c
 gSOAP HTTP Digest Authentication example application.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2005, Robert van Engelen, Genivia, Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc., All Rights Reserved.
 
 --------------------------------------------------------------------------------
 gSOAP public license.
@@ -19,7 +19,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2005, Robert van Engelen, Genivia, Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -92,7 +92,7 @@ int run_serve(int port)
     soap->accept_timeout = 3600; /* let server time out after one hour */
     for (;;)
     {
-      int sock = soap_accept(soap);
+      SOAP_SOCKET sock = soap_accept(soap);
       if (!soap_valid_socket(sock))
       {
         if (soap->errnum)

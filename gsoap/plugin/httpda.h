@@ -90,7 +90,7 @@ struct http_da_data
   unsigned long nc;	/**< client-side: generated nonce count */
   char *ncount;		/**< server-side: client's nonce count */
   char *cnonce;		/**< server-side: client's nonce */
-  char *response;	/**< server-side: client's response digest key */
+  char response[16];	/**< server-side: client's response digest key */
 };
 
 /**

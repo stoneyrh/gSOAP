@@ -76,8 +76,8 @@ static int jsstrout(struct soap *soap, const char *s)
             if (soap_send_raw(soap, buf, 2))
 	      return soap->error;
           }
-          else
-	  { sprintf(buf, "\\u%4x", c);
+          else if (c <= 0xFFFF)
+	  { (SOAP_SNPRINTF(buf, sizeof(buf), 7), "\\u%4x", c);
 	    if (soap_send_raw(soap, buf, 6))
 	      return soap->error;
           }
@@ -163,7 +163,7 @@ int json_recv(struct soap *soap, struct value *v)
   v->__any = NULL;
   v->soap = soap;
   while ((c = soap_getchar(soap)) > 0 && c <= 32)
-    ;
+    continue;
   switch (c)
   { case EOF:
       return soap->error = SOAP_EOF;
@@ -177,7 +177,7 @@ int json_recv(struct soap *soap, struct value *v)
       ((struct _struct*)v->ref)->__size = 0;
       ((struct _struct*)v->ref)->member = 0;
       while ((c = soap_getchar(soap)) > 0 && c <= 32)
-        ;
+        continue;
       if (c == /*{*/'}')
         return SOAP_OK;
       soap_unget(soap, c);
@@ -189,7 +189,7 @@ int json_recv(struct soap *soap, struct value *v)
         if (s->__type != SOAP_TYPE__string)
           return soap->error = SOAP_SYNTAX_ERROR;
         while ((c = soap_getchar(soap)) > 0 && c <= 32)
-          ;
+          continue;
         if (c != ':')
           return soap->error = SOAP_SYNTAX_ERROR;
         if (!(m = soap_malloc(soap, (((struct _struct*)v->ref)->__size + 1) * sizeof(struct member))))
@@ -197,11 +197,11 @@ int json_recv(struct soap *soap, struct value *v)
         (m + ((struct _struct*)v->ref)->__size)->name = s->ref;
         if (json_recv(soap, &(m + ((struct _struct*)v->ref)->__size)->value))
           return soap->error;
-        memcpy(m, ((struct _struct*)v->ref)->member, ((struct _struct*)v->ref)->__size * sizeof(struct member));
+        soap_memcpy(m, (((struct _struct*)v->ref)->__size + 1) * sizeof(struct member), ((struct _struct*)v->ref)->member, ((struct _struct*)v->ref)->__size * sizeof(struct member));
         ((struct _struct*)v->ref)->member = m;
         ((struct _struct*)v->ref)->__size++;
         while ((c = soap_getchar(soap)) > 0 && c <= 32)
-          ;
+          continue;
         if (c == /*{*/'}')
           break;
         if (c != ',')
@@ -220,7 +220,7 @@ int json_recv(struct soap *soap, struct value *v)
       ((struct _array*)v->ref)->data.__size = 0;
       ((struct _array*)v->ref)->data.value = 0;
       while ((c = soap_getchar(soap)) > 0 && c <= 32)
-        ;
+        continue;
       if (c == /*[*/']')
         return SOAP_OK;
       soap_unget(soap, c);
@@ -229,11 +229,11 @@ int json_recv(struct soap *soap, struct value *v)
           return soap->error = SOAP_EOM;
         if (json_recv(soap, u + ((struct _array*)v->ref)->data.__size))
           return soap->error;
-        memcpy(u, ((struct _array*)v->ref)->data.value, ((struct _array*)v->ref)->data.__size * sizeof(struct value));
+        soap_memcpy(u, (((struct _array*)v->ref)->data.__size + 1) * sizeof(struct value), ((struct _array*)v->ref)->data.value, ((struct _array*)v->ref)->data.__size * sizeof(struct value));
         ((struct _array*)v->ref)->data.value = u;
         ((struct _array*)v->ref)->data.__size++;
         while ((c = soap_getchar(soap)) > 0 && c <= 32)
-          ;
+          continue;
         if (c == /*[*/']')
           break;
         if (c != ',')

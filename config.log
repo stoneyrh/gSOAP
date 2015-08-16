@@ -14,7 +14,7 @@ hostname = rvengelen.local
 uname -m = x86_64
 uname -r = 13.4.0
 uname -s = Darwin
-uname -v = Darwin Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64
+uname -v = Darwin Kernel Version 13.4.0: Wed Mar 18 16:20:14 PDT 2015; root:xnu-2422.115.14~1/RELEASE_X86_64
 
 /usr/bin/uname -p = i386
 /bin/uname -X     = unknown
@@ -23,15 +23,15 @@ uname -v = Darwin Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-
 /usr/bin/arch -k       = unknown
 /usr/convex/getsysinfo = unknown
 /usr/bin/hostinfo      = Mach kernel version:
-	 Darwin Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64
+	 Darwin Kernel Version 13.4.0: Wed Mar 18 16:20:14 PDT 2015; root:xnu-2422.115.14~1/RELEASE_X86_64
 Kernel configured for up to 4 processors.
 2 processors are physically available.
 4 processors are logically available.
 Processor type: i486 (Intel 80486)
 Processors active: 0 1 2 3
 Primary memory available: 4.00 gigabytes
-Default processor set: 228 tasks, 1115 threads, 4 processors
-Load average: 1.24, Mach factor: 2.75
+Default processor set: 213 tasks, 926 threads, 4 processors
+Load average: 1.40, Mach factor: 2.59
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -39,11 +39,9 @@ Load average: 1.24, Mach factor: 2.75
 PATH: /sw/bin
 PATH: /sw/sbin
 PATH: /usr/local/teTeX/bin/i386-apple-darwin-current
-PATH: /opt/local/bin
-PATH: /opt/local/sbin
+PATH: /Applications/SWI-Prolog.app/Contents/MacOS
 PATH: /usr/local/teTeX/bin/i386-apple-darwin-current
-PATH: /opt/local/bin
-PATH: /opt/local/sbin
+PATH: /Applications/SWI-Prolog.app/Contents/MacOS
 PATH: /usr/bin
 PATH: /bin
 PATH: /usr/sbin
@@ -55,11 +53,13 @@ PATH: /Users/engelen/bin
 PATH: /usr/texbin
 PATH: /usr/local/bin
 PATH: /opt/local/bin
+PATH: /opt/local/sbin
 PATH: /usr/X11R6/bin
 PATH: /Users/engelen/bin
 PATH: /usr/texbin
 PATH: /usr/local/bin
 PATH: /opt/local/bin
+PATH: /opt/local/sbin
 
 
 ## ----------- ##
@@ -202,8 +202,8 @@ configure:4605: checking lex library
 configure:4619: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in conftest-951e9d.o
-      _main in conftest-951e9d.o
+      _yylex in conftest-a490e7.o
+      _main in conftest-a490e7.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:4619: $? = 1
@@ -4881,21 +4881,30 @@ configure:5890: checking for strerror_r
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 configure:5890: $? = 0
 configure:5890: result: yes
+configure:5890: checking for strlcpy
+configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+conftest.c:91:6: warning: incompatible redeclaration of library function 'strlcpy' [-Wincompatible-library-redeclaration]
+char strlcpy ();
+     ^
+conftest.c:91:6: note: 'strlcpy' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
+1 warning generated.
+configure:5890: $? = 0
+configure:5890: result: yes
 configure:5890: checking for strrchr
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:91:6: warning: incompatible redeclaration of library function 'strrchr' [-Wincompatible-library-redeclaration]
+conftest.c:92:6: warning: incompatible redeclaration of library function 'strrchr' [-Wincompatible-library-redeclaration]
 char strrchr ();
      ^
-conftest.c:91:6: note: 'strrchr' is a builtin with type 'char *(const char *, int)'
+conftest.c:92:6: note: 'strrchr' is a builtin with type 'char *(const char *, int)'
 1 warning generated.
 configure:5890: $? = 0
 configure:5890: result: yes
 configure:5890: checking for strstr
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:92:6: warning: incompatible redeclaration of library function 'strstr' [-Wincompatible-library-redeclaration]
+conftest.c:93:6: warning: incompatible redeclaration of library function 'strstr' [-Wincompatible-library-redeclaration]
 char strstr ();
      ^
-conftest.c:92:6: note: 'strstr' is a builtin with type 'char *(const char *, const char *)'
+conftest.c:93:6: note: 'strstr' is a builtin with type 'char *(const char *, const char *)'
 1 warning generated.
 configure:5890: $? = 0
 configure:5890: result: yes
@@ -4941,16 +4950,18 @@ configure:5890: $? = 0
 configure:5890: result: yes
 configure:5890: checking for sscanf
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-conftest.c:103:6: warning: incompatible redeclaration of library function 'sscanf' [-Wincompatible-library-redeclaration]
+conftest.c:104:6: warning: incompatible redeclaration of library function 'sscanf' [-Wincompatible-library-redeclaration]
 char sscanf ();
      ^
-conftest.c:103:6: note: 'sscanf' is a builtin with type 'int (const char *restrict, const char *restrict, ...)'
+conftest.c:104:6: note: 'sscanf' is a builtin with type 'int (const char *restrict, const char *restrict, ...)'
 1 warning generated.
 configure:5890: $? = 0
 configure:5890: result: yes
 configure:5890: checking for sscanf_l
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 configure:5890: $? = 0
+configure:5890: result: yes
+configure:5890: checking for snprintf
 configure:5890: result: yes
 configure:5890: checking for sprintf_l
 configure:5890: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
@@ -4980,7 +4991,7 @@ configure:5993: checking for gethostbyname_r
 configure:5993: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-0d7066.o
+      _main in conftest-352829.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:5993: $? = 1
@@ -5051,6 +5062,7 @@ configure: failed program was:
 | #define HAVE_STRCHR 1
 | #define HAVE_STRERROR 1
 | #define HAVE_STRERROR_R 1
+| #define HAVE_STRLCPY 1
 | #define HAVE_STRRCHR 1
 | #define HAVE_STRSTR 1
 | #define HAVE_STRTOL 1
@@ -5065,6 +5077,7 @@ configure: failed program was:
 | #define HAVE_STRTOF_L 1
 | #define HAVE_SSCANF 1
 | #define HAVE_SSCANF_L 1
+| #define HAVE_SNPRINTF 1
 | #define HAVE_SPRINTF_L 1
 | #define HAVE_WCTOMB 1
 | #define HAVE_MBTOWC 1
@@ -5146,56 +5159,55 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on rvengelen.local
 
-config.status:1010: creating Makefile
-config.status:1010: creating gsoap.pc
-config.status:1010: creating gsoap++.pc
-config.status:1010: creating gsoapck.pc
-config.status:1010: creating gsoapck++.pc
-config.status:1010: creating gsoapssl.pc
-config.status:1010: creating gsoapssl++.pc
-config.status:1010: creating gsoap/Makefile
-config.status:1010: creating gsoap/src/Makefile
-config.status:1010: creating gsoap/wsdl/Makefile
-config.status:1010: creating gsoap/samples/Makefile
-config.status:1010: creating gsoap/samples/autotest/Makefile
-config.status:1010: creating gsoap/samples/calc/Makefile
-config.status:1010: creating gsoap/samples/calc++/Makefile
-config.status:1010: creating gsoap/samples/chaining/Makefile
-config.status:1010: creating gsoap/samples/chaining++/Makefile
-config.status:1010: creating gsoap/samples/databinding/Makefile
-config.status:1010: creating gsoap/samples/dime/Makefile
-config.status:1010: creating gsoap/samples/dom/Makefile
-config.status:1010: creating gsoap/samples/oneway/Makefile
-config.status:1010: creating gsoap/samples/oneway++/Makefile
-config.status:1010: creating gsoap/samples/factory/Makefile
-config.status:1010: creating gsoap/samples/factorytest/Makefile
-config.status:1010: creating gsoap/samples/gmt/Makefile
-config.status:1010: creating gsoap/samples/googleapi/Makefile
-config.status:1010: creating gsoap/samples/hello/Makefile
-config.status:1010: creating gsoap/samples/httpcookies/Makefile
-config.status:1010: creating gsoap/samples/lu/Makefile
-config.status:1010: creating gsoap/samples/magic/Makefile
-config.status:1010: creating gsoap/samples/mashup/Makefile
-config.status:1010: creating gsoap/samples/mashup++/Makefile
-config.status:1010: creating gsoap/samples/mtom/Makefile
-config.status:1010: creating gsoap/samples/mtom-stream/Makefile
-config.status:1010: creating gsoap/samples/polytest/Makefile
-config.status:1010: creating gsoap/samples/primes/Makefile
-config.status:1010: creating gsoap/samples/roll/Makefile
-config.status:1010: creating gsoap/samples/router/Makefile
-config.status:1010: creating gsoap/samples/rss/Makefile
-config.status:1010: creating gsoap/samples/ssl/Makefile
-config.status:1010: creating gsoap/samples/template/Makefile
-config.status:1010: creating gsoap/samples/udp/Makefile
-config.status:1010: creating gsoap/samples/varparam/Makefile
-config.status:1010: creating gsoap/samples/wsa/Makefile
-config.status:1010: creating gsoap/samples/wsrm/Makefile
-config.status:1010: creating gsoap/samples/wsse/Makefile
-config.status:1010: creating gsoap/samples/xml-rpc-json/Makefile
-config.status:1010: creating gsoap/samples/rest/Makefile
-config.status:1010: creating config.h
-config.status:1191: config.h is unchanged
-config.status:1239: executing depfiles commands
+config.status:1012: creating Makefile
+config.status:1012: creating gsoap.pc
+config.status:1012: creating gsoap++.pc
+config.status:1012: creating gsoapck.pc
+config.status:1012: creating gsoapck++.pc
+config.status:1012: creating gsoapssl.pc
+config.status:1012: creating gsoapssl++.pc
+config.status:1012: creating gsoap/Makefile
+config.status:1012: creating gsoap/src/Makefile
+config.status:1012: creating gsoap/wsdl/Makefile
+config.status:1012: creating gsoap/samples/Makefile
+config.status:1012: creating gsoap/samples/autotest/Makefile
+config.status:1012: creating gsoap/samples/calc/Makefile
+config.status:1012: creating gsoap/samples/calc++/Makefile
+config.status:1012: creating gsoap/samples/chaining/Makefile
+config.status:1012: creating gsoap/samples/chaining++/Makefile
+config.status:1012: creating gsoap/samples/databinding/Makefile
+config.status:1012: creating gsoap/samples/dime/Makefile
+config.status:1012: creating gsoap/samples/dom/Makefile
+config.status:1012: creating gsoap/samples/oneway/Makefile
+config.status:1012: creating gsoap/samples/oneway++/Makefile
+config.status:1012: creating gsoap/samples/factory/Makefile
+config.status:1012: creating gsoap/samples/factorytest/Makefile
+config.status:1012: creating gsoap/samples/gmt/Makefile
+config.status:1012: creating gsoap/samples/googleapi/Makefile
+config.status:1012: creating gsoap/samples/hello/Makefile
+config.status:1012: creating gsoap/samples/httpcookies/Makefile
+config.status:1012: creating gsoap/samples/lu/Makefile
+config.status:1012: creating gsoap/samples/magic/Makefile
+config.status:1012: creating gsoap/samples/mashup/Makefile
+config.status:1012: creating gsoap/samples/mashup++/Makefile
+config.status:1012: creating gsoap/samples/mtom/Makefile
+config.status:1012: creating gsoap/samples/mtom-stream/Makefile
+config.status:1012: creating gsoap/samples/polytest/Makefile
+config.status:1012: creating gsoap/samples/primes/Makefile
+config.status:1012: creating gsoap/samples/roll/Makefile
+config.status:1012: creating gsoap/samples/router/Makefile
+config.status:1012: creating gsoap/samples/rss/Makefile
+config.status:1012: creating gsoap/samples/ssl/Makefile
+config.status:1012: creating gsoap/samples/template/Makefile
+config.status:1012: creating gsoap/samples/udp/Makefile
+config.status:1012: creating gsoap/samples/varparam/Makefile
+config.status:1012: creating gsoap/samples/wsa/Makefile
+config.status:1012: creating gsoap/samples/wsrm/Makefile
+config.status:1012: creating gsoap/samples/wsse/Makefile
+config.status:1012: creating gsoap/samples/xml-rpc-json/Makefile
+config.status:1012: creating gsoap/samples/rest/Makefile
+config.status:1012: creating config.h
+config.status:1241: executing depfiles commands
 
 ## ---------------- ##
 ## Cache variables. ##
@@ -5257,6 +5269,7 @@ ac_cv_func_strchr=yes
 ac_cv_func_strerror=yes
 ac_cv_func_strerror_r=yes
 ac_cv_func_strftime=yes
+ac_cv_func_strlcpy=yes
 ac_cv_func_strrchr=yes
 ac_cv_func_strstr=yes
 ac_cv_func_strtod=yes
@@ -5538,6 +5551,7 @@ target_alias=''
 #define HAVE_STRCHR 1
 #define HAVE_STRERROR 1
 #define HAVE_STRERROR_R 1
+#define HAVE_STRLCPY 1
 #define HAVE_STRRCHR 1
 #define HAVE_STRSTR 1
 #define HAVE_STRTOL 1
@@ -5552,6 +5566,7 @@ target_alias=''
 #define HAVE_STRTOF_L 1
 #define HAVE_SSCANF 1
 #define HAVE_SSCANF_L 1
+#define HAVE_SNPRINTF 1
 #define HAVE_SPRINTF_L 1
 #define HAVE_WCTOMB 1
 #define HAVE_MBTOWC 1

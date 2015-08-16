@@ -7,14 +7,14 @@ The gSOAP 2.8.0 (and 2.8.x updates) software is distributed under:
    1.1).
    
    Components NOT covered by the gSOAP Public License are:
-   - wsdl2h tool and its source code output, 
-   - soapcpp2 tool and its source code output,
+   - wsdl2h tool AND its source code output, 
+   - soapcpp2 tool AND its source code output,
    - UDDI code,
    - the webserver example code in gsoap/samples/webserver,
-   - and several example applications in the gsoap/samples directory.
+   - several example applications in the gsoap/samples directory.
 
    For details, see the note down below. The gSOAP public license is included
-   in the package: gsoap/license.pdf
+   in the package as license.pdf
 
 2) GPL v2 (GNU Public License, a common open-source software license) covers
    all of the gSOAP software.
@@ -40,11 +40,10 @@ The gSOAP 2.8.0 (and 2.8.x updates) software is distributed under:
    code base in GPL and non-GPL.
 
 3) Proprietary commercial software development licenses for the standard
-   edition and enterprise level licensing. The standard edition is identical to
-   the open source version of gSOAP and includes all software components, but
-   without the open source GPL licensing requirements for your project. There
-   is also an enterprise edition that offers the gold standard toolset
-   licensing arrangement.
+   commercial edition and for enterprise-level licensing. The standard edition
+   is identical to the open source version of gSOAP and includes all software
+   components, but without the open source GPL licensing requirements for your
+   project.
 
 IMPORTANT NOTE
 
@@ -71,7 +70,7 @@ under the Genivia commercial-use licenses.
 The Ohloh site by Black Duck includes an analysis of the gSOAP GPLv2 open
 source repository:
 
-https://www.ohloh.net/p/gsoap
+	https://www.ohloh.net/p/gsoap
 
 Please note that "Black Duck Scans" will detect the use of GPL gSOAP software
 in your project builds when you are using the gSOAP source code. The
@@ -109,7 +108,7 @@ license is allowed.
 COPYRIGHT
 
 gSOAP is copyrighted by Robert A. van Engelen, Genivia, Inc.
-Copyright (C) 2000-2011 Robert A. van Engelen, Genivia, Inc.
+Copyright (C) 2000-2015 Robert A. van Engelen, Genivia, Inc.
 All Rights Reserved.
 
 USE RESTRICTIONS

@@ -1,4 +1,4 @@
-The gSOAP 'soapcpp2' source-to-source code compiler
+The gSOAP 'soapcpp2' source-to-source compiler
 
 INSTRUCTIONS
 
@@ -38,11 +38,11 @@ To build 'soapcpp2' when autoconf/automake fail, use:
 
 	make -f MakefileManual
 
-The above command assumes you have Bison and Flex installed. To use Yacc, please
-edit MakefileManual and change as follows:
+The above commands to build 'soapcpp2' assume you have Bison and Flex
+installed. To use Yacc instead, please use:
 
-YACC=yacc -d -v -s soapcpp2_yacc
-CMFLAGS=-DWITH_YACC -DWITH_FLEX
+	$ cd gsoap/src
+	$ make YACC='yacc -d -v -s soapcpp2_yacc' CMFLAGS='-DWITH_YACC -DWITH_FLEX' -f MakefileManual
 
 If you do not have the Bison tool, please download and install it from here:
 
@@ -52,6 +52,32 @@ If you do not have the Flex tool, please download and install it from here:
 
       	http://flex.sourceforge.net
 
+What if you do not have Bison and Flex?
+
+Included in gsoap/src are the flex-generated file 'lex.yy.c' and
+bison-generated files 'soapcpp2_yacc.tab.h' and 'soapcpp2_yacc.tab.c'. These
+files may suffice (no guarantee however) to build 'soapcpp2' as follows:
+
+	$ cd gsoap/src
+	$ make -f MakefileManual soapcpp2
+
+In case the files 'lex.yy.c', 'soapcpp2_yacc.tab.h', and 'soapcpp2_yacc.tab.c'
+were deleted in a prior build run, please unarchive the gSOAP package again
+to retrieve these original files.
+
+For your project builds, use the stdsoap2.c and stdsoap2.cpp sources rather
+than the libgsoap libs, as the libs are not built. To enable SSL, GZIP, HTTP
+cookies, IPv6 support, and/or force C locale usage, use the compiler flags:
+
+	-DWITH_OPENSSL		to enable SSL, link with OpenSSL
+	-DWITH_GNUTLS		to enable SSL, link with GNUTLS
+	-DWITH_GZIP		to enable compression, link with Zlib
+	-DWITH_COOKIES		to enable HTTP cookies
+	-DWITH_IPV6		to enable IPv6
+	-DWITH_C_LOCALE		to force C locale
+
+Note: these flags when set must be used to compile ALL your sources to ensure
+consistency.
 QNX INSTALLATION
 
 On QNX the bison.simple file is located in $QNX_HOST/usr/share/bison.simple

@@ -1,5 +1,5 @@
 /*
-See the header file for details. This file is distributed under the MIT licence.
+See the README.md for details. This file is distributed under the MIT licence.
 */
 
 #include "gsoapWinInet.h"
@@ -12,24 +12,24 @@ See the header file for details. This file is distributed under the MIT licence.
 #define UNUSED_ARG(x)           (x)
 #define INVALID_BUFFER_LENGTH  ((DWORD)-1)
 
-/* plugin id */
+/** plugin id */
 static const char wininet_id[] = "wininet-2.0";
 
-/* plugin private data */
+/** plugin private data */
 struct wininet_data
 {
-    HINTERNET           hInternet;          /* internet session handle */
-    HINTERNET           hConnection;        /* current connection handle */
-    BOOL                bDisconnect;        /* connection is disconnected */
-    DWORD               dwRequestFlags;     /* extra request flags from user */
-    char *              pBuffer;            /* send buffer */
-    size_t              uiBufferLenMax;     /* total length of the message */
-    size_t              uiBufferLen;        /* length of data in buffer */
-    BOOL                bIsChunkSize;       /* expecting a chunk size buffer */
-    wininet_rse_callback pRseCallback;      /* wininet_resolve_send_error callback.  Allows clients to resolve ssl errors programatically */
+    HINTERNET           hInternet;          /**< internet session handle */
+    HINTERNET           hConnection;        /**< current connection handle */
+    BOOL                bDisconnect;        /**< connection is disconnected */
+    DWORD               dwRequestFlags;     /**< extra request flags from user */
+    char *              pBuffer;            /**< send buffer */
+    size_t              uiBufferLenMax;     /**< total length of the message */
+    size_t              uiBufferLen;        /**< length of data in buffer */
+    BOOL                bIsChunkSize;       /**< expecting a chunk size buffer */
+    wininet_rse_callback pRseCallback;      /**< wininet_resolve_send_error callback.  Allows clients to resolve ssl errors programatically */
 #ifdef SOAP_DEBUG
     /* this is only used for DBGLOG output */
-    char *              pszErrorMessage;    /* wininet/system error message */
+    char *              pszErrorMessage;    /**< wininet/system error message */
 #endif
 };
 
@@ -108,7 +108,7 @@ wininet_free_error_message(
 #define wininet_free_error_message(x)
 #endif
 
-/* plugin registration */
+/** plugin registration */
 int 
 wininet_plugin( 
     struct soap *           soap, 
@@ -145,7 +145,7 @@ wininet_plugin(
     return SOAP_OK;
 }
 
-/* initialize private data */
+/** initialize private data */
 static BOOL
 wininet_init(
     struct soap *           soap, 
@@ -207,7 +207,7 @@ wininet_set_rse_callback(
 }
 
 
-/* copy the private data structure */
+/** copy the private data structure */
 static int  
 wininet_copy( 
     struct soap *           soap, 
@@ -222,7 +222,7 @@ wininet_copy(
     return SOAP_FATAL_ERROR;
 }
 
-/* deallocate of our private structure */
+/** deallocate of our private structure */
 static void 
 wininet_delete( 
     struct soap *           soap, 
@@ -254,7 +254,7 @@ wininet_delete(
     free( a_pPluginData->data );
 }
 
-/* gsoap documentation:
+/** 
     Called from a client proxy to open a connection to a Web Service located 
     at endpoint. Input parameters host and port are micro-parsed from endpoint.
     Should return a valid file descriptor, or SOAP_INVALID_SOCKET and 
@@ -341,7 +341,7 @@ wininet_connect(
     /* proxy requires full endpoint URL */
     if ( soap->proxy_host )
     {
-        strncpy(szUrlPath, a_pszEndpoint, MAX_PATH);
+        soap_strcpy(szUrlPath, MAX_PATH, a_pszEndpoint);
     }
 
     /* status determines the HTTP verb */
@@ -386,7 +386,7 @@ wininet_connect(
     return (SOAP_SOCKET) hHttpRequest;
 }
 
-/* gsoap documentation:
+/**
     Called by http_post and http_response (through the callbacks). Emits HTTP 
     key: val header entries. Should return SOAP_OK, or a gSOAP error code. 
     Built-in gSOAP function: http_post_header.
@@ -460,7 +460,7 @@ wininet_post_header(
     return SOAP_OK; 
 }
 
-/* gsoap documentation:
+/**
     Called for all send operations to emit contents of s of length n. 
     Should return SOAP_OK, or a gSOAP error code. Built-in gSOAP 
     function: fsend
@@ -569,11 +569,13 @@ wininet_fsend(
             pData->pBuffer = (char *) realloc( pData->pBuffer, pData->uiBufferLenMax );
             if ( !pData->pBuffer )
             {
+                DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
+                            "wininet %p: fsend, realloc of size %lu failed\n", 
+                            soap, pData->uiBufferLenMax ));
                 return SOAP_EOM;
             }
         }
-        memcpy( pData->pBuffer + pData->uiBufferLen, 
-            a_pBuffer, a_uiBufferLen );
+        soap_memcpy( pData->pBuffer + pData->uiBufferLen, pData->uiBufferLenMax - pData->uiBufferLen, a_pBuffer, a_uiBufferLen );
         pData->uiBufferLen = uiNewBufferLen;
 
         /* if we are doing chunked transfers, and this is a chunk size block,
@@ -743,7 +745,7 @@ wininet_fsend(
     return nResult; 
 }
 
-/* gsoap documentation:
+/**
     Called for all receive operations to fill buffer s of maximum length n. 
     Should return the number of bytes read or 0 in case of an error, e.g. EOF.
     Built-in gSOAP function: frecv
@@ -802,7 +804,7 @@ wininet_frecv(
     return uiTotalBytesRead;
 } 
 
-/* gsoap documentation:
+/**
     Called by client proxy multiple times, to close a socket connection before
     a new socket connection is established and at the end of communications 
     when the SOAP_IO_KEEPALIVE flag is not set and soap.keep_alive = 0 
@@ -825,7 +827,7 @@ wininet_disconnect(
     return soap->error = SOAP_OK;
 }
 
-/* this is mostly for debug tracing */
+/** this is mostly for debug tracing */
 void CALLBACK
 wininet_callback(
     HINTERNET   hInternet,
@@ -983,7 +985,7 @@ wininet_callback(
     }
 }
 
-/* 
+/** 
     check to ensure that our connection hasn't been disconnected 
     and disconnect remaining handles if necessary.
  */

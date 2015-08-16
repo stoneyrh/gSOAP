@@ -5,7 +5,7 @@
 	Supports both Basic and Digest authentication.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2013, Robert van Engelen, Genivia, Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -351,8 +351,8 @@ static struct http_da_session *http_da_session = NULL;
 /** HTTP DA session database lock */
 static MUTEX_TYPE http_da_session_lock = MUTEX_INITIALIZER;
 
-#define HTTP_DA_NONCELEN 21
-#define HTTP_DA_OPAQUELEN 9
+#define HTTP_DA_NONCELEN (21)
+#define HTTP_DA_OPAQUELEN (9)
 
 /******************************************************************************\
  *
@@ -381,7 +381,7 @@ static void http_da_session_cleanup();
 void http_da_calc_nonce(struct soap *soap, char nonce[HTTP_DA_NONCELEN]);
 void http_da_calc_opaque(struct soap *soap, char opaque[HTTP_DA_OPAQUELEN]);
 static void http_da_calc_HA1(struct soap *soap, void **context, const char *alg, const char *userid, const char *realm, const char *passwd, const char *nonce, const char *cnonce, char HA1hex[33]);
-static void http_da_calc_response(struct soap *soap, void **context, char HA1hex[33], const char *nonce, const char *ncount, const char *cnonce, const char *qop, const char *method, const char *uri, char entityHAhex[33], char response[33]);
+static void http_da_calc_response(struct soap *soap, void **context, char HA1hex[33], const char *nonce, const char *ncount, const char *cnonce, const char *qop, const char *method, const char *uri, char entityHAhex[33], char response[33], char responseHA[16]);
 
 /******************************************************************************\
  *
@@ -420,7 +420,7 @@ static int http_da_init(struct soap *soap, struct http_da_data *data)
   data->fprepareinitrecv = soap->fprepareinitrecv;
   soap->fprepareinitrecv = http_da_prepareinitrecv;
   data->context = NULL;
-  memset(data->digest, 0, sizeof(data->digest));
+  memset((void*)data->digest, 0, sizeof(data->digest));
   data->nonce = NULL;
   data->opaque = NULL;
   data->qop = NULL;
@@ -428,7 +428,7 @@ static int http_da_init(struct soap *soap, struct http_da_data *data)
   data->nc = 0;
   data->ncount = NULL;
   data->cnonce = NULL;
-  data->response = NULL;
+  memset((void*)data->response, 0, sizeof(data->response));
 
   return SOAP_OK;
 }
@@ -436,9 +436,9 @@ static int http_da_init(struct soap *soap, struct http_da_data *data)
 static int http_da_copy(struct soap *soap, struct soap_plugin *dst, struct soap_plugin *src)
 {
   dst->data = (void*)SOAP_MALLOC(soap, sizeof(struct http_da_data));
-  memcpy(dst->data, src->data, sizeof(struct http_da_data));
+  soap_memcpy((void*)dst->data, sizeof(struct http_da_data), (const void*)src->data, sizeof(struct http_da_data));
   ((struct http_da_data*)dst->data)->context = NULL;
-  memset(((struct http_da_data*)dst->data)->digest, 0, sizeof(((struct http_da_data*)dst->data)->digest));
+  memset((void*)((struct http_da_data*)dst->data)->digest, 0, sizeof(((struct http_da_data*)dst->data)->digest));
   ((struct http_da_data*)dst->data)->nonce = NULL;
   ((struct http_da_data*)dst->data)->opaque = NULL;
   ((struct http_da_data*)dst->data)->qop = NULL;
@@ -446,7 +446,7 @@ static int http_da_copy(struct soap *soap, struct soap_plugin *dst, struct soap_
   ((struct http_da_data*)dst->data)->nc = 0;
   ((struct http_da_data*)dst->data)->ncount = NULL;
   ((struct http_da_data*)dst->data)->cnonce = NULL;
-  ((struct http_da_data*)dst->data)->response = NULL;
+  memset((void*)((struct http_da_data*)dst->data)->response, 0, sizeof(((struct http_da_data*)dst->data)->response));
   return SOAP_OK;
 }
 
@@ -474,7 +474,7 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
   /* client's HTTP Authorization request */
   if (key && (!strcmp(key, "Authorization") || !strcmp(key, "Proxy-Authorization")))
   {
-    char HA1[33], entityHAhex[33], response[33];
+    char HA1[33], entityHAhex[33], response[33], responseHA[16];
     char cnonce[HTTP_DA_NONCELEN];
     char ncount[9];
     const char *qop, *method;
@@ -511,31 +511,21 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
     else
       method = "POST";
 
-#ifdef HAVE_SNPRINTF
-    soap_snprintf(ncount, sizeof(ncount), "%8.8lx", data->nc++);
-#else
-    sprintf(ncount, "%8.8lx", data->nc++);
-#endif
+    (SOAP_SNPRINTF(ncount, sizeof(ncount), 8), "%8.8lx", data->nc++);
 
-    http_da_calc_response(soap, &data->context, HA1, data->nonce, ncount, cnonce, qop, method, soap->path, entityHAhex, response);
+    http_da_calc_response(soap, &data->context, HA1, data->nonce, ncount, cnonce, qop, method, soap->path, entityHAhex, response, responseHA);
 
-#ifdef HAVE_SNPRINTF
-    soap_snprintf(soap->tmpbuf, sizeof(soap->tmpbuf), "Digest realm=\"%s\", username=\"%s\", nonce=\"%s\", uri=\"%s\", nc=%s, cnonce=\"%s\", response=\"%s\"", soap->authrealm, userid, data->nonce, soap->path, ncount, cnonce, response);
-#else
-    sprintf(soap->tmpbuf, "Digest realm=\"%s\", username=\"%s\", nonce=\"%s\", uri=\"%s\", nc=%s, cnonce=\"%s\", response=\"%s\"", soap->authrealm, userid, data->nonce, soap->path, ncount, cnonce, response);
-#endif
+    (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(soap->authrealm) + strlen(userid) + strlen(data->nonce) + strlen(soap->path) + strlen(ncount) + strlen(cnonce) + strlen(response) + 75), "Digest realm=\"%s\", username=\"%s\", nonce=\"%s\", uri=\"%s\", nc=%s, cnonce=\"%s\", response=\"%s\"", soap->authrealm, userid, data->nonce, soap->path, ncount, cnonce, response);
+
     if (data->opaque)
-#ifdef HAVE_SNPRINTF
-      soap_snprintf(soap->tmpbuf + strlen(soap->tmpbuf), sizeof(soap->tmpbuf) - strlen(soap->tmpbuf), ", opaque=\"%s\"", data->opaque);
-#else
-      sprintf(soap->tmpbuf + strlen(soap->tmpbuf), ", opaque=\"%s\"", data->opaque);
-#endif
+    { size_t l = strlen(soap->tmpbuf);
+      (SOAP_SNPRINTF(soap->tmpbuf + l, sizeof(soap->tmpbuf) - l, strlen(data->opaque) + 11), ", opaque=\"%s\"", data->opaque);
+    }
+
     if (qop)
-#ifdef HAVE_SNPRINTF
-      soap_snprintf(soap->tmpbuf + strlen(soap->tmpbuf), sizeof(soap->tmpbuf) - strlen(soap->tmpbuf), ", qop=\"%s\"", qop);
-#else
-      sprintf(soap->tmpbuf + strlen(soap->tmpbuf), ", qop=\"%s\"", qop);
-#endif
+    { size_t l = strlen(soap->tmpbuf);
+      (SOAP_SNPRINTF(soap->tmpbuf + l, sizeof(soap->tmpbuf) - l, strlen(qop) + 8), ", qop=\"%s\"", qop);
+    }
 
     return data->fposthdr(soap, key, soap->tmpbuf);
   }
@@ -551,11 +541,7 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
 
     http_da_session_start(soap->authrealm, nonce, opaque);
 
-#ifdef HAVE_SNPRINTF
-    soap_snprintf(soap->tmpbuf, sizeof(soap->tmpbuf), "Digest realm=\"%s\", qop=\"auth,auth-int\", nonce=\"%s\", opaque=\"%s\"", soap->authrealm, nonce, opaque);
-#else
-    sprintf(soap->tmpbuf, "Digest realm=\"%s\", qop=\"auth,auth-int\", nonce=\"%s\", opaque=\"%s\"", soap->authrealm, nonce, opaque);
-#endif
+    (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(soap->authrealm) + strlen(nonce) + strlen(opaque) + 59), "Digest realm=\"%s\", qop=\"auth,auth-int\", nonce=\"%s\", opaque=\"%s\"", soap->authrealm, nonce, opaque);
 
     return data->fposthdr(soap, key, soap->tmpbuf);
   }
@@ -616,7 +602,7 @@ static int http_da_parse_header(struct soap *soap, const char *key, const char *
     data->alg = NULL;
     data->ncount = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "nc"));
     data->cnonce = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "cnonce"));
-    data->response = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "response"));
+    soap_hex2s(soap, soap_get_header_attribute(soap, val + 7, "response"), data->response, 16, NULL);
     return SOAP_OK;
   }
 
@@ -631,7 +617,6 @@ static int http_da_parse_header(struct soap *soap, const char *key, const char *
     data->nc = 1;
     data->ncount = NULL;
     data->cnonce = NULL;
-    data->response = NULL;
     return SOAP_OK;
   }
 
@@ -888,7 +873,7 @@ int http_da_verify_get(struct soap *soap, const char *passwd)
 static int http_da_verify_method(struct soap *soap, const char *method, const char *passwd)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
-  char HA1[33], entityHAhex[33], response[33];
+  char HA1[33], entityHAhex[33], response[33], responseHA[16];
 
   if (!data)
     return SOAP_ERR;
@@ -911,14 +896,10 @@ static int http_da_verify_method(struct soap *soap, const char *method, const ch
   if (!soap_tag_cmp(data->qop, "auth-int"))
     soap_s2hex(soap, (unsigned char*)data->digest, entityHAhex, 16);
 
-  http_da_calc_response(soap, &data->context, HA1, data->nonce, data->ncount, data->cnonce, data->qop, method, soap->path, entityHAhex, response);
-
-#ifdef SOAP_DEBUG
-  fprintf(stderr, "Debug message: verifying client response=%s with calculated digest=%s qop=%s\n", data->response, response, data->qop);
-#endif
+  http_da_calc_response(soap, &data->context, HA1, data->nonce, data->ncount, data->cnonce, data->qop, method, soap->path, entityHAhex, response, responseHA);
 
   /* check digest response values */
-  if (strcmp(data->response, response))
+  if (memcmp(data->response, responseHA, 16))
     return SOAP_ERR;
 
   return SOAP_OK;
@@ -1049,21 +1030,13 @@ void http_da_calc_nonce(struct soap *soap, char nonce[HTTP_DA_NONCELEN])
 {
   static short count = 0xCA53;
   (void)soap;
-#ifdef HAVE_SNPRINTF
-  soap_snprintf(nonce, HTTP_DA_NONCELEN, "%8.8x%4.4hx%8.8x", (int)time(NULL), count++, soap_random);
-#else
-  sprintf(nonce, "%8.8x%4.4hx%8.8x", (int)time(NULL), count++, soap_random);
-#endif
+  (SOAP_SNPRINTF(nonce, HTTP_DA_NONCELEN, 20), "%8.8x%4.4hx%8.8x", (int)time(NULL), count++, soap_random);
 }
 
 void http_da_calc_opaque(struct soap *soap, char opaque[HTTP_DA_OPAQUELEN])
 {
   (void)soap;
-#ifdef HAVE_SNPRINTF
-  soap_snprintf(opaque, HTTP_DA_OPAQUELEN, "%8.8x", soap_random);
-#else
-  sprintf(opaque, "%8.8x", soap_random);
-#endif
+  (SOAP_SNPRINTF(opaque, HTTP_DA_OPAQUELEN, 8), "%8.8x", soap_random);
 }
 
 /******************************************************************************\
@@ -1101,9 +1074,9 @@ static void http_da_calc_HA1(struct soap *soap, void **context, const char *alg,
   soap_s2hex(soap, (unsigned char*)HA1, HA1hex, 16);
 };
 
-static void http_da_calc_response(struct soap *soap, void **context, char HA1hex[33], const char *nonce, const char *ncount, const char *cnonce, const char *qop, const char *method, const char *uri, char entityHAhex[33], char response[33])
+static void http_da_calc_response(struct soap *soap, void **context, char HA1hex[33], const char *nonce, const char *ncount, const char *cnonce, const char *qop, const char *method, const char *uri, char entityHAhex[33], char response[33], char responseHA[16])
 {
-  char HA2[16], HA2hex[33], responseHA[16];
+  char HA2[16], HA2hex[33];
 
   md5_handler(soap, context, MD5_INIT, NULL, 0);
   md5_handler(soap, context, MD5_UPDATE, (char*)method, strlen(method));

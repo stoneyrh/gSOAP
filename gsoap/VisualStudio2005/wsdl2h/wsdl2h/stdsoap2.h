@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.22
+	stdsoap2.h 2.8.23
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20822
+#define GSOAP_VERSION 20823
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff */
@@ -263,6 +263,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # elif defined(__APPLE__)
 #  define HAVE_POLL
 #  define HAVE_SNPRINTF
+#  define HAVE_STRLCPY
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -323,6 +324,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # elif defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD)
 #  define HAVE_POLL
 #  define HAVE_SNPRINTF
+#  define HAVE_STRLCPY
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -553,10 +555,15 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #endif
 
-/* allowing empty struct in C is a GNU extension */
+/* allowing empty struct/union in C is a GNU extension */
 #if !defined(__GNU__)
 # define WITH_NOEMPTYSTRUCT
 #endif
+
+/* silence clang's C99 variadic macro warnings */
+#ifdef __clang__ 
+# pragma clang diagnostic ignored "-Wvariadic-macros" 
+#endif 
 
 #ifdef WITH_PURE_VIRTUAL
 # define SOAP_PURE_VIRTUAL = 0
@@ -576,12 +583,14 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #endif
 
-/* if we have xlocale.h we use it to avoid decimal point conversion issues */
+/* if we have xlocale.h then we can use it WITH_C_LOCALE enabled to avoid decimal point conversion issues */
 #ifdef WITH_C_LOCALE
 # ifdef WIN32
 #  include <locale.h>
+#  define SOAP_LOCALE(soap) ((soap)->c_locale ? (soap)->c_locale : ((soap)->c_locale = _create_locale(LC_ALL, "C")))
 # else
 #  include <xlocale.h>
+#  define SOAP_LOCALE(soap) ((soap)->c_locale ? (soap)->c_locale : ((soap)->c_locale = newlocale(LC_ALL_MASK, "C", NULL)))
 # endif
 #else
 # undef HAVE_STRTOF_L
@@ -1003,7 +1012,11 @@ extern "C" {
 # define SOAP_EADDRINUSE WSAEADDRINUSE
 # define SOAP_ECONNREFUSED WSAECONNREFUSED
 #else
-# define SOAP_ERANGE ERANGE
+# ifdef ERANGE
+#  define SOAP_ERANGE ERANGE
+# else
+#  define SOAP_ERANGE (34)
+# endif
 # define SOAP_EINTR EINTR
 # define SOAP_EAGAIN EAGAIN
 # define SOAP_EADDRINUSE EADDRINUSE
@@ -1296,12 +1309,62 @@ extern const char soap_base64o[], soap_base64i[];
 #define soap_isninfd(n) ((n) < 0 && soap_isinf(n))
 #define soap_isninff(n) ((n) < 0 && soap_isinf(n))
 
-#ifdef HAVE_SNPRINTF
-# ifdef WIN32
-#  define soap_snprintf(buf, len, ...) (_snprintf((buf), (len), __VA_ARGS__), (buf)[(len)-1] = '\0')
+/* Safer str & mem functions */
+
+/* The gSOAP code uses guards to ensure that these functions are well behaved
+   and do not raise errors. This, the WIN _s functions should never execute the
+   "invalid parameter handler"
+*/
+
+/* use safer snprintf if possible or guard sprintf against overrun (assumes no variadic macros) */
+# ifdef HAVE_SNPRINTF
+#  ifdef WIN32
+#   define SOAP_SNPRINTF(buf, len, num) void)_snprintf_s((buf), (len), _TRUNCATE
+#   define SOAP_SNPRINTF_SAFE(buf, len) void)_snprintf_s((buf), (len), _TRUNCATE
+#  else
+#   define SOAP_SNPRINTF(buf, len, num) void)snprintf((buf), (len)
+#   define SOAP_SNPRINTF_SAFE(buf, len) void)snprintf((buf), (len)
+#  endif
 # else
-#  define soap_snprintf snprintf
+#  define SOAP_SNPRINTF(buf, len, num) (len) <= (num)) ? (void)((buf)[0] = '\0') : (void)sprintf((buf)
+#  define SOAP_SNPRINTF_SAFE(buf, len) void)sprintf((buf)
 # endif
+
+/* copy string (truncating the result) */
+#if defined(WIN32)
+# define soap_strcpy(buf, len, src) (void)strncpy_s((buf), (len), (src), _TRUNCATE)
+#elif defined(HAVE_STRLCPY)
+# define soap_strcpy(buf, len, src) (void)strlcpy((buf), (src), (len))
+#else
+# define soap_strcpy(buf, len, src) (void)((buf) && (size_t)(len) > 0 && (strncpy((buf), (src), (len) - 1), (buf)[(len) - 1] = '\0'))
+#endif
+
+/* copy string up to n chars (nul on overrun) */
+#if defined(WIN32)
+# define soap_strncpy(buf, len, src, num) (void)strncpy_s((buf), (len), (src), (num))
+#else
+# define soap_strncpy(buf, len, src, num) (void)((buf) && ((size_t)(len) > (size_t)(num) ? (strncpy((buf), (src), (num)), (buf)[(size_t)(num)] = '\0') : ((buf)[0] = '\0')))
+#endif
+
+/* concat string up to n chars (nul on overrun) */
+#if defined(WIN32)
+# define soap_strncat(buf, len, src, num) (void)strncat_s((buf), (len), (src), (num))
+#else
+# define soap_strncat(buf, len, src, num) (void)((buf) && ((size_t)(len) > strlen((buf)) + (size_t)(num) ? (strncat((buf), (src), (num)), (buf)[(size_t)(len) - 1] = '\0') : ((buf)[0] = '\0')))
+#endif
+
+/* copy memory (error on overrun) */
+#if defined(WIN32)
+# define soap_memcpy(buf, len, src, num) ((buf) && (size_t)(len) >= (size_t)(num) ? memcpy_s((buf), (len), (src), (num)) : SOAP_ERANGE)
+#else
+# define soap_memcpy(buf, len, src, num) ((buf) && (size_t)(len) >= (size_t)(num) ? !memcpy((buf), (src), (num)) : SOAP_ERANGE)
+#endif
+
+/* move memory (error on overrun) */
+#if defined(WIN32)
+# define soap_memmove(buf, len, src, num) ((buf) && (size_t)(len) >= (size_t)(num) ? memmove_s((buf), (len), (src), (num)) : SOAP_ERANGE)
+#else
+# define soap_memmove(buf, len, src, num) ((buf) && (size_t)(len) >= (size_t)(num) ? !memmove((buf), (src), (num)) : SOAP_ERANGE)
 #endif
 
 /* gSOAP status/error codes */
@@ -1468,9 +1531,7 @@ typedef soap_int32 soap_mode;
 #define SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE	0x08	/* client does not check the expiration date of the host certificate */
 #define SOAP_SSL_NO_DEFAULT_CA_PATH		0x10	/* don't use default_verify_paths */
 #define SOAP_SSL_RSA				0x20	/* use RSA */
-#if (OPENSSL_VERSION_NUMBER >= 0x0090708fL)
-# define SOAP_SSLv3				0x40	/* SSL v3 only */
-#endif
+#define SOAP_SSLv3				0x40	/* SSL v3 only */
 #define SOAP_SSLv3_TLSv1			0x80	/* SSL v3 and TLS v1/1.1/1.2 support */
 #define SOAP_TLSv1				0x00	/* TLS v1/1.1/1.2 only (default protocols) */
 
@@ -2140,7 +2201,7 @@ struct SOAP_STD_API soap
   size_t lablen;	/* look-aside buffer allocated length */
   size_t labidx;	/* look-aside buffer index to available part */
   char buf[SOAP_BUFLEN];/* send and receive buffer */
-  char msgbuf[1024];	/* in/out buffer for HTTP/MIME headers >=1024 bytes */
+  char msgbuf[1024];	/* in/out buffer for HTTP/MIME headers and short messages, must be >=1024 bytes */
   char tmpbuf[1024];	/* in/out buffer for HTTP/MIME headers, simpleType values, element and attribute tag names, and DIME must be >=1024 bytes */
   char tag[SOAP_TAGLEN];
   char id[SOAP_TAGLEN];
@@ -2298,9 +2359,7 @@ struct SOAP_STD_API soap
   soap(soap_mode);
   soap(soap_mode, soap_mode);
   soap(const struct soap&);
-  virtual ~soap();
-#else
-  void (*dummy)(void);
+  ~soap();			/* no virtual methods, so sizeof(soap) is same in C and C++ */
 #endif
 };
 

@@ -102,8 +102,7 @@ This distribution package contains platform-independent source code. Pre-built
 'soapcpp2' and 'wsdl2h' binaries are included for the following platforms:
 
 	* Win32 i386 compatible
-	* Linux i386 compatible
-	* MAC OS X universal
+	* MAC OS X
 
 The binaries are located in 'gsoap/bin'.
 
@@ -120,18 +119,18 @@ GETTING STARTED
 Follow the installation instructions in INSTALL.txt first.
 
 The gSOAP 'wsdl2h' tool converts WSDLs into a gSOAP header file for processing
-with the gSOAP stub/skeleton generator 'soapcpp2' to generate XML
-serialization, stubs, and skeletons code to build Web services applications.
-Use 'wsdl2h' followed by 'soapcpp2' to translate an entire set of WSDL and XML
-schemas into representative C or C++ data structures and associated XML
-parsers. You can also use the gSOAP 'soapcpp2' tool directly on existing C/C++
-data structure declarations to create XML serialization routines for these
-types to simplify the storage of data in XML.
+with the gSOAP code gnerator 'soapcpp2' to generate XML serialization, stubs,
+and skeletons code to build Web services applications.  Use 'wsdl2h' followed
+by 'soapcpp2' to translate an entire set of WSDL and XML schemas into
+representative C or C++ data structures and associated XML parsers. You can
+also use the gSOAP 'soapcpp2' tool directly on existing C/C++ data structure
+declarations to create XML serialization routines for these types to simplify
+the storage of data in XML.
 
 Example translation of WSDL to code in two steps:
 
 	$ wsdl2h -s -o calc.h http://www.cs.fsu.edu/~engelen/calc.wsdl
-	$ soapcpp2 calc.h
+	$ soapcpp2 -CL -I/path/to/gsoap/import calc.h
 
 The 'calc.h' header file contains the services and XML schema types represented
 in C/C++, together with other useful information copied from the WSDL related
@@ -171,10 +170,10 @@ generated from the calc.h file by soapcpp2. The calc.h file includes
 instructions on what functions to call.
 
 To develop a C++ client application based on C++ proxy objects rather than
-C-like functions, use 'soapcpp2' option -i:
+C-like functions, use 'soapcpp2' option -j:
 
 	$ wsdl2h -s -o calc.h http://www.cs.fsu.edu/~engelen/calc.wsdl
-	$ soapcpp2 -i calc.h
+	$ soapcpp2 -j -CL -I/path/to/gsoap/import calc.h
 
 This generates 'soapcalcProxy.h' and 'soapcalcProxy.cpp' with a calcProxy
 class with service methods that you can use to invoke services. For example:
@@ -244,9 +243,7 @@ See LICENSE.txt
 COPYRIGHT
 ================================================================================
 
-gSOAP is copyrighted by Robert A. van Engelen, Genivia, Inc.
-Copyright (C) 2000-2010 Robert A. van Engelen, Genivia, Inc.
-All Rights Reserved.
+Copyright (C) 2000-2015 Robert van Engelen, Genivia, Inc. All Rights Reserved.
 
 ================================================================================
 USE RESTRICTIONS
@@ -294,9 +291,9 @@ INJURY OR LOSS OF HUMAN LIFE.
 EXTERNAL THIRD-PARTY LIBRARIES
 ================================================================================
 
-The gSOAP toolkit is mostly self-contained and does not require any third-party
-software to run in a basic configuration. When compression and SSL encryption
-are required the Zlib and OpenSSL libraries must be installed.
+The gSOAP toolkit is self-contained and does not require any third-party
+software to run in its standard configuration. When compression and SSL
+encryption are required the Zlib and OpenSSL libraries must be installed.
 
 To build the gSOAP 'soapcpp2' compiler, you must have Bison and Flex installed
 or the older Yacc and Lex equivalents. Note that licensing differs for Flex
@@ -314,8 +311,8 @@ compiler as a custom build.
 DISCLAIMER
 ================================================================================
 
-WE TRY OUR BEST TO PROVIDE YOU WITH "REAL-WORLD" EXAMPLES BUT WE CANNOT
-GUARANTEE THAT ALL CLIENT EXAMPLES CAN CONNECT TO THIRD PARTY WEB SERVICES
-WHEN THESE SERVICES ARE DOWN OR HAVE BEEN REMOVED.
+WE PROVIDE YOU WITH "REAL-WORLD" EXAMPLES BUT WE CANNOT GUARANTEE THAT ALL
+CLIENT EXAMPLES CAN CONNECT TO THIRD PARTY WEB SERVICES WHEN THESE SERVICES ARE
+DOWN OR HAVE BEEN REMOVED.
 
 ================================================================================

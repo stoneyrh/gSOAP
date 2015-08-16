@@ -175,10 +175,10 @@ size_t SoapTransaction::SupplyRequestHeaders(char *pBuf, const size_t len) {
 			nLen = _request_header.length();
 			if (nLen > len) {
 				nLen = len;
-				memcpy(pBuf, _request_header.c_str(), len);
+				memcpy_s(pBuf, len, _request_header.c_str(), len);
 				_request_header = _request_header.substr(len);
 			} else {
-				memcpy(pBuf, _request_header.c_str(), _request_header.length());
+				memcpy_s(pBuf, len, _request_header.c_str(), nLen);
 				_request_header.erase();                
 				_headers_supplied = true;
 			}

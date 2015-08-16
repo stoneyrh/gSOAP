@@ -16,14 +16,14 @@
 
 
 
-<title>gSOAP 2.8.22 User Guide</title>
+<title>gSOAP 2.8.23 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.22 User Guide </h1>
+<h1 align="center">gSOAP 2.8.23 User Guide </h1>
 
-<h3 align="center">Robert van Engelen <br />GENIVIA INC </h3>
+<h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="http://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Apr 12, 2015
-<br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#FF0000"><b>[This document is also available in PDF format (black and white only)]</b></font></a></h3>
+<h3 align="center">Aug 16, 2015
+<br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
 <h1>Contents </h1><a href="#tth_sEc1"
@@ -462,7 +462,7 @@
 >19.38.9&nbsp; <font color="#0000FF">WS-Discovery</font></a><br />
 
 </td></tr></table><br></span>
-<i>Copyright (C) 2000-2012 Robert A. van Engelen, GENIVIA INC, All Rights Reserved.</i>
+<i>Copyright (C) 2000-2015 Robert A. van Engelen, Genivia Inc, All Rights Reserved.</i>
 
 
 <div class="p"><!----></div>
@@ -723,7 +723,7 @@ Developing a service application is easy too. We will use CGI here because it
 is a simple mechanism. This is not the preferred deployment mechanism. Because
 CGI is slow and stateless. Faster services can be developed as a stand-alone
 gSOAP HTTP/HTTPS server (but see comments at the end of this section) or, as
-preferred, the use of Apache module or IIS (included in the gSOAP package under
+preferred, the use of Apache module or IIS with the mod_gsoap ISAPI extension (included in the gSOAP package under
 <i>gsoap/mod_gsoap</i> with instructions).
 
 <div class="p"><!----></div>
@@ -1002,7 +1002,7 @@ soap_destroy(ctx); // delete deserialized objects <br />
 soap_end(ctx); // delete temporaries <br />
 soap_free(ctx); // delete context
 </td></tr></table><br></i>
-Automatic built-in XML validation (enabled with <i>SOAP_XML_STRICT</i>)
+Automatic built-in strict XML validation (enabled with <i>SOAP_XML_STRICT</i>)
 ensures that data members are present so we can safely print them in this
 example, thus ensuring consistency of data with the XML schema. Set the
 <i>ctx</i><tt>-&gt;</tt><i>is</i> input stream to read from a file/string stream
@@ -3871,25 +3871,30 @@ The supported facets are:
   &lt;xs:length&#62; <br />
   &lt;xs:minLength&#62; <br />
   &lt;xs:maxLength&#62; <br />
-  &lt;xs:minInclusive&#62; <br />
-  &lt;xs:maxInclusive&#62; <br />
-  &lt;xs:minExclusive&#62; <br />
-  &lt;xs:maxExclusive&#62; <br />
+  &lt;xs:minInclusive&#62;     &nbsp;&nbsp;&nbsp;<span class="roman">validated only for integer types</span> <br />
+  &lt;xs:maxInclusive&#62;     &nbsp;&nbsp;&nbsp;<span class="roman">validated only for integer types</span> <br />
+  &lt;xs:minExclusive&#62;     &nbsp;&nbsp;&nbsp;<span class="roman">validated only for integer types</span> <br />
+  &lt;xs:maxExclusive&#62;     &nbsp;&nbsp;&nbsp;<span class="roman">validated only for integer types</span> <br />
   &lt;xs:precision&#62;	&nbsp;&nbsp;&nbsp;<span class="roman">maps to float/double with C formatted output</span> <br />
   &lt;xs:scale&#62;		&nbsp;&nbsp;&nbsp;<span class="roman">maps to float/double with C formatted output</span> <br />
   &lt;xs:totalDigits&#62;	&nbsp;&nbsp;&nbsp;<span class="roman">maps to float/double with C formatted output</span> <br />
   &lt;xs:fractionDigits&#62;	&nbsp;&nbsp;&nbsp;<span class="roman">maps to float/double with C formatted output</span> <br />
-  &lt;xs:pattern&#62;		&nbsp;&nbsp;&nbsp;<span class="roman">content not automatically validated yet</span> <br />
-  &lt;xs:union&#62;		&nbsp;&nbsp;&nbsp;<span class="roman">maps to string, content not validated yet</span>
+  &lt;xs:pattern&#62;		&nbsp;&nbsp;&nbsp;<span class="roman">not automatically validated, see note below</span> <br />
+  &lt;xs:union&#62;		&nbsp;&nbsp;&nbsp;<span class="roman">maps to string, content not validated</span>
 </td></tr></table><br></tt>
   Other:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
 &lt;xs:import&#62; <br />
   &lt;xs:include&#62; <br />
   &lt;xs:redefine&#62; <br />
+  &lt;xs:override&#62; <br />
   &lt;xs:annotation&#62;
 </td></tr></table><br></tt>
-All primitive XSD types are supported (with the default mapping shown):
+
+<div class="p"><!----></div>
+All primitive XSD types are supported. A subset of the default type mappings is shown below.
+User-defined mappings can be added to <i>typemap.dat</i> to let <i>wsdl2h</i>
+(re)map XSD types to C/C++ types.
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0B0D0"><tr><td><tt>
 xsd:string &nbsp;&nbsp;&nbsp;<span class="roman">maps to string (<b>char</b>*,<b>wchar_t</b>*,std::string,std::wstring)</span><br />
   xsd:boolean		&nbsp;&nbsp;&nbsp;<span class="roman">maps to bool (C++) or enum xsd__boolean (C)</span> <br />
@@ -3907,9 +3912,17 @@ xsd:string &nbsp;&nbsp;&nbsp;<span class="roman">maps to string (<b>char</b>*,<b
   xsd:hexBinary		&nbsp;&nbsp;&nbsp;<span class="roman">maps to struct xsd__hexBinary</span> <br />
   xsd:base64Bianry 	&nbsp;&nbsp;&nbsp;<span class="roman">maps to struct xsd__base64Binary</span> <br />
   xsd:anyURI		&nbsp;&nbsp;&nbsp;<span class="roman">maps to string</span>  <br />
+  xsd:anyType		&nbsp;&nbsp;&nbsp;<span class="roman">maps to an XML string or DOM with <i>wsdl2h -d</i></span>  <br />
+  xsd:anyAtomicType	&nbsp;&nbsp;&nbsp;<span class="roman">maps to string</span>  <br />
+  xsd:anySimpleType	&nbsp;&nbsp;&nbsp;<span class="roman">maps to string</span>  <br />
   xsd:QName		&nbsp;&nbsp;&nbsp;<span class="roman">maps to _QName</span> (string normalization rules apply)<br />
   xsd:NOTATION		&nbsp;&nbsp;&nbsp;<span class="roman">maps to string</span>
 </td></tr></table><br></tt>
+
+<div class="p"><!----></div>
+Note: automatic validation of <tt>xs:pattern</tt> restricted content is possible with a hook to a regex pattern matching engine, see the <i>fsvalidate</i> and <i>fwvalidate</i> callbacks in Section&nbsp;<a href="#sec:callback">19.7</a>.
+
+<div class="p"><!----></div>
 Note: string targets are defined in the <i>typemap.dat</i> file used by
 <i>wsdl2h</i> to map XSD types. This allows the use of <i><b>char</b>*</i>,
 <i><b>wsha_t*</b></i>, <i>std::string</i>, and <i>std::wstring</i> string types for
@@ -3950,7 +3963,7 @@ xsd:normalizedString &nbsp;&nbsp;&nbsp;<span class="roman">maps to string</span>
 There are several initialization flags to control XML serialization at runtime:
 
 <ul>
-<li> XML content validation is enforced with <i>SOAP_XML_STRICT</i>.
+<li> XML validation is more stricly enforced with <i>SOAP_XML_STRICT</i>.
 <div class="p"><!----></div>
 </li>
 
@@ -3974,6 +3987,16 @@ There are several initialization flags to control XML serialization at runtime:
 <div class="p"><!----></div>
 </li>
 </ul>
+
+<div class="p"><!----></div>
+Strict validation catches all <b>structural</b> XML validation violations. For
+primitive type values, it depends on the C/C++ target type that XSD types are
+mapped to, to catch primitive value content pattern violations. Primitive value
+content validation is performed on non-string types such as numerical and time
+values. String values are not automatocally validated, unless a
+<tt>xs:pattern</tt> is given and the <i>fsvalidate</i> and <i>fwvalidate</i>
+callbacks are implemented by the user. Alternatively, deserialized string
+content can be checked at the application level.
 
 <div class="p"><!----></div>
 To obtain C and/or C++ type definitions for XML schema components, run
@@ -4976,6 +4999,7 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td align="left"><i>-R</i>      </td><td align="left">generate REST operations for REST bindings in the WSDL </td></tr>
 <tr><td align="left"><i>-s</i>      </td><td align="left">don't generate STL code (no std::string and no std::vector) </td></tr>
 <tr><td align="left"><i>-t file</i>  </td><td align="left">use type map file instead of the default file typemap.dat </td></tr>
+<tr><td align="left"><i>-U</i>	</td><td align="left">map Unicode XML names to UTF8-encoded Unicode C/C++ identifiers </td></tr>
 <tr><td align="left"><i>-u</i>	</td><td align="left">don't generate unions </td></tr>
 <tr><td align="left"><i>-v</i>      </td><td align="left">verbose output </td></tr>
 <tr><td align="left"><i>-W</i>	</td><td align="left">suppress warnings </td></tr>
@@ -4987,8 +5011,8 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td align="left"><i>-z3</i>     </td><td align="left">compatibility with 2.7.16 to 2.8.7: qualify element/attribute references</td></tr>
 <tr><td align="left"><i>-z4</i>     </td><td align="left">compatibility up to 2.8.11: don't generate union structs in std::vector </td></tr>
 <tr><td align="left"><i>-z5</i>     </td><td align="left">compatibility up to 2.8.15 </td></tr>
-<tr><td align="left"><i>-z5</i>     </td><td align="left">compatibility up to 2.8.17 </td></tr>
-<tr><td align="left"><i>-_</i>	</td><td align="left">don't generate <i>_USCORE</i> (replace with UNICODE _x005f) </td></tr></table>
+<tr><td align="left"><i>-z6</i>     </td><td align="left">compatibility up to 2.8.17 </td></tr>
+<tr><td align="left"><i>-_</i>	</td><td align="left">don't generate <i>_USCORE</i> (replace with Unicode _x005f) </td></tr></table>
 
 </td></tr></table><br></span>
 
@@ -6828,6 +6852,9 @@ annotation of <i>`<i>tag</i>`</i> placed next to the member field name. This is 
 This maps the <i>t</i> member to the <tt>x:type</tt> XML attribute tag and <i>s</i>
 member to the <tt>x:full-name</tt> XML element tag. Note that both tags are namespace
 qualified as per schema declaration.
+
+<div class="p"><!----></div>
+As of gSOAP 2.8.23, Unicode characters in C/C++ identifiers are accepted by <i>soapcpp2</i> when the source file is encoded in UTF8. C/C++ Unicode names are mapped to Unicode XML tags. For C/C++ source code portability reasons, the <i>wsdl2h</i> tool still converts Unicode XML tag names to ASCII C/C++ identifiers using the <i>_xHHHH</i> naming convention for <i>HHHH</i> character code points. Option <i>wsdl2h -U</i> maps Unicode letters in XML tag names to UTF8-encoded Unicode letters in C/C++ identifiers.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc10.4">
@@ -12259,7 +12286,7 @@ groups you are interested in:
 { <br />
 &nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;soap soap; <br />
 &nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;ip_mreq mcast; <br />
-&nbsp;&nbsp;&nbsp;soap_init1(&amp;soap, SOAP_IO_UDP);
+&nbsp;&nbsp;&nbsp;soap_init1(&amp;soap, SOAP_IO_UDP); <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(!soap_valid_socket(soap_bind(&amp;soap, host, port, 100))) <br />
 &nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_print_fault(&amp;soap, stderr); <br />
@@ -14083,6 +14110,10 @@ To enable SSL for stand-alone gSOAP servers, first install OpenSSL and use optio
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 <i> &gt;  c++ -DWITH_OPENSSL -o myprog myprog.cpp stdsoap2.cpp soapC.cpp soapServer.cpp -lssl -lcrypto</i>
 </td></tr></table><br></span>
+With GNUTLS:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+<i> &gt;  c++ -DWITH_GNUTLS -o myprog myprog.cpp stdsoap2.cpp soapC.cpp soapServer.cpp -lgnutls -lgcrypt -lgpg-error</i>
+</td></tr></table><br></span>
 SSL support for stand-alone gSOAP Web services is enabled by calling <i>soap_ssl_accept</i> to perform the SSL/TLS handshake after <i>soap_accept</i>.
 In addition, a key file, a CA file (or path to certificates), DH file (if RSA is not used), and password need to be supplied. Instructions on how to do this can be found in the
 OpenSSL documentation <i>http://www.openssl.org</i>. See also Section&nbsp;<a href="#sec:ssl">19.24</a>.
@@ -14334,6 +14365,12 @@ or you can add the following line to <i>soapdefs.h</i>:
 #define WITH_OPENSSL
 </td></tr></table><br></i>
 and compile with option <i>-DWITH_SOAPDEFS_H</i> to include <i>soapdefs.h</i> in your project.
+Alternatively, compile with GNUTLS:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+<i> &gt;  c++ -DWITH_GNUTLS myclient.cpp stdsoap.cpp soapC.cpp soapClient.cpp -lgnutls -lgcrypt -lgpg-error</i>
+</td></tr></table><br></span>
+
+<div class="p"><!----></div>
 A client program simply uses the prefix <i>https:</i> instead of <i>http:</i> in the endpoint URL of a service operation call to a
 Web Service to use encrypted transfers (if the service supports HTTPS). You need to specify the client-side key file and password of the keyfile:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
@@ -16252,5 +16289,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 12 Apr 2015, 15:39.</small>
+version 4.00.<br />On 16 Aug 2015, 16:35.</small>
 </html>

@@ -3,11 +3,12 @@
 
 	Example HTTP cookie-enabled server
 
-	Install as CGI application (ck.cgi).
+	Run from command line to start a stand-alone server:
+	$ ./ckserver 8080
+	where 8080 is a port number
 
-	Alternatively, run from command line to start a stand-alone server
-	$ ck.cgi <port>
-	where <port> is a port number
+	Then run the client in a new window:
+	$ ./ckclient
 
 	Please see the ckclient.cpp file for HTTP cookie-related details.
 	Remember to change the soap.cookie_domain value to your host
@@ -47,8 +48,10 @@ int main(int argc, char **argv)
 { int m, s;
   struct soap soap;
   soap_init(&soap);
-  // cookie domain must be the current host name (CGI app)
-  soap.cookie_domain = "www.cs.fsu.edu";
+  // cookie domain for CGI must be the current host name:
+  // soap.cookie_domain = "www.cs.fsu.edu";
+  // Cookie domain for stand-alone server:
+  soap.cookie_domain = "localhost:8080";
   // the path which is used to filter/set cookies with this destination
   soap.cookie_path = "/";
   if (argc < 2)

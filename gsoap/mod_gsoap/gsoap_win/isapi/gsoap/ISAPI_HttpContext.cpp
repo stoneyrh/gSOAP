@@ -67,8 +67,8 @@ bool ISAPI_HttpRequest::AddHeader(EXTENSION_CONTROL_BLOCK& ecb, const char *pszH
   */ 
 bool ISAPI_HttpRequest::ReadHeader(EXTENSION_CONTROL_BLOCK& ecb, LPCTSTR pszVariableName, string& strHeaderValue) {
     bool bRet = true;
-    char szVarName[128]; // :( GetServerVariable uses non-const name parameter, so we make a copy to be save.
-    strncpy(szVarName, pszVariableName, sizeof szVarName);
+    char szVarName[128]; // :( GetServerVariable uses non-const name parameter, so we make a copy to be safe.
+    strncpy_s(szVarName, sizeof(szVarName), pszVariableName, _TRUNCATE);
     char szBuffer[2048];
     DWORD dwBufferSize = sizeof szBuffer;
     BOOL bGet = ecb.GetServerVariable(ecb.ConnID, szVarName, szBuffer, &dwBufferSize);

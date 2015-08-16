@@ -516,7 +516,7 @@ soap_mec_start_alg(struct soap *soap, int alg, const unsigned char *key)
     }
     data->bufidx = soap->buflen - soap->bufidx;
     /* copy buf[bufidx..buflen-1] to data buf */
-    memcpy(data->buf, soap->buf + soap->bufidx, data->bufidx);
+    soap_memcpy((void*)data->buf, data->buflen, (const void*)(soap->buf + soap->bufidx), data->bufidx);
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Alloc buf=%lu, copy %lu message bytes\n", (unsigned long)data->buflen, (unsigned long)data->bufidx));
     /* trigger ffilterrecv() */
     soap->bufidx = soap->buflen;
@@ -684,9 +684,9 @@ soap_mec_upd_enc(struct soap *soap, struct soap_mec_data *data, const char **s, 
   if (m > (int)data->buflen)
   { char *t = data->buf;
     data->buflen = m; /* + slack? */
-    data->buf = (char*)SOAP_MALLOC(soap, data->buflen);
+    data->buf = (char*)SOAP_MALLOC(soap, m);
     if (t)
-    { memcpy(data->buf, t, data->bufidx); /* copy in-use part */
+    { soap_memcpy((void*)data->buf, (size_t)m, (const void*)t, data->bufidx); /* copy in-use part */
       SOAP_FREE(soap, t);
     }
   }
@@ -756,12 +756,12 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Enlarging buffer n=%lu\n", (unsigned long)data->buflen));
       data->buf = (char*)SOAP_MALLOC(soap, data->buflen);
       if (t)
-      { memcpy(data->buf, t, data->bufidx); /* copy old */
+      { soap_memcpy((void*)data->buf, data->buflen, (const void*)t, data->bufidx); /* copy old */
         SOAP_FREE(soap, t);
       }
     }
     /* concat old + new */
-    memcpy(data->buf + data->bufidx, *s, *n);
+    soap_memcpy((void*)(data->buf + data->bufidx), data->buflen - data->bufidx, (const void*)*s, *n);
     *s = data->buf;
     *n += data->bufidx;
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Flush state n=%lu\n", (unsigned long)*n));
@@ -789,7 +789,7 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Enlarging buffer n=%lu\n", (unsigned long)data->buflen));
     data->buf = (char*)SOAP_MALLOC(soap, data->buflen);
     if (t)
-    { memcpy(data->buf, t, data->bufidx); /* copy old part */
+    { soap_memcpy((void*)data->buf, data->buflen, (const void*)t, data->bufidx); /* copy old part */
       SOAP_FREE(soap, t);
     }
   }
@@ -826,7 +826,7 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       data->rest = (char*)SOAP_MALLOC(soap, l);
     }
     data->restlen = l;
-    memcpy(data->rest, r, l);
+    soap_memcpy((void*)data->rest, data->restlen, (const void*)r, l);
   }
   /* debug */
   DBGHEX(TEST, (unsigned char*)(data->buf + data->buflen - k), m);
@@ -838,7 +838,7 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       state = SOAP_MEC_STATE_IV;
     case SOAP_MEC_STATE_IV:
       /* get the IV data from buf[buflen-k] */
-      memmove(data->buf + data->bufidx, data->buf + data->buflen - k, m);
+      soap_memmove((void*)(data->buf + data->bufidx), data->buflen - data->bufidx, (const void*)(data->buf + data->buflen - k), m);
       /* add to IV */
       data->bufidx += m;
       /* got all IV data? */
@@ -867,7 +867,7 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
 	if (ok)
 	{ /* shift rest of data to cipher section */
           k = data->bufidx - EVP_CIPHER_iv_length(data->type);
-	  memmove(data->buf + data->buflen - k, data->buf + EVP_CIPHER_iv_length(data->type), k);
+	  soap_memmove((void*)(data->buf + data->buflen - k), k, (const void*)(data->buf + EVP_CIPHER_iv_length(data->type)), k);
           DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Decrypt %lu bytes\n", (unsigned long)k));
 	  /* decrypt to buf */
 	  len = 0;
@@ -954,12 +954,12 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       *n = data->bufidx + (size_t)len;
       if (data->restlen)
       { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Append %lu bytes from rest\n", data->restlen));
-        memcpy(data->buf + *n, data->rest, data->restlen);
+        soap_memcpy((void*)(data->buf + *n), data->buflen - *n, (const void*)data->rest, data->restlen);
         *n += data->restlen;
       }
       if (k)
       { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Append %lu bytes from input\n", k));
-        memmove(data->buf + *n, t, k);
+        soap_memmove((void*)(data->buf + *n), data->buflen - *n, (const void*)t, k);
         *n += k;
       }
       if (!(data->alg & SOAP_MEC_STORE))
@@ -1197,10 +1197,10 @@ soap_mec_filterrecv(struct soap *soap, char *buf, size_t *len, size_t maxlen)
     return soap->error;
   /* does the result fit in buf[maxlen]? */
   if (*len <= maxlen)
-    memcpy(buf, s, *len); /* yes: copy data to buf[] */
+    soap_memcpy((void*)buf, maxlen, (const void*)s, *len); /* yes: copy data to buf[] */
   else
-  { memcpy(buf, s, maxlen); /* no: copy first part to buf[maxlen] */
-    memmove(data->buf, s + maxlen, *len - maxlen); /* shift rest to the left */
+  { soap_memcpy((void*)buf, maxlen, (const void*)s, maxlen); /* no: copy first part to buf[maxlen] */
+    soap_memmove((void*)data->buf, data->buflen, (const void*)(s + maxlen), *len - maxlen); /* shift rest to the left */
     data->bufidx = *len - maxlen; /* keep rest of the data in s (data->buf) */
     *len = maxlen;
   }

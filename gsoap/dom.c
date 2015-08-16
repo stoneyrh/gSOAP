@@ -176,10 +176,11 @@ out_element(struct soap *soap, const struct soap_dom_element *node, const char *
     return soap->error;
   if (node->type && node->node)
   { if (prefix && *prefix)
-    { char *s = (char*)SOAP_MALLOC(soap, strlen(prefix) + strlen(name) + 2);
+    { size_t l = strlen(prefix) + strlen(name);
+      char *s = (char*)SOAP_MALLOC(soap, l + 2);
       if (!s)
         return soap->error = SOAP_EOM;
-      sprintf(s, "%s:%s", prefix, name);
+      (SOAP_SNPRINTF(s, l + 2, l + 1), "%s:%s", prefix, name);
       soap_putelement(soap, node->node, s, 0, node->type);
       SOAP_FREE(soap, s);
     }
@@ -187,15 +188,16 @@ out_element(struct soap *soap, const struct soap_dom_element *node, const char *
       return soap_putelement(soap, node->node, name, 0, node->type);
   }
   else if (prefix && *prefix)
-  { char *s;
-    if (strlen(prefix) + strlen(name) < sizeof(soap->msgbuf))
+  { size_t l = strlen(prefix) + strlen(name);
+    char *s;
+    if (l + 1 < sizeof(soap->msgbuf))
       s = soap->msgbuf;
     else
-    { s = (char*)SOAP_MALLOC(soap, strlen(prefix) + strlen(name) + 2);
+    { s = (char*)SOAP_MALLOC(soap, l + 2);
       if (!s)
         return soap->error = SOAP_EOM;
     }
-    sprintf(s, "%s:%s", prefix, name);
+    (SOAP_SNPRINTF(s, l + 2, l + 1), "%s:%s", prefix, name);
     soap_element(soap, s, 0, NULL); /* element() */
     if (s != soap->msgbuf)
       SOAP_FREE(soap, s);
@@ -216,6 +218,7 @@ static int
 out_attribute(struct soap *soap, const char *prefix, const char *name, const char *data, const wchar_t *wide, int flag)
 { char *s;
   const char *t;
+  size_t l;
   int err;
   if (wide)
     data = soap_wchar2s(soap, wide);
@@ -231,14 +234,15 @@ out_attribute(struct soap *soap, const char *prefix, const char *name, const cha
     t++;
   else
     t = name;
-  if (strlen(prefix) + strlen(t) < sizeof(soap->msgbuf))
+  l = strlen(prefix) + strlen(t);
+  if (l + 1 < sizeof(soap->msgbuf))
     s = soap->msgbuf;
   else
-  { s = (char*)SOAP_MALLOC(soap, strlen(prefix) + strlen(t) + 2);
+  { s = (char*)SOAP_MALLOC(soap, l + 2);
     if (!s)
       return soap->error = SOAP_EOM;
   } 
-  sprintf(s, "%s:%s", prefix, t);
+  (SOAP_SNPRINTF(s, l + 2, l + 1), "%s:%s", prefix, t);
   if (wide)
     err = soap_set_attr(soap, s, data, 2);
   else if (flag)
@@ -288,8 +292,7 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
     prefix = NULL;
     if (node->nstr && *node->nstr && !(soap->mode & SOAP_DOM_ASIS))
     { if (colon)
-      { strncpy(soap->tag, tag, colon - 1);
-        soap->tag[colon - 1] = '\0';
+      { soap_strncpy(soap->tag, sizeof(soap->tag), tag, colon - 1);
         if ((prefix = soap_push_ns_prefix(soap, soap->tag, node->nstr, 1)) == NULL
          || out_element(soap, node, prefix, tag + colon))
           return soap->error;
@@ -377,15 +380,16 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
         }
         else
         { char *s;
-          if (strlen(prefix) + strlen(tag + colon) < sizeof(soap->msgbuf))
+	  size_t l = strlen(prefix) + strlen(tag + colon);
+          if (l + 1 < sizeof(soap->msgbuf))
 	    s = soap->msgbuf;
 	  else
-	  { s = (char*)SOAP_MALLOC(soap, strlen(prefix) + strlen(tag + colon) + 2);
+	  { s = (char*)SOAP_MALLOC(soap, l + 2);
             if (!s)
               return soap->error = SOAP_EOM;
 	  }
           DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End of DOM node '%s'\n", tag));
-	  sprintf(s, "%s:%s", prefix, tag + colon);
+	  (SOAP_SNPRINTF(s, l + 2, l + 1), "%s:%s", prefix, tag + colon);
 	  soap_pop_namespace(soap);
           if (soap_element_end_out(soap, s))
             return soap->error;
@@ -661,7 +665,7 @@ soap_push_ns_prefix(struct soap *soap, const char *id, const char *ns, int flag)
       }
     }
     if (!id)
-    { sprintf(soap->tag, SOAP_DOMID_FORMAT, soap->idnum++);
+    { (SOAP_SNPRINTF(soap->tag, sizeof(soap->tag), sizeof(SOAP_DOMID_FORMAT) + 20), SOAP_DOMID_FORMAT, soap->idnum++);
       id = soap->tag;
     }
   }
@@ -680,7 +684,7 @@ soap_push_ns_prefix(struct soap *soap, const char *id, const char *ns, int flag)
   }
   np->index = 0; /* for C14N utilized mark */
   if (*np->id)
-  { sprintf(soap->msgbuf, "xmlns:%s", np->id);
+  { (SOAP_SNPRINTF(soap->msgbuf, sizeof(soap->msgbuf), strlen(np->id) + 6), "xmlns:%s", np->id);
     out_attribute(soap, NULL, soap->msgbuf, ns, NULL, flag);
   }
   else

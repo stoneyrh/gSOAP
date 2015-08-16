@@ -1,7 +1,7 @@
 /*
 	soapcpp2_lex.l
 
-	Flex/Lex tokenizer.
+	Flex/Lex tokenizer for C/C++
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -84,10 +84,11 @@ static void module(const char *name, const char *fullname);
 static void import(const char *file);
 static int magic(const char *name);
 %}
+BOM		\xEF\xBB\xBF
 ws		[ \t\v\r\f\n\x1A\xA0]
 digit		[0-9]
-alpha		[a-zA-Z_]
-id		({alpha}|:{alpha})({alpha}|{digit}|::|:{alpha})*
+alpha		([a-zA-Z_\xA8\xAA\xAD\xAF\xB2\xB5\xB7\xB8\xB9\xBA\xBC\xBD\xBE]|[\xC0-\xFF][\x80-\xBF]*|\\u([0-9a-fA-F]{4}))
+id		(:?{alpha})(:?{alpha}|{digit}|::)*
 tag		`[^`\t\v\r\f\n>]+`
 int		{digit}+
 hex		0[xX][0-9a-fA-F]+
@@ -101,6 +102,7 @@ import		#import{ws}+.*\n
 %option nounput
 %x MLCOMMENT
 %%
+^{BOM}			{ /* skip UTF8 BOM */ }
 {ws}			{ /* skip white space */ }
 "/*"			{ BEGIN(MLCOMMENT); }
 <MLCOMMENT>.|\n		{ }

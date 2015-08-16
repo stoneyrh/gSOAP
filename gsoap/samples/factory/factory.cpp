@@ -92,7 +92,8 @@ Factory::~Factory()
 
 // Create a new object, place it in the pool, and return handle
 unsigned int Factory::create(struct soap *soap, enum t__object object, char *name)
-{ for (int i = 0; i < POOLSIZE; i++)
+{ (void)soap;
+  for (int i = 0; i < POOLSIZE; i++)
     if (!ref[++handle % POOLSIZE])	// succeeds if this slot is available
     { t__root *r = NULL;
       if (!handle)
@@ -112,8 +113,9 @@ unsigned int Factory::create(struct soap *soap, enum t__object object, char *nam
       { ref[handle % POOLSIZE] = r;		// add object to the pool
         r->object = object;			// save type
 	if (name)				// save name (if assigned)
-	{ r->name = (char*)malloc(strlen(name+1));
-	  strcpy(r->name, name);
+	{ size_t l = strlen(name);
+	  r->name = (char*)malloc(l + 1);
+	  soap_strcpy(r->name, l + 1, name);
 	}
 	else
 	  r->name = NULL;
@@ -140,10 +142,11 @@ unsigned int Factory::lookup(enum t__object object, char *name)
 unsigned int Factory::rename(unsigned int handle, char *name)
 { t__root *r = get(handle);
   if (r)
-  { if (r->name)
+  { size_t l = strlen(name);
+    if (r->name)
       free(r->name);
-    r->name = (char*)malloc(strlen(name)+1);
-    strcpy(r->name, name);
+    r->name = (char*)malloc(l + 1);
+    soap_strcpy(r->name, l + 1, name);
     r->renew();
     return handle;
   }

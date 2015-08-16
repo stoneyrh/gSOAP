@@ -570,7 +570,7 @@ int
 make_connect(struct soap *server, const char *endpoint)
 { char host[SOAP_TAGLEN];
   int port;
-  strcpy(host, server->host);
+  soap_strcpy(host, sizeof(host), server->host);
   port = server->port;
   soap_set_endpoint(server, endpoint);	/* get host, path, and port */
   server->connect_timeout = server_timeout;
@@ -671,9 +671,8 @@ copy_header(struct soap *sender, struct soap *receiver, const char *endpoint, co
     size_t n = m + (s - h->line) - 5 - (*h->line == 'P');
     if (n >= sizeof(sender->endpoint))
       n = sizeof(sender->endpoint) - 1;
-    strncpy(sender->path, h->line + 4 + (*h->line == 'P'), n - m);
-    sender->path[n - m] = '\0';
-    strcat(sender->endpoint, sender->path);
+    soap_strncpy(sender->path, sizeof(sender->path), h->line + 4 + (*h->line == 'P'), n - m);
+    soap_strncpy(sender->endpoint + m, sizeof(sender->endpoint) - m, sender->path, n - m);
   }
   if (!endpoint || !*endpoint)
     endpoint = sender->endpoint;
@@ -725,7 +724,7 @@ buffer_body(struct soap *sender)
   for (;;)
   { if (!(s = (char*)soap_push_block(sender, NULL, sender->buflen - sender->bufidx)))
       return SOAP_EOM;
-    memcpy(s, sender->buf + sender->bufidx, sender->buflen - sender->bufidx);
+    soap_memcpy((void*)s, sender->buflen - sender->bufidx, (const void*)(sender->buf + sender->bufidx), sender->buflen - sender->bufidx);
     if (soap_recv_raw(sender))
       break;
   }

@@ -37,7 +37,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 static char *getline(char *s, size_t n, FILE *fd);
 static const char *nonblank(const char *s);
 static const char *fill(char *t, int n, const char *s, int e);
-static const char *utf8(char *t, const char *s);
+static const char *utf8(char **t, const char *s, bool start);
 static const char *cstring(const char *s);
 static const char *xstring(const char *s);
 static bool is_integer(const char *s);
@@ -175,22 +175,20 @@ Types::Types()
 int Types::read(const char *file)
 {
   FILE *fd;
-  char buf[1024], xsd[1024], def[1024], use[1024], ptr[1024], uri[1024];
+  char buf[4096], xsd[4096], def[4096], use[4096], ptr[4096], uri[4096];
   const char *s;
   short copy = 0;
   MapOfStringToString eqvtypemap;
-  strcpy(buf, file);
+  soap_strcpy(buf, sizeof(buf), file);
   fd = fopen(buf, "r");
   if (!fd && import_path)
   {
-    strcpy(buf, import_path);
-    strcat(buf, "/");
-    strcat(buf, file);
+    (SOAP_SNPRINTF(buf, sizeof(buf), strlen(import_path) + strlen(file) + 1), "%s/%s", import_path, file);
     fd = fopen(buf, "r");
   }
   if (!fd)
   {
-    fprintf(stderr, "Cannot open file \"%s\"\n", buf);
+    fprintf(stderr, "Cannot open file \"%s\"\n", file);
     return SOAP_EOF;
   }
   fprintf(stderr, "Reading type definitions from type map file \"%s\"\n", buf);
@@ -265,9 +263,9 @@ int Types::read(const char *file)
               const char *t = modtypemap[s];
               if (t)
               {
-        	char *r = (char*)emalloc(strlen(t) + strlen(def) + 1);
-                strcpy(r, t);
-                strcat(r, def);
+		size_t l = strlen(t) + strlen(def);
+        	char *r = (char*)emalloc(l + 1);
+                (SOAP_SNPRINTF(r, l + 1, l), "%s%s", t, def);
                 free((void*)modtypemap[s]);
                 modtypemap[s] = r;
               }
@@ -586,8 +584,9 @@ const char *Types::nsprefix(const char *prefix, const char *URI)
         n = ++syms[s];
       if (n != 1 || !prefix || !*prefix || *prefix == '_')
       {
-        char *t = (char*)emalloc(strlen(s) + 16);
-        sprintf(t, "%s%lu", s, (unsigned long)n);
+	size_t l = strlen(s);
+        char *t = (char*)emalloc(l + 21);
+        (SOAP_SNPRINTF(t, l + 21, l + 20), "%s%lu", s, (unsigned long)n);
         s = t;
       }
       uris[URI] = s;
@@ -597,9 +596,10 @@ const char *Types::nsprefix(const char *prefix, const char *URI)
     // if *prefix == '_', then add prefix string to s
     if (prefix && *prefix == '_')
     {
-      char *t = (char*)emalloc(strlen(s) + 2);
+      size_t l = strlen(s);
+      char *t = (char*)emalloc(l + 2);
       *t = '_';
-      strcpy(t + 1, s);
+      soap_strcpy(t + 1, l + 1, s);
       s = t;
     }
     return s;
@@ -615,16 +615,14 @@ const char *Types::prefix(const char *name)
   {
     s = strchr(name + 1, '"');
     t = (char*)emalloc(s - name);
-    strncpy(t, name + 1, s - name - 1);
-    t[s - name - 1] = '\0';
+    soap_strncpy(t, s - name, name + 1, s - name - 1);
     return nsprefix(NULL, t);
   }
   s = strchr(name, ':');
   if (s)
   {
     t = (char*)emalloc(s - name + 1);
-    strncpy(t, name, s - name);
-    t[s - name] = '\0';
+    soap_strncpy(t, s - name + 1, name, s - name);
     return t;
   }
   return NULL;
@@ -638,8 +636,7 @@ const char *Types::uri(const char *name)
   {
     s = strchr(name + 1, '"');
     t = (char*)emalloc(s - name);
-    strncpy(t, name + 1, s - name - 1);
-    t[s - name - 1] = '\0';
+    soap_strncpy(t, s - name, name + 1, s - name - 1);
     return t;
   }
   s = strchr(name, ':');
@@ -665,7 +662,7 @@ const char *Types::uri(const char *name)
 // Find a C name for a QName. If the name has no qualifier, use URI. Suggest prefix for URI
 const char *Types::fname(const char *prefix, const char *URI, const char *qname, SetOfString *reserved, enum Lookup lookup, bool isqname)
 {
-  char buf[1024], *t;
+  char buf[4096], *t;
   const char *p, *s, *name;
   if (!qname)
   {
@@ -687,8 +684,7 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
     else if (*qname == '"')
     {
       t = (char*)emalloc(s - qname - 1);
-      strncpy(t, qname + 1, s - qname - 2);
-      t[s - qname - 2] = '\0';
+      soap_strncpy(t, s - qname - 1, qname + 1, s - qname - 2);
       URI = t;
     }
     else if (!strncmp(qname, "xs:", 3))	// this hack is necessary since the nsmap table defines "xs" for "xsd"
@@ -699,8 +695,7 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
     else
     {
       t = (char*)emalloc(s - qname + 1);
-      strncpy(t, qname, s - qname);
-      t[s - qname] = '\0';
+      soap_strncpy(t, s - qname + 1, qname, s - qname);
       s = t;
       URI = NULL;
     }
@@ -732,7 +727,7 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
           *t++ = '_';
         if (prefix[1] == '_') // ensures ns prefix starts with __
         {
-          strcpy(t, prefix + 1);
+          soap_strcpy(t, sizeof(buf) - (t - buf), prefix + 1);
           t += strlen(prefix + 1);
         }
       }
@@ -740,6 +735,8 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
       {
         for (; *s; s++)
         {
+	  if (t >= buf + sizeof(buf) - 8)
+	    break;
           if (isalnum(*s))
             *t++ = *s;
           else if (*s == '-' && s[1] != '-' && s != p)
@@ -750,19 +747,17 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
               *t++ = '_';
             else if (!_flag)
             {
-              strcpy(t, "_USCORE");
+              soap_strcpy(t, sizeof(buf) - (t - buf), "_USCORE");
               t += 7;
             }
             else
             {
-              s = utf8(t, s);
-              t += 6;
+              s = utf8(&t, s, t == buf);
             }
           }
           else
           {
-            s = utf8(t, s);
-            t += 6;
+            s = utf8(&t, s, t == buf);
           }
         }
         if (!prefix || *prefix != '*')
@@ -776,22 +771,21 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
     }
     for (s = name; *s; s++)
     {
+      if (t >= buf + sizeof(buf) - 8)
+        break;
       if (isalnum(*s))
         *t++ = *s;
       else if (*s == '-' && s[1] != '-' && s[1] != '\0' && s != name)
         *t++ = '_';
       else if (!_flag && *s == '_')
       {
-        strcpy(t, "_USCORE");
+        soap_strcpy(t, sizeof(buf) - (t - buf), "_USCORE");
         t += 7;
       }
       else
       {
-        s = utf8(t, s);
-        t += 6;
+        s = utf8(&t, s, t == buf);
       }
-      if (t >= buf + sizeof(buf))
-        break;
     }
     *t = '\0';
     s = strchr(buf, ':');
@@ -806,14 +800,16 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
     }
     if (isalpha(*buf) || *buf == '_' || *buf == ':')
     {
-      t = (char*)emalloc(strlen(buf) + 1);
-      strcpy(t, buf);
+      size_t l = strlen(buf);
+      t = (char*)emalloc(l + 1);
+      soap_strcpy(t, l + 1, buf);
     }
     else
     {
-      t = (char*)emalloc(strlen(buf) + 2);
+      size_t l = strlen(buf);
+      t = (char*)emalloc(l + 2);
       *t = '_';
-      strcpy(t + 1, buf);
+      soap_strcpy(t + 1, l + 1, buf);
     }
     s = t;
     if (lookup == LOOKUP)
@@ -877,9 +873,10 @@ const char *Types::tnameptr(bool flag, const char *prefix, const char *URI, cons
       return "char**";
     if (!strchr(s, '*'))
     {
-      char *r = (char*)emalloc(strlen(s) + 2);
-      strcpy(r, s);
-      strcat(r, "*");
+      size_t l = strlen(s);
+      char *r = (char*)emalloc(l + 2);
+      soap_strcpy(r, l + 2, s);
+      soap_strcpy(r + l, 2, "*");
       return r;
     }
   }
@@ -895,8 +892,7 @@ const char *Types::tnamenoptr(const char *prefix, const char *URI, const char *q
   if (s[n - 1] == '*')
   {
     char *r = (char*)emalloc(n);
-    strncpy(r, s, n - 1);
-    r[n - 1] = '\0';
+    soap_strncpy(r, n, s, n - 1);
     return r;
   }
   return s;
@@ -930,9 +926,10 @@ const char *Types::pname(bool flag, const char *prefix, const char *URI, const c
       }
       if (!r && strcmp(s, "_QName") && strcmp(s, "_XML"))	// already pointer or _QName/_XML?
       {
-        char *p = (char*)emalloc(strlen(s) + 2);
-        strcpy(p, s);
-        strcat(p, "*");
+	size_t l = strlen(s);
+        char *p = (char*)emalloc(l + 2);
+        soap_strcpy(p, l + 2, s);
+        soap_strcpy(p + l, 2, "*");
         s = p;
       }
       if (vflag)
@@ -954,10 +951,8 @@ const char *Types::pname(bool flag, const char *prefix, const char *URI, const c
 
 const char *Types::deftname(enum Type type, const char *pointer, bool is_pointer, const char *prefix, const char *URI, const char *qname)
 {
-  char buf[1024];
-  char *s;
-  const char *q = NULL, *t;
-  t = fname(prefix, URI, qname, NULL, LOOKUP, true);
+  char buf[4096];
+  const char *t = fname(prefix, URI, qname, NULL, LOOKUP, true);
   if (deftypemap[t])
   {
     if (vflag)
@@ -970,6 +965,7 @@ const char *Types::deftname(enum Type type, const char *pointer, bool is_pointer
       fprintf(stderr, "Name %s is mapped\n", qname);
     return t;
   }
+  const char *q = NULL;
   switch (type)
   {
     case ENUM:
@@ -988,18 +984,24 @@ const char *Types::deftname(enum Type type, const char *pointer, bool is_pointer
     default:
       break;
   }
+  buf[0] = '\0';
+  size_t n = 0;
   if (q)
   {
-    strcpy(buf, q);
-    strcat(buf, " ");
+    soap_strcpy(buf, sizeof(buf), q);
+    n = strlen(buf);
+    soap_strcpy(buf + n, sizeof(buf) - n, " ");
+    ++n;
   }
-  else
-    buf[0] = '\0';
-  strcat(buf, t);
+  soap_strcpy(buf + n, sizeof(buf) - n, t);
   if (pointer)
-    strcat(buf, pointer);
-  s = (char*)emalloc(strlen(buf) + 1);
-  strcpy(s, buf);
+  {
+    n = strlen(buf);
+    soap_strcpy(buf + n, sizeof(buf) - n, pointer);
+  }
+  n = strlen(buf);
+  char *s = (char*)emalloc(n + 1);
+  soap_strcpy(s, n + 1, buf);
   usetypemap[t] = s;
   if (pointer || is_pointer)
     ptrtypemap[t] = s;
@@ -1020,12 +1022,13 @@ const char *Types::ename(const char *type, const char *value, bool isqname)
       // Add prefix to enum
       if (!*s || (s[0] == '_' && s[1] == '\0'))
         s = "_x0000";
-      char *buf = (char*)emalloc(strlen(type) + strlen(s) + 3);
+      size_t l = strlen(type) + strlen(s);
+      char *buf = (char*)emalloc(l + 3);
       // _xXXXX is OK here
       if (s[0] == '_' && s[1] != 'x' && strncmp(s, "_USCORE", 7))
-        sprintf(buf, "%s_%s", type, s);
+        (SOAP_SNPRINTF(buf, l + 3, l + 1), "%s_%s", type, s);
       else
-        sprintf(buf, "%s__%s", type, s);
+        (SOAP_SNPRINTF(buf, l + 3, l + 2), "%s__%s", type, s);
       s = buf;
     }
     else
@@ -1056,31 +1059,36 @@ const char *Types::sname(const char *URI, const char *name)
   char *t;
   if (!aflag && name)
   {
-    size_t len = 0;
+    size_t l = strlen(name) + 1;
     for (VectorOfString::const_iterator i = scope.begin(); i != scope.end(); ++i)
-      len += strlen(*i) + 1;
-    t = (char*)emalloc(len + strlen(name) + 1);
-    *t = '\0';
+      l += strlen(*i) + 1;
+    t = (char*)emalloc(l);
+    size_t n = 0;
     for (VectorOfString::const_iterator j = scope.begin(); j != scope.end(); ++j)
     {
-      strcat(t, *j);
-      strcat(t, "-");
+      soap_strcpy(t + n, l - n, *j);
+      n = strlen(t);
+      soap_strcpy(t + n, l - n, "-");
+      ++n;
+      if (n >= l)
+	break;
     }
-    strcat(t, name);
+    soap_strcpy(t + n, l - n, name);
     s = fname("_", URI, t, &rnames, NOLOOKUP, true);
     rnames.insert(s);
   }
   else if (URI && *URI)
   {
     s = nsprefix(NULL, URI);
-    t = (char*)emalloc(strlen(s) + 16);
-    sprintf(t, "_%s__struct_%d", s, snum++);
+    size_t l = strlen(s);
+    t = (char*)emalloc(l + 30);
+    (SOAP_SNPRINTF(t, l + 30, l + 29), "_%s__struct_%d", s, snum++);
     s = t;
   }
   else
   {
-    t = (char*)emalloc(16);
-    sprintf(t, "struct_%d", snum++);
+    t = (char*)emalloc(28);
+    (SOAP_SNPRINTF(t, 28, 27), "struct_%d", snum++);
     s = t;
   }
   return s;
@@ -1093,15 +1101,17 @@ const char *Types::uname(const char *URI)
   char *t;
   if (!aflag)
   {
-    size_t len = 0;
+    size_t l = 0;
     for (VectorOfString::const_iterator i = scope.begin(); i != scope.end(); ++i)
-      len += strlen(*i) + 1;
-    t = (char*)emalloc(len + 6);
-    strcpy(t, "union");
+      l += strlen(*i) + 1;
+    t = (char*)emalloc(l + 6);
+    soap_strcpy(t, l + 6, "union");
+    size_t n = 5;
     for (VectorOfString::const_iterator j = scope.begin(); j != scope.end(); ++j)
     {
-      strcat(t, "-");
-      strcat(t, *j);
+      soap_strcpy(t + n, l + 6 - n, "-");
+      soap_strcpy(t + n + 1, l + 5 - n, *j);
+      n = strlen(t);
     }
     s = fname("_", URI, t, &rnames, NOLOOKUP, true);
     rnames.insert(s);
@@ -1109,14 +1119,15 @@ const char *Types::uname(const char *URI)
   else if (URI && *URI)
   {
     s = nsprefix(NULL, URI);
-    t = (char*)emalloc(strlen(s) + 16);
-    sprintf(t, "_%s__union_%d", s, unum++);
+    size_t l = strlen(s);
+    t = (char*)emalloc(l + 30);
+    (SOAP_SNPRINTF(t, l + 30, l + 29), "_%s__union_%d", s, unum++);
     s = t;
   }
   else
   {
-    t = (char*)emalloc(16);
-    sprintf(t, "_union_%d", unum++);
+    t = (char*)emalloc(28);
+    (SOAP_SNPRINTF(t, 28, 27), "_union_%d", unum++);
     s = t;
   }
   return s;
@@ -1129,31 +1140,36 @@ const char *Types::gname(const char *URI, const char *name)
   char *t;
   if (!aflag && name)
   {
-    size_t len = 0;
+    size_t l = strlen(name) + 1;
     for (VectorOfString::const_iterator i = scope.begin(); i != scope.end(); ++i)
-      len += strlen(*i) + 1;
-    t = (char*)emalloc(len + strlen(name) + 1);
-    *t = '\0';
+      l += strlen(*i) + 1;
+    t = (char*)emalloc(l);
+    size_t n = 0;
     for (VectorOfString::const_iterator j = scope.begin(); j != scope.end(); ++j)
     {
-      strcat(t, *j);
-      strcat(t, "-");
+      soap_strcpy(t + n, l - n, *j);
+      n = strlen(t);
+      soap_strcpy(t + n, l - n, "-");
+      ++n;
+      if (n >= l)
+	break;
     }
-    strcat(t, name);
+    soap_strcpy(t + n, l - n, name);
     s = fname("_", URI, t, &rnames, LOOKUP, true);
     rnames.insert(s);
   }
   else if (URI && *URI)
   {
     s = nsprefix(NULL, URI);
-    t = (char*)emalloc(strlen(s) + 16);
-    sprintf(t, "_%s__enum_%d", s, gnum++);
+    size_t l = strlen(s);
+    t = (char*)emalloc(l + 30);
+    (SOAP_SNPRINTF(t, l + 30, l + 29), "_%s__enum_%d", s, gnum++);
     s = t;
   }
   else
   {
-    t = (char*)emalloc(16);
-    sprintf(t, "enum_%d", gnum++);
+    t = (char*)emalloc(28);
+    (SOAP_SNPRINTF(t, 28, 27), "enum_%d", gnum++);
     s = t;
   }
   return s;
@@ -1418,24 +1434,26 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
         format[0] = '\0';
         if (simpleType.restriction->precision && simpleType.restriction->precision->value)
         {
-          strcpy(format, simpleType.restriction->precision->value);
+          soap_strcpy(format, sizeof(format), simpleType.restriction->precision->value);
           fprintf(stream, "/// %sprecision is %s.\n", simpleType.restriction->precision->fixed ? "fixed " : "", simpleType.restriction->precision->value);
         }
         else if (simpleType.restriction->totalDigits && simpleType.restriction->totalDigits->value)
         {
-          strcpy(format, simpleType.restriction->totalDigits->value);
+          soap_strcpy(format, sizeof(format), simpleType.restriction->totalDigits->value);
           fprintf(stream, "/// %snumber of total digits is %s.\n", simpleType.restriction->totalDigits->fixed ? "fixed " : "", simpleType.restriction->totalDigits->value);
         }
         if (simpleType.restriction->scale && simpleType.restriction->scale->value)
         {
-          strcat(format, ".");
-          strcat(format, simpleType.restriction->scale->value);
+	  size_t n = strlen(format);
+          soap_strcpy(format + n, sizeof(format) - n, ".");
+          soap_strcpy(format + n + 1, sizeof(format) - n - 1, simpleType.restriction->scale->value);
           fprintf(stream, "/// %sscale is %s.\n", simpleType.restriction->scale->fixed ? "fixed " : "", simpleType.restriction->scale->value);
         }
         else if (simpleType.restriction->fractionDigits && simpleType.restriction->fractionDigits->value)
         {
-          strcat(format, ".");
-          strcat(format, simpleType.restriction->fractionDigits->value);
+	  size_t n = strlen(format);
+          soap_strcpy(format + n, sizeof(format) - n, ".");
+          soap_strcpy(format + n + 1, sizeof(format) - n - 1, simpleType.restriction->fractionDigits->value);
           fprintf(stream, "/// %snumber of fraction digits is %s.\n", simpleType.restriction->fractionDigits->fixed ? "fixed " : "", simpleType.restriction->fractionDigits->value);
         }
         for (vector<xs__pattern>::const_iterator pattern1 = simpleType.restriction->pattern.begin(); pattern1 != simpleType.restriction->pattern.end(); ++pattern1)
@@ -2684,9 +2702,10 @@ void Types::gen(const char *URI, const xs__seqchoice& sequence, const char *minO
     fprintf(stream, ">\n");
     document(sequence.annotation);
     s = sname(URI, "sequence");
-    t = (char*)emalloc(strlen(s)+2);
-    strcpy(t, "_");
-    strcat(t, s);
+    size_t l = strlen(s);
+    t = (char*)emalloc(l + 2);
+    soap_strcpy(t, l + 2, "_");
+    soap_strcpy(t + 1, l + 1, s);
     s = strstr(s, "__");
     if (!s)
       s = t;
@@ -3442,12 +3461,9 @@ void Types::gen_inh(const char *URI, const xs__complexType *complexType, bool an
 
 void Types::gen_soap_array(const char *t, const char *item, const char *type)
 {
-  char *tmp = NULL, *dims = NULL, size[8];
+  char *tmp = NULL, *dims = NULL, size[24];
   if (type)
-  {
-    tmp = (char*)emalloc(strlen(type) + 1);
-    strcpy(tmp, type);
-  }
+    tmp = (char*)estrdup(type);
   *size = '\0';
   if (tmp)
     dims = strrchr(tmp, '[');
@@ -3464,7 +3480,7 @@ void Types::gen_soap_array(const char *t, const char *item, const char *type)
   {
     char *s = strchr(dims, ']');
     if (s && s != dims)
-      sprintf(size, "[%d]", (int)(s - dims + 1));
+      (SOAP_SNPRINTF(size, 24, 23), "[%d]", (int)(s - dims + 1));
   }
   if (tmp)
   {
@@ -3734,16 +3750,17 @@ static const char *fill(char *t, int n, const char *s, int e)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-static const char *utf8(char *t, const char *s)
+static const char *utf8(char **t, const char *s, bool start)
 {
   unsigned int c = 0;
   unsigned int c1, c2, c3, c4;
-  c = (unsigned char)*s;
+  const char *r = s;
+  c = (unsigned char)*r;
   if (c >= 0x80)
   {
-    c1 = (unsigned char)*++s;
+    c1 = (unsigned char)*++r;
     if (c1 < 0x80)
-      s--;
+      r--;
     else
     {
       c1 &= 0x3F;
@@ -3751,28 +3768,98 @@ static const char *utf8(char *t, const char *s)
         c = ((c & 0x1F) << 6) | c1;
       else
       {
-        c2 = (unsigned char)*++s & 0x3F;
+        c2 = (unsigned char)*++r & 0x3F;
         if (c < 0xF0)
           c = ((c & 0x0F) << 12) | (c1 << 6) | c2;
         else
         {
-          c3 = (unsigned char)*++s & 0x3F;
+          c3 = (unsigned char)*++r & 0x3F;
           if (c < 0xF8)
             c = ((c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | c3;
           else
           {
-            c4 = (unsigned char)*++s & 0x3F;
+            c4 = (unsigned char)*++r & 0x3F;
             if (c < 0xFC)
               c = ((c & 0x03) << 24) | (c1 << 18) | (c2 << 12) | (c3 << 6) | c4;
             else
-              c = ((c & 0x01) << 30) | (c1 << 24) | (c2 << 18) | (c3 << 12) | (c4 << 6) | (*++s & 0x3F);
+              c = ((c & 0x01) << 30) | (c1 << 24) | (c2 << 18) | (c3 << 12) | (c4 << 6) | (*++r & 0x3F);
           }
         }
       }
     }
   }
-  sprintf(t, "_x%.4x", c);
-  return s;
+  if (Uflag &&
+      // Universal character names for identifier characters
+      // E.1 Ranges of characters allowed
+      ( c == 0x00A8
+     || c == 0x00AA
+     || c == 0x00AD
+     || c == 0x00AF
+     || (0x00B2 <= c && c <= 0x00B5)
+     || (0x00B7 <= c && c <= 0x00BA)
+     || (0x00BC <= c && c <= 0x00BE)
+     || (0x00C0 <= c && c <= 0x00D6)
+     || (0x00D8 <= c && c <= 0x00F6)
+     || (0x00F8 <= c && c <= 0x00FF)
+     || (0x0100 <= c && c <= 0x167F)
+     || (0x1681 <= c && c <= 0x180D)
+     || (0x180F <= c && c <= 0x1FFF)
+     || (0x200B <= c && c <= 0x200D)
+     || (0x202A <= c && c <= 0x202E)
+     || (0x203F <= c && c <= 0x2040)
+     || c == 0x2054
+     || (0x2060 <= c && c <= 0x206F)
+     || (0x2070 <= c && c <= 0x218F)
+     || (0x2460 <= c && c <= 0x24FF)
+     || (0x2776 <= c && c <= 0x2793)
+     || (0x2C00 <= c && c <= 0x2DFF)
+     || (0x2E80 <= c && c <= 0x2FFF)
+     || (0x3004 <= c && c <= 0x3007)
+     || (0x3021 <= c && c <= 0x302F)
+     || (0x3031 <= c && c <= 0x303F)
+     || (0x3040 <= c && c <= 0xD7FF)
+     || (0xF900 <= c && c <= 0xFD3D)
+     || (0xFD40 <= c && c <= 0xFDCF)
+     || (0xFDF0 <= c && c <= 0xFE44)
+     || (0xFE47 <= c && c <= 0xFFFD)
+     || (0x10000 <= c && c <= 0x1FFFD)
+     || (0x20000 <= c && c <= 0x2FFFD)
+     || (0x30000 <= c && c <= 0x3FFFD)
+     || (0x40000 <= c && c <= 0x4FFFD)
+     || (0x50000 <= c && c <= 0x5FFFD)
+     || (0x60000 <= c && c <= 0x6FFFD)
+     || (0x70000 <= c && c <= 0x7FFFD)
+     || (0x80000 <= c && c <= 0x8FFFD)
+     || (0x90000 <= c && c <= 0x9FFFD)
+     || (0xA0000 <= c && c <= 0xAFFFD)
+     || (0xB0000 <= c && c <= 0xBFFFD)
+     || (0xC0000 <= c && c <= 0xCFFFD)
+     || (0xD0000 <= c && c <= 0xDFFFD)
+     || (0xE0000 <= c && c <= 0xEFFFD)
+     )
+     &&
+     // E.2 Ranges of characters disallowed initially
+     !(start &&
+	 ( (0x0300 <= c && c <= 0x036F)
+        || (0x1DC0 <= c && c <= 0x1DFF)
+        || (0x20D0 <= c && c <= 0x20FF)
+        || (0xFE20 <= c && c <= 0xFE2F)
+	)
+      )
+     )
+  {
+    soap_strncpy(*t, 7, s, r - s + 1);
+    *t += r - s + 1;
+  }
+  else
+  {
+    // encode up to UCS4 only
+    if (c > 0xFFFF)
+      c = 0xFFFF;
+    (SOAP_SNPRINTF(*t, 7, 6), "_x%4.4x", c);
+    *t += 6;
+  }
+  return r;
 }
 
 static const char *cstring(const char *s)
@@ -3795,7 +3882,7 @@ static const char *cstring(const char *s)
     }
     else if (*s < 32)
     {
-      sprintf(t, "\\%03o", (unsigned int)(unsigned char)*s);
+      (SOAP_SNPRINTF(t, 5, 4), "\\%03o", (unsigned int)(unsigned char)*s);
       t += 4;
     }
     else
@@ -3828,32 +3915,32 @@ static const char *xstring(const char *s)
   {
     if (*s < 32 || *s >= 127)
     {
-      sprintf(t, "&#%.2x;", (unsigned char)*s);
+      (SOAP_SNPRINTF(t, 5, 4), "&#%.2x;", (unsigned char)*s);
       t += 5;
     }
     else if (*s == '<')
     {
-      strcpy(t, "&lt;");
+      soap_strcpy(t, 5, "&lt;");
       t += 4;
     }
     else if (*s == '>')
     {
-      strcpy(t, "&gt;");
+      soap_strcpy(t, 5, "&gt;");
       t += 4;
     }
     else if (*s == '&')
     {
-      strcpy(t, "&amp;");
+      soap_strcpy(t, 6, "&amp;");
       t += 5;
     }
     else if (*s == '"')
     {
-      strcpy(t, "&quot;");
+      soap_strcpy(t, 7, "&quot;");
       t += 6;
     }
     else if (*s == '\\')
     {
-      strcpy(t, "\\\\");
+      soap_strcpy(t, 3, "\\\\");
       t += 2;
     }
     else
@@ -3865,16 +3952,8 @@ static const char *xstring(const char *s)
 
 static LONG64 to_integer(const char *s)
 {
-  LONG64 n;
-#ifdef HAVE_STRTOLL
   char *r;
-  n = soap_strtoll(s, &r, 10);
-#else
-# ifdef HAVE_SSCANF
-  sscanf(s, SOAP_LONG_FORMAT, &n);
-# endif
-#endif
-  return n;
+  return soap_strtoll(s, &r, 10);
 }
 
 static bool is_integer(const char *s)
@@ -3948,8 +4027,9 @@ void *emalloc(size_t size)
 
 char *estrdup(const char *s)
 {
-  char *t = (char*)emalloc(strlen(s) + 1);
-  strcpy(t, s);
+  size_t l = strlen(s);
+  char *t = (char*)emalloc(l + 1);
+  soap_strcpy(t, l + 1, s);
   return t;
 }
 

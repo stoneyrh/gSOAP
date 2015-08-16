@@ -1,9 +1,9 @@
 /*
 
-options.c
+	options.c
 
-Parses command line options and provides options control panel with an
-interactive Web interface for the Web server (webserver.c).
+	Parses command line options and provides options control panel with an
+	interactive Web interface for the Web server (webserver.c).
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -70,8 +70,9 @@ struct option *copy_options(const struct option *options)
       p[n].selections = options[n].selections;
       p[n].selected = options[n].selected;
       if (options[n].value)
-      { p[n].value = (char*)malloc(strlen(options[n].value) + 1);
-        strcpy(p[n].value, options[n].value);
+      { size_t l = strlen(options[n].value);
+	p[n].value = (char*)malloc(l + 1);
+        soap_strcpy(p[n].value, l + 1, options[n].value);
       }
       else
         p[n].value = NULL;
@@ -293,7 +294,7 @@ int html_options(struct soap *soap, struct option *options)
       }
     }
     else
-    { char buf[16];
+    { char buf[24];
       soap_send(soap, n);
       soap_send(soap, "</td><td width='10' background='ls.gif'></td><td bgcolor='#FFFFFF'>&nbsp;</td><td width='10' background='rs.gif'></td><td><input type='text' name='");
       soap_send(soap, n);
@@ -301,7 +302,7 @@ int html_options(struct soap *soap, struct option *options)
       if (p->value)
         soap_send(soap, p->value);
       soap_send(soap, "' size='");
-      sprintf(buf, "%d", p->selected > 0 ? p->selected : 24);
+      (SOAP_SNPRINTF(buf, sizeof(buf), 20), "%d", p->selected > 0 ? p->selected : 24);
       soap_send(soap, buf);
       soap_send(soap, "'><input type='submit' value='Set ");
       soap_send(soap, s);
@@ -326,19 +327,19 @@ static int set_option(const char *key, const char *val, struct option *options)
   { for (p = options; p->name; p++)
     { if (!p->name[0])
       { if (p->value)
-        { char *s = (char*)malloc(strlen(p->value) + strlen(val) + 1);
+        { size_t l = strlen(p->value) + strlen(val);
+	  char *s = (char*)malloc(l + 2);
 	  if (s)
-	  { strcpy(s, p->value);
-	    strcat(s, " ");
-	    strcat(s, val);
+	  { (SOAP_SNPRINTF(s, l + 2, l + 1), "%s %s", p->value, val);
 	    free((void*)p->value);
 	    p->value = s;
           }
         }
         else
-        { p->value = (char*)malloc(strlen(val) + 1);
+        { size_t l = strlen(val);
+	  p->value = (char*)malloc(l + 1);
           if (p->value)
-            strcpy(p->value, val);
+            soap_strcpy(p->value, l + 1, val);
         }
         return 2;
       }
@@ -385,13 +386,15 @@ static int set_option(const char *key, const char *val, struct option *options)
 }
 
 static int set_selection(const char *val, struct option *p)
-{ if (strchr(p->selections, ' '))
+{ size_t l;
+  if (strchr(p->selections, ' '))
     return p->selected = find_selection(val, p->selections);
   if (p->value)
     free(p->value);
-  p->value = (char*)malloc(strlen(val) + 1);
+  l = strlen(val);
+  p->value = (char*)malloc(l + 1);
   if (p->value)
-    strcpy(p->value, val);
+    soap_strcpy(p->value, l + 1, val);
   return 0;
 }
 

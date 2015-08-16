@@ -85,8 +85,7 @@ int main(int argc, char **argv)
   }
   soap_destroy(soap);
   soap_end(soap);
-  soap_done(soap);
-  free(soap);
+  soap_free(soap);
   return 0;
 }
 

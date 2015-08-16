@@ -79,8 +79,7 @@ Root::Root()
 
 Root::Root(const char *factory, enum t__object object, char *name)
 { soap = soap_new();
-  endpoint = (char*)soap_malloc(soap, strlen(factory)+1);
-  strcpy(endpoint, factory);
+  endpoint = soap_strdup(soap, factory);
   status = FACTORY_NOTFOUND;
   if (name)
     if (soap_call_ns__lookup(soap, endpoint, "", object, name, status))
@@ -97,8 +96,7 @@ Root::~Root()
     soap_print_fault(soap, stderr);	// for demo, just print
   soap_destroy(soap);
   soap_end(soap);
-  soap_done(soap);
-  free(soap);
+  soap_free(soap);
 }
 
 void Root::rename(char *name)

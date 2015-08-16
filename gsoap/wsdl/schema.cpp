@@ -98,9 +98,6 @@ xs__schema::xs__schema(struct soap *copy, const char *cwd, const char *loc)
   soap->socket = SOAP_INVALID_SOCKET;
   soap->recvfd = 0;
   soap->sendfd = 1;
-  /* no longer required, since we keep the host name:
-  strcpy(soap->host, copy->host);
-  */
   soap_default(soap);
   soap->fignore = warn_ignore;
   soap->encodingStyle = NULL;
@@ -404,14 +401,16 @@ int xs__schema::read(const char *cwd, const char *loc)
     }
     else if (cwd && (!strncmp(cwd, "http://", 7) || !strncmp(cwd, "https://", 8)))
     {
-      char *s;
-      location = (char*)soap_malloc(soap, strlen(cwd) + strlen(loc) + 2);
-      strcpy(location, cwd);
-      s = strrchr(location, '/');
+      size_t l = strlen(cwd) + strlen(loc);
+      location = (char*)soap_malloc(soap, l + 2);
+      soap_strcpy(location, l + 2, cwd);
+      char *s = strrchr(location, '/');
       if (s)
         *s = '\0';
-      strcat(location, "/");
-      strcat(location, loc);
+      size_t n = strlen(location);
+      soap_strcpy(location + n, l + 2 - n, "/");
+      ++n;
+      soap_strcpy(location + n, l + 2 - n, loc);
       fprintf(stderr, "\nConnecting to '%s' to retrieve relative path '%s' schema...\n", location, loc);
       if (soap_connect_command(soap, SOAP_GET, location, NULL))
       {
@@ -427,28 +426,33 @@ int xs__schema::read(const char *cwd, const char *loc)
       {
         if (cwd)
         {
-          char *s;
-          location = (char*)soap_malloc(soap, strlen(cwd) + strlen(loc) + 2);
-          strcpy(location, cwd);
-          s = strrchr(location, '/');
+	  size_t l = strlen(cwd) + strlen(loc);
+          location = (char*)soap_malloc(soap, l + 2);
+          soap_strcpy(location, l + 2, cwd);
+          char *s = strrchr(location, '/');
 #ifdef WIN32
           if (!s)
             s = strrchr(location, '\\');
 #endif
           if (s)
             *s = '\0';
-          strcat(location, "/");
-          strcat(location, loc);
+	  size_t n = strlen(location);
+	  soap_strcpy(location + n, l + 2 - n, "/");
+	  ++n;
+	  soap_strcpy(location + n, l + 2 - n, loc);
           if (!strncmp(location, "file://", 7))
             location += 7;
           soap->recvfd = open(location, O_RDONLY, 0);
         }
         if (soap->recvfd < 0 && import_path)
         {
-          location = (char*)soap_malloc(soap, strlen(import_path) + strlen(loc) + 2);
-          strcpy(location, import_path);
-          strcat(location, "/");
-          strcat(location, loc);
+	  size_t l = strlen(import_path) + strlen(loc);
+          location = (char*)soap_malloc(soap, l + 2);
+          soap_strcpy(location, l + 2, import_path);
+	  size_t n = strlen(location);
+	  soap_strcpy(location + n, l + 2 - n, "/");
+	  ++n;
+	  soap_strcpy(location + n, l + 2 - n, loc);
           if (!strncmp(location, "file://", 7))
             location += 7;
           soap->recvfd = open(location, O_RDONLY, 0);
@@ -1285,11 +1289,13 @@ int xs__element::traverse(xs__schema &schema)
           xs__element *elt = this;
           if (!elementPtr())
           {
-            elt = new xs__element;
+            elt = soap_new_xs__element(schema.soap);
+	    elt->soap_default(schema.soap);
             elt->name = name;
             elt->form = form;
             elt->elementPtr(this); // create element ref in substitutionsGroup
             elt->schemaPtr(schemaPtr());
+	    elt->targetNamespace = NULL;
           }
           (*i).substitutions.push_back(elt);
           if (vflag)
@@ -1316,11 +1322,13 @@ int xs__element::traverse(xs__schema &schema)
               xs__element *elt = this;
               if (!elementPtr())
               {
-        	elt = new xs__element;
+        	elt = soap_new_xs__element(schema.soap);
+		elt->soap_default(schema.soap);
                 elt->name = name;
                 elt->form = form;
         	elt->elementPtr(this); // create element ref in substitutionsGroup
         	elt->schemaPtr(schemaPtr());
+		elt->targetNamespace = NULL;
               }
               (*j).substitutions.push_back(elt);
               if (vflag)

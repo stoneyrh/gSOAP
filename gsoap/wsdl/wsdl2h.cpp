@@ -73,6 +73,7 @@ int _flag = 0,
     Rflag = 0,
     sflag = 0,
     uflag = 0,
+    Uflag = 0,
     vflag = 0,
     wflag = 0,
     Wflag = 0,
@@ -157,9 +158,9 @@ A commercial-use license is available from Genivia, Inc., contact@genivia.com\n\
 
 int main(int argc, char **argv)
 {
-  init();
   fprintf(stderr, "%s", copyrightnotice);
   options(argc, argv);
+  init();
   Definitions def;
   wsdl__definitions definitions;
   definitions.read(infiles, infile);
@@ -337,8 +338,9 @@ static void options(int argc, char **argv)
               fprintf(stderr, "wsdl2h: Option -r requires proxy host:port:userid:passwd or :userid:passwd authentication argument\n");
             if (proxy_host)
 	    {
-	      char *s = (char*)emalloc(strlen(proxy_host) + 1);
-	      strcpy(s, proxy_host);
+	      size_t l = strlen(proxy_host);
+	      char *s = (char*)emalloc(l + 1);
+	      soap_strcpy(s, l + 2, proxy_host);
 	      proxy_host = s;
 	      s = strchr(proxy_host, ':');
 	      if (s)
@@ -390,6 +392,9 @@ static void options(int argc, char **argv)
             else
               fprintf(stderr, "wsdl2h: Option -t requires a type map file argument\n");
 	    break;
+	  case 'U':
+	    Uflag = 1;
+	    break;
 	  case 'u':
 	    uflag = 1;
 	    break;
@@ -420,7 +425,7 @@ static void options(int argc, char **argv)
 	    break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-t typemapfile] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-t typemapfile] [-U] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -b	bi-directional operations (duplex ops) added to serve one-way responses\n\
@@ -449,6 +454,7 @@ static void options(int argc, char **argv)
         connect with authentication credentials (digest auth requires SSL)\n\
 -s      don't generate STL code (no std::string and no std::vector)\n\
 -tfile  use type map file instead of the default file typemap.dat\n\
+-U      allow UTF8-encoded Unicode C/C++ identifiers when mapping XML tag names\n\
 -u      don't generate unions\n\
 -v      verbose output\n\
 -W      suppress warnings\n\
@@ -496,9 +502,10 @@ infile.wsdl infile.xsd http://www... list of input sources (if none: use stdin)\
         }
         else
         {
-	  outfile = (char*)emalloc(strlen(infile[0]) + 3);
-          strcpy(outfile, infile[0]);
-          strcat(outfile, ".h");
+	  size_t l = strlen(infile[0]);
+	  outfile = (char*)emalloc(l + 3);
+          soap_strcpy(outfile, l + 3, infile[0]);
+          soap_strcpy(outfile + l, 3, ".h");
         }
       }
     }
@@ -537,21 +544,21 @@ struct Namespace namespaces[] =
   {"mime", "http://schemas.xmlsoap.org/wsdl/mime/"},
   {"xmime", "http://www.w3.org/2005/05/xmlmime"},
   {"dime", "http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/", "http://schemas.xmlsoap.org/ws/*/dime/wsdl/"},
-  {"sp", "http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702", "http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"},
   {"wsdl", "http://schemas.xmlsoap.org/wsdl/", "http://www.w3.org/ns/wsdl"},
   {"wsdli", "http://www.w3.org/ns/wsdl-instance"},
   {"wsdlx", "http://www.w3.org/ns/wsdl-extensions"},
   {"wsoap", "http://www.w3.org/ns/wsdl/soap"},
   {"whttp", "http://www.w3.org/ns/wsdl/http"},
   {"wrpc", "http://www.w3.org/ns/wsdl/rpc"},
-  {"wsa_", "http://www.w3.org/2005/08/addressing"},
   {"wsaw", "http://www.w3.org/2006/05/addressing/wsdl"},
+  {"gwsdl", "http://www.gridforum.org/namespaces/2003/03/gridWSDLExtensions"},
+  {"wsa_", "http://www.w3.org/2005/08/addressing"},
   {"wsam", "http://www.w3.org/2007/05/addressing/metadata"},
   {"wsrmp", "http://schemas.xmlsoap.org/ws/2005/02/rm/policy", "http://docs.oasis-open.org/ws-rx/wsrmp/*"},
-  {"wsp", "http://www.w3.org/ns/ws-policy", "http://schemas.xmlsoap.org/ws/2004/09/policy"},
-  {"wst", "http://docs.oasis-open.org/ws-sx/ws-trust/200512"},
+  {"sp", "http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702", "http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"},
+  {"wsp_", "http://www.w3.org/ns/ws-policy", "http://schemas.xmlsoap.org/ws/2004/09/policy"},
+  {"wst_", "http://docs.oasis-open.org/ws-sx/ws-trust/200512"},
   {"wsu_", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"},
-  {"gwsdl", "http://www.gridforum.org/namespaces/2003/03/gridWSDLExtensions"},
   {"plnk","http://docs.oasis-open.org/wsbpel/2.0/plnktype"},
   {"vprop","http://docs.oasis-open.org/wsbpel/2.0/varprop"},
 #ifdef WITH_BPEL

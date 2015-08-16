@@ -1,6 +1,7 @@
 /*
         wsc.h
 
+	WS-SecureConversation 2005/12
         Generated with:
         wsdl2h -cex -o wsc.h -t WS/WS-typemap.dat WS/WS-SecureConversation.xsd
 
@@ -8,11 +9,10 @@
         - Changed //gsoap wsc schema namespace directive to import directive
 */
 
-
 /******************************************************************************\
  *                                                                            *
  * Definitions                                                                *
- *   http://schemas.xmlsoap.org/ws/2005/02/sc                                 *
+ *   http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512            *
  *                                                                            *
 \******************************************************************************/
 
@@ -32,9 +32,8 @@
  *                                                                            *
 \******************************************************************************/
 
-
-#define SOAP_NAMESPACE_OF_wsc	"http://schemas.xmlsoap.org/ws/2005/02/sc"
-//gsoap wsc   schema import:	http://schemas.xmlsoap.org/ws/2005/02/sc
+#define SOAP_NAMESPACE_OF_wsc	"http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512"
+//gsoap wsc   schema import:	http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512
 //gsoap wsc   schema elementForm:	qualified
 //gsoap wsc   schema attributeForm:	unqualified
 
@@ -44,52 +43,57 @@
  *                                                                            *
 \******************************************************************************/
 
-
-/// Imported element "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":SecurityTokenReference from typemap /Users/engelen/Projects/gsoap/WS/WS-typemap.dat.
+/// Imported element ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":SecurityTokenReference" from typemap "/Users/engelen/Projects/gsoap/WS/WS-typemap.dat".
 
 
 /******************************************************************************\
  *                                                                            *
  * Schema Types and Top-Level Elements and Attributes                         *
- *   http://schemas.xmlsoap.org/ws/2005/02/sc                                 *
+ *   http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512            *
  *                                                                            *
 \******************************************************************************/
 
-
-/// union of values "wsc:FaultCodeType xs:QName"
+/// @brief Union of values from member types "wsc:FaultCodeType xs:QName".
 typedef char* wsc__FaultCodeOpenEnumType;
 
-/// "http://schemas.xmlsoap.org/ws/2005/02/sc":FaultCodeType is a simpleType restriction of xs:QName.
+/// @brief "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":FaultCodeType is a simpleType restriction of XSD type xs:QName.
+///
 enum wsc__FaultCodeType
 {
-	wsc__BadContextToken,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2005/02/sc":BadContextToken"
-	wsc__UnsupportedContextToken,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2005/02/sc":UnsupportedContextToken"
-	wsc__UnknownDerivationSource,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2005/02/sc":UnknownDerivationSource"
-	wsc__RenewNeeded,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2005/02/sc":RenewNeeded"
-	wsc__UnableToRenew,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2005/02/sc":UnableToRenew"
+	wsc__BadContextToken,	///< xs:QName value=""http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":BadContextToken"
+	wsc__UnsupportedContextToken,	///< xs:QName value=""http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":UnsupportedContextToken"
+	wsc__UnknownDerivationSource,	///< xs:QName value=""http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":UnknownDerivationSource"
+	wsc__RenewNeeded,	///< xs:QName value=""http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":RenewNeeded"
+	wsc__UnableToRenew,	///< xs:QName value=""http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":UnableToRenew"
 };
+
 
 /******************************************************************************\
  *                                                                            *
  * Schema Complex Types and Top-Level Elements                                *
- *   http://schemas.xmlsoap.org/ws/2005/02/sc                                 *
+ *   http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512            *
  *                                                                            *
 \******************************************************************************/
 
-
-/// "http://schemas.xmlsoap.org/ws/2005/02/sc":SecurityContextTokenType is a complexType.
-/// @brief Actual content model is non-deterministic, hence wildcard. The following shows intended content model: <xs:element ref='wsc:Identifier' minOccurs='1' /> <xs:element ref='wsc:Instance' minOccurs='0' /> <xs:any namespace='##any' processContents='lax' minOccurs='0' maxOccurs='unbounded' />
+/// @brief "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":SecurityContextTokenType is a complexType.
+///
+/// <PRE><BLOCKQUOTE>
+///   Actual content model is non-deterministic, hence wildcard. The following shows intended content model:
+///   <xs:element ref='wsc:Identifier' minOccurs='1' />
+///   <xs:element ref='wsc:Instance' minOccurs='0' />
+///   <xs:any namespace='##any' processContents='lax' minOccurs='0' maxOccurs='unbounded' />
+/// </BLOCKQUOTE></PRE>
 struct wsc__SecurityContextTokenType
 {
-/// TODO: <any namespace="##any" minOccurs="0" maxOccurs="unbounded">
-/// TODO: Schema extensibility is user-definable.
+/// @todo <any namespace="##any" minOccurs="0" maxOccurs="unbounded">
+/// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
 ///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
 /// Imported attribute reference "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd":Id.
    @char*                                wsu__Id                        0;	///< Optional attribute.
-/// <anyAttribute namespace="##other">
-/// TODO: Schema extensibility is user-definable.
+/// @todo <anyAttribute namespace="##other">.
+/// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this attribute.
 ///       Use wsdl2h option -d for xsd__anyAttribute DOM (soap_dom_attribute).
@@ -99,93 +103,91 @@ struct wsc__SecurityContextTokenType
        char*                                Instance;
 };
 
-/// "http://schemas.xmlsoap.org/ws/2005/02/sc":DerivedKeyTokenType is a complexType.
+/// @brief "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":DerivedKeyTokenType is a complexType.
+///
 struct wsc__DerivedKeyTokenType
 {
 /// Imported element reference "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":SecurityTokenReference.
     _wsse__SecurityTokenReference*       wsse__SecurityTokenReference   0;	///< Optional element.
-/// Element Properties of type "http://schemas.xmlsoap.org/ws/2005/02/sc":PropertiesType.
+/// Element "Properties" of XSD type "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":PropertiesType.
     struct wsc__PropertiesType*          Properties                     0;	///< Optional element.
-/// SEQUENCE OF ELEMENTS <xs:sequence minOccurs="0">
-   $int                                  __size_DerivedKeyTokenType_sequence 0;
+//  BEGIN SEQUENCE <xs:sequence minOccurs="0">
     struct __wsc__DerivedKeyTokenType_sequence
     {
-/// CHOICE OF ELEMENTS <xs:choice>
+//  BEGIN CHOICE <xs:choice>
    $int                                  __union_DerivedKeyTokenType   ;	///< Union _wsc__union_DerivedKeyTokenType selector: set to SOAP_UNION__wsc__union_DerivedKeyTokenType_<fieldname>
     union _wsc__union_DerivedKeyTokenType
     {
-/// Element Generation of type xs:unsignedLong.
+/// Element "Generation" of XSD type xs:unsignedLong.
     ULONG64                              Generation                     1;	///< Required element.
-/// Element Offset of type xs:unsignedLong.
+/// Element "Offset" of XSD type xs:unsignedLong.
     ULONG64                              Offset                         1;	///< Required element.
     }                                    union_DerivedKeyTokenType     ;
 //  END OF CHOICE
-/// Element Length of type xs:unsignedLong.
+/// Element "Length" of XSD type xs:unsignedLong.
     ULONG64*                             Length                         0;	///< Optional element.
-    }                                   *__DerivedKeyTokenType_sequence;
+    }                                   *__DerivedKeyTokenType_sequence 0;
 //  END OF SEQUENCE
-/// Element reference "http://schemas.xmlsoap.org/ws/2005/02/sc":Label.
+/// Element reference "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512:""http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":Label.
     char*                                Label                          0;	///< Optional element.
-/// Element reference "http://schemas.xmlsoap.org/ws/2005/02/sc":Nonce.
+/// Element reference "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512:""http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":Nonce.
     char*                                Nonce                          0;	///< Optional element.
 /// Imported attribute reference "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd":Id.
    @char*                                wsu__Id                        0;	///< Optional attribute.
-/// Attribute Algorithm of type xs:anyURI.
+/// Attribute "Algorithm" of XSD type xs:anyURI.
    @char*                                Algorithm                      0;	///< Optional attribute.
 };
 
-/// "http://schemas.xmlsoap.org/ws/2005/02/sc":PropertiesType is a complexType.
+/// @brief "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":PropertiesType is a complexType.
+///
 struct wsc__PropertiesType
 {
-/// TODO: <any namespace="##any" minOccurs="0" maxOccurs="unbounded">
-/// TODO: Schema extensibility is user-definable.
+/// @todo <any namespace="##any" minOccurs="0" maxOccurs="unbounded">
+/// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
 ///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
 };
 
+
 /******************************************************************************\
  *                                                                            *
  * Additional Top-Level Elements                                              *
- *   http://schemas.xmlsoap.org/ws/2005/02/sc                                 *
+ *   http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512            *
  *                                                                            *
 \******************************************************************************/
 
+/// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":SecurityContextToken of XSD type "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":SecurityContextTokenType.
+/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
 
-/// Top-level root element "http://schemas.xmlsoap.org/ws/2005/02/sc":SecurityContextToken of type "http://schemas.xmlsoap.org/ws/2005/02/sc":SecurityContextTokenType.
-/// Note: use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+/// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":Identifier of XSD type xs:anyURI.
+// "_wsc__Identifier" element definition intentionally left blank.
+/// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":Instance of XSD type xs:string.
+// "_wsc__Instance" element definition intentionally left blank.
+/// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":DerivedKeyToken of XSD type "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":DerivedKeyTokenType.
+/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
 
-/// Top-level root element "http://schemas.xmlsoap.org/ws/2005/02/sc":Identifier of type xs:anyURI.
-// '_wsc__Identifier' element definition intentionally left blank.
-
-/// Top-level root element "http://schemas.xmlsoap.org/ws/2005/02/sc":Instance of type xs:string.
-// '_wsc__Instance' element definition intentionally left blank.
-
-/// Top-level root element "http://schemas.xmlsoap.org/ws/2005/02/sc":DerivedKeyToken of type "http://schemas.xmlsoap.org/ws/2005/02/sc":DerivedKeyTokenType.
-/// Note: use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
-
-/// Top-level root element "http://schemas.xmlsoap.org/ws/2005/02/sc":Name of type xs:anyURI.
-// '_wsc__Name' element definition intentionally left blank.
-
-/// Top-level root element "http://schemas.xmlsoap.org/ws/2005/02/sc":Label of type xs:string.
-// '_wsc__Label' element definition intentionally left blank.
-
-/// Top-level root element "http://schemas.xmlsoap.org/ws/2005/02/sc":Nonce of type xs:base64Binary.
-// '_wsc__Nonce' element definition intentionally left blank.
+/// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":Name of XSD type xs:anyURI.
+// "_wsc__Name" element definition intentionally left blank.
+/// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":Label of XSD type xs:string.
+// "_wsc__Label" element definition intentionally left blank.
+/// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":Nonce of XSD type xs:base64Binary.
+// "_wsc__Nonce" element definition intentionally left blank.
 
 /******************************************************************************\
  *                                                                            *
  * Additional Top-Level Attributes                                            *
- *   http://schemas.xmlsoap.org/ws/2005/02/sc                                 *
+ *   http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512            *
  *                                                                            *
 \******************************************************************************/
 
+/// @brief Top-level attribute "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":Instance of simpleType xs:string.
+// "_wsc__Instance" attribute definition intentionally left blank.
+/// @brief Top-level attribute "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":Nonce of simpleType xs:base64Binary.
+// "_wsc__Nonce" attribute definition intentionally left blank.
+/// @brief Top-level attribute "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512":Length of simpleType xs:unsignedLong.
+/// @note Use wsdl2h option -g to auto-generate a top-level attribute declaration and processing code.
 
-/// Top-level attribute "http://schemas.xmlsoap.org/ws/2005/02/sc":Instance of simpleType xs:string.
-// '_wsc__Instance' attribute definition intentionally left blank.
-
-/// Top-level attribute "http://schemas.xmlsoap.org/ws/2005/02/sc":Nonce of simpleType xs:base64Binary.
-// '_wsc__Nonce' attribute definition intentionally left blank.
 
 /******************************************************************************\
  *                                                                            *
@@ -210,24 +212,30 @@ your code to import these data type and function declarations. Only use the
 soapcpp2-generated files in your project build. Do not include the wsdl2h-
 generated .h file in your code.
 
-XML content can be retrieved from:
+Data can be read in XML and deserialized from:
   - a file descriptor, using soap->recvfd = fd
   - a socket, using soap->socket = ...
   - a C++ stream, using soap->is = ...
   - a buffer, using the soap->frecv() callback
 
-XML content can be stored to:
+Data can be serialized in XML and written to:
   - a file descriptor, using soap->sendfd = fd
   - a socket, using soap->socket = ...
   - a C++ stream, using soap->os = ...
   - a buffer, using the soap->fsend() callback
 
+The following options are available for (de)serialization control:
+  - soap->encodingStyle = NULL; to remove SOAP 1.1/1.2 encodingStyle
+  - soap_mode(soap, SOAP_XML_TREE); XML without id-ref (no cycles!)
+  - soap_mode(soap, SOAP_XML_GRAPH); XML with id-ref (including cycles)
+  - soap_set_namespaces(soap, struct Namespace *nsmap); to set xmlns bindings
 
-@section wsc Top-level root elements of schema "http://schemas.xmlsoap.org/ws/2005/02/sc"
 
-  - <wsc:SecurityContextToken> (use wsdl2h option -g to auto-generate)
+@section wsc Top-level root elements of schema "http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512"
 
-  - <wsc:Identifier> @ref _wsc__Identifier
+  - <SecurityContextToken> (use wsdl2h option -g to auto-generate)
+
+  - <Identifier> @ref _wsc__Identifier
     @code
     // Reader (returns SOAP_OK on success):
     soap_read__wsc__Identifier(struct soap*, char*);
@@ -235,7 +243,7 @@ XML content can be stored to:
     soap_write__wsc__Identifier(struct soap*, char*);
     @endcode
 
-  - <wsc:Instance> @ref _wsc__Instance
+  - <Instance> @ref _wsc__Instance
     @code
     // Reader (returns SOAP_OK on success):
     soap_read__wsc__Instance(struct soap*, char*);
@@ -243,9 +251,9 @@ XML content can be stored to:
     soap_write__wsc__Instance(struct soap*, char*);
     @endcode
 
-  - <wsc:DerivedKeyToken> (use wsdl2h option -g to auto-generate)
+  - <DerivedKeyToken> (use wsdl2h option -g to auto-generate)
 
-  - <wsc:Name> @ref _wsc__Name
+  - <Name> @ref _wsc__Name
     @code
     // Reader (returns SOAP_OK on success):
     soap_read__wsc__Name(struct soap*, char*);
@@ -253,7 +261,7 @@ XML content can be stored to:
     soap_write__wsc__Name(struct soap*, char*);
     @endcode
 
-  - <wsc:Label> @ref _wsc__Label
+  - <Label> @ref _wsc__Label
     @code
     // Reader (returns SOAP_OK on success):
     soap_read__wsc__Label(struct soap*, char*);
@@ -261,7 +269,7 @@ XML content can be stored to:
     soap_write__wsc__Label(struct soap*, char*);
     @endcode
 
-  - <wsc:Nonce> @ref _wsc__Nonce
+  - <Nonce> @ref _wsc__Nonce
     @code
     // Reader (returns SOAP_OK on success):
     soap_read__wsc__Nonce(struct soap*, char*);

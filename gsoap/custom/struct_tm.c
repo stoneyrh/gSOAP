@@ -5,11 +5,8 @@
 
 	Compile this file and link it with your code.
 
-	Changes:
-	Feb 8, 2008: fixed local time to internal GMT conversion
-
 gSOAP XML Web services tools
-Copyright (C) 2000-2008, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, the gSOAP public license, OR Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -24,7 +21,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2008, Robert van Engelen, Genivia, Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -55,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "soapH.h"
 
 void soap_default_xsd__dateTime(struct soap *soap, struct tm *a)
-{ memset(a, 0, sizeof(struct tm));
+{ memset((void*)a, 0, sizeof(struct tm));
 }
 
 void soap_serialize_xsd__dateTime(struct soap *soap, struct tm const *a)
@@ -76,82 +73,82 @@ int soap_out_xsd__dateTime(struct soap *soap, const char *tag, int id, const str
 int soap_s2xsd__dateTime(struct soap *soap, const char *s, struct tm *a)
 { memset((void*)a, 0, sizeof(struct tm));
   if (s)
-  { char zone[32];
-    const char *t;
-    if (strchr(s, '-'))
-      t = "%d-%d-%dT%d:%d:%d%31s";
-    else if (strchr(s, ':'))
-      t = "%4d%2d%2dT%d:%d:%d%31s";
-    else /* parse non-XSD-standard alternative ISO 8601 format */
-      t = "%4d%2d%2dT%2d%2d%2d%31s";
-    if (sscanf(s, t, &a->tm_year, &a->tm_mon, &a->tm_mday, &a->tm_hour, &a->tm_min, &a->tm_sec, zone) < 6)
-      return soap->error = SOAP_TYPE;
-    a->tm_wday = -1;
-    a->tm_yday = -1;
+  { char *t;
+    unsigned long d;
+    d = soap_strtoul(s, &t, 10);
+    if (*t == '-')
+    { /* YYYY-MM-DD */
+      a->tm_year = (int)d;
+      a->tm_mon = (int)soap_strtoul(t + 1, &t, 10);
+      a->tm_mday = (int)soap_strtoul(t + 1, &t, 10);
+    }
+    else
+    { /* YYYYMMDD */
+      a->tm_year = (int)(d / 10000);
+      a->tm_mon = (int)(d / 100 % 100);
+      a->tm_mday = (int)(d % 100);
+    }
+    if (*t == 'T')
+    { d = soap_strtoul(t + 1, &t, 10);
+      if (*t == ':')
+      { /* Thh:mm:ss */
+	a->tm_hour = (int)d;
+	a->tm_min = (int)soap_strtoul(t + 1, &t, 10);
+	a->tm_sec = (int)soap_strtoul(t + 1, &t, 10);
+      }
+      else
+      { /* Thhmmss */
+        a->tm_hour = (int)(d / 10000);
+	a->tm_min = (int)(d / 100 % 100);
+	a->tm_sec = (int)(d % 100);
+      }
+    }
     if (a->tm_year == 1)
       a->tm_year = 70;
     else
       a->tm_year -= 1900;
     a->tm_mon--;
-    if (*zone == '.')
-    { for (s = zone + 1; *s; s++)
-        if (*s < '0' || *s > '9')
+    if (*t == '.')
+    { for (t++; *t; t++)
+        if (*t < '0' || *t > '9')
           break;
     }
-    else
-      s = zone;
-    if (*s)
-    { if (*s == '+' || *s == '-')
+    if (*t)
+    {
+#ifndef WITH_NOZONE
+      if (*t == '+' || *t == '-')
       { int h = 0, m = 0;
-        if (s[3] == ':')
+        if (t[3] == ':')
         { /* +hh:mm */
-	  sscanf(s, "%d:%d", &h, &m);
+	  h = (int)soap_strtol(t, NULL, 10);
+	  m = (int)soap_strtol(t + 4, NULL, 10);
           if (h < 0)
             m = -m;
         }
-        else /* +hhmm */
-        { m = (int)atol(s);
+        else
+	{ /* +hhmm */
+          m = (int)soap_strtol(t, NULL, 10);
           h = m / 100;
           m = m % 100;
         }
-        a->tm_hour -= h;
         a->tm_min -= m;
+        a->tm_hour -= h;
+        /* put hour and min in range */
+        a->tm_hour += a->tm_min / 60;
+        a->tm_min %= 60;
+        if (a->tm_min < 0)
+        { a->tm_min += 60;
+          a->tm_hour--;
+        }
+        a->tm_mday += a->tm_hour / 24;
+        a->tm_hour %= 24;
+        if (a->tm_hour < 0)
+        { a->tm_hour += 24;
+          a->tm_mday--;
+        }
+        /* note: day of the month may be out of range, timegm() handles it */
       }
-    }
-    else /* if no time zone then convert to internal GMT without considering DST */
-    { int minuteswest;
-#if defined(HAVE_GETTIMEOFDAY)
-      struct timeval tv;
-      struct timezone tz;
-      gettimeofday(&tv, &tz);
-      minuteswest = tz.tz_minuteswest;
-#elif defined(HAVE_FTIME)
-      struct timeb tb;
-      memset((void*)&tb, 0, sizeof(tb));
-#ifdef __BORLAND__
-      ::ftime(&tb);
-#else
-      ftime(&tb);
 #endif
-      minuteswest = tb.timezone;
-#else
-      /* local timezone unknown */
-      minuteswest = 0;
-#endif
-      a->tm_min += minuteswest;
-    }
-    /* put hour and min in range */
-    a->tm_hour += a->tm_min / 60;
-    a->tm_min %= 60;
-    if (a->tm_min < 0)
-    { a->tm_min += 60;
-      a->tm_hour--;
-    }
-    a->tm_mday += a->tm_hour / 24;
-    a->tm_hour %= 24;
-    if (a->tm_hour < 0)
-    { a->tm_hour += 24;
-      a->tm_mday--;
     }
   }
   return soap->error;

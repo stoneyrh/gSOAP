@@ -41,7 +41,7 @@ class primes: struct soap
     simple_vector<int> prime; // container of ints
     void sieve(int n);
     void write();
-    ~primes();
+    virtual ~primes();
 };
 
 // #include is deferred to the generated code, which will then include the defs:

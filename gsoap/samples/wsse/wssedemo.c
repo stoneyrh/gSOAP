@@ -39,9 +39,9 @@ cc -DWITH_OPENSSL -DWITH_DOM -o wssedemo wssedemo.c wsseapi.c smdevp.c mecevp.c 
 
 Other required files:
 
-server.pem
-servercert.pem
-cacert.pem
+server.pem		server private key and certificate (do not distrubute)
+servercert.pem		server public certificate for public distribution
+cacert.pem		root CA certificate for public distribution
 
 Note:
 
@@ -328,11 +328,11 @@ int main(int argc, char **argv)
     b.b = -99999;
     /* client sending messages to stdout or over port */
     if (port)
-      sprintf(endpoint, "http://localhost:%d", port);
+      (SOAP_SNPRINTF(endpoint, sizeof(endpoint), 37), "http://localhost:%d", port);
     else if (nohttp)
-      strcpy(endpoint, "");
+      soap_strcpy(endpoint, sizeof(endpoint), "");
     else
-      strcpy(endpoint, "http://");
+      soap_strcpy(endpoint, sizeof(endpoint), "http://");
 
     for (run = 0; run < runs; run++)
     {

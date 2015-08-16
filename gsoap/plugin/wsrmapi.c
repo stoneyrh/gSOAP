@@ -6,7 +6,7 @@
 	Implements the WS-RM 1.0 and 1.1 logic for import/wsrm.h import/wsrm5.h
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -1435,6 +1435,7 @@ send and the sequence is initialized upon receipt of the create response.
 int
 soap_wsrm_create_offer_acksto(struct soap *soap, const char *to, const char *replyto, const char *acksto, const char *id, LONG64 expires, enum wsrm__IncompleteSequenceBehaviorType behavior, const char *wsa_id, soap_wsrm_sequence_handle *seq)
 { char *s;
+  size_t l;
   struct wsrm__CreateSequenceType req;
   struct wsrm__CreateSequenceResponseType res;
   struct soap_wsrm_data *data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
@@ -1480,14 +1481,14 @@ soap_wsrm_create_offer_acksto(struct soap *soap, const char *to, const char *rep
       return soap->error;
     soap_default_wsrm__OfferType(soap, req.Offer);
     if (!id)
-    { const char *s;
+    { const char *t;
       MUTEX_LOCK(soap_wsrm_session_lock);
-      s = soap_wsrm_seq_newid(soap);
+      t = soap_wsrm_seq_newid(soap);
       MUTEX_UNLOCK(soap_wsrm_session_lock);
-      if (!s)
+      if (!t)
         return soap->error;
-      id = req.Offer->Identifier = soap_strdup(soap, s); /* required */
-      free((void*)s);
+      id = req.Offer->Identifier = soap_strdup(soap, t); /* required */
+      free((void*)t);
     }
     else
       req.Offer->Identifier = soap_strdup(soap, id); /* required */
@@ -1513,25 +1514,33 @@ soap_wsrm_create_offer_acksto(struct soap *soap, const char *to, const char *rep
     (*seq)->expires = (*seq)->timestamp + expires/1000;
   (*seq)->behavior = behavior;
   if (id && *id)
-  { if ((s = (char*)malloc(strlen(id) + 1)) == NULL)
+  { l = strlen(id);
+    if ((s = (char*)malloc(l + 1)) == NULL)
     { MUTEX_UNLOCK(soap_wsrm_session_lock);
       return soap->error = SOAP_EOM;
     }
-    (*seq)->acksid = strcpy(s, id);
+    soap_strcpy(s, l + 1, id);
+    (*seq)->acksid = s;
     soap_wsrm_seq_insert_ack(*seq);
   }
-  if ((s = (char*)malloc(strlen(to) + 1)) == NULL)
-  { MUTEX_UNLOCK(soap_wsrm_session_lock);
-    return soap->error = SOAP_EOM;
+  if (to)
+  { l = strlen(to);
+    if ((s = (char*)malloc(l + 1)) == NULL)
+    { MUTEX_UNLOCK(soap_wsrm_session_lock);
+      return soap->error = SOAP_EOM;
+    }
+    soap_strcpy(s, l + 1, to);
+    (*seq)->to = s;
   }
-  (*seq)->to = strcpy(s, to);
   if (wsa_id)
-  { if ((s = (char*)malloc(strlen(wsa_id) + 1)) == NULL)
+  { l = strlen(wsa_id);
+    if ((s = (char*)malloc(l + 1)) == NULL)
     { MUTEX_UNLOCK(soap_wsrm_session_lock);
       return soap->error = SOAP_EOM;
     }
     /* trick to keep track of response via RelatesTo */
-    (*seq)->id = strcpy(s, wsa_id);
+    soap_strcpy(s, l + 1, wsa_id);
+    (*seq)->id = s;
     soap_wsrm_seq_insert_data(*seq);
   }
   MUTEX_UNLOCK(soap_wsrm_session_lock);
@@ -1541,12 +1550,14 @@ soap_wsrm_create_offer_acksto(struct soap *soap, const char *to, const char *rep
     return soap->error;
   }
   /* process response */
-  if ((s = (char*)malloc(strlen(res.Identifier) + 1)) == NULL)
+  l = strlen(res.Identifier);
+  if ((s = (char*)malloc(l + 1)) == NULL)
     return soap->error = SOAP_EOM;
+  soap_strcpy(s, l + 1, res.Identifier);
   MUTEX_LOCK(soap_wsrm_session_lock);
   if ((*seq)->id)
     free((void*)(*seq)->id);
-  (*seq)->id = strcpy(s, res.Identifier);
+  (*seq)->id = s;
   soap_wsrm_seq_insert_data(*seq);
   if (res.Expires && (!expires || *res.Expires <= expires))
     (*seq)->expires = time(NULL) + *res.Expires/1000;
@@ -1556,13 +1567,15 @@ soap_wsrm_create_offer_acksto(struct soap *soap, const char *to, const char *rep
     (*seq)->behavior = behavior;
   if (res.Accept && res.Accept->AcksTo.Address)
   { /* accepted: update the sequence for the responses */
-    if ((s = (char*)malloc(strlen(res.Accept->AcksTo.Address) + 1)) == NULL)
+    l = strlen(res.Accept->AcksTo.Address);
+    if ((s = (char*)malloc(l + 1)) == NULL)
     { MUTEX_UNLOCK(soap_wsrm_session_lock);
       return soap->error = SOAP_EOM;
     }
     if ((*seq)->acksto)
       free((void*)(*seq)->acksto);
-    (*seq)->acksto = strcpy(s, res.Accept->AcksTo.Address);
+    soap_strcpy(s, l + 1, res.Accept->AcksTo.Address);
+    (*seq)->acksto = s;
   }
   MUTEX_UNLOCK(soap_wsrm_session_lock);
   (*seq)->state = SOAP_WSRM_CREATED;
@@ -1713,8 +1726,13 @@ soap_wsrm_check_retry(struct soap *soap, soap_wsrm_sequence_handle seq)
   /* HTTP temporary redirect? */
   if (soap->error == 307)
   { char *s;
-    if ((s = (char*)malloc(strlen(soap->endpoint) + 1)) != NULL)
-      seq->to = strcpy(s, soap->endpoint);
+    size_t l = strlen(soap->endpoint);
+    if ((s = (char*)malloc(l + 1)) != NULL)
+    { soap_strcpy(s, l + 1, soap->endpoint);
+      if (seq->to)
+	free((void*)seq->to);
+      seq->to = s;
+    }
   }
   /* if the sequence id was changed (eg. response), cannot resend and we fail */
   else if (!soap->header
@@ -2457,11 +2475,13 @@ soap_wsrm_chk(struct soap *soap, int timeout, int flag)
   replyTo = soap_wsa_ReplyTo(soap);
   if (replyTo && strcmp(replyTo, soap_wsa_anonymousURI))
   { char *s;
-    if ((s = (char*)malloc(strlen(replyTo) + 1)) == NULL)
+    size_t l = strlen(replyTo);
+    if ((s = (char*)malloc(l + 1)) == NULL)
     { MUTEX_UNLOCK(soap_wsrm_session_lock);
       return soap->error = SOAP_EOM;
     }
-    seq->repto = strcpy(s, replyTo);
+    soap_strcpy(s, l + 1, replyTo);
+    seq->repto = s;
   }
 #ifdef SOAP_WSA_2005
   if (soap->header && soap->header->chan__ChannelInstance)
@@ -2616,6 +2636,7 @@ __wsrm__CreateSequence(struct soap *soap, struct wsrm__CreateSequenceType *req, 
   struct soap_wsrm_data *data;
   char *action;
   const char *replyTo;
+  size_t l;
   DBGFUN("__wsrm__CreateSequence");
   if (soap_wsa_check(soap))
     return soap->error;
@@ -2636,19 +2657,23 @@ __wsrm__CreateSequence(struct soap *soap, struct wsrm__CreateSequenceType *req, 
   replyTo = soap_wsa_ReplyTo(soap);
   if (replyTo && strcmp(replyTo, soap_wsa_anonymousURI))
   { char *s;
-    if ((s = (char*)malloc(strlen(replyTo) + 1)) == NULL)
+    l = strlen(replyTo);
+    if ((s = (char*)malloc(l + 1)) == NULL)
     { MUTEX_UNLOCK(soap_wsrm_session_lock);
       return soap->error = SOAP_EOM;
     }
-    seq->to = strcpy(s, replyTo);
+    soap_strcpy(s, l + 1, replyTo);
+    seq->to = s;
   }
   if (req->AcksTo.Address)
   { char *s;
-    if ((s = (char*)malloc(strlen(req->AcksTo.Address) + 1)) == NULL)
+    l = strlen(req->AcksTo.Address);
+    if ((s = (char*)malloc(l + 1)) == NULL)
     { MUTEX_UNLOCK(soap_wsrm_session_lock);
       return soap->error = SOAP_EOM;
     }
-    seq->acksto = strcpy(s, req->AcksTo.Address);
+    soap_strcpy(s, l + 1, req->AcksTo.Address);
+    seq->acksto = s;
   }
   if (req->Expires && *req->Expires/1000 < SOAP_WSRM_MAX_SEC_TO_EXPIRE)
     seq->expires = time(NULL) + *req->Expires/1000;
@@ -2666,9 +2691,10 @@ __wsrm__CreateSequence(struct soap *soap, struct wsrm__CreateSequenceType *req, 
     { /* check if offered identifier is acceptable? */
       /* if (!soap_wsrm_seq_lookup_data(req->Offer->Identifier)) */
       { char *s;
-        if ((s = (char*)malloc(strlen(req->Offer->Identifier) + 1)) != NULL)
-        {
-          seq->id = strcpy(s, req->Offer->Identifier);
+	l = strlen(req->Offer->Identifier);
+        if ((s = (char*)malloc(l + 1)) != NULL)
+        { soap_strcpy(s, l + 1, req->Offer->Identifier);
+          seq->id = s;
           soap_wsrm_seq_insert_data(seq);
         }
       }
@@ -2698,11 +2724,12 @@ __wsrm__CreateSequence(struct soap *soap, struct wsrm__CreateSequenceType *req, 
   MUTEX_UNLOCK(soap_wsrm_session_lock);
   soap->header->wsrm__Sequence = NULL;
   soap->header->wsrm__AckRequested = NULL;
-  action = (char*)soap_malloc(soap, strlen(soap->action) + 9);
+  l = strlen(soap->action);
+  action = (char*)soap_malloc(soap, l + 9);
   if (!action)
     return soap->error;
-  strcpy(action, soap->action);
-  strcat(action, "Response");
+  soap_strcpy(action, l + 9, soap->action);
+  soap_strcpy(action + l, 9, "Response");
   return soap_wsa_reply(soap, NULL, action);
 }
 
@@ -2719,7 +2746,6 @@ int
 __wsrm__CreateSequenceResponse(struct soap *soap, struct wsrm__CreateSequenceResponseType *res)
 { struct soap_wsrm_sequence *seq;
   struct soap_wsrm_data *data;
-  char *s;
   DBGFUN("__wsrm__CreateSequenceResponse");
   if (soap_wsa_check(soap))
     return soap->error;
@@ -2732,7 +2758,9 @@ __wsrm__CreateSequenceResponse(struct soap *soap, struct wsrm__CreateSequenceRes
   MUTEX_LOCK(soap_wsrm_session_lock);
   seq = soap_wsrm_seq_lookup_data(res->Identifier);
   if (!seq)
-  { if (!soap_wsa_RelatesTo(soap))
+  { char *s;
+    size_t l;
+    if (!soap_wsa_RelatesTo(soap))
     { MUTEX_UNLOCK(soap_wsrm_session_lock);
       return soap_wsrm_error(soap, NULL, wsrm__UnknownSequence);
     }
@@ -2741,13 +2769,15 @@ __wsrm__CreateSequenceResponse(struct soap *soap, struct wsrm__CreateSequenceRes
     { MUTEX_UNLOCK(soap_wsrm_session_lock);
       return soap_wsrm_error(soap, NULL, wsrm__UnknownSequence);
     }
-    if ((s = (char*)malloc(strlen(res->Identifier) + 1)) == NULL)
+    l = strlen(res->Identifier);
+    if ((s = (char*)malloc(l + 1)) == NULL)
     { MUTEX_UNLOCK(soap_wsrm_session_lock);
       return soap->error = SOAP_EOM;
     }
+    soap_strcpy(s, l + 1, res->Identifier);
     if (seq->id)
       free((void*)seq->id);
-    seq->id = strcpy(s, res->Identifier);
+    seq->id = s;
     soap_wsrm_seq_insert_data(seq);
   }
   if (res->Expires && *res->Expires/1000 <= SOAP_WSRM_MAX_SEC_TO_EXPIRE)
@@ -2755,14 +2785,17 @@ __wsrm__CreateSequenceResponse(struct soap *soap, struct wsrm__CreateSequenceRes
   if (res->IncompleteSequenceBehavior)
     seq->behavior = *res->IncompleteSequenceBehavior;
   if (res->Accept && res->Accept->AcksTo.Address)
-  { /* accepted: update the sequence for the responses */
-    if ((s = (char*)malloc(strlen(res->Accept->AcksTo.Address) + 1)) == NULL)
+  { char *s;
+    size_t l = strlen(res->Accept->AcksTo.Address);
+    /* accepted: update the sequence for the responses */
+    if ((s = (char*)malloc(l + 1)) == NULL)
     { MUTEX_UNLOCK(soap_wsrm_session_lock);
       return soap->error = SOAP_EOM;
     }
+    soap_strcpy(s, l + 1, res->Accept->AcksTo.Address);
     if (seq->acksto)
       free((void*)seq->acksto);
-    seq->acksto = strcpy(s, res->Accept->AcksTo.Address);
+    seq->acksto = s;
   }
   seq->state = SOAP_WSRM_CREATED;
 #ifdef SOAP_WSA_2005
@@ -2790,6 +2823,7 @@ __wsrm__CloseSequence(struct soap *soap, struct wsrm__CloseSequenceType *req, st
 { struct soap_wsrm_sequence *seq;
   struct soap_wsrm_data *data;
   char *action;
+  size_t l;
   DBGFUN("__wsrm__CloseSequence");
   if (soap_wsa_check(soap))
     return soap->error;
@@ -2829,11 +2863,12 @@ __wsrm__CloseSequence(struct soap *soap, struct wsrm__CloseSequenceType *req, st
   }
   soap_wsa_add_ReplyTo(soap, seq->to);
   MUTEX_UNLOCK(soap_wsrm_session_lock);
-  action = (char*)soap_malloc(soap, strlen(soap->action) + 9);
+  l = strlen(soap->action);
+  action = (char*)soap_malloc(soap, l + 9);
   if (!action)
     return soap->error;
-  strcpy(action, soap->action);
-  strcat(action, "Response");
+  soap_strcpy(action, l + 9, soap->action);
+  soap_strcpy(action + l, 9, "Response");
   return soap_wsa_reply(soap, NULL, action);
 }
 
@@ -2876,6 +2911,7 @@ __wsrm__TerminateSequence(struct soap *soap, struct wsrm__TerminateSequenceType 
 { struct soap_wsrm_sequence *seq;
   struct soap_wsrm_data *data;
   char *action;
+  size_t l;
   DBGFUN("__wsrm__TerminateSequence");
   if (soap_wsa_check(soap))
     return soap->error;
@@ -2942,11 +2978,12 @@ __wsrm__TerminateSequence(struct soap *soap, struct wsrm__TerminateSequenceType 
   soap_wsrm_num_free(soap, seq);
   soap_wsa_add_ReplyTo(soap, seq->to);
   MUTEX_UNLOCK(soap_wsrm_session_lock);
-  action = (char*)soap_malloc(soap, strlen(soap->action) + 9);
+  l = strlen(soap->action);
+  action = (char*)soap_malloc(soap, l + 9);
   if (!action)
     return soap->error;
-  strcpy(action, soap->action);
-  strcat(action, "Response");
+  soap_strcpy(action, l + 9, soap->action);
+  soap_strcpy(action + l, 9, "Response");
   return soap_wsa_reply(soap, NULL, action);
 #endif
 }
@@ -3456,8 +3493,7 @@ soap_wsrm_init(struct soap *soap, struct soap_wsrm_data *data, void *arg)
     else
       s = soap_wsa_rand_uuid(soap);
     MUTEX_LOCK(soap_wsrm_session_lock);
-    strncpy(soap_wsrm_idname, s, sizeof(soap_wsrm_idname));
-    soap_wsrm_idname[37] = '\0';
+    soap_strcpy(soap_wsrm_idname, sizeof(soap_wsrm_idname), s);
     MUTEX_UNLOCK(soap_wsrm_session_lock);
   }
   data->state = SOAP_WSRM_OFF; /* disable caching */
@@ -3484,7 +3520,7 @@ static int
 soap_wsrm_copy(struct soap *soap, struct soap_plugin *p, struct soap_plugin *q)
 { /* create local plugin data */
   p->data = (void*)SOAP_MALLOC(soap, sizeof(struct soap_wsrm_data));
-  memcpy(p->data, q->data, sizeof(struct soap_wsrm_data));
+  soap_memcpy((void*)p->data, sizeof(struct soap_wsrm_data), (const void*)q->data, sizeof(struct soap_wsrm_data));
   ((struct soap_wsrm_data*)p->data)->state = SOAP_WSRM_OFF;
   ((struct soap_wsrm_data*)p->data)->seq = NULL;
   ((struct soap_wsrm_data*)p->data)->msg = NULL;
@@ -4085,17 +4121,13 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, int all,
 */
 static const char *
 soap_wsrm_seq_newid(struct soap *soap)
-{ size_t idlen = strlen(soap_wsrm_idname) + 9;
-  char *id = (char*)malloc(idlen);
+{ size_t l = strlen(soap_wsrm_idname);
+  char *id = (char*)malloc(l + 9);
   if (!id)
   { soap->error = SOAP_EOM;
     return NULL;
   }
-#ifdef HAVE_SNPRINTF
-  soap_snprintf(id, idlen, "%s%8.8x", soap_wsrm_idname, soap_wsrm_idnum++);
-#else
-  sprintf(id, "%s%8.8x", soap_wsrm_idname, soap_wsrm_idnum++);
-#endif
+  (SOAP_SNPRINTF(id, l + 9, l + 8), "%s%8.8x", soap_wsrm_idname, soap_wsrm_idnum++);
   return id;
 }
 
@@ -4395,7 +4427,7 @@ soap_wsrm_msg_append(struct soap *soap, struct soap_wsrm_data *data, const char 
     return soap->error = SOAP_EOM;
   }
   p->len = len;
-  memcpy(p->buf, buf, len);
+  soap_memcpy((void*)p->buf, len, (const void*)buf, len);
   p->next = NULL;
   if (!data->msg->list)
     data->msg->list = p;
@@ -4680,8 +4712,8 @@ soap_wsrm_msg_new(struct soap *soap, struct soap_wsrm_sequence *seq, ULONG64 num
         return NULL;
       }
       if (seq->messages)
-      { memcpy(p, seq->messages, seq->num * sizeof(struct soap_wsrm_message*));
-        free(seq->messages);
+      { soap_memcpy((void*)p, n * sizeof(struct soap_wsrm_message*), (const void*)seq->messages, seq->num * sizeof(struct soap_wsrm_message*));
+        free((void*)seq->messages);
       }
       seq->messages = p;
     }

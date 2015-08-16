@@ -2,13 +2,13 @@
 	wstx.h
 
 	WS-Trust definitions:
-	SOAP Header definitions for WS-Trust
+	SOAP Header definitions for WS-Trust 2005/12
 	WS-Trust operations
 
 	Imported by import/wst.h
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -51,8 +51,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 struct SOAP_ENV__Header
-{ int								__sizeIssuedTokens 0;
-  struct wst__RequestSecurityTokenResponseCollectionType	*wst__IssuedTokens 0;
+{ int								__sizeIssuedTokens 0; ///< size of the array
+  struct wst__RequestSecurityTokenResponseCollectionType	*wst__IssuedTokens 0; ///< array of tokens
+  wst__RequestTypeOpenEnum                                       wst__RequestType  0;
 };
 
 //gsoap wst service name: wst
@@ -64,9 +65,11 @@ struct SOAP_ENV__Header
 //gsoap wst service method-header-part:     RequestSecurityToken wsa5__FaultTo
 //gsoap wst service method-header-part:     RequestSecurityToken wsa5__To
 //gsoap wst service method-header-part:     RequestSecurityToken wsa5__Action
-//gsoap wst service method-action:          RequestSecurityToken http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Issue
-//gsoap wst service method-output-action:   RequestSecurityToken http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Issue
+//gsoap wst service method-header-part:     RequestSecurityToken wst__RequestType
+//gsoap wst service method-action:          RequestSecurityToken http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue
+//gsoap wst service method-output-action:   RequestSecurityToken http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTR/Issue
+//gsoap wst service method-output-action:   RequestSecurityToken http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTRC/IssueFinal
 int __wst__RequestSecurityToken(
-  struct wst__RequestSecurityTokenType		*wst__RequestSecurityToken,
-  struct wst__RequestSecurityTokenResponseType	*wst__RequestSecurityTokenResponse
+  struct wst__RequestSecurityTokenType		*wst__RequestSecurityToken,        ///< request message
+  struct wst__RequestSecurityTokenResponseType	*wst__RequestSecurityTokenResponse ///< response message
 );

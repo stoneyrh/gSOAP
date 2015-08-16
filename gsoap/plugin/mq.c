@@ -301,7 +301,7 @@ soap_mq_recv(struct soap *soap, char *buf, size_t len)
   { len = data->len;
     data->len = 0;
   }
-  memcpy(buf, data->buf, len);
+  soap_memcpy(buf, len, data->buf, len);
   data->buf += len;
   return len;
 }

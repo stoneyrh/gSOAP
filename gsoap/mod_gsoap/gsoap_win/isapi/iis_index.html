@@ -9,32 +9,31 @@
 <body>
 
 <h1 align="center"><font face="Verdana">mod_gsoap ISAPI Extension</font></h1>
-<p><font face="Verdana"><a href="http://www.cs.fsu.edu/~engelen/soap.html">gsoap</a>
-is an open source project that can be used to generate </font><font face="Verdana"> <b>S</b>imple <b>O</b>bject <b>A</b>ccess <b>P</b>rotocol
-(<a href="http://www.w3c.org/TR/SOAP">SOAP</a>) clients and servers. <a href="http://www.aberger.at/SOAP"> mod_gsoap</a>
-allows you to run these services integrated in process inside the Microsoft Internet
-Information server.&nbsp;It is implemented as an ISAPI extension dll and so can
+<p><font face="Verdana"><a href="http://sourceforge.net/projects/gsoap2">gSOAP</a>
+is an open source project that can be used to generate SOAP/XML web services and clients. The <a href="http://www.aberger.at/SOAP">mod_gsoap</a>
+plugin allows you to run these services integrated in process inside the Microsoft Internet
+Information server. It is implemented as an ISAPI extension dll and so can
 be run together with all other services on IIS.</font></p>
+
 <h2><font face="Verdana">Overview</font></h2>
-<p align="left"><font face="Verdana">There is an open source project at <a href="http://www.cs.fsu.edu/~engelen/soap.html">http://www.cs.fsu.edu/~engelen/soap.html</a>
- which implements SOAP in C++. Servers created there can be run standalone or as
+<p><font face="Verdana">Servers created with gSOAP can be run standalone or as
 cgi. This is a contribution to get a production quality Web service for MS-Internet Information
 Server that drives SOAP servers. All the source code and
 documentation is available for download.</font></p>
 <p align="left"><font face="Verdana">Existing gsoap servers can be compiled <u>without
-any change</u> in the source code to run inside IIS. There is one dll, mod_gsoap.dll, an Isapi extension that serves SOAP
+any change</u> in the source code to run inside IIS. There is one DLL, mod_gsoap.dll, an iSAPI extension that serves SOAP
 requests. From the query string in the request the extension finds out which server should be used
-and the appropriate server dll (dynamic link library) is dynamically loaded at
+and the appropriate server DLL (dynamic link library) is dynamically loaded at
 runtime, if not already present. This SOAP server creates the response which is
 sent back to the client by IIS.</font></p>
-<p align="left"><font face="Verdana">To add more servers only the new dlls need
+<p align="left"><font face="Verdana">To add more servers only the new DLLs need
 to be compiled, the ISAPI interface need not be changed for that, the Web
 Service not even restarted.&nbsp;</font></p>
 <p align="left"><font face="Verdana">This distribution contains also the
 standard gsoap calc.h - server to demonstrate operation.&nbsp;The source code of
 that example was not changed from the standard distribution.</font></p>
 <p align="left"><font face="Verdana">Once your gsoap service works as a
-standalone application, you only need to recompile it as a dll and copy that dll
+standalone application, you only need to recompile it as a DLL and copy that DLL
 to your IIS - virtual directory.&nbsp;</font></p>
 <p align="left"><font face="Verdana"> In spite of that instructions can be found
 <a href="#iisdebug"> below</a> for debugging the IIS extension under Windows™ 2000 and XP.&nbsp;</font></p>
@@ -101,7 +100,7 @@ on your IIS Server</font></a></h3>
 </ul>
 <p>There is also a dime sample in the code that shows you how to send and receive dime attachments (binary files etc). 
 This sample also shows how to use module initializer and terminators. When the dll is loaded into IIS for the first time the function mod_gsoap_init is called. 
-Here you can initialize database connections or whatever you like. mod_gsoap_terminate is called when the dll is unloaded again. A good place to clean up.</p>
+Here you can initialize database connections or whatever you like. mod_gsoap_terminate is called when the DLL is unloaded again. A good place to clean up.</p>
 <h2><font face="Verdana">Compiling your own gsoap - Servers for use with
 mod_gsoap</font></h2>
 <ul>
@@ -113,7 +112,7 @@ mod_gsoap</font></h2>
     Create a new empty Win32 - Dynamic Link Library.</font></li>
   <li><font face="Verdana">Copy <a name="stdsoap2.def"> stdsoap2.def</a> from the .\isapi\samples\calc example to your
     project directory and add it to the project. This will ensure that the
-    required functions (soap_initialize, soap_serve, soap_end, soap_free, etc) are exported from the dll.</font></li>
+    required functions (soap_initialize, soap_serve, soap_end, soap_free, etc) are exported from the DLL.</font></li>
   <li><font face="Verdana">Compile it</font></li>
   <li><font face="Verdana">Copy it to the ...wwwroot/gsoap directory described
     above.&nbsp;</font></li>
@@ -121,7 +120,7 @@ mod_gsoap</font></h2>
 </ul>
 <p><font face="Verdana">The <a href="#urlconstruction">URL</a> for the new
 servers is always &quot;<a href="http://localhost//gsoap/mod_gsoap.dll?mydll"></a></font><font color="#FF0000" face="Courier"><a href="http://localhost//gsoap/mod_gsoap.dll?mydll">http://localhost/gsoap/mod_gsoap.dll?mydll</a>&quot;
-</font><font face="Verdana">where mydll is the name of our dll <u>without</u>
+</font><font face="Verdana">where mydll is the name of our DLL <u>without</u>
 the .dll extension.</font></p>
 <h4><font face="Verdana"><a name="vroot">Details for creating the virtual root</a></font></h4>
 <p><font face="Verdana">If you have problems creating the virtual root as
@@ -131,7 +130,7 @@ in the Option Pack submenus). Click with the right mouse button on &quot;Default
 Web Site&quot;, then select &quot;New&quot; and &quot;Virtual Directory&quot;.
 Click &quot;Next&quot; and enter as Alias the name you want to give to the url,
 e.g. &quot;soap&quot;, press &quot;Next&quot; again. Then browse for the
-directory where your dll that you have built in the previous step is, for
+directory where your DLL that you have built in the previous step is, for
 example &quot;c:\Inetpub\wwwroot\gsoap&quot;. Press
 &quot;Next&quot;, then in the access permissions, disable all permissions except
 &quot;Excute (such as ISAPI applications or CGI)&quot;, this must be enabled.
@@ -145,18 +144,18 @@ IIS). It is an extension for IIS. The request your SOAP client must submit is
 made up of 2 parts. Here is an example:</font></p>
 <p><font face="Courier New"> &quot;http://127.0.0.1/gsoap/mod_gsoap.dll?mySoap&quot;</font><font face="Verdana">&nbsp;</font></p>
 <p><font face="Verdana">The part before the question mark '?' is the url for the
-isapi binding dll. This is evaluated by IIS. In this sample the service is on
+ISAPI binding DLL. This is evaluated by IIS. In this sample the service is on
 the same machine as the server. Instead of &quot;127.0.0.1&quot; you can use the
 DNS address of your server, of course. gsoap is the virtual root created above
 and mod_gsoap.dll is the generic ISAPI binding from this contribution. The
 extension mod_gsoap.dll evaluates the part behind the '?', which is in this example
-mySoap. To this the string &quot;.dll&quot; is appended and the dll is loaded. Due
-to security reasons only dlls from the same directory are allowed. If you want to do special
-initialization in your dll you may want to add and export a &quot;DllMain&quot;
+mySoap. To this the string &quot;.dll&quot; is appended and the DLL is loaded. Due
+to security reasons only DLLs from the same directory are allowed. If you want to do special
+initialization in your DLL you may want to add and export a &quot;DllMain&quot;
 function, which will be called when the IIS process attaches to your all and
 before it detaches it. Do not rely on the Thread attach/detach callback, in my
-experience IIS does not always call DllMain in your dll if these threads were
-already in the thread pool before your dll was loaded. Use thread local storage
+experience IIS does not always call DllMain in your DLL if these threads were
+already in the thread pool before your DLL was loaded. Use thread local storage
 instead.</font></p>
 <font face="Verdana">
 <H2><a name="iisdebug">Development and Debugging</a></H2>
@@ -170,7 +169,7 @@ and related), and a start and stop command in the
 Makefile to start and stop iis debugging. Make sure that the path to msdev is in the System environment
 variables (&quot;PATH&quot;) of the system account (not only of your own user
 account, this is not seen by IISAdmin).&nbsp;</P>
-<P>If you want to debug, you must set the dll to run 
+<P>If you want to debug, you must set the DLL to run 
 in-proccess. Right-click on the gsoap virtual root in internet service manager 
 and set the &quot;Appication Protection&quot; to &quot;Low (IIS Process)&quot;. 
 Remove the &quot;Enable Session State&quot; and buffering and Parent 

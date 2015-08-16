@@ -302,7 +302,7 @@ int main(int argc, char **argv)
     "password",		/* password to read the key file */
     NULL, 		/* cacert CA certificate, or ... */
     NULL,		/* capath CA certificate path */
-    NULL, 		/* DH file (e.g. "dh512.pem") or numeric DH param key len bits (e.g. "1024"), if NULL use RSA */
+    NULL, 		/* DH file (e.g. "dh2048.pem") or numeric DH param key len bits in string (e.g. "2048"), if NULL then use RSA */
     NULL,		/* if randfile!=NULL: use a file with random data to seed randomness */ 
     "webserver"		/* server identification for SSL session cache (must be a unique name) */
   ))
@@ -764,8 +764,7 @@ int http_get_handler(struct soap *soap)
   if (!strncmp(soap->path, "/calc?", 6))
     return calcget(soap);
   if (!strncmp(soap->path, "/genivia", 8))
-  { strcpy(soap->endpoint, "http://genivia.com"); /* redirect */
-    strcat(soap->endpoint, soap->path + 8);
+  { (SOAP_SNPRINTF(soap->endpoint, sizeof(soap->endpoint), strlen(soap->path) + 10), "http://genivia.com%s", soap->path + 8); /* redirect */
     return 307; /* Temporary Redirect */
   }
   /* Check requestor's authentication: */
@@ -890,7 +889,7 @@ int calcget(struct soap *soap)
       return soap_sender_fault(soap, "Unknown operation", NULL);
   }
   soap_response(soap, SOAP_HTML);
-  sprintf(buf, "<html>value=%d</html>", val);
+  (SOAP_SNPRINTF(buf, sizeof(buf), 40), "<html>value=%d</html>", val);
   soap_send(soap, buf);
   soap_end_send(soap);
   return SOAP_OK;
@@ -935,7 +934,7 @@ int calcpost(struct soap *soap)
       return soap_sender_fault(soap, "Unknown operation", NULL);
   }
   soap_response(soap, SOAP_HTML);
-  sprintf(buf, "<html>value=%d</html>", val);
+  (SOAP_SNPRINTF(buf, sizeof(buf), 40), "<html>value=%d</html>", val);
   soap_send(soap, buf);
   soap_end_send(soap);
   return SOAP_OK;
@@ -979,7 +978,7 @@ int f__form1(struct soap *soap)
       return soap_sender_fault(soap, "Unknown operation", NULL);
   }
   soap_response(soap, SOAP_HTML);
-  sprintf(buf, "<html>value=%d</html>", val);
+  (SOAP_SNPRINTF(buf, sizeof(buf), 40), "<html>value=%d</html>", val);
   soap_send(soap, buf);
   soap_end_send(soap);
   return SOAP_OK;
@@ -1028,7 +1027,7 @@ int info(struct soap *soap)
 { struct http_get_data *getdata;
   size_t stat_sent, stat_recv;
   const char *t0, *t1, *t2, *t3, *t4, *t5, *t6, *t7;
-  char buf[2048]; /* buffer large enough to hold HTML content */
+  char buf[4096]; /* buffer large enough to hold parts of HTML content */
   struct soap_plugin *p;
   time_t now = time(NULL), elapsed = now - start;
   query_options(soap, options);
@@ -1080,7 +1079,7 @@ int info(struct soap *soap)
     t7 = "<td align='center' bgcolor='red'>NO</td>";
   if (soap_response(soap, SOAP_HTML))
     return soap->error;
-  sprintf(buf, "\
+  (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "\
 <html>\
 <head>\
 <meta name='Author' content='Robert A. van Engelen'>\
@@ -1091,14 +1090,14 @@ int info(struct soap *soap)
 </head>\
 <body bgcolor='#FFFFFF'>\
 <h1>gSOAP Web Server Administration</h1>\
-<p>Server endpoint=%s client agent IP=%d.%d.%d.%d\
+<p/>Server endpoint=%s client agent IP=%d.%d.%d.%d\
 <h2>Registered Plugins</h2>\
 ", soap->endpoint, (int)(soap->ip>>24)&0xFF, (int)(soap->ip>>16)&0xFF, (int)(soap->ip>>8)&0xFF, (int)soap->ip&0xFF);
   if (soap_send(soap, buf))
     return soap->error;
   for (p = soap->plugins; p; p = p->next)
-  { sprintf(buf, "%s<br>", p->id);
-    if (soap_send(soap, buf))
+  { if (soap_send(soap, p->id)
+     || soap_send(soap, "<br/>"))
       return soap->error;
   }
   if (soap_send(soap, "<h2>Elapsed Time</h2>"))
@@ -1111,7 +1110,7 @@ int info(struct soap *soap)
   soap_send(soap, "<h2>Control Panel</h2>");
   if (html_form_options(soap, options))
     return soap->error;
-  sprintf(buf, "\
+  (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "\
 <h2>Function Tests</h2>\
 <table border='0' cellspacing='0' cellpadding='0' bgcolor='#666666' nosave>\
 <tr height='10'><td height='10' background='bl.gif'></td><td height='10'><i>Function</i></td><td align='center' height='10'><i>Result</i></td><td height='10' background='obls.gif'></td></tr>\
@@ -1160,31 +1159,31 @@ int info(struct soap *soap)
     html_hist(soap, "Day", 2, 0, 365, NULL, getdata->day, T.tm_yday);
   }
   soap_send(soap, "\
-<p>This page will automatically reload every minute to refresh the statistics.\
-<br><br><br><img src='favicon.gif' align='absmiddle'>Powered by gSOAP\
+<p/>This page will automatically reload every minute to refresh the statistics.\
+<br/><br/><br/><img src='favicon.gif' align='absmiddle'>Powered by gSOAP\
 </body>\
-</HTML>");
+</html>");
   return soap_end_send(soap);
 }
 
-static size_t html_scaled(char *buf, size_t len)
+static size_t html_scaled(char *buf, size_t max, size_t len)
 { if (len > 1000000)
-  { sprintf(buf, "%.2f&#183;10<sup>6</sup>", (float)len/1000000.0);
+  { (SOAP_SNPRINTF(buf, max, 39), "%.2f&#183;10<sup>6</sup>", (float)len/1000000.0);
     return len / 1000000;
   }
   if (len > 1000)
-  { sprintf(buf, "%.2f&#183;10<sup>3</sup>", (float)len/1000.0);
+  { (SOAP_SNPRINTF(buf, max, 39), "%.2f&#183;10<sup>3</sup>", (float)len/1000.0);
     return len / 1000;
   }
-  sprintf(buf, "%lu", (unsigned long)len);
+  (SOAP_SNPRINTF(buf, max, 20), "%lu", (unsigned long)len);
   return len;
 }
 
 int html_hbar(struct soap *soap, const char *title, size_t pix, size_t len, unsigned long color)
-{ char buf[2048]; /* buffer large enough to hold HTML content */
-  char lab[32];
-  len = html_scaled(lab, len);
-  sprintf(buf, "\
+{ char buf[4096]; /* buffer large enough to hold parts of HTML content */
+  char lab[40];
+  len = html_scaled(lab, sizeof(lab), len);
+  (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "\
 <table border='0' cellspacing='0' cellpadding='0' height='30'>\
 <tr height='10'>\
 <td width='10' height='10' background='bl.gif'></td>\
@@ -1202,13 +1201,13 @@ int html_hbar(struct soap *soap, const char *title, size_t pix, size_t len, unsi
 <td colspan='2' height='10' background='ts.gif'></td>\
 <td width='10' height='10' background='otls.gif'></td>\
 </tr>\
-</table>", (unsigned long)pix, title ? title : "", lab, color, (unsigned long)len * 2);
+</table>", (unsigned long)pix, title && strlen(title) < 80 ? title : "", lab, color, (unsigned long)len * 2);
   return soap_send(soap, buf);
 }
 
 int html_hist(struct soap *soap, const char *title, size_t barwidth, size_t height, size_t num, const char **key, size_t *val, size_t highlight)
-{ char buf[2048]; /* buffer large enough to hold HTML content */
-  char lab[32];
+{ char buf[4096]; /* buffer large enough to hold HTML content */
+  char lab[40];
   size_t i, max;
   float scale;
   max = 0;
@@ -1224,8 +1223,8 @@ int html_hist(struct soap *soap, const char *title, size_t barwidth, size_t heig
       height = 256;
   }
   scale = (float)height / (float)max;
-  html_scaled(lab, max);
-  sprintf(buf, "\
+  html_scaled(lab, sizeof(lab), max);
+  (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "\
 <a name='%s'></a>\
 <table bgcolor='#FFFFFF' border='0' cellspacing='0' cellpadding='0' height='%lu' align='center'>\
 <tr height='10'>\
@@ -1233,31 +1232,31 @@ int html_hist(struct soap *soap, const char *title, size_t barwidth, size_t heig
 </tr>\
 <tr height='%lu' align='center' valign='bottom'>\
 <td width='10' height='%lu' background='bl.gif'></td>\
-<td bgcolor='#666666' valign='top'>%s</td>", title ? title : "", (unsigned long)height + 50, (unsigned long)num + 1, (unsigned long)height, (unsigned long)height, lab);
+<td bgcolor='#666666' valign='top'>%s</td>", title && strlen(title) < 80 ? title : "", (unsigned long)height + 50, (unsigned long)num + 1, (unsigned long)height, (unsigned long)height, lab);
   if (soap_send(soap, buf))
     return soap->error;
   for (i = 0; i < num; i++)
   { unsigned long bar = (scale * val[i] + 0.5);
     if (bar >= 1)
-      sprintf(buf, "\
-<td bgcolor='#FFFFFF'><a onmouseover=\"window.status='%lu';return true\" onmouseout=\"window.status='';return true\" href='#%s'><img src='top.gif' alt='' width='%lu' height='1' align='bottom' border='0'><br><img src='bar.gif' alt='' width='%lu' height='%lu' align='bottom' border='0'></a></td>", (unsigned long)i, title ? title : "", (unsigned long)barwidth, (unsigned long)barwidth, bar - 1);
+      (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "\
+<td bgcolor='#FFFFFF'><a onmouseover=\"window.status='%lu';return true\" onmouseout=\"window.status='';return true\" href='#%s'><img src='top.gif' alt='' width='%lu' height='1' align='bottom' border='0'><br><img src='bar.gif' alt='' width='%lu' height='%lu' align='bottom' border='0'></a></td>", (unsigned long)i, title && strlen(title) < 80 ? title : "", (unsigned long)barwidth, (unsigned long)barwidth, bar - 1);
     else
-      sprintf(buf, "\
+      (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "\
 <td bgcolor='#FFFFFF'><img src='bar.gif' alt='' width='%lu' height='0' align='bottom' border='0'></td>", (unsigned long)barwidth);
     if (soap_send(soap, buf))
       return soap->error;
   }
-  sprintf(buf, "\
+  (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "\
 <td width='10' height='%lu' background='br.gif'></td>\
 <td width='10' height='%lu' background='ls.gif'></td>\
 </tr>\
 <tr bgcolor='#666666' height='20' align='center'>\
 <td width='10' height='20' background='bl.gif'></td>\
-<td bgcolor='#666666'>%s</td>", (unsigned long)height, (unsigned long)height, title ? title : "");
+<td bgcolor='#666666'>%s</td>", (unsigned long)height, (unsigned long)height, title && strlen(title) < 80 ? title : "");
   if (soap_send(soap, buf))
     return soap->error;
   for (i = 0; i < num; i++)
-  { sprintf(buf, "<td%s>%s</td>", (i == highlight) ? " bgcolor='#777777'" : "", key ? key[i] : "<img src='bar.gif'>");
+  { (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "<td%s>%s</td>", (i == highlight) ? " bgcolor='#777777'" : "", key ? key[i] : "<img src='bar.gif'>");
     if (soap_send(soap, buf))
       return soap->error;
   }
@@ -1265,7 +1264,7 @@ int html_hist(struct soap *soap, const char *title, size_t barwidth, size_t heig
 <td width='10' height='20' background='br.gif'></td>\
 <td width='10' height='20' background='ls.gif'></td>"))
     return soap->error;
-  sprintf(buf, "\
+  (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "\
 </tr>\
 <tr height='10'>\
 <td width='10' height='10' background='bbl.gif'></td><td colspan='%lu' height='10' background='bb.gif'></td><td width='10' height='10' background='bbr.gif'></td><td width='10' height='10' background='ls.gif'></td>\

@@ -1,9 +1,11 @@
 
 OVERVIEW
+--------
 
 This directory contains custom serializers for common data types.
 
 CONTENTS
+--------
 
 Custom serializers replace the soapcpp2-generated serialization routines.
 See the notes in the source files on specific usage.
@@ -12,10 +14,11 @@ The following serializers are available:
 
 long_double.*		Serializes long double (extended double) type
 struct_tm.*		Serializes <time.h> struct tm
-struct_timeval.*	Serializes struct timeval (precision in usec)
-duration.*		Serializes LONG64 values as xsd:duration
+struct_timeval.*	Serializes struct timeval (precision in microsecs)
+duration.*		Serializes LONG64 milliseconds as xsd:duration
 
 USAGE
+-----
 
 To use a custom serializer add an import statement to your gSOAP header file:
 
@@ -32,6 +35,7 @@ struct ns__example
 Then compile with soapcpp2 and cc and link struct_tm.c
 
 HOW TO MODIFY TYPEMAP.DAT TO AUTOMATE THE MAPPING TO A CUSTOM TYPE WITH WSDL2H
+------------------------------------------------------------------------------
 
 The mapping is specified in typemap.dat as follows:
 
@@ -44,6 +48,7 @@ xsd__decimal = #import "custom/long_double.h" | long double
 this maps xsd:decimal to long double (the column after | specifies usage).
 
 IMPLEMENTING YOUR OWN CUSTOM SERIALIZERS
+----------------------------------------
 
 To build your own custom serializers: a custom serializer is typically declared
 in the imported file as follows

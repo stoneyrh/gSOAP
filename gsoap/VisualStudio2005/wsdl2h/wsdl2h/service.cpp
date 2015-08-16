@@ -120,10 +120,14 @@ void Definitions::analyze(const wsdl__definitions& definitions)
       binding_name = (*binding).name;
     else if ((*binding).portTypePtr() && (*binding).portTypePtr()->name)
     {
-      char *s = (char*)soap_malloc(definitions.soap, strlen((*binding).portTypePtr()->name) + 8);
-      strcpy(s, (*binding).portTypePtr()->name);
-      strcat(s, "Binding");
-      binding_name = s;
+      size_t l = strlen((*binding).portTypePtr()->name);
+      char *s = (char*)soap_malloc(definitions.soap, l + 8);
+      if (s)
+      {
+	soap_strcpy(s, l + 8, (*binding).portTypePtr()->name);
+	soap_strcpy(s + l, 8, "Binding");
+	binding_name = s;
+      }
     }
     if (!Rflag && (!soap__binding_transport
      || (strcmp(soap__binding_transport+strlen(soap__binding_transport)-4, "http")
@@ -318,11 +322,19 @@ void Definitions::analyze(const wsdl__definitions& definitions)
 	      else
 	      {
 		// multiple service bidings are used, each needs a unique new URI
-		URI = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen(binding_name) + 2);
-		strcpy(URI, definitions.targetNamespace);
-		if (*URI && URI[strlen(URI)-1] != '/')
-		  strcat(URI, "/");
-		strcat(URI, binding_name);
+		size_t l = strlen(definitions.targetNamespace) + strlen(binding_name);
+		URI = (char*)soap_malloc(definitions.soap, l + 2);
+		if (URI)
+		{
+		  soap_strcpy(URI, l + 2, definitions.targetNamespace);
+		  size_t n = strlen(URI);
+		  if (n > 0 && URI[n-1] != '/')
+		  {
+		    soap_strcpy(URI + n, l + 2 - n, "/");
+		    ++n;
+		  }
+		  soap_strcpy(URI + n, l + 2 - n, binding_name);
+		}
 	      }
 	      if (URI)
 	      {
@@ -498,9 +510,13 @@ void Definitions::analyze(const wsdl__definitions& definitions)
 		else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
 		{
 		  const char *name = input->name ? input->name : op->name;
-		  char *tmp = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name) + 3);
-		  sprintf(tmp, "%s/%s/%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name);
-		  op->input->action = tmp;
+		  size_t l = strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name);
+		  char *tmp = (char*)soap_malloc(definitions.soap, l + 3);
+		  if (tmp)
+		  {
+		    (SOAP_SNPRINTF(tmp, l + 3, l + 2), "%s/%s/%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name);
+		    op->input->action = tmp;
+		  }
 		}
 		op->input->message = input->messagePtr();
 		op->input->element = input->elementPtr();
@@ -617,18 +633,24 @@ void Definitions::analyze(const wsdl__definitions& definitions)
 		      op->output->action = NULL;
 		    else if (op->action)
 		    {
-		      const char *name = op->action;
-		      char *tmp = (char*)soap_malloc(definitions.soap, strlen(name) + 9);
-		      strcpy(tmp, name);
-		      strcat(tmp, "Response");
-		      op->output->action = tmp;
+		      size_t l = strlen(op->action);
+		      char *tmp = (char*)soap_malloc(definitions.soap, l + 9);
+		      if (tmp)
+		      {
+			(SOAP_SNPRINTF(tmp, l + 9, l + 8), "%sResponse", op->action);
+			op->output->action = tmp;
+		      }
 		    }
 		    else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
 		    {
 		      const char *name = output->name ? output->name : op->name;
-		      char *tmp = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name) + 11);
-		      sprintf(tmp, "%s/%s/%s%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name, output->name ? "" : "Response");
-		      op->output->action = tmp;
+		      size_t l = strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name);
+		      char *tmp = (char*)soap_malloc(definitions.soap, l + 11);
+		      if (tmp)
+		      {
+			(SOAP_SNPRINTF(tmp, l + 11, l + 10), "%s/%s/%s%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name, output->name ? "" : "Response");
+			op->output->action = tmp;
+		      }
 		    }
 		    op->output->message = output->messagePtr();
 		    op->output->element = output->elementPtr();
@@ -660,13 +682,16 @@ void Definitions::analyze(const wsdl__definitions& definitions)
 		  }
 		  if (op->output->name)
 		  {
-		    char *s = (char*)soap_malloc(definitions.soap, strlen(op->output->name) + 9);
-		    strcpy(s, op->output->name);
-		    strcat(s, "Response");
-		    if (soap__operation_style == document)
-		      op->output_name = types.oname("__", op->URI, s);
-		    else
-		      op->output_name = types.oname(NULL, op->output->URI, s);
+		    size_t l = strlen(op->output->name);
+		    char *s = (char*)soap_malloc(definitions.soap, l + 9);
+		    if (s)
+		    {
+		      (SOAP_SNPRINTF(s, l + 9, l + 8), "%sResponse", op->output->name);
+		      if (soap__operation_style == document)
+			op->output_name = types.oname("__", op->URI, s);
+		      else
+			op->output_name = types.oname(NULL, op->output->URI, s);
+		    }
 		  }
 		  op->output->documentation = output->documentation;
 		  // collect output message policies
@@ -759,11 +784,19 @@ void Definitions::analyze(const wsdl__definitions& definitions)
 	      else
 	      {
 		// multiple service bidings are used, each needs a unique new URI
-		URI = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen(binding_name) + 2);
-		strcpy(URI, definitions.targetNamespace);
-		if (*URI && URI[strlen(URI)-1] != '/')
-		  strcat(URI, "/");
-		strcat(URI, binding_name);
+		size_t l = strlen(definitions.targetNamespace) + strlen(binding_name);
+		URI = (char*)soap_malloc(definitions.soap, l + 2);
+		if (URI)
+		{
+		  soap_strcpy(URI, l + 2, definitions.targetNamespace);
+		  size_t n = strlen(URI);
+		  if (n > 0 && URI[n-1] != '/')
+		  {
+		    soap_strcpy(URI + n, l + 2 - n, "/");
+		    ++n;
+		  }
+		  soap_strcpy(URI + n, l + 2 - n, binding_name);
+		}
 	      }
 	      if (URI)
 	      {
@@ -915,9 +948,13 @@ void Definitions::analyze(const wsdl__definitions& definitions)
 		else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
 		{
 		  const char *name = output->name ? output->name : op->name;
-		  char *tmp = (char*)soap_malloc(definitions.soap, strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name) + 3);
-		  sprintf(tmp, "%s/%s/%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name);
-		  op->output->action = tmp;
+		  size_t l = strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name);
+		  char *tmp = (char*)soap_malloc(definitions.soap, l + 3);
+		  if (tmp)
+		  {
+		    (SOAP_SNPRINTF(tmp, l + 3, l + 2), "%s/%s/%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name);
+		    op->output->action = tmp;
+		  }
 		}
 		op->output->message = output->messagePtr();
 		op->output->element = output->elementPtr();
@@ -971,13 +1008,16 @@ void Definitions::analyze(const wsdl__definitions& definitions)
 		  op->input_name = types.oname("__", op->URI, op->output->name);
 		else
 		  op->input_name = types.oname(NULL, op->output->URI, op->output->name);
-		char *s = (char*)soap_malloc(definitions.soap, strlen(op->output->name) + 9);
-		strcpy(s, op->output->name);
-		strcat(s, "Response");
-		if (soap__operation_style == document)
-		  op->output_name = types.oname("__", op->URI, s);
-		else
-		  op->output_name = types.oname(NULL, op->output->URI, s);
+		size_t l = strlen(op->output->name);
+		char *s = (char*)soap_malloc(definitions.soap, l + 9);
+		if (s)
+		{
+		  (SOAP_SNPRINTF(s, l + 9, l + 8), "%sResponse", op->output->name);
+		  if (soap__operation_style == document)
+		    op->output_name = types.oname("__", op->URI, s);
+		  else
+		    op->output_name = types.oname(NULL, op->output->URI, s);
+		}
 		analyze_headers(definitions, service, ext_input, ext_output);
 		analyze_faults(definitions, service, op, operation);
 		service->operation.push_back(op);
@@ -1208,9 +1248,15 @@ Message *Definitions::analyze_fault(const wsdl__definitions& definitions, Servic
       f->use = ext_fault.soap__fault_->use;
     if (ext_fault.wsoap__code)
     {
-      char *s = (char*)soap_malloc(definitions.soap, 80 + strlen(ext_fault.wsoap__code) + (ext_fault.wsoap__subcodes ? strlen(ext_fault.wsoap__subcodes) : 0));
-      sprintf(s, "\"%s\" with subcodes \"%s\"", ext_fault.wsoap__code, ext_fault.wsoap__subcodes ? ext_fault.wsoap__subcodes : "");
-      f->body_parts = s;
+      size_t l = strlen(ext_fault.wsoap__code);
+      if (ext_fault.wsoap__subcodes)
+        l += strlen(ext_fault.wsoap__subcodes);
+      char *s = (char*)soap_malloc(definitions.soap, l + 40);
+      if (s)
+      {
+	(SOAP_SNPRINTF(s, l + 40, l + 19), "\"%s\" with subcodes \"%s\"", ext_fault.wsoap__code, ext_fault.wsoap__subcodes ? ext_fault.wsoap__subcodes : "");
+	f->body_parts = s;
+      }
     }
     else
       f->ext_documentation = ext_fault.documentation;
@@ -1254,7 +1300,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
   else
     defs = "Service";
   ident();
-  fprintf(stream, "/** @page page_notes Notes\n\n@note HINTS:\n - Run soapcpp2 on %s to generate the SOAP/XML processing logic.\n   Use soapcpp2 -I to specify paths for #import\n   To build with STL, 'stlvector.h' is imported from 'import' dir in package.\n   Use soapcpp2 -j to generate improved proxy and server classes.\n - Use wsdl2h -c and -s to generate pure C code or C++ code without STL.\n - Use 'typemap.dat' to control namespace bindings and type mappings.\n   It is strongly recommended to customize the names of the namespace prefixes\n   generated by wsdl2h. To do so, modify the prefix bindings in the Namespaces\n   section below and add the modified lines to 'typemap.dat' to rerun wsdl2h.\n - Use Doxygen (www.doxygen.org) on this file to generate documentation.\n - Use wsdl2h -R to generate REST operations.\n - Use wsdl2h -nname to use name as the base namespace prefix instead of 'ns'.\n - Use wsdl2h -Nname for service prefix and produce multiple service bindings\n - Use wsdl2h -d to enable DOM support for xsd:anyType.\n - Use wsdl2h -g to auto-generate readers and writers for root elements.\n - Use wsdl2h -b to auto-generate bi-directional operations (duplex ops).\n - Struct/class members serialized as XML attributes are annotated with a '@'.\n - Struct/class members that have a special role are annotated with a '$'.\n\n@warning\n   DO NOT INCLUDE THIS ANNOTATED FILE DIRECTLY IN YOUR PROJECT SOURCE CODE.\n   USE THE FILES GENERATED BY soapcpp2 FOR YOUR PROJECT'S SOURCE CODE:\n   THE soapStub.h FILE CONTAINS THIS CONTENT WITHOUT ANNOTATIONS.\n\n", outfile ? outfile : "this file");
+  fprintf(stream, "/** @page page_notes Notes\n\n@note HINTS:\n - Run soapcpp2 on %s to generate the SOAP/XML processing logic.\n   Use soapcpp2 -I to specify paths for #import\n   To build with STL, 'stlvector.h' is imported from 'import' dir in package.\n   Use soapcpp2 -j to generate improved proxy and server classes.\n - Use wsdl2h -c and -s to generate pure C code or C++ code without STL.\n - Use 'typemap.dat' to control namespace bindings and type mappings.\n   It is strongly recommended to customize the names of the namespace prefixes\n   generated by wsdl2h. To do so, modify the prefix bindings in the Namespaces\n   section below and add the modified lines to 'typemap.dat' to rerun wsdl2h.\n - Use Doxygen (www.doxygen.org) on this file to generate documentation.\n - Use wsdl2h -R to generate REST operations.\n - Use wsdl2h -nname to use name as the base namespace prefix instead of 'ns'.\n - Use wsdl2h -Nname for service prefix and produce multiple service bindings\n - Use wsdl2h -d to enable DOM support for xsd:anyType.\n - Use wsdl2h -g to auto-generate readers and writers for root elements.\n - Use wsdl2h -b to auto-generate bi-directional operations (duplex ops).\n - Use wsdl2h -U to map XML names to C++ Unicode identifiers instead of _xNNNN.\n - Use wsdl2h -u to disable the generation of unions.\n - Struct/class members serialized as XML attributes are annotated with a '@'.\n - Struct/class members that have a special role are annotated with a '$'.\n\n@warning\n   DO NOT INCLUDE THIS ANNOTATED FILE DIRECTLY IN YOUR PROJECT SOURCE CODE.\n   USE THE FILES GENERATED BY soapcpp2 FOR YOUR PROJECT'S SOURCE CODE:\n   THE soapStub.h FILE CONTAINS THIS CONTENT WITHOUT ANNOTATIONS.\n\n", outfile ? outfile : "this file");
   fprintf(stream, "@copyright LICENSE:\n@verbatim\n%s@endverbatim\n\n*/\n\n", licensenotice);
   // gsoap compiler options: 'w' disables WSDL/schema output to avoid file collisions
   if (cflag)
@@ -1340,6 +1386,25 @@ void Definitions::compile(const wsdl__definitions& definitions)
     {
       soap12 = true;
       break;
+    }
+  }
+  if (!soap12)
+  {
+    for (vector<wsdl__import>::const_iterator i = definitions.import.begin(); i != definitions.import.end(); ++i)
+    {
+      if ((*i).definitionsPtr())
+      {
+	for (Namespace *p = (*i).definitionsPtr()->soap->local_namespaces; p && p->id; p++)
+	{
+	  if (p->out && !strcmp(p->id, "soap") && !strcmp(p->out, "http://schemas.xmlsoap.org/wsdl/soap12/"))
+	  {
+	    soap12 = true;
+	    break;
+	  }
+	}
+      }
+      if (soap12)
+	break;
     }
   }
   if (definitions.types)
@@ -3369,17 +3434,20 @@ static const char *urienc(struct soap *soap, const char *uri)
     return uri;
   n = strlen(uri) + 2*n;
   r = t = (char*)soap_malloc(soap, n + 1);
-  for (s = uri; *s; s++)
+  if (r)
   {
-    if (URI_CHAR(*s))
-      *t++ = *s;
-    else
+    for (s = uri; *s; s++)
     {
-      sprintf(t, "%%%.2x", *s);
-      t += 3;
+      if (URI_CHAR(*s))
+	*t++ = *s;
+      else
+      {
+	(SOAP_SNPRINTF(t, n + 1 - (t - r), 3), "%%%2.2x", *s);
+	t += 3;
+      }
     }
+    *t = '\0';
   }
-  *t = '\0';
   return r;
 }
 

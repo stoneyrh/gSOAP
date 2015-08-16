@@ -70,16 +70,18 @@ int md5_handler(struct soap *soap, void **context, enum md5_action action, char 
       break;
     case MD5_UPDATE:
       ctx = (EVP_MD_CTX*)*context;
-      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- MD5 Update %p --\n", ctx));
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- MD5 Update %p (%lu) --\n", ctx, (unsigned long)len));
       DBGMSG(TEST, buf, len);
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n--"));
       EVP_DigestUpdate(ctx, (const void*)buf, (unsigned int)len);
       break;
     case MD5_FINAL:
       ctx = (EVP_MD_CTX*)*context;
-      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- MD5 Final %p --\n", ctx));
       EVP_DigestFinal_ex(ctx, (unsigned char*)hash, &size);
-      memcpy(buf, hash, 16);
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- MD5 Final %p --\n", ctx));
+      DBGHEX(TEST, hash, size);
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n--"));
+      soap_memcpy((void*)buf, 16, (const void*)hash, 16);
       break;
     case MD5_DELETE:
       ctx = (EVP_MD_CTX*)*context;

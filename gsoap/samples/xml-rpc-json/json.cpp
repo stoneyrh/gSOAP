@@ -74,7 +74,7 @@ static int jsstrout(struct soap *soap, const char *s)
               return soap->error;
           }
           else
-          { sprintf(buf, "\\u%4x", c);
+	  { (SOAP_SNPRINTF(buf, sizeof(buf), 7), "\\u%4x", c);
             if (soap_send_raw(soap, buf, 6))
               return soap->error;
           }

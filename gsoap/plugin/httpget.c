@@ -170,9 +170,9 @@ static int http_get_init(struct soap *soap, struct http_get_data *data, int (*ha
   data->stat_get = 0;
   data->stat_post = 0;
   data->stat_fail = 0;
-  memset(data->min, 0, sizeof(data->min));
-  memset(data->hour, 0, sizeof(data->hour));
-  memset(data->day, 0, sizeof(data->day));
+  memset((void*)data->min, 0, sizeof(data->min));
+  memset((void*)data->hour, 0, sizeof(data->hour));
+  memset((void*)data->day, 0, sizeof(data->day));
   soap->fparse = http_get_parse; /* replace HTTP header parser callback with ours */
   return SOAP_OK;
 }

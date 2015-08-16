@@ -2286,6 +2286,7 @@ soap_wsse_verify_X509(struct soap *soap, X509 *cert)
 int
 soap_wsse_add_SecurityContextToken(struct soap *soap, const char *id, const char *identifier)
 { char *URI;
+  size_t l;
   _wsse__Security *security = soap_wsse_add_Security(soap);
   DBGFUN2("soap_wsse_add_SecurityContextToken", "id=%s", id, "identifier=%s", identifier?identifier:"");
   /* allocate wsc:SecurityContextToken if we don't already have one */
@@ -2295,10 +2296,12 @@ soap_wsse_add_SecurityContextToken(struct soap *soap, const char *id, const char
   }
   soap_default_wsc__SecurityContextTokenType(soap, security->wsc__SecurityContextToken);
   /* populate the wsc:SecurityContextToken */
-  if (!(URI = (char*)soap_malloc(soap, strlen(id) + 2)))
+  l = strlen(id);
+  if (!(URI = (char*)soap_malloc(soap, l + 2)))
     return soap->error = SOAP_EOM;
   *URI = '#';
-  security->wsc__SecurityContextToken->wsu__Id = strcpy(URI + 1, id);
+  soap_strcpy(URI + 1, l + 1, id);
+  security->wsc__SecurityContextToken->wsu__Id = URI + 1;
   security->wsc__SecurityContextToken->Identifier = soap_strdup(soap, identifier);
   /* set SecurityTokenReference */
   return soap_wsse_add_KeyInfo_SecurityTokenReferenceURI(soap, URI, NULL);
@@ -3421,12 +3424,13 @@ soap_wsse_add_EncryptedKey_encrypt_only(struct soap *soap, int alg, const char *
   }
   else
   { char *s, *t;
+    size_t l = strlen(tags);
     /* make space to insert # to each id converted from a tag name */
-    t = (char*)soap_malloc(soap, strlen(tags) + 2);
+    t = (char*)soap_malloc(soap, l + 2);
     if (!t)
       return soap->error = SOAP_EOM;
     *t = '#';
-    strcpy(t + 1, tags);
+    soap_strcpy(t + 1, l + 1, tags);
     s = soap_wsse_ids(soap, t);
     if (!s)
       return soap->error = SOAP_EOM;
@@ -3850,12 +3854,13 @@ soap_wsse_session_verify(struct soap *soap, const char hash[SOAP_SMD_SHA1_SIZE],
   }
   /* if not found, allocate new session data */
   if (!session)
-  { session = (struct soap_wsse_session*)malloc(sizeof(struct soap_wsse_session) + strlen(nonce));
+  { size_t l = strlen(nonce);
+    session = (struct soap_wsse_session*)malloc(sizeof(struct soap_wsse_session) + l);
     if (session)
     { session->next = soap_wsse_session;
       session->expired = expired;
-      memcpy(session->hash, hash, SOAP_SMD_SHA1_SIZE);
-      strcpy(session->nonce, nonce);
+      soap_memcpy((void*)session->hash, sizeof(session->hash), (const void*)hash, SOAP_SMD_SHA1_SIZE);
+      soap_strcpy(session->nonce, l + 1, nonce);
       soap_wsse_session = session;
     }
     session = NULL;
@@ -3937,10 +3942,10 @@ static void
 calc_nonce(char nonce[SOAP_WSSE_NONCELEN])
 { int i;
   time_t r = time(NULL);
-  memcpy(nonce, &r, 4);
+  soap_memcpy((void*)nonce, SOAP_WSSE_NONCELEN, (const void*)&r, 4);
   for (i = 4; i < SOAP_WSSE_NONCELEN; i += 4)
   { r = soap_random;
-    memcpy(nonce + i, &r, 4);
+    soap_memcpy((void*)nonce + i, 4, (const void*)&r, 4);
   }
 }
 
@@ -4492,12 +4497,13 @@ soap_wsse_encrypt_only(struct soap *soap, int alg, const void *key, int keylen, 
   data->encid = soap_strdup(soap, tags);
   if (tags)
   { char *s, *t;
+    size_t l = strlen(tags);
     /* make space to insert # to each id converted from a tag name */
-    t = (char*)soap_malloc(soap, strlen(tags) + 2);
+    t = (char*)soap_malloc(soap, l + 2);
     if (!t)
       return soap->error = SOAP_EOM;
     *t = '#';
-    strcpy(t + 1, tags);
+    soap_strcpy(t + 1, l + 1, tags);
     s = soap_wsse_ids(soap, t);
     if (!s)
       return soap->error = SOAP_EOM;
@@ -4905,10 +4911,11 @@ soap_wsse_element_begin_out(struct soap *soap, const char *tag)
     char *URI = NULL;
     if (security && security->xenc__EncryptedKey && security->xenc__EncryptedKey->Id)
     { const char *Id = security->xenc__EncryptedKey->Id;
-      if (!(URI = (char*)soap_malloc(soap, strlen(Id) + 1)))
+      size_t l = strlen(Id);
+      if (!(URI = (char*)soap_malloc(soap, l + 2)))
         return soap->error = SOAP_EOM;
       *URI = '#';
-      strcpy(URI + 1, Id);
+      soap_strcpy(URI + 1, l + 1, Id);
     }
     /* this only encrypts the Body, so stop the callback */
     if (!(soap->mode & SOAP_IO_LENGTH))
@@ -4920,10 +4927,11 @@ soap_wsse_element_begin_out(struct soap *soap, const char *tag)
     char *URI = NULL;
     if (security && security->xenc__EncryptedKey && security->xenc__EncryptedKey->Id)
     { const char *Id = security->xenc__EncryptedKey->Id;
-      if (!(URI = (char*)soap_malloc(soap, strlen(Id) + 1)))
+      size_t l = strlen(Id);
+      if (!(URI = (char*)soap_malloc(soap, l + 2)))
         return soap->error = SOAP_EOM;
       *URI = '#';
-      strcpy(URI + 1, Id);
+      soap_strcpy(URI + 1, l + 1, Id);
     }
     return soap_wsse_encrypt_begin(soap, soap_wsse_ids(soap, tag), data->enco_alg, URI, data->enco_keyname, NULL);
   }
@@ -4984,16 +4992,17 @@ soap_wsse_preparesend(struct soap *soap, const char *buf, size_t len)
     else if (!data->sigid || soap_tagsearch(data->sigid, soap->id))
     { /* initialize smdevp engine */
       struct soap_wsse_digest *digest;
+      size_t l = strlen(soap->id);
       soap->event = SOAP_SEC_SIGN;
-      digest = (struct soap_wsse_digest*)SOAP_MALLOC(soap, sizeof(struct soap_wsse_digest) + strlen(soap->id) + 1);
+      digest = (struct soap_wsse_digest*)SOAP_MALLOC(soap, sizeof(struct soap_wsse_digest) + l + 1);
       digest->next = data->digest;
       digest->level = soap->level;
       /* digest hash strength is same as signature strength */
       alg = (SOAP_SMD_DGST | (data->sign_alg & SOAP_SMD_HASH));
       soap_smd_init(soap, &digest->smd, alg, NULL, 0);
-      memset(digest->hash, 0, sizeof(digest->hash));
+      memset((void*)digest->hash, 0, sizeof(digest->hash));
       digest->id[0] = '#';
-      strcpy(digest->id + 1, soap->id);
+      soap_strcpy(digest->id + 1, l + 1, soap->id);
       data->digest = digest;
       /* omit indent for indented XML (next time around, we will catch '<') */
       if (*buf != '<')

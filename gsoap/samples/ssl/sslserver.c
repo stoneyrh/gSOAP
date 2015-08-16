@@ -92,11 +92,11 @@ int main()
   */
   if (soap_ssl_server_context(&soap,
     SOAP_SSL_DEFAULT,	/* use SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION to verify clients: client must provide a key file e.g. "client.pem" and "password" */
-    "server.pem",	/* keyfile (cert+key): see SSL docs to create this file */
+    "server.pem",	/* keyfile (cert+key): see README.txt to create this file */
     "password",		/* password to read the private key in the key file */
-    "cacert.pem",	/* cacert file to store trusted certificates (to authenticate clients) */
+    "cacert.pem",	/* cacert file to store trusted certificates (to authenticate clients), see README.txt */
     NULL,		/* capath */
-    "dh512.pem",	/* DH file name or DH param key len bits (e.g. "1024"), if NULL use RSA 2048 bits (SOAP_SSL_RSA_BITS) */
+    "dh2048.pem",	/* DH file name or DH param key len bits in string (e.g. "2048"), if NULL then RSA with 2048 bits is used instead (bits defined by SOAP_SSL_RSA_BITS) */
     NULL,		/* if randfile!=NULL: use a file with random data to seed randomness */ 
     "sslserver"		/* server identification for SSL session cache (unique server name, e.g. use argv[0]) */
   ))

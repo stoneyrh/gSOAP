@@ -228,7 +228,7 @@ const mod_gsoap_interface *ISAPI_SoapServerFactory::getInterface(const char *psz
 					nRet = (*pInterface->fmod_gsoap_init)();
 					if (0 != nRet) {
 						char szBuf[256];
-						sprintf(szBuf, "failed to initialize %s: mod_gsoap_init returned %d", (const char *)pszDll, nRet);
+						_snprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, "failed to initialize %s: mod_gsoap_init returned %d", (const char *)pszDll, nRet);
 						m_strError = szBuf;
 					}
 				}
