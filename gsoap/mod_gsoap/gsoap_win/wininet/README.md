@@ -14,7 +14,7 @@ The WinInet plugin for gSOAP enables client applications (not servers) to
 communicate through Microsoft's WinInet API on Windows. This offers all of the
 advantages of WinInet managed through the `Internet Options` control panel of
 Windows, such as HTTP (proxy) authentication, TLS/SSL, and HTTP compression.
-Therefore, "if IE works, gSOAP works." since these options are shared by IE, 
+Therefore, "if IE works, gSOAP works." since these options are shared by IE.
 
 The WinInet project home is at <http://code.google.com/p/gsoapwininet>.
 
@@ -38,7 +38,9 @@ Features                                                             {#features}
 - Can be used in both MBCS and UNICODE projects.
 - Compiles cleanly at warning level 4 supporting Win32 and Win64.
 - Debug logging is supported (`TEST.log`, `SENT.log`, and `RECV.log`).
-- MT safe and supports multiple threads, as usual with gSOAP clients.
+- MT safe and supports multiple threads, as usual with gSOAP clients. You will
+  need to register this plugin with each soap context (do not use `soap_copy`
+  and `soap_copy_context` to copy contexts).
 
 
 Limitations                                                       {#limitations}

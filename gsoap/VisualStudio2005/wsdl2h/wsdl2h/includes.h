@@ -41,7 +41,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "httpda.h"
 #endif
 
-#define WSDL2H_VERSION "2.8.23"
+#define WSDL2H_VERSION "2.8.24"
 
 #ifdef WIN32
 # pragma warning(disable : 4996)
@@ -94,6 +94,7 @@ extern int _flag,
            aflag,
            bflag,
 	   cflag,
+	   c11flag,
 	   dflag,
 	   eflag,
 	   fflag,
@@ -133,9 +134,10 @@ extern const char *schema_prefix;
 extern const char elementformat[];
 extern const char pointerformat[];
 extern const char attributeformat[];
-extern const char vectorformat_open[];
-extern const char vectorformat[];
-extern const char pointervectorformat[];
+extern const char templateformat_open[];
+extern const char attrtemplateformat_open[];
+extern const char templateformat[];
+extern const char pointertemplateformat[];
 extern const char arrayformat[];
 extern const char arraysizeformat[];
 extern const char arrayoffsetformat[];

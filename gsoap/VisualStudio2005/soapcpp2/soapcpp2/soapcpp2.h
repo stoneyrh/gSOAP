@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.23" /* Current version */
-# define GSOAP_VERSION 20823
+# define VERSION "2.8.24" /* Current version */
+# define GSOAP_VERSION 20824
 #endif
 
 #ifdef WIN32
@@ -120,8 +120,8 @@ typedef	int Token;
 
 typedef	enum Type
 {	Tnone,
-	Tvoid,		/* primitive types */
-	Tchar,
+	Tvoid,
+	Tchar,		/* primitive types from here*/
 	Twchar,
 	Tshort,
 	Tint,
@@ -135,15 +135,18 @@ typedef	enum Type
 	Tuint,
 	Tulong,
 	Tullong,
+        Tsize,
 	Ttime,
 	Tenum,
-	Tclass,		/* compound types */
+	Tenumsc,
+	Tclass,		/* compound types from here */
 	Tstruct,
 	Tunion,
-	Tpointer,
-	Treference,
-	Tarray,
-	Ttemplate,
+	Tpointer,	/* pointer T* */
+	Treference,	/* reference T& */
+	Trvalueref,	/* C+11 rvalue reference T&& */
+	Tarray,		/* fixed size array T[N] */
+	Ttemplate,	/* template class<T> */
 	Tfun
 } Type;
 
@@ -159,17 +162,20 @@ typedef	enum Storage
 	Svirtual	= 0x000020,
 	Sconst		= 0x000040,
 	Sconstobj	= 0x000080,
-	Sconstptr	= 0x000100,
-	Sfriend		= 0x000200,
-	Sinline		= 0x000400,
-	Sabstract	= 0x000800,
-	SmustUnderstand	= 0x001000,
-	Sreturn		= 0x002000,
-	Sattribute	= 0x004000,
-	Sspecial	= 0x008000,
-	Sexplicit	= 0x010000,
-	Sprivate	= 0x020000,
-	Sprotected	= 0x040000
+	Sfinal		= 0x000100,
+	Soverride	= 0x000200,
+	Sconstptr	= 0x000400,
+	Sfriend		= 0x000800,
+	Sinline		= 0x001000,
+	Sabstract	= 0x002000,
+	SmustUnderstand	= 0x004000,
+	Sreturn		= 0x008000,
+	Sattribute	= 0x010000,
+	Sspecial	= 0x020000,
+	Sexplicit	= 0x040000,
+	Sprivate	= 0x080000,
+	Sprotected	= 0x100000,
+	Smutable        = 0x200000
 } Storage;
 
 typedef	enum Level { INTERNAL, GLOBAL, PARAM, LOCAL } Level;
@@ -177,25 +183,29 @@ typedef	enum Level { INTERNAL, GLOBAL, PARAM, LOCAL } Level;
 #define mknone()	mktype(Tnone,     NULL, 0)
 #define mkvoid()	mktype(Tvoid,     NULL, 0)
 #define mkbool()	mktype(Tenum,     booltable, 4)
-#define mkchar()	mktype(Tchar,     NULL, 1)
-#define mkwchart()	mktype(Twchar,    NULL, 4)
-#define mkshort()	mktype(Tshort,    NULL, 2)
-#define mkint()		mktype(Tint,      NULL, 4)
-#define mklong()	mktype(Tlong,     NULL, 8)
-#define mkllong()	mktype(Tllong,    NULL, 8)
+#define mkchar()	mktype(Tchar,     NULL, 1)      /* int8_t */
+#define mkwchart()	mktype(Twchar,    NULL, 4)      /* wchar_t */
+#define mkshort()	mktype(Tshort,    NULL, 2)      /* int32_t */
+#define mkint()		mktype(Tint,      NULL, 4)      /* int32_t */
+#define mklong()	mktype(Tlong,     NULL, 8)      /* int32_t */
+#define mkllong()	mktype(Tllong,    NULL, 8)      /* int64_t */
 #define mkfloat()	mktype(Tfloat,    NULL, 4)
 #define mkdouble()	mktype(Tdouble,   NULL, 8)
 #define mkldouble()	mktype(Tldouble,  NULL, 16)	/* long double */
-#define mkuchar()	mktype(Tuchar,    NULL, 1)	/* unsigned char */
-#define mkushort()	mktype(Tushort,   NULL, 2)	/* unsigned short */
-#define mkuint()	mktype(Tuint,     NULL, 4)	/* unsigned int */
-#define mkulong()	mktype(Tulong,    NULL, 8)	/* unsigned long */
-#define mkullong()	mktype(Tullong,   NULL, 8)	/* unsigned long */
+#define mkuchar()	mktype(Tuchar,    NULL, 1)	/* uint8_t unsigned char */
+#define mkushort()	mktype(Tushort,   NULL, 2)	/* utin16_t unsigned short */
+#define mkuint()	mktype(Tuint,     NULL, 4)	/* uint32_t unsigned int */
+#define mkulong()	mktype(Tulong,    NULL, 8)	/* uint64_t unsigned long */
+#define mkullong()	mktype(Tullong,   NULL, 8)	/* uint64_t unsigned long long */
+#define mksize()	mktype(Tsize,     NULL, 8)      /* transient size_t */
 #define mktimet()	mktype(Ttime,     NULL, 4)
 #define mkenum(t)	mktype(Tenum,	  t,    4)
-#define mkmask(t)	mktype(Tenum,	  t,    8)
+#define mkenumsc(t)	mktype(Tenumsc,   t,    4)
+#define mkmask(t)	mktype(Tenum,	  t,    9)
+#define mkmasksc(t)	mktype(Tenumsc,	  t,    9)
 #define	mkpointer(t)	mktype(Tpointer,  t,    4)
 #define	mkreference(t)	mktype(Treference,t,    4)
+#define	mkrvalueref(t)	mktype(Trvalueref,t,    4)
 #define	mkclass(t, w)	mktype(Tclass,    t,    w)
 #define	mkstruct(t, w)	mktype(Tstruct,   t,    w)
 #define	mkunion(t, w)	mktype(Tunion,    t,    w)
@@ -220,11 +230,14 @@ typedef	struct Tnode
 	Symbol		*id;	/* struct/class/union/enum name */
 	Symbol		*base;	/* base class name */
 	Symbol		*sym;	/* typedef name */
+	Symbol		*synonym;	/* synonymous typedef base name for 'typedef base id */
 	struct Entry	*response; /* funcs only: points to response struct */
 	int		width;
 	int		transient;
 	const char	*imported;
 	struct Tnode	*next;
+	Bool		visited;
+	Bool		recursive;	/* recursive data type */
         Bool		generated;
         Bool		classed;	/* class qualified */
         Bool		wsdl;
@@ -255,6 +268,7 @@ typedef	struct Entry {
 	const char	*tag;
 	IDinfo		info;
 	Level		level;
+	const char      *filename;
 	int		lineno;
 	struct Entry	*next;
 } Entry;
@@ -373,14 +387,17 @@ extern Entry *unlinklast(Table*);
 
 extern FILE *fmsg;
 
+extern int soap_version;
+
 extern int aflag;
 extern int Aflag;
 extern int bflag;
-extern int vflag;
-extern int wflag;
 extern int cflag;
+extern int c11flag;
 extern int Cflag;
 extern int eflag;
+extern int Ecflag;
+extern int Edflag;
 extern unsigned long fflag;
 extern int iflag;
 extern int jflag;
@@ -396,11 +413,13 @@ extern int Sflag;
 extern int Tflag;
 extern int tflag;
 extern int uflag;
+extern int vflag;
+extern int wflag;
 extern int xflag;
 extern int yflag;
 extern int zflag;
 extern char dirpath[1024];
-extern char filename[1024];
+extern const char *filename;
 extern const char *prefix;
 extern const char *importpath;
 extern int custom_header;

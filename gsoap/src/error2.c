@@ -53,11 +53,10 @@ static int semwarno = 0;
 char errbuf[1024];	/* to hold error messages */
 
 /*
-yyerror - called by parser from an error production with nonterminal `error'
+yyerror - auto-called by parser from an error production with nonterminal `error'
 */
 void yyerror(const char *s)
-{
-  fprintf(stderr, "%s(%d): %s\n", filename, yylineno, s);
+{ (void)s;
 }
 
 /*
@@ -71,11 +70,11 @@ void lexerror(const char *s)
 }
 
 /*
-synerror - called by a semantic action in the yacc grammar
+synerror - called by a semantic action for an error production in the yacc grammar
 */
 void synerror(const char *s)
 {
-  fprintf(stderr, "%s(%d): Syntax error: %s\n", filename, yylineno-1, s);
+  fprintf(stderr, "%s(%d): Syntax error: %s\n", filename, yylineno, s);
   if (synerrno++ >= MAXERR)
     execerror("too many syntactic errors, bailing out");
 }
@@ -95,7 +94,10 @@ semwarn - report semantic warning from static checking
 */
 void semwarn(const char *s)
 {
-  fprintf(stderr, "\n%s(%d): *WARNING*: %s\n\n", filename, yylineno, s);
+  if (yylineno)
+    fprintf(stderr, "\n%s(%d): *WARNING*: %s\n\n", filename, yylineno, s);
+  else
+    fprintf(stderr, "\n%s: *WARNING*: %s\n\n", filename, s);
   semwarno++;
 }
 

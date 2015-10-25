@@ -1,5 +1,6 @@
 /*	fault.h
 
+	Example SOAP Fault detail definitions, to demonstrate the use of env.h.
 	Defines optional SOAP Fault derail data structures
 
 	Copyright (C) 2000-2004 Robert A. van Engelen. All Rights Reserved.

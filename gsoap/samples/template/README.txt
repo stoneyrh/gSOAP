@@ -3,22 +3,25 @@ How container templates are serialized
 ======================================
 
 In the gSOAP header file (the file processed by soapcpp2) a container template
-can be introduced (but code should NOT be defined in the header file):
+can be declared as follows:
 
     template <class T> class mycontainer;
 
-and it can be used as needed in the same gSOAP header file to serialize
-containers of values in XML (similar to std::vector):
+and mycontainer can be used as needed in the same gSOAP header file to
+serialize mycontainers of values in XML similar to std::vector:
 
     mycontainer<int> ...
     mycontainer<someclass> ... etc
 
-compare this to:
+Compare this to:
 
     std::vector<int>
 
-The "real" container template must be defined in a regular header file and
-implemented as well. For XML serialization to work with the template, the
+Note that the template class code should NOT be defined anywhere in the header
+file, but separately.
+
+That is, The "real" container template must be defined in a regular header file
+and implemented as well. For XML serialization to work with the template, the
 template must define at least four methods with similar functionality to
 std::vector:
 
@@ -28,14 +31,14 @@ std::vector:
     iterator insert(iterator pos, const_reference val)
 
 These four methods allow the gSOAP serializers to read and write the container
-content in XML format. Of course, how you define these is up to you. A
-container can also store just one value, or you can use it to serialize trees
-and graphs, or even produce and consume content dynamically. You could define
-the templates as processors of (de)serialized XML content embedded in XML
-messages. Because the serializers are invoked twice to send a message over HTTP
-(one pass to compute the content length when chunking is off, then to send the
-HTTP body), you MUST ensure that the template instance's iterator produces the
-same content in the two-phase HTTP count/send (or use chunking).
+content from/to XML. Of course, how you define these is up to you. A container
+can also store just one value, or you can use it to serialize trees and graphs,
+or even produce and consume content dynamically. You could define the templates
+as processors of (de)serialized XML content embedded in XML messages. Because
+the serializers are invoked twice to send a message over HTTP (one pass to
+compute the content length when chunking is off, then to send the HTTP body),
+you MUST ensure that the template instance's iterator produces the same content
+in the two-phase HTTP count/send (or use chunking).
 
 Example
 -------

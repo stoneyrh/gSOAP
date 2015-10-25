@@ -13,6 +13,7 @@
   <tr>
    <td width="10%">&nbsp;</td>
    <td width="175px"><a href="http://www.genivia.com"><img alt="Genivia" src="GeniviaLogo2_trans_noslogan.png"/></a></td>
+   <td class="tab_home"><a href="http://www.genivia.com">Home</a></td>
    <td class="tab_home"><a href="http://www.genivia.com/dev.html">Developer Center</a></td>
    <td>
     <div style="float: right;"><h1>HTTP Digest Authentication</h1></div>
@@ -62,9 +63,9 @@ Include dependency graph for httpda.c:</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ad2e2f93a4deabcea027ab231a5686728"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#ad2e2f93a4deabcea027ab231a5686728">HTTP_DA_NONCELEN</a>&#160;&#160;&#160;21</td></tr>
+<tr class="memitem:ad2e2f93a4deabcea027ab231a5686728"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#ad2e2f93a4deabcea027ab231a5686728">HTTP_DA_NONCELEN</a>&#160;&#160;&#160;(21)</td></tr>
 <tr class="separator:ad2e2f93a4deabcea027ab231a5686728"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1812bc0e7cad38f2fba58a4f4478b874"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a1812bc0e7cad38f2fba58a4f4478b874">HTTP_DA_OPAQUELEN</a>&#160;&#160;&#160;9</td></tr>
+<tr class="memitem:a1812bc0e7cad38f2fba58a4f4478b874"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a1812bc0e7cad38f2fba58a4f4478b874">HTTP_DA_OPAQUELEN</a>&#160;&#160;&#160;(9)</td></tr>
 <tr class="separator:a1812bc0e7cad38f2fba58a4f4478b874"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -105,8 +106,8 @@ Functions</h2></td></tr>
 <tr class="separator:a0c6d6f3ca6b4029b9f17f36256c828b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75b4b65a4b47cbd0cf4e471cc6b33e0b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a75b4b65a4b47cbd0cf4e471cc6b33e0b">http_da_calc_HA1</a> (struct soap *soap, void **context, const char *alg, const char *userid, const char *realm, const char *passwd, const char *nonce, const char *cnonce, char HA1hex[33])</td></tr>
 <tr class="separator:a75b4b65a4b47cbd0cf4e471cc6b33e0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada6f2ae73df6f3347fb8e7b4a8aa875a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#ada6f2ae73df6f3347fb8e7b4a8aa875a">http_da_calc_response</a> (struct soap *soap, void **context, char HA1hex[33], const char *nonce, const char *ncount, const char *cnonce, const char *qop, const char *method, const char *uri, char entityHAhex[33], char response[33])</td></tr>
-<tr class="separator:ada6f2ae73df6f3347fb8e7b4a8aa875a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd4ebee1883f704177f4f31d15f06a23"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#acd4ebee1883f704177f4f31d15f06a23">http_da_calc_response</a> (struct soap *soap, void **context, char HA1hex[33], const char *nonce, const char *ncount, const char *cnonce, const char *qop, const char *method, const char *uri, char entityHAhex[33], char response[33], char responseHA[16])</td></tr>
+<tr class="separator:acd4ebee1883f704177f4f31d15f06a23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a193bd879015f573a6a6de4b3f03f70cc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a193bd879015f573a6a6de4b3f03f70cc">http_da</a> (struct soap *soap, struct soap_plugin *p, void *arg)</td></tr>
 <tr class="separator:a193bd879015f573a6a6de4b3f03f70cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d48599051c3ae3dc61e56bd97deba7a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a4d48599051c3ae3dc61e56bd97deba7a">http_da_save</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info, const char *realm, const char *userid, const char *passwd)</td></tr>
@@ -141,7 +142,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define HTTP_DA_NONCELEN&#160;&#160;&#160;21</td>
+          <td class="memname">#define HTTP_DA_NONCELEN&#160;&#160;&#160;(21)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -153,7 +154,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define HTTP_DA_OPAQUELEN&#160;&#160;&#160;9</td>
+          <td class="memname">#define HTTP_DA_OPAQUELEN&#160;&#160;&#160;(9)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -321,7 +322,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ada6f2ae73df6f3347fb8e7b4a8aa875a"></a>
+<a class="anchor" id="acd4ebee1883f704177f4f31d15f06a23"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -392,7 +393,13 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">char&#160;</td>
-          <td class="paramname"><em>response</em>[33]&#160;</td>
+          <td class="paramname"><em>response</em>[33], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>responseHA</em>[16]&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1230,6 +1237,6 @@ Variables</h2></td></tr>
 </div>
 </div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Wed Jun 3 2015 12:27:07 for <a href="http://www.genivia.com">Genivia</a> documentation of HTTP Digest Authentication by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Fri Oct 23 2015 11:52:36 for <a href="http://www.genivia.com">Genivia</a> documentation of HTTP Digest Authentication by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

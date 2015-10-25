@@ -449,12 +449,14 @@ soap_smd_init(struct soap *soap, struct soap_smd_data *data, int alg, const void
     case SOAP_SMD_SHA1:
       type = EVP_sha1();
       break;
+#if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
     case SOAP_SMD_SHA256:
       type = EVP_sha256();
       break;
     case SOAP_SMD_SHA512:
       type = EVP_sha512();
       break;
+#endif
     default:
       type = EVP_md_null();
   }

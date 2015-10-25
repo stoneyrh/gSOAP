@@ -120,6 +120,10 @@ int run_tests(int argc, char **argv)
     data.choice.xop__Include.type = "text/xml";
     data.choice.xop__Include.options = NULL;
     data.xmime5__contentType = "text/xml";
+#ifdef WITH_NOIDREF
+    /* compiling with WITH_NOIDREF removes auto-detection of attachments */
+    soap_set_mime(soap, NULL, NULL); /* so we explicitly set MIME attachments */
+#endif
     if (soap_call_m__EchoTestSingle(soap, argv[1], NULL, &data, &single))
     { soap_print_fault(soap, stderr);
     }
@@ -232,6 +236,10 @@ int m__EchoTestSingle(struct soap *soap, struct x__DataType *data, struct m__Ech
       response->x__Data->choice.xop__Include.type = data->xmime5__contentType;
       response->x__Data->choice.xop__Include.options = NULL;
       response->x__Data->xmime5__contentType = data->xmime5__contentType;
+#ifdef WITH_NOIDREF
+      /* compiling with WITH_NOIDREF removes auto-detection of attachments */
+      soap_set_mime(soap, NULL, NULL); /* so we explicitly set MIME attachments */
+#endif
       break;
     default:
       return soap_sender_fault(soap, "Wrong data format", NULL);
@@ -270,6 +278,10 @@ int m__EchoTestMultiple(struct soap *soap, struct x__WrapperType *x__EchoTest, s
         response->x__EchoTest->Data[i].choice.xop__Include.type = x__EchoTest->Data[i].xmime5__contentType;
         response->x__EchoTest->Data[i].choice.xop__Include.options = NULL;
         response->x__EchoTest->Data[i].xmime5__contentType = x__EchoTest->Data[i].xmime5__contentType;
+#ifdef WITH_NOIDREF
+        /* compiling with WITH_NOIDREF removes auto-detection of attachments */
+        soap_set_mime(soap, NULL, NULL); /* so we explicitly set MIME attachments */
+#endif
         break;
       default:
         return soap_sender_fault(soap, "Wrong data format", NULL);

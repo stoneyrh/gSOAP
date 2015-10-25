@@ -9,8 +9,8 @@ CPPFLAGS=-I$(top_srcdir)/gsoap -I$(top_srcdir)/gsoap/plugin
 AM_LDFLAGS=$(CPPFLAGS) -I$(srcdir) -L$(srcdir)
 SOAP=$(top_srcdir)/gsoap/src/soapcpp2$(EXEEXT)
 WSDL=$(top_srcdir)/gsoap/wsdl/wsdl2h$(EXEEXT)
-WSDL_FLAGS=-P -t $(srcdir)/typemap.dat
-SOAP_FLAGS=-SL -T -I$(top_srcdir)/gsoap/import
+WSDL_FLAGS=-d -P -t $(srcdir)/typemap.dat
+SOAP_FLAGS=-SL -T -I$(top_srcdir)/gsoap/import -I$(top_srcdir)/gsoap/custom
 WSDLINPUT=$(srcdir)/examples.wsdl
 SOAPHEADER=$(srcdir)/examples.h
 SOAP_CPP_SRC=soapC.cpp soapServer.cpp
@@ -20,6 +20,18 @@ $(SOAP_CPP_SRC) : $(WSDLINPUT)
 	$(WSDL) $(WSDL_FLAGS) $(WSDLINPUT)
 	$(SOAP) $(SOAP_FLAGS) $(SOAPHEADER)
 
+duration.cpp : ../../custom/duration.c
+	ln -s ../../custom/duration.c duration.cpp
+
+long_time.cpp : ../../custom/long_time.c
+	ln -s ../../custom/long_time.c long_time.cpp
+
+struct_tm.cpp : ../../custom/struct_tm.c
+	ln -s ../../custom/struct_tm.c struct_tm.cpp
+
+struct_tm_date.cpp : ../../custom/struct_tm_date.c
+	ln -s ../../custom/struct_tm_date.c struct_tm_date.cpp
+
 #LIBS=
 
 noinst_PROGRAMS=autotest
@@ -27,7 +39,7 @@ noinst_PROGRAMS=autotest
 autotest_CFLAGS=$(C_DEBUG_FLAGS) -D$(platform)
 autotest_CPPFLAGS=$(C_DEBUG_FLAGS) -D$(platform)
 autotest_CXXFLAGS=$(WSDL2H_EXTRA_FLAGS)
-autotest_SOURCES=$(SOAP_CPP_SRC) soapTester.cpp
+autotest_SOURCES=$(SOAP_CPP_SRC) soapTester.cpp duration.cpp long_time.cpp struct_tm.cpp struct_tm_date.cpp
 autotest_LDADD=$(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 
 CLEANFILES= *~ *.h *.cpp *.xml *.log *.nsmap

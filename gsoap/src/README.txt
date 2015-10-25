@@ -127,7 +127,7 @@ COMMAND LINE OPTIONS
 -s      generate deserialization code with strict XML validation checks
 -t      generate code for fully xsi:type typed SOAP/XML messaging
 -u	uncomment comments in WSDL/schema output by suppressing XML comments
--v	display version info
+-v	verbose output
 -w	don't generate WSDL and schema files
 -x	don't generate sample XML message files
 -y	include C/C++ type access information in sample XML messages

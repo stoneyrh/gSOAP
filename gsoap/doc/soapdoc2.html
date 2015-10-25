@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.23 User Guide</title>
+<title>gSOAP 2.8.24 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.23 User Guide </h1>
+<h1 align="center">gSOAP 2.8.24 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="http://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Aug 16, 2015
+<h3 align="center">Oct 24, 2015
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -169,7 +169,9 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc9.15"
 >9.15&nbsp; <font color="#0000FF">Generating an Auto Test Server for Client Testing</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc9.16"
->9.16&nbsp; <font color="#0000FF">Required Libraries</font></a><br />
+>9.16&nbsp; <font color="#0000FF">Generating Deep Copy and Deletion Code</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc9.17"
+>9.17&nbsp; <font color="#0000FF">Required Libraries</font></a><br />
 <a href="#tth_sEc10"
 >10&nbsp; <font color="#0000FF">The gSOAP Service Operation Specification Format</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc10.1"
@@ -4080,11 +4082,20 @@ Additional features and potential limitations:
 <div class="p"><!----></div>
 </li>
 
-<li> Types are denoted "volatile", which means that they are declared elsewhere
-  in the source code and should not be redeclared in the generated code nor augmented by the <i>soapcpp2</i> tool:
+<li> Types declared "volatile" means that they are declared elsewhere
+  in the project's code base and should not be redefined in the <i>soapcpp2</i>-generated code nor changed/augmented by the <i>soapcpp2</i> tool:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-<b>volatile</b> <b>class</b>&nbsp;name { ... }; // defined here just to generate the serializers
+<b>volatile</b>&nbsp;<b>class</b>&nbsp;name { ... }; // defined here just to generate the serializers
 </td></tr></table><br></i>
+<div class="p"><!----></div>
+</li>
+
+<li> Classes and structs declared "mutable" means that they can be augmented with additional members, rather than leading to a redefinition error:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>mutable</b>&nbsp;<b>class</b>&nbsp;name { <b>int</b>&nbsp;n; }; // class has a member 'n'
+  <b>mutable</b>&nbsp;<b>class</b>&nbsp;name { <b>float</b>&nbsp;x; }; // and also a member 'x'
+</td></tr></table><br></i> 
+  The <i>SOAP_ENV__Header</i> struct is mutable as well as the <i>SOAP_ENV__Fault</i>, <i>SOAP_ENV__Detail</i>, <i>SOAP_ENV__Reason</i>, and <i>SOAP_ENV__Code</i> structs.
 <div class="p"><!----></div>
 </li>
 
@@ -4815,7 +4826,7 @@ easily changed by defining any of the following macros in the <i>stdsoap2.h</i> 
 #define SOAP_DEFAULT_wstring
 </td></tr></table><br></i>
 Instead of adding these to <i>stdsoap2.h</i>, you can also compile with option <i>-DWITH_SOAPDEFS_H</i> and include your
-definitions in file <i>userdefs.h</i>.
+definitions in file <i>soapdefs.h</i>.
 The absence of a data value in a receiving SOAP message will result in the assignment of a default value to a primitive type upon
 deserialization.
 
@@ -5257,39 +5268,41 @@ The <i>soapcpp2</i> source-to-source compiler supports the following command-lin
 
 <table>
 <tr><td align="left"><font color="#FF0000"><b>Option</b></font> </td><td align="left"><font color="#FF0000"><b>Description</b></font> </td></tr>
-<tr><td align="left"><i>-1</i>	</td><td align="left">Generate SOAP 1.1 bindings </td></tr>
-<tr><td align="left"><i>-2</i>	</td><td align="left">Generate SOAP 1.2 bindings </td></tr>
-<tr><td align="left"><i>-0</i>	</td><td align="left">No SOAP bindings, use REST</td></tr>
-<tr><td align="left"><i>-C</i>	</td><td align="left">Generate client-side code only </td></tr>
-<tr><td align="left"><i>-S</i>	</td><td align="left">Generate server-side code only </td></tr>
-<tr><td align="left"><i>-T</i>	</td><td align="left">Generate server auto-test code </td></tr>
-<tr><td align="left"><i>-L</i>	</td><td align="left">Do not generate soapClientLib/soapServerLib </td></tr>
-<tr><td align="left"><i>-a</i>	</td><td align="left">Use SOAPAction with WS-Addressing to invoke server-side operations </td></tr>
-<tr><td align="left"><i>-A</i>	</td><td align="left">Require SOAPAction to invoke server-side operations </td></tr>
+<tr><td align="left"><i>-1</i>	</td><td align="left">generate SOAP 1.1 bindings </td></tr>
+<tr><td align="left"><i>-2</i>	</td><td align="left">generate SOAP 1.2 bindings </td></tr>
+<tr><td align="left"><i>-0</i>	</td><td align="left">no SOAP bindings, use REST</td></tr>
+<tr><td align="left"><i>-C</i>	</td><td align="left">generate client-side code only </td></tr>
+<tr><td align="left"><i>-S</i>	</td><td align="left">generate server-side code only </td></tr>
+<tr><td align="left"><i>-T</i>	</td><td align="left">generate server auto-test code </td></tr>
+<tr><td align="left"><i>-Ec</i>	</td><td align="left">generate extra routines for deep data copying </td></tr>
+<tr><td align="left"><i>-Ed</i>	</td><td align="left">generate extra routines for deep data deletion </td></tr>
+<tr><td align="left"><i>-L</i>	</td><td align="left">do not generate soapClientLib/soapServerLib </td></tr>
+<tr><td align="left"><i>-a</i>	</td><td align="left">use SOAPAction with WS-Addressing to invoke server-side operations </td></tr>
+<tr><td align="left"><i>-A</i>	</td><td align="left">require SOAPAction to invoke server-side operations </td></tr>
 <tr><td align="left"><i>-b</i>	</td><td align="left">serialize byte arrays <i>char[N]</i> as string </td></tr>
-<tr><td align="left"><i>-c</i>	</td><td align="left">Generate pure C code </td></tr>
-<tr><td align="left"><i>-d  &lt; path &gt; </i>	</td><td align="left">Save sources in directory specified by <i> &lt; path &gt; </i> </td></tr>
-<tr><td align="left"><i>-e</i>	</td><td align="left">Generate SOAP RPC encoding style bindings </td></tr>
-<tr><td align="left"><i>-f N</i>	</td><td align="left">File split of N XML serializer implementations per file </td></tr>
-<tr><td align="left"><i>-h</i>	</td><td align="left">Print a brief usage message </td></tr>
-<tr><td align="left"><i>-i</i>	</td><td align="left">Generate service proxies and objects inherited from soap struct </td></tr>
-<tr><td align="left"><i>-j</i>	</td><td align="left">Generate C++ service proxies and objects that can share a soap struct </td></tr>
-<tr><td align="left"><i>-I  &lt; path &gt; </i>	</td><td align="left">Use <i> &lt; path &gt; </i> for <i>#import</i> (paths separated with ':' or ';' for windows) </td></tr>
+<tr><td align="left"><i>-c</i>	</td><td align="left">generate pure C code </td></tr>
+<tr><td align="left"><i>-d  &lt; path &gt; </i>	</td><td align="left">save sources in directory specified by <i> &lt; path &gt; </i> </td></tr>
+<tr><td align="left"><i>-e</i>	</td><td align="left">generate SOAP RPC encoding style bindings </td></tr>
+<tr><td align="left"><i>-f N</i>	</td><td align="left">file split of N XML serializer implementations per file </td></tr>
+<tr><td align="left"><i>-h</i>	</td><td align="left">print a brief usage message </td></tr>
+<tr><td align="left"><i>-i</i>	</td><td align="left">generate service proxies and objects inherited from soap struct </td></tr>
+<tr><td align="left"><i>-j</i>	</td><td align="left">generate C++ service proxies and objects that can share a soap struct </td></tr>
+<tr><td align="left"><i>-I  &lt; path &gt; </i>	</td><td align="left">use <i> &lt; path &gt; </i> for <i>#import</i> (paths separated with ':' or ';' for windows) </td></tr>
 <tr><td align="left"><i>-k</i>	</td><td align="left">generate data structure walkers (experimental) </td></tr>
-<tr><td align="left"><i>-l</i>	</td><td align="left">Generate linkable modules (experimental) </td></tr>
-<tr><td align="left"><i>-m</i>	</td><td align="left">Generate Matlab<sup><span class="roman">tm</span></sup> code for MEX compiler </td></tr>
-<tr><td align="left"><i>-n</i>	</td><td align="left">When used with <i>-p</i>, enables multi-client and multi-server builds: </td></tr>
-<tr><td align="left"></td><td align="left">Sets compiler option <i>WITH_NONAMESPACES</i>, see Section&nbsp;<a href="#sec:compilerflags">9.11</a> </td></tr>
-<tr><td align="left"></td><td align="left">Saves the namespace mapping table with name <i> &lt; name &gt; _namespaces</i> instead of <i>namespaces</i> </td></tr>
-<tr><td align="left"></td><td align="left">Renames <i>soap_serve()</i> into <i> &lt; name &gt; _serve()</i> and <i>soap_destroy()</i> into <i> &lt; name &gt; _destroy()</i> </td></tr>
-<tr><td align="left"><i>-p  &lt; name &gt; </i>	</td><td align="left">Save sources with file name prefix <i> &lt; name &gt; </i> instead of "<i>soap</i>" </td></tr>
-<tr><td align="left"><i>-q  &lt; name &gt; </i>	</td><td align="left">Use <i>name</i> for the C++ namespace of all declarations </td></tr>
-<tr><td align="left"><i>-s</i>	</td><td align="left">Generates deserialization code with strict XML validation checks </td></tr>
-<tr><td align="left"><i>-t</i>	</td><td align="left">Generates code to send typed messages (with the <tt>xsi:type</tt> attribute) </td></tr>
+<tr><td align="left"><i>-l</i>	</td><td align="left">generate linkable modules (experimental) </td></tr>
+<tr><td align="left"><i>-m</i>	</td><td align="left">generate Matlab<sup><span class="roman">tm</span></sup> code for MEX compiler </td></tr>
+<tr><td align="left"><i>-n</i>	</td><td align="left">when used with <i>-p</i>, enables multi-client and multi-server builds: </td></tr>
+<tr><td align="left"></td><td align="left">sets compiler option <i>WITH_NONAMESPACES</i>, see Section&nbsp;<a href="#sec:compilerflags">9.11</a> </td></tr>
+<tr><td align="left"></td><td align="left">saves the namespace mapping table with name <i> &lt; name &gt; _namespaces</i> instead of <i>namespaces</i> </td></tr>
+<tr><td align="left"></td><td align="left">renames <i>soap_serve()</i> into <i> &lt; name &gt; _serve()</i> and <i>soap_destroy()</i> into <i> &lt; name &gt; _destroy()</i> </td></tr>
+<tr><td align="left"><i>-p  &lt; name &gt; </i>	</td><td align="left">save sources with file name prefix <i> &lt; name &gt; </i> instead of "<i>soap</i>" </td></tr>
+<tr><td align="left"><i>-q  &lt; name &gt; </i>	</td><td align="left">use <i>name</i> for the C++ namespace of all declarations </td></tr>
+<tr><td align="left"><i>-s</i>	</td><td align="left">generates deserialization code with strict XML validation checks </td></tr>
+<tr><td align="left"><i>-t</i>	</td><td align="left">generates code to send typed messages (with the <tt>xsi:type</tt> attribute) </td></tr>
 <tr><td align="left"><i>-u</i>	</td><td align="left">uncomment comments in WSDL/schema output by suppressing XML comments </td></tr>
-<tr><td align="left"><i>-v</i>	</td><td align="left">Display version info</td></tr>
-<tr><td align="left"><i>-w</i>	</td><td align="left">Do not generate WSDL and schema files </td></tr>
-<tr><td align="left"><i>-x</i>	</td><td align="left">Do not generate sample XML message files </td></tr>
+<tr><td align="left"><i>-v</i>	</td><td align="left">verbose output </td></tr>
+<tr><td align="left"><i>-w</i>	</td><td align="left">do not generate WSDL and schema files </td></tr>
+<tr><td align="left"><i>-x</i>	</td><td align="left">do not generate sample XML message files </td></tr>
 <tr><td align="left"><i>-y</i>	</td><td align="left">include C/C++ type access information in sample XML messages </td></tr>
 <tr><td align="left"><i>-z1</i>	</td><td align="left">compatibility: generate old-style C++ service proxies and objects </td></tr>
 <tr><td align="left"><i>-z2</i>	</td><td align="left">compatibility with 2.7.x: omit XML output for NULL pointers </td></tr></table>
@@ -5380,7 +5393,12 @@ The <i>soapdefs.h</i> header file is included in <i>stdsoap2.h</i> when compilin
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 <i> &gt;  c++ -DWITH_SOAPDEFS_H -c stdsoap2.cpp</i>
 </td></tr></table><br></span>
-The <i>soapdefs.h</i> file allows users to include definitions and add includes without requiring changes to <i>stdsoap2.h</i>.
+The <i>soapdefs.h</i> file allows users to include definitions and add includes without requiring changes to <i>stdsoap2.h</i>. You can also specify the header file name to include as a macro <i>SOAPDEFS_h</i> to override the name <i>soapdefs.h</i>:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+<i> &gt;  c++ -DSOAPDEFS_H=mydefs.h -c stdsoap2.cpp</i>
+</td></tr></table><br></span>
+
+<div class="p"><!----></div>
 For example,
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 // Contents of soapdefs.h <br />
@@ -5667,6 +5685,7 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <table>
 <tr><td align="left"><font color="#FF0000"><b>Macro</b></font> </td><td align="left"><font color="#FF0000"><b>Description</b></font> </td></tr>
 <tr><td align="left"><i>WITH_SOAPDEFS_H</i>	</td><td align="left">includes the <i>soapdefs.h</i> file for custom settings, see Section&nbsp;<a href="#sec:soapdefs">9.3</a> </td></tr>
+<tr><td align="left"><i>SOAPDEFS_H</i>	</td><td align="left">the header file to include, if different from <i>soapdefs.h</i> (see above) </td></tr>
 <tr><td align="left"><i>WITH_COOKIES</i>	</td><td align="left">enables HTTP cookies, see Sections&nbsp;<a href="#sec:clientcookie">19.28</a>&nbsp;<a href="#sec:servercookie">19.29</a> </td></tr>
 <tr><td align="left"><i>WITH_OPENSSL</i>	</td><td align="left">enables OpenSSL, see Sections&nbsp;<a href="#sec:clientopenssl">19.22</a>&nbsp;<a href="#sec:serveropenssl">19.21</a> </td></tr>
 <tr><td align="left"><i>WITH_GNUTLS</i>	</td><td align="left">enables GNUTLS, see Sections&nbsp;<a href="#sec:clientopenssl">19.22</a>&nbsp;<a href="#sec:serveropenssl">19.21</a> </td></tr>
@@ -5682,7 +5701,7 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_NOIDREF</i>	</td><td align="left">eliminates href/ref and id attributes to (de)serialize multi-ref data,</td></tr>
 <tr><td align="left"></td><td align="left">or alternatively use the <i>SOAP_XML_TREE</i> runtime flag </td></tr>
 <tr><td align="left"><i>WITH_NOHTTP</i>	</td><td align="left">eliminates HTTP stack to reduce code size </td></tr>
-<tr><td align="left"><i>WITH_NOZONE</i>	</td><td align="left">silently ignores the timezone in time conversions </td></tr>
+<tr><td align="left"><i>WITH_NOZONE</i>	</td><td align="left">silently ignores the timezone in time conversions, time is local time, not GMT </td></tr>
 <tr><td align="left"><i>WITH_LEAN</i>	</td><td align="left">creates a small-footprint executable, see Section&nbsp;<a href="#sec:lean">19.32</a> </td></tr>
 <tr><td align="left"><i>WITH_LEANER</i>	</td><td align="left">creates an even smaller footprint executable, see Section&nbsp;<a href="#sec:lean">19.32</a> </td></tr>
 <tr><td align="left"><i>WITH_COMPAT</i>	</td><td align="left">removes dependency on C++ stream libraries, eliminating C++ exceptions </td></tr>
@@ -5691,7 +5710,8 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"></td><td align="left">see also Section&nbsp;<a href="#sec:nstable">10.4</a> </td></tr>
 <tr><td align="left"><i>WITH_PURE_VIRTUAL</i>	</td><td align="left">for C++ abstract service classes with pure virtual methods </td></tr>
 <tr><td align="left"><i>WITH_NOEMPTYSTRUCT</i>	</td><td align="left">inserts a dummy member in empty structs to allow compilation </td></tr>
-<tr><td align="left"><i>WITH_NOGLOBAL</i>	</td><td align="left">omit SOAP Header and Fault serialization code </td></tr>
+<tr><td align="left"><i>WITH_NOGLOBAL</i>	</td><td align="left">omit SOAP Header and Fault serialization code, </td></tr>
+<tr><td align="left"></td><td align="left">prevents duplicate definitions with generated soapXYZLib code </td></tr>
 <tr><td align="left"><i>WITH_NOCDATA</i>	</td><td align="left">do not retain the parsed CDATA sections in literal XML strings (convert) </td></tr>
 <tr><td align="left"><i>WITH_CDATA</i>	</td><td align="left">retain the parsed CDATA sections in literal XML strings (no conversion, default) </td></tr>
 <tr><td align="left"><i>WITH_C_LOCALE</i>	</td><td align="left">use locale functions when available to ensure locale-independent </td></tr>
@@ -6303,7 +6323,61 @@ when possible, or XML default values, or empty otherwise.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc9.16">
-9.16</a>&nbsp;&nbsp;<font color="#0000FF">Required Libraries</font></h3>
+9.16</a>&nbsp;&nbsp;<font color="#0000FF">Generating Deep Copy and Deletion Code</font></h3>
+
+<div class="p"><!----></div>
+The <i>soapcpp2 -Ec</i> option generates deep copy code for each type <i>T</i>:
+
+<div class="p"><!----></div>
+<i>T * soap_dup_T(<b>struct</b>&nbsp;soap*, T *dst, <b>const</b>&nbsp;T *src)</i> deep copy <i>src</i>
+into <i>dst</i>, replicating all deep cycles and shared pointers when a managing
+soap context is provided as argument. When <i>dst</i> is NULL, allocates space
+for <i>dst</i>. Deep copy is a tree when argument is NULL, but the presence of
+deep cycles will lead to non-termination. Use flag <i>SOAP_XML_TREE</i> with
+managing context to copy into a tree without cycles and
+pointers to shared objects. Returns <i>dst</i> (or allocated space when
+<i>dst</i> is NULL).
+
+<div class="p"><!----></div>
+For classes <i>T</i>, also a deep copy method is generated with option <i>-Ec</i>:
+
+<div class="p"><!----></div>
+<i><b>virtual</b>&nbsp;T * T::soap_dup(<b>struct</b>&nbsp;soap*) <b>const</b></i> returns a duplicate of this
+object by deep copying, replicating all deep cycles and shared pointers when a
+managing soap context is provided as argument. Deep copy is a tree when
+argument is NULL, but the presence of deep cycles will lead to non-termination.
+Use flag <i>SOAP_XML_TREE</i> with managing context to copy into a tree
+without cycles and pointers to shared objects.
+
+<div class="p"><!----></div>
+The <i>soapcpp2 -Ed</i> option generates deep deletion code for each type
+<i>T</i>:
+
+<div class="p"><!----></div>
+<i><b>void</b>&nbsp;soap_del_T(<b>const</b>&nbsp;T*)</i> deletes all heap-allocated members of
+this object by deep deletion ONLY IF this object and all of its (deep) members
+are not managed by a soap context AND the deep structure is a tree (no cycles
+and co-referenced objects by way of multiple
+(non-smart) pointers pointing to the same data). Can be safely used after
+<i>soap_dup(NULL)</i> to delete the deep copy. Does not delete the object
+itself.
+
+<div class="p"><!----></div>
+For classes <i>T</i>, also a deep deletion method is generated with option
+<i>-Ed</i>:
+
+<div class="p"><!----></div>
+<i><b>virtual</b>&nbsp;<b>void</b>&nbsp;T::soap_del() <b>const</b></i> deletes all
+heap-allocated members of this object by deep deletion ONLY IF this object
+and all of its (deep) members are not managed by a soap context AND the deep
+structure is a tree (no cycles and co-referenced objects by way of multiple
+(non-smart) pointers pointing to the same data).Can be safely used after
+<i>soap_dup(NULL)</i> to delete the deep copy. Does not delete the object
+itself.
+
+<div class="p"><!----></div>
+     <h3><a name="tth_sEc9.17">
+9.17</a>&nbsp;&nbsp;<font color="#0000FF">Required Libraries</font></h3>
 
 <div class="p"><!----></div>
 
@@ -7244,7 +7318,7 @@ Type <i>xsd__float</i> declares a floating point number which is encoded as
 	<dd>
 Represents arbitrary hex-encoded binary data.  It has a lexical representation where each binary octet is encoded as a character
 tuple, consisting of two hexadecimal digits ([0-9a-fA-F]) representing the octet code. For example, "0FB7" is a hex encoding for
-the 16-bit integer 4023 (whose binary representation is 111110110111.
+the 16-bit integer 4023 (binary representation is 111110110111.
 For using the <tt>xsd:hexBinary</tt> XSD Schema type, the use of the hexBinary representation of a dynamic array is <b>strongly</b> recommended,
 see Section&nbsp;<a href="#sec:hexbinary">11.13</a>. However, the
 type can also be declared as a string and the encoding will be string-based:
@@ -8844,7 +8918,7 @@ multi-reference data. This means that the data will be serialized only once and
 identified with a unique <tt>id</tt> attribute. The encoding of the pointers to
 the shared data is done through the use of <tt>href</tt> or <tt>ref</tt> attributes
 to refer to the multi-reference data. See Section&nbsp;<a href="#sec:flags">9.12</a> on
-options to control the serialization of multi-reference data. To turn multi-ref off, use <i>SOAP_XML_TREE</i> to process plain tree-based XML. To completely eliminate multi-ref (de)serialization use the <i>WITH_NOIDREF</i> compile-time flag to permanently disable id-href processing. Cyclic C/C++
+options to control the serialization of multi-reference data. To turn multi-ref off, use <i>SOAP_XML_TREE</i> to process plain tree-based XML. To completely eliminate multi-ref (de)serialization use the <i>WITH_NOIDREF</i> compile-time flag with all source code (including <i>stdsoap2.c</i> and <i>stdsoap2.cpp</i>) to permanently disable id-href processing. Cyclic C/C++
 data structures are encoded with multi-reference SOAP encoding.  Consider for
 example the following a linked list data structure:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
@@ -9550,66 +9624,117 @@ You can specify the minOccurs and maxOccurs values as explained in Section&nbsp;
 
 <div class="p"><!----></div>
 You can also implement your own
-containers similar to STL containers. The containers must be class templates and should define an iterator type, and <i><b>void</b>&nbsp;clear()</i>, <i>iterator begin()</i>, <i>iterator end()</i>, and <i>iterator insert(iterator pos, const_reference val)</i>.
-The <i>iterator</i> should have a dereference operator to
-access the container's elements.  The dereference operator is used by gSOAP to
-send a sequence of XML element values.  The <i>insert</i> method can be used as
-a setter method.  gSOAP reads a sequence of XML element values and inserts them
-in the container via this method.  
+containers similar to STL containers. The containers must be class templates and should define a forward iterator type, and provide the following methods:
+
+<ul>
+<li> <i><b>void</b>&nbsp;clear()</i> empty the container;
+<div class="p"><!----></div>
+</li>
+
+<li> <i>iterator begin()</i> return iterator to beginning;
+<div class="p"><!----></div>
+</li>
+
+<li> <i>const_iterator begin() <b>const</b></i> return const iterator to beginning;
+<div class="p"><!----></div>
+</li>
+
+<li> <i>iterator end()</i> return iterator to end;
+<div class="p"><!----></div>
+</li>
+
+<li> <i>const_iterator end() <b>const</b></i> return const iterator to end;
+<div class="p"><!----></div>
+</li>
+
+<li> <i>size_t size()</i> return size;
+<div class="p"><!----></div>
+</li>
+
+<li> <i>iterator insert(iterator pos, const_reference val)</i> insert element.
+<div class="p"><!----></div>
+</li>
+</ul>
+The <i>iterator</i> should be a forward iterator with a dereference operator to
+access the container's elements, it must be comparable (equal/unequal), and be pre-incrementable (<i>++it</i>).  The const iterator is used by gSOAP to
+send a sequence of XML element values.  The <i>insert</i> method is used to populate a container with <i>Container::iterator i = container.insert(container.end(), val)</i>.
 
 <div class="p"><!----></div>
 Here is in example user-defined container template class:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-// simpleVector.h <br />
-<b>template</b>&nbsp; &lt; <b>class</b>&nbsp;T &gt;  <br />
-<b>class</b>&nbsp;simpleVector <br />
+// simple_vector.h <br />
+template &lt;class T&#62; <br />
+class simple_vector <br />
 { <br />
 <b>public</b>: <br />
-&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;T			  value_type; <br />
-&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;value_type		* pointer; <br />
-&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;const value_type	* const_pointer; <br />
-&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;value_type		&amp; reference; <br />
-&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;const value_type	&amp; const_reference; <br />
-&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;pointer		  iterator; <br />
-&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;const_pointer		  const_iterator; <br />
+&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;T                       value_type; <br />
+&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;value_type            * pointer; <br />
+&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;<b>const</b>&nbsp;value_type      * const_pointer; <br />
+&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;value_type            &amp; reference; <br />
+&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;<b>const</b>&nbsp;value_type      &amp; const_reference; <br />
+&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;pointer                 iterator; <br />
+&nbsp;&nbsp;&nbsp;<b>typedef</b>&nbsp;const_pointer           const_iterator; <br />
 <b>protected</b>: <br />
-&nbsp;&nbsp;&nbsp;iterator			  start; <br />
-&nbsp;&nbsp;&nbsp;iterator			  finish; <br />
-&nbsp;&nbsp;&nbsp;size_t			  length; <br />
+&nbsp;&nbsp;&nbsp;iterator                        head; <br />
+&nbsp;&nbsp;&nbsp;iterator                        tail; <br />
+&nbsp;&nbsp;&nbsp;size_t                          capacity; <br />
 <b>public</b>: <br />
-&nbsp;&nbsp;&nbsp;simpleVector()	{ clear(); } <br />
-&nbsp;&nbsp;&nbsp;~simpleVector()	{ <b>delete</b>[] start; } <br />
-&nbsp;&nbsp;&nbsp;<b>void</b>\				  clear()		{ start = finish = NULL; } <br />
-&nbsp;&nbsp;&nbsp;iterator			  begin()		{ <b>return</b>&nbsp;start; } <br />
-&nbsp;&nbsp;&nbsp;const_iterator		  begin() <b>const</b>\		{ <b>return</b>&nbsp;start; } <br />
-&nbsp;&nbsp;&nbsp;iterator			  end()			{ <b>return</b>&nbsp;finish; } <br />
-&nbsp;&nbsp;&nbsp;const_iterator		  end() <b>const</b>\		{ <b>return</b>&nbsp;finish; } <br />
-&nbsp;&nbsp;&nbsp;size_t		  size() <b>const</b>\		{ <b>return</b>&nbsp;finish-start; } <br />
-&nbsp;&nbsp;&nbsp;iterator			  insert(iterator pos, const_reference val) <br />
+&nbsp;&nbsp;&nbsp;simple_vector()       { head = tail = NULL; } <br />
+&nbsp;&nbsp;&nbsp;simple_vector(<b>const</b>&nbsp;simple_vector&amp; v) <br />
+&nbsp;&nbsp;&nbsp;{ operator=(v); } <br />
+&nbsp;&nbsp;&nbsp;~simple_vector()      { <b>if</b>&nbsp;(head) delete[] head; } <br />
+&nbsp;&nbsp;&nbsp;<b>void</b>&nbsp;clear()               { tail = head; } <br />
+/* the member functions below are required for (de)serialization of templates */ <br />
+&nbsp;&nbsp;&nbsp;iterator                        begin()               { <b>return</b>&nbsp;head; } <br />
+&nbsp;&nbsp;&nbsp;const_iterator                  begin() <b>const</b>&nbsp;{ <b>return</b>&nbsp;head; } <br />
+&nbsp;&nbsp;&nbsp;iterator                        end()                 { <b>return</b>&nbsp;tail; } <br />
+&nbsp;&nbsp;&nbsp;const_iterator                  end() <b>const</b>&nbsp;{ <b>return</b>&nbsp;tail; } <br />
+&nbsp;&nbsp;&nbsp;size_t                          size() <b>const</b>&nbsp;{ <b>return</b>&nbsp;tail - head; } <br />
+&nbsp;&nbsp;&nbsp;iterator                        insert(iterator pos, const_reference val) <br />
+&nbsp;&nbsp;&nbsp;{ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(!head) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;head = tail = <b>new</b>&nbsp;value_type[capacity = 1]; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>else</b>&nbsp;<b>if</b>&nbsp;(tail &#62;= head + capacity) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(!start) <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start = finish = <b>new</b>&nbsp;value_type[length = 4]; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>else</b>&nbsp;<b>if</b>&nbsp;(finish <tt>&gt;=</tt> start + length) <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iterator i = start; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iterator j = <b>new</b>&nbsp;value_type[2 * length]; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start = j; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finish = start + length; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;length *= 2; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(pos) <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pos = j + (pos - i); <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>while</b>&nbsp;(i != finish) <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*j++ = *i++; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(pos &amp;&amp; pos != finish) <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ iterator i = finish; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iterator j = i - 1; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>while</b>&nbsp;(j != pos) <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*i&#8722;&nbsp;&#8722; = *j&#8722;&nbsp;&#8722;; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*finish++ = val; <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;pos; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iterator i = head; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iterator j = <b>new</b>&nbsp;value_type[capacity *= 2]; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iterator k = j; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>while</b>&nbsp;(i &lt; tail) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*k++ = *i++; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(pos) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pos = j + (pos - head); <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tail = j + (tail - head); <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>delete</b>[] head; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;head = j; <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(pos &amp;&amp; pos &#62;= head &amp;&amp; pos &lt; tail) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iterator i = tail; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iterator j = i - 1; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>while</b>&nbsp;(j != pos) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*i- = *j-; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*pos = val; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>else</b>&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pos = tail; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*tail++ = val; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;pos; <br />
+&nbsp;&nbsp;&nbsp;} <br />
+&nbsp;&nbsp;&nbsp;simple_vector&amp; <b>operator</b>=(<b>const</b>&nbsp;simple_vector&amp; v) <br />
+&nbsp;&nbsp;&nbsp;{ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;head = tail = NULL; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;capacity = v.capacity; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(v.head) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;head = tail = <b>new</b>&nbsp;value_type[capacity]; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iterator i = v.head; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>while</b>&nbsp;(i != v.tail) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*tail++ = *i++; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;*<b>this</b>; <br />
+&nbsp;&nbsp;&nbsp;} <br />
 };
 </td></tr></table><br></i>
 To enable the container, we add the following two lines to our gSOAP header file:
@@ -9817,10 +9942,10 @@ FILE *fd = fopen(<tt>"image.jpg"</tt>, <tt>"rb"</tt>); <br />
 xsd__base64Binary image(&amp;soap, filesize(fd)); <br />
 fread(image.location(), image.size(), 1, fd); <br />
 fclose(fd); <br />
-soap_begin(&amp;soap); <br />
+soap_begin_send(&amp;soap); <br />
 image.soap_serialize(&amp;soap); <br />
 image.soap_put(&amp;soap, <tt>"jpegimage"</tt>, NULL); <br />
-soap_end(&amp;soap); <br />
+soap_end_send(&amp;soap); <br />
 ...
 </td></tr></table><br></i>
 where <i>filesize</i> is a function that returns the size of a file given a file descriptor.
@@ -9830,9 +9955,9 @@ Reading the <tt>xsd:base64Binary</tt> encoded image.
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 ... <br />
 xsd__base64Binary image; <br />
-soap_begin(&amp;soap); <br />
+soap_begin_recv(&amp;soap); <br />
 image.get(&amp;soap, <tt>"jpegimage"</tt>); <br />
-soap_end(&amp;soap); <br />
+soap_end_recv(&amp;soap); <br />
 ...
 </td></tr></table><br></i>
 The <i><b>struct</b></i> or <i><b>class</b></i> name <i>soap_enc__base64</i> should be used for <tt>SOAP-ENC:base64</tt> schema type instead of
@@ -9844,7 +9969,7 @@ The <i><b>struct</b></i> or <i><b>class</b></i> name <i>soap_enc__base64</i> sho
 </a>
 
 <div class="p"><!----></div>
-The <tt>hexBinary</tt> XML Schema type is a special form of dynamic array declared with the name <i>xsd__hexBinary</i> and a pointer (<i>__ptr</i>) to an <i><b>unsigned</b>&nbsp;<b>char</b></i> array.
+The <tt>hexBinary</tt> XML Schema type is a special form of dynamic array declared with the name <i>xsd__hexBinary</i> and a pointer (<i>__ptr</i>) to an <i><b>unsigned</b>&nbsp;<b>char</b></i> array, similar to the base64Binary type described in the previous section. The only difference with the base64Binary type is the hexadecimal content instead of base64 content. Both types are declared identically, with the exception that the word "<i>hex</i>" occurs in the struct/class name.
 
 <div class="p"><!----></div>
 For example, using a <i><b>struct</b></i>:
@@ -9864,7 +9989,19 @@ Or using a <i><b>class</b></i>:
 &nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;__size; <br />
 };
 </td></tr></table><br></i>
-When compiled by the gSOAP <i>soapcpp2</i> tool, this header file specification will generate <tt>base64Binary</tt> serializers and deserializers.
+or if a binary type such as <i>xsd__base64Binary</i> is defined, then we can simply use a <i>typedef</i> to introduce the hex variant:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>class</b>&nbsp;xsd__base64Binary // serializes into base64 content <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>public</b>: <br />
+&nbsp;&nbsp;&nbsp;<b>unsigned</b>&nbsp;<b>char</b>&nbsp;*__ptr; <br />
+&nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;__size; <br />
+}; <br />
+<b>typedef</b>&nbsp;xsd__base64Binary xsd__hexBinary; // serializes into hex content
+</td></tr></table><br></i>
+
+<div class="p"><!----></div>
+When compiled by the gSOAP <i>soapcpp2</i> tool, this header file specification will generate <tt>hexBinary</tt> serializers and deserializers.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc11.14">
@@ -13982,7 +14119,7 @@ Here are some tips you can use to speed up gSOAP. gSOAP's default settings are c
 <div class="p"><!----></div>
 </li>
 
-<li> Compile <i>stdsoap2.c</i> and <i>stdsoap2.cpp</i> with <i>-DWITH_NOIDREF</i> to improve performance even better by permanently disabling id-ref multi-ref object (de)serialization.
+<li> Compile <i>stdsoap2.c</i> and <i>stdsoap2.cpp</i> and all other source codes with <i>-DWITH_NOIDREF</i> to improve performance even better by permanently disabling id-ref multi-ref object (de)serialization.
 <div class="p"><!----></div>
 </li>
 
@@ -14311,7 +14448,7 @@ By default, clients are not required to authenticate. To support client authenti
 This requires each client to authenticate with its certificate.
 
 <div class="p"><!----></div>
-Since release version 2.8.20 SSL v3 is disabled. To enable SSL v3 together with TLS v1 use <i>SOAP_SSLv3_TLSv1</i> in <i>soap_ssl_server_context</i>.
+Since release version 2.8.20 SSL v3 is disabled. To enable SSL v3 together with TLS v1.0, v1.1, and v1.2  use <i>SOAP_SSLv3_TLSv1</i> in <i>soap_ssl_server_context</i>. To use TLS v1.1 only use <i>SOAP_TLSv1_1</i>. To use TLS v1.2 only use <i>SOAP_TLSv1_2</i>. To use SSL v3 only use <i>SOAP_SSLv3</i>.
 
 <div class="p"><!----></div>
 The <i>cacert</i> file and <i>capath</i> are optional. Either one can be
@@ -14424,7 +14561,7 @@ soap_call_ns__mymethod(&amp;soap, "https://domain/path/secure.cgi", "", ...);
 For systems based on Microsoft windows, the WinInet module can be used instead, see <i>mod_gsoap/gsoap_win/wininet</i>.
 
 <div class="p"><!----></div>
-Since release version 2.8.20 SSL v3 is disabled. To enable SSL v3 together with TLS v1 use <i>SOAP_SSLv3_TLSv1</i> in <i>soap_ssl_client_context</i>.
+Since release version 2.8.20 SSL v3 is disabled. To enable SSL v3 together with TLS v1.0, v1.1, and v1.2  use <i>SOAP_SSLv3_TLSv1</i> in <i>soap_ssl_server_context</i>. To use TLS v1.1 only use <i>SOAP_TLSv1_1</i>. To use TLS v1.2 only use <i>SOAP_TLSv1_2</i>. To use SSL v3 only use <i>SOAP_SSLv3</i>.
 
 <div class="p"><!----></div>
 To disable server authentication for testing purposes, use the following:
@@ -16289,5 +16426,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 16 Aug 2015, 16:35.</small>
+version 4.00.<br />On 24 Oct 2015, 22:33.</small>
 </html>

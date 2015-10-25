@@ -3483,7 +3483,11 @@ soap_wsse_verify_EncryptedKey(struct soap *soap)
        && security->xenc__EncryptedKey->ds__KeyInfo->wsse__SecurityTokenReference->KeyIdentifier->__item)
       { if (!strcmp(security->xenc__EncryptedKey->ds__KeyInfo->wsse__SecurityTokenReference->KeyIdentifier->ValueType, wsse_X509v3URI))
         { X509 *cert = NULL;
+#if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
           const unsigned char *der;
+#else
+          unsigned char *der;
+#endif
           int derlen;
           der = (unsigned char*)soap_base642s(soap, security->xenc__EncryptedKey->ds__KeyInfo->wsse__SecurityTokenReference->KeyIdentifier->__item, NULL, 0, &derlen);
           if (!der)

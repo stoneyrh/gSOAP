@@ -1086,12 +1086,12 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
       h->multipartRelated = NULL;
       h->content = NULL;
       h->layout = NULL;
-      h->ext_documentation = NULL;	// TODO: add document content
-      h->documentation = NULL;	// TODO: add document content
+      h->ext_documentation = NULL;	// TODO: may wanto to add document content
+      h->documentation = NULL;		// TODO: may wanto to add document content
       service->header[h->name] = h;
       for (vector<soap__headerfault>::const_iterator headerfault = (*header).headerfault.begin(); headerfault != (*header).headerfault.end(); ++headerfault)
       {
-        // TODO: headerfault processing. This is practically never used...
+        // TODO: headerfault processing. This is practically never used...!
       }
     }
     for (vector<wsoap__header>::const_iterator wheader = ext_input->wsoap__header_.begin(); wheader != ext_input->wsoap__header_.end(); ++wheader)
@@ -1110,8 +1110,8 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
       h->multipartRelated = NULL;
       h->content = NULL;
       h->layout = NULL;
-      h->ext_documentation = NULL;	// TODO: add document content
-      h->documentation = NULL;	// TODO: add document content
+      h->ext_documentation = NULL;	// TODO: may want to add document content
+      h->documentation = NULL;		// TODO: may want to add document content
       service->header[h->name] = h;
     }
   }
@@ -1155,12 +1155,12 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
       h->multipartRelated = NULL;
       h->content = NULL;
       h->layout = NULL;
-      h->ext_documentation = NULL;	// TODO: add document content?
-      h->documentation = NULL;	// TODO: add document content?
+      h->ext_documentation = NULL;	// TODO: may want to add document content
+      h->documentation = NULL;		// TODO: may want to add document content
       service->header[h->name] = h;
       for (vector<soap__headerfault>::const_iterator headerfault = (*header).headerfault.begin(); headerfault != (*header).headerfault.end(); ++headerfault)
       {
-        // TODO: headerfault processing. This is practically never used...
+        // TODO: headerfault processing. This is practically never used...!
       }
     }
     for (vector<wsoap__header>::const_iterator wheader = ext_output->wsoap__header_.begin(); wheader != ext_output->wsoap__header_.end(); ++wheader)
@@ -1179,8 +1179,8 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
       h->multipartRelated = NULL;
       h->content = NULL;
       h->layout = NULL;
-      h->ext_documentation = NULL;	// TODO: add document content
-      h->documentation = NULL;	// TODO: add document content
+      h->ext_documentation = NULL;	// TODO: may want to add document content
+      h->documentation = NULL;		// TODO: may want to add document content
       service->header[h->name] = h;
     }
   }
@@ -1304,9 +1304,11 @@ void Definitions::compile(const wsdl__definitions& definitions)
   fprintf(stream, "@copyright LICENSE:\n@verbatim\n%s@endverbatim\n\n*/\n\n", licensenotice);
   // gsoap compiler options: 'w' disables WSDL/schema output to avoid file collisions
   if (cflag)
-    fprintf(stream, "\n//gsoapopt cw\n");
+    fprintf(stream, "\n//gsoapopt c,w\n");
+  else if (c11flag)
+    fprintf(stream, "\n//gsoapopt c++11,w\n");
   else
-    fprintf(stream, "\n//gsoapopt w\n");
+    fprintf(stream, "\n//gsoapopt c++,w\n");
   banner("Definitions", definitions.targetNamespace ? definitions.targetNamespace : "targetNamespace");
   // copy documentation from WSDL definitions
   if (definitions.documentation)
@@ -1328,8 +1330,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
   }
   if (!cflag && !sflag)
   {
-    fprintf(stream, "\n// STL vector containers (use option -s to remove STL dependency)\n");
-    fprintf(stream, "#import \"stlvector.h\"\n");
+    fprintf(stream, "#import \"stl.h\"\t// STL containers (use option -s to remove STL dependency)\n");
   }
   if (mflag)
   {
@@ -1539,7 +1540,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
           s = types.tname(NULL, NULL, "xsd:string");
           fprintf(stream, "/// Primitive built-in type \"%s\".\n", *i);
           fprintf(stream, "typedef %s %s;\n\n", s, t);
-          types.deftname(TYPEDEF, NULL, strchr(s, '*') != NULL, NULL, NULL, *i);
+          types.deftname(TYPEDEF, false, types.is_ptr(NULL, NULL, "xsd:string"), NULL, NULL, *i);
           const char *u = types.uri(*i);
           if (u && !types.uris[u])
           {
@@ -1552,7 +1553,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
         fprintf(stream, "//  Imported XSD type \"%s\" defined by %s.\n", *i, t);
       else
         fprintf(stream, "//  xsd.h: should define type %s\n", t);
-      types.deftname(TYPEDEF, NULL, false, NULL, NULL, *i);
+      types.deftname(TYPEDEF, false, false, NULL, NULL, *i);
     }
     if (pflag && !strncmp(*i, "xs:", 3))		// only xsi types are polymorph
     {
@@ -1611,7 +1612,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
           s = types.tname(NULL, NULL, "xsd:any");
           fprintf(stream, "/// Built-in element \"%s\".\n", *j);
           fprintf(stream, "typedef %s %s;\n\n", s, t);
-          types.deftname(TYPEDEF, NULL, true, "_", NULL, *j);	// already pointer
+          types.deftname(TYPEDEF, false, true, "_", NULL, *j);	// already pointer
           const char *u = types.uri(*j);
           if (u && !types.uris[u])
           {
@@ -1624,7 +1625,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
         fprintf(stream, "//  Imported element \"%s\" declared as %s.\n\n", *j, t);
       else
         fprintf(stream, "//  xsd.h: should define element %s\n\n", t);
-      types.deftname(TYPEDEF, NULL, false, "_", NULL, *j);
+      types.deftname(TYPEDEF, false, false, "_", NULL, *j);
     }
   }
   // produce built-in primitive attributes, limited to the ones that are used only
@@ -1683,7 +1684,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
         fprintf(stream, "//  Imported attribute \"%s\" declared as %s.\n\n", *k, t);
       else
         fprintf(stream, "//  xsd.h: should define attribute %s\n\n", t);
-      types.deftname(TYPEDEF, NULL, strchr(s, '*') != NULL, "_", NULL, *k);
+      types.deftname(TYPEDEF, false, types.is_ptr(NULL, NULL, "xsd:string"), "_", NULL, *k);
     }
   }
   // produce types
@@ -1713,11 +1714,12 @@ void Definitions::compile(const wsdl__definitions& definitions)
             fprintf(stream, "/// @brief Top-level root element \"%s\":%s.\n", (*schema4)->targetNamespace, (*element).name);
             if (gflag)
             {
-              const char *t = types.deftname(TYPEDEF, NULL, false, "_", (*schema4)->targetNamespace, (*element).name);
+              const char *t = types.deftname(TYPEDEF, false, false, "_", (*schema4)->targetNamespace, (*element).name);
   	      if (t)
                 fprintf(stream, "typedef _XML %s;\n\n", t);
               else
                 fprintf(stream, "// Element definition intentionally left blank.\n\n");
+              types.ptrtypemap[t] = types.usetypemap[t] = "_XML";
             }
             else
             {
@@ -1809,8 +1811,10 @@ void Definitions::compile(const wsdl__definitions& definitions)
       {
         if ((*simpleType).baseLevel() <= 0)
         {
+	  const char *t = types.deftname(TYPEDEF, false, false, NULL, (*schema)->targetNamespace, (*simpleType).name);
           fprintf(stream, "\n/// @todo !FIXME! @warning %s is a simpleType with cyclic restriction/extension inheritance.\n", (*simpleType).name ? (*simpleType).name : "");
-          fprintf(stream, "typedef _XML %s;\n\n", types.deftname(TYPEDEF, NULL, false, NULL, (*schema)->targetNamespace, (*simpleType).name));
+          fprintf(stream, "typedef _XML %s;\n\n", t);
+	  types.ptrtypemap[t] = types.usetypemap[t] = "_XML";
         }
       }
       for (vector<xs__complexType>::iterator complexType = (*schema)->complexType.begin(); complexType != (*schema)->complexType.end(); ++complexType)
@@ -1848,7 +1852,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
             if (gflag)
             {
               const char *s = types.tnamenoptr(NULL, (*schema)->targetNamespace, (*element).type);
-              const char *t = types.deftname(TYPEDEF, NULL, false, "_", (*schema)->targetNamespace, (*element).name);
+              const char *t = types.deftname(TYPEDEF, false, false, "_", (*schema)->targetNamespace, (*element).name);
               fprintf(stream, "typedef %s %s;\n\n", s, t);
   	    }
   	    else
@@ -1882,7 +1886,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
             if (gflag)
             {
               const char *s = types.tnamenoptr(NULL, (*schema)->targetNamespace, (*attribute).type);
-              const char *t = types.deftname(TYPEDEF, NULL, false, "_", (*schema)->targetNamespace, (*attribute).name);
+              const char *t = types.deftname(TYPEDEF, false, false, "_", (*schema)->targetNamespace, (*attribute).name);
               fprintf(stream, "typedef %s %s;\n\n", s, t);
   	    }
   	    else
@@ -2032,21 +2036,22 @@ void Definitions::compile(const wsdl__definitions& definitions)
     for (vector<xs__schema*>::const_iterator schema5 = definitions.types->xs__schema_.begin(); schema5 != definitions.types->xs__schema_.end(); ++schema5)
     {
       const char *prefix = types.nsprefix(NULL, (*schema5)->targetNamespace);
-      if (!prefix)
-        prefix = "default";
-      fprintf(stream, "\n@section %s Top-level root elements of schema \"%s\"\n", prefix, (*schema5)->targetNamespace);
+      fprintf(stream, "\n@section %s Top-level root elements of schema \"%s\"\n", prefix ? prefix : "default", (*schema5)->targetNamespace);
       for (vector<xs__element>::const_iterator element = (*schema5)->element.begin(); element != (*schema5)->element.end(); ++element)
       {
-        fprintf(stream, "\n  - <%s> ", (*element).name);
+	if (prefix)
+	  fprintf(stream, "\n  - <%s:%s> ", prefix, (*element).name);
+	else
+	  fprintf(stream, "\n  - <%s> ", (*element).name);
+	const char *cname = types.cname("_", (*schema5)->targetNamespace, (*element).name);
         if (types.is_defined("_", (*schema5)->targetNamespace, (*element).name))
         {
-          const char *cname = types.cname("_", (*schema5)->targetNamespace, (*element).name);
-          const char *pname = types.pname(true, "_", (*schema5)->targetNamespace, (*element).name);
+          const char *pname = types.pname(true, false, "_", (*schema5)->targetNamespace, (*element).name);
           fprintf(stream, "@ref %s\n", cname);
           fprintf(stream, "    @code\n    // Reader (returns SOAP_OK on success):\n    soap_read_%s(struct soap*, %s);\n    // Writer (returns SOAP_OK on success):\n    soap_write_%s(struct soap*, %s);\n    @endcode\n", cname, pname, cname, pname);
         }
         else
-          fprintf(stream, "(use wsdl2h option -g to auto-generate)\n");
+          fprintf(stream, "(use wsdl2h option -g to auto-generate type %s)\n", cname);
       }
     }
     fprintf(stream, "\n*/\n");
@@ -2098,17 +2103,17 @@ void Definitions::generate()
       {
         fprintf(stream, "/// \"%s\" SOAP Header part element.\n", (*header).second->part->name);
         if ((*header).second->part->elementPtr()->type && (*header).second->part->element)
-          fprintf(stream, elementformat, types.pname(true, NULL, NULL, (*header).second->part->elementPtr()->type), types.aname(NULL, NULL, (*header).second->part->element));
+          fprintf(stream, elementformat, types.pname(true, false, NULL, NULL, (*header).second->part->elementPtr()->type), types.aname(NULL, NULL, (*header).second->part->element));
         else if ((*header).second->part->element)
-          fprintf(stream, elementformat, types.pname(true, "_", NULL, (*header).second->part->element), types.aname(NULL, NULL, (*header).second->part->element));
+          fprintf(stream, elementformat, types.pname(true, false, "_", NULL, (*header).second->part->element), types.aname(NULL, NULL, (*header).second->part->element));
         else
-          fprintf(stream, elementformat, types.pname(true, "_", NULL, (*header).second->part->elementPtr()->name), (*header).first);
+          fprintf(stream, elementformat, types.pname(true, false, "_", NULL, (*header).second->part->elementPtr()->name), (*header).first);
         fprintf(stream, ";\n");
       }
       else if ((*header).second->part && (*header).second->part->type)
       {
         fprintf(stream, "/// \"%s\" SOAP Header part type.\n", (*header).second->part->type);
-        fprintf(stream, elementformat, types.pname(true, NULL, NULL, (*header).second->part->type), types.aname(NULL, (*header).second->URI, (*header).second->part->name));
+        fprintf(stream, elementformat, types.pname(true, false, NULL, NULL, (*header).second->part->type), types.aname(NULL, (*header).second->URI, (*header).second->part->name));
         fprintf(stream, ";\n");
       }
       else if ((*header).second->element)
@@ -2120,7 +2125,7 @@ void Definitions::generate()
       else
       {
         if ((*header).second->part && (*header).second->part->element)
-          fprintf(stream, elementformat, types.pname(true, "_", NULL, (*header).second->part->element), (*header).first);
+          fprintf(stream, elementformat, types.pname(true, false, "_", NULL, (*header).second->part->element), (*header).first);
         else
           fprintf(stream, pointerformat, (*header).first, (*header).first);
         fprintf(stream, ";\t///< @todo Please check element name and type (imported type)\n");
@@ -2204,9 +2209,9 @@ void Definitions::generate()
               {
                 fprintf(stream, "/// SOAP Fault message \"%s\" part \"%s\" element \"%s\".\n", name, (*part).name ? (*part).name : "", (*part).element ? (*part).element : "");
                 if ((*part).elementPtr()->type)
-                  fprintf(stream, elementformat, types.pname(true, NULL, NULL, (*part).elementPtr()->type), types.aname(NULL, (*fault).second->URI, (*part).element));
+                  fprintf(stream, elementformat, types.pname(true, false, NULL, NULL, (*part).elementPtr()->type), types.aname(NULL, (*fault).second->URI, (*part).element));
                 else
-                  fprintf(stream, elementformat, types.pname(true, "_", NULL, (*part).element), types.aname(NULL, (*fault).second->URI, (*part).element));
+                  fprintf(stream, elementformat, types.pname(true, false, "_", NULL, (*part).element), types.aname(NULL, (*fault).second->URI, (*part).element));
                 fprintf(stream, ";\n");
                 fault_elements.insert((*part).element);
               }
@@ -2217,7 +2222,7 @@ void Definitions::generate()
               {
                 fprintf(stream, schemaformat, types.nsprefix(NULL, (*fault).second->URI), "namespace", (*fault).second->URI);
                 fprintf(stream, "/// SOAP Fault message \"%s\" part \"%s\" type \"%s\".\n", name, (*part).name, (*part).type);
-                fprintf(stream, elementformat, types.pname(true, NULL, NULL, (*part).type), types.aname(NULL, (*fault).second->URI, (*part).name));
+                fprintf(stream, elementformat, types.pname(true, false, NULL, NULL, (*part).type), types.aname(NULL, (*fault).second->URI, (*part).name));
                 fprintf(stream, ";\n");
                 fault_elements.insert((*part).name);
               }
@@ -2238,7 +2243,7 @@ void Definitions::generate()
         if (fault_elements.find((*fault).second->name) == fault_elements.end())
         {
           fprintf(stream, "/// SOAP Fault message \"%s\":%s\n", (*fault).second->URI, (*fault).second->element->name);
-          fprintf(stream, elementformat, types.pname(true, "_", (*fault).second->URI, (*fault).second->element->name), (*fault).second->name);
+          fprintf(stream, elementformat, types.pname(true, false, "_", (*fault).second->URI, (*fault).second->element->name), (*fault).second->name);
           fprintf(stream, ";\n");
           fault_elements.insert((*fault).second->name);
         }
@@ -2939,7 +2944,7 @@ void Operation::generate(Types& types, Service& service)
             fprintf(stream, serviceformat, prefix, "method-mime-type", method_name, (*content).type);
       }
     }
-    // TODO: add headerfault directives
+    // TODO: add headerfault directives?
     for (vector<soap__header>::const_iterator outputheader = output->header.begin(); outputheader != output->header.end(); ++outputheader)
     {
       if ((*outputheader).part)
@@ -3039,7 +3044,7 @@ void Operation::generate(Types& types, Service& service)
             fprintf(stream, serviceformat, prefix, "method-mime-type", method_name, (*content).type);
       }
     }
-    // TODO: add headerfault directives
+    // TODO: add headerfault directives?
     for (vector<soap__header>::const_iterator outputheader = output->header.begin(); outputheader != output->header.end(); ++outputheader)
     {
       if ((*outputheader).part)
@@ -3168,7 +3173,7 @@ void Operation::generate(Types& types, Service& service)
               fprintf(stream, serviceformat, prefix, "method-input-mime-type", method_name, (*content).type);
         }
       }
-      // TODO: add headerfault directives
+      // TODO: add headerfault directives?
       for (vector<soap__header>::const_iterator inputheader = input->header.begin(); inputheader != input->header.end(); ++inputheader)
       {
         if ((*inputheader).part)
@@ -3314,14 +3319,14 @@ void Message::generate(Types& types, const char *sep, bool anonymous, bool remar
             }
             else
             {
-              fprintf(stream, anonymous ? anonformat : paraformat, types.pname(optional, prefix, typeURI, type), " ", types.aname(NULL, nameURI, name), sep);
+              fprintf(stream, anonymous ? anonformat : paraformat, types.pname(optional, false, prefix, typeURI, type), " ", types.aname(NULL, nameURI, name), sep);
               if (remark && *sep == ',')
                 fprintf(stream, "\t///< Input parameter");
             }
           }
           else
           {
-            fprintf(stream, anonymous ? anonformat : paraformat, types.pname(optional, NULL, NULL, (*part).element), " ", types.aname(NULL, NULL, (*part).element), sep);
+            fprintf(stream, anonymous ? anonformat : paraformat, types.pname(optional, false, NULL, NULL, (*part).element), " ", types.aname(NULL, NULL, (*part).element), sep);
             if (remark)
               fprintf(stream, "\t///< @todo Check element type (imported type)");
           }
@@ -3345,7 +3350,7 @@ void Message::generate(Types& types, const char *sep, bool anonymous, bool remar
           }
           else
           {
-            fprintf(stream, anonymous ? anonformat : paraformat, types.pname(optional, NULL, NULL, (*part).type), " ", types.aname(NULL, NULL, (*part).name), sep);
+            fprintf(stream, anonymous ? anonformat : paraformat, types.pname(optional, false, NULL, NULL, (*part).type), " ", types.aname(NULL, NULL, (*part).name), sep);
             if (remark && *sep == ',')
               fprintf(stream, "\t///< Input parameter");
           }
@@ -3388,7 +3393,7 @@ void Message::generate(Types& types, const char *sep, bool anonymous, bool remar
     {
       // WSDL 2.0 document style
       fprintf(stream, "\n");
-      fprintf(stream, anonymous ? anonformat : paraformat, types.pname(optional, prefix, URI, type), " ", types.aname(NULL, URI, name), sep);
+      fprintf(stream, anonymous ? anonformat : paraformat, types.pname(optional, false, prefix, URI, type), " ", types.aname(NULL, URI, name), sep);
       if (remark && *sep == ',')
         fprintf(stream, "\t///< Input parameter");
     }
@@ -3405,7 +3410,7 @@ void Message::generate(Types& types, const char *sep, bool anonymous, bool remar
           if (!type)
             type = name;
           fprintf(stream, "\n");
-          fprintf(stream, anonymous ? anonformat : paraformat, types.pname(optional, prefix, URI, type), " ", types.aname(NULL, NULL, name), sep);
+          fprintf(stream, anonymous ? anonformat : paraformat, types.pname(optional, false, prefix, URI, type), " ", types.aname(NULL, NULL, name), sep);
           if (remark && *sep == ',')
             fprintf(stream, "\t///< Input parameter");
         }
@@ -3524,7 +3529,7 @@ static void ident()
   }
   else
     fprintf(stream, "(stdin) ");
-  fprintf(stream, "and %s\n   %s\n\n   DO NOT INCLUDE THIS FILE DIRECTLY INTO YOUR PROJECT BUILDS\n   USE THE soapcpp2-GENERATED SOURCE CODE FILES FOR YOUR PROJECT BUILDS\n\n   gSOAP XML Web services tools.\n   Copyright (C) 2000-2015 Robert van Engelen, Genivia Inc. All Rights Reserved.\n   Part of this software is released under one of the following licenses:\n   GPL or Genivia's license for commercial use.\n*/\n\n", mapfile, tmp);
+  fprintf(stream, "and %s\n   %s\n\n   DO NOT INCLUDE THIS FILE DIRECTLY INTO YOUR PROJECT BUILDS\n   USE THE soapcpp2-GENERATED SOURCE CODE FILES FOR YOUR PROJECT BUILDS\n\ngSOAP XML Web services tools\nCopyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.\nThis program is released under the GPL with the additional exemption that\ncompiling, linking, and/or using OpenSSL is allowed.\n--------------------------------------------------------------------------------\nA commercial use license is available from Genivia Inc., contact@genivia.com\n--------------------------------------------------------------------------------\n*/\n\n", mapfile, tmp);
 }
 
 void text(const char *text)

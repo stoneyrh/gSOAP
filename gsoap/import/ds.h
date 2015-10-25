@@ -79,6 +79,7 @@ typedef struct ds__TransformType
 /// Typedef synonym for struct ds__DigestMethodType.
 typedef struct ds__DigestMethodType ds__DigestMethodType;
 
+#import "wsse.h"
 /// Imported complexType "http://www.w3.org/2000/09/xmldsig#":KeyInfoType from typemap WS/WS-typemap.dat.
 typedef struct ds__KeyInfoType
 {	char*					KeyName;

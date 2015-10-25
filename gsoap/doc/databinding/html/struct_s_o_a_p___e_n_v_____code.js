@@ -1,0 +1,9 @@
+var struct_s_o_a_p___e_n_v_____code =
+[
+    [ "SOAP_ENV__Code", "struct_s_o_a_p___e_n_v_____code.html#aff8d60936c791605d596bcdf64e59622", null ],
+    [ "~SOAP_ENV__Code", "struct_s_o_a_p___e_n_v_____code.html#a620bfae3b426951485495388a3673a80", null ],
+    [ "soap_type", "struct_s_o_a_p___e_n_v_____code.html#aae134e07c4f220a4a90720e9e1f0021d", null ],
+    [ "soap_type", "struct_s_o_a_p___e_n_v_____code.html#aae134e07c4f220a4a90720e9e1f0021d", null ],
+    [ "SOAP_ENV__Subcode", "struct_s_o_a_p___e_n_v_____code.html#aff17edcc575d9a89878cd2aaa1b2ed97", null ],
+    [ "SOAP_ENV__Value", "struct_s_o_a_p___e_n_v_____code.html#a14cb988fc1baafcb64d889dbef9e89ff", null ]
+];

@@ -49,6 +49,7 @@ class Types
     MapOfStringToString deftypemap;
     MapOfStringToString usetypemap;
     MapOfStringToString ptrtypemap;
+    MapOfStringToString smptypemap;
     MapOfPairToString	qnames;	// (URI,name) -> name
     MapOfStringToString	uris;	// URI -> prefix
     MapOfStringToNum	syms;	// prefix -> count (ns1, ns2, ...)
@@ -72,20 +73,22 @@ class Types
     const char *tname(const char *prefix, const char *URI, const char *qname);
     const char *tnameptr(bool, const char *prefix, const char *URI, const char *qname);
     const char *tnamenoptr(const char *prefix, const char *URI, const char *qname);
-    const char *pname(bool flag, const char *prefix, const char *URI, const char *qname);
+    const char *pname(bool flag, bool smart, const char *prefix, const char *URI, const char *qname);
     const char *oname(const char *prefix, const char *URI, const char *qname);
     const char *ename(const char *type, const char *value, bool isqname);
     const char *sname(const char *URI, const char *name);
     const char *gname(const char *URI, const char *name);
     const char *uname(const char *URI);
+    const char *vname(const char *var);
     const char *nsprefix(const char *prefix, const char *URI);
     const char *prefix(const char *name);
     const char *uri(const char *name);
-    const char *deftname(enum Type type, const char *pointer, bool is_pointer, const char *prefix, const char *URI, const char *qname);
+    const char *deftname(enum Type type, bool mk_pointer, bool is_pointer, const char *prefix, const char *URI, const char *qname);
     bool is_defined(const char *prefix, const char *URI, const char *qname);
     bool is_nillable(const xs__element& element);
     bool is_basetypeforunion(const char *prefix, const char *URI, const char *type);
     bool is_basetype(const char *prefix, const char *URI, const char *type);
+    bool is_ptr(const char *prefix, const char *URI, const char *type);
     void dump(FILE*);
     void define(const char *URI, const char *name, const xs__complexType&);
     void gen(const char *URI, const vector<xs__attribute>&);

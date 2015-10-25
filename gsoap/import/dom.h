@@ -547,9 +547,9 @@ The soap context flags that control the parsing and rendition of XML are:
   localication. The platform must support MB strings (HAVE_MBTOWC).
 - SOAP_DOM_TREE: prevents deserialization of C/C++ data structures into the
   DOM.
-- SOAP_DOM_NODE: attempt to deserialize C/C++ data structures when a
+- SOAP_DOM_NODE: deserialize C/C++ data structures into the DOM when a
   deserializer is available. A deserializer is selected based on the element
-  name or the xsi:type attribute.
+  name or the xsi:type attribute value.
 - SOAP_DOM_ASIS: render XML "as is", i.e. do not insert xmlns bindings for URIs
   stored in nstr. Assumes the DOM is self-contained.
 - SOAP_XML_INDENT: render XML with indent.

@@ -309,7 +309,16 @@ soap_mec_init(struct soap *soap, struct soap_mec_data *data, int alg, SOAP_MEC_K
     case SOAP_MEC_ENV_ENC_AES256_CBC:
     case SOAP_MEC_ENV_ENC_AES512_CBC:
     case SOAP_MEC_ENV_ENC_DES_CBC:
+#if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
       ok = EVP_CIPHER_CTX_rand_key(data->ctx, data->ekey);
+#elif defined(EVP_CIPH_RAND_KEY)
+      if (data->ctx->cipher->flags & EVP_CIPH_RAND_KEY)
+	ok = EVP_CIPHER_CTX_ctrl(data->ctx, EVP_CTRL_RAND_KEY, 0, data->ekey);
+      else
+	ok = RAND_bytes(data->ekey, data->ctx->key_len);
+#else
+      ok = RAND_bytes(data->ekey, data->ctx->key_len);
+#endif
       /* generate ephemeral secret key */
 #if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
       *keylen = EVP_PKEY_encrypt_old(key, data->ekey, EVP_CIPHER_CTX_key_length(data->ctx), pkey);

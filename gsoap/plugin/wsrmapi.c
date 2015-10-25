@@ -2382,7 +2382,7 @@ soap_wsrm_chk(struct soap *soap, int timeout, int flag)
 #ifdef _WRS_KERNEL
       int r3;
 #else
-      useconds_t r3;
+      unsigned int r3;
 #endif
       struct soap *nack_soap = NULL;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Message " SOAP_ULONG_FORMAT " received after message " SOAP_ULONG_FORMAT "\n", recvnum, *vp));
@@ -2415,8 +2415,10 @@ soap_wsrm_chk(struct soap *soap, int timeout, int flag)
       while (r1)
       { while (r2)
         { MUTEX_UNLOCK(soap_wsrm_session_lock);
-#ifdef _WRS_KERNEL
+#if defined(_WRS_KERNEL)
           taskDelay(r3); /* VxWorks compatible sleep API, delay is specified in number of ticks, which depends on the System Clock Rate */
+#elif defined(WIN32)
+	  Sleep(r3/1000);
 #else
           usleep(r3);
 #endif

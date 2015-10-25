@@ -8,5 +8,6 @@ iterator	begin()
 const_iterator	begin() const
 iterator	end()
 const iterator	end() const
+size_t          size() const
 iterator	insert(iterator, const_reference)
 

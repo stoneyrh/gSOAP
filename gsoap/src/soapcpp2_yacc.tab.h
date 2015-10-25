@@ -94,42 +94,45 @@
      TEMPLATE = 310,
      EXPLICIT = 311,
      TYPENAME = 312,
-     RESTRICT = 313,
-     null = 314,
-     UCHAR = 315,
-     USHORT = 316,
-     UINT = 317,
-     ULONG = 318,
-     NONE = 319,
-     ID = 320,
-     LAB = 321,
-     TYPE = 322,
-     LNG = 323,
-     DBL = 324,
-     CHR = 325,
-     TAG = 326,
-     STR = 327,
-     RA = 328,
-     LA = 329,
-     OA = 330,
-     XA = 331,
-     AA = 332,
-     MA = 333,
-     DA = 334,
-     TA = 335,
-     NA = 336,
-     PA = 337,
-     OR = 338,
-     AN = 339,
-     NE = 340,
-     EQ = 341,
-     GE = 342,
-     LE = 343,
-     RS = 344,
-     LS = 345,
-     AR = 346,
-     PP = 347,
-     NN = 348
+     MUTABLE = 313,
+     FINAL = 314,
+     null = 315,
+     RESTRICT = 316,
+     OVERRIDE = 317,
+     UCHAR = 318,
+     USHORT = 319,
+     UINT = 320,
+     ULONG = 321,
+     NONE = 322,
+     ID = 323,
+     LAB = 324,
+     TYPE = 325,
+     LNG = 326,
+     DBL = 327,
+     CHR = 328,
+     TAG = 329,
+     STR = 330,
+     RA = 331,
+     LA = 332,
+     OA = 333,
+     XA = 334,
+     AA = 335,
+     MA = 336,
+     DA = 337,
+     TA = 338,
+     NA = 339,
+     PA = 340,
+     OR = 341,
+     AN = 342,
+     NE = 343,
+     EQ = 344,
+     GE = 345,
+     LE = 346,
+     RS = 347,
+     LS = 348,
+     AR = 349,
+     PP = 350,
+     NN = 351
    };
 #endif
 /* Tokens.  */
@@ -188,61 +191,65 @@
 #define TEMPLATE 310
 #define EXPLICIT 311
 #define TYPENAME 312
-#define RESTRICT 313
-#define null 314
-#define UCHAR 315
-#define USHORT 316
-#define UINT 317
-#define ULONG 318
-#define NONE 319
-#define ID 320
-#define LAB 321
-#define TYPE 322
-#define LNG 323
-#define DBL 324
-#define CHR 325
-#define TAG 326
-#define STR 327
-#define RA 328
-#define LA 329
-#define OA 330
-#define XA 331
-#define AA 332
-#define MA 333
-#define DA 334
-#define TA 335
-#define NA 336
-#define PA 337
-#define OR 338
-#define AN 339
-#define NE 340
-#define EQ 341
-#define GE 342
-#define LE 343
-#define RS 344
-#define LS 345
-#define AR 346
-#define PP 347
-#define NN 348
+#define MUTABLE 313
+#define FINAL 314
+#define null 315
+#define RESTRICT 316
+#define OVERRIDE 317
+#define UCHAR 318
+#define USHORT 319
+#define UINT 320
+#define ULONG 321
+#define NONE 322
+#define ID 323
+#define LAB 324
+#define TYPE 325
+#define LNG 326
+#define DBL 327
+#define CHR 328
+#define TAG 329
+#define STR 330
+#define RA 331
+#define LA 332
+#define OA 333
+#define XA 334
+#define AA 335
+#define MA 336
+#define DA 337
+#define TA 338
+#define NA 339
+#define PA 340
+#define OR 341
+#define AN 342
+#define NE 343
+#define EQ 344
+#define GE 345
+#define LE 346
+#define RS 347
+#define LS 348
+#define AR 349
+#define PP 350
+#define NN 351
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 127 "soapcpp2_yacc.y"
-{	Symbol	*sym;
-	LONG64	i;
-	double	r;
-	char	c;
-	char	*s;
-	Tnode	*typ;
-	Storage	sto;
-	Node	rec;
-	Entry	*e;
+#line 153 "soapcpp2_yacc.y"
+{
+  Symbol  *sym;
+  LONG64  i;
+  double  r;
+  char    c;
+  char    *s;
+  Tnode   *typ;
+  Storage sto;
+  Node    rec;
+  Entry   *e;
 }
 /* Line 1529 of yacc.c.  */
-#line 246 "soapcpp2_yacc.tab.h"
+#line 253 "soapcpp2_yacc.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

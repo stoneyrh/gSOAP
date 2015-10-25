@@ -24,10 +24,10 @@ SOAP_NMAC struct Namespace namespaces[] =
 	{"wsa", "http://www.w3.org/2005/08/addressing", NULL, NULL},
 	{"soap", "http://schemas.xmlsoap.org/wsdl/soap/", NULL, NULL},
 	{"http", "http://schemas.xmlsoap.org/wsdl/http/", NULL, NULL},
-	{"wsdl", "http://schemas.xmlsoap.org/wsdl/", "http://www.w3.org/ns/wsdl", NULL},
 	{"wsp", "http://www.w3.org/ns/ws-policy", NULL, NULL},
 	{"plnk", "http://docs.oasis-open.org/wsbpel/2.0/plnktype", NULL, NULL},
 	{"vprop", "http://docs.oasis-open.org/wsbpel/2.0/varprop", NULL, NULL},
 	{"gwsdl", "http://www.gridforum.org/namespaces/2003/03/gridWSDLExtensions", NULL, NULL},
+	{"wsdl", "http://schemas.xmlsoap.org/wsdl/", "http://www.w3.org/ns/wsdl", NULL},
 	{NULL, NULL, NULL, NULL}
 };

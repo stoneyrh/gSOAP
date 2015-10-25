@@ -13,6 +13,7 @@
   <tr>
    <td width="10%">&nbsp;</td>
    <td width="175px"><a href="http://www.genivia.com"><img alt="Genivia" src="GeniviaLogo2_trans_noslogan.png"/></a></td>
+   <td class="tab_home"><a href="http://www.genivia.com">Home</a></td>
    <td class="tab_home"><a href="http://www.genivia.com/dev.html">Developer Center</a></td>
    <td>
     <div style="float: right;"><h1>WinInet Plugin</h1></div>
@@ -49,7 +50,7 @@
 <div class="textblock"><p>By Jack Kustanowitz, Brodie Thiesfield, and Robert van Engelen.</p>
 <h1><a class="anchor" id="overview"></a>
 Overview                                                             </h1>
-<p>The WinInet plugin for gSOAP enables client applications (not servers) to communicate through Microsoft's WinInet API on Windows. This offers all of the advantages of WinInet managed through the <code>Internet Options</code> control panel of Windows, such as HTTP (proxy) authentication, TLS/SSL, and HTTP compression. Therefore, "if IE works, gSOAP works." since these options are shared by IE,</p>
+<p>The WinInet plugin for gSOAP enables client applications (not servers) to communicate through Microsoft's WinInet API on Windows. This offers all of the advantages of WinInet managed through the <code>Internet Options</code> control panel of Windows, such as HTTP (proxy) authentication, TLS/SSL, and HTTP compression. Therefore, "if IE works, gSOAP works." since these options are shared by IE.</p>
 <p>The WinInet project home is at <a href="http://code.google.com/p/gsoapwininet">http://code.google.com/p/gsoapwininet</a>.</p>
 <p>This plugin is licensed differently than the other plugins for gSOAP. It is licensed under the <a href="#license">MIT license</a> and can be used with GPLv2 and the commercial license for gSOAP.</p>
 <h1><a class="anchor" id="features"></a>
@@ -64,7 +65,7 @@ Features                                                             </h1>
 <li>Can be used in both MBCS and UNICODE projects.</li>
 <li>Compiles cleanly at warning level 4 supporting Win32 and Win64.</li>
 <li>Debug logging is supported (<code>TEST.log</code>, <code>SENT.log</code>, and <code>RECV.log</code>).</li>
-<li>MT safe and supports multiple threads, as usual with gSOAP clients.</li>
+<li>MT safe and supports multiple threads, as usual with gSOAP clients. You will need to register this plugin with each soap context (do not use <code>soap_copy</code> and <code>soap_copy_context</code> to copy contexts).</li>
 </ul>
 <h1><a class="anchor" id="limitations"></a>
 Limitations                                                       </h1>
@@ -120,6 +121,6 @@ Contributors                                                     </h1>
 </ul>
 </div></div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Sat Aug 15 2015 16:15:53 for <a href="http://www.genivia.com">Genivia</a> documentation of WinInet Plugin by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Fri Oct 23 2015 15:22:39 for <a href="http://www.genivia.com">Genivia</a> documentation of WinInet Plugin by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

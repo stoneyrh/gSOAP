@@ -180,7 +180,7 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
   if (!cwd)
     cwd = cwd_path;
   if (vflag)
-    fprintf(stderr, "\nOpening WSDL/XSD '%s' from '%s'\n", loc?loc:"(null)", cwd?cwd:"(null)");
+    fprintf(stderr, "\nOpening WSDL/XSD '%s' from '%s'\n", loc?loc:"(stdin)", cwd?cwd:"./");
   if (loc)
   {
     if (soap->recvfd > 2)
@@ -299,7 +299,7 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
       schema->soap_in(soap, "xs:schema", NULL);
       if (soap->error)
       {
-        fprintf(stderr, "\nAn error occurred while parsing WSDL or XSD from '%s'\n", loc?loc:"(null)");
+        fprintf(stderr, "\nAn error occurred while parsing WSDL or XSD from '%s'\n", loc?loc:"(stdin)");
         soap_print_fault(soap, stderr);
         if (soap->error < 200)
           soap_print_fault_location(soap, stderr);
@@ -351,14 +351,14 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
     }
     else
     {
-      fprintf(stderr, "\nAn error occurred while parsing WSDL from '%s'\n", loc?loc:"(null)");
+      fprintf(stderr, "\nAn error occurred while parsing WSDL from '%s'\n", loc?loc:"(stdin)");
       soap_print_fault(soap, stderr);
       if (soap->error < 200)
         soap_print_fault_location(soap, stderr);
       exit(1);
     }
   }
-  fprintf(stderr, "Done reading '%s'\n", loc?loc:"(null)");
+  fprintf(stderr, "Done reading '%s'\n", loc?loc:"(stdin)");
   soap_end_recv(soap);
   if (soap->recvfd > 2)
   {

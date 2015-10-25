@@ -10,7 +10,6 @@
   attributeFormDefault="unqualified">
   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
   <complexType name="authentication"><!-- h__authentication -->
-
    <sequence>
    </sequence>
      <attribute name="userid" type="xsd:string" use="optional"/><!-- h__authentication::userid -->

@@ -42,6 +42,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
+/* prevent duplicate declarations for global SOAP Header and Fault */
+#define WITH_NOGLOBAL
+
 #include "q.nsmap"
 #include "c.nsmap"
 

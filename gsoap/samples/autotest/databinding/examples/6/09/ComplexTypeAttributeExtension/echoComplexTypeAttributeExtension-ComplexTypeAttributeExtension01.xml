@@ -13,7 +13,8 @@
    <ex:complexTypeAttributeExtension xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                      xmlns:xs="http://www.w3.org/2001/XMLSchema"
                                      xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
-                                     xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/">
-        <ex:name gender="female">Mary</ex:name>
+                                     xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+				     gender="female">
+        <ex:name>Mary</ex:name>
       </ex:complexTypeAttributeExtension>
 </ex:echoComplexTypeAttributeExtension>

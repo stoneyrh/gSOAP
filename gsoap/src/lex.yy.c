@@ -757,7 +757,7 @@ YYSTYPE yylval;
 #ifndef WITH_LEX
 #define MAX_IMPORT_DEPTH 16
 static struct importlist { struct importlist *next; char name[1]; } *importlist = NULL;
-static char fnstk[MAX_IMPORT_DEPTH][1024];
+static const char *fnstk[MAX_IMPORT_DEPTH];
 static int lnstk[MAX_IMPORT_DEPTH];
 static const char *imstk[MAX_IMPORT_DEPTH];
 static YY_BUFFER_STATE instk[MAX_IMPORT_DEPTH];
@@ -1330,48 +1330,58 @@ YY_RULE_SETUP
 { char *s, buf[1024];
 			  s = strchr(yytext, '"');
 			  if (s)
-			  { strcpy(buf, s+1);
+			  { strncpy(buf, s + 1, sizeof(buf));
+			    buf[sizeof(buf) - 1] = '\0';
 			    s = strchr(buf, '"');
-			    *s = '\0';
-			    import(buf);
+			    if (!s)
+			      lexerror("Invalid import directive: missing ending \" or path too long");
+			    else
+			    { *s = '\0';
+			      import(buf);
+			    }
 			  }
 			  else
-		            lexerror("Invalid import directive");
+		            lexerror("Invalid import directive: \" expected");
 			}
 	YY_BREAK
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 173 "soapcpp2_lex.l"
+#line 178 "soapcpp2_lex.l"
 { return install_pragma(); }
 	YY_BREAK
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 174 "soapcpp2_lex.l"
+#line 179 "soapcpp2_lex.l"
 { return error_chr(); }
 	YY_BREAK
 case 43:
 /* rule 43 can match eol */
 YY_RULE_SETUP
-#line 175 "soapcpp2_lex.l"
+#line 180 "soapcpp2_lex.l"
 { return error_str(); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 176 "soapcpp2_lex.l"
+#line 181 "soapcpp2_lex.l"
 { lexerror("Skipping unknown symbol"); }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 177 "soapcpp2_lex.l"
+#line 182 "soapcpp2_lex.l"
 { /* when Lex complains: remove this line and below */
 #ifndef WITH_LEX
 			  if (--imports < 0)
+			  {
+			    yylineno = 0;
 			    yyterminate();
+			  }
 			  else
-			  { yy_delete_buffer(YY_CURRENT_BUFFER);
+			  { if (vflag)
+			      fprintf(stderr, "End of %s\n\n", filename);
+			    yy_delete_buffer(YY_CURRENT_BUFFER);
 			    yy_switch_to_buffer(instk[imports]);
-			    strcpy(filename, fnstk[imports]);
+			    filename = fnstk[imports];
 			    yylineno = lnstk[imports];
 			    imported = imstk[imports];
 			  }
@@ -1380,10 +1390,10 @@ case YY_STATE_EOF(INITIAL):
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 190 "soapcpp2_lex.l"
+#line 200 "soapcpp2_lex.l"
 ECHO;
 	YY_BREAK
-#line 1387 "lex.yy.c"
+#line 1397 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2325,7 +2335,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 190 "soapcpp2_lex.l"
+#line 200 "soapcpp2_lex.l"
 
 
 
@@ -2380,7 +2390,7 @@ check_id(const char *s)
 	if ((s[0] == 'x' || s[0] == 'X')
 	 && (s[1] == 'm' || s[1] == 'M')
 	 && (s[2] == 'l' || s[2] == 'L'))
-	{	sprintf(errbuf, "identifier '%s' starts with or embeds '%3.3s' character sequence exclusively reserved for the XML standard (for enum constants: please ignore this warning)", yytext, s);
+	{	sprintf(errbuf, "identifier '%s' starts with or embeds '%3.3s' character sequence, which is exclusively reserved for and by the W3C XML standards (for enum constants: please ignore this warning)", yytext, s);
 		semwarn(errbuf);
 	}
 }
@@ -2596,14 +2606,14 @@ static void directive(void)
 				sp->WSDL = s;
 			}
 			else if (!strcmp(sp->ns, "SOAP-ENV"))
-			{	if (vflag > 0)
+			{	if (soap_version > 0)
 					semwarn("option -1 or -2 overrides SOAP-ENV namespace");
 				else
 					envURI = s;
 				sp->URI = (char*)envURI;
 			}
 			else if (!strcmp(sp->ns, "SOAP-ENC"))
-			{	if (vflag > 0)
+			{	if (soap_version > 0)
 					semwarn("option -1 or -2 overrides SOAP-ENC namespace");
 				else
 					encURI = s;
@@ -3016,7 +3026,17 @@ static void option(void)
 				aflag = 1;
 				break;
 			case 'c':
-				cflag = 1;
+				if (yytext[i+1] == '+' && yytext[i+2] == '+')
+				{	i += 2;
+					if (yytext[i+1] == '1' && yytext[i+2] == '1')
+					{
+						i += 2;
+						c11flag = 1;
+					}
+					cflag = 0;
+				}
+				else
+				  cflag = 1;
 				break;
 		 	case 'e':
 				eflag = 1;
@@ -3034,7 +3054,7 @@ static void option(void)
 				wflag = 1;
 				break;
 			default:
-				if (yytext[i] <= 32)
+				if (yytext[i] < 32 || yytext[i] == '/')
 					return;
 		}
 }
@@ -3198,18 +3218,25 @@ static void import(const char *file)
 static void import(const char *file)
 { char buf[1024];
   struct importlist *p;
+  if (vflag)
+    fprintf(stderr, "Importing '%s': ", file);
   for (p = importlist; p; p = p->next)
-    if (!strcmp(p->name, file))
+  { if (!strcmp(p->name, file))
+    { if (vflag)
+        fprintf(stderr, "file already read or currently being read\n\n");
       return;
+    }
+  }
   if (imports >= MAX_IMPORT_DEPTH)
     execerror("Imports nested too deep");
   instk[imports] = YY_CURRENT_BUFFER;
-  strcpy(fnstk[imports], filename);
+  fnstk[imports] = filename;
   lnstk[imports] = yylineno;
   imstk[imports] = imported;
   yylineno = 1;
   /* imported = NULL; this is useful to change the semantics of #import to NOT consider non-module imports to be part of the current module */
   imports++;
+  buf[0] = '\0';
   if (!(yyin = fopen(file, "r")))
   { if (importpath)
     { const char *s, *t;
@@ -3246,11 +3273,17 @@ static void import(const char *file)
       execerror(errbuf);
     }
   }
-  p = (struct importlist*)malloc(sizeof(struct importlist) + strlen(file)); /* has already + 1 byte size */
+  if (vflag)
+  { if (buf[0])
+      fprintf(stderr, "OK, found at %s\n\n", buf);
+    else
+      fprintf(stderr, "OK\n\n");
+  }
+  p = (struct importlist*)emalloc(sizeof(struct importlist) + strlen(file)); /* has already + 1 byte size */
   strcpy(p->name, file);
+  filename = p->name;
   p->next = importlist;
   importlist = p;
-  strcpy(filename, file);
   yy_switch_to_buffer(yy_create_buffer(yyin,YY_BUF_SIZE));
 }
 #endif

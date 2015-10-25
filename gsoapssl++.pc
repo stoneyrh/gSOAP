@@ -4,9 +4,9 @@ libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
 Name: GSoap
-Description: SOAP C++ Web Services with SSL and ZLIB
+Description: SOAP C++ Web Services with SSL, ZLIB, DOM, and cookies
 Version: 2.8
 Requires:
 Libs: -L${libdir} -lgsoapssl++
 Libs.private: -lssl -lcrypto -lz -lm
-Cflags:  -DWITH_OPENSSL -DWITH_DOM -DWITH_COOKIES -DWITH_GZIP -I${includedir}
+Cflags:  -DWITH_OPENSSL -DWITH_GZIP -DWITH_DOM -DWITH_COOKIES -I${includedir}

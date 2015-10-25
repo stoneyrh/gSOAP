@@ -48,20 +48,20 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "stdsoap2.h"
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_xsd__anyType(struct soap*, struct soap_dom_element const*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_xsd__anyType(struct soap*, const struct soap_dom_element *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_traverse_xsd__anyType(struct soap*, struct soap_dom_element*, const char*, soap_walker, soap_walker);
 SOAP_FMAC1 void SOAP_FMAC2 soap_default_xsd__anyType(struct soap*, struct soap_dom_element *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__anyType(struct soap*, const struct soap_dom_element *, const char*, const char*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_out_xsd__anyType(struct soap*, const char*, int, const struct soap_dom_element *, const char*);
-SOAP_FMAC3 struct soap_dom_element * SOAP_FMAC4 soap_get_xsd__anyType(struct soap*, struct soap_dom_element *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__anyType(struct soap*, const struct soap_dom_element*, const char*, const char*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_out_xsd__anyType(struct soap*, const char*, int, const struct soap_dom_element*, const char*);
+SOAP_FMAC3 struct soap_dom_element * SOAP_FMAC4 soap_get_xsd__anyType(struct soap*, struct soap_dom_element*, const char*, const char*);
 SOAP_FMAC1 struct soap_dom_element * SOAP_FMAC2 soap_in_xsd__anyType(struct soap*, const char*, struct soap_dom_element *, const char*);
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_xsd__anyAttribute(struct soap*, struct soap_dom_attribute const*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_xsd__anyAttribute(struct soap*, const struct soap_dom_attribute*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_traverse_xsd__anyAttribute(struct soap*, struct soap_dom_attribute*, const char*, soap_walker, soap_walker);
-SOAP_FMAC1 void SOAP_FMAC2 soap_default_xsd__anyAttribute(struct soap*, struct soap_dom_attribute *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__anyAttribute(struct soap*, const struct soap_dom_attribute *, const char*, const char*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_out_xsd__anyAttribute(struct soap*, const char*, int, const struct soap_dom_attribute *, const char*);
-SOAP_FMAC3 struct soap_dom_attribute * SOAP_FMAC4 soap_get_xsd__anyAttribute(struct soap*, struct soap_dom_attribute *, const char*, const char*);
+SOAP_FMAC1 void SOAP_FMAC2 soap_default_xsd__anyAttribute(struct soap*, struct soap_dom_attribute*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__anyAttribute(struct soap*, const struct soap_dom_attribute*, const char*, const char*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_out_xsd__anyAttribute(struct soap*, const char*, int, const struct soap_dom_attribute*, const char*);
+SOAP_FMAC3 struct soap_dom_attribute * SOAP_FMAC4 soap_get_xsd__anyAttribute(struct soap*, struct soap_dom_attribute*, const char*, const char*);
 SOAP_FMAC1 struct soap_dom_attribute * SOAP_FMAC2 soap_in_xsd__anyAttribute(struct soap*, const char*, struct soap_dom_attribute *, const char*);
 
 #ifdef __cplusplus
@@ -1105,7 +1105,7 @@ soap_dom_attribute_iterator &soap_dom_attribute_iterator::operator++()
 std::ostream &operator<<(std::ostream &o, const struct soap_dom_element &e)
 { if (!e.soap)
   { struct soap soap;
-    soap_init2(&soap, SOAP_IO_DEFAULT, SOAP_XML_GRAPH);
+    soap_init1(&soap, SOAP_IO_DEFAULT);
     soap_serialize_xsd__anyType(&soap, &e);
     soap_begin_send(&soap);
     soap.ns = 2; /* do not dump namespace table */
@@ -1117,15 +1117,12 @@ std::ostream &operator<<(std::ostream &o, const struct soap_dom_element &e)
   else
   { std::ostream *os = e.soap->os;
     e.soap->os = &o;
-    soap_mode omode = e.soap->omode;
-    soap_set_omode(e.soap, SOAP_XML_GRAPH);
     soap_serialize_xsd__anyType(e.soap, &e);
     soap_begin_send(e.soap);
     e.soap->ns = 2; /* do not dump namespace table */
     soap_out_xsd__anyType(e.soap, NULL, 0, &e, NULL);
     soap_end_send(e.soap);
     e.soap->os = os;
-    e.soap->omode = omode;
   }
   return o;
 }

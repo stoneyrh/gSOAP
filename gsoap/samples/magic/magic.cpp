@@ -55,7 +55,7 @@ int main(int argc, char **argv)
   if (argc <= 1)
   { char *s = getenv("QUERY_STRING");
     if (!s || (r = atoi(s)) == 0)
-      r = rand()%20;
+      r = 7;
   }
   else
     r = atoi(argv[1]);
@@ -66,10 +66,25 @@ int main(int argc, char **argv)
   }
   else
   { for (int i = 0; i < (*A).__size; i++)
-    { for (int j = 0; j < (*A)[i].__size; j++)
+    { int sum = 0;
+      for (int j = 0; j < (*A)[i].__size; j++)
+      { sum += (*A)[i][j];
         printf("%4d", (*A)[i][j]);
-      printf("\n");
+      }
+      printf(" =%4d\n", sum);
     }
+    for (int j = 0; j < (*A)[0].__size; j++)
+      printf("  ||");
+    printf("\n");
+    for (int j = 0; j < (*A)[0].__size; j++)
+    { int sum = 0;
+      for (int i = 0; i < (*A).__size; i++)
+	sum += (*A)[i][j];
+      printf("%4d", sum);
+    }
+    printf("\n");
+    if (r % 2 == 0)
+      printf("<br/><b>Magic only for odd ranks!</b>\n");
   }
   printf("</pre></html>\n");
   soap_destroy(&soap);
@@ -95,7 +110,7 @@ vector::vector(int size)
 }
 
 vector::~vector()
-{ soap_unlink(soap, this); // not required, but just to make sure if someone calls delete on this
+{ soap_unlink(soap, this);
 }
 
 void vector::resize(int size)

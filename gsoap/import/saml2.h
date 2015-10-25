@@ -6,6 +6,8 @@
 
 	- Removed //gsoapopt
 	- Changed //gsoap saml2 schema namespace directive to import directive
+	- Removed #import "ds.h" since already imported in xenc.h
+	- Commented out two duplicate member declarations (due to choice/seq)
 
 */
 
@@ -23,7 +25,6 @@
  *                                                                            *
 \******************************************************************************/
 
-#import "ds.h"	// ds = <http://www.w3.org/2000/09/xmldsig#>
 #import "xenc.h"	// xenc = <http://www.w3.org/2001/04/xmlenc#>
 
 /******************************************************************************\
@@ -56,8 +57,6 @@
 
 // Imported element ""http://www.w3.org/2000/09/xmldsig#":KeyInfo" declared as _ds__KeyInfo.
 // Imported element ""http://www.w3.org/2000/09/xmldsig#":Signature" declared as _ds__Signature.
-// Imported element ""http://www.w3.org/2001/04/xmlenc#":EncryptedData" declared as _xenc__EncryptedData.
-// Imported element ""http://www.w3.org/2001/04/xmlenc#":EncryptedKey" declared as _xenc__EncryptedKey.
 
 /// @brief Typedef synonym for struct saml2__BaseIDAbstractType.
 typedef struct saml2__BaseIDAbstractType saml2__BaseIDAbstractType;
@@ -115,7 +114,7 @@ typedef struct saml2__AttributeType saml2__AttributeType;
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":DecisionType is a simpleType restriction of XSD type xs:string.
 ///
-/// @note The enum values are prefixed with "saml2__DecisionType__" to avoid name clashes, please use wsdl2h option -e to omit this prefix
+/// @note The enum values are prefixed with "saml2__DecisionType__" to prevent name clashes: use wsdl2h option -e to omit this prefix or use option -c++11 for scoped enumerations
 enum saml2__DecisionType
 {
 	saml2__DecisionType__Permit,	///< xs:string value="Permit"
@@ -135,6 +134,12 @@ typedef enum saml2__DecisionType saml2__DecisionType;
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":BaseIDAbstractType is an abstract complexType.
 ///
+/// struct saml2__BaseIDAbstractType operations:
+/// - soap_default_saml2__BaseIDAbstractType(soap*, saml2__BaseIDAbstractType*) reset members to default
+/// - int soap_read_saml2__BaseIDAbstractType(soap*, saml2__BaseIDAbstractType*) deserialize from a source
+/// - int soap_write_saml2__BaseIDAbstractType(soap*, saml2__BaseIDAbstractType*) serialize to a sink
+/// - saml2__BaseIDAbstractType* soap_dup_saml2__BaseIDAbstractType(soap*, saml2__BaseIDAbstractType* dst, saml2__BaseIDAbstractType *src) returns deep copy of saml2__BaseIDAbstractType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__BaseIDAbstractType(saml2__BaseIDAbstractType*) deep deletes saml2__BaseIDAbstractType data members, use only on dst after soap_dup_saml2__BaseIDAbstractType(NULL, saml2__BaseIDAbstractType *dst, saml2__BaseIDAbstractType *src) (use soapcpp2 -Ed)
 struct saml2__BaseIDAbstractType
 {
 //  BEGIN ATTRIBUTEGROUP <xs:attributeGroup ref=""urn:oasis:names:tc:SAML:2.0:assertion":IDNameQualifiers">.
@@ -147,18 +152,30 @@ struct saml2__BaseIDAbstractType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":EncryptedElementType is a complexType.
 ///
+/// struct saml2__EncryptedElementType operations:
+/// - soap_default_saml2__EncryptedElementType(soap*, saml2__EncryptedElementType*) reset members to default
+/// - int soap_read_saml2__EncryptedElementType(soap*, saml2__EncryptedElementType*) deserialize from a source
+/// - int soap_write_saml2__EncryptedElementType(soap*, saml2__EncryptedElementType*) serialize to a sink
+/// - saml2__EncryptedElementType* soap_dup_saml2__EncryptedElementType(soap*, saml2__EncryptedElementType* dst, saml2__EncryptedElementType *src) returns deep copy of saml2__EncryptedElementType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__EncryptedElementType(saml2__EncryptedElementType*) deep deletes saml2__EncryptedElementType data members, use only on dst after soap_dup_saml2__EncryptedElementType(NULL, saml2__EncryptedElementType *dst, saml2__EncryptedElementType *src) (use soapcpp2 -Ed)
 struct saml2__EncryptedElementType
 {
 /// Imported element reference "http://www.w3.org/2001/04/xmlenc#":EncryptedData.
-    _xenc__EncryptedData                 xenc__EncryptedData            1;	///< Required element.
+    xenc__EncryptedDataType              xenc__EncryptedData            1;	///< Required element.
 /// Imported element reference "http://www.w3.org/2001/04/xmlenc#":EncryptedKey.
 /// Size of "http://www.w3.org/2001/04/xmlenc#":EncryptedKey array is 0..unbounded.
    $int                                  __sizexenc__EncryptedKey       0;
-    _xenc__EncryptedKey*                *xenc__EncryptedKey             0;
+    xenc__EncryptedKeyType*             *xenc__EncryptedKey             0;
 };
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":AssertionType is a complexType.
 ///
+/// struct saml2__AssertionType operations:
+/// - soap_default_saml2__AssertionType(soap*, saml2__AssertionType*) reset members to default
+/// - int soap_read_saml2__AssertionType(soap*, saml2__AssertionType*) deserialize from a source
+/// - int soap_write_saml2__AssertionType(soap*, saml2__AssertionType*) serialize to a sink
+/// - saml2__AssertionType* soap_dup_saml2__AssertionType(soap*, saml2__AssertionType* dst, saml2__AssertionType *src) returns deep copy of saml2__AssertionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__AssertionType(saml2__AssertionType*) deep deletes saml2__AssertionType data members, use only on dst after soap_dup_saml2__AssertionType(NULL, saml2__AssertionType *dst, saml2__AssertionType *src) (use soapcpp2 -Ed)
 struct saml2__AssertionType
 {
 /// Element reference "urn:oasis:names:tc:SAML:2.0:assertion:""urn:oasis:names:tc:SAML:2.0:assertion":Issuer.
@@ -195,6 +212,12 @@ struct saml2__AssertionType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":SubjectType is a complexType.
 ///
+/// struct saml2__SubjectType operations:
+/// - soap_default_saml2__SubjectType(soap*, saml2__SubjectType*) reset members to default
+/// - int soap_read_saml2__SubjectType(soap*, saml2__SubjectType*) deserialize from a source
+/// - int soap_write_saml2__SubjectType(soap*, saml2__SubjectType*) serialize to a sink
+/// - saml2__SubjectType* soap_dup_saml2__SubjectType(soap*, saml2__SubjectType* dst, saml2__SubjectType *src) returns deep copy of saml2__SubjectType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__SubjectType(saml2__SubjectType*) deep deletes saml2__SubjectType data members, use only on dst after soap_dup_saml2__SubjectType(NULL, saml2__SubjectType *dst, saml2__SubjectType *src) (use soapcpp2 -Ed)
 struct saml2__SubjectType
 {
 //  BEGIN CHOICE <xs:choice>
@@ -214,14 +237,20 @@ struct saml2__SubjectType
     struct saml2__SubjectConfirmationType*  saml2__SubjectConfirmation    ;
 //  END OF SEQUENCE
 /// Size of the dynamic array of struct saml2__SubjectConfirmationType* is 1..unbounded.
-   $int                                  __sizeSubjectConfirmation      0;
+// $int                                  __sizeSubjectConfirmation      0;
 /// Array struct saml2__SubjectConfirmationType* of size 1..unbounded.
-    struct saml2__SubjectConfirmationType*  saml2__SubjectConfirmation    ;
+//  struct saml2__SubjectConfirmationType*  saml2__SubjectConfirmation    ;
 //  END OF CHOICE
 };
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":SubjectConfirmationType is a complexType.
 ///
+/// struct saml2__SubjectConfirmationType operations:
+/// - soap_default_saml2__SubjectConfirmationType(soap*, saml2__SubjectConfirmationType*) reset members to default
+/// - int soap_read_saml2__SubjectConfirmationType(soap*, saml2__SubjectConfirmationType*) deserialize from a source
+/// - int soap_write_saml2__SubjectConfirmationType(soap*, saml2__SubjectConfirmationType*) serialize to a sink
+/// - saml2__SubjectConfirmationType* soap_dup_saml2__SubjectConfirmationType(soap*, saml2__SubjectConfirmationType* dst, saml2__SubjectConfirmationType *src) returns deep copy of saml2__SubjectConfirmationType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__SubjectConfirmationType(saml2__SubjectConfirmationType*) deep deletes saml2__SubjectConfirmationType data members, use only on dst after soap_dup_saml2__SubjectConfirmationType(NULL, saml2__SubjectConfirmationType *dst, saml2__SubjectConfirmationType *src) (use soapcpp2 -Ed)
 struct saml2__SubjectConfirmationType
 {
 //  BEGIN CHOICE <xs:choice minOccurs="0">
@@ -240,6 +269,12 @@ struct saml2__SubjectConfirmationType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":ConditionsType is a complexType.
 ///
+/// struct saml2__ConditionsType operations:
+/// - soap_default_saml2__ConditionsType(soap*, saml2__ConditionsType*) reset members to default
+/// - int soap_read_saml2__ConditionsType(soap*, saml2__ConditionsType*) deserialize from a source
+/// - int soap_write_saml2__ConditionsType(soap*, saml2__ConditionsType*) serialize to a sink
+/// - saml2__ConditionsType* soap_dup_saml2__ConditionsType(soap*, saml2__ConditionsType* dst, saml2__ConditionsType *src) returns deep copy of saml2__ConditionsType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__ConditionsType(saml2__ConditionsType*) deep deletes saml2__ConditionsType data members, use only on dst after soap_dup_saml2__ConditionsType(NULL, saml2__ConditionsType *dst, saml2__ConditionsType *src) (use soapcpp2 -Ed)
 struct saml2__ConditionsType
 {
 //  BEGIN CHOICE <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -264,12 +299,24 @@ struct saml2__ConditionsType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":ConditionAbstractType is an abstract complexType.
 ///
+/// struct saml2__ConditionAbstractType operations:
+/// - soap_default_saml2__ConditionAbstractType(soap*, saml2__ConditionAbstractType*) reset members to default
+/// - int soap_read_saml2__ConditionAbstractType(soap*, saml2__ConditionAbstractType*) deserialize from a source
+/// - int soap_write_saml2__ConditionAbstractType(soap*, saml2__ConditionAbstractType*) serialize to a sink
+/// - saml2__ConditionAbstractType* soap_dup_saml2__ConditionAbstractType(soap*, saml2__ConditionAbstractType* dst, saml2__ConditionAbstractType *src) returns deep copy of saml2__ConditionAbstractType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__ConditionAbstractType(saml2__ConditionAbstractType*) deep deletes saml2__ConditionAbstractType data members, use only on dst after soap_dup_saml2__ConditionAbstractType(NULL, saml2__ConditionAbstractType *dst, saml2__ConditionAbstractType *src) (use soapcpp2 -Ed)
 struct saml2__ConditionAbstractType
 {
 };
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":AdviceType is a complexType.
 ///
+/// struct saml2__AdviceType operations:
+/// - soap_default_saml2__AdviceType(soap*, saml2__AdviceType*) reset members to default
+/// - int soap_read_saml2__AdviceType(soap*, saml2__AdviceType*) deserialize from a source
+/// - int soap_write_saml2__AdviceType(soap*, saml2__AdviceType*) serialize to a sink
+/// - saml2__AdviceType* soap_dup_saml2__AdviceType(soap*, saml2__AdviceType* dst, saml2__AdviceType *src) returns deep copy of saml2__AdviceType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__AdviceType(saml2__AdviceType*) deep deletes saml2__AdviceType data members, use only on dst after soap_dup_saml2__AdviceType(NULL, saml2__AdviceType *dst, saml2__AdviceType *src) (use soapcpp2 -Ed)
 struct saml2__AdviceType
 {
 //  BEGIN CHOICE <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -295,12 +342,24 @@ struct saml2__AdviceType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":StatementAbstractType is an abstract complexType.
 ///
+/// struct saml2__StatementAbstractType operations:
+/// - soap_default_saml2__StatementAbstractType(soap*, saml2__StatementAbstractType*) reset members to default
+/// - int soap_read_saml2__StatementAbstractType(soap*, saml2__StatementAbstractType*) deserialize from a source
+/// - int soap_write_saml2__StatementAbstractType(soap*, saml2__StatementAbstractType*) serialize to a sink
+/// - saml2__StatementAbstractType* soap_dup_saml2__StatementAbstractType(soap*, saml2__StatementAbstractType* dst, saml2__StatementAbstractType *src) returns deep copy of saml2__StatementAbstractType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__StatementAbstractType(saml2__StatementAbstractType*) deep deletes saml2__StatementAbstractType data members, use only on dst after soap_dup_saml2__StatementAbstractType(NULL, saml2__StatementAbstractType *dst, saml2__StatementAbstractType *src) (use soapcpp2 -Ed)
 struct saml2__StatementAbstractType
 {
 };
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":SubjectLocalityType is a complexType.
 ///
+/// struct saml2__SubjectLocalityType operations:
+/// - soap_default_saml2__SubjectLocalityType(soap*, saml2__SubjectLocalityType*) reset members to default
+/// - int soap_read_saml2__SubjectLocalityType(soap*, saml2__SubjectLocalityType*) deserialize from a source
+/// - int soap_write_saml2__SubjectLocalityType(soap*, saml2__SubjectLocalityType*) serialize to a sink
+/// - saml2__SubjectLocalityType* soap_dup_saml2__SubjectLocalityType(soap*, saml2__SubjectLocalityType* dst, saml2__SubjectLocalityType *src) returns deep copy of saml2__SubjectLocalityType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__SubjectLocalityType(saml2__SubjectLocalityType*) deep deletes saml2__SubjectLocalityType data members, use only on dst after soap_dup_saml2__SubjectLocalityType(NULL, saml2__SubjectLocalityType *dst, saml2__SubjectLocalityType *src) (use soapcpp2 -Ed)
 struct saml2__SubjectLocalityType
 {
 /// Attribute "Address" of XSD type xs:string.
@@ -311,6 +370,12 @@ struct saml2__SubjectLocalityType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":AuthnContextType is a complexType.
 ///
+/// struct saml2__AuthnContextType operations:
+/// - soap_default_saml2__AuthnContextType(soap*, saml2__AuthnContextType*) reset members to default
+/// - int soap_read_saml2__AuthnContextType(soap*, saml2__AuthnContextType*) deserialize from a source
+/// - int soap_write_saml2__AuthnContextType(soap*, saml2__AuthnContextType*) serialize to a sink
+/// - saml2__AuthnContextType* soap_dup_saml2__AuthnContextType(soap*, saml2__AuthnContextType* dst, saml2__AuthnContextType *src) returns deep copy of saml2__AuthnContextType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__AuthnContextType(saml2__AuthnContextType*) deep deletes saml2__AuthnContextType data members, use only on dst after soap_dup_saml2__AuthnContextType(NULL, saml2__AuthnContextType *dst, saml2__AuthnContextType *src) (use soapcpp2 -Ed)
 struct saml2__AuthnContextType
 {
 //  BEGIN CHOICE <xs:choice>
@@ -327,19 +392,25 @@ struct saml2__AuthnContextType
 //  END OF SEQUENCE
 //  BEGIN CHOICE <xs:choice>
 /// Element reference "urn:oasis:names:tc:SAML:2.0:assertion:""urn:oasis:names:tc:SAML:2.0:assertion":AuthnContextDecl.
-    _XML                                 saml2__AuthnContextDecl       ;
+//  _XML                                 saml2__AuthnContextDecl       ;
 /// Element reference "urn:oasis:names:tc:SAML:2.0:assertion:""urn:oasis:names:tc:SAML:2.0:assertion":AuthnContextDeclRef.
-    char*                                saml2__AuthnContextDeclRef    ;
+//  char*                                saml2__AuthnContextDeclRef    ;
 //  END OF CHOICE
 //  END OF CHOICE
-/// Size of the dynamic array of char** is 0..unbounded.
+/// Size of the dynamic array of char* * is 0..unbounded.
    $int                                  __sizeAuthenticatingAuthority  0;
-/// Array char** of size 0..unbounded.
-    char**                               saml2__AuthenticatingAuthority 0;
+/// Array char* * of size 0..unbounded.
+    char* *                              saml2__AuthenticatingAuthority 0;
 };
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":EvidenceType is a complexType.
 ///
+/// struct saml2__EvidenceType operations:
+/// - soap_default_saml2__EvidenceType(soap*, saml2__EvidenceType*) reset members to default
+/// - int soap_read_saml2__EvidenceType(soap*, saml2__EvidenceType*) deserialize from a source
+/// - int soap_write_saml2__EvidenceType(soap*, saml2__EvidenceType*) serialize to a sink
+/// - saml2__EvidenceType* soap_dup_saml2__EvidenceType(soap*, saml2__EvidenceType* dst, saml2__EvidenceType *src) returns deep copy of saml2__EvidenceType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__EvidenceType(saml2__EvidenceType*) deep deletes saml2__EvidenceType data members, use only on dst after soap_dup_saml2__EvidenceType(NULL, saml2__EvidenceType *dst, saml2__EvidenceType *src) (use soapcpp2 -Ed)
 struct saml2__EvidenceType
 {
 //  BEGIN CHOICE <xs:choice maxOccurs="unbounded">
@@ -360,6 +431,12 @@ struct saml2__EvidenceType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":AttributeType is a complexType.
 ///
+/// struct saml2__AttributeType operations:
+/// - soap_default_saml2__AttributeType(soap*, saml2__AttributeType*) reset members to default
+/// - int soap_read_saml2__AttributeType(soap*, saml2__AttributeType*) deserialize from a source
+/// - int soap_write_saml2__AttributeType(soap*, saml2__AttributeType*) serialize to a sink
+/// - saml2__AttributeType* soap_dup_saml2__AttributeType(soap*, saml2__AttributeType* dst, saml2__AttributeType *src) returns deep copy of saml2__AttributeType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__AttributeType(saml2__AttributeType*) deep deletes saml2__AttributeType data members, use only on dst after soap_dup_saml2__AttributeType(NULL, saml2__AttributeType *dst, saml2__AttributeType *src) (use soapcpp2 -Ed)
 struct saml2__AttributeType
 {
 /// Size of the dynamic array of _XML* is 0..unbounded.
@@ -381,6 +458,12 @@ struct saml2__AttributeType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":NameIDType is a complexType with simpleContent.
 ///
+/// struct saml2__NameIDType operations:
+/// - soap_default_saml2__NameIDType(soap*, saml2__NameIDType*) reset members to default
+/// - int soap_read_saml2__NameIDType(soap*, saml2__NameIDType*) deserialize from a source
+/// - int soap_write_saml2__NameIDType(soap*, saml2__NameIDType*) serialize to a sink
+/// - saml2__NameIDType* soap_dup_saml2__NameIDType(soap*, saml2__NameIDType* dst, saml2__NameIDType *src) returns deep copy of saml2__NameIDType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__NameIDType(saml2__NameIDType*) deep deletes saml2__NameIDType data members, use only on dst after soap_dup_saml2__NameIDType(NULL, saml2__NameIDType *dst, saml2__NameIDType *src) (use soapcpp2 -Ed)
 struct saml2__NameIDType
 {
 /// __item wraps "xs:string" simpleContent.
@@ -399,6 +482,12 @@ struct saml2__NameIDType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":SubjectConfirmationDataType is a complexType with complexContent restriction of XSD type xs:anyType.
 ///
+/// struct saml2__SubjectConfirmationDataType operations:
+/// - soap_default_saml2__SubjectConfirmationDataType(soap*, saml2__SubjectConfirmationDataType*) reset members to default
+/// - int soap_read_saml2__SubjectConfirmationDataType(soap*, saml2__SubjectConfirmationDataType*) deserialize from a source
+/// - int soap_write_saml2__SubjectConfirmationDataType(soap*, saml2__SubjectConfirmationDataType*) serialize to a sink
+/// - saml2__SubjectConfirmationDataType* soap_dup_saml2__SubjectConfirmationDataType(soap*, saml2__SubjectConfirmationDataType* dst, saml2__SubjectConfirmationDataType *src) returns deep copy of saml2__SubjectConfirmationDataType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__SubjectConfirmationDataType(saml2__SubjectConfirmationDataType*) deep deletes saml2__SubjectConfirmationDataType data members, use only on dst after soap_dup_saml2__SubjectConfirmationDataType(NULL, saml2__SubjectConfirmationDataType *dst, saml2__SubjectConfirmationDataType *src) (use soapcpp2 -Ed)
 struct saml2__SubjectConfirmationDataType
 {
 /// @todo <any namespace="##any" minOccurs="0" maxOccurs="unbounded">
@@ -421,7 +510,7 @@ struct saml2__SubjectConfirmationDataType
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this attribute.
 ///       Use wsdl2h option -d for xsd__anyAttribute DOM (soap_dom_attribute).
-/// @todo This mixed complexType is user-definable.
+/// @todo This mixed content complexType is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
     _XML                                 __mixed                       0;	///< Catch mixed content in XML string.
@@ -429,18 +518,30 @@ struct saml2__SubjectConfirmationDataType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":AudienceRestrictionType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:2.0:assertion":ConditionAbstractType.
 ///
+/// struct saml2__AudienceRestrictionType operations:
+/// - soap_default_saml2__AudienceRestrictionType(soap*, saml2__AudienceRestrictionType*) reset members to default
+/// - int soap_read_saml2__AudienceRestrictionType(soap*, saml2__AudienceRestrictionType*) deserialize from a source
+/// - int soap_write_saml2__AudienceRestrictionType(soap*, saml2__AudienceRestrictionType*) serialize to a sink
+/// - saml2__AudienceRestrictionType* soap_dup_saml2__AudienceRestrictionType(soap*, saml2__AudienceRestrictionType* dst, saml2__AudienceRestrictionType *src) returns deep copy of saml2__AudienceRestrictionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__AudienceRestrictionType(saml2__AudienceRestrictionType*) deep deletes saml2__AudienceRestrictionType data members, use only on dst after soap_dup_saml2__AudienceRestrictionType(NULL, saml2__AudienceRestrictionType *dst, saml2__AudienceRestrictionType *src) (use soapcpp2 -Ed)
 struct saml2__AudienceRestrictionType
 {
 /// INHERITED FROM saml2__ConditionAbstractType:
 //  END OF INHERITED FROM saml2__ConditionAbstractType
-/// Size of the dynamic array of char** is 1..unbounded.
+/// Size of the dynamic array of char* * is 1..unbounded.
    $int                                  __sizeAudience                 1;
-/// Array char** of size 1..unbounded.
-    char**                               saml2__Audience                1;
+/// Array char* * of size 1..unbounded.
+    char* *                              saml2__Audience                1;
 };
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":OneTimeUseType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:2.0:assertion":ConditionAbstractType.
 ///
+/// struct saml2__OneTimeUseType operations:
+/// - soap_default_saml2__OneTimeUseType(soap*, saml2__OneTimeUseType*) reset members to default
+/// - int soap_read_saml2__OneTimeUseType(soap*, saml2__OneTimeUseType*) deserialize from a source
+/// - int soap_write_saml2__OneTimeUseType(soap*, saml2__OneTimeUseType*) serialize to a sink
+/// - saml2__OneTimeUseType* soap_dup_saml2__OneTimeUseType(soap*, saml2__OneTimeUseType* dst, saml2__OneTimeUseType *src) returns deep copy of saml2__OneTimeUseType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__OneTimeUseType(saml2__OneTimeUseType*) deep deletes saml2__OneTimeUseType data members, use only on dst after soap_dup_saml2__OneTimeUseType(NULL, saml2__OneTimeUseType *dst, saml2__OneTimeUseType *src) (use soapcpp2 -Ed)
 struct saml2__OneTimeUseType
 {
 /// INHERITED FROM saml2__ConditionAbstractType:
@@ -449,20 +550,32 @@ struct saml2__OneTimeUseType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":ProxyRestrictionType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:2.0:assertion":ConditionAbstractType.
 ///
+/// struct saml2__ProxyRestrictionType operations:
+/// - soap_default_saml2__ProxyRestrictionType(soap*, saml2__ProxyRestrictionType*) reset members to default
+/// - int soap_read_saml2__ProxyRestrictionType(soap*, saml2__ProxyRestrictionType*) deserialize from a source
+/// - int soap_write_saml2__ProxyRestrictionType(soap*, saml2__ProxyRestrictionType*) serialize to a sink
+/// - saml2__ProxyRestrictionType* soap_dup_saml2__ProxyRestrictionType(soap*, saml2__ProxyRestrictionType* dst, saml2__ProxyRestrictionType *src) returns deep copy of saml2__ProxyRestrictionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__ProxyRestrictionType(saml2__ProxyRestrictionType*) deep deletes saml2__ProxyRestrictionType data members, use only on dst after soap_dup_saml2__ProxyRestrictionType(NULL, saml2__ProxyRestrictionType *dst, saml2__ProxyRestrictionType *src) (use soapcpp2 -Ed)
 struct saml2__ProxyRestrictionType
 {
 /// INHERITED FROM saml2__ConditionAbstractType:
 //  END OF INHERITED FROM saml2__ConditionAbstractType
-/// Size of the dynamic array of char** is 0..unbounded.
+/// Size of the dynamic array of char* * is 0..unbounded.
    $int                                  __sizeAudience                 0;
-/// Array char** of size 0..unbounded.
-    char**                               saml2__Audience                0;
+/// Array char* * of size 0..unbounded.
+    char* *                              saml2__Audience                0;
 /// Attribute "Count" of XSD type xs:nonNegativeInteger.
    @char*                                Count                          0;	///< Optional attribute.
 };
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":AuthnStatementType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:2.0:assertion":StatementAbstractType.
 ///
+/// struct saml2__AuthnStatementType operations:
+/// - soap_default_saml2__AuthnStatementType(soap*, saml2__AuthnStatementType*) reset members to default
+/// - int soap_read_saml2__AuthnStatementType(soap*, saml2__AuthnStatementType*) deserialize from a source
+/// - int soap_write_saml2__AuthnStatementType(soap*, saml2__AuthnStatementType*) serialize to a sink
+/// - saml2__AuthnStatementType* soap_dup_saml2__AuthnStatementType(soap*, saml2__AuthnStatementType* dst, saml2__AuthnStatementType *src) returns deep copy of saml2__AuthnStatementType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__AuthnStatementType(saml2__AuthnStatementType*) deep deletes saml2__AuthnStatementType data members, use only on dst after soap_dup_saml2__AuthnStatementType(NULL, saml2__AuthnStatementType *dst, saml2__AuthnStatementType *src) (use soapcpp2 -Ed)
 struct saml2__AuthnStatementType
 {
 /// INHERITED FROM saml2__StatementAbstractType:
@@ -481,6 +594,12 @@ struct saml2__AuthnStatementType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":AuthzDecisionStatementType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:2.0:assertion":StatementAbstractType.
 ///
+/// struct saml2__AuthzDecisionStatementType operations:
+/// - soap_default_saml2__AuthzDecisionStatementType(soap*, saml2__AuthzDecisionStatementType*) reset members to default
+/// - int soap_read_saml2__AuthzDecisionStatementType(soap*, saml2__AuthzDecisionStatementType*) deserialize from a source
+/// - int soap_write_saml2__AuthzDecisionStatementType(soap*, saml2__AuthzDecisionStatementType*) serialize to a sink
+/// - saml2__AuthzDecisionStatementType* soap_dup_saml2__AuthzDecisionStatementType(soap*, saml2__AuthzDecisionStatementType* dst, saml2__AuthzDecisionStatementType *src) returns deep copy of saml2__AuthzDecisionStatementType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__AuthzDecisionStatementType(saml2__AuthzDecisionStatementType*) deep deletes saml2__AuthzDecisionStatementType data members, use only on dst after soap_dup_saml2__AuthzDecisionStatementType(NULL, saml2__AuthzDecisionStatementType *dst, saml2__AuthzDecisionStatementType *src) (use soapcpp2 -Ed)
 struct saml2__AuthzDecisionStatementType
 {
 /// INHERITED FROM saml2__StatementAbstractType:
@@ -499,6 +618,12 @@ struct saml2__AuthzDecisionStatementType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":ActionType is a complexType with simpleContent.
 ///
+/// struct saml2__ActionType operations:
+/// - soap_default_saml2__ActionType(soap*, saml2__ActionType*) reset members to default
+/// - int soap_read_saml2__ActionType(soap*, saml2__ActionType*) deserialize from a source
+/// - int soap_write_saml2__ActionType(soap*, saml2__ActionType*) serialize to a sink
+/// - saml2__ActionType* soap_dup_saml2__ActionType(soap*, saml2__ActionType* dst, saml2__ActionType *src) returns deep copy of saml2__ActionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__ActionType(saml2__ActionType*) deep deletes saml2__ActionType data members, use only on dst after soap_dup_saml2__ActionType(NULL, saml2__ActionType *dst, saml2__ActionType *src) (use soapcpp2 -Ed)
 struct saml2__ActionType
 {
 /// __item wraps "xs:string" simpleContent.
@@ -509,6 +634,12 @@ struct saml2__ActionType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":AttributeStatementType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:2.0:assertion":StatementAbstractType.
 ///
+/// struct saml2__AttributeStatementType operations:
+/// - soap_default_saml2__AttributeStatementType(soap*, saml2__AttributeStatementType*) reset members to default
+/// - int soap_read_saml2__AttributeStatementType(soap*, saml2__AttributeStatementType*) deserialize from a source
+/// - int soap_write_saml2__AttributeStatementType(soap*, saml2__AttributeStatementType*) serialize to a sink
+/// - saml2__AttributeStatementType* soap_dup_saml2__AttributeStatementType(soap*, saml2__AttributeStatementType* dst, saml2__AttributeStatementType *src) returns deep copy of saml2__AttributeStatementType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__AttributeStatementType(saml2__AttributeStatementType*) deep deletes saml2__AttributeStatementType data members, use only on dst after soap_dup_saml2__AttributeStatementType(NULL, saml2__AttributeStatementType *dst, saml2__AttributeStatementType *src) (use soapcpp2 -Ed)
 struct saml2__AttributeStatementType
 {
 /// INHERITED FROM saml2__StatementAbstractType:
@@ -527,6 +658,12 @@ struct saml2__AttributeStatementType
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":KeyInfoConfirmationDataType is a complexType with complexContent restriction of XSD type "urn:oasis:names:tc:SAML:2.0:assertion":SubjectConfirmationDataType.
 ///
+/// struct saml2__KeyInfoConfirmationDataType operations:
+/// - soap_default_saml2__KeyInfoConfirmationDataType(soap*, saml2__KeyInfoConfirmationDataType*) reset members to default
+/// - int soap_read_saml2__KeyInfoConfirmationDataType(soap*, saml2__KeyInfoConfirmationDataType*) deserialize from a source
+/// - int soap_write_saml2__KeyInfoConfirmationDataType(soap*, saml2__KeyInfoConfirmationDataType*) serialize to a sink
+/// - saml2__KeyInfoConfirmationDataType* soap_dup_saml2__KeyInfoConfirmationDataType(soap*, saml2__KeyInfoConfirmationDataType* dst, saml2__KeyInfoConfirmationDataType *src) returns deep copy of saml2__KeyInfoConfirmationDataType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml2__KeyInfoConfirmationDataType(saml2__KeyInfoConfirmationDataType*) deep deletes saml2__KeyInfoConfirmationDataType data members, use only on dst after soap_dup_saml2__KeyInfoConfirmationDataType(NULL, saml2__KeyInfoConfirmationDataType *dst, saml2__KeyInfoConfirmationDataType *src) (use soapcpp2 -Ed)
 struct saml2__KeyInfoConfirmationDataType
 {
 /// Imported element reference "http://www.w3.org/2000/09/xmldsig#":KeyInfo.
@@ -712,71 +849,71 @@ The following options are available for (de)serialization control:
 
 @section saml2 Top-level root elements of schema "urn:oasis:names:tc:SAML:2.0:assertion"
 
-  - <BaseID> (use wsdl2h option -g to auto-generate)
+  - <saml2:BaseID> (use wsdl2h option -g to auto-generate type _saml2__BaseID)
 
-  - <NameID> (use wsdl2h option -g to auto-generate)
+  - <saml2:NameID> (use wsdl2h option -g to auto-generate type _saml2__NameID)
 
-  - <EncryptedID> (use wsdl2h option -g to auto-generate)
+  - <saml2:EncryptedID> (use wsdl2h option -g to auto-generate type _saml2__EncryptedID)
 
-  - <Issuer> (use wsdl2h option -g to auto-generate)
+  - <saml2:Issuer> (use wsdl2h option -g to auto-generate type _saml2__Issuer)
 
-  - <AssertionIDRef> (use wsdl2h option -g to auto-generate)
+  - <saml2:AssertionIDRef> (use wsdl2h option -g to auto-generate type _saml2__AssertionIDRef)
 
-  - <AssertionURIRef> (use wsdl2h option -g to auto-generate)
+  - <saml2:AssertionURIRef> (use wsdl2h option -g to auto-generate type _saml2__AssertionURIRef)
 
-  - <Assertion> (use wsdl2h option -g to auto-generate)
+  - <saml2:Assertion> (use wsdl2h option -g to auto-generate type _saml2__Assertion)
 
-  - <Subject> (use wsdl2h option -g to auto-generate)
+  - <saml2:Subject> (use wsdl2h option -g to auto-generate type _saml2__Subject)
 
-  - <SubjectConfirmation> (use wsdl2h option -g to auto-generate)
+  - <saml2:SubjectConfirmation> (use wsdl2h option -g to auto-generate type _saml2__SubjectConfirmation)
 
-  - <SubjectConfirmationData> (use wsdl2h option -g to auto-generate)
+  - <saml2:SubjectConfirmationData> (use wsdl2h option -g to auto-generate type _saml2__SubjectConfirmationData)
 
-  - <Conditions> (use wsdl2h option -g to auto-generate)
+  - <saml2:Conditions> (use wsdl2h option -g to auto-generate type _saml2__Conditions)
 
-  - <Condition> (use wsdl2h option -g to auto-generate)
+  - <saml2:Condition> (use wsdl2h option -g to auto-generate type _saml2__Condition)
 
-  - <AudienceRestriction> (use wsdl2h option -g to auto-generate)
+  - <saml2:AudienceRestriction> (use wsdl2h option -g to auto-generate type _saml2__AudienceRestriction)
 
-  - <Audience> (use wsdl2h option -g to auto-generate)
+  - <saml2:Audience> (use wsdl2h option -g to auto-generate type _saml2__Audience)
 
-  - <OneTimeUse> (use wsdl2h option -g to auto-generate)
+  - <saml2:OneTimeUse> (use wsdl2h option -g to auto-generate type _saml2__OneTimeUse)
 
-  - <ProxyRestriction> (use wsdl2h option -g to auto-generate)
+  - <saml2:ProxyRestriction> (use wsdl2h option -g to auto-generate type _saml2__ProxyRestriction)
 
-  - <Advice> (use wsdl2h option -g to auto-generate)
+  - <saml2:Advice> (use wsdl2h option -g to auto-generate type _saml2__Advice)
 
-  - <EncryptedAssertion> (use wsdl2h option -g to auto-generate)
+  - <saml2:EncryptedAssertion> (use wsdl2h option -g to auto-generate type _saml2__EncryptedAssertion)
 
-  - <Statement> (use wsdl2h option -g to auto-generate)
+  - <saml2:Statement> (use wsdl2h option -g to auto-generate type _saml2__Statement)
 
-  - <AuthnStatement> (use wsdl2h option -g to auto-generate)
+  - <saml2:AuthnStatement> (use wsdl2h option -g to auto-generate type _saml2__AuthnStatement)
 
-  - <SubjectLocality> (use wsdl2h option -g to auto-generate)
+  - <saml2:SubjectLocality> (use wsdl2h option -g to auto-generate type _saml2__SubjectLocality)
 
-  - <AuthnContext> (use wsdl2h option -g to auto-generate)
+  - <saml2:AuthnContext> (use wsdl2h option -g to auto-generate type _saml2__AuthnContext)
 
-  - <AuthnContextClassRef> (use wsdl2h option -g to auto-generate)
+  - <saml2:AuthnContextClassRef> (use wsdl2h option -g to auto-generate type _saml2__AuthnContextClassRef)
 
-  - <AuthnContextDeclRef> (use wsdl2h option -g to auto-generate)
+  - <saml2:AuthnContextDeclRef> (use wsdl2h option -g to auto-generate type _saml2__AuthnContextDeclRef)
 
-  - <AuthnContextDecl> (use wsdl2h option -g to auto-generate)
+  - <saml2:AuthnContextDecl> (use wsdl2h option -g to auto-generate type _saml2__AuthnContextDecl)
 
-  - <AuthenticatingAuthority> (use wsdl2h option -g to auto-generate)
+  - <saml2:AuthenticatingAuthority> (use wsdl2h option -g to auto-generate type _saml2__AuthenticatingAuthority)
 
-  - <AuthzDecisionStatement> (use wsdl2h option -g to auto-generate)
+  - <saml2:AuthzDecisionStatement> (use wsdl2h option -g to auto-generate type _saml2__AuthzDecisionStatement)
 
-  - <Action> (use wsdl2h option -g to auto-generate)
+  - <saml2:Action> (use wsdl2h option -g to auto-generate type _saml2__Action)
 
-  - <Evidence> (use wsdl2h option -g to auto-generate)
+  - <saml2:Evidence> (use wsdl2h option -g to auto-generate type _saml2__Evidence)
 
-  - <AttributeStatement> (use wsdl2h option -g to auto-generate)
+  - <saml2:AttributeStatement> (use wsdl2h option -g to auto-generate type _saml2__AttributeStatement)
 
-  - <Attribute> (use wsdl2h option -g to auto-generate)
+  - <saml2:Attribute> (use wsdl2h option -g to auto-generate type _saml2__Attribute)
 
-  - <AttributeValue> (use wsdl2h option -g to auto-generate)
+  - <saml2:AttributeValue> (use wsdl2h option -g to auto-generate type _saml2__AttributeValue)
 
-  - <EncryptedAttribute> (use wsdl2h option -g to auto-generate)
+  - <saml2:EncryptedAttribute> (use wsdl2h option -g to auto-generate type _saml2__EncryptedAttribute)
 
 */
 

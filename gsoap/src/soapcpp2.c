@@ -47,14 +47,19 @@ extern const char *ns_cname(const char*, const char*);
 
 FILE *fmsg;		/* fd to flush compiler messages */
 
-int vflag = 0;		/* SOAP version, -1=no SOAP, 0=not set, 1=1.1, 2=1.2 */
+int soap_version = 0;	/* SOAP version, -1=no SOAP, 0=not set, 1=1.1, 2=1.2 */
+
+int vflag = 0;		/* verbose output */
 int wflag = 0;		/* when set, don't generate WSDL and schema files */
-int Cflag = 0;		/* when set, generate only files for clients */
 int cflag = 0;		/* when set, generate files with .c extension */
+int c11flag = 0;	/* when set, generate C++11 files with .cpp extension */
+int Cflag = 0;		/* when set, generate only files for clients */
 int aflag = 0;		/* when set, use value of SOAP Action to dispatch method at server side */
 int Aflag = 0;		/* when set, require SOAP Action to dispatch method at server side */
 int bflag = 0;		/* when set, serialize byte arrays char[N] as string */
 int eflag = 0;		/* when set, use SOAP RPC encoding by default */
+int Ecflag = 0;		/* when set, generate extra routines for data copying (soap_dup_X) */
+int Edflag = 0;		/* when set, generate extra routines for data deletion (soap_del_X) */
 unsigned long fflag = 0;/* multi-file split for each bundle of -fN defs */
 int iflag = 0;		/* when set, generate new style proxy/object classes inherited from soap struct */
 int jflag = 0;		/* when set, generate new style proxy/object classes */
@@ -73,11 +78,9 @@ int xflag = 0;		/* when set, don't generate sample XML message files */
 int yflag = 0;		/* when set, add C/C++ info in sample XML messages */
 int zflag = 0;		/* when set, use backward compatibility option */
 
-int stop_flag = 0;
-
 char dirpath[1024];	/* directory path for generated source files */
 const char *prefix = "soap";	/* file name prefix for generated source files */
-char filename[1024];	/* current file name */
+const char *filename;	/* current file name */
 const char *importpath = NULL; /* default file import path */
 const char *defimportpath = SOAPCPP2_IMPORT_PATH; /* default file import path */
 
@@ -96,7 +99,8 @@ main(int argc, char **argv)
   int i, g;
   char *a, *s;
   fmsg = stderr;
-  strcpy(filename, "<stdin>");
+  filename = "<stdin>";
+  fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release " VERSION "\n**  Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool and its generated software are released under the GPL.\n**  ----------------------------------------------------------------------------\n**  A commercial use license is available from Genivia Inc., contact@genivia.com\n**  ----------------------------------------------------------------------------\n\n");
   for (i = 1; i < argc; i++)
   {
     a = argv[i];
@@ -116,7 +120,18 @@ main(int argc, char **argv)
 	      fprintf(stderr, "soapcpp2: using both options -C and -S omits client/server code\n");
 	    break;
 	  case 'c':
-	    cflag = 1;
+            if (a[1] == '+' && a[2] == '+')
+            {
+              a += 2;
+              if (a[1] == '1' && a[2] == '1')
+              {
+                a += 2;
+                c11flag = 1;
+              }
+              cflag = 0;
+            }
+            else
+              cflag = 1;
 	    break;
 	  case 'd':
 	    a++;
@@ -132,6 +147,20 @@ main(int argc, char **argv)
 	    break;
 	  case 'e':
 	    eflag = 1;
+	    break;
+	  case 'E':
+	    a++;
+	    g = 0;
+	    while (*a)
+	    {
+	      switch (*a)
+	      {
+		case 'c': Ecflag = 1; break;
+		case 'd': Edflag = 1; break;
+		default: execerror("Option -E requires 'c' and/or 'd'");
+	      }
+	      a++;
+	    }
 	    break;
 	  case 'f':
 	    a++;
@@ -157,7 +186,7 @@ main(int argc, char **argv)
 	    break;
 	  case '?':
 	  case 'h':
-	    fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-L] [-a] [-A] [-b] [-c] [-d path] [-e] [-f N] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-k] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
+	    fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-Ecd] [-L] [-a] [-A] [-b] [-c|-c++|-c++11] [-d path] [-e] [-f N] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-k] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
 	    fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
@@ -165,11 +194,15 @@ main(int argc, char **argv)
 -C	generate client-side code only\n\
 -S	generate server-side code only\n\
 -T	generate server auto-test code\n\
+-Ec	generate extra routines for deep data copying\n\
+-Ed	generate extra routines for deep data deletion\n\
 -L	don't generate soapClientLib/soapServerLib\n\
 -a	use SOAPAction with WS-Addressing to invoke server-side operations\n\
 -A	require SOAPAction to invoke server-side operations\n\
 -b	serialize byte arrays char[N] as string\n\
 -c      generate C source code\n\
+-c++    generate C++ source code (default)\n\
+-c++11  generate C++ source code optimized for C++11 (compile with -std=c++11)\n\
 -dpath  use path to save files\n\
 -e	generate SOAP RPC encoding style bindings (also use -1 or -2)\n\
 -fN	file split of N XML serializer implementations per file (N>=10)\n\
@@ -187,7 +220,7 @@ main(int argc, char **argv)
 -s      generate deserialization code with strict XML validation checks\n\
 -t      generate code for fully xsi:type typed SOAP/XML messaging\n\
 -u	uncomment comments in WSDL/schema output by suppressing XML comments\n\
--v	display version info\n\
+-v	verbose output\n\
 -w	don't generate WSDL and schema files\n\
 -x	don't generate sample XML message files\n\
 -y	include C/C++ type access information in sample XML messages\n\
@@ -288,21 +321,21 @@ infile	header file to parse (or stdin)\n\
 	      execerror("Option -q requires a namespace name");
 	    break;
 	  case '0':
-	    vflag = -1;
+	    soap_version = -1;
 	    break;
 	  case '1':
-	    vflag = 1;
+	    soap_version = 1;
 	    envURI = "http://schemas.xmlsoap.org/soap/envelope/";
 	    encURI = "http://schemas.xmlsoap.org/soap/encoding/";
 	    break;
 	  case '2':
-	    vflag = 2;
+	    soap_version = 2;
 	    envURI = "http://www.w3.org/2003/05/soap-envelope";
 	    encURI = "http://www.w3.org/2003/05/soap-encoding";
 	    rpcURI = "http://www.w3.org/2003/05/soap-rpc";
 	    break;
 	  case 'v':
-	    stop_flag = 1;
+	    vflag = 1;
 	    break;
 	  case 'z':
 	    a++;
@@ -325,7 +358,7 @@ infile	header file to parse (or stdin)\n\
       execerror(errbuf);
     }
     else
-      strcpy(filename, argv[i]);
+      filename = argv[i];
   }
   if (importpath && defimportpath)
   { char *t = (char*)emalloc(strlen(importpath) + strlen(defimportpath) + 2);
@@ -336,9 +369,6 @@ infile	header file to parse (or stdin)\n\
   }
   else if (!importpath)
     importpath = defimportpath;
-  fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release " VERSION "\n**  Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool is released under one of the following licenses:\n**  GPL or the commercial license by Genivia Inc.\n\n");
-  if (stop_flag)
-    exit(0);
   init();
   if (yyparse())
     synerror("skipping the remaining part of the input");

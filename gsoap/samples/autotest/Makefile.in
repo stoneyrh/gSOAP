@@ -94,7 +94,9 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am__objects_1 = autotest-soapC.$(OBJEXT) autotest-soapServer.$(OBJEXT)
-am_autotest_OBJECTS = $(am__objects_1) autotest-soapTester.$(OBJEXT)
+am_autotest_OBJECTS = $(am__objects_1) autotest-soapTester.$(OBJEXT) \
+	autotest-duration.$(OBJEXT) autotest-long_time.$(OBJEXT) \
+	autotest-struct_tm.$(OBJEXT) autotest-struct_tm_date.$(OBJEXT)
 autotest_OBJECTS = $(am_autotest_OBJECTS)
 am__DEPENDENCIES_1 =
 autotest_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1)
@@ -288,8 +290,8 @@ AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 AM_LDFLAGS = $(CPPFLAGS) -I$(srcdir) -L$(srcdir)
 SOAP = $(top_srcdir)/gsoap/src/soapcpp2$(EXEEXT)
 WSDL = $(top_srcdir)/gsoap/wsdl/wsdl2h$(EXEEXT)
-WSDL_FLAGS = -P -t $(srcdir)/typemap.dat
-SOAP_FLAGS = -SL -T -I$(top_srcdir)/gsoap/import
+WSDL_FLAGS = -d -P -t $(srcdir)/typemap.dat
+SOAP_FLAGS = -SL -T -I$(top_srcdir)/gsoap/import -I$(top_srcdir)/gsoap/custom
 WSDLINPUT = $(srcdir)/examples.wsdl
 SOAPHEADER = $(srcdir)/examples.h
 SOAP_CPP_SRC = soapC.cpp soapServer.cpp
@@ -297,7 +299,7 @@ SOAP_CPP_LIB = $(top_builddir)/gsoap/libgsoap++.a
 autotest_CFLAGS = $(C_DEBUG_FLAGS) -D$(platform)
 autotest_CPPFLAGS = $(C_DEBUG_FLAGS) -D$(platform)
 autotest_CXXFLAGS = $(WSDL2H_EXTRA_FLAGS)
-autotest_SOURCES = $(SOAP_CPP_SRC) soapTester.cpp
+autotest_SOURCES = $(SOAP_CPP_SRC) soapTester.cpp duration.cpp long_time.cpp struct_tm.cpp struct_tm_date.cpp
 autotest_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 CLEANFILES = *~ *.h *.cpp *.xml *.log *.nsmap
 all: all-am
@@ -348,9 +350,13 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autotest-duration.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autotest-long_time.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autotest-soapC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autotest-soapServer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autotest-soapTester.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autotest-struct_tm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autotest-struct_tm_date.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -409,6 +415,62 @@ autotest-soapTester.obj: soapTester.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='soapTester.cpp' object='autotest-soapTester.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -c -o autotest-soapTester.obj `if test -f 'soapTester.cpp'; then $(CYGPATH_W) 'soapTester.cpp'; else $(CYGPATH_W) '$(srcdir)/soapTester.cpp'; fi`
+
+autotest-duration.o: duration.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -MT autotest-duration.o -MD -MP -MF $(DEPDIR)/autotest-duration.Tpo -c -o autotest-duration.o `test -f 'duration.cpp' || echo '$(srcdir)/'`duration.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/autotest-duration.Tpo $(DEPDIR)/autotest-duration.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='duration.cpp' object='autotest-duration.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -c -o autotest-duration.o `test -f 'duration.cpp' || echo '$(srcdir)/'`duration.cpp
+
+autotest-duration.obj: duration.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -MT autotest-duration.obj -MD -MP -MF $(DEPDIR)/autotest-duration.Tpo -c -o autotest-duration.obj `if test -f 'duration.cpp'; then $(CYGPATH_W) 'duration.cpp'; else $(CYGPATH_W) '$(srcdir)/duration.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/autotest-duration.Tpo $(DEPDIR)/autotest-duration.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='duration.cpp' object='autotest-duration.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -c -o autotest-duration.obj `if test -f 'duration.cpp'; then $(CYGPATH_W) 'duration.cpp'; else $(CYGPATH_W) '$(srcdir)/duration.cpp'; fi`
+
+autotest-long_time.o: long_time.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -MT autotest-long_time.o -MD -MP -MF $(DEPDIR)/autotest-long_time.Tpo -c -o autotest-long_time.o `test -f 'long_time.cpp' || echo '$(srcdir)/'`long_time.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/autotest-long_time.Tpo $(DEPDIR)/autotest-long_time.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='long_time.cpp' object='autotest-long_time.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -c -o autotest-long_time.o `test -f 'long_time.cpp' || echo '$(srcdir)/'`long_time.cpp
+
+autotest-long_time.obj: long_time.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -MT autotest-long_time.obj -MD -MP -MF $(DEPDIR)/autotest-long_time.Tpo -c -o autotest-long_time.obj `if test -f 'long_time.cpp'; then $(CYGPATH_W) 'long_time.cpp'; else $(CYGPATH_W) '$(srcdir)/long_time.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/autotest-long_time.Tpo $(DEPDIR)/autotest-long_time.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='long_time.cpp' object='autotest-long_time.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -c -o autotest-long_time.obj `if test -f 'long_time.cpp'; then $(CYGPATH_W) 'long_time.cpp'; else $(CYGPATH_W) '$(srcdir)/long_time.cpp'; fi`
+
+autotest-struct_tm.o: struct_tm.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -MT autotest-struct_tm.o -MD -MP -MF $(DEPDIR)/autotest-struct_tm.Tpo -c -o autotest-struct_tm.o `test -f 'struct_tm.cpp' || echo '$(srcdir)/'`struct_tm.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/autotest-struct_tm.Tpo $(DEPDIR)/autotest-struct_tm.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='struct_tm.cpp' object='autotest-struct_tm.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -c -o autotest-struct_tm.o `test -f 'struct_tm.cpp' || echo '$(srcdir)/'`struct_tm.cpp
+
+autotest-struct_tm.obj: struct_tm.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -MT autotest-struct_tm.obj -MD -MP -MF $(DEPDIR)/autotest-struct_tm.Tpo -c -o autotest-struct_tm.obj `if test -f 'struct_tm.cpp'; then $(CYGPATH_W) 'struct_tm.cpp'; else $(CYGPATH_W) '$(srcdir)/struct_tm.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/autotest-struct_tm.Tpo $(DEPDIR)/autotest-struct_tm.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='struct_tm.cpp' object='autotest-struct_tm.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -c -o autotest-struct_tm.obj `if test -f 'struct_tm.cpp'; then $(CYGPATH_W) 'struct_tm.cpp'; else $(CYGPATH_W) '$(srcdir)/struct_tm.cpp'; fi`
+
+autotest-struct_tm_date.o: struct_tm_date.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -MT autotest-struct_tm_date.o -MD -MP -MF $(DEPDIR)/autotest-struct_tm_date.Tpo -c -o autotest-struct_tm_date.o `test -f 'struct_tm_date.cpp' || echo '$(srcdir)/'`struct_tm_date.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/autotest-struct_tm_date.Tpo $(DEPDIR)/autotest-struct_tm_date.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='struct_tm_date.cpp' object='autotest-struct_tm_date.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -c -o autotest-struct_tm_date.o `test -f 'struct_tm_date.cpp' || echo '$(srcdir)/'`struct_tm_date.cpp
+
+autotest-struct_tm_date.obj: struct_tm_date.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -MT autotest-struct_tm_date.obj -MD -MP -MF $(DEPDIR)/autotest-struct_tm_date.Tpo -c -o autotest-struct_tm_date.obj `if test -f 'struct_tm_date.cpp'; then $(CYGPATH_W) 'struct_tm_date.cpp'; else $(CYGPATH_W) '$(srcdir)/struct_tm_date.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/autotest-struct_tm_date.Tpo $(DEPDIR)/autotest-struct_tm_date.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='struct_tm_date.cpp' object='autotest-struct_tm_date.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(autotest_CPPFLAGS) $(CPPFLAGS) $(autotest_CXXFLAGS) $(CXXFLAGS) -c -o autotest-struct_tm_date.obj `if test -f 'struct_tm_date.cpp'; then $(CYGPATH_W) 'struct_tm_date.cpp'; else $(CYGPATH_W) '$(srcdir)/struct_tm_date.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -615,6 +677,18 @@ uninstall-am:
 $(SOAP_CPP_SRC) : $(WSDLINPUT)
 	$(WSDL) $(WSDL_FLAGS) $(WSDLINPUT)
 	$(SOAP) $(SOAP_FLAGS) $(SOAPHEADER)
+
+duration.cpp : ../../custom/duration.c
+	ln -s ../../custom/duration.c duration.cpp
+
+long_time.cpp : ../../custom/long_time.c
+	ln -s ../../custom/long_time.c long_time.cpp
+
+struct_tm.cpp : ../../custom/struct_tm.c
+	ln -s ../../custom/struct_tm.c struct_tm.cpp
+
+struct_tm_date.cpp : ../../custom/struct_tm_date.c
+	ln -s ../../custom/struct_tm_date.c struct_tm_date.cpp
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

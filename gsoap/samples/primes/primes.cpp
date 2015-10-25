@@ -42,12 +42,16 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 // include all generated header files:
 #include "soapH.h"
+#include <iostream>
 
 int main()
 {
   primes p;     // also instantiates the 'soap' context
   p.sieve(100); // sieve primes
-  p.write();    // write them in XML
+
+  primes q;
+  q = p;	// to show that copy constructor and assignment are OK
+  q.write();    // write primes in XML
 
   return 0;
 }

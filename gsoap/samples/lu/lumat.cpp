@@ -127,7 +127,7 @@ double vector::operator()(int i)
 void vector::print()
 { int i;
   for (i = 1; i <= end(); i++)
-    printf("%f ", (*this)(i));
+    printf("% f ", (*this)(i));
   printf("\n");
 }
 
@@ -352,9 +352,9 @@ void matrix::print()
 { int i, j;
   for (i = start(); i <= end(); i++)
   { for (j = 1; j < (*this)[i].start(); j++)
-      printf("-------- ");
+      printf("          ");
     for (; j <= (*this)[i].end(); j++)
-      printf("%f ", (*this)(i, j));
+      printf("% f ", (*this)(i, j));
     printf("\n");
   }
 }

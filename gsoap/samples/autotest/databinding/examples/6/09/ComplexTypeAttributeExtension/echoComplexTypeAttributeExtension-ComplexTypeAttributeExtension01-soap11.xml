@@ -18,8 +18,9 @@
    <env:Body>
       <ex:echoComplexTypeAttributeExtension>
          <ex:complexTypeAttributeExtension xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
-                                           xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/">
-            <ex:name gender="female">Mary</ex:name>
+                                           xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/"
+					   gender="female">
+            <ex:name>Mary</ex:name>
          </ex:complexTypeAttributeExtension>
       </ex:echoComplexTypeAttributeExtension>
    </env:Body>

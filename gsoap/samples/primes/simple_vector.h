@@ -1,16 +1,21 @@
 /*
-	simple_vector.h
+        simple_vector.h
 
-	Defines the simple_vector<> template as an example on how to define
-	custom containers that can be auto-serialized in XML with gSOAP.
+        Defines the simple_vector<> template as an example on how to define
+        custom containers that can be auto-serialized in XML with gSOAP.
 
-	In order for the auto-generated XML serializers to work for templates,
-	we must define at least these four methods:
+        In order for the auto-generated XML serializers to work for templates,
+        we must define at least these methods:
 
-	iterator begin();
-	iterator end();
-	size_t   size();
-        iterator insert(iterator pos, const_reference val)
+	void           clear()
+        iterator       begin()
+        const_iterator begin() const
+        iterator       end()
+        const_iterator end() const
+        size_t         size() const
+        iterator       insert(iterator pos, const_reference val)
+
+	where begin() gives a forward iterator over the container.
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -41,54 +46,72 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 // declare the simple_vector<> template:
-#include "stdsoap2.h"
+#include <stdlib.h>
 
 template <class T>
 class simple_vector
 {
 public:
-  typedef T			  value_type;
-  typedef value_type		* pointer;
-  typedef const value_type	* const_pointer;
-  typedef value_type		& reference;
-  typedef const value_type	& const_reference;
-  typedef pointer		  iterator;
-  typedef const_pointer		  const_iterator;
+  typedef T                       value_type;
+  typedef value_type            * pointer;
+  typedef const value_type      * const_pointer;
+  typedef value_type            & reference;
+  typedef const value_type      & const_reference;
+  typedef pointer                 iterator;
+  typedef const_pointer           const_iterator;
 protected:
-  iterator			  start;
-  iterator			  finish;
-  size_t			  length;
+  iterator                        head;
+  iterator                        tail;
+  size_t                          capacity;
 public:
-  				  simple_vector()	{ clear(); }
-  				  ~simple_vector()	{ delete[] start; }
-  void				  clear()		{ start = finish = NULL; }
+                                  simple_vector()       { head = tail = NULL; }
+                                  simple_vector(const simple_vector& v)
+                                                        { operator=(v); }
+                                  ~simple_vector()      { if (head) delete[] head; }
+  void                            clear()               { tail = head; }
 /* the member functions below are required for (de)serialization of templates */
-  iterator			  begin()		{ return start; }
-  const_iterator		  begin() const		{ return start; }
-  iterator			  end()			{ return finish; }
-  const_iterator		  end() const		{ return finish; }
-  size_t			  size() const		{ return length; }
-  iterator			  insert(iterator pos, const_reference val)
-  { if (!start)
-      start = finish = new value_type[length = 4];
-    else if (finish >= start + length)
-    { iterator i = start;
-      iterator j = new value_type[2 * length];
-      start = j;
-      finish = start + length;
-      length *= 2;
+  iterator                        begin()               { return head; }
+  const_iterator                  begin() const         { return head; }
+  iterator                        end()                 { return tail; }
+  const_iterator                  end() const           { return tail; }
+  size_t                          size() const          { return tail - head; }
+  iterator                        insert(iterator pos, const_reference val)
+  { if (!head)
+      head = tail = new value_type[capacity = 1];
+    else if (tail >= head + capacity)
+    { iterator i = head;
+      iterator j = new value_type[capacity *= 2];
+      iterator k = j;
+      while (i < tail)
+        *k++ = *i++;
       if (pos)
-        pos = j + (pos - i);
-      while (i != finish)
-        *j++ = *i++;
+        pos = j + (pos - head);
+      tail = j + (tail - head);
+      delete[] head;
+      head = j;
     }
-    if (pos && pos != finish)
-    { iterator i = finish;
+    if (pos && pos >= head && pos < tail)
+    { iterator i = tail;
       iterator j = i - 1;
       while (j != pos)
         *i-- = *j--;
+      *pos = val;
     }
-    *finish++ = val;
+    else
+    { pos = tail;
+      *tail++ = val;
+    }
     return pos;
+  }
+  simple_vector& operator=(const simple_vector& v)
+  { head = tail = NULL;
+    capacity = v.capacity;
+    if (v.head)
+    { head = tail = new value_type[capacity];
+      iterator i = v.head;
+      while (i != v.tail)
+        *tail++ = *i++;
+    }
+    return *this;
   }
 };

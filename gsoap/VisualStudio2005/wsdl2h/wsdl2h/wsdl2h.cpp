@@ -60,6 +60,7 @@ int _flag = 0,
     aflag = 0,
     bflag = 0,
     cflag = 0,
+    c11flag = 0,
     dflag = 0,
     eflag = 0,
     fflag = 0,
@@ -109,9 +110,10 @@ const char *schema_prefix = "ns";
 const char elementformat[]             = "    %-35s  %-30s";
 const char pointerformat[]             = "    %-35s *%-30s";
 const char attributeformat[]           = "   @%-35s  %-30s";
-const char vectorformat[]              = "    std::vector<%-23s> %-30s";
-const char pointervectorformat[]       = "    std::vector<%-22s> *%-30s";
-const char vectorformat_open[]         = "    std::vector<%s";
+const char templateformat[]            = "    %s<%-23s> %-30s";
+const char pointertemplateformat[]     = "    %s<%-22s> *%-30s";
+const char templateformat_open[]       = "    %s<%s";
+const char attrtemplateformat_open[]   = "   @%s<%s";
 const char arrayformat[]               = "    %-35s *__ptr%-25s";
 const char arraysizeformat[]           = "    %-35s  __size%-24s";
 const char arrayoffsetformat[]         = "//  %-35s  __offset%-22s";
@@ -122,15 +124,15 @@ const char serviceformat[]             = "//gsoap %-4s service %s:\t%s %s\n";
 const char paraformat[]                = "    %-35s%s%s%s";
 const char anonformat[]                = "    %-35s%s_%s%s";
 
-const char copyrightnotice[] = "\n**  The gSOAP WSDL/Schema processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2015 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool is released under one of the following licenses:\n**  GPL or the commercial license by Genivia Inc. Use option -l for details.\n\n";
+const char copyrightnotice[] = "\n**  The gSOAP WSDL/Schema processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2015 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool and its generated software are released under the GPL.\n**  ----------------------------------------------------------------------------\n**  A commercial use license is available from Genivia Inc., contact@genivia.com\n**  ----------------------------------------------------------------------------\n\n";
 
 const char licensenotice[]   = "\
 --------------------------------------------------------------------------------\n\
 gSOAP XML Web services tools\n\
 Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
-\n\
-This software is released under one of the following licenses:\n\
-GPL or Genivia's license for commercial use.\n\
+The wsdl2h tool and its generated software are released under the GPL.\n\
+This software is released under the GPL with the additional exemption that\n\
+compiling, linking, and/or using OpenSSL is allowed.\n\
 --------------------------------------------------------------------------------\n\
 GPL license.\n\
 \n\
@@ -161,6 +163,8 @@ int main(int argc, char **argv)
   fprintf(stderr, "%s", copyrightnotice);
   options(argc, argv);
   init();
+  if (cppnamespace)
+    fprintf(stream, "namespace %s {\n", cppnamespace);
   Definitions def;
   wsdl__definitions definitions;
   definitions.read(infiles, infile);
@@ -237,9 +241,22 @@ static void options(int argc, char **argv)
             bflag = 1;
        	    break;
           case 'c':
-            cflag = 1;
-            if (cppnamespace)
-	      fprintf(stderr, "wsdl2h: Options -c and -q clash\n");
+	    if (a[1] == '+' && a[2] == '+')
+	    {
+	      a += 2;
+	      if (a[1] == '1' && a[2] == '1')
+	      {
+		a += 2;
+		c11flag = 1;
+	      }
+	      cflag = 0;
+	    }
+	    else
+	    {
+	      cflag = 1;
+	      if (cppnamespace)
+		fprintf(stderr, "wsdl2h: Options -c and -q cannot be used together\n");
+	    }
        	    break;
 	  case 'd':
 	    dflag = 1;
@@ -325,7 +342,7 @@ static void options(int argc, char **argv)
             else
               fprintf(stderr, "wsdl2h: Option -q requires a C++ namespace name argument\n");
             if (cflag)
-	      fprintf(stderr, "wsdl2h: Options -c and -q clash\n");
+	      fprintf(stderr, "wsdl2h: Options -c and -q cannot be used together\n");
 	    break;
 	  case 'r':
             a++;
@@ -425,11 +442,13 @@ static void options(int argc, char **argv)
 	    break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-t typemapfile] [-U] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-t typemapfile] [-U] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -b	bi-directional operations (duplex ops) added to serve one-way responses\n\
 -c      generate C source code\n\
+-c++    generate C++ source code (default)\n\
+-c++11  generate C++11 source code\n\
 -d      use DOM to populate xs:any, xs:anyType, and xs:anyAttribute\n\
 -e      don't qualify enum names\n\
 -f      generate flat C++ class hierarchy\n\
@@ -517,8 +536,6 @@ infile.wsdl infile.xsd http://www... list of input sources (if none: use stdin)\
 	fprintf(stderr, "Cannot write to %s\n", outfile);
         exit(1);
       }
-      if (cppnamespace)
-        fprintf(stream, "namespace %s {\n", cppnamespace);
       fprintf(stderr, "Saving %s\n\n", outfile);
     }
   }

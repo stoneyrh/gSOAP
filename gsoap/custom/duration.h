@@ -1,28 +1,35 @@
 /*
 	duration.h
 
-	Custom serializer for xsd:duration stored in a LONG64 with ms precision
-	- a LONG64 int can represent 106751991167 days forward and backward
-	- LONG64 is long long int under Unix/Linux
-	- millisecond resolution (1/1000 sec) means 1 second = 1000
+	Custom serializer for xsd:duration stored in a LONG64 with millisecond
+	(ms) precision.
+
+	- a LONG64 int can represent 106751991167 days forward and backward.
+	- LONG64 is equivalent to long long int and int64_t
+	- millisecond resolution (1/1000 sec) means 1 second = 1000.
 	- when adding to a time_t value, conversion may be needed since time_t
-	  may (or may) not have seconds resolution
+	  may (or may) not have seconds resolution.
 	- durations longer than a month are always output in days, rather than
-	  months to avoid days-per-month conversion inacurracies
+	  months to avoid days-per-month conversion inacurracies.
 	- durations expressed in years and months are not well defined, since
 	  there is no reference starting time; the decoder assumes 30 days per
 	  month and conversion of P4M gives 120 days and therefore the duration
 	  P4M and P120D are assumed identical, while they should give different
-	  results depending on the reference starting time
+	  results depending on the reference starting time.
 
 	#import this file into your gSOAP .h file
 
-	To automate the wsdl2h-mapping of xsd:dateTime to struct tm, add this
+	To automate the wsdl2h-mapping of xsd:duration to LONG64, add this
 	line to the typemap.dat file:
 
 	xsd__duration = #import "custom/duration.h" | xsd__duration
 
 	The typemap.dat file is used by wsdl2h to map types (wsdl2h option -t).
+
+	When using soapcpp2 option -q<name> or -p<name>, you must change
+	duration.c as follows:
+
+		#include "soapH.h"  ->  #include "nameH.h"
 
 	Compile and link your code with custom/duration.c
 

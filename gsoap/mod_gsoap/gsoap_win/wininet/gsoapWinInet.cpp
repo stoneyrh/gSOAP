@@ -493,7 +493,7 @@ wininet_fsend(
         "wininet %p: fsend, data len = %lu bytes\n", soap, a_uiBufferLen ));
 
     /* allow the request to be sent with a NULL buffer */
-    if (a_uiBufferLen == 0)
+    if ( a_uiBufferLen == 0 )
     {
         pData->uiBufferLenMax = 0;
     }
@@ -609,8 +609,7 @@ wininet_fsend(
 
         soap->error = SOAP_OK;
 
-        bResult = HttpSendRequestA( 
-            hHttpRequest, NULL, 0, pData->pBuffer, (DWORD)pData->uiBufferLen );
+        bResult = HttpSendRequestA( hHttpRequest, NULL, 0, pData->pBuffer, (DWORD)pData->uiBufferLen );
         if ( !bResult )
         {
             soap->error = SOAP_EOF;
@@ -702,11 +701,11 @@ wininet_fsend(
                 DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
                     "wininet %p: fsend, user authenication required\n", 
                     soap ));
-            if (pData->pRseCallback)
+            if ( pData->pRseCallback )
             {
                 errorResolved = pData->pRseCallback(hHttpRequest, dwStatusCode);
             }
-            if (errorResolved == rseDisplayDlg)
+            if ( errorResolved == rseDisplayDlg )
             {
                 errorResolved = (wininet_rseReturn)
                     wininet_resolve_send_error( hHttpRequest, ERROR_INTERNET_INCORRECT_PASSWORD );
@@ -738,7 +737,7 @@ wininet_fsend(
         free( pData->pBuffer );
     }
 
-    pData->pBuffer     = 0;
+    pData->pBuffer     = NULL;
     pData->uiBufferLen = 0;
     pData->uiBufferLenMax = INVALID_BUFFER_LENGTH;
 
@@ -1022,7 +1021,7 @@ wininet_have_connection(
         if ( a_pData->pBuffer )
         {
             free( a_pData->pBuffer );
-            a_pData->pBuffer = 0;
+            a_pData->pBuffer = NULL;
         }
         a_pData->uiBufferLen = 0;
         a_pData->uiBufferLenMax = INVALID_BUFFER_LENGTH;
@@ -1200,7 +1199,7 @@ wininet_free_error_message(
     if ( a_pData->pszErrorMessage )
     {
         LocalFree( a_pData->pszErrorMessage );
-        a_pData->pszErrorMessage = 0;
+        a_pData->pszErrorMessage = NULL;
     }
 }
 

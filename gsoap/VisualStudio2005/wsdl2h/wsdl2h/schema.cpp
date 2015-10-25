@@ -147,12 +147,17 @@ int xs__schema::preprocess()
 int xs__schema::insert(xs__schema& schema)
 {
   bool found;
-  if (targetNamespace && schema.targetNamespace && strcmp(targetNamespace, schema.targetNamespace))
+  if (targetNamespace && (!schema.targetNamespace || strcmp(targetNamespace, schema.targetNamespace)))
+  {
     if (!Wflag)
-      fprintf(stderr, "Warning: attempt to include schema with mismatching targetNamespace '%s' in schema '%s'\n", schema.targetNamespace, targetNamespace);
+      fprintf(stderr, "Warning: attempt to include schema with mismatching targetNamespace '%s' in schema '%s', assuming chameleon schema targetNamespace '%s'\n", schema.targetNamespace, targetNamespace, targetNamespace);
+    schema.targetNamespace = targetNamespace;
+  }
   if (elementFormDefault != schema.elementFormDefault)
+  {
     if (!Wflag)
       fprintf(stderr, "Warning: attempt to include schema with mismatching elementFormDefault in schema '%s'\n", targetNamespace?targetNamespace:"(null)");
+  }
   if (attributeFormDefault != schema.attributeFormDefault)
     if (!Wflag)
       fprintf(stderr, "Warning: attempt to include schema with mismatching attributeFormDefault in schema '%s'\n", targetNamespace?targetNamespace:"(null)");
@@ -365,7 +370,7 @@ int xs__schema::read(const char *cwd, const char *loc)
   if (!cwd)
     cwd = cwd_path;
   if (vflag)
-    fprintf(stderr, "\nOpening schema '%s' from '%s'\n", loc?loc:"(null)", cwd?cwd:"(null)");
+    fprintf(stderr, "\nOpening schema '%s' from '%s'\n", loc?loc:"(stdin)", cwd?cwd:"./");
   if (loc)
   {
     if (soap->recvfd > 2)
@@ -508,14 +513,14 @@ int xs__schema::read(const char *cwd, const char *loc)
   }
   if (soap->error)
   {
-    fprintf(stderr, "\nAn error occurred while parsing schema from '%s'\n", loc?loc:"(null)");
+    fprintf(stderr, "\nAn error occurred while parsing schema from '%s'\n", loc?loc:"(stdin)");
     soap_print_fault(soap, stderr);
     if (soap->error < 200)
       soap_print_fault_location(soap, stderr);
     fprintf(stderr, "\nIf this schema namespace is considered \"built-in\", then add\n  namespaceprefix = <namespaceURI>\nto typemap.dat.\n");
     exit(1);
   }
-  fprintf(stderr, "Done reading '%s'\n", loc?loc:"(null)");
+  fprintf(stderr, "Done reading '%s'\n", loc?loc:"(stdin)");
   soap_end_recv(soap);
   if (soap->recvfd > 2)
   {
@@ -618,7 +623,19 @@ int xs__include::preprocess(xs__schema &schema)
         return SOAP_EOF;
       included[schemaLocation] = schemaRef;
       schemaRef->read(schema.sourceLocation(), schemaLocation);
-      schemaRef->targetNamespace = schema.targetNamespace;
+      if (schema.targetNamespace && (!schemaRef->targetNamespace || strcmp(schema.targetNamespace, schemaRef->targetNamespace)))
+      {
+	if (!Wflag)
+	{
+	  if (schemaRef->targetNamespace)
+	    fprintf(stderr, "Warning: attempt to include schema with mismatching targetNamespace '%s' in schema '%s', assigning targetNamespace '%s'\n", schemaRef->targetNamespace, schema.targetNamespace, schema.targetNamespace);
+	  else
+	    fprintf(stderr, "Warning: attempt to include chameleon schema with no targetNamespace in schema '%s', assigning targetNamespace '%s'\n", schema.targetNamespace, schema.targetNamespace);
+	}
+	schemaRef->targetNamespace = schema.targetNamespace;
+	schemaRef->elementFormDefault = schema.elementFormDefault;
+	schemaRef->attributeFormDefault = schema.attributeFormDefault;
+      }
     }
     else
     {
