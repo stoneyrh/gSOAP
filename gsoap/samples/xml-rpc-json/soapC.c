@@ -22,7 +22,7 @@ A commercial use license is available from Genivia Inc., contact@genivia.com
 extern "C" {
 #endif
 
-SOAP_SOURCE_STAMP("@(#) soapC.c ver 2.8.24 2015-10-25 15:32:47 GMT")
+SOAP_SOURCE_STAMP("@(#) soapC.c ver 2.8.24 2015-11-02 14:26:46 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -2714,7 +2714,7 @@ SOAP_FMAC3 wchar_t * * SOAP_FMAC4 soap_in_wstring(struct soap *soap, const char 
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_wstring(struct soap *soap, wchar_t *const*a, const char *tag, const char *type)
 {
-	if (soap_out_wstring(soap, tag?tag:"wchar", -2, a, type))
+	if (soap_out_wstring(soap, tag?tag:"string", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -2909,7 +2909,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in__QName(struct soap *soap, const char *tag
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put__QName(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out__QName(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out__QName(soap, tag?tag:"QName", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -2953,7 +2953,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_string(struct soap *soap, const char *tag
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_string(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out_string(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out_string(soap, tag?tag:"string", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }

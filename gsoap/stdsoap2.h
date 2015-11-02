@@ -2205,7 +2205,7 @@ struct SOAP_STD_API soap
   int (*fpreparerecv)(struct soap*, const char*, size_t);
   int (*fpreparefinalsend)(struct soap*);
   int (*fpreparefinalrecv)(struct soap*);
-  int filterstop;
+  int recverror; /* last soap_recv_raw error code for filterrecv */
   int (*ffiltersend)(struct soap*, const char**, size_t*);
   int (*ffilterrecv)(struct soap*, char*, size_t*, size_t);
   void *(*fdimereadopen)(struct soap*, void*, const char*, const char*, const char*);
@@ -2312,7 +2312,8 @@ struct SOAP_STD_API soap
 #endif
 #ifndef WITH_LEAN
   const char *wsuid;		/* space-separated string of element tags */
-  const char *c14nexclude;	/* space-separated string of prefixes */
+  const char *c14nexclude;	/* space-separated string of prefixes for c14n exclusion */
+  const char *c14ninclude;	/* space-separated string of prefixes for c14n inclusion */
   struct soap_cookie *cookies;
   const char *cookie_domain;
   const char *cookie_path;

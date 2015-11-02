@@ -218,21 +218,32 @@ Signatures</h1>
 <li>HMAC-SHA uses a secret key (also known as a shared key in symmetric cryptography) to sign the SHA digest of the SignedInfo element.</li>
 <li>DSA-SHA uses a DSA private key to sign the SHA digest of the SignedInfo element.</li>
 <li>RSA-SHA uses a RSA private key to sign the SHA digest of the SignedInfo element.</li>
+<li>ECDSA-SHA uses a Elliptic Curve DSA private key to sign the SHA digest of the SignedInfo element.</li>
 </ul>
 <p>HMAC-SHA is the simplest method, but relies on the fact that you have to make absolutely sure the key is kept secret on both the sending and receiving side. As long as the secret key is confidential, messages are securely signed. However, this is virtually impossible when exchanging messages with untrusted disparate parties. The advantage of HMAC-SHA is the speed by which messages are signed and verified.</p>
 <p>Algorithms HMAC SHA1, SHA256, and SHA512 are supported:</p>
 <ul>
 <li><a class="el" href="smdevp_8h.html#a7d00704c43ee044926905cd327a712ef">SOAP_SMD_HMAC_SHA1</a> <a href="http://www.w3.org/2000/09/xmldsig#hmac-sha1">http://www.w3.org/2000/09/xmldsig#hmac-sha1</a></li>
+<li><a class="el" href="smdevp_8h.html#a0a03fa407c392d53e3e6609032c69a19">SOAP_SMD_HMAC_SHA224</a> <a href="http://www.w3.org/2001/04/xmldsig-more#hmac-sha224">http://www.w3.org/2001/04/xmldsig-more#hmac-sha224</a></li>
 <li><a class="el" href="smdevp_8h.html#a561d6c47f122626acb2f36bdabdc07e6">SOAP_SMD_HMAC_SHA256</a> <a href="http://www.w3.org/2001/04/xmldsig-more#hmac-sha256">http://www.w3.org/2001/04/xmldsig-more#hmac-sha256</a></li>
+<li><a class="el" href="smdevp_8h.html#a5928fa6c9c366857ffb96e70e6e04609">SOAP_SMD_HMAC_SHA384</a> <a href="http://www.w3.org/2001/04/xmldsig-more#hmac-sha384">http://www.w3.org/2001/04/xmldsig-more#hmac-sha384</a></li>
 <li><a class="el" href="smdevp_8h.html#a0eaedca857ff22ca7e2290e3ad67a184">SOAP_SMD_HMAC_SHA512</a> <a href="http://www.w3.org/2001/04/xmldsig-more#hmac-sha512">http://www.w3.org/2001/04/xmldsig-more#hmac-sha512</a></li>
 </ul>
 <p>DSA-SHA and RSA-SHA rely on public key cryptography. In simplified terms, a message is signed using the (confidential!) private key. The public key is used to verify the signature. Since only the originating party could have used its private key to sign the message, the integrity of the message is guaranteed. Of course, we must trust the public key came from the originator (it is often included as an X509 certificate in the message). To this end, a trusted certificate authority should have signed the public key, thereby creating a X509 certificate that contains the public key and the identity of the message originator.</p>
-<p>Algorithms DSA-SHA1, RSA-SHA1, RSA-SHA256, and RSA-SHA512 are supported:</p>
+<p>The following DSA, RSA, and ECDSA algorithms are supported:</p>
 <ul>
 <li><a class="el" href="smdevp_8h.html#a647cb5d798442d34c8191c62a2aeebf6">SOAP_SMD_SIGN_DSA_SHA1</a> <a href="http://www.w3.org/2000/09/xmldsig#dsa-sha1">http://www.w3.org/2000/09/xmldsig#dsa-sha1</a></li>
+<li><a class="el" href="smdevp_8h.html#abb7046ffa72e2deade72d960fb2c1272">SOAP_SMD_SIGN_DSA_SHA256</a> <a href="http://www.w3.org/2000/09/xmldsig-more#dsa-sha256">http://www.w3.org/2000/09/xmldsig-more#dsa-sha256</a></li>
 <li><a class="el" href="smdevp_8h.html#acbb90951064d98a13af03724dbed2aa8">SOAP_SMD_SIGN_RSA_SHA1</a> <a href="http://www.w3.org/2000/09/xmldsig#rsa-sha1">http://www.w3.org/2000/09/xmldsig#rsa-sha1</a></li>
+<li><a class="el" href="smdevp_8h.html#afe09714e9ac82800fcc0929b017d5a04">SOAP_SMD_SIGN_RSA_SHA224</a> <a href="http://www.w3.org/2001/04/xmldsig-more#rsa-sha224">http://www.w3.org/2001/04/xmldsig-more#rsa-sha224</a></li>
 <li><a class="el" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a> <a href="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256">http://www.w3.org/2001/04/xmldsig-more#rsa-sha256</a></li>
+<li><a class="el" href="smdevp_8h.html#a46d8a09a01283fb765e09a19c3289aea">SOAP_SMD_SIGN_RSA_SHA384</a> <a href="http://www.w3.org/2001/04/xmldsig-more#rsa-sha384">http://www.w3.org/2001/04/xmldsig-more#rsa-sha384</a></li>
 <li><a class="el" href="smdevp_8h.html#a47b63295eb2fd010886c3a2521090f02">SOAP_SMD_SIGN_RSA_SHA512</a> <a href="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512">http://www.w3.org/2001/04/xmldsig-more#rsa-sha512</a></li>
+<li><a class="el" href="smdevp_8h.html#a8e9b9b7d3eaf1513ecd1058474102fb5">SOAP_SMD_SIGN_ECDSA_SHA1</a> <a href="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1">http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1</a></li>
+<li><a class="el" href="smdevp_8h.html#a56327958f128a7637985e50adb4756c3">SOAP_SMD_SIGN_ECDSA_SHA224</a> <a href="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha224">http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha224</a></li>
+<li><a class="el" href="smdevp_8h.html#af128b314208ee2459008171369738344">SOAP_SMD_SIGN_ECDSA_SHA256</a> <a href="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256">http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256</a></li>
+<li><a class="el" href="smdevp_8h.html#a4fb388819ee78a16227ffc4778bf7930">SOAP_SMD_SIGN_ECDSA_SHA384</a> <a href="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384">http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384</a></li>
+<li><a class="el" href="smdevp_8h.html#a53cb3265fa940c0b2d1fbf5785bdc20f">SOAP_SMD_SIGN_ECDSA_SHA512</a> <a href="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512">http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512</a></li>
 </ul>
 <p>An optional callback function can be passed to the plugin that is responsible for providing a certificate or key to the wsse engine to verify a signed message. For example, when a security token is absent from an DSA-SHA or RSA-SHA signed message then the only mechanism to automatically verify the signature is to let the callback produce a certificate:</p>
 <div class="fragment"><div class="line">soap_register_plugin_arg(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a" title="Plugin registry function, used with soap_register_plugin.">soap_wsse</a>, security_token_handler);</div>
@@ -251,18 +262,29 @@ Signatures</h1>
 <div class="line">  <span class="keyword">const</span> <span class="keywordtype">char</span> *uid = <a class="code" href="wsseapi_8h.html#aca3fe6fb7c1e5c103827b33f24292f47" title="Returns UsernameToken/username string or wsse:FailedAuthentication fault.">soap_wsse_get_Username</a>(soap);</div>
 <div class="line">  <span class="keywordflow">switch</span> (*alg)</div>
 <div class="line">  { <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a448c4d5953ca007263ff6a5bd055cfdc">SOAP_SMD_VRFY_DSA_SHA1</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a5b4e9a64ef8a1de550cc5c5ab889d3c6">SOAP_SMD_VRFY_DSA_SHA256</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#aa395a40932c9c057cd264c03716c9d6e">SOAP_SMD_VRFY_RSA_SHA1</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#aa5d9d36c2db3bbef1dfd66593240cf16">SOAP_SMD_VRFY_RSA_SHA224</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#ac495716c1f8630567900c33cdea08fd1">SOAP_SMD_VRFY_RSA_SHA256</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#afec4c06d2b78ff9a4451a311849d7275">SOAP_SMD_VRFY_RSA_SHA384</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a16e7c5ef33465656c0d270eebc933021">SOAP_SMD_VRFY_RSA_SHA512</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a5dba7fc390d7f1056c1315e33003fadb">SOAP_SMD_VRFY_ECDSA_SHA1</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#adf90c93cd7ddcbfdfb4331cd79ec7fed">SOAP_SMD_VRFY_ECDSA_SHA224</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a302ca7fbeadd43dd57b0cea2c1daf5f3">SOAP_SMD_VRFY_ECDSA_SHA256</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a1b34145858769663cf7dd9c7cd05d549">SOAP_SMD_VRFY_ECDSA_SHA384</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#ab434218e658d6aa79768e43389cf6871">SOAP_SMD_VRFY_ECDSA_SHA512</a>:</div>
 <div class="line">      <span class="keywordflow">if</span> (uid)</div>
 <div class="line">      { <span class="comment">// Lookup uid to retrieve the X509 certificate to verify the signature</span></div>
 <div class="line">        <span class="keyword">const</span> X509 *cert = ...; </div>
 <div class="line">        <span class="keywordflow">return</span> (<span class="keyword">const</span> <span class="keywordtype">void</span>*)cert;</div>
 <div class="line">      }</div>
 <div class="line">      <span class="keywordflow">return</span> NULL; <span class="comment">// no certificate: fail</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a0a03fa407c392d53e3e6609032c69a19">SOAP_SMD_HMAC_SHA224</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a561d6c47f122626acb2f36bdabdc07e6">SOAP_SMD_HMAC_SHA256</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a5928fa6c9c366857ffb96e70e6e04609">SOAP_SMD_HMAC_SHA384</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a0eaedca857ff22ca7e2290e3ad67a184">SOAP_SMD_HMAC_SHA512</a>:</div>
 <div class="line">      <span class="keywordflow">if</span> (uid)</div>
-<div class="line">      { <span class="comment">// Lookup uid to retrieve the HMAC SHA256 key to verify the signature</span></div>
+<div class="line">      { <span class="comment">// Lookup uid to retrieve the HMAC SHA key to verify the signature</span></div>
 <div class="line">        <span class="keyword">const</span> <span class="keywordtype">void</span> *key = ...; </div>
 <div class="line">        *alg = ...;</div>
 <div class="line">        *keylen = ...;</div>
@@ -271,13 +293,23 @@ Signatures</h1>
 <div class="line">      <span class="keywordflow">return</span> NULL; <span class="comment">// no certificate: fail</span></div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a533b28fdec1dba756bdd69dea83ad244">SOAP_MEC_ENV_DEC_DES_CBC</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#aa94bbedb3884c463ddcb6dbe3e582913">SOAP_MEC_ENV_DEC_AES128_CBC</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#ad5935be53e1e0d92fcca66f3227d7465">SOAP_MEC_ENV_DEC_AES192_CBC</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a614a07a8c4fa0aa814e1009033403b84">SOAP_MEC_ENV_DEC_AES256_CBC</a>:</div>
-<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a54d92e9969643328dbdb10e687ea6a88">SOAP_MEC_ENV_DEC_AES512_CBC</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a54d92e9969643328dbdb10e687ea6a88">SOAP_MEC_ENV_DEC_AES512_CBC</a>: <span class="comment">// reserved for future use</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a64d04044822454e1672f5501c67d4a9d">SOAP_MEC_ENV_DEC_AES128_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a8cdb2b051d394a12c7bb7768a95eeb6d">SOAP_MEC_ENV_DEC_AES192_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a86d91a11d9401b4bd0bb86d3b0478fca">SOAP_MEC_ENV_DEC_AES256_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a49ba1d264167026ba86a3a108aad5060">SOAP_MEC_ENV_DEC_AES512_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
 <div class="line">      <span class="comment">// return decryption private key associated with keyname</span></div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a9226364c4bf1cd277c417cd4d2706561">SOAP_MEC_DEC_DES_CBC</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a276b8e0038b3c44235a66467d9056cb1">SOAP_MEC_DEC_AES128_CBC</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#abc989d7ba0703386b786be70f8f23b69">SOAP_MEC_DEC_AES192_CBC</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a7151041a3f95a45edce0660f0fbcea44">SOAP_MEC_DEC_AES256_CBC</a>:</div>
-<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a84c17ef148e5a7ab05eea24acf7d4159">SOAP_MEC_DEC_AES512_CBC</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a84c17ef148e5a7ab05eea24acf7d4159">SOAP_MEC_DEC_AES512_CBC</a>: <span class="comment">// reserved for future use</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#ad63c14482c5e9cf3028e96da56d878ad">SOAP_MEC_DEC_AES128_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#abeda47e7f8d80130e3675a32b9abcb7e">SOAP_MEC_DEC_AES192_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#ab3853c4ab88cd32c4ba6058335f76fdf">SOAP_MEC_DEC_AES256_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher`</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a20016e3054eca51dc31b9eb6c6100d2a">SOAP_MEC_DEC_AES512_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
 <div class="line">      <span class="comment">// *keylen = ...</span></div>
 <div class="line">      <span class="comment">// return decryption shared secret key associated with keyname</span></div>
 <div class="line">  }</div>
@@ -296,7 +328,7 @@ Signing Messages</h2>
 <div class="line">  ... <span class="comment">// an error occurred</span></div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (soap_call_ns__myMethod(soap, ...))</div>
 <div class="line">  ... <span class="comment">// a transmission error occurred</span></div>
-</div><!-- fragment --><p>The hmac_key is some secret key you generated for the sending side and receiving side (don't use the one shown here). Instead of SHA1, SHA256 and SHA512 hashes can be used.</p>
+</div><!-- fragment --><p>The hmac_key is some secret key you generated for the sending side and receiving side (don't use the one shown here). Instead of SHA1 above, you can also use the more secure SHA224, SHA256, SHA384 and SHA512 hashes.</p>
 <p>As always, use soap_print_fault() to display the error message.</p>
 <p>To sign the body of an outbound SOAP message using RSA-SHA (DSA-SHA is similar), we include the X509 certificate with the public key as a BinarySecurityToken in the header and a KeyInfo reference to the token to let receivers use the public key in the certificate to verify the authenticity of the message:</p>
 <div class="fragment"><div class="line">FILE *fd;</div>
@@ -320,7 +352,7 @@ Signing Messages</h2>
 <p>To summarize the signing process:</p>
 <ol type="1">
 <li>Register the wsse plugin.</li>
-<li>Obtain an HMAC secret key or a DSA or RSA private key.</li>
+<li>Obtain an HMAC secret key or a DSA/RSA/ECDSA private key.</li>
 <li>For DSA or RSA, obtain the X509 certificate with the public key signed by a certificate authority.</li>
 <li>Add the X509 certificate as a BinarySecurityToken to the header.</li>
 <li>Add a KeyInfo BinarySecurityTokenReference.</li>
@@ -355,13 +387,17 @@ Signing Message Parts</h2>
 </div><!-- fragment --><p>The above example shows a wsu:Id attribute embedded (hardcoded) in a struct. When it is not possible to add the wsu__Id member, for example when the type is a string instead of a struct, it is suggested to specify the XML element to be signed with the <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a>(soap, "space-separated string of
 element names") function. Use it before each call or in the server operation (when returning XML data from a service operation). This lets the engine add wsu:Id="tag" attribute-value pair to the element's tag name. For example:</p>
 <div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454" title="Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set...">soap_wsse_set_wsu_id</a>(soap, <span class="stringliteral">&quot;ns:myContract&quot;</span>); <span class="comment">// &lt;ns:myContract wsu:Id=&quot;ns:myContract&quot;&gt;...</span></div>
+<div class="line"><a class="code" href="wsseapi_8h.html#a7a1670c6ee444704c8fb7ac612db37ff" title="Sets the C14N InclusiveNamespaces Prefix List property.">soap_wsse_set_InclusiveNamespaces</a>(soap, <span class="stringliteral">&quot;ns xsd&quot;</span>); <span class="comment">// QNames have &#39;ns&#39; and &#39;xsd&#39; values</span></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a53075fb3cec4ec4e70fb11850fecb401" title="Adds BinarySecurityToken element with X509 certificate.">soap_wsse_add_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;X509Token&quot;</span>, cert)</div>
 <div class="line"> || <a class="code" href="wsseapi_8h.html#a72df80abd1d36cea516feda3a84672cf" title="Adds KeyInfo element with SecurityTokenReference URI to an X509 cert.">soap_wsse_add_KeyInfo_SecurityTokenReferenceX509</a>(soap, <span class="stringliteral">&quot;#X509Token&quot;</span>)</div>
 <div class="line"> || <a class="code" href="wsseapi_8h.html#aa3ac2afb86a25ec1e1d8e4515133e9ad" title="Uses the wsse plugin to sign all wsu:Id attributed elements.">soap_wsse_sign</a>(soap, <a class="code" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a>, rsa_private_key, 0))</div>
 <div class="line">  ... <span class="comment">// an error occurred</span></div>
-<div class="line"><a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454" title="Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set...">soap_wsse_set_wsu_id</a>(soap, NULL);</div>
+<div class="line"><a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454" title="Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set...">soap_wsse_set_wsu_id</a>(soap, NULL); <span class="comment">// reset</span></div>
+<div class="line"><a class="code" href="wsseapi_8h.html#a7a1670c6ee444704c8fb7ac612db37ff" title="Sets the C14N InclusiveNamespaces Prefix List property.">soap_wsse_set_InclusiveNamespaces</a>(soap, NULL); <span class="comment">// reset</span></div>
 </div><!-- fragment --><p>This code adds the wsu:Id="ns-myContract" to the ns:myContract element. Here, the wsu__Id value in the struct MUST NOT be set. Otherwise, two wsu:Id attributes are present which is invalid. Also, the element signed must be unique in the message. That is, there cannot be more than one matching element, otherwise the resulting signature is invalid.</p>
 <dl class="section note"><dt>Note</dt><dd>To reset the automatic wsu:Id attributes addition, pass NULL to <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> as shown above. This is automatically performed when a new message is received (but not automatically in a sequence of one-way sends for example).</dd>
+<dd>
+QName content may lead to verification issues with canonicalization (SOAP_XML_CANONICAL), because XML processors may not recognize prefixes in QNames as visually utilized. With QName content and SOAP_XML_CANONICAL enabled, we should use soap_wsse_set_InclusiveNamespaces(soap, "prefixlist") to define which namespace prefixes (space-separated in the string) should be considered inclusive. For example, xsi:type attribute values are QNames with xsd types and other schema types.</dd>
 <dd>
 When signing parts of the body as outlined above, use <a class="el" href="wsseapi_8c.html#aa3ac2afb86a25ec1e1d8e4515133e9ad">soap_wsse_sign</a> (do NOT use <a class="el" href="wsseapi_8c.html#ab653754f1a287ba06bd808cf89548c38">soap_wsse_sign_body</a>).</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Do not attempt to sign an element with a wsu:Id that is a subelement of another element with a wsu:Id, that is, do not sign inner nested wsu:Id elements. The element that you will try to sign will not be canonicalized and will lead to a failure of the signature verification. When elements with wsu:Id are nested, sign the outermost element.</dd></dl>
@@ -432,7 +468,7 @@ Signature Validation</h2>
 <p>For example, to check whether the wsu:Timestamp element was signed (assuming it is present and message expiration checked with <a class="el" href="wsseapi_8c.html#a98422cde0e2b7b14d65212f7061101fa">soap_wsse_verify_Timestamp</a>), use <a class="el" href="wsseapi_8c.html#a3fbe81de521579f026dd1ba8e81c59c1">soap_wsse_verify_element</a>(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp").</p>
 <p>To check the SOAP Body (either using SOAP 1.1 or 1.2), simply use <a class="el" href="wsseapi_8c.html#a5ccbce0f1a4a8f103e921a918f932a20">soap_wsse_verify_body</a>.</p>
 <p>The <a class="el" href="wsseapi_8c.html#a7321b451910e1d3887b328f03de92f34">soap_wsse_verify_auto</a> function keeps processing signed (and unsigned) messages as they arrive. For unsigned messages this can be expensive and the verification engine should be shut down using <a class="el" href="wsseapi_8c.html#a07db8f284ab2bb564248999fe02d0169">soap_wsse_verify_done</a>.</p>
-<p>There can be two problems with signature verification. First, some WS-Security implementations include SignedInfo/Reference/ without targeting an element, which will produce an error that a Reference URI target does not exist. Second, certificates provided by the peer are not verifiable unless the signing CA certificate is included in the cafile or capath. To disable certificate verification set the fsslverify callback:</p>
+<p>There can be two problems with signature verification. First, some WS-Security implementations include SignedInfo/Reference/ without targeting an element, which will produce an error that a Reference URI target does not exist. To ignore these references, use SOAP_WSSE_IGNORE_EXTRA_REFS. Second, certificates provided by the peer are not verifiable unless the signing CA certificate is included in the cafile or capath. To disable certificate verification set the fsslverify callback:</p>
 <div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keywordtype">int</span> ssl_verify(<span class="keywordtype">int</span> ok, X509_STORE_CTX *store)</div>
 <div class="line">{ <span class="comment">// put certificate verification here, return 0 when fails 1 when ok</span></div>
 <div class="line">  <span class="keywordflow">return</span> 1;</div>
@@ -484,7 +520,16 @@ Encrypting Messages</h2>
 <div class="fragment"><div class="line">X509 *cert = ...; <span class="comment">//</span></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a1ba85a8b14587cff0865ebc3e5e9e340" title="Adds EncryptedKey header element and initiates the encryption of the SOAP Body.">soap_wsse_add_EncryptedKey</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL))</div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
-</div><!-- fragment --><p>SOAP_MEC_ENV_ENC_DES_CBC specifies envelope encoding with triple DES CBC and PKCS1 RSA-1_5. Use SOAP_MEC_ENV_ENC_AES256_CBC for AES256 with RSA-OAEP. The "Cert" parameter is a unique URI to reference the key from the encrypted SOAP Body. The above enables the encryption engine for the next message to be sent, either at the client or server side. The server should use this withing a server operation (before returning) to enable the service operation response to be encrypted.</p>
+</div><!-- fragment --><p>SOAP_MEC_ENV_ENC_DES_CBC specifies envelope encoding with triple DES CBC and PKCS1 RSA-1_5. Use (SOAP_MEC_ENV_ENC_AES256_CBC | SOAP_MEC_OAEP) for AES256 CBC with OAEP padding (OAEP is recommended over RSA-1_5 or use GCM).</p>
+<p>The envelope encryption options are:</p>
+<ul>
+<li><a class="el" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a> RSA-1_5 envelope encryption with triple DES CBC</li>
+<li><a class="el" href="mecevp_8h.html#aab870a983b1ea7cf45884462d2c3502b">SOAP_MEC_ENV_ENC_AES256_CBC</a> RSA-1_5 envelope encryption with AES256 CBC</li>
+<li><a class="el" href="mecevp_8h.html#a239ab02045baa8901ab2dd0d99698713">SOAP_MEC_ENV_ENC_AES256_GCM</a> envelope authenticated encryption with AES256 GCM</li>
+<li><a class="el" href="mecevp_8h.html#aab870a983b1ea7cf45884462d2c3502b">SOAP_MEC_ENV_ENC_AES256_CBC</a> | <a class="el" href="mecevp_8h.html#aa1e17bb2df8b81479aa1bd6bedf700cd">SOAP_MEC_OAEP</a> OAEP envelope encryption with AES256 CBC</li>
+</ul>
+<p>where, in the above, AES256 can be replaced with AES128 or AES192.</p>
+<p>The "Cert" parameter is a unique URI to reference the key from the encrypted SOAP Body. The above enables the encryption engine for the next message to be sent, either at the client or server side. The server should use this withing a server operation (before returning) to enable the service operation response to be encrypted.</p>
 <p>To include a subject key ID in the WS-Security header instead of the entire public key, specify the subject key ID parameter:</p>
 <div class="fragment"><div class="line">X509 *cert = ...; <span class="comment">//</span></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a1ba85a8b14587cff0865ebc3e5e9e340" title="Adds EncryptedKey header element and initiates the encryption of the SOAP Body.">soap_wsse_add_EncryptedKey</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, <span class="stringliteral">&quot;Subject Key ID&quot;</span>, NULL, NULL))</div>
@@ -522,9 +567,17 @@ Encrypting Messages</h2>
 <div class="line">    { <span class="keyword">struct </span><a class="code" href="structds_____x509_issuer_serial_type.html" title="&quot;http://www.w3.org/2000/09/xmldsig#&quot;:X509IssuerSerialType is a complexType.">ds__X509IssuerSerialType</a> *issuer;</div>
 <div class="line">      <span class="keywordflow">switch</span> (alg)</div>
 <div class="line">      { <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a448c4d5953ca007263ff6a5bd055cfdc">SOAP_SMD_VRFY_DSA_SHA1</a>:</div>
+<div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a5b4e9a64ef8a1de550cc5c5ab889d3c6">SOAP_SMD_VRFY_DSA_SHA256</a>:</div>
 <div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#aa395a40932c9c057cd264c03716c9d6e">SOAP_SMD_VRFY_RSA_SHA1</a>:</div>
+<div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#aa5d9d36c2db3bbef1dfd66593240cf16">SOAP_SMD_VRFY_RSA_SHA224</a>:</div>
 <div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#ac495716c1f8630567900c33cdea08fd1">SOAP_SMD_VRFY_RSA_SHA256</a>:</div>
+<div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#afec4c06d2b78ff9a4451a311849d7275">SOAP_SMD_VRFY_RSA_SHA384</a>:</div>
 <div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a16e7c5ef33465656c0d270eebc933021">SOAP_SMD_VRFY_RSA_SHA512</a>:</div>
+<div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a5dba7fc390d7f1056c1315e33003fadb">SOAP_SMD_VRFY_ECDSA_SHA1</a>:</div>
+<div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#adf90c93cd7ddcbfdfb4331cd79ec7fed">SOAP_SMD_VRFY_ECDSA_SHA224</a>:</div>
+<div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a302ca7fbeadd43dd57b0cea2c1daf5f3">SOAP_SMD_VRFY_ECDSA_SHA256</a>:</div>
+<div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a1b34145858769663cf7dd9c7cd05d549">SOAP_SMD_VRFY_ECDSA_SHA384</a>:</div>
+<div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#ab434218e658d6aa79768e43389cf6871">SOAP_SMD_VRFY_ECDSA_SHA512</a>:</div>
 <div class="line">          issuer = <a class="code" href="wsseapi_8h.html#a2346304c77d35bd6fb849c8c0e8cea13" title="Returns ds__X509IssuerSerialType with non-NULL X509IssuerName and non-NULL X509SerialNumber of a X509...">soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data</a>(soap);</div>
 <div class="line">          <span class="keywordflow">if</span> (issuer)</div>
 <div class="line">          {</div>
@@ -553,11 +606,17 @@ Encrypting Messages</h2>
 The elements identified by the tag names in <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> to encrypt MUST occur EXACTLY ONCE in the SOAP Body.</dd></dl>
 <p>For symmetric encryption with a shared secret key, generate a 160-bit triple DES key and make sure both the sender and reciever can use the key without it being shared by any other party (key exchange problem). Then use the <a class="el" href="wsseapi_8c.html#ac12c951db671e4e29810d0f0ae7f1b63">soap_wsse_encrypt_body</a> function to encrypt the SOAP Body as follows:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">char</span> des_key[20] = ...; <span class="comment">// 20-byte (160-bit) DES shared secret key</span></div>
-<div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#ac12c951db671e4e29810d0f0ae7f1b63" title="Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOA...">soap_wsse_encrypt_body</a>(soap, <a class="code" href="mecevp_8h.html#ae8f63ce4ee6492f0b07949d301eda7d6">SOAP_MEC_ENC_DES_CBC</a>, des_key, <span class="keyword">sizeof</span>(des_key)))</div>
+<div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#ac12c951db671e4e29810d0f0ae7f1b63" title="Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC etc...">soap_wsse_encrypt_body</a>(soap, <a class="code" href="mecevp_8h.html#ae8f63ce4ee6492f0b07949d301eda7d6">SOAP_MEC_ENC_DES_CBC</a>, des_key, <span class="keyword">sizeof</span>(des_key)))</div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
-</div><!-- fragment --><p>Triple DES can be selected as shown above. Alternatively, AES128, AES256, or AES512, can be selected. For example:</p>
+</div><!-- fragment --><p>The symmetric encryption options are:</p>
+<ul>
+<li><a class="el" href="mecevp_8h.html#ae8f63ce4ee6492f0b07949d301eda7d6">SOAP_MEC_ENC_DES_CBC</a> symmetric encryption with triple DES CBC</li>
+<li><a class="el" href="mecevp_8h.html#aeb9a2bf88cf42f85a4ace0d3cc4a1508">SOAP_MEC_ENC_AES256_CBC</a> symmetric encryption with AES256 CBC</li>
+<li><a class="el" href="mecevp_8h.html#ab4b4ac089f92d93113ee8129dc895e61">SOAP_MEC_ENC_AES256_GCM</a> symmetric authenticated encryption with AES256 GCM</li>
+</ul>
+<p>where, in the above, AES256 can be replaced with AES128 or AES192. For example, symmetric encryption with AES256:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">char</span> aes256_key[32] = ...; <span class="comment">// 32-byte (256-bit) AES256 shared secret key</span></div>
-<div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#ac12c951db671e4e29810d0f0ae7f1b63" title="Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOA...">soap_wsse_encrypt_body</a>(soap, <a class="code" href="mecevp_8h.html#aeb9a2bf88cf42f85a4ace0d3cc4a1508">SOAP_MEC_ENC_AES256_CBC</a>, aes256_key, <span class="keyword">sizeof</span>(aes256_key)))</div>
+<div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#ac12c951db671e4e29810d0f0ae7f1b63" title="Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC etc...">soap_wsse_encrypt_body</a>(soap, <a class="code" href="mecevp_8h.html#aeb9a2bf88cf42f85a4ace0d3cc4a1508">SOAP_MEC_ENC_AES256_CBC</a>, aes256_key, <span class="keyword">sizeof</span>(aes256_key)))</div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 </div><!-- fragment --><p>To symmetrically encrypt specific elements of the SOAP Body rather than the entire SOAP Body, use <a class="el" href="wsseapi_8c.html#a3c417c369946561cbf72566349041805">soap_wsse_encrypt_only</a> in combination with <a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> as follows:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">char</span> des_key[20] = ...; <span class="comment">// 20-byte (160-bit) secret key</span></div>
@@ -588,9 +647,17 @@ Decrypting Message Parts</h2>
 <div class="line">  <span class="keyword">const</span> <span class="keywordtype">char</span> *uid = <a class="code" href="wsseapi_8h.html#aca3fe6fb7c1e5c103827b33f24292f47" title="Returns UsernameToken/username string or wsse:FailedAuthentication fault.">soap_wsse_get_Username</a>(soap);</div>
 <div class="line">  <span class="keywordflow">switch</span> (*alg)</div>
 <div class="line">  { <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a448c4d5953ca007263ff6a5bd055cfdc">SOAP_SMD_VRFY_DSA_SHA1</a>:</div>
-<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#aa395a40932c9c057cd264c03716c9d6e">SOAP_SMD_VRFY_RSA_SHA1</a>:</div>
-<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#ac495716c1f8630567900c33cdea08fd1">SOAP_SMD_VRFY_RSA_SHA256</a>:</div>
-<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a16e7c5ef33465656c0d270eebc933021">SOAP_SMD_VRFY_RSA_SHA512</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a5b4e9a64ef8a1de550cc5c5ab889d3c6">SOAP_SMD_VRFY_DSA_SHA256</a>:</div>
+<div class="line">    CASE <a class="code" href="smdevp_8h.html#aa395a40932c9c057cd264c03716c9d6e">SOAP_SMD_VRFY_RSA_SHA1</a>:</div>
+<div class="line">    CASE <a class="code" href="smdevp_8h.html#aa5d9d36c2db3bbef1dfd66593240cf16">SOAP_SMD_VRFY_RSA_SHA224</a>:</div>
+<div class="line">    CASE <a class="code" href="smdevp_8h.html#ac495716c1f8630567900c33cdea08fd1">SOAP_SMD_VRFY_RSA_SHA256</a>:</div>
+<div class="line">    CASE <a class="code" href="smdevp_8h.html#afec4c06d2b78ff9a4451a311849d7275">SOAP_SMD_VRFY_RSA_SHA384</a>:</div>
+<div class="line">    CASE <a class="code" href="smdevp_8h.html#a16e7c5ef33465656c0d270eebc933021">SOAP_SMD_VRFY_RSA_SHA512</a>:</div>
+<div class="line">    CASE <a class="code" href="smdevp_8h.html#a5dba7fc390d7f1056c1315e33003fadb">SOAP_SMD_VRFY_ECDSA_SHA1</a>:</div>
+<div class="line">    CASE <a class="code" href="smdevp_8h.html#adf90c93cd7ddcbfdfb4331cd79ec7fed">SOAP_SMD_VRFY_ECDSA_SHA224</a>:</div>
+<div class="line">    CASE <a class="code" href="smdevp_8h.html#a302ca7fbeadd43dd57b0cea2c1daf5f3">SOAP_SMD_VRFY_ECDSA_SHA256</a>:</div>
+<div class="line">    CASE <a class="code" href="smdevp_8h.html#a1b34145858769663cf7dd9c7cd05d549">SOAP_SMD_VRFY_ECDSA_SHA384</a>:</div>
+<div class="line">    CASE <a class="code" href="smdevp_8h.html#ab434218e658d6aa79768e43389cf6871">SOAP_SMD_VRFY_ECDSA_SHA512</a>:</div>
 <div class="line">      <span class="keywordflow">if</span> (uid)</div>
 <div class="line">      { <span class="comment">// Lookup uid to retrieve the X509 certificate to verify the signature</span></div>
 <div class="line">        <span class="keyword">const</span> X509 *cert = ...; </div>
@@ -608,13 +675,23 @@ Decrypting Message Parts</h2>
 <div class="line">      <span class="keywordflow">return</span> NULL; <span class="comment">// no certificate: fail</span></div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a533b28fdec1dba756bdd69dea83ad244">SOAP_MEC_ENV_DEC_DES_CBC</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#aa94bbedb3884c463ddcb6dbe3e582913">SOAP_MEC_ENV_DEC_AES128_CBC</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#ad5935be53e1e0d92fcca66f3227d7465">SOAP_MEC_ENV_DEC_AES192_CBC</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a614a07a8c4fa0aa814e1009033403b84">SOAP_MEC_ENV_DEC_AES256_CBC</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a614a07a8c4fa0aa814e1009033403b84">SOAP_MEC_ENV_DEC_AES256_CBC</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a64d04044822454e1672f5501c67d4a9d">SOAP_MEC_ENV_DEC_AES128_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a8cdb2b051d394a12c7bb7768a95eeb6d">SOAP_MEC_ENV_DEC_AES192_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a86d91a11d9401b4bd0bb86d3b0478fca">SOAP_MEC_ENV_DEC_AES256_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a86d91a11d9401b4bd0bb86d3b0478fca">SOAP_MEC_ENV_DEC_AES256_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
 <div class="line">      <span class="comment">// return decryption private key associated with keyname</span></div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a9226364c4bf1cd277c417cd4d2706561">SOAP_MEC_DEC_DES_CBC</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a276b8e0038b3c44235a66467d9056cb1">SOAP_MEC_DEC_AES128_CBC</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#abc989d7ba0703386b786be70f8f23b69">SOAP_MEC_DEC_AES192_CBC</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a7151041a3f95a45edce0660f0fbcea44">SOAP_MEC_DEC_AES256_CBC</a>:</div>
-<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a84c17ef148e5a7ab05eea24acf7d4159">SOAP_MEC_DEC_AES512_CBC</a>:</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a84c17ef148e5a7ab05eea24acf7d4159">SOAP_MEC_DEC_AES512_CBC</a>: <span class="comment">// reserved for future use</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#ad63c14482c5e9cf3028e96da56d878ad">SOAP_MEC_DEC_AES128_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#abeda47e7f8d80130e3675a32b9abcb7e">SOAP_MEC_DEC_AES192_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#ab3853c4ab88cd32c4ba6058335f76fdf">SOAP_MEC_DEC_AES256_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="mecevp_8h.html#a20016e3054eca51dc31b9eb6c6100d2a">SOAP_MEC_DEC_AES512_GCM</a>: <span class="comment">// GCM requires OpenSSL 1.0.2 or higher</span></div>
 <div class="line">      <span class="comment">// *keylen = ...</span></div>
 <div class="line">      <span class="comment">// return decryption shared secret key associated with keyname</span></div>
 <div class="line">  }</div>
@@ -624,10 +701,24 @@ Decrypting Message Parts</h2>
 <p>To set the default private key for envelope decryption, use:</p>
 <div class="fragment"><div class="line">EVP_PKEY *rsa_private_key = ...;</div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc" title="Start automatic decryption when needed using the specified key. This function should be used just onc...">soap_wsse_decrypt_auto</a>(soap, <a class="code" href="mecevp_8h.html#a533b28fdec1dba756bdd69dea83ad244">SOAP_MEC_ENV_DEC_DES_CBC</a>, rsa_private_key, 0);</div>
-</div><!-- fragment --><p>Or to set the default shared secret key for symmetric decryption, use:</p>
+</div><!-- fragment --><p>The envelope decryption options are:</p>
+<ul>
+<li><a class="el" href="mecevp_8h.html#a533b28fdec1dba756bdd69dea83ad244">SOAP_MEC_ENV_DEC_DES_CBC</a> RSA-1_5 envelope decryption with triple DES CBC</li>
+<li><a class="el" href="mecevp_8h.html#a614a07a8c4fa0aa814e1009033403b84">SOAP_MEC_ENV_DEC_AES256_CBC</a> RSA-1_5 envelope decryption with AES256 CBC</li>
+<li><a class="el" href="mecevp_8h.html#a86d91a11d9401b4bd0bb86d3b0478fca">SOAP_MEC_ENV_DEC_AES256_GCM</a> envelope authenticated decryption with AES256 GCM</li>
+<li><a class="el" href="mecevp_8h.html#a614a07a8c4fa0aa814e1009033403b84">SOAP_MEC_ENV_DEC_AES256_CBC</a> | <a class="el" href="mecevp_8h.html#aa1e17bb2df8b81479aa1bd6bedf700cd">SOAP_MEC_OAEP</a> OAEP envelope decryption with AES256 CBC</li>
+</ul>
+<p>where, in the above, AES256 can be replaced with AES128 or AES192.</p>
+<p>Or to set the default shared secret key for symmetric decryption, use:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">char</span> des_key[20] = ...; <span class="comment">// 20-byte (160-bit) triple DES key</span></div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc" title="Start automatic decryption when needed using the specified key. This function should be used just onc...">soap_wsse_decrypt_auto</a>(soap, <a class="code" href="mecevp_8h.html#a9226364c4bf1cd277c417cd4d2706561">SOAP_MEC_DEC_DES_CBC</a>, des_key, <span class="keyword">sizeof</span>(des_key));</div>
-</div><!-- fragment --><p>The above assumes that triple DES is used, but you can select AES128, AES256, or AES512:</p>
+</div><!-- fragment --><p>The symmetric decryption options are:</p>
+<ul>
+<li><a class="el" href="mecevp_8h.html#a9226364c4bf1cd277c417cd4d2706561">SOAP_MEC_DEC_DES_CBC</a> symmetric decryption with triple DES CBC</li>
+<li><a class="el" href="mecevp_8h.html#a7151041a3f95a45edce0660f0fbcea44">SOAP_MEC_DEC_AES256_CBC</a> symmetric decryption with AES256 CBC</li>
+<li><a class="el" href="mecevp_8h.html#ab3853c4ab88cd32c4ba6058335f76fdf">SOAP_MEC_DEC_AES256_GCM</a> symmetric authenticated decryption with AES256 GCM</li>
+</ul>
+<p>where, in the above, AES256 can be replaced with AES128 or AES192. For example, symmetric decryption with AES256:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">char</span> aes256_key[32] = ...; <span class="comment">// 32-byte (256-bit) AES256 key</span></div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc" title="Start automatic decryption when needed using the specified key. This function should be used just onc...">soap_wsse_decrypt_auto</a>(soap, <a class="code" href="mecevp_8h.html#a7151041a3f95a45edce0660f0fbcea44">SOAP_MEC_DEC_AES256_CBC</a>, aes256_key, <span class="keyword">sizeof</span>(aes256_key));</div>
 </div><!-- fragment --><p>If a default key is not set, the token handler callback should be used as discussed above in this section. Do NOT set a default key if a token handler is used to handle multiple different keys. The default key mechanism is simpler to use when only one decryption key is used to decrypt all encrypted messages.</p>
@@ -884,7 +975,7 @@ Encryption Limitations</h1>
 <li>Encryption is performed after signing (likewise, signatures are verified after decryption). Signing after encryption is not supported in the current plugin release.</li>
 </ul>
 <ul>
-<li>Signing and encrypting XML containing QName content may lead to verification issues, because the W3C C14N canonicalization protocol has known limitations and not suited for QName content normalization (prefixes in QNames are ignored, possibly resulting in missing xmlns bindings). We do not recommend to use soapcpp2 option -t for this reason (xsi:type attributes are QNames). Alternatively, disable c14n XML canonicalization, that is, do not use the SOAP_XML_CANONICAL flag.</li>
+<li>Signing and encrypting XML containing QName content may lead to verification issues, because the W3C C14N canonicalization protocol has known limitations with QName content normalization as prefixes in QNames may be ignored, possibly resulting in missing xmlns bindings). Use soap_wsse_set_InclusiveNamespaces(soap, "prefixlist") to define which namespace prefixes (space-separated in the string) should be considered inclusive. All prefixes used in QName content should be listed. The WSSE engine recognizes xsi:type, SOAP-ENC:arrayType, SOAP-ENC:itemType attribute QNames. Therefore, soapcpp2 option -t is always safe to use, but a non-gSOAP receiver may still fail.</li>
 </ul>
 <h1><a class="anchor" id="wsse_wsc"></a>
 WS-SecureConversation</h1>
@@ -894,6 +985,6 @@ WS-SecureConversation</h1>
 </div><!-- fragment --><p>In this example a context has been established and the secret that is identified by the 'identifier' string is known to both parties. This secret is used to sign the message body. The "SCT" is a wsu:Id, which is used as a reference to sign the token. </p>
 </div></div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Fri Oct 23 2015 11:51:42 for <a href="http://www.genivia.com">Genivia</a> documentation of WS-Security by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Mon Nov 2 2015 08:16:04 for <a href="http://www.genivia.com">Genivia</a> documentation of WS-Security by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

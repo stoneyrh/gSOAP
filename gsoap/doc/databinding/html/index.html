@@ -87,8 +87,8 @@ $(document).ready(function(){initNavTree('index.html','');});
 <p>The first example <code><a class="el" href="address_8cpp.html">address.cpp</a></code> shows how to use wsdl2h to bind an XML schema to C++. The C++ application reads and writes an XML file into and from a C++ "address book" data structure. The C++ data structure is an STL vector of address objects.</p>
 <p>The second example <code><a class="el" href="graph_8cpp.html">graph.cpp</a></code> shows how XML is serialized as a tree, digraph, and cyclic graph. The digraph and cyclic graph serialization rules are similar to SOAP 1.1/1.2 encoded multi-ref elements with id-ref attributes to link elements through IDREF XML "pointers".</p>
 <p>These examples demonstrate XML data bindings only for relatively simple data structures and types. The gSOAP tools support more than just these type of structures, which we will explain in the next sections. Support for XML schema components is practically unlimited. The wsdl2h tool maps schemas to C and C++ using built-in intuitive mapping rules, while allowing the mappings to be customized using a <code>typemap.dat</code> file with mapping instructions for wsdl2h.</p>
-<p>The information in this document is applicable to gSOAP 2.8.24 or higher, which supports C++11 features. However, C++11 is not required to use this material and follow the example, unless we need smart pointers and scoped enumerations. While most of the examples in this document are given in C++, the concepts also apply to C with the exception of containers, smart pointers, classes and their methods. None of these exceptions limit the use of the gSOAP tools for C in any way.</p>
-<p>The data binding concepts described in this document have somewhat changed and improved over the years since the first version of gSOAP was developed in 1999 (the project was called a "XML/SOAP stub/skeleton compiler" back then). However, the principle of mapping XSD components to C/C++ types and vice versa was envisioned and implemented early on in research conducted by Dr. van Engelen at the Florida State University and subsequently adopted by other tools, including Java web services and in C# WCF.</p>
+<p>The information in this document is applicable to gSOAP 2.8.24 and higher, which supports C++11 features. However, C++11 is not required to use this material and follow the example, unless we need smart pointers and scoped enumerations. While most of the examples in this document are given in C++, the concepts also apply to C with the exception of containers, smart pointers, classes and their methods. None of these exceptions limit the use of the gSOAP tools for C in any way.</p>
+<p>The data binding concepts described in this document have somewhat changed and improved over the years since the first version of gSOAP was developed in 1999 (the project was called a "XML/SOAP stub/skeleton compiler" back then). However, the principle of mapping XSD components to C/C++ types and vice versa was envisioned, designed, and implemented early on in research conducted by Dr. van Engelen at the Florida State University and subsequently adopted by other tools, including Java web services and in C# WCF.</p>
 <h1><a class="anchor" id="tocpp"></a>
 Mapping WSDL and XML schemas to C/C++                                   </h1>
 <p>To convert WSDL and XML schemas (XSD files), we use the wsdl2h command to generate the data binding interface code in a special gSOAP header file: </p>
@@ -215,15 +215,15 @@ Replacing XSD types by equivalent alternatives                       </h2>
 </pre><p>This replaces all <code>prefix__type1</code> by <code>prefix__type2</code> in the wsdl2h output. However, care muse be taken not to agressively replace types, because this can cause XML validation to fail when a value-type mismatch is encountered in the XML input. Therefore, only replace similar types with other similar types that are wider (e.g. <code>short</code> by <code>int</code> and <code>float</code> by <code>double</code>).</p>
 <h2><a class="anchor" id="typemap5"></a>
 The built-in typemap.dat variables $CONTAINER and $POINTER           </h2>
-<p>The <code>typemap.dat</code> <code>$CONTAINER</code> variable defines the container to emit in the generated declarations, which is <code>std::vector</code> by default. For example: </p>
+<p>The <code>typemap.dat</code> <code>$CONTAINER</code> variable defines the container to emit in the generated declarations, which is <code>std::vector</code> by default. For example, to emit <code>std::list</code> as the container in the wsdl2h-generated declarations: </p>
 <pre class="fragment">$CONTAINER = std::list
 </pre><p>The <code>typemap.dat</code> <code>$POINTER</code> variable defines the smart pointer to emit in the generated declarations, which replaces the use of <code>*</code> pointers. For example: </p>
 <pre class="fragment">$POINTER = std::shared_ptr
-</pre><p>Not all pointers in the generated output can be replaced by smart pointers when standard pointers are used as union members and pointers to arrays.</p>
+</pre><p>Not all pointers in the generated output can be replaced by smart pointers. Standard pointers are itill sed as union members and for pointers to arrays of objects.</p>
 <h2><a class="anchor" id="typemap6"></a>
 User-defined content                                                 </h2>
-<p>Any other content to be generated by wsdl2h can be included in <code>typemap.dat</code> by enclosing it within brackets <code>[</code> and <code>]</code>. These brackets MUST appear at the start of a new line.</p>
-<p>For example, we can add an <code>#import "wsa5.h"</code> directive to the wsdl2h-generated output: </p>
+<p>Any other content to be generated by wsdl2h can be included in <code>typemap.dat</code> by enclosing it within brackets <code>[</code> and <code>]</code> anywhere in the <code>typemap.dat</code> file. Each of the two brackets MUST appear at the start of a new line.</p>
+<p>For example, we can add an <code>#import "wsa5.h"</code> directive to the wsdl2h-generated output as follows: </p>
 <pre class="fragment">[
 #import "wsa5.h"
 ]
@@ -850,7 +850,7 @@ class _ns__record
 <li><code>T * soap_dup_T(struct soap*, T *dst, const T *src)</code> (soapcpp2 option <code>-Ec</code>) deep copy <code>src</code> into <code>dst</code>, replicating all deep cycles and shared pointers when a managing soap context is provided as argument. When <code>dst</code> is NULL, allocates space for <code>dst</code>. Deep copy is a tree when argument is NULL, but the presence of deep cycles will lead to non-termination. Use flag <code>SOAP_XML_TREE</code> with managing context to copy into a tree without cycles and pointers to shared objects. Returns <code>dst</code> (or allocated space when <code>dst</code> is NULL).</li>
 </ul>
 <ul>
-<li><code>void soap_del_T(const T*)</code> (soapcpp2 option <code>-Ed</code>) deletes all heap-allocated members of this object by deep deletion ONLY IF this object and all of its (deep) members are not managed by a soap context AND the deep structure is a tree (no cycles and co-referenced objects by way of multiple (non-smart) pointers pointing to the same data).Can be safely used after <code>soap_dup(NULL)</code> to delete the deep copy. Does not delete the object itself.</li>
+<li><code>void soap_del_T(const T*)</code> (soapcpp2 option <code>-Ed</code>) deletes all heap-allocated members of this object by deep deletion ONLY IF this object and all of its (deep) members are not managed by a soap context AND the deep structure is a tree (no cycles and co-referenced objects by way of multiple (non-smart) pointers pointing to the same data). Can be safely used after <code>soap_dup(NULL)</code> to delete the deep copy. Does not delete the object itself.</li>
 </ul>
 <p>When in C++ mode, soapcpp2 tool adds several methods to classes and structs, in addition to adding a default constructor and destructor (when these were not explicitly declared).</p>
 <p>The public methods added to a class/struct <code>T</code>:</p>
@@ -936,9 +936,14 @@ class _xop__Include
 </pre><p>A wrapper class/struct may have any number of attributes declared with <code>@</code>.</p>
 <h1><a class="anchor" id="memory"></a>
 Memory management                                                      </h1>
+<p>Memory management with the <code>soap</code> context enables us to allocate data in context-managed heap space that can be collectively deleted. All deserialized data is placed on the context-managed heap by the gSOAP engine.</p>
 <h2><a class="anchor" id="memory1"></a>
 Memory management in C                                                </h2>
-<p>In C (wsdl2h option <code>-c</code> and soapcpp2 option <code>-c</code>), the gSOAP engine allocates data on a managed heap with <code>void *soap_malloc(struct soap*, size_t len)</code>. The <code>soap_malloc</code> function is a wrapper around <code>malloc</code>, but which also allows the <code>struct soap</code> context to track all heap allocations for collective deletion with <code>soap_end(soap)</code>: </p>
+<p>In C (wsdl2h option <code>-c</code> and soapcpp2 option <code>-c</code>), the gSOAP engine allocates data on a context-managed heap with:</p>
+<ul>
+<li><code>void *soap_malloc(struct soap*, size_t len)</code>.</li>
+</ul>
+<p>The <code>soap_malloc</code> function is a wrapper around <code>malloc</code>, but which also allows the <code>struct soap</code> context to track all heap allocations for collective deletion with <code>soap_end(soap)</code>: </p>
 <pre class="fragment">#include "soapH.h"
 #include "ns.nsmap"
 ...
@@ -951,7 +956,14 @@ soap_destroy(soap);  // only for C++, see section on C++ below
 soap_end(soap);      // delete record and all other heap allocations
 soap_free(soap);     // delete context
 </pre><p>The soapcpp2 auto-generated deserializers in C use <code>soap_malloc</code> to allocate and populate deserialized structures, which are managed by the context for collective deletion.</p>
-<p>We use the soapcpp2 auto-generated <code>soap_dup_T</code> functions to duplicate data into another context (this requires soapcpp2 option <code>-Ec</code> to generate), here shown for C: </p>
+<p>To make <code>char*</code> and <code>wchar_t*</code> string copies to the context-managed heap, we can use the functions:</p>
+<ul>
+<li><code>char *soap_strdup(struct soap*, const char*)</code> and</li>
+</ul>
+<ul>
+<li><code>wchar_t *soap_wstrdup(struct soap*, const wchar_t*)</code>.</li>
+</ul>
+<p>We use the soapcpp2 auto-generated <code>soap_dup_T</code> functions to duplicate data into another context (this requires soapcpp2 option <code>-Ec</code> to generate), here shown for C with the second argument <code>dst</code> NULL because we want to allocate a new managed structure: </p>
 <pre class="fragment">struct soap *other_soap = soap_new();  // another context
 struct ns__record *other_record = soap_dup_ns__record(other_soap, NULL, record);
 ...
@@ -960,7 +972,7 @@ soap_end(other_soap);      // delete other_record and all of its deep data
 soap_free(other_soap);     // delete context
 </pre><p>Note that the only reason to use another context and not to use the primary context is when the primary context must be destroyed together with all of the objects it manages while some of the objects must be kept alive. If the objects that are kept alive contain deep cycles then this is the only option we have, because deep copy with a managing context detects and preserves these cycles unless the <code>SOAP_XML_TREE</code> flag is used with the context: </p>
 <pre class="fragment">struct soap *other_soap = soap_new1(SOAP_XML_TREE);  // another context
-struct ns__record *other_record = soap_dup_ns__record(other, NULL, record);
+struct ns__record *other_record = soap_dup_ns__record(other_soap, NULL, record);
 </pre><p>The resulting deep copy will be a full copy of the source data structure as a tree without co-referenced data (i.e. no digraph) and without cycles. Cycles are pruned and (one of the) pointers that forms a cycle is repaced by NULL.</p>
 <p>We can also deep copy into unmanaged space and use the auto-generated <code>soap_del_T()</code> function (requires soapcpp2 option <code>-Ed</code> to generate) to delete it later, but we MUST NOT do this for any data that we suspect has deep cycles: </p>
 <pre class="fragment">struct ns__record *other_record = soap_dup_ns__record(NULL, NULL, record);
@@ -980,10 +992,10 @@ free(other_record);                 // delete the record
 struct ns__record pers1, pers2;
 soap_default_ns__record(soap, &amp;pers1);
 soap_default_ns__record(soap, &amp;pers2);
-pers1.name = "Joe";
+pers1.name = "Joe";                     // OK to serialize static data
 pers1.SSN = 1234567890;
 pers1.spouse = &amp;pers2;
-pers2.name = "Jane";
+pers2.name = soap_strdup(soap, "Jane"); // allocates and copies a string
 pers2.SSN = 1987654320;
 pers2.spouse = &amp;pers1;
 ...
@@ -991,7 +1003,7 @@ struct ns__record *pers3 = soap_dup_ns__record(NULL, NULL, &amp;pers1);  // BAD
 struct ns__record *pers4 = soap_dup_ns__record(soap, NULL, &amp;pers1);  // OK
 soap_set_mode(soap, SOAP_XML_TREE);
 struct ns__record *pers5 = soap_dup_ns__record(soap, NULL, &amp;pers1);  // OK
-</pre><p>Note that the gSOAP serializer can serialize any heap, stack, or static allocated data, such as in our code above. So we can serialize the stack-allocated <code>pers1</code> record as follows: </p>
+</pre><p>As we can see, the gSOAP serializer can serialize any heap, stack, or static allocated data, such as in our code above. So we can serialize the stack-allocated <code>pers1</code> record as follows: </p>
 <pre class="fragment">soap-&gt;sendfd = fopen("record.xml", "w");
 soap_set_mode(soap, SOAP_XML_GRAPH);  // support id-ref w/o requiring SOAP
 soap_clr_mode(soap, SOAP_XML_TREE);   // if set, clear
@@ -1029,22 +1041,22 @@ Memory management in C++                                              </h2>
 <p>Only structs, classes, and class templates are allocated with <code>new</code> via <code>soap_new_T(struct soap*)</code> and mass-deleted with <code>soap_destroy(soap)</code>.</p>
 <p>There are four variations of <code>soap_new_T</code> for class/struct/template type <code>T</code> that soapcpp2 auto-generates to create instances on a context-managed heap:</p>
 <ul>
-<li><code>T* soap_new_T(struct soap*)</code> returns a new instance of <code>T</code> with default data member initializations that are set with the soapcpp2 auto-generated <code>void T::soap_default(struct soap*)</code> method), but ONLY IF the soapcpp2 auto-generated default constructor is used that invokes <code>soap_default()</code> and was not replaced by a user-defined default constructor.</li>
+<li><code>T * soap_new_T(struct soap*)</code> returns a new instance of <code>T</code> with default data member initializations that are set with the soapcpp2 auto-generated <code>void T::soap_default(struct soap*)</code> method), but ONLY IF the soapcpp2 auto-generated default constructor is used that invokes <code>soap_default()</code> and was not replaced by a user-defined default constructor.</li>
 </ul>
 <ul>
-<li><code>T* soap_new_T(struct soap*, int n)</code> returns an array of <code>n</code> new instances of <code>T</code>. Similar to the above, instances are initialized.</li>
+<li><code>T * soap_new_T(struct soap*, int n)</code> returns an array of <code>n</code> new instances of <code>T</code>. Similar to the above, instances are initialized.</li>
 </ul>
 <ul>
-<li><code>T* soap_new_req_T(struct soap*, ...)</code> returns a new instance of <code>T</code> and sets the required data members to the values specified in <code>...</code>. The required data members are those with minOccurs &gt; 0, see the subsection on occurrence constraints in <a href="#toxsd9">Classes and structs</a>.</li>
+<li><code>T * soap_new_req_T(struct soap*, ...)</code> returns a new instance of <code>T</code> and sets the required data members to the values specified in <code>...</code>. The required data members are those with minOccurs &gt; 0, see the subsection on occurrence constraints in <a href="#toxsd9">Classes and structs</a>.</li>
 </ul>
 <ul>
-<li><code>T* soap_new_set_T(struct soap*, ...)</code> returns a new instance of <code>T</code> and sets the public/serializable data members to the values specified in <code>...</code>.</li>
+<li><code>T * soap_new_set_T(struct soap*, ...)</code> returns a new instance of <code>T</code> and sets the public/serializable data members to the values specified in <code>...</code>.</li>
 </ul>
 <p>The above functions can be invoked with a NULL <code>soap</code> context, but we will be responsible to use <code>delete T</code> to remove this instance from the unmanaged heap.</p>
 <p>Primitive types and arrays of these are allocated with <code>soap_malloc</code> by the gSOAP engine. As we stated above, all types except for classes, structs, class templates (containers and smart pointers) are allocated with <code>soap_malloc</code> for reasons of efficiency.</p>
-<p>We can use a C++ template to simplify the managed allocation and initialization of primitive values as follows: </p>
+<p>We can use a C++ template to simplify the managed allocation and initialization of primitive values as follows (this is for primitive types only, because we should allocate structs and classes with <code>soap_new_T</code>): </p>
 <pre class="fragment">template&lt;class T&gt;
-T* soap_make(struct soap *soap, T val)
+T * soap_make(struct soap *soap, T val)
 {
   T *p = (T*)soap_malloc(soap, sizeof(T));
   if (p)
@@ -1084,23 +1096,23 @@ ns__record *record = soap_new_set_ns__record(soap, "Joe", &amp;SSN, NULL);
   struct soap *soap;   // the context that manages this instance, or NULL
 };
 </pre><p>The context is set when invoking <code>soap_new_T</code> (and similar) with a non-NULL context argument.</p>
-<p>We use the soapcpp2 auto-generated <code>soap_dup_T</code> functions to duplicate data into another context (this requires soapcpp2 option <code>-Ec</code> to generate): </p>
-<pre class="fragment">soap *other_soap = soap_new();  // another context
-ns__record *other_record = soap_dup_ns__record(other, NULL, record);
-...
-soap_destroy(other_soap);  // delete record and other managed instances
-soap_end(other_soap);      // delete other data (the SSNs on the heap)
-soap_free(other_soap);     // delete context
-</pre><p>To duplicate derived instances when a base class instance is provided, use the auto-generated method <code>T* T::soap_dup(struct soap*)</code>: </p>
+<p>We use the soapcpp2 auto-generated <code>soap_dup_T</code> functions to duplicate data into another context (this requires soapcpp2 option <code>-Ec</code> to generate), here shown for C++ with the second argument <code>dst</code> NULL because we want to allocate a new managed object: </p>
 <pre class="fragment">soap *other_soap = soap_new();  // another context
 ns__record *other_record = soap_dup_ns__record(other_soap, NULL, record);
 ...
 soap_destroy(other_soap);  // delete record and other managed instances
 soap_end(other_soap);      // delete other data (the SSNs on the heap)
 soap_free(other_soap);     // delete context
+</pre><p>To duplicate base and derived instances when a base class pointer or reference is provided, use the auto-generated method <code>T * T::soap_dup(struct soap*)</code>: </p>
+<pre class="fragment">soap *other_soap = soap_new();  // another context
+ns__record *other_record = record-&gt;soap_dup(other_soap);
+...
+soap_destroy(other_soap);  // delete record and other managed instances
+soap_end(other_soap);      // delete other data (the SSNs on the heap)
+soap_free(other_soap);     // delete context
 </pre><p>Note that the only reason to use another context and not to use the primary context is when the primary context must be destroyed together with all of the objects it manages while some of the objects must be kept alive. If the objects that are kept alive contain deep cycles then this is the only option we have, because deep copy with a managing context detects and preserves these cycles unless the <code>SOAP_XML_TREE</code> flag is used with the context: </p>
 <pre class="fragment">soap *other_soap = soap_new1(SOAP_XML_TREE);  // another context
-ns__record *other_record = record-&gt;soap_dup(other_soap);
+ns__record *other_record = record-&gt;soap_dup(other_soap);  // deep tree copy
 </pre><p>The resulting deep copy will be a full copy of the source data structure as a tree without co-referenced data (i.e. no digraph) and without cycles. Cycles are pruned and (one of the) pointers that forms a cycle is repaced by NULL.</p>
 <p>We can also deep copy into unmanaged space and use the auto-generated <code>soap_del_T()</code> function or the <code>T::soap_del()</code> method (requires soapcpp2 option <code>-Ed</code> to generate) to delete it later, but we MUST NOT do this for any data that we suspect has deep cycles: </p>
 <pre class="fragment">ns__record *other_record = record-&gt;soap_dup(NULL);
@@ -1256,6 +1268,6 @@ c++ -I../.. graph.cpp graphC.cpp -o graph -lgsoap++
 <pre class="fragment">./graph</pre> </div></div><!-- contents -->
 </div><!-- doc-content -->
 <hr class="footer"><address class="footer"><small>
-Generated on Fri Oct 23 2015 12:29:38 for <a href="http://www.genivia.com">Genivia</a> documentation of Data Bindings by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Sun Oct 25 2015 21:44:35 for <a href="http://www.genivia.com">Genivia</a> documentation of Data Bindings by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

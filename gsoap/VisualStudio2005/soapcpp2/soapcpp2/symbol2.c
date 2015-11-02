@@ -7410,6 +7410,8 @@ is_transient(Tnode *typ)
     return 0;
   if (typ->transient > 0)
     return 1;
+  if (is_wstring(typ)) /* wchar_t* is serializable but wchar_t is transient */
+    return 0;
   switch (typ->type)
   {
     case Tpointer:
@@ -7420,6 +7422,8 @@ is_transient(Tnode *typ)
       return is_transient((Tnode*)typ->ref);
     case Tnone:
     case Tvoid:
+    case Twchar: /* wchar_t is transient */
+    case Tsize:  /* size_t is transient */
       return 1;
     default:
       break;
@@ -8511,7 +8515,7 @@ xml_tag(Tnode *typ)
 {
   if (!typ)
     return "NULL";
-  if (typ->type == Tpointer || typ->type == Treference || typ->type == Trvalueref)
+  if ((typ->type == Tpointer && !is_string(typ) && !is_wstring(typ)) || typ->type == Treference || typ->type == Trvalueref)
     return xml_tag((Tnode*)typ->ref);
   if (typ->sym)
     return ns_convert(typ->sym->name);
@@ -8583,10 +8587,6 @@ base_type(Tnode *typ, const char *ns)
       if (ns)
         return "xsd:byte";
       return "byte";
-    case Twchar :
-      if (ns)
-        return "xsd:wchar";
-      return "wchar";
     case Tshort :
       if (ns)
         return "xsd:short";
@@ -10550,9 +10550,7 @@ soap_instantiate(Tnode *typ)
   fprintf(fout, "\n\nSOAP_FMAC1 %s * SOAP_FMAC2 soap_instantiate_%s(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)", c_type(typ), c_ident(typ));
   fprintf(fout, "\n{");
   fprintf(fout, "\n\tDBGLOG(TEST, SOAP_MESSAGE(fdebug, \"soap_instantiate_%s(%%p, %%d, %%s, %%s)\\n\", soap, n, type?type:\"\", arrayType?arrayType:\"\"));", c_ident(typ));
-
-  fprintf(fout, "\n\t%s = NULL;\n\tint t = %s;\n\tsize_t k;", c_type_id(typ, "*p"), soap_type(typ));
-  fprintf(fout, "\n\t(void)type; (void)arrayType; /* appease -Wall -Werror */\n\t");
+  fprintf(fout, "\n\t(void)type; (void)arrayType; /* appease -Wall -Werror */");
   for (Eptr = classtable->list; Eptr; Eptr = Eptr->next)
   {
     Tptr = ((Table *) Eptr->info.typ->ref);
@@ -10560,7 +10558,6 @@ soap_instantiate(Tnode *typ)
     {
       continue;
     }
-
     derclass = 0;
     while (Tptr)
     {
@@ -10573,41 +10570,28 @@ soap_instantiate(Tnode *typ)
     if (derclass == 1 && !is_transient(Eptr->info.typ))
     {
       if (is_dynamic_array(Eptr->info.typ) && !is_binary(Eptr->info.typ) && !has_ns(Eptr->info.typ) && !is_untyped(Eptr->info.typ))
-        fprintf(fout, "if (arrayType && !soap_match_tag(soap, arrayType, \"%s\"))", xsi_type(Eptr->info.typ));
+        fprintf(fout, "\n\tif (arrayType && !soap_match_tag(soap, arrayType, \"%s\"))", xsi_type(Eptr->info.typ));
       else
-        fprintf(fout, "if (type && !soap_match_tag(soap, type, \"%s\"))", the_type(Eptr->info.typ));
-      fprintf(fout, "\n\t{\tt = %s;", soap_type(Eptr->info.typ));
-      fprintf(fout, "\n\t\tif (n < 0)");
-      fprintf(fout, "\n\t\t{\tp = SOAP_NEW(%s);", c_type(Eptr->info.typ));
-      fprintf(fout, "\n\t\t\tk = sizeof(%s);", c_type(Eptr->info.typ));
-      if ((s = has_soapref(Eptr->info.typ)))
-        fprintf(fout, "\n\t\t\t((%s*)p)->%s = soap;", c_type(Eptr->info.typ), s);
-      fprintf(fout, "\n\t\t}\n\t\telse");
-      fprintf(fout, "\n\t\t{\tp = SOAP_NEW_ARRAY(%s, n);", c_type(Eptr->info.typ));
-      fprintf(fout, "\n\t\t\tk = n * sizeof(%s);", c_type(Eptr->info.typ));
-      if (s)
-        fprintf(fout, "\n\t\t\tif (p)\n\t\t\t\tfor (int i = 0; i < n; i++)\n\t\t\t\t\t((%s*)p)[i].%s = soap;", c_type(Eptr->info.typ), s);
-      fprintf(fout, "\n\t\t}\n\t}\n\telse ");
+        fprintf(fout, "\n\tif (type && !soap_match_tag(soap, type, \"%s\"))", the_type(Eptr->info.typ));
+      fprintf(fout, "\n\t\treturn soap_instantiate_%s(soap, n, NULL, NULL, size);", c_ident(Eptr->info.typ));
       derclass = 0;
     }
   }
-
-  fprintf(fout, "if (n < 0)");
+  fprintf(fout, "\n\t%s;\n\tsize_t k = sizeof(%s);", c_type_id(typ, "*p"), c_type(typ));
+  fprintf(fout, "\n\tif (n < 0)");
   fprintf(fout, "\n\t{\tp = SOAP_NEW(%s);", c_type(typ));
-  fprintf(fout, "\n\t\tk = sizeof(%s);", c_type(typ));
   if ((s = has_soapref(typ)))
-    fprintf(fout, "\n\t\t((%s*)p)->%s = soap;", c_type(typ), s);
+    fprintf(fout, "\n\t\tif (p)\n\t\t\t((%s*)p)->%s = soap;", c_type(typ), s);
   fprintf(fout, "\n\t}\n\telse");
   fprintf(fout, "\n\t{\tp = SOAP_NEW_ARRAY(%s, n);", c_type(typ));
-  fprintf(fout, "\n\t\tk = n * sizeof(%s);", c_type(typ));
+  fprintf(fout, "\n\t\tk *= n;");
   if (s)
     fprintf(fout, "\n\t\tif (p)\n\t\t\tfor (int i = 0; i < n; i++)\n\t\t\t\t((%s*)p)[i].%s = soap;", c_type(typ), s);
   fprintf(fout, "\n\t}");
-  fprintf(fout, "\n\tDBGLOG(TEST, SOAP_MESSAGE(fdebug, \"Instantiated location=%%p type=%%d n=%%d\\n\", p, t, n));");
-  fprintf(fout, "\n\tsoap_link(soap, p, t, n, %s_fdelete);", prefix);
+  fprintf(fout, "\n\tDBGLOG(TEST, SOAP_MESSAGE(fdebug, \"Instantiated %s location=%%p n=%%d\\n\", p, n));", c_type(typ));
+  fprintf(fout, "\n\tsoap_link(soap, p, %s, n, %s_fdelete);", soap_type(typ), prefix);
   fprintf(fout, "\n\tif (size)\n\t\t*size = k;");
   fprintf(fout, "\n\treturn p;");
-
   fprintf(fout, "\n}");
 }
 
@@ -13066,7 +13050,7 @@ is_fixedstring(Tnode *typ)
 int
 is_wstring(Tnode *typ)
 {
-  return typ->type == Tpointer && ((Tnode*)typ->ref)->type == Twchar && !((Tnode*)typ->ref)->sym;
+  return typ->type == Tpointer && ((Tnode*)typ->ref)->type == Twchar;
 }
 
 int

@@ -21,6 +21,10 @@ long_time.*         Serializes LONG64 milliseconds as xsd:time
 chrono_duration.*   Serializes C++11 std::chrono::nanoseconds as xsd:duration
 chrono_time_point.* Serializes C++11 std::chrono::system_clock as xsd:dateTime
 
+The xsd:dateTime parsers are more permissive to accept alternative ISO8601
+formats. To restrict xsd:dateTime formats to the XSD standard, use the
+SOAP_XML_STRICT flag.
+
 C VERSUS C++
 ------------
 

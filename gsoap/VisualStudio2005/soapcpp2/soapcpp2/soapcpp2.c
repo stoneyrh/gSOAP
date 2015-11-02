@@ -194,8 +194,8 @@ main(int argc, char **argv)
 -C	generate client-side code only\n\
 -S	generate server-side code only\n\
 -T	generate server auto-test code\n\
--Ec	generate extra routines for deep data copying\n\
--Ed	generate extra routines for deep data deletion\n\
+-Ec	generate extra routines for deep copying\n\
+-Ed	generate extra routines for deep deletion\n\
 -L	don't generate soapClientLib/soapServerLib\n\
 -a	use SOAPAction with WS-Addressing to invoke server-side operations\n\
 -A	require SOAPAction to invoke server-side operations\n\
@@ -205,14 +205,14 @@ main(int argc, char **argv)
 -c++11  generate C++ source code optimized for C++11 (compile with -std=c++11)\n\
 -dpath  use path to save files\n\
 -e	generate SOAP RPC encoding style bindings (also use -1 or -2)\n\
--fN	file split of N XML serializer implementations per file (N>=10)\n\
+-fN	multiple soapC files, with N serializer definitions per file (N>=10)\n\
 -h	display help info\n\
 -Ipath  use path(s) for #import (paths separated with '" SOAP_PATHSEP "')\n\
 -i      generate C++ service proxies and objects inherited from soap struct\n\
 -j      generate C++ service proxies and objects that share a soap struct\n\
 -k      generate data structure walkers (experimental)\n\
 -l      generate linkable modules (experimental)\n\
--m      generate Matlab(tm) code for MEX compiler\n\
+-m      generate Matlab(tm) code for MEX compiler (deprecated)\n\
 -n      use service name to rename service functions and namespace table\n\
 -pname  save files with new prefix name instead of 'soap'\n\
 -Qname  use name as the C++ namespace for decls, including custom serializers\n\

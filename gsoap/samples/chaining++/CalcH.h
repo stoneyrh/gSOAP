@@ -883,7 +883,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in__QName(struct soap*, const char*, char **
 SOAP_FMAC3 int SOAP_FMAC4 soap_put__QName(struct soap*, char *const*, const char*, const char*);
 
 #ifndef soap_write__QName
-#define soap_write__QName(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (Calc::soap_serialize__QName(soap, data), 0) || Calc::soap_put__QName(soap, data, "byte", NULL) || soap_end_send(soap), (soap)->error )
+#define soap_write__QName(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (Calc::soap_serialize__QName(soap, data), 0) || Calc::soap_put__QName(soap, data, "QName", NULL) || soap_end_send(soap), (soap)->error )
 #endif
 
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get__QName(struct soap*, char **, const char*, const char*);
@@ -903,7 +903,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_string(struct soap*, const char*, char **
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_string(struct soap*, char *const*, const char*, const char*);
 
 #ifndef soap_write_string
-#define soap_write_string(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (Calc::soap_serialize_string(soap, data), 0) || Calc::soap_put_string(soap, data, "byte", NULL) || soap_end_send(soap), (soap)->error )
+#define soap_write_string(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (Calc::soap_serialize_string(soap, data), 0) || Calc::soap_put_string(soap, data, "string", NULL) || soap_end_send(soap), (soap)->error )
 #endif
 
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get_string(struct soap*, char **, const char*, const char*);

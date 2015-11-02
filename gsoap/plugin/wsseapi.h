@@ -6,7 +6,7 @@
 	See wsseapi.c for documentation and details.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2005, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2005, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -78,6 +78,7 @@ plugin data, together with other info.
 struct soap_wsse_data
 { const char *sigid;		/**< string with wsu:Id names to sign */
   const char *encid;		/**< string with wsu:Id names to encrypt */
+  const char *prefixlist;	/**< string with c14n PrefixList to send, or NULL */
   int sign_alg;			/**< The digest or signature algorithm used */
   const void *sign_key;		/**< EVP_PKEY or key string for HMAC */
   int sign_keylen;		/**< HMAC key length */
@@ -136,15 +137,21 @@ extern const char *ds_rsa_sha1URI;
 extern const char *ds_rsa_sha256URI;
 extern const char *ds_rsa_sha512URI;
 
-extern const char *xenc_rsa15URI;
-extern const char *xenc_rsaesURI;
 extern const char *xenc_3desURI;
-extern const char *xenc_aes128URI;
-extern const char *xenc_aes192URI;
-extern const char *xenc_aes256URI;
-extern const char *xenc_aes512URI;
+extern const char *xenc_aes128cbcURI;
+extern const char *xenc_aes192cbcURI;
+extern const char *xenc_aes256cbcURI;
+extern const char *xenc_aes512cbcURI;
+extern const char *xenc_aes128gcmURI;
+extern const char *xenc_aes192gcmURI;
+extern const char *xenc_aes256gcmURI;
+extern const char *xenc_aes512gcmURI;
+
 extern const char *xenc_elementURI;
 extern const char *xenc_contentURI;
+
+extern const char *xenc_rsa15URI;
+extern const char *xenc_rsaesURI;
 
 extern const char *ds_URI;
 extern const char *c14n_URI;
@@ -183,7 +190,7 @@ struct ds__SignedInfoType *soap_wsse_add_SignedInfo(struct soap *soap);
 int soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, const char *transform, const char *inclusiveNamespaces, int alg, const char *HA);
 int soap_wsse_add_SignedInfo_SignatureMethod(struct soap *soap, const char *method, int canonical);
 struct ds__SignedInfoType *soap_wsse_SignedInfo(struct soap *soap);
-int soap_wsse_get_SignedInfo_SignatureMethod(struct soap *soap, int *alg);
+int soap_wsse_get_SignedInfo_SignatureMethod(struct soap *soap, int *alg, int *bits);
 
 int soap_wsse_add_SignatureValue(struct soap *soap, int alg, const void *key, int keylen);
 int soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int keylen);
@@ -227,6 +234,7 @@ int soap_wsse_verify_done(struct soap *soap);
 size_t soap_wsse_verify_element(struct soap *soap, const char *URI, const char *tag);
 int soap_wsse_verify_body(struct soap *soap);
 int soap_wsse_set_wsu_id(struct soap *soap, const char *tags);
+int soap_wsse_set_InclusiveNamespaces(struct soap *soap, const char *prefixlist);
 int soap_wsse_sign_only(struct soap *soap, const char *tags);
 
 int soap_wsse_add_EncryptedKey(struct soap *soap, int alg, const char *URI, X509 *cert, const char *subjectkeyid, const char *issuer, const char *serial);
@@ -246,7 +254,7 @@ int soap_wsse_decrypt_auto(struct soap *soap, int alg, const void *key, int keyl
 int soap_wsse_encrypt_begin(struct soap *soap, const char *id, int alg, const char *URI, const char *keyname, const unsigned char *key);
 int soap_wsse_encrypt_end(struct soap *soap);
 
-int soap_wsse_decrypt_begin(struct soap *soap, const unsigned char *key);
+int soap_wsse_decrypt_begin(struct soap *soap);
 int soap_wsse_decrypt_end(struct soap *soap);
 
 #ifdef __cplusplus

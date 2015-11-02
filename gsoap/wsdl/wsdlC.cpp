@@ -18,7 +18,7 @@ A commercial use license is available from Genivia Inc., contact@genivia.com
 
 #include "wsdlH.h"
 
-SOAP_SOURCE_STAMP("@(#) wsdlC.cpp ver 2.8.24 2015-10-25 15:30:43 GMT")
+SOAP_SOURCE_STAMP("@(#) wsdlC.cpp ver 2.8.24 2015-11-02 14:25:12 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -4566,20 +4566,18 @@ SOAP_FMAC3 wsdl__service * SOAP_FMAC4 soap_in_wsdl__service(struct soap *soap, c
 SOAP_FMAC1 wsdl__service * SOAP_FMAC2 soap_instantiate_wsdl__service(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__service(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__service *p = NULL;
-	int t = SOAP_TYPE_wsdl__service;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__service *p;
+	size_t k = sizeof(wsdl__service);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__service);
-		k = sizeof(wsdl__service);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__service, n);
-		k = n * sizeof(wsdl__service);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__service location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__service, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -4765,20 +4763,18 @@ SOAP_FMAC3 wsdl__port * SOAP_FMAC4 soap_in_wsdl__port(struct soap *soap, const c
 SOAP_FMAC1 wsdl__port * SOAP_FMAC2 soap_instantiate_wsdl__port(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__port(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__port *p = NULL;
-	int t = SOAP_TYPE_wsdl__port;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__port *p;
+	size_t k = sizeof(wsdl__port);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__port);
-		k = sizeof(wsdl__port);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__port, n);
-		k = n * sizeof(wsdl__port);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__port location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__port, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -4988,20 +4984,18 @@ SOAP_FMAC3 wsdl__binding * SOAP_FMAC4 soap_in_wsdl__binding(struct soap *soap, c
 SOAP_FMAC1 wsdl__binding * SOAP_FMAC2 soap_instantiate_wsdl__binding(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__binding(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__binding *p = NULL;
-	int t = SOAP_TYPE_wsdl__binding;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__binding *p;
+	size_t k = sizeof(wsdl__binding);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__binding);
-		k = sizeof(wsdl__binding);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__binding, n);
-		k = n * sizeof(wsdl__binding);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__binding location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__binding, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -5223,20 +5217,18 @@ SOAP_FMAC3 wsdl__ext_operation * SOAP_FMAC4 soap_in_wsdl__ext_operation(struct s
 SOAP_FMAC1 wsdl__ext_operation * SOAP_FMAC2 soap_instantiate_wsdl__ext_operation(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__ext_operation(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__ext_operation *p = NULL;
-	int t = SOAP_TYPE_wsdl__ext_operation;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__ext_operation *p;
+	size_t k = sizeof(wsdl__ext_operation);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__ext_operation);
-		k = sizeof(wsdl__ext_operation);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__ext_operation, n);
-		k = n * sizeof(wsdl__ext_operation);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__ext_operation location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__ext_operation, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -5409,20 +5401,18 @@ SOAP_FMAC3 wsdl__ext_fault * SOAP_FMAC4 soap_in_wsdl__ext_fault(struct soap *soa
 SOAP_FMAC1 wsdl__ext_fault * SOAP_FMAC2 soap_instantiate_wsdl__ext_fault(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__ext_fault(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__ext_fault *p = NULL;
-	int t = SOAP_TYPE_wsdl__ext_fault;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__ext_fault *p;
+	size_t k = sizeof(wsdl__ext_fault);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__ext_fault);
-		k = sizeof(wsdl__ext_fault);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__ext_fault, n);
-		k = n * sizeof(wsdl__ext_fault);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__ext_fault location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__ext_fault, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -5647,20 +5637,18 @@ SOAP_FMAC3 wsdl__ext_ioput * SOAP_FMAC4 soap_in_wsdl__ext_ioput(struct soap *soa
 SOAP_FMAC1 wsdl__ext_ioput * SOAP_FMAC2 soap_instantiate_wsdl__ext_ioput(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__ext_ioput(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__ext_ioput *p = NULL;
-	int t = SOAP_TYPE_wsdl__ext_ioput;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__ext_ioput *p;
+	size_t k = sizeof(wsdl__ext_ioput);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__ext_ioput);
-		k = sizeof(wsdl__ext_ioput);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__ext_ioput, n);
-		k = n * sizeof(wsdl__ext_ioput);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__ext_ioput location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__ext_ioput, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -5830,20 +5818,18 @@ SOAP_FMAC3 wsdl__fault * SOAP_FMAC4 soap_in_wsdl__fault(struct soap *soap, const
 SOAP_FMAC1 wsdl__fault * SOAP_FMAC2 soap_instantiate_wsdl__fault(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__fault(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__fault *p = NULL;
-	int t = SOAP_TYPE_wsdl__fault;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__fault *p;
+	size_t k = sizeof(wsdl__fault);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__fault);
-		k = sizeof(wsdl__fault);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__fault, n);
-		k = n * sizeof(wsdl__fault);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__fault location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__fault, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -6008,20 +5994,18 @@ SOAP_FMAC3 wsdl__ioput * SOAP_FMAC4 soap_in_wsdl__ioput(struct soap *soap, const
 SOAP_FMAC1 wsdl__ioput * SOAP_FMAC2 soap_instantiate_wsdl__ioput(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__ioput(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__ioput *p = NULL;
-	int t = SOAP_TYPE_wsdl__ioput;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__ioput *p;
+	size_t k = sizeof(wsdl__ioput);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__ioput);
-		k = sizeof(wsdl__ioput);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__ioput, n);
-		k = n * sizeof(wsdl__ioput);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__ioput location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__ioput, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -6229,24 +6213,23 @@ SOAP_FMAC3 wsdl__types * SOAP_FMAC4 soap_in_wsdl__types(struct soap *soap, const
 SOAP_FMAC1 wsdl__types * SOAP_FMAC2 soap_instantiate_wsdl__types(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__types(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__types *p = NULL;
-	int t = SOAP_TYPE_wsdl__types;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__types *p;
+	size_t k = sizeof(wsdl__types);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__types);
-		k = sizeof(wsdl__types);
-		((wsdl__types*)p)->soap = soap;
+		if (p)
+			((wsdl__types*)p)->soap = soap;
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__types, n);
-		k = n * sizeof(wsdl__types);
+		k *= n;
 		if (p)
 			for (int i = 0; i < n; i++)
 				((wsdl__types*)p)[i].soap = soap;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__types location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__types, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -6357,20 +6340,18 @@ SOAP_FMAC3 wsdl__import * SOAP_FMAC4 soap_in_wsdl__import(struct soap *soap, con
 SOAP_FMAC1 wsdl__import * SOAP_FMAC2 soap_instantiate_wsdl__import(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__import(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__import *p = NULL;
-	int t = SOAP_TYPE_wsdl__import;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__import *p;
+	size_t k = sizeof(wsdl__import);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__import);
-		k = sizeof(wsdl__import);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__import, n);
-		k = n * sizeof(wsdl__import);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__import location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__import, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -6516,20 +6497,18 @@ SOAP_FMAC3 vprop__tPropertyAlias * SOAP_FMAC4 soap_in_vprop__tPropertyAlias(stru
 SOAP_FMAC1 vprop__tPropertyAlias * SOAP_FMAC2 soap_instantiate_vprop__tPropertyAlias(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_vprop__tPropertyAlias(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	vprop__tPropertyAlias *p = NULL;
-	int t = SOAP_TYPE_vprop__tPropertyAlias;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	vprop__tPropertyAlias *p;
+	size_t k = sizeof(vprop__tPropertyAlias);
 	if (n < 0)
 	{	p = SOAP_NEW(vprop__tPropertyAlias);
-		k = sizeof(vprop__tPropertyAlias);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(vprop__tPropertyAlias, n);
-		k = n * sizeof(vprop__tPropertyAlias);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated vprop__tPropertyAlias location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_vprop__tPropertyAlias, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -6651,20 +6630,18 @@ SOAP_FMAC3 vprop__tProperty * SOAP_FMAC4 soap_in_vprop__tProperty(struct soap *s
 SOAP_FMAC1 vprop__tProperty * SOAP_FMAC2 soap_instantiate_vprop__tProperty(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_vprop__tProperty(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	vprop__tProperty *p = NULL;
-	int t = SOAP_TYPE_vprop__tProperty;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	vprop__tProperty *p;
+	size_t k = sizeof(vprop__tProperty);
 	if (n < 0)
 	{	p = SOAP_NEW(vprop__tProperty);
-		k = sizeof(vprop__tProperty);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(vprop__tProperty, n);
-		k = n * sizeof(vprop__tProperty);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated vprop__tProperty location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_vprop__tProperty, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -6777,20 +6754,18 @@ SOAP_FMAC3 vprop__tQuery * SOAP_FMAC4 soap_in_vprop__tQuery(struct soap *soap, c
 SOAP_FMAC1 vprop__tQuery * SOAP_FMAC2 soap_instantiate_vprop__tQuery(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_vprop__tQuery(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	vprop__tQuery *p = NULL;
-	int t = SOAP_TYPE_vprop__tQuery;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	vprop__tQuery *p;
+	size_t k = sizeof(vprop__tQuery);
 	if (n < 0)
 	{	p = SOAP_NEW(vprop__tQuery);
-		k = sizeof(vprop__tQuery);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(vprop__tQuery, n);
-		k = n * sizeof(vprop__tQuery);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated vprop__tQuery location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_vprop__tQuery, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -6915,20 +6890,18 @@ SOAP_FMAC3 plnk__tRole * SOAP_FMAC4 soap_in_plnk__tRole(struct soap *soap, const
 SOAP_FMAC1 plnk__tRole * SOAP_FMAC2 soap_instantiate_plnk__tRole(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_plnk__tRole(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	plnk__tRole *p = NULL;
-	int t = SOAP_TYPE_plnk__tRole;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	plnk__tRole *p;
+	size_t k = sizeof(plnk__tRole);
 	if (n < 0)
 	{	p = SOAP_NEW(plnk__tRole);
-		k = sizeof(plnk__tRole);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(plnk__tRole, n);
-		k = n * sizeof(plnk__tRole);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated plnk__tRole location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_plnk__tRole, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -7047,20 +7020,18 @@ SOAP_FMAC3 plnk__tPartnerLinkType * SOAP_FMAC4 soap_in_plnk__tPartnerLinkType(st
 SOAP_FMAC1 plnk__tPartnerLinkType * SOAP_FMAC2 soap_instantiate_plnk__tPartnerLinkType(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_plnk__tPartnerLinkType(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	plnk__tPartnerLinkType *p = NULL;
-	int t = SOAP_TYPE_plnk__tPartnerLinkType;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	plnk__tPartnerLinkType *p;
+	size_t k = sizeof(plnk__tPartnerLinkType);
 	if (n < 0)
 	{	p = SOAP_NEW(plnk__tPartnerLinkType);
-		k = sizeof(plnk__tPartnerLinkType);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(plnk__tPartnerLinkType, n);
-		k = n * sizeof(plnk__tPartnerLinkType);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated plnk__tPartnerLinkType location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_plnk__tPartnerLinkType, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -7220,20 +7191,18 @@ SOAP_FMAC3 wsdl__portType * SOAP_FMAC4 soap_in_wsdl__portType(struct soap *soap,
 SOAP_FMAC1 wsdl__portType * SOAP_FMAC2 soap_instantiate_wsdl__portType(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__portType(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__portType *p = NULL;
-	int t = SOAP_TYPE_wsdl__portType;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__portType *p;
+	size_t k = sizeof(wsdl__portType);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__portType);
-		k = sizeof(wsdl__portType);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__portType, n);
-		k = n * sizeof(wsdl__portType);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__portType location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__portType, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -7347,20 +7316,18 @@ SOAP_FMAC3 wsp__PolicyAttachment * SOAP_FMAC4 soap_in_wsp__PolicyAttachment(stru
 SOAP_FMAC1 wsp__PolicyAttachment * SOAP_FMAC2 soap_instantiate_wsp__PolicyAttachment(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsp__PolicyAttachment(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsp__PolicyAttachment *p = NULL;
-	int t = SOAP_TYPE_wsp__PolicyAttachment;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsp__PolicyAttachment *p;
+	size_t k = sizeof(wsp__PolicyAttachment);
 	if (n < 0)
 	{	p = SOAP_NEW(wsp__PolicyAttachment);
-		k = sizeof(wsp__PolicyAttachment);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsp__PolicyAttachment, n);
-		k = n * sizeof(wsp__PolicyAttachment);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsp__PolicyAttachment location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsp__PolicyAttachment, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -7466,20 +7433,18 @@ SOAP_FMAC3 wsp__AppliesTo * SOAP_FMAC4 soap_in_wsp__AppliesTo(struct soap *soap,
 SOAP_FMAC1 wsp__AppliesTo * SOAP_FMAC2 soap_instantiate_wsp__AppliesTo(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsp__AppliesTo(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsp__AppliesTo *p = NULL;
-	int t = SOAP_TYPE_wsp__AppliesTo;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsp__AppliesTo *p;
+	size_t k = sizeof(wsp__AppliesTo);
 	if (n < 0)
 	{	p = SOAP_NEW(wsp__AppliesTo);
-		k = sizeof(wsp__AppliesTo);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsp__AppliesTo, n);
-		k = n * sizeof(wsp__AppliesTo);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsp__AppliesTo location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsp__AppliesTo, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -7596,20 +7561,18 @@ SOAP_FMAC3 wsp__Attachment * SOAP_FMAC4 soap_in_wsp__Attachment(struct soap *soa
 SOAP_FMAC1 wsp__Attachment * SOAP_FMAC2 soap_instantiate_wsp__Attachment(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsp__Attachment(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsp__Attachment *p = NULL;
-	int t = SOAP_TYPE_wsp__Attachment;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsp__Attachment *p;
+	size_t k = sizeof(wsp__Attachment);
 	if (n < 0)
 	{	p = SOAP_NEW(wsp__Attachment);
-		k = sizeof(wsp__Attachment);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsp__Attachment, n);
-		k = n * sizeof(wsp__Attachment);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsp__Attachment location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsp__Attachment, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -7762,20 +7725,18 @@ SOAP_FMAC3 wsrmp__RMAssertion * SOAP_FMAC4 soap_in_wsrmp__RMAssertion(struct soa
 SOAP_FMAC1 wsrmp__RMAssertion * SOAP_FMAC2 soap_instantiate_wsrmp__RMAssertion(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsrmp__RMAssertion(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsrmp__RMAssertion *p = NULL;
-	int t = SOAP_TYPE_wsrmp__RMAssertion;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsrmp__RMAssertion *p;
+	size_t k = sizeof(wsrmp__RMAssertion);
 	if (n < 0)
 	{	p = SOAP_NEW(wsrmp__RMAssertion);
-		k = sizeof(wsrmp__RMAssertion);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsrmp__RMAssertion, n);
-		k = n * sizeof(wsrmp__RMAssertion);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsrmp__RMAssertion location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsrmp__RMAssertion, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -7877,20 +7838,18 @@ SOAP_FMAC3 wsrmp__Timeout * SOAP_FMAC4 soap_in_wsrmp__Timeout(struct soap *soap,
 SOAP_FMAC1 wsrmp__Timeout * SOAP_FMAC2 soap_instantiate_wsrmp__Timeout(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsrmp__Timeout(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsrmp__Timeout *p = NULL;
-	int t = SOAP_TYPE_wsrmp__Timeout;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsrmp__Timeout *p;
+	size_t k = sizeof(wsrmp__Timeout);
 	if (n < 0)
 	{	p = SOAP_NEW(wsrmp__Timeout);
-		k = sizeof(wsrmp__Timeout);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsrmp__Timeout, n);
-		k = n * sizeof(wsrmp__Timeout);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsrmp__Timeout location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsrmp__Timeout, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -8038,20 +7997,18 @@ SOAP_FMAC3 sp__Token * SOAP_FMAC4 soap_in_sp__Token(struct soap *soap, const cha
 SOAP_FMAC1 sp__Token * SOAP_FMAC2 soap_instantiate_sp__Token(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_sp__Token(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	sp__Token *p = NULL;
-	int t = SOAP_TYPE_sp__Token;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	sp__Token *p;
+	size_t k = sizeof(sp__Token);
 	if (n < 0)
 	{	p = SOAP_NEW(sp__Token);
-		k = sizeof(sp__Token);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(sp__Token, n);
-		k = n * sizeof(sp__Token);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated sp__Token location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_sp__Token, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -8160,20 +8117,18 @@ SOAP_FMAC3 sp__Elements * SOAP_FMAC4 soap_in_sp__Elements(struct soap *soap, con
 SOAP_FMAC1 sp__Elements * SOAP_FMAC2 soap_instantiate_sp__Elements(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_sp__Elements(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	sp__Elements *p = NULL;
-	int t = SOAP_TYPE_sp__Elements;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	sp__Elements *p;
+	size_t k = sizeof(sp__Elements);
 	if (n < 0)
 	{	p = SOAP_NEW(sp__Elements);
-		k = sizeof(sp__Elements);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(sp__Elements, n);
-		k = n * sizeof(sp__Elements);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated sp__Elements location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_sp__Elements, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -8297,20 +8252,18 @@ SOAP_FMAC3 sp__Parts * SOAP_FMAC4 soap_in_sp__Parts(struct soap *soap, const cha
 SOAP_FMAC1 sp__Parts * SOAP_FMAC2 soap_instantiate_sp__Parts(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_sp__Parts(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	sp__Parts *p = NULL;
-	int t = SOAP_TYPE_sp__Parts;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	sp__Parts *p;
+	size_t k = sizeof(sp__Parts);
 	if (n < 0)
 	{	p = SOAP_NEW(sp__Parts);
-		k = sizeof(sp__Parts);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(sp__Parts, n);
-		k = n * sizeof(sp__Parts);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated sp__Parts location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_sp__Parts, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -8417,20 +8370,18 @@ SOAP_FMAC3 sp__Header * SOAP_FMAC4 soap_in_sp__Header(struct soap *soap, const c
 SOAP_FMAC1 sp__Header * SOAP_FMAC2 soap_instantiate_sp__Header(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_sp__Header(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	sp__Header *p = NULL;
-	int t = SOAP_TYPE_sp__Header;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	sp__Header *p;
+	size_t k = sizeof(sp__Header);
 	if (n < 0)
 	{	p = SOAP_NEW(sp__Header);
-		k = sizeof(sp__Header);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(sp__Header, n);
-		k = n * sizeof(sp__Header);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated sp__Header location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_sp__Header, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -8513,20 +8464,18 @@ SOAP_FMAC3 wst__Claims * SOAP_FMAC4 soap_in_wst__Claims(struct soap *soap, const
 SOAP_FMAC1 wst__Claims * SOAP_FMAC2 soap_instantiate_wst__Claims(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wst__Claims(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wst__Claims *p = NULL;
-	int t = SOAP_TYPE_wst__Claims;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wst__Claims *p;
+	size_t k = sizeof(wst__Claims);
 	if (n < 0)
 	{	p = SOAP_NEW(wst__Claims);
-		k = sizeof(wst__Claims);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wst__Claims, n);
-		k = n * sizeof(wst__Claims);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wst__Claims location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wst__Claims, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -8641,42 +8590,22 @@ SOAP_FMAC3 wsp__Assertion * SOAP_FMAC4 soap_in_wsp__Assertion(struct soap *soap,
 SOAP_FMAC1 wsp__Assertion * SOAP_FMAC2 soap_instantiate_wsp__Assertion(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsp__Assertion(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsp__Assertion *p = NULL;
-	int t = SOAP_TYPE_wsp__Assertion;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
 	if (type && !soap_match_tag(soap, type, "sp:Token"))
-	{	t = SOAP_TYPE_sp__Token;
-		if (n < 0)
-		{	p = SOAP_NEW(sp__Token);
-			k = sizeof(sp__Token);
-		}
-		else
-		{	p = SOAP_NEW_ARRAY(sp__Token, n);
-			k = n * sizeof(sp__Token);
-		}
-	}
-	else if (type && !soap_match_tag(soap, type, "wsrmp:RMAssertion"))
-	{	t = SOAP_TYPE_wsrmp__RMAssertion;
-		if (n < 0)
-		{	p = SOAP_NEW(wsrmp__RMAssertion);
-			k = sizeof(wsrmp__RMAssertion);
-		}
-		else
-		{	p = SOAP_NEW_ARRAY(wsrmp__RMAssertion, n);
-			k = n * sizeof(wsrmp__RMAssertion);
-		}
-	}
-	else if (n < 0)
+		return soap_instantiate_sp__Token(soap, n, NULL, NULL, size);
+	if (type && !soap_match_tag(soap, type, "wsrmp:RMAssertion"))
+		return soap_instantiate_wsrmp__RMAssertion(soap, n, NULL, NULL, size);
+	wsp__Assertion *p;
+	size_t k = sizeof(wsp__Assertion);
+	if (n < 0)
 	{	p = SOAP_NEW(wsp__Assertion);
-		k = sizeof(wsp__Assertion);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsp__Assertion, n);
-		k = n * sizeof(wsp__Assertion);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsp__Assertion location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsp__Assertion, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -8792,20 +8721,18 @@ SOAP_FMAC3 wsp__PolicyReference * SOAP_FMAC4 soap_in_wsp__PolicyReference(struct
 SOAP_FMAC1 wsp__PolicyReference * SOAP_FMAC2 soap_instantiate_wsp__PolicyReference(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsp__PolicyReference(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsp__PolicyReference *p = NULL;
-	int t = SOAP_TYPE_wsp__PolicyReference;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsp__PolicyReference *p;
+	size_t k = sizeof(wsp__PolicyReference);
 	if (n < 0)
 	{	p = SOAP_NEW(wsp__PolicyReference);
-		k = sizeof(wsp__PolicyReference);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsp__PolicyReference, n);
-		k = n * sizeof(wsp__PolicyReference);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsp__PolicyReference location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsp__PolicyReference, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -10244,31 +10171,20 @@ SOAP_FMAC3 wsp__Content * SOAP_FMAC4 soap_in_wsp__Content(struct soap *soap, con
 SOAP_FMAC1 wsp__Content * SOAP_FMAC2 soap_instantiate_wsp__Content(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsp__Content(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsp__Content *p = NULL;
-	int t = SOAP_TYPE_wsp__Content;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
 	if (type && !soap_match_tag(soap, type, "wsp:Policy"))
-	{	t = SOAP_TYPE_wsp__Policy;
-		if (n < 0)
-		{	p = SOAP_NEW(wsp__Policy);
-			k = sizeof(wsp__Policy);
-		}
-		else
-		{	p = SOAP_NEW_ARRAY(wsp__Policy, n);
-			k = n * sizeof(wsp__Policy);
-		}
-	}
-	else if (n < 0)
+		return soap_instantiate_wsp__Policy(soap, n, NULL, NULL, size);
+	wsp__Content *p;
+	size_t k = sizeof(wsp__Content);
+	if (n < 0)
 	{	p = SOAP_NEW(wsp__Content);
-		k = sizeof(wsp__Content);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsp__Content, n);
-		k = n * sizeof(wsp__Content);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsp__Content location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsp__Content, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -11452,20 +11368,18 @@ SOAP_FMAC3 wsp__Policy * SOAP_FMAC4 soap_in_wsp__Policy(struct soap *soap, const
 SOAP_FMAC1 wsp__Policy * SOAP_FMAC2 soap_instantiate_wsp__Policy(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsp__Policy(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsp__Policy *p = NULL;
-	int t = SOAP_TYPE_wsp__Policy;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsp__Policy *p;
+	size_t k = sizeof(wsp__Policy);
 	if (n < 0)
 	{	p = SOAP_NEW(wsp__Policy);
-		k = sizeof(wsp__Policy);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsp__Policy, n);
-		k = n * sizeof(wsp__Policy);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsp__Policy location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsp__Policy, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -11581,20 +11495,18 @@ SOAP_FMAC3 wsa__EndpointReferenceType * SOAP_FMAC4 soap_in_wsa__EndpointReferenc
 SOAP_FMAC1 wsa__EndpointReferenceType * SOAP_FMAC2 soap_instantiate_wsa__EndpointReferenceType(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsa__EndpointReferenceType(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsa__EndpointReferenceType *p = NULL;
-	int t = SOAP_TYPE_wsa__EndpointReferenceType;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsa__EndpointReferenceType *p;
+	size_t k = sizeof(wsa__EndpointReferenceType);
 	if (n < 0)
 	{	p = SOAP_NEW(wsa__EndpointReferenceType);
-		k = sizeof(wsa__EndpointReferenceType);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsa__EndpointReferenceType, n);
-		k = n * sizeof(wsa__EndpointReferenceType);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsa__EndpointReferenceType location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsa__EndpointReferenceType, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -11735,20 +11647,18 @@ SOAP_FMAC3 gwsdl__portType * SOAP_FMAC4 soap_in_gwsdl__portType(struct soap *soa
 SOAP_FMAC1 gwsdl__portType * SOAP_FMAC2 soap_instantiate_gwsdl__portType(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_gwsdl__portType(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	gwsdl__portType *p = NULL;
-	int t = SOAP_TYPE_gwsdl__portType;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	gwsdl__portType *p;
+	size_t k = sizeof(gwsdl__portType);
 	if (n < 0)
 	{	p = SOAP_NEW(gwsdl__portType);
-		k = sizeof(gwsdl__portType);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(gwsdl__portType, n);
-		k = n * sizeof(gwsdl__portType);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated gwsdl__portType location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_gwsdl__portType, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -11860,20 +11770,18 @@ SOAP_FMAC3 sd__staticServiceDataValues * SOAP_FMAC4 soap_in_sd__staticServiceDat
 SOAP_FMAC1 sd__staticServiceDataValues * SOAP_FMAC2 soap_instantiate_sd__staticServiceDataValues(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_sd__staticServiceDataValues(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	sd__staticServiceDataValues *p = NULL;
-	int t = SOAP_TYPE_sd__staticServiceDataValues;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	sd__staticServiceDataValues *p;
+	size_t k = sizeof(sd__staticServiceDataValues);
 	if (n < 0)
 	{	p = SOAP_NEW(sd__staticServiceDataValues);
-		k = sizeof(sd__staticServiceDataValues);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(sd__staticServiceDataValues, n);
-		k = n * sizeof(sd__staticServiceDataValues);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated sd__staticServiceDataValues location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_sd__staticServiceDataValues, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -12002,20 +11910,18 @@ SOAP_FMAC3 sd__serviceData * SOAP_FMAC4 soap_in_sd__serviceData(struct soap *soa
 SOAP_FMAC1 sd__serviceData * SOAP_FMAC2 soap_instantiate_sd__serviceData(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_sd__serviceData(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	sd__serviceData *p = NULL;
-	int t = SOAP_TYPE_sd__serviceData;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	sd__serviceData *p;
+	size_t k = sizeof(sd__serviceData);
 	if (n < 0)
 	{	p = SOAP_NEW(sd__serviceData);
-		k = sizeof(sd__serviceData);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(sd__serviceData, n);
-		k = n * sizeof(sd__serviceData);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated sd__serviceData location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_sd__serviceData, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -12208,20 +12114,18 @@ SOAP_FMAC3 wsdl__operation * SOAP_FMAC4 soap_in_wsdl__operation(struct soap *soa
 SOAP_FMAC1 wsdl__operation * SOAP_FMAC2 soap_instantiate_wsdl__operation(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__operation(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__operation *p = NULL;
-	int t = SOAP_TYPE_wsdl__operation;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__operation *p;
+	size_t k = sizeof(wsdl__operation);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__operation);
-		k = sizeof(wsdl__operation);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__operation, n);
-		k = n * sizeof(wsdl__operation);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__operation location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__operation, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -12332,20 +12236,18 @@ SOAP_FMAC3 whttp__header * SOAP_FMAC4 soap_in_whttp__header(struct soap *soap, c
 SOAP_FMAC1 whttp__header * SOAP_FMAC2 soap_instantiate_whttp__header(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_whttp__header(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	whttp__header *p = NULL;
-	int t = SOAP_TYPE_whttp__header;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	whttp__header *p;
+	size_t k = sizeof(whttp__header);
 	if (n < 0)
 	{	p = SOAP_NEW(whttp__header);
-		k = sizeof(whttp__header);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(whttp__header, n);
-		k = n * sizeof(whttp__header);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated whttp__header location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_whttp__header, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -12447,20 +12349,18 @@ SOAP_FMAC3 http__operation * SOAP_FMAC4 soap_in_http__operation(struct soap *soa
 SOAP_FMAC1 http__operation * SOAP_FMAC2 soap_instantiate_http__operation(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_http__operation(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	http__operation *p = NULL;
-	int t = SOAP_TYPE_http__operation;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	http__operation *p;
+	size_t k = sizeof(http__operation);
 	if (n < 0)
 	{	p = SOAP_NEW(http__operation);
-		k = sizeof(http__operation);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(http__operation, n);
-		k = n * sizeof(http__operation);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated http__operation location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_http__operation, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -12562,20 +12462,18 @@ SOAP_FMAC3 http__binding * SOAP_FMAC4 soap_in_http__binding(struct soap *soap, c
 SOAP_FMAC1 http__binding * SOAP_FMAC2 soap_instantiate_http__binding(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_http__binding(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	http__binding *p = NULL;
-	int t = SOAP_TYPE_http__binding;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	http__binding *p;
+	size_t k = sizeof(http__binding);
 	if (n < 0)
 	{	p = SOAP_NEW(http__binding);
-		k = sizeof(http__binding);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(http__binding, n);
-		k = n * sizeof(http__binding);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated http__binding location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_http__binding, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -12677,20 +12575,18 @@ SOAP_FMAC3 http__address * SOAP_FMAC4 soap_in_http__address(struct soap *soap, c
 SOAP_FMAC1 http__address * SOAP_FMAC2 soap_instantiate_http__address(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_http__address(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	http__address *p = NULL;
-	int t = SOAP_TYPE_http__address;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	http__address *p;
+	size_t k = sizeof(http__address);
 	if (n < 0)
 	{	p = SOAP_NEW(http__address);
-		k = sizeof(http__address);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(http__address, n);
-		k = n * sizeof(http__address);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated http__address location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_http__address, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -12792,20 +12688,18 @@ SOAP_FMAC3 dime__message * SOAP_FMAC4 soap_in_dime__message(struct soap *soap, c
 SOAP_FMAC1 dime__message * SOAP_FMAC2 soap_instantiate_dime__message(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_dime__message(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	dime__message *p = NULL;
-	int t = SOAP_TYPE_dime__message;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	dime__message *p;
+	size_t k = sizeof(dime__message);
 	if (n < 0)
 	{	p = SOAP_NEW(dime__message);
-		k = sizeof(dime__message);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(dime__message, n);
-		k = n * sizeof(dime__message);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated dime__message location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_dime__message, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -12907,20 +12801,18 @@ SOAP_FMAC3 mime__mimeXml * SOAP_FMAC4 soap_in_mime__mimeXml(struct soap *soap, c
 SOAP_FMAC1 mime__mimeXml * SOAP_FMAC2 soap_instantiate_mime__mimeXml(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_mime__mimeXml(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	mime__mimeXml *p = NULL;
-	int t = SOAP_TYPE_mime__mimeXml;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	mime__mimeXml *p;
+	size_t k = sizeof(mime__mimeXml);
 	if (n < 0)
 	{	p = SOAP_NEW(mime__mimeXml);
-		k = sizeof(mime__mimeXml);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(mime__mimeXml, n);
-		k = n * sizeof(mime__mimeXml);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated mime__mimeXml location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_mime__mimeXml, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -13024,20 +12916,18 @@ SOAP_FMAC3 mime__multipartRelated * SOAP_FMAC4 soap_in_mime__multipartRelated(st
 SOAP_FMAC1 mime__multipartRelated * SOAP_FMAC2 soap_instantiate_mime__multipartRelated(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_mime__multipartRelated(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	mime__multipartRelated *p = NULL;
-	int t = SOAP_TYPE_mime__multipartRelated;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	mime__multipartRelated *p;
+	size_t k = sizeof(mime__multipartRelated);
 	if (n < 0)
 	{	p = SOAP_NEW(mime__multipartRelated);
-		k = sizeof(mime__multipartRelated);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(mime__multipartRelated, n);
-		k = n * sizeof(mime__multipartRelated);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated mime__multipartRelated location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_mime__multipartRelated, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -13158,20 +13048,18 @@ SOAP_FMAC3 mime__part * SOAP_FMAC4 soap_in_mime__part(struct soap *soap, const c
 SOAP_FMAC1 mime__part * SOAP_FMAC2 soap_instantiate_mime__part(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_mime__part(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	mime__part *p = NULL;
-	int t = SOAP_TYPE_mime__part;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	mime__part *p;
+	size_t k = sizeof(mime__part);
 	if (n < 0)
 	{	p = SOAP_NEW(mime__part);
-		k = sizeof(mime__part);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(mime__part, n);
-		k = n * sizeof(mime__part);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated mime__part location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_mime__part, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -13278,20 +13166,18 @@ SOAP_FMAC3 mime__content * SOAP_FMAC4 soap_in_mime__content(struct soap *soap, c
 SOAP_FMAC1 mime__content * SOAP_FMAC2 soap_instantiate_mime__content(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_mime__content(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	mime__content *p = NULL;
-	int t = SOAP_TYPE_mime__content;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	mime__content *p;
+	size_t k = sizeof(mime__content);
 	if (n < 0)
 	{	p = SOAP_NEW(mime__content);
-		k = sizeof(mime__content);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(mime__content, n);
-		k = n * sizeof(mime__content);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated mime__content location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_mime__content, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -13405,20 +13291,18 @@ SOAP_FMAC3 wsoap__header * SOAP_FMAC4 soap_in_wsoap__header(struct soap *soap, c
 SOAP_FMAC1 wsoap__header * SOAP_FMAC2 soap_instantiate_wsoap__header(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsoap__header(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsoap__header *p = NULL;
-	int t = SOAP_TYPE_wsoap__header;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsoap__header *p;
+	size_t k = sizeof(wsoap__header);
 	if (n < 0)
 	{	p = SOAP_NEW(wsoap__header);
-		k = sizeof(wsoap__header);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsoap__header, n);
-		k = n * sizeof(wsoap__header);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsoap__header location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsoap__header, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -13524,20 +13408,18 @@ SOAP_FMAC3 wsoap__module * SOAP_FMAC4 soap_in_wsoap__module(struct soap *soap, c
 SOAP_FMAC1 wsoap__module * SOAP_FMAC2 soap_instantiate_wsoap__module(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsoap__module(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsoap__module *p = NULL;
-	int t = SOAP_TYPE_wsoap__module;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsoap__module *p;
+	size_t k = sizeof(wsoap__module);
 	if (n < 0)
 	{	p = SOAP_NEW(wsoap__module);
-		k = sizeof(wsoap__module);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsoap__module, n);
-		k = n * sizeof(wsoap__module);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsoap__module location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsoap__module, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -13639,20 +13521,18 @@ SOAP_FMAC3 soap__address * SOAP_FMAC4 soap_in_soap__address(struct soap *soap, c
 SOAP_FMAC1 soap__address * SOAP_FMAC2 soap_instantiate_soap__address(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_soap__address(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	soap__address *p = NULL;
-	int t = SOAP_TYPE_soap__address;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	soap__address *p;
+	size_t k = sizeof(soap__address);
 	if (n < 0)
 	{	p = SOAP_NEW(soap__address);
-		k = sizeof(soap__address);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(soap__address, n);
-		k = n * sizeof(soap__address);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated soap__address location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_soap__address, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -13788,20 +13668,18 @@ SOAP_FMAC3 soap__header * SOAP_FMAC4 soap_in_soap__header(struct soap *soap, con
 SOAP_FMAC1 soap__header * SOAP_FMAC2 soap_instantiate_soap__header(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_soap__header(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	soap__header *p = NULL;
-	int t = SOAP_TYPE_soap__header;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	soap__header *p;
+	size_t k = sizeof(soap__header);
 	if (n < 0)
 	{	p = SOAP_NEW(soap__header);
-		k = sizeof(soap__header);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(soap__header, n);
-		k = n * sizeof(soap__header);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated soap__header location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_soap__header, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -13930,20 +13808,18 @@ SOAP_FMAC3 soap__headerfault * SOAP_FMAC4 soap_in_soap__headerfault(struct soap 
 SOAP_FMAC1 soap__headerfault * SOAP_FMAC2 soap_instantiate_soap__headerfault(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_soap__headerfault(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	soap__headerfault *p = NULL;
-	int t = SOAP_TYPE_soap__headerfault;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	soap__headerfault *p;
+	size_t k = sizeof(soap__headerfault);
 	if (n < 0)
 	{	p = SOAP_NEW(soap__headerfault);
-		k = sizeof(soap__headerfault);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(soap__headerfault, n);
-		k = n * sizeof(soap__headerfault);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated soap__headerfault location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_soap__headerfault, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -14059,20 +13935,18 @@ SOAP_FMAC3 soap__fault * SOAP_FMAC4 soap_in_soap__fault(struct soap *soap, const
 SOAP_FMAC1 soap__fault * SOAP_FMAC2 soap_instantiate_soap__fault(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_soap__fault(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	soap__fault *p = NULL;
-	int t = SOAP_TYPE_soap__fault;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	soap__fault *p;
+	size_t k = sizeof(soap__fault);
 	if (n < 0)
 	{	p = SOAP_NEW(soap__fault);
-		k = sizeof(soap__fault);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(soap__fault, n);
-		k = n * sizeof(soap__fault);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated soap__fault location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_soap__fault, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -14188,20 +14062,18 @@ SOAP_FMAC3 soap__body * SOAP_FMAC4 soap_in_soap__body(struct soap *soap, const c
 SOAP_FMAC1 soap__body * SOAP_FMAC2 soap_instantiate_soap__body(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_soap__body(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	soap__body *p = NULL;
-	int t = SOAP_TYPE_soap__body;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	soap__body *p;
+	size_t k = sizeof(soap__body);
 	if (n < 0)
 	{	p = SOAP_NEW(soap__body);
-		k = sizeof(soap__body);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(soap__body, n);
-		k = n * sizeof(soap__body);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated soap__body location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_soap__body, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -14323,20 +14195,18 @@ SOAP_FMAC3 soap__operation * SOAP_FMAC4 soap_in_soap__operation(struct soap *soa
 SOAP_FMAC1 soap__operation * SOAP_FMAC2 soap_instantiate_soap__operation(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_soap__operation(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	soap__operation *p = NULL;
-	int t = SOAP_TYPE_soap__operation;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	soap__operation *p;
+	size_t k = sizeof(soap__operation);
 	if (n < 0)
 	{	p = SOAP_NEW(soap__operation);
-		k = sizeof(soap__operation);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(soap__operation, n);
-		k = n * sizeof(soap__operation);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated soap__operation location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_soap__operation, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -14454,20 +14324,18 @@ SOAP_FMAC3 soap__binding * SOAP_FMAC4 soap_in_soap__binding(struct soap *soap, c
 SOAP_FMAC1 soap__binding * SOAP_FMAC2 soap_instantiate_soap__binding(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_soap__binding(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	soap__binding *p = NULL;
-	int t = SOAP_TYPE_soap__binding;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	soap__binding *p;
+	size_t k = sizeof(soap__binding);
 	if (n < 0)
 	{	p = SOAP_NEW(soap__binding);
-		k = sizeof(soap__binding);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(soap__binding, n);
-		k = n * sizeof(soap__binding);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated soap__binding location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_soap__binding, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -14601,20 +14469,18 @@ SOAP_FMAC3 wsdl__part * SOAP_FMAC4 soap_in_wsdl__part(struct soap *soap, const c
 SOAP_FMAC1 wsdl__part * SOAP_FMAC2 soap_instantiate_wsdl__part(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__part(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__part *p = NULL;
-	int t = SOAP_TYPE_wsdl__part;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__part *p;
+	size_t k = sizeof(wsdl__part);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__part);
-		k = sizeof(wsdl__part);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__part, n);
-		k = n * sizeof(wsdl__part);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__part location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__part, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -14747,20 +14613,18 @@ SOAP_FMAC3 wsdl__message * SOAP_FMAC4 soap_in_wsdl__message(struct soap *soap, c
 SOAP_FMAC1 wsdl__message * SOAP_FMAC2 soap_instantiate_wsdl__message(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__message(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__message *p = NULL;
-	int t = SOAP_TYPE_wsdl__message;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__message *p;
+	size_t k = sizeof(wsdl__message);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__message);
-		k = sizeof(wsdl__message);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__message, n);
-		k = n * sizeof(wsdl__message);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__message location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__message, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -15010,24 +14874,23 @@ SOAP_FMAC3 wsdl__definitions * SOAP_FMAC4 soap_in_wsdl__definitions(struct soap 
 SOAP_FMAC1 wsdl__definitions * SOAP_FMAC2 soap_instantiate_wsdl__definitions(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_wsdl__definitions(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	wsdl__definitions *p = NULL;
-	int t = SOAP_TYPE_wsdl__definitions;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	wsdl__definitions *p;
+	size_t k = sizeof(wsdl__definitions);
 	if (n < 0)
 	{	p = SOAP_NEW(wsdl__definitions);
-		k = sizeof(wsdl__definitions);
-		((wsdl__definitions*)p)->soap = soap;
+		if (p)
+			((wsdl__definitions*)p)->soap = soap;
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(wsdl__definitions, n);
-		k = n * sizeof(wsdl__definitions);
+		k *= n;
 		if (p)
 			for (int i = 0; i < n; i++)
 				((wsdl__definitions*)p)[i].soap = soap;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated wsdl__definitions location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_wsdl__definitions, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -15161,20 +15024,18 @@ SOAP_FMAC3 xs__redefine * SOAP_FMAC4 soap_in_xs__redefine(struct soap *soap, con
 SOAP_FMAC1 xs__redefine * SOAP_FMAC2 soap_instantiate_xs__redefine(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__redefine(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__redefine *p = NULL;
-	int t = SOAP_TYPE_xs__redefine;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__redefine *p;
+	size_t k = sizeof(xs__redefine);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__redefine);
-		k = sizeof(xs__redefine);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__redefine, n);
-		k = n * sizeof(xs__redefine);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__redefine location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__redefine, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -15322,20 +15183,18 @@ SOAP_FMAC3 xs__override * SOAP_FMAC4 soap_in_xs__override(struct soap *soap, con
 SOAP_FMAC1 xs__override * SOAP_FMAC2 soap_instantiate_xs__override(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__override(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__override *p = NULL;
-	int t = SOAP_TYPE_xs__override;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__override *p;
+	size_t k = sizeof(xs__override);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__override);
-		k = sizeof(xs__override);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__override, n);
-		k = n * sizeof(xs__override);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__override location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__override, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -15441,20 +15300,18 @@ SOAP_FMAC3 xs__include * SOAP_FMAC4 soap_in_xs__include(struct soap *soap, const
 SOAP_FMAC1 xs__include * SOAP_FMAC2 soap_instantiate_xs__include(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__include(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__include *p = NULL;
-	int t = SOAP_TYPE_xs__include;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__include *p;
+	size_t k = sizeof(xs__include);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__include);
-		k = sizeof(xs__include);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__include, n);
-		k = n * sizeof(xs__include);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__include location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__include, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -15565,20 +15422,18 @@ SOAP_FMAC3 xs__import * SOAP_FMAC4 soap_in_xs__import(struct soap *soap, const c
 SOAP_FMAC1 xs__import * SOAP_FMAC2 soap_instantiate_xs__import(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__import(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__import *p = NULL;
-	int t = SOAP_TYPE_xs__import;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__import *p;
+	size_t k = sizeof(xs__import);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__import);
-		k = sizeof(xs__import);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__import, n);
-		k = n * sizeof(xs__import);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__import location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__import, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -15709,20 +15564,18 @@ SOAP_FMAC3 xs__complexContent * SOAP_FMAC4 soap_in_xs__complexContent(struct soa
 SOAP_FMAC1 xs__complexContent * SOAP_FMAC2 soap_instantiate_xs__complexContent(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__complexContent(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__complexContent *p = NULL;
-	int t = SOAP_TYPE_xs__complexContent;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__complexContent *p;
+	size_t k = sizeof(xs__complexContent);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__complexContent);
-		k = sizeof(xs__complexContent);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__complexContent, n);
-		k = n * sizeof(xs__complexContent);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__complexContent location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__complexContent, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -15824,20 +15677,18 @@ SOAP_FMAC3 xs__whiteSpace * SOAP_FMAC4 soap_in_xs__whiteSpace(struct soap *soap,
 SOAP_FMAC1 xs__whiteSpace * SOAP_FMAC2 soap_instantiate_xs__whiteSpace(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__whiteSpace(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__whiteSpace *p = NULL;
-	int t = SOAP_TYPE_xs__whiteSpace;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__whiteSpace *p;
+	size_t k = sizeof(xs__whiteSpace);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__whiteSpace);
-		k = sizeof(xs__whiteSpace);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__whiteSpace, n);
-		k = n * sizeof(xs__whiteSpace);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__whiteSpace location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__whiteSpace, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -15953,20 +15804,18 @@ SOAP_FMAC3 xs__length * SOAP_FMAC4 soap_in_xs__length(struct soap *soap, const c
 SOAP_FMAC1 xs__length * SOAP_FMAC2 soap_instantiate_xs__length(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__length(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__length *p = NULL;
-	int t = SOAP_TYPE_xs__length;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__length *p;
+	size_t k = sizeof(xs__length);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__length);
-		k = sizeof(xs__length);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__length, n);
-		k = n * sizeof(xs__length);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__length location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__length, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -16083,20 +15932,18 @@ SOAP_FMAC3 xs__simpleContent * SOAP_FMAC4 soap_in_xs__simpleContent(struct soap 
 SOAP_FMAC1 xs__simpleContent * SOAP_FMAC2 soap_instantiate_xs__simpleContent(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__simpleContent(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__simpleContent *p = NULL;
-	int t = SOAP_TYPE_xs__simpleContent;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__simpleContent *p;
+	size_t k = sizeof(xs__simpleContent);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__simpleContent);
-		k = sizeof(xs__simpleContent);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__simpleContent, n);
-		k = n * sizeof(xs__simpleContent);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__simpleContent location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__simpleContent, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -16198,20 +16045,18 @@ SOAP_FMAC3 xs__pattern * SOAP_FMAC4 soap_in_xs__pattern(struct soap *soap, const
 SOAP_FMAC1 xs__pattern * SOAP_FMAC2 soap_instantiate_xs__pattern(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__pattern(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__pattern *p = NULL;
-	int t = SOAP_TYPE_xs__pattern;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__pattern *p;
+	size_t k = sizeof(xs__pattern);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__pattern);
-		k = sizeof(xs__pattern);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__pattern, n);
-		k = n * sizeof(xs__pattern);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__pattern location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__pattern, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -16328,20 +16173,18 @@ SOAP_FMAC3 xs__enumeration * SOAP_FMAC4 soap_in_xs__enumeration(struct soap *soa
 SOAP_FMAC1 xs__enumeration * SOAP_FMAC2 soap_instantiate_xs__enumeration(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__enumeration(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__enumeration *p = NULL;
-	int t = SOAP_TYPE_xs__enumeration;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__enumeration *p;
+	size_t k = sizeof(xs__enumeration);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__enumeration);
-		k = sizeof(xs__enumeration);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__enumeration, n);
-		k = n * sizeof(xs__enumeration);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__enumeration location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__enumeration, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -16490,20 +16333,18 @@ SOAP_FMAC3 xs__attributeGroup * SOAP_FMAC4 soap_in_xs__attributeGroup(struct soa
 SOAP_FMAC1 xs__attributeGroup * SOAP_FMAC2 soap_instantiate_xs__attributeGroup(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__attributeGroup(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__attributeGroup *p = NULL;
-	int t = SOAP_TYPE_xs__attributeGroup;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__attributeGroup *p;
+	size_t k = sizeof(xs__attributeGroup);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__attributeGroup);
-		k = sizeof(xs__attributeGroup);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__attributeGroup, n);
-		k = n * sizeof(xs__attributeGroup);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__attributeGroup location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__attributeGroup, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -16609,20 +16450,18 @@ SOAP_FMAC3 xs__anyAttribute * SOAP_FMAC4 soap_in_xs__anyAttribute(struct soap *s
 SOAP_FMAC1 xs__anyAttribute * SOAP_FMAC2 soap_instantiate_xs__anyAttribute(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__anyAttribute(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__anyAttribute *p = NULL;
-	int t = SOAP_TYPE_xs__anyAttribute;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__anyAttribute *p;
+	size_t k = sizeof(xs__anyAttribute);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__anyAttribute);
-		k = sizeof(xs__anyAttribute);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__anyAttribute, n);
-		k = n * sizeof(xs__anyAttribute);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__anyAttribute location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__anyAttribute, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -16711,20 +16550,18 @@ SOAP_FMAC3 xs__contents * SOAP_FMAC4 soap_in_xs__contents(struct soap *soap, con
 SOAP_FMAC1 xs__contents * SOAP_FMAC2 soap_instantiate_xs__contents(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__contents(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__contents *p = NULL;
-	int t = SOAP_TYPE_xs__contents;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__contents *p;
+	size_t k = sizeof(xs__contents);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__contents);
-		k = sizeof(xs__contents);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__contents, n);
-		k = n * sizeof(xs__contents);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__contents location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__contents, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -16847,20 +16684,18 @@ SOAP_FMAC3 xs__any * SOAP_FMAC4 soap_in_xs__any(struct soap *soap, const char *t
 SOAP_FMAC1 xs__any * SOAP_FMAC2 soap_instantiate_xs__any(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__any(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__any *p = NULL;
-	int t = SOAP_TYPE_xs__any;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__any *p;
+	size_t k = sizeof(xs__any);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__any);
-		k = sizeof(xs__any);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__any, n);
-		k = n * sizeof(xs__any);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__any location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__any, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -16964,20 +16799,18 @@ SOAP_FMAC3 xs__all * SOAP_FMAC4 soap_in_xs__all(struct soap *soap, const char *t
 SOAP_FMAC1 xs__all * SOAP_FMAC2 soap_instantiate_xs__all(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__all(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__all *p = NULL;
-	int t = SOAP_TYPE_xs__all;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__all *p;
+	size_t k = sizeof(xs__all);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__all);
-		k = sizeof(xs__all);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__all, n);
-		k = n * sizeof(xs__all);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__all location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__all, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -17175,20 +17008,18 @@ SOAP_FMAC3 xs__attribute * SOAP_FMAC4 soap_in_xs__attribute(struct soap *soap, c
 SOAP_FMAC1 xs__attribute * SOAP_FMAC2 soap_instantiate_xs__attribute(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__attribute(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__attribute *p = NULL;
-	int t = SOAP_TYPE_xs__attribute;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__attribute *p;
+	size_t k = sizeof(xs__attribute);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__attribute);
-		k = sizeof(xs__attribute);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__attribute, n);
-		k = n * sizeof(xs__attribute);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__attribute location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__attribute, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -17436,20 +17267,18 @@ SOAP_FMAC3 xs__element * SOAP_FMAC4 soap_in_xs__element(struct soap *soap, const
 SOAP_FMAC1 xs__element * SOAP_FMAC2 soap_instantiate_xs__element(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__element(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__element *p = NULL;
-	int t = SOAP_TYPE_xs__element;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__element *p;
+	size_t k = sizeof(xs__element);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__element);
-		k = sizeof(xs__element);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__element, n);
-		k = n * sizeof(xs__element);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__element location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__element, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -17571,20 +17400,18 @@ SOAP_FMAC3 xs__alternative * SOAP_FMAC4 soap_in_xs__alternative(struct soap *soa
 SOAP_FMAC1 xs__alternative * SOAP_FMAC2 soap_instantiate_xs__alternative(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__alternative(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__alternative *p = NULL;
-	int t = SOAP_TYPE_xs__alternative;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__alternative *p;
+	size_t k = sizeof(xs__alternative);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__alternative);
-		k = sizeof(xs__alternative);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__alternative, n);
-		k = n * sizeof(xs__alternative);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__alternative location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__alternative, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -17701,20 +17528,18 @@ SOAP_FMAC3 xs__assert * SOAP_FMAC4 soap_in_xs__assert(struct soap *soap, const c
 SOAP_FMAC1 xs__assert * SOAP_FMAC2 soap_instantiate_xs__assert(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__assert(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__assert *p = NULL;
-	int t = SOAP_TYPE_xs__assert;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__assert *p;
+	size_t k = sizeof(xs__assert);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__assert);
-		k = sizeof(xs__assert);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__assert, n);
-		k = n * sizeof(xs__assert);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__assert location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__assert, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -17821,20 +17646,18 @@ SOAP_FMAC3 xs__annotation * SOAP_FMAC4 soap_in_xs__annotation(struct soap *soap,
 SOAP_FMAC1 xs__annotation * SOAP_FMAC2 soap_instantiate_xs__annotation(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__annotation(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__annotation *p = NULL;
-	int t = SOAP_TYPE_xs__annotation;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__annotation *p;
+	size_t k = sizeof(xs__annotation);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__annotation);
-		k = sizeof(xs__annotation);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__annotation, n);
-		k = n * sizeof(xs__annotation);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__annotation location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__annotation, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -17943,20 +17766,18 @@ SOAP_FMAC3 xs__union * SOAP_FMAC4 soap_in_xs__union(struct soap *soap, const cha
 SOAP_FMAC1 xs__union * SOAP_FMAC2 soap_instantiate_xs__union(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__union(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__union *p = NULL;
-	int t = SOAP_TYPE_xs__union;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__union *p;
+	size_t k = sizeof(xs__union);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__union);
-		k = sizeof(xs__union);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__union, n);
-		k = n * sizeof(xs__union);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__union location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__union, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -18079,20 +17900,18 @@ SOAP_FMAC3 xs__list * SOAP_FMAC4 soap_in_xs__list(struct soap *soap, const char 
 SOAP_FMAC1 xs__list * SOAP_FMAC2 soap_instantiate_xs__list(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__list(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__list *p = NULL;
-	int t = SOAP_TYPE_xs__list;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__list *p;
+	size_t k = sizeof(xs__list);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__list);
-		k = sizeof(xs__list);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__list, n);
-		k = n * sizeof(xs__list);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__list location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__list, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -18257,20 +18076,18 @@ SOAP_FMAC3 xs__group * SOAP_FMAC4 soap_in_xs__group(struct soap *soap, const cha
 SOAP_FMAC1 xs__group * SOAP_FMAC2 soap_instantiate_xs__group(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__group(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__group *p = NULL;
-	int t = SOAP_TYPE_xs__group;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__group *p;
+	size_t k = sizeof(xs__group);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__group);
-		k = sizeof(xs__group);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__group, n);
-		k = n * sizeof(xs__group);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__group location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__group, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -18398,20 +18215,18 @@ SOAP_FMAC3 xs__seqchoice * SOAP_FMAC4 soap_in_xs__seqchoice(struct soap *soap, c
 SOAP_FMAC1 xs__seqchoice * SOAP_FMAC2 soap_instantiate_xs__seqchoice(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__seqchoice(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__seqchoice *p = NULL;
-	int t = SOAP_TYPE_xs__seqchoice;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__seqchoice *p;
+	size_t k = sizeof(xs__seqchoice);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__seqchoice);
-		k = sizeof(xs__seqchoice);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__seqchoice, n);
-		k = n * sizeof(xs__seqchoice);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__seqchoice location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__seqchoice, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -18759,20 +18574,18 @@ SOAP_FMAC3 xs__restriction * SOAP_FMAC4 soap_in_xs__restriction(struct soap *soa
 SOAP_FMAC1 xs__restriction * SOAP_FMAC2 soap_instantiate_xs__restriction(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__restriction(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__restriction *p = NULL;
-	int t = SOAP_TYPE_xs__restriction;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__restriction *p;
+	size_t k = sizeof(xs__restriction);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__restriction);
-		k = sizeof(xs__restriction);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__restriction, n);
-		k = n * sizeof(xs__restriction);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__restriction location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__restriction, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -18963,20 +18776,18 @@ SOAP_FMAC3 xs__extension * SOAP_FMAC4 soap_in_xs__extension(struct soap *soap, c
 SOAP_FMAC1 xs__extension * SOAP_FMAC2 soap_instantiate_xs__extension(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__extension(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__extension *p = NULL;
-	int t = SOAP_TYPE_xs__extension;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__extension *p;
+	size_t k = sizeof(xs__extension);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__extension);
-		k = sizeof(xs__extension);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__extension, n);
-		k = n * sizeof(xs__extension);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__extension location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__extension, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -19209,20 +19020,18 @@ SOAP_FMAC3 xs__complexType * SOAP_FMAC4 soap_in_xs__complexType(struct soap *soa
 SOAP_FMAC1 xs__complexType * SOAP_FMAC2 soap_instantiate_xs__complexType(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__complexType(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__complexType *p = NULL;
-	int t = SOAP_TYPE_xs__complexType;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__complexType *p;
+	size_t k = sizeof(xs__complexType);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__complexType);
-		k = sizeof(xs__complexType);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__complexType, n);
-		k = n * sizeof(xs__complexType);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__complexType location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__complexType, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -19382,20 +19191,18 @@ SOAP_FMAC3 xs__simpleType * SOAP_FMAC4 soap_in_xs__simpleType(struct soap *soap,
 SOAP_FMAC1 xs__simpleType * SOAP_FMAC2 soap_instantiate_xs__simpleType(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__simpleType(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__simpleType *p = NULL;
-	int t = SOAP_TYPE_xs__simpleType;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	xs__simpleType *p;
+	size_t k = sizeof(xs__simpleType);
 	if (n < 0)
 	{	p = SOAP_NEW(xs__simpleType);
-		k = sizeof(xs__simpleType);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__simpleType, n);
-		k = n * sizeof(xs__simpleType);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__simpleType location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__simpleType, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -19626,39 +19433,25 @@ SOAP_FMAC3 xs__schema * SOAP_FMAC4 soap_in_xs__schema(struct soap *soap, const c
 SOAP_FMAC1 xs__schema * SOAP_FMAC2 soap_instantiate_xs__schema(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xs__schema(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	xs__schema *p = NULL;
-	int t = SOAP_TYPE_xs__schema;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
 	if (type && !soap_match_tag(soap, type, "wsdl:types"))
-	{	t = SOAP_TYPE_wsdl__types;
-		if (n < 0)
-		{	p = SOAP_NEW(wsdl__types);
-			k = sizeof(wsdl__types);
-			((wsdl__types*)p)->soap = soap;
-		}
-		else
-		{	p = SOAP_NEW_ARRAY(wsdl__types, n);
-			k = n * sizeof(wsdl__types);
-			if (p)
-				for (int i = 0; i < n; i++)
-					((wsdl__types*)p)[i].soap = soap;
-		}
-	}
-	else if (n < 0)
+		return soap_instantiate_wsdl__types(soap, n, NULL, NULL, size);
+	xs__schema *p;
+	size_t k = sizeof(xs__schema);
+	if (n < 0)
 	{	p = SOAP_NEW(xs__schema);
-		k = sizeof(xs__schema);
-		((xs__schema*)p)->soap = soap;
+		if (p)
+			((xs__schema*)p)->soap = soap;
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(xs__schema, n);
-		k = n * sizeof(xs__schema);
+		k *= n;
 		if (p)
 			for (int i = 0; i < n; i++)
 				((xs__schema*)p)[i].soap = soap;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated xs__schema location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_xs__schema, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -19835,20 +19628,18 @@ SOAP_FMAC3 struct SOAP_ENV__Fault * SOAP_FMAC4 soap_in_SOAP_ENV__Fault(struct so
 SOAP_FMAC1 struct SOAP_ENV__Fault * SOAP_FMAC2 soap_instantiate_SOAP_ENV__Fault(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_SOAP_ENV__Fault(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct SOAP_ENV__Fault *p = NULL;
-	int t = SOAP_TYPE_SOAP_ENV__Fault;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct SOAP_ENV__Fault *p;
+	size_t k = sizeof(struct SOAP_ENV__Fault);
 	if (n < 0)
 	{	p = SOAP_NEW(struct SOAP_ENV__Fault);
-		k = sizeof(struct SOAP_ENV__Fault);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct SOAP_ENV__Fault, n);
-		k = n * sizeof(struct SOAP_ENV__Fault);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct SOAP_ENV__Fault location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_SOAP_ENV__Fault, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -19943,20 +19734,18 @@ SOAP_FMAC3 struct SOAP_ENV__Reason * SOAP_FMAC4 soap_in_SOAP_ENV__Reason(struct 
 SOAP_FMAC1 struct SOAP_ENV__Reason * SOAP_FMAC2 soap_instantiate_SOAP_ENV__Reason(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_SOAP_ENV__Reason(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct SOAP_ENV__Reason *p = NULL;
-	int t = SOAP_TYPE_SOAP_ENV__Reason;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct SOAP_ENV__Reason *p;
+	size_t k = sizeof(struct SOAP_ENV__Reason);
 	if (n < 0)
 	{	p = SOAP_NEW(struct SOAP_ENV__Reason);
-		k = sizeof(struct SOAP_ENV__Reason);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct SOAP_ENV__Reason, n);
-		k = n * sizeof(struct SOAP_ENV__Reason);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct SOAP_ENV__Reason location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_SOAP_ENV__Reason, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -20058,20 +19847,18 @@ SOAP_FMAC3 struct SOAP_ENV__Detail * SOAP_FMAC4 soap_in_SOAP_ENV__Detail(struct 
 SOAP_FMAC1 struct SOAP_ENV__Detail * SOAP_FMAC2 soap_instantiate_SOAP_ENV__Detail(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_SOAP_ENV__Detail(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct SOAP_ENV__Detail *p = NULL;
-	int t = SOAP_TYPE_SOAP_ENV__Detail;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct SOAP_ENV__Detail *p;
+	size_t k = sizeof(struct SOAP_ENV__Detail);
 	if (n < 0)
 	{	p = SOAP_NEW(struct SOAP_ENV__Detail);
-		k = sizeof(struct SOAP_ENV__Detail);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct SOAP_ENV__Detail, n);
-		k = n * sizeof(struct SOAP_ENV__Detail);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct SOAP_ENV__Detail location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_SOAP_ENV__Detail, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -20175,20 +19962,18 @@ SOAP_FMAC3 struct SOAP_ENV__Code * SOAP_FMAC4 soap_in_SOAP_ENV__Code(struct soap
 SOAP_FMAC1 struct SOAP_ENV__Code * SOAP_FMAC2 soap_instantiate_SOAP_ENV__Code(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_SOAP_ENV__Code(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct SOAP_ENV__Code *p = NULL;
-	int t = SOAP_TYPE_SOAP_ENV__Code;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct SOAP_ENV__Code *p;
+	size_t k = sizeof(struct SOAP_ENV__Code);
 	if (n < 0)
 	{	p = SOAP_NEW(struct SOAP_ENV__Code);
-		k = sizeof(struct SOAP_ENV__Code);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct SOAP_ENV__Code, n);
-		k = n * sizeof(struct SOAP_ENV__Code);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct SOAP_ENV__Code location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_SOAP_ENV__Code, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -20271,20 +20056,18 @@ SOAP_FMAC3 struct SOAP_ENV__Header * SOAP_FMAC4 soap_in_SOAP_ENV__Header(struct 
 SOAP_FMAC1 struct SOAP_ENV__Header * SOAP_FMAC2 soap_instantiate_SOAP_ENV__Header(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_SOAP_ENV__Header(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct SOAP_ENV__Header *p = NULL;
-	int t = SOAP_TYPE_SOAP_ENV__Header;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct SOAP_ENV__Header *p;
+	size_t k = sizeof(struct SOAP_ENV__Header);
 	if (n < 0)
 	{	p = SOAP_NEW(struct SOAP_ENV__Header);
-		k = sizeof(struct SOAP_ENV__Header);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct SOAP_ENV__Header, n);
-		k = n * sizeof(struct SOAP_ENV__Header);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct SOAP_ENV__Header location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_SOAP_ENV__Header, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -23802,7 +23585,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xs__namespaceList(struct soap *soap, cons
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xs__namespaceList(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out_xs__namespaceList(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out_xs__namespaceList(soap, tag?tag:"xs:namespaceList", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -24305,7 +24088,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__string(struct soap *soap, const char
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__string(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out_xsd__string(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out_xsd__string(soap, tag?tag:"xsd:string", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -24339,7 +24122,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__QName(struct soap *soap, const char 
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__QName(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out_xsd__QName(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out_xsd__QName(soap, tag?tag:"xsd:QName", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -24373,7 +24156,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__NMTOKENS(struct soap *soap, const ch
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__NMTOKENS(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out_xsd__NMTOKENS(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out_xsd__NMTOKENS(soap, tag?tag:"xsd:NMTOKENS", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -24407,7 +24190,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__NMTOKEN(struct soap *soap, const cha
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__NMTOKEN(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out_xsd__NMTOKEN(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out_xsd__NMTOKEN(soap, tag?tag:"xsd:NMTOKEN", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -24441,7 +24224,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__NCName(struct soap *soap, const char
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__NCName(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out_xsd__NCName(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out_xsd__NCName(soap, tag?tag:"xsd:NCName", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -24475,7 +24258,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__ID(struct soap *soap, const char *ta
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__ID(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out_xsd__ID(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out_xsd__ID(soap, tag?tag:"xsd:ID", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -24509,7 +24292,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__anyURI(struct soap *soap, const char
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__anyURI(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out_xsd__anyURI(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out_xsd__anyURI(soap, tag?tag:"xsd:anyURI", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -24543,7 +24326,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in__QName(struct soap *soap, const char *tag
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put__QName(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out__QName(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out__QName(soap, tag?tag:"QName", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -24587,7 +24370,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_string(struct soap *soap, const char *tag
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_string(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out_string(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out_string(soap, tag?tag:"string", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -24677,20 +24460,18 @@ SOAP_FMAC3 std::vector<gwsdl__portType> * SOAP_FMAC4 soap_in_std__vectorTemplate
 SOAP_FMAC1 std::vector<gwsdl__portType>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfgwsdl__portType(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfgwsdl__portType(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<gwsdl__portType> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfgwsdl__portType;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<gwsdl__portType> *p;
+	size_t k = sizeof(std::vector<gwsdl__portType> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<gwsdl__portType> );
-		k = sizeof(std::vector<gwsdl__portType> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<gwsdl__portType> , n);
-		k = n * sizeof(std::vector<gwsdl__portType> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<gwsdl__portType>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfgwsdl__portType, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -24773,20 +24554,18 @@ SOAP_FMAC3 std::vector<vprop__tPropertyAlias> * SOAP_FMAC4 soap_in_std__vectorTe
 SOAP_FMAC1 std::vector<vprop__tPropertyAlias>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfvprop__tPropertyAlias(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfvprop__tPropertyAlias(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<vprop__tPropertyAlias> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfvprop__tPropertyAlias;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<vprop__tPropertyAlias> *p;
+	size_t k = sizeof(std::vector<vprop__tPropertyAlias> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<vprop__tPropertyAlias> );
-		k = sizeof(std::vector<vprop__tPropertyAlias> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<vprop__tPropertyAlias> , n);
-		k = n * sizeof(std::vector<vprop__tPropertyAlias> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<vprop__tPropertyAlias>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfvprop__tPropertyAlias, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -24869,20 +24648,18 @@ SOAP_FMAC3 std::vector<vprop__tProperty> * SOAP_FMAC4 soap_in_std__vectorTemplat
 SOAP_FMAC1 std::vector<vprop__tProperty>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfvprop__tProperty(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfvprop__tProperty(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<vprop__tProperty> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfvprop__tProperty;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<vprop__tProperty> *p;
+	size_t k = sizeof(std::vector<vprop__tProperty> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<vprop__tProperty> );
-		k = sizeof(std::vector<vprop__tProperty> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<vprop__tProperty> , n);
-		k = n * sizeof(std::vector<vprop__tProperty> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<vprop__tProperty>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfvprop__tProperty, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -24965,20 +24742,18 @@ SOAP_FMAC3 std::vector<plnk__tPartnerLinkType> * SOAP_FMAC4 soap_in_std__vectorT
 SOAP_FMAC1 std::vector<plnk__tPartnerLinkType>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfplnk__tPartnerLinkType(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfplnk__tPartnerLinkType(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<plnk__tPartnerLinkType> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfplnk__tPartnerLinkType;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<plnk__tPartnerLinkType> *p;
+	size_t k = sizeof(std::vector<plnk__tPartnerLinkType> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<plnk__tPartnerLinkType> );
-		k = sizeof(std::vector<plnk__tPartnerLinkType> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<plnk__tPartnerLinkType> , n);
-		k = n * sizeof(std::vector<plnk__tPartnerLinkType> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<plnk__tPartnerLinkType>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfplnk__tPartnerLinkType, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -25061,20 +24836,18 @@ SOAP_FMAC3 std::vector<wsdl__service> * SOAP_FMAC4 soap_in_std__vectorTemplateOf
 SOAP_FMAC1 std::vector<wsdl__service>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsdl__service(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsdl__service(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsdl__service> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsdl__service;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsdl__service> *p;
+	size_t k = sizeof(std::vector<wsdl__service> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsdl__service> );
-		k = sizeof(std::vector<wsdl__service> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsdl__service> , n);
-		k = n * sizeof(std::vector<wsdl__service> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsdl__service>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsdl__service, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -25157,20 +24930,18 @@ SOAP_FMAC3 std::vector<wsdl__binding> * SOAP_FMAC4 soap_in_std__vectorTemplateOf
 SOAP_FMAC1 std::vector<wsdl__binding>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsdl__binding(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsdl__binding(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsdl__binding> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsdl__binding;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsdl__binding> *p;
+	size_t k = sizeof(std::vector<wsdl__binding> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsdl__binding> );
-		k = sizeof(std::vector<wsdl__binding> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsdl__binding> , n);
-		k = n * sizeof(std::vector<wsdl__binding> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsdl__binding>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsdl__binding, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -25253,20 +25024,18 @@ SOAP_FMAC3 std::vector<wsdl__portType> * SOAP_FMAC4 soap_in_std__vectorTemplateO
 SOAP_FMAC1 std::vector<wsdl__portType>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsdl__portType(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsdl__portType(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsdl__portType> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsdl__portType;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsdl__portType> *p;
+	size_t k = sizeof(std::vector<wsdl__portType> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsdl__portType> );
-		k = sizeof(std::vector<wsdl__portType> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsdl__portType> , n);
-		k = n * sizeof(std::vector<wsdl__portType> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsdl__portType>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsdl__portType, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -25349,20 +25118,18 @@ SOAP_FMAC3 std::vector<wsdl__message> * SOAP_FMAC4 soap_in_std__vectorTemplateOf
 SOAP_FMAC1 std::vector<wsdl__message>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsdl__message(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsdl__message(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsdl__message> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsdl__message;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsdl__message> *p;
+	size_t k = sizeof(std::vector<wsdl__message> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsdl__message> );
-		k = sizeof(std::vector<wsdl__message> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsdl__message> , n);
-		k = n * sizeof(std::vector<wsdl__message> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsdl__message>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsdl__message, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -25445,20 +25212,18 @@ SOAP_FMAC3 std::vector<wsdl__import> * SOAP_FMAC4 soap_in_std__vectorTemplateOfw
 SOAP_FMAC1 std::vector<wsdl__import>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsdl__import(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsdl__import(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsdl__import> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsdl__import;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsdl__import> *p;
+	size_t k = sizeof(std::vector<wsdl__import> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsdl__import> );
-		k = sizeof(std::vector<wsdl__import> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsdl__import> , n);
-		k = n * sizeof(std::vector<wsdl__import> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsdl__import>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsdl__import, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -25541,20 +25306,18 @@ SOAP_FMAC3 std::vector<wsdl__port> * SOAP_FMAC4 soap_in_std__vectorTemplateOfwsd
 SOAP_FMAC1 std::vector<wsdl__port>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsdl__port(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsdl__port(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsdl__port> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsdl__port;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsdl__port> *p;
+	size_t k = sizeof(std::vector<wsdl__port> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsdl__port> );
-		k = sizeof(std::vector<wsdl__port> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsdl__port> , n);
-		k = n * sizeof(std::vector<wsdl__port> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsdl__port>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsdl__port, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -25637,20 +25400,18 @@ SOAP_FMAC3 std::vector<wsdl__ext_operation> * SOAP_FMAC4 soap_in_std__vectorTemp
 SOAP_FMAC1 std::vector<wsdl__ext_operation>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsdl__ext_operation(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsdl__ext_operation(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsdl__ext_operation> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsdl__ext_operation;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsdl__ext_operation> *p;
+	size_t k = sizeof(std::vector<wsdl__ext_operation> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsdl__ext_operation> );
-		k = sizeof(std::vector<wsdl__ext_operation> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsdl__ext_operation> , n);
-		k = n * sizeof(std::vector<wsdl__ext_operation> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsdl__ext_operation>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsdl__ext_operation, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -25733,20 +25494,18 @@ SOAP_FMAC3 std::vector<wsdl__ext_fault> * SOAP_FMAC4 soap_in_std__vectorTemplate
 SOAP_FMAC1 std::vector<wsdl__ext_fault>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsdl__ext_fault(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsdl__ext_fault(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsdl__ext_fault> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsdl__ext_fault;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsdl__ext_fault> *p;
+	size_t k = sizeof(std::vector<wsdl__ext_fault> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsdl__ext_fault> );
-		k = sizeof(std::vector<wsdl__ext_fault> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsdl__ext_fault> , n);
-		k = n * sizeof(std::vector<wsdl__ext_fault> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsdl__ext_fault>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsdl__ext_fault, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -25829,20 +25588,18 @@ SOAP_FMAC3 std::vector<whttp__header> * SOAP_FMAC4 soap_in_std__vectorTemplateOf
 SOAP_FMAC1 std::vector<whttp__header>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwhttp__header(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwhttp__header(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<whttp__header> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwhttp__header;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<whttp__header> *p;
+	size_t k = sizeof(std::vector<whttp__header> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<whttp__header> );
-		k = sizeof(std::vector<whttp__header> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<whttp__header> , n);
-		k = n * sizeof(std::vector<whttp__header> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<whttp__header>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwhttp__header, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -25925,20 +25682,18 @@ SOAP_FMAC3 std::vector<wsoap__header> * SOAP_FMAC4 soap_in_std__vectorTemplateOf
 SOAP_FMAC1 std::vector<wsoap__header>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsoap__header(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsoap__header(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsoap__header> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsoap__header;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsoap__header> *p;
+	size_t k = sizeof(std::vector<wsoap__header> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsoap__header> );
-		k = sizeof(std::vector<wsoap__header> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsoap__header> , n);
-		k = n * sizeof(std::vector<wsoap__header> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsoap__header>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsoap__header, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -26021,20 +25776,18 @@ SOAP_FMAC3 std::vector<wsoap__module> * SOAP_FMAC4 soap_in_std__vectorTemplateOf
 SOAP_FMAC1 std::vector<wsoap__module>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsoap__module(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsoap__module(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsoap__module> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsoap__module;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsoap__module> *p;
+	size_t k = sizeof(std::vector<wsoap__module> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsoap__module> );
-		k = sizeof(std::vector<wsoap__module> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsoap__module> , n);
-		k = n * sizeof(std::vector<wsoap__module> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsoap__module>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsoap__module, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -26117,20 +25870,18 @@ SOAP_FMAC3 std::vector<wsdl__operation> * SOAP_FMAC4 soap_in_std__vectorTemplate
 SOAP_FMAC1 std::vector<wsdl__operation>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsdl__operation(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsdl__operation(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsdl__operation> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsdl__operation;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsdl__operation> *p;
+	size_t k = sizeof(std::vector<wsdl__operation> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsdl__operation> );
-		k = sizeof(std::vector<wsdl__operation> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsdl__operation> , n);
-		k = n * sizeof(std::vector<wsdl__operation> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsdl__operation>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsdl__operation, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -26213,20 +25964,18 @@ SOAP_FMAC3 std::vector<wsdl__fault> * SOAP_FMAC4 soap_in_std__vectorTemplateOfws
 SOAP_FMAC1 std::vector<wsdl__fault>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsdl__fault(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsdl__fault(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsdl__fault> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsdl__fault;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsdl__fault> *p;
+	size_t k = sizeof(std::vector<wsdl__fault> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsdl__fault> );
-		k = sizeof(std::vector<wsdl__fault> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsdl__fault> , n);
-		k = n * sizeof(std::vector<wsdl__fault> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsdl__fault>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsdl__fault, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -26309,20 +26058,18 @@ SOAP_FMAC3 std::vector<wsdl__part> * SOAP_FMAC4 soap_in_std__vectorTemplateOfwsd
 SOAP_FMAC1 std::vector<wsdl__part>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsdl__part(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsdl__part(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsdl__part> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsdl__part;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsdl__part> *p;
+	size_t k = sizeof(std::vector<wsdl__part> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsdl__part> );
-		k = sizeof(std::vector<wsdl__part> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsdl__part> , n);
-		k = n * sizeof(std::vector<wsdl__part> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsdl__part>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsdl__part, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -26405,20 +26152,18 @@ SOAP_FMAC3 std::vector<wsp__PolicyReference> * SOAP_FMAC4 soap_in_std__vectorTem
 SOAP_FMAC1 std::vector<wsp__PolicyReference>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsp__PolicyReference(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsp__PolicyReference(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsp__PolicyReference> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsp__PolicyReference;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsp__PolicyReference> *p;
+	size_t k = sizeof(std::vector<wsp__PolicyReference> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsp__PolicyReference> );
-		k = sizeof(std::vector<wsp__PolicyReference> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsp__PolicyReference> , n);
-		k = n * sizeof(std::vector<wsp__PolicyReference> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsp__PolicyReference>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsp__PolicyReference, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -26501,20 +26246,18 @@ SOAP_FMAC3 std::vector<wsp__Policy> * SOAP_FMAC4 soap_in_std__vectorTemplateOfws
 SOAP_FMAC1 std::vector<wsp__Policy>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsp__Policy(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsp__Policy(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsp__Policy> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsp__Policy;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsp__Policy> *p;
+	size_t k = sizeof(std::vector<wsp__Policy> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsp__Policy> );
-		k = sizeof(std::vector<wsp__Policy> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsp__Policy> , n);
-		k = n * sizeof(std::vector<wsp__Policy> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsp__Policy>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsp__Policy, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -26585,20 +26328,18 @@ SOAP_FMAC3 std::vector<xs__schema *> * SOAP_FMAC4 soap_in_std__vectorTemplateOfP
 SOAP_FMAC1 std::vector<xs__schema *>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfPointerToxs__schema(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfPointerToxs__schema(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__schema *> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfPointerToxs__schema;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__schema *> *p;
+	size_t k = sizeof(std::vector<xs__schema *> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__schema *> );
-		k = sizeof(std::vector<xs__schema *> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__schema *> , n);
-		k = n * sizeof(std::vector<xs__schema *> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__schema *>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfPointerToxs__schema, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -26681,20 +26422,18 @@ SOAP_FMAC3 std::vector<plnk__tRole> * SOAP_FMAC4 soap_in_std__vectorTemplateOfpl
 SOAP_FMAC1 std::vector<plnk__tRole>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfplnk__tRole(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfplnk__tRole(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<plnk__tRole> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfplnk__tRole;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<plnk__tRole> *p;
+	size_t k = sizeof(std::vector<plnk__tRole> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<plnk__tRole> );
-		k = sizeof(std::vector<plnk__tRole> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<plnk__tRole> , n);
-		k = n * sizeof(std::vector<plnk__tRole> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<plnk__tRole>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfplnk__tRole, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -26777,20 +26516,18 @@ SOAP_FMAC3 std::vector<wsp__Attachment> * SOAP_FMAC4 soap_in_std__vectorTemplate
 SOAP_FMAC1 std::vector<wsp__Attachment>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfwsp__Attachment(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfwsp__Attachment(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsp__Attachment> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfwsp__Attachment;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsp__Attachment> *p;
+	size_t k = sizeof(std::vector<wsp__Attachment> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsp__Attachment> );
-		k = sizeof(std::vector<wsp__Attachment> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsp__Attachment> , n);
-		k = n * sizeof(std::vector<wsp__Attachment> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsp__Attachment>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfwsp__Attachment, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -26859,20 +26596,18 @@ SOAP_FMAC3 std::vector<char *> * SOAP_FMAC4 soap_in_std__vectorTemplateOf_XML(st
 SOAP_FMAC1 std::vector<char *>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOf_XML(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOf_XML(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<char *> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOf_XML;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<char *> *p;
+	size_t k = sizeof(std::vector<char *> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<char *> );
-		k = sizeof(std::vector<char *> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<char *> , n);
-		k = n * sizeof(std::vector<char *> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<char *>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOf_XML, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -26955,20 +26690,18 @@ SOAP_FMAC3 std::vector<sp__Parts> * SOAP_FMAC4 soap_in_std__vectorTemplateOfsp__
 SOAP_FMAC1 std::vector<sp__Parts>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfsp__Parts(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfsp__Parts(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<sp__Parts> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfsp__Parts;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<sp__Parts> *p;
+	size_t k = sizeof(std::vector<sp__Parts> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<sp__Parts> );
-		k = sizeof(std::vector<sp__Parts> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<sp__Parts> , n);
-		k = n * sizeof(std::vector<sp__Parts> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<sp__Parts>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfsp__Parts, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -27039,20 +26772,18 @@ SOAP_FMAC3 std::vector<wsp__Content *> * SOAP_FMAC4 soap_in_std__vectorTemplateO
 SOAP_FMAC1 std::vector<wsp__Content *>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfPointerTowsp__Content(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfPointerTowsp__Content(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsp__Content *> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfPointerTowsp__Content;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsp__Content *> *p;
+	size_t k = sizeof(std::vector<wsp__Content *> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsp__Content *> );
-		k = sizeof(std::vector<wsp__Content *> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsp__Content *> , n);
-		k = n * sizeof(std::vector<wsp__Content *> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsp__Content *>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfPointerTowsp__Content, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -27123,20 +26854,18 @@ SOAP_FMAC3 std::vector<char *> * SOAP_FMAC4 soap_in_std__vectorTemplateOfxsd__st
 SOAP_FMAC1 std::vector<char *>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxsd__string(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxsd__string(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<char *> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxsd__string;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<char *> *p;
+	size_t k = sizeof(std::vector<char *> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<char *> );
-		k = sizeof(std::vector<char *> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<char *> , n);
-		k = n * sizeof(std::vector<char *> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<char *>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxsd__string, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -27219,20 +26948,18 @@ SOAP_FMAC3 std::vector<sp__Header> * SOAP_FMAC4 soap_in_std__vectorTemplateOfsp_
 SOAP_FMAC1 std::vector<sp__Header>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfsp__Header(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfsp__Header(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<sp__Header> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfsp__Header;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<sp__Header> *p;
+	size_t k = sizeof(std::vector<sp__Header> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<sp__Header> );
-		k = sizeof(std::vector<sp__Header> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<sp__Header> , n);
-		k = n * sizeof(std::vector<sp__Header> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<sp__Header>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfsp__Header, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -27315,20 +27042,18 @@ SOAP_FMAC3 std::vector<sd__serviceData> * SOAP_FMAC4 soap_in_std__vectorTemplate
 SOAP_FMAC1 std::vector<sd__serviceData>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfsd__serviceData(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfsd__serviceData(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<sd__serviceData> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfsd__serviceData;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<sd__serviceData> *p;
+	size_t k = sizeof(std::vector<sd__serviceData> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<sd__serviceData> );
-		k = sizeof(std::vector<sd__serviceData> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<sd__serviceData> , n);
-		k = n * sizeof(std::vector<sd__serviceData> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<sd__serviceData>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfsd__serviceData, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -27399,20 +27124,18 @@ SOAP_FMAC3 std::vector<wsdl__operation *> * SOAP_FMAC4 soap_in_std__vectorTempla
 SOAP_FMAC1 std::vector<wsdl__operation *>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfPointerTowsdl__operation(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfPointerTowsdl__operation(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<wsdl__operation *> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfPointerTowsdl__operation;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<wsdl__operation *> *p;
+	size_t k = sizeof(std::vector<wsdl__operation *> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<wsdl__operation *> );
-		k = sizeof(std::vector<wsdl__operation *> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<wsdl__operation *> , n);
-		k = n * sizeof(std::vector<wsdl__operation *> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<wsdl__operation *>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfPointerTowsdl__operation, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -27495,20 +27218,18 @@ SOAP_FMAC3 std::vector<mime__part> * SOAP_FMAC4 soap_in_std__vectorTemplateOfmim
 SOAP_FMAC1 std::vector<mime__part>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfmime__part(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfmime__part(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<mime__part> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfmime__part;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<mime__part> *p;
+	size_t k = sizeof(std::vector<mime__part> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<mime__part> );
-		k = sizeof(std::vector<mime__part> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<mime__part> , n);
-		k = n * sizeof(std::vector<mime__part> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<mime__part>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfmime__part, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -27591,20 +27312,18 @@ SOAP_FMAC3 std::vector<mime__content> * SOAP_FMAC4 soap_in_std__vectorTemplateOf
 SOAP_FMAC1 std::vector<mime__content>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfmime__content(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfmime__content(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<mime__content> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfmime__content;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<mime__content> *p;
+	size_t k = sizeof(std::vector<mime__content> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<mime__content> );
-		k = sizeof(std::vector<mime__content> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<mime__content> , n);
-		k = n * sizeof(std::vector<mime__content> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<mime__content>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfmime__content, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -27687,20 +27406,18 @@ SOAP_FMAC3 std::vector<soap__header> * SOAP_FMAC4 soap_in_std__vectorTemplateOfs
 SOAP_FMAC1 std::vector<soap__header>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfsoap__header(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfsoap__header(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<soap__header> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfsoap__header;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<soap__header> *p;
+	size_t k = sizeof(std::vector<soap__header> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<soap__header> );
-		k = sizeof(std::vector<soap__header> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<soap__header> , n);
-		k = n * sizeof(std::vector<soap__header> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<soap__header>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfsoap__header, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -27783,20 +27500,18 @@ SOAP_FMAC3 std::vector<soap__headerfault> * SOAP_FMAC4 soap_in_std__vectorTempla
 SOAP_FMAC1 std::vector<soap__headerfault>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfsoap__headerfault(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfsoap__headerfault(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<soap__headerfault> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfsoap__headerfault;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<soap__headerfault> *p;
+	size_t k = sizeof(std::vector<soap__headerfault> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<soap__headerfault> );
-		k = sizeof(std::vector<soap__headerfault> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<soap__headerfault> , n);
-		k = n * sizeof(std::vector<soap__headerfault> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<soap__headerfault>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfsoap__headerfault, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -27879,20 +27594,18 @@ SOAP_FMAC3 std::vector<xs__import> * SOAP_FMAC4 soap_in_std__vectorTemplateOfxs_
 SOAP_FMAC1 std::vector<xs__import>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__import(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__import(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__import> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__import;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__import> *p;
+	size_t k = sizeof(std::vector<xs__import> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__import> );
-		k = sizeof(std::vector<xs__import> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__import> , n);
-		k = n * sizeof(std::vector<xs__import> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__import>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__import, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -27975,20 +27688,18 @@ SOAP_FMAC3 std::vector<xs__redefine> * SOAP_FMAC4 soap_in_std__vectorTemplateOfx
 SOAP_FMAC1 std::vector<xs__redefine>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__redefine(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__redefine(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__redefine> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__redefine;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__redefine> *p;
+	size_t k = sizeof(std::vector<xs__redefine> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__redefine> );
-		k = sizeof(std::vector<xs__redefine> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__redefine> , n);
-		k = n * sizeof(std::vector<xs__redefine> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__redefine>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__redefine, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -28071,20 +27782,18 @@ SOAP_FMAC3 std::vector<xs__override> * SOAP_FMAC4 soap_in_std__vectorTemplateOfx
 SOAP_FMAC1 std::vector<xs__override>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__override(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__override(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__override> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__override;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__override> *p;
+	size_t k = sizeof(std::vector<xs__override> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__override> );
-		k = sizeof(std::vector<xs__override> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__override> , n);
-		k = n * sizeof(std::vector<xs__override> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__override>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__override, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -28167,20 +27876,18 @@ SOAP_FMAC3 std::vector<xs__include> * SOAP_FMAC4 soap_in_std__vectorTemplateOfxs
 SOAP_FMAC1 std::vector<xs__include>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__include(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__include(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__include> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__include;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__include> *p;
+	size_t k = sizeof(std::vector<xs__include> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__include> );
-		k = sizeof(std::vector<xs__include> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__include> , n);
-		k = n * sizeof(std::vector<xs__include> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__include>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__include, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -28263,20 +27970,18 @@ SOAP_FMAC3 std::vector<xs__complexType> * SOAP_FMAC4 soap_in_std__vectorTemplate
 SOAP_FMAC1 std::vector<xs__complexType>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__complexType(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__complexType(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__complexType> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__complexType;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__complexType> *p;
+	size_t k = sizeof(std::vector<xs__complexType> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__complexType> );
-		k = sizeof(std::vector<xs__complexType> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__complexType> , n);
-		k = n * sizeof(std::vector<xs__complexType> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__complexType>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__complexType, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -28359,20 +28064,18 @@ SOAP_FMAC3 std::vector<xs__group> * SOAP_FMAC4 soap_in_std__vectorTemplateOfxs__
 SOAP_FMAC1 std::vector<xs__group>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__group(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__group(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__group> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__group;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__group> *p;
+	size_t k = sizeof(std::vector<xs__group> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__group> );
-		k = sizeof(std::vector<xs__group> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__group> , n);
-		k = n * sizeof(std::vector<xs__group> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__group>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__group, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -28455,20 +28158,18 @@ SOAP_FMAC3 std::vector<xs__simpleType> * SOAP_FMAC4 soap_in_std__vectorTemplateO
 SOAP_FMAC1 std::vector<xs__simpleType>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__simpleType(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__simpleType(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__simpleType> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__simpleType;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__simpleType> *p;
+	size_t k = sizeof(std::vector<xs__simpleType> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__simpleType> );
-		k = sizeof(std::vector<xs__simpleType> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__simpleType> , n);
-		k = n * sizeof(std::vector<xs__simpleType> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__simpleType>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__simpleType, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -28551,20 +28252,18 @@ SOAP_FMAC3 std::vector<xs__pattern> * SOAP_FMAC4 soap_in_std__vectorTemplateOfxs
 SOAP_FMAC1 std::vector<xs__pattern>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__pattern(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__pattern(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__pattern> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__pattern;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__pattern> *p;
+	size_t k = sizeof(std::vector<xs__pattern> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__pattern> );
-		k = sizeof(std::vector<xs__pattern> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__pattern> , n);
-		k = n * sizeof(std::vector<xs__pattern> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__pattern>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__pattern, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -28647,20 +28346,18 @@ SOAP_FMAC3 std::vector<xs__enumeration> * SOAP_FMAC4 soap_in_std__vectorTemplate
 SOAP_FMAC1 std::vector<xs__enumeration>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__enumeration(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__enumeration(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__enumeration> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__enumeration;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__enumeration> *p;
+	size_t k = sizeof(std::vector<xs__enumeration> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__enumeration> );
-		k = sizeof(std::vector<xs__enumeration> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__enumeration> , n);
-		k = n * sizeof(std::vector<xs__enumeration> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__enumeration>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__enumeration, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -28743,20 +28440,18 @@ SOAP_FMAC3 std::vector<xs__assert> * SOAP_FMAC4 soap_in_std__vectorTemplateOfxs_
 SOAP_FMAC1 std::vector<xs__assert>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__assert(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__assert(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__assert> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__assert;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__assert> *p;
+	size_t k = sizeof(std::vector<xs__assert> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__assert> );
-		k = sizeof(std::vector<xs__assert> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__assert> , n);
-		k = n * sizeof(std::vector<xs__assert> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__assert>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__assert, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -28839,20 +28534,18 @@ SOAP_FMAC3 std::vector<xs__attributeGroup> * SOAP_FMAC4 soap_in_std__vectorTempl
 SOAP_FMAC1 std::vector<xs__attributeGroup>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__attributeGroup(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__attributeGroup(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__attributeGroup> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__attributeGroup;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__attributeGroup> *p;
+	size_t k = sizeof(std::vector<xs__attributeGroup> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__attributeGroup> );
-		k = sizeof(std::vector<xs__attributeGroup> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__attributeGroup> , n);
-		k = n * sizeof(std::vector<xs__attributeGroup> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__attributeGroup>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__attributeGroup, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -28935,20 +28628,18 @@ SOAP_FMAC3 std::vector<xs__attribute> * SOAP_FMAC4 soap_in_std__vectorTemplateOf
 SOAP_FMAC1 std::vector<xs__attribute>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__attribute(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__attribute(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__attribute> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__attribute;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__attribute> *p;
+	size_t k = sizeof(std::vector<xs__attribute> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__attribute> );
-		k = sizeof(std::vector<xs__attribute> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__attribute> , n);
-		k = n * sizeof(std::vector<xs__attribute> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__attribute>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__attribute, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -29031,20 +28722,18 @@ SOAP_FMAC3 std::vector<xs__contents> * SOAP_FMAC4 soap_in_std__vectorTemplateOfx
 SOAP_FMAC1 std::vector<xs__contents>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__contents(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__contents(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__contents> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__contents;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__contents> *p;
+	size_t k = sizeof(std::vector<xs__contents> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__contents> );
-		k = sizeof(std::vector<xs__contents> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__contents> , n);
-		k = n * sizeof(std::vector<xs__contents> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__contents>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__contents, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -29127,20 +28816,18 @@ SOAP_FMAC3 std::vector<xs__element> * SOAP_FMAC4 soap_in_std__vectorTemplateOfxs
 SOAP_FMAC1 std::vector<xs__element>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__element(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__element(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__element> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__element;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__element> *p;
+	size_t k = sizeof(std::vector<xs__element> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__element> );
-		k = sizeof(std::vector<xs__element> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__element> , n);
-		k = n * sizeof(std::vector<xs__element> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__element>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__element, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -29211,20 +28898,18 @@ SOAP_FMAC3 std::vector<xs__element *> * SOAP_FMAC4 soap_in_std__vectorTemplateOf
 SOAP_FMAC1 std::vector<xs__element *>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfPointerToxs__element(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfPointerToxs__element(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__element *> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfPointerToxs__element;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__element *> *p;
+	size_t k = sizeof(std::vector<xs__element *> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__element *> );
-		k = sizeof(std::vector<xs__element *> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__element *> , n);
-		k = n * sizeof(std::vector<xs__element *> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__element *>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfPointerToxs__element, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -29307,20 +28992,18 @@ SOAP_FMAC3 std::vector<xs__alternative> * SOAP_FMAC4 soap_in_std__vectorTemplate
 SOAP_FMAC1 std::vector<xs__alternative>  * SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfxs__alternative(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfxs__alternative(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	std::vector<xs__alternative> *p = NULL;
-	int t = SOAP_TYPE_std__vectorTemplateOfxs__alternative;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	std::vector<xs__alternative> *p;
+	size_t k = sizeof(std::vector<xs__alternative> );
 	if (n < 0)
 	{	p = SOAP_NEW(std::vector<xs__alternative> );
-		k = sizeof(std::vector<xs__alternative> );
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(std::vector<xs__alternative> , n);
-		k = n * sizeof(std::vector<xs__alternative> );
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, wsdl_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated std::vector<xs__alternative>  location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_std__vectorTemplateOfxs__alternative, n, wsdl_fdelete);
 	if (size)
 		*size = k;
 	return p;

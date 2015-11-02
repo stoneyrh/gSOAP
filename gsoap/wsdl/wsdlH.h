@@ -6158,7 +6158,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xs__namespaceList(struct soap*, const cha
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xs__namespaceList(struct soap*, char *const*, const char*, const char*);
 
 #ifndef soap_write_xs__namespaceList
-#define soap_write_xs__namespaceList(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xs__namespaceList(soap, data), 0) || soap_put_xs__namespaceList(soap, data, "byte", NULL) || soap_end_send(soap), (soap)->error )
+#define soap_write_xs__namespaceList(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xs__namespaceList(soap, data), 0) || soap_put_xs__namespaceList(soap, data, "xs:namespaceList", NULL) || soap_end_send(soap), (soap)->error )
 #endif
 
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get_xs__namespaceList(struct soap*, char **, const char*, const char*);
@@ -6338,7 +6338,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__string(struct soap*, const char*, ch
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__string(struct soap*, char *const*, const char*, const char*);
 
 #ifndef soap_write_xsd__string
-#define soap_write_xsd__string(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__string(soap, data), 0) || soap_put_xsd__string(soap, data, "byte", NULL) || soap_end_send(soap), (soap)->error )
+#define soap_write_xsd__string(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__string(soap, data), 0) || soap_put_xsd__string(soap, data, "xsd:string", NULL) || soap_end_send(soap), (soap)->error )
 #endif
 
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get_xsd__string(struct soap*, char **, const char*, const char*);
@@ -6366,7 +6366,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__QName(struct soap*, const char*, cha
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__QName(struct soap*, char *const*, const char*, const char*);
 
 #ifndef soap_write_xsd__QName
-#define soap_write_xsd__QName(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__QName(soap, data), 0) || soap_put_xsd__QName(soap, data, "byte", NULL) || soap_end_send(soap), (soap)->error )
+#define soap_write_xsd__QName(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__QName(soap, data), 0) || soap_put_xsd__QName(soap, data, "xsd:QName", NULL) || soap_end_send(soap), (soap)->error )
 #endif
 
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get_xsd__QName(struct soap*, char **, const char*, const char*);
@@ -6394,7 +6394,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__NMTOKENS(struct soap*, const char*, 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__NMTOKENS(struct soap*, char *const*, const char*, const char*);
 
 #ifndef soap_write_xsd__NMTOKENS
-#define soap_write_xsd__NMTOKENS(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__NMTOKENS(soap, data), 0) || soap_put_xsd__NMTOKENS(soap, data, "byte", NULL) || soap_end_send(soap), (soap)->error )
+#define soap_write_xsd__NMTOKENS(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__NMTOKENS(soap, data), 0) || soap_put_xsd__NMTOKENS(soap, data, "xsd:NMTOKENS", NULL) || soap_end_send(soap), (soap)->error )
 #endif
 
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get_xsd__NMTOKENS(struct soap*, char **, const char*, const char*);
@@ -6422,7 +6422,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__NMTOKEN(struct soap*, const char*, c
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__NMTOKEN(struct soap*, char *const*, const char*, const char*);
 
 #ifndef soap_write_xsd__NMTOKEN
-#define soap_write_xsd__NMTOKEN(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__NMTOKEN(soap, data), 0) || soap_put_xsd__NMTOKEN(soap, data, "byte", NULL) || soap_end_send(soap), (soap)->error )
+#define soap_write_xsd__NMTOKEN(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__NMTOKEN(soap, data), 0) || soap_put_xsd__NMTOKEN(soap, data, "xsd:NMTOKEN", NULL) || soap_end_send(soap), (soap)->error )
 #endif
 
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get_xsd__NMTOKEN(struct soap*, char **, const char*, const char*);
@@ -6450,7 +6450,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__NCName(struct soap*, const char*, ch
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__NCName(struct soap*, char *const*, const char*, const char*);
 
 #ifndef soap_write_xsd__NCName
-#define soap_write_xsd__NCName(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__NCName(soap, data), 0) || soap_put_xsd__NCName(soap, data, "byte", NULL) || soap_end_send(soap), (soap)->error )
+#define soap_write_xsd__NCName(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__NCName(soap, data), 0) || soap_put_xsd__NCName(soap, data, "xsd:NCName", NULL) || soap_end_send(soap), (soap)->error )
 #endif
 
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get_xsd__NCName(struct soap*, char **, const char*, const char*);
@@ -6478,7 +6478,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__ID(struct soap*, const char*, char *
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__ID(struct soap*, char *const*, const char*, const char*);
 
 #ifndef soap_write_xsd__ID
-#define soap_write_xsd__ID(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__ID(soap, data), 0) || soap_put_xsd__ID(soap, data, "byte", NULL) || soap_end_send(soap), (soap)->error )
+#define soap_write_xsd__ID(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__ID(soap, data), 0) || soap_put_xsd__ID(soap, data, "xsd:ID", NULL) || soap_end_send(soap), (soap)->error )
 #endif
 
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get_xsd__ID(struct soap*, char **, const char*, const char*);
@@ -6506,7 +6506,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_xsd__anyURI(struct soap*, const char*, ch
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_xsd__anyURI(struct soap*, char *const*, const char*, const char*);
 
 #ifndef soap_write_xsd__anyURI
-#define soap_write_xsd__anyURI(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__anyURI(soap, data), 0) || soap_put_xsd__anyURI(soap, data, "byte", NULL) || soap_end_send(soap), (soap)->error )
+#define soap_write_xsd__anyURI(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_xsd__anyURI(soap, data), 0) || soap_put_xsd__anyURI(soap, data, "xsd:anyURI", NULL) || soap_end_send(soap), (soap)->error )
 #endif
 
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get_xsd__anyURI(struct soap*, char **, const char*, const char*);
@@ -6534,7 +6534,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in__QName(struct soap*, const char*, char **
 SOAP_FMAC3 int SOAP_FMAC4 soap_put__QName(struct soap*, char *const*, const char*, const char*);
 
 #ifndef soap_write__QName
-#define soap_write__QName(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize__QName(soap, data), 0) || soap_put__QName(soap, data, "byte", NULL) || soap_end_send(soap), (soap)->error )
+#define soap_write__QName(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize__QName(soap, data), 0) || soap_put__QName(soap, data, "QName", NULL) || soap_end_send(soap), (soap)->error )
 #endif
 
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get__QName(struct soap*, char **, const char*, const char*);
@@ -6554,7 +6554,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_string(struct soap*, const char*, char **
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_string(struct soap*, char *const*, const char*, const char*);
 
 #ifndef soap_write_string
-#define soap_write_string(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_string(soap, data), 0) || soap_put_string(soap, data, "byte", NULL) || soap_end_send(soap), (soap)->error )
+#define soap_write_string(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_string(soap, data), 0) || soap_put_string(soap, data, "string", NULL) || soap_end_send(soap), (soap)->error )
 #endif
 
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get_string(struct soap*, char **, const char*, const char*);

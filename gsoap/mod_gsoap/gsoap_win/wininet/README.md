@@ -38,9 +38,7 @@ Features                                                             {#features}
 - Can be used in both MBCS and UNICODE projects.
 - Compiles cleanly at warning level 4 supporting Win32 and Win64.
 - Debug logging is supported (`TEST.log`, `SENT.log`, and `RECV.log`).
-- MT safe and supports multiple threads, as usual with gSOAP clients. You will
-  need to register this plugin with each soap context (do not use `soap_copy`
-  and `soap_copy_context` to copy contexts).
+- MT safe and supports multiple threads, as usual with gSOAP clients.
 
 
 Limitations                                                       {#limitations}
@@ -160,4 +158,6 @@ Contributors                                                     {#contributors}
   Clean up and re-release.
 - 8 October 2010: Robert van Engelen (engelen@genivia.com):
   Cleanup and fixes for error handling.
+- 28 October 2015: Robert van Engelen (engelen@genivia.com):
+  Plugin copy.
 

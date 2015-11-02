@@ -211,18 +211,18 @@ Functions</h2></td></tr>
 <tr class="memitem:ab4a10d08044dd66da337f684385ed2cf"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structds_____signed_info_type.html">ds__SignedInfoType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ab4a10d08044dd66da337f684385ed2cf">soap_wsse_add_SignedInfo</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:ab4a10d08044dd66da337f684385ed2cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds SignedInfo element.  <a href="#ab4a10d08044dd66da337f684385ed2cf"></a><br/></td></tr>
 <tr class="separator:ab4a10d08044dd66da337f684385ed2cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5ea0bcecf8f77929b70b4603d5d6a0e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#aa5ea0bcecf8f77929b70b4603d5d6a0e">soap_wsse_add_SignedInfo_Reference</a> (struct soap *soap, const char *URI, const char *transform, const char *inclusiveNamespaces, int alg, const char *HA)</td></tr>
-<tr class="memdesc:aa5ea0bcecf8f77929b70b4603d5d6a0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds SignedInfo element with Reference URI, transform algorithm used, and digest value.  <a href="#aa5ea0bcecf8f77929b70b4603d5d6a0e"></a><br/></td></tr>
-<tr class="separator:aa5ea0bcecf8f77929b70b4603d5d6a0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8af97f17426428a48cc8042eeb5b52b6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a8af97f17426428a48cc8042eeb5b52b6">soap_wsse_add_SignedInfo_Reference</a> (struct soap *soap, const char *URI, const char *transform, const char *prefixlist, int alg, const char *HA)</td></tr>
+<tr class="memdesc:a8af97f17426428a48cc8042eeb5b52b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds SignedInfo element with Reference URI, transform algorithm used, and digest value.  <a href="#a8af97f17426428a48cc8042eeb5b52b6"></a><br/></td></tr>
+<tr class="separator:a8af97f17426428a48cc8042eeb5b52b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a398f98d62dfba91d04cff19230fb6722"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a398f98d62dfba91d04cff19230fb6722">soap_wsse_add_SignedInfo_SignatureMethod</a> (struct soap *soap, const char *method, int canonical)</td></tr>
 <tr class="memdesc:a398f98d62dfba91d04cff19230fb6722"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds SignedInfo element with SignatureMethod.  <a href="#a398f98d62dfba91d04cff19230fb6722"></a><br/></td></tr>
 <tr class="separator:a398f98d62dfba91d04cff19230fb6722"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a216e30bdddd04d328398126851d0f87a"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structds_____signed_info_type.html">ds__SignedInfoType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a216e30bdddd04d328398126851d0f87a">soap_wsse_SignedInfo</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:a216e30bdddd04d328398126851d0f87a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns SignedInfo element if present.  <a href="#a216e30bdddd04d328398126851d0f87a"></a><br/></td></tr>
 <tr class="separator:a216e30bdddd04d328398126851d0f87a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd4c4268cc8f9d667cc44586fb635b5d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#afd4c4268cc8f9d667cc44586fb635b5d">soap_wsse_get_SignedInfo_SignatureMethod</a> (struct soap *soap, int *alg)</td></tr>
-<tr class="memdesc:afd4c4268cc8f9d667cc44586fb635b5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get SignatureMethod algorithm.  <a href="#afd4c4268cc8f9d667cc44586fb635b5d"></a><br/></td></tr>
-<tr class="separator:afd4c4268cc8f9d667cc44586fb635b5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09e16b1618a55f17603691ba3c27dea0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a09e16b1618a55f17603691ba3c27dea0">soap_wsse_get_SignedInfo_SignatureMethod</a> (struct soap *soap, int *alg, int *bits)</td></tr>
+<tr class="memdesc:a09e16b1618a55f17603691ba3c27dea0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get SignatureMethod algorithm.  <a href="#a09e16b1618a55f17603691ba3c27dea0"></a><br/></td></tr>
+<tr class="separator:a09e16b1618a55f17603691ba3c27dea0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7399c40e0019bc1ae797fccf92f81fc7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a7399c40e0019bc1ae797fccf92f81fc7">soap_wsse_add_SignatureValue</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
 <tr class="memdesc:a7399c40e0019bc1ae797fccf92f81fc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds SignedInfo/SignatureMethod element, signs the SignedInfo element, and adds the resulting SignatureValue element.  <a href="#a7399c40e0019bc1ae797fccf92f81fc7"></a><br/></td></tr>
 <tr class="separator:a7399c40e0019bc1ae797fccf92f81fc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -324,6 +324,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a9582748dda80d0307e253f1a86c0c454"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a> (struct soap *soap, const char *tags)</td></tr>
 <tr class="memdesc:a9582748dda80d0307e253f1a86c0c454"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set to the string value of the tag's QName by replacing colons with hyphens to produce an xsd:ID value.  <a href="#a9582748dda80d0307e253f1a86c0c454"></a><br/></td></tr>
 <tr class="separator:a9582748dda80d0307e253f1a86c0c454"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a1670c6ee444704c8fb7ac612db37ff"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a7a1670c6ee444704c8fb7ac612db37ff">soap_wsse_set_InclusiveNamespaces</a> (struct soap *soap, const char *prefixlist)</td></tr>
+<tr class="memdesc:a7a1670c6ee444704c8fb7ac612db37ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the C14N InclusiveNamespaces Prefix List property.  <a href="#a7a1670c6ee444704c8fb7ac612db37ff"></a><br/></td></tr>
+<tr class="separator:a7a1670c6ee444704c8fb7ac612db37ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a16e38c1160a47ad2cb60d1b7d5dba777"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a16e38c1160a47ad2cb60d1b7d5dba777">soap_wsse_sign_only</a> (struct soap *soap, const char *tags)</td></tr>
 <tr class="memdesc:a16e38c1160a47ad2cb60d1b7d5dba777"><td class="mdescLeft">&#160;</td><td class="mdescRight">Filters only the specified wsu:Id names for signing. Can be used with <a class="el" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454" title="Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set...">soap_wsse_set_wsu_id()</a> and if so should use the element tag names.  <a href="#a16e38c1160a47ad2cb60d1b7d5dba777"></a><br/></td></tr>
 <tr class="separator:a16e38c1160a47ad2cb60d1b7d5dba777"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -349,16 +352,16 @@ Functions</h2></td></tr>
 <tr class="memdesc:a5ccbce0f1a4a8f103e921a918f932a20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Post-checks the presence of signed SOAP Body. Does not verify the signature of the Body, which is done with <a class="el" href="wsseapi_8c.html#a7321b451910e1d3887b328f03de92f34">soap_wsse_verify_auto</a>.  <a href="#a5ccbce0f1a4a8f103e921a918f932a20"></a><br/></td></tr>
 <tr class="separator:a5ccbce0f1a4a8f103e921a918f932a20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac12c951db671e4e29810d0f0ae7f1b63"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ac12c951db671e4e29810d0f0ae7f1b63">soap_wsse_encrypt_body</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
-<tr class="memdesc:ac12c951db671e4e29810d0f0ae7f1b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption.  <a href="#ac12c951db671e4e29810d0f0ae7f1b63"></a><br/></td></tr>
+<tr class="memdesc:ac12c951db671e4e29810d0f0ae7f1b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC etc. for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption.  <a href="#ac12c951db671e4e29810d0f0ae7f1b63"></a><br/></td></tr>
 <tr class="separator:ac12c951db671e4e29810d0f0ae7f1b63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c417c369946561cbf72566349041805"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a3c417c369946561cbf72566349041805">soap_wsse_encrypt_only</a> (struct soap *soap, int alg, const void *key, int keylen, const char *tags)</td></tr>
-<tr class="memdesc:a3c417c369946561cbf72566349041805"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiates the encryption of XML elements specified in the tags string. Should be used in combination with soap_wsse_set_wsu_id to set wsu:Id for given XML element tags. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey_encrypt_only for public key encryption.  <a href="#a3c417c369946561cbf72566349041805"></a><br/></td></tr>
+<tr class="memdesc:a3c417c369946561cbf72566349041805"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiates the encryption of XML elements specified in the tags string. Should be used in combination with soap_wsse_set_wsu_id to set wsu:Id for given XML element tags. The algorithm should be SOAP_MEC_ENC_DES_CBC etc. for symmetric encryption. Use soap_wsse_add_EncryptedKey_encrypt_only for public key encryption.  <a href="#a3c417c369946561cbf72566349041805"></a><br/></td></tr>
 <tr class="separator:a3c417c369946561cbf72566349041805"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae783dfb65a01ad8d8e6e7ca1e5b3d805"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ae783dfb65a01ad8d8e6e7ca1e5b3d805">soap_wsse_encrypt</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
-<tr class="memdesc:ae783dfb65a01ad8d8e6e7ca1e5b3d805"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start encryption. This function is supposed to be used internally only. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption.  <a href="#ae783dfb65a01ad8d8e6e7ca1e5b3d805"></a><br/></td></tr>
+<tr class="memdesc:ae783dfb65a01ad8d8e6e7ca1e5b3d805"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start encryption. This function is supposed to be used internally only. The algorithm should be SOAP_MEC_ENC_DES_CBC etc. for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption.  <a href="#ae783dfb65a01ad8d8e6e7ca1e5b3d805"></a><br/></td></tr>
 <tr class="separator:ae783dfb65a01ad8d8e6e7ca1e5b3d805"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a403569990cf3278a361552aecaf51ffc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a403569990cf3278a361552aecaf51ffc">soap_wsse_decrypt_auto</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
-<tr class="memdesc:a403569990cf3278a361552aecaf51ffc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start automatic decryption when needed using the specified key. This function should be used just once. The algorithm should be SOAP_MEC_ENV_DEC_DES_CBC for public key encryption/decryption and SOAP_MEC_DEC_DES_CBC for symmetric shared secret keys.  <a href="#a403569990cf3278a361552aecaf51ffc"></a><br/></td></tr>
+<tr class="memdesc:a403569990cf3278a361552aecaf51ffc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start automatic decryption when needed using the specified key. This function should be used just once. The algorithm should be SOAP_MEC_ENV_DEC_DES_CBC etc. for public key encryption/decryption and SOAP_MEC_DEC_DES_CBC etc. for symmetric shared secret keys.  <a href="#a403569990cf3278a361552aecaf51ffc"></a><br/></td></tr>
 <tr class="separator:a403569990cf3278a361552aecaf51ffc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a398ebb03dbadb508185423b3c766aa8c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a398ebb03dbadb508185423b3c766aa8c">soap_wsse_encrypt_begin</a> (struct soap *soap, const char *id, int alg, const char *URI, const char *keyname, const unsigned char *key)</td></tr>
 <tr class="memdesc:a398ebb03dbadb508185423b3c766aa8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit XML encryption tags and start encryption of the XML element content.  <a href="#a398ebb03dbadb508185423b3c766aa8c"></a><br/></td></tr>
@@ -366,9 +369,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a67d96a5fbfb37797a1223155957111cb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a67d96a5fbfb37797a1223155957111cb">soap_wsse_encrypt_end</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:a67d96a5fbfb37797a1223155957111cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit XML encryption end tags and stop encryption of the XML element content.  <a href="#a67d96a5fbfb37797a1223155957111cb"></a><br/></td></tr>
 <tr class="separator:a67d96a5fbfb37797a1223155957111cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc905be8ab736b213c35fa9114eecfd9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#adc905be8ab736b213c35fa9114eecfd9">soap_wsse_decrypt_begin</a> (struct soap *soap, const unsigned char *key)</td></tr>
-<tr class="memdesc:adc905be8ab736b213c35fa9114eecfd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check for XML encryption tags and start decryption of the XML element content. If the KeyInfo element is present, the security_token_handler callback will be used to obtain a decryption key based on the key name. Otherwise the current decryption key will be used.  <a href="#adc905be8ab736b213c35fa9114eecfd9"></a><br/></td></tr>
-<tr class="separator:adc905be8ab736b213c35fa9114eecfd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ac666e655fe29580b7f8bb393a76b59"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a0ac666e655fe29580b7f8bb393a76b59">soap_wsse_decrypt_begin</a> (struct soap *soap)</td></tr>
+<tr class="memdesc:a0ac666e655fe29580b7f8bb393a76b59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check for XML encryption tags and start decryption of the XML element content. If the KeyInfo element is present, the security_token_handler callback will be used to obtain a decryption key based on the key name.  <a href="#a0ac666e655fe29580b7f8bb393a76b59"></a><br/></td></tr>
+<tr class="separator:a0ac666e655fe29580b7f8bb393a76b59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1862170fdd18b54ab832347308d23019"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a1862170fdd18b54ab832347308d23019">soap_wsse_decrypt_end</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:a1862170fdd18b54ab832347308d23019"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check for XML encryption ending tags and stop decryption of the XML element content.  <a href="#a1862170fdd18b54ab832347308d23019"></a><br/></td></tr>
 <tr class="separator:a1862170fdd18b54ab832347308d23019"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -389,42 +392,74 @@ Variables</h2></td></tr>
 <tr class="separator:a88d310451ae729bbf0fdd149a9d7511c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71140ac907117b2bbf37f14939166a15"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a71140ac907117b2bbf37f14939166a15">ds_sha1URI</a> = &quot;http://www.w3.org/2000/09/xmldsig#sha1&quot;</td></tr>
 <tr class="separator:a71140ac907117b2bbf37f14939166a15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1994aeb6b20816972c6fe20d552634d1"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a1994aeb6b20816972c6fe20d552634d1">ds_sha224URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#sha224&quot;</td></tr>
+<tr class="separator:a1994aeb6b20816972c6fe20d552634d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99bf1005a6700b2e94cc400f799f4b93"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a99bf1005a6700b2e94cc400f799f4b93">ds_sha256URI</a> = &quot;http://www.w3.org/2001/04/xmlenc#sha256&quot;</td></tr>
 <tr class="separator:a99bf1005a6700b2e94cc400f799f4b93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10113f7c327dca1d78f79293a37576c7"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a10113f7c327dca1d78f79293a37576c7">ds_sha384URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#sha384&quot;</td></tr>
+<tr class="separator:a10113f7c327dca1d78f79293a37576c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a752690ab049714713ae0d240c0a11350"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a752690ab049714713ae0d240c0a11350">ds_sha512URI</a> = &quot;http://www.w3.org/2001/04/xmlenc#sha512&quot;</td></tr>
 <tr class="separator:a752690ab049714713ae0d240c0a11350"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a352a6e78890296ade9e25de397f1096c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a352a6e78890296ade9e25de397f1096c">ds_hmac_sha1URI</a> = &quot;http://www.w3.org/2000/09/xmldsig#hmac-sha1&quot;</td></tr>
 <tr class="separator:a352a6e78890296ade9e25de397f1096c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c076755b0e3022ca8ee5719d29cc572"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a3c076755b0e3022ca8ee5719d29cc572">ds_hmac_sha224URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#hmac-sha224&quot;</td></tr>
+<tr class="separator:a3c076755b0e3022ca8ee5719d29cc572"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab356216a1331e0ba33de2a62d1c8b5fb"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ab356216a1331e0ba33de2a62d1c8b5fb">ds_hmac_sha256URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#hmac-sha256&quot;</td></tr>
 <tr class="separator:ab356216a1331e0ba33de2a62d1c8b5fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a45a2c8a374d021be5efc6e2cdad294"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a0a45a2c8a374d021be5efc6e2cdad294">ds_hmac_sha384URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#hmac-sha384&quot;</td></tr>
+<tr class="separator:a0a45a2c8a374d021be5efc6e2cdad294"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73b877c9a2879fcc6bfd311150beccbd"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a73b877c9a2879fcc6bfd311150beccbd">ds_hmac_sha512URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#hmac-sha512&quot;</td></tr>
 <tr class="separator:a73b877c9a2879fcc6bfd311150beccbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f62c1715e0f49fd54ffc263e45a12eb"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a1f62c1715e0f49fd54ffc263e45a12eb">ds_dsa_sha1URI</a> = &quot;http://www.w3.org/2000/09/xmldsig#dsa-sha1&quot;</td></tr>
 <tr class="separator:a1f62c1715e0f49fd54ffc263e45a12eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ae987f879a399d655c764a6a6b3a829"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a4ae987f879a399d655c764a6a6b3a829">ds_dsa_sha256URI</a> = &quot;http://www.w3.org/2009/xmldsig11#dsa-sha256&quot;</td></tr>
+<tr class="separator:a4ae987f879a399d655c764a6a6b3a829"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad57129724eb01a743b6583afc522a131"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ad57129724eb01a743b6583afc522a131">ds_rsa_sha1URI</a> = &quot;http://www.w3.org/2000/09/xmldsig#rsa-sha1&quot;</td></tr>
 <tr class="separator:ad57129724eb01a743b6583afc522a131"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f530cd100aa9d7b1329ad1f173db9e3"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a4f530cd100aa9d7b1329ad1f173db9e3">ds_rsa_sha224URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#rsa-sha224&quot;</td></tr>
+<tr class="separator:a4f530cd100aa9d7b1329ad1f173db9e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a739fd4e4c86b17b58877a672bec79bc3"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a739fd4e4c86b17b58877a672bec79bc3">ds_rsa_sha256URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#rsa-sha256&quot;</td></tr>
 <tr class="separator:a739fd4e4c86b17b58877a672bec79bc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a166e4b040ba93226ea1d9042dd581eec"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a166e4b040ba93226ea1d9042dd581eec">ds_rsa_sha384URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#rsa-sha384&quot;</td></tr>
+<tr class="separator:a166e4b040ba93226ea1d9042dd581eec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f17cf69547d2ead56934e89f10f3ba6"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a6f17cf69547d2ead56934e89f10f3ba6">ds_rsa_sha512URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#rsa-sha512&quot;</td></tr>
 <tr class="separator:a6f17cf69547d2ead56934e89f10f3ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c5bdcb80c33d0c3d35050091bd2cec5"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a6c5bdcb80c33d0c3d35050091bd2cec5">xenc_rsa15URI</a> = &quot;http://www.w3.org/2001/04/xmlenc#rsa-1_5&quot;</td></tr>
-<tr class="separator:a6c5bdcb80c33d0c3d35050091bd2cec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43c42203ea88ef920b653d90307e6731"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a43c42203ea88ef920b653d90307e6731">xenc_rsaesURI</a> = &quot;http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p&quot;</td></tr>
-<tr class="separator:a43c42203ea88ef920b653d90307e6731"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7584321eb7036e4ced55493d720e87d2"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a7584321eb7036e4ced55493d720e87d2">ds_ecdsa_sha1URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1&quot;</td></tr>
+<tr class="separator:a7584321eb7036e4ced55493d720e87d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7865af3d6b0aa0963247a6788f2833cf"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a7865af3d6b0aa0963247a6788f2833cf">ds_ecdsa_sha224URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha224&quot;</td></tr>
+<tr class="separator:a7865af3d6b0aa0963247a6788f2833cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad413e3be4c8f195b07abda5b8678dbfa"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ad413e3be4c8f195b07abda5b8678dbfa">ds_ecdsa_sha256URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256&quot;</td></tr>
+<tr class="separator:ad413e3be4c8f195b07abda5b8678dbfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae55b592b5f6e491a8cbdc1ff30a5735b"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ae55b592b5f6e491a8cbdc1ff30a5735b">ds_ecdsa_sha384URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384&quot;</td></tr>
+<tr class="separator:ae55b592b5f6e491a8cbdc1ff30a5735b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a173335d37695dc639728213532f87a59"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a173335d37695dc639728213532f87a59">ds_ecdsa_sha512URI</a> = &quot;http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512&quot;</td></tr>
+<tr class="separator:a173335d37695dc639728213532f87a59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a159d359ac83617f624b54d467db4e0b1"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a159d359ac83617f624b54d467db4e0b1">xenc_3desURI</a> = &quot;http://www.w3.org/2001/04/xmlenc#tripledes-cbc&quot;</td></tr>
 <tr class="separator:a159d359ac83617f624b54d467db4e0b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a289552d8f69933dee3965bb4fc39882b"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a289552d8f69933dee3965bb4fc39882b">xenc_aes128URI</a> = &quot;http://www.w3.org/2001/04/xmlenc#aes128-cbc&quot;</td></tr>
-<tr class="separator:a289552d8f69933dee3965bb4fc39882b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04403c472eedb2abd47751086f6a2b37"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a04403c472eedb2abd47751086f6a2b37">xenc_aes192URI</a> = &quot;http://www.w3.org/2001/04/xmlenc#aes192-cbc&quot;</td></tr>
-<tr class="separator:a04403c472eedb2abd47751086f6a2b37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ab2e6720de47922659747608b9c40e4"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a0ab2e6720de47922659747608b9c40e4">xenc_aes256URI</a> = &quot;http://www.w3.org/2001/04/xmlenc#aes256-cbc&quot;</td></tr>
-<tr class="separator:a0ab2e6720de47922659747608b9c40e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30367bbed5c37ad3d556607aee6e30dd"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a30367bbed5c37ad3d556607aee6e30dd">xenc_aes512URI</a> = &quot;http://www.w3.org/2001/04/xmlenc#aes512-cbc&quot;</td></tr>
-<tr class="separator:a30367bbed5c37ad3d556607aee6e30dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae62c2754ffb9473f23a83d03f9bd0066"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ae62c2754ffb9473f23a83d03f9bd0066">xenc_aes128cbcURI</a> = &quot;http://www.w3.org/2001/04/xmlenc#aes128-cbc&quot;</td></tr>
+<tr class="separator:ae62c2754ffb9473f23a83d03f9bd0066"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c03789019f942f38a52b7cf3e3261f9"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a1c03789019f942f38a52b7cf3e3261f9">xenc_aes192cbcURI</a> = &quot;http://www.w3.org/2001/04/xmlenc#aes192-cbc&quot;</td></tr>
+<tr class="separator:a1c03789019f942f38a52b7cf3e3261f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a980c3cf82e86c8b0643c92ef785384f3"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a980c3cf82e86c8b0643c92ef785384f3">xenc_aes256cbcURI</a> = &quot;http://www.w3.org/2001/04/xmlenc#aes256-cbc&quot;</td></tr>
+<tr class="separator:a980c3cf82e86c8b0643c92ef785384f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1093ef00c10baa0d9ac3c01858fc37ee"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a1093ef00c10baa0d9ac3c01858fc37ee">xenc_aes512cbcURI</a> = &quot;http://www.w3.org/2001/04/xmlenc#aes512-cbc&quot;</td></tr>
+<tr class="separator:a1093ef00c10baa0d9ac3c01858fc37ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5251082fa5d641366794c3c2eb87a634"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a5251082fa5d641366794c3c2eb87a634">xenc_aes128gcmURI</a> = &quot;http://www.w3.org/2009/xmlenc11#aes128-gcm&quot;</td></tr>
+<tr class="separator:a5251082fa5d641366794c3c2eb87a634"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5a138d550595ab0103f5ea0b899ceac"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ac5a138d550595ab0103f5ea0b899ceac">xenc_aes192gcmURI</a> = &quot;http://www.w3.org/2009/xmlenc11#aes192-gcm&quot;</td></tr>
+<tr class="separator:ac5a138d550595ab0103f5ea0b899ceac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7852df271f5783819a53fc3ee247ace2"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a7852df271f5783819a53fc3ee247ace2">xenc_aes256gcmURI</a> = &quot;http://www.w3.org/2009/xmlenc11#aes256-gcm&quot;</td></tr>
+<tr class="separator:a7852df271f5783819a53fc3ee247ace2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c3be5abe1067c475336bd84ff769ef1"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a6c3be5abe1067c475336bd84ff769ef1">xenc_aes512gcmURI</a> = &quot;http://www.w3.org/2009/xmlenc11#aes512-gcm&quot;</td></tr>
+<tr class="separator:a6c3be5abe1067c475336bd84ff769ef1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fdac00892919c46ed53fa05b9cc0bdf"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a4fdac00892919c46ed53fa05b9cc0bdf">xenc_elementURI</a> = &quot;http://www.w3.org/2001/04/xmlenc#Element&quot;</td></tr>
 <tr class="separator:a4fdac00892919c46ed53fa05b9cc0bdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc58fc5b358c1f06737a623788dbfa0e"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#abc58fc5b358c1f06737a623788dbfa0e">xenc_contentURI</a> = &quot;http://www.w3.org/2001/04/xmlenc#Content&quot;</td></tr>
 <tr class="separator:abc58fc5b358c1f06737a623788dbfa0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c5bdcb80c33d0c3d35050091bd2cec5"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a6c5bdcb80c33d0c3d35050091bd2cec5">xenc_rsa15URI</a> = &quot;http://www.w3.org/2001/04/xmlenc#rsa-1_5&quot;</td></tr>
+<tr class="separator:a6c5bdcb80c33d0c3d35050091bd2cec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43c42203ea88ef920b653d90307e6731"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a43c42203ea88ef920b653d90307e6731">xenc_rsaesURI</a> = &quot;http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p&quot;</td></tr>
+<tr class="separator:a43c42203ea88ef920b653d90307e6731"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7aea4af6b24389f66019e8984d4b05c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ad7aea4af6b24389f66019e8984d4b05c">ds_URI</a> = &quot;http://www.w3.org/2000/09/xmldsig#&quot;</td></tr>
 <tr class="separator:ad7aea4af6b24389f66019e8984d4b05c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4089697df0f14ecf44cf0fb6098f4f78"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a4089697df0f14ecf44cf0fb6098f4f78">c14n_URI</a> = &quot;http://www.w3.org/2001/10/xml-exc-c14n#&quot;</td></tr>
@@ -912,7 +947,7 @@ Variables</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>algorithm to use, SOAP_MEC_ENV_ENC_DES_CBC or SOAP_MEC_ENV_ENC_AEAS256_CBC </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>algorithm to use, SOAP_MEC_ENV_ENC_DES_CBC etc. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">URI</td><td>a unique identifier for the key, required for interoperability </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">cert</td><td>the X509 certificate with public key or NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">subjectkeyid</td><td>string identification of the subject which when set to non-NULL is used instead of embedding the public key in the message </td></tr>
@@ -1026,7 +1061,7 @@ Variables</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>algorithm to use, SOAP_MEC_ENV_ENC_DES_CBC or SOAP_MEC_ENV_ENC_AEAS256_CBC </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>algorithm to use, SOAP_MEC_ENV_ENC_DES_CBC etc. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">URI</td><td>a unique identifier for the key, required for interoperability </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">cert</td><td>the X509 certificate with public key or NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">subjectkeyid</td><td>string identification of the subject which when set to non-NULL is used instead of embedding the public key in the message </td></tr>
@@ -1489,8 +1524,8 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is SOAP_SMD_HMAC_SHA1, SOAP_SMD_SIGN_DSA_SHA1, or SOAP_SMD_SIGN_RSA_SHA1 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>to use to sign (HMAC or EVP_PKEY) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is SOAP_SMD_HMAC_SHA1/224/256/384/512, SOAP_SMD_SIGN_DSA_SHA1/256, SOAP_SMD_SIGN_RSA_SHA1/224/256/384/512, or SOAP_SMD_SIGN_ECDSA_SHA1/224/256/384/512 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>to use to sign (HMAC or DSA/RSA/ECDSA EVP_PKEY) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>length of HMAC key </td></tr>
   </table>
   </dd>
@@ -1534,7 +1569,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
-<a class="anchor" id="aa5ea0bcecf8f77929b70b4603d5d6a0e"></a>
+<a class="anchor" id="a8af97f17426428a48cc8042eeb5b52b6"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1560,7 +1595,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>inclusiveNamespaces</em>, </td>
+          <td class="paramname"><em>prefixlist</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1588,7 +1623,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">URI</td><td>reference </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">transform</td><td>string should be c14n_URI for exc-c14n or NULL </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">inclusiveNamespaces</td><td>used by the exc-c14n transform or NULL </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">prefixlist</td><td>used by the exc-c14n transform or NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is the digest algorithm used </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">HA</td><td>is the digest in binary form </td></tr>
   </table>
@@ -1639,8 +1674,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>SOAP_OK</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The c14n:InclusiveNamespaces/PrefixList is set to "SOAP-ENV wsse". </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK </dd></dl>
 
 </div>
 </div>
@@ -1922,7 +1956,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
       </table>
 </div><div class="memdoc">
 
-<p>Start automatic decryption when needed using the specified key. This function should be used just once. The algorithm should be SOAP_MEC_ENV_DEC_DES_CBC for public key encryption/decryption and SOAP_MEC_DEC_DES_CBC for symmetric shared secret keys. </p>
+<p>Start automatic decryption when needed using the specified key. This function should be used just once. The algorithm should be SOAP_MEC_ENV_DEC_DES_CBC etc. for public key encryption/decryption and SOAP_MEC_DEC_DES_CBC etc. for symmetric shared secret keys. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
@@ -1937,7 +1971,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
-<a class="anchor" id="adc905be8ab736b213c35fa9114eecfd9"></a>
+<a class="anchor" id="a0ac666e655fe29580b7f8bb393a76b59"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1945,27 +1979,16 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
           <td class="memname">int soap_wsse_decrypt_begin </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname"><em>soap</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>soap</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const unsigned char *&#160;</td>
-          <td class="paramname"><em>key</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Check for XML encryption tags and start decryption of the XML element content. If the KeyInfo element is present, the security_token_handler callback will be used to obtain a decryption key based on the key name. Otherwise the current decryption key will be used. </p>
+<p>Check for XML encryption tags and start decryption of the XML element content. If the KeyInfo element is present, the security_token_handler callback will be used to obtain a decryption key based on the key name. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>optional triple DES key for decryption (to override the current key) </td></tr>
+    <tr><td class="paramname">soap</td><td>context </td></tr>
   </table>
   </dd>
 </dl>
@@ -2333,11 +2356,11 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
       </table>
 </div><div class="memdoc">
 
-<p>Start encryption. This function is supposed to be used internally only. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption. </p>
+<p>Start encryption. This function is supposed to be used internally only. The algorithm should be SOAP_MEC_ENC_DES_CBC etc. for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC etc. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>a certificate with public key for encryption, a DES CBC 160-bit key or AES key </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>the symmetric encryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
   </table>
@@ -2447,11 +2470,11 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
       </table>
 </div><div class="memdoc">
 
-<p>Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption. </p>
+<p>Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC etc. for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC etc. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>a certificate with public key for encryption, a DES CBC 160-bit key or AES key </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>the symmetric encryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
   </table>
@@ -2529,11 +2552,11 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
       </table>
 </div><div class="memdoc">
 
-<p>Initiates the encryption of XML elements specified in the tags string. Should be used in combination with soap_wsse_set_wsu_id to set wsu:Id for given XML element tags. The algorithm should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC for symmetric encryption. Use soap_wsse_add_EncryptedKey_encrypt_only for public key encryption. </p>
+<p>Initiates the encryption of XML elements specified in the tags string. Should be used in combination with soap_wsse_set_wsu_id to set wsu:Id for given XML element tags. The algorithm should be SOAP_MEC_ENC_DES_CBC etc. for symmetric encryption. Use soap_wsse_add_EncryptedKey_encrypt_only for public key encryption. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC or one of SOAP_MEC_ENC_AESxxx_CBC </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC etc. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>a certificate with public key for encryption, a DES CBC 160-bit key or AES key </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>the symmetric encryption key length, 20 bytes for a DES CBC 160-bit key </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tags</td><td>string of space-separated qualified and unqualified tag names </td></tr>
@@ -2938,7 +2961,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
-<a class="anchor" id="afd4c4268cc8f9d667cc44586fb635b5d"></a>
+<a class="anchor" id="a09e16b1618a55f17603691ba3c27dea0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -2952,7 +2975,13 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>alg</em>&#160;</td>
+          <td class="paramname"><em>alg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>bits</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2966,11 +2995,12 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">alg</td><td>is a signature algorithm, such as SOAP_SMD_HMAC_SHA1, SOAP_SMD_VRFY_DSA_SHA1, or SOAP_SMD_VRFY_RSA_SHA1 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">alg</td><td>is a signature algorithm, such as SOAP_SMD_HMAC_SHA1/224/256/384/512, SOAP_SMD_VRFY_DSA_SHA1/256, SOAP_SMD_VRFY_RSA_SHA1/224/256/384/512 or SOAP_SMD_ECDSA_SHA1/224/256/384/512 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">bits</td><td>is set to HMACOutputLength if present and valid, 0 otherwise </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or SOAP_FAULT with wsse:UnsupportedAlgorithm or wsse:FailedCheck fault </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or SOAP_FAULT with wsse:UnsupportedAlgorithm, wsse:FailedCheck, or wsse__InvalidSecurity fault </dd></dl>
 
 </div>
 </div>
@@ -3676,6 +3706,42 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
+<a class="anchor" id="a7a1670c6ee444704c8fb7ac612db37ff"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_wsse_set_InclusiveNamespaces </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>prefixlist</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the C14N InclusiveNamespaces Prefix List property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">prefixlist</td><td>string of space-separated namespace prefixes, or NULL to remove </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a9582748dda80d0307e253f1a86c0c454"></a>
 <div class="memitem">
 <div class="memproto">
@@ -3752,8 +3818,8 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is the signature algorithm, such as SOAP_SMD_HMAC_SHA1, SOAP_SMD_SIGN_DSA_SHA1, or SOAP_SMD_SIGN_RSA_SHA1 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>is the HMAC secret key or DSA/RSA private EVP_PKEY </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is the signature algorithm, such as SOAP_SMD_HMAC_SHA1/224/256/384/512, SOAP_SMD_SIGN_DSA_SHA1/256, SOAP_SMD_SIGN_RSA_SHA1/224/256/384/512, or SOAP_SMD_SIGN_ECDSA_SHA1/224/256/384/512 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>is the HMAC secret key or DSA/RSA/ECDSA private EVP_PKEY </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>is the HMAC key length </td></tr>
   </table>
   </dd>
@@ -3803,8 +3869,8 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is the signature algorithm, such as SOAP_SMD_HMAC_SHA1, SOAP_SMD_SIGN_DSA_SHA1, or SOAP_SMD_SIGN_RSA_SHA1 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>is the HMAC secret key or DSA/RSA private EVP_PKEY </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is the signature algorithm, such as SOAP_SMD_HMAC_SHA1/224/256/384/512, SOAP_SMD_SIGN_DSA_SHA1/256, SOAP_SMD_SIGN_RSA_SHA1/224/256/384/512, or SOAP_SMD_SIGN_ECDSA_SHA1/224/256/384/512 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>is the HMAC secret key or DSA/RSA/ECDSA private EVP_PKEY </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>is the HMAC key length </td></tr>
   </table>
   </dd>
@@ -4035,7 +4101,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>to verify signature if signature has no secret or public key, use SOAP_SMD_NONE to omit </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>is HMAC key or EVP_PKEY or NULL </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>is HMAC key or a DSA/RSA/ECDSA EVP_PKEY or NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>is HMAC key length or 0 </td></tr>
   </table>
   </dd>
@@ -4387,8 +4453,8 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is a signature algorith, such as SOAP_SMD_HMAC_SHA1, SOAP_SMD_VRFY_DSA_SHA1, or SOAP_SMD_VRFY_RSA_SHA1 determined by the SignedInfo/SignatureMethod </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>to use to verify (HMAC or EVP_PKEY) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is a signature algorith, such as SOAP_SMD_HMAC_SHA1/224/256/384/512, SOAP_SMD_VRFY_DSA_SHA1/256, SOAP_SMD_VRFY_RSA_SHA1/224/256/384/512 or SOAP_SMD_VRFY_ECDSA_SHA1/224/256/384/512 determined by the SignedInfo/SignatureMethod </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>to use to verify (HMAC or DSA/RSA/ECDSA EVP_PKEY) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keylen</td><td>length of HMAC key </td></tr>
   </table>
   </dd>
@@ -4512,6 +4578,78 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
+<a class="anchor" id="a4ae987f879a399d655c764a6a6b3a829"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ds_dsa_sha256URI = &quot;http://www.w3.org/2009/xmldsig11#dsa-sha256&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a7584321eb7036e4ced55493d720e87d2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ds_ecdsa_sha1URI = &quot;http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a7865af3d6b0aa0963247a6788f2833cf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ds_ecdsa_sha224URI = &quot;http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha224&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ad413e3be4c8f195b07abda5b8678dbfa"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ds_ecdsa_sha256URI = &quot;http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ae55b592b5f6e491a8cbdc1ff30a5735b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ds_ecdsa_sha384URI = &quot;http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a173335d37695dc639728213532f87a59"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ds_ecdsa_sha512URI = &quot;http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a352a6e78890296ade9e25de397f1096c"></a>
 <div class="memitem">
 <div class="memproto">
@@ -4524,12 +4662,36 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
+<a class="anchor" id="a3c076755b0e3022ca8ee5719d29cc572"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ds_hmac_sha224URI = &quot;http://www.w3.org/2001/04/xmldsig-more#hmac-sha224&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="ab356216a1331e0ba33de2a62d1c8b5fb"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">const char* ds_hmac_sha256URI = &quot;http://www.w3.org/2001/04/xmldsig-more#hmac-sha256&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a0a45a2c8a374d021be5efc6e2cdad294"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ds_hmac_sha384URI = &quot;http://www.w3.org/2001/04/xmldsig-more#hmac-sha384&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -4560,12 +4722,36 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
+<a class="anchor" id="a4f530cd100aa9d7b1329ad1f173db9e3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ds_rsa_sha224URI = &quot;http://www.w3.org/2001/04/xmldsig-more#rsa-sha224&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a739fd4e4c86b17b58877a672bec79bc3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">const char* ds_rsa_sha256URI = &quot;http://www.w3.org/2001/04/xmldsig-more#rsa-sha256&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a166e4b040ba93226ea1d9042dd581eec"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ds_rsa_sha384URI = &quot;http://www.w3.org/2001/04/xmldsig-more#rsa-sha384&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -4596,12 +4782,36 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
+<a class="anchor" id="a1994aeb6b20816972c6fe20d552634d1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ds_sha224URI = &quot;http://www.w3.org/2001/04/xmldsig-more#sha224&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a99bf1005a6700b2e94cc400f799f4b93"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">const char* ds_sha256URI = &quot;http://www.w3.org/2001/04/xmlenc#sha256&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a10113f7c327dca1d78f79293a37576c7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* ds_sha384URI = &quot;http://www.w3.org/2001/04/xmldsig-more#sha384&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -4771,48 +4981,96 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
-<a class="anchor" id="a289552d8f69933dee3965bb4fc39882b"></a>
+<a class="anchor" id="ae62c2754ffb9473f23a83d03f9bd0066"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const char* xenc_aes128URI = &quot;http://www.w3.org/2001/04/xmlenc#aes128-cbc&quot;</td>
+          <td class="memname">const char* xenc_aes128cbcURI = &quot;http://www.w3.org/2001/04/xmlenc#aes128-cbc&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a class="anchor" id="a04403c472eedb2abd47751086f6a2b37"></a>
+<a class="anchor" id="a5251082fa5d641366794c3c2eb87a634"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const char* xenc_aes192URI = &quot;http://www.w3.org/2001/04/xmlenc#aes192-cbc&quot;</td>
+          <td class="memname">const char* xenc_aes128gcmURI = &quot;http://www.w3.org/2009/xmlenc11#aes128-gcm&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a class="anchor" id="a0ab2e6720de47922659747608b9c40e4"></a>
+<a class="anchor" id="a1c03789019f942f38a52b7cf3e3261f9"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const char* xenc_aes256URI = &quot;http://www.w3.org/2001/04/xmlenc#aes256-cbc&quot;</td>
+          <td class="memname">const char* xenc_aes192cbcURI = &quot;http://www.w3.org/2001/04/xmlenc#aes192-cbc&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a class="anchor" id="a30367bbed5c37ad3d556607aee6e30dd"></a>
+<a class="anchor" id="ac5a138d550595ab0103f5ea0b899ceac"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const char* xenc_aes512URI = &quot;http://www.w3.org/2001/04/xmlenc#aes512-cbc&quot;</td>
+          <td class="memname">const char* xenc_aes192gcmURI = &quot;http://www.w3.org/2009/xmlenc11#aes192-gcm&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a980c3cf82e86c8b0643c92ef785384f3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* xenc_aes256cbcURI = &quot;http://www.w3.org/2001/04/xmlenc#aes256-cbc&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a7852df271f5783819a53fc3ee247ace2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* xenc_aes256gcmURI = &quot;http://www.w3.org/2009/xmlenc11#aes256-gcm&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a1093ef00c10baa0d9ac3c01858fc37ee"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* xenc_aes512cbcURI = &quot;http://www.w3.org/2001/04/xmlenc#aes512-cbc&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a6c3be5abe1067c475336bd84ff769ef1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* xenc_aes512gcmURI = &quot;http://www.w3.org/2009/xmlenc11#aes512-gcm&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -4869,6 +5127,6 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 </div>
 </div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Fri Oct 23 2015 11:51:42 for <a href="http://www.genivia.com">Genivia</a> documentation of WS-Security by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Mon Nov 2 2015 08:16:04 for <a href="http://www.genivia.com">Genivia</a> documentation of WS-Security by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

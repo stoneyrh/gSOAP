@@ -63,6 +63,10 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a50f0bdc755eb878a5bf3e50a05dba7f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af311dcc18c454c211e4a81c073d5bb2b"><td class="memItemLeft" align="right" valign="top">const EVP_CIPHER *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__mec__data.html#af311dcc18c454c211e4a81c073d5bb2b">type</a></td></tr>
 <tr class="separator:af311dcc18c454c211e4a81c073d5bb2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaeb7097d3a593e5bf28e2fbc74bcfce7"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__mec__data.html#aaeb7097d3a593e5bf28e2fbc74bcfce7">tag</a> [16]</td></tr>
+<tr class="separator:aaeb7097d3a593e5bf28e2fbc74bcfce7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab331b6d8bda6950dbfa67eed5c278715"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__mec__data.html#ab331b6d8bda6950dbfa67eed5c278715">taglen</a></td></tr>
+<tr class="separator:ab331b6d8bda6950dbfa67eed5c278715"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabbbd0d6e7733eede3a28e56c1abf82f"><td class="memItemLeft" align="right" valign="top">const EVP_PKEY *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__mec__data.html#aabbbd0d6e7733eede3a28e56c1abf82f">pkey</a></td></tr>
 <tr class="separator:aabbbd0d6e7733eede3a28e56c1abf82f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82e613ad4a322a218e2b984ba92571b3"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__mec__data.html#a82e613ad4a322a218e2b984ba92571b3">ekey</a> [EVP_MAX_KEY_LENGTH]</td></tr>
@@ -79,6 +83,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a61d19693006aca4a55f88081e5a5e427"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae53d1db46e1d2bb3371cfe241415e9d7"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__mec__data.html#ae53d1db46e1d2bb3371cfe241415e9d7">rest</a></td></tr>
 <tr class="separator:ae53d1db46e1d2bb3371cfe241415e9d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a68199f2f20e1a45fe5e05f1656f624"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__mec__data.html#a7a68199f2f20e1a45fe5e05f1656f624">restidx</a></td></tr>
+<tr class="separator:a7a68199f2f20e1a45fe5e05f1656f624"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba6f136b32b6319fe80f12772c04e120"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__mec__data.html#aba6f136b32b6319fe80f12772c04e120">restlen</a></td></tr>
 <tr class="separator:aba6f136b32b6319fe80f12772c04e120"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94e4c41bc60b8798b4ed5ad23b0795b0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__mec__data.html#a94e4c41bc60b8798b4ed5ad23b0795b0">i</a></td></tr>
@@ -283,7 +289,20 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>non-encryption "flush" buffer </p>
+<p>rest-append buffer </p>
+
+</div>
+</div>
+<a class="anchor" id="a7a68199f2f20e1a45fe5e05f1656f624"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t soap_mec_data::restidx</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>rest-append buffer index </p>
 
 </div>
 </div>
@@ -296,7 +315,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>non-encryption "flush" buffer length </p>
+<p>rest-append buffer max length </p>
 
 </div>
 </div>
@@ -310,6 +329,32 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Decryption state </p>
+
+</div>
+</div>
+<a class="anchor" id="aaeb7097d3a593e5bf28e2fbc74bcfce7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char soap_mec_data::tag[16]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>GCM authentication tag buffer </p>
+
+</div>
+</div>
+<a class="anchor" id="ab331b6d8bda6950dbfa67eed5c278715"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char soap_mec_data::taglen</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>GCM authentication tag buffer length </p>
 
 </div>
 </div>
@@ -331,6 +376,6 @@ Public Attributes</h2></td></tr>
 </ul>
 </div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Fri Oct 23 2015 11:51:42 for <a href="http://www.genivia.com">Genivia</a> documentation of WS-Security by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Mon Nov 2 2015 08:16:04 for <a href="http://www.genivia.com">Genivia</a> documentation of WS-Security by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

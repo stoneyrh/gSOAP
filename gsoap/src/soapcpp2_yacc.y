@@ -1085,7 +1085,7 @@ type    : VOID          { $$ = mkvoid(); }
         | LONG          { $$ = mklong(); }
         | LLONG         { $$ = mkllong(); }
         | ULLONG        { $$ = mkullong(); }
-        | SIZE          { $$ = mksize(); $$->transient = 1; }
+        | SIZE          { $$ = mksize(); }
         | FLOAT         { $$ = mkfloat(); }
         | DOUBLE        { $$ = mkdouble(); }
         | SIGNED        { $$ = mkint(); }

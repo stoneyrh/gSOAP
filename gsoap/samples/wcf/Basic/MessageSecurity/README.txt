@@ -37,7 +37,7 @@ Open the MMC console
 
 Add the certificates snap-in to MMC if not already added, by pressing CTRL-M.
 
-In Console Root/Certificates: select under Personal/Cerificates "client.com"
+In Console Root/Certificates: select under Personal/Certificates "client.com"
 
 Export "client.com" by right-clicking, All Tasks/Export...
 
@@ -62,7 +62,7 @@ Repeat for the server key:
 
   C:> makecert -sk myKey -n "CN=10.0.1.5" -ss TrustedPeople -pe
 
-Export certificate 10.0.1.5 under MMC Trusted People/Cerificates to pfx format
+Export certificate 10.0.1.5 under MMC Trusted People/Certificates to pfx format
 as described above, and convert the key and certificate to PEM format:
 
   $ openssl pkcs12 -in server.pfx -nocerts -out serverWCF.pem

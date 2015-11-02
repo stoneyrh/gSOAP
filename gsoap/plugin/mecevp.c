@@ -1,10 +1,10 @@
 /*
-	mecevp.c
+        mecevp.c
 
-	gSOAP interface for streaming message encryption and decryption
+        gSOAP interface for streaming message encryption and decryption
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2012, Robert van Engelen, Genivia, Inc., All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -58,39 +58,42 @@ buffered message encryption modes are supported.
 An encryption and decryption algorithm and mode is selected with one of the
 following:
 
-- @ref SOAP_MEC_ENV_ENC_DES_CBC	envelope encryption with triple DES CBC
-- @ref SOAP_MEC_ENV_ENC_AES256_CBC	envelope encryption with AES256 CBC
-- @ref SOAP_MEC_ENC_DES_CBC		symmetric encryption with triple DES CBC
-- @ref SOAP_MEC_ENC_AES256_CBC		symmetric encryption with AES256 CBC
-- @ref SOAP_MEC_ENV_DEC_DES_CBC	envelope decryption with triple DES CBC
-- @ref SOAP_MEC_ENV_DEC_AES256_CBC	envelope decryption with AES256 CBC
-- @ref SOAP_MEC_DEC_DES_CBC		symmetric decryption with triple DES CBC
-- @ref SOAP_MEC_DEC_AES256_CBC		symmetric decryption with AES256 CBC
+- @ref SOAP_MEC_ENV_ENC_DES_CBC         envelope encryption with triple DES CBC
+- @ref SOAP_MEC_ENV_ENC_AES256_CBC      envelope encryption with AES256 CBC
+- @ref SOAP_MEC_ENV_ENC_AES256_GCM      envelope authenticated encryption with AES256 GCM
+- @ref SOAP_MEC_ENC_DES_CBC             symmetric encryption with triple DES CBC
+- @ref SOAP_MEC_ENC_AES256_CBC          symmetric encryption with AES256 CBC
+- @ref SOAP_MEC_ENC_AES256_GCM          symmetric authenticated encryption with AES256 GCM
+- @ref SOAP_MEC_ENV_DEC_DES_CBC         envelope decryption with triple DES CBC
+- @ref SOAP_MEC_ENV_DEC_AES256_CBC      envelope decryption with AES256 CBC
+- @ref SOAP_MEC_ENV_DEC_AES256_GCM      envelope authenticated decryption with AES256 GCM
+- @ref SOAP_MEC_DEC_DES_CBC             symmetric decryption with triple DES CBC
+- @ref SOAP_MEC_DEC_AES256_CBC          symmetric decryption with AES256 CBC
+- @ref SOAP_MEC_DEC_AES256_GCM          symmetric authenticated decryption with AES256 GCM
 
-where, in the above, AES256 can be replaced with any choice of AES128, AES192,
-AES512.
+where, in the above, AES256 can be replaced with AES128 ot AES192.
 
 Algorithm options:
 
-- @ref SOAP_MEC_STORE		buffer all output in memory
-- @ref SOAP_MEC_OAEP		use OAEP padding
+- @ref SOAP_MEC_STORE           buffer all output in memory
+- @ref SOAP_MEC_OAEP            use OAEP padding for CBC
 
 The mecevp engine wraps the EVP API with four new functions:
 
-- @ref soap_mec_init	to initialize the engine
-- @ref soap_mec_update	to encrypt/decrypt a message part
-- @ref soap_mec_final	to finalize encryption/decryption
-- @ref soap_mec_cleanup	to deallocate the engine and buffers
+- @ref soap_mec_init    to initialize the engine
+- @ref soap_mec_update  to encrypt/decrypt a message part
+- @ref soap_mec_final   to finalize encryption/decryption
+- @ref soap_mec_cleanup to deallocate the engine and buffers
 
 All cipher data is written and read in base64 format.
 
 A higher-level interface for message encryption/decryption in parts (such as
 individual XML elements) is defined by two new functions:
 
-- @ref soap_mec_begin	to begin a streaming sequence of encryptions/decryptions
-- @ref soap_mec_start	to start encryption/decryption of a message part
-- @ref soap_mec_stop	to stop encryption/decryption of a message part
-- @ref soap_mec_end	to end the sequence and deallocate the engine buffers
+- @ref soap_mec_begin   to begin a streaming sequence of encryptions/decryptions
+- @ref soap_mec_start   to start encryption/decryption of a message part
+- @ref soap_mec_stop    to stop encryption/decryption of a message part
+- @ref soap_mec_end     to end the sequence and deallocate the engine buffers
 
 Compile all source codes with -DWITH_OPENSSL and link with ssl and crypto
 libraries.
@@ -169,7 +172,8 @@ decryption.
 Symmetric encryption and decryption can be used if both parties can safely
 share a secret symmetric key that no other party has access to. We use
 SOAP_MEC_ENC_DES_CBC for encryption and SOAP_MEC_DEC_DES_CBC for decryption
-using a 160-bit triple DES key.
+using a 160-bit triple DES key. You can also use AES128, AES192, AES256
+ciphers.
 
 Here is an example to encrypt a message using a shared secret key while
 streaming it to the output.
@@ -257,8 +261,7 @@ static int soap_mec_filterrecv(struct soap *soap, char *buf, size_t *len, size_t
 
 /**
 @fn int soap_mec_init(struct soap *soap, struct soap_mec_data *data, int alg, SOAP_MEC_KEY_TYPE *pkey, unsigned char *key, int *keylen)
-@brief Initialize mecevp engine state and create context for
-encryption/decryption algorithm using a private/public key or symmetric secret
+@brief Initialize mecevp engine state and create context for encryption/decryption algorithm using a private/public key or symmetric secret
 key.
 @param soap context
 @param[in,out] data mecevp engine context
@@ -279,43 +282,64 @@ soap_mec_init(struct soap *soap, struct soap_mec_data *data, int alg, SOAP_MEC_K
   EVP_CIPHER_CTX_init(data->ctx);
   data->alg = alg;
   data->state = SOAP_MEC_STATE_NONE;
-  if (alg & SOAP_MEC_DES_CBC)
-    data->type = EVP_des_ede3_cbc(); /* triple DES CBC */
-  else if (alg & SOAP_MEC_AES128_CBC)
-    data->type = EVP_get_cipherbyname("AES128");
-  else if (alg & SOAP_MEC_AES192_CBC)
-    data->type = EVP_get_cipherbyname("AES192");
-  else if (alg & SOAP_MEC_AES256_CBC)
-    data->type = EVP_get_cipherbyname("AES256");
-  else if (alg & SOAP_MEC_AES512_CBC)
-    data->type = EVP_get_cipherbyname("AES512");
-  else
-    data->type = EVP_enc_null();
-  data->buf = NULL;
-  data->rest = NULL;
-  data->restlen = 0;
+  data->restidx = 0;
+  data->taglen = 0;
+  switch (alg & SOAP_MEC_ALGO)
+  { case SOAP_MEC_DES_CBC:
+      data->type = EVP_des_ede3_cbc();
+      break;
+    case SOAP_MEC_AES128_CBC:
+      data->type = EVP_aes_128_cbc();
+      break;
+    case SOAP_MEC_AES192_CBC:
+      data->type = EVP_aes_192_cbc();
+      break;
+    case SOAP_MEC_AES256_CBC:
+      data->type = EVP_aes_256_cbc();
+      break;
+    case SOAP_MEC_AES512_CBC:
+      data->type = NULL; /* N/A */
+      break;
+#if (OPENSSL_VERSION_NUMBER >= 0x10002000L)
+    case SOAP_MEC_AES128_GCM:
+      data->type = EVP_aes_128_gcm();
+      break;
+    case SOAP_MEC_AES192_GCM:
+      data->type = EVP_aes_192_gcm();
+      break;
+    case SOAP_MEC_AES256_GCM:
+      data->type = EVP_aes_256_gcm();
+      break;
+    case SOAP_MEC_AES512_GCM:
+      data->type = NULL; /* N/A */
+      break;
+#endif
+    default:
+      data->type = NULL;
+  }
   if (alg & SOAP_MEC_ENC)
   { if (!data->type)
       return soap_mec_check(soap, data, 0, "soap_mec_init() failed: cannot load cipher");
-    EVP_EncryptInit_ex(data->ctx, data->type, NULL, NULL, NULL);
+    ok = EVP_EncryptInit_ex(data->ctx, data->type, NULL, NULL, NULL);
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_EncryptInit ok=%d\n", ok));
   }
-  if (alg & SOAP_MEC_OAEP)
-    EVP_CIPHER_CTX_set_padding(data->ctx, RSA_PKCS1_OAEP_PADDING);
+  if (alg & SOAP_MEC_GCM)
+    EVP_CIPHER_CTX_set_padding(data->ctx, 0);
   else
-    EVP_CIPHER_CTX_set_padding(data->ctx, RSA_PKCS1_PADDING);
-  switch (alg & SOAP_MEC_MASK)
-  { case SOAP_MEC_ENV_ENC_AES128_CBC:
-    case SOAP_MEC_ENV_ENC_AES192_CBC:
-    case SOAP_MEC_ENV_ENC_AES256_CBC:
-    case SOAP_MEC_ENV_ENC_AES512_CBC:
-    case SOAP_MEC_ENV_ENC_DES_CBC:
+  { if (alg & SOAP_MEC_OAEP)
+      EVP_CIPHER_CTX_set_padding(data->ctx, RSA_PKCS1_OAEP_PADDING);
+    else
+      EVP_CIPHER_CTX_set_padding(data->ctx, RSA_PKCS1_PADDING);
+  }
+  switch (alg & SOAP_MEC_MASK & ~SOAP_MEC_ALGO)
+  { case SOAP_MEC_ENV_ENC:
 #if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
       ok = EVP_CIPHER_CTX_rand_key(data->ctx, data->ekey);
 #elif defined(EVP_CIPH_RAND_KEY)
       if (data->ctx->cipher->flags & EVP_CIPH_RAND_KEY)
-	ok = EVP_CIPHER_CTX_ctrl(data->ctx, EVP_CTRL_RAND_KEY, 0, data->ekey);
+        ok = EVP_CIPHER_CTX_ctrl(data->ctx, EVP_CTRL_RAND_KEY, 0, data->ekey);
       else
-	ok = RAND_bytes(data->ekey, data->ctx->key_len);
+        ok = RAND_bytes(data->ekey, data->ctx->key_len);
 #else
       ok = RAND_bytes(data->ekey, data->ctx->key_len);
 #endif
@@ -327,26 +351,14 @@ soap_mec_init(struct soap *soap, struct soap_mec_data *data, int alg, SOAP_MEC_K
 #endif
       key = data->ekey;
       /* fall through to next arm */
-    case SOAP_MEC_ENC_DES_CBC:
-    case SOAP_MEC_ENC_AES128_CBC:
-    case SOAP_MEC_ENC_AES192_CBC:
-    case SOAP_MEC_ENC_AES256_CBC:
-    case SOAP_MEC_ENC_AES512_CBC:
+    case SOAP_MEC_ENC:
       data->bufidx = 0;
       data->buflen = 1024; /* > iv in base64 must fit */
       data->buf = (char*)SOAP_MALLOC(soap, data->buflen);
       data->key = key;
       break;
-    case SOAP_MEC_ENV_DEC_AES128_CBC:
-    case SOAP_MEC_ENV_DEC_AES192_CBC:
-    case SOAP_MEC_ENV_DEC_AES256_CBC:
-    case SOAP_MEC_ENV_DEC_AES512_CBC:
-    case SOAP_MEC_ENV_DEC_DES_CBC:
-    case SOAP_MEC_DEC_DES_CBC:
-    case SOAP_MEC_DEC_AES128_CBC:
-    case SOAP_MEC_DEC_AES192_CBC:
-    case SOAP_MEC_DEC_AES256_CBC:
-    case SOAP_MEC_DEC_AES512_CBC:
+    case SOAP_MEC_ENV_DEC:
+    case SOAP_MEC_DEC:
       data->pkey = pkey;
       data->key = key;
       data->keylen = *keylen;
@@ -359,8 +371,7 @@ soap_mec_init(struct soap *soap, struct soap_mec_data *data, int alg, SOAP_MEC_K
 
 /**
 @fn int soap_mec_update(struct soap *soap, struct soap_mec_data *data, const char **s, size_t *n)
-@brief Update mecevp engine state: encrypts plain text (or raw data) or
-decrypts cipher data in base64 format.
+@brief Update mecevp engine state: encrypts plain text (or raw data) or decrypts cipher data in base64 format.
 @param soap context
 @param[in,out] data mecevp engine context
 @param[in,out] s input data to convert, afterwards points to converted data (original content is unchanged)
@@ -402,6 +413,9 @@ soap_mec_final(struct soap *soap, struct soap_mec_data *data, const char **s, si
 void
 soap_mec_cleanup(struct soap *soap, struct soap_mec_data *data)
 { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_mec_cleanup()\n"));
+  data->alg = SOAP_MEC_NONE;
+  data->state = SOAP_MEC_STATE_NONE;
+  data->type = NULL;
   if (data->ctx)
   { EVP_CIPHER_CTX_cleanup(data->ctx);
     SOAP_FREE(soap, data->ctx);
@@ -410,17 +424,18 @@ soap_mec_cleanup(struct soap *soap, struct soap_mec_data *data)
   if (data->buf)
   { SOAP_FREE(soap, data->buf);
     data->buf = NULL;
+    data->buflen = 0;
   }
   if (data->rest)
   { SOAP_FREE(soap, data->rest);
     data->rest = NULL;
+    data->restlen = 0;
   }
 }
 
 /**
 @fn int soap_mec_begin(struct soap *soap, struct soap_mec_data *data, int alg, SOAP_MEC_KEY_TYPE *pkey, unsigned char *key, int *keylen)
-@brief Initialize the mecevp engine data and begin encryption or decryption
-message sequence using a private/public key or symmetric secret key.
+@brief Initialize the mecevp engine data and begin encryption or decryption message sequence using a private/public key or symmetric secret key.
 @param soap context
 @param[in,out] data mecevp engine context
 @param[in] alg encryption/decryption algorithm
@@ -431,14 +446,20 @@ message sequence using a private/public key or symmetric secret key.
 */
 int
 soap_mec_begin(struct soap *soap, struct soap_mec_data *data, int alg, SOAP_MEC_KEY_TYPE *pkey, unsigned char *key, int *keylen)
-{ DBGLOG(TEST, SOAP_MESSAGE(fdebug, "MEC Begin alg=%x\n", alg));
+{ DBGLOG(TEST, SOAP_MESSAGE(fdebug, "MEC Begin alg=0x%x\n", alg));
   /* save and set the engine's 'data' field to pass data to the callbacks */
   soap->data[1] = (void*)data;
   data->ctx = NULL;
-  data->type = EVP_enc_null();
+  data->type = NULL;
   data->pkey = NULL;
   data->key = NULL;
   data->buf = NULL;
+  data->bufidx = 0;
+  data->buflen = 0;
+  data->rest = NULL;
+  data->restidx = 0;
+  data->restlen = 0;
+  data->taglen = 0;
   /* save the mode flag */
   data->mode = soap->mode;
   if (alg & SOAP_MEC_ENC)
@@ -451,7 +472,7 @@ soap_mec_begin(struct soap *soap, struct soap_mec_data *data, int alg, SOAP_MEC_
     if (soap->mode & SOAP_XML_CANONICAL)
       soap->ns = 0; /* for in c14n, we must have all xmlns bindings available */
   }
-  else
+  else if (soap->ffilterrecv != soap_mec_filterrecv)
   { /* save and override the callbacks */
     data->ffilterrecv = soap->ffilterrecv;
     soap->ffilterrecv = soap_mec_filterrecv;
@@ -462,12 +483,10 @@ soap_mec_begin(struct soap *soap, struct soap_mec_data *data, int alg, SOAP_MEC_
 
 /**
 @fn int soap_mec_start_alg(struct soap *soap, int alg, const unsigned char *key)
-@brief Start encryption or decryption of current message. If key is non-NULL,
-use the symmetric triple DES key. Use soap_mec_start only after soap_mec_begin.
-The soap_mec_start should be followed by a soap_mec_stop call.
+@brief Start encryption or decryption of current message. If key is non-NULL, use the symmetric key with alg. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call.
 @param soap context
 @param[in] alg algorithm
-@param[in] key secret triple DES key or NULL
+@param[in] key secret DES/AES key or NULL for private key
 @return SOAP_OK or error code
 */
 int
@@ -477,7 +496,7 @@ soap_mec_start_alg(struct soap *soap, int alg, const unsigned char *key)
   data = (struct soap_mec_data*)soap->data[1];
   if (!data)
     return soap->error = SOAP_USER_ERROR;
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "MEC Start alg=%x\n", data->alg));
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "MEC Start alg=0x%x\n", data->alg));
   if (key)
     data->key = key;
   if (alg != SOAP_MEC_NONE)
@@ -485,6 +504,8 @@ soap_mec_start_alg(struct soap *soap, int alg, const unsigned char *key)
   if (data->alg & SOAP_MEC_ENC)
   { unsigned char iv[EVP_MAX_IV_LENGTH];
     int ivlen;
+    if (!data->type)
+      return soap_mec_check(soap, data, 0, "soap_mec_start_alg() failed: no cipher");
     /* save and override the callbacks */
     data->ffiltersend = soap->ffiltersend;
     soap->ffiltersend = soap_mec_filtersend;
@@ -498,24 +519,48 @@ soap_mec_start_alg(struct soap *soap, int alg, const unsigned char *key)
     }
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "IV = "));
     DBGHEX(TEST, iv, ivlen);
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n--\n"));
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n"));
     ok = EVP_EncryptInit_ex(data->ctx, NULL, NULL, data->key, iv);
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_EncryptInit ok=%d\n", ok));
   }
   else
   { size_t len;
     /* algorithm */
-    if (data->alg & SOAP_MEC_DES_CBC)
-      data->type = EVP_des_ede3_cbc(); /* triple DES CBC */
-    else if (data->alg & SOAP_MEC_AES128_CBC)
-      data->type = EVP_get_cipherbyname("AES128");
-    else if (data->alg & SOAP_MEC_AES192_CBC)
-      data->type = EVP_get_cipherbyname("AES192");
-    else if (data->alg & SOAP_MEC_AES256_CBC)
-      data->type = EVP_get_cipherbyname("AES256");
-    else if (data->alg & SOAP_MEC_AES512_CBC)
-      data->type = EVP_get_cipherbyname("AES512");
-    else
-      data->type = EVP_enc_null();
+    switch (data->alg & SOAP_MEC_ALGO)
+    { case SOAP_MEC_DES_CBC:
+        data->type = EVP_des_ede3_cbc();
+        break;
+      case SOAP_MEC_AES128_CBC:
+        data->type = EVP_aes_128_cbc();
+        break;
+      case SOAP_MEC_AES192_CBC:
+        data->type = EVP_aes_192_cbc();
+        break;
+      case SOAP_MEC_AES256_CBC:
+        data->type = EVP_aes_256_cbc();
+        break;
+      case SOAP_MEC_AES512_CBC:
+        data->type = NULL; /* N/A */
+        break;
+#if (OPENSSL_VERSION_NUMBER >= 0x10002000L)
+      case SOAP_MEC_AES128_GCM:
+        data->type = EVP_aes_128_gcm();
+        break;
+      case SOAP_MEC_AES192_GCM:
+        data->type = EVP_aes_192_gcm();
+        break;
+      case SOAP_MEC_AES256_GCM:
+        data->type = EVP_aes_256_gcm();
+        break;
+      case SOAP_MEC_AES512_GCM:
+        data->type = NULL; /* N/A */
+        break;
+#endif
+      default:
+        data->type = NULL;
+    }
+    if (!data->type)
+      return soap_mec_check(soap, data, 0, "soap_mec_start_alg() failed: cannot load cipher");
     len = 2 * sizeof(soap->buf) + EVP_CIPHER_block_size(data->type);
     if (!data->buf || data->buflen < len)
     { if (data->buf)
@@ -539,11 +584,9 @@ soap_mec_start_alg(struct soap *soap, int alg, const unsigned char *key)
 
 /**
 @fn int soap_mec_start(struct soap *soap, const unsigned char *key)
-@brief Start encryption or decryption of current message. If key is non-NULL,
-use the symmetric triple DES key. Use soap_mec_start only after soap_mec_begin.
-The soap_mec_start should be followed by a soap_mec_stop call.
+@brief Start encryption or decryption of current message. If key is non-NULL, use the symmetric key with alg. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call.
 @param soap context
-@param[in] key secret triple DES key or NULL
+@param[in] key secret DES/AES key or NULL
 @return SOAP_OK or error code
 */
 int
@@ -553,8 +596,7 @@ soap_mec_start(struct soap *soap, const unsigned char *key)
 
 /**
 @fn int soap_mec_stop(struct soap *soap)
-@brief Stops encryption or decryption of current message. Use after
-soap_mec_start.
+@brief Stops encryption or decryption of current message. Use after soap_mec_start.
 @param soap context
 @return SOAP_OK or error code
 */
@@ -562,15 +604,15 @@ int
 soap_mec_stop(struct soap *soap)
 { struct soap_mec_data *data;
   int err = SOAP_OK;
-  const char *s = NULL;
-  size_t n = 0;
   data = (struct soap_mec_data*)soap->data[1];
   if (!data)
     return soap->error = SOAP_USER_ERROR;
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "MEC Stop alg=%x\n", data->alg));
-  err = soap_mec_final(soap, data, &s, &n);
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "MEC Stop alg=0x%x\n", data->alg));
   if (data->alg & SOAP_MEC_ENC)
-  { /* reset callbacks */
+  { const char *s = NULL;
+    size_t n = 0;
+    err = soap_mec_final(soap, data, &s, &n);
+    /* reset callbacks */
     if (soap->ffiltersend == soap_mec_filtersend)
       soap->ffiltersend = data->ffiltersend;
     /* send remaining cipher data */
@@ -591,7 +633,7 @@ with soap_mec_begin.
 */
 int
 soap_mec_end(struct soap *soap, struct soap_mec_data *data)
-{ DBGLOG(TEST, SOAP_MESSAGE(fdebug, "MEC End alg=%x\n", data->alg));
+{ DBGLOG(TEST, SOAP_MESSAGE(fdebug, "MEC End alg=0x%x\n", data->alg));
   /* reset callbacks */
   if (soap->ffiltersend == soap_mec_filtersend)
     soap->ffiltersend = data->ffiltersend;
@@ -617,16 +659,16 @@ size_t
 soap_mec_size(int alg, SOAP_MEC_KEY_TYPE *pkey)
 { if (alg & SOAP_MEC_ENV)
     return EVP_PKEY_size(pkey);
-  switch (alg & SOAP_MEC_MASK & ~SOAP_MEC_ENC)
+  switch (alg & SOAP_MEC_ALGO & ~SOAP_MEC_GCM)
   { case SOAP_MEC_DES_CBC:
-      return 20; /* triple DES 160 bits */
-    case SOAP_MEC_AES128_CBC:
+      return 20;
+    case SOAP_MEC_AES128_CBC: /* CBC and GCM */
       return 16;
-    case SOAP_MEC_AES192_CBC:
+    case SOAP_MEC_AES192_CBC: /* CBC and GCM */
       return 24;
-    case SOAP_MEC_AES256_CBC:
+    case SOAP_MEC_AES256_CBC: /* CBC and GCM */
       return 32;
-    case SOAP_MEC_AES512_CBC:
+    case SOAP_MEC_AES512_CBC: /* CBC and GCM */
       return 64;
   }
   return 0;
@@ -652,7 +694,7 @@ static int
 soap_mec_upd(struct soap *soap, struct soap_mec_data *data, const char **s, size_t *n, int final)
 { if (!data || !data->ctx)
     return soap->error = SOAP_USER_ERROR;
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- MEC Update alg=%x n=%lu final=%d (%p) --\n", data->alg, (unsigned long)*n, final, data->ctx));
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- MEC Update alg=0x%x n=%lu final=%d (%p) --\n", data->alg, (unsigned long)*n, final, data->ctx));
   DBGMSG(TEST, *s, *n);                                     
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n--\n"));
   if (data->alg & SOAP_MEC_ENC)
@@ -685,10 +727,16 @@ soap_mec_upd_enc(struct soap *soap, struct soap_mec_data *data, const char **s, 
 { size_t k;
   int m;
   int ok = 0;
+  if (!data->type)
+    return soap_mec_check(soap, data, 0, "soap_mec_upd_enc() failed");
   /* cipher size */
   k = *n + EVP_CIPHER_block_size(data->type);
   /* scale by base64 size + in-use part + 8 margin */
   m = data->bufidx + 8 + (k + 2) / 3 * 4 + 1;
+#if (OPENSSL_VERSION_NUMBER >= 0x10002000L)
+  if (final && (data->alg & SOAP_MEC_GCM))
+    m += sizeof(data->tag);
+#endif
   /* fits in buf after bufidx? */
   if (m > (int)data->buflen)
   { char *t = data->buf;
@@ -702,10 +750,17 @@ soap_mec_upd_enc(struct soap *soap, struct soap_mec_data *data, const char **s, 
   if (!final)
   { /* envelope encryption or with shared key? */
     if (data->alg & SOAP_MEC_ENV)
-      ok = EVP_SealUpdate(data->ctx, (unsigned char*)data->buf + data->buflen - k, &m, (unsigned char*)*s, (int)*n);
+    { ok = EVP_SealUpdate(data->ctx, (unsigned char*)data->buf + data->buflen - k, &m, (unsigned char*)*s, (int)*n);
+      DBGHEX(TEST, (unsigned char*)(data->buf + data->buflen - k), m);
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n--\n"));
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_SealUpdate ok=%d\n", ok));
+    }
     else
-      ok = EVP_EncryptUpdate(data->ctx, (unsigned char*)data->buf + data->buflen - k, &m, (unsigned char*)*s, (int)*n);
-    DBGHEX(TEST, (unsigned char*)(data->buf + data->buflen - k), m);
+    { ok = EVP_EncryptUpdate(data->ctx, (unsigned char*)data->buf + data->buflen - k, &m, (unsigned char*)*s, (int)*n);
+      DBGHEX(TEST, (unsigned char*)(data->buf + data->buflen - k), m);
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n--\n"));
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_EncryptUpdate ok=%d\n", ok));
+    }
     /* convert to base64 */
     soap_mec_put_base64(soap, data, (unsigned char*)(data->buf + data->buflen - k), m);
     *s = data->buf;
@@ -716,12 +771,29 @@ soap_mec_upd_enc(struct soap *soap, struct soap_mec_data *data, const char **s, 
   else
   { /* envelope encryption or with shared key? */
     if (data->alg & SOAP_MEC_ENV)
-      ok = EVP_SealFinal(data->ctx, (unsigned char*)data->buf + data->buflen - k, &m);
+    { ok = EVP_SealFinal(data->ctx, (unsigned char*)data->buf + data->buflen - k, &m);
+      DBGHEX(TEST, (unsigned char*)(data->buf + data->buflen - k), m);
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n--\n"));
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_SealFinal ok=%d\n", ok));
+    }
     else
-      ok = EVP_EncryptFinal(data->ctx, (unsigned char*)data->buf + data->buflen - k, &m);
-    DBGHEX(TEST, (unsigned char*)(data->buf + data->buflen - k), m);
+    { ok = EVP_EncryptFinal(data->ctx, (unsigned char*)data->buf + data->buflen - k, &m);
+      DBGHEX(TEST, (unsigned char*)(data->buf + data->buflen - k), m);
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n--\n"));
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_EncryptFinal ok=%d\n", ok));
+    }
     /* convert to base64 */
     soap_mec_put_base64(soap, data, (unsigned char*)(data->buf + data->buflen - k), m);
+#if (OPENSSL_VERSION_NUMBER >= 0x10002000L)
+    if (data->alg & SOAP_MEC_GCM)
+    { /* add GCM tag in base64 */
+      EVP_CIPHER_CTX_ctrl(data->ctx, EVP_CTRL_GCM_GET_TAG, sizeof(data->tag), data->tag);
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Get GCM tag = "));
+      DBGHEX(TEST, data->tag, sizeof(data->tag));
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n"));
+      soap_mec_put_base64(soap, data, (unsigned char*)(data->tag), sizeof(data->tag));
+    }
+#endif
     soap_mec_end_base64(soap, data);
     *s = data->buf;
     *n = data->bufidx;
@@ -751,11 +823,14 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
   size_t k = 0, l = 0, m = 0;
   int len = 0;
   int ok = 1;
+  int rest = 0;
   enum SOAP_MEC_STATE state = data->state;
+  if (!data->type)
+    return soap_mec_check(soap, data, 0, "soap_mec_upd_dec() failed");
   if (final && state == SOAP_MEC_STATE_DECRYPT)
     data->state = SOAP_MEC_STATE_FINAL;
   /* if flushing the buf, no base64-decode or decryption to do */
-  if (state == SOAP_MEC_STATE_FLUSH)
+  if (state == SOAP_MEC_STATE_FLUSH || state == SOAP_MEC_STATE_NONE)
   { /* old + new fit in buf? */
     if (data->bufidx + *n > data->buflen)
     { char *t = data->buf;
@@ -784,17 +859,18 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
     data->i = 0;
     data->m = 0;
     k = (data->bufidx + *n + 3) / 4 * 3; /* decoded size from old + new */
+    data->taglen = 0; /* no GCM tag (yet) */
   }
   else
     k = (*n + 3) / 4 * 3; /* base64-decoded size */
   m = k + EVP_CIPHER_block_size(data->type); /* decrypted data size */
-  /* decrypted + base64-decoded will fit in current buf? */
-  if (data->bufidx + m > data->buflen - k)
+  /* decrypted + base64-decoded + GCM tag all fit in current buf? */
+  if (data->buflen < data->bufidx + m + k + data->taglen)
   { /* no, need to enlarge */
     char *t = data->buf;
     do
       data->buflen += sizeof(soap->buf);
-    while (data->buflen < data->bufidx + m + k);
+    while (data->buflen < data->bufidx + m + k + data->taglen);
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Enlarging buffer n=%lu\n", (unsigned long)data->buflen));
     data->buf = (char*)SOAP_MALLOC(soap, data->buflen);
     if (t)
@@ -804,20 +880,21 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
   }
   /* base64 decode */
   if (state == SOAP_MEC_STATE_INIT)
-  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Init state stage 1 n=%lu\n", (unsigned long)data->bufidx));
-    /* base64 is in data buf[0..bufidx-1] and *s */
+  { /* base64 is in data buf[0..bufidx-1] and *s */
     if (soap_mec_get_base64(soap, data, data->buf + data->buflen - k, &m, data->buf, data->bufidx, &r, &l))
       return soap->error;
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Base64 stage 1 s=%p n=%lu r=%p l=%lu\n", *s, (unsigned long)data->bufidx, r, (unsigned long)l));
     /* position 'r' is at a spot that gets overwritten, copy to rest */
-    if (r && l)
-    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Init state stage 2 rest=%lu bytes\n", (unsigned long)l));
+    if (r)
+    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Base64 stage 2 rest=%lu bytes\n", (unsigned long)*n));
+      rest = *n;
     }
     else
     { size_t j;
-      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Init state stage 3 n=%lu\n", (unsigned long)*n));
       /* base64-decode *s */
       if (soap_mec_get_base64(soap, data, data->buf + data->buflen - k + m, &j, *s, *n, &r, &l))
         return soap->error;
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Base64 stage 3 s=%p n=%lu r=%p l=%lu\n", *s, (unsigned long)*n, r, (unsigned long)l));
       m += j;
     }
     data->bufidx = 0;
@@ -826,16 +903,22 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
   { /* base64-decode *s */
     if (soap_mec_get_base64(soap, data, data->buf + data->buflen - k, &m, *s, *n, &r, &l))
       return soap->error;
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Base64 stage 4 n=%lu l=%lu\n", (unsigned long)*n, (unsigned long)l));
   }
-  if (r && l)
-  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Rest=%lu bytes\n", (unsigned long)l));
-    if (data->restlen < l)
+  if (r)
+  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Rest = %lu + %lu bytes\n", (unsigned long)l, (unsigned long)rest));
+    if (data->restlen < l + rest)
     { if (data->rest)
         SOAP_FREE(soap, data->rest);
-      data->rest = (char*)SOAP_MALLOC(soap, l);
+      data->restlen = l + rest;
+      data->rest = (char*)SOAP_MALLOC(soap, data->restlen);
     }
-    data->restlen = l;
+    data->restidx = l + rest;
     soap_memcpy((void*)data->rest, data->restlen, (const void*)r, l);
+    soap_memcpy((void*)(data->rest + l), data->restlen - l, (const void*)*s, rest);
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "--\n"));
+    DBGMSG(TEST, data->rest, data->restidx);
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n--\n"));
   }
   /* debug */
   DBGHEX(TEST, (unsigned char*)(data->buf + data->buflen - k), m);
@@ -854,54 +937,56 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       if (data->bufidx >= (size_t)EVP_CIPHER_iv_length(data->type))
       { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Get IV = "));
         DBGHEX(TEST, (unsigned char*)data->buf, EVP_CIPHER_iv_length(data->type));
-        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\nInitializing alg=%x\n", data->alg));
-        switch (data->alg & SOAP_MEC_MASK)
-        { case SOAP_MEC_ENV_DEC_DES_CBC:
-          case SOAP_MEC_ENV_DEC_AES128_CBC:
-          case SOAP_MEC_ENV_DEC_AES192_CBC:
-          case SOAP_MEC_ENV_DEC_AES256_CBC:
-          case SOAP_MEC_ENV_DEC_AES512_CBC:
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\nInitializing alg=0x%x\n", data->alg));
+        switch (data->alg & SOAP_MEC_MASK & ~SOAP_MEC_ALGO)
+        { case SOAP_MEC_ENV_DEC:
             ok = EVP_OpenInit(data->ctx, data->type, data->key, data->keylen, (unsigned char*)data->buf, (EVP_PKEY*)data->pkey);
             DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_OpenInit ok=%d\n", ok));
-	    break;
-          case SOAP_MEC_DEC_DES_CBC:
-          case SOAP_MEC_DEC_AES128_CBC:
-          case SOAP_MEC_DEC_AES192_CBC:
-          case SOAP_MEC_DEC_AES256_CBC:
-          case SOAP_MEC_DEC_AES512_CBC:
+            break;
+          case SOAP_MEC_DEC:
             ok = EVP_DecryptInit_ex(data->ctx, data->type, NULL, data->key, (unsigned char*)data->buf);
             DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_DecryptInit_ex ok=%d\n", ok));
-	    break;
-	}
-	if (ok)
-	{ /* shift rest of data to cipher section */
-          k = data->bufidx - EVP_CIPHER_iv_length(data->type);
-	  soap_memmove((void*)(data->buf + data->buflen - k), k, (const void*)(data->buf + EVP_CIPHER_iv_length(data->type)), k);
-          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Decrypt %lu bytes\n", (unsigned long)k));
-	  /* decrypt to buf */
-	  len = 0;
-          switch (data->alg & SOAP_MEC_MASK)
-          { case SOAP_MEC_ENV_DEC_DES_CBC:
-            case SOAP_MEC_ENV_DEC_AES128_CBC:
-            case SOAP_MEC_ENV_DEC_AES192_CBC:
-            case SOAP_MEC_ENV_DEC_AES256_CBC:
-            case SOAP_MEC_ENV_DEC_AES512_CBC:
-              ok = EVP_OpenUpdate(data->ctx, (unsigned char*)data->buf, &len, (unsigned char*)(data->buf + data->buflen - k), k);
-	      break;
-            case SOAP_MEC_DEC_DES_CBC:
-            case SOAP_MEC_DEC_AES128_CBC:
-            case SOAP_MEC_DEC_AES192_CBC:
-            case SOAP_MEC_DEC_AES256_CBC:
-            case SOAP_MEC_DEC_AES512_CBC:
-              ok = EVP_DecryptUpdate(data->ctx, (unsigned char*)data->buf, &len, (unsigned char*)(data->buf + data->buflen - k), k);
-	      break;
+            break;
+        }
+        if (ok)
+        { /* shift rest of data to cipher section */
+          m = k = data->bufidx - EVP_CIPHER_iv_length(data->type);
+          soap_memmove((void*)(data->buf + data->buflen - k), m, (const void*)(data->buf + EVP_CIPHER_iv_length(data->type)), m);
+#if (OPENSSL_VERSION_NUMBER >= 0x10002000L)
+          if (data->alg & SOAP_MEC_GCM)
+          { /* rotate the last 128 bits through tag[] buffer */
+            if (m < sizeof(data->tag))
+            { soap_memcpy((void*)data->tag, sizeof(data->tag), (const void*)(data->buf + data->buflen - k), m);
+              data->taglen = m;
+              m = 0;
+            }
+            else
+            { m -= sizeof(data->tag);
+              soap_memcpy((void*)data->tag, sizeof(data->tag), (const void*)(data->buf + data->buflen - k + m), sizeof(data->tag));
+              data->taglen = sizeof(data->tag);
+            }
+            DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Init GCM tag with %lu bytes\n", (unsigned long)data->taglen));
           }
-	  *s = data->buf;
-	  *n = (size_t)len;
-	}
+#endif
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Decrypt %lu bytes\n", (unsigned long)m));
+          /* decrypt to buf */
+          len = 0;
+          switch (data->alg & SOAP_MEC_MASK & ~SOAP_MEC_ALGO)
+          { case SOAP_MEC_ENV_DEC:
+              ok = EVP_OpenUpdate(data->ctx, (unsigned char*)data->buf, &len, (unsigned char*)(data->buf + data->buflen - k), m);
+              DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_OpenUpdate len=%d ok=%d\n", len, ok));
+              break;
+            case SOAP_MEC_DEC:
+              ok = EVP_DecryptUpdate(data->ctx, (unsigned char*)data->buf, &len, (unsigned char*)(data->buf + data->buflen - k), m);
+              DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_DecryptUpdate len=%d ok=%d\n", len, ok));
+              break;
+          }
+          *s = data->buf;
+          *n = (size_t)len;
+        }
         if (!(data->alg & SOAP_MEC_STORE))
-	  data->bufidx = 0; /* next decoded goes to start of buf */
-	else
+          data->bufidx = 0; /* next decoded goes to start of buf */
+        else
           data->bufidx = *n;
         /* next state */
         state = SOAP_MEC_STATE_DECRYPT;
@@ -913,23 +998,36 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "IV/decrypt state n=%lu\n", (unsigned long)*n));
       break;
     case SOAP_MEC_STATE_DECRYPT:
+#if (OPENSSL_VERSION_NUMBER >= 0x10002000L)
+      if (data->alg & SOAP_MEC_GCM)
+      { /* rotate the last 128 bits through tag[] buffer */
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Rotate GCM tag with %lu bytes\n", (unsigned long)data->taglen));
+        k += data->taglen;
+        m += data->taglen;
+        soap_memcpy((void*)(data->buf + data->buflen - k), k, (const void*)data->tag, data->taglen);
+        if (m < sizeof(data->tag))
+        { soap_memcpy((void*)data->tag, sizeof(data->tag), (const void*)(data->buf + data->buflen - k), m);
+          data->taglen = m;
+          m = 0;
+        }
+        else
+        { m -= sizeof(data->tag);
+          soap_memcpy((void*)data->tag, sizeof(data->tag), (const void*)(data->buf + data->buflen - k + m), sizeof(data->tag));
+          data->taglen = sizeof(data->tag);
+        }
+      }
+#endif
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Decrypt %lu bytes\n", (unsigned long)m));
       len = 0;
-      switch (data->alg & SOAP_MEC_MASK)
-      { case SOAP_MEC_ENV_DEC_DES_CBC:
-        case SOAP_MEC_ENV_DEC_AES128_CBC:
-        case SOAP_MEC_ENV_DEC_AES192_CBC:
-        case SOAP_MEC_ENV_DEC_AES256_CBC:
-        case SOAP_MEC_ENV_DEC_AES512_CBC:
+      switch (data->alg & SOAP_MEC_MASK & ~SOAP_MEC_ALGO)
+      { case SOAP_MEC_ENV_DEC:
           ok = EVP_OpenUpdate(data->ctx, (unsigned char*)(data->buf + data->bufidx), &len, (unsigned char*)(data->buf + data->buflen - k), m);
-	  break;
-        case SOAP_MEC_DEC_DES_CBC:
-        case SOAP_MEC_DEC_AES128_CBC:
-        case SOAP_MEC_DEC_AES192_CBC:
-        case SOAP_MEC_DEC_AES256_CBC:
-        case SOAP_MEC_DEC_AES512_CBC:
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_OpenUpdate len=%d ok=%d\n", len, ok));
+          break;
+        case SOAP_MEC_DEC:
           ok = EVP_DecryptUpdate(data->ctx, (unsigned char*)(data->buf + data->bufidx), &len, (unsigned char*)data->buf + data->buflen - k, m);
-	  break;
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_DecryptUpdate len=%d ok=%d\n", len, ok));
+          break;
       }
       *s = data->buf;
       *n = data->bufidx + (size_t)len;
@@ -940,31 +1038,34 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
     case SOAP_MEC_STATE_FINAL:
     { /* we know there is enough space to flush *s and *n through the buf */
       const char *t = *s;
+#if (OPENSSL_VERSION_NUMBER >= 0x10002000L)
+      if (data->alg & SOAP_MEC_GCM)
+      { /* use the tag[] buffer */
+        EVP_CIPHER_CTX_ctrl(data->ctx, EVP_CTRL_GCM_SET_TAG, sizeof(data->tag), data->tag);
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Set GCM tag = "));
+        DBGHEX(TEST, data->tag, sizeof(data->tag));
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n"));
+      }
+#endif
       k = *n;
       len = 0;
-      switch (data->alg & SOAP_MEC_MASK)
-      { case SOAP_MEC_ENV_DEC_DES_CBC:
-        case SOAP_MEC_ENV_DEC_AES128_CBC:
-        case SOAP_MEC_ENV_DEC_AES192_CBC:
-        case SOAP_MEC_ENV_DEC_AES256_CBC:
-        case SOAP_MEC_ENV_DEC_AES512_CBC:
+      switch (data->alg & SOAP_MEC_MASK & ~SOAP_MEC_ALGO)
+      { case SOAP_MEC_ENV_DEC:
           ok = EVP_OpenFinal(data->ctx, (unsigned char*)(data->buf + data->bufidx), &len);
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_OpenFinal ok=%d\n", ok));
           break;
-        case SOAP_MEC_DEC_DES_CBC:
-        case SOAP_MEC_DEC_AES128_CBC:
-        case SOAP_MEC_DEC_AES192_CBC:
-        case SOAP_MEC_DEC_AES256_CBC:
-        case SOAP_MEC_DEC_AES512_CBC:
+        case SOAP_MEC_DEC:
           ok = EVP_DecryptFinal(data->ctx, (unsigned char*)(data->buf + data->bufidx), &len);
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_DecryptFinal ok=%d\n", ok));
           break;
       }
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Append %d bytes from decrypted\n", len));
       *s = data->buf;
       *n = data->bufidx + (size_t)len;
-      if (data->restlen)
-      { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Append %lu bytes from rest\n", data->restlen));
-        soap_memcpy((void*)(data->buf + *n), data->buflen - *n, (const void*)data->rest, data->restlen);
-        *n += data->restlen;
+      if (data->restidx)
+      { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Append %lu bytes from rest\n", data->restidx));
+        soap_memcpy((void*)(data->buf + *n), data->buflen - *n, (const void*)data->rest, data->restidx);
+        *n += data->restidx;
       }
       if (k)
       { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Append %lu bytes from input\n", k));
@@ -981,14 +1082,10 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Error in decryption state\n"));
       return soap->error = SOAP_SSL_ERROR;
   }
-  if (l)
+  if (r)
   { if (state == SOAP_MEC_STATE_DECRYPT)
     { state = SOAP_MEC_STATE_FINAL;
-      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Append rest of stream %lu (%lu <= %lu)\n", data->restlen, *n, data->buflen));
-    }
-    else
-    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Error in decryption state\n"));
-      return soap->error = SOAP_SSL_ERROR;
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Append rest of stream %lu (%lu <= %lu)\n", data->restidx, *n, data->buflen));
     }
   }
   data->state = state;
@@ -1111,9 +1208,9 @@ soap_mec_get_base64(struct soap *soap, struct soap_mec_data *data, char *t, size
       { *l = j;
         data->i = i;
         data->m = m;
-	*r = NULL;
-	*k = 0;
-	return SOAP_OK;
+        *r = NULL;
+        *k = 0;
+        return SOAP_OK;
       }
       c = *s++;
       if (c == '=' || c == '<')
@@ -1127,20 +1224,17 @@ soap_mec_get_base64(struct soap *soap, struct soap_mec_data *data, char *t, size
             *t++ = (char)((m >> 2) & 0xFF);
             j += 2;
         }
-	if (c == '<')
+        if (c == '<')
         { s--;
-	  n++;
-	}
-	else if (n && *s == '=')
+          n++;
+        }
+        else if (n && *s == '=')
         { s++;
-	  n--;
-	}
+          n--;
+        }
         *l = j;
-	*k = n;
-	if (n)
-	  *r = s;
-	else
-	  *r = NULL;
+        *k = n;
+        *r = s;
         return SOAP_OK;
       }
       if (c >= '+' && c <= '+' + 79)
@@ -1200,20 +1294,23 @@ soap_mec_filterrecv(struct soap *soap, char *buf, size_t *len, size_t maxlen)
   const char *s = buf;
   if (!data || (data->alg & SOAP_MEC_MASK) == SOAP_MEC_NONE || (data->alg & SOAP_MEC_ENC))
     return SOAP_OK;
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Filter recv in=%lu\n", (unsigned long)*len));
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Filter recv len in=%lu maxlen=%lu\n", (unsigned long)*len, (unsigned long)maxlen));
   /* convert s[len] to new s with len (new s = data->buf) */
   if (soap_mec_upd(soap, data, &s, len, 0))
     return soap->error;
   /* does the result fit in buf[maxlen]? */
   if (*len <= maxlen)
+  {
     soap_memcpy((void*)buf, maxlen, (const void*)s, *len); /* yes: copy data to buf[] */
+    data->bufidx = 0;
+  }
   else
   { soap_memcpy((void*)buf, maxlen, (const void*)s, maxlen); /* no: copy first part to buf[maxlen] */
     soap_memmove((void*)data->buf, data->buflen, (const void*)(s + maxlen), *len - maxlen); /* shift rest to the left */
     data->bufidx = *len - maxlen; /* keep rest of the data in s (data->buf) */
     *len = maxlen;
   }
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Filter recv out=%lu\n", (unsigned long)*len));
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Filter recv len out=%lu\n", (unsigned long)*len));
   return SOAP_OK;
 }
 

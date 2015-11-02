@@ -86,8 +86,7 @@ class Types
     const char *deftname(enum Type type, bool mk_pointer, bool is_pointer, const char *prefix, const char *URI, const char *qname);
     bool is_defined(const char *prefix, const char *URI, const char *qname);
     bool is_nillable(const xs__element& element);
-    bool is_basetypeforunion(const char *prefix, const char *URI, const char *type);
-    bool is_basetype(const char *prefix, const char *URI, const char *type);
+    bool is_choicetype(const char *prefix, const char *URI, const char *type);
     bool is_ptr(const char *prefix, const char *URI, const char *type);
     void dump(FILE*);
     void define(const char *URI, const char *name, const xs__complexType&);

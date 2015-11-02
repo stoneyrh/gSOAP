@@ -119,7 +119,7 @@ int soap_s2xsd__time(struct soap *soap, const char *s, ULONG64 *a)
         if (*s < '0' || *s > '9')
           break;
     }
-    if (*s == ' ')
+    if (*s == ' ' && !(soap->mode & SOAP_XML_STRICT))
       s++;
     if (*s == 'Z' || *s == 'z')
     { s++;

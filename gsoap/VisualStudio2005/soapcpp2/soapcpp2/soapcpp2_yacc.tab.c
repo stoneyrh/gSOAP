@@ -3546,7 +3546,7 @@ yyreduce:
 
   case 110:
 #line 1088 "soapcpp2_yacc.y"
-    { (yyval.typ) = mksize(); (yyval.typ)->transient = 1; ;}
+    { (yyval.typ) = mksize(); ;}
     break;
 
   case 111:

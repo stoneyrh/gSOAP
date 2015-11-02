@@ -54,7 +54,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "wsseapi.h"		/* gsoap/plugin/wsseapi.h */
 
-const char *endpoint = "http://localhost:8000"; // Set to the service endpoint
+#define ENCRYPTION		/* to enable encryption with signatures */
+
+const char *endpoint = "http://10.0.1.5:8000/ServiceModelSamples/service"; // Set to the service endpoint
 
 X509     *srv_cert   = NULL, *clt_cert   = NULL;
 EVP_PKEY *srv_privk  = NULL, *clt_privk  = NULL;
@@ -322,10 +324,12 @@ static int set_srv_security(struct soap *soap)
    || soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", srv_cert)
    || soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token")
    || soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA1, srv_privk, 0)
+#ifdef ENCRYPTION
 #ifdef UNENCRYPTED_SIGNATURE
    || soap_wsse_add_EncryptedKey(soap, SOAP_MEC_ENV_ENC_AES256_CBC, NULL, clt_cert, NULL, clt_issuer+1, clt_serial)
 #else
    || soap_wsse_add_EncryptedKey_encrypt_only(soap, SOAP_MEC_ENV_ENC_AES256_CBC, NULL, clt_cert, NULL, clt_issuer+1, clt_serial, "ds:Signature SOAP-ENV:Body")
+#endif
 #endif
     )
     return soap->error;
@@ -342,12 +346,15 @@ static int set_clt_security(struct soap *soap)
    || soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token")
    || soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA1, clt_privk, 0)
    || soap_wsse_verify_auto(soap, SOAP_WSSE_IGNORE_EXTRA_REFS, NULL, 0)
+#ifdef ENCRYPTION
 #ifdef UNENCRYPTED_SIGNATURE
    || soap_wsse_add_EncryptedKey(soap, SOAP_MEC_ENV_ENC_AES256_CBC, NULL, srv_cert, NULL, srv_issuer+1, srv_serial)
 #else
    || soap_wsse_add_EncryptedKey_encrypt_only(soap, SOAP_MEC_ENV_ENC_AES256_CBC, NULL, srv_cert, NULL, srv_issuer+1, srv_serial, "ds:Signature SOAP-ENV:Body")
 #endif
-   || soap_wsse_decrypt_auto(soap, SOAP_MEC_ENV_DEC_AES256_CBC, clt_privk, 0))
+   || soap_wsse_decrypt_auto(soap, SOAP_MEC_ENV_DEC_AES256_CBC, clt_privk, 0)
+#endif
+   )
     return soap->error;
 
   return SOAP_OK;
@@ -452,10 +459,10 @@ static const void *token_handler(struct soap *soap, int alg, const char *keyname
       if (issuer)
       {
         if (!strcmp(issuer->X509IssuerName, "CN=Root Agency")
-         && !strcmp(issuer->X509SerialNumber, ""))
+         && !strcmp(issuer->X509SerialNumber, "-79441640260855276448009124614332182350"))
           return (const void*)clt_cert;
         if (!strcmp(issuer->X509IssuerName, "CN=Root Agency")
-         && !strcmp(issuer->X509SerialNumber, ""))
+         && !strcmp(issuer->X509SerialNumber, "-154614137026298720537726749139640359303"))
           return (const void*)srv_cert;
       }
       break;
@@ -469,6 +476,18 @@ static const void *token_handler(struct soap *soap, int alg, const char *keyname
       break;
     case SOAP_MEC_ENV_DEC_DES_CBC:
     case SOAP_MEC_ENV_DEC_AES256_CBC:
+      /* Use KeyInfo/SecurityTokenReference/X509Data */
+      issuer = soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data(soap);
+      if (issuer)
+      {
+        if (!strcmp(issuer->X509IssuerName, "CN=Root Agency")
+         && !strcmp(issuer->X509SerialNumber, "-79441640260855276448009124614332182350"))
+          return (const void*)clt_cert;
+        if (!strcmp(issuer->X509IssuerName, "CN=Root Agency")
+         && !strcmp(issuer->X509SerialNumber, "-154614137026298720537726749139640359303"))
+          return (const void*)srv_cert;
+      }
+      break;
       if (keyname && !strcmp(keyname, "Client"))
         return (const void*)clt_privk;
       if (keyname && !strcmp(keyname, "Server"))
@@ -482,6 +501,7 @@ static const void *token_handler(struct soap *soap, int alg, const char *keyname
         return (const void*)des_key; /* decryption with secret key */
       }
   }
+  fprintf(stderr, "Warning: token handler returned NULL key\n");
   return NULL; /* fail */
 }
 

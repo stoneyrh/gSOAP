@@ -76,7 +76,4 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include <sys/time.h>
 
-extern typedef volatile struct timeval
-{ long tv_sec;
-  long tv_usec;
-} xsd__dateTime;
+extern typedef struct timeval xsd__dateTime;

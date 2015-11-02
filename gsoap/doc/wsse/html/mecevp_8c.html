@@ -104,10 +104,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:abd9dd5e6e38fb46977f5c75aa89f4104"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the mecevp engine data and begin encryption or decryption message sequence using a private/public key or symmetric secret key.  <a href="#abd9dd5e6e38fb46977f5c75aa89f4104"></a><br/></td></tr>
 <tr class="separator:abd9dd5e6e38fb46977f5c75aa89f4104"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada34eeec6780ab44acde4971dd8a4f77"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#ada34eeec6780ab44acde4971dd8a4f77">soap_mec_start_alg</a> (struct soap *soap, int alg, const unsigned char *key)</td></tr>
-<tr class="memdesc:ada34eeec6780ab44acde4971dd8a4f77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start encryption or decryption of current message. If key is non-NULL, use the symmetric triple DES key. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call.  <a href="#ada34eeec6780ab44acde4971dd8a4f77"></a><br/></td></tr>
+<tr class="memdesc:ada34eeec6780ab44acde4971dd8a4f77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start encryption or decryption of current message. If key is non-NULL, use the symmetric key with alg. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call.  <a href="#ada34eeec6780ab44acde4971dd8a4f77"></a><br/></td></tr>
 <tr class="separator:ada34eeec6780ab44acde4971dd8a4f77"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8053a2c0cda70dd37b944408dd3f8f0e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#a8053a2c0cda70dd37b944408dd3f8f0e">soap_mec_start</a> (struct soap *soap, const unsigned char *key)</td></tr>
-<tr class="memdesc:a8053a2c0cda70dd37b944408dd3f8f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start encryption or decryption of current message. If key is non-NULL, use the symmetric triple DES key. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call.  <a href="#a8053a2c0cda70dd37b944408dd3f8f0e"></a><br/></td></tr>
+<tr class="memdesc:a8053a2c0cda70dd37b944408dd3f8f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start encryption or decryption of current message. If key is non-NULL, use the symmetric key with alg. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call.  <a href="#a8053a2c0cda70dd37b944408dd3f8f0e"></a><br/></td></tr>
 <tr class="separator:a8053a2c0cda70dd37b944408dd3f8f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fdc3daea4e2c9c3bbde4e480209b0d0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#a8fdc3daea4e2c9c3bbde4e480209b0d0">soap_mec_stop</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:a8fdc3daea4e2c9c3bbde4e480209b0d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops encryption or decryption of current message. Use after soap_mec_start.  <a href="#a8fdc3daea4e2c9c3bbde4e480209b0d0"></a><br/></td></tr>
@@ -783,11 +783,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Start encryption or decryption of current message. If key is non-NULL, use the symmetric triple DES key. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call. </p>
+<p>Start encryption or decryption of current message. If key is non-NULL, use the symmetric key with alg. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>secret triple DES key or NULL </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>secret DES/AES key or NULL </td></tr>
   </table>
   </dd>
 </dl>
@@ -825,12 +825,12 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Start encryption or decryption of current message. If key is non-NULL, use the symmetric triple DES key. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call. </p>
+<p>Start encryption or decryption of current message. If key is non-NULL, use the symmetric key with alg. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>algorithm </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>secret triple DES key or NULL </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>secret DES/AES key or NULL for private key </td></tr>
   </table>
   </dd>
 </dl>
@@ -1110,6 +1110,6 @@ Functions</h2></td></tr>
 </div>
 </div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Fri Oct 23 2015 11:51:41 for <a href="http://www.genivia.com">Genivia</a> documentation of WS-Security by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Mon Nov 2 2015 08:16:03 for <a href="http://www.genivia.com">Genivia</a> documentation of WS-Security by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

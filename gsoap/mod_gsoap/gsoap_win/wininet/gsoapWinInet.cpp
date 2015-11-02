@@ -207,19 +207,32 @@ wininet_set_rse_callback(
 }
 
 
-/** copy the private data structure */
+/** copy the private data structure's parameters */
 static int  
 wininet_copy( 
     struct soap *           soap, 
     struct soap_plugin *    a_pDst, 
     struct soap_plugin *    a_pSrc )
 {
-    UNUSED_ARG( soap );
-    UNUSED_ARG( a_pDst );
-    UNUSED_ARG( a_pSrc );
+    struct wininet_data * pSrc = 
+        (struct wininet_data *) a_pSrc->data;
 
-    _ASSERTE( !"wininet doesn't support copy" );
-    return SOAP_FATAL_ERROR;
+    a_pDst->data = (void*) malloc( sizeof(struct wininet_data) );
+
+    if ( !a_pDst->data )
+    {
+        return SOAP_EOM;
+    }
+
+    if ( !wininet_init( soap,
+        (struct wininet_data *)pDst->data,
+        pSrc->dwRequestFlags ) )
+    {
+        free( pDst->data );
+        return SOAP_EOM;
+    }
+
+    return SOAP_OK;
 }
 
 /** deallocate of our private structure */
@@ -298,7 +311,7 @@ wininet_connect(
     if ( !InternetCrackUrlA( a_pszEndpoint, 0, 0, &urlComponents ) )
     {
         InternetCloseHandle( hConnection );
-	soap->error = SOAP_TCP_ERROR;
+        soap->error = SOAP_TCP_ERROR;
         soap->errnum = GetLastError();
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
             "wininet %p: connect, error %d (%s) in InternetCrackUrl\n", 
@@ -358,7 +371,7 @@ wininet_connect(
           break;
       case SOAP_CONNECT:
           pszVerb = "CONNECT";
-	  _snprintf(szUrlPath, MAX_PATH, "%s:%d", a_pszHost, a_nPort);
+          _snprintf(szUrlPath, MAX_PATH, "%s:%d", a_pszHost, a_nPort);
           break;
       default:
           pszVerb = "POST";

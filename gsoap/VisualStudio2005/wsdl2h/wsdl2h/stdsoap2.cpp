@@ -81,10 +81,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.24 2015-10-26 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.24 2015-11-01 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.24 2015-10-26 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.24 2015-11-01 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -1286,9 +1286,12 @@ zlib_again:
    && (r = soap->fpreparerecv(soap, soap->buf + soap->bufidx, ret)))
     return soap->error = r;
 #endif
-  soap->count += ret;
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Read count=%lu (+%lu)\n", (unsigned long)soap->count, (unsigned long)ret));
-  return !ret;
+  if (ret)
+  { soap->count += ret;
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Read count=%lu (+%lu)\n", (unsigned long)soap->count, (unsigned long)ret));
+    return SOAP_OK;
+  }
+  return EOF;
 }
 #endif
 
@@ -1361,25 +1364,30 @@ soap_recv(struct soap *soap)
     }
   }
   while (soap->ffilterrecv)
-  { int err, last = soap->filterstop;
-    if (last)
+  { int err;
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Filter recverror = %d\n", soap->recverror));
+    if (soap->recverror)
       soap->bufidx = soap->buflen = 0;
-    if ((err = soap->ffilterrecv(soap, soap->buf, &soap->buflen, sizeof(soap->buf))))
+    else
+    { soap->recverror = soap_recv_raw(soap); /* do not call again after EOF */
+      soap->buflen -= soap->bufidx; /* chunked may set bufidx > 0 to skip hex chunk length */
+    }
+    if ((err = soap->ffilterrecv(soap, soap->buf + soap->bufidx, &soap->buflen, sizeof(soap->buf) - soap->bufidx)))
       return soap->error = err;
     if (soap->buflen)
-    { soap->bufidx = 0;
-      soap->filterstop = last;
+    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Filtered %lu\n", (unsigned long)soap->buflen));
+      soap->buflen += soap->bufidx;
       return SOAP_OK;
     }
-    if (last)
-    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Returning postponed error %d\n", last));
-      soap->filterstop = SOAP_OK;
-      return last;
+    if (soap->recverror)
+    { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Returning postponed EOF%d\n", soap->recverror));
+      return soap->recverror;
     }
-    soap->filterstop = soap_recv_raw(soap); /* do not call again after EOF */
   }
-#endif
+  return soap->recverror = soap_recv_raw(soap);
+#else
   return soap_recv_raw(soap);
+#endif
 }
 #endif
 
@@ -2845,7 +2853,7 @@ soap_pop_namespace(struct soap *soap)
 { struct soap_nlist *np, *nq;
   for (np = soap->nlist; np && np->level >= soap->level; np = nq)
   { nq = np->next;
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Pop namespace binding (level=%u) '%s'\n", soap->level, np->id));
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Pop namespace binding (level=%u) '%s' level=%u\n", soap->level, np->id, np->level));
     SOAP_FREE(soap, np);
   }
   soap->nlist = np;
@@ -8698,6 +8706,7 @@ soap_end_recv(struct soap *soap)
 #ifndef WITH_LEAN
   soap->wsuid = NULL;		/* reset before next send */
   soap->c14nexclude = NULL;	/* reset before next send */
+  soap->c14ninclude = NULL;	/* reset before next send */
 #endif
 #ifndef WITH_LEANER
   soap->ffilterrecv = NULL;
@@ -8970,7 +8979,11 @@ SOAP_FMAC1
 struct soap*
 SOAP_FMAC2
 soap_copy(const struct soap *soap)
-{ return soap_copy_context(soap_versioning(soap_new)(SOAP_IO_DEFAULT, SOAP_IO_DEFAULT), soap);
+{ struct soap *copy = soap_versioning(soap_new)(SOAP_IO_DEFAULT, SOAP_IO_DEFAULT);
+  if (soap_copy_context(copy, soap) != NULL)
+    return copy;
+  soap_free(copy);
+  return NULL;
 }
 #endif
 
@@ -9047,12 +9060,18 @@ soap_copy_context(struct soap *copy, const struct soap *soap)
     for (p = soap->plugins; p; p = p->next)
     { struct soap_plugin *q = (struct soap_plugin*)SOAP_MALLOC(copy, sizeof(struct soap_plugin));
       if (!q)
+      { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not allocate plugin '%s'\n", p->id));
+        soap_end(copy);
+        soap_done(copy);
         return NULL;
+      }
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying plugin '%s'\n", p->id));
       *q = *p;
-      if (p->fcopy && p->fcopy(copy, q, p))
-      { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not copy plugin '%s'\n", p->id));
+      if (p->fcopy && (copy->error = p->fcopy(copy, q, p)))
+      { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not copy plugin '%s' error = %d\n", p->id, copy->error));
         SOAP_FREE(copy, q);
+        soap_end(copy);
+        soap_done(copy);
         return NULL;
       }
       q->next = copy->plugins;
@@ -9449,6 +9468,7 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
 #ifndef WITH_LEAN
   soap->wsuid = NULL;
   soap->c14nexclude = NULL;
+  soap->c14ninclude = NULL;
   soap->cookies = NULL;
   soap->cookie_domain = NULL;
   soap->cookie_path = NULL;
@@ -9901,9 +9921,10 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
     { struct soap_nlist *np;
       /* non-nested wsu:Id found: clear xmlns, re-emit them for exc-c14n */
       for (np = soap->nlist; np; np = np->next)
-      { if (np->index == 2)
+      { int p = soap->c14ninclude && soap_tagsearch(soap->c14ninclude, np->id);
+        if (np->index == 2 || p)
         { struct soap_nlist *np1 = soap_push_ns(soap, np->id, np->ns, 1);
-          if (np1)
+	  if (np1 && !p)
             np1->index = 0;
         }
       }
@@ -10032,13 +10053,11 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
       else
         t = type;
     }
+    else if (soap->mode & SOAP_XML_CANONICAL)
+      soap_utilize_ns(soap, type);
 #endif
     if (soap->attributes ? soap_set_attr(soap, "xsi:type", t, 1) : soap_attribute(soap, "xsi:type", t))
       return soap->error;
-#ifndef WITH_LEAN
-    if (soap->mode & SOAP_XML_CANONICAL)
-      soap_utilize_ns(soap, type);
-#endif
   }
   if (soap->null && soap->position > 0)
   { int i;
@@ -10277,7 +10296,7 @@ soap_element_start_end_out(struct soap *soap, const char *tag)
         soap_utilize_ns(soap, tp->name);
     }
     for (np = soap->nlist; np; np = np->next)
-    { if (np->index == 1 && np->ns)
+    { if (np->ns && (np->index == 1 || (np->index == 0 && soap->c14ninclude && soap_tagsearch(soap->c14ninclude, np->id))))
       { if (*(np->id))
           (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(np->id) + 6), "xmlns:%s", np->id);
         else
@@ -10653,8 +10672,7 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_attribute(struct soap *soap, const char *name, const char *value)
-{
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Attribute '%s'='%s'\n", name, value));
+{ DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Attribute '%s'='%s'\n", name, value));
 #ifdef WITH_DOM
   if ((soap->mode & SOAP_XML_DOM) && !(soap->mode & SOAP_XML_CANONICAL) && soap->dom)
   { struct soap_dom_attribute *a = (struct soap_dom_attribute*)soap_malloc(soap, sizeof(struct soap_dom_attribute));
@@ -10915,6 +10933,17 @@ soap_set_attr(struct soap *soap, const char *name, const char *value, int flag)
     if (!strcmp(name, "wsu:Id"))
     { soap->event = SOAP_SEC_BEGIN;
       soap_strcpy(soap->id, sizeof(soap->id), value);
+    }
+    if ((soap->mode & SOAP_XML_CANONICAL))
+    { const char *s = strchr(name, ':');
+      if (s) /* should also check default namespace when 'type' is not qualified? */
+      { struct soap_nlist *np = soap_lookup_ns(soap, name, s - name);
+	if (np && np->ns && soap->local_namespaces)
+	{ if ((!strcmp(s + 1, "type") && !strcmp(np->ns, soap->local_namespaces[2].ns)) /* xsi:type QName */
+	    || ((!strcmp(s + 1, "arrayType") || !strcmp(s + 1, "itemType")) && !strcmp(np->ns, soap->local_namespaces[1].ns))) /* SOAP-ENC:arrayType and SOAP-ENC:itemType QName */
+	  soap_utilize_ns(soap, value);
+	}
+      }
     }
 #endif
   }
@@ -14445,13 +14474,15 @@ soap_s2dateTime(struct soap *soap, const char *s, time_t *p)
       T.tm_mon = (int)soap_strtoul(t + 1, &t, 10);
       T.tm_mday = (int)soap_strtoul(t + 1, &t, 10);
     }
-    else
+    else if (!(soap->mode & SOAP_XML_STRICT))
     { /* YYYYMMDD */
       T.tm_year = (int)(d / 10000);
       T.tm_mon = (int)(d / 100 % 100);
       T.tm_mday = (int)(d % 100);
     }
-    if (*t == 'T' || *t == 't' || *t == ' ')
+    else
+      return soap->error = SOAP_TYPE;
+    if (*t == 'T' || ((*t == 't' || *t == ' ') && !(soap->mode & SOAP_XML_STRICT)))
     { d = soap_strtoul(t + 1, &t, 10);
       if (*t == ':')
       { /* Thh:mm:ss */
@@ -14459,12 +14490,14 @@ soap_s2dateTime(struct soap *soap, const char *s, time_t *p)
 	T.tm_min = (int)soap_strtoul(t + 1, &t, 10);
 	T.tm_sec = (int)soap_strtoul(t + 1, &t, 10);
       }
-      else
+      else if (!(soap->mode & SOAP_XML_STRICT))
       { /* Thhmmss */
         T.tm_hour = (int)(d / 10000);
 	T.tm_min = (int)(d / 100 % 100);
 	T.tm_sec = (int)(d % 100);
       }
+      else
+	return soap->error = SOAP_TYPE;
     }
     if (T.tm_year == 1)
       T.tm_year = 70;
@@ -14476,30 +14509,33 @@ soap_s2dateTime(struct soap *soap, const char *s, time_t *p)
         if (*t < '0' || *t > '9')
           break;
     }
-    if (*t == ' ')
+    if (*t == ' ' && !(soap->mode & SOAP_XML_STRICT))
       t++;
     if (*t)
     {
 #ifndef WITH_NOZONE
       if (*t == '+' || *t == '-')
-      { int h = 0, m = 0;
-        if (t[1] && t[2] && t[3] == ':')
+      { int h, m;
+	m = (int)soap_strtol(t, &t, 10);
+        if (*t == ':')
         { /* +hh:mm */
-	  h = (int)soap_strtol(t, NULL, 10);
-	  m = (int)soap_strtol(t + 4, NULL, 10);
+	  h = m;
+	  m = (int)soap_strtol(t + 1, &t, 10);
           if (h < 0)
             m = -m;
         }
-        else if (t[1] && t[2] && t[3] && t[4])
+        else if (!(soap->mode & SOAP_XML_STRICT))
 	{ /* +hhmm */
-          m = (int)soap_strtol(t, NULL, 10);
           h = m / 100;
           m = m % 100;
         }
         else
 	{ /* +hh */
-          h = (int)soap_strtol(t, NULL, 10);
+          h = m;
+	  m = 0;
         }
+	if (*t)
+	  return soap->error = SOAP_TYPE;
         T.tm_min -= m;
         T.tm_hour -= h;
         /* put hour and min in range */
@@ -14517,6 +14553,8 @@ soap_s2dateTime(struct soap *soap, const char *s, time_t *p)
         }
         /* note: day of the month may be out of range, timegm() handles it */
       }
+      else if (*t != 'Z')
+	return soap->error = SOAP_TYPE;
 #endif
       *p = soap_timegm(&T);
     }
@@ -15886,7 +15924,7 @@ soap_begin_recv(struct soap *soap)
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Initializing for input from socket=%d/fd=%d\n", soap->socket, soap->recvfd));
   soap->error = SOAP_OK;
 #ifndef WITH_LEANER
-  soap->filterstop = SOAP_OK;
+  soap->recverror = SOAP_OK;
 #endif
   soap_free_temp(soap);
   soap_set_local_namespaces(soap);

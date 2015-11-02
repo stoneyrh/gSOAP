@@ -3529,7 +3529,18 @@ static void ident()
   }
   else
     fprintf(stream, "(stdin) ");
-  fprintf(stream, "and %s\n   %s\n\n   DO NOT INCLUDE THIS FILE DIRECTLY INTO YOUR PROJECT BUILDS\n   USE THE soapcpp2-GENERATED SOURCE CODE FILES FOR YOUR PROJECT BUILDS\n\ngSOAP XML Web services tools\nCopyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.\nThis program is released under the GPL with the additional exemption that\ncompiling, linking, and/or using OpenSSL is allowed.\n--------------------------------------------------------------------------------\nA commercial use license is available from Genivia Inc., contact@genivia.com\n--------------------------------------------------------------------------------\n*/\n\n", mapfile, tmp);
+  fprintf(stream, "and %s\n\
+   %s\n\n\
+   DO NOT INCLUDE THIS FILE DIRECTLY INTO YOUR PROJECT BUILDS\n\
+   USE THE soapcpp2-GENERATED SOURCE CODE FILES FOR YOUR PROJECT BUILDS\n\n\
+gSOAP XML Web services tools\n\
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
+This program is released under the GPL with the additional exemption that\n\
+compiling, linking, and/or using OpenSSL is allowed.\n\
+--------------------------------------------------------------------------------\n\
+A commercial use license is available from Genivia Inc., contact@genivia.com\n\
+--------------------------------------------------------------------------------\n\
+*/\n\n", mapfile, tmp);
 }
 
 void text(const char *text)

@@ -20,7 +20,7 @@ A commercial use license is available from Genivia Inc., contact@genivia.com
 
 namespace Calc {
 
-SOAP_SOURCE_STAMP("@(#) CalcC.cpp ver 2.8.24 2015-10-25 15:32:20 GMT")
+SOAP_SOURCE_STAMP("@(#) CalcC.cpp ver 2.8.24 2015-11-02 14:26:23 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -965,20 +965,18 @@ SOAP_FMAC3 struct SOAP_ENV__Fault * SOAP_FMAC4 soap_in_SOAP_ENV__Fault(struct so
 SOAP_FMAC1 struct SOAP_ENV__Fault * SOAP_FMAC2 soap_instantiate_SOAP_ENV__Fault(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_SOAP_ENV__Fault(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct SOAP_ENV__Fault *p = NULL;
-	int t = SOAP_TYPE_Calc_SOAP_ENV__Fault;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct SOAP_ENV__Fault *p;
+	size_t k = sizeof(struct SOAP_ENV__Fault);
 	if (n < 0)
 	{	p = SOAP_NEW(struct SOAP_ENV__Fault);
-		k = sizeof(struct SOAP_ENV__Fault);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct SOAP_ENV__Fault, n);
-		k = n * sizeof(struct SOAP_ENV__Fault);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct SOAP_ENV__Fault location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_SOAP_ENV__Fault, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -1073,20 +1071,18 @@ SOAP_FMAC3 struct SOAP_ENV__Reason * SOAP_FMAC4 soap_in_SOAP_ENV__Reason(struct 
 SOAP_FMAC1 struct SOAP_ENV__Reason * SOAP_FMAC2 soap_instantiate_SOAP_ENV__Reason(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_SOAP_ENV__Reason(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct SOAP_ENV__Reason *p = NULL;
-	int t = SOAP_TYPE_Calc_SOAP_ENV__Reason;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct SOAP_ENV__Reason *p;
+	size_t k = sizeof(struct SOAP_ENV__Reason);
 	if (n < 0)
 	{	p = SOAP_NEW(struct SOAP_ENV__Reason);
-		k = sizeof(struct SOAP_ENV__Reason);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct SOAP_ENV__Reason, n);
-		k = n * sizeof(struct SOAP_ENV__Reason);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct SOAP_ENV__Reason location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_SOAP_ENV__Reason, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -1188,20 +1184,18 @@ SOAP_FMAC3 struct SOAP_ENV__Detail * SOAP_FMAC4 soap_in_SOAP_ENV__Detail(struct 
 SOAP_FMAC1 struct SOAP_ENV__Detail * SOAP_FMAC2 soap_instantiate_SOAP_ENV__Detail(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_SOAP_ENV__Detail(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct SOAP_ENV__Detail *p = NULL;
-	int t = SOAP_TYPE_Calc_SOAP_ENV__Detail;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct SOAP_ENV__Detail *p;
+	size_t k = sizeof(struct SOAP_ENV__Detail);
 	if (n < 0)
 	{	p = SOAP_NEW(struct SOAP_ENV__Detail);
-		k = sizeof(struct SOAP_ENV__Detail);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct SOAP_ENV__Detail, n);
-		k = n * sizeof(struct SOAP_ENV__Detail);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct SOAP_ENV__Detail location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_SOAP_ENV__Detail, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -1305,20 +1299,18 @@ SOAP_FMAC3 struct SOAP_ENV__Code * SOAP_FMAC4 soap_in_SOAP_ENV__Code(struct soap
 SOAP_FMAC1 struct SOAP_ENV__Code * SOAP_FMAC2 soap_instantiate_SOAP_ENV__Code(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_SOAP_ENV__Code(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct SOAP_ENV__Code *p = NULL;
-	int t = SOAP_TYPE_Calc_SOAP_ENV__Code;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct SOAP_ENV__Code *p;
+	size_t k = sizeof(struct SOAP_ENV__Code);
 	if (n < 0)
 	{	p = SOAP_NEW(struct SOAP_ENV__Code);
-		k = sizeof(struct SOAP_ENV__Code);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct SOAP_ENV__Code, n);
-		k = n * sizeof(struct SOAP_ENV__Code);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct SOAP_ENV__Code location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_SOAP_ENV__Code, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -1401,20 +1393,18 @@ SOAP_FMAC3 struct SOAP_ENV__Header * SOAP_FMAC4 soap_in_SOAP_ENV__Header(struct 
 SOAP_FMAC1 struct SOAP_ENV__Header * SOAP_FMAC2 soap_instantiate_SOAP_ENV__Header(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_SOAP_ENV__Header(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct SOAP_ENV__Header *p = NULL;
-	int t = SOAP_TYPE_Calc_SOAP_ENV__Header;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct SOAP_ENV__Header *p;
+	size_t k = sizeof(struct SOAP_ENV__Header);
 	if (n < 0)
 	{	p = SOAP_NEW(struct SOAP_ENV__Header);
-		k = sizeof(struct SOAP_ENV__Header);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct SOAP_ENV__Header, n);
-		k = n * sizeof(struct SOAP_ENV__Header);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct SOAP_ENV__Header location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_SOAP_ENV__Header, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -1519,20 +1509,18 @@ SOAP_FMAC3 struct ns__pow * SOAP_FMAC4 soap_in_ns__pow(struct soap *soap, const 
 SOAP_FMAC1 struct ns__pow * SOAP_FMAC2 soap_instantiate_ns__pow(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__pow(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct ns__pow *p = NULL;
-	int t = SOAP_TYPE_Calc_ns__pow;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct ns__pow *p;
+	size_t k = sizeof(struct ns__pow);
 	if (n < 0)
 	{	p = SOAP_NEW(struct ns__pow);
-		k = sizeof(struct ns__pow);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct ns__pow, n);
-		k = n * sizeof(struct ns__pow);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct ns__pow location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_ns__pow, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -1621,20 +1609,18 @@ SOAP_FMAC3 struct ns__powResponse * SOAP_FMAC4 soap_in_ns__powResponse(struct so
 SOAP_FMAC1 struct ns__powResponse * SOAP_FMAC2 soap_instantiate_ns__powResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__powResponse(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct ns__powResponse *p = NULL;
-	int t = SOAP_TYPE_Calc_ns__powResponse;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct ns__powResponse *p;
+	size_t k = sizeof(struct ns__powResponse);
 	if (n < 0)
 	{	p = SOAP_NEW(struct ns__powResponse);
-		k = sizeof(struct ns__powResponse);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct ns__powResponse, n);
-		k = n * sizeof(struct ns__powResponse);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct ns__powResponse location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_ns__powResponse, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -1737,20 +1723,18 @@ SOAP_FMAC3 struct ns__div * SOAP_FMAC4 soap_in_ns__div(struct soap *soap, const 
 SOAP_FMAC1 struct ns__div * SOAP_FMAC2 soap_instantiate_ns__div(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__div(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct ns__div *p = NULL;
-	int t = SOAP_TYPE_Calc_ns__div;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct ns__div *p;
+	size_t k = sizeof(struct ns__div);
 	if (n < 0)
 	{	p = SOAP_NEW(struct ns__div);
-		k = sizeof(struct ns__div);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct ns__div, n);
-		k = n * sizeof(struct ns__div);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct ns__div location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_ns__div, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -1839,20 +1823,18 @@ SOAP_FMAC3 struct ns__divResponse * SOAP_FMAC4 soap_in_ns__divResponse(struct so
 SOAP_FMAC1 struct ns__divResponse * SOAP_FMAC2 soap_instantiate_ns__divResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__divResponse(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct ns__divResponse *p = NULL;
-	int t = SOAP_TYPE_Calc_ns__divResponse;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct ns__divResponse *p;
+	size_t k = sizeof(struct ns__divResponse);
 	if (n < 0)
 	{	p = SOAP_NEW(struct ns__divResponse);
-		k = sizeof(struct ns__divResponse);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct ns__divResponse, n);
-		k = n * sizeof(struct ns__divResponse);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct ns__divResponse location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_ns__divResponse, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -1955,20 +1937,18 @@ SOAP_FMAC3 struct ns__mul * SOAP_FMAC4 soap_in_ns__mul(struct soap *soap, const 
 SOAP_FMAC1 struct ns__mul * SOAP_FMAC2 soap_instantiate_ns__mul(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__mul(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct ns__mul *p = NULL;
-	int t = SOAP_TYPE_Calc_ns__mul;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct ns__mul *p;
+	size_t k = sizeof(struct ns__mul);
 	if (n < 0)
 	{	p = SOAP_NEW(struct ns__mul);
-		k = sizeof(struct ns__mul);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct ns__mul, n);
-		k = n * sizeof(struct ns__mul);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct ns__mul location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_ns__mul, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -2057,20 +2037,18 @@ SOAP_FMAC3 struct ns__mulResponse * SOAP_FMAC4 soap_in_ns__mulResponse(struct so
 SOAP_FMAC1 struct ns__mulResponse * SOAP_FMAC2 soap_instantiate_ns__mulResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__mulResponse(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct ns__mulResponse *p = NULL;
-	int t = SOAP_TYPE_Calc_ns__mulResponse;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct ns__mulResponse *p;
+	size_t k = sizeof(struct ns__mulResponse);
 	if (n < 0)
 	{	p = SOAP_NEW(struct ns__mulResponse);
-		k = sizeof(struct ns__mulResponse);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct ns__mulResponse, n);
-		k = n * sizeof(struct ns__mulResponse);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct ns__mulResponse location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_ns__mulResponse, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -2173,20 +2151,18 @@ SOAP_FMAC3 struct ns__sub * SOAP_FMAC4 soap_in_ns__sub(struct soap *soap, const 
 SOAP_FMAC1 struct ns__sub * SOAP_FMAC2 soap_instantiate_ns__sub(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__sub(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct ns__sub *p = NULL;
-	int t = SOAP_TYPE_Calc_ns__sub;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct ns__sub *p;
+	size_t k = sizeof(struct ns__sub);
 	if (n < 0)
 	{	p = SOAP_NEW(struct ns__sub);
-		k = sizeof(struct ns__sub);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct ns__sub, n);
-		k = n * sizeof(struct ns__sub);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct ns__sub location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_ns__sub, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -2275,20 +2251,18 @@ SOAP_FMAC3 struct ns__subResponse * SOAP_FMAC4 soap_in_ns__subResponse(struct so
 SOAP_FMAC1 struct ns__subResponse * SOAP_FMAC2 soap_instantiate_ns__subResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__subResponse(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct ns__subResponse *p = NULL;
-	int t = SOAP_TYPE_Calc_ns__subResponse;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct ns__subResponse *p;
+	size_t k = sizeof(struct ns__subResponse);
 	if (n < 0)
 	{	p = SOAP_NEW(struct ns__subResponse);
-		k = sizeof(struct ns__subResponse);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct ns__subResponse, n);
-		k = n * sizeof(struct ns__subResponse);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct ns__subResponse location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_ns__subResponse, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -2391,20 +2365,18 @@ SOAP_FMAC3 struct ns__add * SOAP_FMAC4 soap_in_ns__add(struct soap *soap, const 
 SOAP_FMAC1 struct ns__add * SOAP_FMAC2 soap_instantiate_ns__add(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__add(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct ns__add *p = NULL;
-	int t = SOAP_TYPE_Calc_ns__add;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct ns__add *p;
+	size_t k = sizeof(struct ns__add);
 	if (n < 0)
 	{	p = SOAP_NEW(struct ns__add);
-		k = sizeof(struct ns__add);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct ns__add, n);
-		k = n * sizeof(struct ns__add);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct ns__add location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_ns__add, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -2493,20 +2465,18 @@ SOAP_FMAC3 struct ns__addResponse * SOAP_FMAC4 soap_in_ns__addResponse(struct so
 SOAP_FMAC1 struct ns__addResponse * SOAP_FMAC2 soap_instantiate_ns__addResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__addResponse(%p, %d, %s, %s)\n", soap, n, type?type:"", arrayType?arrayType:""));
-	struct ns__addResponse *p = NULL;
-	int t = SOAP_TYPE_Calc_ns__addResponse;
-	size_t k;
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	struct ns__addResponse *p;
+	size_t k = sizeof(struct ns__addResponse);
 	if (n < 0)
 	{	p = SOAP_NEW(struct ns__addResponse);
-		k = sizeof(struct ns__addResponse);
 	}
 	else
 	{	p = SOAP_NEW_ARRAY(struct ns__addResponse, n);
-		k = n * sizeof(struct ns__addResponse);
+		k *= n;
 	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p type=%d n=%d\n", p, t, n));
-	soap_link(soap, p, t, n, Calc_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated struct ns__addResponse location=%p n=%d\n", p, n));
+	soap_link(soap, p, SOAP_TYPE_Calc_ns__addResponse, n, Calc_fdelete);
 	if (size)
 		*size = k;
 	return p;
@@ -2778,7 +2748,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in__QName(struct soap *soap, const char *tag
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put__QName(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out__QName(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out__QName(soap, tag?tag:"QName", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
@@ -2822,7 +2792,7 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_string(struct soap *soap, const char *tag
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_string(struct soap *soap, char *const*a, const char *tag, const char *type)
 {
-	if (soap_out_string(soap, tag?tag:"byte", -2, a, type))
+	if (soap_out_string(soap, tag?tag:"string", -2, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }

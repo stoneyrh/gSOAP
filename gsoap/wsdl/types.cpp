@@ -1251,34 +1251,56 @@ const char *Types::vname(const char *var)
   return var;
 }
 
-// checks if nillable or minOccurs=0 (and no default/fixed value is present)
+// checks if nillable or minOccurs=0
 bool Types::is_nillable(const xs__element& element)
 {
   return (element.nillable || (element.minOccurs && !strcmp(element.minOccurs, "0")));
 }
 
-bool Types::is_basetypeforunion(const char *prefix, const char *URI, const char *type)
+// checks if permitted as union member
+bool Types::is_choicetype(const char *prefix, const char *URI, const char *type)
 {
-  const char *t = tname(prefix, URI, type);
-  if (!strcmp(t, "std::string") || !strcmp(t, "std::wstring"))
-    return false;
-  return is_basetype(prefix, URI, type);
-}
-
-bool Types::is_basetype(const char *prefix, const char *URI, const char *type)
-{
-  const char *t = tname(prefix, URI, type);
-  if (!strncmp(t, "enum ", 5))
+  // TODO: consider c11flag also safe, but classes containing unions must define assignment ops using the selector(s)
+  if (cflag)
     return true;
-  if (strstr(t, "__") && strcmp(t, "xsd__byte"))
-    return false;
-  return !strncmp(type, "xs:", 3) || !strncmp(type, "SOAP-ENC:", 9);
+  if (!strcmp(type, "xs:byte"))
+    return true;
+  const char *t = tname(prefix, URI, type);
+  return (
+      !strncmp(t, "enum ", 5) ||
+      !strcmp(t, "bool") ||
+      !strcmp(t, "int8_t") ||
+      !strcmp(t, "int16_t") ||
+      !strcmp(t, "int32_t") ||
+      !strcmp(t, "int64_t") ||
+      !strcmp(t, "uint8_t") ||
+      !strcmp(t, "uint16_t") ||
+      !strcmp(t, "uint32_t") ||
+      !strcmp(t, "uint64_t") ||
+      !strcmp(t, "char") ||
+      !strcmp(t, "unsigned char") ||
+      !strcmp(t, "short") ||
+      !strcmp(t, "unsigned short") ||
+      !strcmp(t, "int") ||
+      !strcmp(t, "unsigned int") ||
+      !strcmp(t, "long") ||
+      !strcmp(t, "long long") ||
+      !strcmp(t, "unsigned long") ||
+      !strcmp(t, "unsigned long long") ||
+      !strcmp(t, "LONG64") ||
+      !strcmp(t, "ULONG64") ||
+      !strcmp(t, "float") ||
+      !strcmp(t, "double") ||
+      !strcmp(t, "long double") ||
+      !strcmp(t, "time_t") ||
+      !strcmp(t, "_QName") ||
+      !strcmp(t, "_XML")
+      );
 }
 
 bool Types::is_ptr(const char *prefix, const char *URI, const char *qname)
 {
-  const char *t;
-  t = cname(prefix, URI, qname);
+  const char *t = cname(prefix, URI, qname);
   if (usetypemap.find(t) != usetypemap.end())
   {
     if (ptrtypemap.find(t) != ptrtypemap.end())
@@ -2637,7 +2659,7 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
     else
       fprintf(stream, "@");
     gen(URI, name, *attribute.simpleTypePtr(), true, false);
-    if (r)
+    if (r && *r != '*' && *r != '$')
       fprintf(stream, elementformat, s, aname(nameprefix, nameURI, name));
     else if (is_optional)
       fprintf(stream, pointerformat, s, aname(nameprefix, nameURI, name));
@@ -3045,9 +3067,9 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     {
       if (element.ref)
         fprintf(stream, "/// Element reference \"%s:\"%s.\n", element.schemaPtr()->targetNamespace, element.ref);
-      else if (URI)
+      else
         fprintf(stream, "/// Element \"%s\":%s.\n", element.schemaPtr()->targetNamespace, name);
-      fprintf(stream, elementformat, pname((with_union && !cflag && !is_basetypeforunion(typeprefix, typeURI, type)) || ((fake_union || element.nillable || (is_nillable(element) && !is_basetypeforunion(typeprefix, typeURI, type))) && !default_) || fixed, !with_union, typeprefix, typeURI, type), aname(nameprefix, nameURI, name));
+      fprintf(stream, elementformat, pname((with_union && !is_choicetype(typeprefix, typeURI, type)) || ((fake_union || element.nillable || (is_nillable(element) && !(with_union && is_choicetype(typeprefix, typeURI, type)))) && !default_) || fixed, !with_union, typeprefix, typeURI, type), aname(nameprefix, nameURI, name));
     }
   }
   else if (name && type)
@@ -3099,7 +3121,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     else
     {
       fprintf(stream, "/// Element \"%s\" of XSD type %s.\n", name, type);
-      fprintf(stream, elementformat, pname((with_union && !cflag && !is_basetypeforunion(NULL, URI, type)) || ((fake_union || element.nillable || (is_nillable(element) && !is_basetypeforunion(NULL, URI, type))) && !default_) || fixed, !with_union, NULL, URI, type), aname(nameprefix, nameURI, name));
+      fprintf(stream, elementformat, pname((with_union && !is_choicetype(NULL, URI, type)) || ((fake_union || element.nillable || (is_nillable(element) && !(with_union && is_choicetype(NULL, URI, type)))) && !default_) || fixed, !with_union, NULL, URI, type), aname(nameprefix, nameURI, name));
     }
   }
   else if (name && element.simpleTypePtr())
@@ -3136,7 +3158,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       }
     }
     gen(URI, name, *element.simpleTypePtr(), true, false);
-    if (r)
+    if (r && *r != '*' && *r != '$')
       fprintf(stream, elementformat, s, aname(nameprefix, nameURI, name));
     else if ((is_nillable(element) && !default_)
      || fixed
@@ -3181,7 +3203,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       }
     }
     gen(URI, name, *element.complexTypePtr(), true);
-    if (r)
+    if (r && *r != '*' && *r != '$')
       fprintf(stream, elementformat, s, aname(nameprefix, nameURI, name));
     else if ((is_nillable(element) && !default_)
      || fixed
@@ -3444,7 +3466,7 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
       fprintf(stream, choiceformat, "int", r);
       if (minOccurs)
         fprintf(stream, " %s", minOccurs);
-      fprintf(stream, ";\t///< Union %s selector: set to SOAP_UNION_%s_<fieldname>%s\n", t, t, minOccurs && !strcmp(minOccurs, "0") ? " or 0" : "");
+      fprintf(stream, ";\t///< Union %s selector: set to SOAP_UNION_%s_<fieldname>%s\n", t, t, minOccurs && !strcmp(minOccurs, "0") ? " or 0 to omit" : "");
       if (name)
         fprintf(stream, "/// Union for choice in %s.\n", cname(NULL, URI, name));
       fprintf(stream, "    union %s\n    {\n", t);
@@ -3657,7 +3679,7 @@ void Types::gen_soap_array(const char *t, const char *item, const char *type)
     }
     else
     {
-      const char *s = pname(!is_basetype(NULL, NULL, tmp), false, NULL, NULL, tmp);
+      const char *s = tname(NULL, NULL, tmp);
       fprintf(stream, "/// Pointer to array of %s.\n", s);
       fprintf(stream, arrayformat, s, item ? aname(NULL, NULL, item) : "");
       fprintf(stream, ";\n");
@@ -3710,7 +3732,7 @@ void Types::gen_substitutions(const char *URI, const xs__element& element)
     fprintf(stream, " minOccurs=\"%s\"", element.minOccurs);
   if (element.maxOccurs)
     fprintf(stream, " maxOccurs=\"%s\"", element.maxOccurs);
-  fprintf(stream, "> with elements");
+  fprintf(stream, "> with global elements");
   for (std::vector<xs__element*>::const_iterator i1 = substitutions->begin(); i1 != substitutions->end(); ++i1)
     fprintf(stream, " <%s>", (*i1)->name);
   fprintf(stream, "\n");
@@ -3744,7 +3766,7 @@ void Types::gen_substitutions(const char *URI, const xs__element& element)
     {
       fprintf(stream, choiceformat, "int", r);
       fprintf(stream, " %s", element.minOccurs ? element.minOccurs : "0");
-      fprintf(stream, ";\t///< Union %s selector: set to SOAP_UNION_%s_<fieldname>%s\n", t, t, element.minOccurs && !strcmp(element.minOccurs, "0") ? " or 0" : "");
+      fprintf(stream, ";\t///< Union %s selector: set to SOAP_UNION_%s_<fieldname>%s\n", t, t, element.minOccurs && !strcmp(element.minOccurs, "0") ? " or 0 to omit" : "");
       fprintf(stream, "/// Union for substitutionGroup=\"%s\".\n", name);
       fprintf(stream, "    union %s\n    {\n", t);
     }
@@ -3759,7 +3781,7 @@ void Types::gen_substitutions(const char *URI, const xs__element& element)
   if (!abstract)
     gen(URI, element, false, NULL, NULL);
   for (vector<xs__element*>::const_iterator i2 = substitutions->begin(); i2 != substitutions->end(); ++i2)
-    gen(URI, *(*i2), true, NULL, NULL); // substitutions are recursive?
+    gen(URI, *(*i2), true, NULL, NULL); // substitutions can be recursive?
   if (use_union)
   {
     with_union = tmp_union;

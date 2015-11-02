@@ -38,32 +38,50 @@
 <div class="title">The smdevp signed message digest engine </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>The gSOAP smdevp engine computes signed/unsigned message digests over any type of data using the EVP interface of OpenSSL. It currently supports MD5, SHA1/256/512, HMAC_SHA1/256/512, DSA_SHA1/256/512, and RSA_SHA1/256/512.</p>
+<div class="textblock"><p>The gSOAP smdevp engine computes signed/unsigned message digests over any type of data using the EVP interface of OpenSSL. It currently supports MD5, SHA1/224/256/384/512, HMAC_SHA1/224/256/384/512, DSA_SHA1/224256/384/512, and RSA_SHA1/224/256/384/512.</p>
 <p>A digest or signature algorithm is selected with one the following:</p>
 <ul>
 <li><a class="el" href="smdevp_8h.html#a27e3ed779342e2ff2c377cde6252b6a1">SOAP_SMD_HMAC_MD5</a> to compute HMAC-MD5 message authentication code</li>
 <li><a class="el" href="smdevp_8h.html#a7d00704c43ee044926905cd327a712ef">SOAP_SMD_HMAC_SHA1</a> to compute HMAC-SHA1 message authentication code</li>
+<li><a class="el" href="smdevp_8h.html#a0a03fa407c392d53e3e6609032c69a19">SOAP_SMD_HMAC_SHA224</a> to compute HMAC-SHA224 message authentication code</li>
 <li><a class="el" href="smdevp_8h.html#a561d6c47f122626acb2f36bdabdc07e6">SOAP_SMD_HMAC_SHA256</a> to compute HMAC-SHA256 message authentication code</li>
+<li><a class="el" href="smdevp_8h.html#a5928fa6c9c366857ffb96e70e6e04609">SOAP_SMD_HMAC_SHA384</a> to compute HMAC-SHA384 message authentication code</li>
 <li><a class="el" href="smdevp_8h.html#a0eaedca857ff22ca7e2290e3ad67a184">SOAP_SMD_HMAC_SHA512</a> to compute HMAC-SHA512 message authentication code</li>
 </ul>
 <ul>
 <li><a class="el" href="smdevp_8h.html#a66e616b88f16506cfad0e9f05445d130">SOAP_SMD_DGST_MD5</a> to compute MD5 128-bit digests</li>
 <li><a class="el" href="smdevp_8h.html#ad8bbfdd0e7b1656123d888bf86a516e9">SOAP_SMD_DGST_SHA1</a> to compute SHA1 160-bit digests</li>
+<li><a class="el" href="smdevp_8h.html#ac71cb6c0aa60f9210348bbdb4a678019">SOAP_SMD_DGST_SHA224</a> to compute SHA224 224-bit digests</li>
 <li><a class="el" href="smdevp_8h.html#af2d675e87ba654125c052235dd97e206">SOAP_SMD_DGST_SHA256</a> to compute SHA256 256-bit digests</li>
+<li><a class="el" href="smdevp_8h.html#ac61bc8dde95147651154fcdb2d833c06">SOAP_SMD_DGST_SHA384</a> to compute SHA384 384-bit digests</li>
 <li><a class="el" href="smdevp_8h.html#af62441bd65c41931d4d2db07511d3c85">SOAP_SMD_DGST_SHA512</a> to compute SHA512 512-bit digests</li>
 </ul>
 <ul>
 <li><a class="el" href="smdevp_8h.html#a647cb5d798442d34c8191c62a2aeebf6">SOAP_SMD_SIGN_DSA_SHA1</a> to compute DSA-SHA1 signatures</li>
+<li><a class="el" href="smdevp_8h.html#adc47896cc5357888c4fe43825f86c783">SOAP_SMD_SIGN_DSA_SHA224</a> to compute DSA-SHA224 signatures</li>
 <li><a class="el" href="smdevp_8h.html#abb7046ffa72e2deade72d960fb2c1272">SOAP_SMD_SIGN_DSA_SHA256</a> to compute DSA-SHA256 signatures</li>
+<li><a class="el" href="smdevp_8h.html#ab100622cd77c0d3078c5f02f19bb6790">SOAP_SMD_SIGN_DSA_SHA384</a> to compute DSA-SHA384 signatures</li>
 <li><a class="el" href="smdevp_8h.html#acdc41df17393ee4e42ad76245a5c3700">SOAP_SMD_SIGN_DSA_SHA512</a> to compute DSA-SHA512 signatures</li>
+</ul>
+<ul>
 <li><a class="el" href="smdevp_8h.html#acbb90951064d98a13af03724dbed2aa8">SOAP_SMD_SIGN_RSA_SHA1</a> to compute RSA-SHA1 signatures</li>
+<li><a class="el" href="smdevp_8h.html#afe09714e9ac82800fcc0929b017d5a04">SOAP_SMD_SIGN_RSA_SHA224</a> to compute RSA-SHA224 signatures</li>
 <li><a class="el" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a> to compute RSA-SHA256 signatures</li>
+<li><a class="el" href="smdevp_8h.html#a46d8a09a01283fb765e09a19c3289aea">SOAP_SMD_SIGN_RSA_SHA384</a> to compute RSA-SHA384 signatures</li>
 <li><a class="el" href="smdevp_8h.html#a47b63295eb2fd010886c3a2521090f02">SOAP_SMD_SIGN_RSA_SHA512</a> to compute RSA-SHA512 signatures</li>
+</ul>
+<ul>
 <li><a class="el" href="smdevp_8h.html#a448c4d5953ca007263ff6a5bd055cfdc">SOAP_SMD_VRFY_DSA_SHA1</a> to verify DSA-SHA1 signatures</li>
+<li><a class="el" href="smdevp_8h.html#ac99358e8d65c468a390ee12a7698c74c">SOAP_SMD_VRFY_DSA_SHA224</a> to verify DSA-SHA224 signatures</li>
 <li><a class="el" href="smdevp_8h.html#a5b4e9a64ef8a1de550cc5c5ab889d3c6">SOAP_SMD_VRFY_DSA_SHA256</a> to verify DSA-SHA256 signatures</li>
+<li><a class="el" href="smdevp_8h.html#a1584ce8cfcb9e6423b1768b3ac3346b6">SOAP_SMD_VRFY_DSA_SHA384</a> to verify DSA-SHA384 signatures</li>
 <li><a class="el" href="smdevp_8h.html#a6ccc62ed11f8753cfd1aca15f1da51de">SOAP_SMD_VRFY_DSA_SHA512</a> to verify DSA-SHA512 signatures</li>
+</ul>
+<ul>
 <li><a class="el" href="smdevp_8h.html#aa395a40932c9c057cd264c03716c9d6e">SOAP_SMD_VRFY_RSA_SHA1</a> to verify RSA-SHA1 signatures</li>
+<li><a class="el" href="smdevp_8h.html#aa5d9d36c2db3bbef1dfd66593240cf16">SOAP_SMD_VRFY_RSA_SHA224</a> to verify RSA-SHA224 signatures</li>
 <li><a class="el" href="smdevp_8h.html#ac495716c1f8630567900c33cdea08fd1">SOAP_SMD_VRFY_RSA_SHA256</a> to verify RSA-SHA256 signatures</li>
+<li><a class="el" href="smdevp_8h.html#afec4c06d2b78ff9a4451a311849d7275">SOAP_SMD_VRFY_RSA_SHA384</a> to verify RSA-SHA384 signatures</li>
 <li><a class="el" href="smdevp_8h.html#a16e7c5ef33465656c0d270eebc933021">SOAP_SMD_VRFY_RSA_SHA512</a> to verify RSA-SHA512 signatures</li>
 </ul>
 <p>Algorithm options:</p>
@@ -214,6 +232,6 @@
 </div><!-- fragment --><p>Note that indentation (SOAP_XML_INDENT) and exc-c14n canonicalization (SOAP_XML_CANONICAL) affects the XML serialization format and, therefore, the digest or signature produced. </p>
 </div></div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Fri Oct 23 2015 11:51:42 for <a href="http://www.genivia.com">Genivia</a> documentation of WS-Security by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Mon Nov 2 2015 08:16:04 for <a href="http://www.genivia.com">Genivia</a> documentation of WS-Security by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

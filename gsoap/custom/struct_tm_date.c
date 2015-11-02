@@ -88,41 +88,46 @@ int soap_s2xsd__date(struct soap *soap, const char *s, struct tm *a)
       a->tm_mon = (int)soap_strtoul(t + 1, &t, 10);
       a->tm_mday = (int)soap_strtoul(t + 1, &t, 10);
     }
-    else
+    else if (!(soap->mode & SOAP_XML_STRICT))
     { /* YYYYMMDD */
       a->tm_year = (int)(d / 10000);
       a->tm_mon = (int)(d / 100 % 100);
       a->tm_mday = (int)(d % 100);
     }
+    else
+      return soap->error = SOAP_TYPE;
     if (a->tm_year == 1)
       a->tm_year = 70;
     else
       a->tm_year -= 1900;
     a->tm_mon--;
-    if (*t == ' ')
+    if (*t == ' ' && !(soap->mode & SOAP_XML_STRICT))
       t++;
     if (*t)
     {
 #ifndef WITH_NOZONE
       if (*t == '+' || *t == '-')
-      { int h = 0, m = 0;
-        if (t[1] && t[2] && t[3] == ':')
+      { int h, m;
+	m = (int)soap_strtol(t, &t, 10);
+        if (*t == ':')
         { /* +hh:mm */
-	  h = (int)soap_strtol(t, NULL, 10);
-	  m = (int)soap_strtol(t + 4, NULL, 10);
+	  h = m;
+	  m = (int)soap_strtol(t + 1, &t, 10);
           if (h < 0)
             m = -m;
         }
-        else if (t[1] && t[2] && t[3] && t[4])
+        else if (!(soap->mode & SOAP_XML_STRICT))
 	{ /* +hhmm */
-          m = (int)soap_strtol(t, NULL, 10);
           h = m / 100;
           m = m % 100;
         }
         else
 	{ /* +hh */
-          h = (int)soap_strtol(t, NULL, 10);
+          h = m;
+	  m = 0;
         }
+	if (*t)
+	  return soap->error = SOAP_TYPE;
         a->tm_min -= m;
         a->tm_hour -= h;
         /* put hour and min in range */
@@ -140,6 +145,8 @@ int soap_s2xsd__date(struct soap *soap, const char *s, struct tm *a)
         }
         /* note: day of the month may be out of range, timegm() handles it */
       }
+      else if (*t != 'Z')
+	return soap->error = SOAP_TYPE;
 #endif
     }
     else /* no UTC or timezone, so assume we got a localtime */
