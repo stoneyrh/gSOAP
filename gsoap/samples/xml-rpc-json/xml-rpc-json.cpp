@@ -38,7 +38,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#include "soapH.h"
 #include "json.h"
 #include <sstream>
 
@@ -49,7 +48,7 @@ int main()
   // set up context
   struct soap *ctx = soap_new1(SOAP_XML_INDENT|SOAP_C_UTFSTRING);
   // create a value
-  value v(ctx);
+  json::value v(ctx);
   // create an input stream from a given string with JSON content
   istringstream in;
   in.str("[ [1, \"2\", 3.14, true], {\"name\": \"john\", \"age\": 24} ]");
@@ -60,8 +59,8 @@ int main()
   soap_write_value(ctx, &v);
   // let's change v's values:
   v[0][0] = (char*)v[0][0];   // convert int 1 to string "1"
-  v[0][1] = (int)v[0][1];     // convert string "2" to int 2
-  v[0][2] = (int)v[0][2];     // truncate 3.14 to int 3
+  v[0][1] = (int)v[0][1];     // convert string "2" to 32 bit int = 2
+  v[0][2] = (LONG64)v[0][2];  // truncate 3.14 to 64 bit int = 3
   v[0].size(3);               // reset size to 3 to remove last entry
   v[1]["name"] = "mary";
   v[1]["age"] = 21;
@@ -70,6 +69,11 @@ int main()
   v[3] = time(0);
   // display in JSON format
   cout << endl << "JSON output of modified value:" << endl << v << endl;
+  // display in XML-RPC format
+  cout << endl << "XML-RPC output of modified value:" << endl;
+  ctx->os = &cout;
+  soap_write_value(ctx, &v);
+  cout << endl;
   // clean up
   soap_destroy(ctx);
   soap_end(ctx);

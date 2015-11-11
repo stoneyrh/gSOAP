@@ -271,7 +271,8 @@ uint64_t                  same as ULONG64
 size_t                    transient type (not serializable)
 float                     32 bit float
 double                    64 bit float
-long double               128 bit float, use #import "custom/long_double.h"
+long double               extended precision float, use #import "custom/long_double.h"
+__float128                &lt;quadmath.h&gt; quadruple precision float, use #import "custom/float128.h"
 typedef                   declares a type name, may restrict numeric range
 </pre><p>List of <a href="#toxsd6">string types</a> </p>
 <pre class="fragment">char*                     string
@@ -329,7 +330,7 @@ class ns:record        // binding 'ns:' to a type name
   ~ns:record();         // and here
 };
 </pre><p>The colon notation is stripped away by soapcpp2 when generating the data binding implementation code for our project. So the final code just uses <code>record</code> to identify this class and its constructor/destructor.</p>
-<p>When using colon notation we have to be consistent as we cannot use both forms together. That is, <code>ns:record</code> differs from <code>ns__record</code> as a name.</p>
+<p>When using colon notation we have to be consistent and not use colon notation mixed with prefixed forms. The name <code>ns:record</code> differs from <code>ns__record</code>, because <code>ns:record</code> is compiled to an unqualified <code>record</code> name.</p>
 <h2><a class="anchor" id="toxsd3"></a>
 C++ Bool and C alternative                                             </h2>
 <p>The C++ <code>bool</code> type is bound to built-in XSD type xsd:boolean.</p>
@@ -422,7 +423,7 @@ const char * soap::double_format
 <pre class="fragment">#import "custom/long_double.h"
 typedef long double xsd__decimal;
 </pre><p>Compile and link your code with <code>custom/long_double.c</code>.</p>
-<p>The range of a numerical type can be restricted with a typedef: </p>
+<p>The range of a typedef-defined numerical type can be restricted: </p>
 <pre class="fragment">typedef int ns__narrow -10:10;
 </pre><p>which maps to a simpleType restriction of xsd:int in the soapcpp2-generated schema: </p>
 <pre class="fragment">&lt;simpleType name="narrow"&gt;
@@ -431,14 +432,27 @@ typedef long double xsd__decimal;
     &lt;maxInclusive value="10"/&gt;
   &lt;/restriction&gt;
 &lt;/simpleType&gt;
-</pre><p>The range of a float type can only be restricted within integral bounds. This restriction may be dropped in future releases.</p>
-<h2><a class="anchor" id="toxsd6"></a>
+</pre><p>The range of a floating point type can be restricted within bounds with decimal fractions. Also a printf format pattern can be given of the form <code>"%[width][.precision]f"</code> to format decimal values with the given width and precision: </p>
+<pre class="fragment">typedef float ns__PH "%5.2f" 0.0:14.0;
+</pre><p>This maps to a simpleType restriction of xsd:float in the soapcpp2-generated schema: </p>
+<pre class="fragment">&lt;simpleType name="PH"&gt;
+  &lt;restriction base="xsd:float"&gt;
+    &lt;totalDigits value="5"/&gt;
+    &lt;fractionDigits value="2"/&gt;
+    &lt;minInclusive value="0"/&gt;
+    &lt;maxInclusive value="14"/&gt;
+  &lt;/restriction&gt;
+&lt;/simpleType&gt;
+</pre><p>Similarly, <code>double</code> and <code>long double</code> can be restricted: </p>
+<pre class="fragment">#import "custom/long_double.h"
+typedef long double ns__epsilon "%16Lg" 0.0:1.0;
+</pre><h2><a class="anchor" id="toxsd6"></a>
 String types                                                           </h2>
 <p>String types are mapped to the built-in xsd:string and xsd:QName XSD types.</p>
 <p>The wide strings <code>wchar_t*</code> and <code>std::wstring</code> may contain Unicode that is preserved in the XML value space.</p>
 <p>Strings <code>char*</code> and <code>std::string</code> can only contain extended Latin, but we can store UTF-8 content that is preserved in the XML value space when the <code>struct soap</code> context is initialized with the flag <code>XML_C_UTFSTRING</code>.</p>
 <p>Beware that many XML 1.0 parsers reject all control characters (those between <code>#x1</code> and <code>#x1F</code>) except <code>#x9</code>, <code>#xA</code>, and <code>#xD</code>. With the newer XML 1.1 parsers (including gSOAP) you should be fine.</p>
-<p>The length of a string type can be restricted with a typedef: </p>
+<p>The length of a string of a typedef-defined string type can be restricted: </p>
 <pre class="fragment">typedef std::string ns__password 6:16;
 </pre><p>which maps to a simpleType restriction of xsd:string in the soapcpp2-generated schema: </p>
 <pre class="fragment">&lt;simpleType name="password"&gt;
@@ -1059,7 +1073,7 @@ Memory management in C++                                              </h2>
 T * soap_make(struct soap *soap, T val)
 {
   T *p = (T*)soap_malloc(soap, sizeof(T));
-  if (p)
+  if (p)      // out of memory? Can also guard with assert(p != NULL) or throw an error
     *p = val;
   return p;
 }
@@ -1077,14 +1091,14 @@ T * soap_make(struct soap *soap, T val)
 ns__record *record = soap_new_set_ns__record(
     soap,
     "Joe",
-    soap_make&lt;uint64_t&gt;(soap, 1234567890),
+    soap_make&lt;uint64_t&gt;(soap, 1234567890LL),
     NULL);
 ...
 soap_destroy(soap);  // delete record and all other managed instances
 soap_end(soap);      // delete managed soap_malloc'ed heap data
 soap_free(soap);     // delete context
 </pre><p>Note however that the gSOAP serializer can serialize any heap, stack, or static allocated data. So we can also create a new record as follows: </p>
-<pre class="fragment">uint64_t SSN = 1234567890;
+<pre class="fragment">uint64_t SSN = 1234567890LL;
 ns__record *record = soap_new_set_ns__record(soap, "Joe", &amp;SSN, NULL);
 </pre><p>which will be fine to serialize this record as long as the local <code>SSN</code> stack-allocated value remains in scope when invoking the serializer and/or using <code>record</code>. It does not matter if <code>soap_destroy</code> and <code>soap_end</code> are called beyond the scope of <code>SSN</code>.</p>
 <p>To facilitate our class methods to access the managing context, we can add a soap context pointer to a class/struct: </p>
@@ -1268,6 +1282,6 @@ c++ -I../.. graph.cpp graphC.cpp -o graph -lgsoap++
 <pre class="fragment">./graph</pre> </div></div><!-- contents -->
 </div><!-- doc-content -->
 <hr class="footer"><address class="footer"><small>
-Generated on Sun Oct 25 2015 21:44:35 for <a href="http://www.genivia.com">Genivia</a> documentation of Data Bindings by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Sun Nov 8 2015 09:37:42 for <a href="http://www.genivia.com">Genivia</a> documentation of Data Bindings by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

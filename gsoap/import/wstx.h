@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-struct SOAP_ENV__Header
+mutable struct SOAP_ENV__Header
 { int								__sizeIssuedTokens 0; ///< size of the array
   struct wst__RequestSecurityTokenResponseCollectionType	*wst__IssuedTokens 0; ///< array of tokens
   wst__RequestTypeOpenEnum                                       wst__RequestType  0;

@@ -1812,7 +1812,8 @@ void Definitions::compile(const wsdl__definitions& definitions)
         if ((*simpleType).baseLevel() <= 0)
         {
 	  const char *t = types.deftname(TYPEDEF, false, false, NULL, (*schema)->targetNamespace, (*simpleType).name);
-          fprintf(stream, "\n/// @todo !FIXME! @warning %s is a simpleType with cyclic restriction/extension inheritance.\n", (*simpleType).name ? (*simpleType).name : "");
+	  fprintf(stderr, "\nError: circular restriction/extension <xs:simpleType name=\"%s\"/>\n", (*simpleType).name ? (*simpleType).name : "");
+          fprintf(stream, "\n/// @todo !FIXME! @warning %s is a simpleType with circular restriction/extension.\n", (*simpleType).name ? (*simpleType).name : "");
           fprintf(stream, "typedef _XML %s;\n\n", t);
 	  types.ptrtypemap[t] = types.usetypemap[t] = "_XML";
         }
@@ -1821,7 +1822,8 @@ void Definitions::compile(const wsdl__definitions& definitions)
       {
         if ((*complexType).baseLevel() <= 0)
         {
-          fprintf(stream, "\n\n/// @todo !FIXME! @warning %s is a complexType with cyclic restriction/extension inheritance.\n", (*complexType).name ? (*complexType).name : "");
+	  fprintf(stderr, "\nError: circular restriction/extension <xs:complexType name=\"%s\"/>\n", (*complexType).name ? (*complexType).name : "");
+          fprintf(stream, "\n\n/// @todo !FIXME! @warning %s is a complexType with circular restriction/extension.\n", (*complexType).name ? (*complexType).name : "");
           if (cflag)
             fprintf(stream, "struct %s { };\n\n", types.cname(NULL, (*schema)->targetNamespace, (*complexType).name));
           else
@@ -2087,7 +2089,7 @@ void Definitions::generate()
   {
     banner("SOAP Header");
     fprintf(stream, "/**\n\nThe SOAP Header is part of the gSOAP context and its content is accessed\nthrough the soap.header variable. You may have to set the soap.actor variable\nto serialize SOAP Headers with SOAP-ENV:actor or SOAP-ENV:role attributes.\nUse option -j to remove entire SOAP Header definition.\nUse option -k to remove the mustUnderstand qualifiers.\n\n*/\n");
-    fprintf(stream, "struct SOAP_ENV__Header\n{\n");
+    fprintf(stream, "mutable struct SOAP_ENV__Header\n{\n");
     for (MapOfStringToMessage::const_iterator header = headers.begin(); header != headers.end(); ++header)
     {
       if ((*header).second->use == encoded && (*header).second->URI && *(*header).second->URI)
@@ -2170,7 +2172,7 @@ void Definitions::generate()
     SetOfString fault_elements;
     banner("SOAP Fault Detail");
     fprintf(stream, "/**\n\nThe SOAP Fault is part of the gSOAP context and its content is accessed\nthrough the soap.fault->detail variable (SOAP 1.1) or the\nsoap.fault->SOAP_ENV__Detail variable (SOAP 1.2).\nUse wsdl2h option -j to omit these declarations.\n\n*/\n");
-    fprintf(stream, "struct SOAP_ENV__Detail\n{\n");
+    fprintf(stream, "mutable struct SOAP_ENV__Detail\n{\n");
     if (dflag)
     {
       const char *t = types.tname(NULL, NULL, "xsd:anyAttribute");

@@ -13,6 +13,7 @@ See the notes in the source files on specific usage.
 The following serializers are available:
 
 long_double.*       Serializes long double (extended double) type
+float128.*          Serializes __float128 <quadmath.h> type
 struct_tm.*         Serializes struct tm as xsd:dateTime
 struct_timeval.*    Serializes struct timeval as xsd:dateTime
 duration.*          Serializes LONG64 milliseconds as xsd:duration

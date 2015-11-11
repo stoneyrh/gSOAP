@@ -7,7 +7,7 @@
 	- Removed //gsoapopt
 	- Added //gsoap wsse  schema import: http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
 	- Added //gsoap wsse  schema namespace2: http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd
-	- Added SOAP_ENV__Header struct
+	- Added mutable SOAP_ENV__Header struct
 
 */
 
@@ -203,7 +203,7 @@ typedef struct _wsse__Password
 /// @brief This global attribute is used to indicate the usage of a referenced or indicated token within the containing context
 /// '_wsse__Usage' attribute definition intentionally left blank.
 
-struct SOAP_ENV__Header
+mutable struct SOAP_ENV__Header
 {
   mustUnderstand _wsse__Security *wsse__Security 0;
 };

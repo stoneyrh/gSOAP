@@ -31,6 +31,16 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
+#ifdef JSON_NAMESPACE
+# include "jsonH.h"
+#else
+# include "soapH.h"
+#endif
+
+#ifdef JSON_NAMESPACE
+namespace json {
+#endif
+
 /// Send a value in JSON format to a stream
 extern std::ostream& operator<<(std::ostream&, const struct value&);
 extern int json_send(struct soap *soap, const struct value& v);
@@ -41,3 +51,7 @@ extern int json_recv(struct soap *soap, struct value& v);
 
 /// Client-side JSON-RPC call
 extern int json_call(struct soap *soap, const char *endpoint, const struct value& in, struct value& out);
+
+#ifdef JSON_NAMESPACE
+} // namespace json
+#endif

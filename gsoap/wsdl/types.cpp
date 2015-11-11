@@ -40,6 +40,7 @@ static const char *fill(char *t, int n, const char *s, int e);
 static const char *utf8(char **t, const char *s, bool start);
 static const char *cstring(const char *s);
 static const char *xstring(const char *s);
+static bool is_float(const char *s);
 static bool is_integer(const char *s);
 static LONG64 to_integer(const char *s);
 static void documentation(const char *text);
@@ -191,7 +192,7 @@ int Types::read(const char *file)
     fprintf(stderr, "Cannot open file \"%s\"\n", file);
     return SOAP_EOF;
   }
-  fprintf(stderr, "Reading type definitions from type map file \"%s\"\n", buf);
+  fprintf(stderr, "Reading type definitions from type map \"%s\"\n", buf);
   while (getline(buf, sizeof(buf), fd))
   {
     s = buf;
@@ -702,7 +703,9 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
   {
     name = s + 1;
     if (qname[0] == '"' && qname[1] == '"')
+    {
       s = NULL;
+    }
     else if (*qname == '"')
     {
       t = (char*)emalloc(s - qname - 1);
@@ -760,9 +763,13 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
           if (t >= buf + sizeof(buf) - 8)
             break;
           if (isalnum(*s))
+	  {
             *t++ = *s;
+	  }
           else if (*s == '-' && s[1] != '-' && s != p)
+	  {
             *t++ = '_';
+	  }
           else if (*s == '_')
           {
             if (s == p)
@@ -789,16 +796,22 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
         }
       }
       else if (isdigit(*name))
+      {
         *t++ = '_';
+      }
     }
     for (s = name; *s; s++)
     {
       if (t >= buf + sizeof(buf) - 8)
         break;
       if (isalnum(*s))
+      {
         *t++ = *s;
+      }
       else if (*s == '-' && s[1] != '-' && s[1] != '\0' && s != name)
+      {
         *t++ = '_';
+      }
       else if (!_flag && *s == '_')
       {
         soap_strcpy(t, sizeof(buf) - (t - buf), "_USCORE");
@@ -859,6 +872,16 @@ bool Types::is_defined(const char *prefix, const char *URI, const char *qname)
 const char *Types::aname(const char *prefix, const char *URI, const char *qname)
 {
   return fname(prefix, URI, qname, NULL, NOLOOKUP, true);
+}
+
+const char *Types::wname(const char *prefix, const char *URI, const char *qname)
+{
+  const char *s = aname(prefix, URI, qname);
+  SetOfString reserved;
+  reserved.insert(s);
+  s = fname(prefix, URI, qname, &reserved, NOLOOKUP, true);
+  knames.insert(s);
+  return s;
 }
 
 const char *Types::cname(const char *prefix, const char *URI, const char *qname)
@@ -1519,9 +1542,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             fprintf(stream, "/// @brief Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
           if (pflag && simpleType.name)
           {
-            const char *s = aname(prefix, URI, name);
-            knames.insert(s);
-            s = aname(prefix, URI, name);
+            const char *s = wname(prefix, URI, name);
             fprintf(stream, "/// @brief A class wrapper.\n///\n");
             fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", s);
             fprintf(stream, elementformat, tname(prefix, URI, name), "__item;");
@@ -1654,7 +1675,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             fprintf(stream, "\"");
           }
           // add range info only when type is numeric
-          bool is_numeric = false, is_float = false;
+          bool is_numeric_type = false, is_float_type = false;
           if (!strncmp(s, "signed ", 7))
             s += 7;
           else if (!strncmp(s, "unsigned ", 9))
@@ -1669,7 +1690,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             s += 5;
           if (!strcmp(s, "float")
            || !strcmp(s, "double"))
-            is_numeric = is_float = true;
+            is_numeric_type = is_float_type = true;
           else if (!strcmp(s, "bool")
            || !strcmp(s, "byte")
            || !strcmp(s, "Byte")
@@ -1682,53 +1703,65 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
            || !strcmp(s, "short")
            || !strcmp(s, "Short")
            || !strcmp(s, "ULONG64"))
-            is_numeric = true;
+            is_numeric_type = true;
           if (!anonymous && *format)
           {
-            if (is_float)
+            if (is_float_type)
               fprintf(stream, " \"%%%sf\"", format);
-            else if (is_numeric)
+            else if (is_numeric_type)
               fprintf(stream, " \"%%%sd\"", format);
           }
           if (!anonymous
-           && simpleType.restriction->minLength
-           && simpleType.restriction->minLength->value)
-            fprintf(stream, " %s", simpleType.restriction->minLength->value);
-          else if (is_numeric
+                && simpleType.restriction->minLength
+                && simpleType.restriction->minLength->value)
+	    fprintf(stream, " %s", simpleType.restriction->minLength->value);
+          else if (is_float_type
+                && !anonymous
+                && simpleType.restriction->minInclusive
+                && simpleType.restriction->minInclusive->value
+                && is_float(simpleType.restriction->minInclusive->value))
+            fprintf(stream, " %s", simpleType.restriction->minInclusive->value);
+          else if (is_numeric_type
                 && !anonymous
                 && simpleType.restriction->minInclusive
                 && simpleType.restriction->minInclusive->value
                 && is_integer(simpleType.restriction->minInclusive->value))
             fprintf(stream, " %s", simpleType.restriction->minInclusive->value);
-          else if (is_float
+          else if (is_float_type
                 && !anonymous
                 && simpleType.restriction->minExclusive
                 && simpleType.restriction->minExclusive->value
-                && is_integer(simpleType.restriction->minExclusive->value))
+                && is_float(simpleType.restriction->minExclusive->value))
             fprintf(stream, " %s", simpleType.restriction->minExclusive->value);
-          else if (is_numeric
+          else if (is_numeric_type
                 && !anonymous
                 && simpleType.restriction->minExclusive
                 && simpleType.restriction->minExclusive->value
                 && is_integer(simpleType.restriction->minExclusive->value))
             fprintf(stream, " " SOAP_LONG_FORMAT, to_integer(simpleType.restriction->minExclusive->value)+1);
           if (!anonymous
-           && simpleType.restriction->maxLength
-           && simpleType.restriction->maxLength->value)
-            fprintf(stream, ":%s", simpleType.restriction->maxLength->value);
-          else if (is_numeric
+                && simpleType.restriction->maxLength
+                && simpleType.restriction->maxLength->value)
+	    fprintf(stream, ":%s", simpleType.restriction->maxLength->value);
+          else if (is_float_type
+                && !anonymous
+                && simpleType.restriction->maxInclusive
+                && simpleType.restriction->maxInclusive->value
+                && is_float(simpleType.restriction->maxInclusive->value))
+            fprintf(stream, ":%s", simpleType.restriction->maxInclusive->value);
+          else if (is_numeric_type
                 && !anonymous
                 && simpleType.restriction->maxInclusive
                 && simpleType.restriction->maxInclusive->value
                 && is_integer(simpleType.restriction->maxInclusive->value))
             fprintf(stream, ":%s", simpleType.restriction->maxInclusive->value);
-          else if (is_float
+          else if (is_float_type
                 && !anonymous
                 && simpleType.restriction->maxExclusive
                 && simpleType.restriction->maxExclusive->value
-                && is_integer(simpleType.restriction->maxExclusive->value))
+                && is_float(simpleType.restriction->maxExclusive->value))
             fprintf(stream, ":%s", simpleType.restriction->maxExclusive->value);
-          else if (is_numeric
+          else if (is_numeric_type
                 && !anonymous
                 && simpleType.restriction->maxExclusive
                 && simpleType.restriction->maxExclusive->value
@@ -1739,9 +1772,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             fprintf(stream, ";\n\n");
             if (pflag && simpleType.name)
             {
-              const char *s = aname(prefix, URI, name);
-              knames.insert(s);
-              s = aname(prefix, URI, name);
+              const char *s = wname(prefix, URI, name);
               fprintf(stream, "/// @brief A class wrapper.\n///\n");
               fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", s);
               fprintf(stream, elementformat, tname(prefix, URI, name), "__item;");
@@ -1800,9 +1831,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             fprintf(stream, "/// @brief Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
           if (pflag && simpleType.name)
           {
-            const char *s = aname(prefix, URI, name);
-            knames.insert(s);
-            s = aname(prefix, URI, name);
+            const char *s = wname(prefix, URI, name);
             fprintf(stream, "/// @brief A class wrapper.\n///\n");
             fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", s);
             fprintf(stream, elementformat, tname(prefix, URI, name), "__item;");
@@ -1866,9 +1895,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
               fprintf(stream, "/// @brief Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
             if (pflag && simpleType.name)
             {
-              const char *s = aname(prefix, URI, name);
-              knames.insert(s);
-              s = aname(prefix, URI, name);
+              const char *s = wname(prefix, URI, name);
               fprintf(stream, "/// @brief A class wrapper.\n///\n");
               fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", s);
               fprintf(stream, elementformat, tname(prefix, URI, name), "__item;");
@@ -1951,9 +1978,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             fprintf(stream, "/// @brief Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
           if (pflag && simpleType.name)
           {
-            const char *s = aname(prefix, URI, name);
-            knames.insert(s);
-            s = aname(prefix, URI, name);
+            const char *s = wname(prefix, URI, name);
             fprintf(stream, "/// @brief A class wrapper.\n///\n");
             fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", s);
             fprintf(stream, elementformat, tname(prefix, URI, name), "__item;");
@@ -2778,19 +2803,37 @@ void Types::gen(const char *URI, const vector<xs__attributeGroup>& attributeGrou
 {
   for (vector<xs__attributeGroup>::const_iterator attributeGroup = attributeGroups.begin(); attributeGroup != attributeGroups.end(); ++attributeGroup)
   {
+    static set<const xs__attributeGroup*> visited;
     const xs__attributeGroup *p = &*attributeGroup;
+    if (visited.find(p) != visited.end())
+    {
+      if (p->ref)
+	fprintf(stderr, "\nWarning: circular attributeGroup <xs:attributeGroup ref=\"%s\"/>\n", p->ref);
+      else
+	fprintf(stderr, "\nWarning: circular attributeGroup <xs:attributeGroup name=\"%s\"/>\n", p->name ? p->name : "");
+      fprintf(stream, "/// @todo !FIXME! @warning %s is an attributeGroup with a circular reference.\n", p->ref ? p->ref : p->name ? p->name : "");
+      return;
+    }
+    visited.insert(p);
     const char *pURI = URI;
     if (p->ref) // attributeGroup ref
       fprintf(stream, "//  BEGIN ATTRIBUTEGROUP <xs:attributeGroup ref=\"%s\">.\n", p->ref ? p->ref : "");
     else
       fprintf(stream, "//  BEGIN ATTRIBUTEGROUP <xs:attributeGroup name=\"%s\">.\n", p->name ? p->name : "");
     if (p->attributeGroupPtr())
-      p = p->attributeGroupPtr();
-    gen(pURI, p->attribute);
-    gen(pURI, p->attributeGroup);
+    {
+      gen(pURI, p->attributeGroupPtr()->attribute);
+      gen(pURI, p->attributeGroupPtr()->attributeGroup);
+    }
+    else
+    {
+      gen(pURI, p->attribute);
+      gen(pURI, p->attributeGroup);
+    }
     if (p->anyAttribute)
       gen(pURI, *p->anyAttribute);
     fprintf(stream, "//  END OF ATTRIBUTEGROUP\n");
+    visited.erase(p);
   }
 }
 
@@ -3353,6 +3396,17 @@ void Types::gen(const char *URI, const vector<xs__group>& groups)
 
 void Types::gen(const char *URI, const xs__group& group, const char *minOccurs, const char *maxOccurs)
 {
+  static set<const xs__group*> visited;
+  if (visited.find(&group) != visited.end())
+  {
+    if (group.ref)
+      fprintf(stderr, "\nWarning: circular group <xs:group ref=\"%s\"/>\n", group.ref);
+    else
+      fprintf(stderr, "\nWarning: circular group <xs:group name=\"%s\"/>\n", group.name ? group.name : "");
+    fprintf(stream, "/// @todo !FIXME! @warning %s is a group with a circular reference.\n", group.ref ? group.ref : group.name ? group.name : "");
+    return;
+  }
+  visited.insert(&group);
   if (group.minOccurs)
     minOccurs = group.minOccurs;
   if (group.maxOccurs)
@@ -3378,6 +3432,7 @@ void Types::gen(const char *URI, const xs__group& group, const char *minOccurs, 
       gen(URI, *group.sequence, minOccurs, maxOccurs);
     fprintf(stream, "//  END OF GROUP\n");
   }
+  visited.erase(&group);
 }
 
 void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, const char *minOccurs, const char *maxOccurs)
@@ -3659,7 +3714,7 @@ void Types::gen_soap_array(const char *t, const char *item, const char *type)
   fprintf(stream, "/// SOAP encoded array of %s.\n", tmp ? tmp : "xs:anyType");
   if (cflag)
     fprintf(stream, "struct %s\n{\n", t);
-  else if (pflag)
+  else if (pflag && *t)
     fprintf(stream, "class %s : public xsd__anyType\n{ public:\n", t);
   else
     fprintf(stream, "class %s\n{ public:\n", t);
@@ -3673,7 +3728,13 @@ void Types::gen_soap_array(const char *t, const char *item, const char *type)
   {
     if (strchr(tmp, '[') != NULL)
     {
-      gen_soap_array("", item, tmp);
+      size_t l = strlen(t);
+      if (!strncmp(t, "ArrayOf", 7) && l > 7)
+	gen_soap_array(t + 7, item, tmp);
+      else if (!strncmp(t, "Array", 5) && l > 5)
+	gen_soap_array(t + 5, item, tmp);
+      else
+	gen_soap_array("", item, tmp);
       fprintf(stream, arrayformat, "}", item ? aname(NULL, NULL, item) : "");
       fprintf(stream, ";\n");
     }
@@ -4137,21 +4198,44 @@ static const char *xstring(const char *s)
   return r;
 }
 
-static LONG64 to_integer(const char *s)
+static bool is_float(const char *s)
 {
-  char *r;
-  return soap_strtoll(s, &r, 10);
+  if (*s == '-' || *s == '+')
+    s++;
+  if (!*s || strlen(s) > 20)
+    return false;
+  while (*s && isdigit(*s))
+    s++;
+  if (*s == '.')
+    s++;
+  while (*s && isdigit(*s))
+    s++;
+  if (*s == 'e' || *s == 'E')
+  {
+    s++;
+    if (*s == '-' || *s == '+')
+      s++;
+    while (*s && isdigit(*s))
+      s++;
+  }
+  return *s == '\0';
 }
 
 static bool is_integer(const char *s)
 {
-  if ((*s == '-' || *s == '+') && s[1])
+  if (*s == '-' || *s == '+')
     s++;
   if (!*s || strlen(s) > 20)
     return false;
   while (*s && isdigit(*s))
     s++;
   return *s == '\0';
+}
+
+static LONG64 to_integer(const char *s)
+{
+  char *r;
+  return soap_strtoll(s, &r, 10);
 }
 
 static void documentation(const char *text)

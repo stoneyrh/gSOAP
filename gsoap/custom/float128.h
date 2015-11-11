@@ -1,21 +1,26 @@
 /*
-	stl.h
+	float128.h
 
-	#import "stl.h" in a gSOAP header file to enable STL vectors, deques,
-	lists, and sets.
+	Custom serializer for the <quadmath.h> __float128 quad precision float
+	type as xsd:decimal.
 
-	You can now remap std::vector in wsdl2h's output to another container
-	by defining the '$CONTAINER' variable in typemap.dat, for example to
-	use std::list:
+	#import this file into your gSOAP .h file.
 
-	$CONTAINER = std::list
+	Add this line to typemap.dat to automate the mapping with wsdl2h:
 
-	Use soapcpp2 option -Ipath:path:... to specify the path(s) for #import
+	xsd__decimal = #import "custom/float128.h" | xsd__decimal
+
+	When using soapcpp2 option -q<name> or -p<name>, you must change
+	float128.c as follows:
+
+		#include "soapH.h"  ->  #include "nameH.h"
+
+	Compile and link your code with custom/float128.c
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
-This part of the software is released under one of the following licenses:
-GPL, the gSOAP public license, or Genivia's license for commercial use.
+This part of the software is released under ONE of the following licenses:
+GPL, the gSOAP public license, OR Genivia's license for commercial use.
 --------------------------------------------------------------------------------
 gSOAP public license.
 
@@ -28,7 +33,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2015 Robert A. van Engelen, Genivia inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -55,7 +60,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#import "stldeque.h"
-#import "stllist.h"
-#import "stlvector.h"
-#import "stlset.h"
+#include <quadmath.h>
+extern class __float128;
+extern typedef __float128 xsd__decimal;

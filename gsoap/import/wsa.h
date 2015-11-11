@@ -14,7 +14,7 @@
 	This ensures that the WS-Addressing schemas are not copied into the
 	generated WSDL by soapcpp2 but are referenced with schema import in the
 	generated WSDL.
-	- Added SOAP_ENV__Header struct
+	- Added mutable SOAP_ENV__Header struct
 	- Added SOAP_ENV__Fault one-way operation
 
 Usage:
@@ -246,7 +246,7 @@ typedef unsigned int _wsa__ReplyAfter;
 /// Attribute "http://schemas.xmlsoap.org/ws/2004/08/addressing":Action of simpleType xs:anyURI.
 // '_wsa__Action' attribute definition intentionally left blank.
 
-struct SOAP_ENV__Header
+mutable struct SOAP_ENV__Header
 {
                  _wsa__MessageID  wsa__MessageID 0;
                  _wsa__RelatesTo *wsa__RelatesTo 0;

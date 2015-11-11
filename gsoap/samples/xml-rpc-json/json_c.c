@@ -38,13 +38,16 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 _boolean False = 0, True = 1; /* so we can take the address of these consts */
 
 static int jsstrout(struct soap *soap, const char *s)
-{ int c;
+{
+  int c;
   char buf[8];
   if (soap_send_raw(soap, "\"", 1))
     return soap->error;
   while ((c = *s++))
-  { switch (c)
-    { case '"':
+  {
+    switch (c)
+    {
+      case '"':
       case '\\':
         buf[0] = '\\';
         buf[1] = c;
@@ -53,8 +56,10 @@ static int jsstrout(struct soap *soap, const char *s)
 	break;
       default:
         if (c < 32 && c > 0)
-        { switch (c)
-          { case '\b':
+        {
+	  switch (c)
+          {
+	    case '\b':
               c = 'b';
               break;
             case '\f':
@@ -71,19 +76,22 @@ static int jsstrout(struct soap *soap, const char *s)
               break;
           }
           if (c > 32)
-          { buf[0] = '\\';
+          {
+	    buf[0] = '\\';
             buf[1] = c;
             if (soap_send_raw(soap, buf, 2))
 	      return soap->error;
           }
           else if (c <= 0xFFFF)
-	  { (SOAP_SNPRINTF(buf, sizeof(buf), 7), "\\u%4x", c);
+	  {
+	    (SOAP_SNPRINTF(buf, sizeof(buf), 7), "\\u%4x", c);
 	    if (soap_send_raw(soap, buf, 6))
 	      return soap->error;
           }
 	}
         else if ((c & 0x80) && (soap->omode & SOAP_ENC_LATIN) && (soap->omode & SOAP_C_UTFSTRING)) // utf8 to ISO 8859-1
-        { if (c < 0xE0 && (c & 0x1F) <= 0x03)
+        {
+	  if (c < 0xE0 && (c & 0x1F) <= 0x03)
             buf[0] = ((c & 0x1F) << 6) | (*s++ & 0x3F);
           else
             buf[0] = '?';
@@ -91,13 +99,15 @@ static int jsstrout(struct soap *soap, const char *s)
             return soap->error;
         }
         else if ((c & 0x80) && !(soap->omode & SOAP_ENC_LATIN) && !(soap->omode & SOAP_C_UTFSTRING)) // ISO 8859-1 to utf8
-        { buf[0] = (char)(0xC0 | ((c >> 6) & 0x1F));
+        {
+	  buf[0] = (char)(0xC0 | ((c >> 6) & 0x1F));
           buf[1] = (char)(0x80 | (c & 0x3F));
           if (soap_send_raw(soap, buf, 2))
             return soap->error;
         }
         else
-        { buf[0] = c;
+        {
+	  buf[0] = c;
           if (soap_send_raw(soap, buf, 1))
             return soap->error;
         }
@@ -107,14 +117,17 @@ static int jsstrout(struct soap *soap, const char *s)
 }
 
 int json_send(struct soap *soap, const struct value *v)
-{ _boolean f; int i;
+{
+  _boolean f; int i;
   switch (v->__type)
-  { case SOAP_TYPE__array: 
+  {
+    case SOAP_TYPE__array: 
       if (soap_send_raw(soap, "["/*]*/, 1))
         return soap->error;
       f = False;
       for (i = 0; i < ((struct _array*)v->ref)->data.__size; i++, f = True)
-      { if (f)
+      {
+	if (f)
 	  if (soap_send_raw(soap, ",", 1))
             return soap->error;
 	if (json_send(soap, (((struct _array*)v->ref)->data.value) + i))
@@ -126,10 +139,11 @@ int json_send(struct soap *soap, const struct value *v)
         return soap_send_raw(soap, "true", 4);
       return soap_send_raw(soap, "false", 5);
     case SOAP_TYPE__double: 
-      return soap_send(soap, soap_double2s(soap, *(double*)v->ref));
+      return soap_send(soap, soap_double2s(soap, (double)*(_double*)v->ref));
     case SOAP_TYPE__i4: 
+      return soap_send(soap, soap_int2s(soap, (int)*(_i4*)v->ref));
     case SOAP_TYPE__int: 
-      return soap_send(soap, soap_int2s(soap, *(int*)v->ref));
+      return soap_send(soap, soap_LONG642s(soap, (LONG64)*(_int*)v->ref));
     case SOAP_TYPE__string: 
     case SOAP_TYPE__dateTime_DOTiso8601: 
     case SOAP_TYPE__base64: 
@@ -139,7 +153,8 @@ int json_send(struct soap *soap, const struct value *v)
         return soap->error;
       f = False;
       for (i = 0; i < ((struct _struct*)v->ref)->__size; i++, f = True)
-      { if (f)
+      {
+	if (f)
           if (soap_send_raw(soap, ",", 1))
             return soap->error;
 	if (jsstrout(soap, (((struct _struct*)v->ref)->member + i)->name)
@@ -157,7 +172,8 @@ int json_send(struct soap *soap, const struct value *v)
 }
 
 int json_recv(struct soap *soap, struct value *v)
-{ soap_wchar c;
+{
+  soap_wchar c;
   v->__type = 0;
   v->ref = NULL;
   v->__any = NULL;
@@ -165,10 +181,12 @@ int json_recv(struct soap *soap, struct value *v)
   while ((c = soap_getchar(soap)) > 0 && c <= 32)
     continue;
   switch (c)
-  { case EOF:
+  {
+    case EOF:
       return soap->error = SOAP_EOF;
     case '{'/*}*/:
-    { struct value *s;
+    {
+      struct value *s;
       struct member *m;
       if (!(v->ref = soap_malloc(soap, sizeof(struct _struct))))
         return soap->error = SOAP_EOM;
@@ -182,7 +200,8 @@ int json_recv(struct soap *soap, struct value *v)
         return SOAP_OK;
       soap_unget(soap, c);
       for (;;)
-      { if (!(s = soap_malloc(soap, sizeof(struct value))))
+      {
+	if (!(s = soap_malloc(soap, sizeof(struct value))))
           return soap->error = SOAP_EOM;
         if (json_recv(soap, s))
           return soap->error;
@@ -212,7 +231,8 @@ int json_recv(struct soap *soap, struct value *v)
       return SOAP_OK;
     }
     case '['/*]*/:
-    { struct value *u;
+    {
+      struct value *u;
       if (!(v->ref = soap_malloc(soap, sizeof(struct _array))))
         return soap->error = SOAP_EOM;
       v->__type = SOAP_TYPE__array;
@@ -225,7 +245,8 @@ int json_recv(struct soap *soap, struct value *v)
         return SOAP_OK;
       soap_unget(soap, c);
       for (;;)
-      { if (!(u = soap_malloc(soap, (((struct _array*)v->ref)->data.__size + 1) * sizeof(struct value))))
+      {
+	if (!(u = soap_malloc(soap, (((struct _array*)v->ref)->data.__size + 1) * sizeof(struct value))))
           return soap->error = SOAP_EOM;
         if (json_recv(soap, u + ((struct _array*)v->ref)->data.__size))
           return soap->error;
@@ -246,7 +267,8 @@ int json_recv(struct soap *soap, struct value *v)
     case '"':
       soap->labidx = 0;
       for (;;)
-      { char *s;
+      {
+	char *s;
         const char *t = NULL;
         register size_t k;
         if (soap_append_lab(soap, NULL, 0))
@@ -255,15 +277,19 @@ int json_recv(struct soap *soap, struct value *v)
         k = soap->lablen - soap->labidx;
         soap->labidx = soap->lablen;
         while (k--)
-        { if (t)
-          { *s++ = *t++;
+        {
+	  if (t)
+          {
+	    *s++ = *t++;
             if (!*t)
               t = NULL;
           }
           else
-          { c = soap_getchar(soap);
+          {
+	    c = soap_getchar(soap);
             switch (c)
-            { case EOF:
+            {
+	      case EOF:
                 return soap->error = SOAP_EOF;
               case '"':
                 *s = '\0';
@@ -274,7 +300,8 @@ int json_recv(struct soap *soap, struct value *v)
               case '\\':
                 c = soap_getchar(soap);
                 switch (c)
-                { case EOF:
+                {
+		  case EOF:
                     return soap->error = SOAP_EOF;
                   case 'b':
                     c = 8;
@@ -292,13 +319,15 @@ int json_recv(struct soap *soap, struct value *v)
                     c = 9;
                     break;               
                   case 'u':
-                  { char *h;
+                  {
+		    char *h;
 		    wchar_t wc[2];
 		    int i;
                     /* hex to utf8 conversion */
                     h = soap->tmpbuf;
                     for (i = 0; i < 4; i++)
-                    { if ((c = soap_getchar(soap)) == EOF)
+                    {
+		      if ((c = soap_getchar(soap)) == EOF)
                         return soap->error = SOAP_EOF;
                       *(h + i) = c;
                     }
@@ -314,13 +343,15 @@ int json_recv(struct soap *soap, struct value *v)
 		break;
               default:
                 if ((c & 0x80) && (soap->imode & SOAP_ENC_LATIN) && (soap->imode & SOAP_C_UTFSTRING)) // ISO 8859-1 to utf8
-                { *s++ = (char)(0xC0 | ((c >> 6) & 0x1F));
+                {
+		  *s++ = (char)(0xC0 | ((c >> 6) & 0x1F));
                   soap->tmpbuf[0] = (0x80 | (c & 0x3F));
                   soap->tmpbuf[1] = '\0';
                   t = soap->tmpbuf;
                 }
                 else if ((c & 0x80) && !(soap->imode & SOAP_ENC_LATIN) && !(soap->imode & SOAP_C_UTFSTRING)) // utf8 to ISO 8859-1
-                { soap_wchar c1 = soap_getchar(soap);
+                {
+		  soap_wchar c1 = soap_getchar(soap);
                   if (c1 == SOAP_EOF)
                     return soap->error = SOAP_EOF;
                   if (c < 0xE0 && (c & 0x1F) <= 0x03)
@@ -335,34 +366,44 @@ int json_recv(struct soap *soap, struct value *v)
         }
       }
     default: /* number, true, false, null */
-    { char *s = soap->tmpbuf;
+    {
+      char *s = soap->tmpbuf;
       do
-      { *s++ = c;
+      {
+	*s++ = c;
         c = soap_getchar(soap);
-      } while ((isalnum((int)c) || (int)c == '.' || (int)c == '+' || (int)c == '-') && s - soap->tmpbuf < (int)sizeof(soap->tmpbuf));
+      } while ((isalnum((int)c) || (int)c == '.' || (int)c == '+' || (int)c == '-') && s - soap->tmpbuf < (int)sizeof(soap->tmpbuf) - 1);
       *s = '\0';
       soap_unget(soap, c);
       if (soap->tmpbuf[0] == '-' || isdigit(soap->tmpbuf[0]))
-      { double n;
-        soap_s2double(soap, soap->tmpbuf, &n);
-	if (n == (int)n) {
+      {
+	LONG64 n = soap_strtoll(soap->tmpbuf, &s, 10)
+	if (!*s)
+	{
           v->__type = SOAP_TYPE__int;
-          if (!(v->ref = soap_malloc(soap, sizeof(int*))))
+          if (!(v->ref = soap_malloc(soap, sizeof(_int))))
             return soap->error = SOAP_EOM;
-	  *(int*)v->ref = (int)n;
-	} else {
+	  *(_int*)v->ref = n;
+	}
+	else
+	{
+	  double x;
+	  soap_s2double(soap, soap->tmpbuf, &x);
           v->__type = SOAP_TYPE__double;
-          if (!(v->ref = soap_malloc(soap, sizeof(double*))))
+          if (!(v->ref = soap_malloc(soap, sizeof(_double))))
             return soap->error = SOAP_EOM;
-	  *(double*)v->ref = n;
+	  *(_double*)v->ref = x;
         }
       }
-      else if (!strcmp(soap->tmpbuf, "true")) {
+      else if (!strcmp(soap->tmpbuf, "true"))
+      {
         v->__type = SOAP_TYPE__boolean;
         if (!(v->ref = soap_malloc(soap, sizeof(char*))))
           return soap->error = SOAP_EOM;
 	*(char*)v->ref = True;
-      } else if (!strcmp(soap->tmpbuf, "false")) {
+      }
+      else if (!strcmp(soap->tmpbuf, "false"))
+      {
         v->__type = SOAP_TYPE__boolean;
         if (!(v->ref = soap_malloc(soap, sizeof(char*))))
           return soap->error = SOAP_EOM;

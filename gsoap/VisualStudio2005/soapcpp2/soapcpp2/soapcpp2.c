@@ -60,10 +60,10 @@ int bflag = 0;		/* when set, serialize byte arrays char[N] as string */
 int eflag = 0;		/* when set, use SOAP RPC encoding by default */
 int Ecflag = 0;		/* when set, generate extra routines for data copying (soap_dup_X) */
 int Edflag = 0;		/* when set, generate extra routines for data deletion (soap_del_X) */
+int Etflag = 0;		/* when set, generate data traversal/walker routines */
 unsigned long fflag = 0;/* multi-file split for each bundle of -fN defs */
 int iflag = 0;		/* when set, generate new style proxy/object classes inherited from soap struct */
 int jflag = 0;		/* when set, generate new style proxy/object classes */
-int kflag = 0;		/* when set, generate data traversal/walker routines */
 int mflag = 0;		/* when set, generate code that requires array/binary classes to explicitly remove malloced array */
 int nflag = 0;		/* when set, names the namespaces global struct '%NAME%_namespaces */
 int lflag = 0;		/* when set, create library */
@@ -157,6 +157,7 @@ main(int argc, char **argv)
 	      {
 		case 'c': Ecflag = 1; break;
 		case 'd': Edflag = 1; break;
+		case 't': Etflag = 1; break;
 		default: execerror("Option -E requires 'c' and/or 'd'");
 	      }
 	      a++;
@@ -186,7 +187,7 @@ main(int argc, char **argv)
 	    break;
 	  case '?':
 	  case 'h':
-	    fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-Ecd] [-L] [-a] [-A] [-b] [-c|-c++|-c++11] [-d path] [-e] [-f N] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-k] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
+	    fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-Ecdt] [-L] [-a] [-A] [-b] [-c|-c++|-c++11] [-d path] [-e] [-f N] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
 	    fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
@@ -196,6 +197,7 @@ main(int argc, char **argv)
 -T	generate server auto-test code\n\
 -Ec	generate extra routines for deep copying\n\
 -Ed	generate extra routines for deep deletion\n\
+-Et     generate extra routines for data traversals with walker functions\n\
 -L	don't generate soapClientLib/soapServerLib\n\
 -a	use SOAPAction with WS-Addressing to invoke server-side operations\n\
 -A	require SOAPAction to invoke server-side operations\n\
@@ -210,7 +212,6 @@ main(int argc, char **argv)
 -Ipath  use path(s) for #import (paths separated with '" SOAP_PATHSEP "')\n\
 -i      generate C++ service proxies and objects inherited from soap struct\n\
 -j      generate C++ service proxies and objects that share a soap struct\n\
--k      generate data structure walkers (experimental)\n\
 -l      generate linkable modules (experimental)\n\
 -m      generate Matlab(tm) code for MEX compiler (deprecated)\n\
 -n      use service name to rename service functions and namespace table\n\
@@ -255,9 +256,6 @@ infile	header file to parse (or stdin)\n\
 	    break;
 	  case 'j':
 	    jflag = 1;
-	    break;
-	  case 'k':
-	    kflag = 1;
 	    break;
 	  case 'm':
 	    mflag = 1;

@@ -15,7 +15,7 @@
 	  This ensures that the WS-Addressing schemas are not copied into the generated
 	  WSDL by soapcpp2 but are referenced with schema import in the generated WSDL.
 	- Added #define SOAP_WSA_2003
-	- Added SOAP_ENV__Header struct
+	- Added mutable SOAP_ENV__Header struct
 	- Added SOAP_ENV__Fault one-way operation
 
 */
@@ -175,7 +175,7 @@ typedef struct wsa3__EndpointReferenceType _wsa3__FaultTo;
 /// Element "http://schemas.xmlsoap.org/ws/2003/03/addressing":Recipient of type "http://schemas.xmlsoap.org/ws/2003/03/addressing":EndpointReferenceType.
 typedef struct wsa3__EndpointReferenceType _wsa3__Recipient;
 
-struct SOAP_ENV__Header
+mutable struct SOAP_ENV__Header
 {
                  _wsa3__MessageID  wsa3__MessageID 0;
                  _wsa3__RelatesTo *wsa3__RelatesTo 0;

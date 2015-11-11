@@ -156,6 +156,7 @@ Declarations in `typemap.dat` can be broken up over multiple lines by
 continuing on the next line by ending each line to be continued with a
 backslash `\`.
 
+
 XML namespace bindings                                               {#typemap1}
 ----------------------
 
@@ -189,6 +190,7 @@ Prefixes in XML have local scopes (like variables in a block).
 
 The first run of wsdl2h will reveal the URIs, so we do not need to search WSDLs
 and XSD files for all of the target namespaces.
+
 
 XSD type bindings                                                    {#typemap2}
 -----------------
@@ -244,6 +246,7 @@ can remap this to a C type that permits referening the extended types via a
 such that `__type_base` and `void*` are used to (de)serialize any data type,
 including base and its derived types.
 
+
 Class/struct member additions                                        {#typemap3}
 -----------------------------
 
@@ -262,6 +265,7 @@ For example, we can add method declarations and private members to a class, say
 Note that method declarations cannot include any code, because soapcpp2's input
 permits only type declarations, not code.
 
+
 Replacing XSD types by equivalent alternatives                       {#typemap4}
 ----------------------------------------------
 
@@ -275,6 +279,7 @@ However, care muse be taken not to agressively replace types, because this can
 cause XML validation to fail when a value-type mismatch is encountered in the
 XML input. Therefore, only replace similar types with other similar types that
 are wider (e.g.  `short` by `int` and `float` by `double`).
+
 
 The built-in typemap.dat variables $CONTAINER and $POINTER           {#typemap5}
 ----------------------------------------------------------
@@ -293,6 +298,7 @@ generated declarations, which replaces the use of `*` pointers. For example:
 Not all pointers in the generated output can be replaced by smart pointers.
 Standard pointers are itill sed as union members and for pointers to arrays of
 objects.
+
 
 User-defined content                                                 {#typemap6}
 --------------------
@@ -334,6 +340,7 @@ where `arg1`, `arg2`, ..., `argn` are formal argument declarations of the input
 and `result` is a formal argument for the output, which must be a pointer or
 reference to the result object to be populated. More information can be found
 in the gSOAP user guide.
+
 
 Overview of serializable C/C++ types                                   {#toxsd1}
 ------------------------------------
@@ -378,7 +385,8 @@ List of [numerical types](#toxsd5)
     size_t                    transient type (not serializable)
     float                     32 bit float
     double                    64 bit float
-    long double               128 bit float, use #import "custom/long_double.h"
+    long double               extended precision float, use #import "custom/long_double.h"
+    __float128                <quadmath.h> quadruple precision float, use #import "custom/float128.h"
     typedef                   declares a type name, may restrict numeric range
 
 List of [string types](#toxsd6)
@@ -431,6 +439,7 @@ List of [special classes and structs](#toxsd10)
     xsd__base64Binary         binary content and optional MIME/MTOM attachments
     Wrapper                   complexTypes with simpleContent
 
+
 Colon notation versus name prefixing                                   {#toxsd2}
 ------------------------------------
 
@@ -465,8 +474,10 @@ The colon notation is stripped away by soapcpp2 when generating the data
 binding implementation code for our project. So the final code just uses
 `record` to identify this class and its constructor/destructor.
 
-When using colon notation we have to be consistent as we cannot use both forms
-together. That is, `ns:record` differs from `ns__record` as a name.
+When using colon notation we have to be consistent and not use colon notation
+mixed with prefixed forms. The name `ns:record` differs from `ns__record`,
+because `ns:record` is compiled to an unqualified `record` name.
+
 
 C++ Bool and C alternative                                             {#toxsd3}
 --------------------------
@@ -486,6 +497,7 @@ and `1` as values.
 
 To prevent name clashes, `false_` and `true_` have an underscore which are
 removed in the XML value space.
+
 
 Enumerations and bitmasks                                              {#toxsd4}
 -------------------------
@@ -613,6 +625,7 @@ To convert `enum` name constants to string, we use the soapcpp2 auto-generated
 To convert a string to an `enum` name constant, we use the soapcpp2
 auto-generated `int soap_s2T(soap, const char *str, enum T*)` function.
 
+
 Numerical types                                                        {#toxsd5}
 ---------------
 
@@ -644,7 +657,7 @@ A `long double` 128 bit floating point value requires a custom serializer:
 
 Compile and link your code with `custom/long_double.c`.
 
-The range of a numerical type can be restricted with a typedef:
+The range of a typedef-defined numerical type can be restricted:
 
     typedef int ns__narrow -10:10;
 
@@ -658,8 +671,30 @@ schema:
       </restriction>
     </simpleType>
 
-The range of a float type can only be restricted within integral bounds. This
-restriction may be dropped in future releases.
+The range of a floating point type can be restricted within bounds with decimal
+fractions. Also a printf format pattern can be given of the form
+`"%[width][.precision]f"` to format decimal values with the given width and
+precision:
+
+    typedef float ns__PH "%5.2f" 0.0:14.0;
+
+This maps to a simpleType restriction of xsd:float in the soapcpp2-generated
+schema:
+
+    <simpleType name="PH">
+      <restriction base="xsd:float">
+        <totalDigits value="5"/>
+        <fractionDigits value="2"/>
+        <minInclusive value="0"/>
+        <maxInclusive value="14"/>
+      </restriction>
+    </simpleType>
+
+Similarly, `double` and `long double` can be restricted:
+
+    #import "custom/long_double.h"
+    typedef long double ns__epsilon "%16Lg" 0.0:1.0;
+
 
 String types                                                           {#toxsd6}
 ------------
@@ -677,7 +712,7 @@ Beware that many XML 1.0 parsers reject all control characters (those between
 `#x1` and `#x1F`) except `#x9`, `#xA`, and `#xD`. With the newer XML 1.1
 parsers (including gSOAP) you should be fine.
 
-The length of a string type can be restricted with a typedef:
+The length of a string of a typedef-defined string type can be restricted:
 
     typedef std::string ns__password 6:16;
 
@@ -771,6 +806,7 @@ We MUST ensure that the string values we populate in this type conform to the
 XML standard, which in case of xsd:token is: the lexical and value spaces of
 xsd:token are the sets of all strings after whitespace replacement of any
 occurrence of `#x9`, `#xA` , and `#xD` by `#x20` and collapsing.
+
 
 Date and time types                                                    {#toxsd7}
 -------------------
@@ -871,6 +907,7 @@ xsd:dateTime XSD type and serialized with the custom serializer
 
 Compile and link your code with `custom/chrono_time_point.cpp`.
 
+
 Time duration types                                                    {#toxsd8}
 -------------------
 
@@ -899,6 +936,7 @@ that declares a `xsd__duration` type:
     ... use xsd__duration ...
 
 Compile and link your code with `custom/chrono_duration.cpp`.
+
 
 Classes and structs                                                    {#toxsd9}
 -------------------
@@ -1465,6 +1503,7 @@ The public methods added to a class/struct `T`:
   (non-smart) pointers pointing to the same data).Can be safely used after
   `soap_dup(NULL)` to delete the deep copy. Does not delete the object itself.
 
+
 Special classes and structs                                           {#toxsd10}
 ---------------------------
 
@@ -1537,12 +1576,14 @@ wrapper:
 
 A wrapper class/struct may have any number of attributes declared with `@`.
 
+
 Memory management                                                      {#memory}
 =================
 
 Memory management with the `soap` context enables us to allocate data in
 context-managed heap space that can be collectively deleted. All deserialized
 data is placed on the context-managed heap by the gSOAP engine.
+
 
 Memory management in C                                                {#memory1}
 ----------------------
@@ -1691,6 +1732,7 @@ We can also use `soap_del_T()` to delete structures that we created in C, but
 only if these structures are created with `malloc` and do NOT contain pointers
 to stack and static data.
 
+
 Memory management in C++                                              {#memory2}
 ------------------------
 
@@ -1739,7 +1781,7 @@ should allocate structs and classes with `soap_new_T`):
     T * soap_make(struct soap *soap, T val)
     {
       T *p = (T*)soap_malloc(soap, sizeof(T));
-      if (p)
+      if (p)      // out of memory? Can also guard with assert(p != NULL) or throw an error
         *p = val;
       return p;
     }
@@ -1763,7 +1805,7 @@ managed heap:
     ns__record *record = soap_new_set_ns__record(
         soap,
         "Joe",
-        soap_make<uint64_t>(soap, 1234567890),
+        soap_make<uint64_t>(soap, 1234567890LL),
         NULL);
     ...
     soap_destroy(soap);  // delete record and all other managed instances
@@ -1773,7 +1815,7 @@ managed heap:
 Note however that the gSOAP serializer can serialize any heap, stack, or static
 allocated data. So we can also create a new record as follows:
 
-    uint64_t SSN = 1234567890;
+    uint64_t SSN = 1234567890LL;
     ns__record *record = soap_new_set_ns__record(soap, "Joe", &SSN, NULL);
 
 which will be fine to serialize this record as long as the local `SSN`
@@ -2039,6 +2081,7 @@ Building the graph serialization example:
 
 To compile without using the `libgsoap++` library: simply compile
 `stdsoap2.cpp` together with the above.
+
 
 Usage
 -----

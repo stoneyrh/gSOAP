@@ -105,19 +105,23 @@ COMMAND LINE OPTIONS
 -C	generate client-side code only
 -S	generate server-side code only
 -T	generate server auto-test code
+-Ec	generate extra routines for deep copying
+-Ed	generate extra routines for deep deletion
+-Et     generate extra routines for data traversals with walker functions
 -L	don't generate soapClientLib/soapServerLib
 -a	use SOAPAction with WS-Addressing to invoke server-side operations
 -A	require SOAPAction to invoke server-side operations
 -b	serialize byte arrays char[N] as string
 -c      generate C source code
+-c++    generate C++ source code (default)
+-c++11  generate C++ source code optimized for C++11 (compile with -std=c++11)
 -dpath  use path to save files
 -e	generate SOAP RPC encoding style bindings (also use -1 or -2)
--fN	file split of N XML serializer implementations per file (N>=10)
+-fN	multiple soapC files, with N serializer definitions per file (N>=10)
 -h	display help info
 -Ipath  use path(s) for #import (paths separated with ':', or ';' for windows)
 -i      generate C++ service proxies and objects inherited from soap struct
 -j      generate C++ service proxies and objects that share a soap struct
--k      generate data structure walkers (experimental)
 -l      generate linkable modules (experimental)
 -m      generate Matlab(tm) code for MEX compiler
 -n      use service name to rename service functions and namespace table

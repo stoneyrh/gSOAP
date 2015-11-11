@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.24" /* Current version */
-# define GSOAP_VERSION 20824
+# define VERSION "2.8.25" /* Current version */
+# define GSOAP_VERSION 20825
 #endif
 
 #ifdef WIN32
@@ -90,6 +90,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # define SOAP_PATHCAT "/"
 # define SOAP_PATHSEP ":"
 # define LONG64 long long
+#endif
+
+#ifndef ULONG64
+# define ULONG64 unsigned LONG64
 #endif
 
 #if defined(WIN32)
@@ -213,9 +217,6 @@ typedef	enum Level { INTERNAL, GLOBAL, PARAM, LOCAL } Level;
 #define	mkfun(t)	mktype(Tfun,      t,    0)
 #define mkstring()	mkpointer(mkchar())
 
-#define MINLONG64 (LONG64)(0x8000000000000000LL)
-#define MAXLONG64 (LONG64)(0x7FFFFFFFFFFFFFFFLL)
-
 typedef struct Symbol
 {	char		*name;
 	Token		token;
@@ -239,12 +240,13 @@ typedef	struct Tnode
 	Bool		visited;
 	Bool		recursive;	/* recursive data type */
         Bool		generated;
-        Bool		classed;	/* class qualified */
         Bool		wsdl;
 	int		num;
+	Bool		hasmin;
+	Bool		hasmax;
+	double		min;
+	double		max;
 	const char	*pattern;
-	LONG64		minLength;
-	LONG64		maxLength;
 } Tnode;
 
 typedef	union Value {
@@ -290,11 +292,13 @@ typedef	struct Node {
 	Storage		sto;
 	Bool		hasval;		/* if true, this node has a constant value */
 	Value		val;		/* ... this is the value */
+	Bool		hasmin;
+	Bool		hasmax;
 	LONG64		minOccurs;
 	LONG64		maxOccurs;
+	double		min;
+	double		max;
 	const char	*pattern;
-	LONG64		minLength;
-	LONG64		maxLength;
 } Node;
 
 #define ACTION		        0x0000
@@ -398,10 +402,10 @@ extern int Cflag;
 extern int eflag;
 extern int Ecflag;
 extern int Edflag;
+extern int Etflag;
 extern unsigned long fflag;
 extern int iflag;
 extern int jflag;
-extern int kflag;
 extern int mflag;
 extern int nflag;
 extern int nflag;

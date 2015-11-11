@@ -201,7 +201,7 @@ typedef struct _wsse__Password
 /// @brief This global attribute is used to indicate the usage of a referenced or indicated token within the containing context
 /// '_wsse__Usage' attribute definition intentionally left blank.
 
-struct SOAP_ENV__Header
+mutable struct SOAP_ENV__Header
 {
   mustUnderstand _wsse__Security *wsse__Security 0;
 };

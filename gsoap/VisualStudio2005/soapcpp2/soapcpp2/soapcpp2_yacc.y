@@ -196,7 +196,8 @@ Pragma     **pp;
 %type   <e> fname struct class base enum enumsc mask masksc
 %type   <sym> id sc arg name
 %type   <s> tag patt
-%type   <i> cint utype
+%type   <i> utype
+%type   <r> cdbl
 /* expressions and statements */
 %type   <rec> expr cexp oexp obex aexp abex rexp lexp pexp init spec tspec ptrs array arrayck texpf texp qexp occurs
 /* terminals */
@@ -384,12 +385,14 @@ dclr    : ptrs ID arrayck tag occurs init
                                 p->info.typ->transient = -2;
                               else
                                 p->info.typ->transient = $3.typ->transient;
-			      if (p->info.typ->width == 0)
-				p->info.typ->width = 8;
+                              if (p->info.typ->width == 0)
+                                p->info.typ->width = 8;
                               p->info.sto = $3.sto;
+                              p->info.typ->hasmin = $5.hasmin;
+                              p->info.typ->hasmax = $5.hasmax;
+                              p->info.typ->min = $5.min;
+                              p->info.typ->max = $5.max;
                               p->info.typ->pattern = $5.pattern;
-                              p->info.typ->minLength = $5.minLength;
-                              p->info.typ->maxLength = $5.maxLength;
                             }
                             $2->token = TYPE;
                           }
@@ -895,16 +898,16 @@ spec    : /*empty */    {
                               }
                             }
                             else if ($2.typ->type == Tpointer)
-			    {
-			      if (!is_primitive_or_string($2.typ->ref) &&
-				  !is_stdstr($2.typ->ref) &&
-				  !is_binary($2.typ->ref) &&
-				  !is_external($2.typ->ref))
-			      {
-				semwarn("invalid attribute pointer @type");
-				$$.sto = (Storage)((int)$$.sto & ~Sattribute);
-			      }
-			    }
+                            {
+                              if (!is_primitive_or_string($2.typ->ref) &&
+                                  !is_stdstr($2.typ->ref) &&
+                                  !is_binary($2.typ->ref) &&
+                                  !is_external($2.typ->ref))
+                              {
+                                semwarn("invalid attribute pointer @type");
+                                $$.sto = (Storage)((int)$$.sto & ~Sattribute);
+                              }
+                            }
                             else if (
                                 !is_primitive_or_string($2.typ) &&
                                 !is_stdstr($2.typ) &&
@@ -1000,18 +1003,18 @@ tspec   : store         {
                               }
                             }
                             else if ($2.typ->type == Tpointer)
-			    {
-			      if (!is_primitive_or_string($2.typ->ref) &&
-				  !is_stdstr($2.typ->ref) &&
-				  !is_binary($2.typ->ref) &&
-				  !is_external($2.typ->ref))
-			      {
-				semwarn("invalid attribute pointer @type");
-				$$.sto = (Storage)((int)$$.sto & ~Sattribute);
-			      }
-			    }
+                            {
+                              if (!is_primitive_or_string($2.typ->ref) &&
+                                  !is_stdstr($2.typ->ref) &&
+                                  !is_binary($2.typ->ref) &&
+                                  !is_external($2.typ->ref))
+                              {
+                                semwarn("invalid attribute pointer @type");
+                                $$.sto = (Storage)((int)$$.sto & ~Sattribute);
+                              }
+                            }
                             else if (
-				!is_primitive_or_string($2.typ) &&
+                                !is_primitive_or_string($2.typ) &&
                                 !is_stdstr($2.typ) &&
                                 !is_binary($2.typ) &&
                                 !is_external($2.typ))
@@ -1145,16 +1148,16 @@ type    : VOID          { $$ = mkvoid(); }
                               p->info.typ->width += sp->offset;
                             }
                           }
-			  else
-			  {
-			    p = reenter(classtable, $1->sym);
-			    sp->table->sym = p->sym;
-			    p->info.typ->ref = sp->table;
-			    p->info.typ->width = sp->offset;
-			    p->info.typ->id = p->sym;
-			    if (p->info.typ->base)
-			      sp->table->prev = (Table*)entry(classtable, p->info.typ->base)->info.typ->ref;
-			  }
+                          else
+                          {
+                            p = reenter(classtable, $1->sym);
+                            sp->table->sym = p->sym;
+                            p->info.typ->ref = sp->table;
+                            p->info.typ->width = sp->offset;
+                            p->info.typ->id = p->sym;
+                            if (p->info.typ->base)
+                              sp->table->prev = (Table*)entry(classtable, p->info.typ->base)->info.typ->ref;
+                          }
                           $$ = p->info.typ;
                           exitscope();
                         }
@@ -1846,7 +1849,7 @@ store   : AUTO          { $$ = Sauto; }
                         }
         | '$'           { $$ = Sspecial; }
         | VOLATILE      { $$ = Sextern; transient = -2; }
-	| MUTABLE       { $$ = Smutable; transient = -4; } 
+        | MUTABLE       { $$ = Smutable; transient = -4; } 
         ;
 const   : /* empty */   { $$ = Snone; }
         | const CONST   { $$ |= Sconstobj; }
@@ -1937,67 +1940,79 @@ tag     : /* empty */   { $$ = NULL; }
         | TAG           { $$ = $1; }
         ;
 occurs  : patt          {
+                          $$.hasmin = False;
+                          $$.hasmax = False;
                           $$.minOccurs = -1;
                           $$.maxOccurs = 1;
-                          $$.minLength = MINLONG64;
-                          $$.maxLength = MAXLONG64;
+                          $$.min = 0.0;
+                          $$.max = 0.0;
                           $$.pattern = $1;
                         }
-        | patt cint     {
+        | patt cdbl     {
+                          $$.hasmin = True;
+                          $$.hasmax = False;
                           $$.minOccurs = (LONG64)$2;
                           $$.maxOccurs = 1;
-			  if ($$.minOccurs < 0)
-			    $$.minOccurs = -1;
-                          $$.minLength = (LONG64)$2;
-                          $$.maxLength = MAXLONG64;
+                          if ($$.minOccurs < 0)
+                            $$.minOccurs = -1;
+                          $$.min = $2;
+                          $$.max = 0.0;
                           $$.pattern = $1;
                         }
-        | patt cint ':' {
+        | patt cdbl ':' {
+                          $$.hasmin = True;
+                          $$.hasmax = False;
                           $$.minOccurs = (LONG64)$2;
                           $$.maxOccurs = 1;
-			  if ($$.minOccurs < 0)
-			    $$.minOccurs = -1;
-                          $$.minLength = (LONG64)$2;
-                          $$.maxLength = MAXLONG64;
+                          if ($$.minOccurs < 0)
+                            $$.minOccurs = -1;
+                          $$.min = $2;
+                          $$.max = 0.0;
                           $$.pattern = $1;
                         }
-        | patt cint ':' cint
+        | patt cdbl ':' cdbl
                         {
+                          $$.hasmin = True;
+                          $$.hasmax = True;
                           $$.minOccurs = (LONG64)$2;
                           $$.maxOccurs = (LONG64)$4;
-			  if ($$.minOccurs < 0 || $$.maxOccurs < 0)
-			  {
-			    $$.minOccurs = -1;
-			    $$.maxOccurs = 1;
-			  }
-			  else if ($$.minOccurs > $$.maxOccurs)
-			  {
-			    $$.minOccurs = -1;
-			    $$.maxOccurs = 1;
-			  }
-                          $$.minLength = (LONG64)$2;
-                          $$.maxLength = (LONG64)$4;
+                          if ($$.minOccurs < 0 || $$.maxOccurs < 0)
+                          {
+                            $$.minOccurs = -1;
+                            $$.maxOccurs = 1;
+                          }
+                          else if ($$.minOccurs > $$.maxOccurs)
+                          {
+                            $$.minOccurs = -1;
+                            $$.maxOccurs = 1;
+                          }
+                          $$.min = $2;
+                          $$.max = $4;
                           $$.pattern = $1;
                         }
-        | patt ':' cint {
+        | patt ':' cdbl {
+                          $$.hasmin = False;
+                          $$.hasmax = True;
                           $$.minOccurs = 0;
                           $$.maxOccurs = (LONG64)$3;
-			  if ($$.maxOccurs < 0)
-			  {
-			    $$.minOccurs = -1;
-			    $$.maxOccurs = 1;
-			  }
-                          $$.minLength = MINLONG64;
-                          $$.maxLength = (LONG64)$3;
+                          if ($$.maxOccurs < 0)
+                          {
+                            $$.minOccurs = -1;
+                            $$.maxOccurs = 1;
+                          }
+                          $$.min = 0.0;
+                          $$.max = $3;
                           $$.pattern = $1;
                         }
         ;
 patt    : /* empty */   { $$ = NULL; }
         | STR           { $$ = $1; }
         ;
-cint    : LNG           { $$ = $1; }
-        | '+' LNG       { $$ = $2; }
-        | '-' LNG       { $$ = -$2; }
+cdbl    : DBL           { $$ = $1; }
+        | LNG           { $$ = $1; }
+        | CHR           { $$ = $1; }
+        | '+' cdbl      { $$ = +$2; }
+        | '-' cdbl      { $$ = -$2; }
         ;
 
 /******************************************************************************\

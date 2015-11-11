@@ -82,6 +82,7 @@ int _flag = 0,
     yflag = 0,
     zflag = 0;
 
+int openfiles = 0;
 int infiles = 0;
 char *infile[MAXINFILES],
      *outfile = NULL,
@@ -178,9 +179,9 @@ int main(int argc, char **argv)
   if (outfile)
   {
     fclose(stream);
-    fprintf(stderr, "\nTo complete the process, compile with:\n> soapcpp2 %s\n", outfile);
+    fprintf(stderr, "\nTo finalize code generation, execute:\n> soapcpp2 %s\n", outfile);
     if (!cflag)
-      fprintf(stderr, "or to generate C++ proxy and object classes:\n> soapcpp2 -j %s\n", outfile);
+      fprintf(stderr, "Or to generate C++ proxy and service classes:\n> soapcpp2 -j %s\n", outfile);
     fprintf(stderr, "\n");
   }
   return 0;
@@ -217,6 +218,7 @@ static void options(int argc, char **argv)
 {
   int i;
   infiles = 0;
+  openfiles = 0;
   for (i = 1; i < argc; i++)
   {
     char *a = argv[i];

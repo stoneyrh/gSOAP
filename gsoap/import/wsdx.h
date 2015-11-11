@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-struct SOAP_ENV__Header
+mutable struct SOAP_ENV__Header
 {
   struct wsdd__AppSequenceType           *wsdd__AppSequence             0;
 };

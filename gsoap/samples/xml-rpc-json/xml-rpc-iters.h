@@ -36,6 +36,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #ifdef __cplusplus
 
+#ifdef JSON_NAMESPACE
+namespace json {
+#endif
+
 /// iterates over _struct
 
 class _struct_iterator
@@ -88,6 +92,10 @@ public:
   params_iterator&	operator++();
   params_iterator&	operator+=(int);
 };
+
+#ifdef JSON_NAMESPACE
+} // namespace json
+#endif
 
 #endif
 #endif

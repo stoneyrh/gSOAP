@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.24
+	stdsoap2.c[pp] 2.8.25
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20824
+#define GSOAP_LIB_VERSION 20825
 
 #ifdef AS400
 # pragma convert(819)	/* EBCDIC to ASCII */
@@ -81,10 +81,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.24 2015-11-01 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.25 2015-11-11 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.24 2015-11-01 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.25 2015-11-11 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -7377,6 +7377,7 @@ soap_begin_count(struct soap *soap)
   soap->event = 0;
   soap->evlev = 0;
   soap->idnum = 0;
+  soap->body = 1;
   soap->level = 0;
   soap_clr_attr(soap);
   soap_set_local_namespaces(soap);
@@ -7481,6 +7482,7 @@ soap_begin_send(struct soap *soap)
   soap->mustUnderstand = 0;
   soap->encoding = 0;
   soap->idnum = 0;
+  soap->body = 1;
   soap->level = 0;
   soap_clr_attr(soap);
   soap_set_local_namespaces(soap);
@@ -7878,7 +7880,6 @@ soap_malloc(struct soap *soap, size_t n)
     *(size_t*)(p + n + sizeof(void*)) = n;
     soap->alist = p + n;
   }
-  soap->alloced = 1;
   return p;
 }
 #endif
@@ -8180,7 +8181,7 @@ soap_link(struct soap *soap, void *p, int t, int n, int (*fdelete)(struct soap_c
       soap->error = SOAP_EOM;
     else
     { cp->next = soap->clist;
-      cp->type = t;
+      cp->type = soap->alloced = t;
       cp->size = n;
       cp->ptr = p;
       cp->fdelete = fdelete;
@@ -8428,12 +8429,14 @@ soap_id_enter(struct soap *soap, const char *id, void *p, int t, size_t n, const
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Enter id='%s' type=%d location=%p size=%lu\n", id, t, p, (unsigned long)n));
   soap->alloced = 0;
   if (!p)
-  { if (finstantiate)
-      p = finstantiate(soap, t, type, arrayType, &n);
+  {
+    if (finstantiate)
+      p = finstantiate(soap, t, type, arrayType, &n); /* alloced set in soap_link() */
     else
+    {
       p = soap_malloc(soap, n);
-    if (p)
-      soap->alloced = 1;
+      soap->alloced = t;
+    }
   }
 #ifndef WITH_NOIDREF
   if (!id || !*id)
@@ -9381,6 +9384,7 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
 #endif
   soap->float_format = "%.9G"; /* Alternative: use "%G" */
   soap->double_format = "%.17lG"; /* Alternative: use "%lG" */
+  soap->long_double_format = NULL;
   soap->dime_id_format = "cid:id%d"; /* default DIME id format for int id index */
   soap->http_version = "1.1";
   soap->proxy_http_version = "1.0";
@@ -9589,7 +9593,6 @@ soap_begin(struct soap *soap)
   soap->part = SOAP_END;
   soap->event = 0;
   soap->evlev = 0;
-  soap->alloced = 0;
   soap->count = 0;
   soap->length = 0;
   soap->cdata = 0;
@@ -15945,7 +15948,6 @@ soap_begin_recv(struct soap *soap)
   soap->peeked = 0;
   soap->level = 0;
   soap->part = SOAP_BEGIN;
-  soap->alloced = 0;
   soap->body = 1;
   soap->count = 0;
   soap->length = 0;

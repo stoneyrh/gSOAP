@@ -17,7 +17,7 @@
 	generated WSDL.
 	- Added //gsoap wsa5  schema namespace2: http://schemas.xmlsoap.org/ws/2004/08/addressing
 	- Added #define SOAP_WSA_2005
-	- Added SOAP_ENV__Header struct
+	- Added mutable SOAP_ENV__Header struct
 	- Added SOAP_ENV__Fault one-way operation
 	- Added //gsoap chan schema import: http://schemas.microsoft.com/ws/2005/02/duplex
 	- Added chan__ChannelInstance to wsa5__ReferenceParametersType
@@ -260,7 +260,7 @@ struct chan__ChannelInstanceType
 };
 
 /// Added
-struct SOAP_ENV__Header
+mutable struct SOAP_ENV__Header
 {
                  _wsa5__MessageID  wsa5__MessageID 0;
                  _wsa5__RelatesTo *wsa5__RelatesTo 0;

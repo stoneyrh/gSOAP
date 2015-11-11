@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.24
+	stdsoap2.h 2.8.25
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20824
+#define GSOAP_VERSION 20825
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff in soapdefs.h */
@@ -680,6 +680,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 
 #if defined(__cplusplus)
 # include <new>
+# include <memory>
 # if !defined(WITH_LEAN) && !defined(WITH_COMPAT)
 #  include <string>
 #  include <iostream>
@@ -2122,6 +2123,7 @@ struct SOAP_STD_API soap
   soap_mode omode;
   const char *float_format;	/* user-definable format string for floats (<1024 chars) */
   const char *double_format;	/* user-definable format string for doubles (<1024 chars) */
+  const char *long_double_format;	/* user-definable format string for long doubles (<1024 chars) */
   const char *dime_id_format;	/* user-definable format string for integer DIME id (<SOAP_TAGLEN chars) */
   const char *http_version;	/* HTTP version used "1.0" or "1.1" */
   const char *http_content;	/* optional custom response content type (with SOAP_FILE) */
@@ -2271,9 +2273,9 @@ struct SOAP_STD_API soap
   short ns;		/* when not set, output full xmlns bindings */
   short part;		/* SOAP part state (header or body) */
   short event;		/* engine events and states for use by plugins */
-  unsigned int evlev;	/* event level */
-  short alloced;
   short peeked;
+  unsigned int evlev;	/* event level */
+  int alloced;
   size_t chunksize;
   size_t chunkbuflen;
   char endpoint[SOAP_TAGLEN];

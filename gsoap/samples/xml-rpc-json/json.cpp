@@ -1,7 +1,7 @@
 /*
-	json.cpp
+        json.cpp
 
-	JSON C++ support & stream JSON from/to XML-RPC
+        JSON C++ support & stream JSON from/to XML-RPC
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -31,17 +31,35 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#include "soapH.h"
 #include "json.h"
 
+#ifdef JSON_NAMESPACE
+# define SOAP_TYPE__boolean             SOAP_TYPE_json__boolean
+# define SOAP_TYPE__i4                  SOAP_TYPE_json__i4
+# define SOAP_TYPE__int                 SOAP_TYPE_json__int
+# define SOAP_TYPE__double              SOAP_TYPE_json__double
+# define SOAP_TYPE__dateTime_DOTiso8601 SOAP_TYPE_json__dateTime_DOTiso8601
+# define SOAP_TYPE__string              SOAP_TYPE_json__string
+# define SOAP_TYPE__array               SOAP_TYPE_json__array
+# define SOAP_TYPE__struct              SOAP_TYPE_json__struct
+# define SOAP_TYPE__base64              SOAP_TYPE_json__base64
+#endif
+
+#ifdef JSON_NAMESPACE
+namespace json {
+#endif
+
 static int jsstrout(struct soap *soap, const char *s)
-{ int c;
+{
+  int c;
   char buf[8];
   if (soap_send_raw(soap, "\"", 1))
     return soap->error;
   while ((c = *s++))
-  { switch (c)
-    { case '"':
+  {
+    switch (c)
+    {
+      case '"':
       case '\\':
         buf[0] = '\\';
         buf[1]  = c;
@@ -50,8 +68,10 @@ static int jsstrout(struct soap *soap, const char *s)
         break;
       default:
         if (c < 32 && c > 0)
-        { switch (c)
-          { case '\b':
+        {
+          switch (c)
+          {
+            case '\b':
               c = 'b';
               break;
             case '\f':
@@ -68,33 +88,38 @@ static int jsstrout(struct soap *soap, const char *s)
               break;
           }
           if (c > 32)
-          { buf[0] = '\\';
+          {
+            buf[0] = '\\';
             buf[1]  = c;
             if (soap_send_raw(soap, buf, 2))
               return soap->error;
           }
           else
-	  { (SOAP_SNPRINTF(buf, sizeof(buf), 7), "\\u%4x", c);
+          {
+            (SOAP_SNPRINTF(buf, sizeof(buf), 7), "\\u%4x", c);
             if (soap_send_raw(soap, buf, 6))
               return soap->error;
           }
         }
-        else if ((c & 0x80) && (soap->omode & SOAP_ENC_LATIN) && (soap->omode & SOAP_C_UTFSTRING)) // utf8 to ISO 8859-1
-        { if (c < 0xE0 && (c & 0x1F) <= 0x03)
+        else if ((c & 0x80) && (soap->omode & SOAP_ENC_LATIN) && (soap->omode & SOAP_C_UTFSTRING)) // UTF-8 to ISO 8859-1
+        {
+          if (c < 0xE0 && (c & 0x1F) <= 0x03)
             buf[0] = ((c & 0x1F) << 6) | (*s++ & 0x3F);
           else
             buf[0] = '?';
           if (soap_send_raw(soap, buf, 1))
             return soap->error;
         }
-        else if ((c & 0x80) && !(soap->omode & SOAP_ENC_LATIN) && !(soap->omode & SOAP_C_UTFSTRING)) // ISO 8859-1 to utf8
-        { buf[0] = (char)(0xC0 | ((c >> 6) & 0x1F));
+        else if ((c & 0x80) && !(soap->omode & SOAP_ENC_LATIN) && !(soap->omode & SOAP_C_UTFSTRING)) // ISO 8859-1 to UTF-8
+        {
+          buf[0] = (char)(0xC0 | ((c >> 6) & 0x1F));
           buf[1] = (char)(0x80 | (c & 0x3F));
           if (soap_send_raw(soap, buf, 2))
             return soap->error;
         }
         else
-        { buf[0] = c;
+        {
+          buf[0] = c;
           if (soap_send_raw(soap, buf, 1))
             return soap->error;
         }
@@ -104,14 +129,17 @@ static int jsstrout(struct soap *soap, const char *s)
 }
 
 int json_send(struct soap *soap, const struct value& v)
-{ bool f;
+{
+  bool f;
   switch (v.__type)
-  { case SOAP_TYPE__array: 
+  {
+    case SOAP_TYPE__array: 
       if (soap_send_raw(soap, "["/*]*/, 1))
         return soap->error;
       f = false;
       for (_array::iterator i = ((struct _array)v).begin(); i != ((struct _array)v).end(); ++i, f = true)
-      { if (f)
+      {
+        if (f)
           if (soap_send_raw(soap, ", ", 2))
             return soap->error;
         if (json_send(soap, (*i)))
@@ -125,8 +153,9 @@ int json_send(struct soap *soap, const struct value& v)
     case SOAP_TYPE__double: 
       return soap_send(soap, soap_double2s(soap, (double)v));
     case SOAP_TYPE__i4: 
-    case SOAP_TYPE__int: 
       return soap_send(soap, soap_int2s(soap, (int)v));
+    case SOAP_TYPE__int: 
+      return soap_send(soap, soap_LONG642s(soap, (LONG64)v));
     case SOAP_TYPE__string: 
     case SOAP_TYPE__dateTime_DOTiso8601: 
     case SOAP_TYPE__base64: 
@@ -136,7 +165,8 @@ int json_send(struct soap *soap, const struct value& v)
         return soap->error;
       f = false;
       for (_struct::iterator i = ((struct _struct)v).begin(); i != ((struct _struct)v).end(); ++i, f = true)
-      { if (f)
+      {
+        if (f)
           if (soap_send_raw(soap, ", ", 2))
             return soap->error;
         if (jsstrout(soap, i.index())
@@ -154,7 +184,8 @@ int json_send(struct soap *soap, const struct value& v)
 }
 
 std::ostream& operator<<(std::ostream& o, const struct value& v)
-{ std::ostream *os = v.soap->os;
+{
+  std::ostream *os = v.soap->os;
   v.soap->os = &o;
   json_send(v.soap, v);
   v.soap->os = os;
@@ -162,29 +193,33 @@ std::ostream& operator<<(std::ostream& o, const struct value& v)
 }
 
 int json_recv(struct soap *soap, struct value& v)
-{ v.__type = 0;
+{
+  v.__type = 0;
   v.ref = NULL;
   v.__any = NULL;
   v.soap = soap;
   soap_wchar c;
   while ((c = soap_getchar(soap)) > 0 && c <= 32)
-    ;
+    continue;
   switch (c)
-  { case EOF:
+  {
+    case EOF:
       return soap->error = SOAP_EOF;
     case '{':
-    { value s(soap);
+    {
+      value s(soap);
       value u(soap);
       for (;;)
-      { if (json_recv(soap, s))
+      {
+        if (json_recv(soap, s))
           return soap->error;
         while ((c = soap_getchar(soap)) > 0 && c <= 32)
-          ;
+          continue;
         if (json_recv(soap, u))
           return soap->error;
         v[(const char*)s] = u;
         while ((c = soap_getchar(soap)) > 0 && c <= 32)
-          ;
+          continue;
         if (c == '}')
           break;
         if ((int)c == EOF)
@@ -193,13 +228,15 @@ int json_recv(struct soap *soap, struct value& v)
       return SOAP_OK;
     }
     case '[':
-    { value u(soap);
+    {
+      value u(soap);
       for (int i = 0; ; i++)
-      { if (json_recv(soap, u))
+      {
+        if (json_recv(soap, u))
           return soap->error;
         v[i] = u;
         while ((c = soap_getchar(soap)) > 0 && c <= 32)
-          ;
+          continue;
         if (c == ']')
           break;
         if ((int)c == EOF)
@@ -210,7 +247,8 @@ int json_recv(struct soap *soap, struct value& v)
     case '"':
       soap->labidx = 0;
       for (;;)
-      { char *s;
+      {
+        char *s;
         const char *t = NULL;
         register size_t k;
         if (soap_append_lab(soap, NULL, 0))
@@ -219,15 +257,19 @@ int json_recv(struct soap *soap, struct value& v)
         k = soap->lablen - soap->labidx;
         soap->labidx = soap->lablen;
         while (k--)
-        { if (t)
-          { *s++ = *t++;
+        {
+          if (t)
+          {
+            *s++ = *t++;
             if (!*t)
               t = NULL;
           }
           else
-          { c = soap_getchar(soap);
+          {
+            c = soap_getchar(soap);
             switch (c)
-            { case EOF:
+            {
+              case EOF:
                 return soap->error = SOAP_EOF;
               case '"':
                 *s = '\0';
@@ -236,7 +278,8 @@ int json_recv(struct soap *soap, struct value& v)
               case '\\':
                 c = soap_getchar(soap);
                 switch (c)
-                { case EOF:
+                {
+                  case EOF:
                     return soap->error = SOAP_EOF;
                   case 'b':
                     c = 8;
@@ -254,10 +297,11 @@ int json_recv(struct soap *soap, struct value& v)
                     c = 9;
                     break;               
                   case 'u':
-                    // hex to utf8 conversion
+                    // hex to UTF-8 conversion
                     char *h = soap->tmpbuf;
                     for (int i = 0; i < 4; i++)
-                    { if ((c = soap_getchar(soap)) == EOF)
+                    {
+                      if ((c = soap_getchar(soap)) == EOF)
                         return soap->error = SOAP_EOF;
                       h[i] = c;
                     }
@@ -270,14 +314,16 @@ int json_recv(struct soap *soap, struct value& v)
                 *s++ = c;
                 break;
               default:
-                if ((c & 0x80) && (soap->imode & SOAP_ENC_LATIN) && (soap->imode & SOAP_C_UTFSTRING)) // ISO 8859-1 to utf8
-                { *s++ = (char)(0xC0 | ((c >> 6) & 0x1F));
+                if ((c & 0x80) && (soap->imode & SOAP_ENC_LATIN) && (soap->imode & SOAP_C_UTFSTRING)) // ISO 8859-1 to UTF-8
+                {
+                  *s++ = (char)(0xC0 | ((c >> 6) & 0x1F));
                   soap->tmpbuf[0] = (0x80 | (c & 0x3F));
                   soap->tmpbuf[1] = '\0';
                   t = soap->tmpbuf;
                 }
-                else if ((c & 0x80) && !(soap->imode & SOAP_ENC_LATIN) && !(soap->imode & SOAP_C_UTFSTRING)) // utf8 to ISO 8859-1
-                { soap_wchar c1 = soap_getchar(soap);
+                else if ((c & 0x80) && !(soap->imode & SOAP_ENC_LATIN) && !(soap->imode & SOAP_C_UTFSTRING)) // UTF-8 to ISO 8859-1
+                {
+                  soap_wchar c1 = soap_getchar(soap);
                   if (c1 == SOAP_EOF)
                     return soap->error = SOAP_EOF;
                   if (c < 0xE0 && (c & 0x1F) <= 0x03)
@@ -292,20 +338,28 @@ int json_recv(struct soap *soap, struct value& v)
         }
       }
     default: // number, true, false, null
-    { char *s = soap->tmpbuf;
+    {
+      char *s = soap->tmpbuf;
       do
-      { *s++ = c;
+      {
+        *s++ = c;
         c = soap_getchar(soap);
-      } while ((isalnum((int)c) || (int)c == '.' || (int)c == '+' || (int)c == '-') && s - soap->tmpbuf < (int)sizeof(soap->tmpbuf));
+      } while ((isalnum((int)c) || (int)c == '.' || (int)c == '+' || (int)c == '-') && s - soap->tmpbuf < (int)sizeof(soap->tmpbuf) - 1);
       *s = '\0';
       soap_unget(soap, c);
       if (soap->tmpbuf[0] == '-' || isdigit(soap->tmpbuf[0]))
-      { double n;
-        soap_s2double(soap, soap->tmpbuf, &n);
-        if (n == (int)n)
-          v = (int)n;
+      {
+        LONG64 n = soap_strtoll(soap->tmpbuf, &s, 10);
+        if (!*s)
+        {
+          v = (_int)n;
+        }
         else
-          v = n;
+        {
+          double x;
+          soap_s2double(soap, soap->tmpbuf, &x);
+          v = (_double)x;
+        }
       }
       else if (!strcmp(soap->tmpbuf, "true"))
         v = true;
@@ -317,7 +371,8 @@ int json_recv(struct soap *soap, struct value& v)
 }
 
 std::istream& operator>>(std::istream& i, struct value& v)
-{ if (!v.soap)
+{
+  if (!v.soap)
     v.soap = soap_new();
   std::istream *is = v.soap->is;
   v.soap->is = &i;
@@ -327,7 +382,8 @@ std::istream& operator>>(std::istream& i, struct value& v)
 }
 
 int json_call(struct soap *soap, const char *endpoint, const struct value& in, struct value& out)
-{ soap->http_content = "application/json; charset=utf-8";
+{
+  soap->http_content = "application/json; charset=utf-8";
   if (soap_begin_count(soap)
    || ((soap->mode & SOAP_IO_LENGTH) && json_send(soap, in))
    || soap_end_count(soap)
@@ -340,3 +396,7 @@ int json_call(struct soap *soap, const char *endpoint, const struct value& in, s
     return soap_closesock(soap);
   return SOAP_OK;
 }
+
+#ifdef JSON_NAMESPACE
+} // namespace json
+#endif

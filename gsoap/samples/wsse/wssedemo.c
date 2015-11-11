@@ -244,7 +244,7 @@ int main(int argc, char **argv)
   /* soap->actor = "..."; */ /* set only when required */
   user = getenv("USER");
   if (!user)
-    user = "anyone";
+    user = (char*)"anyone";
   /* read RSA private key for signing */
   if ((fd = fopen("server.pem", "r")))
   { rsa_privk = PEM_read_PrivateKey(fd, NULL, NULL, (void*)"password");

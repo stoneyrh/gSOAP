@@ -69,6 +69,7 @@ class Types
     const char *fname(const char *prefix, const char *URI, const char *qname, SetOfString *reserved, enum Lookup lookup, bool isqname);
   public:
     const char *aname(const char *prefix, const char *URI, const char *qname);
+    const char *wname(const char *prefix, const char *URI, const char *qname);
     const char *cname(const char *prefix, const char *URI, const char *qname);
     const char *tname(const char *prefix, const char *URI, const char *qname);
     const char *tnameptr(bool, const char *prefix, const char *URI, const char *qname);

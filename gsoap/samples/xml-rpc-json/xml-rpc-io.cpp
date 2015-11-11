@@ -31,11 +31,19 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#include "soapH.h"
-#include "xml-rpc-io.h"
+#ifdef JSON_NAMESPACE
+# include "jsonH.h"
+#else
+# include "soapH.h"
+#endif
+
+#ifdef JSON_NAMESPACE
+using namespace json;
+#endif
 
 std::ostream& operator<<(std::ostream& o, const struct value& v)
-{ std::ostream *os = v.soap->os;
+{
+  std::ostream *os = v.soap->os;
   v.soap->os = &o;
   soap_write_value(v.soap, &v);
   v.soap->os = os;
@@ -43,7 +51,8 @@ std::ostream& operator<<(std::ostream& o, const struct value& v)
 }
 
 std::istream& operator>>(std::istream& i, struct value& v)
-{ if (!v.soap)
+{
+  if (!v.soap)
     v.soap = soap_new();
   std::istream *is = v.soap->is;
   v.soap->is = &i;
@@ -51,4 +60,3 @@ std::istream& operator>>(std::istream& i, struct value& v)
   v.soap->is = is;
   return i;
 }
-

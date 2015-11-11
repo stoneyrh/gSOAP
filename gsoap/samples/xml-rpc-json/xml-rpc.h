@@ -38,13 +38,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 // extern class std::string;
 // extern class std::wstring;
 
-/// for C++ only: external iterator class for structs
+/// for C++ only: declare external iterator class for structs
 extern class _struct_iterator;
 
-/// for C++ only: external iterator class for arrays
+/// for C++ only: declare external iterator class for arrays
 extern class _array_iterator;
 
-/// for C++ only: external iterator class for parameters
+/// for C++ only: declare external iterator class for parameters
 extern class params_iterator;
 
 /// Scalar &lt;boolean&gt; element with values 0 (false) or 1 (true)
@@ -56,8 +56,8 @@ typedef double		_double;
 /// Scalar &lt;i4&gt; element with 32 bit integer
 typedef int		_i4;
 
-/// Scalar &lt;int&gt; element with 32 bit integer
-typedef int		_int;
+/// Scalar &lt;int&gt; element with 64 bit integer
+typedef LONG64		_int;
 
 /// Scalar &lt;string&gt; element
 typedef char*		_string;
@@ -147,7 +147,7 @@ public:
 The &lt;value&gt; element contains either string data stored in __any or an other
 type of data stored in a subelement. In case of a subelement, the __type member
 indicates the type of data pointed to by the ref member. For example, when
-__type = SOAP_TYPE__int then *(int*)ref is an integer and when __type =
+__type = SOAP_TYPE__int then *(int*)ref is a LONG64 and when __type =
 SOAP_TYPE__string (char*)ref is a string.
 */
 
@@ -160,12 +160,14 @@ public:
 			value(struct soap*);
 			value(struct soap*, struct _array&);
 			value(struct soap*, struct _base64&);
-			value(struct soap*, bool);
+			value(struct soap*, extern bool);
 			value(struct soap*, char*);
-			value(struct soap*, double);
-			value(struct soap*, int);
+			value(struct soap*, _double);
+			value(struct soap*, _i4);
+			value(struct soap*, _int);
 			value(struct soap*, time_t);
 			value(struct soap*, struct _struct&);
+			operator extern bool() const;
 			operator struct _array&();
 			operator const struct _array&() const;
 			operator struct _base64&();
@@ -174,8 +176,9 @@ public:
 			operator std::string() const;
 			operator wchar_t*() const;
 			operator std::wstring() const;
-			operator double() const;
-			operator int() const;
+			operator _double() const;
+			operator _i4() const;
+			operator _int() const;
 			operator time_t() const;
 			operator struct _struct&();
 			operator const struct _struct&() const;
@@ -183,15 +186,16 @@ public:
   struct value&		operator[](const char*);
   struct _array&	operator=(const struct _array&);
   struct _base64&	operator=(const struct _base64&);
-  extern bool		operator=(bool);
+  extern bool		operator=(extern bool);
   const char*		operator=(const char*);
   char*			operator=(char*);
   char*			operator=(const std::string&);
   const char*		operator=(const wchar_t*);
   char*			operator=(wchar_t*);
   char*			operator=(const std::wstring&);
-  double		operator=(double);
-  int			operator=(int);
+  _double		operator=(_double);
+  _i4			operator=(_i4);
+  _int			operator=(_int);
   time_t		operator=(time_t);
   struct _struct&	operator=(const struct _struct&);
   extern void		size(int);	        ///< set/allocate size of array
@@ -200,13 +204,14 @@ public:
   extern bool		is_array() const;	///< true if value is array type
   extern bool		is_base64() const;	///< true if value is base64 type
   extern bool		is_bool() const;	///< true if value is boolean type
+  extern bool		is_dateTime() const;	///< true if value is dateTime
   extern bool		is_double() const;	///< true if value is double type
   extern bool		is_false() const;	///< true if value is boolean false
   extern bool		is_int() const;		///< true if value is int type
+  extern bool		is_null() const;	///< true if value is not set (JSON null)
   extern bool		is_string() const;	///< true if value is string type
   extern bool		is_struct() const;	///< true if value is struct type
   extern bool		is_true() const;	///< true if value is boolean true
-  extern bool		is_dateTime() const;	///< true if value is dateTime
  
 // serializable content
 public:
