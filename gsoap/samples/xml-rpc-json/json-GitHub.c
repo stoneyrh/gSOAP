@@ -1,17 +1,22 @@
 /*
-	xml-rpc-currentTimeServer.cpp
+	json-GitHub.c
 
-	XML-RPC currenTime server (C++ version)
-
-	Returns XML-RPC message with current time to client.
+	JSON GitHub API v3 (C version)
+	https://developer.github.com/v3/
 
 	Compile:
-	soapcpp2 xml-rpc.h
-	cc xml-rpc-currentTimeServer.cpp xml-rpc.cpp xml-rpc-io.cpp stdsoap2.cpp soapC.cpp
+	soapcpp2 -c -CSL xml-rpc.h
+	cc -DWITH_OPENSSL -DWITH_GZIP -o json-GitHub json-GitHub.c xml-rpc.c json.c stdsoap2.c soapC.c -lcrypto -lssl -lz
+
+	Usage:
+	./json-GutHub hostname [username password]
+
+	Example:
+	./json-GitHub https://api.github.com/orgs/Genivia/repos
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2008, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -37,73 +42,44 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#include "soapH.h"
-#include "xml-rpc-io.h"
+#include "json.h"
 
-using namespace std;
-
-int serve_request(soap*);
+void display(struct value *v);
 
 int main(int argc, char **argv)
 {
-  soap *ctx = soap_new();
-
   if (argc < 2)
-    return serve_request(ctx);
-
-  int port = atoi(argv[1]);
-
-  if (!soap_valid_socket(soap_bind(ctx, NULL, port, 100)))
   {
-    soap_print_fault(ctx, stderr);
+    fprintf(stderr, "Usage: json-GitHub hostname [username password]\nFor example: json-GitHub https://api.github.com/orgs/Genivia/repos\n\n");
     exit(1);
   }
-
-  for (;;)
-  {
-    if (!soap_valid_socket(soap_accept(ctx)))
-    {
-      soap_print_fault(ctx, stderr);
-    }
-    else
-    {
-      serve_request(ctx);
-    }
-  }
-  soap_free(ctx);
-
-  return 0;
-}
-
-int serve_request(soap* ctx)
-{
-  methodCall m(ctx);
-
-  if (m.recv() != SOAP_OK)
-    soap_print_fault(ctx, stderr);
   else
   {
-    methodResponse r(ctx);
+    struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+    struct value response;
 
-    if (!strcmp(m.name(), "currentTime.getCurrentTime"))
-      // method name matches: first parameter of response is time
-      r[0] = time(0);
-    else
-      // otherwise, set fault
-      r.set_fault("Wrong method");
+    if (argc > 3)
+    {
+      /* Basic authentication with username password */
+      if (strncmp(argv[1], "https", 5))
+      {
+	fprintf(stderr, "Basic authentication over http is not secure: use https\n");
+	exit(1);
+      }
+      ctx->userid = argv[2];
+      ctx->passwd = argv[3];
+    }
 
-    if (r.send() != SOAP_OK)
+    if (json_call(ctx, argv[1], NULL, &response))
       soap_print_fault(ctx, stderr);
+    else
+      json_write(ctx, &response);
+
+    printf("\n\nOK\n");
+    soap_end(ctx);
+    soap_free(ctx);
   }
-
-  // close (but keep-alive keeps socket open)
-  soap_closesock(ctx);
-
-  // clean up
-  soap_destroy(ctx);
-  soap_end(ctx);
-
-  return ctx->error;
+  return 0;
 }
 
 /* Don't need a namespace table. We put an empty one here to avoid link errors */

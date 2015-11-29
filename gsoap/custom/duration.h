@@ -4,18 +4,29 @@
 	Custom serializer for xsd:duration stored in a LONG64 with millisecond
 	(ms) precision.
 
-	- a LONG64 int can represent 106751991167 days forward and backward.
-	- LONG64 is equivalent to long long int and int64_t
-	- millisecond resolution (1/1000 sec) means 1 second = 1000.
-	- when adding to a time_t value, conversion may be needed since time_t
-	  may (or may) not have seconds resolution.
-	- durations longer than a month are always output in days, rather than
-	  months to avoid days-per-month conversion inacurracies.
-	- durations expressed in years and months are not well defined, since
-	  there is no reference starting time; the decoder assumes 30 days per
-	  month and conversion of P4M gives 120 days and therefore the duration
-	  P4M and P120D are assumed identical, while they should give different
-	  results depending on the reference starting time.
+	LONG64 is equivalent to long long int and int64_t
+
+	Millisecond resolution (1/1000 sec) means 1 second = 1000.
+
+	The `xsd__duration` type is a 64 bit signed integer that can represent
+	106751991167 days forward (positive) and backward (negative), with
+	increments of 1 ms (1/1000 second).
+
+	Durations that exceed a month are always output in days, rather than
+	months to avoid days-per-month conversion inacurracies.
+
+	Durations that are received in years and months instead of total number
+	of days from a reference point are not well defined, since there is no
+	accepted reference time point (it may or may not be the current time).
+	The decoder simple assumes that there are 30 days per month. For
+	example, conversion of "P4M" gives 120 days. Therefore, the durations
+	"P4M" and "P120D" are assumed to be identical, which is not necessarily
+	true depending on the reference point in time.
+
+	Rescaling of the duration value by may be needed when adding the
+	duration value to a `time_t` value, because `time_t` may or may not
+	have a seconds resolution, depending on the platform and possible
+	changes to `time_t`.
 
 	#import this file into your gSOAP .h file
 

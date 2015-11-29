@@ -4,7 +4,7 @@
 	Custom serializer for std::chrono::system_clock::time_point as
 	xsd:dateTime
 
-	- requires C++11 or higher, (compile with -std=c++11).
+	Requires C++11 or higher (compile with -std=c++11).
 
 	#import this file into your gSOAP .h file
 

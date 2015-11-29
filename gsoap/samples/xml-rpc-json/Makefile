@@ -78,10 +78,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-apple-darwin13.4.0
 host_triplet = x86_64-apple-darwin13.4.0
-noinst_PROGRAMS = xml-rpc-currentTime$(EXEEXT) \
-	xml-rpc-weblogs$(EXEEXT)
+noinst_PROGRAMS = jsoncpp$(EXEEXT) json-GitHub$(EXEEXT) \
+	xml-rpc-currentTime$(EXEEXT)
 DIST_COMMON = $(srcdir)/../Makefile.defines \
-	$(srcdir)/../Makefile.c_rules $(srcdir)/Makefile.in \
+	$(srcdir)/../Makefile.cpp_rules $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/mkinstalldirs \
 	$(top_srcdir)/depcomp
 subdir = gsoap/samples/xml-rpc-json
@@ -95,18 +95,25 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am__objects_1 =
-am__objects_2 = soapC.$(OBJEXT)
-am_xml_rpc_currentTime_OBJECTS = xml-rpc-currentTime.$(OBJEXT) \
+am__objects_2 = json_GitHub-soapC.$(OBJEXT)
+am_json_GitHub_OBJECTS = json_GitHub-json-GitHub.$(OBJEXT) \
+	json_GitHub-xml-rpc.$(OBJEXT) json_GitHub-json.$(OBJEXT) \
 	$(am__objects_1) $(am__objects_2)
-xml_rpc_currentTime_OBJECTS = $(am_xml_rpc_currentTime_OBJECTS)
-xml_rpc_currentTime_LDADD = $(LDADD)
+json_GitHub_OBJECTS = $(am_json_GitHub_OBJECTS)
 am__DEPENDENCIES_1 =
-xml_rpc_currentTime_DEPENDENCIES = $(SOAP_C_LIB) $(am__DEPENDENCIES_1)
-am_xml_rpc_weblogs_OBJECTS = xml-rpc-weblogs.$(OBJEXT) \
-	$(am__objects_1) $(am__objects_2)
-xml_rpc_weblogs_OBJECTS = $(am_xml_rpc_weblogs_OBJECTS)
-xml_rpc_weblogs_LDADD = $(LDADD)
-xml_rpc_weblogs_DEPENDENCIES = $(SOAP_C_LIB) $(am__DEPENDENCIES_1)
+json_GitHub_DEPENDENCIES = $(SOAP_CPP_LIB_SSL) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am__objects_3 = soapC.$(OBJEXT)
+am_jsoncpp_OBJECTS = jsoncpp.$(OBJEXT) xml-rpc.$(OBJEXT) \
+	json.$(OBJEXT) $(am__objects_1) $(am__objects_3)
+jsoncpp_OBJECTS = $(am_jsoncpp_OBJECTS)
+jsoncpp_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1)
+am_xml_rpc_currentTime_OBJECTS = xml-rpc-currentTime.$(OBJEXT) \
+	xml-rpc.$(OBJEXT) json.$(OBJEXT) $(am__objects_1) \
+	$(am__objects_3)
+xml_rpc_currentTime_OBJECTS = $(am_xml_rpc_currentTime_OBJECTS)
+xml_rpc_currentTime_DEPENDENCIES = $(SOAP_CPP_LIB) \
+	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -123,6 +130,23 @@ DEFAULT_INCLUDES = -I. -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+am__v_lt_1 = 
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_$(V))
+am__v_CXX_ = $(am__v_CXX_$(AM_DEFAULT_VERBOSITY))
+am__v_CXX_0 = @echo "  CXX     " $@;
+am__v_CXX_1 = 
+CXXLD = $(CXX)
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
+AM_V_CXXLD = $(am__v_CXXLD_$(V))
+am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CXXLD_0 = @echo "  CXXLD   " $@;
+am__v_CXXLD_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_$(V))
@@ -135,9 +159,10 @@ AM_V_CCLD = $(am__v_CCLD_$(V))
 am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(xml_rpc_currentTime_SOURCES) $(xml_rpc_weblogs_SOURCES)
-DIST_SOURCES = $(xml_rpc_currentTime_SOURCES) \
-	$(xml_rpc_weblogs_SOURCES)
+SOURCES = $(json_GitHub_SOURCES) $(jsoncpp_SOURCES) \
+	$(xml_rpc_currentTime_SOURCES)
+DIST_SOURCES = $(json_GitHub_SOURCES) $(jsoncpp_SOURCES) \
+	$(xml_rpc_currentTime_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -308,19 +333,24 @@ SOAP_CPP_SERVER = soapServer.cpp $(SOAP_CPP_CORE)
 SOAP_CPP_LIB = $(top_builddir)/gsoap/libgsoap++.a
 SOAP_CPP_LIB_CK = $(top_builddir)/gsoap/libgsoapck++.a
 SOAP_CPP_LIB_SSL = $(top_builddir)/gsoap/libgsoapssl++.a
-SOAP_C_SRC = $(SOAP_C_CLIENT) soapServer.c $(SOAP_H_FILES) $(SOAP_NS)
-LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
-BUILT_SOURCES = $(SOAP_C_SRC) 
-CLEANFILES = $(SOAP_C_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.c soapClient.c soapClientLib.c soapServer.c soapServerLib.c *~
+SOAP_CPP_SRC = $(SOAP_CPP_CLIENT) soapServer.cpp $(SOAP_H_FILES) $(SOAP_NS)
+LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
+BUILT_SOURCES = $(SOAP_CPP_SRC) 
+CLEANFILES = $(SOAP_CPP_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.cpp soap*Proxy.h soap*Proxy.cpp soap*Object.h soap*Service.h soap*Service.cpp soapClient.cpp soapServer.cpp soapClientLib.cpp soapServerLib.cpp *~
 SOAP_NS = $(SOAP_NS_DEF)
-xml_rpc_currentTime_SOURCES = xml-rpc-currentTime.c $(SOAPHEADER) $(SOAP_C_CORE)
-xml_rpc_weblogs_SOURCES = xml-rpc-weblogs.c $(SOAPHEADER) $(SOAP_C_CORE)
+jsoncpp_SOURCES = jsoncpp.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
+jsoncpp_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
+json_GitHub_CPPFLAGS = -DWITH_OPENSSL -DWITH_GZIP
+json_GitHub_SOURCES = json-GitHub.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
+json_GitHub_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
+xml_rpc_currentTime_SOURCES = xml-rpc-currentTime.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
+xml_rpc_currentTime_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/../Makefile.defines $(srcdir)/../Makefile.c_rules $(am__configure_deps)
+.SUFFIXES: .cpp .o .obj
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/../Makefile.defines $(srcdir)/../Makefile.cpp_rules $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -341,7 +371,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../Makefile.defines $(srcdir)/../Makefile.c_rules:
+$(srcdir)/../Makefile.defines $(srcdir)/../Makefile.cpp_rules:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
@@ -355,13 +385,17 @@ $(am__aclocal_m4_deps):
 clean-noinstPROGRAMS:
 	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
 
+json-GitHub$(EXEEXT): $(json_GitHub_OBJECTS) $(json_GitHub_DEPENDENCIES) $(EXTRA_json_GitHub_DEPENDENCIES) 
+	@rm -f json-GitHub$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(json_GitHub_OBJECTS) $(json_GitHub_LDADD) $(LIBS)
+
+jsoncpp$(EXEEXT): $(jsoncpp_OBJECTS) $(jsoncpp_DEPENDENCIES) $(EXTRA_jsoncpp_DEPENDENCIES) 
+	@rm -f jsoncpp$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(jsoncpp_OBJECTS) $(jsoncpp_LDADD) $(LIBS)
+
 xml-rpc-currentTime$(EXEEXT): $(xml_rpc_currentTime_OBJECTS) $(xml_rpc_currentTime_DEPENDENCIES) $(EXTRA_xml_rpc_currentTime_DEPENDENCIES) 
 	@rm -f xml-rpc-currentTime$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(xml_rpc_currentTime_OBJECTS) $(xml_rpc_currentTime_LDADD) $(LIBS)
-
-xml-rpc-weblogs$(EXEEXT): $(xml_rpc_weblogs_OBJECTS) $(xml_rpc_weblogs_DEPENDENCIES) $(EXTRA_xml_rpc_weblogs_DEPENDENCIES) 
-	@rm -f xml-rpc-weblogs$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(xml_rpc_weblogs_OBJECTS) $(xml_rpc_weblogs_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(xml_rpc_currentTime_OBJECTS) $(xml_rpc_currentTime_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -369,25 +403,87 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+include ./$(DEPDIR)/json.Po
+include ./$(DEPDIR)/json_GitHub-json-GitHub.Po
+include ./$(DEPDIR)/json_GitHub-json.Po
+include ./$(DEPDIR)/json_GitHub-soapC.Po
+include ./$(DEPDIR)/json_GitHub-xml-rpc.Po
+include ./$(DEPDIR)/jsoncpp.Po
 include ./$(DEPDIR)/soapC.Po
 include ./$(DEPDIR)/xml-rpc-currentTime.Po
-include ./$(DEPDIR)/xml-rpc-weblogs.Po
+include ./$(DEPDIR)/xml-rpc.Po
 
-.c.o:
-	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+.cpp.o:
+	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
 	$(am__mv) $$depbase.Tpo $$depbase.Po
-#	$(AM_V_CC)source='$<' object='$@' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(COMPILE) -c -o $@ $<
+#	$(AM_V_CXX)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXXCOMPILE) -c -o $@ $<
 
-.c.obj:
-	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+.cpp.obj:
+	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
 	$(am__mv) $$depbase.Tpo $$depbase.Po
-#	$(AM_V_CC)source='$<' object='$@' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+#	$(AM_V_CXX)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+json_GitHub-json-GitHub.o: json-GitHub.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_GitHub-json-GitHub.o -MD -MP -MF $(DEPDIR)/json_GitHub-json-GitHub.Tpo -c -o json_GitHub-json-GitHub.o `test -f 'json-GitHub.cpp' || echo '$(srcdir)/'`json-GitHub.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/json_GitHub-json-GitHub.Tpo $(DEPDIR)/json_GitHub-json-GitHub.Po
+#	$(AM_V_CXX)source='json-GitHub.cpp' object='json_GitHub-json-GitHub.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_GitHub-json-GitHub.o `test -f 'json-GitHub.cpp' || echo '$(srcdir)/'`json-GitHub.cpp
+
+json_GitHub-json-GitHub.obj: json-GitHub.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_GitHub-json-GitHub.obj -MD -MP -MF $(DEPDIR)/json_GitHub-json-GitHub.Tpo -c -o json_GitHub-json-GitHub.obj `if test -f 'json-GitHub.cpp'; then $(CYGPATH_W) 'json-GitHub.cpp'; else $(CYGPATH_W) '$(srcdir)/json-GitHub.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/json_GitHub-json-GitHub.Tpo $(DEPDIR)/json_GitHub-json-GitHub.Po
+#	$(AM_V_CXX)source='json-GitHub.cpp' object='json_GitHub-json-GitHub.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_GitHub-json-GitHub.obj `if test -f 'json-GitHub.cpp'; then $(CYGPATH_W) 'json-GitHub.cpp'; else $(CYGPATH_W) '$(srcdir)/json-GitHub.cpp'; fi`
+
+json_GitHub-xml-rpc.o: xml-rpc.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_GitHub-xml-rpc.o -MD -MP -MF $(DEPDIR)/json_GitHub-xml-rpc.Tpo -c -o json_GitHub-xml-rpc.o `test -f 'xml-rpc.cpp' || echo '$(srcdir)/'`xml-rpc.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/json_GitHub-xml-rpc.Tpo $(DEPDIR)/json_GitHub-xml-rpc.Po
+#	$(AM_V_CXX)source='xml-rpc.cpp' object='json_GitHub-xml-rpc.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_GitHub-xml-rpc.o `test -f 'xml-rpc.cpp' || echo '$(srcdir)/'`xml-rpc.cpp
+
+json_GitHub-xml-rpc.obj: xml-rpc.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_GitHub-xml-rpc.obj -MD -MP -MF $(DEPDIR)/json_GitHub-xml-rpc.Tpo -c -o json_GitHub-xml-rpc.obj `if test -f 'xml-rpc.cpp'; then $(CYGPATH_W) 'xml-rpc.cpp'; else $(CYGPATH_W) '$(srcdir)/xml-rpc.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/json_GitHub-xml-rpc.Tpo $(DEPDIR)/json_GitHub-xml-rpc.Po
+#	$(AM_V_CXX)source='xml-rpc.cpp' object='json_GitHub-xml-rpc.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_GitHub-xml-rpc.obj `if test -f 'xml-rpc.cpp'; then $(CYGPATH_W) 'xml-rpc.cpp'; else $(CYGPATH_W) '$(srcdir)/xml-rpc.cpp'; fi`
+
+json_GitHub-json.o: json.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_GitHub-json.o -MD -MP -MF $(DEPDIR)/json_GitHub-json.Tpo -c -o json_GitHub-json.o `test -f 'json.cpp' || echo '$(srcdir)/'`json.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/json_GitHub-json.Tpo $(DEPDIR)/json_GitHub-json.Po
+#	$(AM_V_CXX)source='json.cpp' object='json_GitHub-json.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_GitHub-json.o `test -f 'json.cpp' || echo '$(srcdir)/'`json.cpp
+
+json_GitHub-json.obj: json.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_GitHub-json.obj -MD -MP -MF $(DEPDIR)/json_GitHub-json.Tpo -c -o json_GitHub-json.obj `if test -f 'json.cpp'; then $(CYGPATH_W) 'json.cpp'; else $(CYGPATH_W) '$(srcdir)/json.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/json_GitHub-json.Tpo $(DEPDIR)/json_GitHub-json.Po
+#	$(AM_V_CXX)source='json.cpp' object='json_GitHub-json.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_GitHub-json.obj `if test -f 'json.cpp'; then $(CYGPATH_W) 'json.cpp'; else $(CYGPATH_W) '$(srcdir)/json.cpp'; fi`
+
+json_GitHub-soapC.o: soapC.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_GitHub-soapC.o -MD -MP -MF $(DEPDIR)/json_GitHub-soapC.Tpo -c -o json_GitHub-soapC.o `test -f 'soapC.cpp' || echo '$(srcdir)/'`soapC.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/json_GitHub-soapC.Tpo $(DEPDIR)/json_GitHub-soapC.Po
+#	$(AM_V_CXX)source='soapC.cpp' object='json_GitHub-soapC.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_GitHub-soapC.o `test -f 'soapC.cpp' || echo '$(srcdir)/'`soapC.cpp
+
+json_GitHub-soapC.obj: soapC.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_GitHub-soapC.obj -MD -MP -MF $(DEPDIR)/json_GitHub-soapC.Tpo -c -o json_GitHub-soapC.obj `if test -f 'soapC.cpp'; then $(CYGPATH_W) 'soapC.cpp'; else $(CYGPATH_W) '$(srcdir)/soapC.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/json_GitHub-soapC.Tpo $(DEPDIR)/json_GitHub-soapC.Po
+#	$(AM_V_CXX)source='soapC.cpp' object='json_GitHub-soapC.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_GitHub-soapC.obj `if test -f 'soapC.cpp'; then $(CYGPATH_W) 'soapC.cpp'; else $(CYGPATH_W) '$(srcdir)/soapC.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -594,8 +690,8 @@ uninstall-am:
 	uninstall-am
 
 
-$(SOAP_C_SRC) : $(SOAPHEADER)
-	$(SOAP) -cL -I$(top_srcdir)/gsoap/import:$(top_srcdir)/gsoap  $(SOAP_FLAGS) $(SOAPHEADER)
+$(SOAP_CPP_SRC) : $(SOAPHEADER)
+	$(SOAP) -L -I$(top_srcdir)/gsoap/import:$(top_srcdir)/gsoap $(SOAP_FLAGS) $(SOAPHEADER)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

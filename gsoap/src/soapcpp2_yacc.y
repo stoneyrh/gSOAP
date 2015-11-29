@@ -199,7 +199,7 @@ Pragma     **pp;
 %type   <i> utype
 %type   <r> cdbl
 /* expressions and statements */
-%type   <rec> expr cexp oexp obex aexp abex rexp lexp pexp init spec tspec ptrs array arrayck texpf texp qexp occurs
+%type   <rec> expr cexp oexp obex aexp abex rexp lexp pexp brinit init spec tspec ptrs array arrayck texpf texp qexp occurs bounds min minmax max
 /* terminals */
 %left   ','
 %right  '=' PA NA TA DA MA AA XA OA LA RA  /* += -= *= /= %= &= ^= |= <<= >>= */
@@ -220,11 +220,11 @@ Pragma     **pp;
 
 %%
 
-/******************************************************************************\
+/**************************************\
 
         Program syntax
 
-\******************************************************************************/
+\**************************************/
 
 prog    : s1 exts       {
                           if (lflag)
@@ -243,6 +243,7 @@ prog    : s1 exts       {
                           freetable(typetable);
                           freetable(booltable);
                           freetable(templatetable);
+			  yylineno = 0;
                         }
         ;
 s1      : /* empty */   {
@@ -273,6 +274,8 @@ exts1   : /* empty */   {
         ;
 ext     : dclrs ';'     { }
         | pragma        { }
+        | t1            { }
+        | t2            { }
         | error ';'     {
                           synerror("input before ; skipped");
                           while (sp > stack)
@@ -282,8 +285,6 @@ ext     : dclrs ';'     { }
                           }
                           yyerrok;
                         }
-        | t1            { }
-        | t2            { }
         ;
 pragma  : PRAGMA        {
                           if ($1[1] >= 'a' && $1[1] <= 'z')
@@ -309,11 +310,11 @@ pragma  : PRAGMA        {
                         }
         ;
 
-/******************************************************************************\
+/**************************************\
 
         Declarations
 
-\******************************************************************************/
+\**************************************/
 
 decls   : /* empty */   {
                           transient &= ~6;
@@ -363,7 +364,7 @@ dclrs   : spec          { }
                           yyerrok;
                         }
         ;
-dclr    : ptrs ID arrayck tag occurs init
+dclr    : ptrs ID arrayck tag bounds brinit
                         {
                           if (($3.sto & Stypedef) && sp->table->level == GLOBAL)
                           {
@@ -375,24 +376,54 @@ dclr    : ptrs ID arrayck tag occurs init
                             {
                               p = enter(typetable, $2);
                               p->info.typ = mksymtype($3.typ, $2);
-                              if ($3.typ->synonym)
-                                p->info.typ->synonym = $3.typ->synonym;
-                              else
-                                p->info.typ->synonym = $3.typ->sym;
                               if ($3.sto & Sextern)
+			      {
                                 p->info.typ->transient = -1;
-                              else if ($3.typ->transient == -1)
-                                p->info.typ->transient = -2;
+				p->info.typ->extsym = $2;
+			      }
+                              else if (is_external($3.typ))
+                                p->info.typ->transient = -3; /* extern and volatile */
                               else
                                 p->info.typ->transient = $3.typ->transient;
                               if (p->info.typ->width == 0)
                                 p->info.typ->width = 8;
                               p->info.sto = $3.sto;
-                              p->info.typ->hasmin = $5.hasmin;
-                              p->info.typ->hasmax = $5.hasmax;
-                              p->info.typ->min = $5.min;
-                              p->info.typ->max = $5.max;
-                              p->info.typ->pattern = $5.pattern;
+			      p->info.typ->synonym = $3.typ->sym;
+			      if ($5.hasmin)
+			      {
+				p->info.typ->hasmin = $5.hasmin;
+				p->info.typ->incmin = $5.incmin;
+				p->info.typ->min = $5.min;
+                                p->info.typ->synonym = NULL;
+			      }
+			      else
+			      {
+				p->info.typ->hasmin = $3.typ->hasmin;
+				p->info.typ->incmin = $3.typ->incmin;
+				p->info.typ->min = $3.typ->min;
+			      }
+			      if ($5.hasmax)
+			      {
+				p->info.typ->hasmax = $5.hasmax;
+				p->info.typ->incmax = $5.incmax;
+				p->info.typ->max = $5.max;
+                                p->info.typ->synonym = NULL;
+			      }
+			      else
+			      {
+				p->info.typ->hasmax = $3.typ->hasmax;
+				p->info.typ->incmax = $3.typ->incmax;
+				p->info.typ->max = $3.typ->max;
+			      }
+			      if ($5.pattern)
+			      {
+				p->info.typ->pattern = $5.pattern;
+                                p->info.typ->synonym = NULL;
+			      }
+			      else
+			      {
+				p->info.typ->pattern = $3.typ->pattern;
+			      }
                             }
                             $2->token = TYPE;
                           }
@@ -426,6 +457,11 @@ dclr    : ptrs ID arrayck tag occurs init
                                       $6.typ->type == Tenumsc)
                                   {
                                     sp->val = p->info.val.i = $6.val.i;
+                                    if (($3.typ->hasmin && $3.typ->min > (double)$6.val.i) ||
+                                        ($3.typ->hasmin && !$3.typ->incmin && $3.typ->min == (double)$6.val.i) ||
+                                        ($3.typ->hasmax && $3.typ->max < (double)$6.val.i) ||
+                                        ($3.typ->hasmax && !$3.typ->incmax && $3.typ->max == (double)$6.val.i))
+                                      semerror("initialization constant outside value range");
                                   }
                                   else
                                   {
@@ -441,10 +477,20 @@ dclr    : ptrs ID arrayck tag occurs init
                                       $6.typ->type == Tldouble)
                                   {
                                     p->info.val.r = $6.val.r;
+                                    if (($3.typ->hasmin && $3.typ->min > $6.val.r) ||
+                                        ($3.typ->hasmin && !$3.typ->incmin && $3.typ->min == $6.val.r) ||
+                                        ($3.typ->hasmax && $3.typ->max < $6.val.r) ||
+                                        ($3.typ->hasmax && !$3.typ->incmax && $3.typ->max == $6.val.r))
+                                      semerror("initialization constant outside value range");
                                   }
                                   else if ($6.typ->type == Tint)
                                   {
                                     p->info.val.r = (double)$6.val.i;
+                                    if (($3.typ->hasmin && $3.typ->min > (double)$6.val.i) ||
+                                        ($3.typ->hasmin && !$3.typ->incmin && $3.typ->min == (double)$6.val.i) ||
+                                        ($3.typ->hasmax && $3.typ->max < (double)$6.val.i) ||
+                                        ($3.typ->hasmax && !$3.typ->incmax && $3.typ->max == (double)$6.val.i))
+                                      semerror("initialization constant outside value range");
                                   }
                                   else
                                   {
@@ -767,6 +813,11 @@ farg    : tspec ptrs arg arrayck occurs init
                                     $6.typ->type == Tenumsc)
                                 {
                                   sp->val = p->info.val.i = $6.val.i;
+                                  if (($4.typ->hasmin && $4.typ->min > (double)$6.val.i) ||
+                                      ($4.typ->hasmin && !$4.typ->incmin && $4.typ->min == (double)$6.val.i) ||
+                                      ($4.typ->hasmax && $4.typ->max < (double)$6.val.i) ||
+                                      ($4.typ->hasmax && !$4.typ->incmax && $4.typ->max == (double)$6.val.i))
+                                    semerror("initialization constant outside value range");
                                 }
                                 else
                                 {
@@ -782,10 +833,20 @@ farg    : tspec ptrs arg arrayck occurs init
                                     $6.typ->type == Tldouble)
                                 {
                                   p->info.val.r = $6.val.r;
+                                  if (($4.typ->hasmin && $4.typ->min > $6.val.r) ||
+                                      ($4.typ->hasmin && !$4.typ->incmin && $4.typ->min == $6.val.r) ||
+                                      ($4.typ->hasmax && $4.typ->max < $6.val.r) ||
+                                      ($4.typ->hasmax && !$4.typ->incmax && $4.typ->max == $6.val.r))
+                                    semerror("initialization constant outside value range");
                                 }
                                 else if ($6.typ->type == Tint)
                                 {
                                   p->info.val.r = (double)$6.val.i;
+                                  if (($4.typ->hasmin && $4.typ->min > (double)$6.val.i) ||
+                                      ($4.typ->hasmin && !$4.typ->incmin && $4.typ->min == (double)$6.val.i) ||
+                                      ($4.typ->hasmax && $4.typ->max < (double)$6.val.i) ||
+                                      ($4.typ->hasmax && !$4.typ->incmax && $4.typ->max == (double)$6.val.i))
+                                    semerror("initialization constant outside value range");
                                 }
                                 else
                                 {
@@ -856,11 +917,11 @@ arg     : /* empty */   {
                         }
         ;
 
-/******************************************************************************\
+/**************************************\
 
         Type specification
 
-\******************************************************************************/
+\**************************************/
 
 /* texpf : type expression (subset of C/C++) */
 texpf   : texp          { $$ = $1; }
@@ -1508,7 +1569,7 @@ type    : VOID          { $$ = mkvoid(); }
                             if (cflag)
                               p->info.typ->transient = 1;       /* make std::string transient in C */
                             else
-                              p->info.typ->transient = -2;
+                              p->info.typ->transient = -2;	/* otherwise volatile in C++ */
                           }
                           else
                           {
@@ -1527,22 +1588,22 @@ type    : VOID          { $$ = mkvoid(); }
                           }
                           else if ($1 == lookup("std::deque"))
                           {
-                            semwarn("To use std::deque, please make sure to add #import \"import/stldeque.h\"");
+                            semwarn("To use std::deque, please also add #import \"import/stldeque.h\"");
                             $$ = mktemplate($3.typ, $1);
                           }
                           else if ($1 == lookup("std::list"))
                           {
-                            semwarn("To use std::list, please make sure to add #import \"import/stllist.h\"");
+                            semwarn("To use std::list, please also add #import \"import/stllist.h\"");
                             $$ = mktemplate($3.typ, $1);
                           }
                           else if ($1 == lookup("std::vector"))
                           {
-                            semwarn("To use std::vector, please make sure to add #import \"import/stlvector.h\"");
+                            semwarn("To use std::vector, please also add #import \"import/stlvector.h\"");
                             $$ = mktemplate($3.typ, $1);
                           }
                           else if ($1 == lookup("std::set"))
                           {
-                            semwarn("To use std::set, please make sure to add #import \"import/stlset.h\"");
+                            semwarn("To use std::set, please also add #import \"import/stlset.h\"");
                             $$ = mktemplate($3.typ, $1);
                           }
                           else if ($1 == lookup("std::queue"))
@@ -1555,11 +1616,15 @@ type    : VOID          { $$ = mkvoid(); }
                             $$ = mktemplate($3.typ, $1);
                             $$->transient = 1; /* not serializable */
                           }
-                          else if ($1 == lookup("std::shared_ptr") || $1 == lookup("std::unique_ptr") || $1 == lookup("std::auto_ptr"))
+                          else if ($1 == lookup("std::shared_ptr") ||
+			      $1 == lookup("std::unique_ptr") ||
+			      $1 == lookup("std::auto_ptr"))
                           {
                             $$ = mktemplate($3.typ, $1);
+                            $$->transient = -2; /* volatile indicates smart pointer template */
                           }
-                          else if ($1 == lookup("std::weak_ptr") || $1 == lookup("std::function"))
+                          else if ($1 == lookup("std::weak_ptr") ||
+			      $1 == lookup("std::function"))
                           {
                             $$ = mktemplate($3.typ, $1);
                             $$->transient = 1; /* not serializable */
@@ -1699,7 +1764,8 @@ enumsc  : ENUM sc utype {
                           $$ = p;
                         }
         ;
-mask    : ENUM '*' id   {
+mask    : ENUM '*' id utype
+			{
                           if ((p = entry(enumtable, $3)))
                           {
                             if (p->info.typ->ref)
@@ -1720,7 +1786,8 @@ mask    : ENUM '*' id   {
                           $$ = p;
                         }
         ;
-masksc  : ENUM '*' sc   {
+masksc  : ENUM '*' sc utype
+			{
                           if ((p = entry(enumtable, $3)))
                           {
                             if (p->info.typ->ref)
@@ -1921,6 +1988,21 @@ arrayck : array         {
                           $$ = $1;
                         }
         ;
+brinit  : init          { $$ = $1; }
+        | '{' cexp '}'  {
+                          if ($2.hasval)
+                          {
+                            $$.typ = $2.typ;
+                            $$.hasval = True;
+                            $$.val = $2.val;
+                          }
+                          else
+                          {
+                            $$.hasval = False;
+                            semerror("initialization expression not constant");
+                          }
+                        }
+        ;
 init    : /* empty */   { $$.hasval = False; }
         | '=' cexp      {
                           if ($2.hasval)
@@ -1939,18 +2021,98 @@ init    : /* empty */   { $$.hasval = False; }
 tag     : /* empty */   { $$ = NULL; }
         | TAG           { $$ = $1; }
         ;
-occurs  : patt          {
+occurs	: /* empty */	{
+                          $$.minOccurs = -1;
+                          $$.maxOccurs = 1;
+                          $$.hasmin = False;
+                          $$.hasmax = False;
+                          $$.min = 0.0;
+                          $$.max = 0.0;
+                          $$.incmin = True;
+                          $$.incmax = True;
+                          $$.pattern = NULL;
+			}
+	| LNG		{
+                          $$.minOccurs = $1;
+                          $$.maxOccurs = 1;
+                          if ($$.minOccurs < 0)
+                            $$.minOccurs = -1;
+                          $$.hasmin = False;
+                          $$.hasmax = False;
+                          $$.min = 0.0;
+                          $$.max = 0.0;
+                          $$.incmin = True;
+                          $$.incmax = True;
+                          $$.pattern = NULL;
+                        }
+	| LNG ':'	{
+                          $$.minOccurs = $1;
+                          $$.maxOccurs = 1;
+                          if ($$.minOccurs < 0)
+                            $$.minOccurs = -1;
+                          $$.hasmin = False;
+                          $$.hasmax = False;
+                          $$.min = 0.0;
+                          $$.max = 0.0;
+                          $$.incmin = True;
+                          $$.incmax = True;
+                          $$.pattern = NULL;
+                        }
+	| LNG ':' LNG	{
+                          $$.minOccurs = $1;
+                          $$.maxOccurs = $3;
+                          if ($$.minOccurs < 0 || $$.maxOccurs < 0)
+                          {
+                            $$.minOccurs = -1;
+                            $$.maxOccurs = 1;
+                          }
+                          else if ($$.minOccurs > $$.maxOccurs)
+                          {
+                            $$.minOccurs = -1;
+                            $$.maxOccurs = 1;
+                          }
+                          $$.hasmin = False;
+                          $$.hasmax = False;
+                          $$.min = 0.0;
+                          $$.max = 0.0;
+                          $$.incmin = True;
+                          $$.incmax = True;
+                          $$.pattern = NULL;
+                        }
+	| ':' LNG	{
+                          $$.minOccurs = -1;
+                          $$.maxOccurs = $2;
+                          if ($$.maxOccurs < 0)
+                          {
+                            $$.minOccurs = -1;
+                            $$.maxOccurs = 1;
+                          }
+                          $$.hasmin = False;
+                          $$.hasmax = False;
+                          $$.min = 0.0;
+                          $$.max = 0.0;
+                          $$.incmin = True;
+                          $$.incmax = True;
+                          $$.pattern = NULL;
+			}
+	;
+bounds  : patt          {
                           $$.hasmin = False;
                           $$.hasmax = False;
                           $$.minOccurs = -1;
                           $$.maxOccurs = 1;
                           $$.min = 0.0;
                           $$.max = 0.0;
+                          $$.incmin = True;
+                          $$.incmax = True;
                           $$.pattern = $1;
                         }
-        | patt cdbl     {
+        | patt cdbl min
+                        {
                           $$.hasmin = True;
                           $$.hasmax = False;
+                          $$.incmin = $3.incmin;
+                          $$.incmax = $3.incmax;
                           $$.minOccurs = (LONG64)$2;
                           $$.maxOccurs = 1;
                           if ($$.minOccurs < 0)
@@ -1959,21 +2121,12 @@ occurs  : patt          {
                           $$.max = 0.0;
                           $$.pattern = $1;
                         }
-        | patt cdbl ':' {
-                          $$.hasmin = True;
-                          $$.hasmax = False;
-                          $$.minOccurs = (LONG64)$2;
-                          $$.maxOccurs = 1;
-                          if ($$.minOccurs < 0)
-                            $$.minOccurs = -1;
-                          $$.min = $2;
-                          $$.max = 0.0;
-                          $$.pattern = $1;
-                        }
-        | patt cdbl ':' cdbl
+        | patt cdbl minmax cdbl
                         {
                           $$.hasmin = True;
                           $$.hasmax = True;
+                          $$.incmin = $3.incmin;
+                          $$.incmax = $3.incmax;
                           $$.minOccurs = (LONG64)$2;
                           $$.maxOccurs = (LONG64)$4;
                           if ($$.minOccurs < 0 || $$.maxOccurs < 0)
@@ -1990,10 +2143,12 @@ occurs  : patt          {
                           $$.max = $4;
                           $$.pattern = $1;
                         }
-        | patt ':' cdbl {
+        | patt max cdbl {
                           $$.hasmin = False;
                           $$.hasmax = True;
-                          $$.minOccurs = 0;
+                          $$.incmin = $2.incmin;
+                          $$.incmax = $2.incmax;
+                          $$.minOccurs = -1;
                           $$.maxOccurs = (LONG64)$3;
                           if ($$.maxOccurs < 0)
                           {
@@ -2014,12 +2169,27 @@ cdbl    : DBL           { $$ = $1; }
         | '+' cdbl      { $$ = +$2; }
         | '-' cdbl      { $$ = -$2; }
         ;
+min     : /* empty */   { $$.incmin = $$.incmax = True; }
+        | ':'           { $$.incmin = $$.incmax = True; }
+        | '<' ':'       { $$.incmin = False; $$.incmax = True; }
+        | '<'           { $$.incmin = False; $$.incmax = True; }
+        ;
+minmax  : ':'           { $$.incmin = $$.incmax = True; }
+        | '<' ':'       { $$.incmin = False; $$.incmax = True; }
+        | ':' '<'       { $$.incmin = True; $$.incmax = False; }
+        | '<' ':' '<'   { $$.incmin = False; $$.incmax = False; }
+        | '<'           { $$.incmin = False; $$.incmax = False; }
+        ;
+max     : ':'           { $$.incmin = $$.incmax = True; }
+        | ':' '<'       { $$.incmin = True; $$.incmax = False; }
+        | '<'           { $$.incmin = True; $$.incmax = False; }
+        ;
 
-/******************************************************************************\
+/**************************************\
 
         Expressions
 
-\******************************************************************************/
+\**************************************/
 
 expr    : expr ',' expr { $$ = $3; }
         | cexp          { $$ = $1; }
@@ -2178,11 +2348,11 @@ yywrap(void)
   return 1;
 }
 
-/******************************************************************************\
+/**************************************\
 
         Support routines
 
-\******************************************************************************/
+\**************************************/
 
 static Node
 op(const char *op, Node p, Node q)
@@ -2254,11 +2424,11 @@ relop(const char *op, Node p, Node q)
   return r;
 }
 
-/******************************************************************************\
+/**************************************\
 
         Scope management
 
-\******************************************************************************/
+\**************************************/
 
 /*
 mkscope - initialize scope stack with a new table and offset
@@ -2294,11 +2464,11 @@ exitscope(void)
   check(sp-- != stack, "exitscope() has no matching enterscope()");
 }
 
-/******************************************************************************\
+/**************************************\
 
         Undefined symbol
 
-\******************************************************************************/
+\**************************************/
 
 static Entry*
 undefined(Symbol *sym)
@@ -2332,11 +2502,11 @@ mgtype(Tnode *typ1, Tnode *typ2)
   return typ1;
 }
 
-/******************************************************************************\
+/**************************************\
 
         Type checks
 
-\******************************************************************************/
+\**************************************/
 
 static int
 integer(Tnode *typ)

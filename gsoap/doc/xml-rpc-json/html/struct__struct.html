@@ -58,13 +58,15 @@ Collaboration diagram for _struct:</div>
 <div class="dyncontent">
 <div class="center"><img src="struct__struct__coll__graph.png" border="0" usemap="#__struct_coll__map" alt="Collaboration graph"/></div>
 <map name="__struct_coll__map" id="__struct_coll__map">
-<area shape="rect" id="node2" href="structmember.html" title="Represents the &lt;member&gt; element of a &lt;struct&gt;." alt="" coords="5,99,75,127"/><area shape="rect" id="node4" href="structvalue.html" title="Represents the &lt;value&gt; container element." alt="" coords="13,6,65,34"/></map>
+<area shape="rect" id="node2" href="structmember.html" title="Represents the &lt;member&gt; element of a &lt;struct&gt;." alt="" coords="5,99,75,127"/><area shape="rect" id="node4" href="structvalue.html" title="value" alt="" coords="13,6,65,34"/></map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a88edf40f7bb954061eddc160b1105ff3"><td class="memItemLeft" align="right" valign="top">typedef _struct_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__struct.html#a88edf40f7bb954061eddc160b1105ff3">iterator</a></td></tr>
 <tr class="separator:a88edf40f7bb954061eddc160b1105ff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a665a3a79dd4b255a781b140f3739b52c"><td class="memItemLeft" align="right" valign="top">typedef _struct_const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__struct.html#a665a3a79dd4b255a781b140f3739b52c">const_iterator</a></td></tr>
+<tr class="separator:a665a3a79dd4b255a781b140f3739b52c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -83,12 +85,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3844a67d9739bd5c7cad5c28584ea31c"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__struct.html#a3844a67d9739bd5c7cad5c28584ea31c">operator[]</a> (const char *)</td></tr>
 <tr class="memdesc:a3844a67d9739bd5c7cad5c28584ea31c"><td class="mdescLeft">&#160;</td><td class="mdescRight">struct accessor index  <a href="#a3844a67d9739bd5c7cad5c28584ea31c"></a><br/></td></tr>
 <tr class="separator:a3844a67d9739bd5c7cad5c28584ea31c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69e6a472947d4aa911a82a153b9d867a"><td class="memItemLeft" align="right" valign="top">_struct_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__struct.html#a69e6a472947d4aa911a82a153b9d867a">begin</a> ()</td></tr>
-<tr class="memdesc:a69e6a472947d4aa911a82a153b9d867a"><td class="mdescLeft">&#160;</td><td class="mdescRight">struct accessor iterator begin  <a href="#a69e6a472947d4aa911a82a153b9d867a"></a><br/></td></tr>
-<tr class="separator:a69e6a472947d4aa911a82a153b9d867a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef253f058f1679add8210023c4f6f8bb"><td class="memItemLeft" align="right" valign="top">_struct_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__struct.html#aef253f058f1679add8210023c4f6f8bb">end</a> ()</td></tr>
-<tr class="memdesc:aef253f058f1679add8210023c4f6f8bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">struct accessor iterator end  <a href="#aef253f058f1679add8210023c4f6f8bb"></a><br/></td></tr>
-<tr class="separator:aef253f058f1679add8210023c4f6f8bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a464b478a002de01a4be4d5fbf015b7dc"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__struct.html#a464b478a002de01a4be4d5fbf015b7dc">operator[]</a> (const wchar_t *)</td></tr>
+<tr class="memdesc:a464b478a002de01a4be4d5fbf015b7dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">struct accessor index  <a href="#a464b478a002de01a4be4d5fbf015b7dc"></a><br/></td></tr>
+<tr class="separator:a464b478a002de01a4be4d5fbf015b7dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affe3d3358649a2e72dcdd44bd0060ce8"><td class="memItemLeft" align="right" valign="top">_struct_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__struct.html#affe3d3358649a2e72dcdd44bd0060ce8">begin</a> () const </td></tr>
+<tr class="memdesc:affe3d3358649a2e72dcdd44bd0060ce8"><td class="mdescLeft">&#160;</td><td class="mdescRight">struct accessor iterator begin  <a href="#affe3d3358649a2e72dcdd44bd0060ce8"></a><br/></td></tr>
+<tr class="separator:affe3d3358649a2e72dcdd44bd0060ce8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a927df1efbfb8f7aabb7417fc971d697e"><td class="memItemLeft" align="right" valign="top">_struct_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__struct.html#a927df1efbfb8f7aabb7417fc971d697e">end</a> () const </td></tr>
+<tr class="memdesc:a927df1efbfb8f7aabb7417fc971d697e"><td class="mdescLeft">&#160;</td><td class="mdescRight">struct accessor iterator end  <a href="#a927df1efbfb8f7aabb7417fc971d697e"></a><br/></td></tr>
+<tr class="separator:a927df1efbfb8f7aabb7417fc971d697e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -98,9 +103,6 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ae1c32890ca9148b25fcd3cb8b3ab1147"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structmember.html">member</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__struct.html#ae1c32890ca9148b25fcd3cb8b3ab1147">member</a></td></tr>
 <tr class="memdesc:ae1c32890ca9148b25fcd3cb8b3ab1147"><td class="mdescLeft">&#160;</td><td class="mdescRight">pointer to member array  <a href="#ae1c32890ca9148b25fcd3cb8b3ab1147"></a><br/></td></tr>
 <tr class="separator:ae1c32890ca9148b25fcd3cb8b3ab1147"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2434704f44f0df2d462d04daad427b7"><td class="memItemLeft" align="right" valign="top">short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__struct.html#ac2434704f44f0df2d462d04daad427b7">s2k</a> = 0</td></tr>
-<tr class="memdesc:ac2434704f44f0df2d462d04daad427b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">size = 2k  <a href="#ac2434704f44f0df2d462d04daad427b7"></a><br/></td></tr>
-<tr class="separator:ac2434704f44f0df2d462d04daad427b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c2f47edd704b9901892f1b0372708b3"><td class="memItemLeft" align="right" valign="top">struct soap *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__struct.html#a0c2f47edd704b9901892f1b0372708b3">soap</a></td></tr>
 <tr class="memdesc:a0c2f47edd704b9901892f1b0372708b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">ref to soap struct that manages this type  <a href="#a0c2f47edd704b9901892f1b0372708b3"></a><br/></td></tr>
 <tr class="separator:a0c2f47edd704b9901892f1b0372708b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -108,6 +110,18 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents the &lt;struct&gt; record structure element. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a class="anchor" id="a665a3a79dd4b255a781b140f3739b52c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef _struct_const_iterator <a class="el" href="struct__struct.html#a665a3a79dd4b255a781b140f3739b52c">_struct::const_iterator</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a88edf40f7bb954061eddc160b1105ff3"></a>
 <div class="memitem">
 <div class="memproto">
@@ -179,7 +193,7 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a69e6a472947d4aa911a82a153b9d867a"></a>
+<a class="anchor" id="affe3d3358649a2e72dcdd44bd0060ce8"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -187,7 +201,7 @@ Public Attributes</h2></td></tr>
           <td class="memname">_struct_iterator _struct::begin </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -213,7 +227,7 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aef253f058f1679add8210023c4f6f8bb"></a>
+<a class="anchor" id="a927df1efbfb8f7aabb7417fc971d697e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -221,7 +235,7 @@ Public Attributes</h2></td></tr>
           <td class="memname">_struct_iterator _struct::end </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -241,6 +255,32 @@ Public Attributes</h2></td></tr>
           <td class="memname">struct <a class="el" href="structvalue.html">value</a>&amp; _struct::operator[] </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">read</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>struct accessor index </p>
+
+</div>
+</div>
+<a class="anchor" id="a464b478a002de01a4be4d5fbf015b7dc"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structvalue.html">value</a>&amp; _struct::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">const wchar_t *&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -302,20 +342,6 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ac2434704f44f0df2d462d04daad427b7"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">short _struct::s2k = 0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>size = 2k </p>
-
-</div>
-</div>
 <a class="anchor" id="a0c2f47edd704b9901892f1b0372708b3"></a>
 <div class="memitem">
 <div class="memproto">
@@ -335,6 +361,6 @@ Public Attributes</h2></td></tr>
 </ul>
 </div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Mon Nov 9 2015 08:44:04 for <a href="http://www.genivia.com">Genivia</a> documentation of XML-RPC &amp; JSON by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Sun Nov 29 2015 11:17:28 for <a href="http://www.genivia.com">Genivia</a> documentation of XML-RPC &amp; JSON by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

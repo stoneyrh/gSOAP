@@ -48,12 +48,12 @@ using namespace std;
 
 int main()
 {
-  soap *ctx = soap_new();
+  soap *ctx = soap_new1(SOAP_C_UTFSTRING);
   // define the weblogsUpdates.ping method
   methodCall ping(ctx, ENDPOINT, "weblogUpdates.ping");
   // set the two parameters of the method
-  ping[0] = (char*)"Scripting News";
-  ping[1] = (char*)"http://www.scripting.com/";
+  ping[0] = "Scripting News";
+  ping[1] = "http://www.scripting.com/";
   // make the call
   params output = ping();
   // error?

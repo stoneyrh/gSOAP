@@ -43,10 +43,22 @@ using namespace json;
 
 std::ostream& operator<<(std::ostream& o, const struct value& v)
 {
-  std::ostream *os = v.soap->os;
-  v.soap->os = &o;
-  soap_write_value(v.soap, &v);
-  v.soap->os = os;
+  if (v.soap)
+  {
+    std::ostream *os = v.soap->os;
+    v.soap->os = &o;
+    soap_write_value(v.soap, &v);
+    v.soap->os = os;
+  }
+  else
+  {
+    soap *ctx = soap_new();
+    ctx->os = &o;
+    soap_write_value(ctx, &v);
+    soap_destroy(ctx);
+    soap_end(ctx);
+    soap_free(ctx);
+  }
   return o;
 }
 
@@ -56,7 +68,12 @@ std::istream& operator>>(std::istream& i, struct value& v)
     v.soap = soap_new();
   std::istream *is = v.soap->is;
   v.soap->is = &i;
-  soap_read_value(v.soap, &v);
+  if (soap_read_value(v.soap, &v))
+  {
+    soap_sprint_fault(v.soap, v.soap->msgbuf, sizeof(v.soap->msgbuf));
+    v["$error"] = v.soap->msgbuf;
+    v["$code"] = v.soap->error;
+  }
   v.soap->is = is;
   return i;
 }

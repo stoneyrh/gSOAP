@@ -183,7 +183,6 @@ import		#import{ws}+.*\n
 #ifndef WITH_LEX
 			  if (--imports < 0)
 			  {
-			    yylineno = 0;
 			    yyterminate();
 			  }
 			  else

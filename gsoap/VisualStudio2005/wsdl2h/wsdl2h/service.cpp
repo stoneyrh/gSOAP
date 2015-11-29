@@ -1322,15 +1322,34 @@ void Definitions::compile(const wsdl__definitions& definitions)
     banner("Version", definitions.version);
     fprintf(stream, "#define SOAP_WSDL_VERSION \"%s\"\n", definitions.version);
   }
+  if (!cflag)
+  {
+    const char *s;
+    if (!sflag)
+    {
+      s = types.vname("$CONTAINER");
+      if (s && *s != '*' && *s != '$')
+      {
+	banner("$CONTAINER", s);
+	fprintf(stream, "template <class T> class %s;\n", s);
+      }
+    }
+    s = types.vname("$POINTER");
+    if (s && *s != '*' && *s != '$')
+    {
+      banner("$POINTER", s);
+      fprintf(stream, "volatile template <class T> class %s;\n", s);
+    }
+  }
   banner("Import");
+  if (!cflag && !sflag)
+  {
+    fprintf(stream, "#import \"stl.h\"\t// enable STL containers when used (option -s removes STL dependency)\n");
+  }
   if (dflag)
   {
     fprintf(stream, "\n// dom.h declares the DOM xsd__anyType object (compiler and link with dom.cpp)\n");
     fprintf(stream, "#import \"dom.h\"\n");
-  }
-  if (!cflag && !sflag)
-  {
-    fprintf(stream, "#import \"stl.h\"\t// STL containers (use option -s to remove STL dependency)\n");
   }
   if (mflag)
   {

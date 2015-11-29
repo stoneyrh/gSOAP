@@ -167,8 +167,8 @@ incomplete examples.xsd schema:
     </xs:sequence>
     </xs:complexType>
 
-4.  echoMinOccurs1-MinOccurs02: fixed in examples.wsdl: two value elements
-    but maxOccurs=1, changed to 2
+4.  echoMinOccurs1: fixed in examples.wsdl: two value elements but maxOccurs=1,
+    changed to 2
 
 5.  echoMixedComplexContent: requires DOM support to pass (wsdl2h option -d)
     and by treating all content with a DOM (thus, removing other class members).

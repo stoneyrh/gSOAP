@@ -99,6 +99,10 @@ To generate parameters for DH (Diffie Hellman) key exchange with OpenSSL, use:
 
     openssl dhparam -out dh2048.pem -2 2048
 
+To convert a CRL file in DER format to PEM format:
+
+    openssl crl -inform DER -out crl.pem -in file.crl
+
 To summarize, the files you need are:
 
 openssl.cnf

@@ -37,7 +37,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#include "soapH.h"
 #include "json.h"
 
 using namespace std;
@@ -50,7 +49,7 @@ int main()
 
   value request(ctx), response(ctx);
 
-  // make the call and get response params
+  // make the JSON REST POST request and get response
   request = "getCurrentTime";
   if (json_call(ctx, "http://www.cs.fsu.edu/~engelen/currentTimeJSON.cgi", request, response))
     soap_print_fault(ctx, stderr);

@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.25 User Guide</title>
+<title>gSOAP 2.8.26 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.25 User Guide </h1>
+<h1 align="center">gSOAP 2.8.26 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="http://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Nov 10, 2015
+<h3 align="center">Nov 29, 2015
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -11842,20 +11842,43 @@ enable the validation of value length constraints.
 17.2.2</a>&nbsp;&nbsp;<font color="#0000FF">Value Range Restrictions</font></h4>
 
 <div class="p"><!----></div>
-Similar to data length constraints for string-based data, integer data value range
-constraints of numeric simpleTypes and complexTypes with simpleContent are defined as
-follows.
+Similar to data length constraints for string-based data, integer and floatig point value range
+constraints on numeric simpleTypes and complexTypes with simpleContent are
+declared with <i>low : high</i>, where <i>low</i> and <i>high</i> are optional.
+
+<div class="p"><!----></div>
+As of gSOAP 2.8.26, floating point value ranges and integer ranges can be
+exclusive by adding  &lt;  on either side of the '<i>:</i>' range operator:
+
+<div class="p"><!----></div>
+
+<table>
+<tr><td align="left"><font color="#FF0000"><b>Range</b></font> </td><td align="left"><font color="#FF0000"><b>Validitation check</b></font> </td></tr>
+<tr><td align="left">1                </td><td align="left">1  &#8804; x </td></tr>
+<tr><td align="left">1 :              </td><td align="left">1  &#8804; x </td></tr>
+<tr><td align="left">&nbsp; : 10           </td><td align="left">x  &#8804; 10 </td></tr>
+<tr><td align="left">1 : 10           </td><td align="left">1  &#8804; x  &#8804; 10 </td></tr>
+<tr><td align="left">1  &lt;  :  &lt;  10   </td><td align="left">1  &lt;  x  &lt;  10 </td><td align="left">(shorthand form: 1  &lt;  10)</td></tr>
+<tr><td align="left">1     :  &lt;  10   </td><td align="left">1  &#8804; x  &lt;  10 </td></tr>
+<tr><td align="left">&nbsp;     :  &lt;  10   </td><td align="left">x  &lt;  10 </td><td align="left">(shorhand form:  &lt;  10) </td></tr>
+<tr><td align="left">1  &lt;  :          </td><td align="left">1  &lt;  x </td><td align="left">(shorthand form: 1  &lt; ) </td></tr>
+<tr><td align="left">1  &lt;  : 10       </td><td align="left">1  &lt;  x  &#8804; 10 </td></tr></table>
+
+
+<div class="p"><!----></div>
+Example:
+
+<div class="p"><!----></div>
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>typedef</b>&nbsp;<b>int</b>&nbsp;ns__int10 0:10; // simpleType restriction of int 0..10 <br />
 <b>typedef</b>&nbsp;LONG64 ns__long -1000000:1000000; // simpleType restriction of long64 -1000000..1000000 <br />
-<b>typedef</b>&nbsp;<b>float</b>&nbsp;ns__float100 -100:100; // simpleType restriction of float -100..100 <br />
+<b>typedef</b>&nbsp;<b>float</b>&nbsp;ns__float -1.0  &lt; : &lt;  10.5; // simpleType restriction of float in (-1,10.5) <br />
 <b>struct</b>&nbsp;ns__data // simpleContent wrapper <br />
 { <br />
 &nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;__item 0:10; // simpleContent range 0..10 <br />
 &nbsp;&nbsp;&nbsp;@<b>char</b>&nbsp;*name 1; // required name attribute <br />
 };
 </td></tr></table><br></i>
-Currently the value bounds must be integer valued. Therefore, floating point ranges are limited to integer bounds. This may change in future releases.
 
 <div class="p"><!----></div>
 	      <h4><a name="tth_sEc17.2.3">
@@ -16426,5 +16449,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 10 Nov 2015, 17:00.</small>
+version 4.00.<br />On 29 Nov 2015, 10:12.</small>
 </html>

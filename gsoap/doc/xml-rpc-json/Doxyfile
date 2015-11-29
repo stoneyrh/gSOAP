@@ -78,7 +78,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ../../samples/xml-rpc-json/README.md ../../samples/xml-rpc-json/xml-rpc.h ../../samples/xml-rpc-json/xml-rpc-iters.h ../../samples/xml-rpc-json/json.h ../../samples/xml-rpc-json/json_c.h
+INPUT                  = ../../samples/xml-rpc-json/README.md ../../samples/xml-rpc-json/xml-rpc.h ../../samples/xml-rpc-json/xml-rpc-iters.h ../../samples/xml-rpc-json/json.h
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \

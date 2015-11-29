@@ -1,4 +1,3 @@
-
 /*
 	xml-rpc-json.cpp
 
@@ -7,12 +6,17 @@
 	Requires xml-rpc.h, xml-rpc.cpp, json.h, and json.cpp
 
 	Compile:
-	soapcpp2 xml-rpc.h
-	c++ xml-rpc-json.cpp xml-rpc.cpp json.cpp stdsoap2.cpp soapC.cpp
+	soapcpp2 -CSL xml-rpc.h
+	c++ -o xml-rpc-json xml-rpc-json.cpp xml-rpc.cpp json.cpp stdsoap2.cpp soapC.cpp
+
+	To put JSON types and operations in a C++ namespace, compile:
+	soapcpp2 -qjson -CSL xml-rpc.h
+	soapcpp2 -CSL -penv env.h
+	c++ -DJSON_NAMESPACE -o xml-rpc-json xml-rpc-json.cpp xml-rpc.cpp json.cpp stdsoap2.cpp jsonC.cpp envC.cpp
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2011, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -43,41 +47,73 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 using namespace std;
 
+#ifdef JSON_NAMESPACE
+using namespace json;
+#endif
+
 int main()
 {
   // set up context
-  struct soap *ctx = soap_new1(SOAP_XML_INDENT|SOAP_C_UTFSTRING);
+  soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+
   // create a value
-  json::value v(ctx);
+  value v(ctx);
+
   // create an input stream from a given string with JSON content
   istringstream in;
-  in.str("[ [1, \"2\", 3.14, true], {\"name\": \"john\", \"age\": 24} ]");
+  in.str("[ [1,\"2\",3.14, true], {\"name\": \"gsoap\", \"major\": 2.8, \"©\": 2015} ]");
+
   // parse JSON content
   in >> v;
+
   // write v in XML-RPC format to cout (soap_write_value is soapcpp2-generated)
   ctx->os = &cout;
   soap_write_value(ctx, &v);
+
   // let's change v's values:
   v[0][0] = (char*)v[0][0];   // convert int 1 to string "1"
   v[0][1] = (int)v[0][1];     // convert string "2" to 32 bit int = 2
   v[0][2] = (LONG64)v[0][2];  // truncate 3.14 to 64 bit int = 3
   v[0].size(3);               // reset size to 3 to remove last entry
-  v[1]["name"] = "mary";
-  v[1]["age"] = 21;
-  v[1]["married"] = true;
+  v[1]["name"] = "gSOAP";
+  v[1]["major"] = 2.9;
+  v[1][L"©"] = 2016;
+  v[1]["released"] = false;
   // v[2] = deliberately skipped, which will show up as null
   v[3] = time(0);
-  // display in JSON format
+  v[4] = 123;                 // see below
+  v[5] = "123";               // see below
+  v[6] = 456;                 // see below
+
+  // find all values 123 in v[] and change to 456, increment all other ints,
+  // string "123" is also changed to 456, since we deliberately do not guard
+  // the change by a type check
+  for (value::iterator i = v.begin(); i != v.end(); ++i)
+  {
+    if ((int)*i == 123)
+      *i = 456;
+    else if (i->is_int())
+      *i = (int)*i + 1;
+  }
+
+  // print index, name, and value of structure v[1]
+  for (value::const_iterator i = v[1].begin(); i != v[1].end(); ++i)
+    cout << "[" << i.index() << "] " << i.name() << ": " << *i << endl;
+
+  // display in JSON format using stream ops defined in json.h/.cpp API
   cout << endl << "JSON output of modified value:" << endl << v << endl;
-  // display in XML-RPC format
+
+  // display in XML-RPC format using soap_write_value()
   cout << endl << "XML-RPC output of modified value:" << endl;
   ctx->os = &cout;
   soap_write_value(ctx, &v);
   cout << endl;
+
   // clean up
   soap_destroy(ctx);
   soap_end(ctx);
   soap_free(ctx);
+
   return 0;
 }
 

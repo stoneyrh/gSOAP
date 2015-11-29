@@ -1,7 +1,7 @@
 /*
-	xml-rpc.h
+        xml-rpc.h
 
-	XML-RPC binding for C and C++
+        XML-RPC binding for C and C++
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -31,300 +31,425 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#include "xml-rpc-iters.h"	// deferred to C++ compiler
+////////////////////////////////////////////////////////////////////////////////
+//
+//      C/C++ XML-RPC/JSON API Value Allocation/Initialization
+//
+////////////////////////////////////////////////////////////////////////////////
 
-// make std::string and std::wstring non-serializable (classes used in methods)
-// Obsoleted in 2.8.17, no need to declare strings transient to avoid C errors
-// extern class std::string;
-// extern class std::wstring;
+/// C/C++ function returns a pointer to a new value
+extern struct value *new_value(struct soap *soap);
 
-/// for C++ only: declare external iterator class for structs
+/// C/C++ function to init or reset a value, returns a pointer to this value
+extern struct value *init_value(struct soap *soap, struct value *v);
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//      C++ XML-RPC/JSON API Array, Struct, and Parameter Iterators
+//
+////////////////////////////////////////////////////////////////////////////////
+
+#include "xml-rpc-iters.h"      // deferred for inclusion by C++ compiler
+
+/// C++ external iterator class for values
+extern class value_iterator;
+
+/// C++ external iterator class for values
+extern class value_const_iterator;
+
+/// C++ external iterator class for structs
+/// C++ external iterator class for structs
 extern class _struct_iterator;
 
-/// for C++ only: declare external iterator class for arrays
+/// C++ external iterator class for structs
+extern class _struct_const_iterator;
+
+/// C++ external iterator class for arrays
 extern class _array_iterator;
 
-/// for C++ only: declare external iterator class for parameters
+/// C++ external iterator class for arrays
+extern class _array_const_iterator;
+
+/// C++ only: declare external iterator class for parameters
 extern class params_iterator;
 
+/// C++ only: declare external iterator class for parameters
+extern class params_const_iterator;
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//      C/C++ XML-RPC and JSON Types
+//
+////////////////////////////////////////////////////////////////////////////////
+
 /// Scalar &lt;boolean&gt; element with values 0 (false) or 1 (true)
-typedef char		_boolean;
+typedef char            _boolean;
 
 /// Scalar &lt;double&gt; element with double floating point
-typedef double		_double;
+typedef double          _double;
 
 /// Scalar &lt;i4&gt; element with 32 bit integer
-typedef int		_i4;
+typedef int             _i4;
 
 /// Scalar &lt;int&gt; element with 64 bit integer
-typedef LONG64		_int;
+typedef LONG64          _int;
 
 /// Scalar &lt;string&gt; element
-typedef char*		_string;
+typedef char*           _string;
 
 /// Scalar &lt;dateTime.iso8601&gt; element with ISO8601 date and time formatted string
-typedef char*		_dateTime_DOTiso8601;
+typedef char*           _dateTime_DOTiso8601;
 
 /// Represents the &lt;base64&gt; binary data element
 struct _base64
 {
 // C++ function members, not available in C (when using stdsoap2 -c)
-public:
-  			_base64();
-  			_base64(struct soap*);
-  			_base64(struct soap*, int, unsigned char*);
-  int			size() const;	///< byte size of data
-  unsigned char*	ptr();		///< pointer to data
-  void			size(int);	///< set byte size of data
-  void			ptr(unsigned char*);///< set pointer to data
+ public:
+                        _base64();
+                        _base64(struct soap*);
+                        _base64(struct soap*, int, unsigned char*);
+  int                   size() const;   ///< byte size of data
+  unsigned char*        ptr();          ///< pointer to data
+  void                  size(int);      ///< set byte size of data
+  void                  ptr(unsigned char*);///< set pointer to data
 
 // serializable content
-public:
-  unsigned char*	__ptr;		///< pointer to raw binary data block
-  int			__size;		///< size of raw binary data block
+ public:
+  unsigned char*        __ptr;          ///< pointer to raw binary data block
+  int                   __size;         ///< size of raw binary data block
 };
 
 /// Represents the &lt;struct&gt; record structure element
 struct _struct
 {
 // C++ function members, not available in C (when using stdsoap2 -c)
-public:
-  typedef _struct_iterator iterator;
-  			_struct();
-  			_struct(struct soap*);
-  			_struct(struct soap*, int);
-  extern bool		empty() const;	///< true if struct is empty
-  int			size() const;	///< number of accessors in struct
-  struct value&		operator[](const char*);///< struct accessor index
-  _struct_iterator	begin();	///< struct accessor iterator begin
-  _struct_iterator	end();		///< struct accessor iterator end
+ public:
+  typedef _struct_iterator       iterator;
+  typedef _struct_const_iterator const_iterator;
+                        _struct();
+                        _struct(struct soap*);
+                        _struct(struct soap*, int);
+  extern bool           empty() const;  ///< true if struct is empty
+  int                   size() const;   ///< number of accessors in struct
+  struct value&         operator[](const char*);///< struct accessor index
+  struct value&         operator[](const wchar_t*);///< struct accessor index
+  _struct_iterator      begin() const;  ///< struct accessor iterator begin
+  _struct_iterator      end() const;    ///< struct accessor iterator end
 
 // serializable content
-public:
-  int			__size;		///< number of members
-  struct member*	member;		///< pointer to member array
-// transient member
-  extern short		s2k = 0;	///< size = 2k
-// context
-  struct soap*		soap;		///< ref to soap struct that manages this type
+ public:
+  int                   __size;         ///< number of members
+  struct member*        member;         ///< pointer to member array
+  struct soap*          soap;           ///< ref to soap struct that manages this type
 };
 
 /// Represents the &lt;data&gt; element
 struct data
 {
 // serializable content
-public:
-  int			__size;		///< number of array elements
-  struct value*		value;		///< pointer to array elements
-// transient member
-  extern short		s2k = 0;	///< size = 2k
+ public:
+  int                   __size;         ///< number of array elements
+  struct value*         value;          ///< pointer to array elements
 };
 
 /// Represents the &lt;array&gt; array of values element
 struct _array
 {
 // C++ function members, not available in C (when using stdsoap2 -c)
-public:
-  typedef _array_iterator iterator;
-  			_array();
-  			_array(struct soap*);
-  			_array(struct soap*, int);
-  extern bool		empty() const;	///< true if array is empty
-  int			size() const;	///< number of array elements
-  void			size(int n);	///< (re)set number of array elements
-  struct value&		operator[](int);///< array index
-  _array_iterator	begin();	///< array iterator begin
-  _array_iterator	end();		///< array iterator end
+ public:
+  typedef _array_iterator       iterator;
+  typedef _array_const_iterator const_iterator;
+                        _array();
+                        _array(struct soap*);
+                        _array(struct soap*, int);
+  extern bool           empty() const;  ///< true if array is empty
+  int                   size() const;   ///< number of array elements
+  void                  size(int n);    ///< (re)set number of array elements
+  struct value&         operator[](int);///< array index (negative to get from end)
+  _array_iterator       begin() const;  ///< array iterator begin
+  _array_iterator       end() const;    ///< array iterator end
  
 // serializable content
-public:
-  struct data		data;		///< data with values
-// context
-  struct soap*		soap;		///< ref to soap struct that manages this type
+ public:
+  struct data           data;           ///< data with values
+  struct soap*          soap;           ///< ref to soap struct that manages this type
 };
 
-/*
-The &lt;value&gt; element contains either string data stored in __any or an other
-type of data stored in a subelement. In case of a subelement, the __type member
-indicates the type of data pointed to by the ref member. For example, when
-__type = SOAP_TYPE__int then *(int*)ref is a LONG64 and when __type =
-SOAP_TYPE__string (char*)ref is a string.
-*/
-
 /// Represents the &lt;value&gt; container element
+/// The &lt;value&gt; element contains either string data stored in __any or an
+/// other type of data stored in a subelement. In case of a subelement, the
+/// __type member indicates the type of data pointed to by the ref member.
+/// For example, when __type = SOAP_TYPE__int then the ref points to a LONG64,
+/// when __type = SOAP_TYPE__string (char*)ref is a string.
 struct value
 {
 // C++ function members, not available in C (when using stdsoap2 -c)
-public:
-			value();
-			value(struct soap*);
-			value(struct soap*, struct _array&);
-			value(struct soap*, struct _base64&);
-			value(struct soap*, extern bool);
-			value(struct soap*, char*);
-			value(struct soap*, _double);
-			value(struct soap*, _i4);
-			value(struct soap*, _int);
-			value(struct soap*, time_t);
-			value(struct soap*, struct _struct&);
-			operator extern bool() const;
-			operator struct _array&();
-			operator const struct _array&() const;
-			operator struct _base64&();
-			operator const struct _base64&() const;
-			operator char*() const;
-			operator std::string() const;
-			operator wchar_t*() const;
-			operator std::wstring() const;
-			operator _double() const;
-			operator _i4() const;
-			operator _int() const;
-			operator time_t() const;
-			operator struct _struct&();
-			operator const struct _struct&() const;
-  struct value&		operator[](int);
-  struct value&		operator[](const char*);
-  struct _array&	operator=(const struct _array&);
-  struct _base64&	operator=(const struct _base64&);
-  extern bool		operator=(extern bool);
-  const char*		operator=(const char*);
-  char*			operator=(char*);
-  char*			operator=(const std::string&);
-  const char*		operator=(const wchar_t*);
-  char*			operator=(wchar_t*);
-  char*			operator=(const std::wstring&);
-  _double		operator=(_double);
-  _i4			operator=(_i4);
-  _int			operator=(_int);
-  time_t		operator=(time_t);
-  struct _struct&	operator=(const struct _struct&);
-  extern void		size(int);	        ///< set/allocate size of array
-  extern int		size() const;	        ///< get array/struct size
-  extern bool		empty() const;	        ///< true if empty array or struct
-  extern bool		is_array() const;	///< true if value is array type
-  extern bool		is_base64() const;	///< true if value is base64 type
-  extern bool		is_bool() const;	///< true if value is boolean type
-  extern bool		is_dateTime() const;	///< true if value is dateTime
-  extern bool		is_double() const;	///< true if value is double type
-  extern bool		is_false() const;	///< true if value is boolean false
-  extern bool		is_int() const;		///< true if value is int type
-  extern bool		is_null() const;	///< true if value is not set (JSON null)
-  extern bool		is_string() const;	///< true if value is string type
-  extern bool		is_struct() const;	///< true if value is struct type
-  extern bool		is_true() const;	///< true if value is boolean true
+ public:
+  typedef value_iterator       iterator;
+  typedef value_const_iterator const_iterator;
+                        value();
+                        value(struct soap*);
+                        value(struct soap*, struct _array&);
+                        value(struct soap*, struct _base64&);
+                        value(struct soap*, extern bool);
+                        value(struct soap*, char*);
+                        value(struct soap*, _double);
+                        value(struct soap*, _i4);
+                        value(struct soap*, _int);
+                        value(struct soap*, time_t);
+                        value(struct soap*, struct _struct&);
+                        operator extern bool() const;
+                        operator struct _array&();
+                        operator const struct _array&() const;
+                        operator struct _base64&();
+                        operator const struct _base64&() const;
+                        operator char*() const;
+                        operator std::string() const;
+                        operator wchar_t*() const;
+                        operator std::wstring() const;
+                        operator _double() const;
+                        operator _i4() const;
+                        operator _int() const;
+                        operator time_t() const;
+                        operator struct _struct&();
+                        operator const struct _struct&() const;
+  struct value&         operator[](int);                  ///< array/struct index (negative to get from end)
+  struct value&         operator[](const char*);          ///< struct access
+  struct value&         operator[](const std::string&);   ///< struct access
+  struct value&         operator[](const wchar_t*);       ///< struct access
+  struct value&         operator[](const std::wstring&);  ///< struct access
+  struct _array&        operator=(const struct _array&);
+  struct _base64&       operator=(const struct _base64&);
+  extern bool           operator=(extern bool);
+  const char*           operator=(const char*);
+  char*                 operator=(char*);
+  char*                 operator=(const std::string&);
+  const char*           operator=(const wchar_t*);
+  char*                 operator=(wchar_t*);
+  char*                 operator=(const std::wstring&);
+  _double               operator=(_double);
+  _i4                   operator=(_i4);
+  _int                  operator=(_int);
+  time_t                operator=(time_t);
+  struct _struct&       operator=(const struct _struct&);
+  extern void           size(int);              ///< set/allocate size of array
+  extern int            size() const;           ///< get array/struct size
+  extern bool           empty() const;          ///< true if empty array or struct
+  extern bool           is_array() const;       ///< true if value is array type
+  extern bool           is_base64() const;      ///< true if value is base64 type
+  extern bool           is_bool() const;        ///< true if value is boolean type
+  extern bool           is_dateTime() const;    ///< true if value is dateTime
+  extern bool           is_double() const;      ///< true if value is double type
+  extern bool           is_false() const;       ///< true if value is boolean false
+  extern bool           is_int() const;         ///< true if value is int type
+  extern bool           is_null() const;        ///< true if value is not set (JSON null)
+  extern bool           is_string() const;      ///< true if value is string type
+  extern bool           is_struct() const;      ///< true if value is struct type
+  extern bool           is_true() const;        ///< true if value is boolean true
+  value_iterator        begin();                ///< value iterator begin
+  value_iterator        end();                  ///< value iterator end
  
 // serializable content
-public:
-  int			__type 0;	///< optional SOAP_TYPE_X, where X is a type name
-  void*			ref;		///< ref to data
-  _string		__any;		///< &lt;value&gt; string content, when present
-// context
-  struct soap*		soap;		///< ref to soap struct that manages this type
+ public:
+  int                   __type 0;       ///< optional SOAP_TYPE_X, where X is a type name
+  void*                 ref;            ///< ref to data
+  _string               __any;          ///< &lt;value&gt; string content in XML-RPC (not JSON), if any
+  struct soap*          soap;           ///< ref to soap struct that manages this type
 };
 
 /// Represents the &lt;member&gt; element of a &lt;struct&gt;
 struct member
 { 
 // serializable content
-public:
-  char*			name;		///< struct accessor name
-  struct value		value;		///< struct accessor value
+ public:
+  char*                 name;           ///< struct accessor name
+  struct value          value;          ///< struct accessor value
 };
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//      C/C++ XML-RPC API Method Parameters and Call Objects
+//
+////////////////////////////////////////////////////////////////////////////////
 
 /// Represents the &lt;params&gt; of a &lt;methodCall&gt; request and response
 struct params
 {
 // C++ function members, not available in C (when using stdsoap2 -c)
-public:
-  typedef params_iterator iterator;
-  			params();
-  			params(struct soap*);
-  			params(struct soap*, int);
-  extern bool		empty() const;	///< true if no parameters
-  int			size() const;	///< number of parameters
-  struct value&		operator[](int);///< parameter index
-  params_iterator	begin();	///< parameter accessor iterator begin
-  params_iterator	end();		///< parameter accessor iterator end
+ public:
+  typedef params_iterator       iterator;
+  typedef params_const_iterator const_iterator;
+                        params();
+                        params(struct soap*);
+                        params(struct soap*, int);
+  extern bool           empty() const;  ///< true if no parameters
+  int                   size() const;   ///< number of parameters
+  struct value&         operator[](int);///< parameter index (negative to get from end)
+  params_iterator       begin() const;  ///< parameter accessor iterator begin
+  params_iterator       end() const;    ///< parameter accessor iterator end
 
 // serializable content
-public:
-  int			__size;		///< number of parameters
-  struct param*		param;		///< pointer to array of parameters
-// transient member
-  extern short		s2k = 0;	///< size = 2k
-// context
-  struct soap*		soap;		///< ref to soap struct that manages this type
+ public:
+  int                   __size;         ///< number of parameters
+  struct param*         param;          ///< pointer to array of parameters
+  struct soap*          soap;           ///< ref to soap struct that manages this type
 };
 
 /// Represents a &lt;param&gt; of the &lt;params&gt; of a &lt;methodCall&gt;
 struct param
 {
 // serializable content
-public:
-  struct value		value;		///< parameter value
-// context
-  struct soap*		soap;		///< ref to soap struct that manages this type
+ public:
+  struct value          value;          ///< parameter value
 };
 
 /// Represents the &lt;methodResponse&gt; element with response &lt;params&gt; and &lt;fault&gt;
 struct methodResponse
 {
 // C++ function members, not available in C (when using stdsoap2 -c)
-public:
-  			methodResponse();
-  			methodResponse(struct soap*);
-  struct value&		operator[](int);///< response parameter accessor index
-  struct value&		get_fault(void);///< get fault, if set
-  struct value&		set_fault(const char*);///< set fault
-  struct value&		set_fault(struct value&);///< set fault
-  int			recv();		///< receive response
-  int			send();		///< send response
+ public:
+                        methodResponse();
+                        methodResponse(struct soap*);
+  struct value&         operator[](int);///< response parameter accessor index
+  struct value&         get_fault(void);///< get fault, if set
+  struct value&         set_fault(const char*);///< set fault
+  struct value&         set_fault(struct value&);///< set fault
+  int                   recv();         ///< receive response
+  int                   send();         ///< send response
 
 // serializable content
-public:
-  struct params*	params;		///< response parameters
-  struct fault*		fault;		///< response fault
-// context
-  struct soap*		soap;		///< ref to soap struct that manages this type
+ public:
+  struct params*        params;         ///< response return parameters, if any
+  struct fault*         fault;          ///< response fault, if any
+  struct soap*          soap;           ///< ref to soap struct that manages this type
 };
   
 /// Represents the &lt;methodCall&gt; element with &lt;methodName&gt; and request &lt;params&gt; for remote invocation
 struct methodCall
 {
 // private state info
-private:
-  char*			methodEndpoint;	///< XML-RPC endpoint
+ private:
+  char*                 methodEndpoint; ///< XML-RPC endpoint
   struct methodResponse*methodResponse; ///< holds the response after the call
 
 // C++ function members, not available in C (when using stdsoap2 -c)
-public:
-  			methodCall();
-  			methodCall(struct soap*);
-  			methodCall(struct soap*, const char *endpoint, const char *methodname);
-			///< instantiate with endpoint and method name
-  struct value&		operator[](int);///< method parameter accessor index
-  struct params&	operator()();	///< method invocation
-  struct params&	operator()(const struct params&);
-  			///< method invocation with param list
-  struct params&	response();	///< get last response
-  struct value&		fault();	///< fault value of response
-  const char*		name() const;	///< get method name
-  int			error() const;	///< gSOAP error code
-  int			recv();		///< receive call
-  int			send();		///< send call
+ public:
+                        methodCall();
+                        methodCall(struct soap*);
+                        methodCall(struct soap*, const char *endpoint, const char *methodname);
+                        ///< instantiate with endpoint and method name
+  struct value&         operator[](int);///< method parameter accessor index
+  struct params&        operator()();   ///< method invocation
+  struct params&        operator()(const struct params&);
+                        ///< method invocation with param list
+  struct params&        response();     ///< get last response
+  struct value&         fault();        ///< fault value of response
+  const char*           name() const;   ///< get method name
+  int                   error() const;  ///< gSOAP error code
+  int                   recv();         ///< receive call
+  int                   send();         ///< send call
 
 // serializable content
-public:
-  char*			methodName;	///< name of the method
-  struct params		params;		///< method request parameters
-// context
-  struct soap*		soap;		///< ref to soap struct that manages this type
+ public:
+  char*                 methodName;     ///< name of the method
+  struct params         params;         ///< input request parameters
+  struct soap*          soap;           ///< ref to soap struct that manages this type
 };
 
 /// Represents the &lt;fault&gt; container element with a value
 struct fault
 {
 // serializable content
-public:
-  struct value		value;		///< value of the fault
+ public:
+  struct value          value;          ///< value of the fault
 };
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//      C XML-RPC/JSON API Functions
+//
+////////////////////////////////////////////////////////////////////////////////
+
+/// C function returns pointer to boolean, coerces v to boolean if needed
+extern _boolean *bool_of(struct value *v);
+
+/// C function returns pointer to int, coerces v to int if needed
+extern _int *int_of(struct value *v);
+
+/// C function returns pointer to double, coerces v to double if needed
+extern _double *double_of(struct value *v);
+
+/// C function returns pointer to string (pointer to char * to set or get), coerces v to string if needed
+extern const char **string_of(struct value *v);
+
+/// C function returns pointer to string of ISO 8601, coerces v to string if needed (get time with soap_s2dateTime and set time with soap_dateTime2s)
+extern const char **dateTime_of(struct value *v);
+
+/// C function returns pointer to base64 struct, coerces v to base64 struct if needed
+extern struct _base64 *base64_of(struct value *v);
+
+/// C function returns pointer to member value of a struct, coerces v to struct if needed
+extern struct value *value_at(struct value *v, const char *s);
+
+/// C function returns pointer to member value of a struct, coerces v to struct if needed
+extern struct value *value_atw(struct value *v, const wchar_t *s);
+
+/// C function returns pointer to n'th member (name and value) of a struct
+extern struct member *nth_member(struct value *v, int n);
+
+/// C function returns pointer to array element value at index n, coerces v to array with value at n if needed
+extern struct value *nth_value(struct value *v, int n);
+
+/// C function returns true if value is not set or assigned (JSON null)
+extern _boolean is_null(struct value *v);
+
+/// C function returns true if value is a 32 or a 64 bit int
+extern _boolean is_int(struct value *v);
+
+/// C function returns true if value is a 64 bit double floating point
+extern _boolean is_double(struct value *v);
+
+/// C function returns true if value is a string
+extern _boolean is_string(struct value *v);
+
+/// C function returns true if value is a Boolean "true" or "false" value
+extern _boolean is_bool(struct value *v);
+
+/// C function returns true if value is Boolean "true"
+extern _boolean is_true(struct value *v);
+
+/// C function returns true if value is Boolean "false"
+extern _boolean is_false(struct value *v);
+
+/// C function returns true if array of values
+extern _boolean is_array(struct value *v);
+
+/// C function returns true if structure, a.k.a. a JSON object
+extern _boolean is_struct(struct value *v);
+
+/// C function returns true if ISO 8601, always false for received JSON
+extern _boolean is_dateTime(struct value *v);
+
+/// C function returns true if base64, always false for received JSON
+extern _boolean is_base64(struct value *v);
+
+/// C function returns the size of an array or struct
+extern int has_size(struct value *v);
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//      C XML-RPC API Method Parameters and Call Function
+//
+////////////////////////////////////////////////////////////////////////////////
+
+/// C function returns pointer to new parameters for XML-RPC methodCall
+extern struct params *new_params(struct soap *soap);
+
+/// C function to clear parameters, returns a pointer to the empty parameters
+extern struct params *init_params(struct soap *soap, struct params *p);
+
+/// C function returns pointer to parameter value at index n, creates new parameter if needed
+extern struct value *nth_param(struct params *p, int n);
+
+/// C function to invoke XML-RPC methodCall on endpoint given methodCall m populates methodResponse r, returns SOAP_OK or error
+extern int call_method(struct soap *soap, const char *endpoint, const char *methodName, struct params *p, struct methodResponse *r);

@@ -101,7 +101,7 @@ class xs__element
   	xs__element			*elementRef;		// traverse() finds ref
   	xs__simpleType			*simpleTypeRef;		// traverse() finds type or = simpleType above
   	xs__complexType			*complexTypeRef;	// traverse() finds type or = complexType above
-        std::vector<xs__element*>	substitutions;		// traverse() finds substitutionGroup elements for this abstract element
+        std::vector<xs__element*>	substitutions;		// traverse() finds substitutionGroup elements
   public:
         				xs__element();
   	int				traverse(xs__schema&);

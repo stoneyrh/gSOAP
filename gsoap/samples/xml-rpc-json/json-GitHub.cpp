@@ -1,17 +1,22 @@
 /*
-	xml-rpc-currentTime.cpp
+	json-GitHub.cpp
 
-	XML-RPC currenTime (C++ version)
-
-	Prints current time.
+	JSON GitHub API v3 (C++ version)
+        https://developer.github.com/v3/
 
 	Compile:
-	soapcpp2 xml-rpc.h
-	cc xml-rpc-currentTime.cpp xml-rpc.cpp xml-rpc-io.cpp stdsoap2.cpp soapC.cpp
+	soapcpp2 -CSL xml-rpc.h
+	c++ -DWITH_OPENSSL -DWITH_GZIP -o json-GitHub json-GitHub.cpp xml-rpc.cpp json.cpp stdsoap2.cpp soapC.cpp -lcrypto -lssl -lz
+
+	Usage:
+	./json-GutHub hostname [username password]
+
+	Example:
+	./json-GitHub https://api.github.com/orgs/Genivia/repos
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2008, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -37,31 +42,43 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#include "soapH.h"
-#include "xml-rpc-io.h"
+#include "json.h"
 
-using namespace std;
+void display(struct value *v);
 
-int main()
+int main(int argc, char **argv)
 {
-  soap *ctx = soap_new();
-  // set up the method call
-  methodCall m(ctx, "http://time.xmlrpc.com/RPC2", "currentTime.getCurrentTime");
-  // make the call and get response params
-  params r = m();
-  // error?
-  if (m.error())
-    soap_print_fault(ctx, stderr);
-  // empty response means fault
-  else if (r.empty())
-    cout << m.fault() << endl;
-  // print time
+  if (argc < 2)
+  {
+    fprintf(stderr, "Usage: json-GitHub hostname [username password]\nFor example: json-GitHub https://api.github.com/orgs/Genivia/repos\n\n");
+    exit(1);
+  }
   else
-    cout << "Time = " << r[0] << endl;
-  // clean up
-  soap_destroy(ctx);
-  soap_end(ctx);
-  soap_free(ctx);
+  {
+    soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+    value response(ctx);
+
+    if (argc > 3)
+    {
+      /* Basic authentication with username password */
+      if (strncmp(argv[1], "https", 5))
+      {
+	fprintf(stderr, "Basic authentication over http is not secure: use https\n");
+	exit(1);
+      }
+      ctx->userid = argv[2];
+      ctx->passwd = argv[3];
+    }
+
+    if (json_call(ctx, argv[1], NULL, &response))
+      soap_print_fault(ctx, stderr);
+    else
+      json_write(ctx, response);
+
+    printf("\n\nOK\n");
+    soap_end(ctx);
+    soap_free(ctx);
+  }
   return 0;
 }
 

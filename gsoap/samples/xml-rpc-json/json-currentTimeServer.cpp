@@ -41,7 +41,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#include "soapH.h"
 #include "json.h"
 
 #include <unistd.h>

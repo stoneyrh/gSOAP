@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -84,7 +84,8 @@ int show_ignore(struct soap*, const char*);
 }
 
 wsdl__definitions::wsdl__definitions()
-{ soap = soap_new1(SOAP_XML_TREE | SOAP_C_UTFSTRING);
+{
+  soap = soap_new1(SOAP_XML_TREE | SOAP_C_UTFSTRING);
 #ifdef HTTPDA_H
   soap_register_plugin(soap, http_da);
 #endif
@@ -448,7 +449,7 @@ again:
         if (found)
         {
           if (vflag)
-            cerr << "\nWarning: duplicate schema with namespace '" << ((*i)->targetNamespace ? (*i)->targetNamespace : "(null)") << "' merged in WSDL '" << (name ? name : "(null)") << "' namespace '" << (targetNamespace ? targetNamespace : "(null)") << "'" << endl;
+            cerr << "\nSchemas with identical namespace '" << ((*i)->targetNamespace ? (*i)->targetNamespace : "(null)") << "' merged in WSDL '" << (name ? name : "(null)") << "' namespace '" << (targetNamespace ? targetNamespace : "(null)") << "'" << endl;
           (*j)->insert(*(*i));
         }
         else
@@ -458,6 +459,8 @@ again:
           types->xs__schema_.push_back(*i);
         }
       }
+      // make imported WSDL <types> point to merged <types>
+      (*im3).definitionsPtr()->types = types;
     }
   }
   // process the types
@@ -1483,16 +1486,10 @@ int wsdl__types::preprocess(wsdl__definitions& definitions)
 {
   if (vflag)
     cerr << "Preprocessing wsdl types" << endl;
-  if (!empty()) // WSDL 2.0 <types>
+  if (xs__schema_.empty()) // WSDL 2.0 <types> w/o <schema>
   {
     targetNamespace = definitions.targetNamespace;
     xs__schema_.push_back(this);
-  }
-  // set the location of each schema in <types> to the WSDL's location
-  for (vector<xs__schema*>::iterator schema0 = xs__schema_.begin(); schema0 != xs__schema_.end(); ++schema0)
-  {
-    if (!(*schema0)->sourceLocation())
-      (*schema0)->sourceLocation(definitions.sourceLocation());
   }
 again:
   // link imported schemas, need to repeat when <types> is extended with new imported schema (from inside another schema, etc.)
@@ -1500,7 +1497,7 @@ again:
   {
     for (vector<xs__import>::iterator import = (*schema1)->import.begin(); import != (*schema1)->import.end(); ++import)
     {
-      if ((*import).namespace_ && !(*import).schemaPtr() && strcmp((*import).namespace_, targetNamespace))
+      if ((*import).namespace_ && !(*import).schemaPtr())
       {
         for (vector<xs__schema*>::const_iterator schema2 = xs__schema_.begin(); schema2 != xs__schema_.end(); ++schema2)
         {
@@ -1525,32 +1522,14 @@ again:
         cerr << "Preprocessing schema '" << (*schema2)->targetNamespace << "' import '" << ((*import).namespace_ ? (*import).namespace_ : "(null)") << "'" << endl; 
       if (!found && (*import).namespace_)
       {
-        if ((*import).schemaPtr())
-          found = true;
-        else if (strcmp((*import).namespace_, targetNamespace))
-        {
-          for (vector<xs__schema*>::const_iterator schema3 = xs__schema_.begin(); schema3 != xs__schema_.end(); ++schema3)
-          {
-            if (schema3 != schema2 && (*schema3)->targetNamespace && !strcmp((*import).namespace_, (*schema3)->targetNamespace))
-            {
-              found = true;
-              if (vflag)
-                cerr << "Schema '" << (*schema2)->targetNamespace << "' already found and present" << endl;
-              break;
-            }
-          }
-        }
-        if (!found)
-        {
-          for (SetOfString::const_iterator i = exturis.begin(); i != exturis.end(); ++i)
-          {
-            if (!soap_tag_cmp((*import).namespace_, *i))
-            {
-              found = true;
-              break;
-            }
-          }
-        }
+	for (SetOfString::const_iterator i = exturis.begin(); i != exturis.end(); ++i)
+	{
+	  if (!soap_tag_cmp((*import).namespace_, *i))
+	  {
+	    found = true;
+	    break;
+	  }
+	}
       }
       if (!found && !iflag) // don't import any of the schemas in the .nsmap table (or when -i option is used)
       {
@@ -1575,20 +1554,23 @@ again:
             importschema->targetNamespace = (*import).namespace_;
           else if ((*import).namespace_ && strcmp(importschema->targetNamespace, (*import).namespace_))
             cerr << "Schema import namespace '" << ((*import).namespace_ ? (*import).namespace_ : "(null)") << "' does not correspond to imported namespace '" << importschema->targetNamespace << "'" << endl;
-        }
-        if (strcmp((*import).namespace_, targetNamespace))
-        {
           for (vector<xs__schema*>::const_iterator schema3 = xs__schema_.begin(); schema3 != xs__schema_.end(); ++schema3)
           {
-            if (schema3 != schema2 && (*schema3)->targetNamespace && !strcmp((*import).namespace_, (*schema3)->targetNamespace))
+            if ((*schema3)->targetNamespace && !strcmp((*import).namespace_, (*schema3)->targetNamespace))
             {
-              found = true;
-              (*import).schemaPtr(*schema3);
-              break;
+	      (*import).schemaPtr(*schema3);
+	      if ((*schema3) == this || // WSDL 2.0 <types> has no FormDefaults
+		  (*schema3)->empty())  // schema w/o components, only imports
+	      {
+		(*schema3)->elementFormDefault = importschema->elementFormDefault;
+		(*schema3)->attributeFormDefault = importschema->attributeFormDefault;
+	      }
+	      (*schema3)->insert(*importschema); // merge content
+	      goto again;
             }
           }
         }
-        if (!found)
+        if (importschema)
         {
           (*import).schemaPtr(importschema);
           xs__schema_.push_back(importschema);
@@ -1601,11 +1583,19 @@ again:
   }
   if (vflag)
   {
-    for (vector<xs__schema*>::iterator i = xs__schema_.begin(); i != xs__schema_.end(); ++i)
+    for (vector<xs__schema*>::iterator schema4 = xs__schema_.begin(); schema4 != xs__schema_.end(); ++schema4)
     {
-      cerr << endl << "Schema " << ((*i)->targetNamespace ? (*i)->targetNamespace : "") << " " << (*i)->sourceLocation() << endl;
-      for (vector<xs__import>::iterator j = (*i)->import.begin(); j != (*i)->import.end(); ++j)
-	cerr << "  Imports " << ((*j).namespace_ ? (*j).namespace_ : "") << " " << ((*j).schemaLocation ? (*j).schemaLocation : "") << endl;
+      cerr << endl << "Schema " << ((*schema4)->targetNamespace ? (*schema4)->targetNamespace : "") << " " << ((*schema4)->sourceLocation() ? (*schema4)->sourceLocation() : "") << endl;
+      for (vector<xs__import>::iterator im = (*schema4)->import.begin(); im != (*schema4)->import.end(); ++im)
+	cerr << "  import " << ((*im).namespace_ ? (*im).namespace_ : "") << " " << ((*im).schemaLocation ? (*im).schemaLocation : "") << endl;
+      for (vector<xs__simpleType>::iterator st = (*schema4)->simpleType.begin(); st != (*schema4)->simpleType.end(); ++st)
+	cerr << "  simpleType " << ((*st).name ? (*st).name : "") << endl;
+      for (vector<xs__complexType>::iterator ct = (*schema4)->complexType.begin(); ct != (*schema4)->complexType.end(); ++ct)
+	cerr << "  complexType " << ((*ct).name ? (*ct).name : "") << endl;
+      for (vector<xs__element>::iterator el = (*schema4)->element.begin(); el != (*schema4)->element.end(); ++el)
+	cerr << "  element " << ((*el).name ? (*el).name : "") << endl;
+      for (vector<xs__attribute>::iterator at = (*schema4)->attribute.begin(); at != (*schema4)->attribute.end(); ++at)
+	cerr << "  attribute " << ((*at).name ? (*at).name : "") << endl;
     }
   }
   return SOAP_OK;

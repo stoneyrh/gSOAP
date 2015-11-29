@@ -2,10 +2,19 @@ var NAVTREE =
 [
   [ "Data Bindings", "index.html", [
     [ "XML Data Bindings", "index.html", [
+      [ "Introduction                                                            ", "index.html#intro", null ],
       [ "Mapping WSDL and XML schemas to C/C++                                   ", "index.html#tocpp", null ],
-      [ "Using typemap.dat to customize generated bindings                     ", "index.html#typemap", [
+      [ "Using typemap.dat to customize data bindings                          ", "index.html#typemap", [
         [ "XML namespace bindings                                               ", "index.html#typemap1", null ],
         [ "XSD type bindings                                                    ", "index.html#typemap2", null ],
+        [ "Custom serializers for XSD types                                       ", "index.html#custom", [
+          [ "xsd:integer", "index.html#custom-1", null ],
+          [ "xsd:decimal", "index.html#custom-2", null ],
+          [ "xsd:dateTime", "index.html#custom-3", null ],
+          [ "xsd:date", "index.html#custom-4", null ],
+          [ "xsd:time", "index.html#custom-5", null ],
+          [ "xsd:duration", "index.html#custom-6", null ]
+        ] ],
         [ "Class/struct member additions                                        ", "index.html#typemap3", null ],
         [ "Replacing XSD types by equivalent alternatives                       ", "index.html#typemap4", null ],
         [ "The built-in typemap.dat variables $CONTAINER and $POINTER           ", "index.html#typemap5", null ],
@@ -20,8 +29,31 @@ var NAVTREE =
         [ "String types                                                           ", "index.html#toxsd6", null ],
         [ "Date and time types                                                    ", "index.html#toxsd7", null ],
         [ "Time duration types                                                    ", "index.html#toxsd8", null ],
-        [ "Classes and structs                                                    ", "index.html#toxsd9", null ],
-        [ "Special classes and structs                                           ", "index.html#toxsd10", null ]
+        [ "Classes and structs                                                    ", "index.html#toxsd9", [
+          [ "Serializable versus transient types and members", "index.html#toxsd9-1", null ],
+          [ "Volatile classes and structs", "index.html#toxsd9-2", null ],
+          [ "Mutable classes and structs", "index.html#toxsd9-3", null ],
+          [ "Default member values in C and C++", "index.html#toxsd9-4", null ],
+          [ "Attribute members", "index.html#toxsd9-5", null ],
+          [ "(Smart) pointer members and their occurrence constraints", "index.html#toxsd9-6", null ],
+          [ "Container members and their occurrence constraints", "index.html#toxsd9-7", null ],
+          [ "Union members", "index.html#toxsd9-8", null ],
+          [ "Adding get and set methods", "index.html#toxsd9-9", null ],
+          [ "Defining document root elements", "index.html#toxsd9-10", null ],
+          [ "Operations on classes and structs", "index.html#toxsd9-11", null ]
+        ] ],
+        [ "Special classes and structs                                           ", "index.html#toxsd10", [
+          [ "SOAP encoded arrays", "index.html#toxsd10-1", null ],
+          [ "XSD hexBinary and base64Binary types", "index.html#toxsd10-2", null ],
+          [ "MIME/MTOM attachment binary types", "index.html#toxsd10-3", null ],
+          [ "Wrapper class/struct for simpleContent", "index.html#toxsd10-4", null ]
+        ] ]
+      ] ],
+      [ "Serialization rules                                                     ", "index.html#rules", [
+        [ "SOAP document versus rpc style                                        ", "index.html#doc-rpc", null ],
+        [ "SOAP literal versus encoding                                          ", "index.html#lit-enc", null ],
+        [ "SOAP 1.1 versus SOAP 1.2                                                 ", "index.html#soap", null ],
+        [ "Non-SOAP XML serialization                                           ", "index.html#non-soap", null ]
       ] ],
       [ "Memory management                                                      ", "index.html#memory", [
         [ "Memory management in C                                                ", "index.html#memory1", null ],

@@ -17,20 +17,26 @@ Compare this to:
 
     std::vector<int>
 
-Note that the template class code should NOT be defined anywhere in the header
-file, but separately.
+Note that the template class code itself should NOT be defined anywhere in the
+header file, but separately in a header file.  You can include this header file
+with (not import):
+
+    #include "mycontainer.h"   // do not use #import: need mycontainer.h later
 
 That is, The "real" container template must be defined in a regular header file
-and implemented as well. For XML serialization to work with the template, the
-template must define at least four methods with similar functionality to
-std::vector:
+and implemented. For XML serialization to work with the template, the
+template<typename T> class C container must define at least the following
+public members:
 
-    iterator begin();
-    iterator end();
-    size_t   size();
-    iterator insert(iterator pos, const_reference val)
+    void              C::clear()
+    C::iterator       C::begin()
+    C::const_iterator C::begin() const
+    C::iterator       C::end()
+    C::const_iterator C::end() const
+    size_t            C::size() const
+    C::iterator       C::insert(C::iterator pos, const T& val)
 
-These four methods allow the gSOAP serializers to read and write the container
+These members allow the gSOAP serializers to read and write the container
 content from/to XML. Of course, how you define these is up to you. A container
 can also store just one value, or you can use it to serialize trees and graphs,
 or even produce and consume content dynamically. You could define the templates

@@ -1,12 +1,12 @@
 #	typemap.dat for W3C basic and advanced XML schema pattern databindings
 
-xsd__duration = #import "duration.h" | xsd__duration
+xsd__duration = #import "duration.h"
 
-xsd__dateTime = #import "struct_tm.h" | xsd__dateTime
+xsd__dateTime = #import "struct_tm.h"
 
-xsd__date = #import "struct_tm_date.h" | xsd__date
+xsd__date = #import "struct_tm_date.h"
 
-xsd__time = #import "long_time.h" | xsd__time
+xsd__time = #import "long_time.h"
 
 #	test/wsdl/typemap.dat
 

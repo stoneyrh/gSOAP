@@ -123,10 +123,17 @@
 #	(assuming option -e is used to remove the xsd__boolean__ name prefix)
 # xsd__boolean	= enum xsd__boolean { false_, true_ }; | enum xsd__boolean
 
+#	Uncomment the line below to use __int128_t for xsd:integer instead of
+#	mapping xsd:integer to string.
+#	Must compile and link custom/int128.c with the project.
+# xsd__integer = #import "custom/int128.h" | xsd__integer
+
 #	Uncomment the line below to use long double for xsd:decimal instead of
 #	mapping xsd:decimal to string.
 #	Must compile and link custom/long_double.c with the project.
 # xsd__decimal = #import "custom/long_double.h" | long double
+#	Or if your system supports __float128 then you can use:
+# xsd__decimal = #import "custom/float128.h" | xsd__decimal
 
 #	Uncomment the line below to use struct tm instead of time_t xsd:dateTime
 #	Must compile and link custom/struct_tm.c with the project.
@@ -135,6 +142,11 @@
 #	Uncomment the line below to use timeval with usec precision xsd:dateTime
 #	Must compile and link custom/struct_timeval.c with the project.
 # xsd__dateTime = #import "custom/struct_timeval.h" | xsd__dateTime
+
+#	Uncomment the line below to use std::chrono::system_clock::time_point
+#	for xsd:dateTime.
+#	Must compile and link custom/chrono_time_point.c with the project.
+# xsd__dateTime = #import "custom/chrono_time_point.h" | xsd__dateTime
 
 #	Uncomment the line below to use struct tm for xsd:date instead of
 #	mapping xsd:date to string.

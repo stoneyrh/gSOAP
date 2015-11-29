@@ -160,7 +160,22 @@ wininet_init(
 
     /* start our internet session */
     a_pData->hInternet = InternetOpenA( 
-        "gSOAP", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0 );
+        "gSOAP",
+	INTERNET_OPEN_TYPE_PRECONFIG,
+	NULL,
+	NULL,
+	0 );
+
+    /* enable HTTP2 when available */
+#ifdef INTERNET_OPTION_ENABLE_HTTP_PROTOCOL
+    DWORD httpProtocol = HTTP_PROTOCOL_FLAG_HTTP2;
+    InternetSetOption(
+	a_pData->hInternet,
+	INTERNET_OPTION_ENABLE_HTTP_PROTOCOL,
+	&httpProtocol,
+	sizeof(httpProtocol) );
+#endif
+
     if ( !a_pData->hInternet )
     {
         soap->error = SOAP_EOF;

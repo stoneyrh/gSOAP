@@ -1373,7 +1373,6 @@ case YY_STATE_EOF(INITIAL):
 #ifndef WITH_LEX
 			  if (--imports < 0)
 			  {
-			    yylineno = 0;
 			    yyterminate();
 			  }
 			  else
@@ -1390,10 +1389,10 @@ case YY_STATE_EOF(INITIAL):
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 200 "soapcpp2_lex.l"
+#line 199 "soapcpp2_lex.l"
 ECHO;
 	YY_BREAK
-#line 1397 "soapcpp2_lex.c"
+#line 1396 "soapcpp2_lex.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2335,7 +2334,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 200 "soapcpp2_lex.l"
+#line 199 "soapcpp2_lex.l"
 
 
 

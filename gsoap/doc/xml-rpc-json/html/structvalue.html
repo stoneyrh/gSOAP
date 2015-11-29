@@ -40,6 +40,7 @@
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structvalue-members.html">List of all members</a>  </div>
@@ -48,11 +49,15 @@
 </div><!--header-->
 <div class="contents">
 
-<p>Represents the &lt;value&gt; container element.  
- <a href="structvalue.html#details">More...</a></p>
-
 <p><code>#include &lt;xml-rpc.h&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:aec762fde6750eaaed2cc1c835d38408a"><td class="memItemLeft" align="right" valign="top">typedef value_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#aec762fde6750eaaed2cc1c835d38408a">iterator</a></td></tr>
+<tr class="separator:aec762fde6750eaaed2cc1c835d38408a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34f1b384ded31c97cf40e66aebde8850"><td class="memItemLeft" align="right" valign="top">typedef value_const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a34f1b384ded31c97cf40e66aebde8850">const_iterator</a></td></tr>
+<tr class="separator:a34f1b384ded31c97cf40e66aebde8850"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9b3a141b79ff268afa6cd30e677e28f1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a9b3a141b79ff268afa6cd30e677e28f1">value</a> ()</td></tr>
@@ -108,9 +113,20 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0d650615b7a03e5c430d8a171f5bf2d9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a0d650615b7a03e5c430d8a171f5bf2d9">operator const struct _struct &amp;</a> () const </td></tr>
 <tr class="separator:a0d650615b7a03e5c430d8a171f5bf2d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd828d3421627cc036e7d15a53aeb9db"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#acd828d3421627cc036e7d15a53aeb9db">operator[]</a> (int)</td></tr>
+<tr class="memdesc:acd828d3421627cc036e7d15a53aeb9db"><td class="mdescLeft">&#160;</td><td class="mdescRight">array/struct index (negative to get from end)  <a href="#acd828d3421627cc036e7d15a53aeb9db"></a><br/></td></tr>
 <tr class="separator:acd828d3421627cc036e7d15a53aeb9db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af30e80af97e9c85764914b4cb92f88cf"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#af30e80af97e9c85764914b4cb92f88cf">operator[]</a> (const char *)</td></tr>
+<tr class="memdesc:af30e80af97e9c85764914b4cb92f88cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">struct access  <a href="#af30e80af97e9c85764914b4cb92f88cf"></a><br/></td></tr>
 <tr class="separator:af30e80af97e9c85764914b4cb92f88cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a028120ea901185d733c2cee9afaf0b76"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a028120ea901185d733c2cee9afaf0b76">operator[]</a> (const std::string &amp;)</td></tr>
+<tr class="memdesc:a028120ea901185d733c2cee9afaf0b76"><td class="mdescLeft">&#160;</td><td class="mdescRight">struct access  <a href="#a028120ea901185d733c2cee9afaf0b76"></a><br/></td></tr>
+<tr class="separator:a028120ea901185d733c2cee9afaf0b76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc01f095ad5cf380e0050fb47ae516e8"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#acc01f095ad5cf380e0050fb47ae516e8">operator[]</a> (const wchar_t *)</td></tr>
+<tr class="memdesc:acc01f095ad5cf380e0050fb47ae516e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">struct access  <a href="#acc01f095ad5cf380e0050fb47ae516e8"></a><br/></td></tr>
+<tr class="separator:acc01f095ad5cf380e0050fb47ae516e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a674cb65f0ab8ba5a2dff28ccae788af6"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a674cb65f0ab8ba5a2dff28ccae788af6">operator[]</a> (const std::wstring &amp;)</td></tr>
+<tr class="memdesc:a674cb65f0ab8ba5a2dff28ccae788af6"><td class="mdescLeft">&#160;</td><td class="mdescRight">struct access  <a href="#a674cb65f0ab8ba5a2dff28ccae788af6"></a><br/></td></tr>
+<tr class="separator:a674cb65f0ab8ba5a2dff28ccae788af6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93c70907f06de29cb68f9d927efabfd6"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct__array.html">_array</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a93c70907f06de29cb68f9d927efabfd6">operator=</a> (const struct <a class="el" href="struct__array.html">_array</a> &amp;)</td></tr>
 <tr class="separator:a93c70907f06de29cb68f9d927efabfd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae50b54a425ddc21c9daf02680dfb04ba"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct__base64.html">_base64</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#ae50b54a425ddc21c9daf02680dfb04ba">operator=</a> (const struct <a class="el" href="struct__base64.html">_base64</a> &amp;)</td></tr>
@@ -181,6 +197,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a069d409dd697b189efdde36b5c61d195"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a069d409dd697b189efdde36b5c61d195">is_true</a> () const </td></tr>
 <tr class="memdesc:a069d409dd697b189efdde36b5c61d195"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if value is boolean true  <a href="#a069d409dd697b189efdde36b5c61d195"></a><br/></td></tr>
 <tr class="separator:a069d409dd697b189efdde36b5c61d195"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f72d8e5406f3349b26de14831b4172f"><td class="memItemLeft" align="right" valign="top">value_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a0f72d8e5406f3349b26de14831b4172f">begin</a> ()</td></tr>
+<tr class="memdesc:a0f72d8e5406f3349b26de14831b4172f"><td class="mdescLeft">&#160;</td><td class="mdescRight">value iterator begin  <a href="#a0f72d8e5406f3349b26de14831b4172f"></a><br/></td></tr>
+<tr class="separator:a0f72d8e5406f3349b26de14831b4172f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8105e2e20772a0d8299579212784c0c"><td class="memItemLeft" align="right" valign="top">value_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#ad8105e2e20772a0d8299579212784c0c">end</a> ()</td></tr>
+<tr class="memdesc:ad8105e2e20772a0d8299579212784c0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">value iterator end  <a href="#ad8105e2e20772a0d8299579212784c0c"></a><br/></td></tr>
+<tr class="separator:ad8105e2e20772a0d8299579212784c0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -191,15 +213,40 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a9d8bdea6bebd0043f1ff58b9a8a38d7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">ref to data  <a href="#a9d8bdea6bebd0043f1ff58b9a8a38d7c"></a><br/></td></tr>
 <tr class="separator:a9d8bdea6bebd0043f1ff58b9a8a38d7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1ba4e5292336e96e96871a76fae13ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#ad17e31c229494a74d846511902d11357">_string</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#ad1ba4e5292336e96e96871a76fae13ab">__any</a></td></tr>
-<tr class="memdesc:ad1ba4e5292336e96e96871a76fae13ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">&lt;value&gt; string content, when present  <a href="#ad1ba4e5292336e96e96871a76fae13ab"></a><br/></td></tr>
+<tr class="memdesc:ad1ba4e5292336e96e96871a76fae13ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">&lt;value&gt; string content in XML-RPC (not JSON), if any  <a href="#ad1ba4e5292336e96e96871a76fae13ab"></a><br/></td></tr>
 <tr class="separator:ad1ba4e5292336e96e96871a76fae13ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a874a72d34f39c0839bc53ccb5f9d1e99"><td class="memItemLeft" align="right" valign="top">struct soap *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a874a72d34f39c0839bc53ccb5f9d1e99">soap</a></td></tr>
 <tr class="memdesc:a874a72d34f39c0839bc53ccb5f9d1e99"><td class="mdescLeft">&#160;</td><td class="mdescRight">ref to soap struct that manages this type  <a href="#a874a72d34f39c0839bc53ccb5f9d1e99"></a><br/></td></tr>
 <tr class="separator:a874a72d34f39c0839bc53ccb5f9d1e99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Represents the &lt;value&gt; container element. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<div class="textblock"><p>Represents the &lt;value&gt; container element The &lt;value&gt; element contains either string data stored in __any or an other type of data stored in a subelement. In case of a subelement, the __type member indicates the type of data pointed to by the ref member. For example, when __type = SOAP_TYPE__int then the ref points to a LONG64, when __type = SOAP_TYPE__string (char*)ref is a string. </p>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a class="anchor" id="a34f1b384ded31c97cf40e66aebde8850"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef value_const_iterator <a class="el" href="structvalue.html#a34f1b384ded31c97cf40e66aebde8850">value::const_iterator</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aec762fde6750eaaed2cc1c835d38408a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef value_iterator <a class="el" href="structvalue.html#aec762fde6750eaaed2cc1c835d38408a">value::iterator</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a9b3a141b79ff268afa6cd30e677e28f1"></a>
 <div class="memitem">
 <div class="memproto">
@@ -466,6 +513,23 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a0f72d8e5406f3349b26de14831b4172f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">value_iterator value::begin </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>value iterator begin </p>
+
+</div>
+</div>
 <a class="anchor" id="a95f0f36dbb5dd05b3fb15a3006f4db36"></a>
 <div class="memitem">
 <div class="memproto">
@@ -480,6 +544,23 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>true if empty array or struct </p>
+
+</div>
+</div>
+<a class="anchor" id="ad8105e2e20772a0d8299579212784c0c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">value_iterator value::end </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>value iterator end </p>
 
 </div>
 </div>
@@ -1165,6 +1246,8 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>array/struct index (negative to get from end) </p>
+
 </div>
 </div>
 <a class="anchor" id="af30e80af97e9c85764914b4cb92f88cf"></a>
@@ -1188,6 +1271,86 @@ Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>struct access </p>
+
+</div>
+</div>
+<a class="anchor" id="a028120ea901185d733c2cee9afaf0b76"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structvalue.html">value</a>&amp; value::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">read</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>struct access </p>
+
+</div>
+</div>
+<a class="anchor" id="acc01f095ad5cf380e0050fb47ae516e8"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structvalue.html">value</a>&amp; value::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">const wchar_t *&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">read</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>struct access </p>
+
+</div>
+</div>
+<a class="anchor" id="a674cb65f0ab8ba5a2dff28ccae788af6"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structvalue.html">value</a>&amp; value::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">const std::wstring &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">read</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>struct access </p>
 
 </div>
 </div>
@@ -1237,7 +1400,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>&lt;value&gt; string content, when present </p>
+<p>&lt;value&gt; string content in XML-RPC (not JSON), if any </p>
 
 </div>
 </div>
@@ -1288,6 +1451,6 @@ Public Attributes</h2></td></tr>
 </ul>
 </div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Mon Nov 9 2015 08:44:04 for <a href="http://www.genivia.com">Genivia</a> documentation of XML-RPC &amp; JSON by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Sun Nov 29 2015 11:17:28 for <a href="http://www.genivia.com">Genivia</a> documentation of XML-RPC &amp; JSON by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

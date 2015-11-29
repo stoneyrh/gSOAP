@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.25" /* Current version */
-# define GSOAP_VERSION 20825
+# define VERSION "2.8.26" /* Current version */
+# define GSOAP_VERSION 20826
 #endif
 
 #ifdef WIN32
@@ -232,6 +232,7 @@ typedef	struct Tnode
 	Symbol		*base;	/* base class name */
 	Symbol		*sym;	/* typedef name */
 	Symbol		*synonym;	/* synonymous typedef base name for 'typedef base id */
+	Symbol		*extsym;	/* typedef sym of external type w/ custom serializer */
 	struct Entry	*response; /* funcs only: points to response struct */
 	int		width;
 	int		transient;
@@ -244,6 +245,8 @@ typedef	struct Tnode
 	int		num;
 	Bool		hasmin;
 	Bool		hasmax;
+	Bool		incmin;
+	Bool		incmax;
 	double		min;
 	double		max;
 	const char	*pattern;
@@ -294,6 +297,8 @@ typedef	struct Node {
 	Value		val;		/* ... this is the value */
 	Bool		hasmin;
 	Bool		hasmax;
+	Bool		incmin;
+	Bool		incmax;
 	LONG64		minOccurs;
 	LONG64		maxOccurs;
 	double		min;

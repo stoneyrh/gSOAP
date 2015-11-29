@@ -12,8 +12,9 @@ See the notes in the source files on specific usage.
 
 The following serializers are available:
 
-long_double.*       Serializes long double (extended double) type
-float128.*          Serializes __float128 <quadmath.h> type
+long_double.*       Serializes long double (extended double) type as xsd:decimal
+float128.*          Serializes __float128 <quadmath.h> type as xsd:decimal
+int128.*            Serializes __int128_t as xsd:integer
 struct_tm.*         Serializes struct tm as xsd:dateTime
 struct_timeval.*    Serializes struct timeval as xsd:dateTime
 duration.*          Serializes LONG64 milliseconds as xsd:duration
@@ -87,17 +88,17 @@ extern typedef Type X;
 To implement custom serializers you should implement the following routines:
 
 void soap_default_X(struct soap*, X*);
-	sets default values for X
+    sets default values for X
 void soap_serialize_X(struct soap*, const X*);
-	analyzes X for id-ref serialization (maybe empty)
+    analyzes X for id-ref serialization (maybe empty)
 int soap_out_X(struct soap*, const char *tag, int id, const X*, const char *type);
-	emits X in XML as <tag xsi:type=type> (type is optional)
+    emits X in XML as <tag xsi:type=type> (type is optional)
 X *soap_in_X(struct soap*, const char *tag, X*, const char *type);
-	parses X from XML as <tag xsi:type=type>
+    parses X from XML as <tag xsi:type=type>
 
 To support XML attribute serialization, you should also define:
 
 int soap_s2X(struct soap*, const char *value, X*);
-	converts string to X and returns SOAP_OK
+    converts string to X and returns SOAP_OK
 const char *soap_X2s(struct soap*, X);
-	converts X to string (or NULL when error)
+    converts X to string (or NULL when error)

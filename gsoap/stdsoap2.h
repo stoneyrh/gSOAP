@@ -1,5 +1,5 @@
 /*
-	stdsoap2.h 2.8.25
+	stdsoap2.h 2.8.26
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20825
+#define GSOAP_VERSION 20826
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"		/* include user-defined stuff in soapdefs.h */
@@ -1541,12 +1541,14 @@ typedef soap_int32 soap_mode;
 #define SOAP_XML_DEFAULTNS	0x00008000	/* out: emit xmlns="..." */
 #define SOAP_XML_CANONICAL	0x00010000	/* out: excC14N canonical XML */
 #define SOAP_XML_TREE		0x00020000	/* in/out: XML tree (no id/ref) */
-#define SOAP_XML_NIL		0x00040000	/* out: NULLs as xsi:nil */
+#define SOAP_XML_NIL		0x00040000	/* out: all NULLs as xsi:nil */
 #define SOAP_XML_NOTYPE		0x00080000	/* out: do not add xsi:type */
 
 #define SOAP_DOM_TREE		0x00100000      /* see DOM manual */
 #define SOAP_DOM_NODE		0x00200000
 #define SOAP_DOM_ASIS		0x00400000
+
+#define SOAP_RESERVED		0x00800000	/* reserved for future use */
 
 #define SOAP_C_NOIOB		0x01000000	/* don't fault on array index out of bounds (just ignore) */
 #define SOAP_C_UTFSTRING	0x02000000	/* (de)serialize strings with UTF8 content */
@@ -1558,7 +1560,7 @@ typedef soap_int32 soap_mode;
 
 #define SOAP_MIME_POSTCHECK	0x40000000	/* MIME flag (internal) */
 
-#define SOAP_SEC_WSUID		0x80000000	/* Add Body wsu:Id */
+#define SOAP_SEC_WSUID		0x80000000	/* Add Body wsu:Id flag (internal) */
 
 /* WITH_XMLNS backward compatibility: always use XML default namespaces */
 #ifdef WITH_XMLNS
@@ -1572,8 +1574,8 @@ typedef soap_int32 soap_mode;
 #define SOAP_SSL_NO_AUTHENTICATION		0x0000	/* for testing purposes */
 #define SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION	0x0001	/* client requires server to authenticate (default) */
 #define SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION	0x0002	/* server requires client to authenticate */
-#define SOAP_SSL_SKIP_HOST_CHECK		0x0004	/* client skips does not check the common name of the host in server's certificate */
-#define SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE	0x0008	/* client does not check the expiration date of the host server's certificate */
+#define SOAP_SSL_SKIP_HOST_CHECK		0x0004	/* client skips common name check against host name */
+#define SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE	0x0008	/* allow self-signed and expired certificates and those w/o CRL */
 #define SOAP_SSL_NO_DEFAULT_CA_PATH		0x0010	/* don't use default_verify_paths */
 #define SOAP_SSL_RSA				0x0020	/* use RSA */
 #define SOAP_TLSv1				0x0000	/* enable TLS v1.0/1.1/1.2 only (default) */
@@ -2579,6 +2581,7 @@ SOAP_FMAC1 SOAP_SOCKET SOAP_FMAC2 soap_bind(struct soap*, const char*, int, int)
 SOAP_FMAC1 SOAP_SOCKET SOAP_FMAC2 soap_accept(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_accept(struct soap*);
 SOAP_FMAC1 const char * SOAP_FMAC2 soap_ssl_error(struct soap*, int);
+SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_crl(struct soap*, const char*);
 
 #if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)
 SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_server_context(struct soap *soap, unsigned short flags, const char *keyfile, const char *keyid, const char *password, const char *cafile, const char *capath, const char *dhfile, const char *randfile, const char *sid);
@@ -2758,6 +2761,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_peek_element(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_retry(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_revert(struct soap*);
 
+SOAP_FMAC1 void* SOAP_FMAC2 soap_memdup(struct soap*, const void*, size_t);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_strdup(struct soap*, const char*);
 SOAP_FMAC1 wchar_t* SOAP_FMAC2 soap_wstrdup(struct soap*, const wchar_t*);
 SOAP_FMAC1 const char * SOAP_FMAC2 soap_tagsearch(const char *big, const char *little);

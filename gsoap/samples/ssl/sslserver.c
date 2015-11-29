@@ -99,10 +99,17 @@ int main()
     "dh2048.pem",	/* DH file name or DH param key len bits in string (e.g. "2048"), if NULL then RSA with 2048 bits is used instead (bits defined by SOAP_SSL_RSA_BITS) */
     NULL,		/* if randfile!=NULL: use a file with random data to seed randomness */ 
     "sslserver"		/* server identification for SSL session cache (unique server name, e.g. use argv[0]) */
-  ))
+  )
+  )
   { soap_print_fault(&soap, stderr);
     exit(1);
   }
+  /* enable CRL, may need SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE when certs have no CRL
+  if (soap_ssl_crl(&soap, ""))
+  { soap_print_fault(&soap, stderr);
+    exit(1);
+  }
+  */
   soap.accept_timeout = 60;	/* server times out after 1 minute inactivity */
   soap.send_timeout = soap.recv_timeout = 30;	/* if I/O stalls, then timeout after 30 seconds */
   m = soap_bind(&soap, NULL, 18081, 100);

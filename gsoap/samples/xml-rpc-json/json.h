@@ -1,11 +1,11 @@
 /*
-	json.h
-	
-	JSON C++ support & stream JSON from/to XML-RPC
+        json.h
+        
+        JSON C/C++ supporting functions
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2012, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -41,16 +41,38 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 namespace json {
 #endif
 
-/// Send a value in JSON format to a stream
-extern std::ostream& operator<<(std::ostream&, const struct value&);
+/** Write a value in JSON format to a file, socket, or stream */
+extern int json_write(struct soap *soap, const struct value *v);
+
+/** Send a value in JSON format to a file, socket, or stream (lower level function, must use soap_begin_send/soap_end_send also) */
+extern int json_send(struct soap *soap, const struct value *v);
+
+#ifdef __cplusplus
+extern int json_write(struct soap *soap, const struct value& v);
 extern int json_send(struct soap *soap, const struct value& v);
+extern std::ostream& operator<<(std::ostream&, const struct value&);
+#endif
 
-/// Receive a value in JSON format from a stream
-extern std::istream& operator>>(std::istream&, struct value&);
+/** Read a value in JSON format from a file, socket, or stream */
+extern int json_read(struct soap *soap, struct value *v);
+
+/** Receive a value in JSON format from a file, socket, or stream (lower level function, must use soap_begin_recv/soap_end_recv also) */
+extern int json_recv(struct soap *soap, struct value *v);
+
+#ifdef __cplusplus
+extern int json_read(struct soap *soap, struct value& v);
 extern int json_recv(struct soap *soap, struct value& v);
+extern std::istream& operator>>(std::istream&, struct value&);
+#endif
 
-/// Client-side JSON-RPC call
+/** Client-side JSON REST call to endpoint URL with optional in and out values (POST in/out, GET out , PUT in), returns SOAP_OK or HTTP code */
+extern int json_call(struct soap *soap, const char *endpoint, const struct value *in, struct value *out);
+
+#ifdef __cplusplus
 extern int json_call(struct soap *soap, const char *endpoint, const struct value& in, struct value& out);
+#endif
+
+extern int json_send_string(struct soap *soap, const char *s);
 
 #ifdef JSON_NAMESPACE
 } // namespace json

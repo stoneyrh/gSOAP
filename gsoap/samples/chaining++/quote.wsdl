@@ -60,7 +60,7 @@
 </binding>
 
 <service name="quote">
- <documentation>gSOAP 2.8.25 generated service definition</documentation>
+ <documentation>gSOAP 2.8.26 generated service definition</documentation>
  <port name="quote" binding="tns:quote">
   <SOAP:address location="http://64.124.140.30:9090/soap"/>
  </port>

@@ -58,13 +58,15 @@ Collaboration diagram for _array:</div>
 <div class="dyncontent">
 <div class="center"><img src="struct__array__coll__graph.png" border="0" usemap="#__array_coll__map" alt="Collaboration graph"/></div>
 <map name="__array_coll__map" id="__array_coll__map">
-<area shape="rect" id="node2" href="structdata.html" title="Represents the &lt;data&gt; element." alt="" coords="11,99,57,127"/><area shape="rect" id="node4" href="structvalue.html" title="Represents the &lt;value&gt; container element." alt="" coords="8,6,60,34"/></map>
+<area shape="rect" id="node2" href="structdata.html" title="Represents the &lt;data&gt; element." alt="" coords="11,99,57,127"/><area shape="rect" id="node4" href="structvalue.html" title="value" alt="" coords="8,6,60,34"/></map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a61e069daf5d5b31875a5d249216ac8d3"><td class="memItemLeft" align="right" valign="top">typedef _array_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__array.html#a61e069daf5d5b31875a5d249216ac8d3">iterator</a></td></tr>
 <tr class="separator:a61e069daf5d5b31875a5d249216ac8d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4eb4cf7bbe96231b59032b424e76555b"><td class="memItemLeft" align="right" valign="top">typedef _array_const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__array.html#a4eb4cf7bbe96231b59032b424e76555b">const_iterator</a></td></tr>
+<tr class="separator:a4eb4cf7bbe96231b59032b424e76555b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -84,14 +86,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ae94d2a757d3a93356c497c6034c133ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">(re)set number of array elements  <a href="#ae94d2a757d3a93356c497c6034c133ea"></a><br/></td></tr>
 <tr class="separator:ae94d2a757d3a93356c497c6034c133ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af42e9052bcc131bff0bb6437843b3fb0"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__array.html#af42e9052bcc131bff0bb6437843b3fb0">operator[]</a> (int)</td></tr>
-<tr class="memdesc:af42e9052bcc131bff0bb6437843b3fb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">array index  <a href="#af42e9052bcc131bff0bb6437843b3fb0"></a><br/></td></tr>
+<tr class="memdesc:af42e9052bcc131bff0bb6437843b3fb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">array index (negative to get from end)  <a href="#af42e9052bcc131bff0bb6437843b3fb0"></a><br/></td></tr>
 <tr class="separator:af42e9052bcc131bff0bb6437843b3fb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac15280959920d28bf27568d38ee7b6ba"><td class="memItemLeft" align="right" valign="top">_array_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__array.html#ac15280959920d28bf27568d38ee7b6ba">begin</a> ()</td></tr>
-<tr class="memdesc:ac15280959920d28bf27568d38ee7b6ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">array iterator begin  <a href="#ac15280959920d28bf27568d38ee7b6ba"></a><br/></td></tr>
-<tr class="separator:ac15280959920d28bf27568d38ee7b6ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f4d85181b117638a22d04925bb386f1"><td class="memItemLeft" align="right" valign="top">_array_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__array.html#a1f4d85181b117638a22d04925bb386f1">end</a> ()</td></tr>
-<tr class="memdesc:a1f4d85181b117638a22d04925bb386f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">array iterator end  <a href="#a1f4d85181b117638a22d04925bb386f1"></a><br/></td></tr>
-<tr class="separator:a1f4d85181b117638a22d04925bb386f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb0f4e1bb00cc556d8fd0e76489e7db3"><td class="memItemLeft" align="right" valign="top">_array_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__array.html#acb0f4e1bb00cc556d8fd0e76489e7db3">begin</a> () const </td></tr>
+<tr class="memdesc:acb0f4e1bb00cc556d8fd0e76489e7db3"><td class="mdescLeft">&#160;</td><td class="mdescRight">array iterator begin  <a href="#acb0f4e1bb00cc556d8fd0e76489e7db3"></a><br/></td></tr>
+<tr class="separator:acb0f4e1bb00cc556d8fd0e76489e7db3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e4804695d0f5ab0e1cae9ea0788f84a"><td class="memItemLeft" align="right" valign="top">_array_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__array.html#a6e4804695d0f5ab0e1cae9ea0788f84a">end</a> () const </td></tr>
+<tr class="memdesc:a6e4804695d0f5ab0e1cae9ea0788f84a"><td class="mdescLeft">&#160;</td><td class="mdescRight">array iterator end  <a href="#a6e4804695d0f5ab0e1cae9ea0788f84a"></a><br/></td></tr>
+<tr class="separator:a6e4804695d0f5ab0e1cae9ea0788f84a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -105,6 +107,18 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents the &lt;array&gt; array of values element. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a class="anchor" id="a4eb4cf7bbe96231b59032b424e76555b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef _array_const_iterator <a class="el" href="struct__array.html#a4eb4cf7bbe96231b59032b424e76555b">_array::const_iterator</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a61e069daf5d5b31875a5d249216ac8d3"></a>
 <div class="memitem">
 <div class="memproto">
@@ -176,7 +190,7 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="ac15280959920d28bf27568d38ee7b6ba"></a>
+<a class="anchor" id="acb0f4e1bb00cc556d8fd0e76489e7db3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -184,7 +198,7 @@ Public Attributes</h2></td></tr>
           <td class="memname">_array_iterator _array::begin </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -210,7 +224,7 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a1f4d85181b117638a22d04925bb386f1"></a>
+<a class="anchor" id="a6e4804695d0f5ab0e1cae9ea0788f84a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -218,7 +232,7 @@ Public Attributes</h2></td></tr>
           <td class="memname">_array_iterator _array::end </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -249,7 +263,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>array index </p>
+<p>array index (negative to get from end) </p>
 
 </div>
 </div>
@@ -322,6 +336,6 @@ Public Attributes</h2></td></tr>
 </ul>
 </div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Mon Nov 9 2015 08:44:04 for <a href="http://www.genivia.com">Genivia</a> documentation of XML-RPC &amp; JSON by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Sun Nov 29 2015 11:17:28 for <a href="http://www.genivia.com">Genivia</a> documentation of XML-RPC &amp; JSON by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

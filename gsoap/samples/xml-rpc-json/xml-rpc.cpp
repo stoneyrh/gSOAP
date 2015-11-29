@@ -4,132 +4,24 @@
         C++ API for XML-RPC/JSON data management
 
         Note: 
-        XML-RPC declarations are given in the gSOAP header file xml-rpc.h,
+
+        XML-RPC declarations are located in the gSOAP header file xml-rpc.h,
         which is used to generate XML-RPC serializers (soapH.h, soapStub.h, and
         soapC.cpp) with:
+
         > soapcpp2 -CSL xml-rpc.h
+
         Iterators to walk the tree data are declared in xml-rpc-iters.h
 
-        Client XML-RPC calling sequence
-        -------------------------------
+	IO stream operations for XML-RPC data are declared in xml-rpc-io.h
 
-        // get XML-RPC serializers (link with soapC.cpp)
-        #include "soapH.h"
-        // get XML-RPC I/O operations (link with xml-rpc-io.cpp)
-        #include "xml-rpc-io.h"
+	For more information please visit:
 
-        // set up context (indent XML is optional)
-        soap *ctx = soap_new1(SOAP_XML_INDENT);
-        // define method call
-        methodCall myMethod(ctx, "<endpoint-URL>", "<method-name>");
-        // populate input parameters
-        myMethod[0] = ...; // first param
-        myMethod[1] = ...; // second param
-        ...
-        // make the call and get the response parameters
-        params result = myMethod();
-        // error?
-        if (myMethod.error())
-          soap_print_fault(ctx, stderr);
-        else if (result.empty())
-          cout << myMethod.fault() << endl;
-        else
-          for (params::iterator arg = result.begin(); arg != result.end(); ++arg)
-            cout << *arg << endl;
-        // delete all
-        soap_destroy(ctx);
-        soap_end(ctx);
-        soap_free(ctx);
-
-        Compile with -DWITH_NONAMESPACES to omit global namespaces[] definition
-        or add to your code:
-
-        struct Namespace namespaces[] = { {NULL, NULL} };
-
-        How to use XML-RPC data types?
-        ------------------------------
-
-        A value is stored in a 'struct value'. This struct has the following
-        methods to query its content:
-        bool is_array()
-        bool is_base64()
-        bool is_bool()
-        bool is_double()
-        bool is_false()
-        bool is_int()
-        bool is_string()
-        bool is_struct()
-        bool is_true()
-        bool is_dateTime()
-
-        To set a value:
-        value v(soap); // the soap struct is used for memory management
-        if (...)
-          v[0] = 1; // assign 1 to first array element
-        else if (...)
-          v = _base64(soap, 8, (unsigned char*)"raw data");
-        else if (...)
-          v = true; // boolean
-        else if (...)
-          v = 12.3; // double
-        else if (...)
-          v = 1234; // int
-        else if (...)
-          v = "xy"; // string
-        else if (...)                                         
-          v["name"] = "Abe"; // struct member 'name' = "Abe"
-        else if (...)
-          v = clock(); // dateTime
-
-        To get a value:
-        if (v.is_array())
-        {
-          _array& a = v;
-          for (_array::iterator i = a.begin(); i != a.end(); ++i)
-            cout << (*i) << ", ";
-        }
-        else if (v.is_base64())
-        {
-          _base64& b = v;
-          ... = b.size();
-          ... = b.ptr();
-        }
-        else if (v.is_bool())
-        {
-          bool b = v.is_true();
-        }
-        else if (v.is_double())
-        {
-          double n = v;
-        }
-        else if (v.is_int())
-        {
-          LONG64 n = v;
-        }
-        else if (v.is_string())
-        {
-          _string s = v; // note: _string is char* by default
-        }
-        else if (v.is_struct())
-        {
-          _struct& s = v;
-          for (_struct::iterator i = s.begin(); i != s.end(); ++i)
-            cout << (*i) << ", ";
-        }
-        else if (v.is_dateTime())
-        {
-          time_t = v;
-        }
-
-        Unicode strings
-        ---------------
-
-        Use SOAP_C_UTFSTRING flag to enable UTF8-encoded char* strings:
-        soap *ctx = soap_new1(SOAP_XML_INDENT | SOAP_C_UTFSTRING);
+	http://www.genivia.com/doc/xml-rpc-json/html/
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2012, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2015, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -251,19 +143,19 @@ void value::size(int n)
 int value::size() const
 {
   if (__type == SOAP_TYPE__array)
-    return ((_array)(*this)).size();
+    return ((_array*)ref)->size();
   if (__type == SOAP_TYPE__struct)
-    return ((_struct)(*this)).size();
+    return ((_struct*)ref)->size();
   return 0;
 }
 
 bool value::empty() const
 {
   if (__type == SOAP_TYPE__array)
-    return ((_array&)(*this)).empty();
+    return ((_array*)ref)->empty();
   if (__type == SOAP_TYPE__struct)
-    return ((_struct&)(*this)).empty();
-  return false;
+    return ((_struct*)ref)->empty();
+  return true;
 }
 
 bool value::is_array() const
@@ -303,7 +195,7 @@ bool value::is_int() const
 
 bool value::is_null() const
 {
-  return __type == 0;
+  return __type == 0 && !(__any && *__any);
 }
 
 bool value::is_struct() const
@@ -323,7 +215,7 @@ bool value::is_true() const
 
 value::operator bool() const
 {
-  return is_true();
+  return this->is_true();
 }
 
 value::operator struct _array&()
@@ -381,7 +273,7 @@ value::operator char*() const
   if (__type == SOAP_TYPE__double)
     return (char*)soap_strdup(soap, soap_double2s(soap, (double)*(_double*)ref));
   if (__type == SOAP_TYPE__boolean)
-    return (char*)(is_true() ? "true" : "false");
+    return (char*)(*(_boolean*)ref ? "true" : "false");
   if (__any)
     return (char*)__any;
   return (char*)"";
@@ -413,6 +305,8 @@ value::operator std::wstring() const
 
 value::operator _double() const
 {
+  if (__type == SOAP_TYPE__boolean)
+    return (_double)*(_boolean*)ref;
   if (__type == SOAP_TYPE__i4)
     return (_double)*(_i4*)ref;
   if (__type == SOAP_TYPE__int)
@@ -428,6 +322,8 @@ value::operator _double() const
 
 value::operator _i4() const
 {
+  if (__type == SOAP_TYPE__boolean)
+    return (_i4)*(_boolean*)ref;
   if (__type == SOAP_TYPE__i4)
     return (_i4)*(_i4*)ref;
   if (__type == SOAP_TYPE__int)
@@ -443,6 +339,8 @@ value::operator _i4() const
 
 value::operator _int() const
 {
+  if (__type == SOAP_TYPE__boolean)
+    return (_int)*(_boolean*)ref;
   if (__type == SOAP_TYPE__i4)
     return (_int)*(_i4*)ref;
   if (__type == SOAP_TYPE__int)
@@ -506,6 +404,33 @@ struct value& value::operator[](const char *s)
   return r[s];
 }
 
+struct value& value::operator[](const std::string& s)
+{
+  struct _struct& r = *this;
+  __type = SOAP_TYPE__struct;
+  __any = NULL;
+  ref = &r;
+  return r[s.c_str()];
+}
+
+struct value& value::operator[](const wchar_t *s)
+{
+  struct _struct& r = *this;
+  __type = SOAP_TYPE__struct;
+  __any = NULL;
+  ref = &r;
+  return r[s];
+}
+
+struct value& value::operator[](const std::wstring& s)
+{
+  struct _struct& r = *this;
+  __type = SOAP_TYPE__struct;
+  __any = NULL;
+  ref = &r;
+  return r[s.c_str()];
+}
+
 struct _array& value::operator=(const struct _array& a)
 {
   __type = SOAP_TYPE__array;
@@ -534,6 +459,37 @@ bool value::operator=(bool b)
   if (ref)
     *(_boolean*)ref = (_boolean)b;
   return b;
+}
+
+value_iterator value::begin()
+{
+  if (__type == SOAP_TYPE__struct)
+    return value_iterator(this, ((_struct*)ref)->member);
+  return value_iterator(this);
+}
+
+value_iterator value::end()
+{
+  if (__type == SOAP_TYPE__struct)
+    return value_iterator(this, ((_struct*)ref)->member + ((_struct*)ref)->__size);
+  if (__type == SOAP_TYPE__array)
+    return value_iterator(this, ((_array*)ref)->data.__size);
+  return value_iterator();
+}
+
+bool value_const_iterator::operator==(const value_iterator& that) const
+{
+  if (_value == NULL)
+    return that._value == NULL;
+  if (that._value == NULL)
+    return _value == NULL;
+  if (_value->__type != that._value->__type)
+    return false;
+  if (_value->__type == SOAP_TYPE__struct)
+    return _member == that._member;
+  if (_value->__type == SOAP_TYPE__array)
+    return (((_array*)_value->ref)->data.value + _index) == (((_array*)that._value->ref)->data.value + that._index);
+  return _value == that._value;
 }
 
 static char* s_copy_l(struct soap *soap, const char *s)
@@ -676,21 +632,21 @@ struct value& _struct::operator[](const char *s)
   {
     int newsize = size2k(__size = 1);
     member = soap_new_member(soap, newsize);
-    s2k = 1;
     for (i = 0; i < newsize; i++)
       soap_default_member(soap, &member[i]);
   }
   else
   {
-    for (i = 0; i < __size; i++)
+    if (s)
     {
-      if (!strcmp(member[i].name, s))
-        return member[i].value;
+      for (i = 0; i < __size; i++)
+      {
+	if (!strcmp(member[i].name, s))
+	  return member[i].value;
+      }
     }
-    int oldsize = __size;
+    int oldsize = size2k(__size);
     int newsize = size2k(++__size);
-    if (s2k)
-      oldsize = size2k(oldsize);
     if (oldsize < newsize)
     {
       struct member *newmember = soap_new_member(soap, newsize);
@@ -701,7 +657,6 @@ struct value& _struct::operator[](const char *s)
       soap_unlink(soap, member);
       delete[] member;
       member = newmember;
-      s2k = 1;
     }
   }
   i = __size - 1;
@@ -710,17 +665,29 @@ struct value& _struct::operator[](const char *s)
   return member[i].value;
 }
 
-_struct_iterator _struct::begin()
+struct value& _struct::operator[](const wchar_t *s)
 {
-  _struct_iterator iter(this);
-  return iter;
+  const char *t = soap_wchar2s(NULL, s);
+  value& r = operator[](t);
+  free((void*)t);
+  return r;
 }
 
-_struct_iterator _struct::end()
+_struct_iterator _struct::begin() const
 {
-  _struct_iterator iter(this);
-  iter += __size;
-  return iter;
+  return _struct_iterator(this);
+}
+
+_struct_iterator _struct::end() const
+{
+  _struct_iterator i(this);
+  i += __size;
+  return i;
+}
+
+bool _struct_const_iterator::operator==(const _struct_iterator& that) const
+{
+  return _member == that._member;
 }
 
 _array::_array()
@@ -760,20 +727,23 @@ void _array::size(int n)
 
 struct value& _array::operator[](int n)
 {
+  if (n < 0)
+  {
+    n += data.__size;
+    if (n < 0)
+      n = 0;
+  }
   if (!data.value)
   {
     int newsize = size2k(data.__size = n + 1);
     data.value = soap_new_value(soap, newsize);
-    data.s2k = 1;
     for (int i = 0; i < newsize; i++)
       soap_default_value(soap, &data.value[i]);
   }
   else if (data.__size <= n)
   {
-    int oldsize = data.__size;
+    int oldsize = size2k(data.__size);
     int newsize = size2k(data.__size = n + 1);
-    if (data.s2k)
-      oldsize = size2k(oldsize);
     if (oldsize < newsize)
     {
       struct value *newvalue = soap_new_value(soap, newsize);
@@ -785,23 +755,26 @@ struct value& _array::operator[](int n)
       soap_unlink(soap, data.value);
       delete[] data.value;
       data.value = newvalue;
-      data.s2k = 1;
     }
   }
   return data.value[n];
 }
 
-_array_iterator _array::begin()
+_array_iterator _array::begin() const
 {
-  _array_iterator iter(this);
-  return iter;
+  return _array_iterator(this);
 }
 
-_array_iterator _array::end()
+_array_iterator _array::end() const
 {
-  _array_iterator iter(this);
-  iter += data.__size;
-  return iter;
+  _array_iterator i(this);
+  i += data.__size;
+  return i;
+}
+
+bool _array_const_iterator::operator==(const _array_iterator& that) const
+{
+  return _value == that._value;
 }
 
 _base64::_base64()
@@ -868,20 +841,23 @@ int params::size() const
 
 struct value& params::operator[](int n)
 {
+  if (n < 0)
+  {
+    n += __size;
+    if (n < 0)
+      n = 0;
+  }
   if (!param)
   {
     int newsize = size2k(__size = n + 1);
     param = soap_new_param(soap, newsize);
-    s2k = 1;
     for (int i = 0; i < newsize; i++)
       soap_default_param(soap, &param[i]);
   }
   else if (__size <= n)
   {
-    int oldsize = __size;
+    int oldsize = size2k(__size);
     int newsize = size2k(__size = n + 1);
-    if (s2k)
-      oldsize = size2k(oldsize);
     if (oldsize < newsize)
     {
       struct param *newparam = soap_new_param(soap, newsize);
@@ -893,23 +869,26 @@ struct value& params::operator[](int n)
       soap_unlink(soap, param);
       delete[] param;
       param = newparam;
-      s2k = 1;
     }
   }
   return param[n].value;
 }
 
-params_iterator params::begin()
+params_iterator params::begin() const
 {
-  params_iterator iter(this);
-  return iter;
+  return params_iterator(this);
 }
 
-params_iterator params::end()
+params_iterator params::end() const
 {
-  params_iterator iter(this);
-  iter += __size;
-  return iter;
+  params_iterator i(this);
+  i += __size;
+  return i;
+}
+
+bool params_const_iterator::operator==(const params_iterator& that) const
+{
+  return _param == that._param;
 }
 
 methodCall::methodCall()
@@ -941,10 +920,10 @@ struct params& methodCall::operator()()
       methodResponse = soap_new_methodResponse(soap);
     if (methodResponse->recv() != SOAP_OK)
       methodResponse = NULL;
-    soap_closesock(soap);
   }
   else
     methodResponse = NULL;
+  soap_closesock(soap);
   if (methodResponse && methodResponse->params)
     return *methodResponse->params;
   struct params *params = soap_new_params(soap);
@@ -1093,138 +1072,24 @@ int methodResponse::recv()
   return SOAP_OK;
 }
 
-_array_iterator::_array_iterator()
-{
-  value = start = NULL;
-}
-
-_array_iterator::_array_iterator(const struct _array* a)
-{
-  value = start = a->data.value;
-}
-
-bool _array_iterator::operator==(const _array_iterator& that) const
-{
-  return this->value == that.value;
-}
-
-bool _array_iterator::operator!=(const _array_iterator& that) const
-{
-  return this->value != that.value;
-}
-
-int _array_iterator::index() const
-{
-  return value - start;
-}
-
-struct value& _array_iterator::operator*() const
-{
-  return *value;
-}
-
-_array_iterator& _array_iterator::operator++()
-{
-  value++;
-  return *this;
-}
-
-_array_iterator& _array_iterator::operator+=(int step)
-{
-  value += step;
-  return *this;
-}
-
-_struct_iterator::_struct_iterator()
-{
-  member = NULL;
-}
-
-_struct_iterator::_struct_iterator(const struct _struct* s)
-{
-  member = s->member;
-}
-
-bool _struct_iterator::operator==(const _struct_iterator& that) const
-{
-  return this->member == that.member;
-}
-
-bool _struct_iterator::operator!=(const _struct_iterator& that) const
-{
-  return this->member != that.member;
-}
-
-const char* _struct_iterator::index() const
-{
-  return member->name;
-}
-
-struct value& _struct_iterator::operator*() const
-{
-  return member->value;
-}
-
-_struct_iterator& _struct_iterator::operator++()
-{
-  member++;
-  return *this;
-}
-
-_struct_iterator& _struct_iterator::operator+=(int step)
-{
-  member += step;
-  return *this;
-}
-
-params_iterator::params_iterator()
-{
-  start = param = NULL;
-}
-
-params_iterator::params_iterator(const struct params* s)
-{
-  start = param = s->param;
-}
-
-bool params_iterator::operator==(const params_iterator& that) const
-{
-  return this->param == that.param;
-}
-
-bool params_iterator::operator!=(const params_iterator& that) const
-{
-  return this->param != that.param;
-}
-
-int params_iterator::index() const
-{
-  return param - start;
-}
-
-struct value& params_iterator::operator*() const
-{
-  return param->value;
-}
-
-params_iterator& params_iterator::operator++()
-{
-  param++;
-  return *this;
-}
-
-params_iterator& params_iterator::operator+=(int step)
-{
-  param += step;
-  return *this;
-}
-
 static int size2k(int n)
 {
   int k = 2;
   while (k < n)
     k *= 2;
   return k;
+}
+
+value *new_value(struct soap *soap)
+{
+  value *v = soap_new_value(soap);
+  return init_value(soap, v);
+}
+
+value *init_value(struct soap *soap, value *v)
+{
+  soap_default_value(soap, v);
+  return v;
 }
 
 #ifdef JSON_NAMESPACE

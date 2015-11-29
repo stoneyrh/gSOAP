@@ -1245,7 +1245,9 @@ __wsdd__Bye(struct soap *soap, struct wsdd__ByeType *Bye)
 
 static int
 soap_wsdd_http(struct soap *soap, const char *endpoint, const char *host, int port, const char *path, const char *action, size_t count)
-{ return soap->fresponse(soap, SOAP_OK, count);
+{
+  (void)endpoint; (void)host; (void)port; (void)path; (void)action;
+  return soap->fresponse(soap, SOAP_OK, count);
 }
 
 /**
@@ -1558,6 +1560,7 @@ soap_wsdd_reset_AppSequence(struct soap *soap)
 static void
 soap_wsdd_delay(struct soap *soap)
 {
+  (void)soap;
   useconds_t delay = 1000*((unsigned int)soap_random % SOAP_WSDD_APP_MAX_DELAY);
   usleep(delay);
 }

@@ -150,19 +150,19 @@ int xs__schema::insert(xs__schema& schema)
   if (targetNamespace && (!schema.targetNamespace || strcmp(targetNamespace, schema.targetNamespace)))
   {
     if (!Wflag)
-      fprintf(stderr, "\nWarning: attempt to include schema with mismatching targetNamespace '%s' in schema '%s', assuming chameleon schema targetNamespace '%s'\n", schema.targetNamespace, targetNamespace, targetNamespace);
+      fprintf(stderr, "\nWarning: attempt to include schema '%s' with mismatching targetNamespace '%s' into schema namespace '%s', assuming chameleon schema targetNamespace '%s'\n", schema.sourceLocation() ? schema.sourceLocation() : "", schema.targetNamespace, targetNamespace, targetNamespace);
     schema.targetNamespace = targetNamespace;
   }
   if (elementFormDefault != schema.elementFormDefault)
   {
     if (!Wflag)
-      fprintf(stderr, "\nWarning: attempt to include schema with mismatching elementFormDefault in schema '%s'\n", targetNamespace ?targetNamespace : "(null)");
+      fprintf(stderr, "\nWarning: attempt to include schema '%s' with mismatching elementFormDefault into schema namespace '%s', assuming elementFormDefault '%squalified'\n", schema.sourceLocation() ? schema.sourceLocation() : "", targetNamespace ?targetNamespace : "(null)", elementFormDefault == qualified ? "" : "un");
     schema.elementFormDefault = elementFormDefault;
   }
   if (attributeFormDefault != schema.attributeFormDefault)
   {
     if (!Wflag)
-      fprintf(stderr, "\nWarning: attempt to include schema with mismatching attributeFormDefault in schema '%s'\n", targetNamespace ? targetNamespace : "(null)");
+      fprintf(stderr, "\nWarning: attempt to include schema '%s' with mismatching attributeFormDefault into schema namespace '%s', assuming attributeFormDefault '%squalified'\n", schema.sourceLocation() ? schema.sourceLocation() : "", targetNamespace ? targetNamespace : "(null)", attributeFormDefault == qualified ? "" : "un");
     schema.attributeFormDefault = attributeFormDefault;
   }
   // insert imports
@@ -202,7 +202,10 @@ int xs__schema::insert(xs__schema& schema)
       }
     }
     if (!found)
+    {
       attribute.push_back(*at);
+      attribute.back().schemaPtr(this);
+    }
   }
   // insert elements, but only add elements with new name (limited conflict check)
   for (vector<xs__element>::const_iterator el = schema.element.begin(); el != schema.element.end(); ++el)
@@ -223,7 +226,10 @@ int xs__schema::insert(xs__schema& schema)
       }
     }
     if (!found)
+    {
       element.push_back(*el);
+      element.back().schemaPtr(this);
+    }
   }
   // insert groups, but only add groups with new name (no conflict check)
   for (vector<xs__group>::const_iterator gp = schema.group.begin(); gp != schema.group.end(); ++gp)
@@ -241,7 +247,10 @@ int xs__schema::insert(xs__schema& schema)
       }
     }
     if (!found)
+    {
       group.push_back(*gp);
+      group.back().schemaPtr(this);
+    }
   }
   // insert attributeGroups, but only add attributeGroups with new name (no conflict check)
   for (vector<xs__attributeGroup>::const_iterator ag = schema.attributeGroup.begin(); ag != schema.attributeGroup.end(); ++ag)
@@ -259,7 +268,10 @@ int xs__schema::insert(xs__schema& schema)
       }
     }
     if (!found)
+    {
       attributeGroup.push_back(*ag);
+      attributeGroup.back().schemaPtr(this);
+    }
   }
   // insert simpleTypes, but only add simpleTypes with new name (no conflict check)
   for (vector<xs__simpleType>::const_iterator st = schema.simpleType.begin(); st != schema.simpleType.end(); ++st)
@@ -277,7 +289,10 @@ int xs__schema::insert(xs__schema& schema)
       }
     }
     if (!found)
+    {
       simpleType.push_back(*st);
+      simpleType.back().schemaPtr(this);
+    }
   }
   // insert complexTypes, but only add complexTypes with new name (no conflict check)
   for (vector<xs__complexType>::const_iterator ct = schema.complexType.begin(); ct != schema.complexType.end(); ++ct)
@@ -295,7 +310,10 @@ int xs__schema::insert(xs__schema& schema)
       }
     }
     if (!found)
+    {
       complexType.push_back(*ct);
+      complexType.back().schemaPtr(this);
+    }
   }
   return SOAP_OK;
 }
@@ -305,7 +323,7 @@ int xs__schema::traverse()
   if (updated)
     return SOAP_OK;
   if (vflag)
-    cerr << "  Analyzing schema '" << (targetNamespace ? targetNamespace : "(null)") << "'" << endl;
+    cerr << "  Analyzing schema '" << (targetNamespace ? targetNamespace : "(null)") << "' '" << (sourceLocation() ? sourceLocation() : "") << "'" << endl;
   updated = true;
   if (!targetNamespace)
   {
@@ -335,9 +353,13 @@ int xs__schema::traverse()
     if ((*st).name)
     {
       for (vector<xs__complexType>::iterator ct = complexType.begin(); ct != complexType.end(); ++ct)
+      {
         if ((*ct).name && !strcmp((*st).name, (*ct).name))
+	{
           if (!Wflag)
             fprintf(stderr, "\nWarning: top-level simpleType name and complexType name '%s' clash in schema '%s'\n", (*st).name, targetNamespace ? targetNamespace : "(null)");
+	}
+      }
     }
   }
   // process complexTypes
@@ -600,7 +622,7 @@ const SetOfString& xs__schema::builtinAttributes() const
 
 bool xs__schema::empty() const
 {
-  return include.empty() && redefine.empty() && override_.empty() && import.empty() && attribute.empty() && element.empty() && group.empty() && attributeGroup.empty() && simpleType.empty() && complexType.empty();
+  return include.empty() && redefine.empty() && override_.empty() && attribute.empty() && element.empty() && group.empty() && attributeGroup.empty() && simpleType.empty() && complexType.empty(); // empty except for <xs:import>
 }
 
 xs__include::xs__include()
@@ -617,11 +639,15 @@ int xs__include::preprocess(xs__schema &schema)
     static map<const char*, xs__schema*, ltstr> included;
     map<const char*, xs__schema*, ltstr>::iterator i = included.end();
     if (schema.targetNamespace)
+    {
       for (i = included.begin(); i != included.end(); ++i)
+      {
         if ((*i).second->targetNamespace
          && !strcmp(schemaLocation, (*i).first)
          && !strcmp(schema.targetNamespace, (*i).second->targetNamespace))
           break;
+      }
+    }
     if (i == included.end())
     {
       if (vflag)
@@ -1302,66 +1328,63 @@ int xs__element::traverse(xs__schema &schema)
       }
     }
   }
-  token = qname_token(substitutionGroup, schema.targetNamespace);
-  if (token)
+  if (!abstract && substitutionGroup)
   {
-    for (vector<xs__element>::iterator i = schema.element.begin(); i != schema.element.end(); ++i)
+    token = qname_token(substitutionGroup, schema.targetNamespace);
+    if (token)
     {
-      if (!abstract)
+      for (vector<xs__element>::iterator i = schema.element.begin(); i != schema.element.end(); ++i)
       {
-        if (!strcmp((*i).name, token))
-        {
-          xs__element *elt = this;
-          if (!elementPtr())
-          {
-            elt = soap_new_xs__element(schema.soap);
+	if (!strcmp((*i).name, token))
+	{
+	  xs__element *elt = this;
+	  if (!elementPtr())
+	  {
+	    elt = soap_new_xs__element(schema.soap);
 	    elt->soap_default(schema.soap);
-            elt->name = name;
-            elt->form = form;
-            elt->elementPtr(this); // create element ref in substitutionsGroup
-            elt->schemaPtr(schemaPtr());
+	    elt->name = name;
+	    elt->form = form;
+	    elt->elementPtr(this); // create element ref in substitutionsGroup
+	    elt->schemaPtr(schemaPtr());
 	    elt->targetNamespace = NULL;
-          }
-          (*i).substitutions.push_back(elt);
-          if (vflag)
-            cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for abstract element '" << (token ? token : "(null)") << "'" << endl;
-          break;
-        }
+	  }
+	  (*i).substitutions.push_back(elt);
+	  if (vflag)
+	    cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for element '" << (token ? token : "(null)") << "'" << endl;
+	  break;
+	}
       }
     }
-  }
-  for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
-  {
-    xs__schema *s = (*i).schemaPtr();
-    if (s)
+    for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
     {
-      token = qname_token(substitutionGroup, s->targetNamespace);
-      if (token)
+      xs__schema *s = (*i).schemaPtr();
+      if (s)
       {
-        for (vector<xs__element>::iterator j = s->element.begin(); j != s->element.end(); ++j)
-        {
-          if (!abstract)
-          {
-            if (!strcmp((*j).name, token))
-            {
-              xs__element *elt = this;
-              if (!elementPtr())
-              {
-        	elt = soap_new_xs__element(schema.soap);
+	token = qname_token(substitutionGroup, s->targetNamespace);
+	if (token)
+	{
+	  for (vector<xs__element>::iterator j = s->element.begin(); j != s->element.end(); ++j)
+	  {
+	    if (!strcmp((*j).name, token))
+	    {
+	      xs__element *elt = this;
+	      if (!elementPtr())
+	      {
+		elt = soap_new_xs__element(schema.soap);
 		elt->soap_default(schema.soap);
-                elt->name = name;
-                elt->form = form;
-        	elt->elementPtr(this); // create element ref in substitutionsGroup
-        	elt->schemaPtr(schemaPtr());
+		elt->name = name;
+		elt->form = form;
+		elt->elementPtr(this); // create element ref in substitutionsGroup
+		elt->schemaPtr(schemaPtr());
 		elt->targetNamespace = NULL;
-              }
-              (*j).substitutions.push_back(elt);
-              if (vflag)
-        	cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for abstract element '" << (token ? token : "(null)") << "'" << endl;
-              break;
-            }
-          }
-        }
+	      }
+	      (*j).substitutions.push_back(elt);
+	      if (vflag)
+		cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for element '" << (token ? token : "(null)") << "' in '" << s->targetNamespace << "'" << endl;
+	      break;
+	    }
+	  }
+	}
       }
     }
   }
