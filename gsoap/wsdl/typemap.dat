@@ -127,6 +127,8 @@
 #	mapping xsd:integer to string.
 #	Must compile and link custom/int128.c with the project.
 # xsd__integer = #import "custom/int128.h" | xsd__integer
+#	Or if the xsd:integer value range is bounded to int64_t, then:
+# xsd__integer = typedef int64_t xsd__integer;
 
 #	Uncomment the line below to use long double for xsd:decimal instead of
 #	mapping xsd:decimal to string.
@@ -134,6 +136,8 @@
 # xsd__decimal = #import "custom/long_double.h" | long double
 #	Or if your system supports __float128 then you can use:
 # xsd__decimal = #import "custom/float128.h" | xsd__decimal
+#	Or if the xsd:decimal value range is bounded to double, then:
+# xsd__decimal = typedef double xsd__decimal;
 
 #	Uncomment the line below to use struct tm instead of time_t xsd:dateTime
 #	Must compile and link custom/struct_tm.c with the project.

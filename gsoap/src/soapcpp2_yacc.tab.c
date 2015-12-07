@@ -4363,7 +4363,7 @@ yyreduce:
                             p = enter(enumtable, (yyvsp[(2) - (3)].sym));
                             p->info.typ = mkenum(0);
                           }
-                          p->info.typ->width = (yyvsp[(3) - (3)].i);
+                          p->info.typ->width = (int)(yyvsp[(3) - (3)].i);
                           (yyval.e) = p;
                         ;}
     break;
@@ -4384,7 +4384,7 @@ yyreduce:
                             p = enter(enumtable, (yyvsp[(2) - (3)].sym));
                             p->info.typ = mkenumsc(0);
                           }
-                          p->info.typ->width = (yyvsp[(3) - (3)].i);
+                          p->info.typ->width = (int)(yyvsp[(3) - (3)].i);
                           (yyvsp[(2) - (3)].sym)->token = TYPE;
                           (yyval.e) = p;
                         ;}
@@ -5075,12 +5075,12 @@ yyreduce:
 
   case 231:
 #line 2167 "soapcpp2_yacc.y"
-    { (yyval.r) = (yyvsp[(1) - (1)].i); ;}
+    { (yyval.r) = (double)(yyvsp[(1) - (1)].i); ;}
     break;
 
   case 232:
 #line 2168 "soapcpp2_yacc.y"
-    { (yyval.r) = (yyvsp[(1) - (1)].c); ;}
+    { (yyval.r) = (double)(yyvsp[(1) - (1)].c); ;}
     break;
 
   case 233:

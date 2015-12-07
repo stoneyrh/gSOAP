@@ -159,8 +159,26 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aa348b92d0343ec28a56542f2c47dc3aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">set/allocate size of array  <a href="#aa348b92d0343ec28a56542f2c47dc3aa"></a><br/></td></tr>
 <tr class="separator:aa348b92d0343ec28a56542f2c47dc3aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2db9152a4f86289696a72bd13e26e7b9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a2db9152a4f86289696a72bd13e26e7b9">size</a> () const </td></tr>
-<tr class="memdesc:a2db9152a4f86289696a72bd13e26e7b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">get array/struct size  <a href="#a2db9152a4f86289696a72bd13e26e7b9"></a><br/></td></tr>
+<tr class="memdesc:a2db9152a4f86289696a72bd13e26e7b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns array/struct size or 0  <a href="#a2db9152a4f86289696a72bd13e26e7b9"></a><br/></td></tr>
 <tr class="separator:a2db9152a4f86289696a72bd13e26e7b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae88d4b548e28edb9fc354be581d71093"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#ae88d4b548e28edb9fc354be581d71093">nth</a> (int) const </td></tr>
+<tr class="memdesc:ae88d4b548e28edb9fc354be581d71093"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns nth index if index is in bounds, &lt; 0 otherwise  <a href="#ae88d4b548e28edb9fc354be581d71093"></a><br/></td></tr>
+<tr class="separator:ae88d4b548e28edb9fc354be581d71093"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adaada4788f3503576b6796fb49f5ca33"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#adaada4788f3503576b6796fb49f5ca33">nth</a> (const char *) const </td></tr>
+<tr class="memdesc:adaada4788f3503576b6796fb49f5ca33"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns nth index of name in struct, &lt; 0 otherwise  <a href="#adaada4788f3503576b6796fb49f5ca33"></a><br/></td></tr>
+<tr class="separator:adaada4788f3503576b6796fb49f5ca33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae36554f425b6f2b0c750d1243db37e2c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#ae36554f425b6f2b0c750d1243db37e2c">nth</a> (const wchar_t *) const </td></tr>
+<tr class="memdesc:ae36554f425b6f2b0c750d1243db37e2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns nth index of name in struct, &lt; 0 otherwise  <a href="#ae36554f425b6f2b0c750d1243db37e2c"></a><br/></td></tr>
+<tr class="separator:ae36554f425b6f2b0c750d1243db37e2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77f964446b0b447c90835eeec6707187"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a77f964446b0b447c90835eeec6707187">has</a> (int) const </td></tr>
+<tr class="memdesc:a77f964446b0b447c90835eeec6707187"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if array index is in bounds  <a href="#a77f964446b0b447c90835eeec6707187"></a><br/></td></tr>
+<tr class="separator:a77f964446b0b447c90835eeec6707187"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bcb7bb92d38c460b8cb59def9ece106"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a1bcb7bb92d38c460b8cb59def9ece106">has</a> (const char *) const </td></tr>
+<tr class="memdesc:a1bcb7bb92d38c460b8cb59def9ece106"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if struct has name as a key  <a href="#a1bcb7bb92d38c460b8cb59def9ece106"></a><br/></td></tr>
+<tr class="separator:a1bcb7bb92d38c460b8cb59def9ece106"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d3606c146cf2c351b4faa66e6f5d9c7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a8d3606c146cf2c351b4faa66e6f5d9c7">has</a> (const wchar_t *) const </td></tr>
+<tr class="memdesc:a8d3606c146cf2c351b4faa66e6f5d9c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if struct has name as a key  <a href="#a8d3606c146cf2c351b4faa66e6f5d9c7"></a><br/></td></tr>
+<tr class="separator:a8d3606c146cf2c351b4faa66e6f5d9c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95f0f36dbb5dd05b3fb15a3006f4db36"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvalue.html#a95f0f36dbb5dd05b3fb15a3006f4db36">empty</a> () const </td></tr>
 <tr class="memdesc:a95f0f36dbb5dd05b3fb15a3006f4db36"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if empty array or struct  <a href="#a95f0f36dbb5dd05b3fb15a3006f4db36"></a><br/></td></tr>
 <tr class="separator:a95f0f36dbb5dd05b3fb15a3006f4db36"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -564,6 +582,60 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a77f964446b0b447c90835eeec6707187"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool value::has </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>true if array index is in bounds </p>
+
+</div>
+</div>
+<a class="anchor" id="a1bcb7bb92d38c460b8cb59def9ece106"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool value::has </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>true if struct has name as a key </p>
+
+</div>
+</div>
+<a class="anchor" id="a8d3606c146cf2c351b4faa66e6f5d9c7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool value::has </td>
+          <td>(</td>
+          <td class="paramtype">const wchar_t *&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>true if struct has name as a key </p>
+
+</div>
+</div>
 <a class="anchor" id="acd5f0cc9c8de4b5a245223e227ee6b7e"></a>
 <div class="memitem">
 <div class="memproto">
@@ -748,6 +820,60 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>true if value is boolean true </p>
+
+</div>
+</div>
+<a class="anchor" id="ae88d4b548e28edb9fc354be581d71093"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int value::nth </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>returns nth index if index is in bounds, &lt; 0 otherwise </p>
+
+</div>
+</div>
+<a class="anchor" id="adaada4788f3503576b6796fb49f5ca33"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int value::nth </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>returns nth index of name in struct, &lt; 0 otherwise </p>
+
+</div>
+</div>
+<a class="anchor" id="ae36554f425b6f2b0c750d1243db37e2c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int value::nth </td>
+          <td>(</td>
+          <td class="paramtype">const wchar_t *&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>returns nth index of name in struct, &lt; 0 otherwise </p>
 
 </div>
 </div>
@@ -1385,7 +1511,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>get array/struct size </p>
+<p>returns array/struct size or 0 </p>
 
 </div>
 </div>
@@ -1451,6 +1577,6 @@ Public Attributes</h2></td></tr>
 </ul>
 </div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Sun Nov 29 2015 11:17:28 for <a href="http://www.genivia.com">Genivia</a> documentation of XML-RPC &amp; JSON by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Sun Dec 6 2015 16:46:55 for <a href="http://www.genivia.com">Genivia</a> documentation of XML-RPC &amp; JSON by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

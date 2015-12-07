@@ -2354,11 +2354,13 @@ soap_wsse_verify_X509(struct soap *soap, X509 *cert)
     }
 #if (OPENSSL_VERSION_NUMBER > 0x00907000L)
     if (soap->crlfile)
-    { X509_LOOKUP *lookup;
-      if (!(lookup = X509_STORE_add_lookup(data->store, X509_LOOKUP_file())))
-        return soap_wsse_receiver_fault(soap, "soap_wsse_verify_X509", "Could not create X509_LOOKUP object");
-      if (X509_load_crl_file(lookup, soap->crlfile, X509_FILETYPE_PEM) != 1)
-        return soap_wsse_receiver_fault(soap, "soap_wsse_verify_X509", "Could not read the CRL file");
+    { if (*soap->crlfile)
+      { X509_LOOKUP *lookup;
+        if (!(lookup = X509_STORE_add_lookup(data->store, X509_LOOKUP_file())))
+          return soap_wsse_receiver_fault(soap, "soap_wsse_verify_X509", "Could not create X509_LOOKUP object");
+        if (X509_load_crl_file(lookup, soap->crlfile, X509_FILETYPE_PEM) != 1)
+          return soap_wsse_receiver_fault(soap, "soap_wsse_verify_X509", "Could not read the CRL file");
+      }
       X509_STORE_set_flags(data->store, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL);
     }
 #endif

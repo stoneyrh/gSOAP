@@ -148,8 +148,14 @@ Functions</h2></td></tr>
 <tr class="memitem:ada27892570331f334c2622e5b6d371e1"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#ada27892570331f334c2622e5b6d371e1">value_atw</a> (struct <a class="el" href="structvalue.html">value</a> *v, const wchar_t *s)</td></tr>
 <tr class="memdesc:ada27892570331f334c2622e5b6d371e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns pointer to member value of a struct, coerces v to struct if needed.  <a href="#ada27892570331f334c2622e5b6d371e1"></a><br/></td></tr>
 <tr class="separator:ada27892570331f334c2622e5b6d371e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7db7ce88557cc6ff24476ff924f3e2f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#ab7db7ce88557cc6ff24476ff924f3e2f">nth_at</a> (struct <a class="el" href="structvalue.html">value</a> *v, const char *s)</td></tr>
+<tr class="memdesc:ab7db7ce88557cc6ff24476ff924f3e2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns the nth index of a name in a struct, &lt; 0 otherwise.  <a href="#ab7db7ce88557cc6ff24476ff924f3e2f"></a><br/></td></tr>
+<tr class="separator:ab7db7ce88557cc6ff24476ff924f3e2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7e9e461f9ac2ee305a2149fce7cddee"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#aa7e9e461f9ac2ee305a2149fce7cddee">nth_atw</a> (struct <a class="el" href="structvalue.html">value</a> *v, const wchar_t *s)</td></tr>
+<tr class="memdesc:aa7e9e461f9ac2ee305a2149fce7cddee"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns the nth index of a name in a struct, &lt; 0 otherwise.  <a href="#aa7e9e461f9ac2ee305a2149fce7cddee"></a><br/></td></tr>
+<tr class="separator:aa7e9e461f9ac2ee305a2149fce7cddee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d1e5a8876f8fc0f27449180847de769"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structmember.html">member</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a9d1e5a8876f8fc0f27449180847de769">nth_member</a> (struct <a class="el" href="structvalue.html">value</a> *v, int n)</td></tr>
-<tr class="memdesc:a9d1e5a8876f8fc0f27449180847de769"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns pointer to n'th member (name and value) of a struct.  <a href="#a9d1e5a8876f8fc0f27449180847de769"></a><br/></td></tr>
+<tr class="memdesc:a9d1e5a8876f8fc0f27449180847de769"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns pointer to nth member (name and value) of a struct.  <a href="#a9d1e5a8876f8fc0f27449180847de769"></a><br/></td></tr>
 <tr class="separator:a9d1e5a8876f8fc0f27449180847de769"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4c5b08c29e341e61062389633c64743"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743">nth_value</a> (struct <a class="el" href="structvalue.html">value</a> *v, int n)</td></tr>
 <tr class="memdesc:ae4c5b08c29e341e61062389633c64743"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns pointer to array element value at index n, coerces v to array with value at n if needed.  <a href="#ae4c5b08c29e341e61062389633c64743"></a><br/></td></tr>
@@ -773,6 +779,62 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ab7db7ce88557cc6ff24476ff924f3e2f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int nth_at </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramname"><em>v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>s</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>C function returns the nth index of a name in a struct, &lt; 0 otherwise. </p>
+
+</div>
+</div>
+<a class="anchor" id="aa7e9e461f9ac2ee305a2149fce7cddee"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int nth_atw </td>
+          <td>(</td>
+          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramname"><em>v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const wchar_t *&#160;</td>
+          <td class="paramname"><em>s</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>C function returns the nth index of a name in a struct, &lt; 0 otherwise. </p>
+
+</div>
+</div>
 <a class="anchor" id="a9d1e5a8876f8fc0f27449180847de769"></a>
 <div class="memitem">
 <div class="memproto">
@@ -805,7 +867,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>C function returns pointer to n'th member (name and value) of a struct. </p>
+<p>C function returns pointer to nth member (name and value) of a struct. </p>
 
 </div>
 </div>
@@ -973,6 +1035,6 @@ Functions</h2></td></tr>
 </div>
 </div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Sun Nov 29 2015 11:17:28 for <a href="http://www.genivia.com">Genivia</a> documentation of XML-RPC &amp; JSON by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Sun Dec 6 2015 16:46:55 for <a href="http://www.genivia.com">Genivia</a> documentation of XML-RPC &amp; JSON by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

@@ -3535,6 +3535,9 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
   }
   t = uname(URI);
   s = strstr(t, "__union");
+#if 0  // Alternative name for choice selector (old style):
+  r = aname(NULL, NULL, name);
+#else
   if (s)
     r = s + 7;
   if (!r || !*r)
@@ -3550,6 +3553,7 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
       s = t;
     }
   }
+#endif
   if (max && strcmp(max, "1"))
   {
     if (with_union)
@@ -3821,7 +3825,7 @@ void Types::gen_substitutions(const char *URI, const xs__element& element)
 {
   const std::vector<xs__element*> *substitutions;
   const char *name;
-  const char *r = NULL, *s = NULL;
+  const char *r = NULL, *s = NULL, *t = NULL;
   bool use_union = !uflag;
   bool wrap_union = false;
   bool tmp_union;
@@ -3853,38 +3857,37 @@ void Types::gen_substitutions(const char *URI, const xs__element& element)
   for (std::vector<xs__element*>::const_iterator i1 = substitutions->begin(); i1 != substitutions->end(); ++i1)
     fprintf(stream, " <%s>", (*i1)->name);
   fprintf(stream, "\n");
+  t = uname(URI);
+  s = strstr(t, "__union");
+  r = aname(NULL, NULL, name);
+  if (element.maxOccurs && strcmp(element.maxOccurs, "1"))
+  {
+    if (with_union)
+    {
+      // Generate a wrapper when we need a union within a union
+      wrap_union = true;
+      fprintf(stream, "    struct __%s\n    {\n", t);
+    }
+    fprintf(stream, sizeformat, "int", r);
+    fprintf(stream, " %s", element.minOccurs ? element.minOccurs : "0");
+    if (is_integer(element.maxOccurs))
+      fprintf(stream, ":%s", element.maxOccurs);
+    fprintf(stream, ";\n");
+    if (cflag)
+      fprintf(stream, "    struct _%s\n    {\n", t);
+    else
+      fprintf(stream, "    class _%s\n    {\n", t);
+  }
   if (use_union)
   {
-    const char *t = uname(URI);
-    // TODO: could reuse the union instead of generating a new one each time!
-    s = strstr(t, "__union");
-    if (!s)
-      s = "__union";
-    r = aname(NULL, NULL, name);
-    if (element.maxOccurs && strcmp(element.maxOccurs, "1"))
-    {
-      if (with_union)
-      {
-        // Generate a wrapper when we need a union within a union
-        wrap_union = true;
-        fprintf(stream, "    struct __%s\n    {\n", t);
-      }
-      fprintf(stream, sizeformat, "int", r);
-      fprintf(stream, " %s", element.minOccurs ? element.minOccurs : "0");
-      if (is_integer(element.maxOccurs))
-        fprintf(stream, ":%s", element.maxOccurs);
-      fprintf(stream, ";\n");
-      if (cflag)
-        fprintf(stream, "    struct _%s\n    {\n", t);
-      else
-        fprintf(stream, "    class _%s\n    {\n", t);
-    }
     if (!with_union || wrap_union)
     {
       fprintf(stream, choiceformat, "int", r);
-      fprintf(stream, " %s", element.minOccurs ? element.minOccurs : "0");
+      if (element.minOccurs)
+        fprintf(stream, " %s", element.minOccurs);
       fprintf(stream, ";\t///< Union %s selector: set to SOAP_UNION_%s_<fieldname>%s\n", t, t, element.minOccurs && !strcmp(element.minOccurs, "0") ? " or 0 to omit" : "");
-      fprintf(stream, "/// Union for substitutionGroup=\"%s\".\n", name);
+      if (name)
+	fprintf(stream, "/// Union for substitutionGroup %s.\n", cname(NULL, URI, name));
       fprintf(stream, "    union %s\n    {\n", t);
     }
     tmp_union = with_union;
@@ -3904,23 +3907,22 @@ void Types::gen_substitutions(const char *URI, const xs__element& element)
     with_union = tmp_union;
     if (!with_union || wrap_union)
     {
-      fprintf(stream, elementformat, "}", s);
-      fprintf(stream, ";\n");
-    }
-    if (element.maxOccurs && strcmp(element.maxOccurs, "1"))
-    {
-      fprintf(stream, ";\n");
-      fprintf(stream, pointerformat, "}", s);
-      fprintf(stream, ";\n");
-    }
-    if (wrap_union)
-    {
-      fprintf(stream, elementformat, "}", s);
+      fprintf(stream, elementformat, "}", s[0] == '_' && s[1] == '_' ? s+2 : s);
       fprintf(stream, ";\n");
     }
   }
   else
     fake_union = tmp_union;
+  if (element.maxOccurs && strcmp(element.maxOccurs, "1"))
+  {
+    fprintf(stream, pointerformat, "}", s);
+    fprintf(stream, ";\n");
+  }
+  if (wrap_union)
+  {
+    fprintf(stream, elementformat, "}", s);
+    fprintf(stream, ";\n");
+  }
   fprintf(stream, "//  END OF SUBSTITUTIONS\n");
 }
 

@@ -1,33 +1,51 @@
 
-XML-RPC and JSON                                                     {#mainpage}
-================
+XML-RPC and JSON/JSONPath                                            {#mainpage}
+=========================
 
 [TOC]
 
 Introduction                                                            {#intro}
 ============
 
-XML-RPC is a simple messaging protocol.  XML-RPC is a generic, self-describing
-(and verbose) XML format to compose XML messages for platform-neutral data
-exchange.  XML-RPC defines a collection of frequently used XML types with common
-programming language equivalents.  XML-RPC does NOT provide a data binding to
-XML and does NOT support a validation mechanism to ensure that data content is
-validated against a data type or schema.  XML-RPC serialization proceeds by
-marshaling parameters in predefined XML elements for each data type.  XML-RPC
-has primitive types (bool, int, double, string, dateTime, base64) and two
-compound types (structs and arrays).
+XML-RPC predates JSON and shares the same goal to offer a simple data format
+for Web applications that interoperate via "remote procedure calls" (RPC) over
+"stateless" HTTP via HTTP POST.  Applications are not limited to RPC via HTTP
+POST.  Other REST methods can be used to manage the state of resources via URL
+references, allowing the storing of data (HTTP PUT), retrieval of data (HTTP
+GET), and removal of data (HTTP DELETE) from a resource.
 
-See <http://www.xmlrpc.com> to read more about XML-RPC.
+XML-RPC is a generic, self-describing (and very verbose) XML format to compose
+XML messages for platform-neutral data exchange.  XML-RPC defines a collection
+of frequently used XML types with common programming language equivalents.
+XML-RPC does NOT provide a data binding to XML and does NOT support a
+validation mechanism to ensure that data content is validated against a schema.
+XML-RPC serialization proceeds by marshaling parameters in predefined XML
+elements for each data type.  XML-RPC has primitive types (bool, int, double,
+string, dateTime, base64) and two compound types (structs and arrays).
+
+This document does not describe XML-RPC in detail.  For more details, please
+visit <http://www.xmlrpc.com>.
 
 JSON (JavaScript Object Notation) is an even simpler data format to support
 platform-neutral data interchange that is highly compatible across programming
-languages by restricting data organization to a set of five common types: bool,
-float, string, array, and object. 
+languages by restricting data representation to a set of five common types:
+bool, float, string, array, and object.  A JSON object is the same as an
+XML-RPC struct.  Only the syntax differs.  Both are composed of fieldname-value
+member pairs (i.e. both are hashmaps) and have no other special properties.
+(Which is in contrast to XML data as "objects" that are namespace scoped and
+may include `xsi:type` information to distinguish derived from base types, and
+may include id-ref data references, and other properties that make XML more
+suitable to achieve lossless C/C++ serialization.)
 
-See <http://www.json.org> to read more about JSON.
+This document does not describe JSON (and JSON RPC/REST) in detail.  For more
+details, please visit <http://www.json.org>.
+
+
+JSON/JSONPath and gSOAP                                               {#intro-1}
+-----------------------
 
 The gSOAP C++ JSON API is compact and lightweight.  It is straightforward to
-write JSON REST code:
+write JSON RPC and JSON REST code:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     #include "json.h"
@@ -42,43 +60,43 @@ write JSON REST code:
       cout << "Current time = " << response << endl;    // JSON response to cout
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To help you to quickly write C/C++ JSON API code, we included a simple code
-generator `jsoncpp`.  You can find the `jsoncpp` tool  with the JSON examples in
-`gsoap/samples/xml-rpc-json`.  The `jsoncpp` command auto-generates C or C++
-code from a JSON fragment.  The generated code creates a JSON node graph for
-this fragment, which can be further tweaked as necessary.  For example:
+To help you quickly develop C/C++ JSON code, we include a code generator
+`jsoncpp` with the gSOAP package (version 2.8.26 and up).  You can find the
+`jsoncpp` tool  with the JSON examples in `gsoap/samples/xml-rpc-json`.  The
+`jsoncpp` command auto-generates C or C++ code from a JSON fragment.  The
+generated code creates a JSON node graph for this fragment, which can be
+further tweaked as necessary.  For example:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     $ cat menu.json
-    {
-      "menu": {
-	"id": "file",
-	"value": "File",
-	"popup": {
-	  "menuitem": [
-	    {"value": "New", "onclick": "CreateNewDoc()"},
-	    {"value": "Open", "onclick": "OpenDoc()"},
-	    {"value": "Close", "onclick": "CloseDoc()"}
-	  ]
-	}
+    { "menu": {
+        "id": "file",
+        "value": "File",
+        "popup": {
+          "menuitem": [
+            {"value": "New", "onclick": "CreateNewDoc()"},
+            {"value": "Open", "onclick": "OpenDoc()"},
+            {"value": "Close", "onclick": "CloseDoc()"}
+          ]
+        }
       }
     }
-    $ jsoncpp menu.json
+    $ ./jsoncpp menu.json
     #include "json.h"
-    { // C++ code generated by jsoncpp from menu.json
-      soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
-      value v(ctx);
+    { /* Generated by jsoncpp menu.json */
+      struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+      ctx->double_format = "%lG";
 
-      v["menu"]["id"] = "file";
-      v["menu"]["value"] = "File";
-      v["menu"]["popup"]["menuitem"][0]["value"] = "New";
-      v["menu"]["popup"]["menuitem"][0]["onclick"] = "CreateNewDoc()";
-      v["menu"]["popup"]["menuitem"][1]["value"] = "Open";
-      v["menu"]["popup"]["menuitem"][1]["onclick"] = "OpenDoc()";
-      v["menu"]["popup"]["menuitem"][2]["value"] = "Close";
-      v["menu"]["popup"]["menuitem"][2]["onclick"] = "CloseDoc()";
-
-      std::cout << v;
+      value x(ctx);
+      x["menu"]["id"] = "file";
+      x["menu"]["value"] = "File";
+      x["menu"]["popup"]["menuitem"][0]["value"] = "New";
+      x["menu"]["popup"]["menuitem"][0]["onclick"] = "CreateNewDoc()";
+      x["menu"]["popup"]["menuitem"][1]["value"] = "Open";
+      x["menu"]["popup"]["menuitem"][1]["onclick"] = "OpenDoc()";
+      x["menu"]["popup"]["menuitem"][2]["value"] = "Close";
+      x["menu"]["popup"]["menuitem"][2]["onclick"] = "CloseDoc()";
+      std::cout << x << std::endl;
 
       soap_destroy(ctx);
       soap_end(ctx);
@@ -86,10 +104,442 @@ this fragment, which can be further tweaked as necessary.  For example:
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-With a few changes this code can also be used as a starting point to read JSON
-data stored in a node graph, for example after parsing a JSON document.  We
-will present in detail how you can create data, access data, send/recv data via
-REST, read/write data to files, streams, and string buffers.
+You can use `jsoncpp` option `-M` to narrow the generated code down to the
+essentials without the initialization and cleanup operations.  This makes it
+more suitable for use within your code base.
+
+You can also use the new `jsoncpp` option `-p` (gSOAP 2.8.27 and up) to
+generate efficient JSONPath query code.
+
+For example, let's write a JSONPath query to display the authors of books in a
+store.  We will read the JSON data from `std:cin` (option `-i`) and filter the
+authors with the query `$.store.book[*].author` to collect them in an array `y`
+of results with option `-y`.  We generate the code from the command line with
+`jsoncpp` as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    $ ./jsoncpp -i -M -p'$.store.book[*].author' -y
+    value x(ctx);
+    std::cin >> x;
+    // $.store.book[*].author
+    value y(ctx);
+    #define QUERY_YIELD(v) y[y.size()] = v
+    if (x.has("store"))
+    {
+      if (x["store"].has("book"))
+      {
+        value::iterator j = x["store"]["book"].begin();
+        value::iterator k = x["store"]["book"].end();
+        for (value::iterator i = j; i != k; ++i)
+        {
+          if ((*i).has("author"))
+          {
+            QUERY_YIELD((*i)["author"]);
+          }
+        }
+      }
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `jsoncpp` code generator aims to produce clean, high-quality and readable
+C and C++ code.  You can also embed C/C++ code in JSONPath queries to filter
+and select values based on your runtime data.
+
+We will present in detail how to use `jsoncpp` in the next section.  The
+remainder of this document explains how you can use the XML-RPC/JSON C and C++
+APIs create data, access data, send/recv data via REST, read/write data to
+files, streams, and string buffers.
+
+It should be stated that JSON as a data format is not a true-and-tested
+alternative to XML and XML schema.  XML data bindings provide a strongly typed
+interface to exchange validated data with RPC and REST.  However, XML can be
+more complex to provide strong guarantees for object polymorphism (base and
+derived classes), to accurately represent tree and graph structures, to include
+binary content natively with base64 (and mechanisms for streaming MIME/MTOM
+attachments), to support extensibility (to extend data types and to add new
+data types), and schema namespaces referenced by XML elements and attributes to
+avoid ambiguity.
+
+
+The jsoncpp command-line tool                                         {#jsoncpp}
+=============================
+
+The `jsoncpp` command produces high-quality readable source code.  The
+generated code can be readily used in your projects to populate JSON data and
+extract data with compiled JSONPath queries, thereby saving you substantial
+time and effort to write code.  You may not have to write any C or C++ code to
+manipulate JSON data with your application's code base by taking full advantage
+of this tool.
+
+The `jsoncpp` command-line tool generates C or C++ source code to populate a
+JSON node graph with the data given in a JSON file.  The command also has an
+option `-p` to generate efficient source code for JSONPath queries.  Even
+stand-alone JSONPath query filter applications can be auto-generated.
+
+
+Compiling the jsoncpp command                                       {#jsoncpp-1}
+-----------------------------
+
+You will find `jsoncpp` and the XML-RPC/JSON examples in the gSOAP package in
+`gsoap/samples/xml-rpc-json`.
+
+To build `jsoncpp`, [install gSOAP](www.genivia.com/downloads.html) and build
+all sample codes as follows:
+
+    ./configure --enable-samples
+    make
+    make install
+
+This builds the command-line tool `jsoncpp` in `gsoap/samples/xml-rpc-json`
+from where you can use it and/or copy it for use with your projects.
+
+If you do not have the samples built, you can use `soapcpp2` (or `soapcpp2.exe`
+in `gsoap/bin/win32`) from the command line to generate the C++ code required
+by `jsoncpp` and also required by the C++ JSON API components:
+
+    cd gsoap/samples/xml-rpc-json
+    soapcpp2 -CSL xml-rpc.h
+    c++ -I../.. -o jsoncpp jsoncpp.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
+
+The above builds the `jsoncpp` command-line tool.
+
+
+Command-line options                                                {#jsoncpp-2}
+--------------------
+
+The `jsoncpp` command takes several options and an optional JSON input file:
+
+    jsoncpp [-c] [-e] [-f%fmt] [-h] [-i] [-m] [-M] [-O] [-ofile] [-ppath] [-rroot] [-xcode] [-y] [infile]
+
+| Option   | Description                                                       |
+| -------- | ----------------------------------------------------------------- |
+| `-c`     | generate C code instead of C++                                    |
+| `-e`     | add explanatory comments to the generated code                    |
+| `-f%%fmt`| use `%%fmt` to format double floats, e.g. `-f%%lg`                |
+| `-h`     | display help message                                              |
+| `-i`     | don't read JSON from stdin, generate code that reads JSON instead |
+| `-m`     | generate stand-alone code with `main()`                           |
+| `-M`     | generate minimal code unadorned with initialization and cleanup   |
+| `-O`     | optimize code by factoring common indices                         |
+| `-ofile` | save source code to `file`                                        |
+| `-ppath` | generate JSONPath query code for `path`                           |
+| `-rroot` | use `root` instead of root value `x` in the generated code        |
+| `-xcode` | generate code that executes `code` for each JSONPath query result |
+| `-y`     | generate code that yields an array `y` of JSONPath query results  |
+| `infile` | JSON file to parse                                                |
+
+The `jsoncpp` command expects a JSON input file or it will read JSON data from
+standard input unless option `-i` is used.  With option `-i`, the generated
+source code includes commands to read JSON data from standard input.  This is
+useful to generate code that filters JSON data from input with the JSONPath
+query given with option `-p`.  Otherwise, the generated code simply builds a
+node graph in code for the specified JSON input data.
+
+The `jsoncpp` command emits source code to standard output or to the file
+specified with option `-o`.
+
+Minimalist code is generated with option `-M`, which is useful to automate
+pasting of the unadorned source code into the source code of your project.
+
+Optimized code is generated with option `-O` by factoring common array indices
+and object field names.  This produces more elaborate code that is more
+efficient but may be harder to read and modify.
+
+The default name of the root value in the generated source code is `x`.  To
+change this name use option `-r`.  Do not use the name `v`, which represents
+the current value.  Other variable names to avoid are `i`, `j`, `k`, `p`, `q`,
+`r`, `s`, and `S`, since these are internally used by the generated JSONPath
+query code.
+
+Options `-p` and `-x` specify a JSONPath query path and the code to execute for
+each query result, respectively.  The default action in the generated code is
+to print each query value in JSON format.  Option `-y` yields a JSON array of
+query values that are incrementally collected.  Option `-x` overrides option
+`-y`.
+
+To generate a stand-alone application use option `-m`.  This option is useful
+for testing JSONPath query filters with option `-p`, possibly combined with
+option `-i` to let the JSONPath filter application read from standard input.
+
+Option `-f%fmt` sets the floating point double precision format to use in the
+generated code.  By default, `jsoncpp` emits floating point numbers with up to
+17 digit mantissas to preserve precision.  Use `-f%lG` for the smallest
+floating point representation.
+
+Use option `-c` to generate C code instead of C++ and add explanatory comments
+to the generated code using option `-e`.
+
+
+JSONPath syntax                                                     {#jsoncpp-3}
+---------------
+
+We use the JSONPath syntax of [Goessner](http://goessner.net/articles/JsonPath)
+extended with `?` ("where") and `!` ("where not") operators.  We also support
+the `[?(expr)]` and `[(expr)]` constructs to insert your own C/C++ expressions
+for filtering and selection of nodes in your JSONPath queries.
+
+JSON data structures are represented internally as a node graph consisting of
+atomic values (null, bool, int/double, string), arrays, and "objects" that are
+structs with fieldname-value pairs.  A JSONPath expression specifies a JSON
+data query, typically starting from the root node, and descending deeper into
+the node graph to match child nodes.
+
+For example, suppose we have a `store` object with a `book` array.  Each `book`
+object has a `title` string (and some other properties we will ignore for now).
+The following JSONPath query returns the titles of all books in the store:
+
+    $.store.book[*].title
+
+We can also write the same query in bracket notation:
+
+    $["store"]["book"][*]["title"]
+
+Note that the syntax of this query has a close similarity to the C++ JSON API
+for accessing field names and array elements.
+
+Basically, a JSONPath expression is a sequence of operations to match nodes:
+
+| Operator      | Nodes matched and returned                                   |
+| ------------- | ------------------------------------------------------------ |
+| `$`           | the root node of the node graph                              |
+| `.f` or `[f]` | child node at field named `f` of the current object node     |
+| `[n]`         | nth node of the current array node, if indexed within bounds |
+| `[b:e:s]`     | array slice of the current array node                        |
+| `[x,y]`       | child nodes matching `x` or `y` (fields, indices and slices) |
+| `*`           | "wildcard": any child node of the current object/array node  |
+| `..`          | "recurse": any matching descendant nodes of the current node |
+| `?`           | "where": current node if the rest of the query path matches  |
+| `!`           | "where not": the complement of `?`                           |
+| `[(e)]`       | evaluate C/C++ expression `e` to match a field or an index   |
+| `[?(e)]`      | evaluate C/C++ expression `e`, continue matching when true   |
+
+Field names (`f` in the table) in JSON and in JSONPath queries may contain
+UTF-8 Unicode characters.  
+
+Other JSONPath implementations require quotes for field names in brackets, as
+in `['store']` or `["store"]`.  In this implementation you will only need to
+add quotes when field names contain control characters, spaces, or punctuation,
+such as the field name `'unit-price'`.  To promote orthogonality of the
+JSONPath syntax (no arbitrary rules and exceptions), quoted field names are
+also valid in dot notation in this JSONPath implementation.
+
+
+JSONPath by example                                                 {#jsoncpp-4}
+-------------------
+
+A JSONPath query expression uses dot or bracket operators to match JSON data
+located at increasingly deeper levels of the data structure.
+
+Consider the following JSON data:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.json}
+    {
+      "store": {
+        "book": [ 
+          {
+            "category": "reference",
+            "author": "Nigel Rees",
+            "title": "Sayings of the Century",
+            "price": 8.95
+          },
+          {
+            "category": "fiction",
+            "author": "Evelyn Waugh",
+            "title": "Sword of Honour",
+            "price": 12.99
+          },
+          {
+            "category": "fiction",
+            "author": "Herman Melville",
+            "title": "Moby Dick",
+            "isbn": "0-553-21311-3",
+            "price": 8.99
+          },
+          {
+            "category": "fiction",
+            "author": "J. R. R. Tolkien",
+            "title": "The Lord of the Rings",
+            "isbn": "0-395-19395-8",
+            "price": 22.99
+          }
+        ],
+        "bicycle": {
+          "color": "red",
+          "price": 19.95
+        }
+      }
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To match the `title` of the first book (`book[0]`) in a `store`, starting at
+the root node indicated by `$`, we use the following JSONPath query expression:
+
+    $.store.book[0].title
+
+This query returns `"Sayings of the Century"` when applied to the JSON data.
+
+To try the JSONPath examples yourself, we suggest to create a `store.json` file
+with the above JSON data and run `jsoncpp` from the command line to compile a
+JSONPath query as follows:
+
+    ./jsoncpp -i -o test-json.cpp -m -p'$.store.book[0].title'
+    c++ -I../.. -o test-json test-json.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
+    ./test-json < store.json
+
+The compiled JSONPath query is applied to the `store.json` data and returns the
+matching values found.  Use `jsoncpp` option `-y` to return matches in a JSON
+array.  The `soapC.cpp` file is generated with the command `soapcpp2 -CSL
+xml-rpc.h`, which is done just once for all C++ JSON applications.
+
+To match any field of an object or any array element, we use a wildcard `*`:
+
+    $.store.*.price
+
+This matches and returns the bicycle price `19.95`, but not the book prices
+that are located one level deeper in the array of books, which can be matched
+with:
+
+    $.store.*.*.price
+
+This returns `8.95`, `12.99`, `8.99`, and `22.99`.
+
+In the latter case we only get the book prices, because the first `*` matches
+`book` and `bicycle` and the second `*` matches the book array and the `red`
+and `price` fields.  Only the book prices are returned, because `red` and
+`price` are atomic and have no `price` child node.
+
+To match and return all prices in the store we use `..` called "recursive
+descent" or simply "recurse", as follows:
+
+    $..price
+
+Array elements are matched with brackets `[n]` where `n` is an array index.
+Negative indices can be used to access array elements from the end of an array,
+where -1 refers to the last element.  We can list the array elements to match
+with `[x,y]`, for example:
+
+    $.store.book[0,1,-1].title
+
+This matches and returns the titles of the first two books and the last.
+
+JSONPath queries do not modify the node graph searched.  So you do not need to
+worry about indices that are out of bounds or fields that are not part of an
+object.
+
+Arrays can also be sliced for matching from a starting index `b` until
+(excluding) an ending index `e` with `[b:e]`, where `b` and `e` values are
+optional.  When omitted, the slice runs from the start and/or from the end of
+the array.
+
+For example
+
+    $.store.book[:].title
+
+matches and returns the titles of all books in the store, and
+
+    $.store.book[:2].title
+
+matches and returns the first two books (at 0 and 1) in the store.
+
+We can use an optional step `s` to slice arrays with `[b:e:s]` and even reverse
+array element-by-element matching with a negative unit step:
+
+    $.store.book[::-1].title
+
+This matches and returns the titles of all books in reverse order.
+
+The following JSONPath queries return the same results, where we used slices
+and `[x,y]` to match multiple array entries:
+
+    $.store.book[1:3].title
+    $.store.book[1:-1].title
+    $.store.book[-3:-1].title
+    $.store.book[1,2].title
+    $.store.book[-3,-2].title
+
+Basically, JSONPath array slices in our implementation follow the intuitive
+Python array slice syntax and meaning.  Beware that many other JSONPath
+implementations do not implement the step parameter consistently or do not
+support stepping.
+
+Note that `[:]` is not the same as `[*]` because `[:]` only matches arrays.
+
+A conditional JSONPath expression contains a `?` ("where") operator.  The
+operator returns the results that match the left side of the `?` but only when
+the right-side matches:
+
+    $.store.book[:]?isbn
+
+This matches and returns only books that have an `isbn` field.
+
+The complement of the `?` ("where") operator is `!` ("where not"), which
+returns the results that match the left side of the `!` but only when the
+right-side does not match.
+
+More complex queries can be formulated by embedding C/C++ expressions in the
+query to filter `[?(e)]` and select `[(e)]` nodes.  For example:
+
+    $.store.book[:][?((double)v["price"] < 10.0)].title
+
+This filters books with prices lower than 10.0 and returns the title of each
+book found.
+
+Embedded C/C++ expressions can inspect the current JSONPath node value by
+accessing variable `v`, as is shown above.  Here we used `(double)v["price"]`
+to obtain the price of the current node for comparison.  The JSONPath root node
+value is `x`.  Instead of `x`, you can select another name with `jsoncpp`
+option `-r`.
+
+You can access variables and functions in embedded C/C++ expressions, but do
+not access or modify `i`, `j`, `k`, `p`, `q`, `r`, `s` and `S`, which are
+internally used by the generated JSONPath query code.
+
+@warning In this respect we should caution you about using C/C++ expressions
+that modify node values, since this may affect the query results in
+unpredictable ways.  In fact, `v["price"]` will add a price to any current node
+value `v` that has no `"price"` field!  To make field accesses safe we should
+first check if the field exists in the current node before we access it:
+
+    $.store.book[:][?((v.has("price") ? (double)v["price"] : 9999) < 10.0)].title
+
+@warning Guarding field accesses with `has()` is the only safe way to combine
+`..` with C/C++ filters, since we may visit all nodes in the graph, for example
+to find all prices < 10.0:
+
+    $..[?((v.has("price") ? (double)v["price"] : 9999) < 10.0)].price
+
+Object fields and array elements can be accessed in a JSONPath query with C/C++
+expressions that evaluate to string field names or to integers indices,
+respectively.  For example, we can use the string `argv[1]` of `main()` as a
+field name:
+
+    $.store.book[:][(argv[1])]
+
+This assumes that the command-line argument (`argv[1]`) of the application is a
+book field name.  Otherwise, no results are returned.
+
+After compiling the JSONPath query with
+
+    ./jsoncpp -i -o test-json.cpp -m -p'$.store.book[:][(argv[1])]'
+    c++ -I../.. -o test-json test-json.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
+
+we can obtain the book titles with:
+
+    ./test-json title < store.json
+
+You can use multiple C/C++ expressions in brackets and combine them with other
+field and array expressions separated by commas:
+
+    $.store.book[:][title,(argv[1])]
+
+This prints the title and the value of the field name given by the command-line
+argument, if there is a field that matches the given name.
+
+Finally, let's use the value of `argv` to filter products in the store by a given price:
+
+    ./jsoncpp -i -m -p'$.store..[?((v.has("price") ? (double)v["price"] : 9999) < strtod(argv[1], NULL))]'
+
+C/C++ expressions cannot be used as array slice bounds, which must be constant.
 
 
 C++ XML-RPC and JSON                                                      {#cpp}
@@ -245,46 +695,62 @@ When receiving a value in XML-RPC or JSON, we generally want to check its type
 to obtain its value.  To check the type of a value, we use `is_Type` methods:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    bool value::is_null();     // true if value is not set or assigned (JSON null)
-    bool value::is_int();      // true if value is a 32 or a 64 bit int
-    bool value::is_double();   // true if value is a 64 bit double floating point
-    bool value::is_string();   // true if value is a string or wide string
-    bool value::is_bool();     // true if value is a Boolean "true" or "false" value
-    bool value::is_true();     // true if value is Boolean "true"
-    bool value::is_false();    // true if value is Boolean "false"
-    bool value::is_array();    // true if array of values
-    bool value::is_struct();   // true if structure, a.k.a. a JSON object
-    bool value::is_dateTime(); // true if ISO 8601, always false for received JSON
-    bool value::is_base64();   // true if base64, always false for received JSON
+    bool value::is_null()     // true if value is not set or assigned (JSON null)
+    bool value::is_int()      // true if value is a 32 or a 64 bit int
+    bool value::is_double()   // true if value is a 64 bit double floating point
+    bool value::is_string()   // true if value is a string or wide string
+    bool value::is_bool()     // true if value is a Boolean "true" or "false" value
+    bool value::is_true()     // true if value is Boolean "true"
+    bool value::is_false()    // true if value is Boolean "false"
+    bool value::is_array()    // true if array of values
+    bool value::is_struct()   // true if structure, a.k.a. a JSON object
+    bool value::is_dateTime() // true if ISO 8601, always false for received JSON
+    bool value::is_base64()   // true if base64, always false for received JSON
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are three additional methods that can be used with arrays and structs:
+The following methods can be used to inspect arrays and structs (JSON objects):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    void value::size(int);     // reset array size or pre-allocate space
-    int value::size();         // returns array or struct size
-    bool value::empty();       // true if array or struct is empty
+    void value::size(int)                  // reset array size or pre-allocate space
+    int value::size()                      // returns array or struct size or 0
+    bool value::empty()                    // true if array or struct is empty
+    bool value::has(int)                   // true if index is within array bounds
+    bool value::has(const char*)           // true if struct has field
+    bool value::has(const wchar_t*)        // true if struct has field
+    int value::nth(int)                    // returns index >= 0 if index is in array bounds, < 0 otherwise
+    int value::nth(const char*)            // returns index >= 0 of field in struct, < 0 otherwise
+    int value::nth(const wchar_t*)         // returns index >= 0 of field in struct, < 0 otherwise
+    value& value::operator[int]            // returns value at index in array or struct
+    value& value::operator[const char*]    // returns value at field in struct
+    value& value::operator[const wchar_t*] // returns value at field in struct
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For example, let's take the value `v` that was assigned the array shown above.
 We have the following properties of this value:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    v.is_null() == false
-    v.is_array() == true
-    v.size() == 1
-    v[0].is_struct() == true
-    v[0]["name"].is_string() == true
-    v[0]["toys"].is_array() == true
-    v[0]["toys"].empty() == false
+    v.is_null() == false             // v is not null
+    v.is_array() == true             // v is an array
+    v.size() == 1                    // v has one element
+    v.has(1) == false                // v has no array element at index 1
+    v.nth(-1) == 0                   // v last element is at index 0
+    v[0].is_struct() == true         // v[0] is a struct
+    v[0].has("name") == true         // v[0] has field name "name"
+    v[0].nth("name") == 0            // v[0] has field name "name" at index 0
+    v[0][0].is_string() == true      // v[0][0] == v[0]["name"] is a string
+    v[0].has("toys") == true         // v[0] has field name "toys"
+    v[0]["toys"].is_array() == true  // v[0]["toys"] is an array
+    v[0]["toys"].empty() == false    // v[0]["toys"] is not empty
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When indexing XML-RPC structs (JSON objects) to access members and values, make
-sure to use existing member names only.  Otherwise, a new member is dynamically
-added to the structure to accomodate the new named member.  Also arrays are
-extended to accommodate the indexed array element.  A negative array index can
-be used to access elements offset from the end, with index -1 accessing the
-last value.
+When accessing structs (JSON objects) with field names, make sure to use
+existing member field names only.  A new member fieldname-value pair is
+dynamically added to the structure to accomodate the new entry for the field.
+
+Also arrays are extended to accommodate the indexed array element.  A negative
+index accesses elements from the array's end, with index -1 accessing the last
+value.  Also the `has` and `nth` methods take a negative index for bounds
+checking on arrays and will return `false` or negative, respectively.
 
 You may want to use iterators to extract data from structs and arrays (see
 further below).
@@ -315,7 +781,7 @@ To access base64 binary raw data of a value `v`, we use the following methods:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     _base64& base64 = v;
-    unsigned char *raw = base64.ptr();  // point to raw binary data
+    unsigned char *raw = base64.ptr();  // points to raw binary data
     int size = base64.size();           // that is of this size
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -344,7 +810,7 @@ the values in structs and arrays:
       for (value::iterator i = v.begin(); i != v.end(); ++i)
       {
         int index = i.index();              // index of element
-	const char *name = i.name();        // name() is nonempty for structs
+        const char *name = i.name();        // name() is nonempty for structs
         value& element = *i;
         ... // use index, name, and/or use/set the element value
       }
@@ -427,7 +893,7 @@ We should note that JSON REST does not require parameter types, for example:
 There are two additional methods to invoke on parameters:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    int params::size();         // get number of parameters
+    int params::size();         // returns number of parameters
     bool params::empty();       // true if no parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1011,6 +1477,58 @@ JSON format this is represented as:
      of 1 struct_/ |              |
     with 2 members_/______________/
 
+When receiving a value in XML-RPC or JSON, we generally want to check its type
+to obtain its value.  To check the type of a value, we use `is_Type` functions:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    is_null(v)     /* true if value is not set or assigned (JSON null) */
+    is_int(v)      /* true if value is a 32 or a 64 bit int */
+    is_double(v)   /* true if value is a 64 bit double floating point */
+    is_string(v)   /* true if value is a string */
+    is_bool(v)     /* true if value is a Boolean "true" or "false" value */
+    is_true(v)     /* true if value is Boolean "true" */
+    is_false(v)    /* true if value is Boolean "false" */
+    is_array(v)    /* true if array of values */
+    is_struct(v)   /* true if structure, a.k.a. a JSON object */
+    is_dateTime(v) /* true if ISO 8601, always false for received JSON */
+    is_base64(v)   /* true if base64, always false for received JSON */
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following functions can be used with arrays and structs (JSON objects):
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    int has_size(v)                            /* returns array or struct size or 0 */
+    struct value *nth_value(v, int)            /* returns nth value in array or struct */
+    struct value *value_at(v, const char*)     /* returns value at field in struct */
+    struct value *value_atw(v, const wchar_t*) /* returns value at field in struct */
+    int nth_at(v, const char*)                 /* returns nth index of field in struct or -1
+    int nth_atw(v, const wchar_t*)             /* returns nth index of field in struct or -1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When accessing structs (JSON objects) with `value_at`, make sure to use
+existing member field names only.  A new member fieldname-value pair is
+dynamically added to the structure to accomodate the new entry for the field.
+
+Also arrays are extended with `nth_value` to accommodate the indexed array
+element.
+
+A negative array index indexes elements from the end of the array, with index
+-1 accessing the array's last value.
+
+For example, let's take the value `v` that was assigned the array shown above.
+We have the following properties of this value:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    is_null(v) == false
+    is_array(v) == true
+    has_size(v) == 1
+    is_struct(nth_value(v, 0)) == true
+    nth_at(nth_value(v, 0), "name") == 0
+    is_string(value_at(nth_value(v, 0), "name")) == true
+    is_string(nth_value(value_at(nth_value(v, 0), "toys"), 0)) == true
+    is_string(nth_value(value_at(nth_value(v, 0), "toys"), 1)) == true
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Considering that the code verbosity quickly increases when accessing deeper
 levels of your structures, you are probably inclined to define your own macros
 to create and access deep data more conveniently, such as:
@@ -1026,49 +1544,6 @@ to create and access deep data more conveniently, such as:
     *nth_string_at_nth(v, 0, "toys", 0) = "ball";
     *nth_string_at_nth(v, 0, "toys", 1) = "furby";
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When receiving a value in XML-RPC or JSON, we generally want to check its type
-to obtain its value.  To check the type of a value, we use `is_Type` functions:
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
-    is_null(v);     /* true if value is not set or assigned (JSON null) */
-    is_int(v);      /* true if value is a 32 or a 64 bit int */
-    is_double(v);   /* true if value is a 64 bit double floating point */
-    is_string(v);   /* true if value is a string */
-    is_bool(v);     /* true if value is a Boolean "true" or "false" value */
-    is_true(v);     /* true if value is Boolean "true" */
-    is_false(v);    /* true if value is Boolean "false" */
-    is_array(v);    /* true if array of values */
-    is_struct(v);   /* true if structure, a.k.a. a JSON object */
-    is_dateTime(v); /* true if ISO 8601, always false for received JSON */
-    is_base64(v);   /* true if base64, always false for received JSON */
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-There is one additional function that can be used with arrays and structs:
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
-    has_size(v);    /* returns array or struct size or 0 if not array/struct */
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For example, let's take the value `v` that was assigned the array shown above.
-We have the following properties of this value:
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
-    is_null(v) == false
-    is_array(v) == true
-    has_size(v) == 1
-    is_struct(nth_value(v, 0)) == true
-    is_string(value_at(nth_value(v, 0), "name")) == true
-    is_string(nth_value(value_at(nth_value(v, 0), "toys"), 0)) == true
-    is_string(nth_value(value_at(nth_value(v, 0), "toys"), 1)) == true
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When indexing XML-RPC structs (JSON objects) to access members and values, make
-sure to use existing member names only.  Otherwise, a new member is dynamically
-added to the structure to accomodate the new named member.  Also arrays are
-extended to accommodate the indexed array element.  A negative array index can
-be used to access elements offset from the end, with index -1 accessing the
-last value.
 
 To iterate over array and struct values, we use a loop over `nth_value` and
 `nth_member` as follows:
@@ -1204,40 +1679,40 @@ The following example shows how to traverse the node graph to display a value:
     void display(struct value *v)
     {
       if (is_bool(v))
-	printf(is_true(v) ? "true" : "false");
+        printf(is_true(v) ? "true" : "false");
       else if (is_int(v))
-	printf("%lld", int_of(v));
+        printf("%lld", int_of(v));
       else if (is_double(v))
-	printf("%g", double_of(v));
+        printf("%lG", double_of(v));
       else if (is_string(v))
-	printf("\"%s\"", string_of(v));
+        printf("\"%s\"", string_of(v));
       else if (is_array(v))
       {
-	int i;
-	printf("[");
-	for (i = 0; i < has_size(v); i++)
-	{
-	  if (i) printf(",");
+        int i;
+        printf("[");
+        for (i = 0; i < has_size(v); i++)
+        {
+          if (i) printf(",");
           display(nth_value(v, i));
-	}
-	printf("]");
+        }
+        printf("]");
       }
       else if (is_struct(v))
       {
-	int i;
-	printf("{");
-	for (i = 0; i < has_size(v); i++)
-	{
-	  if (i) printf(",");
-	  printf("\"%s\": ", nth_member(v, i)->name);
+        int i;
+        printf("{");
+        for (i = 0; i < has_size(v); i++)
+        {
+          if (i) printf(",");
+          printf("\"%s\": ", nth_member(v, i)->name);
           display(&nth_member(v, i)->value);
-	}
-	printf("}");
+        }
+        printf("}");
       }
       else if (is_dateTime(v))
-	printf("\"%s\"", dateTime_of(v));
+        printf("\"%s\"", dateTime_of(v));
       else if (is_base64(v))
-	printf("(%d bytes of raw data at %p)", base64_of(v)->__size, base64_of(v)->__ptr);
+        printf("(%d bytes of raw data at %p)", base64_of(v)->__size, base64_of(v)->__ptr);
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1290,7 +1765,7 @@ converted to UTF-8.
 To force reading and writing JSON in ISO 8859-1 format, use the
 `SOAP_ENC_LATIN` flag to set the context.
 
-To read JSON from a string buffer, we suggest to use the gSOAP engine IO
+To read JSON from a string buffer, we suggest to use the gSOAP engine's IO
 `frecv` callback function as follows:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
@@ -1299,7 +1774,7 @@ To read JSON from a string buffer, we suggest to use the gSOAP engine IO
       const char *in = (char*)ctx->user;  /* get handle to input string */
       size_t n = strlen(in);
       if (n > len) /* if in[] is larger than buf[] len */
-	n = len;   /* then cap length at len */
+        n = len;   /* then cap length at len */
       memcpy(buf, in, n);
       in += n;
       ctx->user = (void*)in;  /* update the handle */
@@ -1325,14 +1800,14 @@ callback function as follows:
       size_t k = (n + len + 1)/BUFFER_INCREMENT;
       if (!out)  /* first time around? */
       {
-	out = malloc((k + 1) * BUFFER_INCREMENT);
+        out = malloc((k + 1) * BUFFER_INCREMENT);
       }
       else if (n/BUFFER_INCREMENT < k)  /* need to increase buffer? */
       {
-	char *more = malloc((k + 1) * BUFFER_INCREMENT);
-	memcpy(more, out, n);
-	free(out);
-	out = more;
+        char *more = malloc((k + 1) * BUFFER_INCREMENT);
+        memcpy(more, out, n);
+        free(out);
+        out = more;
       }
       memcpy(out + n, buf, len);
       out[n + len] = '\0';
@@ -1485,7 +1960,7 @@ value as shown here for C++:
     {
       time_t tm;
       if (soap_s2dateTime(ctx, (const char*)v, &tm) == SOAP_OK)
-	... // success
+        ... // success
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 And for C:
@@ -1495,6 +1970,6 @@ And for C:
     {
       time_t tm;
       if (soap_s2dateTime(ctx, *string_of(v), &tm) == SOAP_OK)
-	... // success
+        ... // success
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

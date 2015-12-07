@@ -131,10 +131,11 @@ struct _struct
                         _struct(struct soap*, int);
   extern bool           empty() const;  ///< true if struct is empty
   int                   size() const;   ///< number of accessors in struct
-  struct value&         operator[](const char*);///< struct accessor index
-  struct value&         operator[](const wchar_t*);///< struct accessor index
-  _struct_iterator      begin() const;  ///< struct accessor iterator begin
-  _struct_iterator      end() const;    ///< struct accessor iterator end
+  struct value&         operator[](int);///< struct index (negative to get from end)
+  struct value&         operator[](const char*);///< struct accessor
+  struct value&         operator[](const wchar_t*);///< struct accessor
+  _struct_iterator      begin() const;  ///< struct iterator begin
+  _struct_iterator      end() const;    ///< struct iterator end
 
 // serializable content
  public:
@@ -164,7 +165,7 @@ struct _array
                         _array(struct soap*, int);
   extern bool           empty() const;  ///< true if array is empty
   int                   size() const;   ///< number of array elements
-  void                  size(int n);    ///< (re)set number of array elements
+  void                  size(int);      ///< (re)set number of array elements
   struct value&         operator[](int);///< array index (negative to get from end)
   _array_iterator       begin() const;  ///< array iterator begin
   _array_iterator       end() const;    ///< array iterator end
@@ -233,7 +234,13 @@ struct value
   time_t                operator=(time_t);
   struct _struct&       operator=(const struct _struct&);
   extern void           size(int);              ///< set/allocate size of array
-  extern int            size() const;           ///< get array/struct size
+  extern int            size() const;           ///< returns array/struct size or 0
+  extern int            nth(int) const;         ///< returns nth index if index is in bounds, < 0 otherwise
+  extern int            nth(const char*) const; ///< returns nth index of name in struct, < 0 otherwise
+  extern int            nth(const wchar_t*) const; ///< returns nth index of name in struct, < 0 otherwise
+  extern bool           has(int) const;         ///< true if array index is in bounds
+  extern bool           has(const char*) const; ///< true if struct has name as a key
+  extern bool           has(const wchar_t*) const; ///< true if struct has name as a key
   extern bool           empty() const;          ///< true if empty array or struct
   extern bool           is_array() const;       ///< true if value is array type
   extern bool           is_base64() const;      ///< true if value is base64 type
@@ -394,7 +401,13 @@ extern struct value *value_at(struct value *v, const char *s);
 /// C function returns pointer to member value of a struct, coerces v to struct if needed
 extern struct value *value_atw(struct value *v, const wchar_t *s);
 
-/// C function returns pointer to n'th member (name and value) of a struct
+/// C function returns the nth index of a name in a struct, < 0 otherwise
+extern int nth_at(struct value *v, const char *s);
+
+/// C function returns the nth index of a name in a struct, < 0 otherwise
+extern int nth_atw(struct value *v, const wchar_t *s);
+
+/// C function returns pointer to nth member (name and value) of a struct
 extern struct member *nth_member(struct value *v, int n);
 
 /// C function returns pointer to array element value at index n, coerces v to array with value at n if needed

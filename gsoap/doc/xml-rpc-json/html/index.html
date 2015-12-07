@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>Genivia - XML-RPC and JSON</title>
+<title>Genivia - XML-RPC and JSON/JSONPath</title>
 <link href="genivia_tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -34,11 +34,19 @@
 </div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">XML-RPC and JSON </div>  </div>
+<div class="title">XML-RPC and JSON/JSONPath </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#intro">Introduction                                                            </a></li>
+<ul><li class="level1"><a href="#intro">Introduction                                                            </a><ul><li class="level2"><a href="#intro-1">JSON/JSONPath and gSOAP                                               </a></li>
+</ul>
+</li>
+<li class="level1"><a href="#jsoncpp">The jsoncpp command-line tool                                         </a><ul><li class="level2"><a href="#jsoncpp-1">Compiling the jsoncpp command                                       </a></li>
+<li class="level2"><a href="#jsoncpp-2">Command-line options                                                </a></li>
+<li class="level2"><a href="#jsoncpp-3">JSONPath syntax                                                     </a></li>
+<li class="level2"><a href="#jsoncpp-4">JSONPath by example                                                 </a></li>
+</ul>
+</li>
 <li class="level1"><a href="#cpp">C++ XML-RPC and JSON                                                      </a><ul><li class="level2"><a href="#cpp-files">List of C++ files                                                  </a></li>
 <li class="level2"><a href="#cpp-ex">C++ XML-RPC and JSON with examples                                     </a></li>
 <li class="level2"><a href="#cpp-cl">C++ XML-RPC client example                                             </a></li>
@@ -65,11 +73,14 @@
 </div>
 <div class="textblock"><h1><a class="anchor" id="intro"></a>
 Introduction                                                            </h1>
-<p>XML-RPC is a simple messaging protocol. XML-RPC is a generic, self-describing (and verbose) XML format to compose XML messages for platform-neutral data exchange. XML-RPC defines a collection of frequently used XML types with common programming language equivalents. XML-RPC does NOT provide a data binding to XML and does NOT support a validation mechanism to ensure that data content is validated against a data type or schema. XML-RPC serialization proceeds by marshaling parameters in predefined XML elements for each data type. XML-RPC has primitive types (bool, int, double, string, dateTime, base64) and two compound types (structs and arrays).</p>
-<p>See <a href="http://www.xmlrpc.com">http://www.xmlrpc.com</a> to read more about XML-RPC.</p>
-<p>JSON (JavaScript Object Notation) is an even simpler data format to support platform-neutral data interchange that is highly compatible across programming languages by restricting data organization to a set of five common types: bool, float, string, array, and object.</p>
-<p>See <a href="http://www.json.org">http://www.json.org</a> to read more about JSON.</p>
-<p>The gSOAP C++ JSON API is compact and lightweight. It is straightforward to write JSON REST code:</p>
+<p>XML-RPC predates JSON and shares the same goal to offer a simple data format for Web applications that interoperate via "remote procedure calls" (RPC) over "stateless" HTTP via HTTP POST. Applications are not limited to RPC via HTTP POST. Other REST methods can be used to manage the state of resources via URL references, allowing the storing of data (HTTP PUT), retrieval of data (HTTP GET), and removal of data (HTTP DELETE) from a resource.</p>
+<p>XML-RPC is a generic, self-describing (and very verbose) XML format to compose XML messages for platform-neutral data exchange. XML-RPC defines a collection of frequently used XML types with common programming language equivalents. XML-RPC does NOT provide a data binding to XML and does NOT support a validation mechanism to ensure that data content is validated against a schema. XML-RPC serialization proceeds by marshaling parameters in predefined XML elements for each data type. XML-RPC has primitive types (bool, int, double, string, dateTime, base64) and two compound types (structs and arrays).</p>
+<p>This document does not describe XML-RPC in detail. For more details, please visit <a href="http://www.xmlrpc.com">http://www.xmlrpc.com</a>.</p>
+<p>JSON (JavaScript Object Notation) is an even simpler data format to support platform-neutral data interchange that is highly compatible across programming languages by restricting data representation to a set of five common types: bool, float, string, array, and object. A JSON object is the same as an XML-RPC struct. Only the syntax differs. Both are composed of fieldname-value member pairs (i.e. both are hashmaps) and have no other special properties. (Which is in contrast to XML data as "objects" that are namespace scoped and may include <code>xsi:type</code> information to distinguish derived from base types, and may include id-ref data references, and other properties that make XML more suitable to achieve lossless C/C++ serialization.)</p>
+<p>This document does not describe JSON (and JSON RPC/REST) in detail. For more details, please visit <a href="http://www.json.org">http://www.json.org</a>.</p>
+<h2><a class="anchor" id="intro-1"></a>
+JSON/JSONPath and gSOAP                                               </h2>
+<p>The gSOAP C++ JSON API is compact and lightweight. It is straightforward to write JSON RPC and JSON REST code:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="json_8h.html">json.h</a>&quot;</span></div>
 <div class="line">soap *ctx = soap_new1(SOAP_C_UTFSTRING);  <span class="comment">// set up context to manage memory</span></div>
 <div class="line"><a class="code" href="structvalue.html">value</a> request(ctx), response(ctx);</div>
@@ -80,10 +91,9 @@ Introduction                                                            </h1>
 <div class="line">      response)                           <span class="comment">// get response, if call is OK</span></div>
 <div class="line">   )</div>
 <div class="line">  cout &lt;&lt; <span class="stringliteral">&quot;Current time = &quot;</span> &lt;&lt; response &lt;&lt; endl;    <span class="comment">// JSON response to cout</span></div>
-</div><!-- fragment --><p>To help you to quickly write C/C++ JSON API code, we included a simple code generator <code>jsoncpp</code>. You can find the <code>jsoncpp</code> tool with the JSON examples in <code>gsoap/samples/xml-rpc-json</code>. The <code>jsoncpp</code> command auto-generates C or C++ code from a JSON fragment. The generated code creates a JSON node graph for this fragment, which can be further tweaked as necessary. For example:</p>
+</div><!-- fragment --><p>To help you quickly develop C/C++ JSON code, we include a code generator <code>jsoncpp</code> with the gSOAP package (version 2.8.26 and up). You can find the <code>jsoncpp</code> tool with the JSON examples in <code>gsoap/samples/xml-rpc-json</code>. The <code>jsoncpp</code> command auto-generates C or C++ code from a JSON fragment. The generated code creates a JSON node graph for this fragment, which can be further tweaked as necessary. For example:</p>
 <div class="fragment"><div class="line">$ cat menu.json</div>
-<div class="line">{</div>
-<div class="line">  <span class="stringliteral">&quot;menu&quot;</span>: {</div>
+<div class="line">{ <span class="stringliteral">&quot;menu&quot;</span>: {</div>
 <div class="line">    <span class="stringliteral">&quot;id&quot;</span>: <span class="stringliteral">&quot;file&quot;</span>,</div>
 <div class="line">    <span class="stringliteral">&quot;value&quot;</span>: <span class="stringliteral">&quot;File&quot;</span>,</div>
 <div class="line">    <span class="stringliteral">&quot;popup&quot;</span>: {</div>
@@ -95,28 +105,260 @@ Introduction                                                            </h1>
 <div class="line">    }</div>
 <div class="line">  }</div>
 <div class="line">}</div>
-<div class="line">$ jsoncpp menu.json</div>
+<div class="line">$ ./jsoncpp menu.json</div>
 <div class="line"><span class="preprocessor">#include &quot;<a class="code" href="json_8h.html">json.h</a>&quot;</span></div>
-<div class="line">{ <span class="comment">// C++ code generated by jsoncpp from menu.json</span></div>
-<div class="line">  soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);</div>
-<div class="line">  <a class="code" href="structvalue.html">value</a> v(ctx);</div>
+<div class="line">{ <span class="comment">/* Generated by jsoncpp menu.json */</span></div>
+<div class="line">  <span class="keyword">struct </span>soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);</div>
+<div class="line">  ctx-&gt;double_format = <span class="stringliteral">&quot;%lG&quot;</span>;</div>
 <div class="line"></div>
-<div class="line">  v[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;id&quot;</span>] = <span class="stringliteral">&quot;file&quot;</span>;</div>
-<div class="line">  v[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;value&quot;</span>] = <span class="stringliteral">&quot;File&quot;</span>;</div>
-<div class="line">  v[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;popup&quot;</span>][<span class="stringliteral">&quot;menuitem&quot;</span>][0][<span class="stringliteral">&quot;value&quot;</span>] = <span class="stringliteral">&quot;New&quot;</span>;</div>
-<div class="line">  v[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;popup&quot;</span>][<span class="stringliteral">&quot;menuitem&quot;</span>][0][<span class="stringliteral">&quot;onclick&quot;</span>] = <span class="stringliteral">&quot;CreateNewDoc()&quot;</span>;</div>
-<div class="line">  v[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;popup&quot;</span>][<span class="stringliteral">&quot;menuitem&quot;</span>][1][<span class="stringliteral">&quot;value&quot;</span>] = <span class="stringliteral">&quot;Open&quot;</span>;</div>
-<div class="line">  v[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;popup&quot;</span>][<span class="stringliteral">&quot;menuitem&quot;</span>][1][<span class="stringliteral">&quot;onclick&quot;</span>] = <span class="stringliteral">&quot;OpenDoc()&quot;</span>;</div>
-<div class="line">  v[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;popup&quot;</span>][<span class="stringliteral">&quot;menuitem&quot;</span>][2][<span class="stringliteral">&quot;value&quot;</span>] = <span class="stringliteral">&quot;Close&quot;</span>;</div>
-<div class="line">  v[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;popup&quot;</span>][<span class="stringliteral">&quot;menuitem&quot;</span>][2][<span class="stringliteral">&quot;onclick&quot;</span>] = <span class="stringliteral">&quot;CloseDoc()&quot;</span>;</div>
-<div class="line"></div>
-<div class="line">  std::cout &lt;&lt; v;</div>
+<div class="line">  <a class="code" href="structvalue.html">value</a> x(ctx);</div>
+<div class="line">  x[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;id&quot;</span>] = <span class="stringliteral">&quot;file&quot;</span>;</div>
+<div class="line">  x[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;value&quot;</span>] = <span class="stringliteral">&quot;File&quot;</span>;</div>
+<div class="line">  x[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;popup&quot;</span>][<span class="stringliteral">&quot;menuitem&quot;</span>][0][<span class="stringliteral">&quot;value&quot;</span>] = <span class="stringliteral">&quot;New&quot;</span>;</div>
+<div class="line">  x[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;popup&quot;</span>][<span class="stringliteral">&quot;menuitem&quot;</span>][0][<span class="stringliteral">&quot;onclick&quot;</span>] = <span class="stringliteral">&quot;CreateNewDoc()&quot;</span>;</div>
+<div class="line">  x[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;popup&quot;</span>][<span class="stringliteral">&quot;menuitem&quot;</span>][1][<span class="stringliteral">&quot;value&quot;</span>] = <span class="stringliteral">&quot;Open&quot;</span>;</div>
+<div class="line">  x[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;popup&quot;</span>][<span class="stringliteral">&quot;menuitem&quot;</span>][1][<span class="stringliteral">&quot;onclick&quot;</span>] = <span class="stringliteral">&quot;OpenDoc()&quot;</span>;</div>
+<div class="line">  x[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;popup&quot;</span>][<span class="stringliteral">&quot;menuitem&quot;</span>][2][<span class="stringliteral">&quot;value&quot;</span>] = <span class="stringliteral">&quot;Close&quot;</span>;</div>
+<div class="line">  x[<span class="stringliteral">&quot;menu&quot;</span>][<span class="stringliteral">&quot;popup&quot;</span>][<span class="stringliteral">&quot;menuitem&quot;</span>][2][<span class="stringliteral">&quot;onclick&quot;</span>] = <span class="stringliteral">&quot;CloseDoc()&quot;</span>;</div>
+<div class="line">  std::cout &lt;&lt; x &lt;&lt; std::endl;</div>
 <div class="line"></div>
 <div class="line">  soap_destroy(ctx);</div>
 <div class="line">  soap_end(ctx);</div>
 <div class="line">  soap_free(ctx);</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>With a few changes this code can also be used as a starting point to read JSON data stored in a node graph, for example after parsing a JSON document. We will present in detail how you can create data, access data, send/recv data via REST, read/write data to files, streams, and string buffers.</p>
+</div><!-- fragment --><p>You can use <code>jsoncpp</code> option <code>-M</code> to narrow the generated code down to the essentials without the initialization and cleanup operations. This makes it more suitable for use within your code base.</p>
+<p>You can also use the new <code>jsoncpp</code> option <code>-p</code> (gSOAP 2.8.27 and up) to generate efficient JSONPath query code.</p>
+<p>For example, let's write a JSONPath query to display the authors of books in a store. We will read the JSON data from <code>std:cin</code> (option <code>-i</code>) and filter the authors with the query <code>$.store.book[*].author</code> to collect them in an array <code>y</code> of results with option <code>-y</code>. We generate the code from the command line with <code>jsoncpp</code> as follows:</p>
+<div class="fragment"><div class="line">$ ./jsoncpp -i -M -p<span class="stringliteral">&#39;$.store.book[*].author&#39;</span> -y</div>
+<div class="line"><a class="code" href="structvalue.html">value</a> x(ctx);</div>
+<div class="line">std::cin &gt;&gt; x;</div>
+<div class="line"><span class="comment">// $.store.book[*].author</span></div>
+<div class="line"><a class="code" href="structvalue.html">value</a> y(ctx);</div>
+<div class="line"><span class="preprocessor">#define QUERY_YIELD(v) y[y.size()] = v</span></div>
+<div class="line"><span class="preprocessor"></span><span class="keywordflow">if</span> (x.has(<span class="stringliteral">&quot;store&quot;</span>))</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (x[<span class="stringliteral">&quot;store&quot;</span>].has(<span class="stringliteral">&quot;book&quot;</span>))</div>
+<div class="line">  {</div>
+<div class="line">    <a class="code" href="structvalue.html#aec762fde6750eaaed2cc1c835d38408a">value::iterator</a> j = x[<span class="stringliteral">&quot;store&quot;</span>][<span class="stringliteral">&quot;book&quot;</span>].begin();</div>
+<div class="line">    <a class="code" href="structvalue.html#aec762fde6750eaaed2cc1c835d38408a">value::iterator</a> k = x[<span class="stringliteral">&quot;store&quot;</span>][<span class="stringliteral">&quot;book&quot;</span>].end();</div>
+<div class="line">    <span class="keywordflow">for</span> (<a class="code" href="structvalue.html#aec762fde6750eaaed2cc1c835d38408a">value::iterator</a> i = j; i != k; ++i)</div>
+<div class="line">    {</div>
+<div class="line">      <span class="keywordflow">if</span> ((*i).has(<span class="stringliteral">&quot;author&quot;</span>))</div>
+<div class="line">      {</div>
+<div class="line">        QUERY_YIELD((*i)[<span class="stringliteral">&quot;author&quot;</span>]);</div>
+<div class="line">      }</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>The <code>jsoncpp</code> code generator aims to produce clean, high-quality and readable C and C++ code. You can also embed C/C++ code in JSONPath queries to filter and select values based on your runtime data.</p>
+<p>We will present in detail how to use <code>jsoncpp</code> in the next section. The remainder of this document explains how you can use the XML-RPC/JSON C and C++ APIs create data, access data, send/recv data via REST, read/write data to files, streams, and string buffers.</p>
+<p>It should be stated that JSON as a data format is not a true-and-tested alternative to XML and XML schema. XML data bindings provide a strongly typed interface to exchange validated data with RPC and REST. However, XML can be more complex to provide strong guarantees for object polymorphism (base and derived classes), to accurately represent tree and graph structures, to include binary content natively with base64 (and mechanisms for streaming MIME/MTOM attachments), to support extensibility (to extend data types and to add new data types), and schema namespaces referenced by XML elements and attributes to avoid ambiguity.</p>
+<h1><a class="anchor" id="jsoncpp"></a>
+The jsoncpp command-line tool                                         </h1>
+<p>The <code>jsoncpp</code> command produces high-quality readable source code. The generated code can be readily used in your projects to populate JSON data and extract data with compiled JSONPath queries, thereby saving you substantial time and effort to write code. You may not have to write any C or C++ code to manipulate JSON data with your application's code base by taking full advantage of this tool.</p>
+<p>The <code>jsoncpp</code> command-line tool generates C or C++ source code to populate a JSON node graph with the data given in a JSON file. The command also has an option <code>-p</code> to generate efficient source code for JSONPath queries. Even stand-alone JSONPath query filter applications can be auto-generated.</p>
+<h2><a class="anchor" id="jsoncpp-1"></a>
+Compiling the jsoncpp command                                       </h2>
+<p>You will find <code>jsoncpp</code> and the XML-RPC/JSON examples in the gSOAP package in <code>gsoap/samples/xml-rpc-json</code>.</p>
+<p>To build <code>jsoncpp</code>, <a href="www.genivia.com/downloads.html">install gSOAP</a> and build all sample codes as follows: </p>
+<pre class="fragment">./configure --enable-samples
+make
+make install
+</pre><p>This builds the command-line tool <code>jsoncpp</code> in <code>gsoap/samples/xml-rpc-json</code> from where you can use it and/or copy it for use with your projects.</p>
+<p>If you do not have the samples built, you can use <code>soapcpp2</code> (or <code>soapcpp2.exe</code> in <code>gsoap/bin/win32</code>) from the command line to generate the C++ code required by <code>jsoncpp</code> and also required by the C++ JSON API components: </p>
+<pre class="fragment">cd gsoap/samples/xml-rpc-json
+soapcpp2 -CSL xml-rpc.h
+c++ -I../.. -o jsoncpp jsoncpp.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
+</pre><p>The above builds the <code>jsoncpp</code> command-line tool.</p>
+<h2><a class="anchor" id="jsoncpp-2"></a>
+Command-line options                                                </h2>
+<p>The <code>jsoncpp</code> command takes several options and an optional JSON input file: </p>
+<pre class="fragment">jsoncpp [-c] [-e] [-f%fmt] [-h] [-i] [-m] [-M] [-O] [-ofile] [-ppath] [-rroot] [-xcode] [-y] [infile]
+</pre><table class="doxtable">
+<tr>
+<th>Option </th><th>Description </th></tr>
+<tr>
+<td><code>-c</code> </td><td>generate C code instead of C++ </td></tr>
+<tr>
+<td><code>-e</code> </td><td>add explanatory comments to the generated code </td></tr>
+<tr>
+<td><code>-f%fmt</code></td><td>use <code>%fmt</code> to format double floats, e.g. <code>-f%lg</code> </td></tr>
+<tr>
+<td><code>-h</code> </td><td>display help message </td></tr>
+<tr>
+<td><code>-i</code> </td><td>don't read JSON from stdin, generate code that reads JSON instead </td></tr>
+<tr>
+<td><code>-m</code> </td><td>generate stand-alone code with <code>main()</code> </td></tr>
+<tr>
+<td><code>-M</code> </td><td>generate minimal code unadorned with initialization and cleanup </td></tr>
+<tr>
+<td><code>-O</code> </td><td>optimize code by factoring common indices </td></tr>
+<tr>
+<td><code>-ofile</code> </td><td>save source code to <code>file</code> </td></tr>
+<tr>
+<td><code>-ppath</code> </td><td>generate JSONPath query code for <code>path</code> </td></tr>
+<tr>
+<td><code>-rroot</code> </td><td>use <code>root</code> instead of root value <code>x</code> in the generated code </td></tr>
+<tr>
+<td><code>-xcode</code> </td><td>generate code that executes <code>code</code> for each JSONPath query result </td></tr>
+<tr>
+<td><code>-y</code> </td><td>generate code that yields an array <code>y</code> of JSONPath query results </td></tr>
+<tr>
+<td><code>infile</code> </td><td>JSON file to parse </td></tr>
+</table>
+<p>The <code>jsoncpp</code> command expects a JSON input file or it will read JSON data from standard input unless option <code>-i</code> is used. With option <code>-i</code>, the generated source code includes commands to read JSON data from standard input. This is useful to generate code that filters JSON data from input with the JSONPath query given with option <code>-p</code>. Otherwise, the generated code simply builds a node graph in code for the specified JSON input data.</p>
+<p>The <code>jsoncpp</code> command emits source code to standard output or to the file specified with option <code>-o</code>.</p>
+<p>Minimalist code is generated with option <code>-M</code>, which is useful to automate pasting of the unadorned source code into the source code of your project.</p>
+<p>Optimized code is generated with option <code>-O</code> by factoring common array indices and object field names. This produces more elaborate code that is more efficient but may be harder to read and modify.</p>
+<p>The default name of the root value in the generated source code is <code>x</code>. To change this name use option <code>-r</code>. Do not use the name <code>v</code>, which represents the current value. Other variable names to avoid are <code>i</code>, <code>j</code>, <code>k</code>, <code>p</code>, <code>q</code>, <code>r</code>, <code>s</code>, and <code>S</code>, since these are internally used by the generated JSONPath query code.</p>
+<p>Options <code>-p</code> and <code>-x</code> specify a JSONPath query path and the code to execute for each query result, respectively. The default action in the generated code is to print each query value in JSON format. Option <code>-y</code> yields a JSON array of query values that are incrementally collected. Option <code>-x</code> overrides option <code>-y</code>.</p>
+<p>To generate a stand-alone application use option <code>-m</code>. This option is useful for testing JSONPath query filters with option <code>-p</code>, possibly combined with option <code>-i</code> to let the JSONPath filter application read from standard input.</p>
+<p>Option <code>-ffmt</code> sets the floating point double precision format to use in the generated code. By default, <code>jsoncpp</code> emits floating point numbers with up to 17 digit mantissas to preserve precision. Use <code>-flG</code> for the smallest floating point representation.</p>
+<p>Use option <code>-c</code> to generate C code instead of C++ and add explanatory comments to the generated code using option <code>-e</code>.</p>
+<h2><a class="anchor" id="jsoncpp-3"></a>
+JSONPath syntax                                                     </h2>
+<p>We use the JSONPath syntax of <a href="http://goessner.net/articles/JsonPath">Goessner</a> extended with <code>?</code> ("where") and <code>!</code> ("where not") operators. We also support the <code>[?(expr)]</code> and <code>[(expr)]</code> constructs to insert your own C/C++ expressions for filtering and selection of nodes in your JSONPath queries.</p>
+<p>JSON data structures are represented internally as a node graph consisting of atomic values (null, bool, int/double, string), arrays, and "objects" that are structs with fieldname-value pairs. A JSONPath expression specifies a JSON data query, typically starting from the root node, and descending deeper into the node graph to match child nodes.</p>
+<p>For example, suppose we have a <code>store</code> object with a <code>book</code> array. Each <code>book</code> object has a <code>title</code> string (and some other properties we will ignore for now). The following JSONPath query returns the titles of all books in the store: </p>
+<pre class="fragment">$.store.book[*].title
+</pre><p>We can also write the same query in bracket notation: </p>
+<pre class="fragment">$["store"]["book"][*]["title"]
+</pre><p>Note that the syntax of this query has a close similarity to the C++ JSON API for accessing field names and array elements.</p>
+<p>Basically, a JSONPath expression is a sequence of operations to match nodes:</p>
+<table class="doxtable">
+<tr>
+<th>Operator </th><th>Nodes matched and returned </th></tr>
+<tr>
+<td><code>$</code> </td><td>the root node of the node graph </td></tr>
+<tr>
+<td><code>.f</code> or <code>[f]</code> </td><td>child node at field named <code>f</code> of the current object node </td></tr>
+<tr>
+<td><code>[n]</code> </td><td>nth node of the current array node, if indexed within bounds </td></tr>
+<tr>
+<td><code>[b:e:s]</code> </td><td>array slice of the current array node </td></tr>
+<tr>
+<td><code>[x,y]</code> </td><td>child nodes matching <code>x</code> or <code>y</code> (fields, indices and slices) </td></tr>
+<tr>
+<td><code>*</code> </td><td>"wildcard": any child node of the current object/array node </td></tr>
+<tr>
+<td><code>..</code> </td><td>"recurse": any matching descendant nodes of the current node </td></tr>
+<tr>
+<td><code>?</code> </td><td>"where": current node if the rest of the query path matches </td></tr>
+<tr>
+<td><code>!</code> </td><td>"where not": the complement of <code>?</code> </td></tr>
+<tr>
+<td><code>[(e)]</code> </td><td>evaluate C/C++ expression <code>e</code> to match a field or an index </td></tr>
+<tr>
+<td><code>[?(e)]</code> </td><td>evaluate C/C++ expression <code>e</code>, continue matching when true </td></tr>
+</table>
+<p>Field names (<code>f</code> in the table) in JSON and in JSONPath queries may contain UTF-8 Unicode characters.</p>
+<p>Other JSONPath implementations require quotes for field names in brackets, as in `['store']<code>or</code>["store"]`. In this implementation you will only need to add quotes when field names contain control characters, spaces, or punctuation, such as the field name <code>'unit-price'</code>. To promote orthogonality of the JSONPath syntax (no arbitrary rules and exceptions), quoted field names are also valid in dot notation in this JSONPath implementation.</p>
+<h2><a class="anchor" id="jsoncpp-4"></a>
+JSONPath by example                                                 </h2>
+<p>A JSONPath query expression uses dot or bracket operators to match JSON data located at increasingly deeper levels of the data structure.</p>
+<p>Consider the following JSON data:</p>
+<div class="fragment"><div class="line">{</div>
+<div class="line">  <span class="stringliteral">&quot;store&quot;</span>: {</div>
+<div class="line">    <span class="stringliteral">&quot;book&quot;</span>: [ </div>
+<div class="line">      {</div>
+<div class="line">        <span class="stringliteral">&quot;category&quot;</span>: <span class="stringliteral">&quot;reference&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;author&quot;</span>: <span class="stringliteral">&quot;Nigel Rees&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;title&quot;</span>: <span class="stringliteral">&quot;Sayings of the Century&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;price&quot;</span>: 8.95</div>
+<div class="line">      },</div>
+<div class="line">      {</div>
+<div class="line">        <span class="stringliteral">&quot;category&quot;</span>: <span class="stringliteral">&quot;fiction&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;author&quot;</span>: <span class="stringliteral">&quot;Evelyn Waugh&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;title&quot;</span>: <span class="stringliteral">&quot;Sword of Honour&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;price&quot;</span>: 12.99</div>
+<div class="line">      },</div>
+<div class="line">      {</div>
+<div class="line">        <span class="stringliteral">&quot;category&quot;</span>: <span class="stringliteral">&quot;fiction&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;author&quot;</span>: <span class="stringliteral">&quot;Herman Melville&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;title&quot;</span>: <span class="stringliteral">&quot;Moby Dick&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;isbn&quot;</span>: <span class="stringliteral">&quot;0-553-21311-3&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;price&quot;</span>: 8.99</div>
+<div class="line">      },</div>
+<div class="line">      {</div>
+<div class="line">        <span class="stringliteral">&quot;category&quot;</span>: <span class="stringliteral">&quot;fiction&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;author&quot;</span>: <span class="stringliteral">&quot;J. R. R. Tolkien&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;title&quot;</span>: <span class="stringliteral">&quot;The Lord of the Rings&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;isbn&quot;</span>: <span class="stringliteral">&quot;0-395-19395-8&quot;</span>,</div>
+<div class="line">        <span class="stringliteral">&quot;price&quot;</span>: 22.99</div>
+<div class="line">      }</div>
+<div class="line">    ],</div>
+<div class="line">    <span class="stringliteral">&quot;bicycle&quot;</span>: {</div>
+<div class="line">      <span class="stringliteral">&quot;color&quot;</span>: <span class="stringliteral">&quot;red&quot;</span>,</div>
+<div class="line">      <span class="stringliteral">&quot;price&quot;</span>: 19.95</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>To match the <code>title</code> of the first book (<code>book[0]</code>) in a <code>store</code>, starting at the root node indicated by <code>$</code>, we use the following JSONPath query expression: </p>
+<pre class="fragment">$.store.book[0].title
+</pre><p>This query returns <code>"Sayings of the Century"</code> when applied to the JSON data.</p>
+<p>To try the JSONPath examples yourself, we suggest to create a <code>store.json</code> file with the above JSON data and run <code>jsoncpp</code> from the command line to compile a JSONPath query as follows: </p>
+<pre class="fragment">./jsoncpp -i -o test-json.cpp -m -p'$.store.book[0].title'
+c++ -I../.. -o test-json test-json.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
+./test-json &lt; store.json
+</pre><p>The compiled JSONPath query is applied to the <code>store.json</code> data and returns the matching values found. Use <code>jsoncpp</code> option <code>-y</code> to return matches in a JSON array. The <code>soapC.cpp</code> file is generated with the command <code>soapcpp2 -CSL <a class="el" href="xml-rpc_8h.html">xml-rpc.h</a></code>, which is done just once for all C++ JSON applications.</p>
+<p>To match any field of an object or any array element, we use a wildcard <code>*</code>: </p>
+<pre class="fragment">$.store.*.price
+</pre><p>This matches and returns the bicycle price <code>19.95</code>, but not the book prices that are located one level deeper in the array of books, which can be matched with: </p>
+<pre class="fragment">$.store.*.*.price
+</pre><p>This returns <code>8.95</code>, <code>12.99</code>, <code>8.99</code>, and <code>22.99</code>.</p>
+<p>In the latter case we only get the book prices, because the first <code>*</code> matches <code>book</code> and <code>bicycle</code> and the second <code>*</code> matches the book array and the <code>red</code> and <code>price</code> fields. Only the book prices are returned, because <code>red</code> and <code>price</code> are atomic and have no <code>price</code> child node.</p>
+<p>To match and return all prices in the store we use <code>..</code> called "recursive
+descent" or simply "recurse", as follows: </p>
+<pre class="fragment">$..price
+</pre><p>Array elements are matched with brackets <code>[n]</code> where <code>n</code> is an array index. Negative indices can be used to access array elements from the end of an array, where -1 refers to the last element. We can list the array elements to match with <code>[x,y]</code>, for example: </p>
+<pre class="fragment">$.store.book[0,1,-1].title
+</pre><p>This matches and returns the titles of the first two books and the last.</p>
+<p>JSONPath queries do not modify the node graph searched. So you do not need to worry about indices that are out of bounds or fields that are not part of an object.</p>
+<p>Arrays can also be sliced for matching from a starting index <code>b</code> until (excluding) an ending index <code>e</code> with <code>[b:e]</code>, where <code>b</code> and <code>e</code> values are optional. When omitted, the slice runs from the start and/or from the end of the array.</p>
+<p>For example </p>
+<pre class="fragment">$.store.book[:].title
+</pre><p>matches and returns the titles of all books in the store, and </p>
+<pre class="fragment">$.store.book[:2].title
+</pre><p>matches and returns the first two books (at 0 and 1) in the store.</p>
+<p>We can use an optional step <code>s</code> to slice arrays with <code>[b:e:s]</code> and even reverse array element-by-element matching with a negative unit step: </p>
+<pre class="fragment">$.store.book[::-1].title
+</pre><p>This matches and returns the titles of all books in reverse order.</p>
+<p>The following JSONPath queries return the same results, where we used slices and <code>[x,y]</code> to match multiple array entries: </p>
+<pre class="fragment">$.store.book[1:3].title
+$.store.book[1:-1].title
+$.store.book[-3:-1].title
+$.store.book[1,2].title
+$.store.book[-3,-2].title
+</pre><p>Basically, JSONPath array slices in our implementation follow the intuitive Python array slice syntax and meaning. Beware that many other JSONPath implementations do not implement the step parameter consistently or do not support stepping.</p>
+<p>Note that <code>[:]</code> is not the same as <code>[*]</code> because <code>[:]</code> only matches arrays.</p>
+<p>A conditional JSONPath expression contains a <code>?</code> ("where") operator. The operator returns the results that match the left side of the <code>?</code> but only when the right-side matches: </p>
+<pre class="fragment">$.store.book[:]?isbn
+</pre><p>This matches and returns only books that have an <code>isbn</code> field.</p>
+<p>The complement of the <code>?</code> ("where") operator is <code>!</code> ("where not"), which returns the results that match the left side of the <code>!</code> but only when the right-side does not match.</p>
+<p>More complex queries can be formulated by embedding C/C++ expressions in the query to filter <code>[?(e)]</code> and select <code>[(e)]</code> nodes. For example: </p>
+<pre class="fragment">$.store.book[:][?((double)v["price"] &lt; 10.0)].title
+</pre><p>This filters books with prices lower than 10.0 and returns the title of each book found.</p>
+<p>Embedded C/C++ expressions can inspect the current JSONPath node value by accessing variable <code>v</code>, as is shown above. Here we used <code>(double)v["price"]</code> to obtain the price of the current node for comparison. The JSONPath root node value is <code>x</code>. Instead of <code>x</code>, you can select another name with <code>jsoncpp</code> option <code>-r</code>.</p>
+<p>You can access variables and functions in embedded C/C++ expressions, but do not access or modify <code>i</code>, <code>j</code>, <code>k</code>, <code>p</code>, <code>q</code>, <code>r</code>, <code>s</code> and <code>S</code>, which are internally used by the generated JSONPath query code.</p>
+<dl class="section warning"><dt>Warning</dt><dd>In this respect we should caution you about using C/C++ expressions that modify node values, since this may affect the query results in unpredictable ways. In fact, <code>v["price"]</code> will add a price to any current node value <code>v</code> that has no <code>"price"</code> field! To make field accesses safe we should first check if the field exists in the current node before we access it: <pre class="fragment">$.store.book[:][?((v.has("price") ? (double)v["price"] : 9999) &lt; 10.0)].title
+</pre></dd>
+<dd>
+Guarding field accesses with <code>has()</code> is the only safe way to combine <code>..</code> with C/C++ filters, since we may visit all nodes in the graph, for example to find all prices &lt; 10.0: <pre class="fragment">$..[?((v.has("price") ? (double)v["price"] : 9999) &lt; 10.0)].price
+</pre></dd></dl>
+<p>Object fields and array elements can be accessed in a JSONPath query with C/C++ expressions that evaluate to string field names or to integers indices, respectively. For example, we can use the string <code>argv[1]</code> of <code>main()</code> as a field name: </p>
+<pre class="fragment">$.store.book[:][(argv[1])]
+</pre><p>This assumes that the command-line argument (<code>argv[1]</code>) of the application is a book field name. Otherwise, no results are returned.</p>
+<p>After compiling the JSONPath query with </p>
+<pre class="fragment">./jsoncpp -i -o test-json.cpp -m -p'$.store.book[:][(argv[1])]'
+c++ -I../.. -o test-json test-json.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
+</pre><p>we can obtain the book titles with: </p>
+<pre class="fragment">./test-json title &lt; store.json
+</pre><p>You can use multiple C/C++ expressions in brackets and combine them with other field and array expressions separated by commas: </p>
+<pre class="fragment">$.store.book[:][title,(argv[1])]
+</pre><p>This prints the title and the value of the field name given by the command-line argument, if there is a field that matches the given name.</p>
+<p>Finally, let's use the value of <code>argv</code> to filter products in the store by a given price: </p>
+<pre class="fragment">./jsoncpp -i -m -p'$.store..[?((v.has("price") ? (double)v["price"] : 9999) &lt; strtod(argv[1], NULL))]'
+</pre><p>C/C++ expressions cannot be used as array slice bounds, which must be constant.</p>
 <h1><a class="anchor" id="cpp"></a>
 C++ XML-RPC and JSON                                                      </h1>
 <p>XML-RPC and JSON data is interchangeable in this implementation, with the only exception that the dateTime and base64 types are handled as strings in JSON. Also, JSON's only numeric type is floating point. However, integers are handled just fine by this JSON implementation as 64 bit (<code>long long</code>, <code>int64_t</code>, <code>LONG64</code>) without conversion to/from double floating point values.</p>
@@ -205,30 +447,45 @@ C++ XML-RPC and JSON with examples                                     </h2>
  of 1 struct_/ |              |
 with 2 members_/______________/
 </pre><p>When receiving a value in XML-RPC or JSON, we generally want to check its type to obtain its value. To check the type of a value, we use <code>is_Type</code> methods:</p>
-<div class="fragment"><div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a98b46005862c3378fa0f514876ac6967" title="true if value is not set (JSON null)">value::is_null</a>();     <span class="comment">// true if value is not set or assigned (JSON null)</span></div>
-<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#ae437ba0822eeec4bc1860040036ce8d1" title="true if value is int type">value::is_int</a>();      <span class="comment">// true if value is a 32 or a 64 bit int</span></div>
-<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a689089dd0cb6ac9649dbe33dd31e8199" title="true if value is double type">value::is_double</a>();   <span class="comment">// true if value is a 64 bit double floating point</span></div>
-<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a9b7b0789dc59f7a50c009c487777c282" title="true if value is string type">value::is_string</a>();   <span class="comment">// true if value is a string or wide string</span></div>
-<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a2afd8b5e664abc2ade103843c319ac0a" title="true if value is boolean type">value::is_bool</a>();     <span class="comment">// true if value is a Boolean &quot;true&quot; or &quot;false&quot; value</span></div>
-<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a069d409dd697b189efdde36b5c61d195" title="true if value is boolean true">value::is_true</a>();     <span class="comment">// true if value is Boolean &quot;true&quot;</span></div>
-<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a9b5ddfed406b282aec258787a72bb590" title="true if value is boolean false">value::is_false</a>();    <span class="comment">// true if value is Boolean &quot;false&quot;</span></div>
-<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#acd5f0cc9c8de4b5a245223e227ee6b7e" title="true if value is array type">value::is_array</a>();    <span class="comment">// true if array of values</span></div>
-<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a3fbb0450e00e7c69726479ea7ca30371" title="true if value is struct type">value::is_struct</a>();   <span class="comment">// true if structure, a.k.a. a JSON object</span></div>
-<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a4d040ec372e86bee35041501dbfbb233" title="true if value is dateTime">value::is_dateTime</a>(); <span class="comment">// true if ISO 8601, always false for received JSON</span></div>
-<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a1ee990d7bdf48e528f61bc1a133df651" title="true if value is base64 type">value::is_base64</a>();   <span class="comment">// true if base64, always false for received JSON</span></div>
-</div><!-- fragment --><p>There are three additional methods that can be used with arrays and structs:</p>
-<div class="fragment"><div class="line"><span class="keywordtype">void</span> <a class="code" href="structvalue.html#a2db9152a4f86289696a72bd13e26e7b9" title="get array/struct size">value::size</a>(<span class="keywordtype">int</span>);     <span class="comment">// reset array size or pre-allocate space</span></div>
-<div class="line"><span class="keywordtype">int</span> <a class="code" href="structvalue.html#a2db9152a4f86289696a72bd13e26e7b9" title="get array/struct size">value::size</a>();         <span class="comment">// returns array or struct size</span></div>
-<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a95f0f36dbb5dd05b3fb15a3006f4db36" title="true if empty array or struct">value::empty</a>();       <span class="comment">// true if array or struct is empty</span></div>
+<div class="fragment"><div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html#a98b46005862c3378fa0f514876ac6967" title="true if value is not set (JSON null)">value::is_null</a>()     <span class="comment">// true if value is not set or assigned (JSON null)</span></div>
+<div class="line">bool <a class="code" href="structvalue.html">value</a>::<a class="code" href="xml-rpc_8h.html#ab980370d74096f35ed7c03d40da5421b" title="C function returns true if value is a 32 or a 64 bit int.">is_int</a>()      <span class="comment">// true if value is a 32 or a 64 bit int</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::<a class="code" href="xml-rpc_8h.html#a32e1cd6673d46971611235857eae95cf" title="C function returns true if value is a 64 bit double floating point.">is_double</a>()   <span class="comment">// true if value is a 64 bit double floating point</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::<a class="code" href="xml-rpc_8h.html#a392a88727e8a46e6819433b477d80857" title="C function returns true if value is a string.">is_string</a>()   <span class="comment">// true if value is a string or wide string</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::<a class="code" href="xml-rpc_8h.html#a37adccbe9ebace8142c5f9e3c5a932a9" title="C function returns true if value is a Boolean &quot;true&quot; or &quot;false&quot; value.">is_bool</a>()     <span class="comment">// true if value is a Boolean &quot;true&quot; or &quot;false&quot; value</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::<a class="code" href="xml-rpc_8h.html#a23a4e8658b6c3f54a8ea9fcd3bd73ba8" title="C function returns true if value is Boolean &quot;true&quot;.">is_true</a>()     <span class="comment">// true if value is Boolean &quot;true&quot;</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::<a class="code" href="xml-rpc_8h.html#a77c2471c5bfcb253a94f5662a8b22f76" title="C function returns true if value is Boolean &quot;false&quot;.">is_false</a>()    <span class="comment">// true if value is Boolean &quot;false&quot;</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::<a class="code" href="xml-rpc_8h.html#a71223486df0b4164e591da1a448b7b3a" title="C function returns true if array of values.">is_array</a>()    <span class="comment">// true if array of values</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::<a class="code" href="xml-rpc_8h.html#a351b9deda4402c39ab1ef288f483f703" title="C function returns true if structure, a.k.a. a JSON object.">is_struct</a>()   <span class="comment">// true if structure, a.k.a. a JSON object</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::<a class="code" href="xml-rpc_8h.html#ae5bad1d463d4d51f71e49b9b3e189168" title="C function returns true if ISO 8601, always false for received JSON.">is_dateTime</a>() <span class="comment">// true if ISO 8601, always false for received JSON</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::<a class="code" href="xml-rpc_8h.html#ab320f60f02810a8baa4f78a5576d3b15" title="C function returns true if base64, always false for received JSON.">is_base64</a>()   <span class="comment">// true if base64, always false for received JSON</span></div>
+</div><!-- fragment --><p>The following methods can be used to inspect arrays and structs (JSON objects):</p>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> <a class="code" href="structvalue.html#a2db9152a4f86289696a72bd13e26e7b9" title="returns array/struct size or 0">value::size</a>(<span class="keywordtype">int</span>)                  <span class="comment">// reset array size or pre-allocate space</span></div>
+<div class="line">int <a class="code" href="structvalue.html">value</a>::size()                      <span class="comment">// returns array or struct size or 0</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::empty()                    <span class="comment">// true if array or struct is empty</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::has(<span class="keywordtype">int</span>)                   <span class="comment">// true if index is within array bounds</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::has(const <span class="keywordtype">char</span>*)           <span class="comment">// true if struct has field</span></div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="structvalue.html">value</a>::has(const <span class="keywordtype">wchar_t</span>*)        <span class="comment">// true if struct has field</span></div>
+<div class="line"><span class="keywordtype">int</span> <a class="code" href="structvalue.html">value</a>::nth(<span class="keywordtype">int</span>)                    <span class="comment">// returns index &gt;= 0 if index is in array bounds, &lt; 0 otherwise</span></div>
+<div class="line"><span class="keywordtype">int</span> <a class="code" href="structvalue.html">value</a>::nth(const <span class="keywordtype">char</span>*)            <span class="comment">// returns index &gt;= 0 of field in struct, &lt; 0 otherwise</span></div>
+<div class="line"><span class="keywordtype">int</span> <a class="code" href="structvalue.html">value</a>::nth(const <span class="keywordtype">wchar_t</span>*)         <span class="comment">// returns index &gt;= 0 of field in struct, &lt; 0 otherwise</span></div>
+<div class="line"><a class="code" href="structvalue.html">value</a>&amp; <a class="code" href="structvalue.html">value</a>::operator[<span class="keywordtype">int</span>]            <span class="comment">// returns value at index in array or struct</span></div>
+<div class="line"><a class="code" href="structvalue.html">value</a>&amp; <a class="code" href="structvalue.html">value</a>::operator[const <span class="keywordtype">char</span>*]    <span class="comment">// returns value at field in struct</span></div>
+<div class="line"><a class="code" href="structvalue.html">value</a>&amp; <a class="code" href="structvalue.html">value</a>::operator[const <span class="keywordtype">wchar_t</span>*] <span class="comment">// returns value at field in struct</span></div>
 </div><!-- fragment --><p>For example, let's take the value <code>v</code> that was assigned the array shown above. We have the following properties of this value:</p>
-<div class="fragment"><div class="line">v.<a class="code" href="structvalue.html#a98b46005862c3378fa0f514876ac6967" title="true if value is not set (JSON null)">is_null</a>() == <span class="keyword">false</span></div>
-<div class="line">v.<a class="code" href="structvalue.html#acd5f0cc9c8de4b5a245223e227ee6b7e" title="true if value is array type">is_array</a>() == <span class="keyword">true</span></div>
-<div class="line">v.<a class="code" href="structvalue.html#aa348b92d0343ec28a56542f2c47dc3aa" title="set/allocate size of array">size</a>() == 1</div>
-<div class="line">v[0].<a class="code" href="structvalue.html#a3fbb0450e00e7c69726479ea7ca30371" title="true if value is struct type">is_struct</a>() == <span class="keyword">true</span></div>
-<div class="line">v[0][<span class="stringliteral">&quot;name&quot;</span>].<a class="code" href="structvalue.html#a9b7b0789dc59f7a50c009c487777c282" title="true if value is string type">is_string</a>() == <span class="keyword">true</span></div>
-<div class="line">v[0][<span class="stringliteral">&quot;toys&quot;</span>].<a class="code" href="structvalue.html#acd5f0cc9c8de4b5a245223e227ee6b7e" title="true if value is array type">is_array</a>() == <span class="keyword">true</span></div>
-<div class="line">v[0][<span class="stringliteral">&quot;toys&quot;</span>].<a class="code" href="structvalue.html#a95f0f36dbb5dd05b3fb15a3006f4db36" title="true if empty array or struct">empty</a>() == <span class="keyword">false</span></div>
-</div><!-- fragment --><p>When indexing XML-RPC structs (JSON objects) to access members and values, make sure to use existing member names only. Otherwise, a new member is dynamically added to the structure to accomodate the new named member. Also arrays are extended to accommodate the indexed array element. A negative array index can be used to access elements offset from the end, with index -1 accessing the last value.</p>
+<div class="fragment"><div class="line">v.<a class="code" href="structvalue.html#a98b46005862c3378fa0f514876ac6967" title="true if value is not set (JSON null)">is_null</a>() == <span class="keyword">false</span>             <span class="comment">// v is not null</span></div>
+<div class="line">v.<a class="code" href="structvalue.html#acd5f0cc9c8de4b5a245223e227ee6b7e" title="true if value is array type">is_array</a>() == <span class="keyword">true</span>             <span class="comment">// v is an array</span></div>
+<div class="line">v.<a class="code" href="structvalue.html#aa348b92d0343ec28a56542f2c47dc3aa" title="set/allocate size of array">size</a>() == 1                    <span class="comment">// v has one element</span></div>
+<div class="line">v.<a class="code" href="structvalue.html#a77f964446b0b447c90835eeec6707187" title="true if array index is in bounds">has</a>(1) == <span class="keyword">false</span>                <span class="comment">// v has no array element at index 1</span></div>
+<div class="line">v.<a class="code" href="structvalue.html#ae88d4b548e28edb9fc354be581d71093" title="returns nth index if index is in bounds, &lt; 0 otherwise">nth</a>(-1) == 0                   <span class="comment">// v last element is at index 0</span></div>
+<div class="line">v[0].<a class="code" href="structvalue.html#a3fbb0450e00e7c69726479ea7ca30371" title="true if value is struct type">is_struct</a>() == <span class="keyword">true</span>         <span class="comment">// v[0] is a struct</span></div>
+<div class="line">v[0].<a class="code" href="structvalue.html#a77f964446b0b447c90835eeec6707187" title="true if array index is in bounds">has</a>(<span class="stringliteral">&quot;name&quot;</span>) == <span class="keyword">true</span>         <span class="comment">// v[0] has field name &quot;name&quot;</span></div>
+<div class="line">v[0].<a class="code" href="structvalue.html#ae88d4b548e28edb9fc354be581d71093" title="returns nth index if index is in bounds, &lt; 0 otherwise">nth</a>(<span class="stringliteral">&quot;name&quot;</span>) == 0            <span class="comment">// v[0] has field name &quot;name&quot; at index 0</span></div>
+<div class="line">v[0][0].<a class="code" href="structvalue.html#a9b7b0789dc59f7a50c009c487777c282" title="true if value is string type">is_string</a>() == <span class="keyword">true</span>      <span class="comment">// v[0][0] == v[0][&quot;name&quot;] is a string</span></div>
+<div class="line">v[0].<a class="code" href="structvalue.html#a77f964446b0b447c90835eeec6707187" title="true if array index is in bounds">has</a>(<span class="stringliteral">&quot;toys&quot;</span>) == <span class="keyword">true</span>         <span class="comment">// v[0] has field name &quot;toys&quot;</span></div>
+<div class="line">v[0][<span class="stringliteral">&quot;toys&quot;</span>].<a class="code" href="structvalue.html#acd5f0cc9c8de4b5a245223e227ee6b7e" title="true if value is array type">is_array</a>() == <span class="keyword">true</span>  <span class="comment">// v[0][&quot;toys&quot;] is an array</span></div>
+<div class="line">v[0][<span class="stringliteral">&quot;toys&quot;</span>].<a class="code" href="structvalue.html#a95f0f36dbb5dd05b3fb15a3006f4db36" title="true if empty array or struct">empty</a>() == <span class="keyword">false</span>    <span class="comment">// v[0][&quot;toys&quot;] is not empty</span></div>
+</div><!-- fragment --><p>When accessing structs (JSON objects) with field names, make sure to use existing member field names only. A new member fieldname-value pair is dynamically added to the structure to accomodate the new entry for the field.</p>
+<p>Also arrays are extended to accommodate the indexed array element. A negative index accesses elements from the array's end, with index -1 accessing the last value. Also the <code>has</code> and <code>nth</code> methods take a negative index for bounds checking on arrays and will return <code>false</code> or negative, respectively.</p>
 <p>You may want to use iterators to extract data from structs and arrays (see further below).</p>
 <p>To extract atomic data we can use casts on a value <code>v</code> as follows:</p>
 <div class="fragment"><div class="line">(double)v                   <span class="comment">// 64 bit double or 0.0 if not numeric</span></div>
@@ -244,7 +501,7 @@ with 2 members_/______________/
 </div><!-- fragment --><p>It is valid to cast a primitive type to any of the other primitive types shown above and no runtime error will occur, although you may loose some information when an atomic value has no representation in the target type's value space. Casting a number to a string is fine, but casting a string to a number only gives a nonzero numeric value if the string is numeric. Casting a value to base64 produces its base64 encoding.</p>
 <p>To access base64 binary raw data of a value <code>v</code>, we use the following methods:</p>
 <div class="fragment"><div class="line"><a class="code" href="struct__base64.html" title="Represents the &lt;base64&gt; binary data element.">_base64</a>&amp; base64 = v;</div>
-<div class="line"><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *raw = base64.<a class="code" href="struct__base64.html#accb75dbcdaf316a692d92d42783ffcb8" title="pointer to data">ptr</a>();  <span class="comment">// point to raw binary data</span></div>
+<div class="line"><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *raw = base64.<a class="code" href="struct__base64.html#accb75dbcdaf316a692d92d42783ffcb8" title="pointer to data">ptr</a>();  <span class="comment">// points to raw binary data</span></div>
 <div class="line"><span class="keywordtype">int</span> size = base64.<a class="code" href="struct__base64.html#a89555bd2f9d977fd17bc2823bef10230" title="byte size of data">size</a>();           <span class="comment">// that is of this size</span></div>
 </div><!-- fragment --><p>Arrays and structs are compound types that cannot be cast to or from other types (but if you do cast, an empty array or struct is created an no runtime error will occur). So we should check for array and struct types to obtain their content. For example:</p>
 <div class="fragment"><div class="line"><span class="keywordflow">if</span> (v.<a class="code" href="structvalue.html#acd5f0cc9c8de4b5a245223e227ee6b7e" title="true if value is array type">is_array</a>())</div>
@@ -282,7 +539,7 @@ with 2 members_/______________/
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (v.<a class="code" href="structvalue.html#a3fbb0450e00e7c69726479ea7ca30371" title="true if value is struct type">is_struct</a>())</div>
 <div class="line">{</div>
 <div class="line">  <a class="code" href="struct__struct.html" title="Represents the &lt;struct&gt; record structure element.">_struct</a>&amp; rec = v;  <span class="comment">// cast to _struct</span></div>
-<div class="line">  <span class="keywordflow">for</span> (<a class="code" href="struct__struct.html#a88edf40f7bb954061eddc160b1105ff3">_struct::iterator</a> i = rec.<a class="code" href="struct__struct.html#affe3d3358649a2e72dcdd44bd0060ce8" title="struct accessor iterator begin">begin</a>(); i != rec.<a class="code" href="struct__struct.html#a927df1efbfb8f7aabb7417fc971d697e" title="struct accessor iterator end">end</a>(); ++i)</div>
+<div class="line">  <span class="keywordflow">for</span> (<a class="code" href="struct__struct.html#a88edf40f7bb954061eddc160b1105ff3">_struct::iterator</a> i = rec.<a class="code" href="struct__struct.html#affe3d3358649a2e72dcdd44bd0060ce8" title="struct iterator begin">begin</a>(); i != rec.<a class="code" href="struct__struct.html#a927df1efbfb8f7aabb7417fc971d697e" title="struct iterator end">end</a>(); ++i)</div>
 <div class="line">  {</div>
 <div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span> *member_name = i.name();</div>
 <div class="line">    <a class="code" href="structvalue.html">value</a>&amp; member_value = *i;</div>
@@ -316,7 +573,7 @@ with 2 members_/______________/
 <div class="line">  ... <span class="comment">// use response value</span></div>
 <div class="line">}</div>
 </div><!-- fragment --><p>There are two additional methods to invoke on parameters:</p>
-<div class="fragment"><div class="line"><span class="keywordtype">int</span> <a class="code" href="structparams.html#a6e150e3958d176f05bd6579d5d14836c" title="number of parameters">params::size</a>();         <span class="comment">// get number of parameters</span></div>
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> <a class="code" href="structparams.html#a6e150e3958d176f05bd6579d5d14836c" title="number of parameters">params::size</a>();         <span class="comment">// returns number of parameters</span></div>
 <div class="line"><span class="keywordtype">bool</span> <a class="code" href="structparams.html#af65f66c853166bc136578dffdde31316" title="true if no parameters">params::empty</a>();       <span class="comment">// true if no parameters</span></div>
 </div><!-- fragment --><p>All dynamically allocated memory that is internally used to store data is deallocated with:</p>
 <div class="fragment"><div class="line">soap_destroy(ctx);  <span class="comment">// delete all values</span></div>
@@ -701,7 +958,38 @@ C XML-RPC and JSON with examples                                         </h2>
   an array_/ | |              |
  of 1 struct_/ |              |
 with 2 members_/______________/
-</pre><p>Considering that the code verbosity quickly increases when accessing deeper levels of your structures, you are probably inclined to define your own macros to create and access deep data more conveniently, such as:</p>
+</pre><p>When receiving a value in XML-RPC or JSON, we generally want to check its type to obtain its value. To check the type of a value, we use <code>is_Type</code> functions:</p>
+<div class="fragment"><div class="line"><a class="code" href="xml-rpc_8h.html#aa4e8a1f12ef2b566cc50569001fca940" title="C function returns true if value is not set or assigned (JSON null)">is_null</a>(v)     <span class="comment">/* true if value is not set or assigned (JSON null) */</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#ab980370d74096f35ed7c03d40da5421b" title="C function returns true if value is a 32 or a 64 bit int.">is_int</a>(v)      <span class="comment">/* true if value is a 32 or a 64 bit int */</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#a32e1cd6673d46971611235857eae95cf" title="C function returns true if value is a 64 bit double floating point.">is_double</a>(v)   <span class="comment">/* true if value is a 64 bit double floating point */</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#a392a88727e8a46e6819433b477d80857" title="C function returns true if value is a string.">is_string</a>(v)   <span class="comment">/* true if value is a string */</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#a37adccbe9ebace8142c5f9e3c5a932a9" title="C function returns true if value is a Boolean &quot;true&quot; or &quot;false&quot; value.">is_bool</a>(v)     <span class="comment">/* true if value is a Boolean &quot;true&quot; or &quot;false&quot; value */</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#a23a4e8658b6c3f54a8ea9fcd3bd73ba8" title="C function returns true if value is Boolean &quot;true&quot;.">is_true</a>(v)     <span class="comment">/* true if value is Boolean &quot;true&quot; */</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#a77c2471c5bfcb253a94f5662a8b22f76" title="C function returns true if value is Boolean &quot;false&quot;.">is_false</a>(v)    <span class="comment">/* true if value is Boolean &quot;false&quot; */</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#a71223486df0b4164e591da1a448b7b3a" title="C function returns true if array of values.">is_array</a>(v)    <span class="comment">/* true if array of values */</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#a351b9deda4402c39ab1ef288f483f703" title="C function returns true if structure, a.k.a. a JSON object.">is_struct</a>(v)   <span class="comment">/* true if structure, a.k.a. a JSON object */</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#ae5bad1d463d4d51f71e49b9b3e189168" title="C function returns true if ISO 8601, always false for received JSON.">is_dateTime</a>(v) <span class="comment">/* true if ISO 8601, always false for received JSON */</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#ab320f60f02810a8baa4f78a5576d3b15" title="C function returns true if base64, always false for received JSON.">is_base64</a>(v)   <span class="comment">/* true if base64, always false for received JSON */</span></div>
+</div><!-- fragment --><p>The following functions can be used with arrays and structs (JSON objects):</p>
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> <a class="code" href="xml-rpc_8h.html#afd626f3d93d1ea851ea6defac4b4979f" title="C function returns the size of an array or struct.">has_size</a>(v)                            <span class="comment">/* returns array or struct size or 0 */</span></div>
+<div class="line">struct <a class="code" href="structvalue.html">value</a> *<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(v, <span class="keywordtype">int</span>)            <span class="comment">/* returns nth value in array or struct */</span></div>
+<div class="line">struct <a class="code" href="structvalue.html">value</a> *<a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c" title="C function returns pointer to member value of a struct, coerces v to struct if needed.">value_at</a>(v, const <span class="keywordtype">char</span>*)     <span class="comment">/* returns value at field in struct */</span></div>
+<div class="line">struct <a class="code" href="structvalue.html">value</a> *<a class="code" href="xml-rpc_8h.html#ada27892570331f334c2622e5b6d371e1" title="C function returns pointer to member value of a struct, coerces v to struct if needed.">value_atw</a>(v, const <span class="keywordtype">wchar_t</span>*) <span class="comment">/* returns value at field in struct */</span></div>
+<div class="line"><span class="keywordtype">int</span> <a class="code" href="xml-rpc_8h.html#ab7db7ce88557cc6ff24476ff924f3e2f" title="C function returns the nth index of a name in a struct, &lt; 0 otherwise.">nth_at</a>(v, const <span class="keywordtype">char</span>*)                 <span class="comment">/* returns nth index of field in struct or -1</span></div>
+<div class="line"><span class="comment">int nth_atw(v, const wchar_t*)             /* returns nth index of field in struct or -1</span></div>
+</div><!-- fragment --><p>When accessing structs (JSON objects) with <code>value_at</code>, make sure to use existing member field names only. A new member fieldname-value pair is dynamically added to the structure to accomodate the new entry for the field.</p>
+<p>Also arrays are extended with <code>nth_value</code> to accommodate the indexed array element.</p>
+<p>A negative array index indexes elements from the end of the array, with index -1 accessing the array's last value.</p>
+<p>For example, let's take the value <code>v</code> that was assigned the array shown above. We have the following properties of this value:</p>
+<div class="fragment"><div class="line"><a class="code" href="xml-rpc_8h.html#aa4e8a1f12ef2b566cc50569001fca940" title="C function returns true if value is not set or assigned (JSON null)">is_null</a>(v) == <span class="keyword">false</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#a71223486df0b4164e591da1a448b7b3a" title="C function returns true if array of values.">is_array</a>(v) == <span class="keyword">true</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#afd626f3d93d1ea851ea6defac4b4979f" title="C function returns the size of an array or struct.">has_size</a>(v) == 1</div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#a351b9deda4402c39ab1ef288f483f703" title="C function returns true if structure, a.k.a. a JSON object.">is_struct</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(v, 0)) == <span class="keyword">true</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#ab7db7ce88557cc6ff24476ff924f3e2f" title="C function returns the nth index of a name in a struct, &lt; 0 otherwise.">nth_at</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(v, 0), <span class="stringliteral">&quot;name&quot;</span>) == 0</div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#a392a88727e8a46e6819433b477d80857" title="C function returns true if value is a string.">is_string</a>(<a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c" title="C function returns pointer to member value of a struct, coerces v to struct if needed.">value_at</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(v, 0), <span class="stringliteral">&quot;name&quot;</span>)) == <span class="keyword">true</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#a392a88727e8a46e6819433b477d80857" title="C function returns true if value is a string.">is_string</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(<a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c" title="C function returns pointer to member value of a struct, coerces v to struct if needed.">value_at</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(v, 0), <span class="stringliteral">&quot;toys&quot;</span>), 0)) == <span class="keyword">true</span></div>
+<div class="line"><a class="code" href="xml-rpc_8h.html#a392a88727e8a46e6819433b477d80857" title="C function returns true if value is a string.">is_string</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(<a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c" title="C function returns pointer to member value of a struct, coerces v to struct if needed.">value_at</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(v, 0), <span class="stringliteral">&quot;toys&quot;</span>), 1)) == <span class="keyword">true</span></div>
+</div><!-- fragment --><p>Considering that the code verbosity quickly increases when accessing deeper levels of your structures, you are probably inclined to define your own macros to create and access deep data more conveniently, such as:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#define string_at(v, s) string_of(value_at((v), (s)))</span></div>
 <div class="line"><span class="preprocessor"></span><span class="preprocessor">#define nth_string(v, n) string_of(nth_value((v), (n)))</span></div>
 <div class="line"><span class="preprocessor"></span><span class="preprocessor">#define nth_string_at(v, s, n) string_of(nth_value(value_at((v), (s)), (n)))</span></div>
@@ -711,30 +999,7 @@ with 2 members_/______________/
 <div class="line">*string_at_nth(v, 0, <span class="stringliteral">&quot;name&quot;</span>) = <span class="stringliteral">&quot;bob&quot;</span>;</div>
 <div class="line">*nth_string_at_nth(v, 0, <span class="stringliteral">&quot;toys&quot;</span>, 0) = <span class="stringliteral">&quot;ball&quot;</span>;</div>
 <div class="line">*nth_string_at_nth(v, 0, <span class="stringliteral">&quot;toys&quot;</span>, 1) = <span class="stringliteral">&quot;furby&quot;</span>;</div>
-</div><!-- fragment --><p>When receiving a value in XML-RPC or JSON, we generally want to check its type to obtain its value. To check the type of a value, we use <code>is_Type</code> functions:</p>
-<div class="fragment"><div class="line"><a class="code" href="xml-rpc_8h.html#aa4e8a1f12ef2b566cc50569001fca940" title="C function returns true if value is not set or assigned (JSON null)">is_null</a>(v);     <span class="comment">/* true if value is not set or assigned (JSON null) */</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#ab980370d74096f35ed7c03d40da5421b" title="C function returns true if value is a 32 or a 64 bit int.">is_int</a>(v);      <span class="comment">/* true if value is a 32 or a 64 bit int */</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#a32e1cd6673d46971611235857eae95cf" title="C function returns true if value is a 64 bit double floating point.">is_double</a>(v);   <span class="comment">/* true if value is a 64 bit double floating point */</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#a392a88727e8a46e6819433b477d80857" title="C function returns true if value is a string.">is_string</a>(v);   <span class="comment">/* true if value is a string */</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#a37adccbe9ebace8142c5f9e3c5a932a9" title="C function returns true if value is a Boolean &quot;true&quot; or &quot;false&quot; value.">is_bool</a>(v);     <span class="comment">/* true if value is a Boolean &quot;true&quot; or &quot;false&quot; value */</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#a23a4e8658b6c3f54a8ea9fcd3bd73ba8" title="C function returns true if value is Boolean &quot;true&quot;.">is_true</a>(v);     <span class="comment">/* true if value is Boolean &quot;true&quot; */</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#a77c2471c5bfcb253a94f5662a8b22f76" title="C function returns true if value is Boolean &quot;false&quot;.">is_false</a>(v);    <span class="comment">/* true if value is Boolean &quot;false&quot; */</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#a71223486df0b4164e591da1a448b7b3a" title="C function returns true if array of values.">is_array</a>(v);    <span class="comment">/* true if array of values */</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#a351b9deda4402c39ab1ef288f483f703" title="C function returns true if structure, a.k.a. a JSON object.">is_struct</a>(v);   <span class="comment">/* true if structure, a.k.a. a JSON object */</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#ae5bad1d463d4d51f71e49b9b3e189168" title="C function returns true if ISO 8601, always false for received JSON.">is_dateTime</a>(v); <span class="comment">/* true if ISO 8601, always false for received JSON */</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#ab320f60f02810a8baa4f78a5576d3b15" title="C function returns true if base64, always false for received JSON.">is_base64</a>(v);   <span class="comment">/* true if base64, always false for received JSON */</span></div>
-</div><!-- fragment --><p>There is one additional function that can be used with arrays and structs:</p>
-<div class="fragment"><div class="line"><a class="code" href="xml-rpc_8h.html#afd626f3d93d1ea851ea6defac4b4979f" title="C function returns the size of an array or struct.">has_size</a>(v);    <span class="comment">/* returns array or struct size or 0 if not array/struct */</span></div>
-</div><!-- fragment --><p>For example, let's take the value <code>v</code> that was assigned the array shown above. We have the following properties of this value:</p>
-<div class="fragment"><div class="line"><a class="code" href="xml-rpc_8h.html#aa4e8a1f12ef2b566cc50569001fca940" title="C function returns true if value is not set or assigned (JSON null)">is_null</a>(v) == <span class="keyword">false</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#a71223486df0b4164e591da1a448b7b3a" title="C function returns true if array of values.">is_array</a>(v) == <span class="keyword">true</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#afd626f3d93d1ea851ea6defac4b4979f" title="C function returns the size of an array or struct.">has_size</a>(v) == 1</div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#a351b9deda4402c39ab1ef288f483f703" title="C function returns true if structure, a.k.a. a JSON object.">is_struct</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(v, 0)) == <span class="keyword">true</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#a392a88727e8a46e6819433b477d80857" title="C function returns true if value is a string.">is_string</a>(<a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c" title="C function returns pointer to member value of a struct, coerces v to struct if needed.">value_at</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(v, 0), <span class="stringliteral">&quot;name&quot;</span>)) == <span class="keyword">true</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#a392a88727e8a46e6819433b477d80857" title="C function returns true if value is a string.">is_string</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(<a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c" title="C function returns pointer to member value of a struct, coerces v to struct if needed.">value_at</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(v, 0), <span class="stringliteral">&quot;toys&quot;</span>), 0)) == <span class="keyword">true</span></div>
-<div class="line"><a class="code" href="xml-rpc_8h.html#a392a88727e8a46e6819433b477d80857" title="C function returns true if value is a string.">is_string</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(<a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c" title="C function returns pointer to member value of a struct, coerces v to struct if needed.">value_at</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743" title="C function returns pointer to array element value at index n, coerces v to array with value at n if n...">nth_value</a>(v, 0), <span class="stringliteral">&quot;toys&quot;</span>), 1)) == <span class="keyword">true</span></div>
-</div><!-- fragment --><p>When indexing XML-RPC structs (JSON objects) to access members and values, make sure to use existing member names only. Otherwise, a new member is dynamically added to the structure to accomodate the new named member. Also arrays are extended to accommodate the indexed array element. A negative array index can be used to access elements offset from the end, with index -1 accessing the last value.</p>
-<p>To iterate over array and struct values, we use a loop over <code>nth_value</code> and <code>nth_member</code> as follows:</p>
+</div><!-- fragment --><p>To iterate over array and struct values, we use a loop over <code>nth_value</code> and <code>nth_member</code> as follows:</p>
 <div class="fragment"><div class="line"><span class="keywordflow">if</span> (<a class="code" href="xml-rpc_8h.html#a71223486df0b4164e591da1a448b7b3a" title="C function returns true if array of values.">is_array</a>(v))</div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordtype">int</span> i;</div>
@@ -749,7 +1014,7 @@ with 2 members_/______________/
 <div class="line">  <span class="keywordtype">int</span> i;</div>
 <div class="line">  <span class="keywordflow">for</span> (i = 0; i &lt; <a class="code" href="xml-rpc_8h.html#afd626f3d93d1ea851ea6defac4b4979f" title="C function returns the size of an array or struct.">has_size</a>(v); i++)</div>
 <div class="line">  {</div>
-<div class="line">    <span class="keyword">struct </span><a class="code" href="structmember.html" title="Represents the &lt;member&gt; element of a &lt;struct&gt;.">member</a> *<a class="code" href="structmember.html" title="Represents the &lt;member&gt; element of a &lt;struct&gt;.">member</a> = <a class="code" href="xml-rpc_8h.html#a9d1e5a8876f8fc0f27449180847de769" title="C function returns pointer to n&#39;th member (name and value) of a struct.">nth_member</a>(v, i);</div>
+<div class="line">    <span class="keyword">struct </span><a class="code" href="structmember.html" title="Represents the &lt;member&gt; element of a &lt;struct&gt;.">member</a> *<a class="code" href="structmember.html" title="Represents the &lt;member&gt; element of a &lt;struct&gt;.">member</a> = <a class="code" href="xml-rpc_8h.html#a9d1e5a8876f8fc0f27449180847de769" title="C function returns pointer to nth member (name and value) of a struct.">nth_member</a>(v, i);</div>
 <div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span> *member_name = member-&gt;<a class="code" href="structmember.html#ac0e09df49f775db12416340f2baf06e9" title="struct accessor name">name</a>;</div>
 <div class="line">    <span class="keyword">struct </span><a class="code" href="structvalue.html">value</a> *member_value = &amp;member-&gt;<a class="code" href="structmember.html#a90c76b22cb6d3433203e6f745e862215" title="struct accessor value">value</a>;</div>
 <div class="line">    ... <span class="comment">/* use member_name and member_value */</span></div>
@@ -841,7 +1106,7 @@ C XML-RPC client example                                                 </h2>
 <div class="line">  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="xml-rpc_8h.html#ab980370d74096f35ed7c03d40da5421b" title="C function returns true if value is a 32 or a 64 bit int.">is_int</a>(v))</div>
 <div class="line">    printf(<span class="stringliteral">&quot;%lld&quot;</span>, <a class="code" href="xml-rpc_8h.html#afe5d1d28793b726a082d5f25c6876612" title="C function returns pointer to int, coerces v to int if needed.">int_of</a>(v));</div>
 <div class="line">  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="xml-rpc_8h.html#a32e1cd6673d46971611235857eae95cf" title="C function returns true if value is a 64 bit double floating point.">is_double</a>(v))</div>
-<div class="line">    printf(<span class="stringliteral">&quot;%g&quot;</span>, <a class="code" href="xml-rpc_8h.html#af038763a0eab127fd25993c37a1ea1af" title="C function returns pointer to double, coerces v to double if needed.">double_of</a>(v));</div>
+<div class="line">    printf(<span class="stringliteral">&quot;%lG&quot;</span>, <a class="code" href="xml-rpc_8h.html#af038763a0eab127fd25993c37a1ea1af" title="C function returns pointer to double, coerces v to double if needed.">double_of</a>(v));</div>
 <div class="line">  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="xml-rpc_8h.html#a392a88727e8a46e6819433b477d80857" title="C function returns true if value is a string.">is_string</a>(v))</div>
 <div class="line">    printf(<span class="stringliteral">&quot;\&quot;%s\&quot;&quot;</span>, <a class="code" href="xml-rpc_8h.html#acae47cb0609e5d6ae32e6ceb75f85b16" title="C function returns pointer to string (pointer to char * to set or get), coerces v to string if needed...">string_of</a>(v));</div>
 <div class="line">  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="xml-rpc_8h.html#a71223486df0b4164e591da1a448b7b3a" title="C function returns true if array of values.">is_array</a>(v))</div>
@@ -862,8 +1127,8 @@ C XML-RPC client example                                                 </h2>
 <div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; <a class="code" href="xml-rpc_8h.html#afd626f3d93d1ea851ea6defac4b4979f" title="C function returns the size of an array or struct.">has_size</a>(v); i++)</div>
 <div class="line">    {</div>
 <div class="line">      <span class="keywordflow">if</span> (i) printf(<span class="stringliteral">&quot;,&quot;</span>);</div>
-<div class="line">      printf(<span class="stringliteral">&quot;\&quot;%s\&quot;: &quot;</span>, <a class="code" href="xml-rpc_8h.html#a9d1e5a8876f8fc0f27449180847de769" title="C function returns pointer to n&#39;th member (name and value) of a struct.">nth_member</a>(v, i)-&gt;name);</div>
-<div class="line">      display(&amp;<a class="code" href="xml-rpc_8h.html#a9d1e5a8876f8fc0f27449180847de769" title="C function returns pointer to n&#39;th member (name and value) of a struct.">nth_member</a>(v, i)-&gt;<a class="code" href="structvalue.html">value</a>);</div>
+<div class="line">      printf(<span class="stringliteral">&quot;\&quot;%s\&quot;: &quot;</span>, <a class="code" href="xml-rpc_8h.html#a9d1e5a8876f8fc0f27449180847de769" title="C function returns pointer to nth member (name and value) of a struct.">nth_member</a>(v, i)-&gt;name);</div>
+<div class="line">      display(&amp;<a class="code" href="xml-rpc_8h.html#a9d1e5a8876f8fc0f27449180847de769" title="C function returns pointer to nth member (name and value) of a struct.">nth_member</a>(v, i)-&gt;<a class="code" href="structvalue.html">value</a>);</div>
 <div class="line">    }</div>
 <div class="line">    printf(<span class="stringliteral">&quot;}&quot;</span>);</div>
 <div class="line">  }</div>
@@ -899,7 +1164,7 @@ C JSON serialization                                                     </h2>
 </ul>
 <p>Strings are stored and exchanged in UTF-8 format in 8-bit strings (<code>char*</code>) by using the <code>SOAP_C_UTFSTRING</code> flag. Without this flag, 8-bit strings are converted to UTF-8.</p>
 <p>To force reading and writing JSON in ISO 8859-1 format, use the <code>SOAP_ENC_LATIN</code> flag to set the context.</p>
-<p>To read JSON from a string buffer, we suggest to use the gSOAP engine IO <code>frecv</code> callback function as follows:</p>
+<p>To read JSON from a string buffer, we suggest to use the gSOAP engine's IO <code>frecv</code> callback function as follows:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">size_t</span> buf_recv(<span class="keyword">struct</span> <a class="code" href="structvalue.html#a874a72d34f39c0839bc53ccb5f9d1e99" title="ref to soap struct that manages this type">soap</a> *ctx, <span class="keywordtype">char</span> *buf, <span class="keywordtype">size_t</span> len)</div>
 <div class="line">{</div>
 <div class="line">  <span class="keyword">const</span> <span class="keywordtype">char</span> *in = (<span class="keywordtype">char</span>*)ctx-&gt;user;  <span class="comment">/* get handle to input string */</span></div>
@@ -1028,6 +1293,6 @@ JSON and ISO 8601 dateTime                                           </h2>
 <div class="line">    ... <span class="comment">// success</span></div>
 </div><!-- fragment --> </div></div><!-- contents -->
 <hr class="footer"><address class="footer"><small>
-Generated on Sun Nov 29 2015 11:17:28 for <a href="http://www.genivia.com">Genivia</a> documentation of XML-RPC &amp; JSON by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
+Generated on Sun Dec 6 2015 16:46:55 for <a href="http://www.genivia.com">Genivia</a> documentation of XML-RPC &amp; JSON by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.3</small></address>
 </body>
 </html>

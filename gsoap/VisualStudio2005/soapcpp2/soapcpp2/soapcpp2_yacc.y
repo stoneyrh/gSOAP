@@ -1741,7 +1741,7 @@ enum    : ENUM id utype {
                             p = enter(enumtable, $2);
                             p->info.typ = mkenum(0);
                           }
-                          p->info.typ->width = $3;
+                          p->info.typ->width = (int)$3;
                           $$ = p;
                         }
         ;
@@ -1759,7 +1759,7 @@ enumsc  : ENUM sc utype {
                             p = enter(enumtable, $2);
                             p->info.typ = mkenumsc(0);
                           }
-                          p->info.typ->width = $3;
+                          p->info.typ->width = (int)$3;
                           $2->token = TYPE;
                           $$ = p;
                         }
@@ -2164,8 +2164,8 @@ patt    : /* empty */   { $$ = NULL; }
         | STR           { $$ = $1; }
         ;
 cdbl    : DBL           { $$ = $1; }
-        | LNG           { $$ = $1; }
-        | CHR           { $$ = $1; }
+        | LNG           { $$ = (double)$1; }
+        | CHR           { $$ = (double)$1; }
         | '+' cdbl      { $$ = +$2; }
         | '-' cdbl      { $$ = -$2; }
         ;

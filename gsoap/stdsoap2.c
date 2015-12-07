@@ -1,5 +1,5 @@
 /*
-	stdsoap2.c[pp] 2.8.26
+	stdsoap2.c[pp] 2.8.27
 
 	gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20826
+#define GSOAP_LIB_VERSION 20827
 
 #ifdef AS400
 # pragma convert(819)	/* EBCDIC to ASCII */
@@ -81,10 +81,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.26 2015-11-30 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.27 2015-12-07 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.26 2015-11-30 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.27 2015-12-07 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -150,9 +150,9 @@ static int soap_ntlm_handshake(struct soap *soap, int command, const char *endpo
 static int soap_has_copies(struct soap*, const char*, const char*);
 static int soap_type_punned(struct soap*, const struct soap_ilist*);
 static int soap_is_shaky(struct soap*, void*);
-#endif
 static void soap_init_iht(struct soap*);
 static void soap_free_iht(struct soap*);
+#endif
 static void soap_init_pht(struct soap*);
 static void soap_free_pht(struct soap*);
 #endif
@@ -7867,6 +7867,7 @@ soap_attachment(struct soap *soap, const char *tag, int id, const void *p, const
 #endif
 
 /******************************************************************************/
+#ifndef WITH_NOIDREF
 #ifndef PALM_1
 static void
 soap_init_iht(struct soap *soap)
@@ -7875,8 +7876,10 @@ soap_init_iht(struct soap *soap)
     soap->iht[i] = NULL;
 }
 #endif
+#endif
 
 /******************************************************************************/
+#ifndef WITH_NOIDREF
 #ifndef PALM_1
 static void
 soap_free_iht(struct soap *soap)
@@ -7896,6 +7899,7 @@ soap_free_iht(struct soap *soap)
     soap->iht[i] = NULL;
   }
 }
+#endif
 #endif
 
 /******************************************************************************/
@@ -8943,7 +8947,9 @@ soap_free_temp(struct soap *soap)
     soap->xlist = xp;
   }
 #endif
+#ifndef WITH_NOIDREF
   soap_free_iht(soap);
+#endif
   soap_free_pht(soap);
 }
 #endif
@@ -9137,7 +9143,9 @@ soap_copy_context(struct soap *copy, const struct soap *soap)
     copy->d_stream = NULL;
     copy->z_buf = NULL;
 #endif
+#ifndef WITH_NOIDREF
     soap_init_iht(copy);
+#endif
     soap_init_pht(copy);
     copy->header = NULL;
     copy->fault = NULL;
@@ -10919,10 +10927,10 @@ soap_attr_value(struct soap *soap, const char *name, int flag)
   if (*name == '-')
     return SOAP_STR_EOS;
   for (tp = soap->attributes; tp; tp = tp->next)
-  { if (tp->visible && !soap_match_tag(soap, tp->name, name))
+  { if (!soap_match_tag(soap, tp->name, name))
       break;
   }
-  if (tp)
+  if (tp && tp->visible == 2)
   { if (flag == 4 || (flag == 2 && (soap->mode & SOAP_XML_STRICT)))
       soap->error = SOAP_PROHIBITED;
     else
@@ -16022,7 +16030,9 @@ soap_begin_recv(struct soap *soap)
   soap_free_temp(soap);
   soap_set_local_namespaces(soap);
   soap->version = 0;	/* don't assume we're parsing SOAP content by default */
+#ifndef WITH_NOIDREF
   soap_free_iht(soap);
+#endif
   if ((soap->imode & SOAP_IO) == SOAP_IO_CHUNK)
     soap->omode |= SOAP_IO_CHUNK;
   soap->imode &= ~(SOAP_IO | SOAP_ENC_MIME);
