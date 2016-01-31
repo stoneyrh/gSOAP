@@ -1,5 +1,5 @@
 .tab_home {
-    text-align: right;
+    text-align: center;
     padding-top: 5px;
     padding-right: 10px;
     padding-left: 10px;
@@ -13,13 +13,15 @@
     color: #D71E1E;
     text-decoration: none;
 }
+
 .tabs, .tabs2, .tabs3 {
     /* background-image: url('tab_b.png'); */
     background: #c0504d;
-    width: 100%;
+    width: 90%;
     z-index: 101;
     font-size: 16px;
     font-family: 'Lucida Grande',Geneva,Helvetica,Arial,sans-serif;
+    padding-left: 10%;
 }
 
 .tabs2 {

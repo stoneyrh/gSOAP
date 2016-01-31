@@ -176,6 +176,11 @@ xsd__duration = #import "custom/duration.h" | xsd__duration
 #	remap the hexBinary type to a string as follows:
 # xsd__hexBinary = | char*
 
+#	When wsdl2h option -d is used, xsd:any is mapped to xsd__anyType DOM
+#	declared in dom.h and implemented in dom.c/dom.cpp. You can remap
+#	xsd:any, for example to a pointer to a DOM node as follows:
+# xsd__any = | xsd__anyType*
+
 #	When SOAP 1.2 Faults should carry multiple SOAP_ENV__Text elements with
 #	xml:lang attributes, then remap SOAP_ENV__Reason as follows:
 # [

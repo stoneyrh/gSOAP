@@ -41,6 +41,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 namespace json {
 #endif
 
+/** If soap context has an error, set/add error message to 'v' and return error code */
+extern int json_error(struct soap *soap, struct value *v);
+
 /** Write a value in JSON format to a file, socket, or stream */
 extern int json_write(struct soap *soap, const struct value *v);
 
@@ -48,9 +51,9 @@ extern int json_write(struct soap *soap, const struct value *v);
 extern int json_send(struct soap *soap, const struct value *v);
 
 #ifdef __cplusplus
-extern int json_write(struct soap *soap, const struct value& v);
-extern int json_send(struct soap *soap, const struct value& v);
-extern std::ostream& operator<<(std::ostream&, const struct value&);
+extern int json_write(struct soap *soap, const value& v);
+extern int json_send(struct soap *soap, const value& v);
+extern std::ostream& operator<<(std::ostream&, const value&);
 #endif
 
 /** Read a value in JSON format from a file, socket, or stream */
@@ -60,12 +63,12 @@ extern int json_read(struct soap *soap, struct value *v);
 extern int json_recv(struct soap *soap, struct value *v);
 
 #ifdef __cplusplus
-extern int json_read(struct soap *soap, struct value& v);
-extern int json_recv(struct soap *soap, struct value& v);
-extern std::istream& operator>>(std::istream&, struct value&);
+extern int json_read(struct soap *soap, value& v);
+extern int json_recv(struct soap *soap, value& v);
+extern std::istream& operator>>(std::istream&, value&);
 #endif
 
-/** Client-side JSON REST call to endpoint URL with optional in and out values (POST in/out, GET out , PUT in), returns SOAP_OK or HTTP code */
+/** Client-side JSON REST call to endpoint URL with optional in and out values (POST with in/out, GET with out, PUT with in, DELETE without in/out), returns SOAP_OK or HTTP code */
 extern int json_call(struct soap *soap, const char *endpoint, const struct value *in, struct value *out);
 
 #ifdef __cplusplus
@@ -73,6 +76,57 @@ extern int json_call(struct soap *soap, const char *endpoint, const struct value
 #endif
 
 extern int json_send_string(struct soap *soap, const char *s);
+
+#ifdef __cplusplus
+extern value json_add(const value&, const value&);
+template<typename T> inline value operator+(const value& x, const T& y);
+template<typename T> inline value operator+(const value& x, const T& y) { return json_add(x, value(x.soap, y)); }
+template<> inline value operator+(const value& x, const value& y) { return json_add(x, y); }
+
+extern value json_sub(const value&, const value&);
+template<typename T> inline value operator-(const value& x, const T& y);
+template<typename T> inline value operator-(const value& x, const T& y) { return json_sub(x, value(x.soap, y)); }
+template<> inline value operator-(const value& x, const value& y) { return json_sub(x, y); }
+
+extern value json_mul(const value&, const value&);
+template<typename T> inline value operator*(const value& x, const T& y);
+template<typename T> inline value operator*(const value& x, const T& y) { return json_mul(x, value(x.soap, y)); }
+template<> inline value operator*(const value& x, const value& y) { return json_mul(x, y); }
+
+extern value json_div(const value&, const value&);
+template<typename T> inline value operator/(const value& x, const T& y);
+template<typename T> inline value operator/(const value& x, const T& y) { return json_div(x, value(x.soap, y)); }
+template<> inline value operator/(const value& x, const value& y) { return json_div(x, y); }
+
+extern value json_mod(const value&, const value&);
+template<typename T> inline value operator%(const value& x, const T& y);
+template<typename T> inline value operator%(const value& x, const T& y) { return json_mod(x, value(x.soap, y)); }
+template<> inline value operator%(const value& x, const value& y) { return json_mod(x, y); }
+
+extern bool json_eqv(const value&, const value&);
+template<typename T> inline bool operator==(const value& x, const T& y);
+template<typename T> inline bool operator==(const value& x, const T& y) { return json_eqv(x, value(x.soap, y)); }
+template<> inline bool operator==(const value& x, const value& y) { return json_eqv(x, y); }
+template<typename T> inline bool operator!=(const value& x, const T& y);
+template<typename T> inline bool operator!=(const value& x, const T& y) { return !json_eqv(x, value(x.soap, y)); }
+template<> inline bool operator!=(const value& x, const value& y) { return !json_eqv(x, y); }
+
+extern bool json_leq(const value&, const value&);
+template<typename T> inline bool operator<=(const value& x, const T& y);
+template<typename T> inline bool operator<=(const value& x, const T& y) { return json_leq(x, value(x.soap, y)); }
+template<> inline bool operator<=(const value& x, const value& y) { return json_leq(x, y); }
+template<typename T> inline bool operator>=(const value& x, const T& y);
+template<typename T> inline bool operator>=(const value& x, const T& y) { return json_leq(value(x.soap, y), x); }
+template<> inline bool operator>=(const value& x, const value& y) { return json_leq(y, x); }
+
+extern bool json_lne(const value&, const value&);
+template<typename T> inline bool operator<(const value& x, const T& y);
+template<typename T> inline bool operator<(const value& x, const T& y) { return json_lne(x, value(x.soap, y)); }
+template<> inline bool operator<(const value& x, const value& y) { return json_lne(x, y); }
+template<typename T> inline bool operator>(const value& x, const T& y);
+template<typename T> inline bool operator>(const value& x, const T& y) { return json_lne(value(x.soap, y), x); }
+template<> inline bool operator>(const value& x, const value& y) { return json_lne(y, x); }
+#endif
 
 #ifdef JSON_NAMESPACE
 } // namespace json

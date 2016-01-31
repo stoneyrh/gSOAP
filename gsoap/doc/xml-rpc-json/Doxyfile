@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = "XML-RPC & JSON"
+PROJECT_NAME           = "XML-RPC & JSON/JSONPath"
 PROJECT_NUMBER         = "2.8 Stable"
 PROJECT_LOGO           = "../GeniviaLogo2_trans_noslogan.png"
 OUTPUT_DIRECTORY       = 
@@ -148,9 +148,10 @@ IGNORE_PREFIX          =
 GENERATE_HTML          = YES
 HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
-HTML_HEADER            = ../doxygen_header.html
-HTML_FOOTER            = ../doxygen_footer.html
+HTML_HEADER            = "../doxygen_header.html"
+HTML_FOOTER            = "../doxygen_footer.html"
 HTML_STYLESHEET        = 
+HTML_EXTRA_STYLESHEET  = "../genivia_content.css"
 HTML_ALIGN_MEMBERS     = YES
 GENERATE_HTMLHELP      = NO
 CHM_FILE               = 

@@ -58,13 +58,16 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 /**
 
-@page wsdd_0 The wsdd library for WS-Discovery 1.0 and 1.1 support
+@page wsdd_0 The WS-Discovery plugin
+
+[TOC]
 
 @section wsdd_1 WS-Discovery Setup
 
 The material in this section relates to the WS-Discovery specification.
 
 To use the wsdd library:
+
 -# Define WS-Discovery event handlers in your code, see Section @ref wsdd_2.
 -# Use the wsdd API functions as described below.
 -# (Re-)compile and link stdsoap2.c/pp or libgsoap, (dom.c/.cpp when needed),
@@ -121,25 +124,25 @@ Inbound WS-Discovery multicast messages are handled via a listener on a port.
 The user-defined event handlers are invoked when WS-Discovery messages arrive
 on the port.
 
-The @ref soap_wsdd_listen function listens on the current port opened with
-soap_bind for WS-Discovery messages for a brief time period as specified by a
+The `soap_wsdd_listen` function listens on the current port opened with
+`soap_bind` for WS-Discovery messages for a brief time period as specified by a
 timeout value in seconds (negative for micro seconds). The function allows for
 periodically polling the port as shown:
 
 @code
-#include "wsddapi.h"
-int port = 8080;
-struct soap *soap = soap_new();
-soap->user = (void*)&my_state;
-if (!soap_valid_socket(soap_bind(soap, port, 100)))
-{ soap_print_fault(soap, stderr);
-  exit(0);
-}
+    #include "wsddapi.h"
+    int port = 8080;
+    struct soap *soap = soap_new();
+    soap->user = (void*)&my_state;
+    if (!soap_valid_socket(soap_bind(soap, port, 100)))
+    { soap_print_fault(soap, stderr);
+      exit(0);
+    }
 
-soap_wsdd_listen(soap, -1000); // listen for messages for 1 ms
+    soap_wsdd_listen(soap, -1000); // listen for messages for 1 ms
 
-soap_wsdd_listen(soap, -1000); // listen for messages for 1 ms
-...
+    soap_wsdd_listen(soap, -1000); // listen for messages for 1 ms
+    ...
 @endcode
 
 WS-Discovery messages are relayed to the event handlers. The soap->user pointer
@@ -150,15 +153,15 @@ Proxy implementation.
 @section wsdd_4 Invoking WS-Discovery Operations
 
 A Client may invoke the following WS-Discovery operations:
-- @ref soap_wsdd_Probe
-- @ref soap_wsdd_Resolve
+- `soap_wsdd_Probe`
+- `soap_wsdd_Resolve`
 
-A Target Service may invoke the following WS-Discovery
-operations:
-- @ref soap_wsdd_Hello
-- @ref soap_wsdd_Bye
-- @ref soap_wsdd_ProbeMatches (automatic via @ref soap_wsdd_listen)
-- @ref soap_wsdd_ResolveMatches (automatic via @ref soap_wsdd_listen)
+A Target Service may invoke the following WS-Discovery operations:
+
+- `soap_wsdd_Hello`
+- `soap_wsdd_Bye`
+- `soap_wsdd_ProbeMatches` (automatic via `soap_wsdd_listen`)
+- `soap_wsdd_ResolveMatches` (automatic via `soap_wsdd_listen`)
 
 A Discovery Proxy can perform all operations listed above, and should use
 "wsdd:DiscoveryProxy" as the Type with the Hello, Bye, and ProbeMatches.
@@ -166,20 +169,20 @@ A Discovery Proxy can perform all operations listed above, and should use
 To send a Hello message to join a network:
 
 @code
-soap_wsdd_Hello(soap,
-  SOAP_WSDD_MANAGED,    // or SOAP_WSDD_ADHOC for ad-hoc mode
-  "to address",         // "http(s):" URL, or "soap.udp:" UDP, or TCP/IP address
-  soap_wsa_rand_uuid(soap), // a unique message ID
-  NULL,
-  "my address",         // where they can find me for WS-Discovery
-  "wsdd:DiscoveryProxy",// Types: I'm a DP
-  NULL,                 // Scope
-  NULL,                 // MatchBy
-  NULL,                 // XAddrs
-  75965);               // MDVersion
+    soap_wsdd_Hello(soap,
+      SOAP_WSDD_MANAGED,    // or SOAP_WSDD_ADHOC for ad-hoc mode
+      "to address",         // "http(s):" URL, or "soap.udp:" UDP, or TCP/IP address
+      soap_wsa_rand_uuid(soap), // a unique message ID
+      NULL,
+      "my address",         // where they can find me for WS-Discovery
+      "wsdd:DiscoveryProxy",// Types: I'm a DP
+      NULL,                 // Scope
+      NULL,                 // MatchBy
+      NULL,                 // XAddrs
+      75965);               // MDVersion
 @endcode
 
-Note that Types is a string with namespace-qualified names (QNames). These
+Note that `Types` above is a string with namespace-qualified names (QNames). These
 should be qualified as in "namespace":name or you can use a namespace prefix
 that is part of your namespace table (in the .nsmap). So you can use
 "wsdd:DiscoveryPRoxy" as a QName in Types because wsdd is a namespace prefix
@@ -188,23 +191,23 @@ with a defined binding in the namespace table.
 For UDP multicast, use
 
 @code
-soap.connect_flags = SO_BROADCAST;
+    soap.connect_flags = SO_BROADCAST;
 @endcode
 
 and optionally set the interface and TTL settings:
 
 @code
-in_addr_t addr = inet_addr("1.2.3.4");
-soap.ipv4_multicast_if = &addr; // see setsockopt IPPROTO_IP IP_MULTICAST_IF
-soap.ipv6_multicast_if = addr; // multicast sin6_scope_id
-soap.ipv4_multicast_ttl = 1; // see setsockopt IPPROTO_IP, IP_MULTICAST_TTL
+    in_addr_t addr = inet_addr("1.2.3.4");
+    soap.ipv4_multicast_if = &addr; // see setsockopt IPPROTO_IP IP_MULTICAST_IF
+    soap.ipv6_multicast_if = addr; // multicast sin6_scope_id
+    soap.ipv4_multicast_ttl = 1; // see setsockopt IPPROTO_IP, IP_MULTICAST_TTL
 @endcode
 
-Please refer to the socket options for IPPROTO_IP IP_MULTICAST_IF to specify
+Please refer to the socket options for `IPPROTO_IP` `IP_MULTICAST_IF` to specify
 the default interface for multicast datagrams to be sent from. Otherwise,
 the default interface set by the system administrator will be used (if any).
 
-Please refer to the socket options for IPPROTO_IP IP_MULTICAST_TTL to limit
+Please refer to the socket options for `IPPROTO_IP` `IP_MULTICAST_TTL` to limit
 the lifetime of the packet. Multicast datagrams are sent with a default value
 of 1, to prevent them to be forwarded beyond the local network. This parameter
 can be set between 1 to 255.
@@ -212,86 +215,86 @@ can be set between 1 to 255.
 To send a Bye message to leave a network:
 
 @code
-soap_wsdd_Bye(soap,
-  SOAP_WSDD_MANAGED,    // or SOAP_WSDD_ADHOC for ad-hoc mode
-  "to address",         // "http(s):" URL, or "soap.udp:" UDP, or TCP/IP address
-  soap_wsa_rand_uuid(soap), // a unique message ID
-  NULL,
-  "my address",         // where they can find me for WS-Discovery
-  "wsdd:DiscoveryProxy",// Types: I'm a DP
-  NULL,                 // Scope
-  NULL,                 // MatchBy
-  NULL,                 // XAddrs
-  75965);               // MDVersion
+    soap_wsdd_Bye(soap,
+      SOAP_WSDD_MANAGED,    // or SOAP_WSDD_ADHOC for ad-hoc mode
+      "to address",         // "http(s):" URL, or "soap.udp:" UDP, or TCP/IP address
+      soap_wsa_rand_uuid(soap), // a unique message ID
+      NULL,
+      "my address",         // where they can find me for WS-Discovery
+      "wsdd:DiscoveryProxy",// Types: I'm a DP
+      NULL,                 // Scope
+      NULL,                 // MatchBy
+      NULL,                 // XAddrs
+      75965);               // MDVersion
 @endcode
 
 To send a Probe message (see WS-Discovery 1.1 Section 1.7) and then listen to
 ProbeMatches:
 
 @code
-struct soap soap = soap_new(); // to invoke messages
-struct soap serv = soap_new(); // for the listener and event handlers
+    struct soap soap = soap_new(); // to invoke messages
+    struct soap serv = soap_new(); // for the listener and event handlers
 
-soap_bind(serv, port, 100);
+    soap_bind(serv, port, 100);
 
-const char *id = soap_wsa_rand_uuid(soap);
-serv->user = (void*)&my_state;
-my_state.probe_id = id;
+    const char *id = soap_wsa_rand_uuid(soap);
+    serv->user = (void*)&my_state;
+    my_state.probe_id = id;
 
-soap_wsdd_Probe(soap,
-  SOAP_WSDD_ADHOC,      // ad-hoc mode
-  SOAP_WSDD_TO_TS,      // to a TS
-  "to address",         // address of TS
-  id,                   // message ID
-  NULL,                 // ReplyTo
-  "\"http://printer.example.org/2003/imaging\":PrintBasic",
-  "ldap:///ou=engineering,o=examplecom,c=us",
-  "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/ldap");
+    soap_wsdd_Probe(soap,
+      SOAP_WSDD_ADHOC,      // ad-hoc mode
+      SOAP_WSDD_TO_TS,      // to a TS
+      "to address",         // address of TS
+      id,                   // message ID
+      NULL,                 // ReplyTo
+      "\"http://printer.example.org/2003/imaging\":PrintBasic",
+      "ldap:///ou=engineering,o=examplecom,c=us",
+      "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01/ldap");
 
-soap_wsdd_listen(serv, -1000);
+    soap_wsdd_listen(serv, -1000);
 @endcode
 
-The id is the WS-Addressing message ID that will be included in the
-ProbeMatches RelatesTo WS-Addressing header. As an example, my_state is set to
-this id so that when the @ref wsdd_event_ProbeMatches event handler is invoked
-it can find the id in the current state that is pointed to by serv->user
-(soap->user in the handler).
+The `id` above is the WS-Addressing message ID that will be included in the
+ProbeMatches RelatesTo WS-Addressing header. As an example, `my_state` is set to
+this `id` so that when the `wsdd_event_ProbeMatches` event handler is invoked
+it can find the `id` in the current state that is pointed to by `serv->user`
+(`soap->user` in the handler).
 
 To send a Resolve message and then listen to ResolveMatches:
 
 @code
-struct soap soap = soap_new(); // to invoke messages
-struct soap serv = soap_new(); // for the listener and event handlers
+    struct soap soap = soap_new(); // to invoke messages
+    struct soap serv = soap_new(); // for the listener and event handlers
 
-soap_bind(serv, port, 100);
+    soap_bind(serv, port, 100);
 
-const char *id = soap_wsa_rand_uuid(soap);
-serv->user = (void*)&my_state;
-my_state.resolve_id = id;
+    const char *id = soap_wsa_rand_uuid(soap);
+    serv->user = (void*)&my_state;
+    my_state.resolve_id = id;
 
-soap_wsdd_Resolve(soap,
-  SOAP_WSDD_ADHOC,      // ad-hoc mode
-  SOAP_WSDD_TO_TS,      // to a TS
-  "to address",         // address to send to
-  id,                   // message ID
-  NULL,                 // ReplyTo
-  "endpoint");          // EndpointReference of TS
- 
-soap_wsdd_listen(serv, -1000);
+    soap_wsdd_Resolve(soap,
+      SOAP_WSDD_ADHOC,      // ad-hoc mode
+      SOAP_WSDD_TO_TS,      // to a TS
+      "to address",         // address to send to
+      id,                   // message ID
+      NULL,                 // ReplyTo
+      "endpoint");          // EndpointReference of TS
+     
+    soap_wsdd_listen(serv, -1000);
 @endcode
 
-Again, the id and state are used to associate the asynchronously received
+Again, the `id` and `my_state` are used to associate the asynchronously received
 ResolveMatches response that is handled by the @ref wsdd_event_ResolveMatches
 for the original request.
 
-In managed mode with unicast messages (request-response messages), the @ref
-soap_wsdd_Probe and @ref soap_wsdd_Resolve are sufficient to invoke without
+In managed mode with unicast messages (request-response messages), the
+`soap_wsdd_Probe` and `soap_wsdd_Resolve` are sufficient to invoke without
 setting up a listener. The event handlers are invoked when the unicast response
 message arrives.
 
 In managed mode, the ProbeMatches and ResolveMatches are automatically sent via
-@ref soap_wsdd_listen and the event @ref wsdd_event_Probe and @ref
-wsdd_event_Resolve handlers. These event handlers should set the matches to be
+`soap_wsdd_listen` and the event `wsdd_event_Probe` and
+`wsdd_event_Resolve` handlers. These event handlers should set the matches to be
 returned.
 
 In ad-hoc mode, ProbeMatches or ResolveMatches responses are NOT sent
@@ -305,59 +308,61 @@ return address (when not anonymous), or by using the peer's host information
 that is accessible in the soap->peer and soap->peerlen members. For example:
 
 @code
-char host[1024], port[16];
-getnameinfo((struct sockaddr*)&soap->peer, soap->peerlen, host, sizeof(host), port, 16, NI_DGRAM | NI_NAMEREQD | NI_NUMERICSERV);
+    char host[1024], port[16];
+    getnameinfo((struct sockaddr*)&soap->peer, soap->peerlen, host, sizeof(host), port, 16, NI_DGRAM | NI_NAMEREQD | NI_NUMERICSERV);
 @endcode
 
 @section wsdd_5 Generating C++ Server Objects
 
 The WSDD library is developed to support C and C++. To support C++ server
-objects generated with soapcpp2 options -i and -j, you need to define in your
-C++ code the following wrappers (use this->soap below for soapcpp2 option -j):
+objects generated with soapcpp2 options `-j` (or `-i`), you need to define in your
+C++ code the following wrappers (use `this` instead of `this->soap` below with
+soapcpp2 option `-i`):
 
 @code
-int wsddService::Hello(struct wsdd__HelloType *hello)
-{ return __wsdd__Hello(this, hello);
-}
-int wsddService::Bye(struct wsdd__ByeType *bye
-{ return __wsdd__Bye(this, bye);
-}
-int wsddService::Probe(struct wsdd__ProbeType *probe)
-{ return __wsdd__Probe(this, probe);
-}
-int wsddService::ProbeMatches(struct wsdd__ProbeMatchesType *matches)
-{ return __wsdd__ProbeMatches(this, matches);
-}
-int wsddService::Resolve(struct wsdd__ResolveType *resolve)
-{ return __wsdd__Resolve(this, resolve);
-}
-int wsddService::ResolveProbeMatches(struct wsdd__ResolveMatchesType *matches)
-{ return __wsdd__ResolveMatches(this, matches);
-}
+    int wsddService::Hello(struct wsdd__HelloType *hello)
+    { return __wsdd__Hello(this->soap, hello);
+    }
+    int wsddService::Bye(struct wsdd__ByeType *bye
+    { return __wsdd__Bye(this->soap, bye);
+    }
+    int wsddService::Probe(struct wsdd__ProbeType *probe)
+    { return __wsdd__Probe(this->soap, probe);
+    }
+    int wsddService::ProbeMatches(struct wsdd__ProbeMatchesType *matches)
+    { return __wsdd__ProbeMatches(this->soap, matches);
+    }
+    int wsddService::Resolve(struct wsdd__ResolveType *resolve)
+    { return __wsdd__Resolve(this->soap, resolve);
+    }
+    int wsddService::ResolveProbeMatches(struct wsdd__ResolveMatchesType *matches)
+    { return __wsdd__ResolveMatches(this->soap, matches);
+    }
 @endcode
 
 Another approach to generate the WSDD service operations is to run soapcpp2
-separately on wsdd.h (or wsdd5.h or wsdd10.h for WS-Discovery 1.0) by soapcpp2
--a -L -pwsdd wsdd.h to generate wsddService.cpp. Then chain the service
-operations at the server side:
+separately on wsdd.h (or wsdd5.h or wsdd10.h for WS-Discovery 1.0) by:
+
+    soapcpp2 -a -L -pwsdd -Iimport import/wsdd.h
+    
+to generate wsddService.cpp. Then chain the service operations at the server
+side:
 
 @code
-if (soap_begin_serve(service.soap) == SOAP_OK)
-  if (service.dispatch() == SOAP_NO_METHOD)
-    soap_serve_request(service.soap);
+    if (soap_begin_serve(service.soap) == SOAP_OK)
+      if (service.dispatch() == SOAP_NO_METHOD)
+	soap_serve_request(service.soap);
 @endcode
 
-where the 'service' object is an instance of the application services generated
-by soapcpp2 -j.
+where the `service` object is an instance of the application services generated
+by soapcpp2 `-j`.
 
 @section wsdd_6 Miscellaneous
 
 You MUST generate client-side operations that the WSDD library expects to be
 linked with, by executing:
 
-@code
-> soapcpp2 -L -pwsdd -Iimport import/wsdd.h
-@endcode
+    soapcpp2 -L -pwsdd -Iimport import/wsdd.h
 
 Then compile and link the generated wsddClient.cpp code with your project.
 
@@ -365,19 +370,19 @@ Because WS-Addressing may relay faults to a FaultTo service, you need to
 define a SOAP Fault service operation to accept and handle these:
 
 @code
-int SOAP_ENV__Fault(struct soap *soap, char *faultcode, char *faultstring, char *faultactor, struct SOAP_ENV__Detail *detail, struct SOAP_ENV__Code *SOAP_ENV__Code, struct SOAP_ENV__Reason *SOAP_ENV__Reason, char *SOAP_ENV__Node, char *SOAP_ENV__Role, struct SOAP_ENV__Detail *SOAP_ENV__Detail)
-{ 
-  ... = faultcode; // SOAP 1.1 fault code string (QName)
-  ... = faultstring; // SOAP 1.1 fault string
-  ... = faultactor; // SOAP 1.1 fault actor string
-  ... = detail; // SOAP 1.1 fault detail struct
-  ... = SOAP_ENV__Code; // SOAP 1.2 fault code struct
-  ... = SOAP_ENV__Reason; // SOAP 1.2 reason struct
-  ... = SOAP_ENV__Node; // SOAP 1.2 node string
-  ... = SOAP_ENV__Role; // SOAP 1.2 role string
-  ... = SOAP_ENV__Detail; // SOAP 1.2 detail struct
-  return SOAP_OK;
-}
+    int SOAP_ENV__Fault(struct soap *soap, char *faultcode, char *faultstring, char *faultactor, struct SOAP_ENV__Detail *detail, struct SOAP_ENV__Code *SOAP_ENV__Code, struct SOAP_ENV__Reason *SOAP_ENV__Reason, char *SOAP_ENV__Node, char *SOAP_ENV__Role, struct SOAP_ENV__Detail *SOAP_ENV__Detail)
+    { 
+      ... = faultcode; // SOAP 1.1 fault code string (QName)
+      ... = faultstring; // SOAP 1.1 fault string
+      ... = faultactor; // SOAP 1.1 fault actor string
+      ... = detail; // SOAP 1.1 fault detail struct
+      ... = SOAP_ENV__Code; // SOAP 1.2 fault code struct
+      ... = SOAP_ENV__Reason; // SOAP 1.2 reason struct
+      ... = SOAP_ENV__Node; // SOAP 1.2 node string
+      ... = SOAP_ENV__Role; // SOAP 1.2 role string
+      ... = SOAP_ENV__Detail; // SOAP 1.2 detail struct
+      return SOAP_OK;
+    }
 @endcode
 
 */

@@ -1,6 +1,6 @@
 
-XML-RPC and JSON/JSONPath                                            {#mainpage}
-=========================
+XML-RPC & JSON/JSONPath                                              {#mainpage}
+=======================
 
 [TOC]
 
@@ -9,10 +9,11 @@ Introduction                                                            {#intro}
 
 XML-RPC predates JSON and shares the same goal to offer a simple data format
 for Web applications that interoperate via "remote procedure calls" (RPC) over
-"stateless" HTTP via HTTP POST.  Applications are not limited to RPC via HTTP
-POST.  Other REST methods can be used to manage the state of resources via URL
-references, allowing the storing of data (HTTP PUT), retrieval of data (HTTP
-GET), and removal of data (HTTP DELETE) from a resource.
+"stateless" HTTP via HTTP POST.  Applications are not limited to the exchange
+of RPC messages via HTTP POST.  Other REST methods can be used to manage the
+state of resources via URL references, allowing for the storage of data (HTTP
+PUT), retrieval of data (HTTP GET), and removal of data (HTTP DELETE) from a
+resource.
 
 XML-RPC is a generic, self-describing (and very verbose) XML format to compose
 XML messages for platform-neutral data exchange.  XML-RPC defines a collection
@@ -29,13 +30,13 @@ visit <http://www.xmlrpc.com>.
 JSON (JavaScript Object Notation) is an even simpler data format to support
 platform-neutral data interchange that is highly compatible across programming
 languages by restricting data representation to a set of five common types:
-bool, float, string, array, and object.  A JSON object is the same as an
+bool, number, string, array, and object.  A JSON object is the same as an
 XML-RPC struct.  Only the syntax differs.  Both are composed of fieldname-value
 member pairs (i.e. both are hashmaps) and have no other special properties.
 (Which is in contrast to XML data as "objects" that are namespace scoped and
-may include `xsi:type` information to distinguish derived from base types, and
-may include id-ref data references, and other properties that make XML more
-suitable to achieve lossless C/C++ serialization.)
+may include xsi:type attributes to distinguish derived from base types, and may
+include id-ref attributes to cross-reference data, and other properties that
+make XML more suitable to achieve lossless C/C++ serialization.)
 
 This document does not describe JSON (and JSON RPC/REST) in detail.  For more
 details, please visit <http://www.json.org>.
@@ -44,31 +45,41 @@ details, please visit <http://www.json.org>.
 JSON/JSONPath and gSOAP                                               {#intro-1}
 -----------------------
 
-The gSOAP C++ JSON API is compact and lightweight.  It is straightforward to
-write JSON RPC and JSON REST code:
+The gSOAP JSON API is compact and lightweight.  It is straightforward to write
+JSON RPC and JSON REST code.  For example in C++:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     #include "json.h"
-    soap *ctx = soap_new1(SOAP_C_UTFSTRING);  // set up context to manage memory
-    value request(ctx), response(ctx);
-    request = "getCurrentTime";               // request current time
-    if (!json_call(ctx,                       // make a call (POST)
-          "http://www.cs.fsu.edu/~engelen/currentTimeJSON.cgi",  // endpoint URL
-          request,                            // value with the request string
-          response)                           // get response, if call is OK
-       )
-      cout << "Current time = " << response << endl;    // JSON response to cout
+    int main()
+    {
+      soap *ctx = soap_new1(SOAP_C_UTFSTRING);  // set up context to manage memory
+      const char *endpoint = "http://www.cs.fsu.edu/~engelen/currentTimeJSON.cgi";
+      value req(ctx), res(ctx);                 // new JSON values req and res
+      req = "getCurrentTime";                   // request current time
+      json_call(ctx,                            // make a call (POST)
+          endpoint,                             // the service endpoint URL
+          req,                                  // value with the request string
+          res)                                  // response, if call is OK
+      );
+      if (ctx->error) ...                       // handle IO error
+      cout << "Current time = " << res << endl; // JSON response to cout
+    }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To help you quickly develop C/C++ JSON code, we include a code generator
-`jsoncpp` with the gSOAP package (version 2.8.26 and up).  You can find the
-`jsoncpp` tool  with the JSON examples in `gsoap/samples/xml-rpc-json`.  The
-`jsoncpp` command auto-generates C or C++ code from a JSON fragment.  The
-generated code creates a JSON node graph for this fragment, which can be
-further tweaked as necessary.  For example:
+To compile this example see the [List of C++ files](#cpp-files).
+
+Furthermore, to help you quickly develop C/C++ JSON code, we offer a code
+generator **jsoncpp** with the gSOAP package (version 2.8.26 and up).  You can
+find the jsoncpp tool with the JSON examples in `gsoap/samples/xml-rpc-json`.
+
+The jsoncpp command-line tool auto-generates C or C++ code from a JSON
+fragment.  The generated code creates a JSON node graph for this fragment,
+which can be further tweaked as necessary.  We demonstrate this on an example
+`menu.json` file:
+
+    cat menu.json
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    $ cat menu.json
     { "menu": {
         "id": "file",
         "value": "File",
@@ -81,7 +92,11 @@ further tweaked as necessary.  For example:
         }
       }
     }
-    $ ./jsoncpp menu.json
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    jsoncpp menu.json
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     #include "json.h"
     { /* Generated by jsoncpp menu.json */
       struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
@@ -104,26 +119,76 @@ further tweaked as necessary.  For example:
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can use `jsoncpp` option `-M` to narrow the generated code down to the
-essentials without the initialization and cleanup operations.  This makes it
-more suitable for use within your code base.
+You can use jsoncpp option `-e` to add explanatory comments to the generated
+code, which explains what the code does to help you understand the JSON API.
 
-You can also use the new `jsoncpp` option `-p` (gSOAP 2.8.27 and up) to
-generate efficient JSONPath query code.
+Use jsoncpp option `-M` to narrow the generated code down to the essentials,
+without the initialization and cleanup parts of the code.  This makes the
+generated code suitable for direct inclusion in your codebase.
 
-For example, let's write a JSONPath query to display the authors of books in a
-store.  We will read the JSON data from `std:cin` (option `-i`) and filter the
-authors with the query `$.store.book[*].author` to collect them in an array `y`
-of results with option `-y`.  We generate the code from the command line with
-`jsoncpp` as follows:
+Generating code to populate a node graph is one option.  Another option is to
+generate code to inspect a node graph.  Use jsoncpp option `-i` (gSOAP 2.8.28
+and up) to generate code to inspect the node graph of a value parsed from JSON
+input, given that the JSON file provided with option `-i` serves as a generic
+template:
+
+    jsoncpp -i menu.json
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    $ ./jsoncpp -i -M -p'$.store.book[*].author' -y
+    #include "json.h"
+    { /* Generated by jsoncpp -i menu.json */
+      struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+      ctx->double_format = "%lG";
+
+      value x(ctx);
+      std::cin >> x;
+      #define USE_VAL(path, val) std::cout << path << " = " << val << std::endl
+      if (x.has("menu"))
+      {
+        if (x["menu"].has("id"))
+          USE_VAL("$.menu.id", x["menu"]["id"]);
+        if (x["menu"].has("value"))
+          USE_VAL("$.menu.value", x["menu"]["value"]);
+        if (x["menu"].has("popup"))
+        {
+          if (x["menu"]["popup"].has("menuitem"))
+          {
+            for (int i3 = 0; i3 < x["menu"]["popup"]["menuitem"].size(); i3++)
+            {
+              if (x["menu"]["popup"]["menuitem"][i3].has("value"))
+                USE_VAL("$.menu.popup.menuitem[].value", x["menu"]["popup"]["menuitem"][i3]["value"]);
+              if (x["menu"]["popup"]["menuitem"][i3].has("onclick"))
+                USE_VAL("$.menu.popup.menuitem[].onclick", x["menu"]["popup"]["menuitem"][i3]["onclick"]);
+            }
+          }
+        }
+      }
+      std::cout << x << std::endl;
+
+      soap_destroy(ctx);
+      soap_end(ctx);
+      soap_free(ctx);
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can also use the new jsoncpp option `-p` (gSOAP 2.8.27 and up) to generate
+efficient JSONPath query code to query and retrieve specific values.
+
+For example, let's write a JSONPath query to display the authors of books in a
+store.  We will read the JSON data from `std:cin` and filter the authors with
+the query `$.store.book[*].author` to collect them in a JSON array `y` of
+results with jsoncpp option `-y`.  We generate the code from the command line
+with jsoncpp as follows:
+
+    jsoncpp -M -p'$.store.book[*].author' -y
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     value x(ctx);
     std::cin >> x;
-    // $.store.book[*].author
+    // JSONPath: $.store.book[*].author
     value y(ctx);
-    #define QUERY_YIELD(v) y[y.size()] = v
+    y.size(0);
+    #define QUERY_YIELD(val) y[y.size()] = val
     if (x.has("store"))
     {
       if (x["store"].has("book"))
@@ -141,14 +206,31 @@ of results with option `-y`.  We generate the code from the command line with
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `jsoncpp` code generator aims to produce clean, high-quality and readable
-C and C++ code.  You can also embed C/C++ code in JSONPath queries to filter
-and select values based on your runtime data.
+Let's apply this query to the `store.json` file that you can find in section
+[JSONPath by example](#jsoncpp-4):
 
-We will present in detail how to use `jsoncpp` in the next section.  The
+    ./query < store.json
+    [
+      "Nigel Rees",
+      "Evelyn Waugh",
+      "Herman Melville",
+      "J. R. R. Tolkien"
+    ]
+
+You can compile this example yourself with:
+
+    jsoncpp -o query.cpp -m -p'$.store.book[*].author' -y
+    soapcpp2 -CSL xml-rpc.h
+    c++ -o query query.cpp json.cpp xml-rpc.cpp soapC.cpp stdsoap2.cpp
+
+You can also embed C/C++ code in JSONPath queries to filter and select values
+from JSON data at runtime.
+
+The jsoncpp code generator aims to produce clean, high-quality and readable C
+and C++ code.  We will present jsoncpp in more detail in the next section.  The
 remainder of this document explains how you can use the XML-RPC/JSON C and C++
-APIs create data, access data, send/recv data via REST, read/write data to
-files, streams, and string buffers.
+APIs to create JSON data, access JSON data, send/recv data via REST, and to
+read/write JSON data to files, streams, and string buffers.
 
 It should be stated that JSON as a data format is not a true-and-tested
 alternative to XML and XML schema.  XML data bindings provide a strongly typed
@@ -164,61 +246,66 @@ avoid ambiguity.
 The jsoncpp command-line tool                                         {#jsoncpp}
 =============================
 
-The `jsoncpp` command produces high-quality readable source code.  The
-generated code can be readily used in your projects to populate JSON data and
-extract data with compiled JSONPath queries, thereby saving you substantial
-time and effort to write code.  You may not have to write any C or C++ code to
-manipulate JSON data with your application's code base by taking full advantage
-of this tool.
+The jsoncpp command produces high-quality, readable and reusable source code.
+The generated code can be readily used in your projects to populate JSON data
+and retrieve data, thereby saving you substantial time and effort to write
+code.  You may not have to write any C or C++ code to manipulate JSON data with
+your application's code base when taking full advantage of the jsoncpp
+autocoding tool.
 
-The `jsoncpp` command-line tool generates C or C++ source code to populate a
+The jsoncpp command-line tool generates C or C++ source code to populate a
 JSON node graph with the data given in a JSON file.  The command also has an
-option `-p` to generate efficient source code for JSONPath queries.  Even
-stand-alone JSONPath query filter applications can be auto-generated.
+option `-i` to generate source code to inspect parsed JSON values by using a
+JSON file as a generic template for this code.  And option `-p` generates
+efficient source code for JSONPath queries.  Even stand-alone JSONPath query
+filter applications can be auto-generated with option `-m` (for main).
 
 
 Compiling the jsoncpp command                                       {#jsoncpp-1}
 -----------------------------
 
-You will find `jsoncpp` and the XML-RPC/JSON examples in the gSOAP package in
+You will find jsoncpp and the XML-RPC/JSON examples in the gSOAP package in
 `gsoap/samples/xml-rpc-json`.
 
-To build `jsoncpp`, [install gSOAP](www.genivia.com/downloads.html) and build
+To build jsoncpp, [install gSOAP](http://www.genivia.com/downloads.html) and build
 all sample codes as follows:
 
     ./configure --enable-samples
     make
     make install
 
-This builds the command-line tool `jsoncpp` in `gsoap/samples/xml-rpc-json`
+This builds the command-line tool jsoncpp in `gsoap/samples/xml-rpc-json`
 from where you can use it and/or copy it for use with your projects.
 
-If you do not have the samples built, you can use `soapcpp2` (or `soapcpp2.exe`
+If you do not have the samples built, you can use soapcpp2 (or soapcpp2.exe
 in `gsoap/bin/win32`) from the command line to generate the C++ code required
-by `jsoncpp` and also required by the C++ JSON API components:
+to compile jsoncpp and that is also required by the C++ JSON API components:
 
     cd gsoap/samples/xml-rpc-json
     soapcpp2 -CSL xml-rpc.h
     c++ -I../.. -o jsoncpp jsoncpp.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
 
-The above builds the `jsoncpp` command-line tool.
+The above builds the jsoncpp command-line tool.
 
 
 Command-line options                                                {#jsoncpp-2}
 --------------------
 
-The `jsoncpp` command takes several options and an optional JSON input file:
+The jsoncpp command takes several options and an optional JSON input file:
 
-    jsoncpp [-c] [-e] [-f%fmt] [-h] [-i] [-m] [-M] [-O] [-ofile] [-ppath] [-rroot] [-xcode] [-y] [infile]
+    jsoncpp [-c] [-e] [-f%fmt] [-h] [-i] [-l] [-m] [-M] [-O] [-ofile] [-ppath] [-rroot] [-xcode] [-y] [infile]
+
+where the jsoncpp command-line options are:
 
 | Option   | Description                                                       |
 | -------- | ----------------------------------------------------------------- |
 | `-c`     | generate C code instead of C++                                    |
 | `-e`     | add explanatory comments to the generated code                    |
-| `-f%%fmt`| use `%%fmt` to format double floats, e.g. `-f%%lg`                |
+| `-f%%fmt`| use `%%fmt` to format double floats, e.g. `-f%%lG`                |
 | `-h`     | display help message                                              |
-| `-i`     | don't read JSON from stdin, generate code that reads JSON instead |
-| `-m`     | generate stand-alone code with `main()`                           |
+| `-i`     | generate code to inspect node graph parsed from JSON input        |
+| `-l`     | generate code for option `-i` to store values in local variables  |
+| `-m`     | generate stand-alone code by adding `main()`                      |
 | `-M`     | generate minimal code unadorned with initialization and cleanup   |
 | `-O`     | optimize code by factoring common indices                         |
 | `-ofile` | save source code to `file`                                        |
@@ -226,24 +313,30 @@ The `jsoncpp` command takes several options and an optional JSON input file:
 | `-rroot` | use `root` instead of root value `x` in the generated code        |
 | `-xcode` | generate code that executes `code` for each JSONPath query result |
 | `-y`     | generate code that yields an array `y` of JSONPath query results  |
-| `infile` | JSON file to parse                                                |
+| `infile` | optional JSON file to parse                                       |
+| `-`      | read JSON from standard input                                     |
 
-The `jsoncpp` command expects a JSON input file or it will read JSON data from
-standard input unless option `-i` is used.  With option `-i`, the generated
-source code includes commands to read JSON data from standard input.  This is
-useful to generate code that filters JSON data from input with the JSONPath
-query given with option `-p`.  Otherwise, the generated code simply builds a
-node graph in code for the specified JSON input data.
+The jsoncpp command takes a JSON input file `infile` to generate code to
+construct this JSON value in C/C++ or, with option `-i`, to generate code that
+reads JSON data from input and traverses it to inspect its value by using the
+JSON input file `infile` as a template to match against.  For option `-i`, if
+you want additional code that uses local variables to store boolean, integer,
+and floating point values retrieved from the JSON node graph, then also use
+option `-l` with option `-i`.
 
-The `jsoncpp` command emits source code to standard output or to the file
+Use option `-c` to generate C code instead of C++ and use option `-e` to add
+explanatory comments to the generated code.
+
+The jsoncpp command emits source code to standard output or to the file
 specified with option `-o`.
 
-Minimalist code is generated with option `-M`, which is useful to automate
+Minimalistic code is generated with option `-M`, which is useful to automate
 pasting of the unadorned source code into the source code of your project.
 
 Optimized code is generated with option `-O` by factoring common array indices
 and object field names.  This produces more elaborate code that is more
-efficient but may be harder to read and modify.
+efficient but may be harder to read and modify.  This option has no effect on
+the code generated with option `-i`.
 
 The default name of the root value in the generated source code is `x`.  To
 change this name use option `-r`.  Do not use the name `v`, which represents
@@ -251,42 +344,49 @@ the current value.  Other variable names to avoid are `i`, `j`, `k`, `p`, `q`,
 `r`, `s`, and `S`, since these are internally used by the generated JSONPath
 query code.
 
-Options `-p` and `-x` specify a JSONPath query path and the code to execute for
-each query result, respectively.  The default action in the generated code is
-to print each query value in JSON format.  Option `-y` yields a JSON array of
-query values that are incrementally collected.  Option `-x` overrides option
-`-y`.
+Use option `-p` to generate code that filters JSON data from a source of input
+with a JSONPath query `path`.  Option `-x` specifies a JSONPath query code to
+execute for each query result.  The default action in the generated code is
+to print each query result value in JSON format separated by newlines.  Option
+`-y` yields a JSON array of query result values that are incrementally
+collected.  Option `-x` overrides option `-y`.
 
 To generate a stand-alone application use option `-m`.  This option is useful
-for testing JSONPath query filters with option `-p`, possibly combined with
-option `-i` to let the JSONPath filter application read from standard input.
+for testing JSONPath query filters given with option `-p`.
 
-Option `-f%fmt` sets the floating point double precision format to use in the
-generated code.  By default, `jsoncpp` emits floating point numbers with up to
-17 digit mantissas to preserve precision.  Use `-f%lG` for the smallest
-floating point representation.
-
-Use option `-c` to generate C code instead of C++ and add explanatory comments
-to the generated code using option `-e`.
+Option `-f%``fmt` sets the floating point double precision format to use in the
+generated code.  By default, jsoncpp emits floating point numbers with up to 17
+digit mantissas to preserve precision.  Use `-f%``lG` for the shortest floating
+point representation.
 
 
 JSONPath syntax                                                     {#jsoncpp-3}
 ---------------
 
-We use the JSONPath syntax of [Goessner](http://goessner.net/articles/JsonPath)
-extended with `?` ("where") and `!` ("where not") operators.  We also support
+The concept behind JSONPath is identical to XPath for XML: to select elements
+(value nodes) from a DOM node structure of a document by matching the path
+expression against descendent nodes in the node tree structure.  A JSONPath
+query returns the JSON values selected.
+
+We adopt the JSONPath syntax suggested by
+[Goessner](http://goessner.net/articles/JsonPath), but extended with `?`
+("where") and `!` ("where not") operators.  Our JSONPath syntax also supports
 the `[?(expr)]` and `[(expr)]` constructs to insert your own C/C++ expressions
-for filtering and selection of nodes in your JSONPath queries.
+for filtering and selection of nodes in JSONPath queries.  Our syntax also
+supports multiple comma-separated alternatives in the `[ ]` selector.  But the
+syntax does not support `|` (alternation).  We recommend to write a JSONPath
+query for each alternation.
 
 JSON data structures are represented internally as a node graph consisting of
-atomic values (null, bool, int/double, string), arrays, and "objects" that are
-structs with fieldname-value pairs.  A JSONPath expression specifies a JSON
-data query, typically starting from the root node, and descending deeper into
-the node graph to match child nodes.
+atomic values (null, bool, int/double, string), arrays, and "objects".  JSON
+objects are structs with fieldname-value pairs.  A JSONPath expression
+specifies a JSON data query, typically starting from the root node, and
+descending deeper into the node graph to match child nodes.
 
 For example, suppose we have a `store` object with a `book` array.  Each `book`
-object has a `title` string (and some other properties we will ignore for now).
-The following JSONPath query returns the titles of all books in the store:
+object has a `title` string and some other properties which we will ignore for
+now.  The following JSONPath query returns the titles of all books in the
+store:
 
     $.store.book[*].title
 
@@ -295,7 +395,7 @@ We can also write the same query in bracket notation:
     $["store"]["book"][*]["title"]
 
 Note that the syntax of this query has a close similarity to the C++ JSON API
-for accessing field names and array elements.
+for accessing object fields (a.k.a. object properties) and array elements.
 
 Basically, a JSONPath expression is a sequence of operations to match nodes:
 
@@ -310,18 +410,23 @@ Basically, a JSONPath expression is a sequence of operations to match nodes:
 | `..`          | "recurse": any matching descendant nodes of the current node |
 | `?`           | "where": current node if the rest of the query path matches  |
 | `!`           | "where not": the complement of `?`                           |
-| `[(e)]`       | evaluate C/C++ expression `e` to match a field or an index   |
+| `[(e)]`       | use value of C/C++ expression `e` to match a field or index  |
 | `[?(e)]`      | evaluate C/C++ expression `e`, continue matching when true   |
 
 Field names (`f` in the table) in JSON and in JSONPath queries may contain
-UTF-8 Unicode characters.  
+UTF-8 Unicode characters.
+
+Throughout this document we refer to the *field names* of objects and structs.
+Also commonly used are JSON object *property names* and *key names* (as in
+key-value pairs),
 
 Other JSONPath implementations require quotes for field names in brackets, as
-in `['store']` or `["store"]`.  In this implementation you will only need to
-add quotes when field names contain control characters, spaces, or punctuation,
-such as the field name `'unit-price'`.  To promote orthogonality of the
-JSONPath syntax (no arbitrary rules and exceptions), quoted field names are
-also valid in dot notation in this JSONPath implementation.
+in `['store']` or `["store"]`.  With jsoncpp you will only need to add quotes
+when field names contain control characters, spaces, or punctuation, such as a
+`unit-price` field name in the query `$..['unit-price']`.  To promote
+orthogonality of the JSONPath syntax (no arbitrary rules and exceptions
+depending on a context), quoted field names are also valid with dot notation in
+our JSONPath syntax, such as the query `$..'unit-price'`.
 
 
 JSONPath by example                                                 {#jsoncpp-4}
@@ -332,7 +437,7 @@ located at increasingly deeper levels of the data structure.
 
 Consider the following JSON data:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.json}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
     {
       "store": {
         "book": [ 
@@ -379,17 +484,23 @@ the root node indicated by `$`, we use the following JSONPath query expression:
 This query returns `"Sayings of the Century"` when applied to the JSON data.
 
 To try the JSONPath examples yourself, we suggest to create a `store.json` file
-with the above JSON data and run `jsoncpp` from the command line to compile a
+with the above JSON data and run jsoncpp from the command line to compile a
 JSONPath query as follows:
 
-    ./jsoncpp -i -o test-json.cpp -m -p'$.store.book[0].title'
+    cd gsoap/samples/xml-rpc-json
+    soapcpp2 -CSL xml-rpc.h
+    jsoncpp -o test-json.cpp -m -p'$.store.book[0].title'
     c++ -I../.. -o test-json test-json.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
     ./test-json < store.json
 
 The compiled JSONPath query is applied to the `store.json` data and returns the
-matching values found.  Use `jsoncpp` option `-y` to return matches in a JSON
-array.  The `soapC.cpp` file is generated with the command `soapcpp2 -CSL
-xml-rpc.h`, which is done just once for all C++ JSON applications.
+matching values found.  Use jsoncpp option `-y` to return matches in a JSON
+array.
+
+The `soapC.cpp` file, and the header files `soapStub.h` and `soapH.h`, are
+generated with the command `soapcpp2 -CSL xml-rpc.h`, which is done just once
+for all C++ JSON applications.  Use soapcpp2 option `-c` to generate `soapC.c`
+for C (with the corresponding `soapStub.h` and `soapH.h` in C).
 
 To match any field of an object or any array element, we use a wildcard `*`:
 
@@ -401,11 +512,11 @@ with:
 
     $.store.*.*.price
 
-This returns `8.95`, `12.99`, `8.99`, and `22.99`.
+This returns the values `8.95`, `12.99`, `8.99`, and `22.99`.
 
-In the latter case we only get the book prices, because the first `*` matches
-`book` and `bicycle` and the second `*` matches the book array and the `red`
-and `price` fields.  Only the book prices are returned, because `red` and
+Note that in the latter case we only get the book prices, because the first `*`
+matches `book` and `bicycle` and the second `*` matches the book array and the
+`red` and `price` fields.  Only the book prices are returned, because `red` and
 `price` are atomic and have no `price` child node.
 
 To match and return all prices in the store we use `..` called "recursive
@@ -431,7 +542,7 @@ Arrays can also be sliced for matching from a starting index `b` until
 optional.  When omitted, the slice runs from the start and/or from the end of
 the array.
 
-For example
+For example:
 
     $.store.book[:].title
 
@@ -448,8 +559,8 @@ array element-by-element matching with a negative unit step:
 
 This matches and returns the titles of all books in reverse order.
 
-The following JSONPath queries return the same results, where we used slices
-and `[x,y]` to match multiple array entries:
+The following JSONPath queries return the same results for the example JSON
+data, where we used slices and `[x,y]` to match multiple array entries:
 
     $.store.book[1:3].title
     $.store.book[1:-1].title
@@ -472,23 +583,28 @@ the right-side matches:
 
 This matches and returns only books that have an `isbn` field.
 
-The complement of the `?` ("where") operator is `!` ("where not"), which
-returns the results that match the left side of the `!` but only when the
-right-side does not match.
+The complement of the `?` operator is `!` ("where not"), which returns the
+results that match the left side of the `!` but only when the right-side does
+not match.
 
 More complex queries can be formulated by embedding C/C++ expressions in the
-query to filter `[?(e)]` and select `[(e)]` nodes.  For example:
+query to filter `[?(e)]` and select `[(e)]` nodes.  For example, in C++:
 
     $.store.book[:][?((double)v["price"] < 10.0)].title
+
+and in C:
+
+    $.store.book[:][?(*double_of(value_at(v, "price")) < 10.0)].title
 
 This filters books with prices lower than 10.0 and returns the title of each
 book found.
 
-Embedded C/C++ expressions can inspect the current JSONPath node value by
-accessing variable `v`, as is shown above.  Here we used `(double)v["price"]`
-to obtain the price of the current node for comparison.  The JSONPath root node
-value is `x`.  Instead of `x`, you can select another name with `jsoncpp`
-option `-r`.
+Embedded C/C++ expressions to filter nodes can inspect the current JSONPath
+node value by accessing variable `v`, as is shown above.  Here we used
+`(double)v["price"]` to obtain the price of the current node for comparison.
+Besides the current node `v` you can also access the JSONPath root node value
+`x`.  Instead of the default name `x`, you can change `x` to another name with
+jsoncpp option `-r`.
 
 You can access variables and functions in embedded C/C++ expressions, but do
 not access or modify `i`, `j`, `k`, `p`, `q`, `r`, `s` and `S`, which are
@@ -511,16 +627,22 @@ to find all prices < 10.0:
 Object fields and array elements can be accessed in a JSONPath query with C/C++
 expressions that evaluate to string field names or to integers indices,
 respectively.  For example, we can use the string `argv[1]` of `main()` as a
-field name:
+field name in C++:
 
     $.store.book[:][(argv[1])]
+
+In C we have to explicitly use `value_at` to access the field of the current
+`v` node (and we use `nth_value` to access array elements of the current `v`
+node, not shown here):
+
+    $.store.book[:][(value_at(v, argv[1]))]
 
 This assumes that the command-line argument (`argv[1]`) of the application is a
 book field name.  Otherwise, no results are returned.
 
 After compiling the JSONPath query with
 
-    ./jsoncpp -i -o test-json.cpp -m -p'$.store.book[:][(argv[1])]'
+    jsoncpp -o test-json.cpp -m -p'$.store.book[:][(argv[1])]'
     c++ -I../.. -o test-json test-json.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
 
 we can obtain the book titles with:
@@ -535,9 +657,14 @@ field and array expressions separated by commas:
 This prints the title and the value of the field name given by the command-line
 argument, if there is a field that matches the given name.
 
-Finally, let's use the value of `argv` to filter products in the store by a given price:
+Finally, let's use the value of `argv` to filter products in the store by a
+given command-line argument price:
 
-    ./jsoncpp -i -m -p'$.store..[?((v.has("price") ? (double)v["price"] : 9999) < strtod(argv[1], NULL))]'
+    jsoncpp -m -p'$.store..[?((v.has("price") ? (double)v["price"] : 9999) < strtod(argv[1], NULL))]'
+
+And in C:
+
+    jsoncpp -c -m -p'$.store..[?((nth_at(v, "price") >= 0 ? *double_of(value_at(v, "price")) : 9999) < strtod(argv[1], NULL))]'
 
 C/C++ expressions cannot be used as array slice bounds, which must be constant.
 
@@ -552,7 +679,7 @@ just fine by this JSON implementation as 64 bit (`long long`, `int64_t`,
 `LONG64`) without conversion to/from double floating point values.
 
 
-List of C++ files                                                  {#cpp-files}
+List of C++ files                                                   {#cpp-files}
 -----------------
 
 The following files define XML-RPC operations and data types for C++:
@@ -583,8 +710,20 @@ files, execute:
     soapcpp2 -CSL xml-rpc.h
 
 Then compile and link the `.cpp` files listed above for XML-RPC and JSON with
-the auto-generted `soapC.cpp` and `stdsoap2.cpp` (or link with `libgsoap++.a`
-installed by the gSOAP package).
+the auto-generated `soapC.cpp` and `stdsoap2.cpp`:
+
+    c++ -I../.. -o myapp myapp.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
+
+Instead of `stdsoap2.cpp` you can link `libgsoap++.a` with `-lgsoap++`, when
+installed by the gSOAP package.
+
+To enable OpenSSL for HTTPS compile with `-DWITH_OPENSSL` and link
+`-lssl`, and `-lcrypto`:
+
+    c++ -DWITH_OPENSSL -I../.. -o myapp myapp.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp -lssl -lcrypto
+
+For OpenSSL support, instead of `stdsoap2.cpp` you can link `libgsoapssl++.a`
+with `-lgsoapssl++`, when installed by the gSOAP package.
 
 Because XML namespaces are not used, we can either use `-DWITH_NONAMESPACES` to
 compile `stdsoap2.cpp` without complaining about a missing global `Namespace`,
@@ -654,7 +793,7 @@ of the following data types:
 
     v = false;            // Boolean
 
-    v = time(0);          // time_t value serialized as ISO 8601 date time
+    v = (ULONG64)time(0); // time_t value serialized as ISO 8601 date time
 
     // create an array [24, 99.99, "abc"]
     v[0] = 24;
@@ -671,8 +810,8 @@ of the following data types:
     v = img;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We can combine this syntax in many possible ways to create arrays of arrays,
-arrays of structs, and so on.  For example:
+We can combine these operations in many possible ways to create arrays of
+arrays, arrays of structs, and so on.  For example:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     v[0]["name"] = "bob";
@@ -691,20 +830,120 @@ In JSON format this is represented as:
      of 1 struct_/ |              |
     with 2 members_/______________/
 
-When receiving a value in XML-RPC or JSON, we generally want to check its type
-to obtain its value.  To check the type of a value, we use `is_Type` methods:
+Let's see what happens when we assign a variable the value of another.
+
+The JSON C++ API uses the *value model* for variables with atomic values,
+meaning that atomic values are copied when assigning a target variable the
+atomic value of another variable.  It uses the *reference model* for arrays and
+structs, meaning that array and struct contents are shared when assigning a
+target variable the array/struct value of another variable.  We illustrate the
+effect below:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    bool value::is_null()     // true if value is not set or assigned (JSON null)
-    bool value::is_int()      // true if value is a 32 or a 64 bit int
-    bool value::is_double()   // true if value is a 64 bit double floating point
-    bool value::is_string()   // true if value is a string or wide string
+    value x(ctx), y(ctx);
+    x = 1;
+    y = x;
+    x = 2;
+    std::cout << "x = " << x << " and y = " << y << std::endl;
+    value a(ctx), b(ctx);
+    a["num"] = 1;
+    b = a;
+    a["num"] = 2;
+    std::cout << "a.num = " << a["num"] << " and b.num = " << b["num"] << std::endl;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This prints `x = 2 and y = 1` and `a.num = 2 and b.num = 2`.
+
+You can make deep copies of values by using the auto-generated `soap_dup_value`
+function in `soapC.cpp`:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    value a(ctx), b(ctx);
+    a["num"] = 1;
+    soap_dup_value(ctx, &b, &a);
+    a["num"] = 2;
+    std::cout << "a.num = " << a["num"] << " and b.num = " << b["num"] << std::endl;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This prints `a.num = 2 and b.num = 1`.
+
+@warning Do not extend arrays and structs (JSON objects) returned by
+`soap_dup_value` with new entries.  The new entries may use unallocated memory.
+You can always loop over arrays and structs to copy their contents to a new
+array or struct managed by another context, if you must add new entries later.
+
+To auto-generate `soap_dup_value`, use option `-Ec` with soapcpp2:
+
+    soapcpp2 -Ec -CSL xml-rpc.h
+
+With gSOAP 2.8.28 and later you can use the following operators on values in
+C++:
+
+| Operator             | Type of JSON Value Operands         | Result after Operand Type Promotion             |
+| -------------------- | ----------------------------------- | ----------------------------------------------- |
+| `+`                  | bool, number, string, struct, array | sum, string concat, struct concat, array concat |
+| `-`, `*`, `/`, `%`   | bool, number                        | difference, product, division, modulo           |
+| `==`, `!=`           | bool, number, string, struct, array | C++ `bool`                                      |
+| `<=`, `>=`, `<`, `>` | bool, number, string                | C++ `bool`                                      |
+
+The (un)equal operators compare the two values by deep value comparison of
+array elements and object fields and values.  For the arithmetic operations,
+operands are converted by type promotion until the two operands conform to the
+type required for the operation:
+
+    atomic   int    double    string    struct    array
+
+    false -> 0
+    true  -> 1
+             int -> double
+    null -------------------> "null"
+    false ------------------> "false"
+    true -------------------> "true"
+             int -> double -> string
+    null ---------------------------------------> [null]
+    false --------------------------------------> [false]
+    true ---------------------------------------> [true]
+             int -------------------------------> [int]
+                    double ---------------------> [double]
+                              string -----------> [string]
+                                        struct -> [struct]
+
+An example:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include <sstream>
+    std::stringstream ss("[0,1,2]");
+
+    // parse JSON array into 'x'
+    value x(ctx);
+    ss >> x;            // x = [0,1,2]
+    x[3] = x[1] + x[2]; // x = [0,1,2,3]
+
+    value y(ctx);
+    y[0] = "abc";       // y = ["abc"]
+    y[1] = y[0] + 123;  // y = ["abc","abc123"]
+
+    std::cout << x + y; // [0,1,2,3] + ["abc","abc123"] is [0,1,2,3,"abc","abc123"]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Arithmetic and concatenation operations may incur significant memory overhead
+due to temporaries, type conversions (when applicable), and managed heap
+storage.  Use them only when CPU and memory usage are not critical.
+
+When receiving a value in XML-RPC/JSON, we generally want to check its type to
+obtain its value.  To check the type of a value, we use `is_Type` methods:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    bool value::is_null()     // true if value is not set (JSON null)
     bool value::is_bool()     // true if value is a Boolean "true" or "false" value
     bool value::is_true()     // true if value is Boolean "true"
     bool value::is_false()    // true if value is Boolean "false"
+    bool value::is_int()      // true if value is a 32 or a 64 bit int
+    bool value::is_double()   // true if value is a 64 bit double floating point
+    bool value::is_string()   // true if value is a string or wide string
+    bool value::is_dateTime() // true if ISO 8601, always false for received JSON
     bool value::is_array()    // true if array of values
     bool value::is_struct()   // true if structure, a.k.a. a JSON object
-    bool value::is_dateTime() // true if ISO 8601, always false for received JSON
     bool value::is_base64()   // true if base64, always false for received JSON
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -743,19 +982,23 @@ We have the following properties of this value:
     v[0]["toys"].empty() == false    // v[0]["toys"] is not empty
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When accessing structs (JSON objects) with field names, make sure to use
-existing member field names only.  A new member fieldname-value pair is
-dynamically added to the structure to accomodate the new entry for the field.
+When accessing structs (JSON objects) by field name, make sure to use existing
+member field names only.  A new member fieldname-value pair is dynamically
+added to the structure to accomodate the new entry for the field.
 
 Also arrays are extended to accommodate the indexed array element.  A negative
 index accesses elements from the array's end, with index -1 accessing the last
-value.  Also the `has` and `nth` methods take a negative index for bounds
-checking on arrays and will return `false` or negative, respectively.
+value.  Also the `value::has(int)` and `value::nth(int)` methods take a
+negative index for bounds checking on arrays and will return `false` or
+negative, respectively.
 
-You may want to use iterators to extract data from structs and arrays (see
+Use `value::size(int)` to change array size or set arrays to zero length.  Use
+negative size with `value::size(int)` to remove elements from the end.
+
+You may want to use iterators to retrieve data from structs and arrays (see
 further below).
 
-To extract atomic data we can use casts on a value `v` as follows:
+To retrieve atomic data we can use casts on a value `v` as follows:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     (double)v                   // 64 bit double or 0.0 if not numeric
@@ -766,7 +1009,7 @@ To extract atomic data we can use casts on a value `v` as follows:
     (wchar_t*)v                 // convert to wide string
     (wstring)v                  // convert to std::wstring
     (bool)v                     // same as is_true()
-    (time_t)v                   // nonzero if v contains an ISO 8601 date time
+    (ULONG64)v                  // nonzero time_t if v contains an ISO 8601 date time
     (_base64)v                  // base64 encoding of v
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -990,7 +1233,7 @@ A typical XML-RPC calling sequence in C++ is:
     }
     else if (response[0].is_dateTime())
     {
-      time_t t = response[0];
+      time_t t = (ULONG64)response[0];
       ... // use time
     }
     // deallocate all
@@ -1019,8 +1262,8 @@ itself as follows:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Note that in the client code, after the response is retrieved, the implicit
-type casts done by assignments extract the values.  These casts can be used
-anywhere to extract values:
+type casts done by assignments will retrieve the values that are type-cast
+converted if needed.  These casts can be used anywhere to retrieve values:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     params response = rpc();
@@ -1060,8 +1303,8 @@ A typical C++ XML-RPC server sequence is:
     // Option 1: parse and write to/from stdin/out for CGI
     // (no code needed)
     // Option 2: parse and write to/from FILE or socket
-    // ctx->recvfd = ...; // set input FD
-    // ctx->sendfd = ...; // set output FD
+    // ctx->recvfd = ...; // set input file descriptor
+    // ctx->sendfd = ...; // set output file descriptor
     // Option 3: parse and write to/from IO streams
     // ctx->is = ...; // set input stream
     // ctx->os = ...; // set output stream
@@ -1149,6 +1392,7 @@ stream, use:
     #include "xml-rpc-io.h"
     value v(ctx);
     std::cin >> v;
+    if (ctx->error) ... // check for parse errors (can also use v.soap->error)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Compile and link together with `soapC.cpp`, `xml-rpc.cpp`, `xml-rpc-io.cpp`,
@@ -1168,6 +1412,12 @@ Because the internal data is the same for XML-RPC and JSON, You can write data
 in XML-RPC or in JSON format.  You can also parse XML-RPC data and write to JSON
 data and vice versa.
 
+To write JSON to a stream you can use the `<<` operator on an output stream and
+a JSON value.
+
+To parse JSON from a stream you can use the `>>` operator on an input stream
+and populate a JSON value.
+
 For example, you can parse a JSON-formatted string and use that data to make an
 XML-RPC call.  The result of the call is displayed in JSON, nicely indented
 using the `SOAP_XML_INDENT` flag (this XML indent flag also works for JSON):
@@ -1180,11 +1430,13 @@ using the `SOAP_XML_INDENT` flag (this XML indent flag also works for JSON):
     // SOAP_C_UTFSTRING: UTF-8 content in char*, SOAP_XML_INDENT: indent JSON
     soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
     value request(ctx);
-    istringstream in;
+    std::istringstream in;
     in.str("[ [1, \"2\", 3.14, true], {\"name\": \"john\", \"age\": 24} ]");
     in >> request;                      // parse JSON, store as XML-PRC data
+    if (ctx->error) ...                 // check for parse errors
     params response = rpc(request);     // make the XML-RPC call
     std::cout << response << std::endl; // display result in JSON (indented)
+    if (ctx->error) ...                 // check for write errors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Compile and link together with `soapC.cpp`, `xml-rpc.cpp`, `json.cpp`, and
@@ -1201,15 +1453,16 @@ lost when serializing to JSON:
   dateTime type to a dateTime-formatted string.
   See also [JSON and ISO 8601 DateTime](#dateTime).
 
-See the section on C++ examples on how to populate and extract C++ data.
+See the section on C++ examples on how to populate and retrieve C++ data.
 
 Strings are stored and exchanged in UTF-8 format in 8-bit strings (`char*` and
-`std::string`) by using the `SOAP_C_UTFSTRING` flag.  Without this flag, 8-bit
-strings are converted to UTF-8.  We can optionally use `SOAP_XML_INDENT` to
-indent XML and JSON.
+`std::string`) by using the `SOAP_C_UTFSTRING` flag.  Wide strings (i.e.
+`wchar_t*` and `std::wstring` ) are converted to UTF-8.
 
 To force reading and writing JSON in ISO 8859-1 format, use the
 `SOAP_ENC_LATIN` flag to set the context.
+
+Optionally use `SOAP_XML_INDENT` to indent XML and JSON.
 
 
 C++ JSON over HTTP (REST method)                                       {#cpp-jr}
@@ -1237,14 +1490,14 @@ To use JSON REST on the client side, we use `json_call`:
     soap_free(ctx);    // free context
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `json_call` function takes a context, an endpoint URL (with query string
+A `json_call` takes a context, an endpoint URL (with URL query string
 parameters as needed), and optional `in` and `out` values to send and receive,
-respectively.  The function returns `SOAP_OK` (zero) for success or `EOF`,
+respectively.  This function returns `SOAP_OK` (zero) for success or `EOF`,
 `SOAP_SYNTAX_ERROR`, or an HTTP error code.
 
-To use the JSON REST POST method, pass both `in` and `out` values to
-`json_call`.  For the GET method, pass a NULL to `in`.  For the PUT method, pass
-a NULL to `out`.  For the DELETE method, pass both NULL to `in` and `out`.
+To use the HTTP POST method, pass both `in` and `out` values to `json_call`.
+For the GET method, pass a NULL to `in`.  For the PUT method, pass a NULL to
+`out`.  For the DELETE method, pass both NULL to `in` and `out`.
 
 Besides `json_call`, there are other JSON API functions:
 
@@ -1255,12 +1508,14 @@ Besides `json_call`, there are other JSON API functions:
   `out`.
 
 - `int json_write(soap *ctx, const value *v)` Writes JSON value to current
-  file, socket, or stream.  Returns `SOAP_OK` or error.  Set file/socket fd with
-  `ctx->sendfd = fd`.  Set output stream with `ctx->os = ostream`.
+  file, socket, or stream.  Returns `SOAP_OK` or error.  Set file/socket file
+  descriptor to write to with `ctx->sendfd = fd` (1 by default).  In C++, set
+  output stream with `ctx->os = ostream` to write to.
 
 - `int json_read(soap *ctx, value *v)` Reads JSON value from current file,
-  socket, or stream.  Returns `SOAP_OK` or error.  Set file/socket fd with
-  `ctx->recvfd = fd`.  Set input stream with `ctx->is = istream`.
+  socket, or stream.  Returns `SOAP_OK` or error.  Set file/socket file
+  descriptor with `ctx->recvfd = fd` to read from (0 by default).  In C++, set
+  input stream with `ctx->is = istream`.
 
 The are two other lower-level functions `json_send` and `json_recv` that are
 similar to `json_write` and `json_read` but do not initialize the sending and
@@ -1309,38 +1564,46 @@ For client and server examples, please see the gSOAP package content:
 - `gsoap/samples/xml-rpc-json/json-currentTimeServer.cpp`
 
 
-Moving JSON types into a C++ namespace                                {#json-ns}
---------------------------------------
+Moving JSON types and operations into a C++ namespace                 {#json-ns}
+-----------------------------------------------------
 
 A C++ namespace is preferred to separate JSON types and operations from other
-project-related types and operations.
+project-related types and operations.  This allows you to cleanly compile the
+JSON API files together with other gSOAP XML data binding files.
 
-To put all JSON (and XML-RPC) types and operations in a `json` C++ namespace,
-execute the following commands:
+To put all JSON (and the internal XML-RPC) types and operations in a `json` C++
+namespace, execute the following commands:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     soapcpp2 -qjson -CSL xml-rpc.h
     soapcpp2 -penv -CSL env.h
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-where `env.h` is an empty file.  This generates `jsonStub.h`, `jsonH.h`,
-`jsonC.cpp`, and `envC.cpp`.
+where `env.h` is an empty file.  This generates `jsonStub.h` and `jsonH.h` and
+two more files `jsonC.cpp` and `envC.cpp` to compile with `xml-rpc.cpp`,
+`json.cpp`, and `stdsoap2.cpp`.
 
-Then compile the source files together with `xml-rpc.cpp` and `json.cpp` and
-set the macro `-DJSON_NAMESPACE`:
+When combining JSON with a wsdl2h-generated header file that declares an XML
+data binding interface, use this header file instead of an empty `env.h`.  Use
+soapcpp2 to generate the data binding and client/server code as usual (without
+option `-penv`).
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compile the source files together with `xml-rpc.cpp` and `json.cpp` and set the
+macro `-DJSON_NAMESPACE`, for example:
+
     c++ -DJSON_NAMESPACE xml-rpc.cpp json.cpp jsonC.cpp envC.cpp stdsoap2.cpp ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Your project should now use the `json` namespace with a `value`, for example:
+To enable OpenSSL for HTTPS also use `-DWITH_OPENSSL` to compile.  Then link
+with `-lssl` and `-lcrypto`.
+
+Your project should now use the `json` namespace with the `value` type, for example:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     #include "json.h"
-    soap *ctx = soap_new1(SOAP_C_UTFSTRING);
+    soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
     json::value v(ctx);
     std::cin >> v;        // parse JSON
+    if (ctx->error) ...   // check for errors (can also check v.soap->error)
     std::cout << v;       // output JSON
+    if (ctx->error) ...   // check for errors (can also check v.soap->error)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -1350,7 +1613,7 @@ C XML-RPC and JSON                                                          {#c}
 With the release of gSOAP 2.8.26, the XML-RPC and JSON C APIs have been greatly
 improved.  The material in this section pertains to gSOAP 2.8.26 and later.
 
-The new C API for XML-RPC and JSON makes it much easier to populate and extract
+The new C API for XML-RPC and JSON makes it much easier to populate and retrieve
 data, but not as simple and easy as the C++ API.
 
 
@@ -1378,8 +1641,20 @@ files, execute:
     soapcpp2 -c -CSL xml-rpc.h
 
 Then compile and link the `.c` files listed above for XML-RPC and JSON with the
-auto-generted `soapC.c` and `stdsoap2.c` (or link with `libgsoap.a` installed
-by the gSOAP package).
+auto-generated `soapC.c` and `stdsoap2.c`:
+
+    cc -I../.. -o myapp myapp.c json.c xml-rpc.c soapC.c ../../stdsoap2.c
+
+Instead of `stdsoap2.c` you can link `libgsoap.a` with `-lgsoap`, when
+installed by the gSOAP package.
+
+To enable OpenSSL for HTTPS compile with `-DWITH_OPENSSL` and link `-lssl`, and
+`-lcrypto`:
+
+    cc -DWITH_OPENSSL -I../.. -o myapp myapp.c json.c xml-rpc.c soapC.c ../../stdsoap2.c -lssl -lcrypto
+
+For OpenSSL support, instead of `stdsoap2.c` you can link `libgsoapssl.a` with
+`-lgsoapssl`, when installed by the gSOAP package.
 
 Because XML namespaces are not used, we can either use `-DWITH_NONAMESPACES` to
 compile `stdsoap2.c` without complaining about a missing global `Namespace`,
@@ -1455,7 +1730,7 @@ of the following data types:
 
 The functions above return a pointer to a specific type of value and this value
 can be assigned as shown above but also read.  So we use these functions also to
-extract data, for example after receiving XML-RPC or JSON data.
+retrieve data, for example after receiving XML-RPC or JSON data.
 
 We can combine this syntax in many possible ways to create arrays of arrays,
 arrays of structs, and so on.  For example:
@@ -1477,32 +1752,84 @@ JSON format this is represented as:
      of 1 struct_/ |              |
     with 2 members_/______________/
 
+Let's see what happens when we assign a variable the value of another.
+
+The JSON C API uses the *reference model* for variables, meaning that values
+are shared when assigning a target variable the value of another variable.
+The variable values are shared until one or the other variables is assigned a
+different type of value.  We illustrate the effect below:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    struct value *x = new_value(ctx), *y = new_value(ctx);
+    *int_of(x) = 1;
+    *y = *x;
+    *int_of(x) = 2;
+    printf("x = %lld and y = %lld\n", *int_of(x), *int_of(y));
+    *double_of(x) = 3.1;
+    printf("x = %g and y = %lld\n", *double_of(x), *int_of(y));
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This prints `x = 2 and y = 2` and `x = 3.1 and y = 2`.
+
+You can make a copy of an atomic value with one of the `Type_of()` functions.
+The following code illustrates how:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    struct value *x = new_value(ctx), *y;
+    *int_of(x) = 1;
+    *inf_of(y) = *int_of(x);
+    *int_of(x) = 2;
+    printf("x = %lld and y = %lld\n", *int_of(x), *int_of(y));
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This prints `x = 2 and y = 1`.
+
+You can also make deep copies of values by using the auto-generated
+`soap_dup_value` function in `soapC.c`:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    struct value *a = new_value(ctx), *b;
+    *int_of(nth_value(a, 0)) = 1;
+    b = soap_dup_value(ctx, NULL, a);
+    *int_of(nth_value(a, 0)) = 2;
+    printf("a[0] = %lld and b[0] = %lld\n", *int_of(nth_value(a, 0)), *int_of(nth_value(b, 0)));
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This prints `a[0] = 2 and b[0] = 1`.
+
+To auto-generate `soap_dup_value`, use option `-Ec` with soapcpp2:
+
+    soapcpp2 -c -Ec -CSL xml-rpc.h
+
 When receiving a value in XML-RPC or JSON, we generally want to check its type
 to obtain its value.  To check the type of a value, we use `is_Type` functions:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
-    is_null(v)     /* true if value is not set or assigned (JSON null) */
-    is_int(v)      /* true if value is a 32 or a 64 bit int */
-    is_double(v)   /* true if value is a 64 bit double floating point */
-    is_string(v)   /* true if value is a string */
+    is_null(v)     /* true if value is not set (JSON null) */
     is_bool(v)     /* true if value is a Boolean "true" or "false" value */
     is_true(v)     /* true if value is Boolean "true" */
     is_false(v)    /* true if value is Boolean "false" */
+    is_int(v)      /* true if value is a 32 or a 64 bit int */
+    is_double(v)   /* true if value is a 64 bit double floating point */
+    is_string(v)   /* true if value is a string */
+    is_dateTime(v) /* true if ISO 8601, always false for received JSON */
     is_array(v)    /* true if array of values */
     is_struct(v)   /* true if structure, a.k.a. a JSON object */
-    is_dateTime(v) /* true if ISO 8601, always false for received JSON */
     is_base64(v)   /* true if base64, always false for received JSON */
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following functions can be used with arrays and structs (JSON objects):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    void set_struct(v)                         /* reset/create an empty struct */
+    void set_size(v, int)                      /* reset/change array size or pre-allocate space */
     int has_size(v)                            /* returns array or struct size or 0 */
     struct value *nth_value(v, int)            /* returns nth value in array or struct */
     struct value *value_at(v, const char*)     /* returns value at field in struct */
     struct value *value_atw(v, const wchar_t*) /* returns value at field in struct */
     int nth_at(v, const char*)                 /* returns nth index of field in struct or -1
     int nth_atw(v, const wchar_t*)             /* returns nth index of field in struct or -1
+    int nth_nth(v, int)                        /* returns nth index if nth index exists in array or -1
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When accessing structs (JSON objects) with `value_at`, make sure to use
@@ -1514,6 +1841,9 @@ element.
 
 A negative array index indexes elements from the end of the array, with index
 -1 accessing the array's last value.
+
+Use `set_size` to change array size or set arrays to zero length.  Use negative
+size with `set_size` to remove elements from the end.
 
 For example, let's take the value `v` that was assigned the array shown above.
 We have the following properties of this value:
@@ -1582,7 +1912,7 @@ To access base64 binary raw data of a value `v`, we use the following code:
 XML-RPC parameter lists are similar to arrays and its values are indexed.  We
 can also loop over response parameters after an XML-RPC REST call:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
     struct params *request = new_params(ctx);
     struct methodResponse response;
     *string_of(nth_param(request, 0)) = "hello";
@@ -1600,7 +1930,7 @@ can also loop over response parameters after an XML-RPC REST call:
 
 We should note that JSON REST does not require parameter types, for example:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
     #include "json.h"
     struct value *request = new_value(ctx);
     struct value *response = new_value(ctx);
@@ -1615,7 +1945,7 @@ We should note that JSON REST does not require parameter types, for example:
 All dynamically allocated memory that is internally used to store data is
 deallocated with:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
     soap_end(ctx);      /* delete all values */
     soap_free(ctx);     /* delete context allocated with soap_new() */
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1726,8 +2056,18 @@ To write values in JSON format or parse JSON data, we use the `json.h` and
 `json.c` JSON C API.  It is also possible to send and receive JSON data over
 HTTP (JSON REST).
 
-You can also convert XML-RPC data to/from JSON and populate XML-RPC from JSON
-data.  For example:
+Reading and writing XML from/to files, streams and string buffers is done via
+the managing context by setting one of the following context members that
+control IO sources and sinks:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    ctx->recvfd = fd; // an int file descriptor to read from (0 by default)
+    ctx->sendfd = fd; // an int file descriptor to write to (1 by default)
+    ctx->is = cs;     // C only: a const char* string to read from (soap->is will advance)
+    ctx->os = &cs;    // C only: pointer to a const char*, will be set to point to the string output
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For example, to read and write JSON data from/to a file descriptor:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
     #include "json.h" /* also compile and link json.c */
@@ -1737,15 +2077,43 @@ data.  For example:
     struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
     struct value *v = new_value(ctx);
 
-    ctx->recvfd = ...;         /* set file descriptor for reading */
+    ctx->recvfd = ...;         /* set int file descriptor for reading */
     json_read(ctx, v);         /* read JSON into value v */
+    if (ctx->error) ...        /* handle IO error (error message is in 'v' */
 
-    ctx->sendfd = ...;         /* set file descriptor for writing */
+    ctx->sendfd = ...;         /* set int file descriptor for writing */
     json_write(ctx, v);        /* write value v in JSON format (indented) */
+    if (ctx->error) ...        /* handle IO error (error message is in 'v' */
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Compile and link together with `soapC.c`, `xml-rpc.c`, `json.c`, and
+You can also read and write JSON data from/to NUL-terminated strings:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    #include "json.h"
+    struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}};
+
+    struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+    struct value *v = new_value(ctx);
+
+    const char *cs = "[1, 2, 3]";
+
+    ctx->is = cs;
+    json_read(ctx, v);         /* read JSON array from cs into value v */
+    if (ctx->error) ...        /* handle IO error (error message is in 'v' */
+
+    cs = NULL;
+    ctx->os = &cs;
+    json_write(ctx, v);        /* write value v in JSON format (indented) and set cs */
+    if (ctx->error) ...        /* handle IO error (error message is in 'v' */
+    printf("JSON data:\n%s\n", cs);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Compile and link your files together with `soapC.c`, `xml-rpc.c`, `json.c`, and
 `stdsoap2.c`.
+
+You can also convert XML-RPC data to/from JSON and populate XML-RPC from JSON
+data.  The XML-RPC parsing and sending functions are `soap_read_value` and
+`soap_write_value`, respectively.
 
 The JSON protocol has fewer data types than XML-RPC, so type information can be
 lost when serializing to JSON:
@@ -1758,15 +2126,49 @@ lost when serializing to JSON:
   dateTime type to a dateTime-formatted string.
   See also [JSON and ISO 8601 DateTime](#dateTime).
 
-Strings are stored and exchanged in UTF-8 format in 8-bit strings (`char*`)
-by using the `SOAP_C_UTFSTRING` flag.  Without this flag, 8-bit strings are
-converted to UTF-8.
+Strings are stored and exchanged in UTF-8 format in 8-bit strings (i.e. `char*`
+strings) with the `SOAP_C_UTFSTRING` flag.  Wide strings (i.e. `wchar_t*`
+strings) are converted to UTF-8.
 
 To force reading and writing JSON in ISO 8859-1 format, use the
-`SOAP_ENC_LATIN` flag to set the context.
+`SOAP_ENC_LATIN` flag.
 
-To read JSON from a string buffer, we suggest to use the gSOAP engine's IO
-`frecv` callback function as follows:
+Optionally use `SOAP_XML_INDENT` to indent XML and JSON.
+
+To read JSON from a string and write JSON to a string, we suggest to use gSOAP
+2.8.28 or later.  With these newer versions you can set the contex input string
+`ctx->is` to the string to parse (reset to NULL afterwards) as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    value *v = new_value(ctx);
+    ctx->is = "[ [1, \"2\", 3.14, true], {\"name\": \"john\", \"age\": 24} ]": 
+    json_read(ctx, v);
+    if (ctx->error) ... /* handle IO error (error message is in 'v' */
+    ctx->is = NULL;     /* stop reading from string */
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can set the contex output string pointer `ctx->os` to point to the `const
+char*` string that you want to be set.  This string will point to the JSON data
+created by the engine and managed by the context as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    value *v = new_value(ctx);
+    const char *json_out = NULL;
+    ... /* populate value v */
+    ctx->os = &json_out; /* the string to point to JSON data */
+    json_write(ctx, v);
+    if (ctx->error) ...
+    ctx->os = NULL;      /* stop writing to strings */
+    if (json_out)
+    {
+      ... /* use json_out string, do not free() (managed by the context) */
+    }
+    ...
+    soap_end(ctx);  /* deletes json_out string */
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For older versions prior to 2.8.28, the gSOAP engine's IO `frecv` callback
+function can be used as follows to parse JSON from a string buffer:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
     size_t buf_recv(struct soap *ctx, char *buf, size_t len)
@@ -1785,11 +2187,12 @@ To read JSON from a string buffer, we suggest to use the gSOAP engine's IO
     const char *json_in = "[ [1, \"2\", 3.14, true], {\"name\": \"john\", \"age\": 24} ]": 
     ctx->frecv = buf_recv;
     ctx->user = (void*)json_in;  /* a user handle that is passed to buf_recv */
-    soap_read_value(ctx, v);
+    json_read(ctx, v);
+    if (ctx->error) ...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To write JSON to a string buffer, we suggest to use the gSOAP engine IO `fsend`
-callback function as follows:
+For older versions prior to 2.8.28, the gSOAP engine IO `fsend` callback
+function can be used to write JSON to strings as follows:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
     #define BUFFER_INCREMENT (1024)
@@ -1820,7 +2223,8 @@ callback function as follows:
     ... /* populate value v */
     ctx->fsend = buf_send;
     ctx->user = NULL;
-    soap_write_value(ctx, v);
+    json_write(ctx, v);
+    if (ctx->error) ...
     json_out = (char*)ctx->user;
     if (json_out)
     {
@@ -1872,11 +2276,14 @@ Besides `json_call`, there are other JSON API functions:
 
 - `int json_write(struct soap *ctx, const struct value *v)` Writes JSON value
   to current file or socket.  Returns `SOAP_OK` or error.  Set current
-  file/socket fd with `ctx->sendfd = fd`.
+  file/socket file descriptor with `ctx->sendfd = fd`.  Or save JSON to a
+  string by setting `ctx->os = &cs` with `const char *cs` a string pointer that
+  will be set to a NUL-terminated string when the write completed.
 
 - `int json_read(struct soap *ctx, struct value *v)` Reads JSON value from
   current file or socket.  Returns `SOAP_OK` or error.  Set current file/socket
-  fd with `ctx->recvfd = fd`.
+  file descriptor with `ctx->recvfd = fd`.  Or read from string by setting
+  `ctx->is = cs` to a `const char *cs` NUL-terminated string.
 
 The are two other lower-level functions `json_send` and `json_recv` that are
 similar to `json_write` and `json_read` but do not initialize the sending and
@@ -1889,6 +2296,59 @@ Compile and link together with `soapC.c`, `xml-rpc.c`, `json.c`, and
 
 Miscellaneous                                                            {#misc}
 =============
+
+
+Compiling JSON files together with gSOAP XML data binding code        {#json-cc}
+--------------------------------------------------------------
+
+To use JSON (and XML-RPC) with other gSOAP XML data binding code requires a few
+simple steps to ensure that your project compiles cleanly.
+
+For C++, arguably the best option is to [move the JSON types and operations
+into a C++ namespace](#json-ns).
+
+We present two other options that you can follow, and the only options you can
+take to combine the JSON C API with other generated XML C data binding code.
+
+The following two options follow different strategies to compile a combined set
+of files with JSON (and XML-RPC) types and operations with other files with XML
+data binding types and operations:
+
+### Option 1: #import "xml-rpc.h"
+
+Before processing a gSOAP XML data binding header file with soapcpp2, add
+`#import "xml-rpc.h"` to this header file to include XML-RPC and JSON data
+types.  Then compile the generated files as usual together with `jcon.c` (or
+`json.cpp` for C++) and `xml-rpc.c` (or `xml-rpc.cpp` for C++).  Also `#include
+"json.h"` in your code to use the JSON API.
+
+This is the simpler of the two options.  When using wsdl2h, you can automate
+this option by adding the following three lines to `typemap.dat`:
+
+    [
+    #import "xml-rpc.h"
+    ]
+
+This automatically imports the JSON/XML-RPC types and operations into the XML
+data binding code.  You will still need to compile your code together with
+`jcon.c` (or `json.cpp` for C++) and `xml-rpc.c` (or `xml-rpc.cpp` for C++).
+
+### Option 2: soapcpp2 -pjson
+
+Use soapcpp2 option `-pjson` to generate and compile the JSON (and XML-RPC) API
+code to combine with your other XML data binding code generated with soapcpp2:
+  
+    soapcpp2 -c -pjson -CSL xml-rpc.h
+
+This generates `jsonStub.h`, `jsonH.h`, and `jsonC.c`.
+
+Now edit `xml-rpc.c` to replace the `#include` of `soapH.h` with `jsonH.h`.
+
+Then edit `json.h` to replace the `#include` of `soapH.h` with `jsonH.h`.
+
+Compile `jsonC.c`, `xml-rpc.c`, and `json.c` together with your project files
+and the files generated by soapcpp2 for your .h file with XML data bindings
+(the .h file generated by wsdl2h).
 
 
 Floating point format                                                      {#fp}
@@ -1914,11 +2374,12 @@ Unicode/UTF-8 sequences.
 Base64 is a common encoding format for binary data.  A JSON string with base64
 content is our recommended option.
 
-To populate JSON data with base64-encoded binary content, you can simply set
-the values as described earlier (e.g.  by casting a `_base64` structure to a
-value in C++).  Receiving base64-encoded content with JSON is not possible,
-because the necessary type information is lost in transit.  The base64 content
-will arrive at the receiver simply as a string with base64 content.
+To populate JSON data with base64-encoded binary content, you can simply create
+and assign a `_base64` value as described earlier (e.g.  by casting a `_base64`
+structure to a value in C++).  Receiving base64-encoded content with JSON is
+not possible, because the necessary type information is lost in transit.  The
+base64 content will arrive at the receiver simply as a string with base64
+content.
 
 You can explicitly decode the base64 string back to binary as shown here for
 C++:
@@ -1928,8 +2389,11 @@ C++:
     {
       /* assuming base64 content in string value v, decoded it */
       int len;
-      unsigned char *ptr = soap_base642s(ctx, (const char*)v, NULL, 0, &len);
+      unsigned char *ptr = (unsigned char*)soap_base642s(ctx, (const char*)v, NULL, 0, &len);
       /* ptr points to binary of length len or is NULL when decoding failed */
+      if (ptr)
+        ... // success
+      ctx->error = SOAP_OK; // fail and reset error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 And for C:
@@ -1939,18 +2403,22 @@ And for C:
     {
       /* assuming base64 content in string value v, decoded it */
       int len;
-      unsigned char *ptr = soap_base642s(ctx, *string_of(v), NULL, 0, &len);
+      unsigned char *ptr = (unsigned char*)soap_base642s(ctx, *string_of(v), NULL, 0, &len);
       /* ptr points to binary of length len or is NULL when decoding failed */
+      if (ptr)
+        ... // success
+      ctx->error = SOAP_OK; // fail and reset error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 JSON and ISO 8601 dateTime                                           {#dateTime}
 --------------------------
 
-To populate JSON data with ISO 8601 date time content, you can simply set the
-values as described earlier.  Receiving ISO 8601 date time content with JSON is
-not possible, because the necessary type information is lost in transit.  The
-content will arrive at the receiver simply as a string with a date and time.
+To populate JSON data with ISO 8601 date time content, you can simply assign a
+`ULONG64` value cast from a `time_t` value as described earlier.  Receiving ISO
+8601 date time content with JSON is not possible, because the necessary type
+information is lost in transit.  The content will arrive at the receiver simply
+as a string with a date and time.
 
 You can explicitly convert a string with an ISO 8601 date time to a `time_t`
 value as shown here for C++:

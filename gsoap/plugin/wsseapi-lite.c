@@ -56,7 +56,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 /**
 
-@page wsse WS-Security (lite version)
+@page wsse WS-Security lite
+
+[TOC]
 
 @section wsse_5 Security Header
 
@@ -72,6 +74,28 @@ To use the wsse lite API:
 
 If HTTPS is required with OpenSSL then please follow the instructions in
 Section @ref wsse_11 to ensure thread-safety of WS-Security with HTTPS.
+
+The wsse lite API is located in:
+
+- `gsoap/plugin/wsseapi-lite.h` wsse lite API.
+- `gsoap/plugin/wsseapi-lite.c` wsse lite API for C and C++.
+
+You will also need:
+
+- compile all sources with `-DWITH_OPENSSL` to enable HTTPS.
+- if you have zlib installed, compile all sources also with `-DWITH_GZIP`.
+- link with `-lssl -lcrypto -lz -gsoapssl++` (or `-lgsoapssl` for C, or compile `stdsoap2.cpp` for C++ and `stdsoap2.c` for C).
+
+The gSOAP header file for soapcpp2 should import wsse.h (or the older 2002
+version wsse2.h):
+
+@code
+    #import "wsse.h"
+@endcode
+
+The wsdl2h tool adds the necessary imports to the generated header file if the
+WSDL declares the use of WS-Security. If not, you may have to add the import
+manually before running soapcpp2.
 
 The wsse lite API consists of a set of functions to populate and verify
 WS-Security headers and message body content. For more details, we refer to the
@@ -146,7 +170,7 @@ To add a user name token to the Security header block, use:
     soap_wsse_add_UsernameTokenText(soap, "Id", "username", NULL);
 @endcode
 
-The Id value is optional and not used in the wsse lite API. These Ids are
+The `Id` value is optional and not used in the wsse lite API. These `Id`s are
 serialized as wsu:Id identifiers for cross-referencing XML elements.
 
 To add a user name token with clear text password, use:
@@ -155,11 +179,11 @@ To add a user name token with clear text password, use:
     soap_wsse_add_UsernameTokenText(soap, "Id", "username", "password");
 @endcode
 
-It is strongly recommended to use @ref soap_wsse_add_UsernameTokenText only in
+It is strongly recommended to use `soap_wsse_add_UsernameTokenText` only in
 combination with HTTPS encrypted transmission or not at all. A better
 alternative is to use password digests (not supported in this wsse lite API).
 
-Clear-text passwords are verified with @ref soap_wsse_verify_Password. To
+Clear-text passwords are verified with `soap_wsse_verify_Password`. To
 verify a password at the receiving side to authorize a request (e.g. within a
 Web service operation), use:
 
@@ -179,11 +203,11 @@ Web service operation), use:
     }
 @endcode
 
-Note that the @ref soap_wsse_get_Username functions sets the
+Note that the `soap_wsse_get_Username` functions sets the
 wsse:FailedAuthentication fault upon failure. It is common for the API
 functions functions to return SOAP_OK or a wsse fault that should be passed to
 the sender by returning soap->error from service operations. The fault is
-displayed with the soap_print_fault() function.
+displayed with the `soap_print_fault` function.
 
 @section wsse_10 Security Timestamps
 
@@ -242,12 +266,13 @@ here:
 With OpenSSL, the CRYPTO threads should be set up before any threads are
 created.
 
-The soap_ssl_client_context only needs to be set up once. Use the following
+The `soap_ssl_client_context` only needs to be set up once. Use the following
 flags:
 
-- SOAP_SSL_DEFAULT requires server authentication, CA certs should be used
-- SOAP_SSL_NO_AUTHENTICATION disables server authentication
-- SOAP_SSL_SKIP_HOST_CHECK disables server authentication host check
+- `SOAP_SSL_DEFAULT` requires server authentication, CA certs should be used
+- `SOAP_SSL_NO_AUTHENTICATION` disables server authentication
+- `SOAP_SSL_SKIP_HOST_CHECK` disables server authentication host check
+- `SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE` to accept self-signed certificates, expired certificates, and certificates without CRL.
 
 The server uses the following:
 
@@ -298,11 +323,11 @@ process the request (on a copy of the soap context struct):
   }
 @endcode
 
-The soap_ssl_server_context only needs to be set up once. Use the following
+The `soap_ssl_server_context` only needs to be set up once. Use the following
 flags:
 
-- SOAP_SSL_DEFAULT requires server authentication, but no client authentication
-- SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION requires client authentication
+- `SOAP_SSL_DEFAULT` requires server authentication, but no client authentication
+- `SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION` requires client authentication
 
 With OpenSSL, we need to define the thread set up and clean up operations as
 follows:
@@ -377,7 +402,7 @@ follows:
 @endcode
 
 For additional details and examples, see the user guide and examples in the
-gSOAP package directory gsoap/samples/ssl.
+gSOAP package directory `gsoap/samples/ssl`.
 
 */
 

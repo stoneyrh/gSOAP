@@ -78,7 +78,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = dom2calc$(EXEEXT)
+noinst_PROGRAMS = domcpp$(EXEEXT) dom2calc$(EXEEXT)
 DIST_COMMON = $(srcdir)/../Makefile.defines \
 	$(srcdir)/../Makefile.cpp_rules $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/mkinstalldirs \
@@ -100,6 +100,9 @@ am_dom2calc_OBJECTS = $(am__objects_1) dom2calc.$(OBJEXT) \
 dom2calc_OBJECTS = $(am_dom2calc_OBJECTS)
 am__DEPENDENCIES_1 =
 dom2calc_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1)
+am_domcpp_OBJECTS = domcpp.$(OBJEXT) $(am__objects_1) $(am__objects_2)
+domcpp_OBJECTS = $(am_domcpp_OBJECTS)
+domcpp_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -141,8 +144,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(dom2calc_SOURCES)
-DIST_SOURCES = $(dom2calc_SOURCES)
+SOURCES = $(dom2calc_SOURCES) $(domcpp_SOURCES)
+DIST_SOURCES = $(dom2calc_SOURCES) $(domcpp_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -317,7 +320,9 @@ SOAP_CPP_SRC = $(SOAP_CPP_CLIENT) soapServer.cpp $(SOAP_H_FILES) $(SOAP_NS)
 LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 BUILT_SOURCES = $(SOAP_CPP_SRC) 
 CLEANFILES = $(SOAP_CPP_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.cpp soap*Proxy.h soap*Proxy.cpp soap*Object.h soap*Service.h soap*Service.cpp soapClient.cpp soapServer.cpp soapClientLib.cpp soapServerLib.cpp *~
-SOAP_NS = 
+SOAP_NS = $(SOAP_NS_DEF)
+domcpp_SOURCES = domcpp.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
+domcpp_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 dom2calc_SOURCES = $(SOAPHEADER) dom2calc.cpp $(SOAP_CPP_CORE)
 dom2calc_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 all: $(BUILT_SOURCES)
@@ -364,6 +369,10 @@ dom2calc$(EXEEXT): $(dom2calc_OBJECTS) $(dom2calc_DEPENDENCIES) $(EXTRA_dom2calc
 	@rm -f dom2calc$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(dom2calc_OBJECTS) $(dom2calc_LDADD) $(LIBS)
 
+domcpp$(EXEEXT): $(domcpp_OBJECTS) $(domcpp_DEPENDENCIES) $(EXTRA_domcpp_DEPENDENCIES) 
+	@rm -f domcpp$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(domcpp_OBJECTS) $(domcpp_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -371,6 +380,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dom2calc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domcpp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapC.Po@am__quote@
 
 .cpp.o:

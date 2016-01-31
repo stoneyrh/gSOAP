@@ -190,69 +190,72 @@ struct value
   typedef value_const_iterator const_iterator;
                         value();
                         value(struct soap*);
-                        value(struct soap*, struct _array&);
-                        value(struct soap*, struct _base64&);
                         value(struct soap*, extern bool);
-                        value(struct soap*, char*);
-                        value(struct soap*, _double);
                         value(struct soap*, _i4);
                         value(struct soap*, _int);
-                        value(struct soap*, time_t);
-                        value(struct soap*, struct _struct&);
+                        value(struct soap*, _double);
+                        value(struct soap*, const char*);
+                        value(struct soap*, const std::string&);
+                        value(struct soap*, const wchar_t*);
+                        value(struct soap*, const std::wstring&);
+                        value(struct soap*, ULONG64);
+                        value(struct soap*, const struct _array&);
+                        value(struct soap*, const struct _struct&);
+                        value(struct soap*, const struct _base64&);
                         operator extern bool() const;
-                        operator struct _array&();
-                        operator const struct _array&() const;
-                        operator struct _base64&();
-                        operator const struct _base64&() const;
+                        operator _i4() const;
+                        operator _int() const;
+                        operator _double() const;
                         operator char*() const;
                         operator std::string() const;
                         operator wchar_t*() const;
                         operator std::wstring() const;
-                        operator _double() const;
-                        operator _i4() const;
-                        operator _int() const;
-                        operator time_t() const;
+                        operator ULONG64() const;
+                        operator struct _array&();
+                        operator const struct _array&() const;
                         operator struct _struct&();
                         operator const struct _struct&() const;
+                        operator struct _base64&();
+                        operator const struct _base64&() const;
   struct value&         operator[](int);                  ///< array/struct index (negative to get from end)
   struct value&         operator[](const char*);          ///< struct access
   struct value&         operator[](const std::string&);   ///< struct access
   struct value&         operator[](const wchar_t*);       ///< struct access
   struct value&         operator[](const std::wstring&);  ///< struct access
-  struct _array&        operator=(const struct _array&);
-  struct _base64&       operator=(const struct _base64&);
   extern bool           operator=(extern bool);
+  _i4                   operator=(_i4);
+  _int                  operator=(_int);
+  _double               operator=(_double);
+  ULONG64               operator=(ULONG64);
   const char*           operator=(const char*);
   char*                 operator=(char*);
   char*                 operator=(const std::string&);
   const char*           operator=(const wchar_t*);
   char*                 operator=(wchar_t*);
   char*                 operator=(const std::wstring&);
-  _double               operator=(_double);
-  _i4                   operator=(_i4);
-  _int                  operator=(_int);
-  time_t                operator=(time_t);
+  struct _array&        operator=(const struct _array&);
   struct _struct&       operator=(const struct _struct&);
+  struct _base64&       operator=(const struct _base64&);
   extern void           size(int);              ///< set/allocate size of array
   extern int            size() const;           ///< returns array/struct size or 0
+  extern bool           empty() const;          ///< true if empty array or struct
   extern int            nth(int) const;         ///< returns nth index if index is in bounds, < 0 otherwise
   extern int            nth(const char*) const; ///< returns nth index of name in struct, < 0 otherwise
   extern int            nth(const wchar_t*) const; ///< returns nth index of name in struct, < 0 otherwise
   extern bool           has(int) const;         ///< true if array index is in bounds
   extern bool           has(const char*) const; ///< true if struct has name as a key
   extern bool           has(const wchar_t*) const; ///< true if struct has name as a key
-  extern bool           empty() const;          ///< true if empty array or struct
-  extern bool           is_array() const;       ///< true if value is array type
-  extern bool           is_base64() const;      ///< true if value is base64 type
-  extern bool           is_bool() const;        ///< true if value is boolean type
-  extern bool           is_dateTime() const;    ///< true if value is dateTime
-  extern bool           is_double() const;      ///< true if value is double type
-  extern bool           is_false() const;       ///< true if value is boolean false
-  extern bool           is_int() const;         ///< true if value is int type
   extern bool           is_null() const;        ///< true if value is not set (JSON null)
+  extern bool           is_bool() const;        ///< true if value is Boolean type
+  extern bool           is_false() const;       ///< true if value is Boolean false
+  extern bool           is_true() const;        ///< true if value is Boolean true
+  extern bool           is_int() const;         ///< true if value is int type
+  extern bool           is_double() const;      ///< true if value is double type
   extern bool           is_string() const;      ///< true if value is string type
+  extern bool           is_dateTime() const;    ///< true if value is dateTime
+  extern bool           is_array() const;       ///< true if value is array type
   extern bool           is_struct() const;      ///< true if value is struct type
-  extern bool           is_true() const;        ///< true if value is boolean true
+  extern bool           is_base64() const;      ///< true if value is base64 type
   value_iterator        begin();                ///< value iterator begin
   value_iterator        end();                  ///< value iterator end
  
@@ -377,7 +380,7 @@ struct fault
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-/// C function returns pointer to boolean, coerces v to boolean if needed
+/// C function returns pointer to Boolean, coerces v to Boolean if needed
 extern _boolean *bool_of(struct value *v);
 
 /// C function returns pointer to int, coerces v to int if needed
@@ -406,6 +409,9 @@ extern int nth_at(struct value *v, const char *s);
 
 /// C function returns the nth index of a name in a struct, < 0 otherwise
 extern int nth_atw(struct value *v, const wchar_t *s);
+
+/// C function returns the nth index if an nth index in the array exists, < 0 otherwise
+extern int nth_nth(struct value *v, int n);
 
 /// C function returns pointer to nth member (name and value) of a struct
 extern struct member *nth_member(struct value *v, int n);
@@ -445,6 +451,12 @@ extern _boolean is_dateTime(struct value *v);
 
 /// C function returns true if base64, always false for received JSON
 extern _boolean is_base64(struct value *v);
+
+/// C function to create an empty struct
+extern void set_struct(struct value *v);
+
+/// C function set/allocate size of array
+extern void set_size(struct value *v, int n);
 
 /// C function returns the size of an array or struct
 extern int has_size(struct value *v);

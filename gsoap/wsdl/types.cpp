@@ -3639,7 +3639,7 @@ void Types::gen(const char *URI, const xs__any& any, const char *minOccurs, cons
     fprintf(stream, " minOccurs=\"%s\"", min);
   if (max)
     fprintf(stream, " maxOccurs=\"%s\"", max);
-  fprintf(stream, ">\n/// @todo Schema extensibility is user-definable.\n///       Consult the protocol documentation to change or insert declarations.\n///       Use wsdl2h option -x to remove this element.\n///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).\n");
+  fprintf(stream, ">\n/// @todo Schema extensibility is user-definable.\n///       Consult the protocol documentation to change or insert declarations.\n///       Use wsdl2h option -x to remove this element.\n///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):\n///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.\n");
   if (!xflag)
   {
     if (max && strcmp(max, "1"))

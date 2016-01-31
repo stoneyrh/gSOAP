@@ -1,14 +1,22 @@
 /*
 	dom2calc.cpp
 
-	Example DOM processing for calculator service
+	Example DOM processing with a calculator service
+	This is version 2 based on the improved DOM API v5 gSOAP 2.8.28
+
+	This example is based on the calculator service (samples/calc) and
+	implements a DOM-message-based calculator client.
+
+	See gsoap/doc/dom/html/index.html for the DOM API documentation,
+	including the domcpp tool that was used to generate the XPath code in
+	this exampple.
 
 	soapcpp2 -Iimport dom2calc.h
 	cc -o dom2calc dom2calc.cpp stdsoap2.cpp soapC.cpp dom.cpp
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2001-2008, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2016, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -38,9 +46,20 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 const char server[] = "http://websrv.cs.fsu.edu/~engelen/calcserver.cgi";
 
+// copied and modified from:
+// domcpp -M -n -rrequest calc.add.req.xml
+struct Namespace namespaces[] = {
+  {"SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/*/soap-envelope",      NULL},
+  {"SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", "http://www.w3.org/*/soap-encoding",      NULL},
+  {"xsi",      "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL},
+  {"xsd",      "http://www.w3.org/2001/XMLSchema",          "http://www.w3.org/*/XMLSchema",          NULL},
+  {"ns", "urn:calc", NULL, NULL },
+  {NULL, NULL, NULL, NULL}
+};
+
 int main(int argc, char **argv)
 {
-  struct soap *soap = soap_new1(SOAP_DOM_NODE | SOAP_XML_INDENT); /* deserialize type nodes */
+  struct soap *ctx = soap_new1(SOAP_DOM_TREE | SOAP_XML_INDENT);
 
   if (argc <= 3)
   {
@@ -48,65 +67,60 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  /* Create elements and attributes for request message */
-  soap_dom_element envelope(soap, namespaces[0].ns, "Envelope");
-  soap_dom_element body(soap, namespaces[0].ns, "Body");
-  soap_dom_attribute encodingStyle(soap, namespaces[0].ns, "encodingStyle", namespaces[1].ns);
-  soap_dom_element request(soap, namespaces[4].ns, argv[1]);
-  soap_dom_element a(soap, NULL, "a");
-  soap_dom_element b(soap, NULL, "b");
+  // create command tag ns:add, ns:sub, ns:mul, ns:div, or ns:pow
+  std::string command = std::string("ns:").append(argv[1]);
 
-  /* Compose the request message */
-  envelope.add(body);
-  body.add(encodingStyle).add(request);
-  request.add(a).add(b);
+  // copied and modified from:
+  // domcpp -M -n -rrequest calc.add.req.xml
+  xsd__anyType request(ctx, "SOAP-ENV:Envelope");
+  request["SOAP-ENV:Body"].att("SOAP-ENV:encodingStyle") = "http://schemas.xmlsoap.org/soap/encoding/";
+  request["SOAP-ENV:Body"][command.c_str()]["a"] = strtod(argv[2], NULL);
+  request["SOAP-ENV:Body"][command.c_str()]["b"] = strtod(argv[3], NULL);
 
-  xsd__double arg1 = strtod(argv[2], NULL);
-  xsd__double arg2 = strtod(argv[3], NULL);
+  std::cout << "** Request message: " << std::endl << request << std::endl << std::endl;
 
-  a.set(&arg1, SOAP_TYPE_xsd__double);
-  b.set(&arg2, SOAP_TYPE_xsd__double);
+  // create response
+  xsd__anyType response(ctx);
 
-  std::cout << "** Request message: " << std::endl << envelope << std::endl;
-
-  /* Create response DOM */
-  soap_dom_element response(soap);
-
-  /* Connect to server and use xsd__anyType serializers */
-  if (soap_connect(soap, server, "")
-   || soap_put_xsd__anyType(soap, &envelope, NULL, NULL)
-   || soap_end_send(soap)
-   || soap_begin_recv(soap)
-   || NULL == soap_get_xsd__anyType(soap, &response, NULL, NULL)
-   || soap_end_recv(soap)
-   || soap_closesock(soap))
+  // invoke server: make POST XML request and receive XML response
+  if (soap_dom_call(ctx, server, "", request, response))
   {
-    soap_stream_fault(soap, std::cerr);
+    soap_stream_fault(ctx, std::cerr);
   }
   else
   {
-    std::cout << "** Response message:" << std::endl << response << std::endl;
+    std::cout << "** Response message:" << std::endl << response << std::endl << std::endl;
 
-    for (soap_dom_element::iterator walker = response.find(SOAP_TYPE__result); walker != response.end(); ++walker)
-      std::cout << std::endl << "Result = " << *(_result*)(*walker).node << std::endl;
+    // copied from:
+    // domcpp -p'/SOAP-ENV:Envelope/SOAP-ENV:Body/ns:addResponse/result' -rresponse -x'std::cout << "Result = " << v << std::endl;'
+    if (response.match("SOAP-ENV:Envelope"))
+    {
+      size_t pos = 1;
+      for (xsd__anyType *it = response.elt_get("SOAP-ENV:Body"); it; it = it->get_next(), ++pos)
+      {
+	xsd__anyType& v = *it;
+	size_t pos = 1;
+	for (xsd__anyType *it = v.elt_get("ns:addResponse"); it; it = it->get_next(), ++pos)
+	{
+	  xsd__anyType& v = *it;
+	  size_t pos = 1;
+	  for (xsd__anyType *it = v.elt_get("result"); it; it = it->get_next(), ++pos)
+	  {
+	    xsd__anyType& v = *it;
+	    std::cout << "Result = " << v.get_double() << std::endl;
+	  }
+	}
+      }
+    }
+
+    // Here is another way to search DOM for <result> element(s):
+    // for (xsd__anyType::iterator it = response.find("result"); it != response.end(); ++it)
+      // std::cout << std::endl << "Result = " << it->get_double() << std::endl;
   }
 
-  /* Delete deserialized object and dealloc temporary data */
-  soap_destroy(soap);
-  soap_end(soap);
-
-  /* Delete context */
-  soap_free(soap);
+  soap_destroy(ctx); // delete objects
+  soap_end(ctx);     // delete temp data
+  soap_free(ctx);    // free context
 
   return 0;
 }
-
-SOAP_NMAC struct Namespace namespaces[] =
-{
-  {"SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/*/soap-envelope"},
-  {"SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", "http://www.w3.org/*/soap-encoding"},
-  {"xsi", "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance"},
-  {"xsd", "http://www.w3.org/2001/XMLSchema", "http://www.w3.org/*/XMLSchema"},
-  {"ns", "urn:calc"},
-  {NULL, NULL}
-};

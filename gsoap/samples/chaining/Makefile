@@ -300,7 +300,7 @@ BUILT_SOURCES = qServerLib.c cServerLib.c envC.c
 CLEANFILES = *.req.xml *.res.xml *.nsmap *.xsd *.wsdl envStub.h envH.h envC.c cStub.h cH.h cC.c cClient.c cServer.c cClientLib.c cServerLib.c qStub.h qH.h qC.c qClient.c qServer.c qClientLib.c qServerLib.c *~
 SOAP_NS = c.nsmap
 chaining_SOURCES = chaining.c quote.h calc.h env.h qServerLib.c cServerLib.c envC.c
-chaining_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
+chaining_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS) -lm
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

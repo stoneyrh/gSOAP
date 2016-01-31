@@ -57,10 +57,15 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 /**
 
-@page httpda The http_da plugin for clients and stand-alone services
+@page httpda The HTTP-DA plugin
+
+[TOC]
+
+@section httpda_0 HTTP-DA Setup
 
 Additional build steps required:
-- Compile all sources with -DWITH_OPENSSL
+
+- Compile all sources with `-DWITH_OPENSSL`
 - Link libgsoapssl (libgsoapssl++), or use the lib's stdsoap2.c/.cpp source
 - Compile and link with plugin/httpda.c, plugin/md5evp.c, and plugin/threads.c
 
@@ -70,10 +75,10 @@ HTTP Basic Authentication is the default authentication supported by gSOAP. The
 credentials for client-side use age set with:
 
 @code
-soap.userid = "<userid>";
-soap.passed = "<passwd>";
-if (soap_call_ns__method(&soap, ...))
-  ... // error
+    soap.userid = "<userid>";
+    soap.passed = "<passwd>";
+    if (soap_call_ns__method(&soap, ...))
+      ... // error
 @endcode
 
 HTTP Basic Authentication should never be used over plain HTTP, because the
@@ -87,113 +92,113 @@ exchange.
 To use HTTP Digest Authentication with gSOAP, register the http_da plugin:
 
 @code
-#include "httpda.h"
-soap_register_plugin(&soap, http_da);
+    #include "httpda.h"
+    soap_register_plugin(&soap, http_da);
 @endcode
 
 To make a client-side service call:
 
 @code
-struct http_da_info info;
-if (soap_call_ns__method(&soap, ...))
-{
-  if (soap.error == 401)
-  {
-    http_da_save(&soap, &info, "<authrealm>", "<userid>", "<passwd>");
-    if (soap_call_ns__method(&soap, ...)) // try again
-      ... // error
-    http_da_release(&soap, &info);
-  }
-  else
-    ... // other error
-}
+    struct http_da_info info;
+    if (soap_call_ns__method(&soap, ...))
+    {
+      if (soap.error == 401)
+      {
+	http_da_save(&soap, &info, "<authrealm>", "<userid>", "<passwd>");
+	if (soap_call_ns__method(&soap, ...)) // try again
+	  ... // error
+	http_da_release(&soap, &info);
+      }
+      else
+	... // other error
+    }
 @endcode
 
 The "<authrealm>" is a string that is associated with the server's realm. It
 can be obtained after an unsuccessful non-authenticated call:
 
 @code
-if (soap_call_ns__method(&soap, ...))
-{
-  if (soap.error == 401) // HTTP authentication is required
-  {
-    const char *realm = soap.authrealm;
-    ...
-  }
-  else
-    ... // error
-}
+    if (soap_call_ns__method(&soap, ...))
+    {
+      if (soap.error == 401) // HTTP authentication is required
+      {
+	const char *realm = soap.authrealm;
+	...
+      }
+      else
+	... // error
+    }
 @endcode
 
 Before a second call is made to the same endpoint that requires authentication,
 you must restore the authentication state and then finally release it:
 
 @code
-struct http_da_info info;
-bool auth = false;
+    struct http_da_info info;
+    bool auth = false;
 
-if (soap_call_ns__method(&soap, ...))
-{
-  if (soap.error == 401)
-  {
-    http_da_save(&soap, &info, "<authrealm>", "<userid>", "<passwd>");
-    auth = true;
-  }
-  else
-    ... // other error
-}
+    if (soap_call_ns__method(&soap, ...))
+    {
+      if (soap.error == 401)
+      {
+	http_da_save(&soap, &info, "<authrealm>", "<userid>", "<passwd>");
+	auth = true;
+      }
+      else
+	... // other error
+    }
 
-if (soap_call_ns__method(&soap, ...))
-  ... // error
+    if (soap_call_ns__method(&soap, ...))
+      ... // error
 
-if (auth)
-  http_da_restore(&soap, &info);
-if (soap_call_ns__method(&soap, ...))
-  ... // error
+    if (auth)
+      http_da_restore(&soap, &info);
+    if (soap_call_ns__method(&soap, ...))
+      ... // error
 
-soap_destroy(&soap); // okay to dealloc data
-soap_end(&soap);     // okay to dealloc data
+    soap_destroy(&soap); // okay to dealloc data
+    soap_end(&soap);     // okay to dealloc data
 
-if (auth)
-  http_da_restore(&soap, &info);
-if (soap_call_ns__method(&soap, ...))
-  ... // error
+    if (auth)
+      http_da_restore(&soap, &info);
+    if (soap_call_ns__method(&soap, ...))
+      ... // error
 
-if (auth)
-  http_da_release(&soap, &info);
+    if (auth)
+      http_da_release(&soap, &info);
 
-soap_destroy(&soap);
-soap_end(&soap);
-soap_done(&soap);
+    soap_destroy(&soap);
+    soap_end(&soap);
+    soap_done(&soap);
 @endcode
 
 For HTTP proxies requiring HTTP Digest Authenticaiton, use the 'proxy'
 functions:
 
 @code
-struct http_da_info info;
-...
-if (soap_call_ns__method(&soap, ...))
-{
-  if (soap.error == 407)
-  {
-    http_da_proxy_save(&soap, &info, "<authrealm>", "<userid>", "<passwd>");
-    auth = true;
-  }
-  else
-    ... // error
-}
+    struct http_da_info info;
+    ...
+    if (soap_call_ns__method(&soap, ...))
+    {
+      if (soap.error == 407)
+      {
+	http_da_proxy_save(&soap, &info, "<authrealm>", "<userid>", "<passwd>");
+	auth = true;
+      }
+      else
+	... // error
+    }
 
-if (auth)
-  http_da_proxy_restore(&soap, &info);
-if (soap_call_ns__method(&soap, ...))
-  ... // error
+    if (auth)
+      http_da_proxy_restore(&soap, &info);
+    if (soap_call_ns__method(&soap, ...))
+      ... // error
 
-http_da_proxy_release(&soap, &info);
+    http_da_proxy_release(&soap, &info);
 
-soap_destroy(&soap);
-soap_end(&soap);
-soap_done(&soap);
+    soap_destroy(&soap);
+    soap_end(&soap);
+    soap_done(&soap);
 @endcode
 
 @section httpda_2 Client Example
@@ -201,51 +206,51 @@ soap_done(&soap);
 A client authenticating against a server:
 
 @code
-soap_register_plugin(&soap, http_da);
-// try calling without authenticating
-if (soap_call_ns__method(&soap, ...))
-{
-  if (soap.error == 401) // HTTP authentication is required
-  {
-    if (!strcmp(soap.authrealm, authrealm)) // check authentication realm
+    soap_register_plugin(&soap, http_da);
+    // try calling without authenticating
+    if (soap_call_ns__method(&soap, ...))
     {
-      struct http_da_info info; // to store userid and passwd
-      http_da_save(&soap, &info, authrealm, userid, passwd);
-      // call again, now with credentials
-      if (soap_call_ns__method(&soap, ...) == SOAP_OK)
+      if (soap.error == 401) // HTTP authentication is required
       {
-        ... // process response data
-        soap_end(&soap);
-	... // userid and passwd were deallocated (!)
-        http_da_restore(&soap, &info); // get userid and passwd after soap_end()
-        if (!soap_call_ns__method(&soap, ...) == SOAP_OK)
-	  ... // error
-        http_da_release(&soap, &info); // free data and remove userid and passwd
+	if (!strcmp(soap.authrealm, authrealm)) // check authentication realm
+	{
+	  struct http_da_info info; // to store userid and passwd
+	  http_da_save(&soap, &info, authrealm, userid, passwd);
+	  // call again, now with credentials
+	  if (soap_call_ns__method(&soap, ...) == SOAP_OK)
+	  {
+	    ... // process response data
+	    soap_end(&soap);
+	    ... // userid and passwd were deallocated (!)
+	    http_da_restore(&soap, &info); // get userid and passwd after soap_end()
+	    if (!soap_call_ns__method(&soap, ...) == SOAP_OK)
+	      ... // error
+	    http_da_release(&soap, &info); // free data and remove userid and passwd
 @endcode
 
 A client authenticating against a proxy:
 
 @code
-soap_register_plugin(&soap, http_da);
-// try calling without authenticating
-if (soap_call_ns__method(&soap, ...))
-{
-  if (soap.error == 407) // HTTP authentication is required
-  {
-    if (!strcmp(soap.authrealm, authrealm)) // check authentication realm
+    soap_register_plugin(&soap, http_da);
+    // try calling without authenticating
+    if (soap_call_ns__method(&soap, ...))
     {
-      struct http_da_info info; // to store userid and passwd
-      http_da_proxy_save(&soap, &info, authrealm, userid, passwd);
-      // call again, now with credentials
-      if (soap_call_ns__method(&soap, ...) == SOAP_OK)
+      if (soap.error == 407) // HTTP authentication is required
       {
-        ... // process response data
-        soap_end(&soap);
-	... // userid and passwd were deallocated (!)
-        http_da_proxy_restore(&soap, &info); // get userid and passwd after soap_end()
-        if (!soap_call_ns__method(&soap, ...) == SOAP_OK)
-	  ... // error
-        http_da_proxy_release(&soap, &info); // free data and remove userid and passwd
+	if (!strcmp(soap.authrealm, authrealm)) // check authentication realm
+	{
+	  struct http_da_info info; // to store userid and passwd
+	  http_da_proxy_save(&soap, &info, authrealm, userid, passwd);
+	  // call again, now with credentials
+	  if (soap_call_ns__method(&soap, ...) == SOAP_OK)
+	  {
+	    ... // process response data
+	    soap_end(&soap);
+	    ... // userid and passwd were deallocated (!)
+	    http_da_proxy_restore(&soap, &info); // get userid and passwd after soap_end()
+	    if (!soap_call_ns__method(&soap, ...) == SOAP_OK)
+	      ... // error
+	    http_da_proxy_release(&soap, &info); // free data and remove userid and passwd
 @endcode
 
 @section httpda_3 Server-Side Usage
@@ -253,79 +258,79 @@ if (soap_call_ns__method(&soap, ...))
 Server-side HTTP Basic Authentication can be enforced by simply checking the soap.userid and soap.passwd values in a service method that requires client authentication:
 
 @code
-soap_register_plugin(&soap, http_da);
-...
-soap_serve(&soap);
-...
-int ns__method(struct soap *soap, ...)
-{
-  if (!soap->userid || !soap->passwd || strcmp(soap->userid, "<userid>") || strcmp(soap->passwd, "<passwd>"))
-    return 401; // HTTP authentication required
-  ...
-}
+    soap_register_plugin(&soap, http_da);
+    ...
+    soap_serve(&soap);
+    ...
+    int ns__method(struct soap *soap, ...)
+    {
+      if (!soap->userid || !soap->passwd || strcmp(soap->userid, "<userid>") || strcmp(soap->passwd, "<passwd>"))
+	return 401; // HTTP authentication required
+      ...
+    }
 @endcode
 
 HTTP Digest Authentication is verified differently:
 
 @code
-soap_register_plugin(&soap, http_da);
-...
-soap_serve(&soap);
-...
-int ns__method(struct soap *soap, ...)
-{
-  if (soap->authrealm && soap->userid)
-  {
-    passwd = ... // database lookup on userid and authrealm to find passwd
-    if (!strcmp(soap->authrealm, authrealm) && !strcmp(soap->userid, userid))
-    { 
-      if (!http_da_verify_post(soap, passwd)) // HTTP POST DA verification
+    soap_register_plugin(&soap, http_da);
+    ...
+    soap_serve(&soap);
+    ...
+    int ns__method(struct soap *soap, ...)
+    {
+      if (soap->authrealm && soap->userid)
       {
-        ... // process request and produce response
-        return SOAP_OK;
+	passwd = ... // database lookup on userid and authrealm to find passwd
+	if (!strcmp(soap->authrealm, authrealm) && !strcmp(soap->userid, userid))
+	{ 
+	  if (!http_da_verify_post(soap, passwd)) // HTTP POST DA verification
+	  {
+	    ... // process request and produce response
+	    return SOAP_OK;
+	  }
+	}
       }
-    }
-  }
-  soap->authrealm = authrealm; // realm to send to client
-  return 401; // Not authorized, challenge with digest authentication
+      soap->authrealm = authrealm; // realm to send to client
+      return 401; // Not authorized, challenge with digest authentication
 @endcode
 
-The http_da_verify_post() function checks the HTTP POST credentials. To verify
-an HTTP GET operation, use http_da_verify_get().
+The `http_da_verify_post` function checks the HTTP POST credentials. To verify
+an HTTP GET operation, use `http_da_verify_get`.
 
 @section httpda_4 Server Example
 
 @code
-soap_register_plugin(&soap, http_da);
-...
-soap_serve(&soap);
-...
-int ns__method(struct soap *soap, ...)
-{
-  if (soap->userid && soap->passwd) // Basic authentication
-  {
-    if (!strcmp(soap->userid, userid) && !strcmp(soap->passwd, passwd))
+    soap_register_plugin(&soap, http_da);
+    ...
+    soap_serve(&soap);
+    ...
+    int ns__method(struct soap *soap, ...)
     {
-      ... // can also check soap->authrealm 
-      ... // process request and produce response
-      return SOAP_OK;
-    }
-  }
-  else if (soap->authrealm && soap->userid) // Digest authentication
-  {
-    passwd = ... // database lookup on userid and authrealm to find passwd
-    if (!strcmp(soap->authrealm, authrealm) && !strcmp(soap->userid, userid))
-    { 
-      if (!http_da_verify_post(soap, passwd)) // HTTP POST DA verification
+      if (soap->userid && soap->passwd) // Basic authentication
       {
-        ... // process request and produce response
-        return SOAP_OK;
+	if (!strcmp(soap->userid, userid) && !strcmp(soap->passwd, passwd))
+	{
+	  ... // can also check soap->authrealm 
+	  ... // process request and produce response
+	  return SOAP_OK;
+	}
       }
+      else if (soap->authrealm && soap->userid) // Digest authentication
+      {
+	passwd = ... // database lookup on userid and authrealm to find passwd
+	if (!strcmp(soap->authrealm, authrealm) && !strcmp(soap->userid, userid))
+	{ 
+	  if (!http_da_verify_post(soap, passwd)) // HTTP POST DA verification
+	  {
+	    ... // process request and produce response
+	    return SOAP_OK;
+	  }
+	}
+      }
+      soap->authrealm = authrealm; // realm to send to client
+      return 401; // Not authorized, challenge with digest authentication
     }
-  }
-  soap->authrealm = authrealm; // realm to send to client
-  return 401; // Not authorized, challenge with digest authentication
-}
 @endcode
 
 @section httpda_5 HTTP Digest Authentication Limitations

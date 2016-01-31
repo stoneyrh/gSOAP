@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.27 User Guide</title>
+<title>gSOAP 2.8.28 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.27 User Guide </h1>
+<h1 align="center">gSOAP 2.8.28 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="http://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Dec  6, 2015
+<h3 align="center">Jan 31, 2016
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -922,6 +922,8 @@ at an XSD complexType that maps to a class:
 </td></tr></table><br></tt>
 In this way, an automatic mapping
 between XML elements of the XML schema and members of a class is created to
+
+<div class="p"><!----></div>
 No DOM traversals and SAX events are needed.
 In addition, the XML C/C++ data binding makes XML manipulation type safe. That
 is, the type safety of C/C++ ensures that only valid XML documents can be
@@ -1041,7 +1043,8 @@ soap_set_namespaces(soap, <b>struct</b>&nbsp;Namespace *nsmap); //to set xmlns b
 Other flags can be used to format XML, see Section&nbsp;<a href="#sec:flags">9.12</a>.
 
 <div class="p"><!----></div>
-More information on XML databinding support for C and C++, see Section&nbsp;<a href="#sec:bindings">7.5</a>.
+For more details on XML databinding support for C and C++, see
+Section&nbsp;<a href="#sec:bindings">7.5</a>.
 
 <div class="p"><!----></div>
      <h3><a name="tth_sEc1.5">
@@ -3836,6 +3839,12 @@ definitions can be translated to WSDL and schemas to support legacy ANSI C
 applications for example.
 
 <div class="p"><!----></div>
+Learn more about XML data binding for C and C++ with gSOAP by visiting the
+Developer Center <a href="http://www.genivia.com/dev.html"><tt>http://www.genivia.com/dev.html</tt></a> and the new and most
+up-to-date XML data binding documentation
+<a href="http://www.genivia.com/doc/databinding/html"><tt>http://www.genivia.com/doc/databinding/html</tt></a>.
+
+<div class="p"><!----></div>
 	      <h4><a name="tth_sEc7.5.1">
 7.5.1</a>&nbsp;&nbsp;<font color="#0000FF">Mapping XML Schema to C/C++ with wsdl2h</font></h4>
 
@@ -3977,7 +3986,7 @@ There are several initialization flags to control XML serialization at runtime:
 <div class="p"><!----></div>
 </li>
 
-<li> XML default <i>xmlns="..."</i> namespace bindings are used with <i>SOAP_XML_DEFAULTNS</i>.
+<li> XML default <i>xmlns="..."</i> namespace bindings are enforced with <i>SOAP_XML_DEFAULTNS</i>.
 <div class="p"><!----></div>
 </li>
 
@@ -4062,7 +4071,8 @@ Additional features and potential limitations:
 
 <li> Optional DOM support can be used to store mixed content or literal XML
   content. Otherwise, mixed content may be lost. Use soapcpp2 option -d for DOM
-  support.
+  support.  Learn more about the DOM API for C and C++ by visiting the
+  Developer Center <a href="http://www.genivia.com/doc/dom/html"><tt>http://www.genivia.com/doc/dom/html</tt></a>.
 <div class="p"><!----></div>
 </li>
 
@@ -4136,8 +4146,10 @@ The following attributes can be set to control the destination and source for se
 <table>
 <tr><td align="left"><font color="#FF0000"><b>Variable</b></font> </td><td align="left"><font color="#FF0000"><b>Description</b></font> </td></tr>
 <tr><td align="left"><i><b>int</b>&nbsp;soap.socket</i> </td><td align="left">socket file descriptor for input and output (or set to <i>SOAP_INVALID_SOCKET</i>) </td></tr>
-<tr><td align="left"><i>ostream *soap.os</i>	</td><td align="left">(C++ only) output stream used for send operations </td></tr>
-<tr><td align="left"><i>istream *soap.is</i>	</td><td align="left">(C++ only) input stream used for receive operations </td></tr>
+<tr><td align="left"><i>ostream *soap.os</i>	</td><td align="left">C++ only: output stream used for send operations </td></tr>
+<tr><td align="left"><i><b>const</b><b>char</b>**soap.os</i>	</td><td align="left">C only: points to a string pointer to be set with the managed string content </td></tr>
+<tr><td align="left"><i>istream *soap.is</i>	</td><td align="left">C++ only: input stream used for receive operations </td></tr>
+<tr><td align="left"><i><b>const</b><b>char</b>*soap.is</i>	</td><td align="left">C only: string with input to parse (this pointer advances) </td></tr>
 <tr><td align="left"><i><b>int</b>&nbsp;soap.sendfd</i> </td><td align="left">when <i>soap.socket</i>=<i>SOAP_INVALID_SOCKET</i>, this fd is used for send operations </td></tr>
 <tr><td align="left"><i><b>int</b>&nbsp;soap.recvfd</i> </td><td align="left">when <i>soap.socket</i>=<i>SOAP_INVALID_SOCKET</i>, this fd is used for receive operations </td></tr></table>
 
@@ -4271,8 +4283,10 @@ all multi-reference parts and cyclic parts of the complete data structure.
 
 <div class="p"><!----></div>
 You can assign an
-output stream to <i>soap.os</i> or a file descriptor to <i>soap.sendfd</i>.
-For example
+output stream in C++ to <i>soap.os</i> and in C an output string <i>soap.os</i>, or a file descriptor to <i>soap.sendfd</i>.
+
+<div class="p"><!----></div>
+For example, to assign a file descriptor:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 soap.sendfd = open(file, O_RDWR | O_CREAT, S_IWUSR | S_IRUSR); <br />
 soap_serialize_PointerTons__Person(&amp;soap, &amp;p); <br />
@@ -4353,6 +4367,7 @@ You can serialize a class instance to a stream as follows:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>struct</b>&nbsp;soap soap; <br />
 myClass obj; <br />
+... populate obj <br />
 soap_init(&amp;soap); // initialize <br />
 soap_begin(&amp;soap); // start new (de)serialization phase <br />
 soap_set_omode(&amp;soap, SOAP_XML_GRAPH); <br />
@@ -4366,6 +4381,28 @@ soap_destroy(&amp;soap); // remove deserialized C++ objects <br />
 soap_end(&amp;soap); // remove deserialized data <br />
 soap_done(&amp;soap); // finalize last use of this context
 </td></tr></table><br></i>
+For gSOAP 2.8.28 and later, in C we use <i>soap\.os</i> to obtain a string with the XML serialized data:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>struct</b>&nbsp;soap soap; <br />
+<b>struct</b>&nbsp;myClass obj; <br />
+<b>const</b><b>char</b>*out; <br />
+... populate obj <br />
+soap_init(&amp;soap); // initialize <br />
+soap_begin(&amp;soap); // start new (de)serialization phase <br />
+soap_set_omode(&amp;soap, SOAP_XML_GRAPH); <br />
+soap_serialize(&amp;soap, &amp;obj); <br />
+soap.os = &amp;out; // string to set <br />
+soap_begin_send(&amp;soap); <br />
+soap_put(&amp;soap, &amp;obj, "<font size="+1"><span class="roman">[</span></font>namespace-prefix:<font size="+1"><span class="roman">]</span></font>element-name1", "<font size="+1"><span class="roman">[</span></font>namespace-prefix:<font size="+1"><span class="roman">]</span></font>type-name1"); <br />
+soap_end_send(&amp;soap); // flush <br />
+... // out has XML content string managed by context <br />
+soap.os = NULL; // stop sending to string <br />
+... <br />
+soap_end(&amp;soap); // remove deserialized data <br />
+soap_done(&amp;soap); // finalize last use of this context
+</td></tr></table><br></i>
+
+<div class="p"><!----></div>
 When you declare a soap struct pointer as a data member in a class, you can overload the <tt>&lt;&lt;</tt> operator to serialize the class to streams:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 ostream &amp;operator<tt>&lt;&lt;</tt>(ostream &amp;o, <b>const</b>&nbsp;myClass &amp;e) <br />
@@ -4535,6 +4572,33 @@ soap_end(&amp;soap); // remove deserialized data <br />
 soap_done(&amp;soap); // finalize last use of the context
 </td></tr></table><br></i>
 When declaring a soap struct pointer as a data member in a class, you can overload the <tt>&gt;&gt;</tt> operator to parse and deserialize a class instance from a stream:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+istream &amp;operator<tt>&gt;&gt;</tt>(istream &amp;i, myClass &amp;e) <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(!e.soap) <br />
+&nbsp;&nbsp;&nbsp;... error: need soap struct to deserialize (could use global struct)... <br />
+&nbsp;&nbsp;&nbsp;istream *is = e.soap<tt>-&gt;</tt>is; <br />
+&nbsp;&nbsp;&nbsp;e.soap<tt>-&gt;</tt>is = &amp;i; <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(soap_read_myClass(e.soap, &amp;e) != SOAP_OK) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... error ... <br />
+&nbsp;&nbsp;&nbsp;e.soap<tt>-&gt;</tt>is = is; <br />
+&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;i; <br />
+}
+</td></tr></table><br></i>
+For gSOAP 2.8.28 and later, you can parse XML from strings as follows:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>struct</b>&nbsp;myClass obj; <br />
+<b>struct</b>&nbsp;soap soap; <br />
+soap_init(&amp;soap); // initialize <br />
+soap.is = "..."; // this is the string with XML to parse <br />
+<b>if</b>&nbsp;(soap_read_myClass(&amp;soap, &amp;obj, NULL) != SOAP_OK) <br />
+&nbsp;&nbsp;&nbsp;... error ... <br />
+soap.is = NULL; // stop parsing from strings <br />
+... <br />
+soap_end(&amp;soap); // remove deserialized data <br />
+soap_done(&amp;soap); // finalize last use of the context
+</td></tr></table><br></i>
+When declaring a soap struct pointer as a data member in a class, you can overload the <tt>&gt;&gt;</tt> operator to parse and deserialize a class instance from a stream or string stream:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 istream &amp;operator<tt>&gt;&gt;</tt>(istream &amp;i, myClass &amp;e) <br />
 { <br />
@@ -5811,7 +5875,7 @@ The input-mode and output-mode flags for inbound and outbound message processing
 <tr><td align="left"><i>SOAP_ENC_SSL</i> </td><td align="left">in&amp;out: encrypt with SSL (automatic with "https:" endpoints) </td></tr>
 <tr><td align="left"><i>SOAP_XML_INDENT</i> </td><td align="left">out: produces indented XML output </td></tr>
 <tr><td align="left"><i>SOAP_XML_CANONICAL</i> </td><td align="left">out: produces canonical XML output </td></tr>
-<tr><td align="left"><i>SOAP_XML_DEFAULTNS</i> </td><td align="left">out: produces xmlns="..." default binding namespaced output </td></tr>
+<tr><td align="left"><i>SOAP_XML_DEFAULTNS</i> </td><td align="left">out: forces output of xmlns="..." default namespace declarations </td></tr>
 <tr><td align="left"><i>SOAP_XML_IGNORENS</i> </td><td align="left">in: ignores the use of XML namespaces in input </td></tr>
 <tr><td align="left"><i>SOAP_XML_STRICT</i> </td><td align="left">in: XML strict validation </td></tr>
 <tr><td align="left"><i>SOAP_XML_TREE</i> </td><td align="left">out: serialize data as XML trees (no multi-ref, duplicate data when necessary) </td></tr>
@@ -10012,10 +10076,7 @@ When compiled by the gSOAP <i>soapcpp2</i> tool, this header file specification 
 gSOAP supports document/literal encoding by default.
 Just as with SOAP RPC encoding, literal encoding requires the XML Schema of the message data to be provided
 e.g.&nbsp;in WSDL in order for the
-gSOAP <i>soapcpp2</i> compiler to generate the (de)serialization routines.  Alternatively, the
-optional DOM parser (<i>dom.c</i> and <i>dom++.cpp</i>) can be used to handle generic XML or
-arbitrary XML documents can be (de)serialized into regular C strings or wide
-character strings (<i>wchar_t*</i>) by gSOAP (see Section&nbsp;<a href="#sec:literal2">11.14.1</a>).
+gSOAP <i>soapcpp2</i> compiler to generate the (de)serialization routines.
 
 <div class="p"><!----></div>
 The <i>//gsoap service encoding</i>, <i>//gsoap service method-encoding</i>, and <i>//gsoap service method-response-encoding</i> directives explicitly enable SOAP encoded or literal encoded messages. For example, to enable RPC encoding style for the entire service, use:
@@ -15714,17 +15775,23 @@ default SOAP Header and Fault. Then compile this header file with:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 <i> &gt;  soapcpp2 -penv env.h</i>
 </td></tr></table><br></span>
-The generated <i>envC.cpp</i> file holds the SOAP Header and Fault serializers, which need to be part of the base library functions.
+The generated <i>envC.cpp</i> file holds the SOAP Header and Fault serializers, which need to be part of the base library functions.  The SOAP Header and Fault structures are generated by wsdl2h and are also located in the <i>.h</i> files for plugins such as <i>wsse.h</i>.  You should copy these Header and Fault structures into <i>env.h</i> to ensure processing by these plugins succeeds.
 
 <div class="p"><!----></div>
 The next step is to create <i>stdsoap2.dll</i> which consists of the file
-<i>stdsoap2.cpp</i> and <i>envC.cpp</i>. This DLL contains all common functions
+<i>stdsoap2.cpp</i> and <i>envC.cpp</i> and optionally the plugins you want to use such as <i>wsseapi.c</i> (rename to .cpp to avoid warnings). This DLL contains all common functions
 needed for all other clients and servers based on gSOAP.  Compile
 <i>envC.cpp</i> and <i>stdsoap2.cpp</i> into <i>stdsoap2.dll</i> using the C++
 compiler option <i>-DWITH_NONAMESPACES</i> and the MSVC Pre-Processor
-definitions <i>SOAP_FMAC1=__declspec(dllexport)</i> and <i>SOAP_FMAC3=__declspec(dllexport)</i> (or you
-can compile with
-<i>-DWITH_SOAPDEFS_H</i> and put the macro definitions in <i>soapdefs.h</i>).
+definitions <i>SOAP_FMAC1=__declspec(dllexport)</i> and <i>SOAP_FMAC3=__declspec(dllexport)</i> as shown below from the MSVC command prompt:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
+<i>C: cl /c /I. /EHsc /DWITH_NONAMESPACES /DSOAP_FMAC1=__declspec(dllexport) /DSOAP_FMAC3=__declspec(dllexport) envC.cpp stdsoap2.cpp</i> <br />
+<i>C: link /LIBPATH ws2_32.lib /OUT:mygsoap.dll /DLL envC.obj stdsoap2.obj</i>
+</td></tr></table><br></span>
+
+<div class="p"><!----></div>
+Alternatively, you can compile with
+<i>-DWITH_SOAPDEFS_H</i> and put the macro definitions in <i>soapdefs.h</i>.
 This exports all functions which are preceded by the macro <i>SOAP_FMAC1</i> in
 the <i>soapcpp2.cpp</i> source file and macro <i>SOAP_FMAC3</i> in the <i>envC.cpp</i> source file.
 
@@ -16449,5 +16516,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On  6 Dec 2015, 22:01.</small>
+version 4.00.<br />On 31 Jan 2016, 08:32.</small>
 </html>

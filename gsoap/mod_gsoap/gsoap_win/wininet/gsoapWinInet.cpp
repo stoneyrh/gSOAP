@@ -4,16 +4,29 @@ See the README.md for details. This file is distributed under the MIT licence.
 
 #include "gsoapWinInet.h"
 
+#ifdef _DEBUG
+# ifdef _WIN32
+#  include <crtdbg.h>
+# else
+#  include <assert.h>
+#  define _ASSERTE(b)  assert(b)
+# endif
+#else
+# ifndef _ASSERTE
+#  define _ASSERTE(b)
+# endif
+#endif
+
 /* ensure that the wininet library is linked */
 #pragma comment( lib, "wininet.lib" )
 /* disable deprecation warnings */
 #pragma warning(disable : 4996)
 
-#define UNUSED_ARG(x)           (x)
+#define UNUSED_ARG(x)          (x)
 #define INVALID_BUFFER_LENGTH  ((DWORD)-1)
 
 /** plugin id */
-static const char wininet_id[] = "wininet-2.0";
+static const char wininet_id[] = "wininet-2.1";
 
 /** plugin private data */
 struct wininet_data
@@ -240,10 +253,10 @@ wininet_copy(
     }
 
     if ( !wininet_init( soap,
-        (struct wininet_data *)pDst->data,
+        (struct wininet_data *)a_pDst->data,
         pSrc->dwRequestFlags ) )
     {
-        free( pDst->data );
+        free( a_pDst->data );
         return SOAP_EOM;
     }
 

@@ -22,4 +22,4 @@ CLEANFILES = *.req.xml *.res.xml *.nsmap *.xsd *.wsdl envStub.h envH.h envC.c cS
 SOAP_NS = c.nsmap
 
 chaining_SOURCES = chaining.c quote.h calc.h env.h qServerLib.c cServerLib.c envC.c
-chaining_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
+chaining_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS) -lm

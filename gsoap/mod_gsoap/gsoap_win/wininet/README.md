@@ -1,6 +1,6 @@
 
-The WinInet plugin for gSOAP                                         {#mainpage}
-============================
+The WinInet plugin                                                   {#mainpage}
+==================
 
 [TOC]
 

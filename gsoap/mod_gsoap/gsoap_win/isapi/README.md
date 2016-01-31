@@ -1,6 +1,6 @@
 
-The ISAPI extension for gSOAP                                        {#mainpage}
-=============================
+The ISAPI extension                                                  {#mainpage}
+===================
 
 [TOC]
 

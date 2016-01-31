@@ -1,8 +1,7 @@
 /*
+	md5evp.c
 
-md5evp.c
-
-gSOAP HTTP Content-MD5 digest EVP handler for httpmd5 plugin
+	gSOAP HTTP Content-MD5 digest EVP handler for httpmd5 plugin
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2005, Robert van Engelen, Genivia Inc., All Rights Reserved.

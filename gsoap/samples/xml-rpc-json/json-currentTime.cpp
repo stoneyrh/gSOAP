@@ -43,7 +43,7 @@ using namespace std;
 
 int main()
 {
-  soap *ctx = soap_new1(SOAP_C_UTFSTRING);
+  soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
   ctx->send_timeout = 10; // 10 sec, stop if server is not accepting msg
   ctx->recv_timeout = 10; // 10 sec, stop if server does not respond in time
 

@@ -1,18 +1,18 @@
 /*
-	xml-rpc-json.cpp
+        xml-rpc-json.cpp
 
-	XML-RPC <=> JSON serialization example
+        XML-RPC <=> JSON serialization example
 
-	Requires xml-rpc.h, xml-rpc.cpp, json.h, and json.cpp
+        Requires xml-rpc.h, xml-rpc.cpp, json.h, and json.cpp
 
-	Compile:
-	soapcpp2 -CSL xml-rpc.h
-	c++ -o xml-rpc-json xml-rpc-json.cpp xml-rpc.cpp json.cpp stdsoap2.cpp soapC.cpp
+        Compile:
+        soapcpp2 -CSL xml-rpc.h
+        c++ -o xml-rpc-json xml-rpc-json.cpp xml-rpc.cpp json.cpp stdsoap2.cpp soapC.cpp
 
-	To put JSON types and operations in a C++ namespace, compile:
-	soapcpp2 -qjson -CSL xml-rpc.h
-	soapcpp2 -CSL -penv env.h
-	c++ -DJSON_NAMESPACE -o xml-rpc-json xml-rpc-json.cpp xml-rpc.cpp json.cpp stdsoap2.cpp jsonC.cpp envC.cpp
+        To put JSON types and operations in a C++ namespace, compile:
+        soapcpp2 -qjson -CSL xml-rpc.h
+        soapcpp2 -CSL -penv env.h
+        c++ -DJSON_NAMESPACE -o xml-rpc-json xml-rpc-json.cpp xml-rpc.cpp json.cpp stdsoap2.cpp jsonC.cpp envC.cpp
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -60,17 +60,20 @@ int main()
   value v(ctx);
 
   // create an input stream from a given string with JSON content
-  istringstream in;
-  in.str("[ [1,\"2\",3.14, true], {\"name\": \"gsoap\", \"major\": 2.8, \"©\": 2015} ]");
+  stringstream in("[ [1,\"2\",3.14, true], {\"name\": \"gsoap\", \"major\": 2.8, \"©\": 2015} ]");
 
   // parse JSON content
   in >> v;
+  if (v.soap->error)
+    cerr << "Error reading JSON\n";
 
   // write v in XML-RPC format to cout (soap_write_value is soapcpp2-generated)
   ctx->os = &cout;
   soap_write_value(ctx, &v);
+  if (v.soap->error)
+    cerr << "Error writing XML-RPC\n"; // assumes writes can fail if deemed critical
 
-  // let's change v's values:
+  // let's change some of v's values:
   v[0][0] = (char*)v[0][0];   // convert int 1 to string "1"
   v[0][1] = (int)v[0][1];     // convert string "2" to 32 bit int = 2
   v[0][2] = (LONG64)v[0][2];  // truncate 3.14 to 64 bit int = 3
@@ -80,10 +83,11 @@ int main()
   v[1][L"©"] = 2016;
   v[1]["released"] = false;
   // v[2] = deliberately skipped, which will show up as null
-  v[3] = time(0);
-  v[4] = 123;                 // see below
-  v[5] = "123";               // see below
-  v[6] = 456;                 // see below
+  v[3] = (ULONG64)time(0);
+  v[4] = 123;          // see below
+  v[5] = "123";        // see below
+  v[6] = 456;          // see below
+  v[7] = v[0] + v[4];  // array concat: copy array v[0] to v[7] extended with one element value of v[4]
 
   // find all values 123 in v[] and change to 456, increment all other ints,
   // string "123" is also changed to 456, since we deliberately do not guard
