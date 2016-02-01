@@ -3345,17 +3345,17 @@ struct soap_dom_attribute
   */
   soap_dom_attribute& set(int n);
   /**
-  @brief Set text of this xsd__anyAttribute DOM attribute node to a long integer value
-  @param n long integer value
-  @return reference to *this
-  */
-  soap_dom_attribute& set(long n);
-  /**
   @brief Set text of this xsd__anyAttribute DOM attribute node to a 64 bit integer value
   @param n 64 bit integer value
   @return reference to *this
   */
   soap_dom_attribute& set(LONG64 n);
+  /**
+  @brief Set text of this xsd__anyAttribute DOM attribute node to a float value
+  @param x float value (NaN and +/-INF are also supported)
+  @return reference to *this
+  */
+  soap_dom_attribute& set(float x);
   /**
   @brief Set text of this xsd__anyAttribute DOM attribute node to a double float value
   @param x double float value (NaN and +/-INF are also supported)
@@ -3399,17 +3399,17 @@ struct soap_dom_attribute
   */
   soap_dom_attribute& operator=(int n);
   /**
-  @brief Set text of this xsd__anyAttribute DOM attribute node to a long integer value, same as set(n)
-  @param n long integer value
-  @return reference to *this
-  */
-  soap_dom_attribute& operator=(long n);
-  /**
   @brief Set text of this xsd__anyAttribute DOM attribute node to a 64 bit integer value, same as set(n)
   @param n 64 bit integer value
   @return reference to *this
   */
   soap_dom_attribute& operator=(LONG64 n);
+  /**
+  @brief Set text of this xsd__anyAttribute DOM attribute node to a float value, same as set(x)
+  @param x float value (NaN and +/-INF are also supported)
+  @return reference to *this
+  */
+  soap_dom_attribute& operator=(float x);
   /**
   @brief Set text of this xsd__anyAttribute DOM attribute node to a double float value, same as set(x)
   @param x double float value (NaN and +/-INF are also supported)
@@ -3543,11 +3543,6 @@ struct soap_dom_attribute
   @return integer value or 0 if text is not numeric
   */
   operator int() const;
-  /**
-  @brief Return long integer value of numeric text of this xsd__anyAttribute DOM attribute node, same as (long)get_int()
-  @return long integer value or 0 if text is not numeric
-  */
-  operator long() const;
   /**
   @brief Return 64 bit integer value of numeric text of this xsd__anyAttribute DOM attribute node, same as get_int()
   @return 64 bit integer value or 0 if text is not numeric
@@ -3783,13 +3778,13 @@ struct soap_dom_element
   @param n integer value
   @return reference to *this
   */
-  soap_dom_element& set(long n);
+  soap_dom_element& set(LONG64 n);
   /**
-  @brief Set text of this xsd__anyType DOM element node to an integer value
-  @param n integer value
+  @brief Set text of this xsd__anyType DOM element node to a float value
+  @param x float value (NaN and +/-INF are also supported)
   @return reference to *this
   */
-  soap_dom_element& set(LONG64 n);
+  soap_dom_element& set(float x);
   /**
   @brief Set text of this xsd__anyType DOM element node to a double float value
   @param x double float value (NaN and +/-INF are also supported)
@@ -3889,16 +3884,16 @@ struct soap_dom_element
   soap_dom_element& operator=(int n);
   /**
   @brief Set text of this xsd__anyType DOM element node to an integer value, same as set(n)
-  @param n long integer value
-  @return reference to *this
-  */
-  soap_dom_element& operator=(long n);
-  /**
-  @brief Set text of this xsd__anyType DOM element node to an integer value, same as set(n)
   @param n 64 bit integer value
   @return reference to *this
   */
   soap_dom_element& operator=(LONG64 n);
+  /**
+  @brief Set text of this xsd__anyType DOM element node to a float value, same as set(x)
+  @param x float value (NaN and +/-INF are also supported)
+  @return reference to *this
+  */
+  soap_dom_element& operator=(float x);
   /**
   @brief Set text of this xsd__anyType DOM element node to a double float value, same as set(x)
   @param x double float value (NaN and +/-INF are also supported)
@@ -4230,11 +4225,6 @@ struct soap_dom_element
   @return integer value or 0 if text is not numeric
   */
   operator int() const;
-  /**
-  @brief Return long integer value of numeric text of this xsd__anyType DOM element node, same as (long)get_int()
-  @return long integer value or 0 if text is not numeric
-  */
-  operator long() const;
   /**
   @brief Return 64 bit integer value of numeric text of this xsd__anyType DOM element node, same as get_int()
   @return 64 bit integer value or 0 if text is not numeric

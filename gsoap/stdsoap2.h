@@ -2180,8 +2180,8 @@ struct soap_dom_attribute
   soap_dom_attribute& set(const char *ns, const wchar_t *tag)   { return *soap_att_set_w(this, ns, tag); }
   soap_dom_attribute& set(bool b)                               { return *soap_att_bool(this, b); }
   soap_dom_attribute& set(int n)                                { return *soap_att_int(this, n); }
-  soap_dom_attribute& set(long n)                               { return *soap_att_int(this, n); }
   soap_dom_attribute& set(LONG64 n)                             { return *soap_att_int(this, n); }
+  soap_dom_attribute& set(float x)                              { return *soap_att_double(this, x); }
   soap_dom_attribute& set(double x)                             { return *soap_att_double(this, x); }
   soap_dom_attribute& set(const char *text)                     { return *soap_att_text(this, text); }
   soap_dom_attribute& set(const wchar_t *text)                  { return *soap_att_text_w(this, text); }
@@ -2191,8 +2191,8 @@ struct soap_dom_attribute
 #endif
   soap_dom_attribute& operator=(bool b)                         { return *soap_att_bool(this, b); }
   soap_dom_attribute& operator=(int n)                          { return *soap_att_int(this, n); }
-  soap_dom_attribute& operator=(long n)                         { return *soap_att_int(this, n); }
   soap_dom_attribute& operator=(LONG64 n)                       { return *soap_att_int(this, n); }
+  soap_dom_attribute& operator=(float x)                        { return *soap_att_double(this, x); }
   soap_dom_attribute& operator=(double x)                       { return *soap_att_double(this, x); }
   soap_dom_attribute& operator=(const char *text)               { return *soap_att_text(this, text); }
   soap_dom_attribute& operator=(const wchar_t *text)            { return *soap_att_text_w(this, text); }
@@ -2218,7 +2218,6 @@ struct soap_dom_attribute
   const char *get_text() const                                  { return this->text; }
   operator bool() const                                         { return soap_att_is_true(this) != 0; }
   operator int() const                                          { return soap_att_get_int(this); }
-  operator long() const                                         { return soap_att_get_long(this); }
   operator LONG64() const                                       { return soap_att_get_LONG64(this); }
   operator double() const                                       { return soap_att_get_double(this); }
   operator const char*() const                                  { return this->text; }
@@ -2297,8 +2296,8 @@ struct soap_dom_element
   soap_dom_element& set(const char *ns, const wchar_t *tag)             { return *soap_elt_set_w(this, ns, tag); }
   soap_dom_element& set(bool b)                                         { return *soap_elt_bool(this, b); }
   soap_dom_element& set(int n)                                          { return *soap_elt_int(this, n); }
-  soap_dom_element& set(long n)                                         { return *soap_elt_int(this, n); }
   soap_dom_element& set(LONG64 n)                                       { return *soap_elt_int(this, n); }
+  soap_dom_element& set(float x)                                       { return *soap_elt_double(this, x); }
   soap_dom_element& set(double x)                                       { return *soap_elt_double(this, x); }
   soap_dom_element& set(const char *text)                               { return *soap_elt_text(this, text); }
   soap_dom_element& set(const wchar_t *text)                            { return *soap_elt_text_w(this, text); }
@@ -2317,8 +2316,8 @@ struct soap_dom_element
   soap_dom_element& adds(soap_dom_attribute *atts)                      { return *soap_add_atts(this, atts); }
   soap_dom_element& operator=(bool b)                                   { return *soap_elt_bool(this, b); }
   soap_dom_element& operator=(int n)                                    { return *soap_elt_int(this, n); }
-  soap_dom_element& operator=(long n)                                   { return *soap_elt_int(this, n); }
   soap_dom_element& operator=(LONG64 n)                                 { return *soap_elt_int(this, n); }
+  soap_dom_element& operator=(float x)                                  { return *soap_elt_double(this, x); }
   soap_dom_element& operator=(double x)                                 { return *soap_elt_double(this, x); }
   soap_dom_element& operator=(const char *text)                         { return *soap_elt_text(this, text); }
   soap_dom_element& operator=(const wchar_t *text)                      { return *soap_elt_text_w(this, text); }
@@ -2385,7 +2384,6 @@ struct soap_dom_element
   int get_type(const void **node) const                                 { return soap_elt_get_type(this, node); }
   operator bool() const                                                 { return soap_elt_is_true(this) != 0; }
   operator int() const                                                  { return soap_elt_get_int(this); }
-  operator long() const                                                 { return soap_elt_get_long(this); }
   operator LONG64() const                                               { return soap_elt_get_LONG64(this); }
   operator double() const                                               { return soap_elt_get_double(this); }
   operator const char*() const                                          { return this->text; }

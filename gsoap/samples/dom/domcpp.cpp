@@ -944,7 +944,7 @@ static void out_gen_c(soap *ctx, xsd__anyType& v, const char *current, const std
           if (is_b)
             *ctx->os << (*text == 't');
           else if (is_n)
-            *ctx->os << n;
+            *ctx->os << n << "LL";
           else if (is_x)
             *ctx->os << x;
           else
@@ -1109,7 +1109,7 @@ static void out_gen_c(soap *ctx, xsd__anyType& v, const char *current, const std
         if (is_b)
           *ctx->os << (*text == 't');
         else if (is_n)
-          *ctx->os << n;
+          *ctx->os << n << "LL";
         else if (is_x)
           *ctx->os << x;
         else
@@ -1130,7 +1130,7 @@ static void out_gen_c(soap *ctx, xsd__anyType& v, const char *current, const std
     if (is_bool(text))
       indent(ctx, k) << "soap_elt_bool(" << lhs << ", " << (*text == 't');
     else if (is_int(ctx, text, n))
-      indent(ctx, k) << "soap_elt_int(" << lhs << ", " << n;
+      indent(ctx, k) << "soap_elt_int(" << lhs << ", " << n << "LL";
     else if (is_double(ctx, text, x))
       indent(ctx, k) << "soap_elt_double(" << lhs << ", " << x;
     else
@@ -1164,7 +1164,7 @@ static void in_gen_c(soap *ctx, xsd__anyType& v, const std::map<std::string,cons
             if ((is_b = is_bool(text)))
               indent(ctx, k + 2) << "short " << newlhs << "_att = " << (*text == 't') << "; /* a default bool value */\n";
             else if ((is_n = is_int(ctx, text, n)))
-              indent(ctx, k + 2) << "LONG64 " << newlhs << "_att = " << n << "; /* a default int value */\n";
+              indent(ctx, k + 2) << "LONG64 " << newlhs << "_att = " << n << "LL; /* a default int value */\n";
             else if ((is_x = is_double(ctx, text, x)))
               indent(ctx, k + 2) << "double " << newlhs << "_att = " << x << "; /* a default float value */\n";
             else
@@ -1275,7 +1275,7 @@ static void in_gen_c(soap *ctx, xsd__anyType& v, const std::map<std::string,cons
         if ((is_b = is_bool(text)))
           indent(ctx, k + 2) << "short " << lhs << "_elt = " << (*text == 't') << "; /* a default bool value */\n";
         else if ((is_n = is_int(ctx, text, n)))
-          indent(ctx, k + 2) << "LONG64 " << lhs << "_elt = " << n << "; /* a default int value */\n";
+          indent(ctx, k + 2) << "LONG64 " << lhs << "_elt = " << n << "LL; /* a default int value */\n";
         else if ((is_x = is_double(ctx, text, x)))
           indent(ctx, k + 2) << "double " << lhs << "_elt = " << x << "; /* a default float value */\n";
         else
@@ -1334,7 +1334,7 @@ static void out_gen_cpp(soap *ctx, xsd__anyType& v, const char *current, const s
           if (is_bool(text))
             *ctx->os << text;
           else if (is_int(ctx, text, n))
-            *ctx->os << n;
+            *ctx->os << n << "LL";
           else if (is_double(ctx, text, x))
             *ctx->os << x;
           else
@@ -1460,7 +1460,7 @@ static void out_gen_cpp(soap *ctx, xsd__anyType& v, const char *current, const s
         if (is_bool(text))
           *ctx->os << text;
         else if (is_int(ctx, text, n))
-          *ctx->os << n;
+          *ctx->os << n << "LL";
         else if (is_double(ctx, text, x))
           *ctx->os << x;
         else
@@ -1481,7 +1481,7 @@ static void out_gen_cpp(soap *ctx, xsd__anyType& v, const char *current, const s
     if (is_bool(text))
       *ctx->os << text;
     else if (is_int(ctx, text, n))
-      *ctx->os << n;
+      *ctx->os << n << "LL";
     else if (is_double(ctx, text, x))
       *ctx->os << x;
     else
@@ -1511,7 +1511,7 @@ static void in_gen_cpp(soap *ctx, xsd__anyType& v, const std::map<std::string,co
             if (is_bool(text))
               indent(ctx, k) << "bool " << newlhs << "_att = " << text << "; // a default bool value\n";
             else if (is_int(ctx, text, n))
-              indent(ctx, k) << "LONG64 " << newlhs << "_att = " << n << "; // a default int value\n";
+              indent(ctx, k) << "LONG64 " << newlhs << "_att = " << n << "LL; // a default int value\n";
             else if (is_double(ctx, text, x))
               indent(ctx, k) << "double " << newlhs << "_att = " << x << "; // a default float value\n";
             else
@@ -1611,7 +1611,7 @@ static void in_gen_cpp(soap *ctx, xsd__anyType& v, const std::map<std::string,co
         if (is_bool(text))
           indent(ctx, k) << "bool " << lhs << "_elt = " << text << "; // a default bool value\n";
         else if (is_int(ctx, text, n))
-          indent(ctx, k) << "LONG64 " << lhs << "_elt = " << n << "; // a default int value\n";
+          indent(ctx, k) << "LONG64 " << lhs << "_elt = " << n << "LL; // a default int value\n";
         else if (is_double(ctx, text, x))
           indent(ctx, k) << "double " << lhs << "_elt = " << x << "; // a default float value\n";
         else

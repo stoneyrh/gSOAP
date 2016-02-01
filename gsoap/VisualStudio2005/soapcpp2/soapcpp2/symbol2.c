@@ -12798,11 +12798,9 @@ soap_put(Tnode *typ)
 #if 0
   /* some compilers cannot handle this inlined function */
   if (typ->type == Tclass && !is_external(typ) && !is_volatile(typ))
-    fprintf(fhead, "\n\ninline int soap_write_%s(struct soap *soap, %s) {
-        if (p->soap_put(soap, \"%s\", NULL) || soap_end_send(soap)) return soap->error; return SOAP_OK; }\n", c_ident(typ), c_type_id(typ, "*p"), xml_tag(typ));
-        else if (typ->type != Treference)
-          fprintf(fhead, "\n\ninline int soap_write_%s(struct soap *soap, %s) {
-              if (soap_begin_send(soap) || soap_put_%s(soap, p, \"%s\", NULL) || soap_end_send(soap)) return soap->error; return SOAP_OK; }\n", c_ident(typ), c_type_id(typ, "*p"), c_ident(typ), xml_tag(typ));
+    fprintf(fhead, "\n\ninline int soap_write_%s(struct soap *soap, %s) { if (p->soap_put(soap, \"%s\", NULL) || soap_end_send(soap)) return soap->error; return SOAP_OK; }\n", c_ident(typ), c_type_id(typ, "*p"), xml_tag(typ));
+  else if (typ->type != Treference)
+    fprintf(fhead, "\n\ninline int soap_write_%s(struct soap *soap, %s) { if (soap_begin_send(soap) || soap_put_%s(soap, p, \"%s\", NULL) || soap_end_send(soap)) return soap->error; return SOAP_OK; }\n", c_ident(typ), c_type_id(typ, "*p"), c_ident(typ), xml_tag(typ));
 #endif
   if (typ->type == Tclass && !is_external(typ) && !is_volatile(typ))
     fprintf(fhead, "\n\n#ifndef soap_write_%s\n#define soap_write_%s(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || ((data)->soap_serialize(soap), 0) || (data)->soap_put(soap, \"%s\", NULL) || soap_end_send(soap), (soap)->error )\n#endif\n", c_ident(typ), c_ident(typ), xml_tag(typ));
