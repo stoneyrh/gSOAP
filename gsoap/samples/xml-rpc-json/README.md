@@ -2298,8 +2298,8 @@ Miscellaneous                                                            {#misc}
 =============
 
 
-Compiling JSON files together with gSOAP XML data binding code        {#json-cc}
---------------------------------------------------------------
+Compiling XML-RPC/JSON together with gSOAP XML data binding code      {#json-cc}
+----------------------------------------------------------------
 
 To use JSON (and XML-RPC) with other gSOAP XML data binding code requires a few
 simple steps to ensure that your project compiles cleanly.

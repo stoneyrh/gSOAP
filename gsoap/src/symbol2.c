@@ -13438,7 +13438,7 @@ soap_attr_value(Entry *p, const char *obj, const char *name, const char *tag)
       fprintf(fout, "\n\t\t\t%s->%s = %s(SOAP_NEW(%s));", obj, name, c_type(typ), c_type(ptr));
       get = ".get()";
     }
-    else if (is_stdstring(ptr))
+    else if (is_stdstr(ptr))
       fprintf(fout, "\n\t\t\tif (!(%s->%s = soap_new_%s(soap)))\n\t\t\t{\tsoap->error = SOAP_EOM;\n\t\t\t\treturn NULL;\n\t\t\t}", obj, name, c_ident(ptr));
     else
       fprintf(fout, "\n\t\t\tif (!(%s->%s = (%s)soap_malloc(soap, sizeof(%s))))\n\t\t\t{\tsoap->error = SOAP_EOM;\n\t\t\t\treturn NULL;\n\t\t\t}", obj, name, c_type(typ), c_type(ptr));

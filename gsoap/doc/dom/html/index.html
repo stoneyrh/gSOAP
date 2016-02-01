@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta http-equiv="cache-control" content="no-cache">
 <title>Genivia - XML DOM &amp; XPath</title>
 <link href="genivia_tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -55,7 +56,7 @@
 <li class="level2"><a href="#domcpp-4">XPath by example                                                     </a></li>
 </ul>
 </li>
-<li class="level1"><a href="#ns">Understanding XML namesapces                                               </a></li>
+<li class="level1"><a href="#ns">Understanding XML namespaces                                               </a></li>
 <li class="level1"><a href="#cpp">C++ XML DOM API                                                           </a><ul><li class="level2"><a href="#cpp-files">List of C++ files                                                   </a></li>
 <li class="level2"><a href="#cpp-api">C++ DOM API functions                                                 </a><ul><li class="level3"><a href="#cpp-api1">Creating a DOM root element node</a></li>
 <li class="level3"><a href="#cpp-api2">Assigning child nodes and values to a DOM node</a></li>
@@ -508,7 +509,7 @@ c++ -I../.. -o test-dom test-dom.cpp soapC.cpp ../../dom.cpp ../../stdsoap2.cpp
 </pre><p>and in C: </p><pre class="fragment">domcpp -c -m -p'//@price[?soap_att_get_double(v) &lt; strtod(argv[1], NULL))]'
 </pre><p>Note that the <code>strtod</code> function returns the double float value of <code>argv[1]</code> and is repeately called. A more efficient implementation would store the value in a temporary variable and use the temporary in the C/C++ predicate.</p>
 <h1><a class="anchor" id="ns"></a>
-Understanding XML namesapces                                               </h1>
+Understanding XML namespaces                                               </h1>
 <p>XML namespaces are commonly used with XML documents that are instances of XML schemas. A full introduction is beyond the scope of this document. We instroduce the basics here to help you understand why XML namespaces are important and how they are used in the C/C++ DOM API of gSOAP.</p>
 <p>XML namespace are important when XML documents contain instances of multiple XML schemas. XML elements and attributes that are declared in separate schemas should be distinguishable and their content should be verifyable. Tag name conflicts that may be caused by combining multiple XML schemas to define an XML document can be resolved by binding elements and attributes to specific XML namespaces.</p>
 <p>XML elements and attributes are bound to an XML namespace by using a namespace prefix in qualified tag names of elements and attributes. A qualified tag is of the form <code>prefix:name</code>, such that the prefix is bound in the scope of the tag to a namespace URI with an <code>xmlns:prefix="URI"</code> declaration. Unqualified tags can be bound to a namesapce with a <code>xmlns="URI"</code> default namespace declaration.</p>
@@ -1474,8 +1475,8 @@ Floating point format                                                      </h2>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sun Jan 31 2016 09:38:59 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Sun Jan 31 2016 16:22:34 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
-<div style="height: 400px; background: #777;">
+<div style="height: 246px; background: #DBDBDB;">
 </body>
 </html>

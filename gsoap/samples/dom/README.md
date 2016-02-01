@@ -825,7 +825,7 @@ is repeately called.  A more efficient implementation would store the value in
 a temporary variable and use the temporary in the C/C++ predicate.
 
 
-Understanding XML namesapces                                               {#ns}
+Understanding XML namespaces                                               {#ns}
 ============================
 
 XML namespaces are commonly used with XML documents that are instances of XML
