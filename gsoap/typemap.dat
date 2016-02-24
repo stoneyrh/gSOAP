@@ -480,9 +480,10 @@ wstop	= "http://docs.oasis-open.org/wsn/t-1"
 i	= "http://soapinterop.org/"
 s	= "http://soapinterop.org/xsd"
 
-#	Prefix binding for Amazon Web Services:
+#	Prefix bindings for Amazon Web Services:
 
 aws	= "urn:PI/DevCentral/SoapService"
+s3	= "http://s3.amazonaws.com/doc/2006-03-01/"
 
 #	Prefix binding for Mappoint Web services:
 

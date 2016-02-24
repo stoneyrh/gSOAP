@@ -4,7 +4,7 @@
 AUTOMAKE_OPTIONS = foreign 1.4
 
 SUBDIRS = \
-	autotest calc calc++ databinding dime dom oneway oneway++ \
+	autotest aws calc calc++ databinding dime dom oneway oneway++ \
 	factory factorytest \
 	gmt googleapi hello httpcookies lu magic mashup mashup++ \
 	chaining chaining++ primes \

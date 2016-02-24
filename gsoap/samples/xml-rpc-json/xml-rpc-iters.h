@@ -63,10 +63,11 @@ class params_iterator;
 }
 #endif
 
+// force "cyclic" inclusion to obtain type declarations for definitions below
 #ifdef JSON_NAMESPACE
-#include "jsonStub.h"   // "cyclic" inclusion to obtain jsonStub.h type declarations for definitions below
+#include "jsonStub.h"
 #else
-#include "soapStub.h"   // "cyclic" inclusion to obtain soapStub.h type declarations for definitions below
+#include "soapStub.h"
 #endif
 
 #ifdef JSON_NAMESPACE

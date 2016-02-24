@@ -172,7 +172,7 @@ wsdl2h-wsdl.o: wsdl.cpp wsdlH.h wsdlStub.h \
   /usr/include/openssl/x509v3.h /usr/include/openssl/conf.h \
   /usr/include/zlib.h /usr/include/zconf.h /usr/include/inttypes.h \
   /usr/include/xlocale/_inttypes.h ../../gsoap/plugin/httpda.h \
-  ../../gsoap/plugin/md5evp.h ../../gsoap/plugin/threads.h \
+  ../../gsoap/plugin/smdevp.h ../../gsoap/plugin/threads.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/set \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__tree \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/map
@@ -721,7 +721,7 @@ includes.h:
 
 ../../gsoap/plugin/httpda.h:
 
-../../gsoap/plugin/md5evp.h:
+../../gsoap/plugin/smdevp.h:
 
 ../../gsoap/plugin/threads.h:
 

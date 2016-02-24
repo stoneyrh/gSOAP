@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The HTTP-DA plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sun Jan 31 2016</div>
+      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -46,39 +46,45 @@
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#httpda_0">HTTP-DA Setup</a></li>
-<li class="level1"><a href="#httpda_1">Client-Side Usage</a></li>
-<li class="level1"><a href="#httpda_2">Client Example</a></li>
-<li class="level1"><a href="#httpda_3">Server-Side Usage</a></li>
-<li class="level1"><a href="#httpda_4">Server Example</a></li>
-<li class="level1"><a href="#httpda_5">HTTP Digest Authentication Limitations</a></li>
+<ul><li class="level1"><a href="#httpda_0">Introduction</a></li>
+<li class="level1"><a href="#httpda_1">Client-side usage</a></li>
+<li class="level1"><a href="#httpda_2">Client example</a></li>
+<li class="level1"><a href="#httpda_3">Server-side usage</a></li>
+<li class="level1"><a href="#httpda_4">Server example</a></li>
+<li class="level1"><a href="#httpda_5">Limitations</a></li>
 </ul>
 </div>
 <div class="textblock"><h1><a class="anchor" id="httpda_0"></a>
-HTTP-DA Setup</h1>
-<p>Additional build steps required:</p>
+Introduction</h1>
+<p>The upgraded HTTP digest authentication plugin for gSOAP adds support for the RFC7616 draft that is backwards compatible with RFC2617. The new plugin adds SHA-256 (and SHA-512/256 when OpenSSL supports it) algorithms, including the -sess variants. To maintain backwards compatibility with RFC2617 the MD5 algorithm is still supported but not recommended.</p>
+<p>HTTP <b>digest authentication</b> does not transmit the user id and password for authentication. Instead, a server negotiates credentials (username and/or password) with a client using cryptographic hashing algorithms with nonce values to prevent replay attacks.</p>
+<p>By contrast, HTTP <b>basic authentication</b> is not safe over unencrypted channels because the password is transmitted to the server unencrypted. Therefore, this mechanism provides no confidentiality protection for the transmitted credentials. HTTPS is typically preferred over or used in conjunction with HTTP basic authentication.</p>
+<p>To support HTTP digest authentication in favor of HTTP basic authentication, you will need to install OpenSSL and follow these steps to build your projects:</p>
 <ul>
-<li>Compile all sources with <code>-DWITH_OPENSSL</code></li>
-<li>Link libgsoapssl (libgsoapssl++), or use the lib's stdsoap2.c/.cpp source</li>
-<li>Compile and link with <a class="el" href="httpda_8c.html">plugin/httpda.c</a>, <a class="el" href="md5evp_8c.html">plugin/md5evp.c</a>, and <a class="el" href="threads_8c.html">plugin/threads.c</a></li>
+<li>Compile your project that uses gSOAP source code with <code>-DWITH_OPENSSL</code>.</li>
+<li>Link libgsoapssl (libgsoapssl++), or use the <code>stdsoap2.c[pp]</code> source.</li>
+<li>Compile and link your code together with <code><a class="el" href="httpda_8c.html">plugin/httpda.c</a></code>, <code>plugin/smdevp.c</code>, and <code><a class="el" href="threads_8c.html">plugin/threads.c</a></code></li>
 </ul>
+<p>The plugin is MT-safe by means of internal mutex locks. Mutex ensures exclusive access and updates of the shared session store with nonces to prevent replay attacks.</p>
 <h1><a class="anchor" id="httpda_1"></a>
-Client-Side Usage</h1>
-<p>HTTP Basic Authentication is the default authentication supported by gSOAP. The credentials for client-side use age set with:</p>
+Client-side usage</h1>
+<p>HTTP basic authentication is the default authentication mechanism supported by gSOAP. You can set the basic authentication credentials at the client-side with:</p>
 <div class="fragment"><div class="line">soap.userid = <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>;</div>
 <div class="line">soap.passed = <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>;</div>
 <div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
 <div class="line">  ... <span class="comment">// error</span></div>
-</div><!-- fragment --><p>HTTP Basic Authentication should never be used over plain HTTP, because the user ID and password are sent in the clear. It is safe(r) to use over HTTPS, because the HTTP headers and body are encrypted.</p>
-<p>The better alternative is to use HTTP Digest Authentication, which uses the digest (hash value) of the credentials and avoids a plain-text password exchange.</p>
-<p>To use HTTP Digest Authentication with gSOAP, register the http_da plugin:</p>
+</div><!-- fragment --><p>HTTP basic authentication should <b>never</b> be used over plain HTTP, because the credentials (the ID and password) are transmitted in the clear in base64 encoded form which is easily reversible. This mechanism is safer to use over HTTPS, because the HTTP headers and body are encrypted.</p>
+<p>This upgraded HTTP digest authentication plugin supports RFC7616 and RFC2617. RFC7616 adds SHA2 and is backwards compatible to clients that use MD5. The MD5 algorithm is not allowed in FIPS making SHA-256 or SHA-512-256 digest algorithms mandatory. The client-side of the plugin handles both RFCs automatically.</p>
+<p>To use HTTP digest authentication with gSOAP, register the http_da plugin as follows:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="httpda_8h.html">httpda.h</a>&quot;</span></div>
 <div class="line">soap_register_plugin(&amp;soap, <a class="code" href="httpda_8h.html#a193bd879015f573a6a6de4b3f03f70cc">http_da</a>);</div>
-</div><!-- fragment --><p>To make a client-side service call:</p>
+</div><!-- fragment --><p>To make a client-side service call you will need to create a digest store <code><a class="el" href="structhttp__da__info.html" title="Used to save and restore credentials for client-side invocations to the same authenticated endpoint...">http_da_info</a></code>. The store holds the digest information locally on your machine to manage repeated authentication challenges from all servers you connect to. Use <code><a class="el" href="httpda_8c.html#a4d48599051c3ae3dc61e56bd97deba7a" title="Saves the credentials to the digest store to use repeatedly for authentication. ">http_da_save()</a></code> to add credentials to the store and release the store with <code><a class="el" href="httpda_8c.html#a25230ec921c71e515fc4280991af6533" title="Releases the digest store and frees memory. ">http_da_release()</a></code> when you no longer need the credentials.</p>
+<p>The <code><a class="el" href="structhttp__da__info.html" title="Used to save and restore credentials for client-side invocations to the same authenticated endpoint...">http_da_info</a></code> store is intended for one thread to issue a sequence of calls that are all authenticated without requiring (re)negotiation. You should not share the <code><a class="el" href="structhttp__da__info.html" title="Used to save and restore credentials for client-side invocations to the same authenticated endpoint...">http_da_info</a></code> store with multiple threads, unless you use mutex locks.</p>
+<p>Here is an example:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span><a class="code" href="structhttp__da__info.html">http_da_info</a> info;</div>
 <div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
 <div class="line">{</div>
-<div class="line">  <span class="keywordflow">if</span> (soap.error == 401)</div>
+<div class="line">  <span class="keywordflow">if</span> (soap.error == 401) <span class="comment">// HTTP authentication is required</span></div>
 <div class="line">  {</div>
 <div class="line">    <a class="code" href="httpda_8h.html#a4d48599051c3ae3dc61e56bd97deba7a">http_da_save</a>(&amp;soap, &amp;info, <span class="stringliteral">&quot;&lt;authrealm&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>);</div>
 <div class="line">    <span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...)) <span class="comment">// try again</span></div>
@@ -88,24 +94,25 @@ Client-Side Usage</h1>
 <div class="line">  <span class="keywordflow">else</span></div>
 <div class="line">    ... <span class="comment">// other error</span></div>
 <div class="line">}</div>
-</div><!-- fragment --><p>The "&lt;authrealm&gt;" is a string that is associated with the server's realm. It can be obtained after an unsuccessful non-authenticated call:</p>
+</div><!-- fragment --><p>The <code>"\&lt;authrealm\&gt;"</code> string is the protected realm of the server that requires authorization. This string can be obtained with the <code>soap.authrealm</code> string after an unsuccessful non-authenticated call so you can use it to save credentials to the digest store:</p>
 <div class="fragment"><div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (soap.error == 401) <span class="comment">// HTTP authentication is required</span></div>
 <div class="line">  {</div>
 <div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span> *realm = soap.authrealm;</div>
+<div class="line">    <a class="code" href="httpda_8h.html#a4d48599051c3ae3dc61e56bd97deba7a">http_da_save</a>(&amp;soap, &amp;info, realm, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>);</div>
 <div class="line">    ...</div>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">else</span></div>
 <div class="line">    ... <span class="comment">// error</span></div>
 <div class="line">}</div>
-</div><!-- fragment --><p>Before a second call is made to the same endpoint that requires authentication, you must restore the authentication state and then finally release it:</p>
+</div><!-- fragment --><p>Before a second call is made to the same endpoint that requires authentication, you must restore the authentication state with <code><a class="el" href="httpda_8c.html#a6bcb428607280dbe2b0dcc63742cda60" title="Retrieves the credentials from the digest store to use for authentication. ">http_da_restore()</a></code>, then use it, and finally release it with <code><a class="el" href="httpda_8c.html#a25230ec921c71e515fc4280991af6533" title="Releases the digest store and frees memory. ">http_da_release()</a></code>:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span><a class="code" href="structhttp__da__info.html">http_da_info</a> info;</div>
 <div class="line"><span class="keywordtype">bool</span> auth = <span class="keyword">false</span>;</div>
 <div class="line"></div>
 <div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
 <div class="line">{</div>
-<div class="line">  <span class="keywordflow">if</span> (soap.error == 401)</div>
+<div class="line">  <span class="keywordflow">if</span> (soap.error == 401) <span class="comment">// HTTP authentication is required</span></div>
 <div class="line">  {</div>
 <div class="line">    <a class="code" href="httpda_8h.html#a4d48599051c3ae3dc61e56bd97deba7a">http_da_save</a>(&amp;soap, &amp;info, <span class="stringliteral">&quot;&lt;authrealm&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>);</div>
 <div class="line">    auth = <span class="keyword">true</span>;</div>
@@ -136,12 +143,12 @@ Client-Side Usage</h1>
 <div class="line">soap_destroy(&amp;soap);</div>
 <div class="line">soap_end(&amp;soap);</div>
 <div class="line">soap_done(&amp;soap);</div>
-</div><!-- fragment --><p>For HTTP proxies requiring HTTP Digest Authenticaiton, use the 'proxy' functions:</p>
+</div><!-- fragment --><p>For HTTP proxies requiring HTTP digest authenticaiton, use the 'proxy' functions of the plugin:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span><a class="code" href="structhttp__da__info.html">http_da_info</a> info;</div>
 <div class="line">...</div>
 <div class="line">if (soap_call_ns__method(&amp;soap, ...))</div>
 <div class="line">{</div>
-<div class="line">  <span class="keywordflow">if</span> (soap.error == 407)</div>
+<div class="line">  <span class="keywordflow">if</span> (soap.error == 407) <span class="comment">// HTTP proxy authentication is required</span></div>
 <div class="line">  {</div>
 <div class="line">    <a class="code" href="httpda_8h.html#a69acb5bfe6dfbbbeb69f0d991fcf6f0f">http_da_proxy_save</a>(&amp;soap, &amp;info, <span class="stringliteral">&quot;&lt;authrealm&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>);</div>
 <div class="line">    auth = <span class="keyword">true</span>;</div>
@@ -161,7 +168,7 @@ Client-Side Usage</h1>
 <div class="line">soap_end(&amp;soap);</div>
 <div class="line">soap_done(&amp;soap);</div>
 </div><!-- fragment --><h1><a class="anchor" id="httpda_2"></a>
-Client Example</h1>
+Client example</h1>
 <p>A client authenticating against a server:</p>
 <div class="fragment"><div class="line">soap_register_plugin(&amp;soap, <a class="code" href="httpda_8h.html#a193bd879015f573a6a6de4b3f03f70cc">http_da</a>);</div>
 <div class="line"><span class="comment">// try calling without authenticating</span></div>
@@ -205,8 +212,8 @@ Client Example</h1>
 <div class="line">          ... <span class="comment">// error</span></div>
 <div class="line">        <a class="code" href="httpda_8h.html#a130a4e7a9e318c649577c3ae2bc0665d">http_da_proxy_release</a>(&amp;soap, &amp;info); <span class="comment">// free data and remove userid and passwd</span></div>
 </div><!-- fragment --><h1><a class="anchor" id="httpda_3"></a>
-Server-Side Usage</h1>
-<p>Server-side HTTP Basic Authentication can be enforced by simply checking the soap.userid and soap.passwd values in a service method that requires client authentication:</p>
+Server-side usage</h1>
+<p>As explained in the gSOAP user guid, server-side HTTP basic authentication is enforced by simply checking the <code>soap.userid</code> and <code>soap.passwd</code> values in a service method that requires client authentication:</p>
 <div class="fragment"><div class="line">soap_register_plugin(&amp;soap, <a class="code" href="httpda_8h.html#a193bd879015f573a6a6de4b3f03f70cc">http_da</a>);</div>
 <div class="line">...</div>
 <div class="line">soap_serve(&amp;soap);</div>
@@ -217,7 +224,7 @@ Server-Side Usage</h1>
 <div class="line">    <span class="keywordflow">return</span> 401; <span class="comment">// HTTP authentication required</span></div>
 <div class="line">  ...</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>HTTP Digest Authentication is verified differently:</p>
+</div><!-- fragment --><p>HTTP digest authentication is verified differently, because digests are compared, not passwords:</p>
 <div class="fragment"><div class="line">soap_register_plugin(&amp;soap, <a class="code" href="httpda_8h.html#a193bd879015f573a6a6de4b3f03f70cc">http_da</a>);</div>
 <div class="line">...</div>
 <div class="line">soap_serve(&amp;soap);</div>
@@ -238,9 +245,23 @@ Server-Side Usage</h1>
 <div class="line">  }</div>
 <div class="line">  soap-&gt;authrealm = <a class="code" href="structhttp__da__info.html#a6a2f59964d40689e21165afe21a5bf17">authrealm</a>; <span class="comment">// realm to send to client</span></div>
 <div class="line">  <span class="keywordflow">return</span> 401; <span class="comment">// Not authorized, challenge with digest authentication</span></div>
-</div><!-- fragment --><p>The <code>http_da_verify_post</code> function checks the HTTP POST credentials. To verify an HTTP GET operation, use <code>http_da_verify_get</code>.</p>
+</div><!-- fragment --><p>The <code><a class="el" href="httpda_8c.html#adc8e72ee1c4d1dbb9c239fe1fff35ca2" title="Verifies the password credentials at the server side when used in an HTTP POST service operation...">http_da_verify_post()</a></code> function checks the HTTP POST credentials by computing and comparing a digest of the password. To verify an HTTP GET operation, use <code><a class="el" href="httpda_8c.html#a76264220d8bfbc627fee4caedd2ee4a0" title="Verifies the password credentials at the server side when used in an HTTP GET service operation...">http_da_verify_get()</a></code> instead.</p>
+<p>RFC7616 recommends SHA2 over MD5. The MD5 algorithm is not allowed in FIPS and SHA-256 or SHA-512-256 are mandatory. The upgrade plugin uses SHA-256 as the default algorithm and reverts to MD5 only if required by a client that does not support RFC7616.</p>
+<p>The default SHA-256 digest algorithm is enabled automatically. However, at the server side you can also use a plugin registry option to set a different algorithm as the default:</p>
+<div class="fragment"><div class="line">soap_register_plugin_arg(&amp;soap, <a class="code" href="httpda_8h.html#a193bd879015f573a6a6de4b3f03f70cc">http_da</a>, &lt;option&gt;);</div>
+</div><!-- fragment --><p>where <code>&lt;option&gt;</code> is one of:</p>
+<ul>
+<li><code><a class="el" href="httpda_8c.html#a2254e61e49fbe4674c2859da506b22b2" title="Use soap_register_plugin_arg(soap, http_da, http_da_md5()) for MD5 server-side challenge algorithm (n...">http_da_md5()</a></code> MD5 (not recommended).</li>
+<li><code><a class="el" href="httpda_8c.html#a4ee9c7c40a7fcf13b6832e973a614d5d" title="Use soap_register_plugin_arg(soap, http_da, http_da_md5_sess()) for MD5-sess server-side challenge al...">http_da_md5_sess()</a></code> MD5-sess (not recommended).</li>
+<li><code><a class="el" href="httpda_8c.html#aa6f6984a302ca1f2623cb019b36f0913" title="Use soap_register_plugin_arg(soap, http_da, http_da_sha256()) for MD5 server-side challenge algorithm...">http_da_sha256()</a></code> SHA-256 (recommended).</li>
+<li><code><a class="el" href="httpda_8c.html#a5f211120938768c596a3faa4cf606488" title="Use soap_register_plugin_arg(soap, http_da, http_da_sha256_sess()) for MD5-sess server-side challenge...">http_da_sha256_sess()</a></code> SHA-256-sess (recommended).</li>
+<li><code><a class="el" href="httpda_8c.html#ad7e77da75a17abdfe310d3eb655f5ab8" title="Use soap_register_plugin_arg(soap, http_da, http_da_sha512_256()) for MD5 server-side challenge algor...">http_da_sha512_256()</a></code> SHA-512-256 (not yet supported).</li>
+<li><code><a class="el" href="httpda_8c.html#a0cf43b4a77a286a5e6334e7357ce49e1" title="Use soap_register_plugin_arg(soap, http_da, http_da_sha512_256_sess()) for MD5-sess server-side chall...">http_da_sha512_256_sess()</a></code> SHA-512-256-sess (not yet supported).</li>
+</ul>
+<p>When non-MD5 option is selected, the server will present that digest algorithm together with the MD5 authentication algorithm as challenge to the client. If the client is upgraded to RFC7616 it selects the newer protcol. If the client is not upgraded it will select the older MD5-based protocol.</p>
+<p>To revert to RFC2617 use <code><a class="el" href="httpda_8c.html#a2254e61e49fbe4674c2859da506b22b2" title="Use soap_register_plugin_arg(soap, http_da, http_da_md5()) for MD5 server-side challenge algorithm (n...">http_da_md5()</a></code>.</p>
 <h1><a class="anchor" id="httpda_4"></a>
-Server Example</h1>
+Server example</h1>
 <div class="fragment"><div class="line">soap_register_plugin(&amp;soap, <a class="code" href="httpda_8h.html#a193bd879015f573a6a6de4b3f03f70cc">http_da</a>);</div>
 <div class="line">...</div>
 <div class="line">soap_serve(&amp;soap);</div>
@@ -272,15 +293,15 @@ Server Example</h1>
 <div class="line">  <span class="keywordflow">return</span> 401; <span class="comment">// Not authorized, challenge with digest authentication</span></div>
 <div class="line">}</div>
 </div><!-- fragment --><h1><a class="anchor" id="httpda_5"></a>
-HTTP Digest Authentication Limitations</h1>
-<p>HTTP Digest Authentication cannot be used with streaming MTOM/MIME/DIME attachments. Streaming is turned off by the plugin and attachment data is buffered rather than streamed. Non-streaming MTOM/MIME/DIME attachments are handled just fine. </p>
+Limitations</h1>
+<p>HTTP digest authentication cannot be used with streaming MTOM/MIME/DIME attachments. Non-streaming MTOM/MIME/DIME attachments are handled just fine. MTOM/MIM/DIME attachment streaming is automatically turned off by the plugin and attachment data is buffered rather than streamed. </p>
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sun Jan 31 2016 16:11:12 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Mon Feb 22 2016 20:00:27 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

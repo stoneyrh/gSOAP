@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.28
+        stdsoap2.h 2.8.29
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20828
+#define GSOAP_VERSION 20829
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1212,7 +1212,7 @@ extern "C" {
    to the limit of 1032:1.
 */
 #ifndef SOAP_MINDEFLATERATIO
-# define SOAP_MINDEFLATERATIO (0.001) /* ratio of deflated/inflated > 0.1% */
+# define SOAP_MINDEFLATERATIO (1.0/1032.0) /* ratio of deflated/inflated */
 #endif
 
 #ifdef VXWORKS
@@ -2412,13 +2412,15 @@ struct soap_dom_element
 };
 #endif
 
+#ifndef WITH_LEANER
 SOAP_FMAC1 struct soap_dom_element * SOAP_FMAC2 soap_dup_xsd__anyType(struct soap *soap, struct soap_dom_element *d, const struct soap_dom_element *a);
 SOAP_FMAC1 void SOAP_FMAC2 soap_del_xsd__anyType(const struct soap_dom_element *a);
 SOAP_FMAC1 struct soap_dom_attribute * SOAP_FMAC2 soap_dup_xsd__anyAttribute(struct soap *soap, struct soap_dom_attribute *d, const struct soap_dom_attribute *a);
 SOAP_FMAC1 void SOAP_FMAC2 soap_del_xsd__anyAttribute(const struct soap_dom_attribute *a);
-
 SOAP_FMAC1 int SOAP_FMAC2 soap_dom_call(struct soap *soap, const char *endpoint, const char *action, const struct soap_dom_element *in, struct soap_dom_element *out);
+#endif
 
+#ifndef WITH_LEANER
 #if defined(__cplusplus) && !defined(WITH_COMPAT)
 extern std::ostream &operator<<(std::ostream&, const struct soap_dom_element&);
 extern std::istream &operator>>(std::istream&, struct soap_dom_element&);
@@ -2426,6 +2428,7 @@ extern std::istream &operator>>(std::istream&, struct soap_dom_element&);
 SOAP_FMAC1 int SOAP_FMAC2 soap_dom_call(struct soap *soap, const char *endpoint, const char *action, const struct soap_dom_element& in, struct soap_dom_element& out);
 SOAP_FMAC1 int SOAP_FMAC2 soap_dom_call(struct soap *soap, const char *endpoint, const char *action, const struct soap_dom_element *in, struct soap_dom_element& out);
 SOAP_FMAC1 int SOAP_FMAC2 soap_dom_call(struct soap *soap, const char *endpoint, const char *action, const struct soap_dom_element& in, struct soap_dom_element *out);
+#endif
 #endif
 
 #if defined(__cplusplus)
@@ -3302,7 +3305,8 @@ SOAP_FMAC1 const char* SOAP_FMAC2 soap_attr_value(struct soap *soap, const char 
 SOAP_FMAC1 int SOAP_FMAC2 soap_set_attr(struct soap *soap, const char *name, const char *value, int flag);
 SOAP_FMAC1 void SOAP_FMAC2 soap_clr_attr(struct soap *soap);
 
-SOAP_FMAC1 const char* SOAP_FMAC2 soap_url(struct soap *soap, const char*, const char*);
+SOAP_FMAC1 const char* SOAP_FMAC2 soap_extend_url(struct soap *soap, const char*, const char*);
+SOAP_FMAC1 const char* SOAP_FMAC2 soap_extend_url_query(struct soap *soap, const char*, const char*);
 SOAP_FMAC1 size_t SOAP_FMAC2 soap_encode_url(const char*, char*, size_t);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_encode_url_string(struct soap*, const char*);
 #ifdef WITH_COOKIES

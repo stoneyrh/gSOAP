@@ -1719,58 +1719,104 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             fprintf(stream, "\"");
           }
           // add range info only when type is numeric
-          bool is_numeric_type = false, is_float_type = false;
+          bool is_numeric_type = false, is_unsigned_type = false, is_long_type = false, is_double_type = false, is_float_type = false;
           if (!strncmp(s, "signed ", 7))
+	  {
             s += 7;
+	  }
           else if (!strncmp(s, "unsigned ", 9))
+	  {
             s += 9;
+	    is_unsigned_type = true;
+	  }
           if (!strncmp(s, "long ", 5))
+	  {
             s += 5;
+	    is_long_type = true;
+	  }
           else if (!strncmp(s, "short ", 6))
+	  {
             s += 6;
+	  }
           if (!strncmp(s, "xsd__unsigned", 13))
+	  {
             s += 13;
+	    is_unsigned_type = true;
+	  }
           else if (!strncmp(s, "xsd__", 5))
+	  {
             s += 5;
-          if (!strcmp(s, "float")
-           || !strcmp(s, "double"))
+	  }
+          if (!strcmp(s, "float"))
             is_numeric_type = is_float_type = true;
+	  else if (!strcmp(s, "double"))
+            is_numeric_type = is_float_type = is_double_type = true;
           else if (!strcmp(s, "bool")
            || !strcmp(s, "byte")
            || !strcmp(s, "Byte")
            || !strcmp(s, "char")
            || !strcmp(s, "int")
            || !strcmp(s, "Int")
-           || !strcmp(s, "long")
-           || !strcmp(s, "Long")
-           || !strcmp(s, "LONG64")
            || !strcmp(s, "short")
-           || !strcmp(s, "Short")
-           || !strcmp(s, "ULONG64"))
+           || !strcmp(s, "Short"))
             is_numeric_type = true;
+          else if (!strcmp(s, "LONG64")
+           || !strcmp(s, "long")
+           || !strcmp(s, "Long"))
+            is_numeric_type = is_long_type = true;
+          else if (!strcmp(s, "ULONG64"))
+            is_numeric_type = is_unsigned_type = is_long_type = true;
           if (!anonymous && *format)
           {
-            if (is_float_type)
+            if (is_double_type)
+	    {
+              if (is_long_type)
+		fprintf(stream, " \"%%%sLf\"", format);
+	      else
+		fprintf(stream, " \"%%%slf\"", format);
+	    }
+	    else if (is_float_type)
+	    {
               fprintf(stream, " \"%%%sf\"", format);
+	    }
             else if (is_numeric_type)
-              fprintf(stream, " \"%%%sd\"", format);
+	    {
+              if (is_unsigned_type)
+	      {
+		if (is_long_type)
+		  fprintf(stream, " \"%%%sllu\"", format);
+		else
+		  fprintf(stream, " \"%%%su\"", format);
+	      }
+	      else
+	      {
+		if (is_long_type)
+		  fprintf(stream, " \"%%%slld\"", format);
+		else
+		  fprintf(stream, " \"%%%sd\"", format);
+	      }
+	    }
           }
           if (!anonymous
+                && simpleType.restriction->length
+                && simpleType.restriction->length->value)
+	    fprintf(stream, " %s", simpleType.restriction->length->value);
+	  else if (!anonymous
                 && simpleType.restriction->minLength
                 && simpleType.restriction->minLength->value)
-	    fprintf(stream, " %s ", simpleType.restriction->minLength->value);
+	    fprintf(stream, " %s", simpleType.restriction->minLength->value);
           else if (is_float_type
                 && !anonymous
                 && simpleType.restriction->minInclusive
                 && simpleType.restriction->minInclusive->value
                 && is_float(simpleType.restriction->minInclusive->value))
-            fprintf(stream, " %s ", simpleType.restriction->minInclusive->value);
+            fprintf(stream, " %s", simpleType.restriction->minInclusive->value);
           else if (is_numeric_type
                 && !anonymous
                 && simpleType.restriction->minInclusive
                 && simpleType.restriction->minInclusive->value
                 && is_integer(simpleType.restriction->minInclusive->value))
-            fprintf(stream, " %s ", simpleType.restriction->minInclusive->value);
+            fprintf(stream, " %s", simpleType.restriction->minInclusive->value);
           else if (is_float_type
                 && !anonymous
                 && simpleType.restriction->minExclusive
@@ -1782,35 +1828,59 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
                 && simpleType.restriction->minExclusive
                 && simpleType.restriction->minExclusive->value
                 && is_integer(simpleType.restriction->minExclusive->value))
-            fprintf(stream, " " SOAP_LONG_FORMAT " ", to_integer(simpleType.restriction->minExclusive->value)+1);
+            fprintf(stream, " " SOAP_LONG_FORMAT, to_integer(simpleType.restriction->minExclusive->value)+1);
+          else if (!anonymous
+                && simpleType.restriction->minInclusive
+                && simpleType.restriction->minInclusive->value
+                && is_integer(simpleType.restriction->minInclusive->value))
+            fprintf(stream, " /* from %s (inclusive) @warning: could not determine if this type is numeric */", simpleType.restriction->minInclusive->value);
+          else if (!anonymous
+                && simpleType.restriction->minExclusive
+                && simpleType.restriction->minExclusive->value
+                && is_integer(simpleType.restriction->minExclusive->value))
+            fprintf(stream, " /* from %s (exclusive) @warning: could not determine if this type is numeric */", simpleType.restriction->minExclusive->value);
           if (!anonymous
+                && simpleType.restriction->length
+                && simpleType.restriction->length->value)
+	    fprintf(stream, " : %s", simpleType.restriction->length->value);
+	  else if (!anonymous
                 && simpleType.restriction->maxLength
                 && simpleType.restriction->maxLength->value)
-	    fprintf(stream, ": %s", simpleType.restriction->maxLength->value);
+	    fprintf(stream, " : %s", simpleType.restriction->maxLength->value);
           else if (is_float_type
                 && !anonymous
                 && simpleType.restriction->maxInclusive
                 && simpleType.restriction->maxInclusive->value
                 && is_float(simpleType.restriction->maxInclusive->value))
-            fprintf(stream, ": %s", simpleType.restriction->maxInclusive->value);
+            fprintf(stream, " : %s", simpleType.restriction->maxInclusive->value);
           else if (is_numeric_type
                 && !anonymous
                 && simpleType.restriction->maxInclusive
                 && simpleType.restriction->maxInclusive->value
                 && is_integer(simpleType.restriction->maxInclusive->value))
-            fprintf(stream, ": %s", simpleType.restriction->maxInclusive->value);
+            fprintf(stream, " : %s", simpleType.restriction->maxInclusive->value);
           else if (is_float_type
                 && !anonymous
                 && simpleType.restriction->maxExclusive
                 && simpleType.restriction->maxExclusive->value
                 && is_float(simpleType.restriction->maxExclusive->value))
-            fprintf(stream, ":< %s", simpleType.restriction->maxExclusive->value);
+            fprintf(stream, " :< %s", simpleType.restriction->maxExclusive->value);
           else if (is_numeric_type
                 && !anonymous
                 && simpleType.restriction->maxExclusive
                 && simpleType.restriction->maxExclusive->value
                 && is_integer(simpleType.restriction->maxExclusive->value))
-            fprintf(stream, ": " SOAP_LONG_FORMAT, to_integer(simpleType.restriction->maxExclusive->value)-1);
+            fprintf(stream, " : " SOAP_LONG_FORMAT, to_integer(simpleType.restriction->maxExclusive->value)-1);
+          else if (!anonymous
+                && simpleType.restriction->maxInclusive
+                && simpleType.restriction->maxInclusive->value
+                && is_integer(simpleType.restriction->maxInclusive->value))
+            fprintf(stream, " /* to %s (inclusive) @warning: could not determine if this type is numeric */", simpleType.restriction->maxInclusive->value);
+          else if (!anonymous
+                && simpleType.restriction->maxExclusive
+                && simpleType.restriction->maxExclusive->value
+                && is_integer(simpleType.restriction->maxExclusive->value))
+            fprintf(stream, " /* to %s (exclusive) @warning: could not determine if this type is numeric */", simpleType.restriction->maxExclusive->value);
           if (!anonymous)
           {
             fprintf(stream, ";\n\n");

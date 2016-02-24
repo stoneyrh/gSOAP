@@ -69,6 +69,7 @@ int _flag = 0,
     jflag = 0,
     kflag = 0,
     mflag = 0,
+    Mflag = 0,
     pflag = 0,
     Pflag = 0,
     Rflag = 0,
@@ -298,6 +299,9 @@ static void options(int argc, char **argv)
 	  case 'm':
 	    mflag = 1;
 	    break;
+	  case 'M':
+	    Mflag = 1;
+	    break;
           case 'n':
             a++;
             g = 0;
@@ -444,7 +448,7 @@ static void options(int argc, char **argv)
 	    break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-t typemapfile] [-U] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-M] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-t typemapfile] [-U] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -b	bi-directional operations (duplex ops) added to serve one-way responses\n\
@@ -462,6 +466,7 @@ static void options(int argc, char **argv)
 -k      don't generate SOAP_ENV__Header mustUnderstand qualifiers\n\
 -l      display license information\n\
 -m      use xsd.h module to import primitive types\n\
+-M      suppress error \"must understand element with wsdl:required='true'\"\n\
 -Nname  use name for service prefixes to produce a service for each binding\n\
 -nname  use name as the base namespace prefix instead of 'ns'\n\
 -ofile  output to file\n\

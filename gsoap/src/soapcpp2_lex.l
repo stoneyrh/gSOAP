@@ -407,6 +407,7 @@ static void directive(void)
 		s = (char*)emalloc(k-j+1);
 		strncpy(s, yytext+j, k-j);
 		s[k-j] = '\0';
+                m = NULL;
 		if (!strncmp(yytext+i, "name:", 5))
 		{	sp->name = s;
 			for (j = k; yytext[j]; j++)
@@ -422,7 +423,7 @@ static void directive(void)
 			s[k-j] = '\0';
 			sp->documentation = s;
 		}
-		else if (!strncmp(yytext+i, "type:", 5) || !strncmp(yytext+i, "portType:", 9) || !strncmp(yytext+i, "interface:", 10))
+		else if (service && (!strncmp(yytext+i, "type:", 5) || !strncmp(yytext+i, "portType:", 9) || !strncmp(yytext+i, "interface:", 10)))
 			sp->porttype = s;
 		else if (!strncmp(yytext+i, "portName:", 9))
 			sp->portname = s;
@@ -430,7 +431,7 @@ static void directive(void)
 			sp->binding = s;
 		else if (!strncmp(yytext+i, "definitions:", 12))
 			sp->definitions = s;
-		else if (!strncmp(yytext+i, "documentation:", 14))
+		else if (!strncmp(yytext+i, "documentation:", 14) || !strncmp(yytext+i, "doc:", 4))
 		{	for (k = j; yytext[k]; k++)
 				if (yytext[k] == 10 || yytext[k] == 13)
 					break;
@@ -515,8 +516,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = PROTOCOL;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -535,8 +534,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = STYLE;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -555,8 +552,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = ENCODING;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -578,8 +573,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = RESPONSE_ENCODING;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -596,13 +589,12 @@ static void directive(void)
 			else
 				m->part = "";
 		}
-		else if (!strncmp(yytext+i, "method-documentation:", 21))
-		{	m = (Method*)emalloc(sizeof(Method));
-			m->name = s;
-			m->mess = COMMENT;
-			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
+		else if (!strncmp(yytext+i, "method-documentation:", 21) || !strncmp(yytext+i, "method:", 7))
+		{	d = (Data*)emalloc(sizeof(Data));
+			d->name = s;
+			d->text = NULL;
+			d->next = sp->data;
+			sp->data = d;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -614,15 +606,13 @@ static void directive(void)
 			s = (char*)emalloc(k-j+1);
 			strncpy(s, yytext+j, k-j);
 			s[k-j] = '\0';
-			m->part = s;
+			d->text = s;
 		}
 		else if (!strncmp(yytext+i, "method-action:", 14))
 		{	m = (Method*)emalloc(sizeof(Method));
 			m->name = s;
 			m->mess = ACTION;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -641,8 +631,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = REQUEST_ACTION;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -661,8 +649,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = RESPONSE_ACTION;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -681,8 +667,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = FAULT_ACTION;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -701,8 +685,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = MIMEIN | MIMEOUT;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -721,8 +703,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = MIMEIN;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -741,8 +721,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = MIMEOUT;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -761,8 +739,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = HDRIN | HDROUT;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -781,8 +757,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = HDRIN;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -801,8 +775,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = HDROUT;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -821,8 +793,6 @@ static void directive(void)
 			m->name = s;
 			m->mess = FAULT;
 			m->part = NULL;
-			m->next = sp->list;
-			sp->list = m;
 			for (j = k; yytext[j]; j++)
 				if (yytext[j] > 32)
 					break;
@@ -836,7 +806,7 @@ static void directive(void)
 			s[k-j] = '\0';
 			m->part = s;
 		}
-		else if (!strncmp(yytext+i, "type-documentation:", 19))
+		else if (!service && (!strncmp(yytext+i, "type-documentation:", 19) || !strncmp(yytext+i, "type:", 5)))
 		{	d = (Data*)emalloc(sizeof(Data));
 			d->name = s;
 			d->text = NULL;
@@ -859,6 +829,19 @@ static void directive(void)
                 {	sprintf(errbuf, "unrecognized gsoap directive: %s", yytext+i);
 			semwarn(errbuf);
 		}
+                if (m)
+                {
+                  m->next = NULL;
+                  if (!sp->list)
+                    sp->list = m;
+                  else
+                  {
+                    Method *p;
+                    for (p = sp->list; p->next; p = p->next)
+                      continue;
+                    p->next = m;
+                  }
+                }
 	}
 	else
         {	sprintf(errbuf, "unrecognized gsoap directive: %s", yytext);

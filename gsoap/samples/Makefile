@@ -235,7 +235,7 @@ SOAPCPP2_NONAMESPACES =
 STRIP = 
 VERSION = 2.8
 WSDL2H_EXTRA_FLAGS = -DWITH_OPENSSL -DWITH_GZIP
-WSDL2H_EXTRA_LIBS =  ../plugin/httpda.c ../plugin/md5evp.c ../plugin/threads.c -lssl -lcrypto -lz
+WSDL2H_EXTRA_LIBS =  ../plugin/httpda.c ../plugin/smdevp.c ../plugin/threads.c -lssl -lcrypto -lz
 WSDL2H_IMPORTPATH = -DWSDL2H_IMPORT_PATH="\"${datarootdir}/gsoap/WS\""
 WSDL2H_SOAP_CPP_LIB = libgsoapssl++.a
 YACC = bison -y
@@ -297,7 +297,7 @@ top_srcdir = ../..
 ####### This is the input file for automake, which will generate Makefile.in ##########
 AUTOMAKE_OPTIONS = foreign 1.4
 SUBDIRS = \
-	autotest calc calc++ databinding dime dom oneway oneway++ \
+	autotest aws calc calc++ databinding dime dom oneway oneway++ \
 	factory factorytest \
 	gmt googleapi hello httpcookies lu magic mashup mashup++ \
 	chaining chaining++ primes \

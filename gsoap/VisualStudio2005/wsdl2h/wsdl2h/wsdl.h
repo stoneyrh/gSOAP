@@ -305,6 +305,7 @@ class wsdl__port			// ... and WSDL 2.0 endpoint
         wsp__Policy			*wsp__Policy_;		// <wsp:Policy>?
         wsp__PolicyReference		*wsp__PolicyReference_;	// <wsp:PolicyReference>?
         wsa__EndpointReferenceType	*wsa__EndpointReference;// <wsa:EndpointReference>?
+	xsd__string			*wsaw__UsingAddressing; // <wsaw:UsingAddressing wsdl:required="true">?
         soap__address			*soap__address_;	// <soap:address>?
         http__address			*http__address_;	// <http:address>?
   private:

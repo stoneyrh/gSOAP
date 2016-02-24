@@ -66,10 +66,10 @@ bpel.o:		bpel.h bpel.cpp includes.h imports.h
 		$(CPP) -c $(CFLAGS) bpel.cpp
 httpda.o:	$(PLUGIN)/httpda.c
 		$(CC) -c $(CFLAGS) $(PLUGIN)/httpda.c
-md5evp.o:	$(PLUGIN)/md5evp.c
-		$(CC) -c $(CFLAGS) $(PLUGIN)/md5evp.c
+smdevp.o:	$(PLUGIN)/smdevp.c
+		$(CC) -c $(CFLAGS) $(PLUGIN)/smdevp.c
 secure:		clean
-		make CMFLAGS='-Wno-deprecated-declarations -DWITH_OPENSSL' LIBS="httpda.o md5evp.o -lcrypto -lssl -lm $(SOCKLIB)" httpda.o md5evp.o wsdl2h
+		make CMFLAGS='-Wno-deprecated-declarations -DWITH_OPENSSL' LIBS="httpda.o smdevp.o -lcrypto -lssl -lm $(SOCKLIB)" httpda.o smdevp.o wsdl2h
 .PHONY:		clean distclean
 clean:		
 		-rm -f *.o wsdlH.h wsdlStub.h wsdlC.cpp wsdlClient.cpp wsdlServer.cpp wsdlClientLib.cpp wsdlServerLib.cpp

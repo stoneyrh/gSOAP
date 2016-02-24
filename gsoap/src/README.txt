@@ -128,6 +128,7 @@ COMMAND LINE OPTIONS
 -pname  save files with new prefix name instead of 'soap'
 -Qname  use name as the C++ namespace for decls, including custom serializers
 -qname  use name as the C++ namespace of all declarations
+-r      generate soapReadme.md report
 -s      generate deserialization code with strict XML validation checks
 -t      generate code for fully xsi:type typed SOAP/XML messaging
 -u	uncomment comments in WSDL/schema output by suppressing XML comments

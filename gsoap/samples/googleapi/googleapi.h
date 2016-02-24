@@ -10,7 +10,7 @@
 
 //gsoapopt t
 
-//gsoap api service name:	googleapi
+//gsoap api service name:	googleapi Google API (no longer available from Google)
 //gsoap api service style:	rpc
 //gsoap api service encoding:	encoded
 //gsoap api service location:	http://api.google.com/search/beta2

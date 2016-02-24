@@ -74,7 +74,7 @@ class Operation
     const char *protocol;
     soap__styleChoice style;
     const char *parameterOrder;
-    const char *action;
+    const char *action;			// SOAP action or HTTP location
     const char *input_name;
     const char *output_name;
     Message *input; 			// name, use, and parts

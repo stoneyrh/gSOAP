@@ -44,8 +44,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "json.h"
 
-void display(struct value *v);
-
 int main(int argc, char **argv)
 {
   if (argc < 2)

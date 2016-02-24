@@ -345,7 +345,7 @@ SOAPCPP2_NONAMESPACES =
 STRIP = 
 VERSION = 2.8
 WSDL2H_EXTRA_FLAGS = -DWITH_OPENSSL -DWITH_GZIP
-WSDL2H_EXTRA_LIBS =  ../plugin/httpda.c ../plugin/md5evp.c ../plugin/threads.c -lssl -lcrypto -lz
+WSDL2H_EXTRA_LIBS =  ../plugin/httpda.c ../plugin/smdevp.c ../plugin/threads.c -lssl -lcrypto -lz
 WSDL2H_IMPORTPATH = -DWSDL2H_IMPORT_PATH="\"${datarootdir}/gsoap/WS\""
 WSDL2H_SOAP_CPP_LIB = libgsoapssl++.a
 YACC = bison -y
@@ -424,7 +424,7 @@ libgsoapssl_a_SOURCES = stdsoap2_ssl.c dom.c
 libgsoapssl_a_CFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_IPV6) -D$(platform) $(WSDL2H_EXTRA_FLAGS) -DWITH_DOM -DWITH_COOKIES
 libgsoapssl___a_SOURCES = stdsoap2_ssl_cpp.cpp dom_cpp.cpp
 libgsoapssl___a_CXXFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_IPV6) -D$(platform) $(WSDL2H_EXTRA_FLAGS) -DWITH_DOM -DWITH_COOKIES
-BUILT_SOURCES = stdsoap2_cpp.cpp dom_cpp.cpp $(lib_LIBRARIES)
+BUILT_SOURCES = stdsoap2_cpp.cpp dom_cpp.cpp stdsoap2_ck.c stdsoap2_ck_cpp.cpp stdsoap2_ssl.c stdsoap2_ssl_cpp.cpp $(lib_LIBRARIES)
 include_HEADERS = stdsoap2.h
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

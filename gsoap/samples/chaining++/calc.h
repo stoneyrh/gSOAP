@@ -1,7 +1,8 @@
 /*
 	calc.h
 
-	This is a gSOAP header file with web service definitions.
+	This is a gSOAP header file with a calculator data binding and Web
+	service interface to implement clients and services
 
 	The service operations and type definitions use familiar C/C++ syntax.
 
@@ -13,17 +14,19 @@
 	div(a,b)
 	pow(a,b)
 
-	Compilation in C (see samples/calc):
-	$ soapcpp2 -c calc.h
+	Build steps for C (see samples/calc):
+	$ soapcpp2 -c -r calc.h
 	$ cc -o calcclient calcclient.c stdsoap2.c soapC.c soapClient.c
 	$ cc -o calcserver calcserver.c stdsoap2.c soapC.c soapServer.c
 
-	Compilation in C++ (see samples/calc++):
-	$ soapcpp2 -i calc.h
-	$ cc -o calcclient++ calcclient.cpp stdsoap2.cpp soapC.cpp soapcalcProxy.cpp
-	$ cc -o calcserver++ calcserver.cpp stdsoap2.cpp soapC.cpp soapcalcService.cpp
+	Build steps for C++ (see samples/calc++):
+	$ soapcpp2 -j -r calc.h
+	$ c++ -o calcclient++ calcclient.cpp stdsoap2.cpp soapC.cpp soapcalcProxy.cpp
+	$ c++ -o calcserver++ calcserver.cpp stdsoap2.cpp soapC.cpp soapcalcService.cpp
 
-	Note that soapcpp2 option -i generates proxy and service classes, which
+	Option -r generates a soapReadme.md report.
+
+	Note that soapcpp2 option -j generates proxy and service classes, which
 	encapsulate the method operations in the class instead of defining them
 	as global functions as in C. 
 
@@ -84,7 +87,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-//gsoap ns service name:	calc Simple calculator service
+//gsoap ns service name:	calc Simple calculator service described at http://www.genivia.com/dev.html
 //gsoap ns service protocol:	SOAP
 //gsoap ns service style:	rpc
 //gsoap ns service encoding:	encoded
@@ -93,17 +96,17 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 //gsoap ns schema namespace:	urn:calc
 
-//gsoap ns service method-documentation: add Sums two values
+//gsoap ns service method: add Sums two values
 int ns__add(double a, double b, double *result);
 
-//gsoap ns service method-documentation: sub Subtracts two values
+//gsoap ns service method: sub Subtracts two values
 int ns__sub(double a, double b, double *result);
 
-//gsoap ns service method-documentation: mul Multiplies two values
+//gsoap ns service method: mul Multiplies two values
 int ns__mul(double a, double b, double *result);
 
-//gsoap ns service method-documentation: div Divides two values
+//gsoap ns service method: div Divides two values
 int ns__div(double a, double b, double *result);
 
-//gsoap ns service method-documentation: pow Raises a to b
+//gsoap ns service method: pow Raises a to b
 int ns__pow(double a, double b, double *result);

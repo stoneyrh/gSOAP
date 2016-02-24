@@ -78,7 +78,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ../../plugin/httpda.h ../../plugin/httpda.c ../../plugin/threads.h ../../plugin/threads.c ../../plugin/md5evp.h ../../plugin/md5evp.c
+INPUT                  = ../../plugin/httpda.h ../../plugin/httpda.c ../../plugin/threads.h ../../plugin/threads.c
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \

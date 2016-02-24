@@ -32,21 +32,22 @@ platform-neutral data interchange that is highly compatible across programming
 languages by restricting data representation to a set of five common types:
 bool, number, string, array, and object.  A JSON object is the same as an
 XML-RPC struct.  Only the syntax differs.  Both are composed of fieldname-value
-member pairs (i.e. both are hashmaps) and have no other special properties.
-(Which is in contrast to XML data as "objects" that are namespace scoped and
-may include xsi:type attributes to distinguish derived from base types, and may
-include id-ref attributes to cross-reference data, and other properties that
-make XML more suitable to achieve lossless C/C++ serialization.)
+member pairs (i.e. dictionaries or hashmaps) and have no other special
+properties.  Which is in contrast to XML data "as objects" that are namespace
+scoped and may include xsi:type attributes to distinguish derived from base
+types, and may include id-ref attributes to cross-reference data, and other
+properties that make XML more suitable to achieve lossless C/C++ serialization.
 
 This document does not describe JSON (and JSON RPC/REST) in detail.  For more
 details, please visit <http://www.json.org>.
 
+This document describes both the C and C++/C++11 APIs, see table of contents.
 
 JSON/JSONPath and gSOAP                                               {#intro-1}
 -----------------------
 
 The gSOAP JSON API is compact and lightweight.  It is straightforward to write
-JSON RPC and JSON REST code.  For example in C++:
+JSON RPC and JSON REST code.  For example, a JSON REST call in C++:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     #include "json.h"
@@ -66,6 +67,8 @@ JSON RPC and JSON REST code.  For example in C++:
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+For more details on JSON-RPC and JSON REST operations, see [JSON-RPC](#cpp-rpc).
+
 To compile this example see the [List of C++ files](#cpp-files).
 
 Furthermore, to help you quickly develop C/C++ JSON code, we offer a code
@@ -75,11 +78,12 @@ find the jsoncpp tool with the JSON examples in `gsoap/samples/xml-rpc-json`.
 The jsoncpp command-line tool auto-generates C or C++ code from a JSON
 fragment.  The generated code creates a JSON node graph for this fragment,
 which can be further tweaked as necessary.  We demonstrate this on an example
-`menu.json` file:
+`menu.json` file, where we show each command executed in a command shell
+followed by the results displayed in the terminal:
 
     cat menu.json
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
     { "menu": {
         "id": "file",
         "value": "File",
@@ -210,12 +214,15 @@ Let's apply this query to the `store.json` file that you can find in section
 [JSONPath by example](#jsoncpp-4):
 
     ./query < store.json
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
     [
       "Nigel Rees",
       "Evelyn Waugh",
       "Herman Melville",
       "J. R. R. Tolkien"
     ]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can compile this example yourself with:
 
@@ -242,7 +249,6 @@ attachments), to support extensibility (to extend data types and to add new
 data types), and schema namespaces referenced by XML elements and attributes to
 avoid ambiguity.
 
-
 The jsoncpp command-line tool                                         {#jsoncpp}
 =============================
 
@@ -259,7 +265,6 @@ option `-i` to generate source code to inspect parsed JSON values by using a
 JSON file as a generic template for this code.  And option `-p` generates
 efficient source code for JSONPath queries.  Even stand-alone JSONPath query
 filter applications can be auto-generated with option `-m` (for main).
-
 
 Compiling the jsoncpp command                                       {#jsoncpp-1}
 -----------------------------
@@ -286,7 +291,6 @@ to compile jsoncpp and that is also required by the C++ JSON API components:
     c++ -I../.. -o jsoncpp jsoncpp.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
 
 The above builds the jsoncpp command-line tool.
-
 
 Command-line options                                                {#jsoncpp-2}
 --------------------
@@ -354,11 +358,10 @@ collected.  Option `-x` overrides option `-y`.
 To generate a stand-alone application use option `-m`.  This option is useful
 for testing JSONPath query filters given with option `-p`.
 
-Option `-f%``fmt` sets the floating point double precision format to use in the
+Option `-f%%fmt` sets the floating point double precision format to use in the
 generated code.  By default, jsoncpp emits floating point numbers with up to 17
-digit mantissas to preserve precision.  Use `-f%``lG` for the shortest floating
+digit mantissas to preserve precision.  Use `-f%%lG` for the shortest floating
 point representation.
-
 
 JSONPath syntax                                                     {#jsoncpp-3}
 ---------------
@@ -421,13 +424,12 @@ Also commonly used are JSON object *property names* and *key names* (as in
 key-value pairs),
 
 Other JSONPath implementations require quotes for field names in brackets, as
-in `['store']` or `["store"]`.  With jsoncpp you will only need to add quotes
-when field names contain control characters, spaces, or punctuation, such as a
-`unit-price` field name in the query `$..['unit-price']`.  To promote
-orthogonality of the JSONPath syntax (no arbitrary rules and exceptions
-depending on a context), quoted field names are also valid with dot notation in
-our JSONPath syntax, such as the query `$..'unit-price'`.
-
+in `["store"]`.  With jsoncpp you will only need to add quotes when field names
+contain control characters, spaces, or punctuation, such as a `unit-price`
+field name in the query `$..["unit-price"]`.  To promote orthogonality of the
+JSONPath syntax (no arbitrary rules and exceptions depending on a context),
+quoted field names are also valid with dot notation in our JSONPath syntax,
+such as the query `$.."unit-price"`.
 
 JSONPath by example                                                 {#jsoncpp-4}
 -------------------
@@ -668,16 +670,15 @@ And in C:
 
 C/C++ expressions cannot be used as array slice bounds, which must be constant.
 
-
 C++ XML-RPC and JSON                                                      {#cpp}
 ====================
 
 XML-RPC and JSON data is interchangeable in this implementation, with the only
 exception that the dateTime and base64 types are handled as strings in JSON.
 Also, JSON's only numeric type is floating point.  However, integers are handled
-just fine by this JSON implementation as 64 bit (`long long`, `int64_t`,
-`LONG64`) without conversion to/from double floating point values.
-
+just fine by this JSON implementation as 64 bit (i.e. `long long`, `int64_t`,
+`LONG64`) without internal conversion to/from double floating point values
+that could cause a loss of precision for large values.
 
 List of C++ files                                                   {#cpp-files}
 -----------------
@@ -732,7 +733,6 @@ or we can define an empty namespaces table somewhere in our code:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}};
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 C++ XML-RPC and JSON with examples                                     {#cpp-ex}
 ----------------------------------
@@ -1159,7 +1159,6 @@ Additional examples are located in `gsoap/samples/xml-rpc-json`:
 - `json-currentTimeServer.cpp`:         JSON C++ server
 - `json-GitHub.cpp`:                    JSON C++ client for GitHub API v3
 
-
 C++ XML-RPC client example                                             {#cpp-cl}
 --------------------------
 
@@ -1289,7 +1288,6 @@ Use iterators to walk over arrays and structs to print values.  Or use the
 JSON API `json.h` and `json.cpp` to print values in JSON format, see further on
 JSON below.
 
-
 C++ XML-RPC server example                                             {#cpp-sr}
 --------------------------
 
@@ -1373,7 +1371,6 @@ and examples for these calls (see for example `gsoap/samples/webserver.c`):
     soap_free(ctx);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 C++ XML-RPC serialization from/to streams                              {#cpp-io}
 -----------------------------------------
 
@@ -1397,7 +1394,6 @@ stream, use:
 
 Compile and link together with `soapC.cpp`, `xml-rpc.cpp`, `xml-rpc-io.cpp`,
 and `stdsoap2.cpp`.
-
 
 C++ JSON serialization from/to streams                                 {#cpp-js}
 --------------------------------------
@@ -1464,7 +1460,6 @@ To force reading and writing JSON in ISO 8859-1 format, use the
 
 Optionally use `SOAP_XML_INDENT` to indent XML and JSON.
 
-
 C++ JSON over HTTP (REST method)                                       {#cpp-jr}
 --------------------------------
 
@@ -1507,12 +1502,12 @@ Besides `json_call`, there are other JSON API functions:
   method: pass a NULL to `out`.  DELETE method: pass both NULL to `in` and
   `out`.
 
-- `int json_write(soap *ctx, const value *v)` Writes JSON value to current
+- `int json_write(soap *ctx, const value *v)` writes JSON value to current
   file, socket, or stream.  Returns `SOAP_OK` or error.  Set file/socket file
   descriptor to write to with `ctx->sendfd = fd` (1 by default).  In C++, set
   output stream with `ctx->os = ostream` to write to.
 
-- `int json_read(soap *ctx, value *v)` Reads JSON value from current file,
+- `int json_read(soap *ctx, value *v)` reads JSON value from current file,
   socket, or stream.  Returns `SOAP_OK` or error.  Set file/socket file
   descriptor with `ctx->recvfd = fd` to read from (0 by default).  In C++, set
   input stream with `ctx->is = istream`.
@@ -1563,6 +1558,95 @@ For client and server examples, please see the gSOAP package content:
 - `gsoap/samples/xml-rpc-json/json-currentTime.cpp`
 - `gsoap/samples/xml-rpc-json/json-currentTimeServer.cpp`
 
+C++ JSON-RPC                                                          {#cpp-rpc}
+------------
+
+The [JSON-RPC 1.0 specification](http://json-rpc.org/wiki/specification) (the
+"original version") adds `method`, `parameter` and `id` fields to the
+request message:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+    { "method": "echo",
+      "params": [ "Hello World!" ],
+      "id": 1
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+where:
+
+- `method` is a string with the name of the method to be invoked.
+- `params` is an array of objects to be passed as parameters to the defined method.
+- `id` is a value of any type, which is used to match the response with the request that it is replying to.
+
+A response message has a `result` field, an `error` field, and an `id`:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+    { "result": "Welcome!",
+      "error": null,
+      "id": 1
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+where:
+
+- `result` is the data returned by the invoked method. If an error occurred while invoking the method, this value must be null.
+- `error` is  a specified error code if there was an error invoking the method, otherwise null.
+- `id` is the id of the request it is responding to.
+
+The [JSON-RPC 2.0 specification](http://www.jsonrpc.org/specification) makes
+all 1.0 fields REQUIRED, except for `error` which MUST NOT be present if there
+was no error triggered during invocation.  The 2.0 specification adds a
+`jsonrpc` field in the request message:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+    { "jsonrpc": 2.0,
+      "method": "echo",
+      "params": [ "Hello World!" ],
+      "id": 1
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+and also adds the `jsonrpc` field to the response message:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+    { "jsonrpc": 2.0,
+      "result": "Welcome!",
+      "id": 1
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The C++ operations are straightforward to conform to the JSON-RPC 1.0 or 2.0
+specifications.  The example JSON-RPC 2.0 request message shown
+above is created by the following code that uses `json_call()` to invoke a
+JSON-RPC service:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+      const char *endpoint = "http://...";
+      soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+
+      value req(ctx), res(ctx);
+      req["jsonrpc"]   = 2.0;
+      req["method"]    = "echo";
+      req["params"][0] = "Hello World!";
+      req["id"]        = 1;
+
+      if (json_call(ctx, endpoint, req, res))               // JSON-RPC call
+        soap_stream_fault(ctx, std::cerr);
+      else if (res.has("error") && !res["error"].is_null()) // JSON-RPC error?
+        std::cerr << res["error"];
+      else if ((int)res["id"] != 1)                         // matching id field?
+        std::cerr << "response id != request id\n";
+      else                                                  // all OK!
+        std::cout << res["result"];                         // display result
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For HTTPS use an https endpoint URL.  You can control the HTTPS context as
+explained in the [tutorials.](http://www.genivia.com/tutorials.html)
+
+The server-side creates response messages similar to the example shown above.
+To implement a C++ JSON-RPC and JSON REST server, please see the example
+`json-currentTimeServer.cpp` located in `gsoap/samples/xml-rpc-json` in the
+gSOAP package.
 
 Moving JSON types and operations into a C++ namespace                 {#json-ns}
 -----------------------------------------------------
@@ -1606,7 +1690,6 @@ Your project should now use the `json` namespace with the `value` type, for exam
     if (ctx->error) ...   // check for errors (can also check v.soap->error)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 C XML-RPC and JSON                                                          {#c}
 ==================
 
@@ -1615,7 +1698,6 @@ improved.  The material in this section pertains to gSOAP 2.8.26 and later.
 
 The new C API for XML-RPC and JSON makes it much easier to populate and retrieve
 data, but not as simple and easy as the C++ API.
-
 
 List of C files                                                       {#c-files}
 ---------------
@@ -1663,7 +1745,6 @@ or we can define an empty namespaces table somewhere in our code:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
     struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}};
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 C XML-RPC and JSON with examples                                         {#c-ex}
 --------------------------------
@@ -1956,7 +2037,6 @@ Additional examples are located in `gsoap/samples/xml-rpc-json`:
 - `xml-rpc-weblogs.c`                   XML-RPC C client
 - `json-GitHub.c`:                      JSON C client for GitHub API v3
 
-
 C XML-RPC client example                                                 {#c-cl}
 ------------------------
 
@@ -2047,7 +2127,6 @@ The following example shows how to traverse the node graph to display a value:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Compile and link together with `soapC.c`, `xml-rpc.c`, and `stdsoap2.c`.
-
 
 C JSON serialization                                                     {#c-js}
 --------------------
@@ -2234,7 +2313,6 @@ function can be used to write JSON to strings as follows:
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 C JSON over HTTP (REST method)                                           {#c-jr}
 ------------------------------
 
@@ -2293,10 +2371,102 @@ operations.
 Compile and link together with `soapC.c`, `xml-rpc.c`, `json.c`, and
 `stdsoap2.c`.
 
+C JSON-RPC                                                              {#c-rpc}
+----------
+
+The [JSON-RPC 1.0 specification](http://json-rpc.org/wiki/specification) (the
+"original version") adds `method`, `parameter` and `id` fields to the
+request message:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+    { "method": "echo",
+      "params": [ "Hello World!" ],
+      "id": 1
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+where:
+
+- `method` is a string with the name of the method to be invoked.
+- `params` is an array of objects to be passed as parameters to the defined method.
+- `id` is a value of any type, which is used to match the response with the request that it is replying to.
+
+A response message has a `result` field, an `error` field, and an `id`:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+    { "result": "Welcome!",
+      "error": null,
+      "id": 1
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+where:
+
+- `result` is the data returned by the invoked method. If an error occurred while invoking the method, this value must be null.
+- `error` is  a specified error code if there was an error invoking the method, otherwise null.
+- `id` is the id of the request it is responding to.
+
+The [JSON-RPC 2.0 specification](http://www.jsonrpc.org/specification) makes
+all 1.0 fields REQUIRED, except for `error` which MUST NOT be present if there
+was no error triggered during invocation.  The 2.0 specification adds a
+`jsonrpc` field in the request message:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+    { "jsonrpc": 2.0,
+      "method": "echo",
+      "params": [ "Hello World!" ],
+      "id": 1
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+and also adds the `jsonrpc` field to the response message:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+    { "jsonrpc": 2.0,
+      "result": "Welcome!",
+      "id": 1
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The C operations are straightforward to conform to the JSON-RPC 1.0 or 2.0
+specifications.  The example JSON-RPC 2.0 request message shown above is
+created by the following code that uses `json_call()` to invoke a JSON-RPC
+service:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+      const char *endpoint = "http://...";
+      struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+
+      struct value *req = new_value(ctx);
+      struct value *res = new_value(ctx);
+      struct value *args;
+      *double_of(value_at(req, "jsonrpc")) = 2.0;
+      *string_of(value_at(req, "method"))  = "echo";
+      args = value_at(ref, "params");
+      *string_of(nth_value(args, 0))       = "Hello World!";
+      *int_of(value_at(req, "id"))         = 1;
+
+      if (json_call(ctx, endpoint, req, res))              // JSON-RPC call
+        soap_printf_fault(ctx, stderr);
+      else if (nth_at(res, "error") >= 0)                  // JSON-RPC error?
+        json_write(ctx, value_at(res, "error"));
+      else if ((int)res["id"] != 1)                        // matching id field?
+        printf("response id != request id\n");
+      else                                                 // all OK!
+        json_write(ctx, value_at(res, "result"));          // display result
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For HTTPS use an https endpoint URL.  You can control the HTTPS context as
+explained in the [tutorials.](http://www.genivia.com/tutorials.html)
+
+The server-side creates response messages similar to the example shown above.
+To implement a C JSON-RPC and JSON REST server, please see the example
+`json-currentTimeServer.cpp` located in `gsoap/samples/xml-rpc-json` in the
+gSOAP package.  While the example is written in C++, the same gSOAP functions
+are used to bind a port and serve requests.
 
 Miscellaneous                                                            {#misc}
 =============
-
 
 Compiling XML-RPC/JSON together with gSOAP XML data binding code      {#json-cc}
 ----------------------------------------------------------------
@@ -2350,7 +2520,6 @@ Compile `jsonC.c`, `xml-rpc.c`, and `json.c` together with your project files
 and the files generated by soapcpp2 for your .h file with XML data bindings
 (the .h file generated by wsdl2h).
 
-
 Floating point format                                                      {#fp}
 ---------------------
 
@@ -2362,7 +2531,6 @@ as follows:
     struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
     ctx->double_format = "%lG";
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 JSON and base64                                                        {#base64}
 ---------------
@@ -2410,7 +2578,6 @@ And for C:
       ctx->error = SOAP_OK; // fail and reset error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 JSON and ISO 8601 dateTime                                           {#dateTime}
 --------------------------
 
@@ -2440,4 +2607,7 @@ And for C:
       if (soap_s2dateTime(ctx, *string_of(v), &tm) == SOAP_OK)
         ... // success
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The disable UTC time zone `Z` in the dateTime string, use `-DWITH_NOZONE` to
+compile `stdsoap2.c` (for C) or `stdsoap2.cpp` (for C++).
 

@@ -393,7 +393,7 @@ on `(hostname || uname -n) 2>/dev/null | sed 1q`
 "
 
 # Files that config.status was made for.
-config_files=" Makefile gsoap.pc gsoap++.pc gsoapck.pc gsoapck++.pc gsoapssl.pc gsoapssl++.pc gsoap/Makefile gsoap/src/Makefile gsoap/wsdl/Makefile gsoap/samples/Makefile gsoap/samples/autotest/Makefile gsoap/samples/calc/Makefile gsoap/samples/calc++/Makefile gsoap/samples/chaining/Makefile gsoap/samples/chaining++/Makefile gsoap/samples/databinding/Makefile gsoap/samples/dime/Makefile gsoap/samples/dom/Makefile gsoap/samples/oneway/Makefile gsoap/samples/oneway++/Makefile gsoap/samples/factory/Makefile gsoap/samples/factorytest/Makefile gsoap/samples/gmt/Makefile gsoap/samples/googleapi/Makefile gsoap/samples/hello/Makefile gsoap/samples/httpcookies/Makefile gsoap/samples/lu/Makefile gsoap/samples/magic/Makefile gsoap/samples/mashup/Makefile gsoap/samples/mashup++/Makefile gsoap/samples/mtom/Makefile gsoap/samples/mtom-stream/Makefile gsoap/samples/polytest/Makefile gsoap/samples/primes/Makefile gsoap/samples/roll/Makefile gsoap/samples/router/Makefile gsoap/samples/rss/Makefile gsoap/samples/ssl/Makefile gsoap/samples/template/Makefile gsoap/samples/udp/Makefile gsoap/samples/varparam/Makefile gsoap/samples/wsa/Makefile gsoap/samples/wsrm/Makefile gsoap/samples/wsse/Makefile gsoap/samples/xml-rpc-json/Makefile gsoap/samples/rest/Makefile"
+config_files=" Makefile gsoap.pc gsoap++.pc gsoapck.pc gsoapck++.pc gsoapssl.pc gsoapssl++.pc gsoap/Makefile gsoap/src/Makefile gsoap/wsdl/Makefile gsoap/samples/Makefile gsoap/samples/autotest/Makefile gsoap/samples/aws/Makefile gsoap/samples/calc/Makefile gsoap/samples/calc++/Makefile gsoap/samples/chaining/Makefile gsoap/samples/chaining++/Makefile gsoap/samples/databinding/Makefile gsoap/samples/dime/Makefile gsoap/samples/dom/Makefile gsoap/samples/oneway/Makefile gsoap/samples/oneway++/Makefile gsoap/samples/factory/Makefile gsoap/samples/factorytest/Makefile gsoap/samples/gmt/Makefile gsoap/samples/googleapi/Makefile gsoap/samples/hello/Makefile gsoap/samples/httpcookies/Makefile gsoap/samples/lu/Makefile gsoap/samples/magic/Makefile gsoap/samples/mashup/Makefile gsoap/samples/mashup++/Makefile gsoap/samples/mtom/Makefile gsoap/samples/mtom-stream/Makefile gsoap/samples/polytest/Makefile gsoap/samples/primes/Makefile gsoap/samples/roll/Makefile gsoap/samples/router/Makefile gsoap/samples/rss/Makefile gsoap/samples/ssl/Makefile gsoap/samples/template/Makefile gsoap/samples/udp/Makefile gsoap/samples/varparam/Makefile gsoap/samples/wsa/Makefile gsoap/samples/wsrm/Makefile gsoap/samples/wsse/Makefile gsoap/samples/xml-rpc-json/Makefile gsoap/samples/rest/Makefile"
 config_headers=" config.h"
 config_commands=" depfiles"
 
@@ -560,6 +560,7 @@ do
     "gsoap/wsdl/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/wsdl/Makefile" ;;
     "gsoap/samples/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/Makefile" ;;
     "gsoap/samples/autotest/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/autotest/Makefile" ;;
+    "gsoap/samples/aws/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/aws/Makefile" ;;
     "gsoap/samples/calc/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/calc/Makefile" ;;
     "gsoap/samples/calc++/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/calc++/Makefile" ;;
     "gsoap/samples/chaining/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/chaining/Makefile" ;;
@@ -674,7 +675,7 @@ S["ENABLE_SAMPLES_TRUE"]="#"
 S["WSDL2H_SOAP_CPP_LIB"]="libgsoapssl++.a"
 S["SAMPLE_SSL_LIBS"]="-lssl -lcrypto -lz"
 S["SAMPLE_INCLUDES"]=""
-S["WSDL2H_EXTRA_LIBS"]=" ../plugin/httpda.c ../plugin/md5evp.c ../plugin/threads.c -lssl -lcrypto -lz"
+S["WSDL2H_EXTRA_LIBS"]=" ../plugin/httpda.c ../plugin/smdevp.c ../plugin/threads.c -lssl -lcrypto -lz"
 S["WSDL2H_EXTRA_FLAGS"]="-DWITH_OPENSSL -DWITH_GZIP"
 S["SOAPCPP2_IPV6"]=""
 S["SOAPCPP2_NONAMESPACES"]=""

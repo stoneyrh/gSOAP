@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.28 User Guide</title>
+<title>gSOAP 2.8.29 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.28 User Guide </h1>
+<h1 align="center">gSOAP 2.8.29 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="http://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Jan 31, 2016
+<h3 align="center">Feb 24, 2016
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -5361,6 +5361,7 @@ The <i>soapcpp2</i> source-to-source compiler supports the following command-lin
 <tr><td align="left"></td><td align="left">renames <i>soap_serve()</i> into <i> &lt; name &gt; _serve()</i> and <i>soap_destroy()</i> into <i> &lt; name &gt; _destroy()</i> </td></tr>
 <tr><td align="left"><i>-p  &lt; name &gt; </i>	</td><td align="left">save sources with file name prefix <i> &lt; name &gt; </i> instead of "<i>soap</i>" </td></tr>
 <tr><td align="left"><i>-q  &lt; name &gt; </i>	</td><td align="left">use <i>name</i> for the C++ namespace of all declarations </td></tr>
+<tr><td align="left"><i>-r</i>        </td><td align="left">generate soapReadme.md report </td></tr>
 <tr><td align="left"><i>-s</i>	</td><td align="left">generates deserialization code with strict XML validation checks </td></tr>
 <tr><td align="left"><i>-t</i>	</td><td align="left">generates code to send typed messages (with the <tt>xsi:type</tt> attribute) </td></tr>
 <tr><td align="left"><i>-u</i>	</td><td align="left">uncomment comments in WSDL/schema output by suppressing XML comments </td></tr>
@@ -5765,7 +5766,7 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_NOIDREF</i>	</td><td align="left">eliminates href/ref and id attributes to (de)serialize multi-ref data,</td></tr>
 <tr><td align="left"></td><td align="left">or alternatively use the <i>SOAP_XML_TREE</i> runtime flag </td></tr>
 <tr><td align="left"><i>WITH_NOHTTP</i>	</td><td align="left">eliminates HTTP stack to reduce code size </td></tr>
-<tr><td align="left"><i>WITH_NOZONE</i>	</td><td align="left">silently ignores the timezone in time conversions, time is local time, not GMT </td></tr>
+<tr><td align="left"><i>WITH_NOZONE</i>	</td><td align="left">removes and ignores the timezone in xsd:dateTime </td></tr>
 <tr><td align="left"><i>WITH_LEAN</i>	</td><td align="left">creates a small-footprint executable, see Section&nbsp;<a href="#sec:lean">19.32</a> </td></tr>
 <tr><td align="left"><i>WITH_LEANER</i>	</td><td align="left">creates an even smaller footprint executable, see Section&nbsp;<a href="#sec:lean">19.32</a> </td></tr>
 <tr><td align="left"><i>WITH_COMPAT</i>	</td><td align="left">removes dependency on C++ stream libraries, eliminating C++ exceptions </td></tr>
@@ -12601,6 +12602,10 @@ To specify the documentation of a Web Service in the header file, use:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 //gsoap <i>namespace-prefix</i> service documentation: <i>text</i>
 </td></tr></table><br></i>
+or shorthand:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+//gsoap <i>namespace-prefix</i> service doc: <i>text</i>
+</td></tr></table><br></i>
 where <i>namespace-prefix</i> is a namespace prefix used by identifiers in the header file and <i>text</i> is the documentation text up to the end of the line.
 The text is incorporated into the WSDL service documentation.
 
@@ -12748,12 +12753,16 @@ To document a data type, use:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 //gsoap <i>namespace-prefix</i> schema type-documentation: <i>type-name</i> //<i>text</i>
 </td></tr></table><br></i>
+or shorthand:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+//gsoap <i>namespace-prefix</i> schema type: <i>type-name</i> //<i>text</i>
+</td></tr></table><br></i>
 where <i>type-name</i> is the unqualified name of the data type and <i>text</i>
 is a line of text terminated by a newline. Do not use any XML reserved
 characters in <i>text</i> such as  &lt;  and  &gt; . Use well-formed XML and XHTML markup instead.
 For example:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-//gsoap ns schema type-documentation: tdata stores <tt>&lt;a&nbsp;href="transaction.html"&gt;</tt>transaction<tt>&lt;/a&gt;</tt> data <br />
+//gsoap ns schema type: tdata stores <tt>&lt;a&nbsp;href="transaction.html"&gt;</tt>transaction<tt>&lt;/a&gt;</tt> data <br />
 <b>class</b>&nbsp;ns__tdata <br />
 { ... }
 </td></tr></table><br></i>
@@ -12763,15 +12772,19 @@ To document a data type's fields and members, use:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 //gsoap <i>namespace-prefix</i> schema type-documentation: <i>type-name::field</i> //<i>text</i>
 </td></tr></table><br></i>
+or shorthand
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+//gsoap <i>namespace-prefix</i> schema type: <i>type-name::field</i> //<i>text</i>
+</td></tr></table><br></i>
 where <i>type-name</i> is the unqualified name of the data type, <i>field</i> is a field, member, or enum name, and <i>text</i>
 is a line of text terminated by a newline. Do not use any XML reserved
 characters in <i>text</i> such as  &lt;  and  &gt; . Use well-formed XML and XHTML markup instead.
 For example:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-//gsoap ns schema type-documentation: tdata::id the transaction number <br />
-//gsoap ns schema type-documentation: tdata::state transaction state  <br />
-//gsoap ns schema type-documentation: tstate::INIT initial state  <br />
-//gsoap ns schema type-documentation: tstate::DONE final state  <br />
+//gsoap ns schema type: tdata::id the transaction number <br />
+//gsoap ns schema type: tdata::state transaction state  <br />
+//gsoap ns schema type: tstate::INIT initial state  <br />
+//gsoap ns schema type: tstate::DONE final state  <br />
 <b>class</b>&nbsp;ns__tdata <br />
 { @<b>int</b>&nbsp;id; <br />
 &nbsp;&nbsp;&nbsp;<b>enum</b>&nbsp;ns__tstate { INIT, DONE } state; <br />
@@ -12786,12 +12799,16 @@ To document a method, use:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 //gsoap <i>namespace-prefix</i> service method-documentation: <i>method-name</i> //<i>text</i>
 </td></tr></table><br></i>
+or shorthand:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+//gsoap <i>namespace-prefix</i> service method: <i>method-name</i> //<i>text</i>
+</td></tr></table><br></i>
 where <i>method-name</i> is the unqualified name of the method and <i>text</i>
 is a line of text terminated by a newline. Do not use any XML reserved
 characters in <i>text</i> such as  &lt;  and  &gt; . Use well-formed XML and XHTML markup instead.
 For example:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-//gsoap ns service method-documentation: getQuote returns a <tt>&lt;i&gt;</tt>stock quote<tt>&lt;/i&gt;</tt> <br />
+//gsoap ns service method: getQuote returns a <tt>&lt;i&gt;</tt>stock quote<tt>&lt;/i&gt;</tt> <br />
 <b>int</b>&nbsp;ns__getQuote(<b>char</b>&nbsp;*symbol, <b>float</b>&nbsp;&amp;_result);
 </td></tr></table><br></i>
 
@@ -12843,7 +12860,7 @@ where <i>protocol</i> is one of
 <tr><td align="left"><i>SOAP1.2</i> </td><td align="left">SOAP 1.2 only </td></tr>
 <tr><td align="left"><i>SOAP-GET</i> </td><td align="left">one-way SOAP with HTTP GET </td></tr>
 <tr><td align="left"><i>SOAP1.1-GET</i> </td><td align="left">one-way SOAP 1.1 with HTTP GET </td></tr>
-<tr><td align="left"><i>SOAP1.2-GET</i> </td><td align="left">one-way SOAP 1.1 with HTTP GET </td></tr>
+<tr><td align="left"><i>SOAP1.2-GET</i> </td><td align="left">one-way SOAP 1.2 with HTTP GET </td></tr>
 <tr><td align="left"><i>HTTP</i> </td><td align="left">REST HTTP (POST or one-way PUT) </td></tr>
 <tr><td align="left"><i>POST</i> </td><td align="left">REST HTTP POST </td></tr>
 <tr><td align="left"><i>GET</i> </td><td align="left">one-way REST HTTP GET </td></tr>
@@ -13368,7 +13385,7 @@ Built-in gSOAP function: <i>frecv</i>
 </td></tr>
 <tr><td align="left"><i><b>int</b>&nbsp;(*soap.fignore)(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*tag)</i> </td></tr>
 <tr><td align="left">Called when an unknown XML element was encountered on the input. The <i>tag</i> parameter is the offending XML element tag name.
-Should return <i>SOAP_OK</i>, or a gSOAP error code such as <i>SOAP_TAG_MISMATCH</i> to throw an exception.
+Should return <i>SOAP_OK</i>, or a gSOAP error code such as <i>SOAP_TAG_MISMATCH</i> to stop processing.  Can be used to override <tt>mustUnderstand="true"</tt> attributes on unrecognized SOAP Header elements that raise faults.  Check <i>soap</i><tt>-&gt;</tt><i>mustUnderstand != 0</i> in <i>fignore</i> function for presence of mustUnderstand attribute.
 Built-in gSOAP function: none.
 </td></tr>
 <tr><td align="left"><i><b>int</b>&nbsp;(*soap.fconnect)(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*endpoint, <b>const</b>&nbsp;<b>char</b>&nbsp;*host, <b>int</b>&nbsp;port)</i> </td></tr>
@@ -13635,10 +13652,12 @@ For example, to throw an exception as soon as an unknown element is encountered 
 soap.fignore = myignore; <br />
 soap_call_ns__method(&amp;soap, ...); // or soap_serve(&amp;soap);
 </td></tr></table><br></i>
-To selectively throw an exception as soon as an unknown element is encountered but element <tt>ns:xyz</tt> can be safely ignored, use:
+To selectively throw an exception when <tt>mustUnderstand="true"</tt> SOAP Header element is encountered or when an unknown element is encountered except for element <tt>ns:xyz</tt>, use:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>int</b>&nbsp;myignore(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*tag) <br />
 { <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(soap<tt>-&gt;</tt>mustUnderstand) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;SOAP_MUSTUNDERSTAND; // do not ignore mustUnderstand="true" <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(soap_match_tag(soap, tag, "ns:xyz") != SOAP_OK) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;SOAP_MUSTUNDERSTAND; <br />
 &nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;SOAP_OK; <br />
@@ -16516,5 +16535,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 31 Jan 2016, 08:32.</small>
+version 4.00.<br />On 24 Feb 2016, 12:05.</small>
 </html>

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.28
+        stdsoap2.c[pp] 2.8.29
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20828
+#define GSOAP_LIB_VERSION 20829
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -81,10 +81,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.28 2016-02-01 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.29 2016-02-24 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.28 2016-02-01 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.29 2016-02-24 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -4655,7 +4655,7 @@ again:
       return SOAP_INVALID_SOCKET;
     }
 #elif (OPENSSL_VERSION_NUMBER >= 0x0090800fL) && defined(SSL_CTRL_SET_TLSEXT_HOSTNAME)
-    if (SSL_ctrl(soap->ssl, SSL_CTRL_SET_TLSEXT_HOSTNAME, TLSEXT_NAMETYPE_host_name, (void*)host))
+    if (!SSL_ctrl(soap->ssl, SSL_CTRL_SET_TLSEXT_HOSTNAME, TLSEXT_NAMETYPE_host_name, (void*)host))
     { soap_set_receiver_error(soap, "SSL/TLS error", "SNI failed", SOAP_SSL_ERROR);
       soap->fclosesocket(soap, sk);
       return SOAP_INVALID_SOCKET;
@@ -5352,9 +5352,8 @@ soap_bind(struct soap *soap, const char *host, int port, int backlog)
 #endif
 #ifdef TCP_FASTOPEN
   if (!(soap->omode & SOAP_IO_UDP) && setsockopt(soap->master, SOL_TCP, TCP_FASTOPEN, (char*)&set, sizeof(int)))
-  { soap->errnum = soap_socket_errno(soap->master);
-    soap_set_receiver_error(soap, tcp_error(soap), "setsockopt TCP_FASTOPEN failed in soap_bind()", SOAP_TCP_ERROR);
-    return SOAP_INVALID_SOCKET;
+  { /* silently ignore */
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "setsockopt TCP_FASTOPEN failed in soap_bind()\n"));
   }
 #endif
 #endif
@@ -6636,10 +6635,45 @@ soap_response(struct soap *soap, int status)
 SOAP_FMAC1
 const char*
 SOAP_FMAC2
-soap_url(struct soap *soap, const char *s, const char *t)
-{ if (!t || (*t != '/' && *t != '?'))
-    return s;
-  (SOAP_SNPRINTF(soap->msgbuf, sizeof(soap->msgbuf), strlen(s) + strlen(t)), "%s%s", s, t);
+soap_extend_url(struct soap *soap, const char *s, const char *t)
+{ if (s)
+    soap_strcpy(soap->msgbuf, sizeof(soap->msgbuf), s);
+  else
+    *soap->msgbuf = '\0';
+  if (t && (*t == '/' || *t == '?'))
+  { char *r;
+    if ((r = strchr(soap->msgbuf, '?')))
+    { if (*t == '?')
+      { soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), "&", 1);
+	soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), t + 1, strlen(t) - 1);
+      }
+      else /* *t == '/' */
+      { size_t l = r - soap->msgbuf;
+	*r = '\0';
+	soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), t, strlen(t));
+	if (s)
+	  soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), s + l, strlen(s + l));
+      }
+    }
+    else
+      soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), t, strlen(t));
+  }
+  return soap->msgbuf;
+}
+#endif
+
+/******************************************************************************/
+
+#ifndef PALM_1
+SOAP_FMAC1
+const char*
+SOAP_FMAC2
+soap_extend_url_query(struct soap *soap, const char *s, const char *t)
+{ soap_extend_url(soap, s, t);
+  if (strchr(soap->msgbuf, '?'))
+    soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), "&", 1);
+  else
+    soap_strncat(soap->msgbuf, sizeof(soap->msgbuf), "?", 1);
   return soap->msgbuf;
 }
 #endif
@@ -16408,7 +16442,9 @@ soap_getgziphdr(struct soap *soap)
       f = c;
   }
   if (f & 0x04) /* FEXTRA */
-  { for (i = soap_get1(soap) | (soap_get1(soap) << 8); i; i--)
+  { i = soap_get1(soap);
+    i |= soap_get1(soap) << 8;
+    while (i-- > 0)
     { if ((int)soap_get1(soap) == EOF)
         return soap->error = SOAP_ZLIB_ERROR;
     }

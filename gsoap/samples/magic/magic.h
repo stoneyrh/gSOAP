@@ -27,17 +27,17 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-//gsoap ns1 service name:	magic
+//gsoap ns1 service name:	magic Magic squares
 //gsoap ns1 service style:	rpc
 //gsoap ns1 service encoding:	encoded
 //gsoap ns1 service namespace:	http://websrv.cs.fsu.edu/~engelen/magic.wsdl
 //gsoap ns1 service location:	http://websrv.cs.fsu.edu/~engelen/magicserver.cgi
-//gsoap ns1 service documentation: Demo Magic Squares service
 
 //gsoap ns1 schema namespace: urn:MagicSquare
 
 typedef int xsd__int;
 
+// SOAP encoded array of ints
 class vector
 { public:
   xsd__int *__ptr;
@@ -50,6 +50,7 @@ class vector
   int& operator[](int) const;
 };
 
+// SOAP encoded array of arrays of ints
 class matrix
 { public:
   vector *__ptr;
@@ -62,4 +63,6 @@ class matrix
   vector& operator[](int) const;
 };
 
+//gsoap ns1 service method: magic Compute magic square of given rank
+//gsoap ns1 service method: magic::rank magic square matrix rank
 int ns1__magic(xsd__int rank, matrix *result);

@@ -34,6 +34,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 //gsoap mime schema documentation:	WSDL/MIME binding schema
 //gsoap mime schema namespace:		http://schemas.xmlsoap.org/wsdl/mime/
+//gsoap mime schema elementForm:	qualified
+//gsoap mime schema attributeForm:	unqualified
 
 //gsoap xmime schema documentation:	xmime binding schema
 //gsoap xmime schema namespace:		http://www.w3.org/2005/05/xmlmime

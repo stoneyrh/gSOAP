@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">XML-RPC &amp; JSON/JSONPath</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 1 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Feb 23 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -61,6 +61,7 @@
 <li class="level2"><a href="#cpp-io">C++ XML-RPC serialization from/to streams                              </a></li>
 <li class="level2"><a href="#cpp-js">C++ JSON serialization from/to streams                                 </a></li>
 <li class="level2"><a href="#cpp-jr">C++ JSON over HTTP (REST method)                                       </a></li>
+<li class="level2"><a href="#cpp-rpc">C++ JSON-RPC                                                          </a></li>
 <li class="level2"><a href="#json-ns">Moving JSON types and operations into a C++ namespace                 </a></li>
 </ul>
 </li>
@@ -69,6 +70,7 @@
 <li class="level2"><a href="#c-cl">C XML-RPC client example                                                 </a></li>
 <li class="level2"><a href="#c-js">C JSON serialization                                                     </a></li>
 <li class="level2"><a href="#c-jr">C JSON over HTTP (REST method)                                           </a></li>
+<li class="level2"><a href="#c-rpc">C JSON-RPC                                                              </a></li>
 </ul>
 </li>
 <li class="level1"><a href="#misc">Miscellaneous                                                            </a><ul><li class="level2"><a href="#json-cc">Compiling XML-RPC/JSON together with gSOAP XML data binding code      </a></li>
@@ -84,11 +86,12 @@ Introduction                                                            </h1>
 <p>XML-RPC predates JSON and shares the same goal to offer a simple data format for Web applications that interoperate via "remote procedure calls" (RPC) over "stateless" HTTP via HTTP POST. Applications are not limited to the exchange of RPC messages via HTTP POST. Other REST methods can be used to manage the state of resources via URL references, allowing for the storage of data (HTTP PUT), retrieval of data (HTTP GET), and removal of data (HTTP DELETE) from a resource.</p>
 <p>XML-RPC is a generic, self-describing (and very verbose) XML format to compose XML messages for platform-neutral data exchange. XML-RPC defines a collection of frequently used XML types with common programming language equivalents. XML-RPC does NOT provide a data binding to XML and does NOT support a validation mechanism to ensure that data content is validated against a schema. XML-RPC serialization proceeds by marshaling parameters in predefined XML elements for each data type. XML-RPC has primitive types (bool, int, double, string, dateTime, base64) and two compound types (structs and arrays).</p>
 <p>This document does not describe XML-RPC in detail. For more details, please visit <a href="http://www.xmlrpc.com">http://www.xmlrpc.com</a>.</p>
-<p>JSON (JavaScript Object Notation) is an even simpler data format to support platform-neutral data interchange that is highly compatible across programming languages by restricting data representation to a set of five common types: bool, number, string, array, and object. A JSON object is the same as an XML-RPC struct. Only the syntax differs. Both are composed of fieldname-value member pairs (i.e. both are hashmaps) and have no other special properties. (Which is in contrast to XML data as "objects" that are namespace scoped and may include xsi:type attributes to distinguish derived from base types, and may include id-ref attributes to cross-reference data, and other properties that make XML more suitable to achieve lossless C/C++ serialization.)</p>
+<p>JSON (JavaScript Object Notation) is an even simpler data format to support platform-neutral data interchange that is highly compatible across programming languages by restricting data representation to a set of five common types: bool, number, string, array, and object. A JSON object is the same as an XML-RPC struct. Only the syntax differs. Both are composed of fieldname-value member pairs (i.e. dictionaries or hashmaps) and have no other special properties. Which is in contrast to XML data "as objects" that are namespace scoped and may include xsi:type attributes to distinguish derived from base types, and may include id-ref attributes to cross-reference data, and other properties that make XML more suitable to achieve lossless C/C++ serialization.</p>
 <p>This document does not describe JSON (and JSON RPC/REST) in detail. For more details, please visit <a href="http://www.json.org">http://www.json.org</a>.</p>
+<p>This document describes both the C and C++/C++11 APIs, see table of contents.</p>
 <h2><a class="anchor" id="intro-1"></a>
 JSON/JSONPath and gSOAP                                               </h2>
-<p>The gSOAP JSON API is compact and lightweight. It is straightforward to write JSON RPC and JSON REST code. For example in C++:</p>
+<p>The gSOAP JSON API is compact and lightweight. It is straightforward to write JSON RPC and JSON REST code. For example, a JSON REST call in C++:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="json_8h.html">json.h</a>&quot;</span></div>
 <div class="line"><span class="keywordtype">int</span> main()</div>
 <div class="line">{</div>
@@ -104,9 +107,10 @@ JSON/JSONPath and gSOAP                                               </h2>
 <div class="line">  <span class="keywordflow">if</span> (ctx-&gt;error) ...                       <span class="comment">// handle IO error</span></div>
 <div class="line">  cout &lt;&lt; <span class="stringliteral">&quot;Current time = &quot;</span> &lt;&lt; res &lt;&lt; endl; <span class="comment">// JSON response to cout</span></div>
 <div class="line">}</div>
-</div><!-- fragment --><p>To compile this example see the <a href="#cpp-files">List of C++ files</a>.</p>
+</div><!-- fragment --><p>For more details on JSON-RPC and JSON REST operations, see <a href="#cpp-rpc">JSON-RPC</a>.</p>
+<p>To compile this example see the <a href="#cpp-files">List of C++ files</a>.</p>
 <p>Furthermore, to help you quickly develop C/C++ JSON code, we offer a code generator <b>jsoncpp</b> with the gSOAP package (version 2.8.26 and up). You can find the jsoncpp tool with the JSON examples in <code>gsoap/samples/xml-rpc-json</code>.</p>
-<p>The jsoncpp command-line tool auto-generates C or C++ code from a JSON fragment. The generated code creates a JSON node graph for this fragment, which can be further tweaked as necessary. We demonstrate this on an example <code>menu.json</code> file: </p><pre class="fragment">cat menu.json
+<p>The jsoncpp command-line tool auto-generates C or C++ code from a JSON fragment. The generated code creates a JSON node graph for this fragment, which can be further tweaked as necessary. We demonstrate this on an example <code>menu.json</code> file, where we show each command executed in a command shell followed by the results displayed in the terminal: </p><pre class="fragment">cat menu.json
 </pre><div class="fragment"><div class="line">{ <span class="stringliteral">&quot;menu&quot;</span>: {</div>
 <div class="line">    <span class="stringliteral">&quot;id&quot;</span>: <span class="stringliteral">&quot;file&quot;</span>,</div>
 <div class="line">    <span class="stringliteral">&quot;value&quot;</span>: <span class="stringliteral">&quot;File&quot;</span>,</div>
@@ -201,13 +205,13 @@ JSON/JSONPath and gSOAP                                               </h2>
 <div class="line">  }</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>Let's apply this query to the <code>store.json</code> file that you can find in section <a href="#jsoncpp-4">JSONPath by example</a>: </p><pre class="fragment">./query &lt; store.json
-[
-  "Nigel Rees",
-  "Evelyn Waugh",
-  "Herman Melville",
-  "J. R. R. Tolkien"
-]
-</pre><p>You can compile this example yourself with: </p><pre class="fragment">jsoncpp -o query.cpp -m -p'$.store.book[*].author' -y
+</pre><div class="fragment"><div class="line">[</div>
+<div class="line">  <span class="stringliteral">&quot;Nigel Rees&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;Evelyn Waugh&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;Herman Melville&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;J. R. R. Tolkien&quot;</span></div>
+<div class="line">]</div>
+</div><!-- fragment --><p>You can compile this example yourself with: </p><pre class="fragment">jsoncpp -o query.cpp -m -p'$.store.book[*].author' -y
 soapcpp2 -CSL xml-rpc.h
 c++ -o query query.cpp json.cpp xml-rpc.cpp soapC.cpp stdsoap2.cpp
 </pre><p>You can also embed C/C++ code in JSONPath queries to filter and select values from JSON data at runtime.</p>
@@ -276,7 +280,7 @@ Command-line options                                                </h2>
 <p>The default name of the root value in the generated source code is <code>x</code>. To change this name use option <code>-r</code>. Do not use the name <code>v</code>, which represents the current value. Other variable names to avoid are <code>i</code>, <code>j</code>, <code>k</code>, <code>p</code>, <code>q</code>, <code>r</code>, <code>s</code>, and <code>S</code>, since these are internally used by the generated JSONPath query code.</p>
 <p>Use option <code>-p</code> to generate code that filters JSON data from a source of input with a JSONPath query <code>path</code>. Option <code>-x</code> specifies a JSONPath query code to execute for each query result. The default action in the generated code is to print each query result value in JSON format separated by newlines. Option <code>-y</code> yields a JSON array of query result values that are incrementally collected. Option <code>-x</code> overrides option <code>-y</code>.</p>
 <p>To generate a stand-alone application use option <code>-m</code>. This option is useful for testing JSONPath query filters given with option <code>-p</code>.</p>
-<p>Option <code>-f%</code><code>fmt</code> sets the floating point double precision format to use in the generated code. By default, jsoncpp emits floating point numbers with up to 17 digit mantissas to preserve precision. Use <code>-f%</code><code>lG</code> for the shortest floating point representation.</p>
+<p>Option <code>-f%fmt</code> sets the floating point double precision format to use in the generated code. By default, jsoncpp emits floating point numbers with up to 17 digit mantissas to preserve precision. Use <code>-f%lG</code> for the shortest floating point representation.</p>
 <h2><a class="anchor" id="jsoncpp-3"></a>
 JSONPath syntax                                                     </h2>
 <p>The concept behind JSONPath is identical to XPath for XML: to select elements (value nodes) from a DOM node structure of a document by matching the path expression against descendent nodes in the node tree structure. A JSONPath query returns the JSON values selected.</p>
@@ -314,7 +318,7 @@ JSONPath syntax                                                     </h2>
 </table>
 <p>Field names (<code>f</code> in the table) in JSON and in JSONPath queries may contain UTF-8 Unicode characters.</p>
 <p>Throughout this document we refer to the <em>field names</em> of objects and structs. Also commonly used are JSON object <em>property names</em> and <em>key names</em> (as in key-value pairs),</p>
-<p>Other JSONPath implementations require quotes for field names in brackets, as in `['store']<code>or</code>["store"]`. With jsoncpp you will only need to add quotes when field names contain control characters, spaces, or punctuation, such as a <code>unit-price</code> field name in the query `$..['unit-price']`. To promote orthogonality of the JSONPath syntax (no arbitrary rules and exceptions depending on a context), quoted field names are also valid with dot notation in our JSONPath syntax, such as the query <code>$..'unit-price'</code>.</p>
+<p>Other JSONPath implementations require quotes for field names in brackets, as in <code>["store"]</code>. With jsoncpp you will only need to add quotes when field names contain control characters, spaces, or punctuation, such as a <code>unit-price</code> field name in the query <code>$..["unit-price"]</code>. To promote orthogonality of the JSONPath syntax (no arbitrary rules and exceptions depending on a context), quoted field names are also valid with dot notation in our JSONPath syntax, such as the query <code>$.."unit-price"</code>.</p>
 <h2><a class="anchor" id="jsoncpp-4"></a>
 JSONPath by example                                                 </h2>
 <p>A JSONPath query expression uses dot or bracket operators to match JSON data located at increasingly deeper levels of the data structure.</p>
@@ -412,7 +416,7 @@ c++ -I../.. -o test-json test-json.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stds
 </pre><p>C/C++ expressions cannot be used as array slice bounds, which must be constant.</p>
 <h1><a class="anchor" id="cpp"></a>
 C++ XML-RPC and JSON                                                      </h1>
-<p>XML-RPC and JSON data is interchangeable in this implementation, with the only exception that the dateTime and base64 types are handled as strings in JSON. Also, JSON's only numeric type is floating point. However, integers are handled just fine by this JSON implementation as 64 bit (<code>long long</code>, <code>int64_t</code>, <code>LONG64</code>) without conversion to/from double floating point values.</p>
+<p>XML-RPC and JSON data is interchangeable in this implementation, with the only exception that the dateTime and base64 types are handled as strings in JSON. Also, JSON's only numeric type is floating point. However, integers are handled just fine by this JSON implementation as 64 bit (i.e. <code>long long</code>, <code>int64_t</code>, <code>LONG64</code>) without internal conversion to/from double floating point values that could cause a loss of precision for large values.</p>
 <h2><a class="anchor" id="cpp-files"></a>
 List of C++ files                                                   </h2>
 <p>The following files define XML-RPC operations and data types for C++:</p>
@@ -947,8 +951,8 @@ C++ JSON over HTTP (REST method)                                       </h2>
 <p>Besides <code>json_call</code>, there are other JSON API functions:</p>
 <ul>
 <li><code>int json_call(soap *ctx, const char *URL, value *in, value *out)</code> makes a POST, GET, PUT, DELETE call, returns <code>SOAP_OK</code> or error code. POST method: pass both <code>in</code> and <code>out</code>. GET method: pass a NULL to <code>in</code>. PUT method: pass a NULL to <code>out</code>. DELETE method: pass both NULL to <code>in</code> and <code>out</code>.</li>
-<li><code>int json_write(soap *ctx, const value *v)</code> Writes JSON value to current file, socket, or stream. Returns <code>SOAP_OK</code> or error. Set file/socket file descriptor to write to with <code>ctx-&gt;sendfd = fd</code> (1 by default). In C++, set output stream with <code>ctx-&gt;os = ostream</code> to write to.</li>
-<li><code>int <a class="el" href="json_8h.html#a927016fe60cb59422e4769dd7803462c">json_read(soap *ctx, value *v)</a></code> Reads JSON value from current file, socket, or stream. Returns <code>SOAP_OK</code> or error. Set file/socket file descriptor with <code>ctx-&gt;recvfd = fd</code> to read from (0 by default). In C++, set input stream with <code>ctx-&gt;is = istream</code>.</li>
+<li><code>int json_write(soap *ctx, const value *v)</code> writes JSON value to current file, socket, or stream. Returns <code>SOAP_OK</code> or error. Set file/socket file descriptor to write to with <code>ctx-&gt;sendfd = fd</code> (1 by default). In C++, set output stream with <code>ctx-&gt;os = ostream</code> to write to.</li>
+<li><code>int <a class="el" href="json_8h.html#a927016fe60cb59422e4769dd7803462c">json_read(soap *ctx, value *v)</a></code> reads JSON value from current file, socket, or stream. Returns <code>SOAP_OK</code> or error. Set file/socket file descriptor with <code>ctx-&gt;recvfd = fd</code> to read from (0 by default). In C++, set input stream with <code>ctx-&gt;is = istream</code>.</li>
 </ul>
 <p>The are two other lower-level functions <code>json_send</code> and <code>json_recv</code> that are similar to <code>json_write</code> and <code>json_read</code> but do not initialize the sending and receiving operations and do not flush after the sending and receiving operations.</p>
 <p>To implement a JSON REST server for CGI (e.g. install in cgi-bin):</p>
@@ -986,6 +990,61 @@ C++ JSON over HTTP (REST method)                                       </h2>
 <li><code>gsoap/samples/xml-rpc-json/json-currentTime.cpp</code></li>
 <li><code>gsoap/samples/xml-rpc-json/json-currentTimeServer.cpp</code></li>
 </ul>
+<h2><a class="anchor" id="cpp-rpc"></a>
+C++ JSON-RPC                                                          </h2>
+<p>The <a href="http://json-rpc.org/wiki/specification">JSON-RPC 1.0 specification</a> (the "original version") adds <code>method</code>, <code>parameter</code> and <code>id</code> fields to the request message:</p>
+<div class="fragment"><div class="line">{ <span class="stringliteral">&quot;method&quot;</span>: <span class="stringliteral">&quot;echo&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;params&quot;</span>: [ <span class="stringliteral">&quot;Hello World!&quot;</span> ],</div>
+<div class="line">  <span class="stringliteral">&quot;id&quot;</span>: 1</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>where:</p>
+<ul>
+<li><code>method</code> is a string with the name of the method to be invoked.</li>
+<li><code>params</code> is an array of objects to be passed as parameters to the defined method.</li>
+<li><code>id</code> is a value of any type, which is used to match the response with the request that it is replying to.</li>
+</ul>
+<p>A response message has a <code>result</code> field, an <code>error</code> field, and an <code>id</code>:</p>
+<div class="fragment"><div class="line">{ <span class="stringliteral">&quot;result&quot;</span>: <span class="stringliteral">&quot;Welcome!&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;error&quot;</span>: null,</div>
+<div class="line">  <span class="stringliteral">&quot;id&quot;</span>: 1</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>where:</p>
+<ul>
+<li><code>result</code> is the data returned by the invoked method. If an error occurred while invoking the method, this value must be null.</li>
+<li><code>error</code> is a specified error code if there was an error invoking the method, otherwise null.</li>
+<li><code>id</code> is the id of the request it is responding to.</li>
+</ul>
+<p>The <a href="http://www.jsonrpc.org/specification">JSON-RPC 2.0 specification</a> makes all 1.0 fields REQUIRED, except for <code>error</code> which MUST NOT be present if there was no error triggered during invocation. The 2.0 specification adds a <code>jsonrpc</code> field in the request message:</p>
+<div class="fragment"><div class="line">{ <span class="stringliteral">&quot;jsonrpc&quot;</span>: 2.0,</div>
+<div class="line">  <span class="stringliteral">&quot;method&quot;</span>: <span class="stringliteral">&quot;echo&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;params&quot;</span>: [ <span class="stringliteral">&quot;Hello World!&quot;</span> ],</div>
+<div class="line">  <span class="stringliteral">&quot;id&quot;</span>: 1</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>and also adds the <code>jsonrpc</code> field to the response message:</p>
+<div class="fragment"><div class="line">{ <span class="stringliteral">&quot;jsonrpc&quot;</span>: 2.0,</div>
+<div class="line">  <span class="stringliteral">&quot;result&quot;</span>: <span class="stringliteral">&quot;Welcome!&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;id&quot;</span>: 1</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>The C++ operations are straightforward to conform to the JSON-RPC 1.0 or 2.0 specifications. The example JSON-RPC 2.0 request message shown above is created by the following code that uses <code><a class="el" href="json_8h.html#af2e35bee99cf7ceec6bc2d245ecb0112">json_call()</a></code> to invoke a JSON-RPC service:</p>
+<div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *endpoint = <span class="stringliteral">&quot;http://...&quot;</span>;</div>
+<div class="line">soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);</div>
+<div class="line"></div>
+<div class="line"><a class="code" href="structvalue.html">value</a> req(ctx), res(ctx);</div>
+<div class="line">req[<span class="stringliteral">&quot;jsonrpc&quot;</span>]   = 2.0;</div>
+<div class="line">req[<span class="stringliteral">&quot;method&quot;</span>]    = <span class="stringliteral">&quot;echo&quot;</span>;</div>
+<div class="line">req[<span class="stringliteral">&quot;params&quot;</span>][0] = <span class="stringliteral">&quot;Hello World!&quot;</span>;</div>
+<div class="line">req[<span class="stringliteral">&quot;id&quot;</span>]        = 1;</div>
+<div class="line"></div>
+<div class="line"><span class="keywordflow">if</span> (<a class="code" href="json_8h.html#af2e35bee99cf7ceec6bc2d245ecb0112">json_call</a>(ctx, endpoint, req, res))               <span class="comment">// JSON-RPC call</span></div>
+<div class="line">  soap_stream_fault(ctx, std::cerr);</div>
+<div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (res.has(<span class="stringliteral">&quot;error&quot;</span>) &amp;&amp; !res[<span class="stringliteral">&quot;error&quot;</span>].is_null()) <span class="comment">// JSON-RPC error?</span></div>
+<div class="line">  std::cerr &lt;&lt; res[<span class="stringliteral">&quot;error&quot;</span>];</div>
+<div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> ((<span class="keywordtype">int</span>)res[<span class="stringliteral">&quot;id&quot;</span>] != 1)                         <span class="comment">// matching id field?</span></div>
+<div class="line">  std::cerr &lt;&lt; <span class="stringliteral">&quot;response id != request id\n&quot;</span>;</div>
+<div class="line"><span class="keywordflow">else</span>                                                  <span class="comment">// all OK!</span></div>
+<div class="line">  std::cout &lt;&lt; res[<span class="stringliteral">&quot;result&quot;</span>];                         <span class="comment">// display result</span></div>
+</div><!-- fragment --><p>For HTTPS use an https endpoint URL. You can control the HTTPS context as explained in the <a href="http://www.genivia.com/tutorials.html">tutorials.</a></p>
+<p>The server-side creates response messages similar to the example shown above. To implement a C++ JSON-RPC and JSON REST server, please see the example <code>json-currentTimeServer.cpp</code> located in <code>gsoap/samples/xml-rpc-json</code> in the gSOAP package.</p>
 <h2><a class="anchor" id="json-ns"></a>
 Moving JSON types and operations into a C++ namespace                 </h2>
 <p>A C++ namespace is preferred to separate JSON types and operations from other project-related types and operations. This allows you to cleanly compile the JSON API files together with other gSOAP XML data binding files.</p>
@@ -1444,6 +1503,64 @@ C JSON over HTTP (REST method)                                           </h2>
 </ul>
 <p>The are two other lower-level functions <code>json_send</code> and <code>json_recv</code> that are similar to <code>json_write</code> and <code>json_read</code> but do not initialize the sending and receiving operations and do not flush after the sending and receiving operations.</p>
 <p>Compile and link together with <code>soapC.c</code>, <code>xml-rpc.c</code>, <code>json.c</code>, and <code>stdsoap2.c</code>.</p>
+<h2><a class="anchor" id="c-rpc"></a>
+C JSON-RPC                                                              </h2>
+<p>The <a href="http://json-rpc.org/wiki/specification">JSON-RPC 1.0 specification</a> (the "original version") adds <code>method</code>, <code>parameter</code> and <code>id</code> fields to the request message:</p>
+<div class="fragment"><div class="line">{ <span class="stringliteral">&quot;method&quot;</span>: <span class="stringliteral">&quot;echo&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;params&quot;</span>: [ <span class="stringliteral">&quot;Hello World!&quot;</span> ],</div>
+<div class="line">  <span class="stringliteral">&quot;id&quot;</span>: 1</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>where:</p>
+<ul>
+<li><code>method</code> is a string with the name of the method to be invoked.</li>
+<li><code>params</code> is an array of objects to be passed as parameters to the defined method.</li>
+<li><code>id</code> is a value of any type, which is used to match the response with the request that it is replying to.</li>
+</ul>
+<p>A response message has a <code>result</code> field, an <code>error</code> field, and an <code>id</code>:</p>
+<div class="fragment"><div class="line">{ <span class="stringliteral">&quot;result&quot;</span>: <span class="stringliteral">&quot;Welcome!&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;error&quot;</span>: null,</div>
+<div class="line">  <span class="stringliteral">&quot;id&quot;</span>: 1</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>where:</p>
+<ul>
+<li><code>result</code> is the data returned by the invoked method. If an error occurred while invoking the method, this value must be null.</li>
+<li><code>error</code> is a specified error code if there was an error invoking the method, otherwise null.</li>
+<li><code>id</code> is the id of the request it is responding to.</li>
+</ul>
+<p>The <a href="http://www.jsonrpc.org/specification">JSON-RPC 2.0 specification</a> makes all 1.0 fields REQUIRED, except for <code>error</code> which MUST NOT be present if there was no error triggered during invocation. The 2.0 specification adds a <code>jsonrpc</code> field in the request message:</p>
+<div class="fragment"><div class="line">{ <span class="stringliteral">&quot;jsonrpc&quot;</span>: 2.0,</div>
+<div class="line">  <span class="stringliteral">&quot;method&quot;</span>: <span class="stringliteral">&quot;echo&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;params&quot;</span>: [ <span class="stringliteral">&quot;Hello World!&quot;</span> ],</div>
+<div class="line">  <span class="stringliteral">&quot;id&quot;</span>: 1</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>and also adds the <code>jsonrpc</code> field to the response message:</p>
+<div class="fragment"><div class="line">{ <span class="stringliteral">&quot;jsonrpc&quot;</span>: 2.0,</div>
+<div class="line">  <span class="stringliteral">&quot;result&quot;</span>: <span class="stringliteral">&quot;Welcome!&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;id&quot;</span>: 1</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>The C operations are straightforward to conform to the JSON-RPC 1.0 or 2.0 specifications. The example JSON-RPC 2.0 request message shown above is created by the following code that uses <code><a class="el" href="json_8h.html#af2e35bee99cf7ceec6bc2d245ecb0112">json_call()</a></code> to invoke a JSON-RPC service:</p>
+<div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *endpoint = <span class="stringliteral">&quot;http://...&quot;</span>;</div>
+<div class="line"><span class="keyword">struct </span>soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);</div>
+<div class="line"></div>
+<div class="line"><span class="keyword">struct </span><a class="code" href="structvalue.html">value</a> *req = <a class="code" href="xml-rpc_8h.html#a432d985b787e5ae321a57064408b4909">new_value</a>(ctx);</div>
+<div class="line"><span class="keyword">struct </span><a class="code" href="structvalue.html">value</a> *res = <a class="code" href="xml-rpc_8h.html#a432d985b787e5ae321a57064408b4909">new_value</a>(ctx);</div>
+<div class="line"><span class="keyword">struct </span><a class="code" href="structvalue.html">value</a> *args;</div>
+<div class="line">*<a class="code" href="xml-rpc_8h.html#af038763a0eab127fd25993c37a1ea1af">double_of</a>(<a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c">value_at</a>(req, <span class="stringliteral">&quot;jsonrpc&quot;</span>)) = 2.0;</div>
+<div class="line">*<a class="code" href="xml-rpc_8h.html#acae47cb0609e5d6ae32e6ceb75f85b16">string_of</a>(<a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c">value_at</a>(req, <span class="stringliteral">&quot;method&quot;</span>))  = <span class="stringliteral">&quot;echo&quot;</span>;</div>
+<div class="line">args = <a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c">value_at</a>(<a class="code" href="structvalue.html#a9d8bdea6bebd0043f1ff58b9a8a38d7c">ref</a>, <span class="stringliteral">&quot;params&quot;</span>);</div>
+<div class="line">*<a class="code" href="xml-rpc_8h.html#acae47cb0609e5d6ae32e6ceb75f85b16">string_of</a>(<a class="code" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743">nth_value</a>(args, 0))       = <span class="stringliteral">&quot;Hello World!&quot;</span>;</div>
+<div class="line">*<a class="code" href="xml-rpc_8h.html#afe5d1d28793b726a082d5f25c6876612">int_of</a>(<a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c">value_at</a>(req, <span class="stringliteral">&quot;id&quot;</span>))         = 1;</div>
+<div class="line"></div>
+<div class="line"><span class="keywordflow">if</span> (<a class="code" href="json_8h.html#af2e35bee99cf7ceec6bc2d245ecb0112">json_call</a>(ctx, endpoint, req, res))              <span class="comment">// JSON-RPC call</span></div>
+<div class="line">  soap_printf_fault(ctx, stderr);</div>
+<div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="xml-rpc_8h.html#ab7db7ce88557cc6ff24476ff924f3e2f">nth_at</a>(res, <span class="stringliteral">&quot;error&quot;</span>) &gt;= 0)                  <span class="comment">// JSON-RPC error?</span></div>
+<div class="line">  <a class="code" href="json_8h.html#ae0b41e1415944a28b8ef92dc98be8c50">json_write</a>(ctx, <a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c">value_at</a>(res, <span class="stringliteral">&quot;error&quot;</span>));</div>
+<div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> ((<span class="keywordtype">int</span>)res[<span class="stringliteral">&quot;id&quot;</span>] != 1)                        <span class="comment">// matching id field?</span></div>
+<div class="line">  printf(<span class="stringliteral">&quot;response id != request id\n&quot;</span>);</div>
+<div class="line"><span class="keywordflow">else</span>                                                 <span class="comment">// all OK!</span></div>
+<div class="line">  <a class="code" href="json_8h.html#ae0b41e1415944a28b8ef92dc98be8c50">json_write</a>(ctx, <a class="code" href="xml-rpc_8h.html#ae5b4dd82782cd6a663fa4fd19ac9697c">value_at</a>(res, <span class="stringliteral">&quot;result&quot;</span>));          <span class="comment">// display result</span></div>
+</div><!-- fragment --><p>For HTTPS use an https endpoint URL. You can control the HTTPS context as explained in the <a href="http://www.genivia.com/tutorials.html">tutorials.</a></p>
+<p>The server-side creates response messages similar to the example shown above. To implement a C JSON-RPC and JSON REST server, please see the example <code>json-currentTimeServer.cpp</code> located in <code>gsoap/samples/xml-rpc-json</code> in the gSOAP package. While the example is written in C++, the same gSOAP functions are used to bind a port and serve requests.</p>
 <h1><a class="anchor" id="misc"></a>
 Miscellaneous                                                            </h1>
 <h2><a class="anchor" id="json-cc"></a>
@@ -1509,13 +1626,14 @@ JSON and ISO 8601 dateTime                                           </h2>
 <div class="line">  time_t tm;</div>
 <div class="line">  <span class="keywordflow">if</span> (soap_s2dateTime(ctx, *<a class="code" href="xml-rpc_8h.html#acae47cb0609e5d6ae32e6ceb75f85b16">string_of</a>(v), &amp;tm) == SOAP_OK)</div>
 <div class="line">    ... <span class="comment">// success</span></div>
-</div><!-- fragment --> </div></div><!-- contents -->
+</div><!-- fragment --><p>The disable UTC time zone <code>Z</code> in the dateTime string, use <code>-DWITH_NOZONE</code> to compile <code>stdsoap2.c</code> (for C) or <code>stdsoap2.cpp</code> (for C++). </p>
+</div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 1 2016 13:29:57 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Feb 23 2016 23:40:28 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

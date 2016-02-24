@@ -48,7 +48,7 @@ Requires OpenSSL
 Compile:
 
 soapcpp2 -c httpdatest.h
-cc -DWITH_OPENSSL -o httpdatest httpdatest.c soapC.c soapClient.c soapServer.c httpda.c md5evp.c threads.c stdsoap2.c -lssl -lcrypto -lz
+cc -DWITH_OPENSSL -o httpdatest httpdatest.c soapC.c soapClient.c soapServer.c httpda.c smdevp.c threads.c stdsoap2.c -lssl -lcrypto -lz
 
 Run server:
 
@@ -56,7 +56,11 @@ Run server:
 
 Run client test:
 
-./httpdatest http://127.0.0.1:8080 hello
+./httpdatest http://127.0.0.1:8080 options
+
+with an option string consisting of:
+  c   chunking
+  z   compression
 
 */
 
@@ -71,10 +75,11 @@ int run_tests(int,char**);
 
 int main(int argc, char **argv)
 {
+  int port;
   if (argc < 2)
     return soap_serve(soap_new1(SOAP_XML_INDENT));
-  else if (argc < 3)
-    return run_serve(atoi(argv[1]));
+  else if (argc < 3 && (port = atoi(argv[1])))
+    return run_serve(port);
   else
     return run_tests(argc, argv);
 }
@@ -83,7 +88,10 @@ int run_serve(int port)
 {
   struct soap *soap = soap_new1(SOAP_XML_INDENT);
   int ret;
-  soap_register_plugin(soap, http_da);
+
+  if (soap_register_plugin(soap, http_da))
+    exit(1);
+
   if (!soap_valid_socket(soap_bind(soap, NULL, port, 100)))
     soap_print_fault(soap, stderr);
   else
@@ -125,16 +133,24 @@ int run_tests(int argc, char **argv)
   char *endpoint, *arg;
   int ret;
 
-  soap_register_plugin(soap, http_da);
+  if (soap_register_plugin(soap, http_da))
+    exit(1);
 
   endpoint = argv[1];
-  arg = argv[2];
+  if (argc >= 3)
+  {
+    arg = argv[2];
 
-  if (strchr(arg, 'c'))
-    soap_set_omode(soap, SOAP_IO_CHUNK);
+    if (strchr(arg, 'c'))
+      soap_set_omode(soap, SOAP_IO_CHUNK); /* use HTTP chunking */
 
-  if (strchr(arg, 'z'))
-    soap_set_omode(soap, SOAP_ENC_ZLIB);
+    if (strchr(arg, 'z'))
+      soap_set_omode(soap, SOAP_ENC_ZLIB); /* use HTTP compression */
+  }
+  else
+  {
+    arg = "Hello world!";
+  }
 
   if (soap_call_ns__echoString(soap, endpoint, NULL, arg, &r))
   {

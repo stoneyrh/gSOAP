@@ -91,6 +91,8 @@ int main(int argc, char **argv)
 #endif
     }
   }
+  soap_destroy(ctx);
+  soap_end(ctx);
   soap_free(ctx);
 
   return 0;
@@ -123,7 +125,7 @@ int serve_request(soap* ctx)
   
       if (request.is_string() && !strcmp(request, "getCurrentTime"))
         // method name matches: first parameter of response is time
-        response = time(0);
+        response = (ULONG64)time(0);
       else
       { // otherwise, set fault
         response["fault"] = "Wrong method";

@@ -69,6 +69,7 @@ int nflag = 0;		/* when set, names the namespaces global struct '%NAME%_namespac
 int lflag = 0;		/* when set, create library */
 int Lflag = 0;		/* when set, don't generate soapClientLib/soapServerLib */
 int Qflag = 0;		/* when set, use C++ namespaces for custom serializers */
+int rflag = 0;		/* when set, generate report */
 int sflag = 0;		/* when set, generate strict validation checks */
 int Sflag = 0;		/* when set, generate only files for servers */
 int Tflag = 0;		/* when set, generates server auto-test code */
@@ -99,7 +100,7 @@ main(int argc, char **argv)
   int i, g;
   char *a, *s;
   fmsg = stderr;
-  filename = "<stdin>";
+  filename = "(stdin)";
   fprintf(fmsg, "\n**  The gSOAP code generator for C and C++, soapcpp2 release " VERSION "\n**  Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The soapcpp2 tool and its generated software are released under the GPL.\n**  ----------------------------------------------------------------------------\n**  A commercial use license is available from Genivia Inc., contact@genivia.com\n**  ----------------------------------------------------------------------------\n\n");
   for (i = 1; i < argc; i++)
   {
@@ -187,7 +188,7 @@ main(int argc, char **argv)
 	    break;
 	  case '?':
 	  case 'h':
-	    fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-Ecdt] [-L] [-a] [-A] [-b] [-c|-c++|-c++11] [-d path] [-e] [-f N] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-l] [-m] [-n] [-p name] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
+	    fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-Ecdt] [-L] [-a] [-A] [-b] [-c|-c++|-c++11] [-d path] [-e] [-f N] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-l] [-m] [-n] [-p name] [-Q name] [-q name] [-r] [-s] [-t] [-u] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
 	    fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
@@ -218,6 +219,7 @@ main(int argc, char **argv)
 -pname  save files with new prefix name instead of 'soap'\n\
 -Qname  use name as the C++ namespace for decls, including custom serializers\n\
 -qname  use name as the C++ namespace for decls, excluding custom serializers\n\
+-r      generate soapReadme.md report\n\
 -s      generate deserialization code with strict XML validation checks\n\
 -t      generate code for fully xsi:type typed SOAP/XML messaging\n\
 -u	uncomment comments in WSDL/schema output by suppressing XML comments\n\
@@ -268,6 +270,9 @@ infile	header file to parse (or stdin)\n\
 	    break;
 	  case 'L':
 	    Lflag = 1;
+	    break;
+	  case 'r':
+	    rflag = 1;
 	    break;
 	  case 's':
 	    sflag = 1;

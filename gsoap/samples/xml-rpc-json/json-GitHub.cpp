@@ -44,8 +44,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "json.h"
 
-void display(struct value *v);
-
 int main(int argc, char **argv)
 {
   if (argc < 2)
@@ -71,13 +69,15 @@ int main(int argc, char **argv)
     }
 
     if (json_call(ctx, argv[1], NULL, &response))
-      soap_print_fault(ctx, stderr);
+      soap_stream_fault(ctx, std::cerr);
     else
-      json_write(ctx, response);
+      std::cout << response;
 
-    printf("\n\nOK\n");
-    soap_end(ctx);
-    soap_free(ctx);
+    std::cout << "\n\nOK\n";
+
+    soap_destroy(ctx); // delete managed objects
+    soap_end(ctx);     // delete managed data
+    soap_free(ctx);    // delete context
   }
   return 0;
 }

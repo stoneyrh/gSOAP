@@ -27,17 +27,27 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-//gsoap ns service name:	Event Service is a simple remote event handler
+//gsoap ns service name:	Event Simple remote event handler
 //gsoap ns service style:	rpc
 //gsoap ns service encoding:	encoded
 //gsoap ns service namespace:	http://www.cs.fsu.edu/~engelen/event.wsdl
 //gsoap ns service location:	http://localhost:18000
 
-//gsoap ns schema namespace: urn:event
+//gsoap ns schema namespace:    urn:event
 
-//gsoap ns schema type-documentation: event Set of four possible events
-enum ns__event { EVENT_A, EVENT_B, EVENT_C, EVENT_Z };
+//gsoap ns schema type: event Set of four possible events
+enum ns__event {
+//gsoap ns schema type: event::EVENT_A first event
+  EVENT_A,
+//gsoap ns schema type: event::EVENT_B second event
+  EVENT_B,
+//gsoap ns schema type: event::EVENT_C third event
+  EVENT_C,
+//gsoap ns schema type: event::EVENT_Z final event
+  EVENT_Z
+};
 
-//gsoap ns service method-action: handle "event"
-//gsoap ns service method-documentation: handle Handles asynchronous events
+//gsoap ns service method:              handle          Handles asynchronous events
+//gsoap ns service method:              handle::event   EVENT_A, EVENT_B, EVENT_C, or EVENT_Z
+//gsoap ns service method-action:       handle          "event"
 int ns__handle(enum ns__event event, void);

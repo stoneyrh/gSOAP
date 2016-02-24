@@ -46,7 +46,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 Compile:
 
 soapcpp2 -c httpdatest.h
-cc -DWITH_OPENSSL -o httpdatest httpdatest.c soapC.c soapClient.c soapServer.c httpda.c md5evp.c threads.c stdsoap2.c -lssl -lcrypto -lz
+cc -DWITH_OPENSSL -o httpdatest httpdatest.c soapC.c soapClient.c soapServer.c httpda.c smdevp.c threads.c stdsoap2.c -lssl -lcrypto -lz
 
 */
 

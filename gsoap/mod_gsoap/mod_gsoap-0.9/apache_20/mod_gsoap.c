@@ -1298,7 +1298,7 @@ getRequestConfiguration(struct soap *soap)
  * out in case someone is interested in using it (at your own risk).
  */
 
-/*
+#if 0
 SOAP_NMAC struct Namespace namespaces[] __attribute__ ((weak));
 SOAP_NMAC struct Namespace namespaces[] = {
     {"SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/",
@@ -1442,7 +1442,7 @@ soap_getelement(struct soap *soap, int *a)
     return pRqConf->pIntf->soap_getelement(soap, a);
 }
 
-*/
+#endif
 
 #ifdef __cplusplus
 }

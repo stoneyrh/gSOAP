@@ -240,9 +240,9 @@ if test "x$with_openssl" = "xyes"; then
   else
     AC_MSG_RESULT(no)
     WSDL2H_EXTRA_FLAGS="-DWITH_OPENSSL -DWITH_GZIP"
-    # an ugly hack to get httpda and md5evp plugins to conditionally
+    # an ugly hack to get httpda and smdevp plugins to conditionally
     # compile with wsdl2h when OPENSSL is available
-    WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} ../plugin/httpda.c ../plugin/md5evp.c ../plugin/threads.c -lssl -lcrypto -lz"
+    WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} ../plugin/httpda.c ../plugin/smdevp.c ../plugin/threads.c -lssl -lcrypto -lz"
     SAMPLE_INCLUDES=
     SAMPLE_SSL_LIBS="-lssl -lcrypto -lz"
     WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
@@ -314,6 +314,7 @@ AC_CONFIG_FILES([ Makefile \
     gsoap/wsdl/Makefile \
     gsoap/samples/Makefile \
     gsoap/samples/autotest/Makefile \
+    gsoap/samples/aws/Makefile \
     gsoap/samples/calc/Makefile \
     gsoap/samples/calc++/Makefile \
     gsoap/samples/chaining/Makefile \

@@ -7,9 +7,9 @@ XML Data Bindings                                                    {#mainpage}
 Introduction                                                            {#intro}
 ============
 
-This is a detailed overview of the gSOAP XML data bindings concepts and
+This is a detailed overview of the gSOAP XML data bindings concepts, usage, and
 implementation.  At the end of this document two examples are given to
-illustrate the application of data bindings.
+illustrate the application of XML data bindings.
 
 The first simple example `address.cpp` shows how to use wsdl2h to bind an XML
 schema to C++.  The C++ application reads and writes an XML file into and from
@@ -24,49 +24,72 @@ XML nodes.
 
 These examples demonstrate XML data bindings only for relatively simple data
 structures and types.  The gSOAP tools support more than just these type of
-structures, which we will explain in the next sections.  Support for XML schema
-components is practically unlimited.  The wsdl2h tool maps schemas to C and C++
-using built-in intuitive mapping rules, while allowing the mappings to be
-customized using a `typemap.dat` file with mapping instructions for wsdl2h.
+structures to serialize in XML.  There are practically no limits to
+enable XML serialization of C and C++ types.
+
+Support for XML schema components is unlimited.  The wsdl2h tool maps schemas
+to C and C++ using built-in intuitive mapping rules, while allowing the
+mappings to be customized using a `typemap.dat` file with mapping instructions
+for wsdl2h.
 
 The information in this document is applicable to gSOAP 2.8.26 and higher, which
 supports C++11 features.  However, C++11 is not required to use this material
-and follow the example, unless we need smart pointers and scoped enumerations.
-While most of the examples in this document are given in C++, the concepts also
-apply to C with the exception of containers, smart pointers, classes and their
-methods.  None of these exceptions limit the use of the gSOAP tools for C in any
-way.
+and the examples included, unless we need smart pointers and scoped
+enumerations.  While most of the examples in this document are given in C++,
+the concepts also apply to C with the exception of containers, smart pointers,
+classes and their methods.  None of these exceptions limit the use of the
+gSOAP tools for C in any way.
 
 The data binding concepts described in this document were first envisioned in
-1999 by Prof. van Engelen at the Florida State University.  An implementation
-was created in 2000, named "stub/skeleton compiler".  The first articles on
-its successor version "gSOAP" appeared in 2002.  The principle of mapping XSD
-components to C/C++ types and vice versa is now widely adopted in systems and
-programming languages, including Java web services and by C# WCF.
+1999 by Prof. Robert van Engelen at the Florida State University.  An
+implementation was created in 2000, named "stub/skeleton compiler".  The first
+articles on its successor version "gSOAP" appeared in 2002.  The principle of
+mapping XSD components to C/C++ types and vice versa is now widely adopted in
+systems and programming languages, including Java web services and by C# WCF.
 
+We continue to be committed to our goal to empower C/C++ developers with
+powerful autocoding tools for XML.  Our commitment started in the very early
+days of SOAP by actively participating in
+[SOAP interoperability testing](http://www.whitemesa.com/interop.htm),
+participating in the development and testing of the
+[W3C XML Schema Patterns for Databinding Interoperability](http://www.w3.org/2002/ws/databinding),
+and continues by contributing to the development of
+[OASIS open standards](https://www.oasis-open.org) in partnership with leading
+IT companies.
 
 Mapping WSDL and XML schemas to C/C++                                   {#tocpp}
 =====================================
 
-To convert WSDL and XML schemas (XSD files) to code, we first use the wsdl2h
-command to generate the data binding interface code that is saved to a special
-gSOAP header file:
+To convert WSDL and XML schemas (XSD files) to code, use the wsdl2h command to
+generate the data binding interface code that is saved to a special gSOAP
+header file with WSDL service declarations and the data binding interface:
 
     wsdl2h [options] -o file.h ... XSD and WSDL files ...
 
 This command converts WSDL and XSD files to C++ (or pure C with wsdl2h option
-`-c`) and saves a data binding interface file `file.h` that uses familar C/C++
-syntax extended with `gsoap` directives and includes notational conventions
-to declare C/C++ types and functions that are associated with these bindings.
+`-c`) and saves the data binding interface to a gSOAP header file `file.h` that
+uses familiar C/C++ syntax extended with `//gsoap` [directives](#directives)
+and annotations.  Notational conventions are used in the data binding interface
+to declare serializable C/C++ types and functions for Web service operations.
 
 The WSDL 1.1/2.0, SOAP 1.1/1.2, and XSD 1.0/1.1 standards are supported by the
 gSOAP tools.  In addition, the most popular WS specifications are also
 supported, including WS-Addressing, WS-ReliableMessaging, WS-Discovery,
 WS-Security, WS-Policy, WS-SecurityPolicy, and WS-SecureConversation.
 
-This document focusses on XML data bindings and mapping C/C++ to XML 1.0/1.1
-and XSD 1.0/1.1.  This covers all of the following standard XSD components with
-their optional attributes and properties:
+This document focusses on XML data bindings.  XML data bindings for C/C++ bind
+XML schema types to C/C++ types.  So integers in XML are bound to C integers,
+strings in XML are bound to C or C++ strings, complex types in XML are bound to
+C structs or C++ classes, and so on.
+
+A data binding is dual.  Either you start with WSDLs and/or XML schemas that
+are mapped to equivalent C/C++ types, or you start with C/C++ types that are
+mapped to XSD types.  Either way, the end result is that you can serialize
+C/C++ types in XML such that your XML is an instance of XML schema(s) and is
+validated against these schema(s).
+
+This covers all of the following standard XSD components with their optional
+attributes and properties:
 
 | XSD Component  | Attributes and Properties                                                                                           |
 | -------------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -106,10 +129,10 @@ The XSD facets and their mappings to C/C++ are:
 | length         | `typedef` with restricted content length annotation                                         |
 | minLength      | `typedef` with restricted content length annotation                                         |
 | maxLength      | `typedef` with restricted content length annotation                                         |
-| minInclusive   | `typedef` with restrict numerical value range annotation                                    |
-| maxInclusive   | `typedef` with restrict numerical value range annotation                                    |
-| minExclusive   | `typedef` with restrict numerical value range annotation                                    |
-| maxExclusive   | `typedef` with restrict numerical value range annotation                                    |
+| minInclusive   | `typedef` with numerical value range restriction annotation                                 |
+| maxInclusive   | `typedef` with numerical value range restriction annotation                                 |
+| minExclusive   | `typedef` with numerical value range restriction annotation                                 |
+| maxExclusive   | `typedef` with numerical value range restriction annotation                                 |
 | precision      | `typedef` with pattern annotation (pattern used for output, but input is not validated)     |
 | scale          | `typedef` with pattern annotation (pattern used for output, but input is not validated)     |
 | totalDigits    | `typedef` with pattern annotation (pattern used for output, but input is not validated)     |
@@ -148,8 +171,8 @@ following XSD types:
 | QName            | `_QName` string (URI normalization rules are applied)                             |
 
 All other primitive XSD types not listed above are mapped to strings, by
-wsdl2h generating a typedef to string for these types.  For example, xsd:token
-is bound to a C++ or C string:
+wsdl2h generating a typedef to string for these types.  For example,
+`xsd:token` is bound to a C++ or C string:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     typedef std::string  xsd__token; // C++
@@ -165,22 +188,20 @@ It is possible to remap types by adding the appropriate mapping rules to
 Imported custom serializers are intended to extend the C/C++ type bindings when
 the default binding to string is not satisfactory to your taste and if the
 target platform supports these C/C++ types.  To add custom serializers to
-`typemap.dat` for wsdl2h, see [Adding custom serializers](#custom) below.
-
+`typemap.dat` for wsdl2h, see [adding custom serializers](#custom) below.
 
 Using typemap.dat to customize data bindings                          {#typemap}
 ============================================
 
-We use a `typemap.dat` file to redefine namespace prefixes and to customize
-type bindings for the the generated header files produced by the wsdl2h tool.
-The `typemap.dat` is the default file processed by wsdl2h.  Use wsdl2h option
-`-t` to specify a different file.
+Use a `typemap.dat` file to redefine namespace prefixes and to customize type
+bindings for the the generated header files produced by the wsdl2h tool.  The
+`typemap.dat` is the default file processed by wsdl2h.  Use wsdl2h option `-t`
+to specify a different file.
 
 Declarations in `typemap.dat` can be broken up over multiple lines by
 continuing on the next line by ending each line to be continued with a
 backslash `\`.  The limit is 4095 characters per line, whether the line is
 broken up or not.
-
 
 XML namespace bindings                                               {#typemap1}
 ----------------------
@@ -210,14 +231,13 @@ This produces `g__name` C/C++ type names that are bound to the "urn:graph"
 schema by association of `g` to the generated C/C++ types.
 
 This means that `<g:name xmlns:g="urn:graph">` is parsed as an instance of a
-`g__name` C/C++ type.  Also `<x:name xmlns:x="urn:graph">` parses as an instance
-of `g__name`, because the prefix `x` has the same URI value `urn:graph`.
-Prefixes in XML have local scopes (like variables in a block).
+`g__name` C/C++ type.  Also `<x:name xmlns:x="urn:graph">` parses as an
+instance of `g__name`, because the prefix `x` has the same URI value
+`urn:graph`.  Prefixes in XML have local scopes (like variables in a block).
 
 The first run of wsdl2h will reveal the URIs, so you do not need to search
 WSDLs and XSD files for all of the target namespaces.  Just copy them from the
 generated header file after the first run into `typemap.dat` for editing.
-
 
 XSD type bindings                                                    {#typemap2}
 -----------------
@@ -239,7 +259,7 @@ where
   pointer type.  By default it is the `use` type name with a `*` or C++11
   `std::shared_ptr<>` when enabled (see further below).
 
-For example, to map xsd:duration to a `long long` (`LONG64`) type that holds
+For example, to map `xsd:duration` to a `long long` (`LONG64`) type that holds
 millisecond duration values, we can use the custom serializer declared in
 `custom/duration.h` by adding the following line to `typemap.dat`:
 
@@ -250,7 +270,7 @@ wsdl2h uses to identify and use this type for our code.  The third field is
 omitted to let wsdl2h use `xsd__duration *` for pointers or
 `std::shared_ptr<xsd__duration>` if smart pointers are enabled.
 
-To map xsd:string to `wchar_t*` wide strings:
+To map `xsd:string` to `wchar_t*` wide strings:
 
     xsd__string = | wchar_t* | wchar_t*
 
@@ -277,12 +297,11 @@ type, including base and its derived types.  The `__type_base` integer is set
 to a `SOAP_TYPE_T` value to indicate what type of data the `void*` pointer
 points to.
 
-
 Custom serializers for XSD types                                       {#custom}
 --------------------------------
 
 In the previous part we saw how a custom serializer is used to bind
-xsd:duration to a `long long` (`LONG64` or `int64_t`) type to store millisecond
+`xsd:duration` to a `long long` (`LONG64` or `int64_t`) type to store millisecond
 duration values:
 
     xsd__duration = #import "custom/duration.h"
@@ -298,22 +317,22 @@ We will discuss the custom serializers that are available to you.
 
 ### xsd:integer                                                      {#custom-1}
 
-The wsdl2h tool maps xsd:integer to a string by default.  To map xsd:integer to
+The wsdl2h tool maps `xsd:integer` to a string by default.  To map `xsd:integer` to
 the 128 bit big int type `__int128_t`:
 
     xsd__integer = #import "custom/int128.h"
 
 The `xsd__integer` type is an alias of `__int128_t`.
 
-@warning Beware that the xsd:integer value space of integers is in principle
+@warning Beware that the `xsd:integer` value space of integers is in principle
 unbounded and values can be of arbitrary length.  A value range fault
 `SOAP_TYPE` (value exceeds native representation) or `SOAP_LENGTH` (value
 exceeds range bounds) will be thrown by the deserializer if the value is out of
 range.
 
-Other XSD integer types that are restrictions of xsd:integer, are
-xsd:nonNegativeInteger and xsd:nonPositiveInteger, which are further restricted
-by xsd:positiveInteger and xsd:negativeInteger.  To bind these types to
+Other XSD integer types that are restrictions of `xsd:integer`, are
+`xsd:nonNegativeInteger` and `xsd:nonPositiveInteger`, which are further restricted
+by `xsd:positiveInteger` and `xsd:negativeInteger`.  To bind these types to
 `__int128_t` we should also add the following definitions to `typemap.dat`:
 
     xsd__nonNegativeInteger = typedef xsd__integer xsd__nonNegativeInteger 0 :    ;
@@ -322,7 +341,7 @@ by xsd:positiveInteger and xsd:negativeInteger.  To bind these types to
     xsd__negativeInteger    = typedef xsd__integer xsd__negativeInteger      : -1 ;
 
 @note If `__int128_t` 128 bit integers are not supported on your platform and if it
-is certain that xsd:integer values are within 64 bit value bounds for your
+is certain that `xsd:integer` values are within 64 bit value bounds for your
 application's use, then you can map this type to `LONG64`:
 
     xsd__integer = typedef LONG64 xsd__integer;
@@ -330,11 +349,11 @@ application's use, then you can map this type to `LONG64`:
 @note Again, a value range fault `SOAP_TYPE` or `SOAP_LENGTH` will be thrown by
 the deserializer if the value is out of range.
 
-@see Section [Numerical types](#toxsd5).
+@see Section [numerical types](#toxsd5).
 
 ### xsd:decimal                                                      {#custom-2}
 
-The wsdl2h tool maps xsd:decimal to a string by default.  To map xsd:decimal to
+The wsdl2h tool maps `xsd:decimal` to a string by default.  To map `xsd:decimal` to
 extended precision floating point:
 
     xsd__decimal = #import "custom/long_double.h" | long double
@@ -344,23 +363,23 @@ double` natively without requiring a new binding name (`xsd__decimal` is NOT
 defined).
 
 If your system supports `<quadmath.h>` quadruple precision floating point
-`__float128`, you can map xsd:decimal to `xsd__decimal` that is an alias of
+`__float128`, you can map `xsd:decimal` to `xsd__decimal` that is an alias of
 `__float128`:
 
     xsd__decimal = #import "custom/float128.h"
 
-@warning Beware that xsd:decimal is in principle a decimal value with arbitraty
+@warning Beware that `xsd:decimal` is in principle a decimal value with arbitraty
 lengths.  A value range fault `SOAP_TYPE` will be thrown by the deserializer if
 the value is out of range.
 
 In the XML payload the special values `INF`, `-INF`, `NaN` represent plus or
 minus infinity and not-a-number, respectively.
 
-@see Section [Numerical types](#toxsd5).
+@see Section [numerical types](#toxsd5).
 
 ### xsd:dateTime                                                     {#custom-3}
 
-The wsdl2h tool maps xsd:dateTime to `time_t` by default.
+The wsdl2h tool maps `xsd:dateTime` to `time_t` by default.
 
 The trouble with `time_t` when represented as 32 bit `long` integers is that it
 is limited to dates between 1970 and 2038.  A 64 bit `time_t` is safe to use if
@@ -372,12 +391,12 @@ custom serializer avoids using date and time information in `time_t`.  You get
 the raw date and time information.  You only lose the day of the week
 information.  It is always Sunday (`tm_wday=0`).
 
-To map xsd:dateTime to `xsd__dateTime` which is an alias of `struct tm`:
+To map `xsd:dateTime` to `xsd__dateTime` which is an alias of `struct tm`:
 
     xsd__dateTime = #import "custom/struct_tm.h"
 
 If the limited date range of `time_t` is not a problem but you want to increase
-the time precision with fractional seconds, then we suggest to map xsd:dateTime
+the time precision with fractional seconds, then we suggest to map `xsd:dateTime`
 to `struct timeval`:
 
     xsd__dateTime = #import "custom/struct_timeval.h"
@@ -389,20 +408,20 @@ uses `time_t`):
     xsd__dateTime = #import "custom/chrono_time_point.h"
 
 Again, we should make sure that the dates will not exceed the date range when
-using the default `time_t` binding for xsd:dateTime or when binding
-xsd:dateTime to `struct timeval` or to `std::chrono::system_clock::time_point`.
-These are safe to use in applications that use xsd:dateTime to record date
+using the default `time_t` binding for `xsd:dateTime` or when binding
+`xsd:dateTime` to `struct timeval` or to `std::chrono::system_clock::time_point`.
+These are safe to use in applications that use `xsd:dateTime` to record date
 stamps within a given window.  Otherwise, we recommend the `struct tm` custom
-serializer.  You could even map xsd:dateTime to a plain string (use `char*` with
+serializer.  You could even map `xsd:dateTime` to a plain string (use `char*` with
 C and `std::string` with C++).  For example:
 
     xsd__dateTime = | char*
 
-@see Section [Date and time types](#toxsd7).
+@see Section [date and time types](#toxsd7).
 
 ### xsd:date                                                         {#custom-4}
 
-The wsdl2h tool maps xsd:date to a string by default.  We can map xsd:date to
+The wsdl2h tool maps `xsd:date` to a string by default.  We can map `xsd:date` to
 `struct tm`:
 
     xsd__date = #import "custom/struct_tm_date.h"
@@ -412,11 +431,11 @@ time part and the deserializer only populates the date part of the struct,
 setting the time to 00:00:00.  There is no unreasonable limit on the date range
 because the year field is stored as an integer (`int`).
 
-@see Section [Date and time types](#toxsd7).
+@see Section [date and time types](#toxsd7).
 
 ### xsd:time                                                         {#custom-5}
 
-The wsdl2h tool maps xsd:time to a string by default.  We can map xsd:time to
+The wsdl2h tool maps `xsd:time` to a string by default.  We can map `xsd:time` to
 an `unsigned long long` (`ULONG64` or `uint64_t`) integer with microsecond time
 precision:
 
@@ -427,11 +446,11 @@ bound of `86399999999`.  A microsecond resolution means that a 1 second
 increment requires an increment of 1000000 in the integer value.  The serializer
 adds a UTC time zone.
 
-@see Section [Date and time types](#toxsd7).
+@see Section [date and time types](#toxsd7).
 
 ### xsd:duration                                                     {#custom-6}
 
-The wsdl2h tool maps xsd:duration to a string by default, unless xsd:duration
+The wsdl2h tool maps `xsd:duration` to a string by default, unless `xsd:duration`
 is mapped to a `long long` (`LONG64` or `int64_t`) type with with millisecond
 (ms) time duration precision:
 
@@ -447,7 +466,7 @@ depending on the platform and possible changes to `time_t`.
 
 Rescaling is done automatically when you add a C++11 `std::chrono::nanoseconds`
 value to a `std::chrono::system_clock::time_point` value.  To use
-`std::chrono::nanoseconds` as xsd:duration:
+`std::chrono::nanoseconds` as `xsd:duration`:
 
     xsd__duration = #import "custom/chrono_duration.h"
 
@@ -455,10 +474,9 @@ This type can represent 384,307,168 days (2^63 nanoseconds) forwards and
 backwards in time in increments of 1 ns (1/1,000,000,000 of a second).
 
 Certain observations with respect to receiving durations in years and months
-apply to both of these serializer decoders for xsd:duration.
+apply to both of these serializer decoders for `xsd:duration`.
 
-@see Section [Time duration types](#toxsd8).
-
+@see Section [time duration types](#toxsd8).
 
 Class/struct member additions                                        {#typemap3}
 -----------------------------
@@ -478,7 +496,6 @@ For example, we can add method declarations and private members to a class, say
 Note that method declarations cannot include any code, because soapcpp2's input
 permits only type declarations, not code.
 
-
 Replacing XSD types by equivalent alternatives                       {#typemap4}
 ----------------------------------------------
 
@@ -493,7 +510,6 @@ This replaces all `prefix__type1` by `prefix__type2` in the wsdl2h output.
 validation to fail when a value-type mismatch is encountered in the XML input.
 Therefore, only replace similar types with other similar types that are wider
 (e.g.  `short` by `int` and `float` by `double`).
-
 
 The built-in typemap.dat variables $CONTAINER and $POINTER           {#typemap5}
 ----------------------------------------------------------
@@ -534,7 +550,6 @@ The user-defined content between `[` and `]` ensures that we include the Boost
 header files that are needed to support `boost::shared_ptr` and
 `boost::make_shared`.
 
-
 User-defined content                                                 {#typemap6}
 --------------------
 
@@ -542,8 +557,8 @@ Any other content to be generated by wsdl2h can be included in `typemap.dat` by
 enclosing it within brackets `[` and `]` anywhere in the `typemap.dat` file.
 Each of the two brackets MUST appear at the start of a new line.
 
-For example, we can add an `#import "wsa5.h"` directive to the wsdl2h-generated
-output as follows:
+For example, we can add an `#import "wsa5.h"` to the wsdl2h-generated output as
+follows:
 
     [
     #import "import/wsa5.h"
@@ -551,7 +566,6 @@ output as follows:
 
 which emits the `#import "import/wsa5.h"` literally at the start of the
 wsdl2h-generated header file.
-
 
 Mapping C/C++ to XML schema                                             {#toxsd}
 ===========================
@@ -562,20 +576,22 @@ binding interface `file.h`:
     soapcpp2 [options] file.h
 
 where `file.h` is a gSOAP header file that declares the XML data binding
-interface.  The `file.h` is typically generated by wsdl2h, but we can also
-declare one ourself.  If so, we add gSOAP directives and declare in this file
-all our C/C++ types we want to serialize in XML.  We can also declare functions
-that will be converted to service operations by soapcpp2.
+interface.  The `file.h` is typically generated by wsdl2h, but you can also
+declare one yourself.  If so, add `//gsaop` [directives](#directives) and
+declare in this file all our C/C++ types you want to serialize in XML.
 
-Global function declarations define service operations, which are of the form:
+You can also declare functions that will be converted to Web service operations
+by soapcpp2.  Global function declarations define service operations, which are
+of the form:
 
-    int ns__name(arg1, arg2, ..., argn, result);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    int prefix__func(arg1, arg2, ..., argn, result);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 where `arg1`, `arg2`, ..., `argn` are formal argument declarations of the input
 and `result` is a formal argument for the output, which must be a pointer or
 reference to the result object to be populated.  More information can be found
-in the gSOAP user guide.
-
+in the [gSOAP user guide.](http://www.genivia.com/doc/soapdoc2.html)
 
 Overview of serializable C/C++ types                                   {#toxsd1}
 ------------------------------------
@@ -601,7 +617,7 @@ and constructs.  See the subsections below for more details or follow the links.
 | `enum*`                       | a bitmask that enumerates values 1, 2, 4, 8, ...                                    |
 | `enum* class`                 | C++11 scoped enumeration bitmask (soapcpp2 `-c++11`)                                |
 
-@see Section [Enumerations and bitmasks](#toxsd4).
+@see Section [enumerations and bitmasks](#toxsd4).
 
 ### List of numerical types
 
@@ -635,7 +651,7 @@ and constructs.  See the subsections below for more details or follow the links.
 | `xsd__decimal`                | `<quadmath.h>` 128 bit quadruple precision float, use `#import "custom/float128.h"` |
 | `typedef`                     | declares a type name, with optional value range and string length bounds            |
 
-@see Section [Numerical types](#toxsd5).
+@see Section [numerical types](#toxsd5).
 
 ### List of string types
 
@@ -650,7 +666,7 @@ and constructs.  See the subsections below for more details or follow the links.
 | `_XML`                        | literal XML string content with wide characters in UTF-8                            |
 | `typedef`                     | declares a new string type name, may restrict string length                         |
 
-@see Section [String types](#toxsd6).
+@see Section [string types](#toxsd6).
 
 ### List of date and time types
 
@@ -663,7 +679,7 @@ and constructs.  See the subsections below for more details or follow the links.
 | `unsigned long long`                    | time point in microseconds, use `#import "custom/long_time.h"`            |
 | `std::chrono::system_clock::time_point` | date and time point, use `#import "custom/chrono_time_point.h"`           |
 
-@see Section [Date and time types](#toxsd7).
+@see Section [date and time types](#toxsd7).
 
 ### List of time duration types
 
@@ -672,7 +688,7 @@ and constructs.  See the subsections below for more details or follow the links.
 | `long long`                   | duration in milliseconds, use `#import "custom/duration.h"`                         |
 | `std::chrono::nanoseconds`    | duration in nanoseconds, use `#import "custom/chrono_duration.h"`                   |
 
-@see Section [Time duration types](#toxsd8).
+@see Section [time duration types](#toxsd8).
 
 ### List of classes and structs
 
@@ -693,7 +709,7 @@ and constructs.  See the subsections below for more details or follow the links.
 | `union`                       | data member: requires a variant selector member `__union`                           |
 | `void*`                       | data member: requires a `__type` member to indicate the type of object pointed to   |
 
-@see Section [Classes and structs](#toxsd9).
+@see Section [classes and structs](#toxsd9).
 
 ### List of special classes and structs
 
@@ -706,8 +722,7 @@ and constructs.  See the subsections below for more details or follow the links.
 | `xsd__anyType`                | DOM elements, use `#import "dom.h"`                                                 |
 | `@xsd__anyAttribute`          | DOM attributes, use `#import "dom.h"`                                               |
 
-@see Section [Special classes and structs](#toxsd10).
-
+@see Section [special classes and structs](#toxsd10).
 
 Colon notation versus name prefixing                                   {#toxsd2}
 ------------------------------------
@@ -752,13 +767,12 @@ because `ns:record` is compiled to an unqualified `record` name.
 Colon notation also facilitates overruling the elementFormDefault and
 attributeFormDefault declaration that is applied to local elements and
 attributes, when declared as members of classes, structs, and unions.  For more
-details, see [Qualified and unqualified members](#toxsd9-6).
-
+details, see [qualified and unqualified members](#toxsd9-6).
 
 C++ Bool and C alternatives                                            {#toxsd3}
 ---------------------------
 
-The C++ `bool` type is bound to built-in XSD type xsd:boolean.
+The C++ `bool` type is bound to built-in XSD type `xsd:boolean`.
 
 The C alternative is to define an enumeration:
 
@@ -772,18 +786,17 @@ or by defining an enumeration in C with pseudo-scoped enumeration constants:
     enum xsd__boolean { xsd__boolean__false, xsd__boolean__true };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The XML value space of these types is `false` and `true`, but also accepted are
-`0` and `1` values for false and true, respectively.
+The XML value space of these types is `false` and `true`, but also accepted
+are `0` and `1` values for false and true, respectively.
 
 To prevent name clashes, `false_` and `true_` have an underscore.  Trailing
 underscores are removed from the XML value space.
-
 
 Enumerations and bitmasks                                              {#toxsd4}
 -------------------------
 
 Enumerations are mapped to XSD simpleType enumeration restrictions of
-xsd:string, xsd:QName, and xsd:long.
+`xsd:string`, `xsd:QName`, and `xsd:long`.
 
 Consider for example:
 
@@ -791,7 +804,7 @@ Consider for example:
     enum ns__Color { RED, WHITE, BLUE };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-which maps to a simpleType restriction of xsd:string in the soapcpp2-generated
+which maps to a simpleType restriction of `xsd:string` in the soapcpp2-generated
 schema:
 
     <simpleType name="Color">
@@ -809,7 +822,7 @@ because enumeration name constants have a global scope in C and C++:
     enum ns__Color { ns__Color__RED, ns__Color__WHITE, ns__Color__BLUE };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We can also use C++11 scoped enumerations to prevent name clashes:
+You can also use C++11 scoped enumerations to prevent name clashes:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     enum class ns__Color : int { RED, WHITE, BLUE };
@@ -823,13 +836,13 @@ The XML value space of the enumertions defined above is `RED`, `WHITE`, and
 `BLUE`.
 
 Prefix-qualified enumeration name constants are mapped to simpleType
-restrictions of xsd:QName, for example:
+restrictions of `xsd:QName`, for example:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     enum ns__types { xsd__int, xsd__float };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-which maps to a simpleType restriction of xsd:QName in the soapcpp2-generated
+which maps to a simpleType restriction of `xsd:QName` in the soapcpp2-generated
 schema:
 
     <simpleType name="types">
@@ -899,7 +912,7 @@ bitmasks with `|` (bitwise or) `&` (bitwise and), and `~` (bitwise not):
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The bitmask type maps to a simpleType list restriction of xsd:string in the
+The bitmask type maps to a simpleType list restriction of `xsd:string` in the
 soapcpp2-generated schema:
 
     <simpleType name="Options">
@@ -915,10 +928,10 @@ soapcpp2-generated schema:
 
 The XML value space of this type consists of all 16 possible subsets of the
 four values, represented by an XML string with space-separated values.  For
-example, the bitmask `TLS10 | TLS11 | TLS12` equals 14 and is represented in by
+example, the bitmask `TLS10 | TLS11 | TLS12` equals 14 and is represented by
 the XML string `TLS10 TLS11 TLS12`.
 
-We can also use C++11 scoped enumerations with bitmasks:
+You can also use C++11 scoped enumerations with bitmasks:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     enum* class ns__Options { SSL3, TLS10, TLS11, TLS12 };
@@ -952,7 +965,6 @@ pseudo-scope prefix and without trailing underscores.  The function sets `val`
 to the corresponding integer enum constant or to a bitmask.  The function
 returns `SOAP_OK` (zero) on success or an error if the string is not a valid
 enumeration name.
-
 
 Numerical types                                                        {#toxsd5}
 ---------------
@@ -1038,7 +1050,7 @@ The range of a typedef-defined numerical type can be restricted using the range
     typedef int ns__narrow -10 : 10;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This maps to a simpleType restriction of xsd:int in the soapcpp2-generated
+This maps to a simpleType restriction of `xsd:int` in the soapcpp2-generated
 schema:
 
     <simpleType name="narrow">
@@ -1062,7 +1074,7 @@ and precision fields:
     typedef float ns__PH "%5.2f" 0.0 : 14.0;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This maps to a simpleType restriction of xsd:float in the soapcpp2-generated
+This maps to a simpleType restriction of `xsd:float` in the soapcpp2-generated
 schema:
 
     <simpleType name="PH">
@@ -1083,7 +1095,7 @@ operator:
 
 Values `eps` of `ns__epsilon` are restricted between `0.0 < eps < 1.0`.
 
-This maps to a simpleType restriction of xsd:float in the soapcpp2-generated
+This maps to a simpleType restriction of `xsd:float` in the soapcpp2-generated
 schema:
 
     <simpleType name="epsilon">
@@ -1144,7 +1156,7 @@ bit integer type with a custom serializer:
     ... use xsd__integer ...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We use the `xsd__integer` alias of `__int128_t`, which has a serializer.  Do not
+Use the `xsd__integer` alias of `__int128_t`, which has a serializer.  Do not
 use `__int128_t` directly, which is transient (not serializable).
 
 To convert numeric values to a string, we use the auto-generated function for
@@ -1170,11 +1182,10 @@ of `__int128_t`).  The function `soap_s2T` returns `SOAP_OK` on success or an
 error when the value is not numeric.  For floating point types, "INF", "-INF"
 and "NaN" are valid strings to convert to numbers.
 
-
 String types                                                           {#toxsd6}
 ------------
 
-String types are mapped to the built-in xsd:string and xsd:QName XSD types.
+String types are mapped to the built-in `xsd:string` and `xsd:QName` XSD types.
 
 The wide strings `wchar_t*` and `std::wstring` may contain Unicode that is
 preserved in the XML value space.
@@ -1184,8 +1195,8 @@ store UTF-8 content that is preserved in the XML value space when the `struct
 soap` context is initialized with the flag `XML_C_UTFSTRING`.
 
 @warning Beware that many XML 1.0 parsers reject all control characters (those
-between `#x1` and `#x1F`) except `#x9`, `#xA`, and `#xD`.  With the newer XML
-1.1 version parsers (including gSOAP) you should be fine.
+between `#x1` and `#x1F`) except for `#x9`, `#xA`, and `#xD`.  With the
+newer XML 1.1 version parsers (including gSOAP) you should be fine.
 
 The length of a string of a typedef-defined string type can be restricted:
 
@@ -1193,7 +1204,7 @@ The length of a string of a typedef-defined string type can be restricted:
     typedef std::string ns__password 6 : 16;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-which maps to a simpleType restriction of xsd:string in the soapcpp2-generated
+which maps to a simpleType restriction of `xsd:string` in the soapcpp2-generated
 schema:
 
     <simpleType name="password">
@@ -1214,7 +1225,7 @@ typedef:
     typedef std::string ns__password "([a-zA-Z]|[0-9]|-)+" 6 : 16;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-which maps to a simpleType restriction of xsd:string in the soapcpp2-generated
+which maps to a simpleType restriction of `xsd:string` in the soapcpp2-generated
 schema:
 
     <simpleType name="password">
@@ -1227,7 +1238,7 @@ schema:
 
 Pattern restrictions are validated by the parser for inbound XML data only if
 the `soap::fsvalidate` and `soap::fwvalidate` callbacks are defined, see the
-gSOAP user guide for more details.
+[gSOAP user guide.](http://www.genivia.com/doc/soapdoc2.html)
 
 Exclusive length bounds can be used with strings:
 
@@ -1243,7 +1254,7 @@ serialization, use soapcpp2 option `-b`.  For example:
     typedef char ns__buffer[10]; // requires soapcpp2 option -b
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-which maps to a simpleType restriction of xsd:string in the soapcpp2-generated
+which maps to a simpleType restriction of `xsd:string` in the soapcpp2-generated
 schema:
 
     <simpleType name="buffer">
@@ -1261,7 +1272,7 @@ Note that raw binary data can be stored in a `xsd__base64Binary` or
 `xsd__hexBinary` structure, or transmitted as a MIME attachment.
 
 The built-in `_QName` type is a regular C string type (`char*`) that maps to
-xsd:QName but has the added advantage that it holds normalized qualified names.
+`xsd:QName` but has the added advantage that it holds normalized qualified names.
 There are actually two forms of normalized QName content, to ensure any QName
 is represented accurately and uniquely:
 
@@ -1278,7 +1289,7 @@ therefore no prefix is available to bind and normalize the URI to.
 A `_QName` string may contain a sequence of space-separated QName values, not
 just one, and all QName values are normalized to the format shown above.
 
-To define a `std::string` base type for xsd:QName, we use a typedef:
+To define a `std::string` base type for `xsd:QName`, we use a typedef:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     typedef std::string xsd__QName;
@@ -1305,9 +1316,9 @@ type:
     typedef std::string xsd__token;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We MUST ensure that the string values we populate in this type conform to the
-XML standard, which in case of xsd:token is: the lexical and value spaces of
-xsd:token are the sets of all strings after whitespace replacement of any
+You MUST ensure that the string values we populate in this type conform to the
+XML standard, which in case of `xsd:token` is the lexical and value spaces of
+`xsd:token` are the sets of all strings after whitespace replacement of any
 occurrence of `#x9`, `#xA` , and `#xD` by `#x20` and collapsing.
 
 To copy `char*` or `wchar_t*` strings with a context that manages the allocated
@@ -1337,28 +1348,27 @@ where `to` is set to point to an allocated `wchar_t*` string.  Pass `-1` for
 `minlen` and `maxlen` to ignore length constraints on the target string.  The
 function returns `SOAP_OK` or an error when the length constraints are not met.
 
-
 Date and time types                                                    {#toxsd7}
 -------------------
 
-The C/C++ `time_t` type is mapped to the built-in xsd:dateTime XSD type that
+The C/C++ `time_t` type is mapped to the built-in `xsd:dateTime` XSD type that
 represents a date and time within a time zone (typically UTC).
 
 The XML value space contains ISO 8601 Gregorian time instances of the form
-`[-]CCYY-MM-DDThh:mm:ss.sss[Z|(+|-)hh:mm]`, where `Z` is the UTC time zone or a
-time zone offset `(+|-)hh:mm]` from UTC is used.
+`[-]CCYY-MM-DDThh:mm:ss.sss[Z|(+|-)hh:mm]`, where `Z` is the UTC time zone
+or a time zone offset `(+|-)hh:mm]` from UTC is used.
 
 A `time_t` value is considered and represented in UTC by the serializer.
 
 Because the `time_t` value range is restricted to dates after 01/01/1970 and
 before 2038 assuming `time_t` is a `long` 32 bit, care must be taken to ensure
-the range of xsd:dateTime values in XML exchanges do not exceed the `time_t`
+the range of `xsd:dateTime` values in XML exchanges do not exceed the `time_t`
 range.
 
 This restriction does not hold for `struct tm` (`<time.h>`), which we can use
 to store and exchange a date and time in UTC without date range restrictions.
 The serializer uses the `struct tm` members directly for the XML value space of
-xsd:dateTime:
+`xsd:dateTime`:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     struct tm
@@ -1379,7 +1389,7 @@ xsd:dateTime:
 You will lose the day of the week information.  It is always Sunday
 (`tm_wday=0`) and the day of the year is not set either.  The time zone is UTC.
 
-This `struct tm` type is mapped to the built-in xsd:dateTime XSD type and
+This `struct tm` type is mapped to the built-in `xsd:dateTime` XSD type and
 serialized with the custom serializer `custom/struct_tm.h` that declares a
 `xsd__dateTime` type:
 
@@ -1391,7 +1401,7 @@ serialized with the custom serializer `custom/struct_tm.h` that declares a
 Compile and link your code with `custom/struct_tm.c`.
 
 The `struct timeval` (`<sys/time.h>`) type is mapped to the built-in
-xsd:dateTime XSD type and serialized with the custom serializer
+`xsd:dateTime` XSD type and serialized with the custom serializer
 `custom/struct_timeval.h` that declares a `xsd__dateTime` type:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
@@ -1414,7 +1424,7 @@ a microsecond-precise clock:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A C++11 `std::chrono::system_clock::time_point` type is mapped to the built-in
-xsd:dateTime XSD type and serialized with the custom serializer
+`xsd:dateTime` XSD type and serialized with the custom serializer
 `custom/chrono_time_point.h` that declares a `xsd__dateTime` type:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
@@ -1424,7 +1434,7 @@ xsd:dateTime XSD type and serialized with the custom serializer
 
 Compile and link your code with `custom/chrono_time_point.cpp`.
 
-The `struct tm` type is mapped to the built-in xsd:date XSD type and serialized
+The `struct tm` type is mapped to the built-in `xsd:date` XSD type and serialized
 with the custom serializer `custom/struct_tm_date.h` that declares a
 `xsd__date` type:
 
@@ -1435,7 +1445,7 @@ with the custom serializer `custom/struct_tm_date.h` that declares a
 
 Compile and link your code with `custom/struct_tm_date.c`.
 
-The XML value space of xsd:date are Gregorian calendar dates of the form
+The XML value space of `xsd:date` are Gregorian calendar dates of the form
 `[-]CCYY-MM-DD[Z|(+|-)hh:mm]` with a time zone.
 
 The serializer ignores the time part and the deserializer only populates the
@@ -1443,7 +1453,7 @@ date part of the struct, setting the time to 00:00:00.  There is no unreasonable
 limit on the date range because the year field is stored as an integer (`int`).
 
 An `unsigned long long` (`ULONG64` or `uint64_t`) type that contains a 24 hour
-time in microseconds UTC is mapped to the built-in xsd:time XSD type and
+time in microseconds UTC is mapped to the built-in `xsd:time` XSD type and
 serialized with the custom serializer `custom/long_time.h` that declares a
 `xsd__time` type:
 
@@ -1454,11 +1464,11 @@ serialized with the custom serializer `custom/long_time.h` that declares a
 
 Compile and link your code with `custom/long_time.c`.
 
-This type represents 00:00:00.000000 to 23:59:59.999999, from `0` to an upper
-bound of `86399999999`.  A microsecond resolution means that a 1 second
-increment requires an increment of 1000000 in the integer value.
+This type represents `00:00:00.000000` to `23:59:59.999999`, from 0 to an
+upper bound of 86,399,999,999.  A microsecond resolution means that a 1 second
+increment requires an increment of 1,000,000 in the integer value.
 
-The XML value space of xsd:time are points in time recurring each day of the
+The XML value space of `xsd:time` are points in time recurring each day of the
 form `hh:mm:ss.sss[Z|(+|-)hh:mm]`, where `Z` is the UTC time zone or a time
 zone offset from UTC is used.  The `xsd__time` value is always considered and
 represented in UTC by the serializer.
@@ -1485,16 +1495,15 @@ where `T` is for example `dateTime` (for `time_t`), `xsd__dateTime` (for
 The function `soap_s2T` returns `SOAP_OK` on success or an error when the value
 is not a date/time.
 
-
 Time duration types                                                    {#toxsd8}
 -------------------
 
-The XML value space of xsd:duration are values of the form `PnYnMnDTnHnMnS`
+The XML value space of `xsd:duration` are values of the form `PnYnMnDTnHnMnS`
 where the capital letters are delimiters.  Delimiters may be omitted when the
 corresponding member is not used.
 
 A `long long` (`LONG64` or `int64_t`) type that contains a duration (time
-lapse) in milliseconds is mapped to the built-in xsd:duration XSD type and
+lapse) in milliseconds is mapped to the built-in `xsd:duration` XSD type and
 serialized with the custom serializer `custom/duration.h` that declares a
 `xsd__duration` type:
 
@@ -1525,7 +1534,7 @@ depending on the platform and possible changes to `time_t`.
 
 Rescaling is done automatically when you add a C++11 `std::chrono::nanoseconds`
 value to a `std::chrono::system_clock::time_point` value.  To use
-`std::chrono::nanoseconds` as xsd:duration:
+`std::chrono::nanoseconds` as `xsd:duration`:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     #import "custom/chrono_duration.h" // import typedef std::chrono::duration xsd__duration;
@@ -1559,7 +1568,6 @@ To convert a string to a duration value, we use the auto-generated function
 The function returns `SOAP_OK` on success or an error when the value is not a
 duration.
 
-
 Classes and structs                                                    {#toxsd9}
 -------------------
 
@@ -1572,7 +1580,7 @@ Classes that are declared with the gSOAP tools are limited to single
 inheritence only.  Structs cannot be inherited.
 
 The class and struct name is bound to an XML namespace by means of the prefix
-naming convention or by using [Colon notation](#toxsd1):
+naming convention or by using [colon notation](#toxsd1):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     //gsoap ns schema namespace: urn:types
@@ -1609,10 +1617,8 @@ Public data members of a class or struct are serialized.  Private and protected
 members are transient and not serializable.
 
 Also `const` and `static` members are not serializable, with the exception of
-`const char*` and `const wchar_t*`.
-
-Types and specific class/struct members can be made transient by using the
-`extern` qualifier:
+`const char*` and `const wchar_t*`.  Types and specific class/struct members
+can also be made transient with the `extern` qualifier:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     extern class std::ostream;     // declare 'std::ostream' transient
@@ -1625,17 +1631,18 @@ Types and specific class/struct members can be made transient by using the
     };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By declaring `std::ostream` transient we can use this type where we need it and
-without soapcpp2 complaining that this class is not defined.
+By declaring `std::ostream` transient with `extern` you can use this type
+wherever you need it without soapcpp2 complaining that this class is not
+defined.
 
 ### Volatile classes and structs                                     {#toxsd9-2}
 
 Classes and structs can be declared `volatile` with the gSOAP tools.  This means
-that they are already declared elsewhere in our project's source code.  We do
-not want soapcpp2 to generate a second definition for these types.
+that they are already declared elsewhere in your project's source code and you
+do not want soapcpp2 to generate code with a second declaration of these types.
 
-For example, `struct tm` is declared in `<time.h>`.  We want it serializable and
-serialize only a selection of its data members:
+For example, `struct tm` is declared in `<time.h>`.  You can make it serializable
+and include a partial list of data members that you want to serialize:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     volatile struct tm
@@ -1649,12 +1656,13 @@ serialize only a selection of its data members:
     };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We can declare classes and structs `volatile` for any such types we want to
-serialize by only providing the public data members we want to serialize.
+You can declare classes and structs `volatile` for any such types you want to
+serialize by only providing the public data members you want to serialize.
 
-Colon notation is a simple and effective way to bind an existing class or
-struct to a schema.  For example, we can change the `tm` name as follows
-without affecting the code that uses `struct tm` generated by soapcpp2:
+In addition, [colon notation](#toxsd2) is a simple and effective way to bind an
+existing class or struct to a schema.  For example, you can change the `tm` name
+as follows without affecting the code that uses `struct tm` generated by
+soapcpp2:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     volatile struct ns:tm { ... }
@@ -1678,7 +1686,7 @@ This struct maps to a complexType in the soapcpp2-generated schema:
 Classes and structs can be declared `mutable` with the gSOAP tools.  This means
 that their definition can be spread out over the source code.  This promotes the
 concept of a class or struct as a *row of named values*, also known as a *named
-tuple*, that can be extended at compile time in our source code with additional
+tuple*, that can be extended at compile time in your source code with additional
 members.  Because these types differ from the traditional object-oriented
 principles and design concepts of classes and objects, constructors and
 destructors cannot be defined (also because we cannot guarantee merging these
@@ -1733,12 +1741,16 @@ the member:
 These initializations are made by the default constructor that is added by
 soapcpp2 to each class and struct.  A constructor is only added when a default
 constructor is not already defined with the class declaration.  You can
-explicitly (re)initialize an object with the auto-generated
-`soap_default(struct soap*)` method of a class and the auto-generated
-`soap_default_T(struct soap*, T*)` function for a struct `T` in C and C++.
+explicitly (re)initialize an object with these initial values by using the
+soapcpp2 auto-generated functions:
+
+- `void T::soap_default(struct soap*)` for `class T` (C++ only)
+- `void soap_default_T(struct soap*, T*)` for `struct T` (C and C++).
 
 Initializations can only be provided for members that have primitive types
 (`bool`, `enum`, `time_t`, numeric and string types).
+
+@see Section [operations on classes and structs](#toxsd9-13).
 
 ### Attribute members                                                {#toxsd9-5}
 
@@ -1788,9 +1800,9 @@ unqualified tag names of local elements and attributes.  If a data member has
 no prefix then the default form of qualification is applied based on the
 element/attribute form that is declared with the schema of the class, struct,
 or union type.  If the member name has a namespace prefix by colon notation,
-then the prefix overrules the default (un)qualified form.  Colon notation is an
-effective mechanism to control qualification of tag names of individual members
-of classes, structs, and unions.
+then the prefix overrules the default (un)qualified form.  Therefore,
+[Colon notation](toxsd2) is an effective mechanism to control qualification of
+tag names of individual members of classes, structs, and unions.
 
 The XML schema elementFormDefault and attributeFormDefault declarations control
 the tag name qualification of local elements and attributes, respectively.
@@ -1864,7 +1876,7 @@ overruled by adding a prefix to the member name by using colon notation:
      public:
       @std::string ns:name; // 'ns:' qualified
       @uint64_t    SSN;
-      ns__record  *:spouse; // ':' unqualified
+      ns__record  *:spouse; // ':' unqualified (empty prefix)
     };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1896,11 +1908,12 @@ ns:name attributes:
 
 Note that data members can also be prefixed using the `prefix__name`
 convention.  However, this has a different effect by referring to global (root)
-elements and attributes, see [Defining document root elements](#toxsd9-7).
+elements and attributes, see [defining document root elements](#toxsd9-7).
 
 @note You must declare a target namespace with a `//gsoap ns schema namespace:`
 directive to enable the `elementForm` and `attributeForm` directives in order
-to generate valid schemas with soapcpp2.
+to generate valid schemas with soapcpp2.  See [directives](#directives) for
+more details.
 
 ### Defining document root elements                                 {#toxsd9-7}
 
@@ -1989,13 +2002,13 @@ refer to standard XSD elements and attributes, such as `xsi__type`, and
 
 By contrast, colon notation has the desired effect to (un)qualify local tag
 names by overruling the default element/attribute namespace qualification, see
-[Qualified and unqualified members](#toxsd9-6).
+[qualified and unqualified members](#toxsd9-6).
 
 ### (Smart) pointer members and their occurrence constraints         {#toxsd9-8}
 
 A public pointer-typed data member is serialized by following its (smart)
 pointer(s) to the value pointed to.  To serialize pointers to dynamic arrays of
-data, please see the next section on [Container members and their occurrence
+data, please see the next section on [container members and their occurrence
 constraints](#toxsd9-9).
 
 Pointers that are NULL and smart pointers that are empty are serialized to
@@ -2017,8 +2030,8 @@ marked as nillable.  Non-pointer data members have a default `1:1` occurence
 constraint, making them required.
 
 A pointer data member that is explicitly marked as required with `1:1` will be
-serialized as an element with an xsi:nil attribute, thus effectively revealing
-the NULL property of its value.
+serialized as an element with an `xsi:nil` attribute, thus effectively
+revealing the NULL property of its value.
 
 A non-pointer data member that is explicitly marked as optional with `0:1` will
 be set to its default value when no XML value is presented to the deserializer.
@@ -2352,7 +2365,8 @@ This maps to a complexType in the soapcpp2-generated schema:
       </sequence>
     </complexType>
 
-The XML value space consists of a sequence of x, n, and/or s elements:
+The XML value space consists of a sequence of `<x>`, `<n>`, and/or `<s>`
+elements:
 
     <ns:record xmlns:ns="urn:types" ...>
       <n>123</n>
@@ -2398,15 +2412,15 @@ schema:
     </complexType>
 
 The XML value space consists of the XML value space of the type with the
-addition of an xsi:type attribute to the enveloping element:
+addition of an `xsi:type` attribute to the enveloping element:
 
     <ns:record xmlns:ns="urn:types" ...>
       <data xsi:type="xsd:int">123</data>
     </ns:record>
 
-This xsi:type attribute is important for the receiving end to distinguish the
-type of data to instantiate.  The receiver cannot deserialize the data without
-an xsd:type attribute.
+This `xsi:type` attribute is important for the receiving end to distinguish
+the type of data to instantiate.  The receiver cannot deserialize the data
+without an `xsd:type` attribute.
 
 You can find the `SOAP_TYPE_T` name of each serializable type in the
 auto-generated soapStub.h file.
@@ -2417,7 +2431,7 @@ that returns their `SOAP_TYPE_T` value that you can use.
 When the `void*` pointer is NULL or when `typeOfdata` is zero, the data is not
 serialized.
 
-An STL container or dynamic array of `void*` pointers to xsd:anyType data
+An STL container or dynamic array of `void*` pointers to `xsd:anyType` data
 requires wrapping the type tag and `void*` members in a struct:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
@@ -2545,7 +2559,7 @@ For example, adding a `set` and `get` method to a class declaration:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To add these and othe rmethods to classes and structs with wsdl2h and
-`typemap.dat`, please see [Class/struct member additions](#typemap3).
+`typemap.dat`, please see [class/struct member additions](#typemap3).
 
 ### Operations on classes and structs                               {#toxsd9-13}
 
@@ -2585,11 +2599,11 @@ C++:
   (non-smart) pointers pointing to the same data).  Can be safely used after
   `soap_dup(NULL)` to delete the deep copy.  Does not delete the object itself.
 
-When in C++ mode, soapcpp2 tool adds several methods to classes and structs, in
-addition to adding a default constructor and destructor (when these were not
-explicitly declared).
+When in C++ mode, soapcpp2 tool adds several methods to classes in addition to
+adding a default constructor and destructor (when these were not explicitly
+declared).
 
-The public methods added to a class/struct `T`:
+The public methods added to a class `T`:
 
 - `virtual int T::soap_type(void)` returns a unique type ID (`SOAP_TYPE_T`).
   This numeric ID can be used to distinguish base from derived instances.
@@ -2607,8 +2621,8 @@ The public methods added to a class/struct `T`:
   `soap_end_send(soap)`.
 
 - `virtual int T::soap_out(struct soap*, const char *tag, int id, const char *type) const`
-  emits object in XML, with tag and optional id attribute and xsi:type, return
-  error code or `SOAP_OK`.  Requires `soap_begin_send(soap)` and
+  emits object in XML, with tag and optional id attribute and `xsi:type`,
+  return error code or `SOAP_OK`.  Requires `soap_begin_send(soap)` and
   `soap_end_send(soap)`.
 
 - `virtual void * T::soap_get(struct soap*, const char *tag, const char *type)`
@@ -2638,6 +2652,30 @@ The public methods added to a class/struct `T`:
   (non-smart) pointers pointing to the same data).  Can be safely used after
   `soap_dup(NULL)` to delete the deep copy.  Does not delete the object itself.
 
+Also for C++, there are four variations of `soap_new_T` for
+class/struct/template type `T` that soapcpp2 auto-generates to create instances
+on a context-managed heap:
+
+- `T * soap_new_T(struct soap*)` returns a new instance of `T` with default data
+  member initializations that are set with the soapcpp2 auto-generated `void
+  T::soap_default(struct soap*)` method), but ONLY IF the soapcpp2
+  auto-generated default constructor is used that invokes `soap_default()` and
+  was not replaced by a user-defined default constructor.
+
+- `T * soap_new_T(struct soap*, int n)` returns an array of `n` new instances of
+  `T`.  Similar to the above, instances are initialized.
+
+- `T * soap_new_req_T(struct soap*, ...)` returns a new instance of `T` and sets
+  the required data members to the values specified in `...`.  The required data
+  members are those with nonzero minOccurs, see the subsections on
+  [(smart) pointer members and their occurrence constraints](#toxsd9-8) and
+  [container members and their occurrence constraints](#toxsd9-9).
+
+- `T * soap_new_set_T(struct soap*, ...)` returns a new instance of `T` and sets
+  the public/serializable data members to the values specified in `...`.
+
+The above functions can be invoked with a NULL `soap` context, but we will be
+responsible to use `delete T` to remove this instance from the unmanaged heap.
 
 Special classes and structs                                           {#toxsd10}
 ---------------------------
@@ -2736,8 +2774,8 @@ Matrix A is serialized as an array with 2x3 values:
 
 ### XSD hexBinary and base64Binary types                            {#toxsd10-2}
 
-A special case of a one-dimensional array is used to define xsd:hexBinary and
-xsd:base64Binary types when the pointer type is `unsigned char`:
+A special case of a one-dimensional array is used to define `xsd:hexBinary` and
+`xsd:base64Binary` types when the pointer type is `unsigned char`:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     class xsd__hexBinary
@@ -2777,8 +2815,8 @@ MIME/MTOM (and older DIME) attachments, such as in xop:Include elements:
     };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Attachments are beyond the scope of this document and we refer to the gSOAP
-user guide for more details.
+Attachments are beyond the scope of this document.  See the
+[gSOAP user guide](http://www.genivia.com/doc/soapdoc2.html) for more details.
 
 ### Wrapper class/struct with simpleContent                         {#toxsd10-4}
 
@@ -2828,15 +2866,15 @@ where `name` contains XML stored in a DOM node set and `attributes` is a list
 of all visibly rendered attributes.  The name `attributes` is arbitrary and any
 name will suffice.
 
-We should place the `xsd__anyType` members at the end of the struct or class.
+You should place the `xsd__anyType` members at the end of the struct or class.
 This ensures that the DOM members are populated last as a "catch all".  A
 member name starting with double underscore is a wildcard member name and
 matches any XML tag.  These members are placed at the end of a struct or class
 automatically by soapcpp2.
 
 An `#import "dom.h"` import is automatically added by wsdl2h with option `-d`
-to bind xsd:anyType to DOM nodes, and also to populate xsd:any,
-xsd:anyAttribute and xsd:mixed XML content:
+to bind `xsd:anyType` to DOM nodes, and also to populate `xsd:any`,
+`xsd:anyAttribute` and `xsd:mixed` XML content:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     #import "dom.h"
@@ -2884,10 +2922,10 @@ DOM class:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This permits an `xsd__anyType` pointer to refer to a derived class such as
-`ns__record`, which will be serialized with an xsi:type attribute that is set
-to "ns:record".  The xsi:type attributes add the necessary type information to
-distinguish the XML content from the DOM base type.  This is important for the
-receiving end: without xsd:type attributes with type names, only base DOM
+`ns__record`, which will be serialized with an `xsi:type` attribute that is
+set to "ns:record".  The `xsi:type` attributes add the necessary type information
+to distinguish the XML content from the DOM base type.  This is important for
+the receiving end: without `xsd:type` attributes with type names, only base DOM
 objects are recognized and instantiated.
 
 Because C lacks OOP principles such as class inheritance and polymorphism, you
@@ -2895,13 +2933,13 @@ will need to use the special [`void*` members](#toxsd9-11) to serialize data
 pointed to by a `void*` member.
 
 To ensure that wsdl2h generates pointer-based `xsd__anyType` DOM nodes with
-option `-d` for xsd:any, add the following line to `typemap.dat`:
+option `-d` for `xsd:any`, add the following line to `typemap.dat`:
 
     xsd__any = | xsd__anyType*
 
 This lets wsdl2h produce class/struct members and containers with
-`xsd__anyType*` for xsd:any instead of `xsd__anyType`.  To just force all
-xsd:anyType uses to be pointer-based, declare in `typemap.dat`:
+`xsd__anyType*` for `xsd:any` instead of `xsd__anyType`.  To just force all
+`xsd:anyType` uses to be pointer-based, declare in `typemap.dat`:
 
     xsd__anyType = | xsd__anyType*
 
@@ -2923,9 +2961,244 @@ where the `_XML __item` member holds any XML content as a literal XML string.
 To use the DOM API, compile `dom.c` (or `dom.cpp` for C++), or link with
 `-lgsoapssl` (or `-lgsoapssl++` for C++).
 
-@see Documentation of the [gSOAP DOM parser](http://www.genivia.com/doc/dom/html) for
-more details.
+@see Documentation of [XML DOM and XPath](http://www.genivia.com/doc/dom/html)
+for more details.
 
+Directives                                                         {#directives}
+==========
+
+You can use `//gsoap` directives in the gSOAP header file with the data binding
+interface for soapcpp2.  These directives are used to configure the code
+generated by soapcpp2 by declaring various.  properties of Web services and XML
+schemas.  When using the wsdl2h tool, you will notice that wsdl2h generates
+directives automatically based on the WSDL and XSD input.
+
+Service directives are applicable to service and operations described by WSDL.
+Schema directives are applicable to types, elements, and attributes defined by
+XML schemas.
+
+Service directives                                               {#directives-1}
+------------------
+
+A service directive must start at a new line and is of the form:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    //gsoap <prefix> service <property>: <value>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+where `<prefix>` is the XML namespace prefix of a service binding.  The
+`<property>` and `<value>` fields are one of the following:
+
+| Property        | Value                                                                            |
+| --------------- | -------------------------------------------------------------------------------- |
+| `name`          | name of the service, optionally followed by text describing the service          |
+| `namespace`     | URI of the WSDL targetNamespace                                                  |
+| `documentation` | text describing the service (see also the `name` property), multiple permitted   |
+| `doc`           | same as above, shorthand form                                                    |
+| `style`         | `document` (default) SOAP messaging style or `rpc` for SOAP RPC                  |
+| `encoding`      | `literal` (default), `encoded` for SOAP encoding, or a custom URI                | 
+| `protocol`      | specifies SOAP or REST, see below                                                |
+| `port`          | URL of the service endpoint, usually an http or https address                    |
+| `transport`     | URI declaration of the transport, usually `http://schemas.xmlsoap.org/soap/http` |
+| `definitions`   | name of the WSDL definitions/\@name                                              |
+| `type`          | name of the WSDL definitions/portType/\@name (WSDL2.0 interface/\@name)          |
+| `binding`       | name of the WSDL definitions/binding/\@name                                      |
+| `portName`      | name of the WSDL definitions/service/port/\@name                                 |
+| `portType`      | an alias for the `type` property                                                 |
+| `interface`     | an alias for the `type` property                                                 |
+| `location`      | an alias for the `port` property                                                 |
+| `endpoint`      | an alias for the `port` property                                                 |
+
+The service `name` and `namespace` properties are required in order to generate
+a valid WSDL with soapcpp2.  The other properties are optional.
+
+The `style` and `encoding` property defaults are changed with soapcpp2 option
+`-e` to `rpc` and `encoded`, respectively.
+
+The `protocol` property is `SOAP` by default (SOAP 1.1).  Protocol property
+values are:
+
+| Protocol Value | Description                                          |
+| -------------- | ---------------------------------------------------- |
+| `SOAP`         | SOAP transport, supporting both SOAP 1.1 and 1.2     |
+| `SOAP1.1`      | SOAP 1.1 transport (same as soapcpp2 option `-1`)    |
+| `SOAP1.2`      | SOAP 1.2 transport (same as soapcpp2 option `-2`)    |
+| `SOAP-GET`     | one-way SOAP 1.1 or 1.2 with HTTP GET                |
+| `SOAP1.1-GET`  | one-way SOAP 1.1 with HTTP GET                       |
+| `SOAP1.2-GET`  | one-way SOAP 1.2 with HTTP GET                       |
+| `HTTP`         | non-SOAP REST protocol with HTTP POST                |
+| `POST`         | non-SOAP REST protocol with HTTP POST                |
+| `GET`          | non-SOAP REST protocol with HTTP GET                 |
+| `PUT`          | non-SOAP REST protocol with HTTP PUT                 |
+| `DELETE`       | non-SOAP REST protocol with HTTP DELETE              |
+
+You can bind service operations to the WSDL namespace of a service by using the
+namespace prefix as part of the identifier name of the function that defines
+the service operation:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    int prefix__func(arg1, arg2, ..., argn, result);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can override the `port` endpoint URL at runtime in the auto-generated
+`soap_call_prefix__func` service call (C/C++ client side) and in the C++ proxy
+class service call.
+
+Service method directives                                        {#directives-2}
+-------------------------
+
+Service properties are applicable to a service and to all of its operations.
+Service method directives are specifically applicable to a service operation.
+
+A service method directive is of the form:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    //gsoap <prefix> service method-<property>: <method> <value>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+where `<prefix>` is the XML namespace prefix of a service binding and
+`<method>` is the unqualified name of a service operation.  The `<property>`
+and `<value>` fields are one of the following:
+
+| Method Property             | Value                                                                          |
+| --------------------------- | ------------------------------------------------------------------------------ |
+| `method-documentation`      | text describing the service operation                                          |
+| `method`                    | same as above, shorthand form                                                  |
+| `method-action`             | `""` or URI SOAPAction HTTP header, or URL query string for REST protocols     |
+| `method-input-action`       | `""` or URI SOAPAction HTTP header of service request messages                 |
+| `method-output-action`      | `""` or URI SOAPAction HTTP header of service response messages                |
+| `method-fault-action`       | `""` or URI SOAPAction HTTP header of service fault messages                   |
+| `method-header-part`        | member name of the `SOAP_ENV__Header` struct used in SOAP Header               |
+| `method-input-header-part`  | member name of the `SOAP_ENV__Header` struct used in SOAP Headers of requests  |
+| `method-output-header-part` | member name of the `SOAP_ENV__Header` struct used in SOAP Headers of responses |
+| `method-fault`              | type name of a struct or class member used in `SOAP_ENV__Details` struct       |
+| `method-mime-type`          | REST content type or SOAP MIME attachment content type(s)                      |
+| `method-input-mime-type`    | REST content type or SOAP MIME attachment content type(s) of request message   |
+| `method-output-mime-type`   | REST content type or SOAP MIME attachment content type(s) of response message  |
+| `method-style`              | `document` or `rpc`                                                            |
+| `method-encoding`           | `literal`, `encoded`, or a custom URI for encodingStyle of messages            |
+| `method-response-encoding`  | `literal`, `encoded`, or a custom URI for encodingStyle of response messages   |
+| `method-protocol`           | SOAP or REST, see [service directives](#directives-1)                          |
+
+The `method-header-part` properties can be repeated for a service operation to
+declare multiple SOAP Header parts that the service operation requires.  You
+can use `method-input-header-part` and `method-output-header-part` to
+differentiate between request and response messages.
+
+The `method-fault` property can be repeated for a service operation to declare
+multiple faults that the service operation may return.
+
+The `method-action` property serves two purposes:
+
+-# To set the SOAPAction header for SOAP protocols, i.e. sets the
+   definitions/binding/operation/SOAP:operation/\@soapAction.
+
+-# To set the URL query string for endpoints with REST protocols, i.e. sets the
+   definitions/binding/operation/HTTP:operation/\@location, which specifies
+   a URL query string (starts with a `?`) to complete the service endpoint URL
+   or extends the endpoint URL with a local path (starts with a `/`).
+
+Use `method-input-action` and `method-output-action` to differentiate the
+SOAPAction between SOAP request and response messages.
+
+You can always override the port endpoint URL and action values at runtime in
+the auto-generated `soap_call_prefix__func` service call (C/C++ client side)
+and in the auto-generated C++ proxy class service calls.  A runtime NULL
+endpoint URL and/or action uses the defaults set by these directives.
+
+The `method-mime-type` property serves two purposes:
+
+-# To set the type of MIME/MTOM attachments used with SOAP protocols.  Multiple
+   attachment types can be declared for a SOAP service operation, i.e. adds
+   definitions/binding/operation/input/MIME:multipartRelated/MIME:part/MIME:content/\@type
+   for each type specified.
+
+-# To set the MIME type of a REST operation.  This replaces XML declared in
+   WSDL by definitions/binding/operation/(input|output)/MIME:mimeXml with
+   MIME:content/\@type.  Use `application/x-www-form-urlencoded` with REST POST
+   and PUT protocols to send encoded form data automatically instead of XML.
+   Only primitive type values can be transmitted with form data, such as
+   numbers and strings, i.e. only types that are legal to use as
+   [attributes members](#toxsd9-5).  
+
+Use `method-input-mime-type` and `method-output-mime-type` to differentiate the
+attachment types between SOAP request and response messages.
+
+Schema directives                                                {#directives-3}
+-----------------
+
+A schema directive is of the form:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    //gsoap <prefix> schema <property>: <value>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+where `<prefix>` is the XML namespace prefix of a schema.  The `<property>` and
+`<value>` fields are one of the following:
+
+| Property        | Value                                                                             |
+| --------------- | --------------------------------------------------------------------------------- |
+| `namespace`     | URI of the XSD targetNamespace                                                    |
+| `namespace2`    | alternate URI for the XSD namespace (i.e. URI is also accepted by the XML parser) |
+| `import`        | URI of imported namespace                                                         |
+| `form`          | `unqualified` (default) or `qualified` local element and attribute form defaults  |
+| `elementForm`   | `unqualified` (default) or `qualified` local element form default                 |
+| `attributeForm` | `unqualified` (default) or `qualified` local attribute form default               |
+| `typed`         | `no` (default) or `yes` for serializers to add `xsi:type` attributes to XML       |
+
+To learn more about the local form defaults, see [qualified and unqualified members.](#toxsd9-6)
+
+The `typed` property is implicitly `yes` when soapcpp2 option `-t` is used.
+
+Schema type directives                                           {#directives-4}
+----------------------
+
+A schema type directive is of the form:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    //gsoap <prefix> schema type-<property>: <name> <value>
+    //gsoap <prefix> schema type-<property>: <name>::<member> <value>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+where `<prefix>` is the XML namespace prefix of a schema and `<name>` is an
+unqualified name of a C/C++ type, and the optional `<member>` is a class/struct
+members or enum constant.
+
+You can describe a type:
+
+| Type Property        | Value                           |
+| -------------------- | ------------------------------- |
+| `type-documentation` | text describing the schema type |
+| `type`               | same as above, shorthand form   |
+
+For example, you can add a description to an enumeration:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    //gsoap ns schema type: Vowels The letters A, E, I, O, U, and sometimes Y
+    //gsoap ns schema type: Vowels::Y A vowel, sometimes
+    enum class ns__Vowels : char { A = 'A', E = 'E', I = 'I', O = 'O', U = 'U', Y = 'Y' };
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This documented enumeration maps to a simpleType restriction of `xsd:string` in
+the soapcpp2-generated schema:
+
+    <simpleType name="Vowels">
+      <annotation>
+        <documentation>The letters A, E, I, O, U, and sometimes Y</documentation>
+      </annotation>
+      <restriction base="xsd:string">
+        <enumeration value="A"/>
+        <enumeration value="E"/>
+        <enumeration value="I"/>
+        <enumeration value="O"/>
+        <enumeration value="U"/>
+        <enumeration value="Y">
+          <annotation>
+            <documentation>A vowel, sometimes</documentation>
+          </annotation>
+        <enumeration/>
+      </restriction>
+    </simpleType>
 
 Serialization rules                                                     {#rules}
 ===================
@@ -2941,7 +3214,7 @@ when generating the service functions in C and C++ that use SOAP or REST.
 
 The gSOAP tools are not limited to SOAP.  The tools implement generic XML data
 bindings for SOAP, REST, and other uses of XML.  So you can read and write XML
-using the serializing [Operations on classes and structs](#toxsd9-13).
+using the serializing [operations on classes and structs](#toxsd9-13).
 
 The following sections briefly explain the serialization rules with respect to
 the SOAP protocol for XML Web services.  A basic understanding of the SOAP
@@ -2949,14 +3222,13 @@ protocol is useful when developing client and server applications that must
 interoperate with other SOAP applications.
 
 SOAP/REST Web service client and service operations are represented as
-functions in our gSOAP header file for soapcpp2.  The soapcpp2 tool will
-translate these function to client-side service invocation calls and
-server-side service operation dispatchers.
+functions in your gSOAP header file with the data binding interface for
+soapcpp2.  The soapcpp2 tool will translate these function to client-side
+service invocation calls and server-side service operation dispatchers.
 
 A discussion of SOAP clients and servers is beyond the scope of this document.
 However, the SOAP options discussed here also apply to SOAP client and server
 development.
-
 
 SOAP document versus rpc style                                        {#doc-rpc}
 ------------------------------
@@ -2999,7 +3271,6 @@ to each type of operation, so that the receiver can dispatch the operation
 based on this element's tag name.  Alternatively, the HTTP URL path can be used
 to specify the operation, or the HTTP action header can be used to dispatch
 operations automatically on the server side (soapcpp2 options -a and -A).
-
 
 SOAP literal versus encoding                                          {#lit-enc}
 ----------------------------
@@ -3147,7 +3418,6 @@ XML validation is possible, which can be enabled with the `SOAP_XML_STRICT`
 flag to initialize the gSOAP engine context.  However, data graphs will be
 serialized as trees and cycles in the data will be cut from the XML rendition.
 
-
 SOAP 1.1 versus SOAP 1.2                                                 {#soap}
 ------------------------
 
@@ -3176,7 +3446,6 @@ The SOAP 1.2 protocol default can also be set by importing and loading
     #import "soap12.h"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 Non-SOAP XML serialization                                           {#non-soap}
 --------------------------
 
@@ -3184,19 +3453,18 @@ You can serialize data that is stored on the heap, on the stack (locals), and
 static data as long as the serializable (i.e. non-transient) members are
 properly initialized and pointers in the structures are either NULL or point to
 valid structures.  Deserialized data is put on the heap and managed by the
-gSOAP engine context `struct soap`, see also [Memory management](#memory).
+gSOAP engine context `struct soap`, see also [memory management](#memory).
 
 You can read and write XML directly to a file or stream with the serializing
-[Operations on classes and structs](#toxsd9-13).
+[operations on classes and structs](#toxsd9-13).
 
 To define and use XML Web service client and service operations, we can declare
-these operations in our gSOAP header file for soapcpp2 as functions that
-soapcpp2 will translate in client-side service invocation calls and server-side
-service operation dispatchers.  These functions are auto-generated by wsdl2h
-from WSDLs.  Note that XSDs do not include service definitions.
+these operations in your gSOAP header file with the data binding interface for
+soapcpp2 as functions.  The function are translated by soapcpp2 to client-side
+service invocation calls and server-side service operation dispatchers.
 
-The REST operations POST, GET, and PUT are declared with gSOAP directives in
-the gSOAP header file for soapcpp2.  For example, a REST POST operation is
+The REST operations POST, GET, and PUT are declared with `//gsoap` directives
+in the gSOAP header file for soapcpp2.  For example, a REST POST operation is
 declared as follows:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
@@ -3236,7 +3504,6 @@ elements as follows:
       </records>
     </ns:DBupdate>
 
-
 Input and output                                                           {#io}
 ================
 
@@ -3264,8 +3531,8 @@ In the following sections, we present more details on how to read and write to
 files and streams, and use string buffers as sources and sinks for XML data.
 
 In addition, you can set IO callback functions to handle IO at a lower level.
-For more details, see the gSOAP user guide.
 
+For more details, see the [gSOAP user guide.](http://www.genivia.com/doc/soapdoc2.html)
 
 Reading and writing from/to files and streams                             {#io1}
 ---------------------------------------------
@@ -3323,7 +3590,6 @@ Similar code with streams in C++:
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 Reading and writing from/to string buffers                                {#io2}
 ------------------------------------------
 
@@ -3369,8 +3635,7 @@ set by the managing context to point to the XML data that is stored on the
 context-managed heap.
 
 For earlier gSOAP versions we recommend to use IO callbacks `soap->frecv` and
-`soap->fsend` as shown in the gSOAP user guide.
-
+`soap->fsend`, see the [gSOAP user guide.](http://www.genivia.com/doc/soapdoc2.html)
 
 Memory management                                                      {#memory}
 =================
@@ -3378,7 +3643,6 @@ Memory management                                                      {#memory}
 Memory management with the `soap` context enables us to allocate data in
 context-managed heap space that can be collectively deleted.  All deserialized
 data is placed on the context-managed heap by the gSOAP engine.
-
 
 Memory management in C                                                {#memory1}
 ----------------------
@@ -3408,7 +3672,7 @@ with `soap_end(soap)`:
     struct soap *soap = soap_new(); // new context
     ...
     struct ns__record *record = soap_malloc(soap, sizeof(struct ns__record));
-    soap_default_ns__record(soap, record);
+    soap_default_ns__record(soap, record); // auto-generated struct initializer
     ...
     soap_destroy(soap); // only for C++, see section on C++ below
     soap_end(soap);     // delete record and all other heap allocations
@@ -3425,10 +3689,68 @@ can use the functions:
 - `char *soap_strdup(struct soap*, const char *str)` and
 - `wchar_t *soap_wstrdup(struct soap*, const wchar_t *wstr)`.
 
-We use the soapcpp2 auto-generated `soap_dup_T` functions to duplicate data
-into another context (this requires soapcpp2 option `-Ec` to generate), here
-shown for C with the second argument `dst` NULL because we want to allocate a
-new managed structure:
+If your C compiler supports `typeof` then you can use the following macro to
+simplify the managed heap allocation and initialization of primitive values:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #define soap_assign(soap, lhs, rhs) (*(lhs = (typeof(lhs))soap_malloc(soap, sizeof(*lhs))) = rhs)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Pointers to primitive values are often used for optional members.  For example,
+assume we have the following struct:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    struct ns__record
+    {
+      const char        *name;   // required name
+      uint64_t          *SSN;    // optional SSN
+      struct ns__record *spouse; // optional spouse
+    };
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use `soap_assign` to create a SSN value on the managed heap:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    struct soap *soap = soap_new(); // new context
+    ...
+    struct ns__record *record = soap_malloc(soap, sizeof(struct ns__record));
+    soap_default_ns__record(soap, record);
+    record->name = soap_strdup(soap, "Joe");
+    soap_assign(soap, record->SSN, 1234567890LL);
+    ...
+    soap_end(soap);     // delete managed soap_malloc'ed heap data
+    soap_free(soap);    // delete context
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Without the `soap_assign` macro, you will need two lines of code, one to
+allocate and one to assign (you should also use this if your system can run out
+of memory):
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    assert((record->SSN = (uint64_t*)soap_malloc(soap, sizeof(utint64_t))) != NULL);
+    *record->SSN = 1234567890LL;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The gSOAP serializer can serialize any heap, stack, or static allocated data.
+So we can also create a new record as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    struct soap *soap = soap_new(); // new context
+    ...
+    struct ns__record *record = soap_malloc(soap, sizeof(struct ns__record));
+    static uint64_t SSN = 1234567890LL;
+    soap_default_ns__record(soap, record);
+    record->name = "Joe";
+    record->SSN = &SSN; // safe to use static values: the value of record->SSN is never changed by gSOAP
+    ...
+    soap_end(soap);     // delete managed soap_malloc'ed heap data
+    soap_free(soap);    // delete context
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use the soapcpp2 auto-generated `soap_dup_T` functions to duplicate data into
+another context (this requires soapcpp2 option `-Ec` to generate), here shown
+for C with the second argument `dst` NULL because we want to allocate a new
+managed structure:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     struct soap *other_soap = soap_new(); // another context
@@ -3455,9 +3777,10 @@ The resulting deep copy will be a full copy of the source data structure as a
 tree without co-referenced data (i.e. no digraph) and without cycles.  Cycles
 are pruned and (one of the) pointers that forms a cycle is repaced by NULL.
 
-We can also deep copy into unmanaged space and use the auto-generated
+You can also deep copy into unmanaged space and use the auto-generated
 `soap_del_T()` function (requires soapcpp2 option `-Ed` to generate) to delete
-it later, but we MUST NOT do this for any data that we suspect has deep cycles:
+it later, but you MUST NOT do this for any data that has deep cycles in its
+runtime data structure:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     struct ns__record *other_record = soap_dup_ns__record(NULL, NULL, record);
@@ -3472,13 +3795,13 @@ deep copies.  Consider for example:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     struct ns__record
     {
-      const char  *name;
-      uint64_t     SSN;
-      ns__record  *spouse;
+      const char         *name;   // required name
+      uint64_t            SSN;    // required SSN
+      struct ns__record  *spouse; // optional spouse
     };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Our code to populate a structure with a mutual spouse relationship:
+The code to populate a structure with a mutual spouse relationship:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     struct soap *soap = soap_new();
@@ -3500,7 +3823,7 @@ Our code to populate a structure with a mutual spouse relationship:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As we can see, the gSOAP serializer can serialize any heap, stack, or static
-allocated data, such as in our code above.  So we can serialize the
+allocated data, such as in the code above.  So we can serialize the
 stack-allocated `pers1` record as follows:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
@@ -3556,10 +3879,9 @@ Copying data with `soap_dup_T(soap)` into managed space is always safe.  Copying
 into unmanaged space requires diligence.  But deleting unmanaged data is easy
 with `soap_del_T()`.
 
-We can also use `soap_del_T()` to delete structures that we created in C, but
+You can also use `soap_del_T()` to delete structures that you created in C, but
 only if these structures are created with `malloc` and do NOT contain pointers
 to stack and static data.
-
 
 Memory management in C++                                              {#memory2}
 ------------------------
@@ -3588,23 +3910,29 @@ that soapcpp2 auto-generates to create instances on a context-managed heap:
 - `T * soap_new_req_T(struct soap*, ...)` returns a new instance of `T` and sets
   the required data members to the values specified in `...`.  The required data
   members are those with nonzero minOccurs, see the subsections on
-  [(Smart) pointer members and their occurrence constraints](#toxsd9-8) and
-  [Container members and their occurrence constraints](#toxsd9-9).
+  [(smart) pointer members and their occurrence constraints](#toxsd9-8) and
+  [container members and their occurrence constraints](#toxsd9-9).
 
 - `T * soap_new_set_T(struct soap*, ...)` returns a new instance of `T` and sets
   the public/serializable data members to the values specified in `...`.
 
-The above functions can be invoked with a NULL `soap` context, but we will be
+The above functions can be invoked with a NULL `soap` context, but you are
 responsible to use `delete T` to remove this instance from the unmanaged heap.
+
+For example, to allocate a managed `std::string` you can use:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    std::string *s = soap_new_std__string(soap);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Primitive types and arrays of these are allocated with `soap_malloc` by the
 gSOAP engine.  As we stated above, all types except for classes, structs, class
 templates (containers and smart pointers) are allocated with `soap_malloc` for
 reasons of efficiency.
 
-We can use a C++ template to simplify the managed allocation and initialization
-of primitive values as follows (this is for primitive types only, because we
-should allocate structs and classes with `soap_new_T`):
+You can use a C++ template to simplify the managed allocation and initialization
+of primitive values as follows (this is for primitive types only, because
+structs and classes are allocated with `soap_new_T`):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     template<class T>
@@ -3629,8 +3957,8 @@ For example, assuming we have the following class:
     };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We can instantiate a record by using the auto-generated
-`soap_new_set_ns__record` and our `soap_make` to create a SSN value on the
+You can instantiate a record by using the auto-generated
+`soap_new_set_ns__record` and use `soap_make` to create a SSN value on the
 managed heap:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
@@ -3660,8 +3988,8 @@ stack-allocated value remains in scope when invoking the serializer and/or
 using `record`.  It does not matter if `soap_destroy` and `soap_end` are called
 beyond the scope of `SSN`.
 
-To facilitate our class methods to access the managing context, we can add a
-soap context pointer to a class/struct:
+To facilitate class methods to access the managing context, we can add a soap
+context pointer to a class/struct:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     class ns__record
@@ -3676,10 +4004,9 @@ soap context pointer to a class/struct:
 The context is set when invoking `soap_new_T` (and similar) with a non-NULL
 context argument.
 
-We use the soapcpp2 auto-generated `soap_dup_T` functions to duplicate data
-into another context (this requires soapcpp2 option `-Ec` to generate), here
-shown for C++ with the second argument `dst` NULL because we want to allocate a
-new managed object:
+Use the soapcpp2 auto-generated `soap_dup_T` functions to duplicate data into
+another context (this requires soapcpp2 option `-Ec` to generate), here shown
+for C++ with the second argument `dst` NULL to allocate a new managed object:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     soap *other_soap = soap_new(); // another context
@@ -3718,10 +4045,10 @@ The resulting deep copy will be a full copy of the source data structure as a
 tree without co-referenced data (i.e. no digraph) and without cycles.  Cycles
 are pruned and (one of the) pointers that forms a cycle is repaced by NULL.
 
-We can also deep copy into unmanaged space and use the auto-generated
+You can also deep copy into unmanaged space and use the auto-generated
 `soap_del_T()` function or the `T::soap_del()` method (requires soapcpp2 option
 `-Ed` to generate) to delete it later, but we MUST NOT do this for any data
-that we suspect has deep cycles:
+that has deep cycles in its runtime data structure graph:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     ns__record *other_record = record->soap_dup(NULL);
@@ -3736,13 +4063,13 @@ deep copies.  Consider for example:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     class ns__record
     {
-      const char  *name;
-      uint64_t     SSN;
-      ns__record  *spouse;
+      const char  *name;   // required name
+      uint64_t     SSN;    // required SSN
+      ns__record  *spouse; // optional spouse
     };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Our code to populate a structure with a mutual spouse relationship:
+The code to populate a structure with a mutual spouse relationship:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     soap *soap = soap_new();
@@ -3762,7 +4089,7 @@ Our code to populate a structure with a mutual spouse relationship:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Note that the gSOAP serializer can serialize any heap, stack, or static
-allocated data, such as in our code above.  So we can serialize the
+allocated data, such as in the code above.  So we can serialize the
 stack-allocated `pers1` record as follows:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
@@ -3819,7 +4146,7 @@ Copying data with `soap_dup_T(soap)` into managed space is always safe.  Copying
 into unmanaged space requires diligence.  But deleting unmanaged data is easy
 with `soap_del_T()`.
 
-We can also use `soap_del_T()` to delete structures in C++, but only if these
+You can also use `soap_del_T()` to delete structures in C++, but only if these
 structures are created with `new` (and `new []` for arrays when applicable) for
 classes, structs, and class templates and with `malloc` for anything else, and
 the structures do NOT contain pointers to stack and static data.
@@ -3886,9 +4213,9 @@ control XML serialization at runtime:
    that the schema attribute form is "qualified" by default (be warned if it is
    not, since attributes in the null namespace will get bound to namespaces!).
 
-- `SOAP_XML_NOTYPE`: removes all xsi:type attribuation.  This option is usually
-  not needed unless the receiver rejects all xs:type attributes.  This option
-  may affect the quality of the deserializer, which relies on xsi:type
+- `SOAP_XML_NOTYPE`: removes all `xsi:type` attribuation.  This option is usually
+  not needed unless the receiver rejects all `xsi:type` attributes.  This option
+  may affect the quality of the deserializer, which relies on `xsi:type`
   attributes to distinguish base class instances from derived class instances
   transported in the XML payloads.
 
@@ -3898,11 +4225,13 @@ Additional notes with respect to the wsdl2h and soapcpp2 tools:
   soapcpp2.
 
 - Use `#import "file.h"` instead of `#include` to import other header files in
-  a gSOAP header file for soapcpp2.  The `#include` and `#define` directives are
-  accepted, but are moved to the very start of the generated code for the C/C++
-  compiler to include before all generated definitions.  You should use
-  `#include` in combinatio with "volatile" types and to ensure transient
-  (incomplete) types are declared when these are used in the gSOAP header file.
+  a gSOAP header file for soapcpp2.  The `#include`, `#define`, and `#pragma`
+  are accepted by soapcpp2, but are moved to the very start of the generated
+  code for the C/C++ compiler to include before all generated definitions.
+  Often it is useful to add an `#include` with a [volatile type](#toxsd9-2)
+  that includes the actual type declaration, and to ensure transient types are
+  declared when these are used in a data binding interface declared in a gSOAP
+  header file for soapcpp2.
 
 - To remove any SOAP-specific bindings, use soapcpp2 option `-0`.
 
@@ -3914,10 +4243,10 @@ Additional notes with respect to the wsdl2h and soapcpp2 tools:
   name { ... }` to the header file, but the `{ ... }` MUST cover the entire
   header file content from begin to end.
   
-- Optional DOM support can be used to store mixed content or literal XML
+- Optional XML DOM support can be used to store mixed content or literal XML
   content.  Otherwise, mixed content may be lost.  Use wsdl2h option `-d` for
-  DOM support and compile and link with `dom.c` or `dom.cpp`.
-
+  XML DOM support and compile and link with `dom.c` or `dom.cpp`.  For details,
+  see [XML DOM and XPath](http://www.genivia.com/doc/dom/html).
 
 Removing SOAP namespaces from XML payloads                              {#nsmap}
 ==========================================
@@ -3935,8 +4264,8 @@ soapcpp2 option `-0` or by simply setting the two entries to NULL:
     };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that once the `.nsmap` is generated, we can copy-paste the content into
-our project code.  However, if we rerun wsdl2h on updated WSDL/XSD files or
+Note that once the `.nsmap` is generated, you can copy-paste the content into
+your project code.  However, if we rerun wsdl2h on updated WSDL/XSD files or
 `typemap.dat` declarations then we need to use the updated table.
 
 In cases that no XML namespaces are used at all, for example with
@@ -3956,7 +4285,6 @@ Examples                                                             {#examples}
 
 Select the project files below to peruse the source code examples.
 
-
 Source files
 ------------
 
@@ -3965,7 +4293,6 @@ Source files
 - `addresstypemap.dat`  Schema namespace prefix name preference for wsdl2h
 - `graph.h`             Graph data binding (tree, digraph, cyclic graph)
 - `graph.cpp`           Test graph serialization as tree, digraph, and cyclic
-
 
 Generated files
 ---------------
@@ -3980,7 +4307,6 @@ Generated files
 - `graphC.cpp`     Serializers
 - `g.xsd`          XSD schema with `g:Graph` complexType
 - `g.nsmap`        xmlns bindings namespace mapping table
-
 
 Build steps
 -----------
@@ -4000,7 +4326,7 @@ type name.  Option `-0` removes the SOAP protocol.  Options `-C` and `-S`
 removes client and server code generation.  Option `-p` renames the output
 `soap` files to `address` files.
 
-See the `address.cpp` implementation and [Related Pages](pages.html).
+See the `address.cpp` implementation and [related pages](pages.html).
 
 The `addresstypemap.dat` file specifies the XML namespace prefix for the
 bindings:
@@ -4016,7 +4342,7 @@ bindings:
 
     #       ... and compile/link with custom/struct_tm.c
 
-The DOB field is a xsd:dateTime, which is bound to `time_t` by default.  To
+The DOB field is a `xsd:dateTime`, which is bound to `time_t` by default.  To
 change this to `struct tm`, enable the import of the `xsd__dateTime` custom
 serializer by uncommenting the definition of `xsd__dateTime` in
 `addresstypemap.dat`.  Then change `soap_dateTime2s` to `soap_xsd__dateTime2s`
@@ -4029,7 +4355,6 @@ Building the graph serialization example:
 
 To compile without using the `libgsoap++` library: simply compile
 `stdsoap2.cpp` together with the above.
-
 
 Usage
 -----

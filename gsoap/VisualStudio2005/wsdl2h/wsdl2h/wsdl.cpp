@@ -557,7 +557,7 @@ void wsdl__definitions::builtinElement(const char *element)
 void wsdl__definitions::builtinElements(const SetOfString& elements)
 {
   for (SetOfString::const_iterator el = elements.begin(); el != elements.end(); ++el)
-   builtinElementSet.insert(*el);
+    builtinElementSet.insert(*el);
 }
 
 void wsdl__definitions::builtinAttribute(const char *attribute)
@@ -1803,12 +1803,14 @@ istream &operator>>(istream &i, wsdl__definitions &e)
 
 extern "C" {
 
-
 int warn_ignore(struct soap *soap, const char *tag)
 {
   // We don't warn if the omitted element was an annotation or a documentation in an unexpected place
-  if (soap->mustUnderstand)
-    fprintf(stderr, "Error: element '%s' at level %d must be understood\n", tag, soap->level);
+  if (!Mflag && soap->mustUnderstand)
+  {
+    fprintf(stderr, "\nError: must understand element '%s' at level %d with wsdl:required='true'. Suppress this error with -M\n", tag, soap->level);
+    return soap->error = SOAP_MUSTUNDERSTAND;
+  }
   if (!Wflag
    && soap_match_tag(soap, tag, "xs:annotation")
    && soap_match_tag(soap, tag, "xs:documentation")
