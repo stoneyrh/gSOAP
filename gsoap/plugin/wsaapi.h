@@ -55,10 +55,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 extern "C" {
 #endif
 
-/** plugin identification for plugin registry */
+/** Plugin identification for plugin registry */
 #define SOAP_WSA_ID "SOAP-WSA-1.3"
 
-/** plugin identification for plugin registry */
+/** Plugin identification for plugin registry */
 extern const char soap_wsa_id[];
 
 extern const char *soap_wsa_noneURI;
@@ -84,7 +84,6 @@ extern const char *soap_wsa_faultAction;
 #endif
 
 /**
-@struct soap_wsa_data
 @brief plugin data to override callbacks
 */
 struct soap_wsa_data
@@ -98,41 +97,41 @@ struct soap_wsa_data
   int (*fdisconnect)(struct soap*);
 };
 
-int soap_wsa(struct soap *soap, struct soap_plugin *p, void *arg);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa(struct soap *soap, struct soap_plugin *p, void *arg);
 
-const char *soap_wsa_rand_uuid(struct soap *soap);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsa_rand_uuid(struct soap *soap);
 
-int soap_wsa_request(struct soap *soap, const char *id, const char *to, const char *action);
-int soap_wsa_add_From(struct soap *soap, const char *endpoint);
-int soap_wsa_add_NoReply(struct soap *soap);
-int soap_wsa_add_ReplyTo(struct soap *soap, const char *endpoint);
-int soap_wsa_add_FaultTo(struct soap *soap, const char *endpoint);
-int soap_wsa_add_RelatesTo(struct soap *soap, const char *endpoint);
-const char *soap_wsa_From(struct soap *soap);
-const char *soap_wsa_ReplyTo(struct soap *soap);
-const char *soap_wsa_FaultTo(struct soap *soap);
-const char *soap_wsa_RelatesTo(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_request(struct soap *soap, const char *id, const char *to, const char *action);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_add_From(struct soap *soap, const char *endpoint);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_add_NoReply(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_add_ReplyTo(struct soap *soap, const char *endpoint);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_add_FaultTo(struct soap *soap, const char *endpoint);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_add_RelatesTo(struct soap *soap, const char *endpoint);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsa_From(struct soap *soap);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsa_ReplyTo(struct soap *soap);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsa_FaultTo(struct soap *soap);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsa_RelatesTo(struct soap *soap);
 
-int soap_wsa_check(struct soap *soap);
-int soap_wsa_reply(struct soap *soap, const char *id, const char *action);
-int soap_wsa_fault_subcode(struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail);
-int soap_wsa_fault_subcode_action(struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action);
-int soap_wsa_sender_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
-int soap_wsa_sender_fault_subcode_action(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action);
-int soap_wsa_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
-int soap_wsa_receiver_fault_subcode_action(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action);
-int soap_wsa_sender_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
-int soap_wsa_receiver_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_check(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_reply(struct soap *soap, const char *id, const char *action);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_fault_subcode(struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_fault_subcode_action(struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_sender_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_sender_fault_subcode_action(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_receiver_fault_subcode_action(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_sender_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_receiver_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
 
 #if defined(SOAP_WSA_2005)
-int soap_wsa_check_fault(struct soap *soap, SOAP_WSA(FaultCodesType) *fault, const char **info);
-int soap_wsa_error(struct soap *soap, SOAP_WSA(FaultCodesType) fault, const char *info);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_check_fault(struct soap *soap, SOAP_WSA(FaultCodesType) *fault, const char **info);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_error(struct soap *soap, SOAP_WSA(FaultCodesType) fault, const char *info);
 #elif defined(SOAP_WSA_2003)
-int soap_wsa_check_fault(struct soap *soap, char **fault);
-int soap_wsa_error(struct soap *soap, const char *fault);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_check_fault(struct soap *soap, char **fault);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_error(struct soap *soap, const char *fault);
 #else
-int soap_wsa_check_fault(struct soap *soap, SOAP_WSA(FaultSubcodeValues) *fault);
-int soap_wsa_error(struct soap *soap, SOAP_WSA(FaultSubcodeValues) fault);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_check_fault(struct soap *soap, SOAP_WSA(FaultSubcodeValues) *fault);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsa_error(struct soap *soap, SOAP_WSA(FaultSubcodeValues) fault);
 #endif
 
 #ifdef __cplusplus

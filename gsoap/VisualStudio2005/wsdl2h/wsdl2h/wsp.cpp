@@ -593,7 +593,7 @@ void wsp__Content::generate(Service& service, Types& types, int indent) const
     fprintf(stream, "%s- WS-Addressing Anonymous Responses\n", tabs);
   else if (wsam__NonAnonymousResponses)
     fprintf(stream, "%s- WS-Addressing NonAnonymous Responses\n", tabs);
-  // WS-ReliableMessaging Policy
+  // WS-ReliableMessaging Policy 2007
   if (wsrmp__RMAssertion_)
   {
     fprintf(stream, "%s- WS-ReliableMessaging%s is used\n", tabs, wsrmp__RMAssertion_->Optional ? " (optional)" : wsrmp__RMAssertion_->Ignorable ? " (ignorable)" : "");
@@ -623,6 +623,37 @@ void wsp__Content::generate(Service& service, Types& types, int indent) const
   if (wsrmp__ExactlyOnce)
     fprintf(stream, "%s- Exactly Once\n", tabs);
   if (wsrmp__InOrder)
+    fprintf(stream, "%s- In Order\n", tabs);
+  // WS-ReliableMessaging Policy 2005
+  if (wsrmp5__RMAssertion_)
+  {
+    fprintf(stream, "%s- WS-ReliableMessaging%s is used\n", tabs, wsrmp5__RMAssertion_->Optional ? " (optional)" : wsrmp5__RMAssertion_->Ignorable ? " (ignorable)" : "");
+    if (wsrmp5__RMAssertion_->InactivityTimeout && wsrmp5__RMAssertion_->InactivityTimeout->Milliseconds)
+      fprintf(stream, "%s  - Inactivity Timeout = %s (ms)\n", tabs, wsrmp5__RMAssertion_->InactivityTimeout->Milliseconds);
+    if (wsrmp5__RMAssertion_->BaseRetransmissionInterval && wsrmp5__RMAssertion_->BaseRetransmissionInterval->Milliseconds)
+      fprintf(stream, "%s  - Base Retransmission Interval = %s (ms)\n", tabs, wsrmp5__RMAssertion_->BaseRetransmissionInterval->Milliseconds);
+    if (wsrmp5__RMAssertion_->AcknowledgementInterval && wsrmp5__RMAssertion_->AcknowledgementInterval->Milliseconds)
+      fprintf(stream, "%s  - Acknowledgement Interval = %s (ms)\n", tabs, wsrmp5__RMAssertion_->AcknowledgementInterval->Milliseconds);
+    if (wsrmp5__RMAssertion_->ExponentialBackoff)
+      fprintf(stream, "%s  - ExponentialBackoff\n", tabs);
+    if (wsrmp5__RMAssertion_->Policy)
+      wsrmp5__RMAssertion_->Policy->generate(service, types, indent + 1);
+    service.add_import("wsrm5.h");
+  }
+  if (wsrmp5__DeliveryAssurance)
+  {
+    fprintf(stream, "%s- WS-ReliableMessaging Delivery Assurance%s:\n", tabs, wsrmp5__DeliveryAssurance->Optional ? " (optional)" : wsrmp5__DeliveryAssurance->Ignorable ? " (ignorable)" : "");
+    if (wsrmp5__DeliveryAssurance->Policy)
+      wsrmp5__DeliveryAssurance->Policy->generate(service, types, indent + 1);
+    service.add_import("wsrm5.h");
+  }
+  if (wsrmp5__AtLeastOnce)
+    fprintf(stream, "%s- At Least Once\n", tabs);
+  if (wsrmp5__AtMostOnce)
+    fprintf(stream, "%s- At Most Once\n", tabs);
+  if (wsrmp5__ExactlyOnce)
+    fprintf(stream, "%s- Exactly Once\n", tabs);
+  if (wsrmp5__InOrder)
     fprintf(stream, "%s- In Order\n", tabs);
   // All else
   for (vector<_XML>::const_iterator x = __any.begin(); x != __any.end(); ++x)

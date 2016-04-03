@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">mq.c File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -80,23 +80,23 @@ Functions</h2></td></tr>
 <tr class="separator:ab818b02228466e8ddeeb8fc2c9d35403"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a448068c3eeee201d750f9c817a176e17"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#a448068c3eeee201d750f9c817a176e17">soap_mq_set</a> (struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a> *msg)</td></tr>
 <tr class="separator:a448068c3eeee201d750f9c817a176e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a930b4506128e5ff3aa42758845a36376"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#a930b4506128e5ff3aa42758845a36376">soap_mq</a> (struct soap *soap, struct soap_plugin *p, void *arg)</td></tr>
-<tr class="separator:a930b4506128e5ff3aa42758845a36376"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a077e02f6875be5be30276f6d4fc36daa"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#a077e02f6875be5be30276f6d4fc36daa">soap_mq_queue</a> (struct soap *soap)</td></tr>
-<tr class="memdesc:a077e02f6875be5be30276f6d4fc36daa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new queue structure allocated in the current context. Will be deallocated with soap_end(soap). Use <a class="el" href="mq_8c.html#a2dc794d667173b3076935a1218deeef2" title="Receive message from socket and queue it at the end of the queue. ">soap_mq_get()</a> to receive a message from the current socket to add to the queue.  <a href="#a077e02f6875be5be30276f6d4fc36daa">More...</a><br /></td></tr>
-<tr class="separator:a077e02f6875be5be30276f6d4fc36daa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2dc794d667173b3076935a1218deeef2"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#a2dc794d667173b3076935a1218deeef2">soap_mq_get</a> (struct soap *soap, struct <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a> *mq)</td></tr>
-<tr class="memdesc:a2dc794d667173b3076935a1218deeef2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive message from socket and queue it at the end of the queue.  <a href="#a2dc794d667173b3076935a1218deeef2">More...</a><br /></td></tr>
-<tr class="separator:a2dc794d667173b3076935a1218deeef2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a966ab9b1d4cd5fe6afa53f803b1f708d"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#a966ab9b1d4cd5fe6afa53f803b1f708d">soap_mq_begin</a> (struct <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a> *mq)</td></tr>
-<tr class="memdesc:a966ab9b1d4cd5fe6afa53f803b1f708d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get first message in queue. Use msg-&gt;soap to invoke service from the queued message, as in soap_serve(&amp;msg-&gt;soap).  <a href="#a966ab9b1d4cd5fe6afa53f803b1f708d">More...</a><br /></td></tr>
-<tr class="separator:a966ab9b1d4cd5fe6afa53f803b1f708d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0bc759b73b9e46764e2be0352631a6a7"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#a0bc759b73b9e46764e2be0352631a6a7">soap_mq_next</a> (struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a> *msg)</td></tr>
-<tr class="memdesc:a0bc759b73b9e46764e2be0352631a6a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get next message in queue. Use msg-&gt;soap to invoke service from the queued message, as in soap_serve(&amp;msg-&gt;soap).  <a href="#a0bc759b73b9e46764e2be0352631a6a7">More...</a><br /></td></tr>
-<tr class="separator:a0bc759b73b9e46764e2be0352631a6a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed4394002c7eab20bfb412a1247dfb5b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#aed4394002c7eab20bfb412a1247dfb5b">soap_mq_del</a> (struct <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a> *mq, struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a> *msg)</td></tr>
-<tr class="memdesc:aed4394002c7eab20bfb412a1247dfb5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete message from queue, e.g. after processing it. Delete entire queue when msg==NULL. Note: structures will be deallocated with deallocation with soap_end().  <a href="#aed4394002c7eab20bfb412a1247dfb5b">More...</a><br /></td></tr>
-<tr class="separator:aed4394002c7eab20bfb412a1247dfb5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32f2ad1c3c651392cb497fa0534f7793"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#a32f2ad1c3c651392cb497fa0534f7793">soap_mq</a> (struct soap *soap, struct soap_plugin *p, void *arg)</td></tr>
+<tr class="separator:a32f2ad1c3c651392cb497fa0534f7793"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4229c48976d050769c40495fb9281d2"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#ab4229c48976d050769c40495fb9281d2">soap_mq_queue</a> (struct soap *soap)</td></tr>
+<tr class="memdesc:ab4229c48976d050769c40495fb9281d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new queue structure allocated in the current context. Will be deallocated with soap_end(soap). Use <a class="el" href="mq_8c.html#a611b2a210304d6f60c628e443ff90b92" title="Receive message from socket and queue it at the end of the queue. ">soap_mq_get()</a> to receive a message from the current socket to add to the queue.  <a href="#ab4229c48976d050769c40495fb9281d2">More...</a><br /></td></tr>
+<tr class="separator:ab4229c48976d050769c40495fb9281d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a611b2a210304d6f60c628e443ff90b92"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#a611b2a210304d6f60c628e443ff90b92">soap_mq_get</a> (struct soap *soap, struct <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a> *mq)</td></tr>
+<tr class="memdesc:a611b2a210304d6f60c628e443ff90b92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive message from socket and queue it at the end of the queue.  <a href="#a611b2a210304d6f60c628e443ff90b92">More...</a><br /></td></tr>
+<tr class="separator:a611b2a210304d6f60c628e443ff90b92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae62edbe024c53494a7e67bdc07d548d3"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#ae62edbe024c53494a7e67bdc07d548d3">soap_mq_begin</a> (struct <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a> *mq)</td></tr>
+<tr class="memdesc:ae62edbe024c53494a7e67bdc07d548d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get first message in queue. Use msg-&gt;soap to invoke service from the queued message, as in soap_serve(&amp;msg-&gt;soap).  <a href="#ae62edbe024c53494a7e67bdc07d548d3">More...</a><br /></td></tr>
+<tr class="separator:ae62edbe024c53494a7e67bdc07d548d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b6ef0b60fe79adb8e08fcad48407fb7"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#a2b6ef0b60fe79adb8e08fcad48407fb7">soap_mq_next</a> (struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a> *msg)</td></tr>
+<tr class="memdesc:a2b6ef0b60fe79adb8e08fcad48407fb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get next message in queue. Use msg-&gt;soap to invoke service from the queued message, as in soap_serve(&amp;msg-&gt;soap).  <a href="#a2b6ef0b60fe79adb8e08fcad48407fb7">More...</a><br /></td></tr>
+<tr class="separator:a2b6ef0b60fe79adb8e08fcad48407fb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73311b8398b32bcf10071add7ef91fb9"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mq_8c.html#a73311b8398b32bcf10071add7ef91fb9">soap_mq_del</a> (struct <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a> *mq, struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a> *msg)</td></tr>
+<tr class="memdesc:a73311b8398b32bcf10071add7ef91fb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete message from queue, e.g. after processing it. Delete entire queue when msg==NULL. Note: structures will be deallocated with deallocation with soap_end().  <a href="#a73311b8398b32bcf10071add7ef91fb9">More...</a><br /></td></tr>
+<tr class="separator:a73311b8398b32bcf10071add7ef91fb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -104,12 +104,12 @@ Variables</h2></td></tr>
 <tr class="separator:a20d6f17af7aee5cf23b9ffc2a6011a61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a930b4506128e5ff3aa42758845a36376"></a>
+<a class="anchor" id="a32f2ad1c3c651392cb497fa0534f7793"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int soap_mq </td>
+          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_mq </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -137,12 +137,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a966ab9b1d4cd5fe6afa53f803b1f708d"></a>
+<a class="anchor" id="ae62edbe024c53494a7e67bdc07d548d3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a>* soap_mq_begin </td>
+          <td class="memname">SOAP_FMAC1 struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a>* SOAP_FMAC2 soap_mq_begin </td>
           <td>(</td>
           <td class="paramtype">struct <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a> *&#160;</td>
           <td class="paramname"><em>mq</em></td><td>)</td>
@@ -154,7 +154,7 @@ Variables</h2></td></tr>
 <p>Get first message in queue. Use msg-&gt;soap to invoke service from the queued message, as in soap_serve(&amp;msg-&gt;soap). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">mq</td><td>pointer to the message queue structure created by <a class="el" href="mq_8c.html#a077e02f6875be5be30276f6d4fc36daa" title="Create a new queue structure allocated in the current context. Will be deallocated with soap_end(soap...">soap_mq_queue()</a> </td></tr>
+    <tr><td class="paramname">mq</td><td>pointer to the message queue structure created by <a class="el" href="mq_8c.html#ab4229c48976d050769c40495fb9281d2" title="Create a new queue structure allocated in the current context. Will be deallocated with soap_end(soap...">soap_mq_queue()</a> </td></tr>
   </table>
   </dd>
 </dl>
@@ -162,12 +162,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aed4394002c7eab20bfb412a1247dfb5b"></a>
+<a class="anchor" id="a73311b8398b32bcf10071add7ef91fb9"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void soap_mq_del </td>
+          <td class="memname">SOAP_FMAC1 void SOAP_FMAC2 soap_mq_del </td>
           <td>(</td>
           <td class="paramtype">struct <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a> *&#160;</td>
           <td class="paramname"><em>mq</em>, </td>
@@ -231,12 +231,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a2dc794d667173b3076935a1218deeef2"></a>
+<a class="anchor" id="a611b2a210304d6f60c628e443ff90b92"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a>* soap_mq_get </td>
+          <td class="memname">SOAP_FMAC1 struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a>* SOAP_FMAC2 soap_mq_get </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -259,7 +259,7 @@ Variables</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>current context </td></tr>
-    <tr><td class="paramname">mq</td><td>pointer to the message queue structure created by <a class="el" href="mq_8c.html#a077e02f6875be5be30276f6d4fc36daa" title="Create a new queue structure allocated in the current context. Will be deallocated with soap_end(soap...">soap_mq_queue()</a> </td></tr>
+    <tr><td class="paramname">mq</td><td>pointer to the message queue structure created by <a class="el" href="mq_8c.html#ab4229c48976d050769c40495fb9281d2" title="Create a new queue structure allocated in the current context. Will be deallocated with soap_end(soap...">soap_mq_queue()</a> </td></tr>
   </table>
   </dd>
 </dl>
@@ -301,12 +301,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a0bc759b73b9e46764e2be0352631a6a7"></a>
+<a class="anchor" id="a2b6ef0b60fe79adb8e08fcad48407fb7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a>* soap_mq_next </td>
+          <td class="memname">SOAP_FMAC1 struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a>* SOAP_FMAC2 soap_mq_next </td>
           <td>(</td>
           <td class="paramtype">struct <a class="el" href="structsoap__mq__msg.html">soap_mq_msg</a> *&#160;</td>
           <td class="paramname"><em>msg</em></td><td>)</td>
@@ -326,12 +326,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a077e02f6875be5be30276f6d4fc36daa"></a>
+<a class="anchor" id="ab4229c48976d050769c40495fb9281d2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">struct <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a>* <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a> </td>
+          <td class="memname">SOAP_FMAC1 struct <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a>* SOAP_FMAC2 <a class="el" href="structsoap__mq__queue.html">soap_mq_queue</a> </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em></td><td>)</td>
@@ -340,7 +340,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Create a new queue structure allocated in the current context. Will be deallocated with soap_end(soap). Use <a class="el" href="mq_8c.html#a2dc794d667173b3076935a1218deeef2" title="Receive message from socket and queue it at the end of the queue. ">soap_mq_get()</a> to receive a message from the current socket to add to the queue. </p>
+<p>Create a new queue structure allocated in the current context. Will be deallocated with soap_end(soap). Use <a class="el" href="mq_8c.html#a611b2a210304d6f60c628e443ff90b92" title="Receive message from socket and queue it at the end of the queue. ">soap_mq_get()</a> to receive a message from the current socket to add to the queue. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>current context </td></tr>
@@ -458,7 +458,7 @@ Variables</h2></td></tr>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 20:01:49 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Mar 29 2016 16:00:21 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

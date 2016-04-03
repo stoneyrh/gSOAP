@@ -1,9 +1,9 @@
 /*
-	wsddapi.c
+        wsddapi.c
 
-	WS-Discovery 1.0 and 1.1 (WSDD) plugin API
+        WS-Discovery 1.0 and 1.1 (WSDD) plugin API
 
-	See gsoap/doc/wsdd for the WSDD plugin user guide.
+        See gsoap/doc/wsdd for the WSDD plugin user guide.
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc., All Rights Reserved.
@@ -135,7 +135,8 @@ periodically polling the port as shown:
     struct soap *soap = soap_new();
     soap->user = (void*)&my_state;
     if (!soap_valid_socket(soap_bind(soap, port, 100)))
-    { soap_print_fault(soap, stderr);
+    {
+      soap_print_fault(soap, stderr);
       exit(0);
     }
 
@@ -321,22 +322,28 @@ soapcpp2 option `-i`):
 
 @code
     int wsddService::Hello(struct wsdd__HelloType *hello)
-    { return __wsdd__Hello(this->soap, hello);
+    {
+      return __wsdd__Hello(this->soap, hello);
     }
-    int wsddService::Bye(struct wsdd__ByeType *bye
-    { return __wsdd__Bye(this->soap, bye);
+    int wsddService::Bye(struct wsdd__ByeType *bye)
+    {
+      return __wsdd__Bye(this->soap, bye);
     }
     int wsddService::Probe(struct wsdd__ProbeType *probe)
-    { return __wsdd__Probe(this->soap, probe);
+    {
+      return __wsdd__Probe(this->soap, probe);
     }
     int wsddService::ProbeMatches(struct wsdd__ProbeMatchesType *matches)
-    { return __wsdd__ProbeMatches(this->soap, matches);
+    {
+      return __wsdd__ProbeMatches(this->soap, matches);
     }
     int wsddService::Resolve(struct wsdd__ResolveType *resolve)
-    { return __wsdd__Resolve(this->soap, resolve);
+    {
+      return __wsdd__Resolve(this->soap, resolve);
     }
     int wsddService::ResolveProbeMatches(struct wsdd__ResolveMatchesType *matches)
-    { return __wsdd__ResolveMatches(this->soap, matches);
+    {
+      return __wsdd__ResolveMatches(this->soap, matches);
     }
 @endcode
 
@@ -351,7 +358,7 @@ side:
 @code
     if (soap_begin_serve(service.soap) == SOAP_OK)
       if (service.dispatch() == SOAP_NO_METHOD)
-	soap_serve_request(service.soap);
+        soap_serve_request(service.soap);
 @endcode
 
 where the `service` object is an instance of the application services generated
@@ -399,7 +406,7 @@ const char *to_ts_URL = "urn:docs-oasis-open-org:ws-dd:ns:discovery:2009:01";
 
 /******************************************************************************\
  *
- *	WS-Discovery AppSequence State
+ *      WS-Discovery AppSequence State
  *
 \******************************************************************************/
 
@@ -422,7 +429,7 @@ static void soap_wsdd_delay(struct soap*);
 
 /******************************************************************************\
  *
- *	WS-Discovery Outbound Messages
+ *      WS-Discovery Outbound Messages
  *
 \******************************************************************************/
 
@@ -450,7 +457,9 @@ Hello is a one-way message sent by a Target Service to announce its
 availability when it joins the network. It is also sent by a Discovery Proxy to
 reduce multicast traffic on an ad hoc network.
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsdd_Hello(struct soap *soap, soap_wsdd_mode mode, const char *endpoint, const char *MessageID, const char *RelatesTo, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion)
 {
   struct wsdd__HelloType req;
@@ -498,6 +507,8 @@ soap_wsdd_Hello(struct soap *soap, soap_wsdd_mode mode, const char *endpoint, co
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 /**
 @fn int soap_wsdd_Bye(struct soap *soap, soap_wsdd_mode mode, const char *endpoint, const char *MessageID, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion)
 @brief TS or DP Bye message to leave a network.
@@ -516,7 +527,9 @@ soap_wsdd_Hello(struct soap *soap, soap_wsdd_mode mode, const char *endpoint, co
 Bye is a one-way message sent by a Target Service to announce its
 unavailability as a best effort when it leaves the network.
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsdd_Bye(struct soap *soap, soap_wsdd_mode mode, const char *endpoint, const char *MessageID, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion)
 {
   struct wsdd__ByeType req;
@@ -563,6 +576,8 @@ soap_wsdd_Bye(struct soap *soap, soap_wsdd_mode mode, const char *endpoint, cons
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 /**
 @fn int soap_wsdd_Probe(struct soap *soap, soap_wsdd_mode mode, soap_wsdd_to to, const char *endpoint, const char *MessageID, const char *ReplyTo, const char *Types, const char *Scopes, const char *MatchBy)
 @brief Client Probe message to a TS or DP.
@@ -583,7 +598,9 @@ Target Services. The matches will be delivered to @ref wsdd_event_ProbeMatches
 when @ref soap_wsdd_listen receives a ProbeMatch response. The RelatesTo of the
 ProbeMatches is the MessageID of the Probe.
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsdd_Probe(struct soap *soap, soap_wsdd_mode mode, soap_wsdd_to to, const char *endpoint, const char *MessageID, const char *ReplyTo, const char *Types, const char *Scopes, const char *MatchBy)
 {
   unsigned int InstanceId = 0;
@@ -658,6 +675,8 @@ soap_wsdd_Probe(struct soap *soap, soap_wsdd_mode mode, soap_wsdd_to to, const c
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 /**
 @fn int soap_wsdd_Resolve(struct soap *soap, soap_wsdd_mode mode, soap_wsdd_to to, const char *endpoint, const char *MessageID, const char *ReplyTo, const char *EndpointReference)
 @brief Client Resolve message to a TS or DP.
@@ -676,7 +695,9 @@ The matches will be delivered to @ref wsdd_event_ResolveMatches when @ref
 soap_wsdd_listen receives a ResolveMatch response. The RelatesTo of the
 ResolveMatches is the MessageID of the Resolve.
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsdd_Resolve(struct soap *soap, soap_wsdd_mode mode, soap_wsdd_to to, const char *endpoint, const char *MessageID, const char *ReplyTo, const char *EndpointReference)
 {
   unsigned int InstanceId = 0;
@@ -748,16 +769,23 @@ soap_wsdd_Resolve(struct soap *soap, soap_wsdd_mode mode, soap_wsdd_to to, const
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 /**
 @fn void soap_wsdd_init_ProbeMatches(struct soap *soap, struct wsdd__ProbeMatchesType *matches)
 @brief Initalize the probe matches container.
 @param soap context
 @param matches the container with matches to initialize
 */
+SOAP_FMAC1
 void
+SOAP_FMAC2
 soap_wsdd_init_ProbeMatches(struct soap *soap, struct wsdd__ProbeMatchesType *matches)
-{ soap_default_wsdd__ProbeMatchesType(soap, matches);
+{
+  soap_default_wsdd__ProbeMatchesType(soap, matches);
 }
+
+/******************************************************************************/
 
 /**
 @fn int soap_wsdd_add_ProbeMatch(struct soap *soap, struct wsdd__ProbeMatchesType *matches, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion)
@@ -777,7 +805,9 @@ soap_wsdd_init_ProbeMatches, then use this function to add each match. The
 container is deallocated with soap_end(soap) and can be initialized again
 (without leaks).
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsdd_add_ProbeMatch(struct soap *soap, struct wsdd__ProbeMatchesType *matches, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion)
 {
   int n = 0, k = matches->__sizeProbeMatch;
@@ -823,6 +853,8 @@ soap_wsdd_add_ProbeMatch(struct soap *soap, struct wsdd__ProbeMatchesType *match
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 /**
 @fn int soap_wsdd_ProbeMatches(struct soap *soap, const char *endpoint, const char *MessageID, const char *RelatesTo, const char *To, struct wsdd__ProbeMatchesType *matches)
 @brief TS or DP ProbeMatches message.
@@ -839,7 +871,9 @@ Service, a Scope in which the Target Service resides, both, or simply all
 Target Services. The Target Server(s) or Discovery Proxy responds by sending
 ProbeMatches to the Client.
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsdd_ProbeMatches(struct soap *soap, const char *endpoint, const char *MessageID, const char *RelatesTo, const char *To, struct wsdd__ProbeMatchesType *matches)
 {
   const char *Action = SOAP_NAMESPACE_OF_wsdd"/ProbeMatches";
@@ -862,6 +896,8 @@ soap_wsdd_ProbeMatches(struct soap *soap, const char *endpoint, const char *Mess
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 /**
 @fn int soap_wsdd_ResolveMatches(struct soap *soap, const char *endpoint, const char *MessageID, const char *RelatesTo, const char *To, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion)
 @brief TS or DP ResolveMatches message.
@@ -882,7 +918,9 @@ A Client sends a resolve to locate a Target Service, i.e., to retrieve its
 transport address(es). The Target Server(s) or Discovery Proxy responds by
 sending ResolveMatches to the Client.
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsdd_ResolveMatches(struct soap *soap, const char *endpoint, const char *MessageID, const char *RelatesTo, const char *To, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion)
 {
   struct wsdd__ResolveMatchesType res;
@@ -928,7 +966,7 @@ soap_wsdd_ResolveMatches(struct soap *soap, const char *endpoint, const char *Me
 
 /******************************************************************************\
  *
- *	WS-Discovery Serving Inbound Messages
+ *      WS-Discovery Serving Inbound Messages
  *
 \******************************************************************************/
 
@@ -946,7 +984,9 @@ Use soap->user to pass a pointer to a state object that the event hanlders can
 use. The timeout allows a Client to periodically poll the port for messages. A
 value of zero will loop the listener forever or until an error occurs.
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsdd_listen(struct soap *soap, int timeout)
 {
   soap->accept_timeout = soap->recv_timeout = soap->send_timeout = timeout;
@@ -985,7 +1025,11 @@ soap_wsdd_listen(struct soap *soap, int timeout)
   } 
 }
 
+/******************************************************************************/
+
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsdd_serve_request(struct soap *soap)
 {
   soap_peek_element(soap);
@@ -1006,117 +1050,141 @@ soap_wsdd_serve_request(struct soap *soap)
   return soap_closesock(soap);
 }
 
+/******************************************************************************/
+
 #ifdef __cplusplus
 }
 #endif
 
+/******************************************************************************/
+
 static int
 soap_wsdd_serve___wsdd__Hello(struct soap *soap)
-{	struct __wsdd__Hello soap_tmp___wsdd__Hello;
-	soap_default___wsdd__Hello(soap, &soap_tmp___wsdd__Hello);
-	soap->encodingStyle = NULL;
-	if (!soap_get___wsdd__Hello(soap, &soap_tmp___wsdd__Hello, "-wsdd:Hello", NULL))
-		return soap->error;
-	if (soap_body_end_in(soap)
-	 || soap_envelope_end_in(soap)
-	 || soap_end_recv(soap))
-		return soap->error;
-	soap->error = __wsdd__Hello(soap, soap_tmp___wsdd__Hello.wsdd__Hello);
-	if (soap->error)
-		return soap->error;
-	return soap_closesock(soap);
+{
+  struct __wsdd__Hello soap_tmp___wsdd__Hello;
+  soap_default___wsdd__Hello(soap, &soap_tmp___wsdd__Hello);
+  soap->encodingStyle = NULL;
+  if (!soap_get___wsdd__Hello(soap, &soap_tmp___wsdd__Hello, "-wsdd:Hello", NULL))
+    return soap->error;
+  if (soap_body_end_in(soap)
+   || soap_envelope_end_in(soap)
+   || soap_end_recv(soap))
+    return soap->error;
+  soap->error = __wsdd__Hello(soap, soap_tmp___wsdd__Hello.wsdd__Hello);
+  if (soap->error)
+    return soap->error;
+  return soap_closesock(soap);
 }
+
+/******************************************************************************/
 
 static int
 soap_wsdd_serve___wsdd__Bye(struct soap *soap)
-{	struct __wsdd__Bye soap_tmp___wsdd__Bye;
-	soap_default___wsdd__Bye(soap, &soap_tmp___wsdd__Bye);
-	soap->encodingStyle = NULL;
-	if (!soap_get___wsdd__Bye(soap, &soap_tmp___wsdd__Bye, "-wsdd:Bye", NULL))
-		return soap->error;
-	if (soap_body_end_in(soap)
-	 || soap_envelope_end_in(soap)
-	 || soap_end_recv(soap))
-		return soap->error;
-	soap->error = __wsdd__Bye(soap, soap_tmp___wsdd__Bye.wsdd__Bye);
-	if (soap->error)
-		return soap->error;
-	return soap_closesock(soap);
+{
+  struct __wsdd__Bye soap_tmp___wsdd__Bye;
+  soap_default___wsdd__Bye(soap, &soap_tmp___wsdd__Bye);
+  soap->encodingStyle = NULL;
+  if (!soap_get___wsdd__Bye(soap, &soap_tmp___wsdd__Bye, "-wsdd:Bye", NULL))
+    return soap->error;
+  if (soap_body_end_in(soap)
+   || soap_envelope_end_in(soap)
+   || soap_end_recv(soap))
+    return soap->error;
+  soap->error = __wsdd__Bye(soap, soap_tmp___wsdd__Bye.wsdd__Bye);
+  if (soap->error)
+    return soap->error;
+  return soap_closesock(soap);
 }
+
+/******************************************************************************/
 
 static int
 soap_wsdd_serve___wsdd__Probe(struct soap *soap)
-{	struct __wsdd__Probe soap_tmp___wsdd__Probe;
-	soap_default___wsdd__Probe(soap, &soap_tmp___wsdd__Probe);
-	soap->encodingStyle = NULL;
-	if (!soap_get___wsdd__Probe(soap, &soap_tmp___wsdd__Probe, "-wsdd:Probe", NULL))
-		return soap->error;
-	if (soap_body_end_in(soap)
-	 || soap_envelope_end_in(soap)
-	 || soap_end_recv(soap))
-		return soap->error;
-	soap->error = __wsdd__Probe(soap, soap_tmp___wsdd__Probe.wsdd__Probe);
-	if (soap->error)
-		return soap->error;
-	return soap_closesock(soap);
+{
+  struct __wsdd__Probe soap_tmp___wsdd__Probe;
+  soap_default___wsdd__Probe(soap, &soap_tmp___wsdd__Probe);
+  soap->encodingStyle = NULL;
+  if (!soap_get___wsdd__Probe(soap, &soap_tmp___wsdd__Probe, "-wsdd:Probe", NULL))
+    return soap->error;
+  if (soap_body_end_in(soap)
+   || soap_envelope_end_in(soap)
+   || soap_end_recv(soap))
+    return soap->error;
+  soap->error = __wsdd__Probe(soap, soap_tmp___wsdd__Probe.wsdd__Probe);
+  if (soap->error)
+    return soap->error;
+  return soap_closesock(soap);
 }
+
+/******************************************************************************/
 
 static int
 soap_wsdd_serve___wsdd__ProbeMatches(struct soap *soap)
-{	struct __wsdd__ProbeMatches soap_tmp___wsdd__ProbeMatches;
-	soap_default___wsdd__ProbeMatches(soap, &soap_tmp___wsdd__ProbeMatches);
-	soap->encodingStyle = NULL;
-	if (!soap_get___wsdd__ProbeMatches(soap, &soap_tmp___wsdd__ProbeMatches, "-wsdd:ProbeMatches", NULL))
-		return soap->error;
-	if (soap_body_end_in(soap)
-	 || soap_envelope_end_in(soap)
-	 || soap_end_recv(soap))
-		return soap->error;
-	soap->error = __wsdd__ProbeMatches(soap, soap_tmp___wsdd__ProbeMatches.wsdd__ProbeMatches);
-	if (soap->error)
-		return soap->error;
-	return soap_closesock(soap);
+{
+  struct __wsdd__ProbeMatches soap_tmp___wsdd__ProbeMatches;
+  soap_default___wsdd__ProbeMatches(soap, &soap_tmp___wsdd__ProbeMatches);
+  soap->encodingStyle = NULL;
+  if (!soap_get___wsdd__ProbeMatches(soap, &soap_tmp___wsdd__ProbeMatches, "-wsdd:ProbeMatches", NULL))
+    return soap->error;
+  if (soap_body_end_in(soap)
+   || soap_envelope_end_in(soap)
+   || soap_end_recv(soap))
+    return soap->error;
+  soap->error = __wsdd__ProbeMatches(soap, soap_tmp___wsdd__ProbeMatches.wsdd__ProbeMatches);
+  if (soap->error)
+    return soap->error;
+  return soap_closesock(soap);
 }
+
+/******************************************************************************/
 
 static int
 soap_wsdd_serve___wsdd__Resolve(struct soap *soap)
-{	struct __wsdd__Resolve soap_tmp___wsdd__Resolve;
-	soap_default___wsdd__Resolve(soap, &soap_tmp___wsdd__Resolve);
-	soap->encodingStyle = NULL;
-	if (!soap_get___wsdd__Resolve(soap, &soap_tmp___wsdd__Resolve, "-wsdd:Resolve", NULL))
-		return soap->error;
-	if (soap_body_end_in(soap)
-	 || soap_envelope_end_in(soap)
-	 || soap_end_recv(soap))
-		return soap->error;
-	soap->error = __wsdd__Resolve(soap, soap_tmp___wsdd__Resolve.wsdd__Resolve);
-	if (soap->error)
-		return soap->error;
-	return soap_closesock(soap);
+{
+  struct __wsdd__Resolve soap_tmp___wsdd__Resolve;
+  soap_default___wsdd__Resolve(soap, &soap_tmp___wsdd__Resolve);
+  soap->encodingStyle = NULL;
+  if (!soap_get___wsdd__Resolve(soap, &soap_tmp___wsdd__Resolve, "-wsdd:Resolve", NULL))
+    return soap->error;
+  if (soap_body_end_in(soap)
+   || soap_envelope_end_in(soap)
+   || soap_end_recv(soap))
+    return soap->error;
+  soap->error = __wsdd__Resolve(soap, soap_tmp___wsdd__Resolve.wsdd__Resolve);
+  if (soap->error)
+    return soap->error;
+  return soap_closesock(soap);
 }
+
+/******************************************************************************/
 
 static int
 soap_wsdd_serve___wsdd__ResolveMatches(struct soap *soap)
-{	struct __wsdd__ResolveMatches soap_tmp___wsdd__ResolveMatches;
-	soap_default___wsdd__ResolveMatches(soap, &soap_tmp___wsdd__ResolveMatches);
-	soap->encodingStyle = NULL;
-	if (!soap_get___wsdd__ResolveMatches(soap, &soap_tmp___wsdd__ResolveMatches, "-wsdd:ResolveMatches", NULL))
-		return soap->error;
-	if (soap_body_end_in(soap)
-	 || soap_envelope_end_in(soap)
-	 || soap_end_recv(soap))
-		return soap->error;
-	soap->error = __wsdd__ResolveMatches(soap, soap_tmp___wsdd__ResolveMatches.wsdd__ResolveMatches);
-	if (soap->error)
-		return soap->error;
-	return soap_closesock(soap);
+{
+  struct __wsdd__ResolveMatches soap_tmp___wsdd__ResolveMatches;
+  soap_default___wsdd__ResolveMatches(soap, &soap_tmp___wsdd__ResolveMatches);
+  soap->encodingStyle = NULL;
+  if (!soap_get___wsdd__ResolveMatches(soap, &soap_tmp___wsdd__ResolveMatches, "-wsdd:ResolveMatches", NULL))
+    return soap->error;
+  if (soap_body_end_in(soap)
+   || soap_envelope_end_in(soap)
+   || soap_end_recv(soap))
+    return soap->error;
+  soap->error = __wsdd__ResolveMatches(soap, soap_tmp___wsdd__ResolveMatches.wsdd__ResolveMatches);
+  if (soap->error)
+    return soap->error;
+  return soap_closesock(soap);
 }
+
+/******************************************************************************/
 
 /**
 @fn int __wsdd__Hello(struct soap *soap, struct wsdd__HelloType *Hello)
 @brief Internal WS-Discovery service operation.
 */
+SOAP_FMAC5
 int
+SOAP_FMAC6
 __wsdd__Hello(struct soap *soap, struct wsdd__HelloType *Hello)
 {
   unsigned int InstanceId = 0;
@@ -1180,11 +1248,15 @@ __wsdd__Hello(struct soap *soap, struct wsdd__HelloType *Hello)
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 /**
 @fn int __wsdd__Bye(struct soap *soap, struct wsdd__ByeType *Bye)
 @brief Internal WS-Discovery service operation.
 */
+SOAP_FMAC5
 int
+SOAP_FMAC6
 __wsdd__Bye(struct soap *soap, struct wsdd__ByeType *Bye)
 {
   unsigned int InstanceId = 0;
@@ -1248,6 +1320,8 @@ __wsdd__Bye(struct soap *soap, struct wsdd__ByeType *Bye)
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 static int
 soap_wsdd_http(struct soap *soap, const char *endpoint, const char *host, int port, const char *path, const char *action, size_t count)
 {
@@ -1255,11 +1329,15 @@ soap_wsdd_http(struct soap *soap, const char *endpoint, const char *host, int po
   return soap->fresponse(soap, SOAP_OK, count);
 }
 
+/******************************************************************************/
+
 /**
 @fn int __wsdd__Probe(struct soap *soap, struct wsdd__ProbeType *Probe)
 @brief Internal WS-Discovery service operation.
 */
+SOAP_FMAC5
 int
+SOAP_FMAC6
 __wsdd__Probe(struct soap *soap, struct wsdd__ProbeType *Probe)
 {
   struct wsdd__ProbeMatchesType ProbeMatches;
@@ -1320,11 +1398,15 @@ __wsdd__Probe(struct soap *soap, struct wsdd__ProbeType *Probe)
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 /**
 @fn int __wsdd__ProbeMatches(struct soap *soap, struct wsdd__ProbeMatchesType *ProbeMatches)
 @brief Internal WS-Discovery service operation.
 */
+SOAP_FMAC5
 int
+SOAP_FMAC6
 __wsdd__ProbeMatches(struct soap *soap, struct wsdd__ProbeMatchesType *ProbeMatches)
 {
   unsigned int InstanceId = 0;
@@ -1370,11 +1452,15 @@ __wsdd__ProbeMatches(struct soap *soap, struct wsdd__ProbeMatchesType *ProbeMatc
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 /**
 @fn int __wsdd__Resolve(struct soap *soap, struct wsdd__ResolveType *Resolve)
 @brief Internal WS-Discovery service operation.
 */
+SOAP_FMAC5
 int
+SOAP_FMAC6
 __wsdd__Resolve(struct soap *soap, struct wsdd__ResolveType *Resolve)
 {
   struct wsdd__ResolveMatchesType ResolveMatches;
@@ -1443,11 +1529,15 @@ __wsdd__Resolve(struct soap *soap, struct wsdd__ResolveType *Resolve)
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 /**
 @fn int __wsdd__ResolveMatches(struct soap *soap, struct wsdd__ResolveMatchesType *ResolveMatches)
 @brief Internal WS-Discovery service operation.
 */
+SOAP_FMAC5
 int
+SOAP_FMAC6
 __wsdd__ResolveMatches(struct soap *soap, struct wsdd__ResolveMatchesType *ResolveMatches)
 {
   unsigned int InstanceId = 0;
@@ -1496,7 +1586,7 @@ __wsdd__ResolveMatches(struct soap *soap, struct wsdd__ResolveMatchesType *Resol
 
 /******************************************************************************\
  *
- *	WS-Discovery AppSequence State
+ *      WS-Discovery AppSequence State
  *
 \******************************************************************************/
 
@@ -1509,7 +1599,9 @@ extern "C" {
 @brief Set the global AppSequence InstanceId that is used to populate messages
 @param[in] InstanceId
 */
+SOAP_FMAC1
 void
+SOAP_FMAC2
 soap_wsdd_set_InstanceId(unsigned int InstanceId)
 {
   MUTEX_LOCK(soap_wsdd_state);
@@ -1518,12 +1610,16 @@ soap_wsdd_set_InstanceId(unsigned int InstanceId)
   MUTEX_UNLOCK(soap_wsdd_state);
 }
 
+/******************************************************************************/
+
 /**
 @fn void soap_wsdd_set_SequenceId(const char *SequenceId)
 @brief Set the global AppSequence SequenceId that is used to populate messages
 @param[in] SequenceId
 */
+SOAP_FMAC1
 void
+SOAP_FMAC2
 soap_wsdd_set_SequenceId(const char *SequenceId)
 {
   MUTEX_LOCK(soap_wsdd_state);
@@ -1534,9 +1630,13 @@ soap_wsdd_set_SequenceId(const char *SequenceId)
   MUTEX_UNLOCK(soap_wsdd_state);
 }
 
+/******************************************************************************/
+
 #ifdef __cplusplus
 }
 #endif
+
+/******************************************************************************/
 
 static void
 soap_wsdd_set_AppSequence(struct soap *soap)
@@ -1555,12 +1655,16 @@ soap_wsdd_set_AppSequence(struct soap *soap)
   MUTEX_UNLOCK(soap_wsdd_state);
 }
 
+/******************************************************************************/
+
 static void
 soap_wsdd_reset_AppSequence(struct soap *soap)
 {
   if (soap->header)
     soap->header->wsdd__AppSequence = NULL;
 }
+
+/******************************************************************************/
 
 static void
 soap_wsdd_delay(struct soap *soap)
@@ -1569,3 +1673,5 @@ soap_wsdd_delay(struct soap *soap)
   useconds_t delay = 1000*((unsigned int)soap_random % SOAP_WSDD_APP_MAX_DELAY);
   usleep(delay);
 }
+
+/******************************************************************************/

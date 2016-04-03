@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WS-Addressing plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -217,7 +217,8 @@ Server-side Usage</h1>
 <p>A service operation implementation should use <code>soap_wsa_check</code> at the start of its execution to verify the validity of the WS-Addressing information headers in the SOAP request message. To allow response message to be automatically relayed based on the ReplyTo information header, the service operation should return <code>soap_wsa_reply</code> with an optional message UUID string and a mandatory response action string. The response action string is documented in the wsdl2h-generated .h file for this service operation.</p>
 <p>For example:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> ns__example(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">char</span> *in, <span class="keyword">struct</span> ns__exampleResponse *out)</div>
-<div class="line">{ <span class="keywordflow">if</span> (<a class="code" href="wsaapi_8h.html#a35f9b1c46ea38b271b8d26bf8b051640">soap_wsa_check</a>(soap))</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsaapi_8h.html#a35f9b1c46ea38b271b8d26bf8b051640">soap_wsa_check</a>(soap))</div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error;</div>
 <div class="line">  <span class="comment">// ... service logic</span></div>
 <div class="line">  <span class="keywordflow">return</span> <a class="code" href="wsaapi_8h.html#a54fda97d2591acd5e2385cc110a50b30">soap_wsa_reply</a>(soap, ResponseMessageID, ResponseAction);</div>
@@ -226,7 +227,8 @@ Server-side Usage</h1>
 <p>In case a Action must be associated with a SOAP Fault, use the <code>soap_wsa_sender_fault_subcode_action</code> and <code>soap_wsa_receiver_fault_subcode_action</code> functions to set the WS-Addressing Action (and HTTP SOAP Action header as well).</p>
 <p>For example, the following service operation illustrates the use of <code>soap_wsa_check</code> to verify and process WS-Addressing header blocks and <code>soap_wsa_reply</code> to enable responses to be relayed as per ReplyTo address in the WS-Addressing header:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> ns__example(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">char</span> *in, <span class="keyword">struct</span> ns__exampleResponse *out)</div>
-<div class="line">{ <span class="keywordflow">if</span> (<a class="code" href="wsaapi_8h.html#a35f9b1c46ea38b271b8d26bf8b051640">soap_wsa_check</a>(soap))</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsaapi_8h.html#a35f9b1c46ea38b271b8d26bf8b051640">soap_wsa_check</a>(soap))</div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error;</div>
 <div class="line">  <span class="comment">// ... service logic</span></div>
 <div class="line">  <span class="comment">// ... an error occurred, need to return fault possibly to fault service:</span></div>
@@ -248,12 +250,14 @@ HTTPS Server-side Usage</h1>
 <div class="line">  NULL,         <span class="comment">// file with random data to seed randomness</span></div>
 <div class="line">  <span class="stringliteral">&quot;myserver&quot;</span>    <span class="comment">// unique server identification for SSL session cache</span></div>
 <div class="line">))</div>
-<div class="line">{ soap_print_fault(soap, stderr);</div>
+<div class="line">{</div>
+<div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">  ...</div>
 <div class="line">}</div>
 <div class="line">soap-&gt;bind_flags = SO_REUSEADDR;</div>
 <div class="line"><span class="keywordflow">if</span> (!soap_valid_socket(soap_bind(soap, NULL, port, 100)))</div>
-<div class="line">{ soap_print_fault(soap, stderr);</div>
+<div class="line">{</div>
+<div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">  ...</div>
 <div class="line">}</div>
 </div><!-- fragment --><h1><a class="anchor" id="wsa_5"></a>
@@ -271,9 +275,10 @@ Implementing a Server for Handling ReplyTo Response Messages</h1>
 <div class="line"><span class="comment">//gsoap ns service method-action: exampleResult urn:example/examplePort/exampleResponse</span></div>
 <div class="line"><span class="keywordtype">int</span> ns__exampleResponse(<span class="keywordtype">char</span> *out, <span class="keywordtype">void</span>);</div>
 </div><!-- fragment --><p>Note that the action information is important, because it is used by the service dispatcher (assuming soapcpp2 option <code>-a</code> is used).</p>
-<p>The implementation in the server code uses <a class="el" href="wsaapi_8c.html#a35f9b1c46ea38b271b8d26bf8b051640" title="Checks the presence and validity of WS-Addressing information headers. ">soap_wsa_check()</a> to check the presense and validity of the WS-Addressing information header in the message. The <code>soap_send_empty_response</code> function should be used to return an acknowledgment HTTP header with "HTTP 202 ACCEPTED" to the sender:</p>
+<p>The implementation in the server code uses <a class="el" href="wsaapi_8c.html#acea5440a6af758896cdd73be65d275fc" title="Checks the presence and validity of WS-Addressing information headers. ">soap_wsa_check()</a> to check the presense and validity of the WS-Addressing information header in the message. The <code>soap_send_empty_response</code> function should be used to return an acknowledgment HTTP header with "HTTP 202 ACCEPTED" to the sender:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> ns__exampleResponse(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">char</span> *out)</div>
-<div class="line">{ <span class="keywordflow">if</span> (<a class="code" href="wsaapi_8h.html#a35f9b1c46ea38b271b8d26bf8b051640">soap_wsa_check</a>(soap))</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsaapi_8h.html#a35f9b1c46ea38b271b8d26bf8b051640">soap_wsa_check</a>(soap))</div>
 <div class="line">    <span class="keywordflow">return</span> soap_send_empty_response(soap, 500); <span class="comment">// HTTP 500 Internal Server Error</span></div>
 <div class="line">  <span class="comment">// ... service logic</span></div>
 <div class="line">  <span class="keywordflow">return</span> soap_send_empty_response(soap, SOAP_OK); <span class="comment">// HTTP 202 ACCEPTED</span></div>
@@ -285,7 +290,8 @@ Implementing a Server for Handling FaultTo Fault Messages</h1>
 <p>The fault operation in the WS-Addressing files (<a class="el" href="wsa5_8h.html">wsa5.h</a> etc.) is declared as follows (here shown for the 2004/08 standard):</p>
 <div class="fragment"><div class="line"><span class="comment">//gsoap SOAP_ENV service method-action: Fault http://schemas.xmlsoap.org/ws/2004/08/addressing/fault</span></div>
 <div class="line"><span class="keywordtype">int</span> <a class="code" href="wsa5_8h.html#af1f0af3d70354401b6969aa0b689a5dc">SOAP_ENV__Fault</a></div>
-<div class="line">(       _QName                       faultcode,             <span class="comment">// SOAP 1.1</span></div>
+<div class="line">(</div>
+<div class="line">        _QName                       faultcode,             <span class="comment">// SOAP 1.1</span></div>
 <div class="line">        <span class="keywordtype">char</span>                        *faultstring,           <span class="comment">// SOAP 1.1</span></div>
 <div class="line">        <span class="keywordtype">char</span>                        *faultactor,            <span class="comment">// SOAP 1.1</span></div>
 <div class="line">        <span class="keyword">struct</span> SOAP_ENV__Detail     *detail,                <span class="comment">// SOAP 1.1</span></div>
@@ -319,7 +325,7 @@ Implementing a Server for Handling FaultTo Fault Messages</h1>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 20:01:38 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Mar 29 2016 17:05:18 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

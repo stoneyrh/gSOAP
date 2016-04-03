@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">httpda.c File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -117,50 +117,50 @@ Functions</h2></td></tr>
 <tr class="separator:a6c6283a380bbf71f8faf872d74ce1316"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac2eaf9a8d733ed8bcd5286a6127ac654"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#ac2eaf9a8d733ed8bcd5286a6127ac654">http_da_calc_response</a> (struct soap *soap, struct soap_smd_data *smd_data, const char *alg, char HA1hex[65], const char *nonce, const char *ncount, const char *cnonce, const char *qop, const char *method, const char *uri, char entityHAhex[65], char response[65], char responseHA[32])</td></tr>
 <tr class="separator:ac2eaf9a8d733ed8bcd5286a6127ac654"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a193bd879015f573a6a6de4b3f03f70cc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a193bd879015f573a6a6de4b3f03f70cc">http_da</a> (struct soap *soap, struct soap_plugin *p, void *arg)</td></tr>
-<tr class="separator:a193bd879015f573a6a6de4b3f03f70cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2254e61e49fbe4674c2859da506b22b2"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a2254e61e49fbe4674c2859da506b22b2">http_da_md5</a> ()</td></tr>
-<tr class="memdesc:a2254e61e49fbe4674c2859da506b22b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use soap_register_plugin_arg(soap, http_da, http_da_md5()) for MD5 server-side challenge algorithm (not recommended).  <a href="#a2254e61e49fbe4674c2859da506b22b2">More...</a><br /></td></tr>
-<tr class="separator:a2254e61e49fbe4674c2859da506b22b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ee9c7c40a7fcf13b6832e973a614d5d"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a4ee9c7c40a7fcf13b6832e973a614d5d">http_da_md5_sess</a> ()</td></tr>
-<tr class="memdesc:a4ee9c7c40a7fcf13b6832e973a614d5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use soap_register_plugin_arg(soap, http_da, http_da_md5_sess()) for MD5-sess server-side challenge algorithm (not recommended).  <a href="#a4ee9c7c40a7fcf13b6832e973a614d5d">More...</a><br /></td></tr>
-<tr class="separator:a4ee9c7c40a7fcf13b6832e973a614d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6f6984a302ca1f2623cb019b36f0913"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#aa6f6984a302ca1f2623cb019b36f0913">http_da_sha256</a> ()</td></tr>
-<tr class="memdesc:aa6f6984a302ca1f2623cb019b36f0913"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use soap_register_plugin_arg(soap, http_da, http_da_sha256()) for MD5 server-side challenge algorithm (recommended).  <a href="#aa6f6984a302ca1f2623cb019b36f0913">More...</a><br /></td></tr>
-<tr class="separator:aa6f6984a302ca1f2623cb019b36f0913"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f211120938768c596a3faa4cf606488"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a5f211120938768c596a3faa4cf606488">http_da_sha256_sess</a> ()</td></tr>
-<tr class="memdesc:a5f211120938768c596a3faa4cf606488"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use soap_register_plugin_arg(soap, http_da, http_da_sha256_sess()) for MD5-sess server-side challenge algorithm (recommended).  <a href="#a5f211120938768c596a3faa4cf606488">More...</a><br /></td></tr>
-<tr class="separator:a5f211120938768c596a3faa4cf606488"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7e77da75a17abdfe310d3eb655f5ab8"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#ad7e77da75a17abdfe310d3eb655f5ab8">http_da_sha512_256</a> ()</td></tr>
-<tr class="memdesc:ad7e77da75a17abdfe310d3eb655f5ab8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use soap_register_plugin_arg(soap, http_da, http_da_sha512_256()) for MD5 server-side challenge algorithm (not yet supported).  <a href="#ad7e77da75a17abdfe310d3eb655f5ab8">More...</a><br /></td></tr>
-<tr class="separator:ad7e77da75a17abdfe310d3eb655f5ab8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0cf43b4a77a286a5e6334e7357ce49e1"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a0cf43b4a77a286a5e6334e7357ce49e1">http_da_sha512_256_sess</a> ()</td></tr>
-<tr class="memdesc:a0cf43b4a77a286a5e6334e7357ce49e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use soap_register_plugin_arg(soap, http_da, http_da_sha512_256_sess()) for MD5-sess server-side challenge algorithm (not yet supported).  <a href="#a0cf43b4a77a286a5e6334e7357ce49e1">More...</a><br /></td></tr>
-<tr class="separator:a0cf43b4a77a286a5e6334e7357ce49e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d48599051c3ae3dc61e56bd97deba7a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a4d48599051c3ae3dc61e56bd97deba7a">http_da_save</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info, const char *realm, const char *userid, const char *passwd)</td></tr>
-<tr class="memdesc:a4d48599051c3ae3dc61e56bd97deba7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the credentials to the digest store to use repeatedly for authentication.  <a href="#a4d48599051c3ae3dc61e56bd97deba7a">More...</a><br /></td></tr>
-<tr class="separator:a4d48599051c3ae3dc61e56bd97deba7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69acb5bfe6dfbbbeb69f0d991fcf6f0f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a69acb5bfe6dfbbbeb69f0d991fcf6f0f">http_da_proxy_save</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info, const char *realm, const char *userid, const char *passwd)</td></tr>
-<tr class="memdesc:a69acb5bfe6dfbbbeb69f0d991fcf6f0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the credentials to the digest store to use repeatedly for proxy authentication.  <a href="#a69acb5bfe6dfbbbeb69f0d991fcf6f0f">More...</a><br /></td></tr>
-<tr class="separator:a69acb5bfe6dfbbbeb69f0d991fcf6f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6bcb428607280dbe2b0dcc63742cda60"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a6bcb428607280dbe2b0dcc63742cda60">http_da_restore</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info)</td></tr>
-<tr class="memdesc:a6bcb428607280dbe2b0dcc63742cda60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the credentials from the digest store to use for authentication.  <a href="#a6bcb428607280dbe2b0dcc63742cda60">More...</a><br /></td></tr>
-<tr class="separator:a6bcb428607280dbe2b0dcc63742cda60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a508dfa526e88a5c3696c9a6aa5bc0800"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a508dfa526e88a5c3696c9a6aa5bc0800">http_da_proxy_restore</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info)</td></tr>
-<tr class="memdesc:a508dfa526e88a5c3696c9a6aa5bc0800"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the credentials from the digest store to use for proxy authentication.  <a href="#a508dfa526e88a5c3696c9a6aa5bc0800">More...</a><br /></td></tr>
-<tr class="separator:a508dfa526e88a5c3696c9a6aa5bc0800"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25230ec921c71e515fc4280991af6533"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a25230ec921c71e515fc4280991af6533">http_da_release</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info)</td></tr>
-<tr class="memdesc:a25230ec921c71e515fc4280991af6533"><td class="mdescLeft">&#160;</td><td class="mdescRight">Releases the digest store and frees memory.  <a href="#a25230ec921c71e515fc4280991af6533">More...</a><br /></td></tr>
-<tr class="separator:a25230ec921c71e515fc4280991af6533"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a130a4e7a9e318c649577c3ae2bc0665d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a130a4e7a9e318c649577c3ae2bc0665d">http_da_proxy_release</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info)</td></tr>
-<tr class="memdesc:a130a4e7a9e318c649577c3ae2bc0665d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Releases the digest store for proxy authentication and frees memory.  <a href="#a130a4e7a9e318c649577c3ae2bc0665d">More...</a><br /></td></tr>
-<tr class="separator:a130a4e7a9e318c649577c3ae2bc0665d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc8e72ee1c4d1dbb9c239fe1fff35ca2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#adc8e72ee1c4d1dbb9c239fe1fff35ca2">http_da_verify_post</a> (struct soap *soap, const char *passwd)</td></tr>
-<tr class="memdesc:adc8e72ee1c4d1dbb9c239fe1fff35ca2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies the password credentials at the server side when used in an HTTP POST service operation.  <a href="#adc8e72ee1c4d1dbb9c239fe1fff35ca2">More...</a><br /></td></tr>
-<tr class="separator:adc8e72ee1c4d1dbb9c239fe1fff35ca2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76264220d8bfbc627fee4caedd2ee4a0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a76264220d8bfbc627fee4caedd2ee4a0">http_da_verify_get</a> (struct soap *soap, const char *passwd)</td></tr>
-<tr class="memdesc:a76264220d8bfbc627fee4caedd2ee4a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies the password credentials at the server side when used in an HTTP GET service operation.  <a href="#a76264220d8bfbc627fee4caedd2ee4a0">More...</a><br /></td></tr>
-<tr class="separator:a76264220d8bfbc627fee4caedd2ee4a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26bfda7ff2ac0f7eff9972a3f82591a3"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a> (struct soap *soap, struct soap_plugin *p, void *arg)</td></tr>
+<tr class="separator:a26bfda7ff2ac0f7eff9972a3f82591a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d07ef5393a7e7e3932a6d1c52c2ae46"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a6d07ef5393a7e7e3932a6d1c52c2ae46">http_da_md5</a> ()</td></tr>
+<tr class="memdesc:a6d07ef5393a7e7e3932a6d1c52c2ae46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use soap_register_plugin_arg(soap, http_da, http_da_md5()) for MD5 server-side challenge algorithm (not recommended).  <a href="#a6d07ef5393a7e7e3932a6d1c52c2ae46">More...</a><br /></td></tr>
+<tr class="separator:a6d07ef5393a7e7e3932a6d1c52c2ae46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17a4da35da69672cb48a3794cd79af0d"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a17a4da35da69672cb48a3794cd79af0d">http_da_md5_sess</a> ()</td></tr>
+<tr class="memdesc:a17a4da35da69672cb48a3794cd79af0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use soap_register_plugin_arg(soap, http_da, http_da_md5_sess()) for MD5-sess server-side challenge algorithm (not recommended).  <a href="#a17a4da35da69672cb48a3794cd79af0d">More...</a><br /></td></tr>
+<tr class="separator:a17a4da35da69672cb48a3794cd79af0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed03222a11ba9d2c9de68267dce4f289"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#aed03222a11ba9d2c9de68267dce4f289">http_da_sha256</a> ()</td></tr>
+<tr class="memdesc:aed03222a11ba9d2c9de68267dce4f289"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use soap_register_plugin_arg(soap, http_da, http_da_sha256()) for MD5 server-side challenge algorithm (recommended).  <a href="#aed03222a11ba9d2c9de68267dce4f289">More...</a><br /></td></tr>
+<tr class="separator:aed03222a11ba9d2c9de68267dce4f289"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa2e9c75d2f8a71f2b3733cb74a44ea9"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#afa2e9c75d2f8a71f2b3733cb74a44ea9">http_da_sha256_sess</a> ()</td></tr>
+<tr class="memdesc:afa2e9c75d2f8a71f2b3733cb74a44ea9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use soap_register_plugin_arg(soap, http_da, http_da_sha256_sess()) for MD5-sess server-side challenge algorithm (recommended).  <a href="#afa2e9c75d2f8a71f2b3733cb74a44ea9">More...</a><br /></td></tr>
+<tr class="separator:afa2e9c75d2f8a71f2b3733cb74a44ea9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00841aaf538c41cce753249539344594"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a00841aaf538c41cce753249539344594">http_da_sha512_256</a> ()</td></tr>
+<tr class="memdesc:a00841aaf538c41cce753249539344594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use soap_register_plugin_arg(soap, http_da, http_da_sha512_256()) for MD5 server-side challenge algorithm (not yet supported).  <a href="#a00841aaf538c41cce753249539344594">More...</a><br /></td></tr>
+<tr class="separator:a00841aaf538c41cce753249539344594"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f8f4c3134a567f8cad1659c75134063"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a8f8f4c3134a567f8cad1659c75134063">http_da_sha512_256_sess</a> ()</td></tr>
+<tr class="memdesc:a8f8f4c3134a567f8cad1659c75134063"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use soap_register_plugin_arg(soap, http_da, http_da_sha512_256_sess()) for MD5-sess server-side challenge algorithm (not yet supported).  <a href="#a8f8f4c3134a567f8cad1659c75134063">More...</a><br /></td></tr>
+<tr class="separator:a8f8f4c3134a567f8cad1659c75134063"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2debc522d5969b31a19f0d902e362089"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a2debc522d5969b31a19f0d902e362089">http_da_save</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info, const char *realm, const char *userid, const char *passwd)</td></tr>
+<tr class="memdesc:a2debc522d5969b31a19f0d902e362089"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the credentials to the digest store to use repeatedly for authentication.  <a href="#a2debc522d5969b31a19f0d902e362089">More...</a><br /></td></tr>
+<tr class="separator:a2debc522d5969b31a19f0d902e362089"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fb73c330e76f4722f1e9fcd91c46a62"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a8fb73c330e76f4722f1e9fcd91c46a62">http_da_proxy_save</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info, const char *realm, const char *userid, const char *passwd)</td></tr>
+<tr class="memdesc:a8fb73c330e76f4722f1e9fcd91c46a62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the credentials to the digest store to use repeatedly for proxy authentication.  <a href="#a8fb73c330e76f4722f1e9fcd91c46a62">More...</a><br /></td></tr>
+<tr class="separator:a8fb73c330e76f4722f1e9fcd91c46a62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41fec462c654d9a38735c260412a4e34"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a41fec462c654d9a38735c260412a4e34">http_da_restore</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info)</td></tr>
+<tr class="memdesc:a41fec462c654d9a38735c260412a4e34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the credentials from the digest store to use for authentication.  <a href="#a41fec462c654d9a38735c260412a4e34">More...</a><br /></td></tr>
+<tr class="separator:a41fec462c654d9a38735c260412a4e34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa50dd85222d3b4c6469862acf4202190"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#aa50dd85222d3b4c6469862acf4202190">http_da_proxy_restore</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info)</td></tr>
+<tr class="memdesc:aa50dd85222d3b4c6469862acf4202190"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the credentials from the digest store to use for proxy authentication.  <a href="#aa50dd85222d3b4c6469862acf4202190">More...</a><br /></td></tr>
+<tr class="separator:aa50dd85222d3b4c6469862acf4202190"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89939a4b65f3533ef7b8161db503f4e3"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a89939a4b65f3533ef7b8161db503f4e3">http_da_release</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info)</td></tr>
+<tr class="memdesc:a89939a4b65f3533ef7b8161db503f4e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Releases the digest store and frees memory.  <a href="#a89939a4b65f3533ef7b8161db503f4e3">More...</a><br /></td></tr>
+<tr class="separator:a89939a4b65f3533ef7b8161db503f4e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ce5c0ca28c0062e9b5c6ef786966291"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a1ce5c0ca28c0062e9b5c6ef786966291">http_da_proxy_release</a> (struct soap *soap, struct <a class="el" href="structhttp__da__info.html">http_da_info</a> *info)</td></tr>
+<tr class="memdesc:a1ce5c0ca28c0062e9b5c6ef786966291"><td class="mdescLeft">&#160;</td><td class="mdescRight">Releases the digest store for proxy authentication and frees memory.  <a href="#a1ce5c0ca28c0062e9b5c6ef786966291">More...</a><br /></td></tr>
+<tr class="separator:a1ce5c0ca28c0062e9b5c6ef786966291"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add969b5bd64baf82026fe1d848958470"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#add969b5bd64baf82026fe1d848958470">http_da_verify_post</a> (struct soap *soap, const char *passwd)</td></tr>
+<tr class="memdesc:add969b5bd64baf82026fe1d848958470"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies the password credentials at the server side when used in an HTTP POST service operation.  <a href="#add969b5bd64baf82026fe1d848958470">More...</a><br /></td></tr>
+<tr class="separator:add969b5bd64baf82026fe1d848958470"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a551f86a9d87113c930cd24b399278e4e"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="httpda_8c.html#a551f86a9d87113c930cd24b399278e4e">http_da_verify_get</a> (struct soap *soap, const char *passwd)</td></tr>
+<tr class="memdesc:a551f86a9d87113c930cd24b399278e4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies the password credentials at the server side when used in an HTTP GET service operation.  <a href="#a551f86a9d87113c930cd24b399278e4e">More...</a><br /></td></tr>
+<tr class="separator:a551f86a9d87113c930cd24b399278e4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -197,12 +197,12 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a193bd879015f573a6a6de4b3f03f70cc"></a>
+<a class="anchor" id="a26bfda7ff2ac0f7eff9972a3f82591a3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int http_da </td>
+          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 http_da </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -226,6 +226,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Plugin registry function, use with soap_register_plugin_arg(soap, http_da, ...) </p>
 
 </div>
 </div>
@@ -587,12 +588,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a2254e61e49fbe4674c2859da506b22b2"></a>
+<a class="anchor" id="a6d07ef5393a7e7e3932a6d1c52c2ae46"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void* http_da_md5 </td>
+          <td class="memname">SOAP_FMAC1 void* SOAP_FMAC2 http_da_md5 </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -601,16 +602,16 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Use soap_register_plugin_arg(soap, http_da, http_da_md5()) for MD5 server-side challenge algorithm (not recommended). </p>
-<p>plugin optional argument to set MD5 for server-side configuration </p>
+<p>Use MD5 for server-side configuration with soap_register_plugin_arg() </p>
 
 </div>
 </div>
-<a class="anchor" id="a4ee9c7c40a7fcf13b6832e973a614d5d"></a>
+<a class="anchor" id="a17a4da35da69672cb48a3794cd79af0d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void* http_da_md5_sess </td>
+          <td class="memname">SOAP_FMAC1 void* SOAP_FMAC2 http_da_md5_sess </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -619,7 +620,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Use soap_register_plugin_arg(soap, http_da, http_da_md5_sess()) for MD5-sess server-side challenge algorithm (not recommended). </p>
-<p>plugin optional argument to set MD5-sess for server-side configuration </p>
+<p>Use MD5-sess for server-side configuration with soap_register_plugin_arg() </p>
 
 </div>
 </div>
@@ -879,12 +880,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a130a4e7a9e318c649577c3ae2bc0665d"></a>
+<a class="anchor" id="a1ce5c0ca28c0062e9b5c6ef786966291"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void http_da_proxy_release </td>
+          <td class="memname">SOAP_FMAC1 void SOAP_FMAC2 http_da_proxy_release </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -914,12 +915,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a508dfa526e88a5c3696c9a6aa5bc0800"></a>
+<a class="anchor" id="aa50dd85222d3b4c6469862acf4202190"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void http_da_proxy_restore </td>
+          <td class="memname">SOAP_FMAC1 void SOAP_FMAC2 http_da_proxy_restore </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -949,12 +950,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a69acb5bfe6dfbbbeb69f0d991fcf6f0f"></a>
+<a class="anchor" id="a8fb73c330e76f4722f1e9fcd91c46a62"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void http_da_proxy_save </td>
+          <td class="memname">SOAP_FMAC1 void SOAP_FMAC2 http_da_proxy_save </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -1005,12 +1006,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a25230ec921c71e515fc4280991af6533"></a>
+<a class="anchor" id="a89939a4b65f3533ef7b8161db503f4e3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void http_da_release </td>
+          <td class="memname">SOAP_FMAC1 void SOAP_FMAC2 http_da_release </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -1040,12 +1041,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6bcb428607280dbe2b0dcc63742cda60"></a>
+<a class="anchor" id="a41fec462c654d9a38735c260412a4e34"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void http_da_restore </td>
+          <td class="memname">SOAP_FMAC1 void SOAP_FMAC2 http_da_restore </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -1075,12 +1076,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a4d48599051c3ae3dc61e56bd97deba7a"></a>
+<a class="anchor" id="a2debc522d5969b31a19f0d902e362089"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void http_da_save </td>
+          <td class="memname">SOAP_FMAC1 void SOAP_FMAC2 http_da_save </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -1246,12 +1247,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aa6f6984a302ca1f2623cb019b36f0913"></a>
+<a class="anchor" id="aed03222a11ba9d2c9de68267dce4f289"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void* http_da_sha256 </td>
+          <td class="memname">SOAP_FMAC1 void* SOAP_FMAC2 http_da_sha256 </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -1260,16 +1261,16 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Use soap_register_plugin_arg(soap, http_da, http_da_sha256()) for MD5 server-side challenge algorithm (recommended). </p>
-<p>plugin optional argument to set SHA-256 for server-side configuration </p>
+<p>Use SHA-256 for server-side configuration with soap_register_plugin_arg() </p>
 
 </div>
 </div>
-<a class="anchor" id="a5f211120938768c596a3faa4cf606488"></a>
+<a class="anchor" id="afa2e9c75d2f8a71f2b3733cb74a44ea9"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void* http_da_sha256_sess </td>
+          <td class="memname">SOAP_FMAC1 void* SOAP_FMAC2 http_da_sha256_sess </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -1278,16 +1279,16 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Use soap_register_plugin_arg(soap, http_da, http_da_sha256_sess()) for MD5-sess server-side challenge algorithm (recommended). </p>
-<p>plugin optional argument to set SHA-256-sess for server-side configuration </p>
+<p>Use SHA-256-sess for server-side configuration with soap_register_plugin_arg() </p>
 
 </div>
 </div>
-<a class="anchor" id="ad7e77da75a17abdfe310d3eb655f5ab8"></a>
+<a class="anchor" id="a00841aaf538c41cce753249539344594"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void* http_da_sha512_256 </td>
+          <td class="memname">SOAP_FMAC1 void* SOAP_FMAC2 http_da_sha512_256 </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -1296,16 +1297,16 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Use soap_register_plugin_arg(soap, http_da, http_da_sha512_256()) for MD5 server-side challenge algorithm (not yet supported). </p>
-<p>plugin optional argument to set SHA-512-256 for server-side configuration </p>
+<p>Use SHA-512-256 for server-side configuration with soap_register_plugin_arg() </p>
 
 </div>
 </div>
-<a class="anchor" id="a0cf43b4a77a286a5e6334e7357ce49e1"></a>
+<a class="anchor" id="a8f8f4c3134a567f8cad1659c75134063"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void* http_da_sha512_256_sess </td>
+          <td class="memname">SOAP_FMAC1 void* SOAP_FMAC2 http_da_sha512_256_sess </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -1314,16 +1315,16 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Use soap_register_plugin_arg(soap, http_da, http_da_sha512_256_sess()) for MD5-sess server-side challenge algorithm (not yet supported). </p>
-<p>plugin optional argument to set SHA-512-256-sess for server-side configuration </p>
+<p>Use SHA-512-256-sess for server-side configuration with soap_register_plugin_arg() </p>
 
 </div>
 </div>
-<a class="anchor" id="a76264220d8bfbc627fee4caedd2ee4a0"></a>
+<a class="anchor" id="a551f86a9d87113c930cd24b399278e4e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int http_da_verify_get </td>
+          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 http_da_verify_get </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -1394,12 +1395,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="adc8e72ee1c4d1dbb9c239fe1fff35ca2"></a>
+<a class="anchor" id="add969b5bd64baf82026fe1d848958470"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int http_da_verify_post </td>
+          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 http_da_verify_post </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -1492,7 +1493,7 @@ Variables</h2></td></tr>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 20:00:27 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Mar 29 2016 15:06:13 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

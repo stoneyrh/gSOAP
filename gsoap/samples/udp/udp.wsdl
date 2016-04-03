@@ -25,7 +25,7 @@
     xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
     xmlns:ns="urn:gsoap-udp-demo"
     xmlns="http://www.w3.org/2001/XMLSchema"
-    elementFormDefault="qualified"
+    elementFormDefault="unqualified"
     attributeFormDefault="unqualified">
     <import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" schemaLocation="http://schemas.xmlsoap.org/ws/2004/08/addressing"/>
     <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
@@ -122,7 +122,7 @@
 </binding>
 
 <service name="udp">
-  <documentation>gSOAP 2.8.29 generated service definition</documentation>
+  <documentation>gSOAP 2.8.30 generated service definition</documentation>
   <port name="udp" binding="tns:udp">
     <SOAP:address location="soap.udp://localhost:10000"/>
   </port>

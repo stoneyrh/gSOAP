@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions name="Service"
-  targetNamespace="http://tempuri.org/t.xsd/Service.wsdl"
-  xmlns:tns="http://tempuri.org/t.xsd/Service.wsdl"
+<definitions name="gmt"
+  targetNamespace="http://tempuri.org/t.xsd/gmt.wsdl"
+  xmlns:tns="http://tempuri.org/t.xsd/gmt.wsdl"
   xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
   xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -23,7 +23,7 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:t="http://tempuri.org/t.xsd"
     xmlns="http://www.w3.org/2001/XMLSchema"
-    elementFormDefault="qualified"
+    elementFormDefault="unqualified"
     attributeFormDefault="unqualified">
     <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
     <!-- operation request element -->
@@ -53,7 +53,7 @@
   <part name="Body" element="t:gmtResponse"/>
 </message>
 
-<portType name="ServicePortType">
+<portType name="gmtPortType">
   <operation name="gmt">
     <documentation>Service definition of function t__gmt</documentation>
     <input message="tns:gmtRequest"/>
@@ -61,7 +61,7 @@
   </operation>
 </portType>
 
-<binding name="Service" type="tns:ServicePortType">
+<binding name="gmt" type="tns:gmtPortType">
   <SOAP:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
   <operation name="gmt">
     <SOAP:operation soapAction=""/>
@@ -74,9 +74,9 @@
   </operation>
 </binding>
 
-<service name="Service">
-  <documentation>gSOAP 2.8.29 generated service definition</documentation>
-  <port name="Service" binding="tns:Service">
+<service name="gmt">
+  <documentation>Get current time client code: `#include "soapH.h" #include "gmt.nsmap" int main() { time_t t; struct soap *soap = soap_new(); soap_call_t__gmt(soap, "http://www.cs.fsu.edu/~engelen/gmtlitserver.cgi", "", &t); printf("The current time is %s\n", ctime(&t)); soap_destroy(soap); soap_end(soap); soap_free(soap); return 0; }`</documentation>
+  <port name="gmt" binding="tns:gmt">
     <SOAP:address location="http://localhost:80"/>
   </port>
 </service>

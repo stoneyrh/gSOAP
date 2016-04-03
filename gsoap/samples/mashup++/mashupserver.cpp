@@ -35,7 +35,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 #include "soapcalcProxy.h"
-#include "soapServiceProxy.h"
+#include "soapgmtProxy.h"
 #include "soapmashupService.h"
 #include "mashup.nsmap"
 
@@ -56,7 +56,7 @@ int mashupService::dtx(_XML x, _ns3__commingtotown &response)
 {
   (void)x; /* input param that is always empty is simply ignored */
 
-  ServiceProxy Time("http://www.cs.fsu.edu/~engelen/gmtlitserver.cgi");
+  gmtProxy Time("http://www.cs.fsu.edu/~engelen/gmtlitserver.cgi");
 
   _ns1__gmt gmt;
   _ns1__gmtResponse gmtResponse;

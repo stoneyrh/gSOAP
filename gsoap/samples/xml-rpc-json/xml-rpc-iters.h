@@ -36,6 +36,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #ifdef __cplusplus
 
+#include <iterator>
+
 #ifdef JSON_NAMESPACE
 # define SOAP_TYPE__boolean             SOAP_TYPE_json__boolean
 # define SOAP_TYPE__i4                  SOAP_TYPE_json__i4
@@ -74,8 +76,8 @@ class params_iterator;
 namespace json {
 #endif
 
-/// iterates over value (struct or array or atomic value)
-class value_const_iterator
+/// bidirectional const iterator over values (struct or array or one atomic value)
+class value_const_iterator : public std::iterator<std::bidirectional_iterator_tag,struct value>
 {
   friend class value_iterator;
  private:
@@ -157,6 +159,27 @@ class value_const_iterator
       _value = NULL;
     return i;
   }
+  value_const_iterator& operator--()
+  {
+    if (_value->__type == SOAP_TYPE__struct)
+      _member--;
+    else if (_value->__type == SOAP_TYPE__array)
+      _index--;
+    else
+      _value = NULL;
+    return *this;
+  }
+  value_const_iterator operator--(int)
+  {
+    value_const_iterator i = *this;
+    if (_value->__type == SOAP_TYPE__struct)
+      _member--;
+    else if (_value->__type == SOAP_TYPE__array)
+      _index--;
+    else
+      _value = NULL;
+    return i;
+  }
   value_const_iterator& operator+=(int k)
   {
     if (_value->__type == SOAP_TYPE__struct)
@@ -179,8 +202,8 @@ class value_const_iterator
   }
 };
 
-/// iterates over value (struct or array or atomic value)
-class value_iterator
+/// bidirectional iterator over values (struct or array or one atomic value)
+class value_iterator : public std::iterator<std::bidirectional_iterator_tag,struct value>
 {
   friend class value_const_iterator;
  private:
@@ -245,7 +268,11 @@ class value_iterator
     if (_value->__type == SOAP_TYPE__struct)
       return &_member->value;
     if (_value->__type == SOAP_TYPE__array)
+    {
+      if (((_array*)_value->ref)->data.__size <= _index)
+        ((_array*)_value->ref)->size(_index + 1);
       return ((_array*)_value->ref)->data.value + _index;
+    }
     return _value;
   }
   int index() const
@@ -279,6 +306,27 @@ class value_iterator
       _member++;
     else if (_value->__type == SOAP_TYPE__array)
       _index++;
+    else
+      _value = NULL;
+    return i;
+  }
+  value_iterator& operator--()
+  {
+    if (_value->__type == SOAP_TYPE__struct)
+      _member--;
+    else if (_value->__type == SOAP_TYPE__array)
+      _index--;
+    else
+      _value = NULL;
+    return *this;
+  }
+  value_iterator operator--(int)
+  {
+    value_iterator i = *this;
+    if (_value->__type == SOAP_TYPE__struct)
+      _member--;
+    else if (_value->__type == SOAP_TYPE__array)
+      _index--;
     else
       _value = NULL;
     return i;

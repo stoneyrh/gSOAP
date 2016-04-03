@@ -661,9 +661,7 @@ value_iterator value::begin()
 {
   if (__type == SOAP_TYPE__struct)
     return value_iterator(this, ((_struct*)ref)->member);
-  if (__type == SOAP_TYPE__array)
-    return value_iterator(this);
-  return value_iterator();
+  return value_iterator(this);
 }
 
 value_iterator value::end()

@@ -6,7 +6,7 @@
 
 	- Removed //gsoapopt
 	- Removed #import "wsu.h" since only wsu__Id is needed
-	- Removed wsu__Id, since this type is defined in wsse.h
+	- Removed wsu__Id and replaced with char*, since this type is defined in wsse.h
 	- Removed enum xsd__boolean_
 	- Added //gsoap wsu schema import: http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd
 	- Added //gsoap wsp schema import: http://schemas.xmlsoap.org/ws/2004/09/policy
@@ -80,7 +80,7 @@ union wsp__union_1
 struct __wsp__union_1
 {
     int                                  __union_1                      0;	///< Union wsp__union_1 selector: set to SOAP_UNION_wsp__union_1_<fieldname> or 0
-    union wsp__union_1                  *union_1                       ;
+    union wsp__union_1                   union_1                       ;
 };
 
 /// "http://schemas.xmlsoap.org/ws/2004/09/policy":OperatorContentType is a complexType.
@@ -169,7 +169,7 @@ struct _wsp__Policy
 /// Attribute TargetNamespace of type xs:anyURI
    @char*                                TargetNamespace                0;	///< Optional attribute
 /// Attribute reference "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd":Id
-   @wsu__Id                              wsu__Id_                       0;	///< Optional attribute
+   @char*                                wsu__Id_                       0;	///< Optional attribute
 /// TODO: <anyAttribute namespace="##any">
 ///       Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change and/or insert declarations.

@@ -518,12 +518,12 @@ the code generated with option `-i`.
 The default name of the root value in the generated source code is `dom`.  To
 change this name use option `-r`.  Do not use the name `v`, which represents
 the current value in XPath query C/C++ code.  Other variable names to avoid are
-`it` `att`, `elt`, `pos`, since these are internally used by the generated
+`it`, `att`, `elt`, and `pos`, since these are internally used by the generated
 code.
 
 To include a namespace table in the generated code, use option `-n`.  This
 option simplifies the use of the DOM API by removing namespace URIs passed to
-API functions as qualified tag names suffice in most cases.
+API functions, as the use of qualified tag names will suffice in most cases.
 
 Use option `-p` to generate code that filters XML data from a source of input
 with an XPath query `path`.  Option `-x` specifies XPath query code to execute
@@ -535,9 +535,9 @@ Option `-x` overrides option `-y`.
 To generate a stand-alone application use option `-m`.  This option is useful
 for testing XPath query filters given with option `-p`.
 
-Option `-f%``fmt` sets the floating point double precision format to use in the
+Option `-f%%fmt` sets the floating point double precision format to use in the
 generated code.  By default, domcpp emits floating point numbers with up to 17
-digit mantissas to preserve precision.  Use `-f%``lG` for the shortest floating
+digit mantissas to preserve precision.  Use `-f%%lG` for the shortest floating
 point representation.
 
 XPath syntax support for domcpp                                      {#domcpp-3}

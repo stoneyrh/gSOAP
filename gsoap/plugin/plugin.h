@@ -14,8 +14,8 @@
 extern "C" {
 #endif
 
-struct plugin_data
-{ int (*fsend)(struct soap*, const char*, size_t); /* example: to save and use send callback */
+struct plugin_data {
+  int (*fsend)(struct soap*, const char*, size_t); /* example: to save and use send callback */
   size_t (*frecv)(struct soap*, char*, size_t); /* example: to save and use recv callback */
 };
 

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.29
+        stdsoap2.h 2.8.30
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20829
+#define GSOAP_VERSION 20830
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -64,6 +64,26 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #ifndef OPENSERVER
 # ifndef _REENTRANT
 #  define _REENTRANT
+# endif
+#endif
+
+#ifdef WIN32
+# ifdef SOAP_STD_EXPORTS        /* dllexport the API functions and classes */
+#  ifndef SOAP_STD_API
+#   define SOAP_STD_API __declspec(dllexport)
+#  endif
+#  ifndef SOAP_CMAC
+#   define SOAP_CMAC SOAP_STD_API       /* export soap struct and generated classes */
+#  endif
+#  ifndef SOAP_FMAC1
+#   define SOAP_FMAC1 SOAP_STD_API      /* export stdsoap2.cpp API */
+#  endif
+#  ifndef SOAP_FMAC3
+#   define SOAP_FMAC3 SOAP_STD_API      /* export soapC.cpp serializers API */
+#  endif
+#  ifndef SOAP_FMAC5
+#   define SOAP_FMAC5 SOAP_STD_API      /* export soapClient.cpp and soapServer.cpp API */
+#  endif
 # endif
 #endif
 
@@ -1178,7 +1198,8 @@ extern "C" {
 
 /* SOAP_MAXARRAYSIZE: Trusted total max size of an inbound SOAP Array.
    Arrays of larger size are not pre-allocated, but deserialized
-   on an element-by-element basis.
+   on an element-by-element basis until XML validation contrains kick in.
+   This macro only affects the efficiency of parsing SOAP arrays.
 */
 #ifndef SOAP_MAXARRAYSIZE
 # define SOAP_MAXARRAYSIZE (100000)
@@ -1213,6 +1234,21 @@ extern "C" {
 */
 #ifndef SOAP_MINDEFLATERATIO
 # define SOAP_MINDEFLATERATIO (1.0/1032.0) /* ratio of deflated/inflated */
+#endif
+
+/* maximum XML nesting depth level allowed for inbound XML parsing, must be greater than zero (0) */
+#ifndef SOAP_MAXLEVEL
+# define SOAP_MAXLEVEL (10000)
+#endif
+
+/* maximum string content length if not already constrained by XML schema validation maxLength constraints, zero means unlimited string lengths are allowed unless restricted by XML schema maxLength */ 
+#ifndef SOAP_MAXLENGTH
+# define SOAP_MAXLENGTH (0)
+#endif
+
+/* maximum number of array or container elements, must be greater than zero (0) */
+#ifndef SOAP_MAXOCCURS
+# define SOAP_MAXOCCURS (100000)
 #endif
 
 #ifdef VXWORKS
@@ -1463,8 +1499,9 @@ typedef soap_int32 soap_status;
 #define SOAP_FD_EXCEEDED                47
 #define SOAP_UTF_ERROR                  48
 #define SOAP_NTLM_ERROR                 49
+#define SOAP_LEVEL                      50
 
-#define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_PATTERN || (e) == SOAP_NULL || (e) == SOAP_HREF)
+#define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_LEVEL || (e) == SOAP_PATTERN || (e) == SOAP_NULL || (e) == SOAP_HREF)
 
 #define soap_soap_error_check(e) ((e) == SOAP_CLI_FAULT || (e) == SOAP_SVR_FAULT || (e) == SOAP_VERSIONMISMATCH || (e) == SOAP_MUSTUNDERSTAND || (e) == SOAP_FAULT || (e) == SOAP_NO_METHOD)
 
@@ -1821,6 +1858,7 @@ struct soap_blist
 { struct soap_blist *next;
   struct soap_bhead *head;
   size_t size;
+  size_t item;
 };
 
 /* pointer serialization management */
@@ -2000,9 +2038,9 @@ struct soap_xlist
 #ifndef WITH_LEANER
 
 /* dom.c[pp] functions (optional, compile and link dom.c[pp] */
-struct soap;
-struct soap_dom_element;
-struct soap_dom_attribute;
+struct SOAP_CMAC soap;
+struct SOAP_CMAC soap_dom_element;
+struct SOAP_CMAC soap_dom_attribute;
 
 /* soap_dom_element construction */
 
@@ -2135,7 +2173,7 @@ SOAP_FMAC1 struct soap_dom_element * SOAP_FMAC2 soap_dom_find_next(const struct 
 
 #ifndef WITH_LEANER
 #ifdef __cplusplus
-class soap_dom_attribute_iterator
+class SOAP_CMAC soap_dom_attribute_iterator
 {
  public:
   struct soap_dom_attribute *iter;
@@ -2155,7 +2193,7 @@ class soap_dom_attribute_iterator
 #endif
 
 #ifndef WITH_LEANER
-struct soap_dom_attribute
+struct SOAP_CMAC soap_dom_attribute
 { struct soap_dom_attribute *next;
   const char *nstr;
   const char *name;
@@ -2234,7 +2272,7 @@ struct soap_dom_attribute
 
 #ifndef WITH_LEANER
 #ifdef __cplusplus
-class soap_dom_element_iterator
+class SOAP_CMAC soap_dom_element_iterator
 {
  public:
   struct soap_dom_element *iter;
@@ -2257,7 +2295,7 @@ class soap_dom_element_iterator
 #endif
 
 #ifndef WITH_LEANER
-struct soap_dom_element
+struct SOAP_CMAC soap_dom_element
 { struct soap_dom_element *next;
   struct soap_dom_element *prnt;
   struct soap_dom_element *elts;
@@ -2437,17 +2475,7 @@ extern "C" {
 
 /******************************************************************************/
 
-#ifdef WIN32
-# ifdef SOAP_STD_EXPORTS
-#  define SOAP_STD_API __declspec(dllexport)
-# else
-#  define SOAP_STD_API
-# endif
-#else
-# define SOAP_STD_API
-#endif
-
-struct SOAP_STD_API soap
+struct SOAP_CMAC soap
 { short state;                  /* 0 = uninitialized, 1 = initialized, 2 = copy of another soap struct */
   short version;                /* 1 = SOAP1.1 and 2 = SOAP1.2 (set automatically from namespace URI in nsmap table), 0 indicates non-SOAP content */
   soap_mode mode;
@@ -2457,20 +2485,23 @@ struct SOAP_STD_API soap
   const char *double_format;    /* user-definable format string for doubles (<1024 chars) */
   const char *long_double_format;       /* user-definable format string for long doubles (<1024 chars) */
   const char *dime_id_format;   /* user-definable format string for integer DIME id (<SOAP_TAGLEN chars) */
+  int recv_timeout;             /* user-definable, when > 0, gives socket recv timeout in seconds, < 0 in usec */
+  int send_timeout;             /* user-definable, when > 0, gives socket send timeout in seconds, < 0 in usec */
+  int connect_timeout;          /* user-definable, when > 0, gives socket connect() timeout in seconds, < 0 in usec */
+  int accept_timeout;           /* user-definable, when > 0, gives socket accept() timeout in seconds, < 0 in usec */
+  int socket_flags;             /* user-definable socket recv() and send() flags, e.g. set to MSG_NOSIGNAL to disable sigpipe */
+  int connect_flags;            /* user-definable connect() SOL_SOCKET sockopt flags, e.g. set to SO_DEBUG to debug socket */
+  int bind_flags;               /* user-definable bind() SOL_SOCKET sockopt flags, e.g. set to SO_REUSEADDR to enable reuse */
+  int accept_flags;             /* user-definable accept() SOL_SOCKET sockopt flags */
+  unsigned short linger_time;   /* user-definable linger time for SO_LINGER option */
+  unsigned int maxlevel;        /* user-definable max XML nesting depth levels, initialized to SOAP_MAXLEVEL */
+  long maxlength;               /* user-definable max string length, initialized to SOAP_MAXLENGTH, maxlength<=0 is unbounded */
+  size_t maxoccurs;             /* user-definable max array/container size, initialized to SOAP_MAXOCCURS */
   const char *http_version;     /* HTTP version used "1.0" or "1.1" */
   const char *http_content;     /* optional custom response content type (with SOAP_FILE) */
   const char *encodingStyle;    /* default = "" which means that SOAP encoding is used */
   const char *actor;            /* SOAP-ENV:actor or role attribute value */
-  const char *lang;             /* xml:lang attribute value of SOAP-ENV:Text */
-  int recv_timeout;             /* when > 0, gives socket recv timeout in seconds, < 0 in usec */
-  int send_timeout;             /* when > 0, gives socket send timeout in seconds, < 0 in usec */
-  int connect_timeout;          /* when > 0, gives socket connect() timeout in seconds, < 0 in usec */
-  int accept_timeout;           /* when > 0, gives socket accept() timeout in seconds, < 0 in usec */
-  int socket_flags;             /* socket recv() and send() flags, e.g. set to MSG_NOSIGNAL to disable sigpipe */
-  int connect_flags;            /* connect() SOL_SOCKET sockopt flags, e.g. set to SO_DEBUG to debug socket */
-  int bind_flags;               /* bind() SOL_SOCKET sockopt flags, e.g. set to SO_REUSEADDR to enable reuse */
-  int accept_flags;             /* accept() SOL_SOCKET sockopt flags */
-  unsigned short linger_time;   /* linger time for SO_LINGER option */
+  const char *lang;             /* user-definable xml:lang attribute value of SOAP-ENV:Text */
   const struct Namespace *namespaces;   /* Pointer to global namespace mapping table */
   struct Namespace *local_namespaces;   /* Local namespace mapping table */
   struct soap_nlist *nlist;     /* namespace stack */
@@ -2745,7 +2776,7 @@ struct SOAP_STD_API soap
   soap(soap_mode, soap_mode);
   soap(const struct soap&);
   struct soap& operator=(const struct soap&);
-  ~soap();                      /* no virtual methods, so sizeof(soap) is same in C and C++ */
+  ~soap();                      /* no virtual methods, so sizeof(soap) should be the same in C and C++ */
 #endif
 };
 
@@ -3092,6 +3123,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_peek_element(struct soap*);
 
 SOAP_FMAC1 void SOAP_FMAC2 soap_retry(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_revert(struct soap*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_ignore(struct soap*);
 
 SOAP_FMAC1 void* SOAP_FMAC2 soap_memdup(struct soap*, const void*, size_t);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_strdup(struct soap*, const char*);
@@ -3126,6 +3158,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_append_lab(struct soap*, const char*, size_t);
 
 SOAP_FMAC1 struct soap_blist* SOAP_FMAC2 soap_new_block(struct soap*);
 SOAP_FMAC1 void* SOAP_FMAC2 soap_push_block(struct soap*, struct soap_blist*, size_t);
+SOAP_FMAC1 void* SOAP_FMAC2 soap_push_block_max(struct soap*, struct soap_blist*, size_t);
 SOAP_FMAC1 void SOAP_FMAC2 soap_pop_block(struct soap*, struct soap_blist*);
 SOAP_FMAC1 size_t SOAP_FMAC2 soap_size_block(struct soap*, struct soap_blist*, size_t);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_first_block(struct soap*, struct soap_blist*);
@@ -3342,7 +3375,7 @@ struct soap_block
       b = soap->blist;
     if (!b)
       return NULL;
-    T *p = (T*)soap_push_block(soap, b, sizeof(T));
+    T *p = (T*)soap_push_block_max(soap, b, sizeof(T));
     if (p)
       SOAP_PLACEMENT_NEW(p, T);
     return p;

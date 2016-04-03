@@ -59,31 +59,31 @@ extern "C" {
 
 extern const char *wsse_PasswordTextURI;
 
-struct _wsse__Security* soap_wsse_add_Security(struct soap *soap);
-struct _wsse__Security* soap_wsse_add_Security_actor(struct soap *soap, const char *actor);
-void soap_wsse_delete_Security(struct soap *soap);
-struct _wsse__Security* soap_wsse_Security(struct soap *soap);
+SOAP_FMAC1 struct _wsse__Security * SOAP_FMAC2 soap_wsse_add_Security(struct soap *soap);
+SOAP_FMAC1 struct _wsse__Security * SOAP_FMAC2 soap_wsse_add_Security_actor(struct soap *soap, const char *actor);
+SOAP_FMAC1 void SOAP_FMAC2 soap_wsse_delete_Security(struct soap *soap);
+SOAP_FMAC1 struct _wsse__Security* SOAP_FMAC2 soap_wsse_Security(struct soap *soap);
 
-struct ds__SignatureType* soap_wsse_add_Signature(struct soap *soap);
-void soap_wsse_delete_Signature(struct soap *soap);
-struct ds__SignatureType* soap_wsse_Signature(struct soap *soap);
+SOAP_FMAC1 struct ds__SignatureType * SOAP_FMAC2 soap_wsse_add_Signature(struct soap *soap);
+SOAP_FMAC1 void SOAP_FMAC2 soap_wsse_delete_Signature(struct soap *soap);
+SOAP_FMAC1 struct ds__SignatureType * SOAP_FMAC2 soap_wsse_Signature(struct soap *soap);
 
-int soap_wsse_add_Timestamp(struct soap *soap, const char *id, time_t lifetime);
-struct _wsu__Timestamp *soap_wsse_Timestamp(struct soap *soap);
-int soap_wsse_verify_Timestamp(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_Timestamp(struct soap *soap, const char *id, time_t lifetime);
+SOAP_FMAC1 struct _wsu__Timestamp * SOAP_FMAC2 soap_wsse_Timestamp(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_Timestamp(struct soap *soap);
 
-int soap_wsse_add_UsernameTokenText(struct soap *soap, const char *id, const char *username, const char *password);
-struct _wsse__UsernameToken *soap_wsse_UsernameToken(struct soap *soap, const char *id);
-const char* soap_wsse_get_Username(struct soap *soap);
-int soap_wsse_verify_Password(struct soap *soap, const char *password);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_UsernameTokenText(struct soap *soap, const char *id, const char *username, const char *password);
+SOAP_FMAC1 struct _wsse__UsernameToken * SOAP_FMAC2 soap_wsse_UsernameToken(struct soap *soap, const char *id);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsse_get_Username(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_Password(struct soap *soap, const char *password);
 
-int soap_wsse_sender_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
-int soap_wsse_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
-int soap_wsse_sender_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
-int soap_wsse_receiver_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
-int soap_wsse_fault(struct soap *soap, enum wsse__FaultcodeEnum fault, const char *detail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_sender_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_sender_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_receiver_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_fault(struct soap *soap, enum wsse__FaultcodeEnum fault, const char *detail);
 
-int soap_wsse_set_wsu_id(struct soap *soap, const char *tags);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_set_wsu_id(struct soap *soap, const char *tags);
 
 #ifdef __cplusplus
 }

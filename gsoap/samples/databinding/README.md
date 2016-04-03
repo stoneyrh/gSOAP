@@ -724,8 +724,8 @@ and constructs.  See the subsections below for more details or follow the links.
 
 @see Section [special classes and structs](#toxsd10).
 
-Colon notation versus name prefixing                                   {#toxsd2}
-------------------------------------
+Colon notation versus name prefixing with XML tag name translation     {#toxsd2}
+------------------------------------------------------------------
 
 To bind C/C++ type names to XSD types, a simple form of name prefixing is used
 by the gSOAP tools by prepending the XML namespace prefix to the C/C++ type
@@ -760,7 +760,7 @@ The colon notation is stripped away by soapcpp2 when generating the data
 binding implementation code for our project.  So the final code just uses
 `record` to identify this class and its constructor/destructor.
 
-When using colon notation we have to be consistent and not use colon notation
+When using colon notation make sure to be consistent and not use colon notation
 mixed with prefixed forms.  The name `ns:record` differs from `ns__record`,
 because `ns:record` is compiled to an unqualified `record` name.
 
@@ -768,6 +768,31 @@ Colon notation also facilitates overruling the elementFormDefault and
 attributeFormDefault declaration that is applied to local elements and
 attributes, when declared as members of classes, structs, and unions.  For more
 details, see [qualified and unqualified members](#toxsd9-6).
+
+A C/C++ identifier name (a type name, member name, function name, or parameter
+name) is translated to an XML tag name by the following rules:
+
+- Two leading underscores indicates that the identifier name has no XML tag
+  name, i.e. this name is not visible in XML and is not translated.
+- A leading underscore is removed, but the underscore indicates that: **a**) a
+  struct/class member name or parameter name has a wildcard XML tag name (i.e.
+  matches any XML tag), or **b**) a type name that has a
+  [document root element definition](#toxsd9-7).
+- Trailing underscores are removed (i.e. trailing underscores can be used to
+  avoid name clashes with keywords).
+- Underscores within names are translated to hyphens (hyphens are more common
+  in XML tags).
+- `_USCORE` is translated to an underscore in the translated XML tag name.
+- `_DOT` is translated to a dot (`.`) in the translated XML tag name.
+- `_xHHHH` is translated to the Unicode character with code point HHHH (hex).
+- C++11 Unicode identifier name characters in UTF-8 are translated as-is.
+
+For example, the C/C++ namespace qualified identifier name `s_a__my_way` is
+translated to the XML tag name `s-a:my-way` by translating the prefix `s_a`
+and the local name `my_way`.
+
+Struct/class member and parameter name translation can be overruled by using
+[backtick XML tags](#toxsd9-5) (with gSOAP 2.8.30 or higher).
 
 C++ Bool and C alternatives                                            {#toxsd3}
 ---------------------------
@@ -1738,11 +1763,23 @@ the member:
     };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Alternatively, use C++11 default initialization syntax:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    class ns__record
+    {
+     public:
+      std::string name { "Joe" };
+      ...
+    };
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 These initializations are made by the default constructor that is added by
-soapcpp2 to each class and struct.  A constructor is only added when a default
-constructor is not already defined with the class declaration.  You can
-explicitly (re)initialize an object with these initial values by using the
-soapcpp2 auto-generated functions:
+soapcpp2 to each class and struct (in C++ only).  A constructor is only added
+when a default constructor is not already defined with the class declaration.
+
+You can explicitly (re)initialize an object with these initial values by using
+the soapcpp2 auto-generated functions:
 
 - `void T::soap_default(struct soap*)` for `class T` (C++ only)
 - `void soap_default_T(struct soap*, T*)` for `struct T` (C and C++).
@@ -1752,10 +1789,10 @@ Initializations can only be provided for members that have primitive types
 
 @see Section [operations on classes and structs](#toxsd9-13).
 
-### Attribute members                                                {#toxsd9-5}
+### Attribute members and backtick XML tags                          {#toxsd9-5}
 
-Class and struct data members can be declared as XML attributes by annotating
-their type with a `@` with the declaration of the member:
+Class and struct data members are declared as XML attributes by annotating
+their type with a `@` qualifier:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     class ns__record
@@ -1793,6 +1830,46 @@ convert values of type `T` to strings and back.
 Attribute data members can be pointers and smart pointers to these types, which
 permits attributes to be optional.
 
+The XML tag name of a class/struct member is the name of the member with the
+usual XML tag translation, see [colon notation](#toxsd2).
+
+To override the standard translation of identifier names to XML tag names of
+attributes and elements, add the XML tag name in backticks (requires gSOAP
+2.8.30 or higher):
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    class ns__record
+    {
+     public:
+      @std::string name    `full-name`;
+      @uint64_t    SSN     `tax-id`;
+      ns__record  *spouse  `married-to`;
+    };
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This class maps to a complexType in the soapcpp2-generated schema:
+
+    <complexType name="record">
+      <sequence>
+        <element name="married-to" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
+      </sequence>
+      <attribute name="full-name" type="xsd:string" use="required"/>
+      <attribute name="tax-id" type="xsd:unsignedLong" use="required"/>
+    </complexType>
+
+An example XML instance of `ns__record` is:
+
+    <ns:record xmlns:ns="urn:types" full-name="Joe" tax-id="1234567890">
+      <married-to full-name="Jane" tax-id="1987654320">
+      </married-to>
+    </ns:record>
+
+A backtick XML tag name may contain any non-empty sequence of ASCII and UTF-8
+characters except white space and the backtick character.  A backtick tag can
+be combined with member constraints and default member initializers:
+
+    @uint64_t SSN `tax-id` 0:1 = 999;
+
 ### Qualified and unqualified members                                {#toxsd9-6}
 
 Class, struct, and union data members are mapped to namespace qualified or
@@ -1801,7 +1878,7 @@ no prefix then the default form of qualification is applied based on the
 element/attribute form that is declared with the schema of the class, struct,
 or union type.  If the member name has a namespace prefix by colon notation,
 then the prefix overrules the default (un)qualified form.  Therefore,
-[Colon notation](toxsd2) is an effective mechanism to control qualification of
+[colon notation](#toxsd2) is an effective mechanism to control qualification of
 tag names of individual members of classes, structs, and unions.
 
 The XML schema elementFormDefault and attributeFormDefault declarations control
@@ -1908,7 +1985,11 @@ ns:name attributes:
 
 Note that data members can also be prefixed using the `prefix__name`
 convention.  However, this has a different effect by referring to global (root)
-elements and attributes, see [defining document root elements](#toxsd9-7).
+elements and attributes, see [document root element definitions](#toxsd9-7).
+
+[Backtick tag names](#toxsd9-5) can be used in place of the member name
+annotations and will achieve the same effect as described when these tag names
+are (un)qualified (requires gSOAP 2.8.30 or higher).
 
 @note You must declare a target namespace with a `//gsoap ns schema namespace:`
 directive to enable the `elementForm` and `attributeForm` directives in order
@@ -2003,6 +2084,21 @@ refer to standard XSD elements and attributes, such as `xsi__type`, and
 By contrast, colon notation has the desired effect to (un)qualify local tag
 names by overruling the default element/attribute namespace qualification, see
 [qualified and unqualified members](#toxsd9-6).
+
+As an alternative to prefixing member names, use the backtick tag (gSOAP 2.8.30
+and higher):
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    typedef std::string _ns__name 1 : 100;
+    class _ns__record
+    {
+     public:
+      @_QName      t    `xsi:type`; // built-in XSD attribute xsi:type
+      _ns__name    s    `ns:name`;  // ref to global ns:name element
+      uint64_t     SSN;
+      _ns__record *spouse;
+    };
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### (Smart) pointer members and their occurrence constraints         {#toxsd9-8}
 
@@ -2815,7 +2911,8 @@ MIME/MTOM (and older DIME) attachments, such as in xop:Include elements:
     };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Attachments are beyond the scope of this document.  See the
+Attachments are beyond the scope of this document.  The `SOAP_ENC_MIME` and
+`SOAP_ENC_MTOM` context flag must be set to enable attachments.  See the
 [gSOAP user guide](http://www.genivia.com/doc/soapdoc2.html) for more details.
 
 ### Wrapper class/struct with simpleContent                         {#toxsd10-4}
@@ -3285,7 +3382,7 @@ cycles) and we want the graph to be serialized in XML in a format that ensures
 that its structure is preserved.  In that case, SOAP 1.2 encoding is the best
 option.
 
-SOAP encoding also adds encoding rules for [SOAP arrays](toxsd10) to serialize
+SOAP encoding also adds encoding rules for [SOAP arrays](#toxsd10) to serialize
 multi-dimensional arrays.  The use of XML attributes to exchange XML data in
 SOAP encoding is not permitted.  The only attributes permitted are the standard
 XSD attributes, SOAP encoding attributes (such as for arrays), and id-ref.
@@ -4151,6 +4248,88 @@ structures are created with `new` (and `new []` for arrays when applicable) for
 classes, structs, and class templates and with `malloc` for anything else, and
 the structures do NOT contain pointers to stack and static data.
 
+Context flags to initialize the soap struct                             {#flags}
+===========================================
+
+There are several context initialization flags and context mode flags to
+control XML serialization at runtime.  The flags are set with `soap_new1()` for
+heap allocation of contexts:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    struct soap *soap = soap_new1(<flag> | <flag> ... | <flag>);
+    ,,,
+    soap_destroy(soap); // delete objects
+    soap_end(soap);     // delete other data and temp data
+    soap_free(soap);    // free context
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+and with `soap_init1()` with stack allocated contexts:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    struct soap soap;
+    soap_init1(&soap, <flag> | <flag> ... | <flag>);
+    ,,,
+    soap_destroy(&soap); // delete objects
+    soap_end(&soap);     // delete other data and temp data
+    soap_done(&soap);    // clear context
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+where `<flag>` is one of:
+
+- `SOAP_C_UTFSTRING`: enables all `std::string` and `char*` strings to
+  contain UTF-8 content.  This option is recommended.
+
+- `SOAP_C_NILSTRING`: treat empty strings as if they were NULL pointers, i.e.
+  omits elements and attributes when empty.
+
+- `SOAP_XML_STRICT`: strictly validates XML while deserializing.  Should not be
+  used together with SOAP 1.1/1.2 encoding style of messaging.  Use soapcpp2
+  option `-s` to hard code `SOAP_XML_STRICT` in the generated serializers.  Not
+  recommended with SOAP 1.1/1.2 encoding style messaging.
+
+- `SOAP_XML_INDENT`: produces indented XML.
+
+- `SOAP_XML_CANONICAL`: c14n canonocalization, removes unused `xmlns` bindings
+  and adds them to appropriate places by applying c14n normalization rules.
+  Should not be used together with SOAP 1.1/1.2 encoding style messaging.
+
+- `SOAP_XML_TREE`: write tree XML without id-ref, while pruning data structure
+  cycles to prevent nontermination of the serializer for cyclic structures.
+
+- `SOAP_XML_GRAPH`: write graph (digraph and cyclic graphs with shared pointers
+  to objects) using id-ref attributes.  That is, XML with SOAP multi-ref
+  encoded id-ref elements.  This is a structure-preserving serialization format,
+  because co-referenced data and also cyclic relations are accurately represented.
+
+- `SOAP_XML_DEFAULTNS`: uses xmlns default namespace declarations, assuming
+   that the schema attribute form is "qualified" by default (be warned if it is
+   not, since attributes in the null namespace will get bound to namespaces!).
+
+- `SOAP_XML_NIL`: emit empty element with `xsi:nil` for all NULL pointers
+  serialized.
+
+- `SOAP_XML_IGNORENS`: the XML parser ignores XML namespaces, i.e. element and
+  attribute tag names match independent of their namespace.
+
+- `SOAP_XML_NOTYPE`: removes all `xsi:type` attribuation.  This option is usually
+  not needed unless the receiver rejects all `xsi:type` attributes.  This option
+  may affect the quality of the deserializer, which relies on `xsi:type`
+  attributes to distinguish base class instances from derived class instances
+  transported in the XML payloads.
+
+- `SOAP_IO_CHUNK`: to enable HTTP chunked transfers.
+
+- `SOAP_IO_STORE`: full buffering of outbound messages.
+
+- `SOAP_ENC_ZLIB`: compress messages, requires compiling with `-DWITH_GZIP` and
+   linking with zlib (`-lz`).
+
+- `SOAP_ENC_MIME`: enable MIME attachments, see
+  [MIME/MTOM attachment binary types](#toxsd10-3).
+
+- `SOAP_ENC_MTOM`: enable MTOM attachments, see
+  [MIME/MTOM attachment binary types](#toxsd10-3).
+
 Features and limitations                                             {#features}
 ========================
 
@@ -4183,41 +4362,6 @@ In general, to use the generated code:
   initialize a stack-allocated context with or without flags.  End the use of
   this context with `soap_done(struct soap*)`, but only after
   `soap_destroy(struct soap*)` and `soap_end(struct soap*)`.
-
-There are several context initialization flags and context mode flags to
-control XML serialization at runtime:
-
-- `SOAP_C_UTFSTRING`: enables all `std::string` and `char*` strings to
-  contain UTF-8 content.  This option is recommended.
-
-- `SOAP_XML_STRICT`: strictly validates XML while deserializing.  Should not be
-  used together with SOAP 1.1/1.2 encoding style of messaging.  Use soapcpp2
-  option `-s` to hard code `SOAP_XML_STRICT` in the generated serializers.  Not
-  recommended with SOAP 1.1/1.2 encoding style messaging.
-
-- `SOAP_XML_INDENT`: produces indented XML.
-
-- `SOAP_XML_CANONICAL`: c14n canonocalization, removes unused `xmlns` bindings
-  and adds them to appropriate places by applying c14n normalization rules.
-  Should not be used together with SOAP 1.1/1.2 encoding style messaging.
-
-- `SOAP_XML_TREE`: write tree XML without id-ref, while pruning data structure
-  cycles to prevent nontermination of the serializer for cyclic structures.
-
-- `SOAP_XML_GRAPH`: write graph (digraph and cyclic graphs with shared pointers
-  to objects) using id-ref attributes.  That is, XML with SOAP multi-ref
-  encoded id-ref elements.  This is a structure-preserving serialization format,
-  because co-referenced data and also cyclic relations are accurately represented.
-
-- `SOAP_XML_DEFAULTNS`: uses xmlns default namespace declarations, assuming
-   that the schema attribute form is "qualified" by default (be warned if it is
-   not, since attributes in the null namespace will get bound to namespaces!).
-
-- `SOAP_XML_NOTYPE`: removes all `xsi:type` attribuation.  This option is usually
-  not needed unless the receiver rejects all `xsi:type` attributes.  This option
-  may affect the quality of the deserializer, which relies on `xsi:type`
-  attributes to distinguish base class instances from derived class instances
-  transported in the XML payloads.
 
 Additional notes with respect to the wsdl2h and soapcpp2 tools:
 

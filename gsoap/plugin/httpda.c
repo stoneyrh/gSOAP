@@ -470,7 +470,10 @@ static int http_da_calc_response(struct soap *soap, struct soap_smd_data *smd_da
  *
 \******************************************************************************/
 
-int http_da(struct soap *soap, struct soap_plugin *p, void *arg)
+SOAP_FMAC1
+int
+SOAP_FMAC2
+http_da(struct soap *soap, struct soap_plugin *p, void *arg)
 {
   (void)arg;
   p->id = http_da_id;
@@ -488,7 +491,10 @@ int http_da(struct soap *soap, struct soap_plugin *p, void *arg)
   return SOAP_OK;
 }
 
-static int http_da_init(struct soap *soap, struct http_da_data *data, int *arg)
+/******************************************************************************/
+
+static int
+http_da_init(struct soap *soap, struct http_da_data *data, int *arg)
 {
   data->fposthdr = soap->fposthdr;
   soap->fposthdr = http_da_post_header;
@@ -518,8 +524,12 @@ static int http_da_init(struct soap *soap, struct http_da_data *data, int *arg)
   return SOAP_OK;
 }
 
-static int http_da_copy(struct soap *soap, struct soap_plugin *dst, struct soap_plugin *src)
+/******************************************************************************/
+
+static int
+http_da_copy(struct soap *soap, struct soap_plugin *dst, struct soap_plugin *src)
 {
+  (void)soap;
   dst->data = (void*)SOAP_MALLOC(soap, sizeof(struct http_da_data));
   soap_memcpy((void*)dst->data, sizeof(struct http_da_data), (const void*)src->data, sizeof(struct http_da_data));
   ((struct http_da_data*)dst->data)->smd_data.ctx = NULL;
@@ -535,7 +545,10 @@ static int http_da_copy(struct soap *soap, struct soap_plugin *dst, struct soap_
   return SOAP_OK;
 }
 
-static void http_da_delete(struct soap *soap, struct soap_plugin *p)
+/******************************************************************************/
+
+static void
+http_da_delete(struct soap *soap, struct soap_plugin *p)
 {
   if (((struct http_da_data*)p->data)->smd_data.ctx)
     soap_smd_final(soap, &((struct http_da_data*)p->data)->smd_data, NULL, NULL);
@@ -552,52 +565,80 @@ static void http_da_delete(struct soap *soap, struct soap_plugin *p)
 /**
 @brief Use soap_register_plugin_arg(soap, http_da, http_da_md5()) for MD5 server-side challenge algorithm (not recommended).
 */
-void *http_da_md5()
+SOAP_FMAC1
+void *
+SOAP_FMAC2
+http_da_md5()
 {
   static int option = 0;
   return (void*)&option;
 }
 
+/******************************************************************************/
+
 /**
 @brief Use soap_register_plugin_arg(soap, http_da, http_da_md5_sess()) for MD5-sess server-side challenge algorithm (not recommended).
 */
-void *http_da_md5_sess()
+SOAP_FMAC1
+void *
+SOAP_FMAC2
+http_da_md5_sess()
 {
   static int option = 1;
   return (void*)&option;
 }
 
+/******************************************************************************/
+
 /**
 @brief Use soap_register_plugin_arg(soap, http_da, http_da_sha256()) for MD5 server-side challenge algorithm (recommended).
 */
-void *http_da_sha256()
+SOAP_FMAC1
+void *
+SOAP_FMAC2
+http_da_sha256()
 {
   static int option = 2;
   return (void*)&option;
 }
 
+/******************************************************************************/
+
 /**
 @brief Use soap_register_plugin_arg(soap, http_da, http_da_sha256_sess()) for MD5-sess server-side challenge algorithm (recommended).
 */
-void *http_da_sha256_sess()
+SOAP_FMAC1
+void *
+SOAP_FMAC2
+http_da_sha256_sess()
 {
   static int option = 3;
   return (void*)&option;
 }
 
+/******************************************************************************/
+
 /**
 @brief Use soap_register_plugin_arg(soap, http_da, http_da_sha512_256()) for MD5 server-side challenge algorithm (not yet supported).
 */
-void *http_da_sha512_256()
+SOAP_FMAC1
+void *
+SOAP_FMAC2
+http_da_sha512_256()
 {
   static int option = 4;
   return (void*)&option;
 }
 
+/******************************************************************************/
+
 /**
 @brief Use soap_register_plugin_arg(soap, http_da, http_da_sha512_256_sess()) for MD5-sess server-side challenge algorithm (not yet supported).
 */
-void *http_da_sha512_256_sess()
+SOAP_FMAC1
+void *
+SOAP_FMAC2
+http_da_sha512_256_sess()
 {
   static int option = 5;
   return (void*)&option;
@@ -609,7 +650,8 @@ void *http_da_sha512_256_sess()
  *
 \******************************************************************************/
 
-static int http_da_post_header(struct soap *soap, const char *key, const char *val)
+static int
+http_da_post_header(struct soap *soap, const char *key, const char *val)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
 
@@ -636,7 +678,7 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
     if (!userid || !passwd || !soap->authrealm || !data->nonce)
     {
 #ifdef SOAP_DEBUG
-      fprintf(stderr, "Debug message: authentication header construction failed, missing some of the authentication data!\n");
+      fprintf(stderr, "Debug message: authentication header construction failed, missing parts of the authentication data!\n");
 #endif
       return SOAP_OK;
     }
@@ -671,12 +713,14 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
     (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(soap->authrealm) + strlen(userid) + strlen(data->nonce) + strlen(soap->path) + strlen(ncount) + strlen(cnonce) + strlen(response) + 75), "Digest algorithm=%s, realm=\"%s\", username=\"%s\", nonce=\"%s\", uri=\"%s\", nc=%s, cnonce=\"%s\", response=\"%s\"", data->alg ? data->alg : "MD5", soap->authrealm, userid, data->nonce, soap->path, ncount, cnonce, response);
 
     if (data->opaque)
-    { size_t l = strlen(soap->tmpbuf);
+    {
+      size_t l = strlen(soap->tmpbuf);
       (SOAP_SNPRINTF(soap->tmpbuf + l, sizeof(soap->tmpbuf) - l, strlen(data->opaque) + 11), ", opaque=\"%s\"", data->opaque);
     }
 
     if (qop)
-    { size_t l = strlen(soap->tmpbuf);
+    {
+      size_t l = strlen(soap->tmpbuf);
       (SOAP_SNPRINTF(soap->tmpbuf + l, sizeof(soap->tmpbuf) - l, strlen(qop) + 8), ", qop=\"%s\"", qop);
     }
 
@@ -709,7 +753,10 @@ static int http_da_post_header(struct soap *soap, const char *key, const char *v
   return data->fposthdr(soap, key, val);
 }
 
-static int http_da_parse(struct soap *soap)
+/******************************************************************************/
+
+static int
+http_da_parse(struct soap *soap)
 { 
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
 
@@ -723,7 +770,8 @@ static int http_da_parse(struct soap *soap)
    || soap_smd_final(soap, &data->smd_data, data->digest, NULL))
     return soap->error;
 
-  if ((soap->error = data->fparse(soap)))
+  soap->error = data->fparse(soap);
+  if (soap->error)
     return soap->error;
 
   if (data->qop && !soap_tag_cmp(data->qop, "auth-int"))
@@ -745,7 +793,10 @@ static int http_da_parse(struct soap *soap)
   return SOAP_OK;
 }
 
-static int http_da_parse_header(struct soap *soap, const char *key, const char *val)
+/******************************************************************************/
+
+static int
+http_da_parse_header(struct soap *soap, const char *key, const char *val)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
 
@@ -799,7 +850,10 @@ static int http_da_parse_header(struct soap *soap, const char *key, const char *
   return data->fparsehdr(soap, key, val);
 }
 
-static int http_da_prepareinitsend(struct soap *soap)
+/******************************************************************************/
+
+static int
+http_da_prepareinitsend(struct soap *soap)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
 
@@ -807,7 +861,8 @@ static int http_da_prepareinitsend(struct soap *soap)
     return SOAP_PLUGIN_ERROR;
 
   if ((soap->mode & SOAP_IO) != SOAP_IO_STORE && (soap->mode & (SOAP_ENC_DIME | SOAP_ENC_MIME)))
-  { /* support non-streaming MIME/DIME attachments by buffering the message */
+  {
+    /* support non-streaming MIME/DIME attachments by buffering the message */
     soap->omode &= ~SOAP_IO;
     soap->omode |= SOAP_IO_STORE;
     soap->mode &= ~SOAP_IO;
@@ -836,7 +891,10 @@ static int http_da_prepareinitsend(struct soap *soap)
   return SOAP_OK;
 }
 
-static int http_da_prepareinitrecv(struct soap *soap)
+/******************************************************************************/
+
+static int
+http_da_prepareinitrecv(struct soap *soap)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
 
@@ -854,7 +912,10 @@ static int http_da_prepareinitrecv(struct soap *soap)
   return SOAP_OK;
 }
 
-static int http_da_preparesend(struct soap *soap, const char *buf, size_t len)
+/******************************************************************************/
+
+static int
+http_da_preparesend(struct soap *soap, const char *buf, size_t len)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
 
@@ -870,7 +931,10 @@ static int http_da_preparesend(struct soap *soap, const char *buf, size_t len)
   return SOAP_OK;
 }
 
-static int http_da_preparerecv(struct soap *soap, const char *buf, size_t len)
+/******************************************************************************/
+
+static int
+http_da_preparerecv(struct soap *soap, const char *buf, size_t len)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
 
@@ -886,7 +950,10 @@ static int http_da_preparerecv(struct soap *soap, const char *buf, size_t len)
   return SOAP_OK;
 }
 
-static int http_da_preparefinalrecv(struct soap *soap)
+/******************************************************************************/
+
+static int
+http_da_preparefinalrecv(struct soap *soap)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
 
@@ -919,7 +986,10 @@ static int http_da_preparefinalrecv(struct soap *soap)
 @param userid the user ID string
 @param passwd the user password string
 */
-void http_da_save(struct soap *soap, struct http_da_info *info, const char *realm, const char *userid, const char *passwd)
+SOAP_FMAC1
+void
+SOAP_FMAC2
+http_da_save(struct soap *soap, struct http_da_info *info, const char *realm, const char *userid, const char *passwd)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
   if (!data)
@@ -935,6 +1005,8 @@ void http_da_save(struct soap *soap, struct http_da_info *info, const char *real
   info->qop = soap_strdup(NULL, data->qop);
   info->alg = soap_strdup(NULL, data->alg);
 }
+
+/******************************************************************************/
 
 /**
 @brief Saves the credentials to the digest store to use repeatedly for proxy authentication.
@@ -944,7 +1016,10 @@ void http_da_save(struct soap *soap, struct http_da_info *info, const char *real
 @param userid the user ID string
 @param passwd the user password string
 */
-void http_da_proxy_save(struct soap *soap, struct http_da_info *info, const char *realm, const char *userid, const char *passwd)
+SOAP_FMAC1
+void
+SOAP_FMAC2
+http_da_proxy_save(struct soap *soap, struct http_da_info *info, const char *realm, const char *userid, const char *passwd)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
   if (!data)
@@ -961,12 +1036,17 @@ void http_da_proxy_save(struct soap *soap, struct http_da_info *info, const char
   info->alg = soap_strdup(NULL, data->alg);
 }
 
+/******************************************************************************/
+
 /**
 @brief Retrieves the credentials from the digest store to use for authentication.
 @param soap context
 @param info a pointer to the digest store
 */
-void http_da_restore(struct soap *soap, struct http_da_info *info)
+SOAP_FMAC1
+void
+SOAP_FMAC2
+http_da_restore(struct soap *soap, struct http_da_info *info)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
   if (!data)
@@ -980,12 +1060,17 @@ void http_da_restore(struct soap *soap, struct http_da_info *info)
   data->alg = info->alg;
 }
 
+/******************************************************************************/
+
 /**
 @brief Retrieves the credentials from the digest store to use for proxy authentication.
 @param soap context
 @param info a pointer to the digest store
 */
-void http_da_proxy_restore(struct soap *soap, struct http_da_info *info)
+SOAP_FMAC1
+void
+SOAP_FMAC2
+http_da_proxy_restore(struct soap *soap, struct http_da_info *info)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
   if (!data)
@@ -999,12 +1084,17 @@ void http_da_proxy_restore(struct soap *soap, struct http_da_info *info)
   data->alg = info->alg;
 }
 
+/******************************************************************************/
+
 /**
 @brief Releases the digest store and frees memory
 @param soap context
 @param info a pointer to the digest store
 */
-void http_da_release(struct soap *soap, struct http_da_info *info)
+SOAP_FMAC1
+void
+SOAP_FMAC2
+http_da_release(struct soap *soap, struct http_da_info *info)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
   if (!data)
@@ -1056,12 +1146,17 @@ void http_da_release(struct soap *soap, struct http_da_info *info)
   }
 }
 
+/******************************************************************************/
+
 /**
 @brief Releases the digest store for proxy authentication and frees memory
 @param soap context
 @param info a pointer to the digest store
 */
-void http_da_proxy_release(struct soap *soap, struct http_da_info *info)
+SOAP_FMAC1
+void
+SOAP_FMAC2
+http_da_proxy_release(struct soap *soap, struct http_da_info *info)
 {
   soap->proxy_userid = NULL;
   soap->proxy_passwd = NULL;
@@ -1081,10 +1176,15 @@ void http_da_proxy_release(struct soap *soap, struct http_da_info *info)
 @param passwd the user password string
 @return SOAP_OK or error when verification failed
 */
-int http_da_verify_post(struct soap *soap, const char *passwd)
+SOAP_FMAC1
+int
+SOAP_FMAC2
+http_da_verify_post(struct soap *soap, const char *passwd)
 {
   return http_da_verify_method(soap, "POST", passwd);
 }
+
+/******************************************************************************/
 
 /**
 @brief Verifies the password credentials at the server side when used in an HTTP GET service operation.
@@ -1092,12 +1192,18 @@ int http_da_verify_post(struct soap *soap, const char *passwd)
 @param passwd the user password string
 @return SOAP_OK or error when verification failed
 */
-int http_da_verify_get(struct soap *soap, const char *passwd)
+SOAP_FMAC1
+int
+SOAP_FMAC2
+http_da_verify_get(struct soap *soap, const char *passwd)
 {
   return http_da_verify_method(soap, "GET", passwd);
 }
 
-static int http_da_verify_method(struct soap *soap, const char *method, const char *passwd)
+/******************************************************************************/
+
+static int
+http_da_verify_method(struct soap *soap, const char *method, const char *passwd)
 {
   struct http_da_data *data = (struct http_da_data*)soap_lookup_plugin(soap, http_da_id);
   char HA1hex[65], entityHAhex[65], response[65], responseHA[32];
@@ -1144,7 +1250,8 @@ static int http_da_verify_method(struct soap *soap, const char *method, const ch
  *
 \******************************************************************************/
 
-static void http_da_session_start(const char *realm, const char *nonce, const char *opaque)
+static void
+http_da_session_start(const char *realm, const char *nonce, const char *opaque)
 {
   struct http_da_session *session;
   time_t now = time(NULL);
@@ -1173,7 +1280,10 @@ static void http_da_session_start(const char *realm, const char *nonce, const ch
   MUTEX_UNLOCK(http_da_session_lock);
 }
 
-static int http_da_session_update(const char *realm, const char *nonce, const char *opaque, const char *cnonce, const char *ncount)
+/******************************************************************************/
+
+static int
+http_da_session_update(const char *realm, const char *nonce, const char *opaque, const char *cnonce, const char *ncount)
 {
   struct http_da_session *session;
 
@@ -1218,7 +1328,10 @@ static int http_da_session_update(const char *realm, const char *nonce, const ch
   return SOAP_OK;
 }
 
-static void http_da_session_cleanup()
+/******************************************************************************/
+
+static void
+http_da_session_cleanup()
 {
   struct http_da_session **session;
   time_t now = time(NULL);
@@ -1259,14 +1372,18 @@ static void http_da_session_cleanup()
  *
 \******************************************************************************/
 
-static void http_da_calc_nonce(struct soap *soap, char nonce[HTTP_DA_NONCELEN])
+static void
+http_da_calc_nonce(struct soap *soap, char nonce[HTTP_DA_NONCELEN])
 {
   static short count = 0xCA53;
   (void)soap;
   (SOAP_SNPRINTF(nonce, HTTP_DA_NONCELEN, 20), "%8.8x%4.4hx%8.8x", (int)time(NULL), count++, soap_random);
 }
 
-static void http_da_calc_opaque(struct soap *soap, char opaque[HTTP_DA_OPAQUELEN])
+/******************************************************************************/
+
+static void
+http_da_calc_opaque(struct soap *soap, char opaque[HTTP_DA_OPAQUELEN])
 {
   (void)soap;
   (SOAP_SNPRINTF(opaque, HTTP_DA_OPAQUELEN, 8), "%8.8x", soap_random);
@@ -1278,7 +1395,8 @@ static void http_da_calc_opaque(struct soap *soap, char opaque[HTTP_DA_OPAQUELEN
  *
 \******************************************************************************/
 
-static int http_da_calc_HA1(struct soap *soap, struct soap_smd_data *smd_data, const char *alg, const char *userid, const char *realm, const char *passwd, const char *nonce, const char *cnonce, char HA1hex[65])
+static int
+http_da_calc_HA1(struct soap *soap, struct soap_smd_data *smd_data, const char *alg, const char *userid, const char *realm, const char *passwd, const char *nonce, const char *cnonce, char HA1hex[65])
 {
   int smd_alg = SOAP_SMD_DGST_MD5;
   size_t smd_len = 16;
@@ -1323,7 +1441,10 @@ static int http_da_calc_HA1(struct soap *soap, struct soap_smd_data *smd_data, c
   return SOAP_OK;
 };
 
-static int http_da_calc_response(struct soap *soap, struct soap_smd_data *smd_data, const char *alg, char HA1hex[65], const char *nonce, const char *ncount, const char *cnonce, const char *qop, const char *method, const char *uri, char entityHAhex[65], char response[65], char responseHA[32])
+/******************************************************************************/
+
+static int
+http_da_calc_response(struct soap *soap, struct soap_smd_data *smd_data, const char *alg, char HA1hex[65], const char *nonce, const char *ncount, const char *cnonce, const char *qop, const char *method, const char *uri, char entityHAhex[65], char response[65], char responseHA[32])
 {
   int smd_alg = SOAP_SMD_DGST_MD5;
   size_t smd_len = 16;
@@ -1385,7 +1506,8 @@ static int http_da_calc_response(struct soap *soap, struct soap_smd_data *smd_da
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 #ifdef __cplusplus
 }
 #endif
-

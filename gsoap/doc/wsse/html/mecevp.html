@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The mecevp streaming message encryption and decryption engine</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -95,7 +95,8 @@
 <div class="line"><span class="keywordflow">if</span> (...) <span class="comment">// key file contains public key?</span></div>
 <div class="line">  pubk = PEM_read_PUBKEY(fd, NULL, NULL, NULL);</div>
 <div class="line"><span class="keywordflow">else</span> <span class="comment">// key file contains certificate</span></div>
-<div class="line">{ X509 *cert = PEM_read_X509(fd, NULL, NULL, NULL);</div>
+<div class="line">{</div>
+<div class="line">  X509 *cert = PEM_read_X509(fd, NULL, NULL, NULL);</div>
 <div class="line">  pubk = X509_get_pubkey(cert);</div>
 <div class="line">  X509_free(cert);</div>
 <div class="line">}</div>
@@ -108,7 +109,8 @@
 <div class="line"> || <a class="code" href="mecevp_8h.html#a8fdc3daea4e2c9c3bbde4e480209b0d0">soap_mec_stop</a>(soap)</div>
 <div class="line"> || <a class="code" href="mecevp_8h.html#ae93d7dae06e1568cc6ee2420cd29faaf">soap_mec_end</a>(soap, &amp;mec)</div>
 <div class="line"> || soap_end_send(soap))</div>
-<div class="line">{ <a class="code" href="mecevp_8h.html#aaa1e6fa1abac32acdd7f76232fa30241">soap_mec_cleanup</a>(soap, &amp;mec); <span class="comment">// clean up when error</span></div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="mecevp_8h.html#aaa1e6fa1abac32acdd7f76232fa30241">soap_mec_cleanup</a>(soap, &amp;mec); <span class="comment">// clean up when error</span></div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">}</div>
 <div class="line">EVP_PKEY_free(pubk);</div>
@@ -131,7 +133,8 @@
 <div class="line"> || <a class="code" href="mecevp_8h.html#a8fdc3daea4e2c9c3bbde4e480209b0d0">soap_mec_stop</a>(soap)</div>
 <div class="line"> || <a class="code" href="mecevp_8h.html#ae93d7dae06e1568cc6ee2420cd29faaf">soap_mec_end</a>(soap, &amp;mec)</div>
 <div class="line"> || soap_end_recv(soap))</div>
-<div class="line">{ <a class="code" href="mecevp_8h.html#aaa1e6fa1abac32acdd7f76232fa30241">soap_mec_cleanup</a>(soap, &amp;mec); <span class="comment">// clean up when error</span></div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="mecevp_8h.html#aaa1e6fa1abac32acdd7f76232fa30241">soap_mec_cleanup</a>(soap, &amp;mec); <span class="comment">// clean up when error</span></div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">}</div>
 <div class="line">EVP_PKEY_free(privk);</div>
@@ -151,7 +154,8 @@
 <div class="line"> || <a class="code" href="mecevp_8h.html#a8fdc3daea4e2c9c3bbde4e480209b0d0">soap_mec_stop</a>(soap)</div>
 <div class="line"> || <a class="code" href="mecevp_8h.html#ae93d7dae06e1568cc6ee2420cd29faaf">soap_mec_end</a>(soap, &amp;mec)</div>
 <div class="line"> || soap_end_send(soap))</div>
-<div class="line">{ <a class="code" href="mecevp_8h.html#aaa1e6fa1abac32acdd7f76232fa30241">soap_mec_cleanup</a>(soap, &amp;mec); <span class="comment">// clean up when error</span></div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="mecevp_8h.html#aaa1e6fa1abac32acdd7f76232fa30241">soap_mec_cleanup</a>(soap, &amp;mec); <span class="comment">// clean up when error</span></div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>The decryption by the recipient/reader requires the same shared secret key to decrypt the message using envelope decryption with SOAP_MEC_DEC_DES_CBC. This key is secret and unencrypted, so it should never be shared with any other party besides the sender/writer and recipient/reader.</p>
@@ -168,7 +172,8 @@
 <div class="line"> || <a class="code" href="mecevp_8h.html#a8fdc3daea4e2c9c3bbde4e480209b0d0">soap_mec_stop</a>(soap)</div>
 <div class="line"> || <a class="code" href="mecevp_8h.html#ae93d7dae06e1568cc6ee2420cd29faaf">soap_mec_end</a>(soap, &amp;mec)</div>
 <div class="line"> || soap_end_recv(soap))</div>
-<div class="line">{ <a class="code" href="mecevp_8h.html#aaa1e6fa1abac32acdd7f76232fa30241">soap_mec_cleanup</a>(soap, &amp;mec); <span class="comment">// clean up when error</span></div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="mecevp_8h.html#aaa1e6fa1abac32acdd7f76232fa30241">soap_mec_cleanup</a>(soap, &amp;mec); <span class="comment">// clean up when error</span></div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">}</div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>The mecevp engine uses callbacks of the gSOAP engine that were introduced in version 2.8.1. Earlier gSOAP version releases are not compatible with the mecevp plugin and engine. </dd></dl>
@@ -178,7 +183,7 @@
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 20:02:03 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Mar 29 2016 16:43:13 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

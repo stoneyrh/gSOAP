@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">WS-Security lite</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -95,7 +95,8 @@ Security Header</h1>
 </div><!-- fragment --><p>To obtain the actor or role value (e.g. after receiving a message), use:</p>
 <div class="fragment"><div class="line"><a class="code" href="struct__wsse_____security.html">_wsse__Security</a> *security = <a class="code" href="wsseapi-lite_8h.html#ae7775b49a0cd57c7cf85db7bb18b034d">soap_wsse_Security</a>(soap);</div>
 <div class="line"><span class="keywordflow">if</span> (security)</div>
-<div class="line">{ ... = security-&gt;<a class="code" href="struct__wsse_____security.html#a1a941d6f69eab871bced7acdb6eb41f3">SOAP_ENV__actor</a>; <span class="comment">// SOAP 1.1</span></div>
+<div class="line">{</div>
+<div class="line">  ... = security-&gt;<a class="code" href="struct__wsse_____security.html#a1a941d6f69eab871bced7acdb6eb41f3">SOAP_ENV__actor</a>; <span class="comment">// SOAP 1.1</span></div>
 <div class="line">  ... = security-&gt;<a class="code" href="struct__wsse_____security.html#a86e02ae8da9bf2f6e1dd6eda8f596012">SOAP_ENV__role</a>;  <span class="comment">// SOAP 1.2</span></div>
 </div><!-- fragment --><p>The SOAP-ENV:mustUnderstand attribute is automatically added and checked by the gSOAP engine. A gSOAP application compiled without Security support will reject Security headers.</p>
 <p>Security header blocks are attached to the soap context, which means that the information will be automatically kept to support multiple invocations.</p>
@@ -112,13 +113,15 @@ User Name Token</h2>
 </div><!-- fragment --><p>It is strongly recommended to use <code>soap_wsse_add_UsernameTokenText</code> only in combination with HTTPS encrypted transmission or not at all. A better alternative is to use password digests (not supported in this wsse lite API).</p>
 <p>Clear-text passwords are verified with <code>soap_wsse_verify_Password</code>. To verify a password at the receiving side to authorize a request (e.g. within a Web service operation), use:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> ns__myMethod(<span class="keyword">struct</span> soap *soap, ...)</div>
-<div class="line">{ <span class="keyword">const</span> <span class="keywordtype">char</span> *username = <a class="code" href="wsseapi-lite_8h.html#aca3fe6fb7c1e5c103827b33f24292f47">soap_wsse_get_Username</a>(soap);</div>
+<div class="line">{</div>
+<div class="line">  <span class="keyword">const</span> <span class="keywordtype">char</span> *username = <a class="code" href="wsseapi-lite_8h.html#aca3fe6fb7c1e5c103827b33f24292f47">soap_wsse_get_Username</a>(soap);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keywordtype">char</span> *password;</div>
 <div class="line">  <span class="keywordflow">if</span> (!username)</div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error; <span class="comment">// no username: return FailedAuthentication (from soap_wsse_get_Username)</span></div>
 <div class="line">  password = ...; <span class="comment">// lookup password of username</span></div>
 <div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsseapi-lite_8h.html#aeb0afd01a5036e4f1314a3cfe8575bd5">soap_wsse_verify_Password</a>(soap, password))</div>
-<div class="line">  { <span class="keywordtype">int</span> err = soap-&gt;error;</div>
+<div class="line">  {</div>
+<div class="line">    <span class="keywordtype">int</span> err = soap-&gt;error;</div>
 <div class="line">    <a class="code" href="wsseapi-lite_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove old security headers</span></div>
 <div class="line">    <span class="keywordflow">return</span> err; <span class="comment">// password verification failed: return FailedAuthentication</span></div>
 <div class="line">  }</div>
@@ -194,7 +197,8 @@ WS-Security and HTTPS</h1>
 <div class="line"><span class="keywordflow">if</span> (!soap_valid_socket(m = soap_bind(soap, NULL, port, 100))</div>
 <div class="line">  ... <span class="comment">// error</span></div>
 <div class="line"><span class="keywordflow">for</span> (;;)</div>
-<div class="line">{ <span class="keywordflow">if</span> (!soap_valid_socket(s = soap_accept(soap)))</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (!soap_valid_socket(s = soap_accept(soap)))</div>
 <div class="line">    ... <span class="comment">// error</span></div>
 <div class="line">  THREAD_CREATE(&amp;tid, (<span class="keywordtype">void</span>*(*)(<span class="keywordtype">void</span>*))&amp;process_request, soap_copy(soap));</div>
 <div class="line">}</div>
@@ -204,7 +208,8 @@ WS-Security and HTTPS</h1>
 <div class="line">CRYPTO_thread_cleanup();</div>
 </div><!-- fragment --><p>where we define a process_request function that is executed by the thread to process the request (on a copy of the soap context struct):</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> *process_request(<span class="keyword">struct</span> soap *soap)</div>
-<div class="line">{ <span class="keywordflow">if</span> (soap_ssl_accept(soap)</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (soap_ssl_accept(soap)</div>
 <div class="line">   || soap_serve(soap))</div>
 <div class="line">    ... <span class="comment">// error</span></div>
 <div class="line">  soap_destroy(soap);</div>
@@ -218,13 +223,15 @@ WS-Security and HTTPS</h1>
 </ul>
 <p>With OpenSSL, we need to define the thread set up and clean up operations as follows:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>CRYPTO_dynlock_value</div>
-<div class="line">{ MUTEX_TYPE mutex;</div>
+<div class="line">{</div>
+<div class="line">  MUTEX_TYPE mutex;</div>
 <div class="line">};</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">static</span> MUTEX_TYPE *mutex_buf;</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">static</span> <span class="keyword">struct </span>CRYPTO_dynlock_value *dyn_create_function(<span class="keyword">const</span> <span class="keywordtype">char</span> *file, <span class="keywordtype">int</span> line)</div>
-<div class="line">{ <span class="keyword">struct </span>CRYPTO_dynlock_value *value;</div>
+<div class="line">{</div>
+<div class="line">  <span class="keyword">struct </span>CRYPTO_dynlock_value *value;</div>
 <div class="line">  value = (<span class="keyword">struct </span>CRYPTO_dynlock_value*)malloc(<span class="keyword">sizeof</span>(<span class="keyword">struct</span> CRYPTO_dynlock_value));</div>
 <div class="line">  <span class="keywordflow">if</span> (value)</div>
 <div class="line">    MUTEX_SETUP(value-&gt;mutex);</div>
@@ -232,30 +239,35 @@ WS-Security and HTTPS</h1>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> dyn_lock_function(<span class="keywordtype">int</span> mode, <span class="keyword">struct</span> CRYPTO_dynlock_value *l, <span class="keyword">const</span> <span class="keywordtype">char</span> *file, <span class="keywordtype">int</span> line)</div>
-<div class="line">{ <span class="keywordflow">if</span> (mode &amp; CRYPTO_LOCK)</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (mode &amp; CRYPTO_LOCK)</div>
 <div class="line">    MUTEX_LOCK(l-&gt;mutex);</div>
 <div class="line">  <span class="keywordflow">else</span></div>
 <div class="line">    MUTEX_UNLOCK(l-&gt;mutex);</div>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> dyn_destroy_function(<span class="keyword">struct</span> CRYPTO_dynlock_value *l, <span class="keyword">const</span> <span class="keywordtype">char</span> *file, <span class="keywordtype">int</span> line)</div>
-<div class="line">{ MUTEX_CLEANUP(l-&gt;mutex);</div>
+<div class="line">{</div>
+<div class="line">  MUTEX_CLEANUP(l-&gt;mutex);</div>
 <div class="line">  free(l);</div>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keywordtype">void</span> locking_function(<span class="keywordtype">int</span> mode, <span class="keywordtype">int</span> n, <span class="keyword">const</span> <span class="keywordtype">char</span> *file, <span class="keywordtype">int</span> line)</div>
-<div class="line">{ <span class="keywordflow">if</span> (mode &amp; CRYPTO_LOCK)</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (mode &amp; CRYPTO_LOCK)</div>
 <div class="line">    MUTEX_LOCK(mutex_buf[n]);</div>
 <div class="line">  <span class="keywordflow">else</span></div>
 <div class="line">    MUTEX_UNLOCK(mutex_buf[n]);</div>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> id_function()</div>
-<div class="line">{ <span class="keywordflow">return</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>)THREAD_ID;</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">return</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>)THREAD_ID;</div>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keywordtype">int</span> CRYPTO_thread_setup()</div>
-<div class="line">{ <span class="keywordtype">int</span> i;</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordtype">int</span> i;</div>
 <div class="line">  mutex_buf = (MUTEX_TYPE*)malloc(CRYPTO_num_locks() * <span class="keyword">sizeof</span>(pthread_mutex_t));</div>
 <div class="line">  <span class="keywordflow">if</span> (!mutex_buf)</div>
 <div class="line">    <span class="keywordflow">return</span> SOAP_EOM;</div>
@@ -270,7 +282,8 @@ WS-Security and HTTPS</h1>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keywordtype">void</span> CRYPTO_thread_cleanup()</div>
-<div class="line">{ <span class="keywordtype">int</span> i;</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordtype">int</span> i;</div>
 <div class="line">  <span class="keywordflow">if</span> (!mutex_buf)</div>
 <div class="line">    <span class="keywordflow">return</span>;</div>
 <div class="line">  CRYPTO_set_id_callback(NULL);</div>
@@ -290,7 +303,7 @@ WS-Security and HTTPS</h1>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 20:02:13 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Mar 29 2016 16:54:06 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

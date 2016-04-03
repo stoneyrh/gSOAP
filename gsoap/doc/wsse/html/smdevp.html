@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The smdevp signed message digest engine</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -108,7 +108,8 @@
 <div class="line">fclose(fd);</div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="smdevp_8h.html#ad8b665c8e8844eca8916f4b16b0ce9c5">soap_smd_begin</a>(soap, alg, key, 0)</div>
 <div class="line"> || soap_out_ns__Object(soap, <span class="stringliteral">&quot;ns:Object&quot;</span>, 0, &amp;<span class="keywordtype">object</span>, NULL))</div>
-<div class="line">{ <a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, NULL, NULL); <span class="comment">// clean up</span></div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, NULL, NULL); <span class="comment">// clean up</span></div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, sig, &amp;siglen))</div>
@@ -130,7 +131,8 @@
 <div class="line"> || soap_begin_send(soap)</div>
 <div class="line"> || soap_out_ns__Object(soap, <span class="stringliteral">&quot;ns:Object&quot;</span>, 0, &amp;<span class="keywordtype">object</span>, NULL) <span class="comment">// save to &quot;object.xml&quot;</span></div>
 <div class="line"> || soap_end_send(soap))</div>
-<div class="line">{ <a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, NULL, NULL); <span class="comment">// clean up</span></div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, NULL, NULL); <span class="comment">// clean up</span></div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, sig, &amp;siglen))</div>
@@ -150,7 +152,8 @@
 <div class="line"><span class="keywordflow">if</span> (...) <span class="comment">// key file contains public key?</span></div>
 <div class="line">  key = PEM_read_PUBKEY(fd, NULL, NULL, NULL);</div>
 <div class="line"><span class="keywordflow">else</span> <span class="comment">// key file contains certificate</span></div>
-<div class="line">{ X509 *cert = PEM_read_X509(fd, NULL, NULL, NULL);</div>
+<div class="line">{</div>
+<div class="line">  X509 *cert = PEM_read_X509(fd, NULL, NULL, NULL);</div>
 <div class="line">  key = X509_get_pubkey(cert);</div>
 <div class="line">  X509_free(cert);</div>
 <div class="line">}</div>
@@ -160,7 +163,8 @@
 <div class="line"> || soap_begin_recv(soap)</div>
 <div class="line"> || soap_in_ns__Object(soap, <span class="stringliteral">&quot;ns:Object&quot;</span>, &amp;<span class="keywordtype">object</span>, NULL) == NULL</div>
 <div class="line"> || soap_end_recv(soap))</div>
-<div class="line">{ <a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, NULL, NULL); <span class="comment">// clean up</span></div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, NULL, NULL); <span class="comment">// clean up</span></div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, sig, &amp;siglen))</div>
@@ -179,14 +183,16 @@
 <div class="line"><span class="keywordflow">if</span> (...) <span class="comment">// key file contains public key?</span></div>
 <div class="line">  key = PEM_read_PUBKEY(fd, NULL, NULL, NULL);</div>
 <div class="line"><span class="keywordflow">else</span> <span class="comment">// key file contains certificate</span></div>
-<div class="line">{ X509 *cert = PEM_read_X509(fd, NULL, NULL, NULL);</div>
+<div class="line">{</div>
+<div class="line">  X509 *cert = PEM_read_X509(fd, NULL, NULL, NULL);</div>
 <div class="line">  key = X509_get_pubkey(cert);</div>
 <div class="line">  X509_free(cert);</div>
 <div class="line">}</div>
 <div class="line">fclose(fd);</div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="smdevp_8h.html#ad8b665c8e8844eca8916f4b16b0ce9c5">soap_smd_begin</a>(soap, alg, key, 0)</div>
 <div class="line"> || soap_out_ns__Object(soap, <span class="stringliteral">&quot;ns:Object&quot;</span>, 0, &amp;<span class="keywordtype">object</span>, NULL))</div>
-<div class="line">{ <a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, NULL, NULL); <span class="comment">// clean up</span></div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, NULL, NULL); <span class="comment">// clean up</span></div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, sig, &amp;siglen))</div>
@@ -204,10 +210,11 @@
 <div class="line"><span class="keywordtype">int</span> siglen;</div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="smdevp_8h.html#ad8b665c8e8844eca8916f4b16b0ce9c5">soap_smd_begin</a>(soap, alg, key, <span class="keyword">sizeof</span>(key))</div>
 <div class="line"> || soap_out_ns__Object(soap, <span class="stringliteral">&quot;ns:Object&quot;</span>, 0, &amp;<span class="keywordtype">object</span>, NULL))</div>
-<div class="line">{ <a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, NULL, NULL); <span class="comment">// clean up</span></div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, NULL, NULL); <span class="comment">// clean up</span></div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">}</div>
-<div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> {<a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, sig, &amp;siglen))</div>
+<div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, sig, &amp;siglen))</div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line"><span class="keywordflow">else</span></div>
 <div class="line">  ... <span class="comment">// sig holds the signature</span></div>
@@ -219,7 +226,8 @@
 <div class="line"><span class="keywordtype">int</span> digestlen;</div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="smdevp_8h.html#ad8b665c8e8844eca8916f4b16b0ce9c5">soap_smd_begin</a>(soap, alg, NULL, 0)</div>
 <div class="line"> || soap_out_ns__Object(soap, <span class="stringliteral">&quot;ns:Object&quot;</span>, 0, &amp;<span class="keywordtype">object</span>, NULL))</div>
-<div class="line">{ <a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, NULL, NULL); <span class="comment">// clean up</span></div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, NULL, NULL); <span class="comment">// clean up</span></div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a>(soap, digest, &amp;digestlen))</div>
@@ -233,7 +241,7 @@
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 20:02:03 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Mar 29 2016 16:43:13 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

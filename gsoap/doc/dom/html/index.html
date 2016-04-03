@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">XML DOM &amp; XPath</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Thu Feb 25 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -376,11 +376,11 @@ Command-line options                                                 </h2>
 <p>The domcpp command emits source code to standard output or to the file specified with option <code>-o</code>.</p>
 <p>Minimalistic code is generated with option <code>-M</code>, which is useful to automate pasting of the unadorned source code into the source code of your project.</p>
 <p>Optimized code is generated with option <code>-O</code> by factoring common array indices and object field names. This produces more elaborate code that is more efficient but may be harder to read and modify. This option has no effect on the code generated with option <code>-i</code>.</p>
-<p>The default name of the root value in the generated source code is <code>dom</code>. To change this name use option <code>-r</code>. Do not use the name <code>v</code>, which represents the current value in XPath query C/C++ code. Other variable names to avoid are <code>it</code> <code>att</code>, <code>elt</code>, <code>pos</code>, since these are internally used by the generated code.</p>
-<p>To include a namespace table in the generated code, use option <code>-n</code>. This option simplifies the use of the DOM API by removing namespace URIs passed to API functions as qualified tag names suffice in most cases.</p>
+<p>The default name of the root value in the generated source code is <code>dom</code>. To change this name use option <code>-r</code>. Do not use the name <code>v</code>, which represents the current value in XPath query C/C++ code. Other variable names to avoid are <code>it</code>, <code>att</code>, <code>elt</code>, and <code>pos</code>, since these are internally used by the generated code.</p>
+<p>To include a namespace table in the generated code, use option <code>-n</code>. This option simplifies the use of the DOM API by removing namespace URIs passed to API functions, as the use of qualified tag names will suffice in most cases.</p>
 <p>Use option <code>-p</code> to generate code that filters XML data from a source of input with an XPath query <code>path</code>. Option <code>-x</code> specifies XPath query code to execute for each query result. The default action in the generated code is to print each query result value in XML separated by newlines. Option <code>-y</code> yields an XML DOM with root <code>results</code> and each query result stored in a <code>result</code> element. Option <code>-x</code> overrides option <code>-y</code>.</p>
 <p>To generate a stand-alone application use option <code>-m</code>. This option is useful for testing XPath query filters given with option <code>-p</code>.</p>
-<p>Option <code>-f%</code><code>fmt</code> sets the floating point double precision format to use in the generated code. By default, domcpp emits floating point numbers with up to 17 digit mantissas to preserve precision. Use <code>-f%</code><code>lG</code> for the shortest floating point representation.</p>
+<p>Option <code>-f%fmt</code> sets the floating point double precision format to use in the generated code. By default, domcpp emits floating point numbers with up to 17 digit mantissas to preserve precision. Use <code>-f%lG</code> for the shortest floating point representation.</p>
 <h2><a class="anchor" id="domcpp-3"></a>
 XPath syntax support for domcpp                                      </h2>
 <p>XPath (the XML Path Language), is a query language for selecting nodes from an XML document. A XPath query returns the XML elements and attributes of a DOM node structure of an XML document that match the selection criteria.</p>
@@ -1479,7 +1479,7 @@ Floating point format                                                      </h2>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 19:59:54 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Thu Feb 25 2016 10:21:29 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

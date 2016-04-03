@@ -1,9 +1,9 @@
 /*
-	wsddapi.h
+        wsddapi.h
 
-	WS-Discovery 1.1 and 1.0 (WSDD) plugin API
+        WS-Discovery 1.1 and 1.0 (WSDD) plugin API
 
-	See gsoap/doc/wsdd for the WSDD plugin user guide.
+        See gsoap/doc/wsdd for the WSDD plugin user guide.
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2011, Robert van Engelen, Genivia Inc., All Rights Reserved.
@@ -51,12 +51,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #ifndef WSDDAPI_H
 #define WSDDAPI_H
 
-#include "wsaapi.h"	/* also includes soapH.h, change wsaapi.h if needed */
-#include "threads.h"	/* threads and locks from plugin/threads.h */
+#include "wsaapi.h"     /* also includes soapH.h, change wsaapi.h if needed */
+#include "threads.h"    /* threads and locks from plugin/threads.h */
 
 /******************************************************************************\
  *
- *	Common Constants
+ *      Common Constants
  *
 \******************************************************************************/
 
@@ -65,7 +65,7 @@ A Target Service MUST wait t (ms) to elapse before sending the message, where
 0 < t < APP_MAX_DELAY is randomly choosen. The default APP_MAX_DELAY is 500 ms.
 */
 #ifndef SOAP_WSDD_APP_MAX_DELAY
-# define SOAP_WSDD_APP_MAX_DELAY	(500)	/* ms delay */
+# define SOAP_WSDD_APP_MAX_DELAY        (500)   /* ms delay */
 #endif
 
 /**
@@ -74,7 +74,7 @@ responses from the DP unsatisfactory, the Client reverts to using the multicast
 messages.
 */
 #ifdef SOAP_WSDD_DP_MAX_TIMEOUT
-# define SOAP_WSDD_DP_MAX_TIMEOUT	(5000)	/* ms timeout */
+# define SOAP_WSDD_DP_MAX_TIMEOUT       (5000)  /* ms timeout */
 #endif
 
 /**
@@ -89,7 +89,7 @@ typedef enum soap_wsdd_to { SOAP_WSDD_TO_DP, SOAP_WSDD_TO_TS } soap_wsdd_to;
 
 /******************************************************************************\
  *
- *	WS-Discovery operations (copied here from soapClient.cpp)
+ *      WS-Discovery operations (copied here from soapClient.cpp)
  *
 \******************************************************************************/
 
@@ -120,7 +120,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_recv___wsdd__ResolveMatches(struct soap *soap, st
 
 /******************************************************************************\
  *
- *	WS-Discovery Operations
+ *      WS-Discovery Operations
  *
 \******************************************************************************/
 
@@ -128,48 +128,48 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_recv___wsdd__ResolveMatches(struct soap *soap, st
 extern "C" {
 #endif
 
-void soap_wsdd_set_InstanceId(unsigned int InstanceId);
+SOAP_FMAC1 void SOAP_FMAC2 soap_wsdd_set_InstanceId(unsigned int InstanceId);
 
-void soap_wsdd_set_SequenceId(const char *SequenceId);
+SOAP_FMAC1 void SOAP_FMAC2 soap_wsdd_set_SequenceId(const char *SequenceId);
 
-int soap_wsdd_Hello(struct soap *soap, soap_wsdd_mode mode, const char *endpoint, const char *MessageID, const char *RelatesTo, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsdd_Hello(struct soap *soap, soap_wsdd_mode mode, const char *endpoint, const char *MessageID, const char *RelatesTo, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion);
 
-int soap_wsdd_Bye(struct soap *soap, soap_wsdd_mode mode, const char *endpoint, const char *MessageID, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsdd_Bye(struct soap *soap, soap_wsdd_mode mode, const char *endpoint, const char *MessageID, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion);
 
-int soap_wsdd_Probe(struct soap *soap, soap_wsdd_mode mode, soap_wsdd_to to, const char *endpoint, const char *MessageID, const char *ReplyTo, const char *Types, const char *Scopes, const char *MatchBy);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsdd_Probe(struct soap *soap, soap_wsdd_mode mode, soap_wsdd_to to, const char *endpoint, const char *MessageID, const char *ReplyTo, const char *Types, const char *Scopes, const char *MatchBy);
 
-int soap_wsdd_Resolve(struct soap *soap, soap_wsdd_mode mode, soap_wsdd_to to, const char *endpoint, const char *MessageID, const char *ReplyTo, const char *EndpointReference);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsdd_Resolve(struct soap *soap, soap_wsdd_mode mode, soap_wsdd_to to, const char *endpoint, const char *MessageID, const char *ReplyTo, const char *EndpointReference);
 
-void soap_wsdd_init_ProbeMatches(struct soap *soap, struct wsdd__ProbeMatchesType *matches);
+SOAP_FMAC1 void SOAP_FMAC2 soap_wsdd_init_ProbeMatches(struct soap *soap, struct wsdd__ProbeMatchesType *matches);
 
-int soap_wsdd_add_ProbeMatch(struct soap *soap, struct wsdd__ProbeMatchesType *matches, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsdd_add_ProbeMatch(struct soap *soap, struct wsdd__ProbeMatchesType *matches, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion);
 
-int soap_wsdd_ProbeMatches(struct soap *soap, const char *endpoint, const char *MessageID, const char *RelatesTo, const char *To, struct wsdd__ProbeMatchesType *matches);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsdd_ProbeMatches(struct soap *soap, const char *endpoint, const char *MessageID, const char *RelatesTo, const char *To, struct wsdd__ProbeMatchesType *matches);
 
-int soap_wsdd_ResolveMatches(struct soap *soap, const char *endpoint, const char *MessageID, const char *RelatesTo, const char *To, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsdd_ResolveMatches(struct soap *soap, const char *endpoint, const char *MessageID, const char *RelatesTo, const char *To, const char *EndpointReference, const char *Types, const char *Scopes, const char *MatchBy, const char *XAddrs, unsigned int MetadataVersion);
 
-int soap_wsdd_listen(struct soap *soap, int timeout);
-int soap_wsdd_serve_request(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsdd_listen(struct soap *soap, int timeout);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsdd_serve_request(struct soap *soap);
 
 #ifdef __cplusplus
 }
 #endif
 
-int __wsdd__Hello(struct soap *soap, struct wsdd__HelloType *Hello);
+SOAP_FMAC5 int SOAP_FMAC6 __wsdd__Hello(struct soap *soap, struct wsdd__HelloType *Hello);
 
-int __wsdd__Bye(struct soap *soap, struct wsdd__ByeType *Bye);
+SOAP_FMAC5 int SOAP_FMAC6 __wsdd__Bye(struct soap *soap, struct wsdd__ByeType *Bye);
 
-int __wsdd__Probe(struct soap *soap, struct wsdd__ProbeType *Probe);
+SOAP_FMAC5 int SOAP_FMAC6 __wsdd__Probe(struct soap *soap, struct wsdd__ProbeType *Probe);
 
-int __wsdd__ProbeMatches(struct soap *soap, struct wsdd__ProbeMatchesType *ProbeMatches);
+SOAP_FMAC5 int SOAP_FMAC6 __wsdd__ProbeMatches(struct soap *soap, struct wsdd__ProbeMatchesType *ProbeMatches);
 
-int __wsdd__Resolve(struct soap *soap, struct wsdd__ResolveType *Resolve);
+SOAP_FMAC5 int SOAP_FMAC6 __wsdd__Resolve(struct soap *soap, struct wsdd__ResolveType *Resolve);
 
-int __wsdd__ResolveMatches(struct soap *soap, struct wsdd__ResolveMatchesType *ResolveMatches);
+SOAP_FMAC5 int SOAP_FMAC6 __wsdd__ResolveMatches(struct soap *soap, struct wsdd__ResolveMatchesType *ResolveMatches);
 
 /******************************************************************************\
  *
- *	User-defined WS-Discovery event handlers
+ *      User-defined WS-Discovery event handlers
  *
 \******************************************************************************/
 

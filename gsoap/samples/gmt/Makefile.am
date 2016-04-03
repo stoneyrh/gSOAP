@@ -8,7 +8,7 @@ SOAPHEADER = gmt.h
 
 include ../Makefile.defines
 include ../Makefile.cpp_rules
-SOAP_NS = t.nsmap t.wsdl
+SOAP_NS = gmt.nsmap gmt.wsdl
 
 gmtclient_SOURCES = gmtclient.cpp $(SOAPHEADER) $(SOAP_CPP_CLIENT)
 gmtclient_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)

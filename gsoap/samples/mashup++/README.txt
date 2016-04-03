@@ -10,9 +10,9 @@ client for the mashup service is also included.
 The mashup.h gSOAP definitions file is generated from the GMT and calculator
 WSDLs using:
 
-wsdl2h -s -o mashup.h t.wsdl calc.wsdl mashup.wsdl
+wsdl2h -s -o mashup.h gmt.wsdl calc.wsdl mashup.wsdl
 
-where t.wsdl is generated in samples/gmt, calc.wsdl is generated in
+where gmt.wsdl is generated in samples/gmt, calc.wsdl is generated in
 samples/calc, and mashup.wsdl is a new WSDL to expose the new "daystoxmas"
 service operation.
 

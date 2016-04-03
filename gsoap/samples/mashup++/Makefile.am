@@ -13,5 +13,5 @@ SOAP_NS = mashup.nsmap
 mashupclient_SOURCES = mashupclient.cpp $(SOAPHEADER) $(SOAP_CPP_CORE) soapmashupProxy.cpp
 mashupclient_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 
-mashupserver_SOURCES = mashupserver.cpp $(SOAPHEADER) $(SOAP_CPP_CORE) soapcalcProxy.cpp soapServiceProxy.cpp soapmashupService.cpp
+mashupserver_SOURCES = mashupserver.cpp $(SOAPHEADER) $(SOAP_CPP_CORE) soapcalcProxy.cpp soapgmtProxy.cpp soapmashupService.cpp
 mashupserver_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)

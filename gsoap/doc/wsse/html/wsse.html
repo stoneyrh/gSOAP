@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WS-Security plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -122,7 +122,8 @@ Security Header</h1>
 </div><!-- fragment --><p>To obtain the actor or role value (e.g. after receiving a message), use:</p>
 <div class="fragment"><div class="line"><a class="code" href="struct__wsse_____security.html">_wsse__Security</a> *security = <a class="code" href="wsseapi_8h.html#ae7775b49a0cd57c7cf85db7bb18b034d">soap_wsse_Security</a>(soap);</div>
 <div class="line"><span class="keywordflow">if</span> (security)</div>
-<div class="line">{ ... = security-&gt;<a class="code" href="struct__wsse_____security.html#a1a941d6f69eab871bced7acdb6eb41f3">SOAP_ENV__actor</a>; <span class="comment">// SOAP 1.1</span></div>
+<div class="line">{</div>
+<div class="line">  ... = security-&gt;<a class="code" href="struct__wsse_____security.html#a1a941d6f69eab871bced7acdb6eb41f3">SOAP_ENV__actor</a>; <span class="comment">// SOAP 1.1</span></div>
 <div class="line">  ... = security-&gt;<a class="code" href="struct__wsse_____security.html#a86e02ae8da9bf2f6e1dd6eda8f596012">SOAP_ENV__role</a>;  <span class="comment">// SOAP 1.2</span></div>
 </div><!-- fragment --><p>The SOAP-ENV:mustUnderstand attribute is automatically added and checked by the gSOAP engine. A gSOAP application compiled without Security support will reject Security headers.</p>
 <p>Security header blocks are attached to the soap context, which means that the information will be automatically kept to support multiple invocations.</p>
@@ -144,19 +145,22 @@ User Name Token</h2>
 <p>You must use <code>soap_wsse_add_UsernameTokenDigest</code> for each message exchange to refresh the password digest even when the user name and password are not changed. Otherwise, the receiver might flag the message as a replay attack.</p>
 <p>Clear-text passwords and password digests are verified with <code>soap_wsse_verify_Password</code>. To verify a password at the receiving side to authorize a request (e.g. within a Web service operation), use:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> ns__myMethod(<span class="keyword">struct</span> soap *soap, ...)</div>
-<div class="line">{ <span class="keyword">const</span> <span class="keywordtype">char</span> *username = <a class="code" href="wsseapi_8h.html#aca3fe6fb7c1e5c103827b33f24292f47">soap_wsse_get_Username</a>(soap);</div>
+<div class="line">{</div>
+<div class="line">  <span class="keyword">const</span> <span class="keywordtype">char</span> *username = <a class="code" href="wsseapi_8h.html#aca3fe6fb7c1e5c103827b33f24292f47">soap_wsse_get_Username</a>(soap);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keywordtype">char</span> *password;</div>
 <div class="line">  <span class="keywordflow">if</span> (!username)</div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error; <span class="comment">// no username: return FailedAuthentication (from soap_wsse_get_Username)</span></div>
 <div class="line">  password = ...; <span class="comment">// lookup password of username</span></div>
 <div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#aeb0afd01a5036e4f1314a3cfe8575bd5">soap_wsse_verify_Password</a>(soap, password))</div>
-<div class="line">  { <span class="keywordtype">int</span> err = soap-&gt;error;</div>
+<div class="line">  {</div>
+<div class="line">    <span class="keywordtype">int</span> err = soap-&gt;error;</div>
 <div class="line">    <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove old security headers</span></div>
 <div class="line">    <span class="comment">// if it is required to return signed faults, then add the following six lines here:</span></div>
 <div class="line">    <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a53075fb3cec4ec4e70fb11850fecb401">soap_wsse_add_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;X509Token&quot;</span>, cert)</div>
 <div class="line">     || <a class="code" href="wsseapi_8h.html#a72df80abd1d36cea516feda3a84672cf">soap_wsse_add_KeyInfo_SecurityTokenReferenceX509</a>(soap, <span class="stringliteral">&quot;#X509Token&quot;</span>)</div>
 <div class="line">     || <a class="code" href="wsseapi_8h.html#ab653754f1a287ba06bd808cf89548c38">soap_wsse_sign_body</a>(soap, <a class="code" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a>, rsa_private_key, 0)</div>
-<div class="line">    { <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove security headers (failed construction)</span></div>
+<div class="line">    {</div>
+<div class="line">      <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove security headers (failed construction)</span></div>
 <div class="line">      <span class="keywordflow">return</span> soap-&gt;error;</div>
 <div class="line">    }</div>
 <div class="line">    <span class="keywordflow">return</span> err; <span class="comment">// password verification failed: return FailedAuthentication</span></div>
@@ -165,7 +169,8 @@ User Name Token</h2>
 <div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a53075fb3cec4ec4e70fb11850fecb401">soap_wsse_add_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;X509Token&quot;</span>, cert)</div>
 <div class="line">   || <a class="code" href="wsseapi_8h.html#a72df80abd1d36cea516feda3a84672cf">soap_wsse_add_KeyInfo_SecurityTokenReferenceX509</a>(soap, <span class="stringliteral">&quot;#X509Token&quot;</span>)</div>
 <div class="line">   || <a class="code" href="wsseapi_8h.html#ab653754f1a287ba06bd808cf89548c38">soap_wsse_sign_body</a>(soap, <a class="code" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a>, rsa_private_key, 0)</div>
-<div class="line">  { <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove security headers (failed construction)</span></div>
+<div class="line">  {</div>
+<div class="line">    <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove security headers (failed construction)</span></div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error;</div>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">return</span> SOAP_OK;</div>
@@ -297,19 +302,22 @@ Signatures</h1>
 <div class="fragment"><div class="line">soap_register_plugin_arg(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>, security_token_handler);</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">const</span> <span class="keywordtype">void</span> *security_token_handler(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">int</span> *alg, <span class="keyword">const</span> <span class="keywordtype">char</span> *keyname, <span class="keywordtype">int</span> *keylen)</div>
-<div class="line">{ <span class="comment">// Note: &#39;keyname&#39; argument is may be used with shared secret key</span></div>
+<div class="line">{</div>
+<div class="line">  <span class="comment">// Note: &#39;keyname&#39; argument is may be used with shared secret key</span></div>
 <div class="line">  <span class="comment">// decryption where the keyname is from the ds:KeyInfo/KeyName content</span></div>
 <div class="line">  <span class="keywordflow">if</span> (keyname)</div>
-<div class="line">  { ... lookup keyname ...</div>
+<div class="line">  {</div>
+<div class="line">    ... lookup keyname ...</div>
 <div class="line">    <span class="keyword">const</span> <span class="keywordtype">void</span> *key = ...;</div>
-<div class="line">     *keylen = ...;</div>
+<div class="line">    *keylen = ...;</div>
 <div class="line">    *alg = ...;</div>
 <div class="line">    <span class="keywordflow">return</span> key;</div>
 <div class="line">  }</div>
 <div class="line">  <span class="comment">// Get the user name from UsernameToken in message</span></div>
 <div class="line">  <span class="keyword">const</span> <span class="keywordtype">char</span> *uid = <a class="code" href="wsseapi_8h.html#aca3fe6fb7c1e5c103827b33f24292f47">soap_wsse_get_Username</a>(soap);</div>
 <div class="line">  <span class="keywordflow">switch</span> (*alg)</div>
-<div class="line">  { <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a448c4d5953ca007263ff6a5bd055cfdc">SOAP_SMD_VRFY_DSA_SHA1</a>:</div>
+<div class="line">  {</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a448c4d5953ca007263ff6a5bd055cfdc">SOAP_SMD_VRFY_DSA_SHA1</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a5b4e9a64ef8a1de550cc5c5ab889d3c6">SOAP_SMD_VRFY_DSA_SHA256</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#aa395a40932c9c057cd264c03716c9d6e">SOAP_SMD_VRFY_RSA_SHA1</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#aa5d9d36c2db3bbef1dfd66593240cf16">SOAP_SMD_VRFY_RSA_SHA224</a>:</div>
@@ -322,7 +330,8 @@ Signatures</h1>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a1b34145858769663cf7dd9c7cd05d549">SOAP_SMD_VRFY_ECDSA_SHA384</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#ab434218e658d6aa79768e43389cf6871">SOAP_SMD_VRFY_ECDSA_SHA512</a>:</div>
 <div class="line">      <span class="keywordflow">if</span> (uid)</div>
-<div class="line">      { <span class="comment">// Lookup uid to retrieve the X509 certificate to verify the signature</span></div>
+<div class="line">      {</div>
+<div class="line">        <span class="comment">// Lookup uid to retrieve the X509 certificate to verify the signature</span></div>
 <div class="line">        <span class="keyword">const</span> X509 *cert = ...; </div>
 <div class="line">        <span class="keywordflow">return</span> (<span class="keyword">const</span> <span class="keywordtype">void</span>*)cert;</div>
 <div class="line">      }</div>
@@ -332,10 +341,11 @@ Signatures</h1>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a5928fa6c9c366857ffb96e70e6e04609">SOAP_SMD_HMAC_SHA384</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a0eaedca857ff22ca7e2290e3ad67a184">SOAP_SMD_HMAC_SHA512</a>:</div>
 <div class="line">      <span class="keywordflow">if</span> (uid)</div>
-<div class="line">      { <span class="comment">// Lookup uid to retrieve the HMAC SHA key to verify the signature</span></div>
+<div class="line">      {</div>
+<div class="line">        <span class="comment">// Lookup uid to retrieve the HMAC SHA key to verify the signature</span></div>
 <div class="line">        <span class="keyword">const</span> <span class="keywordtype">void</span> *key = ...; </div>
-<div class="line">         *alg = ...;</div>
-<div class="line">         *keylen = ...;</div>
+<div class="line">        *alg = ...;</div>
+<div class="line">        *keylen = ...;</div>
 <div class="line">        <span class="keywordflow">return</span> key;</div>
 <div class="line">      }</div>
 <div class="line">      <span class="keywordflow">return</span> NULL; <span class="comment">// no certificate: fail</span></div>
@@ -412,7 +422,8 @@ Signing Message Parts</h2>
 <p>For example, consider a transaction in which we only want to sign a contract in the SOAP Body. This allows us to modify the rest of the message or extract the contract in XML and pass it on with the signature.</p>
 <p>The gSOAP header file includes a myContract declaration:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>ns__myContract</div>
-<div class="line">{ @<span class="keywordtype">char</span>* wsu__Id = <span class="stringliteral">&quot;Contract&quot;</span>;</div>
+<div class="line">{</div>
+<div class="line">  @<span class="keywordtype">char</span>* wsu__Id = <span class="stringliteral">&quot;Contract&quot;</span>;</div>
 <div class="line">  <span class="keywordtype">char</span>* name;</div>
 <div class="line">  <span class="keywordtype">char</span>* title;</div>
 <div class="line">  <span class="keywordtype">char</span>* terms;</div>
@@ -517,7 +528,8 @@ Signature Validation</h2>
 <p>The <code>soap_wsse_verify_auto</code> function keeps processing signed (and unsigned) messages as they arrive. For unsigned messages this can be expensive and the verification engine should be shut down using <code>soap_wsse_verify_done</code>.</p>
 <p>There can be two problems with signature verification. First, some WS-Security implementations include SignedInfo/Reference/ without targeting an element, which will produce an error that a Reference URI target does not exist. To ignore these references, use <code>SOAP_WSSE_IGNORE_EXTRA_REFS</code>. Second, certificates provided by the peer are not verifiable unless the signing CA certificate is included in the cafile or capath. To disable certificate verification set the fsslverify callback:</p>
 <div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keywordtype">int</span> ssl_verify(<span class="keywordtype">int</span> ok, X509_STORE_CTX *store)</div>
-<div class="line">{ <span class="comment">// put certificate verification here, return 0 when fails 1 when ok</span></div>
+<div class="line">{</div>
+<div class="line">  <span class="comment">// put certificate verification here, return 0 when fails 1 when ok</span></div>
 <div class="line">  <span class="keywordflow">return</span> 1;</div>
 <div class="line">}</div>
 <div class="line">...</div>
@@ -611,9 +623,11 @@ Encrypting Messages</h2>
 <div class="line">    soap_register_plugin_arg(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>, security_token_handler);</div>
 <div class="line"></div>
 <div class="line">    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">void</span> *token_handler(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">int</span> alg, <span class="keyword">const</span> <span class="keywordtype">char</span> *keyname, <span class="keywordtype">int</span> *keylen)</div>
-<div class="line">    { <span class="keyword">struct </span><a class="code" href="structds_____x509_issuer_serial_type.html">ds__X509IssuerSerialType</a> *issuer;</div>
+<div class="line">    {</div>
+<div class="line">      <span class="keyword">struct </span><a class="code" href="structds_____x509_issuer_serial_type.html">ds__X509IssuerSerialType</a> *issuer;</div>
 <div class="line">      <span class="keywordflow">switch</span> (alg)</div>
-<div class="line">      { <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a448c4d5953ca007263ff6a5bd055cfdc">SOAP_SMD_VRFY_DSA_SHA1</a>:</div>
+<div class="line">      {</div>
+<div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a448c4d5953ca007263ff6a5bd055cfdc">SOAP_SMD_VRFY_DSA_SHA1</a>:</div>
 <div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a5b4e9a64ef8a1de550cc5c5ab889d3c6">SOAP_SMD_VRFY_DSA_SHA256</a>:</div>
 <div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#aa395a40932c9c057cd264c03716c9d6e">SOAP_SMD_VRFY_RSA_SHA1</a>:</div>
 <div class="line">        <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#aa5d9d36c2db3bbef1dfd66593240cf16">SOAP_SMD_VRFY_RSA_SHA224</a>:</div>
@@ -681,10 +695,12 @@ Decrypting Message Parts</h2>
 <div class="fragment"><div class="line">soap_register_plugin_arg(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>, security_token_handler);</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">const</span> <span class="keywordtype">void</span> *security_token_handler(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">int</span> alg, <span class="keyword">const</span> <span class="keywordtype">char</span> *keyname, <span class="keywordtype">int</span> *keylen)</div>
-<div class="line">{ <span class="comment">// Note: &#39;keyname&#39; argument may be used with shared secret key</span></div>
+<div class="line">{</div>
+<div class="line">  <span class="comment">// Note: &#39;keyname&#39; argument may be used with shared secret key</span></div>
 <div class="line">  <span class="comment">// decryption where the keyname is from the ds:KeyInfo/KeyName content</span></div>
 <div class="line">  <span class="keywordflow">if</span> (keyname)</div>
-<div class="line">  { ... lookup keyname ...</div>
+<div class="line">  {</div>
+<div class="line">    ... lookup keyname ...</div>
 <div class="line">    <span class="keyword">const</span> <span class="keywordtype">void</span> *key = ...;</div>
 <div class="line">    keylen = ...;</div>
 <div class="line">    *alg = ...;</div>
@@ -693,7 +709,8 @@ Decrypting Message Parts</h2>
 <div class="line">  <span class="comment">// Get the user name from UsernameToken in message</span></div>
 <div class="line">  <span class="keyword">const</span> <span class="keywordtype">char</span> *uid = <a class="code" href="wsseapi_8h.html#aca3fe6fb7c1e5c103827b33f24292f47">soap_wsse_get_Username</a>(soap);</div>
 <div class="line">  <span class="keywordflow">switch</span> (*alg)</div>
-<div class="line">  { <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a448c4d5953ca007263ff6a5bd055cfdc">SOAP_SMD_VRFY_DSA_SHA1</a>:</div>
+<div class="line">  {</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a448c4d5953ca007263ff6a5bd055cfdc">SOAP_SMD_VRFY_DSA_SHA1</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a5b4e9a64ef8a1de550cc5c5ab889d3c6">SOAP_SMD_VRFY_DSA_SHA256</a>:</div>
 <div class="line">    CASE <a class="code" href="smdevp_8h.html#aa395a40932c9c057cd264c03716c9d6e">SOAP_SMD_VRFY_RSA_SHA1</a>:</div>
 <div class="line">    CASE <a class="code" href="smdevp_8h.html#aa5d9d36c2db3bbef1dfd66593240cf16">SOAP_SMD_VRFY_RSA_SHA224</a>:</div>
@@ -706,17 +723,19 @@ Decrypting Message Parts</h2>
 <div class="line">    CASE <a class="code" href="smdevp_8h.html#a1b34145858769663cf7dd9c7cd05d549">SOAP_SMD_VRFY_ECDSA_SHA384</a>:</div>
 <div class="line">    CASE <a class="code" href="smdevp_8h.html#ab434218e658d6aa79768e43389cf6871">SOAP_SMD_VRFY_ECDSA_SHA512</a>:</div>
 <div class="line">      <span class="keywordflow">if</span> (uid)</div>
-<div class="line">      { <span class="comment">// Lookup uid to retrieve the X509 certificate to verify the signature</span></div>
+<div class="line">      {</div>
+<div class="line">        <span class="comment">// Lookup uid to retrieve the X509 certificate to verify the signature</span></div>
 <div class="line">        <span class="keyword">const</span> X509 *cert = ...; </div>
 <div class="line">        <span class="keywordflow">return</span> (<span class="keyword">const</span> <span class="keywordtype">void</span>*)cert;</div>
 <div class="line">      }</div>
 <div class="line">      <span class="keywordflow">return</span> NULL; <span class="comment">// no certificate: fail</span></div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a7d00704c43ee044926905cd327a712ef">SOAP_SMD_HMAC_SHA1</a>:</div>
 <div class="line">      <span class="keywordflow">if</span> (uid)</div>
-<div class="line">      { <span class="comment">// Lookup uid to retrieve the HMAC key to verify the signature</span></div>
+<div class="line">      {</div>
+<div class="line">        <span class="comment">// Lookup uid to retrieve the HMAC key to verify the signature</span></div>
 <div class="line">        <span class="keyword">const</span> <span class="keywordtype">void</span> *key = ...; </div>
-<div class="line">         *alg = ...;</div>
-<div class="line">         *keylen = ...;</div>
+<div class="line">        *alg = ...;</div>
+<div class="line">        *keylen = ...;</div>
 <div class="line">        <span class="keywordflow">return</span> key;</div>
 <div class="line">      }</div>
 <div class="line">      <span class="keywordflow">return</span> NULL; <span class="comment">// no certificate: fail</span></div>
@@ -813,7 +832,8 @@ Example Combining Signing with Encryption/Decryption</h2>
 <div class="line">fclose(fd);</div>
 <div class="line">...</div>
 <div class="line">if (soap_serve(soap))</div>
-<div class="line">{ <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap);</div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap);</div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">}</div>
 <div class="line">...</div>
@@ -821,13 +841,15 @@ Example Combining Signing with Encryption/Decryption</h2>
 <div class="line">X509_free(cert);</div>
 </div><!-- fragment --><p>where an example service operation could be:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> ns__myMethod(<span class="keyword">struct</span> soap *soap, ...)</div>
-<div class="line">{ ...</div>
+<div class="line">{</div>
+<div class="line">  ...</div>
 <div class="line">  <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap);</div>
 <div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a53075fb3cec4ec4e70fb11850fecb401">soap_wsse_add_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;X509Token&quot;</span>, cert)</div>
 <div class="line">   || <a class="code" href="wsseapi_8h.html#a72df80abd1d36cea516feda3a84672cf">soap_wsse_add_KeyInfo_SecurityTokenReferenceX509</a>(soap, <span class="stringliteral">&quot;#X509Token&quot;</span>)</div>
 <div class="line">   || <a class="code" href="wsseapi_8h.html#a1ba85a8b14587cff0865ebc3e5e9e340">soap_wsse_add_EncryptedKey</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL)</div>
 <div class="line">   || <a class="code" href="wsseapi_8h.html#ab653754f1a287ba06bd808cf89548c38">soap_wsse_sign_body</a>(soap, <a class="code" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a>, rsa_private_key, 0)</div>
-<div class="line">  { <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove security headers (failed construction)</span></div>
+<div class="line">  {</div>
+<div class="line">  <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove security headers (failed construction)</span></div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error;</div>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">return</span> SOAP_OK;</div>
@@ -904,7 +926,8 @@ WS-Security and HTTPS</h1>
 <div class="line"><span class="keywordflow">if</span> (!soap_valid_socket(m = soap_bind(soap, NULL, port, 100))</div>
 <div class="line">  ... <span class="comment">// error</span></div>
 <div class="line"><span class="keywordflow">for</span> (;;)</div>
-<div class="line">{ <span class="keywordflow">if</span> (!soap_valid_socket(s = soap_accept(soap)))</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (!soap_valid_socket(s = soap_accept(soap)))</div>
 <div class="line">    ... <span class="comment">// error</span></div>
 <div class="line">  THREAD_CREATE(&amp;tid, (<span class="keywordtype">void</span>*(*)(<span class="keywordtype">void</span>*))&amp;process_request, soap_copy(soap));</div>
 <div class="line">}</div>
@@ -914,7 +937,8 @@ WS-Security and HTTPS</h1>
 <div class="line">CRYPTO_thread_cleanup();</div>
 </div><!-- fragment --><p>where we define a process_request function that is executed by the thread to process the request (on a copy of the soap context struct):</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> *process_request(<span class="keyword">struct</span> soap *soap)</div>
-<div class="line">{ ... <span class="comment">// set up WS-Security for signatures/encryption etc</span></div>
+<div class="line">{</div>
+<div class="line">  ... <span class="comment">// set up WS-Security for signatures/encryption etc</span></div>
 <div class="line">  <span class="keywordflow">if</span> (soap_ssl_accept(soap)</div>
 <div class="line">   || soap_serve(soap))</div>
 <div class="line">    ... <span class="comment">// error</span></div>
@@ -929,13 +953,15 @@ WS-Security and HTTPS</h1>
 </ul>
 <p>We need to define the thread set up and clean up operations as follows:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>CRYPTO_dynlock_value</div>
-<div class="line">{ MUTEX_TYPE mutex;</div>
+<div class="line">{</div>
+<div class="line">  MUTEX_TYPE mutex;</div>
 <div class="line">};</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">static</span> MUTEX_TYPE *mutex_buf;</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">static</span> <span class="keyword">struct </span>CRYPTO_dynlock_value *dyn_create_function(<span class="keyword">const</span> <span class="keywordtype">char</span> *file, <span class="keywordtype">int</span> line)</div>
-<div class="line">{ <span class="keyword">struct </span>CRYPTO_dynlock_value *value;</div>
+<div class="line">{</div>
+<div class="line">  <span class="keyword">struct </span>CRYPTO_dynlock_value *value;</div>
 <div class="line">  value = (<span class="keyword">struct </span>CRYPTO_dynlock_value*)malloc(<span class="keyword">sizeof</span>(<span class="keyword">struct</span> CRYPTO_dynlock_value));</div>
 <div class="line">  <span class="keywordflow">if</span> (value)</div>
 <div class="line">    MUTEX_SETUP(value-&gt;mutex);</div>
@@ -943,30 +969,35 @@ WS-Security and HTTPS</h1>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> dyn_lock_function(<span class="keywordtype">int</span> mode, <span class="keyword">struct</span> CRYPTO_dynlock_value *l, <span class="keyword">const</span> <span class="keywordtype">char</span> *file, <span class="keywordtype">int</span> line)</div>
-<div class="line">{ <span class="keywordflow">if</span> (mode &amp; CRYPTO_LOCK)</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (mode &amp; CRYPTO_LOCK)</div>
 <div class="line">    MUTEX_LOCK(l-&gt;mutex);</div>
 <div class="line">  <span class="keywordflow">else</span></div>
 <div class="line">    MUTEX_UNLOCK(l-&gt;mutex);</div>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> dyn_destroy_function(<span class="keyword">struct</span> CRYPTO_dynlock_value *l, <span class="keyword">const</span> <span class="keywordtype">char</span> *file, <span class="keywordtype">int</span> line)</div>
-<div class="line">{ MUTEX_CLEANUP(l-&gt;mutex);</div>
+<div class="line">{</div>
+<div class="line">  MUTEX_CLEANUP(l-&gt;mutex);</div>
 <div class="line">  free(l);</div>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keywordtype">void</span> locking_function(<span class="keywordtype">int</span> mode, <span class="keywordtype">int</span> n, <span class="keyword">const</span> <span class="keywordtype">char</span> *file, <span class="keywordtype">int</span> line)</div>
-<div class="line">{ <span class="keywordflow">if</span> (mode &amp; CRYPTO_LOCK)</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (mode &amp; CRYPTO_LOCK)</div>
 <div class="line">    MUTEX_LOCK(mutex_buf[n]);</div>
 <div class="line">  <span class="keywordflow">else</span></div>
 <div class="line">    MUTEX_UNLOCK(mutex_buf[n]);</div>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> id_function()</div>
-<div class="line">{ <span class="keywordflow">return</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>)THREAD_ID;</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">return</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>)THREAD_ID;</div>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keywordtype">int</span> CRYPTO_thread_setup()</div>
-<div class="line">{ <span class="keywordtype">int</span> i;</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordtype">int</span> i;</div>
 <div class="line">  mutex_buf = (MUTEX_TYPE*)malloc(CRYPTO_num_locks() * <span class="keyword">sizeof</span>(pthread_mutex_t));</div>
 <div class="line">  <span class="keywordflow">if</span> (!mutex_buf)</div>
 <div class="line">    <span class="keywordflow">return</span> SOAP_EOM;</div>
@@ -981,7 +1012,8 @@ WS-Security and HTTPS</h1>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keywordtype">void</span> CRYPTO_thread_cleanup()</div>
-<div class="line">{ <span class="keywordtype">int</span> i;</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordtype">int</span> i;</div>
 <div class="line">  <span class="keywordflow">if</span> (!mutex_buf)</div>
 <div class="line">    <span class="keywordflow">return</span>;</div>
 <div class="line">  CRYPTO_set_id_callback(NULL);</div>
@@ -1031,7 +1063,7 @@ WS-SecureConversation</h1>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 20:02:03 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Mar 29 2016 16:43:13 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

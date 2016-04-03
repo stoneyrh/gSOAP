@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">XML Data Bindings</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Wed Mar 2 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -79,7 +79,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 </ul>
 </li>
 <li class="level1"><a href="#toxsd">Mapping C/C++ to XML schema                                             </a><ul><li class="level2"><a href="#toxsd1">Overview of serializable C/C++ types                                   </a></li>
-<li class="level2"><a href="#toxsd2">Colon notation versus name prefixing                                   </a></li>
+<li class="level2"><a href="#toxsd2">Colon notation versus name prefixing with XML tag name translation     </a></li>
 <li class="level2"><a href="#toxsd3">C++ Bool and C alternatives                                            </a></li>
 <li class="level2"><a href="#toxsd4">Enumerations and bitmasks                                              </a></li>
 <li class="level2"><a href="#toxsd5">Numerical types                                                        </a></li>
@@ -90,7 +90,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li class="level3"><a href="#toxsd9-2">Volatile classes and structs</a></li>
 <li class="level3"><a href="#toxsd9-3">Mutable classes and structs</a></li>
 <li class="level3"><a href="#toxsd9-4">Default member values in C and C++</a></li>
-<li class="level3"><a href="#toxsd9-5">Attribute members</a></li>
+<li class="level3"><a href="#toxsd9-5">Attribute members and backtick XML tags</a></li>
 <li class="level3"><a href="#toxsd9-6">Qualified and unqualified members</a></li>
 <li class="level3"><a href="#toxsd9-7">Defining document root elements</a></li>
 <li class="level3"><a href="#toxsd9-8">(Smart) pointer members and their occurrence constraints</a></li>
@@ -130,6 +130,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li class="level2"><a href="#memory2">Memory management in C++                                              </a></li>
 </ul>
 </li>
+<li class="level1"><a href="#flags">Context flags to initialize the soap struct                             </a></li>
 <li class="level1"><a href="#features">Features and limitations                                             </a></li>
 <li class="level1"><a href="#nsmap">Removing SOAP namespaces from XML payloads                              </a></li>
 <li class="level1"><a href="#examples">Examples                                                             </a></li>
@@ -612,7 +613,7 @@ Overview of serializable C/C++ types                                   </h2>
 </table>
 <dl class="section see"><dt>See also</dt><dd>Section <a href="#toxsd10">special classes and structs</a>.</dd></dl>
 <h2><a class="anchor" id="toxsd2"></a>
-Colon notation versus name prefixing                                   </h2>
+Colon notation versus name prefixing with XML tag name translation     </h2>
 <p>To bind C/C++ type names to XSD types, a simple form of name prefixing is used by the gSOAP tools by prepending the XML namespace prefix to the C/C++ type name with a pair of undescrores. This also ensures that name clashes cannot occur when multiple WSDL and XSD files are converted to C/C++. Also, C++ namespaces are not sufficiently rich to capture XML schema namespaces accurately, for example when class members are associated with schema elements defined in another XML namespace and thus the XML namespace scope of the member's name is relevant, not just its type.</p>
 <p>However, from a C/C++ centric point of view this can be cumbersome. Therefore, colon notation is an alternative to physically augmenting C/C++ names with prefixes.</p>
 <p>For example, the following class uses colon notation to bind the <code>record</code> class to the <code>urn:types</code> schema:</p>
@@ -627,8 +628,21 @@ Colon notation versus name prefixing                                   </h2>
 <div class="line">  ~ns:record();        <span class="comment">// and here</span></div>
 <div class="line">};</div>
 </div><!-- fragment --><p>The colon notation is stripped away by soapcpp2 when generating the data binding implementation code for our project. So the final code just uses <code>record</code> to identify this class and its constructor/destructor.</p>
-<p>When using colon notation we have to be consistent and not use colon notation mixed with prefixed forms. The name <code>ns:record</code> differs from <code>ns__record</code>, because <code>ns:record</code> is compiled to an unqualified <code>record</code> name.</p>
+<p>When using colon notation make sure to be consistent and not use colon notation mixed with prefixed forms. The name <code>ns:record</code> differs from <code>ns__record</code>, because <code>ns:record</code> is compiled to an unqualified <code>record</code> name.</p>
 <p>Colon notation also facilitates overruling the elementFormDefault and attributeFormDefault declaration that is applied to local elements and attributes, when declared as members of classes, structs, and unions. For more details, see <a href="#toxsd9-6">qualified and unqualified members</a>.</p>
+<p>A C/C++ identifier name (a type name, member name, function name, or parameter name) is translated to an XML tag name by the following rules:</p>
+<ul>
+<li>Two leading underscores indicates that the identifier name has no XML tag name, i.e. this name is not visible in XML and is not translated.</li>
+<li>A leading underscore is removed, but the underscore indicates that: <b>a</b>) a struct/class member name or parameter name has a wildcard XML tag name (i.e. matches any XML tag), or <b>b</b>) a type name that has a <a href="#toxsd9-7">document root element definition</a>.</li>
+<li>Trailing underscores are removed (i.e. trailing underscores can be used to avoid name clashes with keywords).</li>
+<li>Underscores within names are translated to hyphens (hyphens are more common in XML tags).</li>
+<li><code>_USCORE</code> is translated to an underscore in the translated XML tag name.</li>
+<li><code>_DOT</code> is translated to a dot (<code>.</code>) in the translated XML tag name.</li>
+<li><code>_xHHHH</code> is translated to the Unicode character with code point HHHH.</li>
+<li>C++11 Unicode identifier name characters in UTF-8 are translated as-is.</li>
+</ul>
+<p>For example, the C/C++ namespace qualified identifier name <code>s_a__my_way</code> is translated to the XML tag name <code>s-a:my-way</code> by translating the prefix <code>s_a</code> and the local name <code>my_way</code>.</p>
+<p>Struct/class member and parameter name translation can be overruled by using <a href="#toxsd9-5">backtick XML tags</a> (with gSOAP 2.8.30 or higher).</p>
 <h2><a class="anchor" id="toxsd3"></a>
 C++ Bool and C alternatives                                            </h2>
 <p>The C++ <code>bool</code> type is bound to built-in XSD type <code>xsd:boolean</code>.</p>
@@ -1042,7 +1056,15 @@ Default member values in C and C++</h3>
 <div class="line">  std::string name = <span class="stringliteral">&quot;Joe&quot;</span>;</div>
 <div class="line">  ...</div>
 <div class="line">};</div>
-</div><!-- fragment --><p>These initializations are made by the default constructor that is added by soapcpp2 to each class and struct. A constructor is only added when a default constructor is not already defined with the class declaration. You can explicitly (re)initialize an object with these initial values by using the soapcpp2 auto-generated functions:</p>
+</div><!-- fragment --><p>Alternatively, use C++11 default initialization syntax:</p>
+<div class="fragment"><div class="line"><span class="keyword">class </span>ns__record</div>
+<div class="line">{</div>
+<div class="line"> <span class="keyword">public</span>:</div>
+<div class="line">  std::string name { <span class="stringliteral">&quot;Joe&quot;</span> };</div>
+<div class="line">  ...</div>
+<div class="line">};</div>
+</div><!-- fragment --><p>These initializations are made by the default constructor that is added by soapcpp2 to each class and struct (in C++ only). A constructor is only added when a default constructor is not already defined with the class declaration.</p>
+<p>You can explicitly (re)initialize an object with these initial values by using the soapcpp2 auto-generated functions:</p>
 <ul>
 <li><code>void T::soap_default(struct soap*)</code> for <code>class T</code> (C++ only)</li>
 <li><code>void soap_default_T(struct soap*, T*)</code> for <code>struct T</code> (C and C++).</li>
@@ -1050,8 +1072,8 @@ Default member values in C and C++</h3>
 <p>Initializations can only be provided for members that have primitive types (<code>bool</code>, <code>enum</code>, <code>time_t</code>, numeric and string types).</p>
 <dl class="section see"><dt>See also</dt><dd>Section <a href="#toxsd9-13">operations on classes and structs</a>.</dd></dl>
 <h3><a class="anchor" id="toxsd9-5"></a>
-Attribute members</h3>
-<p>Class and struct data members can be declared as XML attributes by annotating their type with a <code>@</code> with the declaration of the member:</p>
+Attribute members and backtick XML tags</h3>
+<p>Class and struct data members are declared as XML attributes by annotating their type with a <code>@</code> qualifier:</p>
 <div class="fragment"><div class="line"><span class="keyword">class </span>ns__record</div>
 <div class="line">{</div>
 <div class="line"> <span class="keyword">public</span>:</div>
@@ -1072,9 +1094,30 @@ Attribute members</h3>
 &lt;/ns:record&gt;
 </pre><p>Attribute data members are restricted to primitive types (<code>bool</code>, <code>enum</code>, <code>time_t</code>, numeric and string types), <code>xsd__hexBinary</code>, <code>xsd__base64Binary</code>, and custom serializers, such as <code>xsd__dateTime</code>. Custom serializers for types that may be used as attributes MUST define <code>soap_s2T</code> and <code>soap_T2s</code> functions that convert values of type <code>T</code> to strings and back.</p>
 <p>Attribute data members can be pointers and smart pointers to these types, which permits attributes to be optional.</p>
-<h3><a class="anchor" id="toxsd9-6"></a>
+<p>The XML tag name of a class/struct member is the name of the member with the usual XML tag translation, see <a href="#toxsd2">colon notation</a>.</p>
+<p>To override the standard translation of identifier names to XML tag names of attributes and elements, add the XML tag name in backticks (requires gSOAP 2.8.30 or higher):</p>
+<div class="fragment"><div class="line"><span class="keyword">class </span>ns__record</div>
+<div class="line">{</div>
+<div class="line"> <span class="keyword">public</span>:</div>
+<div class="line">  @std::string name    `full-name`;</div>
+<div class="line">  @uint64_t    SSN     `tax-<span class="keywordtype">id</span>`;</div>
+<div class="line">  ns__record  *spouse  `married-to`;</div>
+<div class="line">};</div>
+</div><!-- fragment --><p>This class maps to a complexType in the soapcpp2-generated schema: </p><pre class="fragment">&lt;complexType name="record"&gt;
+  &lt;sequence&gt;
+    &lt;element name="married-to" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/&gt;
+  &lt;/sequence&gt;
+  &lt;attribute name="full-name" type="xsd:string" use="required"/&gt;
+  &lt;attribute name="tax-id" type="xsd:unsignedLong" use="required"/&gt;
+&lt;/complexType&gt;
+</pre><p>An example XML instance of <code>ns__record</code> is: </p><pre class="fragment">&lt;ns:record xmlns:ns="urn:types" full-name="Joe" tax-id="1234567890"&gt;
+  &lt;married-to full-name="Jane" tax-id="1987654320"&gt;
+  &lt;/married-to&gt;
+&lt;/ns:record&gt;
+</pre><p>A backtick XML tag name may contain any non-empty sequence of ASCII and UTF-8 characters except white space and the backtick character. A backtick tag can be combined with member constraints and default member initializers: </p><pre class="fragment">@uint64_t SSN `tax-id` 0:1 = 999;
+</pre><h3><a class="anchor" id="toxsd9-6"></a>
 Qualified and unqualified members</h3>
-<p>Class, struct, and union data members are mapped to namespace qualified or unqualified tag names of local elements and attributes. If a data member has no prefix then the default form of qualification is applied based on the element/attribute form that is declared with the schema of the class, struct, or union type. If the member name has a namespace prefix by colon notation, then the prefix overrules the default (un)qualified form. Therefore, [Colon notation](toxsd2) is an effective mechanism to control qualification of tag names of individual members of classes, structs, and unions.</p>
+<p>Class, struct, and union data members are mapped to namespace qualified or unqualified tag names of local elements and attributes. If a data member has no prefix then the default form of qualification is applied based on the element/attribute form that is declared with the schema of the class, struct, or union type. If the member name has a namespace prefix by colon notation, then the prefix overrules the default (un)qualified form. Therefore, <a href="#toxsd2">colon notation</a> is an effective mechanism to control qualification of tag names of individual members of classes, structs, and unions.</p>
 <p>The XML schema elementFormDefault and attributeFormDefault declarations control the tag name qualification of local elements and attributes, respectively.</p>
 <ul>
 <li>"unqualified" indicates that local elements/attributes are not qualified with the namespace prefix.</li>
@@ -1138,7 +1181,8 @@ Qualified and unqualified members</h3>
   &lt;spouse&gt; ns:name="Jane" SSN="1987654320"&gt;
   &lt;/spouse&gt;
 &lt;/ns:record&gt;
-</pre><p>Note that data members can also be prefixed using the <code>prefix__name</code> convention. However, this has a different effect by referring to global (root) elements and attributes, see <a href="#toxsd9-7">defining document root elements</a>.</p>
+</pre><p>Note that data members can also be prefixed using the <code>prefix__name</code> convention. However, this has a different effect by referring to global (root) elements and attributes, see <a href="#toxsd9-7">document root element definitions</a>.</p>
+<p><a href="#toxsd9-5">Backtick tag names</a> can be used in place of the member name annotations and will achieve the same effect as described when these tag names are (un)qualified (requires gSOAP 2.8.30 or higher).</p>
 <dl class="section note"><dt>Note</dt><dd>You must declare a target namespace with a <code>//gsoap ns schema namespace:</code> directive to enable the <code>elementForm</code> and <code>attributeForm</code> directives in order to generate valid schemas with soapcpp2. See <a href="#directives">directives</a> for more details.</dd></dl>
 <h3><a class="anchor" id="toxsd9-7"></a>
 Defining document root elements</h3>
@@ -1192,7 +1236,17 @@ Defining document root elements</h3>
 <div class="line">};</div>
 </div><!-- fragment --><p>Therefore, we recommend to use qualified member names only when necessary to refer to standard XSD elements and attributes, such as <code>xsi__type</code>, and <code>xsd__lang</code>.</p>
 <p>By contrast, colon notation has the desired effect to (un)qualify local tag names by overruling the default element/attribute namespace qualification, see <a href="#toxsd9-6">qualified and unqualified members</a>.</p>
-<h3><a class="anchor" id="toxsd9-8"></a>
+<p>As an alternative to prefixing member names, use the backtick tag (gSOAP 2.8.30 and higher):</p>
+<div class="fragment"><div class="line"><span class="keyword">typedef</span> std::string _ns__name 1 : 100;</div>
+<div class="line"><span class="keyword">class </span>_ns__record</div>
+<div class="line">{</div>
+<div class="line"> <span class="keyword">public</span>:</div>
+<div class="line">  @<a class="code" href="address_stub_8h.html#aa178a46d0cf703ff226a5c148483286d">_QName</a>      t    `xsi:type`; <span class="comment">// built-in XSD attribute xsi:type</span></div>
+<div class="line">  _ns__name    s    `ns:name`;  <span class="comment">// ref to global ns:name element</span></div>
+<div class="line">  uint64_t     SSN;</div>
+<div class="line">  _ns__record *spouse;</div>
+<div class="line">};</div>
+</div><!-- fragment --><h3><a class="anchor" id="toxsd9-8"></a>
 (Smart) pointer members and their occurrence constraints</h3>
 <p>A public pointer-typed data member is serialized by following its (smart) pointer(s) to the value pointed to. To serialize pointers to dynamic arrays of data, please see the next section on <a href="#toxsd9-9">container members and their occurrence constraints</a>.</p>
 <p>Pointers that are NULL and smart pointers that are empty are serialized to produce omitted element and attribute values, unless an element is required and is nillable.</p>
@@ -1642,7 +1696,7 @@ MIME/MTOM attachment binary types</h3>
 <div class="line">  <span class="keywordtype">char</span>          *type;    <span class="comment">// MIME type of the data</span></div>
 <div class="line">  <span class="keywordtype">char</span>          *options; <span class="comment">// optional description of MIME attachment</span></div>
 <div class="line">};</div>
-</div><!-- fragment --><p>Attachments are beyond the scope of this document. See the <a href="http://www.genivia.com/doc/soapdoc2.html">gSOAP user guide</a> for more details.</p>
+</div><!-- fragment --><p>Attachments are beyond the scope of this document. The <code>SOAP_ENC_MIME</code> and <code>SOAP_ENC_MTOM</code> context flag must be set to enable attachments. See the <a href="http://www.genivia.com/doc/soapdoc2.html">gSOAP user guide</a> for more details.</p>
 <h3><a class="anchor" id="toxsd10-4"></a>
 Wrapper class/struct with simpleContent</h3>
 <p>A class or struct with the following layout is a complexType that wraps simpleContent:</p>
@@ -1949,7 +2003,7 @@ SOAP document versus rpc style                                        </h2>
 SOAP literal versus encoding                                          </h2>
 <p>The <code>wsdl:operation/soap:body/@use</code> attribute in the wsdl:binding section of a WSDL is either "literal" or "encoded". The "encoded" use refers to the SOAP encoding rules that support id-ref multi-referenced elements to serialize data as graphs.</p>
 <p>SOAP encoding is very useful if the data internally forms a graph (including cycles) and we want the graph to be serialized in XML in a format that ensures that its structure is preserved. In that case, SOAP 1.2 encoding is the best option.</p>
-<p>SOAP encoding also adds encoding rules for [SOAP arrays](toxsd10) to serialize multi-dimensional arrays. The use of XML attributes to exchange XML data in SOAP encoding is not permitted. The only attributes permitted are the standard XSD attributes, SOAP encoding attributes (such as for arrays), and id-ref.</p>
+<p>SOAP encoding also adds encoding rules for <a href="#toxsd10">SOAP arrays</a> to serialize multi-dimensional arrays. The use of XML attributes to exchange XML data in SOAP encoding is not permitted. The only attributes permitted are the standard XSD attributes, SOAP encoding attributes (such as for arrays), and id-ref.</p>
 <p>For example, the following directives in the gSOAP header file for soapcpp2 declare that <code>DBupdate</code> is a SOAP RPC encoding service method:</p>
 <div class="fragment"><div class="line"><span class="comment">//gsoap ns service namespace:       urn:DB</span></div>
 <div class="line"><span class="comment">//gsoap ns service method-protocol: DBupdate SOAP</span></div>
@@ -2456,6 +2510,40 @@ Memory management in C++                                              </h2>
 <div class="line">ns__record *pers5 = soap_dup_ns__record(soap, NULL, &amp;pers1); <span class="comment">// OK</span></div>
 </div><!-- fragment --><p>Copying data with <code>soap_dup_T(soap)</code> into managed space is always safe. Copying into unmanaged space requires diligence. But deleting unmanaged data is easy with <code>soap_del_T()</code>.</p>
 <p>You can also use <code>soap_del_T()</code> to delete structures in C++, but only if these structures are created with <code>new</code> (and <code>new []</code> for arrays when applicable) for classes, structs, and class templates and with <code>malloc</code> for anything else, and the structures do NOT contain pointers to stack and static data.</p>
+<h1><a class="anchor" id="flags"></a>
+Context flags to initialize the soap struct                             </h1>
+<p>There are several context initialization flags and context mode flags to control XML serialization at runtime. The flags are set with <code>soap_new1()</code> for heap allocation of contexts:</p>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(&lt;flag&gt; | &lt;flag&gt; ... | &lt;flag&gt;);</div>
+<div class="line">,,,</div>
+<div class="line">soap_destroy(soap); <span class="comment">// delete objects</span></div>
+<div class="line">soap_end(soap);     <span class="comment">// delete other data and temp data</span></div>
+<div class="line">soap_free(soap);    <span class="comment">// free context</span></div>
+</div><!-- fragment --><p>and with <code>soap_init1()</code> with stack allocated contexts:</p>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap soap;</div>
+<div class="line">soap_init1(&amp;soap, &lt;flag&gt; | &lt;flag&gt; ... | &lt;flag&gt;);</div>
+<div class="line">,,,</div>
+<div class="line">soap_destroy(&amp;soap); <span class="comment">// delete objects</span></div>
+<div class="line">soap_end(&amp;soap);     <span class="comment">// delete other data and temp data</span></div>
+<div class="line">soap_done(&amp;soap);    <span class="comment">// clear context</span></div>
+</div><!-- fragment --><p>where <code>&lt;flag&gt;</code> is one of:</p>
+<ul>
+<li><code>SOAP_C_UTFSTRING</code>: enables all <code>std::string</code> and <code>char*</code> strings to contain UTF-8 content. This option is recommended.</li>
+<li><code>SOAP_C_NILSTRING</code>: treat empty strings as if they were NULL pointers, i.e. omits elements and attributes when empty.</li>
+<li><code>SOAP_XML_STRICT</code>: strictly validates XML while deserializing. Should not be used together with SOAP 1.1/1.2 encoding style of messaging. Use soapcpp2 option <code>-s</code> to hard code <code>SOAP_XML_STRICT</code> in the generated serializers. Not recommended with SOAP 1.1/1.2 encoding style messaging.</li>
+<li><code>SOAP_XML_INDENT</code>: produces indented XML.</li>
+<li><code>SOAP_XML_CANONICAL</code>: c14n canonocalization, removes unused <code>xmlns</code> bindings and adds them to appropriate places by applying c14n normalization rules. Should not be used together with SOAP 1.1/1.2 encoding style messaging.</li>
+<li><code>SOAP_XML_TREE</code>: write tree XML without id-ref, while pruning data structure cycles to prevent nontermination of the serializer for cyclic structures.</li>
+<li><code>SOAP_XML_GRAPH</code>: write graph (digraph and cyclic graphs with shared pointers to objects) using id-ref attributes. That is, XML with SOAP multi-ref encoded id-ref elements. This is a structure-preserving serialization format, because co-referenced data and also cyclic relations are accurately represented.</li>
+<li><code>SOAP_XML_DEFAULTNS</code>: uses xmlns default namespace declarations, assuming that the schema attribute form is "qualified" by default (be warned if it is not, since attributes in the null namespace will get bound to namespaces!).</li>
+<li><code>SOAP_XML_NIL</code>: emit empty element with <code>xsi:nil</code> for all NULL pointers serialized.</li>
+<li><code>SOAP_XML_IGNORENS</code>: the XML parser ignores XML namespaces, i.e. element and attribute tag names match independent of their namespace.</li>
+<li><code>SOAP_XML_NOTYPE</code>: removes all <code>xsi:type</code> attribuation. This option is usually not needed unless the receiver rejects all <code>xsi:type</code> attributes. This option may affect the quality of the deserializer, which relies on <code>xsi:type</code> attributes to distinguish base class instances from derived class instances transported in the XML payloads.</li>
+<li><code>SOAP_IO_CHUNK</code>: to enable HTTP chunked transfers.</li>
+<li><code>SOAP_IO_STORE</code>: full buffering of outbound messages.</li>
+<li><code>SOAP_ENC_ZLIB</code>: compress messages, requires compiling with <code>-DWITH_GZIP</code> and linking with zlib (<code>-lz</code>).</li>
+<li><code>SOAP_ENC_MIME</code>: enable MIME attachments, see <a href="#toxsd10-3">MIME/MTOM attachment binary types</a>.</li>
+<li><code>SOAP_ENC_MTOM</code>: enable MTOM attachments, see <a href="#toxsd10-3">MIME/MTOM attachment binary types</a>.</li>
+</ul>
 <h1><a class="anchor" id="features"></a>
 Features and limitations                                             </h1>
 <p>In general, to use the generated code:</p>
@@ -2466,17 +2554,6 @@ Features and limitations                                             </h1>
 <li>Without soapcpp2 option -j: server-side uses the auto-generated soapServer.cpp and soapC.cpp (or C versions of those). Compile and link with -lgsoap++ (-lgsoap for C), or alternatively compile stdsoap2.cpp (stdsoap2.c for C).</li>
 <li>Use <code>soap_new()</code> or <code>soap_new1(int flags)</code> to allocate and initialize a heap-allocated context with or without flags. Delete this context with <code>soap_free(struct soap*)</code>, but only after <code>soap_destroy(struct soap*)</code> and <code>soap_end(struct soap*)</code>.</li>
 <li>Use <code>soap_init(struct *soap)</code> or <code>soap_init1(struct soap*, int flags)</code> to initialize a stack-allocated context with or without flags. End the use of this context with <code>soap_done(struct soap*)</code>, but only after <code>soap_destroy(struct soap*)</code> and <code>soap_end(struct soap*)</code>.</li>
-</ul>
-<p>There are several context initialization flags and context mode flags to control XML serialization at runtime:</p>
-<ul>
-<li><code>SOAP_C_UTFSTRING</code>: enables all <code>std::string</code> and <code>char*</code> strings to contain UTF-8 content. This option is recommended.</li>
-<li><code>SOAP_XML_STRICT</code>: strictly validates XML while deserializing. Should not be used together with SOAP 1.1/1.2 encoding style of messaging. Use soapcpp2 option <code>-s</code> to hard code <code>SOAP_XML_STRICT</code> in the generated serializers. Not recommended with SOAP 1.1/1.2 encoding style messaging.</li>
-<li><code>SOAP_XML_INDENT</code>: produces indented XML.</li>
-<li><code>SOAP_XML_CANONICAL</code>: c14n canonocalization, removes unused <code>xmlns</code> bindings and adds them to appropriate places by applying c14n normalization rules. Should not be used together with SOAP 1.1/1.2 encoding style messaging.</li>
-<li><code>SOAP_XML_TREE</code>: write tree XML without id-ref, while pruning data structure cycles to prevent nontermination of the serializer for cyclic structures.</li>
-<li><code>SOAP_XML_GRAPH</code>: write graph (digraph and cyclic graphs with shared pointers to objects) using id-ref attributes. That is, XML with SOAP multi-ref encoded id-ref elements. This is a structure-preserving serialization format, because co-referenced data and also cyclic relations are accurately represented.</li>
-<li><code>SOAP_XML_DEFAULTNS</code>: uses xmlns default namespace declarations, assuming that the schema attribute form is "qualified" by default (be warned if it is not, since attributes in the null namespace will get bound to namespaces!).</li>
-<li><code>SOAP_XML_NOTYPE</code>: removes all <code>xsi:type</code> attribuation. This option is usually not needed unless the receiver rejects all <code>xsi:type</code> attributes. This option may affect the quality of the deserializer, which relies on <code>xsi:type</code> attributes to distinguish base class instances from derived class instances transported in the XML payloads.</li>
 </ul>
 <p>Additional notes with respect to the wsdl2h and soapcpp2 tools:</p>
 <ul>
@@ -2553,7 +2630,7 @@ c++ -I../.. graph.cpp graphC.cpp -o graph -lgsoap++
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 19:57:21 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Wed Mar 2 2016 10:24:54 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

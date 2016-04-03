@@ -1,7 +1,7 @@
 /*
-	mq.c
+        mq.c
 
-	Inbound message queues
+        Inbound message queues
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2013, Robert van Engelen, Genivia Inc., All Rights Reserved.
@@ -142,7 +142,8 @@ message queue for each socket accepted and processed by a thread.
     THREAD_TYPE tid;
     struct soap *tsoap = soap_copy(soap);
     if (!tsoap)
-    { soap_closesock(soap);
+    {
+      soap_closesock(soap);
       continue;
     }
     THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap);
@@ -236,6 +237,12 @@ extern "C" {
 
 const char soap_mq_id[] = SOAP_MQ_ID;
 
+/******************************************************************************\
+ *
+ *      Static protos
+ *
+\******************************************************************************/
+
 static int soap_mq_init(struct soap *soap, struct soap_mq_data *data);
 static void soap_mq_delete(struct soap *soap, struct soap_plugin *p);
 static size_t soap_mq_recv(struct soap *soap, char *buf, size_t len);
@@ -244,35 +251,47 @@ static void soap_mq_set(struct soap_mq_msg *msg);
 
 /******************************************************************************\
  *
- *	Plugin registry functions
+ *      Plugin registry functions
  *
 \******************************************************************************/
 
 /** plugin registry function, invoked by soap_register_plugin */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_mq(struct soap *soap, struct soap_plugin *p, void *arg)
-{ p->id = soap_mq_id;
+{
+  (void)soap; (void)arg;
+  p->id = soap_mq_id;
   /* create local plugin data */
   p->data = (void*)SOAP_MALLOC(soap, sizeof(struct soap_mq_data));
   /* register the destructor */
   p->fdelete = soap_mq_delete;
   /* if OK then initialize */
   if (p->data)
-  { if (soap_mq_init(soap, (struct soap_mq_data*)p->data))
-    { SOAP_FREE(soap, p->data); /* error: could not init */
+  {
+    if (soap_mq_init(soap, (struct soap_mq_data*)p->data))
+    {
+      SOAP_FREE(soap, p->data); /* error: could not init */
       return SOAP_EOM; /* return error */
     }
   }
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 /* used by plugin registry function */
 static int
 soap_mq_init(struct soap *soap, struct soap_mq_data *data)
-{ data->buf = NULL;
+{
+  (void)soap;
+  data->buf = NULL;
   data->len = 0;
   return SOAP_OK;
 }
+
+/******************************************************************************/
 
 static void
 soap_mq_delete(struct soap *soap, struct soap_plugin *p)
@@ -281,24 +300,28 @@ soap_mq_delete(struct soap *soap, struct soap_plugin *p)
      not called for all copies of the plugin created with soap_copy(). In this
      example, the fcopy() callback is omitted and the plugin data is shared by
      the soap copies created with soap_copy() */
+  (void)soap;
   SOAP_FREE(soap, p->data);
 }
 
 /******************************************************************************\
  *
- *	Callbacks registered by plugin
+ *      Callbacks registered by plugin
  *
 \******************************************************************************/
 
 static size_t
 soap_mq_recv(struct soap *soap, char *buf, size_t len)
-{ struct soap_mq_data *data = (struct soap_mq_data*)soap_lookup_plugin(soap, soap_mq_id);
+{
+  struct soap_mq_data *data = (struct soap_mq_data*)soap_lookup_plugin(soap, soap_mq_id);
   if (!data)
-  { soap->error = SOAP_PLUGIN_ERROR;
+  {
+    soap->error = SOAP_PLUGIN_ERROR;
     return 0;
   }
   if (data->len < len)
-  { len = data->len;
+  {
+    len = data->len;
     data->len = 0;
   }
   soap_memcpy(buf, len, data->buf, len);
@@ -306,14 +329,17 @@ soap_mq_recv(struct soap *soap, char *buf, size_t len)
   return len;
 }
 
+/******************************************************************************/
+
 static int
 soap_mq_serveloop(struct soap *soap)
-{ return soap->error = SOAP_STOP;
+{
+  return soap->error = SOAP_STOP;
 }
 
 /******************************************************************************\
  *
- *	Queue Operations
+ *      Queue Operations
  *
 \******************************************************************************/
 
@@ -325,13 +351,18 @@ the current socket to add to the queue.
 @param soap current context
 @return pointer to the queue structure
 */
+SOAP_FMAC1
 struct soap_mq_queue *
+SOAP_FMAC2
 soap_mq_queue(struct soap *soap)
-{ struct soap_mq_queue *mq = (struct soap_mq_queue*)soap_malloc(soap, sizeof(struct soap_mq_queue));
+{
+  struct soap_mq_queue *mq = (struct soap_mq_queue*)soap_malloc(soap, sizeof(struct soap_mq_queue));
   if (mq)
     mq->head = mq->tail = NULL;
   return mq;
 }
+
+/******************************************************************************/
 
 /**
 @fn struct soap_mq_msg *soap_mq_get(struct soap *soap, struct soap_mq_queue *mq)
@@ -340,15 +371,18 @@ soap_mq_queue(struct soap *soap)
 @param mq pointer to the message queue structure created by soap_mq_queue()
 @return pointer to the message received and queued, or NULL
 */
+SOAP_FMAC1
 struct soap_mq_msg *
+SOAP_FMAC2
 soap_mq_get(struct soap *soap, struct soap_mq_queue *mq)
-{ struct soap_mq_data *data;
+{
   struct soap_mq_msg *msg;
   if (soap_begin_recv(soap))
     return NULL;
-  msg = (struct soap_mq_msg*)soap_malloc(soap, sizeof(soap_mq_msg));
+  msg = (struct soap_mq_msg*)soap_malloc(soap, sizeof(struct soap_mq_msg));
   if (!msg)
-  { soap->error = SOAP_EOM;
+  {
+    soap->error = SOAP_EOM;
     return NULL;
   }
   msg->next = NULL;
@@ -365,6 +399,8 @@ soap_mq_get(struct soap *soap, struct soap_mq_queue *mq)
   return msg;
 }
 
+/******************************************************************************/
+
 /**
 @fn struct soap_mq_msg *soap_mq_begin(struct soap_mq_queue *mq)
 @brief Get first message in queue. Use msg->soap to invoke service from the
@@ -372,13 +408,18 @@ queued message, as in soap_serve(&msg->soap).
 @param mq pointer to the message queue structure created by soap_mq_queue()
 @return pointer to first message in the queue, or NULL
 */
+SOAP_FMAC1
 struct soap_mq_msg *
+SOAP_FMAC2
 soap_mq_begin(struct soap_mq_queue *mq)
-{ struct soap_mq_msg *msg = mq->head;
+{
+  struct soap_mq_msg *msg = mq->head;
   if (msg)
     soap_mq_set(msg);
   return msg;
 }
+
+/******************************************************************************/
 
 /**
 @fn struct soap_mq_msg *soap_mq_next(struct soap_mq_msg *msg)
@@ -387,14 +428,19 @@ queued message, as in soap_serve(&msg->soap).
 @param msg pointer to current message in the queue
 @return pointer to next message in the queue, or NULL
 */
+SOAP_FMAC1
 struct soap_mq_msg *
+SOAP_FMAC2
 soap_mq_next(struct soap_mq_msg *msg)
-{ if (msg)
+{
+  if (msg)
     msg = msg->next;
   if (msg)
     soap_mq_set(msg);
   return msg;
 }
+
+/******************************************************************************/
 
 /**
 @fn void soap_mq_del(struct soap_mq_queue *mq, struct soap_mq_msg *msg)
@@ -404,18 +450,25 @@ soap_end().
 @param mq pointer to the queue structure
 @param msg pointer to a message in the queue, when NULL delete entire queue
 */
+SOAP_FMAC1
 void
+SOAP_FMAC2
 soap_mq_del(struct soap_mq_queue *mq, struct soap_mq_msg *msg)
-{ if (mq)
-  { struct soap_mq_msg *p = mq->head;
+{
+  if (mq)
+  {
+    struct soap_mq_msg *p = mq->head;
     if (msg)
-    { if (p == msg)
+    {
+      if (p == msg)
         mq->head = msg->next;
       else
-      { while (p && p->next != msg)
+      {
+        while (p && p->next != msg)
           p = p->next;
         if (p)
-        { p->next = msg->next;
+        {
+          p->next = msg->next;
           if (mq->tail == msg)
             mq->tail = p;
         }
@@ -425,8 +478,10 @@ soap_mq_del(struct soap_mq_queue *mq, struct soap_mq_msg *msg)
       soap_done(&msg->soap);
     }
     else
-    { while (p)
-      { soap_destroy(&p->soap);
+    {
+      while (p)
+      {
+        soap_destroy(&p->soap);
         soap_end(&p->soap);
         soap_done(&p->soap);
         p = p->next;
@@ -436,11 +491,15 @@ soap_mq_del(struct soap_mq_queue *mq, struct soap_mq_msg *msg)
   }
 }
 
+/******************************************************************************/
+
 static void
 soap_mq_set(struct soap_mq_msg *msg)
-{ struct soap_mq_data *data = (struct soap_mq_data*)soap_lookup_plugin(&msg->soap, soap_mq_id);
+{
+  struct soap_mq_data *data = (struct soap_mq_data*)soap_lookup_plugin(&msg->soap, soap_mq_id);
   if (data)
-  { data->buf = msg->buf;
+  {
+    data->buf = msg->buf;
     data->len = msg->len;
     soap_clr_imode(&msg->soap, SOAP_IO_CHUNK | SOAP_ENC_ZLIB | SOAP_ENC_SSL);
     msg->soap.frecv = soap_mq_recv;
@@ -448,7 +507,8 @@ soap_mq_set(struct soap_mq_msg *msg)
   }
 }
 
+/******************************************************************************/
+
 #ifdef __cplusplus
 }
 #endif
-

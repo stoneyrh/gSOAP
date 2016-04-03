@@ -69,8 +69,7 @@ extern "C" {
 
 extern const char logging_id[];
 
-struct logging_data
-{
+struct logging_data {
   FILE *inbound;
   FILE *outbound;
   size_t stat_sent;
@@ -79,10 +78,10 @@ struct logging_data
   size_t (*frecv)(struct soap*, char*, size_t); /* to save and use recv callback */
 };
 
-int logging(struct soap *soap, struct soap_plugin *plugin, void *arg);
-void soap_set_logging_inbound(struct soap *soap, FILE *fd);
-void soap_set_logging_outbound(struct soap *soap, FILE *fd);
-void soap_get_logging_stats(struct soap *soap, size_t *sent, size_t *recv);
+SOAP_FMAC1 int SOAP_FMAC2 logging(struct soap *soap, struct soap_plugin *plugin, void *arg);
+SOAP_FMAC1 void SOAP_FMAC2 soap_set_logging_inbound(struct soap *soap, FILE *fd);
+SOAP_FMAC1 void SOAP_FMAC2 soap_set_logging_outbound(struct soap *soap, FILE *fd);
+SOAP_FMAC1 void SOAP_FMAC2 soap_get_logging_stats(struct soap *soap, size_t *sent, size_t *recv);
 
 #ifdef __cplusplus
 }

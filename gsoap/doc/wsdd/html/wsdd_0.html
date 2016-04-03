@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WS-Discovery plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -88,7 +88,8 @@ WS-Discovery Event Listener</h1>
 <div class="line"><span class="keyword">struct </span>soap *soap = soap_new();</div>
 <div class="line">soap-&gt;user = (<span class="keywordtype">void</span>*)&amp;my_state;</div>
 <div class="line"><span class="keywordflow">if</span> (!soap_valid_socket(soap_bind(soap, port, 100)))</div>
-<div class="line">{ soap_print_fault(soap, stderr);</div>
+<div class="line">{</div>
+<div class="line">  soap_print_fault(soap, stderr);</div>
 <div class="line">  exit(0);</div>
 <div class="line">}</div>
 <div class="line"></div>
@@ -189,29 +190,35 @@ Invoking WS-Discovery Operations</h1>
 </div><!-- fragment --><p>Again, the <code>id</code> and <code>my_state</code> are used to associate the asynchronously received ResolveMatches response that is handled by the <a class="el" href="wsddapi_8h.html#a6fe08bbe8ab19ff2a1e0874c0a104d18">wsdd_event_ResolveMatches</a> for the original request.</p>
 <p>In managed mode with unicast messages (request-response messages), the <code>soap_wsdd_Probe</code> and <code>soap_wsdd_Resolve</code> are sufficient to invoke without setting up a listener. The event handlers are invoked when the unicast response message arrives.</p>
 <p>In managed mode, the ProbeMatches and ResolveMatches are automatically sent via <code>soap_wsdd_listen</code> and the event <code>wsdd_event_Probe</code> and <code>wsdd_event_Resolve</code> handlers. These event handlers should set the matches to be returned.</p>
-<p>In ad-hoc mode, ProbeMatches or ResolveMatches responses are NOT sent automatically. In ad-hoc mode the responses can be returned by adding code to the event handler or from anywhere in the main program, for example after <a class="el" href="wsddapi_8c.html#aeaf4e9c91f54ffcf09534b68b5ee6778">soap_wsdd_listen</a>. When responses are to be returned from the event handler or from the main program, you should invoke <a class="el" href="wsddapi_8c.html#ac1fd8fdfb24767d214f68659bfbe4187">soap_wsdd_ProbeMatches</a> and <a class="el" href="wsddapi_8c.html#a6a9722eaaef27e3655714b7592aa3af9">soap_wsdd_ResolveMatches</a> to explicitly send unicast messages with the match(es) back to the clients. The WS-Addressing ReplyTo address can be used as the return address (when not anonymous), or by using the peer's host information that is accessible in the soap-&gt;peer and soap-&gt;peerlen members. For example:</p>
+<p>In ad-hoc mode, ProbeMatches or ResolveMatches responses are NOT sent automatically. In ad-hoc mode the responses can be returned by adding code to the event handler or from anywhere in the main program, for example after <a class="el" href="wsddapi_8c.html#aa4adce86fc059bac2ec6fc44697edd04">soap_wsdd_listen</a>. When responses are to be returned from the event handler or from the main program, you should invoke <a class="el" href="wsddapi_8c.html#af00e0661c0105c3ba658598d5131f185">soap_wsdd_ProbeMatches</a> and <a class="el" href="wsddapi_8c.html#a923096ca493b6b2163a4b08139ed7237">soap_wsdd_ResolveMatches</a> to explicitly send unicast messages with the match(es) back to the clients. The WS-Addressing ReplyTo address can be used as the return address (when not anonymous), or by using the peer's host information that is accessible in the soap-&gt;peer and soap-&gt;peerlen members. For example:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">char</span> host[1024], port[16];</div>
 <div class="line">getnameinfo((<span class="keyword">struct</span> sockaddr*)&amp;soap-&gt;peer, soap-&gt;peerlen, host, <span class="keyword">sizeof</span>(host), port, 16, NI_DGRAM | NI_NAMEREQD | NI_NUMERICSERV);</div>
 </div><!-- fragment --><h1><a class="anchor" id="wsdd_5"></a>
 Generating C++ Server Objects</h1>
 <p>The WSDD library is developed to support C and C++. To support C++ server objects generated with soapcpp2 options <code>-j</code> (or <code>-i</code>), you need to define in your C++ code the following wrappers (use <code>this</code> instead of <code>this-&gt;soap</code> below with soapcpp2 option <code>-i</code>):</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> wsddService::Hello(<span class="keyword">struct</span> <a class="code" href="structwsdd_____hello_type.html">wsdd__HelloType</a> *hello)</div>
-<div class="line">{ <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#a5ff39c1ead345380963b292a21dc9960">__wsdd__Hello</a>(this-&gt;soap, hello);</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#a5ff39c1ead345380963b292a21dc9960">__wsdd__Hello</a>(this-&gt;soap, hello);</div>
 <div class="line">}</div>
-<div class="line"><span class="keywordtype">int</span> wsddService::Bye(<span class="keyword">struct</span> <a class="code" href="structwsdd_____bye_type.html">wsdd__ByeType</a> *bye</div>
-<div class="line">{ <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#a2ade69029974cbac3b06afb74d452964">__wsdd__Bye</a>(this-&gt;soap, bye);</div>
+<div class="line"><span class="keywordtype">int</span> wsddService::Bye(<span class="keyword">struct</span> <a class="code" href="structwsdd_____bye_type.html">wsdd__ByeType</a> *bye)</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#a2ade69029974cbac3b06afb74d452964">__wsdd__Bye</a>(this-&gt;soap, bye);</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordtype">int</span> wsddService::Probe(<span class="keyword">struct</span> <a class="code" href="structwsdd_____probe_type.html">wsdd__ProbeType</a> *probe)</div>
-<div class="line">{ <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#a29c3eb211a71c1fab6c773f5b5ed1adb">__wsdd__Probe</a>(this-&gt;soap, probe);</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#a29c3eb211a71c1fab6c773f5b5ed1adb">__wsdd__Probe</a>(this-&gt;soap, probe);</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordtype">int</span> wsddService::ProbeMatches(<span class="keyword">struct</span> <a class="code" href="structwsdd_____probe_matches_type.html">wsdd__ProbeMatchesType</a> *matches)</div>
-<div class="line">{ <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#aaaabc1f3cc187e5724470cbfdeed1da6">__wsdd__ProbeMatches</a>(this-&gt;soap, matches);</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#aaaabc1f3cc187e5724470cbfdeed1da6">__wsdd__ProbeMatches</a>(this-&gt;soap, matches);</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordtype">int</span> wsddService::Resolve(<span class="keyword">struct</span> <a class="code" href="structwsdd_____resolve_type.html">wsdd__ResolveType</a> *resolve)</div>
-<div class="line">{ <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#aa0ace89168d2e0180730cf42e0c96127">__wsdd__Resolve</a>(this-&gt;soap, resolve);</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#aa0ace89168d2e0180730cf42e0c96127">__wsdd__Resolve</a>(this-&gt;soap, resolve);</div>
 <div class="line">}</div>
 <div class="line"><span class="keywordtype">int</span> wsddService::ResolveProbeMatches(<span class="keyword">struct</span> <a class="code" href="structwsdd_____resolve_matches_type.html">wsdd__ResolveMatchesType</a> *matches)</div>
-<div class="line">{ <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#af1a35f73401918b02c3aa704cbb606ff">__wsdd__ResolveMatches</a>(this-&gt;soap, matches);</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">return</span> <a class="code" href="wsddapi_8h.html#af1a35f73401918b02c3aa704cbb606ff">__wsdd__ResolveMatches</a>(this-&gt;soap, matches);</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>Another approach to generate the WSDD service operations is to run soapcpp2 separately on <a class="el" href="wsdd_8h.html">wsdd.h</a> (or wsdd5.h or wsdd10.h for WS-Discovery 1.0) by: </p><pre class="fragment">soapcpp2 -a -L -pwsdd -Iimport import/wsdd.h
 </pre><p>to generate wsddService.cpp. Then chain the service operations at the server side:</p>
@@ -243,7 +250,7 @@ Miscellaneous</h1>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 20:01:38 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Mar 29 2016 17:05:18 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

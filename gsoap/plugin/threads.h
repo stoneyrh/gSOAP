@@ -116,19 +116,19 @@ The threads.h and threads.c code define the following portable API:
 # define COND_CLEANUP(x)	emulate_pthread_cond_destroy(&(x))
 # define COND_SIGNAL(x)		emulate_pthread_cond_signal(&(x))
 # define COND_WAIT(x,y)		emulate_pthread_cond_wait(&(x), &(y))
-typedef struct
-{ UINT waiters_count_;
+typedef struct {
+  UINT waiters_count_;
   CRITICAL_SECTION waiters_count_lock_;
   HANDLE signal_event_;
 } COND_TYPE;
 #ifdef __cplusplus
 extern "C" {
 #endif
-int emulate_pthread_mutex_lock(volatile MUTEX_TYPE*);
-int emulate_pthread_cond_init(COND_TYPE*);
-int emulate_pthread_cond_destroy(COND_TYPE*);
-int emulate_pthread_cond_signal(COND_TYPE*);
-int emulate_pthread_cond_wait(COND_TYPE*, MUTEX_TYPE*);
+SOAP_FMAC1 int SOAP_FMAC2 emulate_pthread_mutex_lock(volatile MUTEX_TYPE*);
+SOAP_FMAC1 int SOAP_FMAC2 emulate_pthread_cond_init(COND_TYPE*);
+SOAP_FMAC1 int SOAP_FMAC2 emulate_pthread_cond_destroy(COND_TYPE*);
+SOAP_FMAC1 int SOAP_FMAC2 emulate_pthread_cond_signal(COND_TYPE*);
+SOAP_FMAC1 int SOAP_FMAC2 emulate_pthread_cond_wait(COND_TYPE*, MUTEX_TYPE*);
 #ifdef __cplusplus
 }
 #endif

@@ -1095,7 +1095,7 @@ const char *Types::deftname(enum Type type, bool mk_pointer, bool is_pointer, co
   if (is_pointer)
     smptypemap[t] = s;
   if (vflag)
-    cerr <<  "Defined '" << t << "' ('" << qname << "' in namespace '" << (URI ? URI : prefix ? prefix : "") << "') as '" << s << endl;
+    cerr <<  "Defined '" << t << "' ('" << qname << "' in namespace '" << (URI ? URI : prefix ? prefix : "") << "') as '" << s << "'" << endl;
   return t;
 }
 

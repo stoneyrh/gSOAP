@@ -199,6 +199,8 @@ int json_recv(struct soap *soap, struct value *v)
     case '{'/*'}'*/:
     {
       struct value s;
+      if (++soap->level > soap->maxlevel)
+	return soap->error = SOAP_LEVEL;
 #ifdef __cplusplus
       if (!(v->ref = (void*)soap_new__struct(soap)))
         return soap->error = SOAP_EOM;
@@ -239,11 +241,14 @@ int json_recv(struct soap *soap, struct value *v)
         if (c != ',')
           return soap_set_sender_error(soap, "closing '}' or comma expected", NULL, SOAP_SYNTAX_ERROR);
       }
+      soap->level--;
       return SOAP_OK;
     }
     case '['/*']'*/:
     {
-      int i;
+      size_t i;
+      if (++soap->level > soap->maxlevel)
+	return soap->error = SOAP_LEVEL;
 #ifdef __cplusplus
       if (!(v->ref = (void*)soap_new__array(soap)))
         return soap->error = SOAP_EOM;
@@ -258,7 +263,7 @@ int json_recv(struct soap *soap, struct value *v)
       if (c == /*'['*/']')
         return SOAP_OK;
       soap_unget(soap, c);
-      for (i = 0; ; i++)
+      for (i = 0; i < soap->maxoccurs; i++)
       {
 #ifdef __cplusplus
         if (json_recv(soap, v->operator[](i)))
@@ -276,6 +281,7 @@ int json_recv(struct soap *soap, struct value *v)
         if (c != ',')
           return soap_set_sender_error(soap, "closing ']' or comma expected", NULL, SOAP_SYNTAX_ERROR);
       }
+      --soap->level;
       return SOAP_OK;
     }
     case '"':
@@ -290,6 +296,9 @@ int json_recv(struct soap *soap, struct value *v)
         s = soap->labbuf + soap->labidx;
         k = soap->lablen - soap->labidx;
         soap->labidx = soap->lablen;
+	/* raw string length limit, when set (does not take UTF-8 into account) */
+	if (soap->maxlength > 0 && soap->labidx > (size_t)soap->maxlength)
+	  return soap->error = SOAP_LENGTH;
         while (k--)
         {
           if (t)

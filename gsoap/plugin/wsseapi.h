@@ -75,8 +75,8 @@ extern const char soap_wsse_id[];
 The signature key (private) and verification key (public) are kept in the
 plugin data, together with other info.
 */
-struct soap_wsse_data
-{ const char *sigid;		/**< string with wsu:Id names to sign */
+struct soap_wsse_data {
+  const char *sigid;		/**< string with wsu:Id names to sign */
   const char *encid;		/**< string with wsu:Id names to encrypt */
   const char *prefixlist;	/**< string with c14n PrefixList to send, or NULL */
   int sign_alg;			/**< The digest or signature algorithm used */
@@ -112,8 +112,8 @@ during the preprocessing of a message transmission. The 'level' field is used
 to determine when the end of an element is reached by handling inner wsu:Id
 attributed elements, so that the outer wsu:Id attributed element can be hashed.
 */
-struct soap_wsse_digest
-{ struct soap_wsse_digest *next;	/**< Next in list */
+struct soap_wsse_digest {
+  struct soap_wsse_digest *next;	/**< Next in list */
   unsigned int level;			/**< XML parser depth level */
   struct soap_smd_data smd;		/**< smdevp engine context */
   unsigned char hash[SOAP_SMD_MAX_SIZE];/**< Digest hash value */
@@ -157,105 +157,105 @@ extern const char *ds_URI;
 extern const char *c14n_URI;
 extern const char *wsu_URI;
 
-struct _wsse__Security* soap_wsse_add_Security(struct soap *soap);
-struct _wsse__Security* soap_wsse_add_Security_actor(struct soap *soap, const char *actor);
-void soap_wsse_delete_Security(struct soap *soap);
-struct _wsse__Security* soap_wsse_Security(struct soap *soap);
+SOAP_FMAC1 struct _wsse__Security * SOAP_FMAC2 soap_wsse_add_Security(struct soap *soap);
+SOAP_FMAC1 struct _wsse__Security * SOAP_FMAC2 soap_wsse_add_Security_actor(struct soap *soap, const char *actor);
+SOAP_FMAC1 void SOAP_FMAC2 soap_wsse_delete_Security(struct soap *soap);
+SOAP_FMAC1 struct _wsse__Security * SOAP_FMAC2 soap_wsse_Security(struct soap *soap);
 
-struct ds__SignatureType* soap_wsse_add_Signature(struct soap *soap);
-void soap_wsse_delete_Signature(struct soap *soap);
-struct ds__SignatureType* soap_wsse_Signature(struct soap *soap);
+SOAP_FMAC1 struct ds__SignatureType * SOAP_FMAC2 soap_wsse_add_Signature(struct soap *soap);
+SOAP_FMAC1 void SOAP_FMAC2 soap_wsse_delete_Signature(struct soap *soap);
+SOAP_FMAC1 struct ds__SignatureType * SOAP_FMAC2 soap_wsse_Signature(struct soap *soap);
 
-int soap_wsse_add_Timestamp(struct soap *soap, const char *id, time_t lifetime);
-struct _wsu__Timestamp *soap_wsse_Timestamp(struct soap *soap);
-int soap_wsse_verify_Timestamp(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_Timestamp(struct soap *soap, const char *id, time_t lifetime);
+SOAP_FMAC1 struct _wsu__Timestamp * SOAP_FMAC2 soap_wsse_Timestamp(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_Timestamp(struct soap *soap);
 
-int soap_wsse_add_UsernameTokenText(struct soap *soap, const char *id, const char *username, const char *password);
-int soap_wsse_add_UsernameTokenDigest(struct soap *soap, const char *id, const char *username, const char *password);
-struct _wsse__UsernameToken *soap_wsse_UsernameToken(struct soap *soap, const char *id);
-const char* soap_wsse_get_Username(struct soap *soap);
-int soap_wsse_verify_Password(struct soap *soap, const char *password);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_UsernameTokenText(struct soap *soap, const char *id, const char *username, const char *password);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_UsernameTokenDigest(struct soap *soap, const char *id, const char *username, const char *password);
+SOAP_FMAC1 struct _wsse__UsernameToken * SOAP_FMAC2 soap_wsse_UsernameToken(struct soap *soap, const char *id);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsse_get_Username(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_Password(struct soap *soap, const char *password);
 
-int soap_wsse_add_BinarySecurityToken(struct soap *soap, const char *id, const char *valueType, const unsigned char *data, int size);
-int soap_wsse_add_BinarySecurityTokenX509(struct soap *soap, const char *id, X509 *cert);
-int soap_wsse_add_BinarySecurityTokenPEM(struct soap *soap, const char *id, const char *filename);
-struct _wsse__BinarySecurityToken *soap_wsse_BinarySecurityToken(struct soap *soap, const char *id);
-int soap_wsse_get_BinarySecurityToken(struct soap *soap, const char *id, char **valueType, unsigned char **data, int *size);
-X509 *soap_wsse_get_BinarySecurityTokenX509(struct soap *soap, const char *id);
-int soap_wsse_verify_X509(struct soap *soap, X509 *cert);
-int soap_wsse_add_SecurityContextToken(struct soap *soap, const char *id, const char *identifier);
-const char * soap_wsse_get_SecurityContextToken(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_BinarySecurityToken(struct soap *soap, const char *id, const char *valueType, const unsigned char *data, int size);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_BinarySecurityTokenX509(struct soap *soap, const char *id, X509 *cert);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_BinarySecurityTokenPEM(struct soap *soap, const char *id, const char *filename);
+SOAP_FMAC1 struct _wsse__BinarySecurityToken * SOAP_FMAC2 soap_wsse_BinarySecurityToken(struct soap *soap, const char *id);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_get_BinarySecurityToken(struct soap *soap, const char *id, char **valueType, unsigned char **data, int *size);
+SOAP_FMAC1 X509 * SOAP_FMAC2 soap_wsse_get_BinarySecurityTokenX509(struct soap *soap, const char *id);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_X509(struct soap *soap, X509 *cert);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_SecurityContextToken(struct soap *soap, const char *id, const char *identifier);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsse_get_SecurityContextToken(struct soap *soap);
 
-struct ds__SignedInfoType *soap_wsse_add_SignedInfo(struct soap *soap);
-int soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, const char *transform, const char *inclusiveNamespaces, int alg, const char *HA);
-int soap_wsse_add_SignedInfo_SignatureMethod(struct soap *soap, const char *method, int canonical);
-struct ds__SignedInfoType *soap_wsse_SignedInfo(struct soap *soap);
-int soap_wsse_get_SignedInfo_SignatureMethod(struct soap *soap, int *alg, int *bits);
+SOAP_FMAC1 struct ds__SignedInfoType * SOAP_FMAC2 soap_wsse_add_SignedInfo(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, const char *transform, const char *inclusiveNamespaces, int alg, const char *HA);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_SignedInfo_SignatureMethod(struct soap *soap, const char *method, int canonical);
+SOAP_FMAC1 struct ds__SignedInfoType * SOAP_FMAC2 soap_wsse_SignedInfo(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_get_SignedInfo_SignatureMethod(struct soap *soap, int *alg, int *bits);
 
-int soap_wsse_add_SignatureValue(struct soap *soap, int alg, const void *key, int keylen);
-int soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int keylen);
-int soap_wsse_verify_SignedInfo(struct soap *soap);
-int soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *id, unsigned char hash[SOAP_SMD_MAX_SIZE]);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_SignatureValue(struct soap *soap, int alg, const void *key, int keylen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int keylen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_SignedInfo(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *id, unsigned char hash[SOAP_SMD_MAX_SIZE]);
 
-struct ds__KeyInfoType *soap_wsse_add_KeyInfo(struct soap *soap);
-struct ds__KeyInfoType *soap_wsse_KeyInfo(struct soap *soap);
+SOAP_FMAC1 struct ds__KeyInfoType * SOAP_FMAC2 soap_wsse_add_KeyInfo(struct soap *soap);
+SOAP_FMAC1 struct ds__KeyInfoType * SOAP_FMAC2 soap_wsse_KeyInfo(struct soap *soap);
 
-int soap_wsse_add_KeyInfo_KeyName(struct soap *soap, const char *name);
-const char *soap_wsse_get_KeyInfo_KeyName(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_KeyInfo_KeyName(struct soap *soap, const char *name);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsse_get_KeyInfo_KeyName(struct soap *soap);
 
-int soap_wsse_add_KeyInfo_SecurityTokenReferenceURI(struct soap *soap, const char *URI, const char *valueType);
-int soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(struct soap *soap, const char *URI);
-const char *soap_wsse_get_KeyInfo_SecurityTokenReferenceURI(struct soap *soap);
-const char *soap_wsse_get_KeyInfo_SecurityTokenReferenceValueType(struct soap *soap);
-X509 *soap_wsse_get_KeyInfo_SecurityTokenReferenceX509(struct soap *soap);
-struct ds__X509IssuerSerialType *soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_KeyInfo_SecurityTokenReferenceURI(struct soap *soap, const char *URI, const char *valueType);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(struct soap *soap, const char *URI);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceURI(struct soap *soap);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceValueType(struct soap *soap);
+SOAP_FMAC1 X509 * SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceX509(struct soap *soap);
+SOAP_FMAC1 struct ds__X509IssuerSerialType * SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data(struct soap *soap);
 
-int soap_wsse_add_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, const char *id, const char *valueType, unsigned char *data, int size);
-const char *soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType(struct soap *soap);
-const unsigned char *soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, int *size);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, const char *id, const char *valueType, unsigned char *data, int size);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType(struct soap *soap);
+SOAP_FMAC1 const unsigned char * SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, int *size);
 
-int soap_wsse_add_KeyInfo_SecurityTokenReferenceEmbedded(struct soap *soap, const char *id, const char *valueType);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_KeyInfo_SecurityTokenReferenceEmbedded(struct soap *soap, const char *id, const char *valueType);
 
-int soap_wsse_add_EncryptedData_KeyInfo_KeyName(struct soap *soap, const char *keyname);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_EncryptedData_KeyInfo_KeyName(struct soap *soap, const char *keyname);
 
-int soap_wsse_sender_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
-int soap_wsse_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
-int soap_wsse_sender_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
-int soap_wsse_receiver_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
-int soap_wsse_fault(struct soap *soap, enum wsse__FaultcodeEnum fault, const char *detail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_sender_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_sender_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_receiver_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_fault(struct soap *soap, enum wsse__FaultcodeEnum fault, const char *detail);
 
-int soap_wsse(struct soap *soap, struct soap_plugin *p, void *arg);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse(struct soap *soap, struct soap_plugin *p, void *arg);
 
-int soap_wsse_sign(struct soap *soap, int alg, const void *key, int keylen);
-int soap_wsse_sign_body(struct soap *soap, int alg, const void *key, int keylen);
-int soap_wsse_verify_init(struct soap *soap);
-int soap_wsse_verify_auto(struct soap *soap, int alg, const void *key, size_t keylen);
-int soap_wsse_verify_done(struct soap *soap);
-size_t soap_wsse_verify_element(struct soap *soap, const char *URI, const char *tag);
-int soap_wsse_verify_body(struct soap *soap);
-int soap_wsse_set_wsu_id(struct soap *soap, const char *tags);
-int soap_wsse_set_InclusiveNamespaces(struct soap *soap, const char *prefixlist);
-int soap_wsse_sign_only(struct soap *soap, const char *tags);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_sign(struct soap *soap, int alg, const void *key, int keylen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_sign_body(struct soap *soap, int alg, const void *key, int keylen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_init(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_auto(struct soap *soap, int alg, const void *key, size_t keylen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_done(struct soap *soap);
+SOAP_FMAC1 size_t SOAP_FMAC2 soap_wsse_verify_element(struct soap *soap, const char *URI, const char *tag);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_body(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_set_wsu_id(struct soap *soap, const char *tags);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_set_InclusiveNamespaces(struct soap *soap, const char *prefixlist);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_sign_only(struct soap *soap, const char *tags);
 
-int soap_wsse_add_EncryptedKey(struct soap *soap, int alg, const char *URI, X509 *cert, const char *subjectkeyid, const char *issuer, const char *serial);
-int soap_wsse_add_EncryptedKey_encrypt_only(struct soap *soap, int alg, const char *URI, X509 *cert, const char *subjectkeyid, const char *issuer, const char *serial, const char *tags);
-int soap_wsse_verify_EncryptedKey(struct soap *soap);
-void soap_wsse_delete_EncryptedKey(struct soap *soap);
-struct xenc__EncryptedKeyType* soap_wsse_EncryptedKey(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_EncryptedKey(struct soap *soap, int alg, const char *URI, X509 *cert, const char *subjectkeyid, const char *issuer, const char *serial);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_EncryptedKey_encrypt_only(struct soap *soap, int alg, const char *URI, X509 *cert, const char *subjectkeyid, const char *issuer, const char *serial, const char *tags);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_EncryptedKey(struct soap *soap);
+SOAP_FMAC1 void SOAP_FMAC2 soap_wsse_delete_EncryptedKey(struct soap *soap);
+SOAP_FMAC1 struct xenc__EncryptedKeyType * SOAP_FMAC2 soap_wsse_EncryptedKey(struct soap *soap);
 
-int soap_wsse_add_EncryptedKey_DataReferenceURI(struct soap *soap, const char *URI);
-int soap_wsse_add_DataReferenceURI(struct soap *soap, const char *URI);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_EncryptedKey_DataReferenceURI(struct soap *soap, const char *URI);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_DataReferenceURI(struct soap *soap, const char *URI);
 
-int soap_wsse_encrypt_body(struct soap *soap, int alg, const void *key, int keylen);
-int soap_wsse_encrypt_only(struct soap *soap, int alg, const void *key, int keylen, const char *tags);
-int soap_wsse_encrypt(struct soap *soap, int alg, const void *key, int keylen);
-int soap_wsse_decrypt_auto(struct soap *soap, int alg, const void *key, int keylen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_encrypt_body(struct soap *soap, int alg, const void *key, int keylen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_encrypt_only(struct soap *soap, int alg, const void *key, int keylen, const char *tags);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_encrypt(struct soap *soap, int alg, const void *key, int keylen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_decrypt_auto(struct soap *soap, int alg, const void *key, int keylen);
 
-int soap_wsse_encrypt_begin(struct soap *soap, const char *id, int alg, const char *URI, const char *keyname, const unsigned char *key);
-int soap_wsse_encrypt_end(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_encrypt_begin(struct soap *soap, const char *id, int alg, const char *URI, const char *keyname, const unsigned char *key);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_encrypt_end(struct soap *soap);
 
-int soap_wsse_decrypt_begin(struct soap *soap);
-int soap_wsse_decrypt_end(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_decrypt_begin(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_decrypt_end(struct soap *soap);
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.29
+        DOM API v5 gSOAP 2.8.30
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20829
+#define GSOAP_LIB_VERSION 20830
 
 #include "stdsoap2.h"
 
@@ -334,7 +334,8 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
     {
       const struct soap_nlist *np;
       size_t n = 0;
-      if ((prefix = strchr(tag, ':')))
+      prefix = strchr(tag, ':');
+      if (prefix)
       {
         n = prefix - tag;
         if (n && node->nstr)
@@ -344,8 +345,11 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
       }
       np = soap_lookup_ns(soap, tag, n);
       if (!prefix && ((n && !np) || (node->nstr && (!np || !np->ns || strcmp(node->nstr, np->ns)))))
-        if (!(prefix = soap_push_prefix(soap, tag, n, node->nstr, 1, 1)))
+      {
+	prefix = soap_push_prefix(soap, tag, n, node->nstr, 1, 1);
+        if (!(prefix))
           return soap->error;
+      }
       if (n && prefix && *prefix)
         tag += n + 1;
     }
@@ -378,8 +382,11 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
                 p = NULL;
                 np = soap_lookup_ns(soap, att->name, n);
                 if ((n && !np) || (att->nstr && (!np || !np->ns || strcmp(att->nstr, np->ns))))
-                  if (!(p = soap_push_prefix(soap, att->name, n, att->nstr, 0, 0)))
+		{
+                  p = soap_push_prefix(soap, att->name, n, att->nstr, 0, 0);
+                  if (!p)
                     return soap->error;
+		}
               }
             }
             if (out_attribute(soap, p, att->name, att->text, 0))
@@ -494,8 +501,11 @@ soap_out_xsd__anyAttribute(struct soap *soap, const char *tag, int id, const str
             p = NULL;
             np = soap_lookup_ns(soap, att->name, n);
             if ((n && !np) || (att->nstr && (!np || !np->ns || strcmp(att->nstr, np->ns))))
-              if (!(p = soap_push_prefix(soap, att->name, n, att->nstr, 1, 0)))
+	    {
+              p = soap_push_prefix(soap, att->name, n, att->nstr, 1, 0);
+              if (!p)
                 return soap->error;
+	    }
           }
         }
         if (out_attribute(soap, p, att->name, att->text, 1))
@@ -566,7 +576,8 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
   if ((soap->mode & SOAP_DOM_NODE) || (!(soap->mode & SOAP_DOM_TREE) && *soap->id && (!type || strcmp(type, "xsd:anyType"))))
   {
     soap->mode = m;
-    if ((node->node = soap_getelement(soap, &node->type)) && node->type)
+    node->node = soap_getelement(soap, &node->type);
+    if (node->node && node->type)
     {
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node contains type %d from xsi:type or matching element tag name\n", node->type));
       return node;
@@ -611,7 +622,8 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
     {
       if (soap->error != SOAP_NO_TAG)
         return NULL;
-      if (!(node->text = soap_strtrim(soap, soap_string_in(soap, 1, -1, -1, NULL))))
+      node->text = soap_strtrim(soap, soap_string_in(soap, 1, -1, -1, NULL));
+      if (!node->text)
         return NULL;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node '%s' has cdata\n", node->name));
       soap->peeked = 0;
@@ -620,7 +632,8 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
     soap->mode = m;
     for (;;)
     {
-      if (!(*elt = soap_in_xsd__anyType(soap, NULL, NULL, NULL)))
+      *elt = soap_in_xsd__anyType(soap, NULL, NULL, NULL);
+      if (!*elt)
       {
         if (soap->error && soap->error != SOAP_NO_TAG)
           return NULL;
@@ -715,7 +728,7 @@ soap_dup_xsd__anyType(struct soap *soap, struct soap_dom_element *d, const struc
   struct soap_dom_element *elt = NULL;
   if (!a)
     return NULL;
-  if (!d && !(d = new_element(soap)))
+  if (!d && (d = new_element(soap)) == NULL)
     return NULL;
   d->next = NULL;
   d->nstr = soap_strdup(soap, a->nstr);
@@ -771,7 +784,7 @@ soap_dup_xsd__anyAttribute(struct soap *soap, struct soap_dom_attribute *d, cons
   struct soap_dom_attribute *att;
   if (!a)
     return NULL;
-  if (!d && !(d = new_attribute(soap)))
+  if (!d && (d = new_attribute(soap)) == NULL)
     return NULL;
   att = d;
   while (a)
@@ -782,7 +795,8 @@ soap_dup_xsd__anyAttribute(struct soap *soap, struct soap_dom_attribute *d, cons
     a = a->next;
     if (a)
     {
-      if (!(att->next = new_attribute(soap)))
+      att->next = new_attribute(soap);
+      if (!att->next)
         break;
       att = att->next;
     }

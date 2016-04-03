@@ -60,45 +60,42 @@ extern "C" {
 extern const char soap_mq_id[];
 
 /**
-@struct ms_data
 @brief Plugin data.
 */
-struct soap_mq_data
-{ char *buf; /** buffer to read via frecv() */
+struct soap_mq_data {
+  char *buf; /** buffer to read via frecv() */
   size_t len; /** buffer length */
   size_t (*frecv)(struct soap*, char*, size_t); /** to save and use recv callback */
 };
 
 /**
-@struct soap_mq_msg
 @brief Queued inbound message (in linked list).
 */
-struct soap_mq_msg
-{ char *buf;		/**< inbound HTTP body */
+struct soap_mq_msg {
+  char *buf;		/**< inbound HTTP body */
   size_t len;		/**< inbound HTTP body length */
   struct soap soap;	/**< saved context to read HTTP body */
   struct soap_mq_msg *next;
 };
 
 /**
-@struct soap_mq_queue
 @brief Message queue.
 */
-struct soap_mq_queue
-{ struct soap_mq_msg *head, *tail;
+struct soap_mq_queue {
+  struct soap_mq_msg *head, *tail;
 };
 
-int soap_mq(struct soap *soap, struct soap_plugin *plugin, void *arg);
+SOAP_FMAC1 int SOAP_FMAC2 soap_mq(struct soap *soap, struct soap_plugin *plugin, void *arg);
 
-struct soap_mq_queue *soap_mq_queue(struct soap *);
+SOAP_FMAC1 struct soap_mq_queue * SOAP_FMAC2 soap_mq_queue(struct soap *);
 
-struct soap_mq_msg *soap_mq_get(struct soap *soap, struct soap_mq_queue *);
+SOAP_FMAC1 struct soap_mq_msg * SOAP_FMAC2 soap_mq_get(struct soap *soap, struct soap_mq_queue *);
 
-struct soap_mq_msg *soap_mq_begin(struct soap_mq_queue *);
+SOAP_FMAC1 struct soap_mq_msg * SOAP_FMAC2 soap_mq_begin(struct soap_mq_queue *);
 
-struct soap_mq_msg *soap_mq_next(struct soap_mq_msg *);
+SOAP_FMAC1 struct soap_mq_msg * SOAP_FMAC2 soap_mq_next(struct soap_mq_msg *);
 
-void soap_mq_del(struct soap_mq_queue *, struct soap_mq_msg *);
+SOAP_FMAC1 void SOAP_FMAC2 soap_mq_del(struct soap_mq_queue *, struct soap_mq_msg *);
 
 #ifdef __cplusplus
 }

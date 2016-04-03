@@ -1,7 +1,7 @@
 /*
-	wsseapi-lite.c
+        wsseapi-lite.c
 
-	WS-Security, lite version (time stamp and user name token only).
+        WS-Security, lite version (time stamp and user name token only).
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
@@ -147,7 +147,8 @@ To obtain the actor or role value (e.g. after receiving a message), use:
 @code
     _wsse__Security *security = soap_wsse_Security(soap);
     if (security)
-    { ... = security->SOAP_ENV__actor; // SOAP 1.1
+    {
+      ... = security->SOAP_ENV__actor; // SOAP 1.1
       ... = security->SOAP_ENV__role;  // SOAP 1.2
 @endcode
 
@@ -189,13 +190,15 @@ Web service operation), use:
 
 @code
     int ns__myMethod(struct soap *soap, ...)
-    { const char *username = soap_wsse_get_Username(soap);
+    {
+      const char *username = soap_wsse_get_Username(soap);
       const char *password;
       if (!username)
         return soap->error; // no username: return FailedAuthentication (from soap_wsse_get_Username)
       password = ...; // lookup password of username
       if (soap_wsse_verify_Password(soap, password))
-      {	int err = soap->error;
+      {
+        int err = soap->error;
         soap_wsse_delete_Security(soap); // remove old security headers
         return err; // password verification failed: return FailedAuthentication
       }
@@ -299,7 +302,8 @@ The server uses the following:
     if (!soap_valid_socket(m = soap_bind(soap, NULL, port, 100))
       ... // error
     for (;;)
-    { if (!soap_valid_socket(s = soap_accept(soap)))
+    {
+      if (!soap_valid_socket(s = soap_accept(soap)))
         ... // error
       THREAD_CREATE(&tid, (void*(*)(void*))&process_request, soap_copy(soap));
     }
@@ -314,7 +318,8 @@ process the request (on a copy of the soap context struct):
 
 @code
   void *process_request(struct soap *soap)
-  { if (soap_ssl_accept(soap)
+  {
+    if (soap_ssl_accept(soap)
      || soap_serve(soap))
       ... // error
     soap_destroy(soap);
@@ -334,13 +339,15 @@ follows:
 
 @code
   struct CRYPTO_dynlock_value
-  { MUTEX_TYPE mutex;
+  {
+    MUTEX_TYPE mutex;
   };
 
   static MUTEX_TYPE *mutex_buf;
 
   static struct CRYPTO_dynlock_value *dyn_create_function(const char *file, int line)
-  { struct CRYPTO_dynlock_value *value;
+  {
+    struct CRYPTO_dynlock_value *value;
     value = (struct CRYPTO_dynlock_value*)malloc(sizeof(struct CRYPTO_dynlock_value));
     if (value)
       MUTEX_SETUP(value->mutex);
@@ -348,30 +355,35 @@ follows:
   }
 
   static void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l, const char *file, int line)
-  { if (mode & CRYPTO_LOCK)
+  {
+    if (mode & CRYPTO_LOCK)
       MUTEX_LOCK(l->mutex);
     else
       MUTEX_UNLOCK(l->mutex);
   }
 
   static void dyn_destroy_function(struct CRYPTO_dynlock_value *l, const char *file, int line)
-  { MUTEX_CLEANUP(l->mutex);
+  {
+    MUTEX_CLEANUP(l->mutex);
     free(l);
   }
 
   void locking_function(int mode, int n, const char *file, int line)
-  { if (mode & CRYPTO_LOCK)
+  {
+    if (mode & CRYPTO_LOCK)
       MUTEX_LOCK(mutex_buf[n]);
     else
       MUTEX_UNLOCK(mutex_buf[n]);
   }
 
   unsigned long id_function()
-  { return (unsigned long)THREAD_ID;
+  {
+    return (unsigned long)THREAD_ID;
   }
 
   int CRYPTO_thread_setup()
-  { int i;
+  {
+    int i;
     mutex_buf = (MUTEX_TYPE*)malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
     if (!mutex_buf)
       return SOAP_EOM;
@@ -386,7 +398,8 @@ follows:
   }
 
   void CRYPTO_thread_cleanup()
-  { int i;
+  {
+    int i;
     if (!mutex_buf)
       return;
     CRYPTO_set_id_callback(NULL);
@@ -421,7 +434,7 @@ extern "C" {
 
 /******************************************************************************\
  *
- * Common URIs
+ *      Common URIs
  *
 \******************************************************************************/
 
@@ -429,7 +442,7 @@ const char *wsse_PasswordTextURI = "http://docs.oasis-open.org/wss/2004/01/oasis
 
 /******************************************************************************\
  *
- * wsse:Security header element
+ *      wsse:Security header element
  *
 \******************************************************************************/
 
@@ -439,20 +452,26 @@ const char *wsse_PasswordTextURI = "http://docs.oasis-open.org/wss/2004/01/oasis
 @param soap context
 @return _wsse__Security object
 */
-struct _wsse__Security*
+SOAP_FMAC1
+struct _wsse__Security *
+SOAP_FMAC2
 soap_wsse_add_Security(struct soap *soap)
-{ DBGFUN("soap_wsse_add_Security");
+{
+  DBGFUN("soap_wsse_add_Security");
   /* if we don't have a SOAP Header, create one */
   soap_header(soap);
   /* if we don't have a wsse:Security element in the SOAP Header, create one */
   if (!soap->header->wsse__Security)
-  { soap->header->wsse__Security = (_wsse__Security*)soap_malloc(soap, sizeof(_wsse__Security));
+  {
+    soap->header->wsse__Security = (_wsse__Security*)soap_malloc(soap, sizeof(_wsse__Security));
     if (!soap->header->wsse__Security)
       return NULL;
     soap_default__wsse__Security(soap, soap->header->wsse__Security);
   }
   return soap->header->wsse__Security;
 }
+
+/******************************************************************************/
 
 /**
 @fn _wsse__Security* soap_wsse_add_Security_actor(struct soap *soap, const char *actor)
@@ -461,9 +480,12 @@ soap_wsse_add_Security(struct soap *soap)
 @param actor string
 @return _wsse__Security object
 */
-struct _wsse__Security*
+SOAP_FMAC1
+struct _wsse__Security *
+SOAP_FMAC2
 soap_wsse_add_Security_actor(struct soap *soap, const char *actor)
-{ _wsse__Security *security = soap_wsse_add_Security(soap);
+{
+  _wsse__Security *security = soap_wsse_add_Security(soap);
   DBGFUN1("soap_wsse_add_Security_actor", "actor=%s", actor);
   if (soap->namespaces && !strcmp(soap->namespaces[0].ns, "http://schemas.xmlsoap.org/soap/envelope/"))
     security->SOAP_ENV__actor = soap_strdup(soap, actor);
@@ -472,17 +494,24 @@ soap_wsse_add_Security_actor(struct soap *soap, const char *actor)
   return security;
 }
 
+/******************************************************************************/
+
 /**
 @fn void soap_wsse_delete_Security(struct soap *soap)
 @brief Deletes Security header element.
 @param soap context
 */
+SOAP_FMAC1
 void
+SOAP_FMAC2
 soap_wsse_delete_Security(struct soap *soap)
-{ DBGFUN("soap_wsse_delete_Security");
+{
+  DBGFUN("soap_wsse_delete_Security");
   if (soap->header)
     soap->header->wsse__Security = NULL;
 }
+
+/******************************************************************************/
 
 /**
 @fn _wsse__Security* soap_wsse_Security(struct soap *soap)
@@ -490,16 +519,19 @@ soap_wsse_delete_Security(struct soap *soap)
 @param soap context
 @return _wsse__Security object or NULL
 */
-struct _wsse__Security*
+SOAP_FMAC1
+struct _wsse__Security *
+SOAP_FMAC2
 soap_wsse_Security(struct soap *soap)
-{ if (soap->header)
+{
+  if (soap->header)
     return soap->header->wsse__Security;
   return NULL;
 }
 
 /******************************************************************************\
  *
- * wsse:Security/wsu:Timestamp header element
+ *      wsse:Security/wsu:Timestamp header element
  *
 \******************************************************************************/
 
@@ -511,16 +543,20 @@ soap_wsse_Security(struct soap *soap)
 @param[in] lifetime expressed in time_t units, or 0 for no expiration
 @return SOAP_OK
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsse_add_Timestamp(struct soap *soap, const char *id, time_t lifetime)
-{ _wsse__Security *security = soap_wsse_add_Security(soap);
+{
+  _wsse__Security *security = soap_wsse_add_Security(soap);
   time_t now = time(NULL);
   char *created = soap_strdup(soap, soap_dateTime2s(soap, now));
   char *expired = lifetime ? soap_strdup(soap, soap_dateTime2s(soap, now + lifetime)) : NULL;
   DBGFUN1("soap_wsse_add_Timestamp", "id=%s", id?id:"");
   /* allocate a Timestamp if we don't have one already */
   if (!security->wsu__Timestamp)
-  { security->wsu__Timestamp = (_wsu__Timestamp*)soap_malloc(soap, sizeof(_wsu__Timestamp));
+  {
+    security->wsu__Timestamp = (_wsu__Timestamp*)soap_malloc(soap, sizeof(_wsu__Timestamp));
     if (!security->wsu__Timestamp)
       return soap->error = SOAP_EOM;
   }
@@ -532,19 +568,26 @@ soap_wsse_add_Timestamp(struct soap *soap, const char *id, time_t lifetime)
   return SOAP_OK;
 }
 
+/******************************************************************************/
+
 /**
 @fn _wsu__Timestamp *soap_wsse_Timestamp(struct soap *soap)
 @brief Returns Timestamp element if present.
 @param soap context
 @return _wsu__Timestamp object or NULL
 */
-struct _wsu__Timestamp*
+SOAP_FMAC1
+struct _wsu__Timestamp *
+SOAP_FMAC2
 soap_wsse_Timestamp(struct soap *soap)
-{ _wsse__Security *security = soap_wsse_Security(soap);
+{
+  _wsse__Security *security = soap_wsse_Security(soap);
   if (security)
     return security->wsu__Timestamp;
   return NULL;
 }
+
+/******************************************************************************/
 
 /**
 @fn int soap_wsse_verify_Timestamp(struct soap *soap)
@@ -557,16 +600,21 @@ SOAP_WSSE_CLKSKEW value is used as a margin to mitigate clock skew. Keeps
 silent when no timestamp is supplied or no expiration date is included in the
 wsu:Timestamp element.
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsse_verify_Timestamp(struct soap *soap)
-{ _wsu__Timestamp *timestamp = soap_wsse_Timestamp(soap);
+{
+  _wsu__Timestamp *timestamp = soap_wsse_Timestamp(soap);
   DBGFUN("soap_wsse_verify_Timestamp");
   /* if we have a timestamp with an expiration date, check it */
   if (timestamp && timestamp->Expires)
-  { time_t now = time(NULL), expired;
+  {
+    time_t now = time(NULL), expired;
     soap_s2dateTime(soap, timestamp->Expires, &expired);
     if (expired + SOAP_WSSE_CLKSKEW <= now)
-    { const char *code = soap_wsu__tTimestampFault2s(soap, wsu__MessageExpired);
+    {
+      const char *code = soap_wsu__tTimestampFault2s(soap, wsu__MessageExpired);
       return soap_wsse_sender_fault_subcode(soap, code, "Message has expired", timestamp->Expires);
     }
   }
@@ -575,7 +623,7 @@ soap_wsse_verify_Timestamp(struct soap *soap)
 
 /******************************************************************************\
  *
- * wsse:Security/UsernameToken header element
+ *      wsse:Security/UsernameToken header element
  *
 \******************************************************************************/
 
@@ -593,13 +641,18 @@ Passwords are sent in the clear, so transport-level encryption is required.
 @note
 This release supports the use of at most one UsernameToken in the header.
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsse_add_UsernameTokenText(struct soap *soap, const char *id, const char *username, const char *password)
-{ _wsse__Security *security = soap_wsse_add_Security(soap);
+{
+  _wsse__Security *security = soap_wsse_add_Security(soap);
   DBGFUN2("soap_wsse_add_UsernameTokenText", "id=%s", id?id:"", "username=%s", username?username:"");
   /* allocate a UsernameToken if we don't have one already */
   if (!security->UsernameToken)
-  { if (!(security->UsernameToken = (_wsse__UsernameToken*)soap_malloc(soap, sizeof(_wsse__UsernameToken))))
+  {
+    security->UsernameToken = (_wsse__UsernameToken*)soap_malloc(soap, sizeof(_wsse__UsernameToken));
+    if (!security->UsernameToken)
       return soap->error = SOAP_EOM;
   }
   soap_default__wsse__UsernameToken(soap, security->UsernameToken);
@@ -608,7 +661,9 @@ soap_wsse_add_UsernameTokenText(struct soap *soap, const char *id, const char *u
   security->UsernameToken->Username = soap_strdup(soap, username);
   /* allocate and populate the Password */
   if (password)
-  { if (!(security->UsernameToken->Password = (_wsse__Password*)soap_malloc(soap, sizeof(_wsse__Password))))
+  {
+    security->UsernameToken->Password = (_wsse__Password*)soap_malloc(soap, sizeof(_wsse__Password));
+    if (!security->UsernameToken->Password)
       return soap->error = SOAP_EOM;
     soap_default__wsse__Password(soap, security->UsernameToken->Password);
     security->UsernameToken->Password->Type = (char*)wsse_PasswordTextURI;
@@ -616,6 +671,8 @@ soap_wsse_add_UsernameTokenText(struct soap *soap, const char *id, const char *u
   }
   return SOAP_OK;
 }
+
+/******************************************************************************/
 
 /**
 @fn _wsse__UsernameToken* soap_wsse_UsernameToken(struct soap *soap, const char *id)
@@ -627,9 +684,12 @@ soap_wsse_add_UsernameTokenText(struct soap *soap, const char *id, const char *u
 @note
 This release supports the use of at most one UsernameToken in the header.
 */
-struct _wsse__UsernameToken*
+SOAP_FMAC1
+struct _wsse__UsernameToken *
+SOAP_FMAC2
 soap_wsse_UsernameToken(struct soap *soap, const char *id)
-{ _wsse__Security *security = soap_wsse_Security(soap);
+{
+  _wsse__Security *security = soap_wsse_Security(soap);
   if (security
    && security->UsernameToken
    && (!id || (security->UsernameToken->wsu__Id
@@ -637,6 +697,8 @@ soap_wsse_UsernameToken(struct soap *soap, const char *id)
     return security->UsernameToken;
   return NULL;
 }
+
+/******************************************************************************/
 
 /**
 @fn const char* soap_wsse_get_Username(struct soap *soap)
@@ -649,15 +711,20 @@ The returned username should be used to lookup the user's password in a
 dictionary or database for server-side authentication with
 soap_wsse_verify_Password.
 */
-const char*
+SOAP_FMAC1
+const char *
+SOAP_FMAC2
 soap_wsse_get_Username(struct soap *soap)
-{ _wsse__UsernameToken *token = soap_wsse_UsernameToken(soap, NULL);
+{
+  _wsse__UsernameToken *token = soap_wsse_UsernameToken(soap, NULL);
   DBGFUN("soap_wsse_get_Username");
   if (token)
     return token->Username;
   soap_wsse_fault(soap, wsse__FailedAuthentication, "Username authentication required");
   return NULL;
 }
+
+/******************************************************************************/
 
 /**
 @fn int soap_wsse_verify_Password(struct soap *soap, const char *password)
@@ -671,16 +738,21 @@ The verification supports both clear-text password verification only.
 @note
 This release supports the use of at most one UsernameToken in the header.
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsse_verify_Password(struct soap *soap, const char *password)
-{ _wsse__UsernameToken *token = soap_wsse_UsernameToken(soap, NULL);
+{
+  _wsse__UsernameToken *token = soap_wsse_UsernameToken(soap, NULL);
   DBGFUN("soap_wsse_verify_Password");
   /* if we have a UsernameToken with a Password, check it */
   if (token && token->Password)
-  { /* password digest or text? */
+  {
+    /* password digest or text? */
     if (token->Password->Type
      && !strcmp(token->Password->Type, wsse_PasswordTextURI))
-    { /* check password text */
+    {
+      /* check password text */
       if (!strcmp(token->Password->__item, password))
         return SOAP_OK;
     }
@@ -690,7 +762,7 @@ soap_wsse_verify_Password(struct soap *soap, const char *password)
 
 /******************************************************************************\
  *
- * Faults
+ *      Faults
  *
 \******************************************************************************/
 
@@ -703,7 +775,9 @@ soap_wsse_verify_Password(struct soap *soap, const char *password)
 @param[in] faultdetail detail string
 @return SOAP_FAULT
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsse_sender_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail)
 {
 #if defined(SOAP_WSA_2003) || defined(SOAP_WSA_2004) || defined(SOAP_WSA_200408) || defined(SOAP_WSA_2005)
@@ -712,6 +786,8 @@ soap_wsse_sender_fault_subcode(struct soap *soap, const char *faultsubcode, cons
   return soap_sender_fault_subcode(soap, faultsubcode, faultstring, faultdetail);
 #endif
 }
+
+/******************************************************************************/
 
 /**
 @fn int soap_wsse_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail)
@@ -722,7 +798,9 @@ soap_wsse_sender_fault_subcode(struct soap *soap, const char *faultsubcode, cons
 @param[in] faultdetail detail string
 @return SOAP_FAULT
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsse_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail)
 {
 #if defined(SOAP_WSA_2003) || defined(SOAP_WSA_2004) || defined(SOAP_WSA_200408) || defined(SOAP_WSA_2005)
@@ -732,6 +810,8 @@ soap_wsse_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, co
 #endif
 }
 
+/******************************************************************************/
+
 /**
 @fn int soap_wsse_sender_fault(struct soap *soap, const char *faultstring, const char *faultdetail)
 @brief Sets sender SOAP Fault for server fault response.
@@ -740,10 +820,15 @@ soap_wsse_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, co
 @param[in] faultdetail detail string
 @return SOAP_FAULT
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsse_sender_fault(struct soap *soap, const char *faultstring, const char *faultdetail)
-{ return soap_wsse_sender_fault_subcode(soap, NULL, faultstring, faultdetail);
+{
+  return soap_wsse_sender_fault_subcode(soap, NULL, faultstring, faultdetail);
 }
+
+/******************************************************************************/
 
 /**
 @fn int soap_wsse_receiver_fault(struct soap *soap, const char *faultstring, const char *faultdetail)
@@ -753,10 +838,15 @@ soap_wsse_sender_fault(struct soap *soap, const char *faultstring, const char *f
 @param[in] faultdetail detail string
 @return SOAP_FAULT
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsse_receiver_fault(struct soap *soap, const char *faultstring, const char *faultdetail)
-{ return soap_wsse_receiver_fault_subcode(soap, NULL, faultstring, faultdetail);
+{
+  return soap_wsse_receiver_fault_subcode(soap, NULL, faultstring, faultdetail);
 }
+
+/******************************************************************************/
 
 /**
 @fn int soap_wsse_fault(struct soap *soap, wsse__FaultcodeEnum fault, const char *detail)
@@ -766,9 +856,12 @@ soap_wsse_receiver_fault(struct soap *soap, const char *faultstring, const char 
 @param[in] detail string with optional text message
 @return SOAP_FAULT
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsse_fault(struct soap *soap, wsse__FaultcodeEnum fault, const char *detail)
-{ const char *code = soap_wsse__FaultcodeEnum2s(soap, fault);
+{
+  const char *code = soap_wsse__FaultcodeEnum2s(soap, fault);
   DBGFUN2("soap_wsse_fault", "fault=%s", code?code:"", "detail=%s", detail?detail:"");
   /* remove incorrect or incomplete Security header */
   soap_wsse_delete_Security(soap);
@@ -776,7 +869,8 @@ soap_wsse_fault(struct soap *soap, wsse__FaultcodeEnum fault, const char *detail
   /* detail = NULL; */ /* uncomment when detail text not recommended */
   /* use WSA to populate the SOAP Header when WSA is used */
   switch (fault)
-  { case wsse__UnsupportedSecurityToken:
+  {
+    case wsse__UnsupportedSecurityToken:
       return soap_wsse_sender_fault_subcode(soap, code, "An unsupported token was provided", detail);
     case wsse__UnsupportedAlgorithm:
       return soap_wsse_sender_fault_subcode(soap, code, "An unsupported signature or encryption algorithm was used", detail);
@@ -796,7 +890,7 @@ soap_wsse_fault(struct soap *soap, wsse__FaultcodeEnum fault, const char *detail
 
 /******************************************************************************\
  *
- * Misc functions
+ *      Misc functions
  *
 \******************************************************************************/
 
@@ -809,12 +903,17 @@ replacing colons with hyphens to produce an xsd:ID value.
 @param[in] tags string of space-separated qualified and unqualified element tag names
 @return SOAP_OK
 */
+SOAP_FMAC1
 int
+SOAP_FMAC2
 soap_wsse_set_wsu_id(struct soap *soap, const char *tags)
-{ DBGFUN1("soap_wsse_set_wsu_id", "tags=%s", tags?tags:"(null)");
+{
+  DBGFUN1("soap_wsse_set_wsu_id", "tags=%s", tags?tags:"(null)");
   soap->wsuid = soap_strdup(soap, tags);
   return SOAP_OK;
 }
+
+/******************************************************************************/
 
 #ifdef __cplusplus
 }

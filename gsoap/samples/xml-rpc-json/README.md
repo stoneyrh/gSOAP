@@ -800,6 +800,11 @@ of the following data types:
     v[1] = 99.99;
     v[2] = "abc";
 
+    // copy a C array or a C++ container to a JSON array
+    int ints[] = { 1, 2, 3 };
+    v.size(3);            // array size of JSON value v must conform
+    std::copy(ints, ints + 3, v.begin());
+
     // create a struct (JSON object) {"name": "gsoap", "major": 2.8, "©": 2015}
     v["name"]  = "gsoap";
     v["major"] = 2.8;

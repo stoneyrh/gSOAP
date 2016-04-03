@@ -6,9 +6,10 @@
 
 	- Removed //gsoapopt
 	- Changed //gsoap saml1 schema namespace directive to import directive
+	- Replaced #import "ds.h" with #import "xenc.h" (that imports "ds.h")
+	- Commented out duplicate saml1__SubjectConfirmation member (due to choice/seq)
 
 */
-
 
 /******************************************************************************\
  *                                                                            *
@@ -24,14 +25,13 @@
  *                                                                            *
 \******************************************************************************/
 
-#import "ds.h"	// ds = <http://www.w3.org/2000/09/xmldsig#>
+#import "xenc.h"	// xenc = <http://www.w3.org/2001/04/xmlenc#>
 
 /******************************************************************************\
  *                                                                            *
  * Schema Namespaces                                                          *
  *                                                                            *
 \******************************************************************************/
-
 
 /// <PRE><BLOCKQUOTE>
 ///   Document identifier: oasis-sstc-saml-schema-assertion-1.1
@@ -107,7 +107,7 @@ typedef struct saml1__AttributeType saml1__AttributeType;
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":DecisionType is a simpleType restriction of XSD type xs:string.
 ///
-/// @note The enum values are prefixed with "saml1__DecisionType__" to avoid name clashes, please use wsdl2h option -e to omit this prefix
+/// @note The enum values are prefixed with "saml1__DecisionType__" to prevent name clashes: use wsdl2h option -e to omit this prefix or use option -c++11 for scoped enumerations
 enum saml1__DecisionType
 {
 	saml1__DecisionType__Permit,	///< xs:string value="Permit"
@@ -127,6 +127,12 @@ typedef enum saml1__DecisionType saml1__DecisionType;
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":AssertionType is a complexType.
 ///
+/// struct saml1__AssertionType operations:
+/// - soap_default_saml1__AssertionType(soap*, saml1__AssertionType*) reset members to default
+/// - int soap_read_saml1__AssertionType(soap*, saml1__AssertionType*) deserialize from a source
+/// - int soap_write_saml1__AssertionType(soap*, saml1__AssertionType*) serialize to a sink
+/// - saml1__AssertionType* soap_dup_saml1__AssertionType(soap*, saml1__AssertionType* dst, saml1__AssertionType *src) returns deep copy of saml1__AssertionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__AssertionType(saml1__AssertionType*) deep deletes saml1__AssertionType data members, use only on dst after soap_dup_saml1__AssertionType(NULL, saml1__AssertionType *dst, saml1__AssertionType *src) (use soapcpp2 -Ed)
 struct saml1__AssertionType
 {
 /// Element reference "urn:oasis:names:tc:SAML:1.0:assertion:""urn:oasis:names:tc:SAML:1.0:assertion":Conditions.
@@ -161,10 +167,18 @@ struct saml1__AssertionType
    @char*                                Issuer                         1;	///< Required attribute.
 /// Attribute "IssueInstant" of XSD type xs:dateTime.
    @time_t                               IssueInstant                   1;	///< Required attribute.
+/// Member declared in WS/WS-typemap.dat
+   @char*                                wsu__Id                        1;	///< Optional attribute.
 };
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":ConditionsType is a complexType.
 ///
+/// struct saml1__ConditionsType operations:
+/// - soap_default_saml1__ConditionsType(soap*, saml1__ConditionsType*) reset members to default
+/// - int soap_read_saml1__ConditionsType(soap*, saml1__ConditionsType*) deserialize from a source
+/// - int soap_write_saml1__ConditionsType(soap*, saml1__ConditionsType*) serialize to a sink
+/// - saml1__ConditionsType* soap_dup_saml1__ConditionsType(soap*, saml1__ConditionsType* dst, saml1__ConditionsType *src) returns deep copy of saml1__ConditionsType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__ConditionsType(saml1__ConditionsType*) deep deletes saml1__ConditionsType data members, use only on dst after soap_dup_saml1__ConditionsType(NULL, saml1__ConditionsType *dst, saml1__ConditionsType *src) (use soapcpp2 -Ed)
 struct saml1__ConditionsType
 {
 //  BEGIN CHOICE <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -187,12 +201,24 @@ struct saml1__ConditionsType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":ConditionAbstractType is an abstract complexType.
 ///
+/// struct saml1__ConditionAbstractType operations:
+/// - soap_default_saml1__ConditionAbstractType(soap*, saml1__ConditionAbstractType*) reset members to default
+/// - int soap_read_saml1__ConditionAbstractType(soap*, saml1__ConditionAbstractType*) deserialize from a source
+/// - int soap_write_saml1__ConditionAbstractType(soap*, saml1__ConditionAbstractType*) serialize to a sink
+/// - saml1__ConditionAbstractType* soap_dup_saml1__ConditionAbstractType(soap*, saml1__ConditionAbstractType* dst, saml1__ConditionAbstractType *src) returns deep copy of saml1__ConditionAbstractType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__ConditionAbstractType(saml1__ConditionAbstractType*) deep deletes saml1__ConditionAbstractType data members, use only on dst after soap_dup_saml1__ConditionAbstractType(NULL, saml1__ConditionAbstractType *dst, saml1__ConditionAbstractType *src) (use soapcpp2 -Ed)
 struct saml1__ConditionAbstractType
 {
 };
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":AdviceType is a complexType.
 ///
+/// struct saml1__AdviceType operations:
+/// - soap_default_saml1__AdviceType(soap*, saml1__AdviceType*) reset members to default
+/// - int soap_read_saml1__AdviceType(soap*, saml1__AdviceType*) deserialize from a source
+/// - int soap_write_saml1__AdviceType(soap*, saml1__AdviceType*) serialize to a sink
+/// - saml1__AdviceType* soap_dup_saml1__AdviceType(soap*, saml1__AdviceType* dst, saml1__AdviceType *src) returns deep copy of saml1__AdviceType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__AdviceType(saml1__AdviceType*) deep deletes saml1__AdviceType data members, use only on dst after soap_dup_saml1__AdviceType(NULL, saml1__AdviceType *dst, saml1__AdviceType *src) (use soapcpp2 -Ed)
 struct saml1__AdviceType
 {
 //  BEGIN CHOICE <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -207,19 +233,32 @@ struct saml1__AdviceType
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
+///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
+///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
     }                                   *__union_AdviceType            ;
 //  END OF CHOICE
 };
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":StatementAbstractType is an abstract complexType.
 ///
+/// struct saml1__StatementAbstractType operations:
+/// - soap_default_saml1__StatementAbstractType(soap*, saml1__StatementAbstractType*) reset members to default
+/// - int soap_read_saml1__StatementAbstractType(soap*, saml1__StatementAbstractType*) deserialize from a source
+/// - int soap_write_saml1__StatementAbstractType(soap*, saml1__StatementAbstractType*) serialize to a sink
+/// - saml1__StatementAbstractType* soap_dup_saml1__StatementAbstractType(soap*, saml1__StatementAbstractType* dst, saml1__StatementAbstractType *src) returns deep copy of saml1__StatementAbstractType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__StatementAbstractType(saml1__StatementAbstractType*) deep deletes saml1__StatementAbstractType data members, use only on dst after soap_dup_saml1__StatementAbstractType(NULL, saml1__StatementAbstractType *dst, saml1__StatementAbstractType *src) (use soapcpp2 -Ed)
 struct saml1__StatementAbstractType
 {
 };
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":SubjectType is a complexType.
 ///
+/// struct saml1__SubjectType operations:
+/// - soap_default_saml1__SubjectType(soap*, saml1__SubjectType*) reset members to default
+/// - int soap_read_saml1__SubjectType(soap*, saml1__SubjectType*) deserialize from a source
+/// - int soap_write_saml1__SubjectType(soap*, saml1__SubjectType*) serialize to a sink
+/// - saml1__SubjectType* soap_dup_saml1__SubjectType(soap*, saml1__SubjectType* dst, saml1__SubjectType *src) returns deep copy of saml1__SubjectType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__SubjectType(saml1__SubjectType*) deep deletes saml1__SubjectType data members, use only on dst after soap_dup_saml1__SubjectType(NULL, saml1__SubjectType *dst, saml1__SubjectType *src) (use soapcpp2 -Ed)
 struct saml1__SubjectType
 {
 //  BEGIN CHOICE <xs:choice>
@@ -231,18 +270,24 @@ struct saml1__SubjectType
     struct saml1__SubjectConfirmationType*  saml1__SubjectConfirmation    ;
 //  END OF SEQUENCE
 /// Element reference "urn:oasis:names:tc:SAML:1.0:assertion:""urn:oasis:names:tc:SAML:1.0:assertion":SubjectConfirmation.
-    struct saml1__SubjectConfirmationType*  saml1__SubjectConfirmation    ;
+//  struct saml1__SubjectConfirmationType*  saml1__SubjectConfirmation    ;
 //  END OF CHOICE
 };
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":SubjectConfirmationType is a complexType.
 ///
+/// struct saml1__SubjectConfirmationType operations:
+/// - soap_default_saml1__SubjectConfirmationType(soap*, saml1__SubjectConfirmationType*) reset members to default
+/// - int soap_read_saml1__SubjectConfirmationType(soap*, saml1__SubjectConfirmationType*) deserialize from a source
+/// - int soap_write_saml1__SubjectConfirmationType(soap*, saml1__SubjectConfirmationType*) serialize to a sink
+/// - saml1__SubjectConfirmationType* soap_dup_saml1__SubjectConfirmationType(soap*, saml1__SubjectConfirmationType* dst, saml1__SubjectConfirmationType *src) returns deep copy of saml1__SubjectConfirmationType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__SubjectConfirmationType(saml1__SubjectConfirmationType*) deep deletes saml1__SubjectConfirmationType data members, use only on dst after soap_dup_saml1__SubjectConfirmationType(NULL, saml1__SubjectConfirmationType *dst, saml1__SubjectConfirmationType *src) (use soapcpp2 -Ed)
 struct saml1__SubjectConfirmationType
 {
-/// Size of the dynamic array of char** is 1..unbounded.
+/// Size of the dynamic array of char* * is 1..unbounded.
    $int                                  __sizeConfirmationMethod       1;
-/// Array char** of size 1..unbounded.
-    char**                               saml1__ConfirmationMethod      1;
+/// Array char* * of size 1..unbounded.
+    char* *                              saml1__ConfirmationMethod      1;
 /// Element reference "urn:oasis:names:tc:SAML:1.0:assertion:""urn:oasis:names:tc:SAML:1.0:assertion":SubjectConfirmationData.
     _XML                                 saml1__SubjectConfirmationData 0;	///< Optional element.
 /// Imported element reference "http://www.w3.org/2000/09/xmldsig#":KeyInfo.
@@ -251,6 +296,12 @@ struct saml1__SubjectConfirmationType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":SubjectLocalityType is a complexType.
 ///
+/// struct saml1__SubjectLocalityType operations:
+/// - soap_default_saml1__SubjectLocalityType(soap*, saml1__SubjectLocalityType*) reset members to default
+/// - int soap_read_saml1__SubjectLocalityType(soap*, saml1__SubjectLocalityType*) deserialize from a source
+/// - int soap_write_saml1__SubjectLocalityType(soap*, saml1__SubjectLocalityType*) serialize to a sink
+/// - saml1__SubjectLocalityType* soap_dup_saml1__SubjectLocalityType(soap*, saml1__SubjectLocalityType* dst, saml1__SubjectLocalityType *src) returns deep copy of saml1__SubjectLocalityType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__SubjectLocalityType(saml1__SubjectLocalityType*) deep deletes saml1__SubjectLocalityType data members, use only on dst after soap_dup_saml1__SubjectLocalityType(NULL, saml1__SubjectLocalityType *dst, saml1__SubjectLocalityType *src) (use soapcpp2 -Ed)
 struct saml1__SubjectLocalityType
 {
 /// Attribute "IPAddress" of XSD type xs:string.
@@ -261,6 +312,12 @@ struct saml1__SubjectLocalityType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":AuthorityBindingType is a complexType.
 ///
+/// struct saml1__AuthorityBindingType operations:
+/// - soap_default_saml1__AuthorityBindingType(soap*, saml1__AuthorityBindingType*) reset members to default
+/// - int soap_read_saml1__AuthorityBindingType(soap*, saml1__AuthorityBindingType*) deserialize from a source
+/// - int soap_write_saml1__AuthorityBindingType(soap*, saml1__AuthorityBindingType*) serialize to a sink
+/// - saml1__AuthorityBindingType* soap_dup_saml1__AuthorityBindingType(soap*, saml1__AuthorityBindingType* dst, saml1__AuthorityBindingType *src) returns deep copy of saml1__AuthorityBindingType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__AuthorityBindingType(saml1__AuthorityBindingType*) deep deletes saml1__AuthorityBindingType data members, use only on dst after soap_dup_saml1__AuthorityBindingType(NULL, saml1__AuthorityBindingType *dst, saml1__AuthorityBindingType *src) (use soapcpp2 -Ed)
 struct saml1__AuthorityBindingType
 {
 /// Attribute "AuthorityKind" of XSD type xs:QName.
@@ -273,6 +330,12 @@ struct saml1__AuthorityBindingType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":EvidenceType is a complexType.
 ///
+/// struct saml1__EvidenceType operations:
+/// - soap_default_saml1__EvidenceType(soap*, saml1__EvidenceType*) reset members to default
+/// - int soap_read_saml1__EvidenceType(soap*, saml1__EvidenceType*) deserialize from a source
+/// - int soap_write_saml1__EvidenceType(soap*, saml1__EvidenceType*) serialize to a sink
+/// - saml1__EvidenceType* soap_dup_saml1__EvidenceType(soap*, saml1__EvidenceType* dst, saml1__EvidenceType *src) returns deep copy of saml1__EvidenceType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__EvidenceType(saml1__EvidenceType*) deep deletes saml1__EvidenceType data members, use only on dst after soap_dup_saml1__EvidenceType(NULL, saml1__EvidenceType *dst, saml1__EvidenceType *src) (use soapcpp2 -Ed)
 struct saml1__EvidenceType
 {
 //  BEGIN CHOICE <xs:choice maxOccurs="unbounded">
@@ -289,6 +352,12 @@ struct saml1__EvidenceType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":AttributeDesignatorType is a complexType.
 ///
+/// struct saml1__AttributeDesignatorType operations:
+/// - soap_default_saml1__AttributeDesignatorType(soap*, saml1__AttributeDesignatorType*) reset members to default
+/// - int soap_read_saml1__AttributeDesignatorType(soap*, saml1__AttributeDesignatorType*) deserialize from a source
+/// - int soap_write_saml1__AttributeDesignatorType(soap*, saml1__AttributeDesignatorType*) serialize to a sink
+/// - saml1__AttributeDesignatorType* soap_dup_saml1__AttributeDesignatorType(soap*, saml1__AttributeDesignatorType* dst, saml1__AttributeDesignatorType *src) returns deep copy of saml1__AttributeDesignatorType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__AttributeDesignatorType(saml1__AttributeDesignatorType*) deep deletes saml1__AttributeDesignatorType data members, use only on dst after soap_dup_saml1__AttributeDesignatorType(NULL, saml1__AttributeDesignatorType *dst, saml1__AttributeDesignatorType *src) (use soapcpp2 -Ed)
 struct saml1__AttributeDesignatorType
 {
 /// Attribute "AttributeName" of XSD type xs:string.
@@ -299,18 +368,30 @@ struct saml1__AttributeDesignatorType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":AudienceRestrictionConditionType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":ConditionAbstractType.
 ///
+/// struct saml1__AudienceRestrictionConditionType operations:
+/// - soap_default_saml1__AudienceRestrictionConditionType(soap*, saml1__AudienceRestrictionConditionType*) reset members to default
+/// - int soap_read_saml1__AudienceRestrictionConditionType(soap*, saml1__AudienceRestrictionConditionType*) deserialize from a source
+/// - int soap_write_saml1__AudienceRestrictionConditionType(soap*, saml1__AudienceRestrictionConditionType*) serialize to a sink
+/// - saml1__AudienceRestrictionConditionType* soap_dup_saml1__AudienceRestrictionConditionType(soap*, saml1__AudienceRestrictionConditionType* dst, saml1__AudienceRestrictionConditionType *src) returns deep copy of saml1__AudienceRestrictionConditionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__AudienceRestrictionConditionType(saml1__AudienceRestrictionConditionType*) deep deletes saml1__AudienceRestrictionConditionType data members, use only on dst after soap_dup_saml1__AudienceRestrictionConditionType(NULL, saml1__AudienceRestrictionConditionType *dst, saml1__AudienceRestrictionConditionType *src) (use soapcpp2 -Ed)
 struct saml1__AudienceRestrictionConditionType
 {
 /// INHERITED FROM saml1__ConditionAbstractType:
 //  END OF INHERITED FROM saml1__ConditionAbstractType
-/// Size of the dynamic array of char** is 1..unbounded.
+/// Size of the dynamic array of char* * is 1..unbounded.
    $int                                  __sizeAudience                 1;
-/// Array char** of size 1..unbounded.
-    char**                               saml1__Audience                1;
+/// Array char* * of size 1..unbounded.
+    char* *                              saml1__Audience                1;
 };
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":DoNotCacheConditionType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":ConditionAbstractType.
 ///
+/// struct saml1__DoNotCacheConditionType operations:
+/// - soap_default_saml1__DoNotCacheConditionType(soap*, saml1__DoNotCacheConditionType*) reset members to default
+/// - int soap_read_saml1__DoNotCacheConditionType(soap*, saml1__DoNotCacheConditionType*) deserialize from a source
+/// - int soap_write_saml1__DoNotCacheConditionType(soap*, saml1__DoNotCacheConditionType*) serialize to a sink
+/// - saml1__DoNotCacheConditionType* soap_dup_saml1__DoNotCacheConditionType(soap*, saml1__DoNotCacheConditionType* dst, saml1__DoNotCacheConditionType *src) returns deep copy of saml1__DoNotCacheConditionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__DoNotCacheConditionType(saml1__DoNotCacheConditionType*) deep deletes saml1__DoNotCacheConditionType data members, use only on dst after soap_dup_saml1__DoNotCacheConditionType(NULL, saml1__DoNotCacheConditionType *dst, saml1__DoNotCacheConditionType *src) (use soapcpp2 -Ed)
 struct saml1__DoNotCacheConditionType
 {
 /// INHERITED FROM saml1__ConditionAbstractType:
@@ -319,6 +400,12 @@ struct saml1__DoNotCacheConditionType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":SubjectStatementAbstractType is an abstract complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":StatementAbstractType.
 ///
+/// struct saml1__SubjectStatementAbstractType operations:
+/// - soap_default_saml1__SubjectStatementAbstractType(soap*, saml1__SubjectStatementAbstractType*) reset members to default
+/// - int soap_read_saml1__SubjectStatementAbstractType(soap*, saml1__SubjectStatementAbstractType*) deserialize from a source
+/// - int soap_write_saml1__SubjectStatementAbstractType(soap*, saml1__SubjectStatementAbstractType*) serialize to a sink
+/// - saml1__SubjectStatementAbstractType* soap_dup_saml1__SubjectStatementAbstractType(soap*, saml1__SubjectStatementAbstractType* dst, saml1__SubjectStatementAbstractType *src) returns deep copy of saml1__SubjectStatementAbstractType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__SubjectStatementAbstractType(saml1__SubjectStatementAbstractType*) deep deletes saml1__SubjectStatementAbstractType data members, use only on dst after soap_dup_saml1__SubjectStatementAbstractType(NULL, saml1__SubjectStatementAbstractType *dst, saml1__SubjectStatementAbstractType *src) (use soapcpp2 -Ed)
 struct saml1__SubjectStatementAbstractType
 {
 /// INHERITED FROM saml1__StatementAbstractType:
@@ -329,6 +416,12 @@ struct saml1__SubjectStatementAbstractType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":NameIdentifierType is a complexType with simpleContent.
 ///
+/// struct saml1__NameIdentifierType operations:
+/// - soap_default_saml1__NameIdentifierType(soap*, saml1__NameIdentifierType*) reset members to default
+/// - int soap_read_saml1__NameIdentifierType(soap*, saml1__NameIdentifierType*) deserialize from a source
+/// - int soap_write_saml1__NameIdentifierType(soap*, saml1__NameIdentifierType*) serialize to a sink
+/// - saml1__NameIdentifierType* soap_dup_saml1__NameIdentifierType(soap*, saml1__NameIdentifierType* dst, saml1__NameIdentifierType *src) returns deep copy of saml1__NameIdentifierType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__NameIdentifierType(saml1__NameIdentifierType*) deep deletes saml1__NameIdentifierType data members, use only on dst after soap_dup_saml1__NameIdentifierType(NULL, saml1__NameIdentifierType *dst, saml1__NameIdentifierType *src) (use soapcpp2 -Ed)
 struct saml1__NameIdentifierType
 {
 /// __item wraps "xs:string" simpleContent.
@@ -341,6 +434,12 @@ struct saml1__NameIdentifierType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":ActionType is a complexType with simpleContent.
 ///
+/// struct saml1__ActionType operations:
+/// - soap_default_saml1__ActionType(soap*, saml1__ActionType*) reset members to default
+/// - int soap_read_saml1__ActionType(soap*, saml1__ActionType*) deserialize from a source
+/// - int soap_write_saml1__ActionType(soap*, saml1__ActionType*) serialize to a sink
+/// - saml1__ActionType* soap_dup_saml1__ActionType(soap*, saml1__ActionType* dst, saml1__ActionType *src) returns deep copy of saml1__ActionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__ActionType(saml1__ActionType*) deep deletes saml1__ActionType data members, use only on dst after soap_dup_saml1__ActionType(NULL, saml1__ActionType *dst, saml1__ActionType *src) (use soapcpp2 -Ed)
 struct saml1__ActionType
 {
 /// __item wraps "xs:string" simpleContent.
@@ -351,6 +450,12 @@ struct saml1__ActionType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":AttributeType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AttributeDesignatorType.
 ///
+/// struct saml1__AttributeType operations:
+/// - soap_default_saml1__AttributeType(soap*, saml1__AttributeType*) reset members to default
+/// - int soap_read_saml1__AttributeType(soap*, saml1__AttributeType*) deserialize from a source
+/// - int soap_write_saml1__AttributeType(soap*, saml1__AttributeType*) serialize to a sink
+/// - saml1__AttributeType* soap_dup_saml1__AttributeType(soap*, saml1__AttributeType* dst, saml1__AttributeType *src) returns deep copy of saml1__AttributeType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__AttributeType(saml1__AttributeType*) deep deletes saml1__AttributeType data members, use only on dst after soap_dup_saml1__AttributeType(NULL, saml1__AttributeType *dst, saml1__AttributeType *src) (use soapcpp2 -Ed)
 struct saml1__AttributeType
 {
 /// INHERITED FROM saml1__AttributeDesignatorType:
@@ -367,6 +472,12 @@ struct saml1__AttributeType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":AuthenticationStatementType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":SubjectStatementAbstractType.
 ///
+/// struct saml1__AuthenticationStatementType operations:
+/// - soap_default_saml1__AuthenticationStatementType(soap*, saml1__AuthenticationStatementType*) reset members to default
+/// - int soap_read_saml1__AuthenticationStatementType(soap*, saml1__AuthenticationStatementType*) deserialize from a source
+/// - int soap_write_saml1__AuthenticationStatementType(soap*, saml1__AuthenticationStatementType*) serialize to a sink
+/// - saml1__AuthenticationStatementType* soap_dup_saml1__AuthenticationStatementType(soap*, saml1__AuthenticationStatementType* dst, saml1__AuthenticationStatementType *src) returns deep copy of saml1__AuthenticationStatementType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__AuthenticationStatementType(saml1__AuthenticationStatementType*) deep deletes saml1__AuthenticationStatementType data members, use only on dst after soap_dup_saml1__AuthenticationStatementType(NULL, saml1__AuthenticationStatementType *dst, saml1__AuthenticationStatementType *src) (use soapcpp2 -Ed)
 struct saml1__AuthenticationStatementType
 {
 /// INHERITED FROM saml1__StatementAbstractType:
@@ -389,6 +500,12 @@ struct saml1__AuthenticationStatementType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":AuthorizationDecisionStatementType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":SubjectStatementAbstractType.
 ///
+/// struct saml1__AuthorizationDecisionStatementType operations:
+/// - soap_default_saml1__AuthorizationDecisionStatementType(soap*, saml1__AuthorizationDecisionStatementType*) reset members to default
+/// - int soap_read_saml1__AuthorizationDecisionStatementType(soap*, saml1__AuthorizationDecisionStatementType*) deserialize from a source
+/// - int soap_write_saml1__AuthorizationDecisionStatementType(soap*, saml1__AuthorizationDecisionStatementType*) serialize to a sink
+/// - saml1__AuthorizationDecisionStatementType* soap_dup_saml1__AuthorizationDecisionStatementType(soap*, saml1__AuthorizationDecisionStatementType* dst, saml1__AuthorizationDecisionStatementType *src) returns deep copy of saml1__AuthorizationDecisionStatementType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__AuthorizationDecisionStatementType(saml1__AuthorizationDecisionStatementType*) deep deletes saml1__AuthorizationDecisionStatementType data members, use only on dst after soap_dup_saml1__AuthorizationDecisionStatementType(NULL, saml1__AuthorizationDecisionStatementType *dst, saml1__AuthorizationDecisionStatementType *src) (use soapcpp2 -Ed)
 struct saml1__AuthorizationDecisionStatementType
 {
 /// INHERITED FROM saml1__StatementAbstractType:
@@ -411,6 +528,12 @@ struct saml1__AuthorizationDecisionStatementType
 
 /// @brief "urn:oasis:names:tc:SAML:1.0:assertion":AttributeStatementType is a complexType with complexContent extension of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":SubjectStatementAbstractType.
 ///
+/// struct saml1__AttributeStatementType operations:
+/// - soap_default_saml1__AttributeStatementType(soap*, saml1__AttributeStatementType*) reset members to default
+/// - int soap_read_saml1__AttributeStatementType(soap*, saml1__AttributeStatementType*) deserialize from a source
+/// - int soap_write_saml1__AttributeStatementType(soap*, saml1__AttributeStatementType*) serialize to a sink
+/// - saml1__AttributeStatementType* soap_dup_saml1__AttributeStatementType(soap*, saml1__AttributeStatementType* dst, saml1__AttributeStatementType *src) returns deep copy of saml1__AttributeStatementType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_saml1__AttributeStatementType(saml1__AttributeStatementType*) deep deletes saml1__AttributeStatementType data members, use only on dst after soap_dup_saml1__AttributeStatementType(NULL, saml1__AttributeStatementType *dst, saml1__AttributeStatementType *src) (use soapcpp2 -Ed)
 struct saml1__AttributeStatementType
 {
 /// INHERITED FROM saml1__StatementAbstractType:
@@ -540,17 +663,19 @@ your code to import these data type and function declarations. Only use the
 soapcpp2-generated files in your project build. Do not include the wsdl2h-
 generated .h file in your code.
 
-Data can be read in XML and deserialized from:
-  - a file descriptor, using soap->recvfd = fd
-  - a socket, using soap->socket = ...
-  - a C++ stream, using soap->is = ...
-  - a buffer, using the soap->frecv() callback
+Data can be read and deserialized from:
+  - an int file descriptor, using soap->recvfd = fd
+  - a socket, using soap->socket = (int)...
+  - a C++ stream (istream, stringstream), using soap->is = (istream*)...
+  - a C string, using soap->is = (const char*)...
+  - any input, using the soap->frecv() callback
 
-Data can be serialized in XML and written to:
-  - a file descriptor, using soap->sendfd = fd
-  - a socket, using soap->socket = ...
-  - a C++ stream, using soap->os = ...
-  - a buffer, using the soap->fsend() callback
+Data can be serialized and written to:
+  - an int file descriptor, using soap->sendfd = (int)...
+  - a socket, using soap->socket = (int)...
+  - a C++ stream (ostream, stringstream), using soap->os = (ostream*)...
+  - a C string, using soap->os = (const char**)...
+  - any output, using the soap->fsend() callback
 
 The following options are available for (de)serialization control:
   - soap->encodingStyle = NULL; to remove SOAP 1.1/1.2 encodingStyle
@@ -561,55 +686,55 @@ The following options are available for (de)serialization control:
 
 @section saml1 Top-level root elements of schema "urn:oasis:names:tc:SAML:1.0:assertion"
 
-  - <AssertionIDReference> (use wsdl2h option -g to auto-generate)
+  - <saml1:AssertionIDReference> (use wsdl2h option -g to auto-generate type _saml1__AssertionIDReference)
 
-  - <Assertion> (use wsdl2h option -g to auto-generate)
+  - <saml1:Assertion> (use wsdl2h option -g to auto-generate type _saml1__Assertion)
 
-  - <Conditions> (use wsdl2h option -g to auto-generate)
+  - <saml1:Conditions> (use wsdl2h option -g to auto-generate type _saml1__Conditions)
 
-  - <Condition> (use wsdl2h option -g to auto-generate)
+  - <saml1:Condition> (use wsdl2h option -g to auto-generate type _saml1__Condition)
 
-  - <AudienceRestrictionCondition> (use wsdl2h option -g to auto-generate)
+  - <saml1:AudienceRestrictionCondition> (use wsdl2h option -g to auto-generate type _saml1__AudienceRestrictionCondition)
 
-  - <Audience> (use wsdl2h option -g to auto-generate)
+  - <saml1:Audience> (use wsdl2h option -g to auto-generate type _saml1__Audience)
 
-  - <DoNotCacheCondition> (use wsdl2h option -g to auto-generate)
+  - <saml1:DoNotCacheCondition> (use wsdl2h option -g to auto-generate type _saml1__DoNotCacheCondition)
 
-  - <Advice> (use wsdl2h option -g to auto-generate)
+  - <saml1:Advice> (use wsdl2h option -g to auto-generate type _saml1__Advice)
 
-  - <Statement> (use wsdl2h option -g to auto-generate)
+  - <saml1:Statement> (use wsdl2h option -g to auto-generate type _saml1__Statement)
 
-  - <SubjectStatement> (use wsdl2h option -g to auto-generate)
+  - <saml1:SubjectStatement> (use wsdl2h option -g to auto-generate type _saml1__SubjectStatement)
 
-  - <Subject> (use wsdl2h option -g to auto-generate)
+  - <saml1:Subject> (use wsdl2h option -g to auto-generate type _saml1__Subject)
 
-  - <NameIdentifier> (use wsdl2h option -g to auto-generate)
+  - <saml1:NameIdentifier> (use wsdl2h option -g to auto-generate type _saml1__NameIdentifier)
 
-  - <SubjectConfirmation> (use wsdl2h option -g to auto-generate)
+  - <saml1:SubjectConfirmation> (use wsdl2h option -g to auto-generate type _saml1__SubjectConfirmation)
 
-  - <SubjectConfirmationData> (use wsdl2h option -g to auto-generate)
+  - <saml1:SubjectConfirmationData> (use wsdl2h option -g to auto-generate type _saml1__SubjectConfirmationData)
 
-  - <ConfirmationMethod> (use wsdl2h option -g to auto-generate)
+  - <saml1:ConfirmationMethod> (use wsdl2h option -g to auto-generate type _saml1__ConfirmationMethod)
 
-  - <AuthenticationStatement> (use wsdl2h option -g to auto-generate)
+  - <saml1:AuthenticationStatement> (use wsdl2h option -g to auto-generate type _saml1__AuthenticationStatement)
 
-  - <SubjectLocality> (use wsdl2h option -g to auto-generate)
+  - <saml1:SubjectLocality> (use wsdl2h option -g to auto-generate type _saml1__SubjectLocality)
 
-  - <AuthorityBinding> (use wsdl2h option -g to auto-generate)
+  - <saml1:AuthorityBinding> (use wsdl2h option -g to auto-generate type _saml1__AuthorityBinding)
 
-  - <AuthorizationDecisionStatement> (use wsdl2h option -g to auto-generate)
+  - <saml1:AuthorizationDecisionStatement> (use wsdl2h option -g to auto-generate type _saml1__AuthorizationDecisionStatement)
 
-  - <Action> (use wsdl2h option -g to auto-generate)
+  - <saml1:Action> (use wsdl2h option -g to auto-generate type _saml1__Action)
 
-  - <Evidence> (use wsdl2h option -g to auto-generate)
+  - <saml1:Evidence> (use wsdl2h option -g to auto-generate type _saml1__Evidence)
 
-  - <AttributeStatement> (use wsdl2h option -g to auto-generate)
+  - <saml1:AttributeStatement> (use wsdl2h option -g to auto-generate type _saml1__AttributeStatement)
 
-  - <AttributeDesignator> (use wsdl2h option -g to auto-generate)
+  - <saml1:AttributeDesignator> (use wsdl2h option -g to auto-generate type _saml1__AttributeDesignator)
 
-  - <Attribute> (use wsdl2h option -g to auto-generate)
+  - <saml1:Attribute> (use wsdl2h option -g to auto-generate type _saml1__Attribute)
 
-  - <AttributeValue> (use wsdl2h option -g to auto-generate)
+  - <saml1:AttributeValue> (use wsdl2h option -g to auto-generate type _saml1__AttributeValue)
 
 */
 

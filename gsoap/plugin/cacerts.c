@@ -1,8 +1,8 @@
 /*
-	cacerts.c
+        cacerts.c
 
-	Store CA certificates in memory for optimizations and/or stand-alone
-	clients.
+        Store CA certificates in memory for optimizations and/or stand-alone
+        clients.
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
@@ -61,7 +61,8 @@ extern "C" {
 #endif
 
 int soap_ssl_client_cacerts(struct soap *soap)
-{ extern const char cacert_pem_data[];
+{
+  extern const char cacert_pem_data[];
   const char *data = cacert_pem_data;
   const char *next = data;
   int err = SOAP_OK;
@@ -74,12 +75,14 @@ int soap_ssl_client_cacerts(struct soap *soap)
 #endif
   char *buf = NULL;
   X509_STORE *store;
-  if ((err = soap_ssl_client_context(soap, SOAP_SSL_DEFAULT, NULL, NULL, NULL, NULL, NULL)))
+  err = soap_ssl_client_context(soap, SOAP_SSL_DEFAULT, NULL, NULL, NULL, NULL, NULL);
+  if (err)
     return err;
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Populating certificate chain\n"));
   store = SSL_CTX_get_cert_store(soap->ctx);
   for (;;)
-  { int len;
+  {
+    int len;
     data = strstr(next, "-----BEGIN CERTIFICATE-----");
     if (!data)
       break;
@@ -89,7 +92,8 @@ int soap_ssl_client_cacerts(struct soap *soap)
       break;
     len = (next - data + 3) / 4 * 3;
     if (len > max)
-    { if (buf)
+    {
+      if (buf)
         SOAP_FREE(soap, buf);
       buf = (char*)SOAP_MALLOC(soap, len);
       max = len;
@@ -97,14 +101,16 @@ int soap_ssl_client_cacerts(struct soap *soap)
     soap_base642s(soap, data, buf, (size_t)len, NULL);
     der = (unsigned char*)buf;
     if (cert)
-    { X509_free(cert);
+    {
+      X509_free(cert);
       cert = NULL;
     }
     if (!d2i_X509(&cert, &der, len))
       break;
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Adding certificate %d bytes\n", len));
     if (X509_STORE_add_cert(store, cert) != 1)
-    { char line[80];
+    {
+      char line[80];
       (SOAP_SNPRINTF(line, sizeof(line), 32), "At position %lu", (unsigned long)(data - cacert_pem_data));
       err = soap_set_receiver_error(soap, line, "SSL add chain certificate failed in soap_ssl_client_cacerts()", SOAP_SSL_ERROR);
       break;

@@ -80,7 +80,7 @@ extern "C" {
 
 /******************************************************************************\
  *
- * Supported algorithms
+ *      Supported algorithms
  *
 \******************************************************************************/
 
@@ -228,8 +228,8 @@ extern "C" {
 @struct soap_smd_data
 @brief The smdevp engine context data, which is hooked up to soap->data[0]
 */
-struct soap_smd_data
-{ int alg;              /**< The digest or signature algorithm used */
+struct soap_smd_data {
+  int alg;              /**< The digest or signature algorithm used */
   void *ctx;            /**< EVP_MD_CTX or HMAC_CTX */
   const void *key;      /**< EVP_PKEY */
   int (*fsend)(struct soap*, const char*, size_t);
@@ -239,18 +239,18 @@ struct soap_smd_data
 
 /******************************************************************************\
  *
- * soap_smd API functions
+ *      soap_smd API functions
  *
 \******************************************************************************/
 
-size_t soap_smd_size(int alg, const void *key);
+SOAP_FMAC1 size_t SOAP_FMAC2 soap_smd_size(int alg, const void *key);
 
-int soap_smd_begin(struct soap *soap, int alg, const void *key, int keylen);
-int soap_smd_end(struct soap *soap, char *buf, int *len);
+SOAP_FMAC1 int SOAP_FMAC2 soap_smd_begin(struct soap *soap, int alg, const void *key, int keylen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_smd_end(struct soap *soap, char *buf, int *len);
 
-int soap_smd_init(struct soap *soap, struct soap_smd_data *data, int alg, const void *key, int keylen);
-int soap_smd_update(struct soap *soap, struct soap_smd_data *data, const char *buf, size_t len);
-int soap_smd_final(struct soap *soap, struct soap_smd_data *data, char *buf, int *len);
+SOAP_FMAC1 int SOAP_FMAC2 soap_smd_init(struct soap *soap, struct soap_smd_data *data, int alg, const void *key, int keylen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_smd_update(struct soap *soap, struct soap_smd_data *data, const char *buf, size_t len);
+SOAP_FMAC1 int SOAP_FMAC2 soap_smd_final(struct soap *soap, struct soap_smd_data *data, char *buf, int *len);
 
 #ifdef __cplusplus
 }

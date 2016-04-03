@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">wsaapi.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -96,76 +96,76 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa013e3760b97c2efcc71d29b57394501"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#aa013e3760b97c2efcc71d29b57394501">soap_wsa</a> (struct soap *soap, struct soap_plugin *p, void *arg)</td></tr>
+<tr class="memitem:aa013e3760b97c2efcc71d29b57394501"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#aa013e3760b97c2efcc71d29b57394501">soap_wsa</a> (struct soap *soap, struct soap_plugin *p, void *arg)</td></tr>
 <tr class="memdesc:aa013e3760b97c2efcc71d29b57394501"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plugin registry function, used with soap_register_plugin.  <a href="#aa013e3760b97c2efcc71d29b57394501">More...</a><br /></td></tr>
 <tr class="separator:aa013e3760b97c2efcc71d29b57394501"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2b81c42093fc9fcadcf86e7d801e03b"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#ac2b81c42093fc9fcadcf86e7d801e03b">soap_wsa_rand_uuid</a> (struct soap *soap)</td></tr>
+<tr class="memitem:ac2b81c42093fc9fcadcf86e7d801e03b"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 const char *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#ac2b81c42093fc9fcadcf86e7d801e03b">soap_wsa_rand_uuid</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:ac2b81c42093fc9fcadcf86e7d801e03b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a random UUID (UUID algorithm version 4). Compile all source codes with -DWITH_OPENSSL for better randomness results.  <a href="#ac2b81c42093fc9fcadcf86e7d801e03b">More...</a><br /></td></tr>
 <tr class="separator:ac2b81c42093fc9fcadcf86e7d801e03b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cbfe63b812df21c0bc2c8a129a1dc99"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a3cbfe63b812df21c0bc2c8a129a1dc99">soap_wsa_request</a> (struct soap *soap, const char *id, const char *to, const char *action)</td></tr>
+<tr class="memitem:a3cbfe63b812df21c0bc2c8a129a1dc99"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a3cbfe63b812df21c0bc2c8a129a1dc99">soap_wsa_request</a> (struct soap *soap, const char *id, const char *to, const char *action)</td></tr>
 <tr class="memdesc:a3cbfe63b812df21c0bc2c8a129a1dc99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the WS-Addressing information header for the next request message with MessageID (optional), To (optional), and Action (required).  <a href="#a3cbfe63b812df21c0bc2c8a129a1dc99">More...</a><br /></td></tr>
 <tr class="separator:a3cbfe63b812df21c0bc2c8a129a1dc99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a173c7beac1825c49f5d3b446ccdbc6b8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a173c7beac1825c49f5d3b446ccdbc6b8">soap_wsa_add_From</a> (struct soap *soap, const char *endpoint)</td></tr>
+<tr class="memitem:a173c7beac1825c49f5d3b446ccdbc6b8"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a173c7beac1825c49f5d3b446ccdbc6b8">soap_wsa_add_From</a> (struct soap *soap, const char *endpoint)</td></tr>
 <tr class="memdesc:a173c7beac1825c49f5d3b446ccdbc6b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets WS-Addressing From header for request message.  <a href="#a173c7beac1825c49f5d3b446ccdbc6b8">More...</a><br /></td></tr>
 <tr class="separator:a173c7beac1825c49f5d3b446ccdbc6b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18abaa4aba0f1bf391fbd2152070faae"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a18abaa4aba0f1bf391fbd2152070faae">soap_wsa_add_NoReply</a> (struct soap *soap)</td></tr>
+<tr class="memitem:a18abaa4aba0f1bf391fbd2152070faae"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a18abaa4aba0f1bf391fbd2152070faae">soap_wsa_add_NoReply</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:a18abaa4aba0f1bf391fbd2152070faae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets WS-Addressing ReplyTo header to 'none' (no reply)  <a href="#a18abaa4aba0f1bf391fbd2152070faae">More...</a><br /></td></tr>
 <tr class="separator:a18abaa4aba0f1bf391fbd2152070faae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b4871953a687b6f360b04c4bddeb49c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a8b4871953a687b6f360b04c4bddeb49c">soap_wsa_add_ReplyTo</a> (struct soap *soap, const char *endpoint)</td></tr>
+<tr class="memitem:a8b4871953a687b6f360b04c4bddeb49c"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a8b4871953a687b6f360b04c4bddeb49c">soap_wsa_add_ReplyTo</a> (struct soap *soap, const char *endpoint)</td></tr>
 <tr class="memdesc:a8b4871953a687b6f360b04c4bddeb49c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets WS-Addressing ReplyTo header for request message.  <a href="#a8b4871953a687b6f360b04c4bddeb49c">More...</a><br /></td></tr>
 <tr class="separator:a8b4871953a687b6f360b04c4bddeb49c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc91d81e9eec6b9bc39efbd5e715a18a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#afc91d81e9eec6b9bc39efbd5e715a18a">soap_wsa_add_FaultTo</a> (struct soap *soap, const char *endpoint)</td></tr>
+<tr class="memitem:afc91d81e9eec6b9bc39efbd5e715a18a"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#afc91d81e9eec6b9bc39efbd5e715a18a">soap_wsa_add_FaultTo</a> (struct soap *soap, const char *endpoint)</td></tr>
 <tr class="memdesc:afc91d81e9eec6b9bc39efbd5e715a18a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets WS-Addressing FaultTo header for request message.  <a href="#afc91d81e9eec6b9bc39efbd5e715a18a">More...</a><br /></td></tr>
 <tr class="separator:afc91d81e9eec6b9bc39efbd5e715a18a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2bc47e64ed2e35a3be9dea26696f6511"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a2bc47e64ed2e35a3be9dea26696f6511">soap_wsa_add_RelatesTo</a> (struct soap *soap, const char *endpoint)</td></tr>
+<tr class="memitem:a2bc47e64ed2e35a3be9dea26696f6511"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a2bc47e64ed2e35a3be9dea26696f6511">soap_wsa_add_RelatesTo</a> (struct soap *soap, const char *endpoint)</td></tr>
 <tr class="memdesc:a2bc47e64ed2e35a3be9dea26696f6511"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets WS-Addressing RelatesTo header.  <a href="#a2bc47e64ed2e35a3be9dea26696f6511">More...</a><br /></td></tr>
 <tr class="separator:a2bc47e64ed2e35a3be9dea26696f6511"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75218c4fcfbc2368dd4f84214d6c1e88"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a75218c4fcfbc2368dd4f84214d6c1e88">soap_wsa_From</a> (struct soap *soap)</td></tr>
+<tr class="memitem:a75218c4fcfbc2368dd4f84214d6c1e88"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 const char *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a75218c4fcfbc2368dd4f84214d6c1e88">soap_wsa_From</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:a75218c4fcfbc2368dd4f84214d6c1e88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns WS-Addressing From header.  <a href="#a75218c4fcfbc2368dd4f84214d6c1e88">More...</a><br /></td></tr>
 <tr class="separator:a75218c4fcfbc2368dd4f84214d6c1e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6f0b6c1f497b9843a703fb12f6a4215"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#aa6f0b6c1f497b9843a703fb12f6a4215">soap_wsa_ReplyTo</a> (struct soap *soap)</td></tr>
+<tr class="memitem:aa6f0b6c1f497b9843a703fb12f6a4215"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 const char *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#aa6f0b6c1f497b9843a703fb12f6a4215">soap_wsa_ReplyTo</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:aa6f0b6c1f497b9843a703fb12f6a4215"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns WS-Addressing ReplyTo header.  <a href="#aa6f0b6c1f497b9843a703fb12f6a4215">More...</a><br /></td></tr>
 <tr class="separator:aa6f0b6c1f497b9843a703fb12f6a4215"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5f1c44b15b11562febc45bf5195646d"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#ab5f1c44b15b11562febc45bf5195646d">soap_wsa_FaultTo</a> (struct soap *soap)</td></tr>
+<tr class="memitem:ab5f1c44b15b11562febc45bf5195646d"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 const char *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#ab5f1c44b15b11562febc45bf5195646d">soap_wsa_FaultTo</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:ab5f1c44b15b11562febc45bf5195646d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns WS-Addressing FaultTo header.  <a href="#ab5f1c44b15b11562febc45bf5195646d">More...</a><br /></td></tr>
 <tr class="separator:ab5f1c44b15b11562febc45bf5195646d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e0e1aaef637583b71045fdb1176b62c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a8e0e1aaef637583b71045fdb1176b62c">soap_wsa_RelatesTo</a> (struct soap *soap)</td></tr>
+<tr class="memitem:a8e0e1aaef637583b71045fdb1176b62c"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 const char *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a8e0e1aaef637583b71045fdb1176b62c">soap_wsa_RelatesTo</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:a8e0e1aaef637583b71045fdb1176b62c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns WS-Addressing RelatesTo header.  <a href="#a8e0e1aaef637583b71045fdb1176b62c">More...</a><br /></td></tr>
 <tr class="separator:a8e0e1aaef637583b71045fdb1176b62c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35f9b1c46ea38b271b8d26bf8b051640"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a35f9b1c46ea38b271b8d26bf8b051640">soap_wsa_check</a> (struct soap *soap)</td></tr>
+<tr class="memitem:a35f9b1c46ea38b271b8d26bf8b051640"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a35f9b1c46ea38b271b8d26bf8b051640">soap_wsa_check</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:a35f9b1c46ea38b271b8d26bf8b051640"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks the presence and validity of WS-Addressing information headers.  <a href="#a35f9b1c46ea38b271b8d26bf8b051640">More...</a><br /></td></tr>
 <tr class="separator:a35f9b1c46ea38b271b8d26bf8b051640"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54fda97d2591acd5e2385cc110a50b30"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a54fda97d2591acd5e2385cc110a50b30">soap_wsa_reply</a> (struct soap *soap, const char *id, const char *action)</td></tr>
+<tr class="memitem:a54fda97d2591acd5e2385cc110a50b30"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a54fda97d2591acd5e2385cc110a50b30">soap_wsa_reply</a> (struct soap *soap, const char *id, const char *action)</td></tr>
 <tr class="memdesc:a54fda97d2591acd5e2385cc110a50b30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets WS-Addressing header fields for server response. Automatically relays the response to the ReplyTo address (when ReplyTo != to From and ReplyTo != 'none') and returns HTTP 202 Accept to sender when relay was successful.  <a href="#a54fda97d2591acd5e2385cc110a50b30">More...</a><br /></td></tr>
 <tr class="separator:a54fda97d2591acd5e2385cc110a50b30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d84493b077426326f0e7c78129f05c0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a3d84493b077426326f0e7c78129f05c0">soap_wsa_fault_subcode</a> (struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail)</td></tr>
+<tr class="memitem:a3d84493b077426326f0e7c78129f05c0"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a3d84493b077426326f0e7c78129f05c0">soap_wsa_fault_subcode</a> (struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail)</td></tr>
 <tr class="memdesc:a3d84493b077426326f0e7c78129f05c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets sender/receiver SOAP Fault (sub)code for server fault response.  <a href="#a3d84493b077426326f0e7c78129f05c0">More...</a><br /></td></tr>
 <tr class="separator:a3d84493b077426326f0e7c78129f05c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec1f215b5cb5e0bd9cf97e946ebec185"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#aec1f215b5cb5e0bd9cf97e946ebec185">soap_wsa_fault_subcode_action</a> (struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action)</td></tr>
+<tr class="memitem:aec1f215b5cb5e0bd9cf97e946ebec185"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#aec1f215b5cb5e0bd9cf97e946ebec185">soap_wsa_fault_subcode_action</a> (struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action)</td></tr>
 <tr class="memdesc:aec1f215b5cb5e0bd9cf97e946ebec185"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets sender/receiver SOAP Fault (sub)code and action for server fault response.  <a href="#aec1f215b5cb5e0bd9cf97e946ebec185">More...</a><br /></td></tr>
 <tr class="separator:aec1f215b5cb5e0bd9cf97e946ebec185"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfa72c8c9db6352acc80d7b2b771400c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#adfa72c8c9db6352acc80d7b2b771400c">soap_wsa_sender_fault_subcode</a> (struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail)</td></tr>
+<tr class="memitem:adfa72c8c9db6352acc80d7b2b771400c"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#adfa72c8c9db6352acc80d7b2b771400c">soap_wsa_sender_fault_subcode</a> (struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail)</td></tr>
 <tr class="memdesc:adfa72c8c9db6352acc80d7b2b771400c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets sender SOAP Fault (sub)code for server fault response.  <a href="#adfa72c8c9db6352acc80d7b2b771400c">More...</a><br /></td></tr>
 <tr class="separator:adfa72c8c9db6352acc80d7b2b771400c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a049d60fd0b21da89b3f6889dd7c7192f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a049d60fd0b21da89b3f6889dd7c7192f">soap_wsa_sender_fault_subcode_action</a> (struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action)</td></tr>
+<tr class="memitem:a049d60fd0b21da89b3f6889dd7c7192f"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a049d60fd0b21da89b3f6889dd7c7192f">soap_wsa_sender_fault_subcode_action</a> (struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action)</td></tr>
 <tr class="memdesc:a049d60fd0b21da89b3f6889dd7c7192f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets sender SOAP Fault (sub)code for server fault response.  <a href="#a049d60fd0b21da89b3f6889dd7c7192f">More...</a><br /></td></tr>
 <tr class="separator:a049d60fd0b21da89b3f6889dd7c7192f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8dfeadb13617174364cdd67c0bd18448"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a8dfeadb13617174364cdd67c0bd18448">soap_wsa_receiver_fault_subcode</a> (struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail)</td></tr>
+<tr class="memitem:a8dfeadb13617174364cdd67c0bd18448"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a8dfeadb13617174364cdd67c0bd18448">soap_wsa_receiver_fault_subcode</a> (struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail)</td></tr>
 <tr class="memdesc:a8dfeadb13617174364cdd67c0bd18448"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets receiver SOAP Fault (sub)code for server fault response.  <a href="#a8dfeadb13617174364cdd67c0bd18448">More...</a><br /></td></tr>
 <tr class="separator:a8dfeadb13617174364cdd67c0bd18448"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2afdf00b160b0ac32d0cd413c4086df5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a2afdf00b160b0ac32d0cd413c4086df5">soap_wsa_receiver_fault_subcode_action</a> (struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action)</td></tr>
+<tr class="memitem:a2afdf00b160b0ac32d0cd413c4086df5"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a2afdf00b160b0ac32d0cd413c4086df5">soap_wsa_receiver_fault_subcode_action</a> (struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action)</td></tr>
 <tr class="memdesc:a2afdf00b160b0ac32d0cd413c4086df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets receiver SOAP Fault (sub)code for server fault response.  <a href="#a2afdf00b160b0ac32d0cd413c4086df5">More...</a><br /></td></tr>
 <tr class="separator:a2afdf00b160b0ac32d0cd413c4086df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e3eb7af78b1de680ac5352605afcd00"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a1e3eb7af78b1de680ac5352605afcd00">soap_wsa_sender_fault</a> (struct soap *soap, const char *faultstring, const char *faultdetail)</td></tr>
+<tr class="memitem:a1e3eb7af78b1de680ac5352605afcd00"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a1e3eb7af78b1de680ac5352605afcd00">soap_wsa_sender_fault</a> (struct soap *soap, const char *faultstring, const char *faultdetail)</td></tr>
 <tr class="memdesc:a1e3eb7af78b1de680ac5352605afcd00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets sender SOAP Fault for server fault response.  <a href="#a1e3eb7af78b1de680ac5352605afcd00">More...</a><br /></td></tr>
 <tr class="separator:a1e3eb7af78b1de680ac5352605afcd00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad53bf1b057c0facee6f4b94ab7d13045"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#ad53bf1b057c0facee6f4b94ab7d13045">soap_wsa_receiver_fault</a> (struct soap *soap, const char *faultstring, const char *faultdetail)</td></tr>
+<tr class="memitem:ad53bf1b057c0facee6f4b94ab7d13045"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#ad53bf1b057c0facee6f4b94ab7d13045">soap_wsa_receiver_fault</a> (struct soap *soap, const char *faultstring, const char *faultdetail)</td></tr>
 <tr class="memdesc:ad53bf1b057c0facee6f4b94ab7d13045"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets receiver SOAP Fault for server fault response.  <a href="#ad53bf1b057c0facee6f4b94ab7d13045">More...</a><br /></td></tr>
 <tr class="separator:ad53bf1b057c0facee6f4b94ab7d13045"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a67f22e5cb3659b0198c61a71f99fb0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a4a67f22e5cb3659b0198c61a71f99fb0">soap_wsa_check_fault</a> (struct soap *soap, <a class="el" href="wsaapi_8h.html#a93917ecfd7c197590b838a08ab3b1ba1">SOAP_WSA</a>(FaultSubcodeValues)*fault)</td></tr>
+<tr class="memitem:a4a67f22e5cb3659b0198c61a71f99fb0"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#a4a67f22e5cb3659b0198c61a71f99fb0">soap_wsa_check_fault</a> (struct soap *soap, <a class="el" href="wsaapi_8h.html#a93917ecfd7c197590b838a08ab3b1ba1">SOAP_WSA</a>(FaultSubcodeValues)*fault)</td></tr>
 <tr class="memdesc:a4a67f22e5cb3659b0198c61a71f99fb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks the presence of a WS-Addressing fault.  <a href="#a4a67f22e5cb3659b0198c61a71f99fb0">More...</a><br /></td></tr>
 <tr class="separator:a4a67f22e5cb3659b0198c61a71f99fb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0caa4e0097f7c70cca4a38cc1bb0fa0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#ac0caa4e0097f7c70cca4a38cc1bb0fa0">soap_wsa_error</a> (struct soap *soap, <a class="el" href="wsaapi_8h.html#a93917ecfd7c197590b838a08ab3b1ba1">SOAP_WSA</a>(FaultSubcodeValues) fault)</td></tr>
+<tr class="memitem:ac0caa4e0097f7c70cca4a38cc1bb0fa0"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsaapi_8h.html#ac0caa4e0097f7c70cca4a38cc1bb0fa0">soap_wsa_error</a> (struct soap *soap, <a class="el" href="wsaapi_8h.html#a93917ecfd7c197590b838a08ab3b1ba1">SOAP_WSA</a>(FaultSubcodeValues) fault)</td></tr>
 <tr class="memdesc:ac0caa4e0097f7c70cca4a38cc1bb0fa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets SOAP Fault (sub)code for server WS-Addressing fault response.  <a href="#ac0caa4e0097f7c70cca4a38cc1bb0fa0">More...</a><br /></td></tr>
 <tr class="separator:ac0caa4e0097f7c70cca4a38cc1bb0fa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -258,7 +258,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>plugin identification for plugin registry </p>
+<p>Plugin identification for plugin registry </p>
 
 </div>
 </div>
@@ -1253,7 +1253,6 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>plugin identification for plugin registry</p>
 <p>Plugin identification for plugin registry </p>
 
 </div>
@@ -1277,7 +1276,7 @@ Variables</h2></td></tr>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 20:01:49 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Mar 29 2016 16:00:21 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

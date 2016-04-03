@@ -34,6 +34,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 struct t__Option
-{ char *key;
+{
+  char *key;
   char *val;
 };

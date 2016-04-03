@@ -49,5 +49,7 @@ int main()
   else
     std::cout << "Wait " << response.days << " more days to xmas" << std::endl;
 
+  proxy.destroy(); // delete deserialized data
+
   return 0;
 }

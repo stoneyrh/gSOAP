@@ -33,7 +33,6 @@
  *                                                                            *
 \******************************************************************************/
 
-
 /// <PRE><BLOCKQUOTE>
 ///   Document identifier: saml-schema-assertion-2.0
 ///   Location: http://docs.oasis-open.org/security/saml/v2.0/
@@ -208,6 +207,8 @@ struct saml2__AssertionType
    @char*                                ID                             1;	///< Required attribute.
 /// Attribute "IssueInstant" of XSD type xs:dateTime.
    @time_t                               IssueInstant                   1;	///< Required attribute.
+/// Member declared in WS/WS-typemap.dat
+   @char*                                wsu__Id                        1;	///< Optional attribute.
 };
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":SubjectType is a complexType.
@@ -335,7 +336,8 @@ struct saml2__AdviceType
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
+///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
+///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
     }                                   *__union_AdviceType            ;
 //  END OF CHOICE
 };
@@ -494,7 +496,8 @@ struct saml2__SubjectConfirmationDataType
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
+///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
+///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
 /// Attribute "NotBefore" of XSD type xs:dateTime.
    @time_t*                              NotBefore                      0;	///< Optional attribute.
 /// Attribute "NotOnOrAfter" of XSD type xs:dateTime.
@@ -828,17 +831,19 @@ your code to import these data type and function declarations. Only use the
 soapcpp2-generated files in your project build. Do not include the wsdl2h-
 generated .h file in your code.
 
-Data can be read in XML and deserialized from:
-  - a file descriptor, using soap->recvfd = fd
-  - a socket, using soap->socket = ...
-  - a C++ stream, using soap->is = ...
-  - a buffer, using the soap->frecv() callback
+Data can be read and deserialized from:
+  - an int file descriptor, using soap->recvfd = fd
+  - a socket, using soap->socket = (int)...
+  - a C++ stream (istream, stringstream), using soap->is = (istream*)...
+  - a C string, using soap->is = (const char*)...
+  - any input, using the soap->frecv() callback
 
-Data can be serialized in XML and written to:
-  - a file descriptor, using soap->sendfd = fd
-  - a socket, using soap->socket = ...
-  - a C++ stream, using soap->os = ...
-  - a buffer, using the soap->fsend() callback
+Data can be serialized and written to:
+  - an int file descriptor, using soap->sendfd = (int)...
+  - a socket, using soap->socket = (int)...
+  - a C++ stream (ostream, stringstream), using soap->os = (ostream*)...
+  - a C string, using soap->os = (const char**)...
+  - any output, using the soap->fsend() callback
 
 The following options are available for (de)serialization control:
   - soap->encodingStyle = NULL; to remove SOAP 1.1/1.2 encodingStyle

@@ -64,24 +64,29 @@ extern "C" {
 /** plugin identification for plugin registry */
 extern const char http_da_id[];
 
-/** plugin optional argument to set MD5 for server-side configuration */
-extern void *http_da_md5();
-/** plugin optional argument to set MD5-sess for server-side configuration */
-extern void *http_da_md5_sess();
-/** plugin optional argument to set SHA-256 for server-side configuration */
-extern void *http_da_sha256();
-/** plugin optional argument to set SHA-256-sess for server-side configuration */
-extern void *http_da_sha256_sess();
-/** plugin optional argument to set SHA-512-256 for server-side configuration */
-extern void *http_da_sha512_256();
-/** plugin optional argument to set SHA-512-256-sess for server-side configuration */
-extern void *http_da_sha512_256_sess();
+/** Plugin registry function, use with soap_register_plugin_arg(soap, http_da, ...) */
+SOAP_FMAC1 int SOAP_FMAC2 http_da(struct soap *soap, struct soap_plugin *p, void *arg);
+
+/** Use MD5 for server-side configuration with soap_register_plugin_arg() */
+SOAP_FMAC1 void * SOAP_FMAC2 http_da_md5();
+/** Use MD5-sess for server-side configuration with soap_register_plugin_arg() */
+SOAP_FMAC1 void * SOAP_FMAC2 http_da_md5_sess();
+/** Use SHA-256 for server-side configuration with soap_register_plugin_arg()*/
+SOAP_FMAC1 void * SOAP_FMAC2 http_da_sha256();
+/** Use SHA-256-sess for server-side configuration with soap_register_plugin_arg() */
+SOAP_FMAC1 void * SOAP_FMAC2 http_da_sha256_sess();
+/** Use SHA-512-256 for server-side configuration with soap_register_plugin_arg() */
+SOAP_FMAC1 void * SOAP_FMAC2 http_da_sha512_256();
+/** Use SHA-512-256-sess for server-side configuration with soap_register_plugin_arg() */
+SOAP_FMAC1 void * SOAP_FMAC2 http_da_sha512_256_sess();
+
+SOAP_FMAC1 int SOAP_FMAC2 http_da_verify_post(struct soap *soap, const char *passwd);
+SOAP_FMAC1 int SOAP_FMAC2 http_da_verify_get(struct soap *soap, const char *passwd);
 
 /** HTTP digest authentication session times out after ten minutes */
 #define HTTP_DA_SESSION_TIMEOUT (600) 
 
 /**
-@struct http_da_data
 @brief Plugin data to override callbacks
 */
 struct http_da_data
@@ -108,7 +113,6 @@ struct http_da_data
 };
 
 /**
-@struct http_da_session
 @brief Keeps internal state of shared sessions
 */
 struct http_da_session
@@ -121,15 +125,8 @@ struct http_da_session
   unsigned long nc;
 };
 
-int http_da(struct soap *soap, struct soap_plugin *p, void *arg);
-
-int http_da_verify_post(struct soap *soap, const char *passwd);
-int http_da_verify_get(struct soap *soap, const char *passwd);
-
 /**
-@struct http_da_info
-@brief Used to save and restore credentials for client-side invocations to the
-same authenticated endpoint
+@brief Used to save and restore credentials for client-side invocations to the same authenticated endpoint
 */
 struct http_da_info
 {
@@ -142,13 +139,13 @@ struct http_da_info
   char *alg;
 };
 
-void http_da_save(struct soap *soap, struct http_da_info *info, const char *realm, const char *userid, const char *passwd);
-void http_da_restore(struct soap *soap, struct http_da_info *info);
-void http_da_release(struct soap *soap, struct http_da_info *info);
+SOAP_FMAC1 void SOAP_FMAC2 http_da_save(struct soap *soap, struct http_da_info *info, const char *realm, const char *userid, const char *passwd);
+SOAP_FMAC1 void SOAP_FMAC2 http_da_restore(struct soap *soap, struct http_da_info *info);
+SOAP_FMAC1 void SOAP_FMAC2 http_da_release(struct soap *soap, struct http_da_info *info);
 
-void http_da_proxy_save(struct soap *soap, struct http_da_info *info, const char *realm, const char *userid, const char *passwd);
-void http_da_proxy_restore(struct soap *soap, struct http_da_info *info);
-void http_da_proxy_release(struct soap *soap, struct http_da_info *info);
+SOAP_FMAC1 void SOAP_FMAC2 http_da_proxy_save(struct soap *soap, struct http_da_info *info, const char *realm, const char *userid, const char *passwd);
+SOAP_FMAC1 void SOAP_FMAC2 http_da_proxy_restore(struct soap *soap, struct http_da_info *info);
+SOAP_FMAC1 void SOAP_FMAC2 http_da_proxy_release(struct soap *soap, struct http_da_info *info);
 
 #ifdef __cplusplus
 }

@@ -94,11 +94,10 @@ extern const char soap_wsrm_id[];
 enum soap_wsrm_enable { SOAP_WSRM_OFF, SOAP_WSRM_ON };
 
 /**
-@struct soap_wsrm_data
 @brief Plugin data.
 */
-struct soap_wsrm_data
-{ enum soap_wsrm_enable state;
+struct soap_wsrm_data {
+  enum soap_wsrm_enable state;
   struct soap_wsrm_sequence *seq;
   struct soap_wsrm_message *msg;
   int (*fsend)(struct soap*, const char*, size_t);
@@ -107,17 +106,19 @@ struct soap_wsrm_data
 };
 
 /**
-@enum soap_wsrm_message_state
 @brief Message state (initial, explicit ack'ed, or explicit nack'ed)
 */
-enum soap_wsrm_message_state { SOAP_WSRM_INIT, SOAP_WSRM_ACK, SOAP_WSRM_NACK };
+enum soap_wsrm_message_state {
+  SOAP_WSRM_INIT,
+  SOAP_WSRM_ACK,
+  SOAP_WSRM_NACK
+};
 
 /**
-@struct soap_wsrm_message
 @brief Linked list of unacknowledged messages stored for retransmission.
 */
-struct soap_wsrm_message
-{ enum soap_wsrm_message_state state;		/**< (n)ack state */
+struct soap_wsrm_message {
+  enum soap_wsrm_message_state state;		/**< (n)ack state */
   struct soap_wsrm_content *list, *last;	/**< list of content blocks */
 #ifndef SOAP_WSRM_FAST_ALLOC
   ULONG64 num;					/**< message number */
@@ -126,11 +127,10 @@ struct soap_wsrm_message
 };
 
 /**
-@struct soap_wsrm_content
 @brief Linked list of message content blocks.
 */
-struct soap_wsrm_content
-{ char *buf;
+struct soap_wsrm_content {
+  char *buf;
   size_t len;
   struct soap_wsrm_content *next;
 };
@@ -139,8 +139,8 @@ struct soap_wsrm_content
 @struct soap_wsrm_ranges
 @brief Linked list of message range numbers.
 */
-struct soap_wsrm_range
-{ ULONG64 upper, lower;			/**< range */
+struct soap_wsrm_range {
+  ULONG64 upper, lower;			/**< range */
   struct soap_wsrm_range *next;		/**< next range in list */
 };
 
@@ -148,8 +148,8 @@ struct soap_wsrm_range
 @enum soap_wsrm_state
 @brief Sequence state
 */
-enum soap_wsrm_state
-{ SOAP_WSRM_NONE,
+enum soap_wsrm_state {
+  SOAP_WSRM_NONE,
   SOAP_WSRM_UNKNOWN,
   SOAP_WSRM_CREATED,
   SOAP_WSRM_CLOSED,
@@ -160,8 +160,8 @@ enum soap_wsrm_state
 @struct soap_wsrm_sequence
 @brief Linked list of currently active message sequences.
 */
-struct soap_wsrm_sequence
-{ struct soap_wsrm_sequence *next;	/**< next sequence */
+struct soap_wsrm_sequence {
+  struct soap_wsrm_sequence *next;	/**< next sequence */
   size_t refs;		/**< #refs to sequence */
   short handle;		/**< sequence in use by source (has a handle) */
   short ackreq;		/**< ack requested by dest */
@@ -191,68 +191,68 @@ struct soap_wsrm_sequence
 
 typedef struct soap_wsrm_sequence *soap_wsrm_sequence_handle;
 
-int soap_wsrm(struct soap *soap, struct soap_plugin *plugin, void *arg);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm(struct soap *soap, struct soap_plugin *plugin, void *arg);
 
-int soap_wsrm_create(struct soap *soap, const char *to, const char *replyto, LONG64 expires, const char *wsa_id, soap_wsrm_sequence_handle *seq);
-int soap_wsrm_create_offer(struct soap *soap, const char *to, const char *replyto, const char *id, LONG64 expires, enum wsrm__IncompleteSequenceBehaviorType behavior, const char *wsa_id, soap_wsrm_sequence_handle *seq);
-int soap_wsrm_create_offer_acksto(struct soap *soap, const char *to, const char *replyto, const char *acksto, const char *id, LONG64 expires, enum wsrm__IncompleteSequenceBehaviorType behavior, const char *wsa_id, soap_wsrm_sequence_handle *seq);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_create(struct soap *soap, const char *to, const char *replyto, LONG64 expires, const char *wsa_id, soap_wsrm_sequence_handle *seq);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_create_offer(struct soap *soap, const char *to, const char *replyto, const char *id, LONG64 expires, enum wsrm__IncompleteSequenceBehaviorType behavior, const char *wsa_id, soap_wsrm_sequence_handle *seq);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_create_offer_acksto(struct soap *soap, const char *to, const char *replyto, const char *acksto, const char *id, LONG64 expires, enum wsrm__IncompleteSequenceBehaviorType behavior, const char *wsa_id, soap_wsrm_sequence_handle *seq);
 
-int soap_wsrm_request_num(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id, const char *wsa_action, ULONG64 num);
-int soap_wsrm_request(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id, const char *wsa_action);
-int soap_wsrm_request_acks(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id, const char *wsa_action);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_request_num(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id, const char *wsa_action, ULONG64 num);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_request(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id, const char *wsa_action);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_request_acks(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id, const char *wsa_action);
 
-int soap_wsrm_check_retry(struct soap *soap, soap_wsrm_sequence_handle seq);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_check_retry(struct soap *soap, soap_wsrm_sequence_handle seq);
 
-int soap_wsrm_resend(struct soap *soap, soap_wsrm_sequence_handle seq, ULONG64 lower, ULONG64 upper);
-int soap_wsrm_resend_only_nacked(struct soap *soap, soap_wsrm_sequence_handle seq, ULONG64 lower, ULONG64 upper);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_resend(struct soap *soap, soap_wsrm_sequence_handle seq, ULONG64 lower, ULONG64 upper);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_resend_only_nacked(struct soap *soap, soap_wsrm_sequence_handle seq, ULONG64 lower, ULONG64 upper);
 
-int soap_wsrm_close(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_close(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id);
 
-int soap_wsrm_terminate(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_terminate(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id);
 
-int soap_wsrm_pulse(struct soap *soap, int timeout);
-int soap_wsrm_acknowledgement(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id);
-int soap_wsrm_non_acknowledgement(struct soap *soap, soap_wsrm_sequence_handle seq, ULONG64 nack);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_pulse(struct soap *soap, int timeout);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_acknowledgement(struct soap *soap, soap_wsrm_sequence_handle seq, const char *wsa_id);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_non_acknowledgement(struct soap *soap, soap_wsrm_sequence_handle seq, ULONG64 nack);
 
-soap_wsrm_sequence_handle soap_wsrm_seq(struct soap *soap);
-void soap_wsrm_seq_release(struct soap *soap, soap_wsrm_sequence_handle seq);
-int soap_wsrm_seq_created(struct soap *soap, soap_wsrm_sequence_handle seq);
-int soap_wsrm_seq_valid(struct soap *soap, soap_wsrm_sequence_handle seq);
+SOAP_FMAC1 soap_wsrm_sequence_handle SOAP_FMAC2 soap_wsrm_seq(struct soap *soap);
+SOAP_FMAC1 void SOAP_FMAC2 soap_wsrm_seq_release(struct soap *soap, soap_wsrm_sequence_handle seq);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_seq_created(struct soap *soap, soap_wsrm_sequence_handle seq);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_seq_valid(struct soap *soap, soap_wsrm_sequence_handle seq);
 
-soap_wsrm_sequence_handle soap_wsrm_seq_lookup_id(struct soap *soap, const char *id);
-soap_wsrm_sequence_handle soap_wsrm_seq_lookup(struct soap *soap, const char *id);
+SOAP_FMAC1 soap_wsrm_sequence_handle SOAP_FMAC2 soap_wsrm_seq_lookup_id(struct soap *soap, const char *id);
+SOAP_FMAC1 soap_wsrm_sequence_handle SOAP_FMAC2 soap_wsrm_seq_lookup(struct soap *soap, const char *id);
 
-void soap_wsrm_seq_free(struct soap *soap, soap_wsrm_sequence_handle seq);
+SOAP_FMAC1 void SOAP_FMAC2 soap_wsrm_seq_free(struct soap *soap, soap_wsrm_sequence_handle seq);
 
-void soap_wsrm_cleanup(struct soap *soap);
+SOAP_FMAC1 void SOAP_FMAC2 soap_wsrm_cleanup(struct soap *soap);
 
-const char *soap_wsrm_to(const soap_wsrm_sequence_handle seq);
-const char *soap_wsrm_acksto(const soap_wsrm_sequence_handle seq);
-ULONG64 soap_wsrm_num(const soap_wsrm_sequence_handle seq);
-ULONG64 soap_wsrm_nack(const soap_wsrm_sequence_handle seq);
-ULONG64 soap_wsrm_msgs(const soap_wsrm_sequence_handle seq);
-ULONG64 soap_wsrm_recvnum(const soap_wsrm_sequence_handle seq);
-ULONG64 soap_wsrm_lastnum(const soap_wsrm_sequence_handle seq);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsrm_to(const soap_wsrm_sequence_handle seq);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsrm_acksto(const soap_wsrm_sequence_handle seq);
+SOAP_FMAC1 ULONG64 SOAP_FMAC2 soap_wsrm_num(const soap_wsrm_sequence_handle seq);
+SOAP_FMAC1 ULONG64 SOAP_FMAC2 soap_wsrm_nack(const soap_wsrm_sequence_handle seq);
+SOAP_FMAC1 ULONG64 SOAP_FMAC2 soap_wsrm_msgs(const soap_wsrm_sequence_handle seq);
+SOAP_FMAC1 ULONG64 SOAP_FMAC2 soap_wsrm_recvnum(const soap_wsrm_sequence_handle seq);
+SOAP_FMAC1 ULONG64 SOAP_FMAC2 soap_wsrm_lastnum(const soap_wsrm_sequence_handle seq);
 
-int soap_wsrm_check(struct soap *soap);
-int soap_wsrm_check_and_wait(struct soap *soap, int timeout);
-int soap_wsrm_check_send_empty_response(struct soap *soap);
-int soap_wsrm_check_send_empty_response_and_wait(struct soap *soap, int timeout);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_check(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_check_and_wait(struct soap *soap, int timeout);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_check_send_empty_response(struct soap *soap);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_check_send_empty_response_and_wait(struct soap *soap, int timeout);
 
-int soap_wsrm_reply_num(struct soap *soap, int flag);
-int soap_wsrm_reply(struct soap *soap, const char *wsa_id, const char *wsa_action);
-int soap_wsrm_reply_request_acks(struct soap *soap, const char *wsa_id, const char *wsa_action);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_reply_num(struct soap *soap, int flag);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_reply(struct soap *soap, const char *wsa_id, const char *wsa_action);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_reply_request_acks(struct soap *soap, const char *wsa_id, const char *wsa_action);
 
-int soap_wsrm_fault_subcode(struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail);
-int soap_wsrm_sender_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
-int soap_wsrm_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
-int soap_wsrm_sender_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
-int soap_wsrm_receiver_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_fault_subcode(struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_sender_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_sender_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_receiver_fault(struct soap *soap, const char *faultstring, const char *faultdetail);
 
-int soap_wsrm_check_fault(struct soap *soap, enum wsrm__FaultCodes *fault, const char **info);
-int soap_wsrm_error(struct soap *soap, struct soap_wsrm_sequence *seq, enum wsrm__FaultCodes fault);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_check_fault(struct soap *soap, enum wsrm__FaultCodes *fault, const char **info);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsrm_error(struct soap *soap, struct soap_wsrm_sequence *seq, enum wsrm__FaultCodes fault);
 
-void soap_wsrm_dump(struct soap *soap, FILE *fd);
+SOAP_FMAC1 void SOAP_FMAC2 soap_wsrm_dump(struct soap *soap, FILE *fd);
 
 #ifdef __cplusplus
 }
@@ -260,23 +260,27 @@ void soap_wsrm_dump(struct soap *soap, FILE *fd);
 
 /* Server-side generated operations from wsrm.h */
 
-int __wsrm__CreateSequence(struct soap *soap, struct wsrm__CreateSequenceType *req, struct wsrm__CreateSequenceResponseType *res);
+SOAP_FMAC5 int SOAP_FMAC6 __wsrm__CreateSequence(struct soap *soap, struct wsrm__CreateSequenceType *req, struct wsrm__CreateSequenceResponseType *res);
 
-int __wsrm__CreateSequenceResponse(struct soap *soap, struct wsrm__CreateSequenceResponseType *res);
+SOAP_FMAC5 int SOAP_FMAC6 __wsrm__CreateSequenceResponse(struct soap *soap, struct wsrm__CreateSequenceResponseType *res);
 
-int __wsrm__CloseSequence(struct soap *soap, struct wsrm__CloseSequenceType *req, struct wsrm__CloseSequenceResponseType *res);
+SOAP_FMAC5 int SOAP_FMAC6 __wsrm__CloseSequence(struct soap *soap, struct wsrm__CloseSequenceType *req, struct wsrm__CloseSequenceResponseType *res);
 
-int __wsrm__CloseSequenceResponse(struct soap *soap, struct wsrm__CloseSequenceResponseType *res);
+SOAP_FMAC5 int SOAP_FMAC6 __wsrm__CloseSequenceResponse(struct soap *soap, struct wsrm__CloseSequenceResponseType *res);
 
 #ifdef SOAP_WSRM_2005
-int __wsrm__TerminateSequence(struct soap *soap, struct wsrm__TerminateSequenceType *req, struct wsrm__TerminateSequenceType *res);
+SOAP_FMAC5 int SOAP_FMAC6 __wsrm__TerminateSequence(struct soap *soap, struct wsrm__TerminateSequenceType *req, struct wsrm__TerminateSequenceType *res);
 #else
-int __wsrm__TerminateSequence(struct soap *soap, struct wsrm__TerminateSequenceType *req, struct wsrm__TerminateSequenceResponseType *res);
+SOAP_FMAC5 int SOAP_FMAC6 __wsrm__TerminateSequence(struct soap *soap, struct wsrm__TerminateSequenceType *req, struct wsrm__TerminateSequenceResponseType *res);
 #endif
 
-int __wsrm__TerminateSequenceResponse(struct soap *soap, struct wsrm__TerminateSequenceResponseType *res);
+SOAP_FMAC5 int SOAP_FMAC6 __wsrm__TerminateSequenceResponse(struct soap *soap, struct wsrm__TerminateSequenceResponseType *res);
 
-int __wsrm__SequenceAcknowledgement(struct soap *soap);
+SOAP_FMAC5 int SOAP_FMAC6 __wsrm__SequenceAcknowledgement(struct soap *soap);
+
+SOAP_FMAC5 int SOAP_FMAC6 __wsrm__AckRequested(struct soap *soap);
+
+SOAP_FMAC5 int SOAP_FMAC6 __wsrm__LastMessage(struct soap *soap);
 
 /* Client-side generated operations from wsrm.h */
 

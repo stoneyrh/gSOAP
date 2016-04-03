@@ -19,7 +19,7 @@ Supporting modules:
 
 smdevp.*	EVP-based streaming (signed) message digest engine
 mecevp.*	EVP-based streaming message encryption engine
-md5evp.*	MD5 EVP interface for httpda and httpmd5
+md5evp.*	MD5 EVP interface for httpmd5
 threads.*	Portable threads, mutex, and condition variables
 
 Test programs for plugins:
