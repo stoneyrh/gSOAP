@@ -53,12 +53,20 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 namespace json {
 #endif
 
+/******************************************************************************\
+ *
+ *      JSON error
+ *
+\******************************************************************************/
+
 int json_error(struct soap *soap, struct value *v)
 {
   if (soap->error && v)
   {
-    const char *s = *soap_faultstring(soap);
-    const char *t = soap_check_faultdetail(soap);
+    const char *s, *t;
+    soap_set_fault(soap);
+    s = *soap_faultstring(soap);
+    t = soap_check_faultdetail(soap);
     /* set JSON error property (Google JSON Style Guide) */
 #ifdef __cplusplus
     (*v)["error"]["code"] = soap->error;
@@ -81,6 +89,12 @@ int json_error(struct soap *soap, struct value *v)
   return soap->error;
 }
 
+/******************************************************************************\
+ *
+ *      JSON output
+ *
+\******************************************************************************/
+
 int json_write(struct soap *soap, const struct value *v)
 {
   if (soap_begin_send(soap)
@@ -89,6 +103,8 @@ int json_write(struct soap *soap, const struct value *v)
     return soap->error;
   return SOAP_OK;
 }
+
+/******************************************************************************/
 
 int json_send(struct soap *soap, const struct value *v)
 {
@@ -171,294 +187,7 @@ int json_send(struct soap *soap, const struct value *v)
   return SOAP_OK;
 }
 
-int json_read(struct soap *soap, struct value *v)
-{
-  soap_default_value(soap, v);
-  if (soap_begin_recv(soap)
-   || json_recv(soap, v)
-   || soap_end_recv(soap))
-    return json_error(soap, v);
-  return SOAP_OK;
-}
-
-int json_recv(struct soap *soap, struct value *v)
-{
-  soap_wchar c;
-  if (!v)
-    return SOAP_OK;
-  v->__type = 0;
-  v->ref = NULL;
-  v->__any = NULL;
-  v->soap = soap;
-  while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
-    continue;
-  switch (c)
-  {
-    case EOF:
-      return soap->error = SOAP_EOF;
-    case '{'/*'}'*/:
-    {
-      struct value s;
-      if (++soap->level > soap->maxlevel)
-	return soap->error = SOAP_LEVEL;
-#ifdef __cplusplus
-      if (!(v->ref = (void*)soap_new__struct(soap)))
-        return soap->error = SOAP_EOM;
-#else
-      if (!(v->ref = (void*)soap_malloc(soap, sizeof(struct _struct))))
-        return soap->error = SOAP_EOM;
-#endif
-      soap_default__struct(soap, (struct _struct*)v->ref);
-      v->__type = SOAP_TYPE__struct;
-      while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
-        continue;
-      if (c == /*'{'*/'}')
-        return SOAP_OK;
-      soap_unget(soap, c);
-      for (;;)
-      {
-        if (json_recv(soap, &s))
-          return soap->error;
-        if (s.__type != SOAP_TYPE__string)
-          return soap_set_sender_error(soap, "field name expected", (const char*)s.ref, SOAP_SYNTAX_ERROR);
-        while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
-          continue;
-        if (c != ':')
-          return soap_set_sender_error(soap, "':' expected", (const char*)s.ref, SOAP_SYNTAX_ERROR);
-#ifdef __cplusplus
-        if (json_recv(soap, v->operator[]((const char*)s.ref)))
-          return soap->error;
-#else
-        if (json_recv(soap, value_at(v, (const char*)s.ref)))
-          return soap->error;
-#endif
-        while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
-          continue;
-        if (c == /*'{'*/'}')
-          break;
-        if ((int)c == EOF)
-          return soap->error = SOAP_EOF;
-        if (c != ',')
-          return soap_set_sender_error(soap, "closing '}' or comma expected", NULL, SOAP_SYNTAX_ERROR);
-      }
-      soap->level--;
-      return SOAP_OK;
-    }
-    case '['/*']'*/:
-    {
-      size_t i;
-      if (++soap->level > soap->maxlevel)
-	return soap->error = SOAP_LEVEL;
-#ifdef __cplusplus
-      if (!(v->ref = (void*)soap_new__array(soap)))
-        return soap->error = SOAP_EOM;
-#else
-      if (!(v->ref = (void*)soap_malloc(soap, sizeof(struct _array))))
-        return soap->error = SOAP_EOM;
-#endif
-      soap_default__array(soap, (struct _array*)v->ref);
-      v->__type = SOAP_TYPE__array;
-      while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
-        continue;
-      if (c == /*'['*/']')
-        return SOAP_OK;
-      soap_unget(soap, c);
-      for (i = 0; i < soap->maxoccurs; i++)
-      {
-#ifdef __cplusplus
-        if (json_recv(soap, v->operator[](i)))
-          return soap->error;
-#else
-        if (json_recv(soap, nth_value(v, i)))
-          return soap->error;
-#endif
-        while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
-          continue;
-        if (c == /*'['*/']')
-          break;
-        if ((int)c == EOF)
-          return soap->error = SOAP_EOF;
-        if (c != ',')
-          return soap_set_sender_error(soap, "closing ']' or comma expected", NULL, SOAP_SYNTAX_ERROR);
-      }
-      --soap->level;
-      return SOAP_OK;
-    }
-    case '"':
-      soap->labidx = 0;
-      for (;;)
-      {
-        char *s;
-        const char *t = NULL;
-        register size_t k;
-        if (soap_append_lab(soap, NULL, 0))
-          return soap->error = SOAP_EOM;
-        s = soap->labbuf + soap->labidx;
-        k = soap->lablen - soap->labidx;
-        soap->labidx = soap->lablen;
-	/* raw string length limit, when set (does not take UTF-8 into account) */
-	if (soap->maxlength > 0 && soap->labidx > (size_t)soap->maxlength)
-	  return soap->error = SOAP_LENGTH;
-        while (k--)
-        {
-          if (t)
-          {
-            *s++ = *t++;
-            if (!*t)
-              t = NULL;
-          }
-          else
-          {
-            c = soap_getchar(soap);
-            switch (c)
-            {
-              case EOF:
-                return soap->error = SOAP_EOF;
-              case '"':
-                *s = '\0';
-                v->__type = SOAP_TYPE__string;
-                if (!(v->ref = soap_strdup(soap, soap->labbuf)))
-                  return soap->error = SOAP_EOM;
-                return SOAP_OK;
-              case '\\':
-                c = soap_getchar(soap);
-                switch (c)
-                {
-                  case EOF:
-                    return soap->error = SOAP_EOF;
-                  case 'b':
-                    c = 8;
-                    break;               
-                  case 'f':
-                    c = 12;
-                    break;               
-                  case 'n':
-                    c = 10;
-                    break;               
-                  case 'r':
-                    c = 13;
-                    break;               
-                  case 't':
-                    c = 9;
-                    break;               
-                  case 'u':
-                  {
-                    char *h;
-                    wchar_t wc[2];
-                    int i;
-                    /* hex to utf8 conversion */
-                    h = soap->tmpbuf;
-                    for (i = 0; i < 4; i++)
-                    {
-                      if ((c = soap_getchar(soap)) == EOF)
-                        return soap->error = SOAP_EOF;
-                      h[i] = c;
-                    }
-                    wc[0] = soap_strtol(h, NULL, 16);
-                    wc[1] = 0;
-                    t = soap_wchar2s(soap, wc);
-                    c = *t++;
-                    if (!*t)
-                      t = NULL;
-                  }
-                }
-                *s++ = c;
-                break;
-              default:
-                if ((c & 0x80) && (soap->imode & SOAP_ENC_LATIN) && (soap->imode & SOAP_C_UTFSTRING)) /* ISO 8859-1 to utf8 */
-                {
-                  *s++ = (char)(0xC0 | ((c >> 6) & 0x1F));
-                  soap->tmpbuf[0] = (0x80 | (c & 0x3F));
-                  soap->tmpbuf[1] = '\0';
-                  t = soap->tmpbuf;
-                }
-                else if ((c & 0x80) && !(soap->imode & SOAP_ENC_LATIN) && !(soap->imode & SOAP_C_UTFSTRING)) /* utf8 to ISO 8859-1 */
-                {
-                  soap_wchar c1 = soap_getchar(soap);
-                  if (c1 == SOAP_EOF)
-                    return soap->error = SOAP_EOF;
-                  if (c < 0xE0 && (c & 0x1F) <= 0x03)
-                    *s++ = ((c & 0x1F) << 6) | (c1 & 0x3F);
-                  else
-                    *s++ = '?';
-                }
-                else
-                  *s++ = c;
-            }
-          }
-        }
-      }
-    default: /* number, true, false, null */
-    {
-      char *s = soap->tmpbuf;
-      do
-      {
-        *s++ = c;
-        c = soap_getchar(soap);
-      } while ((isalnum((int)c) || (int)c == '.' || (int)c == '+' || (int)c == '-') && s - soap->tmpbuf < (int)sizeof(soap->tmpbuf) - 1);
-      *s = '\0';
-      soap_unget(soap, c);
-      if (soap->tmpbuf[0] == '-' || isdigit(soap->tmpbuf[0]))
-      {
-        LONG64 n = soap_strtoll(soap->tmpbuf, &s, 10);
-        if (!*s)
-        {
-          v->__type = SOAP_TYPE__int;
-          if (!(v->ref = soap_malloc(soap, sizeof(_int))))
-            return soap->error = SOAP_EOM;
-          *(_int*)v->ref = n;
-        }
-        else
-        {
-          double x;
-          if (soap_s2double(soap, soap->tmpbuf, &x))
-            return soap_set_sender_error(soap, "number expected", soap->tmpbuf, SOAP_SYNTAX_ERROR);
-          v->__type = SOAP_TYPE__double;
-          if (!(v->ref = soap_malloc(soap, sizeof(_double))))
-            return soap->error = SOAP_EOM;
-          *(_double*)v->ref = x;
-        }
-      }
-      else if (!strcmp(soap->tmpbuf, "true"))
-      {
-        v->__type = SOAP_TYPE__boolean;
-        if (!(v->ref = soap_malloc(soap, sizeof(_boolean))))
-          return soap->error = SOAP_EOM;
-        *(char*)v->ref = 1;
-      }
-      else if (!strcmp(soap->tmpbuf, "false"))
-      {
-        v->__type = SOAP_TYPE__boolean;
-        if (!(v->ref = soap_malloc(soap, sizeof(_boolean))))
-          return soap->error = SOAP_EOM;
-        *(char*)v->ref = 0;
-      }
-      else if (strcmp(soap->tmpbuf, "null"))
-      {
-        return soap_set_sender_error(soap, "value expected", soap->tmpbuf, SOAP_SYNTAX_ERROR);
-      }
-      return SOAP_OK;
-    }
-  }
-}
-
-int json_call(struct soap *soap, const char *endpoint, const struct value *in, struct value *out)
-{
-  if (out)
-    soap_default_value(soap, out);
-  soap->http_content = "application/json; charset=utf-8";
-  if (soap_begin_count(soap)
-   || ((soap->mode & SOAP_IO_LENGTH) && json_send(soap, in))
-   || soap_end_count(soap)
-   || soap_connect_command(soap, in && out ? SOAP_POST_FILE : out ? SOAP_GET : in ? SOAP_PUT : SOAP_DEL, endpoint, NULL)
-   || json_send(soap, in)
-   || soap_end_send(soap)
-   || soap_begin_recv(soap)
-   || json_recv(soap, out)
-   || soap_end_recv(soap))
-    json_error(soap, out);
-  return soap_closesock(soap);
-}
+/******************************************************************************/
 
 int json_send_string(struct soap *soap, const char *s)
 {
@@ -542,7 +271,322 @@ int json_send_string(struct soap *soap, const char *s)
   return SOAP_OK;
 }
 
+/******************************************************************************\
+ *
+ *      JSON input
+ *
+\******************************************************************************/
+
+int json_read(struct soap *soap, struct value *v)
+{
+  soap_default_value(soap, v);
+  if (soap_begin_recv(soap)
+   || json_recv(soap, v)
+   || soap_end_recv(soap))
+    return json_error(soap, v);
+  return SOAP_OK;
+}
+
+/******************************************************************************/
+
+int json_recv(struct soap *soap, struct value *v)
+{
+  soap_wchar c;
+  if (!v)
+    return SOAP_OK;
+  v->__type = 0;
+  v->ref = NULL;
+  v->__any = NULL;
+  v->soap = soap;
+  while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
+    continue;
+  switch (c)
+  {
+    case EOF:
+      return soap->error = SOAP_EOF;
+    case '{'/*'}'*/:
+    {
+      struct value s;
+      if (++soap->level > soap->maxlevel)
+        return soap->error = SOAP_LEVEL;
 #ifdef __cplusplus
+      if (!(v->ref = (void*)soap_new__struct(soap)))
+        return soap->error = SOAP_EOM;
+#else
+      if (!(v->ref = (void*)soap_malloc(soap, sizeof(struct _struct))))
+        return soap->error = SOAP_EOM;
+#endif
+      soap_default__struct(soap, (struct _struct*)v->ref);
+      v->__type = SOAP_TYPE__struct;
+      while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
+        continue;
+      if (c == /*'{'*/'}')
+        return SOAP_OK;
+      soap_unget(soap, c);
+      for (;;)
+      {
+        if (json_recv(soap, &s))
+          return soap->error;
+        if (s.__type != SOAP_TYPE__string)
+          return soap_set_sender_error(soap, "field name expected", (const char*)s.ref, SOAP_SYNTAX_ERROR);
+        while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
+          continue;
+        if (c != ':')
+          return soap_set_sender_error(soap, "':' expected", (const char*)s.ref, SOAP_SYNTAX_ERROR);
+#ifdef __cplusplus
+        if (json_recv(soap, v->operator[]((const char*)s.ref)))
+          return soap->error;
+#else
+        if (json_recv(soap, value_at(v, (const char*)s.ref)))
+          return soap->error;
+#endif
+        while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
+          continue;
+        if (c == /*'{'*/'}')
+          break;
+        if ((int)c == EOF)
+          return soap->error = SOAP_EOF;
+        if (c != ',')
+          return soap_set_sender_error(soap, "closing '}' or comma expected", NULL, SOAP_SYNTAX_ERROR);
+      }
+      soap->level--;
+      return SOAP_OK;
+    }
+    case '['/*']'*/:
+    {
+      size_t i;
+      if (++soap->level > soap->maxlevel)
+        return soap->error = SOAP_LEVEL;
+#ifdef __cplusplus
+      if (!(v->ref = (void*)soap_new__array(soap)))
+        return soap->error = SOAP_EOM;
+#else
+      if (!(v->ref = (void*)soap_malloc(soap, sizeof(struct _array))))
+        return soap->error = SOAP_EOM;
+#endif
+      soap_default__array(soap, (struct _array*)v->ref);
+      v->__type = SOAP_TYPE__array;
+      while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
+        continue;
+      if (c == /*'['*/']')
+        return SOAP_OK;
+      soap_unget(soap, c);
+      for (i = 0; i < soap->maxoccurs; i++)
+      {
+#ifdef __cplusplus
+        if (json_recv(soap, v->operator[](i)))
+          return soap->error;
+#else
+        if (json_recv(soap, nth_value(v, i)))
+          return soap->error;
+#endif
+        while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
+          continue;
+        if (c == /*'['*/']')
+          break;
+        if ((int)c == EOF)
+          return soap->error = SOAP_EOF;
+        if (c != ',')
+          return soap_set_sender_error(soap, "closing ']' or comma expected", NULL, SOAP_SYNTAX_ERROR);
+      }
+      --soap->level;
+      return SOAP_OK;
+    }
+    case '"':
+    {
+      long l = 0;
+      soap->labidx = 0;
+      for (;;)
+      {
+        char *s;
+        const char *t = NULL;
+        register size_t k;
+        if (soap_append_lab(soap, NULL, 0))
+          return soap->error = SOAP_EOM;
+        s = soap->labbuf + soap->labidx;
+        k = soap->lablen - soap->labidx;
+        soap->labidx = soap->lablen;
+        while (k--)
+        {
+          if (t)
+          {
+            *s++ = *t++;
+            if (!*t)
+              t = NULL;
+          }
+          else
+          {
+            c = soap_getchar(soap);
+            switch (c)
+            {
+              case EOF:
+                return soap->error = SOAP_EOF;
+              case '"':
+                *s = '\0';
+                v->__type = SOAP_TYPE__string;
+                if (!(v->ref = soap_strdup(soap, soap->labbuf)))
+                  return soap->error = SOAP_EOM;
+                if (soap->maxlength > 0 && l > soap->maxlength)
+                  return soap->error = SOAP_LENGTH;
+                return SOAP_OK;
+              case '\\':
+                c = soap_getchar(soap);
+                switch (c)
+                {
+                  case EOF:
+                    return soap->error = SOAP_EOF;
+                  case 'b':
+                    c = 8;
+                    break;               
+                  case 'f':
+                    c = 12;
+                    break;               
+                  case 'n':
+                    c = 10;
+                    break;               
+                  case 'r':
+                    c = 13;
+                    break;               
+                  case 't':
+                    c = 9;
+                    break;               
+                  case 'u':
+                  {
+                    char *h;
+                    wchar_t wc[2];
+                    int i;
+                    /* hex to utf8 conversion */
+                    h = soap->tmpbuf;
+                    for (i = 0; i < 4; i++)
+                    {
+                      if ((c = soap_getchar(soap)) == EOF)
+                        return soap->error = SOAP_EOF;
+                      h[i] = c;
+                    }
+                    wc[0] = soap_strtol(h, NULL, 16);
+                    wc[1] = 0;
+                    t = soap_wchar2s(soap, wc);
+                    c = *t++;
+                    if (!*t)
+                      t = NULL;
+                  }
+                }
+                *s++ = c;
+                l++;
+                break;
+              default:
+                if ((c & 0x80) && (soap->imode & SOAP_ENC_LATIN) && (soap->imode & SOAP_C_UTFSTRING)) /* ISO 8859-1 to utf8 */
+                {
+                  *s++ = (char)(0xC0 | ((c >> 6) & 0x1F));
+                  soap->tmpbuf[0] = (0x80 | (c & 0x3F));
+                  soap->tmpbuf[1] = '\0';
+                  t = soap->tmpbuf;
+                }
+                else if ((c & 0x80) && !(soap->imode & SOAP_ENC_LATIN) && !(soap->imode & SOAP_C_UTFSTRING)) /* utf8 to ISO 8859-1 */
+                {
+                  soap_wchar c1 = soap_getchar(soap);
+                  if (c1 == SOAP_EOF)
+                    return soap->error = SOAP_EOF;
+                  if (c < 0xE0 && (c & 0x1F) <= 0x03)
+                    *s++ = ((c & 0x1F) << 6) | (c1 & 0x3F);
+                  else
+                    *s++ = '?';
+                }
+                else
+                  *s++ = c;
+                l++;
+            }
+          }
+        }
+        if (soap->maxlength > 0 && l > soap->maxlength)
+          return soap->error = SOAP_LENGTH;
+      }
+    }
+    default: /* number, true, false, null */
+    {
+      char *s = soap->tmpbuf;
+      do
+      {
+        *s++ = c;
+        c = soap_getchar(soap);
+      } while ((isalnum((int)c) || (int)c == '.' || (int)c == '+' || (int)c == '-') && s - soap->tmpbuf < (int)sizeof(soap->tmpbuf) - 1);
+      *s = '\0';
+      soap_unget(soap, c);
+      if (soap->tmpbuf[0] == '-' || isdigit(soap->tmpbuf[0]))
+      {
+        LONG64 n = soap_strtoll(soap->tmpbuf, &s, 10);
+        if (!*s)
+        {
+          v->__type = SOAP_TYPE__int;
+          if (!(v->ref = soap_malloc(soap, sizeof(_int))))
+            return soap->error = SOAP_EOM;
+          *(_int*)v->ref = n;
+        }
+        else
+        {
+          double x;
+          if (soap_s2double(soap, soap->tmpbuf, &x))
+            return soap_set_sender_error(soap, "number expected", soap->tmpbuf, SOAP_SYNTAX_ERROR);
+          v->__type = SOAP_TYPE__double;
+          if (!(v->ref = soap_malloc(soap, sizeof(_double))))
+            return soap->error = SOAP_EOM;
+          *(_double*)v->ref = x;
+        }
+      }
+      else if (!strcmp(soap->tmpbuf, "true"))
+      {
+        v->__type = SOAP_TYPE__boolean;
+        if (!(v->ref = soap_malloc(soap, sizeof(_boolean))))
+          return soap->error = SOAP_EOM;
+        *(char*)v->ref = 1;
+      }
+      else if (!strcmp(soap->tmpbuf, "false"))
+      {
+        v->__type = SOAP_TYPE__boolean;
+        if (!(v->ref = soap_malloc(soap, sizeof(_boolean))))
+          return soap->error = SOAP_EOM;
+        *(char*)v->ref = 0;
+      }
+      else if (strcmp(soap->tmpbuf, "null"))
+      {
+        return soap_set_sender_error(soap, "value expected", soap->tmpbuf, SOAP_SYNTAX_ERROR);
+      }
+      return SOAP_OK;
+    }
+  }
+}
+
+/******************************************************************************\
+ *
+ *      JSON REST
+ *
+\******************************************************************************/
+
+int json_call(struct soap *soap, const char *endpoint, const struct value *in, struct value *out)
+{
+  if (out)
+    soap_default_value(soap, out);
+  soap->http_content = "application/json; charset=utf-8";
+  if (soap_begin_count(soap)
+   || ((soap->mode & SOAP_IO_LENGTH) && json_send(soap, in))
+   || soap_end_count(soap)
+   || soap_connect_command(soap, in && out ? SOAP_POST_FILE : out ? SOAP_GET : in ? SOAP_PUT : SOAP_DEL, endpoint, NULL)
+   || json_send(soap, in)
+   || soap_end_send(soap)
+   || soap_begin_recv(soap)
+   || json_recv(soap, out)
+   || soap_end_recv(soap))
+    json_error(soap, out);
+  return soap_closesock(soap);
+}
+
+#ifdef __cplusplus
+
+/******************************************************************************\
+ *
+ *      JSON C++ API
+ *
+\******************************************************************************/
 
 int json_write(struct soap *soap, const struct value& v)
 {

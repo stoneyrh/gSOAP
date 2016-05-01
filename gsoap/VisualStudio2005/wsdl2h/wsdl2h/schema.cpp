@@ -32,7 +32,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 */
 
-#include "wsdlH.h"		// cannot include "schemaH.h"
+#include "wsdlH.h"              // cannot include "schemaH.h"
 #include "includes.h"
 
 extern struct Namespace namespaces[];
@@ -46,7 +46,7 @@ extern int is_builtin_qname(const char*);
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//	schema
+//      schema
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -355,10 +355,10 @@ int xs__schema::traverse()
       for (vector<xs__complexType>::iterator ct = complexType.begin(); ct != complexType.end(); ++ct)
       {
         if ((*ct).name && !strcmp((*st).name, (*ct).name))
-	{
+        {
           if (!Wflag)
             fprintf(stderr, "\nWarning: top-level simpleType name and complexType name '%s' clash in schema '%s'\n", (*st).name, targetNamespace ? targetNamespace : "(null)");
-	}
+        }
       }
     }
   }
@@ -376,10 +376,10 @@ int xs__schema::traverse()
   {
     for (vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
     {
-      if (!strcmp(defaultAttributes, (*ag).name))
+      if ((*ag).name && !strcmp((*ag).name, defaultAttributes))
       {
-	attributeGroupRef = &*ag;
-	break;
+        attributeGroupRef = &*ag;
+        break;
       }
     }
     if (!attributeGroupRef)
@@ -459,7 +459,7 @@ int xs__schema::read(const char *cwd, const char *loc)
       {
         if (cwd)
         {
-	  size_t l = strlen(cwd) + strlen(loc);
+          size_t l = strlen(cwd) + strlen(loc);
           location = (char*)soap_malloc(soap, l + 2);
           soap_strcpy(location, l + 2, cwd);
           char *s = strrchr(location, '/');
@@ -469,23 +469,23 @@ int xs__schema::read(const char *cwd, const char *loc)
 #endif
           if (s)
             *s = '\0';
-	  size_t n = strlen(location);
-	  soap_strcpy(location + n, l + 2 - n, "/");
-	  ++n;
-	  soap_strcpy(location + n, l + 2 - n, loc);
+          size_t n = strlen(location);
+          soap_strcpy(location + n, l + 2 - n, "/");
+          ++n;
+          soap_strcpy(location + n, l + 2 - n, loc);
           if (!strncmp(location, "file://", 7))
             location += 7;
           soap->recvfd = open(location, O_RDONLY, 0);
         }
         if (soap->recvfd < 0 && import_path)
         {
-	  size_t l = strlen(import_path) + strlen(loc);
+          size_t l = strlen(import_path) + strlen(loc);
           location = (char*)soap_malloc(soap, l + 2);
           soap_strcpy(location, l + 2, import_path);
-	  size_t n = strlen(location);
-	  soap_strcpy(location + n, l + 2 - n, "/");
-	  ++n;
-	  soap_strcpy(location + n, l + 2 - n, loc);
+          size_t n = strlen(location);
+          soap_strcpy(location + n, l + 2 - n, "/");
+          ++n;
+          soap_strcpy(location + n, l + 2 - n, loc);
           if (!strncmp(location, "file://", 7))
             location += 7;
           soap->recvfd = open(location, O_RDONLY, 0);
@@ -659,16 +659,16 @@ int xs__include::preprocess(xs__schema &schema)
       schemaRef->read(schema.sourceLocation(), schemaLocation);
       if (schema.targetNamespace && (!schemaRef->targetNamespace || strcmp(schema.targetNamespace, schemaRef->targetNamespace)))
       {
-	if (!Wflag)
-	{
-	  if (schemaRef->targetNamespace)
-	    fprintf(stderr, "\nWarning: attempt to include schema with mismatching targetNamespace '%s' in schema '%s', assigning targetNamespace '%s'\n", schemaRef->targetNamespace, schema.targetNamespace, schema.targetNamespace);
-	  else
-	    fprintf(stderr, "\nWarning: attempt to include chameleon schema with no targetNamespace in schema '%s', assigning targetNamespace '%s'\n", schema.targetNamespace, schema.targetNamespace);
-	}
-	schemaRef->targetNamespace = schema.targetNamespace;
-	schemaRef->elementFormDefault = schema.elementFormDefault;
-	schemaRef->attributeFormDefault = schema.attributeFormDefault;
+        if (!Wflag)
+        {
+          if (schemaRef->targetNamespace)
+            fprintf(stderr, "\nWarning: attempt to include schema with mismatching targetNamespace '%s' in schema '%s', assigning targetNamespace '%s'\n", schemaRef->targetNamespace, schema.targetNamespace, schema.targetNamespace);
+          else
+            fprintf(stderr, "\nWarning: attempt to include chameleon schema with no targetNamespace in schema '%s', assigning targetNamespace '%s'\n", schema.targetNamespace, schema.targetNamespace);
+        }
+        schemaRef->targetNamespace = schema.targetNamespace;
+        schemaRef->elementFormDefault = schema.elementFormDefault;
+        schemaRef->attributeFormDefault = schema.attributeFormDefault;
       }
     }
     else
@@ -722,11 +722,11 @@ int xs__redefine::preprocess(xs__schema &schema)
             if ((*g).name && !strcmp((*gp).name, (*g).name))
             {
               if ((*g).all)
-		(*gp).all = (*g).all;
+                (*gp).all = (*g).all;
               if ((*g).choice)
-		(*gp).choice = (*g).choice;
+                (*gp).choice = (*g).choice;
               if ((*g).sequence)
-		(*gp).sequence = (*g).sequence;
+                (*gp).sequence = (*g).sequence;
               break;
             }
           }
@@ -741,24 +741,24 @@ int xs__redefine::preprocess(xs__schema &schema)
           {
             if ((*g).name && !strcmp((*ag).name, (*g).name))
             {
-	      for (std::vector<xs__attribute>::const_iterator ga = (*g).attribute.begin(); ga != (*g).attribute.end(); ++ga)
-	      {
-		if ((*ga).name)
-		{
-		  bool found = false;
-		  for (std::vector<xs__attribute>::iterator aga = (*ag).attribute.begin(); aga != (*ag).attribute.end(); ++aga)
-		  {
-		    if ((*aga).name && !strcmp((*aga).name, (*ga).name))
-		    {
-		      *aga = *ga;
-		      found = true;
-		      break;
-		    }
-		  }
-		  if (!found)
-		    (*ag).attribute.push_back(*ga);
-		}
-	      }
+              for (std::vector<xs__attribute>::const_iterator ga = (*g).attribute.begin(); ga != (*g).attribute.end(); ++ga)
+              {
+                if ((*ga).name)
+                {
+                  bool found = false;
+                  for (std::vector<xs__attribute>::iterator aga = (*ag).attribute.begin(); aga != (*ag).attribute.end(); ++aga)
+                  {
+                    if ((*aga).name && !strcmp((*aga).name, (*ga).name))
+                    {
+                      *aga = *ga;
+                      found = true;
+                      break;
+                    }
+                  }
+                  if (!found)
+                    (*ag).attribute.push_back(*ga);
+                }
+              }
             }
           }
         }
@@ -772,7 +772,7 @@ int xs__redefine::preprocess(xs__schema &schema)
           {
             if ((*s).name && !strcmp((*st).name, (*s).name))
             {
-	      *st = *s; // TODO would it be too crude to simply replace all content?
+              *st = *s; // TODO would it be too crude to simply replace all content?
               break;
             }
           }
@@ -788,17 +788,17 @@ int xs__redefine::preprocess(xs__schema &schema)
             if ((*c).name && !strcmp((*ct).name, (*c).name))
             {
               if ((*c).complexContent && (*c).complexContent->extension && (*c).complexContent->extension->sequence && qname_token((*c).complexContent->extension->base, schemaRef->targetNamespace))
-	      {
-		if (!(*ct).sequence)
-		  (*ct).sequence = (*c).complexContent->extension->sequence;
-		else
-		{
-		  for (std::vector<xs__contents>::const_iterator e = (*c).complexContent->extension->sequence->__contents.begin(); e != (*c).complexContent->extension->sequence->__contents.end(); ++e)
-		    (*ct).sequence->__contents.push_back(*e);
-		}
-	      }
-	      else if (!Wflag)
-		fprintf(stderr, "\nWarning: redefining complexType \"%s\" in schema \"%s\" by extension requires an extension base\n", (*ct).name, schemaRef->targetNamespace ? schemaRef->targetNamespace : "(null)");
+              {
+                if (!(*ct).sequence)
+                  (*ct).sequence = (*c).complexContent->extension->sequence;
+                else
+                {
+                  for (std::vector<xs__contents>::const_iterator e = (*c).complexContent->extension->sequence->__contents.begin(); e != (*c).complexContent->extension->sequence->__contents.end(); ++e)
+                    (*ct).sequence->__contents.push_back(*e);
+                }
+              }
+              else if (!Wflag)
+                fprintf(stderr, "\nWarning: redefining complexType \"%s\" in schema \"%s\" by extension requires an extension base\n", (*ct).name, schemaRef->targetNamespace ? schemaRef->targetNamespace : "(null)");
 
               break;
             }
@@ -1031,13 +1031,15 @@ int xs__attribute::traverse(xs__schema &schema)
   if (token)
   {
     for (vector<xs__attribute>::iterator i = schema.attribute.begin(); i != schema.attribute.end(); ++i)
-      if (!strcmp((*i).name, token))
+    {
+      if ((*i).name && !strcmp((*i).name, token))
       {
         attributeRef = &(*i);
         if (vflag)
           cerr << "    Found attribute '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << endl;
         break;
       }
+    }
   }
   if (!attributeRef)
   {
@@ -1051,7 +1053,7 @@ int xs__attribute::traverse(xs__schema &schema)
         {
           for (vector<xs__attribute>::iterator j = s->attribute.begin(); j != s->attribute.end(); ++j)
           {
-            if (!strcmp((*j).name, token))
+            if ((*j).name && !strcmp((*j).name, token))
             {
               attributeRef = &(*j);
               if (vflag)
@@ -1077,13 +1079,15 @@ int xs__attribute::traverse(xs__schema &schema)
     if (token)
     {
       for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
-        if (!strcmp((*i).name, token))
+      {
+        if ((*i).name && !strcmp((*i).name, token))
         {
           simpleTypeRef = &(*i);
           if (vflag)
             cerr << "    Found attribute '" << (name ? name : "(null)") << "' type '" << (token ? token : "(null)") << "'" << endl;
           break;
         }
+      }
     }
     if (!simpleTypeRef)
     {
@@ -1097,9 +1101,9 @@ int xs__attribute::traverse(xs__schema &schema)
           {
             for (vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
             {
-              if (!strcmp((*j).name, token))
+              if ((*j).name && !strcmp((*j).name, token))
               {
-        	simpleTypeRef = &(*j);
+                simpleTypeRef = &(*j);
                 if (vflag)
                   cerr << "    Found attribute '" << (name ? name : "(null)") << "' type '" << (token ? token : "(null)") << "'" << endl;
                 break;
@@ -1120,6 +1124,15 @@ int xs__attribute::traverse(xs__schema &schema)
         schema.builtinAttribute(ref);
       else if (!Wflag)
         cerr << "\nWarning: could not find the referenced attribute '" << (name ? name : "") << "' ref '" << ref << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+      if (wsdl__arrayType)
+      {
+        char *arrayType = soap_strdup(schema.soap, wsdl__arrayType);
+        char *s = strchr(arrayType, '[');
+        if (s)
+          *s = '\0';
+        if (is_builtin_qname(arrayType))
+          schema.builtinType(arrayType);
+      }
     }
     else if (type)
     {
@@ -1268,7 +1281,7 @@ int xs__element::traverse(xs__schema &schema)
             {
               if ((*j).name && !strcmp((*j).name, token))
               {
-        	simpleTypeRef = &(*j);
+                simpleTypeRef = &(*j);
                 if (vflag)
                   cerr << "    Found element '" << (name ? name : "(null)") << "' simpleType '" << (token ? token : "(null)") << "'" << endl;
                 break;
@@ -1315,7 +1328,7 @@ int xs__element::traverse(xs__schema &schema)
             {
               if ((*j).name && !strcmp((*j).name, token))
               {
-        	complexTypeRef = &(*j);
+                complexTypeRef = &(*j);
                 if (vflag)
                   cerr << "    Found element '" << (name ? name : "(null)") << "' complexType '" << (token ? token : "(null)") << "'" << endl;
                 break;
@@ -1335,24 +1348,24 @@ int xs__element::traverse(xs__schema &schema)
     {
       for (vector<xs__element>::iterator i = schema.element.begin(); i != schema.element.end(); ++i)
       {
-	if (!strcmp((*i).name, token))
-	{
-	  xs__element *elt = this;
-	  if (!elementPtr())
-	  {
-	    elt = soap_new_xs__element(schema.soap);
-	    elt->soap_default(schema.soap);
-	    elt->name = name;
-	    elt->form = form;
-	    elt->elementPtr(this); // create element ref in substitutionsGroup
-	    elt->schemaPtr(schemaPtr());
-	    elt->targetNamespace = NULL;
-	  }
-	  (*i).substitutions.push_back(elt);
-	  if (vflag)
-	    cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for element '" << (token ? token : "(null)") << "'" << endl;
-	  break;
-	}
+        if ((*i).name && !strcmp((*i).name, token))
+        {
+          xs__element *elt = this;
+          if (!elementPtr())
+          {
+            elt = soap_new_xs__element(schema.soap);
+            elt->soap_default(schema.soap);
+            elt->name = name;
+            elt->form = form;
+            elt->elementPtr(this); // create element ref in substitutionsGroup
+            elt->schemaPtr(schemaPtr());
+            elt->targetNamespace = NULL;
+          }
+          (*i).substitutions.push_back(elt);
+          if (vflag)
+            cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for element '" << (token ? token : "(null)") << "'" << endl;
+          break;
+        }
       }
     }
     for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
@@ -1360,31 +1373,31 @@ int xs__element::traverse(xs__schema &schema)
       xs__schema *s = (*i).schemaPtr();
       if (s)
       {
-	token = qname_token(substitutionGroup, s->targetNamespace);
-	if (token)
-	{
-	  for (vector<xs__element>::iterator j = s->element.begin(); j != s->element.end(); ++j)
-	  {
-	    if (!strcmp((*j).name, token))
-	    {
-	      xs__element *elt = this;
-	      if (!elementPtr())
-	      {
-		elt = soap_new_xs__element(schema.soap);
-		elt->soap_default(schema.soap);
-		elt->name = name;
-		elt->form = form;
-		elt->elementPtr(this); // create element ref in substitutionsGroup
-		elt->schemaPtr(schemaPtr());
-		elt->targetNamespace = NULL;
-	      }
-	      (*j).substitutions.push_back(elt);
-	      if (vflag)
-		cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for element '" << (token ? token : "(null)") << "' in '" << s->targetNamespace << "'" << endl;
-	      break;
-	    }
-	  }
-	}
+        token = qname_token(substitutionGroup, s->targetNamespace);
+        if (token)
+        {
+          for (vector<xs__element>::iterator j = s->element.begin(); j != s->element.end(); ++j)
+          {
+            if ((*j).name && !strcmp((*j).name, token))
+            {
+              xs__element *elt = this;
+              if (!elementPtr())
+              {
+                elt = soap_new_xs__element(schema.soap);
+                elt->soap_default(schema.soap);
+                elt->name = name;
+                elt->form = form;
+                elt->elementPtr(this); // create element ref in substitutionsGroup
+                elt->schemaPtr(schemaPtr());
+                elt->targetNamespace = NULL;
+              }
+              (*j).substitutions.push_back(elt);
+              if (vflag)
+                cerr << "    Found substitutionGroup element '" << (name ? name : "(null)") << "' for element '" << (token ? token : "(null)") << "' in '" << s->targetNamespace << "'" << endl;
+              break;
+            }
+          }
+        }
       }
     }
   }
@@ -1534,6 +1547,8 @@ int xs__complexType::traverse(xs__schema &schema)
     choice->traverse(schema);
   else if (sequence)
     sequence->traverse(schema);
+  else if (group)
+    group->traverse(schema);
   else if (any)
     any->traverse(schema);
   for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
@@ -1662,7 +1677,7 @@ int xs__extension::traverse(xs__schema &schema)
   if (token)
   {
     for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
-      if (!strcmp((*i).name, token))
+      if ((*i).name && !strcmp((*i).name, token))
       {
         simpleTypeRef = &(*i);
         if (vflag)
@@ -1682,7 +1697,7 @@ int xs__extension::traverse(xs__schema &schema)
         {
           for (vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
           {
-            if (!strcmp((*j).name, token))
+            if ((*j).name && !strcmp((*j).name, token))
             {
               simpleTypeRef = &(*j);
               if (vflag)
@@ -1806,7 +1821,7 @@ int xs__restriction::traverse(xs__schema &schema)
   if (token)
   {
     for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
-      if (!strcmp((*i).name, token))
+      if ((*i).name && !strcmp((*i).name, token))
       {
         simpleTypeRef = &(*i);
         if (vflag)
@@ -1826,7 +1841,7 @@ int xs__restriction::traverse(xs__schema &schema)
         {
           for (vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
           {
-            if (!strcmp((*j).name, token))
+            if ((*j).name && !strcmp((*j).name, token))
             {
               simpleTypeRef = &(*j);
               if (vflag)
@@ -1932,13 +1947,15 @@ int xs__list::traverse(xs__schema &schema)
   if (token)
   {
     for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
-      if (!strcmp((*i).name, token))
+    {
+      if ((*i).name && !strcmp((*i).name, token))
       {
         itemTypeRef = &(*i);
         if (vflag)
           cerr << "    Found list itemType '" << (token ? token : "(null)") << "'" << endl;
         break;
       }
+    }
   }
   if (!itemTypeRef)
   {
@@ -1952,7 +1969,7 @@ int xs__list::traverse(xs__schema &schema)
         {
           for (vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
           {
-            if (!strcmp((*j).name, token))
+            if ((*j).name && !strcmp((*j).name, token))
             {
               itemTypeRef = &(*j);
               if (vflag)
@@ -2079,7 +2096,7 @@ int xs__attributeGroup::traverse(xs__schema& schema)
     if (token)
     {
       for (vector<xs__attributeGroup>::iterator i = schema.attributeGroup.begin(); i != schema.attributeGroup.end(); ++i)
-        if (!strcmp((*i).name, token))
+        if ((*i).name && !strcmp((*i).name, token))
         {
           attributeGroupRef = &(*i);
           if (vflag)
@@ -2099,9 +2116,9 @@ int xs__attributeGroup::traverse(xs__schema& schema)
           {
             for (vector<xs__attributeGroup>::iterator j = s->attributeGroup.begin(); j != s->attributeGroup.end(); ++j)
             {
-              if (!strcmp((*j).name, token))
+              if ((*j).name && !strcmp((*j).name, token))
               {
-        	attributeGroupRef = &(*j);
+                attributeGroupRef = &(*j);
                 if (vflag)
                     cerr << "    Found attribute Group '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << endl;
                 break;
@@ -2173,13 +2190,15 @@ int xs__group::traverse(xs__schema &schema)
     if (token)
     {
       for (vector<xs__group>::iterator i = schema.group.begin(); i != schema.group.end(); ++i)
-        if (!strcmp((*i).name, token))
+      {
+        if ((*i).name && !strcmp((*i).name, token))
         {
           groupRef = &(*i);
           if (vflag)
               cerr << "    Found group '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << endl;
           break;
         }
+      }
     }
     if (!groupRef)
     {
@@ -2193,9 +2212,9 @@ int xs__group::traverse(xs__schema &schema)
           {
             for (vector<xs__group>::iterator j = s->group.begin(); j != s->group.end(); ++j)
             {
-              if (!strcmp((*j).name, token))
+              if ((*j).name && !strcmp((*j).name, token))
               {
-        	groupRef = &(*j);
+                groupRef = &(*j);
                 if (vflag)
                     cerr << "    Found group '" << (name ? name : "(null)") << "' ref '" << (token ? token : "(null)") << "'" << endl;
                 break;
@@ -2252,7 +2271,7 @@ int xs__pattern::traverse(xs__schema &schema)
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//	I/O
+//      I/O
 //
 ////////////////////////////////////////////////////////////////////////////////
 

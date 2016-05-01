@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.30 User Guide</title>
+<title>gSOAP 2.8.31 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.30 User Guide </h1>
+<h1 align="center">gSOAP 2.8.31 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="http://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Apr  2, 2016
+<h3 align="center">May  1, 2016
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -5373,7 +5373,8 @@ The <i>soapcpp2</i> source-to-source compiler supports the following command-lin
 <tr><td align="left"><i>-x</i>	</td><td align="left">do not generate sample XML message files </td></tr>
 <tr><td align="left"><i>-y</i>	</td><td align="left">include C/C++ type access information in sample XML messages </td></tr>
 <tr><td align="left"><i>-z1</i>	</td><td align="left">compatibility: generate old-style C++ service proxies and objects </td></tr>
-<tr><td align="left"><i>-z2</i>	</td><td align="left">compatibility with 2.7.x: omit XML output for NULL pointers </td></tr></table>
+<tr><td align="left"><i>-z2</i>	</td><td align="left">compatibility with 2.7.x: omit XML output for NULL pointers </td></tr>
+<tr><td align="left"><i>-z3</i>	</td><td align="left">compatibility with 2.8.30 and earlier: _param_N is indexed globally </td></tr></table>
 
 </td></tr></table><br></span>
 For example
@@ -5999,6 +6000,9 @@ Use the following selection of flags to set server-side socket connection accept
 
 <div class="p"><!----></div>
 For example, <i>soap.accept_flags = (SO_NOSIGPIPE  -  SO_LINGER)</i> disables sigpipe signals and set linger time value given by <i>soap.linger_time</i> (zero by default).
+
+<div class="p"><!----></div>
+The <i>SO_SNDBUF</i> and <i>SO_RCVBUF</i> socket options can be set by assigning <i>soap.sndbuf</i> and <i>soap.rcvbuf</i> after the context initialization, respectively.  The default value is <i>SOAP_BUFLEN</i>, which is the same as the size of the internal buffer.  A zero value omits the internal <i>setsockopt</i> call to set these options.  Setting these values to zero enables autotuning with Linux 2.4 and up.
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc9.13">
@@ -8509,8 +8513,8 @@ was completely parsed. The method is not invoked when the element is an <tt>xsi:
 <tt>href</tt> attribute.
 
 <div class="p"><!----></div>
-<font color="#FF0000"><b>Caution:</b></font> The <i>soap_serialize</i> method of a class calls the setter (when
-provided). However, the <i>soap_serialize</i> method is declared <i><b>const</b></i>
+<font color="#FF0000"><b>Caution:</b></font> The <i>soap_out</i> method of a class calls the setter (when
+provided). However, the <i>soap_out</i> method is declared <i><b>const</b></i>
 while the setter should be allowed to modify the contents of the class
 instance. Therefore, the gSOAP-generated code recasts the instance and the
 <i><b>const</b></i> is removed when invoking the setter.
@@ -13173,9 +13177,9 @@ for the type name that is declared. For example:
 </td></tr></table><br></i>
 The user is required to supply the following routines for each <i><b>extern</b>&nbsp;<b>typedef</b></i>'ed name <u>T</u>:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-<b>void</b>&nbsp;soap_serialize_<u><span class="roman">T</span></u>(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<u><span class="roman">T</span></u> *a) <br />
+<b>int</b>&nbsp;soap_serialize_<u><span class="roman">T</span></u>(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<u><span class="roman">T</span></u> *a) <br />
 <b>void</b>&nbsp;soap_default_<u><span class="roman">T</span></u>(<b>struct</b>&nbsp;soap *soap, <u><span class="roman">T</span></u> *a) <br />
-<b>void</b>&nbsp;soap_out_<u><span class="roman">T</span></u>(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*tag, <b>int</b>&nbsp;id, <b>const</b>&nbsp;<u><span class="roman">T</span></u> *a, <b>const</b>&nbsp;<b>char</b>&nbsp;*type) <br />
+<b>int</b>&nbsp;soap_out_<u><span class="roman">T</span></u>(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*tag, <b>int</b>&nbsp;id, <b>const</b>&nbsp;<u><span class="roman">T</span></u> *a, <b>const</b>&nbsp;<b>char</b>&nbsp;*type) <br />
 <u><span class="roman">T</span></u> *soap_in_<u><span class="roman">T</span></u>(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*tag, <u><span class="roman">T</span></u> *a, <b>const</b>&nbsp;<b>char</b>&nbsp;*type) 
 </td></tr></table><br></i>
 The function prototypes can be found in <i>soapH.h</i>.
@@ -13183,11 +13187,11 @@ The function prototypes can be found in <i>soapH.h</i>.
 <div class="p"><!----></div>
 For example, the (de)serialization of <i>MyData</i> can be done with the following code:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-<b>void</b>&nbsp;soap_serialize_MyData(<b>struct</b>&nbsp;soap *soap, MyData *<b>const</b>*a) <br />
-{ } // no need to mark this node (for multi-ref and cycle detection) <br />
+<b>int</b>&nbsp;soap_serialize_MyData(<b>struct</b>&nbsp;soap *soap, MyData *<b>const</b>*a) <br />
+{ <b>return</b>&nbsp;SOAP_OK; } // no need to mark this node (for multi-ref and cycle detection) <br />
 <b>void</b>&nbsp;soap_default_MyData(&amp;soap, MyData **a) <br />
 { *a = NULL } <br />
-<b>void</b>&nbsp;soap_out_MyData(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*tag, <b>int</b>&nbsp;id, MyData *<b>const</b>*a, <b>const</b>&nbsp;<b>char</b>&nbsp;*type) <br />
+<b>int</b>&nbsp;soap_out_MyData(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*tag, <b>int</b>&nbsp;id, MyData *<b>const</b>*a, <b>const</b>&nbsp;<b>char</b>&nbsp;*type) <br />
 { <br />
 &nbsp;&nbsp;&nbsp;soap_element_begin_out(soap, tag, id, type); // print XML beginning tag <br />
 &nbsp;&nbsp;&nbsp;soap_send(soap, *a); // just print the string (no XML conversion) <br />
@@ -16554,5 +16558,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On  2 Apr 2016, 20:28.</small>
+version 4.00.<br />On  1 May 2016, 14:41.</small>
 </html>

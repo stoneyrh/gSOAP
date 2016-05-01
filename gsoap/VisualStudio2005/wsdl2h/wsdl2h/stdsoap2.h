@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.30
+        stdsoap2.h 2.8.31
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20830
+#define GSOAP_VERSION 20831
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -701,7 +701,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #if defined(__cplusplus)
 # include <new>
 # include <memory>
-# if !defined(WITH_LEAN) && !defined(WITH_COMPAT)
+# if !defined(WITH_COMPAT)
 #  include <string>
 #  include <iostream>
 # endif
@@ -966,8 +966,8 @@ extern "C" {
 # ifndef SOAP_ULONG_FORMAT
 #  define SOAP_ULONG_FORMAT "%lu"
 # endif
-# undef HAVE_STRTOLL
-# undef HAVE_STRTOULL
+# define soap_strtoll soap_strtol
+# define soap_strtoull soap_strtoul
 #elif !defined(WIN32) || defined(CYGWIN) || defined(__GLIBC__) || defined(__GNU__)
 # ifndef LONG64
 #  if defined(HAVE_INTTYPES_H)
@@ -1501,7 +1501,7 @@ typedef soap_int32 soap_status;
 #define SOAP_NTLM_ERROR                 49
 #define SOAP_LEVEL                      50
 
-#define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_LEVEL || (e) == SOAP_PATTERN || (e) == SOAP_NULL || (e) == SOAP_HREF)
+#define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_TYPE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_LEVEL || (e) == SOAP_PATTERN || (e) == SOAP_NULL || (e) == SOAP_HREF)
 
 #define soap_soap_error_check(e) ((e) == SOAP_CLI_FAULT || (e) == SOAP_SVR_FAULT || (e) == SOAP_VERSIONMISMATCH || (e) == SOAP_MUSTUNDERSTAND || (e) == SOAP_FAULT || (e) == SOAP_NO_METHOD)
 
@@ -2493,6 +2493,8 @@ struct SOAP_CMAC soap
   int connect_flags;            /* user-definable connect() SOL_SOCKET sockopt flags, e.g. set to SO_DEBUG to debug socket */
   int bind_flags;               /* user-definable bind() SOL_SOCKET sockopt flags, e.g. set to SO_REUSEADDR to enable reuse */
   int accept_flags;             /* user-definable accept() SOL_SOCKET sockopt flags */
+  int sndbuf;			/* user-definable SO_SNFBUF setsockopt */
+  int rcvbuf;			/* user-definable SO_SNFBUF setsockopt */
   unsigned short linger_time;   /* user-definable linger time for SO_LINGER option */
   unsigned int maxlevel;        /* user-definable max XML nesting depth levels, initialized to SOAP_MAXLEVEL */
   long maxlength;               /* user-definable max string length, initialized to SOAP_MAXLENGTH, maxlength<=0 is unbounded */
@@ -2523,7 +2525,7 @@ struct SOAP_CMAC soap
   struct soap_plugin *plugins;  /* linked list of plug-in data */
   const char *userid;           /* HTTP Basic authorization userid */
   const char *passwd;           /* HTTP Basic authorization passwd */
-  const char *authrealm;        /* HTTP authentication realm (NTLM domain) */
+  const char *authrealm;        /* HTTP authentication realm (and NTLM domain) */
 #if !defined(WITH_LEAN) || defined(WITH_NTLM)
   const char *ntlm_challenge;   /* HTTP NTLM challenge key string */
   short ntlm_auth;              /* HTTP NTLM authentication type */
@@ -2842,6 +2844,7 @@ soap_wchar soap_get1(struct soap*);
 
 #define soap_revget1(soap) ((soap)->bufidx--)
 #define soap_unget(soap, c) ((soap)->ahead = c)
+#define soap_peek(soap) ((soap)->ahead = soap_get(soap))
 #define soap_register_plugin(soap, plugin) soap_register_plugin_arg(soap, plugin, NULL)
 #define soap_mode(soap, n) ((soap)->mode = (soap)->imode = (soap)->omode = (n))
 #define soap_imode(soap, n) ((soap)->imode = (n))
@@ -2876,13 +2879,13 @@ soap_wchar soap_get1(struct soap*);
 
 #if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 # define soap_strtoll _strtoi64
-#else
+#elif !defined(soap_strtoll)
 # define soap_strtoll strtoll
 #endif
 
 #if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 # define soap_strtoull _strtoui64
-#else
+#elif !defined(soap_strtoull)
 # define soap_strtoull strtoull
 #endif
 
@@ -3098,6 +3101,7 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_open_logfile(struct soap*, int);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_value(struct soap*);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_match_tag(struct soap*, const char*, const char *);
+SOAP_FMAC1 int SOAP_FMAC2 soap_match_att(struct soap*, const char*, const char *);
 SOAP_FMAC1 int SOAP_FMAC2 soap_match_array(struct soap*, const char*);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_element(struct soap*, const char*, int, const char*);
@@ -3149,7 +3153,8 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_set_local_namespaces(struct soap*);
 
 SOAP_FMAC1 void SOAP_FMAC2 soap_pop_namespace(struct soap*);
 SOAP_FMAC1 struct soap_nlist* SOAP_FMAC2 soap_push_namespace(struct soap*, const char *,const char *);
-SOAP_FMAC1 const char* SOAP_FMAC2 soap_current_namespace(struct soap *soap, const char *tag);
+SOAP_FMAC1 const char* SOAP_FMAC2 soap_current_namespace_tag(struct soap *soap, const char *tag);
+SOAP_FMAC1 const char* SOAP_FMAC2 soap_current_namespace_att(struct soap *soap, const char *tag);
 
 SOAP_FMAC1 struct soap_nlist* SOAP_FMAC2 soap_lookup_ns(struct soap *soap, const char *tag, size_t n);
 
@@ -3396,6 +3401,7 @@ struct soap_block
       *p++ = *q;
       q->T::~T();
     }
+    soap_end_block(soap, b);
   }
   static void end(struct soap *soap, struct soap_blist *b)
   { if (!b)

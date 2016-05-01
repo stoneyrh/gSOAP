@@ -1,6 +1,8 @@
 /*
 	wsse.h 1.1
 
+        This file is deprecated. Use wsse.h or wsse2.h.
+
 	Generated with:
 	wsdl2h -cegxy -o wsse.h -t WS/WS-typemap.dat WS/wsse.xsd
 

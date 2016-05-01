@@ -17,7 +17,7 @@ The gSOAP 2.8.0 (and 2.8.x updates) software is distributed under:
    in the package as license.pdf
 
 2) GPL v2 (GNU Public License, a common open-source software license) covers
-   all of the gSOAP software.
+   all of the gSOAP software (GPLv2_license.txt(
 
    If you use gSOAP under the GPL v2 to integrate parts of it or code generated
    by it with your own code, then you are allowed to sell copies of the

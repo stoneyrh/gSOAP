@@ -762,13 +762,13 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
           if (t >= buf + sizeof(buf) - 8)
             break;
           if (isalnum(*s))
-	  {
+          {
             *t++ = *s;
-	  }
+          }
           else if (*s == '-' && s[1] != '-' && s != p)
-	  {
+          {
             *t++ = '_';
-	  }
+          }
           else if (*s == '_')
           {
             if (s == p)
@@ -1044,7 +1044,7 @@ const char *Types::deftname(enum Type type, bool mk_pointer, bool is_pointer, co
   {
     case ENUM:
       if (!c11flag)
-	q = "enum";
+        q = "enum";
       if (c11flag || yflag)
         knames.insert(t);
       break;
@@ -1508,72 +1508,72 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             fprintf(stream, "    enum %s\n    {\n", t);
         }
         SetOfString enumvals;
-	LONG64 enumval = 0;
-	if (!is_qname)
-	{
-	  bool letters_ok = true;
-	  for (vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
-	  {
-	    const char *s;
-	    if ((s = (*enumeration).value))
-	    {
-	      if (!enumvals.count(s))
-	      {
-		if (is_integer(s))
-		{
-		  document((*enumeration).annotation);
-		  fprintf(stream, "\t%s = %s,\t///< %s value=\"%s\"\n", ename(eflag ? "enum int" : t, s, false), s, base, s); // type="enum int" if eflag so all int enum consts get the same value assigned
-		  enumvals.insert(s);
-		  LONG64 n = soap_strtoll(s, NULL, 10);
-		  if (letters_ok)
-		  {
-		    if ((n >= 'A' && n <= 'Z') || (n >= 'a' && n <= 'z'))
-		      letters_ok = false;
-		  }
-		  if (n > enumval)
-		    enumval = n;
-		}
-	      }
-	    }
-	  }
-	  if (letters_ok)
-	  {
-	    for (vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
-	    {
-	      const char *s;
-	      if ((s = (*enumeration).value))
-	      {
-		if (!enumvals.count(s))
-		{
-		  if (isalpha(s[0]) && !s[1])
-		  {
-		    document((*enumeration).annotation);
-		    fprintf(stream, "\t%s = '%c',\t///< %s value=\"%s\"\n", ename(eflag ? "enum char" : t, s, false), *s, base, s); // type="enum char" if eflag so all char enum consts get the same value assigned
-		    enumvals.insert(s);
-		    if (*s > enumval)
-		      enumval = *s;
-		  }
-		}
-	      }
-	    }
-	  }
-	}
+        LONG64 enumval = 0;
+        if (!is_qname)
+        {
+          bool letters_ok = true;
+          for (vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
+          {
+            const char *s;
+            if ((s = (*enumeration).value))
+            {
+              if (!enumvals.count(s))
+              {
+                if (is_integer(s))
+                {
+                  document((*enumeration).annotation);
+                  fprintf(stream, "\t%s = %s,\t///< %s value=\"%s\"\n", ename(eflag ? "enum int" : t, s, false), s, base, s); // type="enum int" if eflag so all int enum consts get the same value assigned
+                  enumvals.insert(s);
+                  LONG64 n = soap_strtoll(s, NULL, 10);
+                  if (letters_ok)
+                  {
+                    if ((n >= 'A' && n <= 'Z') || (n >= 'a' && n <= 'z'))
+                      letters_ok = false;
+                  }
+                  if (n > enumval)
+                    enumval = n;
+                }
+              }
+            }
+          }
+          if (letters_ok)
+          {
+            for (vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
+            {
+              const char *s;
+              if ((s = (*enumeration).value))
+              {
+                if (!enumvals.count(s))
+                {
+                  if (isalpha(s[0]) && !s[1])
+                  {
+                    document((*enumeration).annotation);
+                    fprintf(stream, "\t%s = '%c',\t///< %s value=\"%s\"\n", ename(eflag ? "enum char" : t, s, false), *s, base, s); // type="enum char" if eflag so all char enum consts get the same value assigned
+                    enumvals.insert(s);
+                    if (*s > enumval)
+                      enumval = *s;
+                  }
+                }
+              }
+            }
+          }
+        }
         for (vector<xs__enumeration>::const_iterator enumeration = simpleType.restriction->enumeration.begin(); enumeration != simpleType.restriction->enumeration.end(); ++enumeration)
         {
           const char *s;
           if ((s = (*enumeration).value))
           {
             if (!enumvals.count(s))
-	    {
-	      document((*enumeration).annotation);
-	      if (is_qname)
-		fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration).value_, true), base, (*enumeration).value_);
-	      else if (enumval)
-		fprintf(stream, "\t%s = " SOAP_LONG_FORMAT ",\t///< %s value=\"%s\"\n", ename(t, s, false), ++enumval, base, s);
-	      else
-		fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, s, false), base, s);
-	      enumvals.insert(s);
-	    }
+            {
+              document((*enumeration).annotation);
+              if (is_qname)
+                fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, (*enumeration).value_, true), base, (*enumeration).value_);
+              else if (enumval)
+                fprintf(stream, "\t%s = " SOAP_LONG_FORMAT ",\t///< %s value=\"%s\"\n", ename(t, s, false), ++enumval, base, s);
+              else
+                fprintf(stream, "\t%s,\t///< %s value=\"%s\"\n", ename(t, s, false), base, s);
+              enumvals.insert(s);
+            }
           }
           else
             fprintf(stream, "//\tunrecognized: enumeration \"%s\" has no value\n", name ? name : "");
@@ -1582,7 +1582,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
         {
           fprintf(stream, "};\n\n");
           if (!c11flag && yflag)
-	    fprintf(stream, "/// @brief Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
+            fprintf(stream, "/// @brief Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
           if (pflag && simpleType.name)
           {
             const char *s = wname(prefix, URI, name);
@@ -1679,7 +1679,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             fprintf(stream, "%s (exclusive)", ae);
           else
             fprintf(stream, "lowest");
-	  fprintf(stream, " to ");
+          fprintf(stream, " to ");
           if (bi)
             fprintf(stream, "%s.\n", bi);
           else if (be)
@@ -1721,35 +1721,35 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           // add range info only when type is numeric
           bool is_numeric_type = false, is_unsigned_type = false, is_long_type = false, is_double_type = false, is_float_type = false;
           if (!strncmp(s, "signed ", 7))
-	  {
+          {
             s += 7;
-	  }
+          }
           else if (!strncmp(s, "unsigned ", 9))
-	  {
+          {
             s += 9;
-	    is_unsigned_type = true;
-	  }
+            is_unsigned_type = true;
+          }
           if (!strncmp(s, "long ", 5))
-	  {
+          {
             s += 5;
-	    is_long_type = true;
-	  }
+            is_long_type = true;
+          }
           else if (!strncmp(s, "short ", 6))
-	  {
+          {
             s += 6;
-	  }
+          }
           if (!strncmp(s, "xsd__unsigned", 13))
-	  {
+          {
             s += 13;
-	    is_unsigned_type = true;
-	  }
+            is_unsigned_type = true;
+          }
           else if (!strncmp(s, "xsd__", 5))
-	  {
+          {
             s += 5;
-	  }
+          }
           if (!strcmp(s, "float"))
             is_numeric_type = is_float_type = true;
-	  else if (!strcmp(s, "double"))
+          else if (!strcmp(s, "double"))
             is_numeric_type = is_float_type = is_double_type = true;
           else if (!strcmp(s, "bool")
            || !strcmp(s, "byte")
@@ -1769,42 +1769,42 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           if (!anonymous && *format)
           {
             if (is_double_type)
-	    {
+            {
               if (is_long_type)
-		fprintf(stream, " \"%%%sLf\"", format);
-	      else
-		fprintf(stream, " \"%%%slf\"", format);
-	    }
-	    else if (is_float_type)
-	    {
+                fprintf(stream, " \"%%%sLf\"", format);
+              else
+                fprintf(stream, " \"%%%slf\"", format);
+            }
+            else if (is_float_type)
+            {
               fprintf(stream, " \"%%%sf\"", format);
-	    }
+            }
             else if (is_numeric_type)
-	    {
+            {
               if (is_unsigned_type)
-	      {
-		if (is_long_type)
-		  fprintf(stream, " \"%%%sllu\"", format);
-		else
-		  fprintf(stream, " \"%%%su\"", format);
-	      }
-	      else
-	      {
-		if (is_long_type)
-		  fprintf(stream, " \"%%%slld\"", format);
-		else
-		  fprintf(stream, " \"%%%sd\"", format);
-	      }
-	    }
+              {
+                if (is_long_type)
+                  fprintf(stream, " \"%%%sllu\"", format);
+                else
+                  fprintf(stream, " \"%%%su\"", format);
+              }
+              else
+              {
+                if (is_long_type)
+                  fprintf(stream, " \"%%%slld\"", format);
+                else
+                  fprintf(stream, " \"%%%sd\"", format);
+              }
+            }
           }
           if (!anonymous
                 && simpleType.restriction->length
                 && simpleType.restriction->length->value)
-	    fprintf(stream, " %s", simpleType.restriction->length->value);
-	  else if (!anonymous
+            fprintf(stream, " %s", simpleType.restriction->length->value);
+          else if (!anonymous
                 && simpleType.restriction->minLength
                 && simpleType.restriction->minLength->value)
-	    fprintf(stream, " %s", simpleType.restriction->minLength->value);
+            fprintf(stream, " %s", simpleType.restriction->minLength->value);
           else if (is_float_type
                 && !anonymous
                 && simpleType.restriction->minInclusive
@@ -1842,11 +1842,11 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           if (!anonymous
                 && simpleType.restriction->length
                 && simpleType.restriction->length->value)
-	    fprintf(stream, " : %s", simpleType.restriction->length->value);
-	  else if (!anonymous
+            fprintf(stream, " : %s", simpleType.restriction->length->value);
+          else if (!anonymous
                 && simpleType.restriction->maxLength
                 && simpleType.restriction->maxLength->value)
-	    fprintf(stream, " : %s", simpleType.restriction->maxLength->value);
+            fprintf(stream, " : %s", simpleType.restriction->maxLength->value);
           else if (is_float_type
                 && !anonymous
                 && simpleType.restriction->maxInclusive
@@ -1942,7 +1942,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
         {
           fprintf(stream, "};\n\n");
           if (!c11flag && yflag)
-	    fprintf(stream, "/// @brief Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
+            fprintf(stream, "/// @brief Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
           if (pflag && simpleType.name)
           {
             const char *s = wname(prefix, URI, name);
@@ -2006,7 +2006,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           {
             fprintf(stream, "};\n\n");
             if (!c11flag && yflag)
-	      fprintf(stream, "/// @brief Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
+              fprintf(stream, "/// @brief Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
             if (pflag && simpleType.name)
             {
               const char *s = wname(prefix, URI, name);
@@ -2089,7 +2089,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
         {
           fprintf(stream, "};\n\n");
           if (!c11flag && yflag)
-	    fprintf(stream, "/// @brief Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
+            fprintf(stream, "/// @brief Typedef synonym for enum %s.\ntypedef enum %s %s;\n", t, t, t);
           if (pflag && simpleType.name)
           {
             const char *s = wname(prefix, URI, name);
@@ -2631,6 +2631,8 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
       gen(URI, name, *complexType.choice, NULL, NULL);
     else if (complexType.sequence)
       gen(URI, *complexType.sequence, NULL, NULL);
+    else if (complexType.group)
+      gen(URI, *complexType.group, NULL, NULL);
     else if (complexType.any)
       gen(URI, *complexType.any, NULL, NULL);
   }
@@ -2924,9 +2926,9 @@ void Types::gen(const char *URI, const vector<xs__attributeGroup>& attributeGrou
     if (visited.find(p) != visited.end())
     {
       if (p->ref)
-	fprintf(stderr, "\nWarning: circular attributeGroup <xs:attributeGroup ref=\"%s\"/>\n", p->ref);
+        fprintf(stderr, "\nWarning: circular attributeGroup <xs:attributeGroup ref=\"%s\"/>\n", p->ref);
       else
-	fprintf(stderr, "\nWarning: circular attributeGroup <xs:attributeGroup name=\"%s\"/>\n", p->name ? p->name : "");
+        fprintf(stderr, "\nWarning: circular attributeGroup <xs:attributeGroup name=\"%s\"/>\n", p->name ? p->name : "");
       fprintf(stream, "/// @todo !FIXME! @warning %s is an attributeGroup with a circular reference.\n", p->ref ? p->ref : p->name ? p->name : "");
       return;
     }
@@ -3142,15 +3144,18 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
   {
     name = element.elementPtr()->name;
     type = element.elementPtr()->type;
-    if (!default_)
+    if (!max || !strcmp(max, "1"))
     {
-      default_ = element.elementPtr()->default_;
-      default__ = element.elementPtr()->default__;
-    }
-    if (!fixed)
-    {
-      fixed = element.elementPtr()->fixed;
-      fixed_ = element.elementPtr()->fixed_;
+      if (!default_)
+      {
+	default_ = element.elementPtr()->default_;
+	default__ = element.elementPtr()->default__;
+      }
+      if (!fixed)
+      {
+	fixed = element.elementPtr()->fixed;
+	fixed_ = element.elementPtr()->fixed_;
+      }
     }
     if (!nillable)
       nillable = element.elementPtr()->nillable;
@@ -3860,11 +3865,11 @@ void Types::gen_soap_array(const char *t, const char *item, const char *type)
     {
       size_t l = strlen(t);
       if (!strncmp(t, "ArrayOf", 7) && l > 7)
-	gen_soap_array(t + 7, item, tmp);
+        gen_soap_array(t + 7, item, tmp);
       else if (!strncmp(t, "Array", 5) && l > 5)
-	gen_soap_array(t + 5, item, tmp);
+        gen_soap_array(t + 5, item, tmp);
       else
-	gen_soap_array("", item, tmp);
+        gen_soap_array("", item, tmp);
       fprintf(stream, arrayformat, "}", item ? aname(NULL, NULL, item) : "");
       fprintf(stream, ";\n");
     }
@@ -3957,7 +3962,7 @@ void Types::gen_substitutions(const char *URI, const xs__element& element)
         fprintf(stream, " %s", element.minOccurs);
       fprintf(stream, ";\t///< Union %s selector: set to SOAP_UNION_%s_<fieldname>%s\n", t, t, element.minOccurs && !strcmp(element.minOccurs, "0") ? " or 0 to omit" : "");
       if (name)
-	fprintf(stream, "/// Union for substitutionGroup %s.\n", cname(NULL, URI, name));
+        fprintf(stream, "/// Union for substitutionGroup %s.\n", cname(NULL, URI, name));
       fprintf(stream, "    union %s\n    {\n", t);
     }
     tmp_union = with_union;

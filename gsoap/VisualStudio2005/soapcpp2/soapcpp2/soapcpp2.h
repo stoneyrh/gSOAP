@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.30" /* Current version */
-# define GSOAP_VERSION 20830
+# define VERSION "2.8.31" /* Current version */
+# define GSOAP_VERSION 20831
 #endif
 
 #ifdef WIN32
@@ -431,6 +431,7 @@ extern int zflag;
 extern char dirpath[1024];
 extern const char *filename;
 extern const char *prefix;
+extern const char *fprefix;
 extern const char *importpath;
 extern int custom_header;
 extern int custom_fault;

@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">XML Data Bindings</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Mar 2 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Apr 26 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -86,7 +86,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li class="level2"><a href="#toxsd6">String types                                                           </a></li>
 <li class="level2"><a href="#toxsd7">Date and time types                                                    </a></li>
 <li class="level2"><a href="#toxsd8">Time duration types                                                    </a></li>
-<li class="level2"><a href="#toxsd9">Classes and structs                                                    </a><ul><li class="level3"><a href="#toxsd9-1">Serializable versus transient types and members</a></li>
+<li class="level2"><a href="#toxsd9">Classes and structs                                                    </a><ul><li class="level3"><a href="#toxsd9-1">Serializable versus transient types and data members</a></li>
 <li class="level3"><a href="#toxsd9-2">Volatile classes and structs</a></li>
 <li class="level3"><a href="#toxsd9-3">Mutable classes and structs</a></li>
 <li class="level3"><a href="#toxsd9-4">Default member values in C and C++</a></li>
@@ -131,6 +131,8 @@ $(document).ready(function(){initNavTree('index.html','');});
 </ul>
 </li>
 <li class="level1"><a href="#flags">Context flags to initialize the soap struct                             </a></li>
+<li class="level1"><a href="#params">Context parameter settings                                             </a></li>
+<li class="level1"><a href="#errors">Error handling and reporting                                           </a></li>
 <li class="level1"><a href="#features">Features and limitations                                             </a></li>
 <li class="level1"><a href="#nsmap">Removing SOAP namespaces from XML payloads                              </a></li>
 <li class="level1"><a href="#examples">Examples                                                             </a></li>
@@ -143,7 +145,7 @@ Introduction                                                            </h1>
 <p>The second example <code><a class="el" href="graph_8cpp.html">graph.cpp</a></code> shows how XML is serialized as a tree, digraph, and cyclic graph. The digraph and cyclic graph serialization rules are similar to SOAP 1.1/1.2 encoded multi-ref elements with id-ref attributes to link elements through IDREF XML references, creating a an XML graph with pointers to XML nodes.</p>
 <p>These examples demonstrate XML data bindings only for relatively simple data structures and types. The gSOAP tools support more than just these type of structures to serialize in XML. There are practically no limits to enable XML serialization of C and C++ types.</p>
 <p>Support for XML schema components is unlimited. The wsdl2h tool maps schemas to C and C++ using built-in intuitive mapping rules, while allowing the mappings to be customized using a <code>typemap.dat</code> file with mapping instructions for wsdl2h.</p>
-<p>The information in this document is applicable to gSOAP 2.8.26 and higher, which supports C++11 features. However, C++11 is not required to use this material and the examples included, unless we need smart pointers and scoped enumerations. While most of the examples in this document are given in C++, the concepts also apply to C with the exception of containers, smart pointers, classes and their methods. None of these exceptions limit the use of the gSOAP tools for C in any way.</p>
+<p>The information in this document is applicable to gSOAP 2.8.26 and later versions that support C++11 features. However, C++11 is not required to use this material and the examples included, unless we need smart pointers and scoped enumerations. While most of the examples in this document are given in C++, the concepts also apply to C with the exception of containers, smart pointers, classes and their methods. None of these exceptions limit the use of the gSOAP tools for C in any way.</p>
 <p>The data binding concepts described in this document were first envisioned in 1999 by Prof. Robert van Engelen at the Florida State University. An implementation was created in 2000, named "stub/skeleton compiler". The first articles on its successor version "gSOAP" appeared in 2002. The principle of mapping XSD components to C/C++ types and vice versa is now widely adopted in systems and programming languages, including Java web services and by C# WCF.</p>
 <p>We continue to be committed to our goal to empower C/C++ developers with powerful autocoding tools for XML. Our commitment started in the very early days of SOAP by actively participating in <a href="http://www.whitemesa.com/interop.htm">SOAP interoperability testing</a>, participating in the development and testing of the <a href="http://www.w3.org/2002/ws/databinding">W3C XML Schema Patterns for Databinding Interoperability</a>, and continues by contributing to the development of <a href="https://www.oasis-open.org">OASIS open standards</a> in partnership with leading IT companies.</p>
 <h1><a class="anchor" id="tocpp"></a>
@@ -638,11 +640,11 @@ Colon notation versus name prefixing with XML tag name translation     </h2>
 <li>Underscores within names are translated to hyphens (hyphens are more common in XML tags).</li>
 <li><code>_USCORE</code> is translated to an underscore in the translated XML tag name.</li>
 <li><code>_DOT</code> is translated to a dot (<code>.</code>) in the translated XML tag name.</li>
-<li><code>_xHHHH</code> is translated to the Unicode character with code point HHHH.</li>
+<li><code>_xHHHH</code> is translated to the Unicode character with code point HHHH (hex).</li>
 <li>C++11 Unicode identifier name characters in UTF-8 are translated as-is.</li>
 </ul>
 <p>For example, the C/C++ namespace qualified identifier name <code>s_a__my_way</code> is translated to the XML tag name <code>s-a:my-way</code> by translating the prefix <code>s_a</code> and the local name <code>my_way</code>.</p>
-<p>Struct/class member and parameter name translation can be overruled by using <a href="#toxsd9-5">backtick XML tags</a> (with gSOAP 2.8.30 or higher).</p>
+<p>Struct/class member and parameter name translation can be overruled by using <a href="#toxsd9-5">backtick XML tags</a> (with gSOAP 2.8.30 and later versions).</p>
 <h2><a class="anchor" id="toxsd3"></a>
 C++ Bool and C alternatives                                            </h2>
 <p>The C++ <code>bool</code> type is bound to built-in XSD type <code>xsd:boolean</code>.</p>
@@ -990,7 +992,7 @@ Classes and structs                                                    </h2>
   &lt;/sequence&gt;
 &lt;/complexType&gt;
 </pre><h3><a class="anchor" id="toxsd9-1"></a>
-Serializable versus transient types and members</h3>
+Serializable versus transient types and data members</h3>
 <p>Public data members of a class or struct are serialized. Private and protected members are transient and not serializable.</p>
 <p>Also <code>const</code> and <code>static</code> members are not serializable, with the exception of <code>const char*</code> and <code>const wchar_t*</code>. Types and specific class/struct members can also be made transient with the <code>extern</code> qualifier:</p>
 <div class="fragment"><div class="line"><span class="keyword">extern</span> <span class="keyword">class </span>std::ostream;     <span class="comment">// declare &#39;std::ostream&#39; transient</span></div>
@@ -1095,7 +1097,7 @@ Attribute members and backtick XML tags</h3>
 </pre><p>Attribute data members are restricted to primitive types (<code>bool</code>, <code>enum</code>, <code>time_t</code>, numeric and string types), <code>xsd__hexBinary</code>, <code>xsd__base64Binary</code>, and custom serializers, such as <code>xsd__dateTime</code>. Custom serializers for types that may be used as attributes MUST define <code>soap_s2T</code> and <code>soap_T2s</code> functions that convert values of type <code>T</code> to strings and back.</p>
 <p>Attribute data members can be pointers and smart pointers to these types, which permits attributes to be optional.</p>
 <p>The XML tag name of a class/struct member is the name of the member with the usual XML tag translation, see <a href="#toxsd2">colon notation</a>.</p>
-<p>To override the standard translation of identifier names to XML tag names of attributes and elements, add the XML tag name in backticks (requires gSOAP 2.8.30 or higher):</p>
+<p>To override the standard translation of identifier names to XML tag names of attributes and elements, add the XML tag name in backticks (requires gSOAP 2.8.30 and later versions):</p>
 <div class="fragment"><div class="line"><span class="keyword">class </span>ns__record</div>
 <div class="line">{</div>
 <div class="line"> <span class="keyword">public</span>:</div>
@@ -1182,7 +1184,7 @@ Qualified and unqualified members</h3>
   &lt;/spouse&gt;
 &lt;/ns:record&gt;
 </pre><p>Note that data members can also be prefixed using the <code>prefix__name</code> convention. However, this has a different effect by referring to global (root) elements and attributes, see <a href="#toxsd9-7">document root element definitions</a>.</p>
-<p><a href="#toxsd9-5">Backtick tag names</a> can be used in place of the member name annotations and will achieve the same effect as described when these tag names are (un)qualified (requires gSOAP 2.8.30 or higher).</p>
+<p><a href="#toxsd9-5">Backtick tag names</a> can be used in place of the member name annotations and will achieve the same effect as described when these tag names are (un)qualified (requires gSOAP 2.8.30 and later versions).</p>
 <dl class="section note"><dt>Note</dt><dd>You must declare a target namespace with a <code>//gsoap ns schema namespace:</code> directive to enable the <code>elementForm</code> and <code>attributeForm</code> directives in order to generate valid schemas with soapcpp2. See <a href="#directives">directives</a> for more details.</dd></dl>
 <h3><a class="anchor" id="toxsd9-7"></a>
 Defining document root elements</h3>
@@ -1236,7 +1238,7 @@ Defining document root elements</h3>
 <div class="line">};</div>
 </div><!-- fragment --><p>Therefore, we recommend to use qualified member names only when necessary to refer to standard XSD elements and attributes, such as <code>xsi__type</code>, and <code>xsd__lang</code>.</p>
 <p>By contrast, colon notation has the desired effect to (un)qualify local tag names by overruling the default element/attribute namespace qualification, see <a href="#toxsd9-6">qualified and unqualified members</a>.</p>
-<p>As an alternative to prefixing member names, use the backtick tag (gSOAP 2.8.30 and higher):</p>
+<p>As an alternative to prefixing member names, use the backtick tag (requires gSOAP 2.8.30 and later versions):</p>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> std::string _ns__name 1 : 100;</div>
 <div class="line"><span class="keyword">class </span>_ns__record</div>
 <div class="line">{</div>
@@ -2512,13 +2514,13 @@ Memory management in C++                                              </h2>
 <p>You can also use <code>soap_del_T()</code> to delete structures in C++, but only if these structures are created with <code>new</code> (and <code>new []</code> for arrays when applicable) for classes, structs, and class templates and with <code>malloc</code> for anything else, and the structures do NOT contain pointers to stack and static data.</p>
 <h1><a class="anchor" id="flags"></a>
 Context flags to initialize the soap struct                             </h1>
-<p>There are several context initialization flags and context mode flags to control XML serialization at runtime. The flags are set with <code>soap_new1()</code> for heap allocation of contexts:</p>
+<p>There are several context initialization flags and context mode flags to control XML serialization at runtime. The flags are set with <code>soap_new1()</code> to allocate and initialize a new context:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(&lt;flag&gt; | &lt;flag&gt; ... | &lt;flag&gt;);</div>
 <div class="line">,,,</div>
 <div class="line">soap_destroy(soap); <span class="comment">// delete objects</span></div>
 <div class="line">soap_end(soap);     <span class="comment">// delete other data and temp data</span></div>
 <div class="line">soap_free(soap);    <span class="comment">// free context</span></div>
-</div><!-- fragment --><p>and with <code>soap_init1()</code> with stack allocated contexts:</p>
+</div><!-- fragment --><p>and with <code>soap_init1()</code> for stack-allocated contexts:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>soap soap;</div>
 <div class="line">soap_init1(&amp;soap, &lt;flag&gt; | &lt;flag&gt; ... | &lt;flag&gt;);</div>
 <div class="line">,,,</div>
@@ -2544,7 +2546,58 @@ Context flags to initialize the soap struct                             </h1>
 <li><code>SOAP_ENC_MIME</code>: enable MIME attachments, see <a href="#toxsd10-3">MIME/MTOM attachment binary types</a>.</li>
 <li><code>SOAP_ENC_MTOM</code>: enable MTOM attachments, see <a href="#toxsd10-3">MIME/MTOM attachment binary types</a>.</li>
 </ul>
-<h1><a class="anchor" id="features"></a>
+<dl class="section note"><dt>Note</dt><dd>C++ Web service proxy and service classes have their own context, either as a base class (soapcpp2 option -i) or as a data member <code>soap</code> that points to a context (soapcpp2 option -j). These contexts are allocated when the proxy or service is instantiated with context flags that are passed to the constructor.</dd></dl>
+<h1><a class="anchor" id="params"></a>
+Context parameter settings                                             </h1>
+<p>After allocation and initializtion of a <code>struct soap</code> context, several context parameters can be set (some parameters may require 2.8.31 and later versions):</p>
+<ul>
+<li><code>unsigned int soap::maxlevel</code> is the maximum XML nesting depth levels that the parser permits. Default initialized to <code>SOAP_MAXLEVEL</code> (10000), which is a redefinable macro in stdsoap2.h. Set <code>soap::maxlevel</code> to a lower value to restrict XML parsing nesting depth.</li>
+<li><code>long soap::maxlength</code> is the maximum string content length if not already constrained by an XML schema validation <code>maxLength</code> constraint. Zero means unlimited string lengths are permitted (unless restricted by XML schema <code>maxLength</code>). Default initialized to <code>SOAP_MAXLENGTH</code> (0), which is a redefinable macro in stdsoap2.h. Set <code>soap::maxlength</code> to a positive value to restrict the number of (wide) characters in strings parsed, restrict hexBinary byte length, and restrict base64Binary byte length.</li>
+<li><code>size_t soap::maxoccurs</code> is the maximum number of array or container elements permitted by the parser. Must be greater than zero (0). Default initialized to <code>SOAP_MAXOCCURS</code> (100000), which is a redefinable macro in stdsoap2.h. Set <code>soap::maxoccurs</code> to a positive value to restrict the number of array and container elements that can be parsed.</li>
+<li><code>soap::version</code> is the SOAP version used, with 0 for non-SOAP, 1 for SOAP1.1, and 2 for SOAP1.2. This value is normally set by web service operations, and is otherwise 0 (non-SOAP). Use <code>soap_set_version(struct soap*, short)</code> to set the value. This controls XML namespaces and SOAP id-ref serialization when applicable with an encodingStyle (see below).</li>
+<li><code>const char *soap::encodingStyle</code> is a string that is used with SOAP encoding, normally NULL for non-SOAP XML. Set this string to "" (empty string) to enable SOAP encoding style, which supports id-ref graph serialization (see also the <code>SOAP_XML_GRAPH</code> <a href="#flags">context flag</a>).</li>
+<li><code>int soap::recvfd</code> is the file descriptor to read and parse source data from. Default initialized to 0 (stdin). See also <a href="#io">input and output</a>.</li>
+<li><code>int soap::sendfd</code> is the file descriptor to write data to. Default initialized to 1 (stdout). See also <a href="#io">input and output</a>.</li>
+<li><code>const char *is</code> for C: string to read and parse source data from, overriding the <code>recvfd</code> source. Normally NULL. This value must be reset to NULL or the parser will continue to read from this string content until the NUL character. See also <a href="#io">input and output</a>.</li>
+<li><code>std::istream *is</code> for C++: an input stream to read and parse source data from, overriding the <code>recvfd</code> source. Normally NULL. This value must be reset to NULL or the parser will continue to read from this stream until EOF. See also <a href="#io">input and output</a>.</li>
+<li><code>const char **os</code> for C: points to a string (a <code>const char *</code>) that will be set to point to the string output. Normally NULL. This value must be reset to NULL or the next output will result in reassigning the pointer to point to the next string that is output. The strings are automatically deallocated by <code>soap_end(soap)</code>. See also <a href="#io">input and output</a>.</li>
+<li><code>std::ostream *os</code> for C++: an output stream to write output to. Normally NULL. This value must be reste to NULL or the next output will be send to this stream. See also <a href="#io">input and output</a>.</li>
+</ul>
+<h1><a class="anchor" id="errors"></a>
+Error handling and reporting                                           </h1>
+<p>The gSOAP API functions return <code>SOAP_OK</code> (zero) or a non-zero error code. The error code is stored in <code>int soap::error</code> of the current <code>struct soap</code> context. Error messages can be displayed with:</p>
+<ul>
+<li><code>void soap_stream_fault(struct soap*, std::ostream &amp;os)</code> for C++ only, prints the error message to an output stream.</li>
+<li><code>void soap_print_fault(struct soap*, FILE *fd)</code> prints the error message to a FILE descriptor.</li>
+<li><code>void soap_sprint_fault(struct soap*, char *buf, size_t len)</code> saves the error message to a fixed-size buffer allocated with a maximum length.</li>
+<li><code>void soap_print_fault_location(struct soap*, FILE *fd)</code> prints the location and part of the XML where the parser encountered an error.</li>
+</ul>
+<p>An EOF (<code>SOAP_EOF</code> or -1) error code is returned when the parser has hit EOF but expected more input.</p>
+<p>A <code>SOAP_EOM</code> error code is returned when memory was exhausted during processing of input and/or output of data.</p>
+<p>Use <code>soap_xml_error_check(soap-&gt;error)</code> to check for XML errors. This returns true (non-zero) when a parsing and validation error has occurred.</p>
+<p>For example:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;sstream&gt;</span></div>
+<div class="line"></div>
+<div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_INDENT | SOAP_XML_STRICT | SOAP_XML_TREE);</div>
+<div class="line"><span class="keyword">struct </span>ns__record person;</div>
+<div class="line">std::stringstream ss;</div>
+<div class="line">ss.str(<span class="stringliteral">&quot;...&quot;</span>);      <span class="comment">// XML to parse</span></div>
+<div class="line">soap-&gt;is = &amp;ss;</div>
+<div class="line"><span class="keywordflow">if</span> (soap_read__ns__record(soap, &amp;person))</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (soap_xml_error_check(soap-&gt;error))</div>
+<div class="line">    std::cerr &lt;&lt; <span class="stringliteral">&quot;XML parsing error!&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line">  <span class="keywordflow">else</span></div>
+<div class="line">    soap_stream_fault(soap, std::cerr);</div>
+<div class="line">}</div>
+<div class="line"><span class="keywordflow">else</span></div>
+<div class="line">{</div>
+<div class="line">  ...               <span class="comment">// all OK, use person record</span></div>
+<div class="line">}</div>
+<div class="line">soap_destroy(soap); <span class="comment">// delete objects</span></div>
+<div class="line">soap_end(soap);     <span class="comment">// delete other data and temp data</span></div>
+<div class="line">soap_free(soap);    <span class="comment">// free context</span></div>
+</div><!-- fragment --><h1><a class="anchor" id="features"></a>
 Features and limitations                                             </h1>
 <p>In general, to use the generated code:</p>
 <ul>
@@ -2630,7 +2683,7 @@ c++ -I../.. graph.cpp graphC.cpp -o graph -lgsoap++
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Mar 2 2016 10:24:54 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Apr 26 2016 15:13:54 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

@@ -675,56 +675,62 @@ http_da_post_header(struct soap *soap, const char *key, const char *val)
     if (soap_smd_final(soap, &data->smd_data, data->digest, NULL))
       return soap->error;
 
-    if (!userid || !passwd || !soap->authrealm || !data->nonce)
+    if (userid && passwd && soap->authrealm && data->nonce)
     {
-#ifdef SOAP_DEBUG
-      fprintf(stderr, "Debug message: authentication header construction failed, missing parts of the authentication data!\n");
-#endif
-      return SOAP_OK;
+      http_da_calc_nonce(soap, cnonce);
+
+      if (http_da_calc_HA1(soap, &data->smd_data, data->alg, userid, soap->authrealm, passwd, data->nonce, cnonce, HA1hex))
+	return soap->error;
+
+      if (soap->status != SOAP_GET && soap->status != SOAP_CONNECT && data->qop && !soap_tag_cmp(data->qop, "*auth-int*"))
+      {
+	qop = "auth-int";
+	(void)soap_s2hex(soap, (unsigned char*)data->digest, entityHAhex, smd_len);
+      }
+      else if (data->qop)
+      {
+	qop = "auth";
+      }
+      else
+      {
+	qop = NULL;
+      }
+
+      if (soap->status == SOAP_GET)
+      {
+	method = "GET";
+      }
+      else if (soap->status == SOAP_CONNECT)
+      {
+	method = "CONNECT";
+      }
+      else
+      {
+	method = "POST";
+      }
+
+      (SOAP_SNPRINTF(ncount, sizeof(ncount), 8), "%8.8lx", data->nc++);
+
+      if (http_da_calc_response(soap, &data->smd_data, data->alg, HA1hex, data->nonce, ncount, cnonce, qop, method, soap->path, entityHAhex, response, responseHA))
+	return soap->error;
+
+      if (qop)
+      {
+	(SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(soap->authrealm) + strlen(userid) + strlen(data->nonce) + strlen(soap->path) + strlen(qop) + strlen(ncount) + strlen(cnonce) + strlen(response) + 83), "Digest algorithm=%s, realm=\"%s\", username=\"%s\", nonce=\"%s\", uri=\"%s\", qop=\"%s\", nc=%s, cnonce=\"%s\", response=\"%s\"", data->alg ? data->alg : "MD5", soap->authrealm, userid, data->nonce, soap->path, qop, ncount, cnonce, response);
+      }
+      else
+      {
+	(SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(soap->authrealm) + strlen(userid) + strlen(data->nonce) + strlen(soap->path) + strlen(ncount) + strlen(cnonce) + strlen(response) + 59), "Digest algorithm=%s, realm=\"%s\", username=\"%s\", nonce=\"%s\", uri=\"%s\", response=\"%s\"", data->alg ? data->alg : "MD5", soap->authrealm, userid, data->nonce, soap->path, response);
+      }
+
+      if (data->opaque)
+      {
+	size_t l = strlen(soap->tmpbuf);
+	(SOAP_SNPRINTF(soap->tmpbuf + l, sizeof(soap->tmpbuf) - l, strlen(data->opaque) + 11), ", opaque=\"%s\"", data->opaque);
+      }
+
+      return data->fposthdr(soap, key, soap->tmpbuf);
     }
-
-    http_da_calc_nonce(soap, cnonce);
-
-    if (http_da_calc_HA1(soap, &data->smd_data, data->alg, userid, soap->authrealm, passwd, data->nonce, cnonce, HA1hex))
-      return soap->error;
-
-    if (soap->status != SOAP_GET && soap->status != SOAP_CONNECT && data->qop && !soap_tag_cmp(data->qop, "*auth-int*"))
-    {
-      qop = "auth-int";
-      (void)soap_s2hex(soap, (unsigned char*)data->digest, entityHAhex, smd_len);
-    }
-    else if (data->qop)
-      qop = "auth";
-    else
-      qop = NULL;
-
-    if (soap->status == SOAP_GET)
-      method = "GET";
-    else if (soap->status == SOAP_CONNECT)
-      method = "CONNECT";
-    else
-      method = "POST";
-
-    (SOAP_SNPRINTF(ncount, sizeof(ncount), 8), "%8.8lx", data->nc++);
-
-    if (http_da_calc_response(soap, &data->smd_data, data->alg, HA1hex, data->nonce, ncount, cnonce, qop, method, soap->path, entityHAhex, response, responseHA))
-      return soap->error;
-
-    (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(soap->authrealm) + strlen(userid) + strlen(data->nonce) + strlen(soap->path) + strlen(ncount) + strlen(cnonce) + strlen(response) + 75), "Digest algorithm=%s, realm=\"%s\", username=\"%s\", nonce=\"%s\", uri=\"%s\", nc=%s, cnonce=\"%s\", response=\"%s\"", data->alg ? data->alg : "MD5", soap->authrealm, userid, data->nonce, soap->path, ncount, cnonce, response);
-
-    if (data->opaque)
-    {
-      size_t l = strlen(soap->tmpbuf);
-      (SOAP_SNPRINTF(soap->tmpbuf + l, sizeof(soap->tmpbuf) - l, strlen(data->opaque) + 11), ", opaque=\"%s\"", data->opaque);
-    }
-
-    if (qop)
-    {
-      size_t l = strlen(soap->tmpbuf);
-      (SOAP_SNPRINTF(soap->tmpbuf + l, sizeof(soap->tmpbuf) - l, strlen(qop) + 8), ", qop=\"%s\"", qop);
-    }
-
-    return data->fposthdr(soap, key, soap->tmpbuf);
   }
 
   /* server's HTTP Authorization challenge/response */
@@ -746,7 +752,9 @@ http_da_post_header(struct soap *soap, const char *key, const char *val)
       if (data->fposthdr(soap, key, soap->tmpbuf))
         return soap->error;
     }
+
     (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(soap->authrealm) + strlen(nonce) + strlen(opaque) + 59), "Digest algorithm=MD5, realm=\"%s\", qop=\"auth,auth-int\", nonce=\"%s\", opaque=\"%s\"", soap->authrealm, nonce, opaque);
+
     return data->fposthdr(soap, key, soap->tmpbuf);
   }
 
@@ -786,6 +794,7 @@ http_da_parse(struct soap *soap)
       data->fpreparefinalrecv = soap->fpreparefinalrecv;
       soap->fpreparefinalrecv = http_da_preparefinalrecv;
     }
+
     if (soap_smd_init(soap, &data->smd_data, SOAP_SMD_DGST_MD5, NULL, 0))
       return soap->error;
   }
@@ -1375,9 +1384,9 @@ http_da_session_cleanup()
 static void
 http_da_calc_nonce(struct soap *soap, char nonce[HTTP_DA_NONCELEN])
 {
-  static short count = 0xCA53;
+  static unsigned short count = 0xCA53;
   (void)soap;
-  (SOAP_SNPRINTF(nonce, HTTP_DA_NONCELEN, 20), "%8.8x%4.4hx%8.8x", (int)time(NULL), count++, soap_random);
+  (SOAP_SNPRINTF(nonce, HTTP_DA_NONCELEN, 20), "%8.8x%4.4hx%8.8x", (unsigned int)time(NULL), count++, (unsigned int)soap_random);
 }
 
 /******************************************************************************/
@@ -1386,7 +1395,7 @@ static void
 http_da_calc_opaque(struct soap *soap, char opaque[HTTP_DA_OPAQUELEN])
 {
   (void)soap;
-  (SOAP_SNPRINTF(opaque, HTTP_DA_OPAQUELEN, 8), "%8.8x", soap_random);
+  (SOAP_SNPRINTF(opaque, HTTP_DA_OPAQUELEN, 8), "%8.8x", (unsigned int)soap_random);
 }
 
 /******************************************************************************\

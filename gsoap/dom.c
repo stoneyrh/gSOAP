@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.30
+        DOM API v5 gSOAP 2.8.31
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20830
+#define GSOAP_LIB_VERSION 20831
 
 #include "stdsoap2.h"
 
@@ -535,7 +535,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
     const char *s;
     if (soap->error != SOAP_NO_TAG)
       return NULL;
-    s = soap_strtrim(soap, soap_string_in(soap, 1, -1, -1, NULL));
+    s = soap_strtrim(soap, soap_string_in(soap, 3, -1, -1, NULL));
     if (!s || !*s)
     {
       soap->mode = m;
@@ -570,7 +570,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
   {
     soap_default_xsd__anyType(soap, node);
   }
-  node->nstr = soap_current_namespace(soap, soap->tag);
+  node->nstr = soap_current_namespace_tag(soap, soap->tag);
   node->name = soap_strdup(soap, soap->tag);
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node element='%s' start namespace='%s'\n", node->name, node->nstr?node->nstr:""));
   if ((soap->mode & SOAP_DOM_NODE) || (!(soap->mode & SOAP_DOM_TREE) && *soap->id && (!type || strcmp(type, "xsd:anyType"))))
@@ -601,7 +601,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
         return NULL;
       }
       (*att)->next = NULL;
-      (*att)->nstr = soap_current_namespace(soap, tp->name);
+      (*att)->nstr = soap_current_namespace_att(soap, tp->name);
       (*att)->name = soap_strdup(soap, tp->name);
       if (tp->visible == 2)
         (*att)->text = soap_strdup(soap, tp->value);
@@ -622,7 +622,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
     {
       if (soap->error != SOAP_NO_TAG)
         return NULL;
-      node->text = soap_strtrim(soap, soap_string_in(soap, 1, -1, -1, NULL));
+      node->text = soap_strtrim(soap, soap_string_in(soap, 3, -1, -1, NULL));
       if (!node->text)
         return NULL;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node '%s' has cdata\n", node->name));
@@ -706,7 +706,7 @@ soap_in_xsd__anyAttribute(struct soap *soap, const char *tag, struct soap_dom_at
         return NULL;
       }
       att->next = NULL;
-      att->nstr = soap_current_namespace(soap, tp->name);
+      att->nstr = soap_current_namespace_att(soap, tp->name);
       att->name = soap_strdup(soap, tp->name);
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node attribute='%s' namespace='%s'\n", att->name, att->nstr ? att->nstr : "(null)"));
       if (tp->visible == 2)
@@ -1114,7 +1114,7 @@ static struct soap_dom_attribute *new_attribute(struct soap *soap)
 \******************************************************************************/
 
 /**
-@brief Returns pointer to new xsd__anyType DOM element node.
+@brief Returns pointer to new xsd__anyType DOM element node
 @param soap context that manages this object
 @param ns namespace URI string or NULL
 @param tag (un)qualified tag name string or NULL (unnamed node)
@@ -1131,7 +1131,7 @@ soap_elt_new(struct soap *soap, const char *ns, const char *tag)
 /******************************************************************************/
 
 /**
-@brief Returns pointer to new xsd__anyType DOM element node.
+@brief Returns pointer to new xsd__anyType DOM element node
 @param soap context that manages this object
 @param ns namespace URI string or NULL
 @param tag (un)qualified tag name wide string or NULL (unnamed node)
@@ -2034,7 +2034,7 @@ soap_elt_nth(const struct soap_dom_element *elt)
 \******************************************************************************/
 
 /**
-@brief Returns pointer to new xsd__anyAttribute DOM attribute node.
+@brief Returns pointer to new xsd__anyAttribute DOM attribute node
 @param soap context that manages this object
 @param ns namespace URI string or NULL
 @param tag (un)qualified tag name string
@@ -2051,7 +2051,7 @@ soap_att_new(struct soap *soap, const char *ns, const char *tag)
 /******************************************************************************/
 
 /**
-@brief Returns pointer to new xsd__anyAttribute DOM attribute node.
+@brief Returns pointer to new xsd__anyAttribute DOM attribute node
 @param soap context that manages this object
 @param ns namespace URI string or NULL
 @param tag (un)qualified tag name wide string
@@ -2536,7 +2536,7 @@ soap_att_get_text(const struct soap_dom_attribute *att)
 \******************************************************************************/
 
 /**
-@brief Returns pointer to first xsd__anyAttribute DOM attribute node of xsd__anyType DOM element node, if any.
+@brief Returns pointer to first xsd__anyAttribute DOM attribute node of xsd__anyType DOM element node, if any
 @param elt pointer to xsd__anyType DOM element node
 @return pointer to xsd__anyAttribute DOM attribute node or NULL if none
 */
@@ -2551,7 +2551,7 @@ soap_att_first(struct soap_dom_element *elt)
 /******************************************************************************/
 
 /**
-@brief Returns pointer to next xsd__anyAttribute DOM attribute node, if any.
+@brief Returns pointer to next xsd__anyAttribute DOM attribute node, if any
 @param att pointer to current xsd__anyAttribute DOM attribute node in attribute list
 @return pointer to xsd__anyAttribute DOM attribute node or NULL if none
 */
@@ -2566,7 +2566,7 @@ soap_att_next(const struct soap_dom_attribute *att)
 /******************************************************************************/
 
 /**
-@brief Returns pointer to first child element node of xsd__anyType DOM element node, if any.
+@brief Returns pointer to first child element node of xsd__anyType DOM element node, if any
 @param elt pointer to xsd__anyType DOM element node
 @return pointer to xsd__anyType DOM child element node or NULL if none
 */
@@ -2581,7 +2581,7 @@ soap_elt_first(struct soap_dom_element *elt)
 /******************************************************************************/
 
 /**
-@brief Returns pointer to next xsd__anyType DOM child element node, if any.
+@brief Returns pointer to next xsd__anyType DOM child element node, if any
 @param elt pointer to current xsd__anyType DOM child element node in sibling list
 @return pointer to xsd__anyType DOM element node or NULL if none
 */
@@ -3618,7 +3618,7 @@ typedef soap_dom_attribute xsd__anyAttribute;
 
 /**
 @class soap_dom_element
-@brief The xsd__anyType DOM element node structure (xsd__anyType is a typedef of soap_dom_element).
+@brief The xsd__anyType DOM element node structure (xsd__anyType is a typedef of soap_dom_element)
 */
 struct soap_dom_element
 {
@@ -4386,7 +4386,7 @@ struct soap_dom_element
 };
 
 /**
-@brief The xsd__anyType DOM element node structure (xsd__anyType is a typedef of soap_dom_element).
+@brief The xsd__anyType DOM element node structure (xsd__anyType is a typedef of soap_dom_element)
 */
 typedef soap_dom_element xsd__anyType;
 

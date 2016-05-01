@@ -1,12 +1,12 @@
 /*
+	ds2.h
 
-ds2.h
+	Generated with:
+	wsdl2h -cuxy -o ds.h -t WS/WS-typemap.dat WS/ds.xsd
 
-Generated with:
-wsdl2h -cuxy -o ds.h -t WS/WS-typemap.dat WS/ds.xsd
-
-- Removed //gsoapopt
-- Added //gsoap ds    schema import: http://www.w3.org/2000/09/xmldsig#
+	- Removed //gsoapopt
+	- Added //gsoap ds    schema import: http://www.w3.org/2000/09/xmldsig#
+	- Changed to #import "xenc2.h"
 
 */
 
@@ -43,12 +43,13 @@ wsdl2h -cuxy -o ds.h -t WS/WS-typemap.dat WS/ds.xsd
 
 
 /// Imported complexType "http://www.w3.org/2000/09/xmldsig#":SignatureType from typemap WS/WS-typemap.dat.
+typedef char *_ds__SignatureValue;
 typedef struct ds__SignatureType
 {	struct ds__SignedInfoType*		SignedInfo;
-	char*					SignatureValue;
+	_ds__SignatureValue			SignatureValue;
 	struct ds__KeyInfoType*			KeyInfo;
 	@char*					Id;
-} ds__SignatureType;
+} ds__SignatureType, _ds__Signature;
 
 /// Imported complexType "http://www.w3.org/2000/09/xmldsig#":SignatureValueType from typemap WS/WS-typemap.dat.
 /// complexType definition intentionally left blank.
@@ -74,20 +75,21 @@ typedef struct ds__TransformType
 {	_c14n__InclusiveNamespaces*             c14n__InclusiveNamespaces;
 	_XML					__any;
 	@char*					Algorithm;
-} ds__TransformType;
+} ds__TransformType, _ds__Transform;
 
 /// Typedef synonym for struct ds__DigestMethodType.
 typedef struct ds__DigestMethodType ds__DigestMethodType;
 
+#import "wsse2.h"
 /// Imported complexType "http://www.w3.org/2000/09/xmldsig#":KeyInfoType from typemap WS/WS-typemap.dat.
 typedef struct ds__KeyInfoType
 {	char*					KeyName;
 	struct ds__KeyValueType*		KeyValue;
 	struct ds__RetrievalMethodType*		RetrievalMethod;
 	struct ds__X509DataType*		X509Data;
-	struct _wsse2__SecurityTokenReference*	wsse2__SecurityTokenReference;
+	struct _wsse__SecurityTokenReference*	wsse__SecurityTokenReference;
 	@char*					Id;
-} ds__KeyInfoType;
+} ds__KeyInfoType, _ds__KeyInfo;
 
 /// Typedef synonym for struct ds__KeyValueType.
 typedef struct ds__KeyValueType ds__KeyValueType;

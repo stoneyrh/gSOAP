@@ -41,13 +41,28 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 namespace json {
 #endif
 
-/** If soap context has an error, set/add error message to 'v' and return error code */
+/**
+@brief Set value to JSON error property given the context's error code, as per Google JSON Style Guide
+@param soap context with soap->error set
+@param v value to set
+@return error code
+*/
 extern int json_error(struct soap *soap, struct value *v);
 
-/** Write a value in JSON format to a file, socket, or stream */
+/**
+@brief Write JSON value to the context's output (socket, stream, FILE, or string)
+@param soap context that manages IO
+@param v value to write
+@return SOAP_OK or error code
+*/
 extern int json_write(struct soap *soap, const struct value *v);
 
-/** Send a value in JSON format to a file, socket, or stream (lower level function, must use soap_begin_send/soap_end_send also) */
+/**
+@brief Send JSON value, requires soap_begin_send() before this call and soap_end_send() to finish, this function is used by json_write()
+@param soap context that manages IO
+@param v value to send
+@return SOAP_OK or error code
+*/
 extern int json_send(struct soap *soap, const struct value *v);
 
 #ifdef __cplusplus
@@ -56,10 +71,20 @@ extern int json_send(struct soap *soap, const value& v);
 extern std::ostream& operator<<(std::ostream&, const value&);
 #endif
 
-/** Read a value in JSON format from a file, socket, or stream */
+/**
+@brief Read JSON value from context's input (socket, stream, FILE, or string)
+@param soap context that manages IO
+@param v value to read (non NULL)
+@return SOAP_OK or error code
+*/
 extern int json_read(struct soap *soap, struct value *v);
 
-/** Receive a value in JSON format from a file, socket, or stream (lower level function, must use soap_begin_recv/soap_end_recv also) */
+/**
+@brief Receive JSON value, requires soap_begin_recv() before this call and soap_end_recv() to finish, this function is used by json_read()
+@param soap context that manages IO
+@param v value to receive (non NULL)
+@return SOAP_OK or error code
+*/
 extern int json_recv(struct soap *soap, struct value *v);
 
 #ifdef __cplusplus
@@ -68,13 +93,25 @@ extern int json_recv(struct soap *soap, value& v);
 extern std::istream& operator>>(std::istream&, value&);
 #endif
 
-/** Client-side JSON REST call to endpoint URL with optional in and out values (POST with in/out, GET with out, PUT with in, DELETE without in/out), returns SOAP_OK or HTTP code */
+/** Client-side JSON REST call to endpoint URL with optional in and out values (POST with in/out, GET with out, PUT with in, DELETE without in/out), returns SOAP_OK or HTTP code
+@param soap context that manages IO
+@param endpoint URL of the JSON REST/RPC service
+@param in value to send, or NULL (when non-NULL: PUT or POST, when NULL: GET or DELETE)
+@param out value to receive, or NULL (when non-NULL: GET or POST, when NULL: PUT or DELETE)
+@return SOAP_OK or error code with out set to the JSON error property
+*/
 extern int json_call(struct soap *soap, const char *endpoint, const struct value *in, struct value *out);
 
 #ifdef __cplusplus
 extern int json_call(struct soap *soap, const char *endpoint, const struct value& in, struct value& out);
 #endif
 
+/**
+@brief Convert string to JSON string and write it to context's output
+@param soap context that manages IO
+@param s string to send
+@return SOAP_OK or error code
+*/
 extern int json_send_string(struct soap *soap, const char *s);
 
 #ifdef __cplusplus

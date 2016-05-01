@@ -1,5 +1,5 @@
 /*
-	wsse.h 1.0 and 1.1
+	wsse.h 1.0 (2004) and 1.1
 
 	Generated with:
 	wsdl2h -cegxy -o wsse.h -t WS/WS-typemap.dat WS/wsse.xsd
@@ -53,6 +53,8 @@
 /// @brief This type is used for password elements per Section 4.1.
 /// complexType definition intentionally left blank.
 
+/// @brief Typedef synonym for struct wsse__EncodedString.
+typedef struct wsse__EncodedString wsse__EncodedString;
 /// Imported complexType "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":EncodedString from typemap WS/WS-typemap.dat.
 /// @brief This type is used for elements containing stringified binary data.
 /// complexType definition intentionally left blank.
@@ -107,13 +109,25 @@ enum wsse__FaultcodeEnum
 /// Typedef synonym for enum wsse__FaultcodeEnum.
 typedef enum wsse__FaultcodeEnum wsse__FaultcodeEnum;
 
+/// "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":EncodedString is a complexType with simpleContent.
+/// @brief This type is used for elements containing stringified binary data.
+struct wsse__EncodedString
+{
+/// __item wraps "xs:string" simpleContent.
+    char*                                __item                        ;
+/// Attribute "EncodingType" of XSD type xs:anyURI.
+   @char*                                EncodingType                   0;	///< Optional attribute.
+/// Imported attribute reference "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd":Id.
+   @char*                                wsu__Id                        0;	///< Optional attribute.
+};
+
 /// Element "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":UsernameToken of complexType "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":UsernameTokenType.
 /// @brief This element defines the wsse:UsernameToken element per Section 4.1.
 /// Imported element _wsse__UsernameToken from typemap WS/WS-typemap.dat.
 typedef struct _wsse__UsernameToken
 {	char*					Username;
 	struct _wsse__Password*			Password;
-	char*					Nonce;
+	struct wsse__EncodedString*		Nonce;
 	char*					wsu__Created;
 	@char*					wsu__Id;
 } _wsse__UsernameToken;

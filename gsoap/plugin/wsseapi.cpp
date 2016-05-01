@@ -1736,6 +1736,7 @@ const char soap_wsse_id[14] = SOAP_WSSE_ID;
 const char *wsse_PasswordTextURI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText";
 const char *wsse_PasswordDigestURI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest";
 const char *wsse_Base64BinaryURI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary";
+const char *wsse_HexBinaryURI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#HexBinary";
 const char *wsse_X509v3URI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3";
 const char *wsse_X509v3SubjectKeyIdentifierURI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509SubjectKeyIdentifier";
 
@@ -2180,7 +2181,10 @@ soap_wsse_add_UsernameTokenDigest(struct soap *soap, const char *id, const char 
   soap_wsse_add_UsernameTokenText(soap, id, username, HABase64);
   /* populate the remainder of the password, nonce, and created */
   security->UsernameToken->Password->Type = (char*)wsse_PasswordDigestURI;
-  security->UsernameToken->Nonce = nonceBase64;
+  security->UsernameToken->Nonce = (struct wsse__EncodedString*)soap_malloc(soap, sizeof(struct wsse__EncodedString));
+  soap_default_wsse__EncodedString(soap, security->UsernameToken->Nonce);
+  security->UsernameToken->Nonce->__item = nonceBase64;
+  security->UsernameToken->Nonce->EncodingType = (char*)wsse_Base64BinaryURI;
   security->UsernameToken->wsu__Created = soap_strdup(soap, created);
   return SOAP_OK;
 }
@@ -2276,11 +2280,17 @@ soap_wsse_verify_Password(struct soap *soap, const char *password)
         char HA1[SOAP_SMD_SHA1_SIZE], HA2[SOAP_SMD_SHA1_SIZE];
         /* The specs are not clear: compute digest over binary nonce or base64 nonce? The formet appears to be the case: */
         int noncelen;
-        const char *nonce = soap_base642s(soap, token->Nonce, NULL, 0, &noncelen);
+        const char *nonce;
+	if (!token->Nonce->EncodingType || !strcmp(token->Nonce->EncodingType, wsse_Base64BinaryURI))
+	  nonce = soap_base642s(soap, token->Nonce->__item, NULL, 0, &noncelen);
+	else if (!strcmp(token->Nonce->EncodingType, wsse_HexBinaryURI))
+	  nonce = soap_hex2s(soap, token->Nonce->__item, NULL, 0, &noncelen);
+	else
+	  return soap_wsse_fault(soap, wsse__FailedAuthentication, NULL);
         /* compute HA1 = SHA1(created, nonce, password) */
         calc_digest(soap, token->wsu__Created, nonce, noncelen, password, HA1);
         /*
-        calc_digest(soap, token->wsu__Created, token->Nonce, strlen(token->Nonce), password, HA1);
+        calc_digest(soap, token->wsu__Created, token->Nonce->__item, strlen(token->Nonce->__item), password, HA1);
         */
         /* get HA2 = supplied digest from base64 Password */
         soap_base642s(soap, token->Password->__item, HA2, SOAP_SMD_SHA1_SIZE, NULL);
@@ -2288,7 +2298,7 @@ soap_wsse_verify_Password(struct soap *soap, const char *password)
         if (!memcmp(HA1, HA2, SOAP_SMD_SHA1_SIZE))
         {
           /* authorize if HA1 and HA2 identical and not replay attack */
-          if (!soap_wsse_session_verify(soap, HA1, token->wsu__Created, token->Nonce))
+          if (!soap_wsse_session_verify(soap, HA1, token->wsu__Created, token->Nonce->__item))
             return SOAP_OK;
           return soap->error; 
         }
@@ -2462,13 +2472,10 @@ soap_wsse_get_BinarySecurityToken(struct soap *soap, const char *id, char **valu
   if (token)
   {
     *valueType = token->ValueType;
-    /* it appears we don't need HexBinary after all
-    if (token->EncodingType && !strcmp(token->EncodingType, wsse_HexBinaryURI))
+    if (!token->EncodingType || !strcmp(token->EncodingType, wsse_Base64BinaryURI))
+      *data = (unsigned char*)soap_base642s(soap, token->__item, NULL, 0, size);
+    else if (!strcmp(token->EncodingType, wsse_HexBinaryURI))
       *data = (unsigned char*)soap_hex2s(soap, token->__item, NULL, 0, size);
-    else
-    */
-    /* assume token is represented in base64 by default */
-    *data = (unsigned char*)soap_base642s(soap, token->__item, NULL, 0, size);
     if (*data)
       return SOAP_OK;
   }
@@ -6005,7 +6012,7 @@ soap_wsse_preparefinalsend(struct soap *soap)
       else
       {
         const char *c14nexclude = soap->c14nexclude;
-        soap->c14nexclude = "ds"; /* don't add xmlns:ds to count msg len */
+        soap->c14nexclude = "ds xsi"; /* don't add xmlns:ds or xmlns:xsi to count msg len */
         soap->level = 4; /* indent level for XML SignedInfo */
         if (soap->mode & SOAP_XML_CANONICAL && soap->mode & SOAP_XML_INDENT)
         {
@@ -6013,7 +6020,7 @@ soap_wsse_preparefinalsend(struct soap *soap)
           soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
         }
         soap_out_ds__SignedInfoType(soap, "ds:SignedInfo", 0, signature->SignedInfo, NULL);
-        soap_outstring(soap, "ds:SignatureValue", 0, &signature->SignatureValue, NULL, 0);
+        soap_out__ds__SignatureValue(soap, "ds:SignatureValue", 0, &signature->SignatureValue, NULL);
         soap->c14nexclude = c14nexclude;
       }
       soap->part = part;

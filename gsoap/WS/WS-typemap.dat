@@ -214,11 +214,8 @@ typedef struct _wsu__Timestamp\n\
 # wsse:AttributedString has a wsu:Id we don't need
 wsse__AttributedString = | char*
 
-# wsse:EncodedString has an EncodingType attribute we don't need for Nonce
-wsse__EncodedString = | char*
-
-# Don't use global wsse:Nonce
-_wsse__Nonce =
+# wsse:Nonce is just a wsse:EncodedString
+_wsse__Nonce = | struct wsse__EncodedString
 
 # Don't use wsse:tUsage and global wsse:Usage
 wsse__tUsage =
@@ -242,7 +239,7 @@ _wsse__UsernameToken =\
 typedef struct _wsse__UsernameToken\n\
 {	char*					Username;\n\
 	struct _wsse__Password*			Password;\n\
-	char*					Nonce;\n\
+	struct wsse__EncodedString*		Nonce;\n\
 	char*					wsu__Created;\n\
 	@char*					wsu__Id;\n\
 } _wsse__UsernameToken;
@@ -361,9 +358,10 @@ typedef struct ds__KeyInfoType\n\
 } ds__KeyInfoType, _ds__KeyInfo;
 
 ds__SignatureType =\
+typedef char *_ds__SignatureValue;\n\
 typedef struct ds__SignatureType\n\
 {	struct ds__SignedInfoType*		SignedInfo;\n\
-	char*					SignatureValue;\n\
+	_ds__SignatureValueType			SignatureValue;\n\
 	struct ds__KeyInfoType*			KeyInfo;\n\
 	@char*					Id;\n\
 } ds__SignatureType, _ds__Signature;
@@ -372,7 +370,7 @@ typedef struct ds__SignatureType\n\
 ds__CanonicalizationMethodType = $\
     _c14n__InclusiveNamespaces*		c14n__InclusiveNamespaces;
 
-# ds:SignatureValueType has an Id we don't need
+# ds:SignatureValueType already declared above (and has an Id we don't need)
 ds__SignatureValueType =
 
 ds__ObjectType =

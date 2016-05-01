@@ -243,7 +243,7 @@ prog    : s1 exts       {
                           freetable(typetable);
                           freetable(booltable);
                           freetable(templatetable);
-			  yylineno = 0;
+                          yylineno = 0;
                         }
         ;
 s1      : /* empty */   {
@@ -369,18 +369,20 @@ dclr    : ptrs ID arrayck tag bounds brinit
                           if (($3.sto & Stypedef) && sp->table->level == GLOBAL)
                           {
                             if (($3.typ->type != Tstruct &&
+                                  $3.typ->type != Tclass &&
                                   $3.typ->type != Tunion &&
                                   $3.typ->type != Tenum &&
                                   $3.typ->type != Tenumsc) ||
+                                ((is_binary($3.typ) || is_stdstr($3.typ)) && strcmp($2->name, $3.typ->id->name)) ||
                                 strcmp($2->name, $3.typ->id->name))
                             {
                               p = enter(typetable, $2);
                               p->info.typ = mksymtype($3.typ, $2);
                               if ($3.sto & Sextern)
-			      {
+                              {
                                 p->info.typ->transient = -1;
-				p->info.typ->extsym = $2;
-			      }
+                                p->info.typ->extsym = $2;
+                              }
                               else if (is_external($3.typ))
                                 p->info.typ->transient = -3; /* extern and volatile */
                               else
@@ -388,42 +390,42 @@ dclr    : ptrs ID arrayck tag bounds brinit
                               if (p->info.typ->width == 0)
                                 p->info.typ->width = 8;
                               p->info.sto = $3.sto;
-			      p->info.typ->synonym = $3.typ->sym;
-			      if ($5.hasmin)
-			      {
-				p->info.typ->hasmin = $5.hasmin;
-				p->info.typ->incmin = $5.incmin;
-				p->info.typ->min = $5.min;
+                              p->info.typ->synonym = $3.typ->sym;
+                              if ($5.hasmin)
+                              {
+                                p->info.typ->hasmin = $5.hasmin;
+                                p->info.typ->incmin = $5.incmin;
+                                p->info.typ->min = $5.min;
                                 p->info.typ->synonym = NULL;
-			      }
-			      else
-			      {
-				p->info.typ->hasmin = $3.typ->hasmin;
-				p->info.typ->incmin = $3.typ->incmin;
-				p->info.typ->min = $3.typ->min;
-			      }
-			      if ($5.hasmax)
-			      {
-				p->info.typ->hasmax = $5.hasmax;
-				p->info.typ->incmax = $5.incmax;
-				p->info.typ->max = $5.max;
+                              }
+                              else
+                              {
+                                p->info.typ->hasmin = $3.typ->hasmin;
+                                p->info.typ->incmin = $3.typ->incmin;
+                                p->info.typ->min = $3.typ->min;
+                              }
+                              if ($5.hasmax)
+                              {
+                                p->info.typ->hasmax = $5.hasmax;
+                                p->info.typ->incmax = $5.incmax;
+                                p->info.typ->max = $5.max;
                                 p->info.typ->synonym = NULL;
-			      }
-			      else
-			      {
-				p->info.typ->hasmax = $3.typ->hasmax;
-				p->info.typ->incmax = $3.typ->incmax;
-				p->info.typ->max = $3.typ->max;
-			      }
-			      if ($5.pattern)
-			      {
-				p->info.typ->pattern = $5.pattern;
+                              }
+                              else
+                              {
+                                p->info.typ->hasmax = $3.typ->hasmax;
+                                p->info.typ->incmax = $3.typ->incmax;
+                                p->info.typ->max = $3.typ->max;
+                              }
+                              if ($5.pattern)
+                              {
+                                p->info.typ->pattern = $5.pattern;
                                 p->info.typ->synonym = NULL;
-			      }
-			      else
-			      {
-				p->info.typ->pattern = $3.typ->pattern;
-			      }
+                              }
+                              else
+                              {
+                                p->info.typ->pattern = $3.typ->pattern;
+                              }
                             }
                             $2->token = TYPE;
                           }
@@ -901,14 +903,13 @@ farg    : tspec ptrs arg arrayck occurs init
 arg     : /* empty */   {
                           if (sp->table->level != PARAM)
                             $$ = gensymidx("param", (int)++sp->val);
-                          else if (eflag)
+                          else if (eflag || zflag == 0 || zflag > 3)
                             $$ = gensymidx("_param", (int)++sp->val);
                           else
                             $$ = gensym("_param");
                         }
         | ID            {
-                          if (soap_version == 2 && *$1->name == '_' &&
-                              sp->table->level == GLOBAL)
+                          if (soap_version == 2 && *$1->name == '_' && sp->table->level == GLOBAL)
                           {
                             sprintf(errbuf, "SOAP 1.2 does not support anonymous parameters '%s'", $1->name);
                             semwarn(errbuf);
@@ -1569,7 +1570,7 @@ type    : VOID          { $$ = mkvoid(); }
                             if (cflag)
                               p->info.typ->transient = 1;       /* make std::string transient in C */
                             else
-                              p->info.typ->transient = -2;	/* otherwise volatile in C++ */
+                              p->info.typ->transient = -2;      /* otherwise volatile in C++ */
                           }
                           else
                           {
@@ -1617,14 +1618,14 @@ type    : VOID          { $$ = mkvoid(); }
                             $$->transient = 1; /* not serializable */
                           }
                           else if ($1 == lookup("std::shared_ptr") ||
-			      $1 == lookup("std::unique_ptr") ||
-			      $1 == lookup("std::auto_ptr"))
+                              $1 == lookup("std::unique_ptr") ||
+                              $1 == lookup("std::auto_ptr"))
                           {
                             $$ = mktemplate($3.typ, $1);
                             $$->transient = -2; /* volatile indicates smart pointer template */
                           }
                           else if ($1 == lookup("std::weak_ptr") ||
-			      $1 == lookup("std::function"))
+                              $1 == lookup("std::function"))
                           {
                             $$ = mktemplate($3.typ, $1);
                             $$->transient = 1; /* not serializable */
@@ -1765,7 +1766,7 @@ enumsc  : ENUM sc utype {
                         }
         ;
 mask    : ENUM '*' id utype
-			{
+                        {
                           if ((p = entry(enumtable, $3)))
                           {
                             if (p->info.typ->ref)
@@ -1787,7 +1788,7 @@ mask    : ENUM '*' id utype
                         }
         ;
 masksc  : ENUM '*' sc utype
-			{
+                        {
                           if ((p = entry(enumtable, $3)))
                           {
                             if (p->info.typ->ref)
@@ -2021,7 +2022,7 @@ init    : /* empty */   { $$.hasval = False; }
 tag     : /* empty */   { $$ = NULL; }
         | TAG           { $$ = $1; }
         ;
-occurs	: /* empty */	{
+occurs  : /* empty */   {
                           $$.minOccurs = -1;
                           $$.maxOccurs = 1;
                           $$.hasmin = False;
@@ -2031,8 +2032,8 @@ occurs	: /* empty */	{
                           $$.incmin = True;
                           $$.incmax = True;
                           $$.pattern = NULL;
-			}
-	| LNG		{
+                        }
+        | LNG           {
                           $$.minOccurs = $1;
                           $$.maxOccurs = 1;
                           if ($$.minOccurs < 0)
@@ -2045,7 +2046,7 @@ occurs	: /* empty */	{
                           $$.incmax = True;
                           $$.pattern = NULL;
                         }
-	| LNG ':'	{
+        | LNG ':'       {
                           $$.minOccurs = $1;
                           $$.maxOccurs = 1;
                           if ($$.minOccurs < 0)
@@ -2058,7 +2059,7 @@ occurs	: /* empty */	{
                           $$.incmax = True;
                           $$.pattern = NULL;
                         }
-	| LNG ':' LNG	{
+        | LNG ':' LNG   {
                           $$.minOccurs = $1;
                           $$.maxOccurs = $3;
                           if ($$.minOccurs < 0 || $$.maxOccurs < 0)
@@ -2079,7 +2080,7 @@ occurs	: /* empty */	{
                           $$.incmax = True;
                           $$.pattern = NULL;
                         }
-	| ':' LNG	{
+        | ':' LNG       {
                           $$.minOccurs = -1;
                           $$.maxOccurs = $2;
                           if ($$.maxOccurs < 0)
@@ -2094,8 +2095,8 @@ occurs	: /* empty */	{
                           $$.incmin = True;
                           $$.incmax = True;
                           $$.pattern = NULL;
-			}
-	;
+                        }
+        ;
 bounds  : patt          {
                           $$.hasmin = False;
                           $$.hasmax = False;

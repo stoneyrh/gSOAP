@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">README.md Source File</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Mar 2 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Apr 26 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -99,13 +99,13 @@ $(document).ready(function(){initNavTree('_r_e_a_d_m_e_8md.html','');});
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;mappings to be customized using a `typemap.dat` file with mapping instructions</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;for wsdl2h.</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;The information in this document is applicable to gSOAP 2.8.26 and higher, which</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;supports C++11 features.  However, C++11 is not required to use this material</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;and the examples included, unless we need smart pointers and scoped</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;enumerations.  While most of the examples in this document are given in C++,</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;the concepts also apply to C with the exception of containers, smart pointers,</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;classes and their methods.  None of these exceptions limit the use of the</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;gSOAP tools for C in any way.</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;The information in this document is applicable to gSOAP 2.8.26 and later</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;versions that support C++11 features.  However, C++11 is not required to use</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;this material and the examples included, unless we need smart pointers and</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;scoped enumerations.  While most of the examples in this document are given in</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;C++, the concepts also apply to C with the exception of containers, smart</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;pointers, classes and their methods.  None of these exceptions limit the use of</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;the gSOAP tools for C in any way.</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;The data binding concepts described in this document were first envisioned in</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;1999 by Prof. Robert van Engelen at the Florida State University.  An</div>
@@ -851,7 +851,7 @@ $(document).ready(function(){initNavTree('_r_e_a_d_m_e_8md.html','');});
 <div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;  in XML tags).</div>
 <div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;- `_USCORE` is translated to an underscore in the translated XML tag name.</div>
 <div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;- `_DOT` is translated to a dot (`.`) in the translated XML tag name.</div>
-<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;- `_xHHHH` is translated to the Unicode character with code point HHHH.</div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;- `_xHHHH` is translated to the Unicode character with code point HHHH (hex).</div>
 <div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;- C++11 Unicode identifier name characters in UTF-8 are translated as-is.</div>
 <div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;</div>
 <div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;For example, the C/C++ namespace qualified identifier name `s_a__my_way` is</div>
@@ -859,7 +859,7 @@ $(document).ready(function(){initNavTree('_r_e_a_d_m_e_8md.html','');});
 <div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;and the local name `my_way`.</div>
 <div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;</div>
 <div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;Struct/class member and parameter name translation can be overruled by using</div>
-<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;[backtick XML tags](#toxsd9-5) (with gSOAP 2.8.30 or higher).</div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;[backtick XML tags](#toxsd9-5) (with gSOAP 2.8.30 and later versions).</div>
 <div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;</div>
 <div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;C++ Bool and C alternatives                                            {#toxsd3}</div>
 <div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;---------------------------</div>
@@ -1703,7 +1703,7 @@ $(document).ready(function(){initNavTree('_r_e_a_d_m_e_8md.html','');});
 <div class="line"><a name="l01636"></a><span class="lineno"> 1636</span>&#160;      &lt;/sequence&gt;</div>
 <div class="line"><a name="l01637"></a><span class="lineno"> 1637</span>&#160;    &lt;/complexType&gt;</div>
 <div class="line"><a name="l01638"></a><span class="lineno"> 1638</span>&#160;</div>
-<div class="line"><a name="l01639"></a><span class="lineno"> 1639</span>&#160;### Serializable versus transient types and members                  {#toxsd9-1}</div>
+<div class="line"><a name="l01639"></a><span class="lineno"> 1639</span>&#160;### Serializable versus transient types and data members             {#toxsd9-1}</div>
 <div class="line"><a name="l01640"></a><span class="lineno"> 1640</span>&#160;</div>
 <div class="line"><a name="l01641"></a><span class="lineno"> 1641</span>&#160;Public data members of a class or struct are serialized.  Private and protected</div>
 <div class="line"><a name="l01642"></a><span class="lineno"> 1642</span>&#160;members are transient and not serializable.</div>
@@ -1902,7 +1902,7 @@ $(document).ready(function(){initNavTree('_r_e_a_d_m_e_8md.html','');});
 <div class="line"><a name="l01835"></a><span class="lineno"> 1835</span>&#160;</div>
 <div class="line"><a name="l01836"></a><span class="lineno"> 1836</span>&#160;To override the standard translation of identifier names to XML tag names of</div>
 <div class="line"><a name="l01837"></a><span class="lineno"> 1837</span>&#160;attributes and elements, add the XML tag name in backticks (requires gSOAP</div>
-<div class="line"><a name="l01838"></a><span class="lineno"> 1838</span>&#160;2.8.30 or higher):</div>
+<div class="line"><a name="l01838"></a><span class="lineno"> 1838</span>&#160;2.8.30 and later versions):</div>
 <div class="line"><a name="l01839"></a><span class="lineno"> 1839</span>&#160;</div>
 <div class="line"><a name="l01840"></a><span class="lineno"> 1840</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}</div>
 <div class="line"><a name="l01841"></a><span class="lineno"> 1841</span>&#160;    class ns__record</div>
@@ -2056,7 +2056,7 @@ $(document).ready(function(){initNavTree('_r_e_a_d_m_e_8md.html','');});
 <div class="line"><a name="l01989"></a><span class="lineno"> 1989</span>&#160;</div>
 <div class="line"><a name="l01990"></a><span class="lineno"> 1990</span>&#160;[Backtick tag names](#toxsd9-5) can be used in place of the member name</div>
 <div class="line"><a name="l01991"></a><span class="lineno"> 1991</span>&#160;annotations and will achieve the same effect as described when these tag names</div>
-<div class="line"><a name="l01992"></a><span class="lineno"> 1992</span>&#160;are (un)qualified (requires gSOAP 2.8.30 or higher).</div>
+<div class="line"><a name="l01992"></a><span class="lineno"> 1992</span>&#160;are (un)qualified (requires gSOAP 2.8.30 and later versions).</div>
 <div class="line"><a name="l01993"></a><span class="lineno"> 1993</span>&#160;</div>
 <div class="line"><a name="l01994"></a><span class="lineno"> 1994</span>&#160;@note You must declare a target namespace with a `//gsoap ns schema namespace:`</div>
 <div class="line"><a name="l01995"></a><span class="lineno"> 1995</span>&#160;directive to enable the `elementForm` and `attributeForm` directives in order</div>
@@ -2152,8 +2152,8 @@ $(document).ready(function(){initNavTree('_r_e_a_d_m_e_8md.html','');});
 <div class="line"><a name="l02085"></a><span class="lineno"> 2085</span>&#160;names by overruling the default element/attribute namespace qualification, see</div>
 <div class="line"><a name="l02086"></a><span class="lineno"> 2086</span>&#160;[qualified and unqualified members](#toxsd9-6).</div>
 <div class="line"><a name="l02087"></a><span class="lineno"> 2087</span>&#160;</div>
-<div class="line"><a name="l02088"></a><span class="lineno"> 2088</span>&#160;As an alternative to prefixing member names, use the backtick tag (gSOAP 2.8.30</div>
-<div class="line"><a name="l02089"></a><span class="lineno"> 2089</span>&#160;and higher):</div>
+<div class="line"><a name="l02088"></a><span class="lineno"> 2088</span>&#160;As an alternative to prefixing member names, use the backtick tag (requires</div>
+<div class="line"><a name="l02089"></a><span class="lineno"> 2089</span>&#160;gSOAP 2.8.30 and later versions):</div>
 <div class="line"><a name="l02090"></a><span class="lineno"> 2090</span>&#160;</div>
 <div class="line"><a name="l02091"></a><span class="lineno"> 2091</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}</div>
 <div class="line"><a name="l02092"></a><span class="lineno"> 2092</span>&#160;    typedef std::string _ns__name 1 : 100;</div>
@@ -4319,8 +4319,8 @@ $(document).ready(function(){initNavTree('_r_e_a_d_m_e_8md.html','');});
 <div class="line"><a name="l04252"></a><span class="lineno"> 4252</span>&#160;===========================================</div>
 <div class="line"><a name="l04253"></a><span class="lineno"> 4253</span>&#160;</div>
 <div class="line"><a name="l04254"></a><span class="lineno"> 4254</span>&#160;There are several context initialization flags and context mode flags to</div>
-<div class="line"><a name="l04255"></a><span class="lineno"> 4255</span>&#160;control XML serialization at runtime.  The flags are set with `soap_new1()` for</div>
-<div class="line"><a name="l04256"></a><span class="lineno"> 4256</span>&#160;heap allocation of contexts:</div>
+<div class="line"><a name="l04255"></a><span class="lineno"> 4255</span>&#160;control XML serialization at runtime.  The flags are set with `soap_new1()` to</div>
+<div class="line"><a name="l04256"></a><span class="lineno"> 4256</span>&#160;allocate and initialize a new context:</div>
 <div class="line"><a name="l04257"></a><span class="lineno"> 4257</span>&#160;</div>
 <div class="line"><a name="l04258"></a><span class="lineno"> 4258</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}</div>
 <div class="line"><a name="l04259"></a><span class="lineno"> 4259</span>&#160;    struct soap *soap = soap_new1(&lt;flag&gt; | &lt;flag&gt; ... | &lt;flag&gt;);</div>
@@ -4330,7 +4330,7 @@ $(document).ready(function(){initNavTree('_r_e_a_d_m_e_8md.html','');});
 <div class="line"><a name="l04263"></a><span class="lineno"> 4263</span>&#160;    soap_free(soap);    // free context</div>
 <div class="line"><a name="l04264"></a><span class="lineno"> 4264</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</div>
 <div class="line"><a name="l04265"></a><span class="lineno"> 4265</span>&#160;</div>
-<div class="line"><a name="l04266"></a><span class="lineno"> 4266</span>&#160;and with `soap_init1()` with stack allocated contexts:</div>
+<div class="line"><a name="l04266"></a><span class="lineno"> 4266</span>&#160;and with `soap_init1()` for stack-allocated contexts:</div>
 <div class="line"><a name="l04267"></a><span class="lineno"> 4267</span>&#160;</div>
 <div class="line"><a name="l04268"></a><span class="lineno"> 4268</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}</div>
 <div class="line"><a name="l04269"></a><span class="lineno"> 4269</span>&#160;    struct soap soap;</div>
@@ -4397,187 +4397,308 @@ $(document).ready(function(){initNavTree('_r_e_a_d_m_e_8md.html','');});
 <div class="line"><a name="l04330"></a><span class="lineno"> 4330</span>&#160;- `SOAP_ENC_MTOM`: enable MTOM attachments, see</div>
 <div class="line"><a name="l04331"></a><span class="lineno"> 4331</span>&#160;  [MIME/MTOM attachment binary types](#toxsd10-3).</div>
 <div class="line"><a name="l04332"></a><span class="lineno"> 4332</span>&#160;</div>
-<div class="line"><a name="l04333"></a><span class="lineno"> 4333</span>&#160;Features and limitations                                             {#features}</div>
-<div class="line"><a name="l04334"></a><span class="lineno"> 4334</span>&#160;========================</div>
-<div class="line"><a name="l04335"></a><span class="lineno"> 4335</span>&#160;</div>
-<div class="line"><a name="l04336"></a><span class="lineno"> 4336</span>&#160;In general, to use the generated code:</div>
+<div class="line"><a name="l04333"></a><span class="lineno"> 4333</span>&#160;@note C++ Web service proxy and service classes have their own context, either</div>
+<div class="line"><a name="l04334"></a><span class="lineno"> 4334</span>&#160;as a base class (soapcpp2 option -i) or as a data member `soap` that points to</div>
+<div class="line"><a name="l04335"></a><span class="lineno"> 4335</span>&#160;a context (soapcpp2 option -j).  These contexts are allocated when the proxy or</div>
+<div class="line"><a name="l04336"></a><span class="lineno"> 4336</span>&#160;service is instantiated with context flags that are passed to the constructor.</div>
 <div class="line"><a name="l04337"></a><span class="lineno"> 4337</span>&#160;</div>
-<div class="line"><a name="l04338"></a><span class="lineno"> 4338</span>&#160;- Make sure to `#include &quot;soapH.h&quot;` in your code and also define a namespace</div>
-<div class="line"><a name="l04339"></a><span class="lineno"> 4339</span>&#160;  table or `#include &quot;ns.nsmap&quot;` with the generated table, where `ns` is the</div>
-<div class="line"><a name="l04340"></a><span class="lineno"> 4340</span>&#160;  namespace prefix for services.</div>
-<div class="line"><a name="l04341"></a><span class="lineno"> 4341</span>&#160;</div>
-<div class="line"><a name="l04342"></a><span class="lineno"> 4342</span>&#160;- Use soapcpp2 option -j (C++ only) to generate C++ proxy and service objects.</div>
-<div class="line"><a name="l04343"></a><span class="lineno"> 4343</span>&#160;  The auto-generated files include documented inferfaces.  Compile with</div>
-<div class="line"><a name="l04344"></a><span class="lineno"> 4344</span>&#160;  soapC.cpp and link with -lgsoap++, or alternatively compile stdsoap2.cpp.</div>
-<div class="line"><a name="l04345"></a><span class="lineno"> 4345</span>&#160;</div>
-<div class="line"><a name="l04346"></a><span class="lineno"> 4346</span>&#160;- Without soapcpp2 option -j: client-side uses the auto-generated</div>
-<div class="line"><a name="l04347"></a><span class="lineno"> 4347</span>&#160;  soapClient.cpp and soapC.cpp (or C versions of those).  Compile and link with</div>
-<div class="line"><a name="l04348"></a><span class="lineno"> 4348</span>&#160;  -lgsoap++ (-lgsoap for C), or alternatively compile stdsoap2.cpp</div>
-<div class="line"><a name="l04349"></a><span class="lineno"> 4349</span>&#160;  (stdsoap2.c for C).</div>
-<div class="line"><a name="l04350"></a><span class="lineno"> 4350</span>&#160;</div>
-<div class="line"><a name="l04351"></a><span class="lineno"> 4351</span>&#160;- Without soapcpp2 option -j: server-side uses the auto-generated</div>
-<div class="line"><a name="l04352"></a><span class="lineno"> 4352</span>&#160;  soapServer.cpp and soapC.cpp (or C versions of those).  Compile and link with</div>
-<div class="line"><a name="l04353"></a><span class="lineno"> 4353</span>&#160;  -lgsoap++ (-lgsoap for C), or alternatively compile stdsoap2.cpp (stdsoap2.c</div>
-<div class="line"><a name="l04354"></a><span class="lineno"> 4354</span>&#160;  for C).</div>
-<div class="line"><a name="l04355"></a><span class="lineno"> 4355</span>&#160;</div>
-<div class="line"><a name="l04356"></a><span class="lineno"> 4356</span>&#160;- Use `soap_new()` or `soap_new1(int flags)` to allocate and initialize a</div>
-<div class="line"><a name="l04357"></a><span class="lineno"> 4357</span>&#160;  heap-allocated context with or without flags.  Delete this context with</div>
-<div class="line"><a name="l04358"></a><span class="lineno"> 4358</span>&#160;  `soap_free(struct soap*)`, but only after `soap_destroy(struct soap*)` and</div>
-<div class="line"><a name="l04359"></a><span class="lineno"> 4359</span>&#160;  `soap_end(struct soap*)`.</div>
-<div class="line"><a name="l04360"></a><span class="lineno"> 4360</span>&#160;</div>
-<div class="line"><a name="l04361"></a><span class="lineno"> 4361</span>&#160;- Use `soap_init(struct *soap)` or `soap_init1(struct soap*, int flags)` to</div>
-<div class="line"><a name="l04362"></a><span class="lineno"> 4362</span>&#160;  initialize a stack-allocated context with or without flags.  End the use of</div>
-<div class="line"><a name="l04363"></a><span class="lineno"> 4363</span>&#160;  this context with `soap_done(struct soap*)`, but only after</div>
-<div class="line"><a name="l04364"></a><span class="lineno"> 4364</span>&#160;  `soap_destroy(struct soap*)` and `soap_end(struct soap*)`.</div>
-<div class="line"><a name="l04365"></a><span class="lineno"> 4365</span>&#160;</div>
-<div class="line"><a name="l04366"></a><span class="lineno"> 4366</span>&#160;Additional notes with respect to the wsdl2h and soapcpp2 tools:</div>
-<div class="line"><a name="l04367"></a><span class="lineno"> 4367</span>&#160;</div>
-<div class="line"><a name="l04368"></a><span class="lineno"> 4368</span>&#160;- Nested classes, structs, and unions in a gSOAP header file are unnested by</div>
-<div class="line"><a name="l04369"></a><span class="lineno"> 4369</span>&#160;  soapcpp2.</div>
-<div class="line"><a name="l04370"></a><span class="lineno"> 4370</span>&#160;</div>
-<div class="line"><a name="l04371"></a><span class="lineno"> 4371</span>&#160;- Use `#import &quot;file.h&quot;` instead of `#include` to import other header files in</div>
-<div class="line"><a name="l04372"></a><span class="lineno"> 4372</span>&#160;  a gSOAP header file for soapcpp2.  The `#include`, `#define`, and `#pragma`</div>
-<div class="line"><a name="l04373"></a><span class="lineno"> 4373</span>&#160;  are accepted by soapcpp2, but are moved to the very start of the generated</div>
-<div class="line"><a name="l04374"></a><span class="lineno"> 4374</span>&#160;  code for the C/C++ compiler to include before all generated definitions.</div>
-<div class="line"><a name="l04375"></a><span class="lineno"> 4375</span>&#160;  Often it is useful to add an `#include` with a [volatile type](#toxsd9-2)</div>
-<div class="line"><a name="l04376"></a><span class="lineno"> 4376</span>&#160;  that includes the actual type declaration, and to ensure transient types are</div>
-<div class="line"><a name="l04377"></a><span class="lineno"> 4377</span>&#160;  declared when these are used in a data binding interface declared in a gSOAP</div>
-<div class="line"><a name="l04378"></a><span class="lineno"> 4378</span>&#160;  header file for soapcpp2.</div>
+<div class="line"><a name="l04338"></a><span class="lineno"> 4338</span>&#160;Context parameter settings                                             {#params}</div>
+<div class="line"><a name="l04339"></a><span class="lineno"> 4339</span>&#160;==========================</div>
+<div class="line"><a name="l04340"></a><span class="lineno"> 4340</span>&#160;</div>
+<div class="line"><a name="l04341"></a><span class="lineno"> 4341</span>&#160;After allocation and initializtion of a `struct soap` context, several context</div>
+<div class="line"><a name="l04342"></a><span class="lineno"> 4342</span>&#160;parameters can be set (some parameters may require 2.8.31 and later versions):</div>
+<div class="line"><a name="l04343"></a><span class="lineno"> 4343</span>&#160;</div>
+<div class="line"><a name="l04344"></a><span class="lineno"> 4344</span>&#160;- `unsigned int soap::maxlevel` is the maximum XML nesting depth levels that</div>
+<div class="line"><a name="l04345"></a><span class="lineno"> 4345</span>&#160;  the parser permits.  Default initialized to `SOAP_MAXLEVEL` (10000), which is</div>
+<div class="line"><a name="l04346"></a><span class="lineno"> 4346</span>&#160;  a redefinable macro in stdsoap2.h.  Set `soap::maxlevel` to a lower value to</div>
+<div class="line"><a name="l04347"></a><span class="lineno"> 4347</span>&#160;  restrict XML parsing nesting depth.</div>
+<div class="line"><a name="l04348"></a><span class="lineno"> 4348</span>&#160;</div>
+<div class="line"><a name="l04349"></a><span class="lineno"> 4349</span>&#160;- `long soap::maxlength` is the maximum string content length if not already</div>
+<div class="line"><a name="l04350"></a><span class="lineno"> 4350</span>&#160;  constrained by an XML schema validation `maxLength` constraint.  Zero means</div>
+<div class="line"><a name="l04351"></a><span class="lineno"> 4351</span>&#160;  unlimited string lengths are permitted (unless restricted by XML schema</div>
+<div class="line"><a name="l04352"></a><span class="lineno"> 4352</span>&#160;  `maxLength`).  Default initialized to `SOAP_MAXLENGTH` (0), which is a</div>
+<div class="line"><a name="l04353"></a><span class="lineno"> 4353</span>&#160;  redefinable macro in stdsoap2.h.  Set `soap::maxlength` to a positive value</div>
+<div class="line"><a name="l04354"></a><span class="lineno"> 4354</span>&#160;  to restrict the number of (wide) characters in strings parsed, restrict</div>
+<div class="line"><a name="l04355"></a><span class="lineno"> 4355</span>&#160;  hexBinary byte length, and restrict base64Binary byte length.</div>
+<div class="line"><a name="l04356"></a><span class="lineno"> 4356</span>&#160;</div>
+<div class="line"><a name="l04357"></a><span class="lineno"> 4357</span>&#160;- `size_t soap::maxoccurs` is the maximum number of array or container elements</div>
+<div class="line"><a name="l04358"></a><span class="lineno"> 4358</span>&#160;  permitted by the parser.  Must be greater than zero (0).  Default initialized</div>
+<div class="line"><a name="l04359"></a><span class="lineno"> 4359</span>&#160;  to `SOAP_MAXOCCURS` (100000), which is a redefinable macro in stdsoap2.h.</div>
+<div class="line"><a name="l04360"></a><span class="lineno"> 4360</span>&#160;  Set `soap::maxoccurs` to a positive value to restrict the number of array and</div>
+<div class="line"><a name="l04361"></a><span class="lineno"> 4361</span>&#160;  container elements that can be parsed.</div>
+<div class="line"><a name="l04362"></a><span class="lineno"> 4362</span>&#160;</div>
+<div class="line"><a name="l04363"></a><span class="lineno"> 4363</span>&#160;- `soap::version` is the SOAP version used, with 0 for non-SOAP, 1 for SOAP1.1,</div>
+<div class="line"><a name="l04364"></a><span class="lineno"> 4364</span>&#160;  and 2 for SOAP1.2.  This value is normally set by web service operations, and</div>
+<div class="line"><a name="l04365"></a><span class="lineno"> 4365</span>&#160;  is otherwise 0 (non-SOAP).  Use `soap_set_version(struct soap*, short)` to</div>
+<div class="line"><a name="l04366"></a><span class="lineno"> 4366</span>&#160;  set the value.  This controls XML namespaces and SOAP id-ref serialization</div>
+<div class="line"><a name="l04367"></a><span class="lineno"> 4367</span>&#160;  when applicable with an encodingStyle (see below).</div>
+<div class="line"><a name="l04368"></a><span class="lineno"> 4368</span>&#160;</div>
+<div class="line"><a name="l04369"></a><span class="lineno"> 4369</span>&#160;- `const char *soap::encodingStyle` is a string that is used with SOAP</div>
+<div class="line"><a name="l04370"></a><span class="lineno"> 4370</span>&#160;  encoding, normally NULL for non-SOAP XML.  Set this string to &quot;&quot; (empty</div>
+<div class="line"><a name="l04371"></a><span class="lineno"> 4371</span>&#160;  string) to enable SOAP encoding style, which supports id-ref graph</div>
+<div class="line"><a name="l04372"></a><span class="lineno"> 4372</span>&#160;  serialization (see also the `SOAP_XML_GRAPH` [context flag](#flags)).</div>
+<div class="line"><a name="l04373"></a><span class="lineno"> 4373</span>&#160;</div>
+<div class="line"><a name="l04374"></a><span class="lineno"> 4374</span>&#160;- `int soap::recvfd` is the file descriptor to read and parse source data from.</div>
+<div class="line"><a name="l04375"></a><span class="lineno"> 4375</span>&#160;  Default initialized to 0 (stdin).  See also [input and output](#io).</div>
+<div class="line"><a name="l04376"></a><span class="lineno"> 4376</span>&#160;</div>
+<div class="line"><a name="l04377"></a><span class="lineno"> 4377</span>&#160;- `int soap::sendfd` is the file descriptor to write data to.  Default</div>
+<div class="line"><a name="l04378"></a><span class="lineno"> 4378</span>&#160;  initialized to 1 (stdout).  See also [input and output](#io).</div>
 <div class="line"><a name="l04379"></a><span class="lineno"> 4379</span>&#160;</div>
-<div class="line"><a name="l04380"></a><span class="lineno"> 4380</span>&#160;- To remove any SOAP-specific bindings, use soapcpp2 option `-0`.</div>
-<div class="line"><a name="l04381"></a><span class="lineno"> 4381</span>&#160;</div>
-<div class="line"><a name="l04382"></a><span class="lineno"> 4382</span>&#160;- A gSOAP header file for soapcpp2 should not include any code statements, only</div>
-<div class="line"><a name="l04383"></a><span class="lineno"> 4383</span>&#160;  data type declarations.  This includes constructor initialization lists that are</div>
-<div class="line"><a name="l04384"></a><span class="lineno"> 4384</span>&#160;  not permitted.  Use member initializations instead.</div>
-<div class="line"><a name="l04385"></a><span class="lineno"> 4385</span>&#160;</div>
-<div class="line"><a name="l04386"></a><span class="lineno"> 4386</span>&#160;- C++ namespaces are supported.  Use wsdl2h option `-qname`.  Or add a `namespace</div>
-<div class="line"><a name="l04387"></a><span class="lineno"> 4387</span>&#160;  name { ... }` to the header file, but the `{ ... }` MUST cover the entire</div>
-<div class="line"><a name="l04388"></a><span class="lineno"> 4388</span>&#160;  header file content from begin to end.</div>
-<div class="line"><a name="l04389"></a><span class="lineno"> 4389</span>&#160;  </div>
-<div class="line"><a name="l04390"></a><span class="lineno"> 4390</span>&#160;- Optional XML DOM support can be used to store mixed content or literal XML</div>
-<div class="line"><a name="l04391"></a><span class="lineno"> 4391</span>&#160;  content.  Otherwise, mixed content may be lost.  Use wsdl2h option `-d` for</div>
-<div class="line"><a name="l04392"></a><span class="lineno"> 4392</span>&#160;  XML DOM support and compile and link with `dom.c` or `dom.cpp`.  For details,</div>
-<div class="line"><a name="l04393"></a><span class="lineno"> 4393</span>&#160;  see [XML DOM and XPath](http://www.genivia.com/doc/dom/html).</div>
-<div class="line"><a name="l04394"></a><span class="lineno"> 4394</span>&#160;</div>
-<div class="line"><a name="l04395"></a><span class="lineno"> 4395</span>&#160;Removing SOAP namespaces from XML payloads                              {#nsmap}</div>
-<div class="line"><a name="l04396"></a><span class="lineno"> 4396</span>&#160;==========================================</div>
-<div class="line"><a name="l04397"></a><span class="lineno"> 4397</span>&#160;</div>
-<div class="line"><a name="l04398"></a><span class="lineno"> 4398</span>&#160;The soapcpp2 tool generates a `.nsmap` file that includes two bindings for SOAP</div>
-<div class="line"><a name="l04399"></a><span class="lineno"> 4399</span>&#160;namespaces.  We can remove all SOAP namespaces (and SOAP processing logic) with</div>
-<div class="line"><a name="l04400"></a><span class="lineno"> 4400</span>&#160;soapcpp2 option `-0` or by simply setting the two entries to NULL:</div>
-<div class="line"><a name="l04401"></a><span class="lineno"> 4401</span>&#160;</div>
-<div class="line"><a name="l04402"></a><span class="lineno"> 4402</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}</div>
-<div class="line"><a name="l04403"></a><span class="lineno"> 4403</span>&#160;    struct Namespace namespaces[] =</div>
-<div class="line"><a name="l04404"></a><span class="lineno"> 4404</span>&#160;    {</div>
-<div class="line"><a name="l04405"></a><span class="lineno"> 4405</span>&#160;      {&quot;SOAP-ENV&quot;, NULL, NULL, NULL},</div>
-<div class="line"><a name="l04406"></a><span class="lineno"> 4406</span>&#160;      {&quot;SOAP-ENC&quot;, NULL, NULL, NULL},</div>
-<div class="line"><a name="l04407"></a><span class="lineno"> 4407</span>&#160;      ...</div>
-<div class="line"><a name="l04408"></a><span class="lineno"> 4408</span>&#160;    };</div>
-<div class="line"><a name="l04409"></a><span class="lineno"> 4409</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</div>
-<div class="line"><a name="l04410"></a><span class="lineno"> 4410</span>&#160;</div>
-<div class="line"><a name="l04411"></a><span class="lineno"> 4411</span>&#160;Note that once the `.nsmap` is generated, you can copy-paste the content into</div>
-<div class="line"><a name="l04412"></a><span class="lineno"> 4412</span>&#160;your project code.  However, if we rerun wsdl2h on updated WSDL/XSD files or</div>
-<div class="line"><a name="l04413"></a><span class="lineno"> 4413</span>&#160;`typemap.dat` declarations then we need to use the updated table.</div>
-<div class="line"><a name="l04414"></a><span class="lineno"> 4414</span>&#160;</div>
-<div class="line"><a name="l04415"></a><span class="lineno"> 4415</span>&#160;In cases that no XML namespaces are used at all, for example with</div>
-<div class="line"><a name="l04416"></a><span class="lineno"> 4416</span>&#160;[XML-RPC](http://www.genivia.com/doc/xml-rpc-json/html), you may use an empty</div>
-<div class="line"><a name="l04417"></a><span class="lineno"> 4417</span>&#160;namespace table:</div>
+<div class="line"><a name="l04380"></a><span class="lineno"> 4380</span>&#160;- `const char *is` for C: string to read and parse source data from, overriding</div>
+<div class="line"><a name="l04381"></a><span class="lineno"> 4381</span>&#160;  the `recvfd` source.  Normally NULL.  This value must be reset to NULL or</div>
+<div class="line"><a name="l04382"></a><span class="lineno"> 4382</span>&#160;  the parser will continue to read from this string content until the NUL</div>
+<div class="line"><a name="l04383"></a><span class="lineno"> 4383</span>&#160;  character.  See also [input and output](#io).</div>
+<div class="line"><a name="l04384"></a><span class="lineno"> 4384</span>&#160;</div>
+<div class="line"><a name="l04385"></a><span class="lineno"> 4385</span>&#160;- `std::istream *is` for C++: an input stream to read and parse source data</div>
+<div class="line"><a name="l04386"></a><span class="lineno"> 4386</span>&#160;  from, overriding the `recvfd` source.  Normally NULL.  This value must be</div>
+<div class="line"><a name="l04387"></a><span class="lineno"> 4387</span>&#160;  reset to NULL or the parser will continue to read from this stream until EOF.</div>
+<div class="line"><a name="l04388"></a><span class="lineno"> 4388</span>&#160;  See also [input and output](#io).</div>
+<div class="line"><a name="l04389"></a><span class="lineno"> 4389</span>&#160;</div>
+<div class="line"><a name="l04390"></a><span class="lineno"> 4390</span>&#160;- `const char **os` for C: points to a string (a `const char *`) that will be</div>
+<div class="line"><a name="l04391"></a><span class="lineno"> 4391</span>&#160;  set to point to the string output.  Normally NULL.  This value must be reset</div>
+<div class="line"><a name="l04392"></a><span class="lineno"> 4392</span>&#160;  to NULL or the next output will result in reassigning the pointer to point to</div>
+<div class="line"><a name="l04393"></a><span class="lineno"> 4393</span>&#160;  the next string that is output.  The strings are automatically deallocated by</div>
+<div class="line"><a name="l04394"></a><span class="lineno"> 4394</span>&#160;  `soap_end(soap)`.  See also [input and output](#io).</div>
+<div class="line"><a name="l04395"></a><span class="lineno"> 4395</span>&#160;</div>
+<div class="line"><a name="l04396"></a><span class="lineno"> 4396</span>&#160;- `std::ostream *os` for C++: an output stream to write output to.  Normally</div>
+<div class="line"><a name="l04397"></a><span class="lineno"> 4397</span>&#160;  NULL.  This value must be reste to NULL or the next output will be send to</div>
+<div class="line"><a name="l04398"></a><span class="lineno"> 4398</span>&#160;  this stream.  See also [input and output](#io).</div>
+<div class="line"><a name="l04399"></a><span class="lineno"> 4399</span>&#160;</div>
+<div class="line"><a name="l04400"></a><span class="lineno"> 4400</span>&#160;Error handling and reporting                                           {#errors}</div>
+<div class="line"><a name="l04401"></a><span class="lineno"> 4401</span>&#160;==========================</div>
+<div class="line"><a name="l04402"></a><span class="lineno"> 4402</span>&#160;</div>
+<div class="line"><a name="l04403"></a><span class="lineno"> 4403</span>&#160;The gSOAP API functions return `SOAP_OK` (zero) or a non-zero error code.  The</div>
+<div class="line"><a name="l04404"></a><span class="lineno"> 4404</span>&#160;error code is stored in `int soap::error` of the current `struct soap` context.</div>
+<div class="line"><a name="l04405"></a><span class="lineno"> 4405</span>&#160;Error messages can be displayed with:</div>
+<div class="line"><a name="l04406"></a><span class="lineno"> 4406</span>&#160;</div>
+<div class="line"><a name="l04407"></a><span class="lineno"> 4407</span>&#160;- `void soap_stream_fault(struct soap*, std::ostream &amp;os)` for C++ only, prints</div>
+<div class="line"><a name="l04408"></a><span class="lineno"> 4408</span>&#160;  the error message to an output stream.</div>
+<div class="line"><a name="l04409"></a><span class="lineno"> 4409</span>&#160;</div>
+<div class="line"><a name="l04410"></a><span class="lineno"> 4410</span>&#160;- `void soap_print_fault(struct soap*, FILE *fd)` prints the error message to a</div>
+<div class="line"><a name="l04411"></a><span class="lineno"> 4411</span>&#160;  FILE descriptor.</div>
+<div class="line"><a name="l04412"></a><span class="lineno"> 4412</span>&#160;</div>
+<div class="line"><a name="l04413"></a><span class="lineno"> 4413</span>&#160;- `void soap_sprint_fault(struct soap*, char *buf, size_t len)` saves the error</div>
+<div class="line"><a name="l04414"></a><span class="lineno"> 4414</span>&#160;  message to a fixed-size buffer allocated with a maximum length.</div>
+<div class="line"><a name="l04415"></a><span class="lineno"> 4415</span>&#160;</div>
+<div class="line"><a name="l04416"></a><span class="lineno"> 4416</span>&#160;- `void soap_print_fault_location(struct soap*, FILE *fd)` prints the location</div>
+<div class="line"><a name="l04417"></a><span class="lineno"> 4417</span>&#160;  and part of the XML where the parser encountered an error.</div>
 <div class="line"><a name="l04418"></a><span class="lineno"> 4418</span>&#160;</div>
-<div class="line"><a name="l04419"></a><span class="lineno"> 4419</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}</div>
-<div class="line"><a name="l04420"></a><span class="lineno"> 4420</span>&#160;    struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}};</div>
-<div class="line"><a name="l04421"></a><span class="lineno"> 4421</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</div>
-<div class="line"><a name="l04422"></a><span class="lineno"> 4422</span>&#160;</div>
-<div class="line"><a name="l04423"></a><span class="lineno"> 4423</span>&#160;However, beware that any built-in xsi attributes that are rendered will lack</div>
-<div class="line"><a name="l04424"></a><span class="lineno"> 4424</span>&#160;the proper namespace binding.  At least we suggest to use `SOAP_XML_NOTYPE` for</div>
-<div class="line"><a name="l04425"></a><span class="lineno"> 4425</span>&#160;this reason.</div>
-<div class="line"><a name="l04426"></a><span class="lineno"> 4426</span>&#160;</div>
-<div class="line"><a name="l04427"></a><span class="lineno"> 4427</span>&#160;Examples                                                             {#examples}</div>
-<div class="line"><a name="l04428"></a><span class="lineno"> 4428</span>&#160;========</div>
+<div class="line"><a name="l04419"></a><span class="lineno"> 4419</span>&#160;An EOF (`SOAP_EOF` or -1) error code is returned when the parser has hit EOF</div>
+<div class="line"><a name="l04420"></a><span class="lineno"> 4420</span>&#160;but expected more input.</div>
+<div class="line"><a name="l04421"></a><span class="lineno"> 4421</span>&#160;</div>
+<div class="line"><a name="l04422"></a><span class="lineno"> 4422</span>&#160;A `SOAP_EOM` error code is returned when memory was exhausted during</div>
+<div class="line"><a name="l04423"></a><span class="lineno"> 4423</span>&#160;processing of input and/or output of data.</div>
+<div class="line"><a name="l04424"></a><span class="lineno"> 4424</span>&#160;</div>
+<div class="line"><a name="l04425"></a><span class="lineno"> 4425</span>&#160;Use `soap_xml_error_check(soap-&gt;error)` to check for XML errors.  This returns</div>
+<div class="line"><a name="l04426"></a><span class="lineno"> 4426</span>&#160;true (non-zero) when a parsing and validation error has occurred.</div>
+<div class="line"><a name="l04427"></a><span class="lineno"> 4427</span>&#160;</div>
+<div class="line"><a name="l04428"></a><span class="lineno"> 4428</span>&#160;For example:</div>
 <div class="line"><a name="l04429"></a><span class="lineno"> 4429</span>&#160;</div>
-<div class="line"><a name="l04430"></a><span class="lineno"> 4430</span>&#160;Select the project files below to peruse the source code examples.</div>
-<div class="line"><a name="l04431"></a><span class="lineno"> 4431</span>&#160;</div>
-<div class="line"><a name="l04432"></a><span class="lineno"> 4432</span>&#160;Source files</div>
-<div class="line"><a name="l04433"></a><span class="lineno"> 4433</span>&#160;------------</div>
-<div class="line"><a name="l04434"></a><span class="lineno"> 4434</span>&#160;</div>
-<div class="line"><a name="l04435"></a><span class="lineno"> 4435</span>&#160;- `address.xsd`         Address book schema</div>
-<div class="line"><a name="l04436"></a><span class="lineno"> 4436</span>&#160;- `address.cpp`         Address book app (reads/writes address.xml file)</div>
-<div class="line"><a name="l04437"></a><span class="lineno"> 4437</span>&#160;- `addresstypemap.dat`  Schema namespace prefix name preference for wsdl2h</div>
-<div class="line"><a name="l04438"></a><span class="lineno"> 4438</span>&#160;- `graph.h`             Graph data binding (tree, digraph, cyclic graph)</div>
-<div class="line"><a name="l04439"></a><span class="lineno"> 4439</span>&#160;- `graph.cpp`           Test graph serialization as tree, digraph, and cyclic</div>
-<div class="line"><a name="l04440"></a><span class="lineno"> 4440</span>&#160;</div>
-<div class="line"><a name="l04441"></a><span class="lineno"> 4441</span>&#160;Generated files</div>
-<div class="line"><a name="l04442"></a><span class="lineno"> 4442</span>&#160;---------------</div>
-<div class="line"><a name="l04443"></a><span class="lineno"> 4443</span>&#160;</div>
-<div class="line"><a name="l04444"></a><span class="lineno"> 4444</span>&#160;- `address.h`      gSOAP-specific data binding definitions from address.xsd</div>
-<div class="line"><a name="l04445"></a><span class="lineno"> 4445</span>&#160;- `addressStub.h`  C++ data binding definitions</div>
-<div class="line"><a name="l04446"></a><span class="lineno"> 4446</span>&#160;- `addressH.h`     Serializers</div>
-<div class="line"><a name="l04447"></a><span class="lineno"> 4447</span>&#160;- `addressC.cpp`   Serializers</div>
-<div class="line"><a name="l04448"></a><span class="lineno"> 4448</span>&#160;- `address.xml`    Address book data generated by address app</div>
-<div class="line"><a name="l04449"></a><span class="lineno"> 4449</span>&#160;- `graphStub.h`    C++ data binding definitions</div>
-<div class="line"><a name="l04450"></a><span class="lineno"> 4450</span>&#160;- `graphH.h`       Serializers</div>
-<div class="line"><a name="l04451"></a><span class="lineno"> 4451</span>&#160;- `graphC.cpp`     Serializers</div>
-<div class="line"><a name="l04452"></a><span class="lineno"> 4452</span>&#160;- `g.xsd`          XSD schema with `g:Graph` complexType</div>
-<div class="line"><a name="l04453"></a><span class="lineno"> 4453</span>&#160;- `g.nsmap`        xmlns bindings namespace mapping table</div>
-<div class="line"><a name="l04454"></a><span class="lineno"> 4454</span>&#160;</div>
-<div class="line"><a name="l04455"></a><span class="lineno"> 4455</span>&#160;Build steps</div>
-<div class="line"><a name="l04456"></a><span class="lineno"> 4456</span>&#160;-----------</div>
-<div class="line"><a name="l04457"></a><span class="lineno"> 4457</span>&#160;</div>
-<div class="line"><a name="l04458"></a><span class="lineno"> 4458</span>&#160;Building the AddressBook example:</div>
-<div class="line"><a name="l04459"></a><span class="lineno"> 4459</span>&#160;</div>
-<div class="line"><a name="l04460"></a><span class="lineno"> 4460</span>&#160;    wsdl2h -g -t addresstypemap.dat address.xsd</div>
-<div class="line"><a name="l04461"></a><span class="lineno"> 4461</span>&#160;    soapcpp2 -0 -CS -I../../import -p address address.h</div>
-<div class="line"><a name="l04462"></a><span class="lineno"> 4462</span>&#160;    c++ -I../.. address.cpp addressC.cpp -o address -lgsoap++</div>
-<div class="line"><a name="l04463"></a><span class="lineno"> 4463</span>&#160;</div>
-<div class="line"><a name="l04464"></a><span class="lineno"> 4464</span>&#160;Option `-g` produces bindings for global (root) elements in addition to types.</div>
-<div class="line"><a name="l04465"></a><span class="lineno"> 4465</span>&#160;In this case the root element `a:address-book` is bound to `_a__address_book`.</div>
-<div class="line"><a name="l04466"></a><span class="lineno"> 4466</span>&#160;The complexType `a:address` is bound to class `a__address`, which is also the</div>
-<div class="line"><a name="l04467"></a><span class="lineno"> 4467</span>&#160;type of `_a__address_book`.  This option is not required, but allows you to use</div>
-<div class="line"><a name="l04468"></a><span class="lineno"> 4468</span>&#160;global element tag names when referring to their serializers, instead of their</div>
-<div class="line"><a name="l04469"></a><span class="lineno"> 4469</span>&#160;type name.  Option `-0` removes the SOAP protocol.  Options `-C` and `-S`</div>
-<div class="line"><a name="l04470"></a><span class="lineno"> 4470</span>&#160;removes client and server code generation.  Option `-p` renames the output</div>
-<div class="line"><a name="l04471"></a><span class="lineno"> 4471</span>&#160;`soap` files to `address` files.</div>
-<div class="line"><a name="l04472"></a><span class="lineno"> 4472</span>&#160;</div>
-<div class="line"><a name="l04473"></a><span class="lineno"> 4473</span>&#160;See the `address.cpp` implementation and [related pages](pages.html).</div>
-<div class="line"><a name="l04474"></a><span class="lineno"> 4474</span>&#160;</div>
-<div class="line"><a name="l04475"></a><span class="lineno"> 4475</span>&#160;The `addresstypemap.dat` file specifies the XML namespace prefix for the</div>
-<div class="line"><a name="l04476"></a><span class="lineno"> 4476</span>&#160;bindings:</div>
-<div class="line"><a name="l04477"></a><span class="lineno"> 4477</span>&#160;</div>
-<div class="line"><a name="l04478"></a><span class="lineno"> 4478</span>&#160;    #       Bind the address book schema namespace to prefix &#39;a&#39;</div>
-<div class="line"><a name="l04479"></a><span class="lineno"> 4479</span>&#160;</div>
-<div class="line"><a name="l04480"></a><span class="lineno"> 4480</span>&#160;    a = &quot;urn:address-book-example&quot;</div>
+<div class="line"><a name="l04430"></a><span class="lineno"> 4430</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}</div>
+<div class="line"><a name="l04431"></a><span class="lineno"> 4431</span>&#160;    #include &lt;sstream&gt;</div>
+<div class="line"><a name="l04432"></a><span class="lineno"> 4432</span>&#160;</div>
+<div class="line"><a name="l04433"></a><span class="lineno"> 4433</span>&#160;    struct soap *soap = soap_new1(SOAP_XML_INDENT | SOAP_XML_STRICT | SOAP_XML_TREE);</div>
+<div class="line"><a name="l04434"></a><span class="lineno"> 4434</span>&#160;    struct ns__record person;</div>
+<div class="line"><a name="l04435"></a><span class="lineno"> 4435</span>&#160;    std::stringstream ss;</div>
+<div class="line"><a name="l04436"></a><span class="lineno"> 4436</span>&#160;    ss.str(&quot;...&quot;);      // XML to parse</div>
+<div class="line"><a name="l04437"></a><span class="lineno"> 4437</span>&#160;    soap-&gt;is = &amp;ss;</div>
+<div class="line"><a name="l04438"></a><span class="lineno"> 4438</span>&#160;    if (soap_read__ns__record(soap, &amp;person))</div>
+<div class="line"><a name="l04439"></a><span class="lineno"> 4439</span>&#160;    {</div>
+<div class="line"><a name="l04440"></a><span class="lineno"> 4440</span>&#160;      if (soap_xml_error_check(soap-&gt;error))</div>
+<div class="line"><a name="l04441"></a><span class="lineno"> 4441</span>&#160;        std::cerr &lt;&lt; &quot;XML parsing error!&quot; &lt;&lt; std::endl;</div>
+<div class="line"><a name="l04442"></a><span class="lineno"> 4442</span>&#160;      else</div>
+<div class="line"><a name="l04443"></a><span class="lineno"> 4443</span>&#160;        soap_stream_fault(soap, std::cerr);</div>
+<div class="line"><a name="l04444"></a><span class="lineno"> 4444</span>&#160;    }</div>
+<div class="line"><a name="l04445"></a><span class="lineno"> 4445</span>&#160;    else</div>
+<div class="line"><a name="l04446"></a><span class="lineno"> 4446</span>&#160;    {</div>
+<div class="line"><a name="l04447"></a><span class="lineno"> 4447</span>&#160;      ...               // all OK, use person record</div>
+<div class="line"><a name="l04448"></a><span class="lineno"> 4448</span>&#160;    }</div>
+<div class="line"><a name="l04449"></a><span class="lineno"> 4449</span>&#160;    soap_destroy(soap); // delete objects</div>
+<div class="line"><a name="l04450"></a><span class="lineno"> 4450</span>&#160;    soap_end(soap);     // delete other data and temp data</div>
+<div class="line"><a name="l04451"></a><span class="lineno"> 4451</span>&#160;    soap_free(soap);    // free context</div>
+<div class="line"><a name="l04452"></a><span class="lineno"> 4452</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</div>
+<div class="line"><a name="l04453"></a><span class="lineno"> 4453</span>&#160;</div>
+<div class="line"><a name="l04454"></a><span class="lineno"> 4454</span>&#160;Features and limitations                                             {#features}</div>
+<div class="line"><a name="l04455"></a><span class="lineno"> 4455</span>&#160;========================</div>
+<div class="line"><a name="l04456"></a><span class="lineno"> 4456</span>&#160;</div>
+<div class="line"><a name="l04457"></a><span class="lineno"> 4457</span>&#160;In general, to use the generated code:</div>
+<div class="line"><a name="l04458"></a><span class="lineno"> 4458</span>&#160;</div>
+<div class="line"><a name="l04459"></a><span class="lineno"> 4459</span>&#160;- Make sure to `#include &quot;soapH.h&quot;` in your code and also define a namespace</div>
+<div class="line"><a name="l04460"></a><span class="lineno"> 4460</span>&#160;  table or `#include &quot;ns.nsmap&quot;` with the generated table, where `ns` is the</div>
+<div class="line"><a name="l04461"></a><span class="lineno"> 4461</span>&#160;  namespace prefix for services.</div>
+<div class="line"><a name="l04462"></a><span class="lineno"> 4462</span>&#160;</div>
+<div class="line"><a name="l04463"></a><span class="lineno"> 4463</span>&#160;- Use soapcpp2 option -j (C++ only) to generate C++ proxy and service objects.</div>
+<div class="line"><a name="l04464"></a><span class="lineno"> 4464</span>&#160;  The auto-generated files include documented inferfaces.  Compile with</div>
+<div class="line"><a name="l04465"></a><span class="lineno"> 4465</span>&#160;  soapC.cpp and link with -lgsoap++, or alternatively compile stdsoap2.cpp.</div>
+<div class="line"><a name="l04466"></a><span class="lineno"> 4466</span>&#160;</div>
+<div class="line"><a name="l04467"></a><span class="lineno"> 4467</span>&#160;- Without soapcpp2 option -j: client-side uses the auto-generated</div>
+<div class="line"><a name="l04468"></a><span class="lineno"> 4468</span>&#160;  soapClient.cpp and soapC.cpp (or C versions of those).  Compile and link with</div>
+<div class="line"><a name="l04469"></a><span class="lineno"> 4469</span>&#160;  -lgsoap++ (-lgsoap for C), or alternatively compile stdsoap2.cpp</div>
+<div class="line"><a name="l04470"></a><span class="lineno"> 4470</span>&#160;  (stdsoap2.c for C).</div>
+<div class="line"><a name="l04471"></a><span class="lineno"> 4471</span>&#160;</div>
+<div class="line"><a name="l04472"></a><span class="lineno"> 4472</span>&#160;- Without soapcpp2 option -j: server-side uses the auto-generated</div>
+<div class="line"><a name="l04473"></a><span class="lineno"> 4473</span>&#160;  soapServer.cpp and soapC.cpp (or C versions of those).  Compile and link with</div>
+<div class="line"><a name="l04474"></a><span class="lineno"> 4474</span>&#160;  -lgsoap++ (-lgsoap for C), or alternatively compile stdsoap2.cpp (stdsoap2.c</div>
+<div class="line"><a name="l04475"></a><span class="lineno"> 4475</span>&#160;  for C).</div>
+<div class="line"><a name="l04476"></a><span class="lineno"> 4476</span>&#160;</div>
+<div class="line"><a name="l04477"></a><span class="lineno"> 4477</span>&#160;- Use `soap_new()` or `soap_new1(int flags)` to allocate and initialize a</div>
+<div class="line"><a name="l04478"></a><span class="lineno"> 4478</span>&#160;  heap-allocated context with or without flags.  Delete this context with</div>
+<div class="line"><a name="l04479"></a><span class="lineno"> 4479</span>&#160;  `soap_free(struct soap*)`, but only after `soap_destroy(struct soap*)` and</div>
+<div class="line"><a name="l04480"></a><span class="lineno"> 4480</span>&#160;  `soap_end(struct soap*)`.</div>
 <div class="line"><a name="l04481"></a><span class="lineno"> 4481</span>&#160;</div>
-<div class="line"><a name="l04482"></a><span class="lineno"> 4482</span>&#160;    #       By default the xsd:dateTime schema type is translated to time_t</div>
-<div class="line"><a name="l04483"></a><span class="lineno"> 4483</span>&#160;    #       To map xsd:dateTime to struct tm, enable the following line:</div>
-<div class="line"><a name="l04484"></a><span class="lineno"> 4484</span>&#160;</div>
-<div class="line"><a name="l04485"></a><span class="lineno"> 4485</span>&#160;    # xsd__dateTime = #import &quot;../../custom/struct_tm.h&quot;</div>
+<div class="line"><a name="l04482"></a><span class="lineno"> 4482</span>&#160;- Use `soap_init(struct *soap)` or `soap_init1(struct soap*, int flags)` to</div>
+<div class="line"><a name="l04483"></a><span class="lineno"> 4483</span>&#160;  initialize a stack-allocated context with or without flags.  End the use of</div>
+<div class="line"><a name="l04484"></a><span class="lineno"> 4484</span>&#160;  this context with `soap_done(struct soap*)`, but only after</div>
+<div class="line"><a name="l04485"></a><span class="lineno"> 4485</span>&#160;  `soap_destroy(struct soap*)` and `soap_end(struct soap*)`.</div>
 <div class="line"><a name="l04486"></a><span class="lineno"> 4486</span>&#160;</div>
-<div class="line"><a name="l04487"></a><span class="lineno"> 4487</span>&#160;    #       ... and compile/link with custom/struct_tm.c</div>
+<div class="line"><a name="l04487"></a><span class="lineno"> 4487</span>&#160;Additional notes with respect to the wsdl2h and soapcpp2 tools:</div>
 <div class="line"><a name="l04488"></a><span class="lineno"> 4488</span>&#160;</div>
-<div class="line"><a name="l04489"></a><span class="lineno"> 4489</span>&#160;The DOB field is a `xsd:dateTime`, which is bound to `time_t` by default.  To</div>
-<div class="line"><a name="l04490"></a><span class="lineno"> 4490</span>&#160;change this to `struct tm`, enable the import of the `xsd__dateTime` custom</div>
-<div class="line"><a name="l04491"></a><span class="lineno"> 4491</span>&#160;serializer by uncommenting the definition of `xsd__dateTime` in</div>
-<div class="line"><a name="l04492"></a><span class="lineno"> 4492</span>&#160;`addresstypemap.dat`.  Then change `soap_dateTime2s` to `soap_xsd__dateTime2s`</div>
-<div class="line"><a name="l04493"></a><span class="lineno"> 4493</span>&#160;in the code.</div>
-<div class="line"><a name="l04494"></a><span class="lineno"> 4494</span>&#160;</div>
-<div class="line"><a name="l04495"></a><span class="lineno"> 4495</span>&#160;Building the graph serialization example:</div>
-<div class="line"><a name="l04496"></a><span class="lineno"> 4496</span>&#160;</div>
-<div class="line"><a name="l04497"></a><span class="lineno"> 4497</span>&#160;    soapcpp2 -CS -I../../import -p graph graph.h</div>
-<div class="line"><a name="l04498"></a><span class="lineno"> 4498</span>&#160;    c++ -I../.. graph.cpp graphC.cpp -o graph -lgsoap++</div>
-<div class="line"><a name="l04499"></a><span class="lineno"> 4499</span>&#160;</div>
-<div class="line"><a name="l04500"></a><span class="lineno"> 4500</span>&#160;To compile without using the `libgsoap++` library: simply compile</div>
-<div class="line"><a name="l04501"></a><span class="lineno"> 4501</span>&#160;`stdsoap2.cpp` together with the above.</div>
+<div class="line"><a name="l04489"></a><span class="lineno"> 4489</span>&#160;- Nested classes, structs, and unions in a gSOAP header file are unnested by</div>
+<div class="line"><a name="l04490"></a><span class="lineno"> 4490</span>&#160;  soapcpp2.</div>
+<div class="line"><a name="l04491"></a><span class="lineno"> 4491</span>&#160;</div>
+<div class="line"><a name="l04492"></a><span class="lineno"> 4492</span>&#160;- Use `#import &quot;file.h&quot;` instead of `#include` to import other header files in</div>
+<div class="line"><a name="l04493"></a><span class="lineno"> 4493</span>&#160;  a gSOAP header file for soapcpp2.  The `#include`, `#define`, and `#pragma`</div>
+<div class="line"><a name="l04494"></a><span class="lineno"> 4494</span>&#160;  are accepted by soapcpp2, but are moved to the very start of the generated</div>
+<div class="line"><a name="l04495"></a><span class="lineno"> 4495</span>&#160;  code for the C/C++ compiler to include before all generated definitions.</div>
+<div class="line"><a name="l04496"></a><span class="lineno"> 4496</span>&#160;  Often it is useful to add an `#include` with a [volatile type](#toxsd9-2)</div>
+<div class="line"><a name="l04497"></a><span class="lineno"> 4497</span>&#160;  that includes the actual type declaration, and to ensure transient types are</div>
+<div class="line"><a name="l04498"></a><span class="lineno"> 4498</span>&#160;  declared when these are used in a data binding interface declared in a gSOAP</div>
+<div class="line"><a name="l04499"></a><span class="lineno"> 4499</span>&#160;  header file for soapcpp2.</div>
+<div class="line"><a name="l04500"></a><span class="lineno"> 4500</span>&#160;</div>
+<div class="line"><a name="l04501"></a><span class="lineno"> 4501</span>&#160;- To remove any SOAP-specific bindings, use soapcpp2 option `-0`.</div>
 <div class="line"><a name="l04502"></a><span class="lineno"> 4502</span>&#160;</div>
-<div class="line"><a name="l04503"></a><span class="lineno"> 4503</span>&#160;Usage</div>
-<div class="line"><a name="l04504"></a><span class="lineno"> 4504</span>&#160;-----</div>
-<div class="line"><a name="l04505"></a><span class="lineno"> 4505</span>&#160;</div>
-<div class="line"><a name="l04506"></a><span class="lineno"> 4506</span>&#160;To execute the AddressBook example:</div>
-<div class="line"><a name="l04507"></a><span class="lineno"> 4507</span>&#160;</div>
-<div class="line"><a name="l04508"></a><span class="lineno"> 4508</span>&#160;    ./address</div>
-<div class="line"><a name="l04509"></a><span class="lineno"> 4509</span>&#160;</div>
-<div class="line"><a name="l04510"></a><span class="lineno"> 4510</span>&#160;To execute the Graph serialization example:</div>
-<div class="line"><a name="l04511"></a><span class="lineno"> 4511</span>&#160;</div>
-<div class="line"><a name="l04512"></a><span class="lineno"> 4512</span>&#160;    ./graph</div>
-<div class="line"><a name="l04513"></a><span class="lineno"> 4513</span>&#160;</div>
+<div class="line"><a name="l04503"></a><span class="lineno"> 4503</span>&#160;- A gSOAP header file for soapcpp2 should not include any code statements, only</div>
+<div class="line"><a name="l04504"></a><span class="lineno"> 4504</span>&#160;  data type declarations.  This includes constructor initialization lists that are</div>
+<div class="line"><a name="l04505"></a><span class="lineno"> 4505</span>&#160;  not permitted.  Use member initializations instead.</div>
+<div class="line"><a name="l04506"></a><span class="lineno"> 4506</span>&#160;</div>
+<div class="line"><a name="l04507"></a><span class="lineno"> 4507</span>&#160;- C++ namespaces are supported.  Use wsdl2h option `-qname`.  Or add a `namespace</div>
+<div class="line"><a name="l04508"></a><span class="lineno"> 4508</span>&#160;  name { ... }` to the header file, but the `{ ... }` MUST cover the entire</div>
+<div class="line"><a name="l04509"></a><span class="lineno"> 4509</span>&#160;  header file content from begin to end.</div>
+<div class="line"><a name="l04510"></a><span class="lineno"> 4510</span>&#160;  </div>
+<div class="line"><a name="l04511"></a><span class="lineno"> 4511</span>&#160;- Optional XML DOM support can be used to store mixed content or literal XML</div>
+<div class="line"><a name="l04512"></a><span class="lineno"> 4512</span>&#160;  content.  Otherwise, mixed content may be lost.  Use wsdl2h option `-d` for</div>
+<div class="line"><a name="l04513"></a><span class="lineno"> 4513</span>&#160;  XML DOM support and compile and link with `dom.c` or `dom.cpp`.  For details,</div>
+<div class="line"><a name="l04514"></a><span class="lineno"> 4514</span>&#160;  see [XML DOM and XPath](http://www.genivia.com/doc/dom/html).</div>
+<div class="line"><a name="l04515"></a><span class="lineno"> 4515</span>&#160;</div>
+<div class="line"><a name="l04516"></a><span class="lineno"> 4516</span>&#160;Removing SOAP namespaces from XML payloads                              {#nsmap}</div>
+<div class="line"><a name="l04517"></a><span class="lineno"> 4517</span>&#160;==========================================</div>
+<div class="line"><a name="l04518"></a><span class="lineno"> 4518</span>&#160;</div>
+<div class="line"><a name="l04519"></a><span class="lineno"> 4519</span>&#160;The soapcpp2 tool generates a `.nsmap` file that includes two bindings for SOAP</div>
+<div class="line"><a name="l04520"></a><span class="lineno"> 4520</span>&#160;namespaces.  We can remove all SOAP namespaces (and SOAP processing logic) with</div>
+<div class="line"><a name="l04521"></a><span class="lineno"> 4521</span>&#160;soapcpp2 option `-0` or by simply setting the two entries to NULL:</div>
+<div class="line"><a name="l04522"></a><span class="lineno"> 4522</span>&#160;</div>
+<div class="line"><a name="l04523"></a><span class="lineno"> 4523</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}</div>
+<div class="line"><a name="l04524"></a><span class="lineno"> 4524</span>&#160;    struct Namespace namespaces[] =</div>
+<div class="line"><a name="l04525"></a><span class="lineno"> 4525</span>&#160;    {</div>
+<div class="line"><a name="l04526"></a><span class="lineno"> 4526</span>&#160;      {&quot;SOAP-ENV&quot;, NULL, NULL, NULL},</div>
+<div class="line"><a name="l04527"></a><span class="lineno"> 4527</span>&#160;      {&quot;SOAP-ENC&quot;, NULL, NULL, NULL},</div>
+<div class="line"><a name="l04528"></a><span class="lineno"> 4528</span>&#160;      ...</div>
+<div class="line"><a name="l04529"></a><span class="lineno"> 4529</span>&#160;    };</div>
+<div class="line"><a name="l04530"></a><span class="lineno"> 4530</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</div>
+<div class="line"><a name="l04531"></a><span class="lineno"> 4531</span>&#160;</div>
+<div class="line"><a name="l04532"></a><span class="lineno"> 4532</span>&#160;Note that once the `.nsmap` is generated, you can copy-paste the content into</div>
+<div class="line"><a name="l04533"></a><span class="lineno"> 4533</span>&#160;your project code.  However, if we rerun wsdl2h on updated WSDL/XSD files or</div>
+<div class="line"><a name="l04534"></a><span class="lineno"> 4534</span>&#160;`typemap.dat` declarations then we need to use the updated table.</div>
+<div class="line"><a name="l04535"></a><span class="lineno"> 4535</span>&#160;</div>
+<div class="line"><a name="l04536"></a><span class="lineno"> 4536</span>&#160;In cases that no XML namespaces are used at all, for example with</div>
+<div class="line"><a name="l04537"></a><span class="lineno"> 4537</span>&#160;[XML-RPC](http://www.genivia.com/doc/xml-rpc-json/html), you may use an empty</div>
+<div class="line"><a name="l04538"></a><span class="lineno"> 4538</span>&#160;namespace table:</div>
+<div class="line"><a name="l04539"></a><span class="lineno"> 4539</span>&#160;</div>
+<div class="line"><a name="l04540"></a><span class="lineno"> 4540</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}</div>
+<div class="line"><a name="l04541"></a><span class="lineno"> 4541</span>&#160;    struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}};</div>
+<div class="line"><a name="l04542"></a><span class="lineno"> 4542</span>&#160;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</div>
+<div class="line"><a name="l04543"></a><span class="lineno"> 4543</span>&#160;</div>
+<div class="line"><a name="l04544"></a><span class="lineno"> 4544</span>&#160;However, beware that any built-in xsi attributes that are rendered will lack</div>
+<div class="line"><a name="l04545"></a><span class="lineno"> 4545</span>&#160;the proper namespace binding.  At least we suggest to use `SOAP_XML_NOTYPE` for</div>
+<div class="line"><a name="l04546"></a><span class="lineno"> 4546</span>&#160;this reason.</div>
+<div class="line"><a name="l04547"></a><span class="lineno"> 4547</span>&#160;</div>
+<div class="line"><a name="l04548"></a><span class="lineno"> 4548</span>&#160;Examples                                                             {#examples}</div>
+<div class="line"><a name="l04549"></a><span class="lineno"> 4549</span>&#160;========</div>
+<div class="line"><a name="l04550"></a><span class="lineno"> 4550</span>&#160;</div>
+<div class="line"><a name="l04551"></a><span class="lineno"> 4551</span>&#160;Select the project files below to peruse the source code examples.</div>
+<div class="line"><a name="l04552"></a><span class="lineno"> 4552</span>&#160;</div>
+<div class="line"><a name="l04553"></a><span class="lineno"> 4553</span>&#160;Source files</div>
+<div class="line"><a name="l04554"></a><span class="lineno"> 4554</span>&#160;------------</div>
+<div class="line"><a name="l04555"></a><span class="lineno"> 4555</span>&#160;</div>
+<div class="line"><a name="l04556"></a><span class="lineno"> 4556</span>&#160;- `address.xsd`         Address book schema</div>
+<div class="line"><a name="l04557"></a><span class="lineno"> 4557</span>&#160;- `address.cpp`         Address book app (reads/writes address.xml file)</div>
+<div class="line"><a name="l04558"></a><span class="lineno"> 4558</span>&#160;- `addresstypemap.dat`  Schema namespace prefix name preference for wsdl2h</div>
+<div class="line"><a name="l04559"></a><span class="lineno"> 4559</span>&#160;- `graph.h`             Graph data binding (tree, digraph, cyclic graph)</div>
+<div class="line"><a name="l04560"></a><span class="lineno"> 4560</span>&#160;- `graph.cpp`           Test graph serialization as tree, digraph, and cyclic</div>
+<div class="line"><a name="l04561"></a><span class="lineno"> 4561</span>&#160;</div>
+<div class="line"><a name="l04562"></a><span class="lineno"> 4562</span>&#160;Generated files</div>
+<div class="line"><a name="l04563"></a><span class="lineno"> 4563</span>&#160;---------------</div>
+<div class="line"><a name="l04564"></a><span class="lineno"> 4564</span>&#160;</div>
+<div class="line"><a name="l04565"></a><span class="lineno"> 4565</span>&#160;- `address.h`      gSOAP-specific data binding definitions from address.xsd</div>
+<div class="line"><a name="l04566"></a><span class="lineno"> 4566</span>&#160;- `addressStub.h`  C++ data binding definitions</div>
+<div class="line"><a name="l04567"></a><span class="lineno"> 4567</span>&#160;- `addressH.h`     Serializers</div>
+<div class="line"><a name="l04568"></a><span class="lineno"> 4568</span>&#160;- `addressC.cpp`   Serializers</div>
+<div class="line"><a name="l04569"></a><span class="lineno"> 4569</span>&#160;- `address.xml`    Address book data generated by address app</div>
+<div class="line"><a name="l04570"></a><span class="lineno"> 4570</span>&#160;- `graphStub.h`    C++ data binding definitions</div>
+<div class="line"><a name="l04571"></a><span class="lineno"> 4571</span>&#160;- `graphH.h`       Serializers</div>
+<div class="line"><a name="l04572"></a><span class="lineno"> 4572</span>&#160;- `graphC.cpp`     Serializers</div>
+<div class="line"><a name="l04573"></a><span class="lineno"> 4573</span>&#160;- `g.xsd`          XSD schema with `g:Graph` complexType</div>
+<div class="line"><a name="l04574"></a><span class="lineno"> 4574</span>&#160;- `g.nsmap`        xmlns bindings namespace mapping table</div>
+<div class="line"><a name="l04575"></a><span class="lineno"> 4575</span>&#160;</div>
+<div class="line"><a name="l04576"></a><span class="lineno"> 4576</span>&#160;Build steps</div>
+<div class="line"><a name="l04577"></a><span class="lineno"> 4577</span>&#160;-----------</div>
+<div class="line"><a name="l04578"></a><span class="lineno"> 4578</span>&#160;</div>
+<div class="line"><a name="l04579"></a><span class="lineno"> 4579</span>&#160;Building the AddressBook example:</div>
+<div class="line"><a name="l04580"></a><span class="lineno"> 4580</span>&#160;</div>
+<div class="line"><a name="l04581"></a><span class="lineno"> 4581</span>&#160;    wsdl2h -g -t addresstypemap.dat address.xsd</div>
+<div class="line"><a name="l04582"></a><span class="lineno"> 4582</span>&#160;    soapcpp2 -0 -CS -I../../import -p address address.h</div>
+<div class="line"><a name="l04583"></a><span class="lineno"> 4583</span>&#160;    c++ -I../.. address.cpp addressC.cpp -o address -lgsoap++</div>
+<div class="line"><a name="l04584"></a><span class="lineno"> 4584</span>&#160;</div>
+<div class="line"><a name="l04585"></a><span class="lineno"> 4585</span>&#160;Option `-g` produces bindings for global (root) elements in addition to types.</div>
+<div class="line"><a name="l04586"></a><span class="lineno"> 4586</span>&#160;In this case the root element `a:address-book` is bound to `_a__address_book`.</div>
+<div class="line"><a name="l04587"></a><span class="lineno"> 4587</span>&#160;The complexType `a:address` is bound to class `a__address`, which is also the</div>
+<div class="line"><a name="l04588"></a><span class="lineno"> 4588</span>&#160;type of `_a__address_book`.  This option is not required, but allows you to use</div>
+<div class="line"><a name="l04589"></a><span class="lineno"> 4589</span>&#160;global element tag names when referring to their serializers, instead of their</div>
+<div class="line"><a name="l04590"></a><span class="lineno"> 4590</span>&#160;type name.  Option `-0` removes the SOAP protocol.  Options `-C` and `-S`</div>
+<div class="line"><a name="l04591"></a><span class="lineno"> 4591</span>&#160;removes client and server code generation.  Option `-p` renames the output</div>
+<div class="line"><a name="l04592"></a><span class="lineno"> 4592</span>&#160;`soap` files to `address` files.</div>
+<div class="line"><a name="l04593"></a><span class="lineno"> 4593</span>&#160;</div>
+<div class="line"><a name="l04594"></a><span class="lineno"> 4594</span>&#160;See the `address.cpp` implementation and [related pages](pages.html).</div>
+<div class="line"><a name="l04595"></a><span class="lineno"> 4595</span>&#160;</div>
+<div class="line"><a name="l04596"></a><span class="lineno"> 4596</span>&#160;The `addresstypemap.dat` file specifies the XML namespace prefix for the</div>
+<div class="line"><a name="l04597"></a><span class="lineno"> 4597</span>&#160;bindings:</div>
+<div class="line"><a name="l04598"></a><span class="lineno"> 4598</span>&#160;</div>
+<div class="line"><a name="l04599"></a><span class="lineno"> 4599</span>&#160;    #       Bind the address book schema namespace to prefix &#39;a&#39;</div>
+<div class="line"><a name="l04600"></a><span class="lineno"> 4600</span>&#160;</div>
+<div class="line"><a name="l04601"></a><span class="lineno"> 4601</span>&#160;    a = &quot;urn:address-book-example&quot;</div>
+<div class="line"><a name="l04602"></a><span class="lineno"> 4602</span>&#160;</div>
+<div class="line"><a name="l04603"></a><span class="lineno"> 4603</span>&#160;    #       By default the xsd:dateTime schema type is translated to time_t</div>
+<div class="line"><a name="l04604"></a><span class="lineno"> 4604</span>&#160;    #       To map xsd:dateTime to struct tm, enable the following line:</div>
+<div class="line"><a name="l04605"></a><span class="lineno"> 4605</span>&#160;</div>
+<div class="line"><a name="l04606"></a><span class="lineno"> 4606</span>&#160;    # xsd__dateTime = #import &quot;../../custom/struct_tm.h&quot;</div>
+<div class="line"><a name="l04607"></a><span class="lineno"> 4607</span>&#160;</div>
+<div class="line"><a name="l04608"></a><span class="lineno"> 4608</span>&#160;    #       ... and compile/link with custom/struct_tm.c</div>
+<div class="line"><a name="l04609"></a><span class="lineno"> 4609</span>&#160;</div>
+<div class="line"><a name="l04610"></a><span class="lineno"> 4610</span>&#160;The DOB field is a `xsd:dateTime`, which is bound to `time_t` by default.  To</div>
+<div class="line"><a name="l04611"></a><span class="lineno"> 4611</span>&#160;change this to `struct tm`, enable the import of the `xsd__dateTime` custom</div>
+<div class="line"><a name="l04612"></a><span class="lineno"> 4612</span>&#160;serializer by uncommenting the definition of `xsd__dateTime` in</div>
+<div class="line"><a name="l04613"></a><span class="lineno"> 4613</span>&#160;`addresstypemap.dat`.  Then change `soap_dateTime2s` to `soap_xsd__dateTime2s`</div>
+<div class="line"><a name="l04614"></a><span class="lineno"> 4614</span>&#160;in the code.</div>
+<div class="line"><a name="l04615"></a><span class="lineno"> 4615</span>&#160;</div>
+<div class="line"><a name="l04616"></a><span class="lineno"> 4616</span>&#160;Building the graph serialization example:</div>
+<div class="line"><a name="l04617"></a><span class="lineno"> 4617</span>&#160;</div>
+<div class="line"><a name="l04618"></a><span class="lineno"> 4618</span>&#160;    soapcpp2 -CS -I../../import -p graph graph.h</div>
+<div class="line"><a name="l04619"></a><span class="lineno"> 4619</span>&#160;    c++ -I../.. graph.cpp graphC.cpp -o graph -lgsoap++</div>
+<div class="line"><a name="l04620"></a><span class="lineno"> 4620</span>&#160;</div>
+<div class="line"><a name="l04621"></a><span class="lineno"> 4621</span>&#160;To compile without using the `libgsoap++` library: simply compile</div>
+<div class="line"><a name="l04622"></a><span class="lineno"> 4622</span>&#160;`stdsoap2.cpp` together with the above.</div>
+<div class="line"><a name="l04623"></a><span class="lineno"> 4623</span>&#160;</div>
+<div class="line"><a name="l04624"></a><span class="lineno"> 4624</span>&#160;Usage</div>
+<div class="line"><a name="l04625"></a><span class="lineno"> 4625</span>&#160;-----</div>
+<div class="line"><a name="l04626"></a><span class="lineno"> 4626</span>&#160;</div>
+<div class="line"><a name="l04627"></a><span class="lineno"> 4627</span>&#160;To execute the AddressBook example:</div>
+<div class="line"><a name="l04628"></a><span class="lineno"> 4628</span>&#160;</div>
+<div class="line"><a name="l04629"></a><span class="lineno"> 4629</span>&#160;    ./address</div>
+<div class="line"><a name="l04630"></a><span class="lineno"> 4630</span>&#160;</div>
+<div class="line"><a name="l04631"></a><span class="lineno"> 4631</span>&#160;To execute the Graph serialization example:</div>
+<div class="line"><a name="l04632"></a><span class="lineno"> 4632</span>&#160;</div>
+<div class="line"><a name="l04633"></a><span class="lineno"> 4633</span>&#160;    ./graph</div>
+<div class="line"><a name="l04634"></a><span class="lineno"> 4634</span>&#160;</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <hr class="footer">
@@ -4585,7 +4706,7 @@ $(document).ready(function(){initNavTree('_r_e_a_d_m_e_8md.html','');});
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Mar 2 2016 10:24:53 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Apr 26 2016 15:13:54 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

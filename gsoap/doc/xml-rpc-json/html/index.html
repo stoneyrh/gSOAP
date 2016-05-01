@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">XML-RPC &amp; JSON/JSONPath</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Feb 23 2016</div>
+      <div style="float: right; font-size: 10px;">updated Mon Apr 4 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -484,6 +484,11 @@ C++ XML-RPC and JSON with examples                                     </h2>
 <div class="line">v[1] = 99.99;</div>
 <div class="line">v[2] = <span class="stringliteral">&quot;abc&quot;</span>;</div>
 <div class="line"></div>
+<div class="line"><span class="comment">// copy a C array or a C++ container to a JSON array</span></div>
+<div class="line"><span class="keywordtype">int</span> ints[] = { 1, 2, 3 };</div>
+<div class="line">v.<a class="code" href="structvalue.html#aa348b92d0343ec28a56542f2c47dc3aa">size</a>(3);            <span class="comment">// array size of JSON value v must conform</span></div>
+<div class="line">std::copy(ints, ints + 3, v.<a class="code" href="structvalue.html#a0f72d8e5406f3349b26de14831b4172f">begin</a>());</div>
+<div class="line"></div>
 <div class="line"><span class="comment">// create a struct (JSON object) {&quot;name&quot;: &quot;gsoap&quot;, &quot;major&quot;: 2.8, &quot;©&quot;: 2015}</span></div>
 <div class="line">v[<span class="stringliteral">&quot;name&quot;</span>]  = <span class="stringliteral">&quot;gsoap&quot;</span>;</div>
 <div class="line">v[<span class="stringliteral">&quot;major&quot;</span>] = 2.8;</div>
@@ -594,18 +599,18 @@ true ---------------------------------------&gt; [true]
 <div class="line"><a class="code" href="structvalue.html">value</a>&amp; <a class="code" href="structvalue.html">value</a>::operator[const <span class="keywordtype">char</span>*]    <span class="comment">// returns value at field in struct</span></div>
 <div class="line"><a class="code" href="structvalue.html">value</a>&amp; <a class="code" href="structvalue.html">value</a>::operator[const <span class="keywordtype">wchar_t</span>*] <span class="comment">// returns value at field in struct</span></div>
 </div><!-- fragment --><p>For example, let's take the value <code>v</code> that was assigned the array shown above. We have the following properties of this value:</p>
-<div class="fragment"><div class="line">v.<a class="code" href="structvalue.html#a98b46005862c3378fa0f514876ac6967">is_null</a>() == <span class="keyword">false</span>             <span class="comment">// v is not null</span></div>
-<div class="line">v.<a class="code" href="structvalue.html#acd5f0cc9c8de4b5a245223e227ee6b7e">is_array</a>() == <span class="keyword">true</span>             <span class="comment">// v is an array</span></div>
-<div class="line">v.<a class="code" href="structvalue.html#aa348b92d0343ec28a56542f2c47dc3aa">size</a>() == 1                    <span class="comment">// v has one element</span></div>
-<div class="line">v.<a class="code" href="structvalue.html#a77f964446b0b447c90835eeec6707187">has</a>(1) == <span class="keyword">false</span>                <span class="comment">// v has no array element at index 1</span></div>
-<div class="line">v.<a class="code" href="structvalue.html#ae88d4b548e28edb9fc354be581d71093">nth</a>(-1) == 0                   <span class="comment">// v last element is at index 0</span></div>
-<div class="line">v[0].<a class="code" href="structvalue.html#a3fbb0450e00e7c69726479ea7ca30371">is_struct</a>() == <span class="keyword">true</span>         <span class="comment">// v[0] is a struct</span></div>
-<div class="line">v[0].<a class="code" href="structvalue.html#a77f964446b0b447c90835eeec6707187">has</a>(<span class="stringliteral">&quot;name&quot;</span>) == <span class="keyword">true</span>         <span class="comment">// v[0] has field name &quot;name&quot;</span></div>
-<div class="line">v[0].<a class="code" href="structvalue.html#ae88d4b548e28edb9fc354be581d71093">nth</a>(<span class="stringliteral">&quot;name&quot;</span>) == 0            <span class="comment">// v[0] has field name &quot;name&quot; at index 0</span></div>
-<div class="line">v[0][0].<a class="code" href="structvalue.html#a9b7b0789dc59f7a50c009c487777c282">is_string</a>() == <span class="keyword">true</span>      <span class="comment">// v[0][0] == v[0][&quot;name&quot;] is a string</span></div>
-<div class="line">v[0].<a class="code" href="structvalue.html#a77f964446b0b447c90835eeec6707187">has</a>(<span class="stringliteral">&quot;toys&quot;</span>) == <span class="keyword">true</span>         <span class="comment">// v[0] has field name &quot;toys&quot;</span></div>
-<div class="line">v[0][<span class="stringliteral">&quot;toys&quot;</span>].<a class="code" href="structvalue.html#acd5f0cc9c8de4b5a245223e227ee6b7e">is_array</a>() == <span class="keyword">true</span>  <span class="comment">// v[0][&quot;toys&quot;] is an array</span></div>
-<div class="line">v[0][<span class="stringliteral">&quot;toys&quot;</span>].<a class="code" href="structvalue.html#a95f0f36dbb5dd05b3fb15a3006f4db36">empty</a>() == <span class="keyword">false</span>    <span class="comment">// v[0][&quot;toys&quot;] is not empty</span></div>
+<div class="fragment"><div class="line">v.is_null() == <span class="keyword">false</span>             <span class="comment">// v is not null</span></div>
+<div class="line">v.is_array() == <span class="keyword">true</span>             <span class="comment">// v is an array</span></div>
+<div class="line">v.size() == 1                    <span class="comment">// v has one element</span></div>
+<div class="line">v.has(1) == <span class="keyword">false</span>                <span class="comment">// v has no array element at index 1</span></div>
+<div class="line">v.nth(-1) == 0                   <span class="comment">// v last element is at index 0</span></div>
+<div class="line">v[0].is_struct() == <span class="keyword">true</span>         <span class="comment">// v[0] is a struct</span></div>
+<div class="line">v[0].has(<span class="stringliteral">&quot;name&quot;</span>) == <span class="keyword">true</span>         <span class="comment">// v[0] has field name &quot;name&quot;</span></div>
+<div class="line">v[0].nth(<span class="stringliteral">&quot;name&quot;</span>) == 0            <span class="comment">// v[0] has field name &quot;name&quot; at index 0</span></div>
+<div class="line">v[0][0].is_string() == <span class="keyword">true</span>      <span class="comment">// v[0][0] == v[0][&quot;name&quot;] is a string</span></div>
+<div class="line">v[0].has(<span class="stringliteral">&quot;toys&quot;</span>) == <span class="keyword">true</span>         <span class="comment">// v[0] has field name &quot;toys&quot;</span></div>
+<div class="line">v[0][<span class="stringliteral">&quot;toys&quot;</span>].is_array() == <span class="keyword">true</span>  <span class="comment">// v[0][&quot;toys&quot;] is an array</span></div>
+<div class="line">v[0][<span class="stringliteral">&quot;toys&quot;</span>].empty() == <span class="keyword">false</span>    <span class="comment">// v[0][&quot;toys&quot;] is not empty</span></div>
 </div><!-- fragment --><p>When accessing structs (JSON objects) by field name, make sure to use existing member field names only. A new member fieldname-value pair is dynamically added to the structure to accomodate the new entry for the field.</p>
 <p>Also arrays are extended to accommodate the indexed array element. A negative index accesses elements from the array's end, with index -1 accessing the last value. Also the <code>value::has(int)</code> and <code>value::nth(int)</code> methods take a negative index for bounds checking on arrays and will return <code>false</code> or negative, respectively.</p>
 <p>Use <code><a class="el" href="structvalue.html#aa348b92d0343ec28a56542f2c47dc3aa" title="set/allocate size of array ">value::size(int)</a></code> to change array size or set arrays to zero length. Use negative size with <code><a class="el" href="structvalue.html#aa348b92d0343ec28a56542f2c47dc3aa" title="set/allocate size of array ">value::size(int)</a></code> to remove elements from the end.</p>
@@ -627,18 +632,18 @@ true ---------------------------------------&gt; [true]
 <div class="line"><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *raw = base64.<a class="code" href="struct__base64.html#accb75dbcdaf316a692d92d42783ffcb8">ptr</a>();  <span class="comment">// points to raw binary data</span></div>
 <div class="line"><span class="keywordtype">int</span> size = base64.<a class="code" href="struct__base64.html#a89555bd2f9d977fd17bc2823bef10230">size</a>();           <span class="comment">// that is of this size</span></div>
 </div><!-- fragment --><p>Arrays and structs are compound types that cannot be cast to or from other types (but if you do cast, an empty array or struct is created an no runtime error will occur). So we should check for array and struct types to obtain their content. For example:</p>
-<div class="fragment"><div class="line"><span class="keywordflow">if</span> (v.<a class="code" href="structvalue.html#acd5f0cc9c8de4b5a245223e227ee6b7e">is_array</a>())</div>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> (v.is_array())</div>
 <div class="line">{</div>
-<div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; v.<a class="code" href="structvalue.html#aa348b92d0343ec28a56542f2c47dc3aa">size</a>(); ++i)</div>
+<div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; v.size(); ++i)</div>
 <div class="line">  {</div>
 <div class="line">    <a class="code" href="structvalue.html">value</a>&amp; array_value = v[i];</div>
 <div class="line">    ... <span class="comment">// use and/or set array_value</span></div>
 <div class="line">  }</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>We use the iterators <code><a class="el" href="structvalue.html#aec762fde6750eaaed2cc1c835d38408a">value::iterator</a></code> and <code><a class="el" href="structvalue.html#a34f1b384ded31c97cf40e66aebde8850">value::const_iterator</a></code> to loop over the values in structs and arrays:</p>
-<div class="fragment"><div class="line"><span class="keywordflow">if</span> (v.<a class="code" href="structvalue.html#a3fbb0450e00e7c69726479ea7ca30371">is_struct</a>() || v.<a class="code" href="structvalue.html#acd5f0cc9c8de4b5a245223e227ee6b7e">is_array</a>())</div>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> (v.is_struct() || v.is_array())</div>
 <div class="line">{</div>
-<div class="line">  <span class="keywordflow">for</span> (<a class="code" href="structvalue.html#aec762fde6750eaaed2cc1c835d38408a">value::iterator</a> i = v.<a class="code" href="structvalue.html#a0f72d8e5406f3349b26de14831b4172f">begin</a>(); i != v.<a class="code" href="structvalue.html#ad8105e2e20772a0d8299579212784c0c">end</a>(); ++i)</div>
+<div class="line">  <span class="keywordflow">for</span> (<a class="code" href="structvalue.html#aec762fde6750eaaed2cc1c835d38408a">value::iterator</a> i = v.begin(); i != v.end(); ++i)</div>
 <div class="line">  {</div>
 <div class="line">    <span class="keywordtype">int</span> index = i.index();              <span class="comment">// index of element</span></div>
 <div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span> *name = i.name();        <span class="comment">// name() is nonempty for structs</span></div>
@@ -649,7 +654,7 @@ true ---------------------------------------&gt; [true]
 </div><!-- fragment --><p>The iterator method <code>value::iterator::index()</code> returns the integer index of the struct or array element. The <code>value::iterator::name()</code> method returns the name of the struct member, or empty <code>""</code> if the type is not a struct. The <code><a class="el" href="structvalue.html#a34f1b384ded31c97cf40e66aebde8850">value::const_iterator</a></code> does not permit the value referenced by the iterator to be modified.</p>
 <p>There are two lower level iterators for structs and arrays, which are slightly more efficient to use compared to the <code><a class="el" href="structvalue.html#aec762fde6750eaaed2cc1c835d38408a">value::iterator</a></code>. These array and struct iterators have an <code>index()</code> method to obtain the index (an int). Struct iterators have a <code>name()</code> method to obtain a member's name (a string).</p>
 <p>For example, to traverse a value <code>v</code> that is an array or a struct:</p>
-<div class="fragment"><div class="line"><span class="keywordflow">if</span> (v.<a class="code" href="structvalue.html#acd5f0cc9c8de4b5a245223e227ee6b7e">is_array</a>())</div>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> (v.is_array())</div>
 <div class="line">{</div>
 <div class="line">  <a class="code" href="struct__array.html">_array</a>&amp; vec = v;  <span class="comment">// cast to _array</span></div>
 <div class="line">  <span class="keywordflow">for</span> (<a class="code" href="struct__array.html#a61e069daf5d5b31875a5d249216ac8d3">_array::iterator</a> i = vec.<a class="code" href="struct__array.html#acb0f4e1bb00cc556d8fd0e76489e7db3">begin</a>(); i != vec.<a class="code" href="struct__array.html#a6e4804695d0f5ab0e1cae9ea0788f84a">end</a>(); ++i)</div>
@@ -659,7 +664,7 @@ true ---------------------------------------&gt; [true]
 <div class="line">    ... <span class="comment">// use array_index, use and/or set array_value</span></div>
 <div class="line">  }</div>
 <div class="line">}</div>
-<div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (v.<a class="code" href="structvalue.html#a3fbb0450e00e7c69726479ea7ca30371">is_struct</a>())</div>
+<div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (v.is_struct())</div>
 <div class="line">{</div>
 <div class="line">  <a class="code" href="struct__struct.html">_struct</a>&amp; rec = v;  <span class="comment">// cast to _struct</span></div>
 <div class="line">  <span class="keywordflow">for</span> (<a class="code" href="struct__struct.html#a88edf40f7bb954061eddc160b1105ff3">_struct::iterator</a> i = rec.<a class="code" href="struct__struct.html#affe3d3358649a2e72dcdd44bd0060ce8">begin</a>(); i != rec.<a class="code" href="struct__struct.html#a927df1efbfb8f7aabb7417fc971d697e">end</a>(); ++i)</div>
@@ -952,7 +957,7 @@ C++ JSON over HTTP (REST method)                                       </h2>
 <ul>
 <li><code>int json_call(soap *ctx, const char *URL, value *in, value *out)</code> makes a POST, GET, PUT, DELETE call, returns <code>SOAP_OK</code> or error code. POST method: pass both <code>in</code> and <code>out</code>. GET method: pass a NULL to <code>in</code>. PUT method: pass a NULL to <code>out</code>. DELETE method: pass both NULL to <code>in</code> and <code>out</code>.</li>
 <li><code>int json_write(soap *ctx, const value *v)</code> writes JSON value to current file, socket, or stream. Returns <code>SOAP_OK</code> or error. Set file/socket file descriptor to write to with <code>ctx-&gt;sendfd = fd</code> (1 by default). In C++, set output stream with <code>ctx-&gt;os = ostream</code> to write to.</li>
-<li><code>int <a class="el" href="json_8h.html#a927016fe60cb59422e4769dd7803462c">json_read(soap *ctx, value *v)</a></code> reads JSON value from current file, socket, or stream. Returns <code>SOAP_OK</code> or error. Set file/socket file descriptor with <code>ctx-&gt;recvfd = fd</code> to read from (0 by default). In C++, set input stream with <code>ctx-&gt;is = istream</code>.</li>
+<li><code>int <a class="el" href="json_8h.html#a927016fe60cb59422e4769dd7803462c" title="Read JSON value from context&#39;s input (socket, stream, FILE, or string) ">json_read(soap *ctx, value *v)</a></code> reads JSON value from current file, socket, or stream. Returns <code>SOAP_OK</code> or error. Set file/socket file descriptor with <code>ctx-&gt;recvfd = fd</code> to read from (0 by default). In C++, set input stream with <code>ctx-&gt;is = istream</code>.</li>
 </ul>
 <p>The are two other lower-level functions <code>json_send</code> and <code>json_recv</code> that are similar to <code>json_write</code> and <code>json_read</code> but do not initialize the sending and receiving operations and do not flush after the sending and receiving operations.</p>
 <p>To implement a JSON REST server for CGI (e.g. install in cgi-bin):</p>
@@ -1498,8 +1503,8 @@ C JSON over HTTP (REST method)                                           </h2>
 <p>Besides <code>json_call</code>, there are other JSON API functions:</p>
 <ul>
 <li><code>int json_call(struct soap *ctx, const char *URL, struct value *in, struct value *out)</code> makes a POST, GET, PUT, DELETE call, returns <code>SOAP_OK</code> or error code. POST method: pass both <code>in</code> and <code>out</code>. GET method: pass a NULL to <code>in</code>. PUT method: pass a NULL to <code>out</code>. DELETE method: pass both NULL to <code>in</code> and <code>out</code>.</li>
-<li><code>int <a class="el" href="json_8h.html#ae0b41e1415944a28b8ef92dc98be8c50">json_write(struct soap *ctx, const struct value *v)</a></code> Writes JSON value to current file or socket. Returns <code>SOAP_OK</code> or error. Set current file/socket file descriptor with <code>ctx-&gt;sendfd = fd</code>. Or save JSON to a string by setting <code>ctx-&gt;os = &amp;cs</code> with <code>const char *cs</code> a string pointer that will be set to a NUL-terminated string when the write completed.</li>
-<li><code>int <a class="el" href="json_8h.html#a927016fe60cb59422e4769dd7803462c">json_read(struct soap *ctx, struct value *v)</a></code> Reads JSON value from current file or socket. Returns <code>SOAP_OK</code> or error. Set current file/socket file descriptor with <code>ctx-&gt;recvfd = fd</code>. Or read from string by setting <code>ctx-&gt;is = cs</code> to a <code>const char *cs</code> NUL-terminated string.</li>
+<li><code>int <a class="el" href="json_8h.html#ae0b41e1415944a28b8ef92dc98be8c50" title="Write JSON value to the context&#39;s output (socket, stream, FILE, or string) ">json_write(struct soap *ctx, const struct value *v)</a></code> Writes JSON value to current file or socket. Returns <code>SOAP_OK</code> or error. Set current file/socket file descriptor with <code>ctx-&gt;sendfd = fd</code>. Or save JSON to a string by setting <code>ctx-&gt;os = &amp;cs</code> with <code>const char *cs</code> a string pointer that will be set to a NUL-terminated string when the write completed.</li>
+<li><code>int <a class="el" href="json_8h.html#a927016fe60cb59422e4769dd7803462c" title="Read JSON value from context&#39;s input (socket, stream, FILE, or string) ">json_read(struct soap *ctx, struct value *v)</a></code> Reads JSON value from current file or socket. Returns <code>SOAP_OK</code> or error. Set current file/socket file descriptor with <code>ctx-&gt;recvfd = fd</code>. Or read from string by setting <code>ctx-&gt;is = cs</code> to a <code>const char *cs</code> NUL-terminated string.</li>
 </ul>
 <p>The are two other lower-level functions <code>json_send</code> and <code>json_recv</code> that are similar to <code>json_write</code> and <code>json_read</code> but do not initialize the sending and receiving operations and do not flush after the sending and receiving operations.</p>
 <p>Compile and link together with <code>soapC.c</code>, <code>xml-rpc.c</code>, <code>json.c</code>, and <code>stdsoap2.c</code>.</p>
@@ -1633,7 +1638,7 @@ JSON and ISO 8601 dateTime                                           </h2>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Feb 23 2016 23:40:28 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Mon Apr 4 2016 11:23:24 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

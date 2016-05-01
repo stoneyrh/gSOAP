@@ -32,13 +32,13 @@ to C and C++ using built-in intuitive mapping rules, while allowing the
 mappings to be customized using a `typemap.dat` file with mapping instructions
 for wsdl2h.
 
-The information in this document is applicable to gSOAP 2.8.26 and higher, which
-supports C++11 features.  However, C++11 is not required to use this material
-and the examples included, unless we need smart pointers and scoped
-enumerations.  While most of the examples in this document are given in C++,
-the concepts also apply to C with the exception of containers, smart pointers,
-classes and their methods.  None of these exceptions limit the use of the
-gSOAP tools for C in any way.
+The information in this document is applicable to gSOAP 2.8.26 and later
+versions that support C++11 features.  However, C++11 is not required to use
+this material and the examples included, unless we need smart pointers and
+scoped enumerations.  While most of the examples in this document are given in
+C++, the concepts also apply to C with the exception of containers, smart
+pointers, classes and their methods.  None of these exceptions limit the use of
+the gSOAP tools for C in any way.
 
 The data binding concepts described in this document were first envisioned in
 1999 by Prof. Robert van Engelen at the Florida State University.  An
@@ -792,7 +792,7 @@ translated to the XML tag name `s-a:my-way` by translating the prefix `s_a`
 and the local name `my_way`.
 
 Struct/class member and parameter name translation can be overruled by using
-[backtick XML tags](#toxsd9-5) (with gSOAP 2.8.30 or higher).
+[backtick XML tags](#toxsd9-5) (with gSOAP 2.8.30 and later versions).
 
 C++ Bool and C alternatives                                            {#toxsd3}
 ---------------------------
@@ -1636,7 +1636,7 @@ The class maps to a complexType in the soapcpp2-generated schema:
       </sequence>
     </complexType>
 
-### Serializable versus transient types and members                  {#toxsd9-1}
+### Serializable versus transient types and data members             {#toxsd9-1}
 
 Public data members of a class or struct are serialized.  Private and protected
 members are transient and not serializable.
@@ -1835,7 +1835,7 @@ usual XML tag translation, see [colon notation](#toxsd2).
 
 To override the standard translation of identifier names to XML tag names of
 attributes and elements, add the XML tag name in backticks (requires gSOAP
-2.8.30 or higher):
+2.8.30 and later versions):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     class ns__record
@@ -1989,7 +1989,7 @@ elements and attributes, see [document root element definitions](#toxsd9-7).
 
 [Backtick tag names](#toxsd9-5) can be used in place of the member name
 annotations and will achieve the same effect as described when these tag names
-are (un)qualified (requires gSOAP 2.8.30 or higher).
+are (un)qualified (requires gSOAP 2.8.30 and later versions).
 
 @note You must declare a target namespace with a `//gsoap ns schema namespace:`
 directive to enable the `elementForm` and `attributeForm` directives in order
@@ -2085,8 +2085,8 @@ By contrast, colon notation has the desired effect to (un)qualify local tag
 names by overruling the default element/attribute namespace qualification, see
 [qualified and unqualified members](#toxsd9-6).
 
-As an alternative to prefixing member names, use the backtick tag (gSOAP 2.8.30
-and higher):
+As an alternative to prefixing member names, use the backtick tag (requires
+gSOAP 2.8.30 and later versions):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     typedef std::string _ns__name 1 : 100;
@@ -4252,8 +4252,8 @@ Context flags to initialize the soap struct                             {#flags}
 ===========================================
 
 There are several context initialization flags and context mode flags to
-control XML serialization at runtime.  The flags are set with `soap_new1()` for
-heap allocation of contexts:
+control XML serialization at runtime.  The flags are set with `soap_new1()` to
+allocate and initialize a new context:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     struct soap *soap = soap_new1(<flag> | <flag> ... | <flag>);
@@ -4263,7 +4263,7 @@ heap allocation of contexts:
     soap_free(soap);    // free context
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-and with `soap_init1()` with stack allocated contexts:
+and with `soap_init1()` for stack-allocated contexts:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     struct soap soap;
@@ -4329,6 +4329,127 @@ where `<flag>` is one of:
 
 - `SOAP_ENC_MTOM`: enable MTOM attachments, see
   [MIME/MTOM attachment binary types](#toxsd10-3).
+
+@note C++ Web service proxy and service classes have their own context, either
+as a base class (soapcpp2 option -i) or as a data member `soap` that points to
+a context (soapcpp2 option -j).  These contexts are allocated when the proxy or
+service is instantiated with context flags that are passed to the constructor.
+
+Context parameter settings                                             {#params}
+==========================
+
+After allocation and initializtion of a `struct soap` context, several context
+parameters can be set (some parameters may require 2.8.31 and later versions):
+
+- `unsigned int soap::maxlevel` is the maximum XML nesting depth levels that
+  the parser permits.  Default initialized to `SOAP_MAXLEVEL` (10000), which is
+  a redefinable macro in stdsoap2.h.  Set `soap::maxlevel` to a lower value to
+  restrict XML parsing nesting depth.
+
+- `long soap::maxlength` is the maximum string content length if not already
+  constrained by an XML schema validation `maxLength` constraint.  Zero means
+  unlimited string lengths are permitted (unless restricted by XML schema
+  `maxLength`).  Default initialized to `SOAP_MAXLENGTH` (0), which is a
+  redefinable macro in stdsoap2.h.  Set `soap::maxlength` to a positive value
+  to restrict the number of (wide) characters in strings parsed, restrict
+  hexBinary byte length, and restrict base64Binary byte length.
+
+- `size_t soap::maxoccurs` is the maximum number of array or container elements
+  permitted by the parser.  Must be greater than zero (0).  Default initialized
+  to `SOAP_MAXOCCURS` (100000), which is a redefinable macro in stdsoap2.h.
+  Set `soap::maxoccurs` to a positive value to restrict the number of array and
+  container elements that can be parsed.
+
+- `soap::version` is the SOAP version used, with 0 for non-SOAP, 1 for SOAP1.1,
+  and 2 for SOAP1.2.  This value is normally set by web service operations, and
+  is otherwise 0 (non-SOAP).  Use `soap_set_version(struct soap*, short)` to
+  set the value.  This controls XML namespaces and SOAP id-ref serialization
+  when applicable with an encodingStyle (see below).
+
+- `const char *soap::encodingStyle` is a string that is used with SOAP
+  encoding, normally NULL for non-SOAP XML.  Set this string to "" (empty
+  string) to enable SOAP encoding style, which supports id-ref graph
+  serialization (see also the `SOAP_XML_GRAPH` [context flag](#flags)).
+
+- `int soap::recvfd` is the file descriptor to read and parse source data from.
+  Default initialized to 0 (stdin).  See also [input and output](#io).
+
+- `int soap::sendfd` is the file descriptor to write data to.  Default
+  initialized to 1 (stdout).  See also [input and output](#io).
+
+- `const char *is` for C: string to read and parse source data from, overriding
+  the `recvfd` source.  Normally NULL.  This value must be reset to NULL or
+  the parser will continue to read from this string content until the NUL
+  character.  See also [input and output](#io).
+
+- `std::istream *is` for C++: an input stream to read and parse source data
+  from, overriding the `recvfd` source.  Normally NULL.  This value must be
+  reset to NULL or the parser will continue to read from this stream until EOF.
+  See also [input and output](#io).
+
+- `const char **os` for C: points to a string (a `const char *`) that will be
+  set to point to the string output.  Normally NULL.  This value must be reset
+  to NULL or the next output will result in reassigning the pointer to point to
+  the next string that is output.  The strings are automatically deallocated by
+  `soap_end(soap)`.  See also [input and output](#io).
+
+- `std::ostream *os` for C++: an output stream to write output to.  Normally
+  NULL.  This value must be reste to NULL or the next output will be send to
+  this stream.  See also [input and output](#io).
+
+Error handling and reporting                                           {#errors}
+==========================
+
+The gSOAP API functions return `SOAP_OK` (zero) or a non-zero error code.  The
+error code is stored in `int soap::error` of the current `struct soap` context.
+Error messages can be displayed with:
+
+- `void soap_stream_fault(struct soap*, std::ostream &os)` for C++ only, prints
+  the error message to an output stream.
+
+- `void soap_print_fault(struct soap*, FILE *fd)` prints the error message to a
+  FILE descriptor.
+
+- `void soap_sprint_fault(struct soap*, char *buf, size_t len)` saves the error
+  message to a fixed-size buffer allocated with a maximum length.
+
+- `void soap_print_fault_location(struct soap*, FILE *fd)` prints the location
+  and part of the XML where the parser encountered an error.
+
+An EOF (`SOAP_EOF` or -1) error code is returned when the parser has hit EOF
+but expected more input.
+
+A `SOAP_EOM` error code is returned when memory was exhausted during
+processing of input and/or output of data.
+
+Use `soap_xml_error_check(soap->error)` to check for XML errors.  This returns
+true (non-zero) when a parsing and validation error has occurred.
+
+For example:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include <sstream>
+
+    struct soap *soap = soap_new1(SOAP_XML_INDENT | SOAP_XML_STRICT | SOAP_XML_TREE);
+    struct ns__record person;
+    std::stringstream ss;
+    ss.str("...");      // XML to parse
+    soap->is = &ss;
+    if (soap_read__ns__record(soap, &person))
+    {
+      if (soap_xml_error_check(soap->error))
+        std::cerr << "XML parsing error!" << std::endl;
+      else
+        soap_stream_fault(soap, std::cerr);
+    }
+    else
+    {
+      ...               // all OK, use person record
+    }
+    soap_destroy(soap); // delete objects
+    soap_end(soap);     // delete other data and temp data
+    soap_free(soap);    // free context
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Features and limitations                                             {#features}
 ========================

@@ -41,7 +41,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "httpda.h"
 #endif
 
-#define WSDL2H_VERSION "2.8.30"
+#define WSDL2H_VERSION "2.8.31"
 
 #ifdef WIN32
 # pragma warning(disable : 4996)

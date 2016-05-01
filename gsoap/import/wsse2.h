@@ -1,11 +1,13 @@
 /*
-	wsse2.h 1.0 (2002 and 2004 versions)
+	wsse2.h 1.0 (2002 and 2004 version namespaces)
 	See wsse.h for details
 
 	- Copied from wsse.h
 	- Changed //gsoap wsse  schema import: http://schemas.xmlsoap.org/ws/2002/12/secext
 	- Changed //gsoap wsse  schema namespace2:	http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
-	- Changed #import "wsc2.h"
+	- Added mutable SOAP_ENV__Header struct
+	- Changed to #import "xenc2.h"
+	- Changed to #import "wsc2.h"
 
 */
 
@@ -30,7 +32,7 @@
  *                                                                            *
 \******************************************************************************/
 
-//gsoap wsse  schema import: http://schemas.xmlsoap.org/ws/2002/12/secext
+//gsoap wsse  schema import: 		http://schemas.xmlsoap.org/ws/2002/12/secext
 //gsoap wsse  schema namespace2:	http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
 //gsoap wsse  schema elementForm:	qualified
 //gsoap wsse  schema attributeForm:	unqualified
@@ -51,6 +53,8 @@
 /// @brief This type is used for password elements per Section 4.1.
 /// complexType definition intentionally left blank.
 
+/// @brief Typedef synonym for struct wsse__EncodedString.
+typedef struct wsse__EncodedString wsse__EncodedString;
 /// Imported complexType "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":EncodedString from typemap WS/WS-typemap.dat.
 /// @brief This type is used for elements containing stringified binary data.
 /// complexType definition intentionally left blank.
@@ -105,13 +109,25 @@ enum wsse__FaultcodeEnum
 /// Typedef synonym for enum wsse__FaultcodeEnum.
 typedef enum wsse__FaultcodeEnum wsse__FaultcodeEnum;
 
+/// "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":EncodedString is a complexType with simpleContent.
+/// @brief This type is used for elements containing stringified binary data.
+struct wsse__EncodedString
+{
+/// __item wraps "xs:string" simpleContent.
+    char*                                __item                        ;
+/// Attribute "EncodingType" of XSD type xs:anyURI.
+   @char*                                EncodingType                   0;	///< Optional attribute.
+/// Imported attribute reference "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd":Id.
+   @char*                                wsu__Id                        0;	///< Optional attribute.
+};
+
 /// Element "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":UsernameToken of complexType "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":UsernameTokenType.
 /// @brief This element defines the wsse:UsernameToken element per Section 4.1.
 /// Imported element _wsse__UsernameToken from typemap WS/WS-typemap.dat.
 typedef struct _wsse__UsernameToken
 {	char*					Username;
 	struct _wsse__Password*			Password;
-	char*					Nonce;
+	struct wsse__EncodedString*		Nonce;
 	char*					wsu__Created;
 	@char*					wsu__Id;
 } _wsse__UsernameToken;
@@ -169,7 +185,7 @@ typedef struct _wsse__SecurityTokenReference
 /// Element "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":Security of complexType "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":SecurityHeaderType.
 /// @brief This element defines the wsse:Security SOAP header element per Section 4.
 /// Imported element _wsse__Security from typemap WS/WS-typemap.dat.
-#import "xenc.h"
+#import "xenc2.h"
 #import "wsc2.h"
 typedef struct _wsse__Security
 {	struct _wsu__Timestamp*			wsu__Timestamp;

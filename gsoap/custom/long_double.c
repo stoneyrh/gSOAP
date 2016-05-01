@@ -54,9 +54,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include <float.h>
 
-int soap_s2decimal(struct soap *soap, const char *s, long double *p)
-{ if (s)
-  { if (!*s)
+SOAP_FMAC3 int SOAP_FMAC4 soap_s2decimal(struct soap *soap, const char *s, long double *p)
+{
+  if (s)
+  {
+    if (!*s)
       return soap->error = SOAP_TYPE;
     if (!soap_tag_cmp(s, "INF"))
       *p = (long double)DBL_PINFTY;
@@ -95,7 +97,7 @@ int soap_s2decimal(struct soap *soap, const char *s, long double *p)
   return soap->error;
 }
 
-const char *soap_decimal2s(struct soap *soap, long double n)
+SOAP_FMAC3 const char * SOAP_FMAC4 soap_decimal2s(struct soap *soap, long double n)
 {
 #if !defined(WITH_C_LOCALE) || !defined(HAVE_SPRINTF_L)
   char *s;
@@ -130,23 +132,24 @@ const char *soap_decimal2s(struct soap *soap, long double n)
   return soap->tmpbuf;
 }
 
-int
-soap_outdecimal(struct soap *soap, const char *tag, int id, const long double *p, const char *type, int n)
-{ if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, p, n), type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_outdecimal(struct soap *soap, const char *tag, int id, const long double *p, const char *type, int n)
+{
+  if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, p, n), type)
    || soap_string_out(soap, soap_decimal2s(soap, *p), 0))
     return soap->error;
   return soap_element_end_out(soap, tag);
 }
 
-long double *
-soap_indecimal(struct soap *soap, const char *tag, long double *p, const char *type, int t)
-{ if (soap_element_begin_in(soap, tag, 0, type))
+SOAP_FMAC3 long double * SOAP_FMAC4 soap_indecimal(struct soap *soap, const char *tag, long double *p, const char *type, int t)
+{
+  if (soap_element_begin_in(soap, tag, 0, type))
     return NULL;
   p = (long double*)soap_id_enter(soap, soap->id, p, t, sizeof(long double), NULL, NULL, NULL, NULL);
   if (*soap->href)
     p = (long double*)soap_id_forward(soap, soap->href, p, 0, t, 0, sizeof(long double), 0, NULL, NULL);
   else if (p)
-  { if (soap_s2decimal(soap, soap_value(soap), p))
+  {
+    if (soap_s2decimal(soap, soap_value(soap), p))
       return NULL;
   }
   if (soap->body && soap_element_end_in(soap, tag))

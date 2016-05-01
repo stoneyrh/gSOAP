@@ -59,7 +59,7 @@ int is_builtin_qname(const char *QName)
     if (*QName == '#') // reserved QNames
       return 0;
     if (*QName != '"')
-      return 1;	// if the QName does not start with a ", it must be in the nsmap
+      return 1; // if the QName does not start with a ", it must be in the nsmap
     const char *s = strchr(QName + 1, '"');
     if (s)
     {
@@ -74,7 +74,7 @@ int is_builtin_qname(const char *QName)
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//	wsdl
+//      wsdl
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -245,7 +245,7 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
       {
         if (cwd)
         {
-	  size_t l = strlen(cwd) + strlen(loc);
+          size_t l = strlen(cwd) + strlen(loc);
           location = (char*)soap_malloc(soap, l + 2);
           soap_strcpy(location, l + 2, cwd);
           char *s = strrchr(location, '/');
@@ -255,9 +255,9 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
 #endif
           if (s)
             *s = '\0';
-	  size_t n = strlen(location);
+          size_t n = strlen(location);
           soap_strcpy(location + n, l + 2 - n, "/");
-	  ++n;
+          ++n;
           soap_strcpy(location + n, l + 2 - n, loc);
           if (!strncmp(location, "file://", 7))
             location += 7;
@@ -265,12 +265,12 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
         }
         if (soap->recvfd < 0 && import_path)
         {
-	  size_t l = strlen(import_path) + strlen(loc);
+          size_t l = strlen(import_path) + strlen(loc);
           location = (char*)soap_malloc(soap, l + 2);
           soap_strcpy(location, l + 2, import_path);
-	  size_t n = strlen(location);
+          size_t n = strlen(location);
           soap_strcpy(location + n, l + 2 - n, "/");
-	  ++n;
+          ++n;
           soap_strcpy(location + n, l + 2 - n, loc);
           if (!strncmp(location, "file://", 7))
             location += 7;
@@ -1135,7 +1135,7 @@ int wsdl__ioput::traverse(wsdl__definitions& definitions)
             {
               if ((*message).name && !strcmp((*message).name, token))
               {
-        	messageRef = &(*message);
+                messageRef = &(*message);
                 if (vflag)
                   cerr << "    Found input/output '" << (name ? name : "(null)") << "' message '" << (token ? token : "(null)") << "'" << endl;
                 break;
@@ -1222,9 +1222,9 @@ int wsdl__fault::traverse(wsdl__definitions& definitions)
             {
               for (vector<wsdl__fault>::iterator fault = (*i).fault.begin(); fault != (*i).fault.end(); ++fault)
               {
-        	if ((*fault).name && !strcmp((*fault).name, token))
+                if ((*fault).name && !strcmp((*fault).name, token))
                 {
-        	  elementRef = (*fault).elementPtr();
+                  elementRef = (*fault).elementPtr();
                   if (vflag)
                     cerr << "   Found fault '" << (ref ? ref : "(null)") << "' element '" << (token ? token : "(null)") << "'" << endl;
                   break;
@@ -1305,7 +1305,7 @@ int wsdl__fault::traverse(wsdl__definitions& definitions)
             {
               if ((*message).name && !strcmp((*message).name, token))
               {
-        	messageRef = &(*message);
+                messageRef = &(*message);
                 if (vflag)
                   cerr << "    Found operation fault '" << (name ? name : "(null)") << "' message '" << (token ? token : "(null)") << "'" << endl;
                 break;
@@ -1522,14 +1522,14 @@ again:
         cerr << "Preprocessing schema '" << (*schema2)->targetNamespace << "' import '" << ((*import).namespace_ ? (*import).namespace_ : "(null)") << "'" << endl; 
       if (!found && (*import).namespace_)
       {
-	for (SetOfString::const_iterator i = exturis.begin(); i != exturis.end(); ++i)
-	{
-	  if (!soap_tag_cmp((*import).namespace_, *i))
-	  {
-	    found = true;
-	    break;
-	  }
-	}
+        for (SetOfString::const_iterator i = exturis.begin(); i != exturis.end(); ++i)
+        {
+          if (!soap_tag_cmp((*import).namespace_, *i))
+          {
+            found = true;
+            break;
+          }
+        }
       }
       if (!found && !iflag) // don't import any of the schemas in the .nsmap table (or when -i option is used)
       {
@@ -1545,7 +1545,7 @@ again:
           importschema = new xs__schema(definitions.soap, (*schema2)->sourceLocation(), s);
           if (!(*import).namespace_)
           {
-	    if (importschema->targetNamespace)
+            if (importschema->targetNamespace)
               (*import).namespace_ = importschema->targetNamespace;
             else
               (*import).namespace_ = soap_strdup(definitions.soap, "");
@@ -1558,15 +1558,15 @@ again:
           {
             if ((*schema3)->targetNamespace && !strcmp((*import).namespace_, (*schema3)->targetNamespace))
             {
-	      (*import).schemaPtr(*schema3);
-	      if ((*schema3) == this || // WSDL 2.0 <types> has no FormDefaults
-		  (*schema3)->empty())  // schema w/o components, only imports
-	      {
-		(*schema3)->elementFormDefault = importschema->elementFormDefault;
-		(*schema3)->attributeFormDefault = importschema->attributeFormDefault;
-	      }
-	      (*schema3)->insert(*importschema); // merge content
-	      goto again;
+              (*import).schemaPtr(*schema3);
+              if ((*schema3) == this || // WSDL 2.0 <types> has no FormDefaults
+                  (*schema3)->empty())  // schema w/o components, only imports
+              {
+                (*schema3)->elementFormDefault = importschema->elementFormDefault;
+                (*schema3)->attributeFormDefault = importschema->attributeFormDefault;
+              }
+              (*schema3)->insert(*importschema); // merge content
+              goto again;
             }
           }
         }
@@ -1587,15 +1587,15 @@ again:
     {
       cerr << endl << "Schema " << ((*schema4)->targetNamespace ? (*schema4)->targetNamespace : "") << " " << ((*schema4)->sourceLocation() ? (*schema4)->sourceLocation() : "") << endl;
       for (vector<xs__import>::iterator im = (*schema4)->import.begin(); im != (*schema4)->import.end(); ++im)
-	cerr << "  import " << ((*im).namespace_ ? (*im).namespace_ : "") << " " << ((*im).schemaLocation ? (*im).schemaLocation : "") << endl;
+        cerr << "  import " << ((*im).namespace_ ? (*im).namespace_ : "") << " " << ((*im).schemaLocation ? (*im).schemaLocation : "") << endl;
       for (vector<xs__simpleType>::iterator st = (*schema4)->simpleType.begin(); st != (*schema4)->simpleType.end(); ++st)
-	cerr << "  simpleType " << ((*st).name ? (*st).name : "") << endl;
+        cerr << "  simpleType " << ((*st).name ? (*st).name : "") << endl;
       for (vector<xs__complexType>::iterator ct = (*schema4)->complexType.begin(); ct != (*schema4)->complexType.end(); ++ct)
-	cerr << "  complexType " << ((*ct).name ? (*ct).name : "") << endl;
+        cerr << "  complexType " << ((*ct).name ? (*ct).name : "") << endl;
       for (vector<xs__element>::iterator el = (*schema4)->element.begin(); el != (*schema4)->element.end(); ++el)
-	cerr << "  element " << ((*el).name ? (*el).name : "") << endl;
+        cerr << "  element " << ((*el).name ? (*el).name : "") << endl;
       for (vector<xs__attribute>::iterator at = (*schema4)->attribute.begin(); at != (*schema4)->attribute.end(); ++at)
-	cerr << "  attribute " << ((*at).name ? (*at).name : "") << endl;
+        cerr << "  attribute " << ((*at).name ? (*at).name : "") << endl;
     }
   }
   return SOAP_OK;
@@ -1744,7 +1744,7 @@ wsdl__import::wsdl__import()
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//	streams
+//      streams
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1797,7 +1797,7 @@ istream &operator>>(istream &i, wsdl__definitions &e)
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//	Miscellaneous
+//      Miscellaneous
 //
 ////////////////////////////////////////////////////////////////////////////////
 

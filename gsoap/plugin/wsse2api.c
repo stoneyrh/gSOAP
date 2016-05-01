@@ -83,6 +83,7 @@ const char soap_wsse_id[14] = SOAP_WSSE_ID;
 const char *wsse_PasswordTextURI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText";
 const char *wsse_PasswordDigestURI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest";
 const char *wsse_Base64BinaryURI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary";
+const char *wsse_HexBinaryURI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#HexBinary";
 const char *wsse_X509v3URI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3";
 const char *wsse_X509v3SubjectKeyIdentifierURI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509SubjectKeyIdentifier";
 
@@ -437,7 +438,10 @@ soap_wsse_add_UsernameTokenDigest(struct soap *soap, const char *id, const char 
   soap_wsse_add_UsernameTokenText(soap, id, username, HABase64);
   /* populate the remainder of the password, nonce, and created */
   security->UsernameToken->Password->Type = (char*)wsse_PasswordDigestURI;
-  security->UsernameToken->Nonce = nonceBase64;
+  security->UsernameToken->Nonce = (struct wsse__EncodedString*)soap_malloc(soap, sizeof(struct wsse__EncodedString));
+  soap_default_wsse__EncodedString(soap, security->UsernameToken->Nonce);
+  security->UsernameToken->Nonce->__item = nonceBase64;
+  security->UsernameToken->Nonce->EncodingType = (char*)wsse_Base64BinaryURI;
   security->UsernameToken->wsu__Created = soap_strdup(soap, created);
   return SOAP_OK;
 }
@@ -512,18 +516,24 @@ soap_wsse_verify_Password(struct soap *soap, const char *password)
       { char HA1[SOAP_SMD_SHA1_SIZE], HA2[SOAP_SMD_SHA1_SIZE];
         /* The specs are not clear: compute digest over binary nonce or base64 nonce? The formet appears to be the case: */
         int noncelen;
-        const char *nonce = soap_base642s(soap, token->Nonce, NULL, 0, &noncelen);
+        const char *nonce;
+	if (!token->Nonce->EncodingType || !strcmp(token->Nonce->EncodingType, wsse_Base64BinaryURI))
+	  nonce = soap_base642s(soap, token->Nonce->__item, NULL, 0, &noncelen);
+	else if (!strcmp(token->Nonce->EncodingType, wsse_HexBinaryURI))
+	  nonce = soap_hex2s(soap, token->Nonce->__item, NULL, 0, &noncelen);
+	else
+	  return soap_wsse_fault(soap, wsse__FailedAuthentication, NULL);
         /* compute HA1 = SHA1(created, nonce, password) */
         calc_digest(soap, token->wsu__Created, nonce, noncelen, password, HA1);
         /*
-        calc_digest(soap, token->wsu__Created, token->Nonce, strlen(token->Nonce), password, HA1);
+        calc_digest(soap, token->wsu__Created, token->Nonce->__item, strlen(token->Nonce->__item), password, HA1);
         */
         /* get HA2 = supplied digest from base64 Password */
         soap_base642s(soap, token->Password->__item, HA2, SOAP_SMD_SHA1_SIZE, NULL);
         /* compare HA1 to HA2 */
         if (!memcmp(HA1, HA2, SOAP_SMD_SHA1_SIZE))
         { /* authorize if HA1 and HA2 identical and not replay attack */
-          if (!soap_wsse_session_verify(soap, HA1, token->wsu__Created, token->Nonce))
+          if (!soap_wsse_session_verify(soap, HA1, token->wsu__Created, token->Nonce->__item))
             return SOAP_OK;
           return soap->error; 
         }
@@ -1150,7 +1160,7 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
     if (soap->dom)
     { struct soap_dom_element *elt;
       /* traverse the DOM while searching for SignedInfo in the ds namespace */
-      for (elt = soap->dom; elt; elt = soap_dom_next_element(elt))
+      for (elt = soap->dom; elt; elt = soap_dom_next_element(elt, NULL))
       { if (elt->name
          && elt->nstr
          && !strcmp(elt->nstr, ds_URI)
@@ -1161,7 +1171,7 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
       if (elt)
       { int err = SOAP_OK;
         /* should not include leading whitespace in signature verification */
-        elt->head = NULL;
+        elt->lead = NULL;
         /* use smdevp engine to verify SignedInfo */
         if ((alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
           sig = (char*)soap_malloc(soap, soap_smd_size(alg, key));
@@ -1189,12 +1199,12 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
 	  for (prt = elt->prnt; prt; prt = prt->prnt)
           { for (att = prt->atts; att; att = att->next)
               if (!strncmp(att->name, "xmlns:", 6) && !soap_lookup_ns(soap, att->name + 6, strlen(att->name + 6)))
-                soap_attribute(soap, att->name, att->data);
+                soap_attribute(soap, att->name, att->text);
           }
 	  for (prt = elt->prnt; prt; prt = prt->prnt)
           { for (att = prt->atts; att; att = att->next)
               if (!strcmp(att->name, "xmlns"))
-	      { soap_attribute(soap, att->name, att->data);
+	      { soap_attribute(soap, att->name, att->text);
 	        break;
 	      }
 	  }
@@ -1344,7 +1354,7 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
   if (!data)
     return soap_set_receiver_error(soap, "soap_wsse_verify_digest", "Plugin not registered", SOAP_PLUGIN_ERROR);
   /* traverse the DOM to find the element with matching wsu:Id or ds:Id */
-  for (elt = soap->dom; elt; elt = soap_dom_next_element(elt))
+  for (elt = soap->dom; elt; elt = soap_dom_next_element(elt, NULL))
   { struct soap_dom_attribute *att;
     for (att = elt->atts; att; att = att->next)
     { /* check attribute */
@@ -1353,7 +1363,7 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
        && (!strcmp(att->nstr, wsu_URI) || !strcmp(att->nstr, ds_URI))
        && (!strcmp(att->name, "Id") || !soap_tag_cmp(att->name, "*:Id")))
       { /* found a match, compare attribute value with id */
-        if (att->data && !strcmp(att->data, id))
+        if (att->text && !strcmp(att->text, id))
         { if (dom)
             return soap_wsse_fault(soap, wsse__FailedCheck, "SignedInfo duplicate Id");
 	  dom = elt;
@@ -1367,7 +1377,7 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
     int len, err = SOAP_OK;
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Computing digest for Id=%s\n", id));
     /* do not hash leading whitespace */
-    dom->head = NULL;
+    dom->lead = NULL;
     /* canonical or as-is? */
     if (canonical)
     { struct soap_dom_element *prt;
@@ -1385,14 +1395,14 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
       { for (att = prt->atts; att; att = att->next)
         { if (!strncmp(att->name, "xmlns:", 6) && !soap_lookup_ns(soap, att->name + 6, strlen(att->name + 6)))
           { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Attribute=%s\n", att->name));
-            soap_attribute(soap, att->name, att->data);
+            soap_attribute(soap, att->name, att->text);
           }
         }
       }
       for (prt = dom->prnt; prt; prt = prt->prnt)
       { for (att = prt->atts; att; att = att->next)
         { if (!strcmp(att->name, "xmlns"))
-          { soap_attribute(soap, att->name, att->data);
+          { soap_attribute(soap, att->name, att->text);
             break;
           }
         }
@@ -2356,7 +2366,7 @@ soap_wsse_session_verify(struct soap *soap, const char hash[SOAP_SMD_SHA1_SIZE],
     if (session)
     { session->next = soap_wsse_session;
       session->expired = expired;
-      soap_memcpy(session->hash, sizeof(session->hash), hash, SOAP_SMD_SHA1_SIZE);
+      soap_memcpy((void*)session->hash, sizeof(session->hash), (const void*)hash, SOAP_SMD_SHA1_SIZE);
       soap_strcpy(session->nonce, l + 1, nonce);
       soap_wsse_session = session;
     }
@@ -2443,7 +2453,7 @@ calc_nonce(struct soap *soap, char nonce[SOAP_WSSE_NONCELEN])
   soap_memcpy((void*)nonce, SOAP_WSSE_NONCELEN, (const void*)&r, 4);
   for (i = 4; i < SOAP_WSSE_NONCELEN; i += 4)
   { r = soap_random;
-    soap_memcpy((void*)nonce + i, (const void*)&r, 4);
+    soap_memcpy((void*)nonce + i, 4, (const void*)&r, 4);
   }
 }
 
@@ -2830,7 +2840,7 @@ soap_wsse_verify_element(struct soap *soap, const char *URI, const char *tag)
           int i;
           for (i = 0; i < signedInfo->__sizeReference; i++)
           { ds__ReferenceType *reference = signedInfo->Reference[i];
-            if (reference->URI && *reference->URI == '#' && !strcmp(reference->URI + 1, att->data))
+            if (reference->URI && *reference->URI == '#' && !strcmp(reference->URI + 1, att->text))
             { ok = 1;
               break;
             }
@@ -2853,7 +2863,7 @@ soap_wsse_verify_element(struct soap *soap, const char *URI, const char *tag)
 	}
       }
       else
-        elt = soap_dom_next_element(elt);
+        elt = soap_dom_next_element(elt, NULL);
     }
   }
   return count;
@@ -2873,7 +2883,7 @@ soap_wsse_verify_nested(struct soap *soap, struct soap_dom_element *dom, const c
 { size_t count = 0;
   /* search the DOM node and descendants for matching elements */
   struct soap_dom_element *elt = dom;
-  for (elt = dom; elt && elt != dom->next && elt != dom->prnt; elt = soap_dom_next_element(elt))
+  for (elt = dom; elt && elt != dom->next && elt != dom->prnt; elt = soap_dom_next_element(elt, NULL))
   { if (elt->name && ((!elt->nstr && !URI) || (elt->nstr && URI && !strcmp(elt->nstr, URI))))
     { const char *s = strchr(elt->name, ':');
       if (s)
@@ -3579,14 +3589,14 @@ soap_wsse_preparefinalsend(struct soap *soap)
       }
       else
       { const char *c14nexclude = soap->c14nexclude;
-        soap->c14nexclude = "ds"; /* don't add xmlns:ds to count msg len */
+        soap->c14nexclude = "ds xsi"; /* don't add xmlns:ds or xmlns:xsi to count msg len */
         soap->level = 4; /* indent level for XML SignedInfo */
         if (soap->mode & SOAP_XML_CANONICAL && soap->mode & SOAP_XML_INDENT)
         { soap->ns = 0; /* need namespaces for canonicalization */
           soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
 	}
         soap_out_ds__SignedInfoType(soap, "ds:SignedInfo", 0, signature->SignedInfo, NULL);
-        soap_outstring(soap, "ds:SignatureValue", 0, &signature->SignatureValue, NULL, 0);
+        soap_out__ds__SignatureValue(soap, "ds:SignatureValue", 0, &signature->SignatureValue, NULL);
         soap->c14nexclude = c14nexclude;
       }
     }
