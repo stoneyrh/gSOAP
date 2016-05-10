@@ -1029,7 +1029,7 @@ Version 2.8.30 (04/02/2016)
 - Fixed soapcpp2 option `-w` that may cause a message response element tag name inconsistency with SOAP doc/lit style.
 - Fixed deserialization issue with dynamic arrays of STL containers/smart-pointers (i.e. a pointer to an array of containers/smart-pointers, which is an unlikely combination to use, but should work).
 
-Version 2.8.31 (05/1/2016) {#latest}
+Version 2.8.31 (05/1/2016)
 ---
 
 - Added engine context `sndbuf` and `rcvbuf` attributes to (re)set `setsockopt` values for `SO_SNDBUF` and `SO_RCVBUF`, respectively.  Default value is `SOAP_BUFLEN`, same as engine's internal message buffer size.  Setting to zero forces the engine to omit the `setsockopt` `SO_SNDBUF` and `SOAP_RCVBUF` calls, which for example can be used to enable TCP buffer autotuning with Linux (Linux 2.4 and up).
@@ -1045,6 +1045,13 @@ Version 2.8.31 (05/1/2016) {#latest}
 - Fixed (smart) pointer deserialization of non-base (derived) objects that are XML serialized with SOAP id-ref encoding using a href/ref that references a derived object (i.e. should result in a (smart) pointer to a derived instance, not a base instance or missing instance).
 - Fixed strict validation (`SOAP_XML_STRICT`) of unqualified attributes in elements with a default namespace.
 - Fixed wsdl2h 2.8.28-30 parsing of *`xs:unique`* causing wsdl2h to skip over schema components.  The fix also improved string-based parsing of XML content with a fix for 2.8.28-30 XML string handling.
+
+Version 2.8.32 (05/10/2016) {#latest}
+---
+
+- Improved soapcpp2 code generation of type converters `int soap_s2T(soap*, const char*, T*)` and `const char *soap_T2s(soap*, T)` for primitive and binary types T.
+- Fixed unqualified *`xsi:type`* content matching with default namespace, which may lead to a failure in the 2.8.31 release to instantiate derived instances for complexType extensions.
+- Fixed Solaris crash in `soap_wstrdup`.
 
 [![To top](http://www.genivia.com/images/go-up.png) To top](changelog.html)
 

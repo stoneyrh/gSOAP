@@ -146,7 +146,7 @@ chaining.o: chaining.cpp QuotequoteService.h QuoteH.h QuoteStub.h \
   /usr/include/sys/_types/_o_sync.h /usr/include/sys/_types/_o_dsync.h \
   /usr/include/sys/_types/_s_ifmt.h /usr/include/sys/_types/_filesec_t.h \
   /usr/include/inttypes.h /usr/include/xlocale/_inttypes.h \
-  CalccalcService.h CalcH.h CalcStub.h
+  CalccalcService.h CalcH.h CalcStub.h envH.h envStub.h
 
 QuotequoteService.h:
 
@@ -599,3 +599,7 @@ CalccalcService.h:
 CalcH.h:
 
 CalcStub.h:
+
+envH.h:
+
+envStub.h:

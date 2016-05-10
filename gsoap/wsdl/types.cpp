@@ -544,14 +544,14 @@ void Types::init()
   usetypemap["SOAP_ENC__short"] = "SOAP_ENC__short";
   if (cflag || sflag)
   {
-    deftypemap["SOAP_ENC__string"] = "";
-    usetypemap["SOAP_ENC__string"] = "char*";
-    ptrtypemap["SOAP_ENC__string"] = "char*";
+    deftypemap["SOAP_ENC__string"] = "typedef char* SOAP_ENC__string;";
+    usetypemap["SOAP_ENC__string"] = "SOAP_ENC__string";
+    ptrtypemap["SOAP_ENC__string"] = "SOAP_ENC__string";
   }
   else
   {
-    deftypemap["SOAP_ENC__string"] = "";
-    usetypemap["SOAP_ENC__string"] = "std::string";
+    deftypemap["SOAP_ENC__string"] = "typedef std::string SOAP_ENC__string;";
+    usetypemap["SOAP_ENC__string"] = "SOAP_ENC__string";
   }
   deftypemap["SOAP_ENC__unsignedByte"] = "typedef unsigned char SOAP_ENC__unsignedByte;";
   usetypemap["SOAP_ENC__unsignedByte"] = "SOAP_ENC__unsignedByte";

@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.31" /* Current version */
-# define GSOAP_VERSION 20831
+# define VERSION "2.8.32" /* Current version */
+# define GSOAP_VERSION 20832
 #endif
 
 #ifdef WIN32

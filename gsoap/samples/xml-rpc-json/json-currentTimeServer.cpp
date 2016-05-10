@@ -8,7 +8,7 @@
 
 	Compile:
 	soapcpp2 xml-rpc.h
-	c++ -o json-currentTimeServer json-currentTimeServer.cpp json.cpp stdsoap2.cpp soapC.cpp
+	c++ -o json-currentTimeServer json-currentTimeServer.cpp json.cpp xml-rpc.cpp stdsoap2.cpp soapC.cpp
 	Install as CGI on Web server
 	Or run as stand-alone server (e.g. on port 18000):
 	./json-currentTimeServer 18000

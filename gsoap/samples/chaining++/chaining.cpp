@@ -46,6 +46,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "QuotequoteService.h"
 #include "CalccalcService.h"
+#include "envH.h" /* include envH.h as the last file, if this file is needed */
 
 /* A dummy global table, to keep the linker happy */
 struct Namespace namespaces[] = { {NULL} };

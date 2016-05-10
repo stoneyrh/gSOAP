@@ -11,13 +11,23 @@
 	struct SOAP_ENV__Header and struct SOAP_ENV__Detail. Copy these below
 	to make them globally visible to the gSOAP engine and plugins.
 
-	Copyright (C) 2000-2003 Robert A. van Engelen, Genivia inc.
+	Copyright (C) 2000-2016 Robert A. van Engelen, Genivia inc.
 	All Rights Reserved.
 
-	Compile:
-	soapcpp2 -penv env.h
-	c++ -c envC.cpp
-	c++ -DWITH_NONAMESPACES -c stdsoap2.cpp
+	Compile in C:
+	soapcpp2 -c -penv env.h
+	then compile and link envC.c with your project
+
+	Compile in C++ with C++ namespaces:
+	soapcpp2 -qenv env.h
+	then compile and link envC.cpp with your project
+
+	When including envH.h in your project, include envH.h as the last:
+
+	#include "abcH.h"
+	#include "xyzH.h"
+	#include "envH.h"
+
 */
 
 #import "header.h"		// optional user-defined headers

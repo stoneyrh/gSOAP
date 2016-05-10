@@ -45,6 +45,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 /* prevent duplicate declarations for global SOAP Header and Fault */
 #define WITH_NOGLOBAL
 
+#include "envH.h" /* include only if this file is needed */
+#include "cH.h"
+#include "qH.h"
+
 #include "q.nsmap"
 #include "c.nsmap"
 

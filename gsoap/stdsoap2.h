@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.31
+        stdsoap2.h 2.8.32
 
         gSOAP runtime engine
 
@@ -24,7 +24,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2014, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20831
+#define GSOAP_VERSION 20832
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -3222,19 +3222,19 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_s2unsignedShort(struct soap*, const char*, unsign
 SOAP_FMAC1 int SOAP_FMAC2 soap_s2unsignedInt(struct soap*, const char*, unsigned int*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_s2unsignedLong(struct soap*, const char*, unsigned long*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_s2ULONG64(struct soap*, const char*, ULONG64*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_s2string(struct soap*, const char*, char**, long minlen, long maxlen);
-SOAP_FMAC1 int SOAP_FMAC2 soap_s2QName(struct soap*, const char*, char**, long minlen, long maxlen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_s2char(struct soap*, const char*, char**, long minlen, long maxlen, const char *pattern);
+SOAP_FMAC1 int SOAP_FMAC2 soap_s2QName(struct soap*, const char*, char**, long minlen, long maxlen, const char *pattern);
 
 #ifndef WITH_COMPAT
 #ifdef __cplusplus
-SOAP_FMAC1 int SOAP_FMAC2 soap_s2std__QName(struct soap*, const char*, std::string*, long minlen, long maxlen);
-SOAP_FMAC1 int SOAP_FMAC2 soap_s2std__string(struct soap*, const char*, std::string*, long minlen, long maxlen);
-SOAP_FMAC1 int SOAP_FMAC2 soap_s2std__wstring(struct soap*, const char*, std::wstring*, long minlen, long maxlen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_s2stdQName(struct soap*, const char*, std::string*, long minlen, long maxlen, const char *pattern);
+SOAP_FMAC1 int SOAP_FMAC2 soap_s2stdchar(struct soap*, const char*, std::string*, long minlen, long maxlen, const char *pattern);
+SOAP_FMAC1 int SOAP_FMAC2 soap_s2stdwchar(struct soap*, const char*, std::wstring*, long minlen, long maxlen, const char *pattern);
 #endif
 #endif
 
 #if !defined(WITH_LEAN) || defined(WITH_NTLM)
-SOAP_FMAC1 int SOAP_FMAC2 soap_s2wchar(struct soap*, const char*, wchar_t**, long minlen, long maxlen);
+SOAP_FMAC1 int SOAP_FMAC2 soap_s2wchar(struct soap*, const char*, wchar_t**, long minlen, long maxlen, const char *pattern);
 SOAP_FMAC1 int SOAP_FMAC2 soap_s2dateTime(struct soap*, const char*, time_t*);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_s2base64(struct soap*, const unsigned char*, char*, int);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_s2hex(struct soap*, const unsigned char*, char*, int);

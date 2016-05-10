@@ -1,4 +1,4 @@
-chaining.o: chaining.c q.nsmap qH.h qStub.h ../../../gsoap/stdsoap2.h \
+chaining.o: chaining.c envH.h envStub.h ../../../gsoap/stdsoap2.h \
   ../../../config.h /usr/include/stdlib.h /usr/include/Availability.h \
   /usr/include/AvailabilityInternal.h /usr/include/_types.h \
   /usr/include/sys/_types.h /usr/include/sys/cdefs.h \
@@ -85,13 +85,11 @@ chaining.o: chaining.c q.nsmap qH.h qStub.h ../../../gsoap/stdsoap2.h \
   /usr/include/fcntl.h /usr/include/sys/fcntl.h \
   /usr/include/sys/_types/_o_sync.h /usr/include/sys/_types/_o_dsync.h \
   /usr/include/sys/_types/_s_ifmt.h /usr/include/sys/_types/_filesec_t.h \
-  /usr/include/inttypes.h c.nsmap cH.h cStub.h
+  /usr/include/inttypes.h cH.h cStub.h qH.h qStub.h q.nsmap c.nsmap
 
-q.nsmap:
+envH.h:
 
-qH.h:
-
-qStub.h:
+envStub.h:
 
 ../../../gsoap/stdsoap2.h:
 
@@ -391,8 +389,14 @@ qStub.h:
 
 /usr/include/inttypes.h:
 
-c.nsmap:
-
 cH.h:
 
 cStub.h:
+
+qH.h:
+
+qStub.h:
+
+q.nsmap:
+
+c.nsmap:

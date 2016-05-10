@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.31 User Guide</title>
+<title>gSOAP 2.8.32 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.31 User Guide </h1>
+<h1 align="center">gSOAP 2.8.32 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="http://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">May  1, 2016
+<h3 align="center">May 10, 2016
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -3344,6 +3344,11 @@ same port.
 <div class="p"><!----></div>
 The approach is to chain the service dispatchers, as shown below:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+#include "AbcABCService.h" <br />
+#include "UvwUVWService.h" <br />
+#include "XyzXYZService.h" <br />
+#include "envH.h" // include this file last, if this file is needed <br />
+<br />
 Abc::soapABCService abc; // generated with soapcpp2 -i -S -qAbc <br />
 Uvw::soapUVWService uvw; // generated with soapcpp2 -i -S -qUvw <br />
 Xyz::soapXYZService xyz; // generated with soapcpp2 -i -S -qXyz <br />
@@ -3409,6 +3414,11 @@ context. This member pointer should point to the same soap context.
 <div class="p"><!----></div>
 With option <i>-j</i> and <i>-q</i> the code to chain the services is as follows, based on a single <i><b>struct</b>&nbsp;soap</i> engine context:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+#include "AbcABCService.h" <br />
+#include "UvwUVWService.h" <br />
+#include "XyzXYZService.h" <br />
+#include "envH.h" // include this file last, if it is needed <br />
+<br />
 <b>struct</b>&nbsp;soap *soap = soap_new(); <br />
 Abc::soapABCService abc(soap); // generated with soapcpp2 -j -S -qAbc <br />
 Uvw::soapUVWService uvw(soap); // generated with soapcpp2 -j -S -qUvw <br />
@@ -15488,9 +15498,9 @@ This generates <i>myClient1ClientLib.c</i> and <i>myClient2ClientLib.c</i> (amon
 These two files should be compiled and linked with your application.
 The source code of your application should include the generated <i>envH.h</i>, <i>myClient1H.h</i>, <i>myClient2.h</i> files and <i>myClient1.nsmap</i>, <i>myClient2.nsmap</i> files:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-#include "envH.h" // include this file first! <br />
 #include "myClient1H.h" // include client 1 stubs <br />
 #include "myClient2H.h" // include client 2 stubs <br />
+#include "envH.h" <br />
 ... <br />
 #include "myClient1H.nsmap" // include client 1 nsmap <br />
 #include "myClient2H.nsmap" // include client 2 nsmap <br />
@@ -16558,5 +16568,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On  1 May 2016, 14:41.</small>
+version 4.00.<br />On 10 May 2016, 16:32.</small>
 </html>
