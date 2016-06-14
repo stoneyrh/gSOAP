@@ -1669,9 +1669,18 @@ soap_wsdd_reset_AppSequence(struct soap *soap)
 static void
 soap_wsdd_delay(struct soap *soap)
 {
-  (void)soap;
-  useconds_t delay = 1000*((unsigned int)soap_random % SOAP_WSDD_APP_MAX_DELAY);
+  unsigned int r = (unsigned int)soap_random % SOAP_WSDD_APP_MAX_DELAY;
+#if defined(_WRS_KERNEL)
+  int delay = r * sysClkRateGet() / 1000;
+  taskDelay(delay); /* VxWorks compatible sleep API, delay is specified in number of ticks, which depends on the System Clock Rate */
+#elif defined(WIN32)
+  DWORD delay = (DWORD)r;
+  Sleep(delay);
+#else
+  useconds_t delay = 1000 * r;
   usleep(delay);
+#endif
+  (void)soap;
 }
 
 /******************************************************************************/

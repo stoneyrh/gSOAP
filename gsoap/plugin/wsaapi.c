@@ -579,7 +579,7 @@ static int soap_wsa_alloc_header(struct soap *soap);
 @brief Generates a random UUID (UUID algorithm version 4). Compile all source
 codes with -DWITH_OPENSSL for better randomness results.
 @param soap context
-@return UUID "urn:uuid:xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+@return UUID "urn:uuid:xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx" or NULL if out of memory
 */
 SOAP_FMAC1
 const char*
@@ -614,8 +614,11 @@ soap_wsa_rand_uuid(struct soap *soap)
 #endif
   r3 = soap_random;
   r4 = soap_random;
-  (SOAP_SNPRINTF(uuid, uuidlen, 45), "urn:uuid:%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), (short)(((short)r2 >> 4) & 0x0FFF), (short)(((short)(r3 >> 16) & 0x3FFF) | 0x8000), (short)r3, r4);
-  DBGFUN1("soap_wsa_rand_uuid", "%s", uuid);
+  if (uuid)
+  {
+    (SOAP_SNPRINTF(uuid, uuidlen, 45), "urn:uuid:%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), (short)(((short)r2 >> 4) & 0x0FFF), (short)(((short)(r3 >> 16) & 0x3FFF) | 0x8000), (short)r3, r4);
+    DBGFUN1("soap_wsa_rand_uuid", "%s", uuid);
+  }
   return uuid;
 }
 
@@ -953,23 +956,20 @@ soap_wsa_reply(struct soap *soap, const char *id, const char *action)
   */
   if (oldheader && oldheader->SOAP_WSA(ReplyTo) && oldheader->SOAP_WSA(ReplyTo)->ReferenceParameters && oldheader->SOAP_WSA(ReplyTo)->ReferenceParameters->chan__ChannelInstance)
   {
-    if (newheader)
+    if (!newheader->chan__ChannelInstance)
     {
-      if (!newheader->chan__ChannelInstance)
+      newheader->chan__ChannelInstance = (struct chan__ChannelInstanceType*)soap_malloc(soap, sizeof(struct chan__ChannelInstanceType));
+      if (newheader->chan__ChannelInstance)
       {
-        newheader->chan__ChannelInstance = (struct chan__ChannelInstanceType*)soap_malloc(soap, sizeof(struct chan__ChannelInstanceType));
-        if (newheader->chan__ChannelInstance)
-        {
-          soap_default_chan__ChannelInstanceType(soap, newheader->chan__ChannelInstance);
-          newheader->chan__ChannelInstance->__item = *(oldheader->SOAP_WSA(ReplyTo)->ReferenceParameters->chan__ChannelInstance);
-          newheader->chan__ChannelInstance->wsa5__IsReferenceParameter = _wsa5__IsReferenceParameter__true;
-        }
+	soap_default_chan__ChannelInstanceType(soap, newheader->chan__ChannelInstance);
+	newheader->chan__ChannelInstance->__item = *(oldheader->SOAP_WSA(ReplyTo)->ReferenceParameters->chan__ChannelInstance);
+	newheader->chan__ChannelInstance->wsa5__IsReferenceParameter = _wsa5__IsReferenceParameter__true;
       }
-      else
-      {
-        newheader->chan__ChannelInstance->__item = *(oldheader->SOAP_WSA(ReplyTo)->ReferenceParameters->chan__ChannelInstance);
-        newheader->chan__ChannelInstance->wsa5__IsReferenceParameter = _wsa5__IsReferenceParameter__true;
-      }
+    }
+    else
+    {
+      newheader->chan__ChannelInstance->__item = *(oldheader->SOAP_WSA(ReplyTo)->ReferenceParameters->chan__ChannelInstance);
+      newheader->chan__ChannelInstance->wsa5__IsReferenceParameter = _wsa5__IsReferenceParameter__true;
     }
   }
 #endif
@@ -1077,9 +1077,11 @@ soap_wsa_fault_subcode_action(struct soap *soap, int flag, const char *faultsubc
     if (!oldheader->SOAP_WSA(FaultTo))
     {
       oldheader->SOAP_WSA(FaultTo) = (SOAP_WSA_(,FaultTo)*)soap_malloc(soap, sizeof(SOAP_WSA_(,FaultTo)));
-      SOAP_WSA_(soap_default,EndpointReferenceType)(soap, soap->header->SOAP_WSA(FaultTo));
+      if (oldheader->SOAP_WSA(FaultTo))
+	SOAP_WSA_(soap_default,EndpointReferenceType)(soap, soap->header->SOAP_WSA(FaultTo));
     }
-    oldheader->SOAP_WSA(FaultTo)->Address = oldheader->SOAP_WSA(ReplyTo)->Address;
+    if (oldheader->SOAP_WSA(FaultTo))
+      oldheader->SOAP_WSA(FaultTo)->Address = oldheader->SOAP_WSA(ReplyTo)->Address;
   }
   if (oldheader && oldheader->SOAP_WSA(FaultTo))
   {

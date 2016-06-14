@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.32
+        stdsoap2.h 2.8.33
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20832
+#define GSOAP_VERSION 20833
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1241,7 +1241,7 @@ extern "C" {
 # define SOAP_MAXLEVEL (10000)
 #endif
 
-/* maximum string content length if not already constrained by XML schema validation maxLength constraints, zero means unlimited string lengths are allowed unless restricted by XML schema maxLength */ 
+/* maximum string content length if not already constrained by XML schema validation maxLength constraints, zero or negative means unlimited string lengths are allowed unless restricted by XML schema maxLength */ 
 #ifndef SOAP_MAXLENGTH
 # define SOAP_MAXLENGTH (0)
 #endif
@@ -1412,21 +1412,21 @@ extern const char soap_base64o[], soap_base64i[];
 #elif defined(HAVE_STRLCPY)
 # define soap_strcpy(buf, len, src) (void)strlcpy((buf), (src), (len))
 #else
-# define soap_strcpy(buf, len, src) (void)((buf) && (size_t)(len) > 0 && (strncpy((buf), (src), (len) - 1), (buf)[(len) - 1] = '\0'))
+# define soap_strcpy(buf, len, src) (void)((buf) == NULL || (len) <= 0 || (strncpy((buf), (src), (len) - 1), (buf)[(len) - 1] = '\0') || 1)
 #endif
 
 /* copy string up to n chars (nul on overrun) */
 #if _MSC_VER >= 1400
 # define soap_strncpy(buf, len, src, num) (void)strncpy_s((buf), (len), (src), (num))
 #else
-# define soap_strncpy(buf, len, src, num) (void)((buf) && ((size_t)(len) > (size_t)(num) ? (strncpy((buf), (src), (num)), (buf)[(size_t)(num)] = '\0') : ((buf)[0] = '\0')))
+# define soap_strncpy(buf, len, src, num) (void)((buf) == NULL || ((size_t)(len) > (size_t)(num) ? (strncpy((buf), (src), (num)), (buf)[(size_t)(num)] = '\0') : ((buf)[0] = '\0')) || 1)
 #endif
 
 /* concat string up to n chars (nul on overrun) */
 #if _MSC_VER >= 1400
 # define soap_strncat(buf, len, src, num) (void)strncat_s((buf), (len), (src), (num))
 #else
-# define soap_strncat(buf, len, src, num) (void)((buf) && ((size_t)(len) > strlen((buf)) + (size_t)(num) ? (strncat((buf), (src), (num)), (buf)[(size_t)(len) - 1] = '\0') : ((buf)[0] = '\0')))
+# define soap_strncat(buf, len, src, num) (void)((buf) == NULL || ((size_t)(len) > strlen((buf)) + (size_t)(num) ? (strncat((buf), (src), (num)), (buf)[(size_t)(len) - 1] = '\0') : ((buf)[0] = '\0')) || 1)
 #endif
 
 /* copy memory (error on overrun) */
@@ -2940,6 +2940,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_getfault(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_putfault(struct soap*);
 
 SOAP_FMAC1 void SOAP_FMAC2 soap_ssl_init(void);
+SOAP_FMAC1 void SOAP_FMAC2 soap_ssl_noinit(void);
 SOAP_FMAC1 int SOAP_FMAC2 soap_poll(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_connect_command(struct soap*, int, const char*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_connect(struct soap*, const char*, const char*);

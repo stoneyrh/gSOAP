@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.32
+        DOM API v5 gSOAP 2.8.33
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20832
+#define GSOAP_LIB_VERSION 20833
 
 #include "stdsoap2.h"
 
@@ -219,8 +219,14 @@ out_element(struct soap *soap, const struct soap_dom_element *node, const char *
       (SOAP_SNPRINTF(s, l + 2, l + 1), "%s:%s", prefix, name);
     }
     for (p = soap->local_namespaces; p && p->id; p++)
+    {
       if (p->ns && soap_push_prefix(soap, p->id, strlen(p->id), p->ns, 1, 0) == NULL)
-        return soap->error;
+      {
+	if (s)
+	  SOAP_FREE(soap, s);
+	return soap->error;
+      }
+    }
     (void)soap_putelement(soap, node->node, s ? s : name, 0, node->type);
     if (s)
       SOAP_FREE(soap, s);
@@ -230,7 +236,9 @@ out_element(struct soap *soap, const struct soap_dom_element *node, const char *
     size_t l = strlen(prefix) + strlen(name);
     char *s;
     if (l + 1 < sizeof(soap->msgbuf))
+    {
       s = soap->msgbuf;
+    }
     else
     {
       s = (char*)SOAP_MALLOC(soap, l + 2);
@@ -834,7 +842,7 @@ soap_push_prefix(struct soap *soap, const char *id, size_t n, const char *ns, in
   struct soap_nlist *np;
   if (!n)
     id = NULL;
-  if (!ns)
+  if (!ns && id)
   {
     for (p = ln; p && p->id; p++)
       if (!strncmp(p->id, id, n) && !p->id[n])
@@ -1085,11 +1093,13 @@ static struct soap_dom_element *new_element(struct soap *soap)
 {
   struct soap_dom_element *elt;
   elt = (struct soap_dom_element*)soap_malloc(soap, sizeof(struct soap_dom_element));
-#ifdef __cplusplus
-  SOAP_PLACEMENT_NEW(elt, soap_dom_element);
-#endif
   if (elt)
+  {
+#ifdef __cplusplus
+    SOAP_PLACEMENT_NEW(elt, soap_dom_element);
+#endif
     soap_default_xsd__anyType(soap, elt);
+  }
   return elt;
 }
 
@@ -1099,11 +1109,13 @@ static struct soap_dom_attribute *new_attribute(struct soap *soap)
 {
   struct soap_dom_attribute *att;
   att = (struct soap_dom_attribute*)soap_malloc(soap, sizeof(struct soap_dom_attribute));
-#ifdef __cplusplus
-  SOAP_PLACEMENT_NEW(att, soap_dom_attribute);
-#endif
   if (att)
+  {
+#ifdef __cplusplus
+    SOAP_PLACEMENT_NEW(att, soap_dom_attribute);
+#endif
     soap_default_xsd__anyAttribute(soap, att);
+  }
   return att;
 }
 

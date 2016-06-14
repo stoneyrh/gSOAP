@@ -200,7 +200,7 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
 #else
     if (!strncmp(loc, "https://", 8))
     {
-      fprintf(stderr, "\nCannot connect to https site: no SSL support, please rebuild wsdl2h with SSL or download the files and rerun wsdl2h\n");
+      fprintf(stderr, "\nCannot connect to https site: SSL/TLS support not enabled, please rebuild wsdl2h with SSL/TLS enabled using 'make secure' or download the WSDL and XSD files and rerun wsdl2h on these files\n");
       exit(1);
     }
     else if (!strncmp(loc, "http://", 7))

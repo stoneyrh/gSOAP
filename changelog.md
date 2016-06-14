@@ -1046,12 +1046,24 @@ Version 2.8.31 (05/1/2016)
 - Fixed strict validation (`SOAP_XML_STRICT`) of unqualified attributes in elements with a default namespace.
 - Fixed wsdl2h 2.8.28-30 parsing of *`xs:unique`* causing wsdl2h to skip over schema components.  The fix also improved string-based parsing of XML content with a fix for 2.8.28-30 XML string handling.
 
-Version 2.8.32 (05/10/2016) {#latest}
+Version 2.8.32 (05/10/2016)
 ---
 
 - Improved soapcpp2 code generation of type converters `int soap_s2T(soap*, const char*, T*)` and `const char *soap_T2s(soap*, T)` for primitive and binary types T.
 - Fixed unqualified *`xsi:type`* content matching with default namespace, which may lead to a failure in the 2.8.31 release to instantiate derived instances for complexType extensions.
 - Fixed Solaris crash in `soap_wstrdup`.
+
+Version 2.8.33 (06/14/2016) {#latest}
+---
+
+- Updated WS-Trust gsoap/import/wstx.h `__wst__RequestSecurityToken` response message parameter to `wst__RequestSecurityTokenResponseCollection`
+- Updated WS-Security gsoap/import/wsse.h with optional SAML assertions in the Security header.
+- Updated response processing for empty HTTP body with HTTP code 200 to 202: no longer forces socket close when HTTP keep-alive is enabled.
+- Updated `_XML` literal string XML serialization for qualified tag names, no longer uses default namespace (as in *`xmlns="URI"`*) but a prefixed tag name only.
+- Updated wsdl2h options `-p` and `-d`, now generates `xsd__anyType*` (i.e. with pointer) data members without requiring the user to define a typemap.dat rule to do so. This change reinstates some of the old behavior of 2.8.23 and earlier versions.
+- Fixed wsddapi.c compilation issue on Windows (`usleep` replaced).
+- Fixed validation of *`simpleType/restriction/length`* when restriction base is a list that is mapped to a string.
+- Fixed validation of *`simpleType/restriction`* with base type string length bounds restrictions.
 
 [![To top](http://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -78,6 +78,8 @@ The threads.h and threads.c code define the following portable API:
 #ifndef THREADS_H
 #define THREADS_H
 
+#include "stdsoap2.h"
+
 #ifndef WIN32
 # include <unistd.h>	/* defines _POSIX_THREADS if pthreads are available */
 #else

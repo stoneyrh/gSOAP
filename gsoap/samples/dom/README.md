@@ -302,7 +302,7 @@ can be invoked as a function in a client-side C or C++ runtime:
       time_t t;
       soap_call_t__gmt(ctx, endpoint, NULL, &t);
       if (ctx->error == SOAP_OK)
-	cout << "Current time = " << ctime(t) << endl;
+        cout << "Current time = " << ctime(t) << endl;
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1116,6 +1116,13 @@ with the `soap_set_namespaces()` function:
     soap_set_namespaces(ctx, namespaces);        // restore to global table
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+To set or change the tag of an element, use:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    dom.set(ns, utag); // element node <utag xmlns="ns">
+    dom.set(ns, qtag); // element node <q:tag xmlns:q="ns">
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ### Assigning child nodes and values to a DOM node                   {#cpp-api2}
 
 After creating a root element node we can start populating the root with
@@ -1699,6 +1706,13 @@ with the `soap_set_namespaces()` function:
     xsd__anyType *dom = soap_elt_new(ctx, NULL, "q:tag"); // OK: "q" is in the namespace table
     ...
     soap_set_namespaces(ctx, namespaces);                 // restore to global table
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To set or change the tag of an element, use:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    soap_elt_set(dom, ns, utag); // element node <utag xmlns="ns">
+    soap_elt_set(dom, ns, qtag); // element node <q:tag xmlns:q="ns">
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Assigning child nodes and values to a DOM node                     {#c-api2}
@@ -2361,8 +2375,8 @@ We copied the generated code into `dom2calc.cpp` as shown below:
 
       if (argc <= 3)
       {
-	std::cerr << "Usage: dom2calc [add|sub|mul|div|pow] <num> <num>" << std::endl;
-	exit(1);
+        std::cerr << "Usage: dom2calc [add|sub|mul|div|pow] <num> <num>" << std::endl;
+        exit(1);
       }
 
       // create command tag ns:add, ns:sub, ns:mul, ns:div, or ns:pow
@@ -2383,33 +2397,33 @@ We copied the generated code into `dom2calc.cpp` as shown below:
       // invoke server: make POST XML request and receive XML response
       if (soap_dom_call(ctx, server, "", request, response))
       {
-	soap_stream_fault(ctx, std::cerr);
+        soap_stream_fault(ctx, std::cerr);
       }
       else
       {
-	std::cout << "** Response message:" << std::endl << response << std::endl << std::endl;
+        std::cout << "** Response message:" << std::endl << response << std::endl << std::endl;
 
-	// copied from:
-	// domcpp -p'/SOAP-ENV:Envelope/SOAP-ENV:Body/ns:addResponse/result' -rresponse -x'std::cout << "Result = " << v << std::endl;'
-	if (response.match("SOAP-ENV:Envelope"))
-	{
-	  size_t pos = 1;
-	  for (xsd__anyType *it = response.elt_get("SOAP-ENV:Body"); it; it = it->get_next(), ++pos)
-	  {
-	    xsd__anyType& v = *it;
-	    size_t pos = 1;
-	    for (xsd__anyType *it = v.elt_get("ns:addResponse"); it; it = it->get_next(), ++pos)
-	    {
-	      xsd__anyType& v = *it;
-	      size_t pos = 1;
-	      for (xsd__anyType *it = v.elt_get("result"); it; it = it->get_next(), ++pos)
-	      {
-		xsd__anyType& v = *it;
-		std::cout << "Result = " << v.get_double() << std::endl;
-	      }
-	    }
-	  }
-	}
+        // copied from:
+        // domcpp -p'/SOAP-ENV:Envelope/SOAP-ENV:Body/ns:addResponse/result' -rresponse -x'std::cout << "Result = " << v << std::endl;'
+        if (response.match("SOAP-ENV:Envelope"))
+        {
+          size_t pos = 1;
+          for (xsd__anyType *it = response.elt_get("SOAP-ENV:Body"); it; it = it->get_next(), ++pos)
+          {
+            xsd__anyType& v = *it;
+            size_t pos = 1;
+            for (xsd__anyType *it = v.elt_get("ns:addResponse"); it; it = it->get_next(), ++pos)
+            {
+              xsd__anyType& v = *it;
+              size_t pos = 1;
+              for (xsd__anyType *it = v.elt_get("result"); it; it = it->get_next(), ++pos)
+              {
+                xsd__anyType& v = *it;
+                std::cout << "Result = " << v.get_double() << std::endl;
+              }
+            }
+          }
+        }
       }
 
       soap_destroy(ctx); // delete objects
@@ -2432,21 +2446,21 @@ Running the DOM-based calculator client gives:
 
     ** Request message: 
     <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-	    <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-		    <ns:add xmlns:ns="urn:calc">
-			    <a>3</a>
-			    <b>4</b>
-		    </ns:add>
-	    </SOAP-ENV:Body>
+            <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+                    <ns:add xmlns:ns="urn:calc">
+                            <a>3</a>
+                            <b>4</b>
+                    </ns:add>
+            </SOAP-ENV:Body>
     </SOAP-ENV:Envelope>
 
     ** Response message:
     <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns="urn:calc">
-	    <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-		    <ns:addResponse>
-			    <result>7</result>
-		    </ns:addResponse>
-	    </SOAP-ENV:Body>
+            <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+                    <ns:addResponse>
+                            <result>7</result>
+                    </ns:addResponse>
+            </SOAP-ENV:Body>
     </SOAP-ENV:Envelope>
 
     Result = 7

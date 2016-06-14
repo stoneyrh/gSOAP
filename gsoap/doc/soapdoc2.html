@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.32 User Guide</title>
+<title>gSOAP 2.8.33 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.32 User Guide </h1>
+<h1 align="center">gSOAP 2.8.33 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="http://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">May 10, 2016
+<h3 align="center">Jun 14, 2016
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -395,7 +395,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.18"
 >19.18&nbsp; <font color="#0000FF">Messaging Speed and Performance Improvement Tips</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.19"
->19.19&nbsp; <font color="#0000FF">XML Parsing Options for Safety Guards</font></a><br />
+>19.19&nbsp; <font color="#0000FF">XML Parsing Options to set Safety Guards</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.20"
 >19.20&nbsp; <font color="#0000FF">Timeout Management for Non-Blocking Operations</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.21"
@@ -14238,7 +14238,7 @@ Here are some tips you can use to speed up gSOAP. gSOAP's default settings are c
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc19.19">
-19.19</a>&nbsp;&nbsp;<font color="#0000FF">XML Parsing Options for Safety Guards</font></h3><a name="sec:safety">
+19.19</a>&nbsp;&nbsp;<font color="#0000FF">XML Parsing Options to set Safety Guards</font></h3><a name="sec:safety">
 </a>
 
 <div class="p"><!----></div>
@@ -14397,7 +14397,8 @@ multi-threaded stand-alone SOAP Web Service:
 &nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;m, s; <br />
 &nbsp;&nbsp;&nbsp;pthread_t tid; <br />
 &nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;soap soap, *tsoap; <br />
-&nbsp;&nbsp;&nbsp;soap_ssl_init(); /* init OpenSSL (just once) */<br />
+&nbsp;&nbsp;&nbsp;soap_ssl_init(); /* init OpenSSL (skipping this or calling multiple times is OK, since the engine will init SSL automatically) */<br />
+&nbsp;&nbsp;&nbsp;// soap_ssl_noinit(); /* do not init OpenSSL (if SSL is already initialized elsewhere) */<br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(CRYPTO_thread_setup()) // OpenSSL <br />
 &nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, "Cannot setup thread mutex\n"); <br />
@@ -14644,7 +14645,8 @@ Alternatively, compile with GNUTLS:
 A client program simply uses the prefix <i>https:</i> instead of <i>http:</i> in the endpoint URL of a service operation call to a
 Web Service to use encrypted transfers (if the service supports HTTPS). You need to specify the client-side key file and password of the keyfile:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-soap_ssl_init(); /* init OpenSSL (just once) */<br />
+soap_ssl_init(); /* init OpenSSL (skipping this or calling multiple times is OK, since the engine will init SSL automatically) */<br />
+// soap_ssl_noinit(); /* do not init OpenSSL (if SSL is already initialized elsewhere) */<br />
 <b>if</b>&nbsp;(soap_ssl_client_context(&amp;soap, <br />
 &nbsp;&nbsp;&nbsp;SOAP_SSL_DEFAULT, <br />
 &nbsp;&nbsp;&nbsp;"client.pem",	/* keyfile: required only when client must authenticate to server (see SSL docs on how to obtain this file) */ <br />
@@ -14674,7 +14676,8 @@ Other client-side SSL options are <i>SOAP_SSL_SKIP_HOST_CHECK</i> to skip the ho
 
 <div class="p"><!----></div>
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-soap_ssl_init(); /* init OpenSSL (just once) */<br />
+soap_ssl_init(); /* init OpenSSL (skipping this or calling multiple times is OK, since the engine will init SSL automatically) */<br />
+// soap_ssl_noinit(); /* do not init OpenSSL (if SSL is already initialized elsewhere) */<br />
 <b>if</b>&nbsp;(soap_ssl_client_context(&amp;soap, <br />
 &nbsp;&nbsp;&nbsp;SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION  <br />
 &nbsp;&nbsp;&nbsp; -  SOAP_SSL_SKIP_HOST_CHECK, <br />
@@ -16568,5 +16571,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 10 May 2016, 16:32.</small>
+version 4.00.<br />On 14 Jun 2016, 08:09.</small>
 </html>

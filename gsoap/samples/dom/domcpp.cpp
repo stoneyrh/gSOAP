@@ -271,7 +271,7 @@ std::ostream& operator<<(std::ostream& os, const putstr& p)
         default:
           if (*s > 0 && *s < 0x10)
             os << "\\x0" << std::hex << *s << std::dec;
-          else if (*s < 0x20 || *s > 0x7f)
+          else if (*s < 0x20 || *s >= 0x7f)
             os << "\\x" << std::hex << (*s & 0xff) << std::dec;
           else if (coutput && !p.quote && s[0] == '*' && s[1] == '/')
             os << "\\x2a";
@@ -2391,7 +2391,7 @@ static std::string getname(const char **xpath)
   const char *t = s;
   if (*t == '@')
     ++t;
-  while (*t && (isalnum(*t) || *t == '_' || *t == '*' || *t == ':' || *t == '-' || *t == '.' || *t > 0x7f || *t < 0))
+  while (*t && (isalnum(*t) || *t == '_' || *t == '*' || *t == ':' || *t == '-' || *t == '.' || (*t & 0x80)))
     ++t;
   if (t == s)
   {

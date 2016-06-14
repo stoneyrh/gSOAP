@@ -2,7 +2,7 @@
 	wsse2.h 1.0 (2002 and 2004 version namespaces)
 	See wsse.h for details
 
-	- Copied from wsse.h
+	- Copied from wsse.h without (removed) SAML assertions that clash with xenc2.h
 	- Changed //gsoap wsse  schema import: http://schemas.xmlsoap.org/ws/2002/12/secext
 	- Changed //gsoap wsse  schema namespace2:	http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
 	- Added mutable SOAP_ENV__Header struct

@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">XML DOM &amp; XPath</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Feb 25 2016</div>
+      <div style="float: right; font-size: 10px;">updated Wed May 18 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -670,6 +670,9 @@ Creating a DOM root element node</h3>
 <div class="line"><a class="code" href="structsoap__dom__element.html">xsd__anyType</a> dom(ctx, <span class="stringliteral">&quot;q:tag&quot;</span>);              <span class="comment">// OK: &quot;q&quot; is in the namespace table</span></div>
 <div class="line">...</div>
 <div class="line">soap_set_namespaces(ctx, namespaces);        <span class="comment">// restore to global table</span></div>
+</div><!-- fragment --><p>To set or change the tag of an element, use:</p>
+<div class="fragment"><div class="line">dom.set(ns, utag); <span class="comment">// element node &lt;utag xmlns=&quot;ns&quot;&gt;</span></div>
+<div class="line">dom.set(ns, qtag); <span class="comment">// element node &lt;q:tag xmlns:q=&quot;ns&quot;&gt;</span></div>
 </div><!-- fragment --><h3><a class="anchor" id="cpp-api2"></a>
 Assigning child nodes and values to a DOM node</h3>
 <p>After creating a root element node we can start populating the root with attributes, child elements, and values.</p>
@@ -1007,6 +1010,9 @@ Creating a DOM root element node</h3>
 <div class="line"><a class="code" href="structsoap__dom__element.html">xsd__anyType</a> *dom = <a class="code" href="dom_8cpp.html#a509d2cd902256e7876118db7933461e1">soap_elt_new</a>(ctx, NULL, <span class="stringliteral">&quot;q:tag&quot;</span>); <span class="comment">// OK: &quot;q&quot; is in the namespace table</span></div>
 <div class="line">...</div>
 <div class="line">soap_set_namespaces(ctx, namespaces);                 <span class="comment">// restore to global table</span></div>
+</div><!-- fragment --><p>To set or change the tag of an element, use:</p>
+<div class="fragment"><div class="line"><a class="code" href="dom_8cpp.html#a246e8a474b5d4ab7a93c536209bc0eb1">soap_elt_set</a>(dom, ns, utag); <span class="comment">// element node &lt;utag xmlns=&quot;ns&quot;&gt;</span></div>
+<div class="line"><a class="code" href="dom_8cpp.html#a246e8a474b5d4ab7a93c536209bc0eb1">soap_elt_set</a>(dom, ns, qtag); <span class="comment">// element node &lt;q:tag xmlns:q=&quot;ns&quot;&gt;</span></div>
 </div><!-- fragment --><h3><a class="anchor" id="c-api2"></a>
 Assigning child nodes and values to a DOM node</h3>
 <p>After creating a root element node we can start populating the root with attributes, child elements, and values.</p>
@@ -1479,7 +1485,7 @@ Floating point format                                                      </h2>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Feb 25 2016 10:21:29 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Wed May 18 2016 09:57:31 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

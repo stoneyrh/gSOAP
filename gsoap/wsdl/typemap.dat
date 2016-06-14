@@ -408,18 +408,7 @@ xenc	= <http://www.w3.org/2001/04/xmlenc#>
 
 #	xlink
 
-xlink	= <http://www.w3.org/1999/xlink>
-
-_xlink__actuate		= | char*
-_xlink__arcrole		= | char*
-_xlink__from		= | char*
-_xlink__href		= | char*
-_xlink__label		= | char*
-_xlink__role		= | char*
-_xlink__show		= | char*
-_xlink__to		= | char*
-_xlink__title		= | char*
-_xlink__type		= | char*
+xlink	= "http://www.w3.org/1999/xlink"
 
 #	wsrp routing protocol (deprecated)
 

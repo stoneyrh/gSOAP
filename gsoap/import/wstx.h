@@ -70,6 +70,6 @@ mutable struct SOAP_ENV__Header
 //gsoap wst service method-output-action:   RequestSecurityToken http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTR/Issue
 //gsoap wst service method-output-action:   RequestSecurityToken http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTRC/IssueFinal
 int __wst__RequestSecurityToken(
-  struct wst__RequestSecurityTokenType		*wst__RequestSecurityToken,        ///< request message
-  struct wst__RequestSecurityTokenResponseType	*wst__RequestSecurityTokenResponse ///< response message
+  struct wst__RequestSecurityTokenType				*wst__RequestSecurityToken, ///< request message
+  struct wst__RequestSecurityTokenResponseCollectionType	*wst__RequestSecurityTokenResponseCollection ///< response message
 );

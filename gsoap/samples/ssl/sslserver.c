@@ -63,8 +63,12 @@ int main()
   pthread_t tid;
 #endif
   struct soap soap, *tsoap;
+  /* Init SSL (can skip or call multiple times, engien inits automatically) */
+  soap_ssl_init();
+  /* soap_ssl_noinit(); call this first if SSL is initialized elsewhere */
   /* Need SIGPIPE handler on Unix/Linux systems to catch broken pipes: */
   signal(SIGPIPE, sigpipe_handle);
+  /* set up lSSL ocks */
   if (CRYPTO_thread_setup())
   { fprintf(stderr, "Cannot setup thread mutex for OpenSSL\n");
     exit(1);

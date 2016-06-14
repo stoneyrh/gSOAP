@@ -313,10 +313,12 @@ _wsse__TransformationParameters =
 # Don't use wsse:SecurityHeaderType
 wsse__SecurityHeaderType =
 
-# But use wsse:Security element with additional content
+# Use wsse:Security element with additional content such as SAML assertion
 _wsse__Security =\
 #import "xenc.h"\n\
 #import "wsc.h"\n\
+#import "saml1.h"\n\
+#import "saml2.h"\n\
 typedef struct _wsse__Security\n\
 {	struct _wsu__Timestamp*			wsu__Timestamp;\n\
 	struct _wsse__UsernameToken*		UsernameToken;\n\
@@ -324,6 +326,8 @@ typedef struct _wsse__Security\n\
 	struct xenc__EncryptedKeyType*		xenc__EncryptedKey;\n\
 	struct _xenc__ReferenceList*		xenc__ReferenceList;\n\
 	struct ds__SignatureType*		ds__Signature;\n\
+	struct saml1__AssertionType*		saml1__Assertion;\n\
+	struct saml2__AssertionType*		saml2__Assertion;\n\
 	@char*					SOAP_ENV__actor;\n\
 	@char*					SOAP_ENV__role;\n\
 } _wsse__Security;

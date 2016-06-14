@@ -390,7 +390,7 @@ void Types::init()
       deftypemap["xsd__anyType"] = "";
     else
       deftypemap["xsd__anyType"] = "class xsd__anyType { _XML __item; struct soap *soap; };";
-    usetypemap["xsd__anyType"] = "xsd__anyType";
+    usetypemap["xsd__anyType"] = "xsd__anyType*"; // is base class: use pointer
   }
   deftypemap["xsd__any"] = "";
   if (dflag)
@@ -1436,7 +1436,55 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
   if (simpleType.restriction)
   {
     const char *base = simpleType.restriction->base;
-    if (!base && simpleType.restriction->simpleType)
+    const xs__simpleType *ref = simpleType.restriction->simpleTypePtr();
+    while (ref && ref->restriction)
+      ref = ref->restriction->simpleTypePtr();
+    if (ref && ref->list)
+    {
+      const char *baseURI = NULL;
+      if (simpleType.restriction->simpleTypePtr() && simpleType.restriction->simpleTypePtr()->schemaPtr())
+        baseURI = simpleType.restriction->simpleTypePtr()->schemaPtr()->targetNamespace;
+      if (!anonymous)
+      {
+        if (simpleType.restriction->length && simpleType.restriction->length->value)
+        {
+          fprintf(stream, "/// @brief \"%s\":%s is a simpleType restriction of list %s of length %s.\n///\n", URI ? URI : "", name, base ? base : "", simpleType.restriction->length->value);
+          document(simpleType.restriction->length->annotation);
+        }
+        else
+        {
+          const char *a = NULL, *b = "unbounded";
+          if (simpleType.restriction->minLength)
+          {
+            a = simpleType.restriction->minLength->value;
+            document(simpleType.restriction->minLength->annotation);
+          }
+          if (simpleType.restriction->maxLength)
+          {
+            b = simpleType.restriction->maxLength->value;
+            document(simpleType.restriction->maxLength->annotation);
+          }
+          if (a || b)
+            fprintf(stream, "/// @brief \"%s\":%s is a simpleType of restriction of list %s of length %s..%s.\n", URI ? URI : "", name, base ? base : "", a ? a : "0", b ? b : "");
+          else
+            fprintf(stream, "/// @brief \"%s\":%s is a simpleType of restriction of list %s.\n///\n", URI ? URI : "", name, base ? base : "");
+        }
+      }
+      const char *s = tname(NULL, baseURI, base);
+      if (!anonymous)
+      {
+        t = deftname(TYPEDEF, false, is_ptr(NULL, baseURI, base), prefix, URI, name);
+        if (t)
+          fprintf(stream, "typedef %s %s;\n\n", s, t);
+      }
+      else
+      {
+        t = "";
+        fprintf(stream, elementformat, s, "");
+        fprintf(stream, "\n");
+      }
+    }
+    else if (!base && simpleType.restriction->simpleType)
     {
       if (!anonymous)
       {
@@ -1461,7 +1509,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           if (a || b)
             fprintf(stream, "/// @brief \"%s\":%s is a simpleType restriction list of length %s..%s.\n", URI ? URI : "", name, a ? a : "0", b ? b : "");
           else
-            fprintf(stream, "/// @brief \"%s\":%s is a simpleType restriction.\n///\n", URI ? URI : "", name);
+            fprintf(stream, "/// @brief \"%s\":%s is a simpleType restriction list.\n///\n", URI ? URI : "", name);
         }
       }
       gen(URI, name, *simpleType.restriction->simpleType, anonymous, true);
@@ -2112,7 +2160,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       const char *s = tname(NULL, NULL, "xsd:string");
       if (!anonymous)
         t = deftname(TYPEDEF, false, is_ptr(NULL, NULL, "xsd:string"), prefix, URI, name);
-      fprintf(stream, "/// @brief Union of values from member types \"%s\".\n", simpleType.union_->memberTypes);
+      fprintf(stream, "/// @brief Union of values from member types \"%s\".\n", cstring(simpleType.union_->memberTypes));
       if (t)
         fprintf(stream, "typedef %s %s;\n\n", s, t);
       else
@@ -3148,13 +3196,13 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     {
       if (!default_)
       {
-	default_ = element.elementPtr()->default_;
-	default__ = element.elementPtr()->default__;
+        default_ = element.elementPtr()->default_;
+        default__ = element.elementPtr()->default__;
       }
       if (!fixed)
       {
-	fixed = element.elementPtr()->fixed;
-	fixed_ = element.elementPtr()->fixed_;
+        fixed = element.elementPtr()->fixed;
+        fixed_ = element.elementPtr()->fixed_;
       }
     }
     if (!nillable)
@@ -4003,8 +4051,9 @@ void Types::gen_substitutions(const char *URI, const xs__element& element)
 
 void Types::document(const xs__annotation *annotation)
 {
-  if (annotation && annotation->documentation)
-    documentation(annotation->documentation);
+  if (annotation)
+    for (std::vector<char*>::const_iterator i = annotation->documentation.begin(); i != annotation->documentation.end(); ++i)
+      documentation(*i);
 }
 
 void Types::modify(const char *name)
@@ -4260,6 +4309,11 @@ static const char *cstring(const char *s)
     {
       *t++ = '\\';
       *t++ = *s;
+    }
+    else if (*s == '\n')
+    {
+      soap_strcpy(t, 3, "\\n");
+      t += 2;
     }
     else if (*s < 32)
     {

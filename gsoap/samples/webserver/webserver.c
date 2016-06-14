@@ -273,8 +273,13 @@ int main(int argc, char **argv)
   fprintf(stderr, "[Note: http://127.0.0.1:%d for settings, login: '"AUTH_USERID"' and '"AUTH_PASSWD"']\n", port);
   fprintf(stderr, "[Note: you should enable Linux/Unix SIGPIPE handlers to avoid broken pipe]\n");
 
+  /* Init SSL (can skip or call multiple times, engien inits automatically) */
+  soap_ssl_init();
+  /* soap_ssl_noinit(); call this first if SSL is initialized elsewhere */
+
   soap_init2(&soap, SOAP_IO_KEEPALIVE, SOAP_IO_DEFAULT);
 
+  /* set up lSSL ocks */
   if (CRYPTO_thread_setup())
   {
     fprintf(stderr, "Cannot setup thread mutex\n");

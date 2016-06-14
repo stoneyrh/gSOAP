@@ -49,8 +49,10 @@ void sigpipe_handle(int);
 int main()
 { struct soap soap;
   double a, b, result;
-  /* Init SSL */
+  /* Init SSL (can skip or call multiple times, engien inits automatically) */
   soap_ssl_init();
+  /* soap_ssl_noinit(); call this first if SSL is initialized elsewhere */
+  /* set up lSSL ocks */
   if (CRYPTO_thread_setup())
   { fprintf(stderr, "Cannot setup thread mutex for OpenSSL\n");
     exit(1);

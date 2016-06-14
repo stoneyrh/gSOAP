@@ -187,6 +187,8 @@ typedef struct _wsse__SecurityTokenReference
 /// Imported element _wsse__Security from typemap WS/WS-typemap.dat.
 #import "xenc.h"
 #import "wsc.h"
+#import "saml1.h"
+#import "saml2.h"
 typedef struct _wsse__Security
 {	struct _wsu__Timestamp*			wsu__Timestamp;
 	struct _wsse__UsernameToken*		UsernameToken;
@@ -195,6 +197,8 @@ typedef struct _wsse__Security
 	struct _xenc__ReferenceList*		xenc__ReferenceList;
 	struct wsc__SecurityContextTokenType*	wsc__SecurityContextToken;
 	struct ds__SignatureType*		ds__Signature;
+	struct saml1__AssertionType*		saml1__Assertion;
+	struct saml2__AssertionType*		saml2__Assertion;
 	@char*					SOAP_ENV__actor;
 	@char*					SOAP_ENV__role;
 } _wsse__Security;

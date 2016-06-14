@@ -54,7 +54,7 @@ class xs__union;                        // forward declaration
 
 class xs__annotation
 { public:
-        char*                           documentation;
+        std::vector<char*>              documentation;
 };
 
 class xs__assert

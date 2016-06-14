@@ -1,7 +1,8 @@
 INSTRUCTIONS
 
-Install the WCF samples: Windows Communication Foundation (WCF) and Windows
-Workflow Foundation (WF) Samples for .NET Framework 4.
+Install the WCF samples by downloading the "Windows Communication Foundation
+(WCF) and Windows Workflow Foundation (WF) Samples for .NET Framework 4." from
+the Microsoft download site (you may have to search).
 
 You should have:
 
@@ -36,9 +37,11 @@ Obtain the machine name or IP
 
 say it is 10.0.1.5 over wifi.
 
-Add a Main() to self-host by adding a Program class in the WCF sample
+Add a Program class with Main() to the WCF sample to self host a service:
 
   C:\WF_WCF_Samples\WCF\Basic\Binding\Basic\Http\CS\service
+
+with the following Program class put in the namespace:
 
 using System;
 using System.ServiceModel;
