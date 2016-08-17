@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions name="ssl"
   targetNamespace="urn:ssl"
- xmlns:tns="urn:ssl"
+  xmlns:tns="urn:ssl"
   xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
   xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -61,7 +61,7 @@
 </binding>
 
 <service name="ssl">
-  <documentation>gSOAP 2.8.33 generated service definition</documentation>
+  <documentation>gSOAP 2.8.34 generated service definition</documentation>
   <port name="ssl" binding="tns:ssl">
     <SOAP:address location="https://localhost:18081"/>
   </port>

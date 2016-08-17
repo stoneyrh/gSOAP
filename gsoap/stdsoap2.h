@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.33
+        stdsoap2.h 2.8.34
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20833
+#define GSOAP_VERSION 20834
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -180,7 +180,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #endif
 
-#ifdef __CYGWIN__
+#if defined(__CYGWIN__) || defined(__CYGWIN32__)
 # ifndef CYGWIN
 #  define CYGWIN
 # endif
@@ -249,6 +249,24 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define SOAP_HDRLEN (1024)
 #  define SOAP_MAXDIMS (4)
 #  define HAVE_SSCANF
+# elif defined(CYGWIN)
+#  define HAVE_POLL
+#  define HAVE_SNPRINTF
+#  define HAVE_STRRCHR
+#  define HAVE_STRTOD
+#  define HAVE_SSCANF
+#  define HAVE_STRTOL
+#  define HAVE_STRTOUL
+#  define HAVE_SYS_TIMEB_H
+#  define HAVE_FTIME
+#  define HAVE_RAND_R
+#  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
+#  define HAVE_LOCALTIME_R
+#  define HAVE_STRERROR_R
+#  define HAVE_WCTOMB
+#  define HAVE_MBTOWC
+#  define HAVE_INTTYPES_H
 # elif defined(WIN32)
 #  if _MSC_VER >= 1400
 #   define HAVE_SNPRINTF
@@ -271,22 +289,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_MBTOWC
 #  define SOAP_LONG_FORMAT "%I64d"
 #  define SOAP_ULONG_FORMAT "%I64u"
-# elif defined(CYGWIN)
-#  define HAVE_POLL
-#  define HAVE_SNPRINTF
-#  define HAVE_STRRCHR
-#  define HAVE_STRTOD
-#  define HAVE_SSCANF
-#  define HAVE_STRTOL
-#  define HAVE_STRTOUL
-#  define HAVE_SYS_TIMEB_H
-#  define HAVE_FTIME
-#  define HAVE_RAND_R
-#  define HAVE_GMTIME_R
-#  define HAVE_LOCALTIME_R
-#  define HAVE_STRERROR_R
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
 # elif defined(__APPLE__)
 #  define HAVE_POLL
 #  define HAVE_SNPRINTF
@@ -303,6 +305,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_STRTOULL
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_TM_GMTOFF
 #  define HAVE_GETTIMEOFDAY
 #  define HAVE_LOCALTIME_R
@@ -322,6 +325,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_FTIME
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
@@ -353,6 +357,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_FTIME
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
@@ -374,6 +379,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_GETTIMEOFDAY
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
 #  define HAVE_WCTOMB
@@ -394,6 +400,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_FTIME
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
@@ -414,6 +421,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_FTIME
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
 #  define HAVE_TIMEGM
@@ -432,6 +440,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_SYS_TIMEB_H
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define __USE_STD_IOSTREAM
 #  define HAVE_WCTOMB
@@ -453,6 +462,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_RAND_R
 #  define HAVE_GETHOSTBYNAME_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
 #  define HAVE_WCTOMB
@@ -496,6 +506,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_FTIME
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
@@ -510,6 +521,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_FTIME
 #  define HAVE_RAND_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
@@ -530,6 +542,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_RAND_R
 #  define HAVE_GETHOSTBYNAME_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
 #  define HAVE_WCTOMB
@@ -546,6 +559,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_RAND_R
 #  define HAVE_GETHOSTBYNAME_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 # else /* Default assumptions for supported library functions when not including config.h */
 #  define HAVE_SNPRINTF
@@ -561,6 +575,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_RAND_R
 #  define HAVE_GETHOSTBYNAME_R
 #  define HAVE_GMTIME_R
+#  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
 #  ifdef MB_LEN_MAX
@@ -645,6 +660,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 # undef HAVE_WCTOMB
 # undef HAVE_MBTOWC
 # undef HAVE_GMTIME_R
+# undef HAVE_ASCTIME_R
 # undef HAVE_LOCALTIME_R
 # undef HAVE_SNPRINTF
 # define SOAP_BUFLEN (32767)
@@ -957,6 +973,12 @@ extern "C" {
 #if defined(SYMBIAN)
 # define LONG64 long
 # define ULONG64 unsigned LONG64
+# ifndef SOAP_LONG_FORMAT
+#  define SOAP_LONG_FORMAT "%ld"
+# endif
+# ifndef SOAP_ULONG_FORMAT
+#  define SOAP_ULONG_FORMAT "%lu"
+# endif
 #elif !defined(__cplusplus) && defined(__STDC__) && !defined(__STDC_VERSION__) /* C90? */
 # define LONG64 long
 # define ULONG64 unsigned LONG64
@@ -971,21 +993,38 @@ extern "C" {
 #elif !defined(WIN32) || defined(CYGWIN) || defined(__GLIBC__) || defined(__GNU__)
 # ifndef LONG64
 #  if defined(HAVE_INTTYPES_H)
-#   ifdef HAVE_STDINT_H
-#    include <stdint.h>
-#   endif
 #   include <inttypes.h>
 #   define LONG64 int64_t
 #   define ULONG64 uint64_t
+#   ifndef SOAP_LONG_FORMAT
+#    define SOAP_LONG_FORMAT "%" PRId64
+#   endif
+#   ifndef SOAP_ULONG_FORMAT
+#    define SOAP_ULONG_FORMAT "%" PRIu64
+#   endif
 #  elif defined(HAVE_SYS_INTTYPES_H)
 #   include <sys/inttypes.h>
 #   define LONG64 int64_t
 #   define ULONG64 uint64_t
+#   ifndef SOAP_LONG_FORMAT
+#    define SOAP_LONG_FORMAT "%" PRId64
+#   endif
+#   ifndef SOAP_ULONG_FORMAT
+#    define SOAP_ULONG_FORMAT "%" PRIu64
+#   endif
 #  elif defined(HAVE_STDINT_H)
 #   include <stdint.h>
 #   define LONG64 int64_t
 #   define ULONG64 uint64_t
-#  elif defined(__GLIBC__)
+#   if defined(PRId64) && defined(PRIu64)
+#    ifndef SOAP_LONG_FORMAT
+#     define SOAP_LONG_FORMAT "%" PRId64
+#    endif
+#    ifndef SOAP_ULONG_FORMAT
+#     define SOAP_ULONG_FORMAT "%" PRIu64
+#    endif
+#   endif
+#  elif defined(CYGWIN) || defined(__GLIBC__)
 #   include <bits/wordsize.h>
 #   if (__WORDSIZE == 64)
 #    define LONG64 int64_t
@@ -1013,24 +1052,12 @@ extern "C" {
 # define ULONG64 unsigned LONG64
 #endif
 
-#ifdef PRId64
-# ifndef SOAP_LONG_FORMAT
-#  define SOAP_LONG_FORMAT "%" PRId64
-# endif
-#endif
-
-#ifdef PRIu64
-# ifndef SOAP_ULONG_FORMAT
-#  define SOAP_ULONG_FORMAT "%" PRIu64
-# endif
-#endif
-
 #ifndef SOAP_LONG_FORMAT
-# define SOAP_LONG_FORMAT "%lld"        /* printf format for 64 bit ints */
+# define SOAP_LONG_FORMAT "%lld"        /* printf format for 64 bit long long ints */
 #endif
 
 #ifndef SOAP_ULONG_FORMAT
-# define SOAP_ULONG_FORMAT "%llu"       /* printf format for unsigned 64 bit ints */
+# define SOAP_ULONG_FORMAT "%llu"       /* printf format for unsigned 64 bit long long ints */
 #endif
 
 #if defined(WIN32) && !defined(CYGWIN)
@@ -2478,9 +2505,9 @@ extern "C" {
 struct SOAP_CMAC soap
 { short state;                  /* 0 = uninitialized, 1 = initialized, 2 = copy of another soap struct */
   short version;                /* 1 = SOAP1.1 and 2 = SOAP1.2 (set automatically from namespace URI in nsmap table), 0 indicates non-SOAP content */
-  soap_mode mode;
-  soap_mode imode;
-  soap_mode omode;
+  soap_mode mode;		/* internal mode flag, combines imode/omode */
+  soap_mode imode;		/* input mode flag set with soap_init1(), soap_new1(), or soap_set_imode() */
+  soap_mode omode;		/* ouput mode flag set with soap_init1(), soap_new1(), or soap_set_omode() */
   const char *float_format;     /* user-definable format string for floats (<1024 chars) */
   const char *double_format;    /* user-definable format string for doubles (<1024 chars) */
   const char *long_double_format;       /* user-definable format string for long doubles (<1024 chars) */
@@ -2529,7 +2556,6 @@ struct SOAP_CMAC soap
 #if !defined(WITH_LEAN) || defined(WITH_NTLM)
   const char *ntlm_challenge;   /* HTTP NTLM challenge key string */
   short ntlm_auth;              /* HTTP NTLM authentication type */
-  short ntlm_stage;             /* HTTP NTLM stage 0..3 */
 #endif
   int (*fpost)(struct soap*, const char*, const char*, int, const char*, const char*, size_t);
   int (*fget)(struct soap*);    /* HTTP GET hook (not set by default) */
@@ -2564,7 +2590,7 @@ struct SOAP_CMAC soap
   int (*fwvalidate)(struct soap*, const char*, const wchar_t*);
   int (*feltbegin)(struct soap*, const char*);
   int (*feltendin)(struct soap*, const char*, const char*);
-  int (*feltbegout)(struct soap*, const char*);
+  int (*feltbegout)(struct soap*, const char*, int, const char*);
   int (*feltendout)(struct soap*, const char*);
   int (*fprepareinitsend)(struct soap*);
   int (*fprepareinitrecv)(struct soap*);
@@ -2690,13 +2716,14 @@ struct SOAP_CMAC soap
   unsigned int ipv6_multicast_if; /* in_addr_t in6addr->sin6_scope_id IPv6 value */
   char* ipv4_multicast_if; /* IP_MULTICAST_IF IPv4 setsockopt interface_addr */
   unsigned char ipv4_multicast_ttl; /* IP_MULTICAST_TTL value 0..255 */
+  int client_port; /* when nonnegative, client binds to this port before connect */
   union
   { struct sockaddr addr;
     struct sockaddr_in in;
     struct sockaddr_storage storage;
   } peer; /* set by soap_connect/soap_accept and by UDP recv */
-#endif
   size_t peerlen;
+#endif
 #if defined(WITH_OPENSSL)       /* OpenSSL */
   int (*fsslauth)(struct soap*);
   int (*fsslverify)(int, X509_STORE_CTX*);
@@ -2988,6 +3015,8 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_recv(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_send(struct soap*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_send2(struct soap*, const char*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_send3(struct soap*, const char*, const char*, const char*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_send_key(struct soap*, const char*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_send_val(struct soap*, const char*);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_pututf8(struct soap*, unsigned long);
 SOAP_FMAC1 soap_wchar SOAP_FMAC2 soap_getutf8(struct soap*);
@@ -3106,6 +3135,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_match_att(struct soap*, const char*, const char *
 SOAP_FMAC1 int SOAP_FMAC2 soap_match_array(struct soap*, const char*);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_element(struct soap*, const char*, int, const char*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_element_start_end_out(struct soap*, const char *tag);
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_begin_out(struct soap*, const char *tag, int id, const char *type);
 SOAP_FMAC1 int SOAP_FMAC2 soap_array_begin_out(struct soap*, const char *tag, int id, const char *type, const char *offset);
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_ref(struct soap*, const char *tag, int id, int href);
@@ -3116,7 +3146,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_element_id(struct soap*, const char *tag, int id,
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_result(struct soap*, const char *tag);
 SOAP_FMAC1 void SOAP_FMAC2 soap_check_result(struct soap*, const char *tag);
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_end_out(struct soap*, const char *tag);
-SOAP_FMAC1 int SOAP_FMAC2 soap_element_start_end_out(struct soap*, const char *tag);
+SOAP_FMAC1 int SOAP_FMAC2 soap_element_end(struct soap*, const char *tag);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_attribute(struct soap*, const char*, const char*);
 
@@ -3335,6 +3365,7 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_post_check_mime_attachments(struct soap *soap);
 SOAP_FMAC1 int SOAP_FMAC2 soap_check_mime_attachments(struct soap *soap);
 SOAP_FMAC1 struct soap_multipart* SOAP_FMAC2 soap_get_mime_attachment(struct soap *soap, void *handle);
 SOAP_FMAC1 int SOAP_FMAC2 soap_match_cid(struct soap*, const char*, const char*);
+SOAP_FMAC1 const char* SOAP_FMAC2 soap_rand_uuid(struct soap*, const char*);
 #endif
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_register_plugin_arg(struct soap*, int (*fcreate)(struct soap*, struct soap_plugin*, void*), void*);
@@ -3346,6 +3377,7 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_clr_attr(struct soap *soap);
 
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_extend_url(struct soap *soap, const char*, const char*);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_extend_url_query(struct soap *soap, const char*, const char*);
+SOAP_FMAC1 void SOAP_FMAC2 soap_url_query(struct soap *soap, const char*, const char*);
 SOAP_FMAC1 size_t SOAP_FMAC2 soap_encode_url(const char*, char*, size_t);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_encode_url_string(struct soap*, const char*);
 #ifdef WITH_COOKIES

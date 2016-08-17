@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.33 User Guide</title>
+<title>gSOAP 2.8.34 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.33 User Guide </h1>
+<h1 align="center">gSOAP 2.8.34 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="http://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Jun 14, 2016
+<h3 align="center">Aug 17, 2016
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -924,9 +924,7 @@ at an XSD complexType that maps to a class:
 
 </td></tr></table><br></tt>
 In this way, an automatic mapping
-between XML elements of the XML schema and members of a class is created to
-
-<div class="p"><!----></div>
+between XML elements of the XML schema and members of a class is created.
 No DOM traversals and SAX events are needed.
 In addition, the XML C/C++ data binding makes XML manipulation type safe. That
 is, the type safety of C/C++ ensures that only valid XML documents can be
@@ -1621,7 +1619,7 @@ operation declared in the header file (all parameter types are primitive in
 this case).
 
 <div class="p"><!----></div>
-The calculator <i>add</i> opertion takes two double floats <i>a</i> and <i>b</i>,
+The calculator <i>add</i> operation takes two double floats <i>a</i> and <i>b</i>,
 and returns the sum in <i>result</i>. By convention, <b>all parameters are input
 parameters except the last</b>. The last parameter is always the output parameter.
 A <i><b>struct</b></i> or <i><b>class</b></i> is used to wrap multiple output parameters, see
@@ -5501,7 +5499,7 @@ See also Section&nbsp;<a href="#sec:transient">19.3</a>.
 </a>
 
 <div class="p"><!----></div>
-The <i>#module</i> directive is used to build modules. A library can be build from a module and linked with multiple Web services applications. The directive should appear at the top of the header file and has the following formats:
+The <i>#module</i> directive is used to build modules. A library can be built from a module and linked with multiple Web services applications. The directive should appear at the top of the header file and has the following formats:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 #module "<i>name</i>" <br />
 </td></tr></table><br></i>
@@ -5524,7 +5522,7 @@ For example:
 <b>struct</b>&nbsp;ns__S <br />
 { ... }
 </td></tr></table><br></i>
-The <i>module.h</i> header file declares a <b>long</b>, <b>char</b>*, and a <i><b>struct</b>&nbsp;ns__X</i>. The module name is "test", so the gSOAP <i>soapcpp2</i> compiler produces a <i>testC.cpp</i> file with the (de)serializers for these types. The <i>testC.cpp</i> library can be separately compiled and linked with an application that is built from a header file that imports "module.h" using <i>#import "module.h"</i>. You should also compile <i>testClient.cpp</i> when you want to build a library that includes the service opertions that you defined in the module header file.
+The <i>module.h</i> header file declares a <b>long</b>, <b>char</b>*, and a <i><b>struct</b>&nbsp;ns__X</i>. The module name is "test", so the gSOAP <i>soapcpp2</i> compiler produces a <i>testC.cpp</i> file with the (de)serializers for these types. The <i>testC.cpp</i> library can be separately compiled and linked with an application that is built from a header file that imports "module.h" using <i>#import "module.h"</i>. You should also compile <i>testClient.cpp</i> when you want to build a library that includes the service operations that you defined in the module header file.
 
 <div class="p"><!----></div>
 There are some limitations on a sequence of module imports. A module MUST be imported into another header to use the module content and you MUST place this import statement before all other statements in the file, including other imports (except when these are also modules). It is also advised to put all basic data type definitions in the root module of a module import hierarchy, e.g. using <i><b>typedef</b></i> to declare XSD types (see also Section&nbsp;<a href="#sec:primitive">11.3</a>).
@@ -13197,22 +13195,24 @@ The function prototypes can be found in <i>soapH.h</i>.
 <div class="p"><!----></div>
 For example, the (de)serialization of <i>MyData</i> can be done with the following code:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-<b>int</b>&nbsp;soap_serialize_MyData(<b>struct</b>&nbsp;soap *soap, MyData *<b>const</b>*a) <br />
+<b>int</b>&nbsp;soap_serialize_MyData(<b>struct</b>&nbsp;soap *soap, MyData <b>const</b>*a) <br />
 { <b>return</b>&nbsp;SOAP_OK; } // no need to mark this node (for multi-ref and cycle detection) <br />
-<b>void</b>&nbsp;soap_default_MyData(&amp;soap, MyData **a) <br />
+<b>void</b>&nbsp;soap_default_MyData(<b>struct</b>&nbsp;soap *soap, MyData *a) <br />
 { *a = NULL } <br />
-<b>int</b>&nbsp;soap_out_MyData(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*tag, <b>int</b>&nbsp;id, MyData *<b>const</b>*a, <b>const</b>&nbsp;<b>char</b>&nbsp;*type) <br />
+<b>int</b>&nbsp;soap_out_MyData(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*tag, <b>int</b>&nbsp;id, MyData <b>const</b>*a, <b>const</b>&nbsp;<b>char</b>&nbsp;*type) <br />
 { <br />
-&nbsp;&nbsp;&nbsp;soap_element_begin_out(soap, tag, id, type); // print XML beginning tag <br />
-&nbsp;&nbsp;&nbsp;soap_send(soap, *a); // just print the string (no XML conversion) <br />
-&nbsp;&nbsp;&nbsp;soap_element_end_out(soap, tag); // print XML ending tag <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>(soap_element_begin_out(soap, tag, id, type) // print XML beginning tag <br />
+&nbsp;&nbsp;&nbsp;<tt>||</tt> soap_send(soap, *a) // just print the string (no XML conversion) <br />
+&nbsp;&nbsp;&nbsp;<tt>||</tt> soap_element_end_out(soap, tag)) // print XML ending tag <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;soap<tt>-&gt;</tt>error; <br />
+&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;SOAP_OK; <br />
 } <br />
-MyData **soap_in_MyData(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*tag, MyData **a, <b>const</b>&nbsp;<b>char</b>&nbsp;*type) <br />
+MyData **soap_in_MyData(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*tag, MyData *a, <b>const</b>&nbsp;<b>char</b>&nbsp;*type) <br />
 { <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(soap_element_begin_in(soap, tag)) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;NULL; <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(!a) <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a = (MyData**)soap_malloc(soap, <b>sizeof</b>(MyData*)); <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a = (MyData*)soap_malloc(soap, <b>sizeof</b>(MyData)); <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(soap<tt>-&gt;</tt>null) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*a = NULL; // xsi:nil element <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(*soap<tt>-&gt;</tt>type &amp;&amp; soap_match_tag(soap, soap<tt>-&gt;</tt>type, type)) <br />
@@ -13221,7 +13221,7 @@ MyData **soap_in_MyData(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;NULL; // type mismatch <br />
 &nbsp;&nbsp;&nbsp;} <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(*soap<tt>-&gt;</tt>href) <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a = (MyData**)soap_id_forward(soap, soap<tt>-&gt;</tt>href, a, SOAP_MyData, <b>sizeof</b>(MyData*)) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a = (MyData**)soap_id_forward(soap, soap<tt>-&gt;</tt>href, a, 0, SOAP_TYPE_MyData, 0, <b>sizeof</b>(MyData), 0, NULL, NULL) <br />
 &nbsp;&nbsp;&nbsp;<b>else</b>&nbsp;<b>if</b>&nbsp;(soap<tt>-&gt;</tt>body) <br />
 &nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>char</b>&nbsp;*s = soap_value(soap); // fill buffer <br />
@@ -13230,10 +13230,11 @@ MyData **soap_in_MyData(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char
 &nbsp;&nbsp;&nbsp;} <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(soap<tt>-&gt;</tt>body &amp;&amp; soap_element_end_in(soap, tag)) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;NULL; <br />
-&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;a;
+&nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;a; <br />
+}
 </td></tr></table><br></i>
-More information on custom (de)serialization will be provided in this document or in a separate document in the future.
-The writing of the (de)serializer code requires the use of the low-level gSOAP API.
+More information on custom (de)serialization is available in the package in the gsoap/custom directory where you can also find several examples of custom serializers.
+Note that (de)serializer code requires the use of the low-level gSOAP API that may differ in older gSOAP releases.  If in doubt, we recommend to follow the material and examples in gsoap/custom.
 
 <div class="p"><!----></div>
 		     <h3><a name="tth_sEc19.6">
@@ -16571,5 +16572,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 14 Jun 2016, 08:09.</small>
+version 4.00.<br />On 17 Aug 2016, 13:04.</small>
 </html>

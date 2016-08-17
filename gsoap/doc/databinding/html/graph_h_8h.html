@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">graphH.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Apr 26 2016</div>
+      <div style="float: right; font-size: 10px;">updated Fri Jul 1 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -152,13 +152,13 @@ Macros</h2></td></tr>
 <tr class="separator:a950a2b957e16705db03ca9c80b80d468"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab48ddc55ca9f40f8da2d952a0abe8560"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ab48ddc55ca9f40f8da2d952a0abe8560">soap_default__QName</a>(soap,  a)&#160;&#160;&#160;<a class="el" href="graph_h_8h.html#ae310bbddc41fb994297140e42936427b">soap_default_string</a>(soap, a)</td></tr>
 <tr class="separator:ab48ddc55ca9f40f8da2d952a0abe8560"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf427780945d6b2b3768ce6fd9092ae3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#acf427780945d6b2b3768ce6fd9092ae3">soap__QName2s</a>&#160;&#160;&#160;soap_string2s</td></tr>
+<tr class="memitem:acf427780945d6b2b3768ce6fd9092ae3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#acf427780945d6b2b3768ce6fd9092ae3">soap__QName2s</a>&#160;&#160;&#160;<a class="el" href="address_h_8h.html#a4ffe3d817bdfed3787583cbf672f7abb">soap_string2s</a></td></tr>
 <tr class="separator:acf427780945d6b2b3768ce6fd9092ae3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a644409dcb97338220fffbf1bdbd4da16"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a644409dcb97338220fffbf1bdbd4da16">soap_s2_QName</a>&#160;&#160;&#160;soap_s2string</td></tr>
+<tr class="memitem:a644409dcb97338220fffbf1bdbd4da16"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a644409dcb97338220fffbf1bdbd4da16">soap_s2_QName</a>&#160;&#160;&#160;<a class="el" href="address_h_8h.html#afcc2c573481cc33e4d799fea7b4f576d">soap_s2string</a></td></tr>
 <tr class="separator:a644409dcb97338220fffbf1bdbd4da16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05d1880531b5e7b6dd6eb9170dddfe3e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a05d1880531b5e7b6dd6eb9170dddfe3e">soap_write__QName</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#a117253ef25707716512034eb94747278">soap_serialize__QName</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#afd3cf45ea2971714c3d6116fd3756871">soap_put__QName</a>(soap, data, &quot;byte&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
 <tr class="separator:a05d1880531b5e7b6dd6eb9170dddfe3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62724451c38940cfb91b957003b27307"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a62724451c38940cfb91b957003b27307">soap_read__QName</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#ab48ddc55ca9f40f8da2d952a0abe8560">soap_default__QName</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#aec049bc4c217fa3506c73427d16476a6">soap_get__QName</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
+<tr class="memitem:a62724451c38940cfb91b957003b27307"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a62724451c38940cfb91b957003b27307">soap_read__QName</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (<a class="el" href="address_h_8h.html#a4649dcc9cc34e1646c088aa95e34f667">soap_default__QName</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#aec049bc4c217fa3506c73427d16476a6">soap_get__QName</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
 <tr class="separator:a62724451c38940cfb91b957003b27307"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a243a283750788670ef7aa9472a8e2a0e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a243a283750788670ef7aa9472a8e2a0e">SOAP_TYPE_string</a>&#160;&#160;&#160;(4)</td></tr>
 <tr class="separator:a243a283750788670ef7aa9472a8e2a0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -408,7 +408,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap__QName2s&#160;&#160;&#160;soap_string2s</td>
+          <td class="memname">#define soap__QName2s&#160;&#160;&#160;<a class="el" href="address_h_8h.html#a4ffe3d817bdfed3787583cbf672f7abb">soap_string2s</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -464,7 +464,7 @@ Functions</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#ab48ddc55ca9f40f8da2d952a0abe8560">soap_default__QName</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#aec049bc4c217fa3506c73427d16476a6">soap_get__QName</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
+          <td></td><td>&#160;&#160;&#160;( ((data) ? (<a class="el" href="address_h_8h.html#a4649dcc9cc34e1646c088aa95e34f667">soap_default__QName</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#aec049bc4c217fa3506c73427d16476a6">soap_get__QName</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -842,7 +842,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_s2_QName&#160;&#160;&#160;soap_s2string</td>
+          <td class="memname">#define soap_s2_QName&#160;&#160;&#160;<a class="el" href="address_h_8h.html#afcc2c573481cc33e4d799fea7b4f576d">soap_s2string</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -5357,7 +5357,7 @@ Functions</h2></td></tr>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Apr 26 2016 15:13:54 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Fri Jul 1 2016 12:22:11 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

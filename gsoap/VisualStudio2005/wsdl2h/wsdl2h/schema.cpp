@@ -950,11 +950,15 @@ xs__import::xs__import()
 {
   namespace_ = NULL;
   schemaLocation = NULL;
+  location = NULL; // work around a Microsoft bug
   schemaRef = NULL;
 }
 
 int xs__import::traverse(xs__schema &schema)
 {
+  // work around a Microsoft bug that uses @location instead of @schemaLocation in WSDLs
+  if (!schemaLocation && location)
+    schemaLocation = location;
   if (vflag)
     cerr << "   Analyzing schema import '" << (namespace_ ? namespace_ : "(null)") << "'" << endl;
   if (!schemaRef)

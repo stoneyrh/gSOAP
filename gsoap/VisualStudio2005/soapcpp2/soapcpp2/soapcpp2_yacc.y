@@ -8,14 +8,14 @@
         1. Bison 1.6 is known to crash on Win32 systems if YYINITDEPTH is too
         small Compile with -DYYINITDEPTH=5000
 
-        2. This grammar has one shift/reduce conflict related to the use of a
+        2. This grammar has shift/reduce conflicts related to the use of a
         class declaration with a base class (e.g. class Y : public X) and the
         use of a maxOccurs (class Y :10). Internally the conflict is resolved
         in favor of a shift by Bison/Yacc, which leads to the correct parsing
         behavior. Therefore, the warning can be ignored. If this leads to an
         error, then please enable the following directive (around line 121):
 
-%expect 1 // Bison: ignore one shift/reduce conflict
+%expect 3 // Bison: ignore one shift/reduce conflict
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools

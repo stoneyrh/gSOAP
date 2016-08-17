@@ -47,7 +47,7 @@ class Message
     soap__useChoice use;
     const char *encodingStyle;
     const char *action;
-    xs__element *element;
+    const xs__element *element;
     const char *body_parts;
     wsdl__part *part;
     bool mustUnderstand;
@@ -74,7 +74,7 @@ class Operation
     const char *protocol;
     soap__styleChoice style;
     const char *parameterOrder;
-    const char *action;			// SOAP action or HTTP location
+    const char *action;			// SOAP action, REST HTTP location, or REST path /path
     const char *input_name;
     const char *output_name;
     Message *input; 			// name, use, and parts
@@ -127,6 +127,8 @@ class Definitions
     void analyze_headers(const wsdl__definitions&, Service*, wsdl__ext_ioput*, wsdl__ext_ioput*);
     void analyze_faults(const wsdl__definitions&, Service*, Operation*, vector<wsdl__ext_operation>::const_iterator&);
     Message *analyze_fault(const wsdl__definitions&, Service*, const wsdl__ext_fault&);
+    void analyze_application(const wsdl__definitions&);
+    void analyze_resource(const wsdl__definitions&, Service*, const wadl__resource_USCOREtype*, const char*, const char*, const char*);
     void generate();
 };
 

@@ -365,10 +365,10 @@ void server_loop(struct soap *soap)
     SOAP_SOCKET sock;
     int newpoolsize;
     
-    soap->cookie_domain = options[OPTION_d].value;
-    soap->cookie_path = options[OPTION_p].value;
-    soap_set_cookie(soap, "visit", "true", NULL, NULL);
-    soap_set_cookie_expire(soap, "visit", 600, NULL, NULL);
+    soap->cookie_domain = options[OPTION_d].value; /* set domain of this server */
+    soap->cookie_path = options[OPTION_p].value;   /* set root path of the cookies */
+    soap_set_cookie(soap, "visit", "true", NULL, NULL); /* use global domain/path */
+    soap_set_cookie_expire(soap, "visit", 600, NULL, NULL); /* max-age is 600 seconds to expire */
 
     if (options[OPTION_c].selected)
       soap_set_omode(soap, SOAP_IO_CHUNK); /* use chunked HTTP content (fast) */

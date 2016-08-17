@@ -36,7 +36,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include <algorithm>
 
-#define URI_CHAR(c) (((c) > 32 && (c) != '"' && (c) != '<' && (c) != '>' && (c) != '\\' && (c) != '^' && (c) != '`' && (c) <= 'z') || (c) == '~')
+#define URI_CHAR(c) ((c) > 32 && (c) != '"' && (c) != '<' && (c) != '>' && (c) != '\\' && (c) != '^' && (c) != '`' && (c) != '|' && (c) <= '~')
 
 static const char *urienc(struct soap*, const char*);
 static bool imported(const char *tag);
@@ -70,6 +70,8 @@ void Definitions::collect(const wsdl__definitions& definitions)
 
 void Definitions::analyze(const wsdl__definitions& definitions)
 {
+  // Analyze WADL application linked within empty WSDL definitions
+  analyze_application(definitions);
   // Analyze WSDL and build Service information
   binding_count = 0;
   // Determine number of relevant service bindings (service prefix option only)
@@ -910,7 +912,9 @@ void Definitions::analyze(const wsdl__definitions& definitions)
                 op->operation_documentation = (*operation).documentation;
                 op->parameterOrder = wsdl__operation_->parameterOrder;
                 if (http__operation_location)
+                {
                   op->action = http__operation_location; // TODO: for now, store HTTP location in action
+                }
                 else
                 {
                   op->action = soap__operation_action;
@@ -1095,7 +1099,35 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
       service->header[h->name] = h;
       for (vector<soap__headerfault>::const_iterator headerfault = (*header).headerfault.begin(); headerfault != (*header).headerfault.end(); ++headerfault)
       {
-        // TODO: headerfault processing. This is practically never used...!
+        Message *hf = new Message();
+        hf->message = (*headerfault).messagePtr();
+        hf->element = NULL;
+        hf->body_parts = NULL;
+        hf->part = (*headerfault).partPtr();
+        if ((*headerfault).namespace_)
+          hf->URI = urienc(definitions.soap, (*headerfault).namespace_);
+        else
+          hf->URI = service->URI;
+        if (hf->part && hf->part->element)
+          hf->name = types.aname(NULL, NULL, hf->part->element);
+        else if (hf->URI && hf->part && hf->part->name && hf->part->type)
+          hf->name = types.aname(NULL, hf->URI, hf->part->name);
+        else
+        {
+          fprintf(stderr, "\nError in SOAP HeaderFault part definition: input part \"%s\" missing?\n", hf->part && hf->part->name ? hf->part->name : "?");
+          hf->name = "";
+        }
+        hf->encodingStyle = (*headerfault).encodingStyle;
+        hf->action = NULL;
+        hf->style = document;      // irrelevant
+        hf->use = (*headerfault).use;
+        hf->mustUnderstand = false;
+        hf->multipartRelated = NULL;
+        hf->content = NULL;
+        hf->layout = NULL;
+        hf->ext_documentation = NULL;      // TODO: may wanto to add document content
+        hf->documentation = NULL;          // TODO: may wanto to add document content
+        service->headerfault[hf->name] = hf;
       }
     }
     for (vector<wsoap__header>::const_iterator wheader = ext_input->wsoap__header_.begin(); wheader != ext_input->wsoap__header_.end(); ++wheader)
@@ -1164,7 +1196,35 @@ void Definitions::analyze_headers(const wsdl__definitions& definitions, Service 
       service->header[h->name] = h;
       for (vector<soap__headerfault>::const_iterator headerfault = (*header).headerfault.begin(); headerfault != (*header).headerfault.end(); ++headerfault)
       {
-        // TODO: headerfault processing. This is practically never used...!
+        Message *hf = new Message();
+        hf->message = (*headerfault).messagePtr();
+        hf->element = NULL;
+        hf->body_parts = NULL;
+        hf->part = (*headerfault).partPtr();
+        if ((*headerfault).namespace_)
+          hf->URI = urienc(definitions.soap, (*headerfault).namespace_);
+        else
+          hf->URI = service->URI;
+        if (hf->part && hf->part->element)
+          hf->name = types.aname(NULL, NULL, hf->part->element);
+        else if (hf->URI && hf->part && hf->part->name && hf->part->type)
+          hf->name = types.aname(NULL, hf->URI, hf->part->name);
+        else
+        {
+          fprintf(stderr, "\nError in SOAP HeaderFault part definition: output part \"%s\" missing?\n", hf->part && hf->part->name ? hf->part->name : "?");
+          hf->name = "";
+        }
+        hf->encodingStyle = (*headerfault).encodingStyle;
+        hf->action = NULL;
+        hf->style = document;      // irrelevant
+        hf->use = (*headerfault).use;
+        hf->mustUnderstand = false;
+        hf->multipartRelated = NULL;
+        hf->content = NULL;
+        hf->layout = NULL;
+        hf->ext_documentation = NULL;      // TODO: may wanto to add document content
+        hf->documentation = NULL;          // TODO: may wanto to add document content
+        service->headerfault[hf->name] = hf;
       }
     }
     for (vector<wsoap__header>::const_iterator wheader = ext_output->wsoap__header_.begin(); wheader != ext_output->wsoap__header_.end(); ++wheader)
@@ -1293,6 +1353,329 @@ Message *Definitions::analyze_fault(const wsdl__definitions& definitions, Servic
   else
     fprintf(stderr, "\nError: no wsdl:definitions/binding/operation/fault/soap:fault\n");
   return f;
+}
+
+void Definitions::analyze_application(const wsdl__definitions& definitions)
+{
+  // Analyze WADL application resources and build Service information
+  const wadl__application *app = definitions.appPtr();
+  if (app)
+  {
+    if (vflag)
+      fprintf(stderr, "\nAnalyzing and collecting WADL application resources\n");
+    for (std::vector<wadl__resources>::const_iterator resources = app->resources.begin(); resources != app->resources.end(); ++resources)
+    {
+      const char *URI = (*resources).base;
+      if (URI)
+      {
+        const char *prefix = types.nsprefix(service_prefix, URI);
+        Service *service = services[prefix];
+        if (!service)
+        {
+          service = services[prefix] = new Service();
+          service->prefix = prefix;
+          service->URI = urienc(definitions.soap, URI);
+          size_t l = strlen(prefix);
+          char *name = (char*)soap_malloc(definitions.soap, l + 5);
+          (SOAP_SNPRINTF(name, l + 5, l + 4), "%sREST", prefix);
+          service->name = name;
+          service->transport = NULL;
+          service->type = NULL;
+          service->location.insert(URI);
+          for (std::vector<wadl__resource>::const_iterator resource = (*resources).resource.begin(); resource != (*resources).resource.end(); ++resource)
+          {
+            const char *path = urienc(definitions.soap, (*resource).path);
+            const char *queryType = (*resource).queryType;
+            analyze_resource(definitions, service, &*resource, URI, path, queryType);
+            for (std::vector<wadl__resource_USCOREtype*>::const_iterator type = (*resource).typePtrs().begin(); type != (*resource).typePtrs().end(); ++type)
+              analyze_resource(definitions, service, *type, URI, path, queryType);
+          }
+        }
+      }
+    }
+  }
+}
+
+void Definitions::analyze_resource(const wsdl__definitions& definitions, Service *service, const wadl__resource_USCOREtype *type, const char *URI, const char *path, const char *queryType)
+{
+  for (std::vector<__wadl__method_resource_choice>::const_iterator choice = type->__choice.begin(); choice != type->__choice.end(); ++choice)
+  {
+    const wadl__method *method = (*choice).method;
+    if (method)
+    {
+      while (method->methodPtr() && !method->id)
+        method = method->methodPtr();
+      Operation *op = new Operation();
+      op->protocol = soap_wadl__HTTPMethods2s(definitions.soap, method->name);
+      op->operation = NULL; // wsdl__operation_;
+      op->prefix = service->prefix;
+      op->URI = service->URI;
+      op->mep = NULL;
+      op->style = document;
+      op->parameterOrder = NULL;
+      if (path && *path != '/')
+      {
+        size_t l = strlen(path);
+        char *action = (char*)soap_malloc(definitions.soap, l + 2);
+        (SOAP_SNPRINTF(action, l + 2, l + 1), "/%s", path);
+        op->action = action;
+      }
+      else
+      {
+        op->action = path;
+      }
+      op->documentation = NULL;
+      op->operation_documentation = NULL;
+      if (!method->doc.empty())
+      {
+        const wadl__doc& doc = *method->doc.begin();
+        op->documentation = doc.title;
+        op->operation_documentation = doc.__mixed;
+      }
+      const char *name = method->id ? method->id : op->protocol;
+      op->name = types.aname(NULL, URI, name);
+      op->input_name = types.oname("__", URI, name);
+      size_t l = strlen(name);
+      char *resname = (char*)soap_malloc(definitions.soap, l + 9);
+      if (resname)
+      {
+        (SOAP_SNPRINTF(resname, l + 9, l + 8), "%sResponse", name);
+        op->output_name = types.oname("__", URI, resname);
+      }
+      op->input = NULL;
+      if (method->request)
+      {
+        wsdl__message *message = NULL;
+        const xs__element *element = NULL;
+        const char *documentation = NULL;
+        for (std::vector<wadl__representation>::const_iterator rep = method->request->representation.begin(); rep != method->request->representation.end(); ++rep)
+        {
+          const wadl__representation *representation = &*rep;
+          while (representation->representationPtr() && !representation->id)
+            representation = representation->representationPtr();
+          if (!representation->mediaType || strstr(representation->mediaType, "xml"))
+          {
+            if (representation->elementPtr())
+              element = representation->elementPtr();
+            if (!representation->doc.empty())
+            {
+              const wadl__doc& doc = *representation->doc.begin();
+              if (doc.__mixed && *doc.__mixed)
+                documentation = doc.__mixed;
+              else
+                documentation = doc.title;
+            }
+            break;
+          }
+        }
+        std::vector<wadl__param> allparam = type->param;
+        for (std::vector<wadl__param>::const_iterator par = method->request->param.begin(); par != method->request->param.end(); ++par)
+          allparam.push_back(*par);
+        for (std::vector<wadl__param>::const_iterator par = allparam.begin(); par != allparam.end(); ++par)
+        {
+          const wadl__param *param = &*par;
+          while (param->paramPtr() && !param->id)
+            param = param->paramPtr();
+          if (param->name)
+          {
+            if (param->style && (*param->style == matrix || *param->style == header || *param->style == plain))
+            {
+              if (!Wflag)
+                fprintf(stderr, "\nWarning: ignoring param '%s' with unsupported style '%s' in method/response/representation\n", param->name, soap_wadl__ParamStyle2s(definitions.soap, *param->style));
+            }
+            else
+            {
+              if (!message)
+              {
+                message = soap_new_wsdl__message(definitions.soap);
+                message->soap_default(definitions.soap);
+              }
+              wsdl__part part;
+              part.soap_default(definitions.soap);
+              part.name = param->name;
+              if (param->type)
+              {
+                part.type = param->type;
+                if (param->simpleTypePtr())
+                  part.simpleTypePtr(param->simpleTypePtr());
+                else if (param->complexTypePtr())
+                  part.complexTypePtr(param->complexTypePtr());
+              }
+              else
+              {
+                part.type = (char*)"xsd:string";
+              }
+              part.set_optional(param->required == false);
+              if (param->repeating)
+              {
+                part.set_optional(true);
+                part.set_repeating(true);
+              }
+              else if (param->default_)
+              {
+                part.set_optional(true);
+                // There is no point in setting the default value if param is optional
+                // part.set_default(param->default_);
+              }
+              else if (param->fixed)
+              {
+                part.set_optional(false);
+                part.set_fixed(true);
+                part.set_default(param->fixed);
+              }
+              for (std::vector<wadl__option>::const_iterator i = param->option.begin(); i != param->option.end(); ++i)
+                part.set_option((*i).value);
+              if (!param->doc.empty())
+              {
+                const wadl__doc& doc = *param->doc.begin();
+                if (doc.__mixed && *doc.__mixed)
+                  part.documentation = doc.__mixed;
+                else
+                  part.documentation = doc.title;
+              }
+              message->part.push_back(part);
+            }
+          }
+        }
+        op->input = new Message;
+        op->input->name = op->input_name;
+        op->input->URI = service->URI;
+        op->input->style = op->style;
+        op->input->use = literal;
+        op->input->encodingStyle = NULL;
+        op->input->action = NULL;
+        op->input->message = message;
+        op->input->element = element;
+        op->input->part = NULL;
+        op->input->mustUnderstand = false;
+        op->input->multipartRelated = NULL;
+        op->input->content = soap_new_mime__content(definitions.soap);
+        op->input->content->soap_default(definitions.soap);
+        op->input->content->type = (char*)queryType;
+        op->input->body_parts = NULL;
+        op->input->layout = NULL;
+        op->input->multipartRelated = NULL;
+        op->input->layout = NULL;
+        op->input->documentation = documentation;
+        op->input->ext_documentation = NULL;
+        if (!method->request->doc.empty())
+        {
+          const wadl__doc& doc = *method->request->doc.begin();
+          if (doc.__mixed && *doc.__mixed)
+            op->input->ext_documentation = doc.__mixed;
+          else
+            op->input->ext_documentation = doc.title;
+        }
+      }
+      op->output = NULL;
+      for (std::vector<wadl__response>::const_iterator response = method->response.begin(); response != method->response.end(); ++response)
+      {
+        const char *name = NULL;
+        const xs__element *element = NULL;
+        for (std::vector<wadl__representation>::const_iterator rep = (*response).representation.begin(); rep != (*response).representation.end(); ++rep)
+        {
+          const wadl__representation *representation = &*rep;
+          while (representation->representationPtr() && !representation->id)
+            representation = representation->representationPtr();
+          if (!representation->mediaType || strstr(representation->mediaType, "xml"))
+          {
+            if (representation->elementPtr())
+            {
+              name = representation->element;
+              element = representation->elementPtr();
+            }
+            for (std::vector<wadl__param>::const_iterator param = representation->param.begin(); param != representation->param.end(); ++param)
+              if (!Wflag)
+                fprintf(stderr, "\nWarning: ignoring param '%s' in method/response/representation\n", param->name ? param->name : "");
+            break;
+          }
+        }
+        if (element)
+        {
+          if (!op->output && (!(*response).status
+                           || strstr((*response).status, "200")
+                           || strstr((*response).status, "201")
+                           || strstr((*response).status, "202")))
+          {
+            op->output = new Message();
+            op->output->name = op->output_name;
+            op->output->URI = service->URI;
+            op->output->style = op->style;
+            op->output->use = literal;
+            op->output->encodingStyle = NULL;
+            op->output->action = NULL;
+            op->output->message = NULL;
+            op->output->element = element;
+            op->output->part = NULL;
+            op->output->mustUnderstand = false;
+            op->output->multipartRelated = NULL;
+            op->output->content = NULL;
+            op->output->body_parts = NULL;
+            op->output->layout = NULL;
+            op->output->ext_documentation = NULL;
+            op->output->multipartRelated = NULL;
+            op->output->layout = NULL;
+            op->output->ext_documentation = NULL;
+            op->output->documentation = NULL;
+          }
+          else
+          {
+            Message *fault = new Message();
+            fault->name = types.aname(NULL, NULL, name);
+            fault->URI = service->URI;
+            fault->style = op->style;
+            fault->use = literal;
+            fault->encodingStyle = NULL;
+            fault->action = NULL;
+            fault->message = NULL;
+            fault->element = element;
+            fault->part = NULL;
+            fault->mustUnderstand = false;
+            fault->multipartRelated = NULL;
+            fault->content = NULL;
+            fault->body_parts = (*response).status;
+            fault->layout = NULL;
+            fault->ext_documentation = NULL;
+            fault->multipartRelated = NULL;
+            fault->layout = NULL;
+            fault->ext_documentation = NULL;
+            fault->documentation = NULL;
+            op->outfault.push_back(fault);
+          }
+        }
+      }
+      service->operation.push_back(op);
+    }
+    wadl__resource *resource = (*choice).resource;
+    if (resource)
+    {
+      const char *fullpath = NULL;
+      if (resource->path)
+        fullpath = urienc(definitions.soap, resource->path);
+      if (path)
+      {
+        if (fullpath)
+        {
+          size_t l = strlen(path) + strlen(fullpath) + 2;
+          char *s = (char*)soap_malloc(definitions.soap, l);
+          (SOAP_SNPRINTF_SAFE(s, l), "%s/%s", path, fullpath + (*fullpath == '/'));
+          fullpath = s;
+        }
+        else
+        {
+          fullpath = path;
+        }
+      }
+      if (!type->param.empty())
+      {
+        std::vector<wadl__param> allparam = type->param;
+        for (std::vector<wadl__param>::const_iterator par = resource->param.begin(); par != resource->param.end(); ++par)
+          allparam.push_back(*par);
+        resource->param.swap(allparam);
+      }
+      analyze_resource(definitions, service, resource, URI, fullpath, resource->queryType ? resource->queryType : queryType);
+    }
+  }
 }
 
 void Definitions::compile(const wsdl__definitions& definitions)
@@ -1550,13 +1933,15 @@ void Definitions::compile(const wsdl__definitions& definitions)
       if (!mflag)
       {
         if (**i == '"')
+        {
           fprintf(stream, "// Imported XSD type \"%s\" defined by %s.\n", *i, t);
+        }
         else if (!iflag)
         {
           s = types.tname(NULL, NULL, "xsd:string");
           fprintf(stream, "/// Primitive built-in type \"%s\".\n", *i);
           fprintf(stream, "typedef %s %s;\n\n", s, t);
-          types.deftname(TYPEDEF, false, types.is_ptr(NULL, NULL, "xsd:string"), NULL, NULL, *i);
+          types.deftname(TYPEDEF, false, types.is_ptr(NULL, NULL, "xsd:string"), NULL, NULL, *i, s);
           const char *u = types.uri(*i);
           if (u && !types.uris[u])
           {
@@ -1569,7 +1954,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
         fprintf(stream, "//  Imported XSD type \"%s\" defined by %s.\n", *i, t);
       else
         fprintf(stream, "//  xsd.h: should define type %s\n", t);
-      types.deftname(TYPEDEF, false, false, NULL, NULL, *i);
+      types.deftname(TYPEDEF, false, false, NULL, NULL, *i, s);
     }
     if (pflag && !strncmp(*i, "xs:", 3))                // only xsi types are polymorph
     {
@@ -1601,7 +1986,9 @@ void Definitions::compile(const wsdl__definitions& definitions)
         else
           fprintf(stream, "/// Built-in element \"%s\".\n", *j);
         if (mflag)
+        {
           fprintf(stream, "//  (declaration of %s removed by option -m)\n\n", t);
+        }
         else if (!iflag && !imported(*j))
         {
           types.format(s);
@@ -1622,13 +2009,15 @@ void Definitions::compile(const wsdl__definitions& definitions)
       if (!mflag)
       {
         if (**j == '"')
+        {
           fprintf(stream, "// Imported element \"%s\" declared as %s.\n", *j, t);
+        }
         else if (!iflag && !imported(*j))
         {
           s = types.tname(NULL, NULL, "xsd:any");
           fprintf(stream, "/// Built-in element \"%s\".\n", *j);
           fprintf(stream, "typedef %s %s;\n\n", s, t);
-          types.deftname(TYPEDEF, false, true, "_", NULL, *j);  // already pointer
+          types.deftname(TYPEDEF, false, true, "_", NULL, *j, s);  // already pointer
           const char *u = types.uri(*j);
           if (u && !types.uris[u])
           {
@@ -1638,10 +2027,14 @@ void Definitions::compile(const wsdl__definitions& definitions)
         }
       }
       else if (**j == '"')
+      {
         fprintf(stream, "//  Imported element \"%s\" declared as %s.\n\n", *j, t);
+      }
       else
+      {
         fprintf(stream, "//  xsd.h: should define element %s\n\n", t);
-      types.deftname(TYPEDEF, false, false, "_", NULL, *j);
+      }
+      types.deftname(TYPEDEF, false, false, "_", NULL, *j, s);
     }
   }
   // produce built-in primitive attributes, limited to the ones that are used only
@@ -1683,7 +2076,9 @@ void Definitions::compile(const wsdl__definitions& definitions)
       if (!mflag)
       {
         if (**k == '"')
+        {
           fprintf(stream, "// Imported attribute \"%s\" declared as %s.\n", *k, t);
+        }
         else if (!iflag && !imported(*k))
         {
           fprintf(stream, "/// Built-in attribute \"%s\".\n", *k);
@@ -1697,10 +2092,14 @@ void Definitions::compile(const wsdl__definitions& definitions)
         }
       }
       else if (**k == '"')
+      {
         fprintf(stream, "//  Imported attribute \"%s\" declared as %s.\n\n", *k, t);
+      }
       else
+      {
         fprintf(stream, "//  xsd.h: should define attribute %s\n\n", t);
-      types.deftname(TYPEDEF, false, types.is_ptr(NULL, NULL, "xsd:string"), "_", NULL, *k);
+      }
+      types.deftname(TYPEDEF, false, types.is_ptr(NULL, NULL, "xsd:string"), "_", NULL, *k, s);
     }
   }
   // produce types
@@ -1730,7 +2129,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
             fprintf(stream, "/// @brief Top-level root element \"%s\":%s.\n", (*schema4)->targetNamespace, (*element).name);
             if (gflag)
             {
-              const char *t = types.deftname(TYPEDEF, false, false, "_", (*schema4)->targetNamespace, (*element).name);
+              const char *t = types.deftname(TYPEDEF, false, false, "_", (*schema4)->targetNamespace, (*element).name, NULL);
               if (t)
                 fprintf(stream, "typedef _XML %s;\n\n", t);
               else
@@ -1827,7 +2226,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       {
         if ((*simpleType).baseLevel() <= 0)
         {
-          const char *t = types.deftname(TYPEDEF, false, false, NULL, (*schema)->targetNamespace, (*simpleType).name);
+          const char *t = types.deftname(TYPEDEF, false, false, NULL, (*schema)->targetNamespace, (*simpleType).name, NULL);
           fprintf(stderr, "\nError: circular restriction/extension <xs:simpleType name=\"%s\"/>\n", (*simpleType).name ? (*simpleType).name : "");
           fprintf(stream, "\n/// @todo !FIXME! @warning %s is a simpleType with circular restriction/extension.\n", (*simpleType).name ? (*simpleType).name : "");
           fprintf(stream, "typedef _XML %s;\n\n", t);
@@ -1870,7 +2269,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
             if (gflag)
             {
               const char *s = types.tnamenoptr(NULL, (*schema)->targetNamespace, (*element).type);
-              const char *t = types.deftname(TYPEDEF, false, false, "_", (*schema)->targetNamespace, (*element).name);
+              const char *t = types.deftname(TYPEDEF, false, false, "_", (*schema)->targetNamespace, (*element).name, s);
               fprintf(stream, "typedef %s %s;\n\n", s, t);
             }
             else
@@ -1904,7 +2303,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
             if (gflag)
             {
               const char *s = types.tnamenoptr(NULL, (*schema)->targetNamespace, (*attribute).type);
-              const char *t = types.deftname(TYPEDEF, false, false, "_", (*schema)->targetNamespace, (*attribute).name);
+              const char *t = types.deftname(TYPEDEF, false, false, "_", (*schema)->targetNamespace, (*attribute).name, s);
               fprintf(stream, "typedef %s %s;\n\n", s, t);
             }
             else
@@ -2023,7 +2422,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
           section(sv->name, "_plnk BPEL 2.0 Partner Links for Binding", sv->name);
           gen_plnk(*sv);
         }
-        section(sv->name, "_ports Endpoints of Binding", sv->name);
+        section(sv->name, "_ports Default endpoints of Binding", sv->name);
         for (SetOfString::const_iterator port = sv->location.begin(); port != sv->location.end(); ++port)
           fprintf(stream, "\n  - %s\n", *port);
         if (!sv->policy.empty())
@@ -2082,6 +2481,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
 void Definitions::generate()
 {
   MapOfStringToMessage headers;
+  MapOfStringToMessage headerfaults;
   MapOfStringToMessage faults;
   const char *t;
   for (MapOfStringToService::const_iterator service1 = services.begin(); service1 != services.end(); ++service1)
@@ -2090,6 +2490,8 @@ void Definitions::generate()
     {
       for (MapOfStringToMessage::const_iterator header = (*service1).second->header.begin(); header != (*service1).second->header.end(); ++header)
         headers[(*header).first] = (*header).second;
+      for (MapOfStringToMessage::const_iterator headerfault = (*service1).second->headerfault.begin(); headerfault != (*service1).second->headerfault.end(); ++headerfault)
+        headerfaults[(*headerfault).first] = (*headerfault).second;
       for (MapOfStringToMessage::const_iterator fault = (*service1).second->fault.begin(); fault != (*service1).second->fault.end(); ++fault)
         faults[(*fault).first] = (*fault).second;
     }
@@ -2101,7 +2503,7 @@ void Definitions::generate()
     banner("Custom SOAP Header");
     types.format(t);
   }
-  else if (!jflag && !headers.empty())
+  else if (!jflag && !headers.empty() && !headerfaults.empty())
   {
     banner("SOAP Header");
     fprintf(stream, "/**\n\nThe SOAP Header is part of the gSOAP context and its content is accessed\nthrough the soap.header variable. You may have to set the soap.actor variable\nto serialize SOAP Headers with SOAP-ENV:actor or SOAP-ENV:role attributes.\nUse option -j to remove entire SOAP Header definition.\nUse option -k to remove the mustUnderstand qualifiers.\n\n*/\n");
@@ -2136,7 +2538,7 @@ void Definitions::generate()
       }
       else if ((*header).second->element)
       {
-        fprintf(stream, "/// \"%s\" SOAP Header element", (*header).second->name);
+        fprintf(stream, "/// \"%s\" SOAP Header element.", (*header).second->name);
         (*header).second->generate(types, ";", false, true, false, true);
         fprintf(stream, "\n");
       }
@@ -2146,6 +2548,49 @@ void Definitions::generate()
           fprintf(stream, elementformat, types.pname(true, false, "_", NULL, (*header).second->part->element), (*header).first);
         else
           fprintf(stream, pointerformat, (*header).first, (*header).first);
+        fprintf(stream, ";\t///< @todo Please check element name and type (imported type)\n");
+      }
+    }
+    for (MapOfStringToMessage::const_iterator headerfault = headerfaults.begin(); headerfault != headerfaults.end(); ++headerfault)
+    {
+      if ((*headerfault).second->use == encoded && (*headerfault).second->URI && *(*headerfault).second->URI)
+        fprintf(stream, schemaformat, types.nsprefix(NULL, (*headerfault).second->URI), "namespace", (*headerfault).second->URI);
+      comment("HeaderFault", (*headerfault).first, "WSDL", (*headerfault).second->ext_documentation);
+      comment("HeaderFault", (*headerfault).first, "SOAP", (*headerfault).second->documentation);
+      if ((*headerfault).second->mustUnderstand && !kflag)
+      {
+        fprintf(stream, elementformat, "mustUnderstand", "// must be understood by receiver");
+        fprintf(stream, "\n");
+      }
+      if ((*headerfault).second->part && (*headerfault).second->part->elementPtr())
+      {
+        fprintf(stream, "/// \"%s\" SOAP HeaderFault part element optionally contains fault details.\n", (*headerfault).second->part->name);
+        if ((*headerfault).second->part->elementPtr()->type && (*headerfault).second->part->element)
+          fprintf(stream, elementformat, types.pname(true, false, NULL, NULL, (*headerfault).second->part->elementPtr()->type), types.aname(NULL, NULL, (*headerfault).second->part->element));
+        else if ((*headerfault).second->part->element)
+          fprintf(stream, elementformat, types.pname(true, false, "_", NULL, (*headerfault).second->part->element), types.aname(NULL, NULL, (*headerfault).second->part->element));
+        else
+          fprintf(stream, elementformat, types.pname(true, false, "_", NULL, (*headerfault).second->part->elementPtr()->name), (*headerfault).first);
+        fprintf(stream, ";\n");
+      }
+      else if ((*headerfault).second->part && (*headerfault).second->part->type)
+      {
+        fprintf(stream, "/// \"%s\" SOAP HeaderFault part type optionally contains fault details.\n", (*headerfault).second->part->type);
+        fprintf(stream, elementformat, types.pname(true, false, NULL, NULL, (*headerfault).second->part->type), types.aname(NULL, (*headerfault).second->URI, (*headerfault).second->part->name));
+        fprintf(stream, ";\n");
+      }
+      else if ((*headerfault).second->element)
+      {
+        fprintf(stream, "/// \"%s\" SOAP HeaderFault element optionally contains fault details.", (*headerfault).second->name);
+        (*headerfault).second->generate(types, ";", false, true, false, true);
+        fprintf(stream, "\n");
+      }
+      else
+      {
+        if ((*headerfault).second->part && (*headerfault).second->part->element)
+          fprintf(stream, elementformat, types.pname(true, false, "_", NULL, (*headerfault).second->part->element), (*headerfault).first);
+        else
+          fprintf(stream, pointerformat, (*headerfault).first, (*headerfault).first);
         fprintf(stream, ";\t///< @todo Please check element name and type (imported type)\n");
       }
     }
@@ -2349,7 +2794,7 @@ void Service::generate(Types& types)
           flag = ((*op2)->output->element || ((*op2)->output->message && (*op2)->output->message->part.size() == 1));
         else if (!wflag)
           flag = ((*op2)->output->element || ((*op2)->output->message && (*op2)->output->use == encoded && (*op2)->output->message->part.size() == 1 && !(*(*op2)->output->message->part.begin()).simpleTypePtr() && !(*(*op2)->output->message->part.begin()).complexTypePtr()));
-        if (flag && (*op2)->input && (*op2)->output && (*op2)->input->message && (*(*op2)->output->message->part.begin()).element)
+        if (flag && (*op2)->input && (*op2)->output && (*op2)->input->message && (*op2)->output->message && !(*op2)->output->message->part.empty() && (*(*op2)->output->message->part.begin()).element)
           for (vector<wsdl__part>::const_iterator part = (*op2)->input->message->part.begin(); part != (*op2)->input->message->part.end(); ++part)
             if ((*part).element && !strcmp((*part).element, (*(*op2)->output->message->part.begin()).element))
               flag = false;
@@ -2402,9 +2847,8 @@ void Service::generate(Types& types)
           fprintf(stream, "\n  - Request message MIME content");
           if ((*op2)->input->content->type)
           {
-            fprintf(stream, " type=\"");
+            fprintf(stream, " type: ");
             text((*op2)->input->content->type);
-            fprintf(stream, "\"");
           }
           if ((*op2)->input->content->type && !strcmp((*op2)->input->content->type, "application/x-www-form-urlencoded"))
             fprintf(stream, "\n    Use the httpform.c plugin to retrieve key-value pairs from the REST request\n    message form data at the server side (client side is automated).\n");
@@ -2420,9 +2864,8 @@ void Service::generate(Types& types)
           fprintf(stream, "\n  - Response message MIME content");
           if ((*op2)->output->content->type)
           {
-            fprintf(stream, " type=\"");
+            fprintf(stream, " type: ");
             text((*op2)->output->content->type);
-            fprintf(stream, "\"");
           }
           fprintf(stream, "\n    @todo This form of MIME content response is not automatically handled.\n    Use one-way request and implement code to parse response.\n");
         }
@@ -2454,10 +2897,16 @@ void Service::generate(Types& types)
             fprintf(stream, "\n  - %s RPC encoded response messages\n", (*op2)->protocol);
         }
       }
+      if (!location.empty())
+      {
+        fprintf(stream, "\n  - Default endpoints:\n");
+        for (SetOfString::const_iterator port = location.begin(); port != location.end(); ++port)
+          fprintf(stream, "    - %s\n", *port);
+      }
       if ((*op2)->action)
       {
         if (*(*op2)->action)
-          fprintf(stream, "\n  - Action or location: \"%s\"\n", (*op2)->action);
+          fprintf(stream, "\n  - Default SOAP action or REST location path:\n    - \"%s\"\n", (*op2)->action);
       }
       if ((*op2)->input)
       {
@@ -2478,20 +2927,20 @@ void Service::generate(Types& types)
             for (vector<wsdl__part>::const_iterator part = (*infault)->message->part.begin(); part != (*infault)->message->part.end(); ++part)
             {
               if ((*part).element)
-                fprintf(stream, "\n  - SOAP Input Fault: %s (literal)\n", (*part).element);
+                fprintf(stream, "\n  - Input Fault: %s (literal)\n", (*part).element);
               else if ((*part).name && (*part).type)
-                fprintf(stream, "\n  - SOAP Input Fault: %s (literal)\n", (*part).name);
+                fprintf(stream, "\n  - Input Fault: %s (literal)\n", (*part).name);
             }
           }
           else if ((*infault)->message->name)
-            fprintf(stream, "\n  - SOAP Input Fault: %s\n", (*infault)->name);
+            fprintf(stream, "\n  - Input Fault: %s\n", (*infault)->name);
           if ((*infault)->message->name && (*infault)->action)
-            fprintf(stream, "    - SOAP Input Fault addressing action: \"%s\"\n", (*infault)->action);
+            fprintf(stream, "    - Input Fault addressing action: \"%s\"\n", (*infault)->action);
         }
         else if ((*infault)->name)
-          fprintf(stream, "\n  - SOAP Input Fault: %s (literal)\n", (*infault)->name);
+          fprintf(stream, "\n  - Input Fault: %s (literal)\n", (*infault)->name);
         if ((*infault)->body_parts)
-          fprintf(stream, "    SOAP Input Fault code: %s\n", (*infault)->body_parts);
+          fprintf(stream, "    Input Fault code: %s\n", (*infault)->body_parts);
         text((*infault)->documentation);        
         text((*infault)->ext_documentation);    
         gen_policy(*this, (*infault)->policy, "fault message", types);
@@ -2505,20 +2954,20 @@ void Service::generate(Types& types)
             for (vector<wsdl__part>::const_iterator part = (*outfault)->message->part.begin(); part != (*outfault)->message->part.end(); ++part)
             {
               if ((*part).element)
-                fprintf(stream, "\n  - SOAP Output Fault: %s (literal)\n", (*part).element);
+                fprintf(stream, "\n  - Output Fault: %s (literal)\n", (*part).element);
               else if ((*part).name && (*part).type)
-                fprintf(stream, "\n  - SOAP Output Fault: %s (literal)\n", (*part).name);
+                fprintf(stream, "\n  - Output Fault: %s (literal)\n", (*part).name);
             }
           }
           else if ((*outfault)->message->name)
-            fprintf(stream, "\n  - SOAP Output Fault: %s\n", (*outfault)->name);
+            fprintf(stream, "\n  - Output Fault: %s\n", (*outfault)->name);
           if ((*outfault)->message->name && (*outfault)->action)
-            fprintf(stream, "    - SOAP Output Fault addressing action: \"%s\"\n", (*outfault)->action);
+            fprintf(stream, "    - Output Fault addressing action: \"%s\"\n", (*outfault)->action);
         }
         else if ((*outfault)->name)
-          fprintf(stream, "\n  - SOAP Output Fault: %s (literal)\n", (*outfault)->name);
+          fprintf(stream, "\n  - Output Fault: %s (literal)\n", (*outfault)->name);
         if ((*outfault)->body_parts)
-          fprintf(stream, "    SOAP Output Fault code: %s\n", (*outfault)->body_parts);
+          fprintf(stream, "    Output Fault code: %s\n", (*outfault)->body_parts);
         text((*outfault)->documentation);       
         text((*outfault)->ext_documentation);   
         gen_policy(*this, (*outfault)->policy, "fault message", types);
@@ -2563,20 +3012,16 @@ void Service::generate(Types& types)
             fprintf(stream, "    -# MIME attachment %d:\n", k++);
             for (vector<mime__content>::const_iterator content = (*part).content.begin(); content != (*part).content.end(); ++content)
             {
-              fprintf(stream, "       -");
               if ((*content).part)
               {
-                fprintf(stream, " part=\"");
+                fprintf(stream, "       - part: ");
                 text((*content).part);
-                fprintf(stream, "\"");
               }
               if ((*content).type)
               {
-                fprintf(stream, " type=\"");
+                fprintf(stream, "       - type: ");
                 text((*content).type);
-                fprintf(stream, "\"");
               }
-              fprintf(stream, "\n");
             }
           }
         }
@@ -2623,20 +3068,16 @@ void Service::generate(Types& types)
             fprintf(stream, "    -# MIME attachment %d:\n", k++);
             for (vector<mime__content>::const_iterator content = (*part).content.begin(); content != (*part).content.end(); ++content)
             {
-              fprintf(stream, "       -");
               if ((*content).part)
               {
-                fprintf(stream, " part=\"");
+                fprintf(stream, "       - part: ");
                 text((*content).part);
-                fprintf(stream, "\"");
               }
               if ((*content).type)
               {
-                fprintf(stream, " type=\"");
+                fprintf(stream, "       - type: ");
                 text((*content).type);
-                fprintf(stream, "\"");
               }
-              fprintf(stream, "\n");
             }
           }
         }
@@ -2651,7 +3092,7 @@ void Service::generate(Types& types)
         fprintf(stream, "\n    // output parameters:");
         if (flag)
         {
-          if ((*op2)->style == rpc && (*op2)->output->message && (*(*op2)->output->message->part.begin()).name)
+          if ((*op2)->style == rpc && (*op2)->output->message && !(*op2)->output->message->part.empty() && (*(*op2)->output->message->part.begin()).name)
           {
             fprintf(stream, "\n");
             fprintf(stream, anonymous ? anonformat : paraformat, types.tnamenoptr(NULL, NULL, (*(*op2)->output->message->part.begin()).type), cflag ? "*" : "&", types.aname(NULL, NULL, (*(*op2)->output->message->part.begin()).name), "");
@@ -2670,7 +3111,7 @@ void Service::generate(Types& types)
       {
         if (flag)
         {
-          if ((*op2)->style == rpc && (*op2)->output->message && (*(*op2)->output->message->part.begin()).name)
+          if ((*op2)->style == rpc && (*op2)->output->message && !(*op2)->output->message->part.empty() && (*(*op2)->output->message->part.begin()).name)
           {
             fprintf(stream, "\n");
             fprintf(stream, anonymous ? anonformat : paraformat, types.tnamenoptr(NULL, NULL, (*(*op2)->output->message->part.begin()).type), cflag ? "*" : "&", types.aname(NULL, NULL, (*(*op2)->output->message->part.begin()).name), "");
@@ -2684,10 +3125,10 @@ void Service::generate(Types& types)
       fprintf(stream, "\n  );\n@endcode\n\n");
       if (!cflag)
       {
-        fprintf(stream, "C++ proxy class (defined in soap%sProxy.h):\n", name);
+        fprintf(stream, "C++ proxy class (defined in soap%sProxy.h generated with soapcpp2):\n", name);
         fprintf(stream, "@code\n  class %sProxy;\n@endcode\n", name);
         fprintf(stream, "Important: use soapcpp2 option '-j' (or '-i') to generate improved and easy-to-use proxy classes;\n\n");
-        fprintf(stream, "C++ service class (defined in soap%sService.h):\n", name);
+        fprintf(stream, "C++ service class (defined in soap%sService.h generated with soapcpp2):\n", name);
         fprintf(stream, "@code\n  class %sService;\n@endcode\n", name);
         fprintf(stream, "Important: use soapcpp2 option '-j' (or '-i') to generate improved and easy-to-use service classes;\n\n");
       }
@@ -2732,10 +3173,16 @@ void Service::generate(Types& types)
         else
           fprintf(stream, "\n  - %s RPC encoded messaging\n", (*op2)->protocol);
       }
+      if (!location.empty())
+      {
+        fprintf(stream, "\n  - Default endpoints:\n");
+        for (SetOfString::const_iterator port = location.begin(); port != location.end(); ++port)
+          fprintf(stream, "    - %s\n", *port);
+      }
       if ((*op2)->action)
       {
         if (*(*op2)->action)
-          fprintf(stream, "\n  - Action or location: \"%s\"\n", (*op2)->action);
+          fprintf(stream, "\n  - Default SOAP action or REST location path:\n    - \"%s\"\n", (*op2)->action);
       }
       if ((*op2)->output)
       {
@@ -2802,20 +3249,16 @@ void Service::generate(Types& types)
             fprintf(stream, "    -# MIME attachment %d:\n", k++);
             for (vector<mime__content>::const_iterator content = (*part).content.begin(); content != (*part).content.end(); ++content)
             {
-              fprintf(stream, "       -");
               if ((*content).part)
               {
-                fprintf(stream, " part=\"");
+                fprintf(stream, "       - part: ");
                 text((*content).part);
-                fprintf(stream, "\"");
               }
               if ((*content).type)
               {
-                fprintf(stream, " type=\"");
+                fprintf(stream, "       - type: ");
                 text((*content).type);
-                fprintf(stream, "\"");
               }
-              fprintf(stream, "\n");
             }
           }
         }
@@ -2872,7 +3315,7 @@ void Operation::generate(Types& types, Service& service)
       flag = (output->element || (output->message && output->message->part.size() == 1));
     else if (!wflag)
       flag = (output->element || (output->message && output->use == encoded && output->message->part.size() == 1 && !(*output->message->part.begin()).simpleTypePtr() && !(*output->message->part.begin()).complexTypePtr()));
-    if (flag && input && input->message && (*output->message->part.begin()).element)
+    if (flag && input && input->message && output->message && !output->message->part.empty() && (*output->message->part.begin()).element)
       for (vector<wsdl__part>::const_iterator part = input->message->part.begin(); part != input->message->part.end(); ++part)
         if ((*part).element && !strcmp((*part).element, (*output->message->part.begin()).element))
           flag = false;
@@ -3084,10 +3527,10 @@ void Operation::generate(Types& types, Service& service)
       if (style == rpc && output->message && (*output->message->part.begin()).name)
       {
         fprintf(stream, "\n");
-	if (output->use == encoded)
-	  fprintf(stream, anonymous ? anonformat : paraformat, types.tnamenoptr(NULL, NULL, (*output->message->part.begin()).type), cflag ? "*:" : "&:", types.aname(NULL, NULL, (*output->message->part.begin()).name), "");
-	else
-	  fprintf(stream, anonymous ? anonformat : paraformat, types.tnamenoptr(NULL, NULL, (*output->message->part.begin()).type), cflag ? "*" : "&", types.aname(NULL, NULL, (*output->message->part.begin()).name), "");
+        if (output->use == encoded)
+          fprintf(stream, anonymous ? anonformat : paraformat, types.tnamenoptr(NULL, NULL, (*output->message->part.begin()).type), cflag ? "*:" : "&:", types.aname(NULL, NULL, (*output->message->part.begin()).name), "");
+        else
+          fprintf(stream, anonymous ? anonformat : paraformat, types.tnamenoptr(NULL, NULL, (*output->message->part.begin()).type), cflag ? "*" : "&", types.aname(NULL, NULL, (*output->message->part.begin()).name), "");
         fprintf(stream, "\t///< Output parameter%s%s", output->use == encoded ? ", : unqualified name as per RPC encoding" : "", anonymous ? ", _ wildcard name as per RPC parameterOrder" : "");
       }
       else
@@ -3261,10 +3704,10 @@ void Operation::generate(Types& types, Service& service)
         if (style == rpc && output->message && (*output->message->part.begin()).name)
         {
           fprintf(stream, "\n");
-	  if (output->use == encoded)
-	    fprintf(stream, anonymous ? anonformat : paraformat, types.tnamenoptr(NULL, NULL, (*output->message->part.begin()).type), cflag ? "*:" : "&:", types.aname(NULL, NULL, (*output->message->part.begin()).name), "");
-	  else
-	    fprintf(stream, anonymous ? anonformat : paraformat, types.tnamenoptr(NULL, NULL, (*output->message->part.begin()).type), cflag ? "*" : "&", types.aname(NULL, NULL, (*output->message->part.begin()).name), "");
+          if (output->use == encoded)
+            fprintf(stream, anonymous ? anonformat : paraformat, types.tnamenoptr(NULL, NULL, (*output->message->part.begin()).type), cflag ? "*:" : "&:", types.aname(NULL, NULL, (*output->message->part.begin()).name), "");
+          else
+            fprintf(stream, anonymous ? anonformat : paraformat, types.tnamenoptr(NULL, NULL, (*output->message->part.begin()).type), cflag ? "*" : "&", types.aname(NULL, NULL, (*output->message->part.begin()).name), "");
           fprintf(stream, "\t///< Output parameter%s%s", output->use == encoded ? ", : unqualified name as per RPC encoding" : "", anonymous ? ", _ wildcard name as per RPC parameterOrder" : "");
         }
         else
@@ -3383,16 +3826,39 @@ void Message::generate(Types& types, const char *sep, bool anonymous, bool remar
           }
           else
           {
-            if (unqual)
-              fprintf(stream, anonymous ? anonformat : paraformat, types.pname(optional, false, NULL, NULL, (*part).type), " :", types.aname(NULL, NULL, (*part).name), sep);
+            const char *t = types.pname((optional || (*part).is_optional()) && !(*part).is_repeating(), false, NULL, NULL, (*part).type);
+            if ((*part).is_repeating())
+            {
+              if (cflag)
+              {
+                fprintf(stream, sizeparaformat, "int", types.aname(NULL, NULL, (*part).name), ",");
+                fprintf(stream, "\t///< Repeating parameter\n");
+                fprintf(stream, anonymous ? anonformat : paraformat, t, unqual ? "*:" : "*", types.aname(NULL, NULL, (*part).name), "");
+              }
+              else
+              {
+                fprintf(stream, pointertemplateparaformat, types.vname("$CONTAINER"), t, unqual ? " :" : " ", types.aname(NULL, NULL, (*part).name), "");
+              }
+            }
             else
-              fprintf(stream, anonymous ? anonformat : paraformat, types.pname(optional, false, NULL, NULL, (*part).type), " ", types.aname(NULL, NULL, (*part).name), sep);
+            {
+              fprintf(stream, anonymous ? anonformat : paraformat, t, unqual ? " :" : " ", types.aname(NULL, NULL, (*part).name), "");
+              types.gendefault(NULL, (*part).type, NULL, (*part).simpleTypePtr(), (*part).get_default(), NULL);
+            }
+            fprintf(stream, "%s", sep);
             if (remark)
             {
               if (*sep == ',')
-                fprintf(stream, "\t///< Input parameter%s%s", unqual ? ", : unqualified name as per RPC encoding" : "", anonymous ? ", _ wildcard name as per RPC parameterOrder" : "");
+                fprintf(stream, "\t///< Input parameter%s%s%s", (*part).is_repeating() ? " is repeating" : optional || (*part).is_optional() ? " is optional" : "", unqual ? ", : unqualified name as per RPC encoding" : "", anonymous ? ", _ wildcard name as per RPC parameterOrder" : "");
               else
-                fprintf(stream, "\t///< Output parameter%s%s", unqual ? ", : unqualified name as per RPC encoding" : "", anonymous ? ", _ wildcard name as per RPC parameterOrder" : "");
+                fprintf(stream, "\t///< Output parameter%s%s%s", (*part).is_repeating() ? " is repeating" : optional || (*part).is_optional() ? " is optional" : "", unqual ? ", : unqualified name as per RPC encoding" : "", anonymous ? ", _ wildcard name as per RPC parameterOrder" : "");
+              const std::vector<char*>& options = (*part).options();
+              if (!options.empty())
+                fprintf(stream, " with one of the values");
+              for (std::vector<char*>::const_iterator i = options.begin(); i != options.end(); ++i)
+                fprintf(stream, " '%s'", *i);
+              if ((*part).is_fixed() && (*part).get_default())
+                fprintf(stream, " with fixed value '%s'", (*part).get_default());
             }
           }
         }
@@ -3495,7 +3961,9 @@ static const char *urienc(struct soap *soap, const char *uri)
     for (s = uri; *s; s++)
     {
       if (URI_CHAR(*s))
+      {
         *t++ = *s;
+      }
       else
       {
         (SOAP_SNPRINTF(t, n + 1 - (t - r), 3), "%%%2.2x", *s);

@@ -96,10 +96,10 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__objects_1 = wsdl2h-wsdlC.$(OBJEXT)
 am_wsdl2h_OBJECTS = wsdl2h-wsdl2h.$(OBJEXT) wsdl2h-wsdl.$(OBJEXT) \
-	wsdl2h-schema.$(OBJEXT) wsdl2h-types.$(OBJEXT) \
-	wsdl2h-service.$(OBJEXT) wsdl2h-soap.$(OBJEXT) \
-	wsdl2h-mime.$(OBJEXT) wsdl2h-wsp.$(OBJEXT) \
-	wsdl2h-bpel.$(OBJEXT) $(am__objects_1)
+	wsdl2h-wadl.$(OBJEXT) wsdl2h-schema.$(OBJEXT) \
+	wsdl2h-types.$(OBJEXT) wsdl2h-service.$(OBJEXT) \
+	wsdl2h-soap.$(OBJEXT) wsdl2h-mime.$(OBJEXT) \
+	wsdl2h-wsp.$(OBJEXT) wsdl2h-bpel.$(OBJEXT) $(am__objects_1)
 wsdl2h_OBJECTS = $(am_wsdl2h_OBJECTS)
 am__DEPENDENCIES_1 =
 wsdl2h_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1)
@@ -304,7 +304,7 @@ BUILT_SOURCES = $(SOAP_CPP_SRC)
 wsdl2h_CFLAGS = $(C_DEBUG_FLAGS) $(WSDL2H_EXTRA_FLAGS)
 wsdl2h_CXXFLAGS = $(C_DEBUG_FLAGS) $(WSDL2H_EXTRA_FLAGS) $(WSDL2H_IMPORTPATH)
 wsdl2h_CPPFLAGS = $(AM_CPPFLAGS) $(SOAPCPP2_NONAMESPACES) -D$(platform)
-wsdl2h_SOURCES = wsdl2h.cpp wsdl.cpp schema.cpp types.cpp service.cpp soap.cpp mime.cpp wsp.cpp bpel.cpp $(SOAP_CPP_SRC)
+wsdl2h_SOURCES = wsdl2h.cpp wsdl.cpp wadl.cpp schema.cpp types.cpp service.cpp soap.cpp mime.cpp wsp.cpp bpel.cpp $(SOAP_CPP_SRC)
 wsdl2h_LDADD = $(SOAP_CPP_LIB) $(WSDL2H_EXTRA_LIBS)
 CLEANFILES = *~ *C.cpp *H.h *Stub.h *.nsmap
 all: $(BUILT_SOURCES)
@@ -401,6 +401,7 @@ include ./$(DEPDIR)/wsdl2h-schema.Po
 include ./$(DEPDIR)/wsdl2h-service.Po
 include ./$(DEPDIR)/wsdl2h-soap.Po
 include ./$(DEPDIR)/wsdl2h-types.Po
+include ./$(DEPDIR)/wsdl2h-wadl.Po
 include ./$(DEPDIR)/wsdl2h-wsdl.Po
 include ./$(DEPDIR)/wsdl2h-wsdl2h.Po
 include ./$(DEPDIR)/wsdl2h-wsdlC.Po
@@ -447,6 +448,20 @@ wsdl2h-wsdl.obj: wsdl.cpp
 #	$(AM_V_CXX)source='wsdl.cpp' object='wsdl2h-wsdl.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) -c -o wsdl2h-wsdl.obj `if test -f 'wsdl.cpp'; then $(CYGPATH_W) 'wsdl.cpp'; else $(CYGPATH_W) '$(srcdir)/wsdl.cpp'; fi`
+
+wsdl2h-wadl.o: wadl.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) -MT wsdl2h-wadl.o -MD -MP -MF $(DEPDIR)/wsdl2h-wadl.Tpo -c -o wsdl2h-wadl.o `test -f 'wadl.cpp' || echo '$(srcdir)/'`wadl.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/wsdl2h-wadl.Tpo $(DEPDIR)/wsdl2h-wadl.Po
+#	$(AM_V_CXX)source='wadl.cpp' object='wsdl2h-wadl.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) -c -o wsdl2h-wadl.o `test -f 'wadl.cpp' || echo '$(srcdir)/'`wadl.cpp
+
+wsdl2h-wadl.obj: wadl.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) -MT wsdl2h-wadl.obj -MD -MP -MF $(DEPDIR)/wsdl2h-wadl.Tpo -c -o wsdl2h-wadl.obj `if test -f 'wadl.cpp'; then $(CYGPATH_W) 'wadl.cpp'; else $(CYGPATH_W) '$(srcdir)/wadl.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/wsdl2h-wadl.Tpo $(DEPDIR)/wsdl2h-wadl.Po
+#	$(AM_V_CXX)source='wadl.cpp' object='wsdl2h-wadl.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) -c -o wsdl2h-wadl.obj `if test -f 'wadl.cpp'; then $(CYGPATH_W) 'wadl.cpp'; else $(CYGPATH_W) '$(srcdir)/wadl.cpp'; fi`
 
 wsdl2h-schema.o: schema.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(wsdl2h_CPPFLAGS) $(CPPFLAGS) $(wsdl2h_CXXFLAGS) $(CXXFLAGS) -MT wsdl2h-schema.o -MD -MP -MF $(DEPDIR)/wsdl2h-schema.Tpo -c -o wsdl2h-schema.o `test -f 'schema.cpp' || echo '$(srcdir)/'`schema.cpp

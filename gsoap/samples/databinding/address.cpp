@@ -141,11 +141,16 @@ int main()
   a->street = user_input("Street");
   a->city = user_input("City");
   a->zip = user_input("Zip");
-  char *s = user_input("Country");
-  // Advanced level: use the generated s2a__ISO_country() to convert string to
-  // enum constant
-  if (soap_s2a__ISO_country(soap, s, &a->country) != SOAP_OK)
-    std::cerr << "Not a valid country code" << std::endl;
+  char *s;
+  do {
+    s = user_input("Country");
+    // Advanced level: use the generated s2a__ISO_country() to convert string to
+    // enum constant
+    soap->error = SOAP_OK;
+    if (soap_s2a__ISO_country(soap, s, &a->country) != SOAP_OK)
+      std::cerr << "Not a valid country code" << std::endl;
+  }
+  while (soap->error);
   if (*(s = user_input("Phone")))
   {
     // Allocate string in engine's data space:
@@ -158,6 +163,11 @@ int main()
     a->mobile = soap_new_std__string(soap, -1);
     *a->mobile = s;
   } 
+  // change soap_s2dateTime to soap_xsd__dateTime when overriding the default xsd:dateTime to time_t mapping
+  if (*(s = user_input("DOB")))
+    if (soap_s2dateTime(soap, s, a->dob) != SOAP_OK)
+      std::cerr << "Not a valid ISO 8601 date time (ignored)" << std::endl;
+  soap->error = SOAP_OK;
 
   // Add contact to address book
   ab->address.push_back(a);

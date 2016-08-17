@@ -95,8 +95,8 @@ hex		0[xX][0-9a-fA-F]+
 num		{int}(\.{int}([Ee][+-]?{int})?|(\.{int})?[Ee][+-]?{int})
 chr		'(\\'|[^'\n])*'
 str		L?\"(\\\"|\\\n|[^"])*\"
-module		#module{ws}+.*\n
-import		#import{ws}+.*\n
+module		#{ws}*module{ws}+.*\n
+import		#{ws}*import{ws}+.*\n
 %option noyywrap
 %option noinput
 %option nounput
@@ -1111,7 +1111,7 @@ static void import(const char *file)
       while (s && !yyin);
     }
     if (!yyin)
-    { sprintf(errbuf, "#import: Cannot open file \"%s\" for reading.\nHint: use option -I<path> (for example -Igsoap/import"SOAP_PATHSEP"gsoap/custom:.)", file);
+    { sprintf(errbuf, "#import: Cannot open file \"%s\" for reading.\nHint: use option -I<path> (for example -Igsoap" SOAP_PATHSEP "gsoap/import" SOAP_PATHSEP "gsoap/custom:.)", file);
       execerror(errbuf);
     }
   }

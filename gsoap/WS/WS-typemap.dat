@@ -351,7 +351,7 @@ typedef struct ds__TransformType\n\
 	@char*					Algorithm;\n\
 } ds__TransformType, _ds__Transform;
 
-ds__KeyInfoType = #import "wsse.h"\n\
+ds__KeyInfoType = \
 typedef struct ds__KeyInfoType\n\
 {	char*					KeyName;\n\
 	struct ds__KeyValueType*		KeyValue;\n\
@@ -359,7 +359,8 @@ typedef struct ds__KeyInfoType\n\
 	struct ds__X509DataType*		X509Data;\n\
 	struct _wsse__SecurityTokenReference*	wsse__SecurityTokenReference;\n\
 	@char*					Id;\n\
-} ds__KeyInfoType, _ds__KeyInfo;
+} ds__KeyInfoType, _ds__KeyInfo;\n\
+#import "wsse.h"
 
 ds__SignatureType =\
 typedef char *_ds__SignatureValue;\n\

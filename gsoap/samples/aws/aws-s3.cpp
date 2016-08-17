@@ -50,12 +50,20 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "soapAmazonS3SoapBindingProxy.h"
 #include "AmazonS3SoapBinding.nsmap"
 
-// Make allocation of primitive values quick and easy:
+// Make allocation and assigment of primitive values quick and easy:
 template<class T>
 T * soap_make(struct soap *soap, T val)
 {
   T *p = (T*)soap_malloc(soap, sizeof(T));
   *p = val;
+  return p;
+}
+
+// Make allocation and assignment of std::string quick and easy:
+std::string * soap_make_string(struct soap *soap, const char *s)
+{
+  std::string *p = soap_new_std__string(soap);
+  *p = s;
   return p;
 }
 
@@ -66,11 +74,9 @@ int main(int argc, char **argv)
 
   // Set the argument of the ListAllMyBuckets service operation
   _s3__ListAllMyBuckets arg;
-  arg.AWSAccessKeyId  = soap_new_std__string(aws.soap);
-  *arg.AWSAccessKeyId = argc > 1 ? argv[1] : "...";      // use your access key
-  arg.Timestamp       = soap_make(aws.soap, time(0));
-  arg.Signature       = soap_new_std__string(aws.soap);
-  *arg.Signature      = argc > 2 ? argv[2] : "...";       // use your signature
+  arg.AWSAccessKeyId = soap_make_string(aws.soap, argc > 1 ? argv[1] : "..."); // use your access key
+  arg.Timestamp      = soap_make(aws.soap, time(0));
+  arg.Signature      = soap_make_string(aws.soap, argc > 2 ? argv[2] : "..."); // use your signature
 
   // Store the result of the service
   _s3__ListAllMyBucketsResponse response;

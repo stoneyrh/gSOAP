@@ -40,6 +40,7 @@ typedef char	*xsd__anyURI,
 		*xsd__NMTOKEN,
 		*xsd__NMTOKENS,
 		*xsd__QName,
+		*xsd__token,
 		*xsd__string;
 typedef bool	xsd__boolean;
 

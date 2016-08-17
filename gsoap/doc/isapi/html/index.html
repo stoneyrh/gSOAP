@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The ISAPI extension</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Wed Jul 13 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -34,8 +34,6 @@
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
-      <li><a href="files.html"><span>Files</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -54,7 +52,7 @@
 <li class="level1"><a href="#references">Further reading                                                    </a></li>
 </ul>
 </div>
-<div class="textblock"><p>By Christian Aberger and Robert van Engelen.</p>
+<div class="textblock"><p>By Christian Aberger, Robert van Engelen, and Chris Moutsos.</p>
 <h1><a class="anchor" id="overview"></a>
 Overview                                                             </h1>
 <p>SOAP/XML and REST Web services can be easily created and deployed as gSOAP standalone services or installed as (Fast)CGI applications. In addition, the <code>mod_gsoap</code> Internet Server Application Programming Interface (ISAPI) extension offers the ability to run gSOAP services directly inside the Microsoft Internet Information Server (IIS). This is achieved through an ISAPI extension DLL. The ISAPI extension supports the deployment of multiple gSOAP services that can run together with the usual services on IIS. This approach offers a production-quality Web services deployment scenario.</p>
@@ -62,41 +60,59 @@ Overview                                                             </h1>
 <h1><a class="anchor" id="install"></a>
 Installation                                                          </h1>
 <p>To build and install the <code>mod_gsoap.dll</code> ISAPI extension for gSOAP:</p>
+<p>In <code>gsoap\mod_gsoap\gsoap_win\isapi\</code>, there are two directories called <code>vs2006</code> and <code>vs2010</code>. Choose the appropriate directory and installation instructions based on your version of Visual Studio.</p>
+<p>Visual Studio 2010 Service Pack 1 (version 10.0.40219.1) or later (IDE):</p>
 <ul>
-<li>Open Visual Studio C++ 6.0 or later.</li>
-<li>Go to <code>Tools|Options</code> and activate the <code>Directories</code> Panel.</li>
-<li>Select <code>Include Files</code> from the dropdown and add your project directory that contains <code>stdsoap2.h</code>.</li>
-<li>Select <code>Executable Path</code> and add the full path to the <code>gsoap/bin/win32</code> directory in the unpacked gSOAP package that contains the <code>soapcpp2.exe</code> tool.</li>
-<li>Open <code>all4iis.dsw</code> that can be found in <code>gsoap/mod_gsoap/gsoap_win/isapi</code> in the gSOAP package.</li>
-<li>Activate the <code>all4iis</code> project and build all.</li>
+<li>Using Visual Studio 2010 SP1 or later, open <code>all4iis.sln</code> that can be found in <code>gsoap\mod_gsoap\gsoap_win\isapi\vs2010\</code> in the gSOAP package.</li>
+<li>Go to <em>View|Other Windows|Property Manager</em>. Select any of the projects, select the <em>Release</em> build dropdown, then double-click on <em>PropertySheet</em>.</li>
+<li>Under the <em>Common Properties</em> dropdown, choose <em>VC++ Directories</em> and select <em>Executable Directories</em>. Add the full path to the <code>gsoap\bin\win32</code> directory in the unpacked gSOAP package that contains the <code>soapcpp2.exe</code> tool.</li>
+<li>Under the C/C++ dropdown, choose <em>General</em> and select <em>Additional Include Directories</em>. Add the <code>gsoap\</code> directory that contains <code>stdsoap2.h</code>. Press <em>OK</em>.</li>
+<li>Click <em>Build|Build Solution</em> to build the ISAPI extension for gSOAP (<code>mod_gsoap.dll</code>) and the samples, or right-click on the <em>isapi</em> project in the Solution Explorer and click <em>Build</em> to build only the ISAPI extension for gSOAP.</li>
+<li>Install and use the <code>mod_gsoap.dll</code> ISAPI extension as described below.</li>
+</ul>
+<p>Visual Studio 2010 Service Pack 1 (version 10.0.40219.1) or later (Developer Command Prompt for VS):</p>
+<ul>
+<li>In the <code>gsoap\mod_gsoap\gsoap_win\isapi\vs2010\</code> directory, open the file named <code>PropertySheet.props</code>. Make sure that the full path to the <code>gsoap\bin\win32</code> directory that contains the <code>soapcpp2.exe</code> tool is in the <em>ExecutablePath</em> option, for example <code>&lt;ExecutablePath&gt;C:\gsoap-2.8\gsoap\bin\win32;&lt;/ExecutablePath&gt;</code>.</li>
+<li>Also make sure that the <code>gsoap\</code> directory that contains <code>stdsoap2.h</code> is in the <em>IncludePath</em> option, for example <code>&lt;IncludePath&gt;C:\gsoap-2.8\gsoap;&lt;/IncludePath&gt;</code>.</li>
+<li>Open the Developer Command Prompt for VS and navigate to the <code>gsoap\mod_gsoap\gsoap_win\isapi\vs2010\</code> directory.</li>
+<li>Run the command <code>nmake</code> to build the ISAPI extension for gSOAP (<code>mod_gsoap.dll</code>) and the samples. Alternatively, run <code>nmake</code> in the <code>gsoap\mod_gsoap\gsoap_win\isapi\vs2010\gsoap</code> directory to build only the ISAPI extension for gSOAP.</li>
+</ul>
+<p>Visual Studio C++ 6.0:</p>
+<ul>
+<li>Open Visual Studio C++ 6.0 (or later).</li>
+<li>Go to <em>Tools|Options</em> and activate the <em>Directories</em> Panel.</li>
+<li>Select <em>Include Files</em> from the dropdown and add your project directory that contains <code>stdsoap2.h</code>.</li>
+<li>Select <em>Executable Path</em> and add the full path to the <code>gsoap\bin\win32</code> directory in the unpacked gSOAP package that contains the <code>soapcpp2.exe</code> tool.</li>
+<li>Open <code>all4iis.dsw</code> that can be found in <code>gsoap\mod_gsoap\gsoap_win\isapi\vs2006</code> in the gSOAP package.</li>
+<li>Activate the <em>all4iis</em> project and build all.</li>
 <li>Install and use the <code>mod_gsoap.dll</code> ISAPI extension as described below.</li>
 </ul>
 <h1><a class="anchor" id="deploy"></a>
 Deploying services with ISAPI                                          </h1>
 <p>After building <code>mod_gsoap.dll</code> we are ready to deploy gSOAP services with the ISAPI extension.</p>
-<p>The gSOAP package contains a calculator example to demonstrate the ISAPI extension. You will find this example in the gSOAP package under <code>gsoap/mod_gsoap/gsoap_win/isapi/samples/calc</code>. We will use this example to walk you through the creation and deployment of an ISAPI service.</p>
+<p>The gSOAP package contains a calculator example to demonstrate the ISAPI extension. You will find this example in the gSOAP package under <code>gsoap\mod_gsoap\gsoap_win\isapi\vs20##\samples\calc</code>. We will use this example to walk you through the creation and deployment of an ISAPI service, so make sure to build it (see Intallation section).</p>
 <ul>
 <li>Make sure to compile all sources in C++ compilation mode with Visual Studio C++. If you migrate to a project file <code>.vcproj</code> then set <code>CompileAs="2"</code> in your <code>.vcproj</code>.</li>
-<li>Open <code>calc.dsw</code> found in <code>gsoap/mod_gsoap/gsoap_win/isapi/samples/calc</code> in the gSOAP package.</li>
-<li>Compile as a single DLL the service code <code>calcserver.cpp</code>, the gSOAP engine code <code>stdsoap2.cpp</code>, the soapcpp2-generated codes <code>soapC.cpp</code> and <code>soapServer.cpp</code>. You may have to run <code>soapcpp2.exe calc.h</code> from the DOS command window to generate code. Adding a custom-build step in Visual Studio can make this easier.</li>
 <li>Add a <code>gsoap</code> directory to your <code>wwwroot</code> directory, for example <code>C:\Inetpub\wwwroot\gsoap</code>.</li>
 <li>Open Internet Service Manager from the <code>Control Panel</code> select <code>Administrative</code> tools.</li>
 <li>Create in Internet Service Manager a new virtual directory called <code>gsoap</code>, see <a href="#vroot">details here on how to create a virtual root</a> and also shown in <a href="http://www.genivia.com/images/gsoapvdir.png">this screen shot</a>.</li>
-<li>Copy <code>mod_gsoap.dll</code> and <code>calc.dll</code> to the newly created <code>gsoap</code> directory (for example <code>C:\Inetpub\wwwroot\gsoap</code>).</li>
+<li>Copy <code>mod_gsoap.dll</code> (in <code>gsoap\mod_gsoap\gsoap_win\isapi\vs20##\gsoap\</code>) and <code>calc.dll</code> (in <code>gsoap\mod_gsoap\gsoap_win\isapi\vs20##\samples\calc</code>) to the newly created <code>gsoap</code> directory (for example <code>C:\Inetpub\wwwroot\gsoap</code>).</li>
+<li>On 64-bit machines, you may have to enable 32-bit applications to run on the application pool. Go to <em>Application Pools</em> and find the pool your website is using (the default is <em>DefaultAppPool</em>). Right-click the pool, go to <em>Advanced Settings</em>, and set <em>Enable 32-Bit Applications</em> to <em>True</em>. Press <em>OK</em>.</li>
 <li>Start the "World Wide Web Publishing Service".</li>
 <li>Enter in your browser <code><a href="http://localhost/gsoap/mod_gsoap.dll">http://localhost/gsoap/mod_gsoap.dll</a></code>. This should give a response from the server that explains what the correct URL is. This proves that <code>mod_gsoap.dll</code> is configured correctly.</li>
-<li>Enter in your browser <code><a href="http://localhost/gsoap/mod_gsoap.dll?calc">http://localhost/gsoap/mod_gsoap.dll?calc</a></code>. This should give a response from the server that you should use a POST command, not a GET. This proves that <code>mod_gsoap</code> was able to load your DLL. So in principle your installation and service deployment is OK.</li>
+<li>If your browser downloads the .dll instead, you must set up a script map. In IIS, select <em>Default Web Site</em>, go to <em>Handler Mappings</em>, and click <em>Add Script Map...</em>. Type <code>gsoap\mod_gsoap.dll</code> as the request path. Use the full path to the <code>mod_gsoap.dll</code> in your virtual directory as the executable path. In <em>Request Restrictions...</em>, make sure the <em>Access</em> is set to <em>Execute</em>. Click <em>OK</em> and <em>Yes</em>.</li>
+<li>Enter in your browser <code><a href="http://localhost/gsoap/mod_gsoap.dll?gsoap/calc">http://localhost/gsoap/mod_gsoap.dll?gsoap/calc</a></code>. This should give a response from the server that you should use a POST command, not a GET. This proves that <code>mod_gsoap</code> was able to load your DLL. So in principle your installation and service deployment is OK.</li>
 </ul>
 <p>To test the calculator IIS service with a simple client, do the following:</p>
 <ul>
-<li>Check that the client code <code>calcclnt.c</code> of the calculator example in <code>gsoap/mod_gsoap/gsoap_win/isapi/samples/calc</code> has the correct service endpoint URL, which must correspond to your installation: <code>const char server[] = "http://localhost/gsoap/mod_gsoap.dll?calc";</code></li>
-<li>Build the <code>calcclnt.exe</code> client, e.g. using <code>calcclnt.dsp</code>.</li>
+<li>Check that the client code <code>calcclnt.c</code> of the calculator example in <code>gsoap\mod_gsoap\gsoap_win\isapi\vs20##\samples\calc</code> has the correct service endpoint URL, which must correspond to your installation: <code>const char server[] = "http://localhost/gsoap/mod_gsoap.dll?gsoap/calc";</code></li>
+<li>Build the <code>calcclnt.exe</code> client, e.g. using the <code>calcclnt</code> project file.</li>
 <li>Open a DOS command window and go to the directory where <code>calcclnt.exe</code> was built and execute <code>calcclnt.exe add 3 5</code>.</li>
 <li>The response should be: <code>result=8</code>.</li>
 </ul>
 <p>We recommend to test services first as standalone gSOAP services to ensure that the service logic is correct. If the service logic is correct but the service DLL does not produce a response, then please see the next section. Otherwise, read on.</p>
-<p>A <code>Makefile</code> is included that contains commands to start and stop debugging of IIS and for cleaning the directory. The advanced user can compile everything with just one command. Be sure that <code>msdev.exe</code> and <code>nmake.exe</code> are on your PATH. Then enter the command <code>nmake</code> from a DOS command window and presto!</p>
-<p>To develop your own service DLL in Visual Studio, select <code>File|New</code> and create a new empty Dynamic Link Library project. Copy <code>stdsoap2.def</code> from the <code>mod_gsoap/gsoap_win/isapi/samples/calc</code> directory to your project directory and add it to the project. This will ensure that the required functions are exported and visible to <code>mod_gsoap</code>, such as <code>soap_serve</code> that invokes service operations (this function is auto-generated by <code>soapcpp2.exe</code> and defined in <code>soapServer.cpp</code>).</p>
+<p>A <code>Makefile</code> is included that contains commands to start and stop debugging of IIS and for cleaning the directory. The advanced user can compile everything with just one command. Be sure that <code>msdev.exe</code> (VS2006 only) and <code>nmake.exe</code> are on your PATH. Then enter the command <code>nmake</code> from a DOS command window and presto!</p>
+<p>To develop your own service DLL in Visual Studio, select <code>File|New</code> and create a new empty Dynamic Link Library project. Copy <code>stdsoap2.def</code> from the <code>mod_gsoap\gsoap_win\isapi\vs20##\samples\calc</code> directory to your project directory and add it to the project. This will ensure that the required functions are exported and visible to <code>mod_gsoap</code>, such as <code>soap_serve</code> that invokes service operations (this function is auto-generated by <code>soapcpp2.exe</code> and defined in <code>soapServer.cpp</code>).</p>
 <p>In addition, two C functions should be defined by your service code, namely <code>int mod_gsoap_init(void)</code> and <code>int mod_gsoap_terminate(void)</code>:</p>
 <div class="fragment"><div class="line"><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
 <div class="line"><span class="keywordtype">int</span> mod_gsoap_init(<span class="keywordtype">void</span>) {</div>
@@ -108,7 +124,7 @@ Deploying services with ISAPI                                          </h1>
 <div class="line">    <span class="keywordflow">return</span> SOAP_OK;</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>The <code>mod_gsoap_init</code> function is called by <code>mod_gsoap</code> when the DLL was successfully loaded and before processing begins. The <code>mod_gsoap_terminate</code> function is called when the DLL is unloaded. These functions should return <code>SOAP_OK</code> on success. You can use these initialization and termination hooks as you see fit.</p>
-<p>Multiple ISAPI services can run together with all other Internet services on your machine on port 80 (or another port, as configured in IIS). The request your client must submit is a URL with a query string, such as was illustrated above with <code><a href="http://127.0.0.1/gsoap/mod_gsoap.dll?calc">http://127.0.0.1/gsoap/mod_gsoap.dll?calc</a></code>.</p>
+<p>Multiple ISAPI services can run together with all other Internet services on your machine on port 80 (or another port, as configured in IIS). The request your client must submit is a URL with a query string, such as was illustrated above with <code><a href="http://127.0.0.1/gsoap/mod_gsoap.dll?gsoap/calc">http://127.0.0.1/gsoap/mod_gsoap.dll?gsoap/calc</a></code>.</p>
 <p>The requested URL is evaluated by IIS and the query string (the part after the <code>?</code>) is used to dispatch the service request to the <code>calc.dll</code> service.</p>
 <p>Note that instead of <code>127.0.0.1</code> (which is the <code>localhost</code>), clients on the network should use the full domain name of the machine.</p>
 <p>For security reasons only DLLs stored in the same directory as <code>mod_gsoap.dll</code> can be used. If you want to do specialized initializations in your DLL then you may want to add and export a <code>DllMain</code> function, which will be called when the IIS process attaches to your DLL and before it detaches it. Do not rely on the Thread attach/detach callback: in my experience IIS does not always call <code>DllMain</code> in your DLL if these threads were already in the thread pool before your DLL was loaded. Use thread local storage instead.</p>
@@ -116,12 +132,12 @@ Deploying services with ISAPI                                          </h1>
 Troubleshooting                                                         </h1>
 <p>If the client receives an error from the ISAPI service, such as for example: </p><pre class="fragment">SOAP FAULT: SOAP-ENV:Client
 "End of file or no input"
-Detail: http://localhost/gsoap/mod_gsoap.dll?calc
+Detail: http://localhost/gsoap/mod_gsoap.dll?gsoap/calc
 </pre><p>Then we recommend the following steps:</p>
 <ul>
 <li>Make sure that <code>dumpbin.exe</code> is in your PATH (it can be found somewhere in the Visual Studio binaries).</li>
 <li>Open a DOS command window and go to the directory where <code>mod_gsoap.dll</code> is located (<code>C:\Inetpub\wwwroot\gsoap</code>). Execute the following command: <code>dumpbin /exports calc.dll</code>.</li>
-<li>The output should contain the exported symbols that are listed in the <code>stdsoap2.def</code> file. If you don't find these symbols you propably forgot to add the necessary <code>stdsoap2.def</code> exports for your project. This should include <code>soap_initialize</code>, <code>soap_serve</code>, <code>soap_delete</code>, <code>soap_end</code>, <code>soap_done</code>, <code>soap_register_plugin_arg</code>, and <code>soap_lookup_plugin</code>. See for example <code>stdsoap2.def</code> in <code>gsoap/mod_gsoap/gsoap_win/isapi/samples/calc</code>.</li>
+<li>The output should contain the exported symbols that are listed in the <code>stdsoap2.def</code> file. If you don't find these symbols you propably forgot to add the necessary <code>stdsoap2.def</code> exports for your project. This should include <code>soap_initialize</code>, <code>soap_serve</code>, <code>soap_delete</code>, <code>soap_end</code>, <code>soap_done</code>, <code>soap_register_plugin_arg</code>, and <code>soap_lookup_plugin</code>. See for example <code>stdsoap2.def</code> in <code>gsoap\mod_gsoap\gsoap_win\isapi\vs20##\samples\calc</code>.</li>
 </ul>
 <p>If you want to debug a DLL, you must set the DLL to run in-proccess. Right-click on the <code>gsoap</code> virtual root in internet service manager and set the <code>Application Protection</code> to <code>Low (IIS Process)</code>. Remove the <code>Enable Session State</code> and buffering and <code>Parent Paths</code>. Don't forget to allow the IISAdmin and WWW Service to interact with the desktop.</p>
 <p>To enable debugging of services and/or clients:</p>
@@ -145,7 +161,7 @@ Creating the virtual root                                               </h1>
 <p>For testing it might be best to enable the <code>Browse</code> permission and then browse to <code><a href="http://localhost/gsoap">http://localhost/gsoap</a></code>.</p>
 <h1><a class="anchor" id="license"></a>
 License                                                               </h1>
-<p>The Apache modules for gSOAP are released under the gSOAP open source public license (compatible with commercial licensing) and GPLv2.</p>
+<p>The ISAPI extension for gSOAP is released under the gSOAP open source public license (compatible with commercial licensing) and GPLv2.</p>
 <h1><a class="anchor" id="references"></a>
 Further reading                                                    </h1>
 <p><a href="http://www.codeproject.com/Articles/1432/What-is-an-ISAPI-Extension">What is an ISAPI Extension?</a></p>
@@ -156,7 +172,7 @@ Further reading                                                    </h1>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 20:00:39 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Wed Jul 13 2016 13:21:10 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

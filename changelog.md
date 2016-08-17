@@ -1053,7 +1053,7 @@ Version 2.8.32 (05/10/2016)
 - Fixed unqualified *`xsi:type`* content matching with default namespace, which may lead to a failure in the 2.8.31 release to instantiate derived instances for complexType extensions.
 - Fixed Solaris crash in `soap_wstrdup`.
 
-Version 2.8.33 (06/14/2016) {#latest}
+Version 2.8.33 (06/14/2016)
 ---
 
 - Updated WS-Trust gsoap/import/wstx.h `__wst__RequestSecurityToken` response message parameter to `wst__RequestSecurityTokenResponseCollection`
@@ -1064,6 +1064,22 @@ Version 2.8.33 (06/14/2016) {#latest}
 - Fixed wsddapi.c compilation issue on Windows (`usleep` replaced).
 - Fixed validation of *`simpleType/restriction/length`* when restriction base is a list that is mapped to a string.
 - Fixed validation of *`simpleType/restriction`* with base type string length bounds restrictions.
+
+Version 2.8.34 (08/17/2016) {#latest}
+---
+
+- Added custom serializers for QT primitive types and containers.  This serializes many QT types directly in XML.  The QT types to use for XSD types are specified in the typemap.dat.  See the updated gsoap/typemap.dat file in the distribution package and the updated [databindings](http://www.genivia.com/doc/databinding/html) documentation for details.
+- Added HTTP server session management plugin to manage server-side session cookies.
+- Added basic common WADL support to wsdl2h to generate code for WADL REST XML applications.
+- Improved client-side URL query generation and support for URL templates for REST operations.
+- Updated the iOS plugin and its Web service examples.
+- Updated SSL calls for improved iOS portability.
+- Updated wsdl2h headerfault support (optional fault details in SOAP Headers, not widely used by Web services tools).
+- Updated VC++ ISAPI plugin.
+- Fixed `soap_send_empty_response()` with HTTP keep-alive to prevent exit of the server loop back to `soap_accept()`, i.e. prematurely killing the keep-alive connection causing EOF/RST.
+- Fixed `#import "wsse.h"` in `gsoap/import/ds.h` by moving it down to avoid missing type declaration of `_ds__KeyInfo` which may cause a soapcpp2 syntax error.
+- Fixed WS-Security interoperability issues, fixes issues with XML encryption. Token handler callback has new parameters to pass the key data of SecurityTokenReference/KeyIdentifier.
+- Fixed the internal `feltbegout` and `feltendout` callbacks: when set no longer emits XML and (alternative) output is expected to be emitted by these callbacks.
 
 [![To top](http://www.genivia.com/images/go-up.png) To top](changelog.html)
 

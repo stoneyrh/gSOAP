@@ -6,7 +6,7 @@
 	See the README.txt
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2012, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -52,9 +52,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "soapBasicHttpBinding_USCOREICalculatorProxy.h"
 #include "BasicHttpBinding_USCOREICalculator.nsmap"
 
-#include "wsseapi.h"		/* gsoap/plugin/wsseapi.h */
+#include "wsseapi.h"			/* gsoap/plugin/wsseapi.h */
 
-#define ENCRYPTION		/* to enable encryption with signatures */
+#define ENCRYPTION			/* enable encryption */
+/* #define UNENCRYPTED_SIGNATURE */	/* disable encryption of signature */
 
 const char *endpoint = "http://10.0.1.5:8000/ServiceModelSamples/service"; // Set to the service endpoint
 

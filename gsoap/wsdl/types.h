@@ -84,7 +84,7 @@ class Types
     const char *nsprefix(const char *prefix, const char *URI);
     const char *prefix(const char *name);
     const char *uri(const char *name);
-    const char *deftname(enum Type type, bool mk_pointer, bool is_pointer, const char *prefix, const char *URI, const char *qname);
+    const char *deftname(enum Type type, bool mk_pointer, bool is_pointer, const char *prefix, const char *URI, const char *qname, const char *base);
     bool is_defined(const char *prefix, const char *URI, const char *qname);
     bool is_nillable(const xs__element& element);
     bool is_choicetype(const char *prefix, const char *URI, const char *type);
@@ -114,6 +114,7 @@ class Types
     void document(const xs__annotation*);
     void modify(const char *name);
     const char *format(const char *text);
+    void gendefault(const char *URI, const char *type, const char *name, xs__simpleType *p, const char *s, const char *q);
 };
 
 #endif

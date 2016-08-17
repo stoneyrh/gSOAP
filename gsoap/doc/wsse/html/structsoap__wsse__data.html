@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">soap_wsse_data Struct Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
+      <div style="float: right; font-size: 10px;">updated Wed Aug 17 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -112,14 +112,12 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ad6474f2802ec2574452c62f38ee665c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a735585800270c6378a30fe612b8ee47e"><td class="memItemLeft" align="right" valign="top">int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#a735585800270c6378a30fe612b8ee47e">fpreparefinalrecv</a> )(struct soap *)</td></tr>
 <tr class="separator:a735585800270c6378a30fe612b8ee47e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9b62b5b890e87598c367f86210e8743"><td class="memItemLeft" align="right" valign="top">int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#aa9b62b5b890e87598c367f86210e8743">fheader</a> )(struct soap *)</td></tr>
-<tr class="separator:aa9b62b5b890e87598c367f86210e8743"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1cb3f73b75afa9c773ad7c8329ed611"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#ad1cb3f73b75afa9c773ad7c8329ed611">mec</a></td></tr>
 <tr class="separator:ad1cb3f73b75afa9c773ad7c8329ed611"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9dafc222188ed3aba83c24b073a0021"><td class="memItemLeft" align="right" valign="top">X509_STORE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#ad9dafc222188ed3aba83c24b073a0021">store</a></td></tr>
 <tr class="separator:ad9dafc222188ed3aba83c24b073a0021"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f7d53fc0a657d0671588b52c9236403"><td class="memItemLeft" align="right" valign="top">const void *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#a9f7d53fc0a657d0671588b52c9236403">security_token_handler</a> )(struct soap *soap, int *alg, const char *keyname, int *keylen)</td></tr>
-<tr class="separator:a9f7d53fc0a657d0671588b52c9236403"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d2be376f00b21ce4b6f19090d0a6804"><td class="memItemLeft" align="right" valign="top">const void *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__data.html#a4d2be376f00b21ce4b6f19090d0a6804">security_token_handler</a> )(struct soap *soap, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen)</td></tr>
+<tr class="separator:a4d2be376f00b21ce4b6f19090d0a6804"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>wsseapi plugin data </p>
@@ -242,18 +240,6 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aa9b62b5b890e87598c367f86210e8743"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int(* soap_wsse_data::fheader) (struct soap *)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a class="anchor" id="a735585800270c6378a30fe612b8ee47e"></a>
 <div class="memitem">
 <div class="memproto">
@@ -315,12 +301,12 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a9f7d53fc0a657d0671588b52c9236403"></a>
+<a class="anchor" id="a4d2be376f00b21ce4b6f19090d0a6804"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const void*(* soap_wsse_data::security_token_handler) (struct soap *soap, int *alg, const char *keyname, int *keylen)</td>
+          <td class="memname">const void*(* soap_wsse_data::security_token_handler) (struct soap *soap, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -439,7 +425,7 @@ Public Attributes</h2></td></tr>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Mar 29 2016 16:43:13 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Wed Aug 17 2016 10:37:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

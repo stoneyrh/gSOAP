@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The mecevp streaming message encryption and decryption engine</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
+      <div style="float: right; font-size: 10px;">updated Wed Aug 17 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -69,18 +69,18 @@
 </ul>
 <p>The mecevp engine wraps the EVP API with four new functions:</p>
 <ul>
-<li><a class="el" href="mecevp_8c.html#a9874f1faeb40d4d5e2b59310c19bbd7a">soap_mec_init</a> to initialize the engine</li>
-<li><a class="el" href="mecevp_8c.html#a97663d6b4690c7b731d8aa9ece2cafae">soap_mec_update</a> to encrypt/decrypt a message part</li>
+<li><a class="el" href="mecevp_8c.html#a6144725452c8086c7b1807f6310ff79d">soap_mec_init</a> to initialize the engine</li>
+<li><a class="el" href="mecevp_8c.html#a8c447a82872a919bb1935f34b849c1c4">soap_mec_update</a> to encrypt/decrypt a message part</li>
 <li><a class="el" href="mecevp_8c.html#aaa93413bd3e4136fe87a067821cfed53">soap_mec_final</a> to finalize encryption/decryption</li>
-<li><a class="el" href="mecevp_8c.html#aaa1e6fa1abac32acdd7f76232fa30241">soap_mec_cleanup</a> to deallocate the engine and buffers</li>
+<li><a class="el" href="mecevp_8c.html#a81ba68931cefa8b7a0f246d99e31e3ed">soap_mec_cleanup</a> to deallocate the engine and buffers</li>
 </ul>
 <p>All cipher data is written and read in base64 format.</p>
 <p>A higher-level interface for message encryption/decryption in parts (such as individual XML elements) is defined by two new functions:</p>
 <ul>
-<li><a class="el" href="mecevp_8c.html#abd9dd5e6e38fb46977f5c75aa89f4104">soap_mec_begin</a> to begin a streaming sequence of encryptions/decryptions</li>
-<li><a class="el" href="mecevp_8c.html#a8053a2c0cda70dd37b944408dd3f8f0e">soap_mec_start</a> to start encryption/decryption of a message part</li>
-<li><a class="el" href="mecevp_8c.html#a8fdc3daea4e2c9c3bbde4e480209b0d0">soap_mec_stop</a> to stop encryption/decryption of a message part</li>
-<li><a class="el" href="mecevp_8c.html#ae93d7dae06e1568cc6ee2420cd29faaf">soap_mec_end</a> to end the sequence and deallocate the engine buffers</li>
+<li><a class="el" href="mecevp_8c.html#a4c388668cf9472d0bf8abcb3e758786f">soap_mec_begin</a> to begin a streaming sequence of encryptions/decryptions</li>
+<li><a class="el" href="mecevp_8c.html#af225c0e603c01f9a59c60d6465d90535">soap_mec_start</a> to start encryption/decryption of a message part</li>
+<li><a class="el" href="mecevp_8c.html#aedaa8cd525cac9cbe0904378419573d9">soap_mec_stop</a> to stop encryption/decryption of a message part</li>
+<li><a class="el" href="mecevp_8c.html#a52b1ae6b5677aff39ac6f9548e9789b7">soap_mec_end</a> to end the sequence and deallocate the engine buffers</li>
 </ul>
 <p>Compile all source codes with -DWITH_OPENSSL and link with ssl and crypto libraries.</p>
 <p>Here is an example to encrypt a message while streaming it to the output. The example uses the public key of the recipient/reader of the message. The recipient/reader uses its private key to decrypt. Envelope encryption is used with SOAP_MEC_ENV_ENC_DES_CBC, which means an ephemeral secret key is generated and encrypted with the public key. This encrypted secret key should be communicated to the recipient/reader with the message to decrypt:</p>
@@ -183,7 +183,7 @@
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Mar 29 2016 16:43:13 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Wed Aug 17 2016 10:37:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

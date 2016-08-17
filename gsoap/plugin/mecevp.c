@@ -976,7 +976,7 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
     /* base64 is in data buf[0..bufidx-1] and *s */
     if (soap_mec_get_base64(soap, data, data->buf + data->buflen - k, &m, data->buf, data->bufidx, &r, &l))
       return soap->error;
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Base64 stage 1 s=%p n=%lu r=%p l=%lu\n", *s, (unsigned long)data->bufidx, r, (unsigned long)l));
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Base64 stage 1 s=%p n=%lu m=%lu r=%p l=%lu\n", *s, (unsigned long)data->bufidx, (unsigned long)m, r, (unsigned long)l));
     /* position 'r' is at a spot that gets overwritten, copy to rest */
     if (r)
     {
@@ -989,7 +989,7 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       /* base64-decode *s */
       if (soap_mec_get_base64(soap, data, data->buf + data->buflen - k + m, &j, *s, *n, &r, &l))
         return soap->error;
-      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Base64 stage 3 s=%p n=%lu r=%p l=%lu\n", *s, (unsigned long)*n, r, (unsigned long)l));
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Base64 stage 3 s=%p n=%lu m=%lu r=%p l=%lu\n", *s, (unsigned long)*n, (unsigned long)m, r, (unsigned long)l));
       m += j;
     }
     data->bufidx = 0;
@@ -999,7 +999,7 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
     /* base64-decode *s */
     if (soap_mec_get_base64(soap, data, data->buf + data->buflen - k, &m, *s, *n, &r, &l))
       return soap->error;
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Base64 stage 4 n=%lu l=%lu\n", (unsigned long)*n, (unsigned long)l));
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Base64 stage 4 n=%lu m=%lu l=%lu\n", (unsigned long)*n, (unsigned long)m, (unsigned long)l));
   }
   if (r)
   {
@@ -1032,10 +1032,11 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       soap_memmove((void*)(data->buf + data->bufidx), data->buflen - data->bufidx, (const void*)(data->buf + data->buflen - k), m);
       /* add to IV */
       data->bufidx += m;
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Getting IV new size=%lu\n", data->bufidx));
       /* got all IV data? */
       if (data->bufidx >= (size_t)EVP_CIPHER_iv_length(data->type))
       {
-        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Get IV = "));
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Got IV = "));
         DBGHEX(TEST, (unsigned char*)data->buf, EVP_CIPHER_iv_length(data->type));
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\nInitializing alg=0x%x\n", data->alg));
         switch (data->alg & SOAP_MEC_MASK & ~SOAP_MEC_ALGO)
@@ -1445,6 +1446,9 @@ soap_mec_filterrecv(struct soap *soap, char *buf, size_t *len, size_t maxlen)
   /* convert s[len] to new s with len (new s = data->buf) */
   if (soap_mec_upd(soap, data, &s, len, 0))
     return soap->error;
+  /* need more data? */
+  if (*len == 0)
+    return SOAP_OK;
   /* does the result fit in buf[maxlen]? */
   if (*len <= maxlen)
   {

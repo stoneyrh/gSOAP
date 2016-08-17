@@ -33,9 +33,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 //gsoap soap schema documentation:	WSDL 1.1 SOAP binding schema
 //gsoap soap schema namespace:		http://schemas.xmlsoap.org/wsdl/soap/
+//gsoap soap schema elementForm:        qualified
+//gsoap soap schema attributeForm:      unqualified
 
 //gsoap wsoap schema documentation:	WSDL 2.0 SOAP binding schema
 //gsoap wsoap schema namespace:		http://www.w3.org/ns/wsdl/soap
+//gsoap wsoap schema elementForm:       qualified
+//gsoap wsoap schema attributeForm:     unqualified
 
 #import "imports.h"
 

@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The HTTP-DA plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
+      <div style="float: right; font-size: 10px;">updated Wed Jun 29 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -73,84 +73,121 @@ Client-side usage</h1>
 <div class="line">soap.passed = <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>;</div>
 <div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
 <div class="line">  ... <span class="comment">// error</span></div>
+</div><!-- fragment --><p>or if you use a proxy object generated with saopcpp2 option -j:</p>
+<div class="fragment"><div class="line">Proxy proxy(...);</div>
+<div class="line">proxy.soap-&gt;userid = <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>;</div>
+<div class="line">proxy.soap-&gt;passed = <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>;</div>
+<div class="line"><span class="keywordflow">if</span> (proxy.method(...))</div>
+<div class="line">  ... <span class="comment">// error</span></div>
 </div><!-- fragment --><p>HTTP basic authentication should <b>never</b> be used over plain HTTP, because the credentials (the ID and password) are transmitted in the clear in base64 encoded form which is easily reversible. This mechanism is safer to use over HTTPS, because the HTTP headers and body are encrypted.</p>
 <p>This upgraded HTTP digest authentication plugin supports RFC7616 and RFC2617. RFC7616 adds SHA2 and is backwards compatible to clients that use MD5. The MD5 algorithm is not allowed in FIPS making SHA-256 or SHA-512-256 digest algorithms mandatory. The client-side of the plugin handles both RFCs automatically.</p>
 <p>To use HTTP digest authentication with gSOAP, register the http_da plugin as follows:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="httpda_8h.html">httpda.h</a>&quot;</span></div>
-<div class="line">soap_register_plugin(&amp;soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
+<div class="line"><span class="keyword">struct </span>soap *soap = soap_new();</div>
+<div class="line">soap_register_plugin(soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
+<div class="line">...</div>
+<div class="line">soap_destroy(soap); <span class="comment">// deallocate data</span></div>
+<div class="line">soap_end(soap);     <span class="comment">// deallocate temp data</span></div>
+<div class="line">soap_free(soap);    <span class="comment">// deregister plugin and deallocate context</span></div>
+</div><!-- fragment --><p>or if you use a proxy object generated with saopcpp2 option -j:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="httpda_8h.html">httpda.h</a>&quot;</span></div>
+<div class="line">Proxy proxy(...);</div>
+<div class="line">soap_register_plugin(proxy.soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
+<div class="line">...</div>
+<div class="line">proxy.destroy(); <span class="comment">// deallocate data and temps</span></div>
 </div><!-- fragment --><p>To make a client-side service call you will need to create a digest store <code><a class="el" href="structhttp__da__info.html" title="Used to save and restore credentials for client-side invocations to the same authenticated endpoint...">http_da_info</a></code>. The store holds the digest information locally on your machine to manage repeated authentication challenges from all servers you connect to. Use <code><a class="el" href="httpda_8c.html#a2debc522d5969b31a19f0d902e362089" title="Saves the credentials to the digest store to use repeatedly for authentication. ">http_da_save()</a></code> to add credentials to the store and release the store with <code><a class="el" href="httpda_8c.html#a89939a4b65f3533ef7b8161db503f4e3" title="Releases the digest store and frees memory. ">http_da_release()</a></code> when you no longer need the credentials.</p>
 <p>The <code><a class="el" href="structhttp__da__info.html" title="Used to save and restore credentials for client-side invocations to the same authenticated endpoint...">http_da_info</a></code> store is intended for one thread to issue a sequence of calls that are all authenticated without requiring (re)negotiation. You should not share the <code><a class="el" href="structhttp__da__info.html" title="Used to save and restore credentials for client-side invocations to the same authenticated endpoint...">http_da_info</a></code> store with multiple threads, unless you use mutex locks.</p>
 <p>Here is an example:</p>
-<div class="fragment"><div class="line"><span class="keyword">struct </span><a class="code" href="structhttp__da__info.html">http_da_info</a> info;</div>
-<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new();</div>
+<div class="line">soap_register_plugin(soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
+<div class="line"><span class="keyword">struct </span><a class="code" href="structhttp__da__info.html">http_da_info</a> info;</div>
+<div class="line"></div>
+<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(soap, ...)) <span class="comment">// make a call without authentication</span></div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (soap.error == 401) <span class="comment">// HTTP authentication is required</span></div>
 <div class="line">  {</div>
-<div class="line">    <a class="code" href="httpda_8h.html#a2debc522d5969b31a19f0d902e362089">http_da_save</a>(&amp;soap, &amp;info, <span class="stringliteral">&quot;&lt;authrealm&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>);</div>
-<div class="line">    <span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...)) <span class="comment">// try again</span></div>
+<div class="line">    <a class="code" href="httpda_8h.html#a2debc522d5969b31a19f0d902e362089">http_da_save</a>(soap, &amp;info, <span class="stringliteral">&quot;&lt;authrealm&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>);</div>
+<div class="line">    <span class="keywordflow">if</span> (soap_call_ns__method(soap, ...)) <span class="comment">// make a call with authentication</span></div>
 <div class="line">      ... <span class="comment">// error</span></div>
-<div class="line">    <a class="code" href="httpda_8h.html#a89939a4b65f3533ef7b8161db503f4e3">http_da_release</a>(&amp;soap, &amp;info);</div>
+<div class="line">    <a class="code" href="httpda_8h.html#a89939a4b65f3533ef7b8161db503f4e3">http_da_release</a>(soap, &amp;info); <span class="comment">// release if auth is no longer needed</span></div>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">else</span></div>
 <div class="line">    ... <span class="comment">// other error</span></div>
 <div class="line">}</div>
-</div><!-- fragment --><p>The <code>"\&lt;authrealm\&gt;"</code> string is the protected realm of the server that requires authorization. This string can be obtained with the <code>soap.authrealm</code> string after an unsuccessful non-authenticated call so you can use it to save credentials to the digest store:</p>
-<div class="fragment"><div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
+<div class="line"></div>
+<div class="line">soap_destroy(soap);</div>
+<div class="line">soap_end(soap);</div>
+<div class="line">soap_free(soap);</div>
+</div><!-- fragment --><p>Again, if you use a proxy object then replace the <code>soap_call_ns__method</code> with the proxy method invocation, as was shown earlier.</p>
+<p>The <code>&lt;authrealm&gt;</code> string is the protected realm of the server that requires authorization. This string can be obtained with the <code>soap.authrealm</code> string after an unsuccessful non-authenticated call so you can use it to save credentials to the digest store:</p>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new();</div>
+<div class="line">soap_register_plugin(soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
+<div class="line"><span class="keyword">struct </span><a class="code" href="structhttp__da__info.html">http_da_info</a> info;</div>
+<div class="line"></div>
+<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(soap, ...)) <span class="comment">// make a call without authentication</span></div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (soap.error == 401) <span class="comment">// HTTP authentication is required</span></div>
 <div class="line">  {</div>
-<div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span> *realm = soap.authrealm;</div>
-<div class="line">    <a class="code" href="httpda_8h.html#a2debc522d5969b31a19f0d902e362089">http_da_save</a>(&amp;soap, &amp;info, realm, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>);</div>
+<div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span> *realm = soap.<a class="code" href="structhttp__da__info.html#a6a2f59964d40689e21165afe21a5bf17">authrealm</a>;</div>
+<div class="line">    <a class="code" href="httpda_8h.html#a2debc522d5969b31a19f0d902e362089">http_da_save</a>(soap, &amp;info, realm, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>);</div>
+<div class="line">    <span class="keywordflow">if</span> (soap_call_ns__method(soap, ...)) <span class="comment">// make a call with authentication</span></div>
+<div class="line">      ... <span class="comment">// error</span></div>
 <div class="line">    ...</div>
+<div class="line">    <a class="code" href="httpda_8h.html#a89939a4b65f3533ef7b8161db503f4e3">http_da_release</a>(soap, &amp;info); <span class="comment">// deallocate authentication info if auth is no longer needed</span></div>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">else</span></div>
 <div class="line">    ... <span class="comment">// error</span></div>
 <div class="line">}</div>
+<div class="line"></div>
+<div class="line">soap_destroy(soap);</div>
+<div class="line">soap_end(soap);</div>
+<div class="line">soap_free(soap);</div>
 </div><!-- fragment --><p>Before a second call is made to the same endpoint that requires authentication, you must restore the authentication state with <code><a class="el" href="httpda_8c.html#a41fec462c654d9a38735c260412a4e34" title="Retrieves the credentials from the digest store to use for authentication. ">http_da_restore()</a></code>, then use it, and finally release it with <code><a class="el" href="httpda_8c.html#a89939a4b65f3533ef7b8161db503f4e3" title="Releases the digest store and frees memory. ">http_da_release()</a></code>:</p>
-<div class="fragment"><div class="line"><span class="keyword">struct </span><a class="code" href="structhttp__da__info.html">http_da_info</a> info;</div>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new();</div>
+<div class="line">soap_register_plugin(soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
+<div class="line"><span class="keyword">struct </span><a class="code" href="structhttp__da__info.html">http_da_info</a> info;</div>
 <div class="line"><span class="keywordtype">bool</span> auth = <span class="keyword">false</span>;</div>
 <div class="line"></div>
-<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
+<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(soap, ...)) <span class="comment">// make a call without authentication</span></div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (soap.error == 401) <span class="comment">// HTTP authentication is required</span></div>
 <div class="line">  {</div>
-<div class="line">    <a class="code" href="httpda_8h.html#a2debc522d5969b31a19f0d902e362089">http_da_save</a>(&amp;soap, &amp;info, <span class="stringliteral">&quot;&lt;authrealm&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>);</div>
+<div class="line">    <a class="code" href="httpda_8h.html#a2debc522d5969b31a19f0d902e362089">http_da_save</a>(soap, &amp;info, <span class="stringliteral">&quot;&lt;authrealm&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>);</div>
 <div class="line">    auth = <span class="keyword">true</span>;</div>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">else</span></div>
 <div class="line">    ... <span class="comment">// other error</span></div>
 <div class="line">}</div>
 <div class="line"></div>
-<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
+<div class="line"><span class="keywordflow">if</span> (auth)</div>
+<div class="line">  <a class="code" href="httpda_8h.html#a41fec462c654d9a38735c260412a4e34">http_da_restore</a>(soap, &amp;info);</div>
+<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(soap, ...)) <span class="comment">// make a call with authentication</span></div>
+<div class="line">  ... <span class="comment">// error</span></div>
+<div class="line"></div>
+<div class="line">soap_destroy(soap); <span class="comment">// okay to dealloc data</span></div>
+<div class="line">soap_end(soap);     <span class="comment">// okay to dealloc data</span></div>
+<div class="line"></div>
+<div class="line"><span class="keywordflow">if</span> (auth)</div>
+<div class="line">  <a class="code" href="httpda_8h.html#a41fec462c654d9a38735c260412a4e34">http_da_restore</a>(soap, &amp;info);</div>
+<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(soap, ...)) <span class="comment">// make a call with authentication</span></div>
 <div class="line">  ... <span class="comment">// error</span></div>
 <div class="line"></div>
 <div class="line"><span class="keywordflow">if</span> (auth)</div>
-<div class="line">  <a class="code" href="httpda_8h.html#a41fec462c654d9a38735c260412a4e34">http_da_restore</a>(&amp;soap, &amp;info);</div>
-<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
-<div class="line">  ... <span class="comment">// error</span></div>
+<div class="line">  <a class="code" href="httpda_8h.html#a89939a4b65f3533ef7b8161db503f4e3">http_da_release</a>(soap, &amp;info); <span class="comment">// deallocate authentication info</span></div>
 <div class="line"></div>
-<div class="line">soap_destroy(&amp;soap); <span class="comment">// okay to dealloc data</span></div>
-<div class="line">soap_end(&amp;soap);     <span class="comment">// okay to dealloc data</span></div>
-<div class="line"></div>
-<div class="line"><span class="keywordflow">if</span> (auth)</div>
-<div class="line">  <a class="code" href="httpda_8h.html#a41fec462c654d9a38735c260412a4e34">http_da_restore</a>(&amp;soap, &amp;info);</div>
-<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
-<div class="line">  ... <span class="comment">// error</span></div>
-<div class="line"></div>
-<div class="line"><span class="keywordflow">if</span> (auth)</div>
-<div class="line">  <a class="code" href="httpda_8h.html#a89939a4b65f3533ef7b8161db503f4e3">http_da_release</a>(&amp;soap, &amp;info);</div>
-<div class="line"></div>
-<div class="line">soap_destroy(&amp;soap);</div>
-<div class="line">soap_end(&amp;soap);</div>
-<div class="line">soap_done(&amp;soap);</div>
+<div class="line">soap_destroy(soap);</div>
+<div class="line">soap_end(soap);</div>
+<div class="line">soap_free(soap);</div>
 </div><!-- fragment --><p>For HTTP proxies requiring HTTP digest authenticaiton, use the 'proxy' functions of the plugin:</p>
-<div class="fragment"><div class="line"><span class="keyword">struct </span><a class="code" href="structhttp__da__info.html">http_da_info</a> info;</div>
-<div class="line">...</div>
-<div class="line">if (soap_call_ns__method(&amp;soap, ...))</div>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new();</div>
+<div class="line">soap_register_plugin(soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
+<div class="line"><span class="keyword">struct </span><a class="code" href="structhttp__da__info.html">http_da_info</a> info;</div>
+<div class="line"></div>
+<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(soap, ...)) <span class="comment">// make a call without authentication</span></div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (soap.error == 407) <span class="comment">// HTTP proxy authentication is required</span></div>
 <div class="line">  {</div>
-<div class="line">    <a class="code" href="httpda_8h.html#a8fb73c330e76f4722f1e9fcd91c46a62">http_da_proxy_save</a>(&amp;soap, &amp;info, <span class="stringliteral">&quot;&lt;authrealm&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>);</div>
+<div class="line">    <a class="code" href="httpda_8h.html#a8fb73c330e76f4722f1e9fcd91c46a62">http_da_proxy_save</a>(soap, &amp;info, <span class="stringliteral">&quot;&lt;authrealm&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>);</div>
 <div class="line">    auth = <span class="keyword">true</span>;</div>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">else</span></div>
@@ -158,66 +195,70 @@ Client-side usage</h1>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keywordflow">if</span> (auth)</div>
-<div class="line">  <a class="code" href="httpda_8h.html#aa50dd85222d3b4c6469862acf4202190">http_da_proxy_restore</a>(&amp;soap, &amp;info);</div>
-<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
+<div class="line">  <a class="code" href="httpda_8h.html#aa50dd85222d3b4c6469862acf4202190">http_da_proxy_restore</a>(soap, &amp;info);</div>
+<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(soap, ...))</div>
 <div class="line">  ... <span class="comment">// error</span></div>
 <div class="line"></div>
-<div class="line"><a class="code" href="httpda_8h.html#a1ce5c0ca28c0062e9b5c6ef786966291">http_da_proxy_release</a>(&amp;soap, &amp;info);</div>
+<div class="line"><a class="code" href="httpda_8h.html#a1ce5c0ca28c0062e9b5c6ef786966291">http_da_proxy_release</a>(soap, &amp;info); <span class="comment">// deallocate authentication info</span></div>
 <div class="line"></div>
-<div class="line">soap_destroy(&amp;soap);</div>
-<div class="line">soap_end(&amp;soap);</div>
-<div class="line">soap_done(&amp;soap);</div>
+<div class="line">soap_destroy(soap);</div>
+<div class="line">soap_end(soap);</div>
+<div class="line">soap_free(soap);</div>
 </div><!-- fragment --><h1><a class="anchor" id="httpda_2"></a>
 Client example</h1>
 <p>A client authenticating against a server:</p>
-<div class="fragment"><div class="line">soap_register_plugin(&amp;soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
-<div class="line"><span class="comment">// try calling without authenticating</span></div>
-<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new();</div>
+<div class="line">soap_register_plugin(soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
+<div class="line"></div>
+<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(soap, ...)) <span class="comment">// make a call without authentication</span></div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (soap.error == 401) <span class="comment">// HTTP authentication is required</span></div>
 <div class="line">  {</div>
-<div class="line">    <span class="keywordflow">if</span> (!strcmp(soap.authrealm, <a class="code" href="structhttp__da__info.html#a6a2f59964d40689e21165afe21a5bf17">authrealm</a>)) <span class="comment">// check authentication realm</span></div>
+<div class="line">    <span class="keywordflow">if</span> (!strcmp(soap.authrealm, authrealm)) <span class="comment">// check authentication realm</span></div>
 <div class="line">    {</div>
 <div class="line">      <span class="keyword">struct </span><a class="code" href="structhttp__da__info.html">http_da_info</a> info; <span class="comment">// to store userid and passwd</span></div>
-<div class="line">      <a class="code" href="httpda_8h.html#a2debc522d5969b31a19f0d902e362089">http_da_save</a>(&amp;soap, &amp;info, <a class="code" href="structhttp__da__info.html#a6a2f59964d40689e21165afe21a5bf17">authrealm</a>, <a class="code" href="structhttp__da__info.html#a9d713755e3c8a2f2e1754753629f7b51">userid</a>, <a class="code" href="structhttp__da__info.html#aefb8c737836359bb2983f5f88fd52adf">passwd</a>);</div>
+<div class="line">      <a class="code" href="httpda_8h.html#a2debc522d5969b31a19f0d902e362089">http_da_save</a>(soap, &amp;info, <a class="code" href="structhttp__da__info.html#a6a2f59964d40689e21165afe21a5bf17">authrealm</a>, <a class="code" href="structhttp__da__info.html#a9d713755e3c8a2f2e1754753629f7b51">userid</a>, <a class="code" href="structhttp__da__info.html#aefb8c737836359bb2983f5f88fd52adf">passwd</a>);</div>
 <div class="line">      <span class="comment">// call again, now with credentials</span></div>
-<div class="line">      <span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...) == SOAP_OK)</div>
+<div class="line">      <span class="keywordflow">if</span> (soap_call_ns__method(soap, ...) == SOAP_OK)</div>
 <div class="line">      {</div>
 <div class="line">        ... <span class="comment">// process response data</span></div>
-<div class="line">        soap_end(&amp;soap);</div>
+<div class="line">        soap_end(soap);</div>
 <div class="line">        ... <span class="comment">// userid and passwd were deallocated (!)</span></div>
-<div class="line">        <a class="code" href="httpda_8h.html#a41fec462c654d9a38735c260412a4e34">http_da_restore</a>(&amp;soap, &amp;info); <span class="comment">// get userid and passwd after soap_end()</span></div>
-<div class="line">        <span class="keywordflow">if</span> (!soap_call_ns__method(&amp;soap, ...) == SOAP_OK)</div>
+<div class="line">        <a class="code" href="httpda_8h.html#a41fec462c654d9a38735c260412a4e34">http_da_restore</a>(soap, &amp;info); <span class="comment">// get userid and passwd after soap_end()</span></div>
+<div class="line">        <span class="keywordflow">if</span> (!soap_call_ns__method(soap, ...) == SOAP_OK)</div>
 <div class="line">          ... <span class="comment">// error</span></div>
-<div class="line">        <a class="code" href="httpda_8h.html#a89939a4b65f3533ef7b8161db503f4e3">http_da_release</a>(&amp;soap, &amp;info); <span class="comment">// free data and remove userid and passwd</span></div>
+<div class="line">        <a class="code" href="httpda_8h.html#a89939a4b65f3533ef7b8161db503f4e3">http_da_release</a>(soap, &amp;info); <span class="comment">// deallocate authentication info</span></div>
 </div><!-- fragment --><p>A client authenticating against a proxy:</p>
-<div class="fragment"><div class="line">soap_register_plugin(&amp;soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
-<div class="line"><span class="comment">// try calling without authenticating</span></div>
-<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...))</div>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new();</div>
+<div class="line">soap_register_plugin(soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
+<div class="line"></div>
+<div class="line"><span class="keywordflow">if</span> (soap_call_ns__method(soap, ...))  <span class="comment">// make a call without authentication</span></div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (soap.error == 407) <span class="comment">// HTTP authentication is required</span></div>
 <div class="line">  {</div>
-<div class="line">    <span class="keywordflow">if</span> (!strcmp(soap.authrealm, <a class="code" href="structhttp__da__info.html#a6a2f59964d40689e21165afe21a5bf17">authrealm</a>)) <span class="comment">// check authentication realm</span></div>
+<div class="line">    <span class="keywordflow">if</span> (!strcmp(soap.authrealm, authrealm)) <span class="comment">// check authentication realm</span></div>
 <div class="line">    {</div>
 <div class="line">      <span class="keyword">struct </span><a class="code" href="structhttp__da__info.html">http_da_info</a> info; <span class="comment">// to store userid and passwd</span></div>
-<div class="line">      <a class="code" href="httpda_8h.html#a8fb73c330e76f4722f1e9fcd91c46a62">http_da_proxy_save</a>(&amp;soap, &amp;info, <a class="code" href="structhttp__da__info.html#a6a2f59964d40689e21165afe21a5bf17">authrealm</a>, <a class="code" href="structhttp__da__info.html#a9d713755e3c8a2f2e1754753629f7b51">userid</a>, <a class="code" href="structhttp__da__info.html#aefb8c737836359bb2983f5f88fd52adf">passwd</a>);</div>
+<div class="line">      <a class="code" href="httpda_8h.html#a8fb73c330e76f4722f1e9fcd91c46a62">http_da_proxy_save</a>(soap, &amp;info, <a class="code" href="structhttp__da__info.html#a6a2f59964d40689e21165afe21a5bf17">authrealm</a>, <a class="code" href="structhttp__da__info.html#a9d713755e3c8a2f2e1754753629f7b51">userid</a>, <a class="code" href="structhttp__da__info.html#aefb8c737836359bb2983f5f88fd52adf">passwd</a>);</div>
 <div class="line">      <span class="comment">// call again, now with credentials</span></div>
-<div class="line">      <span class="keywordflow">if</span> (soap_call_ns__method(&amp;soap, ...) == SOAP_OK)</div>
+<div class="line">      <span class="keywordflow">if</span> (soap_call_ns__method(soap, ...) == SOAP_OK)</div>
 <div class="line">      {</div>
 <div class="line">        ... <span class="comment">// process response data</span></div>
-<div class="line">        soap_end(&amp;soap);</div>
+<div class="line">        soap_end(soap);</div>
 <div class="line">        ... <span class="comment">// userid and passwd were deallocated (!)</span></div>
-<div class="line">        <a class="code" href="httpda_8h.html#aa50dd85222d3b4c6469862acf4202190">http_da_proxy_restore</a>(&amp;soap, &amp;info); <span class="comment">// get userid and passwd after soap_end()</span></div>
-<div class="line">        <span class="keywordflow">if</span> (!soap_call_ns__method(&amp;soap, ...) == SOAP_OK)</div>
+<div class="line">        <a class="code" href="httpda_8h.html#aa50dd85222d3b4c6469862acf4202190">http_da_proxy_restore</a>(soap, &amp;info); <span class="comment">// get userid and passwd after soap_end()</span></div>
+<div class="line">        <span class="keywordflow">if</span> (!soap_call_ns__method(soap, ...) == SOAP_OK)</div>
 <div class="line">          ... <span class="comment">// error</span></div>
-<div class="line">        <a class="code" href="httpda_8h.html#a1ce5c0ca28c0062e9b5c6ef786966291">http_da_proxy_release</a>(&amp;soap, &amp;info); <span class="comment">// free data and remove userid and passwd</span></div>
+<div class="line">        <a class="code" href="httpda_8h.html#a1ce5c0ca28c0062e9b5c6ef786966291">http_da_proxy_release</a>(soap, &amp;info); <span class="comment">// deallocate authentication info</span></div>
 </div><!-- fragment --><h1><a class="anchor" id="httpda_3"></a>
 Server-side usage</h1>
 <p>As explained in the gSOAP user guid, server-side HTTP basic authentication is enforced by simply checking the <code>soap.userid</code> and <code>soap.passwd</code> values in a service method that requires client authentication:</p>
-<div class="fragment"><div class="line">soap_register_plugin(&amp;soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new();</div>
+<div class="line">soap_register_plugin(soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
 <div class="line">...</div>
-<div class="line">soap_serve(&amp;soap);</div>
+<div class="line">soap_serve(soap); <span class="comment">// see gSOAP documentation and examples on how to serve requests</span></div>
 <div class="line">...</div>
+<div class="line"></div>
 <div class="line">int ns__method(<span class="keyword">struct</span> soap *soap, ...)</div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (!soap-&gt;userid || !soap-&gt;passwd || strcmp(soap-&gt;userid, <span class="stringliteral">&quot;&lt;userid&gt;&quot;</span>) || strcmp(soap-&gt;passwd, <span class="stringliteral">&quot;&lt;passwd&gt;&quot;</span>))</div>
@@ -225,30 +266,32 @@ Server-side usage</h1>
 <div class="line">  ...</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>HTTP digest authentication is verified differently, because digests are compared, not passwords:</p>
-<div class="fragment"><div class="line">soap_register_plugin(&amp;soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new();</div>
+<div class="line">soap_register_plugin(soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
 <div class="line">...</div>
-<div class="line">soap_serve(&amp;soap);</div>
+<div class="line">soap_serve(soap); <span class="comment">// see gSOAP documentation and examples on how to serve requests</span></div>
 <div class="line">...</div>
+<div class="line"></div>
 <div class="line">int ns__method(<span class="keyword">struct</span> soap *soap, ...)</div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (soap-&gt;authrealm &amp;&amp; soap-&gt;userid)</div>
 <div class="line">  {</div>
-<div class="line">    <a class="code" href="structhttp__da__info.html#aefb8c737836359bb2983f5f88fd52adf">passwd</a> = ... <span class="comment">// database lookup on userid and authrealm to find passwd</span></div>
-<div class="line">    <span class="keywordflow">if</span> (!strcmp(soap-&gt;authrealm, <a class="code" href="structhttp__da__info.html#a6a2f59964d40689e21165afe21a5bf17">authrealm</a>) &amp;&amp; !strcmp(soap-&gt;userid, <a class="code" href="structhttp__da__info.html#a9d713755e3c8a2f2e1754753629f7b51">userid</a>))</div>
+<div class="line">    passwd = ... <span class="comment">// database lookup on userid and authrealm to find passwd</span></div>
+<div class="line">    <span class="keywordflow">if</span> (!strcmp(soap-&gt;authrealm, authrealm) &amp;&amp; !strcmp(soap-&gt;userid, userid))</div>
 <div class="line">    { </div>
-<div class="line">      <span class="keywordflow">if</span> (!<a class="code" href="httpda_8h.html#add969b5bd64baf82026fe1d848958470">http_da_verify_post</a>(soap, <a class="code" href="structhttp__da__info.html#aefb8c737836359bb2983f5f88fd52adf">passwd</a>)) <span class="comment">// HTTP POST DA verification</span></div>
+<div class="line">      <span class="keywordflow">if</span> (!<a class="code" href="httpda_8h.html#add969b5bd64baf82026fe1d848958470">http_da_verify_post</a>(soap, passwd)) <span class="comment">// HTTP POST DA verification</span></div>
 <div class="line">      {</div>
 <div class="line">        ... <span class="comment">// process request and produce response</span></div>
 <div class="line">        <span class="keywordflow">return</span> SOAP_OK;</div>
 <div class="line">      }</div>
 <div class="line">    }</div>
 <div class="line">  }</div>
-<div class="line">  soap-&gt;authrealm = <a class="code" href="structhttp__da__info.html#a6a2f59964d40689e21165afe21a5bf17">authrealm</a>; <span class="comment">// realm to send to client</span></div>
+<div class="line">  soap-&gt;authrealm = authrealm; <span class="comment">// realm to send to client</span></div>
 <div class="line">  <span class="keywordflow">return</span> 401; <span class="comment">// Not authorized, challenge with digest authentication</span></div>
 </div><!-- fragment --><p>The <code><a class="el" href="httpda_8c.html#add969b5bd64baf82026fe1d848958470" title="Verifies the password credentials at the server side when used in an HTTP POST service operation...">http_da_verify_post()</a></code> function checks the HTTP POST credentials by computing and comparing a digest of the password. To verify an HTTP GET operation, use <code><a class="el" href="httpda_8c.html#a551f86a9d87113c930cd24b399278e4e" title="Verifies the password credentials at the server side when used in an HTTP GET service operation...">http_da_verify_get()</a></code> instead.</p>
 <p>RFC7616 recommends SHA2 over MD5. The MD5 algorithm is not allowed in FIPS and SHA-256 or SHA-512-256 are mandatory. The upgrade plugin uses SHA-256 as the default algorithm and reverts to MD5 only if required by a client that does not support RFC7616.</p>
 <p>The default SHA-256 digest algorithm is enabled automatically. However, at the server side you can also use a plugin registry option to set a different algorithm as the default:</p>
-<div class="fragment"><div class="line">soap_register_plugin_arg(&amp;soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>, &lt;option&gt;);</div>
+<div class="fragment"><div class="line">soap_register_plugin_arg(soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>, &lt;option&gt;);</div>
 </div><!-- fragment --><p>where <code>&lt;option&gt;</code> is one of:</p>
 <ul>
 <li><code><a class="el" href="httpda_8c.html#a6d07ef5393a7e7e3932a6d1c52c2ae46" title="Use soap_register_plugin_arg(soap, http_da, http_da_md5()) for MD5 server-side challenge algorithm (n...">http_da_md5()</a></code> MD5 (not recommended).</li>
@@ -262,15 +305,17 @@ Server-side usage</h1>
 <p>To revert to RFC2617 use <code><a class="el" href="httpda_8c.html#a6d07ef5393a7e7e3932a6d1c52c2ae46" title="Use soap_register_plugin_arg(soap, http_da, http_da_md5()) for MD5 server-side challenge algorithm (n...">http_da_md5()</a></code>.</p>
 <h1><a class="anchor" id="httpda_4"></a>
 Server example</h1>
-<div class="fragment"><div class="line">soap_register_plugin(&amp;soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new();</div>
+<div class="line">soap_register_plugin(soap, <a class="code" href="httpda_8h.html#a26bfda7ff2ac0f7eff9972a3f82591a3">http_da</a>);</div>
 <div class="line">...</div>
-<div class="line">soap_serve(&amp;soap);</div>
+<div class="line">soap_serve(soap); <span class="comment">// see gSOAP documentation and examples on how to serve requests</span></div>
 <div class="line">...</div>
+<div class="line"></div>
 <div class="line">int ns__method(<span class="keyword">struct</span> soap *soap, ...)</div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (soap-&gt;userid &amp;&amp; soap-&gt;passwd) <span class="comment">// Basic authentication</span></div>
 <div class="line">  {</div>
-<div class="line">    <span class="keywordflow">if</span> (!strcmp(soap-&gt;userid, <a class="code" href="structhttp__da__info.html#a9d713755e3c8a2f2e1754753629f7b51">userid</a>) &amp;&amp; !strcmp(soap-&gt;passwd, <a class="code" href="structhttp__da__info.html#aefb8c737836359bb2983f5f88fd52adf">passwd</a>))</div>
+<div class="line">    <span class="keywordflow">if</span> (!strcmp(soap-&gt;userid, userid) &amp;&amp; !strcmp(soap-&gt;passwd, passwd))</div>
 <div class="line">    {</div>
 <div class="line">      ... <span class="comment">// can also check soap-&gt;authrealm </span></div>
 <div class="line">      ... <span class="comment">// process request and produce response</span></div>
@@ -279,17 +324,17 @@ Server example</h1>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (soap-&gt;authrealm &amp;&amp; soap-&gt;userid) <span class="comment">// Digest authentication</span></div>
 <div class="line">  {</div>
-<div class="line">    <a class="code" href="structhttp__da__info.html#aefb8c737836359bb2983f5f88fd52adf">passwd</a> = ... <span class="comment">// database lookup on userid and authrealm to find passwd</span></div>
-<div class="line">    <span class="keywordflow">if</span> (!strcmp(soap-&gt;authrealm, <a class="code" href="structhttp__da__info.html#a6a2f59964d40689e21165afe21a5bf17">authrealm</a>) &amp;&amp; !strcmp(soap-&gt;userid, <a class="code" href="structhttp__da__info.html#a9d713755e3c8a2f2e1754753629f7b51">userid</a>))</div>
+<div class="line">    passwd = ... <span class="comment">// database lookup on userid and authrealm to find passwd</span></div>
+<div class="line">    <span class="keywordflow">if</span> (!strcmp(soap-&gt;authrealm, authrealm) &amp;&amp; !strcmp(soap-&gt;userid, userid))</div>
 <div class="line">    { </div>
-<div class="line">      <span class="keywordflow">if</span> (!<a class="code" href="httpda_8h.html#add969b5bd64baf82026fe1d848958470">http_da_verify_post</a>(soap, <a class="code" href="structhttp__da__info.html#aefb8c737836359bb2983f5f88fd52adf">passwd</a>)) <span class="comment">// HTTP POST DA verification</span></div>
+<div class="line">      <span class="keywordflow">if</span> (!<a class="code" href="httpda_8h.html#add969b5bd64baf82026fe1d848958470">http_da_verify_post</a>(soap, passwd)) <span class="comment">// HTTP POST DA verification</span></div>
 <div class="line">      {</div>
 <div class="line">        ... <span class="comment">// process request and produce response</span></div>
 <div class="line">        <span class="keywordflow">return</span> SOAP_OK;</div>
 <div class="line">      }</div>
 <div class="line">    }</div>
 <div class="line">  }</div>
-<div class="line">  soap-&gt;authrealm = <a class="code" href="structhttp__da__info.html#a6a2f59964d40689e21165afe21a5bf17">authrealm</a>; <span class="comment">// realm to send to client</span></div>
+<div class="line">  soap-&gt;authrealm = authrealm; <span class="comment">// realm to send to client</span></div>
 <div class="line">  <span class="keywordflow">return</span> 401; <span class="comment">// Not authorized, challenge with digest authentication</span></div>
 <div class="line">}</div>
 </div><!-- fragment --><h1><a class="anchor" id="httpda_5"></a>
@@ -301,7 +346,7 @@ Limitations</h1>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Mar 29 2016 15:06:13 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Wed Jun 29 2016 09:27:22 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

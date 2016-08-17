@@ -110,6 +110,7 @@ wsdl__definitions::wsdl__definitions()
   updated = false;
   location = NULL;
   redirs = 0;
+  appRef = NULL;
 }
 
 wsdl__definitions::wsdl__definitions(struct soap *copy)
@@ -125,6 +126,7 @@ wsdl__definitions::wsdl__definitions(struct soap *copy)
   updated = false;
   location = NULL;
   redirs = 0;
+  appRef = NULL;
 }
 
 wsdl__definitions::wsdl__definitions(struct soap *copy, const char *cwd, const char *loc)
@@ -140,6 +142,7 @@ wsdl__definitions::wsdl__definitions(struct soap *copy, const char *cwd, const c
   updated = false;
   location = NULL;
   redirs = 0;
+  appRef = NULL;
   read(cwd, loc);
 }
 
@@ -181,7 +184,7 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
   if (!cwd)
     cwd = cwd_path;
   if (vflag)
-    fprintf(stderr, "\nOpening WSDL/XSD '%s' from '%s'\n", loc ? loc : "(stdin)", cwd ? cwd : "./");
+    fprintf(stderr, "\nOpening WSDL/WADL or XSD '%s' from '%s'\n", loc ? loc : "(stdin)", cwd ? cwd : "./");
   if (loc)
   {
     if (soap->recvfd > 2)
@@ -200,13 +203,13 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
 #else
     if (!strncmp(loc, "https://", 8))
     {
-      fprintf(stderr, "\nCannot connect to https site: SSL/TLS support not enabled, please rebuild wsdl2h with SSL/TLS enabled using 'make secure' or download the WSDL and XSD files and rerun wsdl2h on these files\n");
+      fprintf(stderr, "\nCannot connect to https site: SSL/TLS support not enabled, please rebuild wsdl2h with SSL/TLS enabled using 'make secure' or download the WSDL/WADL and XSD files and rerun wsdl2h on these files\n");
       exit(1);
     }
     else if (!strncmp(loc, "http://", 7))
 #endif
     {
-      fprintf(stderr, "%*sConnecting to '%s' to retrieve WSDL/XSD...", 2*openfiles, "", loc);
+      fprintf(stderr, "%*sConnecting to '%s' to retrieve WSDL/WADL or XSD...", 2*openfiles, "", loc);
       location = soap_strdup(soap, loc);
       if (soap_connect_command(soap, SOAP_GET, location, NULL))
       {
@@ -296,27 +299,47 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
   {
     // handle sloppy WSDLs that import schemas at the top level rather than
     // importing them in <types>
+    // handle WADL when used in place of WSDL
     if (soap->error == SOAP_TAG_MISMATCH && soap->level == 0)
     {
       soap_retry(soap);
       xs__schema *schema = soap_new_xs__schema(soap);
       schema->soap_in(soap, "xs:schema", NULL);
-      if (soap->error)
+      if (soap->error == SOAP_TAG_MISMATCH && soap->level == 0)
       {
-        fprintf(stderr, "\nAn error occurred while parsing WSDL or XSD from '%s'\n", loc ? loc : "(stdin)");
-        soap_print_fault(soap, stderr);
-        if (soap->error < 200)
-          soap_print_fault_location(soap, stderr);
-        exit(1);
+	soap_retry(soap);
+	wadl__application *app = soap_new_wadl__application(soap);
+	app->soap_in(soap, "wadl:application", NULL);
+	if (soap->error)
+	{
+	  fprintf(stderr, "\nAn error occurred while parsing WSDL/WADL or XSD from '%s'\n", loc ? loc : "(stdin)");
+	  soap_print_fault(soap, stderr);
+	  if (soap->error < 200)
+	    soap_print_fault_location(soap, stderr);
+	  exit(1);
+	}
+	appRef = app;
+	preprocess();
       }
-      name = NULL;
-      targetNamespace = schema->targetNamespace;
-      if (vflag)
-        cerr << "Found schema '" << (targetNamespace ? targetNamespace : "(null)") << "' when expecting WSDL" << endl;
-      types = soap_new_wsdl__types(soap);
-      types->documentation = NULL;
-      types->xs__schema_.push_back(schema);
-      types->preprocess(*this);
+      else
+      {
+	if (soap->error)
+	{
+	  fprintf(stderr, "\nAn error occurred while parsing WSDL/WADL or XSD from '%s'\n", loc ? loc : "(stdin)");
+	  soap_print_fault(soap, stderr);
+	  if (soap->error < 200)
+	    soap_print_fault_location(soap, stderr);
+	  exit(1);
+	}
+	name = NULL;
+	targetNamespace = schema->targetNamespace;
+	if (vflag)
+	  cerr << "Found schema '" << (targetNamespace ? targetNamespace : "(null)") << "' when expecting WSDL" << endl;
+	types = soap_new_wsdl__types(soap);
+	types->documentation = NULL;
+	types->xs__schema_.push_back(schema);
+	types->preprocess(*this);
+      }
     }
     // check HTTP redirect (socket was closed)
     else if ((soap->error >= 301 && soap->error <= 303) || soap->error == 307)
@@ -355,7 +378,7 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
     }
     else
     {
-      fprintf(stderr, "\nAn error occurred while parsing WSDL from '%s'\n", loc ? loc : "(stdin)");
+      fprintf(stderr, "\nAn error occurred while parsing WSDL/WADL and XSD from '%s'\n", loc ? loc : "(stdin)");
       soap_print_fault(soap, stderr);
       if (soap->error < 200)
         soap_print_fault_location(soap, stderr);
@@ -380,6 +403,9 @@ int wsdl__definitions::preprocess()
 {
   if (vflag)
     cerr << "Preprocessing wsdl definitions '" << (location ? location : "(null)") << "' namespace '" << (targetNamespace ? targetNamespace : "(null)") << "'" << endl;
+  // process WADL app
+  if (appPtr())
+    appPtr()->preprocess(*this);
   // process import
   for (vector<wsdl__import>::iterator im1 = import.begin(); im1 != import.end(); ++im1)
     (*im1).preprocess(*this);
@@ -488,6 +514,9 @@ int wsdl__definitions::traverse()
   // then process the types
   if (types)
     types->traverse(*this);
+  // process WADL
+  if (appRef)
+    appRef->traverse(*this);
   // process messages before portType
   for (vector<wsdl__message>::iterator mg = message.begin(); mg != message.end(); ++mg)
     (*mg).traverse(*this);
@@ -584,6 +613,16 @@ const SetOfString& wsdl__definitions::builtinElements() const
 const SetOfString& wsdl__definitions::builtinAttributes() const
 {
   return builtinAttributeSet;
+}
+
+void wsdl__definitions::appPtr(wadl__application *app)
+{
+  appRef = app;
+}
+
+wadl__application *wsdl__definitions::appPtr() const
+{
+  return appRef;
 }
 
 int wsdl__service::traverse(wsdl__definitions& definitions)
@@ -1364,6 +1403,10 @@ wsdl__part::wsdl__part()
   elementRef = NULL;
   simpleTypeRef = NULL;
   complexTypeRef = NULL;
+  optional = false;
+  repeating = false;
+  fixed = false;
+  default_ = NULL;
 }
 
 int wsdl__part::traverse(wsdl__definitions& definitions)
@@ -1482,6 +1525,57 @@ xs__complexType *wsdl__part::complexTypePtr() const
   return complexTypeRef;
 }
 
+void wsdl__part::set_optional(bool b)
+{
+  optional = b;
+}
+
+void wsdl__part::set_fixed(bool b)
+{
+  fixed = b;
+}
+
+void wsdl__part::set_repeating(bool b)
+{
+  repeating = b;
+}
+
+void wsdl__part::set_default(char* s)
+{
+  default_ = s;
+}
+
+void wsdl__part::set_option(char* s)
+{
+  if (s)
+    option.push_back(s);
+}
+
+bool wsdl__part::is_optional() const
+{
+  return optional;
+}
+
+bool wsdl__part::is_fixed() const
+{
+  return fixed;
+}
+
+bool wsdl__part::is_repeating() const
+{
+  return repeating;
+}
+
+const char *wsdl__part::get_default() const
+{
+  return default_;
+}
+
+const std::vector<char*>& wsdl__part::options() const
+{
+  return option;
+}
+
 int wsdl__types::preprocess(wsdl__definitions& definitions)
 {
   if (vflag)
@@ -1538,8 +1632,15 @@ again:
         if (!importschema)
         {
           const char *s = (*import).schemaLocation;
-          if (!s)
+	  if (!s && (*import).location)
+	  {
+	    s = (*import).schemaLocation = (*import).location; // work around for Microsoft bugs
+            cerr << "Schema import with namespace '" << ((*import).namespace_ ? (*import).namespace_ : "(null)") << "' has a 'location' attribute specified but a 'schemaLocation' attribute must be used, please inform the author of this WSDL to correct this problem" << endl;
+	  }
+	  else if (!s)
+	  {
             s = (*import).namespace_;
+	  }
           if (!s)
             continue;
           importschema = new xs__schema(definitions.soap, (*schema2)->sourceLocation(), s);

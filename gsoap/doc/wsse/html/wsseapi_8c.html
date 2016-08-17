@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">wsseapi.c File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
+      <div style="float: right; font-size: 10px;">updated Wed Aug 17 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -67,10 +67,10 @@ Include dependency graph for wsseapi.c:</div>
 <div class="dyncontent">
 <div class="center"><img src="wsseapi_8c__incl.png" border="0" usemap="#wsseapi_8c" alt=""/></div>
 <map name="wsseapi_8c" id="wsseapi_8c">
-<area shape="rect" id="node3" href="wsseapi_8h.html" title="wsseapi.h" alt="" coords="153,83,233,111"/>
-<area shape="rect" id="node22" href="threads_8h.html" title="threads.h" alt="" coords="306,83,381,111"/>
-<area shape="rect" id="node7" href="smdevp_8h.html" title="smdevp.h" alt="" coords="232,161,311,189"/>
-<area shape="rect" id="node17" href="mecevp_8h.html" title="mecevp.h" alt="" coords="130,161,208,189"/>
+<area shape="rect" id="node3" href="wsseapi_8h.html" title="wsseapi.h" alt="" coords="262,83,343,111"/>
+<area shape="rect" id="node22" href="threads_8h.html" title="threads.h" alt="" coords="414,83,489,111"/>
+<area shape="rect" id="node7" href="smdevp_8h.html" title="smdevp.h" alt="" coords="118,161,196,189"/>
+<area shape="rect" id="node17" href="mecevp_8h.html" title="mecevp.h" alt="" coords="315,161,393,189"/>
 </map>
 </div>
 </div><table class="memberdecls">
@@ -93,9 +93,9 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a3dafa97e60020d63fdd4be32aefa4119"><td class="memItemLeft" align="right" valign="top">static char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a3dafa97e60020d63fdd4be32aefa4119">soap_wsse_ids</a> (struct soap *soap, const char *tags)</td></tr>
-<tr class="memdesc:a3dafa97e60020d63fdd4be32aefa4119"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts tag name(s) to id name(s)  <a href="#a3dafa97e60020d63fdd4be32aefa4119">More...</a><br /></td></tr>
-<tr class="separator:a3dafa97e60020d63fdd4be32aefa4119"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc8b4d1dad450f636113ada6960f6316"><td class="memItemLeft" align="right" valign="top">static char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#afc8b4d1dad450f636113ada6960f6316">soap_wsse_ids</a> (struct soap *soap, const char *tags, int sub)</td></tr>
+<tr class="memdesc:afc8b4d1dad450f636113ada6960f6316"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts tag name(s) to id name(s)  <a href="#afc8b4d1dad450f636113ada6960f6316">More...</a><br /></td></tr>
+<tr class="separator:afc8b4d1dad450f636113ada6960f6316"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb666de6b99187df159aaee8219317bd"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#acb666de6b99187df159aaee8219317bd">soap_wsse_session_verify</a> (struct soap *soap, const char hash[<a class="el" href="smdevp_8h.html#a6ba3b594687a71acfa875a5cc0a844be">SOAP_SMD_SHA1_SIZE</a>], const char *created, const char *nonce)</td></tr>
 <tr class="memdesc:acb666de6b99187df159aaee8219317bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies and updates the digest, nonce, and creation time against the digest authentication session database to prevent replay attacks.  <a href="#acb666de6b99187df159aaee8219317bd">More...</a><br /></td></tr>
 <tr class="separator:acb666de6b99187df159aaee8219317bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -108,9 +108,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a88a347b5879814212509d90ea82b1c9d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a88a347b5879814212509d90ea82b1c9d">calc_nonce</a> (char nonce[<a class="el" href="wsseapi_8c.html#a65c55be8ba01ac63f64fddbe0e82b75b">SOAP_WSSE_NONCELEN</a>])</td></tr>
 <tr class="memdesc:a88a347b5879814212509d90ea82b1c9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates randomized nonce (also uses time() in case a poorly seeded PRNG is used)  <a href="#a88a347b5879814212509d90ea82b1c9d">More...</a><br /></td></tr>
 <tr class="separator:a88a347b5879814212509d90ea82b1c9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9f8c9147cb058c0316f7f8c935a1b92"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ae9f8c9147cb058c0316f7f8c935a1b92">soap_wsse_init</a> (struct soap *soap, struct <a class="el" href="structsoap__wsse__data.html">soap_wsse_data</a> *data, const void *(*arg)(struct soap *, int *, const char *, int *))</td></tr>
-<tr class="memdesc:ae9f8c9147cb058c0316f7f8c935a1b92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes plugin data.  <a href="#ae9f8c9147cb058c0316f7f8c935a1b92">More...</a><br /></td></tr>
-<tr class="separator:ae9f8c9147cb058c0316f7f8c935a1b92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1001021a4615e48f7b0a1455423f443"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#aa1001021a4615e48f7b0a1455423f443">soap_wsse_init</a> (struct soap *soap, struct <a class="el" href="structsoap__wsse__data.html">soap_wsse_data</a> *data, const void *(*arg)(struct soap *, int *, const char *, const unsigned char *, int, int *))</td></tr>
+<tr class="separator:aa1001021a4615e48f7b0a1455423f443"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a491ec857faca76dce6ff59218e58626c"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a491ec857faca76dce6ff59218e58626c">soap_wsse_copy</a> (struct soap *soap, struct soap_plugin *dst, struct soap_plugin *src)</td></tr>
 <tr class="memdesc:a491ec857faca76dce6ff59218e58626c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies plugin data to localize plugin data for threads.  <a href="#a491ec857faca76dce6ff59218e58626c">More...</a><br /></td></tr>
 <tr class="separator:a491ec857faca76dce6ff59218e58626c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,18 +128,15 @@ Functions</h2></td></tr>
 <tr class="memitem:ae3558fa3952e01ec72fbd5f9bf4b1b37"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ae3558fa3952e01ec72fbd5f9bf4b1b37">soap_wsse_preparefinalrecv</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:ae3558fa3952e01ec72fbd5f9bf4b1b37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verify signature and SignedInfo digests initiated with soap_wsse_verify_auto.  <a href="#ae3558fa3952e01ec72fbd5f9bf4b1b37">More...</a><br /></td></tr>
 <tr class="separator:ae3558fa3952e01ec72fbd5f9bf4b1b37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a278a5511160aade2c206b0225781ff04"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a278a5511160aade2c206b0225781ff04">soap_wsse_header</a> (struct soap *soap)</td></tr>
-<tr class="memdesc:a278a5511160aade2c206b0225781ff04"><td class="mdescLeft">&#160;</td><td class="mdescRight">This callback is invoked as soon as the SOAP Header is received, we need to obtain the encrypted key when the message is encrypted to start decryption.  <a href="#a278a5511160aade2c206b0225781ff04">More...</a><br /></td></tr>
-<tr class="separator:a278a5511160aade2c206b0225781ff04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a903b3f58fd8b9699751c703793f06435"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a903b3f58fd8b9699751c703793f06435">soap_wsse_element_begin_in</a> (struct soap *soap, const char *tag)</td></tr>
 <tr class="memdesc:a903b3f58fd8b9699751c703793f06435"><td class="mdescLeft">&#160;</td><td class="mdescRight">This callback is invoked as soon as a starting tag of an element is received by the XML parser.  <a href="#a903b3f58fd8b9699751c703793f06435">More...</a><br /></td></tr>
 <tr class="separator:a903b3f58fd8b9699751c703793f06435"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae095227834179806af2ea7dc90bd961e"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ae095227834179806af2ea7dc90bd961e">soap_wsse_element_end_in</a> (struct soap *soap, const char *tag1, const char *tag2)</td></tr>
 <tr class="memdesc:ae095227834179806af2ea7dc90bd961e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This callback is invoked as soon as an ending tag of an element is received by the XML parser.  <a href="#ae095227834179806af2ea7dc90bd961e">More...</a><br /></td></tr>
 <tr class="separator:ae095227834179806af2ea7dc90bd961e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7924c5bd34781df563ed2339eab59f3"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ad7924c5bd34781df563ed2339eab59f3">soap_wsse_element_begin_out</a> (struct soap *soap, const char *tag)</td></tr>
-<tr class="memdesc:ad7924c5bd34781df563ed2339eab59f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">This callback is invoked as soon as a starting tag of an element is to be sent by the XML generator.  <a href="#ad7924c5bd34781df563ed2339eab59f3">More...</a><br /></td></tr>
-<tr class="separator:ad7924c5bd34781df563ed2339eab59f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a636697fcaaa5796107d50d624b1c4927"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a636697fcaaa5796107d50d624b1c4927">soap_wsse_element_begin_out</a> (struct soap *soap, const char *tag, int id, const char *type)</td></tr>
+<tr class="memdesc:a636697fcaaa5796107d50d624b1c4927"><td class="mdescLeft">&#160;</td><td class="mdescRight">This callback is invoked as soon as a starting tag of an element is to be sent by the XML generator.  <a href="#a636697fcaaa5796107d50d624b1c4927">More...</a><br /></td></tr>
+<tr class="separator:a636697fcaaa5796107d50d624b1c4927"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04ac9993d22e7b868135f9b7ebcca8e0"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a04ac9993d22e7b868135f9b7ebcca8e0">soap_wsse_element_end_out</a> (struct soap *soap, const char *tag)</td></tr>
 <tr class="memdesc:a04ac9993d22e7b868135f9b7ebcca8e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">This callback is invoked as soon as an ending tag of an element is to be sent by the XML generator.  <a href="#a04ac9993d22e7b868135f9b7ebcca8e0">More...</a><br /></td></tr>
 <tr class="separator:a04ac9993d22e7b868135f9b7ebcca8e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -279,12 +275,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a0a9887fdded8cb54ecc26310b61d06e8"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a0a9887fdded8cb54ecc26310b61d06e8">soap_wsse_add_KeyInfo_SecurityTokenReferenceKeyIdentifier</a> (struct soap *soap, const char *id, const char *valueType, unsigned char *data, int size)</td></tr>
 <tr class="memdesc:a0a9887fdded8cb54ecc26310b61d06e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds KeyInfo element with SecurityTokenReference/KeyIdentifier binary data.  <a href="#a0a9887fdded8cb54ecc26310b61d06e8">More...</a><br /></td></tr>
 <tr class="separator:a0a9887fdded8cb54ecc26310b61d06e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac87f86e608ae9431067915ccfae607ee"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 const char *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ac87f86e608ae9431067915ccfae607ee">soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType</a> (struct soap *soap)</td></tr>
-<tr class="memdesc:ac87f86e608ae9431067915ccfae607ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns KeyInfo/SecurityTokenReference/KeyIdentifier/ValueType if present.  <a href="#ac87f86e608ae9431067915ccfae607ee">More...</a><br /></td></tr>
-<tr class="separator:ac87f86e608ae9431067915ccfae607ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa32f34c61c3475d45adf49b2463be4ae"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 const unsigned char *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#aa32f34c61c3475d45adf49b2463be4ae">soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifier</a> (struct soap *soap, int *size)</td></tr>
-<tr class="memdesc:aa32f34c61c3475d45adf49b2463be4ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns KeyInfo/SecurityTokenReference/KeyIdentifier binary data.  <a href="#aa32f34c61c3475d45adf49b2463be4ae">More...</a><br /></td></tr>
-<tr class="separator:aa32f34c61c3475d45adf49b2463be4ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9607d8622caac3820ad2e248305a360d"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 const char *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a9607d8622caac3820ad2e248305a360d">soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType</a> (struct soap *soap, <a class="el" href="structds_____key_info_type.html">ds__KeyInfoType</a> *keyInfo)</td></tr>
+<tr class="memdesc:a9607d8622caac3820ad2e248305a360d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns KeyInfo/SecurityTokenReference/KeyIdentifier/ValueType if present.  <a href="#a9607d8622caac3820ad2e248305a360d">More...</a><br /></td></tr>
+<tr class="separator:a9607d8622caac3820ad2e248305a360d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ecae7743d2f29b815d2500701baaf99"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 const unsigned char *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a3ecae7743d2f29b815d2500701baaf99">soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifier</a> (struct soap *soap, <a class="el" href="structds_____key_info_type.html">ds__KeyInfoType</a> *keyInfo, int *size)</td></tr>
+<tr class="memdesc:a3ecae7743d2f29b815d2500701baaf99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns KeyInfo/SecurityTokenReference/KeyIdentifier binary data.  <a href="#a3ecae7743d2f29b815d2500701baaf99">More...</a><br /></td></tr>
+<tr class="separator:a3ecae7743d2f29b815d2500701baaf99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad73ed0f6b9dfe26e00d791f510648394"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ad73ed0f6b9dfe26e00d791f510648394">soap_wsse_add_KeyInfo_SecurityTokenReferenceEmbedded</a> (struct soap *soap, const char *id, const char *valueType)</td></tr>
 <tr class="memdesc:ad73ed0f6b9dfe26e00d791f510648394"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds KeyInfo element with Embedded SecurityTokenReference.  <a href="#ad73ed0f6b9dfe26e00d791f510648394">More...</a><br /></td></tr>
 <tr class="separator:ad73ed0f6b9dfe26e00d791f510648394"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -330,8 +326,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a61060d965eb8b4892863dfb8c8d85057"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a61060d965eb8b4892863dfb8c8d85057">soap_wsse</a> (struct soap *soap, struct soap_plugin *p, void *arg)</td></tr>
 <tr class="memdesc:a61060d965eb8b4892863dfb8c8d85057"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plugin registry function, used with soap_register_plugin.  <a href="#a61060d965eb8b4892863dfb8c8d85057">More...</a><br /></td></tr>
 <tr class="separator:a61060d965eb8b4892863dfb8c8d85057"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae73086424d1c8386d3c6948393fdc94"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#aae73086424d1c8386d3c6948393fdc94">soap_wsse_init</a> (struct soap *soap, struct <a class="el" href="structsoap__wsse__data.html">soap_wsse_data</a> *data, const void *(*arg)(struct soap *, int *alg, const char *keyname, int *keylen))</td></tr>
-<tr class="separator:aae73086424d1c8386d3c6948393fdc94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61b2f63ef7252b89e63a83988d3100b1"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a61b2f63ef7252b89e63a83988d3100b1">soap_wsse_init</a> (struct soap *soap, struct <a class="el" href="structsoap__wsse__data.html">soap_wsse_data</a> *data, const void *(*arg)(struct soap *, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen))</td></tr>
+<tr class="separator:a61b2f63ef7252b89e63a83988d3100b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5aecbf5ab1b06aee118f149189a4008b"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a5aecbf5ab1b06aee118f149189a4008b">soap_wsse_set_wsu_id</a> (struct soap *soap, const char *tags)</td></tr>
 <tr class="memdesc:a5aecbf5ab1b06aee118f149189a4008b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set to the string value of the tag's QName by replacing colons with hyphens to produce an xsd:ID value.  <a href="#a5aecbf5ab1b06aee118f149189a4008b">More...</a><br /></td></tr>
 <tr class="separator:a5aecbf5ab1b06aee118f149189a4008b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -374,9 +370,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a370bea41564f3a49c1c558e174c4f2c0"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a370bea41564f3a49c1c558e174c4f2c0">soap_wsse_decrypt_auto</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
 <tr class="memdesc:a370bea41564f3a49c1c558e174c4f2c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start automatic decryption when needed using the specified key. This function should be used just once. The algorithm should be SOAP_MEC_ENV_DEC_DES_CBC etc. for public key encryption/decryption and SOAP_MEC_DEC_DES_CBC etc. for symmetric shared secret keys.  <a href="#a370bea41564f3a49c1c558e174c4f2c0">More...</a><br /></td></tr>
 <tr class="separator:a370bea41564f3a49c1c558e174c4f2c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5158aec9c03f581f1d07acfa583484bb"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a5158aec9c03f581f1d07acfa583484bb">soap_wsse_encrypt_begin</a> (struct soap *soap, const char *id, int alg, const char *URI, const char *keyname, const unsigned char *key)</td></tr>
-<tr class="memdesc:a5158aec9c03f581f1d07acfa583484bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit XML encryption tags and start encryption of the XML element content.  <a href="#a5158aec9c03f581f1d07acfa583484bb">More...</a><br /></td></tr>
-<tr class="separator:a5158aec9c03f581f1d07acfa583484bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fd10a08c6ccb9df7b2de24251eaa8fa"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a9fd10a08c6ccb9df7b2de24251eaa8fa">soap_wsse_encrypt_begin</a> (struct soap *soap, const char *id, int alg, const char *URI, const char *keyname, const unsigned char *key, const char *type)</td></tr>
+<tr class="memdesc:a9fd10a08c6ccb9df7b2de24251eaa8fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit XML encryption tags and start encryption of the XML element content.  <a href="#a9fd10a08c6ccb9df7b2de24251eaa8fa">More...</a><br /></td></tr>
+<tr class="separator:a9fd10a08c6ccb9df7b2de24251eaa8fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2bfc0ed29076cc4d53496d692986728b"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a2bfc0ed29076cc4d53496d692986728b">soap_wsse_encrypt_end</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:a2bfc0ed29076cc4d53496d692986728b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit XML encryption end tags and stop encryption of the XML element content.  <a href="#a2bfc0ed29076cc4d53496d692986728b">More...</a><br /></td></tr>
 <tr class="separator:a2bfc0ed29076cc4d53496d692986728b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -397,6 +393,8 @@ Variables</h2></td></tr>
 <tr class="separator:a000638936fff26e30a3f256c495c1aa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d0ae8f2dd1beaabdaa4884ea5dd41e4"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a7d0ae8f2dd1beaabdaa4884ea5dd41e4">wsse_Base64BinaryURI</a> = &quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary&quot;</td></tr>
 <tr class="separator:a7d0ae8f2dd1beaabdaa4884ea5dd41e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4e0c851cc61249bbed8f2f2f5d47a71"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ad4e0c851cc61249bbed8f2f2f5d47a71">wsse_HexBinaryURI</a> = &quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#HexBinary&quot;</td></tr>
+<tr class="separator:ad4e0c851cc61249bbed8f2f2f5d47a71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac07968b1c372e976758745ba7089c367"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ac07968b1c372e976758745ba7089c367">wsse_X509v3URI</a> = &quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3&quot;</td></tr>
 <tr class="separator:ac07968b1c372e976758745ba7089c367"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88d310451ae729bbf0fdd149a9d7511c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a88d310451ae729bbf0fdd149a9d7511c">wsse_X509v3SubjectKeyIdentifierURI</a> = &quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509SubjectKeyIdentifier&quot;</td></tr>
@@ -471,6 +469,10 @@ Variables</h2></td></tr>
 <tr class="separator:a6c5bdcb80c33d0c3d35050091bd2cec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43c42203ea88ef920b653d90307e6731"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a43c42203ea88ef920b653d90307e6731">xenc_rsaesURI</a> = &quot;http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p&quot;</td></tr>
 <tr class="separator:a43c42203ea88ef920b653d90307e6731"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4c8ab7f40804d6b9ca2e8d011ddd574"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ad4c8ab7f40804d6b9ca2e8d011ddd574">wsse_URI</a> = &quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd&quot;</td></tr>
+<tr class="separator:ad4c8ab7f40804d6b9ca2e8d011ddd574"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff71a06ce80670d99f165b3599a2f822"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#aff71a06ce80670d99f165b3599a2f822">xenc_URI</a> = &quot;http://www.w3.org/2001/04/xmlenc#&quot;</td></tr>
+<tr class="separator:aff71a06ce80670d99f165b3599a2f822"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7aea4af6b24389f66019e8984d4b05c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ad7aea4af6b24389f66019e8984d4b05c">ds_URI</a> = &quot;http://www.w3.org/2000/09/xmldsig#&quot;</td></tr>
 <tr class="separator:ad7aea4af6b24389f66019e8984d4b05c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4089697df0f14ecf44cf0fb6098f4f78"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a4089697df0f14ecf44cf0fb6098f4f78">c14n_URI</a> = &quot;http://www.w3.org/2001/10/xml-exc-c14n#&quot;</td></tr>
@@ -1459,7 +1461,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structds_____signature_type.html" title="Imported complexType &quot;http://www.w3.org/2000/09/xmldsig#&quot;:SignatureType from typemap WS/WS-typemap...">ds__SignatureType</a> object </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structds_____signature_type.html">ds__SignatureType</a> object </dd></dl>
 
 </div>
 </div>
@@ -2144,7 +2146,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
-<a class="anchor" id="ad7924c5bd34781df563ed2339eab59f3"></a>
+<a class="anchor" id="a636697fcaaa5796107d50d624b1c4927"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -2161,7 +2163,19 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>tag</em>&#160;</td>
+          <td class="paramname"><em>tag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>type</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2181,6 +2195,8 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tag</td><td>name of the element </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>of the element or 0 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>xsi:type of the element or NULL </td></tr>
   </table>
   </dd>
 </dl>
@@ -2333,7 +2349,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
-<a class="anchor" id="a5158aec9c03f581f1d07acfa583484bb"></a>
+<a class="anchor" id="a9fd10a08c6ccb9df7b2de24251eaa8fa"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -2371,7 +2387,13 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const unsigned char *&#160;</td>
-          <td class="paramname"><em>key</em>&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>type</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2390,6 +2412,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
     <tr><td class="paramdir">[in]</td><td class="paramname">URI</td><td>string for the encrypted element wsu:Id attribute </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">keyname</td><td>optional subject key name </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>optional DES/AES key for encryption (to override the current key) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>of encryption, either xenc_elementURI ("http://www.w3.org/2001/04/xmlenc#Element") or xenc_contentURI ("http://www.w3.org/2001/04/xmlenc#Content") </td></tr>
   </table>
   </dd>
 </dl>
@@ -2722,7 +2745,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
-<a class="anchor" id="aa32f34c61c3475d45adf49b2463be4ae"></a>
+<a class="anchor" id="a3ecae7743d2f29b815d2500701baaf99"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -2731,6 +2754,12 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structds_____key_info_type.html">ds__KeyInfoType</a> *&#160;</td>
+          <td class="paramname"><em>keyInfo</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -2750,6 +2779,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">keyInfo</td><td>points to <a class="el" href="structds_____key_info_type.html" title="Imported complexType &quot;http://www.w3.org/2000/09/xmldsig#&quot;:KeyInfoType from typemap WS/WS-typemap...">ds__KeyInfoType</a>, e.g. using soap_wsse_KeyInfo(soap) </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">size</td><td>is set to the size of the decoded data </td></tr>
   </table>
   </dd>
@@ -2758,7 +2788,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
-<a class="anchor" id="ac87f86e608ae9431067915ccfae607ee"></a>
+<a class="anchor" id="a9607d8622caac3820ad2e248305a360d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -2766,8 +2796,18 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
           <td class="memname">SOAP_FMAC1 const char* SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname"><em>soap</em></td><td>)</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="structds_____key_info_type.html">ds__KeyInfoType</a> *&#160;</td>
+          <td class="paramname"><em>keyInfo</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -2776,6 +2816,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramname">keyInfo</td><td>points to <a class="el" href="structds_____key_info_type.html" title="Imported complexType &quot;http://www.w3.org/2000/09/xmldsig#&quot;:KeyInfoType from typemap WS/WS-typemap...">ds__KeyInfoType</a>, e.g. using soap_wsse_KeyInfo(soap) </td></tr>
   </table>
   </dd>
 </dl>
@@ -2978,40 +3019,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
-<a class="anchor" id="a278a5511160aade2c206b0225781ff04"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int soap_wsse_header </td>
-          <td>(</td>
-          <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname"><em>soap</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>This callback is invoked as soon as the SOAP Header is received, we need to obtain the encrypted key when the message is encrypted to start decryption. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">soap</td><td>context </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or error code </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a3dafa97e60020d63fdd4be32aefa4119"></a>
+<a class="anchor" id="afc8b4d1dad450f636113ada6960f6316"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -3028,7 +3036,13 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>tags</em>&#160;</td>
+          <td class="paramname"><em>tags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sub</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -3048,6 +3062,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tags</td><td>string of space-separated (un)qualified tag names </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sub</td><td>replacement character for ':' </td></tr>
   </table>
   </dd>
 </dl>
@@ -3055,58 +3070,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
-<a class="anchor" id="ae9f8c9147cb058c0316f7f8c935a1b92"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int soap_wsse_init </td>
-          <td>(</td>
-          <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname"><em>soap</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">struct <a class="el" href="structsoap__wsse__data.html">soap_wsse_data</a> *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const void *(*)(struct soap *, int *, const char *, int *)&#160;</td>
-          <td class="paramname"><em>arg</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Initializes plugin data. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">data</td><td>plugin data </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">arg</td><td>security token handler callback </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>SOAP_OK </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="aae73086424d1c8386d3c6948393fdc94"></a>
+<a class="anchor" id="aa1001021a4615e48f7b0a1455423f443"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -3128,7 +3092,47 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const void *(*)(struct soap *, int *alg, const char *keyname, int *keylen)&#160;</td>
+          <td class="paramtype">const void *(*)(struct soap *, int *, const char *, const unsigned char *, int, int *)&#160;</td>
+          <td class="paramname"><em>arg</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a61b2f63ef7252b89e63a83988d3100b1"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int soap_wsse_init </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structsoap__wsse__data.html">soap_wsse_data</a> *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *(*)(struct soap *, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen)&#160;</td>
           <td class="paramname"><em>arg</em>&#160;</td>
         </tr>
         <tr>
@@ -3868,7 +3872,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structds_____signature_type.html" title="Imported complexType &quot;http://www.w3.org/2000/09/xmldsig#&quot;:SignatureType from typemap WS/WS-typemap...">ds__SignatureType</a> object or NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structds_____signature_type.html">ds__SignatureType</a> object or NULL </dd></dl>
 
 </div>
 </div>
@@ -4808,6 +4812,18 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
+<a class="anchor" id="ad4e0c851cc61249bbed8f2f2f5d47a71"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* wsse_HexBinaryURI = &quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#HexBinary&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a000638936fff26e30a3f256c495c1aa8"></a>
 <div class="memitem">
 <div class="memproto">
@@ -4826,6 +4842,18 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
       <table class="memname">
         <tr>
           <td class="memname">const char* wsse_PasswordTextURI = &quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ad4c8ab7f40804d6b9ca2e8d011ddd574"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* wsse_URI = &quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -5024,13 +5052,25 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 
 </div>
 </div>
+<a class="anchor" id="aff71a06ce80670d99f165b3599a2f822"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* xenc_URI = &quot;http://www.w3.org/2001/04/xmlenc#&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 </div><!-- contents -->
 <hr class="footer">
 <address class="footer">
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Mar 29 2016 16:43:13 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Wed Aug 17 2016 10:37:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

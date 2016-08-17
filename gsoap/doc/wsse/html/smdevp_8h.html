@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">smdevp.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
+      <div style="float: right; font-size: 10px;">updated Wed Aug 17 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -236,22 +236,22 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a358684027d81577215163533f34b971f"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#a358684027d81577215163533f34b971f">soap_smd_size</a> (int alg, const void *key)</td></tr>
+<tr class="memitem:a358684027d81577215163533f34b971f"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 size_t SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#a358684027d81577215163533f34b971f">soap_smd_size</a> (int alg, const void *key)</td></tr>
 <tr class="memdesc:a358684027d81577215163533f34b971f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of octets needed to store the digest or signature returned by soap_smd_end.  <a href="#a358684027d81577215163533f34b971f">More...</a><br /></td></tr>
 <tr class="separator:a358684027d81577215163533f34b971f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8b665c8e8844eca8916f4b16b0ce9c5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#ad8b665c8e8844eca8916f4b16b0ce9c5">soap_smd_begin</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
+<tr class="memitem:ad8b665c8e8844eca8916f4b16b0ce9c5"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#ad8b665c8e8844eca8916f4b16b0ce9c5">soap_smd_begin</a> (struct soap *soap, int alg, const void *key, int keylen)</td></tr>
 <tr class="memdesc:ad8b665c8e8844eca8916f4b16b0ce9c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiates a digest or signature computation.  <a href="#ad8b665c8e8844eca8916f4b16b0ce9c5">More...</a><br /></td></tr>
 <tr class="separator:ad8b665c8e8844eca8916f4b16b0ce9c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f18dbae37de8942e080d45dd3480a7b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a> (struct soap *soap, char *buf, int *len)</td></tr>
-<tr class="memdesc:a8f18dbae37de8942e080d45dd3480a7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Completes a digest or signature computation. Also deallocates temporary storage allocated by <a class="el" href="smdevp_8c.html#ad8b665c8e8844eca8916f4b16b0ce9c5" title="Initiates a digest or signature computation. ">soap_smd_begin()</a>, so MUST be called after <a class="el" href="smdevp_8c.html#ad8b665c8e8844eca8916f4b16b0ce9c5" title="Initiates a digest or signature computation. ">soap_smd_begin()</a>.  <a href="#a8f18dbae37de8942e080d45dd3480a7b">More...</a><br /></td></tr>
+<tr class="memitem:a8f18dbae37de8942e080d45dd3480a7b"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#a8f18dbae37de8942e080d45dd3480a7b">soap_smd_end</a> (struct soap *soap, char *buf, int *len)</td></tr>
+<tr class="memdesc:a8f18dbae37de8942e080d45dd3480a7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Completes a digest or signature computation. Also deallocates temporary storage allocated by <a class="el" href="smdevp_8c.html#a9a4c5b08a2b82b71cec93e7ceddb20ae" title="Initiates a digest or signature computation. ">soap_smd_begin()</a>, so MUST be called after <a class="el" href="smdevp_8c.html#a9a4c5b08a2b82b71cec93e7ceddb20ae" title="Initiates a digest or signature computation. ">soap_smd_begin()</a>.  <a href="#a8f18dbae37de8942e080d45dd3480a7b">More...</a><br /></td></tr>
 <tr class="separator:a8f18dbae37de8942e080d45dd3480a7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8835cbedd7b123915f673bf7b0e8f0cc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#a8835cbedd7b123915f673bf7b0e8f0cc">soap_smd_init</a> (struct soap *soap, struct <a class="el" href="structsoap__smd__data.html">soap_smd_data</a> *data, int alg, const void *key, int keylen)</td></tr>
+<tr class="memitem:a8835cbedd7b123915f673bf7b0e8f0cc"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#a8835cbedd7b123915f673bf7b0e8f0cc">soap_smd_init</a> (struct soap *soap, struct <a class="el" href="structsoap__smd__data.html">soap_smd_data</a> *data, int alg, const void *key, int keylen)</td></tr>
 <tr class="memdesc:a8835cbedd7b123915f673bf7b0e8f0cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiates a (signed) digest computation.  <a href="#a8835cbedd7b123915f673bf7b0e8f0cc">More...</a><br /></td></tr>
 <tr class="separator:a8835cbedd7b123915f673bf7b0e8f0cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f9631955eabdcf338d0178d2d90ea50"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#a1f9631955eabdcf338d0178d2d90ea50">soap_smd_update</a> (struct soap *soap, struct <a class="el" href="structsoap__smd__data.html">soap_smd_data</a> *data, const char *buf, size_t len)</td></tr>
+<tr class="memitem:a1f9631955eabdcf338d0178d2d90ea50"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#a1f9631955eabdcf338d0178d2d90ea50">soap_smd_update</a> (struct soap *soap, struct <a class="el" href="structsoap__smd__data.html">soap_smd_data</a> *data, const char *buf, size_t len)</td></tr>
 <tr class="memdesc:a1f9631955eabdcf338d0178d2d90ea50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates (signed) digest computation with message part.  <a href="#a1f9631955eabdcf338d0178d2d90ea50">More...</a><br /></td></tr>
 <tr class="separator:a1f9631955eabdcf338d0178d2d90ea50"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d7f8b4fdcfe0afc13fef37fd8c46f5d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#a8d7f8b4fdcfe0afc13fef37fd8c46f5d">soap_smd_final</a> (struct soap *soap, struct <a class="el" href="structsoap__smd__data.html">soap_smd_data</a> *data, char *buf, int *len)</td></tr>
+<tr class="memitem:a8d7f8b4fdcfe0afc13fef37fd8c46f5d"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#a8d7f8b4fdcfe0afc13fef37fd8c46f5d">soap_smd_final</a> (struct soap *soap, struct <a class="el" href="structsoap__smd__data.html">soap_smd_data</a> *data, char *buf, int *len)</td></tr>
 <tr class="memdesc:a8d7f8b4fdcfe0afc13fef37fd8c46f5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalizes (signed) digest computation and returns digest or signature.  <a href="#a8d7f8b4fdcfe0afc13fef37fd8c46f5d">More...</a><br /></td></tr>
 <tr class="separator:a8d7f8b4fdcfe0afc13fef37fd8c46f5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -1282,7 +1282,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Completes a digest or signature computation. Also deallocates temporary storage allocated by <a class="el" href="smdevp_8c.html#ad8b665c8e8844eca8916f4b16b0ce9c5" title="Initiates a digest or signature computation. ">soap_smd_begin()</a>, so MUST be called after <a class="el" href="smdevp_8c.html#ad8b665c8e8844eca8916f4b16b0ce9c5" title="Initiates a digest or signature computation. ">soap_smd_begin()</a>. </p>
+<p>Completes a digest or signature computation. Also deallocates temporary storage allocated by <a class="el" href="smdevp_8c.html#a9a4c5b08a2b82b71cec93e7ceddb20ae" title="Initiates a digest or signature computation. ">soap_smd_begin()</a>, so MUST be called after <a class="el" href="smdevp_8c.html#a9a4c5b08a2b82b71cec93e7ceddb20ae" title="Initiates a digest or signature computation. ">soap_smd_begin()</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
@@ -1439,7 +1439,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>size_t number of octets that is needed to hold digest or signature </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="smdevp_8c.html#a8f18dbae37de8942e080d45dd3480a7b" title="Completes a digest or signature computation. Also deallocates temporary storage allocated by soap_smd...">soap_smd_end</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="smdevp_8c.html#a0f3003d09b3e2d141c9d04b9e302adde" title="Completes a digest or signature computation. Also deallocates temporary storage allocated by soap_smd...">soap_smd_end</a></dd></dl>
 <p>The values returned for digests are SOAP_SMD_MD5_SIZE, SOAP_SMD_SHA1_SIZE, SOAP_SMD_SHA256_SIZE, SOAP_SMD_SHA512_SIZE. </p>
 
 </div>
@@ -1500,7 +1500,7 @@ Functions</h2></td></tr>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Mar 29 2016 16:43:13 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Wed Aug 17 2016 10:37:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

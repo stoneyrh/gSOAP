@@ -105,6 +105,16 @@ with:
       ... // error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+or if you use a proxy object generated with saopcpp2 option -j:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    Proxy proxy(...);
+    proxy.soap->userid = "<userid>";
+    proxy.soap->passed = "<passwd>";
+    if (proxy.method(...))
+      ... // error
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 HTTP basic authentication should **never** be used over plain HTTP, because the
 credentials (the ID and password) are transmitted in the clear in base64
 encoded form which is easily reversible.  This mechanism is safer to use over
@@ -121,7 +131,22 @@ follows:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     #include "httpda.h"
-    soap_register_plugin(&soap, http_da);
+    struct soap *soap = soap_new();
+    soap_register_plugin(soap, http_da);
+    ...
+    soap_destroy(soap); // deallocate data
+    soap_end(soap);     // deallocate temp data
+    soap_free(soap);    // deregister plugin and deallocate context
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+or if you use a proxy object generated with saopcpp2 option -j:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include "httpda.h"
+    Proxy proxy(...);
+    soap_register_plugin(proxy.soap, http_da);
+    ...
+    proxy.destroy(); // deallocate data and temps
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To make a client-side service call you will need to create a digest store
@@ -138,38 +163,59 @@ locks.
 Here is an example:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    struct soap *soap = soap_new();
+    soap_register_plugin(soap, http_da);
     struct http_da_info info;
-    if (soap_call_ns__method(&soap, ...))
+
+    if (soap_call_ns__method(soap, ...)) // make a call without authentication
     {
       if (soap.error == 401) // HTTP authentication is required
       {
-        http_da_save(&soap, &info, "<authrealm>", "<userid>", "<passwd>");
-        if (soap_call_ns__method(&soap, ...)) // try again
+        http_da_save(soap, &info, "<authrealm>", "<userid>", "<passwd>");
+        if (soap_call_ns__method(soap, ...)) // make a call with authentication
           ... // error
-        http_da_release(&soap, &info);
+        http_da_release(soap, &info); // release if auth is no longer needed
       }
       else
         ... // other error
     }
+
+    soap_destroy(soap);
+    soap_end(soap);
+    soap_free(soap);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `"<authrealm>"` string is the protected realm of the server that requires
+Again, if you use a proxy object then replace the `soap_call_ns__method` with
+the proxy method invocation, as was shown earlier.
+
+The `<authrealm>` string is the protected realm of the server that requires
 authorization.  This string can be obtained with the `soap.authrealm` string
 after an unsuccessful non-authenticated call so you can use it to save
 credentials to the digest store:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    if (soap_call_ns__method(&soap, ...))
+    struct soap *soap = soap_new();
+    soap_register_plugin(soap, http_da);
+    struct http_da_info info;
+
+    if (soap_call_ns__method(soap, ...)) // make a call without authentication
     {
       if (soap.error == 401) // HTTP authentication is required
       {
         const char *realm = soap.authrealm;
-        http_da_save(&soap, &info, realm, "<userid>", "<passwd>");
-        ...
+        http_da_save(soap, &info, realm, "<userid>", "<passwd>");
+        if (soap_call_ns__method(soap, ...)) // make a call with authentication
+          ... // error
+	...
+        http_da_release(soap, &info); // deallocate authentication info if auth is no longer needed
       }
       else
         ... // error
     }
+
+    soap_destroy(soap);
+    soap_end(soap);
+    soap_free(soap);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Before a second call is made to the same endpoint that requires authentication,
@@ -177,55 +223,56 @@ you must restore the authentication state with `http_da_restore()`, then use
 it, and finally release it with `http_da_release()`:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    struct soap *soap = soap_new();
+    soap_register_plugin(soap, http_da);
     struct http_da_info info;
     bool auth = false;
 
-    if (soap_call_ns__method(&soap, ...))
+    if (soap_call_ns__method(soap, ...)) // make a call without authentication
     {
       if (soap.error == 401) // HTTP authentication is required
       {
-        http_da_save(&soap, &info, "<authrealm>", "<userid>", "<passwd>");
+        http_da_save(soap, &info, "<authrealm>", "<userid>", "<passwd>");
         auth = true;
       }
       else
         ... // other error
     }
 
-    if (soap_call_ns__method(&soap, ...))
+    if (auth)
+      http_da_restore(soap, &info);
+    if (soap_call_ns__method(soap, ...)) // make a call with authentication
+      ... // error
+
+    soap_destroy(soap); // okay to dealloc data
+    soap_end(soap);     // okay to dealloc data
+
+    if (auth)
+      http_da_restore(soap, &info);
+    if (soap_call_ns__method(soap, ...)) // make a call with authentication
       ... // error
 
     if (auth)
-      http_da_restore(&soap, &info);
-    if (soap_call_ns__method(&soap, ...))
-      ... // error
+      http_da_release(soap, &info); // deallocate authentication info
 
-    soap_destroy(&soap); // okay to dealloc data
-    soap_end(&soap);     // okay to dealloc data
-
-    if (auth)
-      http_da_restore(&soap, &info);
-    if (soap_call_ns__method(&soap, ...))
-      ... // error
-
-    if (auth)
-      http_da_release(&soap, &info);
-
-    soap_destroy(&soap);
-    soap_end(&soap);
-    soap_done(&soap);
+    soap_destroy(soap);
+    soap_end(soap);
+    soap_free(soap);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For HTTP proxies requiring HTTP digest authenticaiton, use the 'proxy'
 functions of the plugin:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    struct soap *soap = soap_new();
+    soap_register_plugin(soap, http_da);
     struct http_da_info info;
-    ...
-    if (soap_call_ns__method(&soap, ...))
+
+    if (soap_call_ns__method(soap, ...)) // make a call without authentication
     {
       if (soap.error == 407) // HTTP proxy authentication is required
       {
-        http_da_proxy_save(&soap, &info, "<authrealm>", "<userid>", "<passwd>");
+        http_da_proxy_save(soap, &info, "<authrealm>", "<userid>", "<passwd>");
         auth = true;
       }
       else
@@ -233,15 +280,15 @@ functions of the plugin:
     }
 
     if (auth)
-      http_da_proxy_restore(&soap, &info);
-    if (soap_call_ns__method(&soap, ...))
+      http_da_proxy_restore(soap, &info);
+    if (soap_call_ns__method(soap, ...))
       ... // error
 
-    http_da_proxy_release(&soap, &info);
+    http_da_proxy_release(soap, &info); // deallocate authentication info
 
-    soap_destroy(&soap);
-    soap_end(&soap);
-    soap_done(&soap);
+    soap_destroy(soap);
+    soap_end(soap);
+    soap_free(soap);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 @section httpda_2 Client example
@@ -249,51 +296,53 @@ functions of the plugin:
 A client authenticating against a server:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap_register_plugin(&soap, http_da);
-    // try calling without authenticating
-    if (soap_call_ns__method(&soap, ...))
+    struct soap *soap = soap_new();
+    soap_register_plugin(soap, http_da);
+
+    if (soap_call_ns__method(soap, ...)) // make a call without authentication
     {
       if (soap.error == 401) // HTTP authentication is required
       {
         if (!strcmp(soap.authrealm, authrealm)) // check authentication realm
         {
           struct http_da_info info; // to store userid and passwd
-          http_da_save(&soap, &info, authrealm, userid, passwd);
+          http_da_save(soap, &info, authrealm, userid, passwd);
           // call again, now with credentials
-          if (soap_call_ns__method(&soap, ...) == SOAP_OK)
+          if (soap_call_ns__method(soap, ...) == SOAP_OK)
           {
             ... // process response data
-            soap_end(&soap);
+            soap_end(soap);
             ... // userid and passwd were deallocated (!)
-            http_da_restore(&soap, &info); // get userid and passwd after soap_end()
-            if (!soap_call_ns__method(&soap, ...) == SOAP_OK)
+            http_da_restore(soap, &info); // get userid and passwd after soap_end()
+            if (!soap_call_ns__method(soap, ...) == SOAP_OK)
               ... // error
-            http_da_release(&soap, &info); // free data and remove userid and passwd
+            http_da_release(soap, &info); // deallocate authentication info
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A client authenticating against a proxy:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap_register_plugin(&soap, http_da);
-    // try calling without authenticating
-    if (soap_call_ns__method(&soap, ...))
+    struct soap *soap = soap_new();
+    soap_register_plugin(soap, http_da);
+
+    if (soap_call_ns__method(soap, ...))  // make a call without authentication
     {
       if (soap.error == 407) // HTTP authentication is required
       {
         if (!strcmp(soap.authrealm, authrealm)) // check authentication realm
         {
           struct http_da_info info; // to store userid and passwd
-          http_da_proxy_save(&soap, &info, authrealm, userid, passwd);
+          http_da_proxy_save(soap, &info, authrealm, userid, passwd);
           // call again, now with credentials
-          if (soap_call_ns__method(&soap, ...) == SOAP_OK)
+          if (soap_call_ns__method(soap, ...) == SOAP_OK)
           {
             ... // process response data
-            soap_end(&soap);
+            soap_end(soap);
             ... // userid and passwd were deallocated (!)
-            http_da_proxy_restore(&soap, &info); // get userid and passwd after soap_end()
-            if (!soap_call_ns__method(&soap, ...) == SOAP_OK)
+            http_da_proxy_restore(soap, &info); // get userid and passwd after soap_end()
+            if (!soap_call_ns__method(soap, ...) == SOAP_OK)
               ... // error
-            http_da_proxy_release(&soap, &info); // free data and remove userid and passwd
+            http_da_proxy_release(soap, &info); // deallocate authentication info
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 @section httpda_3 Server-side usage
@@ -303,10 +352,12 @@ enforced by simply checking the `soap.userid` and `soap.passwd` values in a
 service method that requires client authentication:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap_register_plugin(&soap, http_da);
+    struct soap *soap = soap_new();
+    soap_register_plugin(soap, http_da);
     ...
-    soap_serve(&soap);
+    soap_serve(soap); // see gSOAP documentation and examples on how to serve requests
     ...
+
     int ns__method(struct soap *soap, ...)
     {
       if (!soap->userid || !soap->passwd || strcmp(soap->userid, "<userid>") || strcmp(soap->passwd, "<passwd>"))
@@ -319,10 +370,12 @@ HTTP digest authentication is verified differently, because digests are
 compared, not passwords:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap_register_plugin(&soap, http_da);
+    struct soap *soap = soap_new();
+    soap_register_plugin(soap, http_da);
     ...
-    soap_serve(&soap);
+    soap_serve(soap); // see gSOAP documentation and examples on how to serve requests
     ...
+
     int ns__method(struct soap *soap, ...)
     {
       if (soap->authrealm && soap->userid)
@@ -355,7 +408,7 @@ server side you can also use a plugin registry option to set a different
 algorithm as the default:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap_register_plugin_arg(&soap, http_da, <option>);
+    soap_register_plugin_arg(soap, http_da, <option>);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 where `<option>` is one of:
@@ -377,10 +430,12 @@ To revert to RFC2617 use `http_da_md5()`.
 @section httpda_4 Server example
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap_register_plugin(&soap, http_da);
+    struct soap *soap = soap_new();
+    soap_register_plugin(soap, http_da);
     ...
-    soap_serve(&soap);
+    soap_serve(soap); // see gSOAP documentation and examples on how to serve requests
     ...
+
     int ns__method(struct soap *soap, ...)
     {
       if (soap->userid && soap->passwd) // Basic authentication

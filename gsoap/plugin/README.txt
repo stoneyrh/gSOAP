@@ -9,6 +9,7 @@ httpmd5.*	HTTP MD5 checksums
 logging.*	Message logging (selective inbound/outbound)
 mq.*		Message queueing (for WS-RM message queueing support)
 plugin.*	Example plugin for aspiring plugin developers
+sessions.*	HTTP server session management plugin
 wsaapi.*	WS-Addressing (wsa) plugin, see doc/wsa
 wsrmapi.*	WS-ReliableMessaging (wsrm) plugin, see doc/wsrm
 wsseapi.*	WS-Security (wsse) plugin, see doc/wsse

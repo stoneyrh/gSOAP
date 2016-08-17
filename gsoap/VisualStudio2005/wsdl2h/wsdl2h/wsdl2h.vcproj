@@ -177,6 +177,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\bpel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\mime.cpp"
 				>
 			</File>
@@ -201,6 +205,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\wadl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\wsdl.cpp"
 				>
 			</File>
@@ -222,6 +230,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\bpel.h"
+				>
+			</File>
 			<File
 				RelativePath=".\dime.h"
 				>
@@ -268,6 +280,10 @@
 			</File>
 			<File
 				RelativePath=".\types.h"
+				>
+			</File>
+			<File
+				RelativePath=".\wadl.h"
 				>
 			</File>
 			<File

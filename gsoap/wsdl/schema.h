@@ -435,6 +435,7 @@ class xs__import
 { public:
         @xsd__anyURI                    namespace_;
         @xsd__anyURI                    schemaLocation;
+        @xsd__anyURI                    location;		// work around a Microsoft bug
   private:
         xs__schema                      *schemaRef;             // set by WSDL parser or via schemaLocation
   public:
@@ -525,7 +526,7 @@ class xs__schema
                                         xs__schema(struct soap*);
                                         xs__schema(struct soap*, const char*, const char*);
         virtual                         ~xs__schema();
-        int                             get(struct soap*);      // gSOAP getter is triggered after parsing
+        int                             get(struct soap*);      // getter is triggered after parsing
         int                             preprocess();
         int                             insert(xs__schema&);
         int                             traverse();

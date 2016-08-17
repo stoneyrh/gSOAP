@@ -57,7 +57,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 /**
 
-@page wsa_0 The WS-Addressing plugin
+@page wsa_0 The WS-Addressing Plugin
 
 [TOC]
 
@@ -288,7 +288,8 @@ additional parameter (SOAP Fault detail):
 WS-Security can be combined with WS-Addressing. To sign WS-Addressing header
 blocks, use the `soap_wsse_set_wsu_id` WSSE-plugin call to set the wsu:Id
 attribute and signing of these attributed elements. For example, suppose we use
-WS-Addressing 2005:
+WS-Addressing 2005 headers (which are activated with an `#import "wsa5.h"` in
+the header file for soapcpp2):
 
 @code
     #include "wsaapi.h"
@@ -296,13 +297,20 @@ WS-Addressing 2005:
     soap_register_plugin(soap, soap_wsa);
     soap_register_plugin(soap, soap_wsse);
 
-    soap_wsse_set_wsu_id(soap, "wsa5:From wsa5:To wsa5:ReplyTo wsa5:FaultTo wsa5:Action");
+    soap_wsse_set_wsu_id(soap, "wsa5:From wsa5:To wsa5:ReplyTo wsa5:FaultTo wsa5:Action wsa5:MessageID");
     if (soap_wsa_request(soap, RequestMessageID, ToAddress, RequestAction)
      || soap_wsa_add_From(soap, FromAddress) // optional: add a 'From' address
      || soap_wsa_add_FaultTo(soap, FaultToAddress))
       ... // error: out of memory
     if (soap_call_ns__example(soap, ToAddress, NULL, ...))
       ... // error
+@endcode
+
+If your are using WS-Addressing 2004 (which is activated with an
+`#import "wsa.h"` in the header file for soapcpp2) then change one line:
+
+@code
+    soap_wsse_set_wsu_id(soap, "wsa:From wsa:To wsa:ReplyTo wsa:FaultTo wsa:Action wsa:MessageID");
 @endcode
 
 Note: `soap_wsse_set_wsu_id` should only be set once. Each new call overrides
@@ -577,7 +585,7 @@ static int soap_wsa_alloc_header(struct soap *soap);
 /**
 @fn const char *soap_wsa_rand_uuid(struct soap *soap)
 @brief Generates a random UUID (UUID algorithm version 4). Compile all source
-codes with -DWITH_OPENSSL for better randomness results.
+codes with -DWITH_OPENSSL for better randomness.
 @param soap context
 @return UUID "urn:uuid:xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx" or NULL if out of memory
 */
@@ -586,40 +594,7 @@ const char*
 SOAP_FMAC2
 soap_wsa_rand_uuid(struct soap *soap)
 {
-  const int uuidlen = 48;
-  char *uuid = (char*)soap_malloc(soap, uuidlen);
-  int r1, r2, r3, r4;
-#ifdef WITH_OPENSSL
-  r1 = soap_random;
-  r2 = soap_random;
-#else
-  size_t i;
-  static int k = 0xFACEB00B;
-  int lo = k % 127773;
-  int hi = k / 127773;
-# ifdef HAVE_GETTIMEOFDAY
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  r1 = 10000000 * tv.tv_sec + tv.tv_usec;
-#else
-  r1 = (int)time(NULL);
-# endif
-  k = 16807 * lo - 2836 * hi;
-  if (k <= 0)
-    k += 0x7FFFFFFF;
-  r2 = k;
-  k &= 0x8FFFFFFF;
-  for (i = 0; i < (sizeof(soap->buf) < 16UL ? sizeof(soap->buf) : 16UL); i++)
-    r2 += soap->buf[i];
-#endif
-  r3 = soap_random;
-  r4 = soap_random;
-  if (uuid)
-  {
-    (SOAP_SNPRINTF(uuid, uuidlen, 45), "urn:uuid:%8.8x-%4.4hx-4%3.3hx-%4.4hx-%4.4hx%8.8x", r1, (short)(r2 >> 16), (short)(((short)r2 >> 4) & 0x0FFF), (short)(((short)(r3 >> 16) & 0x3FFF) | 0x8000), (short)r3, r4);
-    DBGFUN1("soap_wsa_rand_uuid", "%s", uuid);
-  }
-  return uuid;
+  return soap_strdup(soap, soap_rand_uuid(soap, "urn:uuid:"));
 }
 
 /******************************************************************************\

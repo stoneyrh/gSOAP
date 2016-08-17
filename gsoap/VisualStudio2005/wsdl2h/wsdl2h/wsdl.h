@@ -39,8 +39,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 //gsoap wsdl schema elementForm:        qualified
 //gsoap wsdl schema attributeForm:      unqualified
 
+class wsdl__definitions;                // forward declaration
+
 #import "imports.h"
 #import "schema.h"
+#import "wadl.h"
 #import "soap.h"
 #import "mime.h"
 #import "dime.h"
@@ -49,8 +52,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #import "wsam.h"
 #import "wsp.h"
 #import "bpel.h"
-
-class wsdl__definitions;                // forward declaration
 
 class wsdl__import
 { public:
@@ -82,6 +83,11 @@ class wsdl__part
         @xsd__QName                     type;
         xsd__string                     documentation;          // <wsdl:documentation>?
   private:
+        bool                            optional;               // WADL @required
+        bool                            repeating;              // WADL @repeating
+        bool                            fixed;                  // true if WADL @fixed
+        xsd__string                     default_;               // WADL @default and @fixed
+        std::vector<char*>              option;                 // WADL option/value*
         xs__element                     *elementRef;            // traverse() finds element
         xs__simpleType                  *simpleTypeRef;         // traverse() finds simpleType
         xs__complexType                 *complexTypeRef;        // traverse() finds complexType
@@ -94,6 +100,16 @@ class wsdl__part
         xs__element                     *elementPtr() const;
         xs__simpleType                  *simpleTypePtr() const;
         xs__complexType                 *complexTypePtr() const;
+        void                            set_optional(bool);
+        void                            set_fixed(bool);
+        void                            set_repeating(bool);
+        void                            set_default(char*);
+        void                            set_option(char*);
+        bool                            is_optional() const;
+        bool                            is_fixed() const;
+        bool                            is_repeating() const;
+        const char*                     get_default() const;
+        const std::vector<char*>&       options() const;
 };
 
 class wsdl__message
@@ -360,12 +376,13 @@ class wsdl__definitions
         SetOfString                     builtinTypeSet;
         SetOfString                     builtinElementSet;
         SetOfString                     builtinAttributeSet;
+        wadl__application               *appRef;
   public:
                                         wsdl__definitions();
                                         wsdl__definitions(struct soap*);
                                         wsdl__definitions(struct soap*, const char*, const char*);
         virtual                         ~wsdl__definitions();
-        int                             get(struct soap*);      // gSOAP getter is triggered after parsing
+        int                             get(struct soap*);      // getter is triggered after parsing
         int                             preprocess();
         int                             traverse();
         int                             read(int, char**);
@@ -383,6 +400,8 @@ class wsdl__definitions
         const SetOfString&              builtinTypes() const;
         const SetOfString&              builtinElements() const;
         const SetOfString&              builtinAttributes() const;
+        void                            appPtr(wadl__application*);
+        wadl__application*              appPtr() const;
         friend ostream&                 operator<<(ostream&, const wsdl__definitions&);
         friend istream&                 operator>>(istream&, wsdl__definitions&);
 };

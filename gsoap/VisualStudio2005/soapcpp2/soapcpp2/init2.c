@@ -195,6 +195,8 @@ static Keyword keywords[] =
   { "_XML",		ID },
   { "std::string",	TYPE },
   { "std::wstring",	TYPE },
+  { "std::u16string",	TYPE },
+  { "std::u32string",	TYPE },
   { "std::deque",	TYPE },
   { "std::queue",	TYPE },
   { "std::list",	TYPE },

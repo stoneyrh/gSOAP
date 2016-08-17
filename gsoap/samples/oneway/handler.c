@@ -76,8 +76,9 @@ int main(int argc, char **argv)
 {
 #if defined(_POSIX_THREADS) || defined(_SC_THREADS)
   pthread_t tid;
+  struct soap *tsoap;
 #endif
-  struct soap soap, *tsoap;
+  struct soap soap;
   int port;
   SOAP_SOCKET m, s;
   int i;
@@ -108,11 +109,13 @@ int main(int argc, char **argv)
       break;
     }
     fprintf(stderr, "Thread %d accepts socket %d connection from IP %d.%d.%d.%d\n", i, s, (int)(soap.ip>>24)&0xFF, (int)(soap.ip>>16)&0xFF, (int)(soap.ip>>8)&0xFF, (int)soap.ip&0xFF);
-    tsoap = soap_copy(&soap);
 #if defined(_POSIX_THREADS) || defined(_SC_THREADS)
+    tsoap = soap_copy(&soap);
     pthread_create(&tid, NULL, (void*(*)(void*))process_request, (void*)tsoap);
 #else
-    process_request((void*)tsoap);
+    soap_serve(&soap);
+    soap_destroy(&soap);
+    soap_end(&soap);
 #endif
   }
   return 0;

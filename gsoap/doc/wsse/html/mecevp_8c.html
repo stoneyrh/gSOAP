@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">mecevp.c File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Mar 29 2016</div>
+      <div style="float: right; font-size: 10px;">updated Wed Aug 17 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -96,44 +96,44 @@ Functions</h2></td></tr>
 <tr class="memitem:aacb9fb2bc2d33968fe8cfe3e358ec16c"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#aacb9fb2bc2d33968fe8cfe3e358ec16c">soap_mec_filterrecv</a> (struct soap *soap, char *buf, size_t *len, size_t maxlen)</td></tr>
 <tr class="memdesc:aacb9fb2bc2d33968fe8cfe3e358ec16c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to modify inbound messages by decrypting through the engine.  <a href="#aacb9fb2bc2d33968fe8cfe3e358ec16c">More...</a><br /></td></tr>
 <tr class="separator:aacb9fb2bc2d33968fe8cfe3e358ec16c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9874f1faeb40d4d5e2b59310c19bbd7a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#a9874f1faeb40d4d5e2b59310c19bbd7a">soap_mec_init</a> (struct soap *soap, struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *data, int alg, <a class="el" href="mecevp_8h.html#a064a5feaff6bbd0c904c0aa042135c4c">SOAP_MEC_KEY_TYPE</a> *pkey, unsigned char *key, int *keylen)</td></tr>
-<tr class="memdesc:a9874f1faeb40d4d5e2b59310c19bbd7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize mecevp engine state and create context for encryption/decryption algorithm using a private/public key or symmetric secret key.  <a href="#a9874f1faeb40d4d5e2b59310c19bbd7a">More...</a><br /></td></tr>
-<tr class="separator:a9874f1faeb40d4d5e2b59310c19bbd7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97663d6b4690c7b731d8aa9ece2cafae"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#a97663d6b4690c7b731d8aa9ece2cafae">soap_mec_update</a> (struct soap *soap, struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *data, const char **s, size_t *n)</td></tr>
-<tr class="memdesc:a97663d6b4690c7b731d8aa9ece2cafae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update mecevp engine state: encrypts plain text (or raw data) or decrypts cipher data in base64 format.  <a href="#a97663d6b4690c7b731d8aa9ece2cafae">More...</a><br /></td></tr>
-<tr class="separator:a97663d6b4690c7b731d8aa9ece2cafae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6144725452c8086c7b1807f6310ff79d"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#a6144725452c8086c7b1807f6310ff79d">soap_mec_init</a> (struct soap *soap, struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *data, int alg, <a class="el" href="mecevp_8h.html#a064a5feaff6bbd0c904c0aa042135c4c">SOAP_MEC_KEY_TYPE</a> *pkey, unsigned char *key, int *keylen)</td></tr>
+<tr class="memdesc:a6144725452c8086c7b1807f6310ff79d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize mecevp engine state and create context for encryption/decryption algorithm using a private/public key or symmetric secret key.  <a href="#a6144725452c8086c7b1807f6310ff79d">More...</a><br /></td></tr>
+<tr class="separator:a6144725452c8086c7b1807f6310ff79d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c447a82872a919bb1935f34b849c1c4"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#a8c447a82872a919bb1935f34b849c1c4">soap_mec_update</a> (struct soap *soap, struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *data, const char **s, size_t *n)</td></tr>
+<tr class="memdesc:a8c447a82872a919bb1935f34b849c1c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update mecevp engine state: encrypts plain text (or raw data) or decrypts cipher data in base64 format.  <a href="#a8c447a82872a919bb1935f34b849c1c4">More...</a><br /></td></tr>
+<tr class="separator:a8c447a82872a919bb1935f34b849c1c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa93413bd3e4136fe87a067821cfed53"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#aaa93413bd3e4136fe87a067821cfed53">soap_mec_final</a> (struct soap *soap, struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *data, const char **s, size_t *n)</td></tr>
 <tr class="memdesc:aaa93413bd3e4136fe87a067821cfed53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ends mecevp engine state: encrypt/decrypt remainder from buffers.  <a href="#aaa93413bd3e4136fe87a067821cfed53">More...</a><br /></td></tr>
 <tr class="separator:aaa93413bd3e4136fe87a067821cfed53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa1e6fa1abac32acdd7f76232fa30241"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#aaa1e6fa1abac32acdd7f76232fa30241">soap_mec_cleanup</a> (struct soap *soap, struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *data)</td></tr>
-<tr class="memdesc:aaa1e6fa1abac32acdd7f76232fa30241"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clean up mecevp engine and deallocate cipher context and buffers.  <a href="#aaa1e6fa1abac32acdd7f76232fa30241">More...</a><br /></td></tr>
-<tr class="separator:aaa1e6fa1abac32acdd7f76232fa30241"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd9dd5e6e38fb46977f5c75aa89f4104"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#abd9dd5e6e38fb46977f5c75aa89f4104">soap_mec_begin</a> (struct soap *soap, struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *data, int alg, <a class="el" href="mecevp_8h.html#a064a5feaff6bbd0c904c0aa042135c4c">SOAP_MEC_KEY_TYPE</a> *pkey, unsigned char *key, int *keylen)</td></tr>
-<tr class="memdesc:abd9dd5e6e38fb46977f5c75aa89f4104"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the mecevp engine data and begin encryption or decryption message sequence using a private/public key or symmetric secret key.  <a href="#abd9dd5e6e38fb46977f5c75aa89f4104">More...</a><br /></td></tr>
-<tr class="separator:abd9dd5e6e38fb46977f5c75aa89f4104"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada34eeec6780ab44acde4971dd8a4f77"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#ada34eeec6780ab44acde4971dd8a4f77">soap_mec_start_alg</a> (struct soap *soap, int alg, const unsigned char *key)</td></tr>
-<tr class="memdesc:ada34eeec6780ab44acde4971dd8a4f77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start encryption or decryption of current message. If key is non-NULL, use the symmetric key with alg. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call.  <a href="#ada34eeec6780ab44acde4971dd8a4f77">More...</a><br /></td></tr>
-<tr class="separator:ada34eeec6780ab44acde4971dd8a4f77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8053a2c0cda70dd37b944408dd3f8f0e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#a8053a2c0cda70dd37b944408dd3f8f0e">soap_mec_start</a> (struct soap *soap, const unsigned char *key)</td></tr>
-<tr class="memdesc:a8053a2c0cda70dd37b944408dd3f8f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start encryption or decryption of current message. If key is non-NULL, use the symmetric key with alg. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call.  <a href="#a8053a2c0cda70dd37b944408dd3f8f0e">More...</a><br /></td></tr>
-<tr class="separator:a8053a2c0cda70dd37b944408dd3f8f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8fdc3daea4e2c9c3bbde4e480209b0d0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#a8fdc3daea4e2c9c3bbde4e480209b0d0">soap_mec_stop</a> (struct soap *soap)</td></tr>
-<tr class="memdesc:a8fdc3daea4e2c9c3bbde4e480209b0d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops encryption or decryption of current message. Use after soap_mec_start.  <a href="#a8fdc3daea4e2c9c3bbde4e480209b0d0">More...</a><br /></td></tr>
-<tr class="separator:a8fdc3daea4e2c9c3bbde4e480209b0d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae93d7dae06e1568cc6ee2420cd29faaf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#ae93d7dae06e1568cc6ee2420cd29faaf">soap_mec_end</a> (struct soap *soap, struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *data)</td></tr>
-<tr class="memdesc:ae93d7dae06e1568cc6ee2420cd29faaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ends encryption or decryption of a sequence of message parts that began with soap_mec_begin.  <a href="#ae93d7dae06e1568cc6ee2420cd29faaf">More...</a><br /></td></tr>
-<tr class="separator:ae93d7dae06e1568cc6ee2420cd29faaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2d26a59a33fafa445fa71ff72d23f02"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#ad2d26a59a33fafa445fa71ff72d23f02">soap_mec_size</a> (int alg, <a class="el" href="mecevp_8h.html#a064a5feaff6bbd0c904c0aa042135c4c">SOAP_MEC_KEY_TYPE</a> *pkey)</td></tr>
-<tr class="memdesc:ad2d26a59a33fafa445fa71ff72d23f02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of octets needed to store the public/private key or the symmetric key, depending on the algorithm.  <a href="#ad2d26a59a33fafa445fa71ff72d23f02">More...</a><br /></td></tr>
-<tr class="separator:ad2d26a59a33fafa445fa71ff72d23f02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81ba68931cefa8b7a0f246d99e31e3ed"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#a81ba68931cefa8b7a0f246d99e31e3ed">soap_mec_cleanup</a> (struct soap *soap, struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *data)</td></tr>
+<tr class="memdesc:a81ba68931cefa8b7a0f246d99e31e3ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clean up mecevp engine and deallocate cipher context and buffers.  <a href="#a81ba68931cefa8b7a0f246d99e31e3ed">More...</a><br /></td></tr>
+<tr class="separator:a81ba68931cefa8b7a0f246d99e31e3ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c388668cf9472d0bf8abcb3e758786f"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#a4c388668cf9472d0bf8abcb3e758786f">soap_mec_begin</a> (struct soap *soap, struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *data, int alg, <a class="el" href="mecevp_8h.html#a064a5feaff6bbd0c904c0aa042135c4c">SOAP_MEC_KEY_TYPE</a> *pkey, unsigned char *key, int *keylen)</td></tr>
+<tr class="memdesc:a4c388668cf9472d0bf8abcb3e758786f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the mecevp engine data and begin encryption or decryption message sequence using a private/public key or symmetric secret key.  <a href="#a4c388668cf9472d0bf8abcb3e758786f">More...</a><br /></td></tr>
+<tr class="separator:a4c388668cf9472d0bf8abcb3e758786f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc7e7012a43201730a0f67eb017897d3"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#afc7e7012a43201730a0f67eb017897d3">soap_mec_start_alg</a> (struct soap *soap, int alg, const unsigned char *key)</td></tr>
+<tr class="memdesc:afc7e7012a43201730a0f67eb017897d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start encryption or decryption of current message. If key is non-NULL, use the symmetric key with alg. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call.  <a href="#afc7e7012a43201730a0f67eb017897d3">More...</a><br /></td></tr>
+<tr class="separator:afc7e7012a43201730a0f67eb017897d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af225c0e603c01f9a59c60d6465d90535"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#af225c0e603c01f9a59c60d6465d90535">soap_mec_start</a> (struct soap *soap, const unsigned char *key)</td></tr>
+<tr class="memdesc:af225c0e603c01f9a59c60d6465d90535"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start encryption or decryption of current message. If key is non-NULL, use the symmetric key with alg. Use soap_mec_start only after soap_mec_begin. The soap_mec_start should be followed by a soap_mec_stop call.  <a href="#af225c0e603c01f9a59c60d6465d90535">More...</a><br /></td></tr>
+<tr class="separator:af225c0e603c01f9a59c60d6465d90535"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aedaa8cd525cac9cbe0904378419573d9"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#aedaa8cd525cac9cbe0904378419573d9">soap_mec_stop</a> (struct soap *soap)</td></tr>
+<tr class="memdesc:aedaa8cd525cac9cbe0904378419573d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops encryption or decryption of current message. Use after soap_mec_start.  <a href="#aedaa8cd525cac9cbe0904378419573d9">More...</a><br /></td></tr>
+<tr class="separator:aedaa8cd525cac9cbe0904378419573d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52b1ae6b5677aff39ac6f9548e9789b7"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#a52b1ae6b5677aff39ac6f9548e9789b7">soap_mec_end</a> (struct soap *soap, struct <a class="el" href="structsoap__mec__data.html">soap_mec_data</a> *data)</td></tr>
+<tr class="memdesc:a52b1ae6b5677aff39ac6f9548e9789b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ends encryption or decryption of a sequence of message parts that began with soap_mec_begin.  <a href="#a52b1ae6b5677aff39ac6f9548e9789b7">More...</a><br /></td></tr>
+<tr class="separator:a52b1ae6b5677aff39ac6f9548e9789b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a975a0081d5add97348fee0fa3b799f92"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 size_t SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mecevp_8c.html#a975a0081d5add97348fee0fa3b799f92">soap_mec_size</a> (int alg, <a class="el" href="mecevp_8h.html#a064a5feaff6bbd0c904c0aa042135c4c">SOAP_MEC_KEY_TYPE</a> *pkey)</td></tr>
+<tr class="memdesc:a975a0081d5add97348fee0fa3b799f92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of octets needed to store the public/private key or the symmetric key, depending on the algorithm.  <a href="#a975a0081d5add97348fee0fa3b799f92">More...</a><br /></td></tr>
+<tr class="separator:a975a0081d5add97348fee0fa3b799f92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="abd9dd5e6e38fb46977f5c75aa89f4104"></a>
+<a class="anchor" id="a4c388668cf9472d0bf8abcb3e758786f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int soap_mec_begin </td>
+          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_mec_begin </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -250,12 +250,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aaa1e6fa1abac32acdd7f76232fa30241"></a>
+<a class="anchor" id="a81ba68931cefa8b7a0f246d99e31e3ed"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void soap_mec_cleanup </td>
+          <td class="memname">SOAP_FMAC1 void SOAP_FMAC2 soap_mec_cleanup </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -286,12 +286,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ae93d7dae06e1568cc6ee2420cd29faaf"></a>
+<a class="anchor" id="a52b1ae6b5677aff39ac6f9548e9789b7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int soap_mec_end </td>
+          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_mec_end </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -610,12 +610,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a9874f1faeb40d4d5e2b59310c19bbd7a"></a>
+<a class="anchor" id="a6144725452c8086c7b1807f6310ff79d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int soap_mec_init </td>
+          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_mec_init </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -731,12 +731,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ad2d26a59a33fafa445fa71ff72d23f02"></a>
+<a class="anchor" id="a975a0081d5add97348fee0fa3b799f92"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">size_t soap_mec_size </td>
+          <td class="memname">SOAP_FMAC1 size_t SOAP_FMAC2 soap_mec_size </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>alg</em>, </td>
@@ -767,12 +767,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8053a2c0cda70dd37b944408dd3f8f0e"></a>
+<a class="anchor" id="af225c0e603c01f9a59c60d6465d90535"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int soap_mec_start </td>
+          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_mec_start </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -803,12 +803,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ada34eeec6780ab44acde4971dd8a4f77"></a>
+<a class="anchor" id="afc7e7012a43201730a0f67eb017897d3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int soap_mec_start_alg </td>
+          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_mec_start_alg </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -846,12 +846,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8fdc3daea4e2c9c3bbde4e480209b0d0"></a>
+<a class="anchor" id="aedaa8cd525cac9cbe0904378419573d9"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int soap_mec_stop </td>
+          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_mec_stop </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em></td><td>)</td>
@@ -1066,12 +1066,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a97663d6b4690c7b731d8aa9ece2cafae"></a>
+<a class="anchor" id="a8c447a82872a919bb1935f34b849c1c4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int soap_mec_update </td>
+          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_mec_update </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname"><em>soap</em>, </td>
@@ -1122,7 +1122,7 @@ Functions</h2></td></tr>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Mar 29 2016 16:43:13 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Wed Aug 17 2016 10:37:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

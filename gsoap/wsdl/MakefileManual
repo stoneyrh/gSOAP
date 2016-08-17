@@ -37,8 +37,8 @@ CMFLAGS=
 CFLAGS=$(CWFLAGS) $(COFLAGS) $(CIFLAGS) $(CMFLAGS)
 #
 all:		clean wsdl2h
-wsdl2h:		wsdlC.o wsdl2h.o wsdl.o schema.o soap.o mime.o wsp.o bpel.o types.o service.o stdsoap2.o
-		$(CPP) -o wsdl2h wsdlC.o wsdl2h.o wsdl.o schema.o soap.o mime.o wsp.o bpel.o types.o service.o stdsoap2.o $(LIBS)
+wsdl2h:		wsdlC.o wsdl2h.o wsdl.o wadl.o schema.o soap.o mime.o wsp.o bpel.o types.o service.o stdsoap2.o
+		$(CPP) -o wsdl2h wsdlC.o wsdl2h.o wsdl.o wadl.o schema.o soap.o mime.o wsp.o bpel.o types.o service.o stdsoap2.o $(LIBS)
 		-cp -f wsdl2h ../bin
 stdsoap2.o:	$(STDSOAPH) $(STDSOAPC)
 		$(CPP) -c $(CFLAGS) $(STDSOAPC)
@@ -54,6 +54,8 @@ service.o:	service.h service.cpp includes.h wsdlC.cpp
 		$(CPP) -c $(CFLAGS) service.cpp
 wsdl.o:		wsdl.h wsdl.cpp includes.h imports.h
 		$(CPP) -c $(CFLAGS) wsdl.cpp
+wadl.o:		wadl.h wadl.cpp includes.h imports.h
+		$(CPP) -c $(CFLAGS) wadl.cpp
 schema.o:	schema.h schema.cpp includes.h imports.h
 		$(CPP) -c $(CFLAGS) schema.cpp
 soap.o:		soap.h soap.cpp includes.h imports.h

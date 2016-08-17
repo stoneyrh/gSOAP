@@ -629,17 +629,22 @@ std::ostream& operator<<(std::ostream& o, const struct value& v)
   {
     std::ostream *os = v.soap->os;
     v.soap->os = &o;
-    json_write(v.soap, v);
+    if (json_write(v.soap, v))
+      o.clear(std::ios::failbit); // writing JSON data failed (must be a stream error)
     v.soap->os = os;
   }
   else
   {
     soap *ctx = soap_new();
-    ctx->os = &o;
-    json_write(ctx, v);
-    soap_destroy(ctx);
-    soap_end(ctx);
-    soap_free(ctx);
+    if (ctx)
+    {
+      ctx->os = &o;
+      if (json_write(ctx, v))
+        o.clear(std::ios::failbit); // writing JSON data failed (must be a stream error)
+      soap_destroy(ctx);
+      soap_end(ctx);
+      soap_free(ctx);
+    }
   }
   return o;
 }
@@ -648,10 +653,13 @@ std::istream& operator>>(std::istream& i, struct value& v)
 {
   if (!v.soap)
     v.soap = soap_new();
-  std::istream *is = v.soap->is;
-  v.soap->is = &i;
-  json_read(v.soap, v);
-  v.soap->is = is;
+  if (v.soap)
+  {
+    std::istream *is = v.soap->is;
+    v.soap->is = &i;
+    (void)json_read(v.soap, v);
+    v.soap->is = is;
+  }
   return i;
 }
 

@@ -1,7 +1,7 @@
 /*
 	wsdl2h.cpp
 
-	WSDL parser, translator, and generator (of the gSOAP header file format)
+	WSDL/WADL/XSD parser and translator to the gSOAP header file format
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -125,8 +125,10 @@ const char schemaformat[]              = "//gsoap %-5s schema %s:\t%s\n";
 const char serviceformat[]             = "//gsoap %-4s service %s:\t%s %s\n";
 const char paraformat[]                = "    %-35s%s%s%s";
 const char anonformat[]                = "    %-35s%s_%s%s";
+const char sizeparaformat[]            = "   $%-35s __size%s%s";
+const char pointertemplateparaformat[] = "    %s<%-21s>*%s%s%s";
 
-const char copyrightnotice[] = "\n**  The gSOAP WSDL/Schema processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2016 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool and its generated software are released under the GPL.\n**  ----------------------------------------------------------------------------\n**  A commercial use license is available from Genivia Inc., contact@genivia.com\n**  ----------------------------------------------------------------------------\n\n";
+const char copyrightnotice[] = "\n**  The gSOAP WSDL/WADL/XSD processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2016 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool and its generated software are released under the GPL.\n**  ----------------------------------------------------------------------------\n**  A commercial use license is available from Genivia Inc., contact@genivia.com\n**  ----------------------------------------------------------------------------\n\n";
 
 const char licensenotice[]   = "\
 --------------------------------------------------------------------------------\n\
@@ -473,7 +475,7 @@ static void options(int argc, char **argv)
 -P      don't create polymorphic types inherited from xsd__anyType\n\
 -p      create polymorphic types inherited from base xsd__anyType\n\
 -qname  use name for the C++ namespace of all declarations\n\
--R      generate REST operations for REST bindings in the WSDL\n\
+-R      generate REST operations for REST bindings specified in a WSDL\n\
 -rhost[:port[:uid:pwd]]\n\
         connect via proxy host, port, and proxy credentials\n\
 -r:uid:pwd\n\
@@ -520,7 +522,7 @@ infile.wsdl infile.xsd http://www... list of input sources (if none: use stdin)\
       if (strncmp(infile[0], "http://", 7) && strncmp(infile[0], "https://", 8))
       {
 	const char *s = strrchr(infile[0], '.');
-        if (s && (!soap_tag_cmp(s, ".wsdl") || !soap_tag_cmp(s, ".gwsdl") || !soap_tag_cmp(s, ".xsd")))
+        if (s && (!soap_tag_cmp(s, ".wsdl") || !soap_tag_cmp(s, ".wadl") || !soap_tag_cmp(s, ".gwsdl") || !soap_tag_cmp(s, ".xsd")))
         {
 	  outfile = estrdup(infile[0]);
           outfile[s - infile[0] + 1] = 'h';
@@ -568,6 +570,7 @@ struct Namespace namespaces[] =
   {"mime", "http://schemas.xmlsoap.org/wsdl/mime/"},
   {"xmime", "http://www.w3.org/2005/05/xmlmime"},
   {"dime", "http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/", "http://schemas.xmlsoap.org/ws/*/dime/wsdl/"},
+  {"wadl", "http://wadl.dev.java.net/2009/02"},
   {"wsdl", "http://schemas.xmlsoap.org/wsdl/", "http://www.w3.org/ns/wsdl"},
   {"wsdli", "http://www.w3.org/ns/wsdl-instance"},
   {"wsdlx", "http://www.w3.org/ns/wsdl-extensions"},

@@ -65,7 +65,24 @@ In your source code for the client, register the WinInet plugin with
 `soap_register_plugin(soap, wininet_plugin)` after creation and initialization
 of the `soap` context.
 
+For example, when using a proxy object in C++ generated with soapcpp2 -j:
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+     #include "gsoapWinInet.h"
+     #include "soapProxy.h"
+     Proxy proxy;
+     proxy.soap->connect_timeout = 15; // 15 sec: this will be used by wininet too
+     proxy.soap->recv_timeout = 10; // 10 sec: this will be used by wininet too
+     proxy.soap->send_timeout = 10; // 10 sec: this will be used by wininet too
+     soap_register_plugin(proxy.soap, wininet_plugin);
+     ...
+     proxy.destroy(); // delete deserialized data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+and in plain C/C++, that is, without a proxy object:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+     #include "soapH.h"
      #include "gsoapWinInet.h"
      struct soap soap;
      soap_init(&soap);
@@ -80,8 +97,8 @@ of the `soap` context.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Please make sure to compile all sources in C++ compilation mode. If you migrate
-to a project file `.vcproj`, please set `CompileAs="2"` in your `.vcproj`
-file.
+to a project file such as `.vcproj`, please set `CompileAs="2"` in your
+`.vcproj` file.
 
 
 WinInet plugin options                                                {#options}

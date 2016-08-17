@@ -60,7 +60,7 @@ extern "C" {
 #endif
 
 /** plugin identification for plugin registry */
-#define SOAP_WSSE_ID "SOAP-WSSE-1.4"
+#define SOAP_WSSE_ID "SOAP-WSSE-1.5"
 
 /** to ignore extra/external SignedInfo/Reference/@URI */
 #define SOAP_WSSE_IGNORE_EXTRA_REFS (0x1000)
@@ -96,10 +96,9 @@ struct soap_wsse_data {
   int (*fpreparesend)(struct soap*, const char*, size_t);
   int (*fpreparefinalsend)(struct soap*);
   int (*fpreparefinalrecv)(struct soap*);
-  int (*fheader)(struct soap*);
   struct soap_mec_data *mec;
   X509_STORE *store;
-  const void *(*security_token_handler)(struct soap *soap, int *alg, const char *keyname, int *keylen);
+  const void *(*security_token_handler)(struct soap *soap, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen);
 };
 
 /**
@@ -211,8 +210,8 @@ SOAP_FMAC1 X509 * SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceX509(st
 SOAP_FMAC1 struct ds__X509IssuerSerialType * SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data(struct soap *soap);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, const char *id, const char *valueType, unsigned char *data, int size);
-SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType(struct soap *soap);
-SOAP_FMAC1 const unsigned char * SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, int *size);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType(struct soap *soap, ds__KeyInfoType *keyInfo);
+SOAP_FMAC1 const unsigned char * SOAP_FMAC2 soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, ds__KeyInfoType *keyInfo, int *size);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_KeyInfo_SecurityTokenReferenceEmbedded(struct soap *soap, const char *id, const char *valueType);
 
@@ -251,7 +250,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_encrypt_only(struct soap *soap, int alg, con
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_encrypt(struct soap *soap, int alg, const void *key, int keylen);
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_decrypt_auto(struct soap *soap, int alg, const void *key, int keylen);
 
-SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_encrypt_begin(struct soap *soap, const char *id, int alg, const char *URI, const char *keyname, const unsigned char *key);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_encrypt_begin(struct soap *soap, const char *id, int alg, const char *URI, const char *keyname, const unsigned char *key, const char *type);
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_encrypt_end(struct soap *soap);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_decrypt_begin(struct soap *soap);

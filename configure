@@ -761,6 +761,7 @@ enable_dependency_tracking
 enable_debug
 enable_namespaces
 enable_ipv6
+with_zlib
 with_openssl
 enable_ssl
 enable_gnutls
@@ -1414,6 +1415,7 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-zlib=DIR         zlib installation prefix
   --with-openssl=DIR      openssl installation prefix
 
 Some influential environment variables:
@@ -5884,7 +5886,7 @@ fi
 fi
 done
 
-for ac_func in random gettimeofday ftime localtime_r timegm gmtime gmtime_r memset select socket snprintf strchr strerror strerror_r strlcpy strrchr strstr strtol strtoul strtoll strtoull strtold strtod strtof strtold_l strtod_l strtof_l sscanf sscanf_l snprintf sprintf_l wctomb mbtowc poll
+for ac_func in random gettimeofday ftime localtime_r timegm gmtime gmtime_r asctime asctime_r memset select socket snprintf strchr strerror strerror_r strlcpy strrchr strstr strtol strtoul strtoll strtoull strtold strtod strtof strtold_l strtod_l strtof_l sscanf sscanf_l snprintf sprintf_l wctomb mbtowc poll
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6149,6 +6151,14 @@ $as_echo "no" >&6; }
 fi
 
 
+# the zlib installation prefix path
+
+# Check whether --with-zlib was given.
+if test "${with_zlib+set}" = set; then :
+  withval=$with_zlib; ZLIB=$withval
+fi
+
+
 # the OpenSSL installation prefix path
 
 # Check whether --with-openssl was given.
@@ -6200,6 +6210,12 @@ $as_echo "no" >&6; }
     SAMPLE_INCLUDES=
     SAMPLE_SSL_LIBS="-lssl -lcrypto -lz"
     WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
+  fi
+  if test -n "$ZLIB"; then
+    WSDL2H_EXTRA_FLAGS="-I${ZLIB}/include ${WSDL2H_EXTRA_FLAGS}"
+    WSDL2H_EXTRA_LIBS="-L${ZLIB}/lib ${WSDL2H_EXTRA_LIBS}"
+    SAMPLE_INCLUDES="-I${ZLIB}/include ${SAMPLE_SSL_LIBS}"
+    SAMPLE_SSL_LIBS="-L${ZLIB}/lib ${SAMPLE_SSL_LIBS}"
   fi
   if test -n "$OPENSSL"; then
     WSDL2H_EXTRA_FLAGS="-I${OPENSSL}/include ${WSDL2H_EXTRA_FLAGS}"

@@ -109,7 +109,7 @@ AC_CHECK_MEMBERS([struct tm.tm_gmtoff, struct tm.__tm_gmtoff],,,
 AC_FUNC_MKTIME
 AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
-AC_CHECK_FUNCS([random gettimeofday ftime localtime_r timegm gmtime gmtime_r memset select socket snprintf strchr strerror strerror_r strlcpy strrchr strstr strtol strtoul strtoll strtoull strtold strtod strtof strtold_l strtod_l strtof_l sscanf sscanf_l snprintf sprintf_l wctomb mbtowc poll])
+AC_CHECK_FUNCS([random gettimeofday ftime localtime_r timegm gmtime gmtime_r asctime asctime_r memset select socket snprintf strchr strerror strerror_r strlcpy strrchr strstr strtol strtoul strtoll strtoull strtold strtod strtof strtold_l strtod_l strtof_l sscanf sscanf_l snprintf sprintf_l wctomb mbtowc poll])
 
 # Checks for isnan and isinf
 AC_CHECK_FUNC(isnan, [has_isnan=1; AC_DEFINE(HAVE_ISNAN, 1, isnan)], has_isnan=0)
@@ -206,6 +206,12 @@ else
 fi
 AC_SUBST(SOAPCPP2_IPV6)
 
+# the zlib installation prefix path
+AC_ARG_WITH([zlib],
+            AS_HELP_STRING([--with-zlib=DIR],
+                           [zlib installation prefix]),
+            [ZLIB=$withval],)
+
 # the OpenSSL installation prefix path
 AC_ARG_WITH([openssl],
             AS_HELP_STRING([--with-openssl=DIR],
@@ -246,6 +252,12 @@ if test "x$with_openssl" = "xyes"; then
     SAMPLE_INCLUDES=
     SAMPLE_SSL_LIBS="-lssl -lcrypto -lz"
     WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
+  fi
+  if test -n "$ZLIB"; then
+    WSDL2H_EXTRA_FLAGS="-I${ZLIB}/include ${WSDL2H_EXTRA_FLAGS}"
+    WSDL2H_EXTRA_LIBS="-L${ZLIB}/lib ${WSDL2H_EXTRA_LIBS}"
+    SAMPLE_INCLUDES="-I${ZLIB}/include ${SAMPLE_SSL_LIBS}"
+    SAMPLE_SSL_LIBS="-L${ZLIB}/lib ${SAMPLE_SSL_LIBS}"
   fi
   if test -n "$OPENSSL"; then
     WSDL2H_EXTRA_FLAGS="-I${OPENSSL}/include ${WSDL2H_EXTRA_FLAGS}"

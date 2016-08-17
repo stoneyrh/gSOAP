@@ -223,7 +223,7 @@ each URI:
 
     prefix = "URI"
 
-For example:
+For example, to use `g` as a prefix for the "urn:graph" XML namespace:
 
     g = "urn:graph"
 
@@ -235,9 +235,15 @@ This means that `<g:name xmlns:g="urn:graph">` is parsed as an instance of a
 instance of `g__name`, because the prefix `x` has the same URI value
 `urn:graph`.  Prefixes in XML have local scopes (like variables in a block).
 
-The first run of wsdl2h will reveal the URIs, so you do not need to search
-WSDLs and XSD files for all of the target namespaces.  Just copy them from the
-generated header file after the first run into `typemap.dat` for editing.
+The first run of wsdl2h will reveal the XML namespace URIs, so you do not need
+to search WSDLs and XSD files for all of the target namespaces.  Just copy them
+from the generated header file after the first run into `typemap.dat` for
+editing.
+
+@note Only define a namespace prefix once in `typemap.dat`.  That is, do not
+use the same prefix for multiple XML namespace URIs.  This is to avoid
+namespace conflicts that may cause failed builds and failures in XML parsing
+and validation.
 
 XSD type bindings                                                    {#typemap2}
 -----------------
@@ -255,9 +261,12 @@ where
   This part can be empty if no explicit declaration is needed;
 - `use` is an optional part that specifies how the C/C++ type is used in the
   code.  When omitted, it is the same as `prefix__type`;
-- `ptruse` is an optional part that specifies how the type is used as a
-  pointer type.  By default it is the `use` type name with a `*` or C++11
-  `std::shared_ptr<>` when enabled (see further below).
+- `ptruse` is an optional part that specifies how the type is used as a pointer
+  type.  By default it is the `use` type name with a `*` or C++11
+  `std::shared_ptr<>` when enabled (see further below).  If `use` is already a
+  pointer type by the presence of a `*` in the `use` part, then the default
+  `ptruse` type is the same as the `use` type (that is, no double pointer `**`
+  will be created in this case).
 
 For example, to map `xsd:duration` to a `long long` (`LONG64`) type that holds
 millisecond duration values, we can use the custom serializer declared in
@@ -265,22 +274,22 @@ millisecond duration values, we can use the custom serializer declared in
 
     xsd__duration = #import "custom/duration.h"
 
-Here, we omitted the second field, because `xsd__duration` is the name that
-wsdl2h uses to identify and use this type for our code.  The third field is
-omitted to let wsdl2h use `xsd__duration *` for pointers or
-`std::shared_ptr<xsd__duration>` if smart pointers are enabled.
+Here, we omitted the second and third parts, because `xsd__duration` is the
+name that wsdl2h uses for this type in our generated code so we should leave
+the `use` part unspecified.  The third part is omitted to let wsdl2h use
+`xsd__duration *` for pointers or `std::shared_ptr<xsd__duration>` if smart
+pointers are enabled.
 
 To map `xsd:string` to `wchar_t*` wide strings:
 
     xsd__string = | wchar_t* | wchar_t*
 
-Note that the first field is empty, because `wchar_t` is a C type and does not
-need to be declared.  A `ptruse` field is given so that we do not end up
-generating the wrong pointer types, such as `wchar_t**` and
-`std::shared_ptr<wchar_t>`.
+Note that the first part is empty, because `wchar_t` is a C type and does not
+need to be declared.  A `ptruse` part is also defined in this example, but does
+not need to be because the `use` part `wchar_t*` is already a pointer.
 
 When the auto-generated declaration should be preserved but the `use` or
-`ptruse` fields replaced, then we use an ellipsis for the declaration part:
+`ptruse` parts replaced, then we use an ellipsis for the declaration part:
 
     prefix__type = ... | use | ptruse
 
@@ -333,12 +342,15 @@ range.
 Other XSD integer types that are restrictions of `xsd:integer`, are
 `xsd:nonNegativeInteger` and `xsd:nonPositiveInteger`, which are further restricted
 by `xsd:positiveInteger` and `xsd:negativeInteger`.  To bind these types to
-`__int128_t` we should also add the following definitions to `typemap.dat`:
+`__int128_t` add the following definitions to `typemap.dat`:
 
     xsd__nonNegativeInteger = typedef xsd__integer xsd__nonNegativeInteger 0 :    ;
     xsd__nonPositiveInteger = typedef xsd__integer xsd__nonPositiveInteger   : 0  ;
     xsd__positiveInteger    = typedef xsd__integer xsd__positiveInteger    1 :    ;
     xsd__negativeInteger    = typedef xsd__integer xsd__negativeInteger      : -1 ;
+
+Or simply uncomment these definitions in `typemap.dat` when you are using the
+latest gSOAP releases.
 
 @note If `__int128_t` 128 bit integers are not supported on your platform and if it
 is certain that `xsd:integer` values are within 64 bit value bounds for your
@@ -348,6 +360,8 @@ application's use, then you can map this type to `LONG64`:
 
 @note Again, a value range fault `SOAP_TYPE` or `SOAP_LENGTH` will be thrown by
 the deserializer if the value is out of range.
+
+After running wsdl2h and soapcpp2, compile `custom/int128.c` with your project.
 
 @see Section [numerical types](#toxsd5).
 
@@ -374,6 +388,9 @@ the value is out of range.
 
 In the XML payload the special values `INF`, `-INF`, `NaN` represent plus or
 minus infinity and not-a-number, respectively.
+
+After running wsdl2h and soapcpp2, compile `custom/long_double.c` with your
+project.
 
 @see Section [numerical types](#toxsd5).
 
@@ -412,8 +429,13 @@ using the default `time_t` binding for `xsd:dateTime` or when binding
 `xsd:dateTime` to `struct timeval` or to `std::chrono::system_clock::time_point`.
 These are safe to use in applications that use `xsd:dateTime` to record date
 stamps within a given window.  Otherwise, we recommend the `struct tm` custom
-serializer.  You could even map `xsd:dateTime` to a plain string (use `char*` with
-C and `std::string` with C++).  For example:
+serializer.
+
+After running wsdl2h and soapcpp2, compile `custom/struct_tm.c` with your
+project.
+
+You could even map `xsd:dateTime` to a plain string (use `char*` with C and
+`std::string` with C++).  For example:
 
     xsd__dateTime = | char*
 
@@ -431,6 +453,9 @@ time part and the deserializer only populates the date part of the struct,
 setting the time to 00:00:00.  There is no unreasonable limit on the date range
 because the year field is stored as an integer (`int`).
 
+After running wsdl2h and soapcpp2, compile `custom/struct_tm_date.c` with your
+project.
+
 @see Section [date and time types](#toxsd7).
 
 ### xsd:time                                                         {#custom-5}
@@ -445,6 +470,9 @@ This type represents 00:00:00.000000 to 23:59:59.999999, from `0` to an upper
 bound of `86399999999`.  A microsecond resolution means that a 1 second
 increment requires an increment of 1000000 in the integer value.  The serializer
 adds a UTC time zone.
+
+After running wsdl2h and soapcpp2, compile `custom/long_time.c` with your
+project.
 
 @see Section [date and time types](#toxsd7).
 
@@ -476,7 +504,85 @@ backwards in time in increments of 1 ns (1/1,000,000,000 of a second).
 Certain observations with respect to receiving durations in years and months
 apply to both of these serializer decoders for `xsd:duration`.
 
+After running wsdl2h and soapcpp2, compile `custom/duration.c` with your
+project.
+
 @see Section [time duration types](#toxsd8).
+
+Custom Qt serializers for XSD types                                        {#qt}
+-----------------------------------
+
+The gSOAP distribution includes several custom serializers for Qt types.  Also
+Qt container classes are supported, see
+[the built-in typemap.dat variables $CONTAINER and $POINTER](#typemap5).
+
+This feature requires gSOAP 2.8.34 or higher and Qt 4.8 or higher.
+
+Each Qt custom serializer has an interface header file for soapcpp2 and a C++
+implementation file to be compiled with your project.
+
+Other Qt primitive types that are Qt typedefs of C/C++ types do not require a
+custom serializer.
+
+### xsd:string                                                           {#qt-1}
+
+To use Qt strings instead of C++ strings, add the following definition to
+`typemap.dat`:
+
+    xsd__string = #import "custom/qstring.h"
+
+After running wsdl2h and soapcpp2, compile `custom/qstring.cpp` with your
+project.
+
+### xsd:base64Binary                                                     {#qt-2}
+
+To use Qt byte arrays for `xsd:base64Binary` instead of the
+`xsd__base64Binary` class, add the following definition to `typemap.dat`:
+
+    xsd__base64Binary = #import "custom/qbytearray_base64.h"
+
+After running wsdl2h and soapcpp2, compile `custom/qbytearray_base64.cpp` with
+your project.
+
+### xsd:hexBinary                                                        {#qt-3}
+
+To use Qt byte arrays for `xsd:hexBinary` instead of the `xsd__base64Binary`
+class, add the following definition to `typemap.dat`:
+
+    xsd__hexBinary = #import "custom/qbytearray_hex.h"
+
+After running wsdl2h and soapcpp2, compile `custom/qbytearray_hex.cpp` with
+your project.
+
+### xsd:dateTime                                                         {#qt-4}
+
+To use Qt QDateTime for `xsd:dateTime`, add the following definition to
+`typemap.dat`:
+
+    xsd__dateTime = #import "custom/datetime.h"
+
+After running wsdl2h and soapcpp2, compile `custom/qdatetime.cpp` with
+your project.
+
+### xsd:date                                                             {#qt-5}
+
+To use Qt QDate for `xsd:date`, add the following definition to
+`typemap.dat`:
+
+    xsd__date = #import "custom/qdate.h"
+
+After running wsdl2h and soapcpp2, compile `custom/qdate.cpp` with your
+project.
+
+### xsd:time                                                             {#qt-6}
+
+To use Qt QDate for `xsd:time`, add the following definition to
+`typemap.dat`:
+
+    xsd__time = #import "custom/qtime.h"
+
+After running wsdl2h and soapcpp2, compile `custom/qtime.cpp` with your
+project.
 
 Class/struct member additions                                        {#typemap3}
 -----------------------------
@@ -549,6 +655,14 @@ and`get()` methods and the dereference operator.  For example Boost
 The user-defined content between `[` and `]` ensures that we include the Boost
 header files that are needed to support `boost::shared_ptr` and
 `boost::make_shared`.
+
+A Qt container can be used instead of the default `std::vector`, for example
+`QVector`:
+
+    [
+    #include <QVector>
+    ]
+    $CONTAINER = QVector
 
 User-defined content                                                 {#typemap6}
 --------------------
@@ -1217,7 +1331,7 @@ preserved in the XML value space.
 
 Strings `char*` and `std::string` can only contain extended Latin, but we can
 store UTF-8 content that is preserved in the XML value space when the `struct
-soap` context is initialized with the flag `XML_C_UTFSTRING`.
+soap` context is initialized with the flag `SOAP_C_UTFSTRING`.
 
 @warning Beware that many XML 1.0 parsers reject all control characters (those
 between `#x1` and `#x1F`) except for `#x9`, `#xA`, and `#xD`.  With the

@@ -144,13 +144,14 @@ static int http_form_parse_header(struct soap *soap, const char *key, const char
     if (!soap_tag_cmp(key, "Content-Type"))
     {
       /* check content type: you can filter any type of payloads here */
-      if (!soap_tag_cmp(val, "application/x-www-form-urlencoded"))
+      if (!soap_tag_cmp(val, "application/x-www-form-urlencoded")
+       || !soap_tag_cmp(val, "application/x-www-form-urlencoded;*")) /* skip charset=UTF-8 etc */
       {
         soap->fform = data->handler;
         soap->error = SOAP_FORM; /* delegate body parsing to form handler */
       }
-      /* it is possible to add other payload types to handle via forms
-      if (!soap_tag_cmp(val, "image/jpg"))
+      /* it is possible to add other payload types to handle via forms and use * as a wildcard:
+      if (!soap_tag_cmp(val, "image/jpg") || !soap_tag_cmp(val, "image/jpg;*"))
         soap->error = SOAP_FORM;
       */
     }

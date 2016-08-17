@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WinInet plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Feb 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Wed Jun 15 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -86,7 +86,19 @@ Limitations                                                       </h1>
 Using the WinInet plugin with gSOAP                                     </h1>
 <p>Add the <code>gsoapWinInet2.h</code> and <code>gsoapWinInet2.cpp</code> files to your project. If you have a C project, change the extension to <code>.c</code>. Disable "precompiled headers" for the <code>.cpp</code> file.</p>
 <p>In your source code for the client, register the WinInet plugin with <code>soap_register_plugin(soap, wininet_plugin)</code> after creation and initialization of the <code>soap</code> context.</p>
+<p>For example, when using a proxy object in C++ generated with soapcpp2 -j:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="gsoap_win_inet_8h.html">gsoapWinInet.h</a>&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;soapProxy.h&quot;</span></div>
+<div class="line">Proxy proxy;</div>
+<div class="line">proxy.soap-&gt;connect_timeout = 15; <span class="comment">// 15 sec: this will be used by wininet too</span></div>
+<div class="line">proxy.soap-&gt;recv_timeout = 10; <span class="comment">// 10 sec: this will be used by wininet too</span></div>
+<div class="line">proxy.soap-&gt;send_timeout = 10; <span class="comment">// 10 sec: this will be used by wininet too</span></div>
+<div class="line">soap_register_plugin(proxy.soap, <a class="code" href="gsoap_win_inet_8cpp.html#ac6bca696008832fa8d798bc40766c122">wininet_plugin</a>);</div>
+<div class="line">...</div>
+<div class="line">proxy.destroy(); <span class="comment">// delete deserialized data</span></div>
+</div><!-- fragment --><p>and in plain C/C++, that is, without a proxy object:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;soapH.h&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="gsoap_win_inet_8h.html">gsoapWinInet.h</a>&quot;</span></div>
 <div class="line"><span class="keyword">struct </span>soap soap;</div>
 <div class="line">soap_init(&amp;soap);</div>
 <div class="line">soap.connect_timeout = 15; <span class="comment">// 15 sec: this will be used by wininet too</span></div>
@@ -97,7 +109,7 @@ Using the WinInet plugin with gSOAP                                     </h1>
 <div class="line">soap_destroy(&amp;soap); <span class="comment">// delete deserialized data</span></div>
 <div class="line">soap_end(&amp;soap);     <span class="comment">// delete temporary and C-based deserialized data</span></div>
 <div class="line">soap_done(&amp;soap);</div>
-</div><!-- fragment --><p>Please make sure to compile all sources in C++ compilation mode. If you migrate to a project file <code>.vcproj</code>, please set <code>CompileAs="2"</code> in your <code>.vcproj</code> file.</p>
+</div><!-- fragment --><p>Please make sure to compile all sources in C++ compilation mode. If you migrate to a project file such as <code>.vcproj</code>, please set <code>CompileAs="2"</code> in your <code>.vcproj</code> file.</p>
 <h1><a class="anchor" id="options"></a>
 WinInet plugin options                                                </h1>
 <p>To control the WinInet's HttpOpenRequest options, register the WinInet plugin with <code>soap_register_plugin_arg()</code> and supply an argument that is passed on to HttpOpenRequest. For example:</p>
@@ -133,7 +145,7 @@ Contributors                                                     </h1>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Feb 22 2016 20:01:14 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Wed Jun 15 2016 12:51:06 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

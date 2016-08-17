@@ -76,6 +76,11 @@ namespace ...
 Under Project Properties change the Output type to Console Application to
 generate a service.exe.
 
+After compiling, run service.exe from the command prompt (this may require
+administrator privileges):
+
+  C:\WF_WCF_Samples\WCF\Basic\Binding\Basic\Http\CS\service\bin\service.exe
+
 Use a web browser to access the service at
   http://10.0.1.5:8000/ServiceModelSamples/service
 and access the WSDL at

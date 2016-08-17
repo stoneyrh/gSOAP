@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.33
+        DOM API v5 gSOAP 2.8.34
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20833
+#define GSOAP_LIB_VERSION 20834
 
 #include "stdsoap2.h"
 
@@ -222,9 +222,9 @@ out_element(struct soap *soap, const struct soap_dom_element *node, const char *
     {
       if (p->ns && soap_push_prefix(soap, p->id, strlen(p->id), p->ns, 1, 0) == NULL)
       {
-	if (s)
-	  SOAP_FREE(soap, s);
-	return soap->error;
+        if (s)
+          SOAP_FREE(soap, s);
+        return soap->error;
       }
     }
     (void)soap_putelement(soap, node->node, s ? s : name, 0, node->type);
@@ -354,7 +354,7 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
       np = soap_lookup_ns(soap, tag, n);
       if (!prefix && ((n && !np) || (node->nstr && (!np || !np->ns || strcmp(node->nstr, np->ns)))))
       {
-	prefix = soap_push_prefix(soap, tag, n, node->nstr, 1, 1);
+        prefix = soap_push_prefix(soap, tag, n, node->nstr, 1, 1);
         if (!(prefix))
           return soap->error;
       }
@@ -390,11 +390,11 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
                 p = NULL;
                 np = soap_lookup_ns(soap, att->name, n);
                 if ((n && !np) || (att->nstr && (!np || !np->ns || strcmp(att->nstr, np->ns))))
-		{
+                {
                   p = soap_push_prefix(soap, att->name, n, att->nstr, 0, 0);
                   if (!p)
                     return soap->error;
-		}
+                }
               }
             }
             if (out_attribute(soap, p, att->name, att->text, 0))
@@ -509,11 +509,11 @@ soap_out_xsd__anyAttribute(struct soap *soap, const char *tag, int id, const str
             p = NULL;
             np = soap_lookup_ns(soap, att->name, n);
             if ((n && !np) || (att->nstr && (!np || !np->ns || strcmp(att->nstr, np->ns))))
-	    {
+            {
               p = soap_push_prefix(soap, att->name, n, att->nstr, 1, 0);
               if (!p)
                 return soap->error;
-	    }
+            }
           }
         }
         if (out_attribute(soap, p, att->name, att->text, 1))
@@ -859,6 +859,8 @@ soap_push_prefix(struct soap *soap, const char *id, size_t n, const char *ns, in
   }
   else if (!id)
   {
+    if (!ns)
+      return "";
     if (iselement)
     {
       id = ""; /* gen xmlsn="ns" for elements with nstr but no prefix */
@@ -4993,15 +4995,19 @@ std::ostream &operator<<(std::ostream &o, const struct soap_dom_element &e)
 {
   if (!e.soap)
   {
-    struct soap soap;
-    soap_init1(&soap, SOAP_IO_DEFAULT | SOAP_DOM_TREE);
-    soap_serialize_xsd__anyType(&soap, &e);
-    if (soap_begin_send(&soap)
-     || soap_out_xsd__anyType(&soap, NULL, 0, &e, NULL)
-     || soap_end_send(&soap))
-    { /* error */ }
-    soap_end(&soap);
-    soap_done(&soap);
+    struct soap *soap = soap_new1(SOAP_IO_DEFAULT | SOAP_DOM_TREE);
+    if (soap)
+    {
+      soap->os = &o;
+      soap_serialize_xsd__anyType(soap, &e);
+      if (soap_begin_send(soap)
+       || soap_out_xsd__anyType(soap, NULL, 0, &e, NULL)
+       || soap_end_send(soap))
+        o.clear(std::ios::failbit); // writing failed (must be a stream error)
+      soap_destroy(soap);
+      soap_end(soap);
+      soap_free(soap);
+    }
   }
   else
   {
@@ -5011,7 +5017,7 @@ std::ostream &operator<<(std::ostream &o, const struct soap_dom_element &e)
     if (soap_begin_send(e.soap)
      || soap_out_xsd__anyType(e.soap, NULL, 0, &e, NULL)
      || soap_end_send(e.soap))
-    { /* e.soap->error is now set and app should check */ }
+      o.clear(std::ios::failbit); // writing failed (must be a stream error)
     e.soap->os = os;
   }
   return o;
@@ -5023,13 +5029,16 @@ std::istream &operator>>(std::istream &i, struct soap_dom_element &e)
 {
   if (!e.soap)
     e.soap = soap_new();
-  std::istream *is = e.soap->is;
-  e.soap->is = &i;
-  if (soap_begin_recv(e.soap)
-   || soap_in_xsd__anyType(e.soap, NULL, &e, NULL) == NULL
-   || soap_end_recv(e.soap))
-  { /* e.soap->error is now set and app should check */ }
-  e.soap->is = is;
+  if (e.soap)
+  {
+    std::istream *is = e.soap->is;
+    e.soap->is = &i;
+    if (soap_begin_recv(e.soap)
+     || soap_in_xsd__anyType(e.soap, NULL, &e, NULL) == NULL
+     || soap_end_recv(e.soap))
+    { /* e.soap->error is now set and app should check */ }
+    e.soap->is = is;
+  }
   return i;
 }
 

@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">XML Data Bindings</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Apr 26 2016</div>
+      <div style="float: right; font-size: 10px;">updated Fri Jul 1 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -70,6 +70,14 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li class="level3"><a href="#custom-4">xsd:date</a></li>
 <li class="level3"><a href="#custom-5">xsd:time</a></li>
 <li class="level3"><a href="#custom-6">xsd:duration</a></li>
+</ul>
+</li>
+<li class="level2"><a href="#qt">Custom Qt serializers for XSD types                                        </a><ul><li class="level3"><a href="#qt-1">xsd:string</a></li>
+<li class="level3"><a href="#qt-2">xsd:base64Binary</a></li>
+<li class="level3"><a href="#qt-3">xsd:hexBinary</a></li>
+<li class="level3"><a href="#qt-4">xsd:dateTime</a></li>
+<li class="level3"><a href="#qt-5">xsd:date</a></li>
+<li class="level3"><a href="#qt-6">xsd:time</a></li>
 </ul>
 </li>
 <li class="level2"><a href="#typemap3">Class/struct member additions                                        </a></li>
@@ -310,10 +318,11 @@ XML namespace bindings                                               </h2>
 <p>The wsdl2h tool generates C/C++ type declarations that use <code>ns1</code>, <code>ns2</code>, etc. as schema-binding URI prefixes. These default prefixes are generated somewhat arbitrarily for each schema targetNamespace URI, meaning that their ordering may change depending on the WSDL and XSD order of processing with wsdl2h.</p>
 <p>Therefore, it is <b>strongly recommended</b> to declare your own prefix for each schema URI in <code>typemap.dat</code> to reduce maintaince effort of your code. This is more robust when anticipating possible changes of the schema(s) and/or the binding URI(s) and/or the tooling algorithms.</p>
 <p>The first and foremost important thing to do is to define prefix-URI bindings for our C/C++ code by adding the following line(s) to our <code>typemap.dat</code> or make a copy of this file and add the line(s) that bind our choice of prefix name to each URI: </p><pre class="fragment">prefix = "URI"
-</pre><p>For example: </p><pre class="fragment">g = "urn:graph"
+</pre><p>For example, to use <code>g</code> as a prefix for the "urn:graph" XML namespace: </p><pre class="fragment">g = "urn:graph"
 </pre><p>This produces <code>g__name</code> C/C++ type names that are bound to the "urn:graph" schema by association of <code>g</code> to the generated C/C++ types.</p>
 <p>This means that <code>&lt;g:name xmlns:g="urn:graph"&gt;</code> is parsed as an instance of a <code>g__name</code> C/C++ type. Also <code>&lt;x:name xmlns:x="urn:graph"&gt;</code> parses as an instance of <code>g__name</code>, because the prefix <code>x</code> has the same URI value <code>urn:graph</code>. Prefixes in XML have local scopes (like variables in a block).</p>
-<p>The first run of wsdl2h will reveal the URIs, so you do not need to search WSDLs and XSD files for all of the target namespaces. Just copy them from the generated header file after the first run into <code>typemap.dat</code> for editing.</p>
+<p>The first run of wsdl2h will reveal the XML namespace URIs, so you do not need to search WSDLs and XSD files for all of the target namespaces. Just copy them from the generated header file after the first run into <code>typemap.dat</code> for editing.</p>
+<dl class="section note"><dt>Note</dt><dd>Only define a namespace prefix once in <code>typemap.dat</code>. That is, do not use the same prefix for multiple XML namespace URIs. This is to avoid namespace conflicts that may cause failed builds and failures in XML parsing and validation.</dd></dl>
 <h2><a class="anchor" id="typemap2"></a>
 XSD type bindings                                                    </h2>
 <p>Custom C/C++ type bindings can be declared in <code>typemap.dat</code> to associate C/C++ types with specific schema types. These type bindings have four parts: </p><pre class="fragment">prefix__type = declaration | use | ptruse
@@ -322,13 +331,13 @@ XSD type bindings                                                    </h2>
 <li><code>prefix__type</code> is the schema type to be customized (the <code>prefix__type</code> name uses the common double underscore naming convention);</li>
 <li><code>declaration</code> declares the C/C++ type in the wsdl2h-generated header file. This part can be empty if no explicit declaration is needed;</li>
 <li><code>use</code> is an optional part that specifies how the C/C++ type is used in the code. When omitted, it is the same as <code>prefix__type</code>;</li>
-<li><code>ptruse</code> is an optional part that specifies how the type is used as a pointer type. By default it is the <code>use</code> type name with a <code>*</code> or C++11 <code>std::shared_ptr&lt;&gt;</code> when enabled (see further below).</li>
+<li><code>ptruse</code> is an optional part that specifies how the type is used as a pointer type. By default it is the <code>use</code> type name with a <code>*</code> or C++11 <code>std::shared_ptr&lt;&gt;</code> when enabled (see further below). If <code>use</code> is already a pointer type by the presence of a <code>*</code> in the <code>use</code> part, then the default <code>ptruse</code> type is the same as the <code>use</code> type (that is, no double pointer <code>**</code> will be created in this case).</li>
 </ul>
 <p>For example, to map <code>xsd:duration</code> to a <code>long long</code> (<code>LONG64</code>) type that holds millisecond duration values, we can use the custom serializer declared in <code>custom/duration.h</code> by adding the following line to <code>typemap.dat</code>: </p><pre class="fragment">xsd__duration = #import "custom/duration.h"
-</pre><p>Here, we omitted the second field, because <code>xsd__duration</code> is the name that wsdl2h uses to identify and use this type for our code. The third field is omitted to let wsdl2h use <code>xsd__duration *</code> for pointers or <code>std::shared_ptr&lt;xsd__duration&gt;</code> if smart pointers are enabled.</p>
+</pre><p>Here, we omitted the second and third parts, because <code>xsd__duration</code> is the name that wsdl2h uses for this type in our generated code so we should leave the <code>use</code> part unspecified. The third part is omitted to let wsdl2h use <code>xsd__duration *</code> for pointers or <code>std::shared_ptr&lt;xsd__duration&gt;</code> if smart pointers are enabled.</p>
 <p>To map <code>xsd:string</code> to <code>wchar_t*</code> wide strings: </p><pre class="fragment">xsd__string = | wchar_t* | wchar_t*
-</pre><p>Note that the first field is empty, because <code>wchar_t</code> is a C type and does not need to be declared. A <code>ptruse</code> field is given so that we do not end up generating the wrong pointer types, such as <code>wchar_t**</code> and <code>std::shared_ptr&lt;wchar_t&gt;</code>.</p>
-<p>When the auto-generated declaration should be preserved but the <code>use</code> or <code>ptruse</code> fields replaced, then we use an ellipsis for the declaration part: </p><pre class="fragment">prefix__type = ... | use | ptruse
+</pre><p>Note that the first part is empty, because <code>wchar_t</code> is a C type and does not need to be declared. A <code>ptruse</code> part is also defined in this example, but does not need to be because the <code>use</code> part <code>wchar_t*</code> is already a pointer.</p>
+<p>When the auto-generated declaration should be preserved but the <code>use</code> or <code>ptruse</code> parts replaced, then we use an ellipsis for the declaration part: </p><pre class="fragment">prefix__type = ... | use | ptruse
 </pre><p>This is useful to map schema polymorphic types to C types for example, where we need to be able to both handle a base type and its extensions as per schema extensibility. Say we have a base type called ns:base that is extended, then we can remap this to a C type that permits referening the extended types via a <code>void*</code> as follows: </p><pre class="fragment">ns__base = ... | int __type_base; void*
 </pre><p>such that <code>__type_base</code> and <code>void*</code> will be used to (de)serialize any data type, including base and its derived types. The <code>__type_base</code> integer is set to a <code>SOAP_TYPE_T</code> value to indicate what type of data the <code>void*</code> pointer points to.</p>
 <h2><a class="anchor" id="custom"></a>
@@ -342,14 +351,16 @@ xsd:integer</h3>
 <p>The wsdl2h tool maps <code>xsd:integer</code> to a string by default. To map <code>xsd:integer</code> to the 128 bit big int type <code>__int128_t</code>: </p><pre class="fragment">xsd__integer = #import "custom/int128.h"
 </pre><p>The <code>xsd__integer</code> type is an alias of <code>__int128_t</code>.</p>
 <dl class="section warning"><dt>Warning</dt><dd>Beware that the <code>xsd:integer</code> value space of integers is in principle unbounded and values can be of arbitrary length. A value range fault <code>SOAP_TYPE</code> (value exceeds native representation) or <code>SOAP_LENGTH</code> (value exceeds range bounds) will be thrown by the deserializer if the value is out of range.</dd></dl>
-<p>Other XSD integer types that are restrictions of <code>xsd:integer</code>, are <code>xsd:nonNegativeInteger</code> and <code>xsd:nonPositiveInteger</code>, which are further restricted by <code>xsd:positiveInteger</code> and <code>xsd:negativeInteger</code>. To bind these types to <code>__int128_t</code> we should also add the following definitions to <code>typemap.dat</code>: </p><pre class="fragment">xsd__nonNegativeInteger = typedef xsd__integer xsd__nonNegativeInteger 0 :    ;
+<p>Other XSD integer types that are restrictions of <code>xsd:integer</code>, are <code>xsd:nonNegativeInteger</code> and <code>xsd:nonPositiveInteger</code>, which are further restricted by <code>xsd:positiveInteger</code> and <code>xsd:negativeInteger</code>. To bind these types to <code>__int128_t</code> add the following definitions to <code>typemap.dat</code>: </p><pre class="fragment">xsd__nonNegativeInteger = typedef xsd__integer xsd__nonNegativeInteger 0 :    ;
 xsd__nonPositiveInteger = typedef xsd__integer xsd__nonPositiveInteger   : 0  ;
 xsd__positiveInteger    = typedef xsd__integer xsd__positiveInteger    1 :    ;
 xsd__negativeInteger    = typedef xsd__integer xsd__negativeInteger      : -1 ;
-</pre><dl class="section note"><dt>Note</dt><dd>If <code>__int128_t</code> 128 bit integers are not supported on your platform and if it is certain that <code>xsd:integer</code> values are within 64 bit value bounds for your application's use, then you can map this type to <code>LONG64</code>: <pre class="fragment">xsd__integer = typedef LONG64 xsd__integer;
+</pre><p>Or simply uncomment these definitions in <code>typemap.dat</code> when you are using the latest gSOAP releases.</p>
+<dl class="section note"><dt>Note</dt><dd>If <code>__int128_t</code> 128 bit integers are not supported on your platform and if it is certain that <code>xsd:integer</code> values are within 64 bit value bounds for your application's use, then you can map this type to <code>LONG64</code>: <pre class="fragment">xsd__integer = typedef LONG64 xsd__integer;
 </pre></dd>
 <dd>
 Again, a value range fault <code>SOAP_TYPE</code> or <code>SOAP_LENGTH</code> will be thrown by the deserializer if the value is out of range.</dd></dl>
+<p>After running wsdl2h and soapcpp2, compile <code>custom/int128.c</code> with your project.</p>
 <dl class="section see"><dt>See also</dt><dd>Section <a href="#toxsd5">numerical types</a>.</dd></dl>
 <h3><a class="anchor" id="custom-2"></a>
 xsd:decimal</h3>
@@ -358,6 +369,7 @@ xsd:decimal</h3>
 <p>If your system supports <code>&lt;quadmath.h&gt;</code> quadruple precision floating point <code>__float128</code>, you can map <code>xsd:decimal</code> to <code>xsd__decimal</code> that is an alias of <code>__float128</code>: </p><pre class="fragment">xsd__decimal = #import "custom/float128.h"
 </pre><dl class="section warning"><dt>Warning</dt><dd>Beware that <code>xsd:decimal</code> is in principle a decimal value with arbitraty lengths. A value range fault <code>SOAP_TYPE</code> will be thrown by the deserializer if the value is out of range.</dd></dl>
 <p>In the XML payload the special values <code>INF</code>, <code>-INF</code>, <code>NaN</code> represent plus or minus infinity and not-a-number, respectively.</p>
+<p>After running wsdl2h and soapcpp2, compile <code>custom/long_double.c</code> with your project.</p>
 <dl class="section see"><dt>See also</dt><dd>Section <a href="#toxsd5">numerical types</a>.</dd></dl>
 <h3><a class="anchor" id="custom-3"></a>
 xsd:dateTime</h3>
@@ -367,17 +379,21 @@ xsd:dateTime</h3>
 <p>To map <code>xsd:dateTime</code> to <code>xsd__dateTime</code> which is an alias of <code>struct tm</code>: </p><pre class="fragment">xsd__dateTime = #import "custom/struct_tm.h"
 </pre><p>If the limited date range of <code>time_t</code> is not a problem but you want to increase the time precision with fractional seconds, then we suggest to map <code>xsd:dateTime</code> to <code>struct timeval</code>: </p><pre class="fragment">xsd__dateTime = #import "custom/struct_timeval.h"
 </pre><p>If the limited date range of <code>time_t</code> is not a problem but you want to use the C++11 time point type <code>std::chrono::system_clock::time_point</code> (which internally uses <code>time_t</code>): </p><pre class="fragment">xsd__dateTime = #import "custom/chrono_time_point.h"
-</pre><p>Again, we should make sure that the dates will not exceed the date range when using the default <code>time_t</code> binding for <code>xsd:dateTime</code> or when binding <code>xsd:dateTime</code> to <code>struct timeval</code> or to <code>std::chrono::system_clock::time_point</code>. These are safe to use in applications that use <code>xsd:dateTime</code> to record date stamps within a given window. Otherwise, we recommend the <code>struct tm</code> custom serializer. You could even map <code>xsd:dateTime</code> to a plain string (use <code>char*</code> with C and <code>std::string</code> with C++). For example: </p><pre class="fragment">xsd__dateTime = | char*
+</pre><p>Again, we should make sure that the dates will not exceed the date range when using the default <code>time_t</code> binding for <code>xsd:dateTime</code> or when binding <code>xsd:dateTime</code> to <code>struct timeval</code> or to <code>std::chrono::system_clock::time_point</code>. These are safe to use in applications that use <code>xsd:dateTime</code> to record date stamps within a given window. Otherwise, we recommend the <code>struct tm</code> custom serializer.</p>
+<p>After running wsdl2h and soapcpp2, compile <code>custom/struct_tm.c</code> with your project.</p>
+<p>You could even map <code>xsd:dateTime</code> to a plain string (use <code>char*</code> with C and <code>std::string</code> with C++). For example: </p><pre class="fragment">xsd__dateTime = | char*
 </pre><dl class="section see"><dt>See also</dt><dd>Section <a href="#toxsd7">date and time types</a>.</dd></dl>
 <h3><a class="anchor" id="custom-4"></a>
 xsd:date</h3>
 <p>The wsdl2h tool maps <code>xsd:date</code> to a string by default. We can map <code>xsd:date</code> to <code>struct tm</code>: </p><pre class="fragment">xsd__date = #import "custom/struct_tm_date.h"
 </pre><p>The <code>xsd__date</code> type is an alias of <code>struct tm</code>. The serializer ignores the time part and the deserializer only populates the date part of the struct, setting the time to 00:00:00. There is no unreasonable limit on the date range because the year field is stored as an integer (<code>int</code>).</p>
+<p>After running wsdl2h and soapcpp2, compile <code>custom/struct_tm_date.c</code> with your project.</p>
 <dl class="section see"><dt>See also</dt><dd>Section <a href="#toxsd7">date and time types</a>.</dd></dl>
 <h3><a class="anchor" id="custom-5"></a>
 xsd:time</h3>
 <p>The wsdl2h tool maps <code>xsd:time</code> to a string by default. We can map <code>xsd:time</code> to an <code>unsigned long long</code> (<code>ULONG64</code> or <code>uint64_t</code>) integer with microsecond time precision: </p><pre class="fragment">xsd__time = #import "custom/long_time.h"
 </pre><p>This type represents 00:00:00.000000 to 23:59:59.999999, from <code>0</code> to an upper bound of <code>86399999999</code>. A microsecond resolution means that a 1 second increment requires an increment of 1000000 in the integer value. The serializer adds a UTC time zone.</p>
+<p>After running wsdl2h and soapcpp2, compile <code>custom/long_time.c</code> with your project.</p>
 <dl class="section see"><dt>See also</dt><dd>Section <a href="#toxsd7">date and time types</a>.</dd></dl>
 <h3><a class="anchor" id="custom-6"></a>
 xsd:duration</h3>
@@ -387,7 +403,38 @@ xsd:duration</h3>
 <p>Rescaling is done automatically when you add a C++11 <code>std::chrono::nanoseconds</code> value to a <code>std::chrono::system_clock::time_point</code> value. To use <code>std::chrono::nanoseconds</code> as <code>xsd:duration</code>: </p><pre class="fragment">xsd__duration = #import "custom/chrono_duration.h"
 </pre><p>This type can represent 384,307,168 days (2^63 nanoseconds) forwards and backwards in time in increments of 1 ns (1/1,000,000,000 of a second).</p>
 <p>Certain observations with respect to receiving durations in years and months apply to both of these serializer decoders for <code>xsd:duration</code>.</p>
+<p>After running wsdl2h and soapcpp2, compile <code>custom/duration.c</code> with your project.</p>
 <dl class="section see"><dt>See also</dt><dd>Section <a href="#toxsd8">time duration types</a>.</dd></dl>
+<h2><a class="anchor" id="qt"></a>
+Custom Qt serializers for XSD types                                        </h2>
+<p>The gSOAP distribution includes several custom serializers for Qt types. Also Qt container classes are supported, see <a href="#typemap5">the built-in typemap.dat variables $CONTAINER and $POINTER</a>.</p>
+<p>This feature requires gSOAP 2.8.34 or higher and Qt 4.8 or higher.</p>
+<p>Each Qt custom serializer has an interface header file for soapcpp2 and a C++ implementation file to be compiled with your project.</p>
+<p>Other Qt primitive types that are Qt typedefs of C/C++ types do not require a custom serializer.</p>
+<h3><a class="anchor" id="qt-1"></a>
+xsd:string</h3>
+<p>To use Qt strings instead of C++ strings, add the following definition to <code>typemap.dat</code>: </p><pre class="fragment">xsd__string = #import "custom/qstring.h"
+</pre><p>After running wsdl2h and soapcpp2, compile <code>custom/qstring.cpp</code> with your project.</p>
+<h3><a class="anchor" id="qt-2"></a>
+xsd:base64Binary</h3>
+<p>To use Qt byte arrays for <code>xsd:base64Binary</code> instead of the <code>xsd__base64Binary</code> class, add the following definition to <code>typemap.dat</code>: </p><pre class="fragment">xsd__base64Binary = #import "custom/qbytearray_base64.h"
+</pre><p>After running wsdl2h and soapcpp2, compile <code>custom/qbytearray_base64.cpp</code> with your project.</p>
+<h3><a class="anchor" id="qt-3"></a>
+xsd:hexBinary</h3>
+<p>To use Qt byte arrays for <code>xsd:hexBinary</code> instead of the <code>xsd__base64Binary</code> class, add the following definition to <code>typemap.dat</code>: </p><pre class="fragment">xsd__hexBinary = #import "custom/qbytearray_hex.h"
+</pre><p>After running wsdl2h and soapcpp2, compile <code>custom/qbytearray_hex.cpp</code> with your project.</p>
+<h3><a class="anchor" id="qt-4"></a>
+xsd:dateTime</h3>
+<p>To use Qt QDateTime for <code>xsd:dateTime</code>, add the following definition to <code>typemap.dat</code>: </p><pre class="fragment">xsd__dateTime = #import "custom/datetime.h"
+</pre><p>After running wsdl2h and soapcpp2, compile <code>custom/qdatetime.cpp</code> with your project.</p>
+<h3><a class="anchor" id="qt-5"></a>
+xsd:date</h3>
+<p>To use Qt QDate for <code>xsd:date</code>, add the following definition to <code>typemap.dat</code>: </p><pre class="fragment">xsd__date = #import "custom/qdate.h"
+</pre><p>After running wsdl2h and soapcpp2, compile <code>custom/qdate.cpp</code> with your project.</p>
+<h3><a class="anchor" id="qt-6"></a>
+xsd:time</h3>
+<p>To use Qt QDate for <code>xsd:time</code>, add the following definition to <code>typemap.dat</code>: </p><pre class="fragment">xsd__time = #import "custom/qtime.h"
+</pre><p>After running wsdl2h and soapcpp2, compile <code>custom/qtime.cpp</code> with your project.</p>
 <h2><a class="anchor" id="typemap3"></a>
 Class/struct member additions                                        </h2>
 <p>All generated classes and structs can be augmented with additional members such as methods, constructors and destructors, and private members: </p><pre class="fragment">prefix__type = $ member-declaration
@@ -411,7 +458,11 @@ The built-in typemap.dat variables $CONTAINER and $POINTER           </h2>
 ]
 $POINTER = boost::shared_ptr
 </pre><p>The user-defined content between <code>[</code> and <code>]</code> ensures that we include the Boost header files that are needed to support <code>boost::shared_ptr</code> and <code>boost::make_shared</code>.</p>
-<h2><a class="anchor" id="typemap6"></a>
+<p>A Qt container can be used instead of the default <code>std::vector</code>, for example <code>QVector</code>: </p><pre class="fragment">[
+#include &lt;QVector&gt;
+]
+$CONTAINER = QVector
+</pre><h2><a class="anchor" id="typemap6"></a>
 User-defined content                                                 </h2>
 <p>Any other content to be generated by wsdl2h can be included in <code>typemap.dat</code> by enclosing it within brackets <code>[</code> and <code>]</code> anywhere in the <code>typemap.dat</code> file. Each of the two brackets MUST appear at the start of a new line.</p>
 <p>For example, we can add an <code>#import "wsa5.h"</code> to the wsdl2h-generated output as follows: </p><pre class="fragment">[
@@ -831,7 +882,7 @@ Numerical types                                                        </h2>
 String types                                                           </h2>
 <p>String types are mapped to the built-in <code>xsd:string</code> and <code>xsd:QName</code> XSD types.</p>
 <p>The wide strings <code>wchar_t*</code> and <code>std::wstring</code> may contain Unicode that is preserved in the XML value space.</p>
-<p>Strings <code>char*</code> and <code>std::string</code> can only contain extended Latin, but we can store UTF-8 content that is preserved in the XML value space when the <code>struct soap</code> context is initialized with the flag <code>XML_C_UTFSTRING</code>.</p>
+<p>Strings <code>char*</code> and <code>std::string</code> can only contain extended Latin, but we can store UTF-8 content that is preserved in the XML value space when the <code>struct soap</code> context is initialized with the flag <code>SOAP_C_UTFSTRING</code>.</p>
 <dl class="section warning"><dt>Warning</dt><dd>Beware that many XML 1.0 parsers reject all control characters (those between <code>#x1</code> and <code>#x1F</code>) except for <code>#x9</code>, <code>#xA</code>, and <code>#xD</code>. With the newer XML 1.1 version parsers (including gSOAP) you should be fine.</dd></dl>
 <p>The length of a string of a typedef-defined string type can be restricted:</p>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> std::string ns__password 6 : 16;</div>
@@ -2683,7 +2734,7 @@ c++ -I../.. graph.cpp graphC.cpp -o graph -lgsoap++
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Apr 26 2016 15:13:54 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Fri Jul 1 2016 12:22:11 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

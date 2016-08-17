@@ -7,6 +7,12 @@
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #define HAVE_ARPA_INET_H 1
 
+/* Define to 1 if you have the `asctime' function. */
+#define HAVE_ASCTIME 1
+
+/* Define to 1 if you have the `asctime_r' function. */
+#define HAVE_ASCTIME_R 1
+
 /* Define to 1 if you have the <ctype.h> header file. */
 #define HAVE_CTYPE_H 1
 

@@ -168,18 +168,22 @@ root access to do so).
 To build without the default OpenSSL SSL/TLS support, use:
 
 	$ ./configure --disable-ssl
-	$ make
-	$ make install
 
 To build with GNUTLS SSL/TLS support, use:
 
 	$ ./configure --enable-gnutls
-	$ make
-	$ make install
 
 IMPORTANT: the WS-Security WSSE plugin requires OpenSSL and will not build with
 GNUTLS. This limitation is being addressed, so please check future 2.8.x
 releases.
+
+To build with OpenSSL installed in a non-standard directory:
+
+	$ ./configure --with-openssl=DIR
+
+To build with Zlib installed in a non-standard directory:
+
+	$ ./configure --with-zlib=DIR
 
 To configure and build the examples, use the --enable-samples option:
 

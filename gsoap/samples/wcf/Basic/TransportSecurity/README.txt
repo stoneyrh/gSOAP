@@ -99,7 +99,11 @@ namespace ...
 Under Project Properties change the Output type to Console Application to
 generate a service.exe.
 
-Compile and run the WCF service:
+After compiling, run service.exe from the command prompt (this may require
+administrator privileges):
+
+  C:\WF_WCF_Samples\WCF\Basic\Binding\Basic\Http\CS\service\bin\service.exe
+
 
   C:\WF_WCF_Samples\WCF\Basic\Binding\Basic\TransportSecurity\CS\service> bin\service.exe
 

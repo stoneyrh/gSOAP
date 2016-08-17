@@ -101,6 +101,8 @@ To connect a gSOAP client to a WCF service
 Follow instructions to set up a WCF service using the keys and certificates,
 where the server certificate should use the machine's host name or IP.
 
+See gsoap\samples\wcf\Basic\Http\README.txt for help.
+
 In Web.config (or App.config) of the service, change the <message> element:
 
   <bindings>

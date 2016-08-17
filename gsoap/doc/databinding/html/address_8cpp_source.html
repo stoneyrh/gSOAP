@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">address.cpp Source File</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Apr 26 2016</div>
+      <div style="float: right; font-size: 10px;">updated Fri Jul 1 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -120,7 +120,7 @@ $(document).ready(function(){initNavTree('address_8cpp_source.html','');});
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keywordflow">if</span> (fs)</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  {</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    soap-&gt;is = &amp;fs;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="address_h_8h.html#ae60e17837264a1651213754d4ba6a7dd">soap_read__a__address_book</a>(soap, ab) != SOAP_OK)</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="address_h_8h.html#ac147bb20f241fad0d3d72877b869027a">soap_read__a__address_book</a>(soap, ab) != SOAP_OK)</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    { </div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      std::cerr &lt;&lt; <span class="stringliteral">&quot;Error reading address.xml file&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      soap_stream_fault(soap, std::cerr);</div>
@@ -168,100 +168,111 @@ $(document).ready(function(){initNavTree('address_8cpp_source.html','');});
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  a-&gt;<a class="code" href="classa____address.html#a5b7f09a40128fa0ecf6752f15323a431">street</a> = <a class="code" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a>(<span class="stringliteral">&quot;Street&quot;</span>);</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  a-&gt;<a class="code" href="classa____address.html#ae01f2cee8f0d164badd4607712a28fdb">city</a> = <a class="code" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a>(<span class="stringliteral">&quot;City&quot;</span>);</div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  a-&gt;<a class="code" href="classa____address.html#a5217f2e15cd25d9db0d30021b3be06fc">zip</a> = <a class="code" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a>(<span class="stringliteral">&quot;Zip&quot;</span>);</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;  <span class="keywordtype">char</span> *s = <a class="code" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a>(<span class="stringliteral">&quot;Country&quot;</span>);</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;  <span class="comment">// Advanced level: use the generated s2a__ISO_country() to convert string to</span></div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;  <span class="comment">// enum constant</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="address_h_8h.html#a18472cc0f588a6cb566883c564487d8d">soap_s2a__ISO_country</a>(soap, s, &amp;a-&gt;<a class="code" href="classa____address.html#a6be04bb9578933b4ca12213416530096">country</a>) != SOAP_OK)</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    std::cerr &lt;&lt; <span class="stringliteral">&quot;Not a valid country code&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  <span class="keywordflow">if</span> (*(s = <a class="code" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a>(<span class="stringliteral">&quot;Phone&quot;</span>)))</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;  {</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="comment">// Allocate string in engine&#39;s data space:</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    a-&gt;<a class="code" href="classa____address.html#a4807f4b850434a17468d565d42052680">phone</a> = <a class="code" href="address_h_8h.html#a6898f547fe3a350ad81cb25e9e16afe5">soap_new_std__string</a>(soap, -1);</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    *a-&gt;<a class="code" href="classa____address.html#a4807f4b850434a17468d565d42052680">phone</a> = s;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  } </div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <span class="keywordflow">if</span> (*(s = <a class="code" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a>(<span class="stringliteral">&quot;Mobile&quot;</span>)))</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  {</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="comment">// Allocate string in engine&#39;s data space:</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    a-&gt;<a class="code" href="classa____address.html#a5123a98174599abc29bc3fbd8d9bfd42">mobile</a> = <a class="code" href="address_h_8h.html#a6898f547fe3a350ad81cb25e9e16afe5">soap_new_std__string</a>(soap, -1);</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    *a-&gt;<a class="code" href="classa____address.html#a5123a98174599abc29bc3fbd8d9bfd42">mobile</a> = s;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  } </div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;  <span class="comment">// Add contact to address book</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;  ab-&gt;<a class="code" href="class__a____address__book.html#a887e4e7ed594cbfb8f36639c3bde323b">address</a>.push_back(a);</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  std::cout &lt;&lt; std::endl &lt;&lt; <span class="stringliteral">&quot;Contact information added.&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  <span class="comment">// Save updated address book to address.xml</span></div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;  fs.open(<span class="stringliteral">&quot;address.xml&quot;</span>, std::ios::out);</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  <span class="keywordflow">if</span> (!fs)</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  {</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    std::cerr &lt;&lt; <span class="stringliteral">&quot;Cannot create address.xml file&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    exit(1);</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  }</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;  soap-&gt;os = &amp;fs;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="address_h_8h.html#a7982be1327477a912e40fe57fe7f1a71">soap_write__a__address_book</a>(soap, ab) != SOAP_OK)</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;  {</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    std::cerr &lt;&lt; <span class="stringliteral">&quot;Error writing address.xml file&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    soap_stream_fault(soap, std::cerr);</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    exit(1);</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;  }</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;  fs.close();</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  <span class="comment">// Delete instances</span></div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  soap_destroy(soap);</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  <span class="comment">// Delete data</span></div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  soap_end(soap);</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;  <span class="comment">// Free soap struct engine context</span></div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  soap_free(soap);</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;}</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;  <span class="keywordtype">char</span> *s;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;  <span class="keywordflow">do</span> {</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    s = <a class="code" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a>(<span class="stringliteral">&quot;Country&quot;</span>);</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="comment">// Advanced level: use the generated s2a__ISO_country() to convert string to</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="comment">// enum constant</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    soap-&gt;error = SOAP_OK;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="address_h_8h.html#a18472cc0f588a6cb566883c564487d8d">soap_s2a__ISO_country</a>(soap, s, &amp;a-&gt;<a class="code" href="classa____address.html#a6be04bb9578933b4ca12213416530096">country</a>) != SOAP_OK)</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;      std::cerr &lt;&lt; <span class="stringliteral">&quot;Not a valid country code&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;  }</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  <span class="keywordflow">while</span> (soap-&gt;error);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  <span class="keywordflow">if</span> (*(s = <a class="code" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a>(<span class="stringliteral">&quot;Phone&quot;</span>)))</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  {</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="comment">// Allocate string in engine&#39;s data space:</span></div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    a-&gt;<a class="code" href="classa____address.html#a4807f4b850434a17468d565d42052680">phone</a> = <a class="code" href="address_h_8h.html#a6898f547fe3a350ad81cb25e9e16afe5">soap_new_std__string</a>(soap, -1);</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    *a-&gt;<a class="code" href="classa____address.html#a4807f4b850434a17468d565d42052680">phone</a> = s;</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;  } </div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  <span class="keywordflow">if</span> (*(s = <a class="code" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a>(<span class="stringliteral">&quot;Mobile&quot;</span>)))</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  {</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="comment">// Allocate string in engine&#39;s data space:</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    a-&gt;<a class="code" href="classa____address.html#a5123a98174599abc29bc3fbd8d9bfd42">mobile</a> = <a class="code" href="address_h_8h.html#a6898f547fe3a350ad81cb25e9e16afe5">soap_new_std__string</a>(soap, -1);</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    *a-&gt;<a class="code" href="classa____address.html#a5123a98174599abc29bc3fbd8d9bfd42">mobile</a> = s;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  } </div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  <span class="comment">// change soap_s2dateTime to soap_xsd__dateTime when overriding the default xsd:dateTime to time_t mapping</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  <span class="keywordflow">if</span> (*(s = <a class="code" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a>(<span class="stringliteral">&quot;DOB&quot;</span>)))</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordflow">if</span> (soap_s2dateTime(soap, s, a-&gt;<a class="code" href="classa____address.html#a6c0c089e5b274845c2d2c005f22ab8d7">dob</a>) != SOAP_OK)</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;      std::cerr &lt;&lt; <span class="stringliteral">&quot;Not a valid ISO 8601 date time (ignored)&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  soap-&gt;error = SOAP_OK;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;  <span class="comment">// Add contact to address book</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  ab-&gt;<a class="code" href="class__a____address__book.html#a887e4e7ed594cbfb8f36639c3bde323b">address</a>.push_back(a);</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  std::cout &lt;&lt; std::endl &lt;&lt; <span class="stringliteral">&quot;Contact information added.&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;  <span class="comment">// Save updated address book to address.xml</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  fs.open(<span class="stringliteral">&quot;address.xml&quot;</span>, std::ios::out);</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;  <span class="keywordflow">if</span> (!fs)</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;  {</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    std::cerr &lt;&lt; <span class="stringliteral">&quot;Cannot create address.xml file&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    exit(1);</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  }</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  soap-&gt;os = &amp;fs;</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="address_h_8h.html#a6a9bba57f5458257bc73e63febf820b1">soap_write__a__address_book</a>(soap, ab) != SOAP_OK)</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  {</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    std::cerr &lt;&lt; <span class="stringliteral">&quot;Error writing address.xml file&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    soap_stream_fault(soap, std::cerr);</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    exit(1);</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  }</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;  fs.close();</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;</div>
-<div class="line"><a name="l00193"></a><span class="lineno"><a class="line" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">  193</a></span>&#160;<span class="keywordtype">char</span> *<a class="code" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *prompt)</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;{</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">char</span> buf[80];</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  <span class="keywordtype">char</span> *s;</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;  printf(<span class="stringliteral">&quot;%-9s&gt; &quot;</span>, prompt);</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;  fgets(buf, 80, stdin);</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;  <span class="comment">// Strip trailing space</span></div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;  <span class="keywordflow">for</span> (s = buf + strlen(buf) - 1; s &gt; buf; s--)</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;  {</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <span class="keywordflow">if</span> (*s &gt; <span class="charliteral">&#39; &#39;</span>)</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;      <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;  }</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;  s[1] = <span class="charliteral">&#39;\0&#39;</span>;</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;  <span class="comment">// Strip leading space</span></div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;  <span class="keywordflow">for</span> (s = buf; *s; s++)</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;  {</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keywordflow">if</span> (*s &gt; <span class="charliteral">&#39; &#39;</span>)</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;      <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  }</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;  <span class="keywordflow">return</span> s;</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;}</div>
-<div class="ttc" id="address_h_8h_html_ae60e17837264a1651213754d4ba6a7dd"><div class="ttname"><a href="address_h_8h.html#ae60e17837264a1651213754d4ba6a7dd">soap_read__a__address_book</a></div><div class="ttdeci">#define soap_read__a__address_book(soap, data)</div><div class="ttdef"><b>Definition:</b> <a href="address_h_8h_source.html#l00179">addressH.h:179</a></div></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;  <span class="comment">// Delete instances</span></div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;  soap_destroy(soap);</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  <span class="comment">// Delete data</span></div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  soap_end(soap);</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;  <span class="comment">// Free soap struct engine context</span></div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;  soap_free(soap);</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;  <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;}</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;</div>
+<div class="line"><a name="l00203"></a><span class="lineno"><a class="line" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">  203</a></span>&#160;<span class="keywordtype">char</span> *<a class="code" href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *prompt)</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;{</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">char</span> buf[80];</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;  <span class="keywordtype">char</span> *s;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;  printf(<span class="stringliteral">&quot;%-9s&gt; &quot;</span>, prompt);</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;  fgets(buf, 80, stdin);</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;  <span class="comment">// Strip trailing space</span></div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;  <span class="keywordflow">for</span> (s = buf + strlen(buf) - 1; s &gt; buf; s--)</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;  {</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    <span class="keywordflow">if</span> (*s &gt; <span class="charliteral">&#39; &#39;</span>)</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;      <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;  }</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;  s[1] = <span class="charliteral">&#39;\0&#39;</span>;</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  <span class="comment">// Strip leading space</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  <span class="keywordflow">for</span> (s = buf; *s; s++)</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;  {</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <span class="keywordflow">if</span> (*s &gt; <span class="charliteral">&#39; &#39;</span>)</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;      <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;  }</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;  <span class="keywordflow">return</span> s;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;}</div>
 <div class="ttc" id="classa____address_html_a6be04bb9578933b4ca12213416530096"><div class="ttname"><a href="classa____address.html#a6be04bb9578933b4ca12213416530096">a__address::country</a></div><div class="ttdeci">enum a__ISO_country country</div><div class="ttdoc">Element country of type "":ISO-country. </div><div class="ttdef"><b>Definition:</b> <a href="address_8h_source.html#l00188">address.h:188</a></div></div>
 <div class="ttc" id="classa____address_html_a9f433c571df3f6a9d1e0d558b97419e2"><div class="ttname"><a href="classa____address.html#a9f433c571df3f6a9d1e0d558b97419e2">a__address::ID</a></div><div class="ttdeci">int ID</div><div class="ttdoc">Attribute ID of type xs:int. </div><div class="ttdef"><b>Definition:</b> <a href="address_8h_source.html#l00196">address.h:196</a></div></div>
-<div class="ttc" id="address_8cpp_html_ab9e04a47deea0760ed07e2e62023e890"><div class="ttname"><a href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a></div><div class="ttdeci">char * user_input(const char *prompt)</div><div class="ttdoc">A quick-and-dirty user input function: reads string from stdin (up to 80 chars), trims leading and tr...</div><div class="ttdef"><b>Definition:</b> <a href="address_8cpp_source.html#l00193">address.cpp:193</a></div></div>
+<div class="ttc" id="address_8cpp_html_ab9e04a47deea0760ed07e2e62023e890"><div class="ttname"><a href="address_8cpp.html#ab9e04a47deea0760ed07e2e62023e890">user_input</a></div><div class="ttdeci">char * user_input(const char *prompt)</div><div class="ttdoc">A quick-and-dirty user input function: reads string from stdin (up to 80 chars), trims leading and tr...</div><div class="ttdef"><b>Definition:</b> <a href="address_8cpp_source.html#l00203">address.cpp:203</a></div></div>
 <div class="ttc" id="address_8cpp_html_ae66f6b31b5ad750f1fe042a706a4e3d4"><div class="ttname"><a href="address_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a></div><div class="ttdeci">int main()</div><div class="ttdoc">Address book application: reads address.xml, displays its content, prompts the user for new contact...</div><div class="ttdef"><b>Definition:</b> <a href="address_8cpp_source.html#l00081">address.cpp:81</a></div></div>
-<div class="ttc" id="classa____address_html_a364b94f01428798ad21942b10a636df2"><div class="ttname"><a href="classa____address.html#a364b94f01428798ad21942b10a636df2">a__address::soap_default</a></div><div class="ttdeci">virtual void soap_default(struct soap *)</div></div>
-<div class="ttc" id="address_h_8h_html_a7982be1327477a912e40fe57fe7f1a71"><div class="ttname"><a href="address_h_8h.html#a7982be1327477a912e40fe57fe7f1a71">soap_write__a__address_book</a></div><div class="ttdeci">#define soap_write__a__address_book(soap, data)</div><div class="ttdef"><b>Definition:</b> <a href="address_h_8h_source.html#l00173">addressH.h:173</a></div></div>
+<div class="ttc" id="classa____address_html_a364b94f01428798ad21942b10a636df2"><div class="ttname"><a href="classa____address.html#a364b94f01428798ad21942b10a636df2">a__address::soap_default</a></div><div class="ttdeci">virtual void soap_default(struct soap *)</div><div class="ttdoc">(Re)set members to default values </div></div>
 <div class="ttc" id="classa____address_html_a5b7f09a40128fa0ecf6752f15323a431"><div class="ttname"><a href="classa____address.html#a5b7f09a40128fa0ecf6752f15323a431">a__address::street</a></div><div class="ttdeci">std::string street</div><div class="ttdoc">Element street of type xs:string. </div><div class="ttdef"><b>Definition:</b> <a href="address_8h_source.html#l00182">address.h:182</a></div></div>
-<div class="ttc" id="address_h_8h_html_a6898f547fe3a350ad81cb25e9e16afe5"><div class="ttname"><a href="address_h_8h.html#a6898f547fe3a350ad81cb25e9e16afe5">soap_new_std__string</a></div><div class="ttdeci">std::string * soap_new_std__string(struct soap *soap, int n=-1)</div><div class="ttdef"><b>Definition:</b> <a href="address_h_8h_source.html#l00155">addressH.h:155</a></div></div>
+<div class="ttc" id="address_h_8h_html_ac147bb20f241fad0d3d72877b869027a"><div class="ttname"><a href="address_h_8h.html#ac147bb20f241fad0d3d72877b869027a">soap_read__a__address_book</a></div><div class="ttdeci">int soap_read__a__address_book(struct soap *soap, _a__address_book *p)</div><div class="ttdef"><b>Definition:</b> <a href="address_h_8h_source.html#l00270">addressH.h:270</a></div></div>
+<div class="ttc" id="address_h_8h_html_a6898f547fe3a350ad81cb25e9e16afe5"><div class="ttname"><a href="address_h_8h.html#a6898f547fe3a350ad81cb25e9e16afe5">soap_new_std__string</a></div><div class="ttdeci">std::string * soap_new_std__string(struct soap *soap, int n=-1)</div><div class="ttdef"><b>Definition:</b> <a href="address_h_8h_source.html#l00179">addressH.h:179</a></div></div>
 <div class="ttc" id="classa____address_html_a4807f4b850434a17468d565d42052680"><div class="ttname"><a href="classa____address.html#a4807f4b850434a17468d565d42052680">a__address::phone</a></div><div class="ttdeci">std::string * phone</div><div class="ttdoc">Element phone of type xs:string. </div><div class="ttdef"><b>Definition:</b> <a href="address_8h_source.html#l00190">address.h:190</a></div></div>
-<div class="ttc" id="address_h_8h_html_af0c17e275bdb045e9f352a4f01196ccc"><div class="ttname"><a href="address_h_8h.html#af0c17e275bdb045e9f352a4f01196ccc">soap_new__a__address_book</a></div><div class="ttdeci">_a__address_book * soap_new__a__address_book(struct soap *soap, int n=-1)</div><div class="ttdef"><b>Definition:</b> <a href="address_h_8h_source.html#l00184">addressH.h:184</a></div></div>
+<div class="ttc" id="address_h_8h_html_af0c17e275bdb045e9f352a4f01196ccc"><div class="ttname"><a href="address_h_8h.html#af0c17e275bdb045e9f352a4f01196ccc">soap_new__a__address_book</a></div><div class="ttdeci">_a__address_book * soap_new__a__address_book(struct soap *soap, int n=-1)</div><div class="ttdef"><b>Definition:</b> <a href="address_h_8h_source.html#l00232">addressH.h:232</a></div></div>
 <div class="ttc" id="classa____address_html"><div class="ttname"><a href="classa____address.html">a__address</a></div><div class="ttdoc">An address information item. </div><div class="ttdef"><b>Definition:</b> <a href="address_8h_source.html#l00177">address.h:177</a></div></div>
 <div class="ttc" id="class__a____address__book_html_a887e4e7ed594cbfb8f36639c3bde323b"><div class="ttname"><a href="class__a____address__book.html#a887e4e7ed594cbfb8f36639c3bde323b">_a__address_book::address</a></div><div class="ttdeci">std::vector&lt; a__address * &gt; address</div><div class="ttdoc">Vector of a__address* with length 0..unbounded. </div><div class="ttdef"><b>Definition:</b> <a href="address_8h_source.html#l00209">address.h:209</a></div></div>
-<div class="ttc" id="address_h_8h_html_a6b1c85ee0e88ec0040a36d0619361487"><div class="ttname"><a href="address_h_8h.html#a6b1c85ee0e88ec0040a36d0619361487">soap_new_a__address</a></div><div class="ttdeci">a__address * soap_new_a__address(struct soap *soap, int n=-1)</div><div class="ttdef"><b>Definition:</b> <a href="address_h_8h_source.html#l00213">addressH.h:213</a></div></div>
+<div class="ttc" id="address_h_8h_html_a6b1c85ee0e88ec0040a36d0619361487"><div class="ttname"><a href="address_h_8h.html#a6b1c85ee0e88ec0040a36d0619361487">soap_new_a__address</a></div><div class="ttdeci">a__address * soap_new_a__address(struct soap *soap, int n=-1)</div><div class="ttdef"><b>Definition:</b> <a href="address_h_8h_source.html#l00287">addressH.h:287</a></div></div>
 <div class="ttc" id="classa____address_html_ae6be3cceb0127ba057133ad57b50ebe6"><div class="ttname"><a href="classa____address.html#ae6be3cceb0127ba057133ad57b50ebe6">a__address::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">Element name of type xs:string. </div><div class="ttdef"><b>Definition:</b> <a href="address_8h_source.html#l00180">address.h:180</a></div></div>
 <div class="ttc" id="address_h_8h_html_a18472cc0f588a6cb566883c564487d8d"><div class="ttname"><a href="address_h_8h.html#a18472cc0f588a6cb566883c564487d8d">soap_s2a__ISO_country</a></div><div class="ttdeci">SOAP_FMAC3S int SOAP_FMAC4S soap_s2a__ISO_country(struct soap *, const char *, enum a__ISO_country *)</div></div>
 <div class="ttc" id="classa____address_html_ae01f2cee8f0d164badd4607712a28fdb"><div class="ttname"><a href="classa____address.html#ae01f2cee8f0d164badd4607712a28fdb">a__address::city</a></div><div class="ttdeci">std::string city</div><div class="ttdoc">Element city of type xs:string. </div><div class="ttdef"><b>Definition:</b> <a href="address_8h_source.html#l00184">address.h:184</a></div></div>
 <div class="ttc" id="address_h_8h_html_a266586667e1bc9e9959da65db937e599"><div class="ttname"><a href="address_h_8h.html#a266586667e1bc9e9959da65db937e599">soap_a__ISO_country2s</a></div><div class="ttdeci">SOAP_FMAC3S const char *SOAP_FMAC4S soap_a__ISO_country2s(struct soap *, enum a__ISO_country)</div></div>
 <div class="ttc" id="classa____address_html_a5123a98174599abc29bc3fbd8d9bfd42"><div class="ttname"><a href="classa____address.html#a5123a98174599abc29bc3fbd8d9bfd42">a__address::mobile</a></div><div class="ttdeci">std::string * mobile</div><div class="ttdoc">Element mobile of type xs:string. </div><div class="ttdef"><b>Definition:</b> <a href="address_8h_source.html#l00192">address.h:192</a></div></div>
+<div class="ttc" id="address_h_8h_html_a6a9bba57f5458257bc73e63febf820b1"><div class="ttname"><a href="address_h_8h.html#a6a9bba57f5458257bc73e63febf820b1">soap_write__a__address_book</a></div><div class="ttdeci">int soap_write__a__address_book(struct soap *soap, _a__address_book const *p)</div><div class="ttdef"><b>Definition:</b> <a href="address_h_8h_source.html#l00259">addressH.h:259</a></div></div>
 <div class="ttc" id="class__a____address__book_html"><div class="ttname"><a href="class__a____address__book.html">_a__address_book</a></div><div class="ttdoc">The root element of the address book schema. </div><div class="ttdef"><b>Definition:</b> <a href="address_8h_source.html#l00206">address.h:206</a></div></div>
+<div class="ttc" id="classa____address_html_a6c0c089e5b274845c2d2c005f22ab8d7"><div class="ttname"><a href="classa____address.html#a6c0c089e5b274845c2d2c005f22ab8d7">a__address::dob</a></div><div class="ttdeci">time_t * dob</div><div class="ttdoc">Element dob of type xs:dateTime. </div><div class="ttdef"><b>Definition:</b> <a href="address_8h_source.html#l00194">address.h:194</a></div></div>
 <div class="ttc" id="classa____address_html_a5217f2e15cd25d9db0d30021b3be06fc"><div class="ttname"><a href="classa____address.html#a5217f2e15cd25d9db0d30021b3be06fc">a__address::zip</a></div><div class="ttdeci">std::string zip</div><div class="ttdoc">Element zip of type xs:string. </div><div class="ttdef"><b>Definition:</b> <a href="address_8h_source.html#l00186">address.h:186</a></div></div>
 <div class="ttc" id="address_h_8h_html"><div class="ttname"><a href="address_h_8h.html">addressH.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -271,7 +282,7 @@ $(document).ready(function(){initNavTree('address_8cpp_source.html','');});
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Apr 26 2016 15:13:54 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Fri Jul 1 2016 12:22:11 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>
