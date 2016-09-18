@@ -965,8 +965,8 @@ Version 2.8.26 (11/30/2015)
 - Added floating point exclusive range bounds notation to gSOAP header file syntax, with `<` on the side of `:` for an exclusive bound (`min <: max` makes `min` exclusive, `min <:< max` makes both exclusive, and `min :< max` makes `max` exclusive), while keeping `min : max` for inclusive bounds.
 - Added C++11 syntax for struct/class member initialization with `{ initval }`, which has an identical effect as declaring members with `= initval` initializers. This works in C and C++.
 - Added HTTP2 support to WinInet plugin.
-- Expanded [XML-RPC and JSON documentation](http://www.genivia.com/doc/xml-rpc-json/html).
-- Expanded [Data Bindings documentation](http://www.genivia.com/doc/databinding/html).
+- Expanded [XML-RPC and JSON documentation](https://www.genivia.com/doc/xml-rpc-json/html).
+- Expanded [Data Bindings documentation](https://www.genivia.com/doc/databinding/html).
 - Improved wsdl2h schema import processing when WSDL and XSD have the same namespace and *`xs:import`* is used instead of *`xs:include`* to populate the schema.
 - Improved wsdl2h output for integer enumeration constants, omits trailing underscores for pseudo-numeric enum constants, updated soapcpp2 to accept duplicate enum constants in different enum lists when their values are the same.
 - Fixed `soap_del_string` crash in `char*` string deletion.
@@ -984,7 +984,7 @@ Version 2.8.27 (12/7/2015)
 Version 2.8.28 (02/01/2016)
 ---
 - Added new **domcpp** code generator that takes an XML sample document and renders it in XML DOM API code for C or C++. Can also convert XPath to XML DOM API code with option `-p`. The domcpp tool is located in `gsoap/samples/dom` with the XML DOM samples.
-- Added many new API functions to a fully redisigned XML DOM API v5 for C and C++ with new DOM API documentation.  The redesigned DOM API v5 is mostly backward compatible to DOM API v4, but with DOM string `data` members changed to `text` members.  Many API functions are added to define a clean interface without having to use the DOM structure data members.  The `soap_dom_next_element()` function now takes a second parameter that is an element pointer to stop deep traversal at (use NULL for old behavior).  See updated [XML DOM and XPath](http://www.genivia.com/doc/dom/html) documentation for details.
+- Added many new API functions to a fully redisigned XML DOM API v5 for C and C++ with new DOM API documentation.  The redesigned DOM API v5 is mostly backward compatible to DOM API v4, but with DOM string `data` members changed to `text` members.  Many API functions are added to define a clean interface without having to use the DOM structure data members.  The `soap_dom_next_element()` function now takes a second parameter that is an element pointer to stop deep traversal at (use NULL for old behavior).  See updated [XML DOM and XPath](https://www.genivia.com/doc/dom/html) documentation for details.
 - Added C serialization to/from strings with new C `soap` struct members `const char *soap::is` input string to parse from and `const char **soap:os` pointer to string that is set by the engine to point to the output.  Note that C++ code is unchanged and the `soap::is` and `soap::os` are still members pointers to `istream` and `ostream` streams (use `std::stringstream` for input/output from/to strings).
 - Added JSON API C function `set_size` to set/change array sizes and JSON API C function `set_struct` to create an empty JSON object.
 - Improved jsoncpp command line tool to generate JSONPath C code and improved overall to generate more compact code.
@@ -999,7 +999,7 @@ Version 2.8.28 (02/01/2016)
 
 Version 2.8.29 (02/24/2016)
 ---
-- Added new soapcpp2 option `-r` to generate a soapReadme.md report that summarizes the input .h file information, the serializable C/C++ types, the services, and the generated code. Use a markdown converter to browse or download the free readmeviewer.html from http://www.genivia.com/files/readmeviewer.html.zip to view the soapReadme.md report in a browser.
+- Added new soapcpp2 option `-r` to generate a soapReadme.md report that summarizes the input .h file information, the serializable C/C++ types, the services, and the generated code. Use a markdown converter to browse or download the free readmeviewer.html from https://www.genivia.com/files/readmeviewer.html.zip to view the soapReadme.md report in a browser.
 - Added new wsdl2h option `-M` to suppress error "must understand element with wsdl:required='true'".
 - Upgraded HTTP digest authentication `httpda` plugin to 2.0 to support RFC7616 "HTTP Digest Access Authentication" with SHA2 (replacing MD5) that is compatible with RFC2617; compile and link upgraded `plugin/httpda.c` with `plugin/smdevp.c` instead of `plugin/md5evp.c`.
 - Updated wsdl2h HTTPS-enabled build steps to use upgraded `httpda` plugin.
@@ -1014,7 +1014,7 @@ Version 2.8.29 (02/24/2016)
 Version 2.8.30 (04/02/2016)
 ---
 
-- Added backtick XML tag name syntax to interface files for soapcpp2, which allows for the overriding of the translated tag names of struct/class members and service operation parameters, see the [Data Bindings documentation](http://www.genivia.com/doc/databinding/html#toxsd9-5). Older gSOAP versions do not support the backtick tag in the generated WSDL and schemas (messages are OK).
+- Added backtick XML tag name syntax to interface files for soapcpp2, which allows for the overriding of the translated tag names of struct/class members and service operation parameters, see the [Data Bindings documentation](https://www.genivia.com/doc/databinding/html#toxsd9-5). Older gSOAP versions do not support the backtick tag in the generated WSDL and schemas (messages are OK).
 - Added macro `SOAP_MAXLEVEL` to trigger `SOAP_LEVEL` error when XML nesting level of inbound XML exceeds the value of `SOAP_MAXLEVEL`.  Default value is 10000.  Redefine `SOAP_MAXLEVEL` as needed, with lower values to restrict XML nesting depth for receivers to accept.
 - Added macro `SOAP_MAXLENGTH` to trigger `SOAP_LENGTH` content length error when string content in inbound XML exceeds the value of `SOAP_MAXLENGTH`.  Applies to strings that are potentially unbounded, i.e. that are not already constrained by XML validation maxLength constaints (which could be larger than `SOAP_MAXLENGTH`).  Default value is zero (0) which means that string length is unconstrained if XML validation maxLength is not given.  Redefine `SOAP_MAXLENGTH` as needed, with lower values to restrict string lengths for receivers to accept.
 - Added macro `SOAP_MAXOCCURS` to trigger `SOAP_OCCURS` content error when array and container lengths exceed the value of `SOAP_MAXOCCURS`.  Must be greater than zero (0).  Default value is 100000.  Redefine `SOAP_MAXOCCURS` as needed, with lower values to restrict array and container lengths for receivers to accept.
@@ -1037,7 +1037,7 @@ Version 2.8.31 (05/1/2016)
 - Improved strengthening of `SOAP_XML_STRICT` and the soapcpp2 `-s` flag to reject all extra (non-deserializable) XML and character data by the parser and deserializers.
 - Improved client-side certificate checking (DNS or IP, and wildcards).
 - Improved soapcpp2 option `-t` and `//gsoap ns schema typed: y` directive that force the addition of *`xsi:type`* attributes to XML content except for types whose type names are prefixed with an underscore (i.e. root elements w/o type as per wsdl2h data bindings rules).
-- Fixed crash with nested dynamic arrays in C++ (C is fine) i.e. classes and structs with `__ptr` and `__size` members as arrays of elements, where these arrays contain nested dynamic arrays.  [See here for patch](http://www.genivia.com/advisory.html).
+- Fixed crash with nested dynamic arrays in C++ (C is fine) i.e. classes and structs with `__ptr` and `__size` members as arrays of elements, where these arrays contain nested dynamic arrays.  [See here for patch](https://www.genivia.com/advisory.html).
 - Fixed typedef of `xsd__hexBinary` struct/class, which should map to hexBinary but instead mapped to base64Binary.
 - Fixed `nc` and `cnonce`, which are removed when `qop` directive is absent in HTTP digest authentication as per RFC2617.
 - Fixed the digest authentication plugin from blocking basic authentication.
@@ -1065,10 +1065,10 @@ Version 2.8.33 (06/14/2016)
 - Fixed validation of *`simpleType/restriction/length`* when restriction base is a list that is mapped to a string.
 - Fixed validation of *`simpleType/restriction`* with base type string length bounds restrictions.
 
-Version 2.8.34 (08/17/2016) {#latest}
+Version 2.8.34 (08/17/2016)
 ---
 
-- Added custom serializers for QT primitive types and containers.  This serializes many QT types directly in XML.  The QT types to use for XSD types are specified in the typemap.dat.  See the updated gsoap/typemap.dat file in the distribution package and the updated [databindings](http://www.genivia.com/doc/databinding/html) documentation for details.
+- Added custom serializers for QT primitive types and QT containers.  This serializes many QT types directly in XML.  The QT types to use for XSD types are specified in the typemap.dat.  See the updated gsoap/typemap.dat file in the distribution package and the updated [databindings](https://www.genivia.com/doc/databinding/html) documentation for details.
 - Added HTTP server session management plugin to manage server-side session cookies.
 - Added basic common WADL support to wsdl2h to generate code for WADL REST XML applications.
 - Improved client-side URL query generation and support for URL templates for REST operations.
@@ -1081,5 +1081,14 @@ Version 2.8.34 (08/17/2016) {#latest}
 - Fixed WS-Security interoperability issues, fixes issues with XML encryption. Token handler callback has new parameters to pass the key data of SecurityTokenReference/KeyIdentifier.
 - Fixed the internal `feltbegout` and `feltendout` callbacks: when set no longer emits XML and (alternative) output is expected to be emitted by these callbacks.
 
-[![To top](http://www.genivia.com/images/go-up.png) To top](changelog.html)
+Version 2.8.35 (09/19/2016) {#latest}
+---
+
+- Added auto-generation of new C functions `T * soap_new_T(struct soap*, int n)` to allocate and default initialize one (or more with `n>1`) value(s) of type `T`. Uses `soap_malloc(soap, n * sizeof(T))` and applies `soap_default_T(struct soap*, T*)` to each value allocated.
+- Added WS-Trust wst extensible framework with SAML 1.0/2.0  tokens, PSHA1 algorithm, and an example WS-Trust client and server to request, create, sign, and verify SAML 2.0 tokens.
+- Changed `soap_new_block` to `soap_alloc_block` in stdsoap2.h and in the gsoap libs to prevent potential name clashes with generated code for a `block` type.
+- Improved UDP connectivity with WS-Discovery to reuse current socket connection, i.e. preventing premature socket close when `soap->socket` is the `soap->master` socket.
+- Fixed wsdl2h option `-u` to prevent a deserialization issue that occurs in the specific case of an *`<xs:any>`* within a *`<xs:choice maxOccurs="unbounded">`*.
+
+[![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

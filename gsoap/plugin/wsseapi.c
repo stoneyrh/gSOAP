@@ -73,21 +73,33 @@ To use the wsse plugin:
    header blocks for XML signature and encryption.
 -# Run soapcpp2 on the header file produced by wsdl2h.
 -# (Re-)compile stdsoap2.c/pp, dom.c/pp, smdevp.c, mecevp.c, wsseapi.c and the
-   generated source files with the -DWITH_DOM and -DWITH_OPENSSL compile flags
-   set. The smdevp.c, mecevp.c, and wsseapi.c files are located in the 'plugin'
-   directory.
+   generated source files with the `-DWITH_DOM` and `-DWITH_OPENSSL` compiler
+   flags set. The smdevp.c, mecevp.c, and wsseapi.c files are located in the
+   'plugin' directory.
 -# Use the wsse plugin API functions described below to add and verify
    Security headers, sign and verify messages, and to encrypt/decrypt messages.
 
-An example wsse client/server application can be found in gsoap/samples/wsse.
+An example WS-Security client/server application can be found in gsoap/samples/wsse.
 
-The wsse engine is thread safe. However, if HTTPS is required please follow the
-instructions in Section @ref wsse_11 to ensure thread-safety of WS-Security
-with HTTPS.
+Another example WS-Security client/server application that is designed to
+interoperate with WCF can be found in gsoap/samples/WCF/Basic/MessageSecurity.
 
-The wsse API is located in:
+@warning
+The security token handler callback function parameters have changed in 2.8.34
+and greater with the addition of KeyIdentifier information `keyid` and
+`keyidlen`.  To register your own security token handler function with the
+plugin, make sure that your functions matches these function parameters:
+@code
+    const void *security_token_handler(struct soap *soap, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen);
+@endcode
 
-- `gsoap/plugin/wsseapi.h` wsse API.
+The wsse engine is thread safe. However, if HTTPS is required then please
+follow the instructions in Section @ref wsse_11 to ensure thread-safety of
+WS-Security with HTTPS.
+
+The wsse API code is implemented in:
+
+- `gsoap/plugin/wsseapi.h` wsse API declarations.
 - `gsoap/plugin/wsseapi.c` wsse API for C and C++.
 
 You will also need:
@@ -98,8 +110,9 @@ You will also need:
 - if you have zlib installed, compile all sources also with `-DWITH_GZIP`.
 - link with `-lssl -lcrypto -lz -gsoapssl++` (or `-lgsoapssl` for C, or compile `stdsoap2.cpp` for C++ and `stdsoap2.c` for C).
 
-The gSOAP header file for soapcpp2 should import wsse.h (or the older 2002
-version wsse2.h):
+The gSOAP header file (generated with wsdl2h, and containing the data binding
+interface for soapcpp2) should import wsse.h (or the older 2002 version
+wsse2.h):
 
 @code
     #import "wsse.h"
@@ -216,12 +229,16 @@ To add a user name token with password digest, use:
 @endcode
 
 Although the password string is passed to this function, it is not rendered in
-XML or stored in a message log. It has been argued that this approach adopted
-by the WS-Security protocol is still vulnerable since the application retrieves
-the password in text form requiring a database to store passwords in clear
-text. However, a digest algorithm can be used to hash the passwords and store
-their digests instead, which eliminates the need to store clear-text passwords.
-Note that this is a common approach adopted by Unix for decades.
+XML or stored in a message log. Only digests are compared on both sides, not
+the passwords. This authentication method adds a timestamp and nonce to prevent
+message replay attacks.
+
+It has been argued that this approach adopted by the WS-Security protocol is
+still vulnerable since the application retrieves the password in text form
+requiring a database to store passwords in clear text. However, a digest
+algorithm can be used to hash the passwords and store their digests instead,
+which eliminates the need to store clear-text passwords. This is a common
+approach adopted by Unix for decades.
 
 By setting the `Id` value to a unique string, the user name token is also
 digitally signed by the signature engine further preventing tampering with its
@@ -241,7 +258,10 @@ authorize a request (e.g. within a Web service operation), use:
       const char *username = soap_wsse_get_Username(soap);
       const char *password;
       if (!username)
+      {
+        soap_wsse_delete_Security(soap); // remove old security headers
         return soap->error; // no username: return FailedAuthentication (from soap_wsse_get_Username)
+      }
       password = ...; // lookup password of username
       if (soap_wsse_verify_Password(soap, password))
       {
@@ -316,7 +336,8 @@ by the wsse plugin's signature verification engine or manually as follows:
     X509 *cert = soap_wsse_get_BinarySecurityTokenX509(soap, "Id");
 @endcode
 
-where `Id` is the identification string of the binary security token or NULL.
+where `Id` is the identification string of the binary security token or NULL to
+get the first found in the Security header.
 
 The X509 certificate returned by this function should be freed with `X509_free`
 to deallocate the certificate data:
@@ -361,43 +382,166 @@ Other types of binary security tokens can be added to the Security header block 
     soap_wsse_add_BinarySecurityToken(soap, "Id", "valueType", data, datalen);
 @endcode
 
-@section wsse_6_4 XML Tokens
+@section wsse_6_4 SAML and Other Tokens
 
-The use and processing rules for XML tokens such as SAML assertions is specific
-to an application.  The wsse plugin does not automate the use of XML tokens.
-The developer is encouraged to generate code for the SAML schema with wsdl2h
-and add the necessary assertions to the Security header block:
-
-@code
-typedef struct _wsse__Security
-{       struct _wsu__Timestamp*                 wsu__Timestamp;
-        struct _wsse__UsernameToken*            UsernameToken;
-        struct _wsse__BinarySecurityToken*      BinarySecurityToken;
-        struct _saml__Assertion*                saml__Assertion; // added
-        struct xenc__EncryptedKeyType*          xenc__EncryptedKey;
-        struct ds__SignatureType*               ds__Signature;
-        @char*                                  SOAP_ENV__actor;
-        @char*                                  SOAP_ENV__role;
-} _wsse__Security;
-@endcode
-
-Alternatively, a DOM can be used to store and retrieve XML tokens:
+The use and processing rules for tokens such as SAML assertions is specific to
+an application.  SAML 1.0 and 2.0 tokens are supported with the following
+functions to retrieve them from Security header blocks:
 
 @code
-#import "dom.h"
-typedef struct _wsse__Security
-{       struct _wsu__Timestamp*                 wsu__Timestamp;
-        struct _wsse__UsernameToken*            UsernameToken;
-        struct _wsse__BinarySecurityToken*      BinarySecurityToken;
-        struct _saml__Assertion*                saml__Assertion; // added
-        struct xenc__EncryptedKeyType*          xenc__EncryptedKey;
-        struct ds__SignatureType*               ds__Signature;
-        int                                     __size;
-        xsd__anyType*                           any;
-        @char*                                  SOAP_ENV__actor;
-        @char*                                  SOAP_ENV__role;
-} _wsse__Security;
+    saml1__AssertionType *assertion1 = soap_wsse_get_saml1(soap);
 @endcode
+
+@code
+    saml2__AssertionType *assertion2 = soap_wsse_get_saml2(soap);
+@endcode
+
+The pointers returned are non-NULL when these tokens are present.  You can
+verify that a token is signed by the signature of the Security header with:
+
+@code
+    saml2__AssertionType *assertion2 = soap_wsse_get_saml2(soap);
+    if (!assertion2 || soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_saml2, "Assertion") == 0)
+      ... error // no Assertion or Assertion not signed (zero Assertion elements signed)
+@endcode
+
+If the SAML token contains a signature and/or time range conditions then you
+should verify that the SAML token is valid after receiving it in a Security
+header block of a WS-Security message:
+
+@code
+    time_t now = time(NULL);
+    if (saml2->saml2__Conditions)
+    {
+      if (saml2->saml2__Conditions->NotBefore && *saml2->saml2__Conditions->NotBefore > now)
+        ... error // not valid yet
+      if (saml2->saml2__Conditions->NotOnOrAfter && *saml2->saml2__Conditions->NotOnOrAfter <= now)
+        ... error // expired
+    }
+    if (saml2->ds__Signature)
+      if (soap_wsse_verify_with_signature(soap, saml2->ds__Signature))
+        ... error // Assertion has signature but token is invalid
+@endcode
+
+The above assumes that a WS-Security message was received that was signed and
+decrypted (when applicable).
+
+To verify a SAML token that was created in memory with
+`int soap_wsse_add_saml1(struct soap*, const char *id)` or with
+`int soap_wsse_add_saml2(struct soap*, const char *id)` (see further below) or
+verify a SAML token that was received in a
+non-WS-Security message as XML payload, use the
+`int soap_wsse_verify_saml1(struct soap*, saml1__AssertionType *saml1)` or
+`int soap_wsse_verify_saml1(struct soap*, saml1__AssertionType *saml1)` function:
+
+@code
+    if (soap_wsse_verify_saml2(soap, saml2))
+      ... // error
+@endcode
+
+To add SAML 1.0 or SAML 2.0 assertions to the Security header block:
+
+@code
+    time_t now = time(NULL);
+    saml1__AssertionType *assertion1 = soap_wsse_add_saml1(soap, "SAML1");
+    assertion1->IssueInstant = now;
+    assertion1->Issuer = (char*)"MyCompany";
+    ...
+@endcode
+
+@code
+    time_t now = time(NULL);
+    saml2__AssertionType *assertion2 = soap_wsse_add_saml2(soap, "SAML2");
+    assertion2->IssueInstant = now;
+    assertion2->saml2__Issuer = (struct saml2__NameIDType*)soap_malloc(soap, sizeof(struct saml2__NameIDType));
+    soap_default_saml2__NameIDType(soap, assertion2->saml2__Issuer);
+    assertion2->saml2__Issuer->__item = (char*)"MyCompany";
+    ...
+@endcode
+
+The code shown above adds an empty SAML token to the Security header block
+after which the SAML assertion issuer, subject, conditions, statements, and
+attributes should be set.  Once these are set, the assertion can be signed
+with a ds:Signature and X509 certificate added to the assertion to create an
+enveloped signature:
+
+@code
+    EVP_PKEY *rsa_private_key;
+    X509 *cert;
+    ...
+    saml2__AssertionType *assertion2 = soap_wsse_add_saml2(soap, "SAML2");
+    ... // set SAML issuer, subject, conditions, statements, and attributes
+    if (soap_wsse_sign_saml2(soap, assertion2, SOAP_SMD_SIGN_RSA_SHA256, private_key, 0, cert))
+      ... error // could not sign and/or add cert to X509Data
+@endcode
+
+The private key and certificate values can be obtained as shown in Section
+@ref wsse_8_2a.
+
+For implementing other types of tokens, you are encouraged to modify the
+import/wsse.h file to add more tokens to the `_wsse__Security` header block:
+
+@code
+    struct somens__SomeTokenType { @char *wsu__Id; ... };
+
+    typedef struct _wsse__Security
+    {       ...
+            struct saml1__AssertionType*            saml1__Assertion;
+            struct saml2__AssertionType*            saml2__Assertion;
+            struct somens__SomeTokenType*           somens__SomeToken; // added an optional token
+            ...                                                        // add more if needed
+            @char*                                  SOAP_ENV__actor;
+            @char*                                  SOAP_ENV__role;
+    } _wsse__Security;
+@endcode
+
+The tokens can be set with:
+
+@code
+    _wsse__Security *security = soap_wsse_Security(soap);
+    security->somens__SomeToken = (struct somens__SomeTokenType*)soap_malloc(soap, sizeof(struct somens__SomeTokenType));
+    soap_default_somens__SomeTokenType(soap, security->somens__SomeToken);
+    security->somens__SomeToken->wsu__Id = "myToken"; // allows for auto-signing this element
+    ...
+@endcode
+ 
+For tokens in DOM XML form, use the `xsd__anyType` DOM element:
+
+@code
+    typedef struct _wsse__Security
+    {       ...
+            xsd__anyType*                           somens__SomeToken; // added an optional token in DOM form
+    } _wsse__Security;
+@endcode
+
+The token in DOM form can be signed if you set the wsu:Id attribute to a unique
+value say "MyToken":
+
+@code
+    _wsse__Security *security = soap_wsse_Security(soap);
+    security->somens__SomeToken = (xsd__anyType*)soap_malloc(soap, sizeof(xsd__anyType));
+    soap_default_xsd__anyType(soap, security->somens__SomeToken);
+    soap_att_text(soap_att(soap_add_security->somens__SomeToken, NULL, "wsu:Id"), "MyToken");
+    ...
+@endcode
+
+We recommend to use [domcpp](http://www.genivia.com/doc/dom/html/index.html) to
+generate code to set the token to send messages and get its values after
+receiving messages.
+
+For tokens in XML "string" text form, use the `_XML` literal string (a `char*`
+type with XML content):
+
+@code
+    typedef struct _wsse__Security
+    {       ...
+            _XML                                    somens__SomeToken; // added an optional token in string form
+    } _wsse__Security;
+@endcode
+
+However, beware that XML text cannot be signed by the signature as a Security
+header (unless you embed it within a new element in the Security header block
+and set that element's wsu:Id attribute).
 
 @section wsse_7 Token References
 
@@ -473,17 +617,18 @@ using the `SOAP_XML_CANONICAL` flag:
     soap_register_plugin(soap, soap_wsse);
 @endcode
 
-If you prefer XML indentation, use:
+Flags to consider:
 
-@code
-    struct soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);
-    soap_register_plugin(soap, soap_wsse);
-@endcode
-
-Other flags to consider:
-
-- `SOAP_IO_CHUNK` for HTTP chunked content to stream messages.
+- `SOAP_XML_CANONICAL` recommended to enable exclusive C14N.
+- `SOAP_XML_INDENT` optional, to emit more readable XML (see warning).
+- `SOAP_IO_CHUNK` efficient HTTP-chunked streaming messages.
 - `SOAP_ENC_GZIP` for HTTP compression (also enables HTTP chunking).
+
+@warning
+Interoperability with WCF WS-Security is not guaranteed when `SOAP_XML_INDENT`
+is enabled.  Avoid using `SOAP_XML_INDENT` for interoperability.  The
+implementation of C14N in WCF with respect to the normalization of white space
+between XML tags differs from the protocol standards.
 
 Next, we decide which signature algorithm is appropriate to use:
 
@@ -543,7 +688,8 @@ RSA-SHA signed message then the only mechanism to automatically verify the
 signature is to let the callback produce a certificate:
 
 @code
-    soap_register_plugin_arg(soap, soap_wsse, security_token_handler);
+    soap_register_plugin(soap, soap_wsse);
+    soap_wsse_set_security_token_handler(soap, security_token_handler);
 
     const void *security_token_handler(struct soap *soap, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen)
     {
@@ -570,6 +716,7 @@ signature is to let the callback produce a certificate:
             return (const void*)cert;
           }
           return NULL; // no certificate: fail
+        case SOAP_SMD_HMAC_SHA1:
         case SOAP_SMD_HMAC_SHA224:
         case SOAP_SMD_HMAC_SHA256:
         case SOAP_SMD_HMAC_SHA384:
@@ -598,8 +745,9 @@ signature is to let the callback produce a certificate:
             // 1. keyname is set to the subject name of the certificate, if a
             //    certificate is present in the SecurityTokenReference/KeyIdentifier
             //    when ValueType is http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3
-            // 2. keyname is set to the concatenation of
-            //     "{X509IssuerName}#{X509SerialNumber}" present in X509Data/X509IssuerSerial
+            // 2. keyname is set to the string concatenation
+            //     "{X509IssuerName}#{X509SerialNumber}" of the X509IssuerName
+            //     and X509SerialNumber present in X509Data/X509IssuerSerial
             // 3. keyname is set to X509Data/X509SubjectName
             return ...;
           }
@@ -633,6 +781,11 @@ signature is to let the callback produce a certificate:
     }
 @endcode
 
+@warning
+The security token handler callback function parameters have changed in 2.8.34
+and greater with the addition of KeyIdentifier information `keyid` and
+`keyidlen`.
+
 @subsection wsse_8_2a Signing Messages
 
 After the plugin is registered and a signature algorithm selected, the
@@ -645,7 +798,7 @@ The code to sign the SOAP Body of a message using HMAC-SHA1 is:
     static char hmac_key[16] =
     { 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,
       0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00 };
-    struct soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);
+    struct soap *soap = soap_new1(SOAP_XML_CANONICAL);
     soap_register_plugin(soap, soap_wsse);
     if (soap_wsse_sign_body(soap, SOAP_SMD_HMAC_SHA1, hmac_key, sizeof(hmac_key))
       ... // an error occurred
@@ -669,7 +822,7 @@ the message:
     FILE *fd;
     EVP_PKEY *rsa_private_key;
     X509 *cert;
-    struct soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);
+    struct soap *soap = soap_new1(SOAP_XML_CANONICAL);
     soap_register_plugin(soap, soap_wsse);
     fd = fopen("privkey.pem", "r");
     rsa_private_key = PEM_read_PrivateKey(fd, NULL, NULL, "password");
@@ -695,21 +848,22 @@ To summarize the signing process:
    certificate authority.
 -# Add the X509 certificate as a BinarySecurityToken to the header.
 -# Add a KeyInfo BinarySecurityTokenReference.
--# Invoke `soap_wsse_sign` or `soap_wsse_sign_body` to sign the message.
+-# Invoke `soap_wsse_sign_body` and/or `soap_wsse_sign` with
+   `soap_wsse_sign_only` to sign the message.
 -# Always check the function return values for errors. You don't want to
    produce and accept messages with an invalid Security headers.
 
 @subsection wsse_8_2b Signing Message Parts
 
-The `soap_wsse_sign_body` function signs the entire SOAP body. If it is
-desirable to sign individual parts of a message the `soap_wsse_sign`
-function should be used. All message parts with wsu:Id attributes are signed.
-These message parts should not be nested (nested elements will not be
-separately signed). By default, all and only those XML elements with wsu:Id
-attributes are signed. Therefore, the wsu:Id attribute values used in a message
-must be unique within the message. Although usually not required, the default
-signing rule can be overridden with the `soap_wsse_sign_only` function, see
-@ref wsse_8_3.
+The `soap_wsse_sign_body` function signs the entire SOAP body but nothing else.
+If it is desirable to sign individual parts of a message the
+`soap_wsse_sign_only` and `soap_wsse_sign` functions should be used. All
+message parts with wsu:Id attributes are signed.  These message parts should
+not be nested (nested elements will not be separately signed). By default, all
+and only those XML elements with wsu:Id attributes are signed. Therefore, the
+wsu:Id attribute values used in a message must be unique within the message.
+Although usually not required, the default signing rule can be overridden with
+the `soap_wsse_sign_only` function, see @ref wsse_8_3.
 
 For example, consider a transaction in which we only want to sign a contract in
 the SOAP Body. This allows us to modify the rest of the message or extract the
@@ -845,7 +999,7 @@ Never use `soap_wsse_set_wsu_id` to set the wsu:Id for an element that
 occurs more than once in the payload, since each will have the same wsu:Id
 attribute that may lead to a WS-Signature failure.
 
-@subsection wsse_8_3 Signing Tokens
+@subsection wsse_8_3 Signing Security Headers and Tokens
 
 To sign security tokens such as user names, passwords, and binary security
 tokens, just assign their Id values with a unique string, such as "Time" for
@@ -859,15 +1013,21 @@ timestamps and "User" for user names. For example:
 
 Note that by default all wsu:Id-attributed elements are signed. To filter a
 subset of wsu:Id-attributed elements for signatures, use the
-`soap_wsse_sign_only` function as follows:
+`soap_wsse_sign_only` function to specify a subset of the elements that have
+wsu:Id values as follows:
 
 @code
+    soap_wsse_add_Timestamp(soap, "Time", 600);
     soap_wsse_add_UsernameTokenDigest(soap, "User", "username", "password");
     soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", cert);
     soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token");
     soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_private_key, 0);
-    soap_wsse_sign_only(soap, "User Body");
+    soap_wsse_sign_only(soap, "Time User Body"); // OK to use after soap_wsse_sign_body
 @endcode
+
+The wsu:Id values are provides with the `add` functions, such as "User" and
+"X509Token". The SOAP Body always has a wsu:Id value "Body" when
+`soap_wsse_sign_body` is used.
 
 Note that in the above we MUST set the X509Token name for cross-referencing
 with a wsu:Id, which normally results in automatically signing that token
@@ -904,11 +1064,11 @@ RSA algorithms, assuming the message contains the X509 certificate as a binary
 security token, use:
 
 @code
-    struct soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);
+    struct soap *soap = soap_new1(SOAP_XML_CANONICAL);
     soap_register_plugin(soap, soap_wsse);
     soap_wsse_verify_auto(soap, SOAP_SMD_NONE, NULL, 0);
     soap->cafile = "cacerts.pem";  // file with CA certs of peers
-    soap->capath = "dir/to/certs"; // and/or point to CA certs
+    soap->capath = "dir/to/certs"; // and/or point to CA certs directory
     soap->crlfile = "revoked.pem"; // use CRL (optional)
 
     // server:
@@ -932,6 +1092,9 @@ message, use:
 
 @code
     soap_wsse_verify_auto(soap, SOAP_SMD_NONE, NULL, 0);
+    soap->cafile = "cacerts.pem";  // file with CA certs of peers
+    soap->capath = "dir/to/certs"; // and/or point to CA certs directory
+    soap->crlfile = "revoked.pem"; // use CRL (optional)
     ... // client call
     if (soap_wsse_verify_element(soap, "namespaceURI", "tag") > 0)
       ... // at least one element with matching tag and namespace is signed
@@ -945,9 +1108,19 @@ after the call completed. A service should invoke this function within the
 service operation routine, i.e. when the message request is accepted and about
 to be processed.
 
-For example, to check whether the wsu:Timestamp element was signed (assuming it
-is present and message expiration checked with
-`soap_wsse_verify_Timestamp)`, use `soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp")`.
+For example, to check whether the wsu:Timestamp element was signed, e.g. after
+checking that it is present and message expiration checked with
+`soap_wsse_verify_Timestamp`, use:
+
+@code
+    if (!soap_wsse_verify_Timestamp(soap))
+    {
+      soap_wsse_delete_Security(soap);
+      ... // error
+    }
+    else if (soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp") > 0)
+      ... // timestamp was signed
+@endcode
 
 To check the SOAP Body (either using SOAP 1.1 or 1.2), simply use
 `soap_wsse_verify_body`.
@@ -961,8 +1134,8 @@ WS-Security implementations include SignedInfo/Reference/@URI without targeting
 an element, which will produce an error that a Reference URI target does not
 exist. To ignore these references, use `SOAP_WSSE_IGNORE_EXTRA_REFS`. Second,
 certificates provided by the peer are not verifiable unless the signing CA
-certificate is included in the cafile or capath. To disable certificate
-verification set the fsslverify callback:
+certificate is included in the cafile or capath. To disable peer certificate
+verification, set the fsslverify callback to return 1 as follows:
 
 @code
     static int ssl_verify(int ok, X509_STORE_CTX *store)
@@ -972,6 +1145,51 @@ verification set the fsslverify callback:
     }
     ...
     soap_wsse_verify_auto(soap, SOAP_SMD_NONE | SOAP_WSSE_IGNORE_EXTRA_REFS, NULL, 0);
+    soap->cafile = "cacerts.pem";  // file with CA certs of peers
+    soap->capath = "dir/to/certs"; // and/or point to CA certs directory
+    soap->crlfile = "revoked.pem"; // use CRL (optional)
+    soap->fsslverify = ssl_verify; // set certificate verification callback
+@endcode
+
+To reject peer certificates under all conditions except specific permitted
+conditions such as self-signed certificates in the chain, use the following
+code as a guide (see OpenSSL documentation on `X509_STORE_CTX_get_error`):
+
+@code
+    static int ssl_verify(int ok, X509_STORE_CTX *store)
+    {
+      if (!ok)
+      {
+        char buf[1024];
+        int err = X509_STORE_CTX_get_error(store);
+        X509 *cert = X509_STORE_CTX_get_current_cert(store);
+        switch (err)
+        {
+          case X509_V_ERR_CERT_NOT_YET_VALID:
+          case X509_V_ERR_CERT_HAS_EXPIRED:
+          case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
+          case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
+          case X509_V_ERR_UNABLE_TO_GET_CRL:
+          case X509_V_ERR_CRL_NOT_YET_VALID:
+          case X509_V_ERR_CRL_HAS_EXPIRED:
+            X509_STORE_CTX_set_error(store, X509_V_OK);
+            ok = 1;
+            break;
+          default:
+            fprintf(stderr, "SSL verify error %d or warning with certificate at depth %d: %s\n", err, X509_STORE_CTX_get_error_depth(store), X509_verify_cert_error_string(err));
+            X509_NAME_oneline(X509_get_issuer_name(cert), buf, sizeof(buf)-1);
+            fprintf(stderr, "  certificate issuer:  %s\n", buf);
+            X509_NAME_oneline(X509_get_subject_name(cert), buf, sizeof(buf)-1);
+            fprintf(stderr, "  certificate subject: %s\n", buf);
+        }
+      }
+      return ok;
+    }
+    ...
+    soap_wsse_verify_auto(soap, SOAP_SMD_NONE | SOAP_WSSE_IGNORE_EXTRA_REFS, NULL, 0);
+    soap->cafile = "cacerts.pem";  // file with CA certs of peers
+    soap->capath = "dir/to/certs"; // and/or point to CA certs directory
+    soap->crlfile = "revoked.pem"; // use CRL (optional)
     soap->fsslverify = ssl_verify;
 @endcode
 
@@ -982,9 +1200,12 @@ supplied:
     static char hmac_key[16] = // the same secret key that was used to sign
     { 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,
       0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00 };
-    struct soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);
+    struct soap *soap = soap_new1(SOAP_XML_CANONICAL);
     soap_register_plugin(soap, soap_wsse);
     soap_wsse_verify_auto(soap, SOAP_SMD_HMAC_SHA1, hmac_key, sizeof(hmac_key));
+    soap->cafile = "cacerts.pem";  // file with CA certs of peers
+    soap->capath = "dir/to/certs"; // and/or point to CA certs directory
+    soap->crlfile = "revoked.pem"; // use CRL (optional)
 
     // server:
     if (soap_serve(soap))
@@ -1015,14 +1236,22 @@ The material in this section relates to the WS-Security specification section 9.
 The wsse plugin must be registered:
 
 @code
-    struct soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);
+    struct soap *soap = soap_new1(SOAP_XML_CANONICAL);
     soap_register_plugin(soap, soap_wsse);
 @endcode
 
-Other flags to consider:
+Flags to consider:
 
-- `SOAP_IO_CHUNK` for HTTP chunked content to stream messages.
+- `SOAP_XML_CANONICAL` recommended to enable exclusive C14N.
+- `SOAP_XML_INDENT` optional, to emit more readable XML (see warning).
+- `SOAP_IO_CHUNK` efficient HTTP-chunked streaming messages.
 - `SOAP_ENC_GZIP` for HTTP compression (also enables HTTP chunking).
+
+@warning
+Interoperability with WCF WS-Security is not guaranteed when `SOAP_XML_INDENT`
+is enabled.  Avoid using `SOAP_XML_INDENT` for interoperability.  The
+implementation of C14N in WCF with respect to the normalization of white space
+between XML tags differs from the protocol standards.
 
 @subsection wsse_9_1 Encrypting Messages
 
@@ -1041,8 +1270,8 @@ public key of the recipient is used to encrypt a temporary (ephemeral) secret
 key that is sent together with the secret key-encrypted message to the
 recipient. The recipient decrypts the ephemeral key and uses it to decrypt the
 message. The public key is usually part of a X509 certificate. The public key
-(containing the subject information) is added to the WS-Security header and
-used for encryption of the SOAP Body as follows:
+(containing the subject information) is added to the Security header and used
+for encryption of the SOAP Body as follows:
 
 @code
     X509 *cert = ...; //
@@ -1061,7 +1290,7 @@ The envelope encryption options are:
 - `SOAP_MEC_ENV_ENC_AES256_GCM`                 envelope authenticated encryption with AES256 GCM
 - `SOAP_MEC_ENV_ENC_AES256_CBC | SOAP_MEC_OAEP` OAEP envelope encryption with AES256 CBC
 
-where, in the above, AES256 can be replaced with AES128 or AES192.
+where, in the above, AES256 can also be replaced with AES128 or AES192.
 
 The "Cert" parameter is a unique URI to reference the key from the encrypted
 SOAP Body. The above enables the encryption engine for the next message to be
@@ -1069,8 +1298,8 @@ sent, either at the client or server side. The server should use this withing a
 server operation (before returning) to enable the service operation response to
 be encrypted.
 
-To include a subject key ID in the WS-Security header instead of the entire
-public key, specify the subject key ID parameter:
+To include a subject key ID in the Security header instead of the entire public
+key, specify the subject key ID parameter:
 
 @code
     X509 *cert = ...; //
@@ -1079,8 +1308,8 @@ public key, specify the subject key ID parameter:
 @endcode
 
 The difference with the previous example where no subject key ID was specified
-is that the WS-Security header only contains the subject key ID and no longer
-the public key in base64 format.
+is that the Security header only contains the subject key ID and no longer the
+public key in base64 format.
 
 To exclude the encrypted key certificate from the message and include a
 X509Data element with IssuerName and SerialNumber:
@@ -1098,7 +1327,7 @@ The issuer name and serial number (must be in decimal for
     X509 *cert = ...;
     BIGNUM *bn = BN_new();
     char issuer[256], *serial;
-    X509_NAME_oneline(X509_get_issuer_name(cert), issuer, sizeof(issuer));
+    X509_NAME_oneline(X509_get_issuer_name(cert), issuer, sizeof(issuer)-1);
     ASN1_INTEGER_to_BN(X509_get_serialNumber(cert), bn);
     serial = BN_bn2dec(bn);
     OPENSSL_free(bn);
@@ -1117,8 +1346,9 @@ handler callback must be provided on the receiving end to obtain the
 certificate that corresponds to the issuer name and serial number. 
 
 To encrypt specific elements of the SOAP Body rather than the entire SOAP Body,
-use `soap_wsse_add_EncryptedKey_encrypt_only` in combination with
-`soap_wsse_set_wsu_id` as follows:
+use `soap_wsse_add_EncryptedKey_encrypt_only` to specify elements to encrypt in
+combination with `soap_wsse_set_wsu_id` to specify these elements again as
+follows:
 
 @code
     X509 *cert = ...;
@@ -1129,7 +1359,8 @@ use `soap_wsse_add_EncryptedKey_encrypt_only` in combination with
 @endcode
 
 To encrypt the SOAP Body and SOAP Header element(s), such as ds:Signature, use
-"SOAP-ENV:Body" with `soap_wsse_add_EncryptedKey_encrypt_only`:
+"SOAP-ENV:Body" with `soap_wsse_add_EncryptedKey_encrypt_only` to specify these
+elements:
 
 @code
     X509 *cert = ...;
@@ -1141,11 +1372,12 @@ To encrypt the SOAP Body and SOAP Header element(s), such as ds:Signature, use
 @note
 The `soap_wsse_set_wsu_id` MUST be used to specify all element tag names to
 encrypt. Additional elements MAY be specified in `soap_wsse_set_wsu_id` (for
-example elements to digitally sign).
+example elements to digitally sign). You do not have to use this function to
+set the wsu:Id of the SOAP Body which always has a wsu:Id with "Body".
 
 @note
 The elements identified by the tag names in `soap_wsse_set_wsu_id` to
-encrypt MUST occur EXACTLY ONCE in the SOAP Body.
+encrypt MUST occur NO MORE THAN ONCE in the XML message.
 
 For symmetric encryption with a shared secret key, generate a 160-bit triple
 DES key and make sure both the sender and reciever can use the key without it
@@ -1164,8 +1396,9 @@ The symmetric encryption options are:
 - `SOAP_MEC_ENC_AES256_CBC`          symmetric encryption with AES256 CBC
 - `SOAP_MEC_ENC_AES256_GCM`          symmetric authenticated encryption with AES256 GCM
 
-where, in the above, AES256 can be replaced with AES128 or AES192. For
-example, symmetric encryption with AES256:
+where, in the above, AES256 can also be replaced with AES128 or AES192.
+
+For example, symmetric encryption with AES256:
 
 @code
     char aes256_key[32] = ...; // 32-byte (256-bit) AES256 shared secret key
@@ -1174,8 +1407,9 @@ example, symmetric encryption with AES256:
 @endcode
 
 To symmetrically encrypt specific elements of the SOAP Body rather than the
-entire SOAP Body, use `soap_wsse_encrypt_only` in combination with
-`soap_wsse_set_wsu_id` as follows:
+entire SOAP Body, use `soap_wsse_encrypt_only` to specify the elements to
+encrypt in combination with `soap_wsse_set_wsu_id` to specify these elements
+again as follows:
 
 @code
     char des_key[20] = ...; // 20-byte (160-bit) secret key
@@ -1203,10 +1437,11 @@ In that case a token handler callback should be defined by the user to select a
 proper decryption key based on the available subject key name or identifier
 embedded in the encrypted message.
 
-Here is an example of a token handler callback:
+An example of a token handler callback:
 
 @code
-    soap_register_plugin_arg(soap, soap_wsse, security_token_handler);
+    soap_register_plugin_arg(soap, soap_wsse);
+    soap_wsse_set_security_token_handler(soap, security_token_handler);
 
     const void *security_token_handler(struct soap *soap, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen)
     {
@@ -1233,6 +1468,7 @@ Here is an example of a token handler callback:
             return (const void*)cert;
           }
           break;
+        case SOAP_SMD_HMAC_SHA1:
         case SOAP_SMD_HMAC_SHA224:
         case SOAP_SMD_HMAC_SHA256:
         case SOAP_SMD_HMAC_SHA384:
@@ -1261,8 +1497,9 @@ Here is an example of a token handler callback:
             // 1. keyname is set to the subject name of the certificate, if a
             //    certificate is present in the SecurityTokenReference/KeyIdentifier
             //    when ValueType is http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3
-            // 2. keyname is set to the concatenation of
-            //     "{X509IssuerName}#{X509SerialNumber}" present in X509Data/X509IssuerSerial
+            // 2. keyname is set to the string concatenation
+            //     "{X509IssuerName}#{X509SerialNumber}" of the X509IssuerName
+            //     and X509SerialNumber present in X509Data/X509IssuerSerial
             // 3. keyname is set to X509Data/X509SubjectName
             return ...;
           }
@@ -1296,10 +1533,15 @@ Here is an example of a token handler callback:
     }
 @endcode
 
-The last two arms are used to return a private key associated with the keyname
-paramater, which is a string that contains the subject key id from the public
-key information in an encrypted message or the subject key ID string that was
-set with `soap_wsse_add_EncryptedKey` at the sender side.
+The last two case-arms are used to return a private key associated with the
+keyname paramater, which is a string that contains the subject key id from the
+public key information in an encrypted message or the subject key ID string
+that was set with `soap_wsse_add_EncryptedKey` at the sender side.
+
+@warning
+The security token handler callback function parameters have changed in 2.8.34
+and greater with the addition of KeyIdentifier information `keyid` and
+`keyidlen`.
 
 To set the default private key for envelope decryption, use:
 
@@ -1317,7 +1559,7 @@ The envelope decryption options are:
 
 where, in the above, AES256 can be replaced with AES128 or AES192.
 
-Or to set the default shared secret key for symmetric decryption, use:
+To set the default shared secret key for symmetric decryption, use:
 
 @code
     char des_key[20] = ...; // 20-byte (160-bit) triple DES key
@@ -1330,8 +1572,9 @@ The symmetric decryption options are:
 - `SOAP_MEC_DEC_AES256_CBC`          symmetric decryption with AES256 CBC
 - `SOAP_MEC_DEC_AES256_GCM`          symmetric authenticated decryption with AES256 GCM
 
-where, in the above, AES256 can be replaced with AES128 or AES192. For
-example, symmetric decryption with AES256:
+where, in the above, AES256 can be replaced with AES128 or AES192.
+
+For example, symmetric decryption with AES256:
 
 @code
     char aes256_key[32] = ...; // 32-byte (256-bit) AES256 key
@@ -1349,59 +1592,101 @@ To remove the default key, use:
     soap_wsse_decrypt_auto(soap, SOAP_MEC_NONE, NULL, 0);
 @endcode
 
-@subsection wsse_9_3 Example Combining Signing with Encryption/Decryption
+@subsection wsse_9_3 Example Client and Server
 
-Here is an client-side example to use signatures and encryption for the
-outbound service request message and verification and decryption of the inbound
-response message:
+The code for a client is shown below that uses signatures and encryption:
 
 @code
     FILE *fd;
     EVP_PKEY *rsa_private_key;
     X509 *cert;
-    struct soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);
+    // create new context with recommended C14N enabled
+    struct soap *soap = soap_new1(SOAP_XML_CANONICAL);
+    // register the plugin(s)
     soap_register_plugin(soap, soap_wsse);
-    soap_wsse_verify_auto(soap, SOAP_SMD_NONE, NULL, 0);
+    // enable peer certificate verification
+    soap->cafile = "cacerts.pem";  // file with CA certs of peers
+    soap->capath = "dir/to/certs"; // and/or point to CA certs directory
+    soap->crlfile = "revoked.pem"; // use CRL (optional)
+    soap->fsslverify = ssl_verify; // optional, a callback to verify peer certificates
+    // get the private key for signing and decryption
     fd = fopen("privkey.pem", "r");
     rsa_private_key = PEM_read_PrivateKey(fd, NULL, NULL, "password");
     fclose(fd);
-    soap_wsse_decrypt_auto(soap, SOAP_MEC_ENV_DEC_DES_CBC, rsa_private_key, 0);
+    // get the certificate to include in the security header
     fd = fopen("cert.pem", "r");
     X509 *cert = PEM_read_X509(fd, NULL, NULL, NULL);
     fclose(fd);
+    // enable decryption with the private key
+    soap_wsse_decrypt_auto(soap, SOAP_MEC_ENV_DEC_DES_CBC, rsa_private_key, 0);
+    // enable signature verification
+    soap_wsse_verify_auto(soap, SOAP_SMD_NONE, NULL, 0);
+    // add the certificate X509 token and token reference, sign the Body using the private key
     if (soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", cert)
      || soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token")
-     || soap_wsse_add_EncryptedKey(soap, SOAP_MEC_ENV_ENC_DES_CBC, "Cert", cert, NULL, NULL, NULL)
-     || soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_private_key, 0)
+     || soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_private_key, 0))
       ... // an error occurred
-    else if (soap_call_ns__myMethod(soap, ...))
+    // encrypt the Body and the signature using the public key in cert (the cert of the peer)
+    soap_wsse_set_wsu_id(soap, "ds:Signature");
+    if (soap_wsse_add_EncryptedKey_encrypt_only(soap, SOAP_MEC_ENV_ENC_DES_CBC, "Cert", cert, NULL, NULL, NULL, "ds:Signature SOAP-ENV:Body"))
+      ... // an error occurred
+    if (soap_call_ns__myMethod(soap, ...))
       ... // a transmission error occurred
     ...
     EVP_PKEY_free(rsa_private_key);
     X509_free(cert);
 @endcode
 
-The server-side service operation is as follows:
+When using HTTPS, the `soap->cafile`, `soap->capath` are already set with
+`soap_ssl_client_context()`. The explicit assignments shown above are not
+needed.
+
+See @ref wsse_8_4 on how to implement the optional `ssl_verify` callback to
+verify peer certificates.
+
+You may want to register a token handler callback if the peer does not include
+its X509 certificate in the security header. The token handler callback should
+retrieve the certificate, e.g. given its id and serial number.
+
+The server-side service is implemented as follows:
 
 @code
+    EVP_PKEY *rsa_private_key; // OK to declare global
+    X509 *cert;                // OK to declare global
+    ..
     FILE *fd;
-    EVP_PKEY *rsa_private_key;
-    X509 *cert;
-    struct soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);
+    // create new context with recommended C14N enabled
+    struct soap *soap = soap_new1(SOAP_XML_CANONICAL);
+    // register the plugin(s)
     soap_register_plugin(soap, soap_wsse);
-    soap_wsse_verify_auto(soap, SOAP_SMD_NONE, NULL, 0);
+    // enable peer certificate verification
+    soap->cafile = "cacerts.pem";  // file with CA certs of peers
+    soap->capath = "dir/to/certs"; // and/or point to CA certs directory
+    soap->crlfile = "revoked.pem"; // use CRL (optional)
+    soap->fsslverify = ssl_verify; // optional, a callback to verify peer certificates
+    // get the private key for signing and decryption
     fd = fopen("privkey.pem", "r");
     rsa_private_key = PEM_read_PrivateKey(fd, NULL, NULL, "password");
     fclose(fd);
-    soap_wsse_decrypt_auto(soap, SOAP_MEC_ENV_DEC_DES_CBC, rsa_private_key, 0);
+    // get the certificate to include in the security header
     fd = fopen("cert.pem", "r");
     X509 *cert = PEM_read_X509(fd, NULL, NULL, NULL);
     fclose(fd);
     ...
-    if (soap_serve(soap))
+    if (!soap_valid_socket(soap_bind(soap, NULL, port, 100)))
+      ... // an error occurred
+    while (soap_valid_socket(soap_accept(soap)))
     {
-      soap_wsse_delete_Security(soap);
-      soap_print_fault(soap, stderr);
+      // enable signature verification
+      soap_wsse_verify_auto(soap, SOAP_SMD_NONE, NULL, 0);
+      // enable decryption with the private key
+      soap_wsse_decrypt_auto(soap, SOAP_MEC_ENV_DEC_DES_CBC, rsa_private_key, 0);
+      // serve one request
+      if (soap_serve(soap))
+      {
+        soap_wsse_delete_Security(soap);
+        soap_print_fault(soap, stderr);
+      }
     }
     ...
     EVP_PKEY_free(rsa_private_key);
@@ -1414,21 +1699,59 @@ where an example service operation could be:
     int ns__myMethod(struct soap *soap, ...)
     {
       ...
+      // remove old security headers
       soap_wsse_delete_Security(soap);
+      // encrypt the Body and the signature using the public key in cert (the cert of the peer)
+      soap_wsse_set_wsu_id(soap, "ds:Signature");
+      // add the certificate X509 token and token reference, sign the Body using the private key
+      // encrypt the Body and the signature using the public key in cert (the cert of the peer)
       if (soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", cert)
        || soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token")
-       || soap_wsse_add_EncryptedKey(soap, SOAP_MEC_ENV_ENC_DES_CBC, "Cert", cert, NULL, NULL, NULL)
        || soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_private_key, 0)
+       || soap_wsse_add_EncryptedKey_encrypt_only(soap, SOAP_MEC_ENV_ENC_DES_CBC, "Cert", cert, NULL, NULL, NULL, "ds:Signature SOAP-ENV:Body"))
       {
-      soap_wsse_delete_Security(soap); // remove security headers (failed construction)
+        soap_wsse_delete_Security(soap); // remove incomplete security headers
         return soap->error;
       }
       return SOAP_OK;
     }
 @endcode
 
-The service operation signs the message using a private key and encrypts the
-response message using a public key (from the certificate).
+The service operation signs the Body using its private key and encrypts the
+response Body and signature using a public key from the peer's certificate.
+
+To implement a server that supports HTTP keep-alive, a `soap->fserveloop`
+callback function should be assigned. This callback is executed in the
+`soap_serve()` loop to call `soap_wsse_verify_auto()` and
+`soap_wsse_decrypt_auto()` to ensure that the continuous inbound message stream
+can be verified and decrypted:
+
+@code
+    struct soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_IO_KEEPALIVE);
+    soap_register_plugin(soap, soap_wsse);
+    ...
+    soap->fserveloop = set_verify_decrypt_auto;
+    ...
+    while (soap_valid_socket(soap_accept(soap)))
+    {
+      set_verify_decrypt_auto(soap);
+      // serve multiple requests (when keep alive)
+      if (soap_serve(soap))
+      {
+        soap_wsse_delete_Security(soap);
+        soap_print_fault(soap, stderr);
+      }
+    }
+
+    int set_verify_decrypt_auto(struct soap *soap)
+    {
+      // enable signature verification
+      soap_wsse_verify_auto(soap, SOAP_SMD_NONE, NULL, 0);
+      // enable decryption with the private key
+      soap_wsse_decrypt_auto(soap, SOAP_MEC_ENV_DEC_DES_CBC, rsa_private_key, 0);
+      return SOAP_OK;
+    }
+@endcode
 
 @section wsse_10 Security Timestamps
 
@@ -1438,7 +1761,7 @@ The material in this section relates to the WS-Security specification section
 To add a timestamp with the creation time to the Security header, use:
 
 @code
-    soap_wsse_add_Timestamp(soap, NULL, 0); // no expiration
+    soap_wsse_add_Timestamp(soap, NULL, 0); // 0 means no expiration
 @endcode
 
 The lifetime of a message (in seconds) is passed as the third argument, which
@@ -1458,6 +1781,19 @@ we simply pass a unique identification string as the second argument:
     soap_wsse_add_Timestamp(soap, "Time", 10); // timestamp will be signed
 @endcode
 
+After receiving a message, the receiver can verify the presence and validity of
+the timestamp and whether it was signed with:
+
+@code
+    if (!soap_wsse_verify_Timestamp(soap))
+    {
+      soap_wsse_delete_Security(soap);
+      ... // error, no timestamp or timestamp has expired
+    }
+    else if (soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp") > 0)
+      ... // timestamp was signed
+@endcode
+
 @section wsse_11 WS-Security and HTTPS
 
 HTTPS is used at the client side with the usual "https:" URL addressing, shown
@@ -1470,7 +1806,7 @@ thread-safe use of SSL for HTTPS:
     struct soap *soap;
     if (CRYPTO_thread_setup())
       ... // error
-    soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);
+    soap = soap_new1(SOAP_XML_CANONICAL);
     soap_register_plugin(soap, soap_wsse);
     if (soap_ssl_client_context(&soap,
       SOAP_SSL_DEFAULT, // requires server authentication
@@ -1514,7 +1850,7 @@ The server uses the following:
     struct soap *soap;
     if (CRYPTO_thread_setup())
       ... // error
-    soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);
+    soap = soap_new1(SOAP_XML_CANONICAL);
     soap_register_plugin(soap, soap_wsse);
     if (soap_ssl_server_context(&soap,
       SOAP_SSL_DEFAULT, // requires server to authenticate, but not the client
@@ -1541,19 +1877,19 @@ The server uses the following:
     CRYPTO_thread_cleanup();
 @endcode
 
-where we define a process_request function that is executed by the thread to
-process the request (on a copy of the soap context struct):
+where we define a `process_request()` function that is executed by the thread
+to process the request (on a copy of the soap context struct):
 
 @code
-  void *process_request(struct soap *soap)
-  {
-    ... // set up WS-Security for signatures/encryption etc
-    if (soap_ssl_accept(soap)
-     || soap_serve(soap))
-      ... // error
-    soap_destroy(soap);
-    soap_end(soap);
-    soap_free(soap);
+    void *process_request(struct soap *soap)
+    {
+      ... // set up WS-Security for signatures/encryption etc
+      if (soap_ssl_accept(soap)
+       || soap_serve(soap))
+        ... // error
+      soap_destroy(soap);
+      soap_end(soap);
+      soap_free(soap);
   }
 @endcode
 
@@ -1563,83 +1899,83 @@ flags:
 - `SOAP_SSL_DEFAULT` requires server authentication, but no client authentication
 - `SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION` requires client authentication
 
-We need to define the thread set up and clean up operations as follows:
+We also should implement the mutex setup and cleanup operations as follows:
 
 @code
-  struct CRYPTO_dynlock_value
-  {
-    MUTEX_TYPE mutex;
-  };
+    struct CRYPTO_dynlock_value
+    {
+      MUTEX_TYPE mutex;
+    };
 
-  static MUTEX_TYPE *mutex_buf;
+    static MUTEX_TYPE *mutex_buf;
 
-  static struct CRYPTO_dynlock_value *dyn_create_function(const char *file, int line)
-  {
-    struct CRYPTO_dynlock_value *value;
-    value = (struct CRYPTO_dynlock_value*)malloc(sizeof(struct CRYPTO_dynlock_value));
-    if (value)
-      MUTEX_SETUP(value->mutex);
-    return value;
-  }
+    static struct CRYPTO_dynlock_value *dyn_create_function(const char *file, int line)
+    {
+      struct CRYPTO_dynlock_value *value;
+      value = (struct CRYPTO_dynlock_value*)malloc(sizeof(struct CRYPTO_dynlock_value));
+      if (value)
+        MUTEX_SETUP(value->mutex);
+      return value;
+    }
 
-  static void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l, const char *file, int line)
-  {
-    if (mode & CRYPTO_LOCK)
-      MUTEX_LOCK(l->mutex);
-    else
-      MUTEX_UNLOCK(l->mutex);
-  }
+    static void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l, const char *file, int line)
+    {
+      if (mode & CRYPTO_LOCK)
+        MUTEX_LOCK(l->mutex);
+      else
+        MUTEX_UNLOCK(l->mutex);
+    }
 
-  static void dyn_destroy_function(struct CRYPTO_dynlock_value *l, const char *file, int line)
-  {
-    MUTEX_CLEANUP(l->mutex);
-    free(l);
-  }
+    static void dyn_destroy_function(struct CRYPTO_dynlock_value *l, const char *file, int line)
+    {
+      MUTEX_CLEANUP(l->mutex);
+      free(l);
+    }
 
-  void locking_function(int mode, int n, const char *file, int line)
-  {
-    if (mode & CRYPTO_LOCK)
-      MUTEX_LOCK(mutex_buf[n]);
-    else
-      MUTEX_UNLOCK(mutex_buf[n]);
-  }
+    void locking_function(int mode, int n, const char *file, int line)
+    {
+      if (mode & CRYPTO_LOCK)
+        MUTEX_LOCK(mutex_buf[n]);
+      else
+        MUTEX_UNLOCK(mutex_buf[n]);
+    }
 
-  unsigned long id_function()
-  {
-    return (unsigned long)THREAD_ID;
-  }
+    unsigned long id_function()
+    {
+      return (unsigned long)THREAD_ID;
+    }
 
-  int CRYPTO_thread_setup()
-  {
-    int i;
-    mutex_buf = (MUTEX_TYPE*)malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
-    if (!mutex_buf)
-      return SOAP_EOM;
-    for (i = 0; i < CRYPTO_num_locks(); i++)
-      MUTEX_SETUP(mutex_buf[i]);
-    CRYPTO_set_id_callback(id_function);
-    CRYPTO_set_locking_callback(locking_function);
-    CRYPTO_set_dynlock_create_callback(dyn_create_function);
-    CRYPTO_set_dynlock_lock_callback(dyn_lock_function);
-    CRYPTO_set_dynlock_destroy_callback(dyn_destroy_function);
-    return SOAP_OK;
-  }
+    int CRYPTO_thread_setup()
+    {
+      int i;
+      mutex_buf = (MUTEX_TYPE*)malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
+      if (!mutex_buf)
+        return SOAP_EOM;
+      for (i = 0; i < CRYPTO_num_locks(); i++)
+        MUTEX_SETUP(mutex_buf[i]);
+      CRYPTO_set_id_callback(id_function);
+      CRYPTO_set_locking_callback(locking_function);
+      CRYPTO_set_dynlock_create_callback(dyn_create_function);
+      CRYPTO_set_dynlock_lock_callback(dyn_lock_function);
+      CRYPTO_set_dynlock_destroy_callback(dyn_destroy_function);
+      return SOAP_OK;
+    }
 
-  void CRYPTO_thread_cleanup()
-  {
-    int i;
-    if (!mutex_buf)
-      return;
-    CRYPTO_set_id_callback(NULL);
-    CRYPTO_set_locking_callback(NULL);
-    CRYPTO_set_dynlock_create_callback(NULL);
-    CRYPTO_set_dynlock_lock_callback(NULL);
-    CRYPTO_set_dynlock_destroy_callback(NULL);
-    for (i = 0; i < CRYPTO_num_locks(); i++)
-      MUTEX_CLEANUP(mutex_buf[i]);
-    free(mutex_buf);
-    mutex_buf = NULL;
-  }
+    void CRYPTO_thread_cleanup()
+    {
+      int i;
+      if (!mutex_buf)
+        return;
+      CRYPTO_set_id_callback(NULL);
+      CRYPTO_set_locking_callback(NULL);
+      CRYPTO_set_dynlock_create_callback(NULL);
+      CRYPTO_set_dynlock_lock_callback(NULL);
+      CRYPTO_set_dynlock_destroy_callback(NULL);
+      for (i = 0; i < CRYPTO_num_locks(); i++)
+        MUTEX_CLEANUP(mutex_buf[i]);
+      free(mutex_buf);
+      mutex_buf = NULL;
+    }
 @endcode
 
 For additional details and examples, see the user guide and examples in the
@@ -1699,7 +2035,7 @@ include additional details.
   QNames. Therefore, soapcpp2 option `-t` is always safe to use, but a non-gSOAP
   receiver may still fail.
 
-@section wsse_wsc WS-SecureConversation
+@section wsse_wsc WS-SecureConversation and WS-Trust
 
 To use a WS-SecureConversation security context token (SCT) with WS-Security:
 
@@ -1713,6 +2049,23 @@ identified by the 'identifier' string is known to both parties. This secret is
 used to sign the message body. The "SCT" is a wsu:Id, which is used as a
 reference to sign the token.
 
+To compute PSHA1 with base64 input strings `client_secret_base64` and
+`server_secret_base64` to output a base64-encoded `psha1[0..psha1len-1]` string
+`psha1_base64`:
+
+@code
+    int psha1len = 32; // or greater
+    int n, m;
+    const char *client_secret = soap_base642s(soap, client_secret_base64, NULL, 0, &n);
+    const char *server_secret = soap_base642s(soap, server_secret_base64, NULL, 0, &m);
+    char psha1[psha1len];
+    char *psha1_base64;
+    if (n != 16)
+      .. error // HMAC key is 16 bytes
+    if (soap_psha1(soap, client_secret, server_secret, m, psha1, psha1len))
+      .. error // insufficient memory
+    psha1_base64 = soap_s2base64(soap, (unsigned char*)psha1, NULL, psha1len);
+@endcode
 */
 
 #include "wsseapi.h"
@@ -1752,6 +2105,8 @@ const char *wsse_Base64BinaryURI = "http://docs.oasis-open.org/wss/2004/01/oasis
 const char *wsse_HexBinaryURI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#HexBinary";
 const char *wsse_X509v3URI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3";
 const char *wsse_X509v3SubjectKeyIdentifierURI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509SubjectKeyIdentifier";
+
+const char *ds_envsigURI = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
 
 const char *ds_sha1URI = "http://www.w3.org/2000/09/xmldsig#sha1";
 const char *ds_sha224URI = "http://www.w3.org/2001/04/xmldsig-more#sha224";
@@ -1810,7 +2165,7 @@ const char *wsu_URI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-w
 
 /**
 @struct soap_wsse_session
-@brief Digest authentication session data
+@brief Digest authentication session data.
 */
 struct soap_wsse_session {
   struct soap_wsse_session *next;       /**< Next session in list */
@@ -1836,7 +2191,6 @@ static char* soap_wsse_ids(struct soap *soap, const char *tags, int sub);
 static int soap_wsse_session_verify(struct soap *soap, const char hash[SOAP_SMD_SHA1_SIZE], const char *created, const char *nonce);
 static void soap_wsse_session_cleanup(struct soap *soap);
 static void calc_digest(struct soap *soap, const char *created, const char *nonce, int noncelen, const char *password, char hash[SOAP_SMD_SHA1_SIZE]);
-static void calc_nonce(char nonce[SOAP_WSSE_NONCELEN]);
 
 static int soap_wsse_init(struct soap *soap, struct soap_wsse_data *data, const void *(*arg)(struct soap*, int*, const char*, const unsigned char*, int, int*));
 static int soap_wsse_copy(struct soap *soap, struct soap_plugin *dst, struct soap_plugin *src);
@@ -1930,6 +2284,11 @@ soap_wsse_delete_Security(struct soap *soap)
       soap->fpreparefinalsend = data->fpreparefinalsend;
     data->fpreparesend = NULL;
     data->fpreparefinalsend = NULL;
+    data->sigid = NULL;
+    data->encid = NULL;
+    if (data->prefixlist)
+      SOAP_FREE(soap, data->prefixlist);
+    data->prefixlist = NULL;
   }
   soap->feltbegout = NULL;
   soap->feltendout = NULL;
@@ -2194,7 +2553,7 @@ soap_wsse_add_UsernameTokenDigest(struct soap *soap, const char *id, const char 
   char nonce[SOAP_WSSE_NONCELEN], *nonceBase64;
   DBGFUN2("soap_wsse_add_UsernameTokenDigest", "id=%s", id?id:"", "username=%s", username?username:"");
   /* generate a nonce */
-  calc_nonce(nonce);
+  soap_wsse_rand_nonce(nonce, SOAP_WSSE_NONCELEN);
   nonceBase64 = soap_s2base64(soap, (unsigned char*)nonce, NULL, SOAP_WSSE_NONCELEN);
   /* The specs are not clear: compute digest over binary nonce or base64 nonce? */
   /* compute SHA1(created, nonce, password) */
@@ -2458,7 +2817,7 @@ soap_wsse_add_BinarySecurityTokenPEM(struct soap *soap, const char *id, const ch
 @fn _wsse__BinarySecurityToken* soap_wsse_BinarySecurityToken(struct soap *soap, const char *id)
 @brief Returns BinarySecurityToken element if present.
 @param soap context
-@param[in] id string of token to get or NULL
+@param[in] id string of token to get or NULL to get the first
 @return _wsse__BinarySecurityToken object or NULL
 */
 SOAP_FMAC1
@@ -2482,7 +2841,7 @@ soap_wsse_BinarySecurityToken(struct soap *soap, const char *id)
 @fn int soap_wsse_get_BinarySecurityToken(struct soap *soap, const char *id, char **valueType, unsigned char **data, int *size)
 @brief Get wsse:BinarySecurityToken element token data in binary form.
 @param soap context
-@param[in] id string of token to get or NULL
+@param[in] id string of token to get or NULL to get the first
 @param[out] valueType string
 @param[out] data points to binary token data
 @param[out] size is length of binary token
@@ -2514,7 +2873,7 @@ soap_wsse_get_BinarySecurityToken(struct soap *soap, const char *id, char **valu
 @fn X509* soap_wsse_get_BinarySecurityTokenX509(struct soap *soap, const char *id)
 @brief Get X509 wsse:BinarySecurityToken certificate and verify its content. This call must be followed by an X509_free to deallocate the X509 certificate data.
 @param soap context
-@param[in] id string of token to get or NULL
+@param[in] id string of token to get or NULL to get the first
 @return X509 certificate (dynamically allocated) or NULL with wsse:SecurityTokenUnavailable fault
 */
 SOAP_FMAC1
@@ -2548,7 +2907,7 @@ soap_wsse_get_BinarySecurityTokenX509(struct soap *soap, const char *id)
 
 /**
 @fn int soap_wsse_verify_X509(struct soap *soap, X509 *cert)
-@brief Verifies X509 certificate against soap->cafile, soap->capath, and soap->crlfile
+@brief Verifies X509 certificate against soap->cafile, soap->capath, and soap->crlfile.
 @param soap context
 @param[in] cert X509 certificate
 @return SOAP_OK or fault
@@ -2566,7 +2925,7 @@ soap_wsse_verify_X509(struct soap *soap, X509 *cert)
   X509_STORE_CTX *verify;
   DBGFUN("soap_wsse_verify_X509");
   if (!data)
-    return soap_set_receiver_error(soap, "soap_wsse_sign", "Plugin not registered", SOAP_PLUGIN_ERROR);
+    return soap_set_receiver_error(soap, "soap_wsse_verify_X509", "Plugin not registered", SOAP_PLUGIN_ERROR);
   if (!cert)
     return soap_wsse_sender_fault(soap, "soap_wsse_verify_X509", "No certificate");
   if (!data->store)
@@ -2609,21 +2968,21 @@ soap_wsse_verify_X509(struct soap *soap, X509 *cert)
 #else
   X509_STORE_CTX_init(verify, data->store, cert, NULL);
 #endif
+#ifdef SOAP_DEBUG
+  {
+    char buf[1024];
+    X509_NAME_oneline(X509_get_issuer_name(cert), buf, sizeof(buf)-1);
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Certificate issuer %s\n", buf));
+    X509_NAME_oneline(X509_get_subject_name(cert), buf, sizeof(buf)-1);
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Certificate subject %s\n", buf));
+  }
+#endif
   if (X509_verify_cert(verify) != 1)
   {
     X509_STORE_CTX_free(verify);
     return soap_wsse_sender_fault(soap, "soap_wsse_verify_X509", "Invalid certificate");
   }
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Certificate is valid\n"));
-#ifdef SOAP_DEBUG
-  {
-    char buf[1024];
-    X509_NAME_oneline(X509_get_issuer_name(cert), buf, sizeof(buf));
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "certificate issuer %s\n", buf));
-    X509_NAME_oneline(X509_get_subject_name(cert), buf, sizeof(buf));
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "certificate subject %s\n", buf));
-  }
-#endif
   X509_STORE_CTX_free(verify);
   return SOAP_OK;
 }
@@ -2636,7 +2995,7 @@ soap_wsse_verify_X509(struct soap *soap, X509 *cert)
 
 /**
 @fn int soap_wsse_add_SecurityContextToken(struct soap *soap, const char *id, const char *identifier)
-@brief Adds wsc:SecurityContextToken/Identifier and SecurityTokenReference to it
+@brief Adds wsc:SecurityContextToken/Identifier and SecurityTokenReference to it.
 @param soap context
 @param[in] id string for signature reference (required)
 @param[in] identifier wsc:Identifier value (required)
@@ -2676,7 +3035,7 @@ soap_wsse_add_SecurityContextToken(struct soap *soap, const char *id, const char
 
 /**
 @fn const char *soap_wsse_get_SecurityContextToken(struct soap *soap)
-@brief Returns wsc:SecurityContextToken/Identifier string value or NULL
+@brief Returns wsc:SecurityContextToken/Identifier string value or NULL.
 @param soap context
 @return wsc:SecurityContextToken/Identifier string value value or NULL
 */
@@ -2727,10 +3086,11 @@ soap_wsse_add_SignedInfo(struct soap *soap)
 /******************************************************************************/
 
 /**
-@fn int soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, const char *transform, const char *prefixlist, int alg, const char *HA)
+@fn int soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, unsigned int level, const char *transform, const char *prefixlist, int alg, const char *HA)
 @brief Adds SignedInfo element with Reference URI, transform algorithm used, and digest value.
 @param soap context
 @param[in] URI reference
+@param[in] level XML depth of element signed
 @param[in] transform string should be c14n_URI for exc-c14n or NULL
 @param[in] prefixlist used by the exc-c14n transform or NULL
 @param[in] alg is the digest algorithm used
@@ -2747,14 +3107,16 @@ XPath transforms cannot be specified in this release.
 SOAP_FMAC1
 int
 SOAP_FMAC2
-soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, const char *transform, const char *prefixlist, int alg, const char *HA)
+soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, unsigned int level, const char *transform, const char *prefixlist, int alg, const char *HA)
 {
   ds__SignedInfoType *signedInfo = soap_wsse_add_SignedInfo(soap);
   ds__ReferenceType *reference;
-  DBGFUN3("soap_wsse_add_SignedInfo_Reference", "URI=%s", URI?URI:"", "transform=%s", transform?transform:"", "alg=%x", alg);
+  DBGFUN3("soap_wsse_add_SignedInfo_Reference", "URI=%s", URI ? URI : "(null)", "transform=%s", transform ? transform : "(null)", "alg=%x", alg);
   /* if this is the first reference, allocate SOAP_WSSE_MAX_REF references */
   if (signedInfo->__sizeReference == 0)
+  {
     signedInfo->Reference = (ds__ReferenceType**)soap_malloc(soap, SOAP_WSSE_MAX_REF*sizeof(ds__ReferenceType*));
+  }
   else
   {
     /* maximum number of references exceeded? */
@@ -2775,9 +3137,19 @@ soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, const cha
     if (!reference->Transforms)
       return soap->error = SOAP_EOM;
     soap_default_ds__TransformsType(soap, reference->Transforms);
-    /* only one transform */
-    reference->Transforms->__sizeTransform = 1;
-    reference->Transforms->Transform = (ds__TransformType*)soap_malloc(soap, sizeof(ds__TransformType));
+    /* only one transform, unless level == 0 to create enveloped signatures */
+    if (level <= 1)
+    {
+      reference->Transforms->__sizeTransform = 2;
+      reference->Transforms->Transform = (ds__TransformType*)soap_malloc(soap, 2 * sizeof(ds__TransformType));
+      soap_default_ds__TransformType(soap, &reference->Transforms->Transform[1]);
+      reference->Transforms->Transform[1].Algorithm = (char*)ds_envsigURI;
+    }
+    else
+    {
+      reference->Transforms->__sizeTransform = 1;
+      reference->Transforms->Transform = (ds__TransformType*)soap_malloc(soap, sizeof(ds__TransformType));
+    }
     soap_default_ds__TransformType(soap, reference->Transforms->Transform);
     reference->Transforms->Transform->Algorithm = (char*)transform;
     /* populate the c14n:InclusiveNamespaces element */
@@ -2884,7 +3256,7 @@ soap_wsse_SignedInfo(struct soap *soap)
 
 /**
 @fn int soap_wsse_get_SignedInfo_SignatureMethod(struct soap *soap, int *alg, int *bits)
-@brief Get SignatureMethod algorithm
+@brief Get SignatureMethod algorithm.
 @param soap context
 @param[out] alg is a signature algorithm, such as SOAP_SMD_HMAC_SHA1/224/256/384/512, SOAP_SMD_VRFY_DSA_SHA1/256, SOAP_SMD_VRFY_RSA_SHA1/224/256/384/512 or SOAP_SMD_ECDSA_SHA1/224/256/384/512
 @param[out] bits is set to HMACOutputLength if present and valid, 0 otherwise
@@ -2951,7 +3323,7 @@ soap_wsse_get_SignedInfo_SignatureMethod(struct soap *soap, int *alg, int *bits)
     }
     return SOAP_OK;
   }
-  return soap_wsse_fault(soap, wsse__FailedCheck, "Signature required");
+  return soap_wsse_fault(soap, wsse__FailedCheck, "Signature with SignedInfo SignatureMethod required");
 }
 
 /******************************************************************************\
@@ -3084,6 +3456,104 @@ soap_wsse_add_SignatureValue(struct soap *soap, int alg, const void *key, int ke
 /******************************************************************************/
 
 /**
+@fn int soap_wsse_verify_Signature(struct soap *soap)
+@brief Verifies the Signature and the signed elements.
+@param soap context
+@return SOAP_OK, SOAP_EOM, or fault
+*/
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_wsse_verify_Signature(struct soap *soap)
+{
+  struct soap_wsse_data *data = (struct soap_wsse_data*)soap_lookup_plugin(soap, soap_wsse_id);
+  ds__SignedInfoType *signedInfo = soap_wsse_SignedInfo(soap);
+  int err = SOAP_OK, alg, bits, keylen = 0;
+  EVP_PKEY *pkey = NULL;
+  const void *key = NULL;
+  DBGFUN("soap_wsse_verify_Signature");
+  if (!signedInfo)
+    return soap_wsse_fault(soap, wsse__FailedCheck, "Signature with SignedInfo required");
+  if (!data)
+    return soap->error = SOAP_PLUGIN_ERROR;
+  /* determine which signature algorithm was used */
+  if (soap_wsse_get_SignedInfo_SignatureMethod(soap, &alg, &bits))
+    return soap->error;
+  /* for HMAC-SHA1, the secret key might be stored in the KeyIdentifier */
+  if ((alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
+  {
+    const char *valueType = soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType(soap, soap_wsse_KeyInfo(soap));
+    /* if in the KeyIdentifier, retrieve it */
+    if (valueType && !strcmp(valueType, ds_hmac_sha1URI))
+    {
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Using HMAC key from KeyIdentifier to verify signature\n"));
+      key = (void*)soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifier(soap, soap_wsse_KeyInfo(soap), &keylen);
+    }
+    /* next, try the plugin's security token handler */
+    if (!key)
+    {
+      if (data->security_token_handler)
+      {
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Getting HMAC key through security_token_handler callback\n"));
+        key = data->security_token_handler(soap, &alg, NULL, NULL, 0, &keylen);
+      }
+    }
+    /* still no key: try to get it from the plugin */
+    if (!key && alg == (data->vrfy_alg & SOAP_SMD_MASK))
+    {
+      /* get the HMAC secret key from the plugin */
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Using HMAC key from plugin to verify signature\n"));
+      key = data->vrfy_key;
+      keylen = data->vrfy_keylen;
+    }
+  }
+  else
+  {
+    /* get the certificate from the KeyInfo reference */
+    X509 *cert, *cert1;
+    cert = cert1 = soap_wsse_get_KeyInfo_SecurityTokenReferenceX509(soap);
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Got cert=%p\n", cert));
+    /* next, try the plugin's security token handler */
+    if (!cert)
+    {
+      /* no cert, get it through the token handler */
+      if (data->security_token_handler)
+      {
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Getting certificate through security_token_handler callback\n"));
+        cert = (X509*)data->security_token_handler(soap, &alg, NULL, NULL, 0, &keylen);
+      }
+    }
+    /* obtain the public key from the cert */
+    if (cert)
+    {
+      pkey = X509_get_pubkey((X509*)cert);
+      key = (void*)pkey;
+      soap->error = SOAP_OK;
+    }
+    else if (alg == (data->vrfy_alg & SOAP_SMD_MASK))
+    {
+      /* get the public key from the plugin */
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Using public key from plugin to verify signature\n"));
+      key = data->vrfy_key;
+      soap->error = SOAP_OK;
+    }
+    if (cert1)
+      X509_free(cert1);
+  }
+  /* if still no key then fault else verify SignedInfo with signature and check digests of local elements */
+  if (!key)
+    err = soap_wsse_fault(soap, wsse__SecurityTokenUnavailable, NULL);
+  else if (soap_wsse_verify_SignatureValue(soap, alg, key, keylen)
+        || soap_wsse_verify_SignedInfo(soap))
+    err = soap->error;
+  if (pkey)
+    EVP_PKEY_free(pkey);
+  return err;
+}
+
+/******************************************************************************/
+
+/**
 @fn int soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int keylen)
 @brief Verifies the SignatureValue of a SignedInfo element.
 @param soap context
@@ -3119,6 +3589,7 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
     char *sig;
     const char *sigval;
     int method, bits, siglen, sigvallen;
+    struct soap_dom_element *elt;
     /* check that we are using the intended signature algorithm */
     if (soap_wsse_get_SignedInfo_SignatureMethod(soap, &method, &bits))
       return soap->error;
@@ -3127,102 +3598,99 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
     /* retrieve the signature */
     sigval = soap_base642s(soap, signature->SignatureValue, NULL, 0, &sigvallen);
     /* search the DOM for SignedInfo */
-    if (soap->dom)
+    elt = soap_dom_find(soap->dom, soap->dom, ds_URI, "SignedInfo", 0);
+    if (elt)
     {
-      struct soap_dom_element *elt = soap_dom_find(soap->dom, soap->dom, ds_URI, "SignedInfo", 0);
-      if (elt)
+      int err = SOAP_OK;
+      const char *c14ninclude = soap->c14ninclude;
+      /* should not include leading whitespace in signature verification */
+      elt->lead = NULL;
+      /* use smdevp engine to verify SignedInfo */
+      if ((alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
       {
-        int err = SOAP_OK;
-        const char *c14ninclude = soap->c14ninclude;
-        /* should not include leading whitespace in signature verification */
-        elt->lead = NULL;
-        /* use smdevp engine to verify SignedInfo */
-        if ((alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
-        {
-          sig = (char*)soap_malloc(soap, soap_smd_size(alg, key));
-        }
-        else
-        {
-          sig = (char*)sigval;
-          siglen = sigvallen;
-        }
-        if (signature->SignedInfo->CanonicalizationMethod
-         && signature->SignedInfo->CanonicalizationMethod->Algorithm
-         && !strcmp(signature->SignedInfo->CanonicalizationMethod->Algorithm, c14n_URI))
-        {
-          struct soap_dom_element *prt;
-          struct soap_dom_attribute *att;
-          if (signature->SignedInfo->CanonicalizationMethod->c14n__InclusiveNamespaces)
-            soap->c14ninclude = signature->SignedInfo->CanonicalizationMethod->c14n__InclusiveNamespaces->PrefixList;
-          else
-            soap->c14ninclude = NULL;
-          /* recanonicalize DOM while keeping content "as is" */
-          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Verifying signed canonicalized DOM with C14N prefix list '%s'\n", soap->c14ninclude ? soap->c14ninclude : ""));
-          soap->mode &= ~SOAP_XML_DOM;
-          soap->mode |= SOAP_XML_CANONICAL | SOAP_DOM_ASIS;
-          err = soap_smd_begin(soap, alg, key, keylen);
-          /* emit all xmlns attributes of ancestors */
-          while (soap->nlist)
-          {
-            struct soap_nlist *np = soap->nlist->next;
-            SOAP_FREE(soap, soap->nlist);
-            soap->nlist = np;
-          }
-          /* push xmlns:ns="..." */
-          for (prt = elt->prnt; prt; prt = prt->prnt)
-          {
-            for (att = prt->atts; att; att = att->next)
-            {
-              DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM attribute = %s\n", att->name));
-              if (!strncmp(att->name, "xmlns:", 6) && !soap_lookup_ns(soap, att->name + 6, strlen(att->name + 6)))
-                soap_attribute(soap, att->name, att->text);
-            }
-          }
-          /* push xmlns="..." */
-          for (prt = elt->prnt; prt; prt = prt->prnt)
-          {
-            for (att = prt->atts; att; att = att->next)
-            {
-              if (!strcmp(att->name, "xmlns"))
-              {
-                soap_attribute(soap, att->name, att->text);
-                break;
-              }
-            }
-          }
-        }
-        else
-        {
-          /* compute digest over DOM "as is" */
-          soap->mode &= ~(SOAP_XML_CANONICAL | SOAP_XML_DOM);
-          soap->mode |= SOAP_DOM_ASIS;
-          err = soap_smd_begin(soap, alg, key, keylen);
-        }
-        /* do not dump namespace table xmlns bindings */
-        soap->ns = 2;
-        /* compute digest */
-        soap->feltbegout = NULL;
-        soap->feltendout = NULL;
-        if (!err)
-          err = soap_out_xsd__anyType(soap, NULL, 0, elt, NULL);
-        soap->c14ninclude = c14ninclude;
-        if (soap_smd_end(soap, sig, &siglen) || err)
-          return soap_wsse_fault(soap, wsse__FailedCheck, "The signed SignedInfo SignatureValue is invalid");
-        if ((alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
-        {
-          if (bits == 0)
-          {
-            if (siglen != sigvallen || memcmp(sig, sigval, siglen))
-              return soap_wsse_fault(soap, wsse__FailedCheck, "The HMAC-signed SignedInfo is invalid");
-          }
-          else if (bits > 8 * siglen || memcmp(sig, sigval, 8 * bits))
-          {
-            return soap_wsse_fault(soap, wsse__FailedCheck, "The HMAC-signed SignedInfo is invalid");
-          }
-        }
-        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Signature in DOM is valid\n"));
-        return SOAP_OK;
+        sig = (char*)soap_malloc(soap, soap_smd_size(alg, key));
       }
+      else
+      {
+        sig = (char*)sigval;
+        siglen = sigvallen;
+      }
+      if (signature->SignedInfo->CanonicalizationMethod
+       && signature->SignedInfo->CanonicalizationMethod->Algorithm
+       && !strcmp(signature->SignedInfo->CanonicalizationMethod->Algorithm, c14n_URI))
+      {
+        struct soap_dom_element *prt;
+        struct soap_dom_attribute *att;
+        if (signature->SignedInfo->CanonicalizationMethod->c14n__InclusiveNamespaces)
+          soap->c14ninclude = signature->SignedInfo->CanonicalizationMethod->c14n__InclusiveNamespaces->PrefixList;
+        else
+          soap->c14ninclude = NULL;
+        /* recanonicalize DOM while keeping content "as is" */
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Verifying signed canonicalized DOM with C14N prefix list '%s'\n", soap->c14ninclude ? soap->c14ninclude : ""));
+        soap->mode &= ~SOAP_XML_DOM;
+        soap->mode |= SOAP_XML_CANONICAL | SOAP_DOM_ASIS;
+        err = soap_smd_begin(soap, alg, key, keylen);
+        /* emit all xmlns attributes of ancestors */
+        while (soap->nlist)
+        {
+          struct soap_nlist *np = soap->nlist->next;
+          SOAP_FREE(soap, soap->nlist);
+          soap->nlist = np;
+        }
+        /* push xmlns:ns="..." */
+        for (prt = elt->prnt; prt; prt = prt->prnt)
+        {
+          for (att = prt->atts; att; att = att->next)
+          {
+            DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM attribute = %s\n", att->name));
+            if (!strncmp(att->name, "xmlns:", 6) && !soap_lookup_ns(soap, att->name + 6, strlen(att->name + 6)))
+              soap_attribute(soap, att->name, att->text);
+          }
+        }
+        /* push xmlns="..." */
+        for (prt = elt->prnt; prt; prt = prt->prnt)
+        {
+          for (att = prt->atts; att; att = att->next)
+          {
+            if (!strcmp(att->name, "xmlns"))
+            {
+              soap_attribute(soap, att->name, att->text);
+              break;
+            }
+          }
+        }
+      }
+      else
+      {
+        /* compute digest over DOM "as is" */
+        soap->mode &= ~(SOAP_XML_CANONICAL | SOAP_XML_DOM);
+        soap->mode |= SOAP_DOM_ASIS;
+        err = soap_smd_begin(soap, alg, key, keylen);
+      }
+      /* do not dump namespace table xmlns bindings */
+      soap->ns = 2;
+      /* compute digest */
+      soap->feltbegout = NULL;
+      soap->feltendout = NULL;
+      if (!err)
+        err = soap_out_xsd__anyType(soap, NULL, 0, elt, NULL);
+      soap->c14ninclude = c14ninclude;
+      if (soap_smd_end(soap, sig, &siglen) || err)
+        return soap_wsse_fault(soap, wsse__FailedCheck, "The signed SignedInfo SignatureValue is invalid");
+      if ((alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
+      {
+        if (bits == 0)
+        {
+          if (siglen != sigvallen || memcmp(sig, sigval, siglen))
+            return soap_wsse_fault(soap, wsse__FailedCheck, "The HMAC-signed SignedInfo is invalid");
+        }
+        else if (bits > 8 * siglen || memcmp(sig, sigval, 8 * bits))
+        {
+          return soap_wsse_fault(soap, wsse__FailedCheck, "The HMAC-signed SignedInfo is invalid");
+        }
+      }
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Signature in DOM is valid\n"));
+      return SOAP_OK;
     }
     else
     {
@@ -3233,7 +3701,6 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
       short part = soap->part;
       /* serialize the SignedInfo element as it appeared in the SOAP Header */
       soap->level = 4;
-      soap->c14nexclude = "ds";
       soap->c14ninclude = NULL;
       soap->part = SOAP_IN_HEADER; /* header encoding rules (literal) */
       soap->mode &= ~SOAP_XML_DOM;
@@ -3264,7 +3731,7 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
         if (bits == 0)
         {
           if (siglen != sigvallen || memcmp(sig, sigval, siglen))
-          return soap_wsse_fault(soap, wsse__FailedCheck, "The HMAC-signed serialized SignedInfo is invalid");
+            return soap_wsse_fault(soap, wsse__FailedCheck, "The HMAC-signed serialized SignedInfo is invalid");
         }
         else if (bits > 8 * siglen || memcmp(sig, sigval, 8 * bits))
         {
@@ -3275,7 +3742,7 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
       return SOAP_OK;
     }
   }
-  return soap_wsse_fault(soap, wsse__FailedCheck, "SignedInfo required");
+  return soap_wsse_fault(soap, wsse__FailedCheck, "Signature with SignedInfo and SignatureValue required");
 }
 
 /******************************************************************************/
@@ -3301,11 +3768,27 @@ soap_wsse_verify_SignedInfo(struct soap *soap)
   DBGFUN("soap_wsse_verify_SignedInfo");
   if (signedInfo)
   {
+    struct soap_dom_element *elt;
     int i;
     /* must have at least one reference element */
     if (signedInfo->__sizeReference == 0)
-      return soap_wsse_fault(soap, wsse__InvalidSecurity, "Missing SignedInfo/Reference");
-    /* As an alternative to the current implementatin, this might be a good place to re-canonicalize the entire DOM to improve interop. Two DOMs can be used: one with non-c14n XML and one with c14n XML so we can handle multiple different transforms. */
+      return soap_wsse_fault(soap, wsse__InvalidSecurity, "Signature SignedInfo Reference required");
+    /* remove ds:Signature from the DOM to support enveloped signatures */
+    elt = soap_dom_find(soap->dom, soap->dom, ds_URI, "Signature", 0);
+    if (elt)
+    {
+      elt->elts = NULL;
+      elt->atts = NULL;
+      elt->nstr = NULL;
+      elt->name = NULL;
+      elt->text = NULL;
+      elt->code = NULL;
+    }
+    /* As an alternative to the current implementation, this might be a good
+       place to re-canonicalize the entire DOM to improve interop. Two DOMs can
+       be used: one with non-c14n XML and one with c14n XML so we can handle
+       multiple different transforms.
+    */
     /* for each reference element, check the digest */
     for (i = 0; i < signedInfo->__sizeReference; i++)
     {
@@ -3315,11 +3798,11 @@ soap_wsse_verify_SignedInfo(struct soap *soap)
        || !reference->DigestMethod
        || !reference->DigestMethod->Algorithm
        || !reference->DigestValue)
-        return soap_wsse_fault(soap, wsse__InvalidSecurity, "Incomplete SignedInfo/Reference");
+        return soap_wsse_fault(soap, wsse__InvalidSecurity, "Incomplete SignedInfo Reference");
       /* reference is local? */
       if (*reference->URI == '#')
       {
-        int alg, canonical;
+        int alg, canonical = 0;
         const char *c14ninclude = soap->c14ninclude;
         unsigned char hash[SOAP_SMD_MAX_SIZE];
         /* digest algorithm */
@@ -3341,18 +3824,20 @@ soap_wsse_verify_SignedInfo(struct soap *soap)
         /* if reference has a transform, it should be an exc-c14n transform */
         if (reference->Transforms)
         {
-          if (reference->Transforms->__sizeTransform != 1
-           || !reference->Transforms->Transform[0].Algorithm
-           || strcmp(reference->Transforms->Transform[0].Algorithm, c14n_URI))
-            return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, reference->Transforms->Transform[0].Algorithm);
-          canonical = 1;
-          if (reference->Transforms->Transform[0].c14n__InclusiveNamespaces)
-            soap->c14ninclude = reference->Transforms->Transform[0].c14n__InclusiveNamespaces->PrefixList;
-          else
-            soap->c14ninclude = NULL;
+          int i;
+          for (i = 0; i < reference->Transforms->__sizeTransform; i++)
+          {
+            if (!reference->Transforms->Transform[i].Algorithm
+                || (strcmp(reference->Transforms->Transform[i].Algorithm, c14n_URI) && strcmp(reference->Transforms->Transform[i].Algorithm, ds_envsigURI)))
+              return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, reference->Transforms->Transform[i].Algorithm);
+            if (!strcmp(reference->Transforms->Transform[i].Algorithm, c14n_URI))
+              canonical = 1;
+            if (reference->Transforms->Transform[i].c14n__InclusiveNamespaces)
+              soap->c14ninclude = reference->Transforms->Transform[i].c14n__InclusiveNamespaces->PrefixList;
+            else
+              soap->c14ninclude = NULL;
+          }
         }
-        else
-          canonical = 0;
         /* convert base64 digest to binary */
         soap_base642s(soap, reference->DigestValue, (char*)hash, SOAP_SMD_MAX_SIZE, NULL);
         /* verify the digest of a locally signed element */
@@ -3363,7 +3848,7 @@ soap_wsse_verify_SignedInfo(struct soap *soap)
     }
     return SOAP_OK;
   }
-  return soap_wsse_fault(soap, wsse__InvalidSecurity, "Missing SignedInfo");
+  return soap_wsse_fault(soap, wsse__InvalidSecurity, "Signature SignedInfo required");
 }
 
 /******************************************************************************/
@@ -3394,11 +3879,12 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
     struct soap_dom_attribute *att;
     for (att = elt->atts; att; att = att->next)
     {
-      /* check attribute */
+      /* check if attribute is an wsu:Id or ds:Id or ID*/
       if (att->name
-       && att->nstr
-       && (!strcmp(att->nstr, wsu_URI) || !strcmp(att->nstr, ds_URI))
-       && (!strcmp(att->name, "Id") || !soap_tag_cmp(att->name, "*:Id")))
+       && ((att->nstr && (!strcmp(att->nstr, wsu_URI) || !strcmp(att->nstr, ds_URI)) && (!strcmp(att->name, "Id") || !soap_tag_cmp(att->name, "*:Id")))
+        || (!att->nstr && (!strcmp(att->name, "ID") || !strcmp(att->name, "AssertionID")))
+          )
+         )
       {
         /* found a match, compare attribute value with id */
         if (att->text && !strcmp(att->text, id))
@@ -3480,7 +3966,7 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
       return SOAP_OK;
     return soap_wsse_fault(soap, wsse__FailedCheck, NULL);
   }
-  if (data->vrfy_alg & SOAP_WSSE_IGNORE_EXTRA_REFS)
+  if ((data->vrfy_alg & SOAP_WSSE_IGNORE_EXTRA_REFS))
     return SOAP_OK;
   return soap_wsse_fault(soap, wsse__FailedCheck, "SignedInfo reference URI target not found");
 }
@@ -3682,7 +4168,7 @@ soap_wsse_get_KeyInfo_SecurityTokenReferenceValueType(struct soap *soap)
 
 /**
 @fn X509* soap_wsse_get_KeyInfo_SecurityTokenReferenceX509(struct soap *soap)
-@brief Returns a X509 certificate if present as a BinarySecurity token. This call must be followed by an X509_free to deallocate the X509 certificate data.
+@brief Returns a X509 certificate when referenced and present as a BinarySecurity token or when embedded in the signature KeyInfo. This call must be followed by an X509_free to deallocate the X509 certificate data.
 @param soap context
 @return X509 object or NULL with wsse:SecurityTokenUnavailable fault
 */
@@ -3701,7 +4187,70 @@ soap_wsse_get_KeyInfo_SecurityTokenReferenceX509(struct soap *soap)
     if (!valueType || !strcmp(valueType, wsse_X509v3URI))
       cert = soap_wsse_get_BinarySecurityTokenX509(soap, URI + 1);
   }
+  else if (!URI)
+  {
+    ds__KeyInfoType *keyInfo = soap_wsse_KeyInfo(soap);
+    if (keyInfo && keyInfo->X509Data && keyInfo->X509Data->X509Certificate)
+    {
+#if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
+      const unsigned char *der;
+#else
+      unsigned char *der;
+#endif
+      int derlen;
+      der = (unsigned char*)soap_base642s(soap, keyInfo->X509Data->X509Certificate, NULL, 0, &derlen);
+      cert = d2i_X509(NULL, &der, derlen);
+      /* verify the certificate */
+      if (cert && soap_wsse_verify_X509(soap, cert))
+      {
+        X509_free(cert);
+        cert = NULL;
+      }
+    }
+  }
   return cert;
+}
+
+/******************************************************************************/
+
+/**
+@fn int soap_wsse_add_KeyInfo_X509Certificate(struct soap *soap, X509 *cert)
+@brief Adds KeyInfo/X509Data/X509Certificate.
+@param soap context
+@param[in] cert X509 certificate
+@return SOAP_OK or error code
+*/
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_wsse_add_KeyInfo_X509Certificate(struct soap *soap, X509 *cert)
+{
+  ds__KeyInfoType *keyInfo = soap_wsse_add_KeyInfo(soap);
+  int derlen;
+  unsigned char *der, *s;
+  DBGFUN("soap_wsse_add_KeyInfo_X509Certificate");
+  if (!cert)
+    return soap_wsse_fault(soap, wsse__InvalidSecurityToken, "Missing certificate");
+  if (!keyInfo)
+    return soap->error = SOAP_EOM;
+  /* populate the X509Data element */
+  keyInfo->X509Data = (struct ds__X509DataType*)soap_malloc(soap, sizeof(struct ds__X509DataType));
+  if (!keyInfo->X509Data)
+    return soap->error = SOAP_EOM;
+  soap_default_ds__X509DataType(soap, keyInfo->X509Data);
+  /* determine the storage requirement */
+  derlen = i2d_X509(cert, NULL);
+  if (derlen < 0)
+    return soap_wsse_fault(soap, wsse__InvalidSecurityToken, "Invalid certificate");
+  /* use the gSOAP engine's look-aside buffer to temporarily hold the cert */
+  if (soap_store_lab(soap, NULL, derlen))
+    return SOAP_EOM;
+  s = der = (unsigned char*)soap->labbuf;
+  /* store in DER format */
+  i2d_X509(cert, &s);
+  /* populate the X509Certificate with base64 certificate data */
+  keyInfo->X509Data->X509Certificate = soap_s2base64(soap, der, NULL, derlen);
+  return SOAP_OK;
 }
 
 /******************************************************************************/
@@ -3736,7 +4285,7 @@ soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data(struct soap *soap)
 
 /**
 @fn int soap_wsse_add_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, const char *id, const char *valueType, unsigned char *data, int size)
-@brief Adds KeyInfo element with SecurityTokenReference/KeyIdentifier binary data
+@brief Adds KeyInfo element with SecurityTokenReference/KeyIdentifier binary data.
 @param soap context
 @param[in] id string for signature reference
 @param[in] valueType string
@@ -3776,7 +4325,7 @@ soap_wsse_add_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, con
 
 /**
 @fn const char* soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType(struct soap *soap, ds__KeyInfoType *keyInfo)
-@brief Returns KeyInfo/SecurityTokenReference/KeyIdentifier/ValueType if present
+@brief Returns KeyInfo/SecurityTokenReference/KeyIdentifier/ValueType if present.
 @param soap context
 @param keyInfo points to ds__KeyInfoType, e.g. using soap_wsse_KeyInfo(soap)
 @return string or NULL
@@ -3798,7 +4347,7 @@ soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType(struct soap *
 
 /**
 @fn const unsigned char* soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifier(struct soap *soap, ds__KeyInfoType *keyInfo, int *size)
-@brief Returns KeyInfo/SecurityTokenReference/KeyIdentifier binary data
+@brief Returns KeyInfo/SecurityTokenReference/KeyIdentifier binary data.
 @param soap context
 @param keyInfo points to ds__KeyInfoType, e.g. using soap_wsse_KeyInfo(soap)
 @param[out] size is set to the size of the decoded data
@@ -3903,7 +4452,7 @@ soap_wsse_add_EncryptedKey(struct soap *soap, int alg, const char *URI, X509 *ce
 
 /**
 @fn int soap_wsse_add_EncryptedKey_encrypt_only(struct soap *soap, int alg, const char *URI, X509 *cert, const char *subjectkeyid, const char *issuer, const char *serial, const char *tags)
-@brief Adds EncryptedKey header element and initiates encryption of the given XML elements specified in the tags string. Should be used in combination with soap_wsse_set_wsu_id to set wsu:Id for given XML element tags. 
+@brief Adds EncryptedKey header element and initiates encryption of the given XML elements specified in the tags string. Should be used in combination with soap_wsse_set_wsu_id to set wsu:Id for given XML element tags.
 @param soap context
 @param[in] alg algorithm to use, SOAP_MEC_ENV_ENC_DES_CBC etc.
 @param[in] URI a unique identifier for the key, required for interoperability
@@ -3948,9 +4497,9 @@ soap_wsse_add_EncryptedKey_encrypt_only(struct soap *soap, int alg, const char *
   int keylen;
   _wsse__Security *security;
   struct soap_wsse_data *data = (struct soap_wsse_data*)soap_lookup_plugin(soap, soap_wsse_id);
-  DBGFUN("soap_wsse_add_EncryptedKey");
+  DBGFUN("soap_wsse_add_EncryptedKey_encrypt_only");
   if (!data)
-    return soap_set_receiver_error(soap, "soap_wsse_add_EncryptedKey", "Plugin not registered", SOAP_PLUGIN_ERROR);
+    return soap_set_receiver_error(soap, "soap_wsse_add_EncryptedKey_encrypt_only", "Plugin not registered", SOAP_PLUGIN_ERROR);
   security = soap_wsse_add_Security(soap);
   /* if we don't have a xenc:EncryptedKey, create one */
   if (!security->xenc__EncryptedKey)
@@ -4280,7 +4829,7 @@ soap_wsse_verify_EncryptedKey(struct soap *soap)
         if (!data->deco_key && data->security_token_handler)
         {
           char buf[1024];
-          X509_NAME_oneline(X509_get_subject_name(cert), buf, sizeof(buf));
+          X509_NAME_oneline(X509_get_subject_name(cert), buf, sizeof(buf)-1);
           DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Getting private key from cert name '%s' through security_token_handler callback\n", buf));
           data->deco_alg = SOAP_MEC_ENV_DEC_DES_CBC;
           data->deco_key = data->security_token_handler(soap, &data->deco_alg, buf, NULL, 0, &keylen);
@@ -4441,7 +4990,7 @@ soap_wsse_add_EncryptedKey_DataReferenceURI(struct soap *soap, const char *URI)
 
 /**
 @fn int soap_wsse_add_DataReferenceURI(struct soap *soap, const char *URI)
-@brief Adds a DataReference URI to the WS-Security header element.
+@brief Adds a DataReference URI to the Security header element.
 @param soap context
 @param[in] URI value of the URI ID
 @return SOAP_OK or error code
@@ -4496,7 +5045,7 @@ soap_wsse_add_DataReferenceURI(struct soap *soap, const char *URI)
 
 /******************************************************************************\
  *
- *      xenc:EncryptedData
+ *      xenc:EncryptedData/ds:KeyInfo/Keyname
  *
 \******************************************************************************/
 
@@ -4521,6 +5070,288 @@ soap_wsse_add_EncryptedData_KeyInfo_KeyName(struct soap *soap, const char *keyna
     return soap_set_receiver_error(soap, "soap_wsse_add_EncryptedData_KeyInfo_KeyName", "Plugin not registered", SOAP_PLUGIN_ERROR);
   data->enco_keyname = soap_strdup(soap, keyname);
   return SOAP_OK;
+}
+
+/******************************************************************************\
+ *
+ *      wsse:Security/saml1:Assertion
+ *
+\******************************************************************************/
+
+/**
+@fn saml1__AssertionType *soap_wsse_add_saml1(struct soap *soap, const char *wsuId)
+@brief Adds SAML 1.0 Assertion to the wsse:Security header block, default initialized with wsu:Id set to enable signing of the assertion.
+@param soap context
+@param[in] wsuId string with unique ID value for signing or NULL to omit signing
+@return pointer to assertion or NULL when failed to allocate
+*/
+SOAP_FMAC1
+saml1__AssertionType *
+SOAP_FMAC2
+soap_wsse_add_saml1(struct soap *soap, const char *wsuId)
+{
+  saml1__AssertionType *assertion = NULL;
+  _wsse__Security *security = soap_wsse_add_Security(soap);
+  if (security)
+  {
+    assertion = (saml1__AssertionType*)soap_malloc(soap, sizeof(saml1__AssertionType));
+    soap_default_saml1__AssertionType(soap, assertion);
+    if (assertion)
+    {
+      assertion->MajorVersion = (char*)"1";
+      assertion->MinorVersion = (char*)"0";
+      assertion->wsu__Id = soap_strdup(soap, wsuId);
+    }
+  }
+  return assertion;
+}
+
+/******************************************************************************/
+
+/**
+@fn int soap_wsse_sign_saml1(struct soap *soap, saml1__Assertion assertion, int alg, const void *key, int keylen, X509 *cert)
+@brief Signs a SAML 2.0 assertion.
+@param soap context
+@param[in] alg is the signature algorithm, such as SOAP_SMD_HMAC_SHA1/224/256/384/512, SOAP_SMD_SIGN_DSA_SHA1/256, SOAP_SMD_SIGN_RSA_SHA1/224/256/384/512, or SOAP_SMD_SIGN_ECDSA_SHA1/224/256/384/512
+@param[in] key is the HMAC secret key or DSA/RSA/ECDSA private EVP_PKEY
+@param[in] keylen is the HMAC key length
+@param[in] cert points to the X509 certificate
+*/
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_wsse_sign_saml1(struct soap *soap, saml1__AssertionType *assertion, int alg, const void *key, int keylen, X509 *cert)
+{
+  _wsse__Security *security = soap_wsse_Security(soap);
+  soap_mode omode = soap->omode;
+  short version = soap->version;
+  int err = SOAP_OK;
+  if (!assertion)
+    return SOAP_OK;
+  soap_set_omode(soap, SOAP_XML_CANONICAL);
+  soap_clr_omode(soap, SOAP_XML_INDENT);
+  soap->version = 0;
+  soap->encodingStyle = NULL;
+  if (!assertion->AssertionID)
+    assertion->AssertionID = soap_strdup(soap, soap_rand_uuid(soap, "_"));
+  assertion->wsu__Id = assertion->AssertionID;
+  if (soap_wsse_sign(soap, alg, key, keylen)
+   || soap_wsse_sign_only(soap, assertion->AssertionID)
+   || soap_begin_count(soap))
+  {
+    err = soap->error;
+  }
+  else
+  {
+    soap_strcpy(soap->id, sizeof(soap->id), assertion->AssertionID);
+    soap->event = SOAP_SEC_BEGIN;
+    if (soap_out_saml1__AssertionType(soap, "saml1:Assertion", 0, assertion, "")
+     || soap_end_count(soap)
+     || soap_wsse_add_KeyInfo_X509Certificate(soap, cert))
+      err = soap->error;
+  }
+  assertion->ds__Signature = soap_wsse_Signature(soap);
+  soap_wsse_delete_Security(soap);
+  soap->header->wsse__Security = security;
+  soap->omode = omode;
+  soap->version = version;
+  return err;
+}
+
+/******************************************************************************/
+
+/**
+@fn saml1__AssertionType *soap_wsse_get_saml1(struct soap *soap)
+@brief Returns SAML 1.0 Assertion in the wsse:Security header block, if present.
+@param soap context
+@return pointer to assertion or NULL
+*/
+SOAP_FMAC1
+saml1__AssertionType *
+SOAP_FMAC2
+soap_wsse_get_saml1(struct soap *soap)
+{
+  _wsse__Security *security = soap_wsse_Security(soap);
+  if (security)
+    return security->saml1__Assertion;
+  return NULL;
+}
+
+/******************************************************************************/
+
+/**
+@fn int soap_wsse_verify_saml1(struct soap *soap, saml1__AssertionType *assertion)
+@brief Verifies the SAML 1.0 Assertion with its enveloped signature, requires soap->cacert specified.
+@param soap context
+@param assertion SAML 1.0 assertion to verify
+@return SOAP_OK or error code
+*/
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_wsse_verify_saml1(struct soap *soap, saml1__AssertionType *assertion)
+{
+  struct soap_dom_element *elt = soap->dom;
+  soap_mode omode = soap->omode;
+  short version = soap->version;
+  int err = SOAP_OK;
+  _ds__Signature *signature = assertion->ds__Signature;
+  assertion->ds__Signature = NULL;
+  soap_set_omode(soap, SOAP_XML_DOM);
+  soap_clr_omode(soap, SOAP_XML_INDENT);
+  soap->version = 0;
+  soap->encodingStyle = NULL;
+  soap->dom = NULL;
+  if (soap_begin_send(soap)
+   || soap_put_saml1__AssertionType(soap, assertion, "saml1:Assertion", "")
+   || soap_end_send(soap)
+   || soap_wsse_verify_with_signature(soap, signature))
+    err = soap->error;
+  soap->version = version;
+  soap->omode = omode;
+  soap->dom = elt;
+  assertion->ds__Signature = signature;
+  return err;
+}
+
+/******************************************************************************\
+ *
+ *      wsse:Security/saml2:Assertion
+ *
+\******************************************************************************/
+
+/**
+@fn saml2__AssertionType *soap_wsse_add_saml2(struct soap *soap, const char *wsuId)
+@brief Adds SAML 2.0 Assertion to the wsse:Security header block, default initialized with wsu:Id set to enable signing of the assertion.
+@param soap context
+@param[in] wsuId string with unique ID value for signing or NULL to omit signing
+@return pointer to assertion or NULL when failed to allocate
+*/
+SOAP_FMAC1
+saml2__AssertionType *
+SOAP_FMAC2
+soap_wsse_add_saml2(struct soap *soap, const char *wsuId)
+{
+  saml2__AssertionType *assertion = NULL;
+  _wsse__Security *security = soap_wsse_add_Security(soap);
+  if (security)
+  {
+    assertion = (saml2__AssertionType*)soap_malloc(soap, sizeof(saml2__AssertionType));
+    soap_default_saml2__AssertionType(soap, assertion);
+    if (assertion)
+    {
+      assertion->Version = (char*)"2.0";
+      assertion->wsu__Id = soap_strdup(soap, wsuId);
+    }
+  }
+  return assertion;
+}
+
+/******************************************************************************/
+
+/**
+@fn int soap_wsse_sign_saml2(struct soap *soap, saml2__Assertion assertion, int alg, const void *key, int keylen, X509 *cert)
+@brief Signs a SAML 2.0 assertion.
+@param soap context
+@param[in] alg is the signature algorithm, such as SOAP_SMD_HMAC_SHA1/224/256/384/512, SOAP_SMD_SIGN_DSA_SHA1/256, SOAP_SMD_SIGN_RSA_SHA1/224/256/384/512, or SOAP_SMD_SIGN_ECDSA_SHA1/224/256/384/512
+@param[in] key is the HMAC secret key or DSA/RSA/ECDSA private EVP_PKEY
+@param[in] keylen is the HMAC key length
+@param[in] cert points to the X509 certificate
+*/
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_wsse_sign_saml2(struct soap *soap, saml2__AssertionType *assertion, int alg, const void *key, int keylen, X509 *cert)
+{
+  _wsse__Security *security = soap_wsse_Security(soap);
+  soap_mode omode = soap->omode;
+  short version = soap->version;
+  int err = SOAP_OK;
+  if (!assertion)
+    return SOAP_OK;
+  soap_set_omode(soap, SOAP_XML_CANONICAL);
+  soap_clr_omode(soap, SOAP_XML_INDENT);
+  soap->version = 0;
+  soap->encodingStyle = NULL;
+  if (!assertion->ID)
+    assertion->ID = soap_strdup(soap, soap_rand_uuid(soap, "_"));
+  if (soap_wsse_sign(soap, alg, key, keylen)
+   || soap_wsse_sign_only(soap, assertion->ID)
+   || soap_begin_count(soap))
+  {
+    err = soap->error;
+  }
+  else
+  {
+    soap_strcpy(soap->id, sizeof(soap->id), assertion->ID);
+    soap->event = SOAP_SEC_BEGIN;
+    if (soap_out_saml2__AssertionType(soap, "saml2:Assertion", 0, assertion, "")
+     || soap_end_count(soap)
+     || soap_wsse_add_KeyInfo_X509Certificate(soap, cert))
+      err = soap->error;
+  }
+  assertion->ds__Signature = soap_wsse_Signature(soap);
+  soap_wsse_delete_Security(soap);
+  soap->header->wsse__Security = security;
+  soap->omode = omode;
+  soap->version = version;
+  return err;
+}
+
+/******************************************************************************/
+
+/**
+@fn saml2__AssertionType *soap_wsse_get_saml2(struct soap *soap)
+@brief Returns SAML 2.0 Assertion in the wsse:Security header block, if present.
+@param soap context
+@return pointer to assertion or NULL
+*/
+SOAP_FMAC1
+saml2__AssertionType *
+SOAP_FMAC2
+soap_wsse_get_saml2(struct soap *soap)
+{
+  _wsse__Security *security = soap_wsse_Security(soap);
+  if (security)
+    return security->saml2__Assertion;
+  return NULL;
+}
+
+/******************************************************************************/
+
+/**
+@fn int soap_wsse_verify_saml2(struct soap *soap, saml2__AssertionType *assertion)
+@brief Verifies the SAML 2.0 Assertion with its enveloped signature, requires soap->cacert specified.
+@param soap context
+@param assertion SAML 2.0 assertion to verify
+@return SOAP_OK or error code
+*/
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_wsse_verify_saml2(struct soap *soap, saml2__AssertionType *assertion)
+{
+  struct soap_dom_element *elt = soap->dom;
+  soap_mode omode = soap->omode;
+  short version = soap->version;
+  int err = SOAP_OK;
+  _ds__Signature *signature = assertion->ds__Signature;
+  assertion->ds__Signature = NULL;
+  soap_set_omode(soap, SOAP_XML_DOM);
+  soap_clr_omode(soap, SOAP_XML_INDENT);
+  soap->version = 0;
+  soap->encodingStyle = NULL;
+  soap->dom = NULL;
+  if (soap_begin_send(soap)
+   || soap_put_saml2__AssertionType(soap, assertion, "saml2:Assertion", "")
+   || soap_end_send(soap)
+   || soap_wsse_verify_with_signature(soap, signature))
+    err = soap->error;
+  soap->version = version;
+  soap->omode = omode;
+  soap->dom = elt;
+  assertion->ds__Signature = signature;
+  return err;
 }
 
 /******************************************************************************\
@@ -4625,11 +5456,11 @@ SOAP_FMAC2
 soap_wsse_fault(struct soap *soap, wsse__FaultcodeEnum fault, const char *detail)
 {
   const char *code = soap_wsse__FaultcodeEnum2s(soap, fault);
-  DBGFUN2("soap_wsse_fault", "fault=%s", code?code:"", "detail=%s", detail?detail:"");
+  DBGFUN2("soap_wsse_fault", "fault=%s", code ? code : "(null)", "detail=%s", detail ? detail : "(null)");
   /* remove incorrect or incomplete Security header */
   soap_wsse_delete_Security(soap);
   /* populate the SOAP Fault as per WS-Security spec */
-  /* detail = NULL; */ /* uncomment when detail text not recommended */
+  /* detail = NULL; */ /* uncomment when detail text is to be omitted from SOAP Fault messages */
   /* use WSA to populate the SOAP Header when WSA is used */
   switch (fault)
   {
@@ -4754,7 +5585,7 @@ soap_wsse_session_cleanup(struct soap *soap)
 
 /**
 @fn static void calc_digest(struct soap *soap, const char *created, const char *nonce, int noncelen, const char *password, char hash[SOAP_SMD_SHA1_SIZE])
-@brief Calculates digest value SHA1(created, nonce, password)
+@brief Calculates digest value SHA1(created, nonce, password).
 @param soap context
 @param[in] created string (XSD dateTime format)
 @param[in] nonce value
@@ -4781,21 +5612,93 @@ calc_digest(struct soap *soap, const char *created, const char *nonce, int nonce
 \******************************************************************************/
 
 /**
-@fn static void calc_nonce(char nonce[SOAP_WSSE_NONCELEN])
-@brief Calculates randomized nonce (also uses time() in case a poorly seeded PRNG is used)
-@param[out] nonce value [0..SOAP_WSSE_NONCELEN-1]
+@fn static void soap_wsse_rand_nonce(char *nonce, size_t noncelen)
+@brief Calculates randomized nonce.
+@param[out] nonce value [0..noncelen-1]
+@param[in] noncelen length of nonce must be multiple of 4
 */
-static void
-calc_nonce(char nonce[SOAP_WSSE_NONCELEN])
+SOAP_FMAC1
+void
+SOAP_FMAC2
+soap_wsse_rand_nonce(char *nonce, size_t noncelen)
 {
-  int i;
+  size_t i;
   time_t r = time(NULL);
-  soap_memcpy((void*)nonce, SOAP_WSSE_NONCELEN, (const void*)&r, 4);
-  for (i = 4; i < SOAP_WSSE_NONCELEN; i += 4)
+  soap_memcpy((void*)nonce, 4, (const void*)&r, 4);
+  for (i = 4; i < noncelen; i += 4)
   {
     r = soap_random;
     soap_memcpy((void*)(nonce + i), 4, (const void*)&r, 4);
   }
+}
+
+/******************************************************************************\
+ *
+ *      WS-SecureConversation PSHA1
+ *
+\******************************************************************************/
+
+/**
+@fn int soap_psha1(struct soap *soap, char hmac_key[16], char *secret, size_t secretlen, char *psha1, size_t psha1len)
+@brief Computes PSHA1(hmac_key[16], secret[0..secretlen], psha[0..psha1len-1]).
+@param soap context
+@param[in] hmac_key HMAC key (client secret) raw bytes
+@param[in] secret seed (server secret) raw bytes
+@param[in] secretlen number of bytes
+@param[out] psha1 points to psha1 raw bytes to fill with result
+@param[in] psha1len number of bytes to fill psha1
+@return SOAP_OK or SOAP_EOM
+
+To compute PSHA1 with base64 input and output a base64 encoded psha1[0..psha1len-1]:
+@code
+    int psha1len = 32; // or greater
+    int n, m;
+    const char *client_secret = soap_base642s(soap, client_secret_base64, NULL, 0, &n);
+    const char *server_secret = soap_base642s(soap, server_secret_base64, NULL, 0, &m);
+    char psha1[psha1len];
+    char *psha1_base64;
+    if (n != 16)
+      .. error // HMAC key is 16 bytes
+    if (soap_psha1(soap, client_secret, server_secret, m, psha1, psha1len))
+      .. error // insufficient memory
+    psha1_base64 = soap_s2base64(soap, (unsigned char*)psha1, NULL, psha1len);
+@endcode
+*/
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_psha1(struct soap *soap, const char hmac_key[16], const char *secret, size_t secretlen, char *psha1, size_t psha1len)
+{
+  char HA[SOAP_SMD_SHA1_SIZE];
+  char *buffer;
+  size_t i;
+  if (!psha1)
+    return SOAP_OK;
+  buffer = (char*)SOAP_MALLOC(soap, SOAP_SMD_SHA1_SIZE + secretlen);
+  if (!buffer)
+    return soap->error = SOAP_EOM;
+  i = 0;
+  while (i < psha1len)
+  {
+    struct soap_smd_data context;
+    char temp[SOAP_SMD_SHA1_SIZE];
+    size_t j;
+    soap_smd_init(soap, &context, SOAP_SMD_HMAC_SHA1, (void*)hmac_key, 16);
+    if (i == 0)
+      soap_smd_update(soap, &context, secret, secretlen);
+    else
+      soap_smd_update(soap, &context, HA, SOAP_SMD_SHA1_SIZE);
+    soap_smd_final(soap, &context, HA, NULL);
+    soap_memcpy((void*)buffer, SOAP_SMD_SHA1_SIZE + secretlen, (void*)HA, SOAP_SMD_SHA1_SIZE);
+    soap_memcpy((void*)(buffer + SOAP_SMD_SHA1_SIZE), secretlen, (void*)secret, secretlen);
+    soap_smd_init(soap, &context, SOAP_SMD_HMAC_SHA1, (void*)hmac_key, 16);
+    soap_smd_update(soap, &context, buffer, SOAP_SMD_SHA1_SIZE + secretlen);
+    soap_smd_final(soap, &context, temp, NULL);
+    for (j = 0; j < SOAP_SMD_SHA1_SIZE && i < psha1len; j++)
+      psha1[i++] = temp[j++];
+  }
+  SOAP_FREE(soap, buffer);
+  return SOAP_OK;
 }
 
 /******************************************************************************\
@@ -4937,6 +5840,25 @@ soap_wsse_delete(struct soap *soap, struct soap_plugin *p)
 \******************************************************************************/
 
 /**
+@fn soap_wsse_set_security_token_handler(struct soap *soap, const void *(*callback)(struct soap*, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen))
+@brief Sets the security token handler callback that is optionaly used to retrieve keys for signature verification and decryption.
+@param soap context
+@param[in] callback function pointer
+@return SOAP_OK
+*/
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_wsse_set_security_token_handler(struct soap *soap, const void *(*callback)(struct soap*, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen))
+{
+  struct soap_wsse_data *data = (struct soap_wsse_data*)soap_lookup_plugin(soap, soap_wsse_id);
+  DBGFUN("soap_wsse_set_security_token_handler");
+  if (data)
+    data->security_token_handler = callback;
+  return SOAP_OK;
+}
+
+/**
 @fn int soap_wsse_set_wsu_id(struct soap *soap, const char *tags)
 @brief Sets the elements that are to be extended with wsu:Id attributes. The wsu:Id attribute values are set to the string value of the tag's QName by replacing colons with hyphens to produce an xsd:ID value.
 @param soap context
@@ -5007,7 +5929,7 @@ soap_wsse_sign_only(struct soap *soap, const char *tags)
 
 /**
 @fn static char* soap_wsse_ids(struct soap *soap, const char *tags, int sub)
-@brief converts tag name(s) to id name(s)
+@brief converts tag name(s) to id name(s).
 @param soap context
 @param[in] tags string of space-separated (un)qualified tag names
 @param[in] sub replacement character for ':'
@@ -5053,6 +5975,7 @@ soap_wsse_sign(struct soap *soap, int alg, const void *key, int keylen)
     return soap_set_receiver_error(soap, "soap_wsse_sign", "Plugin not registered", SOAP_PLUGIN_ERROR);
   if (!alg || !key)
     return soap_wsse_fault(soap, wsse__InvalidSecurity, "Invalid signature algorithm or key");
+  soap_wsse_add_Security(soap);
   /* store alg and key in plugin data */
   data->sign_alg = alg;
   data->sign_key = key;
@@ -5104,7 +6027,7 @@ SOAP_FMAC2
 soap_wsse_sign_body(struct soap *soap, int alg, const void *key, int keylen)
 {
   DBGFUN1("soap_wsse_sign_body", "alg=%x", alg);
-  soap_wsse_add_Security(soap);
+  soap_wsse_sign_only(soap, NULL);
   soap->omode |= SOAP_SEC_WSUID;
   return soap_wsse_sign(soap, alg, key, keylen);
 }
@@ -5356,12 +6279,47 @@ soap_wsse_verify_body(struct soap *soap)
 /******************************************************************************/
 
 /**
+@fn int soap_wsse_verify_with_signature(struct soap *soap, const ds__Signature *signature)
+@brief Verifies XML in DOM of a message that was parsed, using the provided signature, assuming dsig non-WS-Security usage scenarios, requires DOM of the XML message which is created automatically with WS-Security enabled.
+@param soap context
+@param signature points to signature structure or NULL
+@return SOAP_OK (signed) or SOAP_FAULT
+*/
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_wsse_verify_with_signature(struct soap *soap, _ds__Signature *signature)
+{
+  _wsse__Security *new_security, *security;
+  int err;
+  if (!signature)
+    return soap_wsse_fault(soap, wsse__FailedCheck, "Signature required");
+  if (!soap->dom)
+    return soap_wsse_fault(soap, wsse__FailedCheck, "XML DOM of signed message required");
+  /* save wsse:Security/ds:Signature when present */
+  security = soap_wsse_Security(soap);
+  /* set the header wsse:Security/ds:Signature to be used internally */
+  soap_header(soap);
+  soap->header->wsse__Security = NULL;
+  new_security = soap_wsse_add_Security(soap);
+  if (!new_security)
+    return soap->error = SOAP_EOM;
+  new_security->ds__Signature = signature;
+  err = soap_wsse_verify_Signature(soap);
+  /* restore wsse:Security/ds:Signature when present */
+  soap->header->wsse__Security = security;
+  return err;
+}
+
+/******************************************************************************/
+
+/**
 @fn int soap_wsse_encrypt_body(struct soap *soap, int alg, const void *key, int keylen)
 @brief Initiates the encryption of the SOAP Body. The algorithm should be SOAP_MEC_ENC_DES_CBC etc. for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key encryption.
 @param soap context
 @param[in] alg the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC etc.
 @param[in] key a certificate with public key for encryption, a DES CBC 160-bit key or AES key
-@param[in] keylen the symmetric encryption key length, 20 bytes for a DES CBC 160-bit key
+@param[in] keylen the symmetric encryption key length, 20 bytes for a DES CBC 160-bit key or larger for AES key
 @return SOAP_OK or error code
 
 This function initiates the encryption of the SOAP Body using an RSA public key
@@ -5462,7 +6420,7 @@ soap_wsse_encrypt_only(struct soap *soap, int alg, const void *key, int keylen, 
 
 /**
 @fn int soap_wsse_encrypt(struct soap *soap, int alg, const void *key, int keylen)
-@brief Start encryption. This function is supposed to be used internally only. The algorithm should be SOAP_MEC_ENC_DES_CBC etc. for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key
+@brief Start encryption. This function is supposed to be used internally only. The algorithm should be SOAP_MEC_ENC_DES_CBC etc. for symmetric encryption. Use soap_wsse_add_EncryptedKey for public key.
 encryption.
 @param soap context
 @param[in] alg the encryption algorithm, should be SOAP_MEC_ENC_DES_CBC etc.
@@ -6027,8 +6985,10 @@ soap_wsse_preparesend(struct soap *soap, const char *buf, size_t len)
   {
     int alg;
     /* start new digest or continue? */
-    if (data->digest && data->digest->level)
+    if (data->digest && !data->digest->done)
+    {
       soap->event = SOAP_SEC_SIGN;
+    }
     else if (!data->sigid || soap_tagsearch(data->sigid, soap->id))
     {
       /* initialize smdevp engine */
@@ -6037,6 +6997,7 @@ soap_wsse_preparesend(struct soap *soap, const char *buf, size_t len)
       soap->event = SOAP_SEC_SIGN;
       digest = (struct soap_wsse_digest*)SOAP_MALLOC(soap, sizeof(struct soap_wsse_digest) + l + 1);
       digest->next = data->digest;
+      digest->done = 0;
       digest->level = soap->level;
       /* digest hash strength is same as signature strength */
       alg = (SOAP_SMD_DGST | (data->sign_alg & SOAP_SMD_HASH));
@@ -6053,14 +7014,14 @@ soap_wsse_preparesend(struct soap *soap, const char *buf, size_t len)
   if (soap->event == SOAP_SEC_SIGN)
   {
     /* update smdevp engine */
-    if (data->digest && data->digest->level)
+    if (data->digest && !data->digest->done)
     {
       soap_smd_update(soap, &data->digest->smd, buf, len);
       if (soap->level < data->digest->level)
       {
         soap->event = 0;
         soap_smd_final(soap, &data->digest->smd, (char*)data->digest->hash, NULL);
-        data->digest->level = 0;
+        data->digest->done = 1;
       }
     }
   }
@@ -6115,7 +7076,7 @@ soap_wsse_preparefinalsend(struct soap *soap)
     alg = (SOAP_SMD_DGST | (data->sign_alg & SOAP_SMD_HASH));
     /* add the SignedInfo/Reference elements for each digest */
     for (digest = data->digest; digest; digest = digest->next)
-      if (soap_wsse_add_SignedInfo_Reference(soap, digest->id, transform, data->prefixlist, alg, (char*)digest->hash))
+      if (soap_wsse_add_SignedInfo_Reference(soap, digest->id, digest->level, transform, data->prefixlist, alg, (char*)digest->hash))
         return soap->error;
     /* then compute the signature and add it */
     if (soap_wsse_add_SignatureValue(soap, data->sign_alg, data->sign_key, data->sign_keylen))
@@ -6134,7 +7095,7 @@ soap_wsse_preparefinalsend(struct soap *soap)
         const char *c14ninclude = soap->c14ninclude;
         soap->c14ninclude = NULL;
         soap->level = 3; /* indent level for XML Signature */
-        if (soap->mode & SOAP_XML_CANONICAL && soap->mode & SOAP_XML_INDENT)
+        if ((soap->mode & SOAP_XML_CANONICAL) && (soap->mode & SOAP_XML_INDENT))
         {
           soap->ns = 0; /* need namespaces for canonicalization */
           soap->count += 4; /* correction for soap->ns = 0: add \n+indent */
@@ -6147,7 +7108,7 @@ soap_wsse_preparefinalsend(struct soap *soap)
         const char *c14nexclude = soap->c14nexclude;
         soap->c14nexclude = "ds xsi"; /* don't add xmlns:ds or xmlns:xsi to count msg len */
         soap->level = 4; /* indent level for XML SignedInfo */
-        if (soap->mode & SOAP_XML_CANONICAL && soap->mode & SOAP_XML_INDENT)
+        if ((soap->mode & SOAP_XML_CANONICAL) && (soap->mode & SOAP_XML_INDENT))
         {
           soap->ns = 0; /* need namespaces for canonicalization */
           soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
@@ -6207,13 +7168,12 @@ soap_wsse_preparecleanup(struct soap *soap, struct soap_wsse_data *data)
 @return SOAP_OK or fault
 @see soap_wsse_verify_auto
 
-This callback is invoked just after a message was received.
+This callback is invoked immediately after a message was received.
 */
 static int
 soap_wsse_preparefinalrecv(struct soap *soap)
 {
   struct soap_wsse_data *data = (struct soap_wsse_data*)soap_lookup_plugin(soap, soap_wsse_id);
-  ds__SignedInfoType *signedInfo = soap_wsse_SignedInfo(soap);
   soap->omode &= ~SOAP_SEC_WSUID;
   data->sigid = NULL; /* so we must set again before next send */
   data->encid = NULL; /* so we must set again before next send */
@@ -6224,89 +7184,10 @@ soap_wsse_preparefinalrecv(struct soap *soap)
     if (soap_mec_end(soap, data->mec))
       return soap_wsse_fault(soap, wsse__FailedCheck, NULL);
   data->deco_alg = SOAP_MEC_NONE;
-  if (signedInfo)
-  {
-    int err = SOAP_OK, alg, bits, keylen = 0;
-    EVP_PKEY *pkey = NULL;
-    const void *key = NULL;
-    /* determine which signature algorithm was used */
-    if (soap_wsse_get_SignedInfo_SignatureMethod(soap, &alg, &bits))
-      return soap->error;
-    /* for HMAC-SHA1, the secret key might be stored in the KeyIdentifier */
-    if ((alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
-    {
-      const char *valueType = soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType(soap, soap_wsse_KeyInfo(soap));
-      /* if in the KeyIdentifier, retrieve it */
-      if (valueType && !strcmp(valueType, ds_hmac_sha1URI))
-      {
-        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Using HMAC key from KeyIdentifier to verify signature\n"));
-        key = (void*)soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifier(soap, soap_wsse_KeyInfo(soap), &keylen);
-      }
-      /* next, try the plugin's security token handler */
-      if (!key)
-      {
-        if (data->security_token_handler)
-        {
-          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Getting HMAC key through security_token_handler callback\n"));
-          key = data->security_token_handler(soap, &alg, NULL, NULL, 0, &keylen);
-        }
-      }
-      /* still no key: try to get it from the plugin */
-      if (!key && alg == (data->vrfy_alg & SOAP_SMD_MASK))
-      {
-        /* get the HMAC secret key from the plugin */
-        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Using HMAC key from plugin to verify signature\n"));
-        key = data->vrfy_key;
-        keylen = data->vrfy_keylen;
-      }
-    }
-    else
-    {
-      /* get the certificate from the KeyInfo reference */
-      X509 *cert, *cert1;
-      cert = cert1 = soap_wsse_get_KeyInfo_SecurityTokenReferenceX509(soap);
-      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Got cert=%p\n", cert));
-      /* next, try the plugin's security token handler */
-      if (!cert)
-      {
-        if (data->security_token_handler)
-        {
-          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Getting certificate through security_token_handler callback\n"));
-          cert = (X509*)data->security_token_handler(soap, &alg, NULL, NULL, 0, &keylen);
-        }
-      }
-      /* obtain the public key from the cert */
-      if (cert)
-      {
-        pkey = X509_get_pubkey((X509*)cert);
-        key = (void*)pkey;
-      }
-      else if (alg == (data->vrfy_alg & SOAP_SMD_MASK))
-      {
-        /* get the public key from the plugin */
-        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Using public key from plugin to verify signature\n"));
-        key = data->vrfy_key;
-        soap->error = SOAP_OK;
-      }
-      if (cert1)
-        X509_free(cert1);
-    }
-    /* if still no key, fault */
-    if (!key)
-      err = soap_wsse_fault(soap, wsse__SecurityTokenUnavailable, NULL);
-    /* verify SignedInfo with signature and check digests of local elements */
-    else if (soap_wsse_verify_SignatureValue(soap, alg, key, keylen)
-          || soap_wsse_verify_SignedInfo(soap))
-      err = soap->error;
-    if (pkey)
-      EVP_PKEY_free(pkey);
-    if (err)
-      return err;
-    if (data->fpreparefinalrecv && data->fpreparefinalrecv != soap_wsse_preparefinalrecv)
-      return data->fpreparefinalrecv(soap);
-  }
-  else if (!soap->fault)
-    return soap_wsse_fault(soap, wsse__FailedCheck, "Signature required");
+  if (soap_wsse_verify_Signature(soap))
+    return soap->error;
+  if (data->fpreparefinalrecv && data->fpreparefinalrecv != soap_wsse_preparefinalrecv)
+    return data->fpreparefinalrecv(soap);
   return SOAP_OK;
 }
 

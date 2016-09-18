@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.34
+        stdsoap2.h 2.8.35
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20834
+#define GSOAP_VERSION 20835
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1829,6 +1829,7 @@ typedef soap_int32 soap_mode;
 #  define DBGFUN1(FNAME, FMT, ARG) DBGLOG(TEST, SOAP_MESSAGE(fdebug, "%s(%d): %s(" FMT ")\n", __FILE__, __LINE__, FNAME, (ARG)))
 #  define DBGFUN2(FNAME, FMT1, ARG1, FMT2, ARG2) DBGLOG(TEST, SOAP_MESSAGE(fdebug, "%s(%d): %s(" FMT1 ", " FMT2 ")\n", __FILE__, __LINE__, FNAME, (ARG1), (ARG2)))
 #  define DBGFUN3(FNAME, FMT1, ARG1, FMT2, ARG2, FMT3, ARG3) DBGLOG(TEST, SOAP_MESSAGE(fdebug, "%s(%d): %s(" FMT1 ", " FMT2 ", " FMT3 ")\n", __FILE__, __LINE__, FNAME, (ARG1), (ARG2), (ARG3)))
+#  define DBGFUN4(FNAME, FMT1, ARG1, FMT2, ARG2, FMT3, ARG3, FMT4, ARG4) DBGLOG(TEST, SOAP_MESSAGE(fdebug, "%s(%d): %s(" FMT1 ", " FMT2 ", " FMT3 ", " FMT4 ")\n", __FILE__, __LINE__, FNAME, (ARG1), (ARG2), (ARG3), (ARG4)))
 # endif
 # ifndef DBGHEX
 #  define DBGHEX(DBGFILE, MSG, LEN) \
@@ -1851,6 +1852,7 @@ typedef soap_int32 soap_mode;
 # define DBGFUN1(FNAME, FMT, ARG)
 # define DBGFUN2(FNAME, FMT1, ARG1, FMT2, ARG2)
 # define DBGFUN3(FNAME, FMT1, ARG1, FMT2, ARG2, FMT3, ARG3)
+# define DBGFUN4(FNAME, FMT1, ARG1, FMT2, ARG2, FMT3, ARG3, FMT4, ARG4)
 # define DBGHEX(DBGFILE, MSG, LEN)
 #endif
 
@@ -2960,11 +2962,11 @@ SOAP_FMAC3 const char* SOAP_FMAC4 soap_check_faultsubcode(struct soap*);
 SOAP_FMAC3 const char* SOAP_FMAC4 soap_check_faultdetail(struct soap*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serializefault(struct soap*);
 
-SOAP_FMAC1 void SOAP_FMAC2 soap_serializeheader(struct soap*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_getheader(struct soap*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_putheader(struct soap*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_getfault(struct soap*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_putfault(struct soap*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serializeheader(struct soap*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_getheader(struct soap*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_putheader(struct soap*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_getfault(struct soap*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_putfault(struct soap*);
 
 SOAP_FMAC1 void SOAP_FMAC2 soap_ssl_init(void);
 SOAP_FMAC1 void SOAP_FMAC2 soap_ssl_noinit(void);
@@ -3192,7 +3194,7 @@ SOAP_FMAC1 struct soap_nlist* SOAP_FMAC2 soap_lookup_ns(struct soap *soap, const
 SOAP_FMAC1 int SOAP_FMAC2 soap_store_lab(struct soap*, const char*, size_t);
 SOAP_FMAC1 int SOAP_FMAC2 soap_append_lab(struct soap*, const char*, size_t);
 
-SOAP_FMAC1 struct soap_blist* SOAP_FMAC2 soap_new_block(struct soap*);
+SOAP_FMAC1 struct soap_blist* SOAP_FMAC2 soap_alloc_block(struct soap*);
 SOAP_FMAC1 void* SOAP_FMAC2 soap_push_block(struct soap*, struct soap_blist*, size_t);
 SOAP_FMAC1 void* SOAP_FMAC2 soap_push_block_max(struct soap*, struct soap_blist*, size_t);
 SOAP_FMAC1 void SOAP_FMAC2 soap_pop_block(struct soap*, struct soap_blist*);

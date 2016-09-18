@@ -360,6 +360,7 @@ AC_CONFIG_FILES([ Makefile \
     gsoap/samples/wsa/Makefile \
     gsoap/samples/wsrm/Makefile \
     gsoap/samples/wsse/Makefile \
+    gsoap/samples/wst/Makefile \
     gsoap/samples/xml-rpc-json/Makefile
     gsoap/samples/rest/Makefile
 ])

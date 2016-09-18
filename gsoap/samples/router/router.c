@@ -719,7 +719,7 @@ create_header(struct soap *server, int method, const char *endpoint, const char 
 int
 buffer_body(struct soap *sender)
 { char *s;
-  if (!soap_new_block(sender))
+  if (!soap_alloc_block(sender))
     return sender->error;
   for (;;)
   { if (!(s = (char*)soap_push_block(sender, NULL, sender->buflen - sender->bufidx)))

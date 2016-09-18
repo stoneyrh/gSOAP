@@ -1,9 +1,9 @@
 /*
-	calculator.cpp
+        calculator.cpp
 
-	WCF BasicMessageSecurity demo
+        WCF BasicMessageSecurity demo
 
-	See the README.txt
+        See the README.txt
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
@@ -52,10 +52,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "soapBasicHttpBinding_USCOREICalculatorProxy.h"
 #include "BasicHttpBinding_USCOREICalculator.nsmap"
 
-#include "wsseapi.h"			/* gsoap/plugin/wsseapi.h */
+#include "wsseapi.h"                    /* gsoap/plugin/wsseapi.h */
 
-#define ENCRYPTION			/* enable encryption */
-/* #define UNENCRYPTED_SIGNATURE */	/* disable encryption of signature */
+/* user options */
+
+#define ENCRYPTION                      /* enable encryption in addition to signing */
+/* #define UNENCRYPTED_SIGNATURE */     /* disable encryption of signature */
+/* #define CERTVERIFY */                /* enable verification of inbound certs, see ssl_verify() */
 
 const char *endpoint = "http://10.0.1.5:8000/ServiceModelSamples/service"; // Set to the service endpoint
 
@@ -69,8 +72,16 @@ char     *srv_serial = NULL, *clt_serial = NULL;
 static int chk_security(struct soap *soap);
 static int set_srv_security(struct soap *soap);
 static int set_clt_security(struct soap *soap);
-static const void *token_handler(struct soap *soap, int alg, const char *keyname, int *keylen);
+static const void *token_handler(struct soap *soap, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen);
 static int ssl_verify(int, X509_STORE_CTX*);
+
+/* primitive type managed allocator */
+template<class T> T * soap_make(struct soap *soap, T val = T())
+{
+  T *p = (T*)soap_malloc(soap, sizeof(T));
+  *p = val;
+  return p;
+}
 
 int main(int argc, char **argv)
 {
@@ -82,32 +93,44 @@ int main(int argc, char **argv)
 
   /* server's RSA private key for signing */
   if ((fd = fopen("serverWCF.pem", "r")))
-  { srv_privk = PEM_read_PrivateKey(fd, NULL, NULL, (void*)"password");
+  {
+    srv_privk = PEM_read_PrivateKey(fd, NULL, NULL, (void*)"password");
     fclose(fd);
     if (!srv_privk)
-    { fprintf(stderr, "Could not read private RSA key from server.pem\n");
+    {
+      fprintf(stderr, "Could not read private RSA key from server.pem\n");
       exit(1);
     }
   }
   else
+  {
     fprintf(stderr, "Could not read server.pem\n");
+  }
+
   /* server's certificate with public key for encryption and signature verification */
   if ((fd = fopen("servercertWCF.pem", "r")))
-  { srv_cert = PEM_read_X509(fd, NULL, NULL, NULL);
+  {
+    srv_cert = PEM_read_X509(fd, NULL, NULL, NULL);
     fclose(fd);
     if (!srv_cert)
-    { fprintf(stderr, "Could not read certificate from clientcert.pem\n");
+    {
+      fprintf(stderr, "Could not read certificate from clientcert.pem\n");
       exit(1);
     }
   }
   else
+  {
     fprintf(stderr, "Could not read server.pem\n");
+  }
+
   /* server's RSA public key from the certificate */
   srv_pubk = X509_get_pubkey(srv_cert);
   if (!srv_pubk)
-  { fprintf(stderr, "Could not get public key from certificate\n");
+  {
+    fprintf(stderr, "Could not get public key from certificate\n");
     exit(1);
   }
+
   /* server's certificate subject, issuer and serial number */
   X509_NAME_oneline(X509_get_subject_name(srv_cert), srv_subject, sizeof(srv_subject));
   X509_NAME_oneline(X509_get_issuer_name(srv_cert), srv_issuer, sizeof(srv_issuer));
@@ -119,32 +142,40 @@ int main(int argc, char **argv)
 
   /* client's RSA private key for signing */
   if ((fd = fopen("clientWCF.pem", "r")))
-  { clt_privk = PEM_read_PrivateKey(fd, NULL, NULL, (void*)"password");
+  {
+    clt_privk = PEM_read_PrivateKey(fd, NULL, NULL, (void*)"password");
     fclose(fd);
     if (!clt_privk)
-    { fprintf(stderr, "Could not read private RSA key from server.pem\n");
+    {
+      fprintf(stderr, "Could not read private RSA key from server.pem\n");
       exit(1);
     }
   }
   else
     fprintf(stderr, "Could not read server.pem\n");
+
   /* client's certificate with public key for encryption and signature verification */
   if ((fd = fopen("clientcertWCF.pem", "r")))
-  { clt_cert = PEM_read_X509(fd, NULL, NULL, NULL);
+  {
+    clt_cert = PEM_read_X509(fd, NULL, NULL, NULL);
     fclose(fd);
     if (!clt_cert)
-    { fprintf(stderr, "Could not read certificate from clientcert.pem\n");
+    {
+      fprintf(stderr, "Could not read certificate from clientcert.pem\n");
       exit(1);
     }
   }
   else
     fprintf(stderr, "Could not read server.pem\n");
+
   /* client's RSA public key from the certificate */
   clt_pubk = X509_get_pubkey(clt_cert);
   if (!clt_pubk)
-  { fprintf(stderr, "Could not get public key from certificate\n");
+  {
+    fprintf(stderr, "Could not get public key from certificate\n");
     exit(1);
   }
+
   /* client's certificate subject, issuer and serial number */
   X509_NAME_oneline(X509_get_subject_name(clt_cert), clt_subject, sizeof(clt_subject));
   X509_NAME_oneline(X509_get_issuer_name(clt_cert), clt_issuer, sizeof(clt_issuer));
@@ -161,7 +192,7 @@ int main(int argc, char **argv)
     // Service sample application
     int port = atoi(argv[1]);
 
-    BasicHttpBinding_USCOREICalculatorService service(SOAP_XML_INDENT | SOAP_XML_CANONICAL);
+    BasicHttpBinding_USCOREICalculatorService service(SOAP_XML_CANONICAL);
 
     soap_register_plugin_arg(service.soap, soap_wsse, (void*)token_handler);
 
@@ -170,6 +201,9 @@ int main(int argc, char **argv)
     /* need cacert to verify certificates */
     service.soap->cafile = "clientcertWCF.pem";
     service.soap->fsslverify = ssl_verify;
+
+    /* immediately reuse the port when restarting the service */
+    service.soap->bind_flags = SO_REUSEADDR;
 
     if (!soap_valid_socket(service.bind(NULL, port, 100)))
     {
@@ -184,16 +218,16 @@ int main(int argc, char **argv)
       soap_wsse_verify_auto(service.soap, SOAP_WSSE_IGNORE_EXTRA_REFS, NULL, 0);
       soap_wsse_decrypt_auto(service.soap, SOAP_MEC_ENV_DEC_AES256_CBC, srv_privk, 0);
 
-      if (!soap_valid_socket(service.accept())
-       || service.serve())
+      if (!soap_valid_socket(service.accept()) || service.serve())
         service.soap_stream_fault(std::cerr);
+
       service.destroy();
     }
   }
   else
   {
     // Client sample application
-    BasicHttpBinding_USCOREICalculatorProxy proxy(endpoint, SOAP_XML_INDENT | SOAP_XML_CANONICAL);
+    BasicHttpBinding_USCOREICalculatorProxy proxy(endpoint, SOAP_XML_CANONICAL);
 
     soap_register_plugin_arg(proxy.soap, soap_wsse, (void*)token_handler);
 
@@ -206,7 +240,9 @@ int main(int argc, char **argv)
     double n1 = 3.14, n2 = 1.41;
 
     if (set_clt_security(proxy.soap))
+    {
       proxy.soap_stream_fault(std::cerr);
+    }
     else
     { 
       _mssamm__Add areq;
@@ -221,7 +257,9 @@ int main(int argc, char **argv)
     }
 
     if (set_clt_security(proxy.soap))
+    {
       proxy.soap_stream_fault(std::cerr);
+    }
     else
     { 
       _mssamm__Subtract sreq;
@@ -236,7 +274,9 @@ int main(int argc, char **argv)
     }
 
     if (set_clt_security(proxy.soap))
+    {
       proxy.soap_stream_fault(std::cerr);
+    }
     else
     { 
       _mssamm__Multiply mreq;
@@ -251,7 +291,9 @@ int main(int argc, char **argv)
     }
 
     if (set_clt_security(proxy.soap))
+    {
       proxy.soap_stream_fault(std::cerr);
+    }
     else
     { 
       _mssamm__Divide dreq;
@@ -264,6 +306,8 @@ int main(int argc, char **argv)
         proxy.soap_stream_fault(std::cerr);
       proxy.destroy();
     }
+
+    proxy.destroy();
   }
 
   OPENSSL_free(clt_serial);
@@ -274,7 +318,7 @@ int main(int argc, char **argv)
 
 /******************************************************************************\
  *
- *	Check and set security
+ *      Check and set security
  *
 \******************************************************************************/
 
@@ -282,21 +326,20 @@ int main(int argc, char **argv)
 static int chk_security(struct soap *soap)
 {
   X509 *cert = soap_wsse_get_KeyInfo_SecurityTokenReferenceX509(soap);
-  char buf[1024];
-
-  if (!cert)
-    return soap_wsse_fault(soap, wsse__SecurityTokenUnavailable, NULL);
-
-  /* Certificate must be known to us */
-  X509_NAME_oneline(X509_get_subject_name(cert), buf, sizeof(buf));
-  if (!strstr(buf, srv_subject) && !strstr(buf, clt_subject))
+  if (cert)
   {
-    fprintf(stderr, "Warning: certificate from %s is unknown\n", buf);
+    char buf[1024];
+    /* if certificate is included, we may want to check if the certificate is known to us */
+    X509_NAME_oneline(X509_get_subject_name(cert), buf, sizeof(buf));
+    if (!strstr(buf, srv_subject) && !strstr(buf, clt_subject))
+    {
+      fprintf(stderr, "Warning: certificate from %s is unknown\n", buf);
 
-    strncat(buf, ": unrecognized subject name", sizeof(buf)-strlen(buf)-1);
-    buf[sizeof(buf)-1] = '\0';
+      strncat(buf, ": unrecognized subject name", sizeof(buf)-strlen(buf)-1);
+      buf[sizeof(buf)-1] = '\0';
 
-    return soap_wsse_fault(soap, wsse__InvalidSecurityToken, buf);
+      return soap_wsse_fault(soap, wsse__InvalidSecurityToken, buf);
+    }
   }
 
   /* Valid timestamp required */
@@ -304,6 +347,13 @@ static int chk_security(struct soap *soap)
   {
     soap_wsse_delete_Security(soap);
     return soap->error;
+  }
+
+  /* Timestamp must be signed */
+  if (soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp") == 0)
+  {
+    soap_wsse_delete_Security(soap);
+    return soap_wsse_sender_fault(soap, "Timestamp not signed", NULL);
   }
 
   /* Body must be signed */
@@ -321,7 +371,7 @@ static int chk_security(struct soap *soap)
 /* Set WS-Security server-side properties after an operation */
 static int set_srv_security(struct soap *soap)
 {
-  if (soap_wsse_add_Timestamp(soap, "Time", 60)	// 1 min to expire
+  if (soap_wsse_add_Timestamp(soap, "Time", 60) // 1 min to expire
    || soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", srv_cert)
    || soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token")
    || soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA1, srv_privk, 0)
@@ -342,7 +392,7 @@ static int set_srv_security(struct soap *soap)
 static int set_clt_security(struct soap *soap)
 {
   // soap_wsse_set_wsu_id(soap, "ds:Signature"); // to encrypt ds:Signature
-  if (soap_wsse_add_Timestamp(soap, "Time", 60)	// 1 min to expire
+  if (soap_wsse_add_Timestamp(soap, "Time", 60) // 1 min to expire
    || soap_wsse_add_BinarySecurityTokenX509(soap, "X509Token", clt_cert)
    || soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token")
    || soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA1, clt_privk, 0)
@@ -363,13 +413,13 @@ static int set_clt_security(struct soap *soap)
 
 /******************************************************************************\
  *
- *	Service operations
+ *      Service operations
  *
 \******************************************************************************/
 
 int BasicHttpBinding_USCOREICalculatorService::Add(_mssamm__Add *Add, _mssamm__AddResponse *AddResponse)
 {
-  double *res = (double*)soap_malloc(soap, sizeof(double));
+  double *res = soap_make<double>(soap);
 
   if (chk_security(soap))
     return soap->error;
@@ -385,7 +435,7 @@ int BasicHttpBinding_USCOREICalculatorService::Add(_mssamm__Add *Add, _mssamm__A
 
 int BasicHttpBinding_USCOREICalculatorService::Subtract(_mssamm__Subtract *Subtract, _mssamm__SubtractResponse *SubtractResponse)
 {
-  double *res = (double*)soap_malloc(soap, sizeof(double));
+  double *res = soap_make<double>(soap);
 
   if (chk_security(soap))
     return soap->error;
@@ -401,7 +451,7 @@ int BasicHttpBinding_USCOREICalculatorService::Subtract(_mssamm__Subtract *Subtr
 
 int BasicHttpBinding_USCOREICalculatorService::Multiply(_mssamm__Multiply *Multiply, _mssamm__MultiplyResponse *MultiplyResponse)
 {
-  double *res = (double*)soap_malloc(soap, sizeof(double));
+  double *res = soap_make<double>(soap);
 
   if (chk_security(soap))
     return soap->error;
@@ -417,7 +467,7 @@ int BasicHttpBinding_USCOREICalculatorService::Multiply(_mssamm__Multiply *Multi
 
 int BasicHttpBinding_USCOREICalculatorService::Divide(_mssamm__Divide *Divide, _mssamm__DivideResponse *DivideResponse)
 {
-  double *res = (double*)soap_malloc(soap, sizeof(double));
+  double *res = soap_make<double>(soap);
 
   if (chk_security(soap))
     return soap->error;
@@ -433,7 +483,7 @@ int BasicHttpBinding_USCOREICalculatorService::Divide(_mssamm__Divide *Divide, _
 
 /******************************************************************************\
  *
- *	WSSE Token Handler
+ *      WSSE Token Handler
  *
 \******************************************************************************/
 
@@ -443,14 +493,20 @@ static char hmac_key[16] = /* Dummy HMAC key for signature test */
 static char des_key[20] = /* Dummy 160-bit triple DES key for encryption test */
 { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
 
-static const void *token_handler(struct soap *soap, int alg, const char *keyname, int *keylen)
-{ const char *ctxId;
+static const void *token_handler(struct soap *soap, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen)
+{
+  const char *ctxId;
   struct ds__X509IssuerSerialType *issuer;
-  switch (alg)
-  { case SOAP_SMD_VRFY_DSA_SHA1:
+  switch (*alg)
+  {
+    case SOAP_SMD_VRFY_DSA_SHA1:
+    case SOAP_SMD_VRFY_DSA_SHA256:
     case SOAP_SMD_VRFY_RSA_SHA1:
+    case SOAP_SMD_VRFY_RSA_SHA224:
     case SOAP_SMD_VRFY_RSA_SHA256:
+    case SOAP_SMD_VRFY_RSA_SHA384:
     case SOAP_SMD_VRFY_RSA_SHA512:
+      /* Signature verification requires a certificate with a public key */
       if (keyname && !strcmp(keyname, "Client"))
         return (const void*)clt_cert;
       if (keyname && !strcmp(keyname, "Server"))
@@ -468,15 +524,25 @@ static const void *token_handler(struct soap *soap, int alg, const char *keyname
       }
       break;
     case SOAP_SMD_HMAC_SHA1:
+    case SOAP_SMD_HMAC_SHA224:
+    case SOAP_SMD_HMAC_SHA256:
+    case SOAP_SMD_HMAC_SHA384:
+    case SOAP_SMD_HMAC_SHA512:
+      /* HMAC digests requires a shared secret key */
       /* WS-SecureConversation: get & check context token ID */
       if ((keyname && !strcmp(keyname, "Shared"))
        || ((ctxId = soap_wsse_get_SecurityContextToken(soap)) && !strcmp(ctxId, "Context")))
-      { *keylen = sizeof(hmac_key);
+      {
+        *keylen = sizeof(hmac_key);
         return (const void*)hmac_key; /* signature verification with secret key */
       }
       break;
     case SOAP_MEC_ENV_DEC_DES_CBC:
+    case SOAP_MEC_ENV_DEC_AES128_CBC:
+    case SOAP_MEC_ENV_DEC_AES192_CBC:
     case SOAP_MEC_ENV_DEC_AES256_CBC:
+    case SOAP_MEC_ENV_DEC_AES512_CBC:
+      /* Envelope decryption requires a private key */
       /* Use KeyInfo/SecurityTokenReference/X509Data */
       issuer = soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data(soap);
       if (issuer)
@@ -495,10 +561,16 @@ static const void *token_handler(struct soap *soap, int alg, const char *keyname
         return (const void*)srv_privk;
       break;
     case SOAP_MEC_DEC_DES_CBC:
+    case SOAP_MEC_DEC_AES128_CBC:
+    case SOAP_MEC_DEC_AES192_CBC:
+    case SOAP_MEC_DEC_AES256_CBC:
+    case SOAP_MEC_DEC_AES512_CBC:
+      /* Decryption requires a shared secret key */
       /* WS-SecureConversation: get & check context token ID */
       if ((keyname && !strcmp(keyname, "Shared"))
        || ((ctxId = soap_wsse_get_SecurityContextToken(soap)) && !strcmp(ctxId, "Context")))
-      { *keylen = sizeof(des_key);
+      {
+        *keylen = sizeof(des_key);
         return (const void*)des_key; /* decryption with secret key */
       }
   }
@@ -508,11 +580,44 @@ static const void *token_handler(struct soap *soap, int alg, const char *keyname
 
 /******************************************************************************\
  *
- *	Optional certificate verification
+ *      Optional certificate verification
  *
 \******************************************************************************/
 
 static int ssl_verify(int ok, X509_STORE_CTX *store)
-{ /* put certificate verification here, return 0 when fails */
+{ /* put certificate verification here, return 0 to fail, 1 to force success */
+#ifdef CERTVERIFY
+  if (!ok)
+  {
+    char buf[1024];
+    int err = X509_STORE_CTX_get_error(store);
+    X509 *cert = X509_STORE_CTX_get_current_cert(store);
+    /* accept self-signed certificates and certificates out of date - modify as you see fit */
+    switch (err)
+    {
+      case X509_V_ERR_CERT_NOT_YET_VALID:
+      case X509_V_ERR_CERT_HAS_EXPIRED:
+      case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
+      case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
+      case X509_V_ERR_UNABLE_TO_GET_CRL:
+      case X509_V_ERR_CRL_NOT_YET_VALID:
+      case X509_V_ERR_CRL_HAS_EXPIRED:
+        /* override with ok = 1 */
+        X509_STORE_CTX_set_error(store, X509_V_OK);
+        ok = 1;
+        break;
+      default:
+        /* print errors to stderr */
+        fprintf(stderr, "SSL verify error %d or warning with certificate at depth %d: %s\n", err, X509_STORE_CTX_get_error_depth(store), X509_verify_cert_error_string(err));
+        X509_NAME_oneline(X509_get_issuer_name(cert), buf, sizeof(buf));
+        fprintf(stderr, "  certificate issuer:  %s\n", buf);
+        X509_NAME_oneline(X509_get_subject_name(cert), buf, sizeof(buf));
+        fprintf(stderr, "  certificate subject: %s\n", buf);
+    }
+  }
+  return ok;
+#else
+  /* Note: return 1 to try to continue, but unsafe progress will be terminated by OpenSSL */
   return 1;
+#endif
 }

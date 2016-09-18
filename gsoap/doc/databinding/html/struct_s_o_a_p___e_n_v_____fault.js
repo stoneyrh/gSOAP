@@ -2,10 +2,10 @@ var struct_s_o_a_p___e_n_v_____fault =
 [
     [ "SOAP_ENV__Fault", "struct_s_o_a_p___e_n_v_____fault.html#ac4478e1f44c4c4b3149ee03b8c270bef", null ],
     [ "SOAP_ENV__Fault", "struct_s_o_a_p___e_n_v_____fault.html#ac4478e1f44c4c4b3149ee03b8c270bef", null ],
-    [ "~SOAP_ENV__Fault", "struct_s_o_a_p___e_n_v_____fault.html#a807b0f98def303b2f3b508e1e32ee5ed", null ],
     [ "soap_type", "struct_s_o_a_p___e_n_v_____fault.html#aee99c6dc021dd9cb3e032c6e1c2374bd", null ],
     [ "soap_type", "struct_s_o_a_p___e_n_v_____fault.html#aee99c6dc021dd9cb3e032c6e1c2374bd", null ],
     [ "address_instantiate_SOAP_ENV__Fault", "struct_s_o_a_p___e_n_v_____fault.html#a16d07381fab8ae267b050fdf0859476c", null ],
+    [ "graph_instantiate_SOAP_ENV__Fault", "struct_s_o_a_p___e_n_v_____fault.html#a41d2b0ea1df9b13ca9a6ba6c8a326579", null ],
     [ "detail", "struct_s_o_a_p___e_n_v_____fault.html#a3601789316339ef6dae6615177e84187", null ],
     [ "faultactor", "struct_s_o_a_p___e_n_v_____fault.html#afc8d92de57a65eebdd10359acca38333", null ],
     [ "faultcode", "struct_s_o_a_p___e_n_v_____fault.html#a7c71f535500a95835d3d6ef98eb498fa", null ],

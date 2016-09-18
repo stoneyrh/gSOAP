@@ -316,9 +316,13 @@ that is accessible in the soap->peer and soap->peerlen members. For example:
 @section wsdd_5 Generating C++ Server Objects
 
 The WSDD library is developed to support C and C++. To support C++ server
-objects generated with soapcpp2 options `-j` (or `-i`), you need to define in your
-C++ code the following wrappers (use `this` instead of `this->soap` below with
-soapcpp2 option `-i`):
+objects generated with soapcpp2 option `-j` (or `-i`), you need to define in
+your C++ code the following wrappers (use `this` instead of `this->soap` below
+with soapcpp2 option `-i`):
+
+    soapcpp2 -a -j -Iimport import/wsdd.h
+
+and your code should include:
 
 @code
     int wsddService::Hello(struct wsdd__HelloType *hello)
@@ -347,13 +351,18 @@ soapcpp2 option `-i`):
     }
 @endcode
 
+Note that soapcpp2 option `-a` may be needed to enable automatic service
+dispatching of WS-Addressing services based on the SOAP Action value instead of
+the SOAP/XML request operation.
+
 Another approach to generate the WSDD service operations is to run soapcpp2
 separately on wsdd.h (or wsdd5.h or wsdd10.h for WS-Discovery 1.0) by:
 
     soapcpp2 -a -L -pwsdd -Iimport import/wsdd.h
     
-to generate wsddService.cpp. Then chain the service operations at the server
-side:
+to generate wsddService.cpp. Then change wsddapi.h to use `#include "wsddH.h"`.
+
+chain the service operations at the server side as follows:
 
 @code
     if (soap_begin_serve(service.soap) == SOAP_OK)
@@ -366,15 +375,22 @@ by soapcpp2 `-j`.
 
 @section wsdd_6 Miscellaneous
 
-You MUST generate client-side operations that the WSDD library expects to be
+You must generate client-side operations that the WSDD library expects to be
 linked with, by executing:
 
-    soapcpp2 -L -pwsdd -Iimport import/wsdd.h
+    soapcpp2 -a -L -pwsdd -Iimport import/wsdd.h
 
-Then compile and link the generated wsddClient.cpp code with your project.
+Then change wsddapi.h to use `#include "wsddH.h"` and compile and link the
+generated wsddClient.cpp code with your project.
 
-Because WS-Addressing may relay faults to a FaultTo service, you need to
-define a SOAP Fault service operation to accept and handle these:
+For server-side projects, also compile and link the generated wsddServer.cpp
+code.
+
+You will need to implement the @ref wsdd_2.
+
+Because WS-Addressing may relay faults to a FaultTo service, when implementing
+a service you will also have to define a SOAP Fault service operation to accept
+and handle these:
 
 @code
     int SOAP_ENV__Fault(struct soap *soap, char *faultcode, char *faultstring, char *faultactor, struct SOAP_ENV__Detail *detail, struct SOAP_ENV__Code *SOAP_ENV__Code, struct SOAP_ENV__Reason *SOAP_ENV__Reason, char *SOAP_ENV__Node, char *SOAP_ENV__Role, struct SOAP_ENV__Detail *SOAP_ENV__Detail)
@@ -391,6 +407,9 @@ define a SOAP Fault service operation to accept and handle these:
       return SOAP_OK;
     }
 @endcode
+
+When implementing a WS-Discovery client and/or server without any other XML Web
+services, the above suffices to generate the required code.
 
 */
 
@@ -994,15 +1013,14 @@ soap_wsdd_listen(struct soap *soap, int timeout)
   /* event-serve loop (exits upon timeout) */
   for (;;)
   {
-    if (!soap_valid_socket(soap_accept(soap)))
+    if (!soap_valid_socket(soap_accept(soap))
+     || soap_begin_serve(soap))
     {
       /* timeout? */
       if (!soap->errnum)
         return soap->error = SOAP_OK;
       return soap->error;
     }
-    if (soap_begin_serve(soap))
-      return soap->error;
 
     /* always close HTTP afterwards */
     soap->keep_alive = 0;

@@ -78,7 +78,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ../../plugin/wsseapi.h ../../plugin/wsseapi.c ../../plugin/smdevp.h ../../plugin/smdevp.c ../../plugin/mecevp.h ../../plugin/mecevp.c ../../plugin/threads.h ../../plugin/threads.c ../../import/wsse.h ../../import/ds.h ../../import/xenc.h ../../import/wsu.h ../../import/c14n.h
+INPUT                  = ../../plugin/wsseapi.h ../../plugin/wsseapi.c ../../plugin/smdevp.h ../../plugin/smdevp.c ../../plugin/mecevp.h ../../plugin/mecevp.c ../../plugin/threads.h ../../plugin/threads.c ../../import/wsse.h ../../import/ds.h ../../import/xenc.h ../../import/wsu.h ../../import/c14n.h ../../import/wsc.h
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \

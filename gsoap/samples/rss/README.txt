@@ -41,3 +41,11 @@ rss_image	the image
 rss_bar		the dividing bar
 rss_item	the title of the item
 rss_desc	the description of the item
+
+Enabling HTTPS
+--------------
+
+To enable HTTPS you should install OpenSSL, then compile with:
+
+	$ cc -DWITH_OPENSSL -o rss rss.c stdsoap2.c soapC.c -lssl -lcrypto
+

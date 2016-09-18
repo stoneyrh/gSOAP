@@ -18,11 +18,11 @@ wsen	= "http://schemas.xmlsoap.org/ws/2004/09/enumeration"
 
 wsp	= "http://schemas.xmlsoap.org/ws/2004/09/policy"
 
-#	wsp redeclarations, used in wst.h:
+#	recommended wsp redeclarations, used in wst.h:
 
 #_wsp__Policy		= | _XML | _XML
 #_wsp__PolicyReference	= | _XML | _XML
-_wsp__AppliesTo		= typedef struct _wsp__AppliesTo { wsa5__EndpointReferenceType *wsa5__EndpointReference; } _wsp__AppliesTo; | struct _wsp__AppliesTo
+#_wsp__AppliesTo		= typedef struct _wsp__AppliesTo { wsa5__EndpointReferenceType *wsa5__EndpointReference; } _wsp__AppliesTo; | struct _wsp__AppliesTo
 
 #	wsa bindings
 
@@ -131,45 +131,58 @@ wsc__SecurityContextTokenType = $\
 #
 ################################################################################
 
-wst__RequestTypeEnum		=
-wst__BinarySecretTypeEnum	=
-wst__ComputedKeyEnum		=
-wst__StatusCodeEnum		=
-wst__KeyTypeEnum		=
+wst__RequestTypeEnum		= | char*
+wst__RequestTypeOpenEnum	= | char*
+wst__BinarySecretTypeEnum	= | char*
+wst__BinarySecretTypeOpenEnum	= | char*
+wst__ComputedKeyEnum		= | char*
+wst__ComputedKeyOpenEnum	= | char*
+wst__StatusCodeEnum		= | char*
+wst__StatusCodeOpenEnum		= | char*
+wst__KeyTypeEnum		= | char*
+wst__KeyTypeOpenEnum		= | char*
 
+wst__RequestSecurityTokenType = $\
+    _wsp__AppliesTo_*                    wsp__AppliesTo;
+wst__RequestSecurityTokenType = $\
+    char*                                KeyType;
+wst__RequestSecurityTokenType = $\
+    char*                                RequestType;
 wst__RequestSecurityTokenType = $\
     char*                                TokenType;
 wst__RequestSecurityTokenType = $\
-    wst__RequestTypeOpenEnum             RequestType;
+    wst__EntropyType*                    Entropy;
+wst__RequestSecurityTokenType = $\
+    char*                                ComputedKeyAlgorithm;
 wst__RequestSecurityTokenType = $\
     unsigned int*                        KeySize;
 wst__RequestSecurityTokenType = $\
-    struct wst__BinaryExchangeType*      BinaryExhange;
+    struct wst__BinaryExchangeType*      BinaryExchange;
 
+wst__RequestSecurityTokenResponseType = $\
+    struct wst__RequestedSecurityTokenType* RequestedSecurityToken;
+wst__RequestSecurityTokenResponseType = $\
+    struct wst__RequestedReferenceType*  RequestedAttachedReference;
+wst__RequestSecurityTokenResponseType = $\
+    struct wst__RequestedReferenceType*  RequestedUnattachedReference;
+wst__RequestSecurityTokenResponseType = $\
+    char*                                KeyType;
+wst__RequestSecurityTokenResponseType = $\
+    char*                                RequestType;
 wst__RequestSecurityTokenResponseType = $\
     char*                                TokenType;
 wst__RequestSecurityTokenResponseType = $\
-    struct wst__RequestedSecurityTokenType*  RequestedSecurityToken;
+    wst__EntropyType*                    Entropy;
 wst__RequestSecurityTokenResponseType = $\
-    struct wst__BinaryExchangeType*      BinaryExhange;
+    struct wst__BinaryExchangeType*      BinaryExchange;
 
-# With WS-Policy AppliesTo:
-wst__RequestSecurityTokenResponseType = $\
-#import "wsp.h"
-wst__RequestSecurityTokenResponseType = $\
-    struct _wsp__AppliesTo*              wsp__AppliesTo;
-
-# Without SAML 1.1:
-#wst__RequestedSecurityTokenType =\
-#typedef struct wst__RequestedSecurityTokenType\n\
-#{	_wsse__SecurityTokenReference *wsse__SecurityTokenReference;\n\
-#} wst__RequestedSecurityTokenType;
-
-# With SAML 1.1:
+# WS-Trust with SAML 1.0 and 2.0:
 wst__RequestedSecurityTokenType =\
 #import "saml1.h"\n\
+#import "saml2.h"\n\
 typedef struct wst__RequestedSecurityTokenType\n\
 {	saml1__AssertionType *saml1__Assertion;\n\
+	saml2__AssertionType *saml2__Assertion;\n\
         _wsse__SecurityTokenReference *wsse__SecurityTokenReference;\n\
 } wst__RequestedSecurityTokenType;
 
@@ -182,6 +195,11 @@ wst__DelegatToeType =\
 typedef struct wst__DelegateToType\n\
 {	_wsse__SecurityTokenReference *wsse__SecurityTokenReference;\n\
 } wst__DelegateToType;
+
+wst__AuthenticatorType =\
+typedef struct wst__AuthenticatorType\n\
+{	char *CombinedHash;\n\
+} wst__AuthenticatorType;
 
 ################################################################################
 #

@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.34 User Guide</title>
+<title>gSOAP 2.8.35 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.34 User Guide </h1>
+<h1 align="center">gSOAP 2.8.35 User Guide </h1>
 
-<h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="http://www.genivia.com">www.genivia.com</a></h3>
+<h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Aug 17, 2016
+<h3 align="center">Sep 18, 2016
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -517,7 +517,7 @@ consume the XML data based on the schemas.
 To start building Web services applications or automate XML data bindings with gSOAP, you need:
 
 <ul>
-<li> The gSOAP package from <a href="http://www.genivia.com/Products/downloads.html"><tt>http://www.genivia.com/Products/downloads.html</tt></a> and select the gSOAP toolkit commercial edition, or download the GPL open source version from SourceForge <a href="http://sourceforge.net/projects/gsoap2"><tt>http://sourceforge.net/projects/gsoap2</tt></a>.
+<li> The gSOAP package from <a href="https://www.genivia.com/Products/downloads.html"><tt>https://www.genivia.com/Products/downloads.html</tt></a> and select the gSOAP toolkit commercial edition, or download the GPL open source version from SourceForge <a href="https://sourceforge.net/projects/gsoap2"><tt>https://sourceforge.net/projects/gsoap2</tt></a>.
 <div class="p"><!----></div>
 </li>
 
@@ -3851,9 +3851,9 @@ applications for example.
 
 <div class="p"><!----></div>
 Learn more about XML data binding for C and C++ with gSOAP by visiting the
-Developer Center <a href="http://www.genivia.com/dev.html"><tt>http://www.genivia.com/dev.html</tt></a> and the new and most
+Developer Center <a href="https://www.genivia.com/dev.html"><tt>https://www.genivia.com/dev.html</tt></a> and the new and most
 up-to-date XML data binding documentation
-<a href="http://www.genivia.com/doc/databinding/html"><tt>http://www.genivia.com/doc/databinding/html</tt></a>.
+<a href="https://www.genivia.com/doc/databinding/html"><tt>https://www.genivia.com/doc/databinding/html</tt></a>.
 
 <div class="p"><!----></div>
 	      <h4><a name="tth_sEc7.5.1">
@@ -4083,7 +4083,7 @@ Additional features and potential limitations:
 <li> Optional DOM support can be used to store mixed content or literal XML
   content. Otherwise, mixed content may be lost. Use soapcpp2 option -d for DOM
   support.  Learn more about the DOM API for C and C++ by visiting the
-  Developer Center <a href="http://www.genivia.com/doc/dom/html"><tt>http://www.genivia.com/doc/dom/html</tt></a>.
+  Developer Center <a href="https://www.genivia.com/doc/dom/html"><tt>https://www.genivia.com/doc/dom/html</tt></a>.
 <div class="p"><!----></div>
 </li>
 
@@ -7260,7 +7260,7 @@ The built-in XML Schema datatype hierarchy from the XML Schema Part 2 documentat
 <div class="p"><!----></div>
 <a name="tth_fIg1">
 </a> 
-<center><img src="http://www.w3.org/TR/xmlschema-2/type-hierarchy.gif"/>
+<center><img src="https://www.w3.org/TR/xmlschema-2/type-hierarchy.gif"/>
 </center>
 
 <center>Figure 1: Built-in Datatype Hierarchy</center>
@@ -13436,14 +13436,14 @@ Built-in gSOAP function: none.
 <div class="p"><!----></div>
 Built-in gSOAP function: none.
 </td></tr>
-<tr><td align="left"><i><b>void</b>&nbsp;(*soap.fsvalidate)(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*pattern, <b>const</b>&nbsp;<b>char</b>&nbsp;*string)</i> </td></tr>
-<tr><td align="left">Called to validate a non-NULL string against a non-NULL pattern. Patterns use XML schema regex syntax. Allows user-defined pattern validation. Should return <i>SOAP_OK</i> when the string matches the pattern or <i>SOAP_PATTERN</i> when the string does not match.
+<tr><td align="left"><i><b>int</b>&nbsp;(*soap.fsvalidate)(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*pattern, <b>const</b>&nbsp;<b>char</b>&nbsp;*string)</i> </td></tr>
+<tr><td align="left">Called to validate a non-NULL string against a non-NULL pattern. Patterns use XML schema regex syntax. Allows user-defined pattern validation. Should return <i>SOAP_OK</i> when the string matches the pattern or <i>SOAP_TYPE</i> when the string does not match.
 
 <div class="p"><!----></div>
 Built-in gSOAP function: none.
 </td></tr>
-<tr><td align="left"><i><b>void</b>&nbsp;(*soap.fwvalidate)(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*pattern, <b>const</b>&nbsp;wchar_t *string)</i> </td></tr>
-<tr><td align="left">Called to validate a non-NULL wide string against a non-NULL pattern. Patterns use XML schema regex syntax. Allows user-defined pattern validation. Should return <i>SOAP_OK</i> when the string matches the pattern or <i>SOAP_PATTERN</i> when the string does not match.
+<tr><td align="left"><i><b>int</b>&nbsp;(*soap.fwvalidate)(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*pattern, <b>const</b>&nbsp;wchar_t *string)</i> </td></tr>
+<tr><td align="left">Called to validate a non-NULL wide string against a non-NULL pattern. Patterns use XML schema regex syntax. Allows user-defined pattern validation. Should return <i>SOAP_OK</i> when the string matches the pattern or <i>SOAP_TYPE</i> when the string does not match.
 
 <div class="p"><!----></div>
 Built-in gSOAP function: none.
@@ -16572,5 +16572,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 17 Aug 2016, 13:04.</small>
+version 4.00.<br />On 18 Sep 2016, 10:26.</small>
 </html>

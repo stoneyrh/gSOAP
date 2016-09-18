@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">graphH.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Fri Jul 1 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Aug 30 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -90,84 +90,46 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ab74711d5c0a479a0830dd21312b2469f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ab74711d5c0a479a0830dd21312b2469f">SOAP_TYPE_byte</a>&#160;&#160;&#160;(3)</td></tr>
-<tr class="separator:ab74711d5c0a479a0830dd21312b2469f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8af3c97e9b61e3e0261e9854cff82684"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a8af3c97e9b61e3e0261e9854cff82684">soap_write_byte</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_byte(soap, data), 0) || <a class="el" href="graph_h_8h.html#afa14448464eee471db1f17aede238556">soap_put_byte</a>(soap, data, &quot;byte&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a8af3c97e9b61e3e0261e9854cff82684"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48f6d725e68da673e11e6a5da002f0ba"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a48f6d725e68da673e11e6a5da002f0ba">soap_read_byte</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#af08868f5c7e6e5a652dd09dd293abcbd">soap_default_byte</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#ad77bd8d5447b75b6ef63e45e3a235a68">soap_get_byte</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a48f6d725e68da673e11e6a5da002f0ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2647c8b87dd4e0dec5169b1fbfa0c2ef"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a2647c8b87dd4e0dec5169b1fbfa0c2ef">SOAP_TYPE_int</a>&#160;&#160;&#160;(1)</td></tr>
-<tr class="separator:a2647c8b87dd4e0dec5169b1fbfa0c2ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af707302983bd0e5ba6da099f94d0d3b1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#af707302983bd0e5ba6da099f94d0d3b1">soap_write_int</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_int(soap, data), 0) || <a class="el" href="graph_h_8h.html#aec30e211aa769a9c8ff2353ae54171a3">soap_put_int</a>(soap, data, &quot;int&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:af707302983bd0e5ba6da099f94d0d3b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29313c4724d4935db6f5b7d398610e92"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a29313c4724d4935db6f5b7d398610e92">soap_read_int</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#a64f68eb85ea19c5d8d91ded3595f949f">soap_default_int</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a1ef2e15c17574b004ff4c0678ad02497">soap_get_int</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a29313c4724d4935db6f5b7d398610e92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c752c39e6891be06b13b82b82a9e82f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a3c752c39e6891be06b13b82b82a9e82f">soap_write_Graph</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || ((data)-&gt;soap_serialize(soap), 0) || (data)-&gt;soap_put(soap, &quot;g:Graph&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a3c752c39e6891be06b13b82b82a9e82f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c96075561eae379c5c6f8eb1459e9ad"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a6c96075561eae379c5c6f8eb1459e9ad">soap_read_Graph</a>(soap,  data)&#160;&#160;&#160;( ((data) ? ((data)-&gt;soap_default(soap), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a866a5b01e8f8c056f26c1bfa3c1be84f">soap_get_Graph</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a6c96075561eae379c5c6f8eb1459e9ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e3c903da7d065bee37c28c7fdf87bb8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a3e3c903da7d065bee37c28c7fdf87bb8">soap_write_SOAP_ENV__Fault</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#a5d4ba67cc987814baa7177c4f37e9f94">soap_serialize_SOAP_ENV__Fault</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#a32f4b4f04a87635978dedc47192e7897">soap_put_SOAP_ENV__Fault</a>(soap, data, &quot;SOAP-ENV:Fault&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a3e3c903da7d065bee37c28c7fdf87bb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9783536050946eb839e0559f144a590b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a9783536050946eb839e0559f144a590b">soap_read_SOAP_ENV__Fault</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#aa0301c16ad60b8239b963701a4ceb82e">soap_default_SOAP_ENV__Fault</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a304618a474cec5d57037e96c38db66e8">soap_get_SOAP_ENV__Fault</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a9783536050946eb839e0559f144a590b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a43eec9a003f231ad8795153ac3ad99"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a3a43eec9a003f231ad8795153ac3ad99">soap_write_SOAP_ENV__Reason</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#a6d9628922faa6f9a3c0bb4fe1d9fa9ac">soap_serialize_SOAP_ENV__Reason</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#aacef6fe30973ab9d4735979fe1ad85ff">soap_put_SOAP_ENV__Reason</a>(soap, data, &quot;SOAP-ENV:Reason&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a3a43eec9a003f231ad8795153ac3ad99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52e19a357f497ce4a5dc9acac81ab5c5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a52e19a357f497ce4a5dc9acac81ab5c5">soap_read_SOAP_ENV__Reason</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#a220e25615a35beb8ee9104ff7ceb8442">soap_default_SOAP_ENV__Reason</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a58fa87964316d8b088939db29dbe5614">soap_get_SOAP_ENV__Reason</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a52e19a357f497ce4a5dc9acac81ab5c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a05dd83310186b6b4f5852fff4e388a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a1a05dd83310186b6b4f5852fff4e388a">soap_write_SOAP_ENV__Detail</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#a7ac1c6452b69a2c105a8f32e43a1fec1">soap_serialize_SOAP_ENV__Detail</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#aea31c27e1e257e44f136f5bd2c3ae569">soap_put_SOAP_ENV__Detail</a>(soap, data, &quot;SOAP-ENV:Detail&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a1a05dd83310186b6b4f5852fff4e388a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38f4aafd248fb8900901c3a4fef53209"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a38f4aafd248fb8900901c3a4fef53209">soap_read_SOAP_ENV__Detail</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#a1df272c64498b7db3273f53025a8cf7e">soap_default_SOAP_ENV__Detail</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#ad92d184f02004ab8d24a673ac992418f">soap_get_SOAP_ENV__Detail</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a38f4aafd248fb8900901c3a4fef53209"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0e10500d98418d05bc162cee74d6943"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ac0e10500d98418d05bc162cee74d6943">soap_write_SOAP_ENV__Code</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#a78ebdb3557f12a981cdb442a166b1126">soap_serialize_SOAP_ENV__Code</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#ad7e6e75c7c37afe6b77009d88d269bad">soap_put_SOAP_ENV__Code</a>(soap, data, &quot;SOAP-ENV:Code&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:ac0e10500d98418d05bc162cee74d6943"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade0792c8e27dd77a458290a3159b2d4a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ade0792c8e27dd77a458290a3159b2d4a">soap_read_SOAP_ENV__Code</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#af3a886f736baaff5cff1bdce3fb6e6f9">soap_default_SOAP_ENV__Code</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#ab6656ed0a733c0b6b44858a4e8405b66">soap_get_SOAP_ENV__Code</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:ade0792c8e27dd77a458290a3159b2d4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ebb82b4cc2ab2dd3adb12ac687c05e2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a9ebb82b4cc2ab2dd3adb12ac687c05e2">soap_write_SOAP_ENV__Header</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#afe20312644bee2f882e489ff52a756d5">soap_serialize_SOAP_ENV__Header</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#ab20a2bfc1051868eaedc843492a46a58">soap_put_SOAP_ENV__Header</a>(soap, data, &quot;SOAP-ENV:Header&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a9ebb82b4cc2ab2dd3adb12ac687c05e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a371b814e1b16c8b3c07953464252de"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a0a371b814e1b16c8b3c07953464252de">soap_read_SOAP_ENV__Header</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#ad8c3a07a8a168b2b49beba630f4c512c">soap_default_SOAP_ENV__Header</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#abed137552c0fadab3c39c1a6b14fb0e4">soap_get_SOAP_ENV__Header</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a0a371b814e1b16c8b3c07953464252de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0166b3ad91d3633b503c1dd7954080f9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a0166b3ad91d3633b503c1dd7954080f9">SOAP_TYPE_PointerToSOAP_ENV__Reason</a>&#160;&#160;&#160;(20)</td></tr>
-<tr class="separator:a0166b3ad91d3633b503c1dd7954080f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27732e390ea09ddfd0e3a24af61e1f07"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a27732e390ea09ddfd0e3a24af61e1f07">soap_write_PointerToSOAP_ENV__Reason</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#aae996a3d178065ef25fe7af84e4c62b1">soap_serialize_PointerToSOAP_ENV__Reason</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#a75db0d4709ed9cd9cdcfd19276db1688">soap_put_PointerToSOAP_ENV__Reason</a>(soap, data, &quot;SOAP-ENV:Reason&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a27732e390ea09ddfd0e3a24af61e1f07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e8cd11ea9ac08e26d27f33f68af8b0d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a2e8cd11ea9ac08e26d27f33f68af8b0d">soap_read_PointerToSOAP_ENV__Reason</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (soap_default_PointerToSOAP_ENV__Reason(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a859280e63be28dee84029bdedce95a63">soap_get_PointerToSOAP_ENV__Reason</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a2e8cd11ea9ac08e26d27f33f68af8b0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9bc46454cb4d0db51b49ad7da960ddcb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a9bc46454cb4d0db51b49ad7da960ddcb">SOAP_TYPE_PointerToSOAP_ENV__Detail</a>&#160;&#160;&#160;(19)</td></tr>
-<tr class="separator:a9bc46454cb4d0db51b49ad7da960ddcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfffe18aa1c0790924b4b9a946027aac"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#adfffe18aa1c0790924b4b9a946027aac">soap_write_PointerToSOAP_ENV__Detail</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#ab593a982466640634b6340521a2a788f">soap_serialize_PointerToSOAP_ENV__Detail</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#a8290c148802bfc056b4be82c11f02d9b">soap_put_PointerToSOAP_ENV__Detail</a>(soap, data, &quot;SOAP-ENV:Detail&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:adfffe18aa1c0790924b4b9a946027aac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4efea6dac82e7b44f5f98c23836325a9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a4efea6dac82e7b44f5f98c23836325a9">soap_read_PointerToSOAP_ENV__Detail</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (soap_default_PointerToSOAP_ENV__Detail(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a6df7a7bdc182b781e987d141ef6092a5">soap_get_PointerToSOAP_ENV__Detail</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a4efea6dac82e7b44f5f98c23836325a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8aa7b966c3acf3dfe64e4e0373164f7f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a8aa7b966c3acf3dfe64e4e0373164f7f">SOAP_TYPE_PointerToSOAP_ENV__Code</a>&#160;&#160;&#160;(13)</td></tr>
-<tr class="separator:a8aa7b966c3acf3dfe64e4e0373164f7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbe149b87d2f32434b6951b77c4e5081"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#acbe149b87d2f32434b6951b77c4e5081">soap_write_PointerToSOAP_ENV__Code</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#ab6507efac2b2f0268d8eba6d1dacde74">soap_serialize_PointerToSOAP_ENV__Code</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#ad49e525b61cbc5a95cfa2804ba1a2e90">soap_put_PointerToSOAP_ENV__Code</a>(soap, data, &quot;SOAP-ENV:Code&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:acbe149b87d2f32434b6951b77c4e5081"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd76b857eaf3688e642eca4dba10aa79"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#acd76b857eaf3688e642eca4dba10aa79">soap_read_PointerToSOAP_ENV__Code</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (soap_default_PointerToSOAP_ENV__Code(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a91d75b2bad82fb7da237a9699bdf24cf">soap_get_PointerToSOAP_ENV__Code</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:acd76b857eaf3688e642eca4dba10aa79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7340f0f2aa3c0243ee8c3279a85a9f33"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a7340f0f2aa3c0243ee8c3279a85a9f33">SOAP_TYPE_PointerToGraph</a>&#160;&#160;&#160;(9)</td></tr>
-<tr class="separator:a7340f0f2aa3c0243ee8c3279a85a9f33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe37a89681895ec8dc45684b6ffb7e64"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#abe37a89681895ec8dc45684b6ffb7e64">soap_write_PointerToGraph</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#af7267c4eb3860901c3ae0e4e352ea366">soap_serialize_PointerToGraph</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#a8052601497a62291d38a3b96f52065f5">soap_put_PointerToGraph</a>(soap, data, &quot;g:Graph&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:abe37a89681895ec8dc45684b6ffb7e64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a950a2b957e16705db03ca9c80b80d468"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a950a2b957e16705db03ca9c80b80d468">soap_read_PointerToGraph</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (soap_default_PointerToGraph(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a0e4c635160790c5767e9da721d67c77e">soap_get_PointerToGraph</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a950a2b957e16705db03ca9c80b80d468"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab48ddc55ca9f40f8da2d952a0abe8560"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ab48ddc55ca9f40f8da2d952a0abe8560">soap_default__QName</a>(soap,  a)&#160;&#160;&#160;<a class="el" href="graph_h_8h.html#ae310bbddc41fb994297140e42936427b">soap_default_string</a>(soap, a)</td></tr>
-<tr class="separator:ab48ddc55ca9f40f8da2d952a0abe8560"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf427780945d6b2b3768ce6fd9092ae3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#acf427780945d6b2b3768ce6fd9092ae3">soap__QName2s</a>&#160;&#160;&#160;<a class="el" href="address_h_8h.html#a4ffe3d817bdfed3787583cbf672f7abb">soap_string2s</a></td></tr>
-<tr class="separator:acf427780945d6b2b3768ce6fd9092ae3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a644409dcb97338220fffbf1bdbd4da16"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a644409dcb97338220fffbf1bdbd4da16">soap_s2_QName</a>&#160;&#160;&#160;<a class="el" href="address_h_8h.html#afcc2c573481cc33e4d799fea7b4f576d">soap_s2string</a></td></tr>
-<tr class="separator:a644409dcb97338220fffbf1bdbd4da16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05d1880531b5e7b6dd6eb9170dddfe3e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a05d1880531b5e7b6dd6eb9170dddfe3e">soap_write__QName</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#a117253ef25707716512034eb94747278">soap_serialize__QName</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#afd3cf45ea2971714c3d6116fd3756871">soap_put__QName</a>(soap, data, &quot;byte&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a05d1880531b5e7b6dd6eb9170dddfe3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62724451c38940cfb91b957003b27307"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a62724451c38940cfb91b957003b27307">soap_read__QName</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (<a class="el" href="address_h_8h.html#a4649dcc9cc34e1646c088aa95e34f667">soap_default__QName</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#aec049bc4c217fa3506c73427d16476a6">soap_get__QName</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a62724451c38940cfb91b957003b27307"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a243a283750788670ef7aa9472a8e2a0e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a243a283750788670ef7aa9472a8e2a0e">SOAP_TYPE_string</a>&#160;&#160;&#160;(4)</td></tr>
-<tr class="separator:a243a283750788670ef7aa9472a8e2a0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a15de62f4023b1652f640307a0a0abb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a8a15de62f4023b1652f640307a0a0abb">soap_write_string</a>(soap,  data)&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#af02689d9594ff931af8645225a532f0e">soap_serialize_string</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#aee5fd036d86bfd679ba4c94e4172cb21">soap_put_string</a>(soap, data, &quot;byte&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:a8a15de62f4023b1652f640307a0a0abb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7d8b8009199434808a6861e37c37ee0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ae7d8b8009199434808a6861e37c37ee0">soap_read_string</a>(soap,  data)&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#ae310bbddc41fb994297140e42936427b">soap_default_string</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a40d26ae1efa55db545de44fb65a27fc8">soap_get_string</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td></tr>
-<tr class="separator:ae7d8b8009199434808a6861e37c37ee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90899f7dea370dd9a856608172a189e6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a90899f7dea370dd9a856608172a189e6">SOAP_TYPE_std__vectorTemplateOfPointerToGraph</a>&#160;&#160;&#160;(10)</td></tr>
-<tr class="separator:a90899f7dea370dd9a856608172a189e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b5cd3b4d9d3f9c359fe4d96eacac4ba"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a8b5cd3b4d9d3f9c359fe4d96eacac4ba">SOAP_TYPE_byte_DEFINED</a></td></tr>
+<tr class="separator:a8b5cd3b4d9d3f9c359fe4d96eacac4ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a462522616f40659e206e76cb0231ae3d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a462522616f40659e206e76cb0231ae3d">SOAP_TYPE_int_DEFINED</a></td></tr>
+<tr class="separator:a462522616f40659e206e76cb0231ae3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a557564287ad365b0bf19c87ebee38be8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a557564287ad365b0bf19c87ebee38be8">SOAP_TYPE_Graph_DEFINED</a></td></tr>
+<tr class="separator:a557564287ad365b0bf19c87ebee38be8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7ba3860ff40693f508badeb1c508dea"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ae7ba3860ff40693f508badeb1c508dea">SOAP_TYPE_SOAP_ENV__Fault_DEFINED</a></td></tr>
+<tr class="separator:ae7ba3860ff40693f508badeb1c508dea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3682392919d9b4f1a8de7d0c8d3aafd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ab3682392919d9b4f1a8de7d0c8d3aafd">SOAP_TYPE_SOAP_ENV__Reason_DEFINED</a></td></tr>
+<tr class="separator:ab3682392919d9b4f1a8de7d0c8d3aafd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d316ba094d5ec1959db422122d48d18"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a9d316ba094d5ec1959db422122d48d18">SOAP_TYPE_SOAP_ENV__Detail_DEFINED</a></td></tr>
+<tr class="separator:a9d316ba094d5ec1959db422122d48d18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf3dc6227251f73485bc6681dbd49261"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#adf3dc6227251f73485bc6681dbd49261">SOAP_TYPE_SOAP_ENV__Code_DEFINED</a></td></tr>
+<tr class="separator:adf3dc6227251f73485bc6681dbd49261"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a375f659e3f8739b2f54b37ca402dffab"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a375f659e3f8739b2f54b37ca402dffab">SOAP_TYPE_SOAP_ENV__Header_DEFINED</a></td></tr>
+<tr class="separator:a375f659e3f8739b2f54b37ca402dffab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad736c63c0f77e9dde71aa9135bfc093e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ad736c63c0f77e9dde71aa9135bfc093e">SOAP_TYPE_PointerToSOAP_ENV__Reason_DEFINED</a></td></tr>
+<tr class="separator:ad736c63c0f77e9dde71aa9135bfc093e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71a978db36f40357a989748aaf912edd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a71a978db36f40357a989748aaf912edd">SOAP_TYPE_PointerToSOAP_ENV__Detail_DEFINED</a></td></tr>
+<tr class="separator:a71a978db36f40357a989748aaf912edd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afef5c7e1830aa872ded8c377025674bd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#afef5c7e1830aa872ded8c377025674bd">SOAP_TYPE_PointerToSOAP_ENV__Code_DEFINED</a></td></tr>
+<tr class="separator:afef5c7e1830aa872ded8c377025674bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4c5c197e18b4c0394b592b9bfc30f96"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ac4c5c197e18b4c0394b592b9bfc30f96">SOAP_TYPE_PointerToGraph_DEFINED</a></td></tr>
+<tr class="separator:ac4c5c197e18b4c0394b592b9bfc30f96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a429100633e196f97058a990f4d5bfd8e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a429100633e196f97058a990f4d5bfd8e">SOAP_TYPE__XML_DEFINED</a></td></tr>
+<tr class="separator:a429100633e196f97058a990f4d5bfd8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf2399028b7e6ad6106ada815bda8d8b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#abf2399028b7e6ad6106ada815bda8d8b">SOAP_TYPE__QName_DEFINED</a></td></tr>
+<tr class="separator:abf2399028b7e6ad6106ada815bda8d8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a326503ab31b9892ac3326250dc953415"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a326503ab31b9892ac3326250dc953415">soap__QName2s</a>(soap,  a)&#160;&#160;&#160;soap_QName2s(soap, (a))</td></tr>
+<tr class="separator:a326503ab31b9892ac3326250dc953415"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af11eb7c7eb5065edd32cb8f18a46cda5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#af11eb7c7eb5065edd32cb8f18a46cda5">soap_s2_QName</a>(soap,  s,  a)&#160;&#160;&#160;soap_s2QName((soap), (s), (char**)(a), 0, -1, NULL)</td></tr>
+<tr class="separator:af11eb7c7eb5065edd32cb8f18a46cda5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a455b8eb42dd08ef9f37d60b63df5d0e7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a455b8eb42dd08ef9f37d60b63df5d0e7">SOAP_TYPE_string_DEFINED</a></td></tr>
+<tr class="separator:a455b8eb42dd08ef9f37d60b63df5d0e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ffe3d817bdfed3787583cbf672f7abb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a4ffe3d817bdfed3787583cbf672f7abb">soap_string2s</a>(soap,  a)&#160;&#160;&#160;(a)</td></tr>
+<tr class="separator:a4ffe3d817bdfed3787583cbf672f7abb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcc2c573481cc33e4d799fea7b4f576d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#afcc2c573481cc33e4d799fea7b4f576d">soap_s2string</a>(soap,  s,  a)&#160;&#160;&#160;soap_s2char((soap), (s), (char**)(a), 0, -1, NULL)</td></tr>
+<tr class="separator:afcc2c573481cc33e4d799fea7b4f576d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ebce496c043d465626d5a1ed0068310"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a6ebce496c043d465626d5a1ed0068310">SOAP_TYPE_std__vectorTemplateOfPointerToGraph_DEFINED</a></td></tr>
+<tr class="separator:a6ebce496c043d465626d5a1ed0068310"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -201,8 +163,12 @@ Functions</h2></td></tr>
 <tr class="separator:afc73f14affa1a4b357cf0b56d78d7c02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa14448464eee471db1f17aede238556"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#afa14448464eee471db1f17aede238556">soap_put_byte</a> (struct soap *, const char *, const char *, const char *)</td></tr>
 <tr class="separator:afa14448464eee471db1f17aede238556"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6528219ab17e1fdbd449d1af733fea7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ad6528219ab17e1fdbd449d1af733fea7">soap_write_byte</a> (struct soap *soap, char const *p)</td></tr>
+<tr class="separator:ad6528219ab17e1fdbd449d1af733fea7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad77bd8d5447b75b6ef63e45e3a235a68"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 char *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ad77bd8d5447b75b6ef63e45e3a235a68">soap_get_byte</a> (struct soap *, char *, const char *, const char *)</td></tr>
 <tr class="separator:ad77bd8d5447b75b6ef63e45e3a235a68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad20d8ac40a55b7ce99d71a209ae6ac0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aad20d8ac40a55b7ce99d71a209ae6ac0">soap_read_byte</a> (struct soap *soap, char *p)</td></tr>
+<tr class="separator:aad20d8ac40a55b7ce99d71a209ae6ac0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64f68eb85ea19c5d8d91ded3595f949f"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a64f68eb85ea19c5d8d91ded3595f949f">soap_default_int</a> (struct soap *, int *)</td></tr>
 <tr class="separator:a64f68eb85ea19c5d8d91ded3595f949f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf6c6f95fd1b56c5c4c8437b578f1eea"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#acf6c6f95fd1b56c5c4c8437b578f1eea">soap_out_int</a> (struct soap *, const char *, int, const int *, const char *)</td></tr>
@@ -211,22 +177,30 @@ Functions</h2></td></tr>
 <tr class="separator:afa9454047908bcda592b49614f679943"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec30e211aa769a9c8ff2353ae54171a3"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aec30e211aa769a9c8ff2353ae54171a3">soap_put_int</a> (struct soap *, const int *, const char *, const char *)</td></tr>
 <tr class="separator:aec30e211aa769a9c8ff2353ae54171a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afacb34682f4d7b0e88a036957e345b2d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#afacb34682f4d7b0e88a036957e345b2d">soap_write_int</a> (struct soap *soap, int const *p)</td></tr>
+<tr class="separator:afacb34682f4d7b0e88a036957e345b2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ef2e15c17574b004ff4c0678ad02497"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a1ef2e15c17574b004ff4c0678ad02497">soap_get_int</a> (struct soap *, int *, const char *, const char *)</td></tr>
 <tr class="separator:a1ef2e15c17574b004ff4c0678ad02497"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6fac0088e306105d2f4ffaee371f2ef"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ae6fac0088e306105d2f4ffaee371f2ef">soap_read_int</a> (struct soap *soap, int *p)</td></tr>
+<tr class="separator:ae6fac0088e306105d2f4ffaee371f2ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8e7602395c7b1d74c130fc951e4316a"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aa8e7602395c7b1d74c130fc951e4316a">soap_out_Graph</a> (struct soap *, const char *, int, const <a class="el" href="class_graph.html">Graph</a> *, const char *)</td></tr>
 <tr class="separator:aa8e7602395c7b1d74c130fc951e4316a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa356490d7f3112897e71ff50941257fe"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 <a class="el" href="class_graph.html">Graph</a> *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aa356490d7f3112897e71ff50941257fe">soap_in_Graph</a> (struct soap *, const char *, <a class="el" href="class_graph.html">Graph</a> *, const char *)</td></tr>
 <tr class="separator:aa356490d7f3112897e71ff50941257fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:accbf9540afef55bce667c4c253b063d6"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 <a class="el" href="class_graph.html">Graph</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#accbf9540afef55bce667c4c253b063d6">soap_instantiate_Graph</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
-<tr class="separator:accbf9540afef55bce667c4c253b063d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7fe651704c47083590ab38adf4cae94"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 <a class="el" href="class_graph.html">Graph</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ab7fe651704c47083590ab38adf4cae94">graph_instantiate_Graph</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
+<tr class="separator:ab7fe651704c47083590ab38adf4cae94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68df7ac7467a15137075e187c9cdd218"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graph.html">Graph</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a68df7ac7467a15137075e187c9cdd218">soap_new_Graph</a> (struct soap *soap, int n=-1)</td></tr>
 <tr class="separator:a68df7ac7467a15137075e187c9cdd218"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9be40d4dd455230251c8e1ad0949e6ce"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graph.html">Graph</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a9be40d4dd455230251c8e1ad0949e6ce">soap_new_req_Graph</a> (struct soap *soap)</td></tr>
 <tr class="separator:a9be40d4dd455230251c8e1ad0949e6ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e6c4831bde83ecb234efc2d9af4976a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graph.html">Graph</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a7e6c4831bde83ecb234efc2d9af4976a">soap_new_set_Graph</a> (struct soap *soap, const std::vector&lt; <a class="el" href="class_graph.html">Graph</a> * &gt; &amp;edges)</td></tr>
 <tr class="separator:a7e6c4831bde83ecb234efc2d9af4976a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35e25e1143e5bbea329fbcf11dd71f66"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a35e25e1143e5bbea329fbcf11dd71f66">soap_write_Graph</a> (struct soap *soap, <a class="el" href="class_graph.html">Graph</a> const *p)</td></tr>
+<tr class="separator:a35e25e1143e5bbea329fbcf11dd71f66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a866a5b01e8f8c056f26c1bfa3c1be84f"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 <a class="el" href="class_graph.html">Graph</a> *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a866a5b01e8f8c056f26c1bfa3c1be84f">soap_get_Graph</a> (struct soap *, <a class="el" href="class_graph.html">Graph</a> *, const char *, const char *)</td></tr>
 <tr class="separator:a866a5b01e8f8c056f26c1bfa3c1be84f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af395ff6f50458687c0e041c939f37fd5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#af395ff6f50458687c0e041c939f37fd5">soap_read_Graph</a> (struct soap *soap, <a class="el" href="class_graph.html">Graph</a> *p)</td></tr>
+<tr class="separator:af395ff6f50458687c0e041c939f37fd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0301c16ad60b8239b963701a4ceb82e"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aa0301c16ad60b8239b963701a4ceb82e">soap_default_SOAP_ENV__Fault</a> (struct soap *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *)</td></tr>
 <tr class="separator:aa0301c16ad60b8239b963701a4ceb82e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d4ba67cc987814baa7177c4f37e9f94"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a5d4ba67cc987814baa7177c4f37e9f94">soap_serialize_SOAP_ENV__Fault</a> (struct soap *, const struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *)</td></tr>
@@ -235,8 +209,8 @@ Functions</h2></td></tr>
 <tr class="separator:a2efb7c9bf5a6995c9942418e5973cd79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f65a1535e75f71de6b93c4e01ac4613"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a7f65a1535e75f71de6b93c4e01ac4613">soap_in_SOAP_ENV__Fault</a> (struct soap *, const char *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *, const char *)</td></tr>
 <tr class="separator:a7f65a1535e75f71de6b93c4e01ac4613"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed96a089375581f150ecf50fecc35209"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aed96a089375581f150ecf50fecc35209">soap_instantiate_SOAP_ENV__Fault</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
-<tr class="separator:aed96a089375581f150ecf50fecc35209"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c1ba46d8b45a2c2a2a89f607aa1a0ba"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a5c1ba46d8b45a2c2a2a89f607aa1a0ba">graph_instantiate_SOAP_ENV__Fault</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
+<tr class="separator:a5c1ba46d8b45a2c2a2a89f607aa1a0ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a369c83f688d07b9a30bc545ab8084f74"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a369c83f688d07b9a30bc545ab8084f74">soap_new_SOAP_ENV__Fault</a> (struct soap *soap, int n=-1)</td></tr>
 <tr class="separator:a369c83f688d07b9a30bc545ab8084f74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeed8404e8109ab94a481451f0efe9108"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aeed8404e8109ab94a481451f0efe9108">soap_new_req_SOAP_ENV__Fault</a> (struct soap *soap)</td></tr>
@@ -245,8 +219,12 @@ Functions</h2></td></tr>
 <tr class="separator:a84927784cf607f37f6ef86161744cd3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32f4b4f04a87635978dedc47192e7897"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a32f4b4f04a87635978dedc47192e7897">soap_put_SOAP_ENV__Fault</a> (struct soap *, const struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *, const char *, const char *)</td></tr>
 <tr class="separator:a32f4b4f04a87635978dedc47192e7897"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a367d5a2a985ac645fa704a4f3004ea80"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a367d5a2a985ac645fa704a4f3004ea80">soap_write_SOAP_ENV__Fault</a> (struct soap *soap, struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> const *p)</td></tr>
+<tr class="separator:a367d5a2a985ac645fa704a4f3004ea80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a304618a474cec5d57037e96c38db66e8"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a304618a474cec5d57037e96c38db66e8">soap_get_SOAP_ENV__Fault</a> (struct soap *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *, const char *, const char *)</td></tr>
 <tr class="separator:a304618a474cec5d57037e96c38db66e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57185e307fd24bc2b334b61ee3be273e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a57185e307fd24bc2b334b61ee3be273e">soap_read_SOAP_ENV__Fault</a> (struct soap *soap, struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *p)</td></tr>
+<tr class="separator:a57185e307fd24bc2b334b61ee3be273e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a220e25615a35beb8ee9104ff7ceb8442"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a220e25615a35beb8ee9104ff7ceb8442">soap_default_SOAP_ENV__Reason</a> (struct soap *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *)</td></tr>
 <tr class="separator:a220e25615a35beb8ee9104ff7ceb8442"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d9628922faa6f9a3c0bb4fe1d9fa9ac"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a6d9628922faa6f9a3c0bb4fe1d9fa9ac">soap_serialize_SOAP_ENV__Reason</a> (struct soap *, const struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *)</td></tr>
@@ -255,8 +233,8 @@ Functions</h2></td></tr>
 <tr class="separator:ada0f9195c921580d842f5ba20feff116"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5663e0bee29d7cb223130537c9e38584"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a5663e0bee29d7cb223130537c9e38584">soap_in_SOAP_ENV__Reason</a> (struct soap *, const char *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *, const char *)</td></tr>
 <tr class="separator:a5663e0bee29d7cb223130537c9e38584"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf98daf3098b5205174483f654bacd1b"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aaf98daf3098b5205174483f654bacd1b">soap_instantiate_SOAP_ENV__Reason</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
-<tr class="separator:aaf98daf3098b5205174483f654bacd1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fafe497792a3ce0c1b6eb59335766f3"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a0fafe497792a3ce0c1b6eb59335766f3">graph_instantiate_SOAP_ENV__Reason</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
+<tr class="separator:a0fafe497792a3ce0c1b6eb59335766f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f189f0325b0223c407bb743e3b31c6b"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a0f189f0325b0223c407bb743e3b31c6b">soap_new_SOAP_ENV__Reason</a> (struct soap *soap, int n=-1)</td></tr>
 <tr class="separator:a0f189f0325b0223c407bb743e3b31c6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04302427fdae8ee1129b5d2489c6684a"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a04302427fdae8ee1129b5d2489c6684a">soap_new_req_SOAP_ENV__Reason</a> (struct soap *soap)</td></tr>
@@ -265,8 +243,12 @@ Functions</h2></td></tr>
 <tr class="separator:a1eaa45fe4bc6b8525f9ac122a283b421"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aacef6fe30973ab9d4735979fe1ad85ff"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aacef6fe30973ab9d4735979fe1ad85ff">soap_put_SOAP_ENV__Reason</a> (struct soap *, const struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *, const char *, const char *)</td></tr>
 <tr class="separator:aacef6fe30973ab9d4735979fe1ad85ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af74105aca1b48474caac0e6003933ccb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#af74105aca1b48474caac0e6003933ccb">soap_write_SOAP_ENV__Reason</a> (struct soap *soap, struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> const *p)</td></tr>
+<tr class="separator:af74105aca1b48474caac0e6003933ccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58fa87964316d8b088939db29dbe5614"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a58fa87964316d8b088939db29dbe5614">soap_get_SOAP_ENV__Reason</a> (struct soap *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *, const char *, const char *)</td></tr>
 <tr class="separator:a58fa87964316d8b088939db29dbe5614"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae58a367c27bf74b7c98f21c39e11ed66"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ae58a367c27bf74b7c98f21c39e11ed66">soap_read_SOAP_ENV__Reason</a> (struct soap *soap, struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *p)</td></tr>
+<tr class="separator:ae58a367c27bf74b7c98f21c39e11ed66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1df272c64498b7db3273f53025a8cf7e"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a1df272c64498b7db3273f53025a8cf7e">soap_default_SOAP_ENV__Detail</a> (struct soap *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *)</td></tr>
 <tr class="separator:a1df272c64498b7db3273f53025a8cf7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ac1c6452b69a2c105a8f32e43a1fec1"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a7ac1c6452b69a2c105a8f32e43a1fec1">soap_serialize_SOAP_ENV__Detail</a> (struct soap *, const struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *)</td></tr>
@@ -275,8 +257,8 @@ Functions</h2></td></tr>
 <tr class="separator:a68e2b3e83d91e8fc1f925173ec5f9f8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e2410d0954219c7756e4f14cce887f1"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a9e2410d0954219c7756e4f14cce887f1">soap_in_SOAP_ENV__Detail</a> (struct soap *, const char *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *, const char *)</td></tr>
 <tr class="separator:a9e2410d0954219c7756e4f14cce887f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27bc6ee6ccfa540cdce01c34c7a16f4a"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a27bc6ee6ccfa540cdce01c34c7a16f4a">soap_instantiate_SOAP_ENV__Detail</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
-<tr class="separator:a27bc6ee6ccfa540cdce01c34c7a16f4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35591c83fa169d755825e3a742103258"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a35591c83fa169d755825e3a742103258">graph_instantiate_SOAP_ENV__Detail</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
+<tr class="separator:a35591c83fa169d755825e3a742103258"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9216a46d9687ea834dfbae816c699e4"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ab9216a46d9687ea834dfbae816c699e4">soap_new_SOAP_ENV__Detail</a> (struct soap *soap, int n=-1)</td></tr>
 <tr class="separator:ab9216a46d9687ea834dfbae816c699e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0739cbfc1aa07bba40c360489e0eac05"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a0739cbfc1aa07bba40c360489e0eac05">soap_new_req_SOAP_ENV__Detail</a> (struct soap *soap, int __type, void *fault)</td></tr>
@@ -285,8 +267,12 @@ Functions</h2></td></tr>
 <tr class="separator:a54d75f536ce4ca4800e50b1014f4bc07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea31c27e1e257e44f136f5bd2c3ae569"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aea31c27e1e257e44f136f5bd2c3ae569">soap_put_SOAP_ENV__Detail</a> (struct soap *, const struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *, const char *, const char *)</td></tr>
 <tr class="separator:aea31c27e1e257e44f136f5bd2c3ae569"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1671af2560247959ea1dd203ac97052"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ae1671af2560247959ea1dd203ac97052">soap_write_SOAP_ENV__Detail</a> (struct soap *soap, struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> const *p)</td></tr>
+<tr class="separator:ae1671af2560247959ea1dd203ac97052"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad92d184f02004ab8d24a673ac992418f"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ad92d184f02004ab8d24a673ac992418f">soap_get_SOAP_ENV__Detail</a> (struct soap *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *, const char *, const char *)</td></tr>
 <tr class="separator:ad92d184f02004ab8d24a673ac992418f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c25ac14e5da94cd2cac0d4db9a2c5b4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a5c25ac14e5da94cd2cac0d4db9a2c5b4">soap_read_SOAP_ENV__Detail</a> (struct soap *soap, struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *p)</td></tr>
+<tr class="separator:a5c25ac14e5da94cd2cac0d4db9a2c5b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3a886f736baaff5cff1bdce3fb6e6f9"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#af3a886f736baaff5cff1bdce3fb6e6f9">soap_default_SOAP_ENV__Code</a> (struct soap *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *)</td></tr>
 <tr class="separator:af3a886f736baaff5cff1bdce3fb6e6f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78ebdb3557f12a981cdb442a166b1126"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a78ebdb3557f12a981cdb442a166b1126">soap_serialize_SOAP_ENV__Code</a> (struct soap *, const struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *)</td></tr>
@@ -295,8 +281,8 @@ Functions</h2></td></tr>
 <tr class="separator:aa58f2515fccdc55616386623792d0762"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a549dcae848eecb233e776e9af22612f8"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a549dcae848eecb233e776e9af22612f8">soap_in_SOAP_ENV__Code</a> (struct soap *, const char *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *, const char *)</td></tr>
 <tr class="separator:a549dcae848eecb233e776e9af22612f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58a858261b6482a084f16022ccfeb517"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a58a858261b6482a084f16022ccfeb517">soap_instantiate_SOAP_ENV__Code</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
-<tr class="separator:a58a858261b6482a084f16022ccfeb517"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa5f2e2a4e90b225f91e2b2621840f52"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aaa5f2e2a4e90b225f91e2b2621840f52">graph_instantiate_SOAP_ENV__Code</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
+<tr class="separator:aaa5f2e2a4e90b225f91e2b2621840f52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6a3ebfcdc025a64b71affece2c89fd1"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ae6a3ebfcdc025a64b71affece2c89fd1">soap_new_SOAP_ENV__Code</a> (struct soap *soap, int n=-1)</td></tr>
 <tr class="separator:ae6a3ebfcdc025a64b71affece2c89fd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51f62262c8744c433b5cefccc4d46986"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a51f62262c8744c433b5cefccc4d46986">soap_new_req_SOAP_ENV__Code</a> (struct soap *soap)</td></tr>
@@ -305,8 +291,12 @@ Functions</h2></td></tr>
 <tr class="separator:a6528843be787af9099eae48c78f4efb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7e6e75c7c37afe6b77009d88d269bad"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ad7e6e75c7c37afe6b77009d88d269bad">soap_put_SOAP_ENV__Code</a> (struct soap *, const struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *, const char *, const char *)</td></tr>
 <tr class="separator:ad7e6e75c7c37afe6b77009d88d269bad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a462b85f1d77ca1f44c6655c0d3fc6ebe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a462b85f1d77ca1f44c6655c0d3fc6ebe">soap_write_SOAP_ENV__Code</a> (struct soap *soap, struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> const *p)</td></tr>
+<tr class="separator:a462b85f1d77ca1f44c6655c0d3fc6ebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6656ed0a733c0b6b44858a4e8405b66"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ab6656ed0a733c0b6b44858a4e8405b66">soap_get_SOAP_ENV__Code</a> (struct soap *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *, const char *, const char *)</td></tr>
 <tr class="separator:ab6656ed0a733c0b6b44858a4e8405b66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93812cbcd140babe3ca7634007f1f0f6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a93812cbcd140babe3ca7634007f1f0f6">soap_read_SOAP_ENV__Code</a> (struct soap *soap, struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *p)</td></tr>
+<tr class="separator:a93812cbcd140babe3ca7634007f1f0f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8c3a07a8a168b2b49beba630f4c512c"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ad8c3a07a8a168b2b49beba630f4c512c">soap_default_SOAP_ENV__Header</a> (struct soap *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *)</td></tr>
 <tr class="separator:ad8c3a07a8a168b2b49beba630f4c512c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe20312644bee2f882e489ff52a756d5"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#afe20312644bee2f882e489ff52a756d5">soap_serialize_SOAP_ENV__Header</a> (struct soap *, const struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *)</td></tr>
@@ -315,8 +305,8 @@ Functions</h2></td></tr>
 <tr class="separator:ac91aa561df6fd9ab256c26a1eabe2b20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6eda5c974aba607d748feab25e3719cd"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a6eda5c974aba607d748feab25e3719cd">soap_in_SOAP_ENV__Header</a> (struct soap *, const char *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *, const char *)</td></tr>
 <tr class="separator:a6eda5c974aba607d748feab25e3719cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c64d656ec82fea185a05fde6d7d7a05"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a3c64d656ec82fea185a05fde6d7d7a05">soap_instantiate_SOAP_ENV__Header</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
-<tr class="separator:a3c64d656ec82fea185a05fde6d7d7a05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18457012893d948bbc77e71ed19dd9f2"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a18457012893d948bbc77e71ed19dd9f2">graph_instantiate_SOAP_ENV__Header</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
+<tr class="separator:a18457012893d948bbc77e71ed19dd9f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48cb9909864caa700f74ab4cb1924dac"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a48cb9909864caa700f74ab4cb1924dac">soap_new_SOAP_ENV__Header</a> (struct soap *soap, int n=-1)</td></tr>
 <tr class="separator:a48cb9909864caa700f74ab4cb1924dac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7107b41d774c628aa9536fb8185a8a1"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ad7107b41d774c628aa9536fb8185a8a1">soap_new_req_SOAP_ENV__Header</a> (struct soap *soap)</td></tr>
@@ -325,8 +315,12 @@ Functions</h2></td></tr>
 <tr class="separator:a7340a3a61423008e856cfd28d110eb89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab20a2bfc1051868eaedc843492a46a58"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ab20a2bfc1051868eaedc843492a46a58">soap_put_SOAP_ENV__Header</a> (struct soap *, const struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *, const char *, const char *)</td></tr>
 <tr class="separator:ab20a2bfc1051868eaedc843492a46a58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2eb53680a0f237f0eda4253480010c2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ad2eb53680a0f237f0eda4253480010c2">soap_write_SOAP_ENV__Header</a> (struct soap *soap, struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> const *p)</td></tr>
+<tr class="separator:ad2eb53680a0f237f0eda4253480010c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abed137552c0fadab3c39c1a6b14fb0e4"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#abed137552c0fadab3c39c1a6b14fb0e4">soap_get_SOAP_ENV__Header</a> (struct soap *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *, const char *, const char *)</td></tr>
 <tr class="separator:abed137552c0fadab3c39c1a6b14fb0e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfa6901e00f1bb91f1c6ab666350b468"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#adfa6901e00f1bb91f1c6ab666350b468">soap_read_SOAP_ENV__Header</a> (struct soap *soap, struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *p)</td></tr>
+<tr class="separator:adfa6901e00f1bb91f1c6ab666350b468"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae996a3d178065ef25fe7af84e4c62b1"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aae996a3d178065ef25fe7af84e4c62b1">soap_serialize_PointerToSOAP_ENV__Reason</a> (struct soap *, struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *const *)</td></tr>
 <tr class="separator:aae996a3d178065ef25fe7af84e4c62b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a912e6611e433cbf30b764e39df2527ef"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a912e6611e433cbf30b764e39df2527ef">soap_out_PointerToSOAP_ENV__Reason</a> (struct soap *, const char *, int, struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *const *, const char *)</td></tr>
@@ -367,6 +361,8 @@ Functions</h2></td></tr>
 <tr class="separator:a8052601497a62291d38a3b96f52065f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e4c635160790c5767e9da721d67c77e"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 <a class="el" href="class_graph.html">Graph</a> **SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a0e4c635160790c5767e9da721d67c77e">soap_get_PointerToGraph</a> (struct soap *, <a class="el" href="class_graph.html">Graph</a> **, const char *, const char *)</td></tr>
 <tr class="separator:a0e4c635160790c5767e9da721d67c77e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4649dcc9cc34e1646c088aa95e34f667"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a4649dcc9cc34e1646c088aa95e34f667">soap_default__QName</a> (struct soap *, char **)</td></tr>
+<tr class="separator:a4649dcc9cc34e1646c088aa95e34f667"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a117253ef25707716512034eb94747278"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a117253ef25707716512034eb94747278">soap_serialize__QName</a> (struct soap *, char *const *)</td></tr>
 <tr class="separator:a117253ef25707716512034eb94747278"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6ac873da57690eeab6ed38f1555294a"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ab6ac873da57690eeab6ed38f1555294a">soap_out__QName</a> (struct soap *, const char *, int, char *const *, const char *)</td></tr>
@@ -375,8 +371,12 @@ Functions</h2></td></tr>
 <tr class="separator:aaee552d3873e492ee77fd6d04a2886e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd3cf45ea2971714c3d6116fd3756871"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#afd3cf45ea2971714c3d6116fd3756871">soap_put__QName</a> (struct soap *, char *const *, const char *, const char *)</td></tr>
 <tr class="separator:afd3cf45ea2971714c3d6116fd3756871"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20a14dac0839114b55210f822b8d2cae"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a20a14dac0839114b55210f822b8d2cae">soap_write__QName</a> (struct soap *soap, char *const *p)</td></tr>
+<tr class="separator:a20a14dac0839114b55210f822b8d2cae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec049bc4c217fa3506c73427d16476a6"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 char **SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aec049bc4c217fa3506c73427d16476a6">soap_get__QName</a> (struct soap *, char **, const char *, const char *)</td></tr>
 <tr class="separator:aec049bc4c217fa3506c73427d16476a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a841de42ec3cb1edebfd195bae68f113e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a841de42ec3cb1edebfd195bae68f113e">soap_read__QName</a> (struct soap *soap, char **p)</td></tr>
+<tr class="separator:a841de42ec3cb1edebfd195bae68f113e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae310bbddc41fb994297140e42936427b"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ae310bbddc41fb994297140e42936427b">soap_default_string</a> (struct soap *, char **)</td></tr>
 <tr class="separator:ae310bbddc41fb994297140e42936427b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af02689d9594ff931af8645225a532f0e"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#af02689d9594ff931af8645225a532f0e">soap_serialize_string</a> (struct soap *, char *const *)</td></tr>
@@ -387,8 +387,12 @@ Functions</h2></td></tr>
 <tr class="separator:a7c07ac4b323582ec81374f3137f7b321"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee5fd036d86bfd679ba4c94e4172cb21"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 int SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#aee5fd036d86bfd679ba4c94e4172cb21">soap_put_string</a> (struct soap *, char *const *, const char *, const char *)</td></tr>
 <tr class="separator:aee5fd036d86bfd679ba4c94e4172cb21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65776c538d19b307bb298ab11a077ec2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a65776c538d19b307bb298ab11a077ec2">soap_write_string</a> (struct soap *soap, char *const *p)</td></tr>
+<tr class="separator:a65776c538d19b307bb298ab11a077ec2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40d26ae1efa55db545de44fb65a27fc8"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 char **SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a40d26ae1efa55db545de44fb65a27fc8">soap_get_string</a> (struct soap *, char **, const char *, const char *)</td></tr>
 <tr class="separator:a40d26ae1efa55db545de44fb65a27fc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acaa867257a6fe410ab5d07602ed36be0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#acaa867257a6fe410ab5d07602ed36be0">soap_read_string</a> (struct soap *soap, char **p)</td></tr>
+<tr class="separator:acaa867257a6fe410ab5d07602ed36be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a17dd64dbd1ba4d881a64ca7a3183dd"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a6a17dd64dbd1ba4d881a64ca7a3183dd">soap_default_std__vectorTemplateOfPointerToGraph</a> (struct soap *, std::vector&lt; <a class="el" href="class_graph.html">Graph</a> * &gt; *)</td></tr>
 <tr class="separator:a6a17dd64dbd1ba4d881a64ca7a3183dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af45e72972bfedd364a62cee70319c94e"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 void SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#af45e72972bfedd364a62cee70319c94e">soap_serialize_std__vectorTemplateOfPointerToGraph</a> (struct soap *, const std::vector&lt; <a class="el" href="class_graph.html">Graph</a> * &gt; *)</td></tr>
@@ -397,32 +401,18 @@ Functions</h2></td></tr>
 <tr class="separator:afc4008c0bfd516ba89ff8f45c8494c18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72b0d266153513f6a12780b1a58ed0f3"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC3 std::vector&lt; <a class="el" href="class_graph.html">Graph</a> * &gt; *SOAP_FMAC4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a72b0d266153513f6a12780b1a58ed0f3">soap_in_std__vectorTemplateOfPointerToGraph</a> (struct soap *, const char *, std::vector&lt; <a class="el" href="class_graph.html">Graph</a> * &gt; *, const char *)</td></tr>
 <tr class="separator:a72b0d266153513f6a12780b1a58ed0f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73ce0b9c5d09db6a4e17ba7ac8166763"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 std::vector&lt; <a class="el" href="class_graph.html">Graph</a> * &gt; *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a73ce0b9c5d09db6a4e17ba7ac8166763">soap_instantiate_std__vectorTemplateOfPointerToGraph</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
-<tr class="separator:a73ce0b9c5d09db6a4e17ba7ac8166763"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5cdc8f1bc1aacd12ddd83716b49987d"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 std::vector&lt; <a class="el" href="class_graph.html">Graph</a> * &gt; *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#ab5cdc8f1bc1aacd12ddd83716b49987d">graph_instantiate_std__vectorTemplateOfPointerToGraph</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
+<tr class="separator:ab5cdc8f1bc1aacd12ddd83716b49987d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a584c5fabd51e2e9f99b1ece0ef310fc7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_graph.html">Graph</a> * &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="graph_h_8h.html#a584c5fabd51e2e9f99b1ece0ef310fc7">soap_new_std__vectorTemplateOfPointerToGraph</a> (struct soap *soap, int n=-1)</td></tr>
 <tr class="separator:a584c5fabd51e2e9f99b1ece0ef310fc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="acf427780945d6b2b3768ce6fd9092ae3"></a>
+<a class="anchor" id="a326503ab31b9892ac3326250dc953415"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap__QName2s&#160;&#160;&#160;<a class="el" href="address_h_8h.html#a4ffe3d817bdfed3787583cbf672f7abb">soap_string2s</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00466">466</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ab48ddc55ca9f40f8da2d952a0abe8560"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_default__QName</td>
+          <td class="memname">#define soap__QName2s</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">soap, </td>
@@ -436,21 +426,21 @@ Functions</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;<a class="el" href="graph_h_8h.html#ae310bbddc41fb994297140e42936427b">soap_default_string</a>(soap, a)</td>
+          <td></td><td>&#160;&#160;&#160;soap_QName2s(soap, (a))</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00462">462</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00550">550</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a62724451c38940cfb91b957003b27307"></a>
+<a class="anchor" id="af11eb7c7eb5065edd32cb8f18a46cda5"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_read__QName</td>
+          <td class="memname">#define soap_s2_QName</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">soap, </td>
@@ -459,26 +449,32 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
+          <td class="paramname">s, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">a&#160;</td>
         </tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (<a class="el" href="address_h_8h.html#a4649dcc9cc34e1646c088aa95e34f667">soap_default__QName</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#aec049bc4c217fa3506c73427d16476a6">soap_get__QName</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
+          <td></td><td>&#160;&#160;&#160;soap_s2QName((soap), (s), (char**)(a), 0, -1, NULL)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00482">482</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00553">553</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a48f6d725e68da673e11e6a5da002f0ba"></a>
+<a class="anchor" id="afcc2c573481cc33e4d799fea7b4f576d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_read_byte</td>
+          <td class="memname">#define soap_s2string</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">soap, </td>
@@ -487,26 +483,32 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
+          <td class="paramname">s, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">a&#160;</td>
         </tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#af08868f5c7e6e5a652dd09dd293abcbd">soap_default_byte</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#ad77bd8d5447b75b6ef63e45e3a235a68">soap_get_byte</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
+          <td></td><td>&#160;&#160;&#160;soap_s2char((soap), (s), (char**)(a), 0, -1, NULL)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00060">60</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00586">586</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a6c96075561eae379c5c6f8eb1459e9ad"></a>
+<a class="anchor" id="a4ffe3d817bdfed3787583cbf672f7abb"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_read_Graph</td>
+          <td class="memname">#define soap_string2s</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">soap, </td>
@@ -515,843 +517,241 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
+          <td class="paramname">a&#160;</td>
         </tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? ((data)-&gt;soap_default(soap), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a866a5b01e8f8c056f26c1bfa3c1be84f">soap_get_Graph</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
+          <td></td><td>&#160;&#160;&#160;(a)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00117">117</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00583">583</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a29313c4724d4935db6f5b7d398610e92"></a>
+<a class="anchor" id="abf2399028b7e6ad6106ada815bda8d8b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_read_int</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#a64f68eb85ea19c5d8d91ded3595f949f">soap_default_int</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a1ef2e15c17574b004ff4c0678ad02497">soap_get_int</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
+          <td class="memname">#define SOAP_TYPE__QName_DEFINED</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00079">79</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00546">546</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a950a2b957e16705db03ca9c80b80d468"></a>
+<a class="anchor" id="a429100633e196f97058a990f4d5bfd8e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_read_PointerToGraph</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (soap_default_PointerToGraph(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a0e4c635160790c5767e9da721d67c77e">soap_get_PointerToGraph</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
+          <td class="memname">#define SOAP_TYPE__XML_DEFINED</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00454">454</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00542">542</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="acd76b857eaf3688e642eca4dba10aa79"></a>
+<a class="anchor" id="a8b5cd3b4d9d3f9c359fe4d96eacac4ba"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_read_PointerToSOAP_ENV__Code</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (soap_default_PointerToSOAP_ENV__Code(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a91d75b2bad82fb7da237a9699bdf24cf">soap_get_PointerToSOAP_ENV__Code</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
+          <td class="memname">#define SOAP_TYPE_byte_DEFINED</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00433">433</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00049">49</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a4efea6dac82e7b44f5f98c23836325a9"></a>
+<a class="anchor" id="a557564287ad365b0bf19c87ebee38be8"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_read_PointerToSOAP_ENV__Detail</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (soap_default_PointerToSOAP_ENV__Detail(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a6df7a7bdc182b781e987d141ef6092a5">soap_get_PointerToSOAP_ENV__Detail</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
+          <td class="memname">#define SOAP_TYPE_Graph_DEFINED</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00410">410</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00105">105</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a2e8cd11ea9ac08e26d27f33f68af8b0d"></a>
+<a class="anchor" id="a462522616f40659e206e76cb0231ae3d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_read_PointerToSOAP_ENV__Reason</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (soap_default_PointerToSOAP_ENV__Reason(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a859280e63be28dee84029bdedce95a63">soap_get_PointerToSOAP_ENV__Reason</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
+          <td class="memname">#define SOAP_TYPE_int_DEFINED</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00387">387</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00077">77</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ade0792c8e27dd77a458290a3159b2d4a"></a>
+<a class="anchor" id="ac4c5c197e18b4c0394b592b9bfc30f96"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_read_SOAP_ENV__Code</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#af3a886f736baaff5cff1bdce3fb6e6f9">soap_default_SOAP_ENV__Code</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#ab6656ed0a733c0b6b44858a4e8405b66">soap_get_SOAP_ENV__Code</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
+          <td class="memname">#define SOAP_TYPE_PointerToGraph_DEFINED</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00321">321</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00533">533</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a38f4aafd248fb8900901c3a4fef53209"></a>
+<a class="anchor" id="afef5c7e1830aa872ded8c377025674bd"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_read_SOAP_ENV__Detail</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#a1df272c64498b7db3273f53025a8cf7e">soap_default_SOAP_ENV__Detail</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#ad92d184f02004ab8d24a673ac992418f">soap_get_SOAP_ENV__Detail</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
+          <td class="memname">#define SOAP_TYPE_PointerToSOAP_ENV__Code_DEFINED</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00274">274</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00522">522</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a9783536050946eb839e0559f144a590b"></a>
+<a class="anchor" id="a71a978db36f40357a989748aaf912edd"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_read_SOAP_ENV__Fault</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#aa0301c16ad60b8239b963701a4ceb82e">soap_default_SOAP_ENV__Fault</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a304618a474cec5d57037e96c38db66e8">soap_get_SOAP_ENV__Fault</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
+          <td class="memname">#define SOAP_TYPE_PointerToSOAP_ENV__Detail_DEFINED</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00176">176</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00509">509</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a0a371b814e1b16c8b3c07953464252de"></a>
+<a class="anchor" id="ad736c63c0f77e9dde71aa9135bfc093e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define soap_read_SOAP_ENV__Header</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#ad8c3a07a8a168b2b49beba630f4c512c">soap_default_SOAP_ENV__Header</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#abed137552c0fadab3c39c1a6b14fb0e4">soap_get_SOAP_ENV__Header</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00364">364</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a52e19a357f497ce4a5dc9acac81ab5c5"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_read_SOAP_ENV__Reason</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#a220e25615a35beb8ee9104ff7ceb8442">soap_default_SOAP_ENV__Reason</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a58fa87964316d8b088939db29dbe5614">soap_get_SOAP_ENV__Reason</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00221">221</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ae7d8b8009199434808a6861e37c37ee0"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_read_string</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( ((data) ? (<a class="el" href="graph_h_8h.html#ae310bbddc41fb994297140e42936427b">soap_default_string</a>(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !<a class="el" href="graph_h_8h.html#a40d26ae1efa55db545de44fb65a27fc8">soap_get_string</a>(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00502">502</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a644409dcb97338220fffbf1bdbd4da16"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_s2_QName&#160;&#160;&#160;<a class="el" href="address_h_8h.html#afcc2c573481cc33e4d799fea7b4f576d">soap_s2string</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00470">470</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ab74711d5c0a479a0830dd21312b2469f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SOAP_TYPE_byte&#160;&#160;&#160;(3)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00046">46</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a2647c8b87dd4e0dec5169b1fbfa0c2ef"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SOAP_TYPE_int&#160;&#160;&#160;(1)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00065">65</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a7340f0f2aa3c0243ee8c3279a85a9f33"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SOAP_TYPE_PointerToGraph&#160;&#160;&#160;(9)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00440">440</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a8aa7b966c3acf3dfe64e4e0373164f7f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SOAP_TYPE_PointerToSOAP_ENV__Code&#160;&#160;&#160;(13)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00419">419</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a9bc46454cb4d0db51b49ad7da960ddcb"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SOAP_TYPE_PointerToSOAP_ENV__Detail&#160;&#160;&#160;(19)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00396">396</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a0166b3ad91d3633b503c1dd7954080f9"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SOAP_TYPE_PointerToSOAP_ENV__Reason&#160;&#160;&#160;(20)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00373">373</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a90899f7dea370dd9a856608172a189e6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SOAP_TYPE_std__vectorTemplateOfPointerToGraph&#160;&#160;&#160;(10)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00507">507</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a243a283750788670ef7aa9472a8e2a0e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SOAP_TYPE_string&#160;&#160;&#160;(4)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00487">487</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a05d1880531b5e7b6dd6eb9170dddfe3e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write__QName</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#a117253ef25707716512034eb94747278">soap_serialize__QName</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#afd3cf45ea2971714c3d6116fd3756871">soap_put__QName</a>(soap, data, &quot;byte&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00476">476</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a8af3c97e9b61e3e0261e9854cff82684"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_byte</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_byte(soap, data), 0) || <a class="el" href="graph_h_8h.html#afa14448464eee471db1f17aede238556">soap_put_byte</a>(soap, data, &quot;byte&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00054">54</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a3c752c39e6891be06b13b82b82a9e82f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_Graph</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || ((data)-&gt;soap_serialize(soap), 0) || (data)-&gt;soap_put(soap, &quot;g:Graph&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00111">111</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="af707302983bd0e5ba6da099f94d0d3b1"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_int</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_int(soap, data), 0) || <a class="el" href="graph_h_8h.html#aec30e211aa769a9c8ff2353ae54171a3">soap_put_int</a>(soap, data, &quot;int&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00073">73</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="abe37a89681895ec8dc45684b6ffb7e64"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_PointerToGraph</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#af7267c4eb3860901c3ae0e4e352ea366">soap_serialize_PointerToGraph</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#a8052601497a62291d38a3b96f52065f5">soap_put_PointerToGraph</a>(soap, data, &quot;g:Graph&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00448">448</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="acbe149b87d2f32434b6951b77c4e5081"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_PointerToSOAP_ENV__Code</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#ab6507efac2b2f0268d8eba6d1dacde74">soap_serialize_PointerToSOAP_ENV__Code</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#ad49e525b61cbc5a95cfa2804ba1a2e90">soap_put_PointerToSOAP_ENV__Code</a>(soap, data, &quot;SOAP-ENV:Code&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00427">427</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="adfffe18aa1c0790924b4b9a946027aac"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_PointerToSOAP_ENV__Detail</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#ab593a982466640634b6340521a2a788f">soap_serialize_PointerToSOAP_ENV__Detail</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#a8290c148802bfc056b4be82c11f02d9b">soap_put_PointerToSOAP_ENV__Detail</a>(soap, data, &quot;SOAP-ENV:Detail&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00404">404</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a27732e390ea09ddfd0e3a24af61e1f07"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_PointerToSOAP_ENV__Reason</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#aae996a3d178065ef25fe7af84e4c62b1">soap_serialize_PointerToSOAP_ENV__Reason</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#a75db0d4709ed9cd9cdcfd19276db1688">soap_put_PointerToSOAP_ENV__Reason</a>(soap, data, &quot;SOAP-ENV:Reason&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00381">381</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ac0e10500d98418d05bc162cee74d6943"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_SOAP_ENV__Code</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#a78ebdb3557f12a981cdb442a166b1126">soap_serialize_SOAP_ENV__Code</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#ad7e6e75c7c37afe6b77009d88d269bad">soap_put_SOAP_ENV__Code</a>(soap, data, &quot;SOAP-ENV:Code&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00315">315</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a1a05dd83310186b6b4f5852fff4e388a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_SOAP_ENV__Detail</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#a7ac1c6452b69a2c105a8f32e43a1fec1">soap_serialize_SOAP_ENV__Detail</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#aea31c27e1e257e44f136f5bd2c3ae569">soap_put_SOAP_ENV__Detail</a>(soap, data, &quot;SOAP-ENV:Detail&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00268">268</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a3e3c903da7d065bee37c28c7fdf87bb8"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_SOAP_ENV__Fault</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#a5d4ba67cc987814baa7177c4f37e9f94">soap_serialize_SOAP_ENV__Fault</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#a32f4b4f04a87635978dedc47192e7897">soap_put_SOAP_ENV__Fault</a>(soap, data, &quot;SOAP-ENV:Fault&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00170">170</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a9ebb82b4cc2ab2dd3adb12ac687c05e2"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_SOAP_ENV__Header</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#afe20312644bee2f882e489ff52a756d5">soap_serialize_SOAP_ENV__Header</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#ab20a2bfc1051868eaedc843492a46a58">soap_put_SOAP_ENV__Header</a>(soap, data, &quot;SOAP-ENV:Header&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00358">358</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a3a43eec9a003f231ad8795153ac3ad99"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_SOAP_ENV__Reason</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#a6d9628922faa6f9a3c0bb4fe1d9fa9ac">soap_serialize_SOAP_ENV__Reason</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#aacef6fe30973ab9d4735979fe1ad85ff">soap_put_SOAP_ENV__Reason</a>(soap, data, &quot;SOAP-ENV:Reason&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00215">215</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a8a15de62f4023b1652f640307a0a0abb"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define soap_write_string</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">soap, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">data&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;( soap_free_temp(soap), soap_begin_send(soap) || (<a class="el" href="graph_h_8h.html#af02689d9594ff931af8645225a532f0e">soap_serialize_string</a>(soap, data), 0) || <a class="el" href="graph_h_8h.html#aee5fd036d86bfd679ba4c94e4172cb21">soap_put_string</a>(soap, data, &quot;byte&quot;, NULL) || soap_end_send(soap), (soap)-&gt;error )</td>
+          <td class="memname">#define SOAP_TYPE_PointerToSOAP_ENV__Reason_DEFINED</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Definition at line <a class="el" href="graph_h_8h_source.html#l00496">496</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="adf3dc6227251f73485bc6681dbd49261"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SOAP_TYPE_SOAP_ENV__Code_DEFINED</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00372">372</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9d316ba094d5ec1959db422122d48d18"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SOAP_TYPE_SOAP_ENV__Detail_DEFINED</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00302">302</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae7ba3860ff40693f508badeb1c508dea"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SOAP_TYPE_SOAP_ENV__Fault_DEFINED</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00162">162</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a375f659e3f8739b2f54b37ca402dffab"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SOAP_TYPE_SOAP_ENV__Header_DEFINED</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00436">436</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ab3682392919d9b4f1a8de7d0c8d3aafd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SOAP_TYPE_SOAP_ENV__Reason_DEFINED</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00240">240</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a6ebce496c043d465626d5a1ed0068310"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SOAP_TYPE_std__vectorTemplateOfPointerToGraph_DEFINED</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00612">612</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a455b8eb42dd08ef9f37d60b63df5d0e7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SOAP_TYPE_string_DEFINED</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00579">579</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -1486,6 +886,345 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ab7fe651704c47083590ab38adf4cae94"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SOAP_FMAC1 <a class="el" href="class_graph.html">Graph</a>* SOAP_FMAC2 graph_instantiate_Graph </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aaa5f2e2a4e90b225f91e2b2621840f52"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a>* SOAP_FMAC2 graph_instantiate_SOAP_ENV__Code </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Friend allocator used by <a class="el" href="graph_h_8h.html#ae6a3ebfcdc025a64b71affece2c89fd1">soap_new_SOAP_ENV__Code(struct soap*, int)</a> </p>
+
+</div>
+</div>
+<a class="anchor" id="a35591c83fa169d755825e3a742103258"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a>* SOAP_FMAC2 graph_instantiate_SOAP_ENV__Detail </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Friend allocator used by <a class="el" href="graph_h_8h.html#ab9216a46d9687ea834dfbae816c699e4">soap_new_SOAP_ENV__Detail(struct soap*, int)</a> </p>
+
+</div>
+</div>
+<a class="anchor" id="a5c1ba46d8b45a2c2a2a89f607aa1a0ba"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a>* SOAP_FMAC2 graph_instantiate_SOAP_ENV__Fault </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Friend allocator used by <a class="el" href="graph_h_8h.html#a369c83f688d07b9a30bc545ab8084f74">soap_new_SOAP_ENV__Fault(struct soap*, int)</a> </p>
+
+</div>
+</div>
+<a class="anchor" id="a18457012893d948bbc77e71ed19dd9f2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a>* SOAP_FMAC2 graph_instantiate_SOAP_ENV__Header </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Friend allocator used by <a class="el" href="graph_h_8h.html#a48cb9909864caa700f74ab4cb1924dac">soap_new_SOAP_ENV__Header(struct soap*, int)</a> </p>
+
+</div>
+</div>
+<a class="anchor" id="a0fafe497792a3ce0c1b6eb59335766f3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a>* SOAP_FMAC2 graph_instantiate_SOAP_ENV__Reason </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Friend allocator used by <a class="el" href="graph_h_8h.html#a0f189f0325b0223c407bb743e3b31c6b">soap_new_SOAP_ENV__Reason(struct soap*, int)</a> </p>
+
+</div>
+</div>
+<a class="anchor" id="ab5cdc8f1bc1aacd12ddd83716b49987d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SOAP_FMAC1 std::vector&lt;<a class="el" href="class_graph.html">Graph</a> *&gt;* SOAP_FMAC2 graph_instantiate_std__vectorTemplateOfPointerToGraph </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a4649dcc9cc34e1646c088aa95e34f667"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SOAP_FMAC3 void SOAP_FMAC4 soap_default__QName </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -2908,314 +2647,6 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="accbf9540afef55bce667c4c253b063d6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SOAP_FMAC1 <a class="el" href="class_graph.html">Graph</a>* SOAP_FMAC2 soap_instantiate_Graph </td>
-          <td>(</td>
-          <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t *&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a58a858261b6482a084f16022ccfeb517"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a>* SOAP_FMAC2 soap_instantiate_SOAP_ENV__Code </td>
-          <td>(</td>
-          <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t *&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a27bc6ee6ccfa540cdce01c34c7a16f4a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a>* SOAP_FMAC2 soap_instantiate_SOAP_ENV__Detail </td>
-          <td>(</td>
-          <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t *&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="aed96a089375581f150ecf50fecc35209"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a>* SOAP_FMAC2 soap_instantiate_SOAP_ENV__Fault </td>
-          <td>(</td>
-          <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t *&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a3c64d656ec82fea185a05fde6d7d7a05"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a>* SOAP_FMAC2 soap_instantiate_SOAP_ENV__Header </td>
-          <td>(</td>
-          <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t *&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="aaf98daf3098b5205174483f654bacd1b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SOAP_FMAC1 struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a>* SOAP_FMAC2 soap_instantiate_SOAP_ENV__Reason </td>
-          <td>(</td>
-          <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t *&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a73ce0b9c5d09db6a4e17ba7ac8166763"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SOAP_FMAC1 std::vector&lt;<a class="el" href="class_graph.html">Graph</a> *&gt;* SOAP_FMAC2 soap_instantiate_std__vectorTemplateOfPointerToGraph </td>
-          <td>(</td>
-          <td class="paramtype">struct soap *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t *&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a class="anchor" id="a471b8b30119a272c525fc3c6ba97a3f5"></a>
 <div class="memitem">
 <div class="memproto">
@@ -3280,7 +2711,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00090">90</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00110">110</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3306,7 +2737,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00092">92</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00115">115</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3324,7 +2755,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00293">293</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00384">384</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3358,7 +2789,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00240">240</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00314">314</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3376,7 +2807,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00134">134</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00174">174</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3394,7 +2825,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00340">340</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00448">448</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3412,7 +2843,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00195">195</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00252">252</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3448,7 +2879,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00100">100</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00125">125</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3482,7 +2913,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00301">301</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00394">394</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3522,7 +2953,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00252">252</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00328">328</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3598,7 +3029,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00142">142</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00184">184</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3616,7 +3047,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00348">348</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00458">458</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3644,7 +3075,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00203">203</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00262">262</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3672,7 +3103,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00291">291</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00379">379</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3700,7 +3131,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00238">238</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00309">309</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3728,7 +3159,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00132">132</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00169">169</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3756,7 +3187,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00338">338</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00443">443</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3784,7 +3215,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00193">193</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00247">247</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -3820,7 +3251,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00515">515</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00619">619</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
 
 </div>
 </div>
@@ -5038,6 +4469,366 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a841de42ec3cb1edebfd195bae68f113e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_read__QName </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00568">568</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aad20d8ac40a55b7ce99d71a209ae6ac0"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_read_byte </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00066">66</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af395ff6f50458687c0e041c939f37fd5"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_read_Graph </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_graph.html">Graph</a> *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00148">148</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae6fac0088e306105d2f4ffaee371f2ef"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_read_int </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00094">94</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a93812cbcd140babe3ca7634007f1f0f6"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_read_SOAP_ENV__Code </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00420">420</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a5c25ac14e5da94cd2cac0d4db9a2c5b4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_read_SOAP_ENV__Detail </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00356">356</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a57185e307fd24bc2b334b61ee3be273e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_read_SOAP_ENV__Fault </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00224">224</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="adfa6901e00f1bb91f1c6ab666350b468"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_read_SOAP_ENV__Header </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00480">480</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae58a367c27bf74b7c98f21c39e11ed66"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_read_SOAP_ENV__Reason </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00286">286</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="acaa867257a6fe410ab5d07602ed36be0"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_read_string </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00601">601</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a117253ef25707716512034eb94747278"></a>
 <div class="memitem">
 <div class="memproto">
@@ -5350,6 +5141,366 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a20a14dac0839114b55210f822b8d2cae"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_write__QName </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *const *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00557">557</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad6528219ab17e1fdbd449d1af733fea7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_write_byte </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char const *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00055">55</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a35e25e1143e5bbea329fbcf11dd71f66"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_write_Graph </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_graph.html">Graph</a> const *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00137">137</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="afacb34682f4d7b0e88a036957e345b2d"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_write_int </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int const *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00083">83</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a462b85f1d77ca1f44c6655c0d3fc6ebe"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_write_SOAP_ENV__Code </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="struct_s_o_a_p___e_n_v_____code.html">SOAP_ENV__Code</a> const *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00409">409</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae1671af2560247959ea1dd203ac97052"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_write_SOAP_ENV__Detail </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="struct_s_o_a_p___e_n_v_____detail.html">SOAP_ENV__Detail</a> const *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00345">345</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a367d5a2a985ac645fa704a4f3004ea80"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_write_SOAP_ENV__Fault </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="struct_s_o_a_p___e_n_v_____fault.html">SOAP_ENV__Fault</a> const *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00213">213</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad2eb53680a0f237f0eda4253480010c2"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_write_SOAP_ENV__Header </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="struct_s_o_a_p___e_n_v_____header.html">SOAP_ENV__Header</a> const *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00469">469</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af74105aca1b48474caac0e6003933ccb"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_write_SOAP_ENV__Reason </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="struct_s_o_a_p___e_n_v_____reason.html">SOAP_ENV__Reason</a> const *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00275">275</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a65776c538d19b307bb298ab11a077ec2"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_write_string </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *const *&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="graph_h_8h_source.html#l00590">590</a> of file <a class="el" href="graph_h_8h_source.html">graphH.h</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <hr class="footer">
@@ -5357,7 +5508,7 @@ Functions</h2></td></tr>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Fri Jul 1 2016 12:22:11 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Aug 30 2016 13:24:31 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

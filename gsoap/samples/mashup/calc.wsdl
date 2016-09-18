@@ -153,7 +153,7 @@
 </binding>
 
 <service name="calc">
-  <documentation>Simple calculator service described at http://www.genivia.com/dev.html</documentation>
+  <documentation>Simple calculator service described at https://www.genivia.com/dev.html</documentation>
   <port name="calc" binding="tns:calc">
     <SOAP:address location="http://websrv.cs.fsu.edu/~engelen/calcserver.cgi"/>
   </port>

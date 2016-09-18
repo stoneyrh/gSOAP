@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">soap_wsse_digest Struct Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Aug 17 2016</div>
+      <div style="float: right; font-size: 10px;">updated Sat Sep 17 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -72,6 +72,8 @@ Collaboration diagram for soap_wsse_digest:</div>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a13360889b01e19791f5f28884f0a22a8"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__wsse__digest.html">soap_wsse_digest</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__digest.html#a13360889b01e19791f5f28884f0a22a8">next</a></td></tr>
 <tr class="separator:a13360889b01e19791f5f28884f0a22a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71a23612063e382f983185763442e5a3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__digest.html#a71a23612063e382f983185763442e5a3">done</a></td></tr>
+<tr class="separator:a71a23612063e382f983185763442e5a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37bf7969173878e54c311b6484af54fb"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__digest.html#a37bf7969173878e54c311b6484af54fb">level</a></td></tr>
 <tr class="separator:a37bf7969173878e54c311b6484af54fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15e6a918067d5f6d575478751733523f"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structsoap__smd__data.html">soap_smd_data</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap__wsse__digest.html#a15e6a918067d5f6d575478751733523f">smd</a></td></tr>
@@ -85,6 +87,19 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><p>Digest dictionary: linked list of ID-hash pairs. </p>
 <p>The digest dictionary is populated by the soap_wsse_preparesend callback. The callback intercepts XML elements with wsu:Id attributes and computes the digest during the preprocessing of a message transmission. The 'level' field is used to determine when the end of an element is reached by handling inner wsu:Id attributed elements, so that the outer wsu:Id attributed element can be hashed. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="a71a23612063e382f983185763442e5a3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_wsse_digest::done</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>done when digest is computed </p>
+
+</div>
+</div>
 <a class="anchor" id="a3f5c0f80cb1f005193388aadcacd18f5"></a>
 <div class="memitem">
 <div class="memproto">
@@ -120,7 +135,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>XML parser depth level </p>
+<p>XML element level </p>
 
 </div>
 </div>
@@ -159,7 +174,7 @@ Public Attributes</h2></td></tr>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Aug 17 2016 10:37:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Sat Sep 17 2016 13:47:43 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

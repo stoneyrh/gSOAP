@@ -3766,7 +3766,7 @@ yyreduce:
                             sp->table->prev = (Table*)(yyvsp[(3) - (7)].e)->info.typ->ref;
                             if (!sp->table->prev && !(yyvsp[(3) - (7)].e)->info.typ->transient)
                             {
-                              sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s)'", (yyvsp[(3) - (7)].e)->sym->name, (yyvsp[(3) - (7)].e)->sym->name);
+                              sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s')'", (yyvsp[(3) - (7)].e)->sym->name, (yyvsp[(3) - (7)].e)->sym->name);
                               semerror(errbuf);
                             }
                             p->info.typ->base = (yyvsp[(3) - (7)].e)->info.typ->id;
@@ -3798,7 +3798,7 @@ yyreduce:
                           {
                             if (!(yyvsp[(3) - (3)].e)->info.typ->ref && !(yyvsp[(3) - (3)].e)->info.typ->transient)
                             {
-                              sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s)'", (yyvsp[(3) - (3)].e)->sym->name, (yyvsp[(3) - (3)].e)->sym->name);
+                              sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s')'", (yyvsp[(3) - (3)].e)->sym->name, (yyvsp[(3) - (3)].e)->sym->name);
                               semerror(errbuf);
                             }
                             (yyvsp[(1) - (3)].e)->info.typ->base = (yyvsp[(3) - (3)].e)->info.typ->id;
@@ -4824,9 +4824,9 @@ yyreduce:
                             if (!(yyvsp[(1) - (1)].rec).typ->ref && !(yyvsp[(1) - (1)].rec).typ->transient && !((yyvsp[(1) - (1)].rec).sto & Stypedef))
                             {
                               if ((yyvsp[(1) - (1)].rec).typ->type == Tstruct)
-                                sprintf(errbuf, "struct '%s' has incomplete type (if this struct is not serializable then declare 'extern struct %s)", (yyvsp[(1) - (1)].rec).typ->id->name, (yyvsp[(1) - (1)].rec).typ->id->name);
+                                sprintf(errbuf, "struct '%s' has incomplete type (if this struct is not serializable then declare 'extern struct %s')", (yyvsp[(1) - (1)].rec).typ->id->name, (yyvsp[(1) - (1)].rec).typ->id->name);
                               else
-                                sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s)", (yyvsp[(1) - (1)].rec).typ->id->name, (yyvsp[(1) - (1)].rec).typ->id->name);
+                                sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s')", (yyvsp[(1) - (1)].rec).typ->id->name, (yyvsp[(1) - (1)].rec).typ->id->name);
                               semerror(errbuf);
                             }
                           }

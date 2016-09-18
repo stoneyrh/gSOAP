@@ -1236,7 +1236,7 @@ type    : VOID          { $$ = mkvoid(); }
                             sp->table->prev = (Table*)$3->info.typ->ref;
                             if (!sp->table->prev && !$3->info.typ->transient)
                             {
-                              sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s)'", $3->sym->name, $3->sym->name);
+                              sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s')'", $3->sym->name, $3->sym->name);
                               semerror(errbuf);
                             }
                             p->info.typ->base = $3->info.typ->id;
@@ -1261,7 +1261,7 @@ type    : VOID          { $$ = mkvoid(); }
                           {
                             if (!$3->info.typ->ref && !$3->info.typ->transient)
                             {
-                              sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s)'", $3->sym->name, $3->sym->name);
+                              sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s')'", $3->sym->name, $3->sym->name);
                               semerror(errbuf);
                             }
                             $1->info.typ->base = $3->info.typ->id;
@@ -1980,9 +1980,9 @@ arrayck : array         {
                             if (!$1.typ->ref && !$1.typ->transient && !($1.sto & Stypedef))
                             {
                               if ($1.typ->type == Tstruct)
-                                sprintf(errbuf, "struct '%s' has incomplete type (if this struct is not serializable then declare 'extern struct %s)", $1.typ->id->name, $1.typ->id->name);
+                                sprintf(errbuf, "struct '%s' has incomplete type (if this struct is not serializable then declare 'extern struct %s')", $1.typ->id->name, $1.typ->id->name);
                               else
-                                sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s)", $1.typ->id->name, $1.typ->id->name);
+                                sprintf(errbuf, "class '%s' has incomplete type (if this class is not serializable then declare 'extern class %s')", $1.typ->id->name, $1.typ->id->name);
                               semerror(errbuf);
                             }
                           }

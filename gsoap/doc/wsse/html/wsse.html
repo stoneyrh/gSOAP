@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WS-Security plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Aug 17 2016</div>
+      <div style="float: right; font-size: 10px;">updated Sat Sep 17 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -51,24 +51,24 @@
 <li class="level2"><a href="#wsse_6_3">Binary Security Tokens</a></li>
 </ul>
 </li>
-<li class="level1"><a href="#wsse_6_4">XML Tokens</a></li>
+<li class="level1"><a href="#wsse_6_4">SAML and Other Tokens</a></li>
 <li class="level1"><a href="#wsse_7">Token References</a></li>
 <li class="level1"><a href="#wsse_8">Signatures</a><ul><li class="level2"><a href="#wsse_8_2a">Signing Messages</a></li>
 <li class="level2"><a href="#wsse_8_2b">Signing Message Parts</a></li>
-<li class="level2"><a href="#wsse_8_3">Signing Tokens</a></li>
+<li class="level2"><a href="#wsse_8_3">Signing Security Headers and Tokens</a></li>
 <li class="level2"><a href="#wsse_8_4">Signature Validation</a></li>
 </ul>
 </li>
 <li class="level1"><a href="#wsse_9">Encryption</a><ul><li class="level2"><a href="#wsse_9_1">Encrypting Messages</a></li>
 <li class="level2"><a href="#wsse_9_2">Decrypting Message Parts</a></li>
-<li class="level2"><a href="#wsse_9_3">Example Combining Signing with Encryption/Decryption</a></li>
+<li class="level2"><a href="#wsse_9_3">Example Client and Server</a></li>
 </ul>
 </li>
 <li class="level1"><a href="#wsse_10">Security Timestamps</a></li>
 <li class="level1"><a href="#wsse_11">WS-Security and HTTPS</a></li>
 <li class="level1"><a href="#wsse_12">Miscellaneous</a></li>
 <li class="level1"><a href="#wsse_13">Encryption Limitations</a></li>
-<li class="level1"><a href="#wsse_wsc">WS-SecureConversation</a></li>
+<li class="level1"><a href="#wsse_wsc">WS-SecureConversation and WS-Trust</a></li>
 </ul>
 </div>
 <div class="textblock"><h1><a class="anchor" id="wsse_5"></a>
@@ -77,14 +77,17 @@ Security Header</h1>
 <p>To use the wsse plugin:</p><ol type="1">
 <li>Run wsdl2h -t typemap.dat on a WSDL of a service that requires WS-Security headers. The typemap.dat file is used to recognize and translate Security header blocks for XML signature and encryption.</li>
 <li>Run soapcpp2 on the header file produced by wsdl2h.</li>
-<li>(Re-)compile stdsoap2.c/pp, dom.c/pp, <a class="el" href="smdevp_8c.html">smdevp.c</a>, <a class="el" href="mecevp_8c.html">mecevp.c</a>, <a class="el" href="wsseapi_8c.html">wsseapi.c</a> and the generated source files with the -DWITH_DOM and -DWITH_OPENSSL compile flags set. The <a class="el" href="smdevp_8c.html">smdevp.c</a>, <a class="el" href="mecevp_8c.html">mecevp.c</a>, and <a class="el" href="wsseapi_8c.html">wsseapi.c</a> files are located in the 'plugin' directory.</li>
+<li>(Re-)compile stdsoap2.c/pp, dom.c/pp, <a class="el" href="smdevp_8c.html">smdevp.c</a>, <a class="el" href="mecevp_8c.html">mecevp.c</a>, <a class="el" href="wsseapi_8c.html">wsseapi.c</a> and the generated source files with the <code>-DWITH_DOM</code> and <code>-DWITH_OPENSSL</code> compiler flags set. The <a class="el" href="smdevp_8c.html">smdevp.c</a>, <a class="el" href="mecevp_8c.html">mecevp.c</a>, and <a class="el" href="wsseapi_8c.html">wsseapi.c</a> files are located in the 'plugin' directory.</li>
 <li>Use the wsse plugin API functions described below to add and verify Security headers, sign and verify messages, and to encrypt/decrypt messages.</li>
 </ol>
-<p>An example wsse client/server application can be found in gsoap/samples/wsse.</p>
-<p>The wsse engine is thread safe. However, if HTTPS is required please follow the instructions in Section <a class="el" href="wsse.html#wsse_11">WS-Security and HTTPS</a> to ensure thread-safety of WS-Security with HTTPS.</p>
-<p>The wsse API is located in:</p>
+<p>An example WS-Security client/server application can be found in gsoap/samples/wsse.</p>
+<p>Another example WS-Security client/server application that is designed to interoperate with WCF can be found in gsoap/samples/WCF/Basic/MessageSecurity.</p>
+<dl class="section warning"><dt>Warning</dt><dd>The security token handler callback function parameters have changed in 2.8.34 and greater with the addition of KeyIdentifier information <code>keyid</code> and <code>keyidlen</code>. To register your own security token handler function with the plugin, make sure that your functions matches these function parameters: <div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">void</span> *security_token_handler(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">int</span> *alg, <span class="keyword">const</span> <span class="keywordtype">char</span> *keyname, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *keyid, <span class="keywordtype">int</span> keyidlen, <span class="keywordtype">int</span> *keylen);</div>
+</div><!-- fragment --></dd></dl>
+<p>The wsse engine is thread safe. However, if HTTPS is required then please follow the instructions in Section <a class="el" href="wsse.html#wsse_11">WS-Security and HTTPS</a> to ensure thread-safety of WS-Security with HTTPS.</p>
+<p>The wsse API code is implemented in:</p>
 <ul>
-<li><code><a class="el" href="wsseapi_8h.html">gsoap/plugin/wsseapi.h</a></code> wsse API.</li>
+<li><code><a class="el" href="wsseapi_8h.html">gsoap/plugin/wsseapi.h</a></code> wsse API declarations.</li>
 <li><code><a class="el" href="wsseapi_8c.html">gsoap/plugin/wsseapi.c</a></code> wsse API for C and C++.</li>
 </ul>
 <p>You will also need:</p>
@@ -95,7 +98,7 @@ Security Header</h1>
 <li>if you have zlib installed, compile all sources also with <code>-DWITH_GZIP</code>.</li>
 <li>link with <code>-lssl -lcrypto -lz -gsoapssl++</code> (or <code>-lgsoapssl</code> for C, or compile <code>stdsoap2.cpp</code> for C++ and <code>stdsoap2.c</code> for C).</li>
 </ul>
-<p>The gSOAP header file for soapcpp2 should import <a class="el" href="wsse_8h.html">wsse.h</a> (or the older 2002 version wsse2.h):</p>
+<p>The gSOAP header file (generated with wsdl2h, and containing the data binding interface for soapcpp2) should import <a class="el" href="wsse_8h.html">wsse.h</a> (or the older 2002 version wsse2.h):</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#import &quot;<a class="code" href="wsse_8h.html">wsse.h</a>&quot;</span></div>
 </div><!-- fragment --><p>The wsdl2h tool adds the necessary imports to the generated header file if the WSDL declares the use of WS-Security. If not, you may have to add the import manually before running soapcpp2.</p>
 <p>The wsse API consists of a set of functions to populate and verify WS-Security headers and message body content. For more details, we refer to the following sections that correspond to the WS-Security specification sections:</p>
@@ -108,7 +111,7 @@ Security Header</h1>
 <li><a class="el" href="wsse.html#wsse_11">WS-Security and HTTPS</a></li>
 <li><a class="el" href="wsse.html#wsse_12">Miscellaneous</a></li>
 <li><a class="el" href="wsse.html#wsse_13">Encryption Limitations</a></li>
-<li><a class="el" href="wsse.html#wsse_wsc">WS-SecureConversation</a></li>
+<li><a class="el" href="wsse.html#wsse_wsc">WS-SecureConversation and WS-Trust</a></li>
 </ul>
 <p>The basic API is introduced below.</p>
 <p>To add an empty Security header block to the SOAP header, use:</p>
@@ -140,7 +143,8 @@ User Name Token</h2>
 </div><!-- fragment --><p>It is strongly recommended to use <code>soap_wsse_add_UsernameTokenText</code> only in combination with HTTPS encrypted transmission or not at all. A better alternative is to use password digests. With password digest authentication, the digest value of a password (with message creation time and a random nonce) is compared on both sides, thus eliminating the need to exchange a password over the wire.</p>
 <p>To add a user name token with password digest, use:</p>
 <div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#ac9fe59008bdf12d7a007ac48e6ebb613">soap_wsse_add_UsernameTokenDigest</a>(soap, <span class="stringliteral">&quot;Id&quot;</span>, <span class="stringliteral">&quot;username&quot;</span>, <span class="stringliteral">&quot;password&quot;</span>);</div>
-</div><!-- fragment --><p>Although the password string is passed to this function, it is not rendered in XML or stored in a message log. It has been argued that this approach adopted by the WS-Security protocol is still vulnerable since the application retrieves the password in text form requiring a database to store passwords in clear text. However, a digest algorithm can be used to hash the passwords and store their digests instead, which eliminates the need to store clear-text passwords. Note that this is a common approach adopted by Unix for decades.</p>
+</div><!-- fragment --><p>Although the password string is passed to this function, it is not rendered in XML or stored in a message log. Only digests are compared on both sides, not the passwords. This authentication method adds a timestamp and nonce to prevent message replay attacks.</p>
+<p>It has been argued that this approach adopted by the WS-Security protocol is still vulnerable since the application retrieves the password in text form requiring a database to store passwords in clear text. However, a digest algorithm can be used to hash the passwords and store their digests instead, which eliminates the need to store clear-text passwords. This is a common approach adopted by Unix for decades.</p>
 <p>By setting the <code>Id</code> value to a unique string, the user name token is also digitally signed by the signature engine further preventing tampering with its value.</p>
 <p>You must use <code>soap_wsse_add_UsernameTokenDigest</code> for each message exchange to refresh the password digest even when the user name and password are not changed. Otherwise, the receiver might flag the message as a replay attack.</p>
 <p>Clear-text passwords and password digests are verified with <code>soap_wsse_verify_Password</code>. To verify a password at the receiving side to authorize a request (e.g. within a Web service operation), use:</p>
@@ -149,7 +153,10 @@ User Name Token</h2>
 <div class="line">  <span class="keyword">const</span> <span class="keywordtype">char</span> *username = <a class="code" href="wsseapi_8h.html#aca3fe6fb7c1e5c103827b33f24292f47">soap_wsse_get_Username</a>(soap);</div>
 <div class="line">  <span class="keyword">const</span> <span class="keywordtype">char</span> *password;</div>
 <div class="line">  <span class="keywordflow">if</span> (!username)</div>
+<div class="line">  {</div>
+<div class="line">    <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove old security headers</span></div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error; <span class="comment">// no username: return FailedAuthentication (from soap_wsse_get_Username)</span></div>
+<div class="line">  }</div>
 <div class="line">  password = ...; <span class="comment">// lookup password of username</span></div>
 <div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#aeb0afd01a5036e4f1314a3cfe8575bd5">soap_wsse_verify_Password</a>(soap, password))</div>
 <div class="line">  {</div>
@@ -186,7 +193,7 @@ Binary Security Tokens</h2>
 <div class="line">soap-&gt;crlfile = <span class="stringliteral">&quot;revoked.pem&quot;</span>; <span class="comment">// use CRL (optional)</span></div>
 </div><!-- fragment --><p>The <code>soap_wsse_verify_X509</code> function checks the validity of a certificate. The check is automatically performed. The check is also performed when retrieving the certificate from a Security header block, either automatically by the wsse plugin's signature verification engine or manually as follows:</p>
 <div class="fragment"><div class="line">X509 *cert = <a class="code" href="wsseapi_8h.html#a2ec22f47b0c66b62ef3c96d8f7b31436">soap_wsse_get_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;Id&quot;</span>);</div>
-</div><!-- fragment --><p>where <code>Id</code> is the identification string of the binary security token or NULL.</p>
+</div><!-- fragment --><p>where <code>Id</code> is the identification string of the binary security token or NULL to get the first found in the Security header.</p>
 <p>The X509 certificate returned by this function should be freed with <code>X509_free</code> to deallocate the certificate data:</p>
 <div class="fragment"><div class="line"><span class="keywordflow">if</span> (cert)</div>
 <div class="line">  X509_free(cert);</div>
@@ -205,33 +212,89 @@ Binary Security Tokens</h2>
 </div><!-- fragment --><p>Other types of binary security tokens can be added to the Security header block using:</p>
 <div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a272ece3d02d7fbb5309cda9d1b252822">soap_wsse_add_BinarySecurityToken</a>(soap, <span class="stringliteral">&quot;Id&quot;</span>, <span class="stringliteral">&quot;valueType&quot;</span>, data, datalen);</div>
 </div><!-- fragment --><h1><a class="anchor" id="wsse_6_4"></a>
-XML Tokens</h1>
-<p>The use and processing rules for XML tokens such as SAML assertions is specific to an application. The wsse plugin does not automate the use of XML tokens. The developer is encouraged to generate code for the SAML schema with wsdl2h and add the necessary assertions to the Security header block:</p>
-<div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct__wsse_____security.html">_wsse__Security</a></div>
-<div class="line">{       <span class="keyword">struct </span><a class="code" href="struct__wsu_____timestamp.html">_wsu__Timestamp</a>*                 <a class="code" href="struct__wsse_____security.html#a583fa6d2bb116663adab85ecae3a21e2">wsu__Timestamp</a>;</div>
-<div class="line">        <span class="keyword">struct </span><a class="code" href="struct__wsse_____username_token.html">_wsse__UsernameToken</a>*            <a class="code" href="struct__wsse_____security.html#a7ad164fa611e885fdc48d869f54bcda2">UsernameToken</a>;</div>
-<div class="line">        <span class="keyword">struct </span><a class="code" href="struct__wsse_____binary_security_token.html">_wsse__BinarySecurityToken</a>*      <a class="code" href="struct__wsse_____security.html#ae1a14c1c9cb302b6e155eec932b4f342">BinarySecurityToken</a>;</div>
-<div class="line">        <span class="keyword">struct </span>_saml__Assertion*                saml__Assertion; <span class="comment">// added</span></div>
-<div class="line">        <span class="keyword">struct </span><a class="code" href="structxenc_____encrypted_key_type.html">xenc__EncryptedKeyType</a>*          <a class="code" href="struct__wsse_____security.html#af12916fe6b69cc8cf4414408548ff91e">xenc__EncryptedKey</a>;</div>
-<div class="line">        <span class="keyword">struct </span><a class="code" href="structds_____signature_type.html">ds__SignatureType</a>*               <a class="code" href="struct__wsse_____security.html#a9a97955540b1b810aeeda13a1341dba0">ds__Signature</a>;</div>
-<div class="line">        @<span class="keywordtype">char</span>*                                  <a class="code" href="struct__wsse_____security.html#a1a941d6f69eab871bced7acdb6eb41f3">SOAP_ENV__actor</a>;</div>
-<div class="line">        @<span class="keywordtype">char</span>*                                  <a class="code" href="struct__wsse_____security.html#a86e02ae8da9bf2f6e1dd6eda8f596012">SOAP_ENV__role</a>;</div>
-<div class="line">} <a class="code" href="wsse_8h.html#adea0e9370ef38183a230394959186a83">_wsse__Security</a>;</div>
-</div><!-- fragment --><p>Alternatively, a DOM can be used to store and retrieve XML tokens:</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#import &quot;dom.h&quot;</span></div>
+SAML and Other Tokens</h1>
+<p>The use and processing rules for tokens such as SAML assertions is specific to an application. SAML 1.0 and 2.0 tokens are supported with the following functions to retrieve them from Security header blocks:</p>
+<div class="fragment"><div class="line">saml1__AssertionType *assertion1 = <a class="code" href="wsseapi_8h.html#af7d41c9b544e967d555aa215e6460366">soap_wsse_get_saml1</a>(soap);</div>
+</div><!-- fragment --><div class="fragment"><div class="line">saml2__AssertionType *assertion2 = <a class="code" href="wsseapi_8h.html#a8c3fe59935cca54624dc7a402c4785c5">soap_wsse_get_saml2</a>(soap);</div>
+</div><!-- fragment --><p>The pointers returned are non-NULL when these tokens are present. You can verify that a token is signed by the signature of the Security header with:</p>
+<div class="fragment"><div class="line">saml2__AssertionType *assertion2 = <a class="code" href="wsseapi_8h.html#a8c3fe59935cca54624dc7a402c4785c5">soap_wsse_get_saml2</a>(soap);</div>
+<div class="line"><span class="keywordflow">if</span> (!assertion2 || <a class="code" href="wsseapi_8h.html#a3fbe81de521579f026dd1ba8e81c59c1">soap_wsse_verify_element</a>(soap, SOAP_NAMESPACE_OF_saml2, <span class="stringliteral">&quot;Assertion&quot;</span>) == 0)</div>
+<div class="line">  ... error <span class="comment">// no Assertion or Assertion not signed (zero Assertion elements signed)</span></div>
+</div><!-- fragment --><p>If the SAML token contains a signature and/or time range conditions then you should verify that the SAML token is valid after receiving it in a Security header block of a WS-Security message:</p>
+<div class="fragment"><div class="line">time_t now = time(NULL);</div>
+<div class="line"><span class="keywordflow">if</span> (saml2-&gt;saml2__Conditions)</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (saml2-&gt;saml2__Conditions-&gt;NotBefore &amp;&amp; *saml2-&gt;saml2__Conditions-&gt;NotBefore &gt; now)</div>
+<div class="line">    ... error <span class="comment">// not valid yet</span></div>
+<div class="line">  <span class="keywordflow">if</span> (saml2-&gt;saml2__Conditions-&gt;NotOnOrAfter &amp;&amp; *saml2-&gt;saml2__Conditions-&gt;NotOnOrAfter &lt;= now)</div>
+<div class="line">    ... error <span class="comment">// expired</span></div>
+<div class="line">}</div>
+<div class="line"><span class="keywordflow">if</span> (saml2-&gt;ds__Signature)</div>
+<div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a9683d6e2780bf1d679e191ea18591cbc">soap_wsse_verify_with_signature</a>(soap, saml2-&gt;ds__Signature))</div>
+<div class="line">    ... error <span class="comment">// Assertion has signature but token is invalid</span></div>
+</div><!-- fragment --><p>The above assumes that a WS-Security message was received that was signed and decrypted (when applicable).</p>
+<p>To verify a SAML token that was created in memory with <code>int <a class="el" href="wsseapi_8c.html#a23b0b90e7bfb812786adb5d72f43c4d4" title="Adds SAML 1.0 Assertion to the wsse:Security header block, default initialized with wsu:Id set to ena...">soap_wsse_add_saml1(struct soap*, const char *id)</a></code> or with <code>int <a class="el" href="wsseapi_8c.html#a6a076fab8158a3e50f48c1af1f7e8574" title="Adds SAML 2.0 Assertion to the wsse:Security header block, default initialized with wsu:Id set to ena...">soap_wsse_add_saml2(struct soap*, const char *id)</a></code> (see further below) or verify a SAML token that was received in a non-WS-Security message as XML payload, use the <code>int <a class="el" href="wsseapi_8c.html#a2fd0a873e154563c598eed40aff7cdaa" title="Verifies the SAML 1.0 Assertion with its enveloped signature, requires soap->cacert specified...">soap_wsse_verify_saml1(struct soap*, saml1__AssertionType *saml1)</a></code> or <code>int <a class="el" href="wsseapi_8c.html#a2fd0a873e154563c598eed40aff7cdaa" title="Verifies the SAML 1.0 Assertion with its enveloped signature, requires soap->cacert specified...">soap_wsse_verify_saml1(struct soap*, saml1__AssertionType *saml1)</a></code> function:</p>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#ae18127d9c3f9f1932858e8072db46197">soap_wsse_verify_saml2</a>(soap, saml2))</div>
+<div class="line">  ... <span class="comment">// error</span></div>
+</div><!-- fragment --><p>To add SAML 1.0 or SAML 2.0 assertions to the Security header block:</p>
+<div class="fragment"><div class="line">time_t now = time(NULL);</div>
+<div class="line">saml1__AssertionType *assertion1 = <a class="code" href="wsseapi_8h.html#af8bdf2a05df4c6901628f46dca436a39">soap_wsse_add_saml1</a>(soap, <span class="stringliteral">&quot;SAML1&quot;</span>);</div>
+<div class="line">assertion1-&gt;IssueInstant = now;</div>
+<div class="line">assertion1-&gt;Issuer = (<span class="keywordtype">char</span>*)<span class="stringliteral">&quot;MyCompany&quot;</span>;</div>
+<div class="line">...</div>
+</div><!-- fragment --><div class="fragment"><div class="line">time_t now = time(NULL);</div>
+<div class="line">saml2__AssertionType *assertion2 = <a class="code" href="wsseapi_8h.html#aab6f05bfb6d67043724624475de74027">soap_wsse_add_saml2</a>(soap, <span class="stringliteral">&quot;SAML2&quot;</span>);</div>
+<div class="line">assertion2-&gt;IssueInstant = now;</div>
+<div class="line">assertion2-&gt;saml2__Issuer = (<span class="keyword">struct </span>saml2__NameIDType*)soap_malloc(soap, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> saml2__NameIDType));</div>
+<div class="line">soap_default_saml2__NameIDType(soap, assertion2-&gt;saml2__Issuer);</div>
+<div class="line">assertion2-&gt;saml2__Issuer-&gt;__item = (<span class="keywordtype">char</span>*)<span class="stringliteral">&quot;MyCompany&quot;</span>;</div>
+<div class="line">...</div>
+</div><!-- fragment --><p>The code shown above adds an empty SAML token to the Security header block after which the SAML assertion issuer, subject, conditions, statements, and attributes should be set. Once these are set, the assertion can be signed with a ds:Signature and X509 certificate added to the assertion to create an enveloped signature:</p>
+<div class="fragment"><div class="line">EVP_PKEY *rsa_private_key;</div>
+<div class="line">X509 *cert;</div>
+<div class="line">...</div>
+<div class="line">saml2__AssertionType *assertion2 = <a class="code" href="wsseapi_8h.html#aab6f05bfb6d67043724624475de74027">soap_wsse_add_saml2</a>(soap, <span class="stringliteral">&quot;SAML2&quot;</span>);</div>
+<div class="line">... <span class="comment">// set SAML issuer, subject, conditions, statements, and attributes</span></div>
+<div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a7fccf98063160b012cf832411774f289">soap_wsse_sign_saml2</a>(soap, assertion2, <a class="code" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a>, private_key, 0, cert))</div>
+<div class="line">  ... error <span class="comment">// could not sign and/or add cert to X509Data</span></div>
+</div><!-- fragment --><p>The private key and certificate values can be obtained as shown in Section <a class="el" href="wsse.html#wsse_8_2a">Signing Messages</a>.</p>
+<p>For implementing other types of tokens, you are encouraged to modify the <a class="el" href="wsse_8h.html">import/wsse.h</a> file to add more tokens to the <code><a class="el" href="struct__wsse_____security.html" title="This element defines the wsse:Security SOAP header element per Section 4. Imported element _wsse__Sec...">_wsse__Security</a></code> header block:</p>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>somens__SomeTokenType { @<span class="keywordtype">char</span> *wsu__Id; ... };</div>
+<div class="line"></div>
 <div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct__wsse_____security.html">_wsse__Security</a></div>
-<div class="line">{       <span class="keyword">struct </span><a class="code" href="struct__wsu_____timestamp.html">_wsu__Timestamp</a>*                 <a class="code" href="struct__wsse_____security.html#a583fa6d2bb116663adab85ecae3a21e2">wsu__Timestamp</a>;</div>
-<div class="line">        <span class="keyword">struct </span><a class="code" href="struct__wsse_____username_token.html">_wsse__UsernameToken</a>*            <a class="code" href="struct__wsse_____security.html#a7ad164fa611e885fdc48d869f54bcda2">UsernameToken</a>;</div>
-<div class="line">        <span class="keyword">struct </span><a class="code" href="struct__wsse_____binary_security_token.html">_wsse__BinarySecurityToken</a>*      <a class="code" href="struct__wsse_____security.html#ae1a14c1c9cb302b6e155eec932b4f342">BinarySecurityToken</a>;</div>
-<div class="line">        <span class="keyword">struct </span>_saml__Assertion*                saml__Assertion; <span class="comment">// added</span></div>
-<div class="line">        <span class="keyword">struct </span><a class="code" href="structxenc_____encrypted_key_type.html">xenc__EncryptedKeyType</a>*          <a class="code" href="struct__wsse_____security.html#af12916fe6b69cc8cf4414408548ff91e">xenc__EncryptedKey</a>;</div>
-<div class="line">        <span class="keyword">struct </span><a class="code" href="structds_____signature_type.html">ds__SignatureType</a>*               <a class="code" href="struct__wsse_____security.html#a9a97955540b1b810aeeda13a1341dba0">ds__Signature</a>;</div>
-<div class="line">        <span class="keywordtype">int</span>                                     __size;</div>
-<div class="line">        xsd__anyType*                           any;</div>
+<div class="line">{       ...</div>
+<div class="line">        <span class="keyword">struct </span>saml1__AssertionType*            <a class="code" href="struct__wsse_____security.html#a81114bad15ccbb17574b6f6c0cf6e3fb">saml1__Assertion</a>;</div>
+<div class="line">        <span class="keyword">struct </span>saml2__AssertionType*            <a class="code" href="struct__wsse_____security.html#a38e0ee68c6f968e7a8502972bc52b94a">saml2__Assertion</a>;</div>
+<div class="line">        <span class="keyword">struct </span>somens__SomeTokenType*           somens__SomeToken; <span class="comment">// added an optional token</span></div>
+<div class="line">        ...                                                        <span class="comment">// add more if needed</span></div>
 <div class="line">        @<span class="keywordtype">char</span>*                                  <a class="code" href="struct__wsse_____security.html#a1a941d6f69eab871bced7acdb6eb41f3">SOAP_ENV__actor</a>;</div>
 <div class="line">        @<span class="keywordtype">char</span>*                                  <a class="code" href="struct__wsse_____security.html#a86e02ae8da9bf2f6e1dd6eda8f596012">SOAP_ENV__role</a>;</div>
 <div class="line">} <a class="code" href="wsse_8h.html#adea0e9370ef38183a230394959186a83">_wsse__Security</a>;</div>
-</div><!-- fragment --><h1><a class="anchor" id="wsse_7"></a>
+</div><!-- fragment --><p>The tokens can be set with:</p>
+<div class="fragment"><div class="line"><a class="code" href="struct__wsse_____security.html">_wsse__Security</a> *security = <a class="code" href="wsseapi_8h.html#ae7775b49a0cd57c7cf85db7bb18b034d">soap_wsse_Security</a>(soap);</div>
+<div class="line">security-&gt;somens__SomeToken = (<span class="keyword">struct </span>somens__SomeTokenType*)soap_malloc(soap, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> somens__SomeTokenType));</div>
+<div class="line">soap_default_somens__SomeTokenType(soap, security-&gt;somens__SomeToken);</div>
+<div class="line">security-&gt;somens__SomeToken-&gt;wsu__Id = <span class="stringliteral">&quot;myToken&quot;</span>; <span class="comment">// allows for auto-signing this element</span></div>
+<div class="line">...</div>
+</div><!-- fragment --><p>For tokens in DOM XML form, use the <code>xsd__anyType</code> DOM element:</p>
+<div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct__wsse_____security.html">_wsse__Security</a></div>
+<div class="line">{       ...</div>
+<div class="line">        xsd__anyType*                           somens__SomeToken; <span class="comment">// added an optional token in DOM form</span></div>
+<div class="line">} <a class="code" href="wsse_8h.html#adea0e9370ef38183a230394959186a83">_wsse__Security</a>;</div>
+</div><!-- fragment --><p>The token in DOM form can be signed if you set the wsu:Id attribute to a unique value say "MyToken":</p>
+<div class="fragment"><div class="line"><a class="code" href="struct__wsse_____security.html">_wsse__Security</a> *security = <a class="code" href="wsseapi_8h.html#ae7775b49a0cd57c7cf85db7bb18b034d">soap_wsse_Security</a>(soap);</div>
+<div class="line">security-&gt;somens__SomeToken = (xsd__anyType*)soap_malloc(soap, <span class="keyword">sizeof</span>(xsd__anyType));</div>
+<div class="line"><a class="code" href="wsseapi_8h.html#ac92bae52f1a5a467f3a857ec9f078723">soap_default_xsd__anyType</a>(soap, security-&gt;somens__SomeToken);</div>
+<div class="line">soap_att_text(soap_att(soap_add_security-&gt;somens__SomeToken, NULL, <span class="stringliteral">&quot;wsu:Id&quot;</span>), <span class="stringliteral">&quot;MyToken&quot;</span>);</div>
+<div class="line">...</div>
+</div><!-- fragment --><p>We recommend to use <a href="http://www.genivia.com/doc/dom/html/index.html">domcpp</a> to generate code to set the token to send messages and get its values after receiving messages.</p>
+<p>For tokens in XML "string" text form, use the <code>_XML</code> literal string (a <code>char*</code> type with XML content):</p>
+<div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct__wsse_____security.html">_wsse__Security</a></div>
+<div class="line">{       ...</div>
+<div class="line">        _XML                                    somens__SomeToken; <span class="comment">// added an optional token in string form</span></div>
+<div class="line">} <a class="code" href="wsse_8h.html#adea0e9370ef38183a230394959186a83">_wsse__Security</a>;</div>
+</div><!-- fragment --><p>However, beware that XML text cannot be signed by the signature as a Security header (unless you embed it within a new element in the Security header block and set that element's wsu:Id attribute).</p>
+<h1><a class="anchor" id="wsse_7"></a>
 Token References</h1>
 <p>The material in this section relates to the WS-Security specification section 7.</p>
 <p>To use a certificate for signature verification, add a direct security token reference URI for the token to the KeyInfo, for example:</p>
@@ -258,14 +321,14 @@ Signatures</h1>
 </div><!-- fragment --><p>XML signatures are usually computed over normalized XML (to ensure the XML processors of intermediate nodes can accurately reproduce the XML). To this end, the exclusive canonical XML standard (exc-c14n) is required, which is set using the <code>SOAP_XML_CANONICAL</code> flag:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL);</div>
 <div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
-</div><!-- fragment --><p>If you prefer XML indentation, use:</p>
-<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);</div>
-<div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
-</div><!-- fragment --><p>Other flags to consider:</p>
+</div><!-- fragment --><p>Flags to consider:</p>
 <ul>
-<li><code>SOAP_IO_CHUNK</code> for HTTP chunked content to stream messages.</li>
+<li><code>SOAP_XML_CANONICAL</code> recommended to enable exclusive C14N.</li>
+<li><code>SOAP_XML_INDENT</code> optional, to emit more readable XML (see warning).</li>
+<li><code>SOAP_IO_CHUNK</code> efficient HTTP-chunked streaming messages.</li>
 <li><code>SOAP_ENC_GZIP</code> for HTTP compression (also enables HTTP chunking).</li>
 </ul>
+<dl class="section warning"><dt>Warning</dt><dd>Interoperability with WCF WS-Security is not guaranteed when <code>SOAP_XML_INDENT</code> is enabled. Avoid using <code>SOAP_XML_INDENT</code> for interoperability. The implementation of C14N in WCF with respect to the normalization of white space between XML tags differs from the protocol standards.</dd></dl>
 <p>Next, we decide which signature algorithm is appropriate to use:</p>
 <ul>
 <li>HMAC-SHA uses a secret key (also known as a shared key in symmetric cryptography) to sign the SHA digest of the SignedInfo element.</li>
@@ -299,7 +362,8 @@ Signatures</h1>
 <li><code>SOAP_SMD_SIGN_ECDSA_SHA512</code> <a href="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512">http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512</a></li>
 </ul>
 <p>An optional callback function can be passed to the plugin that is responsible for providing a certificate or key to the wsse engine to verify a signed message. For example, when a security token is absent from an DSA-SHA or RSA-SHA signed message then the only mechanism to automatically verify the signature is to let the callback produce a certificate:</p>
-<div class="fragment"><div class="line">soap_register_plugin_arg(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>, security_token_handler);</div>
+<div class="fragment"><div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
+<div class="line"><a class="code" href="wsseapi_8h.html#ad6a0b722a052aaa7652cba5245f78b5f">soap_wsse_set_security_token_handler</a>(soap, security_token_handler);</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">const</span> <span class="keywordtype">void</span> *security_token_handler(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">int</span> *alg, <span class="keyword">const</span> <span class="keywordtype">char</span> *keyname, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *keyid, <span class="keywordtype">int</span> keyidlen, <span class="keywordtype">int</span> *keylen)</div>
 <div class="line">{</div>
@@ -326,6 +390,7 @@ Signatures</h1>
 <div class="line">        <span class="keywordflow">return</span> (<span class="keyword">const</span> <span class="keywordtype">void</span>*)cert;</div>
 <div class="line">      }</div>
 <div class="line">      <span class="keywordflow">return</span> NULL; <span class="comment">// no certificate: fail</span></div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a7d00704c43ee044926905cd327a712ef">SOAP_SMD_HMAC_SHA1</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a0a03fa407c392d53e3e6609032c69a19">SOAP_SMD_HMAC_SHA224</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a561d6c47f122626acb2f36bdabdc07e6">SOAP_SMD_HMAC_SHA256</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a5928fa6c9c366857ffb96e70e6e04609">SOAP_SMD_HMAC_SHA384</a>:</div>
@@ -354,8 +419,9 @@ Signatures</h1>
 <div class="line">        <span class="comment">// 1. keyname is set to the subject name of the certificate, if a</span></div>
 <div class="line">        <span class="comment">//    certificate is present in the SecurityTokenReference/KeyIdentifier</span></div>
 <div class="line">        <span class="comment">//    when ValueType is http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3</span></div>
-<div class="line">        <span class="comment">// 2. keyname is set to the concatenation of</span></div>
-<div class="line">        <span class="comment">//     &quot;{X509IssuerName}#{X509SerialNumber}&quot; present in X509Data/X509IssuerSerial</span></div>
+<div class="line">        <span class="comment">// 2. keyname is set to the string concatenation</span></div>
+<div class="line">        <span class="comment">//     &quot;{X509IssuerName}#{X509SerialNumber}&quot; of the X509IssuerName</span></div>
+<div class="line">        <span class="comment">//     and X509SerialNumber present in X509Data/X509IssuerSerial</span></div>
 <div class="line">        <span class="comment">// 3. keyname is set to X509Data/X509SubjectName</span></div>
 <div class="line">        <span class="keywordflow">return</span> ...;</div>
 <div class="line">      }</div>
@@ -387,14 +453,15 @@ Signatures</h1>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">return</span> NULL; <span class="comment">// fail</span></div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="wsse_8_2a"></a>
+</div><!-- fragment --><dl class="section warning"><dt>Warning</dt><dd>The security token handler callback function parameters have changed in 2.8.34 and greater with the addition of KeyIdentifier information <code>keyid</code> and <code>keyidlen</code>.</dd></dl>
+<h2><a class="anchor" id="wsse_8_2a"></a>
 Signing Messages</h2>
 <p>After the plugin is registered and a signature algorithm selected, the <code>soap_wsse_sign</code> function or the <code>soap_wsse_sign_body</code> function is used to initiate the signature engine to automatically sign outbound messages.</p>
 <p>The code to sign the SOAP Body of a message using HMAC-SHA1 is:</p>
 <div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keywordtype">char</span> hmac_key[16] =</div>
 <div class="line">{ 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,</div>
 <div class="line">  0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00 };</div>
-<div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);</div>
+<div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL);</div>
 <div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#ab653754f1a287ba06bd808cf89548c38">soap_wsse_sign_body</a>(soap, <a class="code" href="smdevp_8h.html#a7d00704c43ee044926905cd327a712ef">SOAP_SMD_HMAC_SHA1</a>, hmac_key, <span class="keyword">sizeof</span>(hmac_key))</div>
 <div class="line">  ... <span class="comment">// an error occurred</span></div>
@@ -406,7 +473,7 @@ Signing Messages</h2>
 <div class="fragment"><div class="line">FILE *fd;</div>
 <div class="line">EVP_PKEY *rsa_private_key;</div>
 <div class="line">X509 *cert;</div>
-<div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);</div>
+<div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL);</div>
 <div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
 <div class="line">fd = fopen(<span class="stringliteral">&quot;privkey.pem&quot;</span>, <span class="stringliteral">&quot;r&quot;</span>);</div>
 <div class="line">rsa_private_key = PEM_read_PrivateKey(fd, NULL, NULL, <span class="stringliteral">&quot;password&quot;</span>);</div>
@@ -427,12 +494,12 @@ Signing Messages</h2>
 <li>For DSA or RSA, obtain the X509 certificate with the public key signed by a certificate authority.</li>
 <li>Add the X509 certificate as a BinarySecurityToken to the header.</li>
 <li>Add a KeyInfo BinarySecurityTokenReference.</li>
-<li>Invoke <code>soap_wsse_sign</code> or <code>soap_wsse_sign_body</code> to sign the message.</li>
+<li>Invoke <code>soap_wsse_sign_body</code> and/or <code>soap_wsse_sign</code> with <code>soap_wsse_sign_only</code> to sign the message.</li>
 <li>Always check the function return values for errors. You don't want to produce and accept messages with an invalid Security headers.</li>
 </ol>
 <h2><a class="anchor" id="wsse_8_2b"></a>
 Signing Message Parts</h2>
-<p>The <code>soap_wsse_sign_body</code> function signs the entire SOAP body. If it is desirable to sign individual parts of a message the <code>soap_wsse_sign</code> function should be used. All message parts with wsu:Id attributes are signed. These message parts should not be nested (nested elements will not be separately signed). By default, all and only those XML elements with wsu:Id attributes are signed. Therefore, the wsu:Id attribute values used in a message must be unique within the message. Although usually not required, the default signing rule can be overridden with the <code>soap_wsse_sign_only</code> function, see <a class="el" href="wsse.html#wsse_8_3">Signing Tokens</a>.</p>
+<p>The <code>soap_wsse_sign_body</code> function signs the entire SOAP body but nothing else. If it is desirable to sign individual parts of a message the <code>soap_wsse_sign_only</code> and <code>soap_wsse_sign</code> functions should be used. All message parts with wsu:Id attributes are signed. These message parts should not be nested (nested elements will not be separately signed). By default, all and only those XML elements with wsu:Id attributes are signed. Therefore, the wsu:Id attribute values used in a message must be unique within the message. Although usually not required, the default signing rule can be overridden with the <code>soap_wsse_sign_only</code> function, see <a class="el" href="wsse.html#wsse_8_3">Signing Security Headers and Tokens</a>.</p>
 <p>For example, consider a transaction in which we only want to sign a contract in the SOAP Body. This allows us to modify the rest of the message or extract the contract in XML and pass it on with the signature.</p>
 <p>The gSOAP header file includes a myContract declaration:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>ns__myContract</div>
@@ -497,18 +564,20 @@ When signing parts of the body as outlined above, use <code>soap_wsse_sign</code
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd><code>soap_wsse_set_wsu_id</code> should only be set once for each <code>soap_wsse_sign</code> or <code>soap_wsse_sign_body</code>. Each new call overrides the previous setting.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Never use <code>soap_wsse_set_wsu_id</code> to set the wsu:Id for an element that occurs more than once in the payload, since each will have the same wsu:Id attribute that may lead to a WS-Signature failure.</dd></dl>
 <h2><a class="anchor" id="wsse_8_3"></a>
-Signing Tokens</h2>
+Signing Security Headers and Tokens</h2>
 <p>To sign security tokens such as user names, passwords, and binary security tokens, just assign their Id values with a unique string, such as "Time" for timestamps and "User" for user names. For example:</p>
 <div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a71fe27aee76db1d0a635afe106d8b109">soap_wsse_add_Timestamp</a>(soap, <span class="stringliteral">&quot;Time&quot;</span>, 600);</div>
 <div class="line"><a class="code" href="wsseapi_8h.html#ac9fe59008bdf12d7a007ac48e6ebb613">soap_wsse_add_UsernameTokenDigest</a>(soap, <span class="stringliteral">&quot;User&quot;</span>, <span class="stringliteral">&quot;username&quot;</span>, <span class="stringliteral">&quot;password&quot;</span>);</div>
 <div class="line">... <span class="comment">// the rest of the signing code</span></div>
-</div><!-- fragment --><p>Note that by default all wsu:Id-attributed elements are signed. To filter a subset of wsu:Id-attributed elements for signatures, use the <code>soap_wsse_sign_only</code> function as follows:</p>
-<div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#ac9fe59008bdf12d7a007ac48e6ebb613">soap_wsse_add_UsernameTokenDigest</a>(soap, <span class="stringliteral">&quot;User&quot;</span>, <span class="stringliteral">&quot;username&quot;</span>, <span class="stringliteral">&quot;password&quot;</span>);</div>
+</div><!-- fragment --><p>Note that by default all wsu:Id-attributed elements are signed. To filter a subset of wsu:Id-attributed elements for signatures, use the <code>soap_wsse_sign_only</code> function to specify a subset of the elements that have wsu:Id values as follows:</p>
+<div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a71fe27aee76db1d0a635afe106d8b109">soap_wsse_add_Timestamp</a>(soap, <span class="stringliteral">&quot;Time&quot;</span>, 600);</div>
+<div class="line"><a class="code" href="wsseapi_8h.html#ac9fe59008bdf12d7a007ac48e6ebb613">soap_wsse_add_UsernameTokenDigest</a>(soap, <span class="stringliteral">&quot;User&quot;</span>, <span class="stringliteral">&quot;username&quot;</span>, <span class="stringliteral">&quot;password&quot;</span>);</div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a53075fb3cec4ec4e70fb11850fecb401">soap_wsse_add_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;X509Token&quot;</span>, cert);</div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a72df80abd1d36cea516feda3a84672cf">soap_wsse_add_KeyInfo_SecurityTokenReferenceX509</a>(soap, <span class="stringliteral">&quot;#X509Token&quot;</span>);</div>
 <div class="line"><a class="code" href="wsseapi_8h.html#ab653754f1a287ba06bd808cf89548c38">soap_wsse_sign_body</a>(soap, <a class="code" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a>, rsa_private_key, 0);</div>
-<div class="line"><a class="code" href="wsseapi_8h.html#a16e38c1160a47ad2cb60d1b7d5dba777">soap_wsse_sign_only</a>(soap, <span class="stringliteral">&quot;User Body&quot;</span>);</div>
-</div><!-- fragment --><p>Note that in the above we MUST set the X509Token name for cross-referencing with a wsu:Id, which normally results in automatically signing that token unless filtered out with <code>soap_wsse_sign_only</code>. The SOAP Body wsu:Id is always "Body" and should be part of the <code>soap_wsse_sign_only</code> set of wsu:Id names to sign.</p>
+<div class="line"><a class="code" href="wsseapi_8h.html#a16e38c1160a47ad2cb60d1b7d5dba777">soap_wsse_sign_only</a>(soap, <span class="stringliteral">&quot;Time User Body&quot;</span>); <span class="comment">// OK to use after soap_wsse_sign_body</span></div>
+</div><!-- fragment --><p>The wsu:Id values are provides with the <code>add</code> functions, such as "User" and "X509Token". The SOAP Body always has a wsu:Id value "Body" when <code>soap_wsse_sign_body</code> is used.</p>
+<p>Note that in the above we MUST set the X509Token name for cross-referencing with a wsu:Id, which normally results in automatically signing that token unless filtered out with <code>soap_wsse_sign_only</code>. The SOAP Body wsu:Id is always "Body" and should be part of the <code>soap_wsse_sign_only</code> set of wsu:Id names to sign.</p>
 <p>When using <code>soap_wsse_set_wsu_id</code> we need to use the tag name with <code>soap_wsse_sign_only</code>. For example:</p>
 <div class="fragment"><div class="line">soap_wsa_request(soap, RequestMessageID, ToAddress, RequestAction);</div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a>(soap, <span class="stringliteral">&quot;wsa5:To wsa5:From wsa5:ReplyTo wsa5:Action&quot;</span>);</div>
@@ -523,11 +592,11 @@ To reset the filtering of signed tokens and elements, pass NULL to <code>soap_ws
 <h2><a class="anchor" id="wsse_8_4"></a>
 Signature Validation</h2>
 <p>To automatically verify the signature of an inbound message signed with DSA or RSA algorithms, assuming the message contains the X509 certificate as a binary security token, use:</p>
-<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);</div>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL);</div>
 <div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a7321b451910e1d3887b328f03de92f34">soap_wsse_verify_auto</a>(soap, <a class="code" href="smdevp_8h.html#a011f7d21ad3c8634373fe3d3325fcd75">SOAP_SMD_NONE</a>, NULL, 0);</div>
 <div class="line">soap-&gt;cafile = <span class="stringliteral">&quot;cacerts.pem&quot;</span>;  <span class="comment">// file with CA certs of peers</span></div>
-<div class="line">soap-&gt;capath = <span class="stringliteral">&quot;dir/to/certs&quot;</span>; <span class="comment">// and/or point to CA certs</span></div>
+<div class="line">soap-&gt;capath = <span class="stringliteral">&quot;dir/to/certs&quot;</span>; <span class="comment">// and/or point to CA certs directory</span></div>
 <div class="line">soap-&gt;crlfile = <span class="stringliteral">&quot;revoked.pem&quot;</span>; <span class="comment">// use CRL (optional)</span></div>
 <div class="line"></div>
 <div class="line"><span class="comment">// server:</span></div>
@@ -540,15 +609,25 @@ Signature Validation</h2>
 </div><!-- fragment --><p>All locally referenced and signed elements in the signed message will be verified with <code>soap_wsse_verify_auto</code> using the default settings set with <code>SOAP_SMD_NONE</code>. Elements that are not signed cannot be verified. Also elements referenced with absolute URIs that are not part of the message are not automatically verified. The received message is stored in a DOM accessible with soap-&gt;dom. This enables further analysis of the message content.</p>
 <p>For a post-parsing check to verify if an XML element was signed in an inbound message, use:</p>
 <div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a7321b451910e1d3887b328f03de92f34">soap_wsse_verify_auto</a>(soap, <a class="code" href="smdevp_8h.html#a011f7d21ad3c8634373fe3d3325fcd75">SOAP_SMD_NONE</a>, NULL, 0);</div>
+<div class="line">soap-&gt;cafile = <span class="stringliteral">&quot;cacerts.pem&quot;</span>;  <span class="comment">// file with CA certs of peers</span></div>
+<div class="line">soap-&gt;capath = <span class="stringliteral">&quot;dir/to/certs&quot;</span>; <span class="comment">// and/or point to CA certs directory</span></div>
+<div class="line">soap-&gt;crlfile = <span class="stringliteral">&quot;revoked.pem&quot;</span>; <span class="comment">// use CRL (optional)</span></div>
 <div class="line">... <span class="comment">// client call</span></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a3fbe81de521579f026dd1ba8e81c59c1">soap_wsse_verify_element</a>(soap, <span class="stringliteral">&quot;namespaceURI&quot;</span>, <span class="stringliteral">&quot;tag&quot;</span>) &gt; 0)</div>
 <div class="line">  ... <span class="comment">// at least one element with matching tag and namespace is signed</span></div>
 </div><!-- fragment --><p>The signed element nesting rules are obeyed, so if the matching element is a descendent of a signed element, it is signed as well.</p>
 <p>Because it is a post check, a client should invoke <code>soap_wsse_verify_element</code> after the call completed. A service should invoke this function within the service operation routine, i.e. when the message request is accepted and about to be processed.</p>
-<p>For example, to check whether the wsu:Timestamp element was signed (assuming it is present and message expiration checked with <code>soap_wsse_verify_Timestamp)</code>, use <code>soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp")</code>.</p>
-<p>To check the SOAP Body (either using SOAP 1.1 or 1.2), simply use <code>soap_wsse_verify_body</code>.</p>
+<p>For example, to check whether the wsu:Timestamp element was signed, e.g. after checking that it is present and message expiration checked with <code>soap_wsse_verify_Timestamp</code>, use:</p>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> (!<a class="code" href="wsseapi_8h.html#a98422cde0e2b7b14d65212f7061101fa">soap_wsse_verify_Timestamp</a>(soap))</div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap);</div>
+<div class="line">  ... <span class="comment">// error</span></div>
+<div class="line">}</div>
+<div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a3fbe81de521579f026dd1ba8e81c59c1">soap_wsse_verify_element</a>(soap, <span class="stringliteral">&quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd&quot;</span>, <span class="stringliteral">&quot;Timestamp&quot;</span>) &gt; 0)</div>
+<div class="line">  ... <span class="comment">// timestamp was signed</span></div>
+</div><!-- fragment --><p>To check the SOAP Body (either using SOAP 1.1 or 1.2), simply use <code>soap_wsse_verify_body</code>.</p>
 <p>The <code>soap_wsse_verify_auto</code> function keeps processing signed (and unsigned) messages as they arrive. For unsigned messages this can be expensive and the verification engine should be shut down using <code>soap_wsse_verify_done</code>.</p>
-<p>There can be two problems with signature verification. First, some WS-Security implementations include SignedInfo/Reference/ without targeting an element, which will produce an error that a Reference URI target does not exist. To ignore these references, use <code>SOAP_WSSE_IGNORE_EXTRA_REFS</code>. Second, certificates provided by the peer are not verifiable unless the signing CA certificate is included in the cafile or capath. To disable certificate verification set the fsslverify callback:</p>
+<p>There can be two problems with signature verification. First, some WS-Security implementations include SignedInfo/Reference/ without targeting an element, which will produce an error that a Reference URI target does not exist. To ignore these references, use <code>SOAP_WSSE_IGNORE_EXTRA_REFS</code>. Second, certificates provided by the peer are not verifiable unless the signing CA certificate is included in the cafile or capath. To disable peer certificate verification, set the fsslverify callback to return 1 as follows:</p>
 <div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keywordtype">int</span> ssl_verify(<span class="keywordtype">int</span> ok, X509_STORE_CTX *store)</div>
 <div class="line">{</div>
 <div class="line">  <span class="comment">// put certificate verification here, return 0 when fails 1 when ok</span></div>
@@ -556,14 +635,56 @@ Signature Validation</h2>
 <div class="line">}</div>
 <div class="line">...</div>
 <div class="line">soap_wsse_verify_auto(soap, <a class="code" href="smdevp_8h.html#a011f7d21ad3c8634373fe3d3325fcd75">SOAP_SMD_NONE</a> | <a class="code" href="wsseapi_8h.html#ae6f973cd88cca2187640822dc86fcd9e">SOAP_WSSE_IGNORE_EXTRA_REFS</a>, NULL, 0);</div>
+<div class="line">soap-&gt;cafile = <span class="stringliteral">&quot;cacerts.pem&quot;</span>;  <span class="comment">// file with CA certs of peers</span></div>
+<div class="line">soap-&gt;capath = <span class="stringliteral">&quot;dir/to/certs&quot;</span>; <span class="comment">// and/or point to CA certs directory</span></div>
+<div class="line">soap-&gt;crlfile = <span class="stringliteral">&quot;revoked.pem&quot;</span>; <span class="comment">// use CRL (optional)</span></div>
+<div class="line">soap-&gt;fsslverify = ssl_verify; <span class="comment">// set certificate verification callback</span></div>
+</div><!-- fragment --><p>To reject peer certificates under all conditions except specific permitted conditions such as self-signed certificates in the chain, use the following code as a guide (see OpenSSL documentation on <code>X509_STORE_CTX_get_error</code>):</p>
+<div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keywordtype">int</span> ssl_verify(<span class="keywordtype">int</span> ok, X509_STORE_CTX *store)</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">if</span> (!ok)</div>
+<div class="line">  {</div>
+<div class="line">    <span class="keywordtype">char</span> buf[1024];</div>
+<div class="line">    <span class="keywordtype">int</span> err = X509_STORE_CTX_get_error(store);</div>
+<div class="line">    X509 *cert = X509_STORE_CTX_get_current_cert(store);</div>
+<div class="line">    <span class="keywordflow">switch</span> (err)</div>
+<div class="line">    {</div>
+<div class="line">      <span class="keywordflow">case</span> X509_V_ERR_CERT_NOT_YET_VALID:</div>
+<div class="line">      <span class="keywordflow">case</span> X509_V_ERR_CERT_HAS_EXPIRED:</div>
+<div class="line">      <span class="keywordflow">case</span> X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:</div>
+<div class="line">      <span class="keywordflow">case</span> X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:</div>
+<div class="line">      <span class="keywordflow">case</span> X509_V_ERR_UNABLE_TO_GET_CRL:</div>
+<div class="line">      <span class="keywordflow">case</span> X509_V_ERR_CRL_NOT_YET_VALID:</div>
+<div class="line">      <span class="keywordflow">case</span> X509_V_ERR_CRL_HAS_EXPIRED:</div>
+<div class="line">        X509_STORE_CTX_set_error(store, X509_V_OK);</div>
+<div class="line">        ok = 1;</div>
+<div class="line">        <span class="keywordflow">break</span>;</div>
+<div class="line">      <span class="keywordflow">default</span>:</div>
+<div class="line">        fprintf(stderr, <span class="stringliteral">&quot;SSL verify error %d or warning with certificate at depth %d: %s\n&quot;</span>, err, X509_STORE_CTX_get_error_depth(store), X509_verify_cert_error_string(err));</div>
+<div class="line">        X509_NAME_oneline(X509_get_issuer_name(cert), buf, <span class="keyword">sizeof</span>(buf)-1);</div>
+<div class="line">        fprintf(stderr, <span class="stringliteral">&quot;  certificate issuer:  %s\n&quot;</span>, buf);</div>
+<div class="line">        X509_NAME_oneline(X509_get_subject_name(cert), buf, <span class="keyword">sizeof</span>(buf)-1);</div>
+<div class="line">        fprintf(stderr, <span class="stringliteral">&quot;  certificate subject: %s\n&quot;</span>, buf);</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">  <span class="keywordflow">return</span> ok;</div>
+<div class="line">}</div>
+<div class="line">...</div>
+<div class="line">soap_wsse_verify_auto(soap, <a class="code" href="smdevp_8h.html#a011f7d21ad3c8634373fe3d3325fcd75">SOAP_SMD_NONE</a> | <a class="code" href="wsseapi_8h.html#ae6f973cd88cca2187640822dc86fcd9e">SOAP_WSSE_IGNORE_EXTRA_REFS</a>, NULL, 0);</div>
+<div class="line">soap-&gt;cafile = <span class="stringliteral">&quot;cacerts.pem&quot;</span>;  <span class="comment">// file with CA certs of peers</span></div>
+<div class="line">soap-&gt;capath = <span class="stringliteral">&quot;dir/to/certs&quot;</span>; <span class="comment">// and/or point to CA certs directory</span></div>
+<div class="line">soap-&gt;crlfile = <span class="stringliteral">&quot;revoked.pem&quot;</span>; <span class="comment">// use CRL (optional)</span></div>
 <div class="line">soap-&gt;fsslverify = ssl_verify;</div>
 </div><!-- fragment --><p>To verify the HMAC signature of an inbound message, the HMAC key must be supplied:</p>
 <div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keywordtype">char</span> hmac_key[16] = <span class="comment">// the same secret key that was used to sign</span></div>
 <div class="line">{ 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x88,</div>
 <div class="line">  0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00 };</div>
-<div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);</div>
+<div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL);</div>
 <div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a7321b451910e1d3887b328f03de92f34">soap_wsse_verify_auto</a>(soap, <a class="code" href="smdevp_8h.html#a7d00704c43ee044926905cd327a712ef">SOAP_SMD_HMAC_SHA1</a>, hmac_key, <span class="keyword">sizeof</span>(hmac_key));</div>
+<div class="line">soap-&gt;cafile = <span class="stringliteral">&quot;cacerts.pem&quot;</span>;  <span class="comment">// file with CA certs of peers</span></div>
+<div class="line">soap-&gt;capath = <span class="stringliteral">&quot;dir/to/certs&quot;</span>; <span class="comment">// and/or point to CA certs directory</span></div>
+<div class="line">soap-&gt;crlfile = <span class="stringliteral">&quot;revoked.pem&quot;</span>; <span class="comment">// use CRL (optional)</span></div>
 <div class="line"></div>
 <div class="line"><span class="comment">// server:</span></div>
 <div class="line"><span class="keywordflow">if</span> (soap_serve(soap))</div>
@@ -586,18 +707,21 @@ Signature Validation</h2>
 Encryption</h1>
 <p>The material in this section relates to the WS-Security specification section 9.</p>
 <p>The wsse plugin must be registered:</p>
-<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);</div>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL);</div>
 <div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
-</div><!-- fragment --><p>Other flags to consider:</p>
+</div><!-- fragment --><p>Flags to consider:</p>
 <ul>
-<li><code>SOAP_IO_CHUNK</code> for HTTP chunked content to stream messages.</li>
+<li><code>SOAP_XML_CANONICAL</code> recommended to enable exclusive C14N.</li>
+<li><code>SOAP_XML_INDENT</code> optional, to emit more readable XML (see warning).</li>
+<li><code>SOAP_IO_CHUNK</code> efficient HTTP-chunked streaming messages.</li>
 <li><code>SOAP_ENC_GZIP</code> for HTTP compression (also enables HTTP chunking).</li>
 </ul>
+<dl class="section warning"><dt>Warning</dt><dd>Interoperability with WCF WS-Security is not guaranteed when <code>SOAP_XML_INDENT</code> is enabled. Avoid using <code>SOAP_XML_INDENT</code> for interoperability. The implementation of C14N in WCF with respect to the normalization of white space between XML tags differs from the protocol standards.</dd></dl>
 <h2><a class="anchor" id="wsse_9_1"></a>
 Encrypting Messages</h2>
 <p>Encryption should be used in combination with signing. A signature ensures message integrity while encryption ensures confidentially. Encrypted messages can be tampered with unless integrity is ensured. Therefore, the reader should be familiar with the material in Section <a class="el" href="wsse.html#wsse_8">Signatures</a> should to sign and verify message content.</p>
 <p>Messages are encrypted using either public key cryptography or by using a symmetric secret key. A symmetric secret key should only be shared between the sender and receiver (or any trusted communicating peer).</p>
-<p>Encryption with public key cryptography uses an "envelope" process, where the public key of the recipient is used to encrypt a temporary (ephemeral) secret key that is sent together with the secret key-encrypted message to the recipient. The recipient decrypts the ephemeral key and uses it to decrypt the message. The public key is usually part of a X509 certificate. The public key (containing the subject information) is added to the WS-Security header and used for encryption of the SOAP Body as follows:</p>
+<p>Encryption with public key cryptography uses an "envelope" process, where the public key of the recipient is used to encrypt a temporary (ephemeral) secret key that is sent together with the secret key-encrypted message to the recipient. The recipient decrypts the ephemeral key and uses it to decrypt the message. The public key is usually part of a X509 certificate. The public key (containing the subject information) is added to the Security header and used for encryption of the SOAP Body as follows:</p>
 <div class="fragment"><div class="line">X509 *cert = ...; <span class="comment">//</span></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a1ba85a8b14587cff0865ebc3e5e9e340">soap_wsse_add_EncryptedKey</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL))</div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
@@ -609,13 +733,13 @@ Encrypting Messages</h2>
 <li><code>SOAP_MEC_ENV_ENC_AES256_GCM</code> envelope authenticated encryption with AES256 GCM</li>
 <li><code>SOAP_MEC_ENV_ENC_AES256_CBC | SOAP_MEC_OAEP</code> OAEP envelope encryption with AES256 CBC</li>
 </ul>
-<p>where, in the above, AES256 can be replaced with AES128 or AES192.</p>
+<p>where, in the above, AES256 can also be replaced with AES128 or AES192.</p>
 <p>The "Cert" parameter is a unique URI to reference the key from the encrypted SOAP Body. The above enables the encryption engine for the next message to be sent, either at the client or server side. The server should use this withing a server operation (before returning) to enable the service operation response to be encrypted.</p>
-<p>To include a subject key ID in the WS-Security header instead of the entire public key, specify the subject key ID parameter:</p>
+<p>To include a subject key ID in the Security header instead of the entire public key, specify the subject key ID parameter:</p>
 <div class="fragment"><div class="line">X509 *cert = ...; <span class="comment">//</span></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a1ba85a8b14587cff0865ebc3e5e9e340">soap_wsse_add_EncryptedKey</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, <span class="stringliteral">&quot;Subject Key ID&quot;</span>, NULL, NULL))</div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
-</div><!-- fragment --><p>The difference with the previous example where no subject key ID was specified is that the WS-Security header only contains the subject key ID and no longer the public key in base64 format.</p>
+</div><!-- fragment --><p>The difference with the previous example where no subject key ID was specified is that the Security header only contains the subject key ID and no longer the public key in base64 format.</p>
 <p>To exclude the encrypted key certificate from the message and include a X509Data element with IssuerName and SerialNumber:</p>
 <div class="fragment"><div class="line">X509 *cert = ...;</div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a1ba85a8b14587cff0865ebc3e5e9e340">soap_wsse_add_EncryptedKey</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, <span class="stringliteral">&quot;CN=Root Agency&quot;</span>, <span class="stringliteral">&quot;-79441640260855276448009124614332182350&quot;</span>))</div>
@@ -624,7 +748,7 @@ Encrypting Messages</h2>
 <div class="fragment"><div class="line">X509 *cert = ...;</div>
 <div class="line">BIGNUM *bn = BN_new();</div>
 <div class="line"><span class="keywordtype">char</span> issuer[256], *serial;</div>
-<div class="line">X509_NAME_oneline(X509_get_issuer_name(cert), issuer, <span class="keyword">sizeof</span>(issuer));</div>
+<div class="line">X509_NAME_oneline(X509_get_issuer_name(cert), issuer, <span class="keyword">sizeof</span>(issuer)-1);</div>
 <div class="line">ASN1_INTEGER_to_BN(X509_get_serialNumber(cert), bn);</div>
 <div class="line">serial = BN_bn2dec(bn);</div>
 <div class="line">OPENSSL_free(bn);</div>
@@ -635,20 +759,20 @@ Encrypting Messages</h2>
 <div class="line">OPENSSL_free(serial);</div>
 </div><!-- fragment --><p>Note that in the above code the leading slash in "/CN=Root Agency" is excluded from the issuer name.</p>
 <p>When excluding the encrypted key certificate from the message, the token handler callback must be provided on the receiving end to obtain the certificate that corresponds to the issuer name and serial number.</p>
-<p>To encrypt specific elements of the SOAP Body rather than the entire SOAP Body, use <code>soap_wsse_add_EncryptedKey_encrypt_only</code> in combination with <code>soap_wsse_set_wsu_id</code> as follows:</p>
+<p>To encrypt specific elements of the SOAP Body rather than the entire SOAP Body, use <code>soap_wsse_add_EncryptedKey_encrypt_only</code> to specify elements to encrypt in combination with <code>soap_wsse_set_wsu_id</code> to specify these elements again as follows:</p>
 <div class="fragment"><div class="line">X509 *cert = ...;</div>
 <div class="line"><span class="comment">// the SOAP Body contains one &lt;ns:myContract&gt; and one &lt;ns:myPIN&gt; (not nested)</span></div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a>(soap, <span class="stringliteral">&quot;ns:myContract ns:myPIN&quot;</span>);</div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#adef816d148bd8b1ce1c5a3d023712779">soap_wsse_add_EncryptedKey_encrypt_only</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL, <span class="stringliteral">&quot;ns:myContract ns:myPIN&quot;</span>))</div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
-</div><!-- fragment --><p>To encrypt the SOAP Body and SOAP Header element(s), such as ds:Signature, use "SOAP-ENV:Body" with <code>soap_wsse_add_EncryptedKey_encrypt_only</code>:</p>
+</div><!-- fragment --><p>To encrypt the SOAP Body and SOAP Header element(s), such as ds:Signature, use "SOAP-ENV:Body" with <code>soap_wsse_add_EncryptedKey_encrypt_only</code> to specify these elements:</p>
 <div class="fragment"><div class="line">X509 *cert = ...;</div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a>(soap, <span class="stringliteral">&quot;ds:Signature&quot;</span>);</div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#adef816d148bd8b1ce1c5a3d023712779">soap_wsse_add_EncryptedKey_encrypt_only</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL, <span class="stringliteral">&quot;ds:Signature SOAP-ENV:Body&quot;</span>))</div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
-</div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>The <code>soap_wsse_set_wsu_id</code> MUST be used to specify all element tag names to encrypt. Additional elements MAY be specified in <code>soap_wsse_set_wsu_id</code> (for example elements to digitally sign).</dd>
+</div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>The <code>soap_wsse_set_wsu_id</code> MUST be used to specify all element tag names to encrypt. Additional elements MAY be specified in <code>soap_wsse_set_wsu_id</code> (for example elements to digitally sign). You do not have to use this function to set the wsu:Id of the SOAP Body which always has a wsu:Id with "Body".</dd>
 <dd>
-The elements identified by the tag names in <code>soap_wsse_set_wsu_id</code> to encrypt MUST occur EXACTLY ONCE in the SOAP Body.</dd></dl>
+The elements identified by the tag names in <code>soap_wsse_set_wsu_id</code> to encrypt MUST occur NO MORE THAN ONCE in the XML message.</dd></dl>
 <p>For symmetric encryption with a shared secret key, generate a 160-bit triple DES key and make sure both the sender and reciever can use the key without it being shared by any other party (key exchange problem). Then use the <code>soap_wsse_encrypt_body</code> function to encrypt the SOAP Body as follows:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">char</span> des_key[20] = ...; <span class="comment">// 20-byte (160-bit) DES shared secret key</span></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#ac12c951db671e4e29810d0f0ae7f1b63">soap_wsse_encrypt_body</a>(soap, <a class="code" href="mecevp_8h.html#ae8f63ce4ee6492f0b07949d301eda7d6">SOAP_MEC_ENC_DES_CBC</a>, des_key, <span class="keyword">sizeof</span>(des_key)))</div>
@@ -659,11 +783,12 @@ The elements identified by the tag names in <code>soap_wsse_set_wsu_id</code> to
 <li><code>SOAP_MEC_ENC_AES256_CBC</code> symmetric encryption with AES256 CBC</li>
 <li><code>SOAP_MEC_ENC_AES256_GCM</code> symmetric authenticated encryption with AES256 GCM</li>
 </ul>
-<p>where, in the above, AES256 can be replaced with AES128 or AES192. For example, symmetric encryption with AES256:</p>
+<p>where, in the above, AES256 can also be replaced with AES128 or AES192.</p>
+<p>For example, symmetric encryption with AES256:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">char</span> aes256_key[32] = ...; <span class="comment">// 32-byte (256-bit) AES256 shared secret key</span></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#ac12c951db671e4e29810d0f0ae7f1b63">soap_wsse_encrypt_body</a>(soap, <a class="code" href="mecevp_8h.html#aeb9a2bf88cf42f85a4ace0d3cc4a1508">SOAP_MEC_ENC_AES256_CBC</a>, aes256_key, <span class="keyword">sizeof</span>(aes256_key)))</div>
 <div class="line">  soap_print_fault(soap, stderr);</div>
-</div><!-- fragment --><p>To symmetrically encrypt specific elements of the SOAP Body rather than the entire SOAP Body, use <code>soap_wsse_encrypt_only</code> in combination with <code>soap_wsse_set_wsu_id</code> as follows:</p>
+</div><!-- fragment --><p>To symmetrically encrypt specific elements of the SOAP Body rather than the entire SOAP Body, use <code>soap_wsse_encrypt_only</code> to specify the elements to encrypt in combination with <code>soap_wsse_set_wsu_id</code> to specify these elements again as follows:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">char</span> des_key[20] = ...; <span class="comment">// 20-byte (160-bit) secret key</span></div>
 <div class="line"><span class="comment">// the SOAP Body contains one &lt;ns:myContract&gt; and one &lt;ns:myPIN&gt; (not nested)</span></div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a>(soap, <span class="stringliteral">&quot;ns:myContract ns:myPIN&quot;</span>);</div>
@@ -675,8 +800,9 @@ The elements identified by the tag names in <code>soap_wsse_set_wsu_id</code> to
 <h2><a class="anchor" id="wsse_9_2"></a>
 Decrypting Message Parts</h2>
 <p>The wsse engine automatically decrypts message parts, but requires a private key or secret shared key to do so. A default key can be given to enable decryption, but it will fail if a non-compatible key was used for encryption. In that case a token handler callback should be defined by the user to select a proper decryption key based on the available subject key name or identifier embedded in the encrypted message.</p>
-<p>Here is an example of a token handler callback:</p>
-<div class="fragment"><div class="line">soap_register_plugin_arg(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>, security_token_handler);</div>
+<p>An example of a token handler callback:</p>
+<div class="fragment"><div class="line">soap_register_plugin_arg(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
+<div class="line"><a class="code" href="wsseapi_8h.html#ad6a0b722a052aaa7652cba5245f78b5f">soap_wsse_set_security_token_handler</a>(soap, security_token_handler);</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">const</span> <span class="keywordtype">void</span> *security_token_handler(<span class="keyword">struct</span> soap *soap, <span class="keywordtype">int</span> *alg, <span class="keyword">const</span> <span class="keywordtype">char</span> *keyname, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *keyid, <span class="keywordtype">int</span> keyidlen, <span class="keywordtype">int</span> *keylen)</div>
 <div class="line">{</div>
@@ -703,6 +829,7 @@ Decrypting Message Parts</h2>
 <div class="line">        <span class="keywordflow">return</span> (<span class="keyword">const</span> <span class="keywordtype">void</span>*)cert;</div>
 <div class="line">      }</div>
 <div class="line">      <span class="keywordflow">break</span>;</div>
+<div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a7d00704c43ee044926905cd327a712ef">SOAP_SMD_HMAC_SHA1</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a0a03fa407c392d53e3e6609032c69a19">SOAP_SMD_HMAC_SHA224</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a561d6c47f122626acb2f36bdabdc07e6">SOAP_SMD_HMAC_SHA256</a>:</div>
 <div class="line">    <span class="keywordflow">case</span> <a class="code" href="smdevp_8h.html#a5928fa6c9c366857ffb96e70e6e04609">SOAP_SMD_HMAC_SHA384</a>:</div>
@@ -731,8 +858,9 @@ Decrypting Message Parts</h2>
 <div class="line">        <span class="comment">// 1. keyname is set to the subject name of the certificate, if a</span></div>
 <div class="line">        <span class="comment">//    certificate is present in the SecurityTokenReference/KeyIdentifier</span></div>
 <div class="line">        <span class="comment">//    when ValueType is http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3</span></div>
-<div class="line">        <span class="comment">// 2. keyname is set to the concatenation of</span></div>
-<div class="line">        <span class="comment">//     &quot;{X509IssuerName}#{X509SerialNumber}&quot; present in X509Data/X509IssuerSerial</span></div>
+<div class="line">        <span class="comment">// 2. keyname is set to the string concatenation</span></div>
+<div class="line">        <span class="comment">//     &quot;{X509IssuerName}#{X509SerialNumber}&quot; of the X509IssuerName</span></div>
+<div class="line">        <span class="comment">//     and X509SerialNumber present in X509Data/X509IssuerSerial</span></div>
 <div class="line">        <span class="comment">// 3. keyname is set to X509Data/X509SubjectName</span></div>
 <div class="line">        <span class="keywordflow">return</span> ...;</div>
 <div class="line">      }</div>
@@ -764,7 +892,8 @@ Decrypting Message Parts</h2>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">return</span> NULL; <span class="comment">// fail</span></div>
 <div class="line">}</div>
-</div><!-- fragment --><p>The last two arms are used to return a private key associated with the keyname paramater, which is a string that contains the subject key id from the public key information in an encrypted message or the subject key ID string that was set with <code>soap_wsse_add_EncryptedKey</code> at the sender side.</p>
+</div><!-- fragment --><p>The last two case-arms are used to return a private key associated with the keyname paramater, which is a string that contains the subject key id from the public key information in an encrypted message or the subject key ID string that was set with <code>soap_wsse_add_EncryptedKey</code> at the sender side.</p>
+<dl class="section warning"><dt>Warning</dt><dd>The security token handler callback function parameters have changed in 2.8.34 and greater with the addition of KeyIdentifier information <code>keyid</code> and <code>keyidlen</code>.</dd></dl>
 <p>To set the default private key for envelope decryption, use:</p>
 <div class="fragment"><div class="line">EVP_PKEY *rsa_private_key = ...;</div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc">soap_wsse_decrypt_auto</a>(soap, <a class="code" href="mecevp_8h.html#a533b28fdec1dba756bdd69dea83ad244">SOAP_MEC_ENV_DEC_DES_CBC</a>, rsa_private_key, 0);</div>
@@ -776,7 +905,7 @@ Decrypting Message Parts</h2>
 <li><code>SOAP_MEC_ENV_DEC_AES256_CBC | SOAP_MEC_OAEP</code> OAEP envelope decryption with AES256 CBC</li>
 </ul>
 <p>where, in the above, AES256 can be replaced with AES128 or AES192.</p>
-<p>Or to set the default shared secret key for symmetric decryption, use:</p>
+<p>To set the default shared secret key for symmetric decryption, use:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">char</span> des_key[20] = ...; <span class="comment">// 20-byte (160-bit) triple DES key</span></div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc">soap_wsse_decrypt_auto</a>(soap, <a class="code" href="mecevp_8h.html#a9226364c4bf1cd277c417cd4d2706561">SOAP_MEC_DEC_DES_CBC</a>, des_key, <span class="keyword">sizeof</span>(des_key));</div>
 </div><!-- fragment --><p>The symmetric decryption options are:</p>
@@ -785,57 +914,94 @@ Decrypting Message Parts</h2>
 <li><code>SOAP_MEC_DEC_AES256_CBC</code> symmetric decryption with AES256 CBC</li>
 <li><code>SOAP_MEC_DEC_AES256_GCM</code> symmetric authenticated decryption with AES256 GCM</li>
 </ul>
-<p>where, in the above, AES256 can be replaced with AES128 or AES192. For example, symmetric decryption with AES256:</p>
+<p>where, in the above, AES256 can be replaced with AES128 or AES192.</p>
+<p>For example, symmetric decryption with AES256:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">char</span> aes256_key[32] = ...; <span class="comment">// 32-byte (256-bit) AES256 key</span></div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc">soap_wsse_decrypt_auto</a>(soap, <a class="code" href="mecevp_8h.html#a7151041a3f95a45edce0660f0fbcea44">SOAP_MEC_DEC_AES256_CBC</a>, aes256_key, <span class="keyword">sizeof</span>(aes256_key));</div>
 </div><!-- fragment --><p>If a default key is not set, the token handler callback should be used as discussed above in this section. Do NOT set a default key if a token handler is used to handle multiple different keys. The default key mechanism is simpler to use when only one decryption key is used to decrypt all encrypted messages.</p>
 <p>To remove the default key, use:</p>
 <div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc">soap_wsse_decrypt_auto</a>(soap, <a class="code" href="mecevp_8h.html#ad5e433363a4d62ada3cf154fb7e5c08e">SOAP_MEC_NONE</a>, NULL, 0);</div>
 </div><!-- fragment --><h2><a class="anchor" id="wsse_9_3"></a>
-Example Combining Signing with Encryption/Decryption</h2>
-<p>Here is an client-side example to use signatures and encryption for the outbound service request message and verification and decryption of the inbound response message:</p>
+Example Client and Server</h2>
+<p>The code for a client is shown below that uses signatures and encryption:</p>
 <div class="fragment"><div class="line">FILE *fd;</div>
 <div class="line">EVP_PKEY *rsa_private_key;</div>
 <div class="line">X509 *cert;</div>
-<div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);</div>
+<div class="line"><span class="comment">// create new context with recommended C14N enabled</span></div>
+<div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL);</div>
+<div class="line"><span class="comment">// register the plugin(s)</span></div>
 <div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
-<div class="line"><a class="code" href="wsseapi_8h.html#a7321b451910e1d3887b328f03de92f34">soap_wsse_verify_auto</a>(soap, <a class="code" href="smdevp_8h.html#a011f7d21ad3c8634373fe3d3325fcd75">SOAP_SMD_NONE</a>, NULL, 0);</div>
+<div class="line"><span class="comment">// enable peer certificate verification</span></div>
+<div class="line">soap-&gt;cafile = <span class="stringliteral">&quot;cacerts.pem&quot;</span>;  <span class="comment">// file with CA certs of peers</span></div>
+<div class="line">soap-&gt;capath = <span class="stringliteral">&quot;dir/to/certs&quot;</span>; <span class="comment">// and/or point to CA certs directory</span></div>
+<div class="line">soap-&gt;crlfile = <span class="stringliteral">&quot;revoked.pem&quot;</span>; <span class="comment">// use CRL (optional)</span></div>
+<div class="line">soap-&gt;fsslverify = ssl_verify; <span class="comment">// optional, a callback to verify peer certificates</span></div>
+<div class="line"><span class="comment">// get the private key for signing and decryption</span></div>
 <div class="line">fd = fopen(<span class="stringliteral">&quot;privkey.pem&quot;</span>, <span class="stringliteral">&quot;r&quot;</span>);</div>
 <div class="line">rsa_private_key = PEM_read_PrivateKey(fd, NULL, NULL, <span class="stringliteral">&quot;password&quot;</span>);</div>
 <div class="line">fclose(fd);</div>
-<div class="line"><a class="code" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc">soap_wsse_decrypt_auto</a>(soap, <a class="code" href="mecevp_8h.html#a533b28fdec1dba756bdd69dea83ad244">SOAP_MEC_ENV_DEC_DES_CBC</a>, rsa_private_key, 0);</div>
+<div class="line"><span class="comment">// get the certificate to include in the security header</span></div>
 <div class="line">fd = fopen(<span class="stringliteral">&quot;cert.pem&quot;</span>, <span class="stringliteral">&quot;r&quot;</span>);</div>
 <div class="line">X509 *cert = PEM_read_X509(fd, NULL, NULL, NULL);</div>
 <div class="line">fclose(fd);</div>
+<div class="line"><span class="comment">// enable decryption with the private key</span></div>
+<div class="line"><a class="code" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc">soap_wsse_decrypt_auto</a>(soap, <a class="code" href="mecevp_8h.html#a533b28fdec1dba756bdd69dea83ad244">SOAP_MEC_ENV_DEC_DES_CBC</a>, rsa_private_key, 0);</div>
+<div class="line"><span class="comment">// enable signature verification</span></div>
+<div class="line"><a class="code" href="wsseapi_8h.html#a7321b451910e1d3887b328f03de92f34">soap_wsse_verify_auto</a>(soap, <a class="code" href="smdevp_8h.html#a011f7d21ad3c8634373fe3d3325fcd75">SOAP_SMD_NONE</a>, NULL, 0);</div>
+<div class="line"><span class="comment">// add the certificate X509 token and token reference, sign the Body using the private key</span></div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a53075fb3cec4ec4e70fb11850fecb401">soap_wsse_add_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;X509Token&quot;</span>, cert)</div>
 <div class="line"> || <a class="code" href="wsseapi_8h.html#a72df80abd1d36cea516feda3a84672cf">soap_wsse_add_KeyInfo_SecurityTokenReferenceX509</a>(soap, <span class="stringliteral">&quot;#X509Token&quot;</span>)</div>
-<div class="line"> || <a class="code" href="wsseapi_8h.html#a1ba85a8b14587cff0865ebc3e5e9e340">soap_wsse_add_EncryptedKey</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL)</div>
-<div class="line"> || <a class="code" href="wsseapi_8h.html#ab653754f1a287ba06bd808cf89548c38">soap_wsse_sign_body</a>(soap, <a class="code" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a>, rsa_private_key, 0)</div>
+<div class="line"> || <a class="code" href="wsseapi_8h.html#ab653754f1a287ba06bd808cf89548c38">soap_wsse_sign_body</a>(soap, <a class="code" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a>, rsa_private_key, 0))</div>
 <div class="line">  ... <span class="comment">// an error occurred</span></div>
-<div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (soap_call_ns__myMethod(soap, ...))</div>
+<div class="line"><span class="comment">// encrypt the Body and the signature using the public key in cert (the cert of the peer)</span></div>
+<div class="line"><a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a>(soap, <span class="stringliteral">&quot;ds:Signature&quot;</span>);</div>
+<div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#adef816d148bd8b1ce1c5a3d023712779">soap_wsse_add_EncryptedKey_encrypt_only</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL, <span class="stringliteral">&quot;ds:Signature SOAP-ENV:Body&quot;</span>))</div>
+<div class="line">  ... <span class="comment">// an error occurred</span></div>
+<div class="line"><span class="keywordflow">if</span> (soap_call_ns__myMethod(soap, ...))</div>
 <div class="line">  ... <span class="comment">// a transmission error occurred</span></div>
 <div class="line">...</div>
 <div class="line">EVP_PKEY_free(rsa_private_key);</div>
 <div class="line">X509_free(cert);</div>
-</div><!-- fragment --><p>The server-side service operation is as follows:</p>
-<div class="fragment"><div class="line">FILE *fd;</div>
-<div class="line">EVP_PKEY *rsa_private_key;</div>
-<div class="line">X509 *cert;</div>
-<div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);</div>
+</div><!-- fragment --><p>When using HTTPS, the <code>soap-&gt;cafile</code>, <code>soap-&gt;capath</code> are already set with <code>soap_ssl_client_context()</code>. The explicit assignments shown above are not needed.</p>
+<p>See <a class="el" href="wsse.html#wsse_8_4">Signature Validation</a> on how to implement the optional <code>ssl_verify</code> callback to verify peer certificates.</p>
+<p>You may want to register a token handler callback if the peer does not include its X509 certificate in the security header. The token handler callback should retrieve the certificate, e.g. given its id and serial number.</p>
+<p>The server-side service is implemented as follows:</p>
+<div class="fragment"><div class="line">EVP_PKEY *rsa_private_key; <span class="comment">// OK to declare global</span></div>
+<div class="line">X509 *cert;                <span class="comment">// OK to declare global</span></div>
+<div class="line">..</div>
+<div class="line">FILE *fd;</div>
+<div class="line"><span class="comment">// create new context with recommended C14N enabled</span></div>
+<div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL);</div>
+<div class="line"><span class="comment">// register the plugin(s)</span></div>
 <div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
-<div class="line"><a class="code" href="wsseapi_8h.html#a7321b451910e1d3887b328f03de92f34">soap_wsse_verify_auto</a>(soap, <a class="code" href="smdevp_8h.html#a011f7d21ad3c8634373fe3d3325fcd75">SOAP_SMD_NONE</a>, NULL, 0);</div>
+<div class="line"><span class="comment">// enable peer certificate verification</span></div>
+<div class="line">soap-&gt;cafile = <span class="stringliteral">&quot;cacerts.pem&quot;</span>;  <span class="comment">// file with CA certs of peers</span></div>
+<div class="line">soap-&gt;capath = <span class="stringliteral">&quot;dir/to/certs&quot;</span>; <span class="comment">// and/or point to CA certs directory</span></div>
+<div class="line">soap-&gt;crlfile = <span class="stringliteral">&quot;revoked.pem&quot;</span>; <span class="comment">// use CRL (optional)</span></div>
+<div class="line">soap-&gt;fsslverify = ssl_verify; <span class="comment">// optional, a callback to verify peer certificates</span></div>
+<div class="line"><span class="comment">// get the private key for signing and decryption</span></div>
 <div class="line">fd = fopen(<span class="stringliteral">&quot;privkey.pem&quot;</span>, <span class="stringliteral">&quot;r&quot;</span>);</div>
 <div class="line">rsa_private_key = PEM_read_PrivateKey(fd, NULL, NULL, <span class="stringliteral">&quot;password&quot;</span>);</div>
 <div class="line">fclose(fd);</div>
-<div class="line"><a class="code" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc">soap_wsse_decrypt_auto</a>(soap, <a class="code" href="mecevp_8h.html#a533b28fdec1dba756bdd69dea83ad244">SOAP_MEC_ENV_DEC_DES_CBC</a>, rsa_private_key, 0);</div>
+<div class="line"><span class="comment">// get the certificate to include in the security header</span></div>
 <div class="line">fd = fopen(<span class="stringliteral">&quot;cert.pem&quot;</span>, <span class="stringliteral">&quot;r&quot;</span>);</div>
 <div class="line">X509 *cert = PEM_read_X509(fd, NULL, NULL, NULL);</div>
 <div class="line">fclose(fd);</div>
 <div class="line">...</div>
-<div class="line">if (soap_serve(soap))</div>
+<div class="line">if (!soap_valid_socket(soap_bind(soap, NULL, port, 100)))</div>
+<div class="line">  ... <span class="comment">// an error occurred</span></div>
+<div class="line"><span class="keywordflow">while</span> (soap_valid_socket(soap_accept(soap)))</div>
 <div class="line">{</div>
-<div class="line">  <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap);</div>
-<div class="line">  soap_print_fault(soap, stderr);</div>
+<div class="line">  <span class="comment">// enable signature verification</span></div>
+<div class="line">  <a class="code" href="wsseapi_8h.html#a7321b451910e1d3887b328f03de92f34">soap_wsse_verify_auto</a>(soap, <a class="code" href="smdevp_8h.html#a011f7d21ad3c8634373fe3d3325fcd75">SOAP_SMD_NONE</a>, NULL, 0);</div>
+<div class="line">  <span class="comment">// enable decryption with the private key</span></div>
+<div class="line">  <a class="code" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc">soap_wsse_decrypt_auto</a>(soap, <a class="code" href="mecevp_8h.html#a533b28fdec1dba756bdd69dea83ad244">SOAP_MEC_ENV_DEC_DES_CBC</a>, rsa_private_key, 0);</div>
+<div class="line">  <span class="comment">// serve one request</span></div>
+<div class="line">  <span class="keywordflow">if</span> (soap_serve(soap))</div>
+<div class="line">  {</div>
+<div class="line">    <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap);</div>
+<div class="line">    soap_print_fault(soap, stderr);</div>
+<div class="line">  }</div>
 <div class="line">}</div>
 <div class="line">...</div>
 <div class="line">EVP_PKEY_free(rsa_private_key);</div>
@@ -844,27 +1010,65 @@ Example Combining Signing with Encryption/Decryption</h2>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> ns__myMethod(<span class="keyword">struct</span> soap *soap, ...)</div>
 <div class="line">{</div>
 <div class="line">  ...</div>
+<div class="line">  <span class="comment">// remove old security headers</span></div>
 <div class="line">  <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap);</div>
+<div class="line">  <span class="comment">// encrypt the Body and the signature using the public key in cert (the cert of the peer)</span></div>
+<div class="line">  <a class="code" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454">soap_wsse_set_wsu_id</a>(soap, <span class="stringliteral">&quot;ds:Signature&quot;</span>);</div>
+<div class="line">  <span class="comment">// add the certificate X509 token and token reference, sign the Body using the private key</span></div>
+<div class="line">  <span class="comment">// encrypt the Body and the signature using the public key in cert (the cert of the peer)</span></div>
 <div class="line">  <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a53075fb3cec4ec4e70fb11850fecb401">soap_wsse_add_BinarySecurityTokenX509</a>(soap, <span class="stringliteral">&quot;X509Token&quot;</span>, cert)</div>
 <div class="line">   || <a class="code" href="wsseapi_8h.html#a72df80abd1d36cea516feda3a84672cf">soap_wsse_add_KeyInfo_SecurityTokenReferenceX509</a>(soap, <span class="stringliteral">&quot;#X509Token&quot;</span>)</div>
-<div class="line">   || <a class="code" href="wsseapi_8h.html#a1ba85a8b14587cff0865ebc3e5e9e340">soap_wsse_add_EncryptedKey</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL)</div>
 <div class="line">   || <a class="code" href="wsseapi_8h.html#ab653754f1a287ba06bd808cf89548c38">soap_wsse_sign_body</a>(soap, <a class="code" href="smdevp_8h.html#a8634e2291f274a42107d3e935add3241">SOAP_SMD_SIGN_RSA_SHA256</a>, rsa_private_key, 0)</div>
+<div class="line">   || <a class="code" href="wsseapi_8h.html#adef816d148bd8b1ce1c5a3d023712779">soap_wsse_add_EncryptedKey_encrypt_only</a>(soap, <a class="code" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a>, <span class="stringliteral">&quot;Cert&quot;</span>, cert, NULL, NULL, NULL, <span class="stringliteral">&quot;ds:Signature SOAP-ENV:Body&quot;</span>))</div>
 <div class="line">  {</div>
-<div class="line">  <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove security headers (failed construction)</span></div>
+<div class="line">    <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap); <span class="comment">// remove incomplete security headers</span></div>
 <div class="line">    <span class="keywordflow">return</span> soap-&gt;error;</div>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">return</span> SOAP_OK;</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>The service operation signs the message using a private key and encrypts the response message using a public key (from the certificate).</p>
-<h1><a class="anchor" id="wsse_10"></a>
+</div><!-- fragment --><p>The service operation signs the Body using its private key and encrypts the response Body and signature using a public key from the peer's certificate.</p>
+<p>To implement a server that supports HTTP keep-alive, a <code>soap-&gt;fserveloop</code> callback function should be assigned. This callback is executed in the <code>soap_serve()</code> loop to call <code><a class="el" href="wsseapi_8c.html#aba1ed2878f44b2c4efac24cd89ff30bf" title="Uses the wsse plugin to initiate the automatic verification of the signature and SignedInfo Reference...">soap_wsse_verify_auto()</a></code> and <code><a class="el" href="wsseapi_8c.html#a370bea41564f3a49c1c558e174c4f2c0" title="Start automatic decryption when needed using the specified key. This function should be used just onc...">soap_wsse_decrypt_auto()</a></code> to ensure that the continuous inbound message stream can be verified and decrypted:</p>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_IO_KEEPALIVE);</div>
+<div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
+<div class="line">...</div>
+<div class="line">soap-&gt;fserveloop = set_verify_decrypt_auto;</div>
+<div class="line">...</div>
+<div class="line">while (soap_valid_socket(soap_accept(soap)))</div>
+<div class="line">{</div>
+<div class="line">  set_verify_decrypt_auto(soap);</div>
+<div class="line">  <span class="comment">// serve multiple requests (when keep alive)</span></div>
+<div class="line">  <span class="keywordflow">if</span> (soap_serve(soap))</div>
+<div class="line">  {</div>
+<div class="line">    <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap);</div>
+<div class="line">    soap_print_fault(soap, stderr);</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+<div class="line"></div>
+<div class="line"><span class="keywordtype">int</span> set_verify_decrypt_auto(<span class="keyword">struct</span> soap *soap)</div>
+<div class="line">{</div>
+<div class="line">  <span class="comment">// enable signature verification</span></div>
+<div class="line">  <a class="code" href="wsseapi_8h.html#a7321b451910e1d3887b328f03de92f34">soap_wsse_verify_auto</a>(soap, <a class="code" href="smdevp_8h.html#a011f7d21ad3c8634373fe3d3325fcd75">SOAP_SMD_NONE</a>, NULL, 0);</div>
+<div class="line">  <span class="comment">// enable decryption with the private key</span></div>
+<div class="line">  <a class="code" href="wsseapi_8h.html#a403569990cf3278a361552aecaf51ffc">soap_wsse_decrypt_auto</a>(soap, <a class="code" href="mecevp_8h.html#a533b28fdec1dba756bdd69dea83ad244">SOAP_MEC_ENV_DEC_DES_CBC</a>, rsa_private_key, 0);</div>
+<div class="line">  <span class="keywordflow">return</span> SOAP_OK;</div>
+<div class="line">}</div>
+</div><!-- fragment --><h1><a class="anchor" id="wsse_10"></a>
 Security Timestamps</h1>
 <p>The material in this section relates to the WS-Security specification section 10.</p>
 <p>To add a timestamp with the creation time to the Security header, use:</p>
-<div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a71fe27aee76db1d0a635afe106d8b109">soap_wsse_add_Timestamp</a>(soap, NULL, 0); <span class="comment">// no expiration</span></div>
+<div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a71fe27aee76db1d0a635afe106d8b109">soap_wsse_add_Timestamp</a>(soap, NULL, 0); <span class="comment">// 0 means no expiration</span></div>
 </div><!-- fragment --><p>The lifetime of a message (in seconds) is passed as the third argument, which will be displayed as the timestamp expiration time:</p>
 <div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a71fe27aee76db1d0a635afe106d8b109">soap_wsse_add_Timestamp</a>(soap, NULL, 10); <span class="comment">// 10 seconds lifetime</span></div>
 </div><!-- fragment --><p>Timestamps, like other header elements, are not automatically secured with a digital signature. To secure a timestamp, we add an identifier (wsu:Id) to each element we want the WS-Security plugin to sign thereby making it impossible for someone to tamper with that part of the message. To do this for the timestamp, we simply pass a unique identification string as the second argument:</p>
 <div class="fragment"><div class="line"><a class="code" href="wsseapi_8h.html#a71fe27aee76db1d0a635afe106d8b109">soap_wsse_add_Timestamp</a>(soap, <span class="stringliteral">&quot;Time&quot;</span>, 10); <span class="comment">// timestamp will be signed</span></div>
+</div><!-- fragment --><p>After receiving a message, the receiver can verify the presence and validity of the timestamp and whether it was signed with:</p>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> (!<a class="code" href="wsseapi_8h.html#a98422cde0e2b7b14d65212f7061101fa">soap_wsse_verify_Timestamp</a>(soap))</div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">soap_wsse_delete_Security</a>(soap);</div>
+<div class="line">  ... <span class="comment">// error, no timestamp or timestamp has expired</span></div>
+<div class="line">}</div>
+<div class="line"><span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#a3fbe81de521579f026dd1ba8e81c59c1">soap_wsse_verify_element</a>(soap, <span class="stringliteral">&quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd&quot;</span>, <span class="stringliteral">&quot;Timestamp&quot;</span>) &gt; 0)</div>
+<div class="line">  ... <span class="comment">// timestamp was signed</span></div>
 </div><!-- fragment --><h1><a class="anchor" id="wsse_11"></a>
 WS-Security and HTTPS</h1>
 <p>HTTPS is used at the client side with the usual "https:" URL addressing, shown here with the registration of the wsse plugin and setting up locks for thread-safe use of SSL for HTTPS:</p>
@@ -873,7 +1077,7 @@ WS-Security and HTTPS</h1>
 <div class="line"><span class="keyword">struct </span>soap *soap;</div>
 <div class="line"><span class="keywordflow">if</span> (CRYPTO_thread_setup())</div>
 <div class="line">  ... <span class="comment">// error</span></div>
-<div class="line">soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);</div>
+<div class="line">soap = soap_new1(SOAP_XML_CANONICAL);</div>
 <div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
 <div class="line"><span class="keywordflow">if</span> (soap_ssl_client_context(&amp;soap,</div>
 <div class="line">  SOAP_SSL_DEFAULT, <span class="comment">// requires server authentication</span></div>
@@ -911,7 +1115,7 @@ WS-Security and HTTPS</h1>
 <div class="line"><span class="keyword">struct </span>soap *soap;</div>
 <div class="line"><span class="keywordflow">if</span> (CRYPTO_thread_setup())</div>
 <div class="line">  ... <span class="comment">// error</span></div>
-<div class="line">soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_INDENT);</div>
+<div class="line">soap = soap_new1(SOAP_XML_CANONICAL);</div>
 <div class="line">soap_register_plugin(soap, <a class="code" href="wsseapi_8h.html#af15bedb61bffb589683354bc37d20c3a">soap_wsse</a>);</div>
 <div class="line"><span class="keywordflow">if</span> (soap_ssl_server_context(&amp;soap,</div>
 <div class="line">  SOAP_SSL_DEFAULT, <span class="comment">// requires server to authenticate, but not the client</span></div>
@@ -936,23 +1140,23 @@ WS-Security and HTTPS</h1>
 <div class="line">soap_end(soap);</div>
 <div class="line">soap_free(soap);</div>
 <div class="line">CRYPTO_thread_cleanup();</div>
-</div><!-- fragment --><p>where we define a process_request function that is executed by the thread to process the request (on a copy of the soap context struct):</p>
-<div class="fragment"><div class="line"><span class="keywordtype">void</span> *process_request(<span class="keyword">struct</span> soap *soap)</div>
-<div class="line">{</div>
-<div class="line">  ... <span class="comment">// set up WS-Security for signatures/encryption etc</span></div>
-<div class="line">  <span class="keywordflow">if</span> (soap_ssl_accept(soap)</div>
-<div class="line">   || soap_serve(soap))</div>
-<div class="line">    ... <span class="comment">// error</span></div>
-<div class="line">  soap_destroy(soap);</div>
-<div class="line">  soap_end(soap);</div>
-<div class="line">  soap_free(soap);</div>
+</div><!-- fragment --><p>where we define a <code>process_request()</code> function that is executed by the thread to process the request (on a copy of the soap context struct):</p>
+<div class="fragment"><div class="line">  <span class="keywordtype">void</span> *process_request(<span class="keyword">struct</span> soap *soap)</div>
+<div class="line">  {</div>
+<div class="line">    ... <span class="comment">// set up WS-Security for signatures/encryption etc</span></div>
+<div class="line">    <span class="keywordflow">if</span> (soap_ssl_accept(soap)</div>
+<div class="line">     || soap_serve(soap))</div>
+<div class="line">      ... <span class="comment">// error</span></div>
+<div class="line">    soap_destroy(soap);</div>
+<div class="line">    soap_end(soap);</div>
+<div class="line">    soap_free(soap);</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>The <code>soap_ssl_server_context</code> only needs to be set up once. Use the following flags:</p>
 <ul>
 <li><code>SOAP_SSL_DEFAULT</code> requires server authentication, but no client authentication</li>
 <li><code>SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION</code> requires client authentication</li>
 </ul>
-<p>We need to define the thread set up and clean up operations as follows:</p>
+<p>We also should implement the mutex setup and cleanup operations as follows:</p>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>CRYPTO_dynlock_value</div>
 <div class="line">{</div>
 <div class="line">  MUTEX_TYPE mutex;</div>
@@ -1053,18 +1257,30 @@ Encryption Limitations</h1>
 <li>Signing and encrypting XML containing QName content may lead to verification issues, because the W3C C14N canonicalization protocol has known limitations with QName content normalization as prefixes in QNames may be ignored, possibly resulting in missing xmlns bindings). Use <code>soap_wsse_set_InclusiveNamespaces(soap, "prefixlist")</code> to define which namespace prefixes (space-separated in the string) should be considered inclusive. All prefixes used in QName content should be listed. The WSSE engine recognizes xsi:type, SOAP-ENC:arrayType, SOAP-ENC:itemType attribute QNames. Therefore, soapcpp2 option <code>-t</code> is always safe to use, but a non-gSOAP receiver may still fail.</li>
 </ul>
 <h1><a class="anchor" id="wsse_wsc"></a>
-WS-SecureConversation</h1>
+WS-SecureConversation and WS-Trust</h1>
 <p>To use a WS-SecureConversation security context token (SCT) with WS-Security:</p>
 <div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *identifier = <span class="stringliteral">&quot;...&quot;</span>;</div>
 <div class="line"><a class="code" href="wsseapi_8h.html#a4941ccab15e473e979ff4b3a926c04bb">soap_wsse_add_SecurityContextToken</a>(soap, <span class="stringliteral">&quot;SCT&quot;</span>, identifier);</div>
-</div><!-- fragment --><p>In this example a context has been established and the secret that is identified by the 'identifier' string is known to both parties. This secret is used to sign the message body. The "SCT" is a wsu:Id, which is used as a reference to sign the token. </p>
-</div></div><!-- contents -->
+</div><!-- fragment --><p>In this example a context has been established and the secret that is identified by the 'identifier' string is known to both parties. This secret is used to sign the message body. The "SCT" is a wsu:Id, which is used as a reference to sign the token.</p>
+<p>To compute PSHA1 with base64 input strings <code>client_secret_base64</code> and <code>server_secret_base64</code> to output a base64-encoded <code>psha1[0..psha1len-1]</code> string <code>psha1_base64</code>:</p>
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> psha1len = 32; <span class="comment">// or greater</span></div>
+<div class="line"><span class="keywordtype">int</span> n, m;</div>
+<div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *client_secret = soap_base642s(soap, client_secret_base64, NULL, 0, &amp;n);</div>
+<div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *server_secret = soap_base642s(soap, server_secret_base64, NULL, 0, &amp;m);</div>
+<div class="line"><span class="keywordtype">char</span> psha1[psha1len];</div>
+<div class="line"><span class="keywordtype">char</span> *psha1_base64;</div>
+<div class="line"><span class="keywordflow">if</span> (n != 16)</div>
+<div class="line">  .. error <span class="comment">// HMAC key is 16 bytes</span></div>
+<div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#ac50a99453ce725c252c8d5efb89438c6">soap_psha1</a>(soap, client_secret, server_secret, m, psha1, psha1len))</div>
+<div class="line">  .. error <span class="comment">// insufficient memory</span></div>
+<div class="line">psha1_base64 = soap_s2base64(soap, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*)psha1, NULL, psha1len);</div>
+</div><!-- fragment --> </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Aug 17 2016 10:37:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Sat Sep 17 2016 13:47:43 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

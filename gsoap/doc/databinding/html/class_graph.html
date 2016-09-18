@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">Graph Class Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Fri Jul 1 2016</div>
+      <div style="float: right; font-size: 10px;">updated Tue Aug 30 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -85,13 +85,13 @@ Inheritance diagram for Graph:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a3b8fc12c63ae488db417c40cf91d5e35"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graph.html#a3b8fc12c63ae488db417c40cf91d5e35">soap_type</a> (void) const </td></tr>
-<tr class="memdesc:a3b8fc12c63ae488db417c40cf91d5e35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the unique type ID value SOAP_TYPE_Graph (8)  <a href="#a3b8fc12c63ae488db417c40cf91d5e35">More...</a><br /></td></tr>
+<tr class="memdesc:a3b8fc12c63ae488db417c40cf91d5e35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return unique type id SOAP_TYPE_Graph.  <a href="#a3b8fc12c63ae488db417c40cf91d5e35">More...</a><br /></td></tr>
 <tr class="separator:a3b8fc12c63ae488db417c40cf91d5e35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5988cbb646c541fe65556aab1eaffca9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graph.html#a5988cbb646c541fe65556aab1eaffca9">soap_default</a> (struct soap *)</td></tr>
-<tr class="memdesc:a5988cbb646c541fe65556aab1eaffca9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set object's data members to default values.  <a href="#a5988cbb646c541fe65556aab1eaffca9">More...</a><br /></td></tr>
+<tr class="memdesc:a5988cbb646c541fe65556aab1eaffca9"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Re)set members to default values  <a href="#a5988cbb646c541fe65556aab1eaffca9">More...</a><br /></td></tr>
 <tr class="separator:a5988cbb646c541fe65556aab1eaffca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a5475b71f6e7b35ec92c40ef2f3d43e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graph.html#a2a5475b71f6e7b35ec92c40ef2f3d43e">soap_serialize</a> (struct soap *) const </td></tr>
-<tr class="memdesc:a2a5475b71f6e7b35ec92c40ef2f3d43e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serialize object to prepare for SOAP 1.1/1.2 encoded output (and SOAP_XML_GRAPH) by analyzing its (cyclic) structures for structural equivalence of the transmitted data between sender and receiver.  <a href="#a2a5475b71f6e7b35ec92c40ef2f3d43e">More...</a><br /></td></tr>
+<tr class="memdesc:a2a5475b71f6e7b35ec92c40ef2f3d43e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serialize object to prepare for SOAP 1.1/1.2 encoded output (or with SOAP_XML_GRAPH) by analyzing its (cyclic) structures.  <a href="#a2a5475b71f6e7b35ec92c40ef2f3d43e">More...</a><br /></td></tr>
 <tr class="separator:a2a5475b71f6e7b35ec92c40ef2f3d43e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c813bdf388bf3299e1afbc9c5596c71"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graph.html#a1c813bdf388bf3299e1afbc9c5596c71">soap_put</a> (struct soap *, const char *tag, const char *type) const </td></tr>
 <tr class="memdesc:a1c813bdf388bf3299e1afbc9c5596c71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output object in XML, compliant with SOAP 1.1 encoding style, return error code or SOAP_OK.  <a href="#a1c813bdf388bf3299e1afbc9c5596c71">More...</a><br /></td></tr>
@@ -106,9 +106,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a9c94627c74ae1427d7c5ebfb9e469eed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get object from XML, with matching tag and type (NULL matches any tag and type), return pointer to object or NULL on error.  <a href="#a9c94627c74ae1427d7c5ebfb9e469eed">More...</a><br /></td></tr>
 <tr class="separator:a9c94627c74ae1427d7c5ebfb9e469eed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af74d9a7cab95a39a05ed8e09094d8241"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="class_graph.html">Graph</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graph.html#af74d9a7cab95a39a05ed8e09094d8241">soap_alloc</a> (void) const </td></tr>
-<tr class="memdesc:af74d9a7cab95a39a05ed8e09094d8241"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a new object, default initialized and not managed by a soap context, of this object's type.  <a href="#af74d9a7cab95a39a05ed8e09094d8241">More...</a><br /></td></tr>
+<tr class="memdesc:af74d9a7cab95a39a05ed8e09094d8241"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a new object of type <a class="el" href="class_graph.html">Graph</a>, default initialized and not managed by a soap context.  <a href="#af74d9a7cab95a39a05ed8e09094d8241">More...</a><br /></td></tr>
 <tr class="separator:af74d9a7cab95a39a05ed8e09094d8241"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4c72b8ac4d693c49800a4c7e273654f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graph.html#ae4c72b8ac4d693c49800a4c7e273654f">Graph</a> ()</td></tr>
+<tr class="memdesc:ae4c72b8ac4d693c49800a4c7e273654f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor with initializations.  <a href="#ae4c72b8ac4d693c49800a4c7e273654f">More...</a><br /></td></tr>
 <tr class="separator:ae4c72b8ac4d693c49800a4c7e273654f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1621cd1ffcf6a135cbc7e039c305627b"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graph.html#a1621cd1ffcf6a135cbc7e039c305627b">~Graph</a> ()</td></tr>
 <tr class="separator:a1621cd1ffcf6a135cbc7e039c305627b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -116,16 +117,18 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a9f2aaa1325baa7df2e9c4bf5485ed32a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_graph.html">Graph</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graph.html#a9f2aaa1325baa7df2e9c4bf5485ed32a">edges</a></td></tr>
+<tr class="memdesc:a9f2aaa1325baa7df2e9c4bf5485ed32a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional element 'edges' of XSD type 'g:<a class="el" href="class_graph.html">Graph</a>'.  <a href="#a9f2aaa1325baa7df2e9c4bf5485ed32a">More...</a><br /></td></tr>
 <tr class="separator:a9f2aaa1325baa7df2e9c4bf5485ed32a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a7085bd6c0541d7a93bb65daffaf7b884"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graph.html">Graph</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graph.html#a7085bd6c0541d7a93bb65daffaf7b884">soap_instantiate_Graph</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
-<tr class="separator:a7085bd6c0541d7a93bb65daffaf7b884"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7fe651704c47083590ab38adf4cae94"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 <a class="el" href="class_graph.html">Graph</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graph.html#ab7fe651704c47083590ab38adf4cae94">graph_instantiate_Graph</a> (struct soap *, int, const char *, const char *, size_t *)</td></tr>
+<tr class="memdesc:ab7fe651704c47083590ab38adf4cae94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Friend allocator used by <a class="el" href="graph_h_8h.html#a68df7ac7467a15137075e187c9cdd218">soap_new_Graph(struct soap*, int)</a>  <a href="#ab7fe651704c47083590ab38adf4cae94">More...</a><br /></td></tr>
+<tr class="separator:ab7fe651704c47083590ab38adf4cae94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p>Definition at line <a class="el" href="graph_stub_8h_source.html#l00049">49</a> of file <a class="el" href="graph_stub_8h_source.html">graphStub.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_stub_8h_source.html#l00044">44</a> of file <a class="el" href="graph_stub_8h_source.html">graphStub.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ae4c72b8ac4d693c49800a4c7e273654f"></a>
 <div class="memitem">
@@ -148,7 +151,9 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_stub_8h_source.html#l00070">70</a> of file <a class="el" href="graph_stub_8h_source.html">graphStub.h</a>.</p>
+<p>Constructor with initializations. </p>
+
+<p>Definition at line <a class="el" href="graph_stub_8h_source.html#l00067">67</a> of file <a class="el" href="graph_stub_8h_source.html">graphStub.h</a>.</p>
 
 </div>
 </div>
@@ -173,7 +178,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_stub_8h_source.html#l00071">71</a> of file <a class="el" href="graph_stub_8h_source.html">graphStub.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_stub_8h_source.html#l00070">70</a> of file <a class="el" href="graph_stub_8h_source.html">graphStub.h</a>.</p>
 
 </div>
 </div>
@@ -200,9 +205,9 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Return a new object, default initialized and not managed by a soap context, of this object's type. </p>
+<p>Return a new object of type <a class="el" href="class_graph.html">Graph</a>, default initialized and not managed by a soap context. </p>
 
-<p>Definition at line <a class="el" href="graph_stub_8h_source.html#l00069">69</a> of file <a class="el" href="graph_stub_8h_source.html">graphStub.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_stub_8h_source.html#l00064">64</a> of file <a class="el" href="graph_stub_8h_source.html">graphStub.h</a>.</p>
 
 </div>
 </div>
@@ -228,7 +233,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Set object's data members to default values. </p>
+<p>(Re)set members to default values </p>
 
 </div>
 </div>
@@ -428,7 +433,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Serialize object to prepare for SOAP 1.1/1.2 encoded output (and SOAP_XML_GRAPH) by analyzing its (cyclic) structures for structural equivalence of the transmitted data between sender and receiver. </p>
+<p>Serialize object to prepare for SOAP 1.1/1.2 encoded output (or with SOAP_XML_GRAPH) by analyzing its (cyclic) structures. </p>
 
 </div>
 </div>
@@ -454,14 +459,14 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Return the unique type ID value SOAP_TYPE_Graph (8) </p>
+<p>Return unique type id SOAP_TYPE_Graph. </p>
 
-<p>Definition at line <a class="el" href="graph_stub_8h_source.html#l00055">55</a> of file <a class="el" href="graph_stub_8h_source.html">graphStub.h</a>.</p>
+<p>Definition at line <a class="el" href="graph_stub_8h_source.html#l00050">50</a> of file <a class="el" href="graph_stub_8h_source.html">graphStub.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Function Documentation</h2>
-<a class="anchor" id="a7085bd6c0541d7a93bb65daffaf7b884"></a>
+<a class="anchor" id="ab7fe651704c47083590ab38adf4cae94"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -469,7 +474,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_graph.html">Graph</a>* soap_instantiate_Graph </td>
+          <td class="memname">SOAP_FMAC1 <a class="el" href="class_graph.html">Graph</a>* SOAP_FMAC2 graph_instantiate_Graph </td>
           <td>(</td>
           <td class="paramtype">struct soap *&#160;</td>
           <td class="paramname">, </td>
@@ -511,6 +516,8 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Friend allocator used by <a class="el" href="graph_h_8h.html#a68df7ac7467a15137075e187c9cdd218">soap_new_Graph(struct soap*, int)</a> </p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -524,7 +531,9 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="graph_stub_8h_source.html#l00052">52</a> of file <a class="el" href="graph_stub_8h_source.html">graphStub.h</a>.</p>
+<p>Optional element 'edges' of XSD type 'g:<a class="el" href="class_graph.html">Graph</a>'. </p>
+
+<p>Definition at line <a class="el" href="graph_stub_8h_source.html#l00047">47</a> of file <a class="el" href="graph_stub_8h_source.html">graphStub.h</a>.</p>
 
 </div>
 </div>
@@ -538,7 +547,7 @@ Friends</h2></td></tr>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Fri Jul 1 2016 12:22:11 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Tue Aug 30 2016 13:24:31 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

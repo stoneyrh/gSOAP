@@ -3526,6 +3526,7 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
   bool use_union = !uflag;
   bool wrap_union = false;
   bool tmp_union;
+  int tmp_xflag = xflag;
   if (!URI && choice.schemaPtr())
     URI = choice.schemaPtr()->targetNamespace;
   fprintf(stream, "//  BEGIN CHOICE <xs:choice");
@@ -3541,12 +3542,16 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
   document(choice.annotation);
   for (vector<xs__contents>::const_iterator c1 = choice.__contents.begin(); c1 != choice.__contents.end(); ++c1)
   {
-    if ((*c1).__union == SOAP_UNION_xs__union_content_group
-     || (*c1).__union == SOAP_UNION_xs__union_content_sequence)
+    if (use_union && ((*c1).__union == SOAP_UNION_xs__union_content_group || (*c1).__union == SOAP_UNION_xs__union_content_sequence))
     {
       fprintf(stream, "/// @note <xs:choice> with embedded <xs:sequence> or <xs:group> prevents the use of a union for <xs:choice>. Instead of being members of a union, the following members are declared optional. Only one member should be non-NULL by choice.\n");
       use_union = false;
       break;
+    }
+    if (!xflag && !use_union && max && strcmp(max, "1") && (*c1).__union == SOAP_UNION_xs__union_content_any)
+    {
+      fprintf(stream, "/// @note <xs:choice> with maxOccurs>1 and an embedded <xs:any> requires the use of a union for <xs:choice> whereas option -u is currently enabled: locally enabling option -x to remove <xs:any> for this <xs:choice>.\n");
+      xflag = true;
     }
   }
   if (use_union && (cflag || sflag))
@@ -3645,6 +3650,7 @@ void Types::gen(const char *URI, const char *name, const xs__seqchoice& choice, 
     fprintf(stream, elementformat, "}", s);
     fprintf(stream, ";\n");
   }
+  xflag = tmp_xflag;
   fprintf(stream, "//  END OF CHOICE\n");
 }
 
@@ -4492,9 +4498,9 @@ static void documentation(const char *text)
 static void operations(const char *t)
 {
   if (cflag)
-    fprintf(stream, "/// struct %s operations:\n/// - soap_default_%s(soap*, %s*) reset members to default\n/// - int soap_read_%s(soap*, %s*) deserialize from a source\n/// - int soap_write_%s(soap*, %s*) serialize to a sink\n/// - %s* soap_dup_%s(soap*, %s* dst, %s *src) returns deep copy of %s src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)\n/// - soap_del_%s(%s*) deep deletes %s data members, use only on dst after soap_dup_%s(NULL, %s *dst, %s *src) (use soapcpp2 -Ed)\n", t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t);
+    fprintf(stream, "/// struct %s operations:\n/// - %s* soap_new_%s(struct soap*, int num) allocate and default initialize one or more values (array)\n/// - soap_default_%s(struct soap*, %s*) default initialize members\n/// - int soap_read_%s(struct soap*, %s*) deserialize from a source\n/// - int soap_write_%s(struct soap*, %s*) serialize to a sink\n/// - %s* soap_dup_%s(struct soap*, %s* dst, %s *src) returns deep copy of %s src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)\n/// - soap_del_%s(%s*) deep deletes %s data members, use only on dst after soap_dup_%s(NULL, %s *dst, %s *src) (use soapcpp2 -Ed)\n", t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t);
   else
-    fprintf(stream, "/// class %s operations:\n/// - %s* soap_new_%s(soap*) allocate\n/// - %s* soap_new_%s(soap*, int num) allocate array\n/// - %s* soap_new_req_%s(soap*, ...) allocate, set required members\n/// - %s* soap_new_set_%s(soap*, ...) allocate, set all public members\n/// - %s::soap_default(soap*) reset members to default\n/// - int soap_read_%s(soap*, %s*) deserialize from a stream\n/// - int soap_write_%s(soap*, %s*) serialize to a stream\n/// - %s* %s::soap_dup(soap*) returns deep copy of %s, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)\n/// - %s::soap_del() deep deletes %s data members, use only after %s::soap_dup(NULL) (use soapcpp2 -Ed)\n", t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t);
+    fprintf(stream, "/// class %s operations:\n/// - %s* soap_new_%s(soap*) allocate and default initialize\n/// - %s* soap_new_%s(soap*, int num) allocate array and default initialize values\n/// - %s* soap_new_req_%s(soap*, ...) allocate, set required members\n/// - %s* soap_new_set_%s(soap*, ...) allocate, set all public members\n/// - %s::soap_default(soap*) default initialize members\n/// - int soap_read_%s(soap*, %s*) deserialize from a stream\n/// - int soap_write_%s(soap*, %s*) serialize to a stream\n/// - %s* %s::soap_dup(soap*) returns deep copy of %s, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)\n/// - %s::soap_del() deep deletes %s data members, use only after %s::soap_dup(NULL) (use soapcpp2 -Ed)\n", t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

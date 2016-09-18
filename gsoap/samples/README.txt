@@ -46,6 +46,7 @@ webserver:                Stand-alone Web server (C,pthreads,OpenSSL,Zlib)
 wsa:                      WS-Addressing demo (C)
 wsrm:                     WS-ReliableMessaging demo (C)
 wsse:                     WS-Security demo (C,OpenSSL)
+wst:                      WS-Trust, WS-Security, and SAML demo (C,OpenSSL)
 xml-rpc-json:             XML-RPC and JSON support and examples (C/C++)
 
 LIBRARY AND GSOAP PLUGIN SUPPORT

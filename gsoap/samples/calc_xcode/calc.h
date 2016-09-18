@@ -87,7 +87,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-//gsoap ns service name:	calc Simple calculator service described at http://www.genivia.com/dev.html
+//gsoap ns service name:	calc Simple calculator service described at https://www.genivia.com/dev.html
 //gsoap ns service protocol:	SOAP
 //gsoap ns service style:	rpc
 //gsoap ns service encoding:	encoded

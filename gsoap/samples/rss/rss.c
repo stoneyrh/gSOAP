@@ -7,7 +7,7 @@
 
 	Compile:
 	$ soapcpp2 -c -CSL rss.h
-	$ cc rss.c stdsoap2.c soapC.c
+	$ cc -o rss rss.c stdsoap2.c soapC.c
 
 	Usage (client):
 	$ rss [maxitems] URL
@@ -34,6 +34,9 @@
 	rss_item	the title of the item
 	rss_date	the date of the item
 	rss_desc	the description of the item
+
+	To enable HTTPS, compile with:
+	$ cc -DWITH_OPENSSL -o rss rss.c stdsoap2.c soapC.c -lssl -lcrypto
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools

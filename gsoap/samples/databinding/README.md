@@ -1,15 +1,16 @@
 
-XML Data Bindings                                                    {#mainpage}
-=================
+C and C++ XML Data Bindings                                          {#mainpage}
+===========================
 
 [TOC]
 
 Introduction                                                            {#intro}
 ============
 
-This is a detailed overview of the gSOAP XML data bindings concepts, usage, and
-implementation.  At the end of this document two examples are given to
-illustrate the application of XML data bindings.
+This is a detailed overview of the gSOAP C and C++ XML data bindings and
+discussed the advantages, concepts, usage, and implementation.  At the end of
+this document two examples are given to illustrate the application of XML data
+bindings.
 
 The first simple example `address.cpp` shows how to use wsdl2h to bind an XML
 schema to C++.  The C++ application reads and writes an XML file into and from
@@ -21,6 +22,22 @@ and cyclic graph.  The digraph and cyclic graph serialization rules are similar
 to SOAP 1.1/1.2 encoded multi-ref elements with id-ref attributes to link
 elements through IDREF XML references, creating a an XML graph with pointers to
 XML nodes.
+
+The major advantage of XML data bindings is that your application data is
+always **type safe** in C and C++ by binding XML schema types to C/C++ types.
+So integers in XML are bound to C integers, strings in XML are bound to C or
+C++ strings, complex types in XML are bound to C structs or C++ classes, and so
+on.  The structured data you create and accept will fit the data model and is
+**static type safe**.  In other words, by leveraging strong typing in C/C++,
+your XML data meets **XML validation requirements** and satisfies **XML
+interoperability requirements**.
+
+The gSOAP data bindings are more powerful than simply representing C/C++ data
+in XML.  In fact, the tools implement **true serialization** of C/C++ data in
+XML, including the serialization of cyclic graph structures.  The gSOAP tools
+also generate routines for deep copying and deep deletion of C/C++ data
+structures to simplify memory management.  In addition, C/C++ structures are
+deserialized into managed memory, managed by the gSOAP `soap` context.
 
 These examples demonstrate XML data bindings only for relatively simple data
 structures and types.  The gSOAP tools support more than just these type of
@@ -3858,8 +3875,8 @@ data is placed on the context-managed heap by the gSOAP engine.
 Memory management in C                                                {#memory1}
 ----------------------
 
-In C (wsdl2h option `-c` and soapcpp2 option `-c`), the gSOAP engine allocates
-data on a context-managed heap with:
+When working with gSOAP in C (i.e. using wsdl2h option `-c` and soapcpp2 option
+`-c`), data is allocated on the managed heap with:
 
 - `void *soap_malloc(struct soap*, size_t len)`.
 
@@ -3867,10 +3884,20 @@ You can also make shallow copies of data with `soap_memdup` that uses
 `soap_malloc` and a safe version of `memcpy` to copy a chunk of data `src` with
 length `len` to the context-managed heap:
 
-- `void *soap_memdup(struct soap*, const void *src, size_t len)`
+- `void * soap_memdup(struct soap*, const void *src, size_t len)`
 
 This function returns a pointer to the copy.  This function requires gSOAP
 2.8.27 or later.
+
+In gSOAP 2.8.35 and later, you can use a auto-generated function to allocate
+and initialize data of type `T` on the managed heap:
+
+- `T * soap_new_T(struct soap*, int n)`
+
+This function returns an array of length `n` of type `T` data that is default
+initialized (by internally calling `soap_malloc(soap, n * sizeof(T))` and then
+`soap_default_T(soap, T*)` on each array value).  Use `n=1` to allocate and
+initialize a single value.
 
 The `soap_malloc` function is a wrapper around `malloc`, but which also permits
 the `struct soap` context to track all heap allocations for collective deletion
@@ -3882,13 +3909,20 @@ with `soap_end(soap)`:
     ...
     struct soap *soap = soap_new(); // new context
     ...
-    struct ns__record *record = soap_malloc(soap, sizeof(struct ns__record));
+    struct ns__record *record = (struct ns__record*)soap_malloc(soap, sizeof(struct ns__record));
     soap_default_ns__record(soap, record); // auto-generated struct initializer
     ...
     soap_destroy(soap); // only for C++, see section on C++ below
     soap_end(soap);     // delete record and all other heap allocations
     soap_free(soap);    // delete context
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All data on the managed heap is mass-deleted with `soap_end(soap)` which must
+be called before `soap_done(soap)` or `soap_free(soap)` (these calls end the
+use of the `soap` engine context and free the context, respectively).
+
+The managed heap is checked for memory leaks when the gSOAP code is compiled
+with `-DDEBUG`.
 
 The soapcpp2 auto-generated deserializers in C use `soap_malloc` to allocate
 and populate deserialized structures, which are managed by the context for
@@ -3924,7 +3958,7 @@ Use `soap_assign` to create a SSN value on the managed heap:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     struct soap *soap = soap_new(); // new context
     ...
-    struct ns__record *record = soap_malloc(soap, sizeof(struct ns__record));
+    struct ns__record *record = (struct ns__record*)soap_malloc(soap, sizeof(struct ns__record));
     soap_default_ns__record(soap, record);
     record->name = soap_strdup(soap, "Joe");
     soap_assign(soap, record->SSN, 1234567890LL);
@@ -3948,7 +3982,7 @@ So we can also create a new record as follows:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     struct soap *soap = soap_new(); // new context
     ...
-    struct ns__record *record = soap_malloc(soap, sizeof(struct ns__record));
+    struct ns__record *record = (struct ns__record*)soap_malloc(soap, sizeof(struct ns__record));
     static uint64_t SSN = 1234567890LL;
     soap_default_ns__record(soap, record);
     record->name = "Joe";
@@ -4097,37 +4131,42 @@ to stack and static data.
 Memory management in C++                                              {#memory2}
 ------------------------
 
-In C++, the gSOAP engine allocates data on a managed heap using a combination
-of `void *soap_malloc(struct soap*, size_t len)` and `soap_new_T()`, where `T`
-is the name of a class, struct, or class template (container or smart pointer).
-Heap allocation is tracked by the `struct soap` context for collective
-deletion with `soap_destroy(soap)` and `soap_end(soap)`.
+When working with gSOAP in C++, the gSOAP engine allocates data on a managed
+heap using a combination of `void * soap_malloc(struct soap*, size_t len)` to
+allocate primitive types and a managed call to `new T()` to allocate a struct,
+class or a template type `T`.  Heap allocation is tracked by the `struct soap`
+context for collective deletion with `soap_destroy(soap)` for structs, classes,
+and templates and with `soap_end(soap)` for everything else.
 
-Only structs, classes, and class templates are allocated with `new` via
-`soap_new_T(struct soap*)` and mass-deleted with `soap_destroy(soap)`.
+The auto-generated `T * soap_new_T(struct soap*)` returns data allocated on the
+managed heap for type `T`.  The data is mass-deleted with `soap_destroy(soap)`
+followed by `soap_end(soap)`.
 
-There are four variations of `soap_new_T` for class/struct/template type `T`
-that soapcpp2 auto-generates to create instances on a context-managed heap:
+There are four variations of `soap_new_T` to allocate data of type `T` that
+soapcpp2 auto-generates to create instances on a context-managed heap:
 
-- `T * soap_new_T(struct soap*)` returns a new instance of `T` with default data
-  member initializations that are set with the soapcpp2 auto-generated `void
-  T::soap_default(struct soap*)` method), but ONLY IF the soapcpp2
-  auto-generated default constructor is used that invokes `soap_default()` and
-  was not replaced by a user-defined default constructor.
+- `T * soap_new_T(struct soap*)` returns a new instance of `T` that is default
+  initialized.  For classes, initialization is internally performed using the
+  soapcpp2 auto-generated `void T::soap_default(struct soap*)` method of the
+  class, but ONLY IF the soapcpp2 auto-generated default constructor is used
+  that invokes `soap_default()` and was not replaced by a user-defined default
+  constructor.
 
 - `T * soap_new_T(struct soap*, int n)` returns an array of `n` new instances of
-  `T`.  Similar to the above, instances are initialized.
+  `T`.  The instances in the array are default initialized as described above.
 
-- `T * soap_new_req_T(struct soap*, ...)` returns a new instance of `T` and sets
-  the required data members to the values specified in `...`.  The required data
-  members are those with nonzero minOccurs, see the subsections on
+- `T * soap_new_req_T(struct soap*, ...)` (structs and classes only) returns a
+  new instance of `T` and sets the required data members to the values
+  specified in `...`.  The required data members are those with nonzero
+  minOccurs, see the subsections on
   [(smart) pointer members and their occurrence constraints](#toxsd9-8) and
   [container members and their occurrence constraints](#toxsd9-9).
 
-- `T * soap_new_set_T(struct soap*, ...)` returns a new instance of `T` and sets
-  the public/serializable data members to the values specified in `...`.
+- `T * soap_new_set_T(struct soap*, ...)` (structs and classes only) returns a
+  new instance of `T` and sets the public/serializable data members to the values
+  specified in `...`.
 
-The above functions can be invoked with a NULL `soap` context, but you are
+The above functions can be invoked with a NULL `soap` context, but you are then
 responsible to use `delete T` to remove this instance from the unmanaged heap.
 
 For example, to allocate a managed `std::string` you can use:
@@ -4136,14 +4175,14 @@ For example, to allocate a managed `std::string` you can use:
     std::string *s = soap_new_std__string(soap);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Primitive types and arrays of these are allocated with `soap_malloc` by the
-gSOAP engine.  As we stated above, all types except for classes, structs, class
-templates (containers and smart pointers) are allocated with `soap_malloc` for
-reasons of efficiency.
+Primitive types and arrays of these are allocated with `soap_malloc`
+(`soap_new_T` calls `soap_malloc` for primitive type `T`).  All primitive types
+(i.e. no classes, structs, class templates, containers, and smart pointers) are
+allocated with `soap_malloc` for reasons of efficiency.
 
 You can use a C++ template to simplify the managed allocation and initialization
 of primitive values as follows (this is for primitive types only, because
-structs and classes are allocated with `soap_new_T`):
+structs and classes must be allocated with `soap_new_T`):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     template<class T>
@@ -4170,7 +4209,7 @@ For example, assuming we have the following class:
 
 You can instantiate a record by using the auto-generated
 `soap_new_set_ns__record` and use `soap_make` to create a SSN value on the
-managed heap:
+managed heap as follows:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     soap *soap = soap_new(); // new context
@@ -4185,6 +4224,14 @@ managed heap:
     soap_end(soap);     // delete managed soap_malloc'ed heap data
     soap_free(soap);    // delete context
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All data on the managed heap is mass-deleted with `soap_destroy(soap)` and
+`soap_end(soap)` which must be called before `soap_done(soap)` or
+`soap_free(soap)` (these calls end the use of the `soap` engine context and
+free the context, respectively).
+
+The managed heap is checked for memory leaks when the gSOAP code is compiled
+with `-DDEBUG`.
 
 Note however that the gSOAP serializer can serialize any heap, stack, or static
 allocated data.  So we can also create a new record as follows:

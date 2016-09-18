@@ -1900,7 +1900,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       if (*s)
       {
         if (**i == '"')
-          fprintf(stream, "/// Imported XSD type \"%s\" from typemap \"%s\".\n", *i, mapfile ? mapfile : "");
+          fprintf(stream, "/// Imported XSD type \"%s\" from typemap %s.\n", *i, mapfile ? mapfile : "");
         else
           fprintf(stream, "/// Built-in XSD type \"%s\".\n", *i);
         if (mflag)
@@ -1982,7 +1982,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       if (*s)
       {
         if (**j == '"')
-          fprintf(stream, "/// Imported element \"%s\" from typemap \"%s\".\n", *j, mapfile ? mapfile : "");
+          fprintf(stream, "/// Imported element \"%s\" from typemap %s.\n", *j, mapfile ? mapfile : "");
         else
           fprintf(stream, "/// Built-in element \"%s\".\n", *j);
         if (mflag)
@@ -2050,7 +2050,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       if (*s)
       {
         if (**k == '"')
-          fprintf(stream, "/// Imported attribute \"%s\" from typemap \"%s\".\n", *k, mapfile ? mapfile : "");
+          fprintf(stream, "/// Imported attribute \"%s\" from typemap %s.\n", *k, mapfile ? mapfile : "");
         else
           fprintf(stream, "/// Built-in attribute \"%s\".\n", *k);
         if (mflag)
@@ -2281,7 +2281,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
             const char *t = types.deftypemap[s];
             if (t && *t)
             {
-              fprintf(stream, "/// Imported element \"%s\" from typemap \"%s\".\n", s, mapfile ? mapfile : "");
+              fprintf(stream, "/// Imported element \"%s\" from typemap %s.\n", s, mapfile ? mapfile : "");
               types.format(t);
             }
             else
@@ -2315,7 +2315,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
             const char *t = types.deftypemap[s];
             if (t && *t)
             {
-              fprintf(stream, "/// Imported attribute \"%s\" from typemap \"%s\".\n", s, mapfile ? mapfile : "");
+              fprintf(stream, "/// Imported attribute \"%s\" from typemap %s.\n", s, mapfile ? mapfile : "");
               types.format(t);
             }
             else

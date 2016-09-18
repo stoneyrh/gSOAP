@@ -1,0 +1,20 @@
+<map id="saml1__AttributeStatementType" name="saml1__AttributeStatementType">
+<area shape="rect" id="node2" href="$structsaml1_____subject_type.html" title="&quot;urn:oasis:names:tc:SAML:1.0:assertion&quot;:SubjectType is a complexType. " alt="" coords="2235,155,2381,183"/>
+<area shape="rect" id="node4" href="$structsaml1_____name_identifier_type.html" title="&quot;urn:oasis:names:tc:SAML:1.0:assertion&quot;:NameIdentifierType is a complexType with simpleContent. " alt="" coords="1804,131,1991,159"/>
+<area shape="rect" id="node6" href="$structsaml1_____subject_confirmation_type.html" title="&quot;urn:oasis:names:tc:SAML:1.0:assertion&quot;:SubjectConfirmationType is a complexType. ..." alt="" coords="1787,183,2008,211"/>
+<area shape="rect" id="node8" href="$structds_____key_info_type.html" title="Imported complexType &quot;http://www.w3.org/2000/09/xmldsig#&quot;:KeyInfoType from typemap WS/WS&#45;typemap..." alt="" coords="1536,183,1661,211"/>
+<area shape="rect" id="node10" href="$structds_____key_value_type.html" title="&quot;http://www.w3.org/2000/09/xmldsig#&quot;:KeyValueType is a complexType. " alt="" coords="1116,58,1252,86"/>
+<area shape="rect" id="node12" href="$structds_____r_s_a_key_value_type.html" title="&quot;http://www.w3.org/2000/09/xmldsig#&quot;:RSAKeyValueType is a complexType. " alt="" coords="771,6,933,34"/>
+<area shape="rect" id="node14" href="$structds_____d_s_a_key_value_type.html" title="&quot;http://www.w3.org/2000/09/xmldsig#&quot;:DSAKeyValueType is a complexType. " alt="" coords="771,58,933,86"/>
+<area shape="rect" id="node16" href="$structds_____retrieval_method_type.html" title="&quot;http://www.w3.org/2000/09/xmldsig#&quot;:RetrievalMethodType is a complexType. " alt="" coords="1096,121,1272,149"/>
+<area shape="rect" id="node18" href="$structds_____transforms_type.html" title="&quot;http://www.w3.org/2000/09/xmldsig#&quot;:TransformsType is a complexType. " alt="" coords="779,110,925,138"/>
+<area shape="rect" id="node20" href="$structds_____transform_type.html" title="Imported complexType &quot;http://www.w3.org/2000/09/xmldsig#&quot;:TransformType from typemap WS/WS&#45;typemap..." alt="" coords="456,110,595,138"/>
+<area shape="rect" id="node22" href="$struct__c14n_____inclusive_namespaces.html" title="_c14n__InclusiveNamespaces" alt="" coords="6,110,208,138"/>
+<area shape="rect" id="node24" href="$struct__wsse_____security_token_reference.html" title="This element defines the wsse:SecurityTokenReference per Section 4.3. Imported element _wsse__Securit..." alt="" coords="1074,214,1294,242"/>
+<area shape="rect" id="node26" href="$struct__wsse_____embedded.html" title="This element defines a security token embedded reference Imported element _wsse__Embedded from typema..." alt="" coords="783,162,921,190"/>
+<area shape="rect" id="node28" href="$struct__wsse_____key_identifier.html" title="This element defines a key identifier reference Imported element _wsse__KeyIdentifier from typemap WS..." alt="" coords="778,214,926,242"/>
+<area shape="rect" id="node30" href="$structds_____x509_data_type.html" title="&quot;http://www.w3.org/2000/09/xmldsig#&quot;:X509DataType is a complexType. " alt="" coords="783,334,921,362"/>
+<area shape="rect" id="node32" href="$structds_____x509_issuer_serial_type.html" title="&quot;http://www.w3.org/2000/09/xmldsig#&quot;:X509IssuerSerialType is a complexType. " alt="" coords="435,334,616,362"/>
+<area shape="rect" id="node34" href="$struct__wsse_____reference.html" title="This element defines a security token reference Imported element _wsse__Reference from typemap WS/WS&#45;..." alt="" coords="784,266,920,294"/>
+<area shape="rect" id="node37" href="$structsaml1_____attribute_type.html" title="&quot;urn:oasis:names:tc:SAML:1.0:assertion&quot;:AttributeType is a complexType with complexContent extension ..." alt="" coords="2233,207,2383,235"/>
+</map>

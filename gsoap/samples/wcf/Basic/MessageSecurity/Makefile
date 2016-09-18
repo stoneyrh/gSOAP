@@ -20,7 +20,7 @@ CFLAGS= $(CWFLAGS) $(COFLAGS) $(CIFLAGS) $(CMFLAGS)
 all:		calculator
 calculator:	calculator.h calculator.cpp $(SOAPH) $(SOAPC)
 		$(GSOAP) $(GSFLAGS) -a -j calculator.h
-		$(CPP) $(CFLAGS) -o calculator calculator.cpp soapC.cpp soapBasicHttpBinding_USCOREICalculatorService.cpp soapBasicHttpBinding_USCOREICalculatorProxy.cpp ../../../../plugin/wsseapi.c ../../../../plugin/smdevp.c ../../../../mecevp.c $(SOAPDOMCPP) $(SOAPCPP) $(LIBS)
+		$(CPP) $(CFLAGS) -o calculator calculator.cpp soapC.cpp soapBasicHttpBinding_USCOREICalculatorService.cpp soapBasicHttpBinding_USCOREICalculatorProxy.cpp ../../../../plugin/wsseapi.c ../../../../plugin/smdevp.c ../../../../plugin/mecevp.c $(SOAPDOMCPP) $(SOAPCPP) $(LIBS)
 %.cer: %.pem
 		openssl x509 -in $< -outform der -out $@
 calculator.h:

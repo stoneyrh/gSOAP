@@ -53,7 +53,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 mutable struct SOAP_ENV__Header
 { int								__sizeIssuedTokens 0; ///< size of the array
   struct wst__RequestSecurityTokenResponseCollectionType	*wst__IssuedTokens 0; ///< array of tokens
-  wst__RequestTypeOpenEnum                                       wst__RequestType  0;
+  char*								wst__RequestType  0;
 };
 
 //gsoap wst service name: wst
@@ -71,5 +71,20 @@ mutable struct SOAP_ENV__Header
 //gsoap wst service method-output-action:   RequestSecurityToken http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTRC/IssueFinal
 int __wst__RequestSecurityToken(
   struct wst__RequestSecurityTokenType				*wst__RequestSecurityToken, ///< request message
+  struct wst__RequestSecurityTokenResponseType          	*wst__RequestSecurityTokenResponse ///< response message
+);
+
+//gsoap wst service method-header-part:     RequestSecurityTokenCollection wsa5__MessageID
+//gsoap wst service method-header-part:     RequestSecurityTokenCollection wsa5__RelatesTo
+//gsoap wst service method-header-part:     RequestSecurityTokenCollection wsa5__From
+//gsoap wst service method-header-part:     RequestSecurityTokenCollection wsa5__ReplyTo
+//gsoap wst service method-header-part:     RequestSecurityTokenCollection wsa5__FaultTo
+//gsoap wst service method-header-part:     RequestSecurityTokenCollection wsa5__To
+//gsoap wst service method-header-part:     RequestSecurityTokenCollection wsa5__Action
+//gsoap wst service method-header-part:     RequestSecurityTokenCollection wst__RequestType
+//gsoap wst service method-action:          RequestSecurityTokenCollection http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTC/Issue
+//gsoap wst service method-output-action:   RequestSecurityTokenCollection http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTRC/IssueFinal
+int __wst__RequestSecurityTokenCollection(
+  struct wst__RequestSecurityTokenCollectionType		*wst__RequestSecurityTokenCollection, ///< request message
   struct wst__RequestSecurityTokenResponseCollectionType	*wst__RequestSecurityTokenResponseCollection ///< response message
 );

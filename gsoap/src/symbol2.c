@@ -957,7 +957,7 @@ compile(Table *table)
       copyrightnote(flib, soapClientLib);
       fprintf(fmsg, "Saving %s client stubs with serializers (use only for libs)\n", pathsoapClientLib);
       fprintf(flib, "\n\n/** Use this file in your project build instead of the two files %s and %s. This hides the serializer functions and avoids linking problems when linking multiple clients and servers. */\n", soapC, soapClient);
-      fprintf(flib, "\n#ifndef WITH_NOGLOBAL\n#define WITH_NOGLOBAL\n#endif");
+      /* fprintf(flib, "\n#ifndef WITH_NOGLOBAL\n#define WITH_NOGLOBAL\n#endif"); deprecated behavior */
       fprintf(flib, "\n#define SOAP_FMAC3 static");
       fprintf(flib, "\n#include \"%s\"", soapC);
       fprintf(flib, "\n#include \"%s\"", soapClient);
@@ -991,7 +991,7 @@ compile(Table *table)
       copyrightnote(flib, soapServerLib);
       fprintf(fmsg, "Saving %s server request dispatcher with serializers (use only for libs)\n", pathsoapServerLib);
       fprintf(flib, "\n\n/** Use this file in your project build instead of the two files %s and %s. This hides the serializer functions and avoids linking problems when linking multiple clients and servers. */\n", soapC, soapServer);
-      fprintf(flib, "\n#ifndef WITH_NOGLOBAL\n#define WITH_NOGLOBAL\n#endif");
+      /* fprintf(flib, "\n#ifndef WITH_NOGLOBAL\n#define WITH_NOGLOBAL\n#endif"); deprecated behavior */
       fprintf(flib, "\n#define SOAP_FMAC3 static");
       fprintf(flib, "\n#include \"%s\"", soapC);
       fprintf(flib, "\n#include \"%s\"", soapServer);
@@ -1531,7 +1531,7 @@ compile(Table *table)
     char tmp[256];
     time_t T = time(NULL);
     strftime(tmp, 256, "%a %b %d %Y %H:%M:%S UTC", gmtime(&T));
-    fprintf(freport, "\n  [1]: http://www.genivia.com/images/go-up.png\n\n");
+    fprintf(freport, "\n  [1]: https://www.genivia.com/images/go-up.png\n\n");
     fprintf(freport, "--------------------------------------------------------------------------------\n\n_Generated on %s by soapcpp2 v" VERSION " for %s._\n_The gSOAP XML Web services tools are Copyright (C) Robert van Engelen, Genivia Inc. All Rights Reserved._\n", tmp, filename);
     fclose(freport);
   }
@@ -2013,11 +2013,14 @@ gen_class(FILE *fd, Entry *p)
         gen_report_members(p, nsa, nse);
         fprintf(freport, "The following operations on `%s` are available:\n\n", c_type(p->info.typ));
         if (cflag)
-          fprintf(freport, "- `(%s *)soap_malloc(struct soap*, sizeof(%s))` managed allocation\n", c_type(p->info.typ), c_type(p->info.typ));
+        {
+          fprintf(freport, "- `(%s *)soap_malloc(struct soap*, sizeof(%s))` raw managed allocation\n", c_type(p->info.typ), c_type(p->info.typ));
+          fprintf(freport, "- `%s *soap_new_%s(struct soap*, int n)` managed allocation with default initialization of one `%s` when `n` = 1 or array `%s[n]` when `n` > 1\n", c_type(p->info.typ), c_ident(p->info.typ), c_type(p->info.typ), c_type(p->info.typ));
+        }
         else
         {
           fprintf(freport, "- `%s *soap_new_%s(struct soap*)` managed allocation with default initialization\n", c_type(p->info.typ), c_ident(p->info.typ));
-          fprintf(freport, "- `%s *soap_new_%s(struct soap*, int n)` managed allocation of array `%s[n]`\n", c_type(p->info.typ), c_ident(p->info.typ), c_type(p->info.typ));
+          fprintf(freport, "- `%s *soap_new_%s(struct soap*, int n)` managed allocation with default initialization of array `%s[n]`\n", c_type(p->info.typ), c_ident(p->info.typ), c_type(p->info.typ));
           fprintf(freport, "- `%s *soap_new_req_%s(struct soap*", c_type(p->info.typ), c_ident(p->info.typ));
           gen_report_req_params(p->info.typ);
           fprintf(freport, ")` managed allocation with required members assigned the values of these parameters, with all other members default initialized\n");
@@ -2025,7 +2028,7 @@ gen_class(FILE *fd, Entry *p)
           gen_report_set_params(p->info.typ);
           fprintf(freport, ")` managed allocation with the public members assigned the values of these parameters\n");
         }
-        fprintf(freport, "- `void soap_default_%s(struct soap*, %s*)` (re)set members to default initialization values\n", c_ident(p->info.typ), c_type(p->info.typ));
+        fprintf(freport, "- `void soap_default_%s(struct soap*, %s*)` (re)set to default initialization values\n", c_ident(p->info.typ), c_type(p->info.typ));
         fprintf(freport, "- `int soap_read_%s(struct soap*, %s*)` deserialize from XML, returns `SOAP_OK` or error code\n", c_ident(p->info.typ), c_type(p->info.typ));
         fprintf(freport, "- `int soap_write_%s(struct soap*, const %s*)` serialize to XML, returns `SOAP_OK` or error code\n", c_ident(p->info.typ), c_type(p->info.typ));
         if (!wflag)
@@ -2432,7 +2435,7 @@ generate_header(Table *t)
   int i;
   if (rflag)
   {
-    fprintf(freport, "<div style='display: none'>\n@tableofcontents @section README\n\nTo view this file in a browser, download readmeviewer.html from http://www.genivia.com/files/readmeviewer.html.zip, unzip and copy it to the same directory where this soapReadme.md file is located, then open it in a browser to view the contents of soapReadme.md.\n\nThis markdown file is compatible with Doxygen.\n</div>\n\n");
+    fprintf(freport, "<div style='display: none'>\n@tableofcontents @section README\n\nTo view this file in a browser, download readmeviewer.html from https://www.genivia.com/files/readmeviewer.html.zip, unzip and copy it to the same directory where this soapReadme.md file is located, then open it in a browser to view the contents of soapReadme.md.\n\nThis markdown file is compatible with Doxygen.\n</div>\n\n");
     fprintf(freport, "## Overview {#doc-overview}\n\nThis report was generated by soapcpp2 v" VERSION " for interface file [%s](%s) with options -r %s%s%s%s%s%s%s%s%s\n\n", filename, filename, soap_version < 0 ? "-0 " : "", cflag ? "-c " : c11flag ? "-c++11 " : "", Cflag ? "-C " : "", Sflag ? "-S " : "", Lflag ? "-L " : "", iflag ? "-i " : jflag ? "-j " : "", wflag ? "-w " : "", namespaceid ? "-q" : strcmp(prefix, "soap") ? "-p" : "", strcmp(prefix, "soap") ? prefix : "");
     for (sp = services; sp; sp = sp->next)
       if (sp->documentation)
@@ -2646,11 +2649,14 @@ generate_header(Table *t)
         if (!is_transient(p->info.typ))
         {
           if (cflag)
-            fprintf(freport, "- `(%s *)soap_malloc(struct soap*, sizeof(%s))` managed allocation\n", c_type(p->info.typ), c_type(p->info.typ));
+          {
+            fprintf(freport, "- `(%s *)soap_malloc(struct soap*, sizeof(%s))` raw managed allocation\n", c_type(p->info.typ), c_type(p->info.typ));
+            fprintf(freport, "- `%s *soap_new_%s(struct soap*, int n)` managed allocation with default initialization of one `%s` when `n` = 1 or array `%s[n]` when `n` > 1\n", c_type(p->info.typ), c_ident(p->info.typ), c_type(p->info.typ), c_type(p->info.typ));
+          }
           else
           {
-            fprintf(freport, "- `%s *soap_new_%s(struct soap*)` managed allocation\n", c_type(p->info.typ), c_ident(p->info.typ));
-            fprintf(freport, "- `%s *soap_new_%s(struct soap*, int n)` managed allocation of array `%s[n]`\n", c_type(p->info.typ), c_ident(p->info.typ), c_type(p->info.typ));
+            fprintf(freport, "- `%s *soap_new_%s(struct soap*)` managed allocation with default initialization\n", c_type(p->info.typ), c_ident(p->info.typ));
+            fprintf(freport, "- `%s *soap_new_%s(struct soap*, int n)` managed allocation with default initialization of array `%s[n]`\n", c_type(p->info.typ), c_ident(p->info.typ), c_type(p->info.typ));
           }
           fprintf(freport, "- `void soap_default_%s(struct soap*, %s)` set to default value\n", c_ident(p->info.typ), c_type_id(p->info.typ, "*value"));
           fprintf(freport, "- `const char *soap_%s2s(struct soap*, %s)` returns string-converted value in temporary string buffer\n", c_ident(p->info.typ), c_type_id(p->info.typ, "value"));
@@ -2796,9 +2802,9 @@ generate_header(Table *t)
           if (has_ns_t(p->info.typ))
             fprintf(freport, ", is serialized as XSD type *`%s`*", xsi_type(p->info.typ));
           if (is_XML(p->info.typ) || is_stdXML(p->info.typ))
-            fprintf(freport, " and is a built-in string type to serialize XML literally in a string by preserving the XML content");
+            fprintf(freport, " and is a built-in string type to serialize XML that is literally stored in this string");
           else if (is_qname(p->info.typ) || is_stdqname(p->info.typ))
-            fprintf(freport, " and is a built-in string type to normalize and serialize QName(s) in a string, such that namespace prefixes in this string correspond to the namespace prefixes defined in the [namespace table](#doc-namespaces)");
+            fprintf(freport, " and is a built-in string type to normalize and serialize a list of space-separated QNames stored in a string, such that namespace prefixes in this string can be used when prefixes have URI entries in the [namespace table](#doc-namespaces)");
           else if (is_anyType(p->info.typ))
             fprintf(freport, " and is a built-in XML DOM element node graph");
           else if (is_anyAttribute(p->info.typ))
@@ -2882,16 +2888,17 @@ generate_header(Table *t)
     fprintf(freport, "Each serializable %s *Type* with binding name *Name* has a set of auto-generated functions:\n\n", cflag ? "C" : "C/C++");
     if (cflag)
     {
-      fprintf(freport, "- `(Type *)soap_malloc(struct soap*, sizeof(Type))` managed allocation\n");
+      fprintf(freport, "- `(Type *)soap_malloc(struct soap*, sizeof(Type))` raw managed allocation of *Type*\n");
+      fprintf(freport, "- `Type *soap_new_Name(struct soap*, int n)` managed allocation with default initialization of one *Type* when `n` = 1 or array *Type*`[n]` when `n` > 1\n");
       fprintf(freport, "- `void soap_default_Name(struct soap*, Type*)` initialize or reset *Type* to default\n");
     }
     else
     {
-      fprintf(freport, "- `Type *soap_new_Name(struct soap*)` managed allocation of class, struct, or enum *Type*\n");
-      fprintf(freport, "- `Type *soap_new_Name(struct soap*, int n)` managed allocation of an array of class, struct, or enum *Type*\n");
-      fprintf(freport, "- `(Type *)soap_malloc(struct soap*, sizeof(Type))` managed allocation of primitive *Type* (primitive types are types that are not structs or classes)\n");
-      fprintf(freport, "- `void soap_default_Name(struct soap*, Type*)` (re)set *Type* to default (see below for class *Type*)\n");
-      fprintf(freport, "- `void Type::soap_default(struct soap*)` non-volatile class *Type* (re)set to default\n");
+      fprintf(freport, "- `Type *soap_new_Name(struct soap*)` managed allocation and default initialization\n");
+      fprintf(freport, "- `Type *soap_new_Name(struct soap*, int n)` managed allocation and default initialization of an array `Type[n]`\n");
+      fprintf(freport, "- `(Type *)soap_malloc(struct soap*, sizeof(Type))` raw managed allocation of primitive *Type* (primitive types are types that are not structs or classes)\n");
+      fprintf(freport, "- `void soap_default_Name(struct soap*, Type*)` initialize or reset *Type* to default (see below for class *Type*)\n");
+      fprintf(freport, "- `void Type::soap_default(struct soap*)` non-volatile class *Type* reset to default\n");
     }
     fprintf(freport, "- `const char *soap_strdup(struct saop*, const char*)` managed duplication of string\n");
     fprintf(freport, "- `const wchar_t *soap_wstrdup(struct saop*, const wchar_t*)` managed duplication of wide string\n");
@@ -2903,7 +2910,10 @@ generate_header(Table *t)
       fprintf(freport, "- `Type *soap_dup_Name(struct soap*, Type *dst, const Type *src)` deep copy `src` to `dst` managed by context or NULL, returning `dst` (if `dst` is NULL then allocates `dst` copy)\n");
     if (Edflag)
       fprintf(freport, "- `void soap_del_Name(struct soap*, Type*)` deep delete if *Type* is not managed\n");
-    fprintf(freport, "\nEach *Type* also has a unique type id `SOAP_TYPE_Name` that you can use to serialize `void*`\n\nFrom the toolkit documentation:\n\n");
+    fprintf(freport, "\nEach *Type* also has a unique type id `SOAP_TYPE_Name` that you can use to serialize `void*` in a struct/class by setting the `int __type` member to this type id.");
+    if (!cflag)
+      fprintf(freport, " The unique type id is also used to distinguish derived class instances from base class instances by calling their `virtual soap_type()` methods that return this type id.");
+    fprintf(freport, "\n\nFrom the toolkit documentation:\n\n");
     if (cflag)
       fprintf(freport, "- Set `soap->sendfd = fd` to serialize to an `int fd` file descriptor\n- Set `soap->os = &cs` to serialize to a string `const char *cs`, which will be assigned by the engine and set to point to a managed string that is automatically deleted\n- Set `soap->recvfd = fd` to deserialize from an `int fd` file descriptor\n- Set `soap->is = cs` to deserialize from a `const char *cs` string\n- All managed allocated data is freed by `soap_end(soap)` with context `soap`\n");
     else
@@ -2970,6 +2980,8 @@ get_namespace_prefixes(void)
   for (p = symlist; p; p = p->next)
   {
     s = p->name;
+    if (!strncmp(s, "__size", 6) || !strncmp(s, "__type", 6) || !strncmp(s, "__union", 7))
+      continue;
     while (*s == '_' || *s == '~')
       s++;
     n = (int)(strlen(s) - 2);
@@ -12225,11 +12237,30 @@ soap_instantiate(Tnode *typ)
   int derclass = 0, flag = 0;
   const char *s;
 
-  if (cflag)
+  if (is_XML(typ))
+    return;
+  if (typ->type == Tunion)
+    return;
+  if (typ->type == Tpointer && !is_string(typ) && !is_wstring(typ))
     return;
 
-  if (typ->type == Tenum || typ->type == Tenumsc)
-    fprintf(fhead, "\n\ninline %s * soap_new_%s(struct soap *soap, int n = -1)\n{\n\treturn static_cast<%s *>(soap_malloc(soap, (n < 0 ? 1 : n) * sizeof(%s)));\n}", c_type(typ), c_ident(typ), c_type(typ), c_type(typ));
+  if (cflag)
+  {
+    if ((is_typedef(typ) && !is_external(typ)) || is_synonym(typ))
+      fprintf(fhead, "\n#define soap_new_%s soap_new_%s\n", c_ident(typ), t_ident(typ));
+    else
+    {
+      fprintf(fhead, "\n\nSOAP_FMAC3 %s * SOAP_FMAC4 soap_new_%s(struct soap *soap, int n);", c_type(typ), c_ident(typ));
+      fprintf(fout, "\n\nSOAP_FMAC3 %s * SOAP_FMAC4 soap_new_%s(struct soap *soap, int n)\n{\n\t%s *p;\n\t%s *a = (%s*)soap_malloc((soap), (n = (n < 0 ? 1 : n)) * sizeof(%s));\n\tfor (p = a; p && n--; p++)\n\t\tsoap_default_%s(soap, p);\n\treturn a;\n}", c_type(typ), c_ident(typ), c_type(typ), c_type(typ), c_type(typ), c_type(typ), c_ident(typ));
+    }
+    return;
+  }
+
+  if (is_primitive(typ) || is_string(typ) || is_wstring(typ))
+  {
+    fprintf(fhead, "\n\nSOAP_FMAC3 %s * SOAP_FMAC4 soap_new_%s(struct soap *soap, int n = -1);", c_type(typ), c_ident(typ));
+    fprintf(fout, "\n\nSOAP_FMAC3 %s * SOAP_FMAC4 soap_new_%s(struct soap *soap, int n)\n{\n\t%s *a = static_cast<%s *>(soap_malloc(soap, (n = (n < 0 ? 1 : n)) * sizeof(%s)));\n\tfor (%s *p = a; p && n--; ++p)\n\t\tsoap_default_%s(soap, p);\n\treturn a;\n}", c_type(typ), c_ident(typ), c_type(typ), c_type(typ), c_type(typ), c_type(typ), c_ident(typ));
+  }
 
   if (typ->type != Tstruct && typ->type != Tclass && typ->type != Ttemplate)
     return;
@@ -13652,9 +13683,9 @@ soap_default(Tnode* typ)
     if (typ->type == Tclass && !is_stdstring(typ) && !is_stdwstring(typ) && !is_volatile(typ))
       fprintf(fhead, "\n\n#define soap_default_%s(soap, a) (a)->%s::soap_default(soap)\n", c_ident(typ), t_ident(typ));
     else if (typ->type == Tclass && is_eq(typ->sym->name, "xsd__QName"))
-      fprintf(fhead, "\n\n#define soap_default_%s(soap, a) soap_default_std__string(soap, a)\n", c_ident(typ));
+      fprintf(fhead, "\n\n#define soap_default_%s soap_default_std__string\n", c_ident(typ));
     else
-      fprintf(fhead, "\n\n#define soap_default_%s(soap, a) soap_default_%s(soap, a)\n", c_ident(typ), t_ident(typ));
+      fprintf(fhead, "\n\n#define soap_default_%s soap_default_%s\n", c_ident(typ), t_ident(typ));
     return;
   }
   p = is_dynamic_array(typ);
@@ -13730,15 +13761,17 @@ soap_default(Tnode* typ)
     fflush(fout);
     return;
   }
-  if (is_primitive(typ) || is_string(typ))
+  if (is_primitive(typ) || is_string(typ) || is_wstring(typ))
   {
     if (is_external(typ))
     {
       fprintf(fhead, "\nSOAP_FMAC1 void SOAP_FMAC2 soap_default_%s(struct soap*, %s);", c_ident(typ), c_type_id(typ, "*"));
-     return;
+      return;
     }
-    fprintf(fhead, "\nSOAP_FMAC3 void SOAP_FMAC4 soap_default_%s(struct soap*, %s);", c_ident(typ), c_type_id(typ, "*"));
-    fprintf(fout, "\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_default_%s(struct soap *soap, %s)\n{\n\t(void)soap; /* appease -Wall -Werror */\n#ifdef SOAP_DEFAULT_%s\n\t*a = SOAP_DEFAULT_%s;\n#else\n\t*a = (%s)0;\n#endif\n}", c_ident(typ), c_type_id(typ, "*a"), c_ident(typ), c_ident(typ), c_type(typ));
+    if (cflag)
+      fprintf(fhead, "\n\n#ifdef SOAP_DEFAULT_%s\n#define soap_default_%s(soap, a) (*(a) = SOAP_DEFAULT_%s)\n#else\n#define soap_default_%s(soap, a) (*(a) = (%s)0)\n#endif", c_ident(typ), c_ident(typ), c_ident(typ), c_ident(typ), c_type(typ));
+    else
+      fprintf(fhead, "\n\ninline void soap_default_%s(struct soap *soap, %s)\n{\n\t(void)soap; /* appease -Wall -Werror */\n#ifdef SOAP_DEFAULT_%s\n\t*a = SOAP_DEFAULT_%s;\n#else\n\t*a = (%s)0;\n#endif\n}", c_ident(typ), c_type_id(typ, "*a"), c_ident(typ), c_ident(typ), c_type(typ));
     return;
   }
   if (is_fixedstring(typ))
@@ -13749,8 +13782,7 @@ soap_default(Tnode* typ)
   }
   if (is_stdstring(typ) || is_stdwstring(typ))
   {
-    fprintf(fhead, "\nSOAP_FMAC3 void SOAP_FMAC4 soap_default_%s(struct soap*, %s);", c_ident(typ), c_type_id(typ, "*"));
-    fprintf(fout, "\n\nSOAP_FMAC3 void SOAP_FMAC4 soap_default_%s(struct soap *soap, %s)\n{\n\t(void)soap; /* appease -Wall -Werror */\n\tp->erase();\n}", c_ident(typ), c_type_id(typ, "*p"));
+    fprintf(fhead, "\n\ninline void soap_default_%s(struct soap *soap, %s)\n{\n\t(void)soap; /* appease -Wall -Werror */\n\tp->erase();\n}", c_ident(typ), c_type_id(typ, "*p"));
     return;
   }
   switch(typ->type)
@@ -16706,7 +16738,7 @@ soap_in(Tnode *typ)
               flag = 1;
               fprintf(fout, "\n\t\t\tif (soap->error == SOAP_TAG_MISMATCH && ");
               fprintf(fout, "!soap_element_begin_in(soap, %s, 1, NULL))", field(p->next, nse));
-              fprintf(fout, "\n\t\t\t{\tif (a->%s == NULL)\n\t\t\t\t{\tif (soap_blist_%s == NULL)\n\t\t\t\t\t\tsoap_blist_%s = soap_new_block(soap);", ident(p->next->sym->name), ident(p->next->sym->name), ident(p->next->sym->name));
+              fprintf(fout, "\n\t\t\t{\tif (a->%s == NULL)\n\t\t\t\t{\tif (soap_blist_%s == NULL)\n\t\t\t\t\t\tsoap_blist_%s = soap_alloc_block(soap);", ident(p->next->sym->name), ident(p->next->sym->name), ident(p->next->sym->name));
               if (((Tnode*)p->next->info.typ->ref)->type == Tclass
                || ((Tnode*)p->next->info.typ->ref)->type == Ttemplate
                || has_class((Tnode*)p->next->info.typ->ref)
@@ -16871,7 +16903,7 @@ soap_in(Tnode *typ)
                   fprintf(fout, "!soap_element_begin_in(soap, NULL, 1, NULL))");
                 else if (is_invisible(p->next->sym->name))
                   fprintf(fout, "!soap_peek_element(soap))");
-                fprintf(fout, "\n\t\t\t{\tif (a->%s == NULL)\n\t\t\t\t{\tif (soap_blist_%s == NULL)\n\t\t\t\t\t\tsoap_blist_%s = soap_new_block(soap);", ident(p->next->sym->name), ident(p->next->sym->name), ident(p->next->sym->name));
+                fprintf(fout, "\n\t\t\t{\tif (a->%s == NULL)\n\t\t\t\t{\tif (soap_blist_%s == NULL)\n\t\t\t\t\t\tsoap_blist_%s = soap_alloc_block(soap);", ident(p->next->sym->name), ident(p->next->sym->name), ident(p->next->sym->name));
                 if (((Tnode*)p->next->info.typ->ref)->type == Tclass
                  || ((Tnode*)p->next->info.typ->ref)->type == Ttemplate
                  || has_class((Tnode*)p->next->info.typ->ref)
@@ -17338,7 +17370,7 @@ soap_in(Tnode *typ)
               flag = 1;
               fprintf(fout, "\n\t\t\tif (soap->error == SOAP_TAG_MISMATCH && ");
               fprintf(fout, "!soap_element_begin_in(soap, %s, 1, NULL))", field(p->next, nse1));
-              fprintf(fout, "\n\t\t\t{\tif (a->%s::%s == NULL)\n\t\t\t\t{\tif (soap_blist_%s%d == NULL)\n\t\t\t\t\t\tsoap_blist_%s%d = soap_new_block(soap);", ident(t->sym->name), ident(p->next->sym->name), ident(p->next->sym->name), i, ident(p->next->sym->name), i);
+              fprintf(fout, "\n\t\t\t{\tif (a->%s::%s == NULL)\n\t\t\t\t{\tif (soap_blist_%s%d == NULL)\n\t\t\t\t\t\tsoap_blist_%s%d = soap_alloc_block(soap);", ident(t->sym->name), ident(p->next->sym->name), ident(p->next->sym->name), i, ident(p->next->sym->name), i);
               if (((Tnode*)p->next->info.typ->ref)->type == Tclass
                || ((Tnode*)p->next->info.typ->ref)->type == Ttemplate
                || has_class((Tnode*)p->next->info.typ->ref)
@@ -17510,7 +17542,7 @@ soap_in(Tnode *typ)
                   fprintf(fout, "!soap_element_begin_in(soap, NULL, 1, NULL))");
                 else if (is_invisible(p->next->sym->name))
                   fprintf(fout, "!soap_peek_element(soap))");
-                fprintf(fout, "\n\t\t\t{\tif (a->%s::%s == NULL)\n\t\t\t\t{\tif (soap_blist_%s%d == NULL)\n\t\t\t\t\t\tsoap_blist_%s%d = soap_new_block(soap);", ident(t->sym->name), ident(p->next->sym->name), ident(p->next->sym->name), i, ident(p->next->sym->name), i);
+                fprintf(fout, "\n\t\t\t{\tif (a->%s::%s == NULL)\n\t\t\t\t{\tif (soap_blist_%s%d == NULL)\n\t\t\t\t\t\tsoap_blist_%s%d = soap_alloc_block(soap);", ident(t->sym->name), ident(p->next->sym->name), ident(p->next->sym->name), i, ident(p->next->sym->name), i);
                 if (((Tnode*)p->next->info.typ->ref)->type == Tclass
                  || ((Tnode*)p->next->info.typ->ref)->type == Ttemplate
                  || has_class((Tnode*)p->next->info.typ->ref)
@@ -18485,7 +18517,7 @@ soap_in_Darray(Tnode *typ)
       fprintf(fout, "\n\t\t\t\t}");
     }
     fprintf(fout, "\n\t\t\t}\n\t\t}\n\t\telse");
-    fprintf(fout, "\n\t\t{\tif (soap_new_block(soap) == NULL)\n\t\t\t\treturn NULL;");
+    fprintf(fout, "\n\t\t{\tif (soap_alloc_block(soap) == NULL)\n\t\t\t\treturn NULL;");
     if (p->info.maxOccurs > 1)
     {
       if (d)

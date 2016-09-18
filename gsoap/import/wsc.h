@@ -43,7 +43,7 @@
  *                                                                            *
 \******************************************************************************/
 
-/// Imported element ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":SecurityTokenReference" from typemap "/Users/engelen/Projects/gsoap/WS/WS-typemap.dat".
+/// Imported element ""http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd":SecurityTokenReference" from typemap "WS/WS-typemap.dat".
 
 
 /******************************************************************************\
@@ -97,9 +97,9 @@ struct wsc__SecurityContextTokenType
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this attribute.
 ///       Use wsdl2h option -d for xsd__anyAttribute DOM (soap_dom_attribute).
-/// Member declared in /Users/engelen/Projects/gsoap/WS/WS-typemap.dat
+/// Member declared in WS/WS-typemap.dat
        char*                                Identifier;
-/// Member declared in /Users/engelen/Projects/gsoap/WS/WS-typemap.dat
+/// Member declared in WS/WS-typemap.dat
        char*                                Instance;
 };
 

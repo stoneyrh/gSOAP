@@ -1040,11 +1040,8 @@ int
 SOAP_FMAC2
 soap_wsa_fault_subcode_action(struct soap *soap, int flag, const char *faultsubcode, const char *faultstring, const char *faultdetail, const char *action)
 {
-  struct soap_wsa_data *data = (struct soap_wsa_data*)soap_lookup_plugin(soap, soap_wsa_id);
   struct SOAP_ENV__Header *oldheader, *newheader;
-  DBGFUN2("soap_wsa_fault_subcode", "faultsubcode=%s", faultsubcode?faultsubcode:"(null)", "faultstring=%s", faultstring?faultstring:"(null)");
-  if (!data)
-    return soap->error = SOAP_PLUGIN_ERROR;
+  DBGFUN2("soap_wsa_fault_subcode_action", "faultsubcode=%s", faultsubcode ? faultsubcode : "(null)", "faultstring=%s", faultstring ? faultstring : "(null)");
   oldheader = soap->header;
   /* no FaultTo: use ReplyTo */
   if (oldheader && oldheader->SOAP_WSA(ReplyTo) && (!oldheader->SOAP_WSA(FaultTo) || soap_tagsearch(soap_wsa_allAnonymousURI, oldheader->SOAP_WSA(FaultTo)->Address)))
@@ -1058,51 +1055,53 @@ soap_wsa_fault_subcode_action(struct soap *soap, int flag, const char *faultsubc
     if (oldheader->SOAP_WSA(FaultTo))
       oldheader->SOAP_WSA(FaultTo)->Address = oldheader->SOAP_WSA(ReplyTo)->Address;
   }
-  if (oldheader && oldheader->SOAP_WSA(FaultTo))
-  {
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "WSA FaultTo='%s'\n", oldheader->SOAP_WSA(FaultTo)->Address));
-  }
+  /* use FaultTo */
   if (oldheader && oldheader->SOAP_WSA(FaultTo) && !strcmp(oldheader->SOAP_WSA(FaultTo)->Address, soap_wsa_noneURI))
     return soap_send_empty_response(soap, SOAP_OK);     /* HTTP ACCEPTED */
   soap->header = NULL;
   /* allocate a new header */
-  if (soap_wsa_alloc_header(soap))
-    return soap->error;
+  soap_header(soap);
   newheader = soap->header;
-  soap_default_SOAP_ENV__Header(soap, newheader); /* remove/clear SOAP Header */
-  /* check header */
-  if (oldheader && oldheader->SOAP_WSA(MessageID))
+  if (newheader)
   {
-    newheader->SOAP_WSA(RelatesTo) = (SOAP_WSA_(,RelatesTo)*)soap_malloc(soap, sizeof(SOAP_WSA_(,RelatesTo)));
-    SOAP_WSA_(soap_default_,RelatesTo)(soap, newheader->SOAP_WSA(RelatesTo));
-    newheader->SOAP_WSA(RelatesTo)->__item = oldheader->SOAP_WSA(MessageID);
-  }
-  /* header->wsa__MessageID = "..."; */
-  newheader->SOAP_WSA(Action) = (char*)soap_wsa_faultAction;
-  if (oldheader && oldheader->SOAP_WSA(FaultTo) && oldheader->SOAP_WSA(FaultTo)->Address && !soap_tagsearch(soap_wsa_allAnonymousURI, oldheader->SOAP_WSA(FaultTo)->Address))
-  {
-    newheader->SOAP_WSA(To) = oldheader->SOAP_WSA(FaultTo)->Address;
-    /* (re)connect to FaultTo endpoint if From != FaultTo */
-    if (!oldheader->SOAP_WSA(From) || !oldheader->SOAP_WSA(From)->Address || strcmp(oldheader->SOAP_WSA(From)->Address, oldheader->SOAP_WSA(FaultTo)->Address))
+    soap_default_SOAP_ENV__Header(soap, newheader); /* remove/clear SOAP Header */
+    /* check header */
+    if (oldheader && oldheader->SOAP_WSA(MessageID))
     {
-      soap->keep_alive = 0;
-      soap_send_empty_response(soap, SOAP_OK);  /* HTTP ACCEPTED */
-      if (soap_connect(soap, newheader->SOAP_WSA(To), newheader->SOAP_WSA(Action)))
-        return soap->error = SOAP_STOP; /* nowhere to go */
-      soap_set_endpoint(soap, newheader->SOAP_WSA(To));
-      if (action)
-        soap->action = (char*)action;
-      else
-        soap->action = newheader->SOAP_WSA(Action);
-      data->fresponse = soap->fresponse;
-      soap->fresponse = soap_wsa_response;      /* response will be a POST */
+      newheader->SOAP_WSA(RelatesTo) = (SOAP_WSA_(,RelatesTo)*)soap_malloc(soap, sizeof(SOAP_WSA_(,RelatesTo)));
+      SOAP_WSA_(soap_default_,RelatesTo)(soap, newheader->SOAP_WSA(RelatesTo));
+      newheader->SOAP_WSA(RelatesTo)->__item = oldheader->SOAP_WSA(MessageID);
     }
+    /* header->wsa__MessageID = "..."; */
+    newheader->SOAP_WSA(Action) = (char*)soap_wsa_faultAction;
+    if (oldheader && oldheader->SOAP_WSA(FaultTo) && oldheader->SOAP_WSA(FaultTo)->Address && !soap_tagsearch(soap_wsa_allAnonymousURI, oldheader->SOAP_WSA(FaultTo)->Address))
+    {
+      newheader->SOAP_WSA(To) = oldheader->SOAP_WSA(FaultTo)->Address;
+      /* (re)connect to FaultTo endpoint if From != FaultTo */
+      if (!oldheader->SOAP_WSA(From) || !oldheader->SOAP_WSA(From)->Address || strcmp(oldheader->SOAP_WSA(From)->Address, oldheader->SOAP_WSA(FaultTo)->Address))
+      {
+	struct soap_wsa_data *data = (struct soap_wsa_data*)soap_lookup_plugin(soap, soap_wsa_id);
+	if (!data)
+	  return soap->error = SOAP_PLUGIN_ERROR;
+	soap->keep_alive = 0;
+	soap_send_empty_response(soap, SOAP_OK);  /* HTTP ACCEPTED */
+	if (soap_connect(soap, newheader->SOAP_WSA(To), newheader->SOAP_WSA(Action)))
+	  return soap->error = SOAP_STOP; /* nowhere to go */
+	soap_set_endpoint(soap, newheader->SOAP_WSA(To));
+	if (action)
+	  soap->action = (char*)action;
+	else
+	  soap->action = newheader->SOAP_WSA(Action);
+	data->fresponse = soap->fresponse;
+	soap->fresponse = soap_wsa_response;      /* response will be a POST */
+      }
+    }
+    else if (oldheader && oldheader->SOAP_WSA(From))
+      newheader->SOAP_WSA(To) = oldheader->SOAP_WSA(From)->Address;
+    else
+      newheader->SOAP_WSA(To) = (char*)soap_wsa_anonymousURI;
+    soap->header = newheader;
   }
-  else if (oldheader && oldheader->SOAP_WSA(From))
-    newheader->SOAP_WSA(To) = oldheader->SOAP_WSA(From)->Address;
-  else
-    newheader->SOAP_WSA(To) = (char*)soap_wsa_anonymousURI;
-  soap->header = newheader;
   if (flag)
     return soap_sender_fault_subcode(soap, faultsubcode, faultstring, faultdetail);
   return soap_receiver_fault_subcode(soap, faultsubcode, faultstring, faultdetail);
@@ -1357,7 +1356,7 @@ soap_wsa_error(struct soap *soap, SOAP_WSA(FaultCodesType) fault, const char *in
         soap->fault->detail->__type = SOAP_WSA_(SOAP_TYPE_,ProblemHeaderQName);
         soap->fault->detail->fault = (void*)info;
       }
-      else
+      else if (soap->version == 2)
       {
         soap->fault->SOAP_ENV__Detail->__type = SOAP_WSA_(SOAP_TYPE_,ProblemHeaderQName);
         soap->fault->SOAP_ENV__Detail->fault = (void*)info;
@@ -1389,7 +1388,7 @@ soap_wsa_error(struct soap *soap, SOAP_WSA(FaultCodesType) fault, const char *in
         soap->fault->detail->__type = SOAP_WSA_(SOAP_TYPE_,ProblemHeaderQName);
         soap->fault->detail->fault = (void*)info;
       }
-      else
+      else if (soap->version == 2)
       {
         soap->fault->SOAP_ENV__Detail->__type = SOAP_WSA_(SOAP_TYPE_,ProblemHeaderQName);
         soap->fault->SOAP_ENV__Detail->fault = (void*)info;
@@ -1403,7 +1402,7 @@ soap_wsa_error(struct soap *soap, SOAP_WSA(FaultCodesType) fault, const char *in
         soap->fault->detail->__type = SOAP_WSA_(SOAP_TYPE_,ProblemIRI);
         soap->fault->detail->fault = (void*)info;
       }
-      else
+      else if (soap->version == 2)
       {
         soap->fault->SOAP_ENV__Detail->__type = SOAP_WSA_(SOAP_TYPE_,ProblemIRI);
         soap->fault->SOAP_ENV__Detail->fault = (void*)info;
@@ -1419,7 +1418,7 @@ soap_wsa_error(struct soap *soap, SOAP_WSA(FaultCodesType) fault, const char *in
         SOAP_WSA_(soap_default_,ProblemAction)(soap, (SOAP_WSA_(,ProblemAction)*)soap->fault->detail->fault);
         ((SOAP_WSA_(,ProblemAction)*)soap->fault->detail->fault)->Action = (char*)info;
       }
-      else
+      else if (soap->version == 2)
       {
         soap->fault->SOAP_ENV__Detail->__type = SOAP_WSA_(SOAP_TYPE_,ProblemAction);
         soap->fault->SOAP_ENV__Detail->fault = (void*)soap_malloc(soap, sizeof(SOAP_WSA_(,ProblemAction)));
@@ -1435,7 +1434,7 @@ soap_wsa_error(struct soap *soap, SOAP_WSA(FaultCodesType) fault, const char *in
         soap->fault->detail->__type = SOAP_WSA_(SOAP_TYPE_,ProblemIRI);
         soap->fault->detail->fault = (void*)info;
       }
-      else
+      else if (soap->version == 2)
       {
         soap->fault->SOAP_ENV__Detail->__type = SOAP_WSA_(SOAP_TYPE_,ProblemIRI);
         soap->fault->SOAP_ENV__Detail->fault = (void*)info;
@@ -1614,7 +1613,7 @@ static void
 soap_wsa_set_error(struct soap *soap, const char **c, const char **s)
 {
   struct soap_wsa_data *data = (struct soap_wsa_data*)soap_lookup_plugin(soap, soap_wsa_id);
-  DBGFUN("soap_wsa_set_error");
+  DBGFUN2("soap_wsa_set_error", "code=%s", c && *c ? *c : "(null)", "string=%s", s && *s ? *s : "(null)");
   if (!data)
     return;
   if (data->fseterror)
