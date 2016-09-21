@@ -1081,14 +1081,19 @@ Version 2.8.34 (08/17/2016)
 - Fixed WS-Security interoperability issues, fixes issues with XML encryption. Token handler callback has new parameters to pass the key data of SecurityTokenReference/KeyIdentifier.
 - Fixed the internal `feltbegout` and `feltendout` callbacks: when set no longer emits XML and (alternative) output is expected to be emitted by these callbacks.
 
-Version 2.8.35 (09/19/2016) {#latest}
+Version 2.8.35 (09/19/2016)
 ---
 
 - Added auto-generation of new C functions `T * soap_new_T(struct soap*, int n)` to allocate and default initialize one (or more with `n>1`) value(s) of type `T`. Uses `soap_malloc(soap, n * sizeof(T))` and applies `soap_default_T(struct soap*, T*)` to each value allocated.
-- Added WS-Trust wst extensible framework with SAML 1.0/2.0  tokens, PSHA1 algorithm, and an example WS-Trust client and server to request, create, sign, and verify SAML 2.0 tokens.
+- Added WS-Trust wst extensible framework with SAML 1.0/2.0 tokens, PSHA1 algorithm, and an example WS-Trust client and server to request, create, sign, and verify SAML 2.0 tokens.
 - Changed `soap_new_block` to `soap_alloc_block` in stdsoap2.h and in the gsoap libs to prevent potential name clashes with generated code for a `block` type.
 - Improved UDP connectivity with WS-Discovery to reuse current socket connection, i.e. preventing premature socket close when `soap->socket` is the `soap->master` socket.
 - Fixed wsdl2h option `-u` to prevent a deserialization issue that occurs in the specific case of an *`<xs:any>`* within a *`<xs:choice maxOccurs="unbounded">`*.
+
+Version 2.8.36 (09/21/2016) {#latest}
+---
+
+- Fixed a problem with `SOAP_ENV__Header` missing in wsdl2h-generated .h file (problem occurs with 2.8.34/35 due to an update for headerfaults).
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -2503,7 +2503,7 @@ void Definitions::generate()
     banner("Custom SOAP Header");
     types.format(t);
   }
-  else if (!jflag && !headers.empty() && !headerfaults.empty())
+  else if (!jflag && (!headers.empty() || !headerfaults.empty()))
   {
     banner("SOAP Header");
     fprintf(stream, "/**\n\nThe SOAP Header is part of the gSOAP context and its content is accessed\nthrough the soap.header variable. You may have to set the soap.actor variable\nto serialize SOAP Headers with SOAP-ENV:actor or SOAP-ENV:role attributes.\nUse option -j to remove entire SOAP Header definition.\nUse option -k to remove the mustUnderstand qualifiers.\n\n*/\n");

@@ -30,8 +30,8 @@ Kernel configured for up to 4 processors.
 Processor type: i486 (Intel 80486)
 Processors active: 0 1 2 3
 Primary memory available: 4.00 gigabytes
-Default processor set: 194 tasks, 979 threads, 4 processors
-Load average: 1.02, Mach factor: 2.97
+Default processor set: 228 tasks, 1065 threads, 4 processors
+Load average: 1.09, Mach factor: 2.89
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -203,8 +203,8 @@ configure:4608: checking lex library
 configure:4622: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in conftest-694156.o
-      _main in conftest-694156.o
+      _yylex in conftest-58e21f.o
+      _main in conftest-58e21f.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:4622: $? = 1
@@ -5000,7 +5000,7 @@ configure:5996: checking for gethostbyname_r
 configure:5996: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-198ec9.o
+      _main in conftest-da86a8.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:5996: $? = 1
