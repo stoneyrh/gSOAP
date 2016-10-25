@@ -7591,8 +7591,8 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, const char *name)
   fprintf(fd, "\nint %s::ssl_accept()\n{\treturn soap_ssl_accept(%s);\n}", name, soap);
   fprintf(fd, "\n#endif");
   fprintf(fd, "\n\nint %s::serve()", name);
-  fprintf(fd, "\n{\n#ifndef WITH_FASTCGI\n\tunsigned int k = %s->max_keep_alive;\n#endif\n\tdo\n\t{", soap);
-  fprintf(fd, "\n#ifndef WITH_FASTCGI\n\t\tif (%s->max_keep_alive > 0 && !--k)\n\t\t\t%s->keep_alive = 0;\n#endif", soap, soap);
+  fprintf(fd, "\n{\n#ifndef WITH_FASTCGI\n\t%s->keep_alive = %s->max_keep_alive + 1;\n#endif\n\tdo\n\t{", soap, soap);
+  fprintf(fd, "\n#ifndef WITH_FASTCGI\n\t\tif (%s->keep_alive > 0 && %s->max_keep_alive > 0)\n\t\t\t%s->keep_alive--;\n#endif", soap, soap, soap);
   fprintf(fd, "\n\t\tif (soap_begin_serve(%s))\n\t\t{\tif (%s->error >= SOAP_STOP)\n\t\t\t\tcontinue;\n\t\t\treturn %s->error;\n\t\t}", soap, soap, soap);
   fprintf(fd, "\n\t\tif ((dispatch() || (%s->fserveloop && %s->fserveloop(%s))) && %s->error && %s->error < SOAP_STOP)\n\t\t{\n#ifdef WITH_FASTCGI\n\t\t\tsoap_send_fault(%s);\n#else\n\t\t\treturn soap_send_fault(%s);\n#endif\n\t\t}", soap, soap, soap, soap, soap, soap, soap);
   fprintf(fd, "\n#ifdef WITH_FASTCGI\n\t\tsoap_destroy(%s);\n\t\tsoap_end(%s);\n\t} while (1);\n#else\n\t} while (%s->keep_alive);\n#endif", soap, soap, soap);
@@ -8838,8 +8838,8 @@ soap_serve(Table *table)
     if (!cflag && !namespaceid)
       fprintf(fserver, "extern \"C\" ");
     fprintf(fserver, "SOAP_FMAC5 int SOAP_FMAC6 %s_serve(struct soap *soap)", nflag?prefix:"soap");
-    fprintf(fserver, "\n{\n#ifndef WITH_FASTCGI\n\tunsigned int k = soap->max_keep_alive;\n#endif\n\tdo\n\t{");
-    fprintf(fserver, "\n#ifndef WITH_FASTCGI\n\t\tif (soap->max_keep_alive > 0 && !--k)\n\t\t\tsoap->keep_alive = 0;\n#endif");
+    fprintf(fserver, "\n{\n#ifndef WITH_FASTCGI\n\tsoap->keep_alive = soap->max_keep_alive + 1;\n#endif\n\tdo\n\t{");
+    fprintf(fserver, "\n#ifndef WITH_FASTCGI\n\t\tif (soap->keep_alive > 0 && soap->max_keep_alive > 0)\n\t\t\tsoap->keep_alive--;\n#endif");
     fprintf(fserver, "\n\t\tif (soap_begin_serve(soap))\n\t\t{\tif (soap->error >= SOAP_STOP)\n\t\t\t\tcontinue;\n\t\t\treturn soap->error;\n\t\t}");
     if (namespaceid)
       fprintf(fserver, "\n\t\tif ((%s::%s_serve_request(soap) || (soap->fserveloop && soap->fserveloop(soap))) && soap->error && soap->error < SOAP_STOP)\n\t\t{\n#ifdef WITH_FASTCGI\n\t\t\tsoap_send_fault(soap);\n#else\n\t\t\treturn soap_send_fault(soap);\n#endif\n\t\t}", namespaceid, nflag?prefix:"soap");
@@ -11157,20 +11157,16 @@ xsi_type_Tarray(Tnode *typ)
 const char *
 xsi_type_Darray(Tnode *typ)
 {
-#if 0 /* deprecated behavior */
   Tnode *t;
   int cardinality;
   char *p;
   const char *s;
-#endif
   Entry *q;
   if (!typ->ref)
     return "";
   q = ((Table*)typ->ref)->list;
   while (q && q->info.typ->type == Tfun)
     q = q->next;
-  return xsi_type(q->info.typ->ref);
-#if 0 /* deprecated behavior */
   t = (Tnode*)q->info.typ->ref;
   cardinality = 1;
   while (t->type == Tarray || (is_dynamic_array(t) && !has_ns(t) && !is_untyped(t) && !is_binary(t)))
@@ -11199,7 +11195,6 @@ xsi_type_Darray(Tnode *typ)
     strcat(p, "]");
   }
   return p;
-#endif
 }
 
 void

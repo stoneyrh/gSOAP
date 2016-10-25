@@ -36,7 +36,12 @@ CMFLAGS=
 #
 CFLAGS=$(CWFLAGS) $(COFLAGS) $(CIFLAGS) $(CMFLAGS)
 #
-all:		clean wsdl2h
+release:
+		$(MAKE) distclean
+		$(MAKE) wsdl2h
+secure:
+		$(MAKE) distclean
+		$(MAKE) CMFLAGS='-Wno-deprecated-declarations -DWITH_OPENSSL' LIBS="httpda.o smdevp.o -lcrypto -lssl -lm $(SOCKLIB)" httpda.o smdevp.o wsdl2h
 wsdl2h:		wsdlC.o wsdl2h.o wsdl.o wadl.o schema.o soap.o mime.o wsp.o bpel.o types.o service.o stdsoap2.o
 		$(CPP) -o wsdl2h wsdlC.o wsdl2h.o wsdl.o wadl.o schema.o soap.o mime.o wsp.o bpel.o types.o service.o stdsoap2.o $(LIBS)
 		-cp -f wsdl2h ../bin
@@ -70,8 +75,6 @@ httpda.o:	$(PLUGIN)/httpda.c
 		$(CC) -c $(CFLAGS) $(PLUGIN)/httpda.c
 smdevp.o:	$(PLUGIN)/smdevp.c
 		$(CC) -c $(CFLAGS) $(PLUGIN)/smdevp.c
-secure:		clean
-		make CMFLAGS='-Wno-deprecated-declarations -DWITH_OPENSSL' LIBS="httpda.o smdevp.o -lcrypto -lssl -lm $(SOCKLIB)" httpda.o smdevp.o wsdl2h
 .PHONY:		clean distclean
 clean:		
 		-rm -f *.o wsdlH.h wsdlStub.h wsdlC.cpp wsdlClient.cpp wsdlServer.cpp wsdlClientLib.cpp wsdlServerLib.cpp

@@ -688,7 +688,7 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
   const char *p, *s, *name;
   if (!qname)
   {
-    fprintf(stream, "// Warning: internal error, no QName in fname()\n");
+    fprintf(stream, "// Warning: FIXME internal error, no QName in fname()\n");
     if (vflag)
       fprintf(stderr, "Internal error, no QName in fname()\n");
     qname = "?";
@@ -2883,13 +2883,16 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
   }
   else if (attribute.ref)
   {
+    if (!type)
+      type = attribute.ref;
     fprintf(stream, "/// Imported attribute reference %s.\n", attribute.ref);
     fprintf(stream, attributeformat, pname(is_optional, true, "_", NULL, attribute.ref), aname(NULL, NULL, attribute.ref));
   }
   else
   {
+    type = "xs:string";
     fprintf(stream, "/// Attribute \"%s\" has no type or ref: assuming string content.\n", name ? name : "");
-    fprintf(stream, attributeformat, tname(NULL, NULL, "xs:string"), aname(NULL, nameURI, name));
+    fprintf(stream, attributeformat, pname(is_optional, true, NULL, NULL, type), aname(NULL, nameURI, name));
   }
   switch (attribute.use)
   {
@@ -3436,7 +3439,9 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       fprintf(stream, elementformat, "_XML", aname(NULL, nameURI, name));
   }
   else
+  {
     fprintf(stream, "/// Element has no name, type, or ref.\n");
+  }
   if (!substok
    || (   !(element.elementPtr() && element.elementPtr()->abstract)
        && !(element.substitutionsPtr() && !element.substitutionsPtr()->empty())
@@ -4042,7 +4047,7 @@ void Types::gendefault(const char *URI, const char *type, const char *name, xs__
       t = cname(NULL, URI, p->restriction->base);
     }
   }
-  else
+  else if (type)
   {
     t = cname(NULL, URI, type);
   }

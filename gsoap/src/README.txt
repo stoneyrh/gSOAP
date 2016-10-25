@@ -132,12 +132,14 @@ COMMAND LINE OPTIONS
 -s      generate deserialization code with strict XML validation checks
 -t      generate code for fully xsi:type typed SOAP/XML messaging
 -u	uncomment comments in WSDL/schema output by suppressing XML comments
+-V	display the current version and exit
 -v	verbose output
 -w	don't generate WSDL and schema files
 -x	don't generate sample XML message files
 -y	include C/C++ type access information in sample XML messages
 -z1	generate deprecated old-style C++ service proxies and objects
 -z2	compatibility with 2.7.x: omit XML output for NULL pointers
+-z3	compatibility with 2.8.30 and earlier: _param_N is indexed globally
 infile	header file to parse (or stdin)
 
 DOCUMENTATION

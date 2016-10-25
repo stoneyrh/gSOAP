@@ -1,7 +1,7 @@
 /*
-	wsdl2h.cpp
+        wsdl2h.cpp
 
-	WSDL/WADL/XSD parser and translator to the gSOAP header file format
+        WSDL/WADL/XSD parser and translator to the gSOAP header file format
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -31,13 +31,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 
 Build:
-	soapcpp2 -ipwsdl wsdl.h
-	g++ -o wsdl2h wsdl2h.cpp types.cpp service.cpp wsdl.cpp schema.cpp wsdlC.cpp stdsoap2.cpp
-	
+        soapcpp2 -ipwsdl wsdl.h
+        g++ -o wsdl2h wsdl2h.cpp types.cpp service.cpp wsdl.cpp schema.cpp wsdlC.cpp stdsoap2.cpp
+        
 TODO:
-	Resolve relative versus absolute import paths for reading imported WSDL/schema (use URL local addresses)
-	Do not generate abstract complexTypes, but include defs in derived types
-	Handle simpleType derivation from base64
+        Resolve relative versus absolute import paths for reading imported WSDL/schema (use URL local addresses)
+        Do not generate abstract complexTypes, but include defs in derived types
+        Handle simpleType derivation from base64
 
 */
 
@@ -164,8 +164,10 @@ A commercial-use license is available from Genivia, Inc., contact@genivia.com\n\
 
 int main(int argc, char **argv)
 {
-  fprintf(stderr, "%s", copyrightnotice);
   options(argc, argv);
+  fprintf(stderr, "%s", copyrightnotice);
+  if (!infiles)
+    fprintf(stderr, "Reading from stdin...\n");
   init();
   if (cppnamespace)
     fprintf(stream, "namespace %s {\n", cppnamespace);
@@ -192,7 +194,7 @@ int main(int argc, char **argv)
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//	Initialization
+//      Initialization
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -213,7 +215,7 @@ static void init()
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//	Parse command line options
+//      Parse command line options
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -234,56 +236,56 @@ static void options(int argc, char **argv)
       int g = 1;
       while (g && *++a)
       {
-	switch (*a)
+        switch (*a)
         {
-	  case '_':
+          case '_':
             _flag = 1;
-       	    break;
+            break;
           case 'a':
             aflag = 1;
-       	    break;
+            break;
           case 'b':
             bflag = 1;
-       	    break;
+            break;
           case 'c':
-	    if (a[1] == '+' && a[2] == '+')
-	    {
-	      a += 2;
-	      if (a[1] == '1' && a[2] == '1')
-	      {
-		a += 2;
-		c11flag = 1;
-	      }
-	      cflag = 0;
-	    }
-	    else
-	    {
-	      cflag = 1;
-	      if (cppnamespace)
-		fprintf(stderr, "wsdl2h: Options -c and -q cannot be used together\n");
-	    }
-       	    break;
-	  case 'd':
-	    dflag = 1;
-	    break;
-	  case 'e':
-	    eflag = 1;
-	    break;
-	  case 'f':
-	    fflag = 1;
-	    break;
-	  case 'g':
-	    gflag = 1;
-	    break;
-	  case 'i':
-	    iflag = 1;
-	    break;
-	  case 'j':
-	    jflag = 1;
-	    break;
-	  case 'k':
-	    kflag = 1;
-	    break;
+            if (a[1] == '+' && a[2] == '+')
+            {
+              a += 2;
+              if (a[1] == '1' && a[2] == '1')
+              {
+                a += 2;
+                c11flag = 1;
+              }
+              cflag = 0;
+            }
+            else
+            {
+              cflag = 1;
+              if (cppnamespace)
+                fprintf(stderr, "wsdl2h: Options -c and -q cannot be used together\n");
+            }
+            break;
+          case 'd':
+            dflag = 1;
+            break;
+          case 'e':
+            eflag = 1;
+            break;
+          case 'f':
+            fflag = 1;
+            break;
+          case 'g':
+            gflag = 1;
+            break;
+          case 'i':
+            iflag = 1;
+            break;
+          case 'j':
+            jflag = 1;
+            break;
+          case 'k':
+            kflag = 1;
+            break;
           case 'I':
             a++;
             g = 0;
@@ -293,17 +295,17 @@ static void options(int argc, char **argv)
               import_path = argv[i];
             else
               fprintf(stderr, "wsdl2h: Option -I requires a path argument\n");
-	    break;
-	  case 'l':
+            break;
+          case 'l':
             fprintf(stderr, "%s", licensenotice);
-	    exit(0);
-	    break;
-	  case 'm':
-	    mflag = 1;
-	    break;
-	  case 'M':
-	    Mflag = 1;
-	    break;
+            exit(0);
+            break;
+          case 'm':
+            mflag = 1;
+            break;
+          case 'M':
+            Mflag = 1;
+            break;
           case 'n':
             a++;
             g = 0;
@@ -313,7 +315,7 @@ static void options(int argc, char **argv)
               schema_prefix = argv[i];
             else
               fprintf(stderr, "wsdl2h: Option -n requires a prefix name argument\n");
-	    break;
+            break;
           case 'N':
             a++;
             g = 0;
@@ -323,7 +325,7 @@ static void options(int argc, char **argv)
               service_prefix = argv[i];
             else
               fprintf(stderr, "wsdl2h: Option -N requires a prefix name argument\n");
-	    break;
+            break;
           case 'o':
             a++;
             g = 0;
@@ -333,26 +335,26 @@ static void options(int argc, char **argv)
               outfile = argv[i];
             else
               fprintf(stderr, "wsdl2h: Option -o requires an output file argument\n");
-	    break;
-	  case 'p':
-	    pflag = 1;
-	    break;
-	  case 'P':
-	    Pflag = 1;
-	    break;
-	  case 'q':
+            break;
+          case 'p':
+            pflag = 1;
+            break;
+          case 'P':
+            Pflag = 1;
+            break;
+          case 'q':
             a++;
             g = 0;
             if (*a)
-	      cppnamespace = a;
+              cppnamespace = a;
             else if (i < argc && argv[++i])
               cppnamespace = argv[i];
             else
               fprintf(stderr, "wsdl2h: Option -q requires a C++ namespace name argument\n");
             if (cflag)
-	      fprintf(stderr, "wsdl2h: Options -c and -q cannot be used together\n");
-	    break;
-	  case 'r':
+              fprintf(stderr, "wsdl2h: Options -c and -q cannot be used together\n");
+            break;
+          case 'r':
             a++;
             g = 0;
             if (*a)
@@ -362,51 +364,51 @@ static void options(int argc, char **argv)
             else
               fprintf(stderr, "wsdl2h: Option -r requires proxy host:port:userid:passwd or :userid:passwd authentication argument\n");
             if (proxy_host)
-	    {
-	      size_t l = strlen(proxy_host);
-	      char *s = (char*)emalloc(l + 1);
-	      soap_strcpy(s, l + 2, proxy_host);
-	      proxy_host = s;
-	      s = strchr(proxy_host, ':');
-	      if (s)
-	      {
-		*s = '\0';
-		if (*proxy_host)
-	        {
-		  proxy_port = soap_strtol(s + 1, &s, 10);
-		  if (s && *s == ':')
-	          {
-		    *s = '\0';
-		    proxy_userid = s + 1;
-		    s = strchr(proxy_userid, ':');
-		    if (s && *s == ':')
-		    {
-		      *s = '\0';
-		      proxy_passwd = s + 1;
-		    }
-		  }
-	        }
-		else
-		{
-		  s = proxy_host;
-		  proxy_host = NULL;
-		  auth_userid = s + 1;
+            {
+              size_t l = strlen(proxy_host);
+              char *s = (char*)emalloc(l + 1);
+              soap_strcpy(s, l + 2, proxy_host);
+              proxy_host = s;
+              s = strchr(proxy_host, ':');
+              if (s)
+              {
+                *s = '\0';
+                if (*proxy_host)
+                {
+                  proxy_port = soap_strtol(s + 1, &s, 10);
+                  if (s && *s == ':')
+                  {
+                    *s = '\0';
+                    proxy_userid = s + 1;
+                    s = strchr(proxy_userid, ':');
+                    if (s && *s == ':')
+                    {
+                      *s = '\0';
+                      proxy_passwd = s + 1;
+                    }
+                  }
+                }
+                else
+                {
+                  s = proxy_host;
+                  proxy_host = NULL;
+                  auth_userid = s + 1;
                   s = strchr(auth_userid, ':');
-		  if (s && *s == ':')
-		  {
-		    *s = '\0';
-		    auth_passwd = s + 1;
-		  }
-		}
-	      }
-	    }
-	    break;
-	  case 'R':
-	    Rflag = 1;
-	    break;
-	  case 's':
-	    sflag = 1;
-	    break;
+                  if (s && *s == ':')
+                  {
+                    *s = '\0';
+                    auth_passwd = s + 1;
+                  }
+                }
+              }
+            }
+            break;
+          case 'R':
+            Rflag = 1;
+            break;
+          case 's':
+            sflag = 1;
+            break;
           case 't':
             a++;
             g = 0;
@@ -416,44 +418,47 @@ static void options(int argc, char **argv)
               mapfile = argv[i];
             else
               fprintf(stderr, "wsdl2h: Option -t requires a type map file argument\n");
-	    break;
-	  case 'U':
-	    Uflag = 1;
-	    break;
-	  case 'u':
-	    uflag = 1;
-	    break;
-	  case 'v':
-	    vflag = 1;
-	    break;
-	  case 'w':
-	    wflag = 1;
-	    break;
-	  case 'W':
-	    Wflag = 1;
-	    break;
-	  case 'x':
-	    xflag = 1;
-	    break;
-	  case 'y':
-	    yflag = 1;
-	    break;
-	  case 'z':
+            break;
+          case 'U':
+            Uflag = 1;
+            break;
+          case 'u':
+            uflag = 1;
+            break;
+          case 'V':
+            printf("%s", WSDL2H_VERSION);
+            exit(0);
+          case 'v':
+            vflag = 1;
+            break;
+          case 'w':
+            wflag = 1;
+            break;
+          case 'W':
+            Wflag = 1;
+            break;
+          case 'x':
+            xflag = 1;
+            break;
+          case 'y':
+            yflag = 1;
+            break;
+          case 'z':
             a++;
             g = 0;
             if (*a)
               zflag = soap_strtol(a, NULL, 10);
             else if (i < argc && argv[++i])
               zflag = soap_strtol(argv[i], NULL, 10);
-	    else
-	      zflag = 1;
-	    break;
+            else
+              zflag = 1;
+            break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-M] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-t typemapfile] [-U] [-u] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-M] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
--b	bi-directional operations (duplex ops) added to serve one-way responses\n\
+-b      bi-directional operations (duplex ops) added to serve one-way responses\n\
 -c      generate C source code\n\
 -c++    generate C++ source code (default)\n\
 -c++11  generate C++11 source code\n\
@@ -484,6 +489,7 @@ static void options(int argc, char **argv)
 -tfile  use type map file instead of the default file typemap.dat\n\
 -U      allow UTF8-encoded Unicode C/C++ identifiers when mapping XML tag names\n\
 -u      don't generate unions\n\
+-V      display the current version and exit\n\
 -v      verbose output\n\
 -W      suppress warnings\n\
 -w      always wrap response parameters in a response struct (<=1.1.4 behavior)\n\
@@ -496,7 +502,7 @@ static void options(int argc, char **argv)
 -z5     compatibility up to 2.8.15\n\
 -z6     compatibility up to 2.8.17\n\
 -_      don't generate _USCORE (replace with UNICODE _x005f)\n\
-infile.wsdl infile.xsd http://www... list of input sources (if none: use stdin)\n\
+infile.wsdl infile.xsd http://www... list of input sources (if none reads stdin)\n\
 \n");
             exit(0);
           default:
@@ -510,7 +516,7 @@ infile.wsdl infile.xsd http://www... list of input sources (if none: use stdin)\
       infile[infiles++] = argv[i];
       if (infiles >= MAXINFILES)
       {
-	fprintf(stderr, "wsdl2h: too many files\n");
+        fprintf(stderr, "wsdl2h: too many files\n");
         exit(1);
       }
     }
@@ -521,17 +527,17 @@ infile.wsdl infile.xsd http://www... list of input sources (if none: use stdin)\
     {
       if (strncmp(infile[0], "http://", 7) && strncmp(infile[0], "https://", 8))
       {
-	const char *s = strrchr(infile[0], '.');
+        const char *s = strrchr(infile[0], '.');
         if (s && (!soap_tag_cmp(s, ".wsdl") || !soap_tag_cmp(s, ".wadl") || !soap_tag_cmp(s, ".gwsdl") || !soap_tag_cmp(s, ".xsd")))
         {
-	  outfile = estrdup(infile[0]);
+          outfile = estrdup(infile[0]);
           outfile[s - infile[0] + 1] = 'h';
           outfile[s - infile[0] + 2] = '\0';
         }
         else
         {
-	  size_t l = strlen(infile[0]);
-	  outfile = (char*)emalloc(l + 3);
+          size_t l = strlen(infile[0]);
+          outfile = (char*)emalloc(l + 3);
           soap_strcpy(outfile, l + 3, infile[0]);
           soap_strcpy(outfile + l, 3, ".h");
         }
@@ -542,7 +548,7 @@ infile.wsdl infile.xsd http://www... list of input sources (if none: use stdin)\
       stream = fopen(outfile, "w");
       if (!stream)
       {
-	fprintf(stderr, "Cannot write to %s\n", outfile);
+        fprintf(stderr, "Cannot write to %s\n", outfile);
         exit(1);
       }
       fprintf(stderr, "Saving %s\n\n", outfile);
@@ -552,7 +558,7 @@ infile.wsdl infile.xsd http://www... list of input sources (if none: use stdin)\
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//	Namespaces
+//      Namespaces
 //
 ////////////////////////////////////////////////////////////////////////////////
 

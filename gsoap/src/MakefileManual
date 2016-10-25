@@ -31,21 +31,18 @@ CMFLAGS=-DWITH_BISON -DWITH_FLEX
 #
 CFLAGS= $(CWFLAGS) $(COFLAGS) $(CIFLAGS) $(CMFLAGS)
 #
-all:		allclean soapcpp2
+release:
+		$(MAKE) distclean
+		$(YACC) -d -v soapcpp2_yacc.y
+		$(LEX) soapcpp2_lex.l
+		$(MAKE) soapcpp2
 soapcpp2:	soapcpp2.h soapcpp2_yacc.tab.o symbol2.o error2.o lex.yy.o init2.o soapcpp2.o
 		$(CC) symbol2.o error2.o soapcpp2_yacc.tab.o lex.yy.o init2.o soapcpp2.o $(LIBS) -o $@
 		-cp -f soapcpp2 ../bin
-soapcpp2_yacc.tab.c:	soapcpp2_yacc.y soapcpp2.h error2.h
-		$(YACC) -d -v soapcpp2_yacc.y
-lex.yy.c:	soapcpp2_yacc.tab.h soapcpp2_yacc.tab.c soapcpp2_lex.l
-		$(LEX) soapcpp2_lex.l
-.c.o:		soapcpp2.h soapcpp2_yacc.tab.h error2.h
+.c.o:		soapcpp2_yacc.tab.h soapcpp2.h error2.h
 		$(CC) $(CFLAGS) -c $<
-.PHONY:		clean distclean allclean
+.PHONY:		clean distclean
 clean:		
 		-rm -f *.o
 distclean:		
 		-rm -f soapcpp2 *.o *.output
-allclean:
-		-rm -f soapcpp2 *.o *.output
-		-rm -f lex.yy.c soapcpp2_yacc.tab.h soapcpp2_yacc.tab.c

@@ -67,7 +67,7 @@ protocol NoDiscard behavior is implemented by starting a thread for each
 inbound message and letting the thread block with the
 soap_wsrm_check_and_wait() or soap_wsrm_check_send_empty_response_and_wait()
 calls. However, that approach is not efficient with HTTP keep-alive because the
-next messages on the keep-alive socket will be blocked from being processes.
+next messages on the keep-alive socket will be blocked from being processed.
 This plugin is designed to process messages on an HTTP keep-alive socket even
 when operations block.
 
@@ -334,6 +334,7 @@ soap_mq_recv(struct soap *soap, char *buf, size_t len)
 static int
 soap_mq_serveloop(struct soap *soap)
 {
+  soap->keep_alive = 0;
   return soap->error = SOAP_STOP;
 }
 
@@ -388,7 +389,8 @@ soap_mq_get(struct soap *soap, struct soap_mq_queue *mq)
   msg->next = NULL;
   soap_copy_context(&msg->soap, soap);
   msg->buf = soap_get_http_body(soap, &msg->len);
-  soap_end_recv(soap);
+  if (soap_end_recv(soap))
+    return NULL;
   if (!msg->buf)
     return NULL;
   soap_mq_set(msg);

@@ -168,6 +168,7 @@ COMMAND LINE OPTIONS
 -s      don't generate STL code (no std::string and no std::vector)
 -tfile  use type map file instead of the default file typemap.dat
 -u      don't generate unions
+-V      display the current version and exit
 -v      verbose output
 -W      suppress warnings
 -w      always wrap response parameters in a response struct (<=1.1.4 behavior)

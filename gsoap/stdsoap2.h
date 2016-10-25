@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.36
+        stdsoap2.h 2.8.37
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20836
+#define GSOAP_VERSION 20837
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1213,7 +1213,7 @@ extern "C" {
 #endif
 
 /* Max number of EINTR while poll/select on a socket */
-/* Each EINTR can lengthen the I/O blocking time by at most one second */
+/* Each EINTR may increase the I/O blocking time by at most one second */
 #ifndef SOAP_MAXEINTR
 # define SOAP_MAXEINTR (10)
 #endif
@@ -1559,6 +1559,8 @@ typedef soap_int32 soap_status;
 #define SOAP_PUT                2003    /* PUT request */
 #define SOAP_DEL                2004    /* DELETE request */
 #define SOAP_CONNECT            2005    /* CONNECT request */
+#define SOAP_HEAD               2006    /* HEAD request */
+#define SOAP_OPTIONS            2007    /* OPTIONS request */
 
 /* gSOAP DIME */
 
@@ -2678,18 +2680,24 @@ struct SOAP_CMAC soap
   const char *prolog;           /* XML declaration prolog */
   unsigned long ip;             /* IP number */
   int port;                     /* port number */
-  short keep_alive;             /* connection should be kept open */
-  short tcp_keep_alive;         /* enable SO_KEEPALIVE */
+  int keep_alive;               /* connection should be kept open (-1, 0, or counts down) */
+  int tcp_keep_alive;           /* enable SO_KEEPALIVE */
   unsigned int tcp_keep_idle;   /* set TCP_KEEPIDLE */
   unsigned int tcp_keep_intvl;  /* set TCP_KEEPINTVL */
   unsigned int tcp_keep_cnt;    /* set TCP_KEEPCNT */
-  unsigned int max_keep_alive;  /* maximum keep-alive session (default=100) */
+  int max_keep_alive;           /* maximum keep-alive session (default=100) 0 to always keep open */
   const char *proxy_http_version;/* HTTP version of proxy "1.0" or "1.1" */
   const char *proxy_host;       /* Proxy Server host name */
   int proxy_port;               /* Proxy Server port (default = 8080) */
   const char *proxy_userid;     /* Proxy Authorization user name */
   const char *proxy_passwd;     /* Proxy Authorization password */
   const char *proxy_from;       /* X-Forwarding-For header returned by proxy */
+  const char *origin;           /* Origin */
+  const char *cors_origin;      /* CORS Allow-Origin */
+  const char *cors_method;      /* CORS Request-Method */
+  const char *cors_header;      /* CORS Request-Headers */
+  const char *cors_methods;     /* CORS Allow-Methods */
+  const char *cors_headers;     /* CORS Allow-Headers */
   int status;                   /* -1 when request, else error code to be returned by server */
   int error;
   int errmode;

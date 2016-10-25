@@ -415,7 +415,7 @@ int xs__schema::read(const char *cwd, const char *loc)
 #else
     if (!strncmp(loc, "https://", 8))
     {
-      fprintf(stderr, "\nCannot connect to https site: SSL/TLS support not enabled, please rebuild wsdl2h with SSL/TLS enabled using 'make secure' or download the WSDL and XSD files and rerun wsdl2h on these files\n");
+      fprintf(stderr, "\nCannot connect to https site: SSL/TLS support not enabled, please rebuild wsdl2h with SSL/TLS enabled using 'make secure' or download the WSDL/WADL and XSD files and rerun wsdl2h on these files directly by specifying the file names on the command line.\n");
       exit(1);
     }
     else if (!strncmp(loc, "http://", 7))

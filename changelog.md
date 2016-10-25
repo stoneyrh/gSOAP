@@ -1090,10 +1090,19 @@ Version 2.8.35 (09/19/2016)
 - Improved UDP connectivity with WS-Discovery to reuse current socket connection, i.e. preventing premature socket close when `soap->socket` is the `soap->master` socket.
 - Fixed wsdl2h option `-u` to prevent a deserialization issue that occurs in the specific case of an *`<xs:any>`* within a *`<xs:choice maxOccurs="unbounded">`*.
 
-Version 2.8.36 (09/21/2016) {#latest}
+Version 2.8.36 (09/21/2016)
 ---
 
 - Fixed a problem with `SOAP_ENV__Header` missing in wsdl2h-generated .h file (problem occurs with 2.8.34/35 due to an update for headerfaults).
+
+Version 2.8.37 (10/25/2016) {#latest}
+---
+
+- Added server-side HTTP cross-origin resource sharing (CORS) access control using HTTP OPTIONS `fopt()` callback.
+- Fixed `make -j n` parallel builds.
+- Fixed an issue causing UDP message fragmentation.
+- Fixed `soap_mq` message queue plugin dropping connections.
+- Fixed missing nested [] in arrayType value in SOAP 1.1 encoding (SOAP 1.2 not affected).
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 
