@@ -85,8 +85,8 @@ int soap_post_connect(struct soap*, const char *endpoint, const char *action, co
 /* a function to send HTTP PUT, should be followed by a soap_send to transmit data */
 int soap_put_connect(struct soap*, const char *endpoint, const char *action, const char *type);
 
-/* a function to send HTTP DELETE */
-int soap_delete_connect(struct soap*, const char *endpoint, const char *action, const char *type);
+/* a function to send HTTP DELETE to the endpoint, closes socket */
+int soap_delete_connect(struct soap*, const char *endpoint);
 
 /* a function to retrieve the HTTP body into an internal buffer */
 int soap_http_body(struct soap*, char **buf, size_t *len);

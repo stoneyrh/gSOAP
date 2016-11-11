@@ -1095,7 +1095,7 @@ Version 2.8.36 (09/21/2016)
 
 - Fixed a problem with `SOAP_ENV__Header` missing in wsdl2h-generated .h file (problem occurs with 2.8.34/35 due to an update for headerfaults).
 
-Version 2.8.37 (10/25/2016) {#latest}
+Version 2.8.37 (10/25/2016)
 ---
 
 - Added server-side HTTP cross-origin resource sharing (CORS) access control using HTTP OPTIONS `fopt()` callback.
@@ -1103,6 +1103,12 @@ Version 2.8.37 (10/25/2016) {#latest}
 - Fixed an issue causing UDP message fragmentation.
 - Fixed `soap_mq` message queue plugin dropping connections.
 - Fixed missing nested [] in arrayType value in SOAP 1.1 encoding (SOAP 1.2 not affected).
+
+Version 2.8.38 (11/11/2016) {#latest}
+---
+
+- Added auto-generated client-side REST API functions to simplify REST GET, PUT, POST operations with XML data: `soap_GET_T`, `soap_PUT_T`, `soap_POST_send_T`, and `soap_POST_recv_T` for XML elements/types `T`.  Also `soap_DELETE` REST DELETE added.  See [get started](http://www.genivia.com/dev.html#services) on how to use these functions.
+- Updated samples/webserver to use both the httpform and httppost plugins to serve HTML form data and REST PUT, POST, DELETE operations for the updated samples/rest example person.c and person.cpp clients.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

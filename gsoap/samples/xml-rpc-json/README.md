@@ -83,8 +83,10 @@ followed by the results displayed in the terminal:
 
     cat menu.json
 
+<div class="alt">
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
-    { "menu": {
+    {
+      "menu": {
         "id": "file",
         "value": "File",
         "popup": {
@@ -97,6 +99,7 @@ followed by the results displayed in the terminal:
       }
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</div>
 
     jsoncpp menu.json
 
@@ -215,6 +218,7 @@ Let's apply this query to the `store.json` file that you can find in section
 
     ./query < store.json
 
+<div class="alt">
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
     [
       "Nigel Rees",
@@ -223,6 +227,7 @@ Let's apply this query to the `store.json` file that you can find in section
       "J. R. R. Tolkien"
     ]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</div>
 
 You can compile this example yourself with:
 
@@ -439,6 +444,7 @@ located at increasingly deeper levels of the data structure.
 
 Consider the following JSON data:
 
+<div class="alt">
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
     {
       "store": {
@@ -477,6 +483,7 @@ Consider the following JSON data:
       }
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</div>
 
 To match the `title` of the first book (`book[0]`) in a `store`, starting at
 the root node indicated by `$`, we use the following JSONPath query expression:
@@ -1440,8 +1447,23 @@ using the `SOAP_XML_INDENT` flag (this XML indent flag also works for JSON):
     if (ctx->error) ...                 // check for write errors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Compile and link together with `soapC.cpp`, `xml-rpc.cpp`, `json.cpp`, and
-`stdsoap2.cpp`.
+To force reading and writing JSON in ISO 8859-1 format, use the
+`SOAP_ENC_LATIN` flag to set the context (not recommended).
+
+Optionally use `SOAP_XML_INDENT` to indent XML and JSON.
+
+To parse JSON values from a file, it is recommended to set the `SOAP_ENC_PLAIN`
+context flag to prevent the parser from attempting to read a MIME or HTTP
+headers (HTTP headers are required with JSON-RPC):
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT | SOAP_ENC_PLAIN);
+    value v(ctx);
+    in >> v;       // SOAP_ENC_PLAIN: read JSON without parsing MIME/HTTP header
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Compile and link your code together with `soapC.cpp` (generated),
+`xml-rpc.cpp`, `json.cpp`, and `stdsoap2.cpp`.
 
 The JSON protocol has fewer data types than XML-RPC, so type information can be
 lost when serializing to JSON:
@@ -1459,11 +1481,6 @@ See the section on C++ examples on how to populate and retrieve C++ data.
 Strings are stored and exchanged in UTF-8 format in 8-bit strings (`char*` and
 `std::string`) by using the `SOAP_C_UTFSTRING` flag.  Wide strings (i.e.
 `wchar_t*` and `std::wstring` ) are converted to UTF-8.
-
-To force reading and writing JSON in ISO 8859-1 format, use the
-`SOAP_ENC_LATIN` flag to set the context.
-
-Optionally use `SOAP_XML_INDENT` to indent XML and JSON.
 
 C++ JSON over HTTP (REST method)                                       {#cpp-jr}
 --------------------------------
@@ -1555,8 +1572,8 @@ To implement a JSON REST server for CGI (e.g. install in cgi-bin):
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Compile and link the code together with `soapC.cpp`, `xml-rpc.cpp`, `json.cpp`,
-and `stdsoap2.cpp`.
+Compile and link your code together with `soapC.cpp` (generated),
+`xml-rpc.cpp`, `json.cpp`, and `stdsoap2.cpp`.
 
 For client and server examples, please see the gSOAP package content:
 
@@ -1570,12 +1587,15 @@ The [JSON-RPC 1.0 specification](http://json-rpc.org/wiki/specification) (the
 "original version") adds `method`, `parameter` and `id` fields to the
 request message:
 
+<div class="alt">
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
-    { "method": "echo",
+    {
+      "method": "echo",
       "params": [ "Hello World!" ],
       "id": 1
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</div>
 
 where:
 
@@ -1585,12 +1605,15 @@ where:
 
 A response message has a `result` field, an `error` field, and an `id`:
 
+<div class="alt">
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
-    { "result": "Welcome!",
+    {
+      "result": "Welcome!",
       "error": null,
       "id": 1
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</div>
 
 where:
 
@@ -1603,22 +1626,28 @@ all 1.0 fields REQUIRED, except for `error` which MUST NOT be present if there
 was no error triggered during invocation.  The 2.0 specification adds a
 `jsonrpc` field in the request message:
 
+<div class="alt">
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
-    { "jsonrpc": 2.0,
+    {
+      "jsonrpc": 2.0,
       "method": "echo",
       "params": [ "Hello World!" ],
       "id": 1
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</div>
 
 and also adds the `jsonrpc` field to the response message:
 
+<div class="alt">
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
-    { "jsonrpc": 2.0,
+    {
+      "jsonrpc": 2.0,
       "result": "Welcome!",
       "id": 1
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</div>
 
 The C++ operations are straightforward to conform to the JSON-RPC 1.0 or 2.0
 specifications.  The example JSON-RPC 2.0 request message shown
@@ -2131,7 +2160,8 @@ The following example shows how to traverse the node graph to display a value:
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Compile and link together with `soapC.c`, `xml-rpc.c`, and `stdsoap2.c`.
+Compile and link your code together with `soapC.c` (generated), `xml-rpc.c`,
+and `stdsoap2.c`.
 
 C JSON serialization                                                     {#c-js}
 --------------------
@@ -2170,6 +2200,21 @@ For example, to read and write JSON data from/to a file descriptor:
     if (ctx->error) ...        /* handle IO error (error message is in 'v' */
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+To force reading and writing JSON in ISO 8859-1 format, use the
+`SOAP_ENC_LATIN` flag to set the context (not recommended).
+
+Optionally use `SOAP_XML_INDENT` to indent XML and JSON output.
+
+To parse JSON values from a file, it is recommended to set the `SOAP_ENC_PLAIN`
+context flag to prevent the parser from attempting to read a MIME or HTTP
+headers (HTTP headers are required with JSON-RPC):
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT | SOAP_ENC_PLAIN);
+    struct value *v = new_value(ctx);
+    json_read(ctx, v);         /* read JSON without parsing MIME/HTTP header */
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 You can also read and write JSON data from/to NUL-terminated strings:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
@@ -2192,8 +2237,8 @@ You can also read and write JSON data from/to NUL-terminated strings:
     printf("JSON data:\n%s\n", cs);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Compile and link your files together with `soapC.c`, `xml-rpc.c`, `json.c`, and
-`stdsoap2.c`.
+Compile and link your code together with `soapC.c` (generated), `xml-rpc.c`,
+`json.c`, and `stdsoap2.c`.
 
 You can also convert XML-RPC data to/from JSON and populate XML-RPC from JSON
 data.  The XML-RPC parsing and sending functions are `soap_read_value` and
@@ -2213,11 +2258,6 @@ lost when serializing to JSON:
 Strings are stored and exchanged in UTF-8 format in 8-bit strings (i.e. `char*`
 strings) with the `SOAP_C_UTFSTRING` flag.  Wide strings (i.e. `wchar_t*`
 strings) are converted to UTF-8.
-
-To force reading and writing JSON in ISO 8859-1 format, use the
-`SOAP_ENC_LATIN` flag.
-
-Optionally use `SOAP_XML_INDENT` to indent XML and JSON.
 
 To read JSON from a string and write JSON to a string, we suggest to use gSOAP
 2.8.28 or later.  With these newer versions you can set the contex input string
@@ -2373,8 +2413,8 @@ similar to `json_write` and `json_read` but do not initialize the sending and
 receiving operations and do not flush after the sending and receiving
 operations.
 
-Compile and link together with `soapC.c`, `xml-rpc.c`, `json.c`, and
-`stdsoap2.c`.
+Compile and link your code together with `soapC.c` (generated), `xml-rpc.c`,
+`json.c`, and `stdsoap2.c`.
 
 C JSON-RPC                                                              {#c-rpc}
 ----------
@@ -2383,12 +2423,15 @@ The [JSON-RPC 1.0 specification](http://json-rpc.org/wiki/specification) (the
 "original version") adds `method`, `parameter` and `id` fields to the
 request message:
 
+<div class="alt">
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
-    { "method": "echo",
+    {
+      "method": "echo",
       "params": [ "Hello World!" ],
       "id": 1
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</div>
 
 where:
 
@@ -2398,12 +2441,15 @@ where:
 
 A response message has a `result` field, an `error` field, and an `id`:
 
+<div class="alt">
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
-    { "result": "Welcome!",
+    {
+      "result": "Welcome!",
       "error": null,
       "id": 1
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</div>
 
 where:
 
@@ -2416,22 +2462,28 @@ all 1.0 fields REQUIRED, except for `error` which MUST NOT be present if there
 was no error triggered during invocation.  The 2.0 specification adds a
 `jsonrpc` field in the request message:
 
+<div class="alt">
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
-    { "jsonrpc": 2.0,
+    {
+      "jsonrpc": 2.0,
       "method": "echo",
       "params": [ "Hello World!" ],
       "id": 1
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</div>
 
 and also adds the `jsonrpc` field to the response message:
 
+<div class="alt">
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
-    { "jsonrpc": 2.0,
+    {
+      "jsonrpc": 2.0,
       "result": "Welcome!",
       "id": 1
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</div>
 
 The C operations are straightforward to conform to the JSON-RPC 1.0 or 2.0
 specifications.  The example JSON-RPC 2.0 request message shown above is
@@ -2615,4 +2667,21 @@ And for C:
 
 The disable UTC time zone `Z` in the dateTime string, use `-DWITH_NOZONE` to
 compile `stdsoap2.c` (for C) or `stdsoap2.cpp` (for C++).
+
+Potential issues                                                       {#issues}
+----------------
+
+The JSON parser follows the published JSON "standards" but is a bit more
+forgiving, meaning that it parses the following extensions:
+
+- The parser admits floating point values that are formatted as C floating
+  point values in addition to JSON formats for numbers (which are more
+  restrictive).
+- The parser admits `NaN`, `+Inf`, `-Inf` as floating point values.
+- The parser admits hexadecimal integer values of the form `0xHHHH`.
+- Any additional trailing content after a valid JSON object or array is
+  silently ignored.
+- To parse JSON data from files use the `SOAP_ENC_PLAIN` flag to set the
+  context, otherwise files containing just the JSON values `true`, `false`, and
+  `null` are not parsed.
 

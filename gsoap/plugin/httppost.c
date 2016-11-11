@@ -68,7 +68,7 @@ compiling, linking, and/or using OpenSSL is allowed.
                   { NULL }
                 };
         Note that '*' can be used as a wildcard and some media types may have
-        optional parameters (after ';').
+        optional parameters (after ';') that should be captured with a '*'.
 
         Register the plugin and the handlers:
 
@@ -197,18 +197,16 @@ static int http_post_parse_header(struct soap *soap, const char *key, const char
   struct http_post_data *data = (struct http_post_data*)soap_lookup_plugin(soap, http_post_id);
   if (!data)
     return SOAP_PLUGIN_ERROR;
-  soap->error = data->fparsehdr(soap, key, val); /* parse HTTP header */
-  if (soap->error == SOAP_OK)
+  if (data->fparsehdr(soap, key, val)) /* parse HTTP header */
+    return soap->error;
+  if (!soap_tag_cmp(key, "Content-Type"))
   {
-    if (!soap_tag_cmp(key, "Content-Type"))
-    {
-      /* check content type */
-      soap->fform = http_lookup_handler(soap, val, data);
-      if (!soap->fform)
-        soap->fform = http_lookup_handler(soap, "POST", data);
-      if (soap->fform)
-        return SOAP_FORM; /* calls soap->fform after processing the HTTP header */
-    }
+    /* check content type */
+    soap->fform = http_lookup_handler(soap, val, data);
+    if (!soap->fform)
+      soap->fform = http_lookup_handler(soap, "POST", data);
+    if (soap->fform)
+      return SOAP_FORM; /* calls soap->fform after processing the HTTP header */
   }
   return soap->error;
 }
@@ -253,26 +251,17 @@ static int http_fdel(struct soap *soap)
 
 int soap_post_connect(struct soap *soap, const char *endpoint, const char *action, const char *type)
 {
-  if ((soap->omode & SOAP_IO) != SOAP_IO_CHUNK) /* not chunking: store in buf */
-    soap->omode = (soap->omode & ~SOAP_IO) | SOAP_IO_STORE;
-  soap->http_content = type;
-  return soap_connect_command(soap, SOAP_POST_FILE, endpoint, action);
+  return soap_POST(soap, endpoint, action, type);
 }
 
 int soap_put_connect(struct soap *soap, const char *endpoint, const char *action, const char *type)
 {
-  if ((soap->omode & SOAP_IO) != SOAP_IO_CHUNK) /* not chunking: store in buf */
-    soap->omode = (soap->omode & ~SOAP_IO) | SOAP_IO_STORE;
-  soap->http_content = type;
-  return soap_connect_command(soap, SOAP_PUT, endpoint, action);
+  return soap_PUT(soap, endpoint, action, type);
 }
 
-int soap_delete_connect(struct soap *soap, const char *endpoint, const char *action, const char *type)
+int soap_delete_connect(struct soap *soap, const char *endpoint)
 {
-  if (soap_connect_command(soap, SOAP_DEL, endpoint, action)
-   || soap_end_send(soap))
-    return soap_closesock(soap);
-  return soap_closesock(soap);
+  return soap_DELETE(soap, endpoint);
 }
 
 int soap_http_body(struct soap *soap, char **buf, size_t *len)

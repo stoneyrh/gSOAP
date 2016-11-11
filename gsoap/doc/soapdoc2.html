@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.37 User Guide</title>
+<title>gSOAP 2.8.38 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.37 User Guide </h1>
+<h1 align="center">gSOAP 2.8.38 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Oct 25, 2016
+<h3 align="center">Nov 11, 2016
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -449,21 +449,23 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.1"
 >19.39.1&nbsp; <font color="#0000FF">The Message Logging and Statistics Plug-in</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.2"
->19.39.2&nbsp; <font color="#0000FF">RESTful Interface: The HTTP GET Plug-in</font></a><br />
+>19.39.2&nbsp; <font color="#0000FF">RESTful Client-Side API</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.3"
->19.39.3&nbsp; <font color="#0000FF">RESTful Interface: The HTTP POST Plug-in</font></a><br />
+>19.39.3&nbsp; <font color="#0000FF">RESTful Server-Side API: The HTTP GET Plug-in</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.4"
->19.39.4&nbsp; <font color="#0000FF">The HTTP MD5 Checksum Plug-in</font></a><br />
+>19.39.4&nbsp; <font color="#0000FF">RESTful Server-Side API: The HTTP POST Plug-in</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.5"
->19.39.5&nbsp; <font color="#0000FF">The HTTP Digest Authentication Plug-in</font></a><br />
+>19.39.5&nbsp; <font color="#0000FF">The HTTP MD5 Checksum Plug-in</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.6"
->19.39.6&nbsp; <font color="#0000FF">The WS-Addressing Plug-in</font></a><br />
+>19.39.6&nbsp; <font color="#0000FF">The HTTP Digest Authentication Plug-in</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.7"
->19.39.7&nbsp; <font color="#0000FF">The WS-ReliableMessaging Plug-in</font></a><br />
+>19.39.7&nbsp; <font color="#0000FF">The WS-Addressing Plug-in</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.8"
->19.39.8&nbsp; <font color="#0000FF">The WS-Security Plug-in</font></a><br />
+>19.39.8&nbsp; <font color="#0000FF">The WS-ReliableMessaging Plug-in</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.9"
->19.39.9&nbsp; <font color="#0000FF">WS-Discovery</font></a><br />
+>19.39.9&nbsp; <font color="#0000FF">The WS-Security Plug-in</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.10"
+>19.39.10&nbsp; <font color="#0000FF">WS-Discovery</font></a><br />
 
 </td></tr></table><br></span>
 <i>Copyright (C) 2000-2015 Robert A. van Engelen, Genivia Inc, All Rights Reserved.</i>
@@ -4343,7 +4345,7 @@ the serializers are called before the output routines:
 <b>struct</b>&nbsp;soap soap; <br />
 ... <br />
 soap_init(&amp;soap); // initialize <br />
-<font size="+1"><span class="roman">[</span></font>soap_omode(&amp;soap, flags);<font size="+1"><span class="roman">]</span></font> // set output-mode flags (e.g. SOAP_ENC_XML<tt>|</tt>SOAP_ENC_ZLIB) <br />
+<font size="+1"><span class="roman">[</span></font>soap_omode(&amp;soap, flags);<font size="+1"><span class="roman">]</span></font> // set output-mode flags (e.g. SOAP_ENC_PLAIN<tt>|</tt>SOAP_ENC_ZLIB) <br />
 soap_begin(&amp;soap); // start new (de)serialization phase <br />
 soap_set_omode(&amp;soap, SOAP_XML_GRAPH); <br />
 soap_serialize_<u><span class="roman">Type1</span></u>(&amp;soap, &amp;var1); <br />
@@ -5882,7 +5884,8 @@ The input-mode and output-mode flags for inbound and outbound message processing
 <tr><td align="left"><i>SOAP_IO_LENGTH</i> </td><td align="left">out: (internal flag) require apriori calculation of content length </td></tr>
 <tr><td align="left"><i>SOAP_IO_KEEPALIVE</i> </td><td align="left">in&amp;out: attempt to keep socket connections alive (open) </td></tr>
 <tr><td align="left"><i>SOAP_IO_UDP</i> </td><td align="left">in&amp;out: use UDP (datagram) transport, maximum message length is <i>SOAP_BUFLEN</i> </td></tr>
-<tr><td align="left"><i>SOAP_ENC_XML</i> </td><td align="left">out: use plain XML encoding without HTTP headers (useful with <i>SOAP_ENC_ZLIB</i>) </td></tr>
+<tr><td align="left"><i>SOAP_ENC_PLAIN</i> </td><td align="left">in&amp;out: use plain messages without parsing or emitting HTTP headers </td></tr>
+<tr><td align="left"><i>SOAP_ENC_XML</i> </td><td align="left">deprecated, alias for <i>SOAP_ENC_PLAIN</i> </td></tr>
 <tr><td align="left"><i>SOAP_ENC_DIME</i> </td><td align="left">out: use DIME encoding (automatic when DIME attachments are used) </td></tr>
 <tr><td align="left"><i>SOAP_ENC_MIME</i> </td><td align="left">out: use MIME encoding (activate using <i>soap_set_mime</i>) </td></tr>
 <tr><td align="left"><i>SOAP_ENC_MTOM</i> </td><td align="left">out: use MTOM XOP attachments (instead of DIME) </td></tr>
@@ -11108,7 +11111,7 @@ MUST be determined in advance to calculate HTTP message length required to
 stream DIME over HTTP.  However, gSOAP also supports the transmission of
 outbound chunked DIME attachments without prior determination of DIME
 attachment sizes when certain conditions are met.  These conditions require
-either non-HTTP transport (use the output-mode <i>SOAP_ENC_XML</i> flag), or
+either non-HTTP transport (use the output-mode <i>SOAP_ENC_PLAIN</i> flag), or
 chunked HTTP transport (use the output-mode <i>SOAP_IO_CHUNK</i> flag).  You
 can also use the <i>SOAP_IO_STORE</i> flag (which is also used automatically
 with compression to determine the HTTP content length header) but that cancels
@@ -11727,7 +11730,7 @@ MUST be determined in advance to calculate HTTP message length required to
 stream MTOM/MIME over HTTP.  However, gSOAP also supports the transmission of
 outbound chunked MTOM/MIME attachments without prior determination of MTOM/MIME
 attachment sizes when certain conditions are met.  These conditions require
-either non-HTTP transport (use the output-mode <i>SOAP_ENC_XML</i> flag), or
+either non-HTTP transport (use the output-mode <i>SOAP_ENC_PLAIN</i> flag), or
 chunked HTTP transport (use the output-mode <i>SOAP_IO_CHUNK</i> flag).  You
 can also use the <i>SOAP_IO_STORE</i> flag (which is also used automatically
 with compression to determine the HTTP content length header) but that cancels
@@ -13340,7 +13343,7 @@ Built-in gSOAP function: none.
 <tr><td align="left"><i><b>int</b>&nbsp;(*soap.fpost)(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*endpoint, <b>const</b>&nbsp;<b>char</b>&nbsp;*host, <b>int</b>&nbsp;port, <b>const</b>&nbsp;<b>char</b>&nbsp;*path, <b>const</b>&nbsp;<b>char</b>&nbsp;*action, size_t count)</i> </td></tr>
 <tr><td align="left">Called from a client proxy to generate the HTTP header to connect to <i>endpoint</i>.
 Input parameters <i>host</i>, <i>port</i>, and <i>path</i> are micro-parsed from <i>endpoint</i>, <i>action</i> is the SOAP action,
-and <i>count</i> is the length of the SOAP message or 0 when <i>SOAP_ENC_XML</i> is set or when <i>SOAP_IO_LENGTH</i> is reset.
+and <i>count</i> is the length of the SOAP message or 0 when <i>SOAP_ENC_PLAIN</i> is set or when <i>SOAP_IO_LENGTH</i> is reset.
 Use function <i>soap_send(<b>struct</b>&nbsp;soap *soap, <b>char</b>&nbsp;*s)</i> to write the header contents.
 Should return SOAP_OK, or a gSOAP error code.
 Built-in gSOAP function: <i>http_post</i>.
@@ -13354,7 +13357,7 @@ Built-in gSOAP function: <i>http_post_header</i>.
 <tr><td align="left"><i><b>int</b>&nbsp;(*soap.fresponse)(<b>struct</b>&nbsp;soap *soap, <b>int</b>&nbsp;soap_error_code, size_t count)</i> </td></tr>
 <tr><td align="left">Called from a service to generate the response HTTP header.
 Input parameter <i>soap_error_code</i> is a gSOAP error code (see Section&nbsp;<a href="#sec:errcodes">10.2</a> and
-<i>count</i> is the length of the SOAP message or 0 when <i>SOAP_ENC_XML</i> is set or when <i>SOAP_IO_LENGTH</i> is reset.
+<i>count</i> is the length of the SOAP message or 0 when <i>SOAP_ENC_PLAIN</i> is set or when <i>SOAP_IO_LENGTH</i> is reset.
 Use function <i>soap_send(<b>struct</b>&nbsp;soap *soap, <b>char</b>&nbsp;*s)</i> to write the header contents.
 Should return SOAP_OK, or a gSOAP error code
 Built-in gSOAP function: <i>http_response</i>
@@ -16058,12 +16061,43 @@ Therefore, the statistics are not 100% guaranteed to be accurate for multi-threa
 
 <div class="p"><!----></div>
 		      <h4><a name="tth_sEc19.39.2">
-19.39.2</a>&nbsp;&nbsp;<font color="#0000FF">RESTful Interface: The HTTP GET Plug-in</font></h4>
+19.39.2</a>&nbsp;&nbsp;<font color="#0000FF">RESTful Client-Side API</font></h4>
 
 <div class="p"><!----></div>
-Client-side and server-side use of RESTful HTTP GET operations are supported with the HTTP GET plug-in <i>plugin/httpget.c</i>.
+The soapcpp2 tool generates the following functions for client-side REST operations:
+
+<div class="p"><!----></div>
+<i>soap_PUT_</i><i>Name</i><i>(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*URL, </i><i>Type</i><i>* data)</i>
+REST PUT XML of type <i>Type</i> to the endoint at the specified URL.
+
+<div class="p"><!----></div>
+<i>soap_POST_send_</i><i>Name</i><i>(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*URL, </i><i>Type</i><i>* data)</i>
+REST POST send XML of type <i>Type</i> to the endoint at the specified URL, which MUST be followed by a REST POST receive (see below) to receive response data.
+
+<div class="p"><!----></div>
+<i>soap_GET_</i><i>Name</i><i>(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*URL, </i><i>Type</i><i>* data)</i>
+REST GET XML of type <i>Type</i> from the endoint at the specified URL.
+
+<div class="p"><!----></div>
+<i>soap_POST_recv_</i><i>Name</i><i>(<b>struct</b>&nbsp;soap *soap, </i><i>Type</i><i>* data)</i>
+REST POST receive XML of type <i>Type</i> after REST POST send.
+
+<div class="p"><!----></div>
+The REST POST operation is a two-step process, first a POST send of the data
+followed by a POST receive of the response data.
+
+<div class="p"><!----></div>
+		      <h4><a name="tth_sEc19.39.3">
+19.39.3</a>&nbsp;&nbsp;<font color="#0000FF">RESTful Server-Side API: The HTTP GET Plug-in</font></h4>
+
+<div class="p"><!----></div>
+Server-side use of RESTful HTTP GET operations is supported with the HTTP GET
+plug-in <i>plugin/httpget.c</i>.
+
+<div class="p"><!----></div>
 The HTTP GET plug-in allows your server to handle RESTful HTTP GET requests and
-at the same time still serve SOAP-based POST requests. The plug-in provides support to client applications to issue HTTP GET operations to a server.
+at the same time still serve SOAP-based POST requests. The plug-in provides
+support to client applications to issue HTTP GET operations to a server.
 
 <div class="p"><!----></div>
 Note that HTTP GET requests can also be handled at the server side with the
@@ -16149,12 +16183,12 @@ soap_done(&amp;soap);
 </td></tr></table><br></i>
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.3">
-19.39.3</a>&nbsp;&nbsp;<font color="#0000FF">RESTful Interface: The HTTP POST Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.39.4">
+19.39.4</a>&nbsp;&nbsp;<font color="#0000FF">RESTful Server-Side API: The HTTP POST Plug-in</font></h4>
 
 <div class="p"><!----></div>
-Client-side and server-side use of RESTful HTTP POST, PUT, and DELETE
-operations are supported with the HTTP POST plug-in <i>plugin/httppost.c</i>.
+Server-side use of RESTful HTTP POST, PUT, and DELETE operations are supported
+with the HTTP POST plug-in <i>plugin/httppost.c</i>.
 
 <div class="p"><!----></div>
 The HTTP POST plug-in allows your server to handle RESTful HTTP POST requests
@@ -16231,8 +16265,8 @@ soap_end(soap);
 Similarly, <i>soap_put_connect</i> and <i>soap_delete_connect</i> commands are provided for PUT and DELETE handling.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.4">
-19.39.4</a>&nbsp;&nbsp;<font color="#0000FF">The HTTP MD5 Checksum Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.39.5">
+19.39.5</a>&nbsp;&nbsp;<font color="#0000FF">The HTTP MD5 Checksum Plug-in</font></h4>
 
 <div class="p"><!----></div>
 The HTTP MD5 plug-in works in the background to automatically verify the
@@ -16267,8 +16301,8 @@ soap_init1(&amp;soap, SOAP_IO_STORE); <br />
 Unfortunately, this eliminates streaming.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.5">
-19.39.5</a>&nbsp;&nbsp;<font color="#0000FF">The HTTP Digest Authentication Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.39.6">
+19.39.6</a>&nbsp;&nbsp;<font color="#0000FF">The HTTP Digest Authentication Plug-in</font></h4>
 
 <div class="p"><!----></div>
 The HTTP digest authentication plug-in enables a more secure authentication
@@ -16369,8 +16403,8 @@ For more details, including how to configure HTTP Digest authentication for
 proxies, please see the <i>doc/httpda/html/index.html</i> documentation in the gSOAP package.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.6">
-19.39.6</a>&nbsp;&nbsp;<font color="#0000FF">The WS-Addressing Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.39.7">
+19.39.7</a>&nbsp;&nbsp;<font color="#0000FF">The WS-Addressing Plug-in</font></h4>
 
 <div class="p"><!----></div>
 The WSA WS-Addressing plug-in and the source code are extensively documented in
@@ -16395,8 +16429,8 @@ This imports the SOAP header elements required by WS-Addressing.
 For more details, please see the <i>doc/wsa/html/index.html</i> documentation in the gSOAP package.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.7">
-19.39.7</a>&nbsp;&nbsp;<font color="#0000FF">The WS-ReliableMessaging Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.39.8">
+19.39.8</a>&nbsp;&nbsp;<font color="#0000FF">The WS-ReliableMessaging Plug-in</font></h4>
 
 <div class="p"><!----></div>
 The WSRM WS-ReliableMessaging plug-in and the source code are extensively documented in
@@ -16429,8 +16463,8 @@ This imports the SOAP header elements required by WS-ReliableMessaging.
 For more details, please see the <i>doc/wsrm/html/index.html</i> documentation in the gSOAP package.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.8">
-19.39.8</a>&nbsp;&nbsp;<font color="#0000FF">The WS-Security Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.39.9">
+19.39.9</a>&nbsp;&nbsp;<font color="#0000FF">The WS-Security Plug-in</font></h4>
 
 <div class="p"><!----></div>
 The WSSE WS-Security plug-in and the source code are extensively documented in
@@ -16464,8 +16498,8 @@ This imports the SOAP header elements required by WS-Security.
 For more details, please see the <i>doc/wsse/html/index.html</i> documentation in the gSOAP package.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.9">
-19.39.9</a>&nbsp;&nbsp;<font color="#0000FF">WS-Discovery</font></h4>
+		      <h4><a name="tth_sEc19.39.10">
+19.39.10</a>&nbsp;&nbsp;<font color="#0000FF">WS-Discovery</font></h4>
 
 <div class="p"><!----></div>
 The WS-Discovery implementation is documented in the <i>doc/wsdd</i> directory
@@ -16574,5 +16608,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 25 Oct 2016, 14:31.</small>
+version 4.00.<br />On 11 Nov 2016, 16:09.</small>
 </html>

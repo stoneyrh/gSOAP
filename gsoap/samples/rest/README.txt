@@ -1,6 +1,32 @@
 
-HTTP REST Examples for gSOAP
-============================
+XML REST clients
+================
+
+Every type Type with data binding name Name has the following REST operations:
+
+  int soap_GET_Name(struct soap *soap, const char *URL, Type *p)
+  int soap_PUT_Name(struct soap *soap, const char *URL, const Type *p)
+  int soap_POST_send_Name(struct soap *soap, const char *URL, const Type *p)
+  int soap_POST_recv_Name(struct soap *soap, Type *p)
+
+These are GET and PUT methods to read/write a value Type in XML.  The POST
+method has a send phase and a receive phase.  After a POST send, a POST receive
+MUST be executed (may be with a different type).
+
+There is also a DELETE:
+
+  int soap_DELETE(struct soap *soap, const char *URL)
+
+These functions return SOAP_OK or error code.
+
+XML REST client examples:
+
+  person.h		Person struct uses custom/struct_tm_date.h
+  person.c		GET, PUT, POST, DELETE person (C)
+  person.cpp		GET, PUT, POST, DELETE person (C++)
+
+Additional REST Examples based on WSDL
+======================================
 
   calcrest.wsdl		WSDL with REST calc operations
   calcrest.c		REST-based calculator client and CGI server in C
@@ -22,7 +48,7 @@ Example run:
 
 $ ./calcrest add 1 2
 
-HTTP REST Hooks
+HTTP REST Hooks 
 ===============
 
 1. HTTP REST via hooks: server-side hooks are provided with the gSOAP engine:

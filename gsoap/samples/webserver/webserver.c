@@ -131,6 +131,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "webserver.nsmap"	/* namespaces updated 4/4/13 */
 #include "options.h"
 #include "httpget.h"
+#include "httppost.h"
 #include "httpform.h"
 #include "logging.h"
 #include "threads.h"
@@ -227,7 +228,10 @@ void *process_request(void*);	/* multi-threaded request handler */
 void *process_queue(void*);	/* multi-threaded request handler for pool */
 int enqueue(SOAP_SOCKET);
 SOAP_SOCKET dequeue();
-int http_get_handler(struct soap*);	/* HTTP get handler */
+int http_GET_handler(struct soap*);	/* HTTP httpget plugin GET handler */
+int http_PUT_handler(struct soap*);	/* HTTP httpost plugin handler for PUT (see table below) */
+int http_POST_handler(struct soap*);	/* HTTP httpost plugin handler for POST (see table below) */
+int http_DELETE_handler(struct soap*);	/* HTTP httpost plugin handler for DELETE (see table below) */
 int http_form_handler(struct soap*);	/* HTTP form handler */
 int check_authentication(struct soap*);	/* HTTP authentication check */
 int copy_file(struct soap*, const char*, const char*);	/* copy file as HTTP response */
@@ -239,6 +243,19 @@ int html_hist(struct soap*, const char*, size_t, size_t, size_t, const char**, s
 void sigpipe_handle(int); /* SIGPIPE handler: Unix/Linux only */
 int CRYPTO_thread_setup();
 void CRYPTO_thread_cleanup();
+
+/******************************************************************************\
+ *
+ *	PUT/POST/DELETE handlers for httppost plugin
+ *
+\******************************************************************************/
+
+struct http_post_handlers http_handlers[] = {
+  { "PUT",    http_PUT_handler },
+  { "POST",   http_POST_handler },
+  { "DELETE", http_DELETE_handler },
+  { NULL }
+};
 
 /******************************************************************************\
  *
@@ -317,9 +334,12 @@ int main(int argc, char **argv)
   }
 #endif
   /* Register HTTP GET plugin */
-  if (soap_register_plugin_arg(&soap, http_get, (void*)http_get_handler))
+  if (soap_register_plugin_arg(&soap, http_get, (void*)http_GET_handler))
     soap_print_fault(&soap, stderr);
-  /* Register HTTP POST plugin */
+  /* Register HTTP POST plugin with the table of handlers */
+  if (soap_register_plugin_arg(&soap, http_post, (void*)http_handlers))
+    soap_print_fault(&soap, stderr);
+  /* Register HTTP form POST plugin (MUST be registered AFTER the httppost plugin) */
   if (soap_register_plugin_arg(&soap, http_form, (void*)http_form_handler))
     soap_print_fault(&soap, stderr);
   /* Register logging plugin */
@@ -731,11 +751,11 @@ int ns__divResponse_(struct soap *soap, double a)
 
 /******************************************************************************\
  *
- *	HTTP GET handler for plugin
+ *	HTTP GET handler for httpget plugin
  *
 \******************************************************************************/
 
-int http_get_handler(struct soap *soap)
+int http_GET_handler(struct soap *soap)
 {
   /* gSOAP >=2.5 soap_response() will do this automatically for us, when sending SOAP_HTML or SOAP_FILE:
   if ((soap->omode & SOAP_IO) != SOAP_IO_CHUNK)
@@ -803,7 +823,71 @@ int check_authentication(struct soap *soap)
 
 /******************************************************************************\
  *
- *	HTTP POST application/x-www-form-urlencoded handler for plugin
+ *	HTTP PUT handler for httppost plugin
+ *
+\******************************************************************************/
+
+int http_PUT_handler(struct soap *soap)
+{
+  /* Use soap->path (from request URL) to determine request: */
+  if (options[OPTION_v].selected)
+    fprintf(stderr, "HTTP PUT Request: %s\n", soap->endpoint);
+  /* Note: soap->path always starts with '/' */
+  if (!strcmp(soap->path, "/person.xml"))
+  {
+    /* in this example we actually do not save the data as a file person.xml, but we could! */
+    const char *data = soap_get_http_body(soap, NULL);
+    return 202; /* HTTP accepted */
+  }
+  return 404; /* HTTP not found */
+}
+
+/******************************************************************************\
+ *
+ *	HTTP POST handler for httppost plugin
+ *
+\******************************************************************************/
+
+int http_POST_handler(struct soap *soap)
+{
+#ifdef WITH_ZLIB
+  if (options[OPTION_z].selected && soap->zlib_out == SOAP_ZLIB_GZIP) /* client accepts gzip */
+    soap_set_omode(soap, SOAP_ENC_ZLIB); /* so we can compress content (gzip) */
+  soap->z_level = 9; /* best compression */
+#endif
+  /* Use soap->path (from request URL) to determine request: */
+  if (options[OPTION_v].selected)
+    fprintf(stderr, "HTTP POST Request: %s\n", soap->endpoint);
+  /* Note: soap->path always starts with '/' */
+  if (!strcmp(soap->path, "/person.xml"))
+  {
+    /* in this example we actually do not save the data as a file person.xml, but we could! */
+    const char *data = soap_get_http_body(soap, NULL);
+    return copy_file(soap, "person.xml", "text/xml");
+  }
+  return 404; /* HTTP not found */
+}
+
+/******************************************************************************\
+ *
+ *	HTTP DELETE handler for httppost plugin
+ *
+\******************************************************************************/
+
+int http_DELETE_handler(struct soap *soap)
+{
+  /* Use soap->path (from request URL) to determine request: */
+  if (options[OPTION_v].selected)
+    fprintf(stderr, "HTTP DELETE Request: %s\n", soap->endpoint);
+  /* Note: soap->path always starts with '/' */
+  if (!strcmp(soap->path, "/person.xml"))
+    return 202; /* HTTP accepted */
+  return 404; /* HTTP not found */
+}
+
+/******************************************************************************\
+ *
+ *	HTTP POST application/x-www-form-urlencoded handler for httpform plugin
  *
 \******************************************************************************/
 

@@ -190,13 +190,13 @@ int generic_PUT_handler(struct soap *soap)
   size_t len;
   soap_http_body(soap, &buf, &len);
   fprintf(stderr, "Generic PUT accepted URL=\"%s\" content=\"%s\"\n", soap->endpoint, soap->http_content);
-  return soap_send_empty_response(soap, 202); /* HTTP Accepted */
+  return 202; /* HTTP Accepted */
 }
 
 /* the generic DELETE handler */
 int generic_DELETE_handler(struct soap *soap)
 { fprintf(stderr, "Generic DELETE accepted URL=\"%s\"\n", soap->endpoint);
-  return soap_send_empty_response(soap, 202); /* HTTP Accepted */
+  return 202; /* HTTP Accepted */
 }
 
 SOAP_NMAC struct Namespace namespaces[] =

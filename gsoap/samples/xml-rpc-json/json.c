@@ -328,7 +328,7 @@ int json_recv(struct soap *soap, struct value *v)
         if (json_recv(soap, &s))
           return soap->error;
         if (s.__type != SOAP_TYPE__string)
-          return soap_set_sender_error(soap, "field name expected", (const char*)s.ref, SOAP_SYNTAX_ERROR);
+          return soap_set_sender_error(soap, "string name expected", (const char*)s.ref, SOAP_SYNTAX_ERROR);
         while (((c = soap_getchar(soap)) > 0 && c <= 0x20) || c == 0xA0)
           continue;
         if (c != ':')
@@ -435,6 +435,10 @@ int json_recv(struct soap *soap, struct value *v)
                 {
                   case EOF:
                     return soap->error = SOAP_EOF;
+                  case '"':
+                  case '\\':
+                  case '/':
+		    break;
                   case 'b':
                     c = 8;
                     break;               
@@ -463,13 +467,19 @@ int json_recv(struct soap *soap, struct value *v)
                         return soap->error = SOAP_EOF;
                       h[i] = c;
                     }
-                    wc[0] = soap_strtol(h, NULL, 16);
+		    h[4] = '\0';
+                    wc[0] = soap_strtol(h, &h, 16);
                     wc[1] = 0;
+		    if (h - soap->tmpbuf < 4)
+		      return soap->error = SOAP_TYPE;
                     t = soap_wchar2s(soap, wc);
                     c = *t++;
                     if (!*t)
                       t = NULL;
+		    break;
                   }
+		  default:
+		    return soap_set_sender_error(soap, "invalid escape in string", NULL, SOAP_SYNTAX_ERROR);
                 }
                 *s++ = c;
                 l++;
@@ -492,8 +502,16 @@ int json_recv(struct soap *soap, struct value *v)
                   else
                     *s++ = '?';
                 }
-                else
+		/* the JSON "standard" does not permit ctrl chars in strings, we silently accept these
+                else if (c < 0x20 && c >= 0)
+		{
+		  return soap_set_sender_error(soap, "invalid control character in string", NULL, SOAP_SYNTAX_ERROR);
+		}
+		*/
+		else
+		{
                   *s++ = c;
+		}
                 l++;
             }
           }
@@ -526,7 +544,7 @@ int json_recv(struct soap *soap, struct value *v)
         {
           double x;
           if (soap_s2double(soap, soap->tmpbuf, &x))
-            return soap_set_sender_error(soap, "number expected", soap->tmpbuf, SOAP_SYNTAX_ERROR);
+            return soap_set_sender_error(soap, "JSON number expected", soap->tmpbuf, SOAP_SYNTAX_ERROR);
           v->__type = SOAP_TYPE__double;
           if (!(v->ref = soap_malloc(soap, sizeof(_double))))
             return soap->error = SOAP_EOM;
@@ -549,7 +567,7 @@ int json_recv(struct soap *soap, struct value *v)
       }
       else if (strcmp(soap->tmpbuf, "null"))
       {
-        return soap_set_sender_error(soap, "value expected", soap->tmpbuf, SOAP_SYNTAX_ERROR);
+        return soap_set_sender_error(soap, "JSON value expected", soap->tmpbuf, SOAP_SYNTAX_ERROR);
       }
       return SOAP_OK;
     }

@@ -337,6 +337,7 @@ LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
 BUILT_SOURCES = $(SOAP_C_SRC) 
 CLEANFILES = $(SOAP_C_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.c soapClient.c soapClientLib.c soapServer.c soapServerLib.c *~
 SOAP_NS = $(SOAP_NS_DEF)
+person_SOURCES = person.c person.h $(SOAP_C_CORE) ../../custom/struct_tm_date.c
 calcrest_SOURCES = calcrest.c calcrest.h $(SOAP_C_SRC)
 httpgettest_SOURCES = httpgettest.c httpgettest.h $(SOAP_C_CORE) ../../plugin/httpget.c
 httpposttest_SOURCES = httpposttest.c httpposttest.h $(SOAP_C_SERVER) ../../plugin/httppost.c

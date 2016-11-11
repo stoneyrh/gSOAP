@@ -959,7 +959,7 @@ soap_wsa_reply(struct soap *soap, const char *id, const char *action)
       {
         soap_copy_stream(reply_soap, soap);
         soap_free_stream(soap); /* prevents close in soap_connect() below */
-        soap->omode |= SOAP_ENC_XML; /* omit HTTP header ("encode XML body only") */
+        soap->omode |= SOAP_ENC_PLAIN; /* omit HTTP header ("encode XML body only") */
         if (soap_connect(soap, newheader->SOAP_WSA(To), newheader->SOAP_WSA(Action)))
         {
           int err;
@@ -981,7 +981,7 @@ soap_wsa_reply(struct soap *soap, const char *id, const char *action)
         if (soap_valid_socket(reply_soap->socket))
           soap_send_empty_response(reply_soap, SOAP_OK);        /* HTTP ACCEPTED */
         soap->header = newheader;
-        soap->omode &= ~SOAP_ENC_XML;           /* HTTP header required */
+        soap->omode &= ~SOAP_ENC_PLAIN;           /* HTTP header required */
         soap_end(reply_soap);
         soap_free(reply_soap);
         data->fresponse = soap->fresponse;

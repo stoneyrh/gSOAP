@@ -26,7 +26,7 @@ a.el {
 
 pre {
 	font-family: inconsolatamedium, monospace, serif !important;
-	font-size: 1.1em !important;
+	font-size: 1em !important;
 }
 
 code {
@@ -34,7 +34,7 @@ code {
 	background-color: #ffe;
 	font-family: inconsolatamedium, monospace, serif !important;
 	margin-top: 1px;
-	margin-bottom: 1px;
+	margin-bottom: 0px;
 	padding-top: 0px;
 	padding-bottom: 0px;
 	padding-left: 2px;
@@ -70,6 +70,20 @@ div.toc {
 
 div.toc h3 {
 	visibility: hidden;
+}
+
+div.alt div.fragment {
+	border: 1px solid rgba(38, 91, 142, 0.5);
+	border-left: 10px solid #000;
+	background-color: #FAFAFA;
+	padding-left: 10px;
+	padding-right: 6px;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	margin-left: 0px;
+	font: 100 1em;
+        line-height: normal;
+	overflow: auto;
 }
 
 div.fragment {

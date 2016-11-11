@@ -90,6 +90,8 @@ compiling, linking, and/or using OpenSSL is allowed.
         soap_end_send(soap);
 
         See samples/webserver for an example HTTP POST form handling server.
+
+	Warning: this plugin MUST be registered AFTER the httppost plugin.
 */
 
 #include "httpform.h"
@@ -138,25 +140,21 @@ static int http_form_parse_header(struct soap *soap, const char *key, const char
   struct http_form_data *data = (struct http_form_data*)soap_lookup_plugin(soap, http_form_id);
   if (!data)
     return SOAP_PLUGIN_ERROR;
-  soap->error = data->fparsehdr(soap, key, val); /* parse HTTP header */
-  if (soap->error == SOAP_OK)
+  if (!soap_tag_cmp(key, "Content-Type"))
   {
-    if (!soap_tag_cmp(key, "Content-Type"))
+    /* check content type: you can filter any type of payloads here */
+    if (!soap_tag_cmp(val, "application/x-www-form-urlencoded")
+     || !soap_tag_cmp(val, "application/x-www-form-urlencoded;*")) /* skip charset=UTF-8 etc */
     {
-      /* check content type: you can filter any type of payloads here */
-      if (!soap_tag_cmp(val, "application/x-www-form-urlencoded")
-       || !soap_tag_cmp(val, "application/x-www-form-urlencoded;*")) /* skip charset=UTF-8 etc */
-      {
-        soap->fform = data->handler;
-        soap->error = SOAP_FORM; /* delegate body parsing to form handler */
-      }
-      /* it is possible to add other payload types to handle via forms and use * as a wildcard:
-      if (!soap_tag_cmp(val, "image/jpg") || !soap_tag_cmp(val, "image/jpg;*"))
-        soap->error = SOAP_FORM;
-      */
+      soap->fform = data->handler;
+      return soap->error = SOAP_FORM; /* delegate body parsing to form handler */
     }
+    /* it is possible to add other payload types to handle via forms and use * as a wildcard:
+       if (!soap_tag_cmp(val, "image/jpg") || !soap_tag_cmp(val, "image/jpg;*"))
+       soap->error = SOAP_FORM;
+     */
   }
-  return soap->error;
+  return data->fparsehdr(soap, key, val); /* parse HTTP header */
 }
 
 char* form(struct soap *soap)

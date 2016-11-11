@@ -472,6 +472,8 @@ int main(int argc, char **argv)
 
   if (ifile)
   {
+    // read plain JSON, no HTTP/MIME headers
+    soap_set_imode(ctx, SOAP_ENC_PLAIN);
     if (json_read(ctx, v))
     {
       soap_print_fault(ctx, stderr);

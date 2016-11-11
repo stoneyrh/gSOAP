@@ -17,13 +17,13 @@
    <tbody>
     <tr>
      <td width="10%">&nbsp;</td>
-     <td width="175px"><a href="http://www.genivia.com"><img alt="Genivia" src="GeniviaLogo2_trans_noslogan.png"/></a></td>
-     <td class="tab_home"><a href="http://www.genivia.com">Home</a></td>
-     <td class="tab_home"><a href="http://www.genivia.com/docs.html">Documentation</a></td>
+     <td width="175px"><a href="https://www.genivia.com"><img alt="Genivia" src="GeniviaLogo2_trans_noslogan.png"/></a></td>
+     <td class="tab_home"><a href="https://www.genivia.com">Home</a></td>
+     <td class="tab_home"><a href="https://www.genivia.com/docs.html">Documentation</a></td>
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">XML DOM &amp; XPath</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed May 18 2016</div>
+      <div style="float: right; font-size: 10px;">updated Fri Nov 4 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -97,14 +97,14 @@ Introduction                                                            </h1>
 XML DOM and gSOAP                                                     </h2>
 <p>To help you quickly develop C/C++ code to construct, inspect, and search DOM node graphs using the XML DOM API, we offer a new code generator <b>domcpp</b> with the gSOAP package (version 2.8.28 and up). You can find the domcpp tool with the DOM examples in <code>gsoap/samples/dom</code>.</p>
 <p>The domcpp command-line tool auto-generates C or C++ code from an XML fragment. The generated code creates a DOM node graph for this fragment, which can be further tweaked as necessary. Let's demonstrate this with an example <code>menu.xml</code> XML file, where we show each command executed in a command shell followed by the results displayed in the terminal: </p><pre class="fragment">cat menu.xml
-</pre><div class="fragment"><div class="line">&lt;menu <span class="keywordtype">id</span>=<span class="stringliteral">&quot;file&quot;</span> value=<span class="stringliteral">&quot;File&quot;</span>&gt;</div>
+</pre><div class="alt"> <div class="fragment"><div class="line">&lt;menu <span class="keywordtype">id</span>=<span class="stringliteral">&quot;file&quot;</span> value=<span class="stringliteral">&quot;File&quot;</span>&gt;</div>
 <div class="line">  &lt;popup&gt;</div>
 <div class="line">    &lt;menuitem value=<span class="stringliteral">&quot;New&quot;</span> onclick=<span class="stringliteral">&quot;CreateNewDoc()&quot;</span> /&gt;</div>
 <div class="line">    &lt;menuitem value=<span class="stringliteral">&quot;Open&quot;</span> onclick=<span class="stringliteral">&quot;OpenDoc()&quot;</span> /&gt;</div>
 <div class="line">    &lt;menuitem value=<span class="stringliteral">&quot;Close&quot;</span> onclick=<span class="stringliteral">&quot;CloseDoc()&quot;</span> /&gt;</div>
 <div class="line">  &lt;/popup&gt;</div>
 <div class="line">&lt;/menu&gt;</div>
-</div><!-- fragment --> <pre class="fragment">domcpp menu.xml
+</div><!-- fragment --> </div> <pre class="fragment">domcpp menu.xml
 </pre><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;soapH.h&quot;</span></div>
 <div class="line">{</div>
 <div class="line">  <span class="keyword">struct </span>soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT | SOAP_DOM_TREE);</div>
@@ -195,13 +195,13 @@ XML DOM and gSOAP                                                     </h2>
 <div class="line">  }</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>Let's apply this query to the <code>store.xml</code> file that you can find in section <a href="#domcpp-4">XPath by example</a>: </p><pre class="fragment">./query &lt; store.xml
-</pre><div class="fragment"><div class="line">&lt;results&gt;</div>
+</pre><div class="alt"> <div class="fragment"><div class="line">&lt;results&gt;</div>
 <div class="line">  &lt;result author=<span class="stringliteral">&quot;Nigel Rees&quot;</span>/&gt;</div>
 <div class="line">  &lt;result author=<span class="stringliteral">&quot;Evelyn Waugh&quot;</span>/&gt;</div>
 <div class="line">  &lt;result author=<span class="stringliteral">&quot;Herman Melville&quot;</span>/&gt;</div>
 <div class="line">  &lt;result author=<span class="stringliteral">&quot;J. R. R. Tolkien&quot;</span>/&gt;</div>
 <div class="line">&lt;/results&gt;</div>
-</div><!-- fragment --><p>You can compile this example yourself with: </p><pre class="fragment">domcpp -o query.cpp -m -p'/store/book/@author' -y
+</div><!-- fragment --> </div><p>You can compile this example yourself with: </p><pre class="fragment">domcpp -o query.cpp -m -p'/store/book/@author' -y
 soapcpp2 -CSL import/dom.h
 c++ -o query query.cpp soapC.cpp dom.cpp stdsoap2.cpp
 </pre><p>You can also embed C/C++ code in XPath queries to filter and select values from XML at runtime.</p>
@@ -264,23 +264,23 @@ Embedding serializable objects and data in DOM element nodes          </h2>
 </div><!-- fragment --><p>This is a very small example to illustrate the concept. You can add declarations of data types to serialize. If namespaces are used in the XML document, then follow the naming conventions outlined in <a href="http://www.genivia.com/doc/databinding/html/index.html#toxsd2">XML Data Bindings: Colon notation versus name prefixing</a>.</p>
 <p>Importing <code><a class="el" href="dom_8h.html">dom.h</a></code> is automated with wsdl2h option <code>-d</code> when running wsdl2h on WSDL and XSD files to produce a header file with the data binding interface for soapcpp2. Here, we assume you are starting with a header file for soapcpp2 with the declarations of C/C++ types to serialize.</p>
 <p>We use soapcpp2 to generate the data binding implementation code together with the DOM API in <code>soapStub.h</code>, <code>soapH.h</code>, <code>soapC.cpp</code> and a namespace table file <code>t.nsmap</code> and <code>t.xsd</code> schema that declares a <code>time</code> type (at line 11) and also an element (at line 15) because by convention the <code>_t__time</code> type name is prefixed with a <code>_</code>:</p>
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;<span class="keywordtype">schema</span> <span class="keyword">targetNamespace</span>=<span class="stringliteral">&quot;urn:demotime&quot;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;    <span class="keyword">xmlns:SOAP-ENV</span>=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    <span class="keyword">xmlns:SOAP-ENC</span>=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;    <span class="keyword">xmlns:xsi</span>=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    <span class="keyword">xmlns:xsd</span>=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="keyword">xmlns:t</span>=<span class="stringliteral">&quot;urn:demotime&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <span class="keyword">xmlns</span>=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="keyword">elementFormDefault</span>=<span class="stringliteral">&quot;unqualified&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keyword">attributeFormDefault</span>=<span class="stringliteral">&quot;unqualified&quot;</span>&gt;</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;  &lt;<span class="keywordtype">import</span> <span class="keyword">namespace</span>=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span>/&gt;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;  &lt;<span class="keywordtype">simpleType</span> <span class="keyword">name</span>=<span class="stringliteral">&quot;time&quot;</span>&gt;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    &lt;<span class="keywordtype">restriction</span> <span class="keyword">base</span>=<span class="stringliteral">&quot;xsd:dateTime&quot;</span>&gt;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    &lt;/<span class="keywordtype">restriction</span>&gt;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  &lt;/<span class="keywordtype">simpleType</span>&gt;</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  &lt;<span class="keywordtype">element</span> <span class="keyword">name</span>=<span class="stringliteral">&quot;time&quot;</span> <span class="keyword">type</span>=<span class="stringliteral">&quot;xsd:dateTime&quot;</span>/&gt;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;&lt;/<span class="keywordtype">schema</span>&gt;</div>
-</div><!-- fragment --><p>For details on declaring C/C++ types for XML data bindings and serialization, see <a href="http://www.genivia.com/doc/databinding/html/index.html#toxsd9-7">XML Data Bindings: Defining document root elements</a>.</p>
+<div class="alt"> <div class="fragment"><div class="line">&lt;schema targetNamespace=<span class="stringliteral">&quot;urn:demotime&quot;</span></div>
+<div class="line">    xmlns:SOAP-ENV=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</span></div>
+<div class="line">    xmlns:SOAP-ENC=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span></div>
+<div class="line">    xmlns:xsi=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></div>
+<div class="line">    xmlns:xsd=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema&quot;</span></div>
+<div class="line">    xmlns:t=<span class="stringliteral">&quot;urn:demotime&quot;</span></div>
+<div class="line">    xmlns=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema&quot;</span></div>
+<div class="line">    elementFormDefault=<span class="stringliteral">&quot;unqualified&quot;</span></div>
+<div class="line">    attributeFormDefault=<span class="stringliteral">&quot;unqualified&quot;</span>&gt;</div>
+<div class="line">  &lt;<span class="keyword">import</span> <span class="keyword">namespace</span>=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span>/&gt;</div>
+<div class="line">  &lt;simpleType name=<span class="stringliteral">&quot;time&quot;</span>&gt;</div>
+<div class="line">    &lt;restriction base=<span class="stringliteral">&quot;xsd:dateTime&quot;</span>&gt;</div>
+<div class="line">    &lt;/restriction&gt;</div>
+<div class="line">  &lt;/simpleType&gt;</div>
+<div class="line">  &lt;element name=<span class="stringliteral">&quot;time&quot;</span> type=<span class="stringliteral">&quot;xsd:dateTime&quot;</span>/&gt;</div>
+<div class="line">&lt;/schema&gt;</div>
+</div><!-- fragment --> </div><p>For details on declaring C/C++ types for XML data bindings and serialization, see <a href="http://www.genivia.com/doc/databinding/html/index.html#toxsd9-7">XML Data Bindings: Defining document root elements</a>.</p>
 <p>You can use these serializable types declared in the header file as embedded serializable objects and data in DOM element nodes. The <code>SOAP_DOM_NODE</code> context flag should be set to enable this feature.</p>
 <p>In the following example we use <code>_t__time</code> to construct a DOM for an XML root element <code>&lt;t:time&gt;</code> that contains an embedded serializable <code>time_t</code> value:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;soapH.h&quot;</span></div>
@@ -436,34 +436,34 @@ XPath syntax support for domcpp                                      </h2>
 <h2><a class="anchor" id="domcpp-4"></a>
 XPath by example                                                     </h2>
 <p>Consider the following XML document:</p>
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;<span class="keywordtype">store</span>&gt;</div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;  &lt;<span class="keywordtype">book</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    <span class="keyword">category</span>=<span class="stringliteral">&quot;reference&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;    <span class="keyword">author</span>=<span class="stringliteral">&quot;Nigel Rees&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    <span class="keyword">title</span>=<span class="stringliteral">&quot;Sayings of the Century&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="keyword">price</span>=<span class="stringliteral">&quot;8.95&quot;</span> /&gt;</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;  &lt;<span class="keywordtype">book</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="keyword">category</span>=<span class="stringliteral">&quot;fiction&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keyword">author</span>=<span class="stringliteral">&quot;Evelyn Waugh&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keyword">title</span>=<span class="stringliteral">&quot;Sword of Honour&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keyword">price</span>=<span class="stringliteral">&quot;12.99&quot;</span> /&gt;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  &lt;<span class="keywordtype">book</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keyword">category</span>=<span class="stringliteral">&quot;fiction&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">author</span>=<span class="stringliteral">&quot;Herman Melville&quot;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keyword">title</span>=<span class="stringliteral">&quot;Moby Dick&quot;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keyword">isbn</span>=<span class="stringliteral">&quot;0-553-21311-3&quot;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keyword">price</span>=<span class="stringliteral">&quot;8.99&quot;</span> /&gt;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  &lt;<span class="keywordtype">book</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">category</span>=<span class="stringliteral">&quot;fiction&quot;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keyword">author</span>=<span class="stringliteral">&quot;J. R. R. Tolkien&quot;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keyword">title</span>=<span class="stringliteral">&quot;The Lord of the Rings&quot;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keyword">isbn</span>=<span class="stringliteral">&quot;0-395-19395-8&quot;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keyword">price</span>=<span class="stringliteral">&quot;22.99&quot;</span> /&gt;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  &lt;<span class="keywordtype">bicycle</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">color</span>=<span class="stringliteral">&quot;red&quot;</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">price</span>=<span class="stringliteral">&quot;19.95&quot;</span> /&gt;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;&lt;/<span class="keywordtype">store</span>&gt;</div>
-</div><!-- fragment --><p>To match the <code>title</code> of the first book in a <code>store</code>, starting at the root indicated by <code>/</code>, we use the following XPath query expression: </p><pre class="fragment">/store/book[1]/@title
+<div class="alt"> <div class="fragment"><div class="line">&lt;store&gt;</div>
+<div class="line">  &lt;book</div>
+<div class="line">    category=<span class="stringliteral">&quot;reference&quot;</span></div>
+<div class="line">    author=<span class="stringliteral">&quot;Nigel Rees&quot;</span></div>
+<div class="line">    title=<span class="stringliteral">&quot;Sayings of the Century&quot;</span></div>
+<div class="line">    price=<span class="stringliteral">&quot;8.95&quot;</span> /&gt;</div>
+<div class="line">  &lt;book</div>
+<div class="line">    category=<span class="stringliteral">&quot;fiction&quot;</span></div>
+<div class="line">    author=<span class="stringliteral">&quot;Evelyn Waugh&quot;</span></div>
+<div class="line">    title=<span class="stringliteral">&quot;Sword of Honour&quot;</span></div>
+<div class="line">    price=<span class="stringliteral">&quot;12.99&quot;</span> /&gt;</div>
+<div class="line">  &lt;book</div>
+<div class="line">    category=<span class="stringliteral">&quot;fiction&quot;</span></div>
+<div class="line">    author=<span class="stringliteral">&quot;Herman Melville&quot;</span></div>
+<div class="line">    title=<span class="stringliteral">&quot;Moby Dick&quot;</span></div>
+<div class="line">    isbn=<span class="stringliteral">&quot;0-553-21311-3&quot;</span></div>
+<div class="line">    price=<span class="stringliteral">&quot;8.99&quot;</span> /&gt;</div>
+<div class="line">  &lt;book</div>
+<div class="line">    category=<span class="stringliteral">&quot;fiction&quot;</span></div>
+<div class="line">    author=<span class="stringliteral">&quot;J. R. R. Tolkien&quot;</span></div>
+<div class="line">    title=<span class="stringliteral">&quot;The Lord of the Rings&quot;</span></div>
+<div class="line">    isbn=<span class="stringliteral">&quot;0-395-19395-8&quot;</span></div>
+<div class="line">    price=<span class="stringliteral">&quot;22.99&quot;</span> /&gt;</div>
+<div class="line">  &lt;bicycle</div>
+<div class="line">    color=<span class="stringliteral">&quot;red&quot;</span></div>
+<div class="line">    price=<span class="stringliteral">&quot;19.95&quot;</span> /&gt;</div>
+<div class="line">&lt;/store&gt;</div>
+</div><!-- fragment --> </div><p>To match the <code>title</code> of the first book in a <code>store</code>, starting at the root indicated by <code>/</code>, we use the following XPath query expression: </p><pre class="fragment">/store/book[1]/@title
 </pre><p>This query returns <code>"Sayings of the Century"</code> when applied to the XML document.</p>
 <p>To try the XPath examples yourself, we suggest to create a <code>store.xml</code> file with the above XML and run domcpp from the command line to compile an XPath query as follows: </p><pre class="fragment">cd gsoap/samples/dom
 soapcpp2 -CSL ../../import/dom.h
@@ -516,12 +516,12 @@ Understanding XML namespaces                                               </h1>
 <p>XML elements and attributes are bound to an XML namespace by using a namespace prefix in qualified tag names of elements and attributes. A qualified tag is of the form <code>prefix:name</code>, such that the prefix is bound in the scope of the tag to a namespace URI with an <code>xmlns:prefix="URI"</code> declaration. Unqualified tags can be bound to a namesapce with a <code>xmlns="URI"</code> default namespace declaration.</p>
 <p>An XML namespace is a Uniform Resource Identifier (URI). There are two general forms of URI: Uniform Resource Locators (URL) and Uniform Resource Names (URN).</p>
 <p>Consider for example the XML document with elements and attributes in three distinct XML namespaces <code>"urn:one"</code>, <code>"urn:two"</code>, and <code>"urn:three"</code>:</p>
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;<span class="keywordtype">x:e1</span> <span class="keyword">a1</span>=<span class="stringliteral">&quot;1&quot;</span> <span class="keyword">xmlns:x</span>=<span class="stringliteral">&quot;urn:one&quot;</span> <span class="keyword">xmlns:y</span>=<span class="stringliteral">&quot;urn:two&quot;</span> <span class="keyword">y:a2</span>=<span class="stringliteral">&quot;2&quot;</span>&gt;</div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;  &lt;<span class="keywordtype">e2</span> <span class="keyword">xmlns</span>=<span class="stringliteral">&quot;urn:three&quot;</span> <span class="keyword">a3</span>=<span class="stringliteral">&quot;3&quot;</span>&gt;</div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;    &lt;<span class="keywordtype">e3</span> /&gt;</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;  &lt;/<span class="keywordtype">e2</span>&gt;</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;&lt;/<span class="keywordtype">x:e1</span>&gt;</div>
-</div><!-- fragment --><p>Element <code>e1</code> is bound to <code>"urn:one"</code>, <code>e2</code> and <code>e3</code> are bound to <code>"urn:three"</code>. Attribute <code>a1</code> has no namespace (it is in the null namespace), <code>a2</code> is bound to <code>"urn:two"</code> and <code>a3</code> is bound to <code>"urn:three"</code>.</p>
+<div class="alt"> <div class="fragment"><div class="line">&lt;x:e1 a1=<span class="stringliteral">&quot;1&quot;</span> xmlns:x=<span class="stringliteral">&quot;urn:one&quot;</span> xmlns:y=<span class="stringliteral">&quot;urn:two&quot;</span> y:a2=<span class="stringliteral">&quot;2&quot;</span>&gt;</div>
+<div class="line">  &lt;e2 xmlns=<span class="stringliteral">&quot;urn:three&quot;</span> a3=<span class="stringliteral">&quot;3&quot;</span>&gt;</div>
+<div class="line">    &lt;e3 /&gt;</div>
+<div class="line">  &lt;/e2&gt;</div>
+<div class="line">&lt;/x:e1&gt;</div>
+</div><!-- fragment --> </div><p>Element <code>e1</code> is bound to <code>"urn:one"</code>, <code>e2</code> and <code>e3</code> are bound to <code>"urn:three"</code>. Attribute <code>a1</code> has no namespace (it is in the null namespace), <code>a2</code> is bound to <code>"urn:two"</code> and <code>a3</code> is bound to <code>"urn:three"</code>.</p>
 <p>A namespace declaration (<code>xmlns</code>) scope extends to all descendants or until redeclared. The <code>x</code> and <code>y</code> prefixes declared in element <code>e1</code> have a scope of visibility in all elements, since <code>e1</code> is the root. The default namespace declaration in element <code>e2</code> has a scope of visibility in element <code>e2</code> and extends to all of its attributes and all of its child elements.</p>
 <p>An XML namespace may refer to the defining XML schema by a URL, but often they do not. The URI string itself should be sufficiently unique, which is important to distinguish XML elements and attributes in different XML namespaces. This is similar to C++ namespaces. A unique c++ namespace name suffices (we do not need to know where the source files are located).</p>
 <p>The DOM API aims to simplify XML document construction and XML analysis by offering an API that does not require full namespace URIs to passed to the API functions when the URIs are defined in a namespace table. You can simply use qualified tag names to construct XML documents in a DOM and to analyze a DOM after XML parsing. This approach works on the basis of internal normalization so that two prefixes match when their associated URI matches (i.e. prefix names may differ but still match when their URIs match).</p>
@@ -1333,37 +1333,37 @@ Example                                                               </h1>
 <p>We use a very simple calculator service to demonstrate the C++ DOM API to populate a DOM node graph and to query a DOM node graph. The codes to accomplish both of these tasks can be generated with domcpp and modified as needed for our purposes.</p>
 <p>The SOAP calculator service and client on which this example is based are located in <code>gsoap/samples/calc</code> (for C) and <code>gsoap/samples/calc++</code> (for C++) in the gSOAP package.</p>
 <p>We use the SOAP calculator sample SOAP message <code>calc.add.req.xml</code> generated by soapcpp2 in <code>gsoap/samples/calc++</code>. This XML message contains a SOAP request to add two floating point values:</p>
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?<span class="keyword">xml</span> <span class="keyword">version</span>=<span class="stringliteral">&quot;1.0&quot;</span> <span class="keyword">encoding</span>=<span class="stringliteral">&quot;UTF-8&quot;</span>?&gt;</div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;&lt;<span class="keywordtype">SOAP-ENV:Envelope</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;  <span class="keyword">xmlns:SOAP-ENV</span>=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;  <span class="keyword">xmlns:SOAP-ENC</span>=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;  <span class="keyword">xmlns:xsi</span>=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;  <span class="keyword">xmlns:xsd</span>=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;  <span class="keyword">xmlns:ns</span>=<span class="stringliteral">&quot;urn:calc&quot;</span>&gt;</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; &lt;<span class="keywordtype">SOAP-ENV:Body</span> <span class="keyword">SOAP-ENV:encodingStyle</span>=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span>&gt;</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;  &lt;<span class="keywordtype">ns:add</span>&gt;</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;   &lt;<span class="keywordtype">a</span>&gt;0.0&lt;/<span class="keywordtype">a</span>&gt;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;   &lt;<span class="keywordtype">b</span>&gt;0.0&lt;/<span class="keywordtype">b</span>&gt;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  &lt;/<span class="keywordtype">ns:add</span>&gt;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; &lt;/<span class="keywordtype">SOAP-ENV:Body</span>&gt;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;&lt;/<span class="keywordtype">SOAP-ENV:Envelope</span>&gt;</div>
-</div><!-- fragment --><p>To generate code that populates this SOAP request message as a DOM node graph, we invoke: </p><pre class="fragment">domcpp -M -n -rrequest calc.add.req.xml
+<div class="alt"> <div class="fragment"><div class="line">&lt;?xml version=<span class="stringliteral">&quot;1.0&quot;</span> encoding=<span class="stringliteral">&quot;UTF-8&quot;</span>?&gt;</div>
+<div class="line">&lt;SOAP-ENV:Envelope</div>
+<div class="line">  xmlns:SOAP-ENV=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</span></div>
+<div class="line">  xmlns:SOAP-ENC=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span></div>
+<div class="line">  xmlns:xsi=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></div>
+<div class="line">  xmlns:xsd=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema&quot;</span></div>
+<div class="line">  xmlns:ns=<span class="stringliteral">&quot;urn:calc&quot;</span>&gt;</div>
+<div class="line"> &lt;SOAP-ENV:Body SOAP-ENV:encodingStyle=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span>&gt;</div>
+<div class="line">  &lt;ns:add&gt;</div>
+<div class="line">   &lt;a&gt;0.0&lt;/a&gt;</div>
+<div class="line">   &lt;b&gt;0.0&lt;/b&gt;</div>
+<div class="line">  &lt;/ns:add&gt;</div>
+<div class="line"> &lt;/SOAP-ENV:Body&gt;</div>
+<div class="line">&lt;/SOAP-ENV:Envelope&gt;</div>
+</div><!-- fragment --> </div><p>To generate code that populates this SOAP request message as a DOM node graph, we invoke: </p><pre class="fragment">domcpp -M -n -rrequest calc.add.req.xml
 </pre><p>We copied the generated code into <code><a class="el" href="dom2calc_8cpp.html">dom2calc.cpp</a></code> as shown further below.</p>
 <p>A sample SOAP response message <code>calc.add.res.xml</code> from the calculator service is:</p>
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?<span class="keyword">xml</span> <span class="keyword">version</span>=<span class="stringliteral">&quot;1.0&quot;</span> <span class="keyword">encoding</span>=<span class="stringliteral">&quot;UTF-8&quot;</span>?&gt;</div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;&lt;<span class="keywordtype">SOAP-ENV:Envelope</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;  <span class="keyword">xmlns:SOAP-ENV</span>=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;  <span class="keyword">xmlns:SOAP-ENC</span>=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;  <span class="keyword">xmlns:xsi</span>=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;  <span class="keyword">xmlns:xsd</span>=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;  <span class="keyword">xmlns:ns</span>=<span class="stringliteral">&quot;urn:calc&quot;</span>&gt;</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; &lt;<span class="keywordtype">SOAP-ENV:Body</span> <span class="keyword">SOAP-ENV:encodingStyle</span>=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span>&gt;</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;  &lt;<span class="keywordtype">ns:addResponse</span>&gt;</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;   &lt;<span class="keywordtype">result</span>&gt;0.0&lt;/<span class="keywordtype">result</span>&gt;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;  &lt;/<span class="keywordtype">ns:addResponse</span>&gt;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; &lt;/<span class="keywordtype">SOAP-ENV:Body</span>&gt;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;&lt;/<span class="keywordtype">SOAP-ENV:Envelope</span>&gt;</div>
-</div><!-- fragment --><p>We want to generate code that inspects the SOAP response message to extract the value of <code>&lt;result&gt;</code>. For this purpose we can use the XPath query <code>/SOAP-ENV:Envelope/SOAP-ENV:Body/ns:addResponse/result</code> and use this XPath with domcpp option <code>-p</code> and option <code>-x</code> to generate code that prints the <code>&lt;result&gt;</code> value: </p><pre class="fragment">domcpp -p'/SOAP-ENV:Envelope/SOAP-ENV:Body/ns:addResponse/result' \
+<div class="alt"> <div class="fragment"><div class="line">&lt;?xml version=<span class="stringliteral">&quot;1.0&quot;</span> encoding=<span class="stringliteral">&quot;UTF-8&quot;</span>?&gt;</div>
+<div class="line">&lt;SOAP-ENV:Envelope</div>
+<div class="line">  xmlns:SOAP-ENV=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</span></div>
+<div class="line">  xmlns:SOAP-ENC=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span></div>
+<div class="line">  xmlns:xsi=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></div>
+<div class="line">  xmlns:xsd=<span class="stringliteral">&quot;http://www.w3.org/2001/XMLSchema&quot;</span></div>
+<div class="line">  xmlns:ns=<span class="stringliteral">&quot;urn:calc&quot;</span>&gt;</div>
+<div class="line"> &lt;SOAP-ENV:Body SOAP-ENV:encodingStyle=<span class="stringliteral">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span>&gt;</div>
+<div class="line">  &lt;ns:addResponse&gt;</div>
+<div class="line">   &lt;result&gt;0.0&lt;/result&gt;</div>
+<div class="line">  &lt;/ns:addResponse&gt;</div>
+<div class="line"> &lt;/SOAP-ENV:Body&gt;</div>
+<div class="line">&lt;/SOAP-ENV:Envelope&gt;</div>
+</div><!-- fragment --> </div><p>We want to generate code that inspects the SOAP response message to extract the value of <code>&lt;result&gt;</code>. For this purpose we can use the XPath query <code>/SOAP-ENV:Envelope/SOAP-ENV:Body/ns:addResponse/result</code> and use this XPath with domcpp option <code>-p</code> and option <code>-x</code> to generate code that prints the <code>&lt;result&gt;</code> value: </p><pre class="fragment">domcpp -p'/SOAP-ENV:Envelope/SOAP-ENV:Body/ns:addResponse/result' \
   -rresponse -x'std::cout &lt;&lt; "Result = " &lt;&lt; v &lt;&lt; std::endl;'
 </pre><p>We copied the generated code into <code><a class="el" href="dom2calc_8cpp.html">dom2calc.cpp</a></code> as shown below:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;soapH.h&quot;</span></div>
@@ -1485,7 +1485,7 @@ Floating point format                                                      </h2>
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed May 18 2016 09:57:31 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Fri Nov 4 2016 15:34:50 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

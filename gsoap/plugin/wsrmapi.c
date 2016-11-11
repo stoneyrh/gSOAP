@@ -4559,7 +4559,7 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, int all,
     {
       struct soap_wsrm_content *q;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Resending message " SOAP_ULONG_FORMAT "\n", i));
-      soap->omode |= SOAP_ENC_XML; /* disables HTTP */
+      soap->omode |= SOAP_ENC_PLAIN; /* disables HTTP */
       if (soap_connect(soap, seq->to, NULL))
         return soap->error;
       DBGLOG(SENT, SOAP_MESSAGE(fdebug, "\n==== BEGIN RESEND ====\n"));
@@ -4575,7 +4575,7 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, int all,
       if (soap_end_send(soap))
         return soap_closesock(soap);
       DBGLOG(SENT, SOAP_MESSAGE(fdebug, "\n==== END RESEND ====\n"));
-      soap->omode &= ~SOAP_ENC_XML; /* reenables HTTP */
+      soap->omode &= ~SOAP_ENC_PLAIN; /* reenables HTTP */
       if (!soap_begin_recv(soap))
         soap_ignore_element(soap); /* read content but ignore */
       else if (soap->error != SOAP_NO_DATA && soap->error != 202)
@@ -4601,7 +4601,7 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, int all,
       {
         struct soap_wsrm_content *q;
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Resending message " SOAP_ULONG_FORMAT "\n", p->num));
-	soap->omode |= SOAP_ENC_XML; /* disables HTTP */
+	soap->omode |= SOAP_ENC_PLAIN; /* disables HTTP */
         if (soap_connect(soap, seq->to, NULL))
           return soap->error;
         DBGLOG(SENT, SOAP_MESSAGE(fdebug, "\n==== BEGIN RESEND ====\n"));
@@ -4614,7 +4614,7 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, int all,
         if (soap_end_send(soap))
           return soap_closesock(soap);
         DBGLOG(SENT, SOAP_MESSAGE(fdebug, "\n==== END RESEND ====\n"));
-	soap->omode &= ~SOAP_ENC_XML; /* reenables HTTP */
+	soap->omode &= ~SOAP_ENC_PLAIN; /* reenables HTTP */
 	if (!soap_begin_recv(soap))
 	  soap_ignore_element(soap); /* read content but ignore */
 	else if (soap->error != SOAP_NO_DATA && soap->error != 202)

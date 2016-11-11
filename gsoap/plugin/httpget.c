@@ -251,7 +251,7 @@ static int http_get_parse(struct soap *soap)
 
 int soap_get_connect(struct soap *soap, const char *endpoint, const char *action)
 {
-  return soap_connect_command(soap, SOAP_GET, endpoint, action);
+  return soap_GET(soap, endpoint, action);
 }
 
 char *query(struct soap *soap)

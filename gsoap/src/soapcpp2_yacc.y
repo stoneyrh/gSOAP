@@ -287,26 +287,11 @@ ext     : dclrs ';'     { }
                         }
         ;
 pragma  : PRAGMA        {
-                          if ($1[1] >= 'a' && $1[1] <= 'z')
-                          {
-                            char *s;
-                            for (pp = &pragmas; *pp; pp = &(*pp)->next)
-                              ;
-                            *pp = (Pragma*)emalloc(sizeof(Pragma));
-                            s = (char*)emalloc(strlen($1)+1);
-                            strcpy(s, $1);
-                            (*pp)->pragma = s;
-                            (*pp)->next = NULL;
-                          }
-                          else if ((i = atoi($1+2)) > 0)
-                          {
-                            yylineno = i;
-                          }
-                          else
-                          {
-                            sprintf(errbuf, "directive '%s' ignored (use #import to import files)", $1);
-                            semwarn(errbuf);
-                          }
+                          for (pp = &pragmas; *pp; pp = &(*pp)->next)
+                            ;
+                          *pp = (Pragma*)emalloc(sizeof(Pragma));
+                          (*pp)->pragma = $1;
+                          (*pp)->next = NULL;
                         }
         ;
 
