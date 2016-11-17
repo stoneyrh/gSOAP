@@ -2256,7 +2256,10 @@ them optional, and their XML schema local element/attribute definition is
 marked as nillable.  Non-pointer data members have a default `1:1` occurence
 constraint, making them required.
 
-A pointer data member that is explicitly marked as required with `1:1` will be
+A `nullptr` occurrence constraint may be applicable to required elements that
+are nillable pointer types, thus `nullptr 1:1`.  This indicates that the
+element is nillable (can be `NULL` or `nullptr`).  A pointer data member that
+is explicitly marked as required and nillable with `nullptr 1:1` will be
 serialized as an element with an `xsi:nil` attribute, thus effectively
 revealing the NULL property of its value.
 

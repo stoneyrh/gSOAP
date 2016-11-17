@@ -57,12 +57,17 @@ wsdl2h-wsp.o: wsp.cpp wsdlH.h wsdlStub.h \
   /usr/include/sys/syslimits.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/stdexcept \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__split_buffer \
-  includes.h ../../gsoap/stdsoap2.h ../../config.h /usr/include/stdlib.h \
-  /usr/include/sys/wait.h /usr/include/sys/_types/_pid_t.h \
-  /usr/include/sys/_types/_id_t.h /usr/include/sys/signal.h \
-  /usr/include/sys/appleapiopts.h /usr/include/machine/signal.h \
-  /usr/include/i386/signal.h /usr/include/machine/_mcontext.h \
-  /usr/include/i386/_mcontext.h /usr/include/mach/i386/_structs.h \
+  includes.h ../../gsoap/stdsoap2.h ../../config.h /usr/include/locale.h \
+  /usr/include/_locale.h /usr/include/xlocale.h /usr/include/_xlocale.h \
+  /usr/include/xlocale/_ctype.h /usr/include/xlocale/__wctype.h \
+  /usr/include/xlocale/_stdio.h /usr/include/xlocale/_string.h \
+  /usr/include/xlocale/_time.h /usr/include/xlocale/_wchar.h \
+  /usr/include/stdlib.h /usr/include/sys/wait.h \
+  /usr/include/sys/_types/_pid_t.h /usr/include/sys/_types/_id_t.h \
+  /usr/include/sys/signal.h /usr/include/sys/appleapiopts.h \
+  /usr/include/machine/signal.h /usr/include/i386/signal.h \
+  /usr/include/machine/_mcontext.h /usr/include/i386/_mcontext.h \
+  /usr/include/mach/i386/_structs.h \
   /usr/include/sys/_types/_sigaltstack.h \
   /usr/include/sys/_types/_ucontext.h \
   /usr/include/sys/_types/_pthread_attr_t.h \
@@ -73,7 +78,7 @@ wsdl2h-wsp.o: wsp.cpp wsdlH.h wsdlStub.h \
   /usr/include/libkern/i386/_OSByteOrder.h /usr/include/alloca.h \
   /usr/include/machine/types.h /usr/include/i386/types.h \
   /usr/include/sys/_types/___offsetof.h /usr/include/sys/_types/_dev_t.h \
-  /usr/include/sys/_types/_mode_t.h \
+  /usr/include/sys/_types/_mode_t.h /usr/include/xlocale/_stdlib.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/float.h \
   /usr/include/math.h /usr/include/poll.h /usr/include/sys/poll.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/string \
@@ -82,6 +87,7 @@ wsdl2h-wsp.o: wsp.cpp wsdlH.h wsdlStub.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/cwctype \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/cctype \
   /usr/include/wctype.h /usr/include/_types/_wctrans_t.h \
+  /usr/include/xlocale/_wctype.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/iostream \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/ios \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__locale \
@@ -106,12 +112,6 @@ wsdl2h-wsp.o: wsp.cpp wsdlH.h wsdlStub.h \
   /usr/include/sys/_types/_mach_port_t.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/functional \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__functional_03 \
-  /usr/include/locale.h /usr/include/_locale.h /usr/include/xlocale.h \
-  /usr/include/_xlocale.h /usr/include/xlocale/_ctype.h \
-  /usr/include/xlocale/__wctype.h /usr/include/xlocale/_stdio.h \
-  /usr/include/xlocale/_stdlib.h /usr/include/xlocale/_string.h \
-  /usr/include/xlocale/_time.h /usr/include/xlocale/_wchar.h \
-  /usr/include/xlocale/_wctype.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/streambuf \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/ostream \
@@ -354,6 +354,26 @@ includes.h:
 
 ../../config.h:
 
+/usr/include/locale.h:
+
+/usr/include/_locale.h:
+
+/usr/include/xlocale.h:
+
+/usr/include/_xlocale.h:
+
+/usr/include/xlocale/_ctype.h:
+
+/usr/include/xlocale/__wctype.h:
+
+/usr/include/xlocale/_stdio.h:
+
+/usr/include/xlocale/_string.h:
+
+/usr/include/xlocale/_time.h:
+
+/usr/include/xlocale/_wchar.h:
+
 /usr/include/stdlib.h:
 
 /usr/include/sys/wait.h:
@@ -412,6 +432,8 @@ includes.h:
 
 /usr/include/sys/_types/_mode_t.h:
 
+/usr/include/xlocale/_stdlib.h:
+
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/float.h:
 
 /usr/include/math.h:
@@ -433,6 +455,8 @@ includes.h:
 /usr/include/wctype.h:
 
 /usr/include/_types/_wctrans_t.h:
+
+/usr/include/xlocale/_wctype.h:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/iostream:
 
@@ -487,30 +511,6 @@ includes.h:
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/functional:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__functional_03:
-
-/usr/include/locale.h:
-
-/usr/include/_locale.h:
-
-/usr/include/xlocale.h:
-
-/usr/include/_xlocale.h:
-
-/usr/include/xlocale/_ctype.h:
-
-/usr/include/xlocale/__wctype.h:
-
-/usr/include/xlocale/_stdio.h:
-
-/usr/include/xlocale/_stdlib.h:
-
-/usr/include/xlocale/_string.h:
-
-/usr/include/xlocale/_time.h:
-
-/usr/include/xlocale/_wchar.h:
-
-/usr/include/xlocale/_wctype.h:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/streambuf:
 

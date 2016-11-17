@@ -30,8 +30,8 @@ Kernel configured for up to 4 processors.
 Processor type: i486 (Intel 80486)
 Processors active: 0 1 2 3
 Primary memory available: 4.00 gigabytes
-Default processor set: 215 tasks, 1106 threads, 4 processors
-Load average: 1.43, Mach factor: 2.56
+Default processor set: 218 tasks, 965 threads, 4 processors
+Load average: 0.81, Mach factor: 3.18
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -203,8 +203,8 @@ configure:4608: checking lex library
 configure:4622: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in conftest-f7565a.o
-      _main in conftest-f7565a.o
+      _yylex in conftest-8d4db0.o
+      _main in conftest-8d4db0.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:4622: $? = 1
@@ -3899,15 +3899,15 @@ configure:5336: $? = 0
 configure:5336: result: yes
 configure:5336: checking for arpa/inet.h
 configure:5336: result: yes
-configure:5336: checking xlocale.h usability
+configure:5336: checking locale.h usability
 configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
 configure:5336: $? = 0
 configure:5336: result: yes
-configure:5336: checking xlocale.h presence
+configure:5336: checking locale.h presence
 configure:5336: gcc -E  conftest.c
 configure:5336: $? = 0
 configure:5336: result: yes
-configure:5336: checking for xlocale.h
+configure:5336: checking for locale.h
 configure:5336: result: yes
 configure:5336: checking errno.h usability
 configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
@@ -4038,7 +4038,7 @@ configure: failed program was:
 | #define HAVE_STDINT_H 1
 | #define HAVE_UNISTD_H 1
 | #define HAVE_ARPA_INET_H 1
-| #define HAVE_XLOCALE_H 1
+| #define HAVE_LOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
 | #define HAVE_CTYPE_H 1
@@ -4118,7 +4118,7 @@ configure: failed program was:
 | #define HAVE_STDINT_H 1
 | #define HAVE_UNISTD_H 1
 | #define HAVE_ARPA_INET_H 1
-| #define HAVE_XLOCALE_H 1
+| #define HAVE_LOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
 | #define HAVE_CTYPE_H 1
@@ -4247,7 +4247,7 @@ configure: failed program was:
 | #define HAVE_STDINT_H 1
 | #define HAVE_UNISTD_H 1
 | #define HAVE_ARPA_INET_H 1
-| #define HAVE_XLOCALE_H 1
+| #define HAVE_LOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
 | #define HAVE_CTYPE_H 1
@@ -4359,7 +4359,7 @@ configure: failed program was:
 | #define HAVE_STDINT_H 1
 | #define HAVE_UNISTD_H 1
 | #define HAVE_ARPA_INET_H 1
-| #define HAVE_XLOCALE_H 1
+| #define HAVE_LOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
 | #define HAVE_CTYPE_H 1
@@ -4432,7 +4432,7 @@ configure: failed program was:
 | #define HAVE_STDINT_H 1
 | #define HAVE_UNISTD_H 1
 | #define HAVE_ARPA_INET_H 1
-| #define HAVE_XLOCALE_H 1
+| #define HAVE_LOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
 | #define HAVE_CTYPE_H 1
@@ -4510,7 +4510,7 @@ configure: failed program was:
 | #define HAVE_STDINT_H 1
 | #define HAVE_UNISTD_H 1
 | #define HAVE_ARPA_INET_H 1
-| #define HAVE_XLOCALE_H 1
+| #define HAVE_LOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
 | #define HAVE_CTYPE_H 1
@@ -4761,7 +4761,7 @@ configure: failed program was:
 | #define HAVE_STDINT_H 1
 | #define HAVE_UNISTD_H 1
 | #define HAVE_ARPA_INET_H 1
-| #define HAVE_XLOCALE_H 1
+| #define HAVE_LOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
 | #define HAVE_CTYPE_H 1
@@ -5000,7 +5000,7 @@ configure:5996: checking for gethostbyname_r
 configure:5996: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-93f9db.o
+      _main in conftest-6a2a2d.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:5996: $? = 1
@@ -5026,7 +5026,7 @@ configure: failed program was:
 | #define HAVE_STDINT_H 1
 | #define HAVE_UNISTD_H 1
 | #define HAVE_ARPA_INET_H 1
-| #define HAVE_XLOCALE_H 1
+| #define HAVE_LOCALE_H 1
 | #define HAVE_ERRNO_H 1
 | #define HAVE_FCNTL_H 1
 | #define HAVE_CTYPE_H 1
@@ -5309,6 +5309,7 @@ ac_cv_header_float_h=yes
 ac_cv_header_gnutls_gnutls_h=yes
 ac_cv_header_inttypes_h=yes
 ac_cv_header_limits_h=yes
+ac_cv_header_locale_h=yes
 ac_cv_header_math_h=yes
 ac_cv_header_memory_h=yes
 ac_cv_header_netdb_h=yes
@@ -5329,7 +5330,6 @@ ac_cv_header_sys_types_h=yes
 ac_cv_header_time=yes
 ac_cv_header_time_h=yes
 ac_cv_header_unistd_h=yes
-ac_cv_header_xlocale_h=yes
 ac_cv_header_zlib_h=yes
 ac_cv_host=x86_64-apple-darwin13.4.0
 ac_cv_lib_lex=-ll
@@ -5522,7 +5522,7 @@ target_alias=''
 #define HAVE_STDINT_H 1
 #define HAVE_UNISTD_H 1
 #define HAVE_ARPA_INET_H 1
-#define HAVE_XLOCALE_H 1
+#define HAVE_LOCALE_H 1
 #define HAVE_ERRNO_H 1
 #define HAVE_FCNTL_H 1
 #define HAVE_CTYPE_H 1

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.38
+        stdsoap2.h 2.8.39
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20838
+#define GSOAP_VERSION 20839
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -267,6 +267,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 #  define HAVE_INTTYPES_H
+#  define HAVE_LOCALE_H
 # elif defined(WIN32)
 #  if _MSC_VER >= 1400
 #   define HAVE_SNPRINTF
@@ -275,7 +276,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
 #  define HAVE_STRTOD_L
-#  define HAVE_SPRINTF_L
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
 #  if _MSC_VER >= 1300
@@ -289,6 +289,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_MBTOWC
 #  define SOAP_LONG_FORMAT "%I64d"
 #  define SOAP_ULONG_FORMAT "%I64u"
+#  define HAVE_LOCALE_H
 # elif defined(__APPLE__)
 #  define HAVE_POLL
 #  define HAVE_SNPRINTF
@@ -298,7 +299,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_SSCANF
 #  define HAVE_STRTOD_L
 #  define HAVE_SSCANF_L
-#  define HAVE_SPRINTF_L
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
 #  define HAVE_STRTOLL
@@ -314,6 +314,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 #  define HAVE_INTTYPES_H
+#  define HAVE_LOCALE_H
 # elif defined(_AIX43)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -329,6 +330,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_LOCALTIME_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
+#  define HAVE_LOCALE_H
 # elif defined(_AIX41)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -339,6 +341,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_SYS_TIMEB_H
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
+#  define HAVE_LOCALE_H
 # elif defined(HP_UX)
 #  include <sys/_inttypes.h>
 extern intmax_t __strtoll(const char*, char**, int);
@@ -362,6 +365,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 #  define HAVE_ISNAN
+#  define HAVE_LOCALE_H
 # elif defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD)
 #  define HAVE_POLL
 #  define HAVE_SNPRINTF
@@ -371,7 +375,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_SSCANF
 #  define HAVE_STRTOD_L
 #  define HAVE_SSCANF_L
-#  define HAVE_SPRINTF_L
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
 #  define HAVE_STRTOLL
@@ -388,6 +391,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define SOAP_ULONG_FORMAT "%qu"
 #  define HAVE_ISNAN
 #  define HAVE_ISINF
+#  define HAVE_LOCALE_H
 # elif defined(__VMS)
 #  include <ioctl.h>
 #  define HAVE_SNPRINTF
@@ -404,7 +408,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_LOCALTIME_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
-# elif defined(__GLIBC__) || defined(__GNU__)
+# elif defined(__GLIBC__) || defined(__GNU__) || defined(__GNUC__)
 #  define HAVE_POLL
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -412,11 +416,11 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_SSCANF
 #  define HAVE_STRTOD_L
 #  define HAVE_SSCANF_L
-#  define HAVE_SPRINTF_L
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
 #  define HAVE_STRTOLL
 #  define HAVE_STRTOULL
+#  define HAVE_GETTIMEOFDAY
 #  define HAVE_SYS_TIMEB_H
 #  define HAVE_FTIME
 #  define HAVE_RAND_R
@@ -429,6 +433,9 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_MBTOWC
 #  define HAVE_ISNAN
 #  define HAVE_ISINF
+#  if !defined(__GNUC__) || __GNUC__ >= 4 /* gcc 3 and earlier often refuse to compile _l functions */
+#   define HAVE_LOCALE_H
+#  endif
 # elif defined(TRU64)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -447,6 +454,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_MBTOWC
 #  define SOAP_LONG_FORMAT "%ld"
 #  define SOAP_ULONG_FORMAT "%lu"
+#  define HAVE_LOCALE_H
 # elif defined(MAC_CARBON)
 #  define WITH_NOIO
 #  define HAVE_SNPRINTF
@@ -455,7 +463,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_SSCANF
 #  define HAVE_STRTOD_L
 #  define HAVE_SSCANF_L
-#  define HAVE_SPRINTF_L
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
 #  define HAVE_FTIME
@@ -578,6 +585,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 #  define HAVE_STRERROR_R
+#  define HAVE_LOCALE_H
 #  ifdef MB_LEN_MAX
 #   define HAVE_WCTOMB
 #   define HAVE_MBTOWC
@@ -610,7 +618,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #endif
 
 /* allowing empty struct/union in C is a GNU extension */
-#if !defined(__GNU__)
+#if !defined(__GNU__) && !defined(__GNUC__)
 # define WITH_NOEMPTYSTRUCT
 #endif
 
@@ -632,20 +640,33 @@ extern intmax_t __strtoull(const char*, char**, int);
 # endif
 #endif
 
-/* if we have xlocale.h then we can use it WITH_C_LOCALE enabled to avoid decimal point conversion issues */
+/* if we have locale.h then we should use it WITH_C_LOCALE enabled to avoid decimal point conversion issues */
+#ifdef HAVE_LOCALE_H
+# ifndef WITH_C_LOCALE
+#  define WITH_C_LOCALE
+# endif
+#endif
+
+#ifdef WITH_NO_C_LOCALE
+# undef WITH_C_LOCALE
+#endif
+
 #ifdef WITH_C_LOCALE
+# include <locale.h>
 # ifdef WIN32
-#  include <locale.h>
+#  define SOAP_LOCALE_T _locale_t
 #  define SOAP_LOCALE(soap) ((soap)->c_locale ? (soap)->c_locale : ((soap)->c_locale = _create_locale(LC_ALL, "C")))
+#  define SOAP_FREELOCALE(soap) (void)((soap)->c_locale && (_free_locale((soap)->c_locale), ((soap)->c_locale = NULL)))
 # else
 #  include <xlocale.h>
+#  define SOAP_LOCALE_T locale_t
 #  define SOAP_LOCALE(soap) ((soap)->c_locale ? (soap)->c_locale : ((soap)->c_locale = newlocale(LC_ALL_MASK, "C", NULL)))
+#  define SOAP_FREELOCALE(soap) (void)((soap)->c_locale && (freelocale((soap)->c_locale), ((soap)->c_locale = NULL)))
 # endif
 #else
 # undef HAVE_STRTOF_L
 # undef HAVE_STRTOD_L
 # undef HAVE_SSCANF_L
-# undef HAVE_SPRINTF_L
 #endif
 
 #ifdef TANDEM_NONSTOP /* Support for Guardian */
@@ -990,7 +1011,7 @@ extern "C" {
 # endif
 # define soap_strtoll soap_strtol
 # define soap_strtoull soap_strtoul
-#elif !defined(WIN32) || defined(CYGWIN) || defined(__GLIBC__) || defined(__GNU__)
+#elif !defined(WIN32) || defined(CYGWIN) || defined(__GLIBC__) || defined(__GNU__) || defined(__GNUC__)
 # ifndef LONG64
 #  if defined(HAVE_INTTYPES_H)
 #   include <inttypes.h>
@@ -2782,11 +2803,7 @@ struct SOAP_CMAC soap
   char session_host[SOAP_TAGLEN];
   int session_port;
 #ifdef WITH_C_LOCALE
-# ifdef WIN32
-  _locale_t c_locale;           /* set to C locale by default */
-# else
-  locale_t c_locale;            /* set to C locale by default */
-# endif
+  SOAP_LOCALE_T c_locale;       /* set to C locale by default */
 #else
   void *c_locale;
 #endif

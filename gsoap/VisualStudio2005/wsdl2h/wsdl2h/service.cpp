@@ -142,9 +142,6 @@ void Definitions::analyze(const wsdl__definitions& definitions)
     else
     {
       // /definitions/binding/@type
-      const char *binding_type = NULL;
-      if ((*binding).type_)
-        binding_type = (*binding).type_;
       // TODO: need to find the Policy of portType, though it is never used...?
       // const wsp__Policy *portType_policy = NULL;
       // /definitions/binding/wsp:Policy and wsp:PolicyReference
@@ -2465,7 +2462,9 @@ void Definitions::compile(const wsdl__definitions& definitions)
         {
           const char *pname = types.pname(true, false, "_", (*schema5)->targetNamespace, (*element).name);
           fprintf(stream, "@ref %s\n", cname);
-          fprintf(stream, "    @code\n    // Reader (returns SOAP_OK on success):\n    soap_read_%s(struct soap*, %s);\n    // Writer (returns SOAP_OK on success):\n    soap_write_%s(struct soap*, %s);\n    @endcode\n", cname, pname, cname, pname);
+          fprintf(stream, "    @code\n    // Reader (returns SOAP_OK on success):\n    soap_read_%s(struct soap*, %s);\n    // Writer (returns SOAP_OK on success):\n    soap_write_%s(struct soap*, %s);\n", cname, pname, cname, pname);
+          fprintf(stream, "    // REST GET (returns SOAP_OK on success):\n    soap_GET_%s(struct soap*, const char *URL, %s);\n    // REST PUT (returns SOAP_OK on success):\n    soap_PUT_%s(struct soap*, const char *URL, %s);\n", cname, pname, cname, pname);
+          fprintf(stream, "    // REST POST (returns SOAP_OK on success):\n    soap_POST_send_%s(struct soap*, const char *URL, %s);\n    soap_POST_recv_%s(struct soap*, %s);\n    @endcode\n", cname, pname, cname, pname);
         }
         else
           fprintf(stream, "(use wsdl2h option -g to auto-generate type %s)\n", cname);

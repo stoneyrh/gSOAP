@@ -1104,11 +1104,16 @@ Version 2.8.37 (10/25/2016)
 - Fixed `soap_mq` message queue plugin dropping connections.
 - Fixed missing nested [] in arrayType value in SOAP 1.1 encoding (SOAP 1.2 not affected).
 
-Version 2.8.38 (11/11/2016) {#latest}
+Version 2.8.38 (11/11/2016)
 ---
 
 - Added auto-generated client-side REST API functions to simplify REST GET, PUT, POST operations with XML data: `soap_GET_T`, `soap_PUT_T`, `soap_POST_send_T`, and `soap_POST_recv_T` for XML elements/types `T`.  Also `soap_DELETE` REST DELETE added.  See [get started](http://www.genivia.com/dev.html#services) on how to use these functions.
 - Updated samples/webserver to use both the httpform and httppost plugins to serve HTML form data and REST PUT, POST, DELETE operations for the updated samples/rest example person.c and person.cpp clients.
+
+Version 2.8.39 (11/17/2016) {#latest}
+---
+
+- Minor improvements: the engine sets the temporary "C" locale for floating point conversion on most systems.  This is now the default on most systems, rather than an option.  To disable, compile source code with `-DWITH_NO_C_LOCALE`.  To enable, compile with `-DWITH_C_LOCALE`.  As before, the setting is temporary and thread-local in the engine so it does not affect the application's locale.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

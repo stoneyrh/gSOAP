@@ -7095,10 +7095,11 @@ soap_wsse_preparefinalsend(struct soap *soap)
         const char *c14ninclude = soap->c14ninclude;
         soap->c14ninclude = NULL;
         soap->level = 3; /* indent level for XML Signature */
-        if ((soap->mode & SOAP_XML_CANONICAL) && (soap->mode & SOAP_XML_INDENT))
+        if ((soap->mode & SOAP_XML_CANONICAL))
         {
           soap->ns = 0; /* need namespaces for canonicalization */
-          soap->count += 4; /* correction for soap->ns = 0: add \n+indent */
+	  if ((soap->mode & SOAP_XML_INDENT))
+	    soap->count += 4; /* correction for soap->ns = 0: add \n+indent */
         }
         soap_out_ds__SignatureType(soap, "ds:Signature", 0, signature, NULL);
         soap->c14ninclude = c14ninclude;
@@ -7108,10 +7109,11 @@ soap_wsse_preparefinalsend(struct soap *soap)
         const char *c14nexclude = soap->c14nexclude;
         soap->c14nexclude = "ds xsi"; /* don't add xmlns:ds or xmlns:xsi to count msg len */
         soap->level = 4; /* indent level for XML SignedInfo */
-        if ((soap->mode & SOAP_XML_CANONICAL) && (soap->mode & SOAP_XML_INDENT))
+        if ((soap->mode & SOAP_XML_CANONICAL))
         {
           soap->ns = 0; /* need namespaces for canonicalization */
-          soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
+	  if ((soap->mode & SOAP_XML_INDENT))
+	    soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
         }
         soap_out_ds__SignedInfoType(soap, "ds:SignedInfo", 0, signature->SignedInfo, NULL);
         soap_out__ds__SignatureValue(soap, "ds:SignatureValue", 0, &signature->SignatureValue, NULL);

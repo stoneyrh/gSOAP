@@ -23,7 +23,11 @@ soapC.o: soapC.cpp soapH.h soapStub.h xml-rpc-iters.h \
   /usr/include/_types/_wctype_t.h /usr/include/ctype.h \
   /usr/include/runetype.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/initializer_list \
-  ../../../gsoap/stdsoap2.h ../../../config.h /usr/include/stdlib.h \
+  ../../../gsoap/stdsoap2.h ../../../config.h /usr/include/locale.h \
+  /usr/include/_locale.h /usr/include/xlocale.h /usr/include/_xlocale.h \
+  /usr/include/xlocale/_ctype.h /usr/include/xlocale/__wctype.h \
+  /usr/include/xlocale/_stdio.h /usr/include/xlocale/_time.h \
+  /usr/include/xlocale/_wchar.h /usr/include/stdlib.h \
   /usr/include/sys/wait.h /usr/include/sys/_types/_pid_t.h \
   /usr/include/sys/_types/_id_t.h /usr/include/sys/signal.h \
   /usr/include/sys/appleapiopts.h /usr/include/machine/signal.h \
@@ -47,9 +51,10 @@ soapC.o: soapC.cpp soapH.h soapStub.h xml-rpc-iters.h \
   /usr/include/libkern/i386/_OSByteOrder.h /usr/include/alloca.h \
   /usr/include/machine/types.h /usr/include/i386/types.h \
   /usr/include/sys/_types/___offsetof.h /usr/include/sys/_types/_dev_t.h \
-  /usr/include/sys/_types/_mode_t.h /usr/include/string.h \
-  /usr/include/sys/_types/_rsize_t.h /usr/include/sys/_types/_errno_t.h \
-  /usr/include/strings.h \
+  /usr/include/sys/_types/_mode_t.h /usr/include/xlocale/_stdlib.h \
+  /usr/include/string.h /usr/include/sys/_types/_rsize_t.h \
+  /usr/include/sys/_types/_errno_t.h /usr/include/strings.h \
+  /usr/include/xlocale/_string.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/limits.h \
   /usr/include/limits.h /usr/include/machine/limits.h \
   /usr/include/i386/limits.h /usr/include/i386/_limits.h \
@@ -76,6 +81,7 @@ soapC.o: soapC.cpp soapH.h soapStub.h xml-rpc-iters.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/cwctype \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/cctype \
   /usr/include/wctype.h /usr/include/_types/_wctrans_t.h \
+  /usr/include/xlocale/_wctype.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/algorithm \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/stdexcept \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/iostream \
@@ -103,12 +109,6 @@ soapC.o: soapC.cpp soapH.h soapStub.h xml-rpc-iters.h \
   /usr/include/sys/_types/_mach_port_t.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/functional \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__functional_03 \
-  /usr/include/locale.h /usr/include/_locale.h /usr/include/xlocale.h \
-  /usr/include/_xlocale.h /usr/include/xlocale/_ctype.h \
-  /usr/include/xlocale/__wctype.h /usr/include/xlocale/_stdio.h \
-  /usr/include/xlocale/_stdlib.h /usr/include/xlocale/_string.h \
-  /usr/include/xlocale/_time.h /usr/include/xlocale/_wchar.h \
-  /usr/include/xlocale/_wctype.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/streambuf \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/ostream \
@@ -236,6 +236,24 @@ xml-rpc-iters.h:
 
 ../../../config.h:
 
+/usr/include/locale.h:
+
+/usr/include/_locale.h:
+
+/usr/include/xlocale.h:
+
+/usr/include/_xlocale.h:
+
+/usr/include/xlocale/_ctype.h:
+
+/usr/include/xlocale/__wctype.h:
+
+/usr/include/xlocale/_stdio.h:
+
+/usr/include/xlocale/_time.h:
+
+/usr/include/xlocale/_wchar.h:
+
 /usr/include/stdlib.h:
 
 /usr/include/sys/wait.h:
@@ -322,6 +340,8 @@ xml-rpc-iters.h:
 
 /usr/include/sys/_types/_mode_t.h:
 
+/usr/include/xlocale/_stdlib.h:
+
 /usr/include/string.h:
 
 /usr/include/sys/_types/_rsize_t.h:
@@ -329,6 +349,8 @@ xml-rpc-iters.h:
 /usr/include/sys/_types/_errno_t.h:
 
 /usr/include/strings.h:
+
+/usr/include/xlocale/_string.h:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/limits.h:
 
@@ -392,6 +414,8 @@ xml-rpc-iters.h:
 
 /usr/include/_types/_wctrans_t.h:
 
+/usr/include/xlocale/_wctype.h:
+
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/algorithm:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/stdexcept:
@@ -451,30 +475,6 @@ xml-rpc-iters.h:
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/functional:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__functional_03:
-
-/usr/include/locale.h:
-
-/usr/include/_locale.h:
-
-/usr/include/xlocale.h:
-
-/usr/include/_xlocale.h:
-
-/usr/include/xlocale/_ctype.h:
-
-/usr/include/xlocale/__wctype.h:
-
-/usr/include/xlocale/_stdio.h:
-
-/usr/include/xlocale/_stdlib.h:
-
-/usr/include/xlocale/_string.h:
-
-/usr/include/xlocale/_time.h:
-
-/usr/include/xlocale/_wchar.h:
-
-/usr/include/xlocale/_wctype.h:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/streambuf:
 

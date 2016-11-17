@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.38
+        stdsoap2.c[pp] 2.8.39
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20838
+#define GSOAP_LIB_VERSION 20839
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -81,10 +81,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.38 2016-11-11 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.39 2016-11-17 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.38 2016-11-11 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.39 2016-11-17 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -6149,15 +6149,7 @@ soap_done(struct soap *soap)
       gsk_environment_close(&soap->ctx);
 #endif  
 #ifdef WITH_C_LOCALE
-  if (soap->c_locale)
-  {
-# ifdef WIN32
-    _free_locale(soap->c_locale);
-# else
-    freelocale(soap->c_locale);
-# endif
-    soap->c_locale = NULL;
-  }
+  SOAP_FREELOCALE(soap);
 #endif
 #ifdef WITH_ZLIB
   if (soap->d_stream)
@@ -14005,8 +13997,12 @@ const char*
 SOAP_FMAC2
 soap_float2s(struct soap *soap, float n)
 {
-#if !defined(WITH_C_LOCALE) || !defined(HAVE_SPRINTF_L)
+#if !defined(WIN32)
+# if defined(WITH_C_LOCALE)
+  SOAP_LOCALE_T locale;
+# else
   char *s;
+# endif
 #endif
   if (soap_isnan((double)n))
     return "NaN";
@@ -14014,11 +14010,13 @@ soap_float2s(struct soap *soap, float n)
     return "INF";
   if (soap_isninff(n))
     return "-INF";
-#if defined(WITH_C_LOCALE) && defined(HAVE_SPRINTF_L)
+#if defined(WITH_C_LOCALE)
 # ifdef WIN32
   _sprintf_s_l(soap->tmpbuf, _countof(soap->tmpbuf), soap->float_format, SOAP_LOCALE(soap), n);
 # else
-  sprintf_l(soap->tmpbuf, SOAP_LOCALE(soap), soap->float_format, n);
+  locale = uselocale(SOAP_LOCALE(soap));
+  (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), 20), soap->float_format, n);
+  uselocale(locale);
 # endif
 #else
   (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), 20), soap->float_format, n);
@@ -14064,24 +14062,54 @@ soap_s2float(struct soap *soap, const char *s, float *p)
       *p = FLT_NAN;
     else
     {
-/* On some systems strtof requires -std=c99 or does not even link: so we try to use strtod first */
-#if defined(WITH_C_LOCALE) && defined(HAVE_STRTOD_L)
+/* On some systems strtof requires -std=c99 or does not even link: so we try strtod first */
+#if defined(WITH_C_LOCALE)
+# if defined(HAVE_STRTOD_L)
       char *r;
-# ifdef WIN32
+#  ifdef WIN32
       *p = (float)_strtod_l(s, &r, SOAP_LOCALE(soap));
-# else
+#  else
       *p = (float)strtod_l(s, &r, SOAP_LOCALE(soap));
-# endif
+#  endif
       if (*r)
         soap->error = SOAP_TYPE;
+# elif defined(HAVE_STRTOF_L)
+      char *r;
+      *p = strtof_l((char*)s, &r, SOAP_LOCALE(soap));
+      if (*r)
+        soap->error = SOAP_TYPE;
+# elif defined(HAVE_SSCANF_L)
+      double n;
+      if (sscanf_l(s, SOAP_LOCALE(soap), "%lf", &n) != 1)
+        soap->error = SOAP_TYPE;
+      *p = (float)n;
+# elif defined(HAVE_STRTOD)
+      char *r;
+      SOAP_LOCALE_T locale = uselocale(SOAP_LOCALE(soap));
+      *p = (float)strtod((char*)s, &r);
+      uselocale(locale);
+      if (*r)
+        soap->error = SOAP_TYPE;
+# elif defined(HAVE_STRTOF)
+      char *r;
+      SOAP_LOCALE_T locale = uselocale(SOAP_LOCALE(soap));
+      *p = strtof((char*)s, &r);
+      uselocale(locale);
+      if (*r)
+        soap->error = SOAP_TYPE;
+# elif defined(HAVE_SSCANF)
+      double n;
+      SOAP_LOCALE_T locale = uselocale(SOAP_LOCALE(soap));
+      if (sscanf(s, "%lf", &n) != 1)
+        soap->error = SOAP_TYPE;
+      uselocale(locale);
+      *p = (float)n;
+# else
+      soap->error = SOAP_TYPE;
+# endif
 #elif defined(HAVE_STRTOD)
       char *r;
       *p = (float)strtod(s, &r);
-      if (*r)
-        soap->error = SOAP_TYPE;
-#elif defined(WITH_C_LOCALE) && defined(HAVE_STRTOF_L)
-      char *r;
-      *p = strtof_l((char*)s, &r, SOAP_LOCALE(soap));
       if (*r)
         soap->error = SOAP_TYPE;
 #elif defined(HAVE_STRTOF)
@@ -14089,11 +14117,6 @@ soap_s2float(struct soap *soap, const char *s, float *p)
       *p = strtof((char*)s, &r);
       if (*r)
         soap->error = SOAP_TYPE;
-#elif defined(WITH_C_LOCALE) && defined(HAVE_SSCANF_L) && !defined(HAVE_STRTOF_L) && !defined(HAVE_STRTOD_L)
-      double n;
-      if (sscanf_l(s, SOAP_LOCALE(soap), "%lf", &n) != 1)
-        soap->error = SOAP_TYPE;
-      *p = (float)n;
 #elif defined(HAVE_SSCANF)
       double n;
       if (sscanf(s, "%lf", &n) != 1)
@@ -14173,8 +14196,12 @@ const char*
 SOAP_FMAC2
 soap_double2s(struct soap *soap, double n)
 {
-#if !defined(WITH_C_LOCALE) || !defined(HAVE_SPRINTF_L)
+#if !defined(WIN32)
+# if defined(WITH_C_LOCALE)
+  SOAP_LOCALE_T locale;
+# else
   char *s;
+# endif
 #endif
   if (soap_isnan(n))
     return "NaN";
@@ -14182,11 +14209,13 @@ soap_double2s(struct soap *soap, double n)
     return "INF";
   if (soap_isninfd(n))
     return "-INF";
-#if defined(WITH_C_LOCALE) && defined(HAVE_SPRINTF_L)
+#if defined(WITH_C_LOCALE)
 # ifdef WIN32
   _sprintf_s_l(soap->tmpbuf, _countof(soap->tmpbuf), soap->double_format, SOAP_LOCALE(soap), n);
 # else
-  sprintf_l(soap->tmpbuf, SOAP_LOCALE(soap), soap->double_format, n);
+  locale = uselocale(SOAP_LOCALE(soap));
+  (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), 40), soap->double_format, n);
+  uselocale(locale);
 # endif
 #else
   (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), 40), soap->double_format, n);
@@ -14232,22 +14261,35 @@ soap_s2double(struct soap *soap, const char *s, double *p)
       *p = DBL_NAN;
     else
     {
-#if defined(WITH_C_LOCALE) && defined(HAVE_STRTOD_L)
+#if defined(WITH_C_LOCALE)
+# if defined(HAVE_STRTOD_L)
       char *r;
-# ifdef WIN32
+#  ifdef WIN32
       *p = _strtod_l(s, &r, SOAP_LOCALE(soap));
-# else
+#  else
       *p = strtod_l(s, &r, SOAP_LOCALE(soap));
-# endif
+#  endif
       if (*r)
         soap->error = SOAP_TYPE;
+# elif defined(HAVE_STRTOD)
+      char *r;
+      SOAP_LOCALE_T locale = uselocale(SOAP_LOCALE(soap));
+      *p = strtod(s, &r);
+      uselocale(locale);
+      if (*r)
+        soap->error = SOAP_TYPE;
+# elif defined(HAVE_SSCANF_L)
+      SOAP_LOCALE_T locale = uselocale(SOAP_LOCALE(soap));
+      if (sscanf_l(s, SOAP_LOCALE(soap), "%lf", p) != 1)
+        soap->error = SOAP_TYPE;
+      uselocale(locale);
+# else
+      soap->error = SOAP_TYPE;
+# endif
 #elif defined(HAVE_STRTOD)
       char *r;
       *p = strtod(s, &r);
       if (*r)
-        soap->error = SOAP_TYPE;
-#elif defined(WITH_C_LOCALE) && defined(HAVE_SSCANF_L) && !defined(HAVE_STRTOF_L) && !defined(HAVE_STRTOD_L)
-      if (sscanf_l(s, SOAP_LOCALE(soap), "%lf", p) != 1)
         soap->error = SOAP_TYPE;
 #elif defined(HAVE_SSCANF)
       if (sscanf(s, "%lf", p) != 1)

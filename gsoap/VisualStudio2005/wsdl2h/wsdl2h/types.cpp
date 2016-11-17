@@ -2782,7 +2782,6 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
   const char *default_ = attribute.default_;
   const char *default__ = attribute.default__;
   const char *fixed = attribute.fixed;
-  const char *fixed_ = attribute.fixed_;
   const char *nameURI = NULL, *typeURI = NULL, *nameprefix = NULL, *typeprefix = NULL;
   bool is_optional = attribute.use != required && !default_;
   document(attribute.annotation);
@@ -2821,7 +2820,6 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
     if (!fixed)
     {
       fixed = attribute.attributePtr()->fixed;
-      fixed_ = attribute.attributePtr()->fixed_;
     }
     if (default_)
       is_optional = false;
@@ -3110,7 +3108,6 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
   const char *default_ = element.default_;
   const char *default__ = element.default__;
   const char *fixed = element.fixed;
-  const char *fixed_ = element.fixed_;
   const char *min = minOccurs;
   const char *max = maxOccurs;
   bool nillable = element.nillable;
@@ -3159,7 +3156,6 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       if (!fixed)
       {
         fixed = element.elementPtr()->fixed;
-        fixed_ = element.elementPtr()->fixed_;
       }
     }
     if (!nillable)
@@ -3235,6 +3231,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
         else
           fprintf(stream, templateformat, vname("$CONTAINER"), s, aname(nameprefix, nameURI, name));
       }
+      nillable = false;
     }
     else
     {
@@ -3242,7 +3239,8 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
         fprintf(stream, "/// Element reference \"%s:\"%s.\n", element.schemaPtr()->targetNamespace, element.ref);
       else
         fprintf(stream, "/// Element \"%s\":%s.\n", element.schemaPtr()->targetNamespace, name);
-      fprintf(stream, elementformat, pname((with_union && !is_choicetype(typeprefix, typeURI, type)) || ((fake_union || element.nillable || (is_nillable(element) && !(with_union && is_choicetype(typeprefix, typeURI, type)))) && !default_) || fixed, !with_union, typeprefix, typeURI, type), aname(nameprefix, nameURI, name));
+      nillable = (with_union && !is_choicetype(typeprefix, typeURI, type)) || ((fake_union || element.nillable || (is_nillable(element) && !(with_union && is_choicetype(typeprefix, typeURI, type)))) && !default_) || fixed;
+      fprintf(stream, elementformat, pname(nillable, !with_union, typeprefix, typeURI, type), aname(nameprefix, nameURI, name));
     }
   }
   else if (name && type)
@@ -3290,11 +3288,13 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
         else
           fprintf(stream, templateformat, vname("$CONTAINER"), s, aname(nameprefix, nameURI, name));
       }
+      nillable = false;
     }
     else
     {
       fprintf(stream, "/// Element \"%s\" of XSD type %s.\n", name, type);
-      fprintf(stream, elementformat, pname((with_union && !is_choicetype(NULL, URI, type)) || ((fake_union || element.nillable || (is_nillable(element) && !(with_union && is_choicetype(NULL, URI, type)))) && !default_) || fixed, !with_union, NULL, URI, type), aname(nameprefix, nameURI, name));
+      nillable = (with_union && !is_choicetype(NULL, URI, type)) || ((fake_union || element.nillable || (is_nillable(element) && !(with_union && is_choicetype(NULL, URI, type)))) && !default_) || fixed;
+      fprintf(stream, elementformat, pname(nillable, !with_union, NULL, URI, type), aname(nameprefix, nameURI, name));
     }
   }
   else if (name && element.simpleTypePtr())
@@ -3319,6 +3319,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
         fprintf(stream, "/// Vector of %s of length %s..%s.\n", name, min ? min : "1", max);
         fprintf(stream, templateformat_open, vname("$CONTAINER"), "\n");
       }
+      nillable = false;
     }
     else if (!cflag && !with_union && (r = vname("$POINTER")) && *r != '*' && *r != '$')
     {
@@ -3338,9 +3339,14 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
      || ((cflag || sflag) && max && strcmp(max, "1")) // maxOccurs != "1"
      || (with_union && !cflag)
      || (fake_union && !default_))
+    {
       fprintf(stream, pointerformat, s, aname(nameprefix, nameURI, name));
+    }
     else
+    {
       fprintf(stream, elementformat, s, aname(nameprefix, nameURI, name));
+      nillable = false;
+    }
   }
   else if (name && element.complexTypePtr())
   {
@@ -3364,6 +3370,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
         fprintf(stream, "/// Vector of %s of length %s..%s.\n", name, min ? min : "1", max);
         fprintf(stream, templateformat_open, vname("$CONTAINER"), "\n");
       }
+      nillable = false;
     }
     else if (!cflag && !with_union && (r = vname("$POINTER")) && *r != '*' && *r != '$')
     {
@@ -3383,9 +3390,14 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
      || ((cflag || sflag) && max && strcmp(max, "1")) // maxOccurs != "1"
      || (with_union && !cflag)
      || (fake_union && !default_))
+    {
       fprintf(stream, pointerformat, s, aname(nameprefix, nameURI, name));
+    }
     else
+    {
       fprintf(stream, elementformat, s, aname(nameprefix, nameURI, name));
+      nillable = false;
+    }
   }
   else if (element.ref)
   {
@@ -3407,9 +3419,13 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
         fprintf(stream, "/// Vector of %s of length %s..%s.\n", element.ref, min ? min : "1", max);
         fprintf(stream, templateformat, vname("$CONTAINER"), tname("_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
       }
+      nillable = false;
     }
     else
-      fprintf(stream, elementformat, pname((with_union && !cflag) || ((fake_union || is_nillable(element)) && !default_) || fixed, !with_union, "_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
+    {
+      nillable = (with_union && !cflag) || ((fake_union || is_nillable(element)) && !default_) || fixed;
+      fprintf(stream, elementformat, pname(nillable, !with_union, "_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
+    }
   }
   else if (name)
   {
@@ -3434,9 +3450,12 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
         else
           fprintf(stream, templateformat, vname("$CONTAINER"), "_XML", aname(NULL, nameURI, name));
       }
+      nillable = false;
     }
     else
+    {
       fprintf(stream, elementformat, "_XML", aname(NULL, nameURI, name));
+    }
   }
   else
   {
@@ -3448,6 +3467,8 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
        && !(element.elementPtr() && element.elementPtr()->substitutionsPtr() && !element.elementPtr()->substitutionsPtr()->empty())
       ))
   {
+    if (nillable && (!min || !strcmp(min, "1")) && (!max || !strcmp(max, "1")))
+      fprintf(stream, " nullptr");
     if (!fake_union && !min && (default_ || fixed))
       fprintf(stream, " 0");
     else if (!fake_union && !min && !element.abstract)
@@ -3464,7 +3485,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     else if (fixed)
       fprintf(stream, ";\t///< Fixed element value=\"%s\".\n", fixed);
     else if (nillable && (!min || !strcmp(min, "1")) && (!max || !strcmp(max, "1")))
-      fprintf(stream, ";\t///< Optional (xsi:nil when NULL) element.\n");
+      fprintf(stream, ";\t///< Required nillable (xsi:nil when NULL) element.\n");
     else if (!fake_union && (!min || !strcmp(min, "1")) && (!max || !strcmp(max, "1")))
       fprintf(stream, ";\t///< Required element.\n");
     else if (!fake_union && min && !strcmp(min, "0") && (!max || !strcmp(max, "1")))

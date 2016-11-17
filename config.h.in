@@ -54,6 +54,9 @@
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
 
+/* Define to 1 if you have the <locale.h> header file. */
+#undef HAVE_LOCALE_H
+
 /* Define to 1 if you have the `localtime_r' function. */
 #undef HAVE_LOCALTIME_R
 
@@ -207,9 +210,6 @@
 
 /* Define to 1 if you have the `wctomb' function. */
 #undef HAVE_WCTOMB
-
-/* Define to 1 if you have the <xlocale.h> header file. */
-#undef HAVE_XLOCALE_H
 
 /* Define to 1 if you have the <zlib.h> header file. */
 #undef HAVE_ZLIB_H

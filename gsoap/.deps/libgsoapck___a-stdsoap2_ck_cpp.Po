@@ -1,15 +1,16 @@
 libgsoapck___a-stdsoap2_ck_cpp.o: stdsoap2_ck_cpp.cpp stdsoap2.h \
-  ../config.h /usr/include/stdlib.h /usr/include/Availability.h \
-  /usr/include/AvailabilityInternal.h /usr/include/_types.h \
-  /usr/include/sys/_types.h /usr/include/sys/cdefs.h \
-  /usr/include/sys/_symbol_aliasing.h \
-  /usr/include/sys/_posix_availability.h /usr/include/machine/_types.h \
-  /usr/include/i386/_types.h /usr/include/sys/wait.h \
-  /usr/include/sys/_types/_pid_t.h /usr/include/sys/_types/_id_t.h \
-  /usr/include/sys/signal.h /usr/include/sys/appleapiopts.h \
-  /usr/include/machine/signal.h /usr/include/i386/signal.h \
-  /usr/include/machine/_mcontext.h /usr/include/i386/_mcontext.h \
-  /usr/include/mach/i386/_structs.h \
+  ../config.h /usr/include/locale.h /usr/include/_locale.h \
+  /usr/include/sys/cdefs.h /usr/include/sys/_symbol_aliasing.h \
+  /usr/include/sys/_posix_availability.h /usr/include/_types.h \
+  /usr/include/sys/_types.h /usr/include/machine/_types.h \
+  /usr/include/i386/_types.h /usr/include/sys/_types/_null.h \
+  /usr/include/xlocale.h /usr/include/_xlocale.h /usr/include/stdlib.h \
+  /usr/include/Availability.h /usr/include/AvailabilityInternal.h \
+  /usr/include/sys/wait.h /usr/include/sys/_types/_pid_t.h \
+  /usr/include/sys/_types/_id_t.h /usr/include/sys/signal.h \
+  /usr/include/sys/appleapiopts.h /usr/include/machine/signal.h \
+  /usr/include/i386/signal.h /usr/include/machine/_mcontext.h \
+  /usr/include/i386/_mcontext.h /usr/include/mach/i386/_structs.h \
   /usr/include/sys/_types/_sigaltstack.h \
   /usr/include/sys/_types/_ucontext.h \
   /usr/include/sys/_types/_pthread_attr_t.h \
@@ -27,15 +28,17 @@ libgsoapck___a-stdsoap2_ck_cpp.o: stdsoap2_ck_cpp.cpp stdsoap2.h \
   /usr/include/sys/_endian.h /usr/include/libkern/_OSByteOrder.h \
   /usr/include/libkern/i386/_OSByteOrder.h /usr/include/alloca.h \
   /usr/include/sys/_types/_ct_rune_t.h /usr/include/sys/_types/_rune_t.h \
-  /usr/include/sys/_types/_wchar_t.h /usr/include/sys/_types/_null.h \
-  /usr/include/machine/types.h /usr/include/i386/types.h \
-  /usr/include/sys/_types/___offsetof.h /usr/include/sys/_types/_dev_t.h \
-  /usr/include/sys/_types/_mode_t.h /usr/include/stdio.h \
+  /usr/include/sys/_types/_wchar_t.h /usr/include/machine/types.h \
+  /usr/include/i386/types.h /usr/include/sys/_types/___offsetof.h \
+  /usr/include/sys/_types/_dev_t.h /usr/include/sys/_types/_mode_t.h \
+  /usr/include/xlocale/_stdlib.h /usr/include/stdio.h \
   /usr/include/sys/_types/_va_list.h /usr/include/sys/_types/_off_t.h \
-  /usr/include/sys/_types/_ssize_t.h /usr/include/string.h \
-  /usr/include/sys/_types/_rsize_t.h /usr/include/sys/_types/_errno_t.h \
-  /usr/include/strings.h /usr/include/ctype.h /usr/include/runetype.h \
-  /usr/include/sys/_types/_wint_t.h \
+  /usr/include/sys/_types/_ssize_t.h /usr/include/xlocale/_stdio.h \
+  /usr/include/string.h /usr/include/sys/_types/_rsize_t.h \
+  /usr/include/sys/_types/_errno_t.h /usr/include/strings.h \
+  /usr/include/xlocale/_string.h /usr/include/ctype.h \
+  /usr/include/runetype.h /usr/include/sys/_types/_wint_t.h \
+  /usr/include/xlocale/_ctype.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/limits.h \
   /usr/include/limits.h /usr/include/machine/limits.h \
   /usr/include/i386/limits.h /usr/include/i386/_limits.h \
@@ -63,7 +66,9 @@ libgsoapck___a-stdsoap2_ck_cpp.o: stdsoap2_ck_cpp.cpp stdsoap2.h \
   /usr/include/time.h /usr/include/_structs.h \
   /usr/include/sys/_structs.h /usr/include/sys/_types/_timespec.h \
   /usr/include/sys/_types/_clock_t.h /usr/include/sys/_types/_time_t.h \
-  /usr/include/_wctype.h /usr/include/_types/_wctype_t.h \
+  /usr/include/xlocale/_time.h /usr/include/_wctype.h \
+  /usr/include/_types/_wctype_t.h /usr/include/xlocale/__wctype.h \
+  /usr/include/xlocale/_wchar.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/initializer_list \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__functional_base \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__functional_base_03 \
@@ -75,6 +80,7 @@ libgsoapck___a-stdsoap2_ck_cpp.o: stdsoap2_ck_cpp.cpp stdsoap2.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/cwctype \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/cctype \
   /usr/include/wctype.h /usr/include/_types/_wctrans_t.h \
+  /usr/include/xlocale/_wctype.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/algorithm \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/stdexcept \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/iostream \
@@ -102,12 +108,6 @@ libgsoapck___a-stdsoap2_ck_cpp.o: stdsoap2_ck_cpp.cpp stdsoap2.h \
   /usr/include/sys/_types/_mach_port_t.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/functional \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__functional_03 \
-  /usr/include/locale.h /usr/include/_locale.h /usr/include/xlocale.h \
-  /usr/include/_xlocale.h /usr/include/xlocale/_ctype.h \
-  /usr/include/xlocale/__wctype.h /usr/include/xlocale/_stdio.h \
-  /usr/include/xlocale/_stdlib.h /usr/include/xlocale/_string.h \
-  /usr/include/xlocale/_time.h /usr/include/xlocale/_wchar.h \
-  /usr/include/xlocale/_wctype.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/streambuf \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/ostream \
@@ -151,15 +151,9 @@ stdsoap2.h:
 
 ../config.h:
 
-/usr/include/stdlib.h:
+/usr/include/locale.h:
 
-/usr/include/Availability.h:
-
-/usr/include/AvailabilityInternal.h:
-
-/usr/include/_types.h:
-
-/usr/include/sys/_types.h:
+/usr/include/_locale.h:
 
 /usr/include/sys/cdefs.h:
 
@@ -167,9 +161,25 @@ stdsoap2.h:
 
 /usr/include/sys/_posix_availability.h:
 
+/usr/include/_types.h:
+
+/usr/include/sys/_types.h:
+
 /usr/include/machine/_types.h:
 
 /usr/include/i386/_types.h:
+
+/usr/include/sys/_types/_null.h:
+
+/usr/include/xlocale.h:
+
+/usr/include/_xlocale.h:
+
+/usr/include/stdlib.h:
+
+/usr/include/Availability.h:
+
+/usr/include/AvailabilityInternal.h:
 
 /usr/include/sys/wait.h:
 
@@ -253,8 +263,6 @@ stdsoap2.h:
 
 /usr/include/sys/_types/_wchar_t.h:
 
-/usr/include/sys/_types/_null.h:
-
 /usr/include/machine/types.h:
 
 /usr/include/i386/types.h:
@@ -265,6 +273,8 @@ stdsoap2.h:
 
 /usr/include/sys/_types/_mode_t.h:
 
+/usr/include/xlocale/_stdlib.h:
+
 /usr/include/stdio.h:
 
 /usr/include/sys/_types/_va_list.h:
@@ -272,6 +282,8 @@ stdsoap2.h:
 /usr/include/sys/_types/_off_t.h:
 
 /usr/include/sys/_types/_ssize_t.h:
+
+/usr/include/xlocale/_stdio.h:
 
 /usr/include/string.h:
 
@@ -281,11 +293,15 @@ stdsoap2.h:
 
 /usr/include/strings.h:
 
+/usr/include/xlocale/_string.h:
+
 /usr/include/ctype.h:
 
 /usr/include/runetype.h:
 
 /usr/include/sys/_types/_wint_t.h:
+
+/usr/include/xlocale/_ctype.h:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/limits.h:
 
@@ -357,9 +373,15 @@ stdsoap2.h:
 
 /usr/include/sys/_types/_time_t.h:
 
+/usr/include/xlocale/_time.h:
+
 /usr/include/_wctype.h:
 
 /usr/include/_types/_wctype_t.h:
+
+/usr/include/xlocale/__wctype.h:
+
+/usr/include/xlocale/_wchar.h:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/initializer_list:
 
@@ -384,6 +406,8 @@ stdsoap2.h:
 /usr/include/wctype.h:
 
 /usr/include/_types/_wctrans_t.h:
+
+/usr/include/xlocale/_wctype.h:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/algorithm:
 
@@ -444,30 +468,6 @@ stdsoap2.h:
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/functional:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__functional_03:
-
-/usr/include/locale.h:
-
-/usr/include/_locale.h:
-
-/usr/include/xlocale.h:
-
-/usr/include/_xlocale.h:
-
-/usr/include/xlocale/_ctype.h:
-
-/usr/include/xlocale/__wctype.h:
-
-/usr/include/xlocale/_stdio.h:
-
-/usr/include/xlocale/_stdlib.h:
-
-/usr/include/xlocale/_string.h:
-
-/usr/include/xlocale/_time.h:
-
-/usr/include/xlocale/_wchar.h:
-
-/usr/include/xlocale/_wctype.h:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/streambuf:
 

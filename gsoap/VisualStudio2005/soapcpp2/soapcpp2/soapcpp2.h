@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.38" /* Current version */
-# define GSOAP_VERSION 20838
+# define VERSION "2.8.39" /* Current version */
+# define GSOAP_VERSION 20839
 #endif
 
 #ifdef WIN32
@@ -266,6 +266,7 @@ typedef	struct IDinfo {
 	int		offset;
 	LONG64		minOccurs;
 	LONG64		maxOccurs;
+	Bool		nillable;
 } IDinfo;
 
 typedef	struct Entry {
@@ -303,6 +304,7 @@ typedef	struct Node {
 	LONG64		maxOccurs;
 	double		min;
 	double		max;
+	Bool		nillable;
 	const char	*pattern;
 } Node;
 

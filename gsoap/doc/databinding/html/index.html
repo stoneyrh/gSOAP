@@ -17,13 +17,13 @@
    <tbody>
     <tr>
      <td width="10%">&nbsp;</td>
-     <td width="175px"><a href="http://www.genivia.com"><img alt="Genivia" src="GeniviaLogo2_trans_noslogan.png"/></a></td>
-     <td class="tab_home"><a href="http://www.genivia.com">Home</a></td>
-     <td class="tab_home"><a href="http://www.genivia.com/docs.html">Documentation</a></td>
+     <td width="175px"><a href="https://www.genivia.com"><img alt="Genivia" src="GeniviaLogo2_trans_noslogan.png"/></a></td>
+     <td class="tab_home"><a href="https://www.genivia.com">Home</a></td>
+     <td class="tab_home"><a href="https://www.genivia.com/docs.html">Documentation</a></td>
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">C and C++ XML Data Bindings</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Aug 30 2016</div>
+      <div style="float: right; font-size: 10px;">updated Wed Nov 16 2016</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -1312,7 +1312,7 @@ Defining document root elements</h3>
 <li><code>1:1</code> means that this element or attribute is required.</li>
 </ul>
 <p>Pointer-based data members have a default <code>0:1</code> occurrence constraint, making them optional, and their XML schema local element/attribute definition is marked as nillable. Non-pointer data members have a default <code>1:1</code> occurence constraint, making them required.</p>
-<p>A pointer data member that is explicitly marked as required with <code>1:1</code> will be serialized as an element with an <code>xsi:nil</code> attribute, thus effectively revealing the NULL property of its value.</p>
+<p>A <code>nullptr</code> occurrence constraint may be applicable to required elements that are nillable pointer types, thus <code>nullptr 1:1</code>. This indicates that the element is nillable (can be <code>NULL</code> or <code>nullptr</code>). A pointer data member that is explicitly marked as required and nillable with <code>nullptr 1:1</code> will be serialized as an element with an <code>xsi:nil</code> attribute, thus effectively revealing the NULL property of its value.</p>
 <p>A non-pointer data member that is explicitly marked as optional with <code>0:1</code> will be set to its default value when no XML value is presented to the deserializer. A default value can be assigned to data members that have primitive types.</p>
 <p>Consider for example:</p>
 <div class="fragment"><div class="line"><span class="keyword">class </span>ns__record</div>
@@ -2745,7 +2745,7 @@ c++ -I../.. graph.cpp graphC.cpp -o graph -lgsoap++
 Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Aug 30 2016 13:24:31 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
+Converted on Wed Nov 16 2016 20:51:34 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.10</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

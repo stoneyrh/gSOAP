@@ -196,7 +196,7 @@ Pragma     **pp;
 %type   <e> fname struct class base enum enumsc mask masksc
 %type   <sym> id sc arg name
 %type   <s> tag patt
-%type   <i> utype
+%type   <i> nullptr utype
 %type   <r> cdbl
 /* expressions and statements */
 %type   <rec> expr cexp oexp obex aexp abex rexp lexp pexp brinit init spec tspec ptrs array arrayck texpf texp qexp occurs bounds min minmax max
@@ -554,6 +554,7 @@ dclr    : ptrs ID arrayck tag bounds brinit
                               p->info.minOccurs = $5.minOccurs;
                             }
                             p->info.maxOccurs = $5.maxOccurs;
+                            p->info.nillable = $5.nillable;
                             if (sp->mask)
                               sp->val <<= 1;
                             else
@@ -2082,7 +2083,7 @@ occurs  : /* empty */   {
                           $$.pattern = NULL;
                         }
         ;
-bounds  : patt          {
+bounds  : nullptr patt          {
                           $$.hasmin = False;
                           $$.hasmax = False;
                           $$.minOccurs = -1;
@@ -2091,30 +2092,32 @@ bounds  : patt          {
                           $$.max = 0.0;
                           $$.incmin = True;
                           $$.incmax = True;
-                          $$.pattern = $1;
+                          $$.nillable = $1;
+                          $$.pattern = $2;
                         }
-        | patt cdbl min
+        | nullptr patt cdbl min
                         {
                           $$.hasmin = True;
                           $$.hasmax = False;
-                          $$.incmin = $3.incmin;
-                          $$.incmax = $3.incmax;
-                          $$.minOccurs = (LONG64)$2;
+                          $$.incmin = $4.incmin;
+                          $$.incmax = $4.incmax;
+                          $$.minOccurs = (LONG64)$3;
                           $$.maxOccurs = 1;
                           if ($$.minOccurs < 0)
                             $$.minOccurs = -1;
-                          $$.min = $2;
+                          $$.min = $3;
                           $$.max = 0.0;
-                          $$.pattern = $1;
+                          $$.nillable = $1;
+                          $$.pattern = $2;
                         }
-        | patt cdbl minmax cdbl
+        | nullptr patt cdbl minmax cdbl
                         {
                           $$.hasmin = True;
                           $$.hasmax = True;
-                          $$.incmin = $3.incmin;
-                          $$.incmax = $3.incmax;
-                          $$.minOccurs = (LONG64)$2;
-                          $$.maxOccurs = (LONG64)$4;
+                          $$.incmin = $4.incmin;
+                          $$.incmax = $4.incmax;
+                          $$.minOccurs = (LONG64)$3;
+                          $$.maxOccurs = (LONG64)$5;
                           if ($$.minOccurs < 0 || $$.maxOccurs < 0)
                           {
                             $$.minOccurs = -1;
@@ -2125,26 +2128,31 @@ bounds  : patt          {
                             $$.minOccurs = -1;
                             $$.maxOccurs = 1;
                           }
-                          $$.min = $2;
-                          $$.max = $4;
-                          $$.pattern = $1;
+                          $$.min = $3;
+                          $$.max = $5;
+                          $$.nillable = $1;
+                          $$.pattern = $2;
                         }
-        | patt max cdbl {
+        | nullptr patt max cdbl {
                           $$.hasmin = False;
                           $$.hasmax = True;
-                          $$.incmin = $2.incmin;
-                          $$.incmax = $2.incmax;
+                          $$.incmin = $3.incmin;
+                          $$.incmax = $3.incmax;
                           $$.minOccurs = -1;
-                          $$.maxOccurs = (LONG64)$3;
+                          $$.maxOccurs = (LONG64)$4;
                           if ($$.maxOccurs < 0)
                           {
                             $$.minOccurs = -1;
                             $$.maxOccurs = 1;
                           }
                           $$.min = 0.0;
-                          $$.max = $3;
-                          $$.pattern = $1;
+                          $$.max = $4;
+                          $$.nillable = $1;
+                          $$.pattern = $2;
                         }
+        ;
+nullptr : /* empty */   { $$ = False; }
+        | null          { $$ = True; }
         ;
 patt    : /* empty */   { $$ = NULL; }
         | STR           { $$ = $1; }
@@ -2344,7 +2352,6 @@ static Node
 op(const char *op, Node p, Node q)
 {
   Node  r;
-  Tnode *typ;
   r.typ = p.typ;
   r.sto = Snone;
   if (p.hasval && q.hasval)
@@ -2379,7 +2386,7 @@ op(const char *op, Node p, Node q)
   }
   else
   {
-    typ = mgtype(p.typ, q.typ);
+    r.typ = mgtype(p.typ, q.typ);
     r.hasval = False;
   }
   return r;
@@ -2398,7 +2405,6 @@ static Node
 relop(const char *op, Node p, Node q)
 {
   Node  r;
-  Tnode *typ;
   r.typ = mkint();
   r.sto = Snone;
   r.hasval = True;
@@ -2406,7 +2412,7 @@ relop(const char *op, Node p, Node q)
   sprintf(errbuf, "comparison '%s' not evaluated and considered true", op);
   semwarn(errbuf);
   if (p.typ->type != Tpointer || p.typ != q.typ)
-    typ = mgtype(p.typ, q.typ);
+    r.typ = mgtype(p.typ, q.typ);
   return r;
 }
 
