@@ -3308,6 +3308,7 @@ void Operation::generate(Types& types, Service& service)
 {
   bool flag = false, anonymous = ((style != document) && parameterOrder != NULL);
   const char *method_name = NULL;
+  (void)service;
   if (output)
   {
     if (style == document)

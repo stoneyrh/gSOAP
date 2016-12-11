@@ -12,4 +12,4 @@ SOAP_NS = wstdemo.nsmap
 
 wstdemo_CFLAGS = -DWITH_DOM -DWITH_OPENSSL -DWITH_GZIP -DSKIP_CERTIFICATE_VERIFICATION
 wstdemo_SOURCES = wstdemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../dom.c ../../plugin/wstapi.c ../../plugin/wsseapi.c ../../plugin/wsaapi.c ../../plugin/smdevp.c ../../plugin/mecevp.c
-wstdemo_LDADD = $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
+wstdemo_LDADD = $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz

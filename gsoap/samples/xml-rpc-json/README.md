@@ -282,10 +282,11 @@ all sample codes as follows:
 
     ./configure --enable-samples
     make
-    make install
+    sudo make install
 
-This builds the command-line tool jsoncpp in `gsoap/samples/xml-rpc-json`
-from where you can use it and/or copy it for use with your projects.
+This builds all of the gSOAP tools, libraries, and examples including the
+command-line tool jsoncpp in `gsoap/samples/xml-rpc-json` from where you can
+use it and/or copy it for use with your projects.
 
 If you do not have the samples built, you can use soapcpp2 (or soapcpp2.exe
 in `gsoap/bin/win32`) from the command line to generate the C++ code required
@@ -295,7 +296,7 @@ to compile jsoncpp and that is also required by the C++ JSON API components:
     soapcpp2 -CSL xml-rpc.h
     c++ -I../.. -o jsoncpp jsoncpp.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
 
-The above builds the jsoncpp command-line tool.
+This builds the jsoncpp command-line tool.
 
 Command-line options                                                {#jsoncpp-2}
 --------------------

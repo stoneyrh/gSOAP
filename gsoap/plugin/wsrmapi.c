@@ -1,9 +1,9 @@
 /*
-	wsrmapi.c
+        wsrmapi.c
 
-	WS-ReliableMessaging plugin.
+        WS-ReliableMessaging plugin.
 
-	Implements the WS-RM 1.0 and 1.1 logic for import/wsrm.h import/wsrm5.h
+        Implements the WS-RM 1.0 and 1.1 logic for import/wsrm.h import/wsrm5.h
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc., All Rights Reserved.
@@ -333,48 +333,48 @@ A sequence is created, closed, terminated, and cleaned-up on the client side as
 follows, using a 'soap' context struct (use one 'soap' context per thread):
 
 @code
-	struct soap *soap = soap_new(); // Note: can use C++ proxy instead of 'soap'
-	soap_register_plugin(soap, soap_wsa);
-	soap_register_plugin(soap, soap_wsrm);
+        struct soap *soap = soap_new(); // Note: can use C++ proxy instead of 'soap'
+        soap_register_plugin(soap, soap_wsa);
+        soap_register_plugin(soap, soap_wsrm);
 
-	const char *destination = "..."; // WS-RM destination server address
-	const char *source = NULL;       // WS-RM source (NULL means current)
-	ULONG64 expires = 10000;         // 10000 ms to expire (10 seconds)
-	const char *id = NULL;           // id = NULL: generate a temp sequence ID
-	const char *opt_msg_id = NULL;   // WS-Addressing message ID (optional)
+        const char *destination = "..."; // WS-RM destination server address
+        const char *source = NULL;       // WS-RM source (NULL means current)
+        ULONG64 expires = 10000;         // 10000 ms to expire (10 seconds)
+        const char *id = NULL;           // id = NULL: generate a temp sequence ID
+        const char *opt_msg_id = NULL;   // WS-Addressing message ID (optional)
 
-	soap_wsrm_sequence_handle seq;   // a local handle to the sequence state
+        soap_wsrm_sequence_handle seq;   // a local handle to the sequence state
 
-	// Step 1: create a sequence
-	if (soap_wsrm_create_offer(soap, destination, source, id, expires, NoDiscard, opt_msg_id, &seq))
-	{
+        // Step 1: create a sequence
+        if (soap_wsrm_create_offer(soap, destination, source, id, expires, NoDiscard, opt_msg_id, &seq))
+        {
           soap_wsrm_seq_free(soap, seq);
-	  ... // error creating sequence
-	} 
+          ... // error creating sequence
+        } 
 
-	// Step 2: exchange messages with WS-RM destination, request acks, receive acks, issue resends (see later) 
-	...
+        // Step 2: exchange messages with WS-RM destination, request acks, receive acks, issue resends (see later) 
+        ...
 
-	// Step 3: optionally close first before terminating
-	if (soap_wsrm_close(soap, seq, NULL))
-	{
+        // Step 3: optionally close first before terminating
+        if (soap_wsrm_close(soap, seq, NULL))
+        {
           soap_wsrm_seq_free(soap, seq);
-	  ... // error closing sequence
-	}
+          ... // error closing sequence
+        }
 
-	// Step 4: optionally resend messages before terminating
-	if (soap_wsrm_nack(seq)) // any non-acks for messages sent?
-	  soap_wsrm_resend(soap, seq, 0, 0); // resend all non-acked messages
+        // Step 4: optionally resend messages before terminating
+        if (soap_wsrm_nack(seq)) // any non-acks for messages sent?
+          soap_wsrm_resend(soap, seq, 0, 0); // resend all non-acked messages
 
-	// Step 5: terminate
-	if (soap_wsrm_terminate(soap, seq, NULL))
-	{
+        // Step 5: terminate
+        if (soap_wsrm_terminate(soap, seq, NULL))
+        {
           soap_wsrm_seq_free(soap, seq);
-	  ... // error creating sequence
-	}
+          ... // error creating sequence
+        }
 
-	// Step 6: cleanup
-	soap_wsrm_seq_free(soap, seq);
+        // Step 6: cleanup
+        soap_wsrm_seq_free(soap, seq);
 @endcode
 
 For duplex communication, the responses are sent to the WS-RM source's port,
@@ -410,13 +410,13 @@ WS-RM source:
       if (soap->error != 202) // Error != HTTP Accepted
       {
         soap_wsrm_seq_free(soap, seq);
-	... // error creating sequence
+        ... // error creating sequence
       }
     }
     // poll 10 times for 1 second until the sequence created response received
     for (retry = 10; retry && !soap_wsrm_seq_created(soap, seq); retry--)
       if (callback_poll(callback, 1)) // 1 second poll
-	... // error
+        ... // error
     if (!retry)
       ... // error
 
@@ -429,7 +429,7 @@ WS-RM source:
       if (soap->error != 202) // Error != HTTP Accepted
       {
         soap_wsrm_seq_free(soap, seq);
-	... // error closing sequence
+        ... // error closing sequence
       }
     }
 
@@ -441,7 +441,7 @@ WS-RM source:
     {
       soap_wsrm_resend(soap, seq, 0, 0); // resend all non-acked messages
       if (callback_poll(callback, -100000)) // 100 ms poll
-	... // error
+        ... // error
     }
 
     // Step 6: terminate
@@ -450,7 +450,7 @@ WS-RM source:
       if (soap->error != 202) // Error != HTTP Accepted
       {
         soap_wsrm_seq_free(soap, seq);
-	... // error creating sequence
+        ... // error creating sequence
       }
     }
 
@@ -474,11 +474,11 @@ The polling operation can be implemented as follows:
       while (poll-- && soap_valid_socket(soap_accept(soap)))
       {
         soap_serve(soap);
-	soap_destroy(soap);
-	soap_end(soap);
+        soap_destroy(soap);
+        soap_end(soap);
       }
       if (soap->error == SOAP_STOP || soap->error == SOAP_EOF) // timed out
-	return soap->error = SOAP_OK;
+        return soap->error = SOAP_OK;
       return soap->error;
     }
 @endcode
@@ -504,19 +504,19 @@ operation that can be customized to your needs:
     {
       soap_send_empty_response(soap, 202);
       if (!detail)
-	detail = Detail;
+        detail = Detail;
       if (detail && detail->__type == SOAP_TYPE__wsrm__Identifier)
       {
         // the sequence id is in the Fault Detail __type and fault members
-	char *id = (char*)detail->fault;
-	// we opt to treat all faults fatal, so let's terminate the sequence
-	soap_wsrm_sequence_handle seq = soap_wsrm_seq_lookup_id(soap, id);
-	if (seq)
-	{
+        char *id = (char*)detail->fault;
+        // we opt to treat all faults fatal, so let's terminate the sequence
+        soap_wsrm_sequence_handle seq = soap_wsrm_seq_lookup_id(soap, id);
+        if (seq)
+        {
           soap_wsrm_error(soap, seq, wsrm__SequenceTerminated);
-	  soap_wsrm_seq_release(soap, seq);
-	  return soap->error;
-	}
+          soap_wsrm_seq_release(soap, seq);
+          return soap->error;
+        }
       }
       return SOAP_OK;
     }
@@ -526,35 +526,60 @@ This cleanup of memory resources may be performed at any time in the sequence
 of message exchange or afterwards when desired. The sequence state is
 maintained independent of these cleanup operations.
 
-The sequence termination may fail when the delivery of a sequence of messages
-is incomplete or when the lifetime of the sequence expired
-(set macro `SOAP_WSRM_MAX_SEC_TO_EXPIRE`). The WS-RM destination determines the
-failure based on the final sequence state and the sequence behavior. The
-behavior is set to NoDiscard by default, which means that the sequence is not
-discarded when transmission gaps appeared in the messages and the sequence is
-incomplete. The desired behavior can be specified with a sequence creation
-offer as explained in the next section.
+A graceful sequence termination may fail when the delivery of a sequence of
+messages is incomplete or when the lifetime of the sequence expired (the hard
+limit on the lifetime is `SOAP_WSRM_MAX_SEC_TO_EXPIRE`, this macro can be
+changed).
+
+The WS-RM destination determines the failure based on the final sequence state
+and the sequence behavior. The behavior is set to NoDiscard by default, which
+means that the sequence is not discarded when transmission gaps appeared in the
+messages and the sequence is incomplete. The desired behavior can be specified
+with a sequence creation offer as explained in the next section.
 
 If the source ReplyTo and AcksTo addresses differ in your project, then use the
 following:
 
 @code
+    const char *destination = "..."; // WS-RM destination server address
+    const char *replyto = NULL;      // WS-RM ReplyTo
+    const char *acksto = NULL;       // WS-RM AckstTo
+    ULONG64 expires = 10000;         // 10000 ms to expire (10 seconds)
+    const char *id = NULL;           // id = NULL: generate a temp sequence ID
+    const char *opt_msg_id = NULL;   // WS-Addressing message ID (optional)
+
     if (soap_wsrm_create_offer_acksto(soap, destination, replyto, acksto, id, expires, DiscardEntireSequence, opt_msg_id, &seq)))
       ... // error
 @endcode
+
+Expiration times should not be infinite, because sequences are kept in memory
+until expired even when the sequences are closed and terminated. This permits
+the detection of duplicate sequences. The limit on the lifetime is
+`SOAP_WSRM_MAX_SEC_TO_EXPIRE`. This macro can be changed.
 
 @subsection wsrm_4_2 Creating a Sequence without an Offer
 
 To enable a destination server to produce a reliable message response sequence,
 you need to create a sequence with an offer. Otherwise, response messages are
-not tracked and delivery not verified. Two-way messaging should use the offer
-mechanism, but if all messages are one-way from source to destination then this
-is not needed. A sequence is created without an offer as follows:
+not tracked and delivery is not verified. A sequence of two-way message
+exchanges should use the offer mechanism. If all messages are one-way from
+source to destination then the sequence offer mechanism is not needed. A
+sequence can be created without an offer as follows:
 
 @code
+    const char *destination = "..."; // WS-RM destination server address
+    const char *source = NULL;       // WS-RM source (NULL means current)
+    ULONG64 expires = 10000;         // 10000 ms to expire (10 seconds)
+    const char *opt_msg_id = NULL;   // WS-Addressing message ID (optional)
+
     if (soap_wsrm_create(soap, destination, source, expires, DiscardEntireSequence, opt_msg_id, &seq))
       ... // error
 @endcode
+
+Expiration times should not be infinite, because sequences are kept in memory
+until expired even when the sequences are closed and terminated. This permits
+the detection of duplicate sequences. The limit on the lifetime is
+`SOAP_WSRM_MAX_SEC_TO_EXPIRE`. This macro can be changed.
 
 @subsection wsrm_4_3 Exchanging Messages in a Sequence
 
@@ -576,12 +601,12 @@ closing):
     if (endpoint)
     {
       if (soap_wsrm_request(soap, seq, exampleRequestMessageID, exampleRequestAction))
-	... // error: out of memory
+        ... // error: out of memory
 
       if (soap_call_ns__example(soap, endpoint, exampleRequestAction, &response))
-	soap_print_fault(soap, stderr); // an error occurred
+        soap_print_fault(soap, stderr); // an error occurred
       else
-	... // process the response
+        ... // process the response
     }
 @endcode
 
@@ -628,7 +653,7 @@ service endpoint in which case the acknowledgements are sent to.
       ... // error
     if (soap_call_ns__example(soap, endpoint, exampleRequestAction, &response))
       if (soap->error != 202) // Error != HTTP Accepted
-	... // error
+        ... // error
 @endcode
 
 When duplex messaging is used via a callback, a polling operation will be
@@ -711,11 +736,11 @@ message as follows:
       if (soap_wsrm_request_acks(soap, seq, NULL, exampleRequestAction)
        || soap_wsa_add_ReplyTo(soap, replyto)
        || soap_wsa_add_FaultTo(soap, faultto))
-	... // error: out of memory
+        ... // error: out of memory
       if (soap_call_ns__example(soap, endpoint, exampleRequestAction, &response))
       {
         if (soap->error != 202)
-	  ... // error
+          ... // error
       }
     }
 @endcode
@@ -761,16 +786,16 @@ message exchange (or send) when needed:
       if (soap->error == 202)
       {
         // request was accepted by destination (HTTP 202 Accept)
-	break;
+        break;
       }
       else if (soap->error == SOAP_NO_TAG) // empty <Body>
       {
         // request was accepted by destination, acks are returned
-	break;
+        break;
       }
       soap_print_fault(soap, stderr);
       if (soap_wsrm_check_retry(soap, seq))
-	break; // do not continue
+        break; // do not continue
       sleep(1); // wait a second to give network a chance to recover
     }
 
@@ -819,16 +844,16 @@ concepts introduced in the previous sections for a request-response scenario:
       if (soap->error == 202)
       {
         // request was accepted by destination (HTTP 202 Accept)
-	break;
+        break;
       }
       else if (soap->error == SOAP_NO_TAG) // empty <Body>
       {
         // request was accepted by destination, acks are returned
-	break;
+        break;
       }
       soap_print_fault(soap, stderr);
       if (soap_wsrm_check_retry(soap, seq))
-	break; // do not continue
+        break; // do not continue
       sleep(1); // wait a second to give network a chance to recover
     }
 
@@ -885,14 +910,14 @@ A duplex mode client that accepts responses via a callback:
       if (soap->error != 202)
       {
         soap_wsrm_seq_free(soap, seq);
-	... // error creating sequence
+        ... // error creating sequence
       }
     } 
 
     // poll 10 times for 1 second until the sequence created response received
     for (retry = 10; retry && !soap_wsrm_seq_created(soap, seq); retry--)
       if (callback_poll(callback, 1)) // 1 second poll
-	... // error
+        ... // error
     if (!retry)
       ... // error
 
@@ -903,15 +928,15 @@ A duplex mode client that accepts responses via a callback:
       if (soap->error == 202)
       {
         // request was accepted by destination (HTTP 202 Accept)
-	break;
+        break;
       }
       else if (soap->error == SOAP_NO_TAG) // empty <Body>
       {
         // request was accepted by destination, acks are returned
-	break;
+        break;
       }
       if (soap_wsrm_check_retry(soap, seq))
-	break; // do not continue
+        break; // do not continue
       sleep(1); // wait a second to give network a chance to recover
     }
 
@@ -923,7 +948,7 @@ A duplex mode client that accepts responses via a callback:
       if (soap->error != 202)
       {
         soap_wsrm_seq_free(soap, seq);
-	... // error closing sequence
+        ... // error closing sequence
       }
     }
 
@@ -932,7 +957,7 @@ A duplex mode client that accepts responses via a callback:
     {
       soap_wsrm_resend(soap, seq, 0, 0); // 0 0 means full range of msg nums
       if (callback_poll(callback, -500000)) // 500 ms poll
-	... // error
+        ... // error
     }
 
     if (soap_wsrm_terminate(soap, seq, NULL))
@@ -940,7 +965,7 @@ A duplex mode client that accepts responses via a callback:
       if (soap->error != 202)
       {
         soap_wsrm_seq_free(soap, seq);
-	... // error closing sequence
+        ... // error closing sequence
       }
     } 
 
@@ -1002,19 +1027,19 @@ periodic acknowledgement updates as follows:
       // server loop, accept next message
       if (!soap_valid_socket(accept()))
       {
-	// error or timeout?
-	if (soap->errnum)
-	{
-	  soap_stream_fault(std::cerr);
-	  exit(1); // may want to exit, but trying to continue is also possible
-	}
-	else
-	{
+        // error or timeout?
+        if (soap->errnum)
+        {
+          soap_stream_fault(std::cerr);
+          exit(1); // may want to exit, but trying to continue is also possible
+        }
+        else
+        {
           // timeout occurs after 200ms
-	  // send acks to peers (optional), take 10 ms per message 
-	  soap_wsrm_pulse(soap, -10000); // 10 ms
-	  // sleep(1); // must do this with UDP: since accept() returns immediately
-	}
+          // send acks to peers (optional), take 10 ms per message 
+          soap_wsrm_pulse(soap, -10000); // 10 ms
+          // sleep(1); // must do this with UDP: since accept() returns immediately
+        }
       }
       else
       {
@@ -1033,16 +1058,16 @@ should use the `soap_wsrm_check`, `soap_wsrm_sender_fault`,
 
       // fatal service operation-specific errors (before soap_wsrm_check())
       if (!database) // suppose we need a database, if there is none terminate
-	return soap_wsrm_receiver_fault(soap, "No database!", NULL);
+        return soap_wsrm_receiver_fault(soap, "No database!", NULL);
 
       // check for WS-RM/WSA and set WS-RM/WSA return headers and protocol errors
       // note: use soap_wsrm_check_and_wait() with NoDiscard behavior to queue out-of-order messages
       if (soap_wsrm_check(soap))
-	return soap->error;
+        return soap->error;
 
       // check for non-fatal service operation-specific errors
       if (!in || !*in) // sender did not put anything in the 'in' string: fault
-	return soap_wsrm_sender_fault(soap, "No string content!", NULL);
+        return soap_wsrm_sender_fault(soap, "No string content!", NULL);
 
       response->out = ...
 
@@ -1099,7 +1124,7 @@ The server operation implementation is for example:
       // check WS-RM/WSA headers and protocol errors and send 202 Accept back to peer
       // note: use soap_wsrm_check_send_empty_response_and_wait() with NoDiscard behavior to queue out-of-order messages
       if (soap_wsrm_check_send_empty_response(soap))
-	return soap->error;
+        return soap->error;
       ... // process the 'out' content, invoke callback etc
       return SOAP_OK;
     }
@@ -1118,13 +1143,13 @@ to authenticate the other servers:
 @code
     if (soap_ssl_server_context(soap,
       SOAP_SSL_DEFAULT,
-      "server.pem",	// keyfile (server)
-      "password",	// password to read the key file (server)
-      "cacert.pem",	// cacert file to store trusted certificates (client)
-      NULL,		// optional capath
-      NULL, 	// DH file name or DH param key len bits, NULL: RSA
-      NULL,		// file with random data to seed randomness
-      argv[1]	// unique server identification for SSL session cache
+      "server.pem",     // keyfile (server)
+      "password",       // password to read the key file (server)
+      "cacert.pem",     // cacert file to store trusted certificates (client)
+      NULL,             // optional capath
+      NULL,     // DH file name or DH param key len bits, NULL: RSA
+      NULL,             // file with random data to seed randomness
+      argv[1]   // unique server identification for SSL session cache
     ))
     {
       soap_print_fault(soap, stderr);
@@ -1150,9 +1175,9 @@ values:
     if (soap_call_ns__example(soap, endpoint, exampleRequestAction, &response))
     {
       if (soap->error == 401)
-	... // authentication failed for the userid/passwd pair
+        ... // authentication failed for the userid/passwd pair
       else
-	... // other error
+        ... // other error
     }
 @endcode
 
@@ -1166,10 +1191,10 @@ occurs. For example:
       if (!soap->userid || !soap->passwd || strcmp(soap->userid, "...") || strcmp(soap->passwd, "..."))
       {
         soap->authrealm = "..."; // optional to set HTTP WWW-Authenticate: Basic realm="..."
-	return 401; // HTTP 401 Unauthorized
+        return 401; // HTTP 401 Unauthorized
       }
       if (soap_wsrm_check(soap))
-	return soap->error;
+        return soap->error;
       ...
 @endcode
 
@@ -1206,6 +1231,7 @@ and receive timeouts:
 
     const char *destination = "soap.udp://...";
     const char *source = NULL;
+    ULONG64 expires = 60000;         // 1 minute sequence lifetime
 
     soap->send_timeout = soap->recv_timeout = 1; // 1 second to timeout
 
@@ -1217,9 +1243,9 @@ and receive timeouts:
     if (soap_call_ns__example(soap, ...))
     {
       if (soap->error == SOAP_EOF && soap->errnum == 0)
-	... // a timeout occured
+        ... // a timeout occured
       else
-	... // an error occured
+        ... // an error occured
     }
 @endcode
 
@@ -1236,6 +1262,7 @@ AcksTo).
     const char *destination = "soap.udp://...";
     const char *from = "..."; // some identifying URI
     const char *source = from;
+    ULONG64 expires = 60000;         // 1 minute sequence lifetime
 
     soap->send_timeout = soap->recv_timeout = 1; // 1 second to timeout
 
@@ -1248,11 +1275,11 @@ AcksTo).
     if (soap_call_ns__example(soap, ...))
     {
       if (soap->error == SOAP_EOF && soap->errnum == 0)
-	... // a timeout occured
+        ... // a timeout occured
       else if (soap->error == SOAP_NO_TAG)
-	... // ack was received and recorded
+        ... // ack was received and recorded
       else
-	... // an error occured
+        ... // an error occured
     }
 @endcode
 
@@ -1292,21 +1319,21 @@ process requests with the serve() member function (also generated):
     {
       if (!soap_valid_socket(service.accept()))
       {
-	service.soap_stream_fault(std::cerr);
-	exit(1);
+        service.soap_stream_fault(std::cerr);
+        exit(1);
       }
       if (soap_begin_serve(service.soap) == SOAP_OK)
       {
-	if (service.dispatch() == SOAP_NO_METHOD)
-	{
-	  if (soap_serve_request(service.soap) != SOAP_OK)
-	  {
-	    soap_send_fault(service.soap);
-	    service.soap_stream_fault(std::cerr);
-	  }
-	}
-	else if (service.soap->error)
-	  service.soap_stream_fault(std::cerr);
+        if (service.dispatch() == SOAP_NO_METHOD)
+        {
+          if (soap_serve_request(service.soap) != SOAP_OK)
+          {
+            soap_send_fault(service.soap);
+            service.soap_stream_fault(std::cerr);
+          }
+        }
+        else if (service.soap->error)
+          service.soap_stream_fault(std::cerr);
       }
       service.destroy();
     }
@@ -1356,7 +1383,7 @@ static struct soap_wsrm_hash_id* soap_wsrm_hash_acksid[SOAP_IDHASH];
 
 /******************************************************************************\
  *
- *	Static protos
+ *      Static protos
  *
 \******************************************************************************/
 
@@ -1403,7 +1430,7 @@ static void soap_wsrm_msg_free(struct soap *soap, struct soap_wsrm_message *p);
 
 /******************************************************************************\
  *
- *	Client-side WS-RM Operations
+ *      Client-side WS-RM Operations
  *
 \******************************************************************************/
 
@@ -1417,7 +1444,7 @@ reply to. A sequence ID is generated by the server upon success.
 @param soap context
 @param[in] to endpoint address of the WS-RM destination server (required)
 @param[in] replyto endpoint address of the WS-RM source to reply/ack to (optional)
-@param[in] expires max sequence duration (its lifetime) in ms (use 0 to offer infinite, subject to server policy)
+@param[in] expires max sequence duration (its lifetime) in ms (use 0 to offer infinite, subject to SOAP_WSRM_MAX_SEC_TO_EXPIRE or server policy)
 @param[in] wsa_id WS-Addressing message ID (optional, use NULL when omitted)
 @param[out] seq sequence handle is set
 @return SOAP_OK or error code
@@ -1444,7 +1471,7 @@ A sequence ID is generated by the server upon success.
 @param[in] to endpoint address of the WS-RM destination server (required)
 @param[in] replyto endpoint address of the WS-RM source to reply/ack to (optional)
 @param[in] id offered WS-RM sequence identifier (optional, generate with NULL)
-@param[in] expires max sequence duration (its lifetime) in ms (use 0 for infinite, subject to server policy)
+@param[in] expires max sequence duration (its lifetime) in ms (use 0 for infinite, subject to SOAP_WSRM_MAX_SEC_TO_EXPIRE or server policy)
 @param[in] behavior offered DiscardEntireSequence, DiscardFollowingFirstGap, or
 NoDiscard, which specifies the WS-RM destination's action when a sequence is
 closed/terminated when it is incomplete, and notifies the source when failed.
@@ -1480,7 +1507,7 @@ success.
 (optional, use NULL when acks are piggy-backed on response messages to the
 source)
 @param[in] id offered WS-RM sequence identifier (optional, generate when NULL)
-@param[in] expires max sequence duration (its lifetime) in ms (use 0 for infinite, subject to server policy)
+@param[in] expires max sequence duration (its lifetime) in ms (use 0 for infinite, subject to SOAP_WSRM_MAX_SEC_TO_EXPIRE or server policy)
 @param[in] behavior offered DiscardEntireSequence, DiscardFollowingFirstGap, or
 NoDiscard, which specifies the WS-RM destination's action when a sequence is
 closed/terminated when it is incomplete, and notifies the source when failed.
@@ -1843,7 +1870,7 @@ soap_wsrm_check_retry(struct soap *soap, soap_wsrm_sequence_handle seq)
     {
       soap_strcpy(s, l + 1, soap->endpoint);
       if (seq->to)
-	free((void*)seq->to);
+        free((void*)seq->to);
       seq->to = s;
     }
   }
@@ -2293,12 +2320,12 @@ soap_wsrm_seq_free(struct soap *soap, soap_wsrm_sequence_handle seq)
         for (i = 0; i < t->num; i++)
         {
           if (t->messages[i])
-	  {
+          {
             soap_wsrm_msg_free(soap, t->messages[i]);
             free((void*)t->messages[i]);
-	  }
-	}
-	free((void*)t->messages);
+          }
+        }
+        free((void*)t->messages);
       }
 #else
       for (p = t->messages; p; p = r)
@@ -2417,7 +2444,7 @@ soap_wsrm_nack(const soap_wsrm_sequence_handle seq)
 
 /******************************************************************************\
  *
- *	Server
+ *      Server
  *
 \******************************************************************************/
 
@@ -2655,7 +2682,7 @@ soap_wsrm_chk(struct soap *soap, int timeout, int flag)
 #if defined(_WRS_KERNEL)
           taskDelay(r3); /* VxWorks compatible sleep API, delay is specified in number of ticks, which depends on the System Clock Rate */
 #elif defined(WIN32)
-	  Sleep(r3/1000);
+          Sleep(r3/1000);
 #else
           usleep(r3);
 #endif
@@ -2897,7 +2924,7 @@ soap_wsrm_cleanup(struct soap *soap)
 
 /******************************************************************************\
  *
- *	Server-side Predefined WS-RM Operations
+ *      Server-side Predefined WS-RM Operations
  *
 \******************************************************************************/
 
@@ -2986,7 +3013,7 @@ __wsrm__CreateSequence(struct soap *soap, struct wsrm__CreateSequenceType *req, 
       /* if (!soap_wsrm_seq_lookup_data(req->Offer->Identifier)) */
       {
         char *s;
-	l = strlen(req->Offer->Identifier);
+        l = strlen(req->Offer->Identifier);
         s = (char*)malloc(l + 1);
         if (s)
         {
@@ -3473,7 +3500,7 @@ __wsrm__LastMessage(struct soap *soap)
 
 /******************************************************************************\
  *
- *	Server-side SOAP Fault
+ *      Server-side SOAP Fault
  *
 \******************************************************************************/
 
@@ -3614,7 +3641,7 @@ soap_wsrm_receiver_fault(struct soap *soap, const char *faultstring, const char 
 
 /******************************************************************************\
  *
- *	WS-RM Faults
+ *      WS-RM Faults
  *
 \******************************************************************************/
 
@@ -3735,7 +3762,7 @@ soap_wsrm_error(struct soap *soap, struct soap_wsrm_sequence *seq, enum wsrm__Fa
 
 /******************************************************************************\
  *
- *	WS-RM State Dump
+ *      WS-RM State Dump
  *
 \******************************************************************************/
 
@@ -3799,34 +3826,34 @@ soap_wsrm_dump(struct soap *soap, FILE *fd)
       {
         char sep = ' ';
         int nack = 0;
-	struct soap_wsrm_message *p;
+        struct soap_wsrm_message *p;
 #ifdef SOAP_WSRM_FAST_ALLOC
-	ULONG64 i;
+        ULONG64 i;
 #endif
         fprintf(fd, "    ACKED  =");
 #ifdef SOAP_WSRM_FAST_ALLOC
         for (i = 0; i < seq->num; i++)
         {
           p = seq->messages[i];
-	  if (!p || p->state == SOAP_WSRM_ACK)
-	  {
+          if (!p || p->state == SOAP_WSRM_ACK)
+          {
             fprintf(fd, "%c" SOAP_ULONG_FORMAT, sep, i + 1); 
-	    sep = ',';
-	  }
-	  else if (p->state == SOAP_WSRM_NACK)
-	    nack = 1;
+            sep = ',';
+          }
+          else if (p->state == SOAP_WSRM_NACK)
+            nack = 1;
         }
 #else
-	for (p = seq->messages; p; p = p->next)
-	{
+        for (p = seq->messages; p; p = p->next)
+        {
           if (p->state == SOAP_WSRM_ACK)
-	  {
+          {
             fprintf(fd, "%c" SOAP_ULONG_FORMAT, sep, p->num); 
-	    sep = ',';
-	  }
-	  else if (p->state == SOAP_WSRM_NACK)
-	    nack = 1;
-	}
+            sep = ',';
+          }
+          else if (p->state == SOAP_WSRM_NACK)
+            nack = 1;
+        }
 #endif
         fprintf(fd, "\n");
         if (nack)
@@ -3844,14 +3871,14 @@ soap_wsrm_dump(struct soap *soap, FILE *fd)
             }
           }
 #else
-	  for (p = seq->messages; p; p = p->next)
-	  {
+          for (p = seq->messages; p; p = p->next)
+          {
             if (p->state == SOAP_WSRM_NACK)
-	    {
+            {
               fprintf(fd, "%c" SOAP_ULONG_FORMAT, sep, p->num); 
-	      sep = ',';
-	    }
-	  }
+              sep = ',';
+            }
+          }
 #endif
           fprintf(fd, "\n");
         }
@@ -3880,7 +3907,7 @@ soap_wsrm_dump(struct soap *soap, FILE *fd)
 
 /******************************************************************************\
  *
- *	Plugin registry functions
+ *      Plugin registry functions
  *
 \******************************************************************************/
 
@@ -3994,7 +4021,7 @@ soap_wsrm_delete(struct soap *soap, struct soap_plugin *p)
 
 /******************************************************************************\
  *
- *	Callbacks registered by plugin
+ *      Callbacks registered by plugin
  *
 \******************************************************************************/
 
@@ -4105,7 +4132,7 @@ soap_wsrm_disconnect(struct soap *soap)
 
 /******************************************************************************\
  *
- *	Process Acknowledgements
+ *      Process Acknowledgements
  *
 \******************************************************************************/
 
@@ -4157,8 +4184,8 @@ soap_wsrm_process_ack(struct soap *soap, struct _wsrm__SequenceAcknowledgement *
       if (seq->messages)
       {
         p = seq->messages[ack->Nack[i] - 1];
-	if (p)
-	  p->state = SOAP_WSRM_NACK;
+        if (p)
+          p->state = SOAP_WSRM_NACK;
       }
 #else
       for (p = seq->messages; p; p = p->next)
@@ -4177,48 +4204,48 @@ soap_wsrm_process_ack(struct soap *soap, struct _wsrm__SequenceAcknowledgement *
       for (i = 0; i < ack->__sizeAcknowledgementRange; i++)
       {
         ULONG64 lo = ack->AcknowledgementRange[i].Lower;
-	ULONG64 hi = ack->AcknowledgementRange[i].Upper;
-	if (lo == 0 || hi > seq->num)
+        ULONG64 hi = ack->AcknowledgementRange[i].Upper;
+        if (lo == 0 || hi > seq->num)
         {
           soap_wsrm_error(soap, seq, wsrm__InvalidAcknowledgement);
           MUTEX_UNLOCK(soap_wsrm_session_lock);
           return soap->error;
         }
-	else
-	{
+        else
+        {
 #ifdef SOAP_WSRM_FAST_ALLOC
-	  ULONG64 j;
-	  for (j = lo; j <= hi; j++)
-	  {
+          ULONG64 j;
+          for (j = lo; j <= hi; j++)
+          {
             struct soap_wsrm_message *p = seq->messages[j - 1];
-	    if (p)
-	    {
+            if (p)
+            {
               DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Ack=" SOAP_ULONG_FORMAT "\n", j));
-	      soap_wsrm_msg_free(soap, p);
-	      free((void*)p);
-	      seq->messages[j - 1] = NULL;
-	    }
-	  }
+              soap_wsrm_msg_free(soap, p);
+              free((void*)p);
+              seq->messages[j - 1] = NULL;
+            }
+          }
 #else
-	  struct soap_wsrm_message *p, **q = &seq->messages;
-	  for (p = seq->messages; p && p->num <= hi; p = *q)
-	  {
+          struct soap_wsrm_message *p, **q = &seq->messages;
+          for (p = seq->messages; p && p->num <= hi; p = *q)
+          {
             if (lo <= p->num)
-	    {
+            {
               DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Ack=" SOAP_ULONG_FORMAT "\n", p->num));
-	      *q = p->next;
-	      soap_wsrm_msg_free(soap, p);
-	      free((void*)p);
-	    }
-	    else
-	      q = &p->next;
-	  }
+              *q = p->next;
+              soap_wsrm_msg_free(soap, p);
+              free((void*)p);
+            }
+            else
+              q = &p->next;
+          }
 #endif
-	}
+        }
       }
 #ifndef SOAP_WSRM_FAST_ALLOC
       if (!seq->messages)
-	seq->messageslast = NULL;
+        seq->messageslast = NULL;
 #endif
     }
   }
@@ -4228,7 +4255,7 @@ soap_wsrm_process_ack(struct soap *soap, struct _wsrm__SequenceAcknowledgement *
 
 /******************************************************************************\
  *
- *	Check and Add/Send Acknowledgements
+ *      Check and Add/Send Acknowledgements
  *
 \******************************************************************************/
 
@@ -4521,7 +4548,7 @@ soap_wsrm_post(struct soap *soap, const char *endpoint, const char *host, int po
 
 /******************************************************************************\
  *
- *	WS-RM Resend
+ *      WS-RM Resend
  *
 \******************************************************************************/
 
@@ -4601,7 +4628,7 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, int all,
       {
         struct soap_wsrm_content *q;
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Resending message " SOAP_ULONG_FORMAT "\n", p->num));
-	soap->omode |= SOAP_ENC_PLAIN; /* disables HTTP */
+        soap->omode |= SOAP_ENC_PLAIN; /* disables HTTP */
         if (soap_connect(soap, seq->to, NULL))
           return soap->error;
         DBGLOG(SENT, SOAP_MESSAGE(fdebug, "\n==== BEGIN RESEND ====\n"));
@@ -4614,13 +4641,13 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, int all,
         if (soap_end_send(soap))
           return soap_closesock(soap);
         DBGLOG(SENT, SOAP_MESSAGE(fdebug, "\n==== END RESEND ====\n"));
-	soap->omode &= ~SOAP_ENC_PLAIN; /* reenables HTTP */
-	if (!soap_begin_recv(soap))
-	  soap_ignore_element(soap); /* read content but ignore */
-	else if (soap->error != SOAP_NO_DATA && soap->error != 202)
-	  return soap_closesock(soap);
-	soap_end_recv(soap);
-	soap_closesock(soap);
+        soap->omode &= ~SOAP_ENC_PLAIN; /* reenables HTTP */
+        if (!soap_begin_recv(soap))
+          soap_ignore_element(soap); /* read content but ignore */
+        else if (soap->error != SOAP_NO_DATA && soap->error != 202)
+          return soap_closesock(soap);
+        soap_end_recv(soap);
+        soap_closesock(soap);
       }
     }
   }
@@ -4630,7 +4657,7 @@ soap_wsrm_resend_seq(struct soap *soap, struct soap_wsrm_sequence *seq, int all,
 
 /******************************************************************************\
  *
- *	Sequences
+ *      Sequences
  *
 \******************************************************************************/
 
@@ -5123,7 +5150,7 @@ soap_wsrm_seq_valid(struct soap *soap, struct soap_wsrm_sequence *seq)
 
 /******************************************************************************\
  *
- *	Messages and Message Number Ranges
+ *      Messages and Message Number Ranges
  *
 \******************************************************************************/
 

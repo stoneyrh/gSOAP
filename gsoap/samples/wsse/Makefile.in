@@ -111,7 +111,7 @@ am_wssedemo_OBJECTS = wssedemo-wssedemo.$(OBJEXT) $(am__objects_1) \
 	wssedemo-smdevp.$(OBJEXT) wssedemo-mecevp.$(OBJEXT)
 wssedemo_OBJECTS = $(am_wssedemo_OBJECTS)
 am__DEPENDENCIES_1 =
-wssedemo_DEPENDENCIES = $(am__DEPENDENCIES_1)
+wssedemo_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 wssedemo_LINK = $(CCLD) $(wssedemo_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am__objects_5 = soapC.$(OBJEXT)
@@ -121,7 +121,7 @@ am__objects_7 = $(am__objects_6) soapServer.$(OBJEXT) $(am__objects_1) \
 am_wsselite_OBJECTS = wsselite.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_7) stdsoap2.$(OBJEXT) wsseapi-lite.$(OBJEXT)
 wsselite_OBJECTS = $(am_wsselite_OBJECTS)
-wsselite_DEPENDENCIES = $(am__DEPENDENCIES_1)
+wsselite_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -336,9 +336,9 @@ CLEANFILES = $(SOAP_C_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h 
 SOAP_NS = wssedemo.nsmap
 wssedemo_CFLAGS = -DWITH_DOM -DWITH_OPENSSL -DWITH_GZIP
 wssedemo_SOURCES = wssedemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../dom.c ../../plugin/wsseapi.c ../../plugin/smdevp.c ../../plugin/mecevp.c
-wssedemo_LDADD = $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
+wssedemo_LDADD = $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
 wsselite_SOURCES = wsselite.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../plugin/wsseapi-lite.c
-wsselite_LDADD = $(SAMPLE_EXTRA_LIBS)
+wsselite_LDADD = $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

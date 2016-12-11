@@ -388,6 +388,7 @@ class wsdl__definitions
         int                             read(int, char**);
         int                             read(const char *cwd, const char*);
         const char*                     sourceLocation();
+        char*                           absoluteLocation(const char *loc) const;
         int                             error();
         bool                            is_updated();
         void                            print_fault();

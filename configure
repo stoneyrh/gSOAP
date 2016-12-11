@@ -5330,7 +5330,7 @@ fi
 done
 
 
-for ac_header in arpa/inet.h locale.h errno.h fcntl.h ctype.h limits.h float.h math.h netdb.h netinet/in.h stdlib.h string.h strings.h stdint.h inttypes.h time.h sys/inttypes.h sys/socket.h sys/types.h sys/time.h sys/timeb.h unistd.h poll.h openssl/ssl.h gnutls/gnutls.h zlib.h
+for ac_header in arpa/inet.h locale.h xlocale.h errno.h fcntl.h ctype.h limits.h float.h math.h netdb.h netinet/in.h stdlib.h string.h strings.h stdint.h inttypes.h time.h sys/inttypes.h sys/socket.h sys/types.h sys/time.h sys/timeb.h unistd.h poll.h openssl/ssl.h gnutls/gnutls.h zlib.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -5887,7 +5887,7 @@ fi
 fi
 done
 
-for ac_func in random gettimeofday ftime localtime_r timegm gmtime gmtime_r asctime asctime_r memset select socket snprintf strchr strerror strerror_r strlcpy strrchr strstr strtol strtoul strtoll strtoull strtold strtod strtof strtold_l strtod_l strtof_l sscanf sscanf_l snprintf sprintf_l wctomb mbtowc poll
+for ac_func in random gettimeofday ftime localtime_r timegm gmtime gmtime_r asctime asctime_r memset select socket snprintf strchr strerror strerror_r strlcpy strrchr strstr strtol strtoul strtoll strtoull strtold strtod strtof strtold_l strtod_l strtof_l sscanf sscanf_l snprintf sprintf_l wctomb mbtowc poll newlocale uselocale freelocale
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"

@@ -28,7 +28,7 @@ COFLAGS=-O1
 #	For debugging use:
 #	COFLAGS=-DDEBUG -g
 #	COFLAGS=-g
-CWFLAGS=-Wall
+CWFLAGS=-Wall -Wextra
 #
 CIFLAGS=-I.. -I$(PLUGIN)
 #

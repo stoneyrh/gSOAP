@@ -109,7 +109,8 @@ am_wsademo_OBJECTS = wsademo-wsademo.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_4) wsademo-wsaapi.$(OBJEXT)
 wsademo_OBJECTS = $(am_wsademo_OBJECTS)
 am__DEPENDENCIES_1 =
-wsademo_DEPENDENCIES = $(SOAP_C_LIB_SSL) $(am__DEPENDENCIES_1)
+wsademo_DEPENDENCIES = $(SOAP_C_LIB_SSL) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 wsademo_LINK = $(CCLD) $(wsademo_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
@@ -327,7 +328,7 @@ CLEANFILES = $(SOAP_C_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h 
 SOAP_NS = wsademo.nsmap wsademo.wsdl
 wsademo_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
 wsademo_SOURCES = wsademo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../plugin/wsaapi.c
-wsademo_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
+wsademo_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

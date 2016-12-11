@@ -124,7 +124,8 @@ am_wsrmdemo_ssl_OBJECTS = wsrmdemo_ssl-wsrmdemo.$(OBJEXT) \
 	wsrmdemo_ssl-wsaapi.$(OBJEXT) wsrmdemo_ssl-wsrmapi.$(OBJEXT) \
 	wsrmdemo_ssl-threads.$(OBJEXT) wsrmdemo_ssl-duration.$(OBJEXT)
 wsrmdemo_ssl_OBJECTS = $(am_wsrmdemo_ssl_OBJECTS)
-wsrmdemo_ssl_DEPENDENCIES = $(SOAP_C_LIB_SSL) $(am__DEPENDENCIES_1)
+wsrmdemo_ssl_DEPENDENCIES = $(SOAP_C_LIB_SSL) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 wsrmdemo_ssl_LINK = $(CCLD) $(wsrmdemo_ssl_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 am__objects_8 = wsrmdemo_udp-soapC.$(OBJEXT)
@@ -362,7 +363,7 @@ wsrmdemo_udp_SOURCES = wsrmdemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../plugin/wsaap
 wsrmdemo_udp_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS) -lpthread
 wsrmdemo_ssl_CFLAGS = -DWITH_OPENSSL
 wsrmdemo_ssl_SOURCES = wsrmdemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../plugin/wsaapi.c ../../plugin/wsrmapi.c ../../plugin/threads.c ../../custom/duration.c
-wsrmdemo_ssl_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz -lpthread
+wsrmdemo_ssl_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz -lpthread
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

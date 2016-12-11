@@ -8,5 +8,5 @@ Description: SOAP C Web Services with SSL, ZLIB, DOM, and cookies
 Version: 2.8
 Requires:
 Libs: -L${libdir} -lgsoapssl
-Libs.private: -lssl -lcrypto -lz -lm
-Cflags:  -DWITH_OPENSSL -DWITH_GZIP -DWITH_DOM -DWITH_COOKIES -I${includedir}
+Libs.private: -L/usr/local/opt/openssl/lib -lssl -lcrypto -lz -lm
+Cflags:  -I/usr/local/opt/openssl/include -DWITH_OPENSSL -DWITH_GZIP -DWITH_DOM -DWITH_COOKIES -I${includedir}

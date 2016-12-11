@@ -25,6 +25,9 @@
 /* Define to 1 if you have the <float.h> header file. */
 #define HAVE_FLOAT_H 1
 
+/* Define to 1 if you have the `freelocale' function. */
+#define HAVE_FREELOCALE 1
+
 /* Define to 1 if you have the `ftime' function. */
 #define HAVE_FTIME 1
 
@@ -41,7 +44,7 @@
 #define HAVE_GMTIME_R 1
 
 /* Define to 1 if you have the <gnutls/gnutls.h> header file. */
-#define HAVE_GNUTLS_GNUTLS_H 1
+/* #undef HAVE_GNUTLS_GNUTLS_H */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -83,8 +86,11 @@
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #define HAVE_NETINET_IN_H 1
 
+/* Define to 1 if you have the `newlocale' function. */
+#define HAVE_NEWLOCALE 1
+
 /* Define to 1 if you have the <openssl/ssl.h> header file. */
-#define HAVE_OPENSSL_SSL_H 1
+/* #undef HAVE_OPENSSL_SSL_H */
 
 /* Define to 1 if you have the `poll' function. */
 #define HAVE_POLL 1
@@ -209,8 +215,14 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
 
+/* Define to 1 if you have the `uselocale' function. */
+#define HAVE_USELOCALE 1
+
 /* Define to 1 if you have the `wctomb' function. */
 #define HAVE_WCTOMB 1
+
+/* Define to 1 if you have the <xlocale.h> header file. */
+#define HAVE_XLOCALE_H 1
 
 /* Define to 1 if you have the <zlib.h> header file. */
 #define HAVE_ZLIB_H 1

@@ -13,6 +13,6 @@ SOAP_NS = wsademo.nsmap wsademo.wsdl
 
 wsademo_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
 wsademo_SOURCES = wsademo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../plugin/wsaapi.c
-wsademo_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
+wsademo_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
 
 

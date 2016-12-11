@@ -440,6 +440,7 @@ class xs__import
         xs__schema                      *schemaRef;             // set by WSDL parser or via schemaLocation
   public:
                                         xs__import();
+        int                             preprocess(xs__schema&);
         int                             traverse(xs__schema&);
         void                            schemaPtr(xs__schema*);
         xs__schema                      *schemaPtr() const;
@@ -533,6 +534,7 @@ class xs__schema
         int                             read(const char*, const char*);
         void                            sourceLocation(const char*);
         const char*                     sourceLocation();
+        char*                           absoluteLocation(const char*) const;
         xs__attributeGroup              *attributeGroupPtr() const;     // defaultAttributes group
         int                             error();
         void                            print_fault();

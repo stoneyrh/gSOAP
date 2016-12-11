@@ -6,7 +6,7 @@ rm -f missing
 automake --add-missing
 autoconf
 automake
-./configure --enable-samples
+./configure --enable-samples --with-openssl=/usr/local/opt/openssl
 rm -f gsoap/wsdl/wsdlC.cpp
 rm -f gsoap/wsdl/*.o
 rm -f gsoap/src/*.o

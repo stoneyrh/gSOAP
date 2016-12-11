@@ -12,8 +12,8 @@ SOAP_NS = wssedemo.nsmap
 
 wssedemo_CFLAGS = -DWITH_DOM -DWITH_OPENSSL -DWITH_GZIP
 wssedemo_SOURCES = wssedemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../dom.c ../../plugin/wsseapi.c ../../plugin/smdevp.c ../../plugin/mecevp.c
-wssedemo_LDADD = $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
+wssedemo_LDADD = $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz
 
 wsselite_SOURCES = wsselite.c $(SOAPHEADER) $(SOAP_C_SRC) ../../stdsoap2.c ../../plugin/wsseapi-lite.c
-wsselite_LDADD = $(SAMPLE_EXTRA_LIBS)
+wsselite_LDADD = $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS)
 

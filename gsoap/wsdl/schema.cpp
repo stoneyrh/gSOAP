@@ -121,8 +121,8 @@ int xs__schema::get(struct soap *soap)
 
 int xs__schema::preprocess()
 {
-  // process xs:include recursively
-  // NOTE: includes are context sensitive (take context info), so keep including
+  for (vector<xs__import>::iterator im = import.begin(); im != import.end(); ++im)
+    (*im).preprocess(*this); // read schema and recurse over <import>
   for (vector<xs__include>::iterator in = include.begin(); in != include.end(); ++in)
   {
     (*in).preprocess(*this); // read schema and recurse over <include>
@@ -169,7 +169,18 @@ int xs__schema::insert(xs__schema& schema)
   for (vector<xs__import>::const_iterator im = schema.import.begin(); im != schema.import.end(); ++im)
   {
     found = false;
-    if ((*im).namespace_)
+    if ((*im).schemaLocation)
+    {
+      for (vector<xs__import>::const_iterator i = import.begin(); i != import.end(); ++i)
+      {
+        if ((*i).schemaLocation && !strcmp((*im).schemaLocation, (*i).schemaLocation))
+        {
+          found = true;
+          break;
+        }
+      }
+    }
+    else if ((*im).namespace_)
     {
       for (vector<xs__import>::const_iterator i = import.begin(); i != import.end(); ++i)
       {
@@ -497,7 +508,9 @@ int xs__schema::read(const char *cwd, const char *loc)
         }
       }
       else
+      {
         location = soap_strdup(soap, loc);
+      }
       fprintf(stderr, "%*sReading schema '%s'...\n", 2*openfiles, "", location);
       openfiles++;
     }
@@ -573,6 +586,38 @@ const char *xs__schema::sourceLocation()
   return location;
 }
 
+char *xs__schema::absoluteLocation(const char *loc) const
+{
+  if (!location)
+    return soap_strdup(soap, loc);
+  if (!strncmp(loc, "http://", 7) || !strncmp(loc, "https://", 8) || !strncmp(loc, "file://", 7))
+    return soap_strdup(soap, loc);
+  const char *s = strrchr(location, '/');
+  if (!s)
+    return soap_strdup(soap, loc);
+  size_t k = 0;
+  while (!strncmp(loc, "../", 3))
+  {
+    loc += 3;
+    ++k;
+  }
+  while (k > 0 && s > location)
+    if (*--s == '/')
+      --k;
+  loc -= 3*k;
+  size_t n = s - location;
+  size_t l = n + strlen(loc);
+  char *abs = (char*)soap_malloc(soap, l + 2);
+  soap_strncpy(abs, l + 2, location, n);
+  if (n > 0)
+  {
+    soap_strcpy(abs + n, l + 2 - n, "/");
+    ++n;
+  }
+  soap_strcpy(abs + n, l + 2 - n, loc);
+  return abs;
+}
+
 xs__attributeGroup *xs__schema::attributeGroupPtr() const
 {
   return attributeGroupRef;
@@ -638,6 +683,7 @@ int xs__include::preprocess(xs__schema &schema)
     // only read from include locations not read already, uses static std::map
     static map<const char*, xs__schema*, ltstr> included;
     map<const char*, xs__schema*, ltstr>::iterator i = included.end();
+    schemaLocation = schema.absoluteLocation(schemaLocation);
     if (schema.targetNamespace)
     {
       for (i = included.begin(); i != included.end(); ++i)
@@ -954,13 +1000,13 @@ xs__import::xs__import()
   schemaRef = NULL;
 }
 
-int xs__import::traverse(xs__schema &schema)
+int xs__import::preprocess(xs__schema &schema)
 {
   // work around a Microsoft bug that uses @location instead of @schemaLocation in WSDLs
   if (!schemaLocation && location)
     schemaLocation = location;
   if (vflag)
-    cerr << "   Analyzing schema import '" << (namespace_ ? namespace_ : "(null)") << "'" << endl;
+    cerr << "   Preprocessing schema import '" << (namespace_ ? namespace_ : "(null)") << "'" << endl;
   if (!schemaRef)
   {
     bool found = false;
@@ -976,33 +1022,43 @@ int xs__import::traverse(xs__schema &schema)
       }
     }
     else if (!Wflag)
+    {
       fprintf(stderr, "\nWarning: no namespace in <import>\n");
+    }
     if (!found && !iflag) // don't import any of the schemas in the .nsmap table (or when -i option is used)
     {
-      const char *s = schemaLocation;
-      if (!s)
-        s = namespace_;
-      // only read from import locations not read already, uses static std::map
-      static map<const char*, xs__schema*, ltstr> included;
-      map<const char*, xs__schema*, ltstr>::iterator i = included.find(s);
-      if (i == included.end())
+      if (schemaLocation)
       {
-        included[s] = schemaRef = new xs__schema(schema.soap);
-        schemaRef->read(schema.sourceLocation(), s);
-      }
-      else
-        schemaRef = (*i).second;
-      if (schemaRef)
-      {
-        if (!schemaRef->targetNamespace || !*schemaRef->targetNamespace)
-          schemaRef->targetNamespace = namespace_;
+        schemaLocation = schema.absoluteLocation(schemaLocation);
+        // only read from import locations not read already, uses static std::map
+        static map<const char*, xs__schema*, ltstr> included;
+        map<const char*, xs__schema*, ltstr>::iterator i = included.find(schemaLocation);
+        if (i == included.end())
+        {
+          included[schemaLocation] = schemaRef = new xs__schema(schema.soap);
+          schemaRef->read(schema.sourceLocation(), schemaLocation);
+        }
         else
-          if (!namespace_ || strcmp(schemaRef->targetNamespace, namespace_))
+        {
+          schemaRef = (*i).second;
+        }
+        if (schemaRef)
+        {
+          if (!schemaRef->targetNamespace || !*schemaRef->targetNamespace)
+            schemaRef->targetNamespace = namespace_;
+          else if (!namespace_ || strcmp(schemaRef->targetNamespace, namespace_))
             if (!Wflag)
               fprintf(stderr, "\nWarning: schema import '%s' with schema targetNamespace '%s' mismatch\n", namespace_ ? namespace_ : "(null)", schemaRef->targetNamespace);
+        }
       }
     }
   }
+  return SOAP_OK;
+}
+
+int xs__import::traverse(xs__schema &schema)
+{
+  (void)schema;
   if (schemaRef)
     schemaRef->traverse();
   return SOAP_OK;

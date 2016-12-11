@@ -2235,8 +2235,8 @@ gSOAP 2.8.30 and later versions):
 
 A public pointer-typed data member is serialized by following its (smart)
 pointer(s) to the value pointed to.  To serialize pointers to dynamic arrays of
-data, please see the next section on [container members and their occurrence
-constraints](#toxsd9-9).
+data, please see the next section on
+[container and array members and their occurrence constraints](#toxsd9-9).
 
 Pointers that are NULL and smart pointers that are empty are serialized to
 produce omitted element and attribute values, unless an element is required
@@ -2310,7 +2310,7 @@ in a gSOAP header file for soapcpp2:
 `NAMESPACE` is any valid C++ namespace such as `std` and `boost` if you have
 Boost installed.
 
-### Container members and their occurrence constraints               {#toxsd9-9}
+### Container and array members and their occurrence constraints     {#toxsd9-9}
 
 Class and struct data member types that are containers `std::deque`,
 `std::list`, `std::vector` and `std::set` are serialized as a collection of
@@ -2899,7 +2899,7 @@ on a context-managed heap:
   the required data members to the values specified in `...`.  The required data
   members are those with nonzero minOccurs, see the subsections on
   [(smart) pointer members and their occurrence constraints](#toxsd9-8) and
-  [container members and their occurrence constraints](#toxsd9-9).
+  [container and array members and their occurrence constraints](#toxsd9-9).
 
 - `T * soap_new_set_T(struct soap*, ...)` returns a new instance of `T` and sets
   the public/serializable data members to the values specified in `...`.
@@ -4163,7 +4163,7 @@ soapcpp2 auto-generates to create instances on a context-managed heap:
   specified in `...`.  The required data members are those with nonzero
   minOccurs, see the subsections on
   [(smart) pointer members and their occurrence constraints](#toxsd9-8) and
-  [container members and their occurrence constraints](#toxsd9-9).
+  [container and array members and their occurrence constraints](#toxsd9-9).
 
 - `T * soap_new_set_T(struct soap*, ...)` (structs and classes only) returns a
   new instance of `T` and sets the public/serializable data members to the values

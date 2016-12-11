@@ -304,41 +304,42 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
     {
       soap_retry(soap);
       xs__schema *schema = soap_new_xs__schema(soap);
+      schema->sourceLocation(location);
       schema->soap_in(soap, "xs:schema", NULL);
       if (soap->error == SOAP_TAG_MISMATCH && soap->level == 0)
       {
-	soap_retry(soap);
-	wadl__application *app = soap_new_wadl__application(soap);
-	app->soap_in(soap, "wadl:application", NULL);
-	if (soap->error)
-	{
-	  fprintf(stderr, "\nAn error occurred while parsing WSDL/WADL or XSD from '%s'\n", loc ? loc : "(stdin)");
-	  soap_print_fault(soap, stderr);
-	  if (soap->error < 200)
-	    soap_print_fault_location(soap, stderr);
-	  exit(1);
-	}
-	appRef = app;
-	preprocess();
+        soap_retry(soap);
+        wadl__application *app = soap_new_wadl__application(soap);
+        app->soap_in(soap, "wadl:application", NULL);
+        if (soap->error)
+        {
+          fprintf(stderr, "\nAn error occurred while parsing WSDL/WADL or XSD from '%s'\n", loc ? loc : "(stdin)");
+          soap_print_fault(soap, stderr);
+          if (soap->error < 200)
+            soap_print_fault_location(soap, stderr);
+          exit(1);
+        }
+        appRef = app;
+        preprocess();
       }
       else
       {
-	if (soap->error)
-	{
-	  fprintf(stderr, "\nAn error occurred while parsing WSDL/WADL or XSD from '%s'\n", loc ? loc : "(stdin)");
-	  soap_print_fault(soap, stderr);
-	  if (soap->error < 200)
-	    soap_print_fault_location(soap, stderr);
-	  exit(1);
-	}
-	name = NULL;
-	targetNamespace = schema->targetNamespace;
-	if (vflag)
-	  cerr << "Found schema '" << (targetNamespace ? targetNamespace : "(null)") << "' when expecting WSDL" << endl;
-	types = soap_new_wsdl__types(soap);
-	types->documentation = NULL;
-	types->xs__schema_.push_back(schema);
-	types->preprocess(*this);
+        if (soap->error)
+        {
+          fprintf(stderr, "\nAn error occurred while parsing WSDL/WADL or XSD from '%s'\n", loc ? loc : "(stdin)");
+          soap_print_fault(soap, stderr);
+          if (soap->error < 200)
+            soap_print_fault_location(soap, stderr);
+          exit(1);
+        }
+        name = NULL;
+        targetNamespace = schema->targetNamespace;
+        if (vflag)
+          cerr << "Found schema '" << (targetNamespace ? targetNamespace : "(null)") << "' when expecting WSDL" << endl;
+        types = soap_new_wsdl__types(soap);
+        types->documentation = NULL;
+        types->xs__schema_.push_back(schema);
+        types->preprocess(*this);
       }
     }
     // check HTTP redirect (socket was closed)
@@ -548,6 +549,38 @@ int wsdl__definitions::traverse()
 const char *wsdl__definitions::sourceLocation()
 {
   return location;
+}
+
+char *wsdl__definitions::absoluteLocation(const char *loc) const
+{
+  if (!location)
+    return soap_strdup(soap, loc);
+  if (!strncmp(loc, "http://", 7) || !strncmp(loc, "https://", 8) || !strncmp(loc, "file://", 7))
+    return soap_strdup(soap, loc);
+  const char *s = strrchr(location, '/');
+  if (!s)
+    return soap_strdup(soap, loc);
+  size_t k = 0;
+  while (!strncmp(loc, "../", 3))
+  {
+    loc += 3;
+    ++k;
+  }
+  while (k > 0 && s > location)
+    if (*--s == '/')
+      --k;
+  loc -= 3*k;
+  size_t n = s - location;
+  size_t l = n + strlen(loc);
+  char *abs = (char*)soap_malloc(soap, l + 2);
+  soap_strncpy(abs, l + 2, location, n);
+  if (n > 0)
+  {
+    soap_strcpy(abs + n, l + 2 - n, "/");
+    ++n;
+  }
+  soap_strcpy(abs + n, l + 2 - n, loc);
+  return abs;
 }
 
 int wsdl__definitions::error()
@@ -1585,6 +1618,8 @@ int wsdl__types::preprocess(wsdl__definitions& definitions)
     targetNamespace = definitions.targetNamespace;
     xs__schema_.push_back(this);
   }
+  for (vector<xs__schema*>::iterator schema = xs__schema_.begin(); schema != xs__schema_.end(); ++schema)
+    (*schema)->sourceLocation(definitions.sourceLocation());
 again:
   // link imported schemas, need to repeat when <types> is extended with new imported schema (from inside another schema, etc.)
   for (vector<xs__schema*>::iterator schema1 = xs__schema_.begin(); schema1 != xs__schema_.end(); ++schema1)
@@ -1610,8 +1645,6 @@ again:
     for (vector<xs__import>::iterator import = (*schema2)->import.begin(); import != (*schema2)->import.end(); ++import)
     {
       bool found = false;
-      if ((*import).schemaPtr())
-        found = true;
       if (vflag)
         cerr << "Preprocessing schema '" << (*schema2)->targetNamespace << "' import '" << ((*import).namespace_ ? (*import).namespace_ : "(null)") << "'" << endl; 
       if (!found && (*import).namespace_)
@@ -1629,21 +1662,22 @@ again:
       {
         xs__schema *importschema;
         importschema = (*import).schemaPtr();
+#if 0 // no longer applicable as imports are preprocessed
         if (!importschema)
         {
           const char *s = (*import).schemaLocation;
-	  if (!s && (*import).location)
-	  {
-	    s = (*import).schemaLocation = (*import).location; // work around for Microsoft bugs
+          if (!s && (*import).location)
+          {
+            s = (*import).schemaLocation = (*import).location; // work around for Microsoft bugs
             cerr << "Schema import with namespace '" << ((*import).namespace_ ? (*import).namespace_ : "(null)") << "' has a 'location' attribute specified but a 'schemaLocation' attribute must be used, please inform the author of this WSDL to correct this problem" << endl;
-	  }
-	  else if (!s)
-	  {
+          }
+          else if (!s)
+          {
             s = (*import).namespace_;
-	  }
+          }
           if (!s)
             continue;
-          importschema = new xs__schema(definitions.soap, (*schema2)->sourceLocation(), s);
+          importschema = new xs__schema(definitions.soap, (*schema2)->sourceLocation(), (*schema2)->absoluteLocation(s));
           if (!(*import).namespace_)
           {
             if (importschema->targetNamespace)
@@ -1671,9 +1705,31 @@ again:
             }
           }
         }
-        if (importschema)
+#endif
+        if (!found)
         {
-          (*import).schemaPtr(importschema);
+          for (vector<xs__schema*>::const_iterator schema3 = xs__schema_.begin(); schema3 != xs__schema_.end(); ++schema3)
+          {
+            if (*schema3 == importschema)
+            {
+              found = true;
+            }
+            else if ((*schema3)->targetNamespace && (*import).namespace_ && !strcmp((*import).namespace_, (*schema3)->targetNamespace))
+            {
+              (*import).schemaPtr(*schema3);
+              if ((*schema3) == this || // WSDL 2.0 <types> has no FormDefaults
+                  (*schema3)->empty())  // schema w/o components, only imports
+              {
+                (*schema3)->elementFormDefault = importschema->elementFormDefault;
+                (*schema3)->attributeFormDefault = importschema->attributeFormDefault;
+              }
+              (*schema3)->insert(*importschema); // merge content
+              goto again;
+            }
+          }
+        }
+        if (!found)
+        {
           xs__schema_.push_back(importschema);
           if (vflag)
             cerr << "Adding schema '" << importschema->targetNamespace << "'" << endl;
@@ -1760,6 +1816,7 @@ int wsdl__import::preprocess(wsdl__definitions& definitions)
 {
   static map<const char*, wsdl__definitions*, ltstr> included;
   bool found = false;
+  location = definitions.absoluteLocation(location);
   if (vflag)
     cerr << "Preprocess wsdl import '" << (location ? location : "(null)") << "'" << endl;
   definitionsRef = NULL;

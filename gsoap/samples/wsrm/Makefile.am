@@ -21,4 +21,4 @@ wsrmdemo_udp_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS) -lpthread
 
 wsrmdemo_ssl_CFLAGS = -DWITH_OPENSSL
 wsrmdemo_ssl_SOURCES = wsrmdemo.c $(SOAPHEADER) $(SOAP_C_SRC) ../../plugin/wsaapi.c ../../plugin/wsrmapi.c ../../plugin/threads.c ../../custom/duration.c
-wsrmdemo_ssl_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz -lpthread
+wsrmdemo_ssl_LDADD = $(SOAP_C_LIB_SSL) $(SAMPLE_SSL_LIBS) $(SAMPLE_EXTRA_LIBS) -lssl -lcrypto -lz -lpthread

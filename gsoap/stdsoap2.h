@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.39
+        stdsoap2.h 2.8.40
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20839
+#define GSOAP_VERSION 20840
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -223,22 +223,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
-# if defined(WITH_OPENSSL)
-#  ifndef HAVE_OPENSSL_SSL_H
-#   undef WITH_OPENSSL
-#  endif
-# endif
-# if defined(WITH_GNUTLS)
-#  ifndef HAVE_GNUTLS_GNUTLS_H
-#   undef WITH_GNUTLS
-#  endif
-# endif
-# if defined(WITH_ZLIB) || defined(WITH_GZIP)
-#  ifndef HAVE_ZLIB_H
-#   undef WITH_ZLIB
-#   undef WITH_GZIP
-#  endif
-# endif
 #else
 # if defined(UNDER_CE)
 #  define SOAP_BUFLEN (2048)
@@ -344,10 +328,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_LOCALE_H
 # elif defined(HP_UX)
 #  include <sys/_inttypes.h>
+#  if 0 /* enable if __strtoll and __strtoull are available */
 extern intmax_t __strtoll(const char*, char**, int);
 extern intmax_t __strtoull(const char*, char**, int);
 #  define strtoll __strtoll
 #  define strtoull __strtoull
+#  endif
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
@@ -617,9 +603,11 @@ extern intmax_t __strtoull(const char*, char**, int);
 # endif
 #endif
 
+#if defined(__cplusplus)
 /* allowing empty struct/union in C is a GNU extension */
-#if !defined(__GNU__) && !defined(__GNUC__)
-# define WITH_NOEMPTYSTRUCT
+# if !defined(__GNU__) && !defined(__GNUC__)
+#  define WITH_NOEMPTYSTRUCT
+# endif
 #endif
 
 /* silence clang's C99 variadic macro warnings */
@@ -647,17 +635,19 @@ extern intmax_t __strtoull(const char*, char**, int);
 # endif
 #endif
 
+/* user can set WITH_NO_C_LOCALE to force removal of locale (e.g. in case of compiler errors) */
 #ifdef WITH_NO_C_LOCALE
 # undef WITH_C_LOCALE
 #endif
 
 #ifdef WITH_C_LOCALE
 # include <locale.h>
-# ifdef WIN32
+# if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 #  define SOAP_LOCALE_T _locale_t
 #  define SOAP_LOCALE(soap) ((soap)->c_locale ? (soap)->c_locale : ((soap)->c_locale = _create_locale(LC_ALL, "C")))
 #  define SOAP_FREELOCALE(soap) (void)((soap)->c_locale && (_free_locale((soap)->c_locale), ((soap)->c_locale = NULL)))
 # else
+#  include <locale.h>
 #  include <xlocale.h>
 #  define SOAP_LOCALE_T locale_t
 #  define SOAP_LOCALE(soap) ((soap)->c_locale ? (soap)->c_locale : ((soap)->c_locale = newlocale(LC_ALL_MASK, "C", NULL)))
@@ -932,7 +922,7 @@ extern "C" {
 #endif
 
 /* Portability (X/Open, BSD sockets etc): define SOAP_SOCKLEN_T as socklen_t or int or ... */
-#if defined(_AIX) || defined(AIX)
+#if defined(_AIX) || defined(AIX) || defined(HP_UX)
 # if defined(_AIX43)
 #  define SOAP_SOCKLEN_T socklen_t
 # else
@@ -942,7 +932,7 @@ extern "C" {
 # define SOAP_SOCKLEN_T SOCKLEN_T
 #elif defined(__socklen_t_defined) || defined(_SOCKLEN_T) || defined(CYGWIN) || defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD) || defined(__QNX__) || defined(QNX) || defined(OS390) || defined(__ANDROID__) || defined(_XOPEN_SOURCE)
 # define SOAP_SOCKLEN_T socklen_t
-#elif defined(IRIX) || defined(WIN32) || defined(__APPLE__) || defined(SUN_OS) || defined(OPENSERVER) || defined(TRU64) || defined(VXWORKS) || defined(HP_UX)
+#elif defined(IRIX) || defined(WIN32) || defined(__APPLE__) || defined(SUN_OS) || defined(OPENSERVER) || defined(TRU64) || defined(VXWORKS)
 # define SOAP_SOCKLEN_T int
 #elif !defined(SOAP_SOCKLEN_T)
 # define SOAP_SOCKLEN_T size_t
@@ -2946,7 +2936,7 @@ soap_wchar soap_get1(struct soap*);
 
 #if defined(WITH_OPENSSL)
 # define soap_random soap_rand()
-SOAP_FMAC1 int SOAP_FMAC2 soap_rand(void);
+ SOAP_FMAC1 int SOAP_FMAC2 soap_rand(void);
 #elif defined(HAVE_RANDOM)
 # define soap_random (int)random()
 #else
@@ -3173,6 +3163,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_array_begin_out(struct soap*, const char *tag, in
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_ref(struct soap*, const char *tag, int id, int href);
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_href(struct soap*, const char *tag, int id, const char *ref, const char *val);
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_null(struct soap*, const char *tag, int id, const char *type);
+SOAP_FMAC1 int SOAP_FMAC2 soap_element_empty(struct soap*, const char *tag);
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_nil(struct soap*, const char *tag);
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_id(struct soap*, const char *tag, int id, const void *p, const void *a, int n, const char *type, int t, char **mark);
 SOAP_FMAC1 int SOAP_FMAC2 soap_element_result(struct soap*, const char *tag);

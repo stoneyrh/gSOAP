@@ -37,7 +37,7 @@
     <element name="gmtResponse">
       <complexType>
           <sequence>
-            <element name="param-1" type="xsd:dateTime" minOccurs="0" maxOccurs="1" nillable="true"/><!-- t__gmt::_param_1 -->
+            <element name="param-1" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/><!-- t__gmt::_param_1 -->
           </sequence>
       </complexType>
     </element>
