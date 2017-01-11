@@ -3964,7 +3964,7 @@ Use `soap_assign` to create a SSN value on the managed heap:
     struct ns__record *record = (struct ns__record*)soap_malloc(soap, sizeof(struct ns__record));
     soap_default_ns__record(soap, record);
     record->name = soap_strdup(soap, "Joe");
-    soap_assign(soap, record->SSN, 1234567890LL);
+    soap_assign(soap, record->SSN, 1234567890UL);
     ...
     soap_end(soap);     // delete managed soap_malloc'ed heap data
     soap_free(soap);    // delete context
@@ -3976,7 +3976,7 @@ of memory):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     assert((record->SSN = (uint64_t*)soap_malloc(soap, sizeof(utint64_t))) != NULL);
-    *record->SSN = 1234567890LL;
+    *record->SSN = 1234567890UL;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The gSOAP serializer can serialize any heap, stack, or static allocated data.
@@ -3986,7 +3986,7 @@ So we can also create a new record as follows:
     struct soap *soap = soap_new(); // new context
     ...
     struct ns__record *record = (struct ns__record*)soap_malloc(soap, sizeof(struct ns__record));
-    static uint64_t SSN = 1234567890LL;
+    static uint64_t SSN = 1234567890UL;
     soap_default_ns__record(soap, record);
     record->name = "Joe";
     record->SSN = &SSN; // safe to use static values: the value of record->SSN is never changed by gSOAP
@@ -4135,18 +4135,19 @@ Memory management in C++                                              {#memory2}
 ------------------------
 
 When working with gSOAP in C++, the gSOAP engine allocates data on a managed
-heap using a combination of `void * soap_malloc(struct soap*, size_t len)` to
-allocate primitive types and a managed call to `new T()` to allocate a struct,
-class or a template type `T`.  Heap allocation is tracked by the `struct soap`
-context for collective deletion with `soap_destroy(soap)` for structs, classes,
-and templates and with `soap_end(soap)` for everything else.
+heap using `soap_new_T(soap)` to allocate a type with type name `T`.  Managed
+heap allocation is tracked by the `struct soap` context for collective deletion
+with `soap_destroy(soap)` for structs, classes, and templates and with
+`soap_end(soap)` for everything else.
 
-The auto-generated `T * soap_new_T(struct soap*)` returns data allocated on the
-managed heap for type `T`.  The data is mass-deleted with `soap_destroy(soap)`
-followed by `soap_end(soap)`.
+You should only use `soap_malloc(struct soap*, size_t len)` to allocate
+primitive types, but `soap_new_T()` is preferred.  The auto-generated `T *
+soap_new_T(struct soap*)` returns data allocated on the managed heap for type
+`T`.  The data is mass-deleted with `soap_destroy(soap)` followed by
+`soap_end(soap)`.
 
-There are four variations of `soap_new_T` to allocate data of type `T` that
-soapcpp2 auto-generates to create instances on a context-managed heap:
+There are four variations of `soap_new_T()` to allocate data of type `T` that
+soapcpp2 auto-generates:
 
 - `T * soap_new_T(struct soap*)` returns a new instance of `T` that is default
   initialized.  For classes, initialization is internally performed using the
@@ -4184,8 +4185,7 @@ Primitive types and arrays of these are allocated with `soap_malloc`
 allocated with `soap_malloc` for reasons of efficiency.
 
 You can use a C++ template to simplify the managed allocation and initialization
-of primitive values as follows (this is for primitive types only, because
-structs and classes must be allocated with `soap_new_T`):
+of primitive values as follows (this is for primitive types only):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     template<class T>
@@ -4220,7 +4220,7 @@ managed heap as follows:
     ns__record *record = soap_new_set_ns__record(
         soap,
         "Joe",
-        soap_make<uint64_t>(soap, 1234567890LL),
+        soap_make<uint64_t>(soap, 1234567890UL),
         NULL);
     ...
     soap_destroy(soap); // delete record and all other managed instances
@@ -4240,7 +4240,7 @@ Note however that the gSOAP serializer can serialize any heap, stack, or static
 allocated data.  So we can also create a new record as follows:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    uint64_t SSN = 1234567890LL;
+    uint64_t SSN = 1234567890UL;
     ns__record *record = soap_new_set_ns__record(soap, "Joe", &SSN, NULL);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -4264,6 +4264,37 @@ context pointer to a class/struct:
 
 The context is set when invoking `soap_new_T` (and similar) with a non-NULL
 context argument.
+
+You can also use a template when an array of pointers to values is required.
+To create an array of pointers to values, define the following template:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    template<class T>
+    T **soap_make_array(struct soap *soap, T* array, int n)
+    { 
+      T **p = (T**)soap_malloc(soap, n * sizeof(T*));
+      for (int i = 0; i < n; ++i)
+	p[i] = &array[i];
+      return p;
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `array` parameter is a pointer to an array of `n` values.  The template
+returns an array of `n` pointers that point to the values in that array:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    // create an array of 100 pointers to 100 records
+    int n = 100;
+    ns__record **precords = soap_make_array(soap, soap_new_ns__record(soap, n), n);
+    for (int i = 0; i < n; ++i)
+    {
+      precords[i]->name = "...";
+      precords[i]->SSN = soap_make<uint64_t>(1234567890UL + i);
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that `soap_new_ns__record(soap, n)` returns a pointer to an array of `n`
+records, which is then used to create an array of `n` pointers to these records.
 
 Use the soapcpp2 auto-generated `soap_dup_T` functions to duplicate data into
 another context (this requires soapcpp2 option `-Ec` to generate), here shown

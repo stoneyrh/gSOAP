@@ -37,6 +37,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 %{
 #include "soapcpp2.h"
 
+#ifndef YY_NO_UNISTD_H
+#define YY_NO_UNISTD_H
+#endif
+
 #ifdef HAVE_CONFIG_H
 #include "soapcpp2_yacc.h"
 #else

@@ -99,11 +99,13 @@ QByteArray *soap_in_xsd__hexBinary(struct soap *soap, char const *tag, QByteArra
   return a;
 }
 
-char const *soap_xsd__hexBinary2s(struct soap *soap, QByteArray a)
+const char * soap_xsd__hexBinary2s(struct soap *soap, QByteArray a)
 {
-  QByteArray hex = a.toHex();
-  soap_strcpy(soap->tmpbuf, qstrlen(hex) + 1, hex.constData());
-  return soap->tmpbuf;
+  QByteArray ba = a.toHex();
+  size_t n = qstrlen(ba);
+  const char *s = (const char*)soap_malloc(soap, n + 1);
+  soap_strcpy(s, n + 1, ba.constData());
+  return s;
 }
 
 int soap_s2xsd__hexBinary(struct soap *soap, const char *s, QByteArray *a)

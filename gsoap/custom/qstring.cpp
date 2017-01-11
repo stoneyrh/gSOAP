@@ -99,16 +99,17 @@ QString *soap_in_xsd__string(struct soap *soap, char const *tag, QString *a, cha
   return a;
 }
 
-char const *soap_xsd__string2s(struct soap *soap, QString a)
+const char * soap_xsd__string2s(struct soap *soap, QString a)
 {
   QByteArray ba;
   if (soap->mode & SOAP_C_UTFSTRING)
     ba = a.toUtf8();
   else
     ba = a.toLatin1();
-  const char *s = ba.constData();
-  soap_strcpy(soap->tmpbuf, qstrlen(ba)+1, s);
-  return soap->tmpbuf;
+  size_t n = qstrlen(ba);
+  const char *s = (const char*)soap_malloc(soap, n + 1);
+  soap_strcpy(s, n + 1, ba.constData());
+  return s;
 }
 
 int soap_s2xsd__string(struct soap *soap, const char *s, QString *a)

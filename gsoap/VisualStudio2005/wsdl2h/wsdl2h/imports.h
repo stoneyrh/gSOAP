@@ -32,7 +32,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 */
 
-#import "stlvector.h"
+template <class T> class std::vector;
 
 typedef char	*xsd__anyURI,
 		*xsd__ID,

@@ -1294,17 +1294,15 @@ WS-Security can be combined with WS-ReliableMessaging using the
 Both plugins must be registered at the client and server side. These APIs are
 independent.
 
-@section wsrm_9 The wsrm Plugin and C++ Server Objects
+@section wsrm_9 The wsrm Plugin and C++ Proxy and Server Objects
 
-Run `soapcpp2 -a -j` (or `-i`) on the .h file with the service operation
-definitions.
-
-When you prefer to use soapcpp2 option `-j` (or `-i`), please run soacpp2 again as
-follows:
+The WS-ReliableMessaging plugin is developed to support C and C++. To support
+C++ server objects generated with soapcpp2 option `-j` (or `-i`), run soapcpp2
+again:
 
     soapcpp2 -A -pwsrx import/wsrx.h
 
-This generates wsrxClient.cpp and wsrxServer.cpp needed with the
+This generates wsrxClient.cpp and wsrxServer.cpp that are also needed with the
 WS-ReliableMessaging plugin and code.
 
 To dispatch the wsrm service operations when received: Suppose we have a

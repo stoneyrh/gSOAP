@@ -1,8 +1,8 @@
 /*
 	wsse2api.c
 
-	WS-Security plugin (2002 version)
-	See wsseapi.c for details
+	WS-Security plugin (this is old, to support WS-Security 2002)
+	See wsseapi.c for documentation and details
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
@@ -155,9 +155,10 @@ static void soap_wsse_preparecleanup(struct soap *soap, struct soap_wsse_data *d
 static int soap_wsse_preparefinalrecv(struct soap *soap);
 
 static int soap_wsse_header(struct soap *soap);
+
 static int soap_wsse_element_begin_in(struct soap *soap, const char *tag);
 static int soap_wsse_element_end_in(struct soap *soap, const char *tag1, const char *tag2);
-static int soap_wsse_element_begin_out(struct soap *soap, const char *tag);
+static int soap_wsse_element_begin_out(struct soap *soap, const char *tag, int id, const char *type);
 static int soap_wsse_element_end_out(struct soap *soap, const char *tag);
 
 static size_t soap_wsse_verify_nested(struct soap *soap, struct soap_dom_element *dom, const char *URI, const char *tag);
@@ -2450,6 +2451,7 @@ static void
 calc_nonce(struct soap *soap, char nonce[SOAP_WSSE_NONCELEN])
 { int i;
   time_t r = time(NULL);
+  (void)soap;
   soap_memcpy((void*)nonce, SOAP_WSSE_NONCELEN, (const void*)&r, 4);
   for (i = 4; i < SOAP_WSSE_NONCELEN; i += 4)
   { r = soap_random;
@@ -2584,6 +2586,7 @@ soap_wsse_copy(struct soap *soap, struct soap_plugin *dst, struct soap_plugin *s
 static void
 soap_wsse_delete(struct soap *soap, struct soap_plugin *p)
 { struct soap_wsse_data *data = (struct soap_wsse_data*)soap_lookup_plugin(soap, soap_wsse_id);
+  (void)p;
   DBGFUN("soap_wsse_delete");
   if (data)
   { soap_wsse_preparecleanup(soap, data);
@@ -3410,8 +3413,9 @@ to be sent by the XML generator.
 @return SOAP_OK or error code
 */
 static int
-soap_wsse_element_begin_out(struct soap *soap, const char *tag)
+soap_wsse_element_begin_out(struct soap *soap, const char *tag, int id, const char *type)
 { struct soap_wsse_data *data = (struct soap_wsse_data*)soap_lookup_plugin(soap, soap_wsse_id);
+  (void)id; (void)type;
   if (data && !data->encid && !strcmp(tag, "SOAP-ENV:Body"))
   { _wsse__Security *security = soap_wsse_Security(soap);
     char *URI = NULL;
@@ -3578,12 +3582,14 @@ soap_wsse_preparefinalsend(struct soap *soap)
     /* if non-chunked, adjust content length */
     if ((soap->mode & SOAP_IO) != SOAP_IO_CHUNK)
     { /* the code below ensures we increase the HTTP length counter */
+      short part = soap->part;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Counting the size of additional SOAP Header elements, mode=0x%x\n", soap->mode));
       if (signature_added)
       { soap->level = 3; /* indent level for XML Signature */
-        if (soap->mode & SOAP_XML_CANONICAL && soap->mode & SOAP_XML_INDENT)
+        if (soap->mode & SOAP_XML_CANONICAL)
         { soap->ns = 0; /* need namespaces for canonicalization */
-          soap->count += 4; /* correction for soap->ns = 0: add \n+indent */
+	  if (soap->mode & SOAP_XML_INDENT)
+	    soap->count += 4; /* correction for soap->ns = 0: add \n+indent */
 	}
         soap_out_ds__SignatureType(soap, "ds:Signature", 0, signature, NULL);
       }
@@ -3591,14 +3597,16 @@ soap_wsse_preparefinalsend(struct soap *soap)
       { const char *c14nexclude = soap->c14nexclude;
         soap->c14nexclude = "ds xsi"; /* don't add xmlns:ds or xmlns:xsi to count msg len */
         soap->level = 4; /* indent level for XML SignedInfo */
-        if (soap->mode & SOAP_XML_CANONICAL && soap->mode & SOAP_XML_INDENT)
+        if (soap->mode & SOAP_XML_CANONICAL)
         { soap->ns = 0; /* need namespaces for canonicalization */
-          soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
+	  if (soap->mode & SOAP_XML_INDENT)
+	    soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
 	}
         soap_out_ds__SignedInfoType(soap, "ds:SignedInfo", 0, signature->SignedInfo, NULL);
         soap_out__ds__SignatureValue(soap, "ds:SignatureValue", 0, &signature->SignatureValue, NULL);
         soap->c14nexclude = c14nexclude;
       }
+      soap->part = part;
     }
   }
   else /* Reset the callbacks and cleanup digests */

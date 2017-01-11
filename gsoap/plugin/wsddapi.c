@@ -315,14 +315,13 @@ that is accessible in the soap->peer and soap->peerlen members. For example:
 
 @section wsdd_5 Generating C++ Server Objects
 
-The WSDD library is developed to support C and C++. To support C++ server
-objects generated with soapcpp2 option `-j` (or `-i`), you need to define in
-your C++ code the following wrappers (use `this` instead of `this->soap` below
-with soapcpp2 option `-i`):
+The WSDD plugin is developed to support C and C++. To support C++ server
+objects generated with soapcpp2 option `-j` (or `-i`), run soapcpp2 again:
 
     soapcpp2 -a -j -Iimport import/wsdd.h
 
-and your code should include:
+You should define in your C++ code the following wrappers (use `this` instead
+of `this->soap` below with soapcpp2 option `-i`):
 
 @code
     int wsddService::Hello(struct wsdd__HelloType *hello)
@@ -345,7 +344,7 @@ and your code should include:
     {
       return __wsdd__Resolve(this->soap, resolve);
     }
-    int wsddService::ResolveProbeMatches(struct wsdd__ResolveMatchesType *matches)
+    int wsddService::ResolveMatches(struct wsdd__ResolveMatchesType *matches)
     {
       return __wsdd__ResolveMatches(this->soap, matches);
     }
@@ -360,9 +359,10 @@ separately on wsdd.h (or wsdd5.h or wsdd10.h for WS-Discovery 1.0) by:
 
     soapcpp2 -a -L -pwsdd -Iimport import/wsdd.h
     
-to generate wsddService.cpp. Then change wsddapi.h to use `#include "wsddH.h"`.
+This generates wsddService.cpp and wsddClient.cpp, which should be compiled together with the rest of your project code. Then change wsddapi.h to use `#include "wsddH.h"`.
 
-chain the service operations at the server side as follows:
+Now with this approach you must chain the service operations at the server side
+as follows:
 
 @code
     if (soap_begin_serve(service.soap) == SOAP_OK)

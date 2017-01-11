@@ -1115,12 +1115,22 @@ Version 2.8.39 (11/17/2016)
 
 - Minor improvements: the engine sets the temporary "C" locale for floating point conversion on most systems.  This is now the default on most systems, rather than an option.  To disable, compile source code with `-DWITH_NO_C_LOCALE`.  To enable, compile with `-DWITH_C_LOCALE`.  As before, the setting is temporary and thread-local in the engine so it does not affect the application's locale.
 
-Version 2.8.40 (12/10/2016) {#latest}
+Version 2.8.40 (12/10/2016)
 ---
 
 - Improved wsdl2h import/include relative path search.
 - Fixed wsdl2h schema import when imports are deeply nested in imports/includes.
 - Fixed MinGW compilation issue.
+
+Version 2.8.41 (01/11/2017) {#latest}
+---
+
+- Added updates to support OpenSSL 1.1.0.
+- Added HTTP header `Accept: multipart/related,application/xop+xml,*/*;q=0.8` when MTOM is expected (i.e. when the input mode flag is set to `SOAP_ENC_MTOM`).
+- Improved CORS internals and compatibility.
+- Fixed minor issues with `WITH_NOIO` and `WITH_NO_C_LOCALE`.
+- Fixed crash in XML attribute serialization of QT QByteArray and QString types.
+- Fixed WinCE7 `IP_MULTICAST_IF` issue.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

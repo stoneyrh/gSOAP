@@ -99,7 +99,7 @@ QDateTime *soap_in_xsd__dateTime(struct soap *soap, char const *tag, QDateTime *
   return a;
 }
 
-char const *soap_xsd__dateTime2s(struct soap *soap, QDateTime a)
+const char * soap_xsd__dateTime2s(struct soap *soap, QDateTime a)
 {
   //YYYY-MM-DDThh:mm:ss.sssZ
   if (!a.isValid())
@@ -108,8 +108,7 @@ char const *soap_xsd__dateTime2s(struct soap *soap, QDateTime a)
     a = a.toUTC();
   QString str = a.toString("yyyy-MM-ddTHH:mm:ss.zzzZ");
   QByteArray ba = str.toLatin1();
-  const char *s = ba.constData();
-  soap_strcpy(soap->tmpbuf, qstrlen(ba)+1, s);
+  soap_strcpy(soap->tmpbuf, qstrlen(ba)+1, ba.constData());
   return soap->tmpbuf;
 }
 

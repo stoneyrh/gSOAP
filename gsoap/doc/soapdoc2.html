@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.40 User Guide</title>
+<title>gSOAP 2.8.41 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.40 User Guide </h1>
+<h1 align="center">gSOAP 2.8.41 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Dec 10, 2016
+<h3 align="center">Dec 27, 2016
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -4061,7 +4061,7 @@ The following C/C++ types are supported in the header file:
   pointers to any of the above (any pointer-linked structures are serializable, including cyclic graphs) <br />
   fixed-size arrays of all of the above
 </td></tr></table><br></i>
-Additional features and potential limitations:
+Additional features and C/C++ syntax requirements:
 
 <ul>
 <li> A header file should not include any code statements, only data type declarations.
@@ -4115,7 +4115,7 @@ Additional features and potential limitations:
 
 <li> Classes and structs declared "mutable" means that they can be augmented with additional members, rather than leading to a redefinition error:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-<b>mutable</b>&nbsp;<b>class</b>&nbsp;name { <b>int</b>&nbsp;n; }; // class has a member 'n'
+<b>mutable</b>&nbsp;<b>class</b>&nbsp;name { <b>int</b>&nbsp;n; }; // class has a member 'n' <br />
   <b>mutable</b>&nbsp;<b>class</b>&nbsp;name { <b>float</b>&nbsp;x; }; // and also a member 'x'
 </td></tr></table><br></i> 
   The <i>SOAP_ENV__Header</i> struct is mutable as well as the <i>SOAP_ENV__Fault</i>, <i>SOAP_ENV__Detail</i>, <i>SOAP_ENV__Reason</i>, and <i>SOAP_ENV__Code</i> structs.
@@ -10295,11 +10295,11 @@ The built-in <i><b>struct</b>&nbsp;SOAP_ENV__Fault</i> data structure is defined
 &nbsp;&nbsp;&nbsp;<b>char</b>&nbsp;*SOAP_ENV__Node; <br />
 &nbsp;&nbsp;&nbsp;<b>char</b>&nbsp;*SOAP_ENV__Role; <br />
 &nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;SOAP_ENV__Detail *SOAP_ENV__Detail; // SOAP 1.2 detail field <br />
-};
+}; <br />
 <b>struct</b>&nbsp;SOAP_ENV__Code <br />
 { <br />
 &nbsp;&nbsp;&nbsp;_QName SOAP_ENV__Value; <br />
-&nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;SOAP_ENV__Code *SOAP_ENV__Subcode;
+&nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;SOAP_ENV__Code *SOAP_ENV__Subcode; <br />
 }; <br />
 <b>struct</b>&nbsp;SOAP_ENV__Detail <br />
 { <br />
@@ -12805,11 +12805,11 @@ parts in the generated WSDL. For the type-name use the function name. For the fi
 <div class="p"><!----></div>
 To document a method, use:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-//gsoap <i>namespace-prefix</i> service method-documentation: <i>method-name</i> //<i>text</i>
+//gsoap <i>namespace-prefix</i> service method-documentation: <i>method-name</i> <i>text</i>
 </td></tr></table><br></i>
 or shorthand:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-//gsoap <i>namespace-prefix</i> service method: <i>method-name</i> //<i>text</i>
+//gsoap <i>namespace-prefix</i> service method: <i>method-name</i> <i>text</i>
 </td></tr></table><br></i>
 where <i>method-name</i> is the unqualified name of the method and <i>text</i>
 is a line of text terminated by a newline. Do not use any XML reserved
@@ -12949,7 +12949,7 @@ Similarly, to specify the header parts for the method output (method response me
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 //gsoap <i>namespace-prefix</i> service method-output-header-part: <i>method-name</i> <i>header-part</i>
 </td></tr></table><br></i>
-The declarations above only affect the WSDL.
+The declarations only affect the WSDL.
 For example:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>struct</b>&nbsp;SOAP_ENV__Header <br />
@@ -12963,6 +12963,25 @@ For example:
 <b>int</b>&nbsp;ns__login(...);
 </td></tr></table><br></i>
 The headers MUST be present in all operations that declared the header parts.
+
+<div class="p"><!----></div>
+When SOAP Faults include custom fault information, the SOAP Fault detail element contains one or more elements with this information.  Assuming that the SOAP Fault detail structure contains one or more members that correspond to the optional detail elements, a method may be associated with one or more of these members by using:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+//gsoap <i>namespace-prefix</i> service method-fault: <i>method-name</i> <i>fault-detail</i>
+</td></tr></table><br></i>
+The declarations only affect the WSDL.
+For example:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>struct</b>&nbsp;SOAP_ENV__Header <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>char</b>&nbsp;*h__transaction; <br />
+&nbsp;&nbsp;&nbsp;<b>struct</b>&nbsp;UserAuth *h__authentication; <br />
+}; <br />
+//gsoap ns service method-fault: login f__invalid <br />
+//gsoap ns service method-fault: login f__unavailable <br />
+<b>int</b>&nbsp;ns__login(...);
+</td></tr></table><br></i>
+The fault members MUST be present in the <i>SOAP_ENV__Detail</i> structure, for example, <i>f__invalid</i> must be a pointer-based member of the <i>SOAP_ENV__Detail</i> struct, see Section&nbsp;<a href="#sec:fault">12</a>.  Alternatively to adding members to the structure, use the <i>__type</i> field that can be set to point to an object that is serialized as the SOAP Fault detail element.
 
 <div class="p"><!----></div>
 To specify MIME attachments for the method input and output (method request and response messages), use:
@@ -16608,5 +16627,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 10 Dec 2016, 21:52.</small>
+version 4.00.<br />On 27 Dec 2016, 09:27.</small>
 </html>

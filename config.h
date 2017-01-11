@@ -90,7 +90,7 @@
 #define HAVE_NEWLOCALE 1
 
 /* Define to 1 if you have the <openssl/ssl.h> header file. */
-/* #undef HAVE_OPENSSL_SSL_H */
+#define HAVE_OPENSSL_SSL_H 1
 
 /* Define to 1 if you have the `poll' function. */
 #define HAVE_POLL 1

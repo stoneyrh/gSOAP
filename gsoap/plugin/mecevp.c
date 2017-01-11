@@ -284,10 +284,15 @@ soap_mec_init(struct soap *soap, struct soap_mec_data *data, int alg, SOAP_MEC_K
   int ok = 1;
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_mec_init()\n"));
   soap_ssl_init();
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
   data->ctx = (EVP_CIPHER_CTX*)SOAP_MALLOC(soap, sizeof(EVP_CIPHER_CTX));
+  if (data->ctx)
+    EVP_CIPHER_CTX_init(data->ctx);
+#else
+  data->ctx = EVP_CIPHER_CTX_new();
+#endif
   if (!data->ctx)
     return soap->error = SOAP_EOM;
-  EVP_CIPHER_CTX_init(data->ctx);
   data->alg = alg;
   data->state = SOAP_MEC_STATE_NONE;
   data->restidx = 0;
@@ -443,8 +448,12 @@ soap_mec_cleanup(struct soap *soap, struct soap_mec_data *data)
   data->type = NULL;
   if (data->ctx)
   {
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
     EVP_CIPHER_CTX_cleanup(data->ctx);
     SOAP_FREE(soap, data->ctx);
+#else
+    EVP_CIPHER_CTX_free(data->ctx);
+#endif
     data->ctx = NULL;
   }
   if (data->buf)

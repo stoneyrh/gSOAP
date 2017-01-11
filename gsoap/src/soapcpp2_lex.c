@@ -760,6 +760,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #line 38 "soapcpp2_lex.l"
 #include "soapcpp2.h"
 
+#ifndef YY_NO_UNISTD_H
+#define YY_NO_UNISTD_H
+#endif
+
 #ifdef HAVE_CONFIG_H
 #include "soapcpp2_yacc.h"
 #else
@@ -808,7 +812,7 @@ static void import(const char *file);
 static int magic(const char *name);
 #define YY_NO_INPUT 1
 
-#line 812 "soapcpp2_lex.c"
+#line 816 "soapcpp2_lex.c"
 
 #define INITIAL 0
 #define MLCOMMENT 1
@@ -992,9 +996,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 104 "soapcpp2_lex.l"
+#line 108 "soapcpp2_lex.l"
 
-#line 998 "soapcpp2_lex.c"
+#line 1002 "soapcpp2_lex.c"
 
 	if ( !(yy_init) )
 		{
@@ -1123,209 +1127,209 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 105 "soapcpp2_lex.l"
+#line 109 "soapcpp2_lex.l"
 { /* skip UTF8 BOM */ }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 106 "soapcpp2_lex.l"
+#line 110 "soapcpp2_lex.l"
 { /* skip white space */ }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 107 "soapcpp2_lex.l"
+#line 111 "soapcpp2_lex.l"
 { BEGIN(MLCOMMENT); }
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 108 "soapcpp2_lex.l"
+#line 112 "soapcpp2_lex.l"
 { }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 109 "soapcpp2_lex.l"
+#line 113 "soapcpp2_lex.l"
 { BEGIN(INITIAL); }
 	YY_BREAK
 case YY_STATE_EOF(MLCOMMENT):
-#line 110 "soapcpp2_lex.l"
+#line 114 "soapcpp2_lex.l"
 { execerror("Unclosed multiline comment at end of file"); }
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 111 "soapcpp2_lex.l"
+#line 115 "soapcpp2_lex.l"
 { option(); }
 	YY_BREAK
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
-#line 112 "soapcpp2_lex.l"
+#line 116 "soapcpp2_lex.l"
 { directive(); }
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 113 "soapcpp2_lex.l"
+#line 117 "soapcpp2_lex.l"
 { xpath(); }
 	YY_BREAK
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 114 "soapcpp2_lex.l"
+#line 118 "soapcpp2_lex.l"
 { /* skip single line comment */ }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 115 "soapcpp2_lex.l"
+#line 119 "soapcpp2_lex.l"
 { return PA; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 116 "soapcpp2_lex.l"
+#line 120 "soapcpp2_lex.l"
 { return NA; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 117 "soapcpp2_lex.l"
+#line 121 "soapcpp2_lex.l"
 { return TA; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 118 "soapcpp2_lex.l"
+#line 122 "soapcpp2_lex.l"
 { return DA; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 119 "soapcpp2_lex.l"
+#line 123 "soapcpp2_lex.l"
 { return MA; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 120 "soapcpp2_lex.l"
+#line 124 "soapcpp2_lex.l"
 { return AA; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 121 "soapcpp2_lex.l"
+#line 125 "soapcpp2_lex.l"
 { return XA; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 122 "soapcpp2_lex.l"
+#line 126 "soapcpp2_lex.l"
 { return OA; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 123 "soapcpp2_lex.l"
+#line 127 "soapcpp2_lex.l"
 { return LA; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 124 "soapcpp2_lex.l"
+#line 128 "soapcpp2_lex.l"
 { return RA; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 125 "soapcpp2_lex.l"
+#line 129 "soapcpp2_lex.l"
 { return OR; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 126 "soapcpp2_lex.l"
+#line 130 "soapcpp2_lex.l"
 { return AN; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 127 "soapcpp2_lex.l"
+#line 131 "soapcpp2_lex.l"
 { return EQ; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 128 "soapcpp2_lex.l"
+#line 132 "soapcpp2_lex.l"
 { return NE; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 129 "soapcpp2_lex.l"
+#line 133 "soapcpp2_lex.l"
 { return LE; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 130 "soapcpp2_lex.l"
+#line 134 "soapcpp2_lex.l"
 { return GE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 131 "soapcpp2_lex.l"
+#line 135 "soapcpp2_lex.l"
 { return LS; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 132 "soapcpp2_lex.l"
+#line 136 "soapcpp2_lex.l"
 { return RS; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 133 "soapcpp2_lex.l"
+#line 137 "soapcpp2_lex.l"
 { return PP; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 134 "soapcpp2_lex.l"
+#line 138 "soapcpp2_lex.l"
 { return NN; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 135 "soapcpp2_lex.l"
+#line 139 "soapcpp2_lex.l"
 { return AR; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 136 "soapcpp2_lex.l"
+#line 140 "soapcpp2_lex.l"
 { return yytext[0]; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 137 "soapcpp2_lex.l"
+#line 141 "soapcpp2_lex.l"
 { return install_id(); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 138 "soapcpp2_lex.l"
+#line 142 "soapcpp2_lex.l"
 { return install_tag(); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 139 "soapcpp2_lex.l"
+#line 143 "soapcpp2_lex.l"
 { return install_int(); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 140 "soapcpp2_lex.l"
+#line 144 "soapcpp2_lex.l"
 { return install_hex(); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 141 "soapcpp2_lex.l"
+#line 145 "soapcpp2_lex.l"
 { return install_num(); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 142 "soapcpp2_lex.l"
+#line 146 "soapcpp2_lex.l"
 { return install_chr(); }
 	YY_BREAK
 case 38:
 /* rule 38 can match eol */
 YY_RULE_SETUP
-#line 143 "soapcpp2_lex.l"
+#line 147 "soapcpp2_lex.l"
 { return install_str(); }
 	YY_BREAK
 case 39:
 /* rule 39 can match eol */
 YY_RULE_SETUP
-#line 144 "soapcpp2_lex.l"
+#line 148 "soapcpp2_lex.l"
 { char *s, *t, buf[1024];
                           s = strchr(yytext, '"');
                           if (!s)
@@ -1348,7 +1352,7 @@ YY_RULE_SETUP
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 162 "soapcpp2_lex.l"
+#line 166 "soapcpp2_lex.l"
 { char *s, buf[1024];
                           s = strchr(yytext, '"');
                           if (s)
@@ -1369,28 +1373,28 @@ YY_RULE_SETUP
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 178 "soapcpp2_lex.l"
+#line 182 "soapcpp2_lex.l"
 { return install_pragma(); }
 	YY_BREAK
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 179 "soapcpp2_lex.l"
+#line 183 "soapcpp2_lex.l"
 { return error_chr(); }
 	YY_BREAK
 case 43:
 /* rule 43 can match eol */
 YY_RULE_SETUP
-#line 180 "soapcpp2_lex.l"
+#line 184 "soapcpp2_lex.l"
 { return error_str(); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 181 "soapcpp2_lex.l"
+#line 185 "soapcpp2_lex.l"
 { lexerror("Skipping unknown symbol"); }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 182 "soapcpp2_lex.l"
+#line 186 "soapcpp2_lex.l"
 { /* when Lex complains: remove this line and below */
 #ifndef WITH_LEX
                           if (--imports < 0)
@@ -1411,10 +1415,10 @@ case YY_STATE_EOF(INITIAL):
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 199 "soapcpp2_lex.l"
+#line 203 "soapcpp2_lex.l"
 ECHO;
 	YY_BREAK
-#line 1418 "soapcpp2_lex.c"
+#line 1422 "soapcpp2_lex.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2356,7 +2360,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 199 "soapcpp2_lex.l"
+#line 203 "soapcpp2_lex.l"
 
 
 

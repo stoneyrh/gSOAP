@@ -99,11 +99,13 @@ QByteArray *soap_in_xsd__base64Binary(struct soap *soap, char const *tag, QByteA
   return a;
 }
 
-char const *soap_xsd__base64Binary2s(struct soap *soap, QByteArray a)
+const char * soap_xsd__base64Binary2s(struct soap *soap, QByteArray a)
 {
-  QByteArray base64 = a.toBase64();
-  soap_strcpy(soap->tmpbuf, qstrlen(base64) + 1, base64.constData());
-  return soap->tmpbuf;
+  QByteArray ba = a.toBase64();
+  size_t n = qstrlen(ba);
+  const char *s = (const char*)soap_malloc(soap, n + 1);
+  soap_strcpy(s, n + 1, ba.constData());
+  return s;
 }
 
 int soap_s2xsd__base64Binary(struct soap *soap, const char *s, QByteArray *a)

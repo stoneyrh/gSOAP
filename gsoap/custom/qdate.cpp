@@ -99,15 +99,14 @@ QDate *soap_in_xsd__date(struct soap *soap, char const *tag, QDate *a, char cons
   return a;
 }
 
-char const *soap_xsd__date2s(struct soap *soap, QDate a)
+const char * soap_xsd__date2s(struct soap *soap, QDate a)
 {
   //YYYY-MM-DDZ
   if (!a.isValid())
     a = QDate(1, 1, 1);
   QString str = a.toString("yyyy-MM-ddZ");
   QByteArray ba = str.toLatin1();
-  const char *s = ba.constData();
-  soap_strcpy(soap->tmpbuf, qstrlen(ba)+1, s);
+  soap_strcpy(soap->tmpbuf, qstrlen(ba)+1, ba.constData());
   return soap->tmpbuf;
 }
 

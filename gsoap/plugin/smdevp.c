@@ -479,18 +479,26 @@ soap_smd_init(struct soap *soap, struct soap_smd_data *data, int alg, const void
   /* allocate and init the OpenSSL HMAC or EVP_MD context */
   if ((alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
   {
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
     data->ctx = (void*)SOAP_MALLOC(soap, sizeof(HMAC_CTX));
-    if (!data->ctx)
-      return soap_set_receiver_error(soap, "soap_smd_init() failed", "No context", SOAP_SSL_ERROR);
-    HMAC_CTX_init((HMAC_CTX*)data->ctx);
+    if (data->ctx)
+      HMAC_CTX_init((HMAC_CTX*)data->ctx);
+#else
+    data->ctx = (void*)HMAC_CTX_new();
+#endif
   }
   else
   {
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
     data->ctx = (void*)SOAP_MALLOC(soap, sizeof(EVP_MD_CTX));
-    if (!data->ctx)
-      return soap_set_receiver_error(soap, "soap_smd_init() failed", "No context", SOAP_SSL_ERROR);
-    EVP_MD_CTX_init((EVP_MD_CTX*)data->ctx);
+    if (data->ctx)
+      EVP_MD_CTX_init((EVP_MD_CTX*)data->ctx);
+#else
+    data->ctx = (void*)EVP_MD_CTX_new();
+#endif
   }
+  if (!data->ctx)
+    return soap_set_receiver_error(soap, "soap_smd_init() failed", "No context", SOAP_SSL_ERROR);
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- SMD Init alg=%x (%p) --\n", alg, data->ctx));
   /* init the digest or signature computations */
   switch (alg & SOAP_SMD_HASH)
@@ -634,11 +642,18 @@ soap_smd_final(struct soap *soap, struct soap_smd_data *data, char *buf, int *le
       *len = (int)n;
   }
   /* cleanup */
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
   if ((data->alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
     HMAC_CTX_cleanup((HMAC_CTX*)data->ctx);
   else
     EVP_MD_CTX_cleanup((EVP_MD_CTX*)data->ctx);
   SOAP_FREE(soap, data->ctx);
+#else
+  if ((data->alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
+    HMAC_CTX_free((HMAC_CTX*)data->ctx);
+  else
+    EVP_MD_CTX_free((EVP_MD_CTX*)data->ctx);
+#endif
   data->ctx = NULL;
   /* check and return */
   return soap_smd_check(soap, data, ok, "soap_smd_final() failed");
@@ -672,11 +687,18 @@ soap_smd_check(struct soap *soap, struct soap_smd_data *data, int ok, const char
     }
     if (data->ctx)
     {
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
       if ((data->alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
         HMAC_CTX_cleanup((HMAC_CTX*)data->ctx);
       else
         EVP_MD_CTX_cleanup((EVP_MD_CTX*)data->ctx);
       SOAP_FREE(soap, data->ctx);
+#else
+      if ((data->alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
+        HMAC_CTX_free((HMAC_CTX*)data->ctx);
+      else
+        EVP_MD_CTX_free((EVP_MD_CTX*)data->ctx);
+#endif
       data->ctx = NULL;
     }
     return soap_set_receiver_error(soap, msg, soap->msgbuf, SOAP_SSL_ERROR);

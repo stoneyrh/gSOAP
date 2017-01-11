@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 @mainpage
 
-- @ref wsse documents the wsse plugin for WS-Security 1.0 support.
+- @ref wsse documents the wsse plugin for WS-Security 1.0/1.1 support.
 - @ref smdevp documents the smdevp signature/digest engine.
 - @ref mecevp documents the mecevp encryption engine.
 - @ref threads documents a portable threads and locking API.

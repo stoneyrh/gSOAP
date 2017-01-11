@@ -1,10 +1,10 @@
 /*
-        stdsoap2.h 2.8.40
+        stdsoap2.h 2.8.41
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20840
+#define GSOAP_VERSION 20841
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -2543,7 +2543,8 @@ struct SOAP_CMAC soap
   long maxlength;               /* user-definable max string length, initialized to SOAP_MAXLENGTH, maxlength<=0 is unbounded */
   size_t maxoccurs;             /* user-definable max array/container size, initialized to SOAP_MAXOCCURS */
   const char *http_version;     /* HTTP version used "1.0" or "1.1" */
-  const char *http_content;     /* optional custom response content type (with SOAP_FILE) */
+  const char *http_content;     /* optional custom HTTP content type (with SOAP_PUT, SOAP_POST_FILE, SOAP_FILE) */
+  const char *http_extra_header;/* optional custom HTTP header of the form 'key: val' (multiple headers should be separated in the string by \r\n - crlf) */
   const char *encodingStyle;    /* default = "" which means that SOAP encoding is used */
   const char *actor;            /* SOAP-ENV:actor or role attribute value */
   const char *lang;             /* user-definable xml:lang attribute value of SOAP-ENV:Text */
@@ -2704,12 +2705,13 @@ struct SOAP_CMAC soap
   const char *proxy_userid;     /* Proxy Authorization user name */
   const char *proxy_passwd;     /* Proxy Authorization password */
   const char *proxy_from;       /* X-Forwarding-For header returned by proxy */
-  const char *origin;           /* Origin */
-  const char *cors_origin;      /* CORS Allow-Origin */
-  const char *cors_method;      /* CORS Request-Method */
-  const char *cors_header;      /* CORS Request-Headers */
-  const char *cors_methods;     /* CORS Allow-Methods */
-  const char *cors_headers;     /* CORS Allow-Headers */
+  const char *origin;           /* Origin header received */
+  const char *cors_origin;      /* CORS Allow-Origin header returned by server */
+  const char *cors_allow;       /* CORS Allow-Origin header default value of "*" */
+  const char *cors_method;      /* CORS Request-Method header received */
+  const char *cors_header;      /* CORS Request-Headers header received */
+  const char *cors_methods;     /* CORS Allow-Methods header returned by server */
+  const char *cors_headers;     /* CORS Allow-Headers header returned by server */
   int status;                   /* -1 when request, else error code to be returned by server */
   int error;
   int errmode;

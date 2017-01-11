@@ -114,7 +114,7 @@ int json_send(struct soap *soap, const struct value *v)
     return SOAP_OK;
   switch (v->__type)
   {
-    case SOAP_TYPE__array: 
+    case SOAP_TYPE__array:
       if ((soap->mode & SOAP_XML_INDENT))
         n = 2 * (++soap->level % 40) + 2;
       if (soap_send_raw(soap, "["/*"]"*/, 1))
@@ -136,26 +136,26 @@ int json_send(struct soap *soap, const struct value *v)
         soap->level--;
       }
       return soap_send_raw(soap, /*"["*/"]", 1);
-    case SOAP_TYPE__boolean: 
+    case SOAP_TYPE__boolean:
       if (*(_boolean*)v->ref == 1)
         return soap_send_raw(soap, "true", 4);
       return soap_send_raw(soap, "false", 5);
-    case SOAP_TYPE__double: 
+    case SOAP_TYPE__double:
       return soap_send(soap, soap_double2s(soap, (double)*(_double*)v->ref));
-    case SOAP_TYPE__i4: 
+    case SOAP_TYPE__i4:
       return soap_send(soap, soap_int2s(soap, (int)*(_i4*)v->ref));
-    case SOAP_TYPE__int: 
+    case SOAP_TYPE__int:
       return soap_send(soap, soap_LONG642s(soap, (LONG64)*(_int*)v->ref));
-    case SOAP_TYPE__string: 
-    case SOAP_TYPE__dateTime_DOTiso8601: 
+    case SOAP_TYPE__string:
+    case SOAP_TYPE__dateTime_DOTiso8601:
       return json_send_string(soap, (const char*)v->ref);
-    case SOAP_TYPE__base64: 
+    case SOAP_TYPE__base64:
       if (soap_send_raw(soap, "\"", 1))
         return soap->error;
       if (v->ref && soap_putbase64(soap, ((struct _base64*)v->ref)->__ptr, ((struct _base64*)v->ref)->__size))
         return soap->error;
       return soap_send_raw(soap, "\"", 1);
-    case SOAP_TYPE__struct: 
+    case SOAP_TYPE__struct:
       if ((soap->mode & SOAP_XML_INDENT))
         n = 2 * (++soap->level % 40) + 2;
       if (soap_send_raw(soap, "{"/*"}"*/, 1))
@@ -438,22 +438,22 @@ int json_recv(struct soap *soap, struct value *v)
                   case '"':
                   case '\\':
                   case '/':
-		    break;
+                    break;
                   case 'b':
                     c = 8;
-                    break;               
+                    break;
                   case 'f':
                     c = 12;
-                    break;               
+                    break;
                   case 'n':
                     c = 10;
-                    break;               
+                    break;
                   case 'r':
                     c = 13;
-                    break;               
+                    break;
                   case 't':
                     c = 9;
-                    break;               
+                    break;
                   case 'u':
                   {
                     char *h;
@@ -467,19 +467,19 @@ int json_recv(struct soap *soap, struct value *v)
                         return soap->error = SOAP_EOF;
                       h[i] = c;
                     }
-		    h[4] = '\0';
-                    wc[0] = soap_strtol(h, &h, 16);
+                    h[4] = '\0';
+                    wc[0] = (wchar_t)soap_strtol(h, &h, 16);
                     wc[1] = 0;
-		    if (h - soap->tmpbuf < 4)
-		      return soap->error = SOAP_TYPE;
+                    if (h - soap->tmpbuf < 4)
+                      return soap->error = SOAP_TYPE;
                     t = soap_wchar2s(soap, wc);
                     c = *t++;
                     if (!*t)
                       t = NULL;
-		    break;
+                    break;
                   }
-		  default:
-		    return soap_set_sender_error(soap, "invalid escape in string", NULL, SOAP_SYNTAX_ERROR);
+                  default:
+                    return soap_set_sender_error(soap, "invalid escape in string", NULL, SOAP_SYNTAX_ERROR);
                 }
                 *s++ = c;
                 l++;
@@ -502,16 +502,16 @@ int json_recv(struct soap *soap, struct value *v)
                   else
                     *s++ = '?';
                 }
-		/* the JSON "standard" does not permit ctrl chars in strings, we silently accept these
+                /* the JSON "standard" does not permit ctrl chars in strings, we silently accept these
                 else if (c < 0x20 && c >= 0)
-		{
-		  return soap_set_sender_error(soap, "invalid control character in string", NULL, SOAP_SYNTAX_ERROR);
-		}
-		*/
-		else
-		{
+                {
+                  return soap_set_sender_error(soap, "invalid control character in string", NULL, SOAP_SYNTAX_ERROR);
+                }
+                */
+                else
+                {
                   *s++ = c;
-		}
+                }
                 l++;
             }
           }

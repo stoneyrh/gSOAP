@@ -1,10 +1,10 @@
 /*
-        stdsoap2.c[pp] 2.8.40
+        stdsoap2.c[pp] 2.8.41
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20840
+#define GSOAP_LIB_VERSION 20841
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -81,10 +81,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.40 2016-12-10 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.41 2017-01-11 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.40 2016-12-10 10:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.41 2017-01-11 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -4651,6 +4651,7 @@ again:
     in6addr->sin6_scope_id = soap->ipv6_multicast_if;
   }
 #endif
+#endif
 #ifdef IP_MULTICAST_TTL
   if ((soap->omode & SOAP_IO_UDP))
   { if (soap->ipv4_multicast_ttl)
@@ -4692,7 +4693,6 @@ again:
 #endif
     }
   }
-#endif
 #endif
 #endif
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Opening socket=%d to host='%s' port=%d\n", (int)sk, host, port));
@@ -5123,7 +5123,7 @@ again:
               break;
             name = X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subj, i));
             if (name)
-            { if (!soap_tag_cmp(host, (const char*)M_ASN1_STRING_data(name)))
+            { if (!soap_tag_cmp(host, (const char*)ASN1_STRING_data(name)))
                 ok = 1;
               else
               { unsigned char *tmp = NULL;
@@ -5798,6 +5798,8 @@ soap_accept(struct soap *soap)
 #endif
   soap->error = SOAP_OK;
   memset((void*)&soap->peer, 0, sizeof(soap->peer));
+  if (soap_valid_socket(soap->socket) && !(soap->omode & SOAP_IO_UDP))
+    soap->fclosesocket(soap, soap->socket);
   soap->socket = SOAP_INVALID_SOCKET;
   soap->errmode = 0;
   soap->keep_alive = 0;
@@ -5960,7 +5962,6 @@ soap_closesock(struct soap *soap)
 
 /******************************************************************************/
 
-#ifndef WITH_NOIO
 #ifndef PALM_1
 SOAP_FMAC1
 int
@@ -5971,7 +5972,6 @@ soap_force_closesock(struct soap *soap)
     return soap_closesocket(soap->socket);
   return SOAP_OK;
 }
-#endif
 #endif
 
 /******************************************************************************/
@@ -6496,6 +6496,7 @@ http_parse_header(struct soap *soap, const char *key, const char *val)
   }
   else if (!soap_tag_cmp(key, "Origin"))
   { soap->origin = soap_strdup(soap, val);
+    soap->cors_origin = soap->cors_allow;
   }
   else if (!soap_tag_cmp(key, "Access-Control-Request-Method"))
   { soap->cors_method = soap_strdup(soap, val);
@@ -6659,8 +6660,8 @@ http_405(struct soap *soap)
 #ifndef PALM_1
 static int
 http_200(struct soap *soap)
-{ if (soap->origin && soap->cors_method) /* Origin and Access-Control-Request-Method headers */
-  { soap->cors_origin = "*"; /* modify this or write your own soap->fopt() callback with logic */
+{ if (soap->origin && soap->cors_method) /* CORS Origin and Access-Control-Request-Method headers */
+  { soap->cors_origin = soap->cors_allow; /* modify this code or hook your own soap->fopt() callback with logic */
     soap->cors_methods = "GET, POST, HEAD, OPTIONS";
     soap->cors_headers = soap->cors_header;
   }
@@ -6752,13 +6753,31 @@ http_post(struct soap *soap, const char *endpoint, const char *host, int port, c
   { err = soap->fposthdr(soap, "Origin", soap->origin);
     if (err)
       return err;
+    if (soap->status == SOAP_OPTIONS)
+    {
+      err = soap->fposthdr(soap, "Access-Control-Request-Method", soap->cors_method ? soap->cors_method : "POST");
+      if (err)
+        return err;
+      if (soap->cors_header)
+      { err = soap->fposthdr(soap, "Access-Control-Request-Headers", soap->cors_header);
+        if (err)
+          return err;
+      }
+    }
   }
   err = soap_puthttphdr(soap, SOAP_OK, count);
   if (err)
     return err;
+  if (soap->imode & SOAP_ENC_MTOM)
+#ifndef WITH_LEANER
+  { err = soap->fposthdr(soap, "Accept", "multipart/related,application/xop+xml,*/*;q=0.8");
+    if (err)
+      return err;
+  }
+#endif
 #ifdef WITH_ZLIB
 #ifdef WITH_GZIP
-  err = soap->fposthdr(soap, "Accept-Encoding", "gzip, deflate");
+  err = soap->fposthdr(soap, "Accept-Encoding", "gzip,deflate");
 #else
   err = soap->fposthdr(soap, "Accept-Encoding", "deflate");
 #endif
@@ -6924,6 +6943,9 @@ http_response(struct soap *soap, int status, size_t count)
     return err;
   if (soap->cors_origin)
   { err = soap->fposthdr(soap, "Access-Control-Allow-Origin", soap->cors_origin);
+    if (err)
+      return err;
+    err = soap->fposthdr(soap, "Access-Control-Allow-Credentials", "true");
     if (err)
       return err;
     if (soap->cors_methods)
@@ -10088,7 +10110,7 @@ soap_copy_stream(struct soap *copy, struct soap *soap)
           s = soap->local_namespaces[np->index].ns;
       }
       if (s)
-	(void)soap_push_namespace(copy, np->id, s);
+        (void)soap_push_namespace(copy, np->id, s);
       nq = np;
       np = np->next;
       SOAP_FREE(copy, nq);
@@ -10308,6 +10330,7 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
   soap->http_version = "1.1";
   soap->proxy_http_version = "1.0";
   soap->http_content = NULL;
+  soap->http_extra_header = NULL;
   soap->actor = NULL;
   soap->lang = "en";
   soap->keep_alive = 0;
@@ -10371,6 +10394,7 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
   soap->proxy_from = NULL;
   soap->origin = NULL;
   soap->cors_origin = NULL;
+  soap->cors_allow = "*";
   soap->cors_method = NULL;
   soap->cors_header = NULL;
   soap->cors_methods = NULL;
@@ -10656,8 +10680,8 @@ soap_set_namespaces(struct soap *soap, const struct Namespace *p)
       if (!s)
         s = ns[np->index].ns;
     }
-    if (s && soap_push_namespace(soap, np->id, s) == NULL)
-      return soap->error;
+    if (s)
+      (void)soap_push_namespace(soap, np->id, s);
     nq = np;
     np = np->next;
     SOAP_FREE(soap, nq);
@@ -13472,23 +13496,23 @@ soap_wstring_in(struct soap *soap, int flag, long minlen, long maxlen, const cha
         if (n == 0)
           goto end;
         n--;
-        *s++ = '<';
+        *s++ = L'<';
         soap_unget(soap, '/');
         break;
       case SOAP_LT:
         if (flag == 3 || (f && n == 0))
           goto end;
         n++;
-        *s++ = '<';
+        *s++ = L'<';
         break;
       case SOAP_GT:
-        *s++ = '>';
+        *s++ = L'>';
         break;
       case SOAP_QT:
-        *s++ = '"';
+        *s++ = L'"';
         break;
       case SOAP_AP:
-        *s++ = '\'';
+        *s++ = L'\'';
         break;
       case '/':
         if (n > 0)
@@ -13497,29 +13521,29 @@ soap_wstring_in(struct soap *soap, int flag, long minlen, long maxlen, const cha
             n--;
           soap_unget(soap, c);
         }
-        *s++ = '/';
+        *s++ = L'/';
         break;
       case '<':
         if (flag > 0)
-          *s++ = (soap_wchar)'<';
+          *s++ = L'<';
         else
-        { *s++ = (soap_wchar)'&';
+        { *s++ = L'&';
           t = (char*)"lt;";
         }
         break;
       case '>':
         if (flag > 0)
-          *s++ = (soap_wchar)'>';
+          *s++ = L'>';
         else
-        { *s++ = (soap_wchar)'&';
+        { *s++ = (wchar_t)'&';
           t = (char*)"gt;";
         }
         break;
       case '"':
         if (flag > 0)
-          *s++ = (soap_wchar)'"';
+          *s++ = L'"';
         else
-        { *s++ = (soap_wchar)'&';
+        { *s++ = L'&';
           t = (char*)"quot;";
         }
         break;
@@ -13534,7 +13558,7 @@ soap_wstring_in(struct soap *soap, int flag, long minlen, long maxlen, const cha
           c = c1;
           soap_unget(soap, c2);
         }
-        *s++ = (wchar_t)c & 0x7FFFFFFF;
+        *s++ = (wchar_t)(c & 0x7FFFFFFF);
       }
       l++;
       if (maxlen >= 0 && l > maxlen)
@@ -13546,7 +13570,7 @@ soap_wstring_in(struct soap *soap, int flag, long minlen, long maxlen, const cha
   }
 end:
   soap_unget(soap, c);
-  *s = '\0';
+  *s = L'\0';
   soap_size_block(soap, NULL, sizeof(wchar_t) * (i + 1));
   if (l < minlen)
   { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "String too short: %ld chars, minlen=%ld\n", l, minlen));
@@ -14008,12 +14032,12 @@ const char*
 SOAP_FMAC2
 soap_float2s(struct soap *soap, float n)
 {
-#if !defined(WIN32)
-# if defined(WITH_C_LOCALE)
+#if defined(WITH_C_LOCALE)
+# if !defined(WIN32)
   SOAP_LOCALE_T locale;
-# else
-  char *s;
 # endif
+#else
+  char *s;
 #endif
   if (soap_isnan((double)n))
     return "NaN";
@@ -14207,12 +14231,12 @@ const char*
 SOAP_FMAC2
 soap_double2s(struct soap *soap, double n)
 {
-#if !defined(WIN32)
-# if defined(WITH_C_LOCALE)
+#if defined(WITH_C_LOCALE)
+# if !defined(WIN32)
   SOAP_LOCALE_T locale;
-# else
-  char *s;
 # endif
+#else
+  char *s;
 #endif
   if (soap_isnan(n))
     return "NaN";
@@ -18419,6 +18443,7 @@ soap_puthttphdr(struct soap *soap, int status, size_t count)
     { if (soap->version == 2)
         s = "application/soap+xml; charset=utf-8";
     }
+    soap->http_content = NULL; /* use http_content once (assign new value before each call) */
 #ifndef WITH_LEANER
     if (soap->mode & (SOAP_ENC_DIME | SOAP_ENC_MTOM))
     { if (soap->mode & SOAP_ENC_MTOM)
@@ -18469,6 +18494,15 @@ soap_puthttphdr(struct soap *soap, int status, size_t count)
 #else
     soap_strcpy(soap->tmpbuf, sizeof(soap->tmpbuf), s);
 #endif
+    if (soap->http_extra_header)
+    { err = soap_send(soap, soap->http_extra_header);
+      soap->http_extra_header = NULL; /* use http_extra_header once (assign new value before each call) */
+      if (err)
+        return err;
+      err = soap_send_raw(soap, "\r\n", 2);
+      if (err)
+        return err;
+    }
     err = soap->fposthdr(soap, "Content-Type", soap->tmpbuf);
     if (err)
       return err;
@@ -18905,7 +18939,7 @@ soap_send_empty_response(struct soap *soap, int httpstatuscode)
       soap->omode = (m & ~SOAP_IO) | SOAP_IO_BUFFER;
     (void)soap_response(soap, httpstatuscode);
     (void)soap_end_send(soap); /* force end of sends */
-    soap->error = SOAP_STOP; /* stops the server (from returning another response */
+    soap->error = SOAP_STOP; /* stops the server from returning another response */
     soap->omode = m;
   }
   return soap_closesock(soap);
