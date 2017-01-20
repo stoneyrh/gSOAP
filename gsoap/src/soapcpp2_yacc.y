@@ -1799,12 +1799,12 @@ masksc  : ENUM '*' sc utype
 sc      : STRUCT id     {
                           $$ = $2;
                           if (!c11flag)
-                            semwarn("To use scoped enumerations (enum class) you must also use soapcpp2 option -c++11");
+                            semwarn("To use scoped enumerations (enum class) you must also use soapcpp2 option -c++11 or -c++14");
                         }
         | CLASS id      {
                           $$ = $2;
                           if (!c11flag)
-                            semwarn("To use scoped enumerations (enum class) you must also use soapcpp2 option -c++11");
+                            semwarn("To use scoped enumerations (enum class) you must also use soapcpp2 option -c++11 or -c++14");
                         }
         ;
 utype   : ':' CHAR      { $$ = 1; }

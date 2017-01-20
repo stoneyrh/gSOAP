@@ -390,7 +390,8 @@ void Types::init()
       deftypemap["xsd__anyType"] = "";
     else
       deftypemap["xsd__anyType"] = "class xsd__anyType { _XML __item; struct soap *soap; };";
-    usetypemap["xsd__anyType"] = "xsd__anyType*"; // is base class: use pointer
+    // xsd__anyType ia a base class: use pointer so can replace with any derived class
+    usetypemap["xsd__anyType"] = "xsd__anyType*";
   }
   deftypemap["xsd__any"] = "";
   if (dflag)
@@ -586,6 +587,16 @@ void Types::init()
   usetypemap["$CONTAINER"] = "std::vector";
   if (read(mapfile))
     fprintf(stderr, "Problem reading type map file '%s'.\nUsing internal type definitions for %s instead.\n\n", mapfile, cflag ? "C" : "C++");
+  if (!cflag)
+  {
+    // xsd__anyType ia a base class: use pointer so can replace with any derived class
+    const char *r = vname("$POINTER");
+    if (r && *r != '*' && *r != '$' && !strcmp(usetypemap["xsd__anyType"], "xsd__anyType*"))
+    {
+      usetypemap["xsd__anyType"] = "xsd__anyType";
+      smptypemap["xsd__anyType"] = usetypemap["xsd__anyType"] = pname(true, true, NULL, NULL, "xs:anyType");
+    }
+  }
 }
 
 const char *Types::nsprefix(const char *prefix, const char *URI)
@@ -1593,10 +1604,10 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
               {
                 if (is_integer(s))
                 {
-                  document((*enumeration).annotation);
-                  fprintf(stream, "\t%s = %s,\t///< %s value=\"%s\"\n", ename(eflag ? "enum int" : t, s, false), s, base, s); // type="enum int" if eflag so all int enum consts get the same value assigned
-                  enumvals.insert(s);
                   LONG64 n = soap_strtoll(s, NULL, 10);
+                  document((*enumeration).annotation);
+                  fprintf(stream, "\t%s = " SOAP_LONG_FORMAT ",\t///< %s value=\"%s\"\n", ename(eflag ? "enum int" : t, s, false), n, base, s); // type="enum int" if eflag so all int enum consts get the same value assigned
+                  enumvals.insert(s);
                   if (letters_ok)
                   {
                     if ((n >= 'A' && n <= 'Z') || (n >= 'a' && n <= 'z'))
@@ -3332,8 +3343,10 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       }
     }
     gen(URI, name, *element.simpleTypePtr(), true, false);
-    if (r && *r != '*' && *r != '$')
+    if (!with_union && s && s[0] == '>') // container or smart pointer, not in a union
+    {
       fprintf(stream, elementformat, s, aname(nameprefix, nameURI, name));
+    }
     else if ((is_nillable(element) && !default_)
      || fixed
      || ((cflag || sflag) && max && strcmp(max, "1")) // maxOccurs != "1"
@@ -3383,8 +3396,10 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       }
     }
     gen(URI, name, *element.complexTypePtr(), true);
-    if (r && *r != '*' && *r != '$')
+    if (!with_union && s && s[1] == '>') // container or smart pointer, not in a union
+    {
       fprintf(stream, elementformat, s, aname(nameprefix, nameURI, name));
+    }
     else if ((is_nillable(element) && !default_)
      || fixed
      || ((cflag || sflag) && max && strcmp(max, "1")) // maxOccurs != "1"

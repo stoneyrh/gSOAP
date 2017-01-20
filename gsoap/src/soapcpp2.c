@@ -49,10 +49,12 @@ FILE *fmsg;             /* fd to flush compiler messages */
 
 int soap_version = 0;   /* SOAP version, -1=no SOAP, 0=not set, 1=1.1, 2=1.2 */
 
+const char *copt = NULL;/* "-c" or "-c++11" or "-c++14" or NULL for default option C++ */
+
 int vflag = 0;          /* verbose output */
 int wflag = 0;          /* when set, don't generate WSDL and schema files */
 int cflag = 0;          /* when set, generate files with .c extension */
-int c11flag = 0;        /* when set, generate C++11 files with .cpp extension */
+int c11flag = 0;        /* when set, generate C++11/C++XX compatible files with .cpp extension */
 int Cflag = 0;          /* when set, generate only files for clients */
 int aflag = 0;          /* when set, use value of SOAP Action to dispatch method at server side */
 int Aflag = 0;          /* when set, require SOAP Action to dispatch method at server side */
@@ -121,18 +123,21 @@ main(int argc, char **argv)
               fprintf(stderr, "soapcpp2: using both options -C and -S omits client/server code\n");
             break;
           case 'c':
+	    copt = a - 1;
             if (a[1] == '+' && a[2] == '+')
             {
               a += 2;
-              if (a[1] == '1' && a[2] == '1')
+              if (isdigit(a[1]) && isdigit(a[2]))
               {
+                c11flag = 10*(a[1] - '0') + a[2] - '0'; /* 11 = C++11, 14 = C++14, etc */
                 a += 2;
-                c11flag = 1;
               }
               cflag = 0;
             }
             else
+	    {
               cflag = 1;
+	    }
             break;
           case 'd':
             a++;

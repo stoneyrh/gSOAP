@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.41 User Guide</title>
+<title>gSOAP 2.8.42 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.41 User Guide </h1>
+<h1 align="center">gSOAP 2.8.42 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Dec 27, 2016
+<h3 align="center">Jan 20, 2017
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -5777,7 +5777,6 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_FASTCGI</i>	</td><td align="left">enables FastCGI, see Sections&nbsp;<a href="#sec:fastcgi">19.32</a> </td></tr>
 <tr><td align="left"><i>WITH_GZIP</i>	</td><td align="left">enables gzip and deflate compression, see Section&nbsp;<a href="#sec:compression">19.28</a> </td></tr>
 <tr><td align="left"><i>WITH_ZLIB</i>	</td><td align="left">enables deflate compression only, see Section&nbsp;<a href="#sec:compression">19.28</a> </td></tr>
-<tr><td align="left"><i>WITH_FAST</i>	</td><td align="left">use faster memory allocation for <i>WITH_LEAN</i>/<i>WITH_LEANER</i> </td></tr>
 <tr><td align="left"><i>WITH_NOIO</i>	</td><td align="left">eliminates need for file IO and BSD socket library, see Section&nbsp;<a href="#sec:noio">19.34</a> </td></tr>
 <tr><td align="left"><i>WITH_NOIDREF</i>	</td><td align="left">eliminates href/ref and id attributes to (de)serialize multi-ref data,</td></tr>
 <tr><td align="left"></td><td align="left">or alternatively use the <i>SOAP_XML_TREE</i> runtime flag </td></tr>
@@ -5785,6 +5784,7 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_NOZONE</i>	</td><td align="left">removes and ignores the timezone in xsd:dateTime </td></tr>
 <tr><td align="left"><i>WITH_LEAN</i>	</td><td align="left">creates a small-footprint executable, see Section&nbsp;<a href="#sec:lean">19.33</a> </td></tr>
 <tr><td align="left"><i>WITH_LEANER</i>	</td><td align="left">creates an even smaller footprint executable, see Section&nbsp;<a href="#sec:lean">19.33</a> </td></tr>
+<tr><td align="left"><i>WITH_FAST</i>	</td><td align="left">use faster memory allocation when used with <i>WITH_LEAN</i>/<i>WITH_LEANER</i> </td></tr>
 <tr><td align="left"><i>WITH_COMPAT</i>	</td><td align="left">removes dependency on C++ stream libraries, eliminating C++ exceptions </td></tr>
 <tr><td align="left"><i>WITH_NONAMESPACES</i></td><td align="left">removes dependence on global <i>namespaces</i> table, MUST set it </td></tr>
 <tr><td align="left"></td><td align="left">explicitly with <i>soap_set_.namespaces()</i> </td></tr>
@@ -5793,12 +5793,11 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_NOEMPTYSTRUCT</i>	</td><td align="left">inserts a dummy member in empty structs to allow compilation </td></tr>
 <tr><td align="left"><i>WITH_NOGLOBAL</i>	</td><td align="left">omit SOAP Header and Fault serialization code, </td></tr>
 <tr><td align="left"></td><td align="left">prevents duplicate definitions with generated soapXYZLib code </td></tr>
-<tr><td align="left"><i>WITH_NOCDATA</i>	</td><td align="left">do not retain the parsed CDATA sections in literal XML strings (convert) </td></tr>
 <tr><td align="left"><i>WITH_CDATA</i>	</td><td align="left">retain the parsed CDATA sections in literal XML strings (no conversion, default) </td></tr>
 <tr><td align="left"><i>WITH_C_LOCALE</i>	</td><td align="left">use locale functions when available to ensure locale-independent </td></tr>
 <tr><td align="left"></td><td align="left">number conversions (force the use of C locale) </td></tr>
 <tr><td align="left"><i>WITH_CASEINSENSITIVETAGS</i>	</td><td align="left">enable case insensitive XML parsing </td></tr>
-<tr><td align="left"><i>WITH_REPLACE_ILLEGAL_UTF8</i>	</td><td align="left">replaces UTF8 content that is outside the allowed range of XML 1.0 </td></tr></table>
+<tr><td align="left"><i>WITH_REPLACE_ILLEGAL_UTF8</i>	</td><td align="left">strict UTF-8: replaces UTF8 content that is outside the allowed range with U+FFFD </td></tr></table>
 
 </td></tr></table><br></span>
 Other compile-time flags:
@@ -16627,5 +16626,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 27 Dec 2016, 09:27.</small>
+version 4.00.<br />On 20 Jan 2017, 12:18.</small>
 </html>

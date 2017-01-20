@@ -4432,7 +4432,7 @@ yyreduce:
     {
                           (yyval.sym) = (yyvsp[(2) - (2)].sym);
                           if (!c11flag)
-                            semwarn("To use scoped enumerations (enum class) you must also use soapcpp2 option -c++11");
+                            semwarn("To use scoped enumerations (enum class) you must also use soapcpp2 option -c++11 or -c++14");
                         ;}
     break;
 
@@ -4441,7 +4441,7 @@ yyreduce:
     {
                           (yyval.sym) = (yyvsp[(2) - (2)].sym);
                           if (!c11flag)
-                            semwarn("To use scoped enumerations (enum class) you must also use soapcpp2 option -c++11");
+                            semwarn("To use scoped enumerations (enum class) you must also use soapcpp2 option -c++11 or -c++14");
                         ;}
     break;
 

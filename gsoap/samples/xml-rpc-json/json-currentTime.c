@@ -1,13 +1,13 @@
 /*
-	json-currentTime.cpp
+	json-currentTime.c
 
-	JSON currenTime (C++ version)
+	JSON currenTime (C version)
 
 	Prints current time.
 
 	Compile:
-	soapcpp2 -CSL xml-rpc.h
-	c++ json-currentTime.cpp xml-rpc.cpp json.cpp stdsoap2.cpp soapC.cpp
+	soapcpp2 -c -CSL xml-rpc.h
+	cc json-currentTime.c xml-rpc.c json.c stdsoap2.c soapC.c
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -39,24 +39,26 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "json.h"
 
-using namespace std;
-
 int main()
 {
-  soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+  struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
   ctx->send_timeout = 10; // 10 sec, stop if server is not accepting msg
   ctx->recv_timeout = 10; // 10 sec, stop if server does not respond in time
 
-  value request(ctx), response(ctx);
+  struct value *request = new_value(ctx);
+  struct value response;
 
   // make the JSON REST POST request and get response
-  request = "getCurrentTime";
-  if (json_call(ctx, "http://www.cs.fsu.edu/~engelen/currentTimeJSON.cgi", request, response))
+  *string_of(request) = "getCurrentTime";
+  if (json_call(ctx, "http://www.cs.fsu.edu/~engelen/currentTimeJSON.cgi", request, &response))
     soap_print_fault(ctx, stderr);
-  else if (response.is_string()) // JSON does not support a dateTime value: this is a string
-    cout << "Time = " << response << endl;
+  else if (is_string(&response)) // JSON does not support a dateTime value: this is a string
+    printf("Time = %s\n", *string_of(&response));
   else // error?
-    cout << "Error: " << response << endl;
+  {
+    printf("Error: ");
+    json_write(ctx, &response);
+  }
 
   // clean up
   soap_destroy(ctx);

@@ -1,14 +1,14 @@
 /*
-	json-currentTimeServer.cpp
+	json-currentTimeServer.c
 
-	JSON currenTime server (C++ version)
+	JSON currenTime server (C version)
 	CGI or stand-alone multi-threaded server
 
 	Returns JSON message with current time to client.
 
 	Compile:
-	soapcpp2 -CSL xml-rpc.h
-	c++ -o json-currentTimeServer json-currentTimeServer.cpp json.cpp xml-rpc.cpp stdsoap2.cpp soapC.cpp
+	soapcpp2 -c -CSL xml-rpc.h
+	cc -o json-currentTimeServer json-currentTimeServer.c json.c xml-rpc.c stdsoap2.c soapC.c
 	Install as CGI on Web server
 	Or run as stand-alone server (e.g. on port 18000):
 	./json-currentTimeServer 18000
@@ -51,13 +51,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #define BACKLOG (100)	// Max. request backlog
 #define MAX_THR (8)	// Max. threads to serve requests
 
-using namespace std;
-
-int serve_request(soap*);
+int serve_request(struct soap*);
 
 int main(int argc, char **argv)
 {
-  soap *ctx = soap_new1(SOAP_C_UTFSTRING);
+  struct soap *ctx = soap_new1(SOAP_C_UTFSTRING);
   ctx->send_timeout = 10; // 10 sec
   ctx->recv_timeout = 10; // 10 sec
 
@@ -98,13 +96,13 @@ int main(int argc, char **argv)
   return 0;
 }
 
-int serve_request(soap* ctx)
+int serve_request(struct soap* ctx)
 {
 #ifdef _POSIX_THREADS
   pthread_detach(pthread_self());
 #endif
 
-  value request(ctx);
+  struct value *request = new_value(ctx);
     
   // HTTP keep-alive max number of iterations
   unsigned int k = ctx->max_keep_alive;
@@ -121,15 +119,15 @@ int serve_request(soap* ctx)
       soap_send_fault(ctx);
     else
     {
-      value response(ctx);
+      struct value *response = new_value(ctx);
   
-      if (request.is_string() && !strcmp(request, "getCurrentTime"))
+      if (is_string(request) && !strcmp(*string_of(request), "getCurrentTime"))
         // method name matches: first parameter of response is time
-        response = (ULONG64)time(0);
+        *dateTime_of(response) = soap_dateTime2s(ctx, time(0));
       else
       { // otherwise, set fault
-        response["fault"] = "Wrong method";
-        response["detail"] = request;
+        *string_of(value_at(response, "fault")) = "Wrong method";
+        *value_at(response, "detail") = *request;
       }
 
       // http content type

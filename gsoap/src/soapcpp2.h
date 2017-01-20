@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2015, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.41" /* Current version */
-# define GSOAP_VERSION 20841
+# define VERSION "2.8.42" /* Current version */
+# define GSOAP_VERSION 20842
 #endif
 
 #ifdef WIN32
@@ -399,6 +399,8 @@ extern Entry *unlinklast(Table*);
 extern FILE *fmsg;
 
 extern int soap_version;
+
+extern const char *copt;
 
 extern int aflag;
 extern int Aflag;

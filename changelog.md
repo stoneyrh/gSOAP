@@ -1122,7 +1122,7 @@ Version 2.8.40 (12/10/2016)
 - Fixed wsdl2h schema import when imports are deeply nested in imports/includes.
 - Fixed MinGW compilation issue.
 
-Version 2.8.41 (01/11/2017) {#latest}
+Version 2.8.41 (01/11/2017)
 ---
 
 - Added updates to support OpenSSL 1.1.0.
@@ -1131,6 +1131,13 @@ Version 2.8.41 (01/11/2017) {#latest}
 - Fixed minor issues with `WITH_NOIO` and `WITH_NO_C_LOCALE`.
 - Fixed crash in XML attribute serialization of QT QByteArray and QString types.
 - Fixed WinCE7 `IP_MULTICAST_IF` issue.
+
+Version 2.8.42 (01/20/2017) {#latest}
+---
+
+- Fixed shared pointer to QName string QName output normalization.
+- Improved `WITH_REPLACE_ILLEGAL_UTF8` flag to optionally compile the library with:  this replaces illegal UTF-8 input/output with the replacement character U+FFFD (or define your own `SOAP_UNKNOWN_UNICODE_CHAR`).
+- Fixed wsdl2h pointer member to vector for minOccurs="0", unnecessary pointer removed.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

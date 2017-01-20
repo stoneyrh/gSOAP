@@ -688,8 +688,8 @@ just fine by this JSON implementation as 64 bit (i.e. `long long`, `int64_t`,
 `LONG64`) without internal conversion to/from double floating point values
 that could cause a loss of precision for large values.
 
-List of C++ files                                                   {#cpp-files}
------------------
+List of files                                                       {#cpp-files}
+-------------
 
 The following files define XML-RPC operations and data types for C++:
 
@@ -742,8 +742,8 @@ or we can define an empty namespaces table somewhere in our code:
     struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}};
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-C++ XML-RPC and JSON with examples                                     {#cpp-ex}
-----------------------------------
+Overview                                                               {#cpp-ex}
+--------
 
 An XML-RPC/JSON data value is created in C++ as follows, which requires a
 context `ctx` with the engine state (the soap struct).  The context manages the
@@ -1162,15 +1162,15 @@ deallocated with:
     soap_free(ctx);     // delete context allocated with soap_new()
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Additional examples are located in `gsoap/samples/xml-rpc-json`:
+Additional C++ examples are located in `gsoap/samples/xml-rpc-json`:
 
 - `xml-rpc-currentTime.cpp`:            XML-RPC C++ client, also uses JSON
 - `xml-rpc-currentTimeServer.cpp`:      XML-RPC C++ server
 - `xml-rpc-weblogs.cpp`:                XML-RPC C++ client
 - `xml-rpc-json.cpp`:                   XML-RPC to/from JSON example
-- `json-currentTime.cpp`:               JSON C++ client
-- `json-currentTimeServer.cpp`:         JSON C++ server
-- `json-GitHub.cpp`:                    JSON C++ client for GitHub API v3
+- `json-currentTime.cpp`:               JSON REST C++ client
+- `json-currentTimeServer.cpp`:         JSON REST C++ server
+- `json-GitHub.cpp`:                    JSON REST C++ client for GitHub API v3
 
 C++ XML-RPC client example                                             {#cpp-cl}
 --------------------------
@@ -1483,8 +1483,8 @@ Strings are stored and exchanged in UTF-8 format in 8-bit strings (`char*` and
 `std::string`) by using the `SOAP_C_UTFSTRING` flag.  Wide strings (i.e.
 `wchar_t*` and `std::wstring` ) are converted to UTF-8.
 
-C++ JSON over HTTP (REST method)                                       {#cpp-jr}
---------------------------------
+C++ JSON REST clients and servers                                      {#cpp-jr}
+---------------------------------
 
 To use JSON REST on the client side, we use `json_call`:
 
@@ -1573,16 +1573,22 @@ To implement a JSON REST server for CGI (e.g. install in cgi-bin):
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Compile and link your code together with `soapC.cpp` (generated),
-`xml-rpc.cpp`, `json.cpp`, and `stdsoap2.cpp`.
+Compile and link your code together with `soapC.cpp` (generated with
+`soapcpp2 -CSL xml-rpc.h`), `xml-rpc.cpp`, `json.cpp`, and `stdsoap2.cpp`.
 
-For client and server examples, please see the gSOAP package content:
+The above server works with CGI, which is rather slow and stateless.  A
+stand-alone JSON REST server is recommended.  You can also use the Apache and
+IIS plugins for gSOAP to deploy JSON REST services.  See the
+[documentation](https://www.genivia.com/docs.html).
 
-- `gsoap/samples/xml-rpc-json/json-currentTime.cpp`
-- `gsoap/samples/xml-rpc-json/json-currentTimeServer.cpp`
+For C++ client and server examples, please see the gSOAP package content
+`gsoap/samples/xml-rpc-json`:
 
-C++ JSON-RPC                                                          {#cpp-rpc}
-------------
+- `json-currentTime.cpp`:               JSON REST C++ client
+- `json-currentTimeServer.cpp`:         JSON REST C++ server (CGI and stand-alone)
+
+C++ JSON-RPC clients and servers                                      {#cpp-rpc}
+--------------------------------
 
 The [JSON-RPC 1.0 specification](http://json-rpc.org/wiki/specification) (the
 "original version") adds `method`, `parameter` and `id` fields to the
@@ -1734,8 +1740,8 @@ improved.  The material in this section pertains to gSOAP 2.8.26 and later.
 The new C API for XML-RPC and JSON makes it much easier to populate and retrieve
 data, but not as simple and easy as the C++ API.
 
-List of C files                                                       {#c-files}
----------------
+List of files                                                         {#c-files}
+-------------
 
 The following files define XML-RPC operations and data types:
 
@@ -1781,8 +1787,8 @@ or we can define an empty namespaces table somewhere in our code:
     struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}};
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-C XML-RPC and JSON with examples                                         {#c-ex}
---------------------------------
+Overview                                                                 {#c-ex}
+--------
 
 An XML-RPC/JSON data value is created in C as follows, which requires a context
 `ctx` with the engine state (the soap struct).  The context manages the memory
@@ -2068,9 +2074,11 @@ deallocated with:
 
 Additional examples are located in `gsoap/samples/xml-rpc-json`:
 
+- `json-currentTime.c`                  JSON REST C client
+- `json-currentTimeServer.c`            JSON REST C server
+- `json-GitHub.c`:                      JSON C client for GitHub API v3
 - `xml-rpc-currentTime.c`               XML-RPC C client
 - `xml-rpc-weblogs.c`                   XML-RPC C client
-- `json-GitHub.c`:                      JSON C client for GitHub API v3
 
 C XML-RPC client example                                                 {#c-cl}
 ------------------------
@@ -2359,8 +2367,8 @@ function can be used to write JSON to strings as follows:
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-C JSON over HTTP (REST method)                                           {#c-jr}
-------------------------------
+C JSON REST clients and servers                                          {#c-jr}
+-------------------------------
 
 To use JSON REST on the client side, we use `json_call`:
 
@@ -2373,7 +2381,7 @@ To use JSON REST on the client side, we use `json_call`:
     struct value *request = new_value(ctx);
     struct value response;
     ... /* here we populate the request data to be send */
-    if (json_call(ctx, "endpoint URL", request, response))
+    if (json_call(ctx, "endpoint URL", request, &response))
       ... /* error */
     ... /* use the response data */
     soap_end(ctx); /* delete all values */
@@ -2417,8 +2425,55 @@ operations.
 Compile and link your code together with `soapC.c` (generated), `xml-rpc.c`,
 `json.c`, and `stdsoap2.c`.
 
-C JSON-RPC                                                              {#c-rpc}
-----------
+To implement a JSON REST server for CGI (e.g. install in cgi-bin):
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include "json.h"            // also compile and link json.c
+    struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}}; // no XML namespaces
+
+    int main()
+    {
+      struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+      struct value *request = new_value(ctx);
+      struct value *response = new_value(ctx);
+      if (soap_begin_recv(ctx)
+       || json_recv(ctx, request)
+       || soap_end_recv(ctx))
+        soap_send_fault(ctx);
+      else
+      {
+        ... // use the 'request' value
+        ... // set the 'response' value
+        // set http content type
+        ctx->http_content = "application/json; charset=utf-8";
+        // send http header and body
+        if (soap_response(ctx, SOAP_FILE)
+         || json_send(ctx, response)
+         || soap_end_send(ctx))
+          soap_print_fault(ctx, stdout);
+      }
+      // dealloc all
+      soap_end(ctx);
+      soap_free(ctx);
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Compile and link your code together with `soapC.c` (generated with
+`soapcpp2 -c -CSL xml-rpc.h`), `xml-rpc.c`, `json.c`, and `stdsoap2.c`.
+
+The above server works with CGI, which is rather slow and stateless.  A
+stand-alone JSON REST server is recommended.  You can also use the Apache and
+IIS plugins for gSOAP to deploy JSON REST services.  See the
+[documentation](https://www.genivia.com/docs.html).
+
+For client and server examples, please see the gSOAP package content in
+`gsoap/samples/xml-rpc-json`:
+
+- `json-currentTime.c`                  JSON REST C client
+- `json-currentTimeServer.c`            JSON REST C server (CGI and stand-alone)
+
+C JSON-RPC clients and servers                                          {#c-rpc}
+------------------------------
 
 The [JSON-RPC 1.0 specification](http://json-rpc.org/wiki/specification) (the
 "original version") adds `method`, `parameter` and `id` fields to the
@@ -2519,9 +2574,8 @@ explained in the [tutorials.](http://www.genivia.com/tutorials.html)
 
 The server-side creates response messages similar to the example shown above.
 To implement a C JSON-RPC and JSON REST server, please see the example
-`json-currentTimeServer.cpp` located in `gsoap/samples/xml-rpc-json` in the
-gSOAP package.  While the example is written in C++, the same gSOAP functions
-are used to bind a port and serve requests.
+`json-currentTimeServer.c` located in `gsoap/samples/xml-rpc-json` in the
+gSOAP package.
 
 Miscellaneous                                                            {#misc}
 =============

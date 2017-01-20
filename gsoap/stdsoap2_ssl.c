@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.41
+        stdsoap2.c[pp] 2.8.42
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20841
+#define GSOAP_LIB_VERSION 20842
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -81,10 +81,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.41 2017-01-11 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.42 2017-01-20 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.41 2017-01-11 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.42 2017-01-20 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -1878,17 +1878,41 @@ SOAP_FMAC1
 soap_wchar
 SOAP_FMAC2
 soap_getutf8(struct soap *soap)
-{ soap_wchar c, c1, c2, c3, c4;
+{
+#ifdef WITH_REPLACE_ILLEGAL_UTF8
+  soap_wchar c, c1, c2, c3;
+#else
+  soap_wchar c, c1, c2, c3, c4;
+#endif
   c = soap->ahead;
   if (c >= 0x80)
     soap->ahead = 0;
   else
-    c = soap_get(soap);
+    c = (soap_wchar)soap_get(soap);
   if (c < 0x80 || c > 0xFF || (soap->mode & SOAP_ENC_LATIN))
     return c;
-  c1 = soap_get1(soap);
-  if (c1 < 0x80)
-  { soap_revget1(soap); /* doesn't look like this is UTF8 */
+#ifdef WITH_REPLACE_ILLEGAL_UTF8
+  c1 = (soap_wchar)soap_get1(soap);
+  if (c <= 0xC1)
+    return SOAP_UNKNOWN_UNICODE_CHAR;
+  c1 &= 0x3F;
+  if (c < 0xE0)
+    return (((c & 0x1F) << 6) | c1);
+  c2 = (soap_wchar)soap_get1(soap);
+  if ((c == 0xE0 && c1 < 0x20) || (c2 & 0xC0) != 0x80)
+    return SOAP_UNKNOWN_UNICODE_CHAR;
+  c2 &= 0x3F;
+  if (c < 0xF0)
+    return (((c & 0x0F) << 12) | (c1 << 6) | c2);
+  c3 = (soap_wchar)soap_get1(soap);
+  if ((c == 0xF0 && c1 < 0x10) || (c == 0xF4 && c1 >= 0x10) || c >= 0xF5 || (c3 & 0xC0) != 0x80)
+    return SOAP_UNKNOWN_UNICODE_CHAR;
+  return (((c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | (c3 & 0x3F));
+#else
+  c1 = (soap_wchar)soap_get1(soap);
+  if (c < 0xC0 || (c1 & 0xC0) != 0x80)
+  { soap_revget1(soap);
+    /* doesn't look like this is UTF-8, try continue as if ISO-8859-1 */
     return c;
   }
   c1 &= 0x3F;
@@ -1904,6 +1928,7 @@ soap_getutf8(struct soap *soap)
   if (c < 0xFC)
     return ((soap_wchar)(c & 0x03) << 24) | (c1 << 18) | (c2 << 12) | (c3 << 6) | c4;
   return ((soap_wchar)(c & 0x01) << 30) | (c1 << 24) | (c2 << 18) | (c3 << 12) | (c4 << 6) | (soap_wchar)(soap_get1(soap) & 0x3F);
+#endif
 }
 #endif
 
@@ -4747,6 +4772,7 @@ again:
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not bind before connect\n"));
       soap_set_receiver_error(soap, tcp_error(soap), "bind failed in tcp_connect()", SOAP_TCP_ERROR);
       soap->fclosesocket(soap, sk);
+      freeaddrinfo(ressave);
       return SOAP_INVALID_SOCKET;
     }
     soap->client_port = -1; /* disable bind before connect, so explicitly need to set client_port before next connect */
@@ -12043,14 +12069,19 @@ soap_getattrval(struct soap *soap, char *s, size_t *n, soap_wchar d)
         if (c < 0x0800)
           *t++ = (char)(0xC0 | ((c >> 6) & 0x1F));
         else
-        { if (c < 0x010000)
-          *t++ = (char)(0xE0 | ((c >> 12) & 0x0F));
+        {
+#ifdef WITH_REPLACE_ILLEGAL_UTF8
+          if (!((c >= 0x80 && c <= 0xD7FF) || (c >= 0xE000 && c <= 0xFFFD) || (c >= 0x10000 && c <= 0x10FFFF)))
+            c = SOAP_UNKNOWN_UNICODE_CHAR;
+#endif
+          if (c < 0x010000)
+            *t++ = (char)(0xE0 | ((c >> 12) & 0x0F));
           else
           { if (c < 0x200000)
-            *t++ = (char)(0xF0 | ((c >> 18) & 0x07));
+              *t++ = (char)(0xF0 | ((c >> 18) & 0x07));
             else
             { if (c < 0x04000000)
-              *t++ = (char)(0xF8 | ((c >> 24) & 0x03));
+                *t++ = (char)(0xF8 | ((c >> 24) & 0x03));
               else
               { *t++ = (char)(0xFC | ((c >> 30) & 0x01));
                 *t++ = (char)(0x80 | ((c >> 24) & 0x3F));
@@ -12888,7 +12919,12 @@ soap_string_in(struct soap *soap, int flag, long minlen, long maxlen, const char
             if (c < 0x0800)
               *t++ = (char)(0xC0 | ((c >> 6) & 0x1F));
             else
-            { if (c < 0x010000)
+            {
+#ifdef WITH_REPLACE_ILLEGAL_UTF8
+              if (!((c >= 0x80 && c <= 0xD7FF) || (c >= 0xE000 && c <= 0xFFFD) || (c >= 0x10000 && c <= 0x10FFFF)))
+                c = SOAP_UNKNOWN_UNICODE_CHAR;
+#endif
+              if (c < 0x010000)
                 *t++ = (char)(0xE0 | ((c >> 12) & 0x0F));
               else
               { if (c < 0x200000)
@@ -13133,14 +13169,19 @@ soap_string_in(struct soap *soap, int flag, long minlen, long maxlen, const char
             if (c < 0x0800)
               *t++ = (char)(0xC0 | ((c >> 6) & 0x1F));
             else
-            { if (c < 0x010000)
-              *t++ = (char)(0xE0 | ((c >> 12) & 0x0F));
+            {
+#ifdef WITH_REPLACE_ILLEGAL_UTF8
+              if (!((c >= 0x80 && c <= 0xD7FF) || (c >= 0xE000 && c <= 0xFFFD) || (c >= 0x10000 && c <= 0x10FFFF)))
+                c = SOAP_UNKNOWN_UNICODE_CHAR;
+#endif
+              if (c < 0x010000)
+                *t++ = (char)(0xE0 | ((c >> 12) & 0x0F));
               else
               { if (c < 0x200000)
-                *t++ = (char)(0xF0 | ((c >> 18) & 0x07));
+                  *t++ = (char)(0xF0 | ((c >> 18) & 0x07));
                 else
                 { if (c < 0x04000000)
-                  *t++ = (char)(0xF8 | ((c >> 24) & 0x03));
+                    *t++ = (char)(0xF8 | ((c >> 24) & 0x03));
                   else
                   { *t++ = (char)(0xFC | ((c >> 30) & 0x01));
                     *t++ = (char)(0x80 | ((c >> 24) & 0x3F));
@@ -15267,12 +15308,42 @@ soap_wstring(struct soap *soap, const char *s, long minlen, long maxlen, const c
     else
     { /* Convert UTF8 to wchar */
       while (*s)
-      { soap_wchar c, c1, c2, c3, c4;
+      { soap_wchar c;
         c = (unsigned char)*s++;
         if (c < 0x80)
           wc = (wchar_t)c;
         else
-        { c1 = (unsigned char)*s++ & 0x3F;
+        {
+#ifdef WITH_REPLACE_ILLEGAL_UTF8
+          soap_wchar c1, c2, c3;
+          c1 = (unsigned char)*s++;
+          if (c <= 0xC1 || (c1 & 0xC0) != 0x80)
+            wc = SOAP_UNKNOWN_UNICODE_CHAR;
+          else
+          { c1 &= 0x3F;
+            if (c < 0xE0)
+              wc = (((c & 0x1F) << 6) | c1);
+            else
+            { c2 = (unsigned char)*s++;
+              if ((c == 0xE0 && c1 < 0x20) || (c2 & 0xC0) != 0x80)
+                wc = SOAP_UNKNOWN_UNICODE_CHAR;
+              else
+              { c2 &= 0x3F;
+                if (c < 0xF0)
+                  wc = (((c & 0x0F) << 12) | (c1 << 6) | c2);
+                else
+                { c3 = (unsigned char)*s++;
+                  if ((c == 0xF0 && c1 < 0x10) || (c == 0xF4 && c1 >= 0x10) || c >= 0xF5 || (c3 & 0xC0) != 0x80)
+                    wc = SOAP_UNKNOWN_UNICODE_CHAR;
+                  else
+                    wc = (((c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | (c3 & 0x3F));
+                }
+              }
+            }
+          }
+#else
+          soap_wchar c1, c2, c3, c4;
+          c1 = (unsigned char)*s++ & 0x3F;
           if (c < 0xE0)
             wc = (wchar_t)(((soap_wchar)(c & 0x1F) << 6) | c1);
           else
@@ -15292,6 +15363,7 @@ soap_wstring(struct soap *soap, const char *s, long minlen, long maxlen, const c
               }
             }
           }
+#endif
         }
         if (soap_append_lab(soap, (const char*)&wc, sizeof(wc)))
           return NULL;
@@ -15335,19 +15407,29 @@ soap_wchar2s(struct soap *soap, const wchar_t *s)
   { if (c > 0 && c < 0x80)
       n++;
     else
+#ifdef WITH_REPLACE_ILLEGAL_UTF8
+      n += 4;
+#else
       n += 6;
+#endif
   }
   r = t = (char*)soap_malloc(soap, n + 1);
   if (r)
-  { /* Convert wchar to UTF8 */
+  { /* Convert wchar to UTF8 (chars above U+10FFFF are silently converted, but should not be used) */
     while ((c = *s++))
     { if (c > 0 && c < 0x80)
         *t++ = (char)c;
       else
-      { if (c < 0x0800)
+      {
+        if (c < 0x0800)
           *t++ = (char)(0xC0 | ((c >> 6) & 0x1F));
         else
-        { if (c < 0x010000)
+        {
+#ifdef WITH_REPLACE_ILLEGAL_UTF8
+          if (!((c >= 0x80 && c <= 0xD7FF) || (c >= 0xE000 && c <= 0xFFFD) || (c >= 0x10000 && c <= 0x10FFFF)))
+            c = SOAP_UNKNOWN_UNICODE_CHAR;
+#endif
+          if (c < 0x010000)
             *t++ = (char)(0xE0 | ((c >> 12) & 0x0F));
           else
           { if (c < 0x200000)

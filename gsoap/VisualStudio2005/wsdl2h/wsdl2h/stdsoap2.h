@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.41
+        stdsoap2.h 2.8.42
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20841
+#define GSOAP_VERSION 20842
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -394,7 +394,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_LOCALTIME_R
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
-# elif defined(__GLIBC__) || defined(__GNU__) || defined(__GNUC__)
+# elif defined(__GLIBC__) || defined(__GNU__)
 #  define HAVE_POLL
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -725,10 +725,10 @@ extern intmax_t __strtoull(const char*, char**, int);
 # include <poll.h>
 #endif
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 # include <new>
 # include <memory>
-# if !defined(WITH_COMPAT)
+# ifndef WITH_COMPAT
 #  include <string>
 #  include <iostream>
 # endif

@@ -91,7 +91,7 @@ QByteArray *soap_in_xsd__hexBinary(struct soap *soap, char const *tag, QByteArra
   }
   else if (a)
   {
-    if (soap_s2xsd__hexBinary(soap, soap_value(soap), a))
+    if (soap_s2xsd__hexBinary(soap, soap_string_in(soap, 0, -1, -1, NULL), a))
       return NULL;
   }
   if (soap->body && soap_element_end_in(soap, tag))
