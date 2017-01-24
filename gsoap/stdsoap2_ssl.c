@@ -5824,8 +5824,6 @@ soap_accept(struct soap *soap)
 #endif
   soap->error = SOAP_OK;
   memset((void*)&soap->peer, 0, sizeof(soap->peer));
-  if (soap_valid_socket(soap->socket) && !(soap->omode & SOAP_IO_UDP))
-    soap->fclosesocket(soap, soap->socket);
   soap->socket = SOAP_INVALID_SOCKET;
   soap->errmode = 0;
   soap->keep_alive = 0;
