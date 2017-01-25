@@ -640,6 +640,31 @@ extern intmax_t __strtoull(const char*, char**, int);
 # undef WITH_C_LOCALE
 #endif
 
+#ifndef WITH_NOSTDLIB
+# if defined(__gnu_linux__) && defined(WITH_C_LOCALE)
+#  define _GNU_SOURCE 1
+# endif
+# include <stdlib.h>
+# ifndef PALM
+#  include <stdio.h>
+#  include <string.h>
+# endif
+# if !defined(HAVE_CONFIG_H) || defined(HAVE_CTYPE_H)
+#  include <ctype.h>
+# endif
+# if !defined(HAVE_CONFIG_H) || defined(HAVE_LIMITS_H)
+#  include <limits.h>   /* for MB_LEN_MAX */
+# endif
+# if !defined(HAVE_CONFIG_H) || defined(HAVE_FLOAT_H)
+#  include <float.h>    /* for INFINITY */
+# endif
+# if !defined(HAVE_CONFIG_H) || defined(HAVE_MATH_H)
+#  ifndef PALM
+#   include <math.h>    /* for isnan() and isinf() */
+#  endif
+# endif
+#endif
+
 #ifdef WITH_C_LOCALE
 # include <locale.h>
 # if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
@@ -694,28 +719,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 # define int32_t int
 # define SOAP_BUFLEN (32767)
 #endif                                                        
-
-#ifndef WITH_NOSTDLIB
-# include <stdlib.h>
-# ifndef PALM
-#  include <stdio.h>
-#  include <string.h>
-# endif
-# if !defined(HAVE_CONFIG_H) || defined(HAVE_CTYPE_H)
-#  include <ctype.h>
-# endif
-# if !defined(HAVE_CONFIG_H) || defined(HAVE_LIMITS_H)
-#  include <limits.h>   /* for MB_LEN_MAX */
-# endif
-# if !defined(HAVE_CONFIG_H) || defined(HAVE_FLOAT_H)
-#  include <float.h>    /* for INFINITY */
-# endif
-# if !defined(HAVE_CONFIG_H) || defined(HAVE_MATH_H)
-#  ifndef PALM
-#   include <math.h>    /* for isnan() and isinf() */
-#  endif
-# endif
-#endif
 
 #ifdef WITH_NTLM
 # include <ntlm.h>

@@ -1,12 +1,10 @@
 libgsoap___a-stdsoap2_cpp.o: stdsoap2_cpp.cpp stdsoap2.h ../config.h \
-  /usr/include/locale.h /usr/include/_locale.h /usr/include/sys/cdefs.h \
+  /usr/include/stdlib.h /usr/include/Availability.h \
+  /usr/include/AvailabilityInternal.h /usr/include/_types.h \
+  /usr/include/sys/_types.h /usr/include/sys/cdefs.h \
   /usr/include/sys/_symbol_aliasing.h \
-  /usr/include/sys/_posix_availability.h /usr/include/_types.h \
-  /usr/include/sys/_types.h /usr/include/machine/_types.h \
+  /usr/include/sys/_posix_availability.h /usr/include/machine/_types.h \
   /usr/include/i386/_types.h /usr/include/sys/_pthread/_pthread_types.h \
-  /usr/include/sys/_types/_null.h /usr/include/xlocale.h \
-  /usr/include/_xlocale.h /usr/include/stdlib.h \
-  /usr/include/Availability.h /usr/include/AvailabilityInternal.h \
   /usr/include/sys/wait.h /usr/include/sys/_types/_pid_t.h \
   /usr/include/sys/_types/_id_t.h /usr/include/sys/signal.h \
   /usr/include/sys/appleapiopts.h /usr/include/machine/signal.h \
@@ -29,26 +27,29 @@ libgsoap___a-stdsoap2_cpp.o: stdsoap2_cpp.cpp stdsoap2.h ../config.h \
   /usr/include/sys/_endian.h /usr/include/libkern/_OSByteOrder.h \
   /usr/include/libkern/i386/_OSByteOrder.h /usr/include/alloca.h \
   /usr/include/sys/_types/_ct_rune_t.h /usr/include/sys/_types/_rune_t.h \
-  /usr/include/sys/_types/_wchar_t.h /usr/include/machine/types.h \
-  /usr/include/i386/types.h /usr/include/sys/_types/_u_int8_t.h \
+  /usr/include/sys/_types/_wchar_t.h /usr/include/sys/_types/_null.h \
+  /usr/include/machine/types.h /usr/include/i386/types.h \
+  /usr/include/sys/_types/_u_int8_t.h \
   /usr/include/sys/_types/_u_int16_t.h \
   /usr/include/sys/_types/_u_int32_t.h \
   /usr/include/sys/_types/_u_int64_t.h /usr/include/sys/_types/_dev_t.h \
-  /usr/include/sys/_types/_mode_t.h /usr/include/xlocale/_stdlib.h \
-  /usr/include/stdio.h /usr/include/sys/_types/_va_list.h \
-  /usr/include/sys/stdio.h /usr/include/sys/_types/_off_t.h \
-  /usr/include/sys/_types/_ssize_t.h /usr/include/xlocale/_stdio.h \
+  /usr/include/sys/_types/_mode_t.h /usr/include/stdio.h \
+  /usr/include/sys/_types/_va_list.h /usr/include/sys/stdio.h \
+  /usr/include/sys/_types/_off_t.h /usr/include/sys/_types/_ssize_t.h \
   /usr/include/string.h /usr/include/sys/_types/_rsize_t.h \
   /usr/include/sys/_types/_errno_t.h /usr/include/strings.h \
-  /usr/include/xlocale/_string.h /usr/include/ctype.h \
-  /usr/include/runetype.h /usr/include/sys/_types/_wint_t.h \
-  /usr/include/xlocale/_ctype.h \
+  /usr/include/ctype.h /usr/include/runetype.h \
+  /usr/include/sys/_types/_wint_t.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include/limits.h \
   /usr/include/limits.h /usr/include/machine/limits.h \
   /usr/include/i386/limits.h /usr/include/i386/_limits.h \
   /usr/include/sys/syslimits.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include/float.h \
-  /usr/include/math.h /usr/include/poll.h /usr/include/sys/poll.h \
+  /usr/include/math.h /usr/include/locale.h /usr/include/_locale.h \
+  /usr/include/xlocale.h /usr/include/_xlocale.h \
+  /usr/include/xlocale/_ctype.h /usr/include/xlocale/_stdio.h \
+  /usr/include/xlocale/_stdlib.h /usr/include/xlocale/_string.h \
+  /usr/include/poll.h /usr/include/sys/poll.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/new \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__config \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/exception \
@@ -157,9 +158,15 @@ stdsoap2.h:
 
 ../config.h:
 
-/usr/include/locale.h:
+/usr/include/stdlib.h:
 
-/usr/include/_locale.h:
+/usr/include/Availability.h:
+
+/usr/include/AvailabilityInternal.h:
+
+/usr/include/_types.h:
+
+/usr/include/sys/_types.h:
 
 /usr/include/sys/cdefs.h:
 
@@ -167,27 +174,11 @@ stdsoap2.h:
 
 /usr/include/sys/_posix_availability.h:
 
-/usr/include/_types.h:
-
-/usr/include/sys/_types.h:
-
 /usr/include/machine/_types.h:
 
 /usr/include/i386/_types.h:
 
 /usr/include/sys/_pthread/_pthread_types.h:
-
-/usr/include/sys/_types/_null.h:
-
-/usr/include/xlocale.h:
-
-/usr/include/_xlocale.h:
-
-/usr/include/stdlib.h:
-
-/usr/include/Availability.h:
-
-/usr/include/AvailabilityInternal.h:
 
 /usr/include/sys/wait.h:
 
@@ -271,6 +262,8 @@ stdsoap2.h:
 
 /usr/include/sys/_types/_wchar_t.h:
 
+/usr/include/sys/_types/_null.h:
+
 /usr/include/machine/types.h:
 
 /usr/include/i386/types.h:
@@ -287,8 +280,6 @@ stdsoap2.h:
 
 /usr/include/sys/_types/_mode_t.h:
 
-/usr/include/xlocale/_stdlib.h:
-
 /usr/include/stdio.h:
 
 /usr/include/sys/_types/_va_list.h:
@@ -299,8 +290,6 @@ stdsoap2.h:
 
 /usr/include/sys/_types/_ssize_t.h:
 
-/usr/include/xlocale/_stdio.h:
-
 /usr/include/string.h:
 
 /usr/include/sys/_types/_rsize_t.h:
@@ -309,15 +298,11 @@ stdsoap2.h:
 
 /usr/include/strings.h:
 
-/usr/include/xlocale/_string.h:
-
 /usr/include/ctype.h:
 
 /usr/include/runetype.h:
 
 /usr/include/sys/_types/_wint_t.h:
-
-/usr/include/xlocale/_ctype.h:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include/limits.h:
 
@@ -334,6 +319,22 @@ stdsoap2.h:
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include/float.h:
 
 /usr/include/math.h:
+
+/usr/include/locale.h:
+
+/usr/include/_locale.h:
+
+/usr/include/xlocale.h:
+
+/usr/include/_xlocale.h:
+
+/usr/include/xlocale/_ctype.h:
+
+/usr/include/xlocale/_stdio.h:
+
+/usr/include/xlocale/_stdlib.h:
+
+/usr/include/xlocale/_string.h:
 
 /usr/include/poll.h:
 
