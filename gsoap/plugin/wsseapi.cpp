@@ -5694,7 +5694,8 @@ soap_psha1(struct soap *soap, const char hmac_key[16], const char *secret, size_
     soap_smd_init(soap, &context, SOAP_SMD_HMAC_SHA1, (void*)hmac_key, 16);
     soap_smd_update(soap, &context, buffer, SOAP_SMD_SHA1_SIZE + secretlen);
     soap_smd_final(soap, &context, temp, NULL);
-    for (j = 0; j < SOAP_SMD_SHA1_SIZE && i < psha1len; j++)
+    j = 0;
+    while (j < SOAP_SMD_SHA1_SIZE && i < psha1len)
       psha1[i++] = temp[j++];
   }
   SOAP_FREE(soap, buffer);

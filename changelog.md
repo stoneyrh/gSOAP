@@ -1132,12 +1132,20 @@ Version 2.8.41 (01/11/2017)
 - Fixed crash in XML attribute serialization of QT QByteArray and QString types.
 - Fixed WinCE7 `IP_MULTICAST_IF` issue.
 
-Version 2.8.42 (01/20/2017) {#latest}
+Version 2.8.42 (01/20/2017)
 ---
 
+- Improved `WITH_REPLACE_ILLEGAL_UTF8` flag to compile the source code of the gSOAP libraries:  this replaces illegal UTF-8 input/output with the replacement character U+FFFD (or define your own `SOAP_UNKNOWN_UNICODE_CHAR`).
 - Fixed shared pointer to QName string QName output normalization.
-- Improved `WITH_REPLACE_ILLEGAL_UTF8` flag to optionally compile the library with:  this replaces illegal UTF-8 input/output with the replacement character U+FFFD (or define your own `SOAP_UNKNOWN_UNICODE_CHAR`).
-- Fixed wsdl2h pointer member to vector for minOccurs="0", unnecessary pointer removed.
+- Fixed wsdl2h pointer member to vector for minOccurs="0" by removing the unnecessary pointer to the container, i.e. just using the container.
+
+Version 2.8.43 (02/05/2017) {#latest}
+---
+
+- Added `SSL_CTX_need_tmp_RSA()` check (OpenSSL 1.0.1 and greater).
+- Fixed string length limiting issue in QT QString type serializer `custom/qstring.h` and addressed compilation issue with other QT types serializers.
+- Fixed documentation of `soap_copy_stream()` followed by `soap_free_stream()` to chain services.
+- Fixed `soap_psha1` string buffering.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

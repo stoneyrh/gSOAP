@@ -151,50 +151,31 @@ wsdl2h-mime.o: mime.cpp wsdlH.h wsdlStub.h includes.h \
   /usr/include/fcntl.h /usr/include/sys/fcntl.h \
   /usr/include/sys/_types/_o_sync.h /usr/include/sys/_types/_o_dsync.h \
   /usr/include/sys/_types/_s_ifmt.h /usr/include/sys/_types/_filesec_t.h \
-  /usr/local/opt/openssl/include/openssl/bio.h \
-  /usr/local/opt/openssl/include/openssl/e_os2.h \
-  /usr/local/opt/openssl/include/openssl/opensslconf.h \
-  /usr/local/opt/openssl/include/openssl/crypto.h \
-  /usr/local/opt/openssl/include/openssl/stack.h \
-  /usr/local/opt/openssl/include/openssl/safestack.h \
-  /usr/local/opt/openssl/include/openssl/opensslv.h \
-  /usr/local/opt/openssl/include/openssl/ossl_typ.h \
-  /usr/local/opt/openssl/include/openssl/symhacks.h \
-  /usr/local/opt/openssl/include/openssl/err.h \
-  /usr/local/opt/openssl/include/openssl/lhash.h \
-  /usr/local/opt/openssl/include/openssl/rand.h \
-  /usr/local/opt/openssl/include/openssl/ssl.h \
-  /usr/local/opt/openssl/include/openssl/comp.h \
-  /usr/local/opt/openssl/include/openssl/x509.h \
-  /usr/local/opt/openssl/include/openssl/buffer.h \
-  /usr/local/opt/openssl/include/openssl/evp.h \
-  /usr/local/opt/openssl/include/openssl/objects.h \
-  /usr/local/opt/openssl/include/openssl/obj_mac.h \
-  /usr/local/opt/openssl/include/openssl/asn1.h \
-  /usr/local/opt/openssl/include/openssl/bn.h \
-  /usr/local/opt/openssl/include/openssl/ec.h \
-  /usr/local/opt/openssl/include/openssl/ecdsa.h \
-  /usr/local/opt/openssl/include/openssl/ecdh.h \
-  /usr/local/opt/openssl/include/openssl/rsa.h \
-  /usr/local/opt/openssl/include/openssl/dsa.h \
-  /usr/local/opt/openssl/include/openssl/dh.h \
-  /usr/local/opt/openssl/include/openssl/sha.h \
-  /usr/local/opt/openssl/include/openssl/x509_vfy.h \
-  /usr/local/opt/openssl/include/openssl/pkcs7.h \
-  /usr/local/opt/openssl/include/openssl/pem.h \
-  /usr/local/opt/openssl/include/openssl/pem2.h \
-  /usr/local/opt/openssl/include/openssl/hmac.h \
-  /usr/local/opt/openssl/include/openssl/kssl.h \
-  /usr/local/opt/openssl/include/openssl/ssl2.h \
-  /usr/local/opt/openssl/include/openssl/ssl3.h \
-  /usr/local/opt/openssl/include/openssl/tls1.h \
-  /usr/local/opt/openssl/include/openssl/dtls1.h \
-  /usr/local/opt/openssl/include/openssl/pqueue.h \
-  /usr/local/opt/openssl/include/openssl/ssl23.h \
-  /usr/local/opt/openssl/include/openssl/srtp.h \
-  /usr/local/opt/openssl/include/openssl/x509v3.h \
-  /usr/local/opt/openssl/include/openssl/conf.h /usr/include/zlib.h \
-  /usr/include/zconf.h \
+  /opt/local/include/openssl/bio.h /opt/local/include/openssl/e_os2.h \
+  /opt/local/include/openssl/opensslconf.h \
+  /opt/local/include/openssl/crypto.h /opt/local/include/openssl/stack.h \
+  /opt/local/include/openssl/safestack.h \
+  /opt/local/include/openssl/opensslv.h \
+  /opt/local/include/openssl/ossl_typ.h \
+  /opt/local/include/openssl/symhacks.h /opt/local/include/openssl/err.h \
+  /opt/local/include/openssl/lhash.h /opt/local/include/openssl/rand.h \
+  /opt/local/include/openssl/ssl.h /opt/local/include/openssl/comp.h \
+  /opt/local/include/openssl/x509.h /opt/local/include/openssl/buffer.h \
+  /opt/local/include/openssl/evp.h /opt/local/include/openssl/objects.h \
+  /opt/local/include/openssl/obj_mac.h /opt/local/include/openssl/asn1.h \
+  /opt/local/include/openssl/bn.h /opt/local/include/openssl/ec.h \
+  /opt/local/include/openssl/ecdsa.h /opt/local/include/openssl/ecdh.h \
+  /opt/local/include/openssl/rsa.h /opt/local/include/openssl/dsa.h \
+  /opt/local/include/openssl/dh.h /opt/local/include/openssl/sha.h \
+  /opt/local/include/openssl/x509_vfy.h \
+  /opt/local/include/openssl/pkcs7.h /opt/local/include/openssl/pem.h \
+  /opt/local/include/openssl/pem2.h /opt/local/include/openssl/hmac.h \
+  /opt/local/include/openssl/kssl.h /opt/local/include/openssl/ssl2.h \
+  /opt/local/include/openssl/ssl3.h /opt/local/include/openssl/tls1.h \
+  /opt/local/include/openssl/dtls1.h /opt/local/include/openssl/pqueue.h \
+  /opt/local/include/openssl/ssl23.h /opt/local/include/openssl/srtp.h \
+  /opt/local/include/openssl/x509v3.h /opt/local/include/openssl/conf.h \
+  /opt/local/include/zlib.h /opt/local/include/zconf.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include/inttypes.h \
   /usr/include/inttypes.h /usr/include/xlocale/_inttypes.h \
   ../../gsoap/plugin/httpda.h ../../gsoap/plugin/smdevp.h \
@@ -663,95 +644,95 @@ includes.h:
 
 /usr/include/sys/_types/_filesec_t.h:
 
-/usr/local/opt/openssl/include/openssl/bio.h:
+/opt/local/include/openssl/bio.h:
 
-/usr/local/opt/openssl/include/openssl/e_os2.h:
+/opt/local/include/openssl/e_os2.h:
 
-/usr/local/opt/openssl/include/openssl/opensslconf.h:
+/opt/local/include/openssl/opensslconf.h:
 
-/usr/local/opt/openssl/include/openssl/crypto.h:
+/opt/local/include/openssl/crypto.h:
 
-/usr/local/opt/openssl/include/openssl/stack.h:
+/opt/local/include/openssl/stack.h:
 
-/usr/local/opt/openssl/include/openssl/safestack.h:
+/opt/local/include/openssl/safestack.h:
 
-/usr/local/opt/openssl/include/openssl/opensslv.h:
+/opt/local/include/openssl/opensslv.h:
 
-/usr/local/opt/openssl/include/openssl/ossl_typ.h:
+/opt/local/include/openssl/ossl_typ.h:
 
-/usr/local/opt/openssl/include/openssl/symhacks.h:
+/opt/local/include/openssl/symhacks.h:
 
-/usr/local/opt/openssl/include/openssl/err.h:
+/opt/local/include/openssl/err.h:
 
-/usr/local/opt/openssl/include/openssl/lhash.h:
+/opt/local/include/openssl/lhash.h:
 
-/usr/local/opt/openssl/include/openssl/rand.h:
+/opt/local/include/openssl/rand.h:
 
-/usr/local/opt/openssl/include/openssl/ssl.h:
+/opt/local/include/openssl/ssl.h:
 
-/usr/local/opt/openssl/include/openssl/comp.h:
+/opt/local/include/openssl/comp.h:
 
-/usr/local/opt/openssl/include/openssl/x509.h:
+/opt/local/include/openssl/x509.h:
 
-/usr/local/opt/openssl/include/openssl/buffer.h:
+/opt/local/include/openssl/buffer.h:
 
-/usr/local/opt/openssl/include/openssl/evp.h:
+/opt/local/include/openssl/evp.h:
 
-/usr/local/opt/openssl/include/openssl/objects.h:
+/opt/local/include/openssl/objects.h:
 
-/usr/local/opt/openssl/include/openssl/obj_mac.h:
+/opt/local/include/openssl/obj_mac.h:
 
-/usr/local/opt/openssl/include/openssl/asn1.h:
+/opt/local/include/openssl/asn1.h:
 
-/usr/local/opt/openssl/include/openssl/bn.h:
+/opt/local/include/openssl/bn.h:
 
-/usr/local/opt/openssl/include/openssl/ec.h:
+/opt/local/include/openssl/ec.h:
 
-/usr/local/opt/openssl/include/openssl/ecdsa.h:
+/opt/local/include/openssl/ecdsa.h:
 
-/usr/local/opt/openssl/include/openssl/ecdh.h:
+/opt/local/include/openssl/ecdh.h:
 
-/usr/local/opt/openssl/include/openssl/rsa.h:
+/opt/local/include/openssl/rsa.h:
 
-/usr/local/opt/openssl/include/openssl/dsa.h:
+/opt/local/include/openssl/dsa.h:
 
-/usr/local/opt/openssl/include/openssl/dh.h:
+/opt/local/include/openssl/dh.h:
 
-/usr/local/opt/openssl/include/openssl/sha.h:
+/opt/local/include/openssl/sha.h:
 
-/usr/local/opt/openssl/include/openssl/x509_vfy.h:
+/opt/local/include/openssl/x509_vfy.h:
 
-/usr/local/opt/openssl/include/openssl/pkcs7.h:
+/opt/local/include/openssl/pkcs7.h:
 
-/usr/local/opt/openssl/include/openssl/pem.h:
+/opt/local/include/openssl/pem.h:
 
-/usr/local/opt/openssl/include/openssl/pem2.h:
+/opt/local/include/openssl/pem2.h:
 
-/usr/local/opt/openssl/include/openssl/hmac.h:
+/opt/local/include/openssl/hmac.h:
 
-/usr/local/opt/openssl/include/openssl/kssl.h:
+/opt/local/include/openssl/kssl.h:
 
-/usr/local/opt/openssl/include/openssl/ssl2.h:
+/opt/local/include/openssl/ssl2.h:
 
-/usr/local/opt/openssl/include/openssl/ssl3.h:
+/opt/local/include/openssl/ssl3.h:
 
-/usr/local/opt/openssl/include/openssl/tls1.h:
+/opt/local/include/openssl/tls1.h:
 
-/usr/local/opt/openssl/include/openssl/dtls1.h:
+/opt/local/include/openssl/dtls1.h:
 
-/usr/local/opt/openssl/include/openssl/pqueue.h:
+/opt/local/include/openssl/pqueue.h:
 
-/usr/local/opt/openssl/include/openssl/ssl23.h:
+/opt/local/include/openssl/ssl23.h:
 
-/usr/local/opt/openssl/include/openssl/srtp.h:
+/opt/local/include/openssl/srtp.h:
 
-/usr/local/opt/openssl/include/openssl/x509v3.h:
+/opt/local/include/openssl/x509v3.h:
 
-/usr/local/opt/openssl/include/openssl/conf.h:
+/opt/local/include/openssl/conf.h:
 
-/usr/include/zlib.h:
+/opt/local/include/zlib.h:
 
-/usr/include/zconf.h:
+/opt/local/include/zconf.h:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include/inttypes.h:
 

@@ -3892,7 +3892,7 @@ length `len` to the context-managed heap:
 This function returns a pointer to the copy.  This function requires gSOAP
 2.8.27 or later.
 
-In gSOAP 2.8.35 and later, you can use a auto-generated function to allocate
+In gSOAP 2.8.35 and later, you can use an auto-generated function to allocate
 and initialize data of type `T` on the managed heap:
 
 - `T * soap_new_T(struct soap*, int n)`
@@ -4101,7 +4101,7 @@ which produces an XML document record.xml that is similar to:
 
 Deserialization of an XML document with a SOAP 1.1/1.2 encoded id-ref graph
 leads to the same non-termination problem when we later try to copy the data
-into unmanaged space:
+into unmanaged memory heap space:
     
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     struct soap *soap = soap_new1(SOAP_XML_GRAPH); // support id-ref w/o SOAP
@@ -4123,13 +4123,30 @@ into unmanaged space:
     struct ns__record *pers5 = soap_dup_ns__record(soap, NULL, &pers1); // OK
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copying data with `soap_dup_T(soap)` into managed space is always safe.  Copying
-into unmanaged space requires diligence.  But deleting unmanaged data is easy
-with `soap_del_T()`.
+Copying data with `soap_dup_T(soap)` into managed heap memory space is always
+safe.  Copying into unmanaged heap memory space requires diligence.  But
+deleting unmanaged data is easy with `soap_del_T()`.
 
 You can also use `soap_del_T()` to delete structures that you created in C, but
 only if these structures are created with `malloc` and do NOT contain pointers
 to stack and static data.
+
+Finally, when data is allocated in managed memory heap space, either explicitly
+with the allocation functions shown above or by the gSOAP deserializers, you
+can delegate the management and deletion of this data to another `struct soap`
+context.  That context will be responsible to delete the data with
+`soap_end(soap)` later:
+
+- `void delegate_deletion(struct soap *soap_from, struct soap *soap_to)`
+
+This allows the `soap_from` context to be deleted with `soap_free(soap_from)`
+(assuming it is allocated with `soap_new()`, use `soap_done(soap_from)` when
+`soap_from` is stack-allocated) while the managed data remains intact.  You
+can use this function any time, to delegate management and deletion to another
+context `soap_to` and then continue with the current context.  You can also use
+different source `soap_from` contexts to delegate management and deletion to
+the other `soap_to` context.  To mass delete all managed data, use
+`soap_end(soap_to)`.
 
 Memory management in C++                                              {#memory2}
 ------------------------
@@ -4442,6 +4459,23 @@ You can also use `soap_del_T()` to delete structures in C++, but only if these
 structures are created with `new` (and `new []` for arrays when applicable) for
 classes, structs, and class templates and with `malloc` for anything else, and
 the structures do NOT contain pointers to stack and static data.
+
+Finally, when data is allocated in managed memory heap space, either explicitly
+with the allocation functions shown above or by the gSOAP deserializers, you
+can delegate the management and deletion of this data to another `struct soap`
+context.  That context will be responsible to delete the data with
+`soap_destroy(soap)` and `soap_end(soap)` later:
+
+- `void delegate_deletion(struct soap *soap_from, struct soap *soap_to)`
+
+This allows the `soap_from` context to be deleted with `soap_free(soap_from)`
+(assuming it is allocated with `soap_new()`, use `soap_done(soap_from)` when
+`soap_from` is stack-allocated) while the managed data remains intact.  You
+can use this function any time, to delegate management and deletion to another
+context `soap_to` and then continue with the current context.  You can also use
+different source `soap_from` contexts to delegate management and deletion to
+the other `soap_to` context.  To mass delete all managed data, use
+`soap_destroy(soap_to)` followed by `soap_end(soap_to)`.
 
 Context flags to initialize the soap struct                             {#flags}
 ===========================================

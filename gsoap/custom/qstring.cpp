@@ -91,7 +91,7 @@ QString *soap_in_xsd__string(struct soap *soap, char const *tag, QString *a, cha
   }
   else if (a)
   {
-    if (soap_s2xsd__string(soap, soap_value(soap), a))
+    if (soap_s2xsd__string(soap, soap_string_in(soap, 0, -1, -1, NULL), a))
       return NULL;
   }
   if (soap->body && soap_element_end_in(soap, tag))
@@ -107,7 +107,7 @@ const char * soap_xsd__string2s(struct soap *soap, QString a)
   else
     ba = a.toLatin1();
   size_t n = qstrlen(ba);
-  const char *s = (const char*)soap_malloc(soap, n + 1);
+  char *s = (char*)soap_malloc(soap, n + 1);
   soap_strcpy(s, n + 1, ba.constData());
   return s;
 }

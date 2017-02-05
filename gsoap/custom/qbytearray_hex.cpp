@@ -103,7 +103,7 @@ const char * soap_xsd__hexBinary2s(struct soap *soap, QByteArray a)
 {
   QByteArray ba = a.toHex();
   size_t n = qstrlen(ba);
-  char *s = (const char*)soap_malloc(soap, n + 1);
+  char *s = (char*)soap_malloc(soap, n + 1);
   soap_strcpy(s, n + 1, ba.constData());
   return s;
 }

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.42
+        stdsoap2.h 2.8.43
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20842
+#define GSOAP_VERSION 20843
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -641,9 +641,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #endif
 
 #ifndef WITH_NOSTDLIB
-# if defined(__gnu_linux__) && defined(WITH_C_LOCALE)
-#  define _GNU_SOURCE 1
-# endif
 # include <stdlib.h>
 # ifndef PALM
 #  include <stdio.h>
@@ -1671,9 +1668,9 @@ typedef soap_int32 soap_mode;
 
 /* state */
 
-#define SOAP_NONE       0
-#define SOAP_INIT       1
-#define SOAP_COPY       2
+#define SOAP_NONE               0
+#define SOAP_INIT               1
+#define SOAP_COPY               2
 
 #define soap_check_state(soap) (!(soap) || ((soap)->state != SOAP_INIT && (soap)->state != SOAP_COPY))
 
@@ -2524,9 +2521,9 @@ extern "C" {
 struct SOAP_CMAC soap
 { short state;                  /* 0 = uninitialized, 1 = initialized, 2 = copy of another soap struct */
   short version;                /* 1 = SOAP1.1 and 2 = SOAP1.2 (set automatically from namespace URI in nsmap table), 0 indicates non-SOAP content */
-  soap_mode mode;		/* internal mode flag, combines imode/omode */
-  soap_mode imode;		/* input mode flag set with soap_init1(), soap_new1(), or soap_set_imode() */
-  soap_mode omode;		/* ouput mode flag set with soap_init1(), soap_new1(), or soap_set_omode() */
+  soap_mode mode;               /* internal mode flag, combines imode/omode */
+  soap_mode imode;              /* input mode flag set with soap_init1(), soap_new1(), or soap_set_imode() */
+  soap_mode omode;              /* ouput mode flag set with soap_init1(), soap_new1(), or soap_set_omode() */
   const char *float_format;     /* user-definable format string for floats (<1024 chars) */
   const char *double_format;    /* user-definable format string for doubles (<1024 chars) */
   const char *long_double_format;       /* user-definable format string for long doubles (<1024 chars) */
@@ -2539,8 +2536,8 @@ struct SOAP_CMAC soap
   int connect_flags;            /* user-definable connect() SOL_SOCKET sockopt flags, e.g. set to SO_DEBUG to debug socket */
   int bind_flags;               /* user-definable bind() SOL_SOCKET sockopt flags, e.g. set to SO_REUSEADDR to enable reuse */
   int accept_flags;             /* user-definable accept() SOL_SOCKET sockopt flags */
-  int sndbuf;			/* user-definable SO_SNFBUF setsockopt */
-  int rcvbuf;			/* user-definable SO_SNFBUF setsockopt */
+  int sndbuf;                   /* user-definable SO_SNFBUF setsockopt */
+  int rcvbuf;                   /* user-definable SO_SNFBUF setsockopt */
   unsigned short linger_time;   /* user-definable linger time for SO_LINGER option */
   unsigned int maxlevel;        /* user-definable max XML nesting depth levels, initialized to SOAP_MAXLEVEL */
   long maxlength;               /* user-definable max string length, initialized to SOAP_MAXLENGTH, maxlength<=0 is unbounded */

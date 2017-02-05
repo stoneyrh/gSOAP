@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.42 User Guide</title>
+<title>gSOAP 2.8.43 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.42 User Guide </h1>
+<h1 align="center">gSOAP 2.8.43 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Jan 20, 2017
+<h3 align="center">Feb  5, 2017
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -3358,20 +3358,21 @@ abc.bind(NULL, 8080, 100); <br />
 abc.accept(); <br />
 // when using SSL: ssl_accept(&amp;abc); <br />
 ... <br />
-<b>if</b>(soap_begin_serve(&amp;abc)) // available in 2.8.2 and later <br />
+<b>if</b>&nbsp;(soap_begin_serve(&amp;abc)) // available in 2.8.2 and later <br />
 &nbsp;&nbsp;&nbsp;abc.soap_stream_fault(std::cerr); <br />
-<b>else</b><b>if</b>&nbsp;(abc.dispatch() == SOAP_NO_METHOD) <br />
+<b>else</b>&nbsp;<b>if</b>&nbsp;(abc.dispatch() == SOAP_NO_METHOD) <br />
 { <br />
 &nbsp;&nbsp;&nbsp;soap_copy_stream(&amp;uvw, &amp;abc); <br />
+&nbsp;&nbsp;&nbsp;soap_free_stream(&amp;abc); // abc no longer uses this stream <br />
 &nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(uvw.dispatch() == SOAP_NO_METHOD) <br />
 &nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_copy_stream(&amp;xyz, &amp;uvw); <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_free_stream(&amp;uvw); // uvw no longer uses this stream <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>if</b>&nbsp;(xyz.dispatch()) <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_send_fault(&amp;xyz); // send fault to client <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xyz.soap_stream_fault(std::cerr); <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_free_stream(&amp;xyz); // free the copy <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xyz.destroy(); <br />
 &nbsp;&nbsp;&nbsp;} <br />
 &nbsp;&nbsp;&nbsp;<b>else</b><br />
@@ -3379,7 +3380,6 @@ abc.accept(); <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap_send_fault(&amp;uvw); // send fault to client <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uvw.soap_stream_fault(std::cerr); <br />
 &nbsp;&nbsp;&nbsp;} <br />
-&nbsp;&nbsp;&nbsp;soap_free_stream(&amp;uvw); // free the copy <br />
 &nbsp;&nbsp;&nbsp;uvw.destroy(); <br />
 } <br />
 <b>else</b><br />
@@ -5797,7 +5797,7 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_C_LOCALE</i>	</td><td align="left">use locale functions when available to ensure locale-independent </td></tr>
 <tr><td align="left"></td><td align="left">number conversions (force the use of C locale) </td></tr>
 <tr><td align="left"><i>WITH_CASEINSENSITIVETAGS</i>	</td><td align="left">enable case insensitive XML parsing </td></tr>
-<tr><td align="left"><i>WITH_REPLACE_ILLEGAL_UTF8</i>	</td><td align="left">strict UTF-8: replaces UTF8 content that is outside the allowed range with U+FFFD </td></tr></table>
+<tr><td align="left"><i>WITH_REPLACE_ILLEGAL_UTF8</i>	</td><td align="left">strict UTF-8: replaces UTF8 content that is outside the allowed range, with U+FFFD </td></tr></table>
 
 </td></tr></table><br></span>
 Other compile-time flags:
@@ -11907,6 +11907,11 @@ Remember to set the <i>SOAP_XML_STRICT</i> input mode flag to
 enable the validation of value length constraints.
 
 <div class="p"><!----></div>
+Use compiler flag <i>WITH_REPLACE_ILLEGAL_UTF8</i> to force strict UTF-8 text
+conversions, which replaces invalid UTF-8 with U+FFFD.  Compile
+<i>stdsoap2.c</i> and <i>stdsoap2.cpp</i> with this flag.
+
+<div class="p"><!----></div>
 	      <h4><a name="tth_sEc17.2.2">
 17.2.2</a>&nbsp;&nbsp;<font color="#0000FF">Value Range Restrictions</font></h4>
 
@@ -11948,6 +11953,15 @@ Example:
 &nbsp;&nbsp;&nbsp;@<b>char</b>&nbsp;*name 1; // required name attribute <br />
 };
 </td></tr></table><br></i>
+
+<div class="p"><!----></div>
+Remember to set the <i>SOAP_XML_STRICT</i> input mode flag to
+enable the validation of value range constraints.
+
+<div class="p"><!----></div>
+Use compiler flag <i>WITH_REPLACE_ILLEGAL_UTF8</i> to force strict UTF-8 text
+conversions, which replaces invalid UTF-8 with U+FFFD.  Compile
+<i>stdsoap2.c</i> and <i>stdsoap2.cpp</i> with this flag.
 
 <div class="p"><!----></div>
 	      <h4><a name="tth_sEc17.2.3">
@@ -16626,5 +16640,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 20 Jan 2017, 12:18.</small>
+version 4.00.<br />On  5 Feb 2017, 11:33.</small>
 </html>

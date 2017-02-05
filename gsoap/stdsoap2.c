@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.42
+        stdsoap2.c[pp] 2.8.43
 
         gSOAP runtime engine
 
@@ -51,10 +51,14 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20842
+#define GSOAP_LIB_VERSION 20843
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
+#endif
+
+#if defined(__gnu_linux__) && !defined(_GNU_SOURCE)
+# define _GNU_SOURCE 1
 #endif
 
 #include "stdsoap2.h"
@@ -81,10 +85,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.42 2017-01-20 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.43 2017-02-05 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.42 2017-01-20 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.43 2017-02-05 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -1893,20 +1897,26 @@ soap_getutf8(struct soap *soap)
     return c;
 #ifdef WITH_REPLACE_ILLEGAL_UTF8
   c1 = (soap_wchar)soap_get1(soap);
-  if (c <= 0xC1)
+  if (c <= 0xC1 || (c1 & 0xC0) != 0x80)
+  { soap_revget1(soap);
     return SOAP_UNKNOWN_UNICODE_CHAR;
+  }
   c1 &= 0x3F;
   if (c < 0xE0)
     return (((c & 0x1F) << 6) | c1);
   c2 = (soap_wchar)soap_get1(soap);
   if ((c == 0xE0 && c1 < 0x20) || (c2 & 0xC0) != 0x80)
+  { soap_revget1(soap);
     return SOAP_UNKNOWN_UNICODE_CHAR;
+  }
   c2 &= 0x3F;
   if (c < 0xF0)
     return (((c & 0x0F) << 12) | (c1 << 6) | c2);
   c3 = (soap_wchar)soap_get1(soap);
   if ((c == 0xF0 && c1 < 0x10) || (c == 0xF4 && c1 >= 0x10) || c >= 0xF5 || (c3 & 0xC0) != 0x80)
+  { soap_revget1(soap);
     return SOAP_UNKNOWN_UNICODE_CHAR;
+  }
   return (((c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | (c3 & 0x3F));
 #else
   c1 = (soap_wchar)soap_get1(soap);
@@ -3801,13 +3811,18 @@ ssl_auth_init(struct soap *soap)
     return soap_set_receiver_error(soap, "SSL error", "Can't read key", SOAP_SSL_ERROR);
 #endif
   if ((soap->ssl_flags & SOAP_SSL_RSA))
-  { RSA *rsa = RSA_generate_key(SOAP_SSL_RSA_BITS, RSA_F4, NULL, NULL);
-    if (!SSL_CTX_set_tmp_rsa(soap->ctx, rsa))
-    { if (rsa)
-        RSA_free(rsa);
-      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set RSA key", SOAP_SSL_ERROR);
+  {
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    if (SSL_CTX_need_tmp_RSA(soap->ctx))
+#endif
+    { RSA *rsa = RSA_generate_key(SOAP_SSL_RSA_BITS, RSA_F4, NULL, NULL);
+      if (!rsa || !SSL_CTX_set_tmp_rsa(soap->ctx, rsa))
+      { if (rsa)
+          RSA_free(rsa);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set RSA key", SOAP_SSL_ERROR);
+      }
+      RSA_free(rsa);
     }
-    RSA_free(rsa);
   }
   else if (soap->dhfile)
   { DH *dh = 0;
@@ -10030,7 +10045,6 @@ soap_copy_stream(struct soap *copy, struct soap *soap)
   copy->mode = soap->mode;
   copy->imode = soap->imode;
   copy->omode = soap->omode;
-  copy->master = soap->master;
   copy->socket = soap->socket;
   copy->sendsk = soap->sendsk;
   copy->recvsk = soap->recvsk;

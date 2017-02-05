@@ -384,7 +384,7 @@ ds__SignatureType =\
 typedef char *_ds__SignatureValue;\n\
 typedef struct ds__SignatureType\n\
 {	struct ds__SignedInfoType*		SignedInfo;\n\
-	_ds__SignatureValueType			SignatureValue;\n\
+	_ds__SignatureValue    			SignatureValue;\n\
 	struct ds__KeyInfoType*			KeyInfo;\n\
 	@char*					Id;\n\
 } ds__SignatureType, _ds__Signature;

@@ -62,9 +62,9 @@ int main()
 	else if (quote.dispatch() == SOAP_NO_METHOD)
 	{
 		soap_copy_stream(&calc, &quote);
+		soap_free_stream(&quote); /* quote is no longer using this socket */
 		if (calc.dispatch())
 			soap_send_fault(&calc);
-		soap_free_stream(&calc);
 	}
 	else if (quote.error)
 		soap_send_fault(&quote);
@@ -75,7 +75,7 @@ int main()
 }
 
 int Quote::quoteService::getQuote(char *s, float *r)
-{ *r = 123; /* a dummy service, stocks don't move */
+{ *r = 123; /* a dummy service, these stocks don't move! */
   return SOAP_OK;
 }
 
