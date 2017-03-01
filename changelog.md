@@ -899,7 +899,7 @@ Version 2.8.23 (8/17/2015)
 - Added TLS SNI.
 - Added Unicode C++11 identifier support to soapcpp2, supported directly by UTF8 encoding and the UCN `\uNNNN` extension of identifier naming in the C99/C98++ standards.
 - Added wsdl2h option -U to allow UTF8-encoded Unicode C/C++ identifiers upon mapping universal XML tag names to C/C++ identifier names (this is a C++ standard-dependent and compiler-dependent feature).
-- Replaced C lib functions `memcpy`, `memmove`, `strcpy`, `strcat`, `strncpy`, `strncat`, `sscanf`, `sprintf` by more secure alternatives when available on target platform.
+- Replaced C lib functions `memcpy`, `memmove`, `strcpy`, `strcat`, `strncpy`, `strncat`, `sscanf`, `sprintf` by more secure alternatives when available on target platform.  On windows you should add an [Invalid Parameter Routine](https://msdn.microsoft.com/en-us/library/ksazx244.aspx), to ignore and let gsoap safely continue with truncated strings (and deal with soft errors later).
 - Updated OpenSSL and GNUTLS integration.
 - Fixed soapcpp2 SOAP RPC literal WSDL output (supported are SOAP RPC encoded, RPC literal, document literal, and REST).
 - Fixed C++ struct soap context constructor memory leak when `WITH_GZIP` is enabled and changed struct soap context allocation in C++.
@@ -1139,13 +1139,21 @@ Version 2.8.42 (01/20/2017)
 - Fixed shared pointer to QName string QName output normalization.
 - Fixed wsdl2h pointer member to vector for minOccurs="0" by removing the unnecessary pointer to the container, i.e. just using the container.
 
-Version 2.8.43 (02/05/2017) {#latest}
+Version 2.8.43 (02/05/2017)
 ---
 
 - Added `SSL_CTX_need_tmp_RSA()` check (OpenSSL 1.0.1 and greater).
 - Fixed string length limiting issue in QT QString type serializer `custom/qstring.h` and addressed compilation issue with other QT types serializers.
 - Fixed documentation of `soap_copy_stream()` followed by `soap_free_stream()` to chain services.
 - Fixed `soap_psha1` string buffering.
+
+Version 2.8.44 (03/01/2017) {#latest}
+---
+
+- Improved windows portability and stability.
+- Fixed WS-Discovery `soap_wsdd_listen` memory cleanup on timeouts.
+- Fixed `soap->os` saved message string NUL termination (this was a C code problem only).
+- Fixed Cygwin and MinGW missing xlocale.h error.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

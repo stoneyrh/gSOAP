@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.43 User Guide</title>
+<title>gSOAP 2.8.44 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.43 User Guide </h1>
+<h1 align="center">gSOAP 2.8.44 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Feb  5, 2017
+<h3 align="center">Mar  1, 2017
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -5772,7 +5772,7 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_GNUTLS</i>	</td><td align="left">enables GNUTLS, see Sections&nbsp;<a href="#sec:clientopenssl">19.23</a>&nbsp;<a href="#sec:serveropenssl">19.22</a> </td></tr>
 <tr><td align="left"><i>WITH_IPV6</i>	</td><td align="left">enables IPv6 support (compile ALL sources with this macro set)</td></tr>
 <tr><td align="left"><i>WITH_IPV6_V6ONLY</i></td><td align="left">IPv6-only server option (compile ALL sources with this macro set)</td></tr>
-<tr><td align="left"><i>WITH_NO_IPV6_V6ONLY</i></td><td align="left">resets IPv6-only server option (compile ALL sources with this macro set)</td></tr>
+<tr><td align="left"><i>WITH_NO_IPV6_V6ONLY</i></td><td align="left">permits IPv4 and IPv6 (compile ALL sources with this macro set)</td></tr>
 <tr><td align="left"><i>WITH_TCPFIN</i>	</td><td align="left">use TCP FIN after sends when socket is ready to close </td></tr>
 <tr><td align="left"><i>WITH_FASTCGI</i>	</td><td align="left">enables FastCGI, see Sections&nbsp;<a href="#sec:fastcgi">19.32</a> </td></tr>
 <tr><td align="left"><i>WITH_GZIP</i>	</td><td align="left">enables gzip and deflate compression, see Section&nbsp;<a href="#sec:compression">19.28</a> </td></tr>
@@ -15887,6 +15887,12 @@ This exports all functions which are preceded by the macro <i>SOAP_FMAC1</i> in
 the <i>soapcpp2.cpp</i> source file and macro <i>SOAP_FMAC3</i> in the <i>envC.cpp</i> source file.
 
 <div class="p"><!----></div>
+Finally, note that the gSOAP distribution package contains a number of .c
+files.  Mixing .c with .cpp files is not recommended with Visual Studio and
+will lead to runtime errors when building DLLs.  Therefore, always rename .c
+files to .cpp files when creating DLLs.
+
+<div class="p"><!----></div>
 		      <h4><a name="tth_sEc19.38.2">
 19.38.2</a>&nbsp;&nbsp;<font color="#0000FF">Creating Client and Server DLLs</font></h4>
 
@@ -16640,5 +16646,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On  5 Feb 2017, 11:33.</small>
+version 4.00.<br />On  1 Mar 2017, 15:09.</small>
 </html>

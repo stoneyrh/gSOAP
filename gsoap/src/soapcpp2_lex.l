@@ -340,23 +340,40 @@ static void directive(void)
         Data *d;
         int service;
         for (i = 0; yytext[i]; i++)
-                if (yytext[i] <= 32)
-                        break;
+          if (yytext[i] <= 32)
+            break;
         for (; yytext[i]; i++)
-                if (yytext[i] > 32)
-                        break;
-        for (j = i; yytext[j]; j++)
-                if (yytext[j] <= 32)
-                        break;
-        if (i == j)
-                return;
-        s = (char*)emalloc(j-i+1);
-        for (k = 0; k < j-i; k++)
-        { s[k] = yytext[k+i];
-          if (s[k] == '_')
-            s[k] = '-';
+          if (yytext[i] > 32)
+              break;
+        if (!strncmp(yytext+i, "schema", 6))
+        { sprintf(errbuf, "gsoap schema directive without namespace: %s", yytext+i);
+          semwarn(errbuf);
+          s = (char*)emalloc(1);
+          *s = '\0';
         }
-        s[k] = '\0';
+        else if (!strncmp(yytext+i, "service", 7))
+        {
+          s = (char*)emalloc(1);
+          *s = '\0';
+        }
+        else
+        {
+          for (j = i; yytext[j]; j++)
+            if (yytext[j] <= 32)
+              break;
+          if (i == j)
+            return;
+          s = (char*)emalloc(j-i+1);
+          for (k = 0; k < j-i; k++)
+          { s[k] = yytext[k+i];
+            if (s[k] == '_')
+              s[k] = '-';
+          }
+          s[k] = '\0';
+          for (i = j; yytext[i]; i++)
+            if (yytext[i] > 32)
+              break;
+        }
         for (sp = services; sp; sp = sp->next)
                 if (!strcmp(sp->ns, s))
                         break;
@@ -387,9 +404,6 @@ static void directive(void)
                 sp->data = NULL;
                 services = sp;
         }
-        for (i = j; yytext[i]; i++)
-                if (yytext[i] > 32)
-                        break;
         if (!strncmp(yytext+i, "service", 7) || !strncmp(yytext+i, "schema", 6))
         {       service = strncmp(yytext+i, "schema", 6);
                 for (i += 7; yytext[i]; i++)

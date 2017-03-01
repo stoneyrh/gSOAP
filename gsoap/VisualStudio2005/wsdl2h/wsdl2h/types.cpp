@@ -637,7 +637,7 @@ const char *Types::nsprefix(const char *prefix, const char *URI)
     }
     return s;
   }
-  return NULL;
+  return "";
 }
 
 const char *Types::prefix(const char *name)
@@ -758,7 +758,7 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
         *t++ = ':';
       else if (prefix && *prefix == '_')
       {
-        if (!URI)
+        if (!URI || !*URI)
           *t++ = '_';
         if (prefix[1] == '_') // ensures ns prefix starts with __
         {

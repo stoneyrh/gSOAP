@@ -991,7 +991,7 @@ soap_wsdd_ResolveMatches(struct soap *soap, const char *endpoint, const char *Me
 
 /**
 @fn int soap_wsdd_listen(struct soap *soap, int timeout)
-@brief Listen on a port for inbound WS-Discovery messages.
+@brief Listen on a port for inbound WS-Discovery messages, also cleans up memory with `soap_destroy` and `soap_end`.
 @param soap context
 @param[in] timeout seconds to listen (use negative value for micro seconds)
 @return SOAP_OK or error code
@@ -1018,7 +1018,7 @@ soap_wsdd_listen(struct soap *soap, int timeout)
     {
       /* timeout? */
       if (!soap->errnum)
-        return soap->error = SOAP_OK;
+        break;
       return soap->error;
     }
 
@@ -1030,7 +1030,7 @@ soap_wsdd_listen(struct soap *soap, int timeout)
     {
       /* timeout? */
       if (!soap->errnum)
-        return soap->error = SOAP_OK;
+	break;
 #ifdef WITH_FASTCGI
       soap_send_fault(soap);
 #else
@@ -1041,6 +1041,11 @@ soap_wsdd_listen(struct soap *soap, int timeout)
     soap_destroy(soap);
     soap_end(soap);
   } 
+
+  /* timed out */
+  soap_destroy(soap);
+  soap_end(soap);
+  return soap->error = SOAP_OK;
 }
 
 /******************************************************************************/

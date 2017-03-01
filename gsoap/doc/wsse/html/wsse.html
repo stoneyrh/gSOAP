@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WS-Security plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Dec 22 2016</div>
+      <div style="float: right; font-size: 10px;">updated Wed Mar 1 2017 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -430,10 +430,10 @@ WS-SecureConversation and WS-Trust</h1>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> psha1len = 32; <span class="comment">// or greater</span></div><div class="line"><span class="keywordtype">int</span> n, m;</div><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *client_secret = soap_base642s(soap, client_secret_base64, NULL, 0, &amp;n);</div><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *server_secret = soap_base642s(soap, server_secret_base64, NULL, 0, &amp;m);</div><div class="line"><span class="keywordtype">char</span> psha1[psha1len];</div><div class="line"><span class="keywordtype">char</span> *psha1_base64;</div><div class="line"><span class="keywordflow">if</span> (n != 16)</div><div class="line">  .. error <span class="comment">// HMAC key is 16 bytes</span></div><div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#ac50a99453ce725c252c8d5efb89438c6">soap_psha1</a>(soap, client_secret, server_secret, m, psha1, psha1len))</div><div class="line">  .. error <span class="comment">// insufficient memory</span></div><div class="line">psha1_base64 = soap_s2base64(soap, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*)psha1, NULL, psha1len);</div></div><!-- fragment --> </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2016, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Dec 22 2016 09:15:17 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Wed Mar 1 2017 13:52:20 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

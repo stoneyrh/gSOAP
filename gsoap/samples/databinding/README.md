@@ -7,21 +7,9 @@ C and C++ XML Data Bindings                                          {#mainpage}
 Introduction                                                            {#intro}
 ============
 
-This is a detailed overview of the gSOAP C and C++ XML data bindings and
-discussed the advantages, concepts, usage, and implementation.  At the end of
-this document two examples are given to illustrate the application of XML data
-bindings.
-
-The first simple example `address.cpp` shows how to use wsdl2h to bind an XML
-schema to C++.  The C++ application reads and writes an XML file into and from
-a C++ "address book" data structure.  The C++ data structure is an STL vector
-of address objects.
-
-The second example `graph.cpp` shows how XML is serialized as a tree, digraph,
-and cyclic graph.  The digraph and cyclic graph serialization rules are similar
-to SOAP 1.1/1.2 encoded multi-ref elements with id-ref attributes to link
-elements through IDREF XML references, creating a an XML graph with pointers to
-XML nodes.
+This article gives a detailed overview of the gSOAP C and C++ XML data bindings
+and highlights the advantages, concepts, usage, and implementation aspects of
+XML data bindings.
 
 The major advantage of XML data bindings is that your application data is
 always **type safe** in C and C++ by binding XML schema types to C/C++ types.
@@ -38,6 +26,17 @@ XML, including the serialization of cyclic graph structures.  The gSOAP tools
 also generate routines for deep copying and deep deletion of C/C++ data
 structures to simplify memory management.  In addition, C/C++ structures are
 deserialized into managed memory, managed by the gSOAP `soap` context.
+
+At the end of this document two examples are given to illustrate the
+application of XML data bindings.  The first simple example `address.cpp` shows
+how to use wsdl2h to bind an XML schema to C++.  The C++ application reads and
+writes an XML file into and from a C++ "address book" data structure.  The C++
+data structure is an STL vector of address objects.  The second example
+`graph.cpp` shows how C++ data can be accurately serialized as a tree, digraph,
+and cyclic graph in XML.  The digraph and cyclic graph serialization rules
+implement SOAP 1.1/1.2 multi-ref encoding with id-ref attributes to link
+elements through IDREF XML references, creating a an XML graph with pointers to
+XML nodes that preserves the structural integrity of the serialized C++ data.
 
 These examples demonstrate XML data bindings only for relatively simple data
 structures and types.  The gSOAP tools support more than just these type of
@@ -4163,6 +4162,10 @@ soap_new_T(struct soap*)` returns data allocated on the managed heap for type
 `T`.  The data is mass-deleted with `soap_destroy(soap)` followed by
 `soap_end(soap)`.
 
+The `soap_new_T` functions return NULL when allocation fails.  C++ exceptions
+are never raised by gSOAP code when data is allocated, unless `SOAP_NOTHROW`
+(set to `(std::nothrow)`) is redefined to permit `new` to throw exceptions.
+
 There are four variations of `soap_new_T()` to allocate data of type `T` that
 soapcpp2 auto-generates:
 
@@ -4291,7 +4294,7 @@ To create an array of pointers to values, define the following template:
     { 
       T **p = (T**)soap_malloc(soap, n * sizeof(T*));
       for (int i = 0; i < n; ++i)
-	p[i] = &array[i];
+        p[i] = &array[i];
       return p;
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -4627,7 +4630,7 @@ parameters can be set (some parameters may require 2.8.31 and later versions):
   this stream.  See also [input and output](#io).
 
 Error handling and reporting                                           {#errors}
-==========================
+============================
 
 The gSOAP API functions return `SOAP_OK` (zero) or a non-zero error code.  The
 error code is stored in `int soap::error` of the current `struct soap` context.
@@ -4645,11 +4648,18 @@ Error messages can be displayed with:
 - `void soap_print_fault_location(struct soap*, FILE *fd)` prints the location
   and part of the XML where the parser encountered an error.
 
-An EOF (`SOAP_EOF` or -1) error code is returned when the parser has hit EOF
-but expected more input.
+C++ exceptions are never raised by gSOAP code, even when data is allocated.
+(That is unless the `SOAP_NOTHROW` macro (set to `(std::nothrow)` by default)
+is redefined to permit `new` to throw exceptions.)
 
 A `SOAP_EOM` error code is returned when memory was exhausted during
 processing of input and/or output of data.
+
+An EOF (`SOAP_EOF` or -1) error code is returned when the parser has hit EOF
+but expected more input, or when socket communications timed out.  In addition
+to the `SOAP_EOF` error, the `int soap::errnum` of the `struct soap` context is
+set to the `errno` value of the operation that failed.  For timeouts, the
+`soap::ernum` value is always 0 instead of an `errno` error code.
 
 Use `soap_xml_error_check(soap->error)` to check for XML errors.  This returns
 true (non-zero) when a parsing and validation error has occurred.
@@ -4679,6 +4689,25 @@ For example:
     soap_end(soap);     // delete other data and temp data
     soap_free(soap);    // free context
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When deploying your application on UNIX and Linux systems, UNIX signal handlers
+should be added to your code handle signals, in particular `SIGPIPE`:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    signal(SIGPIPE, sigpipe_handler);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+where the `sigpipe_handler` is a function:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    void sigpipe_handler(int x) { }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Other UNIX signals may have to be handled as well.
+
+The gSOAP engine is designed for easy memory cleanup after being interrupted.
+Use `soap_destroy(soap)` and `soap_end(soap)`, after which the `soap` context
+can be reused.
 
 Features and limitations                                             {#features}
 ========================

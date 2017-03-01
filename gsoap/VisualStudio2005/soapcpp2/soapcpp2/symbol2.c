@@ -319,6 +319,7 @@ void gen_method(FILE *fd, Entry *method, int server);
 void gen_report_params(Entry *p, Entry *result, int server);
 void gen_report_req_params(Tnode *typ);
 void gen_report_set_params(Tnode *typ);
+void gen_params_ref(FILE *fd, Table *params, Entry *result, int flag);
 void gen_params(FILE *fd, Table *params, Entry *result, int flag);
 void gen_args(FILE *fd, Table *params, Entry *result, int flag);
 void gen_query_url(FILE *fd, Table *params, int soap);
@@ -2942,9 +2943,9 @@ generate_header(Table *t)
     }
     fprintf(freport, "- `const char *soap_strdup(struct saop*, const char*)` managed duplication of string\n");
     fprintf(freport, "- `const wchar_t *soap_wstrdup(struct saop*, const wchar_t*)` managed duplication of wide string\n");
-    fprintf(freport, "- `int soap_write_Name(struct soap*, Type*)` serialize *Type* to XML, returns `SOAP_OK` or error code\n");
-    fprintf(freport, "- `int soap_PUT_Name(struct soap*, const char *URL, Type*)` REST PUT *Type* in XML, returns `SOAP_OK` or error code\n");
-    fprintf(freport, "- `int soap_POST_send_Name(struct soap*, const char *URL, Type*)` REST POST send *Type* in XML (MUST be followed by a `soap_POST_recv_OtherName`), returns `SOAP_OK` or error code\n");
+    fprintf(freport, "- `int soap_write_Name(struct soap*, const Type*)` serialize *Type* to XML, returns `SOAP_OK` or error code\n");
+    fprintf(freport, "- `int soap_PUT_Name(struct soap*, const char *URL, const Type*)` REST PUT *Type* in XML, returns `SOAP_OK` or error code\n");
+    fprintf(freport, "- `int soap_POST_send_Name(struct soap*, const char *URL, const Type*)` REST POST send *Type* in XML (MUST be followed by a `soap_POST_recv_OtherName`), returns `SOAP_OK` or error code\n");
     fprintf(freport, "- `int soap_read_Name(struct soap*, Type*)` deserialize *Type* from XML, returns `SOAP_OK` or error code\n");
     fprintf(freport, "- `int soap_GET_Name(struct soap*, const char *URL, Type*)` REST GET *Type* from XML, returns `SOAP_OK` or error code\n");
     fprintf(freport, "- `int soap_POST_recv_Name(struct soap*, Type*)` REST GET *Type* from XML (after a `soap_POST_send_OtherName`), returns `SOAP_OK` or error code\n");
@@ -3467,10 +3468,10 @@ generate_schema(Table *t)
       fclose(fd);
     }
   }
+  if (Tflag)
+    fprintf(fmsg, "Warning: cannot save soapTester, need directive //gsoap ns service name:\n");
   if (!has_nsmap)
   {
-    if (Tflag)
-      fprintf(fmsg, "Warning: cannot save soapTester, need directive //gsoap service name\n");
     for (ns = nslist; ns; ns = ns->next)
       if (strcmp(ns->name, "SOAP-ENV") && strcmp(ns->name, "SOAP-ENC") && strcmp(ns->name, "xsi") && strcmp(ns->name, "xsd"))
         break;
@@ -6099,22 +6100,6 @@ gen_proxy(FILE *fd, Table *table, Symbol *ns, const char *name, const char *URL)
         fprintf(fd, ", %s%s) { return soap ? soap_call_%s(soap, endpoint, NULL", c_storage(q->info.sto), c_type_id(q->info.typ, q->sym->name), ident(r->sym->name));
       else
         fprintf(fd, "%s%s) { return soap ? soap_call_%s(soap, endpoint, NULL", c_storage(q->info.sto), c_type_id(q->info.typ, q->sym->name), ident(r->sym->name));
-      /* the action is now handled by the soap_call/soap_send operation when we pass NULL */
-#if 0
-      m = NULL;
-      if (sp && (s = strstr(r->sym->name, "__")))
-        for (m = sp->list; m; m = m->next)
-          if (m->part && m->mess == ACTION && !strcmp(m->name, s+2))
-          {
-            if (*m->part == '"')
-              fprintf(fd, "%s", m->part);
-            else
-              fprintf(fd, "\"%s\"", m->part);
-            break;
-          }
-      if (!m)
-        fprintf(fd, "NULL");
-#endif
       for (t = output; t; t = t->prev)
         for (p = t->list; p; p = p->next)
           fprintf(fd, ", %s", ident(p->sym->name));
@@ -6274,7 +6259,7 @@ gen_proxy_header(FILE *fd, Table *table, Symbol *ns, const char *name)
       {
         fprintf(fd, "\n        /// Add SOAP Header to message");
         fprintf(fd, "\n        virtual void soap_header(");
-        gen_params(fd, t, NULL, 0);
+        gen_params_ref(fd, t, NULL, 0);
         fprintf(fd, ";");
       }
     }
@@ -6397,7 +6382,7 @@ gen_proxy_code(FILE *fd, Table *table, Symbol *ns, const char *name)
       if (t && t->list && !is_void(t->list->info.typ))
       {
         fprintf(fd, "\n\nvoid %s::soap_header(", name);
-        gen_params(fd, t, NULL, 0);
+        gen_params_ref(fd, t, NULL, 0);
         fprintf(fd, "\n{\t::soap_header(%s);", soap);
         for (param = t->list; param; param = param->next)
         {
@@ -6528,7 +6513,7 @@ gen_object_header(FILE *fd, Table *table, Symbol *ns, const char *name)
       {
         fprintf(fd, "\n        /// Add SOAP Header to message");
         fprintf(fd, "\n        virtual void soap_header(");
-        gen_params(fd, t, NULL, 0);
+        gen_params_ref(fd, t, NULL, 0);
         fprintf(fd, ";");
       }
     }
@@ -6620,14 +6605,14 @@ gen_method(FILE *fd, Entry *method, int server)
     else
       fprintf(fd, "\n        /// Web service operation '%s' (returns SOAP_OK or error code)", ns_remove(method->sym->name));
     fprintf(fd, "\n        virtual int %s(", ns_cname(method->sym->name, NULL));
-    gen_params(fd, params, result, 0);
+    gen_params_ref(fd, params, result, 0);
     if (!server)
     {
       fprintf(fd, "\n        { return this->%s(NULL, NULL", ns_cname(method->sym->name, NULL));
       gen_args(fd, params, result, 1);
       fprintf(fd, "; }");
       fprintf(fd, "\n        virtual int %s(const char *soap_endpoint, const char *soap_action", ns_cname(method->sym->name, NULL));
-      gen_params(fd, params, result, 1);
+      gen_params_ref(fd, params, result, 1);
     }
     if (server)
       fprintf(fd, " SOAP_PURE_VIRTUAL;");
@@ -6640,12 +6625,12 @@ gen_method(FILE *fd, Entry *method, int server)
   {
     fprintf(fd, "\n        /// Web service one-way send operation 'send_%s' (returns SOAP_OK or error code)", ns_remove(method->sym->name));
     fprintf(fd, "\n        virtual int send_%s(", ns_cname(method->sym->name, NULL));
-    gen_params(fd, params, result, 0);
+    gen_params_ref(fd, params, result, 0);
     fprintf(fd, "\n        { return this->send_%s(NULL, NULL", ns_cname(method->sym->name, NULL));
     gen_args(fd, params, result, 1);
     fprintf(fd, "; }");
     fprintf(fd, "\n        virtual int send_%s(const char *soap_endpoint, const char *soap_action", ns_cname(method->sym->name, NULL));
-    gen_params(fd, params, result, 1);
+    gen_params_ref(fd, params, result, 1);
     fprintf(fd, ";\n        /// Web service one-way receive operation 'recv_%s' (returns SOAP_OK or error code)", ns_remove(method->sym->name));
     fprintf(fd, ";\n        virtual int recv_%s(", ns_cname(method->sym->name, NULL));
     fprintf(fd, "struct %s&);", ident(method->sym->name));
@@ -6653,12 +6638,12 @@ gen_method(FILE *fd, Entry *method, int server)
     fprintf(fd, "\n        virtual int recv_%s_empty_response()\n        { return soap_recv_empty_response(%s); }", ns_cname(method->sym->name, NULL), soap);
     fprintf(fd, "\n        /// Web service one-way synchronous send operation '%s' with HTTP Accept/OK response receive (returns SOAP_OK or error code)", ns_remove(method->sym->name));
     fprintf(fd, "\n        virtual int %s(", ns_cname(method->sym->name, NULL));
-    gen_params(fd, params, result, 0);
+    gen_params_ref(fd, params, result, 0);
     fprintf(fd, "\n        { return this->%s(NULL, NULL", ns_cname(method->sym->name, NULL));
     gen_args(fd, params, result, 1);
     fprintf(fd, "; }");
     fprintf(fd, "\n        virtual int %s(const char *soap_endpoint, const char *soap_action", ns_cname(method->sym->name, NULL));
-    gen_params(fd, params, result, 1);
+    gen_params_ref(fd, params, result, 1);
     fprintf(fd, "\n        {\n          if (this->send_%s(soap_endpoint, soap_action", ns_cname(method->sym->name, NULL));
     gen_args(fd, params, result, 1);
     fprintf(fd, " || soap_recv_empty_response(%s))\n            return %s->error;\n            return SOAP_OK;\n        }", soap, soap);
@@ -6773,6 +6758,23 @@ gen_report_set_params(Tnode *typ)
       }
     }
   }
+}
+
+void
+gen_params_ref(FILE *fd, Table *params, Entry *result, int flag)
+{
+  Entry *param;
+  for (param = params->list; param; param = param->next)
+  {
+    if (!cflag && (param->info.typ->type == Tstruct || param->info.typ->type == Tclass))
+      fprintf(fd, "%s%s%s& %s", flag || param != params->list ? ", " : "", c_storage(param->info.sto | Sconst), c_type(param->info.typ), ident(param->sym->name));
+    else
+      fprintf(fd, "%s%s%s", flag || param != params->list ? ", " : "", c_storage(param->info.sto), c_type_id(param->info.typ, param->sym->name));
+  }
+  if (!result || is_transient(result->info.typ))
+    fprintf(fd, ")");
+  else
+    fprintf(fd, "%s%s%s)", flag || params->list ? ", " : "", c_storage(result->info.sto), c_type_id(result->info.typ, result->sym->name));
 }
 
 void
@@ -6945,12 +6947,12 @@ gen_call_proto(FILE *fd, Entry *method)
   if (!is_transient(result->info.typ))
   {
     fprintf(fd, "\n    SOAP_FMAC5 int SOAP_FMAC6 soap_call_%s(struct soap *soap, const char *soap_endpoint, const char *soap_action", ident(method->sym->name));
-    gen_params(fd, params, result, 1);
+    gen_params_ref(fd, params, result, 1);
   }
   else
   {
     fprintf(fd, "\n    SOAP_FMAC5 int SOAP_FMAC6 soap_send_%s(struct soap *soap, const char *soap_endpoint, const char *soap_action", ident(method->sym->name));
-    gen_params(fd, params, result, 1);
+    gen_params_ref(fd, params, result, 1);
   }
   fprintf(fd, ";");
   if (is_transient(result->info.typ))
@@ -6998,17 +7000,17 @@ gen_call_method(FILE *fd, Entry *method, const char *name)
       fprintf(fd, "\n\nint %s::%s(const char *endpoint, const char *soap_action", name, ns_cname(method->sym->name, NULL));
     else
       fprintf(fd, "\n\nint %s::send_%s(const char *endpoint, const char *soap_action", name, ns_cname(method->sym->name, NULL));
-    gen_params(fd, params, result, 1);
+    gen_params_ref(fd, params, result, 1);
   }
   else if (!is_transient(result->info.typ))
   {
     fprintf(fd, "\n\nSOAP_FMAC5 int SOAP_FMAC6 soap_call_%s(struct soap *soap, const char *soap_endpoint, const char *soap_action", ident(method->sym->name));
-    gen_params(fd, params, result, 1);
+    gen_params_ref(fd, params, result, 1);
   }
   else
   {
     fprintf(fd, "\n\nSOAP_FMAC5 int SOAP_FMAC6 soap_send_%s(struct soap *soap, const char *soap_endpoint, const char *soap_action", ident(method->sym->name));
-    gen_params(fd, params, result, 1);
+    gen_params_ref(fd, params, result, 1);
   }
   if (name)
   {
@@ -7652,7 +7654,7 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, const char *name)
       if (t && t->list && !is_void(t->list->info.typ))
       {
         fprintf(fd, "\n\nvoid %s::soap_header(", name);
-        gen_params(fd, t, NULL, 0);
+        gen_params_ref(fd, t, NULL, 0);
         fprintf(fd, "\n{\t::soap_header(%s);", soap);
         for (param = t->list; param; param = param->next)
         {

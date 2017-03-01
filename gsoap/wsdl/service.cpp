@@ -316,11 +316,13 @@ void Definitions::analyze(const wsdl__definitions& definitions)
               char *URI;
               if (input_body && soap__operation_style == rpc)
                 URI = input_body->namespace_;
-              else if (binding_count == 1 || !service_prefix)
+              else if ((binding_count == 1 || !service_prefix) && definitions.targetNamespace && *definitions.targetNamespace)
                 URI = definitions.targetNamespace;
+              else if ((binding_count == 1 || !service_prefix) && definitions.name && *definitions.name)
+                URI = definitions.name;
               else
               {
-                // multiple service bidings are used, each needs a unique new URI
+                // multiple service bindings are used, each needs a unique new URI
                 size_t l = strlen(definitions.targetNamespace) + strlen(binding_name);
                 URI = (char*)soap_malloc(definitions.soap, l + 2);
                 if (URI)
@@ -335,400 +337,392 @@ void Definitions::analyze(const wsdl__definitions& definitions)
                   soap_strcpy(URI + n, l + 2 - n, binding_name);
                 }
               }
-              if (URI)
+              const char *prefix = types.nsprefix(service_prefix, URI);
+              const char *name = types.aname(NULL, NULL, binding_name); // name of service is binding name
+              Service *service = services[prefix];
+              if (!service)
               {
-                const char *prefix = types.nsprefix(service_prefix, URI);
-                const char *name = types.aname(NULL, NULL, binding_name); // name of service is binding name
-                Service *service = services[prefix];
-                if (!service)
+                service = services[prefix] = new Service();
+                service->prefix = prefix;
+                service->URI = urienc(definitions.soap, URI);
+                service->name = name;
+                service->transport = soap__binding_transport;
+                if ((*binding).portTypePtr() && (*binding).portTypePtr()->name)
+                  service->type = types.aname(NULL, NULL, (*binding).portTypePtr()->name);
+                else
+                  service->type = NULL;
+                // collect faults (TODO: this is not used anywhere)
+                for (vector<wsdl__ext_fault>::const_iterator fault = (*binding).fault.begin(); fault != (*binding).fault.end(); ++fault)
                 {
-                  service = services[prefix] = new Service();
-                  service->prefix = prefix;
-                  service->URI = urienc(definitions.soap, URI);
-                  service->name = name;
-                  service->transport = soap__binding_transport;
-                  if ((*binding).portTypePtr() && (*binding).portTypePtr()->name)
-                    service->type = types.aname(NULL, NULL, (*binding).portTypePtr()->name);
-                  else
-                    service->type = NULL;
-                  // collect faults (TODO: this is not used anywhere)
-                  for (vector<wsdl__ext_fault>::const_iterator fault = (*binding).fault.begin(); fault != (*binding).fault.end(); ++fault)
-                  {
-                    Message *f = analyze_fault(definitions, service, *fault);
-                    if (f)
-                      service->fault[f->name] = f;
-                  }
-                  // collect policies for the bindings
-                  for (vector<wsp__Policy>::const_iterator p = (*binding).wsp__Policy_.begin(); p != (*binding).wsp__Policy_.end(); ++p)
-                    service->policy.push_back(&(*p));
-                  for (vector<wsp__PolicyReference>::const_iterator r = (*binding).wsp__PolicyReference_.begin(); r != (*binding).wsp__PolicyReference_.end(); ++r)
-                    service->policy.push_back((*r).policyPtr());
-                  // collect policies for the service endpoints
-                  for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
-                  {
-                    for (vector<wsp__Policy>::const_iterator p = (*s).wsp__Policy_.begin(); p != (*s).wsp__Policy_.end(); ++p)
-                      service->policy.push_back(&(*p));
-                    for (vector<wsp__PolicyReference>::const_iterator r = (*s).wsp__PolicyReference_.begin(); r != (*s).wsp__PolicyReference_.end(); ++r)
-                      service->policy.push_back((*r).policyPtr());
-                  }
-                  // collect BPEL 2.0 partner link roles
-                  for (vector<plnk__tPartnerLinkType>::const_iterator p = definitions.plnk__partnerLinkType.begin(); p != definitions.plnk__partnerLinkType.end(); ++p)
-                  {
-                    for (vector<plnk__tRole>::const_iterator r = (*p).role.begin(); r != (*p).role.end(); ++r)
-                    {
-                      if ((binding_count > 1 && !service_prefix) || (*r).portTypePtr() == (*binding).portTypePtr())
-                        service->role.push_back(&(*r));
-                    }
-                  }  
+                  Message *f = analyze_fault(definitions, service, *fault);
+                  if (f)
+                    service->fault[f->name] = f;
                 }
+                // collect policies for the bindings
+                for (vector<wsp__Policy>::const_iterator p = (*binding).wsp__Policy_.begin(); p != (*binding).wsp__Policy_.end(); ++p)
+                  service->policy.push_back(&(*p));
+                for (vector<wsp__PolicyReference>::const_iterator r = (*binding).wsp__PolicyReference_.begin(); r != (*binding).wsp__PolicyReference_.end(); ++r)
+                  service->policy.push_back((*r).policyPtr());
+                // collect policies for the service endpoints
                 for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
                 {
-                  for (vector<wsdl__port>::const_iterator port = (*s).port.begin(); port != (*s).port.end(); ++port)
-                  {
-                    if ((*port).bindingPtr() == &(*binding))
-                    {
-                      if ((*port).soap__address_ && (*port).soap__address_->location)
-                        service->location.insert(urienc(definitions.soap, (*port).soap__address_->location));
-                      if ((*port).wsa__EndpointReference && (*port).wsa__EndpointReference->Address)
-                        service->location.insert(urienc(definitions.soap, (*port).wsa__EndpointReference->Address));
-                      if ((*port).http__address_ && (*port).http__address_->location)
-                        service->location.insert(urienc(definitions.soap, (*port).http__address_->location));
-                      if ((*port).wsaw__UsingAddressing)
-                        service->add_import("wsa5.h");
-                      // collect service documentation
-                      if ((*s).documentation)
-                        service->service_documentation[(*service).name] = (*s).documentation;
-                      if ((*port).documentation && (*port).name)
-                        service->port_documentation[(*port).name] = (*port).documentation;
-                      if (binding_documentation)
-                        service->binding_documentation[binding_name] = binding_documentation;
-                      // collect policies for the service and endpoints
-                      if ((*port).wsp__Policy_)
-                        service->policy.push_back((*port).wsp__Policy_);
-                      if ((*port).wsp__PolicyReference_ && (*port).wsp__PolicyReference_->policyPtr())
-                        service->policy.push_back((*port).wsp__PolicyReference_->policyPtr());
-                    }
-                  }
-                  for (vector<wsdl__port>::const_iterator endpoint = (*s).endpoint.begin(); endpoint != (*s).endpoint.end(); ++endpoint)
-                  {
-                    if ((*endpoint).bindingPtr() == &(*binding))
-                    {
-                      if ((*endpoint).address)
-                        service->location.insert(urienc(definitions.soap, (*endpoint).address));
-                      if ((*endpoint).wsa__EndpointReference && (*endpoint).wsa__EndpointReference->Address)
-                        service->location.insert(urienc(definitions.soap, (*endpoint).wsa__EndpointReference->Address));
-                      if ((*endpoint).http__address_ && (*endpoint).http__address_->location)
-                        service->location.insert(urienc(definitions.soap, (*endpoint).http__address_->location));
-                      // TODO: locations need auth
-                      // service->auth_scheme = (*endpoint).whttp__authenticationScheme;
-                      // service->auth_realm = (*endpoint).whttp__authenticationRealm;
-                      // collect service documentation
-                      if ((*s).documentation)
-                        service->service_documentation[(*service).name] = (*s).documentation;
-                      if ((*endpoint).documentation && (*endpoint).name)
-                        service->port_documentation[(*endpoint).name] = (*endpoint).documentation;
-                      if (binding_documentation)
-                        service->binding_documentation[binding_name] = binding_documentation;
-                      // collect policies for the service and endpoints
-                      if ((*endpoint).wsp__Policy_)
-                        service->policy.push_back((*endpoint).wsp__Policy_);
-                      if ((*endpoint).wsp__PolicyReference_ && (*endpoint).wsp__PolicyReference_->policyPtr())
-                        service->policy.push_back((*endpoint).wsp__PolicyReference_->policyPtr());
-                    }
-                  }
+                  for (vector<wsp__Policy>::const_iterator p = (*s).wsp__Policy_.begin(); p != (*s).wsp__Policy_.end(); ++p)
+                    service->policy.push_back(&(*p));
+                  for (vector<wsp__PolicyReference>::const_iterator r = (*s).wsp__PolicyReference_.begin(); r != (*s).wsp__PolicyReference_.end(); ++r)
+                    service->policy.push_back((*r).policyPtr());
                 }
-                Operation *op = new Operation();
-                op->operation = wsdl__operation_;
-                op->name = types.aname(NULL, NULL, wsdl__operation_->name);
-                op->prefix = prefix;
-                op->URI = urienc(definitions.soap, URI);
-                op->style = soap__operation_style;
-                op->mep = soap__operation_mep;
-                if (soap__binding_transport
-                 && (!strcmp(soap__binding_transport+strlen(soap__binding_transport)-4, "http")
-                  || !strcmp(soap__binding_transport+strlen(soap__binding_transport)-5, "HTTP/")))
+                // collect BPEL 2.0 partner link roles
+                for (vector<plnk__tPartnerLinkType>::const_iterator p = definitions.plnk__partnerLinkType.begin(); p != definitions.plnk__partnerLinkType.end(); ++p)
                 {
-                  if ((op->mep && strstr(op->mep, "soap-response"))
-                   || (http_method && !strcmp(http_method, "GET")))
-                    op->protocol = "SOAP-GET";
-                  else if (version == 1)
-                    op->protocol = "SOAP1.1";
-                  else if (version == 2)
-                    op->protocol = "SOAP1.2";
-                  else
-                    op->protocol = "SOAP";
+                  for (vector<plnk__tRole>::const_iterator r = (*p).role.begin(); r != (*p).role.end(); ++r)
+                  {
+                    if ((binding_count > 1 && !service_prefix) || (*r).portTypePtr() == (*binding).portTypePtr())
+                      service->role.push_back(&(*r));
+                  }
+                }  
+              }
+              for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
+              {
+                for (vector<wsdl__port>::const_iterator port = (*s).port.begin(); port != (*s).port.end(); ++port)
+                {
+                  if ((*port).bindingPtr() == &(*binding))
+                  {
+                    if ((*port).soap__address_ && (*port).soap__address_->location)
+                      service->location.insert(urienc(definitions.soap, (*port).soap__address_->location));
+                    if ((*port).wsa__EndpointReference && (*port).wsa__EndpointReference->Address)
+                      service->location.insert(urienc(definitions.soap, (*port).wsa__EndpointReference->Address));
+                    if ((*port).http__address_ && (*port).http__address_->location)
+                      service->location.insert(urienc(definitions.soap, (*port).http__address_->location));
+                    if ((*port).wsaw__UsingAddressing)
+                      service->add_import("wsa5.h");
+                    // collect service documentation
+                    if ((*s).documentation)
+                      service->service_documentation[(*service).name] = (*s).documentation;
+                    if ((*port).documentation && (*port).name)
+                      service->port_documentation[(*port).name] = (*port).documentation;
+                    if (binding_documentation)
+                      service->binding_documentation[binding_name] = binding_documentation;
+                    // collect policies for the service and endpoints
+                    if ((*port).wsp__Policy_)
+                      service->policy.push_back((*port).wsp__Policy_);
+                    if ((*port).wsp__PolicyReference_ && (*port).wsp__PolicyReference_->policyPtr())
+                      service->policy.push_back((*port).wsp__PolicyReference_->policyPtr());
+                  }
                 }
+                for (vector<wsdl__port>::const_iterator endpoint = (*s).endpoint.begin(); endpoint != (*s).endpoint.end(); ++endpoint)
+                {
+                  if ((*endpoint).bindingPtr() == &(*binding))
+                  {
+                    if ((*endpoint).address)
+                      service->location.insert(urienc(definitions.soap, (*endpoint).address));
+                    if ((*endpoint).wsa__EndpointReference && (*endpoint).wsa__EndpointReference->Address)
+                      service->location.insert(urienc(definitions.soap, (*endpoint).wsa__EndpointReference->Address));
+                    if ((*endpoint).http__address_ && (*endpoint).http__address_->location)
+                      service->location.insert(urienc(definitions.soap, (*endpoint).http__address_->location));
+                    // TODO: locations need auth
+                    // service->auth_scheme = (*endpoint).whttp__authenticationScheme;
+                    // service->auth_realm = (*endpoint).whttp__authenticationRealm;
+                    // collect service documentation
+                    if ((*s).documentation)
+                      service->service_documentation[(*service).name] = (*s).documentation;
+                    if ((*endpoint).documentation && (*endpoint).name)
+                      service->port_documentation[(*endpoint).name] = (*endpoint).documentation;
+                    if (binding_documentation)
+                      service->binding_documentation[binding_name] = binding_documentation;
+                    // collect policies for the service and endpoints
+                    if ((*endpoint).wsp__Policy_)
+                      service->policy.push_back((*endpoint).wsp__Policy_);
+                    if ((*endpoint).wsp__PolicyReference_ && (*endpoint).wsp__PolicyReference_->policyPtr())
+                      service->policy.push_back((*endpoint).wsp__PolicyReference_->policyPtr());
+                  }
+                }
+              }
+              Operation *op = new Operation();
+              op->operation = wsdl__operation_;
+              op->name = types.aname(NULL, NULL, wsdl__operation_->name);
+              op->prefix = prefix;
+              op->URI = urienc(definitions.soap, URI);
+              op->style = soap__operation_style;
+              op->mep = soap__operation_mep;
+              if (soap__binding_transport
+                  && (!strcmp(soap__binding_transport+strlen(soap__binding_transport)-4, "http")
+                    || !strcmp(soap__binding_transport+strlen(soap__binding_transport)-5, "HTTP/")))
+              {
+                if ((op->mep && strstr(op->mep, "soap-response"))
+                    || (http_method && !strcmp(http_method, "GET")))
+                  op->protocol = "SOAP-GET";
+                else if (version == 1)
+                  op->protocol = "SOAP1.1";
+                else if (version == 2)
+                  op->protocol = "SOAP1.2";
                 else
-                {
-                  if (http_method)
-                    op->protocol = http_method;
-                  else
-                    op->protocol = "HTTP";
-                }
-                op->documentation = wsdl__operation_->documentation;
-                op->operation_documentation = (*operation).documentation;
-                op->parameterOrder = wsdl__operation_->parameterOrder;
-                if (http__operation_location)
-                  op->action = http__operation_location; // TODO: for now, store HTTP location in action
-                else
-                {
-                  op->action = soap__operation_action;
-                  if ((*operation).soap__operation_)
-                  {
-                    if ((*operation).soap__operation_->soapActionRequired)
-                      op->action = (*operation).soap__operation_->soapAction;
-                  }
-                  else if (version != 2)
-                    op->action = "";
-                }
-                if (operation_policy)
-                  op->policy.push_back(operation_policy);
-                if (ext_operation_policy)
-                  op->policy.push_back(ext_operation_policy);
-                op->input = new Message();
-                op->input->name = wsdl__operation_->name;
-                if (input_body && soap__operation_style == rpc && !input_body->namespace_)
-                {
-                  op->input->URI = "";
-                  fprintf(stderr, "\nError: no soap:body namespace attribute\n");
-                }
-                else if (input_body)
-                  op->input->URI = urienc(definitions.soap, input_body->namespace_);
-                else
-                  op->input->URI = service->URI;
-                op->input->style = soap__operation_style;
-                if (input_body)
-                {
-                  op->input->use = input_body->use;
-                  op->input->encodingStyle = input_body->encodingStyle;
-                }
-                if (input->wsa__Action)
-                  op->input->action = input->wsa__Action;
-                else if (input->wsam__Action)
-                  op->input->action = input->wsam__Action;
-                else if (op->action)
-                  op->input->action = op->action;
-                else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
-                {
-                  const char *name = input->name ? input->name : op->name;
-                  size_t l = strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name);
-                  char *tmp = (char*)soap_malloc(definitions.soap, l + 3);
-                  if (tmp)
-                  {
-                    (SOAP_SNPRINTF(tmp, l + 3, l + 2), "%s/%s/%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name);
-                    op->input->action = tmp;
-                  }
-                }
-                op->input->message = input->messagePtr();
-                op->input->element = input->elementPtr();
-                op->input->part = NULL;
-                op->input->mustUnderstand = false;
-                op->input->multipartRelated = NULL;
-                op->input->content = input_mime_content;
-                op->input->body_parts = NULL;
-                op->input->layout = NULL;
-                op->input->ext_documentation = NULL;
-                if (ext_input)
-                {
-                  op->input->multipartRelated = ext_input->mime__multipartRelated_;
-                  if (ext_input->mime__multipartRelated_ && !ext_input->mime__multipartRelated_->part.empty())
-                    op->input->header = ext_input->mime__multipartRelated_->part.front().soap__header_;
-                  else if (!ext_input->soap__header_.empty())
-                    op->input->header = ext_input->soap__header_;
-                  else if (!ext_input->wsoap__header_.empty())
-                    op->input->wheader = ext_input->wsoap__header_;
-                  if (ext_input->mime__multipartRelated_ && !ext_input->mime__multipartRelated_->part.empty() && ext_input->mime__multipartRelated_->part.front().soap__body_)
-                    op->input->body_parts = ext_input->mime__multipartRelated_->part.front().soap__body_->parts;
-                  else if (input_body)
-                    op->input->body_parts = input_body->parts;
-                  if (ext_input->dime__message_)
-                    op->input->layout = ext_input->dime__message_->layout;
-                  else
-                    op->input->layout = NULL;
-                  op->input->ext_documentation = ext_input->documentation;
-                }
-                op->input->documentation = input->documentation;
-                // collect input message policies
-                if (op->input->message)
-                {
-                  for (vector<wsp__Policy>::const_iterator p = op->input->message->wsp__Policy_.begin(); p != op->input->message->wsp__Policy_.end(); ++p)
-                    op->input->policy.push_back(&(*p));
-                  for (vector<wsp__PolicyReference>::const_iterator r = op->input->message->wsp__PolicyReference_.begin(); r != op->input->message->wsp__PolicyReference_.end(); ++r)
-                    op->input->policy.push_back((*r).policyPtr());
-                }
-                if (input->wsp__Policy_)
-                  op->input->policy.push_back(input->wsp__Policy_);
-                if (input->wsp__PolicyReference_ && input->wsp__PolicyReference_->policyPtr())
-                  op->input->policy.push_back(input->wsp__PolicyReference_->policyPtr());
-                if (ext_input)
-                {
-                  if (ext_input->wsp__Policy_)
-                    op->input->policy.push_back(ext_input->wsp__Policy_);
-                  if (ext_input->wsp__PolicyReference_ && ext_input->wsp__PolicyReference_->policyPtr())
-                    op->input->policy.push_back(ext_input->wsp__PolicyReference_->policyPtr());
-                }
-                if (soap__operation_style == document)
-                  op->input_name = types.oname("__", op->URI, op->input->name);
-                else
-                  op->input_name = types.oname(NULL, op->input->URI, op->input->name);
-                if (output)
-                {
-                  soap__body *output_body = NULL;
-                  mime__mimeXml *output_mime = NULL;
-                  mime__content *output_mime_content = NULL;
-                  if (ext_output)
-                  {
-                    output_body = ext_output->soap__body_;
-                    output_mime = ext_output->mime__mimeXml_;
-                    output_mime_content = ext_output->mime__content_;
-                    if (ext_output->mime__multipartRelated_)
-                    {
-                      for (vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
-                        if ((*part).soap__body_)
-                        {
-                          output_body = (*part).soap__body_;
-                          break;
-                        }
-                    }
-                  }
-                  if (ext_output && ext_output->mime__content_)
-                  {
-                    op->output = new Message();
-                    op->output->name = NULL;
-                    op->output->URI = NULL;
-                    op->output->style = soap__operation_style;
-                    op->output->use = literal;
-                    op->output->encodingStyle = NULL;
-                    op->output->action = NULL;
-                    op->output->body_parts = NULL;
-                    op->output->part = NULL;
-                    op->output->mustUnderstand = false;
-                    op->output->multipartRelated = NULL;
-                    op->output->content = output_mime_content;
-                    op->output->message = output->messagePtr();
-                    op->output->element = output->elementPtr();
-                    op->output->layout = NULL;
-                  }
-                  else if (output_body || output_mime || output_mime_content || output->element)
-                  {
-                    op->output = new Message();
-                    op->output->name = wsdl__operation_->name; // RPC uses operation/@name with suffix 'Response' as set below
-                    op->output->style = soap__operation_style;
-                    if (output_body)
-                    {
-                      op->output->use = output_body->use;
-                      // the code below is a hack around the RPC encoded response message element tag mismatch with Axis:
-                      if (!output_body->namespace_ || output_body->use == encoded)
-                        op->output->URI = op->input->URI; // encoded seems (?) to require the request's namespace
-                      else
-                        op->output->URI = urienc(definitions.soap, output_body->namespace_);
-                      op->output->encodingStyle = output_body->encodingStyle;
-                    }
-                    else
-                      op->output->URI = service->URI;
-                    if (output->wsa__Action)
-                      op->output->action = output->wsa__Action;
-                    else if (output->wsam__Action)
-                      op->output->action = output->wsam__Action;
-                    else if (http__operation_location)
-                      op->output->action = NULL;
-                    else if (op->action)
-                    {
-                      size_t l = strlen(op->action);
-                      char *tmp = (char*)soap_malloc(definitions.soap, l + 9);
-                      if (tmp)
-                      {
-                        (SOAP_SNPRINTF(tmp, l + 9, l + 8), "%sResponse", op->action);
-                        op->output->action = tmp;
-                      }
-                    }
-                    else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
-                    {
-                      const char *name = output->name ? output->name : op->name;
-                      size_t l = strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name);
-                      char *tmp = (char*)soap_malloc(definitions.soap, l + 11);
-                      if (tmp)
-                      {
-                        (SOAP_SNPRINTF(tmp, l + 11, l + 10), "%s/%s/%s%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name, output->name ? "" : "Response");
-                        op->output->action = tmp;
-                      }
-                    }
-                    op->output->message = output->messagePtr();
-                    op->output->element = output->elementPtr();
-                    op->output->part = NULL;
-                    op->output->content = output_mime_content;
-                    op->output->body_parts = NULL;
-                    op->output->layout = NULL;
-                    op->output->ext_documentation = NULL;
-                    op->output->mustUnderstand = false;
-                  }
-                  if (ext_output)
-                  {
-                    op->output->multipartRelated = ext_output->mime__multipartRelated_;
-                    if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty())
-                      op->output->header = ext_output->mime__multipartRelated_->part.front().soap__header_;
-                    else if (!ext_output->soap__header_.empty())
-                      op->output->header = ext_output->soap__header_;
-                    else if (!ext_output->wsoap__header_.empty())
-                      op->output->wheader = ext_output->wsoap__header_;
-                    if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty() && ext_output->mime__multipartRelated_->part.front().soap__body_)
-                      op->output->body_parts = ext_output->mime__multipartRelated_->part.front().soap__body_->parts;
-                    else if (output_body)
-                      op->output->body_parts = output_body->parts;
-                    if (ext_output->dime__message_)
-                      op->output->layout = ext_output->dime__message_->layout;
-                    else
-                      op->output->layout = NULL;
-                    op->output->ext_documentation = ext_output->documentation;
-                  }
-                  if (op->output->name)
-                  {
-                    size_t l = strlen(op->output->name);
-                    char *s = (char*)soap_malloc(definitions.soap, l + 9);
-                    if (s)
-                    {
-                      (SOAP_SNPRINTF(s, l + 9, l + 8), "%sResponse", op->output->name);
-                      if (soap__operation_style == document)
-                        op->output_name = types.oname("__", op->URI, s);
-                      else
-                        op->output_name = types.oname(NULL, op->output->URI, s);
-                    }
-                  }
-                  op->output->documentation = output->documentation;
-                  // collect output message policies
-                  if (op->output->message)
-                  {
-                    for (vector<wsp__Policy>::const_iterator p = op->output->message->wsp__Policy_.begin(); p != op->output->message->wsp__Policy_.end(); ++p)
-                      op->output->policy.push_back(&(*p));
-                    for (vector<wsp__PolicyReference>::const_iterator r = op->output->message->wsp__PolicyReference_.begin(); r != op->output->message->wsp__PolicyReference_.end(); ++r)
-                      op->output->policy.push_back((*r).policyPtr());
-                  }
-                  if (output->wsp__Policy_)
-                    op->output->policy.push_back(output->wsp__Policy_);
-                  if (output->wsp__PolicyReference_ && output->wsp__PolicyReference_->policyPtr())
-                    op->output->policy.push_back(output->wsp__PolicyReference_->policyPtr());
-                  if (ext_output)
-                  {
-                    if (ext_output->wsp__Policy_)
-                      op->output->policy.push_back(ext_output->wsp__Policy_);
-                    if (ext_output->wsp__PolicyReference_ && ext_output->wsp__PolicyReference_->policyPtr())
-                      op->output->policy.push_back(ext_output->wsp__PolicyReference_->policyPtr());
-                  }
-                }
-                else
-                {
-                  op->output_name = NULL;
-                  op->output = NULL;
-                }
-                analyze_headers(definitions, service, ext_input, ext_output);
-                analyze_faults(definitions, service, op, operation);
-                service->operation.push_back(op);
+                  op->protocol = "SOAP";
               }
               else
               {
-                if (!Wflag)
-                  fprintf(stderr, "\nWarning: no SOAP RPC operation namespace, operations will be ignored\n");
+                if (http_method)
+                  op->protocol = http_method;
+                else
+                  op->protocol = "HTTP";
               }
+              op->documentation = wsdl__operation_->documentation;
+              op->operation_documentation = (*operation).documentation;
+              op->parameterOrder = wsdl__operation_->parameterOrder;
+              if (http__operation_location)
+                op->action = http__operation_location; // TODO: for now, store HTTP location in action
+              else
+              {
+                op->action = soap__operation_action;
+                if ((*operation).soap__operation_)
+                {
+                  if ((*operation).soap__operation_->soapActionRequired)
+                    op->action = (*operation).soap__operation_->soapAction;
+                }
+                else if (version != 2)
+                  op->action = "";
+              }
+              if (operation_policy)
+                op->policy.push_back(operation_policy);
+              if (ext_operation_policy)
+                op->policy.push_back(ext_operation_policy);
+              op->input = new Message();
+              op->input->name = wsdl__operation_->name;
+              if (input_body && soap__operation_style == rpc && !input_body->namespace_)
+              {
+                op->input->URI = "";
+                fprintf(stderr, "\nError: no soap:body namespace attribute\n");
+              }
+              else if (input_body)
+                op->input->URI = urienc(definitions.soap, input_body->namespace_);
+              else
+                op->input->URI = service->URI;
+              op->input->style = soap__operation_style;
+              if (input_body)
+              {
+                op->input->use = input_body->use;
+                op->input->encodingStyle = input_body->encodingStyle;
+              }
+              if (input->wsa__Action)
+                op->input->action = input->wsa__Action;
+              else if (input->wsam__Action)
+                op->input->action = input->wsam__Action;
+              else if (op->action)
+                op->input->action = op->action;
+              else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
+              {
+                const char *name = input->name ? input->name : op->name;
+                size_t l = strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name);
+                char *tmp = (char*)soap_malloc(definitions.soap, l + 3);
+                if (tmp)
+                {
+                  (SOAP_SNPRINTF(tmp, l + 3, l + 2), "%s/%s/%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name);
+                  op->input->action = tmp;
+                }
+              }
+              op->input->message = input->messagePtr();
+              op->input->element = input->elementPtr();
+              op->input->part = NULL;
+              op->input->mustUnderstand = false;
+              op->input->multipartRelated = NULL;
+              op->input->content = input_mime_content;
+              op->input->body_parts = NULL;
+              op->input->layout = NULL;
+              op->input->ext_documentation = NULL;
+              if (ext_input)
+              {
+                op->input->multipartRelated = ext_input->mime__multipartRelated_;
+                if (ext_input->mime__multipartRelated_ && !ext_input->mime__multipartRelated_->part.empty())
+                  op->input->header = ext_input->mime__multipartRelated_->part.front().soap__header_;
+                else if (!ext_input->soap__header_.empty())
+                  op->input->header = ext_input->soap__header_;
+                else if (!ext_input->wsoap__header_.empty())
+                  op->input->wheader = ext_input->wsoap__header_;
+                if (ext_input->mime__multipartRelated_ && !ext_input->mime__multipartRelated_->part.empty() && ext_input->mime__multipartRelated_->part.front().soap__body_)
+                  op->input->body_parts = ext_input->mime__multipartRelated_->part.front().soap__body_->parts;
+                else if (input_body)
+                  op->input->body_parts = input_body->parts;
+                if (ext_input->dime__message_)
+                  op->input->layout = ext_input->dime__message_->layout;
+                else
+                  op->input->layout = NULL;
+                op->input->ext_documentation = ext_input->documentation;
+              }
+              op->input->documentation = input->documentation;
+              // collect input message policies
+              if (op->input->message)
+              {
+                for (vector<wsp__Policy>::const_iterator p = op->input->message->wsp__Policy_.begin(); p != op->input->message->wsp__Policy_.end(); ++p)
+                  op->input->policy.push_back(&(*p));
+                for (vector<wsp__PolicyReference>::const_iterator r = op->input->message->wsp__PolicyReference_.begin(); r != op->input->message->wsp__PolicyReference_.end(); ++r)
+                  op->input->policy.push_back((*r).policyPtr());
+              }
+              if (input->wsp__Policy_)
+                op->input->policy.push_back(input->wsp__Policy_);
+              if (input->wsp__PolicyReference_ && input->wsp__PolicyReference_->policyPtr())
+                op->input->policy.push_back(input->wsp__PolicyReference_->policyPtr());
+              if (ext_input)
+              {
+                if (ext_input->wsp__Policy_)
+                  op->input->policy.push_back(ext_input->wsp__Policy_);
+                if (ext_input->wsp__PolicyReference_ && ext_input->wsp__PolicyReference_->policyPtr())
+                  op->input->policy.push_back(ext_input->wsp__PolicyReference_->policyPtr());
+              }
+              if (soap__operation_style == document)
+                op->input_name = types.oname("__", op->URI, op->input->name);
+              else
+                op->input_name = types.oname(NULL, op->input->URI, op->input->name);
+              if (output)
+              {
+                soap__body *output_body = NULL;
+                mime__mimeXml *output_mime = NULL;
+                mime__content *output_mime_content = NULL;
+                if (ext_output)
+                {
+                  output_body = ext_output->soap__body_;
+                  output_mime = ext_output->mime__mimeXml_;
+                  output_mime_content = ext_output->mime__content_;
+                  if (ext_output->mime__multipartRelated_)
+                  {
+                    for (vector<mime__part>::const_iterator part = ext_output->mime__multipartRelated_->part.begin(); part != ext_output->mime__multipartRelated_->part.end(); ++part)
+                      if ((*part).soap__body_)
+                      {
+                        output_body = (*part).soap__body_;
+                        break;
+                      }
+                  }
+                }
+                if (ext_output && ext_output->mime__content_)
+                {
+                  op->output = new Message();
+                  op->output->name = NULL;
+                  op->output->URI = NULL;
+                  op->output->style = soap__operation_style;
+                  op->output->use = literal;
+                  op->output->encodingStyle = NULL;
+                  op->output->action = NULL;
+                  op->output->body_parts = NULL;
+                  op->output->part = NULL;
+                  op->output->mustUnderstand = false;
+                  op->output->multipartRelated = NULL;
+                  op->output->content = output_mime_content;
+                  op->output->message = output->messagePtr();
+                  op->output->element = output->elementPtr();
+                  op->output->layout = NULL;
+                }
+                else if (output_body || output_mime || output_mime_content || output->element)
+                {
+                  op->output = new Message();
+                  op->output->name = wsdl__operation_->name; // RPC uses operation/@name with suffix 'Response' as set below
+                  op->output->style = soap__operation_style;
+                  if (output_body)
+                  {
+                    op->output->use = output_body->use;
+                    // the code below is a hack around the RPC encoded response message element tag mismatch with Axis:
+                    if (!output_body->namespace_ || output_body->use == encoded)
+                      op->output->URI = op->input->URI; // encoded seems (?) to require the request's namespace
+                    else
+                      op->output->URI = urienc(definitions.soap, output_body->namespace_);
+                    op->output->encodingStyle = output_body->encodingStyle;
+                  }
+                  else
+                    op->output->URI = service->URI;
+                  if (output->wsa__Action)
+                    op->output->action = output->wsa__Action;
+                  else if (output->wsam__Action)
+                    op->output->action = output->wsam__Action;
+                  else if (http__operation_location)
+                    op->output->action = NULL;
+                  else if (op->action)
+                  {
+                    size_t l = strlen(op->action);
+                    char *tmp = (char*)soap_malloc(definitions.soap, l + 9);
+                    if (tmp)
+                    {
+                      (SOAP_SNPRINTF(tmp, l + 9, l + 8), "%sResponse", op->action);
+                      op->output->action = tmp;
+                    }
+                  }
+                  else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
+                  {
+                    const char *name = output->name ? output->name : op->name;
+                    size_t l = strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name);
+                    char *tmp = (char*)soap_malloc(definitions.soap, l + 11);
+                    if (tmp)
+                    {
+                      (SOAP_SNPRINTF(tmp, l + 11, l + 10), "%s/%s/%s%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name, output->name ? "" : "Response");
+                      op->output->action = tmp;
+                    }
+                  }
+                  op->output->message = output->messagePtr();
+                  op->output->element = output->elementPtr();
+                  op->output->part = NULL;
+                  op->output->content = output_mime_content;
+                  op->output->body_parts = NULL;
+                  op->output->layout = NULL;
+                  op->output->ext_documentation = NULL;
+                  op->output->mustUnderstand = false;
+                }
+                if (ext_output)
+                {
+                  op->output->multipartRelated = ext_output->mime__multipartRelated_;
+                  if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty())
+                    op->output->header = ext_output->mime__multipartRelated_->part.front().soap__header_;
+                  else if (!ext_output->soap__header_.empty())
+                    op->output->header = ext_output->soap__header_;
+                  else if (!ext_output->wsoap__header_.empty())
+                    op->output->wheader = ext_output->wsoap__header_;
+                  if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty() && ext_output->mime__multipartRelated_->part.front().soap__body_)
+                    op->output->body_parts = ext_output->mime__multipartRelated_->part.front().soap__body_->parts;
+                  else if (output_body)
+                    op->output->body_parts = output_body->parts;
+                  if (ext_output->dime__message_)
+                    op->output->layout = ext_output->dime__message_->layout;
+                  else
+                    op->output->layout = NULL;
+                  op->output->ext_documentation = ext_output->documentation;
+                }
+                if (op->output->name)
+                {
+                  size_t l = strlen(op->output->name);
+                  char *s = (char*)soap_malloc(definitions.soap, l + 9);
+                  if (s)
+                  {
+                    (SOAP_SNPRINTF(s, l + 9, l + 8), "%sResponse", op->output->name);
+                    if (soap__operation_style == document)
+                      op->output_name = types.oname("__", op->URI, s);
+                    else
+                      op->output_name = types.oname(NULL, op->output->URI, s);
+                  }
+                }
+                op->output->documentation = output->documentation;
+                // collect output message policies
+                if (op->output->message)
+                {
+                  for (vector<wsp__Policy>::const_iterator p = op->output->message->wsp__Policy_.begin(); p != op->output->message->wsp__Policy_.end(); ++p)
+                    op->output->policy.push_back(&(*p));
+                  for (vector<wsp__PolicyReference>::const_iterator r = op->output->message->wsp__PolicyReference_.begin(); r != op->output->message->wsp__PolicyReference_.end(); ++r)
+                    op->output->policy.push_back((*r).policyPtr());
+                }
+                if (output->wsp__Policy_)
+                  op->output->policy.push_back(output->wsp__Policy_);
+                if (output->wsp__PolicyReference_ && output->wsp__PolicyReference_->policyPtr())
+                  op->output->policy.push_back(output->wsp__PolicyReference_->policyPtr());
+                if (ext_output)
+                {
+                  if (ext_output->wsp__Policy_)
+                    op->output->policy.push_back(ext_output->wsp__Policy_);
+                  if (ext_output->wsp__PolicyReference_ && ext_output->wsp__PolicyReference_->policyPtr())
+                    op->output->policy.push_back(ext_output->wsp__PolicyReference_->policyPtr());
+                }
+              }
+              else
+              {
+                op->output_name = NULL;
+                op->output = NULL;
+              }
+              analyze_headers(definitions, service, ext_input, ext_output);
+              analyze_faults(definitions, service, op, operation);
+              service->operation.push_back(op);
             }
             else
               fprintf(stderr, "\nError: no wsdl:definitions/binding/operation/input\n");
@@ -780,8 +774,10 @@ void Definitions::analyze(const wsdl__definitions& definitions)
               char *URI;
               if (output_body && soap__operation_style == rpc)
                 URI = output_body->namespace_;
-              else if (binding_count == 1 || !service_prefix)
+              else if ((binding_count == 1 || !service_prefix) && definitions.targetNamespace && *definitions.targetNamespace)
                 URI = definitions.targetNamespace;
+              else if ((binding_count == 1 || !service_prefix) && definitions.name && *definitions.name)
+                URI = definitions.name;
               else
               {
                 // multiple service bidings are used, each needs a unique new URI
@@ -799,239 +795,231 @@ void Definitions::analyze(const wsdl__definitions& definitions)
                   soap_strcpy(URI + n, l + 2 - n, binding_name);
                 }
               }
-              if (URI)
+              const char *prefix = types.nsprefix(service_prefix, URI);
+              const char *name = types.aname(NULL, NULL, binding_name); // name of service is binding name
+              Service *service = services[prefix];
+              if (!service)
               {
-                const char *prefix = types.nsprefix(service_prefix, URI);
-                const char *name = types.aname(NULL, NULL, binding_name); // name of service is binding name
-                Service *service = services[prefix];
-                if (!service)
+                service = services[prefix] = new Service();
+                service->prefix = prefix;
+                service->URI = urienc(definitions.soap, URI);
+                service->name = name;
+                service->transport = soap__binding_transport;
+                if ((*binding).portTypePtr() && (*binding).portTypePtr()->name)
+                  service->type = types.aname(NULL, NULL, (*binding).portTypePtr()->name);
+                else
+                  service->type = NULL;
+                // collect faults (TODO: this is not used anywhere)
+                for (vector<wsdl__ext_fault>::const_iterator fault = (*binding).fault.begin(); fault != (*binding).fault.end(); ++fault)
                 {
-                  service = services[prefix] = new Service();
-                  service->prefix = prefix;
-                  service->URI = urienc(definitions.soap, URI);
-                  service->name = name;
-                  service->transport = soap__binding_transport;
-                  if ((*binding).portTypePtr() && (*binding).portTypePtr()->name)
-                    service->type = types.aname(NULL, NULL, (*binding).portTypePtr()->name);
-                  else
-                    service->type = NULL;
-                  // collect faults (TODO: this is not used anywhere)
-                  for (vector<wsdl__ext_fault>::const_iterator fault = (*binding).fault.begin(); fault != (*binding).fault.end(); ++fault)
-                  {
-                    Message *f = analyze_fault(definitions, service, *fault);
-                    if (f)
-                      service->fault[f->name] = f;
-                  }
-                  // collect policies for the bindings
-                  for (vector<wsp__Policy>::const_iterator p = (*binding).wsp__Policy_.begin(); p != (*binding).wsp__Policy_.end(); ++p)
-                    service->policy.push_back(&(*p));
-                  for (vector<wsp__PolicyReference>::const_iterator r = (*binding).wsp__PolicyReference_.begin(); r != (*binding).wsp__PolicyReference_.end(); ++r)
-                    service->policy.push_back((*r).policyPtr());
-                  // collect policies for the service endpoints
-                  for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
-                  {
-                    for (vector<wsp__Policy>::const_iterator p = (*s).wsp__Policy_.begin(); p != (*s).wsp__Policy_.end(); ++p)
-                      service->policy.push_back(&(*p));
-                    for (vector<wsp__PolicyReference>::const_iterator r = (*s).wsp__PolicyReference_.begin(); r != (*s).wsp__PolicyReference_.end(); ++r)
-                      service->policy.push_back((*r).policyPtr());
-                  }
-                  // collect BPEL 2.0 partner link roles
-                  for (vector<plnk__tPartnerLinkType>::const_iterator p = definitions.plnk__partnerLinkType.begin(); p != definitions.plnk__partnerLinkType.end(); ++p)
-                  {
-                    for (vector<plnk__tRole>::const_iterator r = (*p).role.begin(); r != (*p).role.end(); ++r)
-                    {
-                      if ((binding_count > 1 && !service_prefix) || (*r).portTypePtr() == (*binding).portTypePtr())
-                        service->role.push_back(&(*r));
-                    }
-                  }  
+                  Message *f = analyze_fault(definitions, service, *fault);
+                  if (f)
+                    service->fault[f->name] = f;
                 }
+                // collect policies for the bindings
+                for (vector<wsp__Policy>::const_iterator p = (*binding).wsp__Policy_.begin(); p != (*binding).wsp__Policy_.end(); ++p)
+                  service->policy.push_back(&(*p));
+                for (vector<wsp__PolicyReference>::const_iterator r = (*binding).wsp__PolicyReference_.begin(); r != (*binding).wsp__PolicyReference_.end(); ++r)
+                  service->policy.push_back((*r).policyPtr());
+                // collect policies for the service endpoints
                 for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
                 {
-                  for (vector<wsdl__port>::const_iterator port = (*s).port.begin(); port != (*s).port.end(); ++port)
+                  for (vector<wsp__Policy>::const_iterator p = (*s).wsp__Policy_.begin(); p != (*s).wsp__Policy_.end(); ++p)
+                    service->policy.push_back(&(*p));
+                  for (vector<wsp__PolicyReference>::const_iterator r = (*s).wsp__PolicyReference_.begin(); r != (*s).wsp__PolicyReference_.end(); ++r)
+                    service->policy.push_back((*r).policyPtr());
+                }
+                // collect BPEL 2.0 partner link roles
+                for (vector<plnk__tPartnerLinkType>::const_iterator p = definitions.plnk__partnerLinkType.begin(); p != definitions.plnk__partnerLinkType.end(); ++p)
+                {
+                  for (vector<plnk__tRole>::const_iterator r = (*p).role.begin(); r != (*p).role.end(); ++r)
                   {
-                    if ((*port).bindingPtr() == &(*binding))
-                    {
-                      if ((*port).soap__address_ && (*port).soap__address_->location)
-                        service->location.insert(urienc(definitions.soap, (*port).soap__address_->location));
-                      else if ((*port).wsa__EndpointReference && (*port).wsa__EndpointReference->Address)
-                        service->location.insert(urienc(definitions.soap, (*port).wsa__EndpointReference->Address));
-                      if ((*port).wsaw__UsingAddressing)
-                        service->add_import("wsa5.h");
-                      // TODO: HTTP address for HTTP operations
-                      // if ((*port).http__address_)
-                      // http__address_location = http__address_->location;
-                      // collect service documentation
-                      if ((*s).documentation)
-                        service->service_documentation[(*service).name] = (*s).documentation;
-                      if ((*port).documentation && (*port).name)
-                        service->port_documentation[(*port).name] = (*port).documentation;
-                      if (binding_documentation)
-                        service->binding_documentation[binding_name] = binding_documentation;
-                      // collect policies for the service and endpoints
-                      if ((*port).wsp__Policy_)
-                        service->policy.push_back((*port).wsp__Policy_);
-                      if ((*port).wsp__PolicyReference_ && (*port).wsp__PolicyReference_->policyPtr())
-                        service->policy.push_back((*port).wsp__PolicyReference_->policyPtr());
-                    }
+                    if ((binding_count > 1 && !service_prefix) || (*r).portTypePtr() == (*binding).portTypePtr())
+                      service->role.push_back(&(*r));
+                  }
+                }  
+              }
+              for (vector<wsdl__service>::const_iterator s = definitions.service.begin(); s != definitions.service.end(); ++s)
+              {
+                for (vector<wsdl__port>::const_iterator port = (*s).port.begin(); port != (*s).port.end(); ++port)
+                {
+                  if ((*port).bindingPtr() == &(*binding))
+                  {
+                    if ((*port).soap__address_ && (*port).soap__address_->location)
+                      service->location.insert(urienc(definitions.soap, (*port).soap__address_->location));
+                    else if ((*port).wsa__EndpointReference && (*port).wsa__EndpointReference->Address)
+                      service->location.insert(urienc(definitions.soap, (*port).wsa__EndpointReference->Address));
+                    if ((*port).wsaw__UsingAddressing)
+                      service->add_import("wsa5.h");
+                    // TODO: HTTP address for HTTP operations
+                    // if ((*port).http__address_)
+                    // http__address_location = http__address_->location;
+                    // collect service documentation
+                    if ((*s).documentation)
+                      service->service_documentation[(*service).name] = (*s).documentation;
+                    if ((*port).documentation && (*port).name)
+                      service->port_documentation[(*port).name] = (*port).documentation;
+                    if (binding_documentation)
+                      service->binding_documentation[binding_name] = binding_documentation;
+                    // collect policies for the service and endpoints
+                    if ((*port).wsp__Policy_)
+                      service->policy.push_back((*port).wsp__Policy_);
+                    if ((*port).wsp__PolicyReference_ && (*port).wsp__PolicyReference_->policyPtr())
+                      service->policy.push_back((*port).wsp__PolicyReference_->policyPtr());
                   }
                 }
-                Operation *op = new Operation();
-                op->operation = wsdl__operation_;
-                op->input_name = NULL;
-                op->input = NULL;
-                op->name = types.aname(NULL, NULL, wsdl__operation_->name);
-                op->prefix = prefix;
-                op->URI = urienc(definitions.soap, URI);
-                op->style = soap__operation_style;
-                op->mep = soap__operation_mep;
-                if (soap__binding_transport
-                 && (!strcmp(soap__binding_transport+strlen(soap__binding_transport)-4, "http")
-                  || !strcmp(soap__binding_transport+strlen(soap__binding_transport)-5, "HTTP/")))
-                {
-                  if ((op->mep && strstr(op->mep, "soap-response"))
-                   || (http_method && !strcmp(http_method, "GET")))
-                    op->protocol = "SOAP-GET";
-                  else if (version == 1)
-                    op->protocol = "SOAP1.1";
-                  else if (version == 2)
-                    op->protocol = "SOAP1.2";
-                  else
-                    op->protocol = "SOAP";
-                }
+              }
+              Operation *op = new Operation();
+              op->operation = wsdl__operation_;
+              op->input_name = NULL;
+              op->input = NULL;
+              op->name = types.aname(NULL, NULL, wsdl__operation_->name);
+              op->prefix = prefix;
+              op->URI = urienc(definitions.soap, URI);
+              op->style = soap__operation_style;
+              op->mep = soap__operation_mep;
+              if (soap__binding_transport
+                  && (!strcmp(soap__binding_transport+strlen(soap__binding_transport)-4, "http")
+                    || !strcmp(soap__binding_transport+strlen(soap__binding_transport)-5, "HTTP/")))
+              {
+                if ((op->mep && strstr(op->mep, "soap-response"))
+                    || (http_method && !strcmp(http_method, "GET")))
+                  op->protocol = "SOAP-GET";
+                else if (version == 1)
+                  op->protocol = "SOAP1.1";
+                else if (version == 2)
+                  op->protocol = "SOAP1.2";
                 else
-                {
-                  if (http_method)
-                    op->protocol = http_method;
-                  else
-                    op->protocol = "HTTP";
-                }
-                op->documentation = wsdl__operation_->documentation;
-                op->operation_documentation = (*operation).documentation;
-                op->parameterOrder = wsdl__operation_->parameterOrder;
-                if (http__operation_location)
-                {
-                  op->action = http__operation_location; // TODO: for now, store HTTP location in action
-                }
-                else
-                {
-                  op->action = soap__operation_action;
-                  if ((*operation).soap__operation_)
-                  {
-                    if ((*operation).soap__operation_->soapActionRequired)
-                      op->action = (*operation).soap__operation_->soapAction;
-                  }
-                  else if (version != 2)
-                    op->action = "";
-                }
-                if (operation_policy)
-                  op->policy.push_back(operation_policy);
-                if (ext_operation_policy)
-                  op->policy.push_back(ext_operation_policy);
-                op->output = new Message(); // one-way output operation
-                op->output->name = wsdl__operation_->name; // RPC uses operation/@name
-                if (output_body && soap__operation_style == rpc && !output_body->namespace_)
-                {
-                  op->output->URI = "";
-                  fprintf(stderr, "\nError: no soap:body namespace attribute\n");
-                }
-                else if (output_body)
-                  op->output->URI = urienc(definitions.soap, output_body->namespace_);
-                else
-                  op->output->URI = service->URI;
-                op->output->style = soap__operation_style;
-                if (output_body)
-                {
-                  op->output->use = output_body->use;
-                  op->output->encodingStyle = output_body->encodingStyle;
-                }
-                if (output->wsa__Action)
-                  op->output->action = output->wsa__Action;
-                else if (output->wsam__Action)
-                  op->output->action = output->wsam__Action;
-                else if (op->action)
-                  op->output->action = op->action;
-                else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
-                {
-                  const char *name = output->name ? output->name : op->name;
-                  size_t l = strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name);
-                  char *tmp = (char*)soap_malloc(definitions.soap, l + 3);
-                  if (tmp)
-                  {
-                    (SOAP_SNPRINTF(tmp, l + 3, l + 2), "%s/%s/%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name);
-                    op->output->action = tmp;
-                  }
-                }
-                op->output->message = output->messagePtr();
-                op->output->element = output->elementPtr();
-                op->output->part = NULL;
-                op->output->mustUnderstand = false;
-                op->output->multipartRelated = NULL;
-                op->output->content = output_mime_content;
-                op->output->body_parts = NULL;
-                op->output->layout = NULL;
-                op->output->ext_documentation = NULL;
-                if (ext_output)
-                {
-                  op->output->multipartRelated = ext_output->mime__multipartRelated_;
-                  if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty())
-                    op->output->header = ext_output->mime__multipartRelated_->part.front().soap__header_;
-                  else if (!ext_output->soap__header_.empty())
-                    op->output->header = ext_output->soap__header_;
-                  else if (!ext_output->wsoap__header_.empty())
-                    op->output->wheader = ext_output->wsoap__header_;
-                  if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty() && ext_output->mime__multipartRelated_->part.front().soap__body_)
-                    op->output->body_parts = ext_output->mime__multipartRelated_->part.front().soap__body_->parts;
-                  else if (output_body)
-                    op->output->body_parts = output_body->parts;
-                  if (ext_output->dime__message_)
-                    op->output->layout = ext_output->dime__message_->layout;
-                  else
-                    op->output->layout = NULL;
-                  op->output->ext_documentation = ext_output->documentation;
-                }
-                op->output->documentation = output->documentation;
-                // collect output message policies
-                if (op->output->message)
-                {
-                  for (vector<wsp__Policy>::const_iterator p = op->output->message->wsp__Policy_.begin(); p != op->output->message->wsp__Policy_.end(); ++p)
-                    op->output->policy.push_back(&(*p));
-                  for (vector<wsp__PolicyReference>::const_iterator r = op->output->message->wsp__PolicyReference_.begin(); r != op->output->message->wsp__PolicyReference_.end(); ++r)
-                    op->output->policy.push_back((*r).policyPtr());
-                }
-                if (output->wsp__Policy_)
-                  op->output->policy.push_back(output->wsp__Policy_);
-                if (output->wsp__PolicyReference_ && output->wsp__PolicyReference_->policyPtr())
-                  op->output->policy.push_back(output->wsp__PolicyReference_->policyPtr());
-                if (ext_output)
-                {
-                  if (ext_output->wsp__Policy_)
-                    op->output->policy.push_back(ext_output->wsp__Policy_);
-                  if (ext_output->wsp__PolicyReference_ && ext_output->wsp__PolicyReference_->policyPtr())
-                    op->output->policy.push_back(ext_output->wsp__PolicyReference_->policyPtr());
-                }
-                if (soap__operation_style == document)
-                  op->input_name = types.oname("__", op->URI, op->output->name);
-                else
-                  op->input_name = types.oname(NULL, op->output->URI, op->output->name);
-                size_t l = strlen(op->output->name);
-                char *s = (char*)soap_malloc(definitions.soap, l + 9);
-                if (s)
-                {
-                  (SOAP_SNPRINTF(s, l + 9, l + 8), "%sResponse", op->output->name);
-                  if (soap__operation_style == document)
-                    op->output_name = types.oname("__", op->URI, s);
-                  else
-                    op->output_name = types.oname(NULL, op->output->URI, s);
-                }
-                analyze_headers(definitions, service, ext_input, ext_output);
-                analyze_faults(definitions, service, op, operation);
-                service->operation.push_back(op);
+                  op->protocol = "SOAP";
               }
               else
               {
-                if (!Wflag)
-                  fprintf(stderr, "\nWarning: no SOAP RPC operation namespace, operations will be ignored\n");
+                if (http_method)
+                  op->protocol = http_method;
+                else
+                  op->protocol = "HTTP";
               }
+              op->documentation = wsdl__operation_->documentation;
+              op->operation_documentation = (*operation).documentation;
+              op->parameterOrder = wsdl__operation_->parameterOrder;
+              if (http__operation_location)
+              {
+                op->action = http__operation_location; // TODO: for now, store HTTP location in action
+              }
+              else
+              {
+                op->action = soap__operation_action;
+                if ((*operation).soap__operation_)
+                {
+                  if ((*operation).soap__operation_->soapActionRequired)
+                    op->action = (*operation).soap__operation_->soapAction;
+                }
+                else if (version != 2)
+                  op->action = "";
+              }
+              if (operation_policy)
+                op->policy.push_back(operation_policy);
+              if (ext_operation_policy)
+                op->policy.push_back(ext_operation_policy);
+              op->output = new Message(); // one-way output operation
+              op->output->name = wsdl__operation_->name; // RPC uses operation/@name
+              if (output_body && soap__operation_style == rpc && !output_body->namespace_)
+              {
+                op->output->URI = "";
+                fprintf(stderr, "\nError: no soap:body namespace attribute\n");
+              }
+              else if (output_body)
+                op->output->URI = urienc(definitions.soap, output_body->namespace_);
+              else
+                op->output->URI = service->URI;
+              op->output->style = soap__operation_style;
+              if (output_body)
+              {
+                op->output->use = output_body->use;
+                op->output->encodingStyle = output_body->encodingStyle;
+              }
+              if (output->wsa__Action)
+                op->output->action = output->wsa__Action;
+              else if (output->wsam__Action)
+                op->output->action = output->wsam__Action;
+              else if (op->action)
+                op->output->action = op->action;
+              else if (definitions.targetNamespace && (*binding).portTypePtr() && (*binding).portTypePtr()->name)
+              {
+                const char *name = output->name ? output->name : op->name;
+                size_t l = strlen(definitions.targetNamespace) + strlen((*binding).portTypePtr()->name) + strlen(name);
+                char *tmp = (char*)soap_malloc(definitions.soap, l + 3);
+                if (tmp)
+                {
+                  (SOAP_SNPRINTF(tmp, l + 3, l + 2), "%s/%s/%s", definitions.targetNamespace, (*binding).portTypePtr()->name, name);
+                  op->output->action = tmp;
+                }
+              }
+              op->output->message = output->messagePtr();
+              op->output->element = output->elementPtr();
+              op->output->part = NULL;
+              op->output->mustUnderstand = false;
+              op->output->multipartRelated = NULL;
+              op->output->content = output_mime_content;
+              op->output->body_parts = NULL;
+              op->output->layout = NULL;
+              op->output->ext_documentation = NULL;
+              if (ext_output)
+              {
+                op->output->multipartRelated = ext_output->mime__multipartRelated_;
+                if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty())
+                  op->output->header = ext_output->mime__multipartRelated_->part.front().soap__header_;
+                else if (!ext_output->soap__header_.empty())
+                  op->output->header = ext_output->soap__header_;
+                else if (!ext_output->wsoap__header_.empty())
+                  op->output->wheader = ext_output->wsoap__header_;
+                if (ext_output->mime__multipartRelated_ && !ext_output->mime__multipartRelated_->part.empty() && ext_output->mime__multipartRelated_->part.front().soap__body_)
+                  op->output->body_parts = ext_output->mime__multipartRelated_->part.front().soap__body_->parts;
+                else if (output_body)
+                  op->output->body_parts = output_body->parts;
+                if (ext_output->dime__message_)
+                  op->output->layout = ext_output->dime__message_->layout;
+                else
+                  op->output->layout = NULL;
+                op->output->ext_documentation = ext_output->documentation;
+              }
+              op->output->documentation = output->documentation;
+              // collect output message policies
+              if (op->output->message)
+              {
+                for (vector<wsp__Policy>::const_iterator p = op->output->message->wsp__Policy_.begin(); p != op->output->message->wsp__Policy_.end(); ++p)
+                  op->output->policy.push_back(&(*p));
+                for (vector<wsp__PolicyReference>::const_iterator r = op->output->message->wsp__PolicyReference_.begin(); r != op->output->message->wsp__PolicyReference_.end(); ++r)
+                  op->output->policy.push_back((*r).policyPtr());
+              }
+              if (output->wsp__Policy_)
+                op->output->policy.push_back(output->wsp__Policy_);
+              if (output->wsp__PolicyReference_ && output->wsp__PolicyReference_->policyPtr())
+                op->output->policy.push_back(output->wsp__PolicyReference_->policyPtr());
+              if (ext_output)
+              {
+                if (ext_output->wsp__Policy_)
+                  op->output->policy.push_back(ext_output->wsp__Policy_);
+                if (ext_output->wsp__PolicyReference_ && ext_output->wsp__PolicyReference_->policyPtr())
+                  op->output->policy.push_back(ext_output->wsp__PolicyReference_->policyPtr());
+              }
+              if (soap__operation_style == document)
+                op->input_name = types.oname("__", op->URI, op->output->name);
+              else
+                op->input_name = types.oname(NULL, op->output->URI, op->output->name);
+              size_t l = strlen(op->output->name);
+              char *s = (char*)soap_malloc(definitions.soap, l + 9);
+              if (s)
+              {
+                (SOAP_SNPRINTF(s, l + 9, l + 8), "%sResponse", op->output->name);
+                if (soap__operation_style == document)
+                  op->output_name = types.oname("__", op->URI, s);
+                else
+                  op->output_name = types.oname(NULL, op->output->URI, s);
+              }
+              analyze_headers(definitions, service, ext_input, ext_output);
+              analyze_faults(definitions, service, op, operation);
+              service->operation.push_back(op);
             }
             else
               fprintf(stderr, "\nError: no wsdl:definitions/binding/operation/output\n");
@@ -1363,30 +1351,27 @@ void Definitions::analyze_application(const wsdl__definitions& definitions)
     for (std::vector<wadl__resources>::const_iterator resources = app->resources.begin(); resources != app->resources.end(); ++resources)
     {
       const char *URI = (*resources).base;
-      if (URI)
+      const char *prefix = types.nsprefix(service_prefix, URI);
+      Service *service = services[prefix];
+      if (!service)
       {
-        const char *prefix = types.nsprefix(service_prefix, URI);
-        Service *service = services[prefix];
-        if (!service)
+        service = services[prefix] = new Service();
+        service->prefix = prefix;
+        service->URI = urienc(definitions.soap, URI);
+        size_t l = strlen(prefix);
+        char *name = (char*)soap_malloc(definitions.soap, l + 5);
+        (SOAP_SNPRINTF(name, l + 5, l + 4), "%sREST", prefix);
+        service->name = name;
+        service->transport = NULL;
+        service->type = NULL;
+        service->location.insert(URI);
+        for (std::vector<wadl__resource>::const_iterator resource = (*resources).resource.begin(); resource != (*resources).resource.end(); ++resource)
         {
-          service = services[prefix] = new Service();
-          service->prefix = prefix;
-          service->URI = urienc(definitions.soap, URI);
-          size_t l = strlen(prefix);
-          char *name = (char*)soap_malloc(definitions.soap, l + 5);
-          (SOAP_SNPRINTF(name, l + 5, l + 4), "%sREST", prefix);
-          service->name = name;
-          service->transport = NULL;
-          service->type = NULL;
-          service->location.insert(URI);
-          for (std::vector<wadl__resource>::const_iterator resource = (*resources).resource.begin(); resource != (*resources).resource.end(); ++resource)
-          {
-            const char *path = urienc(definitions.soap, (*resource).path);
-            const char *queryType = (*resource).queryType;
-            analyze_resource(definitions, service, &*resource, URI, path, queryType);
-            for (std::vector<wadl__resource_USCOREtype*>::const_iterator type = (*resource).typePtrs().begin(); type != (*resource).typePtrs().end(); ++type)
-              analyze_resource(definitions, service, *type, URI, path, queryType);
-          }
+          const char *path = urienc(definitions.soap, (*resource).path);
+          const char *queryType = (*resource).queryType;
+          analyze_resource(definitions, service, &*resource, URI, path, queryType);
+          for (std::vector<wadl__resource_USCOREtype*>::const_iterator type = (*resource).typePtrs().begin(); type != (*resource).typePtrs().end(); ++type)
+            analyze_resource(definitions, service, *type, URI, path, queryType);
         }
       }
     }
@@ -1693,7 +1678,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
     fprintf(stream, "\n//gsoapopt c++11,w\n");
   else
     fprintf(stream, "\n//gsoapopt c++,w\n");
-  banner("Definitions", definitions.targetNamespace ? definitions.targetNamespace : "targetNamespace");
+  banner("Definitions", definitions.targetNamespace ? definitions.targetNamespace : "");
   // copy documentation from WSDL definitions
   if (definitions.documentation)
   {
@@ -1823,7 +1808,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
     for (vector<xs__schema*>::const_iterator schema2 = definitions.types->xs__schema_.begin(); schema2 != definitions.types->xs__schema_.end(); ++schema2)
     {
       const char *t = types.nsprefix(NULL, (*schema2)->targetNamespace);
-      if (t)
+      if (t && *t)
       {
         fprintf(stream, "\n");
         types.document((*schema2)->annotation);
@@ -2333,7 +2318,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
     for (MapOfStringToService::const_iterator service1 = services.begin(); service1 != services.end(); ++service1)
     {
       Service *sv = (*service1).second;
-      if (sv && sv->prefix)
+      if (sv)
       {
         fprintf(stream, "\n");
         if (sv->name)
@@ -2342,7 +2327,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
           fprintf(stream, serviceformat, sv->prefix, "type", sv->type, "");
         for (SetOfString::const_iterator port = sv->location.begin(); port != sv->location.end(); ++port)
           fprintf(stream, serviceformat, sv->prefix, "port", (*port), "");
-        if (sv->URI)
+        if (sv->URI && *sv->URI)
           fprintf(stream, serviceformat, sv->prefix, "namespace", sv->URI, "");
         if (sv->transport)
           fprintf(stream, serviceformat, sv->prefix, "transport", sv->transport, "");
@@ -2453,7 +2438,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       fprintf(stream, "\n@section %s Top-level root elements of schema \"%s\"\n", prefix ? prefix : "default", (*schema5)->targetNamespace);
       for (vector<xs__element>::const_iterator element = (*schema5)->element.begin(); element != (*schema5)->element.end(); ++element)
       {
-        if (prefix)
+        if (prefix && *prefix)
           fprintf(stream, "\n  - <%s:%s> ", prefix, (*element).name);
         else
           fprintf(stream, "\n  - <%s> ", (*element).name);
@@ -3320,7 +3305,7 @@ void Operation::generate(Types& types, Service& service)
         if ((*part).element && !strcmp((*part).element, (*output->message->part.begin()).element))
           flag = false;
   }
-  if (output && output_name && bflag) // (output && (!input || bflag))
+  if (output && output_name && bflag)
   {
     if (input)
     {
@@ -3431,7 +3416,7 @@ void Operation::generate(Types& types, Service& service)
     output->generate(types, ",", anonymous, true, false, false);
     fprintf(stream, "\n    void\t///< One-way message: no output parameter\n);\n");
   }
-  if (!input && output && output_name) // (!input && output && bflag)
+  if (!input && output && output_name)
   {
     method_name = strstr(output_name + 1, "__");
     if (method_name)
