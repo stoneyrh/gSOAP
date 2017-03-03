@@ -635,6 +635,14 @@ extern intmax_t __strtoull(const char*, char**, int);
 # endif
 #endif
 
+/* MinGW does not support uselocale() and xlocale.h */
+#if defined(__MINGW32__) || defined(__MINGW64__)
+# if !defined(WITH_NO_C_LOCALE)
+#  define WITH_NO_C_LOCALE
+# endif
+# undef HAVE_GETTIMEOFDAY
+#endif
+
 /* user can set WITH_NO_C_LOCALE to force removal of locale (e.g. in case of compiler errors) */
 #ifdef WITH_NO_C_LOCALE
 # undef WITH_C_LOCALE
@@ -664,12 +672,12 @@ extern intmax_t __strtoull(const char*, char**, int);
 
 #ifdef WITH_C_LOCALE
 # include <locale.h>
-# if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__) && !defined(CYGWIN)
+# if defined(WIN32) && !defined(CYGWIN)
 #  define SOAP_LOCALE_T _locale_t
 #  define SOAP_LOCALE(soap) ((soap)->c_locale ? (soap)->c_locale : ((soap)->c_locale = _create_locale(LC_ALL, "C")))
 #  define SOAP_FREELOCALE(soap) (void)((soap)->c_locale && (_free_locale((soap)->c_locale), ((soap)->c_locale = NULL)))
 # else
-#  if !defined(__MINGW32__) && !defined(__MINGW64__) && !defined(CYGWIN)
+#  if !defined(CYGWIN)
 #   include <xlocale.h>
 #  else
 #   undef HAVE_STRTOF_L
@@ -1458,19 +1466,11 @@ extern const char soap_base64o[], soap_base64i[];
 # define soap_strcpy(buf, len, src) (void)((buf) == NULL || (len) <= 0 || (strncpy((buf), (src), (len) - 1), (buf)[(len) - 1] = '\0') || 1)
 #endif
 
-/* copy string up to n chars (truncates or sets to nul on overrun and returns nonzero) */
-#if _MSC_VER >= 1400
-# define soap_strncpy(buf, len, src, num) strncpy_s((buf), (len), (src), _TRUNCATE)
-#else
-# define soap_strncpy(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > (size_t)(num) ? (strncpy((buf), (src), (num)), (buf)[(size_t)(num)] = '\0') : !((buf)[0] = '\0')))
-#endif
+/* copy string up to n chars (sets to nul on overrun and returns nonzero) */
+#define soap_strncpy(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > (size_t)(num) ? (strncpy((buf), (src), (num)), (buf)[(size_t)(num)] = '\0') : !((buf)[0] = '\0')))
 
 /* concat string up to n chars (truncates on overrun and returns nonzero) */
-#if _MSC_VER >= 1400
-# define soap_strncat(buf, len, src, num) strncat_s((buf), (len), (src), _TRUNCATE)
-#else
-# define soap_strncat(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > strlen((buf)) + (size_t)(num) ? (strncat((buf), (src), (num)), (buf)[(size_t)(len) - 1] = '\0') : 1))
-#endif
+#define soap_strncat(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > strlen((buf)) + (size_t)(num) ? (strncat((buf), (src), (num)), (buf)[(size_t)(len) - 1] = '\0') : 1))
 
 /* copy memory (error on overrun) */
 #if _MSC_VER >= 1400
