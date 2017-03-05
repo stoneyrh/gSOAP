@@ -1466,20 +1466,28 @@ extern const char soap_base64o[], soap_base64i[];
 # define soap_strcpy(buf, len, src) (void)((buf) == NULL || (len) <= 0 || (strncpy((buf), (src), (len) - 1), (buf)[(len) - 1] = '\0') || 1)
 #endif
 
-/* copy string up to n chars (sets to nul on overrun and returns nonzero) */
-#define soap_strncpy(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > (size_t)(num) ? (strncpy((buf), (src), (num)), (buf)[(size_t)(num)] = '\0') : !((buf)[0] = '\0')))
+/* copy string up to n chars (sets string to empty on overrun and returns nonzero, zero if OK) */
+#if _MSC_VER >= 1400
+# define soap_strncpy(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > (size_t)(num) ? strncpy_s((buf), (len), (src), (num)) : !((buf)[0] = '\0')))
+#else
+# define soap_strncpy(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > (size_t)(num) ? (strncpy((buf), (src), (num)), (buf)[(size_t)(num)] = '\0') : !((buf)[0] = '\0')))
+#endif
 
-/* concat string up to n chars (truncates on overrun and returns nonzero) */
-#define soap_strncat(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > strlen((buf)) + (size_t)(num) ? (strncat((buf), (src), (num)), (buf)[(size_t)(len) - 1] = '\0') : 1))
+/* concat string up to n chars (truncates on overrun and returns nonzero, zero if OK) */
+#if _MSC_VER >= 1400
+# define soap_strncat(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > strlen((buf)) + (size_t)(num) ? strncat_s((buf), (src), (num)) : 1))
+#else
+# define soap_strncat(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > strlen((buf)) + (size_t)(num) ? (strncat((buf), (src), (num)), (buf)[(size_t)(len) - 1] = '\0') : 1))
+#endif
 
-/* copy memory (error on overrun) */
+/* copy memory (returns SOAP_ERANGE on overrun, zero if OK) */
 #if _MSC_VER >= 1400
 # define soap_memcpy(buf, len, src, num) ((buf) && (size_t)(len) >= (size_t)(num) ? memcpy_s((buf), (len), (src), (num)) : SOAP_ERANGE)
 #else
 # define soap_memcpy(buf, len, src, num) ((buf) && (size_t)(len) >= (size_t)(num) ? !memcpy((buf), (src), (num)) : SOAP_ERANGE)
 #endif
 
-/* move memory (error on overrun) */
+/* move memory (returns SOAP_ERANGE on overrun, zero if OK) */
 #if _MSC_VER >= 1400
 # define soap_memmove(buf, len, src, num) ((buf) && (size_t)(len) >= (size_t)(num) ? memmove_s((buf), (len), (src), (num)) : SOAP_ERANGE)
 #else

@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -4038,7 +4038,7 @@ static void ident()
    DO NOT INCLUDE THIS FILE DIRECTLY INTO YOUR PROJECT BUILDS\n\
    USE THE soapcpp2-GENERATED SOURCE CODE FILES FOR YOUR PROJECT BUILDS\n\n\
 gSOAP XML Web services tools\n\
-Copyright (C) 2000-2016, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
+Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
 This program is released under the GPL with the additional exemption that\n\
 compiling, linking, and/or using OpenSSL is allowed.\n\
 --------------------------------------------------------------------------------\n\

@@ -1147,12 +1147,12 @@ Version 2.8.43 (02/05/2017)
 - Fixed documentation of `soap_copy_stream()` followed by `soap_free_stream()` to chain services.
 - Fixed `soap_psha1` string buffering.
 
-Version 2.8.44 (03/01/2017) {#latest}
+Version 2.8.44 upd (03/04/2017) {#latest}
 ---
 
 - Improved windows portability and stability.
 - Fixed WS-Discovery `soap_wsdd_listen` memory cleanup on timeouts.
-- Fixed `soap->os` saved message string NUL termination (this was a C code problem only).
+- Fixed `soap->os` saved message string NUL termination (a problem in C code, not in C++).
 - Fixed Cygwin and MinGW missing xlocale.h error.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
