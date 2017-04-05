@@ -771,8 +771,9 @@ int http_GET_handler(struct soap *soap)
   /* Use soap->path (from request URL) to determine request: */
   if (options[OPTION_v].selected)
     fprintf(stderr, "HTTP GET Request '%s' to host '%s' path '%s'\n", soap->endpoint, soap->host, soap->path);
-  /* Note: soap->path always starts with '/' */
-  if (strchr(soap->path + 1, '/') || strchr(soap->path + 1, '\\'))	/* we don't like snooping in dirs */
+  /* we don't like request to snoop around in dirs, so reject when path has a '/' or a '\' or you must at least check for .. to avoid request from snooping around in higher dirs! */
+  /* Note: soap->path always starts with '/' so we chech path + 1 */
+  if (strchr(soap->path + 1, '/') || strchr(soap->path + 1, '\\'))
     return 403; /* HTTP forbidden */
   if (!soap_tag_cmp(soap->path, "*.html"))
     return copy_file(soap, soap->path + 1, "text/html");

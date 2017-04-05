@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.44
+        stdsoap2.h 2.8.45
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20844
+#define GSOAP_VERSION 20845
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -2725,6 +2725,7 @@ struct SOAP_CMAC soap
   const char *cors_header;      /* CORS Request-Headers header received */
   const char *cors_methods;     /* CORS Allow-Methods header returned by server */
   const char *cors_headers;     /* CORS Allow-Headers header returned by server */
+  const char *x_frame_options;  /* "DENY", "SAMEORIGIN" (default), or "ALLOW-FROM uri" */
   int status;                   /* -1 when request, else error code to be returned by server */
   int error;
   int errmode;
@@ -2939,14 +2940,18 @@ soap_wchar soap_get1(struct soap*);
 
 #if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 # define soap_strtoll _strtoi64
-#elif !defined(soap_strtoll)
+#elif defined(HAVE_STRTOLL) && !defined(soap_strtoll)
 # define soap_strtoll strtoll
+#elif !defined(soap_strtoll)
+ SOAP_FMAC1 LONG64 SOAP_FMAC2 soap_strtoll(const char*, char**, int);
 #endif
 
 #if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 # define soap_strtoull _strtoui64
-#elif !defined(soap_strtoull)
+#elif defined(HAVE_STRTOULL) && !defined(soap_strtoull)
 # define soap_strtoull strtoull
+#elif !defined(soap_strtoull)
+ SOAP_FMAC1 ULONG64 SOAP_FMAC2 soap_strtoull(const char*, char**, int);
 #endif
 
 #if defined(WITH_OPENSSL)

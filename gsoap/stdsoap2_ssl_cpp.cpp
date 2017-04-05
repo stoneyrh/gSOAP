@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.44
+        stdsoap2.c[pp] 2.8.45
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20844
+#define GSOAP_LIB_VERSION 20845
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -85,10 +85,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.44 2017-03-04 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.45 2017-04-05 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.44 2017-03-04 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.45 2017-04-05 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -164,8 +164,8 @@ static void soap_free_pht(struct soap*);
 #ifndef WITH_LEAN
 static const char *soap_set_validation_fault(struct soap*, const char*, const char*);
 static int soap_isnumeric(struct soap*, const char*);
-static struct soap_nlist *soap_push_ns(struct soap *soap, const char *id, const char *ns, short utilized);
-static void soap_utilize_ns(struct soap *soap, const char *tag);
+static struct soap_nlist *soap_push_ns(struct soap *soap, const char *id, const char *ns, short utilized, short isearly);
+static void soap_utilize_ns(struct soap *soap, const char *tag, short isearly);
 static const wchar_t* soap_wstring(struct soap *soap, const char *s, long minlen, long maxlen, const char *pattern);
 #endif
 
@@ -777,7 +777,8 @@ soap_send_raw(struct soap *soap, const char *s, size_t n)
     return soap->error;
 #endif
   if ((soap->mode & SOAP_IO_LENGTH))
-    soap->count += n;
+  { soap->count += n;
+  }
   else if (soap->mode & SOAP_IO)
   { size_t i = sizeof(soap->buf) - soap->bufidx;
     while (n >= i)
@@ -6943,7 +6944,7 @@ http_response(struct soap *soap, int status, size_t count)
 #ifdef WMW_RPM_IO
   if (soap->rpmreqid || soap_valid_socket(soap->master) || soap_valid_socket(soap->socket)) /* RPM behaves as if standalone */
 #else
-  if (soap_valid_socket(soap->master) || soap_valid_socket(soap->socket)) /* standalone application (socket) or CGI (stdin/out)? */
+  if ((soap_valid_socket(soap->master) || soap_valid_socket(soap->socket)) && !soap->os && soap->sendfd >= 0) /* standalone application (socket) or CGI (stdin/out)? */
 #endif
     (SOAP_SNPRINTF(http, sizeof(http), strlen(soap->http_version) + 5), "HTTP/%s", soap->http_version);
   else
@@ -7002,6 +7003,11 @@ http_response(struct soap *soap, int status, size_t count)
           return err;
       }
     }
+  }
+  if (soap->x_frame_options)
+  { err = soap->fposthdr(soap, "X-Frame-Options", soap->x_frame_options);
+    if (err)
+      return err;
   }
   soap->cors_origin = NULL;
   soap->cors_methods = NULL;
@@ -8349,6 +8355,9 @@ soap_begin_send(struct soap *soap)
   soap->position = 0;
   soap->mustUnderstand = 0;
   soap->encoding = 0;
+  soap->part = SOAP_BEGIN;
+  soap->event = 0;
+  soap->evlev = 0;
   soap->idnum = 0;
   soap->body = 1;
   soap->level = 0;
@@ -10444,6 +10453,7 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
   soap->cors_header = NULL;
   soap->cors_methods = NULL;
   soap->cors_headers = NULL;
+  soap->x_frame_options = "SAMEORIGIN";
   soap->prolog = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 #ifdef WITH_ZLIB
   soap->zlib_state = SOAP_ZLIB_NONE;
@@ -10828,9 +10838,10 @@ soap_lookup_ns(struct soap *soap, const char *tag, size_t n)
 
 #ifndef WITH_LEAN
 static struct soap_nlist *
-soap_push_ns(struct soap *soap, const char *id, const char *ns, short utilized)
+soap_push_ns(struct soap *soap, const char *id, const char *ns, short utilized, short isearly)
 { struct soap_nlist *np;
   size_t n, k;
+  unsigned int level = soap->level + isearly;
   if (soap_tagsearch(soap->c14nexclude, id))
     return NULL;
   if (!utilized)
@@ -10839,13 +10850,13 @@ soap_push_ns(struct soap *soap, const char *id, const char *ns, short utilized)
         break;
     }
     if (np)
-    { if ((np->level < soap->level || !np->ns) && np->index == 1)
+    { if ((np->level < level || !np->ns) && np->index == 1)
         utilized = 1;
       else
         return NULL;
     }
   }
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Adding namespace binding (level=%u) '%s' '%s' utilized=%d\n", soap->level, id, ns ? ns : "(null)", utilized));
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Adding namespace binding (level=%u) '%s' '%s' utilized=%d\n", level, id, ns ? ns : "(null)", utilized));
   n = strlen(id);
   if (ns)
     k = strlen(ns);
@@ -10865,7 +10876,7 @@ soap_push_ns(struct soap *soap, const char *id, const char *ns, short utilized)
   }
   else
     np->ns = NULL;
-  np->level = soap->level;
+  np->level = level;
   np->index = utilized;
   return np;
 }
@@ -10875,25 +10886,26 @@ soap_push_ns(struct soap *soap, const char *id, const char *ns, short utilized)
 
 #ifndef WITH_LEAN
 static void
-soap_utilize_ns(struct soap *soap, const char *tag)
+soap_utilize_ns(struct soap *soap, const char *tag, short isearly)
 { struct soap_nlist *np;
   size_t n = 0;
   const char *t = strchr(tag, ':');
   if (t)
     n = t - tag;
   np = soap_lookup_ns(soap, tag, n);
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Utilizing namespace of '%s'\n", tag));
   if (np)
-  { if (np->index <= 0)
-    { if (np->level == soap->level)
+  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Utilizing namespace of '%s' at level %u utilized=%d at level=%u\n", tag, soap->level + isearly, np->index, np->level));
+    if (np->index <= 0)
+    { if (np->level == soap->level + isearly)
         np->index = 1;
       else
-        soap_push_ns(soap, np->id, np->ns, 1);
+        soap_push_ns(soap, np->id, np->ns, 1, isearly);
     }
   }
   else if (n && strncmp(tag, "xml", 3))
-  { (void)soap_strncpy(soap->tmpbuf, sizeof(soap->tmpbuf), tag, n);
-    soap_push_ns(soap, soap->tmpbuf, NULL, 1);
+  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Utilizing '%s' at level %u\n", tag, soap->level + isearly));
+    (void)soap_strncpy(soap->tmpbuf, sizeof(soap->tmpbuf), tag, n);
+    soap_push_ns(soap, soap->tmpbuf, NULL, 1, isearly);
   }
 }
 #endif
@@ -10910,9 +10922,6 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
   const char *s;
 #endif
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Element begin tag='%s' level='%u' id='%d' type='%s'\n", tag, soap->level, id, type ? type : SOAP_STR_EOS));
-  soap->level++;
-  if (soap->level > soap->maxlevel)
-    return soap->error = SOAP_LEVEL;
 #ifdef WITH_DOM
 #ifndef WITH_LEAN
   if (soap_tagsearch(soap->wsuid, tag))
@@ -10923,6 +10932,13 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
     if (soap_set_attr(soap, "wsu:Id", soap->tag, 1))
       return soap->error;
   }
+#endif
+#endif
+  soap->level++;
+  if (soap->level > soap->maxlevel)
+    return soap->error = SOAP_LEVEL;
+#ifdef WITH_DOM
+#ifndef WITH_LEAN
   if ((soap->mode & SOAP_XML_CANONICAL) && !(soap->mode & SOAP_DOM_ASIS))
   { if (soap->evlev >= soap->level)
       soap->evlev = 0;
@@ -10932,7 +10948,7 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
       for (np = soap->nlist; np; np = np->next)
       { int p = soap_tagsearch(soap->c14ninclude, np->id) != NULL;
         if (np->index == 2 || p)
-        { struct soap_nlist *np1 = soap_push_ns(soap, np->id, np->ns, 1);
+        { struct soap_nlist *np1 = soap_push_ns(soap, np->id, np->ns, 1, 0);
           if (np1 && !p)
             np1->index = 0;
         }
@@ -11000,7 +11016,7 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
           ns = NULL;
         for (; ns && ns->id; ns++)
         { if (*ns->id && ns->ns && !strncmp(ns->id, tag, n) && !ns->id[n])
-          { soap_push_ns(soap, ns->id, ns->out ? ns->out : ns->ns, 0);
+          { soap_push_ns(soap, ns->id, ns->out ? ns->out : ns->ns, 0, 0);
             if (soap_attribute(soap, "xmlns", ns->out ? ns->out : ns->ns))
               return soap->error;
             break;
@@ -11008,7 +11024,7 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
         }
       }
       else if (!soap->nlist || *soap->nlist->id)
-      { soap_push_ns(soap, SOAP_STR_EOS, SOAP_STR_EOS, 0);
+      { soap_push_ns(soap, SOAP_STR_EOS, SOAP_STR_EOS, 0, 0);
         if (soap_attribute(soap, "xmlns", SOAP_STR_EOS))
           return soap->error;
       }
@@ -11054,7 +11070,7 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
   soap->ns = 1; /* namespace table control: ns = 0 or 2 to start, then 1 to stop dumping the table  */
 #ifndef WITH_LEAN
   if ((soap->mode & SOAP_XML_CANONICAL))
-    soap_utilize_ns(soap, tag);
+    soap_utilize_ns(soap, tag, 0);
 #endif
   if (id > 0)
   { (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), sizeof(SOAP_BASEREFNAME) + 20), SOAP_BASEREFNAME "%d", id);
@@ -11076,9 +11092,9 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
         t = type;
     }
     else if ((soap->mode & SOAP_XML_CANONICAL))
-      soap_utilize_ns(soap, type);
+      soap_utilize_ns(soap, type, 0);
 #endif
-    if (soap->attributes ? soap_set_attr(soap, "xsi:type", t, 1) : soap_attribute(soap, "xsi:type", t))
+    if (soap_attribute(soap, "xsi:type", t))
       return soap->error;
   }
   if (soap->null && soap->position > 0 && soap->version == 1)
@@ -11118,8 +11134,6 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
   }
   soap->null = 0;
   soap->position = 0;
-  if (soap->event == SOAP_SEC_BEGIN)
-    soap->event = 0;
   return SOAP_OK;
 }
 #endif
@@ -11272,6 +11286,116 @@ soap_strtoul(const char *s, char **t, int b)
 
 /******************************************************************************/
 
+#ifndef PALM_2
+#ifndef soap_strtoll
+SOAP_FMAC1
+LONG64
+SOAP_FMAC2
+soap_strtoll(const char *s, char **t, int b)
+{ LONG64 n = 0LL;
+  int c;
+  while (*s > 0 && *s <= 32)
+    s++;
+  if (b == 10)
+  { short neg = 0;
+    if (*s == '-')
+    { s++;
+      neg = 1;
+    }
+    else if (*s == '+')
+      s++;
+    while ((c = *s) && c >= '0' && c <= '9')
+    { if (n >= 922337203685477580LL && (n > 922337203685477580LL || c >= '8'))
+      { if (neg && n == 922337203685477580LL && c == '8')
+        { if (t)
+            *t = (char*)(s + 1);
+          return -9223372036854775807LL - 1LL; /* appease compilers that complain */
+        }
+        break;
+      }
+      n *= 10LL;
+      n += c - '0';
+      s++;
+    }
+    if (neg)
+      n = -n;
+  }
+  else /* assume b == 16 and value is always positive */
+  { while ((c = *s))
+    { if (c >= '0' && c <= '9')
+        c -= '0';
+      else if (c >= 'A' && c <= 'F')
+        c -= 'A' - 10;
+      else if (c >= 'a' && c <= 'f')
+        c -= 'a' - 10;
+      if (n > 0x07FFFFFFFFFFFFFFLL)
+        break;
+      n <<= 4;
+      n += c;
+      s++;
+    }
+  }
+  if (t)
+    *t = (char*)s;
+  return n;
+}
+#endif
+#endif
+
+/******************************************************************************/
+
+#ifndef PALM_2
+#ifndef soap_strtoull
+SOAP_FMAC1
+ULONG64
+SOAP_FMAC2
+soap_strtoull(const char *s, char **t, int b)
+{ ULONG64 n = 0UL;
+  int c;
+  while (*s > 0 && *s <= 32)
+    s++;
+  if (b == 10)
+  { short neg = 0;
+    if (*s == '-')
+    { s++;
+      neg = 1;
+    }
+    else if (*s == '+')
+      s++;
+    while ((c = *s) && c >= '0' && c <= '9')
+    { if (n >= 1844674407370955161UL)
+        break;
+      n *= 10UL;
+      n += c - '0';
+      s++;
+    }
+    if (neg && n > 0UL)
+      s--;
+  }
+  else /* b == 16 */
+  { while ((c = *s))
+    { if (c >= '0' && c <= '9')
+        c -= '0';
+      else if (c >= 'A' && c <= 'F')
+        c -= 'A' - 10;
+      else if (c >= 'a' && c <= 'f')
+        c -= 'a' - 10;
+      if (n > 0x0FFFFFFFFFFFFFFFUL)
+        break;
+      n <<= 4;
+      n += c;
+      s++;
+    }
+  }
+  if (t)
+    *t = (char*)s;
+  return n;
+}
+#endif
+#endif
+
+/******************************************************************************/
+
 #ifndef PALM_1
 SOAP_FMAC1
 int
@@ -11305,7 +11429,7 @@ soap_array_begin_out(struct soap *soap, const char *tag, int id, const char *typ
   }
 #ifndef WITH_LEAN
   if ((soap->mode & SOAP_XML_CANONICAL))
-    soap_utilize_ns(soap, type);
+    soap_utilize_ns(soap, type, 0);
 #endif
   return soap_element_start_end_out(soap, NULL);
 }
@@ -11324,17 +11448,27 @@ soap_element_start_end_out(struct soap *soap, const char *tag)
   { struct soap_nlist *np;
     for (tp = soap->attributes; tp; tp = tp->next)
     { if (tp->visible && *tp->name)
-        soap_utilize_ns(soap, tp->name);
+        soap_utilize_ns(soap, tp->name, 0);
+    }
+    if (soap->event == SOAP_SEC_BEGIN)
+    { for (np = soap->nlist; np; np = np->next)
+        if (soap_tagsearch(soap->c14ninclude, np->id))
+          soap_push_ns(soap, np->id, np->ns, 1, 0);
+      soap->event = 0;
+      soap->evlev = 0;
     }
     for (np = soap->nlist; np; np = np->next)
-    { if (np->ns && (np->index == 1 || (np->index == 0 && soap->event == SOAP_SEC_BEGIN && soap_tagsearch(soap->c14ninclude, np->id))))
+    { if (np->ns && np->index == 1)
       { if (*(np->id))
           (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(np->id) + 6), "xmlns:%s", np->id);
         else
           soap_strcpy(soap->tmpbuf, sizeof(soap->tmpbuf), "xmlns");
-        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Enabling utilized binding (level=%u) %s='%s' c14ninclude='%s'\n", np->level, soap->tmpbuf, np->ns, soap->c14ninclude ? soap->c14ninclude : "(null)"));
-        soap_set_attr(soap, soap->tmpbuf, np->ns, 1);
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Enabling utilized binding (level=%u) %s='%s' SEC-BEGIN=%d c14ninclude='%s'\n", np->level, soap->tmpbuf, np->ns, soap->event == SOAP_SEC_BEGIN, soap->c14ninclude ? soap->c14ninclude : "(null)"));
         np->index = 2;
+        soap->level--;
+        if (soap_set_attr(soap, soap->tmpbuf, np->ns, 1))
+          return soap->error;
+        soap->level++;
       }
       else
       { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Binding (level=%u) %s='%s' utilized=%d\n", np->level, np->id, np->ns, np->index));
@@ -11750,9 +11884,13 @@ soap_attribute(struct soap *soap, const char *name, const char *value)
   if ((soap->mode & SOAP_XML_CANONICAL))
   { /* push namespace */
     if (!strncmp(name, "xmlns", 5) && (name[5] == ':' || name[5] == '\0'))
-      soap_push_ns(soap, name + 5 + (name[5] == ':'), value, (name[5] == '\0'));
-    else if (soap_set_attr(soap, name, value, 1))
-      return soap->error;
+      soap_push_ns(soap, name + 5 + (name[5] == ':'), value, (name[5] == '\0'), 0);
+    else
+    { soap->level--;
+      if (soap_set_attr(soap, name, value, 1))
+        return soap->error;
+      soap->level++;
+    }
   }
   else
 #endif
@@ -12025,7 +12163,7 @@ soap_set_attr(struct soap *soap, const char *name, const char *value, int flag)
         if (np && np->ns && soap->local_namespaces)
         { if ((!strcmp(s + 1, "type") && !strcmp(np->ns, soap->local_namespaces[2].ns)) /* xsi:type QName */
             || ((!strcmp(s + 1, "arrayType") || !strcmp(s + 1, "itemType")) && !strcmp(np->ns, soap->local_namespaces[1].ns))) /* SOAP-ENC:arrayType and SOAP-ENC:itemType QName */
-          soap_utilize_ns(soap, value);
+            soap_utilize_ns(soap, value, 1);
         }
       }
     }
@@ -13864,7 +14002,7 @@ soap_outLONG64(struct soap *soap, const char *tag, int id, const LONG64 *p, cons
 
 /******************************************************************************/
 
-#ifndef WITH_LEAN
+#ifndef PALM_2
 SOAP_FMAC1
 int
 SOAP_FMAC2
@@ -15183,7 +15321,7 @@ soap_QName2s(struct soap *soap, const char *s)
       {
 #ifndef WITH_LEAN
         if ((soap->mode & SOAP_XML_CANONICAL))
-          soap_utilize_ns(soap, s);
+          soap_utilize_ns(soap, s, 1);
         if ((soap->mode & SOAP_XML_DEFAULTNS))
         { r = strchr(s, ':');
           if (r && soap->nlist && !strncmp(soap->nlist->id, s, r - s) && !soap->nlist->id[r - s])
@@ -18985,7 +19123,7 @@ soap_recv_fault(struct soap *soap, int check)
   { /* try getfault when no tag or tag mismatched at level 2, otherwise ret */
     if (soap->error != SOAP_NO_TAG
      && (soap->error != SOAP_TAG_MISMATCH || soap->level != 2))
-      return soap->error;
+      return soap_closesock(soap);
   }
   else if (soap->version == 0) /* check == 1 but no SOAP: do not parse SOAP Fault */
   { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Not a SOAP protocol\n"));

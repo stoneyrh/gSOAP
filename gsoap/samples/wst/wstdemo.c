@@ -478,7 +478,7 @@ __wst__RequestSecurityToken(struct soap *soap, struct wst__RequestSecurityTokenT
     /* this part if for testing the validity of the SAML token only and can be omitted */
     /* assumes soap->cacert = "cacert.pem"; */ /* already set with soap_ssl_server_context() */
     if (soap_wsse_verify_saml2(soap, assertion))
-      return soap_receiver_fault(soap, "Cannot sign SAML token with outdated key and/or certificate", NULL);
+      return soap_receiver_fault(soap, "Cannot sign SAML token (outdated key and/or certificate)", NULL);
 
     response->RequestedSecurityToken = (wst__RequestedSecurityTokenType*)soap_malloc(soap, sizeof(wst__RequestedSecurityTokenType));
     if (!response->RequestedSecurityToken)

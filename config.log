@@ -30,8 +30,8 @@ Kernel configured for up to 8 processors.
 Processor type: x86_64h (Intel x86-64h Haswell)
 Processors active: 0 1 2 3 4 5 6 7
 Primary memory available: 16.00 gigabytes
-Default processor set: 396 tasks, 1887 threads, 8 processors
-Load average: 0.80, Mach factor: 7.19
+Default processor set: 453 tasks, 2235 threads, 8 processors
+Load average: 1.38, Mach factor: 6.61
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -96,7 +96,7 @@ configure:3162: found /usr/bin/g++
 configure:3173: result: g++
 configure:3200: checking for C++ compiler version
 configure:3209: g++ --version >&5
-Apple LLVM version 8.0.0 (clang-800.0.42.1)
+Apple LLVM version 8.1.0 (clang-802.0.38)
 Target: x86_64-apple-darwin16.4.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
@@ -104,7 +104,7 @@ Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-
 configure:3220: $? = 0
 configure:3209: g++ -v >&5
 Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
-Apple LLVM version 8.0.0 (clang-800.0.42.1)
+Apple LLVM version 8.1.0 (clang-802.0.38)
 Target: x86_64-apple-darwin16.4.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
@@ -154,7 +154,7 @@ configure:3850: found /usr/bin/gcc
 configure:3861: result: gcc
 configure:4090: checking for C compiler version
 configure:4099: gcc --version >&5
-Apple LLVM version 8.0.0 (clang-800.0.42.1)
+Apple LLVM version 8.1.0 (clang-802.0.38)
 Target: x86_64-apple-darwin16.4.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
@@ -162,7 +162,7 @@ Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-
 configure:4110: $? = 0
 configure:4099: gcc -v >&5
 Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
-Apple LLVM version 8.0.0 (clang-800.0.42.1)
+Apple LLVM version 8.1.0 (clang-802.0.38)
 Target: x86_64-apple-darwin16.4.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
@@ -206,8 +206,8 @@ configure:4608: checking lex library
 configure:4622: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in conftest-c396b0.o
-      _main in conftest-c396b0.o
+      _yylex in conftest-9785fe.o
+      _main in conftest-9785fe.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:4622: $? = 1
@@ -5162,7 +5162,7 @@ configure:5996: checking for gethostbyname_r
 configure:5996: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-67ff37.o
+      _main in conftest-a9de31.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:5996: $? = 1

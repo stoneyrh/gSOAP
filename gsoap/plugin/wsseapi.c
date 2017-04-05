@@ -3821,6 +3821,7 @@ soap_wsse_verify_SignedInfo(struct soap *soap)
         else
           return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, reference->DigestMethod->Algorithm);
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Verifying digest of locally referenced data %s alg=%x\n", reference->URI, alg));
+        soap->c14ninclude = NULL;
         /* if reference has a transform, it should be an exc-c14n transform */
         if (reference->Transforms)
         {
@@ -3834,8 +3835,6 @@ soap_wsse_verify_SignedInfo(struct soap *soap)
               canonical = 1;
             if (reference->Transforms->Transform[i].c14n__InclusiveNamespaces)
               soap->c14ninclude = reference->Transforms->Transform[i].c14n__InclusiveNamespaces->PrefixList;
-            else
-              soap->c14ninclude = NULL;
           }
         }
         /* convert base64 digest to binary */
@@ -3952,6 +3951,8 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
     /* compute digest */
     soap->feltbegout = NULL;
     soap->feltendout = NULL;
+    /* root may have prefixes that should be retained as per soap->c14ninclude */
+    soap->event = SOAP_SEC_BEGIN;
     if (!err)
       err = soap_out_xsd__anyType(soap, NULL, 0, dom, NULL);
     if (soap_smd_end(soap, (char*)HA, &len) || err)
@@ -7099,8 +7100,8 @@ soap_wsse_preparefinalsend(struct soap *soap)
         if ((soap->mode & SOAP_XML_CANONICAL))
         {
           soap->ns = 0; /* need namespaces for canonicalization */
-	  if ((soap->mode & SOAP_XML_INDENT))
-	    soap->count += 4; /* correction for soap->ns = 0: add \n+indent */
+          if ((soap->mode & SOAP_XML_INDENT))
+            soap->count += 4; /* correction for soap->ns = 0: add \n+indent */
         }
         soap_out_ds__SignatureType(soap, "ds:Signature", 0, signature, NULL);
         soap->c14ninclude = c14ninclude;
@@ -7113,8 +7114,8 @@ soap_wsse_preparefinalsend(struct soap *soap)
         if ((soap->mode & SOAP_XML_CANONICAL))
         {
           soap->ns = 0; /* need namespaces for canonicalization */
-	  if ((soap->mode & SOAP_XML_INDENT))
-	    soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
+          if ((soap->mode & SOAP_XML_INDENT))
+            soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
         }
         soap_out_ds__SignedInfoType(soap, "ds:SignedInfo", 0, signature->SignedInfo, NULL);
         soap_out__ds__SignatureValue(soap, "ds:SignatureValue", 0, &signature->SignatureValue, NULL);
