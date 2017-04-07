@@ -32,10 +32,10 @@ CMFLAGS=-DWITH_BISON -DWITH_FLEX
 CFLAGS= $(CWFLAGS) $(COFLAGS) $(CIFLAGS) $(CMFLAGS)
 #
 release:
-		$(MAKE) distclean
+		$(MAKE) -f MakefileManual distclean
 		$(YACC) -d -v soapcpp2_yacc.y
 		$(LEX) soapcpp2_lex.l
-		$(MAKE) soapcpp2
+		$(MAKE) -f MakefileManual soapcpp2
 soapcpp2:	soapcpp2.h soapcpp2_yacc.tab.o symbol2.o error2.o lex.yy.o init2.o soapcpp2.o
 		$(CC) symbol2.o error2.o soapcpp2_yacc.tab.o lex.yy.o init2.o soapcpp2.o $(LIBS) -o $@
 		-cp -f soapcpp2 ../bin
