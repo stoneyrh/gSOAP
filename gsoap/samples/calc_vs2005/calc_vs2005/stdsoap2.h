@@ -603,7 +603,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 # endif
 #endif
 
-#if defined(__cplusplus)
+#if !defined(__cplusplus)
 /* allowing empty struct/union in C is a GNU extension */
 # if !defined(__GNU__) && !defined(__GNUC__)
 #  define WITH_NOEMPTYSTRUCT
@@ -635,7 +635,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 # endif
 #endif
 
-/* MinGW does not support uselocale() and xlocale.h */
+/* MinGW does not support uselocale() and xlocale.h and gettimeofday() */
 #if defined(__MINGW32__) || defined(__MINGW64__)
 # if !defined(WITH_NO_C_LOCALE)
 #  define WITH_NO_C_LOCALE
@@ -1475,7 +1475,7 @@ extern const char soap_base64o[], soap_base64i[];
 
 /* concat string up to n chars (truncates on overrun and returns nonzero, zero if OK) */
 #if _MSC_VER >= 1400
-# define soap_strncat(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > strlen((buf)) + (size_t)(num) ? strncat_s((buf), (src), (num)) : 1))
+# define soap_strncat(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > strlen((buf)) + (size_t)(num) ? strncat_s((buf), (len), (src), (num)) : 1))
 #else
 # define soap_strncat(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > strlen((buf)) + (size_t)(num) ? (strncat((buf), (src), (num)), (buf)[(size_t)(len) - 1] = '\0') : 1))
 #endif

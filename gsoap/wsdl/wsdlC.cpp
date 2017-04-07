@@ -18,7 +18,7 @@ A commercial use license is available from Genivia Inc., contact@genivia.com
 
 #include "wsdlH.h"
 
-SOAP_SOURCE_STAMP("@(#) wsdlC.cpp ver 2.8.45 2017-04-05 23:50:27 GMT")
+SOAP_SOURCE_STAMP("@(#) wsdlC.cpp ver 2.8.45 2017-04-07 18:09:15 GMT")
 
 
 #ifndef WITH_NOGLOBAL

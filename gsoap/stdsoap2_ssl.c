@@ -85,10 +85,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.45 2017-04-05 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.45 2017-04-07 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.45 2017-04-05 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.45 2017-04-07 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -3564,19 +3564,18 @@ soap_ssl_crl(struct soap *soap, const char *crlfile)
 #ifdef WITH_OPENSSL
   if (crlfile && soap->ctx)
   {
-#if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
+#if (OPENSSL_VERSION_NUMBER > 0x00907000L)
     X509_STORE *store = SSL_CTX_get_cert_store(soap->ctx);
     if (*crlfile)
     { int ret;
       X509_LOOKUP *lookup = X509_STORE_add_lookup(store, X509_LOOKUP_file());
+      if (!lookup)
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't create X509_LOOKUP object", SOAP_SSL_ERROR);
       ret = X509_load_crl_file(lookup, crlfile, X509_FILETYPE_PEM);
       if (ret <= 0)
-        return soap_set_receiver_error(soap, soap_ssl_error(soap, ret), "Can't read CRL file", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, soap_ssl_error(soap, ret), "Can't read CRL PEM file", SOAP_SSL_ERROR);
     }
-    X509_VERIFY_PARAM *param = X509_VERIFY_PARAM_new();
-    X509_VERIFY_PARAM_set_flags(param, X509_V_FLAG_CRL_CHECK);
-    X509_STORE_set1_param(store, param);
-    X509_VERIFY_PARAM_free(param);
+    X509_STORE_set_flags(store, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL);
 #endif
   }
   else
@@ -3586,7 +3585,7 @@ soap_ssl_crl(struct soap *soap, const char *crlfile)
   if (crlfile && soap->xcred)
   { if (*crlfile)
       if (gnutls_certificate_set_x509_crl_file(soap->xcred, crlfile, GNUTLS_X509_FMT_PEM) < 0)
-        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CRL file", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CRL PEM file", SOAP_SSL_ERROR);
   }
   else
     soap->crlfile = crlfile; /* activate later when xcred is available */
@@ -3756,13 +3755,13 @@ ssl_auth_init(struct soap *soap)
   }
   if (soap->cafile || soap->capath)
   { if (!SSL_CTX_load_verify_locations(soap->ctx, soap->cafile, soap->capath))
-      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CA file", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CA PEM file", SOAP_SSL_ERROR);
     if (soap->cafile && (soap->ssl_flags & SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION))
       SSL_CTX_set_client_CA_list(soap->ctx, SSL_load_client_CA_file(soap->cafile));
   }
   if (!(soap->ssl_flags & SOAP_SSL_NO_DEFAULT_CA_PATH))
   { if (!SSL_CTX_set_default_verify_paths(soap->ctx))
-      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read default CA file and/or directory", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read default CA PEM file and/or directory", SOAP_SSL_ERROR);
   }
   if (soap->crlfile)
   { if (soap_ssl_crl(soap, soap->crlfile))
@@ -3772,14 +3771,14 @@ ssl_auth_init(struct soap *soap)
 #if 1
   if (soap->keyfile)
   { if (!SSL_CTX_use_certificate_chain_file(soap->ctx, soap->keyfile))
-      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't find or read certificate in key file", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't find or read certificate in private key PEM file", SOAP_SSL_ERROR);
     if (soap->password)
     { SSL_CTX_set_default_passwd_cb_userdata(soap->ctx, (void*)soap->password);
       SSL_CTX_set_default_passwd_cb(soap->ctx, ssl_password);
     }
 #ifndef WM_SECURE_KEY_STORAGE
     if (!SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM))
-      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read key file", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read private key PEM file", SOAP_SSL_ERROR);
 #endif
   }
 #else
@@ -3791,17 +3790,17 @@ ssl_auth_init(struct soap *soap)
   if (!soap->cafile)
   { if (soap->keyfile)
     { if (!SSL_CTX_use_certificate_chain_file(soap->ctx, soap->keyfile))
-        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't find or read certificate in key file", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't find or read certificate in private key PEM file", SOAP_SSL_ERROR);
       if (!SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM))
-        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read key file", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read private key PEM file", SOAP_SSL_ERROR);
     }
   }
   else /* use cafile for (server) cert and keyfile for (server) key */
   { if (!SSL_CTX_use_certificate_chain_file(soap->ctx, soap->cafile))
-      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CA file", SOAP_SSL_ERROR);
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CA PEM file", SOAP_SSL_ERROR);
     if (soap->keyfile)
       if (!SSL_CTX_use_PrivateKey_file(soap->ctx, soap->keyfile, SSL_FILETYPE_PEM))
-        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read key file", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read private key PEM file", SOAP_SSL_ERROR);
   }
 #endif
 #if defined(VXWORKS) && defined(WM_SECURE_KEY_STORAGE)
@@ -3840,7 +3839,7 @@ ssl_auth_init(struct soap *soap)
     { BIO *bio;
       bio = BIO_new_file(soap->dhfile, "r");
       if (!bio)
-        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read DH file", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read DH PEM file", SOAP_SSL_ERROR);
       dh = PEM_read_bio_DHparams(bio, NULL, NULL, NULL);
       BIO_free(bio);
     }
@@ -3899,7 +3898,7 @@ ssl_auth_init(struct soap *soap)
   { gnutls_certificate_allocate_credentials(&soap->xcred);
     if (soap->cafile)
     { if (gnutls_certificate_set_x509_trust_file(soap->xcred, soap->cafile, GNUTLS_X509_FMT_PEM) < 0)
-        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CA file", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CA PEM file", SOAP_SSL_ERROR);
     }
     if (soap->crlfile)
     { if (soap_ssl_crl(soap, soap->crlfile))
@@ -3907,7 +3906,7 @@ ssl_auth_init(struct soap *soap)
     }
     if (soap->keyfile)
     { if (gnutls_certificate_set_x509_key_file(soap->xcred, soap->keyfile, soap->keyfile, GNUTLS_X509_FMT_PEM) < 0) /* Assumes that key and cert(s) are concatenated in the keyfile */
-        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read key file", SOAP_SSL_ERROR);
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read private key PEM file", SOAP_SSL_ERROR);
     }
   }
   if ((soap->ssl_flags & SOAP_SSL_CLIENT))
@@ -7495,7 +7494,7 @@ soap_putsetcookies(struct soap *soap)
       { (SOAP_SNPRINTF(s, 4096 - (s-tmp), 29), ";Max-Age=%ld", p->maxage);
         s += strlen(s);
       }
-#if !defined(WITH_LEAN) && !defined(UNDER_CE)
+#if !defined(WITH_LEAN)
 #if defined(HAVE_GMTIME_R) || defined(HAVE_GMTIME)
       if (p->maxage >= 0 && s-tmp < 4056)
       { time_t n = time(NULL) + p->maxage;
@@ -17080,10 +17079,12 @@ soap_rand_uuid(struct soap *soap, const char *prefix)
   static int k = 0xFACEB00C;
   int lo = k % 127773;
   int hi = k / 127773;
-# ifdef HAVE_GETTIMEOFDAY
+# if defined(HAVE_GETTIMEOFDAY)
   struct timeval tv;
   gettimeofday(&tv, NULL);
   r1 = 10000000 * tv.tv_sec + tv.tv_usec;
+# elif defined(UNDER_CE)
+  r1 = (int)Random();
 # else
   r1 = (int)time(NULL);
 # endif

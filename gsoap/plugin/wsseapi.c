@@ -2938,7 +2938,7 @@ soap_wsse_verify_X509(struct soap *soap, X509 *cert)
     if (soap->cafile || soap->capath)
     {
       if (X509_STORE_load_locations(data->store, soap->cafile, soap->capath) != 1)
-        return soap_wsse_receiver_fault(soap, "soap_wsse_verify_X509", "Could not load CA file or path");
+        return soap_wsse_receiver_fault(soap, "soap_wsse_verify_X509", "Could not load CA PEM file or path");
     }
 #if (OPENSSL_VERSION_NUMBER > 0x00907000L)
     if (soap->crlfile)
@@ -2950,7 +2950,7 @@ soap_wsse_verify_X509(struct soap *soap, X509 *cert)
         if (!lookup)
           return soap_wsse_receiver_fault(soap, "soap_wsse_verify_X509", "Could not create X509_LOOKUP object");
         if (X509_load_crl_file(lookup, soap->crlfile, X509_FILETYPE_PEM) != 1)
-          return soap_wsse_receiver_fault(soap, "soap_wsse_verify_X509", "Could not read the CRL file");
+          return soap_wsse_receiver_fault(soap, "soap_wsse_verify_X509", "Could not read CRL PEM file");
       }
       X509_STORE_set_flags(data->store, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL);
     }
