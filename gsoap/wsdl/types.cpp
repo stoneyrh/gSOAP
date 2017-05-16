@@ -287,6 +287,12 @@ int Types::read(const char *file)
               usetypemap[s] = estrdupf(xsd);
             if (*ptr)
               ptrtypemap[s] = estrdupf(ptr);
+	    else
+	    {
+	      MapOfStringToString::iterator i = ptrtypemap.find(s);
+	      if (i != ptrtypemap.end())
+		ptrtypemap.erase(i);
+	    }
           }
         }
       }
@@ -923,7 +929,7 @@ const char *Types::tnameptr(bool flag, const char *prefix, const char *URI, cons
   const char *s = pname(flag, !flag, prefix, URI, qname);
   if (flag)
   {
-    if (!strchr(s, '*') || !strncmp(s, "char", 4) || !strncmp(s, "const char", 10) || !strncmp(s, "wchar_t", 7) || !strncmp(s, "const wchar_t", 13))
+    if (!strchr(s, '*') || !strncmp(s, "char", 4) || !strncmp(s, "const char", 10) || !strncmp(s, "wchar_t", 7) || !strncmp(s, "const wchar_t", 13) || !strncmp(s, "_QName", 6) || !strncmp(s, "_XML", 4))
     {
       size_t l = strlen(s);
       char *r = (char*)emalloc(l + 2);
@@ -938,7 +944,7 @@ const char *Types::tnameptr(bool flag, const char *prefix, const char *URI, cons
 const char *Types::tnamenoptr(const char *prefix, const char *URI, const char *qname)
 {
   const char *s = tname(prefix, URI, qname);
-  if (strchr(s, '*') && (!strncmp(s, "char", 4) || !strncmp(s, "const char", 10) || !strncmp(s, "wchar_t", 7) || !strncmp(s, "const wchar_t", 13)))
+  if (strchr(s, '*') && (!strncmp(s, "char", 4) || !strncmp(s, "const char", 10) || !strncmp(s, "wchar_t", 7) || !strncmp(s, "const wchar_t", 13) || !strncmp(s, "_QName", 6) || !strncmp(s, "_XML", 4)))
     return s;
   size_t n = strlen(s);
   if (s[n - 1] == '*')
@@ -1361,15 +1367,17 @@ bool Types::is_ptr(const char *prefix, const char *URI, const char *qname)
   */
   if ((!s || !*s) && usetypemap.find(t) != usetypemap.end())
   {
-    if (ptrtypemap.find(t) != ptrtypemap.end())
-      return usetypemap[t] == ptrtypemap[t];
     s = usetypemap[t];
-  }
-  while (s && *s)
-  {
-    s = strchr(s + 1, '*');
-    if (s && *(s-1) != '/' && *(s+1) != '/')
+    if (ptrtypemap.find(t) != ptrtypemap.end() && s == ptrtypemap[t])
       return true;
+    if (!strcmp(s, "_QName") || !strcmp(s, "_XML"))
+      return true;
+    while (s && *s)
+    {
+      s = strchr(s + 1, '*');
+      if (s && *(s-1) != '/' && *(s+1) != '/')
+	return true;
+    }
   }
   return false;
 }
@@ -3130,6 +3138,12 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     min = element.minOccurs;
   if (element.maxOccurs)
     max = element.maxOccurs;
+  if ((min && strcmp(min, "0") && strcmp(min, "1")) || (max && strcmp(max, "0") && strcmp(max, "1"))) // min/maxOccurs > "1"
+  {
+    default_ = NULL;
+    default__ = NULL;
+    fixed = NULL;
+  }
   if (element.xmime__expectedContentTypes)
     fprintf(stream, "/// MTOM attachment with content types %s.\n", element.xmime__expectedContentTypes);
   if (element.targetNamespace)
@@ -3157,7 +3171,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
   {
     name = element.elementPtr()->name;
     type = element.elementPtr()->type;
-    if (!max || !strcmp(max, "1"))
+    if (!max || !strcmp(max, "0") || !strcmp(max, "1"))
     {
       if (!default_)
       {
@@ -3326,9 +3340,12 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       }
       else
       {
-        s = ">";
+	if (with_union)
+	  s = ">*";
+	else
+	  s = ">";
         fprintf(stream, "/// Vector of %s of length %s..%s.\n", name, min ? min : "1", max);
-        fprintf(stream, templateformat_open, vname("$CONTAINER"), "\n");
+	fprintf(stream, templateformat_open, vname("$CONTAINER"), "\n");
       }
       nillable = false;
     }
@@ -3379,7 +3396,10 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       }
       else
       {
-        s = "}>";
+	if (with_union)
+	  s = "}>*";
+	else
+	  s = "}>";
         fprintf(stream, "/// Vector of %s of length %s..%s.\n", name, min ? min : "1", max);
         fprintf(stream, templateformat_open, vname("$CONTAINER"), "\n");
       }
@@ -3432,7 +3452,10 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       else
       {
         fprintf(stream, "/// Vector of %s of length %s..%s.\n", element.ref, min ? min : "1", max);
-        fprintf(stream, templateformat, vname("$CONTAINER"), tname("_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
+	if (with_union)
+	  fprintf(stream, pointertemplateformat, vname("$CONTAINER"), tname("_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
+	else
+	  fprintf(stream, templateformat, vname("$CONTAINER"), tname("_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
       }
       nillable = false;
     }
@@ -4168,6 +4191,8 @@ void Types::gendefault(const char *URI, const char *type, const char *name, xs__
   }
   else if (!strncmp(s, "char", 4)
         || !strncmp(s, "const char", 10)
+        || !strncmp(s, "_QName", 6)
+        || !strncmp(s, "_XML", 4)
         || !strncmp(s, "wchar_t", 7)
         || !strncmp(s, "const wchar_t", 13)
         || !strncmp(s, "std::string", 11)

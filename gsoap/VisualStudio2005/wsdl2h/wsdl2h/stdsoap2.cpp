@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.45
+        stdsoap2.c[pp] 2.8.46
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20845
+#define GSOAP_LIB_VERSION 20846
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -85,10 +85,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.45 2017-04-07 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.46 2017-05-16 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.45 2017-04-07 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.46 2017-05-16 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -4752,8 +4752,19 @@ again:
       soap->fclosesocket(soap, sk);
       return SOAP_INVALID_SOCKET;
     }
-    soap->client_port = -1; /* disable bind before connect, so explicitly need to set client_port before next connect */
+    soap->client_port = -1; /* disable bind before connect, so need to set it again before the next connect */
   }
+#ifndef WIN32
+  if (soap->client_interface)
+  { if (inet_pton(AF_INET, soap->client_interface, &soap->peer.in.sin_addr) != 1)
+    { soap->errnum = soap_socket_errno(sk);
+      soap_set_receiver_error(soap, tcp_error(soap), "inet_pton() failed in tcp_connect()", SOAP_TCP_ERROR);
+      soap->fclosesocket(soap, sk);
+      return SOAP_INVALID_SOCKET;
+    }
+    soap->client_interface = NULL; /* disable client interface, so need to set it again before the next connect */
+  }
+#endif
   soap->errmode = 2;
   if (soap->proxy_host)
   { if (soap->fresolve(soap, soap->proxy_host, &soap->peer.in.sin_addr))
@@ -4790,7 +4801,17 @@ again:
       freeaddrinfo(ressave);
       return SOAP_INVALID_SOCKET;
     }
-    soap->client_port = -1; /* disable bind before connect, so explicitly need to set client_port before next connect */
+    soap->client_port = -1; /* disable bind before connect, so need to set t again before the next connect */
+  }
+  if (soap->client_interface)
+  { if (inet_pton(AF_INET6, soap->client_interface, res->ai_addr) != 1)
+    { soap->errnum = soap_socket_errno(sk);
+      soap_set_receiver_error(soap, tcp_error(soap), "inet_pton() failed in tcp_connect()", SOAP_TCP_ERROR);
+      soap->fclosesocket(soap, sk);
+      freeaddrinfo(ressave);
+      return SOAP_INVALID_SOCKET;
+    }
+    soap->client_interface = NULL; /* disable client interface, so need to set it again before the next connect */
   }
   if ((soap->omode & SOAP_IO_UDP))
   { if (soap_memcpy((void*)&soap->peer.storage, sizeof(soap->peer.storage), (const void*)res->ai_addr, res->ai_addrlen))
@@ -8607,6 +8628,8 @@ soap_attachment(struct soap *soap, const char *tag, int id, const void *p, const
   if (!aid)
   { (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), strlen(soap->dime_id_format) + 20), soap->dime_id_format, id);
     aid = soap_strdup(soap, soap->tmpbuf);
+    if (!aid)
+      return -1;
   }
   /* Add MTOM xop:Include element when necessary */
   /* TODO: this code to be obsoleted with new import/xop.h conventions */
@@ -10305,7 +10328,8 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
   soap->ipv6_multicast_if = 0; /* in_addr_t value */
   soap->ipv4_multicast_if = NULL; /* points to struct in_addr or in_addr_t */
   soap->ipv4_multicast_ttl = 0; /* 0: use default */
-  soap->client_port = -1;
+  soap->client_port = -1; /* client port to bind, -1 for none */
+  soap->client_interface = NULL; /* client interface address, NULL for none */
 #ifndef WITH_IPV6
   soap->fresolve = tcp_gethost;
 #else
@@ -10959,7 +10983,7 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
   if (soap->mode & SOAP_XML_DOM)
   { struct soap_dom_element *elt = (struct soap_dom_element*)soap_malloc(soap, sizeof(struct soap_dom_element));
     if (!elt)
-      return soap->error;
+      return soap->error = SOAP_EOM;
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Adding DOM element tag='%s' %p (parent='%s' %p)\n", tag, elt, soap->dom ? soap->dom->name : "(null)", soap->dom));
     elt->soap = soap;
     elt->next = NULL;
@@ -10985,6 +11009,8 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
         soap->dom->elts = elt;
     }
     soap->dom = elt;
+    if (!elt->name)
+      return soap->error = SOAP_EOM;
   }
   else
   {
@@ -11489,6 +11515,8 @@ soap_element_start_end_out(struct soap *soap, const char *tag)
         (*att)->name = soap_strdup(soap, tp->name);
         (*att)->text = soap_strdup(soap, tp->value);
         (*att)->soap = soap;
+        if (!(*att)->name || (tp->value && !(*att)->text))
+          return soap->error = SOAP_EOM;
         att = &(*att)->next;
         tp->visible = 0;
       }
@@ -11876,6 +11904,8 @@ soap_attribute(struct soap *soap, const char *name, const char *value)
     a->text = soap_strdup(soap, value);
     a->soap = soap;
     soap->dom->atts = a;
+    if (!a->name || (value && !a->text))
+      return soap->error = SOAP_EOM;
     return SOAP_OK;
   }
 #endif
@@ -12508,6 +12538,8 @@ soap_peek_element(struct soap *soap)
     }
     soap->dom = elt;
     att = &elt->atts;
+    if (!elt->name)
+      return soap->error = SOAP_EOM;
   }
 #endif
   soap_pop_namespace(soap);
@@ -12535,6 +12567,8 @@ soap_peek_element(struct soap *soap)
        (*att)->name = soap_strdup(soap, soap->tmpbuf);
        (*att)->text = NULL;
        (*att)->soap = soap;
+       if (!(*att)->name)
+         return soap->error = SOAP_EOM;
     }
 #endif
     if (!strncmp(soap->tmpbuf, "xmlns", 5))
@@ -12657,8 +12691,11 @@ soap_peek_element(struct soap *soap)
       } while (soap_blank(c));
       tp->visible = 2; /* seen this attribute w/ value */
 #ifdef WITH_DOM
-      if (att)
-        (*att)->text = soap_strdup(soap, tp->value);
+      if (att && tp->value)
+      { (*att)->text = soap_strdup(soap, tp->value);
+        if (!(*att)->text)
+          return soap->error = SOAP_EOM;
+      }
 #endif
     }
     else
@@ -12889,6 +12926,8 @@ soap_string_out(struct soap *soap, const char *s, int flag)
 #ifdef WITH_DOM
   if ((soap->mode & SOAP_XML_DOM) && soap->dom)
   { soap->dom->text = soap_strdup(soap, s);
+    if (!soap->dom->text)
+      return soap->error = SOAP_EOM;
     return SOAP_OK;
   }
 #endif
@@ -13505,6 +13544,8 @@ end:
   *s = '\0';
 #ifdef WITH_FAST
   t = soap_strdup(soap, soap->labbuf);
+  if (!t)
+    return NULL;
 #else
   soap_size_block(soap, NULL, i + 1);
   t = soap_save_block(soap, NULL, NULL, 0);
@@ -15360,6 +15401,8 @@ soap_QName2s(struct soap *soap, const char *s)
           }
           else /* not in namespace table: create xmlns binding */
           { char *x = soap_strdup(soap, s);
+            if (!x)
+              return NULL;
             x[q - s - 1] = '\0';
             (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), 27), "xmlns:_%d", soap->idnum++);
             soap_set_attr(soap, soap->tmpbuf, x, 1);
@@ -15398,6 +15441,8 @@ soap_QName2s(struct soap *soap, const char *s)
     }
 #ifdef WITH_FAST
     t = soap_strdup(soap, soap->labbuf);
+    if (!t)
+      soap->error = SOAP_EOM;
 #else
     t = (char*)soap_save_block(soap, NULL, NULL, 0);
 #endif
@@ -15671,6 +15716,8 @@ soap_instring(struct soap *soap, const char *tag, char **p, const char *type, in
       return NULL;
     }
     *p = soap_strdup(soap, SOAP_STR_EOS);
+    if (!*p)
+      return NULL;
   }
   if (*soap->href)
     p = (char**)soap_id_lookup(soap, soap->href, (void**)p, t, sizeof(char**), 0, NULL);
@@ -16294,7 +16341,10 @@ soap_value(struct soap *soap)
   }
 #ifdef WITH_DOM
   if ((soap->mode & SOAP_XML_DOM) && soap->dom)
-    soap->dom->text = soap_strdup(soap, soap->tmpbuf);
+  { soap->dom->text = soap_strdup(soap, soap->tmpbuf);
+    if (!soap->dom->text)
+      return NULL;
+  }
 #endif
   return soap->tmpbuf; /* return non-null pointer */
 }
@@ -16814,7 +16864,10 @@ soap_getmimehdr(struct soap *soap)
         return soap->error = SOAP_MIME_ERROR;
     }
     else
-      soap->mime.boundary = soap_strdup(soap, soap->msgbuf + 2);
+    { soap->mime.boundary = soap_strdup(soap, soap->msgbuf + 2);
+      if (!soap->mime.boundary)
+        return soap->error = SOAP_EOM;
+    }
     if (soap_getline(soap, soap->msgbuf, sizeof(soap->msgbuf)))
       return soap->error;
   }
@@ -19475,9 +19528,15 @@ soap_sprint_fault(struct soap *soap, char *buf, size_t len)
     }
     if (soap->version == 2)
       v = soap_check_faultsubcode(soap);
+    if (!v)
+      v = "no subcode";
     s = *soap_faultstring(soap);
+    if (!s)
+      s = "[no reason]";
     d = soap_check_faultdetail(soap);
-    (SOAP_SNPRINTF(buf, len, strlen(*c) + strlen(v) + strlen(s) + strlen(d) + 72), "%s%d fault %s [%s]\n\"%s\"\nDetail: %s\n", soap->version ? "SOAP 1." : "Error ", soap->version ? (int)soap->version : soap->error, *c, v ? v : "no subcode", s ? s : "[no reason]", d ? d : "[no detail]");
+    if (!d)
+      d = "[no detail]";
+    (SOAP_SNPRINTF(buf, len, strlen(*c) + strlen(v) + strlen(s) + strlen(d) + 72), "%s%d fault %s [%s]\n\"%s\"\nDetail: %s\n", soap->version ? "SOAP 1." : "Error ", soap->version ? (int)soap->version : soap->error, *c, v, s, d);
   }
   return buf;
 }
@@ -19495,7 +19554,7 @@ soap_print_fault_location(struct soap *soap, FILE *fd)
 {
 #ifndef WITH_LEAN
   int i, j, c1, c2;
-  if (soap->error && soap->error != SOAP_STOP && soap->bufidx <= soap->buflen && soap->buflen > 0 && soap->buflen <= sizeof(soap->buf))
+  if (soap_check_state(soap) == SOAP_OK && soap->error && soap->error != SOAP_STOP && soap->bufidx <= soap->buflen && soap->buflen > 0 && soap->buflen <= sizeof(soap->buf))
   { i = (int)soap->bufidx - 1;
     if (i <= 0)
       i = 0;
@@ -19518,6 +19577,42 @@ soap_print_fault_location(struct soap *soap, FILE *fd)
   (void)fd;
 #endif
 }
+#endif
+#endif
+
+/******************************************************************************/
+
+#ifdef __cplusplus
+#ifndef WITH_LEAN
+#ifndef WITH_NOSTDLIB
+#ifndef WITH_COMPAT
+SOAP_FMAC1
+void
+SOAP_FMAC2
+soap_stream_fault_location(struct soap *soap, std::ostream& os)
+{
+  int i, j, c1, c2;
+  if (soap_check_state(soap) == SOAP_OK && soap->error && soap->error != SOAP_STOP && soap->bufidx <= soap->buflen && soap->buflen > 0 && soap->buflen <= sizeof(soap->buf))
+  { i = (int)soap->bufidx - 1;
+    if (i <= 0)
+      i = 0;
+    c1 = soap->buf[i];
+    soap->buf[i] = '\0';
+    if ((int)soap->buflen >= i + 1024)
+      j = i + 1023;
+    else
+      j = (int)soap->buflen - 1;
+    c2 = soap->buf[j];
+    soap->buf[j] = '\0';
+    os << soap->buf << (char)c1 << std::endl << "<!-- ** HERE ** -->" << std::endl;
+    if (soap->bufidx < soap->buflen)
+      os << soap->buf + soap->bufidx << std::endl;
+    soap->buf[i] = (char)c1;
+    soap->buf[j] = (char)c2;
+  }
+}
+#endif
+#endif
 #endif
 #endif
 

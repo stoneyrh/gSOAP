@@ -2,7 +2,7 @@
 	wsdd5.h WS-Discovery 1.0 2005 with WS-Addressing 2005/08
 
 	Generated with:
-	wsdl2h -cyex -o wsdd5.h -t WS/WS-typemap.dat WS/discovery.xsd
+	wsdl2h -cgyex -o wsdd5.h -t WS/WS-typemap.dat WS/discovery.xsd
 
         Modified by Robert van Engelen:
 
@@ -113,6 +113,13 @@ typedef enum wsdd__FaultCodeType wsdd__FaultCodeType;
 
 /// @brief "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":HelloType is a complexType.
 ///
+/// struct wsdd__HelloType operations:
+/// - wsdd__HelloType* soap_new_wsdd__HelloType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wsdd__HelloType(struct soap*, wsdd__HelloType*) default initialize members
+/// - int soap_read_wsdd__HelloType(struct soap*, wsdd__HelloType*) deserialize from a source
+/// - int soap_write_wsdd__HelloType(struct soap*, wsdd__HelloType*) serialize to a sink
+/// - wsdd__HelloType* soap_dup_wsdd__HelloType(struct soap*, wsdd__HelloType* dst, wsdd__HelloType *src) returns deep copy of wsdd__HelloType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_wsdd__HelloType(wsdd__HelloType*) deep deletes wsdd__HelloType data members, use only on dst after soap_dup_wsdd__HelloType(NULL, wsdd__HelloType *dst, wsdd__HelloType *src) (use soapcpp2 -Ed)
 struct wsdd__HelloType
 {
 /// Imported element reference "http://www.w3.org/2005/08/addressing":EndpointReference.
@@ -129,7 +136,8 @@ struct wsdd__HelloType
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
+///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
+///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
 /// @todo <anyAttribute namespace="##other">.
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
@@ -139,6 +147,13 @@ struct wsdd__HelloType
 
 /// @brief "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ByeType is a complexType.
 ///
+/// struct wsdd__ByeType operations:
+/// - wsdd__ByeType* soap_new_wsdd__ByeType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wsdd__ByeType(struct soap*, wsdd__ByeType*) default initialize members
+/// - int soap_read_wsdd__ByeType(struct soap*, wsdd__ByeType*) deserialize from a source
+/// - int soap_write_wsdd__ByeType(struct soap*, wsdd__ByeType*) serialize to a sink
+/// - wsdd__ByeType* soap_dup_wsdd__ByeType(struct soap*, wsdd__ByeType* dst, wsdd__ByeType *src) returns deep copy of wsdd__ByeType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_wsdd__ByeType(wsdd__ByeType*) deep deletes wsdd__ByeType data members, use only on dst after soap_dup_wsdd__ByeType(NULL, wsdd__ByeType *dst, wsdd__ByeType *src) (use soapcpp2 -Ed)
 struct wsdd__ByeType
 {
 /// Imported element reference "http://www.w3.org/2005/08/addressing":EndpointReference.
@@ -155,7 +170,8 @@ struct wsdd__ByeType
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
+///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
+///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
 /// @todo <anyAttribute namespace="##other">.
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
@@ -165,6 +181,13 @@ struct wsdd__ByeType
 
 /// @brief "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ProbeType is a complexType.
 ///
+/// struct wsdd__ProbeType operations:
+/// - wsdd__ProbeType* soap_new_wsdd__ProbeType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wsdd__ProbeType(struct soap*, wsdd__ProbeType*) default initialize members
+/// - int soap_read_wsdd__ProbeType(struct soap*, wsdd__ProbeType*) deserialize from a source
+/// - int soap_write_wsdd__ProbeType(struct soap*, wsdd__ProbeType*) serialize to a sink
+/// - wsdd__ProbeType* soap_dup_wsdd__ProbeType(struct soap*, wsdd__ProbeType* dst, wsdd__ProbeType *src) returns deep copy of wsdd__ProbeType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_wsdd__ProbeType(wsdd__ProbeType*) deep deletes wsdd__ProbeType data members, use only on dst after soap_dup_wsdd__ProbeType(NULL, wsdd__ProbeType *dst, wsdd__ProbeType *src) (use soapcpp2 -Ed)
 struct wsdd__ProbeType
 {
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Types.
@@ -175,7 +198,8 @@ struct wsdd__ProbeType
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
+///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
+///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
 /// @todo <anyAttribute namespace="##other">.
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
@@ -185,6 +209,13 @@ struct wsdd__ProbeType
 
 /// @brief "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ProbeMatchesType is a complexType.
 ///
+/// struct wsdd__ProbeMatchesType operations:
+/// - wsdd__ProbeMatchesType* soap_new_wsdd__ProbeMatchesType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wsdd__ProbeMatchesType(struct soap*, wsdd__ProbeMatchesType*) default initialize members
+/// - int soap_read_wsdd__ProbeMatchesType(struct soap*, wsdd__ProbeMatchesType*) deserialize from a source
+/// - int soap_write_wsdd__ProbeMatchesType(struct soap*, wsdd__ProbeMatchesType*) serialize to a sink
+/// - wsdd__ProbeMatchesType* soap_dup_wsdd__ProbeMatchesType(struct soap*, wsdd__ProbeMatchesType* dst, wsdd__ProbeMatchesType *src) returns deep copy of wsdd__ProbeMatchesType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_wsdd__ProbeMatchesType(wsdd__ProbeMatchesType*) deep deletes wsdd__ProbeMatchesType data members, use only on dst after soap_dup_wsdd__ProbeMatchesType(NULL, wsdd__ProbeMatchesType *dst, wsdd__ProbeMatchesType *src) (use soapcpp2 -Ed)
 struct wsdd__ProbeMatchesType
 {
 /// Size of array of struct wsdd__ProbeMatchType* is 0..unbounded.
@@ -195,7 +226,8 @@ struct wsdd__ProbeMatchesType
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
+///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
+///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
 /// @todo <anyAttribute namespace="##other">.
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
@@ -205,6 +237,13 @@ struct wsdd__ProbeMatchesType
 
 /// @brief "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ProbeMatchType is a complexType.
 ///
+/// struct wsdd__ProbeMatchType operations:
+/// - wsdd__ProbeMatchType* soap_new_wsdd__ProbeMatchType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wsdd__ProbeMatchType(struct soap*, wsdd__ProbeMatchType*) default initialize members
+/// - int soap_read_wsdd__ProbeMatchType(struct soap*, wsdd__ProbeMatchType*) deserialize from a source
+/// - int soap_write_wsdd__ProbeMatchType(struct soap*, wsdd__ProbeMatchType*) serialize to a sink
+/// - wsdd__ProbeMatchType* soap_dup_wsdd__ProbeMatchType(struct soap*, wsdd__ProbeMatchType* dst, wsdd__ProbeMatchType *src) returns deep copy of wsdd__ProbeMatchType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_wsdd__ProbeMatchType(wsdd__ProbeMatchType*) deep deletes wsdd__ProbeMatchType data members, use only on dst after soap_dup_wsdd__ProbeMatchType(NULL, wsdd__ProbeMatchType *dst, wsdd__ProbeMatchType *src) (use soapcpp2 -Ed)
 struct wsdd__ProbeMatchType
 {
 /// Imported element reference "http://www.w3.org/2005/08/addressing":EndpointReference.
@@ -221,7 +260,8 @@ struct wsdd__ProbeMatchType
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
+///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
+///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
 /// @todo <anyAttribute namespace="##other">.
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
@@ -231,6 +271,13 @@ struct wsdd__ProbeMatchType
 
 /// @brief "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveType is a complexType.
 ///
+/// struct wsdd__ResolveType operations:
+/// - wsdd__ResolveType* soap_new_wsdd__ResolveType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wsdd__ResolveType(struct soap*, wsdd__ResolveType*) default initialize members
+/// - int soap_read_wsdd__ResolveType(struct soap*, wsdd__ResolveType*) deserialize from a source
+/// - int soap_write_wsdd__ResolveType(struct soap*, wsdd__ResolveType*) serialize to a sink
+/// - wsdd__ResolveType* soap_dup_wsdd__ResolveType(struct soap*, wsdd__ResolveType* dst, wsdd__ResolveType *src) returns deep copy of wsdd__ResolveType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_wsdd__ResolveType(wsdd__ResolveType*) deep deletes wsdd__ResolveType data members, use only on dst after soap_dup_wsdd__ResolveType(NULL, wsdd__ResolveType *dst, wsdd__ResolveType *src) (use soapcpp2 -Ed)
 struct wsdd__ResolveType
 {
 /// Imported element reference "http://www.w3.org/2005/08/addressing":EndpointReference.
@@ -239,7 +286,8 @@ struct wsdd__ResolveType
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
+///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
+///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
 /// @todo <anyAttribute namespace="##other">.
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
@@ -249,6 +297,13 @@ struct wsdd__ResolveType
 
 /// @brief "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveMatchesType is a complexType.
 ///
+/// struct wsdd__ResolveMatchesType operations:
+/// - wsdd__ResolveMatchesType* soap_new_wsdd__ResolveMatchesType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wsdd__ResolveMatchesType(struct soap*, wsdd__ResolveMatchesType*) default initialize members
+/// - int soap_read_wsdd__ResolveMatchesType(struct soap*, wsdd__ResolveMatchesType*) deserialize from a source
+/// - int soap_write_wsdd__ResolveMatchesType(struct soap*, wsdd__ResolveMatchesType*) serialize to a sink
+/// - wsdd__ResolveMatchesType* soap_dup_wsdd__ResolveMatchesType(struct soap*, wsdd__ResolveMatchesType* dst, wsdd__ResolveMatchesType *src) returns deep copy of wsdd__ResolveMatchesType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_wsdd__ResolveMatchesType(wsdd__ResolveMatchesType*) deep deletes wsdd__ResolveMatchesType data members, use only on dst after soap_dup_wsdd__ResolveMatchesType(NULL, wsdd__ResolveMatchesType *dst, wsdd__ResolveMatchesType *src) (use soapcpp2 -Ed)
 struct wsdd__ResolveMatchesType
 {
 /// Element "ResolveMatch" of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveMatchType.
@@ -257,7 +312,8 @@ struct wsdd__ResolveMatchesType
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
+///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
+///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
 /// @todo <anyAttribute namespace="##other">.
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
@@ -267,6 +323,13 @@ struct wsdd__ResolveMatchesType
 
 /// @brief "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveMatchType is a complexType.
 ///
+/// struct wsdd__ResolveMatchType operations:
+/// - wsdd__ResolveMatchType* soap_new_wsdd__ResolveMatchType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wsdd__ResolveMatchType(struct soap*, wsdd__ResolveMatchType*) default initialize members
+/// - int soap_read_wsdd__ResolveMatchType(struct soap*, wsdd__ResolveMatchType*) deserialize from a source
+/// - int soap_write_wsdd__ResolveMatchType(struct soap*, wsdd__ResolveMatchType*) serialize to a sink
+/// - wsdd__ResolveMatchType* soap_dup_wsdd__ResolveMatchType(struct soap*, wsdd__ResolveMatchType* dst, wsdd__ResolveMatchType *src) returns deep copy of wsdd__ResolveMatchType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_wsdd__ResolveMatchType(wsdd__ResolveMatchType*) deep deletes wsdd__ResolveMatchType data members, use only on dst after soap_dup_wsdd__ResolveMatchType(NULL, wsdd__ResolveMatchType *dst, wsdd__ResolveMatchType *src) (use soapcpp2 -Ed)
 struct wsdd__ResolveMatchType
 {
 /// Imported element reference "http://www.w3.org/2005/08/addressing":EndpointReference.
@@ -283,7 +346,8 @@ struct wsdd__ResolveMatchType
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
+///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
+///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
 /// @todo <anyAttribute namespace="##other">.
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
@@ -293,6 +357,13 @@ struct wsdd__ResolveMatchType
 
 /// @brief "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":SecurityType is a complexType.
 ///
+/// struct wsdd__SecurityType operations:
+/// - wsdd__SecurityType* soap_new_wsdd__SecurityType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wsdd__SecurityType(struct soap*, wsdd__SecurityType*) default initialize members
+/// - int soap_read_wsdd__SecurityType(struct soap*, wsdd__SecurityType*) deserialize from a source
+/// - int soap_write_wsdd__SecurityType(struct soap*, wsdd__SecurityType*) serialize to a sink
+/// - wsdd__SecurityType* soap_dup_wsdd__SecurityType(struct soap*, wsdd__SecurityType* dst, wsdd__SecurityType *src) returns deep copy of wsdd__SecurityType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_wsdd__SecurityType(wsdd__SecurityType*) deep deletes wsdd__SecurityType data members, use only on dst after soap_dup_wsdd__SecurityType(NULL, wsdd__SecurityType *dst, wsdd__SecurityType *src) (use soapcpp2 -Ed)
 struct wsdd__SecurityType
 {
 /// Element reference "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01:""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Sig.
@@ -306,13 +377,21 @@ struct wsdd__SecurityType
 
 /// @brief "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":SigType is a complexType.
 ///
+/// struct wsdd__SigType operations:
+/// - wsdd__SigType* soap_new_wsdd__SigType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wsdd__SigType(struct soap*, wsdd__SigType*) default initialize members
+/// - int soap_read_wsdd__SigType(struct soap*, wsdd__SigType*) deserialize from a source
+/// - int soap_write_wsdd__SigType(struct soap*, wsdd__SigType*) serialize to a sink
+/// - wsdd__SigType* soap_dup_wsdd__SigType(struct soap*, wsdd__SigType* dst, wsdd__SigType *src) returns deep copy of wsdd__SigType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_wsdd__SigType(wsdd__SigType*) deep deletes wsdd__SigType data members, use only on dst after soap_dup_wsdd__SigType(NULL, wsdd__SigType *dst, wsdd__SigType *src) (use soapcpp2 -Ed)
 struct wsdd__SigType
 {
 /// @todo <any namespace="##other" minOccurs="0" maxOccurs="unbounded">
 /// @todo Schema extensibility is user-definable.
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).
+///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element):
+///       wsdl2h maps xsd:any to xsd__anyType, use typemap.dat to remap.
 /// Attribute "Scheme" of XSD type xs:anyURI.
    @char*                                Scheme                         1;	///< Required attribute.
 /// Attribute "KeyId" of XSD type xs:base64Binary.
@@ -330,6 +409,13 @@ struct wsdd__SigType
 
 /// @brief "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ScopesType is a complexType with simpleContent.
 ///
+/// struct wsdd__ScopesType operations:
+/// - wsdd__ScopesType* soap_new_wsdd__ScopesType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wsdd__ScopesType(struct soap*, wsdd__ScopesType*) default initialize members
+/// - int soap_read_wsdd__ScopesType(struct soap*, wsdd__ScopesType*) deserialize from a source
+/// - int soap_write_wsdd__ScopesType(struct soap*, wsdd__ScopesType*) serialize to a sink
+/// - wsdd__ScopesType* soap_dup_wsdd__ScopesType(struct soap*, wsdd__ScopesType* dst, wsdd__ScopesType *src) returns deep copy of wsdd__ScopesType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_wsdd__ScopesType(wsdd__ScopesType*) deep deletes wsdd__ScopesType data members, use only on dst after soap_dup_wsdd__ScopesType(NULL, wsdd__ScopesType *dst, wsdd__ScopesType *src) (use soapcpp2 -Ed)
 struct wsdd__ScopesType
 {
 /// __item wraps ""http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":UriListType" simpleContent.
@@ -345,6 +431,13 @@ struct wsdd__ScopesType
 
 /// @brief "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":AppSequenceType is a complexType with complexContent restriction of XSD type xs:anyType.
 ///
+/// struct wsdd__AppSequenceType operations:
+/// - wsdd__AppSequenceType* soap_new_wsdd__AppSequenceType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wsdd__AppSequenceType(struct soap*, wsdd__AppSequenceType*) default initialize members
+/// - int soap_read_wsdd__AppSequenceType(struct soap*, wsdd__AppSequenceType*) deserialize from a source
+/// - int soap_write_wsdd__AppSequenceType(struct soap*, wsdd__AppSequenceType*) serialize to a sink
+/// - wsdd__AppSequenceType* soap_dup_wsdd__AppSequenceType(struct soap*, wsdd__AppSequenceType* dst, wsdd__AppSequenceType *src) returns deep copy of wsdd__AppSequenceType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - soap_del_wsdd__AppSequenceType(wsdd__AppSequenceType*) deep deletes wsdd__AppSequenceType data members, use only on dst after soap_dup_wsdd__AppSequenceType(NULL, wsdd__AppSequenceType *dst, wsdd__AppSequenceType *src) (use soapcpp2 -Ed)
 struct wsdd__AppSequenceType
 {
 /// Attribute "InstanceId" of XSD type xs:unsignedInt.
@@ -369,46 +462,46 @@ struct wsdd__AppSequenceType
 \******************************************************************************/
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Hello of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":HelloType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wsdd__HelloType _wsdd__Hello;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Bye of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ByeType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wsdd__ByeType _wsdd__Bye;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Probe of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ProbeType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wsdd__ProbeType _wsdd__Probe;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ProbeMatches of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ProbeMatchesType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wsdd__ProbeMatchesType _wsdd__ProbeMatches;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Resolve of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wsdd__ResolveType _wsdd__Resolve;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveMatches of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveMatchesType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wsdd__ResolveMatchesType _wsdd__ResolveMatches;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Types of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":QNameListType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef wsdd__QNameListType _wsdd__Types;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Scopes of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ScopesType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wsdd__ScopesType _wsdd__Scopes;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":XAddrs of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":UriListType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef wsdd__UriListType _wsdd__XAddrs;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":MetadataVersion of XSD type xs:unsignedInt.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef unsigned int _wsdd__MetadataVersion;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":SupportedMatchingRules of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":UriListType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef wsdd__UriListType _wsdd__SupportedMatchingRules;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Security of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":SecurityType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wsdd__SecurityType _wsdd__Security;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Sig of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":SigType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wsdd__SigType _wsdd__Sig;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":AppSequence of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":AppSequenceType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wsdd__AppSequenceType _wsdd__AppSequence;
 
 
 /******************************************************************************\
@@ -419,7 +512,7 @@ struct wsdd__AppSequenceType
 \******************************************************************************/
 
 /// @brief Top-level attribute "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Id of simpleType xs:ID.
-/// @note Use wsdl2h option -g to auto-generate a top-level attribute declaration and processing code.
+typedef char*  _wsdd__Id;
 
 
 /******************************************************************************\
@@ -445,17 +538,19 @@ your code to import these data type and function declarations. Only use the
 soapcpp2-generated files in your project build. Do not include the wsdl2h-
 generated .h file in your code.
 
-Data can be read in XML and deserialized from:
-  - a file descriptor, using soap->recvfd = fd
-  - a socket, using soap->socket = ...
-  - a C++ stream, using soap->is = ...
-  - a buffer, using the soap->frecv() callback
+Data can be read and deserialized from:
+  - an int file descriptor, using soap->recvfd = fd
+  - a socket, using soap->socket = (int)...
+  - a C++ stream (istream, stringstream), using soap->is = (istream*)...
+  - a C string, using soap->is = (const char*)...
+  - any input, using the soap->frecv() callback
 
-Data can be serialized in XML and written to:
-  - a file descriptor, using soap->sendfd = fd
-  - a socket, using soap->socket = ...
-  - a C++ stream, using soap->os = ...
-  - a buffer, using the soap->fsend() callback
+Data can be serialized and written to:
+  - an int file descriptor, using soap->sendfd = (int)...
+  - a socket, using soap->socket = (int)...
+  - a C++ stream (ostream, stringstream), using soap->os = (ostream*)...
+  - a C string, using soap->os = (const char**)...
+  - any output, using the soap->fsend() callback
 
 The following options are available for (de)serialization control:
   - soap->encodingStyle = NULL; to remove SOAP 1.1/1.2 encodingStyle
@@ -466,36 +561,218 @@ The following options are available for (de)serialization control:
 
 @section wsdd Top-level root elements of schema "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01"
 
-  - <Hello> (use wsdl2h option -g to auto-generate)
+  - <wsdd:Hello> @ref _wsdd__Hello
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__Hello(struct soap*, _wsdd__Hello*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__Hello(struct soap*, _wsdd__Hello*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__Hello(struct soap*, const char *URL, _wsdd__Hello*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__Hello(struct soap*, const char *URL, _wsdd__Hello*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__Hello(struct soap*, const char *URL, _wsdd__Hello*);
+    soap_POST_recv__wsdd__Hello(struct soap*, _wsdd__Hello*);
+    @endcode
 
-  - <Bye> (use wsdl2h option -g to auto-generate)
+  - <wsdd:Bye> @ref _wsdd__Bye
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__Bye(struct soap*, _wsdd__Bye*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__Bye(struct soap*, _wsdd__Bye*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__Bye(struct soap*, const char *URL, _wsdd__Bye*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__Bye(struct soap*, const char *URL, _wsdd__Bye*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__Bye(struct soap*, const char *URL, _wsdd__Bye*);
+    soap_POST_recv__wsdd__Bye(struct soap*, _wsdd__Bye*);
+    @endcode
 
-  - <Probe> (use wsdl2h option -g to auto-generate)
+  - <wsdd:Probe> @ref _wsdd__Probe
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__Probe(struct soap*, _wsdd__Probe*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__Probe(struct soap*, _wsdd__Probe*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__Probe(struct soap*, const char *URL, _wsdd__Probe*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__Probe(struct soap*, const char *URL, _wsdd__Probe*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__Probe(struct soap*, const char *URL, _wsdd__Probe*);
+    soap_POST_recv__wsdd__Probe(struct soap*, _wsdd__Probe*);
+    @endcode
 
-  - <ProbeMatches> (use wsdl2h option -g to auto-generate)
+  - <wsdd:ProbeMatches> @ref _wsdd__ProbeMatches
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__ProbeMatches(struct soap*, _wsdd__ProbeMatches*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__ProbeMatches(struct soap*, _wsdd__ProbeMatches*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__ProbeMatches(struct soap*, const char *URL, _wsdd__ProbeMatches*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__ProbeMatches(struct soap*, const char *URL, _wsdd__ProbeMatches*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__ProbeMatches(struct soap*, const char *URL, _wsdd__ProbeMatches*);
+    soap_POST_recv__wsdd__ProbeMatches(struct soap*, _wsdd__ProbeMatches*);
+    @endcode
 
-  - <Resolve> (use wsdl2h option -g to auto-generate)
+  - <wsdd:Resolve> @ref _wsdd__Resolve
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__Resolve(struct soap*, _wsdd__Resolve*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__Resolve(struct soap*, _wsdd__Resolve*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__Resolve(struct soap*, const char *URL, _wsdd__Resolve*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__Resolve(struct soap*, const char *URL, _wsdd__Resolve*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__Resolve(struct soap*, const char *URL, _wsdd__Resolve*);
+    soap_POST_recv__wsdd__Resolve(struct soap*, _wsdd__Resolve*);
+    @endcode
 
-  - <ResolveMatches> (use wsdl2h option -g to auto-generate)
+  - <wsdd:ResolveMatches> @ref _wsdd__ResolveMatches
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__ResolveMatches(struct soap*, _wsdd__ResolveMatches*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__ResolveMatches(struct soap*, _wsdd__ResolveMatches*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__ResolveMatches(struct soap*, const char *URL, _wsdd__ResolveMatches*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__ResolveMatches(struct soap*, const char *URL, _wsdd__ResolveMatches*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__ResolveMatches(struct soap*, const char *URL, _wsdd__ResolveMatches*);
+    soap_POST_recv__wsdd__ResolveMatches(struct soap*, _wsdd__ResolveMatches*);
+    @endcode
 
-  - <Types> (use wsdl2h option -g to auto-generate)
+  - <wsdd:Types> @ref _wsdd__Types
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__Types(struct soap*, _wsdd__Types*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__Types(struct soap*, _wsdd__Types*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__Types(struct soap*, const char *URL, _wsdd__Types*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__Types(struct soap*, const char *URL, _wsdd__Types*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__Types(struct soap*, const char *URL, _wsdd__Types*);
+    soap_POST_recv__wsdd__Types(struct soap*, _wsdd__Types*);
+    @endcode
 
-  - <Scopes> (use wsdl2h option -g to auto-generate)
+  - <wsdd:Scopes> @ref _wsdd__Scopes
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__Scopes(struct soap*, _wsdd__Scopes*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__Scopes(struct soap*, _wsdd__Scopes*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__Scopes(struct soap*, const char *URL, _wsdd__Scopes*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__Scopes(struct soap*, const char *URL, _wsdd__Scopes*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__Scopes(struct soap*, const char *URL, _wsdd__Scopes*);
+    soap_POST_recv__wsdd__Scopes(struct soap*, _wsdd__Scopes*);
+    @endcode
 
-  - <XAddrs> (use wsdl2h option -g to auto-generate)
+  - <wsdd:XAddrs> @ref _wsdd__XAddrs
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__XAddrs(struct soap*, _wsdd__XAddrs*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__XAddrs(struct soap*, _wsdd__XAddrs*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__XAddrs(struct soap*, const char *URL, _wsdd__XAddrs*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__XAddrs(struct soap*, const char *URL, _wsdd__XAddrs*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__XAddrs(struct soap*, const char *URL, _wsdd__XAddrs*);
+    soap_POST_recv__wsdd__XAddrs(struct soap*, _wsdd__XAddrs*);
+    @endcode
 
-  - <MetadataVersion> (use wsdl2h option -g to auto-generate)
+  - <wsdd:MetadataVersion> @ref _wsdd__MetadataVersion
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__MetadataVersion(struct soap*, _wsdd__MetadataVersion*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__MetadataVersion(struct soap*, _wsdd__MetadataVersion*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__MetadataVersion(struct soap*, const char *URL, _wsdd__MetadataVersion*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__MetadataVersion(struct soap*, const char *URL, _wsdd__MetadataVersion*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__MetadataVersion(struct soap*, const char *URL, _wsdd__MetadataVersion*);
+    soap_POST_recv__wsdd__MetadataVersion(struct soap*, _wsdd__MetadataVersion*);
+    @endcode
 
-  - <SupportedMatchingRules> (use wsdl2h option -g to auto-generate)
+  - <wsdd:SupportedMatchingRules> @ref _wsdd__SupportedMatchingRules
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__SupportedMatchingRules(struct soap*, _wsdd__SupportedMatchingRules*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__SupportedMatchingRules(struct soap*, _wsdd__SupportedMatchingRules*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__SupportedMatchingRules(struct soap*, const char *URL, _wsdd__SupportedMatchingRules*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__SupportedMatchingRules(struct soap*, const char *URL, _wsdd__SupportedMatchingRules*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__SupportedMatchingRules(struct soap*, const char *URL, _wsdd__SupportedMatchingRules*);
+    soap_POST_recv__wsdd__SupportedMatchingRules(struct soap*, _wsdd__SupportedMatchingRules*);
+    @endcode
 
-  - <Security> (use wsdl2h option -g to auto-generate)
+  - <wsdd:Security> @ref _wsdd__Security
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__Security(struct soap*, _wsdd__Security*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__Security(struct soap*, _wsdd__Security*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__Security(struct soap*, const char *URL, _wsdd__Security*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__Security(struct soap*, const char *URL, _wsdd__Security*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__Security(struct soap*, const char *URL, _wsdd__Security*);
+    soap_POST_recv__wsdd__Security(struct soap*, _wsdd__Security*);
+    @endcode
 
-  - <Sig> (use wsdl2h option -g to auto-generate)
+  - <wsdd:Sig> @ref _wsdd__Sig
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__Sig(struct soap*, _wsdd__Sig*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__Sig(struct soap*, _wsdd__Sig*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__Sig(struct soap*, const char *URL, _wsdd__Sig*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__Sig(struct soap*, const char *URL, _wsdd__Sig*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__Sig(struct soap*, const char *URL, _wsdd__Sig*);
+    soap_POST_recv__wsdd__Sig(struct soap*, _wsdd__Sig*);
+    @endcode
 
-  - <AppSequence> (use wsdl2h option -g to auto-generate)
+  - <wsdd:AppSequence> @ref _wsdd__AppSequence
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wsdd__AppSequence(struct soap*, _wsdd__AppSequence*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wsdd__AppSequence(struct soap*, _wsdd__AppSequence*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wsdd__AppSequence(struct soap*, const char *URL, _wsdd__AppSequence*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wsdd__AppSequence(struct soap*, const char *URL, _wsdd__AppSequence*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wsdd__AppSequence(struct soap*, const char *URL, _wsdd__AppSequence*);
+    soap_POST_recv__wsdd__AppSequence(struct soap*, _wsdd__AppSequence*);
+    @endcode
 
 */
 
 #import "wsdx.h"
 
-/* End of wsdd5.h */
+/* End of wsdd.h */

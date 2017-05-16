@@ -103,7 +103,10 @@
 #
 #	which replaces all 'float' with 'double' in the wsdl2h output. Beware
 #	that replacing types may lead to xsi:type mismatches and SOAP
-#	encoding id-ref mismatches when parsing inbound XML messages.
+#	encoding id-ref mismatches when parsing inbound XML messages. However,
+#	this is not a problem when using XML instead of SOAP and when mapping
+#	schema root elements to their types, for example the WCF serialization
+#	root element remappings defined further below.
 
 #######	BUILT-IN VARIABLES
 
@@ -271,7 +274,7 @@ empty	= ""
 ser	= <http://schemas.microsoft.com/2003/10/Serialization/>
 arr	= "http://schemas.microsoft.com/2003/10/Serialization/Arrays"
 
-#	.NET WCF DataContract Serialization Schema remappings
+#	.NET WCF DataContract Serialization Schema root element remappings
 
 _ser__anyURI		== xsd__anyURI
 _ser__boolean		== xsd__boolean
@@ -300,7 +303,7 @@ _ser__anyType	= | struct __ser__anyType | struct __ser__anyType
 _ser__char	= | int
 ser__char	= | int
 
-#	.NET WCF ser:duration element and type maps to xsd:duration
+#	.NET WCF ser:duration root element and type maps to xsd:duration
 
 _ser__duration	== xsd__duration
 ser__duration	== xsd__duration
@@ -425,6 +428,7 @@ wsc2	= <http://schemas.xmlsoap.org/ws/2005/02/sc>
 #	WS-Trust 1.2 and 1.3
 
 wst	= <http://docs.oasis-open.org/ws-sx/ws-trust/200512/>
+wst	= <http://docs.oasis-open.org/ws-sx/ws-trust/200512>
 wst12	= <http://schemas.xmlsoap.org/ws/2005/02/trust>
 
 #       SAML bindings

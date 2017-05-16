@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.45 User Guide</title>
+<title>gSOAP 2.8.46 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.45 User Guide </h1>
+<h1 align="center">gSOAP 2.8.46 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Apr  5, 2017
+<h3 align="center">May 16, 2017
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -421,51 +421,53 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.31"
 >19.31&nbsp; <font color="#0000FF">Connecting Clients Through Proxy Servers</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.32"
->19.32&nbsp; <font color="#0000FF">FastCGI Support</font></a><br />
+>19.32&nbsp; <font color="#0000FF">Bind Before Connect and Setting the Client Interface Address</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.33"
->19.33&nbsp; <font color="#0000FF">How to Create gSOAP Applications With a Small Memory Footprint</font></a><br />
+>19.33&nbsp; <font color="#0000FF">FastCGI Support</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.34"
->19.34&nbsp; <font color="#0000FF">How to Eliminate BSD Socket Library Linkage</font></a><br />
+>19.34&nbsp; <font color="#0000FF">How to Create gSOAP Applications With a Small Memory Footprint</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.35"
->19.35&nbsp; <font color="#0000FF">How to Combine Multiple Client and Server Implementations into one Executable</font></a><br />
+>19.35&nbsp; <font color="#0000FF">How to Eliminate BSD Socket Library Linkage</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.36"
->19.36&nbsp; <font color="#0000FF">How to Build a Client or Server in a C++ Code Namespace</font></a><br />
+>19.36&nbsp; <font color="#0000FF">How to Combine Multiple Client and Server Implementations into one Executable</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.37"
->19.37&nbsp; <font color="#0000FF">How to Create Client/Server Libraries</font></a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.37.1"
->19.37.1&nbsp; <font color="#0000FF">C++ Clients Example</font></a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.37.2"
->19.37.2&nbsp; <font color="#0000FF">C Clients Example</font></a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.37.3"
->19.37.3&nbsp; <font color="#0000FF">C Services Chaining Example</font></a><br />
+>19.37&nbsp; <font color="#0000FF">How to Build a Client or Server in a C++ Code Namespace</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.38"
->19.38&nbsp; <font color="#0000FF">How to Create DLLs</font></a><br />
+>19.38&nbsp; <font color="#0000FF">How to Create Client/Server Libraries</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.38.1"
->19.38.1&nbsp; <font color="#0000FF">Create the Base stdsoap2.dll</font></a><br />
+>19.38.1&nbsp; <font color="#0000FF">C++ Clients Example</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.38.2"
->19.38.2&nbsp; <font color="#0000FF">Creating Client and Server DLLs</font></a><br />
+>19.38.2&nbsp; <font color="#0000FF">C Clients Example</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.38.3"
+>19.38.3&nbsp; <font color="#0000FF">C Services Chaining Example</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39"
->19.39&nbsp; <font color="#0000FF">gSOAP Plug-ins</font></a><br />
+>19.39&nbsp; <font color="#0000FF">How to Create DLLs</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.1"
->19.39.1&nbsp; <font color="#0000FF">The Message Logging and Statistics Plug-in</font></a><br />
+>19.39.1&nbsp; <font color="#0000FF">Create the Base stdsoap2.dll</font></a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.2"
->19.39.2&nbsp; <font color="#0000FF">RESTful Client-Side API</font></a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.3"
->19.39.3&nbsp; <font color="#0000FF">RESTful Server-Side API: The HTTP GET Plug-in</font></a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.4"
->19.39.4&nbsp; <font color="#0000FF">RESTful Server-Side API: The HTTP POST Plug-in</font></a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.5"
->19.39.5&nbsp; <font color="#0000FF">The HTTP MD5 Checksum Plug-in</font></a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.6"
->19.39.6&nbsp; <font color="#0000FF">The HTTP Digest Authentication Plug-in</font></a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.7"
->19.39.7&nbsp; <font color="#0000FF">The WS-Addressing Plug-in</font></a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.8"
->19.39.8&nbsp; <font color="#0000FF">The WS-ReliableMessaging Plug-in</font></a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.9"
->19.39.9&nbsp; <font color="#0000FF">The WS-Security Plug-in</font></a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.39.10"
->19.39.10&nbsp; <font color="#0000FF">WS-Discovery</font></a><br />
+>19.39.2&nbsp; <font color="#0000FF">Creating Client and Server DLLs</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.40"
+>19.40&nbsp; <font color="#0000FF">gSOAP Plug-ins</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.40.1"
+>19.40.1&nbsp; <font color="#0000FF">The Message Logging and Statistics Plug-in</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.40.2"
+>19.40.2&nbsp; <font color="#0000FF">RESTful Client-Side API</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.40.3"
+>19.40.3&nbsp; <font color="#0000FF">RESTful Server-Side API: The HTTP GET Plug-in</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.40.4"
+>19.40.4&nbsp; <font color="#0000FF">RESTful Server-Side API: The HTTP POST Plug-in</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.40.5"
+>19.40.5&nbsp; <font color="#0000FF">The HTTP MD5 Checksum Plug-in</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.40.6"
+>19.40.6&nbsp; <font color="#0000FF">The HTTP Digest Authentication Plug-in</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.40.7"
+>19.40.7&nbsp; <font color="#0000FF">The WS-Addressing Plug-in</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.40.8"
+>19.40.8&nbsp; <font color="#0000FF">The WS-ReliableMessaging Plug-in</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.40.9"
+>19.40.9&nbsp; <font color="#0000FF">The WS-Security Plug-in</font></a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc19.40.10"
+>19.40.10&nbsp; <font color="#0000FF">WS-Discovery</font></a><br />
 
 </td></tr></table><br></span>
 <i>Copyright (C) 2000-2015 Robert A. van Engelen, Genivia Inc, All Rights Reserved.</i>
@@ -2117,9 +2119,9 @@ The constructor allocates and initializes a gSOAP context for the instance.
 You can use <i>soapcpp2</i> option <i>-n</i> together with <i>-p</i> to create
 a local namespaces table to avoid link conflicts when you need multiple
 namespace tables or need to combine multiple clients, see also
-Sections&nbsp;<a href="#sec:options">9.1</a> and&nbsp;<a href="#sec:dylibs">19.37</a>, and you can use a C++ code
+Sections&nbsp;<a href="#sec:options">9.1</a> and&nbsp;<a href="#sec:dylibs">19.38</a>, and you can use a C++ code
 <i><b>namespace</b></i> to create a namespace qualified proxy class, see
-Section&nbsp;<a href="#sec:codenamespace">19.36</a>.
+Section&nbsp;<a href="#sec:codenamespace">19.37</a>.
 
 <div class="p"><!----></div>
 The <i>soapcpp2 -i</i> option to generate proxy classes
@@ -3182,7 +3184,7 @@ passed to the service methods:
 &nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;SOAP_OK; <br />
 }
 </td></tr></table><br></i>
-Another way to pass application data around in a more organized way is accomplished with plugins, see Section&nbsp;<a href="#sec:plugins">19.39</a>.
+Another way to pass application data around in a more organized way is accomplished with plugins, see Section&nbsp;<a href="#sec:plugins">19.40</a>.
 
 <div class="p"><!----></div>
 		      <h4><a name="tth_sEc7.2.6">
@@ -3284,8 +3286,8 @@ This generated server object class can be included into a server application tog
 You can use <i>soapcpp2</i> option <i>-n</i> together with <i>-p</i> to create a
 local namespace table to avoid link conflict when you need to combine multiple
 tables and/or multiple servers, see also Sections&nbsp;<a href="#sec:options">9.1</a>
-and&nbsp;<a href="#sec:dylibs">19.37</a>, and you can use a C++ code <i><b>namespace</b></i> to create a
-namespace qualified server object class, see Section&nbsp;<a href="#sec:codenamespace">19.36</a>.
+and&nbsp;<a href="#sec:dylibs">19.38</a>, and you can use a C++ code <i><b>namespace</b></i> to create a
+namespace qualified server object class, see Section&nbsp;<a href="#sec:codenamespace">19.37</a>.
 
 <div class="p"><!----></div>
 The example above serves requests over stdin/out. Use the bind and accept calls
@@ -3331,7 +3333,7 @@ object itself is the context (it is derived from the soap struct).
 When combining multiple services into one application, you can run <i>wsdl2h</i>
 on multiple WSDLs to generate the single all-inclusive service definitions
 header file. This header file is then processed with <i>soapcpp2</i>, for
-example to generate server class objects with option <i>-i</i> and <i>-q</i> to separate the service codes with C++ namespaces, see Section&nbsp;<a href="#sec:codenamespace">19.36</a>.
+example to generate server class objects with option <i>-i</i> and <i>-q</i> to separate the service codes with C++ namespaces, see Section&nbsp;<a href="#sec:codenamespace">19.37</a>.
 
 <div class="p"><!----></div>
 This works well, but the problem is that we end up with multiple classes, each
@@ -5321,7 +5323,7 @@ need to know the details of the internal SOAP encoding used by the client and
 service.
 
 <div class="p"><!----></div>
-The <i>soapClientLib.cpp</i> and <i>soapServerLib.cpp</i> can be used to build (dynamic) client and server libraries. The serialization routines are local (static) to avoid link symbol conflicts. You must create a separate library for SOAP Header and Fault handling, as described in Section&nbsp;<a href="#sec:dylibs">19.37</a>.
+The <i>soapClientLib.cpp</i> and <i>soapServerLib.cpp</i> can be used to build (dynamic) client and server libraries. The serialization routines are local (static) to avoid link symbol conflicts. You must create a separate library for SOAP Header and Fault handling, as described in Section&nbsp;<a href="#sec:dylibs">19.38</a>.
 
 <div class="p"><!----></div>
 The following files are part of the gSOAP package and are required to build client and service applications:
@@ -5774,16 +5776,16 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_IPV6_V6ONLY</i></td><td align="left">IPv6-only server option (compile ALL sources with this macro set)</td></tr>
 <tr><td align="left"><i>WITH_NO_IPV6_V6ONLY</i></td><td align="left">permits IPv4 and IPv6 (compile ALL sources with this macro set)</td></tr>
 <tr><td align="left"><i>WITH_TCPFIN</i>	</td><td align="left">use TCP FIN after sends when socket is ready to close </td></tr>
-<tr><td align="left"><i>WITH_FASTCGI</i>	</td><td align="left">enables FastCGI, see Sections&nbsp;<a href="#sec:fastcgi">19.32</a> </td></tr>
+<tr><td align="left"><i>WITH_FASTCGI</i>	</td><td align="left">enables FastCGI, see Sections&nbsp;<a href="#sec:fastcgi">19.33</a> </td></tr>
 <tr><td align="left"><i>WITH_GZIP</i>	</td><td align="left">enables gzip and deflate compression, see Section&nbsp;<a href="#sec:compression">19.28</a> </td></tr>
 <tr><td align="left"><i>WITH_ZLIB</i>	</td><td align="left">enables deflate compression only, see Section&nbsp;<a href="#sec:compression">19.28</a> </td></tr>
-<tr><td align="left"><i>WITH_NOIO</i>	</td><td align="left">eliminates need for file IO and BSD socket library, see Section&nbsp;<a href="#sec:noio">19.34</a> </td></tr>
+<tr><td align="left"><i>WITH_NOIO</i>	</td><td align="left">eliminates need for file IO and BSD socket library, see Section&nbsp;<a href="#sec:noio">19.35</a> </td></tr>
 <tr><td align="left"><i>WITH_NOIDREF</i>	</td><td align="left">eliminates href/ref and id attributes to (de)serialize multi-ref data,</td></tr>
 <tr><td align="left"></td><td align="left">or alternatively use the <i>SOAP_XML_TREE</i> runtime flag </td></tr>
 <tr><td align="left"><i>WITH_NOHTTP</i>	</td><td align="left">eliminates HTTP stack to reduce code size </td></tr>
 <tr><td align="left"><i>WITH_NOZONE</i>	</td><td align="left">removes and ignores the timezone in xsd:dateTime </td></tr>
-<tr><td align="left"><i>WITH_LEAN</i>	</td><td align="left">creates a small-footprint executable, see Section&nbsp;<a href="#sec:lean">19.33</a> </td></tr>
-<tr><td align="left"><i>WITH_LEANER</i>	</td><td align="left">creates an even smaller footprint executable, see Section&nbsp;<a href="#sec:lean">19.33</a> </td></tr>
+<tr><td align="left"><i>WITH_LEAN</i>	</td><td align="left">creates a small-footprint executable, see Section&nbsp;<a href="#sec:lean">19.34</a> </td></tr>
+<tr><td align="left"><i>WITH_LEANER</i>	</td><td align="left">creates an even smaller footprint executable, see Section&nbsp;<a href="#sec:lean">19.34</a> </td></tr>
 <tr><td align="left"><i>WITH_FAST</i>	</td><td align="left">use faster memory allocation when used with <i>WITH_LEAN</i>/<i>WITH_LEANER</i> </td></tr>
 <tr><td align="left"><i>WITH_COMPAT</i>	</td><td align="left">removes dependency on C++ stream libraries, eliminating C++ exceptions </td></tr>
 <tr><td align="left"><i>WITH_NONAMESPACES</i></td><td align="left">removes dependence on global <i>namespaces</i> table, MUST set it </td></tr>
@@ -6735,9 +6737,11 @@ code is also stored in <i>soap.error</i>, where <i>soap</i> is a variable that
 contains the current runtime context. The function
 <i>soap_print_fault(<b>struct</b>&nbsp;soap *soap, FILE *fd)</i> can be called to
 display an error message on <i>fd</i> where current value of the
-<i>soap.error</i> variable is used by the function to display the error.  The
-function <i>soap_print_fault_location(<b>struct</b>&nbsp;soap *soap, FILE *fd)</i>
+<i>soap.error</i> variable is used by the function to display the error.  
+Use <i>soap_stream_fault(<b>struct</b>&nbsp;soap *soap, std::ostream&amp; os)</i> in C++.
+The function <i>soap_print_fault_location(<b>struct</b>&nbsp;soap *soap, FILE *fd)</i>
 prints the location of the error if the error is a result from parsing XML.
+Use <i>soap_print_stream_location(<b>struct</b>&nbsp;soap *soap, std::ostream&amp; os)</i> in C++.
 Use <i>soap_sprint_fault(<b>struct</b>&nbsp;soap*, <b>char</b>&nbsp;*buf, size_t len)</i> to print the error to a string.
 
 <div class="p"><!----></div>
@@ -15265,7 +15269,37 @@ When X-Forwarded-For headers are returned by the proxy, the header can be access
 
 <div class="p"><!----></div>
 	     <h3><a name="tth_sEc19.32">
-19.32</a>&nbsp;&nbsp;<font color="#0000FF">FastCGI Support</font></h3><a name="sec:fastcgi">
+19.32</a>&nbsp;&nbsp;<font color="#0000FF">Bind Before Connect and Setting the Client Interface Address</font></h3>
+
+<div class="p"><!----></div>
+To bind the client to a port before connect, set the <i>soap.client_port</i> to a non-negative port number:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>struct</b>&nbsp;soap soap; <br />
+soap_init(&amp;soap); <br />
+soap.client_port = ...; // non-negative port number <br />
+<b>if</b>&nbsp;(soap_call_ns__method(&amp;soap, "http://host:port/path", "action", ...)) <br />
+&nbsp;&nbsp;&nbsp;soap_print_fault(&amp;soap, stderr); <br />
+<b>else</b><br />
+&nbsp;&nbsp;&nbsp;...
+</td></tr></table><br></i>
+This port number is used only once and reset to -1 (disabled).  Set it again for the next call.
+
+<div class="p"><!----></div>
+To set a client interface address for the connection that is an IP address of the client:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>struct</b>&nbsp;soap soap; <br />
+soap_init(&amp;soap); <br />
+soap.client_interface = "..."; // IP address <br />
+<b>if</b>&nbsp;(soap_call_ns__method(&amp;soap, "http://host:port/path", "action", ...)) <br />
+&nbsp;&nbsp;&nbsp;soap_print_fault(&amp;soap, stderr); <br />
+<b>else</b><br />
+&nbsp;&nbsp;&nbsp;...
+</td></tr></table><br></i>
+This client interface address string is used only once and reset to NULL (disabled).  Set it again for the next call.  This feature is not available when compiling the code on windows.
+
+<div class="p"><!----></div>
+	     <h3><a name="tth_sEc19.33">
+19.33</a>&nbsp;&nbsp;<font color="#0000FF">FastCGI Support</font></h3><a name="sec:fastcgi">
 </a>
 
 <div class="p"><!----></div>
@@ -15282,8 +15316,8 @@ to <i>stdsoap2.h</i> and recompile the project code.
 suitable for FastCGI. Compile <i>stdsoap2.c</i> (or <i>stdsoap2.cpp</i>) instead.
 
 <div class="p"><!----></div>
-	     <h3><a name="tth_sEc19.33">
-19.33</a>&nbsp;&nbsp;<font color="#0000FF">How to Create gSOAP Applications With a Small Memory Footprint</font></h3><a name="sec:lean">
+	     <h3><a name="tth_sEc19.34">
+19.34</a>&nbsp;&nbsp;<font color="#0000FF">How to Create gSOAP Applications With a Small Memory Footprint</font></h3><a name="sec:lean">
 </a>
 
 <div class="p"><!----></div>
@@ -15365,8 +15399,8 @@ occurs in the compilation process, it is safe to assume that your application
 will run just fine.
 
 <div class="p"><!----></div>
-	     <h3><a name="tth_sEc19.34">
-19.34</a>&nbsp;&nbsp;<font color="#0000FF">How to Eliminate BSD Socket Library Linkage</font></h3><a name="sec:noio">
+	     <h3><a name="tth_sEc19.35">
+19.35</a>&nbsp;&nbsp;<font color="#0000FF">How to Eliminate BSD Socket Library Linkage</font></h3><a name="sec:noio">
 </a>
 
 <div class="p"><!----></div>
@@ -15402,8 +15436,8 @@ All callback function pointers should be non-NULL, except <i>fpoll</i>.
 You cannot use <i>soap_print_fault</i> and <i>soap_print_fault_location</i> to print error diagnostics. Instead, the value of <i>soap.error</i>, which contains the gSOAP error code, can be used to determine the cause of a fault.
 
 <div class="p"><!----></div>
-	     <h3><a name="tth_sEc19.35">
-19.35</a>&nbsp;&nbsp;<font color="#0000FF">How to Combine Multiple Client and Server Implementations into one Executable</font></h3>
+	     <h3><a name="tth_sEc19.36">
+19.36</a>&nbsp;&nbsp;<font color="#0000FF">How to Combine Multiple Client and Server Implementations into one Executable</font></h3>
 
 <div class="p"><!----></div>
 The <i>wsdl2h</i> tool can be used to import multiple WSDLs and schemas at once.
@@ -15424,8 +15458,8 @@ subsequent sections. This is automated with <i>wsdl2h</i> option <i>-q</i>.
 Both approaches are demonstrated by example in the gSOAP distribution, the <i>samples/link</i> (C only) and <i>samples/link++</i> (C++ with C++ namespaces) examples.
 
 <div class="p"><!----></div>
-	     <h3><a name="tth_sEc19.36">
-19.36</a>&nbsp;&nbsp;<font color="#0000FF">How to Build a Client or Server in a C++ Code Namespace</font></h3><a name="sec:codenamespace">
+	     <h3><a name="tth_sEc19.37">
+19.37</a>&nbsp;&nbsp;<font color="#0000FF">How to Build a Client or Server in a C++ Code Namespace</font></h3><a name="sec:codenamespace">
 </a>
 
 <div class="p"><!----></div>
@@ -15474,8 +15508,8 @@ The generated <i>envC.cpp</i> file holds the SOAP Header and Fault serializers a
 link this file with your client or server application.
 
 <div class="p"><!----></div>
-	     <h3><a name="tth_sEc19.37">
-19.37</a>&nbsp;&nbsp;<font color="#0000FF">How to Create Client/Server Libraries</font></h3><a name="sec:dylibs">
+	     <h3><a name="tth_sEc19.38">
+19.38</a>&nbsp;&nbsp;<font color="#0000FF">How to Create Client/Server Libraries</font></h3><a name="sec:dylibs">
 </a>
 
 <div class="p"><!----></div>
@@ -15488,20 +15522,20 @@ clients and/or servers into one executable. Note that it is far simpler to use
 the <i>wsdl2h</i> tool on multiple WSDL files to generate a header file that
 combines all service definitions. However, the approach presented in this
 section is useful when creating (dynamic) libraries for client and server
-objects, such as DLLs as described in Section&nbsp;<a href="#sec:dll">19.38</a>.
+objects, such as DLLs as described in Section&nbsp;<a href="#sec:dll">19.39</a>.
 
 <div class="p"><!----></div>
 Do not link <i>soapClientLib.cpp</i> or <i>soapServerLib.cpp</i> together with <i>soapC.cpp</i>, <i>soapClient.cpp</i>, and <i>soapServer.cpp</i>. The library versions already include all of the necessary definitions.
 
 <div class="p"><!----></div>
 To build multiple libraries in the same project directory, you can define a C++
-code namespace in your header file (see Section&nbsp;<a href="#sec:codenamespace">19.36</a>) or you
+code namespace in your header file (see Section&nbsp;<a href="#sec:codenamespace">19.37</a>) or you
 can use <i>soapcpp2</i> with option <i>-p</i> to rename the generated
 <i>soapClientLib.cpp</i> and <i>soapServerLib.cpp</i> (and associated) files. The
 <i>-p</i> option specifies the file name prefix to replace the <i>soap</i>
 prefix.  The libraries don't have to be C++ codes. You can use option <i>-c</i>
 to generate C code. A clean separation of libraries can also be achieved with
-C++ code namespaces, see Section&nbsp;<a href="#sec:codenamespace">19.36</a>.
+C++ code namespaces, see Section&nbsp;<a href="#sec:codenamespace">19.37</a>.
 
 <div class="p"><!----></div>
 The library codes do not define SOAP Header and Fault serializers.  You MUST
@@ -15561,8 +15595,8 @@ two or more client stubs or server skeletons when these methods share the same X
 namespaces to avoid these link conflicts or rename the namespace prefixes used by the service operation defined in the header files.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.37.1">
-19.37.1</a>&nbsp;&nbsp;<font color="#0000FF">C++ Clients Example</font></h4>
+		      <h4><a name="tth_sEc19.38.1">
+19.38.1</a>&nbsp;&nbsp;<font color="#0000FF">C++ Clients Example</font></h4>
 
 <div class="p"><!----></div>
 As an example we will build a Delayed Stock Quote client library and a Currency Exchange Rate client library.
@@ -15699,8 +15733,8 @@ context.
 The example above serves requests over stdin/out. Use the bind and accept calls to create a stand-alone server to service inbound requests over sockets, see&nbsp;<a href="#sec:stand-alone">7.2.3</a>.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.37.2">
-19.37.2</a>&nbsp;&nbsp;<font color="#0000FF">C Clients Example</font></h4>
+		      <h4><a name="tth_sEc19.38.2">
+19.38.2</a>&nbsp;&nbsp;<font color="#0000FF">C Clients Example</font></h4>
 
 <div class="p"><!----></div>
 This is the same example as above, but the clients are build with pure C.
@@ -15788,8 +15822,8 @@ Compile and link this application with <i>stdsoap2.o</i>, <i>envC.o</i>, <i>quot
 To compile and link a server library is very similar. Assuming that the server is named "<i>calc</i>" (as specified with options <i>-n</i> and <i>-p</i>), the application needs to include the <i>calcStub.h</i> file, link the <i>calcServerLib.o</i> file, and call <i>calc_serve(&amp;soap)</i> function at run time.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.37.3">
-19.37.3</a>&nbsp;&nbsp;<font color="#0000FF">C Services Chaining Example</font></h4>
+		      <h4><a name="tth_sEc19.38.3">
+19.38.3</a>&nbsp;&nbsp;<font color="#0000FF">C Services Chaining Example</font></h4>
 
 <div class="p"><!----></div>
 We build a C application for multiple services served on one port.
@@ -15850,13 +15884,13 @@ The server should also define the service operations:
 </td></tr></table><br></i>
 
 <div class="p"><!----></div>
-	     <h3><a name="tth_sEc19.38">
-19.38</a>&nbsp;&nbsp;<font color="#0000FF">How to Create DLLs</font></h3><a name="sec:dll">
+	     <h3><a name="tth_sEc19.39">
+19.39</a>&nbsp;&nbsp;<font color="#0000FF">How to Create DLLs</font></h3><a name="sec:dll">
 </a>
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.38.1">
-19.38.1</a>&nbsp;&nbsp;<font color="#0000FF">Create the Base stdsoap2.dll</font></h4>
+		      <h4><a name="tth_sEc19.39.1">
+19.39.1</a>&nbsp;&nbsp;<font color="#0000FF">Create the Base stdsoap2.dll</font></h4>
 
 <div class="p"><!----></div>
 First, create a new header file <i>env.h</i> with the SOAP Header and Fault
@@ -15893,8 +15927,8 @@ will lead to runtime errors when building DLLs.  Therefore, always rename .c
 files to .cpp files when creating DLLs.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.38.2">
-19.38.2</a>&nbsp;&nbsp;<font color="#0000FF">Creating Client and Server DLLs</font></h4>
+		      <h4><a name="tth_sEc19.39.2">
+19.39.2</a>&nbsp;&nbsp;<font color="#0000FF">Creating Client and Server DLLs</font></h4>
 
 <div class="p"><!----></div>
 Compile the <i>soapClientLib.cpp</i> and <i>soapServerLib.cpp</i> sources as DLLs
@@ -15908,7 +15942,7 @@ To create multiple DLLs in the same project directory, you SHOULD use option
 <i>-p</i> to rename the generated <i>soapClientLib.cpp</i> and
 <i>soapServerLib.cpp</i> (and associated) files. The <i>-p</i> option specifies
 the file name prefix to replace the <i>soap</i> prefix.
-A clean separation of libraries can also be achieved with C++ namespaces, see Section&nbsp;<a href="#sec:codenamespace">19.36</a>.
+A clean separation of libraries can also be achieved with C++ namespaces, see Section&nbsp;<a href="#sec:codenamespace">19.37</a>.
 
 <div class="p"><!----></div>
 Unless you use the client proxy and server object classes (<i>soapXProxy.h</i> and <i>soapXObject.h</i> where <i>X</i> is the name of the service), all client and server applications MUST explicitly set the namespaces value of the gSOAP context:
@@ -15919,8 +15953,8 @@ soap_set_namespaces(&amp;soap, namespaces);
 where the <i>namespaces[]</i> table should be defined in the client/server source. These tables are generated in the <i>.nsmap</i> files. You can rename the tables using option <i>-n</i>, see Section&nbsp;<a href="#sec:options">9.1</a>.
 
 <div class="p"><!----></div>
-	     <h3><a name="tth_sEc19.39">
-19.39</a>&nbsp;&nbsp;<font color="#0000FF">gSOAP Plug-ins</font></h3><a name="sec:plugins">
+	     <h3><a name="tth_sEc19.40">
+19.40</a>&nbsp;&nbsp;<font color="#0000FF">gSOAP Plug-ins</font></h3><a name="sec:plugins">
 </a>
 
 <div class="p"><!----></div>
@@ -16070,8 +16104,8 @@ argument to plug-in's registry callback.
 A number of example plug-ins are included in the gSOAP package's <i>plugin</i> directory. Some of these plug-ins are discussed.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.1">
-19.39.1</a>&nbsp;&nbsp;<font color="#0000FF">The Message Logging and Statistics Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.40.1">
+19.40.1</a>&nbsp;&nbsp;<font color="#0000FF">The Message Logging and Statistics Plug-in</font></h4>
 
 <div class="p"><!----></div>
 The message logging and access statistics plug-in can be used to selectively log inbound and outbound messages to a file or stream. It also keeps access statistics to log the total number of bytes sent and received.
@@ -16098,8 +16132,8 @@ If you use <i>soap_copy</i> to copy the soap struct with the plug-in, the plug-i
 Therefore, the statistics are not 100% guaranteed to be accurate for multi-threaded services since race conditions on the counters may occur. Mutex is not used to update the counters to avoid introducing expensive synchronization points. If 100% server-side accuracy is required, add mutex at the points indicated in the <i>logging.c</i> code.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.2">
-19.39.2</a>&nbsp;&nbsp;<font color="#0000FF">RESTful Client-Side API</font></h4>
+		      <h4><a name="tth_sEc19.40.2">
+19.40.2</a>&nbsp;&nbsp;<font color="#0000FF">RESTful Client-Side API</font></h4>
 
 <div class="p"><!----></div>
 The soapcpp2 tool generates the following functions for client-side REST operations:
@@ -16125,8 +16159,8 @@ The REST POST operation is a two-step process, first a POST send of the data
 followed by a POST receive of the response data.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.3">
-19.39.3</a>&nbsp;&nbsp;<font color="#0000FF">RESTful Server-Side API: The HTTP GET Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.40.3">
+19.40.3</a>&nbsp;&nbsp;<font color="#0000FF">RESTful Server-Side API: The HTTP GET Plug-in</font></h4>
 
 <div class="p"><!----></div>
 Server-side use of RESTful HTTP GET operations is supported with the HTTP GET
@@ -16221,8 +16255,8 @@ soap_done(&amp;soap);
 </td></tr></table><br></i>
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.4">
-19.39.4</a>&nbsp;&nbsp;<font color="#0000FF">RESTful Server-Side API: The HTTP POST Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.40.4">
+19.40.4</a>&nbsp;&nbsp;<font color="#0000FF">RESTful Server-Side API: The HTTP POST Plug-in</font></h4>
 
 <div class="p"><!----></div>
 Server-side use of RESTful HTTP POST, PUT, and DELETE operations are supported
@@ -16303,8 +16337,8 @@ soap_end(soap);
 Similarly, <i>soap_put_connect</i> and <i>soap_delete_connect</i> commands are provided for PUT and DELETE handling.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.5">
-19.39.5</a>&nbsp;&nbsp;<font color="#0000FF">The HTTP MD5 Checksum Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.40.5">
+19.40.5</a>&nbsp;&nbsp;<font color="#0000FF">The HTTP MD5 Checksum Plug-in</font></h4>
 
 <div class="p"><!----></div>
 The HTTP MD5 plug-in works in the background to automatically verify the
@@ -16339,8 +16373,8 @@ soap_init1(&amp;soap, SOAP_IO_STORE); <br />
 Unfortunately, this eliminates streaming.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.6">
-19.39.6</a>&nbsp;&nbsp;<font color="#0000FF">The HTTP Digest Authentication Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.40.6">
+19.40.6</a>&nbsp;&nbsp;<font color="#0000FF">The HTTP Digest Authentication Plug-in</font></h4>
 
 <div class="p"><!----></div>
 The HTTP digest authentication plug-in enables a more secure authentication
@@ -16441,8 +16475,8 @@ For more details, including how to configure HTTP Digest authentication for
 proxies, please see the <i>doc/httpda/html/index.html</i> documentation in the gSOAP package.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.7">
-19.39.7</a>&nbsp;&nbsp;<font color="#0000FF">The WS-Addressing Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.40.7">
+19.40.7</a>&nbsp;&nbsp;<font color="#0000FF">The WS-Addressing Plug-in</font></h4>
 
 <div class="p"><!----></div>
 The WSA WS-Addressing plug-in and the source code are extensively documented in
@@ -16467,8 +16501,8 @@ This imports the SOAP header elements required by WS-Addressing.
 For more details, please see the <i>doc/wsa/html/index.html</i> documentation in the gSOAP package.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.8">
-19.39.8</a>&nbsp;&nbsp;<font color="#0000FF">The WS-ReliableMessaging Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.40.8">
+19.40.8</a>&nbsp;&nbsp;<font color="#0000FF">The WS-ReliableMessaging Plug-in</font></h4>
 
 <div class="p"><!----></div>
 The WSRM WS-ReliableMessaging plug-in and the source code are extensively documented in
@@ -16501,8 +16535,8 @@ This imports the SOAP header elements required by WS-ReliableMessaging.
 For more details, please see the <i>doc/wsrm/html/index.html</i> documentation in the gSOAP package.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.9">
-19.39.9</a>&nbsp;&nbsp;<font color="#0000FF">The WS-Security Plug-in</font></h4>
+		      <h4><a name="tth_sEc19.40.9">
+19.40.9</a>&nbsp;&nbsp;<font color="#0000FF">The WS-Security Plug-in</font></h4>
 
 <div class="p"><!----></div>
 The WSSE WS-Security plug-in and the source code are extensively documented in
@@ -16536,8 +16570,8 @@ This imports the SOAP header elements required by WS-Security.
 For more details, please see the <i>doc/wsse/html/index.html</i> documentation in the gSOAP package.
 
 <div class="p"><!----></div>
-		      <h4><a name="tth_sEc19.39.10">
-19.39.10</a>&nbsp;&nbsp;<font color="#0000FF">WS-Discovery</font></h4>
+		      <h4><a name="tth_sEc19.40.10">
+19.40.10</a>&nbsp;&nbsp;<font color="#0000FF">WS-Discovery</font></h4>
 
 <div class="p"><!----></div>
 The WS-Discovery implementation is documented in the <i>doc/wsdd</i> directory
@@ -16646,5 +16680,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On  5 Apr 2017, 18:30.</small>
+version 4.00.<br />On 16 May 2017, 15:09.</small>
 </html>

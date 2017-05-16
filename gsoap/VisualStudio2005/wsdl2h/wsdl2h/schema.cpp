@@ -678,50 +678,57 @@ xs__include::xs__include()
 
 int xs__include::preprocess(xs__schema &schema)
 {
-  if (!schemaRef && schemaLocation)
+  if (!schemaRef)
   {
-    // only read from include locations not read already, uses static std::map
-    static map<const char*, xs__schema*, ltstr> included;
-    map<const char*, xs__schema*, ltstr>::iterator i = included.end();
-    schemaLocation = schema.absoluteLocation(schemaLocation);
-    if (schema.targetNamespace)
+    if (schemaLocation)
     {
-      for (i = included.begin(); i != included.end(); ++i)
+      // only read from include locations not read already, uses static std::map
+      static map<const char*, xs__schema*, ltstr> included;
+      map<const char*, xs__schema*, ltstr>::iterator i = included.end();
+      schemaLocation = schema.absoluteLocation(schemaLocation);
+      if (schema.targetNamespace)
       {
-        if ((*i).second->targetNamespace
-         && !strcmp(schemaLocation, (*i).first)
-         && !strcmp(schema.targetNamespace, (*i).second->targetNamespace))
-          break;
-      }
-    }
-    if (i == included.end())
-    {
-      if (vflag)
-        cerr << "Preprocessing schema include '" << (schemaLocation ? schemaLocation : "(null)") << "' into schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
-      schemaRef = new xs__schema(schema.soap);
-      if (!schemaRef)
-        return SOAP_EOF;
-      included[schemaLocation] = schemaRef;
-      schemaRef->read(schema.sourceLocation(), schemaLocation);
-      if (schema.targetNamespace && (!schemaRef->targetNamespace || strcmp(schema.targetNamespace, schemaRef->targetNamespace)))
-      {
-        if (!Wflag)
+        for (i = included.begin(); i != included.end(); ++i)
         {
-          if (schemaRef->targetNamespace)
-            fprintf(stderr, "\nWarning: attempt to include schema with mismatching targetNamespace '%s' in schema '%s', assigning targetNamespace '%s'\n", schemaRef->targetNamespace, schema.targetNamespace, schema.targetNamespace);
-          else
-            fprintf(stderr, "\nWarning: attempt to include chameleon schema with no targetNamespace in schema '%s', assigning targetNamespace '%s'\n", schema.targetNamespace, schema.targetNamespace);
+          if ((*i).second->targetNamespace
+              && !strcmp(schemaLocation, (*i).first)
+              && !strcmp(schema.targetNamespace, (*i).second->targetNamespace))
+            break;
         }
-        schemaRef->targetNamespace = schema.targetNamespace;
-        schemaRef->elementFormDefault = schema.elementFormDefault;
-        schemaRef->attributeFormDefault = schema.attributeFormDefault;
+      }
+      if (i == included.end())
+      {
+        if (vflag)
+          cerr << "Preprocessing schema include '" << (schemaLocation ? schemaLocation : "(null)") << "' into schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+        schemaRef = new xs__schema(schema.soap);
+        if (!schemaRef)
+          return SOAP_EOF;
+        included[schemaLocation] = schemaRef;
+        schemaRef->read(schema.sourceLocation(), schemaLocation);
+        if (schema.targetNamespace && (!schemaRef->targetNamespace || strcmp(schema.targetNamespace, schemaRef->targetNamespace)))
+        {
+          if (!Wflag)
+          {
+            if (schemaRef->targetNamespace)
+              fprintf(stderr, "\nWarning: attempt to include schema with mismatching targetNamespace '%s' in schema '%s', assigning targetNamespace '%s'\n", schemaRef->targetNamespace, schema.targetNamespace, schema.targetNamespace);
+            else
+              fprintf(stderr, "\nWarning: attempt to include chameleon schema with no targetNamespace in schema '%s', assigning targetNamespace '%s'\n", schema.targetNamespace, schema.targetNamespace);
+          }
+          schemaRef->targetNamespace = schema.targetNamespace;
+          schemaRef->elementFormDefault = schema.elementFormDefault;
+          schemaRef->attributeFormDefault = schema.attributeFormDefault;
+        }
+      }
+      else
+      {
+        if (vflag)
+          cerr << "Schema '" << (schemaLocation ? schemaLocation : "(null)") << "' already included into schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+        schemaRef = (*i).second;
       }
     }
-    else
+    else if (!Wflag)
     {
-      if (vflag)
-        cerr << "Schema '" << (schemaLocation ? schemaLocation : "(null)") << "' already included into schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
-      schemaRef = (*i).second;
+      fprintf(stderr, "\nWarning: no schemaLocation in <include> to load schema\n");
     }
   }
   return SOAP_OK;
@@ -845,12 +852,15 @@ int xs__redefine::preprocess(xs__schema &schema)
               }
               else if (!Wflag)
                 fprintf(stderr, "\nWarning: redefining complexType \"%s\" in schema \"%s\" by extension requires an extension base\n", (*ct).name, schemaRef->targetNamespace ? schemaRef->targetNamespace : "(null)");
-
               break;
             }
           }
         }
       }
+    }
+    else if (!Wflag)
+    {
+      fprintf(stderr, "\nWarning: no schemaLocation in <redefine> to load schema\n");
     }
   }
   return SOAP_OK;
@@ -971,6 +981,10 @@ int xs__override::preprocess(xs__schema &schema)
           }
         }
       }
+    }
+    else if (!Wflag)
+    {
+      fprintf(stderr, "\nWarning: no schemaLocation in <override> to load schema\n");
     }
   }
   return SOAP_OK;

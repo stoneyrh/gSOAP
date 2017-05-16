@@ -1155,12 +1155,19 @@ Version 2.8.44 upd (03/04/2017)
 - Fixed `soap->os` saved message string NUL termination (a problem in C code, not in C++).
 - Fixed Cygwin and MinGW missing xlocale.h error.
 
-Version 2.8.45 upd (04/07/2017) {#latest}
+Version 2.8.45 upd (04/07/2017)
 ---
 
 - Fixed an issue with the WSSE plugin that caused WS-Security SignedInfo/Reference/Transforms/Transform/InclusiveNamespaces/@PrefixList ending up being ignored by the canonicalizer.
 - Fixed Windows and WinCE compilation issues.
 - Improvements.
+
+Version 2.8.46 (05/16/2017) {#latest}
+---
+
+- Improved WS-Trust API, updated import/wst.h, import/saml1.h, import/saml2.h and import/wsdd.h definitions.
+- Added `soap.client_interface` string to set the client IP address interface with `inet_pton()` (not generally available on windows).
+- Fixes for minor issues, improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

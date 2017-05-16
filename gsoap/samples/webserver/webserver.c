@@ -762,11 +762,11 @@ int http_GET_handler(struct soap *soap)
     soap_set_omode(soap, SOAP_IO_STORE); */ /* if not chunking we MUST buffer entire content when returning HTML pages to determine content length */
 #ifdef WITH_ZLIB
   if (options[OPTION_z].selected && soap->zlib_out == SOAP_ZLIB_GZIP) /* client accepts gzip */
-  { soap_set_omode(soap, SOAP_ENC_ZLIB); /* so we can compress content (gzip) */
+  { soap_set_omode(soap, SOAP_ENC_ZLIB); /* we can compress content (gzip) */
     soap->z_level = 9; /* best compression */
   }
   else
-    soap_clr_omode(soap, SOAP_ENC_ZLIB); /* so we can compress content (gzip) */
+    soap_clr_omode(soap, SOAP_ENC_ZLIB);
 #endif
   /* Use soap->path (from request URL) to determine request: */
   if (options[OPTION_v].selected)

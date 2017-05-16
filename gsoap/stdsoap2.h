@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.45
+        stdsoap2.h 2.8.46
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20845
+#define GSOAP_VERSION 20846
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -299,6 +299,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_MBTOWC
 #  define HAVE_INTTYPES_H
 #  define HAVE_LOCALE_H
+#  define HAVE_XLOCALE_H
 # elif defined(_AIX43)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -378,6 +379,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_ISNAN
 #  define HAVE_ISINF
 #  define HAVE_LOCALE_H
+#  define HAVE_XLOCALE_H
 # elif defined(__VMS)
 #  include <ioctl.h>
 #  define HAVE_SNPRINTF
@@ -400,8 +402,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
-#  define HAVE_STRTOD_L
-#  define HAVE_SSCANF_L
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
 #  define HAVE_STRTOLL
@@ -420,7 +420,10 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_ISNAN
 #  define HAVE_ISINF
 #  if !defined(__GNUC__) || __GNUC__ >= 4 /* gcc 3 and earlier often refuse to compile _l functions */
+#   define HAVE_STRTOD_L
+#   define HAVE_SSCANF_L
 #   define HAVE_LOCALE_H
+#   define HAVE_XLOCALE_H
 #  endif
 # elif defined(TRU64)
 #  define HAVE_SNPRINTF
@@ -447,8 +450,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
-#  define HAVE_STRTOD_L
-#  define HAVE_SSCANF_L
 #  define HAVE_STRTOL
 #  define HAVE_STRTOUL
 #  define HAVE_FTIME
@@ -677,7 +678,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define SOAP_LOCALE(soap) ((soap)->c_locale ? (soap)->c_locale : ((soap)->c_locale = _create_locale(LC_ALL, "C")))
 #  define SOAP_FREELOCALE(soap) (void)((soap)->c_locale && (_free_locale((soap)->c_locale), ((soap)->c_locale = NULL)))
 # else
-#  if !defined(CYGWIN)
+#  if defined(HAVE_XLOCALE_H)
 #   include <xlocale.h>
 #  else
 #   undef HAVE_STRTOF_L
@@ -1020,21 +1021,25 @@ extern "C" {
 #   include <inttypes.h>
 #   define LONG64 int64_t
 #   define ULONG64 uint64_t
-#   ifndef SOAP_LONG_FORMAT
-#    define SOAP_LONG_FORMAT "%" PRId64
-#   endif
-#   ifndef SOAP_ULONG_FORMAT
-#    define SOAP_ULONG_FORMAT "%" PRIu64
+#   if defined(PRId64) && defined(PRIu64)
+#    ifndef SOAP_LONG_FORMAT
+#     define SOAP_LONG_FORMAT "%" PRId64
+#    endif
+#    ifndef SOAP_ULONG_FORMAT
+#     define SOAP_ULONG_FORMAT "%" PRIu64
+#    endif
 #   endif
 #  elif defined(HAVE_SYS_INTTYPES_H)
 #   include <sys/inttypes.h>
 #   define LONG64 int64_t
 #   define ULONG64 uint64_t
-#   ifndef SOAP_LONG_FORMAT
-#    define SOAP_LONG_FORMAT "%" PRId64
-#   endif
-#   ifndef SOAP_ULONG_FORMAT
-#    define SOAP_ULONG_FORMAT "%" PRIu64
+#   if defined(PRId64) && defined(PRIu64)
+#    ifndef SOAP_LONG_FORMAT
+#     define SOAP_LONG_FORMAT "%" PRId64
+#    endif
+#    ifndef SOAP_ULONG_FORMAT
+#     define SOAP_ULONG_FORMAT "%" PRIu64
+#    endif
 #   endif
 #  elif defined(HAVE_STDINT_H)
 #   include <stdint.h>
@@ -2755,6 +2760,7 @@ struct SOAP_CMAC soap
   char* ipv4_multicast_if; /* IP_MULTICAST_IF IPv4 setsockopt interface_addr */
   unsigned char ipv4_multicast_ttl; /* IP_MULTICAST_TTL value 0..255 */
   int client_port; /* when nonnegative, client binds to this port before connect */
+  const char *client_interface; /* when non-NULL, use this client address */
   union
   { struct sockaddr addr;
     struct sockaddr_in in;
@@ -3278,6 +3284,7 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_print_fault_location(struct soap*, FILE*);
 #  ifndef WITH_COMPAT
 #   ifdef __cplusplus
 SOAP_FMAC1 void SOAP_FMAC2 soap_stream_fault(struct soap*, std::ostream&);
+SOAP_FMAC1 void SOAP_FMAC2 soap_stream_fault_location(struct soap*, std::ostream&);
 #   endif
 #  endif
 SOAP_FMAC1 char* SOAP_FMAC2 soap_sprint_fault(struct soap*, char*, size_t);

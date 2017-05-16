@@ -1,9 +1,9 @@
 /*
 	wst.h
 
-	WS-Trust 2005/12 with SAML 2.0
+	WS-Trust 2005/12 with SAML 1.0/2.0
 	Generated with:
-	wsdl2h -cuyx -o wst.h -t WS/WS-typemap.dat WS/WS-Trust.xsd
+	wsdl2h -cguxy -o wst.h -t WS/WS-typemap.dat WS/WS-Trust.xsd
 
 	- Removed //gsoapopt
 	- Changed http://docs.oasis-open.org/ws-sx/ws-trust/200512 to remove trailing /
@@ -194,10 +194,11 @@ typedef struct wst__ParticipantType wst__ParticipantType;
 ///   <xs:any namespace='##other' processContents='lax' minOccurs='0' maxOccurs='unbounded' />
 /// </BLOCKQUOTE></PRE>
 /// struct wst__RequestSecurityTokenType operations:
-/// - soap_default_wst__RequestSecurityTokenType(soap*, wst__RequestSecurityTokenType*) reset members to default
-/// - int soap_read_wst__RequestSecurityTokenType(soap*, wst__RequestSecurityTokenType*) deserialize from a source
-/// - int soap_write_wst__RequestSecurityTokenType(soap*, wst__RequestSecurityTokenType*) serialize to a sink
-/// - wst__RequestSecurityTokenType* soap_dup_wst__RequestSecurityTokenType(soap*, wst__RequestSecurityTokenType* dst, wst__RequestSecurityTokenType *src) returns deep copy of wst__RequestSecurityTokenType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__RequestSecurityTokenType* soap_new_wst__RequestSecurityTokenType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__RequestSecurityTokenType(struct soap*, wst__RequestSecurityTokenType*) default initialize members
+/// - int soap_read_wst__RequestSecurityTokenType(struct soap*, wst__RequestSecurityTokenType*) deserialize from a source
+/// - int soap_write_wst__RequestSecurityTokenType(struct soap*, wst__RequestSecurityTokenType*) serialize to a sink
+/// - wst__RequestSecurityTokenType* soap_dup_wst__RequestSecurityTokenType(struct soap*, wst__RequestSecurityTokenType* dst, wst__RequestSecurityTokenType *src) returns deep copy of wst__RequestSecurityTokenType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__RequestSecurityTokenType(wst__RequestSecurityTokenType*) deep deletes wst__RequestSecurityTokenType data members, use only on dst after soap_dup_wst__RequestSecurityTokenType(NULL, wst__RequestSecurityTokenType *dst, wst__RequestSecurityTokenType *src) (use soapcpp2 -Ed)
 struct wst__RequestSecurityTokenType
 {
@@ -270,10 +271,11 @@ struct wst__RequestSecurityTokenType
 ///   <xs:any namespace='##other' processContents='lax' minOccurs='0' maxOccurs='unbounded' />
 /// </BLOCKQUOTE></PRE>
 /// struct wst__RequestSecurityTokenResponseType operations:
-/// - soap_default_wst__RequestSecurityTokenResponseType(soap*, wst__RequestSecurityTokenResponseType*) reset members to default
-/// - int soap_read_wst__RequestSecurityTokenResponseType(soap*, wst__RequestSecurityTokenResponseType*) deserialize from a source
-/// - int soap_write_wst__RequestSecurityTokenResponseType(soap*, wst__RequestSecurityTokenResponseType*) serialize to a sink
-/// - wst__RequestSecurityTokenResponseType* soap_dup_wst__RequestSecurityTokenResponseType(soap*, wst__RequestSecurityTokenResponseType* dst, wst__RequestSecurityTokenResponseType *src) returns deep copy of wst__RequestSecurityTokenResponseType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__RequestSecurityTokenResponseType* soap_new_wst__RequestSecurityTokenResponseType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__RequestSecurityTokenResponseType(struct soap*, wst__RequestSecurityTokenResponseType*) default initialize members
+/// - int soap_read_wst__RequestSecurityTokenResponseType(struct soap*, wst__RequestSecurityTokenResponseType*) deserialize from a source
+/// - int soap_write_wst__RequestSecurityTokenResponseType(struct soap*, wst__RequestSecurityTokenResponseType*) serialize to a sink
+/// - wst__RequestSecurityTokenResponseType* soap_dup_wst__RequestSecurityTokenResponseType(struct soap*, wst__RequestSecurityTokenResponseType* dst, wst__RequestSecurityTokenResponseType *src) returns deep copy of wst__RequestSecurityTokenResponseType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__RequestSecurityTokenResponseType(wst__RequestSecurityTokenResponseType*) deep deletes wst__RequestSecurityTokenResponseType data members, use only on dst after soap_dup_wst__RequestSecurityTokenResponseType(NULL, wst__RequestSecurityTokenResponseType *dst, wst__RequestSecurityTokenResponseType *src) (use soapcpp2 -Ed)
 struct wst__RequestSecurityTokenResponseType
 {
@@ -290,8 +292,6 @@ struct wst__RequestSecurityTokenResponseType
 ///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this attribute.
 ///       Use wsdl2h option -d for xsd__anyAttribute DOM (soap_dom_attribute).
-/// Member declared in WS/WS-typemap.dat
-       _wsp__AppliesTo_*                    wsp__AppliesTo;
 /// Member declared in WS/WS-typemap.dat
        struct wst__RequestedSecurityTokenType* RequestedSecurityToken;
 /// Member declared in WS/WS-typemap.dat
@@ -313,10 +313,11 @@ struct wst__RequestSecurityTokenResponseType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ClaimsType is a complexType.
 ///
 /// struct wst__ClaimsType operations:
-/// - soap_default_wst__ClaimsType(soap*, wst__ClaimsType*) reset members to default
-/// - int soap_read_wst__ClaimsType(soap*, wst__ClaimsType*) deserialize from a source
-/// - int soap_write_wst__ClaimsType(soap*, wst__ClaimsType*) serialize to a sink
-/// - wst__ClaimsType* soap_dup_wst__ClaimsType(soap*, wst__ClaimsType* dst, wst__ClaimsType *src) returns deep copy of wst__ClaimsType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__ClaimsType* soap_new_wst__ClaimsType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__ClaimsType(struct soap*, wst__ClaimsType*) default initialize members
+/// - int soap_read_wst__ClaimsType(struct soap*, wst__ClaimsType*) deserialize from a source
+/// - int soap_write_wst__ClaimsType(struct soap*, wst__ClaimsType*) serialize to a sink
+/// - wst__ClaimsType* soap_dup_wst__ClaimsType(struct soap*, wst__ClaimsType* dst, wst__ClaimsType *src) returns deep copy of wst__ClaimsType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__ClaimsType(wst__ClaimsType*) deep deletes wst__ClaimsType data members, use only on dst after soap_dup_wst__ClaimsType(NULL, wst__ClaimsType *dst, wst__ClaimsType *src) (use soapcpp2 -Ed)
 struct wst__ClaimsType
 {
@@ -338,10 +339,11 @@ struct wst__ClaimsType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":LifetimeType is a complexType.
 ///
 /// struct wst__LifetimeType operations:
-/// - soap_default_wst__LifetimeType(soap*, wst__LifetimeType*) reset members to default
-/// - int soap_read_wst__LifetimeType(soap*, wst__LifetimeType*) deserialize from a source
-/// - int soap_write_wst__LifetimeType(soap*, wst__LifetimeType*) serialize to a sink
-/// - wst__LifetimeType* soap_dup_wst__LifetimeType(soap*, wst__LifetimeType* dst, wst__LifetimeType *src) returns deep copy of wst__LifetimeType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__LifetimeType* soap_new_wst__LifetimeType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__LifetimeType(struct soap*, wst__LifetimeType*) default initialize members
+/// - int soap_read_wst__LifetimeType(struct soap*, wst__LifetimeType*) deserialize from a source
+/// - int soap_write_wst__LifetimeType(struct soap*, wst__LifetimeType*) serialize to a sink
+/// - wst__LifetimeType* soap_dup_wst__LifetimeType(struct soap*, wst__LifetimeType* dst, wst__LifetimeType *src) returns deep copy of wst__LifetimeType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__LifetimeType(wst__LifetimeType*) deep deletes wst__LifetimeType data members, use only on dst after soap_dup_wst__LifetimeType(NULL, wst__LifetimeType *dst, wst__LifetimeType *src) (use soapcpp2 -Ed)
 struct wst__LifetimeType
 {
@@ -357,10 +359,11 @@ struct wst__LifetimeType
 ///   The RequestSecurityTokenCollection (RSTC) element is used to provide multiple RST requests. One or more RSTR elements in an RSTRC element are returned in the response to the RequestSecurityTokenCollection.
 /// </BLOCKQUOTE></PRE>
 /// struct wst__RequestSecurityTokenCollectionType operations:
-/// - soap_default_wst__RequestSecurityTokenCollectionType(soap*, wst__RequestSecurityTokenCollectionType*) reset members to default
-/// - int soap_read_wst__RequestSecurityTokenCollectionType(soap*, wst__RequestSecurityTokenCollectionType*) deserialize from a source
-/// - int soap_write_wst__RequestSecurityTokenCollectionType(soap*, wst__RequestSecurityTokenCollectionType*) serialize to a sink
-/// - wst__RequestSecurityTokenCollectionType* soap_dup_wst__RequestSecurityTokenCollectionType(soap*, wst__RequestSecurityTokenCollectionType* dst, wst__RequestSecurityTokenCollectionType *src) returns deep copy of wst__RequestSecurityTokenCollectionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__RequestSecurityTokenCollectionType* soap_new_wst__RequestSecurityTokenCollectionType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__RequestSecurityTokenCollectionType(struct soap*, wst__RequestSecurityTokenCollectionType*) default initialize members
+/// - int soap_read_wst__RequestSecurityTokenCollectionType(struct soap*, wst__RequestSecurityTokenCollectionType*) deserialize from a source
+/// - int soap_write_wst__RequestSecurityTokenCollectionType(struct soap*, wst__RequestSecurityTokenCollectionType*) serialize to a sink
+/// - wst__RequestSecurityTokenCollectionType* soap_dup_wst__RequestSecurityTokenCollectionType(struct soap*, wst__RequestSecurityTokenCollectionType* dst, wst__RequestSecurityTokenCollectionType *src) returns deep copy of wst__RequestSecurityTokenCollectionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__RequestSecurityTokenCollectionType(wst__RequestSecurityTokenCollectionType*) deep deletes wst__RequestSecurityTokenCollectionType data members, use only on dst after soap_dup_wst__RequestSecurityTokenCollectionType(NULL, wst__RequestSecurityTokenCollectionType *dst, wst__RequestSecurityTokenCollectionType *src) (use soapcpp2 -Ed)
 struct wst__RequestSecurityTokenCollectionType
 {
@@ -376,10 +379,11 @@ struct wst__RequestSecurityTokenCollectionType
 ///   The <wst:RequestSecurityTokenResponseCollection> element (RSTRC) MUST be used to return a security token or response to a security token request on the final response.
 /// </BLOCKQUOTE></PRE>
 /// struct wst__RequestSecurityTokenResponseCollectionType operations:
-/// - soap_default_wst__RequestSecurityTokenResponseCollectionType(soap*, wst__RequestSecurityTokenResponseCollectionType*) reset members to default
-/// - int soap_read_wst__RequestSecurityTokenResponseCollectionType(soap*, wst__RequestSecurityTokenResponseCollectionType*) deserialize from a source
-/// - int soap_write_wst__RequestSecurityTokenResponseCollectionType(soap*, wst__RequestSecurityTokenResponseCollectionType*) serialize to a sink
-/// - wst__RequestSecurityTokenResponseCollectionType* soap_dup_wst__RequestSecurityTokenResponseCollectionType(soap*, wst__RequestSecurityTokenResponseCollectionType* dst, wst__RequestSecurityTokenResponseCollectionType *src) returns deep copy of wst__RequestSecurityTokenResponseCollectionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__RequestSecurityTokenResponseCollectionType* soap_new_wst__RequestSecurityTokenResponseCollectionType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__RequestSecurityTokenResponseCollectionType(struct soap*, wst__RequestSecurityTokenResponseCollectionType*) default initialize members
+/// - int soap_read_wst__RequestSecurityTokenResponseCollectionType(struct soap*, wst__RequestSecurityTokenResponseCollectionType*) deserialize from a source
+/// - int soap_write_wst__RequestSecurityTokenResponseCollectionType(struct soap*, wst__RequestSecurityTokenResponseCollectionType*) serialize to a sink
+/// - wst__RequestSecurityTokenResponseCollectionType* soap_dup_wst__RequestSecurityTokenResponseCollectionType(struct soap*, wst__RequestSecurityTokenResponseCollectionType* dst, wst__RequestSecurityTokenResponseCollectionType *src) returns deep copy of wst__RequestSecurityTokenResponseCollectionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__RequestSecurityTokenResponseCollectionType(wst__RequestSecurityTokenResponseCollectionType*) deep deletes wst__RequestSecurityTokenResponseCollectionType data members, use only on dst after soap_dup_wst__RequestSecurityTokenResponseCollectionType(NULL, wst__RequestSecurityTokenResponseCollectionType *dst, wst__RequestSecurityTokenResponseCollectionType *src) (use soapcpp2 -Ed)
 struct wst__RequestSecurityTokenResponseCollectionType
 {
@@ -397,10 +401,11 @@ struct wst__RequestSecurityTokenResponseCollectionType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedReferenceType is a complexType.
 ///
 /// struct wst__RequestedReferenceType operations:
-/// - soap_default_wst__RequestedReferenceType(soap*, wst__RequestedReferenceType*) reset members to default
-/// - int soap_read_wst__RequestedReferenceType(soap*, wst__RequestedReferenceType*) deserialize from a source
-/// - int soap_write_wst__RequestedReferenceType(soap*, wst__RequestedReferenceType*) serialize to a sink
-/// - wst__RequestedReferenceType* soap_dup_wst__RequestedReferenceType(soap*, wst__RequestedReferenceType* dst, wst__RequestedReferenceType *src) returns deep copy of wst__RequestedReferenceType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__RequestedReferenceType* soap_new_wst__RequestedReferenceType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__RequestedReferenceType(struct soap*, wst__RequestedReferenceType*) default initialize members
+/// - int soap_read_wst__RequestedReferenceType(struct soap*, wst__RequestedReferenceType*) deserialize from a source
+/// - int soap_write_wst__RequestedReferenceType(struct soap*, wst__RequestedReferenceType*) serialize to a sink
+/// - wst__RequestedReferenceType* soap_dup_wst__RequestedReferenceType(struct soap*, wst__RequestedReferenceType* dst, wst__RequestedReferenceType *src) returns deep copy of wst__RequestedReferenceType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__RequestedReferenceType(wst__RequestedReferenceType*) deep deletes wst__RequestedReferenceType data members, use only on dst after soap_dup_wst__RequestedReferenceType(NULL, wst__RequestedReferenceType *dst, wst__RequestedReferenceType *src) (use soapcpp2 -Ed)
 struct wst__RequestedReferenceType
 {
@@ -411,10 +416,11 @@ struct wst__RequestedReferenceType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedProofTokenType is a complexType.
 ///
 /// struct wst__RequestedProofTokenType operations:
-/// - soap_default_wst__RequestedProofTokenType(soap*, wst__RequestedProofTokenType*) reset members to default
-/// - int soap_read_wst__RequestedProofTokenType(soap*, wst__RequestedProofTokenType*) deserialize from a source
-/// - int soap_write_wst__RequestedProofTokenType(soap*, wst__RequestedProofTokenType*) serialize to a sink
-/// - wst__RequestedProofTokenType* soap_dup_wst__RequestedProofTokenType(soap*, wst__RequestedProofTokenType* dst, wst__RequestedProofTokenType *src) returns deep copy of wst__RequestedProofTokenType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__RequestedProofTokenType* soap_new_wst__RequestedProofTokenType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__RequestedProofTokenType(struct soap*, wst__RequestedProofTokenType*) default initialize members
+/// - int soap_read_wst__RequestedProofTokenType(struct soap*, wst__RequestedProofTokenType*) deserialize from a source
+/// - int soap_write_wst__RequestedProofTokenType(struct soap*, wst__RequestedProofTokenType*) serialize to a sink
+/// - wst__RequestedProofTokenType* soap_dup_wst__RequestedProofTokenType(struct soap*, wst__RequestedProofTokenType* dst, wst__RequestedProofTokenType *src) returns deep copy of wst__RequestedProofTokenType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__RequestedProofTokenType(wst__RequestedProofTokenType*) deep deletes wst__RequestedProofTokenType data members, use only on dst after soap_dup_wst__RequestedProofTokenType(NULL, wst__RequestedProofTokenType *dst, wst__RequestedProofTokenType *src) (use soapcpp2 -Ed)
 struct wst__RequestedProofTokenType
 {
@@ -429,10 +435,11 @@ struct wst__RequestedProofTokenType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RenewTargetType is a complexType.
 ///
 /// struct wst__RenewTargetType operations:
-/// - soap_default_wst__RenewTargetType(soap*, wst__RenewTargetType*) reset members to default
-/// - int soap_read_wst__RenewTargetType(soap*, wst__RenewTargetType*) deserialize from a source
-/// - int soap_write_wst__RenewTargetType(soap*, wst__RenewTargetType*) serialize to a sink
-/// - wst__RenewTargetType* soap_dup_wst__RenewTargetType(soap*, wst__RenewTargetType* dst, wst__RenewTargetType *src) returns deep copy of wst__RenewTargetType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__RenewTargetType* soap_new_wst__RenewTargetType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__RenewTargetType(struct soap*, wst__RenewTargetType*) default initialize members
+/// - int soap_read_wst__RenewTargetType(struct soap*, wst__RenewTargetType*) deserialize from a source
+/// - int soap_write_wst__RenewTargetType(struct soap*, wst__RenewTargetType*) serialize to a sink
+/// - wst__RenewTargetType* soap_dup_wst__RenewTargetType(struct soap*, wst__RenewTargetType* dst, wst__RenewTargetType *src) returns deep copy of wst__RenewTargetType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__RenewTargetType(wst__RenewTargetType*) deep deletes wst__RenewTargetType data members, use only on dst after soap_dup_wst__RenewTargetType(NULL, wst__RenewTargetType *dst, wst__RenewTargetType *src) (use soapcpp2 -Ed)
 struct wst__RenewTargetType
 {
@@ -447,10 +454,11 @@ struct wst__RenewTargetType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":AllowPostdatingType is a complexType.
 ///
 /// struct wst__AllowPostdatingType operations:
-/// - soap_default_wst__AllowPostdatingType(soap*, wst__AllowPostdatingType*) reset members to default
-/// - int soap_read_wst__AllowPostdatingType(soap*, wst__AllowPostdatingType*) deserialize from a source
-/// - int soap_write_wst__AllowPostdatingType(soap*, wst__AllowPostdatingType*) serialize to a sink
-/// - wst__AllowPostdatingType* soap_dup_wst__AllowPostdatingType(soap*, wst__AllowPostdatingType* dst, wst__AllowPostdatingType *src) returns deep copy of wst__AllowPostdatingType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__AllowPostdatingType* soap_new_wst__AllowPostdatingType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__AllowPostdatingType(struct soap*, wst__AllowPostdatingType*) default initialize members
+/// - int soap_read_wst__AllowPostdatingType(struct soap*, wst__AllowPostdatingType*) deserialize from a source
+/// - int soap_write_wst__AllowPostdatingType(struct soap*, wst__AllowPostdatingType*) serialize to a sink
+/// - wst__AllowPostdatingType* soap_dup_wst__AllowPostdatingType(struct soap*, wst__AllowPostdatingType* dst, wst__AllowPostdatingType *src) returns deep copy of wst__AllowPostdatingType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__AllowPostdatingType(wst__AllowPostdatingType*) deep deletes wst__AllowPostdatingType data members, use only on dst after soap_dup_wst__AllowPostdatingType(NULL, wst__AllowPostdatingType *dst, wst__AllowPostdatingType *src) (use soapcpp2 -Ed)
 struct wst__AllowPostdatingType
 {
@@ -459,10 +467,11 @@ struct wst__AllowPostdatingType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RenewingType is a complexType.
 ///
 /// struct wst__RenewingType operations:
-/// - soap_default_wst__RenewingType(soap*, wst__RenewingType*) reset members to default
-/// - int soap_read_wst__RenewingType(soap*, wst__RenewingType*) deserialize from a source
-/// - int soap_write_wst__RenewingType(soap*, wst__RenewingType*) serialize to a sink
-/// - wst__RenewingType* soap_dup_wst__RenewingType(soap*, wst__RenewingType* dst, wst__RenewingType *src) returns deep copy of wst__RenewingType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__RenewingType* soap_new_wst__RenewingType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__RenewingType(struct soap*, wst__RenewingType*) default initialize members
+/// - int soap_read_wst__RenewingType(struct soap*, wst__RenewingType*) deserialize from a source
+/// - int soap_write_wst__RenewingType(struct soap*, wst__RenewingType*) serialize to a sink
+/// - wst__RenewingType* soap_dup_wst__RenewingType(struct soap*, wst__RenewingType* dst, wst__RenewingType *src) returns deep copy of wst__RenewingType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__RenewingType(wst__RenewingType*) deep deletes wst__RenewingType data members, use only on dst after soap_dup_wst__RenewingType(NULL, wst__RenewingType *dst, wst__RenewingType *src) (use soapcpp2 -Ed)
 struct wst__RenewingType
 {
@@ -475,10 +484,11 @@ struct wst__RenewingType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":CancelTargetType is a complexType.
 ///
 /// struct wst__CancelTargetType operations:
-/// - soap_default_wst__CancelTargetType(soap*, wst__CancelTargetType*) reset members to default
-/// - int soap_read_wst__CancelTargetType(soap*, wst__CancelTargetType*) deserialize from a source
-/// - int soap_write_wst__CancelTargetType(soap*, wst__CancelTargetType*) serialize to a sink
-/// - wst__CancelTargetType* soap_dup_wst__CancelTargetType(soap*, wst__CancelTargetType* dst, wst__CancelTargetType *src) returns deep copy of wst__CancelTargetType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__CancelTargetType* soap_new_wst__CancelTargetType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__CancelTargetType(struct soap*, wst__CancelTargetType*) default initialize members
+/// - int soap_read_wst__CancelTargetType(struct soap*, wst__CancelTargetType*) deserialize from a source
+/// - int soap_write_wst__CancelTargetType(struct soap*, wst__CancelTargetType*) serialize to a sink
+/// - wst__CancelTargetType* soap_dup_wst__CancelTargetType(struct soap*, wst__CancelTargetType* dst, wst__CancelTargetType *src) returns deep copy of wst__CancelTargetType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__CancelTargetType(wst__CancelTargetType*) deep deletes wst__CancelTargetType data members, use only on dst after soap_dup_wst__CancelTargetType(NULL, wst__CancelTargetType *dst, wst__CancelTargetType *src) (use soapcpp2 -Ed)
 struct wst__CancelTargetType
 {
@@ -493,10 +503,11 @@ struct wst__CancelTargetType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedTokenCancelledType is a complexType.
 ///
 /// struct wst__RequestedTokenCancelledType operations:
-/// - soap_default_wst__RequestedTokenCancelledType(soap*, wst__RequestedTokenCancelledType*) reset members to default
-/// - int soap_read_wst__RequestedTokenCancelledType(soap*, wst__RequestedTokenCancelledType*) deserialize from a source
-/// - int soap_write_wst__RequestedTokenCancelledType(soap*, wst__RequestedTokenCancelledType*) serialize to a sink
-/// - wst__RequestedTokenCancelledType* soap_dup_wst__RequestedTokenCancelledType(soap*, wst__RequestedTokenCancelledType* dst, wst__RequestedTokenCancelledType *src) returns deep copy of wst__RequestedTokenCancelledType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__RequestedTokenCancelledType* soap_new_wst__RequestedTokenCancelledType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__RequestedTokenCancelledType(struct soap*, wst__RequestedTokenCancelledType*) default initialize members
+/// - int soap_read_wst__RequestedTokenCancelledType(struct soap*, wst__RequestedTokenCancelledType*) deserialize from a source
+/// - int soap_write_wst__RequestedTokenCancelledType(struct soap*, wst__RequestedTokenCancelledType*) serialize to a sink
+/// - wst__RequestedTokenCancelledType* soap_dup_wst__RequestedTokenCancelledType(struct soap*, wst__RequestedTokenCancelledType* dst, wst__RequestedTokenCancelledType *src) returns deep copy of wst__RequestedTokenCancelledType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__RequestedTokenCancelledType(wst__RequestedTokenCancelledType*) deep deletes wst__RequestedTokenCancelledType data members, use only on dst after soap_dup_wst__RequestedTokenCancelledType(NULL, wst__RequestedTokenCancelledType *dst, wst__RequestedTokenCancelledType *src) (use soapcpp2 -Ed)
 struct wst__RequestedTokenCancelledType
 {
@@ -505,10 +516,11 @@ struct wst__RequestedTokenCancelledType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ValidateTargetType is a complexType.
 ///
 /// struct wst__ValidateTargetType operations:
-/// - soap_default_wst__ValidateTargetType(soap*, wst__ValidateTargetType*) reset members to default
-/// - int soap_read_wst__ValidateTargetType(soap*, wst__ValidateTargetType*) deserialize from a source
-/// - int soap_write_wst__ValidateTargetType(soap*, wst__ValidateTargetType*) serialize to a sink
-/// - wst__ValidateTargetType* soap_dup_wst__ValidateTargetType(soap*, wst__ValidateTargetType* dst, wst__ValidateTargetType *src) returns deep copy of wst__ValidateTargetType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__ValidateTargetType* soap_new_wst__ValidateTargetType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__ValidateTargetType(struct soap*, wst__ValidateTargetType*) default initialize members
+/// - int soap_read_wst__ValidateTargetType(struct soap*, wst__ValidateTargetType*) deserialize from a source
+/// - int soap_write_wst__ValidateTargetType(struct soap*, wst__ValidateTargetType*) serialize to a sink
+/// - wst__ValidateTargetType* soap_dup_wst__ValidateTargetType(struct soap*, wst__ValidateTargetType* dst, wst__ValidateTargetType *src) returns deep copy of wst__ValidateTargetType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__ValidateTargetType(wst__ValidateTargetType*) deep deletes wst__ValidateTargetType data members, use only on dst after soap_dup_wst__ValidateTargetType(NULL, wst__ValidateTargetType *dst, wst__ValidateTargetType *src) (use soapcpp2 -Ed)
 struct wst__ValidateTargetType
 {
@@ -523,10 +535,11 @@ struct wst__ValidateTargetType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":StatusType is a complexType.
 ///
 /// struct wst__StatusType operations:
-/// - soap_default_wst__StatusType(soap*, wst__StatusType*) reset members to default
-/// - int soap_read_wst__StatusType(soap*, wst__StatusType*) deserialize from a source
-/// - int soap_write_wst__StatusType(soap*, wst__StatusType*) serialize to a sink
-/// - wst__StatusType* soap_dup_wst__StatusType(soap*, wst__StatusType* dst, wst__StatusType *src) returns deep copy of wst__StatusType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__StatusType* soap_new_wst__StatusType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__StatusType(struct soap*, wst__StatusType*) default initialize members
+/// - int soap_read_wst__StatusType(struct soap*, wst__StatusType*) deserialize from a source
+/// - int soap_write_wst__StatusType(struct soap*, wst__StatusType*) serialize to a sink
+/// - wst__StatusType* soap_dup_wst__StatusType(struct soap*, wst__StatusType* dst, wst__StatusType *src) returns deep copy of wst__StatusType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__StatusType(wst__StatusType*) deep deletes wst__StatusType data members, use only on dst after soap_dup_wst__StatusType(NULL, wst__StatusType *dst, wst__StatusType *src) (use soapcpp2 -Ed)
 struct wst__StatusType
 {
@@ -539,10 +552,11 @@ struct wst__StatusType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":SignChallengeType is a complexType.
 ///
 /// struct wst__SignChallengeType operations:
-/// - soap_default_wst__SignChallengeType(soap*, wst__SignChallengeType*) reset members to default
-/// - int soap_read_wst__SignChallengeType(soap*, wst__SignChallengeType*) deserialize from a source
-/// - int soap_write_wst__SignChallengeType(soap*, wst__SignChallengeType*) serialize to a sink
-/// - wst__SignChallengeType* soap_dup_wst__SignChallengeType(soap*, wst__SignChallengeType* dst, wst__SignChallengeType *src) returns deep copy of wst__SignChallengeType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__SignChallengeType* soap_new_wst__SignChallengeType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__SignChallengeType(struct soap*, wst__SignChallengeType*) default initialize members
+/// - int soap_read_wst__SignChallengeType(struct soap*, wst__SignChallengeType*) deserialize from a source
+/// - int soap_write_wst__SignChallengeType(struct soap*, wst__SignChallengeType*) serialize to a sink
+/// - wst__SignChallengeType* soap_dup_wst__SignChallengeType(struct soap*, wst__SignChallengeType* dst, wst__SignChallengeType *src) returns deep copy of wst__SignChallengeType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__SignChallengeType(wst__SignChallengeType*) deep deletes wst__SignChallengeType data members, use only on dst after soap_dup_wst__SignChallengeType(NULL, wst__SignChallengeType *dst, wst__SignChallengeType *src) (use soapcpp2 -Ed)
 struct wst__SignChallengeType
 {
@@ -564,10 +578,11 @@ struct wst__SignChallengeType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestKETType is a complexType.
 ///
 /// struct wst__RequestKETType operations:
-/// - soap_default_wst__RequestKETType(soap*, wst__RequestKETType*) reset members to default
-/// - int soap_read_wst__RequestKETType(soap*, wst__RequestKETType*) deserialize from a source
-/// - int soap_write_wst__RequestKETType(soap*, wst__RequestKETType*) serialize to a sink
-/// - wst__RequestKETType* soap_dup_wst__RequestKETType(soap*, wst__RequestKETType* dst, wst__RequestKETType *src) returns deep copy of wst__RequestKETType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__RequestKETType* soap_new_wst__RequestKETType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__RequestKETType(struct soap*, wst__RequestKETType*) default initialize members
+/// - int soap_read_wst__RequestKETType(struct soap*, wst__RequestKETType*) deserialize from a source
+/// - int soap_write_wst__RequestKETType(struct soap*, wst__RequestKETType*) serialize to a sink
+/// - wst__RequestKETType* soap_dup_wst__RequestKETType(struct soap*, wst__RequestKETType* dst, wst__RequestKETType *src) returns deep copy of wst__RequestKETType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__RequestKETType(wst__RequestKETType*) deep deletes wst__RequestKETType data members, use only on dst after soap_dup_wst__RequestKETType(NULL, wst__RequestKETType *dst, wst__RequestKETType *src) (use soapcpp2 -Ed)
 struct wst__RequestKETType
 {
@@ -576,10 +591,11 @@ struct wst__RequestKETType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":KeyExchangeTokenType is a complexType.
 ///
 /// struct wst__KeyExchangeTokenType operations:
-/// - soap_default_wst__KeyExchangeTokenType(soap*, wst__KeyExchangeTokenType*) reset members to default
-/// - int soap_read_wst__KeyExchangeTokenType(soap*, wst__KeyExchangeTokenType*) deserialize from a source
-/// - int soap_write_wst__KeyExchangeTokenType(soap*, wst__KeyExchangeTokenType*) serialize to a sink
-/// - wst__KeyExchangeTokenType* soap_dup_wst__KeyExchangeTokenType(soap*, wst__KeyExchangeTokenType* dst, wst__KeyExchangeTokenType *src) returns deep copy of wst__KeyExchangeTokenType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__KeyExchangeTokenType* soap_new_wst__KeyExchangeTokenType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__KeyExchangeTokenType(struct soap*, wst__KeyExchangeTokenType*) default initialize members
+/// - int soap_read_wst__KeyExchangeTokenType(struct soap*, wst__KeyExchangeTokenType*) deserialize from a source
+/// - int soap_write_wst__KeyExchangeTokenType(struct soap*, wst__KeyExchangeTokenType*) serialize to a sink
+/// - wst__KeyExchangeTokenType* soap_dup_wst__KeyExchangeTokenType(struct soap*, wst__KeyExchangeTokenType* dst, wst__KeyExchangeTokenType *src) returns deep copy of wst__KeyExchangeTokenType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__KeyExchangeTokenType(wst__KeyExchangeTokenType*) deep deletes wst__KeyExchangeTokenType data members, use only on dst after soap_dup_wst__KeyExchangeTokenType(NULL, wst__KeyExchangeTokenType *dst, wst__KeyExchangeTokenType *src) (use soapcpp2 -Ed)
 struct wst__KeyExchangeTokenType
 {
@@ -594,10 +610,11 @@ struct wst__KeyExchangeTokenType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":OnBehalfOfType is a complexType.
 ///
 /// struct wst__OnBehalfOfType operations:
-/// - soap_default_wst__OnBehalfOfType(soap*, wst__OnBehalfOfType*) reset members to default
-/// - int soap_read_wst__OnBehalfOfType(soap*, wst__OnBehalfOfType*) deserialize from a source
-/// - int soap_write_wst__OnBehalfOfType(soap*, wst__OnBehalfOfType*) serialize to a sink
-/// - wst__OnBehalfOfType* soap_dup_wst__OnBehalfOfType(soap*, wst__OnBehalfOfType* dst, wst__OnBehalfOfType *src) returns deep copy of wst__OnBehalfOfType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__OnBehalfOfType* soap_new_wst__OnBehalfOfType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__OnBehalfOfType(struct soap*, wst__OnBehalfOfType*) default initialize members
+/// - int soap_read_wst__OnBehalfOfType(struct soap*, wst__OnBehalfOfType*) deserialize from a source
+/// - int soap_write_wst__OnBehalfOfType(struct soap*, wst__OnBehalfOfType*) serialize to a sink
+/// - wst__OnBehalfOfType* soap_dup_wst__OnBehalfOfType(struct soap*, wst__OnBehalfOfType* dst, wst__OnBehalfOfType *src) returns deep copy of wst__OnBehalfOfType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__OnBehalfOfType(wst__OnBehalfOfType*) deep deletes wst__OnBehalfOfType data members, use only on dst after soap_dup_wst__OnBehalfOfType(NULL, wst__OnBehalfOfType *dst, wst__OnBehalfOfType *src) (use soapcpp2 -Ed)
 struct wst__OnBehalfOfType
 {
@@ -612,10 +629,11 @@ struct wst__OnBehalfOfType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":EncryptionType is a complexType.
 ///
 /// struct wst__EncryptionType operations:
-/// - soap_default_wst__EncryptionType(soap*, wst__EncryptionType*) reset members to default
-/// - int soap_read_wst__EncryptionType(soap*, wst__EncryptionType*) deserialize from a source
-/// - int soap_write_wst__EncryptionType(soap*, wst__EncryptionType*) serialize to a sink
-/// - wst__EncryptionType* soap_dup_wst__EncryptionType(soap*, wst__EncryptionType* dst, wst__EncryptionType *src) returns deep copy of wst__EncryptionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__EncryptionType* soap_new_wst__EncryptionType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__EncryptionType(struct soap*, wst__EncryptionType*) default initialize members
+/// - int soap_read_wst__EncryptionType(struct soap*, wst__EncryptionType*) deserialize from a source
+/// - int soap_write_wst__EncryptionType(struct soap*, wst__EncryptionType*) serialize to a sink
+/// - wst__EncryptionType* soap_dup_wst__EncryptionType(struct soap*, wst__EncryptionType* dst, wst__EncryptionType *src) returns deep copy of wst__EncryptionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__EncryptionType(wst__EncryptionType*) deep deletes wst__EncryptionType data members, use only on dst after soap_dup_wst__EncryptionType(NULL, wst__EncryptionType *dst, wst__EncryptionType *src) (use soapcpp2 -Ed)
 struct wst__EncryptionType
 {
@@ -630,10 +648,11 @@ struct wst__EncryptionType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ProofEncryptionType is a complexType.
 ///
 /// struct wst__ProofEncryptionType operations:
-/// - soap_default_wst__ProofEncryptionType(soap*, wst__ProofEncryptionType*) reset members to default
-/// - int soap_read_wst__ProofEncryptionType(soap*, wst__ProofEncryptionType*) deserialize from a source
-/// - int soap_write_wst__ProofEncryptionType(soap*, wst__ProofEncryptionType*) serialize to a sink
-/// - wst__ProofEncryptionType* soap_dup_wst__ProofEncryptionType(soap*, wst__ProofEncryptionType* dst, wst__ProofEncryptionType *src) returns deep copy of wst__ProofEncryptionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__ProofEncryptionType* soap_new_wst__ProofEncryptionType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__ProofEncryptionType(struct soap*, wst__ProofEncryptionType*) default initialize members
+/// - int soap_read_wst__ProofEncryptionType(struct soap*, wst__ProofEncryptionType*) deserialize from a source
+/// - int soap_write_wst__ProofEncryptionType(struct soap*, wst__ProofEncryptionType*) serialize to a sink
+/// - wst__ProofEncryptionType* soap_dup_wst__ProofEncryptionType(struct soap*, wst__ProofEncryptionType* dst, wst__ProofEncryptionType *src) returns deep copy of wst__ProofEncryptionType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__ProofEncryptionType(wst__ProofEncryptionType*) deep deletes wst__ProofEncryptionType data members, use only on dst after soap_dup_wst__ProofEncryptionType(NULL, wst__ProofEncryptionType *dst, wst__ProofEncryptionType *src) (use soapcpp2 -Ed)
 struct wst__ProofEncryptionType
 {
@@ -648,10 +667,11 @@ struct wst__ProofEncryptionType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":UseKeyType is a complexType.
 ///
 /// struct wst__UseKeyType operations:
-/// - soap_default_wst__UseKeyType(soap*, wst__UseKeyType*) reset members to default
-/// - int soap_read_wst__UseKeyType(soap*, wst__UseKeyType*) deserialize from a source
-/// - int soap_write_wst__UseKeyType(soap*, wst__UseKeyType*) serialize to a sink
-/// - wst__UseKeyType* soap_dup_wst__UseKeyType(soap*, wst__UseKeyType* dst, wst__UseKeyType *src) returns deep copy of wst__UseKeyType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__UseKeyType* soap_new_wst__UseKeyType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__UseKeyType(struct soap*, wst__UseKeyType*) default initialize members
+/// - int soap_read_wst__UseKeyType(struct soap*, wst__UseKeyType*) deserialize from a source
+/// - int soap_write_wst__UseKeyType(struct soap*, wst__UseKeyType*) serialize to a sink
+/// - wst__UseKeyType* soap_dup_wst__UseKeyType(struct soap*, wst__UseKeyType* dst, wst__UseKeyType *src) returns deep copy of wst__UseKeyType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__UseKeyType(wst__UseKeyType*) deep deletes wst__UseKeyType data members, use only on dst after soap_dup_wst__UseKeyType(NULL, wst__UseKeyType *dst, wst__UseKeyType *src) (use soapcpp2 -Ed)
 struct wst__UseKeyType
 {
@@ -668,10 +688,11 @@ struct wst__UseKeyType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":DelegateToType is a complexType.
 ///
 /// struct wst__DelegateToType operations:
-/// - soap_default_wst__DelegateToType(soap*, wst__DelegateToType*) reset members to default
-/// - int soap_read_wst__DelegateToType(soap*, wst__DelegateToType*) deserialize from a source
-/// - int soap_write_wst__DelegateToType(soap*, wst__DelegateToType*) serialize to a sink
-/// - wst__DelegateToType* soap_dup_wst__DelegateToType(soap*, wst__DelegateToType* dst, wst__DelegateToType *src) returns deep copy of wst__DelegateToType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__DelegateToType* soap_new_wst__DelegateToType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__DelegateToType(struct soap*, wst__DelegateToType*) default initialize members
+/// - int soap_read_wst__DelegateToType(struct soap*, wst__DelegateToType*) deserialize from a source
+/// - int soap_write_wst__DelegateToType(struct soap*, wst__DelegateToType*) serialize to a sink
+/// - wst__DelegateToType* soap_dup_wst__DelegateToType(struct soap*, wst__DelegateToType* dst, wst__DelegateToType *src) returns deep copy of wst__DelegateToType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__DelegateToType(wst__DelegateToType*) deep deletes wst__DelegateToType data members, use only on dst after soap_dup_wst__DelegateToType(NULL, wst__DelegateToType *dst, wst__DelegateToType *src) (use soapcpp2 -Ed)
 struct wst__DelegateToType
 {
@@ -686,10 +707,11 @@ struct wst__DelegateToType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ParticipantsType is a complexType.
 ///
 /// struct wst__ParticipantsType operations:
-/// - soap_default_wst__ParticipantsType(soap*, wst__ParticipantsType*) reset members to default
-/// - int soap_read_wst__ParticipantsType(soap*, wst__ParticipantsType*) deserialize from a source
-/// - int soap_write_wst__ParticipantsType(soap*, wst__ParticipantsType*) serialize to a sink
-/// - wst__ParticipantsType* soap_dup_wst__ParticipantsType(soap*, wst__ParticipantsType* dst, wst__ParticipantsType *src) returns deep copy of wst__ParticipantsType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__ParticipantsType* soap_new_wst__ParticipantsType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__ParticipantsType(struct soap*, wst__ParticipantsType*) default initialize members
+/// - int soap_read_wst__ParticipantsType(struct soap*, wst__ParticipantsType*) deserialize from a source
+/// - int soap_write_wst__ParticipantsType(struct soap*, wst__ParticipantsType*) serialize to a sink
+/// - wst__ParticipantsType* soap_dup_wst__ParticipantsType(struct soap*, wst__ParticipantsType* dst, wst__ParticipantsType *src) returns deep copy of wst__ParticipantsType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__ParticipantsType(wst__ParticipantsType*) deep deletes wst__ParticipantsType data members, use only on dst after soap_dup_wst__ParticipantsType(NULL, wst__ParticipantsType *dst, wst__ParticipantsType *src) (use soapcpp2 -Ed)
 struct wst__ParticipantsType
 {
@@ -710,10 +732,11 @@ struct wst__ParticipantsType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ParticipantType is a complexType.
 ///
 /// struct wst__ParticipantType operations:
-/// - soap_default_wst__ParticipantType(soap*, wst__ParticipantType*) reset members to default
-/// - int soap_read_wst__ParticipantType(soap*, wst__ParticipantType*) deserialize from a source
-/// - int soap_write_wst__ParticipantType(soap*, wst__ParticipantType*) serialize to a sink
-/// - wst__ParticipantType* soap_dup_wst__ParticipantType(soap*, wst__ParticipantType* dst, wst__ParticipantType *src) returns deep copy of wst__ParticipantType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__ParticipantType* soap_new_wst__ParticipantType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__ParticipantType(struct soap*, wst__ParticipantType*) default initialize members
+/// - int soap_read_wst__ParticipantType(struct soap*, wst__ParticipantType*) deserialize from a source
+/// - int soap_write_wst__ParticipantType(struct soap*, wst__ParticipantType*) serialize to a sink
+/// - wst__ParticipantType* soap_dup_wst__ParticipantType(struct soap*, wst__ParticipantType* dst, wst__ParticipantType *src) returns deep copy of wst__ParticipantType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__ParticipantType(wst__ParticipantType*) deep deletes wst__ParticipantType data members, use only on dst after soap_dup_wst__ParticipantType(NULL, wst__ParticipantType *dst, wst__ParticipantType *src) (use soapcpp2 -Ed)
 struct wst__ParticipantType
 {
@@ -728,10 +751,11 @@ struct wst__ParticipantType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":BinarySecretType is a complexType with simpleContent.
 ///
 /// struct wst__BinarySecretType operations:
-/// - soap_default_wst__BinarySecretType(soap*, wst__BinarySecretType*) reset members to default
-/// - int soap_read_wst__BinarySecretType(soap*, wst__BinarySecretType*) deserialize from a source
-/// - int soap_write_wst__BinarySecretType(soap*, wst__BinarySecretType*) serialize to a sink
-/// - wst__BinarySecretType* soap_dup_wst__BinarySecretType(soap*, wst__BinarySecretType* dst, wst__BinarySecretType *src) returns deep copy of wst__BinarySecretType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__BinarySecretType* soap_new_wst__BinarySecretType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__BinarySecretType(struct soap*, wst__BinarySecretType*) default initialize members
+/// - int soap_read_wst__BinarySecretType(struct soap*, wst__BinarySecretType*) deserialize from a source
+/// - int soap_write_wst__BinarySecretType(struct soap*, wst__BinarySecretType*) serialize to a sink
+/// - wst__BinarySecretType* soap_dup_wst__BinarySecretType(struct soap*, wst__BinarySecretType* dst, wst__BinarySecretType *src) returns deep copy of wst__BinarySecretType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__BinarySecretType(wst__BinarySecretType*) deep deletes wst__BinarySecretType data members, use only on dst after soap_dup_wst__BinarySecretType(NULL, wst__BinarySecretType *dst, wst__BinarySecretType *src) (use soapcpp2 -Ed)
 struct wst__BinarySecretType
 {
@@ -749,10 +773,11 @@ struct wst__BinarySecretType
 /// @brief "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":BinaryExchangeType is a complexType with simpleContent.
 ///
 /// struct wst__BinaryExchangeType operations:
-/// - soap_default_wst__BinaryExchangeType(soap*, wst__BinaryExchangeType*) reset members to default
-/// - int soap_read_wst__BinaryExchangeType(soap*, wst__BinaryExchangeType*) deserialize from a source
-/// - int soap_write_wst__BinaryExchangeType(soap*, wst__BinaryExchangeType*) serialize to a sink
-/// - wst__BinaryExchangeType* soap_dup_wst__BinaryExchangeType(soap*, wst__BinaryExchangeType* dst, wst__BinaryExchangeType *src) returns deep copy of wst__BinaryExchangeType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
+/// - wst__BinaryExchangeType* soap_new_wst__BinaryExchangeType(struct soap*, int num) allocate and default initialize one or more values (array)
+/// - soap_default_wst__BinaryExchangeType(struct soap*, wst__BinaryExchangeType*) default initialize members
+/// - int soap_read_wst__BinaryExchangeType(struct soap*, wst__BinaryExchangeType*) deserialize from a source
+/// - int soap_write_wst__BinaryExchangeType(struct soap*, wst__BinaryExchangeType*) serialize to a sink
+/// - wst__BinaryExchangeType* soap_dup_wst__BinaryExchangeType(struct soap*, wst__BinaryExchangeType* dst, wst__BinaryExchangeType *src) returns deep copy of wst__BinaryExchangeType src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)
 /// - soap_del_wst__BinaryExchangeType(wst__BinaryExchangeType*) deep deletes wst__BinaryExchangeType data members, use only on dst after soap_dup_wst__BinaryExchangeType(NULL, wst__BinaryExchangeType *dst, wst__BinaryExchangeType *src) (use soapcpp2 -Ed)
 struct wst__BinaryExchangeType
 {
@@ -778,154 +803,154 @@ struct wst__BinaryExchangeType
 \******************************************************************************/
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestSecurityToken of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestSecurityTokenType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__RequestSecurityTokenType _wst__RequestSecurityToken;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":TokenType of XSD type xs:anyURI.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char*  _wst__TokenType;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestType of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestTypeOpenEnum.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char* _wst__RequestType;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestSecurityTokenResponse of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestSecurityTokenResponseType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__RequestSecurityTokenResponseType _wst__RequestSecurityTokenResponse;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedSecurityToken of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedSecurityTokenType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef wst__RequestedSecurityTokenType _wst__RequestedSecurityToken;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":BinarySecret of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":BinarySecretType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__BinarySecretType _wst__BinarySecret;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":Claims of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ClaimsType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__ClaimsType _wst__Claims;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":Entropy of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":EntropyType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef wst__EntropyType _wst__Entropy;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":Lifetime of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":LifetimeType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__LifetimeType _wst__Lifetime;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestSecurityTokenCollection of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestSecurityTokenCollectionType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__RequestSecurityTokenCollectionType _wst__RequestSecurityTokenCollection;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestSecurityTokenResponseCollection of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestSecurityTokenResponseCollectionType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__RequestSecurityTokenResponseCollectionType _wst__RequestSecurityTokenResponseCollection;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ComputedKey of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ComputedKeyOpenEnum.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char* _wst__ComputedKey;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedAttachedReference of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedReferenceType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__RequestedReferenceType _wst__RequestedAttachedReference;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedUnattachedReference of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedReferenceType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__RequestedReferenceType _wst__RequestedUnattachedReference;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedProofToken of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedProofTokenType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__RequestedProofTokenType _wst__RequestedProofToken;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":IssuedTokens of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestSecurityTokenResponseCollectionType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__RequestSecurityTokenResponseCollectionType _wst__IssuedTokens;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RenewTarget of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RenewTargetType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__RenewTargetType _wst__RenewTarget;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":AllowPostdating of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":AllowPostdatingType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__AllowPostdatingType _wst__AllowPostdating;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":Renewing of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RenewingType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__RenewingType _wst__Renewing;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":CancelTarget of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":CancelTargetType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__CancelTargetType _wst__CancelTarget;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedTokenCancelled of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedTokenCancelledType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__RequestedTokenCancelledType _wst__RequestedTokenCancelled;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ValidateTarget of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ValidateTargetType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__ValidateTargetType _wst__ValidateTarget;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":Status of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":StatusType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__StatusType _wst__Status;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":SignChallenge of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":SignChallengeType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__SignChallengeType _wst__SignChallenge;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":SignChallengeResponse of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":SignChallengeType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__SignChallengeType _wst__SignChallengeResponse;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":Challenge of XSD type xs:string.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char* _wst__Challenge;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":BinaryExchange of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":BinaryExchangeType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__BinaryExchangeType _wst__BinaryExchange;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestKET of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestKETType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__RequestKETType _wst__RequestKET;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":KeyExchangeToken of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":KeyExchangeTokenType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__KeyExchangeTokenType _wst__KeyExchangeToken;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":Authenticator of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":AuthenticatorType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef wst__AuthenticatorType _wst__Authenticator;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":CombinedHash of XSD type xs:base64Binary.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char*  _wst__CombinedHash;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":OnBehalfOf of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":OnBehalfOfType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__OnBehalfOfType _wst__OnBehalfOf;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":Issuer of XSD type "http://www.w3.org/2005/08/addressing":EndpointReferenceType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef wsa5__EndpointReferenceType _wst__Issuer;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":AuthenticationType of XSD type xs:anyURI.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char*  _wst__AuthenticationType;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":KeyType of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":KeyTypeOpenEnum.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char* _wst__KeyType;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":KeySize of XSD type xs:unsignedInt.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef unsigned int _wst__KeySize;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":SignatureAlgorithm of XSD type xs:anyURI.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char*  _wst__SignatureAlgorithm;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":EncryptionAlgorithm of XSD type xs:anyURI.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char*  _wst__EncryptionAlgorithm;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":CanonicalizationAlgorithm of XSD type xs:anyURI.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char*  _wst__CanonicalizationAlgorithm;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ComputedKeyAlgorithm of XSD type xs:anyURI.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char*  _wst__ComputedKeyAlgorithm;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":Encryption of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":EncryptionType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__EncryptionType _wst__Encryption;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ProofEncryption of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ProofEncryptionType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__ProofEncryptionType _wst__ProofEncryption;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":UseKey of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":UseKeyType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__UseKeyType _wst__UseKey;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":KeyWrapAlgorithm of XSD type xs:anyURI.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char*  _wst__KeyWrapAlgorithm;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":SignWith of XSD type xs:anyURI.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char*  _wst__SignWith;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":EncryptWith of XSD type xs:anyURI.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char*  _wst__EncryptWith;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":DelegateTo of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":DelegateToType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__DelegateToType _wst__DelegateTo;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":Forwardable of XSD type xs:boolean.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char* _wst__Forwardable;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":Delegatable of XSD type xs:boolean.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef char* _wst__Delegatable;
 
 /// @brief Top-level root element "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":Participants of XSD type "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":ParticipantsType.
-/// @note Use wsdl2h option -g to auto-generate a top-level root element declaration and processing code.
+typedef struct wst__ParticipantsType _wst__Participants;
 
 
 /******************************************************************************\
@@ -982,105 +1007,755 @@ The following options are available for (de)serialization control:
 
 @section wst Top-level root elements of schema "http://docs.oasis-open.org/ws-sx/ws-trust/200512/"
 
-  - <wst:RequestSecurityToken> (use wsdl2h option -g to auto-generate type _wst__RequestSecurityToken)
+  - <wst:RequestSecurityToken> @ref _wst__RequestSecurityToken
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__RequestSecurityToken(struct soap*, _wst__RequestSecurityToken*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__RequestSecurityToken(struct soap*, _wst__RequestSecurityToken*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__RequestSecurityToken(struct soap*, const char *URL, _wst__RequestSecurityToken*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__RequestSecurityToken(struct soap*, const char *URL, _wst__RequestSecurityToken*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__RequestSecurityToken(struct soap*, const char *URL, _wst__RequestSecurityToken*);
+    soap_POST_recv__wst__RequestSecurityToken(struct soap*, _wst__RequestSecurityToken*);
+    @endcode
 
-  - <wst:TokenType> (use wsdl2h option -g to auto-generate type _wst__TokenType)
+  - <wst:TokenType> @ref _wst__TokenType
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__TokenType(struct soap*, _wst__TokenType*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__TokenType(struct soap*, _wst__TokenType*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__TokenType(struct soap*, const char *URL, _wst__TokenType*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__TokenType(struct soap*, const char *URL, _wst__TokenType*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__TokenType(struct soap*, const char *URL, _wst__TokenType*);
+    soap_POST_recv__wst__TokenType(struct soap*, _wst__TokenType*);
+    @endcode
 
-  - <wst:RequestType> (use wsdl2h option -g to auto-generate type _wst__RequestType)
+  - <wst:RequestType> @ref _wst__RequestType
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__RequestType(struct soap*, _wst__RequestType*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__RequestType(struct soap*, _wst__RequestType*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__RequestType(struct soap*, const char *URL, _wst__RequestType*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__RequestType(struct soap*, const char *URL, _wst__RequestType*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__RequestType(struct soap*, const char *URL, _wst__RequestType*);
+    soap_POST_recv__wst__RequestType(struct soap*, _wst__RequestType*);
+    @endcode
 
-  - <wst:RequestSecurityTokenResponse> (use wsdl2h option -g to auto-generate type _wst__RequestSecurityTokenResponse)
+  - <wst:RequestSecurityTokenResponse> @ref _wst__RequestSecurityTokenResponse
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__RequestSecurityTokenResponse(struct soap*, _wst__RequestSecurityTokenResponse*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__RequestSecurityTokenResponse(struct soap*, _wst__RequestSecurityTokenResponse*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__RequestSecurityTokenResponse(struct soap*, const char *URL, _wst__RequestSecurityTokenResponse*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__RequestSecurityTokenResponse(struct soap*, const char *URL, _wst__RequestSecurityTokenResponse*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__RequestSecurityTokenResponse(struct soap*, const char *URL, _wst__RequestSecurityTokenResponse*);
+    soap_POST_recv__wst__RequestSecurityTokenResponse(struct soap*, _wst__RequestSecurityTokenResponse*);
+    @endcode
 
-  - <wst:RequestedSecurityToken> (use wsdl2h option -g to auto-generate type _wst__RequestedSecurityToken)
+  - <wst:RequestedSecurityToken> @ref _wst__RequestedSecurityToken
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__RequestedSecurityToken(struct soap*, _wst__RequestedSecurityToken*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__RequestedSecurityToken(struct soap*, _wst__RequestedSecurityToken*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__RequestedSecurityToken(struct soap*, const char *URL, _wst__RequestedSecurityToken*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__RequestedSecurityToken(struct soap*, const char *URL, _wst__RequestedSecurityToken*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__RequestedSecurityToken(struct soap*, const char *URL, _wst__RequestedSecurityToken*);
+    soap_POST_recv__wst__RequestedSecurityToken(struct soap*, _wst__RequestedSecurityToken*);
+    @endcode
 
-  - <wst:BinarySecret> (use wsdl2h option -g to auto-generate type _wst__BinarySecret)
+  - <wst:BinarySecret> @ref _wst__BinarySecret
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__BinarySecret(struct soap*, _wst__BinarySecret*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__BinarySecret(struct soap*, _wst__BinarySecret*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__BinarySecret(struct soap*, const char *URL, _wst__BinarySecret*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__BinarySecret(struct soap*, const char *URL, _wst__BinarySecret*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__BinarySecret(struct soap*, const char *URL, _wst__BinarySecret*);
+    soap_POST_recv__wst__BinarySecret(struct soap*, _wst__BinarySecret*);
+    @endcode
 
-  - <wst:Claims> (use wsdl2h option -g to auto-generate type _wst__Claims)
+  - <wst:Claims> @ref _wst__Claims
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__Claims(struct soap*, _wst__Claims*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__Claims(struct soap*, _wst__Claims*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__Claims(struct soap*, const char *URL, _wst__Claims*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__Claims(struct soap*, const char *URL, _wst__Claims*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__Claims(struct soap*, const char *URL, _wst__Claims*);
+    soap_POST_recv__wst__Claims(struct soap*, _wst__Claims*);
+    @endcode
 
-  - <wst:Entropy> (use wsdl2h option -g to auto-generate type _wst__Entropy)
+  - <wst:Entropy> @ref _wst__Entropy
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__Entropy(struct soap*, _wst__Entropy*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__Entropy(struct soap*, _wst__Entropy*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__Entropy(struct soap*, const char *URL, _wst__Entropy*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__Entropy(struct soap*, const char *URL, _wst__Entropy*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__Entropy(struct soap*, const char *URL, _wst__Entropy*);
+    soap_POST_recv__wst__Entropy(struct soap*, _wst__Entropy*);
+    @endcode
 
-  - <wst:Lifetime> (use wsdl2h option -g to auto-generate type _wst__Lifetime)
+  - <wst:Lifetime> @ref _wst__Lifetime
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__Lifetime(struct soap*, _wst__Lifetime*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__Lifetime(struct soap*, _wst__Lifetime*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__Lifetime(struct soap*, const char *URL, _wst__Lifetime*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__Lifetime(struct soap*, const char *URL, _wst__Lifetime*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__Lifetime(struct soap*, const char *URL, _wst__Lifetime*);
+    soap_POST_recv__wst__Lifetime(struct soap*, _wst__Lifetime*);
+    @endcode
 
-  - <wst:RequestSecurityTokenCollection> (use wsdl2h option -g to auto-generate type _wst__RequestSecurityTokenCollection)
+  - <wst:RequestSecurityTokenCollection> @ref _wst__RequestSecurityTokenCollection
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__RequestSecurityTokenCollection(struct soap*, _wst__RequestSecurityTokenCollection*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__RequestSecurityTokenCollection(struct soap*, _wst__RequestSecurityTokenCollection*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__RequestSecurityTokenCollection(struct soap*, const char *URL, _wst__RequestSecurityTokenCollection*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__RequestSecurityTokenCollection(struct soap*, const char *URL, _wst__RequestSecurityTokenCollection*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__RequestSecurityTokenCollection(struct soap*, const char *URL, _wst__RequestSecurityTokenCollection*);
+    soap_POST_recv__wst__RequestSecurityTokenCollection(struct soap*, _wst__RequestSecurityTokenCollection*);
+    @endcode
 
-  - <wst:RequestSecurityTokenResponseCollection> (use wsdl2h option -g to auto-generate type _wst__RequestSecurityTokenResponseCollection)
+  - <wst:RequestSecurityTokenResponseCollection> @ref _wst__RequestSecurityTokenResponseCollection
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__RequestSecurityTokenResponseCollection(struct soap*, _wst__RequestSecurityTokenResponseCollection*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__RequestSecurityTokenResponseCollection(struct soap*, _wst__RequestSecurityTokenResponseCollection*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__RequestSecurityTokenResponseCollection(struct soap*, const char *URL, _wst__RequestSecurityTokenResponseCollection*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__RequestSecurityTokenResponseCollection(struct soap*, const char *URL, _wst__RequestSecurityTokenResponseCollection*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__RequestSecurityTokenResponseCollection(struct soap*, const char *URL, _wst__RequestSecurityTokenResponseCollection*);
+    soap_POST_recv__wst__RequestSecurityTokenResponseCollection(struct soap*, _wst__RequestSecurityTokenResponseCollection*);
+    @endcode
 
-  - <wst:ComputedKey> (use wsdl2h option -g to auto-generate type _wst__ComputedKey)
+  - <wst:ComputedKey> @ref _wst__ComputedKey
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__ComputedKey(struct soap*, _wst__ComputedKey*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__ComputedKey(struct soap*, _wst__ComputedKey*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__ComputedKey(struct soap*, const char *URL, _wst__ComputedKey*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__ComputedKey(struct soap*, const char *URL, _wst__ComputedKey*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__ComputedKey(struct soap*, const char *URL, _wst__ComputedKey*);
+    soap_POST_recv__wst__ComputedKey(struct soap*, _wst__ComputedKey*);
+    @endcode
 
-  - <wst:RequestedAttachedReference> (use wsdl2h option -g to auto-generate type _wst__RequestedAttachedReference)
+  - <wst:RequestedAttachedReference> @ref _wst__RequestedAttachedReference
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__RequestedAttachedReference(struct soap*, _wst__RequestedAttachedReference*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__RequestedAttachedReference(struct soap*, _wst__RequestedAttachedReference*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__RequestedAttachedReference(struct soap*, const char *URL, _wst__RequestedAttachedReference*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__RequestedAttachedReference(struct soap*, const char *URL, _wst__RequestedAttachedReference*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__RequestedAttachedReference(struct soap*, const char *URL, _wst__RequestedAttachedReference*);
+    soap_POST_recv__wst__RequestedAttachedReference(struct soap*, _wst__RequestedAttachedReference*);
+    @endcode
 
-  - <wst:RequestedUnattachedReference> (use wsdl2h option -g to auto-generate type _wst__RequestedUnattachedReference)
+  - <wst:RequestedUnattachedReference> @ref _wst__RequestedUnattachedReference
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__RequestedUnattachedReference(struct soap*, _wst__RequestedUnattachedReference*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__RequestedUnattachedReference(struct soap*, _wst__RequestedUnattachedReference*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__RequestedUnattachedReference(struct soap*, const char *URL, _wst__RequestedUnattachedReference*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__RequestedUnattachedReference(struct soap*, const char *URL, _wst__RequestedUnattachedReference*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__RequestedUnattachedReference(struct soap*, const char *URL, _wst__RequestedUnattachedReference*);
+    soap_POST_recv__wst__RequestedUnattachedReference(struct soap*, _wst__RequestedUnattachedReference*);
+    @endcode
 
-  - <wst:RequestedProofToken> (use wsdl2h option -g to auto-generate type _wst__RequestedProofToken)
+  - <wst:RequestedProofToken> @ref _wst__RequestedProofToken
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__RequestedProofToken(struct soap*, _wst__RequestedProofToken*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__RequestedProofToken(struct soap*, _wst__RequestedProofToken*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__RequestedProofToken(struct soap*, const char *URL, _wst__RequestedProofToken*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__RequestedProofToken(struct soap*, const char *URL, _wst__RequestedProofToken*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__RequestedProofToken(struct soap*, const char *URL, _wst__RequestedProofToken*);
+    soap_POST_recv__wst__RequestedProofToken(struct soap*, _wst__RequestedProofToken*);
+    @endcode
 
-  - <wst:IssuedTokens> (use wsdl2h option -g to auto-generate type _wst__IssuedTokens)
+  - <wst:IssuedTokens> @ref _wst__IssuedTokens
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__IssuedTokens(struct soap*, _wst__IssuedTokens*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__IssuedTokens(struct soap*, _wst__IssuedTokens*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__IssuedTokens(struct soap*, const char *URL, _wst__IssuedTokens*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__IssuedTokens(struct soap*, const char *URL, _wst__IssuedTokens*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__IssuedTokens(struct soap*, const char *URL, _wst__IssuedTokens*);
+    soap_POST_recv__wst__IssuedTokens(struct soap*, _wst__IssuedTokens*);
+    @endcode
 
-  - <wst:RenewTarget> (use wsdl2h option -g to auto-generate type _wst__RenewTarget)
+  - <wst:RenewTarget> @ref _wst__RenewTarget
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__RenewTarget(struct soap*, _wst__RenewTarget*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__RenewTarget(struct soap*, _wst__RenewTarget*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__RenewTarget(struct soap*, const char *URL, _wst__RenewTarget*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__RenewTarget(struct soap*, const char *URL, _wst__RenewTarget*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__RenewTarget(struct soap*, const char *URL, _wst__RenewTarget*);
+    soap_POST_recv__wst__RenewTarget(struct soap*, _wst__RenewTarget*);
+    @endcode
 
-  - <wst:AllowPostdating> (use wsdl2h option -g to auto-generate type _wst__AllowPostdating)
+  - <wst:AllowPostdating> @ref _wst__AllowPostdating
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__AllowPostdating(struct soap*, _wst__AllowPostdating*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__AllowPostdating(struct soap*, _wst__AllowPostdating*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__AllowPostdating(struct soap*, const char *URL, _wst__AllowPostdating*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__AllowPostdating(struct soap*, const char *URL, _wst__AllowPostdating*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__AllowPostdating(struct soap*, const char *URL, _wst__AllowPostdating*);
+    soap_POST_recv__wst__AllowPostdating(struct soap*, _wst__AllowPostdating*);
+    @endcode
 
-  - <wst:Renewing> (use wsdl2h option -g to auto-generate type _wst__Renewing)
+  - <wst:Renewing> @ref _wst__Renewing
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__Renewing(struct soap*, _wst__Renewing*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__Renewing(struct soap*, _wst__Renewing*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__Renewing(struct soap*, const char *URL, _wst__Renewing*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__Renewing(struct soap*, const char *URL, _wst__Renewing*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__Renewing(struct soap*, const char *URL, _wst__Renewing*);
+    soap_POST_recv__wst__Renewing(struct soap*, _wst__Renewing*);
+    @endcode
 
-  - <wst:CancelTarget> (use wsdl2h option -g to auto-generate type _wst__CancelTarget)
+  - <wst:CancelTarget> @ref _wst__CancelTarget
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__CancelTarget(struct soap*, _wst__CancelTarget*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__CancelTarget(struct soap*, _wst__CancelTarget*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__CancelTarget(struct soap*, const char *URL, _wst__CancelTarget*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__CancelTarget(struct soap*, const char *URL, _wst__CancelTarget*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__CancelTarget(struct soap*, const char *URL, _wst__CancelTarget*);
+    soap_POST_recv__wst__CancelTarget(struct soap*, _wst__CancelTarget*);
+    @endcode
 
-  - <wst:RequestedTokenCancelled> (use wsdl2h option -g to auto-generate type _wst__RequestedTokenCancelled)
+  - <wst:RequestedTokenCancelled> @ref _wst__RequestedTokenCancelled
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__RequestedTokenCancelled(struct soap*, _wst__RequestedTokenCancelled*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__RequestedTokenCancelled(struct soap*, _wst__RequestedTokenCancelled*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__RequestedTokenCancelled(struct soap*, const char *URL, _wst__RequestedTokenCancelled*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__RequestedTokenCancelled(struct soap*, const char *URL, _wst__RequestedTokenCancelled*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__RequestedTokenCancelled(struct soap*, const char *URL, _wst__RequestedTokenCancelled*);
+    soap_POST_recv__wst__RequestedTokenCancelled(struct soap*, _wst__RequestedTokenCancelled*);
+    @endcode
 
-  - <wst:ValidateTarget> (use wsdl2h option -g to auto-generate type _wst__ValidateTarget)
+  - <wst:ValidateTarget> @ref _wst__ValidateTarget
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__ValidateTarget(struct soap*, _wst__ValidateTarget*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__ValidateTarget(struct soap*, _wst__ValidateTarget*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__ValidateTarget(struct soap*, const char *URL, _wst__ValidateTarget*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__ValidateTarget(struct soap*, const char *URL, _wst__ValidateTarget*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__ValidateTarget(struct soap*, const char *URL, _wst__ValidateTarget*);
+    soap_POST_recv__wst__ValidateTarget(struct soap*, _wst__ValidateTarget*);
+    @endcode
 
-  - <wst:Status> (use wsdl2h option -g to auto-generate type _wst__Status)
+  - <wst:Status> @ref _wst__Status
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__Status(struct soap*, _wst__Status*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__Status(struct soap*, _wst__Status*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__Status(struct soap*, const char *URL, _wst__Status*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__Status(struct soap*, const char *URL, _wst__Status*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__Status(struct soap*, const char *URL, _wst__Status*);
+    soap_POST_recv__wst__Status(struct soap*, _wst__Status*);
+    @endcode
 
-  - <wst:SignChallenge> (use wsdl2h option -g to auto-generate type _wst__SignChallenge)
+  - <wst:SignChallenge> @ref _wst__SignChallenge
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__SignChallenge(struct soap*, _wst__SignChallenge*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__SignChallenge(struct soap*, _wst__SignChallenge*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__SignChallenge(struct soap*, const char *URL, _wst__SignChallenge*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__SignChallenge(struct soap*, const char *URL, _wst__SignChallenge*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__SignChallenge(struct soap*, const char *URL, _wst__SignChallenge*);
+    soap_POST_recv__wst__SignChallenge(struct soap*, _wst__SignChallenge*);
+    @endcode
 
-  - <wst:SignChallengeResponse> (use wsdl2h option -g to auto-generate type _wst__SignChallengeResponse)
+  - <wst:SignChallengeResponse> @ref _wst__SignChallengeResponse
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__SignChallengeResponse(struct soap*, _wst__SignChallengeResponse*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__SignChallengeResponse(struct soap*, _wst__SignChallengeResponse*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__SignChallengeResponse(struct soap*, const char *URL, _wst__SignChallengeResponse*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__SignChallengeResponse(struct soap*, const char *URL, _wst__SignChallengeResponse*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__SignChallengeResponse(struct soap*, const char *URL, _wst__SignChallengeResponse*);
+    soap_POST_recv__wst__SignChallengeResponse(struct soap*, _wst__SignChallengeResponse*);
+    @endcode
 
-  - <wst:Challenge> (use wsdl2h option -g to auto-generate type _wst__Challenge)
+  - <wst:Challenge> @ref _wst__Challenge
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__Challenge(struct soap*, _wst__Challenge*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__Challenge(struct soap*, _wst__Challenge*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__Challenge(struct soap*, const char *URL, _wst__Challenge*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__Challenge(struct soap*, const char *URL, _wst__Challenge*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__Challenge(struct soap*, const char *URL, _wst__Challenge*);
+    soap_POST_recv__wst__Challenge(struct soap*, _wst__Challenge*);
+    @endcode
 
-  - <wst:BinaryExchange> (use wsdl2h option -g to auto-generate type _wst__BinaryExchange)
+  - <wst:BinaryExchange> @ref _wst__BinaryExchange
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__BinaryExchange(struct soap*, _wst__BinaryExchange*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__BinaryExchange(struct soap*, _wst__BinaryExchange*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__BinaryExchange(struct soap*, const char *URL, _wst__BinaryExchange*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__BinaryExchange(struct soap*, const char *URL, _wst__BinaryExchange*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__BinaryExchange(struct soap*, const char *URL, _wst__BinaryExchange*);
+    soap_POST_recv__wst__BinaryExchange(struct soap*, _wst__BinaryExchange*);
+    @endcode
 
-  - <wst:RequestKET> (use wsdl2h option -g to auto-generate type _wst__RequestKET)
+  - <wst:RequestKET> @ref _wst__RequestKET
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__RequestKET(struct soap*, _wst__RequestKET*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__RequestKET(struct soap*, _wst__RequestKET*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__RequestKET(struct soap*, const char *URL, _wst__RequestKET*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__RequestKET(struct soap*, const char *URL, _wst__RequestKET*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__RequestKET(struct soap*, const char *URL, _wst__RequestKET*);
+    soap_POST_recv__wst__RequestKET(struct soap*, _wst__RequestKET*);
+    @endcode
 
-  - <wst:KeyExchangeToken> (use wsdl2h option -g to auto-generate type _wst__KeyExchangeToken)
+  - <wst:KeyExchangeToken> @ref _wst__KeyExchangeToken
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__KeyExchangeToken(struct soap*, _wst__KeyExchangeToken*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__KeyExchangeToken(struct soap*, _wst__KeyExchangeToken*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__KeyExchangeToken(struct soap*, const char *URL, _wst__KeyExchangeToken*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__KeyExchangeToken(struct soap*, const char *URL, _wst__KeyExchangeToken*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__KeyExchangeToken(struct soap*, const char *URL, _wst__KeyExchangeToken*);
+    soap_POST_recv__wst__KeyExchangeToken(struct soap*, _wst__KeyExchangeToken*);
+    @endcode
 
-  - <wst:Authenticator> (use wsdl2h option -g to auto-generate type _wst__Authenticator)
+  - <wst:Authenticator> @ref _wst__Authenticator
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__Authenticator(struct soap*, _wst__Authenticator*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__Authenticator(struct soap*, _wst__Authenticator*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__Authenticator(struct soap*, const char *URL, _wst__Authenticator*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__Authenticator(struct soap*, const char *URL, _wst__Authenticator*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__Authenticator(struct soap*, const char *URL, _wst__Authenticator*);
+    soap_POST_recv__wst__Authenticator(struct soap*, _wst__Authenticator*);
+    @endcode
 
-  - <wst:CombinedHash> (use wsdl2h option -g to auto-generate type _wst__CombinedHash)
+  - <wst:CombinedHash> @ref _wst__CombinedHash
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__CombinedHash(struct soap*, _wst__CombinedHash*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__CombinedHash(struct soap*, _wst__CombinedHash*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__CombinedHash(struct soap*, const char *URL, _wst__CombinedHash*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__CombinedHash(struct soap*, const char *URL, _wst__CombinedHash*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__CombinedHash(struct soap*, const char *URL, _wst__CombinedHash*);
+    soap_POST_recv__wst__CombinedHash(struct soap*, _wst__CombinedHash*);
+    @endcode
 
-  - <wst:OnBehalfOf> (use wsdl2h option -g to auto-generate type _wst__OnBehalfOf)
+  - <wst:OnBehalfOf> @ref _wst__OnBehalfOf
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__OnBehalfOf(struct soap*, _wst__OnBehalfOf*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__OnBehalfOf(struct soap*, _wst__OnBehalfOf*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__OnBehalfOf(struct soap*, const char *URL, _wst__OnBehalfOf*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__OnBehalfOf(struct soap*, const char *URL, _wst__OnBehalfOf*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__OnBehalfOf(struct soap*, const char *URL, _wst__OnBehalfOf*);
+    soap_POST_recv__wst__OnBehalfOf(struct soap*, _wst__OnBehalfOf*);
+    @endcode
 
-  - <wst:Issuer> (use wsdl2h option -g to auto-generate type _wst__Issuer)
+  - <wst:Issuer> @ref _wst__Issuer
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__Issuer(struct soap*, _wst__Issuer*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__Issuer(struct soap*, _wst__Issuer*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__Issuer(struct soap*, const char *URL, _wst__Issuer*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__Issuer(struct soap*, const char *URL, _wst__Issuer*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__Issuer(struct soap*, const char *URL, _wst__Issuer*);
+    soap_POST_recv__wst__Issuer(struct soap*, _wst__Issuer*);
+    @endcode
 
-  - <wst:AuthenticationType> (use wsdl2h option -g to auto-generate type _wst__AuthenticationType)
+  - <wst:AuthenticationType> @ref _wst__AuthenticationType
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__AuthenticationType(struct soap*, _wst__AuthenticationType*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__AuthenticationType(struct soap*, _wst__AuthenticationType*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__AuthenticationType(struct soap*, const char *URL, _wst__AuthenticationType*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__AuthenticationType(struct soap*, const char *URL, _wst__AuthenticationType*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__AuthenticationType(struct soap*, const char *URL, _wst__AuthenticationType*);
+    soap_POST_recv__wst__AuthenticationType(struct soap*, _wst__AuthenticationType*);
+    @endcode
 
-  - <wst:KeyType> (use wsdl2h option -g to auto-generate type _wst__KeyType)
+  - <wst:KeyType> @ref _wst__KeyType
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__KeyType(struct soap*, _wst__KeyType*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__KeyType(struct soap*, _wst__KeyType*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__KeyType(struct soap*, const char *URL, _wst__KeyType*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__KeyType(struct soap*, const char *URL, _wst__KeyType*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__KeyType(struct soap*, const char *URL, _wst__KeyType*);
+    soap_POST_recv__wst__KeyType(struct soap*, _wst__KeyType*);
+    @endcode
 
-  - <wst:KeySize> (use wsdl2h option -g to auto-generate type _wst__KeySize)
+  - <wst:KeySize> @ref _wst__KeySize
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__KeySize(struct soap*, _wst__KeySize*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__KeySize(struct soap*, _wst__KeySize*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__KeySize(struct soap*, const char *URL, _wst__KeySize*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__KeySize(struct soap*, const char *URL, _wst__KeySize*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__KeySize(struct soap*, const char *URL, _wst__KeySize*);
+    soap_POST_recv__wst__KeySize(struct soap*, _wst__KeySize*);
+    @endcode
 
-  - <wst:SignatureAlgorithm> (use wsdl2h option -g to auto-generate type _wst__SignatureAlgorithm)
+  - <wst:SignatureAlgorithm> @ref _wst__SignatureAlgorithm
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__SignatureAlgorithm(struct soap*, _wst__SignatureAlgorithm*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__SignatureAlgorithm(struct soap*, _wst__SignatureAlgorithm*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__SignatureAlgorithm(struct soap*, const char *URL, _wst__SignatureAlgorithm*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__SignatureAlgorithm(struct soap*, const char *URL, _wst__SignatureAlgorithm*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__SignatureAlgorithm(struct soap*, const char *URL, _wst__SignatureAlgorithm*);
+    soap_POST_recv__wst__SignatureAlgorithm(struct soap*, _wst__SignatureAlgorithm*);
+    @endcode
 
-  - <wst:EncryptionAlgorithm> (use wsdl2h option -g to auto-generate type _wst__EncryptionAlgorithm)
+  - <wst:EncryptionAlgorithm> @ref _wst__EncryptionAlgorithm
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__EncryptionAlgorithm(struct soap*, _wst__EncryptionAlgorithm*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__EncryptionAlgorithm(struct soap*, _wst__EncryptionAlgorithm*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__EncryptionAlgorithm(struct soap*, const char *URL, _wst__EncryptionAlgorithm*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__EncryptionAlgorithm(struct soap*, const char *URL, _wst__EncryptionAlgorithm*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__EncryptionAlgorithm(struct soap*, const char *URL, _wst__EncryptionAlgorithm*);
+    soap_POST_recv__wst__EncryptionAlgorithm(struct soap*, _wst__EncryptionAlgorithm*);
+    @endcode
 
-  - <wst:CanonicalizationAlgorithm> (use wsdl2h option -g to auto-generate type _wst__CanonicalizationAlgorithm)
+  - <wst:CanonicalizationAlgorithm> @ref _wst__CanonicalizationAlgorithm
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__CanonicalizationAlgorithm(struct soap*, _wst__CanonicalizationAlgorithm*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__CanonicalizationAlgorithm(struct soap*, _wst__CanonicalizationAlgorithm*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__CanonicalizationAlgorithm(struct soap*, const char *URL, _wst__CanonicalizationAlgorithm*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__CanonicalizationAlgorithm(struct soap*, const char *URL, _wst__CanonicalizationAlgorithm*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__CanonicalizationAlgorithm(struct soap*, const char *URL, _wst__CanonicalizationAlgorithm*);
+    soap_POST_recv__wst__CanonicalizationAlgorithm(struct soap*, _wst__CanonicalizationAlgorithm*);
+    @endcode
 
-  - <wst:ComputedKeyAlgorithm> (use wsdl2h option -g to auto-generate type _wst__ComputedKeyAlgorithm)
+  - <wst:ComputedKeyAlgorithm> @ref _wst__ComputedKeyAlgorithm
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__ComputedKeyAlgorithm(struct soap*, _wst__ComputedKeyAlgorithm*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__ComputedKeyAlgorithm(struct soap*, _wst__ComputedKeyAlgorithm*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__ComputedKeyAlgorithm(struct soap*, const char *URL, _wst__ComputedKeyAlgorithm*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__ComputedKeyAlgorithm(struct soap*, const char *URL, _wst__ComputedKeyAlgorithm*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__ComputedKeyAlgorithm(struct soap*, const char *URL, _wst__ComputedKeyAlgorithm*);
+    soap_POST_recv__wst__ComputedKeyAlgorithm(struct soap*, _wst__ComputedKeyAlgorithm*);
+    @endcode
 
-  - <wst:Encryption> (use wsdl2h option -g to auto-generate type _wst__Encryption)
+  - <wst:Encryption> @ref _wst__Encryption
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__Encryption(struct soap*, _wst__Encryption*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__Encryption(struct soap*, _wst__Encryption*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__Encryption(struct soap*, const char *URL, _wst__Encryption*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__Encryption(struct soap*, const char *URL, _wst__Encryption*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__Encryption(struct soap*, const char *URL, _wst__Encryption*);
+    soap_POST_recv__wst__Encryption(struct soap*, _wst__Encryption*);
+    @endcode
 
-  - <wst:ProofEncryption> (use wsdl2h option -g to auto-generate type _wst__ProofEncryption)
+  - <wst:ProofEncryption> @ref _wst__ProofEncryption
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__ProofEncryption(struct soap*, _wst__ProofEncryption*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__ProofEncryption(struct soap*, _wst__ProofEncryption*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__ProofEncryption(struct soap*, const char *URL, _wst__ProofEncryption*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__ProofEncryption(struct soap*, const char *URL, _wst__ProofEncryption*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__ProofEncryption(struct soap*, const char *URL, _wst__ProofEncryption*);
+    soap_POST_recv__wst__ProofEncryption(struct soap*, _wst__ProofEncryption*);
+    @endcode
 
-  - <wst:UseKey> (use wsdl2h option -g to auto-generate type _wst__UseKey)
+  - <wst:UseKey> @ref _wst__UseKey
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__UseKey(struct soap*, _wst__UseKey*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__UseKey(struct soap*, _wst__UseKey*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__UseKey(struct soap*, const char *URL, _wst__UseKey*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__UseKey(struct soap*, const char *URL, _wst__UseKey*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__UseKey(struct soap*, const char *URL, _wst__UseKey*);
+    soap_POST_recv__wst__UseKey(struct soap*, _wst__UseKey*);
+    @endcode
 
-  - <wst:KeyWrapAlgorithm> (use wsdl2h option -g to auto-generate type _wst__KeyWrapAlgorithm)
+  - <wst:KeyWrapAlgorithm> @ref _wst__KeyWrapAlgorithm
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__KeyWrapAlgorithm(struct soap*, _wst__KeyWrapAlgorithm*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__KeyWrapAlgorithm(struct soap*, _wst__KeyWrapAlgorithm*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__KeyWrapAlgorithm(struct soap*, const char *URL, _wst__KeyWrapAlgorithm*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__KeyWrapAlgorithm(struct soap*, const char *URL, _wst__KeyWrapAlgorithm*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__KeyWrapAlgorithm(struct soap*, const char *URL, _wst__KeyWrapAlgorithm*);
+    soap_POST_recv__wst__KeyWrapAlgorithm(struct soap*, _wst__KeyWrapAlgorithm*);
+    @endcode
 
-  - <wst:SignWith> (use wsdl2h option -g to auto-generate type _wst__SignWith)
+  - <wst:SignWith> @ref _wst__SignWith
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__SignWith(struct soap*, _wst__SignWith*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__SignWith(struct soap*, _wst__SignWith*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__SignWith(struct soap*, const char *URL, _wst__SignWith*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__SignWith(struct soap*, const char *URL, _wst__SignWith*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__SignWith(struct soap*, const char *URL, _wst__SignWith*);
+    soap_POST_recv__wst__SignWith(struct soap*, _wst__SignWith*);
+    @endcode
 
-  - <wst:EncryptWith> (use wsdl2h option -g to auto-generate type _wst__EncryptWith)
+  - <wst:EncryptWith> @ref _wst__EncryptWith
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__EncryptWith(struct soap*, _wst__EncryptWith*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__EncryptWith(struct soap*, _wst__EncryptWith*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__EncryptWith(struct soap*, const char *URL, _wst__EncryptWith*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__EncryptWith(struct soap*, const char *URL, _wst__EncryptWith*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__EncryptWith(struct soap*, const char *URL, _wst__EncryptWith*);
+    soap_POST_recv__wst__EncryptWith(struct soap*, _wst__EncryptWith*);
+    @endcode
 
-  - <wst:DelegateTo> (use wsdl2h option -g to auto-generate type _wst__DelegateTo)
+  - <wst:DelegateTo> @ref _wst__DelegateTo
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__DelegateTo(struct soap*, _wst__DelegateTo*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__DelegateTo(struct soap*, _wst__DelegateTo*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__DelegateTo(struct soap*, const char *URL, _wst__DelegateTo*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__DelegateTo(struct soap*, const char *URL, _wst__DelegateTo*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__DelegateTo(struct soap*, const char *URL, _wst__DelegateTo*);
+    soap_POST_recv__wst__DelegateTo(struct soap*, _wst__DelegateTo*);
+    @endcode
 
-  - <wst:Forwardable> (use wsdl2h option -g to auto-generate type _wst__Forwardable)
+  - <wst:Forwardable> @ref _wst__Forwardable
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__Forwardable(struct soap*, _wst__Forwardable*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__Forwardable(struct soap*, _wst__Forwardable*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__Forwardable(struct soap*, const char *URL, _wst__Forwardable*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__Forwardable(struct soap*, const char *URL, _wst__Forwardable*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__Forwardable(struct soap*, const char *URL, _wst__Forwardable*);
+    soap_POST_recv__wst__Forwardable(struct soap*, _wst__Forwardable*);
+    @endcode
 
-  - <wst:Delegatable> (use wsdl2h option -g to auto-generate type _wst__Delegatable)
+  - <wst:Delegatable> @ref _wst__Delegatable
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__Delegatable(struct soap*, _wst__Delegatable*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__Delegatable(struct soap*, _wst__Delegatable*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__Delegatable(struct soap*, const char *URL, _wst__Delegatable*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__Delegatable(struct soap*, const char *URL, _wst__Delegatable*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__Delegatable(struct soap*, const char *URL, _wst__Delegatable*);
+    soap_POST_recv__wst__Delegatable(struct soap*, _wst__Delegatable*);
+    @endcode
 
-  - <wst:Participants> (use wsdl2h option -g to auto-generate type _wst__Participants)
+  - <wst:Participants> @ref _wst__Participants
+    @code
+    // Reader (returns SOAP_OK on success):
+    soap_read__wst__Participants(struct soap*, _wst__Participants*);
+    // Writer (returns SOAP_OK on success):
+    soap_write__wst__Participants(struct soap*, _wst__Participants*);
+    // REST GET (returns SOAP_OK on success):
+    soap_GET__wst__Participants(struct soap*, const char *URL, _wst__Participants*);
+    // REST PUT (returns SOAP_OK on success):
+    soap_PUT__wst__Participants(struct soap*, const char *URL, _wst__Participants*);
+    // REST POST (returns SOAP_OK on success):
+    soap_POST_send__wst__Participants(struct soap*, const char *URL, _wst__Participants*);
+    soap_POST_recv__wst__Participants(struct soap*, _wst__Participants*);
+    @endcode
 
 */
 

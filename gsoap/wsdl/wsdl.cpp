@@ -1660,8 +1660,9 @@ again:
       }
       if (!found && !iflag) // don't import any of the schemas in the .nsmap table (or when -i option is used)
       {
-        xs__schema *importschema;
-        importschema = (*import).schemaPtr();
+        xs__schema *importschema = (*import).schemaPtr();
+        if (importschema)
+        {
 #if 0 // no longer applicable as imports are preprocessed
         if (!importschema)
         {
@@ -1706,34 +1707,39 @@ again:
           }
         }
 #endif
-        if (!found)
-        {
-          for (vector<xs__schema*>::const_iterator schema3 = xs__schema_.begin(); schema3 != xs__schema_.end(); ++schema3)
+          if (!found)
           {
-            if (*schema3 == importschema)
+            for (vector<xs__schema*>::const_iterator schema3 = xs__schema_.begin(); schema3 != xs__schema_.end(); ++schema3)
             {
-              found = true;
-            }
-            else if ((*schema3)->targetNamespace && (*import).namespace_ && !strcmp((*import).namespace_, (*schema3)->targetNamespace))
-            {
-              (*import).schemaPtr(*schema3);
-              if ((*schema3) == this || // WSDL 2.0 <types> has no FormDefaults
-                  (*schema3)->empty())  // schema w/o components, only imports
+              if (*schema3 == importschema)
               {
-                (*schema3)->elementFormDefault = importschema->elementFormDefault;
-                (*schema3)->attributeFormDefault = importschema->attributeFormDefault;
+                found = true;
               }
-              (*schema3)->insert(*importschema); // merge content
-              goto again;
+              else if ((*schema3)->targetNamespace && (*import).namespace_ && !strcmp((*import).namespace_, (*schema3)->targetNamespace))
+              {
+                (*import).schemaPtr(*schema3);
+                if ((*schema3) == this || // WSDL 2.0 <types> has no FormDefaults
+                    (*schema3)->empty())  // schema w/o components, only imports
+                {
+                  (*schema3)->elementFormDefault = importschema->elementFormDefault;
+                  (*schema3)->attributeFormDefault = importschema->attributeFormDefault;
+                }
+                (*schema3)->insert(*importschema); // merge content
+                goto again;
+              }
             }
           }
+          if (!found)
+          {
+            xs__schema_.push_back(importschema);
+            if (vflag)
+              cerr << "Adding schema '" << importschema->targetNamespace << "'" << endl;
+            goto again;
+          }
         }
-        if (!found)
+        else if (!Wflag)
         {
-          xs__schema_.push_back(importschema);
-          if (vflag)
-            cerr << "Adding schema '" << importschema->targetNamespace << "'" << endl;
-          goto again;
+          fprintf(stderr, "\nWarning: no schemaLocation in <import namespace=\"%s\"> to load schema: unknown schema\n", (*import).namespace_ ? (*import).namespace_ : "(null)");
         }
       }
     }
