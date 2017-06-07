@@ -81,12 +81,16 @@
 
 <portType name="udpPortType">
   <operation name="echoString">
-    <documentation>Demo (anonymous) request-response MEP over UDP</documentation>
+    <documentation>
+      Demo (anonymous) request-response MEP over UDP
+    </documentation>
     <input message="tns:echoStringRequest"/>
     <output message="tns:echoStringResponse"/>
   </operation>
   <operation name="sendString">
-    <documentation>Demo one-way MEP over UDP</documentation>
+    <documentation>
+      Demo one-way MEP over UDP
+    </documentation>
     <input message="tns:sendString"/>
   </operation>
 </portType>
@@ -122,7 +126,7 @@
 </binding>
 
 <service name="udp">
-  <documentation>gSOAP 2.8.46 generated service definition</documentation>
+  <documentation>gSOAP 2.8.47 generated service definition</documentation>
   <port name="udp" binding="tns:udp">
     <SOAP:address location="soap.udp://localhost:10000"/>
   </port>

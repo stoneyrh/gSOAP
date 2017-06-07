@@ -1,7 +1,7 @@
 /*
 	json-GitHub.cpp
 
-	JSON GitHub API v3 (C++ version)
+	JSON GitHub API v3 (gSOAP C++ version)
         https://developer.github.com/v3/
 
 	Compile:
@@ -9,7 +9,7 @@
 	c++ -DWITH_OPENSSL -DWITH_GZIP -o json-GitHub json-GitHub.cpp xml-rpc.cpp json.cpp stdsoap2.cpp soapC.cpp -lcrypto -lssl -lz
 
 	Usage:
-	./json-GutHub hostname [username password]
+	./json-GutHub URL [username password]
 
 	Example:
 	./json-GitHub https://api.github.com/orgs/Genivia/repos
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 {
   if (argc < 2)
   {
-    fprintf(stderr, "Usage: json-GitHub hostname [username password]\nFor example: json-GitHub https://api.github.com/orgs/Genivia/repos\n\n");
+    fprintf(stderr, "Usage: json-GitHub URL [username password]\nFor example: json-GitHub https://api.github.com/orgs/Genivia/repos\n\n");
     exit(1);
   }
   else

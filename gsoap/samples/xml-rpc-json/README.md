@@ -951,14 +951,21 @@ obtain its value.  To check the type of a value, we use `is_Type` methods:
     bool value::is_bool()     // true if value is a Boolean "true" or "false" value
     bool value::is_true()     // true if value is Boolean "true"
     bool value::is_false()    // true if value is Boolean "false"
+    bool value::is_number()   // true if value is a number (int or float)
     bool value::is_int()      // true if value is a 32 or a 64 bit int
-    bool value::is_double()   // true if value is a 64 bit double floating point
+    bool value::is_double()   // true if value is a 64 bit double floating point (not integer)
     bool value::is_string()   // true if value is a string or wide string
     bool value::is_dateTime() // true if ISO 8601, always false for received JSON
     bool value::is_array()    // true if array of values
     bool value::is_struct()   // true if structure, a.k.a. a JSON object
     bool value::is_base64()   // true if base64, always false for received JSON
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When working with JSON data, do not use `is_double()` but `is_number()`.  JSON
+data does not differentiate between integers and floats.  However, gSOAP makes
+sure that 64 bit integer values are accurately represented in JSON and decoded
+without loss from JSON.  That is, when receiving an integer that you checked
+with `is_int()` you can then safely cast value with e.g.  `int64_t n = v`.
 
 The following methods can be used to inspect arrays and structs (JSON objects):
 
@@ -1281,7 +1288,7 @@ converted if needed.  These casts can be used anywhere to retrieve values:
     params response = rpc();
     double sum = 0.0;
     for (int i = 0; i < response.size(); i++)
-      if (response[i].is_double())    // is this parameter a double float?
+      if (response[i].is_number())    // is this parameter an int or float?
         sum += (double)response[i];
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1899,7 +1906,7 @@ The following code illustrates how:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
     struct value *x = new_value(ctx), *y;
     *int_of(x) = 1;
-    *inf_of(y) = *int_of(x);
+    *int_of(y) = *int_of(x);
     *int_of(x) = 2;
     printf("x = %lld and y = %lld\n", *int_of(x), *int_of(y));
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1931,14 +1938,22 @@ to obtain its value.  To check the type of a value, we use `is_Type` functions:
     is_bool(v)     /* true if value is a Boolean "true" or "false" value */
     is_true(v)     /* true if value is Boolean "true" */
     is_false(v)    /* true if value is Boolean "false" */
+    is_number(v)   /* true if value is a number (int or float) */
     is_int(v)      /* true if value is a 32 or a 64 bit int */
-    is_double(v)   /* true if value is a 64 bit double floating point */
+    is_double(v)   /* true if value is a 64 bit double floating point (not integer) */
     is_string(v)   /* true if value is a string */
     is_dateTime(v) /* true if ISO 8601, always false for received JSON */
     is_array(v)    /* true if array of values */
     is_struct(v)   /* true if structure, a.k.a. a JSON object */
     is_base64(v)   /* true if base64, always false for received JSON */
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When working with JSON data, do not use `is_double()` but `is_number()`.  JSON
+data does not differentiate between integers and floats.  However, gSOAP makes
+sure that 64 bit integer values are accurately represented in JSON and decoded
+without loss from JSON.  That is, when receiving an integer that you checked
+with `is_int()` you can then safely retrieve the value with `int_of()`, for
+example `int64_t n = *int_of(v)`.
 
 The following functions can be used with arrays and structs (JSON objects):
 

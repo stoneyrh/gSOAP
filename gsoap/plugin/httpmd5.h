@@ -65,7 +65,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 extern "C" {
 #endif
 
-#define HTTP_MD5_ID "HTTP-MD5-1.2" /* plugin identification */
+#define HTTP_MD5_ID "SOAP-HTTP-MD5/1.2" /* plugin identification */
 
 extern const char http_md5_id[];
 

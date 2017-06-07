@@ -2748,7 +2748,7 @@ soap_wsrm_chk(struct soap *soap, int timeout, int flag)
     char *s;
     size_t l = strlen(replyTo);
     s = (char*)malloc(l + 1);
-    if (s)
+    if (!s)
     {
       MUTEX_UNLOCK(soap_wsrm_session_lock);
       return soap->error = SOAP_EOM;

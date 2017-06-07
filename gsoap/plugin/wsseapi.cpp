@@ -5624,7 +5624,7 @@ SOAP_FMAC2
 soap_wsse_rand_nonce(char *nonce, size_t noncelen)
 {
   size_t i;
-  time_t r = time(NULL);
+  soap_int32 r = (soap_int32)time(NULL);
   soap_memcpy((void*)nonce, 4, (const void*)&r, 4);
   for (i = 4; i < noncelen; i += 4)
   {

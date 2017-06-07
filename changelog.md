@@ -1162,12 +1162,19 @@ Version 2.8.45 upd (04/07/2017)
 - Fixed Windows and WinCE compilation issues.
 - Improvements.
 
-Version 2.8.46 (05/16/2017) {#latest}
+Version 2.8.46 (05/16/2017)
 ---
 
 - Improved WS-Trust API, updated import/wst.h, import/saml1.h, import/saml2.h and import/wsdd.h definitions.
 - Added `soap.client_interface` string to set the client IP address interface with `inet_pton()` (not generally available on windows).
 - Fixes for minor issues, improvements.
+
+Version 2.8.47 (06/07/2017) {#latest}
+---
+
+- Added CURL plugin to use libcurl for gSOAP client applications.
+- Fixed spurious occurrences of `<root\>` elements in XML renderings of DOM nodes.
+- Improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

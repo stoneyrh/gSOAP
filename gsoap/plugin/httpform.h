@@ -57,7 +57,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 extern "C" {
 #endif
 
-#define HTTP_FORM_ID "HTTP-FORM-1.1" /* plugin identification */
+#define HTTP_FORM_ID "SOAP-HTTP-FORM/1.1" /* plugin identification */
 
 extern const char http_form_id[];
 

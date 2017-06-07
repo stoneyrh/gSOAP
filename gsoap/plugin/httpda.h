@@ -59,7 +59,7 @@ extern "C" {
 #endif
 
 /** plugin identification for plugin registry */
-#define HTTP_DA_ID "HTTP-DA-2.0"
+#define HTTP_DA_ID "SOAP-HTTP-DA/2.0"
 
 /** plugin identification for plugin registry */
 extern const char http_da_id[];

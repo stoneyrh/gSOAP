@@ -41,7 +41,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "calc.nsmap"
 
 int main(int argc, char **argv)
-{ SOAP_SOCKET m, s; /* master and slave sockets */
+{ SOAP_SOCKET m, s; /* sockets */
   struct soap soap;
   soap_init(&soap);
   if (argc < 2)

@@ -1501,7 +1501,7 @@ soap_wsa_error(struct soap *soap, SOAP_WSA(FaultSubcodeValues) fault)
 
 /**
 @fn int soap_wsa(struct soap *soap, struct soap_plugin *p, void *arg)
-@brief Plugin registry function, used with soap_register_plugin.
+@brief Plugin registry function, used with soap_register_plugin and soap_register_plugin_arg.
 @param soap context
 @param[in,out] p plugin created in registry
 @param[in] arg passed from soap_register_plugin_arg

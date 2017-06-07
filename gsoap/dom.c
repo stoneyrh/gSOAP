@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.46
+        DOM API v5 gSOAP 2.8.47
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20846
+#define GSOAP_LIB_VERSION 20847
 
 #include "stdsoap2.h"
 
@@ -3654,7 +3654,7 @@ struct soap_dom_element
   typedef soap_dom_element_iterator iterator;
 
   /**
-  @brief Construct new xsd__anyType DOM element "root"
+  @brief Construct new xsd__anyType DOM element
   @param soap context that manages this object
   */
   soap_dom_element(struct soap *soap = NULL);
@@ -4431,7 +4431,6 @@ int soap_read_xsd__anyType(struct soap *soap, xsd__anyType *dom);
 soap_dom_element::soap_dom_element(struct soap *soap)
 {
   soap_default_xsd__anyType(soap, this);
-  this->name = "root";
 }
 
 /******************************************************************************/

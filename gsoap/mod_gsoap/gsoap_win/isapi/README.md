@@ -277,7 +277,7 @@ License                                                               {#license}
 =======
 
 The ISAPI extension for gSOAP is released under the gSOAP open source public
-license (compatible with commercial licensing) and GPLv2.
+license and the GPLv2.
 
 
 Further reading                                                    {#references}

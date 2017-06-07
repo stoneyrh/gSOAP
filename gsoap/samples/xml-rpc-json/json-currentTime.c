@@ -42,25 +42,25 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 int main()
 {
   struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
-  ctx->send_timeout = 10; // 10 sec, stop if server is not accepting msg
-  ctx->recv_timeout = 10; // 10 sec, stop if server does not respond in time
-
   struct value *request = new_value(ctx);
   struct value response;
 
-  // make the JSON REST POST request and get response
+  ctx->send_timeout = 10; /* 10 sec, stop if server is not accepting msg */
+  ctx->recv_timeout = 10; /* 10 sec, stop if server does not respond in time */
+
+  /* make the JSON REST POST request and get response */
   *string_of(request) = "getCurrentTime";
   if (json_call(ctx, "http://www.cs.fsu.edu/~engelen/currentTimeJSON.cgi", request, &response))
     soap_print_fault(ctx, stderr);
-  else if (is_string(&response)) // JSON does not support a dateTime value: this is a string
+  else if (is_string(&response)) /* JSON does not support a dateTime value: this is a string */
     printf("Time = %s\n", *string_of(&response));
-  else // error?
+  else /* error? */
   {
     printf("Error: ");
     json_write(ctx, &response);
   }
 
-  // clean up
+  /* clean up */
   soap_destroy(ctx);
   soap_end(ctx);
   soap_free(ctx);

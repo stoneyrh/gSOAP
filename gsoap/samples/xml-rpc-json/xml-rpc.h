@@ -49,7 +49,7 @@ extern struct value *init_value(struct soap *soap, struct value *v);
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "xml-rpc-iters.h"      // deferred for inclusion by C++ compiler
+#include "xml-rpc-iters.h"      /* deferred for inclusion by C++ compiler */
 
 /// C++ external iterator class for values
 extern class value_iterator;
@@ -251,6 +251,7 @@ struct value
   extern bool           is_true() const;        ///< true if value is Boolean true
   extern bool           is_int() const;         ///< true if value is int type
   extern bool           is_double() const;      ///< true if value is double type
+  extern bool           is_number() const;      ///< true if value is a number (int or float)
   extern bool           is_string() const;      ///< true if value is string type
   extern bool           is_dateTime() const;    ///< true if value is dateTime
   extern bool           is_array() const;       ///< true if value is array type
@@ -427,6 +428,9 @@ extern _boolean is_int(struct value *v);
 
 /// C function returns true if value is a 64 bit double floating point
 extern _boolean is_double(struct value *v);
+
+/// C function returns true if value is a number (int or float)
+extern _boolean is_number(struct value *v);
 
 /// C function returns true if value is a string
 extern _boolean is_string(struct value *v);

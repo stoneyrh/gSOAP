@@ -632,6 +632,11 @@ bool value::is_double() const
   return __type == SOAP_TYPE__double;
 }
 
+bool value::is_number() const
+{
+  return __type == SOAP_TYPE__i4 || __type == SOAP_TYPE__int || __type == SOAP_TYPE__double;
+}
+
 bool value::is_string() const
 {
   return __type == SOAP_TYPE__string || (__any && *__any);

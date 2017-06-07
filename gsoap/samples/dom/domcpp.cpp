@@ -183,6 +183,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include <iomanip>
 #include <map>
 
+#define DOM_ROOT "root"			// unnamed root element is named "root"
+
 struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}};
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -289,7 +291,9 @@ std::ostream& operator<<(std::ostream& os, const putstr& p)
       os << (char)p.quote;
   }
   else
-    os << "NULL";
+  {
+    os << DOM_ROOT;
+  }
   return os;
 }
 
@@ -628,7 +632,7 @@ int main(int argc, char **argv)
 
   if (coutput)
   {
-    if (!genread && explain)
+    if (!genread && explain && dom.tag())
     {
       *ctx->os << "  /* <" << putstr(dom.tag(), 0);
       for (xsd__anyAttribute::iterator i = dom.att_begin(); i != dom.att_end(); ++i)
@@ -644,12 +648,15 @@ int main(int argc, char **argv)
       *ctx->os << "  xsd__anyType *" << xroot << " = soap_elt_new(ctx, NULL, " << putstr(dom.tag()) << ");\n";
 
     std::string path = "/";
-    path.append(dom.tag());
+    if (dom.tag() != NULL)
+      path.append(dom.tag());
+    else
+      path.append(DOM_ROOT);
 
     if (ifile && !genread)
     {
       out_gen_c(ctx, dom, NULL, nsmap, xroot, path, 2);
-      if (explain)
+      if (explain && dom.tag())
         *ctx->os << "  /* </" << putstr(dom.tag(), 0) << "> */\n";
     }
     else
@@ -759,7 +766,7 @@ int main(int argc, char **argv)
   }
   else
   {
-    if (!genread && explain)
+    if (!genread && explain && dom.tag())
     {
       *ctx->os << "  // <" << putstr(dom.tag(), 0);
       for (xsd__anyAttribute::iterator i = dom.att_begin(); i != dom.att_end(); ++i)
@@ -775,12 +782,15 @@ int main(int argc, char **argv)
       *ctx->os << "  xsd__anyType " << xroot << "(ctx, " << putstr(dom.tag()) << ");\n";
 
     std::string path = "/";
-    path.append(dom.tag());
+    if (dom.tag() != NULL)
+      path.append(dom.tag());
+    else
+      path.append(DOM_ROOT);
 
     if (ifile && !genread)
     {
       out_gen_cpp(ctx, dom, NULL, nsmap, xroot, path, 2);
-      if (explain)
+      if (explain && dom.tag())
         *ctx->os << "  // </" << putstr(dom.tag(), 0) << ">\n";
     }
     else
@@ -2295,6 +2305,8 @@ static std::string gen_ident(const std::string& lhs, const char *tag)
 {
   std::string id = lhs;
   id.append("_");
+  if (tag == NULL)
+    tag = DOM_ROOT;
   for (const char *s = tag; *s; tag = s)
   {
     while (isalnum(*s))
@@ -2339,7 +2351,7 @@ static bool is_double(soap *ctx, const char *text, double& x)
 
 static bool need_ns(const char *ns, const char *tag, const std::map<std::string,const char*>& nsmap, const char *current)
 {
-  if (ns == NULL)
+  if (ns == NULL || tag == NULL)
     return false;
   if (!is_qualified(tag) && is_current(ns, current))
     return false;
@@ -2364,7 +2376,10 @@ static bool is_current(const char *ns, const char *current)
 
 static std::string prefix(const char *tag)
 {
-  const char *s = strchr(tag, ':');
+  const char *s;
+  if (tag == NULL)
+    return std::string(DOM_ROOT);
+  s = strchr(tag, ':');
   if (s)
     return std::string(tag, s - tag);
   return std::string(tag);
@@ -2372,7 +2387,10 @@ static std::string prefix(const char *tag)
 
 static const char *name(const char *tag)
 {
-  const char *s = strchr(tag, ':');
+  const char *s;
+  if (tag == NULL)
+    return DOM_ROOT;
+  s = strchr(tag, ':');
   if (s)
     return s + 1;
   return tag;

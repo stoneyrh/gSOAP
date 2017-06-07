@@ -65,7 +65,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 extern "C" {
 #endif
 
-#define LOGGING_ID "LOGGING-1.3"
+#define LOGGING_ID "SOAP-LOGGING/1.3"
 
 extern const char logging_id[];
 

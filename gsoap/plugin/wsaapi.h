@@ -56,7 +56,7 @@ extern "C" {
 #endif
 
 /** Plugin identification for plugin registry */
-#define SOAP_WSA_ID "SOAP-WSA-1.3"
+#define SOAP_WSA_ID "SOAP-WSA/1.3"
 
 /** Plugin identification for plugin registry */
 extern const char soap_wsa_id[];

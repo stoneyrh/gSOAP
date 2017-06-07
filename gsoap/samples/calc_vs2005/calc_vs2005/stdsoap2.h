@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.46
+        stdsoap2.h 2.8.47
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20846
+#define GSOAP_VERSION 20847
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -918,7 +918,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #endif
 
 #ifdef WITH_CASEINSENSITIVETAGS
-# define SOAP_STRCMP soap_tag_cmp       /* case insensitve XML element/attribute names */
+# define SOAP_STRCMP soap_tag_cmp       /* case insensitive XML element/attribute names */
 #else
 # define SOAP_STRCMP strcmp             /* case sensitive XML element/attribute names */
 #endif
@@ -2707,10 +2707,12 @@ struct SOAP_CMAC soap
   char endpoint[SOAP_TAGLEN];
   char path[SOAP_TAGLEN];
   char host[SOAP_TAGLEN];
-  char *action;
+  char *action;                 /* SOAPAction string */
   const char *prolog;           /* XML declaration prolog */
-  unsigned long ip;             /* IP number */
+  unsigned long ip;             /* IP number retrieved from request */
   int port;                     /* port number */
+  const char *override_host;    /* to override the client-side host name/IP when connecting */
+  int override_port;            /* to override client-side port number when connecting */
   int keep_alive;               /* connection should be kept open (-1, 0, or counts down) */
   int tcp_keep_alive;           /* enable SO_KEEPALIVE */
   unsigned int tcp_keep_idle;   /* set TCP_KEEPIDLE */
@@ -3036,6 +3038,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_client_context(struct soap *soap, unsigned sh
 SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_client_context(struct soap *soap, unsigned short flags, const char *keyfile, const char *password, const char *cafile, const char *capath, const char *randfile);
 #endif
 
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_http_content_type(struct soap *soap, int status);
 SOAP_FMAC1 int SOAP_FMAC2 soap_puthttphdr(struct soap*, int status, size_t count);
 
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_get_header_attribute(struct soap*, const char*, const char*);

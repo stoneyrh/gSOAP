@@ -696,17 +696,19 @@ HTTPGet_SendWSDL(request_rec *r, const char *path)
     fseek(fd, 0, SEEK_END);
     size = ftell(fd);
     rewind(fd);
-    tmp = (char*)malloc(size);
+    tmp = (char*)malloc(size + 1);
     if (tmp)
         n = fread(tmp, 1, size, fd);
     if (!tmp || n != size)
         SendErrorMessage(r, "HTTP GET error reading file");
     else
-    {   r->content_type = "text/xml";
+    {   tmp[size] = '\0';
+        r->content_type = "text/xml";
         ap_rputs(tmp, r);
     }
     fclose(fd);
-    free(tmp);
+    if (tmp)
+      free(tmp);
     return;
 }
 

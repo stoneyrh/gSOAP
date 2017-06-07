@@ -74,9 +74,7 @@ int main(int argc, char **argv)
       exit(0);
   }
   if (soap.error)
-  { soap_print_fault(&soap, stderr);
-    exit(1);
-  }
+    soap_print_fault(&soap, stderr);
   else
     printf("result = %g\n", result);
   soap_destroy(&soap);

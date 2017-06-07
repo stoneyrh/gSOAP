@@ -59,7 +59,7 @@ extern "C" {
 #endif
 
 /** Plugin identification for plugin registry */
-#define SOAP_WSRM_ID "WS-RM-1.14"
+#define SOAP_WSRM_ID "WS-RM/1.14"
 
 /** Use fast O(1) message allocation/deallocation and lookup at the cost of
     storing an array of N pointers per sequence, where N = 2^k >= is the number

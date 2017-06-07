@@ -1,6 +1,8 @@
 /*
    This example shows a REST PUT, GET, POST, DELETE client
 
+   Uses the custom/struct_tm_date.c xsd:date serializer
+
    To run the client, first build and start the gSOAP webserver on port 8080
    and make sure person.xml (in samples/webserver) is in the webserver's folder
    for the GET and POST operations to work.
@@ -8,7 +10,7 @@
 
    Compile with:
    soapcpp2 -c -0 person.h
-   cc -o person person.c soapC.c stdsoap2.c
+   cc -o person person.c soapC.c stdsoap2.c custom/struct_tm_date.c
 */
 
 #include "soapH.h"

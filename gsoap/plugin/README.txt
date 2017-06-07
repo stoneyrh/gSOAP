@@ -1,6 +1,7 @@
 This directory contains plugins for extending the gSOAP engine's capabilities.
 
 cacerts.*	To embed client-side certificate chain in code (no cacerts.pem)
+curlapi.*       cURL plugin for gSOAP client applications
 httpda.*	HTTP Digest Authentication, see doc/httpda
 httpget.*	HTTP GET method support
 httpform.*	HTTP POST application/x-www-form-urlencoded support

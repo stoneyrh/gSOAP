@@ -2753,19 +2753,16 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
           )
       ))
   {
-    fprintf(stream, "/// @todo This mixed content complexType is user-definable.\n///       Consult the protocol documentation to change or insert declarations.\n///       Use wsdl2h option -d for xsd__anyType DOM (soap_dom_element).\n");
+    fprintf(stream, "/// @todo This mixed content complexType is user-definable.\n///       Consult the protocol documentation to change or insert declarations.\n///       Use wsdl2h option -d for DOM (soap_dom_element) to store mixed content.\n");
     if (dflag)
     {
-      if (with_union)
-        fprintf(stream, pointerformat, "xsd__anyType", "__mixed");
-      else
-        fprintf(stream, elementformat, "xsd__anyType", "__mixed");
-      fprintf(stream, "0;\t///< Catch mixed content in DOM soap_dom_element linked node structure.\n");
+      fprintf(stream, elementformat, pname(with_union, false, NULL, NULL, "xsd:any"), "__mixed");
+      fprintf(stream, "0;\t///< Catch mixed content as xsd:any (by default a xsd__anyType DOM soap_dom_element linked node structure).\n");
     }
     else
     {
-      fprintf(stream, elementformat, "_XML", "__mixed");
-      fprintf(stream, "0;\t///< Catch mixed content in XML string.\n");
+      fprintf(stream, elementformat, tname(NULL, NULL, "xsd:any"), "__mixed");
+      fprintf(stream, "0;\t///< Catch mixed content as an xsd:any (an XML string by default).\n");
     }
   }
   if (t)

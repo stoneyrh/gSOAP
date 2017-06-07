@@ -86,10 +86,10 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-apple-darwin16.5.0
-host_triplet = x86_64-apple-darwin16.5.0
+build_triplet = x86_64-apple-darwin16.6.0
+host_triplet = x86_64-apple-darwin16.6.0
 noinst_PROGRAMS = jsoncpp$(EXEEXT) json-GitHub$(EXEEXT) \
-	xml-rpc-currentTime$(EXEEXT)
+	json-currentTime$(EXEEXT) xml-rpc-currentTime$(EXEEXT)
 subdir = gsoap/samples/xml-rpc-json
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -111,6 +111,11 @@ am__DEPENDENCIES_1 =
 json_GitHub_DEPENDENCIES = $(SOAP_CPP_LIB_SSL) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am__objects_3 = soapC.$(OBJEXT)
+am_json_currentTime_OBJECTS = json-currentTime.$(OBJEXT) \
+	xml-rpc.$(OBJEXT) json.$(OBJEXT) $(am__objects_1) \
+	$(am__objects_3)
+json_currentTime_OBJECTS = $(am_json_currentTime_OBJECTS)
+json_currentTime_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1)
 am_jsoncpp_OBJECTS = jsoncpp.$(OBJEXT) xml-rpc.$(OBJEXT) \
 	json.$(OBJEXT) $(am__objects_1) $(am__objects_3)
 jsoncpp_OBJECTS = $(am_jsoncpp_OBJECTS)
@@ -166,10 +171,10 @@ AM_V_CCLD = $(am__v_CCLD_$(V))
 am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(json_GitHub_SOURCES) $(jsoncpp_SOURCES) \
-	$(xml_rpc_currentTime_SOURCES)
-DIST_SOURCES = $(json_GitHub_SOURCES) $(jsoncpp_SOURCES) \
-	$(xml_rpc_currentTime_SOURCES)
+SOURCES = $(json_GitHub_SOURCES) $(json_currentTime_SOURCES) \
+	$(jsoncpp_SOURCES) $(xml_rpc_currentTime_SOURCES)
+DIST_SOURCES = $(json_GitHub_SOURCES) $(json_currentTime_SOURCES) \
+	$(jsoncpp_SOURCES) $(xml_rpc_currentTime_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -282,10 +287,10 @@ am__quote =
 am__tar = $${TAR-tar} chof - "$$tardir"
 am__untar = $${TAR-tar} xf -
 bindir = ${exec_prefix}/bin
-build = x86_64-apple-darwin16.5.0
+build = x86_64-apple-darwin16.6.0
 build_alias = 
 build_cpu = x86_64
-build_os = darwin16.5.0
+build_os = darwin16.6.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -293,10 +298,10 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = x86_64-apple-darwin16.5.0
+host = x86_64-apple-darwin16.6.0
 host_alias = 
 host_cpu = x86_64
-host_os = darwin16.5.0
+host_os = darwin16.6.0
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
@@ -353,6 +358,8 @@ jsoncpp_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 json_GitHub_CPPFLAGS = -DWITH_OPENSSL -DWITH_GZIP
 json_GitHub_SOURCES = json-GitHub.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 json_GitHub_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
+json_currentTime_SOURCES = json-currentTime.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
+json_currentTime_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 xml_rpc_currentTime_SOURCES = xml-rpc-currentTime.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 xml_rpc_currentTime_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 all: $(BUILT_SOURCES)
@@ -398,6 +405,10 @@ json-GitHub$(EXEEXT): $(json_GitHub_OBJECTS) $(json_GitHub_DEPENDENCIES) $(EXTRA
 	@rm -f json-GitHub$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(json_GitHub_OBJECTS) $(json_GitHub_LDADD) $(LIBS)
 
+json-currentTime$(EXEEXT): $(json_currentTime_OBJECTS) $(json_currentTime_DEPENDENCIES) $(EXTRA_json_currentTime_DEPENDENCIES) 
+	@rm -f json-currentTime$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(json_currentTime_OBJECTS) $(json_currentTime_LDADD) $(LIBS)
+
 jsoncpp$(EXEEXT): $(jsoncpp_OBJECTS) $(jsoncpp_DEPENDENCIES) $(EXTRA_jsoncpp_DEPENDENCIES) 
 	@rm -f jsoncpp$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(jsoncpp_OBJECTS) $(jsoncpp_LDADD) $(LIBS)
@@ -412,6 +423,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+include ./$(DEPDIR)/json-currentTime.Po
 include ./$(DEPDIR)/json.Po
 include ./$(DEPDIR)/json_GitHub-json-GitHub.Po
 include ./$(DEPDIR)/json_GitHub-json.Po

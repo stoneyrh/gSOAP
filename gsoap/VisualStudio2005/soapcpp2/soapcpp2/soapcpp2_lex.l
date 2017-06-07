@@ -113,7 +113,7 @@ import          #{ws}*import{ws}+.*\n
 <MLCOMMENT>"*/"         { BEGIN(INITIAL); }
 <MLCOMMENT><<EOF>>      { execerror("Unclosed multiline comment at end of file"); }
 "//"\/*"gsoapopt".*\n   { option(); }
-"//"\/*"gsoap".*\n      { directive(); }
+"//"\/*"gsoap"(.|\\\n)*\n { directive(); }
 "//"\/*"xpath".*\n      { xpath(); }
 "//".*\n                { /* skip single line comment */ }
 "+="                    { return PA; }
@@ -343,7 +343,7 @@ static void directive(void)
           if (yytext[i] <= 32)
             break;
         for (; yytext[i]; i++)
-          if (yytext[i] > 32)
+          if (yytext[i] > 32 && yytext[i] != '\\')
               break;
         if (!strncmp(yytext+i, "schema", 6))
         { sprintf(errbuf, "gsoap schema directive without namespace: %s", yytext+i);
@@ -371,7 +371,7 @@ static void directive(void)
           }
           s[k] = '\0';
           for (i = j; yytext[i]; i++)
-            if (yytext[i] > 32)
+            if (yytext[i] > 32 && yytext[i] != '\\')
               break;
         }
         for (sp = services; sp; sp = sp->next)
@@ -407,13 +407,13 @@ static void directive(void)
         if (!strncmp(yytext+i, "service", 7) || !strncmp(yytext+i, "schema", 6))
         {       service = strncmp(yytext+i, "schema", 6);
                 for (i += 7; yytext[i]; i++)
-                        if (yytext[i] > 32)
+                        if (yytext[i] > 32 && yytext[i] != '\\')
                                 break;
                 for (j = i; yytext[j]; j++)
                         if (yytext[j] <= 32)
                                 break;
                 for (; yytext[j]; j++)
-                        if (yytext[j] > 32)
+                        if (yytext[j] > 32 && yytext[j] != '\\')
                                 break;
                 for (k = j; yytext[k]; k++)
                         if (yytext[k] <= 32)
@@ -429,10 +429,12 @@ static void directive(void)
                 if (!strncmp(yytext+i, "name:", 5))
                 {       sp->name = s;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
-                                if (yytext[k] == 10 || yytext[k] == 13)
+                                if (yytext[k] == '\\')
+					k++;
+				else if (yytext[k] == 10 || yytext[k] == 13)
                                         break;
                         if (j == k)
                                 return;
@@ -451,7 +453,9 @@ static void directive(void)
                         sp->definitions = s;
                 else if (!strncmp(yytext+i, "documentation:", 14) || !strncmp(yytext+i, "doc:", 4))
                 {       for (k = j; yytext[k]; k++)
-                                if (yytext[k] == 10 || yytext[k] == 13)
+                                if (yytext[k] == '\\')
+					k++;
+				else if (yytext[k] == 10 || yytext[k] == 13)
                                         break;
                         if (j == k)
                                 return;
@@ -535,10 +539,12 @@ static void directive(void)
                         m->mess = PROTOCOL;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
-                                if (yytext[k] == 10 || yytext[k] == 13)
+                                if (yytext[k] == '\\')
+					k++;
+				else if (yytext[k] == 10 || yytext[k] == 13)
                                         break;
                         if (j == k)
                                 return;
@@ -553,10 +559,12 @@ static void directive(void)
                         m->mess = STYLE;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
-                                if (yytext[k] == 10 || yytext[k] == 13)
+                                if (yytext[k] == '\\')
+					k++;
+				else if (yytext[k] == 10 || yytext[k] == 13)
                                         break;
                         if (j == k)
                                 return;
@@ -571,10 +579,12 @@ static void directive(void)
                         m->mess = ENCODING;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
-                                if (yytext[k] == 10 || yytext[k] == 13)
+                                if (yytext[k] == '\\')
+					k++;
+				else if (yytext[k] == 10 || yytext[k] == 13)
                                         break;
                         if (j == k)
                                 return;
@@ -592,10 +602,12 @@ static void directive(void)
                         m->mess = RESPONSE_ENCODING;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
-                                if (yytext[k] == 10 || yytext[k] == 13)
+                                if (yytext[k] == '\\')
+					k++;
+				else if (yytext[k] == 10 || yytext[k] == 13)
                                         break;
                         if (j == k)
                                 return;
@@ -614,10 +626,12 @@ static void directive(void)
                         d->next = sp->data;
                         sp->data = d;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
-                                if (yytext[k] == 10 || yytext[k] == 13)
+                                if (yytext[k] == '\\')
+					k++;
+				else if (yytext[k] == 10 || yytext[k] == 13)
                                         break;
                         if (j == k)
                                 return;
@@ -632,10 +646,12 @@ static void directive(void)
                         m->mess = ACTION;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
-                                if (yytext[k] == 10 || yytext[k] == 13)
+                                if (yytext[k] == '\\')
+					k++;
+				else if (yytext[k] == 10 || yytext[k] == 13)
                                         break;
                         if (j == k)
                                 return;
@@ -650,10 +666,12 @@ static void directive(void)
                         m->mess = REQUEST_ACTION;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
-                                if (yytext[k] == 10 || yytext[k] == 13)
+                                if (yytext[k] == '\\')
+					k++;
+				else if (yytext[k] == 10 || yytext[k] == 13)
                                         break;
                         if (j == k)
                                 return;
@@ -668,10 +686,12 @@ static void directive(void)
                         m->mess = RESPONSE_ACTION;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
-                                if (yytext[k] == 10 || yytext[k] == 13)
+                                if (yytext[k] == '\\')
+					k++;
+				else if (yytext[k] == 10 || yytext[k] == 13)
                                         break;
                         if (j == k)
                                 return;
@@ -686,10 +706,12 @@ static void directive(void)
                         m->mess = FAULT_ACTION;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
-                                if (yytext[k] == 10 || yytext[k] == 13)
+                                if (yytext[k] == '\\')
+					k++;
+				else if (yytext[k] == 10 || yytext[k] == 13)
                                         break;
                         if (j == k)
                                 return;
@@ -704,7 +726,7 @@ static void directive(void)
                         m->mess = MIMEIN | MIMEOUT;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
                                 if (yytext[k] <= 32)
@@ -722,7 +744,7 @@ static void directive(void)
                         m->mess = MIMEIN;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
                                 if (yytext[k] <= 32)
@@ -740,7 +762,7 @@ static void directive(void)
                         m->mess = MIMEOUT;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
                                 if (yytext[k] <= 32)
@@ -758,7 +780,7 @@ static void directive(void)
                         m->mess = HDRIN | HDROUT;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
                                 if (yytext[k] <= 32)
@@ -776,7 +798,7 @@ static void directive(void)
                         m->mess = HDRIN;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
                                 if (yytext[k] <= 32)
@@ -794,7 +816,7 @@ static void directive(void)
                         m->mess = HDROUT;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
                                 if (yytext[k] <= 32)
@@ -812,7 +834,7 @@ static void directive(void)
                         m->mess = FAULT;
                         m->part = NULL;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
                                 if (yytext[k] <= 32)
@@ -831,10 +853,12 @@ static void directive(void)
                         d->next = sp->data;
                         sp->data = d;
                         for (j = k; yytext[j]; j++)
-                                if (yytext[j] > 32)
+                                if (yytext[j] > 32 && yytext[j] != '\\')
                                         break;
                         for (k = j; yytext[k]; k++)
-                                if (yytext[k] == 10 || yytext[k] == 13)
+                                if (yytext[k] == '\\')
+					k++;
+				else if (yytext[k] == 10 || yytext[k] == 13)
                                         break;
                         if (j == k)
                                 return;
@@ -878,7 +902,7 @@ static void option(void)
                 if (yytext[i] <= 32)
                         break;
         for (; yytext[i]; i++)
-                if (yytext[i] > 32)
+                if (yytext[i] > 32 && yytext[i] != '\\')
                         break;
         for (; yytext[i]; i++)
                 switch (yytext[i])
@@ -927,7 +951,7 @@ static void xpath(void)
                 if (yytext[i] <= 32)
                         break;
         for (; yytext[i]; i++)
-                if (yytext[i] > 32)
+                if (yytext[i] > 32 && yytext[i] != '\\')
                         break;
         for (j = i; yytext[j]; j++)
                 if (yytext[j] <= 32)
@@ -935,7 +959,7 @@ static void xpath(void)
         if (i == j)
                 return;
         for (k = j; yytext[k]; k++)
-                if (yytext[k] > 32)
+                if (yytext[k] > 32 && yytext[k] != '\\')
                         break;
         s = (char*)emalloc(yyleng - i);
         strncpy(s, yytext + i, j - i);

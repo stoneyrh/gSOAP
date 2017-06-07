@@ -146,7 +146,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 extern "C" {
 #endif
 
-const char http_post_id[14] = HTTP_POST_ID;
+const char http_post_id[] = HTTP_POST_ID;
 
 static int http_post_init(struct soap *soap, struct http_post_data *data, struct http_post_handlers *handlers);
 static void http_post_delete(struct soap *soap, struct soap_plugin *p);

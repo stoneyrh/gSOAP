@@ -1,5 +1,5 @@
 /*
-See the README.md for details. This file is distributed under the MIT licence.
+See the README.md for details.
 */
 
 #ifndef INCLUDED_gsoapWinInet2_h

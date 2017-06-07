@@ -1,17 +1,17 @@
 /*
-	json-currentTimeServer.c
+        json-currentTimeServer.c
 
-	JSON currenTime server (C version)
-	CGI or stand-alone multi-threaded server
+        JSON currenTime server (C version)
+        CGI or stand-alone multi-threaded server
 
-	Returns JSON message with current time to client.
+        Returns JSON message with current time to client.
 
-	Compile:
-	soapcpp2 -c -CSL xml-rpc.h
-	cc -o json-currentTimeServer json-currentTimeServer.c json.c xml-rpc.c stdsoap2.c soapC.c
-	Install as CGI on Web server
-	Or run as stand-alone server (e.g. on port 18000):
-	./json-currentTimeServer 18000
+        Compile:
+        soapcpp2 -c -CSL xml-rpc.h
+        cc -o json-currentTimeServer json-currentTimeServer.c json.c xml-rpc.c stdsoap2.c soapC.c
+        Install as CGI on Web server
+        Or run as stand-alone server (e.g. on port 18000):
+        ./json-currentTimeServer 18000
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -42,53 +42,78 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 #include "json.h"
-
-#include <unistd.h>
-#ifdef _POSIX_THREADS
-#include <pthread.h>    // use Pthreads
-#endif
-
-#define BACKLOG (100)	// Max. request backlog
-#define MAX_THR (8)	// Max. threads to serve requests
+#include "plugin/threads.h"
 
 int serve_request(struct soap*);
 
 int main(int argc, char **argv)
 {
   struct soap *ctx = soap_new1(SOAP_C_UTFSTRING);
-  ctx->send_timeout = 10; // 10 sec
-  ctx->recv_timeout = 10; // 10 sec
+  int port;
 
   if (argc < 2)
-    return serve_request(ctx);
+  {
+    /* process CGI request */
+    struct value request;
 
-  int port = atoi(argv[1]);
+    /* receive JSON request value */
+    if (soap_begin_recv(ctx)
+     || json_recv(ctx, &request)
+     || soap_end_recv(ctx))
+    {
+      soap_send_fault(ctx);
+    }
+    else
+    {
+      struct value *response = new_value(ctx);
 
-#ifdef _POSIX_THREADS
-  pthread_t tid;
-#endif
+      /* if the name matches: set response to time, else error */
+      if (is_string(&request) && !strcmp(*string_of(&request), "getCurrentTime"))
+      {
+        *dateTime_of(response) = soap_dateTime2s(ctx, time(0));
+      }
+      else
+      {
+        *string_of(value_at(response, "fault")) = "Wrong method";
+        *value_at(response, "detail") = request;
+      }
+      /* set the http content type */
+      ctx->http_content = "application/json; charset=utf-8";
+      /* send the response */
+      if (soap_begin_count(ctx)
+       || ((ctx->mode & SOAP_IO_LENGTH) && json_send(ctx, response))
+       || soap_end_count(ctx)
+       || soap_response(ctx, SOAP_FILE)
+       || json_send(ctx, response)
+       || soap_end_send(ctx))
+        soap_send_fault(ctx);
+    }
+    soap_destroy(ctx);
+    soap_end(ctx);
+    soap_free(ctx);
+    return 0;
+  }
 
-  if (!soap_valid_socket(soap_bind(ctx, NULL, port, BACKLOG)))
+  port = atoi(argv[1]);
+
+  if (!soap_valid_socket(soap_bind(ctx, NULL, port, 100)))
   {
     soap_print_fault(ctx, stderr);
     exit(1);
   }
 
-  for (;;)
+  ctx->send_timeout = 10;
+  ctx->recv_timeout = 10;
+
+  while (1)
   {
+    THREAD_TYPE tid;
     if (!soap_valid_socket(soap_accept(ctx)))
-    {
       soap_print_fault(ctx, stderr);
-    }
     else
-    {
-#ifdef _POSIX_THREADS
-      pthread_create(&tid, NULL, (void*(*)(void*))serve_request, (void*)soap_copy(ctx));
-#else
-      serve_request(ctx);
-#endif
-    }
+      THREAD_CREATE(&tid, (void*(*)(void*))serve_request, (void*)soap_copy(ctx));
   }
+
   soap_destroy(ctx);
   soap_end(ctx);
   soap_free(ctx);
@@ -98,21 +123,19 @@ int main(int argc, char **argv)
 
 int serve_request(struct soap* ctx)
 {
-#ifdef _POSIX_THREADS
-  pthread_detach(pthread_self());
-#endif
-
-  struct value *request = new_value(ctx);
-    
-  // HTTP keep-alive max number of iterations
+  /* HTTP keep-alive max number of iterations */
   unsigned int k = ctx->max_keep_alive;
+  struct value *request = new_value(ctx);
+  int err;
+
+  THREAD_DETACH(THREAD_ID);
 
   do
   {
     if (ctx->max_keep_alive > 0 && !--k)
       ctx->keep_alive = 0;
 
-    // receive HTTP header (optional) and JSON content
+    /* receive JSON request */
     if (soap_begin_recv(ctx)
      || json_recv(ctx, request)
      || soap_end_recv(ctx))
@@ -122,44 +145,38 @@ int serve_request(struct soap* ctx)
       struct value *response = new_value(ctx);
   
       if (is_string(request) && !strcmp(*string_of(request), "getCurrentTime"))
-        // method name matches: first parameter of response is time
+      {
         *dateTime_of(response) = soap_dateTime2s(ctx, time(0));
+      }
       else
-      { // otherwise, set fault
+      {
         *string_of(value_at(response, "fault")) = "Wrong method";
         *value_at(response, "detail") = *request;
       }
 
-      // http content type
       ctx->http_content = "application/json; charset=utf-8";
-      // http content length
       if (soap_begin_count(ctx)
        || ((ctx->mode & SOAP_IO_LENGTH) && json_send(ctx, response))
        || soap_end_count(ctx)
        || soap_response(ctx, SOAP_FILE)
        || json_send(ctx, response)
        || soap_end_send(ctx))
-        soap_print_fault(ctx, stderr);
+        soap_send_fault(ctx);
     }
-    // close (keep-alive may keep socket open when client supports it)
+    /* close (keep-alive may keep socket open when client supports it) */
     soap_closesock(ctx);
 
   } while (ctx->keep_alive);
 
-  int err = ctx->error;
+  err = ctx->error;
 
-  // clean up
+  /* clean up */
   soap_destroy(ctx);
   soap_end(ctx);
-
-#ifdef _POSIX_THREADS
-  // free the ctx copy for this thread
   soap_free(ctx);
-#endif
 
   return err;
 }
 
 /* Don't need a namespace table. We put an empty one here to avoid link errors */
 struct Namespace namespaces[] = { {NULL, NULL} };
-

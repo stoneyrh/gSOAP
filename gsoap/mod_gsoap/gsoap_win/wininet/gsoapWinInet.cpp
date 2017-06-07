@@ -1,5 +1,5 @@
 /*
-See the README.md for details. This file is distributed under the MIT licence.
+See the README.md for details.
 */
 
 #include "gsoapWinInet.h"
@@ -399,23 +399,19 @@ wininet_connect(
           break;
       case SOAP_CONNECT:
           pszVerb = "CONNECT";
-          _snprintf(szUrlPath, MAX_PATH, "%s:%d", a_pszHost, a_nPort);
+          _snprintf_s(szUrlPath, MAX_PATH, _TRUNCATE, "%s:%d", a_pszHost, a_nPort);
           break;
       default:
           pszVerb = "POST";
     }
 
-    hHttpRequest = HttpOpenRequestA(
-        hConnection, pszVerb, szUrlPath, "HTTP/1.1", NULL, NULL, 
-        dwFlags, (DWORD_PTR) soap );
+    hHttpRequest = HttpOpenRequestA( hConnection, pszVerb, szUrlPath, "HTTP/1.1", NULL, NULL, dwFlags, (DWORD_PTR) soap );
     if ( !hHttpRequest )
     {
         InternetCloseHandle( hConnection );
         soap->error = SOAP_HTTP_ERROR;
         soap->errnum = GetLastError();
-        DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
-            "wininet %p: connect, error %d (%s) in HttpOpenRequest\n", 
-            soap, soap->errnum, wininet_error_message(soap,soap->errnum) ));
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "wininet %p: connect, error %d (%s) in HttpOpenRequest\n", soap, soap->errnum, wininet_error_message(soap,soap->errnum) ));
         return SOAP_INVALID_SOCKET;
     }
 
@@ -477,8 +473,7 @@ wininet_post_header(
             pData->uiBufferLenMax = strtoul( a_pszValue, NULL, 10 );
         }
 
-        nLen = _snprintf( 
-            szHeader, 4096, "%s: %s\r\n", a_pszKey, a_pszValue );
+        nLen = _snprintf_s( szHeader, 4096, _TRUNCATE, "%s: %s\r\n", a_pszKey, a_pszValue );
         if ( nLen < 0 )
         {
             return SOAP_EOM;
@@ -635,9 +630,7 @@ wininet_fsend(
     if ( pData->uiBufferLen < pData->uiBufferLenMax )
     {
         /* toggle our chunk size marker if we are chunking */
-        pData->bIsChunkSize = 
-            ((soap->mode & SOAP_IO) == SOAP_IO_CHUNK) 
-            && !pData->bIsChunkSize; 
+        pData->bIsChunkSize = ((soap->mode & SOAP_IO) == SOAP_IO_CHUNK) && !pData->bIsChunkSize; 
         return SOAP_OK;
     }
     _ASSERTE( pData->uiBufferLen == pData->uiBufferLenMax );
