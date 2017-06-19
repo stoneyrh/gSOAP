@@ -294,97 +294,97 @@ Grammar
 
   214 init: /* empty */
   215     | '=' cexp
+  216     | EQ cexp
 
-  216 tag: /* empty */
-  217    | TAG
+  217 tag: /* empty */
+  218    | TAG
 
-  218 occurs: /* empty */
-  219       | LNG
-  220       | LNG ':'
-  221       | LNG ':' LNG
-  222       | ':' LNG
+  219 occurs: /* empty */
+  220       | LNG
+  221       | LNG ':'
+  222       | LNG ':' LNG
+  223       | ':' LNG
 
-  223 bounds: nullptr patt
-  224       | nullptr patt cdbl min
-  225       | nullptr patt cdbl minmax cdbl
-  226       | nullptr patt max cdbl
+  224 bounds: nullptr patt
+  225       | nullptr patt cdbl min
+  226       | nullptr patt cdbl minmax cdbl
+  227       | nullptr patt max cdbl
 
-  227 nullptr: /* empty */
-  228        | null
+  228 nullptr: /* empty */
+  229        | null
 
-  229 patt: /* empty */
-  230     | STR
+  230 patt: /* empty */
+  231     | STR
 
-  231 cdbl: DBL
-  232     | LNG
-  233     | CHR
-  234     | '+' cdbl
-  235     | '-' cdbl
+  232 cdbl: DBL
+  233     | LNG
+  234     | CHR
+  235     | '+' cdbl
+  236     | '-' cdbl
 
-  236 min: /* empty */
-  237    | ':'
-  238    | '<' ':'
-  239    | '<'
+  237 min: /* empty */
+  238    | ':'
+  239    | '<' ':'
+  240    | '<'
 
-  240 minmax: ':'
-  241       | '<' ':'
-  242       | ':' '<'
-  243       | '<' ':' '<'
-  244       | '<'
+  241 minmax: ':'
+  242       | '<' ':'
+  243       | ':' '<'
+  244       | '<' ':' '<'
+  245       | '<'
 
-  245 max: ':'
-  246    | ':' '<'
-  247    | '<'
+  246 max: ':'
+  247    | ':' '<'
+  248    | '<'
 
-  248 expr: expr ',' expr
-  249     | cexp
+  249 expr: expr ',' expr
+  250     | cexp
 
-  250 cexp: obex '?' qexp ':' cexp
-  251     | oexp
+  251 cexp: obex '?' qexp ':' cexp
+  252     | oexp
 
-  252 qexp: expr
+  253 qexp: expr
 
-  253 oexp: obex OR aexp
-  254     | aexp
+  254 oexp: obex OR aexp
+  255     | aexp
 
-  255 obex: oexp
+  256 obex: oexp
 
-  256 aexp: abex AN rexp
-  257     | rexp
+  257 aexp: abex AN rexp
+  258     | rexp
 
-  258 abex: aexp
+  259 abex: aexp
 
-  259 rexp: rexp '|' rexp
-  260     | rexp '^' rexp
-  261     | rexp '&' rexp
-  262     | rexp EQ rexp
-  263     | rexp NE rexp
-  264     | rexp '<' rexp
-  265     | rexp LE rexp
-  266     | rexp '>' rexp
-  267     | rexp GE rexp
-  268     | rexp LS rexp
-  269     | rexp RS rexp
-  270     | rexp '+' rexp
-  271     | rexp '-' rexp
-  272     | rexp '*' rexp
-  273     | rexp '/' rexp
-  274     | rexp '%' rexp
-  275     | lexp
+  260 rexp: rexp '|' rexp
+  261     | rexp '^' rexp
+  262     | rexp '&' rexp
+  263     | rexp EQ rexp
+  264     | rexp NE rexp
+  265     | rexp '<' rexp
+  266     | rexp LE rexp
+  267     | rexp '>' rexp
+  268     | rexp GE rexp
+  269     | rexp LS rexp
+  270     | rexp RS rexp
+  271     | rexp '+' rexp
+  272     | rexp '-' rexp
+  273     | rexp '*' rexp
+  274     | rexp '/' rexp
+  275     | rexp '%' rexp
+  276     | lexp
 
-  276 lexp: '!' lexp
-  277     | '~' lexp
-  278     | '-' lexp
-  279     | '+' lexp
-  280     | '*' lexp
-  281     | '&' lexp
-  282     | SIZEOF '(' texp ')'
-  283     | pexp
+  277 lexp: '!' lexp
+  278     | '~' lexp
+  279     | '-' lexp
+  280     | '+' lexp
+  281     | '*' lexp
+  282     | '&' lexp
+  283     | SIZEOF '(' texp ')'
+  284     | pexp
 
-  284 pexp: '(' expr ')'
-  285     | ID
-  286     | LNG
-  287     | null
+  285 pexp: '(' expr ')'
+  286     | ID
+  287     | LNG
   288     | DBL
   289     | CHR
   290     | STR
@@ -395,33 +395,33 @@ Grammar
 Terminals, with rules where they appear
 
 $end (0) 0
-'!' (33) 39 276
+'!' (33) 39 277
 '$' (36) 193
-'%' (37) 69 274
-'&' (38) 56 206 261 281
-'(' (40) 74 78 90 282 284
-')' (41) 33 74 78 90 282 284
-'*' (42) 67 132 152 153 205 272 280
-'+' (43) 65 234 270 279
-',' (44) 30 31 83 85 176 248
-'-' (45) 66 235 271 278
-'/' (47) 68 273
-':' (58) 15 16 17 122 124 156 157 158 159 160 161 162 163 220 221 222
-    237 238 240 241 242 243 245 246 250
+'%' (37) 69 275
+'&' (38) 56 206 262 282
+'(' (40) 74 78 90 283 285
+')' (41) 33 74 78 90 283 285
+'*' (42) 67 132 152 153 205 273 281
+'+' (43) 65 235 271 280
+',' (44) 30 31 83 85 176 249
+'-' (45) 66 236 272 279
+'/' (47) 68 274
+':' (58) 15 16 17 122 124 156 157 158 159 160 161 162 163 221 222 223
+    238 239 241 242 243 244 246 247 251
 ';' (59) 7 11 14 19
-'<' (60) 59 119 140 238 239 241 242 243 244 246 247 264
+'<' (60) 59 119 140 239 240 242 243 244 245 247 248 265
 '=' (61) 41 201 215
-'>' (62) 61 119 140 142 143 266
-'?' (63) 250
+'>' (62) 61 119 140 142 143 267
+'?' (63) 251
 '@' (64) 192
 '[' (91) 20 73 209 210
 ']' (93) 21 73 209 210
-'^' (94) 55 260
+'^' (94) 55 261
 '{' (123) 3 120 121 122 125 126 128 129 131 132 133 134 135 136 213
-'|' (124) 54 259
+'|' (124) 54 260
 '}' (125) 3 120 121 122 125 126 128 129 131 132 133 134 135 136 144
     145 146 147 213
-'~' (126) 40 77 277
+'~' (126) 40 77 278
 error (256) 11 19 32 33 84 85 141 142 143 144 145 146 147
 PRAGMA (258) 12
 AUTO (259) 178
@@ -450,7 +450,7 @@ SIGNED (281) 112
 VOID (282) 100
 DEFAULT (283)
 GOTO (284)
-SIZEOF (285) 282
+SIZEOF (285) 283
 VOLATILE (286) 194
 DO (287)
 IF (288)
@@ -481,7 +481,7 @@ EXPLICIT (311) 181
 TYPENAME (312) 166
 MUTABLE (313) 195
 FINAL (314) 186 198
-null (315) 228 287
+null (315) 229
 RESTRICT (316)
 OVERRIDE (317) 187 199
 UCHAR (318) 114
@@ -489,14 +489,14 @@ USHORT (319) 115
 UINT (320) 116
 ULONG (321) 117
 NONE (322)
-ID (323) 3 32 34 36 38 84 88 92 141 142 171 285
+ID (323) 3 32 34 36 38 84 88 92 141 142 171 286
 LAB (324)
 TYPE (325) 37 76 77 139 140 162 170
-LNG (326) 201 219 220 221 222 232 286
-DBL (327) 231 288
-CHR (328) 233 289
-TAG (329) 217
-STR (330) 230 290
+LNG (326) 201 220 221 222 223 233 287
+DBL (327) 232 288
+CHR (328) 234 289
+TAG (329) 218
+STR (330) 231 290
 RA (331) 51
 LA (332) 50
 OA (333) 49
@@ -507,14 +507,14 @@ DA (337) 45
 TA (338) 44
 NA (339) 43
 PA (340) 42
-OR (341) 52 253
-AN (342) 53 207 256
-NE (343) 58 263
-EQ (344) 57 262
-GE (345) 62 267
-LE (346) 60 265
-RS (347) 64 269
-LS (348) 63 268
+OR (341) 52 254
+AN (342) 53 207 257
+NE (343) 58 264
+EQ (344) 57 216 263
+GE (345) 62 268
+LE (346) 60 266
+RS (347) 64 270
+LS (348) 63 269
 AR (349) 72
 PP (350) 70
 NN (351) 71
@@ -582,7 +582,7 @@ arg (147)
 texpf (148)
     on left: 89 90, on right: 140
 texp (149)
-    on left: 91 92, on right: 75 89 282
+    on left: 91 92, on right: 75 89 283
 spec (150)
     on left: 93 94 95, on right: 25 26 27 94 95
 tspec (151)
@@ -641,48 +641,48 @@ arrayck (174)
 brinit (175)
     on left: 212 213, on right: 34
 init (176)
-    on left: 214 215, on right: 86 212
+    on left: 214 215 216, on right: 86 212
 tag (177)
-    on left: 216 217, on right: 34
+    on left: 217 218, on right: 34
 occurs (178)
-    on left: 218 219 220 221 222, on right: 86
+    on left: 219 220 221 222 223, on right: 86
 bounds (179)
-    on left: 223 224 225 226, on right: 34
+    on left: 224 225 226 227, on right: 34
 nullptr (180)
-    on left: 227 228, on right: 223 224 225 226
+    on left: 228 229, on right: 224 225 226 227
 patt (181)
-    on left: 229 230, on right: 223 224 225 226
+    on left: 230 231, on right: 224 225 226 227
 cdbl (182)
-    on left: 231 232 233 234 235, on right: 224 225 226 234 235
+    on left: 232 233 234 235 236, on right: 225 226 227 235 236
 min (183)
-    on left: 236 237 238 239, on right: 224
+    on left: 237 238 239 240, on right: 225
 minmax (184)
-    on left: 240 241 242 243 244, on right: 225
+    on left: 241 242 243 244 245, on right: 226
 max (185)
-    on left: 245 246 247, on right: 226
+    on left: 246 247 248, on right: 227
 expr (186)
-    on left: 248 249, on right: 248 252 284
+    on left: 249 250, on right: 249 253 285
 cexp (187)
-    on left: 250 251, on right: 209 213 215 249 250
+    on left: 251 252, on right: 209 213 215 216 250 251
 qexp (188)
-    on left: 252, on right: 250
+    on left: 253, on right: 251
 oexp (189)
-    on left: 253 254, on right: 251 255
+    on left: 254 255, on right: 252 256
 obex (190)
-    on left: 255, on right: 250 253
+    on left: 256, on right: 251 254
 aexp (191)
-    on left: 256 257, on right: 253 254 258
+    on left: 257 258, on right: 254 255 259
 abex (192)
-    on left: 258, on right: 256
+    on left: 259, on right: 257
 rexp (193)
-    on left: 259 260 261 262 263 264 265 266 267 268 269 270 271 272
-    273 274 275, on right: 256 257 259 260 261 262 263 264 265 266
-    267 268 269 270 271 272 273 274
+    on left: 260 261 262 263 264 265 266 267 268 269 270 271 272 273
+    274 275 276, on right: 257 258 260 261 262 263 264 265 266 267
+    268 269 270 271 272 273 274 275
 lexp (194)
-    on left: 276 277 278 279 280 281 282 283, on right: 275 276 277
-    278 279 280 281
+    on left: 277 278 279 280 281 282 283 284, on right: 276 277 278
+    279 280 281 282
 pexp (195)
-    on left: 284 285 286 287 288 289 290 291 292, on right: 283
+    on left: 285 286 287 288 289 290 291 292, on right: 284
 
 
 state 0
@@ -2583,6 +2583,7 @@ state 144
     ':'  reduce using rule 97 (tspec)
     AN   reduce using rule 97 (tspec)
     '&'  reduce using rule 97 (tspec)
+    EQ   reduce using rule 97 (tspec)
     '>'  reduce using rule 97 (tspec)
     '*'  reduce using rule 97 (tspec)
     '['  reduce using rule 97 (tspec)
@@ -2657,6 +2658,7 @@ state 145
     ':'  reduce using rule 96 (tspec)
     AN   reduce using rule 96 (tspec)
     '&'  reduce using rule 96 (tspec)
+    EQ   reduce using rule 96 (tspec)
     '>'  reduce using rule 96 (tspec)
     '*'  reduce using rule 96 (tspec)
     '['  reduce using rule 96 (tspec)
@@ -4207,29 +4209,28 @@ state 238
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    ']'     shift, and go to state 290
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    ']'     shift, and go to state 289
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
-    cexp  go to state 294
-    oexp  go to state 295
-    obex  go to state 296
-    aexp  go to state 297
-    abex  go to state 298
-    rexp  go to state 299
-    lexp  go to state 300
-    pexp  go to state 301
+    cexp  go to state 293
+    oexp  go to state 294
+    obex  go to state 295
+    aexp  go to state 296
+    abex  go to state 297
+    rexp  go to state 298
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 239
@@ -4243,18 +4244,18 @@ state 240
 
    34 dclr: ptrs ID arrayck . tag bounds brinit
 
-    TAG  shift, and go to state 302
+    TAG  shift, and go to state 301
 
-    $default  reduce using rule 216 (tag)
+    $default  reduce using rule 217 (tag)
 
-    tag  go to state 303
+    tag  go to state 302
 
 
 state 241
 
   126 type: struct '{' s2 decls . '}'
 
-    '}'  shift, and go to state 304
+    '}'  shift, and go to state 303
 
 
 state 242
@@ -4291,14 +4292,14 @@ state 246
 
     $default  reduce using rule 172 (s2)
 
-    s2  go to state 305
+    s2  go to state 304
 
 
 state 247
 
   121 type: class '{' s2 decls . '}'
 
-    '}'  shift, and go to state 306
+    '}'  shift, and go to state 305
 
 
 state 248
@@ -4311,7 +4312,7 @@ state 248
 
     $default  reduce using rule 175 (s5)
 
-    s5  go to state 307
+    s5  go to state 306
 
 
 state 249
@@ -4324,7 +4325,7 @@ state 249
 
     $default  reduce using rule 175 (s5)
 
-    s5  go to state 308
+    s5  go to state 307
 
 
 state 250
@@ -4337,7 +4338,7 @@ state 250
 
     $default  reduce using rule 175 (s5)
 
-    s5  go to state 309
+    s5  go to state 308
 
 
 state 251
@@ -4350,7 +4351,7 @@ state 251
 
     $default  reduce using rule 175 (s5)
 
-    s5  go to state 310
+    s5  go to state 309
 
 
 state 252
@@ -4366,7 +4367,7 @@ state 253
 
     $default  reduce using rule 22 (t3)
 
-    t3  go to state 311
+    t3  go to state 310
 
 
 state 254
@@ -4375,7 +4376,7 @@ state 254
 
     $default  reduce using rule 23 (t4)
 
-    t4  go to state 312
+    t4  go to state 311
 
 
 state 255
@@ -4384,7 +4385,7 @@ state 255
 
     $default  reduce using rule 24 (t5)
 
-    t5  go to state 313
+    t5  go to state 312
 
 
 state 256
@@ -4400,7 +4401,7 @@ state 257
 
     ']'  shift, and go to state 52
 
-    t2  go to state 314
+    t2  go to state 313
 
 
 state 258
@@ -4467,7 +4468,7 @@ state 258
     ']'       reduce using rule 13 (decls)
     '~'       reduce using rule 202 (virtual)
 
-    decls    go to state 315
+    decls    go to state 314
     t1       go to state 176
     dclrs    go to state 177
     ctor     go to state 60
@@ -4494,7 +4495,7 @@ state 259
 
     $default  reduce using rule 175 (s5)
 
-    s5  go to state 316
+    s5  go to state 315
 
 
 state 260
@@ -4515,7 +4516,7 @@ state 261
 
   131 type: ENUM '{' s2 dclrs s5 . '}'
 
-    '}'  shift, and go to state 317
+    '}'  shift, and go to state 316
 
 
 state 262
@@ -4529,7 +4530,7 @@ state 263
 
   129 type: UNION id '{' s3 decls . '}'
 
-    '}'  shift, and go to state 318
+    '}'  shift, and go to state 317
 
 
 state 264
@@ -4543,7 +4544,7 @@ state 265
 
   119 type: TEMPLATE '<' tname id '>' . CLASS id
 
-    CLASS  shift, and go to state 319
+    CLASS  shift, and go to state 318
 
 
 state 266
@@ -4554,7 +4555,7 @@ state 266
 
     $default  reduce using rule 208 (array)
 
-    array  go to state 320
+    array  go to state 319
 
 
 state 267
@@ -4563,7 +4564,7 @@ state 267
 
     $default  reduce using rule 177 (s6)
 
-    s6  go to state 321
+    s6  go to state 320
 
 
 state 268
@@ -4581,8 +4582,8 @@ state 269
   142     | error . ID '>'
   143     | error . '>'
 
-    ID   shift, and go to state 322
-    ','  shift, and go to state 323
+    ID   shift, and go to state 321
+    ','  shift, and go to state 322
     '>'  shift, and go to state 74
 
 
@@ -4590,7 +4591,7 @@ state 270
 
    78 func: fname '(' s6 fargso . ')' const abstract
 
-    ')'  shift, and go to state 324
+    ')'  shift, and go to state 323
 
 
 state 271
@@ -4605,7 +4606,7 @@ state 272
    82 fargs: farg .
    83      | farg . ',' fargs
 
-    ','  shift, and go to state 325
+    ','  shift, and go to state 324
 
     $default  reduce using rule 82 (fargs)
 
@@ -4616,7 +4617,7 @@ state 273
 
     $default  reduce using rule 204 (ptrs)
 
-    ptrs  go to state 326
+    ptrs  go to state 325
 
 
 state 274
@@ -4654,9 +4655,9 @@ state 276
 
 state 277
 
-  282 lexp: SIZEOF . '(' texp ')'
+  283 lexp: SIZEOF . '(' texp ')'
 
-    '('  shift, and go to state 327
+    '('  shift, and go to state 326
 
 
 state 278
@@ -4675,147 +4676,136 @@ state 279
 
 state 280
 
-  287 pexp: null .
-
-    $default  reduce using rule 287 (pexp)
-
-
-state 281
-
-  285 pexp: ID .
-
-    $default  reduce using rule 285 (pexp)
-
-
-state 282
-
-  286 pexp: LNG .
+  286 pexp: ID .
 
     $default  reduce using rule 286 (pexp)
 
 
-state 283
+state 281
+
+  287 pexp: LNG .
+
+    $default  reduce using rule 287 (pexp)
+
+
+state 282
 
   288 pexp: DBL .
 
     $default  reduce using rule 288 (pexp)
 
 
-state 284
+state 283
 
   289 pexp: CHR .
 
     $default  reduce using rule 289 (pexp)
 
 
-state 285
+state 284
 
   290 pexp: STR .
 
     $default  reduce using rule 290 (pexp)
 
 
-state 286
+state 285
 
-  281 lexp: '&' . lexp
+  282 lexp: '&' . lexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
+
+    lexp  go to state 327
+    pexp  go to state 300
+
+
+state 286
+
+  280 lexp: '+' . lexp
+
+    SIZEOF  shift, and go to state 277
+    CFALSE  shift, and go to state 278
+    CTRUE   shift, and go to state 279
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     lexp  go to state 328
-    pexp  go to state 301
+    pexp  go to state 300
 
 
 state 287
 
-  279 lexp: '+' . lexp
+  279 lexp: '-' . lexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     lexp  go to state 329
-    pexp  go to state 301
+    pexp  go to state 300
 
 
 state 288
 
-  278 lexp: '-' . lexp
+  281 lexp: '*' . lexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     lexp  go to state 330
-    pexp  go to state 301
+    pexp  go to state 300
 
 
 state 289
-
-  280 lexp: '*' . lexp
-
-    SIZEOF  shift, and go to state 277
-    CFALSE  shift, and go to state 278
-    CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
-
-    lexp  go to state 331
-    pexp  go to state 301
-
-
-state 290
 
   210 array: '[' ']' . array
 
@@ -4823,214 +4813,211 @@ state 290
 
     $default  reduce using rule 208 (array)
 
-    array  go to state 332
+    array  go to state 331
+
+
+state 290
+
+  277 lexp: '!' . lexp
+
+    SIZEOF  shift, and go to state 277
+    CFALSE  shift, and go to state 278
+    CTRUE   shift, and go to state 279
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
+
+    lexp  go to state 332
+    pexp  go to state 300
 
 
 state 291
 
-  276 lexp: '!' . lexp
+  278 lexp: '~' . lexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     lexp  go to state 333
-    pexp  go to state 301
+    pexp  go to state 300
 
 
 state 292
 
-  277 lexp: '~' . lexp
+  285 pexp: '(' . expr ')'
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
-    lexp  go to state 334
-    pexp  go to state 301
+    expr  go to state 334
+    cexp  go to state 335
+    oexp  go to state 294
+    obex  go to state 295
+    aexp  go to state 296
+    abex  go to state 297
+    rexp  go to state 298
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 293
 
-  284 pexp: '(' . expr ')'
+  209 array: '[' cexp . ']' array
 
-    SIZEOF  shift, and go to state 277
-    CFALSE  shift, and go to state 278
-    CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
-
-    expr  go to state 335
-    cexp  go to state 336
-    oexp  go to state 295
-    obex  go to state 296
-    aexp  go to state 297
-    abex  go to state 298
-    rexp  go to state 299
-    lexp  go to state 300
-    pexp  go to state 301
+    ']'  shift, and go to state 336
 
 
 state 294
 
-  209 array: '[' cexp . ']' array
+  252 cexp: oexp .
+  256 obex: oexp .
 
-    ']'  shift, and go to state 337
+    '?'       reduce using rule 256 (obex)
+    OR        reduce using rule 256 (obex)
+    $default  reduce using rule 252 (cexp)
 
 
 state 295
 
-  251 cexp: oexp .
-  255 obex: oexp .
+  251 cexp: obex . '?' qexp ':' cexp
+  254 oexp: obex . OR aexp
 
-    '?'       reduce using rule 255 (obex)
-    OR        reduce using rule 255 (obex)
-    $default  reduce using rule 251 (cexp)
+    '?'  shift, and go to state 337
+    OR   shift, and go to state 338
 
 
 state 296
 
-  250 cexp: obex . '?' qexp ':' cexp
-  253 oexp: obex . OR aexp
+  255 oexp: aexp .
+  259 abex: aexp .
 
-    '?'  shift, and go to state 338
-    OR   shift, and go to state 339
+    AN        reduce using rule 259 (abex)
+    $default  reduce using rule 255 (oexp)
 
 
 state 297
 
-  254 oexp: aexp .
-  258 abex: aexp .
+  257 aexp: abex . AN rexp
 
-    AN        reduce using rule 258 (abex)
-    $default  reduce using rule 254 (oexp)
+    AN  shift, and go to state 339
 
 
 state 298
 
-  256 aexp: abex . AN rexp
+  258 aexp: rexp .
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
 
-    AN  shift, and go to state 340
+    '|'  shift, and go to state 340
+    '^'  shift, and go to state 341
+    '&'  shift, and go to state 342
+    NE   shift, and go to state 343
+    EQ   shift, and go to state 344
+    '<'  shift, and go to state 345
+    '>'  shift, and go to state 346
+    GE   shift, and go to state 347
+    LE   shift, and go to state 348
+    RS   shift, and go to state 349
+    LS   shift, and go to state 350
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
+
+    $default  reduce using rule 258 (aexp)
 
 
 state 299
 
-  257 aexp: rexp .
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
+  276 rexp: lexp .
 
-    '|'  shift, and go to state 341
-    '^'  shift, and go to state 342
-    '&'  shift, and go to state 343
-    NE   shift, and go to state 344
-    EQ   shift, and go to state 345
-    '<'  shift, and go to state 346
-    '>'  shift, and go to state 347
-    GE   shift, and go to state 348
-    LE   shift, and go to state 349
-    RS   shift, and go to state 350
-    LS   shift, and go to state 351
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
-
-    $default  reduce using rule 257 (aexp)
+    $default  reduce using rule 276 (rexp)
 
 
 state 300
 
-  275 rexp: lexp .
+  284 lexp: pexp .
 
-    $default  reduce using rule 275 (rexp)
+    $default  reduce using rule 284 (lexp)
 
 
 state 301
 
-  283 lexp: pexp .
+  218 tag: TAG .
 
-    $default  reduce using rule 283 (lexp)
+    $default  reduce using rule 218 (tag)
 
 
 state 302
 
-  217 tag: TAG .
+   34 dclr: ptrs ID arrayck tag . bounds brinit
 
-    $default  reduce using rule 217 (tag)
+    null  shift, and go to state 356
+
+    $default  reduce using rule 228 (nullptr)
+
+    bounds   go to state 357
+    nullptr  go to state 358
 
 
 state 303
-
-   34 dclr: ptrs ID arrayck tag . bounds brinit
-
-    null  shift, and go to state 357
-
-    $default  reduce using rule 227 (nullptr)
-
-    bounds   go to state 358
-    nullptr  go to state 359
-
-
-state 304
 
   126 type: struct '{' s2 decls '}' .
 
     $default  reduce using rule 126 (type)
 
 
-state 305
+state 304
 
   122 type: class ':' base '{' s2 . decls '}'
 
@@ -5093,7 +5080,7 @@ state 305
     ';'       reduce using rule 93 (spec)
     '~'       reduce using rule 202 (virtual)
 
-    decls    go to state 360
+    decls    go to state 359
     t1       go to state 176
     dclrs    go to state 177
     ctor     go to state 60
@@ -5110,44 +5097,125 @@ state 305
     virtual  go to state 71
 
 
-state 306
+state 305
 
   121 type: class '{' s2 decls '}' .
 
     $default  reduce using rule 121 (type)
 
 
-state 307
+state 306
 
   133 type: enum '{' s2 dclrs s5 . '}'
+
+    '}'  shift, and go to state 360
+
+
+state 307
+
+  134 type: enumsc '{' s2 dclrs s5 . '}'
 
     '}'  shift, and go to state 361
 
 
 state 308
 
-  134 type: enumsc '{' s2 dclrs s5 . '}'
+  135 type: mask '{' s4 dclrs s5 . '}'
 
     '}'  shift, and go to state 362
 
 
 state 309
 
-  135 type: mask '{' s4 dclrs s5 . '}'
+  136 type: masksc '{' s4 dclrs s5 . '}'
 
     '}'  shift, and go to state 363
 
 
 state 310
 
-  136 type: masksc '{' s4 dclrs s5 . '}'
+   15 decls: PRIVATE ':' t3 . decls
 
-    '}'  shift, and go to state 364
+    error           shift, and go to state 171
+    AUTO            shift, and go to state 10
+    DOUBLE          shift, and go to state 11
+    INT             shift, and go to state 12
+    STRUCT          shift, and go to state 13
+    LONG            shift, and go to state 14
+    ENUM            shift, and go to state 15
+    REGISTER        shift, and go to state 16
+    TYPEDEF         shift, and go to state 17
+    CHAR            shift, and go to state 18
+    EXTERN          shift, and go to state 19
+    RETURN          shift, and go to state 20
+    UNION           shift, and go to state 21
+    CONST           shift, and go to state 22
+    FLOAT           shift, and go to state 23
+    SHORT           shift, and go to state 24
+    UNSIGNED        shift, and go to state 25
+    SIGNED          shift, and go to state 26
+    VOID            shift, and go to state 27
+    VOLATILE        shift, and go to state 28
+    STATIC          shift, and go to state 29
+    CLASS           shift, and go to state 30
+    PRIVATE         shift, and go to state 172
+    PROTECTED       shift, and go to state 173
+    PUBLIC          shift, and go to state 174
+    VIRTUAL         shift, and go to state 31
+    INLINE          shift, and go to state 32
+    LLONG           shift, and go to state 33
+    BOOL            shift, and go to state 34
+    WCHAR           shift, and go to state 35
+    TIME            shift, and go to state 36
+    ULLONG          shift, and go to state 37
+    MUSTUNDERSTAND  shift, and go to state 38
+    SIZE            shift, and go to state 39
+    FRIEND          shift, and go to state 40
+    TEMPLATE        shift, and go to state 41
+    EXPLICIT        shift, and go to state 42
+    MUTABLE         shift, and go to state 43
+    FINAL           shift, and go to state 44
+    OVERRIDE        shift, and go to state 45
+    UCHAR           shift, and go to state 46
+    USHORT          shift, and go to state 47
+    UINT            shift, and go to state 48
+    ULONG           shift, and go to state 49
+    TYPE            shift, and go to state 50
+    '['             shift, and go to state 51
+    '@'             shift, and go to state 53
+    '$'             shift, and go to state 54
+
+    OPERATOR  reduce using rule 93 (spec)
+    ID        reduce using rule 93 (spec)
+    ','       reduce using rule 93 (spec)
+    AN        reduce using rule 93 (spec)
+    '&'       reduce using rule 93 (spec)
+    '*'       reduce using rule 93 (spec)
+    '}'       reduce using rule 13 (decls)
+    ';'       reduce using rule 93 (spec)
+    ']'       reduce using rule 13 (decls)
+    '~'       reduce using rule 202 (virtual)
+
+    decls    go to state 364
+    t1       go to state 176
+    dclrs    go to state 177
+    ctor     go to state 60
+    dtor     go to state 61
+    spec     go to state 62
+    type     go to state 63
+    struct   go to state 64
+    class    go to state 65
+    enum     go to state 66
+    enumsc   go to state 67
+    mask     go to state 68
+    masksc   go to state 69
+    store    go to state 70
+    virtual  go to state 71
 
 
 state 311
 
-   15 decls: PRIVATE ':' t3 . decls
+   16 decls: PROTECTED ':' t4 . decls
 
     error           shift, and go to state 171
     AUTO            shift, and go to state 10
@@ -5228,7 +5296,7 @@ state 311
 
 state 312
 
-   16 decls: PROTECTED ':' t4 . decls
+   17 decls: PUBLIC ':' t5 . decls
 
     error           shift, and go to state 171
     AUTO            shift, and go to state 10
@@ -5309,7 +5377,7 @@ state 312
 
 state 313
 
-   17 decls: PUBLIC ':' t5 . decls
+   18 decls: t1 decls t2 . decls
 
     error           shift, and go to state 171
     AUTO            shift, and go to state 10
@@ -5390,131 +5458,50 @@ state 313
 
 state 314
 
-   18 decls: t1 decls t2 . decls
-
-    error           shift, and go to state 171
-    AUTO            shift, and go to state 10
-    DOUBLE          shift, and go to state 11
-    INT             shift, and go to state 12
-    STRUCT          shift, and go to state 13
-    LONG            shift, and go to state 14
-    ENUM            shift, and go to state 15
-    REGISTER        shift, and go to state 16
-    TYPEDEF         shift, and go to state 17
-    CHAR            shift, and go to state 18
-    EXTERN          shift, and go to state 19
-    RETURN          shift, and go to state 20
-    UNION           shift, and go to state 21
-    CONST           shift, and go to state 22
-    FLOAT           shift, and go to state 23
-    SHORT           shift, and go to state 24
-    UNSIGNED        shift, and go to state 25
-    SIGNED          shift, and go to state 26
-    VOID            shift, and go to state 27
-    VOLATILE        shift, and go to state 28
-    STATIC          shift, and go to state 29
-    CLASS           shift, and go to state 30
-    PRIVATE         shift, and go to state 172
-    PROTECTED       shift, and go to state 173
-    PUBLIC          shift, and go to state 174
-    VIRTUAL         shift, and go to state 31
-    INLINE          shift, and go to state 32
-    LLONG           shift, and go to state 33
-    BOOL            shift, and go to state 34
-    WCHAR           shift, and go to state 35
-    TIME            shift, and go to state 36
-    ULLONG          shift, and go to state 37
-    MUSTUNDERSTAND  shift, and go to state 38
-    SIZE            shift, and go to state 39
-    FRIEND          shift, and go to state 40
-    TEMPLATE        shift, and go to state 41
-    EXPLICIT        shift, and go to state 42
-    MUTABLE         shift, and go to state 43
-    FINAL           shift, and go to state 44
-    OVERRIDE        shift, and go to state 45
-    UCHAR           shift, and go to state 46
-    USHORT          shift, and go to state 47
-    UINT            shift, and go to state 48
-    ULONG           shift, and go to state 49
-    TYPE            shift, and go to state 50
-    '['             shift, and go to state 51
-    '@'             shift, and go to state 53
-    '$'             shift, and go to state 54
-
-    OPERATOR  reduce using rule 93 (spec)
-    ID        reduce using rule 93 (spec)
-    ','       reduce using rule 93 (spec)
-    AN        reduce using rule 93 (spec)
-    '&'       reduce using rule 93 (spec)
-    '*'       reduce using rule 93 (spec)
-    '}'       reduce using rule 13 (decls)
-    ';'       reduce using rule 93 (spec)
-    ']'       reduce using rule 13 (decls)
-    '~'       reduce using rule 202 (virtual)
-
-    decls    go to state 368
-    t1       go to state 176
-    dclrs    go to state 177
-    ctor     go to state 60
-    dtor     go to state 61
-    spec     go to state 62
-    type     go to state 63
-    struct   go to state 64
-    class    go to state 65
-    enum     go to state 66
-    enumsc   go to state 67
-    mask     go to state 68
-    masksc   go to state 69
-    store    go to state 70
-    virtual  go to state 71
-
-
-state 315
-
    14 decls: dclrs ';' decls .
 
     $default  reduce using rule 14 (decls)
 
 
-state 316
+state 315
 
   132 type: ENUM '*' '{' s2 dclrs s5 . '}'
 
-    '}'  shift, and go to state 369
+    '}'  shift, and go to state 368
 
 
-state 317
+state 316
 
   131 type: ENUM '{' s2 dclrs s5 '}' .
 
     $default  reduce using rule 131 (type)
 
 
-state 318
+state 317
 
   129 type: UNION id '{' s3 decls '}' .
 
     $default  reduce using rule 129 (type)
 
 
-state 319
+state 318
 
   119 type: TEMPLATE '<' tname id '>' CLASS . id
 
     ID    shift, and go to state 78
     TYPE  shift, and go to state 79
 
-    id  go to state 370
+    id  go to state 369
 
 
-state 320
+state 319
 
    92 texp: tspec ptrs ID array .
 
     $default  reduce using rule 92 (texp)
 
 
-state 321
+state 320
 
    90 texpf: tspec ptrs '(' s6 . fargso ')'
 
@@ -5565,7 +5552,7 @@ state 321
 
     ')'  reduce using rule 80 (fargso)
 
-    fargso  go to state 371
+    fargso  go to state 370
     fargs   go to state 271
     farg    go to state 272
     tspec   go to state 273
@@ -5579,7 +5566,7 @@ state 321
     store   go to state 145
 
 
-state 322
+state 321
 
    84 fargs: error ID .
   141 type: error ID . error
@@ -5591,23 +5578,23 @@ state 322
     ')'  reduce using rule 84 (fargs)
 
 
-state 323
+state 322
 
    85 fargs: error ',' .
 
     $default  reduce using rule 85 (fargs)
 
 
-state 324
+state 323
 
    78 func: fname '(' s6 fargso ')' . const abstract
 
     $default  reduce using rule 196 (const)
 
-    const  go to state 372
+    const  go to state 371
 
 
-state 325
+state 324
 
    83 fargs: farg ',' . fargs
 
@@ -5656,7 +5643,7 @@ state 325
     '@'             shift, and go to state 53
     '$'             shift, and go to state 54
 
-    fargs   go to state 373
+    fargs   go to state 372
     farg    go to state 272
     tspec   go to state 273
     type    go to state 144
@@ -5669,26 +5656,26 @@ state 325
     store   go to state 145
 
 
-state 326
+state 325
 
    86 farg: tspec ptrs . arg arrayck occurs init
   205 ptrs: ptrs . '*'
   206     | ptrs . '&'
   207     | ptrs . AN
 
-    ID   shift, and go to state 374
+    ID   shift, and go to state 373
     AN   shift, and go to state 152
     '&'  shift, and go to state 153
     '*'  shift, and go to state 154
 
     $default  reduce using rule 87 (arg)
 
-    arg  go to state 375
+    arg  go to state 374
 
 
-state 327
+state 326
 
-  282 lexp: SIZEOF '(' . texp ')'
+  283 lexp: SIZEOF '(' . texp ')'
 
     error           shift, and go to state 105
     AUTO            shift, and go to state 10
@@ -5735,7 +5722,7 @@ state 327
     '@'             shift, and go to state 53
     '$'             shift, and go to state 54
 
-    texp    go to state 376
+    texp    go to state 375
     tspec   go to state 237
     type    go to state 144
     struct  go to state 64
@@ -5747,72 +5734,72 @@ state 327
     store   go to state 145
 
 
+state 327
+
+  282 lexp: '&' lexp .
+
+    $default  reduce using rule 282 (lexp)
+
+
 state 328
 
-  281 lexp: '&' lexp .
+  280 lexp: '+' lexp .
 
-    $default  reduce using rule 281 (lexp)
+    $default  reduce using rule 280 (lexp)
 
 
 state 329
 
-  279 lexp: '+' lexp .
+  279 lexp: '-' lexp .
 
     $default  reduce using rule 279 (lexp)
 
 
 state 330
 
-  278 lexp: '-' lexp .
+  281 lexp: '*' lexp .
 
-    $default  reduce using rule 278 (lexp)
+    $default  reduce using rule 281 (lexp)
 
 
 state 331
-
-  280 lexp: '*' lexp .
-
-    $default  reduce using rule 280 (lexp)
-
-
-state 332
 
   210 array: '[' ']' array .
 
     $default  reduce using rule 210 (array)
 
 
-state 333
+state 332
 
-  276 lexp: '!' lexp .
-
-    $default  reduce using rule 276 (lexp)
-
-
-state 334
-
-  277 lexp: '~' lexp .
+  277 lexp: '!' lexp .
 
     $default  reduce using rule 277 (lexp)
 
 
+state 333
+
+  278 lexp: '~' lexp .
+
+    $default  reduce using rule 278 (lexp)
+
+
+state 334
+
+  249 expr: expr . ',' expr
+  285 pexp: '(' expr . ')'
+
+    ','  shift, and go to state 376
+    ')'  shift, and go to state 377
+
+
 state 335
 
-  248 expr: expr . ',' expr
-  284 pexp: '(' expr . ')'
+  250 expr: cexp .
 
-    ','  shift, and go to state 377
-    ')'  shift, and go to state 378
+    $default  reduce using rule 250 (expr)
 
 
 state 336
-
-  249 expr: cexp .
-
-    $default  reduce using rule 249 (expr)
-
-
-state 337
 
   209 array: '[' cexp ']' . array
 
@@ -5820,524 +5807,506 @@ state 337
 
     $default  reduce using rule 208 (array)
 
-    array  go to state 379
+    array  go to state 378
+
+
+state 337
+
+  251 cexp: obex '?' . qexp ':' cexp
+
+    SIZEOF  shift, and go to state 277
+    CFALSE  shift, and go to state 278
+    CTRUE   shift, and go to state 279
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
+
+    expr  go to state 379
+    cexp  go to state 335
+    qexp  go to state 380
+    oexp  go to state 294
+    obex  go to state 295
+    aexp  go to state 296
+    abex  go to state 297
+    rexp  go to state 298
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 338
 
-  250 cexp: obex '?' . qexp ':' cexp
+  254 oexp: obex OR . aexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
-    expr  go to state 380
-    cexp  go to state 336
-    qexp  go to state 381
-    oexp  go to state 295
-    obex  go to state 296
-    aexp  go to state 297
-    abex  go to state 298
-    rexp  go to state 299
-    lexp  go to state 300
-    pexp  go to state 301
+    aexp  go to state 381
+    abex  go to state 297
+    rexp  go to state 298
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 339
 
-  253 oexp: obex OR . aexp
+  257 aexp: abex AN . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
-    aexp  go to state 382
-    abex  go to state 298
-    rexp  go to state 299
-    lexp  go to state 300
-    pexp  go to state 301
+    rexp  go to state 382
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 340
 
-  256 aexp: abex AN . rexp
+  260 rexp: rexp '|' . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 383
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 341
 
-  259 rexp: rexp '|' . rexp
+  261 rexp: rexp '^' . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 384
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 342
 
-  260 rexp: rexp '^' . rexp
+  262 rexp: rexp '&' . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 385
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 343
 
-  261 rexp: rexp '&' . rexp
+  264 rexp: rexp NE . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 386
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 344
 
-  263 rexp: rexp NE . rexp
+  263 rexp: rexp EQ . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 387
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 345
 
-  262 rexp: rexp EQ . rexp
+  265 rexp: rexp '<' . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 388
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 346
 
-  264 rexp: rexp '<' . rexp
+  267 rexp: rexp '>' . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 389
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 347
 
-  266 rexp: rexp '>' . rexp
+  268 rexp: rexp GE . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 390
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 348
 
-  267 rexp: rexp GE . rexp
+  266 rexp: rexp LE . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 391
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 349
 
-  265 rexp: rexp LE . rexp
+  270 rexp: rexp RS . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 392
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 350
 
-  269 rexp: rexp RS . rexp
+  269 rexp: rexp LS . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 393
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 351
 
-  268 rexp: rexp LS . rexp
+  271 rexp: rexp '+' . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 394
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 352
 
-  270 rexp: rexp '+' . rexp
+  272 rexp: rexp '-' . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 395
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 353
 
-  271 rexp: rexp '-' . rexp
+  273 rexp: rexp '*' . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 396
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 354
 
-  272 rexp: rexp '*' . rexp
+  274 rexp: rexp '/' . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 397
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 355
 
-  273 rexp: rexp '/' . rexp
+  275 rexp: rexp '%' . rexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     rexp  go to state 398
-    lexp  go to state 300
-    pexp  go to state 301
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 356
 
-  274 rexp: rexp '%' . rexp
+  229 nullptr: null .
 
-    SIZEOF  shift, and go to state 277
-    CFALSE  shift, and go to state 278
-    CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
-
-    rexp  go to state 399
-    lexp  go to state 300
-    pexp  go to state 301
+    $default  reduce using rule 229 (nullptr)
 
 
 state 357
 
-  228 nullptr: null .
-
-    $default  reduce using rule 228 (nullptr)
-
-
-state 358
-
    34 dclr: ptrs ID arrayck tag bounds . brinit
 
-    '='  shift, and go to state 400
+    '='  shift, and go to state 399
+    EQ   shift, and go to state 400
     '{'  shift, and go to state 401
 
     $default  reduce using rule 214 (init)
@@ -6346,105 +6315,105 @@ state 358
     init    go to state 403
 
 
-state 359
+state 358
 
-  223 bounds: nullptr . patt
-  224       | nullptr . patt cdbl min
-  225       | nullptr . patt cdbl minmax cdbl
-  226       | nullptr . patt max cdbl
+  224 bounds: nullptr . patt
+  225       | nullptr . patt cdbl min
+  226       | nullptr . patt cdbl minmax cdbl
+  227       | nullptr . patt max cdbl
 
     STR  shift, and go to state 404
 
-    $default  reduce using rule 229 (patt)
+    $default  reduce using rule 230 (patt)
 
     patt  go to state 405
 
 
-state 360
+state 359
 
   122 type: class ':' base '{' s2 decls . '}'
 
     '}'  shift, and go to state 406
 
 
-state 361
+state 360
 
   133 type: enum '{' s2 dclrs s5 '}' .
 
     $default  reduce using rule 133 (type)
 
 
-state 362
+state 361
 
   134 type: enumsc '{' s2 dclrs s5 '}' .
 
     $default  reduce using rule 134 (type)
 
 
-state 363
+state 362
 
   135 type: mask '{' s4 dclrs s5 '}' .
 
     $default  reduce using rule 135 (type)
 
 
-state 364
+state 363
 
   136 type: masksc '{' s4 dclrs s5 '}' .
 
     $default  reduce using rule 136 (type)
 
 
-state 365
+state 364
 
    15 decls: PRIVATE ':' t3 decls .
 
     $default  reduce using rule 15 (decls)
 
 
-state 366
+state 365
 
    16 decls: PROTECTED ':' t4 decls .
 
     $default  reduce using rule 16 (decls)
 
 
-state 367
+state 366
 
    17 decls: PUBLIC ':' t5 decls .
 
     $default  reduce using rule 17 (decls)
 
 
-state 368
+state 367
 
    18 decls: t1 decls t2 decls .
 
     $default  reduce using rule 18 (decls)
 
 
-state 369
+state 368
 
   132 type: ENUM '*' '{' s2 dclrs s5 '}' .
 
     $default  reduce using rule 132 (type)
 
 
-state 370
+state 369
 
   119 type: TEMPLATE '<' tname id '>' CLASS id .
 
     $default  reduce using rule 119 (type)
 
 
-state 371
+state 370
 
    90 texpf: tspec ptrs '(' s6 fargso . ')'
 
     ')'  shift, and go to state 407
 
 
-state 372
+state 371
 
    78 func: fname '(' s6 fargso ')' const . abstract
   197 const: const . CONST
@@ -6461,21 +6430,21 @@ state 372
     abstract  go to state 412
 
 
-state 373
+state 372
 
    83 fargs: farg ',' fargs .
 
     $default  reduce using rule 83 (fargs)
 
 
-state 374
+state 373
 
    88 arg: ID .
 
     $default  reduce using rule 88 (arg)
 
 
-state 375
+state 374
 
    86 farg: tspec ptrs arg . arrayck occurs init
 
@@ -6487,643 +6456,671 @@ state 375
     arrayck  go to state 413
 
 
-state 376
+state 375
 
-  282 lexp: SIZEOF '(' texp . ')'
+  283 lexp: SIZEOF '(' texp . ')'
 
     ')'  shift, and go to state 414
 
 
-state 377
+state 376
 
-  248 expr: expr ',' . expr
+  249 expr: expr ',' . expr
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     expr  go to state 415
-    cexp  go to state 336
-    oexp  go to state 295
-    obex  go to state 296
-    aexp  go to state 297
-    abex  go to state 298
-    rexp  go to state 299
-    lexp  go to state 300
-    pexp  go to state 301
+    cexp  go to state 335
+    oexp  go to state 294
+    obex  go to state 295
+    aexp  go to state 296
+    abex  go to state 297
+    rexp  go to state 298
+    lexp  go to state 299
+    pexp  go to state 300
+
+
+state 377
+
+  285 pexp: '(' expr ')' .
+
+    $default  reduce using rule 285 (pexp)
 
 
 state 378
-
-  284 pexp: '(' expr ')' .
-
-    $default  reduce using rule 284 (pexp)
-
-
-state 379
 
   209 array: '[' cexp ']' array .
 
     $default  reduce using rule 209 (array)
 
 
+state 379
+
+  249 expr: expr . ',' expr
+  253 qexp: expr .
+
+    ','  shift, and go to state 376
+
+    $default  reduce using rule 253 (qexp)
+
+
 state 380
 
-  248 expr: expr . ',' expr
-  252 qexp: expr .
-
-    ','  shift, and go to state 377
-
-    $default  reduce using rule 252 (qexp)
-
-
-state 381
-
-  250 cexp: obex '?' qexp . ':' cexp
+  251 cexp: obex '?' qexp . ':' cexp
 
     ':'  shift, and go to state 416
 
 
+state 381
+
+  254 oexp: obex OR aexp .
+  259 abex: aexp .
+
+    AN        reduce using rule 259 (abex)
+    $default  reduce using rule 254 (oexp)
+
+
 state 382
 
-  253 oexp: obex OR aexp .
-  258 abex: aexp .
+  257 aexp: abex AN rexp .
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
 
-    AN        reduce using rule 258 (abex)
-    $default  reduce using rule 253 (oexp)
+    '|'  shift, and go to state 340
+    '^'  shift, and go to state 341
+    '&'  shift, and go to state 342
+    NE   shift, and go to state 343
+    EQ   shift, and go to state 344
+    '<'  shift, and go to state 345
+    '>'  shift, and go to state 346
+    GE   shift, and go to state 347
+    LE   shift, and go to state 348
+    RS   shift, and go to state 349
+    LS   shift, and go to state 350
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
+
+    $default  reduce using rule 257 (aexp)
 
 
 state 383
 
-  256 aexp: abex AN rexp .
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
+  260 rexp: rexp . '|' rexp
+  260     | rexp '|' rexp .
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
 
-    '|'  shift, and go to state 341
-    '^'  shift, and go to state 342
-    '&'  shift, and go to state 343
-    NE   shift, and go to state 344
-    EQ   shift, and go to state 345
-    '<'  shift, and go to state 346
-    '>'  shift, and go to state 347
-    GE   shift, and go to state 348
-    LE   shift, and go to state 349
-    RS   shift, and go to state 350
-    LS   shift, and go to state 351
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
-
-    $default  reduce using rule 256 (aexp)
-
-
-state 384
-
-  259 rexp: rexp . '|' rexp
-  259     | rexp '|' rexp .
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
-
-    '^'  shift, and go to state 342
-    '&'  shift, and go to state 343
-    NE   shift, and go to state 344
-    EQ   shift, and go to state 345
-    '<'  shift, and go to state 346
-    '>'  shift, and go to state 347
-    GE   shift, and go to state 348
-    LE   shift, and go to state 349
-    RS   shift, and go to state 350
-    LS   shift, and go to state 351
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
-
-    $default  reduce using rule 259 (rexp)
-
-
-state 385
-
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  260     | rexp '^' rexp .
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
-
-    '&'  shift, and go to state 343
-    NE   shift, and go to state 344
-    EQ   shift, and go to state 345
-    '<'  shift, and go to state 346
-    '>'  shift, and go to state 347
-    GE   shift, and go to state 348
-    LE   shift, and go to state 349
-    RS   shift, and go to state 350
-    LS   shift, and go to state 351
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
+    '^'  shift, and go to state 341
+    '&'  shift, and go to state 342
+    NE   shift, and go to state 343
+    EQ   shift, and go to state 344
+    '<'  shift, and go to state 345
+    '>'  shift, and go to state 346
+    GE   shift, and go to state 347
+    LE   shift, and go to state 348
+    RS   shift, and go to state 349
+    LS   shift, and go to state 350
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
 
     $default  reduce using rule 260 (rexp)
 
 
-state 386
+state 384
 
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  261     | rexp '&' rexp .
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  261     | rexp '^' rexp .
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
 
-    NE   shift, and go to state 344
-    EQ   shift, and go to state 345
-    '<'  shift, and go to state 346
-    '>'  shift, and go to state 347
-    GE   shift, and go to state 348
-    LE   shift, and go to state 349
-    RS   shift, and go to state 350
-    LS   shift, and go to state 351
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
+    '&'  shift, and go to state 342
+    NE   shift, and go to state 343
+    EQ   shift, and go to state 344
+    '<'  shift, and go to state 345
+    '>'  shift, and go to state 346
+    GE   shift, and go to state 347
+    LE   shift, and go to state 348
+    RS   shift, and go to state 349
+    LS   shift, and go to state 350
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
 
     $default  reduce using rule 261 (rexp)
 
 
+state 385
+
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  262     | rexp '&' rexp .
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
+
+    NE   shift, and go to state 343
+    EQ   shift, and go to state 344
+    '<'  shift, and go to state 345
+    '>'  shift, and go to state 346
+    GE   shift, and go to state 347
+    LE   shift, and go to state 348
+    RS   shift, and go to state 349
+    LS   shift, and go to state 350
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
+
+    $default  reduce using rule 262 (rexp)
+
+
+state 386
+
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  264     | rexp NE rexp .
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
+
+    '<'  shift, and go to state 345
+    '>'  shift, and go to state 346
+    GE   shift, and go to state 347
+    LE   shift, and go to state 348
+    RS   shift, and go to state 349
+    LS   shift, and go to state 350
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
+
+    $default  reduce using rule 264 (rexp)
+
+
 state 387
 
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  263     | rexp NE rexp .
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  263     | rexp EQ rexp .
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
 
-    '<'  shift, and go to state 346
-    '>'  shift, and go to state 347
-    GE   shift, and go to state 348
-    LE   shift, and go to state 349
-    RS   shift, and go to state 350
-    LS   shift, and go to state 351
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
+    '<'  shift, and go to state 345
+    '>'  shift, and go to state 346
+    GE   shift, and go to state 347
+    LE   shift, and go to state 348
+    RS   shift, and go to state 349
+    LS   shift, and go to state 350
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
 
     $default  reduce using rule 263 (rexp)
 
 
 state 388
 
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  262     | rexp EQ rexp .
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  265     | rexp '<' rexp .
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
 
-    '<'  shift, and go to state 346
-    '>'  shift, and go to state 347
-    GE   shift, and go to state 348
-    LE   shift, and go to state 349
-    RS   shift, and go to state 350
-    LS   shift, and go to state 351
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
-
-    $default  reduce using rule 262 (rexp)
-
-
-state 389
-
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  264     | rexp '<' rexp .
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
-
-    RS   shift, and go to state 350
-    LS   shift, and go to state 351
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
-
-    $default  reduce using rule 264 (rexp)
-
-
-state 390
-
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  266     | rexp '>' rexp .
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
-
-    RS   shift, and go to state 350
-    LS   shift, and go to state 351
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
-
-    $default  reduce using rule 266 (rexp)
-
-
-state 391
-
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  267     | rexp GE rexp .
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
-
-    RS   shift, and go to state 350
-    LS   shift, and go to state 351
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
-
-    $default  reduce using rule 267 (rexp)
-
-
-state 392
-
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  265     | rexp LE rexp .
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
-
-    RS   shift, and go to state 350
-    LS   shift, and go to state 351
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
+    RS   shift, and go to state 349
+    LS   shift, and go to state 350
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
 
     $default  reduce using rule 265 (rexp)
 
 
+state 389
+
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  267     | rexp '>' rexp .
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
+
+    RS   shift, and go to state 349
+    LS   shift, and go to state 350
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
+
+    $default  reduce using rule 267 (rexp)
+
+
+state 390
+
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  268     | rexp GE rexp .
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
+
+    RS   shift, and go to state 349
+    LS   shift, and go to state 350
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
+
+    $default  reduce using rule 268 (rexp)
+
+
+state 391
+
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  266     | rexp LE rexp .
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
+
+    RS   shift, and go to state 349
+    LS   shift, and go to state 350
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
+
+    $default  reduce using rule 266 (rexp)
+
+
+state 392
+
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  270     | rexp RS rexp .
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
+
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
+
+    $default  reduce using rule 270 (rexp)
+
+
 state 393
 
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  269     | rexp RS rexp .
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  269     | rexp LS rexp .
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
 
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
+    '+'  shift, and go to state 351
+    '-'  shift, and go to state 352
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
 
     $default  reduce using rule 269 (rexp)
 
 
 state 394
 
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  268     | rexp LS rexp .
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  271     | rexp '+' rexp .
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
 
-    '+'  shift, and go to state 352
-    '-'  shift, and go to state 353
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
-
-    $default  reduce using rule 268 (rexp)
-
-
-state 395
-
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  270     | rexp '+' rexp .
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
-
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
-
-    $default  reduce using rule 270 (rexp)
-
-
-state 396
-
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  271     | rexp '-' rexp .
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
-
-    '*'  shift, and go to state 354
-    '/'  shift, and go to state 355
-    '%'  shift, and go to state 356
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
 
     $default  reduce using rule 271 (rexp)
 
 
-state 397
+state 395
 
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  272     | rexp '*' rexp .
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  272     | rexp '-' rexp .
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
+
+    '*'  shift, and go to state 353
+    '/'  shift, and go to state 354
+    '%'  shift, and go to state 355
 
     $default  reduce using rule 272 (rexp)
 
 
-state 398
+state 396
 
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  273     | rexp '/' rexp .
-  274     | rexp . '%' rexp
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  273     | rexp '*' rexp .
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
 
     $default  reduce using rule 273 (rexp)
 
 
-state 399
+state 397
 
-  259 rexp: rexp . '|' rexp
-  260     | rexp . '^' rexp
-  261     | rexp . '&' rexp
-  262     | rexp . EQ rexp
-  263     | rexp . NE rexp
-  264     | rexp . '<' rexp
-  265     | rexp . LE rexp
-  266     | rexp . '>' rexp
-  267     | rexp . GE rexp
-  268     | rexp . LS rexp
-  269     | rexp . RS rexp
-  270     | rexp . '+' rexp
-  271     | rexp . '-' rexp
-  272     | rexp . '*' rexp
-  273     | rexp . '/' rexp
-  274     | rexp . '%' rexp
-  274     | rexp '%' rexp .
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  274     | rexp '/' rexp .
+  275     | rexp . '%' rexp
 
     $default  reduce using rule 274 (rexp)
 
 
-state 400
+state 398
+
+  260 rexp: rexp . '|' rexp
+  261     | rexp . '^' rexp
+  262     | rexp . '&' rexp
+  263     | rexp . EQ rexp
+  264     | rexp . NE rexp
+  265     | rexp . '<' rexp
+  266     | rexp . LE rexp
+  267     | rexp . '>' rexp
+  268     | rexp . GE rexp
+  269     | rexp . LS rexp
+  270     | rexp . RS rexp
+  271     | rexp . '+' rexp
+  272     | rexp . '-' rexp
+  273     | rexp . '*' rexp
+  274     | rexp . '/' rexp
+  275     | rexp . '%' rexp
+  275     | rexp '%' rexp .
+
+    $default  reduce using rule 275 (rexp)
+
+
+state 399
 
   215 init: '=' . cexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
     cexp  go to state 417
-    oexp  go to state 295
-    obex  go to state 296
-    aexp  go to state 297
-    abex  go to state 298
-    rexp  go to state 299
-    lexp  go to state 300
-    pexp  go to state 301
+    oexp  go to state 294
+    obex  go to state 295
+    aexp  go to state 296
+    abex  go to state 297
+    rexp  go to state 298
+    lexp  go to state 299
+    pexp  go to state 300
+
+
+state 400
+
+  216 init: EQ . cexp
+
+    SIZEOF  shift, and go to state 277
+    CFALSE  shift, and go to state 278
+    CTRUE   shift, and go to state 279
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
+
+    cexp  go to state 418
+    oexp  go to state 294
+    obex  go to state 295
+    aexp  go to state 296
+    abex  go to state 297
+    rexp  go to state 298
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 401
@@ -7133,28 +7130,27 @@ state 401
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
-    cexp  go to state 418
-    oexp  go to state 295
-    obex  go to state 296
-    aexp  go to state 297
-    abex  go to state 298
-    rexp  go to state 299
-    lexp  go to state 300
-    pexp  go to state 301
+    cexp  go to state 419
+    oexp  go to state 294
+    obex  go to state 295
+    aexp  go to state 296
+    abex  go to state 297
+    rexp  go to state 298
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 402
@@ -7173,30 +7169,30 @@ state 403
 
 state 404
 
-  230 patt: STR .
+  231 patt: STR .
 
-    $default  reduce using rule 230 (patt)
+    $default  reduce using rule 231 (patt)
 
 
 state 405
 
-  223 bounds: nullptr patt .
-  224       | nullptr patt . cdbl min
-  225       | nullptr patt . cdbl minmax cdbl
-  226       | nullptr patt . max cdbl
+  224 bounds: nullptr patt .
+  225       | nullptr patt . cdbl min
+  226       | nullptr patt . cdbl minmax cdbl
+  227       | nullptr patt . max cdbl
 
-    LNG  shift, and go to state 419
-    DBL  shift, and go to state 420
-    CHR  shift, and go to state 421
-    ':'  shift, and go to state 422
-    '<'  shift, and go to state 423
-    '+'  shift, and go to state 424
-    '-'  shift, and go to state 425
+    LNG  shift, and go to state 420
+    DBL  shift, and go to state 421
+    CHR  shift, and go to state 422
+    ':'  shift, and go to state 423
+    '<'  shift, and go to state 424
+    '+'  shift, and go to state 425
+    '-'  shift, and go to state 426
 
-    $default  reduce using rule 223 (bounds)
+    $default  reduce using rule 224 (bounds)
 
-    cdbl  go to state 426
-    max   go to state 427
+    cdbl  go to state 427
+    max   go to state 428
 
 
 state 406
@@ -7238,7 +7234,7 @@ state 411
 
   201 abstract: '=' . LNG
 
-    LNG  shift, and go to state 428
+    LNG  shift, and go to state 429
 
 
 state 412
@@ -7252,58 +7248,57 @@ state 413
 
    86 farg: tspec ptrs arg arrayck . occurs init
 
-    LNG  shift, and go to state 429
-    ':'  shift, and go to state 430
+    LNG  shift, and go to state 430
+    ':'  shift, and go to state 431
 
-    $default  reduce using rule 218 (occurs)
+    $default  reduce using rule 219 (occurs)
 
-    occurs  go to state 431
+    occurs  go to state 432
 
 
 state 414
 
-  282 lexp: SIZEOF '(' texp ')' .
+  283 lexp: SIZEOF '(' texp ')' .
 
-    $default  reduce using rule 282 (lexp)
+    $default  reduce using rule 283 (lexp)
 
 
 state 415
 
-  248 expr: expr . ',' expr
-  248     | expr ',' expr .
+  249 expr: expr . ',' expr
+  249     | expr ',' expr .
 
-    $default  reduce using rule 248 (expr)
+    $default  reduce using rule 249 (expr)
 
 
 state 416
 
-  250 cexp: obex '?' qexp ':' . cexp
+  251 cexp: obex '?' qexp ':' . cexp
 
     SIZEOF  shift, and go to state 277
     CFALSE  shift, and go to state 278
     CTRUE   shift, and go to state 279
-    null    shift, and go to state 280
-    ID      shift, and go to state 281
-    LNG     shift, and go to state 282
-    DBL     shift, and go to state 283
-    CHR     shift, and go to state 284
-    STR     shift, and go to state 285
-    '&'     shift, and go to state 286
-    '+'     shift, and go to state 287
-    '-'     shift, and go to state 288
-    '*'     shift, and go to state 289
-    '!'     shift, and go to state 291
-    '~'     shift, and go to state 292
-    '('     shift, and go to state 293
+    ID      shift, and go to state 280
+    LNG     shift, and go to state 281
+    DBL     shift, and go to state 282
+    CHR     shift, and go to state 283
+    STR     shift, and go to state 284
+    '&'     shift, and go to state 285
+    '+'     shift, and go to state 286
+    '-'     shift, and go to state 287
+    '*'     shift, and go to state 288
+    '!'     shift, and go to state 290
+    '~'     shift, and go to state 291
+    '('     shift, and go to state 292
 
-    cexp  go to state 432
-    oexp  go to state 295
-    obex  go to state 296
-    aexp  go to state 297
-    abex  go to state 298
-    rexp  go to state 299
-    lexp  go to state 300
-    pexp  go to state 301
+    cexp  go to state 433
+    oexp  go to state 294
+    obex  go to state 295
+    aexp  go to state 296
+    abex  go to state 297
+    rexp  go to state 298
+    lexp  go to state 299
+    pexp  go to state 300
 
 
 state 417
@@ -7315,272 +7310,188 @@ state 417
 
 state 418
 
-  213 brinit: '{' cexp . '}'
+  216 init: EQ cexp .
 
-    '}'  shift, and go to state 433
+    $default  reduce using rule 216 (init)
 
 
 state 419
 
-  232 cdbl: LNG .
+  213 brinit: '{' cexp . '}'
 
-    $default  reduce using rule 232 (cdbl)
+    '}'  shift, and go to state 434
 
 
 state 420
 
-  231 cdbl: DBL .
-
-    $default  reduce using rule 231 (cdbl)
-
-
-state 421
-
-  233 cdbl: CHR .
+  233 cdbl: LNG .
 
     $default  reduce using rule 233 (cdbl)
 
 
+state 421
+
+  232 cdbl: DBL .
+
+    $default  reduce using rule 232 (cdbl)
+
+
 state 422
 
-  245 max: ':' .
-  246    | ':' . '<'
+  234 cdbl: CHR .
 
-    '<'  shift, and go to state 434
-
-    $default  reduce using rule 245 (max)
+    $default  reduce using rule 234 (cdbl)
 
 
 state 423
 
-  247 max: '<' .
+  246 max: ':' .
+  247    | ':' . '<'
 
-    $default  reduce using rule 247 (max)
+    '<'  shift, and go to state 435
+
+    $default  reduce using rule 246 (max)
 
 
 state 424
 
-  234 cdbl: '+' . cdbl
+  248 max: '<' .
 
-    LNG  shift, and go to state 419
-    DBL  shift, and go to state 420
-    CHR  shift, and go to state 421
-    '+'  shift, and go to state 424
-    '-'  shift, and go to state 425
-
-    cdbl  go to state 435
+    $default  reduce using rule 248 (max)
 
 
 state 425
 
-  235 cdbl: '-' . cdbl
+  235 cdbl: '+' . cdbl
 
-    LNG  shift, and go to state 419
-    DBL  shift, and go to state 420
-    CHR  shift, and go to state 421
-    '+'  shift, and go to state 424
-    '-'  shift, and go to state 425
+    LNG  shift, and go to state 420
+    DBL  shift, and go to state 421
+    CHR  shift, and go to state 422
+    '+'  shift, and go to state 425
+    '-'  shift, and go to state 426
 
     cdbl  go to state 436
 
 
 state 426
 
-  224 bounds: nullptr patt cdbl . min
-  225       | nullptr patt cdbl . minmax cdbl
+  236 cdbl: '-' . cdbl
 
-    ':'  shift, and go to state 437
-    '<'  shift, and go to state 438
+    LNG  shift, and go to state 420
+    DBL  shift, and go to state 421
+    CHR  shift, and go to state 422
+    '+'  shift, and go to state 425
+    '-'  shift, and go to state 426
 
-    $default  reduce using rule 236 (min)
-
-    min     go to state 439
-    minmax  go to state 440
+    cdbl  go to state 437
 
 
 state 427
 
-  226 bounds: nullptr patt max . cdbl
+  225 bounds: nullptr patt cdbl . min
+  226       | nullptr patt cdbl . minmax cdbl
 
-    LNG  shift, and go to state 419
-    DBL  shift, and go to state 420
-    CHR  shift, and go to state 421
-    '+'  shift, and go to state 424
-    '-'  shift, and go to state 425
+    ':'  shift, and go to state 438
+    '<'  shift, and go to state 439
 
-    cdbl  go to state 441
+    $default  reduce using rule 237 (min)
+
+    min     go to state 440
+    minmax  go to state 441
 
 
 state 428
+
+  227 bounds: nullptr patt max . cdbl
+
+    LNG  shift, and go to state 420
+    DBL  shift, and go to state 421
+    CHR  shift, and go to state 422
+    '+'  shift, and go to state 425
+    '-'  shift, and go to state 426
+
+    cdbl  go to state 442
+
+
+state 429
 
   201 abstract: '=' LNG .
 
     $default  reduce using rule 201 (abstract)
 
 
-state 429
-
-  219 occurs: LNG .
-  220       | LNG . ':'
-  221       | LNG . ':' LNG
-
-    ':'  shift, and go to state 442
-
-    $default  reduce using rule 219 (occurs)
-
-
 state 430
 
-  222 occurs: ':' . LNG
+  220 occurs: LNG .
+  221       | LNG . ':'
+  222       | LNG . ':' LNG
 
-    LNG  shift, and go to state 443
+    ':'  shift, and go to state 443
+
+    $default  reduce using rule 220 (occurs)
 
 
 state 431
 
-   86 farg: tspec ptrs arg arrayck occurs . init
+  223 occurs: ':' . LNG
 
-    '='  shift, and go to state 400
-
-    $default  reduce using rule 214 (init)
-
-    init  go to state 444
+    LNG  shift, and go to state 444
 
 
 state 432
 
-  250 cexp: obex '?' qexp ':' cexp .
+   86 farg: tspec ptrs arg arrayck occurs . init
 
-    $default  reduce using rule 250 (cexp)
+    '='  shift, and go to state 399
+    EQ   shift, and go to state 400
+
+    $default  reduce using rule 214 (init)
+
+    init  go to state 445
 
 
 state 433
+
+  251 cexp: obex '?' qexp ':' cexp .
+
+    $default  reduce using rule 251 (cexp)
+
+
+state 434
 
   213 brinit: '{' cexp '}' .
 
     $default  reduce using rule 213 (brinit)
 
 
-state 434
-
-  246 max: ':' '<' .
-
-    $default  reduce using rule 246 (max)
-
-
 state 435
 
-  234 cdbl: '+' cdbl .
+  247 max: ':' '<' .
 
-    $default  reduce using rule 234 (cdbl)
+    $default  reduce using rule 247 (max)
 
 
 state 436
 
-  235 cdbl: '-' cdbl .
+  235 cdbl: '+' cdbl .
 
     $default  reduce using rule 235 (cdbl)
 
 
 state 437
 
-  237 min: ':' .
-  240 minmax: ':' .
-  242       | ':' . '<'
+  236 cdbl: '-' cdbl .
 
-    '<'  shift, and go to state 445
-
-    LNG       reduce using rule 240 (minmax)
-    DBL       reduce using rule 240 (minmax)
-    CHR       reduce using rule 240 (minmax)
-    '+'       reduce using rule 240 (minmax)
-    '-'       reduce using rule 240 (minmax)
-    $default  reduce using rule 237 (min)
+    $default  reduce using rule 236 (cdbl)
 
 
 state 438
 
-  238 min: '<' . ':'
-  239    | '<' .
-  241 minmax: '<' . ':'
-  243       | '<' . ':' '<'
-  244       | '<' .
+  238 min: ':' .
+  241 minmax: ':' .
+  243       | ':' . '<'
 
-    ':'  shift, and go to state 446
-
-    LNG       reduce using rule 244 (minmax)
-    DBL       reduce using rule 244 (minmax)
-    CHR       reduce using rule 244 (minmax)
-    '+'       reduce using rule 244 (minmax)
-    '-'       reduce using rule 244 (minmax)
-    $default  reduce using rule 239 (min)
-
-
-state 439
-
-  224 bounds: nullptr patt cdbl min .
-
-    $default  reduce using rule 224 (bounds)
-
-
-state 440
-
-  225 bounds: nullptr patt cdbl minmax . cdbl
-
-    LNG  shift, and go to state 419
-    DBL  shift, and go to state 420
-    CHR  shift, and go to state 421
-    '+'  shift, and go to state 424
-    '-'  shift, and go to state 425
-
-    cdbl  go to state 447
-
-
-state 441
-
-  226 bounds: nullptr patt max cdbl .
-
-    $default  reduce using rule 226 (bounds)
-
-
-state 442
-
-  220 occurs: LNG ':' .
-  221       | LNG ':' . LNG
-
-    LNG  shift, and go to state 448
-
-    $default  reduce using rule 220 (occurs)
-
-
-state 443
-
-  222 occurs: ':' LNG .
-
-    $default  reduce using rule 222 (occurs)
-
-
-state 444
-
-   86 farg: tspec ptrs arg arrayck occurs init .
-
-    $default  reduce using rule 86 (farg)
-
-
-state 445
-
-  242 minmax: ':' '<' .
-
-    $default  reduce using rule 242 (minmax)
-
-
-state 446
-
-  238 min: '<' ':' .
-  241 minmax: '<' ':' .
-  243       | '<' ':' . '<'
-
-    '<'  shift, and go to state 449
+    '<'  shift, and go to state 446
 
     LNG       reduce using rule 241 (minmax)
     DBL       reduce using rule 241 (minmax)
@@ -7590,22 +7501,114 @@ state 446
     $default  reduce using rule 238 (min)
 
 
-state 447
+state 439
 
-  225 bounds: nullptr patt cdbl minmax cdbl .
+  239 min: '<' . ':'
+  240    | '<' .
+  242 minmax: '<' . ':'
+  244       | '<' . ':' '<'
+  245       | '<' .
+
+    ':'  shift, and go to state 447
+
+    LNG       reduce using rule 245 (minmax)
+    DBL       reduce using rule 245 (minmax)
+    CHR       reduce using rule 245 (minmax)
+    '+'       reduce using rule 245 (minmax)
+    '-'       reduce using rule 245 (minmax)
+    $default  reduce using rule 240 (min)
+
+
+state 440
+
+  225 bounds: nullptr patt cdbl min .
 
     $default  reduce using rule 225 (bounds)
 
 
-state 448
+state 441
 
-  221 occurs: LNG ':' LNG .
+  226 bounds: nullptr patt cdbl minmax . cdbl
+
+    LNG  shift, and go to state 420
+    DBL  shift, and go to state 421
+    CHR  shift, and go to state 422
+    '+'  shift, and go to state 425
+    '-'  shift, and go to state 426
+
+    cdbl  go to state 448
+
+
+state 442
+
+  227 bounds: nullptr patt max cdbl .
+
+    $default  reduce using rule 227 (bounds)
+
+
+state 443
+
+  221 occurs: LNG ':' .
+  222       | LNG ':' . LNG
+
+    LNG  shift, and go to state 449
 
     $default  reduce using rule 221 (occurs)
 
 
-state 449
+state 444
 
-  243 minmax: '<' ':' '<' .
+  223 occurs: ':' LNG .
+
+    $default  reduce using rule 223 (occurs)
+
+
+state 445
+
+   86 farg: tspec ptrs arg arrayck occurs init .
+
+    $default  reduce using rule 86 (farg)
+
+
+state 446
+
+  243 minmax: ':' '<' .
 
     $default  reduce using rule 243 (minmax)
+
+
+state 447
+
+  239 min: '<' ':' .
+  242 minmax: '<' ':' .
+  244       | '<' ':' . '<'
+
+    '<'  shift, and go to state 450
+
+    LNG       reduce using rule 242 (minmax)
+    DBL       reduce using rule 242 (minmax)
+    CHR       reduce using rule 242 (minmax)
+    '+'       reduce using rule 242 (minmax)
+    '-'       reduce using rule 242 (minmax)
+    $default  reduce using rule 239 (min)
+
+
+state 448
+
+  226 bounds: nullptr patt cdbl minmax cdbl .
+
+    $default  reduce using rule 226 (bounds)
+
+
+state 449
+
+  222 occurs: LNG ':' LNG .
+
+    $default  reduce using rule 222 (occurs)
+
+
+state 450
+
+  244 minmax: '<' ':' '<' .
+
+    $default  reduce using rule 244 (minmax)

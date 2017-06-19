@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.47" /* Current version */
-# define GSOAP_VERSION 20847
+# define VERSION "2.8.48" /* Current version */
+# define GSOAP_VERSION 20848
 #endif
 
 #ifdef WIN32
@@ -261,7 +261,9 @@ typedef	union Value {
 typedef	struct IDinfo {
 	Tnode		*typ;
 	Storage		sto;
-	Bool		hasval;		/* if true, identifier is constant */
+	Bool		hasval;		/* if true, identifier has a default value */
+	Bool		ptrval;		/* if true, identifier is a pointer to a default value */
+	Bool		fixed;		/* if true and hasval, identifier has a fixed value */
 	Value		val;		/* ... with this value */
 	int		offset;
 	LONG64		minOccurs;
@@ -294,7 +296,8 @@ typedef struct FNinfo {
 typedef	struct Node {
 	Tnode		*typ;
 	Storage		sto;
-	Bool		hasval;		/* if true, this node has a constant value */
+	Bool		hasval;		/* if true, this node has a default value */
+	Bool		fixed;		/* if true and hasval, this node has a fixed value */
 	Value		val;		/* ... this is the value */
 	Bool		hasmin;
 	Bool		hasmax;

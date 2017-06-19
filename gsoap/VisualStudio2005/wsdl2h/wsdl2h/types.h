@@ -114,7 +114,7 @@ class Types
     void document(const xs__annotation*);
     void modify(const char *name);
     const char *format(const char *text);
-    void gendefault(const char *URI, const char *type, const char *name, xs__simpleType *p, const char *s, const char *q);
+    void gendefault(const char *URI, const char *type, const char *name, xs__simpleType *p, const char *s, const char *q, const char *a);
 };
 
 #endif

@@ -56,7 +56,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 To use the CURL plugin:
 -# Add `#include "plugin/curlapi.h"` to your client-side code and compile your
-   code together with `plugin/curlapi.c`. Link with libcurl.
+   code together with `plugin/curlapi.c`. Link your code with libcurl.
 -# Add `curl_global_init(CURL_GLOBAL_ALL)` at the start of your program to
    initialize CURL. Add `curl_global_cleanup()` at the end of your program.
 -# In your source code where you create a `soap` context, register the plugin
@@ -66,9 +66,12 @@ To use the CURL plugin:
    register the plugin with `soap_register_plugin_arg(soap, soap_curl, curl)`.
    The benefit of this is that you can set CURL options of the handle. Do not
    delete this handle until the `soap` context is deleted.
+-# If you register multiple other plugins with the context, you should register
+   the CURL plugin always first.
 
 The plugin is not limited to SOAP calls, you can use it with XML REST and JSON
-in gSOAP.  The plugin registry stepst are the same.
+in gSOAP.  The plugin registry steps are the same for any client-side API
+service calls.
 
 The CURL plugin supports SOAP with MTOM attachments, including streaming MTOM.
 Other plugins can be combined with this plugin, such as WSSE for WS-Security.
@@ -97,9 +100,8 @@ CURL plugin, when set, as follows:
     curl_global_init(CURL_GLOBAL_ALL);
     soap = soap_new1(SOAP_IO_CHUNK);
     soap_register_plugin(soap, soap_curl);
-    soap->connect_timeout = 60;
-    soap->send_timeout = 10;
-    soap->recv_timeout = 10;
+    soap->connect_timeout = 60;  // 1 minute
+    soap->transfer_timeout = 10; // 10 seconds
     ...
     // client program runs
     ...
@@ -237,7 +239,7 @@ plugin.
 @section curl_4 JSON REST example
 
 See the gSOAP [JSON documentation](https://www.genivia.com/doc/xml-rpc-json/html/index.html)
-for details about using JSON with gSOAP.
+for details about using JSON with gSOAP in C and in C++.
 
 A JSON client in C with CURL has the following outline:
 
@@ -261,15 +263,19 @@ A JSON client in C with CURL has the following outline:
     {
       ... // use the response data here
     }
-    soap_end(ctx);     // delete all values
-    ... // here we can make other calls etc.
-    soap_free(ctx); // delete the context
+    soap_destroy(ctx); // delete objects
+    soap_end(ctx);     // delete data
+    ...                // here we can make other calls etc.
+    soap_free(ctx);    // delete the context
     curl_global_cleanup();
 @endcode
 
 As stated previously, to use a current `CURL *curl` handle that you have
 created, use `soap_register_plugin_arg(soap, soap_curl, curl)` to register the
 plugin.
+
+JSON in C++ is similar to the C example shown with the benefit of the
+easy-to-use [JSON C++ API](https://www.genivia.com/doc/xml-rpc-json/html/index.html#cpp).
 
 */
 
@@ -346,6 +352,7 @@ static int soap_curl_init(struct soap *soap, struct soap_curl_data *data, CURL *
   data->soap = soap;
   data->curl = curl;
   data->own = (curl == NULL);
+  data->active = 0;
   data->hdr = NULL;
   data->blk = NULL;
   data->ptr = NULL;
@@ -357,8 +364,10 @@ static int soap_curl_init(struct soap *soap, struct soap_curl_data *data, CURL *
   soap->omode |= SOAP_ENC_PLAIN;
   data->fconnect = soap->fconnect;
   soap->fconnect = soap_curl_connect_callback;
-  data->fsend = NULL;
-  data->frecv = NULL;
+  data->fsend = soap->fsend;
+  soap->fsend = soap_curl_send_callback;
+  data->frecv = soap->frecv;
+  soap->frecv = soap_curl_recv_callback;
   data->fprepareinitrecv = soap->fprepareinitrecv;
   soap->fprepareinitrecv = soap_curl_prepare_init_recv_callback;
   data->fpreparefinalrecv = soap->fpreparefinalrecv;
@@ -381,10 +390,8 @@ static void soap_curl_delete(struct soap *soap, struct soap_plugin *p)
     soap_end_block(soap, data->lst);
   if (data->curl && data->own)
     curl_easy_cleanup(data->curl);
-  if (data->fsend)
-    soap->fsend = data->fsend;
-  if (data->frecv)
-    soap->frecv = data->frecv;
+  soap->fsend = data->fsend;
+  soap->frecv = data->frecv;
   soap->fprepareinitrecv = data->fprepareinitrecv;
   soap->fpreparefinalrecv = data->fpreparefinalrecv;
   SOAP_FREE(soap, data);
@@ -409,18 +416,7 @@ soap_curl_reset(struct soap *soap)
   struct soap_curl_data *data = (struct soap_curl_data*)soap_lookup_plugin(soap, soap_curl_id);
   DBGFUN("soap_curl_reset");
   if (data)
-  {
-    if (data->fsend)
-    {
-      soap->fsend = data->fsend;
-      data->fsend = NULL;
-    }
-    if (data->frecv)
-    {
-      soap->frecv = data->frecv;
-      data->frecv = NULL;
-    }
-  }
+    data->active = 0;
 }
 
 /******************************************************************************\
@@ -498,7 +494,9 @@ static int soap_curl_connect_callback(struct soap *soap, const char *endpoint, c
     curl_easy_setopt(data->curl, CURLOPT_CONNECTTIMEOUT, (long)soap->connect_timeout);
   else if (soap->connect_timeout < 0)
     curl_easy_setopt(data->curl, CURLOPT_CONNECTTIMEOUT_MS, -(long)soap->connect_timeout/1000);
-  if (soap->send_timeout > 0)
+  if (soap->transfer_timeout > 0)
+    curl_easy_setopt(data->curl, CURLOPT_TIMEOUT, (long)soap->transfer_timeout);
+  else if (soap->send_timeout > 0)
     curl_easy_setopt(data->curl, CURLOPT_TIMEOUT, (long)soap->send_timeout);
   else if (soap->send_timeout < 0)
     curl_easy_setopt(data->curl, CURLOPT_TIMEOUT_MS, -(long)soap->send_timeout/1000);
@@ -515,12 +513,8 @@ static int soap_curl_connect_callback(struct soap *soap, const char *endpoint, c
     return soap->error;
   data->lst = soap->blist;
   soap->blist = soap->blist->next;
-  /* set up send callback */
-  if (!data->fsend && soap->fsend != soap_curl_send_callback)
-  {
-    data->fsend = soap->fsend;
-    soap->fsend = soap_curl_send_callback;
-  }
+  /* activate callbacks */
+  data->active = 1;
   return SOAP_OK;
 }
 
@@ -539,6 +533,8 @@ static int soap_curl_send_callback(struct soap *soap, const char *buf, size_t le
   DBGFUN1("soap_curl_send_callback", "len=%zu", len);
   if (!data || !data->lst)
     return soap->error = SOAP_PLUGIN_ERROR;
+  if (!data->active)
+    return data->fsend(soap, buf, len);
   blk = (char*)soap_push_block(soap, data->lst, len);
   if (!blk)
     return soap->error;
@@ -560,12 +556,6 @@ static int soap_curl_prepare_init_recv_callback(struct soap *soap)
     return soap->error = SOAP_PLUGIN_ERROR;
   if (!data->lst)
     return SOAP_OK;
-  /* remove send callback */
-  if (data->fsend)
-  {
-    soap->fsend = data->fsend;
-    data->fsend = NULL;
-  }
   if ((data->mode & SOAP_IO) == SOAP_IO_CHUNK)
   {
     /* HTTP chunking mode was set with soap_init1() */
@@ -595,12 +585,6 @@ static int soap_curl_prepare_init_recv_callback(struct soap *soap)
   data->hdr = NULL;
   if (res != CURLE_OK)
     return soap_sender_fault(soap, curl_easy_strerror(res), "origin: soap_curl plugin");
-  /* set up recv callback */
-  if (!data->frecv && soap->frecv != soap_curl_recv_callback)
-  {
-    data->frecv = soap->frecv;
-    soap->frecv = soap_curl_recv_callback;
-  }
   if (data->fprepareinitrecv)
     return data->fprepareinitrecv(soap);
   return SOAP_OK;
@@ -618,12 +602,8 @@ static int soap_curl_prepare_final_recv_callback(struct soap *soap)
   DBGFUN("soap_curl_prepare_final_recv_callback");
   if (!data)
     return soap->error = SOAP_PLUGIN_ERROR;
-  /* remove recv callback */
-  if (data->frecv)
-  {
-    soap->frecv = data->frecv;
-    data->frecv = NULL;
-  }
+  /* deactivate callbacks */
+  data->active = 0;
   if (data->fpreparefinalrecv)
     return data->fpreparefinalrecv(soap);
   return SOAP_OK;
@@ -647,6 +627,8 @@ static size_t soap_curl_recv_callback(struct soap *soap, char *buf, size_t size)
     soap->error = SOAP_PLUGIN_ERROR;
     return 0;
   }
+  if (!data->active)
+    return data->frecv(soap, buf, size);
   if (!data->lst)
   {
     long status;

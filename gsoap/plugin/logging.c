@@ -1,7 +1,7 @@
 /*
 	logging.c
 
-	Message logging plugin and stat collector for webserver.
+	Message logging plugin and stat collector for services.
 
 	Register the plugin with:
 		soap_register_plugin(soap, logging);

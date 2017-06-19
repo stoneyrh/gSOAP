@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.47
+        stdsoap2.h 2.8.48
 
         gSOAP runtime engine
 
@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20847
+#define GSOAP_VERSION 20848
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -300,6 +300,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_INTTYPES_H
 #  define HAVE_LOCALE_H
 #  define HAVE_XLOCALE_H
+#  define HAVE_RANDOM
 # elif defined(_AIX43)
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
@@ -380,6 +381,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_ISINF
 #  define HAVE_LOCALE_H
 #  define HAVE_XLOCALE_H
+#  define HAVE_RANDOM
 # elif defined(__VMS)
 #  include <ioctl.h>
 #  define HAVE_SNPRINTF
@@ -1473,9 +1475,9 @@ extern const char soap_base64o[], soap_base64i[];
 
 /* copy string up to n chars (sets string to empty on overrun and returns nonzero, zero if OK) */
 #if _MSC_VER >= 1400
-# define soap_strncpy(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > (size_t)(num) ? strncpy_s((buf), (len), (src), (num)) : !((buf)[0] = '\0')))
+# define soap_strncpy(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > (size_t)(num) ? strncpy_s((buf), (len), (src), (num)) : ((buf)[0] = '\0', 1)))
 #else
-# define soap_strncpy(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > (size_t)(num) ? (strncpy((buf), (src), (num)), (buf)[(size_t)(num)] = '\0') : !((buf)[0] = '\0')))
+# define soap_strncpy(buf, len, src, num) ((buf) == NULL || ((size_t)(len) > (size_t)(num) ? (strncpy((buf), (src), (num)), (buf)[(size_t)(num)] = '\0') : ((buf)[0] = '\0', 1)))
 #endif
 
 /* concat string up to n chars (truncates on overrun and returns nonzero, zero if OK) */
@@ -1556,8 +1558,10 @@ typedef soap_int32 soap_status;
 #define SOAP_UTF_ERROR                  48
 #define SOAP_NTLM_ERROR                 49
 #define SOAP_LEVEL                      50
+#define SOAP_FIXED                      51
+#define SOAP_EMPTY                      52
 
-#define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_TYPE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_LEVEL || (e) == SOAP_PATTERN || (e) == SOAP_NULL || (e) == SOAP_HREF)
+#define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_TYPE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_LEVEL || (e) == SOAP_PATTERN || (e) == SOAP_NULL || (e) == SOAP_HREF || (e) == SOAP_FIXED || (e) == SOAP_EMPTY)
 
 #define soap_soap_error_check(e) ((e) == SOAP_CLI_FAULT || (e) == SOAP_SVR_FAULT || (e) == SOAP_VERSIONMISMATCH || (e) == SOAP_MUSTUNDERSTAND || (e) == SOAP_FAULT || (e) == SOAP_NO_METHOD)
 
@@ -2546,8 +2550,9 @@ struct SOAP_CMAC soap
   const char *double_format;    /* user-definable format string for doubles (<1024 chars) */
   const char *long_double_format;       /* user-definable format string for long doubles (<1024 chars) */
   const char *dime_id_format;   /* user-definable format string for integer DIME id (<SOAP_TAGLEN chars) */
-  int recv_timeout;             /* user-definable, when > 0, gives socket recv timeout in seconds, < 0 in usec */
-  int send_timeout;             /* user-definable, when > 0, gives socket send timeout in seconds, < 0 in usec */
+  int transfer_timeout;         /* user-definable, when > 0, gives socket total transfer timeout in seconds, < 0 in usec */
+  int recv_timeout;             /* user-definable, when > 0, gives socket recv stall timeout in seconds, < 0 in usec */
+  int send_timeout;             /* user-definable, when > 0, gives socket send stall timeout in seconds, < 0 in usec */
   int connect_timeout;          /* user-definable, when > 0, gives socket connect() timeout in seconds, < 0 in usec */
   int accept_timeout;           /* user-definable, when > 0, gives socket accept() timeout in seconds, < 0 in usec */
   int socket_flags;             /* user-definable socket recv() and send() flags, e.g. set to MSG_NOSIGNAL to disable sigpipe */
@@ -2673,6 +2678,9 @@ struct SOAP_CMAC soap
   short cdata;          /* CDATA parser state */
   short body;           /* HTTP or XML element has a body (1) or not (0) */
   unsigned int level;   /* XML nesting level */
+#ifndef WITH_LEAN
+  time_t start;         /* start time of send/recv */
+#endif
   size_t count;         /* message length counter */
   size_t length;        /* message length as set by HTTP header */
   char *labbuf;         /* look-aside buffer */
@@ -2965,6 +2973,8 @@ soap_wchar soap_get1(struct soap*);
 #if defined(WITH_OPENSSL)
 # define soap_random soap_rand()
  SOAP_FMAC1 int SOAP_FMAC2 soap_rand(void);
+#elif defined(UNDER_CE)
+# define soap_random (int)Random()
 #elif defined(HAVE_RANDOM)
 # define soap_random (int)random()
 #else

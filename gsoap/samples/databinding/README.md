@@ -17,7 +17,7 @@ So integers in XML are bound to C integers, strings in XML are bound to C or
 C++ strings, complex types in XML are bound to C structs or C++ classes, and so
 on.  The structured data you create and accept will fit the data model and is
 **static type safe**.  In other words, by leveraging strong typing in C/C++,
-your XML data meets **XML validation requirements** and satisfies **XML
+your XML data meets **XML schema validation requirements** and satisfies **XML
 interoperability requirements**.
 
 The gSOAP data bindings are more powerful than simply representing C/C++ data
@@ -259,7 +259,7 @@ editing.
 @note Only define a namespace prefix once in `typemap.dat`.  That is, do not
 use the same prefix for multiple XML namespace URIs.  This is to avoid
 namespace conflicts that may cause failed builds and failures in XML parsing
-and validation.
+and XML schema validation.
 
 XSD type bindings                                                    {#typemap2}
 -----------------
@@ -628,7 +628,7 @@ type:
 
 This replaces all `prefix__type1` by `prefix__type2` in the wsdl2h output.
 
-@warning Do not agressively replace types, because this can cause XML
+@warning Do not agressively replace types, because this can cause XML schema
 validation to fail when a value-type mismatch is encountered in the XML input.
 Therefore, only replace similar types with other similar types that are wider
 (e.g.  `short` by `int` and `float` by `double`).
@@ -1728,8 +1728,9 @@ Classes and structs                                                    {#toxsd9}
 
 Classes and structs are mapped to XSD complexTypes.  The XML value space
 consists of XML elements with attributes and subelements, possibly constrained
-by validation rules that enforce element and attribute occurrence contraints,
-numerical value range constraints, and string length and pattern constraints.
+by XML schema validation rules that enforce element and attribute occurrence
+contraints, numerical value range constraints, and string length and pattern
+constraints.
 
 Classes that are declared with the gSOAP tools are limited to single
 inheritence only.  Structs cannot be inherited.
@@ -1878,7 +1879,7 @@ The `mutable` concept has proven to be very useful when declaring and
 collecting SOAP Headers for multiple services, which are collected into one
 `struct SOAP_ENV__Header` by the soapcpp2 tool.
 
-### Default member values in C and C++                               {#toxsd9-4}
+### Default and fixed member values                                  {#toxsd9-4}
 
 Class and struct data members in C and C++ may be declared with an optional
 default initialization value that is provided "inline" with the declaration of
@@ -1914,8 +1915,80 @@ the soapcpp2 auto-generated functions:
 - `void T::soap_default(struct soap*)` for `class T` (C++ only)
 - `void soap_default_T(struct soap*, T*)` for `struct T` (C and C++).
 
-Initializations can only be provided for members that have primitive types
-(`bool`, `enum`, `time_t`, numeric and string types).
+Default value initializations can be provided for members that have primitive
+types (`bool`, `enum`, `time_t`, numeric and string types).
+
+Default value initializations of pointer members is permitted, but the effect
+is different.  To conform to XML schema validation, an attribute member that is
+a pointer to a primitive type will be assigned the default value when parsed
+from XML.  An element member that is a pointer to a primitive type will be
+assigned when the element is empty when parsed from XML.
+
+As of gSOAP 2.8.48 and greater, a fixed value can be assigned with a `==`.  A
+fixed value is also verified by the parser's validator.
+
+Default and fixed values for members with or without pointers are best
+explained with the following two example fragments.
+
+A record class (can be a struct in C) with default values for attributes and
+elements is declared as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    class ns__record_with_default
+    {
+     public:
+      @std::string  a   = "A"; // optional XML attribute with default value "A"
+      @std::string  b 1 = "B"; // required XML attribute with default value "B"
+      @std::string *c   = "C"; // optional XML attribute with default value "C"
+       std::string  d 0 = "D"; // optional XML element with default value "D"
+       std::string  e   = "E"; // required XML element with default value "E"
+       std::string *f   = "F"; // optional XML element with default value "F"
+      ...
+    };
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that attributes are optional unless marked as required with the occurrence
+constraint `1`.  Elements are required unless the member type is a pointer or
+if the member is marked optional with occurrence constraint `0`.
+
+Instead of default values, fixed values indicate that the attribute or element
+must contain that value, and only that value, when provided in XML.  A fixed
+value is specified with a `==`.
+
+A record class (can be a struct in C) with fixed values for attributes and
+elements is declared as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    class ns__record_with_fixed
+    {
+     public:
+      @std::string  g   == "G"; // optional XML attribute with fixed value "G"
+      @std::string  h 1 == "H"; // required XML attribute with fixed value "H"
+      @std::string *i   == "I"; // optional XML attribute with fixed value "I"
+       std::string  j 0 == "J"; // optional XML element with fixed value "J"
+       std::string  k   == "K"; // required XML element with fixed value "K"
+       std::string *l   == "L"; // optional XML element with fixed value "L"
+      ...
+    };
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The XML schema validation rules for the two example classes above are as
+follows:
+
+| Member | Notes
+| ------ | ---------------------------------------------------------------------
+| `a`    | attribute may appear once; if it does not appear its value is "A", otherwise its value is that given (also note: instantiating `ns__record_with_default` assigns the default value "A")
+| `b`    | has no effect when parsing XML (but note: instantiating `ns__record_with_default` assigns the default value "B")
+| `c`    | attribute may appear once; if it does not appear its value is "C", otherwise its value is that given (also note: instantiating `ns__record_with_default` assigns NULL)
+| `d`    | element may appear once; if it does not appear or if it is empty, its value is "D"; otherwise its value is that given (also note: instantiating `ns__record_with_default` assigns the default value "D")
+| `e`    | has no effect when parsing XML (but note: instantiating `ns__record_with_default` assigns the default value "E")
+| `f`    | element may appear once; if it does not appear it is not provided; if it does appear and it is empty, its value is "F"; otherwise its value is that given (also note: instantiating `ns__record_with_default` assigns NULL)
+| `g`    | attribute may appear once; if it does not appear its value is "G", if it does not appear its value is "G" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "G")
+| `h`    | attribute must appear once, its value must be "H" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "H")
+| `i`    | attribute may appear once; if it does not appear its value is "I", if it does not appear its value is "I" (also note: instantiating `ns__record_with_fixed` assigns NULL)
+| `j`    | element may appear once, if it does not appear it is not provided; if it does appear and it is empty, its value is "J"; if it does appear and it is not empty, its value must be "J" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "J")
+| `k`    | element must appear once, its value must be "K" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "K")
+| `l`    | element may appear once, if it does not appear it is not provided; if it does appear and it is empty, its value is "J"; if it does appear and it is not empty, its value must be "J" (also note: instantiating `ns__record_with_fixed` assigns NULL)
 
 @see Section [operations on classes and structs](#toxsd9-13).
 
@@ -2264,7 +2337,8 @@ revealing the NULL property of its value.
 
 A non-pointer data member that is explicitly marked as optional with `0:1` will
 be set to its default value when no XML value is presented to the deserializer.
-A default value can be assigned to data members that have primitive types.
+A default value can be assigned to a data member that has a primitive type or
+is a (smart) pointer to primitive type.
 
 Consider for example:
 
@@ -2468,7 +2542,7 @@ and the names of its members `x`, `n`, and `s`:
 - `xORnORs = SOAP_UNION_choice_n` when `u.n` is valid.
 - `xORnORs = SOAP_UNION_choice_s` when `u.s` is valid.
 - `xORnORs = 0` when none are valid (should only be used with great care,
-  because XML content validation may fail when content is required but absent).
+  because XSD validation may fail when content is required but absent).
 
 This class maps to a complexType with a sequence and choice in the
 soapcpp2-generated schema:
@@ -3226,7 +3300,7 @@ where `<prefix>` is the XML namespace prefix of a service binding.  The
 | `documentation` | text describing the service (see also the `name` property), multiple permitted   |
 | `doc`           | same as above, shorthand form                                                    |
 | `style`         | `document` (default) SOAP messaging style or `rpc` for SOAP RPC                  |
-| `encoding`      | `literal` (default), `encoded` for SOAP encoding, or a custom URI                | 
+| `encoding`      | `literal` (default), `encoded` for SOAP encoding, or a custom URI                |
 | `protocol`      | specifies SOAP or REST, see below                                                |
 | `port`          | URL of the service endpoint, usually an http or https address                    |
 | `transport`     | URI declaration of the transport, usually `http://schemas.xmlsoap.org/soap/http` |
@@ -3638,13 +3712,13 @@ ref attributes.
 To remove all rendered id-ref multi-referenced elements in gSOAP, use the
 `SOAP_XML_TREE` flag to initialize the gSOAP engine context.
 
-Some XML validation rules are turned off with SOAP encoding, because of the
+Some XSD validation rules are turned off with SOAP encoding, because of the
 presence of additional attributes, such as id and ref/href, SOAP arrays with
 arbitrary element tags for array elements, and the occurrence of additional
 multi-ref elements in the SOAP 1.1 Body.
 
 The use of "literal" puts no restrictions on the XML in the SOAP Body.  Full
-XML validation is possible, which can be enabled with the `SOAP_XML_STRICT`
+XSD validation is possible, which can be enabled with the `SOAP_XML_STRICT`
 flag to initialize the gSOAP engine context.  However, data graphs will be
 serialized as trees and cycles in the data will be cut from the XML rendition.
 
@@ -4209,11 +4283,12 @@ of primitive values as follows (this is for primitive types only):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     template<class T>
-    T * soap_make(struct soap *soap, T val)
+    T * soap_make(struct soap *soap, T val) throw (std::bad_alloc)
     {
       T *p = (T*)soap_malloc(soap, sizeof(T));
-      if (p)      // out of memory? Can also guard with assert(p != NULL) or throw an error
-        *p = val;
+      if (p == NULL)
+	throw std::bad_alloc;
+      *p = val;
       return p;
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -4290,9 +4365,11 @@ To create an array of pointers to values, define the following template:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     template<class T>
-    T **soap_make_array(struct soap *soap, T* array, int n)
+    T **soap_make_array(struct soap *soap, T* array, int n) throw (std::bad_alloc)
     { 
       T **p = (T**)soap_malloc(soap, n * sizeof(T*));
+      if (p == NULL)
+	throw std::bad_alloc;
       for (int i = 0; i < n; ++i)
         p[i] = &array[i];
       return p;

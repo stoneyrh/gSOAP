@@ -3828,7 +3828,7 @@ void Message::generate(Types& types, const char *sep, bool anonymous, bool remar
             else
             {
               fprintf(stream, anonymous ? anonformat : paraformat, t, unqual ? " :" : " ", types.aname(NULL, NULL, (*part).name), "");
-              types.gendefault(NULL, (*part).type, NULL, (*part).simpleTypePtr(), (*part).get_default(), NULL);
+              types.gendefault(NULL, (*part).type, NULL, (*part).simpleTypePtr(), (*part).get_default(), NULL, "=");
             }
             fprintf(stream, "%s", sep);
             if (remark)

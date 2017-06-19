@@ -2799,7 +2799,7 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
   const char *default__ = attribute.default__;
   const char *fixed = attribute.fixed;
   const char *nameURI = NULL, *typeURI = NULL, *nameprefix = NULL, *typeprefix = NULL;
-  bool is_optional = attribute.use != required && !default_;
+  bool is_optional = attribute.use != required && !default_ && !fixed;
   document(attribute.annotation);
   if (!URI)
     URI = attribute.schemaPtr()->targetNamespace;
@@ -2837,7 +2837,7 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
     {
       fixed = attribute.attributePtr()->fixed;
     }
-    if (default_)
+    if (default_ || fixed)
       is_optional = false;
     else if (is_optional)
       is_optional = attribute.attributePtr()->use != required;
@@ -2917,23 +2917,28 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
       fprintf(stream, " 1");
       break;
     default:
-      if (is_optional || default_)
-        fprintf(stream, " 0");
+      fprintf(stream, " 0");
       break;
   }
+  const char *s = "Optional attribute";
+  if (attribute.use == required)
+    s = "Required attribute";
+  else if (attribute.use == prohibited)
+    s = "Prohibited attribute";
   if (default_)
   {
-    gendefault(typeURI ? typeURI : URI, type, name, attribute.simpleTypePtr(), default_, default__);
-    fprintf(stream, ";\t///< Default attribute value=\"%s\".\n", default_);
+    gendefault(typeURI ? typeURI : URI, type, name, attribute.simpleTypePtr(), default_, default__, "=");
+    fprintf(stream, ";\t///< %s with default value=\"%s\".\n", s, default_);
   }
   else if (fixed)
-    fprintf(stream, ";\t///< Fixed attribute value=\"%s\".\n", fixed);
-  else if (attribute.use == required)
-    fprintf(stream, ";\t///< Required attribute.\n");
-  else if (attribute.use == prohibited)
-    fprintf(stream, ";\t///< Prohibited attribute.\n");
+  {
+    gendefault(typeURI ? typeURI : URI, type, name, attribute.simpleTypePtr(), fixed, fixed, "==");
+    fprintf(stream, ";\t///< %s with fixed value=\"%s\".\n", s, fixed);
+  }
   else
-    fprintf(stream, ";\t///< Optional attribute.\n");
+  {
+    fprintf(stream, ";\t///< %s.\n", s);
+  }
 }
 
 void Types::gen(const char *URI, const vector<xs__attributeGroup>& attributeGroups)
@@ -3135,12 +3140,6 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     min = element.minOccurs;
   if (element.maxOccurs)
     max = element.maxOccurs;
-  if ((min && strcmp(min, "0") && strcmp(min, "1")) || (max && strcmp(max, "0") && strcmp(max, "1"))) // min/maxOccurs > "1"
-  {
-    default_ = NULL;
-    default__ = NULL;
-    fixed = NULL;
-  }
   if (element.xmime__expectedContentTypes)
     fprintf(stream, "/// MTOM attachment with content types %s.\n", element.xmime__expectedContentTypes);
   if (element.targetNamespace)
@@ -3261,7 +3260,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
         fprintf(stream, "/// Element reference \"%s:\"%s.\n", element.schemaPtr()->targetNamespace, element.ref);
       else
         fprintf(stream, "/// Element \"%s\":%s.\n", element.schemaPtr()->targetNamespace, name);
-      nillable = (with_union && !is_choicetype(typeprefix, typeURI, type)) || ((fake_union || element.nillable || (is_nillable(element) && !(with_union && is_choicetype(typeprefix, typeURI, type)))) && !default_) || fixed;
+      nillable = (with_union && !is_choicetype(typeprefix, typeURI, type)) || ((fake_union || element.nillable || (is_nillable(element) && !(with_union && is_choicetype(typeprefix, typeURI, type)))));
       fprintf(stream, elementformat, pname(nillable, !with_union, typeprefix, typeURI, type), aname(nameprefix, nameURI, name));
     }
   }
@@ -3315,7 +3314,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     else
     {
       fprintf(stream, "/// Element \"%s\" of XSD type %s.\n", name, type);
-      nillable = (with_union && !is_choicetype(NULL, URI, type)) || ((fake_union || element.nillable || (is_nillable(element) && !(with_union && is_choicetype(NULL, URI, type)))) && !default_) || fixed;
+      nillable = (with_union && !is_choicetype(NULL, URI, type)) || ((fake_union || element.nillable || (is_nillable(element) && !(with_union && is_choicetype(NULL, URI, type)))));
       fprintf(stream, elementformat, pname(nillable, !with_union, NULL, URI, type), aname(nameprefix, nameURI, name));
     }
   }
@@ -3348,9 +3347,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     }
     else if (!cflag && !with_union && (r = vname("$POINTER")) && *r != '*' && *r != '$')
     {
-      if ((is_nillable(element) && !default_)
-       || fixed
-       || (fake_union && !default_))
+      if (is_nillable(element) || fake_union)
       {
         s = ">";
         fprintf(stream, templateformat_open, r, "\n");
@@ -3361,11 +3358,10 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     {
       fprintf(stream, elementformat, s, aname(nameprefix, nameURI, name));
     }
-    else if ((is_nillable(element) && !default_)
-     || fixed
+    else if (is_nillable(element)
      || ((cflag || sflag) && max && strcmp(max, "1")) // maxOccurs != "1"
      || (with_union && !cflag)
-     || (fake_union && !default_))
+     || fake_union)
     {
       fprintf(stream, pointerformat, s, aname(nameprefix, nameURI, name));
     }
@@ -3404,9 +3400,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     }
     else if (!cflag && !with_union && (r = vname("$POINTER")) && *r != '*' && *r != '$')
     {
-      if ((is_nillable(element) && !default_)
-       || fixed
-       || (fake_union && !default_))
+      if (is_nillable(element) || fake_union)
       {
         s = "}>";
         fprintf(stream, templateformat_open, r, "\n");
@@ -3417,11 +3411,10 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     {
       fprintf(stream, elementformat, s, aname(nameprefix, nameURI, name));
     }
-    else if ((is_nillable(element) && !default_)
-     || fixed
+    else if (is_nillable(element)
      || ((cflag || sflag) && max && strcmp(max, "1")) // maxOccurs != "1"
      || (with_union && !cflag)
-     || (fake_union && !default_))
+     || fake_union)
     {
       fprintf(stream, pointerformat, s, aname(nameprefix, nameURI, name));
     }
@@ -3458,7 +3451,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     }
     else
     {
-      nillable = (with_union && !cflag) || ((fake_union || is_nillable(element)) && !default_) || fixed;
+      nillable = (with_union && !cflag) || fake_union || is_nillable(element);
       fprintf(stream, elementformat, pname(nillable, !with_union, "_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
     }
   }
@@ -3504,29 +3497,37 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
   {
     if (nillable && (!min || !strcmp(min, "1")) && (!max || !strcmp(max, "1")))
       fprintf(stream, " nullptr");
-    if (!fake_union && !min && (default_ || fixed))
-      fprintf(stream, " 0");
-    else if (!fake_union && !min && !element.abstract)
+    if (!fake_union && !min)
       fprintf(stream, " 1");
     else if (!fake_union && min)
       fprintf(stream, " %s", min);
     if (max && strcmp(max, "1") && is_integer(max))
       fprintf(stream, ":%s", max);
+    const char *s = "Required element";
+    if (nillable && (!min || !strcmp(min, "1")) && (!max || !strcmp(max, "1")))
+      s = "Required nillable (xsi:nil when NULL) element";
+    else if (!fake_union && min && !strcmp(min, "0") && (!max || !strcmp(max, "1")))
+      s = "Optional element";
+    else if (!fake_union && max && !strcmp(max, "0"))
+      s = "Prohibited element";
+    else if (!fake_union && max)
+      s = "Elements";
     if (default_)
     {
-      gendefault(typeURI ? typeURI : URI, type, name, element.simpleTypePtr(), default_, default__);
-      fprintf(stream, ";\t///< Default element value=\"%s\".\n", default_);
+      if ((!min || !strcmp(min, "0") || !strcmp(min, "1")) && (!max || !strcmp(max, "0") || !strcmp(max, "1"))) // min/maxOccurs <= "0"
+	gendefault(typeURI ? typeURI : URI, type, name, element.simpleTypePtr(), default_, default__, "=");
+      fprintf(stream, ";\t///< %s with default value=\"%s\".\n", s, default_);
     }
     else if (fixed)
-      fprintf(stream, ";\t///< Fixed element value=\"%s\".\n", fixed);
-    else if (nillable && (!min || !strcmp(min, "1")) && (!max || !strcmp(max, "1")))
-      fprintf(stream, ";\t///< Required nillable (xsi:nil when NULL) element.\n");
-    else if (!fake_union && (!min || !strcmp(min, "1")) && (!max || !strcmp(max, "1")))
-      fprintf(stream, ";\t///< Required element.\n");
-    else if (!fake_union && min && !strcmp(min, "0") && (!max || !strcmp(max, "1")))
-      fprintf(stream, ";\t///< Optional element.\n");
+    {
+      if ((!min || !strcmp(min, "0") || !strcmp(min, "1")) && (!max || !strcmp(max, "0") || !strcmp(max, "1"))) // min/maxOccurs <= "0"
+	gendefault(typeURI ? typeURI : URI, type, name, element.simpleTypePtr(), fixed, fixed, "==");
+      fprintf(stream, ";\t///< %s with fixed value=\"%s\".\n", s, fixed);
+    }
     else
-      fprintf(stream, ";\n");
+    {
+      fprintf(stream, ";\t///< %s.\n", s);
+    }
   }
 }
 
@@ -4076,7 +4077,7 @@ const char* Types::format(const char *text)
   return s;
 }
 
-void Types::gendefault(const char *URI, const char *type, const char *name, xs__simpleType *p, const char *v, const char *q)
+void Types::gendefault(const char *URI, const char *type, const char *name, xs__simpleType *p, const char *v, const char *q, const char *a)
 {
   if (!v)
     return;
@@ -4092,7 +4093,7 @@ void Types::gendefault(const char *URI, const char *type, const char *name, xs__
       {
         v = enames[Pair(t, v)];
         if (v)
-          fprintf(stream, " = %s", v);
+          fprintf(stream, " %s %s", a, v);
       }
       return;
     }
@@ -4173,18 +4174,18 @@ void Types::gendefault(const char *URI, const char *type, const char *name, xs__
    || (d && !strncmp(s, "short ", 6))
    || (d && !strncmp(s, "Short ", 6))
    || (d && !strncmp(s, "ULONG64 ", 8)))
-    fprintf(stream, " = %s", v);
+    fprintf(stream, " %s %s", a, v);
   else if (!strncmp(s, "enum ", 5))
   {
     s += 5;
     while (isspace(*s))
       ++s;
     if (is_integer(s))
-      fprintf(stream, " = %s", v);
+      fprintf(stream, " %s %s", a, v);
     else if (!*s)
       fprintf(stream, " = 0");
     else if ((v = enames[Pair(t, v)]))
-      fprintf(stream, " = %s", v);
+      fprintf(stream, " %s %s", a, v);
   }
   else if (!strncmp(s, "char", 4)
         || !strncmp(s, "const char", 10)
@@ -4194,9 +4195,9 @@ void Types::gendefault(const char *URI, const char *type, const char *name, xs__
         || !strncmp(s, "const wchar_t", 13)
         || !strncmp(s, "std::string", 11)
         || !strncmp(s, "std::wstring", 12))
-    fprintf(stream, " = \"%s\"", cstring(v));
+    fprintf(stream, " %s \"%s\"", a, cstring(v));
   else if (!strcmp(s, "xsd__QName") && q)     // QName
-    fprintf(stream, " = \"%s\"", cstring(q));
+    fprintf(stream, " %s \"%s\"", a, cstring(q));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

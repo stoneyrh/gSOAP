@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.47 User Guide</title>
+<title>gSOAP 2.8.48 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.47 User Guide </h1>
+<h1 align="center">gSOAP 2.8.48 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Jun  7, 2017
+<h3 align="center">Jun 16, 2017
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -2866,8 +2866,8 @@ The following example illustrates the use of threads to improve the quality of s
 &nbsp;&nbsp;&nbsp;} <br />
 &nbsp;&nbsp;&nbsp;<b>else</b>&nbsp;<br />
 &nbsp;&nbsp;&nbsp;{ <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap.send_timeout = 60; // 60 seconds <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap.recv_timeout = 60; // 60 seconds <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap.send_timeout = 10; // 10 seconds max socket delay <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap.recv_timeout = 10; // 10 seconds max socket delay <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap.accept_timeout = 3600; // server stops after 1 hour of inactivity <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;soap.max_keep_alive = 100; // max keep-alive sequence <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>void</b>&nbsp;*process_request(<b>void</b>*); <br />
@@ -12277,7 +12277,7 @@ Section&nbsp;<a href="#sec:udp.h">18.1</a>
 <b>struct</b>&nbsp;soap soap; <br />
 <b>struct</b>&nbsp;SOAP_ENV__Header header; // the SOAP Header <br />
 soap_init(&amp;soap); <br />
-soap.send_timeout = 1; // 1s timeout <br />
+soap.send_timeout = 5; // 5 seconds max socket delay <br />
 soap_default_SOAP_ENV__Header(&amp;soap, &amp;header); // init SOAP Header <br />
 header.wsa__MessageID = "<i>message ID</i>"; <br />
 header.wsa__To = "<i>server URL</i>"; <br />
@@ -12303,8 +12303,7 @@ uses a broadcast address and the <i>SO_BROADCAST</i> socket option:
 <b>struct</b>&nbsp;SOAP_ENV__Header header; // the SOAP Header <br />
 in_addr_t addr = inet_addr("1.2.3.4"); // optional <br />
 soap_init(&amp;soap); <br />
-soap.send_timeout = 1; // 1s timeout <br />
-soap.connect_flags = SO_BROADCAST; // required for broadcast <br />
+soap.send_timeout = 5; // 5 seconds max socket delay &nbsp;soap.connect_flags = SO_BROADCAST; // required for broadcast <br />
 soap.ipv4_multicast_if = &amp;addr; // optional for IPv4: see setsockopt IPPROTO_IP IP_MULTICAST_IF <br />
 soap.ipv6_multicast_if = addr; // optional for IPv6: multicast sin6_scope_id <br />
 soap.ipv4_multicast_ttl = 1; // optional, see setsockopt IPPROTO_IP, IP_MULTICAST_TTL <br />
@@ -12348,8 +12347,8 @@ Section&nbsp;<a href="#sec:udp.h">18.1</a>
 <b>struct</b>&nbsp;wsa__EndpointReferenceType replyTo; // (anonymous) reply address <br />
 <b>char</b>&nbsp;*res; // server response <br />
 soap_init(&amp;soap); <br />
-soap.send_timeout = 1; // 1s timeout <br />
-soap.recv_timeout = 1; // 1s timeout <br />
+soap.send_timeout = 5; // 5 seconds max socket delay <br />
+soap.recv_timeout = 5; // 5 seconds max socket delay <br />
 soap_default_SOAP_ENV__Header(&amp;soap, &amp;header); // init SOAP Header <br />
 soap_default_wsa__EndpointReferenceType(&amp;soap, &amp;replyTo); // init reply address <br />
 replyTo.Address = "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous"; <br />
@@ -12410,8 +12409,8 @@ The client code includes a loop to receive response messages until a timeout occ
 <b>char</b>&nbsp;*res; <br />
 soap_init(&amp;soap); <br />
 soap.connect_flags = SO_BROADCAST; <br />
-soap.send_timeout = 1; // 1s timeout <br />
-soap.recv_timeout = 1; // 1s timeout <br />
+soap.send_timeout = 5; // 5 seconds max socket delay <br />
+soap.recv_timeout = 5; // 5 seconds max socket delay <br />
 soap_default_SOAP_ENV__Header(&amp;soap, &amp;header); <br />
 soap.header = &amp;header; <br />
 soap_default_wsa__EndpointReferenceType(&amp;soap, &amp;replyTo); <br />
@@ -13965,8 +13964,8 @@ each thread handles the client connection:
 <b>void</b>&nbsp;*process_request(<b>void</b>&nbsp;*soap) <br />
 { <br />
 &nbsp;&nbsp;&nbsp;pthread_detach(pthread_self()); <br />
-&nbsp;&nbsp;&nbsp;((<b>struct</b>&nbsp;soap*)soap)<tt>-&gt;</tt>recv_timeout = 300; // Timeout after 5 minutes stall on recv <br />
-&nbsp;&nbsp;&nbsp;((<b>struct</b>&nbsp;soap*)soap)<tt>-&gt;</tt>send_timeout = 60; // Timeout after 1 minute stall on send <br />
+&nbsp;&nbsp;&nbsp;((<b>struct</b>&nbsp;soap*)soap)<tt>-&gt;</tt>recv_timeout = 60; // Timeout after 1 minute stall on recv <br />
+&nbsp;&nbsp;&nbsp;((<b>struct</b>&nbsp;soap*)soap)<tt>-&gt;</tt>send_timeout = 10; // Timeout after 10 second stall on send <br />
 &nbsp;&nbsp;&nbsp;soap_serve((<b>struct</b>&nbsp;soap*)soap); <br />
 &nbsp;&nbsp;&nbsp;soap_destroy((<b>struct</b>&nbsp;soap*)soap); <br />
 &nbsp;&nbsp;&nbsp;soap_end((<b>struct</b>&nbsp;soap*)soap); <br />
@@ -14313,11 +14312,12 @@ XML schema validation constraints are enforced with the <i>SOAP_XML_STRICT</i> c
 <div class="p"><!----></div>
 Socket connect, accept, send, and receive timeout values can be set to manage
 socket communication timeouts.  The <i>soap.connect_timeout</i>,
-<i>soap.accept_timeout</i>, <i>soap.send_timeout</i>, and
-<i>soap.recv_timeout</i> context attributes of the current gSOAP runtime context
-<i>soap</i> can be set to the appropriate user-defined socket send, receive, and
-accept timeout values. A positive value measures the timeout in seconds. A
-negative timeout value measures the timeout in microseconds (10<sup>&#8722;6</sup> sec).
+<i>soap.accept_timeout</i>, <i>soap.send_timeout</i>,
+<i>soap.recv_timeout</i> and <i>soap.transfer_timeout</i> context attributes of
+the current gSOAP runtime context <i>soap</i> can be set to the appropriate
+user-defined socket send, receive, and accept timeout values. A positive value
+measures the timeout in seconds. A negative timeout value measures the timeout
+in microseconds (10<sup>&#8722;6</sup> sec).
 
 <div class="p"><!----></div>
 The <i>soap.connect_timeout</i> specifies the timeout for
@@ -14329,7 +14329,10 @@ The <i>soap.accept_timeout</i> specifies the timeout for
 
 <div class="p"><!----></div>
 The <i>soap.send_timeout</i> and <i>soap.recv_timeout</i> specify the timeout
-for non-blocking socket I/O operations.
+for non-blocking socket I/O operations.  This is the maximum delay on the socket operation permitted.
+
+<div class="p"><!----></div>
+The <i>soap.transfer_timeout</i> is new since 2.8.48 and limits the time a message send and a message receive operation can take.  This value should be used in combination with <i>soap.send_timeout</i> and <i>soap.recv_timeout</i> for accurate timeout control.
 
 <div class="p"><!----></div>
 Example:
@@ -14337,22 +14340,25 @@ Example:
 <b>struct</b>&nbsp;soap soap; <br />
 soap_init(&amp;soap); <br />
 soap.send_timeout = 10; <br />
-soap.recv_timeout = 10; 
+soap.recv_timeout = 10; <br />
+soap.recv_timeout = 60; 
 </td></tr></table><br></i>
 This will result in a timeout if no data can be send in 10 seconds and no data is received within 10 seconds after initiating
 a send or receive operation over the socket. A value of zero disables timeout, for example:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 soap.send_timeout = 0; <br />
+soap.recv_timeout = 0;  <br />
 soap.recv_timeout = 0; 
 </td></tr></table><br></i>
-When a timeout occurs in send/receive operations, a <i>SOAP_EOF</i> exception will be raised ("end of file or no input").
+When a timeout occurs in the send or receive operations, a <i>SOAP_EOF</i> exception will be raised ("end of file or no input").
 Negative timeout values measure timeouts in microseconds, for example:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 #define uSec *-1 <br />
 #define mSec *-1000 <br />
 soap.accept_timeout = 10 uSec; <br />
 soap.send_timeout = 20 mSec; <br />
-soap.recv_timeout = 20 mSec;
+soap.recv_timeout = 20 mSec; <br />
+soap.recv_timeout = 10;
 </td></tr></table><br></i>
 The macros improve readability.
 
@@ -16695,5 +16701,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On  7 Jun 2017, 10:05.</small>
+version 4.00.<br />On 16 Jun 2017, 16:14.</small>
 </html>

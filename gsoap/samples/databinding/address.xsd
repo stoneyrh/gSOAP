@@ -36,7 +36,7 @@
     <element name="street" type="xsd:string" minOccurs="1" maxOccurs="1"/>
     <element name="city" type="xsd:string" minOccurs="1" maxOccurs="1"/>
     <element name="zip" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-    <element name="country" type="tns:ISO-country" minOccurs="0" maxOccurs="1" default = "us"/>
+    <element name="country" type="tns:ISO-country" minOccurs="1" maxOccurs="1" default = "us"/>
     <element name="phone" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
     <element name="mobile" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
     <element name="dob" type="xsd:dateTime" minOccurs="0" maxOccurs="1" nillable="true"/>

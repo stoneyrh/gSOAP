@@ -747,14 +747,14 @@ Overview                                                               {#cpp-ex}
 
 An XML-RPC/JSON data value is created in C++ as follows, which requires a
 context `ctx` with the engine state (the soap struct).  The context manages the
-memory that is internally allocated to hold values.
+memory that is internally allocated to hold values:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     #include "soapH.h"
 
     soap *ctx = soap_new1(SOAP_C_UTFSTRING);  // new context
 
-    value v(ctx);
+    value v(ctx);       // a new local value v
 
     soap_destroy(ctx);  // delete all values
     soap_end(ctx);      // delete temp data
@@ -801,7 +801,7 @@ of the following data types:
 
     v = false;            // Boolean
 
-    v = (ULONG64)time(0); // time_t value serialized as ISO 8601 date time
+    v = (ULONG64)time(0); // ULONG64 values are serialized as ISO 8601 date time
 
     // create an array [24, 99.99, "abc"]
     v[0] = 24;
@@ -1964,9 +1964,9 @@ The following functions can be used with arrays and structs (JSON objects):
     struct value *nth_value(v, int)            /* returns nth value in array or struct */
     struct value *value_at(v, const char*)     /* returns value at field in struct */
     struct value *value_atw(v, const wchar_t*) /* returns value at field in struct */
-    int nth_at(v, const char*)                 /* returns nth index of field in struct or -1
-    int nth_atw(v, const wchar_t*)             /* returns nth index of field in struct or -1
-    int nth_nth(v, int)                        /* returns nth index if nth index exists in array or -1
+    int nth_at(v, const char*)                 /* returns nth index of field in struct or -1 */
+    int nth_atw(v, const wchar_t*)             /* returns nth index of field in struct or -1 */
+    int nth_nth(v, int)                        /* returns nth index if nth index exists in array or -1 */
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When accessing structs (JSON objects) with `value_at`, make sure to use

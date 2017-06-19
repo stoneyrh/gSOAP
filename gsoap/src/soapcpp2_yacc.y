@@ -324,9 +324,9 @@ t1      : '['           { transient |= 1; }
         ;
 t2      : ']'           { transient &= ~1; }
         ;
-t3      :               { permission = Sprivate; }
+t3      :               { permission = (int)Sprivate; }
         ;
-t4      :               { permission = Sprotected; }
+t4      :               { permission = (int)Sprotected; }
         ;
 t5      :               { permission = 0; }
         ;
@@ -351,7 +351,7 @@ dclrs   : spec          { }
         ;
 dclr    : ptrs ID arrayck tag bounds brinit
                         {
-                          if (($3.sto & Stypedef) && sp->table->level == GLOBAL)
+                          if (((int)$3.sto & (int)Stypedef) && sp->table->level == GLOBAL)
                           {
                             if (($3.typ->type != Tstruct &&
                                   $3.typ->type != Tclass &&
@@ -363,7 +363,7 @@ dclr    : ptrs ID arrayck tag bounds brinit
                             {
                               p = enter(typetable, $2);
                               p->info.typ = mksymtype($3.typ, $2);
-                              if ($3.sto & Sextern)
+                              if (((int)$3.sto & (int)Sextern))
                               {
                                 p->info.typ->transient = -1;
                                 p->info.typ->extsym = $2;
@@ -422,8 +422,17 @@ dclr    : ptrs ID arrayck tag bounds brinit
                             p->info.sto = (Storage)((int)$3.sto | permission);
                             if ($6.hasval)
                             {
+                              Tnode *t = $3.typ;
                               p->info.hasval = True;
-                              switch ($3.typ->type)
+                              p->info.ptrval = False;
+                              p->info.fixed = $6.fixed;
+                              if (is_smart(t) || (t->type == Tpointer && !is_string(t) && !is_wstring(t)))
+                              {
+                                p->info.hasval = False;
+                                p->info.ptrval = True;
+                                t = t->ref;
+                              }
+                              switch (t->type)
                               {
                                 case Tchar:
                                 case Tuchar:
@@ -444,10 +453,10 @@ dclr    : ptrs ID arrayck tag bounds brinit
                                       $6.typ->type == Tenumsc)
                                   {
                                     sp->val = p->info.val.i = $6.val.i;
-                                    if (($3.typ->hasmin && $3.typ->min > (double)$6.val.i) ||
-                                        ($3.typ->hasmin && !$3.typ->incmin && $3.typ->min == (double)$6.val.i) ||
-                                        ($3.typ->hasmax && $3.typ->max < (double)$6.val.i) ||
-                                        ($3.typ->hasmax && !$3.typ->incmax && $3.typ->max == (double)$6.val.i))
+                                    if ((t->hasmin && t->min > (double)$6.val.i) ||
+                                        (t->hasmin && !t->incmin && t->min == (double)$6.val.i) ||
+                                        (t->hasmax && t->max < (double)$6.val.i) ||
+                                        (t->hasmax && !t->incmax && t->max == (double)$6.val.i))
                                       semerror("initialization constant outside value range");
                                   }
                                   else
@@ -464,19 +473,19 @@ dclr    : ptrs ID arrayck tag bounds brinit
                                       $6.typ->type == Tldouble)
                                   {
                                     p->info.val.r = $6.val.r;
-                                    if (($3.typ->hasmin && $3.typ->min > $6.val.r) ||
-                                        ($3.typ->hasmin && !$3.typ->incmin && $3.typ->min == $6.val.r) ||
-                                        ($3.typ->hasmax && $3.typ->max < $6.val.r) ||
-                                        ($3.typ->hasmax && !$3.typ->incmax && $3.typ->max == $6.val.r))
+                                    if ((t->hasmin && t->min > $6.val.r) ||
+                                        (t->hasmin && !t->incmin && t->min == $6.val.r) ||
+                                        (t->hasmax && t->max < $6.val.r) ||
+                                        (t->hasmax && !t->incmax && t->max == $6.val.r))
                                       semerror("initialization constant outside value range");
                                   }
                                   else if ($6.typ->type == Tint)
                                   {
                                     p->info.val.r = (double)$6.val.i;
-                                    if (($3.typ->hasmin && $3.typ->min > (double)$6.val.i) ||
-                                        ($3.typ->hasmin && !$3.typ->incmin && $3.typ->min == (double)$6.val.i) ||
-                                        ($3.typ->hasmax && $3.typ->max < (double)$6.val.i) ||
-                                        ($3.typ->hasmax && !$3.typ->incmax && $3.typ->max == (double)$6.val.i))
+                                    if ((t->hasmin && t->min > (double)$6.val.i) ||
+                                        (t->hasmin && !t->incmin && t->min == (double)$6.val.i) ||
+                                        (t->hasmax && t->max < (double)$6.val.i) ||
+                                        (t->hasmax && !t->incmax && t->max == (double)$6.val.i))
                                       semerror("initialization constant outside value range");
                                   }
                                   else
@@ -486,19 +495,19 @@ dclr    : ptrs ID arrayck tag bounds brinit
                                   }
                                   break;
                                 default:
-                                  if ($3.typ->type == Tpointer &&
-                                      (((Tnode*)$3.typ->ref)->type == Tchar ||
-                                       ((Tnode*)$3.typ->ref)->type == Twchar) &&
+                                  if (t->type == Tpointer &&
+                                      (((Tnode*)t->ref)->type == Tchar ||
+                                       ((Tnode*)t->ref)->type == Twchar) &&
                                       $6.typ->type == Tpointer &&
                                       ((Tnode*)$6.typ->ref)->type == Tchar)
                                     p->info.val.s = $6.val.s;
                                   else if (bflag &&
-                                      $3.typ->type == Tarray &&
-                                      ((Tnode*)$3.typ->ref)->type == Tchar &&
+                                      t->type == Tarray &&
+                                      ((Tnode*)t->ref)->type == Tchar &&
                                       $6.typ->type == Tpointer &&
                                       ((Tnode*)$6.typ->ref)->type == Tchar)
                                   {
-                                    if ($3.typ->width / ((Tnode*)$3.typ->ref)->width - 1 < (int)strlen($6.val.s))
+                                    if (t->width / ((Tnode*)t->ref)->width - 1 < (int)strlen($6.val.s))
                                     {
                                       semerror("char[] initialization constant too long");
                                       p->info.val.s = "";
@@ -509,22 +518,10 @@ dclr    : ptrs ID arrayck tag bounds brinit
                                     }
 
                                   }
-                                  else if (($3.typ->type == Tpointer || is_smart($3.typ)) &&
-                                      (((Tnode*)$3.typ->ref)->id == lookup("std::string") ||
-                                       ((Tnode*)$3.typ->ref)->id == lookup("std::wstring")))
+                                  else if (t->id == lookup("std::string") ||
+                                      t->id == lookup("std::wstring"))
                                   {
                                     p->info.val.s = $6.val.s;
-                                  }
-                                  else if ($3.typ->id == lookup("std::string") ||
-                                      $3.typ->id == lookup("std::wstring"))
-                                  {
-                                    p->info.val.s = $6.val.s;
-                                  }
-                                  else if ($3.typ->type == Tpointer &&
-                                      $6.typ->type == Tint &&
-                                      $6.val.i == 0)
-                                  {
-                                    p->info.val.i = 0;
                                   }
                                   else
                                   {
@@ -541,7 +538,7 @@ dclr    : ptrs ID arrayck tag bounds brinit
                             if ($5.minOccurs < 0)
                             {
                               if ($6.hasval ||
-                                  ($3.sto & Sattribute) ||
+                                  ((int)$3.sto & (int)Sattribute) ||
                                   $3.typ->type == Tpointer ||
                                   $3.typ->type == Ttemplate ||
                                   !strncmp($2->name, "__size", 6))
@@ -560,9 +557,9 @@ dclr    : ptrs ID arrayck tag bounds brinit
                             else
                               sp->val++;
                             p->info.offset = sp->offset;
-                            if ($3.sto & Sextern)
+                            if (((int)$3.sto & (int)Sextern))
                               p->level = GLOBAL;
-                            else if ($3.sto & Stypedef)
+                            else if (((int)$3.sto & (int)Stypedef))
                               ;
                             else if (sp->grow)
                               sp->offset += p->info.typ->width;
@@ -573,7 +570,7 @@ dclr    : ptrs ID arrayck tag bounds brinit
                         }
         ;
 fdclr   : ptrs name     {
-                          if ($1.sto & Stypedef)
+                          if (((int)$1.sto & (int)Stypedef))
                           {
                             sprintf(errbuf, "invalid typedef qualifier for '%s'", $2->name);
                             semwarn(errbuf);
@@ -685,14 +682,14 @@ func    : fname '(' s6 fargso ')' const abstract
                         {
                           if ($1->level == GLOBAL)
                           {
-                            if (!($1->info.sto & Sextern) &&
+                            if (!((int)$1->info.sto & (int)Sextern) &&
                                 sp->entry && sp->entry->info.typ->type == Tpointer &&
                                 ((Tnode*)sp->entry->info.typ->ref)->type == Tchar)
                             {
                               sprintf(errbuf, "last output parameter of service operation function prototype '%s' is a pointer to a char which will only return one byte: use char** instead to return a string", $1->sym->name);
                               semwarn(errbuf);
                             }
-                            if ($1->info.sto & Sextern)
+                            if (((int)$1->info.sto & (int)Sextern))
                             {
                               $1->info.typ = mkmethod($1->info.typ, sp->table);
                             }
@@ -760,7 +757,7 @@ fargs   : farg          { }
         ;
 farg    : tspec ptrs arg arrayck occurs init
                         {
-                          if ($4.sto & Stypedef)
+                          if (((int)$4.sto & (int)Stypedef))
                             semwarn("typedef in function argument");
                           p = enter(sp->table, $3);
                           p->info.typ = $4.typ;
@@ -768,7 +765,8 @@ farg    : tspec ptrs arg arrayck occurs init
                           if ($5.minOccurs < 0)
                           {
                             if ($6.hasval ||
-                                ($4.sto & Sattribute) ||
+                                ((int)$4.sto & (int)Sattribute) ||
+                                $4.typ->type == Ttemplate ||
                                 $4.typ->type == Tpointer)
                               p->info.minOccurs = 0;
                             else
@@ -781,8 +779,17 @@ farg    : tspec ptrs arg arrayck occurs init
                           p->info.maxOccurs = $5.maxOccurs;
                           if ($6.hasval)
                           {
+                            Tnode *t = $4.typ;
                             p->info.hasval = True;
-                            switch ($4.typ->type)
+                            p->info.ptrval = False;
+                            p->info.fixed = $6.fixed;
+                            if (is_smart(t) || (t->type == Tpointer && !is_string(t) && !is_wstring(t)))
+                            {
+                              p->info.hasval = False;
+                              p->info.ptrval = True;
+                              t = t->ref;
+                            }
+                            switch (t->type)
                             {
                               case Tchar:
                               case Tuchar:
@@ -801,10 +808,10 @@ farg    : tspec ptrs arg arrayck occurs init
                                     $6.typ->type == Tenumsc)
                                 {
                                   sp->val = p->info.val.i = $6.val.i;
-                                  if (($4.typ->hasmin && $4.typ->min > (double)$6.val.i) ||
-                                      ($4.typ->hasmin && !$4.typ->incmin && $4.typ->min == (double)$6.val.i) ||
-                                      ($4.typ->hasmax && $4.typ->max < (double)$6.val.i) ||
-                                      ($4.typ->hasmax && !$4.typ->incmax && $4.typ->max == (double)$6.val.i))
+                                  if ((t->hasmin && t->min > (double)$6.val.i) ||
+                                      (t->hasmin && !t->incmin && t->min == (double)$6.val.i) ||
+                                      (t->hasmax && t->max < (double)$6.val.i) ||
+                                      (t->hasmax && !t->incmax && t->max == (double)$6.val.i))
                                     semerror("initialization constant outside value range");
                                 }
                                 else
@@ -821,19 +828,19 @@ farg    : tspec ptrs arg arrayck occurs init
                                     $6.typ->type == Tldouble)
                                 {
                                   p->info.val.r = $6.val.r;
-                                  if (($4.typ->hasmin && $4.typ->min > $6.val.r) ||
-                                      ($4.typ->hasmin && !$4.typ->incmin && $4.typ->min == $6.val.r) ||
-                                      ($4.typ->hasmax && $4.typ->max < $6.val.r) ||
-                                      ($4.typ->hasmax && !$4.typ->incmax && $4.typ->max == $6.val.r))
+                                  if ((t->hasmin && t->min > $6.val.r) ||
+                                      (t->hasmin && !t->incmin && t->min == $6.val.r) ||
+                                      (t->hasmax && t->max < $6.val.r) ||
+                                      (t->hasmax && !t->incmax && t->max == $6.val.r))
                                     semerror("initialization constant outside value range");
                                 }
                                 else if ($6.typ->type == Tint)
                                 {
                                   p->info.val.r = (double)$6.val.i;
-                                  if (($4.typ->hasmin && $4.typ->min > (double)$6.val.i) ||
-                                      ($4.typ->hasmin && !$4.typ->incmin && $4.typ->min == (double)$6.val.i) ||
-                                      ($4.typ->hasmax && $4.typ->max < (double)$6.val.i) ||
-                                      ($4.typ->hasmax && !$4.typ->incmax && $4.typ->max == (double)$6.val.i))
+                                  if ((t->hasmin && t->min > (double)$6.val.i) ||
+                                      (t->hasmin && !t->incmin && t->min == (double)$6.val.i) ||
+                                      (t->hasmax && t->max < (double)$6.val.i) ||
+                                      (t->hasmax && !t->incmax && t->max == (double)$6.val.i))
                                     semerror("initialization constant outside value range");
                                 }
                                 else
@@ -843,30 +850,18 @@ farg    : tspec ptrs arg arrayck occurs init
                                 }
                                 break;
                               default:
-                                if ($4.typ->type == Tpointer &&
-                                    (((Tnode*)$4.typ->ref)->type == Tchar ||
-                                     ((Tnode*)$4.typ->ref)->type == Twchar) &&
+                                if (t->type == Tpointer &&
+                                    (((Tnode*)t->ref)->type == Tchar ||
+                                     ((Tnode*)t->ref)->type == Twchar) &&
                                     $6.typ->type == Tpointer &&
                                     ((Tnode*)$6.typ->ref)->type == Tchar)
                                 {
                                   p->info.val.s = $6.val.s;
                                 }
-                                else if (($4.typ->type == Tpointer || is_smart($4.typ)) &&
-                                    (((Tnode*)$4.typ->ref)->id == lookup("std::string") ||
-                                     ((Tnode*)$4.typ->ref)->id == lookup("std::wstring")))
+                                else if (t->id == lookup("std::string") ||
+                                    t->id == lookup("std::wstring"))
                                 {
                                   p->info.val.s = $6.val.s;
-                                }
-                                else if ($4.typ->id == lookup("std::string") ||
-                                    $4.typ->id == lookup("std::wstring"))
-                                {
-                                  p->info.val.s = $6.val.s;
-                                }
-                                else if ($4.typ->type == Tpointer &&
-                                    $6.typ->type == Tint &&
-                                    $6.val.i == 0)
-                                {
-                                  p->info.val.i = 0;
                                 }
                                 else
                                 {
@@ -877,7 +872,7 @@ farg    : tspec ptrs arg arrayck occurs init
                             }
                           }
                           p->info.offset = sp->offset;
-                          if ($4.sto & Sextern)
+                          if (((int)$4.sto & (int)Sextern))
                             p->level = GLOBAL;
                           else if (sp->grow)
                             sp->offset += p->info.typ->width;
@@ -932,28 +927,28 @@ spec    : /*empty */    {
         | store spec    {
                           $$.typ = $2.typ;
                           $$.sto = (Storage)((int)$1 | (int)$2.sto);
-                          if (($$.sto & Sattribute))
+                          if (((int)$$.sto & (int)Sattribute))
                           {
                             if (is_smart($2.typ))
                             {
                               if (!is_primitive_or_string($2.typ->ref) &&
-                                  !is_stdstr($2.typ->ref) &&
-                                  !is_binary($2.typ->ref) &&
-                                  !is_external($2.typ->ref))
+                                  !is_stdstr((Tnode*)$2.typ->ref) &&
+                                  !is_binary((Tnode*)$2.typ->ref) &&
+                                  !is_external((Tnode*)$2.typ->ref))
                               {
                                 semwarn("invalid attribute smart pointer @type");
-                                $$.sto = (Storage)((int)$$.sto & ~Sattribute);
+                                $$.sto = (Storage)((int)$$.sto & ~(int)Sattribute);
                               }
                             }
                             else if ($2.typ->type == Tpointer)
                             {
                               if (!is_primitive_or_string($2.typ->ref) &&
-                                  !is_stdstr($2.typ->ref) &&
-                                  !is_binary($2.typ->ref) &&
-                                  !is_external($2.typ->ref))
+                                  !is_stdstr((Tnode*)$2.typ->ref) &&
+                                  !is_binary((Tnode*)$2.typ->ref) &&
+                                  !is_external((Tnode*)$2.typ->ref))
                               {
                                 semwarn("invalid attribute pointer @type");
-                                $$.sto = (Storage)((int)$$.sto & ~Sattribute);
+                                $$.sto = (Storage)((int)$$.sto & ~(int)Sattribute);
                               }
                             }
                             else if (
@@ -963,11 +958,11 @@ spec    : /*empty */    {
                                 !is_external($2.typ))
                             {
                               semwarn("invalid attribute @type");
-                              $$.sto = (Storage)((int)$$.sto & ~Sattribute);
+                              $$.sto = (Storage)((int)$$.sto & ~(int)Sattribute);
                             }
                           }
                           sp->node = $$;
-                          if ($1 & Sextern)
+                          if (((int)$1 & (int)Sextern))
                             transient = 0;
                         }
         | type spec     {
@@ -1026,7 +1021,7 @@ tspec   : store         {
                           $$.typ = mkint();
                           $$.sto = $1;
                           sp->node = $$;
-                          if ($1 & Sextern)
+                          if (((int)$1 & (int)Sextern))
                             transient = 0;
                         }
         | type          {
@@ -1037,28 +1032,28 @@ tspec   : store         {
         | store tspec   {
                           $$.typ = $2.typ;
                           $$.sto = (Storage)((int)$1 | (int)$2.sto);
-                          if (($$.sto & Sattribute))
+                          if (((int)$$.sto & (int)Sattribute))
                           {
                             if (is_smart($2.typ))
                             {
-                              if (!is_primitive_or_string($2.typ->ref) &&
-                                  !is_stdstr($2.typ->ref) &&
-                                  !is_binary($2.typ->ref) &&
-                                  !is_external($2.typ->ref))
+                              if (!is_primitive_or_string((Tnode*)$2.typ->ref) &&
+                                  !is_stdstr((Tnode*)$2.typ->ref) &&
+                                  !is_binary((Tnode*)$2.typ->ref) &&
+                                  !is_external((Tnode*)$2.typ->ref))
                               {
                                 semwarn("invalid attribute smart pointer @type");
-                                $$.sto = (Storage)((int)$$.sto & ~Sattribute);
+                                $$.sto = (Storage)((int)$$.sto & ~(int)Sattribute);
                               }
                             }
                             else if ($2.typ->type == Tpointer)
                             {
-                              if (!is_primitive_or_string($2.typ->ref) &&
-                                  !is_stdstr($2.typ->ref) &&
-                                  !is_binary($2.typ->ref) &&
-                                  !is_external($2.typ->ref))
+                              if (!is_primitive_or_string((Tnode*)$2.typ->ref) &&
+                                  !is_stdstr((Tnode*)$2.typ->ref) &&
+                                  !is_binary((Tnode*)$2.typ->ref) &&
+                                  !is_external((Tnode*)$2.typ->ref))
                               {
                                 semwarn("invalid attribute pointer @type");
-                                $$.sto = (Storage)((int)$$.sto & ~Sattribute);
+                                $$.sto = (Storage)((int)$$.sto & ~(int)Sattribute);
                               }
                             }
                             else if (
@@ -1068,11 +1063,11 @@ tspec   : store         {
                                 !is_external($2.typ))
                             {
                               semwarn("invalid attribute @type");
-                              $$.sto = (Storage)((int)$$.sto & ~Sattribute);
+                              $$.sto = (Storage)((int)$$.sto & ~(int)Sattribute);
                             }
                           }
                           sp->node = $$;
-                          if ($1 & Sextern)
+                          if (((int)$1 & (int)Sextern))
                             transient = 0;
                         }
         | type tspec    {
@@ -1609,6 +1604,8 @@ type    : VOID          { $$ = mkvoid(); }
                           {
                             $$ = mktemplate($3.typ, $1);
                             $$->transient = -2; /* volatile indicates smart pointer template */
+			    if (!c11flag)
+			      semwarn("To use smart pointers you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
                           }
                           else if ($1 == lookup("std::weak_ptr") ||
                               $1 == lookup("std::function"))
@@ -1799,12 +1796,12 @@ masksc  : ENUM '*' sc utype
 sc      : STRUCT id     {
                           $$ = $2;
                           if (!c11flag)
-                            semwarn("To use scoped enumerations (enum class) you must also use soapcpp2 option -c++11 or -c++14");
+                            semwarn("To use scoped enumerations (enum class) you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
                         }
         | CLASS id      {
                           $$ = $2;
                           if (!c11flag)
-                            semwarn("To use scoped enumerations (enum class) you must also use soapcpp2 option -c++11 or -c++14");
+                            semwarn("To use scoped enumerations (enum class) you must also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
                         }
         ;
 utype   : ':' CHAR      { $$ = 1; }
@@ -1906,9 +1903,9 @@ store   : AUTO          { $$ = Sauto; }
         | MUTABLE       { $$ = Smutable; transient = -4; } 
         ;
 const   : /* empty */   { $$ = Snone; }
-        | const CONST   { $$ |= Sconstobj; }
-        | const FINAL   { $$ |= Sfinal; }
-        | const OVERRIDE{ $$ |= Soverride; }
+        | const CONST   { $$ = (Storage)((int)$1 | (int)Sconstobj); }
+        | const FINAL   { $$ = (Storage)((int)$1 | (int)Sfinal); }
+        | const OVERRIDE{ $$ = (Storage)((int)$1 | (int)Soverride); }
         ;
 abstract: /* empty */   { $$ = Snone; }
         | '=' LNG       { $$ = Sabstract; }
@@ -1919,8 +1916,8 @@ virtual : /* empty */   { $$ = Snone; }
 ptrs    : /* empty */   { $$ = tmp = sp->node; }
         | ptrs '*'      {
                           /* handle const pointers, such as const char* */
-                          if ((tmp.sto & Sconst))
-                            tmp.sto = (Storage)(((int)tmp.sto & ~Sconst) | Sconstptr);
+                          if (((int)tmp.sto & (int)Sconst))
+                            tmp.sto = (Storage)(((int)tmp.sto & ~(int)Sconst) | (int)Sconstptr);
                           tmp.typ = mkpointer(tmp.typ);
                           tmp.typ->transient = transient;
                           $$ = tmp;
@@ -1963,7 +1960,7 @@ array   : /* empty */   { $$ = tmp; }   /* tmp is inherited */
 arrayck : array         {
                           if ($1.typ->type == Tstruct || $1.typ->type == Tclass)
                           {
-                            if (!$1.typ->ref && !$1.typ->transient && !($1.sto & Stypedef))
+                            if (!$1.typ->ref && !$1.typ->transient && !((int)$1.sto & (int)Stypedef))
                             {
                               if ($1.typ->type == Tstruct)
                                 sprintf(errbuf, "struct '%s' has incomplete type (if this struct is not serializable then declare 'extern struct %s')", $1.typ->id->name, $1.typ->id->name);
@@ -1981,6 +1978,7 @@ brinit  : init          { $$ = $1; }
                           {
                             $$.typ = $2.typ;
                             $$.hasval = True;
+                            $$.fixed = False;
                             $$.val = $2.val;
                           }
                           else
@@ -1990,12 +1988,30 @@ brinit  : init          { $$ = $1; }
                           }
                         }
         ;
-init    : /* empty */   { $$.hasval = False; }
+init    : /* empty */   {
+                          $$.hasval = False;
+                          $$.fixed = False;
+                        }
         | '=' cexp      {
                           if ($2.hasval)
                           {
                             $$.typ = $2.typ;
                             $$.hasval = True;
+                            $$.fixed = False;
+                            $$.val = $2.val;
+                          }
+                          else
+                          {
+                            $$.hasval = False;
+                            semerror("initialization expression not constant");
+                          }
+                        }
+        | EQ cexp       {
+                          if ($2.hasval)
+                          {
+                            $$.typ = $2.typ;
+                            $$.hasval = True;
+                            $$.fixed = True;
                             $$.val = $2.val;
                           }
                           else
@@ -2279,6 +2295,7 @@ lexp    : '!' lexp      {
         | SIZEOF '(' texp ')'
                         {
                           $$.hasval = True;
+                          $$.fixed = False;
                           $$.typ = mkint();
                           $$.val.i = $3.typ->width;
                         }
@@ -2291,42 +2308,44 @@ pexp    : '(' expr ')'  { $$ = $2; }
                             p = undefined($1);
                           else
                             $$.hasval = True;
+                          $$.fixed = False;
                           $$.typ = p->info.typ;
                           $$.val = p->info.val;
                         }
         | LNG           {
                           $$.typ = mkint();
                           $$.hasval = True;
+                          $$.fixed = False;
                           $$.val.i = $1;
-                        }
-        | null          {
-                          $$.typ = mkint();
-                          $$.hasval = True;
-                          $$.val.i = 0;
                         }
         | DBL           {
                           $$.typ = mkfloat();
                           $$.hasval = True;
+                          $$.fixed = False;
                           $$.val.r = $1;
                         }
         | CHR           {
                           $$.typ = mkchar();
                           $$.hasval = True;
+                          $$.fixed = False;
                           $$.val.i = $1;
                         }
         | STR           {
                           $$.typ = mkstring();
                           $$.hasval = True;
+                          $$.fixed = False;
                           $$.val.s = $1;
                         }
         | CFALSE        {
                           $$.typ = mkbool();
                           $$.hasval = True;
+                          $$.fixed = False;
                           $$.val.i = 0;
                         }
         | CTRUE         {
                           $$.typ = mkbool();
                           $$.hasval = True;
+                          $$.fixed = False;
                           $$.val.i = 1;
                         }
         ;
@@ -2383,6 +2402,7 @@ op(const char *op, Node p, Node q)
     else
       semerror("invalid constant operation");
     r.hasval = True;
+    r.fixed = False;
   }
   else
   {
@@ -2408,6 +2428,7 @@ relop(const char *op, Node p, Node q)
   r.typ = mkint();
   r.sto = Snone;
   r.hasval = True;
+  r.fixed = False;
   r.val.i = 1;
   sprintf(errbuf, "comparison '%s' not evaluated and considered true", op);
   semwarn(errbuf);
@@ -2743,14 +2764,14 @@ add_result(Tnode *typ)
     return;
   }
   for (p = ((Table*)((Tnode*)typ->ref)->ref)->list; p; p = p->next)
-    if (p->info.sto & Sreturn)
+    if (((int)p->info.sto & (int)Sreturn))
       return;
   for (p = ((Table*)((Tnode*)typ->ref)->ref)->list; p; p = p->next)
   {
     if (p->info.typ->type != Tfun &&
-        !(p->info.sto & Sattribute) &&
+        !((int)p->info.sto & (int)Sattribute) &&
         !is_transient(p->info.typ) &&
-        !(p->info.sto & (Sprivate|Sprotected)))
+        !((int)p->info.sto & ((int)Sprivate | (int)Sprotected)))
       p->info.sto = (Storage)((int)p->info.sto | (int)Sreturn);
     return;
   }
@@ -2789,7 +2810,7 @@ add_request(Symbol *sym, Scope *sp)
         sprintf(errbuf, "parameter '%s' of service operation function '%s()' in %s:%d cannot be passed by reference: use a pointer instead", q->sym->name, sym->name, q->filename, q->lineno);
         semwarn(errbuf);
       }
-      else if ((q->info.sto & (Sconst | Sconstptr)))
+      else if (((int)q->info.sto & ((int)Sconst | (int)Sconstptr)))
       {
         if (!is_string(q->info.typ) && !is_wstring(q->info.typ))
         {
@@ -2797,7 +2818,7 @@ add_request(Symbol *sym, Scope *sp)
           semwarn(errbuf);
         }
       }
-      else if ((q->info.sto & ~(Sattribute | Sextern | Sspecial)))
+      else if (((int)q->info.sto & ~((int)Sattribute | (int)Sextern | (int)Sspecial)))
       {
         sprintf(errbuf, "invalid parameter '%s' of service operation function '%s()' in %s:%d", q->sym->name, sym->name, q->filename, q->lineno);
         semwarn(errbuf);

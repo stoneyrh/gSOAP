@@ -57,7 +57,7 @@ extern "C" {
 #endif
 
 /** Plugin identification for plugin registry */
-#define SOAP_CURL_ID "SOAP-CURL/1.0"
+#define SOAP_CURL_ID "SOAP-CURL/1.1"
 
 /** Plugin identification for plugin registry */
 extern const char soap_curl_id[];
@@ -68,12 +68,13 @@ extern const char soap_curl_id[];
 struct soap_curl_data
 {
   struct soap *soap;
-  CURL *curl;
-  short own;
-  struct curl_slist *hdr;
-  char *blk;
-  char *ptr;
-  struct soap_blist *lst;
+  CURL *curl;             /**< CURL handle (passed as arg to plugin or internal) */
+  short own;              /**< we own the CURL handle */
+  short active;           /**< when true: override IO */
+  struct curl_slist *hdr; /**< to add custom HTTP headers */
+  char *blk;              /**< current block of data received from CURL stored in blist lst */
+  char *ptr;              /**< points to data in blk */
+  struct soap_blist *lst; /**< block list with data sent to CURL and received from CURL */
   soap_mode mode;
   char buf[CURL_ERROR_SIZE];
   int (*fconnect)(struct soap*, const char*, const char*, int);

@@ -1686,6 +1686,8 @@ soap_wsa_disconnect(struct soap *soap)
 static int
 soap_wsa_alloc_header(struct soap *soap)
 {
+  if (soap->header)
+    return SOAP_OK;
   soap_header(soap);
   if (soap->header)
     return SOAP_OK;
