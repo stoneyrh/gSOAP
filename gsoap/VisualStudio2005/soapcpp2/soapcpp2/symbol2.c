@@ -18701,7 +18701,7 @@ soap_in(Tnode *typ)
       fprintf(fout, "\n\ta = (%s)soap_id_enter(soap, soap->id, a, %s, sizeof(%s), NULL, NULL, NULL, NULL);", c_type_id(typ, "*"), soap_type(typ), c_type(typ));
       fprintf(fout, "\n\tif (!a)\n\t\treturn NULL;");
       fprintf(fout, "\n\tif (!*soap->href)\n\t{");
-      fprintf(fout, "\tif (soap_s2%s(soap, soap_value(soap), a) | (soap->body && soap_element_end_in(soap, tag)))\n\t\t\treturn NULL;", c_ident(typ));
+      fprintf(fout, "\tint err = soap_s2%s(soap, soap_value(soap), a);\n\t\tif ((soap->body && soap_element_end_in(soap, tag)) || err)\n\t\t\treturn NULL;", c_ident(typ));
       fprintf(fout, "\n\t}\n\telse\n\t{\ta = (%s)soap_id_forward(soap, soap->href, (void*)a, 0, %s, %s, sizeof(%s), 0, NULL, NULL);", c_type_id(typ, "*"), soap_type(typ), soap_type(typ), c_type(typ));
       fprintf(fout, "\n\t\tif (soap->body && soap_element_end_in(soap, tag))\n\t\t\treturn NULL;");
       fprintf(fout, "\n\t}\n\treturn a;\n}");

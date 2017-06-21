@@ -119,14 +119,19 @@ SOAP_FMAC3 __float128 * SOAP_FMAC4 soap_in_xsd__decimal(struct soap *soap, const
   if (soap_element_begin_in(soap, tag, 0, type))
     return NULL;
   a = (__float128*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__decimal, sizeof(__float128), NULL, NULL, NULL, NULL);
-  if (*soap->href)
-    a = (__float128*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__decimal, 0, sizeof(__float128), 0, NULL, NULL);
-  else if (a)
+  if (!a)
+    return NULL;
+  if (!*soap->href)
   {
-    if (soap_s2xsd__decimal(soap, soap_value(soap), a))
+    int err = soap_s2xsd__decimal(soap, soap_value(soap), a);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
-  if (soap->body && soap_element_end_in(soap, tag))
-    return NULL;
+  else
+  {
+    a = (__float128*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__decimal, 0, sizeof(__float128), 0, NULL, NULL);
+    if (soap->body && soap_element_end_in(soap, tag))
+      return NULL;
+  }
   return a;
 }

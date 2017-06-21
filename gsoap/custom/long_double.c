@@ -145,14 +145,19 @@ SOAP_FMAC3 long double * SOAP_FMAC4 soap_indecimal(struct soap *soap, const char
   if (soap_element_begin_in(soap, tag, 0, type))
     return NULL;
   p = (long double*)soap_id_enter(soap, soap->id, p, t, sizeof(long double), NULL, NULL, NULL, NULL);
-  if (*soap->href)
-    p = (long double*)soap_id_forward(soap, soap->href, p, 0, t, 0, sizeof(long double), 0, NULL, NULL);
-  else if (p)
+  if (!p)
+    return NULL;
+  if (!*soap->href)
   {
-    if (soap_s2decimal(soap, soap_value(soap), p))
+    int err = soap_s2decimal(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
-  if (soap->body && soap_element_end_in(soap, tag))
-    return NULL;
+  else
+  {
+    p = (long double*)soap_id_forward(soap, soap->href, p, 0, t, 0, sizeof(long double), 0, NULL, NULL);
+    if (soap->body && soap_element_end_in(soap, tag))
+      return NULL;
+  }
   return p;
 }

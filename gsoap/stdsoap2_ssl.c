@@ -85,10 +85,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.48 2017-06-19 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.48 2017-06-21 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.48 2017-06-19 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.48 2017-06-21 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -13969,7 +13969,8 @@ soap_inint(struct soap *soap, const char *tag, int *p, const char *type, int t)
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2int(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2int(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else
@@ -14063,7 +14064,8 @@ soap_inlong(struct soap *soap, const char *tag, long *p, const char *type, int t
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2long(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2long(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else
@@ -14161,7 +14163,8 @@ soap_inLONG64(struct soap *soap, const char *tag, LONG64 *p, const char *type, i
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2LONG64(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2LONG64(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else
@@ -14243,7 +14246,8 @@ soap_inbyte(struct soap *soap, const char *tag, char *p, const char *type, int t
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2byte(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2byte(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else
@@ -14326,7 +14330,8 @@ soap_inshort(struct soap *soap, const char *tag, short *p, const char *type, int
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2short(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2short(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else
@@ -14528,7 +14533,8 @@ soap_infloat(struct soap *soap, const char *tag, float *p, const char *type, int
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2float(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2float(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else
@@ -14674,7 +14680,8 @@ soap_indouble(struct soap *soap, const char *tag, double *p, const char *type, i
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2double(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2double(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else
@@ -14756,7 +14763,8 @@ soap_inunsignedByte(struct soap *soap, const char *tag, unsigned char *p, const 
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2unsignedByte(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2unsignedByte(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else
@@ -14839,7 +14847,8 @@ soap_inunsignedShort(struct soap *soap, const char *tag, unsigned short *p, cons
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2unsignedShort(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2unsignedShort(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else
@@ -14936,7 +14945,8 @@ soap_inunsignedInt(struct soap *soap, const char *tag, unsigned int *p, const ch
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2unsignedInt(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2unsignedInt(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else
@@ -15034,7 +15044,8 @@ soap_inunsignedLong(struct soap *soap, const char *tag, unsigned long *p, const 
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2unsignedLong(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2unsignedLong(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else
@@ -15129,7 +15140,8 @@ soap_inULONG64(struct soap *soap, const char *tag, ULONG64 *p, const char *type,
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2ULONG64(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2ULONG64(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else
@@ -15481,17 +15493,16 @@ soap_QName2s(struct soap *soap, const char *s)
         m = n + 1;
       }
       else /* URL-based string prefix */
-      { s++;
-        q = strchr(s, '"');
+      { q = strchr(s + 1, '"');
         if (q)
         { struct Namespace *p = soap->local_namespaces;
           if (p)
           { for (; p->id; p++)
             { if (p->ns)
-                if (!soap_tag_cmp(s, p->ns))
+                if (!soap_tag_cmp(s + 1, p->ns))
                   break;
               if (p->in)
-                if (!soap_tag_cmp(s, p->in))
+                if (!soap_tag_cmp(s + 1, p->in))
                   break;
             }
           }
@@ -15507,10 +15518,10 @@ soap_QName2s(struct soap *soap, const char *s)
               m = strlen(r);
           }
           else /* not in namespace table: create xmlns binding */
-          { char *x = soap_strdup(soap, s);
+          { char *x = soap_strdup(soap, s + 1);
             if (!x)
               return NULL;
-            x[q - s - 1] = '\0';
+            x[q - s - 2] = '\0';
             (SOAP_SNPRINTF(soap->tmpbuf, sizeof(soap->tmpbuf), 27), "xmlns:_%d", soap->idnum++);
             soap_set_attr(soap, soap->tmpbuf, x, 1);
             r = soap->tmpbuf + 6;
@@ -15521,10 +15532,10 @@ soap_QName2s(struct soap *soap, const char *s)
       /* copy normalized QName into buffer, including the ending blank or NUL */
 #ifdef WITH_FAST
       if ((m && soap_append_lab(soap, r, m))
-       || (q && soap_append_lab(soap, q, n - (q - s))))
+       || (q && soap_append_lab(soap, q, n - (q - s) + 1)))
         return NULL;
 #else
-      k = m + (q ? n - (q - s) : 0);
+      k = m + (q ? n - (q - s) + 1 : 0);
       b = (char*)soap_push_block(soap, NULL, k);
       if (!b)
       { soap->error = SOAP_EOM;
@@ -15536,11 +15547,11 @@ soap_QName2s(struct soap *soap, const char *s)
       }
       b += m;
       if (q)
-      { if (soap_memcpy((void*)b, k - m, (const void*)q, n - (q - s)))
+      { if (soap_memcpy((void*)b, k - m, (const void*)q, n - (q - s) + 1))
         { soap->error = SOAP_EOM;
           return NULL;
         }
-        b += n - (q - s);
+        b += n - (q - s) + 1;
       }
 #endif
       /* advance to next */
@@ -16276,7 +16287,8 @@ soap_indateTime(struct soap *soap, const char *tag, time_t *p, const char *type,
   if (!p)
     return NULL;
   if (!*soap->href)
-  { if (soap_s2dateTime(soap, soap_value(soap), p) | (soap->body && soap_element_end_in(soap, tag)))
+  { int err = soap_s2dateTime(soap, soap_value(soap), p);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
   else

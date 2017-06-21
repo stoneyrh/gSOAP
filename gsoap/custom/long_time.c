@@ -183,14 +183,19 @@ SOAP_FMAC3 ULONG64 * SOAP_FMAC4 soap_in_xsd__time(struct soap *soap, const char 
     return NULL;
   }
   a = (ULONG64*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__time, sizeof(ULONG64), NULL, NULL, NULL, NULL);
-  if (*soap->href)
-    a = (ULONG64*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__time, 0, sizeof(ULONG64), 0, NULL, NULL);
-  else if (a)
+  if (!a)
+    return NULL;
+  if (!*soap->href)
   {
-    if (soap_s2xsd__time(soap, soap_value(soap), a))
+    int err = soap_s2xsd__time(soap, soap_value(soap), a);
+    if ((soap->body && soap_element_end_in(soap, tag)) || err)
       return NULL;
   }
-  if (soap->body && soap_element_end_in(soap, tag))
-    return NULL;
+  else
+  {
+    a = (ULONG64*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__time, 0, sizeof(ULONG64), 0, NULL, NULL);
+    if (soap->body && soap_element_end_in(soap, tag))
+      return NULL;
+  }
   return a;
 }

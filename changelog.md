@@ -1176,7 +1176,7 @@ Version 2.8.47 (06/07/2017)
 - Fixed spurious occurrences of `<root\>` elements in XML renderings of DOM nodes.
 - Improvements.
 
-Version 2.8.48 (06/19/2017) {#latest}
+Version 2.8.48 upd (06/21/2017) {#latest}
 ---
 
 - Improved element and attribute `default` and `fixed` value validation.  Changed the code generation by wsdl2h slightly for optional elements with default values.  This fixes an issue when an optional element is omitted in XML and becomes indistinguishable from an empty element because in both cases a default value is assigned.  An omitted optional element has no default value.  New XML validation error codes `SOAP_FIXED` and `SOAP_EMPTY`.

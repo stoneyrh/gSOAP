@@ -18,7 +18,7 @@ A commercial use license is available from Genivia Inc., contact@genivia.com
 
 #include "wsdlH.h"
 
-SOAP_SOURCE_STAMP("@(#) wsdlC.cpp ver 2.8.48 2017-06-19 18:31:07 GMT")
+SOAP_SOURCE_STAMP("@(#) wsdlC.cpp ver 2.8.48 2017-06-21 13:18:57 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -4583,7 +4583,8 @@ SOAP_FMAC3 enum sd__mutability * SOAP_FMAC4 soap_in_sd__mutability(struct soap *
 	if (!a)
 		return NULL;
 	if (!*soap->href)
-	{	if (soap_s2sd__mutability(soap, soap_value(soap), a) | (soap->body && soap_element_end_in(soap, tag)))
+	{	int err = soap_s2sd__mutability(soap, soap_value(soap), a);
+		if ((soap->body && soap_element_end_in(soap, tag)) || err)
 			return NULL;
 	}
 	else
@@ -4664,7 +4665,8 @@ SOAP_FMAC3 enum soap__useChoice * SOAP_FMAC4 soap_in_soap__useChoice(struct soap
 	if (!a)
 		return NULL;
 	if (!*soap->href)
-	{	if (soap_s2soap__useChoice(soap, soap_value(soap), a) | (soap->body && soap_element_end_in(soap, tag)))
+	{	int err = soap_s2soap__useChoice(soap, soap_value(soap), a);
+		if ((soap->body && soap_element_end_in(soap, tag)) || err)
 			return NULL;
 	}
 	else
@@ -4745,7 +4747,8 @@ SOAP_FMAC3 enum soap__styleChoice * SOAP_FMAC4 soap_in_soap__styleChoice(struct 
 	if (!a)
 		return NULL;
 	if (!*soap->href)
-	{	if (soap_s2soap__styleChoice(soap, soap_value(soap), a) | (soap->body && soap_element_end_in(soap, tag)))
+	{	int err = soap_s2soap__styleChoice(soap, soap_value(soap), a);
+		if ((soap->body && soap_element_end_in(soap, tag)) || err)
 			return NULL;
 	}
 	else
@@ -4829,7 +4832,8 @@ SOAP_FMAC3 enum wadl__ParamStyle * SOAP_FMAC4 soap_in_wadl__ParamStyle(struct so
 	if (!a)
 		return NULL;
 	if (!*soap->href)
-	{	if (soap_s2wadl__ParamStyle(soap, soap_value(soap), a) | (soap->body && soap_element_end_in(soap, tag)))
+	{	int err = soap_s2wadl__ParamStyle(soap, soap_value(soap), a);
+		if ((soap->body && soap_element_end_in(soap, tag)) || err)
 			return NULL;
 	}
 	else
@@ -4913,7 +4917,8 @@ SOAP_FMAC3 enum wadl__HTTPMethods * SOAP_FMAC4 soap_in_wadl__HTTPMethods(struct 
 	if (!a)
 		return NULL;
 	if (!*soap->href)
-	{	if (soap_s2wadl__HTTPMethods(soap, soap_value(soap), a) | (soap->body && soap_element_end_in(soap, tag)))
+	{	int err = soap_s2wadl__HTTPMethods(soap, soap_value(soap), a);
+		if ((soap->body && soap_element_end_in(soap, tag)) || err)
 			return NULL;
 	}
 	else
@@ -4995,7 +5000,8 @@ SOAP_FMAC3 enum xs__processContents * SOAP_FMAC4 soap_in_xs__processContents(str
 	if (!a)
 		return NULL;
 	if (!*soap->href)
-	{	if (soap_s2xs__processContents(soap, soap_value(soap), a) | (soap->body && soap_element_end_in(soap, tag)))
+	{	int err = soap_s2xs__processContents(soap, soap_value(soap), a);
+		if ((soap->body && soap_element_end_in(soap, tag)) || err)
 			return NULL;
 	}
 	else
@@ -5079,7 +5085,8 @@ SOAP_FMAC3 enum xs__attribute_use * SOAP_FMAC4 soap_in_xs__attribute_use(struct 
 	if (!a)
 		return NULL;
 	if (!*soap->href)
-	{	if (soap_s2xs__attribute_use(soap, soap_value(soap), a) | (soap->body && soap_element_end_in(soap, tag)))
+	{	int err = soap_s2xs__attribute_use(soap, soap_value(soap), a);
+		if ((soap->body && soap_element_end_in(soap, tag)) || err)
 			return NULL;
 	}
 	else
@@ -5160,7 +5167,8 @@ SOAP_FMAC3 enum xs__formChoice * SOAP_FMAC4 soap_in_xs__formChoice(struct soap *
 	if (!a)
 		return NULL;
 	if (!*soap->href)
-	{	if (soap_s2xs__formChoice(soap, soap_value(soap), a) | (soap->body && soap_element_end_in(soap, tag)))
+	{	int err = soap_s2xs__formChoice(soap, soap_value(soap), a);
+		if ((soap->body && soap_element_end_in(soap, tag)) || err)
 			return NULL;
 	}
 	else
@@ -5213,7 +5221,8 @@ SOAP_FMAC3 bool * SOAP_FMAC4 soap_in_xsd__boolean(struct soap *soap, const char 
 	if (!a)
 		return NULL;
 	if (!*soap->href)
-	{	if (soap_s2xsd__boolean(soap, soap_value(soap), a) | (soap->body && soap_element_end_in(soap, tag)))
+	{	int err = soap_s2xsd__boolean(soap, soap_value(soap), a);
+		if ((soap->body && soap_element_end_in(soap, tag)) || err)
 			return NULL;
 	}
 	else
@@ -5297,7 +5306,8 @@ SOAP_FMAC3 bool * SOAP_FMAC4 soap_in_bool(struct soap *soap, const char *tag, bo
 	if (!a)
 		return NULL;
 	if (!*soap->href)
-	{	if (soap_s2bool(soap, soap_value(soap), a) | (soap->body && soap_element_end_in(soap, tag)))
+	{	int err = soap_s2bool(soap, soap_value(soap), a);
+		if ((soap->body && soap_element_end_in(soap, tag)) || err)
 			return NULL;
 	}
 	else
