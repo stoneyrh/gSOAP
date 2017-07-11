@@ -1590,6 +1590,12 @@ XML standard, which in case of `xsd:token` is the lexical and value spaces of
 `xsd:token` are the sets of all strings after whitespace replacement of any
 occurrence of `#x9`, `#xA` , and `#xD` by `#x20` and collapsing.
 
+As of version 2.8.49, the gSOAP parser will automatically collapse or replace
+the white space content when receiving data for XSD types that require white
+space collapsed or replaced.  This normalization is applied to strings
+directly.  The decision to collapse or replace is based on the `typedef` name
+corresponding to the built-in string-based XSD type.
+
 To copy `char*` or `wchar_t*` strings with a context that manages the allocated
 memory, use functions
 
