@@ -194,7 +194,7 @@ information will be automatically kept to support multiple invocations.
 
 The material in this section relates to the WS-Security specification section 6.
 
-@subsection wsse_6_2 User Name Token
+@subsection wsse_6_2 User Name Tokens
 
 To add a user name token to the Security header block, use:
 
@@ -247,6 +247,13 @@ value.
 You must use `soap_wsse_add_UsernameTokenDigest` for each message exchange
 to refresh the password digest even when the user name and password are not
 changed. Otherwise, the receiver might flag the message as a replay attack.
+
+To specify a time stamp for the digest instead of the current time, use:
+
+@code
+    time_t when = ...;
+    soap_wsse_add_UsernameTokenDigest_at(soap, "Id", "username", "password", when);
+@endcode
 
 Clear-text passwords and password digests are verified with
 `soap_wsse_verify_Password`. To verify a password at the receiving side to
@@ -617,20 +624,29 @@ using the `SOAP_XML_CANONICAL` flag:
     soap_register_plugin(soap, soap_wsse);
 @endcode
 
+To send messages with inclusive canonicalization, use: 
+
+@code
+    soap_wsse_set_InclusiveNamespaces(soap, "*");
+@endcode
+
+However, exclusive canonicalization is recommended over inclusive
+canonicalization, or no canonicalization at all.
+
 Flags to consider:
 
-- `SOAP_XML_CANONICAL` recommended to enable exclusive C14N.
-- `SOAP_XML_INDENT` optional, to emit more readable XML (see warning).
+- `SOAP_XML_CANONICAL` recommended to enable exc-c14n (exclusive canonicalization).
+- `SOAP_XML_INDENT` optional, to emit more readable XML (see warning below).
 - `SOAP_IO_CHUNK` efficient HTTP-chunked streaming messages.
 - `SOAP_ENC_GZIP` for HTTP compression (also enables HTTP chunking).
 
 @warning
 Interoperability with WCF WS-Security is not guaranteed when `SOAP_XML_INDENT`
 is enabled.  Avoid using `SOAP_XML_INDENT` for interoperability.  The
-implementation of C14N in WCF with respect to the normalization of white space
-between XML tags differs from the protocol standards.
+implementation of canonicalization in WCF with respect to the normalization of
+white space between XML tags differs from the protocol standards.
 
-Next, we decide which signature algorithm is appropriate to use:
+Next, decide which signature algorithm is appropriate to use:
 
 - HMAC-SHA uses a secret key (also known as a shared key in symmetric
   cryptography) to sign the SHA digest of the SignedInfo element.
@@ -741,7 +757,7 @@ signature is to let the callback produce a certificate:
         case SOAP_MEC_ENV_DEC_AES512_GCM: // GCM requires OpenSSL 1.0.2 or higher
           if (keyname)
           {
-            // use this to get private key from a key store using the keyname value:
+            // use this to get key or X509 certificate from a key store using the keyname value:
             // 1. keyname is set to the subject name of the certificate, if a
             //    certificate is present in the SecurityTokenReference/KeyIdentifier
             //    when ValueType is http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3
@@ -753,7 +769,7 @@ signature is to let the callback produce a certificate:
           }
           else if (keyid)
           {
-            // use this to get private key from a key store using the keyid[0..keyidlen-1]:
+            // use this to get the key from a key store using the keyid[0..keyidlen-1]:
             // 1. keyid and keyidlen are set to the data in
             //    SecurityTokenReference/KeyIdentifier when the ValueType is
             //    http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509SubjectKeyIdentifier
@@ -932,11 +948,12 @@ message is received (but not automatically in a sequence of one-way sends for
 example).
 
 @note
-QName content may lead to verification issues with canonicalization
-(`SOAP_XML_CANONICAL`), because XML processors may not recognize prefixes in
-QNames as visually utilized. With QName content and `SOAP_XML_CANONICAL` enabled,
-we should use `soap_wsse_set_InclusiveNamespaces(soap, "prefixlist")` to define
-which namespace prefixes (space-separated in the string) should be considered
+It is generally known that QName content may lead to verification issues with
+canonicalization (`SOAP_XML_CANONICAL`), because XML processors may not
+recognize prefixes in QNames as visually utilized. With QName content and
+`SOAP_XML_CANONICAL` enabled, we should use
+`soap_wsse_set_InclusiveNamespaces(soap, "prefixlist")` to define which
+namespace prefixes (space-separated in the string) should be considered
 inclusive. For example, xsi:type attribute values are QNames with xsd types and
 other schema types.
 
@@ -1242,7 +1259,7 @@ The wsse plugin must be registered:
 
 Flags to consider:
 
-- `SOAP_XML_CANONICAL` recommended to enable exclusive C14N.
+- `SOAP_XML_CANONICAL` recommended to enable exc-c14n (exclusive canonicalization).
 - `SOAP_XML_INDENT` optional, to emit more readable XML (see warning).
 - `SOAP_IO_CHUNK` efficient HTTP-chunked streaming messages.
 - `SOAP_ENC_GZIP` for HTTP compression (also enables HTTP chunking).
@@ -1493,7 +1510,7 @@ An example of a token handler callback:
         case SOAP_MEC_ENV_DEC_AES512_GCM: // GCM requires OpenSSL 1.0.2 or higher
           if (keyname)
           {
-            // use this to get private key from a key store using the keyname value:
+            // use this to get the key or certificate from a key store using the keyname value:
             // 1. keyname is set to the subject name of the certificate, if a
             //    certificate is present in the SecurityTokenReference/KeyIdentifier
             //    when ValueType is http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3
@@ -1505,7 +1522,7 @@ An example of a token handler callback:
           }
           else if (keyid)
           {
-            // use this to get private key from a key store using the keyid[0..keyidlen-1]:
+            // use this to get the key from a key store using the keyid[0..keyidlen-1]:
             // 1. keyid and keyidlen are set to the data in
             //    SecurityTokenReference/KeyIdentifier when the ValueType is
             //    http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509SubjectKeyIdentifier
@@ -1533,10 +1550,10 @@ An example of a token handler callback:
     }
 @endcode
 
-The last two case-arms are used to return a private key associated with the
-keyname paramater, which is a string that contains the subject key id from the
-public key information in an encrypted message or the subject key ID string
-that was set with `soap_wsse_add_EncryptedKey` at the sender side.
+The last two case-arms are used to return a key associated with the keyname
+paramater, which is a string that contains the subject key id from the public
+key information in an encrypted message or the subject key ID string that was
+set with `soap_wsse_add_EncryptedKey` at the sender side.
 
 @warning
 The security token handler callback function parameters have changed in 2.8.34
@@ -2013,20 +2030,21 @@ typedef struct _wsse__Security
 The `_wsse__Security` header is modified by a WS/WS-typemap.dat mapping rule to
 include additional details.
 
-@section wsse_13 Encryption Limitations
+@section wsse_13 Some Limitations
 
-- Individual encryption/decryption of simple content (CDATA content) with
-  `soap_wsse_add_EncryptedKey_encrypt_only` IS NOT SUPPORTED. Encrypt the entire
-  SOAP Body or encrypt elements with complex content (complexType and
+- Encryption of simple content (CDATA content) with
+  `soap_wsse_add_EncryptedKey_encrypt_only` is not supported. Encrypt the
+  entire SOAP Body or encrypt elements with complex content (complexType and
   complexContent elements that have sub elements).
 
 - Encryption is performed after signing (likewise, signatures are verified
   after decryption). Signing after encryption is not supported in the current
-  plugin release.
+  plugin release.  It is generally known that it is safer to perform encryption
+  after signing and not vice versa.
 
 - Signing and encrypting XML containing QName content may lead to verification
   issues, because the W3C C14N canonicalization protocol has known limitations
-  with QName content normalization as prefixes in QNames may be ignored,
+  with QName content normalization.  Prefixes in QNames may be ignored,
   possibly resulting in missing xmlns bindings). Use
   `soap_wsse_set_InclusiveNamespaces(soap, "prefixlist")` to define which
   namespace prefixes (space-separated in the string) should be considered
@@ -2154,7 +2172,10 @@ const char *xenc_rsaesURI = "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p";
 const char *wsse_URI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
 const char *xenc_URI = "http://www.w3.org/2001/04/xmlenc#";
 const char *ds_URI = "http://www.w3.org/2000/09/xmldsig#";
-const char *c14n_URI = "http://www.w3.org/2001/10/xml-exc-c14n#";
+const char *c14n_URI = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
+const char *c14n_wc_URI = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments";
+const char *exc_c14n_URI = "http://www.w3.org/2001/10/xml-exc-c14n#";
+const char *exc_c14n_wc_URI = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
 const char *wsu_URI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
 
 /******************************************************************************\
@@ -2546,9 +2567,34 @@ int
 SOAP_FMAC2
 soap_wsse_add_UsernameTokenDigest(struct soap *soap, const char *id, const char *username, const char *password)
 {
+  return soap_wsse_add_UsernameTokenDigest_at(soap, id, username, password, time(NULL));
+}
+
+/******************************************************************************/
+
+/**
+@fn int soap_wsse_add_UsernameTokenDigest_at(struct soap *soap, const char *id, const char *username, const char *password, time_t when)
+@brief Adds UsernameToken element for digest authentication.
+@param soap context
+@param[in] id string for signature referencing or NULL
+@param[in] username string
+@param[in] password string
+@param[in] when the time stamp to use for the digest hash
+@return SOAP_OK
+
+Computes SHA1 digest of the time stamp, a nonce, and the password. The digest
+provides the authentication credentials. Passwords are NOT sent in the clear.
+
+@note
+This release supports the use of at most one UsernameToken in the header.
+*/
+SOAP_FMAC1
+int
+SOAP_FMAC2
+soap_wsse_add_UsernameTokenDigest_at(struct soap *soap, const char *id, const char *username, const char *password, time_t when)
+{
   _wsse__Security *security = soap_wsse_add_Security(soap);
-  time_t now = time(NULL);
-  const char *created = soap_dateTime2s(soap, now);
+  const char *created = soap_dateTime2s(soap, when);
   char HA[SOAP_SMD_SHA1_SIZE], HABase64[29];
   char nonce[SOAP_WSSE_NONCELEN], *nonceBase64;
   DBGFUN2("soap_wsse_add_UsernameTokenDigest", "id=%s", id?id:"", "username=%s", username?username:"");
@@ -3091,7 +3137,7 @@ soap_wsse_add_SignedInfo(struct soap *soap)
 @param soap context
 @param[in] URI reference
 @param[in] level XML depth of element signed
-@param[in] transform string should be c14n_URI for exc-c14n or NULL
+@param[in] transform string should be exc_c14n_URI for exc-c14n, or c14n_URI or NULL for default (no canonicalization)
 @param[in] prefixlist used by the exc-c14n transform or NULL
 @param[in] alg is the digest algorithm used
 @param[in] HA is the digest in binary form
@@ -3153,7 +3199,7 @@ soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, unsigned 
     soap_default_ds__TransformType(soap, reference->Transforms->Transform);
     reference->Transforms->Transform->Algorithm = (char*)transform;
     /* populate the c14n:InclusiveNamespaces element */
-    if (prefixlist && *prefixlist)
+    if (prefixlist && *prefixlist && *prefixlist != '*')
     {
       reference->Transforms->Transform->c14n__InclusiveNamespaces = (_c14n__InclusiveNamespaces*)soap_malloc(soap, sizeof(_c14n__InclusiveNamespaces));
       if (!reference->Transforms->Transform->c14n__InclusiveNamespaces)
@@ -3218,12 +3264,17 @@ soap_wsse_add_SignedInfo_SignatureMethod(struct soap *soap, const char *method, 
   ds__SignedInfoType *signedInfo = soap_wsse_add_SignedInfo(soap);
   DBGFUN2("soap_wsse_add_SignedInfo_SignatureMethod", "method=%s", method?method:"", "canonical=%d", canonical);
   /* if signed in exc-c14n form, populate CanonicalizationMethod element */
-  signedInfo->CanonicalizationMethod = (ds__CanonicalizationMethodType*)soap_malloc(soap, sizeof(ds__CanonicalizationMethodType));
-  if (!signedInfo->CanonicalizationMethod)
-    return soap->error = SOAP_EOM;
-  soap_default_ds__CanonicalizationMethodType(soap, signedInfo->CanonicalizationMethod);
   if (canonical)
-    signedInfo->CanonicalizationMethod->Algorithm = (char*)c14n_URI;
+  {
+    signedInfo->CanonicalizationMethod = (ds__CanonicalizationMethodType*)soap_malloc(soap, sizeof(ds__CanonicalizationMethodType));
+    if (!signedInfo->CanonicalizationMethod)
+      return soap->error = SOAP_EOM;
+    soap_default_ds__CanonicalizationMethodType(soap, signedInfo->CanonicalizationMethod);
+    if (soap->c14ninclude && *soap->c14ninclude == '*')
+      signedInfo->CanonicalizationMethod->Algorithm = (char*)c14n_URI;
+    else
+      signedInfo->CanonicalizationMethod->Algorithm = (char*)exc_c14n_URI;
+  }
   /* populate SignatureMethod element */
   signedInfo->SignatureMethod = (ds__SignatureMethodType*)soap_malloc(soap, sizeof(ds__SignatureMethodType));
   if (!signedInfo->SignatureMethod)
@@ -3345,8 +3396,7 @@ To sign the SignedInfo element with this function, populate SignedInfo with
 Reference elements first using soap_wsse_add_SignedInfo_Reference. The
 SignedInfo element must not be modified after signing.
 
-The SOAP_XML_INDENT and SOAP_XML_CANONICAL flags are used to serialize the
-SignedInfo to compute the signature.
+The SOAP_XML_INDENT and SOAP_XML_CANONICAL flags are used to serialize the SignedInfo to compute the signature.
 */
 SOAP_FMAC1
 int
@@ -3423,7 +3473,7 @@ soap_wsse_add_SignatureValue(struct soap *soap, int alg, const void *key, int ke
       break;
 #endif
     default:
-      return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, "Unsupported algorithm or algorithm requires OpenSSL 0.9.8");
+      return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, "Unsupported algorithm (requires OpenSSL 0.9.8 or greater)");
   }
   /* populate SignedInfo/SignatureMethod based on SOAP_XML_CANONICAL flag */
   soap_wsse_add_SignedInfo_SignatureMethod(soap, method, (soap->mode & SOAP_XML_CANONICAL));
@@ -3615,9 +3665,7 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
         sig = (char*)sigval;
         siglen = sigvallen;
       }
-      if (signature->SignedInfo->CanonicalizationMethod
-       && signature->SignedInfo->CanonicalizationMethod->Algorithm
-       && !strcmp(signature->SignedInfo->CanonicalizationMethod->Algorithm, c14n_URI))
+      if (signature->SignedInfo->CanonicalizationMethod && signature->SignedInfo->CanonicalizationMethod->Algorithm)
       {
         struct soap_dom_element *prt;
         struct soap_dom_attribute *att;
@@ -3629,6 +3677,11 @@ soap_wsse_verify_SignatureValue(struct soap *soap, int alg, const void *key, int
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Verifying signed canonicalized DOM with C14N prefix list '%s'\n", soap->c14ninclude ? soap->c14ninclude : ""));
         soap->mode &= ~SOAP_XML_DOM;
         soap->mode |= SOAP_XML_CANONICAL | SOAP_DOM_ASIS;
+        if (strcmp(signature->SignedInfo->CanonicalizationMethod->Algorithm, c14n_URI)
+         && strcmp(signature->SignedInfo->CanonicalizationMethod->Algorithm, c14n_wc_URI)
+         && strcmp(signature->SignedInfo->CanonicalizationMethod->Algorithm, exc_c14n_URI)
+         && strcmp(signature->SignedInfo->CanonicalizationMethod->Algorithm, exc_c14n_wc_URI))
+          return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, "Invalid canonicalization method");
         err = soap_smd_begin(soap, alg, key, keylen);
         /* emit all xmlns attributes of ancestors */
         while (soap->nlist)
@@ -3822,19 +3875,33 @@ soap_wsse_verify_SignedInfo(struct soap *soap)
           return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, reference->DigestMethod->Algorithm);
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Verifying digest of locally referenced data %s alg=%x\n", reference->URI, alg));
         soap->c14ninclude = NULL;
-        /* if reference has a transform, it should be an exc-c14n transform */
+        /* if reference has a transform, it should be an c14n or exc-c14n transform */
         if (reference->Transforms)
         {
           int i;
           for (i = 0; i < reference->Transforms->__sizeTransform; i++)
           {
-            if (!reference->Transforms->Transform[i].Algorithm
-                || (strcmp(reference->Transforms->Transform[i].Algorithm, c14n_URI) && strcmp(reference->Transforms->Transform[i].Algorithm, ds_envsigURI)))
-              return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, reference->Transforms->Transform[i].Algorithm);
-            if (!strcmp(reference->Transforms->Transform[i].Algorithm, c14n_URI))
+            if (!reference->Transforms->Transform[i].Algorithm)
+              return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, NULL);
+            if (!strcmp(reference->Transforms->Transform[i].Algorithm, c14n_URI)
+             || !strcmp(reference->Transforms->Transform[i].Algorithm, c14n_wc_URI))
+            {
               canonical = 1;
-            if (reference->Transforms->Transform[i].c14n__InclusiveNamespaces)
-              soap->c14ninclude = reference->Transforms->Transform[i].c14n__InclusiveNamespaces->PrefixList;
+            }
+            else if (!strcmp(reference->Transforms->Transform[i].Algorithm, exc_c14n_URI)
+                  || !strcmp(reference->Transforms->Transform[i].Algorithm, exc_c14n_wc_URI))
+            {
+              canonical = 1;
+              if (reference->Transforms->Transform[i].c14n__InclusiveNamespaces)
+                soap->c14ninclude = reference->Transforms->Transform[i].c14n__InclusiveNamespaces->PrefixList;
+            }
+            else if (strcmp(reference->Transforms->Transform[i].Algorithm, ds_envsigURI))
+            {
+	      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Unsupported Transform Algorithm %s\n", reference->Transforms->Transform[i].Algorithm));
+              /* ignore application-specific Transforms
+		 return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, reference->Transforms->Transform[i].Algorithm);
+	      */
+            }
           }
         }
         /* convert base64 digest to binary */
@@ -3857,7 +3924,7 @@ soap_wsse_verify_SignedInfo(struct soap *soap)
 @brief Verifies the digest value of an XML element referenced by id against the hash.
 @param soap context
 @param[in] alg digest algorithm
-@param[in] canonical flag indicating that element is signed in exc-c14n form
+@param[in] canonical flag indicating that element is signed in c14n (inclusive or exclusive)
 @param[in] id string of the XML element to verify
 @param[in] hash digest value to verify against
 @return SOAP_OK or fault
@@ -3881,9 +3948,7 @@ soap_wsse_verify_digest(struct soap *soap, int alg, int canonical, const char *i
       /* check if attribute is an wsu:Id or ds:Id or ID*/
       if (att->name
        && ((att->nstr && (!strcmp(att->nstr, wsu_URI) || !strcmp(att->nstr, ds_URI)) && (!strcmp(att->name, "Id") || !soap_tag_cmp(att->name, "*:Id")))
-        || (!att->nstr && (!strcmp(att->name, "ID") || !strcmp(att->name, "AssertionID")))
-          )
-         )
+        || (!att->nstr && (!strcmp(att->name, "ID") || !strcmp(att->name, "AssertionID")))))
       {
         /* found a match, compare attribute value with id */
         if (att->text && !strcmp(att->text, id))
@@ -5895,12 +5960,16 @@ soap_wsse_set_InclusiveNamespaces(struct soap *soap, const char *prefixlist)
   DBGFUN1("soap_wsse_set_InclusiveNamespaces", "prefixlist=%s", prefixlist?prefixlist:"(null)");
   if (data)
   {
-    size_t l = strlen(prefixlist);
-    char *s;
+    char *s = NULL;
     if (data->prefixlist)
       SOAP_FREE(soap, data->prefixlist);
-    s = (char*)SOAP_MALLOC(soap, l + 1);
-    soap_strcpy(s, l + 1, prefixlist);
+    if (prefixlist)
+    {
+      size_t l = strlen(prefixlist);
+      s = (char*)SOAP_MALLOC(soap, l + 1);
+      if (s)
+        soap_strcpy(s, l + 1, prefixlist);
+    }
     data->prefixlist = s;
   }
   return SOAP_OK;
@@ -7054,13 +7123,16 @@ soap_wsse_preparefinalsend(struct soap *soap)
   {
     ds__SignatureType *signature = soap_wsse_Signature(soap);
     struct soap_wsse_digest *digest;
-    const char *transform;
+    const char *transform = NULL;
     int alg, signature_added = 0;
     /* if message is canonicalized populate transform element accordingly */
-    if (soap->mode & SOAP_XML_CANONICAL)
-      transform = c14n_URI;
-    else
-      transform = NULL;
+    if ((soap->mode & SOAP_XML_CANONICAL))
+    {
+      if (soap->c14ninclude && *soap->c14ninclude == '*')
+        transform = c14n_URI;
+      else
+        transform = exc_c14n_URI;
+    }
     /* to increase the message length counter we need to emit the Signature,
        SignedInfo and SignatureValue elements. However, this does not work if
        we already populated the wsse:Signature with SignedInfo and should never
@@ -7108,17 +7180,20 @@ soap_wsse_preparefinalsend(struct soap *soap)
       }
       else
       {
+        const char *c14ninclude = soap->c14ninclude;
         const char *c14nexclude = soap->c14nexclude;
         soap->c14nexclude = "ds xsi"; /* don't add xmlns:ds or xmlns:xsi to count msg len */
         soap->level = 4; /* indent level for XML SignedInfo */
         if ((soap->mode & SOAP_XML_CANONICAL))
         {
           soap->ns = 0; /* need namespaces for canonicalization */
+          soap->c14ninclude = NULL; /* but do not render inclusive namespaces */
           if ((soap->mode & SOAP_XML_INDENT))
             soap->count += 5; /* correction for soap->ns = 0: add \n+indent */
         }
         soap_out_ds__SignedInfoType(soap, "ds:SignedInfo", 0, signature->SignedInfo, NULL);
         soap_out__ds__SignatureValue(soap, "ds:SignatureValue", 0, &signature->SignatureValue, NULL);
+        soap->c14ninclude = c14ninclude;
         soap->c14nexclude = c14nexclude;
       }
       soap->part = part;

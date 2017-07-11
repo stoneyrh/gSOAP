@@ -1176,12 +1176,21 @@ Version 2.8.47 (06/07/2017)
 - Fixed spurious occurrences of `<root\>` elements in XML renderings of DOM nodes.
 - Improvements.
 
-Version 2.8.48 upd (06/21/2017) {#latest}
+Version 2.8.48 upd (06/21/2017)
 ---
 
 - Improved element and attribute `default` and `fixed` value validation.  Changed the code generation by wsdl2h slightly for optional elements with default values.  This fixes an issue when an optional element is omitted in XML and becomes indistinguishable from an empty element because in both cases a default value is assigned.  An omitted optional element has no default value.  New XML validation error codes `SOAP_FIXED` and `SOAP_EMPTY`.
 - Added `soap->transfer_timeout` max transfer timeout, to use in combination with `soap->send_timeout` and `soap->recv_timeout`.
 - Fixed a potential vulnerability that may be exposed with large and specific XML messages over 2 GB in size.
+
+Version 2.8.49 (07/10/2017) {#latest}
+---
+
+- Improved JSON API to compile with XML data bindings, see updated JSON API documentation on "Compiling XML-RPC/JSON together with gSOAP XML data binding code"
+- Improved white space handling of built-in XSD types that have "replace" and "collapse" white space properties. Further, types derived from these built-in XSD types will now inherit the white space "replace" or "collapse" property, meaning that white space of inbound strings are normalized (`xsd__anyURI`, `xsd__language` `xsd__ENTITY`, `xsd__ENTITIES`, `xsd__ID`, `xsd__IDREF`, `xsd__IDREFS`, `xsd__Name`, `xsd__NCName`, `xsd__NMTOKEN`, `xsd__NMTOKENS`, `xsd__normalizedString`, `xsd__token`, etc).
+- Fixed a memory leak in the deserializer of `std::vector<xsd__anyType>` (and dynamic arrays of `xsd__anyType`) where `xsd__anyType` is a DOM node imported with `#import "dom.h"`.
+- Fixed WSSE plugin recanonicalization of inclusive C14N SignedInfo.
+- Fixes for minor issues, improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "soapBasicHttpBinding_USCOREICalculatorProxy.h"
 #include "BasicHttpBinding_USCOREICalculator.nsmap"
 
-const char *URI = NULL; // Set to the service URI
+const char *URI = "http://10.0.1.5:8000/ServiceModelSamples/service"; // the service endpoint
 
 int main(int argc, char **argv)
 {

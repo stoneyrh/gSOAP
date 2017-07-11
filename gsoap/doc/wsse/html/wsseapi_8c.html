@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">wsseapi.c File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Apr 5 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sun Jul 9 2017 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -176,6 +176,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a712b4fd33970abc9c5b8b3094128da8c"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a712b4fd33970abc9c5b8b3094128da8c">soap_wsse_add_UsernameTokenDigest</a> (struct soap *soap, const char *id, const char *username, const char *password)</td></tr>
 <tr class="memdesc:a712b4fd33970abc9c5b8b3094128da8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds UsernameToken element for digest authentication.  <a href="#a712b4fd33970abc9c5b8b3094128da8c">More...</a><br /></td></tr>
 <tr class="separator:a712b4fd33970abc9c5b8b3094128da8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3786d1b35bbbb43b6e6b6c840ebe3c57"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a3786d1b35bbbb43b6e6b6c840ebe3c57">soap_wsse_add_UsernameTokenDigest_at</a> (struct soap *soap, const char *id, const char *username, const char *password, time_t when)</td></tr>
+<tr class="memdesc:a3786d1b35bbbb43b6e6b6c840ebe3c57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds UsernameToken element for digest authentication.  <a href="#a3786d1b35bbbb43b6e6b6c840ebe3c57">More...</a><br /></td></tr>
+<tr class="separator:a3786d1b35bbbb43b6e6b6c840ebe3c57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b840da9c3dd8e21cf47511137d24aa7"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct__wsse_____username_token.html">_wsse__UsernameToken</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a0b840da9c3dd8e21cf47511137d24aa7">soap_wsse_UsernameToken</a> (struct soap *soap, const char *id)</td></tr>
 <tr class="memdesc:a0b840da9c3dd8e21cf47511137d24aa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns UsernameToken element if present.  <a href="#a0b840da9c3dd8e21cf47511137d24aa7">More...</a><br /></td></tr>
 <tr class="separator:a0b840da9c3dd8e21cf47511137d24aa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -512,8 +515,14 @@ Variables</h2></td></tr>
 <tr class="separator:aff71a06ce80670d99f165b3599a2f822"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7aea4af6b24389f66019e8984d4b05c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#ad7aea4af6b24389f66019e8984d4b05c">ds_URI</a> = &quot;http://www.w3.org/2000/09/xmldsig#&quot;</td></tr>
 <tr class="separator:ad7aea4af6b24389f66019e8984d4b05c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4089697df0f14ecf44cf0fb6098f4f78"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a4089697df0f14ecf44cf0fb6098f4f78">c14n_URI</a> = &quot;http://www.w3.org/2001/10/xml-exc-c14n#&quot;</td></tr>
+<tr class="memitem:a4089697df0f14ecf44cf0fb6098f4f78"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a4089697df0f14ecf44cf0fb6098f4f78">c14n_URI</a> = &quot;http://www.w3.org/TR/2001/REC-xml-c14n-20010315&quot;</td></tr>
 <tr class="separator:a4089697df0f14ecf44cf0fb6098f4f78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afeb095c8a9783a680def55e4d011fa19"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#afeb095c8a9783a680def55e4d011fa19">c14n_wc_URI</a> = &quot;http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments&quot;</td></tr>
+<tr class="separator:afeb095c8a9783a680def55e4d011fa19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f4ed9fe98451fed2a0ab0cedcb899ac"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a9f4ed9fe98451fed2a0ab0cedcb899ac">exc_c14n_URI</a> = &quot;http://www.w3.org/2001/10/xml-exc-c14n#&quot;</td></tr>
+<tr class="separator:a9f4ed9fe98451fed2a0ab0cedcb899ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98e313540a8ca7010fce2027063e9509"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a98e313540a8ca7010fce2027063e9509">exc_c14n_wc_URI</a> = &quot;http://www.w3.org/2001/10/xml-exc-c14n#WithComments&quot;</td></tr>
+<tr class="separator:a98e313540a8ca7010fce2027063e9509"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb66cffe8d95c5d511987189173a993c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#adb66cffe8d95c5d511987189173a993c">wsu_URI</a> = &quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd&quot;</td></tr>
 <tr class="separator:adb66cffe8d95c5d511987189173a993c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a777b5d06409128e7bcb97703b4f40f06"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structsoap__wsse__session.html">soap_wsse_session</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8c.html#a777b5d06409128e7bcb97703b4f40f06">soap_wsse_session</a> = NULL</td></tr>
@@ -1765,7 +1774,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">URI</td><td>reference </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">level</td><td>XML depth of element signed </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">transform</td><td>string should be c14n_URI for exc-c14n or NULL </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">transform</td><td>string should be exc_c14n_URI for exc-c14n, or c14n_URI or NULL for default (no canonicalization) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">prefixlist</td><td>used by the exc-c14n transform or NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is the digest algorithm used </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">HA</td><td>is the digest in binary form </td></tr>
@@ -1907,6 +1916,65 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
     <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>string for signature referencing or NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">username</td><td>string </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">password</td><td>string </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK</dd></dl>
+<p>Computes SHA1 digest of the time stamp, a nonce, and the password. The digest provides the authentication credentials. Passwords are NOT sent in the clear.</p>
+<dl class="section note"><dt>Note</dt><dd>This release supports the use of at most one UsernameToken in the header. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3786d1b35bbbb43b6e6b6c840ebe3c57"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_UsernameTokenDigest_at </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>username</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>password</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">time_t&#160;</td>
+          <td class="paramname"><em>when</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds UsernameToken element for digest authentication. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>string for signature referencing or NULL </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">username</td><td>string </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">password</td><td>string </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">when</td><td>the time stamp to use for the digest hash </td></tr>
   </table>
   </dd>
 </dl>
@@ -4478,7 +4546,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>digest algorithm </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">canonical</td><td>flag indicating that element is signed in exc-c14n form </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">canonical</td><td>flag indicating that element is signed in c14n (inclusive or exclusive) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>string of the XML element to verify </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">hash</td><td>digest value to verify against </td></tr>
   </table>
@@ -4976,7 +5044,19 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const char* c14n_URI = &quot;http://www.w3.org/2001/10/xml-exc-c14n#&quot;</td>
+          <td class="memname">const char* c14n_URI = &quot;http://www.w3.org/TR/2001/REC-xml-c14n-20010315&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="afeb095c8a9783a680def55e4d011fa19"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* c14n_wc_URI = &quot;http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -5265,6 +5345,30 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
       <table class="memname">
         <tr>
           <td class="memname">const char* ds_URI = &quot;http://www.w3.org/2000/09/xmldsig#&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a9f4ed9fe98451fed2a0ab0cedcb899ac"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* exc_c14n_URI = &quot;http://www.w3.org/2001/10/xml-exc-c14n#&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a98e313540a8ca7010fce2027063e9509"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* exc_c14n_wc_URI = &quot;http://www.w3.org/2001/10/xml-exc-c14n#WithComments&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -5596,7 +5700,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Apr 5 2017 18:32:59 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sun Jul 9 2017 11:29:29 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

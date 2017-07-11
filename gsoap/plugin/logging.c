@@ -139,6 +139,7 @@ logging_init(struct soap *soap, struct logging_data *data)
 static void
 logging_delete(struct soap *soap, struct soap_plugin *p)
 { 
+  (void)soap;
   /* free allocated plugin data. If fcopy() is not set, then this function is
      not called for all copies of the plugin created with soap_copy(). In this
      example, the fcopy() callback is omitted and the plugin data is shared by

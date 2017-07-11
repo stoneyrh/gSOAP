@@ -870,35 +870,35 @@ http_da_parse_header(struct soap *soap, const char *key, const char *val)
   /* check if server received Authorization Digest HTTP header from client */
   if (!soap_tag_cmp(key, "Authorization") && !soap_tag_cmp(val, "Digest *"))
   {
-    data->alg = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "algorithm"));
-    soap->authrealm = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "realm"));
-    soap->userid = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "username"));
+    data->alg = soap_strdup(soap, soap_http_header_attribute(soap, val + 7, "algorithm"));
+    soap->authrealm = soap_strdup(soap, soap_http_header_attribute(soap, val + 7, "realm"));
+    soap->userid = soap_strdup(soap, soap_http_header_attribute(soap, val + 7, "username"));
     soap->passwd = NULL;
-    data->nonce = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "nonce"));
-    data->opaque = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "opaque"));
-    data->qop = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "qop"));
-    data->ncount = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "nc"));
-    data->cnonce = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "cnonce"));
-    (void)soap_hex2s(soap, soap_get_header_attribute(soap, val + 7, "response"), data->response, 32, NULL);
+    data->nonce = soap_strdup(soap, soap_http_header_attribute(soap, val + 7, "nonce"));
+    data->opaque = soap_strdup(soap, soap_http_header_attribute(soap, val + 7, "opaque"));
+    data->qop = soap_strdup(soap, soap_http_header_attribute(soap, val + 7, "qop"));
+    data->ncount = soap_strdup(soap, soap_http_header_attribute(soap, val + 7, "nc"));
+    data->cnonce = soap_strdup(soap, soap_http_header_attribute(soap, val + 7, "cnonce"));
+    (void)soap_hex2s(soap, soap_http_header_attribute(soap, val + 7, "response"), data->response, 32, NULL);
     return SOAP_OK;
   }
 
   /* check if client received WWW-Authenticate Digest HTTP header from server */
   if ((!soap_tag_cmp(key, "WWW-Authenticate") || !soap_tag_cmp(key, "Proxy-Authenticate")) && !soap_tag_cmp(val, "Digest *"))
   {
-    const char *authrealm = soap_get_header_attribute(soap, val + 7, "realm");
+    const char *authrealm = soap_http_header_attribute(soap, val + 7, "realm");
     if (authrealm && (!soap->authrealm || strcmp(authrealm, soap->authrealm)))
     {
       const char *alg;
       soap->authrealm = soap_strdup(soap, authrealm);
-      alg = soap_get_header_attribute(soap, val + 7, "algorithm");
+      alg = soap_http_header_attribute(soap, val + 7, "algorithm");
       if (!alg || soap_tag_cmp(alg, "SHA-512-256*"))
       {
         /* got the first authenticate header for this realm that we can accept */
         data->alg = soap_strdup(soap, alg);
-        data->nonce = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "nonce"));
-        data->opaque = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "opaque"));
-        data->qop = soap_strdup(soap, soap_get_header_attribute(soap, val + 7, "qop"));
+        data->nonce = soap_strdup(soap, soap_http_header_attribute(soap, val + 7, "nonce"));
+        data->opaque = soap_strdup(soap, soap_http_header_attribute(soap, val + 7, "opaque"));
+        data->qop = soap_strdup(soap, soap_http_header_attribute(soap, val + 7, "qop"));
         data->nc = 1;
         data->ncount = NULL;
         data->cnonce = NULL;

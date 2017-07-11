@@ -27,7 +27,7 @@ Convert PEM to cer format:
 Import cacert.cer by opening it on the Windows machine and then select Install
 Certificate.
 
-Change client.cs by removing the RemoveValidate(...) check to always return
+Change client.cs by removing the RemoteCertValidate(...) check to always return
 true, or modify according to certificate properties to enforce.
 
 To connect a WCF client to a gSOAP service
@@ -45,7 +45,7 @@ Run the gSOAP server on port 8000 and then the client.
 
   $ ./calculator 8000
 
-  C:\WF_WCF_Samples\WCF\Basic\Binding\Basic\TransportSecurity\CS\client> bin\client.exe
+  C:\WF_WCF_Samples\WCF\Basic\Binding\Basic\TransportSecurity\CS\client\bin\client.exe
 
 To self-host a WCF service
 --------------------------
@@ -80,11 +80,10 @@ namespace ...
         BasicHttpBinding bhb = new BasicHttpBinding();
         bhb.Security.Mode = BasicHttpSecurityMode.Transport;
         bhb.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
-  
         serviceHost.AddServiceEndpoint(typeof(ICalculator), bhb, "");
   
         ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
-        smb.HttpGetEnabled = true;
+        smb.HttpsGetEnabled = true;
         serviceHost.Description.Behaviors.Add(smb);
   
         serviceHost.Open();
@@ -99,13 +98,19 @@ namespace ...
 Under Project Properties change the Output type to Console Application to
 generate a service.exe.
 
+For the self-hosted service to work properly you must configure a port with an
+SSL certificate, see:
+
+https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/how-to-configure-a-port-with-an-ssl-certificate
+
+If you are using IIS then configure an IIS-hosted WCF service with SSL:
+
+https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/how-to-configure-an-iis-hosted-wcf-service-with-ssl
+
 After compiling, run service.exe from the command prompt (this may require
 administrator privileges):
 
-  C:\WF_WCF_Samples\WCF\Basic\Binding\Basic\Http\CS\service\bin\service.exe
-
-
-  C:\WF_WCF_Samples\WCF\Basic\Binding\Basic\TransportSecurity\CS\service> bin\service.exe
+  C:\WF_WCF_Samples\WCF\Basic\Binding\Basic\TransportSecurity\CS\service\bin\service.exe
 
 Use a web browser to access the service at
   https://10.0.1.5:8000/ServiceModelSamples/service

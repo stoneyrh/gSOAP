@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">wsseapi.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Apr 5 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sun Jul 9 2017 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -92,7 +92,7 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a263bd9819133fc1daccc34458c991ff9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a263bd9819133fc1daccc34458c991ff9">SOAP_WSSE_ID</a>&#160;&#160;&#160;&quot;SOAP-WSSE-1.5&quot;</td></tr>
+<tr class="memitem:a263bd9819133fc1daccc34458c991ff9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a263bd9819133fc1daccc34458c991ff9">SOAP_WSSE_ID</a>&#160;&#160;&#160;&quot;SOAP-WSSE/1.5&quot;</td></tr>
 <tr class="separator:a263bd9819133fc1daccc34458c991ff9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6f973cd88cca2187640822dc86fcd9e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ae6f973cd88cca2187640822dc86fcd9e">SOAP_WSSE_IGNORE_EXTRA_REFS</a>&#160;&#160;&#160;(0x1000)</td></tr>
 <tr class="separator:ae6f973cd88cca2187640822dc86fcd9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -135,6 +135,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ac9fe59008bdf12d7a007ac48e6ebb613"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ac9fe59008bdf12d7a007ac48e6ebb613">soap_wsse_add_UsernameTokenDigest</a> (struct soap *soap, const char *id, const char *username, const char *password)</td></tr>
 <tr class="memdesc:ac9fe59008bdf12d7a007ac48e6ebb613"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds UsernameToken element for digest authentication.  <a href="#ac9fe59008bdf12d7a007ac48e6ebb613">More...</a><br /></td></tr>
 <tr class="separator:ac9fe59008bdf12d7a007ac48e6ebb613"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7204edbdd78caf5f1e26f0244e0214ee"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#a7204edbdd78caf5f1e26f0244e0214ee">soap_wsse_add_UsernameTokenDigest_at</a> (struct soap *soap, const char *id, const char *username, const char *password, time_t when)</td></tr>
+<tr class="memdesc:a7204edbdd78caf5f1e26f0244e0214ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds UsernameToken element for digest authentication.  <a href="#a7204edbdd78caf5f1e26f0244e0214ee">More...</a><br /></td></tr>
+<tr class="separator:a7204edbdd78caf5f1e26f0244e0214ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae74d27ca59d97961711a038b7188ceb6"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 struct <a class="el" href="struct__wsse_____username_token.html">_wsse__UsernameToken</a> *SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsseapi_8h.html#ae74d27ca59d97961711a038b7188ceb6">soap_wsse_UsernameToken</a> (struct soap *soap, const char *id)</td></tr>
 <tr class="memdesc:ae74d27ca59d97961711a038b7188ceb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns UsernameToken element if present.  <a href="#ae74d27ca59d97961711a038b7188ceb6">More...</a><br /></td></tr>
 <tr class="separator:ae74d27ca59d97961711a038b7188ceb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -454,7 +457,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define SOAP_WSSE_ID&#160;&#160;&#160;&quot;SOAP-WSSE-1.5&quot;</td>
+          <td class="memname">#define SOAP_WSSE_ID&#160;&#160;&#160;&quot;SOAP-WSSE/1.5&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1703,7 +1706,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">URI</td><td>reference </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">level</td><td>XML depth of element signed </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">transform</td><td>string should be c14n_URI for exc-c14n or NULL </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">transform</td><td>string should be exc_c14n_URI for exc-c14n, or c14n_URI or NULL for default (no canonicalization) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">prefixlist</td><td>used by the exc-c14n transform or NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>is the digest algorithm used </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">HA</td><td>is the digest in binary form </td></tr>
@@ -1845,6 +1848,65 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
     <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>string for signature referencing or NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">username</td><td>string </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">password</td><td>string </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK</dd></dl>
+<p>Computes SHA1 digest of the time stamp, a nonce, and the password. The digest provides the authentication credentials. Passwords are NOT sent in the clear.</p>
+<dl class="section note"><dt>Note</dt><dd>This release supports the use of at most one UsernameToken in the header. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a7204edbdd78caf5f1e26f0244e0214ee"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int soap_wsse_add_UsernameTokenDigest_at </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>username</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>password</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">time_t&#160;</td>
+          <td class="paramname"><em>when</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds UsernameToken element for digest authentication. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>string for signature referencing or NULL </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">username</td><td>string </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">password</td><td>string </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">when</td><td>the time stamp to use for the digest hash </td></tr>
   </table>
   </dd>
 </dl>
@@ -3738,7 +3800,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">alg</td><td>digest algorithm </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">canonical</td><td>flag indicating that element is signed in exc-c14n form </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">canonical</td><td>flag indicating that element is signed in c14n (inclusive or exclusive) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>string of the XML element to verify </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">hash</td><td>digest value to verify against </td></tr>
   </table>
@@ -4565,7 +4627,7 @@ Encryption/decryption of elements with simple content (CDATA content) IS NOT SUP
 Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Apr 5 2017 18:32:59 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sun Jul 9 2017 11:29:29 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

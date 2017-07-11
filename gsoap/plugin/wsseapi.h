@@ -172,6 +172,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_Timestamp(struct soap *soap);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_UsernameTokenText(struct soap *soap, const char *id, const char *username, const char *password);
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_UsernameTokenDigest(struct soap *soap, const char *id, const char *username, const char *password);
+SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_UsernameTokenDigest_at(struct soap *soap, const char *id, const char *username, const char *password, time_t when);
 SOAP_FMAC1 struct _wsse__UsernameToken * SOAP_FMAC2 soap_wsse_UsernameToken(struct soap *soap, const char *id);
 SOAP_FMAC1 const char * SOAP_FMAC2 soap_wsse_get_Username(struct soap *soap);
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_Password(struct soap *soap, const char *password);

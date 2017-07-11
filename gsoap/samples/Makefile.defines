@@ -3,7 +3,7 @@
 
 AM_CFLAGS=-D$(platform)
 AM_CXXFLAGS=-D$(platform)
-CPPFLAGS=$(SAMPLE_INCLUDES) -I$(top_srcdir)/gsoap -I$(top_srcdir)/gsoap/plugin
+CPPFLAGS=$(SAMPLE_INCLUDES) -I$(top_srcdir)/gsoap -I$(top_srcdir)/gsoap/plugin $(SOAPCPP2_NO_C_LOCALE)
 SOAP=$(top_srcdir)/gsoap/src/soapcpp2
 
 SOAP_NS_DEF=ns.nsmap ns.wsdl

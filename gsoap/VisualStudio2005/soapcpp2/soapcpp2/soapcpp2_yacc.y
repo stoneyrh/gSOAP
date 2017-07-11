@@ -267,8 +267,8 @@ exts    : NAMESPACE ID '{' exts1 '}'
         ;
 exts1   : /* empty */   {
                           add_soap();
-                          add_qname();
                           add_XML();
+                          add_qname();
                         }
         | exts1 ext     { }
         ;
@@ -402,12 +402,14 @@ dclr    : ptrs ID arrayck tag bounds brinit
                                 p->info.typ->incmax = $3.typ->incmax;
                                 p->info.typ->max = $3.typ->max;
                               }
+                              if (p->info.typ->property == 1)
+                                p->info.typ->property = $3.typ->property;
                               if ($5.pattern)
                               {
                                 p->info.typ->pattern = $5.pattern;
                                 p->info.typ->synonym = NULL;
                               }
-                              else
+                              else if (!p->info.typ->pattern)
                               {
                                 p->info.typ->pattern = $3.typ->pattern;
                               }
@@ -1604,8 +1606,8 @@ type    : VOID          { $$ = mkvoid(); }
                           {
                             $$ = mktemplate($3.typ, $1);
                             $$->transient = -2; /* volatile indicates smart pointer template */
-			    if (!c11flag)
-			      semwarn("To use smart pointers you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
+                            if (!c11flag)
+                              semwarn("To use smart pointers you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
                           }
                           else if ($1 == lookup("std::weak_ptr") ||
                               $1 == lookup("std::function"))
@@ -2099,7 +2101,8 @@ occurs  : /* empty */   {
                           $$.pattern = NULL;
                         }
         ;
-bounds  : nullptr patt          {
+bounds  : nullptr patt
+                        {
                           $$.hasmin = False;
                           $$.hasmax = False;
                           $$.minOccurs = -1;

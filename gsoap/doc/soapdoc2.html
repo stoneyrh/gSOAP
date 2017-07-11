@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.48 User Guide</title>
+<title>gSOAP 2.8.49 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.48 User Guide </h1>
+<h1 align="center">gSOAP 2.8.49 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Jun 16, 2017
+<h3 align="center">Jul 10, 2017
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -536,7 +536,7 @@ To start building Web services applications or automate XML data bindings with g
 </li>
 </ul>
 The gSOAP software is self-contained, so there is no need to download any third-party
-software, unless you need to use OpenSSL and/or Zlib compression.
+software, except when you want to use OpenSSL for HTTPS and/or Zlib compression.
 
 <div class="p"><!----></div>
 The gSOAP distribution package includes:
@@ -10659,18 +10659,19 @@ C++ programmers can use an iterator instead, as in:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>for</b>&nbsp;(soap_multipart::iterator attachment = soap.mime.begin(); attachment != soap.mime.end(); ++attachment) <br />
 { <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> "MIME attachment:" <tt>&lt;&lt;</tt> endl; <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> "Memory=" <tt>&lt;&lt;</tt> (<b>void</b>*)(*attachment).ptr <tt>&lt;&lt;</tt> endl; <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> "Size=" <tt>&lt;&lt;</tt> (*attachment).size <tt>&lt;&lt;</tt> endl; <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> &#203;ncoding=" <tt>&lt;&lt;</tt> (*attachment).encoding <tt>&lt;&lt;</tt> endl; <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> "Type=" <tt>&lt;&lt;</tt> ((*attachment).type?(*attachment).type:"null") <tt>&lt;&lt;</tt> endl; <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> "ID=" <tt>&lt;&lt;</tt> ((*attachment).id?(*attachment).id:"null") <tt>&lt;&lt;</tt> endl; <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> "Location=" <tt>&lt;&lt;</tt> ((*attachment).location?(*attachment).location:"null") <tt>&lt;&lt;</tt> endl; <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> "Description=" <tt>&lt;&lt;</tt> ((*attachment).description?(*attachment).description:"null") <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"MIME&nbsp;attachment:"</tt> <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"Memory="</tt> <tt>&lt;&lt;</tt> (<b>void</b>*)(*attachment).ptr <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"Size="</tt> <tt>&lt;&lt;</tt> (*attachment).size <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"Encoding="</tt> <tt>&lt;&lt;</tt> (*attachment).encoding <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"Type="</tt> <tt>&lt;&lt;</tt> ((*attachment).type?(*attachment).type:"null") <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"ID="</tt> <tt>&lt;&lt;</tt> ((*attachment).id?(*attachment).id:"null") <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"Location="</tt> <tt>&lt;&lt;</tt> ((*attachment).location?(*attachment).location:"null") <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"Description="</tt> <tt>&lt;&lt;</tt> ((*attachment).description?(*attachment).description:"null") <tt>&lt;&lt;</tt> endl; <br />
 }
 </td></tr></table><br></i>
 Note: keep in mind that the first attachment is associated with the SOAP
-message and you may want to ignore it.
+message and you may want to ignore it if the message has the attachment data
+already embedded through its hrefs.
 
 <div class="p"><!----></div>
 A call to <i>soap_end</i> removes all of the received MIME data. To preserve an
@@ -10691,7 +10692,7 @@ http://msdn.microsoft.com/library/en-us/dnglobspec/html/draft-nielsen-dime-02.tx
 Applications developed with gSOAP can transmit binary DIME attachments with or
 without streaming messages. Without streaming, all data is stored and retrieved in
 memory, which can be prohibitive when transmitting large files on small
-devices. The maximum DIME attachment size is limited to 8 MB by default as set with <i>SOAP_MAXDIMESIZE</i> in <i>stdsoap2.h</i>. In contrast, with DIME streaming, data handlers are used to pass the
+devices. The maximum DIME attachment size is limited to 8 MB by default as set with <i>SOAP_MAXDIMESIZE</i> in <i>stdsoap2.h</i>. This limit can be changed as needed by recompiling <i>stdsoap2.c</i> and <i>stdsoap2.cpp</i> with <i>-DSOAP_MAXDIMESIZE=100000000</i> for example. In contrast, with DIME streaming, data handlers are used to pass the
 data to and from a resource, such as a file or device.  With DIME output
 streaming, raw binary data is send from a data source in chunks on the fly
 without buffering the entire content to save memory. With DIME input streaming,
@@ -10757,11 +10758,11 @@ C++ programmers can use an iterator instead, as in:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>for</b>&nbsp;(soap_multipart::iterator attachment = soap.dime.begin(); attachment != soap.dime.end(); ++attachment) <br />
 { <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> "DIME attachment:" <tt>&lt;&lt;</tt> endl; <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> "Memory=" <tt>&lt;&lt;</tt> (<b>void</b>*)(*attachment).ptr <tt>&lt;&lt;</tt> endl; <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> "Size=" <tt>&lt;&lt;</tt> (*attachment).size <tt>&lt;&lt;</tt> endl; <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> "Type=" <tt>&lt;&lt;</tt> ((*attachment).type?(*attachment).type:"null") <tt>&lt;&lt;</tt> endl; <br />
-&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> "ID=" <tt>&lt;&lt;</tt> ((*attachment).id?(*attachment).id:"null") <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"DIME&nbsp;attachment:"</tt> <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"Memory="</tt> <tt>&lt;&lt;</tt> (<b>void</b>*)(*attachment).ptr <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"Size="</tt> <tt>&lt;&lt;</tt> (*attachment).size <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"Type="</tt> <tt>&lt;&lt;</tt> ((*attachment).type?(*attachment).type:"null") <tt>&lt;&lt;</tt> endl; <br />
+&nbsp;&nbsp;&nbsp;cout <tt>&lt;&lt;</tt> <tt>"ID="</tt> <tt>&lt;&lt;</tt> ((*attachment).id?(*attachment).id:"null") <tt>&lt;&lt;</tt> endl; <br />
 }
 </td></tr></table><br></i>
 The <i>options</i> field is available as well. The <i>options</i> content is
@@ -10785,9 +10786,11 @@ Binary data stored in extended <tt>xsd:base64Binary</tt> and <tt>xsd:hexBinary</
 types can be serialized and deserialized as DIME attachments. These attachments
 will be transmitted prior to the sequence of secondary DIME attachments defined
 by the user with <i>soap_set_dime_attachment</i> as explained in the
-previous section. The serialization process is automated and DIME attachments
-will be send even when <i>soap_set_dime</i> or
-<i>soap_set_dime_attachment</i> are not used.
+previous section. The serialization process is automated for SOAP encoded
+messages and DIME attachments will be send even when <i>soap_set_dime</i> or
+<i>soap_set_dime_attachment</i> are not used.  For non-SOAP-encoded messages
+such as document/literal messages you must still call <i>soap_set_dime</i> to
+enable sending messages with attachments.
 
 <div class="p"><!----></div>
 The <tt>xsd:base64Binary</tt> XSD type is defined in gSOAP as a struct or class by
@@ -11803,17 +11806,25 @@ be initialized with default values.
 To force the validation of minOccurs and maxOccurs contraints the <i>SOAP_XML_STRICT</i> input mode flag must be set.
 The minOccurs and maxOccurs constraints are specified for fields of a struct and members of a class in a header file using the following syntax:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-<u><span class="roman">Type</span></u> <u><span class="roman">fieldname</span></u> <font size="+1"><span class="roman">[</span></font><u><span class="roman">minOccurs</span></u><font size="+1"><span class="roman">[</span></font>:<u><span class="roman">maxOccurs</span></u><font size="+1"><span class="roman">]</span></font><font size="+1"><span class="roman">]</span></font> <font size="+1"><span class="roman">[</span></font>= <span class="roman">value</span><font size="+1"><span class="roman">]</span></font>
+<u><span class="roman">Type</span></u> <u><span class="roman">fieldname</span></u> <font size="+1"><span class="roman">[</span></font><u><b>nullptr</b></u><font size="+1"><span class="roman">]</span></font> <font size="+1"><span class="roman">[</span></font><u><span class="roman">minOccurs</span></u><font size="+1"><span class="roman">[</span></font>:<u><span class="roman">maxOccurs</span></u><font size="+1"><span class="roman">]</span></font><font size="+1"><span class="roman">]</span></font> <font size="+1"><span class="roman">[</span></font>= <span class="roman">value</span><font size="+1"><span class="roman">]</span></font>
 </td></tr></table><br></i>
-The minOccurs and maxOccurs values must be integer literals. A default value can be provided. When minOccurs is not specified, it is assumed to be zero.
+The minOccurs and maxOccurs values must be integer literals. Also a default initialization value can be provided. When minOccurs is not specified it is assumed to be one (1) for non-pointer <i>fieldname</i> members that are elements and zero (0) for <i>fieldname</i> members that are pointers or are attributes (i.e. have a <i>@</i> qualifier).
+
+<div class="p"><!----></div>
+The nillable property can by specified by adding a <b>nullptr</b> before the minOccurs (version 2.8.24 or greater).
+
+<div class="p"><!----></div>
+A fixed initialization value can be specified with  (version 2.8.48 or greater).
 
 <div class="p"><!----></div>
 For example
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
 <b>struct</b>&nbsp;ns__MyRecord <br />
 { <br />
-&nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;n = 5; // element with default value 5, minOccurs=0, maxOccurs=1<br />
-&nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;m 1; // element with minOccurs=1 <br />
+&nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;n 0 = 5; // element with default value 5, minOccurs=0, maxOccurs=1<br />
+&nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;m; // element with minOccurs=1 <br />
+&nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;*k <b>nullptr</b> 1; // element with minOccurs=1 and nillable=true <br />
+&nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;v == 2; // element with minOccurs=1 and fixed value 2 <br />
 &nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;__size 0:10; // sequence &lt;item&#62; with minOccurs=0, maxOccurs=10<br />
 &nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;*item; <br />
 &nbsp;&nbsp;&nbsp;std::vector<tt>&lt;</tt>double<tt>&gt;</tt> nums 2; // sequence &lt;nums&#62; with minOccurs=2, maxOccurs=unbounded <br />
@@ -11824,7 +11835,6 @@ For example
 &nbsp;&nbsp;&nbsp;<b>int</b>&nbsp;size; <br />
 };
 </td></tr></table><br></i>
-Pointer-based struct fields and class members are allowed to be nillable when minOccurs is zero.
 
 <div class="p"><!----></div>
 		      <h4><a name="tth_sEc17.1.3">
@@ -16701,5 +16711,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 16 Jun 2017, 16:14.</small>
+version 4.00.<br />On 10 Jul 2017, 12:49.</small>
 </html>

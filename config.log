@@ -30,8 +30,8 @@ Kernel configured for up to 8 processors.
 Processor type: x86_64h (Intel x86-64h Haswell)
 Processors active: 0 1 2 3 4 5 6 7
 Primary memory available: 16.00 gigabytes
-Default processor set: 507 tasks, 2185 threads, 8 processors
-Load average: 1.75, Mach factor: 6.23
+Default processor set: 526 tasks, 2518 threads, 8 processors
+Load average: 1.76, Mach factor: 6.23
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -43,6 +43,7 @@ PATH: /Applications/SWI-Prolog.app/Contents/MacOS
 PATH: /usr/local/teTeX/bin/i386-apple-darwin-current
 PATH: /opt/local/bin
 PATH: /opt/local/sbin
+PATH: /Users/engelen/cov-analysis-macosx-8.7.0/bin
 PATH: /Applications/SWI-Prolog.app/Contents/MacOS
 PATH: /usr/local/bin
 PATH: /usr/bin
@@ -54,7 +55,6 @@ PATH: /Library/TeX/texbin
 PATH: /Applications/Wireshark.app/Contents/MacOS
 PATH: /usr/X11R6/bin
 PATH: /Users/engelen/bin
-PATH: /usr/texbin
 PATH: /usr/local/bin
 PATH: /usr/X11R6/bin
 PATH: /Users/engelen/bin
@@ -65,151 +65,151 @@ PATH: /usr/local/bin
 ## Core tests. ##
 ## ----------- ##
 
-configure:2415: checking for a BSD-compatible install
-configure:2483: result: /usr/bin/install -c
-configure:2494: checking whether build environment is sane
-configure:2549: result: yes
-configure:2700: checking for a thread-safe mkdir -p
-configure:2739: result: ./install-sh -c -d
-configure:2746: checking for gawk
-configure:2776: result: no
-configure:2746: checking for mawk
-configure:2776: result: no
-configure:2746: checking for nawk
-configure:2776: result: no
-configure:2746: checking for awk
-configure:2762: found /usr/bin/awk
-configure:2773: result: awk
-configure:2784: checking whether make sets $(MAKE)
-configure:2806: result: yes
-configure:2835: checking whether make supports nested variables
-configure:2852: result: yes
-configure:2983: checking build system type
-configure:2997: result: x86_64-apple-darwin16.6.0
-configure:3017: checking host system type
-configure:3030: result: x86_64-apple-darwin16.6.0
-configure:3056: checking whether make sets $(MAKE)
-configure:3078: result: yes
-configure:3146: checking for g++
-configure:3162: found /usr/bin/g++
-configure:3173: result: g++
-configure:3200: checking for C++ compiler version
-configure:3209: g++ --version >&5
+configure:2418: checking for a BSD-compatible install
+configure:2486: result: /usr/bin/install -c
+configure:2497: checking whether build environment is sane
+configure:2552: result: yes
+configure:2703: checking for a thread-safe mkdir -p
+configure:2742: result: ./install-sh -c -d
+configure:2749: checking for gawk
+configure:2779: result: no
+configure:2749: checking for mawk
+configure:2779: result: no
+configure:2749: checking for nawk
+configure:2779: result: no
+configure:2749: checking for awk
+configure:2765: found /usr/bin/awk
+configure:2776: result: awk
+configure:2787: checking whether make sets $(MAKE)
+configure:2809: result: yes
+configure:2838: checking whether make supports nested variables
+configure:2855: result: yes
+configure:2986: checking build system type
+configure:3000: result: x86_64-apple-darwin16.6.0
+configure:3020: checking host system type
+configure:3033: result: x86_64-apple-darwin16.6.0
+configure:3059: checking whether make sets $(MAKE)
+configure:3081: result: yes
+configure:3149: checking for g++
+configure:3165: found /usr/bin/g++
+configure:3176: result: g++
+configure:3203: checking for C++ compiler version
+configure:3212: g++ --version >&5
 Apple LLVM version 8.1.0 (clang-802.0.42)
 Target: x86_64-apple-darwin16.6.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
 Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
-configure:3220: $? = 0
-configure:3209: g++ -v >&5
+configure:3223: $? = 0
+configure:3212: g++ -v >&5
 Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
 Apple LLVM version 8.1.0 (clang-802.0.42)
 Target: x86_64-apple-darwin16.6.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
-configure:3220: $? = 0
-configure:3209: g++ -V >&5
+configure:3223: $? = 0
+configure:3212: g++ -V >&5
 clang: error: argument to '-V' is missing (expected 1 value)
 clang: error: no input files
-configure:3220: $? = 1
-configure:3209: g++ -qversion >&5
+configure:3223: $? = 1
+configure:3212: g++ -qversion >&5
 clang: error: unknown argument: '-qversion'
 clang: error: no input files
-configure:3220: $? = 1
-configure:3240: checking whether the C++ compiler works
-configure:3262: g++    conftest.cpp  >&5
-configure:3266: $? = 0
-configure:3314: result: yes
-configure:3317: checking for C++ compiler default output file name
-configure:3319: result: a.out
-configure:3325: checking for suffix of executables
-configure:3332: g++ -o conftest    conftest.cpp  >&5
-configure:3336: $? = 0
-configure:3358: result: 
-configure:3380: checking whether we are cross compiling
-configure:3388: g++ -o conftest    conftest.cpp  >&5
-configure:3392: $? = 0
-configure:3399: ./conftest
-configure:3403: $? = 0
-configure:3418: result: no
-configure:3423: checking for suffix of object files
-configure:3445: g++ -c   conftest.cpp >&5
-configure:3449: $? = 0
-configure:3470: result: o
-configure:3474: checking whether we are using the GNU C++ compiler
-configure:3493: g++ -c   conftest.cpp >&5
-configure:3493: $? = 0
-configure:3502: result: yes
-configure:3511: checking whether g++ accepts -g
-configure:3531: g++ -c -g  conftest.cpp >&5
-configure:3531: $? = 0
-configure:3572: result: yes
-configure:3606: checking for style of include used by make
-configure:3634: result: GNU
-configure:3660: checking dependency style of g++
-configure:3771: result: gcc3
-configure:3834: checking for gcc
-configure:3850: found /usr/bin/gcc
-configure:3861: result: gcc
-configure:4090: checking for C compiler version
-configure:4099: gcc --version >&5
+configure:3223: $? = 1
+configure:3243: checking whether the C++ compiler works
+configure:3265: g++    conftest.cpp  >&5
+configure:3269: $? = 0
+configure:3317: result: yes
+configure:3320: checking for C++ compiler default output file name
+configure:3322: result: a.out
+configure:3328: checking for suffix of executables
+configure:3335: g++ -o conftest    conftest.cpp  >&5
+configure:3339: $? = 0
+configure:3361: result: 
+configure:3383: checking whether we are cross compiling
+configure:3391: g++ -o conftest    conftest.cpp  >&5
+configure:3395: $? = 0
+configure:3402: ./conftest
+configure:3406: $? = 0
+configure:3421: result: no
+configure:3426: checking for suffix of object files
+configure:3448: g++ -c   conftest.cpp >&5
+configure:3452: $? = 0
+configure:3473: result: o
+configure:3477: checking whether we are using the GNU C++ compiler
+configure:3496: g++ -c   conftest.cpp >&5
+configure:3496: $? = 0
+configure:3505: result: yes
+configure:3514: checking whether g++ accepts -g
+configure:3534: g++ -c -g  conftest.cpp >&5
+configure:3534: $? = 0
+configure:3575: result: yes
+configure:3609: checking for style of include used by make
+configure:3637: result: GNU
+configure:3663: checking dependency style of g++
+configure:3774: result: gcc3
+configure:3837: checking for gcc
+configure:3853: found /usr/bin/gcc
+configure:3864: result: gcc
+configure:4093: checking for C compiler version
+configure:4102: gcc --version >&5
 Apple LLVM version 8.1.0 (clang-802.0.42)
 Target: x86_64-apple-darwin16.6.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
 Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
-configure:4110: $? = 0
-configure:4099: gcc -v >&5
+configure:4113: $? = 0
+configure:4102: gcc -v >&5
 Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
 Apple LLVM version 8.1.0 (clang-802.0.42)
 Target: x86_64-apple-darwin16.6.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
-configure:4110: $? = 0
-configure:4099: gcc -V >&5
+configure:4113: $? = 0
+configure:4102: gcc -V >&5
 clang: error: argument to '-V' is missing (expected 1 value)
 clang: error: no input files
-configure:4110: $? = 1
-configure:4099: gcc -qversion >&5
+configure:4113: $? = 1
+configure:4102: gcc -qversion >&5
 clang: error: unknown argument: '-qversion'
 clang: error: no input files
-configure:4110: $? = 1
-configure:4114: checking whether we are using the GNU C compiler
-configure:4133: gcc -c   conftest.c >&5
-configure:4133: $? = 0
-configure:4142: result: yes
-configure:4151: checking whether gcc accepts -g
-configure:4171: gcc -c -g  conftest.c >&5
-configure:4171: $? = 0
-configure:4212: result: yes
-configure:4229: checking for gcc option to accept ISO C89
-configure:4292: gcc  -c -g -O2  conftest.c >&5
-configure:4292: $? = 0
-configure:4305: result: none needed
-configure:4330: checking whether gcc understands -c and -o together
-configure:4352: gcc -c conftest.c -o conftest2.o
-configure:4355: $? = 0
-configure:4352: gcc -c conftest.c -o conftest2.o
-configure:4355: $? = 0
-configure:4367: result: yes
-configure:4386: checking dependency style of gcc
-configure:4497: result: gcc3
-configure:4518: checking for flex
-configure:4534: found /usr/bin/flex
-configure:4545: result: flex
-configure:4583: flex conftest.l
-configure:4587: $? = 0
-configure:4589: checking lex output file root
-configure:4603: result: lex.yy
-configure:4608: checking lex library
-configure:4622: gcc -o conftest -g -O2   conftest.c   >&5
+configure:4113: $? = 1
+configure:4117: checking whether we are using the GNU C compiler
+configure:4136: gcc -c   conftest.c >&5
+configure:4136: $? = 0
+configure:4145: result: yes
+configure:4154: checking whether gcc accepts -g
+configure:4174: gcc -c -g  conftest.c >&5
+configure:4174: $? = 0
+configure:4215: result: yes
+configure:4232: checking for gcc option to accept ISO C89
+configure:4295: gcc  -c -g -O2  conftest.c >&5
+configure:4295: $? = 0
+configure:4308: result: none needed
+configure:4333: checking whether gcc understands -c and -o together
+configure:4355: gcc -c conftest.c -o conftest2.o
+configure:4358: $? = 0
+configure:4355: gcc -c conftest.c -o conftest2.o
+configure:4358: $? = 0
+configure:4370: result: yes
+configure:4389: checking dependency style of gcc
+configure:4500: result: gcc3
+configure:4521: checking for flex
+configure:4537: found /usr/bin/flex
+configure:4548: result: flex
+configure:4586: flex conftest.l
+configure:4590: $? = 0
+configure:4592: checking lex output file root
+configure:4606: result: lex.yy
+configure:4611: checking lex library
+configure:4625: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in conftest-b12c07.o
-      _main in conftest-b12c07.o
+      _yylex in conftest-b5e6a2.o
+      _main in conftest-b5e6a2.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
-configure:4622: $? = 1
+configure:4625: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -1994,10 +1994,10 @@ configure: failed program was:
 | {
 |   return ! yylex () + ! yywrap ();
 | }
-configure:4622: gcc -o conftest -g -O2   conftest.c -lfl  >&5
+configure:4625: gcc -o conftest -g -O2   conftest.c -lfl  >&5
 ld: library not found for -lfl
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
-configure:4622: $? = 1
+configure:4625: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -3782,25 +3782,25 @@ configure: failed program was:
 | {
 |   return ! yylex () + ! yywrap ();
 | }
-configure:4622: gcc -o conftest -g -O2   conftest.c -ll  >&5
-configure:4622: $? = 0
-configure:4632: result: -ll
-configure:4638: checking whether yytext is a pointer
-configure:4655: gcc -o conftest -g -O2   conftest.c -ll  >&5
-configure:4655: $? = 0
-configure:4663: result: yes
-configure:4680: checking for bison
-configure:4696: found /usr/bin/bison
-configure:4707: result: bison -y
-configure:4724: checking how to run the C preprocessor
-configure:4755: gcc -E  conftest.c
-configure:4755: $? = 0
-configure:4769: gcc -E  conftest.c
+configure:4625: gcc -o conftest -g -O2   conftest.c -ll  >&5
+configure:4625: $? = 0
+configure:4635: result: -ll
+configure:4641: checking whether yytext is a pointer
+configure:4658: gcc -o conftest -g -O2   conftest.c -ll  >&5
+configure:4658: $? = 0
+configure:4666: result: yes
+configure:4683: checking for bison
+configure:4699: found /usr/bin/bison
+configure:4710: result: bison -y
+configure:4727: checking how to run the C preprocessor
+configure:4758: gcc -E  conftest.c
+configure:4758: $? = 0
+configure:4772: gcc -E  conftest.c
 conftest.c:12:10: fatal error: 'ac_nonexistent.h' file not found
 #include <ac_nonexistent.h>
          ^
 1 error generated.
-configure:4769: $? = 1
+configure:4772: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -3814,15 +3814,15 @@ configure: failed program was:
 | #define YYTEXT_POINTER 1
 | /* end confdefs.h.  */
 | #include <ac_nonexistent.h>
-configure:4794: result: gcc -E
-configure:4814: gcc -E  conftest.c
-configure:4814: $? = 0
-configure:4828: gcc -E  conftest.c
+configure:4797: result: gcc -E
+configure:4817: gcc -E  conftest.c
+configure:4817: $? = 0
+configure:4831: gcc -E  conftest.c
 conftest.c:12:10: fatal error: 'ac_nonexistent.h' file not found
 #include <ac_nonexistent.h>
          ^
 1 error generated.
-configure:4828: $? = 1
+configure:4831: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -3836,198 +3836,198 @@ configure: failed program was:
 | #define YYTEXT_POINTER 1
 | /* end confdefs.h.  */
 | #include <ac_nonexistent.h>
-configure:4899: checking for ranlib
-configure:4915: found /usr/bin/ranlib
-configure:4926: result: ranlib
-configure:4949: checking whether ln -s works
-configure:4953: result: yes
-configure:4964: checking for gawk
-configure:4991: result: awk
-configure:5074: checking for grep that handles long lines and -e
-configure:5132: result: /usr/bin/grep
-configure:5137: checking for egrep
-configure:5199: result: /usr/bin/grep -E
-configure:5204: checking for ANSI C header files
-configure:5224: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5224: $? = 0
-configure:5297: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5297: $? = 0
-configure:5297: ./conftest
-configure:5297: $? = 0
-configure:5308: result: yes
-configure:5321: checking for sys/types.h
-configure:5321: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5321: $? = 0
-configure:5321: result: yes
-configure:5321: checking for sys/stat.h
-configure:5321: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5321: $? = 0
-configure:5321: result: yes
-configure:5321: checking for stdlib.h
-configure:5321: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5321: $? = 0
-configure:5321: result: yes
-configure:5321: checking for string.h
-configure:5321: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5321: $? = 0
-configure:5321: result: yes
-configure:5321: checking for memory.h
-configure:5321: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5321: $? = 0
-configure:5321: result: yes
-configure:5321: checking for strings.h
-configure:5321: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5321: $? = 0
-configure:5321: result: yes
-configure:5321: checking for inttypes.h
-configure:5321: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5321: $? = 0
-configure:5321: result: yes
-configure:5321: checking for stdint.h
-configure:5321: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5321: $? = 0
-configure:5321: result: yes
-configure:5321: checking for unistd.h
-configure:5321: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5321: $? = 0
-configure:5321: result: yes
-configure:5336: checking arpa/inet.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking arpa/inet.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for arpa/inet.h
-configure:5336: result: yes
-configure:5336: checking locale.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking locale.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for locale.h
-configure:5336: result: yes
-configure:5336: checking xlocale.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking xlocale.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for xlocale.h
-configure:5336: result: yes
-configure:5336: checking errno.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking errno.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for errno.h
-configure:5336: result: yes
-configure:5336: checking fcntl.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking fcntl.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for fcntl.h
-configure:5336: result: yes
-configure:5336: checking ctype.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking ctype.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for ctype.h
-configure:5336: result: yes
-configure:5336: checking limits.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking limits.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for limits.h
-configure:5336: result: yes
-configure:5336: checking float.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking float.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for float.h
-configure:5336: result: yes
-configure:5336: checking math.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking math.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for math.h
-configure:5336: result: yes
-configure:5336: checking netdb.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking netdb.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for netdb.h
-configure:5336: result: yes
-configure:5336: checking netinet/in.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking netinet/in.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for netinet/in.h
-configure:5336: result: yes
-configure:5336: checking for stdlib.h
-configure:5336: result: yes
-configure:5336: checking for string.h
-configure:5336: result: yes
-configure:5336: checking for strings.h
-configure:5336: result: yes
-configure:5336: checking for stdint.h
-configure:5336: result: yes
-configure:5336: checking for inttypes.h
-configure:5336: result: yes
-configure:5336: checking time.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking time.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for time.h
-configure:5336: result: yes
-configure:5336: checking sys/inttypes.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:4902: checking for ranlib
+configure:4918: found /usr/bin/ranlib
+configure:4929: result: ranlib
+configure:4952: checking whether ln -s works
+configure:4956: result: yes
+configure:4967: checking for gawk
+configure:4994: result: awk
+configure:5077: checking for grep that handles long lines and -e
+configure:5135: result: /usr/bin/grep
+configure:5140: checking for egrep
+configure:5202: result: /usr/bin/grep -E
+configure:5207: checking for ANSI C header files
+configure:5227: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5227: $? = 0
+configure:5300: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5300: $? = 0
+configure:5300: ./conftest
+configure:5300: $? = 0
+configure:5311: result: yes
+configure:5324: checking for sys/types.h
+configure:5324: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5324: $? = 0
+configure:5324: result: yes
+configure:5324: checking for sys/stat.h
+configure:5324: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5324: $? = 0
+configure:5324: result: yes
+configure:5324: checking for stdlib.h
+configure:5324: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5324: $? = 0
+configure:5324: result: yes
+configure:5324: checking for string.h
+configure:5324: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5324: $? = 0
+configure:5324: result: yes
+configure:5324: checking for memory.h
+configure:5324: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5324: $? = 0
+configure:5324: result: yes
+configure:5324: checking for strings.h
+configure:5324: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5324: $? = 0
+configure:5324: result: yes
+configure:5324: checking for inttypes.h
+configure:5324: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5324: $? = 0
+configure:5324: result: yes
+configure:5324: checking for stdint.h
+configure:5324: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5324: $? = 0
+configure:5324: result: yes
+configure:5324: checking for unistd.h
+configure:5324: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5324: $? = 0
+configure:5324: result: yes
+configure:5339: checking arpa/inet.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking arpa/inet.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for arpa/inet.h
+configure:5339: result: yes
+configure:5339: checking locale.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking locale.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for locale.h
+configure:5339: result: yes
+configure:5339: checking xlocale.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking xlocale.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for xlocale.h
+configure:5339: result: yes
+configure:5339: checking errno.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking errno.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for errno.h
+configure:5339: result: yes
+configure:5339: checking fcntl.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking fcntl.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for fcntl.h
+configure:5339: result: yes
+configure:5339: checking ctype.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking ctype.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for ctype.h
+configure:5339: result: yes
+configure:5339: checking limits.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking limits.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for limits.h
+configure:5339: result: yes
+configure:5339: checking float.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking float.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for float.h
+configure:5339: result: yes
+configure:5339: checking math.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking math.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for math.h
+configure:5339: result: yes
+configure:5339: checking netdb.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking netdb.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for netdb.h
+configure:5339: result: yes
+configure:5339: checking netinet/in.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking netinet/in.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for netinet/in.h
+configure:5339: result: yes
+configure:5339: checking for stdlib.h
+configure:5339: result: yes
+configure:5339: checking for string.h
+configure:5339: result: yes
+configure:5339: checking for strings.h
+configure:5339: result: yes
+configure:5339: checking for stdint.h
+configure:5339: result: yes
+configure:5339: checking for inttypes.h
+configure:5339: result: yes
+configure:5339: checking time.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking time.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for time.h
+configure:5339: result: yes
+configure:5339: checking sys/inttypes.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
 conftest.c:72:10: fatal error: 'sys/inttypes.h' file not found
 #include <sys/inttypes.h>
          ^
 1 error generated.
-configure:5336: $? = 1
+configure:5339: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -4101,14 +4101,14 @@ configure: failed program was:
 | # include <unistd.h>
 | #endif
 | #include <sys/inttypes.h>
-configure:5336: result: no
-configure:5336: checking sys/inttypes.h presence
-configure:5336: gcc -E  conftest.c
+configure:5339: result: no
+configure:5339: checking sys/inttypes.h presence
+configure:5339: gcc -E  conftest.c
 conftest.c:39:10: fatal error: 'sys/inttypes.h' file not found
 #include <sys/inttypes.h>
          ^
 1 error generated.
-configure:5336: $? = 1
+configure:5339: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -4149,70 +4149,70 @@ configure: failed program was:
 | #define HAVE_TIME_H 1
 | /* end confdefs.h.  */
 | #include <sys/inttypes.h>
-configure:5336: result: no
-configure:5336: checking for sys/inttypes.h
-configure:5336: result: no
-configure:5336: checking sys/socket.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking sys/socket.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for sys/socket.h
-configure:5336: result: yes
-configure:5336: checking for sys/types.h
-configure:5336: result: yes
-configure:5336: checking sys/time.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking sys/time.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for sys/time.h
-configure:5336: result: yes
-configure:5336: checking sys/timeb.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking sys/timeb.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for sys/timeb.h
-configure:5336: result: yes
-configure:5336: checking for unistd.h
-configure:5336: result: yes
-configure:5336: checking poll.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking poll.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for poll.h
-configure:5336: result: yes
-configure:5336: checking openssl/ssl.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking openssl/ssl.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for openssl/ssl.h
-configure:5336: result: yes
-configure:5336: checking gnutls/gnutls.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: result: no
+configure:5339: checking for sys/inttypes.h
+configure:5339: result: no
+configure:5339: checking sys/socket.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking sys/socket.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for sys/socket.h
+configure:5339: result: yes
+configure:5339: checking for sys/types.h
+configure:5339: result: yes
+configure:5339: checking sys/time.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking sys/time.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for sys/time.h
+configure:5339: result: yes
+configure:5339: checking sys/timeb.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking sys/timeb.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for sys/timeb.h
+configure:5339: result: yes
+configure:5339: checking for unistd.h
+configure:5339: result: yes
+configure:5339: checking poll.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking poll.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for poll.h
+configure:5339: result: yes
+configure:5339: checking openssl/ssl.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking openssl/ssl.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for openssl/ssl.h
+configure:5339: result: yes
+configure:5339: checking gnutls/gnutls.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
 conftest.c:79:10: fatal error: 'gnutls/gnutls.h' file not found
 #include <gnutls/gnutls.h>
          ^
 1 error generated.
-configure:5336: $? = 1
+configure:5339: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -4293,14 +4293,14 @@ configure: failed program was:
 | # include <unistd.h>
 | #endif
 | #include <gnutls/gnutls.h>
-configure:5336: result: no
-configure:5336: checking gnutls/gnutls.h presence
-configure:5336: gcc -E  conftest.c
+configure:5339: result: no
+configure:5339: checking gnutls/gnutls.h presence
+configure:5339: gcc -E  conftest.c
 conftest.c:46:10: fatal error: 'gnutls/gnutls.h' file not found
 #include <gnutls/gnutls.h>
          ^
 1 error generated.
-configure:5336: $? = 1
+configure:5339: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -4348,32 +4348,32 @@ configure: failed program was:
 | #define HAVE_OPENSSL_SSL_H 1
 | /* end confdefs.h.  */
 | #include <gnutls/gnutls.h>
-configure:5336: result: no
-configure:5336: checking for gnutls/gnutls.h
-configure:5336: result: no
-configure:5336: checking zlib.h usability
-configure:5336: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking zlib.h presence
-configure:5336: gcc -E  conftest.c
-configure:5336: $? = 0
-configure:5336: result: yes
-configure:5336: checking for zlib.h
-configure:5336: result: yes
-configure:5348: checking for an ANSI C-conforming const
-configure:5414: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5414: $? = 0
-configure:5421: result: yes
-configure:5429: checking for size_t
-configure:5429: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5429: $? = 0
-configure:5429: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: result: no
+configure:5339: checking for gnutls/gnutls.h
+configure:5339: result: no
+configure:5339: checking zlib.h usability
+configure:5339: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking zlib.h presence
+configure:5339: gcc -E  conftest.c
+configure:5339: $? = 0
+configure:5339: result: yes
+configure:5339: checking for zlib.h
+configure:5339: result: yes
+configure:5351: checking for an ANSI C-conforming const
+configure:5417: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5417: $? = 0
+configure:5424: result: yes
+configure:5432: checking for size_t
+configure:5432: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5432: $? = 0
+configure:5432: gcc -c -Wno-deprecated-declarations  conftest.c >&5
 conftest.c:83:21: error: expected expression
 if (sizeof ((size_t)))
                     ^
 1 error generated.
-configure:5429: $? = 1
+configure:5432: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -4462,21 +4462,21 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5429: result: yes
-configure:5440: checking whether time.h and sys/time.h may both be included
-configure:5460: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5460: $? = 0
-configure:5467: result: yes
-configure:5475: checking whether struct tm is in sys/time.h or time.h
-configure:5495: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5495: $? = 0
-configure:5502: result: time.h
-configure:5510: checking for struct tm.tm_gmtoff
-configure:5510: gcc -c -Wno-deprecated-declarations  conftest.c >&5
-configure:5510: $? = 0
-configure:5510: result: yes
-configure:5523: checking for struct tm.__tm_gmtoff
-configure:5523: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5432: result: yes
+configure:5443: checking whether time.h and sys/time.h may both be included
+configure:5463: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5463: $? = 0
+configure:5470: result: yes
+configure:5478: checking whether struct tm is in sys/time.h or time.h
+configure:5498: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5498: $? = 0
+configure:5505: result: time.h
+configure:5513: checking for struct tm.tm_gmtoff
+configure:5513: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5513: $? = 0
+configure:5513: result: yes
+configure:5526: checking for struct tm.__tm_gmtoff
+configure:5526: gcc -c -Wno-deprecated-declarations  conftest.c >&5
 conftest.c:58:13: error: no member named '__tm_gmtoff' in 'struct tm'; did you mean 'tm_gmtoff'?
 if (ac_aggr.__tm_gmtoff)
             ^~~~~~~~~~~
@@ -4485,7 +4485,7 @@ if (ac_aggr.__tm_gmtoff)
         long    tm_gmtoff;      /* offset from CUT in seconds */
                 ^
 1 error generated.
-configure:5523: $? = 1
+configure:5526: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -4549,7 +4549,7 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5523: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5526: gcc -c -Wno-deprecated-declarations  conftest.c >&5
 conftest.c:58:20: error: no member named '__tm_gmtoff' in 'struct tm'; did you mean 'tm_gmtoff'?
 if (sizeof ac_aggr.__tm_gmtoff)
                    ^~~~~~~~~~~
@@ -4558,7 +4558,7 @@ if (sizeof ac_aggr.__tm_gmtoff)
         long    tm_gmtoff;      /* offset from CUT in seconds */
                 ^
 1 error generated.
-configure:5523: $? = 1
+configure:5526: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -4622,20 +4622,20 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5523: result: no
-configure:5545: checking for sys/time.h
-configure:5545: result: yes
-configure:5545: checking for unistd.h
-configure:5545: result: yes
-configure:5566: checking for alarm
-configure:5566: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5566: $? = 0
-configure:5566: result: yes
-configure:5579: checking for working mktime
-configure:5781: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5781: $? = 0
-configure:5781: ./conftest
-configure:5781: $? = 1
+configure:5526: result: no
+configure:5548: checking for sys/time.h
+configure:5548: result: yes
+configure:5548: checking for unistd.h
+configure:5548: result: yes
+configure:5569: checking for alarm
+configure:5569: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5569: $? = 0
+configure:5569: result: yes
+configure:5582: checking for working mktime
+configure:5784: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5784: $? = 0
+configure:5784: ./conftest
+configure:5784: $? = 1
 configure: program exited with status 1
 configure: failed program was:
 | /* confdefs.h */
@@ -4880,14 +4880,14 @@ configure: failed program was:
 |     }
 |   return ! (irix_6_4_bug () && spring_forward_gap () && year_2050_test ());
 | }
-configure:5791: result: no
-configure:5802: checking return type of signal handlers
-configure:5820: gcc -c -Wno-deprecated-declarations  conftest.c >&5
+configure:5794: result: no
+configure:5805: checking return type of signal handlers
+configure:5823: gcc -c -Wno-deprecated-declarations  conftest.c >&5
 conftest.c:58:8: error: indirection requires pointer operand ('void' invalid)
 return *(signal (0, 0)) (0) == 1;
        ^~~~~~~~~~~~~~~~~~~~
 1 error generated.
-configure:5820: $? = 1
+configure:5823: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -4950,221 +4950,221 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5827: result: void
-configure:5837: checking for strftime
-configure:5837: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5837: $? = 0
-configure:5837: result: yes
-configure:5893: checking for random
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for gettimeofday
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for ftime
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for localtime_r
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for timegm
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for gmtime
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for gmtime_r
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for asctime
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for asctime_r
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for memset
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5830: result: void
+configure:5840: checking for strftime
+configure:5840: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5840: $? = 0
+configure:5840: result: yes
+configure:5896: checking for random
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for gettimeofday
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for ftime
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for localtime_r
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for timegm
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for gmtime
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for gmtime_r
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for asctime
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for asctime_r
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for memset
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 conftest.c:86:6: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
 char memset ();
      ^
 conftest.c:86:6: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
 1 warning generated.
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for select
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for socket
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for snprintf
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for select
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for socket
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for snprintf
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 conftest.c:89:6: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
 char snprintf ();
      ^
 conftest.c:89:6: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
 1 warning generated.
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strchr
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strchr
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 conftest.c:90:6: warning: incompatible redeclaration of library function 'strchr' [-Wincompatible-library-redeclaration]
 char strchr ();
      ^
 conftest.c:90:6: note: 'strchr' is a builtin with type 'char *(const char *, int)'
 1 warning generated.
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strerror
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strerror
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 conftest.c:91:6: warning: incompatible redeclaration of library function 'strerror' [-Wincompatible-library-redeclaration]
 char strerror ();
      ^
 conftest.c:91:6: note: 'strerror' is a builtin with type 'char *(int)'
 1 warning generated.
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strerror_r
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strlcpy
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strerror_r
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strlcpy
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 conftest.c:93:6: warning: incompatible redeclaration of library function 'strlcpy' [-Wincompatible-library-redeclaration]
 char strlcpy ();
      ^
 conftest.c:93:6: note: 'strlcpy' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
 1 warning generated.
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strrchr
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strrchr
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 conftest.c:94:6: warning: incompatible redeclaration of library function 'strrchr' [-Wincompatible-library-redeclaration]
 char strrchr ();
      ^
 conftest.c:94:6: note: 'strrchr' is a builtin with type 'char *(const char *, int)'
 1 warning generated.
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strstr
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strstr
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 conftest.c:95:6: warning: incompatible redeclaration of library function 'strstr' [-Wincompatible-library-redeclaration]
 char strstr ();
      ^
 conftest.c:95:6: note: 'strstr' is a builtin with type 'char *(const char *, const char *)'
 1 warning generated.
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strtol
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strtoul
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strtoll
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strtoull
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strtold
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strtod
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strtof
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strtold_l
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strtod_l
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for strtof_l
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for sscanf
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strtol
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strtoul
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strtoll
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strtoull
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strtold
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strtod
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strtof
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strtold_l
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strtod_l
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for strtof_l
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for sscanf
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 conftest.c:106:6: warning: incompatible redeclaration of library function 'sscanf' [-Wincompatible-library-redeclaration]
 char sscanf ();
      ^
 conftest.c:106:6: note: 'sscanf' is a builtin with type 'int (const char *restrict, const char *restrict, ...)'
 1 warning generated.
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for sscanf_l
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for snprintf
-configure:5893: result: yes
-configure:5893: checking for sprintf_l
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for wctomb
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for mbtowc
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for poll
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for newlocale
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for uselocale
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5893: checking for freelocale
-configure:5893: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5893: $? = 0
-configure:5893: result: yes
-configure:5904: checking for isnan
-configure:5904: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5904: $? = 0
-configure:5904: result: yes
-configure:5913: checking for isinf
-configure:5913: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:5913: $? = 0
-configure:5913: result: yes
-configure:5996: checking for gethostbyname_r
-configure:5996: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for sscanf_l
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for snprintf
+configure:5896: result: yes
+configure:5896: checking for sprintf_l
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for wctomb
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for mbtowc
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for poll
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for newlocale
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for uselocale
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5896: checking for freelocale
+configure:5896: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5896: $? = 0
+configure:5896: result: yes
+configure:5907: checking for isnan
+configure:5907: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5907: $? = 0
+configure:5907: result: yes
+configure:5916: checking for isinf
+configure:5916: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:5916: $? = 0
+configure:5916: result: yes
+configure:5999: checking for gethostbyname_r
+configure:5999: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-689461.o
+      _main in conftest-28a0f4.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
-configure:5996: $? = 1
+configure:5999: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "gsoap"
@@ -5298,26 +5298,28 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5996: result: no
-configure:6007: checking for stdlib.h
-configure:6007: result: yes
-configure:6017: checking for GNU libc compatible malloc
-configure:6041: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
-configure:6041: $? = 0
-configure:6041: ./conftest
-configure:6041: $? = 0
-configure:6051: result: yes
-configure:6121: checking for disable namespaces in library
-configure:6124: result: no
-configure:6143: checking for enable ipv6 in library
-configure:6150: result: no
-configure:6189: checking for disable openssl in library
-configure:6192: result: no
-configure:6194: checking for enable gnutls in library
-configure:6205: result: no
-configure:6404: checking that generated files are newer than configure
-configure:6410: result: done
-configure:6445: creating ./config.status
+configure:5999: result: no
+configure:6010: checking for stdlib.h
+configure:6010: result: yes
+configure:6020: checking for GNU libc compatible malloc
+configure:6044: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
+configure:6044: $? = 0
+configure:6044: ./conftest
+configure:6044: $? = 0
+configure:6054: result: yes
+configure:6124: checking for disable namespaces in library
+configure:6127: result: no
+configure:6146: checking for disable c locale usage in library
+configure:6149: result: no
+configure:6168: checking for enable ipv6 in library
+configure:6175: result: no
+configure:6214: checking for disable openssl in library
+configure:6217: result: no
+configure:6219: checking for enable gnutls in library
+configure:6230: result: no
+configure:6429: checking that generated files are newer than configure
+configure:6435: result: done
+configure:6470: creating ./config.status
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -5334,58 +5336,58 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on RE.local
 
-config.status:1019: creating Makefile
-config.status:1019: creating gsoap.pc
-config.status:1019: creating gsoap++.pc
-config.status:1019: creating gsoapck.pc
-config.status:1019: creating gsoapck++.pc
-config.status:1019: creating gsoapssl.pc
-config.status:1019: creating gsoapssl++.pc
-config.status:1019: creating gsoap/Makefile
-config.status:1019: creating gsoap/src/Makefile
-config.status:1019: creating gsoap/wsdl/Makefile
-config.status:1019: creating gsoap/samples/Makefile
-config.status:1019: creating gsoap/samples/autotest/Makefile
-config.status:1019: creating gsoap/samples/aws/Makefile
-config.status:1019: creating gsoap/samples/calc/Makefile
-config.status:1019: creating gsoap/samples/calc++/Makefile
-config.status:1019: creating gsoap/samples/chaining/Makefile
-config.status:1019: creating gsoap/samples/chaining++/Makefile
-config.status:1019: creating gsoap/samples/databinding/Makefile
-config.status:1019: creating gsoap/samples/dime/Makefile
-config.status:1019: creating gsoap/samples/dom/Makefile
-config.status:1019: creating gsoap/samples/oneway/Makefile
-config.status:1019: creating gsoap/samples/oneway++/Makefile
-config.status:1019: creating gsoap/samples/factory/Makefile
-config.status:1019: creating gsoap/samples/factorytest/Makefile
-config.status:1019: creating gsoap/samples/gmt/Makefile
-config.status:1019: creating gsoap/samples/googleapi/Makefile
-config.status:1019: creating gsoap/samples/hello/Makefile
-config.status:1019: creating gsoap/samples/httpcookies/Makefile
-config.status:1019: creating gsoap/samples/lu/Makefile
-config.status:1019: creating gsoap/samples/magic/Makefile
-config.status:1019: creating gsoap/samples/mashup/Makefile
-config.status:1019: creating gsoap/samples/mashup++/Makefile
-config.status:1019: creating gsoap/samples/mtom/Makefile
-config.status:1019: creating gsoap/samples/mtom-stream/Makefile
-config.status:1019: creating gsoap/samples/polytest/Makefile
-config.status:1019: creating gsoap/samples/primes/Makefile
-config.status:1019: creating gsoap/samples/roll/Makefile
-config.status:1019: creating gsoap/samples/router/Makefile
-config.status:1019: creating gsoap/samples/rss/Makefile
-config.status:1019: creating gsoap/samples/ssl/Makefile
-config.status:1019: creating gsoap/samples/template/Makefile
-config.status:1019: creating gsoap/samples/udp/Makefile
-config.status:1019: creating gsoap/samples/varparam/Makefile
-config.status:1019: creating gsoap/samples/wsa/Makefile
-config.status:1019: creating gsoap/samples/wsrm/Makefile
-config.status:1019: creating gsoap/samples/wsse/Makefile
-config.status:1019: creating gsoap/samples/wst/Makefile
-config.status:1019: creating gsoap/samples/xml-rpc-json/Makefile
-config.status:1019: creating gsoap/samples/rest/Makefile
-config.status:1019: creating config.h
-config.status:1200: config.h is unchanged
-config.status:1248: executing depfiles commands
+config.status:1020: creating Makefile
+config.status:1020: creating gsoap.pc
+config.status:1020: creating gsoap++.pc
+config.status:1020: creating gsoapck.pc
+config.status:1020: creating gsoapck++.pc
+config.status:1020: creating gsoapssl.pc
+config.status:1020: creating gsoapssl++.pc
+config.status:1020: creating gsoap/Makefile
+config.status:1020: creating gsoap/src/Makefile
+config.status:1020: creating gsoap/wsdl/Makefile
+config.status:1020: creating gsoap/samples/Makefile
+config.status:1020: creating gsoap/samples/autotest/Makefile
+config.status:1020: creating gsoap/samples/aws/Makefile
+config.status:1020: creating gsoap/samples/calc/Makefile
+config.status:1020: creating gsoap/samples/calc++/Makefile
+config.status:1020: creating gsoap/samples/chaining/Makefile
+config.status:1020: creating gsoap/samples/chaining++/Makefile
+config.status:1020: creating gsoap/samples/databinding/Makefile
+config.status:1020: creating gsoap/samples/dime/Makefile
+config.status:1020: creating gsoap/samples/dom/Makefile
+config.status:1020: creating gsoap/samples/oneway/Makefile
+config.status:1020: creating gsoap/samples/oneway++/Makefile
+config.status:1020: creating gsoap/samples/factory/Makefile
+config.status:1020: creating gsoap/samples/factorytest/Makefile
+config.status:1020: creating gsoap/samples/gmt/Makefile
+config.status:1020: creating gsoap/samples/googleapi/Makefile
+config.status:1020: creating gsoap/samples/hello/Makefile
+config.status:1020: creating gsoap/samples/httpcookies/Makefile
+config.status:1020: creating gsoap/samples/lu/Makefile
+config.status:1020: creating gsoap/samples/magic/Makefile
+config.status:1020: creating gsoap/samples/mashup/Makefile
+config.status:1020: creating gsoap/samples/mashup++/Makefile
+config.status:1020: creating gsoap/samples/mtom/Makefile
+config.status:1020: creating gsoap/samples/mtom-stream/Makefile
+config.status:1020: creating gsoap/samples/polytest/Makefile
+config.status:1020: creating gsoap/samples/primes/Makefile
+config.status:1020: creating gsoap/samples/roll/Makefile
+config.status:1020: creating gsoap/samples/router/Makefile
+config.status:1020: creating gsoap/samples/rss/Makefile
+config.status:1020: creating gsoap/samples/ssl/Makefile
+config.status:1020: creating gsoap/samples/template/Makefile
+config.status:1020: creating gsoap/samples/udp/Makefile
+config.status:1020: creating gsoap/samples/varparam/Makefile
+config.status:1020: creating gsoap/samples/wsa/Makefile
+config.status:1020: creating gsoap/samples/wsrm/Makefile
+config.status:1020: creating gsoap/samples/wsse/Makefile
+config.status:1020: creating gsoap/samples/wst/Makefile
+config.status:1020: creating gsoap/samples/xml-rpc-json/Makefile
+config.status:1020: creating gsoap/samples/rest/Makefile
+config.status:1020: creating config.h
+config.status:1201: config.h is unchanged
+config.status:1249: executing depfiles commands
 
 ## ---------------- ##
 ## Cache variables. ##
@@ -5604,6 +5606,7 @@ SOAPCPP2_DEBUG=''
 SOAPCPP2_IMPORTPATH='-DSOAPCPP2_IMPORT_PATH="\"${datarootdir}/gsoap/import\""'
 SOAPCPP2_IPV6=''
 SOAPCPP2_NONAMESPACES=''
+SOAPCPP2_NO_C_LOCALE=''
 STRIP=''
 VERSION='2.8'
 WSDL2H_EXTRA_FLAGS='-I/usr/local/opt/openssl/include -DWITH_OPENSSL -DWITH_GZIP'

@@ -120,7 +120,6 @@ static const char *keywords[] =
   "private",
   "protected",
   "public",
-  "_QName",
   "register",
   "reinterpret_cast",
   "restrict",
@@ -156,9 +155,10 @@ static const char *keywords[] =
   "wchar_t",
   "while",
   "XML",
-  "_XML",
   "xor",
   "xor_eq",
+  "_QName",
+  "_XML",
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3510,7 +3510,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       s = "Optional element";
     else if (!fake_union && max && !strcmp(max, "0"))
       s = "Prohibited element";
-    else if (!fake_union && max)
+    else if (!fake_union && max && strcmp(max, "1"))
       s = "Elements";
     if (default_)
     {

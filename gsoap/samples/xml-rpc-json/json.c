@@ -38,6 +38,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "json.h"
 
 #ifdef JSON_NAMESPACE
+#ifdef __cplusplus
 # define SOAP_TYPE__boolean             SOAP_TYPE_json__boolean
 # define SOAP_TYPE__i4                  SOAP_TYPE_json__i4
 # define SOAP_TYPE__int                 SOAP_TYPE_json__int
@@ -48,9 +49,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # define SOAP_TYPE__struct              SOAP_TYPE_json__struct
 # define SOAP_TYPE__base64              SOAP_TYPE_json__base64
 #endif
+#endif
 
 #ifdef JSON_NAMESPACE
+#ifdef __cplusplus
 namespace json {
+#endif
 #endif
 
 /******************************************************************************\
@@ -938,5 +942,7 @@ bool json_lne(const value& x, const value& y)
 #endif
 
 #ifdef JSON_NAMESPACE
+#ifdef __cplusplus
 } // namespace json
+#endif
 #endif

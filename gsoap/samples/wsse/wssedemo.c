@@ -52,7 +52,7 @@ Note:
 The wsse.h, wsu.h, ds.h, xenc.h c14n.h files are located in 'import'.
 The smdevp.*, mecevp.* and wsseapi.* files are located in 'plugin'.
 
-Usage: wssedemo abcdehikmnpstxyz [port]
+Usage: wssedemo abcdehiklmnopstxyz [port]
 
 with options:
 
@@ -66,9 +66,11 @@ g sign parts instead of the entire SOAP Body
 h use hmac shared secret key for digital signatures instead of RSA keys
 i indent XML
 k don't put signature keys in the WS-Security header
+l inclusive canonicalization (when used with 'n')
 m use GCM with AES
-n canonicalize XML (recommended!)
-p prefixlist for c14n:InclusiveNamespaces/PrefixList for canonical XML interop
+n canonicalize XML (exclusive C14N, recommended!)
+o use rsa-oaep-mgf1p with AES256 CBC
+p add prefixlist for c14n:InclusiveNamespaces/PrefixList for canonical XML interop
 s server (stand-alone)
 t use plain-text passwords (password digest by default)
 x use plain XML (no HTTP header), client only
@@ -265,7 +267,9 @@ int main(int argc, char **argv)
     if (strchr(argv[1], 'n'))
       soap_set_omode(soap, SOAP_XML_CANONICAL);
     if (strchr(argv[1], 'p'))
-      soap_wsse_set_InclusiveNamespaces(soap, "SOAP-ENV SOAP-ENC xsi xsd");
+      soap_wsse_set_InclusiveNamespaces(soap, "ns1");
+    if (strchr(argv[1], 'l'))
+      soap_wsse_set_InclusiveNamespaces(soap, "*");
     if (strchr(argv[1], 'a'))
       aes = 1;
     if (strchr(argv[1], 'm'))

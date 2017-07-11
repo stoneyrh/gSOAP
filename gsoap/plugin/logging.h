@@ -4,6 +4,7 @@
 	Message logging plugin and stat collector for webserver.
 
 	Register the plugin with:
+	        #include "plugin/logging.h"
 		soap_register_plugin(soap, logging);
 
 	Change logging destinations:

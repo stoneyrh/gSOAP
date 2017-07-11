@@ -214,6 +214,7 @@ static int http_post_parse_header(struct soap *soap, const char *key, const char
 static http_handler_t http_lookup_handler(struct soap *soap, const char *type, struct http_post_data *data)
 {
   struct http_post_handlers *p;
+  (void)soap;
   for (p = data->handlers; p && p->type; p++)
   {
     if (!soap_tag_cmp(type, p->type))

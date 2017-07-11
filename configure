@@ -638,6 +638,7 @@ SAMPLE_INCLUDES
 WSDL2H_EXTRA_LIBS
 WSDL2H_EXTRA_FLAGS
 SOAPCPP2_IPV6
+SOAPCPP2_NO_C_LOCALE
 SOAPCPP2_NONAMESPACES
 WSDL2H_IMPORTPATH
 SOAPCPP2_IMPORTPATH
@@ -760,6 +761,7 @@ enable_silent_rules
 enable_dependency_tracking
 enable_debug
 enable_namespaces
+enable_c_locale
 enable_ipv6
 with_zlib
 with_openssl
@@ -1407,6 +1409,7 @@ Optional Features:
                           speeds up one-time build
   --enable-debug	  add debug symbols for debugging
   --disable-namespaces    compile library without namespaces
+  --disable-c-locale      compile library without c locale usage
   --enable-ipv6           compile library with IPv6 support
   --disable-ssl           build without SSL/TLS
   --enable-gnutls         build with GNUTLS SSL/TLS
@@ -6127,6 +6130,28 @@ else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
   SOAPCPP2_NONAMESPACES="-DWITH_NONAMESPACES" ##define to remove nsmap link dependence
+fi
+
+
+# the disable-c-locale option adds the -DWITH_NO_C_LOCALE to the
+# library compilation thus disabling the use of the C locale usage
+# Check whether --enable-c-locale was given.
+if test "${enable_c_locale+set}" = set; then :
+  enableval=$enable_c_locale; with_no_c_locale="$enable_cl"
+else
+  with_no_c_locale="yes"
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for disable c locale usage in library" >&5
+$as_echo_n "checking for disable c locale usage in library... " >&6; }
+if test "x$with_no_c_locale" = "xyes"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+  SOAPCPP2_NO_C_LOCALE="-DWITH_NO_C_LOCALE"
 fi
 
 

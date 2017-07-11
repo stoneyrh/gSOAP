@@ -87,8 +87,8 @@ class xs__element
         @xsd__boolean                   nillable                = false;
         @xsd__boolean                   abstract                = false;
         @xsd__QName                     substitutionGroup;
-        @xsd__string                    minOccurs;              // xsd:nonNegativeInteger
-        @xsd__string                    maxOccurs;              // xsd:nonNegativeInteger|unbounded
+        @xsd__token                     minOccurs;              // xsd:nonNegativeInteger
+        @xsd__token                     maxOccurs;              // xsd:nonNegativeInteger|unbounded
         @xsd__anyURI                    targetNamespace;        // XSD 1.1
         @xsd__string                    xmime__expectedContentTypes;
         xs__annotation                  *annotation;
@@ -164,8 +164,8 @@ class xs__any
 { public:
         @xs__namespaceList              namespace_              = "##any";
         @enum xs__processContents       processContents         = strict;
-        @xsd__string                    minOccurs;              // xsd:nonNegativeInteger
-        @xsd__string                    maxOccurs;              // xsd:nonNegativeInteger|unbounded
+        @xsd__token                     minOccurs;              // xsd:nonNegativeInteger
+        @xsd__token                     maxOccurs;              // xsd:nonNegativeInteger|unbounded
         std::vector<xs__element>        element;
   public:
         int                             traverse(xs__schema&);
@@ -187,8 +187,8 @@ class xs__contents
 
 class xs__seqchoice
 { public:
-        @xsd__string                    minOccurs;              // xsd:nonNegativeInteger
-        @xsd__string                    maxOccurs;              // xsd:nonNegativeInteger|unbounded
+        @xsd__token                     minOccurs;              // xsd:nonNegativeInteger
+        @xsd__token                     maxOccurs;              // xsd:nonNegativeInteger|unbounded
         xs__annotation                  *annotation;
         std::vector<xs__contents>       __contents;
   private:
@@ -204,8 +204,8 @@ class xs__group
 { public:
         @xsd__NCName                    name;
         @xsd__QName                     ref;
-        @xsd__string                    minOccurs;              // xsd:nonNegativeInteger
-        @xsd__string                    maxOccurs;              // xsd:nonNegativeInteger|unbounded
+        @xsd__token                     minOccurs;              // xsd:nonNegativeInteger
+        @xsd__token                     maxOccurs;              // xsd:nonNegativeInteger|unbounded
         xs__annotation                  *annotation;
         xs__all                         *all;
         xs__seqchoice                   *choice;

@@ -243,7 +243,7 @@ value::operator wchar_t*() const
 {
   const char *s = *this;
   wchar_t *t = NULL;
-  soap_s2wchar(soap, s, &t, 0, -1, NULL);
+  soap_s2wchar(soap, s, &t, 1, 0, -1, NULL);
   soap->error = SOAP_OK;
   return t;
 }
@@ -252,7 +252,7 @@ value::operator std::wstring() const
 {
   const char *s = *this;
   wchar_t *t = NULL;
-  soap_s2wchar(soap, s, &t, 0, -1, NULL);
+  soap_s2wchar(soap, s, &t, 1, 0, -1, NULL);
   soap->error = SOAP_OK;
   return std::wstring(t);
 }

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.48
+        stdsoap2.h 2.8.49
 
         gSOAP runtime engine
 
@@ -10,8 +10,9 @@ GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
 Contributors:
 
-Wind River Systems, Inc., for the following additions
-  - vxWorks compatible
+Wind River Systems, Inc., for the following addition licensed under the gSOAP
+public license:
+  - vxWorks compatible, enabled with compiler option -DVXWORKS
 --------------------------------------------------------------------------------
 gSOAP public license.
 
@@ -51,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20848
+#define GSOAP_VERSION 20849
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -425,7 +426,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #   define HAVE_STRTOD_L
 #   define HAVE_SSCANF_L
 #   define HAVE_LOCALE_H
-#   define HAVE_XLOCALE_H
 #  endif
 # elif defined(TRU64)
 #  define HAVE_SNPRINTF
@@ -558,6 +558,9 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define HAVE_ASCTIME_R
 #  define HAVE_LOCALTIME_R
 # else /* Default assumptions for supported library functions when not including config.h */
+#  ifndef WITH_C_LOCALE
+#   define WITH_NO_C_LOCALE /* turn locale support off by default */
+#  endif
 #  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
@@ -633,8 +636,10 @@ extern intmax_t __strtoull(const char*, char**, int);
 
 /* if we have locale.h then we should use it WITH_C_LOCALE enabled to avoid decimal point conversion issues */
 #ifdef HAVE_LOCALE_H
-# ifndef WITH_C_LOCALE
-#  define WITH_C_LOCALE
+# ifndef WITH_NO_C_LOCALE
+#  ifndef WITH_C_LOCALE
+#   define WITH_C_LOCALE
+#  endif
 # endif
 #endif
 
@@ -682,10 +687,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 # else
 #  if defined(HAVE_XLOCALE_H)
 #   include <xlocale.h>
-#  else
-#   undef HAVE_STRTOF_L
-#   undef HAVE_STRTOD_L
-#   undef HAVE_SSCANF_L
 #  endif
 #  define SOAP_LOCALE_T locale_t
 #  define SOAP_LOCALE(soap) ((soap)->c_locale ? (soap)->c_locale : ((soap)->c_locale = newlocale(LC_ALL_MASK, "C", NULL)))
@@ -1639,7 +1640,7 @@ typedef soap_int32 soap_mode;
 #define SOAP_XML_INDENT         0x00002000      /* out: emit indented XML */
 #define SOAP_XML_IGNORENS       0x00004000      /* in:  ignore namespaces */
 #define SOAP_XML_DEFAULTNS      0x00008000      /* out: emit xmlns="..." */
-#define SOAP_XML_CANONICAL      0x00010000      /* out: excC14N canonical XML */
+#define SOAP_XML_CANONICAL      0x00010000      /* out: C14N canonical XML */
 #define SOAP_XML_TREE           0x00020000      /* in/out: XML tree (no id/ref) */
 #define SOAP_XML_NIL            0x00040000      /* out: all NULLs as xsi:nil */
 #define SOAP_XML_NOTYPE         0x00080000      /* out: do not add xsi:type */
@@ -2824,8 +2825,8 @@ struct SOAP_CMAC soap
   const char *crlfile;
   char session_host[SOAP_TAGLEN];
   int session_port;
-#ifdef WITH_C_LOCALE
-  SOAP_LOCALE_T c_locale;       /* set to C locale by default */
+#ifdef SOAP_LOCALE_T
+  SOAP_LOCALE_T c_locale;       /* set to C locale by default, if this does not compile use -DWITH_NO_C_LOCALE */
 #else
   void *c_locale;
 #endif
@@ -2846,7 +2847,7 @@ struct SOAP_CMAC soap
   unsigned short z_level;       /* compression level to be used (0=none, 1=fast to 9=best) */
   float z_ratio_in;             /* detected compression ratio compressed_length/length of inbound message */
   float z_ratio_out;            /* detected compression ratio compressed_length/length of outbound message */
-#ifdef WMW_RPM_IO               /* VxWorks */
+#ifdef WMW_RPM_IO               /* vxWorks compatibility */
   void *rpmreqid;
 #endif
 #ifdef __cplusplus
@@ -2988,6 +2989,7 @@ soap_wchar soap_get1(struct soap*);
 # define soap_id_nullify(s, i)                            ((void)(s), (i))
 # define soap_reference(s, a, t)                          ((void)(s), 1)
 # define soap_array_reference(s, p, a, n, t)              ((void)(s), 1)
+# define soap_attachment_reference(s, p, a, n, t, i, y)   ((void)(s), 1)
 # define soap_embed(s, p, a, n, t)                        ((void)(s), 0)
 # define soap_embedded_id(s, i, p, t)                     ((void)(s), (void)(t), i)
 # define soap_is_embedded(s, p)                           ((void)(s), 0)
@@ -3051,7 +3053,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_client_context(struct soap *soap, unsigned sh
 SOAP_FMAC1 const char * SOAP_FMAC2 soap_http_content_type(struct soap *soap, int status);
 SOAP_FMAC1 int SOAP_FMAC2 soap_puthttphdr(struct soap*, int status, size_t count);
 
-SOAP_FMAC1 const char* SOAP_FMAC2 soap_get_header_attribute(struct soap*, const char*, const char*);
+SOAP_FMAC1 const char* SOAP_FMAC2 soap_http_header_attribute(struct soap*, const char*, const char*);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_decode_key(char*, size_t, const char*);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_decode_val(char*, size_t, const char*);
 
@@ -3105,6 +3107,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_resolve(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_embedded(struct soap*, const void *p, int t);
 SOAP_FMAC1 int SOAP_FMAC2 soap_reference(struct soap*, const void *p, int t);
 SOAP_FMAC1 int SOAP_FMAC2 soap_array_reference(struct soap*, const void *p, const void *a, int n, int t);
+SOAP_FMAC1 int SOAP_FMAC2 soap_attachment_reference(struct soap *soap, const void *p, const void *a, int n, int t, const char *id, const char *type);
 SOAP_FMAC1 int SOAP_FMAC2 soap_embedded_id(struct soap*, int id, const void *p, int t);
 SOAP_FMAC1 int SOAP_FMAC2 soap_is_embedded(struct soap*, struct soap_plist*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_is_single(struct soap*, struct soap_plist*);
@@ -3240,7 +3243,6 @@ SOAP_FMAC1 wchar_t* SOAP_FMAC2 soap_wstring_in(struct soap*, int, long, long, co
 SOAP_FMAC1 int SOAP_FMAC2 soap_match_namespace(struct soap*, const char *, const char*, size_t n1, size_t n2);
 
 SOAP_FMAC1 void SOAP_FMAC2 soap_set_version(struct soap*, short);
-SOAP_FMAC1 void SOAP_FMAC2 soap_get_version(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_set_namespaces(struct soap*, const struct Namespace*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_set_local_namespaces(struct soap*);
 
@@ -3316,19 +3318,19 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_s2unsignedShort(struct soap*, const char*, unsign
 SOAP_FMAC1 int SOAP_FMAC2 soap_s2unsignedInt(struct soap*, const char*, unsigned int*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_s2unsignedLong(struct soap*, const char*, unsigned long*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_s2ULONG64(struct soap*, const char*, ULONG64*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_s2char(struct soap*, const char*, char**, long minlen, long maxlen, const char *pattern);
+SOAP_FMAC1 int SOAP_FMAC2 soap_s2char(struct soap*, const char*, char**, int, long minlen, long maxlen, const char *pattern);
 SOAP_FMAC1 int SOAP_FMAC2 soap_s2QName(struct soap*, const char*, char**, long minlen, long maxlen, const char *pattern);
 
 #ifndef WITH_COMPAT
 #ifdef __cplusplus
 SOAP_FMAC1 int SOAP_FMAC2 soap_s2stdQName(struct soap*, const char*, std::string*, long minlen, long maxlen, const char *pattern);
-SOAP_FMAC1 int SOAP_FMAC2 soap_s2stdchar(struct soap*, const char*, std::string*, long minlen, long maxlen, const char *pattern);
-SOAP_FMAC1 int SOAP_FMAC2 soap_s2stdwchar(struct soap*, const char*, std::wstring*, long minlen, long maxlen, const char *pattern);
+SOAP_FMAC1 int SOAP_FMAC2 soap_s2stdchar(struct soap*, const char*, std::string*, int, long minlen, long maxlen, const char *pattern);
+SOAP_FMAC1 int SOAP_FMAC2 soap_s2stdwchar(struct soap*, const char*, std::wstring*, int, long minlen, long maxlen, const char *pattern);
 #endif
 #endif
 
 #if !defined(WITH_LEAN) || defined(WITH_NTLM)
-SOAP_FMAC1 int SOAP_FMAC2 soap_s2wchar(struct soap*, const char*, wchar_t**, long minlen, long maxlen, const char *pattern);
+SOAP_FMAC1 int SOAP_FMAC2 soap_s2wchar(struct soap*, const char*, wchar_t**, int, long minlen, long maxlen, const char *pattern);
 SOAP_FMAC1 int SOAP_FMAC2 soap_s2dateTime(struct soap*, const char*, time_t*);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_s2base64(struct soap*, const unsigned char*, char*, int);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_s2hex(struct soap*, const unsigned char*, char*, int);
@@ -3377,7 +3379,7 @@ SOAP_FMAC1 time_t SOAP_FMAC2 soap_timegm(struct tm*);
 #endif
 
 #ifndef WITH_LEANER
-SOAP_FMAC1 wchar_t** SOAP_FMAC2 soap_inwstring(struct soap*, const char *tag, wchar_t **p, const char *, int, long, long, const char*);
+SOAP_FMAC1 wchar_t** SOAP_FMAC2 soap_inwstring(struct soap*, const char *tag, wchar_t **p, const char *, int, int, long, long, const char*);
 SOAP_FMAC1 wchar_t** SOAP_FMAC2 soap_inwliteral(struct soap*, const char *tag, wchar_t **p);
 #endif
 
@@ -3434,7 +3436,7 @@ SOAP_FMAC1 const char* SOAP_FMAC2 soap_rand_uuid(struct soap*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_register_plugin_arg(struct soap*, int (*fcreate)(struct soap*, struct soap_plugin*, void*), void*);
 SOAP_FMAC1 void* SOAP_FMAC2 soap_lookup_plugin(struct soap*, const char*);
 
-SOAP_FMAC1 const char* SOAP_FMAC2 soap_attr_value(struct soap *soap, const char *name, int flag);
+SOAP_FMAC1 const char* SOAP_FMAC2 soap_attr_value(struct soap *soap, const char *name, int flag, int occurs);
 SOAP_FMAC1 int SOAP_FMAC2 soap_set_attr(struct soap *soap, const char *name, const char *value, int flag);
 SOAP_FMAC1 void SOAP_FMAC2 soap_clr_attr(struct soap *soap);
 

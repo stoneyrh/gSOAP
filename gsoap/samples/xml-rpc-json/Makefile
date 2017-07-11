@@ -215,7 +215,7 @@ CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -Wno-deprecated-declarations
 CPP = gcc -E
-CPPFLAGS = $(SAMPLE_INCLUDES) -I$(top_srcdir)/gsoap -I$(top_srcdir)/gsoap/plugin
+CPPFLAGS = $(SAMPLE_INCLUDES) -I$(top_srcdir)/gsoap -I$(top_srcdir)/gsoap/plugin $(SOAPCPP2_NO_C_LOCALE)
 CXX = g++
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -Wno-deprecated-declarations
@@ -266,6 +266,7 @@ SOAPCPP2_DEBUG =
 SOAPCPP2_IMPORTPATH = -DSOAPCPP2_IMPORT_PATH="\"${datarootdir}/gsoap/import\""
 SOAPCPP2_IPV6 = 
 SOAPCPP2_NONAMESPACES = 
+SOAPCPP2_NO_C_LOCALE = 
 STRIP = 
 VERSION = 2.8
 WSDL2H_EXTRA_FLAGS = -I/usr/local/opt/openssl/include -DWITH_OPENSSL -DWITH_GZIP

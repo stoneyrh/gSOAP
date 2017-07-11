@@ -100,7 +100,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 extern "C" {
 #endif
 
-const char http_form_id[14] = HTTP_FORM_ID;
+const char http_form_id[] = HTTP_FORM_ID;
 
 static int http_form_init(struct soap *soap, struct http_form_data *data, int (*handler)(struct soap*));
 static void http_form_delete(struct soap *soap, struct soap_plugin *p);

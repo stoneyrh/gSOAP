@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.48
+        DOM API v5 gSOAP 2.8.49
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20848
+#define GSOAP_LIB_VERSION 20849
 
 #include "stdsoap2.h"
 
@@ -82,8 +82,10 @@ extern "C" {
 SOAP_FMAC1 void SOAP_FMAC2 soap_markelement(struct soap*, const void*, int);
 #endif
 
-SOAP_FMAC1 int SOAP_FMAC2 soap_putelement(struct soap*, const void*, const char*, int, int);
-SOAP_FMAC1 void *SOAP_FMAC2 soap_getelement(struct soap*, int*);
+SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap*, int*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap*, const void*, const char*, int, int);
+SOAP_FMAC3 void * SOAP_FMAC4 soap_dupelement(struct soap*, const void*, int);
+SOAP_FMAC3 void SOAP_FMAC4 soap_delelement(const void*, int);
 
 #ifdef __cplusplus
 }
@@ -274,7 +276,7 @@ out_attribute(struct soap *soap, const char *prefix, const char *name, const cha
     text = "";
   if (!prefix || !*prefix)
   {
-    if ((soap->mode & SOAP_XML_CANONICAL) && !strncmp(name, "xmlns", 5) && (name[5] == ':' || name[5] == '\0'))
+    if ((soap->mode & SOAP_XML_CANONICAL) && !strncmp(name, "xmlns", 5) && ((name[5] == ':') || name[5] == '\0'))
       return soap_attribute(soap, name, text);
     if (isearly)
       return soap_set_attr(soap, name, text, 2);
@@ -580,7 +582,7 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
   }
   node->nstr = soap_current_namespace_tag(soap, soap->tag);
   node->name = soap_strdup(soap, soap->tag);
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node element='%s' start namespace='%s'\n", node->name, node->nstr?node->nstr:""));
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node element='%s' start namespace='%s'\n", node->name, node->nstr?node->nstr:"(null)"));
   if ((soap->mode & SOAP_DOM_NODE) || (!(soap->mode & SOAP_DOM_TREE) && *soap->id && (!type || strcmp(type, "xsd:anyType"))))
   {
     soap->mode = m;
@@ -745,8 +747,8 @@ soap_dup_xsd__anyType(struct soap *soap, struct soap_dom_element *d, const struc
   d->text = soap_strdup(soap, a->text);
   d->code = soap_strdup(soap, a->code);
   d->tail = soap_strdup(soap, a->tail);
-  d->node = NULL;
-  d->type = 0;
+  d->node = a->node ? soap_dupelement(soap, a->node, a->type) : NULL;
+  d->type = a->type;
   d->atts = soap_dup_xsd__anyAttribute(soap, NULL, a->atts);
   for (a = a->elts; a; a = a->next)
   {
@@ -766,6 +768,7 @@ soap_del_xsd__anyType(const struct soap_dom_element *a)
 {
   while (a)
   {
+    struct soap_dom_element *next = a->next;
     if (a->nstr)
       SOAP_FREE(NULL, a->nstr);
     if (a->name)
@@ -778,9 +781,12 @@ soap_del_xsd__anyType(const struct soap_dom_element *a)
       SOAP_FREE(NULL, a->code);
     if (a->tail)
       SOAP_FREE(NULL, a->tail);
+    if (a->node)
+      soap_delelement(a->node, a->type);
     soap_del_xsd__anyAttribute(a->atts);
     soap_del_xsd__anyType(a->elts);
-    a = a->next;
+    SOAP_FREE(NULL, a);
+    a = next;
   }
 }
 
@@ -819,13 +825,15 @@ soap_del_xsd__anyAttribute(const struct soap_dom_attribute *a)
 {
   while (a)
   {
+    struct soap_dom_attribute *next = a->next;
     if (a->nstr)
       SOAP_FREE(NULL, a->nstr);
     if (a->name)
       SOAP_FREE(NULL, a->name);
     if (a->text)
       SOAP_FREE(NULL, a->text);
-    a = a->next;
+    SOAP_FREE(NULL, a);
+    a = next;
   }
 }
 
@@ -1661,6 +1669,10 @@ struct soap_dom_element *
 SOAP_FMAC2
 soap_elt_copy(struct soap_dom_element *elt, const struct soap_dom_element *node)
 {
+  if (!elt)
+    return NULL;
+  if (!elt->soap)
+    elt->soap = node->soap;
   elt->nstr = node->nstr;
   elt->name = node->name;
   elt->lead = node->lead;
@@ -2308,6 +2320,8 @@ soap_att_copy(struct soap_dom_attribute *att, const struct soap_dom_attribute *n
 {
   if (att)
   {
+    if (!att->soap)
+      att->soap = node->soap;
     att->nstr = node->nstr;
     att->name = node->name;
     att->text = node->text;
@@ -3238,7 +3252,7 @@ soap_dom_call(struct soap *soap, const char *endpoint, const char *action, const
  *
 \******************************************************************************/
 
-#if 0 // DOXYGEN PROCESSING ONLY
+#if 0 /* DOXYGEN PROCESSING ONLY */
 
 /**
 @class soap_dom_attribute
@@ -5002,7 +5016,7 @@ std::ostream &operator<<(std::ostream &o, const struct soap_dom_element &e)
       if (soap_begin_send(soap)
        || soap_out_xsd__anyType(soap, NULL, 0, &e, NULL)
        || soap_end_send(soap))
-        o.clear(std::ios::failbit); // writing failed (must be a stream error)
+        o.clear(std::ios::failbit); /* writing failed (must be a stream error) */
       soap_destroy(soap);
       soap_end(soap);
       soap_free(soap);
@@ -5016,7 +5030,7 @@ std::ostream &operator<<(std::ostream &o, const struct soap_dom_element &e)
     if (soap_begin_send(e.soap)
      || soap_out_xsd__anyType(e.soap, NULL, 0, &e, NULL)
      || soap_end_send(e.soap))
-      o.clear(std::ios::failbit); // writing failed (must be a stream error)
+      o.clear(std::ios::failbit); /* writing failed (must be a stream error) */
     e.soap->os = os;
   }
   return o;

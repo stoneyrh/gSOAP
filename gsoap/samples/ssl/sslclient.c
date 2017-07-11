@@ -125,7 +125,7 @@ struct CRYPTO_dynlock_value
   MUTEX_TYPE mutex;
 };
 
-static MUTEX_TYPE *mutex_buf;
+static MUTEX_TYPE *mutex_buf = NULL;
 
 static struct CRYPTO_dynlock_value *dyn_create_function(const char *file, int line)
 {

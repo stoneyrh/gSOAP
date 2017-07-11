@@ -73,6 +73,8 @@ and continues by contributing to the development of
 [OASIS open standards](https://www.oasis-open.org) in partnership with leading
 IT companies.
 
+🔝 [Back to table of contents](#)
+
 Mapping WSDL and XML schemas to C/C++                                   {#tocpp}
 =====================================
 
@@ -107,93 +109,93 @@ validated against these schema(s).
 This covers all of the following standard XSD components with their optional
 attributes and properties:
 
-| XSD Component  | Attributes and Properties                                                                                           |
-| -------------- | ------------------------------------------------------------------------------------------------------------------- |
-| schema         | targetNamespace, version, elementFormDefault, attributeFormDefault, defaultAttributes                               |
-| attribute      | name, ref, type, use, default, fixed, form, targetNamespace, wsdl:arrayType                                         |
-| element        | name, ref, type, default, fixed, form, nillable, abstract, substitutionGroup, minOccurs, maxOccurs, targetNamespace |
-| simpleType     | name                                                                                                                |
-| complexType    | name, abstract, mixed, defaultAttributesApply                                                                       |
-| all            |                                                                                                                     |
-| choice         | minOccurs, maxOccurs                                                                                                |
-| sequence       | minOccurs, maxOccurs                                                                                                |
-| group          | name, ref, minOccurs, maxOccurs                                                                                     |
-| attributeGroup | name, ref                                                                                                           |
-| any            | minOccurs, maxOccurs                                                                                                |
-| anyAttribute   |                                                                                                                     |
+XSD component  | attributes and properties
+-------------- | -------------------------
+schema         | targetNamespace, version, elementFormDefault, attributeFormDefault, defaultAttributes
+attribute      | name, ref, type, use, default, fixed, form, targetNamespace, wsdl:arrayType
+element        | name, ref, type, default, fixed, form, nillable, abstract, substitutionGroup, minOccurs, maxOccurs, targetNamespace
+simpleType     | name
+complexType    | name, abstract, mixed, defaultAttributesApply
+all            | *n/a*
+choice         | minOccurs, maxOccurs
+sequence       | minOccurs, maxOccurs
+group          | name, ref, minOccurs, maxOccurs
+attributeGroup | name, ref
+any            | minOccurs, maxOccurs
+anyAttribute   | *n/a*
 
 And also the following standard XSD directives are covered:
 
-| Directive  | Description                                                |
-| ---------- | ---------------------------------------------------------- |
-| import     | Imports a schema into the importing schema for referencing |
-| include    | Include schema component definitions into a schema         |
-| override   | Override by replacing schema component definitions         |
-| redefine   | Extend or restrict schema component definitions            |
-| annotation | Annotates a component                                      |
+directive  | description
+---------- | -----------
+import     | Imports a schema into the importing schema for referencing
+include    | Include schema component definitions into a schema
+override   | Override by replacing schema component definitions
+redefine   | Extend or restrict schema component definitions
+annotation | Annotates a component
 
 The XSD facets and their mappings to C/C++ are:
 
-| XSD Facet      | Maps to                                                                                     |
-| -------------- | ------------------------------------------------------------------------------------------- |
-| enumeration    | `enum`                                                                                      |
-| simpleContent  | class/struct wrapper with `__item` member                                                   |
-| complexContent | class/struct                                                                                |
-| list           | `enum*` bitmask (`enum*` enumerates up to 64 bit masks)                                     |
-| extension      | class/struct inheritance/extension                                                          |
-| restriction    | `typedef` and class/struct inheritance/redeclaration                                        |
-| length         | `typedef` with restricted content length annotation                                         |
-| minLength      | `typedef` with restricted content length annotation                                         |
-| maxLength      | `typedef` with restricted content length annotation                                         |
-| minInclusive   | `typedef` with numerical value range restriction annotation                                 |
-| maxInclusive   | `typedef` with numerical value range restriction annotation                                 |
-| minExclusive   | `typedef` with numerical value range restriction annotation                                 |
-| maxExclusive   | `typedef` with numerical value range restriction annotation                                 |
-| precision      | `typedef` with pattern annotation (pattern used for output, but input is not validated)     |
-| scale          | `typedef` with pattern annotation (pattern used for output, but input is not validated)     |
-| totalDigits    | `typedef` with pattern annotation (pattern used for output, but input is not validated)     |
-| fractionDigits | `typedef` with pattern annotation (pattern used for output, but input is not validated)     |
-| pattern        | `typedef` with pattern annotation (define `soap::fsvalidate` callback to validate patterns) |
-| union          | string with union of values
+XSD facet      | maps to
+-------------- | -------
+enumeration    | `enum`
+simpleContent  | class/struct wrapper with `__item` member
+complexContent | class/struct
+list           | `enum*` bitmask (`enum*` enumerates up to 64 bit masks)
+extension      | class/struct inheritance/extension
+restriction    | `typedef` and class/struct inheritance/redeclaration
+length         | `typedef` with restricted content length annotation
+minLength      | `typedef` with restricted content length annotation
+maxLength      | `typedef` with restricted content length annotation
+minInclusive   | `typedef` with numerical value range restriction annotation
+maxInclusive   | `typedef` with numerical value range restriction annotation
+minExclusive   | `typedef` with numerical value range restriction annotation
+maxExclusive   | `typedef` with numerical value range restriction annotation
+precision      | `typedef` with pattern annotation (pattern used for output, but input is not validated)
+scale          | `typedef` with pattern annotation (pattern used for output, but input is not validated)
+totalDigits    | `typedef` with pattern annotation (pattern used for output, but input is not validated)
+fractionDigits | `typedef` with pattern annotation (pattern used for output, but input is not validated)
+pattern        | `typedef` with pattern annotation (define `soap::fsvalidate` callback to validate patterns)
+union          | string with union of value
 
 All primitive XSD types are supported, including but not limited to the
 following XSD types:
 
-| XSD Type         | Maps to                                                                           |
-| ---------------- | --------------------------------------------------------------------------------- |
-| any/anyType      | `_XML` string with literal XML content (or enable DOM with wsdl2h option `-d`)    |
-| anyURI           | string (i.e. `char*`, `wchar_t*`, `std::string`, `std::wstring`)                  |
-| string           | string (i.e. `char*`, `wchar_t*`, `std::string`, `std::wstring`)                  |
-| boolean          | `bool` (C++) or `enum xsd__boolean` (C)                                           |
-| byte             | `char` (i.e. `int8_t`)                                                            |
-| short            | `short` (i.e. `int16_t`)                                                          |
-| int              | `int` (i.e. `int32_t`)                                                            |
-| long             | `LONG64` (i.e. `long long` and `int64_t`)                                         |
-| unsignedByte     | `unsigned char` (i.e. `uint8_t`)                                                  |
-| unsignedShort    | `unsigned short` (i.e. `uint16_t`)                                                |
-| unsignedInt      | `unsigned int` (i.e. `uint32_t`)                                                  |
-| unsignedLong     | `ULONG64` (i.e. `unsigned long long` and `uint64_t`)                              |
-| float            | `float`                                                                           |
-| double           | `double`                                                                          |
-| integer          | string or `#import "custom/int128.h"` to use 128 bit `xsd__integer`               |
-| decimal          | string or `#import "custom/long_double.h"` to use `long double`                   |
-| precisionDecimal | string                                                                            |
-| duration         | string or `#import "custom/duration.h"` to use 64 bit `xsd__duration`             |
-| dateTime         | `time_t` or `#import "custom/struct_tm.h"` to use `struct tm` for `xsd__dateTime` |
-| time             | string or `#import "custom/long_time.h"` to use 64 bit `xsd__time`                |
-| date             | string or `#import "custom/struct_tm_date.h"` to use `struct tm` for `xsd__date`  |
-| hexBinary        | special class/struct `xsd__hexBinary`                                             |
-| base64Bianry     | special class/struct `xsd__base64Binary`                                          |
-| QName            | `_QName` string (URI normalization rules are applied)                             |
+XSD type         | maps to
+---------------- | -------
+any/anyType      | `_XML` string with literal XML content (or enable DOM with wsdl2h option `-d`)
+anyURI           | string (i.e. `char*`, `wchar_t*`, `std::string`, `std::wstring`)
+string           | string (i.e. `char*`, `wchar_t*`, `std::string`, `std::wstring`)
+boolean          | `bool` (C++) or `enum xsd__boolean` (C)
+byte             | `char` (i.e. `int8_t`)
+short            | `short` (i.e. `int16_t`)
+int              | `int` (i.e. `int32_t`)
+long             | `LONG64` (i.e. `long long` and `int64_t`)
+unsignedByte     | `unsigned char` (i.e. `uint8_t`)
+unsignedShort    | `unsigned short` (i.e. `uint16_t`)
+unsignedInt      | `unsigned int` (i.e. `uint32_t`)
+unsignedLong     | `ULONG64` (i.e. `unsigned long long` and `uint64_t`)
+float            | `float`
+double           | `double`
+integer          | string or `#import "custom/int128.h"` to use 128 bit `xsd__integer`
+decimal          | string or `#import "custom/long_double.h"` to use `long double`
+precisionDecimal | string
+duration         | string or `#import "custom/duration.h"` to use 64 bit `xsd__duration`
+dateTime         | `time_t` or `#import "custom/struct_tm.h"` to use `struct tm` for `xsd__dateTime`
+time             | string or `#import "custom/long_time.h"` to use 64 bit `xsd__time`
+date             | string or `#import "custom/struct_tm_date.h"` to use `struct tm` for `xsd__date`
+hexBinary        | special class/struct `xsd__hexBinary`
+base64Bianry     | special class/struct `xsd__base64Binary`
+QName            | `_QName` string (URI normalization rules are applied)
 
 All other primitive XSD types not listed above are mapped to strings, by
 wsdl2h generating a typedef to string for these types.  For example,
 `xsd:token` is bound to a C++ or C string:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef std::string  xsd__token; // C++
-    typedef char        *xsd__token; // C (wsdl2h option -c)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef std::string  xsd__token; // C++
+typedef char        *xsd__token; // C (wsdl2h option -c)
+```
 
 This associates a compatible value space to the type with the appropriate XSD
 type name used by the soapcpp2-generated serializers.
@@ -205,6 +207,8 @@ Imported custom serializers are intended to extend the C/C++ type bindings when
 the default binding to string is not satisfactory to your taste and if the
 target platform supports these C/C++ types.  To add custom serializers to
 `typemap.dat` for wsdl2h, see [adding custom serializers](#custom) below.
+
+🔝 [Back to table of contents](#)
 
 Using typemap.dat to customize data bindings                          {#typemap}
 ============================================
@@ -218,6 +222,8 @@ Declarations in `typemap.dat` can be broken up over multiple lines by
 continuing on the next line by ending each line to be continued with a
 backslash `\`.  The limit is 4095 characters per line, whether the line is
 broken up or not.
+
+🔝 [Back to table of contents](#)
 
 XML namespace bindings                                               {#typemap1}
 ----------------------
@@ -260,6 +266,8 @@ editing.
 use the same prefix for multiple XML namespace URIs.  This is to avoid
 namespace conflicts that may cause failed builds and failures in XML parsing
 and XML schema validation.
+
+🔝 [Back to table of contents](#)
 
 XSD type bindings                                                    {#typemap2}
 -----------------
@@ -322,6 +330,8 @@ type, including base and its derived types.  The `__type_base` integer is set
 to a `SOAP_TYPE_T` value to indicate what type of data the `void*` pointer
 points to.
 
+🔝 [Back to table of contents](#)
+
 Custom serializers for XSD types                                       {#custom}
 --------------------------------
 
@@ -339,6 +349,8 @@ header file and an implementation file written in C.  You can compile these in
 C++ (rename files to `.cpp` if needed).
 
 We will discuss the custom serializers that are available to you.
+
+🔝 [Back to table of contents](#)
 
 ### xsd:integer                                                      {#custom-1}
 
@@ -381,6 +393,8 @@ After running wsdl2h and soapcpp2, compile `custom/int128.c` with your project.
 
 @see Section [numerical types](#toxsd5).
 
+🔝 [Back to table of contents](#)
+
 ### xsd:decimal                                                      {#custom-2}
 
 The wsdl2h tool maps `xsd:decimal` to a string by default.  To map `xsd:decimal` to
@@ -409,6 +423,8 @@ After running wsdl2h and soapcpp2, compile `custom/long_double.c` with your
 project.
 
 @see Section [numerical types](#toxsd5).
+
+🔝 [Back to table of contents](#)
 
 ### xsd:dateTime                                                     {#custom-3}
 
@@ -457,6 +473,8 @@ You could even map `xsd:dateTime` to a plain string (use `char*` with C and
 
 @see Section [date and time types](#toxsd7).
 
+🔝 [Back to table of contents](#)
+
 ### xsd:date                                                         {#custom-4}
 
 The wsdl2h tool maps `xsd:date` to a string by default.  We can map `xsd:date` to
@@ -473,6 +491,8 @@ After running wsdl2h and soapcpp2, compile `custom/struct_tm_date.c` with your
 project.
 
 @see Section [date and time types](#toxsd7).
+
+🔝 [Back to table of contents](#)
 
 ### xsd:time                                                         {#custom-5}
 
@@ -491,6 +511,8 @@ After running wsdl2h and soapcpp2, compile `custom/long_time.c` with your
 project.
 
 @see Section [date and time types](#toxsd7).
+
+🔝 [Back to table of contents](#)
 
 ### xsd:duration                                                     {#custom-6}
 
@@ -525,6 +547,8 @@ project.
 
 @see Section [time duration types](#toxsd8).
 
+🔝 [Back to table of contents](#)
+
 Custom Qt serializers for XSD types                                        {#qt}
 -----------------------------------
 
@@ -540,6 +564,8 @@ implementation file to be compiled with your project.
 Other Qt primitive types that are Qt typedefs of C/C++ types do not require a
 custom serializer.
 
+🔝 [Back to table of contents](#)
+
 ### xsd:string                                                           {#qt-1}
 
 To use Qt strings instead of C++ strings, add the following definition to
@@ -549,6 +575,8 @@ To use Qt strings instead of C++ strings, add the following definition to
 
 After running wsdl2h and soapcpp2, compile `custom/qstring.cpp` with your
 project.
+
+🔝 [Back to table of contents](#)
 
 ### xsd:base64Binary                                                     {#qt-2}
 
@@ -560,6 +588,8 @@ To use Qt byte arrays for `xsd:base64Binary` instead of the
 After running wsdl2h and soapcpp2, compile `custom/qbytearray_base64.cpp` with
 your project.
 
+🔝 [Back to table of contents](#)
+
 ### xsd:hexBinary                                                        {#qt-3}
 
 To use Qt byte arrays for `xsd:hexBinary` instead of the `xsd__base64Binary`
@@ -569,6 +599,8 @@ class, add the following definition to `typemap.dat`:
 
 After running wsdl2h and soapcpp2, compile `custom/qbytearray_hex.cpp` with
 your project.
+
+🔝 [Back to table of contents](#)
 
 ### xsd:dateTime                                                         {#qt-4}
 
@@ -580,6 +612,8 @@ To use Qt QDateTime for `xsd:dateTime`, add the following definition to
 After running wsdl2h and soapcpp2, compile `custom/qdatetime.cpp` with
 your project.
 
+🔝 [Back to table of contents](#)
+
 ### xsd:date                                                             {#qt-5}
 
 To use Qt QDate for `xsd:date`, add the following definition to
@@ -590,6 +624,8 @@ To use Qt QDate for `xsd:date`, add the following definition to
 After running wsdl2h and soapcpp2, compile `custom/qdate.cpp` with your
 project.
 
+🔝 [Back to table of contents](#)
+
 ### xsd:time                                                             {#qt-6}
 
 To use Qt QDate for `xsd:time`, add the following definition to
@@ -599,6 +635,8 @@ To use Qt QDate for `xsd:time`, add the following definition to
 
 After running wsdl2h and soapcpp2, compile `custom/qtime.cpp` with your
 project.
+
+🔝 [Back to table of contents](#)
 
 Class/struct member additions                                        {#typemap3}
 -----------------------------
@@ -618,6 +656,8 @@ For example, we can add method declarations and private members to a class, say
 Note that method declarations cannot include any code, because soapcpp2's input
 permits only type declarations, not code.
 
+🔝 [Back to table of contents](#)
+
 Replacing XSD types by equivalent alternatives                       {#typemap4}
 ----------------------------------------------
 
@@ -632,6 +672,8 @@ This replaces all `prefix__type1` by `prefix__type2` in the wsdl2h output.
 validation to fail when a value-type mismatch is encountered in the XML input.
 Therefore, only replace similar types with other similar types that are wider
 (e.g.  `short` by `int` and `float` by `double`).
+
+🔝 [Back to table of contents](#)
 
 The built-in typemap.dat variables $CONTAINER and $POINTER           {#typemap5}
 ----------------------------------------------------------
@@ -680,6 +722,8 @@ A Qt container can be used instead of the default `std::vector`, for example
     ]
     $CONTAINER = QVector
 
+🔝 [Back to table of contents](#)
+
 User-defined content                                                 {#typemap6}
 --------------------
 
@@ -696,6 +740,8 @@ follows:
 
 which emits the `#import "import/wsa5.h"` literally at the start of the
 wsdl2h-generated header file.
+
+🔝 [Back to table of contents](#)
 
 Mapping C/C++ to XML schema                                             {#toxsd}
 ===========================
@@ -714,20 +760,24 @@ You can also declare functions that will be converted to Web service operations
 by soapcpp2.  Global function declarations define service operations, which are
 of the form:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    int prefix__func(arg1, arg2, ..., argn, result);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+int prefix__func(arg1, arg2, ..., argn, result);
+```
 
 where `arg1`, `arg2`, ..., `argn` are formal argument declarations of the input
 and `result` is a formal argument for the output, which must be a pointer or
 reference to the result object to be populated.  More information can be found
 in the [gSOAP user guide.](http://www.genivia.com/doc/soapdoc2.html)
 
+🔝 [Back to table of contents](#)
+
 Overview of serializable C/C++ types                                   {#toxsd1}
 ------------------------------------
 
 The following C/C++ types are supported by soapcpp2 and mapped to XSD types
 and constructs.  See the subsections below for more details or follow the links.
+
+🔝 [Back to table of contents](#)
 
 ### List of Boolean types
 
@@ -737,6 +787,8 @@ and constructs.  See the subsections below for more details or follow the links.
 | `enum xsd__boolean`           | C alternative to C++ `bool` with `false_` and `true_`                               |
  
 @see Section [C++ bool and C alternative](#toxsd3).
+
+🔝 [Back to table of contents](#)
 
 ### List of enumeration and bitmask types
 
@@ -748,6 +800,8 @@ and constructs.  See the subsections below for more details or follow the links.
 | `enum* class`                 | C++11 scoped enumeration bitmask (soapcpp2 `-c++11`)                                |
 
 @see Section [enumerations and bitmasks](#toxsd4).
+
+🔝 [Back to table of contents](#)
 
 ### List of numerical types
 
@@ -783,6 +837,8 @@ and constructs.  See the subsections below for more details or follow the links.
 
 @see Section [numerical types](#toxsd5).
 
+🔝 [Back to table of contents](#)
+
 ### List of string types
 
 | String Type                   | Notes                                                                               |
@@ -798,6 +854,8 @@ and constructs.  See the subsections below for more details or follow the links.
 
 @see Section [string types](#toxsd6).
 
+🔝 [Back to table of contents](#)
+
 ### List of date and time types
 
 | Date and Time Type                      | Notes                                                                     |
@@ -811,6 +869,8 @@ and constructs.  See the subsections below for more details or follow the links.
 
 @see Section [date and time types](#toxsd7).
 
+🔝 [Back to table of contents](#)
+
 ### List of time duration types
 
 | Time Duration Type            | Notes                                                                               |
@@ -819,6 +879,8 @@ and constructs.  See the subsections below for more details or follow the links.
 | `std::chrono::nanoseconds`    | duration in nanoseconds, use `#import "custom/chrono_duration.h"`                   |
 
 @see Section [time duration types](#toxsd8).
+
+🔝 [Back to table of contents](#)
 
 ### List of classes and structs
 
@@ -841,6 +903,8 @@ and constructs.  See the subsections below for more details or follow the links.
 
 @see Section [classes and structs](#toxsd9).
 
+🔝 [Back to table of contents](#)
+
 ### List of special classes and structs
 
 | Special Classes and Structs   | Notes                                                                               |
@@ -853,6 +917,8 @@ and constructs.  See the subsections below for more details or follow the links.
 | `@xsd__anyAttribute`          | DOM attributes, use `#import "dom.h"`                                               |
 
 @see Section [special classes and structs](#toxsd10).
+
+🔝 [Back to table of contents](#)
 
 Colon notation versus name prefixing with XML tag name translation     {#toxsd2}
 ------------------------------------------------------------------
@@ -873,18 +939,18 @@ prefixes.
 For example, the following class uses colon notation to bind the `record` class
 to the `urn:types` schema:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap ns schema namespace: urn:types
-    class ns:record        // binding 'ns:' to a type name
-    {
-     public:
-      std::string name;
-      uint64_t    SSN;
-      ns:record   *spouse; // using 'ns:' with the type name
-      ns:record();         // using 'ns:' here too
-      ~ns:record();        // and here
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap ns schema namespace: urn:types
+class ns:record        // binding 'ns:' to a type name
+{
+ public:
+  std::string name;
+  uint64_t    SSN;
+  ns:record   *spouse; // using 'ns:' with the type name
+  ns:record();         // using 'ns:' here too
+  ~ns:record();        // and here
+};
+```
 
 The colon notation is stripped away by soapcpp2 when generating the data
 binding implementation code for our project.  So the final code just uses
@@ -924,6 +990,8 @@ and the local name `my_way`.
 Struct/class member and parameter name translation can be overruled by using
 [backtick XML tags](#toxsd9-5) (with gSOAP 2.8.30 and later versions).
 
+🔝 [Back to table of contents](#)
+
 C++ Bool and C alternatives                                            {#toxsd3}
 ---------------------------
 
@@ -931,21 +999,23 @@ The C++ `bool` type is bound to built-in XSD type `xsd:boolean`.
 
 The C alternative is to define an enumeration:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    enum xsd__boolean { false_, true_ };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+enum xsd__boolean { false_, true_ };
+```
 
 or by defining an enumeration in C with pseudo-scoped enumeration constants:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    enum xsd__boolean { xsd__boolean__false, xsd__boolean__true };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+enum xsd__boolean { xsd__boolean__false, xsd__boolean__true };
+```
 
 The XML value space of these types is `false` and `true`, but also accepted
 are `0` and `1` values for false and true, respectively.
 
 To prevent name clashes, `false_` and `true_` have an underscore.  Trailing
 underscores are removed from the XML value space.
+
+🔝 [Back to table of contents](#)
 
 Enumerations and bitmasks                                              {#toxsd4}
 -------------------------
@@ -955,33 +1025,37 @@ Enumerations are mapped to XSD simpleType enumeration restrictions of
 
 Consider for example:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    enum ns__Color { RED, WHITE, BLUE };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+enum ns__Color { RED, WHITE, BLUE };
+```
 
 which maps to a simpleType restriction of `xsd:string` in the soapcpp2-generated
 schema:
 
-    <simpleType name="Color">
-      <restriction base="xsd:string">
-        <enumeration value="RED"/>
-        <enumeration value="WHITE"/>
-        <enumeration value="BLUE"/>
-      </restriction>
-    </simpleType>
+<div class="alt">
+```xml
+<simpleType name="Color">
+  <restriction base="xsd:string">
+    <enumeration value="RED"/>
+    <enumeration value="WHITE"/>
+    <enumeration value="BLUE"/>
+  </restriction>
+</simpleType>
+```
+</div>
 
 Enumeration name constants can be pseudo-scoped to prevent name clashes,
 because enumeration name constants have a global scope in C and C++:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    enum ns__Color { ns__Color__RED, ns__Color__WHITE, ns__Color__BLUE };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+enum ns__Color { ns__Color__RED, ns__Color__WHITE, ns__Color__BLUE };
+```
 
 You can also use C++11 scoped enumerations to prevent name clashes:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    enum class ns__Color : int { RED, WHITE, BLUE };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+enum class ns__Color : int { RED, WHITE, BLUE };
+```
 
 Here, the enumeration class base type `: int` is optional.  In place of `int`
 in the example above, we can also use `int8_t`, `int16_t`, `int32_t`, or
@@ -993,36 +1067,44 @@ The XML value space of the enumertions defined above is `RED`, `WHITE`, and
 Prefix-qualified enumeration name constants are mapped to simpleType
 restrictions of `xsd:QName`, for example:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    enum ns__types { xsd__int, xsd__float };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+enum ns__types { xsd__int, xsd__float };
+```
 
 which maps to a simpleType restriction of `xsd:QName` in the soapcpp2-generated
 schema:
 
-    <simpleType name="types">
-      <restriction base="xsd:QName">
-        <enumeration value="xsd:int"/>
-        <enumeration value="xsd:float"/>
-      </restriction>
-    </simpleType>
+<div class="alt">
+```xml
+<simpleType name="types">
+  <restriction base="xsd:QName">
+    <enumeration value="xsd:int"/>
+    <enumeration value="xsd:float"/>
+  </restriction>
+</simpleType>
+```
+</div>
 
 Enumeration name constants can be pseudo-numeric as follows:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    enum ns__Primes { _3 = 3, _5 = 5, _7 = 7, _11 = 11 };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+enum ns__Primes { _3 = 3, _5 = 5, _7 = 7, _11 = 11 };
+```
 
 which maps to a simpleType restriction of `xsd:long`:
 
-    <simpleType name="Color">
-      <restriction base="xsd:long">
-        <enumeration value="3"/>
-        <enumeration value="5"/>
-        <enumeration value="7"/>
-        <enumeration value="11"/>
-      </restriction>
-    </simpleType>
+<div class="alt">
+```xml
+<simpleType name="Color">
+  <restriction base="xsd:long">
+    <enumeration value="3"/>
+    <enumeration value="5"/>
+    <enumeration value="7"/>
+    <enumeration value="11"/>
+  </restriction>
+</simpleType>
+```
+</div>
 
 The XML value space of this type is `3`, `5`, `7`, and `11`.
 
@@ -1032,54 +1114,58 @@ underscore or followed it by any number of underscores, which makes it
 unique.  The leading and trailing underscores are removed from the XML value
 space.
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    enum ns__ABC { A, B, C };
-    enum ns__BA  { B, A };    // BAD: B = 1 but B is already defined as 2
-    enum ns__BA_ { B_, A_ };  // OK
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+enum ns__ABC { A, B, C };
+enum ns__BA  { B, A };    // BAD: B = 1 but B is already defined as 2
+enum ns__BA_ { B_, A_ };  // OK
+```
 
 The gSOAP soapcpp2 tool permits reusing enumeration name constants across
 (non-scoped) enumerations as long as these values are assigned the same
 constant.  Therefore, the following is permitted:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    enum ns__Primes { _3 = 3, _5 = 5, _7 = 7, _11 = 11 };
-    enum ns__Throws { _1 = 1, _2 = 2, _3 = 3, _4 = 4, _5 = 5, _6 = 6 };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+enum ns__Primes { _3 = 3, _5 = 5, _7 = 7, _11 = 11 };
+enum ns__Throws { _1 = 1, _2 = 2, _3 = 3, _4 = 4, _5 = 5, _6 = 6 };
+```
 
 A bitmask type is an `enum*` "product" enumeration with a geometric,
 power-of-two sequence of values assigned to the enumeration constants:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    enum* ns__Options { SSL3, TLS10, TLS11, TLS12 };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+enum* ns__Options { SSL3, TLS10, TLS11, TLS12 };
+```
 
 where the product enum assigns 1 to `SSL3`, 2 to `TLS10`, 4 to `TLS11`, and 8
 to `TLS12`, which allows these enumeration constants to be used in composing
 bitmasks with `|` (bitwise or) `&` (bitwise and), and `~` (bitwise not):
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    enum ns__Options options = (enum ns__Options)(SSL3 | TLS10 | TLS11 | TLS12);
-    if (options & SSL3) // if SSL3 is an option, warn and remove from options
-    {
-      warning();
-      options &= ~SSL3;
-    }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+enum ns__Options options = (enum ns__Options)(SSL3 | TLS10 | TLS11 | TLS12);
+if (options & SSL3) // if SSL3 is an option, warn and remove from options
+{
+  warning();
+  options &= ~SSL3;
+}
+```
 
 The bitmask type maps to a simpleType list restriction of `xsd:string` in the
 soapcpp2-generated schema:
 
-    <simpleType name="Options">
-      <list>
-        <restriction base="xsd:string">
-          <enumeration value="SSL3"/>
-          <enumeration value="TLS10"/>
-          <enumeration value="TLS11"/>
-          <enumeration value="TLS12"/>
-        </restriction>
-      </list>
-    </simpleType>
+<div class="alt">
+```xml
+<simpleType name="Options">
+  <list>
+    <restriction base="xsd:string">
+      <enumeration value="SSL3"/>
+      <enumeration value="TLS10"/>
+      <enumeration value="TLS11"/>
+      <enumeration value="TLS12"/>
+    </restriction>
+  </list>
+</simpleType>
+```
+</div>
 
 The XML value space of this type consists of all 16 possible subsets of the
 four values, represented by an XML string with space-separated values.  For
@@ -1088,9 +1174,9 @@ the XML string `TLS10 TLS11 TLS12`.
 
 You can also use C++11 scoped enumerations with bitmasks:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    enum* class ns__Options { SSL3, TLS10, TLS11, TLS12 };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+enum* class ns__Options { SSL3, TLS10, TLS11, TLS12 };
+```
 
 The base type of a scoped enumeration bitmask, when explicitly given, is
 ignored.  The base type is either `int` or `int64_t`, depending on the number
@@ -1099,9 +1185,9 @@ of constants enumerated in the bitmask.
 To convert `enum` name constants and bitmasks to a string, we use the
 auto-generated function for enum `T`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    const char *soap_T2s(struct soap*, enum T val)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+const char *soap_T2s(struct soap*, enum T val)
+```
 
 The string returned is stored in an internal buffer of the current `soap`
 context, so you MUST copy it to keep it from being overwritten.  For example,
@@ -1110,9 +1196,9 @@ use `char *soap_strdup(struct soap*, const char*)`.
 To convert a string to an `enum` constant or bitmask, we use the auto-generated
 function
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    int soap_s2T(struct soap*, const char *str, enum T *val)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+int soap_s2T(struct soap*, const char *str, enum T *val)
+```
   
 This function takes the name (or names, space-separated for bitmasks) of
 the enumeration constant in a string `str`.  Names should be given without the
@@ -1120,6 +1206,8 @@ pseudo-scope prefix and without trailing underscores.  The function sets `val`
 to the corresponding integer enum constant or to a bitmask.  The function
 returns `SOAP_OK` (zero) on success or an error if the string is not a valid
 enumeration name.
+
+🔝 [Back to table of contents](#)
 
 Numerical types                                                        {#toxsd5}
 ---------------
@@ -1139,11 +1227,11 @@ for floats and the printf format string "%.17lG" for double.  To change the
 format strings, we can assign new strings to the following `struct soap`
 context members:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap.float_format       = "%g";
-    soap.double_format      = "%lg";
-    soap.long_double_format = "%Lg";
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+soap.float_format       = "%g";
+soap.double_format      = "%lg";
+soap.long_double_format = "%Lg";
+```
 
 Note that decimal representations may result in a loss of precision of the
 least significant decimal.  Therefore, the format strings that are used by
@@ -1152,10 +1240,10 @@ decimal fractions in the XML value space.
 
 The `long double` extended floating point type requires a custom serializer:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "custom/long_double.h"
-    ... use long double ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "custom/long_double.h"
+... use long double ...
+```
 
 You can now use `long double`, which has a serializer that serializes this type
 as `xsd:decimal`.  Compile and link your code with `custom/long_double.c`.
@@ -1164,56 +1252,60 @@ The value space of floating point values includes the special values `INF`,
 `-INF`, and `NaN`.  You can check a value for plus or minus infinity and
 not-a-number as follows:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap_isinf(x) && x > 0 // is x INF?
-    soap_isinf(x) && x < 0 // is x -INF?
-    soap_isnan(x)          // is x NaN?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+soap_isinf(x) && x > 0 // is x INF?
+soap_isinf(x) && x < 0 // is x -INF?
+soap_isnan(x)          // is x NaN?
+```
 
 To assign these values, use:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    // x is float       // x is double, long double, or __float128
-    x = FLT_PINFY;      x = DBL_PINFTY;
-    x = FLT_NINFY;      x = DBL_NINFTY;
-    x = FLT_NAN;        x = DBL_NAN;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+// x is float       // x is double, long double, or __float128
+x = FLT_PINFY;      x = DBL_PINFTY;
+x = FLT_NINFY;      x = DBL_NINFTY;
+x = FLT_NAN;        x = DBL_NAN;
+```
 
 If your system supports `__float128` then you can also use this 128 bit
 floating point type with a custom serializer:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "custom/float128.h"
-    ... use xsd__decimal ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "custom/float128.h"
+... use xsd__decimal ...
+```
 
 Then use the `xsd__decimal` alias of `__float128`, which has a serializer.  Do
 not use `__float128` directly, which is transient (not serializable).
 
 To check for `INF`, `-INF`, and `NaN` of a `__float128` value use:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    isinfq(x) && x > 0 // is x INF?
-    isinfq(x) && x < 0 // is x -INF?
-    isnanq(x)          // is x NaN?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+isinfq(x) && x > 0 // is x INF?
+isinfq(x) && x < 0 // is x -INF?
+isnanq(x)          // is x NaN?
+```
 
 The range of a typedef-defined numerical type can be restricted using the range
 `:` operator with inclusive lower and upper bounds.  For example:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef int ns__narrow -10 : 10;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef int ns__narrow -10 : 10;
+```
 
 This maps to a simpleType restriction of `xsd:int` in the soapcpp2-generated
 schema:
 
-    <simpleType name="narrow">
-      <restriction base="xsd:int">
-        <minInclusive value="-10"/>
-        <maxInclusive value="10"/>
-      </restriction>
-    </simpleType>
+<div class="alt">
+```xml
+<simpleType name="narrow">
+  <restriction base="xsd:int">
+    <minInclusive value="-10"/>
+    <maxInclusive value="10"/>
+  </restriction>
+</simpleType>
+```
+</div>
 
 The lower and upper bound of a range are optional.  When omitted, values are
 not bound from below or from above, respectively.
@@ -1225,56 +1317,64 @@ Also with a floating point typedef a printf format pattern can be given of the
 form `"%[width][.precision]f"` to format decimal values using the given width
 and precision fields:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef float ns__PH "%5.2f" 0.0 : 14.0;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef float ns__PH "%5.2f" 0.0 : 14.0;
+```
 
 This maps to a simpleType restriction of `xsd:float` in the soapcpp2-generated
 schema:
 
-    <simpleType name="PH">
-      <restriction base="xsd:float">
-        <totalDigits value="5"/>
-        <fractionDigits value="2"/>
-        <minInclusive value="0"/>
-        <maxInclusive value="14"/>
-      </restriction>
-    </simpleType>
+<div class="alt">
+```xml
+<simpleType name="PH">
+  <restriction base="xsd:float">
+    <totalDigits value="5"/>
+    <fractionDigits value="2"/>
+    <minInclusive value="0"/>
+    <maxInclusive value="14"/>
+  </restriction>
+</simpleType>
+```
+</div>
 
 For exclusive bounds, we use the `<` operator instead of the `:` range
 operator:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef float ns__epsilon 0.0 < 1.0;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef float ns__epsilon 0.0 < 1.0;
+```
 
 Values `eps` of `ns__epsilon` are restricted between `0.0 < eps < 1.0`.
 
 This maps to a simpleType restriction of `xsd:float` in the soapcpp2-generated
 schema:
 
-    <simpleType name="epsilon">
-      <restriction base="xsd:float">
-        <minExclusive value="0"/>
-        <maxExclusive value="1"/>
-      </restriction>
-    </simpleType>
+<div class="alt">
+```xml
+<simpleType name="epsilon">
+  <restriction base="xsd:float">
+    <minExclusive value="0"/>
+    <maxExclusive value="1"/>
+  </restriction>
+</simpleType>
+```
+</div>
 
 To make just one of the bounds exclusive, while keeping the other bound
 inclusive, we add a `<` on the left or on the right side of the range ':'
 operator.  For example:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef float ns__pos 0.0 < : ; // 0.0 < pos
-    typedef float ns__neg : < 0.0 ; // neg < 0.0
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef float ns__pos 0.0 < : ; // 0.0 < pos
+typedef float ns__neg : < 0.0 ; // neg < 0.0
+```
 
 It is valid to make both left and right side exclusive with `< : <` which is in
 fact identical to the exlusive range `<` operator:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef float ns__epsilon 0.0 < : < 1.0; // 0.0 < eps < 1.0
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef float ns__epsilon 0.0 < : < 1.0; // 0.0 < eps < 1.0
+```
 
 It helps to think of the `:` as a placeholder of the value between the two
 bounds, which is easier to memorize than the shorthand forms of bounds from
@@ -1294,10 +1394,10 @@ which the `:` is removed:
 Besides `float`, also `double` and `long double` values can be restricted.  For
 example, consider a nonzero probability extended floating point precision type:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "custom/long_double.h"
-    typedef long double ns__probability "%16Lg" 0.0 < : 1.0;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "custom/long_double.h"
+typedef long double ns__probability "%16Lg" 0.0 < : 1.0;
+```
 
 Value range restrictions are validated by the parser for all inbound XML data.
 A type fault `SOAP_TYPE` will be thrown by the deserializer if the value is out
@@ -1306,10 +1406,10 @@ of range.
 Finally, if your system supports `__int128_t` then you can also use this 128
 bit integer type with a custom serializer:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "custom/int128.h"
-    ... use xsd__integer ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "custom/int128.h"
+... use xsd__integer ...
+```
 
 Use the `xsd__integer` alias of `__int128_t`, which has a serializer.  Do not
 use `__int128_t` directly, which is transient (not serializable).
@@ -1317,9 +1417,9 @@ use `__int128_t` directly, which is transient (not serializable).
 To convert numeric values to a string, we use the auto-generated function for
 numeric type `T`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    const char *soap_T2s(struct soap*, T val)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+const char *soap_T2s(struct soap*, T val)
+```
 
 For numeric types `T`, the string returned is stored in an internal buffer of
 the current `soap` context, so you MUST copy it to keep it from being
@@ -1327,15 +1427,17 @@ overwritten.  For example, use `char *soap_strdup(struct soap*, const char*)`.
 
 To convert a string to a numeric value, we use the auto-generated function
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    int soap_s2T(struct soap*, const char *str, T *val)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+int soap_s2T(struct soap*, const char *str, T *val)
+```
   
 where `T` is for example `int`, `LONG64`, `float`, `decimal` (the custom
 serializer name of `long double`) or `xsd__integer` (the custom serializer name
 of `__int128_t`).  The function `soap_s2T` returns `SOAP_OK` on success or an
 error when the value is not numeric.  For floating point types, "INF", "-INF"
 and "NaN" are valid strings to convert to numbers.
+
+🔝 [Back to table of contents](#)
 
 String types                                                           {#toxsd6}
 ------------
@@ -1355,19 +1457,23 @@ newer XML 1.1 version parsers (including gSOAP) you should be fine.
 
 The length of a string of a typedef-defined string type can be restricted:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef std::string ns__password 6 : 16;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef std::string ns__password 6 : 16;
+```
 
 which maps to a simpleType restriction of `xsd:string` in the soapcpp2-generated
 schema:
 
-    <simpleType name="password">
-      <restriction base="xsd:string">
-        <minLength value="6"/>
-        <maxLength value="16"/>
-      </restriction>
-    </simpleType>
+<div class="alt">
+```xml
+<simpleType name="password">
+  <restriction base="xsd:string">
+    <minLength value="6"/>
+    <maxLength value="16"/>
+  </restriction>
+</simpleType>
+```
+</div>
 
 String length restrictions are validated by the parser for inbound XML data.
 A value length fault `SOAP_LENGTH` will be thrown by the deserializer if the
@@ -1376,20 +1482,24 @@ string is too long or too short.
 In addition, an XSD regex pattern restriction can be associated with a string
 typedef:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef std::string ns__password "([a-zA-Z]|[0-9]|-)+" 6 : 16;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef std::string ns__password "([a-zA-Z]|[0-9]|-)+" 6 : 16;
+```
 
 which maps to a simpleType restriction of `xsd:string` in the soapcpp2-generated
 schema:
 
-    <simpleType name="password">
-      <restriction base="xsd:string">
-        <pattern value="([a-zA-Z0-9]|-)+"/>
-        <minLength value="6"/>
-        <maxLength value="16"/>
-      </restriction>
-    </simpleType>
+<div class="alt">
+```xml
+<simpleType name="password">
+  <restriction base="xsd:string">
+    <pattern value="([a-zA-Z0-9]|-)+"/>
+    <minLength value="6"/>
+    <maxLength value="16"/>
+  </restriction>
+</simpleType>
+```
+</div>
 
 Pattern restrictions are validated by the parser for inbound XML data only if
 the `soap::fsvalidate` and `soap::fwvalidate` callbacks are defined, see the
@@ -1397,26 +1507,30 @@ the `soap::fsvalidate` and `soap::fwvalidate` callbacks are defined, see the
 
 Exclusive length bounds can be used with strings:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef std::string ns__string255 : < 256; // same as 0 : 255
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef std::string ns__string255 : < 256; // same as 0 : 255
+```
 
 Fixed-size strings (`char[N]`) are rare occurrences in the wild, but apparently
 still used in some projects to store strings.  To facilitate fixed-size string
 serialization, use soapcpp2 option `-b`.  For example:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef char ns__buffer[10]; // requires soapcpp2 option -b
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef char ns__buffer[10]; // requires soapcpp2 option -b
+```
 
 which maps to a simpleType restriction of `xsd:string` in the soapcpp2-generated
 schema:
 
-    <simpleType name="buffer">
-      <restriction base="xsd:string">
-        <maxLength value="9"/>
-      </restriction>
-    </simpleType>
+<div class="alt">
+```xml
+<simpleType name="buffer">
+  <restriction base="xsd:string">
+    <maxLength value="9"/>
+  </restriction>
+</simpleType>
+```
+</div>
 
 Note that fixed-size strings MUST contain NUL-terminated text and SHOULD NOT
 contain raw binary data.  Also, the length limitation is more restrictive for
@@ -1431,10 +1545,10 @@ The built-in `_QName` type is a regular C string type (`char*`) that maps to
 There are actually two forms of normalized QName content, to ensure any QName
 is represented accurately and uniquely:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    "prefix:name"
-    "\"URI\":name"
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+"prefix:name"
+"\"URI\":name"
+```
 
 The first form of string is used when the prefix (and the binding URI) is
 defined in the namespace table and is bound to a URI (see the .nsmap file).
@@ -1446,9 +1560,9 @@ just one, and all QName values are normalized to the format shown above.
 
 To define a `std::string` base type for `xsd:QName`, we use a typedef:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef std::string xsd__QName;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef std::string xsd__QName;
+```
 
 The `xsd__QName` string content is normalized, just as with the `_QName`
 normalization.
@@ -1459,17 +1573,17 @@ string type (`char*`) that maps to plain XML CDATA.
 
 To define a `std::string` base type for literal XML content, use a typedef:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef std::string XML;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef std::string XML;
+```
 
 Strings can hold any of the values of the XSD built-in primitive types.  We can
 use a string typedef to declare the use of the string type as a XSD built-in
 type:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef std::string xsd__token;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef std::string xsd__token;
+```
 
 You MUST ensure that the string values we populate in this type conform to the
 XML standard, which in case of `xsd:token` is the lexical and value spaces of
@@ -1479,29 +1593,31 @@ occurrence of `#x9`, `#xA` , and `#xD` by `#x20` and collapsing.
 To copy `char*` or `wchar_t*` strings with a context that manages the allocated
 memory, use functions
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    char *soap_strdup(struct soap*, const char*)
-    wchar_t *soap_wstrdup(struct soap*, const wchar_t*)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+char *soap_strdup(struct soap*, const char*)
+wchar_t *soap_wstrdup(struct soap*, const wchar_t*)
+```
 
 To convert a wide string to a UTF-8 encoded string, use function
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    const char* SOAP_FMAC2 soap_wchar2s(struct soap*, const wchar_t *s)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+const char* SOAP_FMAC2 soap_wchar2s(struct soap*, const wchar_t *s)
+```
 
 The function allocates and returns a string, with its memory being managed by
 the context.
 
 To convert a UTF-8 encoded string to a wide string, use function
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    int soap_s2wchar(struct soap*, const char *from, wchar_t **to, long minlen, long maxlen)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+int soap_s2wchar(struct soap*, const char *from, wchar_t **to, long minlen, long maxlen)
+```
 
 where `to` is set to point to an allocated `wchar_t*` string.  Pass `-1` for
 `minlen` and `maxlen` to ignore length constraints on the target string.  The
 function returns `SOAP_OK` or an error when the length constraints are not met.
+
+🔝 [Back to table of contents](#)
 
 Date and time types                                                    {#toxsd7}
 -------------------
@@ -1525,21 +1641,21 @@ to store and exchange a date and time in UTC without date range restrictions.
 The serializer uses the `struct tm` members directly for the XML value space of
 `xsd:dateTime`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct tm
-    {
-      int    tm_sec;   // seconds (0 - 60)
-      int    tm_min;   // minutes (0 - 59)
-      int    tm_hour;  // hours (0 - 23)
-      int    tm_mday;  // day of month (1 - 31)
-      int    tm_mon;   // month of year (0 - 11)
-      int    tm_year;  // year - 1900
-      int    tm_wday;  // day of week (Sunday = 0) (NOT USED)
-      int    tm_yday;  // day of year (0 - 365) (NOT USED)
-      int    tm_isdst; // is summer time in effect?
-      char*  tm_zone;  // abbreviation of timezone (NOT USED)
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct tm
+{
+  int    tm_sec;   // seconds (0 - 60)
+  int    tm_min;   // minutes (0 - 59)
+  int    tm_hour;  // hours (0 - 23)
+  int    tm_mday;  // day of month (1 - 31)
+  int    tm_mon;   // month of year (0 - 11)
+  int    tm_year;  // year - 1900
+  int    tm_wday;  // day of week (Sunday = 0) (NOT USED)
+  int    tm_yday;  // day of year (0 - 365) (NOT USED)
+  int    tm_isdst; // is summer time in effect?
+  char*  tm_zone;  // abbreviation of timezone (NOT USED)
+};
+```
 
 You will lose the day of the week information.  It is always Sunday
 (`tm_wday=0`) and the day of the year is not set either.  The time zone is UTC.
@@ -1548,10 +1664,10 @@ This `struct tm` type is mapped to the built-in `xsd:dateTime` XSD type and
 serialized with the custom serializer `custom/struct_tm.h` that declares a
 `xsd__dateTime` type:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "custom/struct_tm.h" // import typedef struct tm xsd__dateTime;
-    ... use xsd__dateTime ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "custom/struct_tm.h" // import typedef struct tm xsd__dateTime;
+... use xsd__dateTime ...
+```
 
 Compile and link your code with `custom/struct_tm.c`.
 
@@ -1559,10 +1675,10 @@ The `struct timeval` (`<sys/time.h>`) type is mapped to the built-in
 `xsd:dateTime` XSD type and serialized with the custom serializer
 `custom/struct_timeval.h` that declares a `xsd__dateTime` type:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "custom/struct_timeval.h" // import typedef struct timeval xsd__dateTime;
-    ... use xsd__dateTime ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "custom/struct_timeval.h" // import typedef struct timeval xsd__dateTime;
+... use xsd__dateTime ...
+```
 
 Compile and link your code with `custom/struct_timeval.c`.
 
@@ -1570,22 +1686,22 @@ Note that the same value range restrictions apply to `struct timeval` as they
 apply to `time_t`.  The added benefit of `struct timeval` is the addition of
 a microsecond-precise clock:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct timeval
-    {
-      time_t       tv_sec;  // seconds since Jan. 1, 1970
-      suseconds_t  tv_usec; // and microseconds
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct timeval
+{
+  time_t       tv_sec;  // seconds since Jan. 1, 1970
+  suseconds_t  tv_usec; // and microseconds
+};
+```
 
 A C++11 `std::chrono::system_clock::time_point` type is mapped to the built-in
 `xsd:dateTime` XSD type and serialized with the custom serializer
 `custom/chrono_time_point.h` that declares a `xsd__dateTime` type:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "custom/chrono_time_point.h" // import typedef std::chrono::system_clock::time_point xsd__dateTime;
-    ... use xsd__dateTime ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "custom/chrono_time_point.h" // import typedef std::chrono::system_clock::time_point xsd__dateTime;
+... use xsd__dateTime ...
+```
 
 Compile and link your code with `custom/chrono_time_point.cpp`.
 
@@ -1593,10 +1709,10 @@ The `struct tm` type is mapped to the built-in `xsd:date` XSD type and serialize
 with the custom serializer `custom/struct_tm_date.h` that declares a
 `xsd__date` type:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "custom/struct_tm_date.h" // import typedef struct tm xsd__date;
-    ... use xsd__date ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "custom/struct_tm_date.h" // import typedef struct tm xsd__date;
+... use xsd__date ...
+```
 
 Compile and link your code with `custom/struct_tm_date.c`.
 
@@ -1612,10 +1728,10 @@ time in microseconds UTC is mapped to the built-in `xsd:time` XSD type and
 serialized with the custom serializer `custom/long_time.h` that declares a
 `xsd__time` type:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "custom/long_time.h" // import typedef unsigned long long xsd__time;
-    ... use xsd__time ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "custom/long_time.h" // import typedef unsigned long long xsd__time;
+... use xsd__time ...
+```
 
 Compile and link your code with `custom/long_time.c`.
 
@@ -1631,9 +1747,9 @@ represented in UTC by the serializer.
 To convert date and/or time values to a string, we use the auto-generated
 function for type `T`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    const char *soap_T2s(struct soap*, T val)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+const char *soap_T2s(struct soap*, T val)
+```
 
 For date and time types `T`, the string returned is stored in an internal
 buffer of the current `soap` context, so you MUST copy it to keep it from being
@@ -1641,14 +1757,16 @@ overwritten.  For example, use `char *soap_strdup(struct soap*, const char*)`.
 
 To convert a string to a date/time value, we use the auto-generated function
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    int soap_s2T(struct soap*, const char *str, T *val)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+int soap_s2T(struct soap*, const char *str, T *val)
+```
   
 where `T` is for example `dateTime` (for `time_t`), `xsd__dateTime` (for
 `struct tm`, `struct timeval`, or `std::chrono::system_clock::time_point`).
 The function `soap_s2T` returns `SOAP_OK` on success or an error when the value
 is not a date/time.
+
+🔝 [Back to table of contents](#)
 
 Time duration types                                                    {#toxsd8}
 -------------------
@@ -1662,10 +1780,10 @@ lapse) in milliseconds is mapped to the built-in `xsd:duration` XSD type and
 serialized with the custom serializer `custom/duration.h` that declares a
 `xsd__duration` type:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "custom/duration.h" // import typedef long long xsd__duration;
-    ... use xsd__duration ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "custom/duration.h" // import typedef long long xsd__duration;
+... use xsd__duration ...
+```
 
 Compile and link your code with `custom/duration.c`.
 
@@ -1691,10 +1809,10 @@ Rescaling is done automatically when you add a C++11 `std::chrono::nanoseconds`
 value to a `std::chrono::system_clock::time_point` value.  To use
 `std::chrono::nanoseconds` as `xsd:duration`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "custom/chrono_duration.h" // import typedef std::chrono::duration xsd__duration;
-    ... use xsd__duration ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "custom/chrono_duration.h" // import typedef std::chrono::duration xsd__duration;
+... use xsd__duration ...
+```
 
 Compile and link your code with `custom/chrono_duration.cpp`.
 
@@ -1706,9 +1824,9 @@ apply to this serializer's decoder.
 
 To convert duration values to a string, we use the auto-generated function
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    const char *soap_xsd__duration2s(struct soap*, xsd__duration val)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+const char *soap_xsd__duration2s(struct soap*, xsd__duration val)
+```
 
 The string returned is stored in an internal buffer, so you MUST copy it to
 keep it from being overwritten,  Use `soap_strdup(struct soap*, const char*)`
@@ -1716,12 +1834,14 @@ for example to copy this string.
 
 To convert a string to a duration value, we use the auto-generated function
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    int soap_s2xsd__dateTime(struct soap*, const char *str, xsd__dateTime *val)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+int soap_s2xsd__dateTime(struct soap*, const char *str, xsd__dateTime *val)
+```
 
 The function returns `SOAP_OK` on success or an error when the value is not a
 duration.
+
+🔝 [Back to table of contents](#)
 
 Classes and structs                                                    {#toxsd9}
 -------------------
@@ -1738,20 +1858,20 @@ inheritence only.  Structs cannot be inherited.
 The class and struct name is bound to an XML namespace by means of the prefix
 naming convention or by using [colon notation](#toxsd1):
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap ns schema namespace: urn:types
-    class ns__record
-    {
-     public:
-      std::string  name;
-      uint64_t     SSN;
-      ns__record  *spouse;
-      ns__record();
-      ~ns__record();
-     protected:
-      struct soap  *soap;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap ns schema namespace: urn:types
+class ns__record
+{
+ public:
+  std::string  name;
+  uint64_t     SSN;
+  ns__record  *spouse;
+  ns__record();
+  ~ns__record();
+ protected:
+  struct soap  *soap;
+};
+```
 
 In the example above, we also added a context pointer to the `struct soap` that
 manages this instance.  It is set when the instance is created in the engine's
@@ -1759,13 +1879,19 @@ context, for example when deserialized and populated by the engine.
 
 The class maps to a complexType in the soapcpp2-generated schema:
 
-    <complexType name="record">
-      <sequence>
-        <element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-        <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1"/>
-        <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
-      </sequence>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence>
+    <element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+    <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1"/>
+    <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
+  </sequence>
+</complexType>
+```
+</div>
+
+🔝 [Back to table of contents](#)
 
 ### Serializable versus transient types and data members             {#toxsd9-1}
 
@@ -1776,20 +1902,22 @@ Also `const` and `static` members are not serializable, with the exception of
 `const char*` and `const wchar_t*`.  Types and specific class/struct members
 can also be made transient with the `extern` qualifier:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    extern class std::ostream;     // declare 'std::ostream' transient
-    class ns__record
-    {
-     public:
-      extern int       num;        // not serialized
-      std::ostream     out;        // not serialized
-      static const int MAX = 1024; // not serialized
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+extern class std::ostream;     // declare 'std::ostream' transient
+class ns__record
+{
+ public:
+  extern int       num;        // not serialized
+  std::ostream     out;        // not serialized
+  static const int MAX = 1024; // not serialized
+};
+```
 
 By declaring `std::ostream` transient with `extern` you can use this type
 wherever you need it without soapcpp2 complaining that this class is not
 defined.
+
+🔝 [Back to table of contents](#)
 
 ### Volatile classes and structs                                     {#toxsd9-2}
 
@@ -1800,17 +1928,17 @@ do not want soapcpp2 to generate code with a second declaration of these types.
 For example, `struct tm` is declared in `<time.h>`.  You can make it serializable
 and include a partial list of data members that you want to serialize:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    volatile struct tm
-    {
-      int    tm_sec;    // seconds (0 - 60)
-      int    tm_min;    // minutes (0 - 59)
-      int    tm_hour;   // hours (0 - 23)
-      int    tm_mday;   // day of month (1 - 31)
-      int    tm_mon;    // month of year (0 - 11)
-      int    tm_year;   // year - 1900
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+volatile struct tm
+{
+  int    tm_sec;    // seconds (0 - 60)
+  int    tm_min;    // minutes (0 - 59)
+  int    tm_hour;   // hours (0 - 23)
+  int    tm_mday;   // day of month (1 - 31)
+  int    tm_mon;    // month of year (0 - 11)
+  int    tm_year;   // year - 1900
+};
+```
 
 You can declare classes and structs `volatile` for any such types you want to
 serialize by only providing the public data members you want to serialize.
@@ -1820,22 +1948,28 @@ existing class or struct to a schema.  For example, you can change the `tm` name
 as follows without affecting the code that uses `struct tm` generated by
 soapcpp2:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    volatile struct ns:tm { ... }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+volatile struct ns:tm { ... }
+```
 
 This struct maps to a complexType in the soapcpp2-generated schema:
 
-    <complexType name="tm">
-      <sequence>
-        <element name="tm-sec" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-        <element name="tm-min" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-        <element name="tm-hour" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-        <element name="tm-mday" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-        <element name="tm-mon" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-        <element name="tm-year" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-      </sequence>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="tm">
+  <sequence>
+    <element name="tm-sec" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+    <element name="tm-min" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+    <element name="tm-hour" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+    <element name="tm-mday" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+    <element name="tm-mon" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+    <element name="tm-year" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+  </sequence>
+</complexType>
+```
+</div>
+
+🔝 [Back to table of contents](#)
 
 ### Mutable classes and structs                                      {#toxsd9-3}
 
@@ -1850,34 +1984,36 @@ into one such that all members will be initialized).  A default constructor,
 copy constructor, assignment operation, and destructor will be assigned
 automatically by soapcpp2.
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    mutable struct ns__tuple
-    {
-      @std::string  id;
-    };
+```cpp
+mutable struct ns__tuple
+{
+  @std::string  id;
+};
 
-    mutable struct ns__tuple
-    {
-      std::string  name;
-      std::string  value;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+mutable struct ns__tuple
+{
+  std::string  name;
+  std::string  value;
+};
+```
 
 The members are collected into one definition generated by soapcpp2.  Members
 may be repeated from one definition to another, but only if their associated
 types are identical.  So, for example, a third extension with a `value` member
 with a different type fails:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    mutable struct ns__tuple
-    {
-      float        value; // BAD: value is already declared std::string
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+mutable struct ns__tuple
+{
+  float        value; // BAD: value is already declared std::string
+};
+```
 
 The `mutable` concept has proven to be very useful when declaring and
 collecting SOAP Headers for multiple services, which are collected into one
 `struct SOAP_ENV__Header` by the soapcpp2 tool.
+
+🔝 [Back to table of contents](#)
 
 ### Default and fixed member values                                  {#toxsd9-4}
 
@@ -1885,25 +2021,25 @@ Class and struct data members in C and C++ may be declared with an optional
 default initialization value that is provided "inline" with the declaration of
 the member:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-     public:
-      std::string name = "Joe";
-      ...
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+ public:
+  std::string name = "Joe";
+  ...
+};
+```
 
 Alternatively, use C++11 default initialization syntax:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-     public:
-      std::string name { "Joe" };
-      ...
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+ public:
+  std::string name { "Joe" };
+  ...
+};
+```
 
 These initializations are made by the default constructor that is added by
 soapcpp2 to each class and struct (in C++ only).  A constructor is only added
@@ -1933,19 +2069,19 @@ explained with the following two example fragments.
 A record class (can be a struct in C) with default values for attributes and
 elements is declared as follows:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record_with_default
-    {
-     public:
-      @std::string  a   = "A"; // optional XML attribute with default value "A"
-      @std::string  b 1 = "B"; // required XML attribute with default value "B"
-      @std::string *c   = "C"; // optional XML attribute with default value "C"
-       std::string  d 0 = "D"; // optional XML element with default value "D"
-       std::string  e   = "E"; // required XML element with default value "E"
-       std::string *f   = "F"; // optional XML element with default value "F"
-      ...
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record_with_default
+{
+ public:
+  @std::string  a   = "A"; // optional XML attribute with default value "A"
+  @std::string  b 1 = "B"; // required XML attribute with default value "B"
+  @std::string *c   = "C"; // optional XML attribute with default value "C"
+   std::string  d 0 = "D"; // optional XML element with default value "D"
+   std::string  e   = "E"; // required XML element with default value "E"
+   std::string *f   = "F"; // optional XML element with default value "F"
+  ...
+};
+```
 
 Note that attributes are optional unless marked as required with the occurrence
 constraint `1`.  Elements are required unless the member type is a pointer or
@@ -1958,71 +2094,81 @@ value is specified with a `==`.
 A record class (can be a struct in C) with fixed values for attributes and
 elements is declared as follows:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record_with_fixed
-    {
-     public:
-      @std::string  g   == "G"; // optional XML attribute with fixed value "G"
-      @std::string  h 1 == "H"; // required XML attribute with fixed value "H"
-      @std::string *i   == "I"; // optional XML attribute with fixed value "I"
-       std::string  j 0 == "J"; // optional XML element with fixed value "J"
-       std::string  k   == "K"; // required XML element with fixed value "K"
-       std::string *l   == "L"; // optional XML element with fixed value "L"
-      ...
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record_with_fixed
+{
+ public:
+  @std::string  g   == "G"; // optional XML attribute with fixed value "G"
+  @std::string  h 1 == "H"; // required XML attribute with fixed value "H"
+  @std::string *i   == "I"; // optional XML attribute with fixed value "I"
+   std::string  j 0 == "J"; // optional XML element with fixed value "J"
+   std::string  k   == "K"; // required XML element with fixed value "K"
+   std::string *l   == "L"; // optional XML element with fixed value "L"
+  ...
+};
+```
 
 The XML schema validation rules for the two example classes above are as
 follows:
 
-| Member | Notes
-| ------ | ---------------------------------------------------------------------
-| `a`    | attribute may appear once; if it does not appear its value is "A", otherwise its value is that given (also note: instantiating `ns__record_with_default` assigns the default value "A")
-| `b`    | has no effect when parsing XML (but note: instantiating `ns__record_with_default` assigns the default value "B")
-| `c`    | attribute may appear once; if it does not appear its value is "C", otherwise its value is that given (also note: instantiating `ns__record_with_default` assigns NULL)
-| `d`    | element may appear once; if it does not appear or if it is empty, its value is "D"; otherwise its value is that given (also note: instantiating `ns__record_with_default` assigns the default value "D")
-| `e`    | has no effect when parsing XML (but note: instantiating `ns__record_with_default` assigns the default value "E")
-| `f`    | element may appear once; if it does not appear it is not provided; if it does appear and it is empty, its value is "F"; otherwise its value is that given (also note: instantiating `ns__record_with_default` assigns NULL)
-| `g`    | attribute may appear once; if it does not appear its value is "G", if it does not appear its value is "G" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "G")
-| `h`    | attribute must appear once, its value must be "H" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "H")
-| `i`    | attribute may appear once; if it does not appear its value is "I", if it does not appear its value is "I" (also note: instantiating `ns__record_with_fixed` assigns NULL)
-| `j`    | element may appear once, if it does not appear it is not provided; if it does appear and it is empty, its value is "J"; if it does appear and it is not empty, its value must be "J" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "J")
-| `k`    | element must appear once, its value must be "K" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "K")
-| `l`    | element may appear once, if it does not appear it is not provided; if it does appear and it is empty, its value is "J"; if it does appear and it is not empty, its value must be "J" (also note: instantiating `ns__record_with_fixed` assigns NULL)
+Member | Notes
+------ | ---------------------------------------------------------------------
+`a`    | attribute may appear once; if it does not appear its value is "A", otherwise its value is that given (also note: instantiating `ns__record_with_default` assigns the default value "A")
+`b`    | has no effect when parsing XML (but note: instantiating `ns__record_with_default` assigns the default value "B")
+`c`    | attribute may appear once; if it does not appear its value is "C", otherwise its value is that given (also note: instantiating `ns__record_with_default` assigns NULL)
+`d`    | element may appear once; if it does not appear or if it is empty, its value is "D"; otherwise its value is that given (also note: instantiating `ns__record_with_default` assigns the default value "D")
+`e`    | has no effect when parsing XML (but note: instantiating `ns__record_with_default` assigns the default value "E")
+`f`    | element may appear once; if it does not appear it is not provided; if it does appear and it is empty, its value is "F"; otherwise its value is that given (also note: instantiating `ns__record_with_default` assigns NULL)
+`g`    | attribute may appear once; if it does not appear its value is "G", if it does not appear its value is "G" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "G")
+`h`    | attribute must appear once, its value must be "H" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "H")
+`i`    | attribute may appear once; if it does not appear its value is "I", if it does not appear its value is "I" (also note: instantiating `ns__record_with_fixed` assigns NULL)
+`j`    | element may appear once, if it does not appear it is not provided; if it does appear and it is empty, its value is "J"; if it does appear and it is not empty, its value must be "J" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "J")
+`k`    | element must appear once, its value must be "K" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "K")
+`l`    | element may appear once, if it does not appear it is not provided; if it does appear and it is empty, its value is "J"; if it does appear and it is not empty, its value must be "J" (also note: instantiating `ns__record_with_fixed` assigns NULL)
 
 @see Section [operations on classes and structs](#toxsd9-13).
+
+🔝 [Back to table of contents](#)
 
 ### Attribute members and backtick XML tags                          {#toxsd9-5}
 
 Class and struct data members are declared as XML attributes by annotating
 their type with a `@` qualifier:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-     public:
-      @std::string name;
-      @uint64_t    SSN;
-      ns__record  *spouse;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+ public:
+  @std::string name;
+  @uint64_t    SSN;
+  ns__record  *spouse;
+};
+```
 
 This class maps to a complexType in the soapcpp2-generated schema:
 
-    <complexType name="record">
-      <sequence>
-        <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
-      </sequence>
-      <attribute name="name" type="xsd:string" use="required"/>
-      <attribute name="SSN" type="xsd:unsignedLong" use="required"/>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence>
+    <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
+  </sequence>
+  <attribute name="name" type="xsd:string" use="required"/>
+  <attribute name="SSN" type="xsd:unsignedLong" use="required"/>
+</complexType>
+```
+</div>
 
 An example XML instance of `ns__record` is:
 
-    <ns:record xmlns:ns="urn:types" name="Joe" SSN="1234567890">
-      <spouse name="Jane" SSN="1987654320">
-      </spouse>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types" name="Joe" SSN="1234567890">
+  <spouse name="Jane" SSN="1987654320">
+  </spouse>
+</ns:record>
+```
+</div>
 
 Attribute data members are restricted to primitive types (`bool`, `enum`,
 `time_t`, numeric and string types), `xsd__hexBinary`, `xsd__base64Binary`, and
@@ -2040,38 +2186,48 @@ To override the standard translation of identifier names to XML tag names of
 attributes and elements, add the XML tag name in backticks (requires gSOAP
 2.8.30 and later versions):
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-     public:
-      @std::string name    `full-name`;
-      @uint64_t    SSN     `tax-id`;
-      ns__record  *spouse  `married-to`;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+ public:
+  @std::string name    `full-name`;
+  @uint64_t    SSN     `tax-id`;
+  ns__record  *spouse  `married-to`;
+};
+```
 
 This class maps to a complexType in the soapcpp2-generated schema:
 
-    <complexType name="record">
-      <sequence>
-        <element name="married-to" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
-      </sequence>
-      <attribute name="full-name" type="xsd:string" use="required"/>
-      <attribute name="tax-id" type="xsd:unsignedLong" use="required"/>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence>
+    <element name="married-to" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
+  </sequence>
+  <attribute name="full-name" type="xsd:string" use="required"/>
+  <attribute name="tax-id" type="xsd:unsignedLong" use="required"/>
+</complexType>
+```
+</div>
 
 An example XML instance of `ns__record` is:
 
-    <ns:record xmlns:ns="urn:types" full-name="Joe" tax-id="1234567890">
-      <married-to full-name="Jane" tax-id="1987654320">
-      </married-to>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types" full-name="Joe" tax-id="1234567890">
+  <married-to full-name="Jane" tax-id="1987654320">
+  </married-to>
+</ns:record>
+```
+</div>
 
 A backtick XML tag name may contain any non-empty sequence of ASCII and UTF-8
 characters except white space and the backtick character.  A backtick tag can
 be combined with member constraints and default member initializers:
 
     @uint64_t SSN `tax-id` 0:1 = 999;
+
+🔝 [Back to table of contents](#)
 
 ### Qualified and unqualified members                                {#toxsd9-6}
 
@@ -2101,43 +2257,51 @@ for soapcpp2.
 Consider for example an `ns__record` class in the `ns` namespace in which local
 elements are qualified and local attributes are unqualified by default:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap ns schema namespace:     urn:types
-    //gsoap ns schema elementForm:   qualified
-    //gsoap ns schema attributeForm: unqualified
-    class ns__record
-    {
-     public:
-      @std::string name;
-      @uint64_t    SSN;
-      ns__record  *spouse;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap ns schema namespace:     urn:types
+//gsoap ns schema elementForm:   qualified
+//gsoap ns schema attributeForm: unqualified
+class ns__record
+{
+ public:
+  @std::string name;
+  @uint64_t    SSN;
+  ns__record  *spouse;
+};
+```
 
 This class maps to a complexType in the soapcpp2-generated schema with
 targetNamespace "urn:types", elementFormDefault qualified and
 attributeFormDefault unqualified:
 
-    <schema targetNamespace="urn:types"
-      ...
-      elementFormDefault="qualified"
-      attributeFormDefault="unqualified"
-      ...  >
-      <complexType name="record">
-        <sequence>
-          <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
-        </sequence>
-        <attribute name="name" type="xsd:string" use="required"/>
-        <attribute name="SSN" type="xsd:unsignedLong" use="required"/>
-      </complexType>
-    </schema>
+<div class="alt">
+```xml
+<schema targetNamespace="urn:types"
+  ...
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  ...  >
+  <complexType name="record">
+    <sequence>
+      <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
+    </sequence>
+    <attribute name="name" type="xsd:string" use="required"/>
+    <attribute name="SSN" type="xsd:unsignedLong" use="required"/>
+  </complexType>
+</schema>
+```
+</div>
 
 An example XML instance of `ns__record` is:
 
-    <ns:record xmlns:ns="urn:types" name="Joe" SSN="1234567890">
-      <ns:spouse> name="Jane" SSN="1987654320">
-      </ns:spouse>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types" name="Joe" SSN="1234567890">
+  <ns:spouse> name="Jane" SSN="1987654320">
+  </ns:spouse>
+</ns:record>
+```
+</div>
 
 Note that the root element ns:record is qualified because it is a root element
 of the schema with target namespace "urn:types".  Its local element ns:spouse
@@ -2147,44 +2311,52 @@ qualified.  Attributes are unqualified.
 The default namespace (un)qualification of local elements and attributes can be
 overruled by adding a prefix to the member name by using colon notation:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap ns schema namespace:     urn:types
-    //gsoap ns schema elementForm:   qualified
-    //gsoap ns schema attributeForm: unqualified
-    class ns__record
-    {
-     public:
-      @std::string ns:name; // 'ns:' qualified
-      @uint64_t    SSN;
-      ns__record  *:spouse; // ':' unqualified (empty prefix)
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap ns schema namespace:     urn:types
+//gsoap ns schema elementForm:   qualified
+//gsoap ns schema attributeForm: unqualified
+class ns__record
+{
+ public:
+  @std::string ns:name; // 'ns:' qualified
+  @uint64_t    SSN;
+  ns__record  *:spouse; // ':' unqualified (empty prefix)
+};
+```
 
 The colon notation for member `ns:name` forces qualification of its attribute
 tag in XML.  The colon notation for member `:spouse` removes qualification from
 its local element tag:
 
-    <schema targetNamespace="urn:types"
-      ...
-      elementFormDefault="unqualified"
-      attributeFormDefault="unqualified"
-      ... >
-      <complexType name="record">
-        <sequence>
-          <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true" form="unqualified"/>
-        </sequence>
-        <attribute name="name" type="xsd:string" use="required" form="qualified"/>
-        <attribute name="SSN" type="xsd:unsignedLong" use="required"/>
-      </complexType>
-    </schema>
+<div class="alt">
+```xml
+<schema targetNamespace="urn:types"
+  ...
+  elementFormDefault="unqualified"
+  attributeFormDefault="unqualified"
+  ... >
+  <complexType name="record">
+    <sequence>
+      <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true" form="unqualified"/>
+    </sequence>
+    <attribute name="name" type="xsd:string" use="required" form="qualified"/>
+    <attribute name="SSN" type="xsd:unsignedLong" use="required"/>
+  </complexType>
+</schema>
+```
+</div>
 
 XML instances of `ns__record` have unqualified spouse elements and qualified
 ns:name attributes:
 
-    <ns:record xmlns:ns="urn:types" ns:name="Joe" SSN="1234567890">
-      <spouse> ns:name="Jane" SSN="1987654320">
-      </spouse>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types" ns:name="Joe" SSN="1234567890">
+  <spouse> ns:name="Jane" SSN="1987654320">
+  </spouse>
+</ns:record>
+```
+</div>
 
 Note that data members can also be prefixed using the `prefix__name`
 convention.  However, this has a different effect by referring to global (root)
@@ -2199,86 +2371,100 @@ directive to enable the `elementForm` and `attributeForm` directives in order
 to generate valid schemas with soapcpp2.  See [directives](#directives) for
 more details.
 
+🔝 [Back to table of contents](#)
+
 ### Defining document root elements                                 {#toxsd9-7}
 
 To define and reference XML document root elements we use type names that start
 with an underscore:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class _ns__record
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class _ns__record
+```
 
 Alternatively, we can use a typedef to define a document root element with a
 given type:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef ns__record _ns__record;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef ns__record _ns__record;
+```
 
 This typedef maps to a global root element that is added to the
 soapcpp2-generated schema:
 
-    <element name="record" type="ns:record"/>
+<div class="alt">
+```xml
+<element name="record" type="ns:record"/>
+```
+</div>
 
 An example XML instance of `_ns__record` is:
 
-    <ns:record xmlns:ns="urn:types">
-      <name>Joe</name>
-      <SSN>1234567890</SSN>
-      <spouse>
-        <name>Jane</name>
-        <SSN>1987654320</SSN>
-      </spouse>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types">
+  <name>Joe</name>
+  <SSN>1234567890</SSN>
+  <spouse>
+    <name>Jane</name>
+    <SSN>1987654320</SSN>
+  </spouse>
+</ns:record>
+```
+</div>
 
 Global-level element/attribute definitions are also referenced and/or added to
 the generated schema when serializable data members reference these by their
 qualified name:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef std::string _ns__name 1 : 100;
-    class _ns__record
-    {
-     public:
-      @_QName      xsi__type; // built-in XSD attribute xsi:type
-      _ns__name    ns__name;  // ref to global ns:name element
-      uint64_t     SSN;
-      _ns__record *spouse;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef std::string _ns__name 1 : 100;
+class _ns__record
+{
+ public:
+  @_QName      xsi__type; // built-in XSD attribute xsi:type
+  _ns__name    ns__name;  // ref to global ns:name element
+  uint64_t     SSN;
+  _ns__record *spouse;
+};
+```
 
 These types map to the following comonents in the soapcpp2-generated schema:
 
-    <simpleType name="name">
-      <restriction base="xsd:string">
-        <minLength value="1"/>
-        <maxLength value="100"/>
-      </restriction>
-    </simpleType>
-    <element name="name" type="ns:name"/>
-    <complexType name="record">
-      <sequence>
-        <element ref="ns:name" minOccurs="1" maxOccurs="1"/>
-        <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1"/>
-        <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
-      </sequence>
-      <attribute ref="xsi:type" use="optional"/>
-    </complexType>
-    <element name="record" type="ns:record"/>
+<div class="alt">
+```xml
+<simpleType name="name">
+  <restriction base="xsd:string">
+    <minLength value="1"/>
+    <maxLength value="100"/>
+  </restriction>
+</simpleType>
+<element name="name" type="ns:name"/>
+<complexType name="record">
+  <sequence>
+    <element ref="ns:name" minOccurs="1" maxOccurs="1"/>
+    <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1"/>
+    <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
+  </sequence>
+  <attribute ref="xsi:type" use="optional"/>
+</complexType>
+<element name="record" type="ns:record"/>
+```
+</div>
 
 Use only use qualified member names when their types match the global-level
 element types that they refer to.  For example:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef std::string _ns__name; // global element ns:name of type xsd:string
-    class _ns__record
-    {
-     public:
-      int          ns__name;       // BAD: global element ns:name is NOT type int
-      _ns__record  ns__record;     // OK: ns:record is a global-level root element
-      ...
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef std::string _ns__name; // global element ns:name of type xsd:string
+class _ns__record
+{
+ public:
+  int          ns__name;       // BAD: global element ns:name is NOT type int
+  _ns__record  ns__record;     // OK: ns:record is a global-level root element
+  ...
+};
+```
 
 Therefore, we recommend to use qualified member names only when necessary to
 refer to standard XSD elements and attributes, such as `xsi__type`, and
@@ -2291,17 +2477,19 @@ names by overruling the default element/attribute namespace qualification, see
 As an alternative to prefixing member names, use the backtick tag (requires
 gSOAP 2.8.30 and later versions):
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    typedef std::string _ns__name 1 : 100;
-    class _ns__record
-    {
-     public:
-      @_QName      t    `xsi:type`; // built-in XSD attribute xsi:type
-      _ns__name    s    `ns:name`;  // ref to global ns:name element
-      uint64_t     SSN;
-      _ns__record *spouse;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+typedef std::string _ns__name 1 : 100;
+class _ns__record
+{
+ public:
+  @_QName      t    `xsi:type`; // built-in XSD attribute xsi:type
+  _ns__name    s    `ns:name`;  // ref to global ns:name element
+  uint64_t     SSN;
+  _ns__record *spouse;
+};
+```
+
+🔝 [Back to table of contents](#)
 
 ### (Smart) pointer members and their occurrence constraints         {#toxsd9-8}
 
@@ -2342,46 +2530,56 @@ is a (smart) pointer to primitive type.
 
 Consider for example:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-     public:
-      std::shared_ptr<std::string>  name;             // optional (0:1)
-      uint64_t                      SSN    0:1 = 999; // forced this to be optional with default 999
-      ns__record                   *spouse 1:1;       // forced this to be required (only married people)
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+ public:
+  std::shared_ptr<std::string>  name;             // optional (0:1)
+  uint64_t                      SSN    0:1 = 999; // forced this to be optional with default 999
+  ns__record                   *spouse 1:1;       // forced this to be required (only married people)
+};
+```
 
 This class maps to a complexType in the soapcpp2-generated schema:
 
-    <complexType name="record">
-      <sequence>
-        <element name="name" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
-        <element name="SSN" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" default="999"/>
-        <element name="spouse" type="ns:record" minOccurs="1" maxOccurs="1" nillable="true"/>
-      </sequence>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence>
+    <element name="name" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+    <element name="SSN" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" default="999"/>
+    <element name="spouse" type="ns:record" minOccurs="1" maxOccurs="1" nillable="true"/>
+  </sequence>
+</complexType>
+```
+</div>
 
 An example XML instance of `ns__record` with its `name` string value set to
 `Joe`, `SSN` set to its default, and `spouse` set to NULL:
 
-    <ns:record xmlns:ns="urn:types" ...>
-      <name>Joe</name>
-      <SSN>999</SSN>
-      <spouse xsi:nil="true"/>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types" ...>
+  <name>Joe</name>
+  <SSN>999</SSN>
+  <spouse xsi:nil="true"/>
+</ns:record>
+```
+</div>
 
 @note In general, a smart pointer is simply declared as a `volatile` template
 in a gSOAP header file for soapcpp2:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    volatile template <class T> class NAMESPACE::shared_ptr;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+volatile template <class T> class NAMESPACE::shared_ptr;
+```
 
 @note The soapcpp2 tool generates code that uses `NAMESPACE::shared_ptr` and
 `NAMESPACE::make_shared` to create shared pointers to objects, where
 `NAMESPACE` is any valid C++ namespace such as `std` and `boost` if you have
 Boost installed.
+
+🔝 [Back to table of contents](#)
 
 ### Container and array members and their occurrence constraints     {#toxsd9-9}
 
@@ -2393,71 +2591,75 @@ alternative for C to store collections of data.  Let's start with STL containers
 You can use `std::deque`, `std::list`, `std::vector`, and `std::set` containers
 by importing:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "import/stl.h"       // import all containers
-    #import "import/stldeque.h"  // import deque
-    #import "import/stllist.h"   // import list
-    #import "import/stlvector.h" // import vector
-    #import "import/stlset.h"    // import set
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "import/stl.h"       // import all containers
+#import "import/stldeque.h"  // import deque
+#import "import/stllist.h"   // import list
+#import "import/stlvector.h" // import vector
+#import "import/stlset.h"    // import set
+```
 
 For example, to use a vector data mamber to store names in a record:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "import/stlvector.h"
-    class ns__record
-    {
-     public:
-      std::vector<std::string>  names;
-      uint64_t                  SSN;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "import/stlvector.h"
+class ns__record
+{
+ public:
+  std::vector<std::string>  names;
+  uint64_t                  SSN;
+};
+```
 
 To limit the number of names in the vector within reasonable bounds, occurrence
 constraints are associated with the container.  Occurrence constraints are of
 the form `minOccurs : maxOccurs`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "import/stlvector.h"
-    class ns__record
-    {
-     public:
-      std::vector<std::string>  names 1:10;
-      uint64_t                  SSN;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "import/stlvector.h"
+class ns__record
+{
+ public:
+  std::vector<std::string>  names 1:10;
+  uint64_t                  SSN;
+};
+```
 
 This class maps to a complexType in the soapcpp2-generated schema:
 
-    <complexType name="record">
-      <sequence>
-        <element name="name" type="xsd:string" minOccurs="1" maxOccurs="10"/>
-        <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1""/>
-      </sequence>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence>
+    <element name="name" type="xsd:string" minOccurs="1" maxOccurs="10"/>
+    <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1""/>
+  </sequence>
+</complexType>
+```
+</div>
 
 @note In general, a container is simply declared as a template in a gSOAP
 header file for soapcpp2.  All class templates are considered containers
 (except when declared `volatile`, see smart pointers).  For example,
 `std::vector` is declared in `gsoap/import/stlvector.h` as:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    template <class T> class std::vector;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+template <class T> class std::vector;
+```
 
 @note You can define and use your own containers.  The soapcpp2 tool generates
 code that uses the following members of the `template <typename T> class C`
 container:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-        void              C::clear()
-        C::iterator       C::begin()
-        C::const_iterator C::begin() const
-        C::iterator       C::end()
-        C::const_iterator C::end() const
-        size_t            C::size() const
-        C::iterator       C::insert(C::iterator pos, const T& val)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+void              C::clear()
+C::iterator       C::begin()
+C::const_iterator C::begin() const
+C::iterator       C::end()
+C::const_iterator C::end() const
+size_t            C::size() const
+C::iterator       C::insert(C::iterator pos, const T& val)
+```
 
 @note For more details see the example `simple_vector` container with
 documentation in the package under `gsoap/samples/template`.
@@ -2469,45 +2671,55 @@ in a special size tag member with the name `__size` or `__sizeX`, where `X` can
 be any name, or by an `$int` member to identify the member as a special size
 tag:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct ns__record
-    {
-      $int      sizeofnames; // array size
-      char*    *names;       // array of char* names
-      uint64_t  SSN;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct ns__record
+{
+  $int      sizeofnames; // array size
+  char*    *names;       // array of char* names
+  uint64_t  SSN;
+};
+```
 
 This class maps to a complexType in the soapcpp2-generated schema:
 
-    <complexType name="record">
-      <sequence>
-        <element name="name" type="xsd:string" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
-        <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1""/>
-      </sequence>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence>
+    <element name="name" type="xsd:string" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+    <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1""/>
+  </sequence>
+</complexType>
+```
+</div>
 
 To limit the number of names in the array within reasonable bounds, occurrence
 constraints are associated with the array size member.  Occurrence constraints
 are of the form `minOccurs : maxOccurs`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct ns__record
-    {
-      $int      sizeofnames 1:10; // array size 1..10
-      char*    *names;            // array of one to ten char* names
-      uint64_t  SSN;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct ns__record
+{
+  $int      sizeofnames 1:10; // array size 1..10
+  char*    *names;            // array of one to ten char* names
+  uint64_t  SSN;
+};
+```
 
 This class maps to a complexType in the soapcpp2-generated schema:
 
-    <complexType name="record">
-      <sequence>
-        <element name="name" type="xsd:string" minOccurs="1" maxOccurs="10" nillable="true"/>
-        <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1""/>
-      </sequence>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence>
+    <element name="name" type="xsd:string" minOccurs="1" maxOccurs="10" nillable="true"/>
+    <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1""/>
+  </sequence>
+</complexType>
+```
+</div>
+
+🔝 [Back to table of contents](#)
 
 ### Tagged union members                                            {#toxsd9-10}
 
@@ -2520,20 +2732,20 @@ The variant selector is a member with the name `__union` or `__unionX`, where
 `X` can be any name, or by an `$int` member to identify the member as a variant
 selector tag:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-     public:
-      $int  xORnORs;    // variant selector with values SOAP_UNION_fieldname
-      union choice
-      {
-        float x;
-        int   n;
-        char *s;
-      } u;
-      std::string name;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+ public:
+  $int  xORnORs;    // variant selector with values SOAP_UNION_fieldname
+  union choice
+  {
+    float x;
+    int   n;
+    char *s;
+  } u;
+  std::string name;
+};
+```
 
 The variant selector values are auto-generated based on the union name `choice`
 and the names of its members `x`, `n`, and `s`:
@@ -2547,142 +2759,164 @@ and the names of its members `x`, `n`, and `s`:
 This class maps to a complexType with a sequence and choice in the
 soapcpp2-generated schema:
 
-    <complexType name="record">
-      <sequence>
-        <choice>
-          <element name="x" type="xsd:float" minOccurs="1" maxOccurs="1"/>
-          <element name="n" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-          <element name="s" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
-        </choice>
-        <element name="names" type="xsd:string" minOccurs="1" maxOccurs="1" nillable="true"/>
-      </sequence>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence>
+    <choice>
+      <element name="x" type="xsd:float" minOccurs="1" maxOccurs="1"/>
+      <element name="n" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+      <element name="s" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+    </choice>
+    <element name="names" type="xsd:string" minOccurs="1" maxOccurs="1" nillable="true"/>
+  </sequence>
+</complexType>
+```
+</div>
 
 An STL container or dynamic array of a union requires wrapping the variant
 selector and union member in a struct:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
+```cpp
+class ns__record
+{
+ public:
+  std::vector<
+  struct ns__data  // data with a choice of x, n, or s
+  {
+    $int  xORnORs; // variant selector with values SOAP_UNION_fieldname
+    union choice
     {
-     public:
-      std::vector<
-      struct ns__data  // data with a choice of x, n, or s
-      {
-        $int  xORnORs; // variant selector with values SOAP_UNION_fieldname
-        union choice
-        {
-          float x;
-          int   n;
-          char *s;
-        } u;
-      }> data;         // vector with data
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      float x;
+      int   n;
+      char *s;
+    } u;
+  }> data;         // vector with data
+};
+```
 
 and an equivalent definition with a dynamic array instead of a `std::vector`
 (you can use this in C with structs):
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
+```cpp
+class ns__record
+{
+ public:
+  $int  sizeOfdata; // size of dynamic array
+  struct ns__data   // data with a choice of x, n, or s
+  {
+    $int  xORnORs;  // variant selector with values SOAP_UNION_fieldname
+    union choice
     {
-     public:
-      $int  sizeOfdata; // size of dynamic array
-      struct ns__data   // data with a choice of x, n, or s
-      {
-        $int  xORnORs;  // variant selector with values SOAP_UNION_fieldname
-        union choice
-        {
-          float x;
-          int   n;
-          char *s;
-        } u;
-      } *data;          // points to the data array of length sizeOfdata
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      float x;
+      int   n;
+      char *s;
+    } u;
+  } *data;          // points to the data array of length sizeOfdata
+};
+```
 
 This maps to two complexTypes in the soapcpp2-generated schema:
 
-    <complexType name="data">
-      <choice>
-        <element name="x" type="xsd:float" minOccurs="1" maxOccurs="1"/>
-        <element name="n" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-        <element name="s" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
-      </choice>
-    </complexType>
-    <complexType name="record">
-      <sequence>
-        <element name="data" type="ns:data" minOccurs="0" maxOccurs="unbounded"/>
-      </sequence>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="data">
+  <choice>
+    <element name="x" type="xsd:float" minOccurs="1" maxOccurs="1"/>
+    <element name="n" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+    <element name="s" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+  </choice>
+</complexType>
+<complexType name="record">
+  <sequence>
+    <element name="data" type="ns:data" minOccurs="0" maxOccurs="unbounded"/>
+  </sequence>
+</complexType>
+```
+</div>
 
 The XML value space consists of a sequence of item elements each wrapped in an
 data element:
 
-    <ns:record xmlns:ns="urn:types" ...>
-      <data>
-        <n>123</n>
-      </data>
-      <data>
-        <x>3.1</x>
-      </data>
-      <data>
-        <s>hello</s>
-      </data>
-      <data>
-        <s>world</s>
-      </data>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types" ...>
+  <data>
+    <n>123</n>
+  </data>
+  <data>
+    <x>3.1</x>
+  </data>
+  <data>
+    <s>hello</s>
+  </data>
+  <data>
+    <s>world</s>
+  </data>
+</ns:record>
+```
+</div>
 
 To remove the wrapping data element, simply rename the wrapping struct and
 member to `__data` to make this member invisible to the serializer with the
 double underscore prefix naming convention.  Also use a dynamic array instead
 of a STL container (you can use this in C with structs):
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
+```cpp
+class ns__record
+{
+ public:
+  $int  sizeOfdata; // size of dynamic array
+  struct __data     // contains choice of x, n, or s
+  {
+    $int  xORnORs;  // variant selector with values SOAP_UNION_fieldname
+    union choice
     {
-     public:
-      $int  sizeOfdata; // size of dynamic array
-      struct __data     // contains choice of x, n, or s
-      {
-        $int  xORnORs;  // variant selector with values SOAP_UNION_fieldname
-        union choice
-        {
-          float x;
-          int   n;
-          char *s;
-        } u;
-      } *__data;        // points to the data array of length sizeOfdata
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      float x;
+      int   n;
+      char *s;
+    } u;
+  } *__data;        // points to the data array of length sizeOfdata
+};
+```
 
 This maps to a complexType in the soapcpp2-generated schema:
 
-    <complexType name="record">
-      <sequence minOccurs="0" maxOccurs="unbounded">
-        <choice>
-          <element name="x" type="xsd:float" minOccurs="1" maxOccurs="1"/>
-          <element name="n" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-          <element name="s" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
-        </choice>
-      </sequence>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence minOccurs="0" maxOccurs="unbounded">
+    <choice>
+      <element name="x" type="xsd:float" minOccurs="1" maxOccurs="1"/>
+      <element name="n" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+      <element name="s" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+    </choice>
+  </sequence>
+</complexType>
+```
+</div>
 
 The XML value space consists of a sequence of `<x>`, `<n>`, and/or `<s>`
 elements:
 
-    <ns:record xmlns:ns="urn:types" ...>
-      <n>123</n>
-      <x>3.1</x>
-      <s>hello</s>
-      <s>world</s>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types" ...>
+  <n>123</n>
+  <x>3.1</x>
+  <s>hello</s>
+  <s>world</s>
+</ns:record>
+```
+</div>
 
 Please note that structs, classes, and unions are unnested by soapcpp2 (as in
 the C standard of nested structs and unions).  Therefore, the `choice` union in
 the `ns__record` class is redeclared at the top level despite its nesting
 within the `ns__record` class.  This means that you will have to choose a
 unique name for each nested struct, class, and union.
+
+🔝 [Back to table of contents](#)
 
 ### Tagged void pointer members                                     {#toxsd9-11}
 
@@ -2692,14 +2926,14 @@ pointer*.  This type information is stored in a special type tag member of a
 struct/class with the name `__type` or `__typeX`, where `X` can be any name, or
 alternatively by an `$int` special member of any name as a type tag:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-     public:
-      $int  typeOfdata; // type tag with values SOAP_TYPE_T
-      void *data;       // points to some data of type T
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+ public:
+  $int  typeOfdata; // type tag with values SOAP_TYPE_T
+  void *data;       // points to some data of type T
+};
+```
 
 A type tag member has nonzero values `SOAP_TYPE_T` where `T` is the name of a
 struct/class or the name of a primitive type, such as `int`, `std__string` (for
@@ -2708,18 +2942,26 @@ struct/class or the name of a primitive type, such as `int`, `std__string` (for
 This class maps to a complexType with a sequence in the soapcpp2-generated
 schema:
 
-    <complexType name="record">
-      <sequence>
-        <element name="data" type="xsd:anyType" minOccurs="0" maxOccurs="1"/>
-      </sequence>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence>
+    <element name="data" type="xsd:anyType" minOccurs="0" maxOccurs="1"/>
+  </sequence>
+</complexType>
+```
+</div>
 
 The XML value space consists of the XML value space of the type with the
 addition of an `xsi:type` attribute to the enveloping element:
 
-    <ns:record xmlns:ns="urn:types" ...>
-      <data xsi:type="xsd:int">123</data>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types" ...>
+  <data xsi:type="xsd:int">123</data>
+</ns:record>
+```
+</div>
 
 This `xsi:type` attribute is important for the receiving end to distinguish
 the type of data to instantiate.  The receiver cannot deserialize the data
@@ -2737,96 +2979,112 @@ serialized.
 An STL container or dynamic array of `void*` pointers to `xsd:anyType` data
 requires wrapping the type tag and `void*` members in a struct:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-     public:
-      std::vector<
-      struct ns__data     // data with an xsd:anyType item
-      {
-        $int  typeOfitem; // type tag with values SOAP_TYPE_T
-        void *item;       // points to some item of type T
-      }> data;            // vector with data
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+ public:
+  std::vector<
+  struct ns__data     // data with an xsd:anyType item
+  {
+    $int  typeOfitem; // type tag with values SOAP_TYPE_T
+    void *item;       // points to some item of type T
+  }> data;            // vector with data
+};
+```
 
 and an equivalent definition with a dynamic array instead of a `std::vector`
 (you can use this in C with structs):
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-     public:
-      $int  sizeOfdata;   // size of dynamic array
-      struct ns__data     // data with an xsd:anyType item
-      {
-        $int  typeOfitem; // type tag with values SOAP_TYPE_T
-        void *item;       // points to some item of type T
-      } *data;            // points to the data array of length sizeOfdata
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+ public:
+  $int  sizeOfdata;   // size of dynamic array
+  struct ns__data     // data with an xsd:anyType item
+  {
+    $int  typeOfitem; // type tag with values SOAP_TYPE_T
+    void *item;       // points to some item of type T
+  } *data;            // points to the data array of length sizeOfdata
+};
+```
 
 This maps to two complexTypes in the soapcpp2-generated schema:
 
-    <complexType name="data">
-      <sequence>
-        <element name="item" type="xsd:anyType" minOccurs="1" maxOccurs="1" nillable="true"/>
-      </sequence>
-    </complexType>
-    <complexType name="record">
-      <sequence>
-        <element name="data" type="ns:data" minOccurs="0" maxOccurs="unbounded"/>
-      </sequence>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="data">
+  <sequence>
+    <element name="item" type="xsd:anyType" minOccurs="1" maxOccurs="1" nillable="true"/>
+  </sequence>
+</complexType>
+<complexType name="record">
+  <sequence>
+    <element name="data" type="ns:data" minOccurs="0" maxOccurs="unbounded"/>
+  </sequence>
+</complexType>
+```
+</div>
 
 The XML value space consists of a sequence of item elements each wrapped in a
 data element:
 
-    <ns:record xmlns:ns="urn:types" ...>
-      <data>
-        <item xsi:type="xsd:int">123</item>
-      </data>
-      <data>
-        <item xsi:type="xsd:double">3.1</item>
-      </data>
-      <data>
-        <item xsi:type="xsd:string">abc</item>
-      </data>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types" ...>
+  <data>
+    <item xsi:type="xsd:int">123</item>
+  </data>
+  <data>
+    <item xsi:type="xsd:double">3.1</item>
+  </data>
+  <data>
+    <item xsi:type="xsd:string">abc</item>
+  </data>
+</ns:record>
+```
+</div>
 
 To remove the wrapping data elements, simply rename the wrapping struct and
 member to `__data` to make this member invisible to the serializer with the
 double underscore prefix naming convention.  Also use a dynamic array instead
 of a STL container (you can use this in C with structs):
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-     public:
-      $int  sizeOfdata;   // size of dynamic array
-      struct __data       // contains xsd:anyType item
-      {
-        $int  typeOfitem; // type tag with values SOAP_TYPE_T
-        void *item;       // points to some item of type T
-      } *__data;          // points to the data array of length sizeOfdata
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+ public:
+  $int  sizeOfdata;   // size of dynamic array
+  struct __data       // contains xsd:anyType item
+  {
+    $int  typeOfitem; // type tag with values SOAP_TYPE_T
+    void *item;       // points to some item of type T
+  } *__data;          // points to the data array of length sizeOfdata
+};
+```
 
 This maps to a complexType in the soapcpp2-generated schema:
 
-    <complexType name="record">
-      <sequence minOccurs="0" maxOccurs="unbounded">
-        <element name="item" type="xsd:anyType" minOccurs="1" maxOccurs="1"/>
-      </sequence>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence minOccurs="0" maxOccurs="unbounded">
+    <element name="item" type="xsd:anyType" minOccurs="1" maxOccurs="1"/>
+  </sequence>
+</complexType>
+```
+</div>
 
 The XML value space consists of a sequence of data elements:
 
-    <ns:record xmlns:ns="urn:types" ...>
-      <item xsi:type="xsd:int">123</item>
-      <item xsi:type="xsd:double">3.1</item>
-      <item xsi:type="xsd:string">abc</item>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types" ...>
+  <item xsi:type="xsd:int">123</item>
+  <item xsi:type="xsd:double">3.1</item>
+  <item xsi:type="xsd:string">abc</item>
+</ns:record>
+```
+</div>
 
 Again, please note that structs, classes, and unions are unnested by soapcpp2
 (as in the C standard of nested structs and unions).  Therefore, the `__data`
@@ -2835,6 +3093,8 @@ nesting within the `ns__record` class.  This means that you will have to choose
 a unique name for each nested struct, class, and union.
 
 @see Section [XSD type bindings](#typemap2).
+
+🔝 [Back to table of contents](#)
 
 ### Adding get and set methods                                      {#toxsd9-12}
 
@@ -2851,18 +3111,20 @@ set set `soap::error` to a nonzero error code and return it.
 
 For example, adding a `set` and `get` method to a class declaration:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-     public:
-      int set(struct soap*); // triggered before serialization
-      int get(struct soap*); // triggered after deserialization
-      ...
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+ public:
+  int set(struct soap*); // triggered before serialization
+  int get(struct soap*); // triggered after deserialization
+  ...
+};
+```
 
 To add these and othe rmethods to classes and structs with wsdl2h and
 `typemap.dat`, please see [class/struct member additions](#typemap3).
+
+🔝 [Back to table of contents](#)
 
 ### Operations on classes and structs                               {#toxsd9-13}
 
@@ -2980,6 +3242,8 @@ on a context-managed heap:
 The above functions can be invoked with a NULL `soap` context, but we will be
 responsible to use `delete T` to remove this instance from the unmanaged heap.
 
+🔝 [Back to table of contents](#)
+
 Special classes and structs                                           {#toxsd10}
 ---------------------------
 
@@ -2988,25 +3252,25 @@ Special classes and structs                                           {#toxsd10}
 A class or struct with the following layout is a one-dimensional SOAP encoded
 Array type:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ArrayOfT
-    {
-     public:
-      T   *__ptr;  // array pointer
-      int  __size; // array size
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ArrayOfT
+{
+ public:
+  T   *__ptr;  // array pointer
+  int  __size; // array size
+};
+```
 
 where `T` is the array element type.  A multidimensional SOAP Array is:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ArrayOfT
-    {
-     public:
-      T   *__ptr;     // array pointer
-      int  __size[N]; // array size of each dimension
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ArrayOfT
+{
+ public:
+  T   *__ptr;     // array pointer
+  int  __size[N]; // array size of each dimension
+};
+```
 
 where `N` is the constant number of dimensions.  The pointer points to an array
 of `__size[0]*__size[1]* ... * __size[N-1]` elements.
@@ -3014,16 +3278,20 @@ of `__size[0]*__size[1]* ... * __size[N-1]` elements.
 This maps to a complexType restriction of SOAP-ENC:Array in the
 soapcpp2-generated schema:
 
-    <complexType name="ArrayOfT">
-      <complexContent>
-        <restriction base="SOAP-ENC:Array">
-          <sequence>
-            <element name="item" type="T" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
-          </sequence>
-          <attribute ref="SOAP-ENC:arrayType" WSDL:arrayType="ArrayOfT[]"/>
-        </restriction>
-      </complexContent>
-    </complexType>
+<div class="alt">
+```xml
+<complexType name="ArrayOfT">
+  <complexContent>
+    <restriction base="SOAP-ENC:Array">
+      <sequence>
+	<element name="item" type="T" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+      </sequence>
+      <attribute ref="SOAP-ENC:arrayType" WSDL:arrayType="ArrayOfT[]"/>
+    </restriction>
+  </complexContent>
+</complexType>
+```
+</div>
 
 The name of the class can be arbitrary.  We often use `ArrayOfT` without a
 prefix to distinguish arrays from other classes and structs.
@@ -3031,109 +3299,119 @@ prefix to distinguish arrays from other classes and structs.
 With SOAP 1.1 encoding, an optional offset member can be added that controls
 the start of the index range for each dimension:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ArrayOfT
-    {
-     public:
-      T   *__ptr;       // array pointer
-      int  __size[N];   // array size of each dimension
-      int  __offset[N]; // array offsets to start each dimension
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ArrayOfT
+{
+ public:
+  T   *__ptr;       // array pointer
+  int  __size[N];   // array size of each dimension
+  int  __offset[N]; // array offsets to start each dimension
+};
+```
 
 For example, we can define a matrix of floats as follows:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class Matrix
-    {
-     public:
-      double *__ptr;
-      int     __size[2];
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class Matrix
+{
+ public:
+  double *__ptr;
+  int     __size[2];
+};
+```
 
 The following code populates the matrix and serializes it in XML:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap *soap = soap_new1(SOAP_XML_INDENT);
-    Matrix A;
-    double a[6] = { 1, 2, 3, 4, 5, 6 };
-    A.__ptr = a;
-    A.__size[0] = 2;
-    A.__size[1] = 3;
-    soap_write_Matrix(soap, &A);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+soap *soap = soap_new1(SOAP_XML_INDENT);
+Matrix A;
+double a[6] = { 1, 2, 3, 4, 5, 6 };
+A.__ptr = a;
+A.__size[0] = 2;
+A.__size[1] = 3;
+soap_write_Matrix(soap, &A);
+```
 
 Matrix A is serialized as an array with 2x3 values:
 
-    <SOAP-ENC:Array SOAP-ENC:arrayType="xsd:double[2,3]" ...>
-      <item>1</item>
-      <item>2</item>
-      <item>3</item>
-      <item>4</item>
-      <item>5</item>
-      <item>6</item>
-    </SOAP-ENC:Array>
+<div class="alt">
+```xml
+<SOAP-ENC:Array SOAP-ENC:arrayType="xsd:double[2,3]" ...>
+  <item>1</item>
+  <item>2</item>
+  <item>3</item>
+  <item>4</item>
+  <item>5</item>
+  <item>6</item>
+</SOAP-ENC:Array>
+```
+</div>
+
+🔝 [Back to table of contents](#)
 
 ### XSD hexBinary and base64Binary types                            {#toxsd10-2}
 
 A special case of a one-dimensional array is used to define `xsd:hexBinary` and
 `xsd:base64Binary` types when the pointer type is `unsigned char`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class xsd__hexBinary
-    {
-     public:
-      unsigned char *__ptr;  // points to raw binary data
-      int            __size; // size of data
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class xsd__hexBinary
+{
+ public:
+  unsigned char *__ptr;  // points to raw binary data
+  int            __size; // size of data
+};
+```
 
 and
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class xsd__base64Binary
-    {
-     public:
-      unsigned char *__ptr;  // points to raw binary data
-      int            __size; // size of data
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class xsd__base64Binary
+{
+ public:
+  unsigned char *__ptr;  // points to raw binary data
+  int            __size; // size of data
+};
+```
+
+🔝 [Back to table of contents](#)
 
 ### MIME/MTOM attachment binary types                               {#toxsd10-3}
 
 A class or struct with a binary content layout can be extended to support
 MIME/MTOM (and older DIME) attachments, such as in xop:Include elements:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap xop schema import: http://www.w3.org/2004/08/xop/include
-    class _xop__Include
-    {
-     public:
-      unsigned char *__ptr;   // points to raw binary data
-      int            __size;  // size of data
-      char          *id;      // NULL to generate an id, or set to a unique UUID
-      char          *type;    // MIME type of the data
-      char          *options; // optional description of MIME attachment
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap xop schema import: http://www.w3.org/2004/08/xop/include
+class _xop__Include
+{
+ public:
+  unsigned char *__ptr;   // points to raw binary data
+  int            __size;  // size of data
+  char          *id;      // NULL to generate an id, or set to a unique UUID
+  char          *type;    // MIME type of the data
+  char          *options; // optional description of MIME attachment
+};
+```
 
 Attachments are beyond the scope of this document.  The `SOAP_ENC_MIME` and
 `SOAP_ENC_MTOM` context flag must be set to enable attachments.  See the
 [gSOAP user guide](http://www.genivia.com/doc/soapdoc2.html) for more details.
+
+🔝 [Back to table of contents](#)
 
 ### Wrapper class/struct with simpleContent                         {#toxsd10-4}
 
 A class or struct with the following layout is a complexType that wraps
 simpleContent:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__simple
-    {
-     public:
-      T   __item;
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__simple
+{
+ public:
+  T   __item;
+};
+```
 
 The type `T` is a primitive type (`bool`, `enum`, `time_t`, numeric and string
 types), `xsd__hexBinary`, `xsd__base64Binary`, and custom serializers, such as
@@ -3141,30 +3419,36 @@ types), `xsd__hexBinary`, `xsd__base64Binary`, and custom serializers, such as
 
 This maps to a complexType with simpleContent in the soapcpp2-generated schema:
 
-    <complexType name="simple">
-      <simpleContent>
-        <extension base="T"/>
-      </simpleContent>
-    </complexType> 
+<div class="alt">
+```xml
+<complexType name="simple">
+  <simpleContent>
+    <extension base="T"/>
+  </simpleContent>
+</complexType> 
+```
+</div>
 
 A wrapper class/struct may include any number of attributes declared with `@`.
+
+🔝 [Back to table of contents](#)
 
 ### DOM anyType and anyAttribute                                    {#toxsd10-5}
 
 Use of a DOM is optional and enabled by `#import "dom.h"` to use the DOM
 `xsd__anyType` element node and `xsd__anyAttribute` attribute node:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "dom.h"
+```cpp
+#import "dom.h"
 
-    class ns__record
-    {
-     public:
-      @xsd__anyAttribute  attributes; // list of DOM attributes
-      ...
-      xsd__anyType       *name;       // optional DOM element
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class ns__record
+{
+ public:
+  @xsd__anyAttribute  attributes; // list of DOM attributes
+  ...
+  xsd__anyType       *name;       // optional DOM element
+};
+```
 
 where `name` contains XML stored in a DOM node set and `attributes` is a list
 of all visibly rendered attributes.  The name `attributes` is arbitrary and any
@@ -3180,50 +3464,49 @@ An `#import "dom.h"` import is automatically added by wsdl2h with option `-d`
 to bind `xsd:anyType` to DOM nodes, and also to populate `xsd:any`,
 `xsd:anyAttribute` and `xsd:mixed` XML content:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "dom.h"
+```cpp
+#import "dom.h"
 
-    class ns__record
-    {
-     public:
-      ...
-      @xsd__anyAttribute        __anyAttribute; // optional DOM attributes
-      std::vector<xsd__anyType> __any   0;      // optional DOM elements
-      xsd__anyType              __mixed 0;      // optional mixed content
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class ns__record
+{
+ public:
+  ...
+  @xsd__anyAttribute        __anyAttribute; // optional DOM attributes
+  std::vector<xsd__anyType> __any   0;      // optional DOM elements
+  xsd__anyType              __mixed 0;      // optional mixed content
+};
+```
 
 where the members prefixed with `__` are "invisible" to the XML parser, meaning
 that these members are not bound to XML tag names.
 
 In C you can use a dynamic arrary instead of `std::vector`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
-    #import "dom.h"
+```cpp
+#import "dom.h"
 
-    struct ns__record
-    {
-      ...
-      @xsd__anyAttribute        __anyAttribute; // optional DOM attributes
-      $int                      __sizeOfany;    // size of the array
-      xsd__anyType             *__any;          // optional DOM elements
-      xsd__anyType              __mixed 0;      // optional mixed content
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+struct ns__record
+{
+  ...
+  @xsd__anyAttribute        __anyAttribute; // optional DOM attributes
+  $int                      __sizeOfany;    // size of the array
+  xsd__anyType             *__any;          // optional DOM elements
+  xsd__anyType              __mixed 0;      // optional mixed content
+};
+```
 
 Classes can inherit DOM, which enables full use of polymorphism with one base
 DOM class:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "dom.h"
+```cpp
+#import "dom.h"
 
-    class ns__record : public xsd__anyType
-    {
-      ...
-      std::vector<xsd__anyType*> array; // array of objects of any class
-    };
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class ns__record : public xsd__anyType
+{
+  ...
+  std::vector<xsd__anyType*> array; // array of objects of any class
+};
+```
 
 This permits an `xsd__anyType` pointer to refer to a derived class such as
 `ns__record`, which will be serialized with an `xsi:type` attribute that is
@@ -3251,14 +3534,14 @@ If you use wsdl2h with option `-p` with option `-d` then every class will
 inherit DOM as shown above.  Without option `-d`, an `xsd__anyType` type is
 generated to serve as the root type in the type hierarchy:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class xsd__anyType { _XML __item; struct soap *soap; };
+```cpp
+class xsd__anyType { _XML __item; struct soap *soap; };
 
-    class ns__record : public xsd__anyType
-    {
-      ...
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class ns__record : public xsd__anyType
+{
+  ...
+};
+```
 
 where the `_XML __item` member holds any XML content as a literal XML string.
 
@@ -3267,6 +3550,8 @@ To use the DOM API, compile `dom.c` (or `dom.cpp` for C++), or link with
 
 @see Documentation of [XML DOM and XPath](http://www.genivia.com/doc/dom/html)
 for more details.
+
+🔝 [Back to table of contents](#)
 
 Directives                                                         {#directives}
 ==========
@@ -3281,37 +3566,39 @@ Service directives are applicable to service and operations described by WSDL.
 Schema directives are applicable to types, elements, and attributes defined by
 XML schemas.
 
+🔝 [Back to table of contents](#)
+
 Service directives                                               {#directives-1}
 ------------------
 
 A service directive must start at a new line and is of the form:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap <prefix> service <property>: <value>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap <prefix> service <property>: <value>
+```
 
 where `<prefix>` is the XML namespace prefix of a service binding.  The
 `<property>` and `<value>` fields are one of the following:
 
-| Property        | Value                                                                            |
-| --------------- | -------------------------------------------------------------------------------- |
-| `name`          | name of the service, optionally followed by text describing the service          |
-| `namespace`     | URI of the WSDL targetNamespace                                                  |
-| `documentation` | text describing the service (see also the `name` property), multiple permitted   |
-| `doc`           | same as above, shorthand form                                                    |
-| `style`         | `document` (default) SOAP messaging style or `rpc` for SOAP RPC                  |
-| `encoding`      | `literal` (default), `encoded` for SOAP encoding, or a custom URI                |
-| `protocol`      | specifies SOAP or REST, see below                                                |
-| `port`          | URL of the service endpoint, usually an http or https address                    |
-| `transport`     | URI declaration of the transport, usually `http://schemas.xmlsoap.org/soap/http` |
-| `definitions`   | name of the WSDL definitions/\@name                                              |
-| `type`          | name of the WSDL definitions/portType/\@name (WSDL2.0 interface/\@name)          |
-| `binding`       | name of the WSDL definitions/binding/\@name                                      |
-| `portName`      | name of the WSDL definitions/service/port/\@name                                 |
-| `portType`      | an alias for the `type` property                                                 |
-| `interface`     | an alias for the `type` property                                                 |
-| `location`      | an alias for the `port` property                                                 |
-| `endpoint`      | an alias for the `port` property                                                 |
+property        | value
+--------------- | -----
+`name`          | name of the service, optionally followed by text describing the service
+`namespace`     | URI of the WSDL targetNamespace
+`documentation` | text describing the service (see also the `name` property), multiple permitted
+`doc`           | same as above, shorthand form
+`style`         | `document` (default) SOAP messaging style or `rpc` for SOAP RPC
+`encoding`      | `literal` (default), `encoded` for SOAP encoding, or a custom URI
+`protocol`      | specifies SOAP or REST, see below
+`port`          | URL of the service endpoint, usually an http or https address
+`transport`     | URI declaration of the transport, usually `http://schemas.xmlsoap.org/soap/http`
+`definitions`   | name of the WSDL definitions/\@name
+`type`          | name of the WSDL definitions/portType/\@name (WSDL2.0 interface/\@name)
+`binding`       | name of the WSDL definitions/binding/\@name
+`portName`      | name of the WSDL definitions/service/port/\@name
+`portType`      | an alias for the `type` property
+`interface`     | an alias for the `type` property
+`location`      | an alias for the `port` property
+`endpoint`      | an alias for the `port` property
 
 The service `name` and `namespace` properties are required in order to generate
 a valid WSDL with soapcpp2.  The other properties are optional.
@@ -3322,31 +3609,33 @@ The `style` and `encoding` property defaults are changed with soapcpp2 option
 The `protocol` property is `SOAP` by default (SOAP 1.1).  Protocol property
 values are:
 
-| Protocol Value | Description                                          |
-| -------------- | ---------------------------------------------------- |
-| `SOAP`         | SOAP transport, supporting both SOAP 1.1 and 1.2     |
-| `SOAP1.1`      | SOAP 1.1 transport (same as soapcpp2 option `-1`)    |
-| `SOAP1.2`      | SOAP 1.2 transport (same as soapcpp2 option `-2`)    |
-| `SOAP-GET`     | one-way SOAP 1.1 or 1.2 with HTTP GET                |
-| `SOAP1.1-GET`  | one-way SOAP 1.1 with HTTP GET                       |
-| `SOAP1.2-GET`  | one-way SOAP 1.2 with HTTP GET                       |
-| `HTTP`         | non-SOAP REST protocol with HTTP POST                |
-| `POST`         | non-SOAP REST protocol with HTTP POST                |
-| `GET`          | non-SOAP REST protocol with HTTP GET                 |
-| `PUT`          | non-SOAP REST protocol with HTTP PUT                 |
-| `DELETE`       | non-SOAP REST protocol with HTTP DELETE              |
+protocol value | description
+-------------- | -----------
+`SOAP`         | SOAP transport, supporting both SOAP 1.1 and 1.2
+`SOAP1.1`      | SOAP 1.1 transport (same as soapcpp2 option `-1`)
+`SOAP1.2`      | SOAP 1.2 transport (same as soapcpp2 option `-2`)
+`SOAP-GET`     | one-way SOAP 1.1 or 1.2 with HTTP GET
+`SOAP1.1-GET`  | one-way SOAP 1.1 with HTTP GET
+`SOAP1.2-GET`  | one-way SOAP 1.2 with HTTP GET
+`HTTP`         | non-SOAP REST protocol with HTTP POST
+`POST`         | non-SOAP REST protocol with HTTP POST
+`GET`          | non-SOAP REST protocol with HTTP GET
+`PUT`          | non-SOAP REST protocol with HTTP PUT
+`DELETE`       | non-SOAP REST protocol with HTTP DELETE
 
 You can bind service operations to the WSDL namespace of a service by using the
 namespace prefix as part of the identifier name of the function that defines
 the service operation:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    int prefix__func(arg1, arg2, ..., argn, result);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+int prefix__func(arg1, arg2, ..., argn, result);
+```
 
 You can override the `port` endpoint URL at runtime in the auto-generated
 `soap_call_prefix__func` service call (C/C++ client side) and in the C++ proxy
 class service call.
+
+🔝 [Back to table of contents](#)
 
 Service method directives                                        {#directives-2}
 -------------------------
@@ -3356,33 +3645,33 @@ Service method directives are specifically applicable to a service operation.
 
 A service method directive is of the form:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap <prefix> service method-<property>: <method> <value>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap <prefix> service method-<property>: <method> <value>
+```
 
 where `<prefix>` is the XML namespace prefix of a service binding and
 `<method>` is the unqualified name of a service operation.  The `<property>`
 and `<value>` fields are one of the following:
 
-| Method Property             | Value                                                                          |
-| --------------------------- | ------------------------------------------------------------------------------ |
-| `method-documentation`      | text describing the service operation                                          |
-| `method`                    | same as above, shorthand form                                                  |
-| `method-action`             | `""` or URI SOAPAction HTTP header, or URL query string for REST protocols     |
-| `method-input-action`       | `""` or URI SOAPAction HTTP header of service request messages                 |
-| `method-output-action`      | `""` or URI SOAPAction HTTP header of service response messages                |
-| `method-fault-action`       | `""` or URI SOAPAction HTTP header of service fault messages                   |
-| `method-header-part`        | member name of the `SOAP_ENV__Header` struct used in SOAP Header               |
-| `method-input-header-part`  | member name of the `SOAP_ENV__Header` struct used in SOAP Headers of requests  |
-| `method-output-header-part` | member name of the `SOAP_ENV__Header` struct used in SOAP Headers of responses |
-| `method-fault`              | type name of a struct or class member used in `SOAP_ENV__Details` struct       |
-| `method-mime-type`          | REST content type or SOAP MIME attachment content type(s)                      |
-| `method-input-mime-type`    | REST content type or SOAP MIME attachment content type(s) of request message   |
-| `method-output-mime-type`   | REST content type or SOAP MIME attachment content type(s) of response message  |
-| `method-style`              | `document` or `rpc`                                                            |
-| `method-encoding`           | `literal`, `encoded`, or a custom URI for encodingStyle of messages            |
-| `method-response-encoding`  | `literal`, `encoded`, or a custom URI for encodingStyle of response messages   |
-| `method-protocol`           | SOAP or REST, see [service directives](#directives-1)                          |
+method property             | value
+--------------------------- | -----
+`method-documentation`      | text describing the service operation
+`method`                    | same as above, shorthand form
+`method-action`             | `""` or URI SOAPAction HTTP header, or URL query string for REST protocols
+`method-input-action`       | `""` or URI SOAPAction HTTP header of service request messages
+`method-output-action`      | `""` or URI SOAPAction HTTP header of service response messages
+`method-fault-action`       | `""` or URI SOAPAction HTTP header of service fault messages
+`method-header-part`        | member name of the `SOAP_ENV__Header` struct used in SOAP Header
+`method-input-header-part`  | member name of the `SOAP_ENV__Header` struct used in SOAP Headers of requests
+`method-output-header-part` | member name of the `SOAP_ENV__Header` struct used in SOAP Headers of responses
+`method-fault`              | type name of a struct or class member used in `SOAP_ENV__Details` struct
+`method-mime-type`          | REST content type or SOAP MIME attachment content type(s)
+`method-input-mime-type`    | REST content type or SOAP MIME attachment content type(s) of request message
+`method-output-mime-type`   | REST content type or SOAP MIME attachment content type(s) of response message
+`method-style`              | `document` or `rpc`
+`method-encoding`           | `literal`, `encoded`, or a custom URI for encodingStyle of messages
+`method-response-encoding`  | `literal`, `encoded`, or a custom URI for encodingStyle of response messages
+`method-protocol`           | SOAP or REST, see [service directives](#directives-1)
 
 The `method-header-part` properties can be repeated for a service operation to
 declare multiple SOAP Header parts that the service operation requires.  You
@@ -3428,41 +3717,45 @@ The `method-mime-type` property serves two purposes:
 Use `method-input-mime-type` and `method-output-mime-type` to differentiate the
 attachment types between SOAP request and response messages.
 
+🔝 [Back to table of contents](#)
+
 Schema directives                                                {#directives-3}
 -----------------
 
 A schema directive is of the form:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap <prefix> schema <property>: <value>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap <prefix> schema <property>: <value>
+```
 
 where `<prefix>` is the XML namespace prefix of a schema.  The `<property>` and
 `<value>` fields are one of the following:
 
-| Property        | Value                                                                             |
-| --------------- | --------------------------------------------------------------------------------- |
-| `namespace`     | URI of the XSD targetNamespace                                                    |
-| `namespace2`    | alternate URI for the XSD namespace (i.e. URI is also accepted by the XML parser) |
-| `import`        | URI of imported namespace                                                         |
-| `form`          | `unqualified` (default) or `qualified` local element and attribute form defaults  |
-| `elementForm`   | `unqualified` (default) or `qualified` local element form default                 |
-| `attributeForm` | `unqualified` (default) or `qualified` local attribute form default               |
-| `typed`         | `no` (default) or `yes` for serializers to add `xsi:type` attributes to XML       |
+property        | value
+--------------- | -----
+`namespace`     | URI of the XSD targetNamespace
+`namespace2`    | alternate URI for the XSD namespace (i.e. URI is also accepted by the XML parser)
+`import`        | URI of imported namespace
+`form`          | `unqualified` (default) or `qualified` local element and attribute form defaults
+`elementForm`   | `unqualified` (default) or `qualified` local element form default
+`attributeForm` | `unqualified` (default) or `qualified` local attribute form default
+`typed`         | `no` (default) or `yes` for serializers to add `xsi:type` attributes to XML
 
 To learn more about the local form defaults, see [qualified and unqualified members.](#toxsd9-6)
 
 The `typed` property is implicitly `yes` when soapcpp2 option `-t` is used.
+
+🔝 [Back to table of contents](#)
 
 Schema type directives                                           {#directives-4}
 ----------------------
 
 A schema type directive is of the form:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap <prefix> schema type-<property>: <name> <value>
-    //gsoap <prefix> schema type-<property>: <name>::<member> <value>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap <prefix> schema type-<property>: <name> <value>
+//gsoap <prefix> schema type-<property>: <name>::<member> <value>
+```
 
 where `<prefix>` is the XML namespace prefix of a schema and `<name>` is an
 unqualified name of a C/C++ type, and the optional `<member>` is a class/struct
@@ -3470,39 +3763,45 @@ members or enum constant.
 
 You can describe a type:
 
-| Type Property        | Value                           |
-| -------------------- | ------------------------------- |
-| `type-documentation` | text describing the schema type |
-| `type`               | same as above, shorthand form   |
+type property        | value
+-------------------- | -----
+`type-documentation` | text describing the schema type
+`type`               | same as above, shorthand form
 
 For example, you can add a description to an enumeration:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap ns schema type: Vowels The letters A, E, I, O, U, and sometimes Y
-    //gsoap ns schema type: Vowels::Y A vowel, sometimes
-    enum class ns__Vowels : char { A = 'A', E = 'E', I = 'I', O = 'O', U = 'U', Y = 'Y' };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap ns schema type: Vowels The letters A, E, I, O, U, and sometimes Y
+//gsoap ns schema type: Vowels::Y A vowel, sometimes
+enum class ns__Vowels : char { A = 'A', E = 'E', I = 'I', O = 'O', U = 'U', Y = 'Y' };
+```
 
 This documented enumeration maps to a simpleType restriction of `xsd:string` in
 the soapcpp2-generated schema:
 
-    <simpleType name="Vowels">
+<div class="alt">
+```xml
+<simpleType name="Vowels">
+  <annotation>
+    <documentation>The letters A, E, I, O, U, and sometimes Y</documentation>
+  </annotation>
+  <restriction base="xsd:string">
+    <enumeration value="A"/>
+    <enumeration value="E"/>
+    <enumeration value="I"/>
+    <enumeration value="O"/>
+    <enumeration value="U"/>
+    <enumeration value="Y">
       <annotation>
-        <documentation>The letters A, E, I, O, U, and sometimes Y</documentation>
+	<documentation>A vowel, sometimes</documentation>
       </annotation>
-      <restriction base="xsd:string">
-        <enumeration value="A"/>
-        <enumeration value="E"/>
-        <enumeration value="I"/>
-        <enumeration value="O"/>
-        <enumeration value="U"/>
-        <enumeration value="Y">
-          <annotation>
-            <documentation>A vowel, sometimes</documentation>
-          </annotation>
-        <enumeration/>
-      </restriction>
-    </simpleType>
+    <enumeration/>
+  </restriction>
+</simpleType>
+```
+</div>
+
+🔝 [Back to table of contents](#)
 
 Serialization rules                                                     {#rules}
 ===================
@@ -3534,6 +3833,8 @@ A discussion of SOAP clients and servers is beyond the scope of this document.
 However, the SOAP options discussed here also apply to SOAP client and server
 development.
 
+🔝 [Back to table of contents](#)
+
 SOAP document versus rpc style                                        {#doc-rpc}
 ------------------------------
 
@@ -3546,28 +3847,32 @@ XML subelements as its parameters.
 For example, the following directives in the gSOAP header file for soapcpp2
 declare that `DBupdate` is a SOAP RPC encoding service method:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap ns service namespace:       urn:DB
-    //gsoap ns service method-protocol: DBupdate SOAP
-    //gsoap ns service method-style:    DBupdate rpc
-    int ns__DBupdate(...);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap ns service namespace:       urn:DB
+//gsoap ns service method-protocol: DBupdate SOAP
+//gsoap ns service method-style:    DBupdate rpc
+int ns__DBupdate(...);
+```
 
 The XML payload has a SOAP envelope, optional SOAP header, and a SOAP body with
 one element representing the operation with the parameters as subelements:
 
-    <SOAP-ENV:Envelope
-      xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-      xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-      xmlsn:ns="urn:DB">
-      <SOAP-ENV:Body>
-        <ns:DBupdate>
-          ...
-        </ns:DBupdate>
-      </SOAP-ENV:Body>
-    </SOAP-ENV:Envelope>
+<div class="alt">
+```xml
+<SOAP-ENV:Envelope
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlsn:ns="urn:DB">
+  <SOAP-ENV:Body>
+    <ns:DBupdate>
+      ...
+    </ns:DBupdate>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+</div>
 
 The "document" style puts no restrictions on the SOAP Body content.  However, we
 recommend that the first element's tag name in the SOAP Body should be unique
@@ -3575,6 +3880,8 @@ to each type of operation, so that the receiver can dispatch the operation
 based on this element's tag name.  Alternatively, the HTTP URL path can be used
 to specify the operation, or the HTTP action header can be used to dispatch
 operations automatically on the server side (soapcpp2 options -a and -A).
+
+🔝 [Back to table of contents](#)
 
 SOAP literal versus encoding                                          {#lit-enc}
 ----------------------------
@@ -3597,44 +3904,48 @@ XSD attributes, SOAP encoding attributes (such as for arrays), and id-ref.
 For example, the following directives in the gSOAP header file for soapcpp2
 declare that `DBupdate` is a SOAP RPC encoding service method:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap ns service namespace:       urn:DB
-    //gsoap ns service method-protocol: DBupdate SOAP
-    //gsoap ns service method-style:    DBupdate rpc
-    //gsoap ns service method-encoding: DBupdate encoded
-    int ns__DBupdate(...);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap ns service namespace:       urn:DB
+//gsoap ns service method-protocol: DBupdate SOAP
+//gsoap ns service method-style:    DBupdate rpc
+//gsoap ns service method-encoding: DBupdate encoded
+int ns__DBupdate(...);
+```
 
 The XML payload has a SOAP envelope, optional SOAP header, and a SOAP body with
 an encodingStyle attribute for SOAP 1.1 encoding and an element representing the
 operation with parameters that are SOAP 1.1 encoded:
 
-    <SOAP-ENV:Envelope
-      xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-      xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-      xmlsn:ns="urn:DB">
-      <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-        <ns:DBupdate>
-          <records SOAP-ENC:arrayType="ns:record[3]">
-            <item>
-              <name href="#_1"/>
-              <SSN>1234567890</SSN>
-            </item>
-            <item>
-              <name>Jane</name>
-              <SSN>1987654320</SSN>
-            </item>
-            <item>
-              <name href="#_1"/>
-              <SSN>2345678901</SSN>
-            </item>
-          </records>
-        </ns:DBupdate>
-        <id id="_1" xsi:type="xsd:string">Joe</id>
-      </SOAP-ENV:Body>
-    </SOAP-ENV:Envelope>
+<div class="alt">
+```xml
+<SOAP-ENV:Envelope
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlsn:ns="urn:DB">
+  <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+    <ns:DBupdate>
+      <records SOAP-ENC:arrayType="ns:record[3]">
+	<item>
+	  <name href="#_1"/>
+	  <SSN>1234567890</SSN>
+	</item>
+	<item>
+	  <name>Jane</name>
+	  <SSN>1987654320</SSN>
+	</item>
+	<item>
+	  <name href="#_1"/>
+	  <SSN>2345678901</SSN>
+	</item>
+      </records>
+    </ns:DBupdate>
+    <id id="_1" xsi:type="xsd:string">Joe</id>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+</div>
 
 Note that the name "Joe" is shared by two records and the string is referenced
 by SOAP 1.1 href and id attributes.
@@ -3644,65 +3955,73 @@ are actually multi-referenced in the data graph, other SOAP applications may
 render multi-referenced elements more aggressively.  The example could also be
 rendered as:
 
-    <SOAP-ENV:Envelope
-      xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-      xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-      xmlsn:ns="urn:DB">
-      <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-        <ns:DBupdate>
-          <records SOAP-ENC:arrayType="ns:record[3]">
-            <item href="#id1"/>
-            <item href="#id2"/>
-            <item href="#id3"/>
-          </records>
-        </ns:DBupdate>
-        <id id="id1" xsi:type="ns:record">
-          <name href="#id4"/>
-          <SSN>1234567890</SSN>
-        </id>
-        <id id="id2" xsi:type="ns:record">
-          <name href="#id5"/>
-          <SSN>1987654320</SSN>
-        </id>
-        <id id="id3" xsi:type="ns:record">
-          <name href="#id4"/>
-          <SSN>2345678901</SSN>
-        </id>
-        <id id="id4" xsi:type="xsd:string">Joe</id>
-        <id id="id5" xsi:type="xsd:string">Jane</id>
-      </SOAP-ENV:Body>
-    </SOAP-ENV:Envelope>
+<div class="alt">
+```xml
+<SOAP-ENV:Envelope
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlsn:ns="urn:DB">
+  <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+    <ns:DBupdate>
+      <records SOAP-ENC:arrayType="ns:record[3]">
+	<item href="#id1"/>
+	<item href="#id2"/>
+	<item href="#id3"/>
+      </records>
+    </ns:DBupdate>
+    <id id="id1" xsi:type="ns:record">
+      <name href="#id4"/>
+      <SSN>1234567890</SSN>
+    </id>
+    <id id="id2" xsi:type="ns:record">
+      <name href="#id5"/>
+      <SSN>1987654320</SSN>
+    </id>
+    <id id="id3" xsi:type="ns:record">
+      <name href="#id4"/>
+      <SSN>2345678901</SSN>
+    </id>
+    <id id="id4" xsi:type="xsd:string">Joe</id>
+    <id id="id5" xsi:type="xsd:string">Jane</id>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+</div>
 
 SOAP 1.2 encoding is cleaner and produces more accurate XML encodings of data
 graphs by setting the id attribute on the element that is referenced:
 
-    <SOAP-ENV:Envelope
-      xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope"
-      xmlns:SOAP-ENC="http://www.w3.org/2003/05/soap-encoding"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-      xmlsn:ns="urn:DB">
-      <SOAP-ENV:Body>
-        <ns:DBupdate SOAP-ENV:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-          <records SOAP-ENC:itemType="ns:record" SOAP-ENC:arraySize="3">
-            <item>
-              <name SOAP-ENC:id="_1">Joe</name>
-              <SSN>1234567890</SSN>
-            </item>
-            <item>
-              <name>Jane</name>
-              <SSN>1987654320</SSN>
-            </item>
-            <item>
-              <name SOAP-ENC:ref="_1"/>
-              <SSN>2345678901</SSN>
-            </item>
-          </records>
-        </ns:DBupdate>
-      </SOAP-ENV:Body>
-    </SOAP-ENV:Envelope>
+<div class="alt">
+```xml
+<SOAP-ENV:Envelope
+  xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope"
+  xmlns:SOAP-ENC="http://www.w3.org/2003/05/soap-encoding"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlsn:ns="urn:DB">
+  <SOAP-ENV:Body>
+    <ns:DBupdate SOAP-ENV:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+      <records SOAP-ENC:itemType="ns:record" SOAP-ENC:arraySize="3">
+	<item>
+	  <name SOAP-ENC:id="_1">Joe</name>
+	  <SSN>1234567890</SSN>
+	</item>
+	<item>
+	  <name>Jane</name>
+	  <SSN>1987654320</SSN>
+	</item>
+	<item>
+	  <name SOAP-ENC:ref="_1"/>
+	  <SSN>2345678901</SSN>
+	</item>
+      </records>
+    </ns:DBupdate>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+</div>
 
 @note Some SOAP 1.2 applications consider the namespace `SOAP-ENC` of
 `SOAP-ENC:id` and `SOAP-ENC:ref` optional.  The gSOAP SOAP 1.2 encoding
@@ -3722,6 +4041,8 @@ XSD validation is possible, which can be enabled with the `SOAP_XML_STRICT`
 flag to initialize the gSOAP engine context.  However, data graphs will be
 serialized as trees and cycles in the data will be cut from the XML rendition.
 
+🔝 [Back to table of contents](#)
+
 SOAP 1.1 versus SOAP 1.2                                                 {#soap}
 ------------------------
 
@@ -3729,9 +4050,9 @@ There are two SOAP protocol versions: 1.1 and 1.2. The gSOAP tools can switch
 between the two versions seamlessly.  You can declare the default SOAP version
 for a service operation as follows:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-      //gsoap ns service method-protocol: DBupdate SOAP1.2
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap ns service method-protocol: DBupdate SOAP1.2
+```
 
 The gSOAP soapcpp2 auto-generates client and server code.  At the client side,
 this operation sends data with SOAP 1.2 but accepts responses also in SOAP 1.1.
@@ -3746,9 +4067,11 @@ recommended.
 The SOAP 1.2 protocol default can also be set by importing and loading
 `gsoap/import/soap12.h`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #import "soap12.h"
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#import "soap12.h"
+```
+
+🔝 [Back to table of contents](#)
 
 Non-SOAP XML serialization                                           {#non-soap}
 --------------------------
@@ -3771,42 +4094,52 @@ The REST operations POST, GET, and PUT are declared with `//gsoap` directives
 in the gSOAP header file for soapcpp2.  For example, a REST POST operation is
 declared as follows:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    //gsoap ns service namespace:       urn:DB
-    //gsoap ns service method-protocol: DBupdate POST
-    int ns__DBupdate(...);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+//gsoap ns service namespace:       urn:DB
+//gsoap ns service method-protocol: DBupdate POST
+int ns__DBupdate(...);
+```
 
 There is no SOAP Envelope and no SOAP Body in the payload for `DBupdate`.  Also
 the XML serialization rules are identical to SOAP document/literal.  The XML
 payload only has the operation name as an element with its parameters
 serialized as subelements:
 
-    <ns:DBupdate xmln:ns="urn:DB" ...>
-     ...
-    </ns:DBupdate>
+<div class="alt">
+```xml
+<ns:DBupdate xmln:ns="urn:DB" ...>
+ ...
+</ns:DBupdate>
+```
+</div>
 
 To force id-ref serialization with REST similar to SOAP 1.2 multi-reference
 encoding, use the `SOAP_XML_GRAPH` flag to initialize the gSOAP engine context.
 The XML serialization includes id and ref attributes for multi-referenced
 elements as follows:
 
-    <ns:DBupdate xmln:ns="urn:DB" ...>
-      <records>
-        <item>
-          <name id="_1">Joe</name>
-          <SSN>1234567890</SSN>
-        </item>
-        <item>
-          <name>Jane</name>
-          <SSN>1987654320</SSN>
-        </item>
-        <item>
-          <name ref="_1"/>
-          <SSN>2345678901</SSN>
-        </item>
-      </records>
-    </ns:DBupdate>
+<div class="alt">
+```xml
+<ns:DBupdate xmln:ns="urn:DB" ...>
+  <records>
+    <item>
+      <name id="_1">Joe</name>
+      <SSN>1234567890</SSN>
+    </item>
+    <item>
+      <name>Jane</name>
+      <SSN>1987654320</SSN>
+    </item>
+    <item>
+      <name ref="_1"/>
+      <SSN>2345678901</SSN>
+    </item>
+  </records>
+</ns:DBupdate>
+```
+</div>
+
+🔝 [Back to table of contents](#)
 
 Input and output                                                           {#io}
 ================
@@ -3815,14 +4148,14 @@ Reading and writing XML from/to files, streams and string buffers is done via
 the managing context by setting one of the following context members that
 control IO sources and sinks:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap->recvfd = fd; // an int file descriptor to read from (0 by default)
-    soap->sendfd = fd; // an int file descriptor to write to (1 by default)
-    soap->is = &is;    // C++ only: a std::istream is object to read from
-    soap->os = &os;    // C++ only: a std::ostream os object to write to
-    soap->is = cs;     // C only: a const char* string to read from (soap->is will advance)
-    soap->os = &cs;    // C only: pointer to a const char*, will be set to point to the string output
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+soap->recvfd = fd; // an int file descriptor to read from (0 by default)
+soap->sendfd = fd; // an int file descriptor to write to (1 by default)
+soap->is = &is;    // C++ only: a std::istream is object to read from
+soap->os = &os;    // C++ only: a std::ostream os object to write to
+soap->is = cs;     // C only: a const char* string to read from (soap->is will advance)
+soap->os = &cs;    // C only: pointer to a const char*, will be set to point to the string output
+```
 
 Normally, all of these context members are NULL, which is required to send and
 receive data over sockets by gSOAP clients and servers.  Therefore, if you set
@@ -3838,6 +4171,8 @@ In addition, you can set IO callback functions to handle IO at a lower level.
 
 For more details, see the [gSOAP user guide.](http://www.genivia.com/doc/soapdoc2.html)
 
+🔝 [Back to table of contents](#)
+
 Reading and writing from/to files and streams                             {#io1}
 ---------------------------------------------
 
@@ -3845,54 +4180,56 @@ The default IO is standard input and output.  Other sources and sinks (those
 listed above) will be used until you (re)set them.  For example with file-based
 input and output:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    FILE *fp = fopen("record.xml", "r");
-    if (fp != NULL)
-    {
-      soap->recvfd = fileno(fp);    // get file descriptor of file to read from
-      if (soap_read_ns__record(soap, &pers1))
-        ... // handle IO error
-      fclose(fp);
-      soap->recvfd = 0;             // read from stdin, or -1 to block reading
-    }
+```cpp
+FILE *fp = fopen("record.xml", "r");
+if (fp != NULL)
+{
+  soap->recvfd = fileno(fp);    // get file descriptor of file to read from
+  if (soap_read_ns__record(soap, &pers1))
+    ... // handle IO error
+  fclose(fp);
+  soap->recvfd = 0;             // read from stdin, or -1 to block reading
+}
 
-    FILE *fp = fopen("record.xml", "w");
-    if (fp != NULL)
-    {
-      soap->sendfd = fileno(fp);    // get file descriptor of file to write to
-      if (soap_write_ns__record(soap, &pers1))
-        ... // handle IO error
-      fclose(fp);
-      soap->sendfd = 1;             // write to stdout, or -1 to block writing
-    }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FILE *fp = fopen("record.xml", "w");
+if (fp != NULL)
+{
+  soap->sendfd = fileno(fp);    // get file descriptor of file to write to
+  if (soap_write_ns__record(soap, &pers1))
+    ... // handle IO error
+  fclose(fp);
+  soap->sendfd = 1;             // write to stdout, or -1 to block writing
+}
+```
 
 Similar code with streams in C++:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #include <fstream>
+```cpp
+#include <fstream>
 
-    std::fstream fs;
-    fs.open("record.xml", std::ios::in);
-    if (fs)
-    {
-      soap->is = &fs;
-      if (soap_read__ns__record(soap, &pers1))
-        ... // handle IO error
-      fs.close();
-      soap->is = NULL;
-    }
+std::fstream fs;
+fs.open("record.xml", std::ios::in);
+if (fs)
+{
+  soap->is = &fs;
+  if (soap_read__ns__record(soap, &pers1))
+    ... // handle IO error
+  fs.close();
+  soap->is = NULL;
+}
 
-    fs.open("record.xml", std::ios::out);
-    if (fs)
-    {
-      soap->os = &fs;
-      if (soap_write__ns__record(soap, &pers1))
-        ... // handle IO error
-      fs.close();
-      soap->os = NULL;
-    }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+fs.open("record.xml", std::ios::out);
+if (fs)
+{
+  soap->os = &fs;
+  if (soap_write__ns__record(soap, &pers1))
+    ... // handle IO error
+  fs.close();
+  soap->os = NULL;
+}
+```
+
+🔝 [Back to table of contents](#)
 
 Reading and writing from/to string buffers                                {#io2}
 ------------------------------------------
@@ -3900,39 +4237,39 @@ Reading and writing from/to string buffers                                {#io2}
 For C++ we recommend to use `std::stringstream` objects from `<sstream>` as
 illustrated in the following example:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #include <sstream>
+```cpp
+#include <sstream>
 
-    std::stringstream ss;
-    ss.str("..."); // XML to parse
-    soap->is = &ss;
-    if (soap_read__ns__record(soap, &pers1))
-      ... // handle IO error
-    soap->is = NULL;
+std::stringstream ss;
+ss.str("..."); // XML to parse
+soap->is = &ss;
+if (soap_read__ns__record(soap, &pers1))
+  ... // handle IO error
+soap->is = NULL;
 
-    soap->os = &ss;
-    if (soap_write__ns__record(soap, &pers1))
-      ... // handle IO error
-    soap->os = NULL;
-    std::string s = ss.str(); // string with XML
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+soap->os = &ss;
+if (soap_write__ns__record(soap, &pers1))
+  ... // handle IO error
+soap->os = NULL;
+std::string s = ss.str(); // string with XML
+```
 
 For C we can use `soap->is` and `soap->os` to point to strings of XML content
 as follows (this requires gSOAP 2.8.28 or later):
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap->is = "..."; // XML to parse
-    if (soap_read__ns__record(soap, &pers1))
-      ... // handle IO error
-    soap->is = NULL;
+```cpp
+soap->is = "..."; // XML to parse
+if (soap_read__ns__record(soap, &pers1))
+  ... // handle IO error
+soap->is = NULL;
 
-    const char *cs = NULL;
-    soap->os = &cs;
-    if (soap_write__ns__record(soap, &pers1))
-      ... // handle IO error
-    soap->os = NULL;
-    ... = cs; // string with XML (do not free(cs): managed by the context and freed with soap_end())
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+const char *cs = NULL;
+soap->os = &cs;
+if (soap_write__ns__record(soap, &pers1))
+  ... // handle IO error
+soap->os = NULL;
+... = cs; // string with XML (do not free(cs): managed by the context and freed with soap_end())
+```
 
 Note that `soap->os` is a pointer to a `const char*` string.  The pointer is
 set by the managing context to point to the XML data that is stored on the
@@ -3941,12 +4278,16 @@ context-managed heap.
 For earlier gSOAP versions we recommend to use IO callbacks `soap->frecv` and
 `soap->fsend`, see the [gSOAP user guide.](http://www.genivia.com/doc/soapdoc2.html)
 
+🔝 [Back to table of contents](#)
+
 Memory management                                                      {#memory}
 =================
 
 Memory management with the `soap` context enables us to allocate data in
 context-managed heap space that can be collectively deleted.  All deserialized
 data is placed on the context-managed heap by the gSOAP engine.
+
+🔝 [Back to table of contents](#)
 
 Memory management in C                                                {#memory1}
 ----------------------
@@ -3979,23 +4320,26 @@ The `soap_malloc` function is a wrapper around `malloc`, but which also permits
 the `struct soap` context to track all heap allocations for collective deletion
 with `soap_end(soap)`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #include "soapH.h"
-    #include "ns.nsmap"
-    ...
-    struct soap *soap = soap_new(); // new context
-    ...
-    struct ns__record *record = (struct ns__record*)soap_malloc(soap, sizeof(struct ns__record));
-    soap_default_ns__record(soap, record); // auto-generated struct initializer
-    ...
-    soap_destroy(soap); // only for C++, see section on C++ below
-    soap_end(soap);     // delete record and all other heap allocations
-    soap_free(soap);    // delete context
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#include "soapH.h"
+#include "ns.nsmap"
+...
+struct soap *soap = soap_new(); // new context
+...
+struct ns__record *record = (struct ns__record*)soap_malloc(soap, sizeof(struct ns__record));
+soap_default_ns__record(soap, record); // auto-generated struct initializer
+...
+soap_destroy(soap); // only for C++, see section on C++ below
+soap_end(soap);     // delete record and all other heap allocations
+soap_free(soap);    // delete context
+```
 
 All data on the managed heap is mass-deleted with `soap_end(soap)` which must
-be called before `soap_done(soap)` or `soap_free(soap)` (these calls end the
-use of the `soap` engine context and free the context, respectively).
+be called before `soap_done(soap)` or `soap_free(soap)`, which end the use of
+the `soap` engine context and free the context, respectively.  Use
+`soap_free(soap)` only when the context is allocated with `soap_new()`.  Use
+`soap_done(soap)` only when the context is stack allocated (so cannot be
+deleted from the heap).
 
 The managed heap is checked for memory leaks when the gSOAP code is compiled
 with `-DDEBUG`.
@@ -4013,74 +4357,74 @@ can use the functions:
 If your C compiler supports `typeof` then you can use the following macro to
 simplify the managed heap allocation and initialization of primitive values:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #define soap_assign(soap, lhs, rhs) (*(lhs = (typeof(lhs))soap_malloc(soap, sizeof(*lhs))) = rhs)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+#define soap_assign(soap, lhs, rhs) (*(lhs = (typeof(lhs))soap_malloc(soap, sizeof(*lhs))) = rhs)
+```
 
 Pointers to primitive values are often used for optional members.  For example,
 assume we have the following struct:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct ns__record
-    {
-      const char        *name;   // required name
-      uint64_t          *SSN;    // optional SSN
-      struct ns__record *spouse; // optional spouse
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct ns__record
+{
+  const char        *name;   // required name
+  uint64_t          *SSN;    // optional SSN
+  struct ns__record *spouse; // optional spouse
+};
+```
 
 Use `soap_assign` to create a SSN value on the managed heap:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct soap *soap = soap_new(); // new context
-    ...
-    struct ns__record *record = (struct ns__record*)soap_malloc(soap, sizeof(struct ns__record));
-    soap_default_ns__record(soap, record);
-    record->name = soap_strdup(soap, "Joe");
-    soap_assign(soap, record->SSN, 1234567890UL);
-    ...
-    soap_end(soap);     // delete managed soap_malloc'ed heap data
-    soap_free(soap);    // delete context
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct soap *soap = soap_new(); // new context
+...
+struct ns__record *record = (struct ns__record*)soap_malloc(soap, sizeof(struct ns__record));
+soap_default_ns__record(soap, record);
+record->name = soap_strdup(soap, "Joe");
+soap_assign(soap, record->SSN, 1234567890UL);
+...
+soap_end(soap);     // delete managed soap_malloc'ed heap data
+soap_free(soap);    // delete context
+```
 
 Without the `soap_assign` macro, you will need two lines of code, one to
 allocate and one to assign (you should also use this if your system can run out
 of memory):
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    assert((record->SSN = (uint64_t*)soap_malloc(soap, sizeof(utint64_t))) != NULL);
-    *record->SSN = 1234567890UL;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+assert((record->SSN = (uint64_t*)soap_malloc(soap, sizeof(utint64_t))) != NULL);
+*record->SSN = 1234567890UL;
+```
 
 The gSOAP serializer can serialize any heap, stack, or static allocated data.
 So we can also create a new record as follows:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct soap *soap = soap_new(); // new context
-    ...
-    struct ns__record *record = (struct ns__record*)soap_malloc(soap, sizeof(struct ns__record));
-    static uint64_t SSN = 1234567890UL;
-    soap_default_ns__record(soap, record);
-    record->name = "Joe";
-    record->SSN = &SSN; // safe to use static values: the value of record->SSN is never changed by gSOAP
-    ...
-    soap_end(soap);     // delete managed soap_malloc'ed heap data
-    soap_free(soap);    // delete context
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct soap *soap = soap_new(); // new context
+...
+struct ns__record *record = (struct ns__record*)soap_malloc(soap, sizeof(struct ns__record));
+static uint64_t SSN = 1234567890UL;
+soap_default_ns__record(soap, record);
+record->name = "Joe";
+record->SSN = &SSN; // safe to use static values: the value of record->SSN is never changed by gSOAP
+...
+soap_end(soap);     // delete managed soap_malloc'ed heap data
+soap_free(soap);    // delete context
+```
 
 Use the soapcpp2 auto-generated `soap_dup_T` functions to duplicate data into
 another context (this requires soapcpp2 option `-Ec` to generate), here shown
 for C with the second argument `dst` NULL because we want to allocate a new
 managed structure:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct soap *other_soap = soap_new(); // another context
-    struct ns__record *other_record = soap_dup_ns__record(other_soap, NULL, record);
-    ...
-    soap_destroy(other_soap); // only for C++, see section on C++ below
-    soap_end(other_soap);     // delete other_record and all of its deep data
-    soap_free(other_soap);    // delete context
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct soap *other_soap = soap_new(); // another context
+struct ns__record *other_record = soap_dup_ns__record(other_soap, NULL, record);
+...
+soap_destroy(other_soap); // only for C++, see section on C++ below
+soap_end(other_soap);     // delete other_record and all of its deep data
+soap_free(other_soap);    // delete context
+```
 
 Note that the only reason to use another context and not to use the primary
 context is when the primary context must be destroyed together with all of the
@@ -4089,10 +4433,10 @@ that are kept alive contain deep cycles then this is the only option we have,
 because deep copy with a managing context detects and preserves these
 cycles unless the `SOAP_XML_TREE` flag is used with the context:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct soap *other_soap = soap_new1(SOAP_XML_TREE); // another context
-    struct ns__record *other_record = soap_dup_ns__record(other_soap, NULL, record);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct soap *other_soap = soap_new1(SOAP_XML_TREE); // another context
+struct ns__record *other_record = soap_dup_ns__record(other_soap, NULL, record);
+```
 
 The resulting deep copy will be a full copy of the source data structure as a
 tree without co-referenced data (i.e. no digraph) and without cycles.  Cycles
@@ -4103,98 +4447,102 @@ You can also deep copy into unmanaged space and use the auto-generated
 it later, but you MUST NOT do this for any data that has deep cycles in its
 runtime data structure:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct ns__record *other_record = soap_dup_ns__record(NULL, NULL, record);
-    ...
-    soap_del_ns__record(other_record); // deep delete record data members
-    free(other_record);                // delete the record
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct ns__record *other_record = soap_dup_ns__record(NULL, NULL, record);
+...
+soap_del_ns__record(other_record); // deep delete record data members
+free(other_record);                // delete the record
+```
 
 Cycles in the data structure will lead to non-termination when making unmanaged
 deep copies.  Consider for example:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct ns__record
-    {
-      const char         *name;   // required name
-      uint64_t            SSN;    // required SSN
-      struct ns__record  *spouse; // optional spouse
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct ns__record
+{
+  const char         *name;   // required name
+  uint64_t            SSN;    // required SSN
+  struct ns__record  *spouse; // optional spouse
+};
+```
 
 The code to populate a structure with a mutual spouse relationship:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct soap *soap = soap_new();
-    ...
-    struct ns__record pers1, pers2;
-    soap_default_ns__record(soap, &pers1);
-    soap_default_ns__record(soap, &pers2);
-    pers1.name = "Joe";                     // OK to serialize static data
-    pers1.SSN = 1234567890;
-    pers1.spouse = &pers2;
-    pers2.name = soap_strdup(soap, "Jane"); // allocates and copies a string
-    pers2.SSN = 1987654320;
-    pers2.spouse = &pers1;
-    ...
-    struct ns__record *pers3 = soap_dup_ns__record(NULL, NULL, &pers1); // BAD
-    struct ns__record *pers4 = soap_dup_ns__record(soap, NULL, &pers1); // OK
-    soap_set_mode(soap, SOAP_XML_TREE);
-    struct ns__record *pers5 = soap_dup_ns__record(soap, NULL, &pers1); // OK
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct soap *soap = soap_new();
+...
+struct ns__record pers1, pers2;
+soap_default_ns__record(soap, &pers1);
+soap_default_ns__record(soap, &pers2);
+pers1.name = "Joe";                     // OK to serialize static data
+pers1.SSN = 1234567890;
+pers1.spouse = &pers2;
+pers2.name = soap_strdup(soap, "Jane"); // allocates and copies a string
+pers2.SSN = 1987654320;
+pers2.spouse = &pers1;
+...
+struct ns__record *pers3 = soap_dup_ns__record(NULL, NULL, &pers1); // BAD
+struct ns__record *pers4 = soap_dup_ns__record(soap, NULL, &pers1); // OK
+soap_set_mode(soap, SOAP_XML_TREE);
+struct ns__record *pers5 = soap_dup_ns__record(soap, NULL, &pers1); // OK
+```
 
 As we can see, the gSOAP serializer can serialize any heap, stack, or static
 allocated data, such as in the code above.  So we can serialize the
 stack-allocated `pers1` record as follows:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    FILE *fp = fopen("record.xml", "w");
-    if (fp != NULL)
-    {
-      soap->sendfd = fileno(fp);           // file descriptor to write to
-      soap_set_mode(soap, SOAP_XML_GRAPH); // support id-ref w/o requiring SOAP
-      soap_clr_mode(soap, SOAP_XML_TREE);  // if set, clear
-      soap_write_ns__record(soap, &pers1);
-      fclose(fp);
-      soap->sendfd = -1;                   // block further writing
-    }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+FILE *fp = fopen("record.xml", "w");
+if (fp != NULL)
+{
+  soap->sendfd = fileno(fp);           // file descriptor to write to
+  soap_set_mode(soap, SOAP_XML_GRAPH); // support id-ref w/o requiring SOAP
+  soap_clr_mode(soap, SOAP_XML_TREE);  // if set, clear
+  soap_write_ns__record(soap, &pers1);
+  fclose(fp);
+  soap->sendfd = -1;                   // block further writing
+}
+```
 
 which produces an XML document record.xml that is similar to:
 
-    <ns:record xmlns:ns="urn:types" id="Joe">
-      <name>Joe</name>
-      <SSN>1234567890</SSN>
-      <spouse id="Jane">
-        <name>Jane</name>
-        <SSN>1987654320</SSN>
-        <spouse ref="#Joe"/>
-      </spouse>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types" id="Joe">
+  <name>Joe</name>
+  <SSN>1234567890</SSN>
+  <spouse id="Jane">
+    <name>Jane</name>
+    <SSN>1987654320</SSN>
+    <spouse ref="#Joe"/>
+  </spouse>
+</ns:record>
+```
+</div>
 
 Deserialization of an XML document with a SOAP 1.1/1.2 encoded id-ref graph
 leads to the same non-termination problem when we later try to copy the data
 into unmanaged memory heap space:
     
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct soap *soap = soap_new1(SOAP_XML_GRAPH); // support id-ref w/o SOAP
-    ...
-    struct ns__record pers1;
-    FILE *fp = fopen("record.xml", "r");
-    if (fp != NULL)
-    {
-      soap->recvfd = fileno(fp);
-      if (soap_read_ns__record(soap, &pers1))
-        ... // handle IO error
-      fclose(fp);
-      soap->recvfd = -1;                    // blocks further reading
-    }
-    ...
-    struct ns__record *pers3 = soap_dup_ns__record(NULL, NULL, &pers1); // BAD
-    struct ns__record *pers4 = soap_dup_ns__record(soap, NULL, &pers1); // OK
-    soap_set_mode(soap, SOAP_XML_TREE);
-    struct ns__record *pers5 = soap_dup_ns__record(soap, NULL, &pers1); // OK
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct soap *soap = soap_new1(SOAP_XML_GRAPH); // support id-ref w/o SOAP
+...
+struct ns__record pers1;
+FILE *fp = fopen("record.xml", "r");
+if (fp != NULL)
+{
+  soap->recvfd = fileno(fp);
+  if (soap_read_ns__record(soap, &pers1))
+    ... // handle IO error
+  fclose(fp);
+  soap->recvfd = -1;                    // blocks further reading
+}
+...
+struct ns__record *pers3 = soap_dup_ns__record(NULL, NULL, &pers1); // BAD
+struct ns__record *pers4 = soap_dup_ns__record(soap, NULL, &pers1); // OK
+soap_set_mode(soap, SOAP_XML_TREE);
+struct ns__record *pers5 = soap_dup_ns__record(soap, NULL, &pers1); // OK
+```
 
 Copying data with `soap_dup_T(soap)` into managed heap memory space is always
 safe.  Copying into unmanaged heap memory space requires diligence.  But
@@ -4203,6 +4551,17 @@ deleting unmanaged data is easy with `soap_del_T()`.
 You can also use `soap_del_T()` to delete structures that you created in C, but
 only if these structures are created with `malloc` and do NOT contain pointers
 to stack and static data.
+
+You can unlink one or more allocated objects from the managed heap to allow the
+object to live after `soap_end(soap)` by using:
+
+- `void soap_unlink(struct soap *soap, void *ptr)`
+
+The unlinked heap-allocated data pointed to by `ptr` can be accessed after
+`soap_end(soap)`.  Do not forget to free the data with `free(ptr)`.  Be aware
+that `soap_unlink(soap, ptr)` does not perform a deep unlinkage.  If `ptr` is a
+struct, pointer members will become invalid when pointing to objects on the
+managed heap.  Use `soap_unlink(soap, ptr->member)` to unlink `member` as well.
 
 Finally, when data is allocated in managed memory heap space, either explicitly
 with the allocation functions shown above or by the gSOAP deserializers, you
@@ -4220,6 +4579,8 @@ context `soap_to` and then continue with the current context.  You can also use
 different source `soap_from` contexts to delegate management and deletion to
 the other `soap_to` context.  To mass delete all managed data, use
 `soap_end(soap_to)`.
+
+🔝 [Back to table of contents](#)
 
 Memory management in C++                                              {#memory2}
 ------------------------
@@ -4269,9 +4630,9 @@ responsible to use `delete T` to remove this instance from the unmanaged heap.
 
 For example, to allocate a managed `std::string` you can use:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    std::string *s = soap_new_std__string(soap);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+std::string *s = soap_new_std__string(soap);
+```
 
 Primitive types and arrays of these are allocated with `soap_malloc`
 (`soap_new_T` calls `soap_malloc` for primitive type `T`).  All primitive types
@@ -4281,52 +4642,54 @@ allocated with `soap_malloc` for reasons of efficiency.
 You can use a C++ template to simplify the managed allocation and initialization
 of primitive values as follows (this is for primitive types only):
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    template<class T>
-    T * soap_make(struct soap *soap, T val) throw (std::bad_alloc)
-    {
-      T *p = (T*)soap_malloc(soap, sizeof(T));
-      if (p == NULL)
-	throw std::bad_alloc;
-      *p = val;
-      return p;
-    }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+template<class T>
+T * soap_make(struct soap *soap, T val) throw (std::bad_alloc)
+{
+  T *p = (T*)soap_malloc(soap, sizeof(T));
+  if (p == NULL)
+    throw std::bad_alloc;
+  *p = val;
+  return p;
+}
+```
 
 For example, assuming we have the following class:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-     public:
-      std::string  name;   // required name
-      uint64_t    *SSN;    // optional SSN
-      ns__record  *spouse; // optional spouse
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+ public:
+  std::string  name;   // required name
+  uint64_t    *SSN;    // optional SSN
+  ns__record  *spouse; // optional spouse
+};
+```
 
 You can instantiate a record by using the auto-generated
 `soap_new_set_ns__record` and use `soap_make` to create a SSN value on the
 managed heap as follows:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap *soap = soap_new(); // new context
-    ...
-    ns__record *record = soap_new_set_ns__record(
-        soap,
-        "Joe",
-        soap_make<uint64_t>(soap, 1234567890UL),
-        NULL);
-    ...
-    soap_destroy(soap); // delete record and all other managed instances
-    soap_end(soap);     // delete managed soap_malloc'ed heap data
-    soap_free(soap);    // delete context
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+soap *soap = soap_new(); // new context
+...
+ns__record *record = soap_new_set_ns__record(
+    soap,
+    "Joe",
+    soap_make<uint64_t>(soap, 1234567890UL),
+    NULL);
+...
+soap_destroy(soap); // delete record and all other managed instances
+soap_end(soap);     // delete managed soap_malloc'ed heap data
+soap_free(soap);    // delete context
+```
 
-All data on the managed heap is mass-deleted with `soap_destroy(soap)` and
-`soap_end(soap)` which must be called before `soap_done(soap)` or
-`soap_free(soap)` (these calls end the use of the `soap` engine context and
-free the context, respectively).
+All data on the managed heap is mass-deleted with `soap_end(soap)` which must
+be called before `soap_done(soap)` or `soap_free(soap)`, which end the use of
+the `soap` engine context and free the context, respectively.  Use
+`soap_free(soap)` only when the context is allocated with `soap_new()`.  Use
+`soap_done(soap)` only when the context is stack allocated (so cannot be
+deleted from the heap).
 
 The managed heap is checked for memory leaks when the gSOAP code is compiled
 with `-DDEBUG`.
@@ -4334,10 +4697,10 @@ with `-DDEBUG`.
 Note however that the gSOAP serializer can serialize any heap, stack, or static
 allocated data.  So we can also create a new record as follows:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    uint64_t SSN = 1234567890UL;
-    ns__record *record = soap_new_set_ns__record(soap, "Joe", &SSN, NULL);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+uint64_t SSN = 1234567890UL;
+ns__record *record = soap_new_set_ns__record(soap, "Joe", &SSN, NULL);
+```
 
 which will be fine to serialize this record as long as the local `SSN`
 stack-allocated value remains in scope when invoking the serializer and/or
@@ -4347,15 +4710,15 @@ beyond the scope of `SSN`.
 To facilitate class methods to access the managing context, we can add a soap
 context pointer to a class/struct:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-      ...
-      void create_more(); // needs a context to create more internal data
-     protected:
-      struct soap *soap;  // the context that manages this instance, or NULL
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+  ...
+  void create_more(); // needs a context to create more internal data
+ protected:
+  struct soap *soap;  // the context that manages this instance, or NULL
+};
+```
 
 The context is set when invoking `soap_new_T` (and similar) with a non-NULL
 context argument.
@@ -4363,32 +4726,32 @@ context argument.
 You can also use a template when an array of pointers to values is required.
 To create an array of pointers to values, define the following template:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    template<class T>
-    T **soap_make_array(struct soap *soap, T* array, int n) throw (std::bad_alloc)
-    { 
-      T **p = (T**)soap_malloc(soap, n * sizeof(T*));
-      if (p == NULL)
-	throw std::bad_alloc;
-      for (int i = 0; i < n; ++i)
-        p[i] = &array[i];
-      return p;
-    }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+template<class T>
+T **soap_make_array(struct soap *soap, T* array, int n) throw (std::bad_alloc)
+{ 
+  T **p = (T**)soap_malloc(soap, n * sizeof(T*));
+  if (p == NULL)
+    throw std::bad_alloc;
+  for (int i = 0; i < n; ++i)
+    p[i] = &array[i];
+  return p;
+}
+```
 
 The `array` parameter is a pointer to an array of `n` values.  The template
 returns an array of `n` pointers that point to the values in that array:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    // create an array of 100 pointers to 100 records
-    int n = 100;
-    ns__record **precords = soap_make_array(soap, soap_new_ns__record(soap, n), n);
-    for (int i = 0; i < n; ++i)
-    {
-      precords[i]->name = "...";
-      precords[i]->SSN = soap_make<uint64_t>(1234567890UL + i);
-    }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+// create an array of 100 pointers to 100 records
+int n = 100;
+ns__record **precords = soap_make_array(soap, soap_new_ns__record(soap, n), n);
+for (int i = 0; i < n; ++i)
+{
+  precords[i]->name = "...";
+  precords[i]->SSN = soap_make<uint64_t>(1234567890UL + i);
+}
+```
 
 Note that `soap_new_ns__record(soap, n)` returns a pointer to an array of `n`
 records, which is then used to create an array of `n` pointers to these records.
@@ -4397,26 +4760,26 @@ Use the soapcpp2 auto-generated `soap_dup_T` functions to duplicate data into
 another context (this requires soapcpp2 option `-Ec` to generate), here shown
 for C++ with the second argument `dst` NULL to allocate a new managed object:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap *other_soap = soap_new(); // another context
-    ns__record *other_record = soap_dup_ns__record(other_soap, NULL, record);
-    ...
-    soap_destroy(other_soap); // delete record and other managed instances
-    soap_end(other_soap);     // delete other data (the SSNs on the heap)
-    soap_free(other_soap);    // delete context
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+soap *other_soap = soap_new(); // another context
+ns__record *other_record = soap_dup_ns__record(other_soap, NULL, record);
+...
+soap_destroy(other_soap); // delete record and other managed instances
+soap_end(other_soap);     // delete other data (the SSNs on the heap)
+soap_free(other_soap);    // delete context
+```
 
 To duplicate base and derived instances when a base class pointer or reference
 is provided, use the auto-generated method `T * T::soap_dup(struct soap*)`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap *other_soap = soap_new(); // another context
-    ns__record *other_record = record->soap_dup(other_soap);
-    ...
-    soap_destroy(other_soap); // delete record and other managed instances
-    soap_end(other_soap);     // delete other data (the SSNs on the heap)
-    soap_free(other_soap);    // delete context
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+soap *other_soap = soap_new(); // another context
+ns__record *other_record = record->soap_dup(other_soap);
+...
+soap_destroy(other_soap); // delete record and other managed instances
+soap_end(other_soap);     // delete other data (the SSNs on the heap)
+soap_free(other_soap);    // delete context
+```
 
 Note that the only reason to use another context and not to use the primary
 context is when the primary context must be destroyed together with all of the
@@ -4425,10 +4788,10 @@ that are kept alive contain deep cycles then this is the only option we have,
 because deep copy with a managing context detects and preserves these
 cycles unless the `SOAP_XML_TREE` flag is used with the context:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap *other_soap = soap_new1(SOAP_XML_TREE);             // another context
-    ns__record *other_record = record->soap_dup(other_soap); // deep tree copy
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+soap *other_soap = soap_new1(SOAP_XML_TREE);             // another context
+ns__record *other_record = record->soap_dup(other_soap); // deep tree copy
+```
 
 The resulting deep copy will be a full copy of the source data structure as a
 tree without co-referenced data (i.e. no digraph) and without cycles.  Cycles
@@ -4439,97 +4802,101 @@ You can also deep copy into unmanaged space and use the auto-generated
 `-Ed` to generate) to delete it later, but we MUST NOT do this for any data
 that has deep cycles in its runtime data structure graph:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    ns__record *other_record = record->soap_dup(NULL);
-    ...
-    other_record->soap_del(); // deep delete record data members
-    delete other_record;      // delete the record
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+ns__record *other_record = record->soap_dup(NULL);
+...
+other_record->soap_del(); // deep delete record data members
+delete other_record;      // delete the record
+```
 
 Cycles in the data structure will lead to non-termination when making unmanaged
 deep copies.  Consider for example:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    class ns__record
-    {
-      const char  *name;   // required name
-      uint64_t     SSN;    // required SSN
-      ns__record  *spouse; // optional spouse
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+class ns__record
+{
+  const char  *name;   // required name
+  uint64_t     SSN;    // required SSN
+  ns__record  *spouse; // optional spouse
+};
+```
 
 The code to populate a structure with a mutual spouse relationship:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap *soap = soap_new();
-    ...
-    ns__record pers1, pers2;
-    pers1.name = "Joe";
-    pers1.SSN = 1234567890;
-    pers1.spouse = &pers2;
-    pers2.name = "Jane";
-    pers2.SSN = 1987654320;
-    pers2.spouse = &pers1;
-    ...
-    ns__record *pers3 = soap_dup_ns__record(NULL, NULL, &pers1); // BAD
-    ns__record *pers4 = soap_dup_ns__record(soap, NULL, &pers1); // OK
-    soap_set_mode(soap, SOAP_XML_TREE);
-    ns__record *pers5 = soap_dup_ns__record(soap, NULL, &pers1); // OK
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+soap *soap = soap_new();
+...
+ns__record pers1, pers2;
+pers1.name = "Joe";
+pers1.SSN = 1234567890;
+pers1.spouse = &pers2;
+pers2.name = "Jane";
+pers2.SSN = 1987654320;
+pers2.spouse = &pers1;
+...
+ns__record *pers3 = soap_dup_ns__record(NULL, NULL, &pers1); // BAD
+ns__record *pers4 = soap_dup_ns__record(soap, NULL, &pers1); // OK
+soap_set_mode(soap, SOAP_XML_TREE);
+ns__record *pers5 = soap_dup_ns__record(soap, NULL, &pers1); // OK
+```
 
 Note that the gSOAP serializer can serialize any heap, stack, or static
 allocated data, such as in the code above.  So we can serialize the
 stack-allocated `pers1` record as follows:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    FILE *fp = fopen("record.xml", "w");
-    if (fp != NULL)
-    {
-      soap->sendfd = fileno(fp);           // file descriptor to write to
-      soap_set_mode(soap, SOAP_XML_GRAPH); // support id-ref w/o requiring SOAP
-      soap_clr_mode(soap, SOAP_XML_TREE);  // if set, clear
-      if (soap_write_ns__record(soap, &pers1))
-        ... // handle IO error
-          fclose(fp);
-      soap->sendfd = -1;                   // block further writing
-    }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+FILE *fp = fopen("record.xml", "w");
+if (fp != NULL)
+{
+  soap->sendfd = fileno(fp);           // file descriptor to write to
+  soap_set_mode(soap, SOAP_XML_GRAPH); // support id-ref w/o requiring SOAP
+  soap_clr_mode(soap, SOAP_XML_TREE);  // if set, clear
+  if (soap_write_ns__record(soap, &pers1))
+    ... // handle IO error
+      fclose(fp);
+  soap->sendfd = -1;                   // block further writing
+}
+```
 
 which produces an XML document record.xml that is similar to:
 
-    <ns:record xmlns:ns="urn:types" id="Joe">
-      <name>Joe</name>
-      <SSN>1234567890</SSN>
-      <spouse id="Jane">
-        <name>Jane</name>
-        <SSN>1987654320</SSN>
-        <spouse ref="#Joe"/>
-      </spouse>
-    </ns:record>
+<div class="alt">
+```xml
+<ns:record xmlns:ns="urn:types" id="Joe">
+  <name>Joe</name>
+  <SSN>1234567890</SSN>
+  <spouse id="Jane">
+    <name>Jane</name>
+    <SSN>1987654320</SSN>
+    <spouse ref="#Joe"/>
+  </spouse>
+</ns:record>
+```
+</div>
 
 Deserialization of an XML document with a SOAP 1.1/1.2 encoded id-ref graph
 leads to the same non-termination problem when we later try to copy the data
 into unmanaged space:
     
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    soap *soap = soap_new1(SOAP_XML_GRAPH); // support id-ref w/o SOAP
-    ...
-    ns__record pers1;
-    FILE *fp = fopen("record.xml", "r");
-    if (fp != NULL)
-    {
-      soap->recvfd = fileno(fp);            // file descriptor to read from
-      if (soap_read_ns__record(soap, &pers1))
-        ... // handle IO error
-      fclose(fp);
-      soap->recvfd = -1;                    // block further reading
-    }
-    ...
-    ns__record *pers3 = soap_dup_ns__record(NULL, NULL, &pers1); // BAD
-    ns__record *pers4 = soap_dup_ns__record(soap, NULL, &pers1); // OK
-    soap_set_mode(soap, SOAP_XML_TREE);
-    ns__record *pers5 = soap_dup_ns__record(soap, NULL, &pers1); // OK
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+soap *soap = soap_new1(SOAP_XML_GRAPH); // support id-ref w/o SOAP
+...
+ns__record pers1;
+FILE *fp = fopen("record.xml", "r");
+if (fp != NULL)
+{
+  soap->recvfd = fileno(fp);            // file descriptor to read from
+  if (soap_read_ns__record(soap, &pers1))
+    ... // handle IO error
+  fclose(fp);
+  soap->recvfd = -1;                    // block further reading
+}
+...
+ns__record *pers3 = soap_dup_ns__record(NULL, NULL, &pers1); // BAD
+ns__record *pers4 = soap_dup_ns__record(soap, NULL, &pers1); // OK
+soap_set_mode(soap, SOAP_XML_TREE);
+ns__record *pers5 = soap_dup_ns__record(soap, NULL, &pers1); // OK
+```
 
 Copying data with `soap_dup_T(soap)` into managed space is always safe.  Copying
 into unmanaged space requires diligence.  But deleting unmanaged data is easy
@@ -4539,6 +4906,19 @@ You can also use `soap_del_T()` to delete structures in C++, but only if these
 structures are created with `new` (and `new []` for arrays when applicable) for
 classes, structs, and class templates and with `malloc` for anything else, and
 the structures do NOT contain pointers to stack and static data.
+
+You can unlink one or more allocated objects from the managed heap to allow the
+object to live after `soap_destroy(soap)` and `soap_end(soap)` by using:
+
+- `void soap_unlink(struct soap *soap, void *ptr)`
+
+The unlinked heap-allocated data pointed to by `ptr` can be accessed after
+`soap_destroy(soap)` and `soap_end(soap)`.  Do not forget to free the data with
+`delete ptr` (C++ class instance only) or with `free(ptr)` (non-class data).
+Be aware that `soap_unlink(soap, ptr)` does not perform a deep unlinkage.  If
+`ptr` is a struct or class, pointer members will become invalid when pointing
+to objects on the managed heap.  Use `soap_unlink(soap, ptr->member)` to unlink
+`member` as well.
 
 Finally, when data is allocated in managed memory heap space, either explicitly
 with the allocation functions shown above or by the gSOAP deserializers, you
@@ -4557,6 +4937,8 @@ different source `soap_from` contexts to delegate management and deletion to
 the other `soap_to` context.  To mass delete all managed data, use
 `soap_destroy(soap_to)` followed by `soap_end(soap_to)`.
 
+🔝 [Back to table of contents](#)
+
 Context flags to initialize the soap struct                             {#flags}
 ===========================================
 
@@ -4564,24 +4946,24 @@ There are several context initialization flags and context mode flags to
 control XML serialization at runtime.  The flags are set with `soap_new1()` to
 allocate and initialize a new context:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct soap *soap = soap_new1(<flag> | <flag> ... | <flag>);
-    ,,,
-    soap_destroy(soap); // delete objects
-    soap_end(soap);     // delete other data and temp data
-    soap_free(soap);    // free context
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct soap *soap = soap_new1(<flag> | <flag> ... | <flag>);
+...
+soap_destroy(soap); // delete objects
+soap_end(soap);     // delete other data and temp data
+soap_free(soap);    // free context
+```
 
 and with `soap_init1()` for stack-allocated contexts:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct soap soap;
-    soap_init1(&soap, <flag> | <flag> ... | <flag>);
-    ,,,
-    soap_destroy(&soap); // delete objects
-    soap_end(&soap);     // delete other data and temp data
-    soap_done(&soap);    // clear context
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct soap soap;
+soap_init1(&soap, <flag> | <flag> ... | <flag>);
+...
+soap_destroy(&soap); // delete objects
+soap_end(&soap);     // delete other data and temp data
+soap_done(&soap);    // clear context
+```
 
 where `<flag>` is one of:
 
@@ -4643,6 +5025,8 @@ where `<flag>` is one of:
 as a base class (soapcpp2 option -i) or as a data member `soap` that points to
 a context (soapcpp2 option -j).  These contexts are allocated when the proxy or
 service is instantiated with context flags that are passed to the constructor.
+
+🔝 [Back to table of contents](#)
 
 Context parameter settings                                             {#params}
 ==========================
@@ -4706,6 +5090,8 @@ parameters can be set (some parameters may require 2.8.31 and later versions):
   NULL.  This value must be reste to NULL or the next output will be send to
   this stream.  See also [input and output](#io).
 
+🔝 [Back to table of contents](#)
+
 Error handling and reporting                                           {#errors}
 ============================
 
@@ -4743,48 +5129,50 @@ true (non-zero) when a parsing and validation error has occurred.
 
 For example:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    #include <sstream>
+```cpp
+#include <sstream>
 
-    struct soap *soap = soap_new1(SOAP_XML_INDENT | SOAP_XML_STRICT | SOAP_XML_TREE);
-    struct ns__record person;
-    std::stringstream ss;
-    ss.str("...");      // XML to parse
-    soap->is = &ss;
-    if (soap_read__ns__record(soap, &person))
-    {
-      if (soap_xml_error_check(soap->error))
-        std::cerr << "XML parsing error!" << std::endl;
-      else
-        soap_stream_fault(soap, std::cerr);
-    }
-    else
-    {
-      ...               // all OK, use person record
-    }
-    soap_destroy(soap); // delete objects
-    soap_end(soap);     // delete other data and temp data
-    soap_free(soap);    // free context
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+struct soap *soap = soap_new1(SOAP_XML_INDENT | SOAP_XML_STRICT | SOAP_XML_TREE);
+struct ns__record person;
+std::stringstream ss;
+ss.str("...");      // XML to parse
+soap->is = &ss;
+if (soap_read__ns__record(soap, &person))
+{
+  if (soap_xml_error_check(soap->error))
+    std::cerr << "XML parsing error!" << std::endl;
+  else
+    soap_stream_fault(soap, std::cerr);
+}
+else
+{
+  ...               // all OK, use person record
+}
+soap_destroy(soap); // delete objects
+soap_end(soap);     // delete other data and temp data
+soap_free(soap);    // free context
+```
 
 When deploying your application on UNIX and Linux systems, UNIX signal handlers
 should be added to your code handle signals, in particular `SIGPIPE`:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    signal(SIGPIPE, sigpipe_handler);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+signal(SIGPIPE, sigpipe_handler);
+```
 
 where the `sigpipe_handler` is a function:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    void sigpipe_handler(int x) { }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+void sigpipe_handler(int x) { }
+```
 
 Other UNIX signals may have to be handled as well.
 
 The gSOAP engine is designed for easy memory cleanup after being interrupted.
 Use `soap_destroy(soap)` and `soap_end(soap)`, after which the `soap` context
 can be reused.
+
+🔝 [Back to table of contents](#)
 
 Features and limitations                                             {#features}
 ========================
@@ -4848,6 +5236,8 @@ Additional notes with respect to the wsdl2h and soapcpp2 tools:
   XML DOM support and compile and link with `dom.c` or `dom.cpp`.  For details,
   see [XML DOM and XPath](http://www.genivia.com/doc/dom/html).
 
+🔝 [Back to table of contents](#)
+
 Removing SOAP namespaces from XML payloads                              {#nsmap}
 ==========================================
 
@@ -4855,14 +5245,14 @@ The soapcpp2 tool generates a `.nsmap` file that includes two bindings for SOAP
 namespaces.  We can remove all SOAP namespaces (and SOAP processing logic) with
 soapcpp2 option `-0` or by simply setting the two entries to NULL:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct Namespace namespaces[] =
-    {
-      {"SOAP-ENV", NULL, NULL, NULL},
-      {"SOAP-ENC", NULL, NULL, NULL},
-      ...
-    };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct Namespace namespaces[] =
+{
+  {"SOAP-ENV", NULL, NULL, NULL},
+  {"SOAP-ENC", NULL, NULL, NULL},
+  ...
+};
+```
 
 Note that once the `.nsmap` is generated, you can copy-paste the content into
 your project code.  However, if we rerun wsdl2h on updated WSDL/XSD files or
@@ -4872,18 +5262,22 @@ In cases that no XML namespaces are used at all, for example with
 [XML-RPC](http://www.genivia.com/doc/xml-rpc-json/html), you may use an empty
 namespace table:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-    struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}};
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```cpp
+struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}};
+```
 
 However, beware that any built-in xsi attributes that are rendered will lack
 the proper namespace binding.  At least we suggest to use `SOAP_XML_NOTYPE` for
 this reason.
 
+🔝 [Back to table of contents](#)
+
 Examples                                                             {#examples}
 ========
 
 Select the project files below to peruse the source code examples.
+
+🔝 [Back to table of contents](#)
 
 Source files
 ------------
@@ -4893,6 +5287,8 @@ Source files
 - `addresstypemap.dat`  Schema namespace prefix name preference for wsdl2h
 - `graph.h`             Graph data binding (tree, digraph, cyclic graph)
 - `graph.cpp`           Test graph serialization as tree, digraph, and cyclic
+
+🔝 [Back to table of contents](#)
 
 Generated files
 ---------------
@@ -4907,6 +5303,8 @@ Generated files
 - `graphC.cpp`     Serializers
 - `g.xsd`          XSD schema with `g:Graph` complexType
 - `g.nsmap`        xmlns bindings namespace mapping table
+
+🔝 [Back to table of contents](#)
 
 Build steps
 -----------
@@ -4955,6 +5353,8 @@ Building the graph serialization example:
 
 To compile without using the `libgsoap++` library: simply compile
 `stdsoap2.cpp` together with the above.
+
+🔝 [Back to table of contents](#)
 
 Usage
 -----

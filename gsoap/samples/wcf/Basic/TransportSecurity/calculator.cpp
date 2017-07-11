@@ -57,7 +57,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 int CRYPTO_thread_setup();
 void CRYPTO_thread_cleanup();
 
-const char *URI = NULL; // Set to the service URI
+const char *URI = "https://10.0.1.5:8000/ServiceModelSamples/service"; // the service URI
 
 int main(int argc, char **argv)
 {
@@ -107,20 +107,12 @@ int main(int argc, char **argv)
       exit(1);
     }
 
-    if (!soap_valid_socket(service.bind(NULL, port, 100)))
-    {
-      service.soap_stream_fault(std::cerr);
-      exit(1);
-    }
-
     std::cerr << "Server running" << std::endl;
 
     for (;;)
     {
-      if (!soap_valid_socket(service.accept())
-       || service.ssl_accept()
-       || service.serve())
-        service.soap_stream_fault(std::cerr);
+      service.ssl_run(port);
+      service.soap_stream_fault(std::cerr);
     }
   }
   else

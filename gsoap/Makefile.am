@@ -37,17 +37,17 @@ dom_cpp.cpp: dom.cpp
 lib_LIBRARIES = libgsoap.a libgsoap++.a libgsoapck.a libgsoapck++.a libgsoapssl.a libgsoapssl++.a
 
 libgsoap_a_SOURCES = stdsoap2.c dom.c
-libgsoap_a_CFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_IPV6) -D$(platform)
+libgsoap_a_CFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_NO_C_LOCALE) $(SOAPCPP2_IPV6) -D$(platform)
 libgsoap___a_SOURCES = stdsoap2_cpp.cpp dom_cpp.cpp
-libgsoap___a_CXXFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_IPV6) -D$(platform)
+libgsoap___a_CXXFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_NO_C_LOCALE) $(SOAPCPP2_IPV6) -D$(platform)
 libgsoapck_a_SOURCES = stdsoap2_ck.c dom.c
-libgsoapck_a_CFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_IPV6) -D$(platform) -DWITH_COOKIES
+libgsoapck_a_CFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_NO_C_LOCALE) $(SOAPCPP2_IPV6) -D$(platform) -DWITH_COOKIES
 libgsoapck___a_SOURCES = stdsoap2_ck_cpp.cpp dom_cpp.cpp
-libgsoapck___a_CXXFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_IPV6) -D$(platform) -DWITH_COOKIES
+libgsoapck___a_CXXFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_NO_C_LOCALE) $(SOAPCPP2_IPV6) -D$(platform) -DWITH_COOKIES
 libgsoapssl_a_SOURCES = stdsoap2_ssl.c dom.c
-libgsoapssl_a_CFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_IPV6) -D$(platform) $(WSDL2H_EXTRA_FLAGS) -DWITH_DOM -DWITH_COOKIES
+libgsoapssl_a_CFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_NO_C_LOCALE) $(SOAPCPP2_IPV6) -D$(platform) $(WSDL2H_EXTRA_FLAGS) -DWITH_DOM -DWITH_COOKIES
 libgsoapssl___a_SOURCES = stdsoap2_ssl_cpp.cpp dom_cpp.cpp
-libgsoapssl___a_CXXFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_IPV6) -D$(platform) $(WSDL2H_EXTRA_FLAGS) -DWITH_DOM -DWITH_COOKIES
+libgsoapssl___a_CXXFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_NO_C_LOCALE) $(SOAPCPP2_IPV6) -D$(platform) $(WSDL2H_EXTRA_FLAGS) -DWITH_DOM -DWITH_COOKIES
 
 BUILT_SOURCES = stdsoap2_cpp.cpp dom_cpp.cpp stdsoap2_ck.c stdsoap2_ck_cpp.cpp stdsoap2_ssl.c stdsoap2_ssl_cpp.cpp
 

@@ -43,8 +43,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.48" /* Current version */
-# define GSOAP_VERSION 20848
+# define VERSION "2.8.49" /* Current version */
+# define GSOAP_VERSION 20849
 #endif
 
 #ifdef WIN32
@@ -249,6 +249,7 @@ typedef	struct Tnode
 	Bool		incmax;
 	double		min;
 	double		max;
+        int             property;
 	const char	*pattern;
 } Tnode;
 
@@ -308,6 +309,7 @@ typedef	struct Node {
 	double		min;
 	double		max;
 	Bool		nillable;
+        int             property;
 	const char	*pattern;
 } Node;
 

@@ -731,21 +731,25 @@ int ns__div(struct soap *soap, double a, double b, double *c)
 
 int ns__addResponse_(struct soap *soap, double a)
 {
+  (void)soap; (void)a;
   return SOAP_NO_METHOD; /* we don't use this: we use soap_send_ns__addResponse instead */
 }
 
 int ns__subResponse_(struct soap *soap, double a)
 {
+  (void)soap; (void)a;
   return SOAP_NO_METHOD; /* we don't use this: we use soap_send_ns__subResponse instead */
 }
 
 int ns__mulResponse_(struct soap *soap, double a)
 {
+  (void)soap; (void)a;
   return SOAP_NO_METHOD; /* we don't use this: we use soap_send_ns__mulResponse instead */
 }
 
 int ns__divResponse_(struct soap *soap, double a)
 {
+  (void)soap; (void)a;
   return SOAP_NO_METHOD; /* we don't use this: we use soap_send_ns__divResponse instead */
 }
 

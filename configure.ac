@@ -189,6 +189,23 @@ else
 fi
 AC_SUBST(SOAPCPP2_NONAMESPACES)
 
+# the disable-c-locale option adds the -DWITH_NO_C_LOCALE to the
+# library compilation thus disabling the use of the C locale usage
+AC_ARG_ENABLE(c-locale,
+              [AC_HELP_STRING([--disable-c-locale],
+                              [compile library without c locale usage])],
+              [with_no_c_locale="$enable_cl"],
+              [with_no_c_locale="yes"])
+
+AC_MSG_CHECKING(for disable c locale usage in library)
+if test "x$with_no_c_locale" = "xyes"; then
+  AC_MSG_RESULT(no)
+else
+  AC_MSG_RESULT(yes)
+  SOAPCPP2_NO_C_LOCALE="-DWITH_NO_C_LOCALE"
+fi
+AC_SUBST(SOAPCPP2_NO_C_LOCALE)
+
 # the enable-ipv6 option adds the -DWITH_IPV6 to the
 # library compilation thus enabling IPv6
 AC_ARG_ENABLE(ipv6,

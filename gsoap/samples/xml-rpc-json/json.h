@@ -38,7 +38,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef JSON_NAMESPACE
+#ifdef __cplusplus
 namespace json {
+#endif
 #endif
 
 /**
@@ -166,5 +168,7 @@ template<> inline bool operator>(const value& x, const value& y) { return json_l
 #endif
 
 #ifdef JSON_NAMESPACE
+#ifdef __cplusplus
 } // namespace json
+#endif
 #endif
