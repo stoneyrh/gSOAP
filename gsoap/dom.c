@@ -766,9 +766,11 @@ void
 SOAP_FMAC2
 soap_del_xsd__anyType(const struct soap_dom_element *a)
 {
+  const struct soap_dom_element *prev = NULL;
   while (a)
   {
-    struct soap_dom_element *next = a->next;
+    if (prev)
+      SOAP_FREE(NULL, prev);
     if (a->nstr)
       SOAP_FREE(NULL, a->nstr);
     if (a->name)
@@ -785,9 +787,11 @@ soap_del_xsd__anyType(const struct soap_dom_element *a)
       soap_delelement(a->node, a->type);
     soap_del_xsd__anyAttribute(a->atts);
     soap_del_xsd__anyType(a->elts);
-    SOAP_FREE(NULL, a);
-    a = next;
+    prev = a;
+    a = a->next;
   }
+  if (prev)
+    SOAP_FREE(NULL, prev);
 }
 
 SOAP_FMAC1
@@ -823,18 +827,22 @@ void
 SOAP_FMAC2
 soap_del_xsd__anyAttribute(const struct soap_dom_attribute *a)
 {
+  const struct soap_dom_attribute *prev = NULL;
   while (a)
   {
-    struct soap_dom_attribute *next = a->next;
+    if (prev)
+      SOAP_FREE(NULL, prev);
     if (a->nstr)
       SOAP_FREE(NULL, a->nstr);
     if (a->name)
       SOAP_FREE(NULL, a->name);
     if (a->text)
       SOAP_FREE(NULL, a->text);
-    SOAP_FREE(NULL, a);
-    a = next;
+    prev = a;
+    a = a->next;
   }
+  if (prev)
+    SOAP_FREE(NULL, prev);
 }
 
 /******************************************************************************\
