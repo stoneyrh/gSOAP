@@ -3503,8 +3503,8 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       fprintf(stream, " %s", min);
     if (max && strcmp(max, "1") && is_integer(max))
       fprintf(stream, ":%s", max);
-    const char *s = "Required element";
-    if (nillable && (!min || !strcmp(min, "1")) && (!max || !strcmp(max, "1")))
+    const char *s = fake_union ? "Optional element (one of multiple choices)" : "Required element";
+    if (!fake_union && nillable && (!min || !strcmp(min, "1")) && (!max || !strcmp(max, "1")))
       s = "Required nillable (xsi:nil when NULL) element";
     else if (!fake_union && min && !strcmp(min, "0") && (!max || !strcmp(max, "1")))
       s = "Optional element";

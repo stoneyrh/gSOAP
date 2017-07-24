@@ -1094,6 +1094,7 @@ wininet_set_timeout(
 }
 
 #if 0
+/* See the wininet_resolve_send_error for details */
 static BOOL
 wininet_flag_set_option(
     HINTERNET   a_hHttpRequest,

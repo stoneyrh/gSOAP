@@ -7,9 +7,11 @@ C and C++ XML Data Bindings                                          {#mainpage}
 Introduction                                                            {#intro}
 ============
 
-This article gives a detailed overview of the gSOAP C and C++ XML data bindings
-and highlights the advantages, concepts, usage, and implementation aspects of
-XML data bindings.
+This article presents a detailed overview of the gSOAP XML data bindings for C
+and C++.  The XML data bindings for C and C++ are extensively used with gSOAP
+Web services to serialize C and C++ data in XML as part of the SOAP/XML Web
+services payloads.  Also REST XML with gSOAP relies on XML serialization of C
+and C++ data via XML data bindings.
 
 The major advantage of XML data bindings is that your application data is
 always **type safe** in C and C++ by binding XML schema types to C/C++ types.
@@ -20,18 +22,19 @@ on.  The structured data you create and accept will fit the data model and is
 your XML data meets **XML schema validation requirements** and satisfies **XML
 interoperability requirements**.
 
-The gSOAP data bindings are more powerful than simply representing C/C++ data
-in XML.  In fact, the tools implement **true serialization** of C/C++ data in
-XML, including the serialization of cyclic graph structures.  The gSOAP tools
-also generate routines for deep copying and deep deletion of C/C++ data
-structures to simplify memory management.  In addition, C/C++ structures are
-deserialized into managed memory, managed by the gSOAP `soap` context.
+In fact, gSOAP data bindings are more powerful than simply representing C/C++
+data in XML.  The gSOAP tools implement true and tested **structure-preserving
+serialization** of C/C++ data in XML, including the serialization of cyclic
+graph structures with id-ref XML attributes.  The gSOAP tools also generate
+routines for deep copying and deep deletion of C/C++ data structures to
+simplify memory management.  In addition, C/C++ structures are deserialized
+into managed memory, managed by the gSOAP `soap` context.
 
-At the end of this document two examples are given to illustrate the
-application of XML data bindings.  The first simple example `address.cpp` shows
-how to use wsdl2h to bind an XML schema to C++.  The C++ application reads and
-writes an XML file into and from a C++ "address book" data structure.  The C++
-data structure is an STL vector of address objects.  The second example
+At the end of this article two examples are given to illustrate the application
+of XML data bindings.  The first simple example `address.cpp` shows how to use
+wsdl2h to bind an XML schema to C++.  The C++ application reads and writes an
+XML file into and from a C++ "address book" data structure as a simple example.
+The C++ data structure is an STL vector of address objects.  The second example
 `graph.cpp` shows how C++ data can be accurately serialized as a tree, digraph,
 and cyclic graph in XML.  The digraph and cyclic graph serialization rules
 implement SOAP 1.1/1.2 multi-ref encoding with id-ref attributes to link
@@ -40,23 +43,23 @@ XML nodes that preserves the structural integrity of the serialized C++ data.
 
 These examples demonstrate XML data bindings only for relatively simple data
 structures and types.  The gSOAP tools support more than just these type of
-structures to serialize in XML.  There are practically no limits to
-enable XML serialization of C and C++ types.
+structures to serialize in XML.  There are practically no limits to the
+serialization of C and C++ data types in XML.
 
-Support for XML schema components is unlimited.  The wsdl2h tool maps schemas
-to C and C++ using built-in intuitive mapping rules, while allowing the
-mappings to be customized using a `typemap.dat` file with mapping instructions
-for wsdl2h.
+Also the support for XML schema (XSD) components is unlimited.  The wsdl2h tool
+maps schemas to C and C++ using built-in intuitive mapping rules, while
+allowing the mappings to be customized using a `typemap.dat` file with mapping
+instructions for wsdl2h.
 
-The information in this document is applicable to gSOAP 2.8.26 and later
-versions that support C++11 features.  However, C++11 is not required to use
-this material and the examples included, unless we need smart pointers and
-scoped enumerations.  While most of the examples in this document are given in
-C++, the concepts also apply to C with the exception of containers, smart
-pointers, classes and their methods.  None of these exceptions limit the use of
-the gSOAP tools for C in any way.
+The information in this article is applicable to gSOAP 2.8.26 and later
+versions that support C++11 features.  However, C++11 is not required.  The
+material and the examples in this article use plain C and C++, until the point
+where we introduce C++11 smart pointers and scoped enumerations.  While most of
+the examples in this article are given in C++, the concepts also apply to C
+with the exception of containers, smart pointers, classes and their methods.
+None of these exceptions limit the use of the gSOAP tools for C in any way.
 
-The data binding concepts described in this document were first envisioned in
+The data binding concepts described in this article were first envisioned in
 1999 by Prof. Robert van Engelen at the Florida State University.  An
 implementation was created in 2000, named "stub/skeleton compiler".  The first
 articles on its successor version "gSOAP" appeared in 2002.  The principle of
@@ -71,16 +74,19 @@ participating in the development and testing of the
 [W3C XML Schema Patterns for Databinding Interoperability](http://www.w3.org/2002/ws/databinding),
 and continues by contributing to the development of
 [OASIS open standards](https://www.oasis-open.org) in partnership with leading
-IT companies.
+IT companies in the world.
 
 🔝 [Back to table of contents](#)
 
 Mapping WSDL and XML schemas to C/C++                                   {#tocpp}
 =====================================
 
-To convert WSDL and XML schemas (XSD files) to code, use the wsdl2h command to
-generate the data binding interface code that is saved to a special gSOAP
-header file with WSDL service declarations and the data binding interface:
+To convert WSDL and XML schemas (XSD files) to code, we use the wsdl2h command
+on the command line (or command prompt), after opening a terminal.  The wsdl2h
+command generates the data binding interface code that is saved to a special
+gSOAP header file with extension `.h` that contains the WSDL service
+declarations and the data binding interface declarations in a familiar C/C++
+format:
 
     wsdl2h [options] -o file.h ... XSD and WSDL files ...
 
@@ -95,16 +101,17 @@ gSOAP tools.  In addition, the most popular WS specifications are also
 supported, including WS-Addressing, WS-ReliableMessaging, WS-Discovery,
 WS-Security, WS-Policy, WS-SecurityPolicy, and WS-SecureConversation.
 
-This document focusses on XML data bindings.  XML data bindings for C/C++ bind
-XML schema types to C/C++ types.  So integers in XML are bound to C integers,
-strings in XML are bound to C or C++ strings, complex types in XML are bound to
-C structs or C++ classes, and so on.
+This article focusses mainly on XML data bindings.  XML data bindings for C/C++
+bind XML schema types to C/C++ types.  So integers in XML are bound to C
+integers, strings in XML are bound to C or C++ strings, complex types in XML
+are bound to C structs or C++ classes, and so on.
 
-A data binding is dual.  Either you start with WSDLs and/or XML schemas that
-are mapped to equivalent C/C++ types, or you start with C/C++ types that are
-mapped to XSD types.  Either way, the end result is that you can serialize
-C/C++ types in XML such that your XML is an instance of XML schema(s) and is
-validated against these schema(s).
+A data binding is dual, meaning supporting a two way direction for development.
+Either you start with WSDLs and/or XML schemas that are mapped to equivalent
+C/C++ types, or you start with C/C++ types that are mapped to XSD types.
+Either way, the end result is that you can serialize C/C++ types in XML such
+that your XML is an instance of XML schema(s) and is validated against these
+schema(s).
 
 This covers all of the following standard XSD components with their optional
 attributes and properties:
@@ -319,8 +326,8 @@ When the auto-generated declaration should be preserved but the `use` or
 
 This is useful to map schema polymorphic types to C types for example, where we
 need to be able to both handle a base type and its extensions as per schema
-extensibility.  Say we have a base type called ns:base that is extended, then we
-can remap this to a C type that permits referening the extended types via a
+extensibility.  Say we have a base type called `ns:base` that is extended, then
+we can remap this to a C type that permits referening the extended types via a
 `void*` as follows:
 
     ns__base = ... | int __type_base; void*
@@ -781,10 +788,10 @@ and constructs.  See the subsections below for more details or follow the links.
 
 ### List of Boolean types
 
-| Boolean Type                  | Notes                                                                               |
-| ----------------------------- | ----------------------------------------------------------------------------------- |
-| `bool`                        | C++ bool                                                                            |
-| `enum xsd__boolean`           | C alternative to C++ `bool` with `false_` and `true_`                               |
+Boolean Type                  | Notes
+----------------------------- | -----
+`bool`                        | C++ bool
+`enum xsd__boolean`           | C alternative to C++ `bool` with `false_` and `true_`
  
 @see Section [C++ bool and C alternative](#toxsd3).
 
@@ -792,12 +799,12 @@ and constructs.  See the subsections below for more details or follow the links.
 
 ### List of enumeration and bitmask types
 
-| Enumeration Type              | Notes                                                                               |
-| ----------------------------- | ----------------------------------------------------------------------------------- |
-| `enum`                        | enumeration                                                                         |
-| `enum class`                  | C++11 scoped enumeration (soapcpp2 `-c++11`)                                        |
-| `enum*`                       | a bitmask that enumerates values 1, 2, 4, 8, ...                                    |
-| `enum* class`                 | C++11 scoped enumeration bitmask (soapcpp2 `-c++11`)                                |
+Enumeration Type              | Notes
+----------------------------- | -----
+`enum`                        | enumeration
+`enum class`                  | C++11 scoped enumeration (soapcpp2 `-c++11`)
+`enum*`                       | a bitmask that enumerates values 1, 2, 4, 8, ...
+`enum* class`                 | C++11 scoped enumeration bitmask (soapcpp2 `-c++11`)
 
 @see Section [enumerations and bitmasks](#toxsd4).
 
@@ -805,35 +812,35 @@ and constructs.  See the subsections below for more details or follow the links.
 
 ### List of numerical types
 
-| Numerical Type                | Notes                                                                               |
-| ----------------------------- | ----------------------------------------------------------------------------------- |
-| `char`                        | byte                                                                                |
-| `short`                       | 16 bit integer                                                                      |
-| `int`                         | 32 bit integer                                                                      |
-| `long`                        | 32 bit integer                                                                      |
-| `LONG64`                      | 64 bit integer                                                                      |
-| `xsd__integer`                | 128 bit integer, use `#import "custom/int128.h"`                                    |
-| `long long`                   | same as `LONG64`                                                                    |
-| `unsigned char`               | unsigned byte                                                                       |
-| `unsigned short`              | unsigned 16 bit integer                                                             |
-| `unsigned int`                | unsigned 32 bit integer                                                             |
-| `unsigned long`               | unsigned 32 bit integer                                                             |
-| `ULONG64`                     | unsigned 64 bit integer                                                             |
-| `unsigned long long`          | same as `ULONG64`                                                                   |
-| `int8_t`                      | same as `char`                                                                      |
-| `int16_t`                     | same as `short`                                                                     |
-| `int32_t`                     | same as `int`                                                                       |
-| `int64_t`                     | same as `LONG64`                                                                    |
-| `uint8_t`                     | same as `unsigned char`                                                             |
-| `uint16_t`                    | same as `unsigned short`                                                            |
-| `uint32_t`                    | same as `unsigned int`                                                              |
-| `uint64_t`                    | same as `ULONG64`                                                                   |
-| `size_t`                      | transient type (not serializable)                                                   |
-| `float`                       | 32 bit float                                                                        |
-| `double`                      | 64 bit float                                                                        |
-| `long double`                 | extended precision float, use `#import "custom/long_double.h"`                      |
-| `xsd__decimal`                | `<quadmath.h>` 128 bit quadruple precision float, use `#import "custom/float128.h"` |
-| `typedef`                     | declares a type name, with optional value range and string length bounds            |
+Numerical Type                | Notes
+----------------------------- | -----
+`char`                        | byte
+`short`                       | 16 bit integer
+`int`                         | 32 bit integer
+`long`                        | 32 bit integer
+`LONG64`                      | 64 bit integer
+`xsd__integer`                | 128 bit integer, use `#import "custom/int128.h"`
+`long long`                   | same as `LONG64`
+`unsigned char`               | unsigned byte
+`unsigned short`              | unsigned 16 bit integer
+`unsigned int`                | unsigned 32 bit integer
+`unsigned long`               | unsigned 32 bit integer
+`ULONG64`                     | unsigned 64 bit integer
+`unsigned long long`          | same as `ULONG64`
+`int8_t`                      | same as `char`
+`int16_t`                     | same as `short`
+`int32_t`                     | same as `int`
+`int64_t`                     | same as `LONG64`
+`uint8_t`                     | same as `unsigned char`
+`uint16_t`                    | same as `unsigned short`
+`uint32_t`                    | same as `unsigned int`
+`uint64_t`                    | same as `ULONG64`
+`size_t`                      | transient type (not serializable)
+`float`                       | 32 bit float
+`double`                      | 64 bit float
+`long double`                 | extended precision float, use `#import "custom/long_double.h"`
+`xsd__decimal`                | `<quadmath.h>` 128 bit quadruple precision float, use `#import "custom/float128.h"`
+`typedef`                     | declares a type name, with optional value range and string length bounds
 
 @see Section [numerical types](#toxsd5).
 
@@ -841,16 +848,16 @@ and constructs.  See the subsections below for more details or follow the links.
 
 ### List of string types
 
-| String Type                   | Notes                                                                               |
-| ----------------------------- | ----------------------------------------------------------------------------------- |
-| `char*`                       | string (may contain UTF-8 with flag `SOAP_C_UTFSTRING`)                             |
-| `wchar_t*`                    | wide string                                                                         |
-| `std::string`                 | C++ string (may contain UTF-8 with flag `SOAP_C_UTFSTRING`)                         |
-| `std::wstring`                | C++ wide string                                                                     |
-| `char[N]`                     | fixed-size string, requires soapcpp2 option `-b`                                    |
-| `_QName`                      | normalized QName content                                                            |
-| `_XML`                        | literal XML string content with wide characters in UTF-8                            |
-| `typedef`                     | declares a new string type name, may restrict string length                         |
+String Type                   | Notes
+----------------------------- | -----
+`char*`                       | string (may contain UTF-8 with flag `SOAP_C_UTFSTRING`)
+`wchar_t*`                    | wide string
+`std::string`                 | C++ string (may contain UTF-8 with flag `SOAP_C_UTFSTRING`)
+`std::wstring`                | C++ wide string
+`char[N]`                     | fixed-size string, requires soapcpp2 option `-b`
+`_QName`                      | normalized QName content
+`_XML`                        | literal XML string content with wide characters in UTF-8
+`typedef`                     | declares a new string type name, may restrict string length
 
 @see Section [string types](#toxsd6).
 
@@ -858,14 +865,14 @@ and constructs.  See the subsections below for more details or follow the links.
 
 ### List of date and time types
 
-| Date and Time Type                      | Notes                                                                     |
-| --------------------------------------- | ------------------------------------------------------------------------- |
-| `time_t`                                | date and time point since epoch                                           |
-| `struct tm`                             | date and time point, use `#import "custom/struct_tm.h"`                   |
-| `struct tm`                             | date point, use `#import "custom/struct_tm_date.h"`                       |
-| `struct timeval`                        | date and time point, use `#import "custom/struct_timeval.h"`              |
-| `unsigned long long`                    | time point in microseconds, use `#import "custom/long_time.h"`            |
-| `std::chrono::system_clock::time_point` | date and time point, use `#import "custom/chrono_time_point.h"`           |
+Date and Time Type                      | Notes
+--------------------------------------- | -----
+`time_t`                                | date and time point since epoch
+`struct tm`                             | date and time point, use `#import "custom/struct_tm.h"`
+`struct tm`                             | date point, use `#import "custom/struct_tm_date.h"`
+`struct timeval`                        | date and time point, use `#import "custom/struct_timeval.h"`
+`unsigned long long`                    | time point in microseconds, use `#import "custom/long_time.h"`
+`std::chrono::system_clock::time_point` | date and time point, use `#import "custom/chrono_time_point.h"`
 
 @see Section [date and time types](#toxsd7).
 
@@ -873,10 +880,10 @@ and constructs.  See the subsections below for more details or follow the links.
 
 ### List of time duration types
 
-| Time Duration Type            | Notes                                                                               |
-| ----------------------------- | ----------------------------------------------------------------------------------- |
-| `long long`                   | duration in milliseconds, use `#import "custom/duration.h"`                         |
-| `std::chrono::nanoseconds`    | duration in nanoseconds, use `#import "custom/chrono_duration.h"`                   |
+Time Duration Type            | Notes
+----------------------------- | -----
+`long long`                   | duration in milliseconds, use `#import "custom/duration.h"`
+`std::chrono::nanoseconds`    | duration in nanoseconds, use `#import "custom/chrono_duration.h"`
 
 @see Section [time duration types](#toxsd8).
 
@@ -884,22 +891,22 @@ and constructs.  See the subsections below for more details or follow the links.
 
 ### List of classes and structs
 
-| Classes, Structs, and Members | Notes                                                                               |
-| ----------------------------- | ----------------------------------------------------------------------------------- |
-| `class`                       | C++ class with single inheritance only                                              |
-| `struct`                      | C struct or C++ struct without inheritance                                          |
-| `std::shared_ptr<T>`          | C++11 smart shared pointer                                                          |
-| `std::unique_ptr<T>`          | C++11 smart pointer                                                                 |
-| `std::auto_ptr<T>`            | C++ smart pointer                                                                   |
-| `std::deque<T>`               | use `#import "import/stldeque.h"`                                                   |
-| `std::list<T>`                | use `#import "import/stllist.h"`                                                    |
-| `std::vector<T>`              | use `#import "import/stlvector.h"`                                                  |
-| `std::set<T>`                 | use `#import "import/stlset.h"`                                                     |
-| `template<T> class`           | a container with `begin()`, `end()`, `size()`, `clear()`, and `insert()` methods    |
-| `T*`                          | data member: pointer to data of type `T` or points to array of `T` of size `__size` |
-| `T[N]`                        | data member: fixed-size array of type `T`                                           |
-| `union`                       | data member: requires a variant selector member `__union`                           |
-| `void*`                       | data member: requires a `__type` member to indicate the type of object pointed to   |
+Classes, Structs, and Members | Notes
+----------------------------- | -----
+`class`                       | C++ class with single inheritance only
+`struct`                      | C struct or C++ struct without inheritance
+`std::shared_ptr<T>`          | C++11 smart shared pointer
+`std::unique_ptr<T>`          | C++11 smart pointer
+`std::auto_ptr<T>`            | C++ smart pointer
+`std::deque<T>`               | use `#import "import/stldeque.h"`
+`std::list<T>`                | use `#import "import/stllist.h"`
+`std::vector<T>`              | use `#import "import/stlvector.h"`
+`std::set<T>`                 | use `#import "import/stlset.h"`
+`template<T> class`           | a container with `begin()`, `end()`, `size()`, `clear()`, and `insert()` methods
+`T*`                          | data member: pointer to data of type `T` or points to array of `T` of size `__size`
+`T[N]`                        | data member: fixed-size array of type `T`
+`union`                       | data member: requires a variant selector member `__union`
+`void*`                       | data member: requires a `__type` member to indicate the type of object pointed to
 
 @see Section [classes and structs](#toxsd9).
 
@@ -907,14 +914,14 @@ and constructs.  See the subsections below for more details or follow the links.
 
 ### List of special classes and structs
 
-| Special Classes and Structs   | Notes                                                                               |
-| ----------------------------- | ----------------------------------------------------------------------------------- |
-| Special Array class/struct    | single and multidimensional SOAP Arrays                                             |
-| Special Wrapper class/struct  | complexTypes with simpleContent, wraps `__item` member                              |
-| `xsd__hexBinary`              | binary content                                                                      |
-| `xsd__base64Binary`           | binary content and optional MIME/MTOM attachments                                   |
-| `xsd__anyType`                | DOM elements, use `#import "dom.h"`                                                 |
-| `@xsd__anyAttribute`          | DOM attributes, use `#import "dom.h"`                                               |
+Special Classes and Structs   | Notes
+----------------------------- | -----
+Special Array class/struct    | single and multidimensional SOAP Arrays
+Special Wrapper class/struct  | complexTypes with simpleContent, wraps `__item` member
+`xsd__hexBinary`              | binary content
+`xsd__base64Binary`           | binary content and optional MIME/MTOM attachments
+`xsd__anyType`                | DOM elements, use `#import "dom.h"`
+`@xsd__anyAttribute`          | DOM attributes, use `#import "dom.h"`
 
 @see Section [special classes and structs](#toxsd10).
 
@@ -2145,9 +2152,9 @@ their type with a `@` qualifier:
 class ns__record
 {
  public:
-  @std::string name;
-  @uint64_t    SSN;
-  ns__record  *spouse;
+  @std::string name;   // required (non-pointer means required)
+  @uint64_t    SSN;    // required (non-pointer means required)
+  ns__record  *spouse; // optional (pointer means minOccurs=0)
 };
 ```
 
@@ -2208,7 +2215,7 @@ This class maps to a complexType in the soapcpp2-generated schema:
 ```xml
 <complexType name="record">
   <sequence>
-    <element name="married-to" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
+    <element name="married-to" type="ns:record" minOccurs="0" maxOccurs="1"/>
   </sequence>
   <attribute name="full-name" type="xsd:string" use="required"/>
   <attribute name="tax-id" type="xsd:unsignedLong" use="required"/>
@@ -2289,7 +2296,7 @@ attributeFormDefault unqualified:
   ...  >
   <complexType name="record">
     <sequence>
-      <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
+      <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1"/>
     </sequence>
     <attribute name="name" type="xsd:string" use="required"/>
     <attribute name="SSN" type="xsd:unsignedLong" use="required"/>
@@ -2309,8 +2316,8 @@ An example XML instance of `ns__record` is:
 ```
 </div>
 
-Note that the root element ns:record is qualified because it is a root element
-of the schema with target namespace "urn:types".  Its local element ns:spouse
+Note that the root element `<ns:record>` is qualified because it is a root element
+of the schema with target namespace "urn:types".  Its local element `<ns:spouse>`
 is namespace qualified because the elementFormDefault of local elements is
 qualified.  Attributes are unqualified.
 
@@ -2343,7 +2350,7 @@ its local element tag:
   ... >
   <complexType name="record">
     <sequence>
-      <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true" form="unqualified"/>
+      <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" form="unqualified"/>
     </sequence>
     <attribute name="name" type="xsd:string" use="required" form="qualified"/>
     <attribute name="SSN" type="xsd:unsignedLong" use="required"/>
@@ -2450,7 +2457,7 @@ These types map to the following comonents in the soapcpp2-generated schema:
   <sequence>
     <element ref="ns:name" minOccurs="1" maxOccurs="1"/>
     <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1"/>
-    <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1" nillable="true"/>
+    <element name="spouse" type="ns:record" minOccurs="0" maxOccurs="1"/>
   </sequence>
   <attribute ref="xsi:type" use="optional"/>
 </complexType>
@@ -2506,7 +2513,8 @@ data, please see the next section on
 
 Pointers that are NULL and smart pointers that are empty are serialized to
 produce omitted element and attribute values, unless an element is required
-and is nillable.
+and is nillable (struct/class members marked with `nullptr`) in which case the
+element is rendered as an empty element with `xsi:nil="true"`.
 
 To control the occurrence requirements of pointer-based data members,
 occurrence constraints are associated with data members in the form of a range
@@ -2540,9 +2548,9 @@ Consider for example:
 class ns__record
 {
  public:
-  std::shared_ptr<std::string>  name;             // optional (0:1)
-  uint64_t                      SSN    0:1 = 999; // forced this to be optional with default 999
-  ns__record                   *spouse 1:1;       // forced this to be required (only married people)
+  std::shared_ptr<std::string>  name;               // optional (pointer means minOccurs=0)
+  uint64_t                      SSN    0:1 = 999;   // force optional with default 999
+  ns__record                   *spouse nullptr 1:1; // force required and nillabe when absent
 };
 ```
 
@@ -3385,7 +3393,7 @@ class xsd__base64Binary
 ### MIME/MTOM attachment binary types                               {#toxsd10-3}
 
 A class or struct with a binary content layout can be extended to support
-MIME/MTOM (and older DIME) attachments, such as in xop:Include elements:
+MIME/MTOM (and older DIME) attachments, such as in `<xop:Include>` elements:
 
 ```cpp
 //gsoap xop schema import: http://www.w3.org/2004/08/xop/include
@@ -3400,7 +3408,7 @@ class _xop__Include
 };
 ```
 
-Attachments are beyond the scope of this document.  The `SOAP_ENC_MIME` and
+Attachments are beyond the scope of this article.  The `SOAP_ENC_MIME` and
 `SOAP_ENC_MTOM` context flag must be set to enable attachments.  See the
 [gSOAP user guide](http://www.genivia.com/doc/soapdoc2.html) for more details.
 
@@ -3450,9 +3458,11 @@ Use of a DOM is optional and enabled by `#import "dom.h"` to use the DOM
 class ns__record
 {
  public:
-  @xsd__anyAttribute  attributes; // list of DOM attributes
+  @xsd__anyAttribute attributes; // optional DOM attributes
   ...
-  xsd__anyType       *name;       // optional DOM element
+  xsd__anyType      *name;       // optional DOM element (pointer means minOccurs=0)
+  xsd__anyType       address;    // required DOM element (minOccurs=1)
+  xsd__anyType       email   0;  // optional DOM element (minOccurs=0)
 };
 ```
 
@@ -3478,8 +3488,8 @@ class ns__record
  public:
   ...
   @xsd__anyAttribute        __anyAttribute; // optional DOM attributes
-  std::vector<xsd__anyType> __any   0;      // optional DOM elements
-  xsd__anyType              __mixed 0;      // optional mixed content
+  std::vector<xsd__anyType> __any   0;      // optional DOM elements (minOccurs=0)
+  xsd__anyType              __mixed 0;      // optional mixed content (minOccurs=0)
 };
 ```
 
@@ -3496,8 +3506,8 @@ struct ns__record
   ...
   @xsd__anyAttribute        __anyAttribute; // optional DOM attributes
   $int                      __sizeOfany;    // size of the array
-  xsd__anyType             *__any;          // optional DOM elements
-  xsd__anyType              __mixed 0;      // optional mixed content
+  xsd__anyType             *__any;          // optional DOM elements (pointer means minOccurs=0)
+  xsd__anyType              __mixed 0;      // optional mixed content (minOccurs=0)
 };
 ```
 
@@ -3835,7 +3845,7 @@ functions in your gSOAP header file with the data binding interface for
 soapcpp2.  The soapcpp2 tool will translate these function to client-side
 service invocation calls and server-side service operation dispatchers.
 
-A discussion of SOAP clients and servers is beyond the scope of this document.
+A discussion of SOAP clients and servers is beyond the scope of this article.
 However, the SOAP options discussed here also apply to SOAP client and server
 development.
 
@@ -3844,11 +3854,11 @@ development.
 SOAP document versus rpc style                                        {#doc-rpc}
 ------------------------------
 
-The `wsdl:binding/soap:binding/@style` attribute in the wsdl:binding section of
-a WSDL is either "document" or "rpc".  The "rpc" style refers to SOAP RPC
-(Remote Procedure Call), which is more restrictive than the "document" style by
-requiring one XML element in the SOAP Body to act as the procedure name with
-XML subelements as its parameters.
+The `wsdl:binding/soap:binding/@style` attribute in the `<wsdl:binding>`
+section of a WSDL is either "document" or "rpc".  The "rpc" style refers to
+SOAP RPC (Remote Procedure Call), which is more restrictive than the "document"
+style by requiring one XML element in the SOAP Body to act as the procedure
+name with XML subelements as its parameters.
 
 For example, the following directives in the gSOAP header file for soapcpp2
 declare that `DBupdate` is a SOAP RPC encoding service method:
@@ -3892,9 +3902,9 @@ operations automatically on the server side (soapcpp2 options -a and -A).
 SOAP literal versus encoding                                          {#lit-enc}
 ----------------------------
 
-The `wsdl:operation/soap:body/@use` attribute in the wsdl:binding section of a
-WSDL is either "literal" or "encoded".  The "encoded" use refers to the SOAP
-encoding rules that support id-ref multi-referenced elements to serialize
+The `wsdl:operation/soap:body/@use` attribute in the `<wsdl:binding>` section
+of a WSDL is either "literal" or "encoded".  The "encoded" use refers to the
+SOAP encoding rules that support id-ref multi-referenced elements to serialize
 data as graphs.
 
 SOAP encoding is very useful if the data internally forms a graph (including
@@ -4373,9 +4383,9 @@ assume we have the following struct:
 ```cpp
 struct ns__record
 {
-  const char        *name;   // required name
-  uint64_t          *SSN;    // optional SSN
-  struct ns__record *spouse; // optional spouse
+  const char        *name 1; // required (minOccurs=1)
+  uint64_t          *SSN;    // optional (pointer means minOccurs=0)
+  struct ns__record *spouse; // optional (pointer means minOccurs=0)
 };
 ```
 
@@ -4466,9 +4476,9 @@ deep copies.  Consider for example:
 ```cpp
 struct ns__record
 {
-  const char         *name;   // required name
-  uint64_t            SSN;    // required SSN
-  struct ns__record  *spouse; // optional spouse
+  const char         *name 1; // required (minOccurs=1)
+  uint64_t            SSN;    // required (non-pointer means minOccurs=1)
+  struct ns__record  *spouse; // optional (pointer means minOccurs=0)
 };
 ```
 
@@ -4654,7 +4664,7 @@ T * soap_make(struct soap *soap, T val) throw (std::bad_alloc)
 {
   T *p = (T*)soap_malloc(soap, sizeof(T));
   if (p == NULL)
-    throw std::bad_alloc;
+    throw std::bad_alloc();
   *p = val;
   return p;
 }
@@ -4666,9 +4676,9 @@ For example, assuming we have the following class:
 class ns__record
 {
  public:
-  std::string  name;   // required name
-  uint64_t    *SSN;    // optional SSN
-  ns__record  *spouse; // optional spouse
+  std::string  name;   // required (non-pointer means minOccurs=1)
+  uint64_t    *SSN;    // optional (pointer means minOccurs=0)
+  ns__record  *spouse; // optional (pointer means minOccurs=0)
 };
 ```
 
@@ -4738,7 +4748,7 @@ T **soap_make_array(struct soap *soap, T* array, int n) throw (std::bad_alloc)
 { 
   T **p = (T**)soap_malloc(soap, n * sizeof(T*));
   if (p == NULL)
-    throw std::bad_alloc;
+    throw std::bad_alloc();
   for (int i = 0; i < n; ++i)
     p[i] = &array[i];
   return p;
@@ -4821,9 +4831,9 @@ deep copies.  Consider for example:
 ```cpp
 class ns__record
 {
-  const char  *name;   // required name
-  uint64_t     SSN;    // required SSN
-  ns__record  *spouse; // optional spouse
+  const char  *name 1; // required (minOccurs=1)
+  uint64_t     SSN;    // required (non-pointer means minOccurs=1)
+  ns__record  *spouse; // optional (pointer means minOccurs=1)
 };
 ```
 

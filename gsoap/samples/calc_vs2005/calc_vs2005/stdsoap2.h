@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.49
+        stdsoap2.h 2.8.50
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20849
+#define GSOAP_VERSION 20850
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -973,7 +973,7 @@ extern "C" {
 #endif
 
 #define SOAP_INVALID_SOCKET ((SOAP_SOCKET)-1)
-#define soap_valid_socket(n) ((n) != SOAP_INVALID_SOCKET)
+#define soap_valid_socket(sk) ((sk) != SOAP_INVALID_SOCKET)
 
 #define SOAP_SHUT_WR (1)
 #define SOAP_SHUT_RDWR (2)
@@ -1502,7 +1502,7 @@ extern const char soap_base64o[], soap_base64i[];
 # define soap_memmove(buf, len, src, num) ((buf) && (size_t)(len) >= (size_t)(num) ? !memmove((buf), (src), (num)) : SOAP_ERANGE)
 #endif
 
-/* gSOAP status/error codes */
+/* gSOAP status and error codes */
 
 typedef soap_int32 soap_status;
 
@@ -1519,7 +1519,7 @@ typedef soap_int32 soap_status;
 #define SOAP_MUSTUNDERSTAND             8
 #define SOAP_NAMESPACE                  9
 #define SOAP_USER_ERROR                 10
-#define SOAP_FATAL_ERROR                11
+#define SOAP_FATAL_ERROR                11      /* deprecated */
 #define SOAP_FAULT                      12
 #define SOAP_NO_METHOD                  13
 #define SOAP_NO_DATA                    14
@@ -1549,7 +1549,7 @@ typedef soap_int32 soap_status;
 #define SOAP_MIME_END                   38
 #define SOAP_VERSIONMISMATCH            39
 #define SOAP_PLUGIN_ERROR               40
-#define SOAP_DATAENCODINGUNKNOWN        41
+#define SOAP_DATAENCODINGUNKNOWN        41      /* unused */
 #define SOAP_REQUIRED                   42
 #define SOAP_PROHIBITED                 43
 #define SOAP_OCCURS                     44
@@ -2549,13 +2549,14 @@ struct SOAP_CMAC soap
   soap_mode omode;              /* ouput mode flag set with soap_init1(), soap_new1(), or soap_set_omode() */
   const char *float_format;     /* user-definable format string for floats (<1024 chars) */
   const char *double_format;    /* user-definable format string for doubles (<1024 chars) */
-  const char *long_double_format;       /* user-definable format string for long doubles (<1024 chars) */
+  const char *long_double_format;/* user-definable format string for long doubles (<1024 chars) */
   const char *dime_id_format;   /* user-definable format string for integer DIME id (<SOAP_TAGLEN chars) */
-  int transfer_timeout;         /* user-definable, when > 0, gives socket total transfer timeout in seconds, < 0 in usec */
-  int recv_timeout;             /* user-definable, when > 0, gives socket recv stall timeout in seconds, < 0 in usec */
-  int send_timeout;             /* user-definable, when > 0, gives socket send stall timeout in seconds, < 0 in usec */
-  int connect_timeout;          /* user-definable, when > 0, gives socket connect() timeout in seconds, < 0 in usec */
-  int accept_timeout;           /* user-definable, when > 0, gives socket accept() timeout in seconds, < 0 in usec */
+  ULONG64 recv_maxlength;       /* user-definable, when > 0, sets max message size that can be received */
+  int recv_timeout;             /* user-definable, when > 0, sets socket recv stall timeout in seconds, < 0 in usec */
+  int send_timeout;             /* user-definable, when > 0, sets socket send stall timeout in seconds, < 0 in usec */
+  int transfer_timeout;         /* user-definable, when > 0, sets socket total transfer timeout in seconds, < 0 in usec */
+  int connect_timeout;          /* user-definable, when > 0, sets socket connect() timeout in seconds, < 0 in usec */
+  int accept_timeout;           /* user-definable, when > 0, sets socket accept() timeout in seconds, < 0 in usec */
   int socket_flags;             /* user-definable socket recv() and send() flags, e.g. set to MSG_NOSIGNAL to disable sigpipe */
   int connect_flags;            /* user-definable connect() SOL_SOCKET sockopt flags, e.g. set to SO_DEBUG to debug socket */
   int bind_flags;               /* user-definable bind() SOL_SOCKET sockopt flags, e.g. set to SO_REUSEADDR to enable reuse */
@@ -2598,7 +2599,7 @@ struct SOAP_CMAC soap
   const char *ntlm_challenge;   /* HTTP NTLM challenge key string */
   short ntlm_auth;              /* HTTP NTLM authentication type */
 #endif
-  int (*fpost)(struct soap*, const char*, const char*, int, const char*, const char*, size_t);
+  int (*fpost)(struct soap*, const char*, const char*, int, const char*, const char*, ULONG64);
   int (*fget)(struct soap*);    /* HTTP GET hook (not set by default) */
   int (*fput)(struct soap*);    /* HTTP PUT hook (handled as POST by default) */
   int (*fdel)(struct soap*);    /* HTTP DELETE hook (not set by default) */
@@ -2606,7 +2607,7 @@ struct SOAP_CMAC soap
   int (*fhead)(struct soap*);   /* HTTP HEAD hook (not set by default) */
   int (*fform)(struct soap*);   /* HTTP/HTML form handler for plugins */
   int (*fposthdr)(struct soap*, const char*, const char*);
-  int (*fresponse)(struct soap*, int, size_t);
+  int (*fresponse)(struct soap*, int, ULONG64);
   int (*fparse)(struct soap*);
   int (*fparsehdr)(struct soap*, const char*, const char*);
   int (*fheader)(struct soap*);
@@ -2682,8 +2683,8 @@ struct SOAP_CMAC soap
 #ifndef WITH_LEAN
   time_t start;         /* start time of send/recv */
 #endif
-  size_t count;         /* message length counter */
-  size_t length;        /* message length as set by HTTP header */
+  ULONG64 count;        /* message length counter */
+  ULONG64 length;       /* message length as set by HTTP header */
   char *labbuf;         /* look-aside buffer */
   size_t lablen;        /* look-aside buffer allocated length */
   size_t labidx;        /* look-aside buffer index to available part */
@@ -2856,6 +2857,7 @@ struct SOAP_CMAC soap
   soap(soap_mode, soap_mode);
   soap(const struct soap&);
   struct soap& operator=(const struct soap&);
+  void destroy();
   ~soap();                      /* no virtual methods, so sizeof(soap) should be the same in C and C++ */
 #endif
 };
@@ -3051,7 +3053,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_client_context(struct soap *soap, unsigned sh
 #endif
 
 SOAP_FMAC1 const char * SOAP_FMAC2 soap_http_content_type(struct soap *soap, int status);
-SOAP_FMAC1 int SOAP_FMAC2 soap_puthttphdr(struct soap*, int status, size_t count);
+SOAP_FMAC1 int SOAP_FMAC2 soap_puthttphdr(struct soap*, int status, ULONG64 count);
 
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_http_header_attribute(struct soap*, const char*, const char*);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_decode_key(char*, size_t, const char*);
@@ -3409,8 +3411,8 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_outwliteral(struct soap*, const char *tag, wchar_
 
 #ifndef WITH_LEANER
 SOAP_FMAC1 int SOAP_FMAC2 soap_attachment(struct soap *, const char*, int, const void*, const void*, int, const char*, const char*, const char*, const char*, int);
-SOAP_FMAC1 int SOAP_FMAC2 soap_move(struct soap*, size_t);
-SOAP_FMAC1 size_t SOAP_FMAC2 soap_tell(struct soap*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_move(struct soap*, ULONG64);
+SOAP_FMAC1 ULONG64 SOAP_FMAC2 soap_tell(struct soap*);
 SOAP_FMAC1 char* SOAP_FMAC2 soap_dime_option(struct soap*, unsigned short, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_getdimehdr(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_getdime(struct soap*);

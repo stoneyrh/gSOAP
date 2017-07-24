@@ -571,7 +571,7 @@ static void soap_wsa_delete(struct soap *soap, struct soap_plugin *p);
 
 static int soap_wsa_header(struct soap *soap);
 static void soap_wsa_set_error(struct soap *soap, const char **c, const char **s);
-static int soap_wsa_response(struct soap *soap, int status, size_t count);
+static int soap_wsa_response(struct soap *soap, int status, ULONG64 count);
 static int soap_wsa_disconnect(struct soap *soap);
 
 static int soap_wsa_alloc_header(struct soap *soap);
@@ -1633,14 +1633,14 @@ soap_wsa_set_error(struct soap *soap, const char **c, const char **s)
 /******************************************************************************/
 
 /**
-@fn int soap_wsa_response(struct soap *soap, int status, size_t count)
+@fn int soap_wsa_response(struct soap *soap, int status, ULONG64 count)
 @brief Overrides the HTTP response operations to send an HTTP POST
 @param soap context
 @param status code
 @param count message length (if non-chunked)
 */
 static int
-soap_wsa_response(struct soap *soap, int status, size_t count)
+soap_wsa_response(struct soap *soap, int status, ULONG64 count)
 {
   struct soap_wsa_data *data = (struct soap_wsa_data*)soap_lookup_plugin(soap, soap_wsa_id);
   (void)status;

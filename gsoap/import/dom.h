@@ -61,5 +61,5 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 // The custom serializer for DOM element nodes is represented by xsd__anyType.
 extern typedef struct soap_dom_element xsd__anyType;
 
-// The custom serializer for DOM attribute nodes is represented by xsd__anyAttribute.
+// The custom serializer for DOM attribute nodes is represented by @xsd__anyAttribute.
 extern typedef struct soap_dom_attribute xsd__anyAttribute;

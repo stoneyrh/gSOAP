@@ -122,8 +122,11 @@ static void       add_soap(void),
 /* imported from symbol2.c */
 extern int        is_string(Tnode*),
                   is_wstring(Tnode*),
+                  is_smart(Tnode*),
                   is_XML(Tnode*),
-                  is_smart(Tnode*);
+                  is_stdXML(Tnode*),
+		  is_anyType(Tnode*),
+		  is_anyAttribute(Tnode*);
 extern char       *c_storage(Storage);
 extern const char *c_type(Tnode*);
 extern int        is_primitive_or_string(Tnode*),
@@ -541,8 +544,10 @@ dclr    : ptrs ID arrayck tag bounds brinit
                             {
                               if ($6.hasval ||
                                   ((int)$3.sto & (int)Sattribute) ||
+                                  ((int)$3.sto & (int)Sspecial) ||
                                   $3.typ->type == Tpointer ||
                                   $3.typ->type == Ttemplate ||
+                                  is_anyAttribute($3.typ) ||
                                   !strncmp($2->name, "__size", 6))
                                 p->info.minOccurs = 0;
                               else
@@ -710,7 +715,7 @@ func    : fname '(' s6 fargso ')' const abstract
                                 {
                                   if (!is_response(sp->entry->info.typ))
                                   {
-                                    if (!is_XML(sp->entry->info.typ))
+                                    if (!is_XML(sp->entry->info.typ) && !is_stdXML(sp->entry->info.typ))
                                       add_response($1, sp->entry);
                                   }
                                   else
@@ -768,8 +773,11 @@ farg    : tspec ptrs arg arrayck occurs init
                           {
                             if ($6.hasval ||
                                 ((int)$4.sto & (int)Sattribute) ||
+                                ((int)$4.sto & (int)Sspecial) ||
+                                $4.typ->type == Tpointer ||
                                 $4.typ->type == Ttemplate ||
-                                $4.typ->type == Tpointer)
+				is_anyAttribute($4.typ) ||
+				!strncmp($3->name, "__size", 6))
                               p->info.minOccurs = 0;
                             else
                               p->info.minOccurs = 1;

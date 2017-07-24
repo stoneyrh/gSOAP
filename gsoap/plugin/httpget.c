@@ -93,39 +93,25 @@ compiling, linking, and/or using OpenSSL is allowed.
 
         Usage (client side):
 
-        For SOAP calls, declare a one-way response message in the header file,
-        for example:
-        int ns__methodResponse(... params ..., void);
-        The params will hold the return values returned by the server's SOAP
-        response message.
+	For SOAP GET method calls, declare the service method with protocol GET:
 
-        Client code:
+	//gsoap ns service method-protocol: someMethod GET
+        int ns__someMethod(... in-params ..., struct ns__someMethodResponse { ... out-params ... } *);
 
-        struct soap soap;
-        soap_init(&soap);
-        soap_register_plugin(&soap, http_get); // register plugin
-        ...
-        if (soap_get_connect(&soap, endpoint, action))
-          ... connect error ...
-        else if (soap_recv_ns__methodResponse(&soap, ... params ...))
-          ... error ...
-        else
-          ... ok ...
-        soap_destroy(&soap);
-        soap_end(&soap);
-        soap_done(&soap);
+	and to make the call in your code:
 
-        Note that the endpoint URL may contain a query string with key-value
-        pairs to pass to the server, e.g.: http://domain/path?key=val&key=val
+	struct ns__someMethodResponse res;
+	soap_call_ns__someMethod(soap, "endpoint", "action", ... in-params ...., &res)
+
+        Client code for non-SOAP REST GET:
 
         To use general HTTP GET, for example to retrieve an HTML document, use:
 
         struct soap soap;
         char *buf = NULL;
-        size_t len;
+        size_t len = 0;
         soap_init(&soap);
-        soap_register_plugin(&soap, http_get); // register plugin
-        if (soap_get_connect(&soap, endpoint, action)
+        if (soap_GET(&soap, endpoint, action)
          || soap_begin_recv(&soap))
           ... connect/recv error ...
         else

@@ -369,6 +369,7 @@ AC_CONFIG_FILES([ Makefile \
     gsoap/samples/primes/Makefile \
     gsoap/samples/roll/Makefile \
     gsoap/samples/router/Makefile \
+    gsoap/samples/atom/Makefile \
     gsoap/samples/rss/Makefile \
     gsoap/samples/ssl/Makefile \
     gsoap/samples/template/Makefile \

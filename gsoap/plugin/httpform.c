@@ -91,7 +91,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 
         See samples/webserver for an example HTTP POST form handling server.
 
-	Warning: this plugin MUST be registered AFTER the httppost plugin.
+        Warning: this plugin MUST be registered AFTER the httppost plugin.
 */
 
 #include "httpform.h"
@@ -194,11 +194,16 @@ char* form(struct soap *soap)
   {
     if (soap->length)
     {
+      if (soap->length > 0x7FFFFFFF - 2)
+      {
+        soap->error = SOAP_EOM;
+        return NULL;
+      }
       s = (char*)soap_malloc(soap, soap->length + 2);
       if (s)
       {
         char *t = s;
-        size_t i;
+        ULONG64 i;
         *t++ = '?';
         for (i = soap->length; i; i--)
         {

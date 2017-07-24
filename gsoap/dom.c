@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.49
+        DOM API v5 gSOAP 2.8.50
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20849
+#define GSOAP_LIB_VERSION 20850
 
 #include "stdsoap2.h"
 
@@ -766,11 +766,9 @@ void
 SOAP_FMAC2
 soap_del_xsd__anyType(const struct soap_dom_element *a)
 {
-  const struct soap_dom_element *prev = NULL;
+  const struct soap_dom_element *p = NULL;
   while (a)
   {
-    if (prev)
-      SOAP_FREE(NULL, prev);
     if (a->nstr)
       SOAP_FREE(NULL, a->nstr);
     if (a->name)
@@ -785,13 +783,21 @@ soap_del_xsd__anyType(const struct soap_dom_element *a)
       SOAP_FREE(NULL, a->tail);
     if (a->node)
       soap_delelement(a->node, a->type);
-    soap_del_xsd__anyAttribute(a->atts);
-    soap_del_xsd__anyType(a->elts);
-    prev = a;
+    if (a->atts)
+    {
+      soap_del_xsd__anyAttribute(a->atts);
+      SOAP_FREE(NULL, a->atts);
+    }
+    if (a->elts)
+    {
+      soap_del_xsd__anyType(a->elts);
+      SOAP_FREE(NULL, a->elts);
+    }
     a = a->next;
+    if (p)
+      SOAP_FREE(NULL, p);
+    p = a;
   }
-  if (prev)
-    SOAP_FREE(NULL, prev);
 }
 
 SOAP_FMAC1
@@ -827,22 +833,20 @@ void
 SOAP_FMAC2
 soap_del_xsd__anyAttribute(const struct soap_dom_attribute *a)
 {
-  const struct soap_dom_attribute *prev = NULL;
+  const struct soap_dom_attribute *p = NULL;
   while (a)
   {
-    if (prev)
-      SOAP_FREE(NULL, prev);
     if (a->nstr)
       SOAP_FREE(NULL, a->nstr);
     if (a->name)
       SOAP_FREE(NULL, a->name);
     if (a->text)
       SOAP_FREE(NULL, a->text);
-    prev = a;
     a = a->next;
+    if (p)
+      SOAP_FREE(NULL, p);
+    p = a;
   }
-  if (prev)
-    SOAP_FREE(NULL, prev);
 }
 
 /******************************************************************************\

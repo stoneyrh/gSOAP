@@ -5,6 +5,7 @@ To build the example services and clients, run 'make' in the 'samples'
 directory. The concurrent server examples require the Pthreads library. The SSL
 example requires OpenSSL. The webserver example also requires Zlib.
 
+atom:                     Atom 1.0 reading and writing, REST GET/PUT (C++)
 autotest:                 Autotest code generation for XML databindings (C++)
 aws-s3:                   AWS S3 SOAP client (C++)
 calc:                     Simple calculator client and server (C)

@@ -92,7 +92,7 @@ struct soap_wsa_data
   /** fseterror callback is used to inspect and change gSOAP error codes */
   void (*fseterror)(struct soap*, const char**, const char**);
   /** fresponse callback is used to change a HTTP response into a HTTP POST */
-  int (*fresponse)(struct soap*, int, size_t);
+  int (*fresponse)(struct soap*, int, ULONG64);
   /** fdisconnect callback is used to accept HTTP 202 */
   int (*fdisconnect)(struct soap*);
 };

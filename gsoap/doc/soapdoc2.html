@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.49 User Guide</title>
+<title>gSOAP 2.8.50 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.49 User Guide </h1>
+<h1 align="center">gSOAP 2.8.50 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Jul 10, 2017
+<h3 align="center">Jul 23, 2017
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -734,7 +734,7 @@ Developing a service application is easy too. We will use CGI here because it
 is a simple mechanism. This is not the preferred deployment mechanism. Because
 CGI is slow and stateless. Faster services can be developed as a stand-alone
 gSOAP HTTP/HTTPS server (but see comments at the end of this section) or, as
-preferred, the use of Apache module or IIS with the mod_gsoap ISAPI extension (included in the gSOAP package under
+preferred and recommended for security reasons, the use of Apache module or IIS with the mod_gsoap ISAPI extension (included in the gSOAP package under
 <i>gsoap/mod_gsoap</i> with instructions).
 
 <div class="p"><!----></div>
@@ -880,7 +880,7 @@ To run the server as a stand-alone iterative (non-multithreaded) server on port 
 To implement threaded services, please see Section&nbsp;<a href="#sec:mt">7.2.4</a>. These
 stand-alone Web Services that handle multiple SOAP requests by spawning a
 thread for each request. Thread pooling is also an option. The use of Apache
-and IIS modules to deploy gSOAP services is preferred to ensure load balancing, access control, tracing, and so on.
+and IIS modules to deploy gSOAP services is preferred and recommended to ensure load balancing, access control, tracing, security, and so on.
 
 <div class="p"><!----></div>
 For more information on server-side service classes, see
@@ -13387,7 +13387,7 @@ Built-in gSOAP function: <i>http_get</i>
 Should return <i>SOAP_OK</i> or a gSOAP error code.
 Built-in gSOAP function: none.
 </td></tr>
-<tr><td align="left"><i><b>int</b>&nbsp;(*soap.fpost)(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*endpoint, <b>const</b>&nbsp;<b>char</b>&nbsp;*host, <b>int</b>&nbsp;port, <b>const</b>&nbsp;<b>char</b>&nbsp;*path, <b>const</b>&nbsp;<b>char</b>&nbsp;*action, size_t count)</i> </td></tr>
+<tr><td align="left"><i><b>int</b>&nbsp;(*soap.fpost)(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*endpoint, <b>const</b>&nbsp;<b>char</b>&nbsp;*host, <b>int</b>&nbsp;port, <b>const</b>&nbsp;<b>char</b>&nbsp;*path, <b>const</b>&nbsp;<b>char</b>&nbsp;*action, ULONG64 count)</i> </td></tr>
 <tr><td align="left">Called from a client proxy to generate the HTTP header to connect to <i>endpoint</i>.
 Input parameters <i>host</i>, <i>port</i>, and <i>path</i> are micro-parsed from <i>endpoint</i>, <i>action</i> is the SOAP action,
 and <i>count</i> is the length of the SOAP message or 0 when <i>SOAP_ENC_PLAIN</i> is set or when <i>SOAP_IO_LENGTH</i> is reset.
@@ -13401,7 +13401,7 @@ Emits HTTP <i>key</i>: <i>val</i> header entries.
 Should return SOAP_OK, or a gSOAP error code.
 Built-in gSOAP function: <i>http_post_header</i>.
 </td></tr>
-<tr><td align="left"><i><b>int</b>&nbsp;(*soap.fresponse)(<b>struct</b>&nbsp;soap *soap, <b>int</b>&nbsp;soap_error_code, size_t count)</i> </td></tr>
+<tr><td align="left"><i><b>int</b>&nbsp;(*soap.fresponse)(<b>struct</b>&nbsp;soap *soap, <b>int</b>&nbsp;soap_error_code, ULONG64 count)</i> </td></tr>
 <tr><td align="left">Called from a service to generate the response HTTP header.
 Input parameter <i>soap_error_code</i> is a gSOAP error code (see Section&nbsp;<a href="#sec:errcodes">10.2</a> and
 <i>count</i> is the length of the SOAP message or 0 when <i>SOAP_ENC_PLAIN</i> is set or when <i>SOAP_IO_LENGTH</i> is reset.
@@ -13662,7 +13662,7 @@ SOAP_SOCKET myopen(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&
 &nbsp;&nbsp;&nbsp;soap<tt>-&gt;</tt>recvfd = 0; // set back to stdin <br />
 &nbsp;&nbsp;&nbsp;soap<tt>-&gt;</tt>sendfd = 1; // set back to stdout <br />
 } <br />
-<b>int</b>&nbsp;mypost(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*endpoint, <b>const</b>&nbsp;<b>char</b>&nbsp;*host, <b>const</b>&nbsp;<b>char</b>&nbsp;*path, <b>const</b>&nbsp;<b>char</b>&nbsp;*action, size_t count) <br />
+<b>int</b>&nbsp;mypost(<b>struct</b>&nbsp;soap *soap, <b>const</b>&nbsp;<b>char</b>&nbsp;*endpoint, <b>const</b>&nbsp;<b>char</b>&nbsp;*host, <b>const</b>&nbsp;<b>char</b>&nbsp;*path, <b>const</b>&nbsp;<b>char</b>&nbsp;*action, ULONG64 count) <br />
 { <br />
 &nbsp;&nbsp;&nbsp;<b>return</b>&nbsp;soap_send(soap, "Custom-generated file<tt>\</tt>n"); // writes to soap<tt>-&gt;</tt>sendfd <br />
 } <br />
@@ -14342,7 +14342,7 @@ The <i>soap.send_timeout</i> and <i>soap.recv_timeout</i> specify the timeout
 for non-blocking socket I/O operations.  This is the maximum delay on the socket operation permitted.
 
 <div class="p"><!----></div>
-The <i>soap.transfer_timeout</i> is new since 2.8.48 and limits the time a message send and a message receive operation can take.  This value should be used in combination with <i>soap.send_timeout</i> and <i>soap.recv_timeout</i> for accurate timeout control.
+The <i>soap.transfer_timeout</i> is new since 2.8.48 and limits the time a message send and a message receive operation can take.  This value should be used in combination with <i>soap.send_timeout</i> and <i>soap.recv_timeout</i> for accurate timeout control.  The <i>soap.recv_maxlength</i> value when non-zero limits the length of messages that can be received in bytes in total in decompressed form (message length includes HTTP headers and HTTP chunk size fields). The value of <i>soap.recv_maxlength</i> is 2GB by default.
 
 <div class="p"><!----></div>
 Example:
@@ -16711,5 +16711,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 10 Jul 2017, 12:49.</small>
+version 4.00.<br />On 23 Jul 2017, 21:44.</small>
 </html>

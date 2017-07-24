@@ -1346,7 +1346,7 @@ __wsdd__Bye(struct soap *soap, struct wsdd__ByeType *Bye)
 /******************************************************************************/
 
 static int
-soap_wsdd_http(struct soap *soap, const char *endpoint, const char *host, int port, const char *path, const char *action, size_t count)
+soap_wsdd_http(struct soap *soap, const char *endpoint, const char *host, int port, const char *path, const char *action, ULONG64 count)
 {
   (void)endpoint; (void)host; (void)port; (void)path; (void)action;
   return soap->fresponse(soap, SOAP_OK, count);
@@ -1403,7 +1403,7 @@ __wsdd__Probe(struct soap *soap, struct wsdd__ProbeType *Probe)
   else
   {
     int err;
-    int (*fpost)(struct soap*, const char*, const char*, int, const char*, const char*, size_t);
+    int (*fpost)(struct soap*, const char*, const char*, int, const char*, const char*, ULONG64);
     const char *MessageID = soap_wsa_rand_uuid(soap);
     const char *Action = SOAP_NAMESPACE_OF_wsdd"/ProbeMatches";
 
@@ -1534,7 +1534,7 @@ __wsdd__Resolve(struct soap *soap, struct wsdd__ResolveType *Resolve)
   else
   {
     int err;
-    int (*fpost)(struct soap*, const char*, const char*, int, const char*, const char*, size_t);
+    int (*fpost)(struct soap*, const char*, const char*, int, const char*, const char*, ULONG64);
     const char *MessageID = soap_wsa_rand_uuid(soap);
     const char *Action = SOAP_NAMESPACE_OF_wsdd"/ResolveMatches";
 

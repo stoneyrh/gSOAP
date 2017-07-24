@@ -1,7 +1,7 @@
 /*
         httppost.c
 
-        gSOAP HTTP POST plugin for non-SOAP payloads.
+        gSOAP HTTP POST/PUT/DELETE plugin for SOAP and non-SOAP payloads.
 
         See instructions below.
 
@@ -304,11 +304,13 @@ int soap_http_body(struct soap *soap, char **buf, size_t *len)
   {
     if (soap->length)
     {
+      if (soap->length > 0x7FFFFFFF - 1)
+        return soap->error = SOAP_EOM;
       s = (char*)soap_malloc(soap, soap->length + 1);
       if (s)
       {
         char *t = s;
-        size_t i;
+        ULONG64 i;
         for (i = soap->length; i; i--)
         {
           soap_wchar c;
