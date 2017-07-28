@@ -11,12 +11,12 @@ By Bethany Sanders, Robert van Engelen, Ning Xie, and Wei Zhang
 Consuming Web services on iOS (iPhone and iPad) platforms is increasingly in
 demand today.  Xcode does not have any built-in tools that make consuming XML
 Web services easy.  It typically requires knowledge of XML processing
-techniques to send soap requests to the Web services and then parse the
-returning XML results.  The gSOAP toolkit provides an automated XML data
-binding toolkit for C and C++ can be used to develop XML Web service client
-applications to consuming Web services on iOS platforms such as iPhone and
-iPad.  Moreover, the plugin takes advantage of network connection offered by
-iOS SDK and supports 3G/4G/LTE, wifi and so on.
+techniques to send XML SOAP or REST requests to the Web services and then parse
+the returning XML results.  The gSOAP toolkit provides an automated XML data
+binding toolkit for C and C++.  The toolkit can be used to develop XML Web
+service client applications to consuming Web services on iOS platforms such as
+iPhone and iPad.  Moreover, the plugin takes advantage of network connection
+offered by iOS SDK and supports 3G/4G/LTE, wifi and so on.
 
 To use the iOS plugin for development of client applications on iOS platforms,
 register the plugin with the gSOAP engine context as follows:
@@ -70,18 +70,23 @@ The steps to create a client application on iOS:
 
 - Create an iOS application project in Xcode;
 
+- Add stdsoap2.cpp and stdsoap2.h from the gSOAP package to your iOS project;
+
+- Add gsoapios.h and gsoapios.mm that are part of the iOS plugin files to your
+  iOS project;
+
 - In your client code create an engine context and register the iOS plugin;
 
 - In your client code add the Web service methods invocations that you want,
   see the wsdl2h-generated header file (first step above) with interface
   declarations for instructions on how to invoke services.
 
-All of the source code files need to be of type Objective C++ source. Mixing
-some C files with some C++ files will cause errors.
+All of the source code files should be of type Objective C++ source.  Mixing
+C files with C++ files will cause errors.
 
 @section ios_cache_policy Specifying the Cache Policy
 
-The interaction between the client and the Web service server can be controlled
+The interaction between the client and the Web serviceserver can be controlled
 by specifying the cache policy. To specify the cache policy, use the API
 function `soap_ios_setcachepolicy(struct soap *soap, unsigned int policy)`.
 This API function cannot be called before the plugin is registered.
@@ -144,7 +149,7 @@ The default timeout is 60 seconds.
 @section ios_http_auth HTTP Authentication
 
 To support authentication when access is denied (HTTP 401 error) as the client
-tries to connect. enable HTTP authentication as follows.
+tries to connect, enable HTTP authentication as follows.
 
 Basic authentication is simply enabled at the client-side by setting the
 `soap.userid` and `soap.passwd` strings to a username and password,
@@ -156,16 +161,24 @@ respectively:
     soap->passwd = "somepass";
 @endcode
 
+When using a generated C++ proxy class:
+
+@code
+    Proxy proxy;
+    porxy.soap->userid = "someone";
+    porxy.soap->passwd = "somepass";
+@endcode
+
 @section ios_example Examples
 
 This section introduces four examples to demonstrate the development of client
 applications consuming Web services on iOS platforms such as iPhone and iPad
 using the gSOAP tools and the iOS plugin.
 
-The first example @ref ios_example_calc is a basic calculator example client.
-The second example @ref ios_example_geoip is a web service that locates the country
+The first example @ref ios_example_calc is a basic calculator client app.  The
+second example @ref ios_example_geoip is a web service that locates the country
 of a certain IP Adress. The  third example @ref ios_example_weather returns
-weather results for well known US cities, and the fourth example
+weather results for well-known US cities, and the fourth example
 @ref ios_example_air shows information on every airport within a given country.
 
 We assume you already have had the experience in development of applications
@@ -175,11 +188,15 @@ Directions:
 
 - Rename the .m files to .mm files, if any;
 
-- Generate a C++ proxy class using wsdl2h and soapcpp2 option -j to access the
-  Web servivce;
+- Generate a C++ proxy class using wsdl2h and soapcpp2 -j, which produces the
+  source code you will need to access the Web service;
 
-- Use stdsoap2.cpp instead of stdsoap2.c from the gSOAP package in your iOS
-  project;
+- Add stdsoap2.cpp and stdsoap2.h from the gSOAP package to your iOS project;
+
+- Add gsoapios.h and gsoapios.mm that are part of the iOS plugin files to your
+  iOS project;
+
+- In your client code create an engine context and register the iOS plugin.
 
 @subsection ios_example_calc Simple Calculator Example (C++)
 
@@ -194,9 +211,12 @@ following link:
 
     http://www.genivia.com/calc.wsdl
 
-The Xcode project for this example can be found in samples/ios/calc.
+The Xcode project for this example can be found in gsoap/ios_plugin/examples/calc.
 
 @subsubsection ios_calc_step_1 Step 1: Generating stubs for C++ API
+
+The gsoap/ios_plugin/examples/calc directory already contains calc.h so you can skip
+this step.
 
 To generate codes for the calculator Web service, we first run the wsdl2h tool
 from the command line on the URL of the WSDL and use option -o to specify the
@@ -310,7 +330,7 @@ layer of protection (App Transport Security).
 Add the source files soapC.cpp, soapClient.cpp, soapH.h, and soapStub.h
 generated in Step 1 of this tutorial to the project. Also add files stdsoap2.h
 and stdsoap2.cpp to the project from gSOAP package as well as the iOS plugin
-files gsoapios.h and sgsoapios.mm.
+files gsoapios.h and gsoapios.mm.
 
 Once all of your files have been added to the project, ensure they are all of
 type "Objective C++ Source".  This ensures that there will be no issues with
@@ -319,7 +339,7 @@ mixing Objective C and C++ code.
 @subsubsection ios_calc_step_4 Step 4: Implementing the Logic by calling the soap service
 
 Firstly, edit file main.mm to import the file calc.nsmap.  Link errors may
-arise without importing this namespace mapping.
+arise without importing this XML namespace mapping table.
 
 @code
     // File: main.mm
@@ -421,8 +441,7 @@ It is crucial to follow these directions in order for your app to work:
 
 - Generate C++ proxy using proper options with wsdl2h and soapcpp2.
 
-- Use the stdsoap2.cpp instead of stdsoap2.c from the gSOAP package in your iOS
-  project.
+- Use stdsoap2.cpp from the gSOAP package in your iOS project.
 
 The Xcode project for this example can be found in gsoap/ios_plugin/examples/GeoIPService.
 
@@ -430,12 +449,12 @@ The Xcode project for this example can be found in gsoap/ios_plugin/examples/Geo
 
 To generate codes for the GeoIPService Web service, we first run the wsdl2h
 tool from the command line on the URL of the WSDL and use option -o to specify
-the output file (Alternatively, you can download the GeoIPService.wsdl file and
+the output file (alternatively, you can download the GeoIPService.wsdl file and
 use the local file instead of the URL):
 
     wsdl2h -o GeoIPService.h 'http://www.webservicex.net/geoipservice.asmx?WSDL'
 
-This generates the GeoIPService.h service definition header file with service
+This generates the GeoIPService.h service interface header file with service
 operation definitions and types for the operation's data.  By default, gSOAP
 assumes you will use C++ with STL.
 
@@ -550,7 +569,7 @@ mixing Objective C and C++ code.
 @subsubsection ios_geoip_step_4 Step 4: Implementing the Logic by calling the soap service
 
 Firstly, edit file main.mm to import the file GeoIPService.nsmap. Linking
-errors would arise without importing this namespace mapping.
+errors would arise without importing this XML namespace mapping table.
 
 @code
     // File: main.mm
@@ -696,8 +715,7 @@ It is crucial to follow these directions in order for your app to work:
 
 - Generate C++ proxy using proper options with wsdl2h and soapcpp2.
 
-- Use the stdsoap2.cpp instead of stdsoap2.c from the gSOAP package in your iOS
-  project.
+- Use stdsoap2.cpp from the gSOAP package in your iOS project.
 
 The Xcode project for this example can be found in gsoap/ios_plugin/examples/Weather.
 
@@ -714,11 +732,11 @@ This generates the weather.h service definition header file with service
 operation definitions and types for the operation's data.  By default, gSOAP
 assumes you will use C++ with STL.
 
-To generate the stubs for the C++ proxy classes, run the soapcpp2.  compiler:
+To generate the stubs for the C++ proxy classes, run the soapcpp2 tool:
 
     soapcpp2 -j -CL -I$GSOAP_HOME/import weather.h
 
-Option -j tells the compiler to generate the C++ proxy class and option -CL
+Option -j tells soapcpp2 to generate the C++ proxy class and option -CL
 indicates client-side only files (soapcpp2 generates both client and server
 stubs and skeletons by default). Option -I is needed to import the
 stlvector.h file from the import directory in the gSOAP package to support
@@ -817,7 +835,7 @@ mixing Objective C and C++ code.
 @subsubsection ios_weather_step_4 Step 4: Implementing the Logic by calling the soap service
 
 Firstly, edit file main.mm to import the file GlobalWeatherSoap.nsmap. Linking
-errors would arise without importing this namespace mapping.
+errors would arise without importing this XML namespace mapping table.
 
 @code
     // File: main.mm
@@ -1005,10 +1023,21 @@ you have dom executable in your working directory, just execute the command
 
     ./domcpp -i weather.xml
 
-where weather.xml is a file that stores an example xml response. The option -i
-is what tells the dom tool to generate the code you need to parse your result.
-To obtain an example XML response, test the web service on
+where weather.xml is a file that stores an example xml response. Option -i
+tells the domcpp tool to generate the code you need to parse your result.  To
+obtain an example XML response, test the web service on
 http://www.webservicex.net/New/Home/ServiceDetail/56.
+
+The domcpp tool is found in gsoap/samples/dom and should be built in that
+directory with:
+
+    make domcpp
+
+Then move or copy the domcpp executable to use it for your projects.
+
+For more information about domcpp, read
+[XML DOM and XPath](https://www.genivia.com/doc/dom/html/index.html) of the
+gSOAP documentation.
 
 @subsection ios_example_air Air Example (C++)
 
@@ -1161,7 +1190,7 @@ mixing Objective C and C++ code.
 @subsubsection ios_air_step_4 Step 4: Implementing the Logic by calling the soap service 
 
 Firstly, edit file main.mm to import the file airportSoap.nsmap. Linking errors
-would arise without importing this namespace mapping.
+would arise without importing this XML namespace mapping table.
 
 @code
     // File: main.mm
@@ -1421,3 +1450,15 @@ where airPorts.xml is a file that stores an example xml response. The option -i
 is what tells the dom tool to generate the code you need to parse your result.
 To obtain an example XML response, test the web service on
 http://www.webservicex.net/New/Home/ServiceDetail/20.
+
+The domcpp tool is found in gsoap/samples/dom and should be built in that
+directory with:
+
+    make domcpp
+
+Then move or copy the domcpp executable to use it for your projects.
+
+For more information about domcpp, read
+[XML DOM and XPath](https://www.genivia.com/doc/dom/html/index.html) of the
+gSOAP documentation.
+

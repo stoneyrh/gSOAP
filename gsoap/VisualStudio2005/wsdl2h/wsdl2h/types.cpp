@@ -287,12 +287,12 @@ int Types::read(const char *file)
               usetypemap[s] = estrdupf(xsd);
             if (*ptr)
               ptrtypemap[s] = estrdupf(ptr);
-	    else
-	    {
-	      MapOfStringToString::iterator i = ptrtypemap.find(s);
-	      if (i != ptrtypemap.end())
-		ptrtypemap.erase(i);
-	    }
+            else
+            {
+              MapOfStringToString::iterator i = ptrtypemap.find(s);
+              if (i != ptrtypemap.end())
+                ptrtypemap.erase(i);
+            }
           }
         }
       }
@@ -797,12 +797,12 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
             }
             else
             {
-              s = utf8(&t, s, t == buf);
+              s = utf8(&t, s, t == buf) - 1;
             }
           }
           else
           {
-            s = utf8(&t, s, t == buf);
+            s = utf8(&t, s, t == buf) - 1;
           }
         }
         if (!prefix || *prefix != '*')
@@ -835,7 +835,7 @@ const char *Types::fname(const char *prefix, const char *URI, const char *qname,
       }
       else
       {
-        s = utf8(&t, s, t == buf);
+        s = utf8(&t, s, t == buf) - 1;
       }
     }
     *t = '\0';
@@ -1317,7 +1317,7 @@ bool Types::is_choicetype(const char *prefix, const char *URI, const char *type)
   // TODO: consider c11flag also safe, but classes containing unions must define assignment ops using the selector(s)
   if (cflag)
     return true;
-  if (!strcmp(type, "xs:byte"))
+  if (type && !strcmp(type, "xs:byte"))
     return true;
   const char *t = tname(prefix, URI, type);
   return (
@@ -1376,7 +1376,7 @@ bool Types::is_ptr(const char *prefix, const char *URI, const char *qname)
     {
       s = strchr(s + 1, '*');
       if (s && *(s-1) != '/' && *(s+1) != '/')
-	return true;
+        return true;
     }
   }
   return false;
@@ -2262,7 +2262,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
   if (complexType.simpleContent)
   {
     if (!anonymous)
-      fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with simpleContent.\n///\n", URI ? URI : "", name, complexType.abstract ? "n abstract" : "");
+      fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with simpleContent.\n///\n", URI ? URI : "", name ? name : "", complexType.abstract ? "n abstract" : "");
     document(complexType.annotation);
     if (!complexType.assert.empty())
     {
@@ -2494,7 +2494,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
     if (complexType.complexContent->restriction)
     {
       if (!anonymous)
-        fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with complexContent restriction of XSD type %s.\n///\n", URI ? URI : "", name, complexType.abstract ? "n abstract" : "", complexType.complexContent->restriction->base);
+        fprintf(stream, "/// @brief \"%s\":%s is a%s complexType with complexContent restriction of XSD type %s.\n///\n", URI ? URI : "", name ? name : "", complexType.abstract ? "n abstract" : "", complexType.complexContent->restriction->base);
       document(complexType.annotation);
       document(complexType.complexContent->annotation);
       document(complexType.complexContent->restriction->annotation);
@@ -2700,7 +2700,7 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
   else
   {
     if (!anonymous)
-      fprintf(stream, "/// @brief \"%s\":%s is a%s complexType.\n///\n", URI ? URI : "", name, complexType.abstract ? "n abstract" : "");
+      fprintf(stream, "/// @brief \"%s\":%s is a%s complexType.\n///\n", URI ? URI : "", name ? name : "", complexType.abstract ? "n abstract" : "");
     document(complexType.annotation);
     operations(t);
     if (anonymous)
@@ -2782,7 +2782,8 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
     }
     fprintf(stream, "};\n\n");
   }
-  scope.pop_back();
+  if (name)
+    scope.pop_back();
 }
 
 void Types::gen(const char *URI, const vector<xs__attribute>& attributes)
@@ -3336,12 +3337,12 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       }
       else
       {
-	if (with_union)
-	  s = ">*";
-	else
-	  s = ">";
+        if (with_union)
+          s = ">*";
+        else
+          s = ">";
         fprintf(stream, "/// Vector of %s of length %s..%s.\n", name, min ? min : "1", max);
-	fprintf(stream, templateformat_open, vname("$CONTAINER"), "\n");
+        fprintf(stream, templateformat_open, vname("$CONTAINER"), "\n");
       }
       nillable = false;
     }
@@ -3389,10 +3390,10 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       }
       else
       {
-	if (with_union)
-	  s = "}>*";
-	else
-	  s = "}>";
+        if (with_union)
+          s = "}>*";
+        else
+          s = "}>";
         fprintf(stream, "/// Vector of %s of length %s..%s.\n", name, min ? min : "1", max);
         fprintf(stream, templateformat_open, vname("$CONTAINER"), "\n");
       }
@@ -3442,10 +3443,10 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       else
       {
         fprintf(stream, "/// Vector of %s of length %s..%s.\n", element.ref, min ? min : "1", max);
-	if (with_union)
-	  fprintf(stream, pointertemplateformat, vname("$CONTAINER"), tname("_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
-	else
-	  fprintf(stream, templateformat, vname("$CONTAINER"), tname("_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
+        if (with_union)
+          fprintf(stream, pointertemplateformat, vname("$CONTAINER"), tname("_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
+        else
+          fprintf(stream, templateformat, vname("$CONTAINER"), tname("_", NULL, element.ref), aname(nameprefix, nameURI, element.ref));
       }
       nillable = false;
     }
@@ -3515,13 +3516,13 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     if (default_)
     {
       if ((!min || !strcmp(min, "0") || !strcmp(min, "1")) && (!max || !strcmp(max, "0") || !strcmp(max, "1"))) // min/maxOccurs <= "0"
-	gendefault(typeURI ? typeURI : URI, type, name, element.simpleTypePtr(), default_, default__, "=");
+        gendefault(typeURI ? typeURI : URI, type, name, element.simpleTypePtr(), default_, default__, "=");
       fprintf(stream, ";\t///< %s with default value=\"%s\".\n", s, default_);
     }
     else if (fixed)
     {
       if ((!min || !strcmp(min, "0") || !strcmp(min, "1")) && (!max || !strcmp(max, "0") || !strcmp(max, "1"))) // min/maxOccurs <= "0"
-	gendefault(typeURI ? typeURI : URI, type, name, element.simpleTypePtr(), fixed, fixed, "==");
+        gendefault(typeURI ? typeURI : URI, type, name, element.simpleTypePtr(), fixed, fixed, "==");
       fprintf(stream, ";\t///< %s with fixed value=\"%s\".\n", s, fixed);
     }
     else
@@ -4006,7 +4007,10 @@ void Types::gen_substitutions(const char *URI, const xs__element& element)
     with_union = tmp_union;
     if (!with_union || wrap_union)
     {
-      fprintf(stream, elementformat, "}", s[0] == '_' && s[1] == '_' ? s+2 : s);
+      if (s)
+        fprintf(stream, elementformat, "}", s[0] == '_' && s[1] == '_' ? s+2 : s);
+      else
+        fprintf(stream, elementformat, "}", t[0] == '_' ? t+1 : t);
       fprintf(stream, ";\n");
     }
   }
@@ -4282,14 +4286,14 @@ static const char *fill(char *t, int n, const char *s, int e)
 static const char *utf8(char **t, const char *s, bool start)
 {
   unsigned int c = 0;
-  unsigned int c1, c2, c3, c4;
+  unsigned int c1, c2, c3;
   const char *r = s;
-  c = (unsigned char)*r;
+  c = (unsigned char)*r++;
   if (c >= 0x80)
   {
-    c1 = (unsigned char)*++r;
-    if (c1 < 0x80)
-      r--;
+    c1 = (unsigned char)*r++;
+    if (c < 0xC0 || (c1 & 0xC0) != 0x80)
+      r--; /* doesn't look like this is UTF-8, try continue as if ISO-8859-1 */
     else
     {
       c1 &= 0x3F;
@@ -4297,21 +4301,21 @@ static const char *utf8(char **t, const char *s, bool start)
         c = ((c & 0x1F) << 6) | c1;
       else
       {
-        c2 = (unsigned char)*++r & 0x3F;
-        if (c < 0xF0)
-          c = ((c & 0x0F) << 12) | (c1 << 6) | c2;
+        c2 = (unsigned char)*r++;
+        if ((c == 0xE0 && c1 < 0x20) || (c2 & 0xC0) != 0x80)
+          r -= 2; /* doesn't look like this is UTF-8, try continue as if ISO-8859-1 */
         else
         {
-          c3 = (unsigned char)*++r & 0x3F;
-          if (c < 0xF8)
-            c = ((c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | c3;
+          c2 &= 0x3F;
+          if (c < 0xF0)
+            c = ((c & 0x0F) << 12) | (c1 << 6) | c2;
           else
           {
-            c4 = (unsigned char)*++r & 0x3F;
-            if (c < 0xFC)
-              c = ((c & 0x03) << 24) | (c1 << 18) | (c2 << 12) | (c3 << 6) | c4;
+            c3 = (unsigned char)*r++;
+            if ((c == 0xF0 && c1 < 0x10) || (c == 0xF4 && c1 >= 0x10) || c >= 0xF5 || (c3 & 0xC0) != 0x80)
+              r -= 3; /* doesn't look like this is UTF-8, try continue as if ISO-8859-1 */
             else
-              c = ((c & 0x01) << 30) | (c1 << 24) | (c2 << 18) | (c3 << 12) | (c4 << 6) | (*++r & 0x3F);
+              c = ((c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | (c3 & 0x3F);
           }
         }
       }
@@ -4377,12 +4381,12 @@ static const char *utf8(char **t, const char *s, bool start)
       )
      )
   {
-    soap_strncpy(*t, 7, s, r - s + 1);
-    *t += r - s + 1;
+    soap_strncpy(*t, 7, s, r - s);
+    *t += r - s;
   }
   else
   {
-    // encode up to UCS4 only
+    // encode up to UCS2 only
     if (c > 0xFFFF)
       c = 0xFFFF;
     (SOAP_SNPRINTF(*t, 7, 6), "_x%4.4x", c);
@@ -4575,6 +4579,8 @@ static void operations(const char *t)
 
 void *emalloc(size_t size)
 {
+  // we will not always make an attempt to release this heap memory
+  // since the wsdl2h tool needs heap allocated data until it terminates
   void *p = malloc(size);
   if (!p)
   {

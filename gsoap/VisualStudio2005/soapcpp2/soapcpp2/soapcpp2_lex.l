@@ -237,7 +237,7 @@ install_id()
 */ 
 static Token
 install_tag()
-{       yylval.s = (char*)emalloc(yyleng-1);    /* yyleng = length(yytext) */
+{       yylval.s = (char*)emalloc(yyleng);    /* yyleng = length(yytext) */
         strcpy(yylval.s, yytext+1);
         yylval.s[yyleng-2] = '\0';
         return TAG;

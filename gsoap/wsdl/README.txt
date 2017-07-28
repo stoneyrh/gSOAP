@@ -206,13 +206,19 @@ If you don't have OpenSSL installed, you cannot build an SSL-secure version of
 wsdl2h. In that case we recommend downloading the WSDL and schema files for
 processing with the non-SSL-enabled wsdl2h tool.
 
+A NOTE ON HEAP MEMORY USAGE
+
+Parts of the wsdl2h tool allocate heap memory during its execution to maintain
+critical state information during its execution.  No attempt is made to release
+this memory before the program terminates.
+
 LICENSE
 
-The gSOAP WSDL parser 'wsdl2h' and source code are released under GPL or
-a commercial license. The commercial license is available from Genivia.
+The gSOAP WSDL parser 'wsdl2h' and source code are released under GPLv2 or a
+commercial license. The commercial license is available from Genivia.
 Please visit http://genivia.com/Products/gsoap/contract.html
 
 COPYRIGHT NOTICE
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2013, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2000-2017, Robert van Engelen, Genivia, Inc. All Rights Reserved.

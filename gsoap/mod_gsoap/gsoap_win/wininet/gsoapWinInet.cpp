@@ -201,12 +201,32 @@ wininet_init(
     }
 
     /* set the timeouts, if any of these fail the error isn't fatal */
-    wininet_set_timeout( soap, a_pData, "connect", 
-        INTERNET_OPTION_CONNECT_TIMEOUT, soap->connect_timeout );
-    wininet_set_timeout( soap, a_pData, "receive", 
-        INTERNET_OPTION_RECEIVE_TIMEOUT, soap->recv_timeout );
-    wininet_set_timeout( soap, a_pData, "send",    
-        INTERNET_OPTION_SEND_TIMEOUT, soap->send_timeout );
+    if ( soap->connect_timeout > 0 )
+      wininet_set_timeout( soap, a_pData, "connect", INTERNET_OPTION_CONNECT_TIMEOUT, 1000 * soap->connect_timeout );
+    else if ( soap->connect_timeout < 0 )
+      wininet_set_timeout( soap, a_pData, "connect", INTERNET_OPTION_CONNECT_TIMEOUT, -soap->connect_timeout/1000 );
+
+    if ( soap->transfer_timeout > 0 )
+    {
+      wininet_set_timeout( soap, a_pData, "receive", INTERNET_OPTION_RECEIVE_TIMEOUT, 1000 * soap->transfer_timeout );
+      wininet_set_timeout( soap, a_pData, "send",    INTERNET_OPTION_SEND_TIMEOUT, 1000 * soap->transfer_timeout );
+    }
+    else if (soap->transfer_timeout < 0 )
+    {
+      wininet_set_timeout( soap, a_pData, "receive", INTERNET_OPTION_RECEIVE_TIMEOUT, -soap->transfer_timeout/1000 );
+      wininet_set_timeout( soap, a_pData, "send",    INTERNET_OPTION_SEND_TIMEOUT, -soap->transfer_timeout/1000 );
+    }
+    else
+    {
+      if ( soap->recv_timeout > 0 )
+	wininet_set_timeout( soap, a_pData, "receive", INTERNET_OPTION_RECEIVE_TIMEOUT, 1000 * soap->recv_timeout );
+      else if ( soap->recv_timeout < 0 )
+	wininet_set_timeout( soap, a_pData, "receive", INTERNET_OPTION_RECEIVE_TIMEOUT, -soap->recv_timeout/1000 );
+      if ( soap->send_timeout > 0 )
+	wininet_set_timeout( soap, a_pData, "send",    INTERNET_OPTION_SEND_TIMEOUT, 1000 * soap->send_timeout );
+      else if ( soap->send_timeout < 0 )
+	wininet_set_timeout( soap, a_pData, "send",    INTERNET_OPTION_SEND_TIMEOUT, -soap->send_timeout/1000 );
+    }
 
     /* set up the callback function so we get notifications */
     InternetSetStatusCallback( a_pData->hInternet, wininet_callback );
@@ -404,6 +424,7 @@ wininet_connect(
       default:
           pszVerb = "POST";
     }
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "wininet %p: %s %s\n", soap, pszVerb, szUrlPath));
 
     hHttpRequest = HttpOpenRequestA( hConnection, pszVerb, szUrlPath, "HTTP/1.1", NULL, NULL, dwFlags, (DWORD_PTR) soap );
     if ( !hHttpRequest )
@@ -521,7 +542,7 @@ wininet_fsend(
     BOOL        bRetryPost;
     DWORD       dwStatusCode;
     DWORD       dwStatusCodeLen;
-    int         nResult = SOAP_OK;
+	int         nResult = SOAP_OK;
     struct wininet_data * pData = 
         (struct wininet_data *) soap_lookup_plugin( soap, wininet_id );
 
@@ -833,6 +854,8 @@ wininet_frecv(
 
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, 
         "wininet %p: recv, received %lu bytes\n", soap, uiTotalBytesRead ));
+	
+	soap->length += uiTotalBytesRead;
 
     return uiTotalBytesRead;
 } 
@@ -857,7 +880,7 @@ wininet_disconnect(
     pData->bDisconnect = TRUE;
     wininet_have_connection( soap, pData );
 
-    return soap->error = SOAP_OK;
+    return SOAP_OK;
 }
 
 /** this is mostly for debug tracing */

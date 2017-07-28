@@ -5808,9 +5808,12 @@ enterscope - enter a new scope by pushing a new table and offset on the stack
 static void
 enterscope(Table *table, int offset)
 {
-  if (++sp == stack+MAXNEST)
-    execerror("maximum scope depth exceeded");
+  if (++sp == stack + MAXNEST)
+    execerror("maximum scope nesting depth exceeded");
   sp->table = table;
+  sp->entry = NULL;
+  sp->node.typ = mkint();
+  sp->node.sto = Snone;
   sp->val = 0;
   sp->offset = offset;
   sp->grow = True;      /* by default, offset grows */

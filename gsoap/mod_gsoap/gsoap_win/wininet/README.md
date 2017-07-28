@@ -71,9 +71,9 @@ For example, when using a proxy object in C++ generated with soapcpp2 -j:
      #include "gsoapWinInet.h"
      #include "soapProxy.h"
      Proxy proxy;
-     proxy.soap->connect_timeout = 15; // 15 sec: this will be used by wininet too
-     proxy.soap->recv_timeout = 10; // 10 sec: this will be used by wininet too
-     proxy.soap->send_timeout = 10; // 10 sec: this will be used by wininet too
+     proxy.soap->connect_timeout = 15; // 15 sec max connect time
+     proxy.soap->recv_timeout = 10;    // 10 sec max recv time
+     proxy.soap->send_timeout = 10;    // 10 sec max send time
      soap_register_plugin(proxy.soap, wininet_plugin);
      ...
      proxy.destroy(); // delete deserialized data
@@ -86,15 +86,20 @@ and in plain C/C++, that is, without a proxy object:
      #include "gsoapWinInet.h"
      struct soap soap;
      soap_init(&soap);
-     soap.connect_timeout = 15; // 15 sec: this will be used by wininet too
-     soap.recv_timeout = 10; // 10 sec: this will be used by wininet too
-     soap.send_timeout = 10; // 10 sec: this will be used by wininet too
+     soap.connect_timeout = 15;  // 15 sec max connect time
+     soap.recv_timeout = 10;     // 10 sec max recv time
+     soap.send_timeout = 10;     // 10 sec max send time
      soap_register_plugin(&soap, wininet_plugin);
      ...
      soap_destroy(&soap); // delete deserialized data
      soap_end(&soap);     // delete temporary and C-based deserialized data
      soap_done(&soap);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that the receive and send timeouts limit the time to receive and send
+data, respectively.  **This behavior differs from the gSOAP engine's timeouts
+that limit the socket receive and send operation idle times.**  The gSOAP
+engine uses `transfer_timeout` to limit the receive and send times.
 
 Please make sure to compile all sources in C++ compilation mode. If you migrate
 to a project file such as `.vcproj`, please set `CompileAs="2"` in your
@@ -109,8 +114,7 @@ with `soap_register_plugin_arg()` and supply an argument that is passed on to
 HttpOpenRequest. For example:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-     soap_register_plugin_arg(&soap, wininet_plugin,
-         (void*)INTERNET_FLAG_IGNORE_CERT_CN_INVALID);
+     soap_register_plugin_arg(&soap, wininet_plugin, (void*)INTERNET_FLAG_IGNORE_CERT_CN_INVALID);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 See the MSDN documentation on HttpOpenRequest for details of the
@@ -166,7 +170,7 @@ Contributors                                                     {#contributors}
 ============
 
 - 26 May 2003: Jack Kustanowitz (jackk@atomica.com):
-  Original version
+  Original prototype version
 - 29 September 2003: Brodie Thiesfield (code@jellycan.com):
   Rewritten as C plugin for gsoap. Bugs fixed and features added.
 - 14 January 2004: Brodie Thiesfield (code@jellycan.com):
@@ -174,7 +178,7 @@ Contributors                                                     {#contributors}
 - 17 March 2009: Brodie Thiesfield (code@jellycan.com):
   Clean up and re-release.
 - 8 October 2010: Robert van Engelen (engelen@genivia.com):
-  Cleanup and fixes for error handling.
+  Cleanup and bug fixes for error handling.
 - 28 October 2015: Robert van Engelen (engelen@genivia.com):
-  Plugin copy.
+  Plugin copy code added.
 

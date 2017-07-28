@@ -146,6 +146,12 @@ DOCUMENTATION
 
 See soapdoc2.pdf for documentation.
 
+A NOTE ON HEAP MEMORY USAGE
+
+Parts of the soapcpp2 tool allocate heap memory during its execution to
+maintain critical state information during its execution.  No attempt is made
+to release this memory before the program terminates.
+
 LICENSE
 
 The gSOAP 'soapcpp2' tool and (generated) source code are released under GPL or

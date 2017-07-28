@@ -5,7 +5,7 @@ See the README.md for details.
 #ifndef INCLUDED_gsoapWinInet2_h
 #define INCLUDED_gsoapWinInet2_h
 
-#include <stdsoap2.h>
+#include "stdsoap2.h"
 #include <wininet.h>
 
 #ifdef __cplusplus

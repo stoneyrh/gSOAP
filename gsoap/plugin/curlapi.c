@@ -535,10 +535,13 @@ static int soap_curl_send_callback(struct soap *soap, const char *buf, size_t le
     return soap->error = SOAP_PLUGIN_ERROR;
   if (!data->active)
     return data->fsend(soap, buf, len);
-  blk = (char*)soap_push_block(soap, data->lst, len);
-  if (!blk)
-    return soap->error;
-  soap_memcpy((void*)blk, len, (const void*)buf, len);
+  if (len > 0)
+  {
+    blk = (char*)soap_push_block(soap, data->lst, len);
+    if (!blk)
+      return soap->error;
+    soap_memcpy((void*)blk, len, (const void*)buf, len);
+  }
   return SOAP_OK;
 }
 
@@ -551,6 +554,8 @@ static int soap_curl_send_callback(struct soap *soap, const char *buf, size_t le
 static int soap_curl_prepare_init_recv_callback(struct soap *soap)
 {
   struct soap_curl_data *data = (struct soap_curl_data*)soap_lookup_plugin(soap, soap_curl_id);
+  long status;
+  const char *s = NULL;
   DBGFUN("soap_curl_prepare_init_recv_callback");
   if (!data || !data->curl)
     return soap->error = SOAP_PLUGIN_ERROR;
@@ -585,9 +590,22 @@ static int soap_curl_prepare_init_recv_callback(struct soap *soap)
   data->hdr = NULL;
   if (res != CURLE_OK)
     return soap_sender_fault(soap, curl_easy_strerror(res), "origin: soap_curl plugin");
-  if (data->fprepareinitrecv)
-    return data->fprepareinitrecv(soap);
-  return SOAP_OK;
+  curl_easy_getinfo(data->curl, CURLINFO_RESPONSE_CODE, &status);
+  if (!curl_easy_getinfo(data->curl, CURLINFO_CONTENT_TYPE, &s) && s)
+    soap->http_content = soap_strdup(soap, s);
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "cURL HTTP response code %ld content type %s\n", status, s ? s : ""));
+  soap->status = (int)status;
+  if ((soap->status >= 200 && soap->status <= 299) /* OK, Accepted, etc */
+   || soap->status == 400                          /* Bad Request */
+   || soap->status == 500)                         /* Internal Server Error */
+  {
+    if (data->fprepareinitrecv)
+      return data->fprepareinitrecv(soap);
+    return SOAP_OK;
+  }
+  /* read HTTP body for error details */
+  s = soap_get_http_body(soap, NULL);
+  return soap_set_receiver_error(soap, "HTTP Error", s, soap->status);
 }
 
 /**
@@ -661,6 +679,7 @@ static size_t soap_curl_recv_callback(struct soap *soap, char *buf, size_t size)
       data->lst = NULL;
     }
   }
+  soap->length += len;
   return len;
 }
 
