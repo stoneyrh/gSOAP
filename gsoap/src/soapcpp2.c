@@ -64,6 +64,7 @@ int Ecflag = 0;         /* when set, generate extra routines for data copying (s
 int Edflag = 0;         /* when set, generate extra routines for data deletion (soap_del_X) */
 int Etflag = 0;         /* when set, generate data traversal/walker routines */
 unsigned long fflag = 0;/* multi-file split for each bundle of -fN defs */
+int gflag = 0;          /* when set, generate XML sample messages in template format */
 int iflag = 0;          /* when set, generate new style proxy/object classes inherited from soap struct */
 int jflag = 0;          /* when set, generate new style proxy/object classes */
 int mflag = 0;          /* when set, generate code that requires array/binary classes to explicitly remove malloced array */
@@ -123,7 +124,7 @@ main(int argc, char **argv)
               fprintf(stderr, "soapcpp2: using both options -C and -S omits client/server code\n");
             break;
           case 'c':
-	    copt = a - 1;
+            copt = a - 1;
             if (a[1] == '+' && a[2] == '+')
             {
               a += 2;
@@ -135,9 +136,9 @@ main(int argc, char **argv)
               cflag = 0;
             }
             else
-	    {
+            {
               cflag = 1;
-	    }
+            }
             break;
           case 'd':
             a++;
@@ -181,6 +182,9 @@ main(int argc, char **argv)
             if (fflag < 10)
               fflag = 10;
             break;
+          case 'g':
+            gflag = 1;
+            break;
           case 'a':
             aflag = 1;
             break;
@@ -193,7 +197,7 @@ main(int argc, char **argv)
             break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-Ecdt] [-L] [-a] [-A] [-b] [-c|-c++|-c++11] [-d path] [-e] [-f N] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-l] [-m] [-n] [-p name] [-Q name] [-q name] [-r] [-s] [-t] [-u] [-V] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
+            fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-Ecdt] [-L] [-a] [-A] [-b] [-c|-c++|-c++11] [-d path] [-e] [-f N] [-g] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-l] [-m] [-n] [-p name] [-Q name] [-q name] [-r] [-s] [-t] [-u] [-V] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
             fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
@@ -214,6 +218,7 @@ main(int argc, char **argv)
 -dpath  use path to save files\n\
 -e      generate SOAP RPC encoding style bindings (also use -1 or -2)\n\
 -fN     multiple soapC files, with N serializer definitions per file (N>=10)\n\
+-g      generate XML sample messages in template format\n\
 -h      display help info\n\
 -Ipath  use path(s) for #import (paths separated with '" SOAP_PATHSEP "')\n\
 -i      generate C++ service proxies and objects inherited from soap struct\n\

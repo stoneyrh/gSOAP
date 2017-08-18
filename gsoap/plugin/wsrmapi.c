@@ -3692,7 +3692,6 @@ soap_wsrm_error(struct soap *soap, struct soap_wsrm_sequence *seq, enum wsrm__Fa
   if (data)
   {
     data->state = SOAP_WSRM_OFF; /* disable caching */
-    soap_wsrm_seq_release(soap, data->seq);
     data->seq = NULL;
   }
   if (seq)

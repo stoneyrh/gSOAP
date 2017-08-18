@@ -39,12 +39,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
+#include <float.h>
 #include <time.h>
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.51" /* Current version */
-# define GSOAP_VERSION 20851
+# define VERSION "2.8.52" /* Current version */
+# define GSOAP_VERSION 20852
 #endif
 
 #ifdef WIN32
@@ -231,7 +232,8 @@ typedef struct Tnode
         Symbol          *id;    /* struct/class/union/enum name */
         Symbol          *base;  /* base class name */
         Symbol          *sym;   /* typedef name */
-        Symbol          *synonym;       /* synonymous typedef base name for 'typedef base id */
+        Symbol          *restriction;   /* restriction via typedef base id */
+        Symbol          *synonym;       /* synonymous typedef base name for typedef base id */
         Symbol          *extsym;        /* typedef sym of external type w/ custom serializer */
         struct Entry    *response; /* funcs only: points to response struct */
         int             width;
@@ -418,6 +420,7 @@ extern int Ecflag;
 extern int Edflag;
 extern int Etflag;
 extern unsigned long fflag;
+extern int gflag;
 extern int iflag;
 extern int jflag;
 extern int mflag;

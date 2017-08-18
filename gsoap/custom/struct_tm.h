@@ -85,7 +85,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include <time.h>
 
-/** externally declared ("volatila"e).
+/** externally declared (and "volatile" to avoid redeclaration).
     Declared here for soapcpp2 to produce soap_dup_xsd__dateTime() */
 extern typedef volatile struct tm
 {	int	tm_sec;		///< seconds (0 - 60)

@@ -263,9 +263,8 @@ if test "x$with_openssl" = "xyes"; then
   else
     AC_MSG_RESULT(no)
     WSDL2H_EXTRA_FLAGS="-DWITH_OPENSSL -DWITH_GZIP"
-    # an ugly hack to get httpda and smdevp plugins to conditionally
     # compile with wsdl2h when OPENSSL is available
-    WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} ../plugin/httpda.c ../plugin/smdevp.c ../plugin/threads.c -lssl -lcrypto -lz"
+    WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} -lssl -lcrypto -lz"
     SAMPLE_INCLUDES=
     SAMPLE_SSL_LIBS="-lssl -lcrypto -lz"
     WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
@@ -289,6 +288,8 @@ else
   SAMPLE_INCLUDES=
   WSDL2H_SOAP_CPP_LIB="libgsoap++.a"
 fi
+AM_CONDITIONAL(WITH_OPENSSL, test "x$with_openssl" = "xyes" -a "x$with_gnutls" != "xyes")
+AC_SUBST(WITH_OPENSSL)
 AC_SUBST(WSDL2H_EXTRA_FLAGS)
 AC_SUBST(WSDL2H_EXTRA_LIBS)
 AC_SUBST(SAMPLE_INCLUDES)
@@ -380,6 +381,7 @@ AC_CONFIG_FILES([ Makefile \
     gsoap/samples/wsse/Makefile \
     gsoap/samples/wst/Makefile \
     gsoap/samples/xml-rpc-json/Makefile \
-    gsoap/samples/rest/Makefile
+    gsoap/samples/rest/Makefile \
+    gsoap/samples/testmsgr/Makefile
 ])
 AC_OUTPUT

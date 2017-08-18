@@ -117,7 +117,8 @@ static void       add_soap(void),
                   add_fault(void),
                   add_response(Entry*, Entry*),
                   add_result(Tnode*),
-                  add_request(Symbol*, Scope*);
+                  add_request(Symbol*, Scope*),
+                  add_pragma(const char*);
 
 /* imported from symbol2.c */
 extern int        is_string(Tnode*),
@@ -125,8 +126,8 @@ extern int        is_string(Tnode*),
                   is_smart(Tnode*),
                   is_XML(Tnode*),
                   is_stdXML(Tnode*),
-		  is_anyType(Tnode*),
-		  is_anyAttribute(Tnode*);
+                  is_anyType(Tnode*),
+                  is_anyAttribute(Tnode*);
 extern char       *c_storage(Storage);
 extern const char *c_type(Tnode*);
 extern int        is_primitive_or_string(Tnode*),
@@ -144,7 +145,6 @@ Symbol     *sym;
 Entry      *p, *q;
 Tnode      *t;
 Node       tmp, c;
-Pragma     **pp;
 
 %}
 
@@ -289,13 +289,7 @@ ext     : dclrs ';'     { }
                           yyerrok;
                         }
         ;
-pragma  : PRAGMA        {
-                          for (pp = &pragmas; *pp; pp = &(*pp)->next)
-                            ;
-                          *pp = (Pragma*)emalloc(sizeof(Pragma));
-                          (*pp)->pragma = $1;
-                          (*pp)->next = NULL;
-                        }
+pragma  : PRAGMA        { add_pragma($1); }
         ;
 
 /**************************************\
@@ -378,6 +372,7 @@ dclr    : ptrs ID arrayck tag bounds brinit
                               if (p->info.typ->width == 0)
                                 p->info.typ->width = 8;
                               p->info.sto = $3.sto;
+                              p->info.typ->restriction = $3.typ->sym;
                               p->info.typ->synonym = $3.typ->sym;
                               if ($5.hasmin)
                               {
@@ -468,6 +463,7 @@ dclr    : ptrs ID arrayck tag bounds brinit
                                   {
                                     semerror("type error in initialization constant");
                                     p->info.hasval = False;
+                                    p->info.ptrval = False;
                                   }
                                   break;
                                 case Tfloat:
@@ -497,6 +493,7 @@ dclr    : ptrs ID arrayck tag bounds brinit
                                   {
                                     semerror("type error in initialization constant");
                                     p->info.hasval = False;
+                                    p->info.ptrval = False;
                                   }
                                   break;
                                 default:
@@ -532,6 +529,7 @@ dclr    : ptrs ID arrayck tag bounds brinit
                                   {
                                     semerror("type error in initialization constant");
                                     p->info.hasval = False;
+                                    p->info.ptrval = False;
                                   }
                                   break;
                               }
@@ -776,8 +774,8 @@ farg    : tspec ptrs arg arrayck occurs init
                                 ((int)$4.sto & (int)Sspecial) ||
                                 $4.typ->type == Tpointer ||
                                 $4.typ->type == Ttemplate ||
-				is_anyAttribute($4.typ) ||
-				!strncmp($3->name, "__size", 6))
+                                is_anyAttribute($4.typ) ||
+                                !strncmp($3->name, "__size", 6))
                               p->info.minOccurs = 0;
                             else
                               p->info.minOccurs = 1;
@@ -828,6 +826,7 @@ farg    : tspec ptrs arg arrayck occurs init
                                 {
                                   semerror("type error in initialization constant");
                                   p->info.hasval = False;
+                                  p->info.ptrval = False;
                                 }
                                 break;
                               case Tfloat:
@@ -857,6 +856,7 @@ farg    : tspec ptrs arg arrayck occurs init
                                 {
                                   semerror("type error in initialization constant");
                                   p->info.hasval = False;
+                                  p->info.ptrval = False;
                                 }
                                 break;
                               default:
@@ -877,6 +877,7 @@ farg    : tspec ptrs arg arrayck occurs init
                                 {
                                   semerror("type error in initialization constant");
                                   p->info.hasval = False;
+                                  p->info.ptrval = False;
                                 }
                                 break;
                             }
@@ -1580,32 +1581,40 @@ type    : VOID          { $$ = mkvoid(); }
                           }
                           else if ($1 == lookup("std::deque"))
                           {
-                            semwarn("To use std::deque, please also add #import \"import/stldeque.h\"");
-                            $$ = mktemplate($3.typ, $1);
+                            add_pragma("#include <deque>");
+                            p = enter(templatetable, $1);
+                            $$ = p->info.typ = mktemplate($3.typ, $1);
                           }
                           else if ($1 == lookup("std::list"))
                           {
-                            semwarn("To use std::list, please also add #import \"import/stllist.h\"");
-                            $$ = mktemplate($3.typ, $1);
+                            add_pragma("#include <list>");
+                            p = enter(templatetable, $1);
+                            $$ = p->info.typ = mktemplate($3.typ, $1);
                           }
                           else if ($1 == lookup("std::vector"))
                           {
-                            semwarn("To use std::vector, please also add #import \"import/stlvector.h\"");
-                            $$ = mktemplate($3.typ, $1);
+                            add_pragma("#include <vector>");
+                            p = enter(templatetable, $1);
+                            $$ = p->info.typ = mktemplate($3.typ, $1);
                           }
                           else if ($1 == lookup("std::set"))
                           {
-                            semwarn("To use std::set, please also add #import \"import/stlset.h\"");
-                            $$ = mktemplate($3.typ, $1);
+                            add_pragma("#include <set>");
+                            p = enter(templatetable, $1);
+                            $$ = p->info.typ = mktemplate($3.typ, $1);
                           }
                           else if ($1 == lookup("std::queue"))
                           {
-                            $$ = mktemplate($3.typ, $1);
+                            add_pragma("#include <queue>");
+                            p = enter(templatetable, $1);
+                            $$ = p->info.typ = mktemplate($3.typ, $1);
                             $$->transient = 1; /* not serializable */
                           }
                           else if ($1 == lookup("std::stack"))
                           {
-                            $$ = mktemplate($3.typ, $1);
+                            add_pragma("#include <stack>");
+                            p = enter(templatetable, $1);
+                            $$ = p->info.typ = mktemplate($3.typ, $1);
                             $$->transient = 1; /* not serializable */
                           }
                           else if ($1 == lookup("std::shared_ptr") ||
@@ -2294,7 +2303,10 @@ lexp    : '!' lexp      {
                           if ($2.typ->type == Tpointer)
                             $$.typ = (Tnode*)$2.typ->ref;
                           else
+                          {
                             typerror("dereference of non-pointer type");
+                            $$.typ = $2.typ;
+                          }
                           $$.sto = Snone;
                           $$.hasval = False;
                         }
@@ -2363,9 +2375,6 @@ pexp    : '(' expr ')'  { $$ = $2; }
 
 %%
 
-/*
- * ???
- */
 int
 yywrap(void)
 {
@@ -2397,8 +2406,8 @@ op(const char *op, Node p, Node q)
         case '+': r.val.i = p.val.i +  q.val.i; break;
         case '-': r.val.i = p.val.i -  q.val.i; break;
         case '*': r.val.i = p.val.i *  q.val.i; break;
-        case '/': r.val.i = p.val.i /  q.val.i; break;
-        case '%': r.val.i = p.val.i %  q.val.i; break;
+        case '/': r.val.i = q.val.i != 0 ? p.val.i / q.val.i : 0; break;
+        case '%': r.val.i = q.val.i != 0 ? p.val.i % q.val.i : 0; break;
         default:  typerror(op);
       }
     else if (real(p.typ) && real(q.typ))
@@ -2407,7 +2416,7 @@ op(const char *op, Node p, Node q)
         case '+': r.val.r = p.val.r + q.val.r; break;
         case '-': r.val.r = p.val.r - q.val.r; break;
         case '*': r.val.r = p.val.r * q.val.r; break;
-        case '/': r.val.r = p.val.r / q.val.r; break;
+        case '/': r.val.r = q.val.r != 0 ? p.val.r / q.val.r : 0.0; break;
         default:  typerror(op);
       }
     else
@@ -2568,6 +2577,12 @@ numeric(Tnode *typ)
   return integer(typ) || real(typ);
 }
 
+/**************************************\
+
+        Type additions
+
+\**************************************/
+
 static void
 add_fault(void)
 {
@@ -2695,6 +2710,8 @@ add_soap(void)
   p->info.typ = mkstruct(NULL, 0);
   p->info.typ->transient = -2;
   p->info.typ->id = s;
+  p->filename = "(built-in)";
+  p->lineno = 0;
 }
 
 static void
@@ -2705,6 +2722,8 @@ add_XML(void)
   p = enter(typetable, s);
   xml = p->info.typ = mksymtype(mkstring(), s);
   p->info.sto = Stypedef;
+  p->filename = "(built-in)";
+  p->lineno = 0;
 }
 
 static void
@@ -2715,6 +2734,8 @@ add_qname(void)
   p = enter(typetable, s);
   qname = p->info.typ = mksymtype(mkstring(), s);
   p->info.sto = Stypedef;
+  p->filename = "(built-in)";
+  p->lineno = 0;
 }
 
 static void
@@ -2839,4 +2860,21 @@ add_request(Symbol *sym, Scope *sp)
       }
     }
   }
+}
+
+/**************************************\
+
+        Add pragma
+
+\**************************************/
+
+static void
+add_pragma(const char *s)
+{
+  Pragma **pp;
+  for (pp = &pragmas; *pp; pp = &(*pp)->next)
+    ;
+  *pp = (Pragma*)emalloc(sizeof(Pragma));
+  (*pp)->pragma = s;
+  (*pp)->next = NULL;
 }

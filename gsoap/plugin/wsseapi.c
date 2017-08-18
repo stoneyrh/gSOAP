@@ -5966,9 +5966,12 @@ soap_wsse_set_InclusiveNamespaces(struct soap *soap, const char *prefixlist)
     if (prefixlist)
     {
       size_t l = strlen(prefixlist);
+      if (l + 1 < l || (SOAP_MAXALLOCSIZE > 0 && l > SOAP_MAXALLOCSIZE))
+        return soap->error = SOAP_EOM;
       s = (char*)SOAP_MALLOC(soap, l + 1);
-      if (s)
-        soap_strcpy(s, l + 1, prefixlist);
+      if (!s)
+        return soap->error = SOAP_EOM;
+      soap_strcpy(s, l + 1, prefixlist);
     }
     data->prefixlist = s;
   }

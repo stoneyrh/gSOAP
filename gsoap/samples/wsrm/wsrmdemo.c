@@ -739,11 +739,12 @@ int ns__wsrmdemo(struct soap *soap, char *in, struct ns__wsrmdemoResponse *resul
   /* for fatal errors that terminate the sequence, we must call soap_wsrm_sender_fault() before soap_wsrm_check() */
   if (in && !strcmp(in, "error"))
   { /* this is fatal, we terminate the sequence */
+    int err;
     soap_wsrm_sequence_handle seq = soap_wsrm_seq(soap);
-    soap_wsrm_error(soap, seq, wsrm__SequenceTerminated);
+    err = soap_wsrm_error(soap, seq, wsrm__SequenceTerminated);
     soap_wsrm_seq_release(soap, seq);
     printf("\n**** Simulating Server Operation Fatal Error\n");
-    return soap_wsrm_sender_fault(soap, "The demo service wsrmdemo() operation generated a fatal error", NULL);
+    return err;
   }
 
   /* simulate a non-fatal user-defined error, which is can be relayed */

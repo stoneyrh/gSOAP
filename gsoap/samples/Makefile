@@ -245,8 +245,9 @@ SOAPCPP2_NONAMESPACES =
 SOAPCPP2_NO_C_LOCALE = 
 STRIP = 
 VERSION = 2.8
+WITH_OPENSSL = 
 WSDL2H_EXTRA_FLAGS = -I/usr/local/opt/openssl/include -DWITH_OPENSSL -DWITH_GZIP
-WSDL2H_EXTRA_LIBS = -L/usr/local/opt/openssl/lib  ../plugin/httpda.c ../plugin/smdevp.c ../plugin/threads.c -lssl -lcrypto -lz
+WSDL2H_EXTRA_LIBS = -L/usr/local/opt/openssl/lib  -lssl -lcrypto -lz
 WSDL2H_IMPORTPATH = -DWSDL2H_IMPORT_PATH="\"${datarootdir}/gsoap/WS\""
 WSDL2H_SOAP_CPP_LIB = libgsoapssl++.a
 YACC = bison -y
@@ -313,7 +314,7 @@ SUBDIRS = \
 	gmt googleapi hello httpcookies lu magic mashup mashup++ \
 	chaining chaining++ primes \
 	mtom mtom-stream polytest roll router atom rss ssl template udp varparam \
-	wsa wsrm wsse wst xml-rpc-json rest
+	wsa wsrm wsse wst xml-rpc-json rest testmsgr
 
 all: all-recursive
 

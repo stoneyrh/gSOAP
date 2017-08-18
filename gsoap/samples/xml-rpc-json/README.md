@@ -84,7 +84,7 @@ followed by the results displayed in the terminal:
     cat menu.json
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       "menu": {
         "id": "file",
@@ -219,7 +219,7 @@ Let's apply this query to the `store.json` file that you can find in section
     ./query < store.json
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [
       "Nigel Rees",
       "Evelyn Waugh",
@@ -278,15 +278,13 @@ You will find jsoncpp and the XML-RPC/JSON examples in the gSOAP package in
 `gsoap/samples/xml-rpc-json`.
 
 To build jsoncpp, [install gSOAP](http://www.genivia.com/downloads.html) and build
-all sample codes as follows:
+jsoncpp as follows:
 
-    ./configure --enable-samples
-    make
-    sudo make install
+    cd gsoap/samples/xml-rpc-json
+    make jsoncpp
 
-This builds all of the gSOAP tools, libraries, and examples including the
-command-line tool jsoncpp in `gsoap/samples/xml-rpc-json` from where you can
-use it and/or copy it for use with your projects.
+This builds the command-line tool jsoncpp in `gsoap/samples/xml-rpc-json` from
+where you can use it and/or copy it for use with your projects.
 
 If you do not have the samples built, you can use soapcpp2 (or soapcpp2.exe
 in `gsoap/bin/win32`) from the command line to generate the C++ code required
@@ -446,7 +444,7 @@ located at increasingly deeper levels of the data structure.
 Consider the following JSON data:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       "store": {
         "book": [ 
@@ -1602,7 +1600,7 @@ The [JSON-RPC 1.0 specification](http://json-rpc.org/wiki/specification) (the
 request message:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       "method": "echo",
       "params": [ "Hello World!" ],
@@ -1620,7 +1618,7 @@ where:
 A response message has a `result` field, an `error` field, and an `id`:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       "result": "Welcome!",
       "error": null,
@@ -1641,7 +1639,7 @@ was no error triggered during invocation.  The 2.0 specification adds a
 `jsonrpc` field in the request message:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       "jsonrpc": 2.0,
       "method": "echo",
@@ -1654,7 +1652,7 @@ was no error triggered during invocation.  The 2.0 specification adds a
 and also adds the `jsonrpc` field to the response message:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       "jsonrpc": 2.0,
       "result": "Welcome!",
@@ -2495,7 +2493,7 @@ The [JSON-RPC 1.0 specification](http://json-rpc.org/wiki/specification) (the
 request message:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       "method": "echo",
       "params": [ "Hello World!" ],
@@ -2513,7 +2511,7 @@ where:
 A response message has a `result` field, an `error` field, and an `id`:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       "result": "Welcome!",
       "error": null,
@@ -2534,7 +2532,7 @@ was no error triggered during invocation.  The 2.0 specification adds a
 `jsonrpc` field in the request message:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       "jsonrpc": 2.0,
       "method": "echo",
@@ -2547,7 +2545,7 @@ was no error triggered during invocation.  The 2.0 specification adds a
 and also adds the `jsonrpc` field to the response message:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.js}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       "jsonrpc": 2.0,
       "result": "Welcome!",
@@ -2778,4 +2776,8 @@ forgiving, meaning that it parses the following extensions:
 - To parse JSON data from files use the `SOAP_ENC_PLAIN` flag to set the
   context, otherwise files containing just the JSON values `true`, `false`, and
   `null` are not parsed.
+ 
+Copyright                                                           {#copyright}
+=========
 
+Copyright (c) 2017, Robert van Engelen, Genivia Inc. All rights reserved.

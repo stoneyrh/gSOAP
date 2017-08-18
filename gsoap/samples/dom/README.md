@@ -32,9 +32,14 @@ and XPath code to query a DOM.  The generated code uses the DOM API
 transparently in C and C++ (C++ by default and pure C as an option).  So it is
 easy to get familiar with the DOM API by using the domcpp tool.  In the first
 part of this introduction we show how to effectively use the domcpp tool to get
-started.
+started.  The **domcpp** application is located in the gSOAP distribution
+package under `gsoap/samples/dom` and is built with:
 
-This document describes both the C and C++/C++11 APIs, see table of contents.
+    cd gsoap/samples/dom
+    make domcpp
+
+This document describes **domcpp** and the C and C++/C++11 DOM APIs of gSOAP,
+see table of contents.
 
 XML DOM and gSOAP                                                     {#intro-1}
 -----------------
@@ -53,7 +58,7 @@ followed by the results displayed in the terminal:
     cat menu.xml
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.txt}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     <menu id="file" value="File">
       <popup>
         <menuitem value="New" onclick="CreateNewDoc()" />
@@ -198,7 +203,7 @@ Let's apply this query to the `store.xml` file that you can find in section
     ./query < store.xml
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.txt}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     <results>
       <result author="Nigel Rees"/>
       <result author="Evelyn Waugh"/>
@@ -346,7 +351,7 @@ an element (at line 15) because by convention  the `_t__time` type name is
 prefixed with a `_`:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.txt}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     <schema targetNamespace="urn:demotime"
         xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
         xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
@@ -451,11 +456,10 @@ You will find domcpp and the XML DOM examples in the gSOAP package in
 `gsoap/samples/dom`.
 
 To build domcpp, [install gSOAP](http://www.genivia.com/downloads.html) and
-build all sample codes as follows:
+build domcpp as follows:
 
-    ./configure --enable-samples
-    make
-    make install
+    cd gsoap/samples/dom
+    make domcpp
 
 This builds the command-line tool domcpp in `gsoap/samples/dom` from where you
 can use it and/or copy it for use with your projects.
@@ -468,7 +472,7 @@ for domcpp:
     soapcpp2 -CSL ../../import/dom.h
     c++ -I../.. -o domcpp domcpp.cpp soapC.cpp ../../dom.cpp ../../stdsoap2.cpp
 
-The above builds the domcpp command-line tool.
+This builds the domcpp command-line tool.
 
 Command-line options                                                 {#domcpp-2}
 --------------------
@@ -624,7 +628,7 @@ XPath by example                                                     {#domcpp-4}
 Consider the following XML document:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.txt}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     <store>
       <book
         category="reference"
@@ -859,7 +863,7 @@ Consider for example the XML document with elements and attributes in three
 distinct XML namespaces `"urn:one"`, `"urn:two"`, and `"urn:three"`:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.txt}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     <x:e1 a1="1" xmlns:x="urn:one" xmlns:y="urn:two" y:a2="2">
       <e2 xmlns="urn:three" a3="3">
         <e3 />
@@ -2311,7 +2315,7 @@ soapcpp2 in `gsoap/samples/calc++`.  This XML message contains a SOAP request
 to add two floating point values:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.txt}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     <?xml version="1.0" encoding="UTF-8"?>
     <SOAP-ENV:Envelope
       xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
@@ -2339,7 +2343,7 @@ We copied the generated code into `dom2calc.cpp` as shown further below.
 A sample SOAP response message `calc.add.res.xml` from the calculator service is:
 
 <div class="alt">
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.txt}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     <?xml version="1.0" encoding="UTF-8"?>
     <SOAP-ENV:Envelope
       xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
@@ -2505,3 +2509,8 @@ as follows:
     struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
     ctx->double_format = "%lG";
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Copyright                                                           {#copyright}
+=========
+
+Copyright (c) 2017, Robert van Engelen, Genivia Inc. All rights reserved.

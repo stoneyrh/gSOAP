@@ -45,8 +45,8 @@ int main()
   struct value *request = new_value(ctx);
   struct value response;
 
-  ctx->send_timeout = 10; /* 10 sec, stop if server is not accepting msg */
-  ctx->recv_timeout = 10; /* 10 sec, stop if server does not respond in time */
+  ctx->send_timeout = 5; /* 5 sec max socket idle time */
+  ctx->recv_timeout = 5; /* 5 sec max socket idle time */
 
   /* make the JSON REST POST request and get response */
   *string_of(request) = "getCurrentTime";

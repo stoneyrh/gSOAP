@@ -6,13 +6,13 @@
 AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 
 CPPFLAGS=-I$(top_srcdir)/gsoap -I$(top_srcdir)/gsoap/plugin
-AM_LDFLAGS=$(CPPFLAGS) -I$(srcdir) -L$(srcdir)
+AM_LDFLAGS=$(CPPFLAGS) -I$(top_srcdir)/gsoap/samples/autotest -L$(top_srcdir)/gsoap/samples/autotest
 SOAP=$(top_srcdir)/gsoap/src/soapcpp2$(EXEEXT)
 WSDL=$(top_srcdir)/gsoap/wsdl/wsdl2h$(EXEEXT)
-WSDL_FLAGS=-d -P -t $(srcdir)/typemap.dat
+WSDL_FLAGS=-d -P -t $(top_srcdir)/gsoap/samples/autotest/typemap.dat
 SOAP_FLAGS=-SL -T -I$(top_srcdir)/gsoap/import -I$(top_srcdir)/gsoap/custom
-WSDLINPUT=$(srcdir)/examples.wsdl
-SOAPHEADER=$(srcdir)/examples.h
+WSDLINPUT=$(top_srcdir)/gsoap/samples/autotest/examples.wsdl
+SOAPHEADER=$(top_srcdir)/gsoap/samples/autotest/examples.h
 SOAP_CPP_SRC=soapC.cpp soapServer.cpp
 SOAP_CPP_LIB=$(top_builddir)/gsoap/libgsoap++.a
 

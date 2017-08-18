@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.51
+        DOM API v5 gSOAP 2.8.52
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20851
+#define GSOAP_LIB_VERSION 20852
 
 #include "stdsoap2.h"
 
@@ -215,6 +215,8 @@ out_element(struct soap *soap, const struct soap_dom_element *node, const char *
     if (prefix && *prefix)
     {
       size_t l = strlen(prefix) + strlen(name);
+      if (l + 2 < l || (SOAP_MAXALLOCSIZE > 0 && l + 2 > SOAP_MAXALLOCSIZE))
+        return soap->error = SOAP_EOM;
       s = (char*)SOAP_MALLOC(soap, l + 2);
       if (!s)
         return soap->error = SOAP_EOM;
@@ -237,6 +239,8 @@ out_element(struct soap *soap, const struct soap_dom_element *node, const char *
   {
     size_t l = strlen(prefix) + strlen(name);
     char *s;
+    if (l + 2 < l || (SOAP_MAXALLOCSIZE > 0 && l + 2 > SOAP_MAXALLOCSIZE))
+      return soap->error = SOAP_EOM;
     if (l + 1 < sizeof(soap->msgbuf))
     {
       s = soap->msgbuf;
@@ -288,8 +292,12 @@ out_attribute(struct soap *soap, const char *prefix, const char *name, const cha
   else
     t = name;
   l = strlen(prefix) + strlen(t);
+  if (l + 2 < l || (SOAP_MAXALLOCSIZE > 0 && l + 2 > SOAP_MAXALLOCSIZE))
+    return soap->error = SOAP_EOM;
   if (l + 1 < sizeof(soap->msgbuf))
+  {
     s = soap->msgbuf;
+  }
   else
   {
     s = (char*)SOAP_MALLOC(soap, l + 2);
@@ -444,8 +452,12 @@ soap_out_xsd__anyType(struct soap *soap, const char *tag, int id, const struct s
         {
           char *s;
           size_t l = strlen(prefix) + strlen(tag);
+          if (l + 2 < l || (SOAP_MAXALLOCSIZE > 0 && l + 2 > SOAP_MAXALLOCSIZE))
+            return soap->error = SOAP_EOM;
           if (l + 1 < sizeof(soap->msgbuf))
+          {
             s = soap->msgbuf;
+          }
           else
           {
             s = (char*)SOAP_MALLOC(soap, l + 2);

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.51
+        stdsoap2.c[pp] 2.8.52
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20851
+#define GSOAP_LIB_VERSION 20852
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.51 2017-07-28 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.52 2017-08-17 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.51 2017-07-28 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.52 2017-08-17 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -2422,11 +2422,13 @@ SOAP_FMAC2
 soap_strdup(struct soap *soap, const char *s)
 { char *t = NULL;
   if (s)
-  { size_t n = strlen(s);
-    t = (char*)soap_malloc(soap, n + 1);
-    if (t)
-    { soap_memcpy((void*)t, n, (const void*)s, n);
-      t[n] = '\0';
+  { size_t n = strlen(s) + 1;
+    if (n > 0)
+    { t = (char*)soap_malloc(soap, n);
+      if (t)
+      { soap_memcpy((void*)t, n, (const void*)s, n);
+        t[n - 1] = '\0';
+      }
     }
   }
   return t;
@@ -2445,11 +2447,14 @@ soap_wstrdup(struct soap *soap, const wchar_t *s)
   { size_t n = 0, m;
     while (s[n])
       n++;
+    n++;
     m = sizeof(wchar_t) * n;
-    t = (wchar_t*)soap_malloc(soap, m + sizeof(wchar_t));
-    if (t)
-    { soap_memcpy((void*)t, m, (const void*)s, m);
-      t[n] = L'\0';
+    if (n > 0)
+    { t = (wchar_t*)soap_malloc(soap, m);
+      if (t)
+      { soap_memcpy((void*)t, m, (const void*)s, m);
+        t[n - 1] = L'\0';
+      }
     }
   }
   return t;
@@ -2535,7 +2540,10 @@ soap_push_block(struct soap *soap, struct soap_blist *b, size_t n)
 { struct soap_bhead *p;
   if (!b)
     b = soap->blist;
-  if (!b || b->size + n < b->size)
+  if (!b
+   || b->size + n < b->size
+   || sizeof(struct soap_bhead) + n < n
+   || (SOAP_MAXALLOCSIZE > 0 && sizeof(struct soap_bhead) + n > SOAP_MAXALLOCSIZE))
   { soap->error = SOAP_EOM;
     return NULL;
   }
@@ -3110,7 +3118,7 @@ SOAP_FMAC1
 struct soap_nlist *
 SOAP_FMAC2
 soap_push_namespace(struct soap *soap, const char *id, const char *ns)
-{ struct soap_nlist *np;
+{ struct soap_nlist *np = NULL;
   struct Namespace *p;
   short i = -1;
   size_t n, k;
@@ -3127,7 +3135,8 @@ soap_push_namespace(struct soap *soap, const char *id, const char *ns)
       }
       else if (p->in)
       { if (!soap_tag_cmp(ns, p->in))
-        { p->out = (char*)SOAP_MALLOC(soap, k);
+        { if (SOAP_MAXALLOCSIZE <= 0 || k <= SOAP_MAXALLOCSIZE)
+            p->out = (char*)SOAP_MALLOC(soap, k);
           if (p->out)
             soap_strcpy(p->out, k, ns);
           break;
@@ -3139,7 +3148,8 @@ soap_push_namespace(struct soap *soap, const char *id, const char *ns)
   }
   if (i >= 0)
     k = 0;
-  np = (struct soap_nlist*)SOAP_MALLOC(soap, sizeof(struct soap_nlist) + n + k);
+  if (sizeof(struct soap_nlist) + n + k > n && (SOAP_MAXALLOCSIZE <= 0 || sizeof(struct soap_nlist) + n + k <= SOAP_MAXALLOCSIZE))
+    np = (struct soap_nlist*)SOAP_MALLOC(soap, sizeof(struct soap_nlist) + n + k);
   if (!np)
   { soap->error = SOAP_EOM;
     return NULL;
@@ -3733,7 +3743,9 @@ soap_ssl_error(struct soap *soap, int ret)
       ERR_error_string_n(r, soap->msgbuf + l, sizeof(soap->msgbuf) - l);
       l = strlen(soap->msgbuf);
       if (l + 1 < sizeof(soap->msgbuf))
-        soap->msgbuf[l++] = '\n';
+      { soap->msgbuf[l++] = '\n';
+        soap->msgbuf[l] = '\0';
+      }
       if (ERR_GET_REASON(r) == SSL_R_CERTIFICATE_VERIFY_FAILED && l < sizeof(soap->msgbuf))
       { const char *s = X509_verify_cert_error_string(SSL_get_verify_result(soap->ssl));
         (SOAP_SNPRINTF(soap->msgbuf + l, sizeof(soap->msgbuf) - l, strlen(s)), "%s", s);
@@ -7335,10 +7347,12 @@ soap_set_cookie(struct soap *soap, const char *name, const char *value, const ch
   if (!q)
   { q = (struct soap_cookie*)SOAP_MALLOC(soap, sizeof(struct soap_cookie));
     if (q)
-    { size_t l = strlen(name);
-      q->name = (char*)SOAP_MALLOC(soap, l + 1);
+    { size_t l = strlen(name) + 1;
+      q->name = NULL;
+      if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+        q->name = (char*)SOAP_MALLOC(soap, l);
       if (q->name)
-        soap_strcpy(q->name, l + 1, name);
+        soap_strcpy(q->name, l, name);
       q->value = NULL;
       q->domain = NULL;
       q->path = NULL;
@@ -7371,10 +7385,12 @@ soap_set_cookie(struct soap *soap, const char *name, const char *value, const ch
       }
     }
     if (value && *value && !q->value)
-    { size_t l = strlen(value);
-      q->value = (char*)SOAP_MALLOC(soap, l + 1);
+    { size_t l = strlen(value) + 1;
+      q->value = NULL;
+      if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+        q->value = (char*)SOAP_MALLOC(soap, l);
       if (q->value)
-        soap_strcpy(q->value, l + 1, value);
+        soap_strcpy(q->value, l, value);
     }
     if (q->domain)
     { if (!domain || strcmp(domain, q->domain))
@@ -7383,10 +7399,12 @@ soap_set_cookie(struct soap *soap, const char *name, const char *value, const ch
       }
     }
     if (domain && !q->domain)
-    { size_t l = strlen(domain);
-      q->domain = (char*)SOAP_MALLOC(soap, l + 1);
+    { size_t l = strlen(domain) + 1;
+      q->domain = NULL;
+      if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+        q->domain = (char*)SOAP_MALLOC(soap, l);
       if (q->domain)
-        soap_strcpy(q->domain, l + 1, domain);
+        soap_strcpy(q->domain, l, domain);
     }
     if (q->path)
     { if (!path || strncmp(path, q->path, strlen(q->path)))
@@ -7395,10 +7413,12 @@ soap_set_cookie(struct soap *soap, const char *name, const char *value, const ch
       }
     }
     if (path && !q->path)
-    { size_t l = strlen(path);
-      q->path = (char*)SOAP_MALLOC(soap, l + 1);
+    { size_t l = strlen(path) + 1;
+      q->path  = NULL;
+      if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+        q->path = (char*)SOAP_MALLOC(soap, l);
       if (q->path)
-        soap_strcpy(q->path, l + 1, path);
+        soap_strcpy(q->path, l, path);
     }
     q->session = 1;
     q->env = 0;
@@ -7775,7 +7795,9 @@ soap_getcookies(struct soap *soap, const char *val)
     { s = soap_decode_val(tmp, sizeof(tmp), s);
       if (*tmp)
       { size_t l = strlen(tmp) + 1;
-        t = (char*)SOAP_MALLOC(soap, l);
+        t = NULL;
+        if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+          t = (char*)SOAP_MALLOC(soap, l);
         if (t)
           soap_memcpy((void*)t, l, (const void*)tmp, l);
       }
@@ -7796,7 +7818,9 @@ soap_getcookies(struct soap *soap, const char *val)
     { s = soap_decode_val(tmp, sizeof(tmp), s);
       if (*tmp)
       { size_t l = strlen(tmp) + 1;
-        t = (char*)SOAP_MALLOC(soap, l);
+        t = NULL;
+        if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+          t = (char*)SOAP_MALLOC(soap, l);
         if (t)
           soap_memcpy((void*)t, l, (const void*)tmp, l);
       }
@@ -7819,7 +7843,9 @@ soap_getcookies(struct soap *soap, const char *val)
       s = soap_decode_val(tmp, sizeof(tmp), s);
       if (*tmp)
       { size_t l = strlen(tmp) + 1;
-        p->path = (char*)SOAP_MALLOC(soap, l);
+        p->path = NULL;
+        if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+          p->path = (char*)SOAP_MALLOC(soap, l);
         if (p->path)
           soap_memcpy((void*)p->path, l, (const void*)tmp, l);
       }
@@ -7832,7 +7858,9 @@ soap_getcookies(struct soap *soap, const char *val)
       s = soap_decode_val(tmp, sizeof(tmp), s);
       if (*tmp)
       { size_t l = strlen(tmp) + 1;
-        p->domain = (char*)SOAP_MALLOC(soap, l);
+        p->domain = NULL;
+        if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+          p->domain = (char*)SOAP_MALLOC(soap, l);
         if (p->domain)
           soap_memcpy((void*)p->domain, l, (const void*)tmp, l);
       }
@@ -7910,13 +7938,17 @@ soap_getcookies(struct soap *soap, const char *val)
       p = (struct soap_cookie*)SOAP_MALLOC(soap, sizeof(struct soap_cookie));
       if (p)
       { size_t l = strlen(tmp) + 1;
-        p->name = (char*)SOAP_MALLOC(soap, l);
+        p->name = NULL;
+        if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+          p->name = (char*)SOAP_MALLOC(soap, l);
         if (p->name)
           soap_memcpy((void*)p->name, l, (const void*)tmp, l);
         s = soap_decode_val(tmp, sizeof(tmp), s);
         if (*tmp)
         { l = strlen(tmp) + 1;
-          p->value = (char*)SOAP_MALLOC(soap, l);
+          p->value = NULL;
+          if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+            p->value = (char*)SOAP_MALLOC(soap, l);
           if (p->value)
             soap_memcpy((void*)p->value, l, (const void*)tmp, l);
         }
@@ -7928,7 +7960,9 @@ soap_getcookies(struct soap *soap, const char *val)
         }
         else if (*soap->host)
         { l = strlen(soap->host) + 1;
-          p->domain = (char*)SOAP_MALLOC(soap, l);
+          p->domain = NULL;
+          if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+            p->domain = (char*)SOAP_MALLOC(soap, l);
           if (p->domain)
             soap_memcpy((void*)p->domain, l, (const void*)soap->host, l);
         }
@@ -7940,7 +7974,9 @@ soap_getcookies(struct soap *soap, const char *val)
         }
         else if (*soap->path)
         { l = strlen(soap->path) + 1;
-          p->path = (char*)SOAP_MALLOC(soap, l);
+          p->path = NULL;
+          if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+            p->path = (char*)SOAP_MALLOC(soap, l);
           if (p->path)
             soap_memcpy((void*)p->path, l, (const void*)soap->path, l);
         }
@@ -8018,25 +8054,33 @@ soap_copy_cookies(struct soap *copy, const struct soap *soap)
     **q = *p;
     if (p->name)
     { size_t l = strlen(p->name) + 1;
-      (*q)->name = (char*)SOAP_MALLOC(copy, l);
+      (*q)->name = NULL;
+      if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+        (*q)->name = (char*)SOAP_MALLOC(copy, l);
       if ((*q)->name)
         soap_memcpy((*q)->name, l, p->name, l);
     }
     if (p->value)
     { size_t l = strlen(p->value) + 1;
-      (*q)->value = (char*)SOAP_MALLOC(copy, l);
+      (*q)->value = NULL;
+      if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+        (*q)->value = (char*)SOAP_MALLOC(copy, l);
       if ((*q)->value)
         soap_memcpy((*q)->value, l, p->value, l);
     }
     if (p->domain)
     { size_t l = strlen(p->domain) + 1;
-      (*q)->domain = (char*)SOAP_MALLOC(copy, l);
+      (*q)->domain = NULL;
+      if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+        (*q)->domain = (char*)SOAP_MALLOC(copy, l);
       if ((*q)->domain)
         soap_memcpy((*q)->domain, l, p->domain, l);
     }
     if (p->path)
     { size_t l = strlen(p->path) + 1;
-      (*q)->path = (char*)SOAP_MALLOC(copy, l);
+      (*q)->path = NULL;
+      if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
+        (*q)->path = (char*)SOAP_MALLOC(copy, l);
       if ((*q)->path)
         soap_memcpy((*q)->path, l, p->path, l);
     }
@@ -8855,9 +8899,10 @@ struct soap_ilist *
 SOAP_FMAC2
 soap_enter(struct soap *soap, const char *id, int t, size_t n)
 { size_t h;
-  struct soap_ilist *ip;
+  struct soap_ilist *ip = NULL;
   size_t l = strlen(id);
-  ip = (struct soap_ilist*)SOAP_MALLOC(soap, sizeof(struct soap_ilist) + l);
+  if (sizeof(struct soap_ilist) + l > l && (SOAP_MAXALLOCSIZE <= 0 || sizeof(struct soap_ilist) + l <= SOAP_MAXALLOCSIZE))
+    ip = (struct soap_ilist*)SOAP_MALLOC(soap, sizeof(struct soap_ilist) + l);
   if (ip)
   { ip->type = t;
     ip->size = n;
@@ -8886,12 +8931,18 @@ void*
 SOAP_FMAC2
 soap_malloc(struct soap *soap, size_t n)
 { char *p;
+  if (SOAP_MAXALLOCSIZE > 0 && n > SOAP_MAXALLOCSIZE)
+    return NULL;
   if (!soap)
     return SOAP_MALLOC(soap, n);
   if (soap->fmalloc)
     p = (char*)soap->fmalloc(soap, n);
   else
-  { n += sizeof(short);
+  { if (n + sizeof(short) < n)
+      return NULL;
+    n += sizeof(short);
+    if (n + ((-(long)n) & (sizeof(void*)-1)) + sizeof(void*) + sizeof(size_t) < n)
+      return NULL;
     n += (-(long)n) & (sizeof(void*)-1); /* align at 4-, 8- or 16-byte boundary by rounding up */
     p = (char*)SOAP_MALLOC(soap, n + sizeof(void*) + sizeof(size_t));
     if (!p)
@@ -10071,6 +10122,7 @@ struct soap*
 SOAP_FMAC2
 soap_copy(const struct soap *soap)
 { struct soap *copy = soap_versioning(soap_new)(SOAP_IO_DEFAULT, SOAP_IO_DEFAULT);
+  soap_done(copy);
   if (soap_copy_context(copy, soap) != NULL)
     return copy;
   soap_free(copy);
@@ -10977,7 +11029,7 @@ soap_lookup_ns(struct soap *soap, const char *tag, size_t n)
 #ifndef WITH_LEAN
 static struct soap_nlist *
 soap_push_ns(struct soap *soap, const char *id, const char *ns, short utilized, short isearly)
-{ struct soap_nlist *np;
+{ struct soap_nlist *np = NULL;
   size_t n, k;
   unsigned int level = soap->level + isearly;
   if (soap_tagsearch(soap->c14nexclude, id))
@@ -10997,10 +11049,11 @@ soap_push_ns(struct soap *soap, const char *id, const char *ns, short utilized, 
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Adding namespace binding (level=%u) '%s' '%s' utilized=%d\n", level, id, ns ? ns : "(null)", utilized));
   n = strlen(id);
   if (ns)
-    k = strlen(ns);
+    k = strlen(ns) + 1;
   else
     k = 0;
-  np = (struct soap_nlist*)SOAP_MALLOC(soap, sizeof(struct soap_nlist) + n + k + 1);
+  if (sizeof(struct soap_nlist) + n + k > n && (SOAP_MAXALLOCSIZE <= 0 || sizeof(struct soap_nlist) + n + k <= SOAP_MAXALLOCSIZE))
+    np = (struct soap_nlist*)SOAP_MALLOC(soap, sizeof(struct soap_nlist) + n + k);
   if (!np)
   { soap->error = SOAP_EOM;
     return NULL;
@@ -11010,7 +11063,7 @@ soap_push_ns(struct soap *soap, const char *id, const char *ns, short utilized, 
   soap_strcpy((char*)np->id, n + 1, id);
   if (ns)
   { np->ns = np->id + n + 1;
-    soap_strcpy((char*)np->ns, k + 1, ns);
+    soap_strcpy((char*)np->ns, k, ns);
   }
   else
     np->ns = NULL;
@@ -11048,9 +11101,12 @@ soap_utilize_ns(struct soap *soap, const char *tag, short isearly)
   }
   else if (n && strncmp(tag, "xml", 3))
   { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Utilizing '%s' at level %u\n", tag, soap->level + isearly));
-    char *t = (char*)SOAP_MALLOC(soap, n + 1);
+    char *t = NULL;
+    n++;
+    if (SOAP_MAXALLOCSIZE <= 0 || n <= SOAP_MAXALLOCSIZE)
+      t = (char*)SOAP_MALLOC(soap, n);
     if (t)
-    { (void)soap_strncpy(t, n + 1, tag, n);
+    { (void)soap_strncpy(t, n, tag, n - 1);
       soap_push_ns(soap, t, NULL, 1, isearly);
       SOAP_FREE(soap, t);
     }
@@ -12090,7 +12146,7 @@ int
 SOAP_FMAC2
 soap_element_end_in(struct soap *soap, const char *tag)
 { soap_wchar c;
-  char *s;
+  char *s = NULL;
   int n = 0;
   if (tag && *tag == '-')
     return SOAP_OK;
@@ -12099,12 +12155,13 @@ soap_element_end_in(struct soap *soap, const char *tag)
 #ifdef WITH_DOM
   /* this whitespace or mixed content is significant for DOM "as-is" */
   if ((soap->mode & SOAP_XML_DOM) && soap->dom)
-  { s = soap_string_in(soap, -1, -1, -1, NULL);
+  { if (!soap->dom->code || !*soap->dom->code)
+      s = soap_string_in(soap, -1, -1, -1, NULL);
     if (!soap->peeked && !s)
       return soap->error;
     if (soap->dom->prnt)
       soap->dom = soap->dom->prnt;
-    if ((soap->mode & SOAP_XML_STRICT))
+    if (s && (soap->mode & SOAP_XML_STRICT))
     { for (; *s; s++)
         if (!soap_coblank((soap_wchar)*s))
           return soap->error = SOAP_SYNTAX_ERROR; /* reject mixed content before ending tag */
@@ -12134,7 +12191,7 @@ soap_element_end_in(struct soap *soap, const char *tag)
         }
       }
     }
-  } while (n--);
+  } while (n-- > 0);
   s = soap->tag;
   n = sizeof(soap->tag);
   while ((c = soap_get(soap)) > 32)
@@ -12220,7 +12277,8 @@ soap_set_attr(struct soap *soap, const char *name, const char *value, int flag)
   if (!tp)
   { size_t l = strlen(name);
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Allocate attribute %s\n", name));
-    tp = (struct soap_attribute*)SOAP_MALLOC(soap, sizeof(struct soap_attribute) + l);
+    if (sizeof(struct soap_attribute) + l > l && (SOAP_MAXALLOCSIZE <= 0 || sizeof(struct soap_attribute) + l <= SOAP_MAXALLOCSIZE))
+      tp = (struct soap_attribute*)SOAP_MALLOC(soap, sizeof(struct soap_attribute) + l);
     if (!tp)
       return soap->error = SOAP_EOM;
     tp->ns = NULL;
@@ -12286,7 +12344,8 @@ soap_set_attr(struct soap *soap, const char *name, const char *value, int flag)
   if (value)
   { if (!tp->value)
     { tp->size = strlen(value) + 1;
-      tp->value = (char*)SOAP_MALLOC(soap, tp->size);
+      if (SOAP_MAXALLOCSIZE <= 0 || tp->size <= SOAP_MAXALLOCSIZE)
+        tp->value = (char*)SOAP_MALLOC(soap, tp->size);
       if (!tp->value)
         return soap->error = SOAP_EOM;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Allocate attribute value for %s (%p)\n", tp->name, (void*)tp->value));
@@ -12498,8 +12557,13 @@ soap_append_lab(struct soap *soap, const char *s, size_t n)
     if (soap->lablen == 0)
       soap->lablen = SOAP_LABLEN;
     while (soap->labidx + n >= soap->lablen)
+    { if (soap->lablen << 1 < soap->lablen)
+        return soap->error = SOAP_EOM;
       soap->lablen <<= 1;
+    }
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "New look-aside buffer size=%lu\n", (unsigned long)soap->lablen));
+    if (SOAP_MAXALLOCSIZE > 0 && soap->lablen > SOAP_MAXALLOCSIZE)
+      return soap->error = SOAP_EOM;
     soap->labbuf = (char*)SOAP_MALLOC(soap, soap->lablen);
     if (!soap->labbuf)
     { if (t)
@@ -12796,6 +12860,8 @@ soap_peek_element(struct soap *soap)
             break;
         }
         k = tp->size + soap->blist->size;
+        if (SOAP_MAXALLOCSIZE > 0 && k > SOAP_MAXALLOCSIZE)
+          return soap->error = SOAP_EOM;
         s = (char*)SOAP_MALLOC(soap, k);
         if (!s)
           return soap->error = SOAP_EOM;
@@ -16692,7 +16758,7 @@ soap_getline(struct soap *soap, char *buf, int len)
     if (c != '\n')
       c = soap_getchar(soap); /* got \r or something else, now get \n */
     if (c == '\n')
-    { if (i + 1 == len) /* empty line: end of HTTP/MIME header */
+    { if (i == len) /* empty line: end of HTTP/MIME header */
         break;
       c = soap_get0(soap);
       if (c != ' ' && c != '\t') /* HTTP line continuation? */
@@ -16950,23 +17016,22 @@ soap_putdime(struct soap *soap)
 #ifndef PALM_1
 static char *
 soap_getdimefield(struct soap *soap, size_t n)
-{ soap_wchar c;
-  size_t i;
-  char *s;
-  char *p = NULL;
-  if (n)
-  { p = (char*)soap_malloc(soap, n + 1);
+{ char *p = NULL;
+  if (n > 0)
+  { p = (char*)soap_malloc(soap, n + 1 > n ? n + 1 : n);
     if (p)
-    { s = p;
+    { char *s = p;
+      size_t i;
       for (i = n; i > 0; i--)
-      { c = soap_get1(soap);
+      { soap_wchar c = soap_get1(soap);
         if ((int)c == EOF)
         { soap->error = SOAP_CHK_EOF;
           return NULL;
         }
         *s++ = (char)c;
       }
-      *s = '\0'; /* force NUL terminated */
+      if (n + 1 > n)
+	*s = '\0'; /* force NUL terminated */
       soap->error = soap_move(soap, (size_t)(-(long)n&3));
       if (soap->error)
         return NULL;
@@ -17972,6 +18037,7 @@ soap_begin_recv(struct soap *soap)
     soap->d_stream->zfree = Z_NULL;
     soap->d_stream->opaque = Z_NULL;
     soap->d_stream->next_in = Z_NULL;
+    soap->d_stream->msg = Z_NULL;
   }
   soap->d_stream->avail_in = 0;
   soap->d_stream->next_out = (Byte*)soap->buf;
@@ -18147,7 +18213,7 @@ soap_begin_recv(struct soap *soap)
       soap->error = soap->fform(soap);
       if (soap->error == SOAP_OK)
         return soap->error = SOAP_STOP; /* prevents further processing */
-      if (soap->error < 300) /* continue only if POST plugin returned HTTP error, e.g. not found */
+      if (soap->error != 404) /* try to continue if POST plugin form handler returned HTTP not found */
         return soap->error;
       soap->error = SOAP_OK;
     }
@@ -20072,7 +20138,7 @@ soap_lookup_plugin(struct soap *soap, const char *id)
 #ifdef __cplusplus
 soap::soap()
 { soap_init(this);
-  /* no logs to prevent leaks when user calls soap_init() on this context */
+  /* no logs to prevent DEBUG mode leaks when the user unnecessarily calls a soap_init() on this context */
   soap_set_test_logfile(this, NULL);
   soap_set_sent_logfile(this, NULL);
   soap_set_recv_logfile(this, NULL);
@@ -20107,7 +20173,8 @@ soap::soap(const struct soap& soap)
 
 #ifdef __cplusplus
 struct soap& soap::operator=(const struct soap& soap)
-{ soap_copy_context(this, &soap);
+{ soap_done(this);
+  soap_copy_context(this, &soap);
   return *this;
 }
 #endif

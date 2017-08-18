@@ -637,6 +637,9 @@ SAMPLE_SSL_LIBS
 SAMPLE_INCLUDES
 WSDL2H_EXTRA_LIBS
 WSDL2H_EXTRA_FLAGS
+WITH_OPENSSL
+WITH_OPENSSL_FALSE
+WITH_OPENSSL_TRUE
 SOAPCPP2_IPV6
 SOAPCPP2_NO_C_LOCALE
 SOAPCPP2_NONAMESPACES
@@ -6230,9 +6233,8 @@ $as_echo "yes" >&6; }
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
     WSDL2H_EXTRA_FLAGS="-DWITH_OPENSSL -DWITH_GZIP"
-    # an ugly hack to get httpda and smdevp plugins to conditionally
     # compile with wsdl2h when OPENSSL is available
-    WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} ../plugin/httpda.c ../plugin/smdevp.c ../plugin/threads.c -lssl -lcrypto -lz"
+    WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} -lssl -lcrypto -lz"
     SAMPLE_INCLUDES=
     SAMPLE_SSL_LIBS="-lssl -lcrypto -lz"
     WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
@@ -6257,6 +6259,15 @@ $as_echo "yes" >&6; }
   SAMPLE_INCLUDES=
   WSDL2H_SOAP_CPP_LIB="libgsoap++.a"
 fi
+ if test "x$with_openssl" = "xyes" -a "x$with_gnutls" != "xyes"; then
+  WITH_OPENSSL_TRUE=
+  WITH_OPENSSL_FALSE='#'
+else
+  WITH_OPENSSL_TRUE='#'
+  WITH_OPENSSL_FALSE=
+fi
+
+
 
 
 
@@ -6316,7 +6327,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile gsoap.pc gsoap++.pc gsoapck.pc gsoapck++.pc gsoapssl.pc gsoapssl++.pc gsoap/Makefile gsoap/src/Makefile gsoap/wsdl/Makefile gsoap/samples/Makefile gsoap/samples/autotest/Makefile gsoap/samples/aws/Makefile gsoap/samples/calc/Makefile gsoap/samples/calc++/Makefile gsoap/samples/chaining/Makefile gsoap/samples/chaining++/Makefile gsoap/samples/databinding/Makefile gsoap/samples/dime/Makefile gsoap/samples/dom/Makefile gsoap/samples/oneway/Makefile gsoap/samples/oneway++/Makefile gsoap/samples/factory/Makefile gsoap/samples/factorytest/Makefile gsoap/samples/gmt/Makefile gsoap/samples/googleapi/Makefile gsoap/samples/hello/Makefile gsoap/samples/httpcookies/Makefile gsoap/samples/lu/Makefile gsoap/samples/magic/Makefile gsoap/samples/mashup/Makefile gsoap/samples/mashup++/Makefile gsoap/samples/mtom/Makefile gsoap/samples/mtom-stream/Makefile gsoap/samples/polytest/Makefile gsoap/samples/primes/Makefile gsoap/samples/roll/Makefile gsoap/samples/router/Makefile gsoap/samples/atom/Makefile gsoap/samples/rss/Makefile gsoap/samples/ssl/Makefile gsoap/samples/template/Makefile gsoap/samples/udp/Makefile gsoap/samples/varparam/Makefile gsoap/samples/wsa/Makefile gsoap/samples/wsrm/Makefile gsoap/samples/wsse/Makefile gsoap/samples/wst/Makefile gsoap/samples/xml-rpc-json/Makefile gsoap/samples/rest/Makefile"
+ac_config_files="$ac_config_files Makefile gsoap.pc gsoap++.pc gsoapck.pc gsoapck++.pc gsoapssl.pc gsoapssl++.pc gsoap/Makefile gsoap/src/Makefile gsoap/wsdl/Makefile gsoap/samples/Makefile gsoap/samples/autotest/Makefile gsoap/samples/aws/Makefile gsoap/samples/calc/Makefile gsoap/samples/calc++/Makefile gsoap/samples/chaining/Makefile gsoap/samples/chaining++/Makefile gsoap/samples/databinding/Makefile gsoap/samples/dime/Makefile gsoap/samples/dom/Makefile gsoap/samples/oneway/Makefile gsoap/samples/oneway++/Makefile gsoap/samples/factory/Makefile gsoap/samples/factorytest/Makefile gsoap/samples/gmt/Makefile gsoap/samples/googleapi/Makefile gsoap/samples/hello/Makefile gsoap/samples/httpcookies/Makefile gsoap/samples/lu/Makefile gsoap/samples/magic/Makefile gsoap/samples/mashup/Makefile gsoap/samples/mashup++/Makefile gsoap/samples/mtom/Makefile gsoap/samples/mtom-stream/Makefile gsoap/samples/polytest/Makefile gsoap/samples/primes/Makefile gsoap/samples/roll/Makefile gsoap/samples/router/Makefile gsoap/samples/atom/Makefile gsoap/samples/rss/Makefile gsoap/samples/ssl/Makefile gsoap/samples/template/Makefile gsoap/samples/udp/Makefile gsoap/samples/varparam/Makefile gsoap/samples/wsa/Makefile gsoap/samples/wsrm/Makefile gsoap/samples/wsse/Makefile gsoap/samples/wst/Makefile gsoap/samples/xml-rpc-json/Makefile gsoap/samples/rest/Makefile gsoap/samples/testmsgr/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -6456,6 +6467,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${DEBUG_COMPILE_TRUE}" && test -z "${DEBUG_COMPILE_FALSE}"; then
   as_fn_error $? "conditional \"DEBUG_COMPILE\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${WITH_OPENSSL_TRUE}" && test -z "${WITH_OPENSSL_FALSE}"; then
+  as_fn_error $? "conditional \"WITH_OPENSSL\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_SAMPLES_TRUE}" && test -z "${ENABLE_SAMPLES_FALSE}"; then
@@ -7106,6 +7121,7 @@ do
     "gsoap/samples/wst/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/wst/Makefile" ;;
     "gsoap/samples/xml-rpc-json/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/xml-rpc-json/Makefile" ;;
     "gsoap/samples/rest/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/rest/Makefile" ;;
+    "gsoap/samples/testmsgr/Makefile") CONFIG_FILES="$CONFIG_FILES gsoap/samples/testmsgr/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

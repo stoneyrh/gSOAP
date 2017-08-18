@@ -54,6 +54,8 @@ static  Symbol *nslist = (Symbol*) 0;   /* pointer to linked list of namespace p
 
 static Tnode *Tptr[TYPES];
 
+static unsigned long idnum = 0;
+
 Service *services = NULL;
 
 XPath *xpaths = NULL; /* TODO? */
@@ -238,6 +240,8 @@ int is_stdstring(Tnode*);
 int is_stdwstring(Tnode*);
 int is_stdstr(Tnode*);
 int is_typedef(Tnode*);
+int is_restriction(Tnode*);
+int has_restriction_base(Tnode *typ, const char *base);
 int is_synonym(Tnode*);
 int get_dimension(Tnode*);
 const char *has_soapref(Tnode*);
@@ -343,7 +347,7 @@ FILE *gen_env(const char*, const char*, int, const char*, int);
 void gen_xmlns(FILE*, int soap);
 void gen_field(FILE*, int, Entry*, const char*, const char*, const char*);
 void gen_val(FILE*, int, Tnode*, const char*, const char*, const char*);
-void gen_atts(FILE*, Table*, const char*);
+void gen_atts(FILE*, Table*, const char*, const char*, const char*);
 
 /*
 install - add new symbol
@@ -491,17 +495,17 @@ again:
       }
       if (p->level == GLOBAL)
       {
-	if (((int)p->info.sto & (int)Sextern))
-	{
-	  sto = p->info.sto;
-	  break;
-	}
-	else
-	{
-	  sprintf(errbuf, "Duplicate declaration of '%s' (already declared at line %d)", sym->name, p->lineno);
-	  semwarn(errbuf);
-	  return p;
-	}
+        if (((int)p->info.sto & (int)Sextern))
+        {
+          sto = p->info.sto;
+          break;
+        }
+        else
+        {
+          sprintf(errbuf, "Duplicate declaration of '%s' (already declared at line %d)", sym->name, p->lineno);
+          semwarn(errbuf);
+          return p;
+        }
       }
     }
   }
@@ -648,6 +652,7 @@ mktype(Type type, void *ref, int width)
   p->id = lookup("/*?*/");
   p->base = NULL;
   p->sym = NULL;
+  p->restriction = NULL;
   p->synonym = NULL;
   p->extsym = NULL;
   p->response = NULL;
@@ -689,6 +694,7 @@ mksymtype(Tnode *typ, Symbol *sym)
   else
     p->id = typ->id;
   p->sym = sym;
+  p->restriction = NULL;
   p->synonym = NULL;
   p->extsym = typ->extsym;
   p->response = (Entry*)0;
@@ -731,6 +737,7 @@ mktemplate(Tnode *typ, Symbol *id)
   p->ref = typ;
   p->id = id;
   p->sym = NULL;
+  p->restriction = NULL;
   p->synonym = NULL;
   p->extsym = NULL;
   p->response = (Entry*)0;
@@ -2892,11 +2899,14 @@ generate_header(Table *t)
         {
           fprintf(freport, "<a name=\"%s\"></a>\n\n### `%s`\n\n", c_ident(p->info.typ), c_ident(p->info.typ));
           gen_report_type_doc(p);
-          fprintf(freport, "This typedef is declared in [%s](%s) at line %d", p->filename, p->filename, p->lineno);
+          if (p->lineno)
+            fprintf(freport, "This typedef is declared in [%s](%s) at line %d", p->filename, p->filename, p->lineno);
+          else
+            fprintf(freport, "This typedef is internally generated");
           if (has_ns_t(p->info.typ))
             fprintf(freport, ", is serialized as XSD type *`%s`*", xsi_type(p->info.typ));
           if (is_XML(p->info.typ) || is_stdXML(p->info.typ))
-            fprintf(freport, " and is a built-in string type to serialize XML that is literally stored in this string");
+            fprintf(freport, " and is a built-in string type to hold XML that is literally serialized to and from XML");
           else if (is_qname(p->info.typ) || is_stdqname(p->info.typ))
             fprintf(freport, " and is a built-in string type to serialize a list of space-separated qualified names (*`xsd:QName`*), such that XML namespace prefixes are normalized to the XML prefixes defined in the [namespace table](#doc-namespaces) or replaced with \"URI\": when the namespace table has no prefix entry for the URI");
           else if (is_anyType(p->info.typ))
@@ -3432,7 +3442,7 @@ generate_schema(Table *t)
             strcat(soapTester, ".cpp");
           strcpy(pathsoapTester, dirpath);
           strcat(pathsoapTester, soapTester);
-          fprintf(fmsg, "Saving %s server auto-test code\n", pathsoapTester);
+          fprintf(fmsg, "Saving %s auto-test echo server\n", pathsoapTester);
           fd = fopen(pathsoapTester, "w");
           if (!fd)
             execerror("Cannot write to file");
@@ -4607,7 +4617,7 @@ gen_schema(FILE *fd, Table *t, const char *ns1, const char *ns, int all, const c
         {
           fprintf(fd, "    <simpleType name=\"%s\">", ns_remove(p->sym->name));
           gen_type_documentation(fd, p, ns);
-          if (p->info.typ->pattern && p->info.typ->pattern[0] == '%' && p->info.typ->pattern[1])
+          if (!is_synonym(p->info.typ) && p->info.typ->pattern && p->info.typ->pattern[0] == '%' && p->info.typ->pattern[1])
           {
             unsigned int n = (unsigned int)strtoul(p->info.typ->pattern + 1, NULL, 10);
             unsigned int f = 0;
@@ -4639,12 +4649,12 @@ gen_schema(FILE *fd, Table *t, const char *ns1, const char *ns, int all, const c
           else
           {
             fprintf(fd, "      <restriction base=\"%s\">\n", base_type(p->info.typ, ns1));
-            if (p->info.typ->pattern)
+            if (!is_synonym(p->info.typ) && p->info.typ->pattern)
               fprintf(fd, "        <pattern value=\"%s\"/>\n", p->info.typ->pattern);
           }
           if (is_primitive(p->info.typ) || (p->info.typ->type == Tpointer && is_primitive((Tnode*)p->info.typ->ref) && !is_string(p->info.typ) && !is_wstring(p->info.typ)))
           {
-            if (p->info.typ->hasmin)
+            if (!is_synonym(p->info.typ) && p->info.typ->hasmin)
             {
               if (p->info.typ->type >= Tfloat && p->info.typ->type <= Tldouble)
               {
@@ -4661,7 +4671,7 @@ gen_schema(FILE *fd, Table *t, const char *ns1, const char *ns, int all, const c
                   fprintf(fd, "        <minExclusive value=\"" SOAP_LONG_FORMAT "\"/>\n", (LONG64)p->info.typ->min);
               }
             }
-            if (p->info.typ->hasmax)
+            if (!is_synonym(p->info.typ) && p->info.typ->hasmax)
             {
               if (p->info.typ->type >= Tfloat && p->info.typ->type <= Tldouble)
               {
@@ -4681,18 +4691,18 @@ gen_schema(FILE *fd, Table *t, const char *ns1, const char *ns, int all, const c
           }
           else
           {
-            if (p->info.typ->hasmax && p->info.typ->max >= 0 && p->info.typ->incmin && p->info.typ->incmax && p->info.typ->min == p->info.typ->max)
+            if (!is_synonym(p->info.typ) && p->info.typ->hasmax && p->info.typ->max >= 0 && p->info.typ->incmin && p->info.typ->incmax && p->info.typ->min == p->info.typ->max)
               fprintf(fd, "        <length value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->max);
             else
             {
-              if (p->info.typ->hasmin && p->info.typ->min >= 0)
+              if (!is_synonym(p->info.typ) && p->info.typ->hasmin && p->info.typ->min >= 0)
               {
                 if (p->info.typ->incmin)
                   fprintf(fd, "        <minLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->min);
                 else
                   fprintf(fd, "        <minLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->min + 1);
               }
-              if (p->info.typ->hasmax && p->info.typ->max >= 0)
+              if (!is_synonym(p->info.typ) && p->info.typ->hasmax && p->info.typ->max >= 0)
               {
                 if (p->info.typ->incmax)
                   fprintf(fd, "        <maxLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->max);
@@ -4708,14 +4718,14 @@ gen_schema(FILE *fd, Table *t, const char *ns1, const char *ns, int all, const c
           fprintf(fd, "    <simpleType name=\"%s\">", ns_remove(p->sym->name));
           gen_type_documentation(fd, p, ns);
           fprintf(fd, "      <restriction base=\"%s\">\n", base_type(p->info.typ, ns1));
-          if (p->info.typ->hasmin && p->info.typ->min >= 0)
+          if (!is_synonym(p->info.typ) && p->info.typ->hasmin && p->info.typ->min >= 0)
           {
             if (p->info.typ->incmin)
               fprintf(fd, "        <minLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->min);
             else
               fprintf(fd, "        <minLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->min + 1);
           }
-          if (p->info.typ->hasmax && p->info.typ->max >= 0)
+          if (!is_synonym(p->info.typ) && p->info.typ->hasmax && p->info.typ->max >= 0)
           {
             if (p->info.typ->incmax)
               fprintf(fd, "        <maxLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->max);
@@ -4726,12 +4736,19 @@ gen_schema(FILE *fd, Table *t, const char *ns1, const char *ns, int all, const c
             fprintf(fd, "        <maxLength value=\"%d\"/>\n", get_dimension(p->info.typ) - 1);
           fprintf(fd, "      </restriction>\n    </simpleType>\n");
         }
-        else
+        else if (is_restriction(p->info.typ) && !has_ns_eq("xsd", p->info.typ->restriction->name))
         {
           fprintf(fd, "    <complexType name=\"%s\">", ns_remove(p->sym->name));
           gen_type_documentation(fd, p, ns);
           fprintf(fd, "      <complexContent>\n        <restriction base=\"%s\">\n", base_type(p->info.typ, ns1));
           fprintf(fd, "        </restriction>\n      </complexContent>\n    </complexType>\n");
+        }
+        else 
+        {
+          fprintf(fd, "    <simpleType name=\"%s\">", ns_remove(p->sym->name));
+          gen_type_documentation(fd, p, ns);
+          fprintf(fd, "      <restriction base=\"%s\">\n", base_type(p->info.typ, ns1));
+          fprintf(fd, "      </restriction>\n    </simpleType>\n");
         }
       }
     }
@@ -4851,11 +4868,11 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
         {
           for (q = ((Table*)p->info.typ->ref)->list; q; q = q->next)
           {
+            if (!uflag)
+              fprintf(fd, "          <!-- = " SOAP_LONG_FORMAT " -->\n", q->info.val.i);
             fprintf(fd, "          <enumeration value=\"%s\"", ns_remove2(q->sym->name, c_ident(p->info.typ)));
             if (gen_member_documentation(fd, p->sym, q, ns, q->info.typ->type == Tenumsc))
-              fprintf(fd, "          </enumeration>");
-            if (!uflag)
-              fprintf(fd, "<!-- = " SOAP_LONG_FORMAT " -->\n", q->info.val.i);
+              fprintf(fd, "          </enumeration>\n");
           }
         }
         fprintf(fd, "        </restriction>\n      </list>\n    </simpleType>\n");
@@ -4872,12 +4889,11 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
         {
           for (q = ((Table*)p->info.typ->ref)->list; q; q = q->next)
           {
+            if (!uflag)
+              fprintf(fd, "        <!-- = " SOAP_LONG_FORMAT " -->\n", q->info.val.i);
             fprintf(fd, "        <enumeration value=\"%s\"", ns_remove2(q->sym->name, c_ident(p->info.typ)));
             if (gen_member_documentation(fd, p->sym, q, ns, q->info.typ->type == Tenumsc))
-              fprintf(fd, "        </enumeration>");
-            if (!uflag)
-              fprintf(fd, "<!-- = " SOAP_LONG_FORMAT " -->", q->info.val.i);
-            fprintf(fd, "\n");
+              fprintf(fd, "        </enumeration>\n");
           }
         }
         fprintf(fd, "      </restriction>\n    </simpleType>\n");
@@ -5257,7 +5273,7 @@ gen_schema_element(FILE *fd, Tnode *p, Entry *q, const char *ns, const char *ns1
   else
   {
     t = ns_tag_convert(q);
-    if (*t == '-')
+    if (*t == '-' || !*t)
     {
       fprintf(fd, "            <any processContents=\"lax\" minOccurs=\"0\" maxOccurs=\"1\"/>");
       if (!uflag)
@@ -8199,7 +8215,7 @@ gen_data(const char *buf, Table *t, const char *ns, const char *encoding)
           {
             if (!is_invisible(p->sym->name))
             {
-              gen_atts(fd, (Table*)q->info.typ->ref, nsa);
+              gen_atts(fd, (Table*)q->info.typ->ref, nse, nsa, encoding);
               fprintf(fd, "\n");
             }
             for (q = ((Table*)q->info.typ->ref)->list; q; q = q->next)
@@ -8248,7 +8264,7 @@ gen_data(const char *buf, Table *t, const char *ns, const char *encoding)
             {
               if (!soap || soap_version < 0)
                 gen_xmlns(fd, 0);
-              gen_atts(fd, (Table*)((Tnode*)q->info.typ->ref)->ref, nsa);
+              gen_atts(fd, (Table*)((Tnode*)q->info.typ->ref)->ref, nse, nsa, encoding);
               fprintf(fd, "\n");
             }
             for (r = ((Table*)((Tnode*)q->info.typ->ref)->ref)->list; r; r = r->next)
@@ -8307,27 +8323,6 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
         fprintf(fd, "%*s<!-- WARNING max depth exceeded: schema may incorrectly define infinitely large documents in recursion over mandatory elements with minOccurs>0 -->\n", n, "");
         return;
       }
-      else if (is_external(p->info.typ) && p->info.typ->sym)
-      {
-        gen_element_begin(fd, n, ns_add(p, nse), p);
-        fprintf(fd, ">");
-        if (!strcmp(p->info.typ->sym->name, "xsd__boolean"))
-          fprintf(fd, "false");
-        else if (!strcmp(p->info.typ->sym->name, "xsd__date"))
-          fprintf(fd, "1999-12-31");
-        else if (!strcmp(p->info.typ->sym->name, "xsd__dateTime"))
-        {
-          char tmp[256];
-          time_t t = time(NULL), *p = &t;
-          strftime(tmp, 256, "%Y-%m-%dT%H:%M:%SZ", gmtime(p));
-          fprintf(fd, "%s", tmp);
-        }
-        else if (!strcmp(p->info.typ->sym->name, "xsd__duration"))
-          fprintf(fd, "PT0S");
-        else if (!strcmp(p->info.typ->sym->name, "xsd__time"))
-          fprintf(fd, "12:34:56.789Z");
-        fflush(fd);
-      }
       else if (is_fixedstring(p->info.typ))
       {
         if (yflag)
@@ -8360,14 +8355,26 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
         fflush(fd);
         gen_val(fd, n, p->info.typ, nse, nsa, encoding);
       }
-      else if ((q = is_dynamic_array(p->info.typ)) && !is_binary(p->info.typ))
+      else if (is_binary(p->info.typ))
+      {
+        if (yflag)
+          fprintf(fd, "%*s<!-- %s -->\n", n, "", c_type_id(p->info.typ, p->sym->name));
+        gen_element_begin(fd, n, ns_add(p, nse), p);
+        fprintf(fd, ">");
+        fflush(fd);
+        if ((p->info.hasval || p->info.ptrval) && p->info.val.s)
+          fprintf(fd, "%s", xstring(p->info.val.s));
+        else
+          gen_val(fd, n, p->info.typ, nse, nsa, encoding);
+      }
+      else if ((q = is_dynamic_array(p->info.typ)))
       {
         if (!eflag && (has_ns(p->info.typ) || is_untyped(p->info.typ)))
         {
           if (yflag)
             fprintf(fd, "%*s<!-- %s -->\n", n, "", c_type_id(p->info.typ, p->sym->name));
           gen_element_begin(fd, n, ns_add(p, nse), p);
-          gen_atts(fd, (Table*)p->info.typ->ref, nsa);
+          gen_atts(fd, (Table*)p->info.typ->ref, nse, nsa, encoding);
           gen_val(fd, n, p->info.typ, nse, nsa, encoding);
         }
         else
@@ -8413,7 +8420,7 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
           if (yflag)
             fprintf(fd, "%*s<!-- %s -->\n", n, "", c_type_id(p->info.typ, p->sym->name));
           gen_element_begin(fd, n, ns_add(p, nse), p);
-          gen_atts(fd, (Table*)((Tnode*)p->info.typ->ref)->ref, nsa);
+          gen_atts(fd, (Table*)((Tnode*)p->info.typ->ref)->ref, nse, nsa, encoding);
           gen_val(fd, n, (Tnode*)p->info.typ->ref, nse, nsa, encoding);
         }
         else
@@ -8450,23 +8457,12 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
       }
       else if (p->info.typ->type == Tstruct || p->info.typ->type == Tclass)
       {
-        /*
-           if (!is_primclass(p->info.typ))
-           {
-           const char *nse1 = ns_qualifiedElement(p->info.typ);
-           const char *nsa1 = ns_qualifiedAttribute(p->info.typ);
-           if (nse1)
-           nse = nse1;
-           if (nsa1)
-           nsa = nsa1;
-           }
-         */
         if (!is_invisible(p->sym->name))
         {
           if (yflag)
             fprintf(fd, "%*s<!-- %s -->\n", n, "", c_type_id(p->info.typ, p->sym->name));
           gen_element_begin(fd, n, ns_add(p, nse), p);
-          gen_atts(fd, (Table*)p->info.typ->ref, nsa);
+          gen_atts(fd, (Table*)p->info.typ->ref, nse, nsa, encoding);
         }
         else if (is_anyType(p->info.typ))
           fprintf(fd, "%*s<!-- extensibility element(s) -->\n", n, "");
@@ -8474,23 +8470,12 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
       else if ((p->info.typ->type == Tpointer || p->info.typ->type == Treference || p->info.typ->type == Trvalueref)
           && (((Tnode*)p->info.typ->ref)->type == Tstruct || ((Tnode*)p->info.typ->ref)->type == Tclass))
       {
-        /*
-           if (!is_primclass(p->info.typ->ref))
-           {
-           const char *nse1 = ns_qualifiedElement(p->info.typ->ref);
-           const char *nsa1 = ns_qualifiedAttribute(p->info.typ->ref);
-           if (nse1)
-           nse = nse1;
-           if (nsa1)
-           nsa = nsa1;
-           }
-         */
         if (!is_invisible(p->sym->name))
         {
           if (yflag)
             fprintf(fd, "%*s<!-- %s -->\n", n, "", c_type_id(p->info.typ, p->sym->name));
           gen_element_begin(fd, n, ns_add(p, nse), p);
-          gen_atts(fd, (Table*)((Tnode*)p->info.typ->ref)->ref, nsa);
+          gen_atts(fd, (Table*)((Tnode*)p->info.typ->ref)->ref, nse, nsa, encoding);
         }
         else if (is_anyType(p->info.typ))
           fprintf(fd, "%*s<!-- extensibility element(s) -->\n", n, "");
@@ -8507,10 +8492,10 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
             if (((Tnode*)p->info.typ->ref)->type == Tpointer
                 && (((Tnode*)((Tnode*)p->info.typ->ref)->ref)->type == Tclass
                   || ((Tnode*)((Tnode*)p->info.typ->ref)->ref)->type == Tstruct))
-              gen_atts(fd, (Table*)((Tnode*)((Tnode*)p->info.typ->ref)->ref)->ref, nsa);
+              gen_atts(fd, (Table*)((Tnode*)((Tnode*)p->info.typ->ref)->ref)->ref, nse, nsa, encoding);
             else if (((Tnode*)p->info.typ->ref)->type == Tclass
                 || ((Tnode*)p->info.typ->ref)->type == Tstruct)
-              gen_atts(fd, (Table*)((Tnode*)p->info.typ->ref)->ref, nsa);
+              gen_atts(fd, (Table*)((Tnode*)p->info.typ->ref)->ref, nse, nsa, encoding);
             else
               fprintf(fd, ">");
           }
@@ -8518,7 +8503,11 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
             fprintf(fd, ">");
         }
       }
-      if (!is_external(p->info.typ))
+      if (p->info.typ->sym && has_ns_eq("xsd", p->info.typ->sym->name))
+      {
+        gen_val(fd, n+1, p->info.typ, nse, nsa, encoding);
+      }
+      else
       {
         switch (p->info.typ->type)
         {
@@ -8534,34 +8523,19 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
           case Tullong:
             if (p->info.hasval || p->info.ptrval)
               fprintf(fd, SOAP_LONG_FORMAT, p->info.val.i);
-            else if (p->info.typ->hasmin)
-              fprintf(fd, SOAP_LONG_FORMAT, (LONG64)p->info.typ->min + (p->info.typ->incmin == False));
             else
-              fprintf(fd, "0");
+              gen_val(fd, n+1, p->info.typ, nse, nsa, encoding);
             break;
           case Tfloat:
           case Tdouble:
           case Tldouble:
             if (p->info.hasval || p->info.ptrval)
               fprintf(fd, "%g", p->info.val.r);
-            else if (p->info.typ->hasmin && p->info.typ->min > 0)
-              fprintf(fd, "%g", p->info.typ->min * (1 + (p->info.typ->incmin == False)/1000));
-            else if (p->info.typ->hasmax && p->info.typ->max > 0)
-              fprintf(fd, "%g", p->info.typ->max * (1 - (p->info.typ->incmax == False)/1000));
-            else if (p->info.typ->hasmin && p->info.typ->min < 0)
-              fprintf(fd, "%g", p->info.typ->min * (1 - (p->info.typ->incmin == False)/1000));
-            else if (p->info.typ->hasmax && p->info.typ->max < 0)
-              fprintf(fd, "%g", p->info.typ->max * (1 + (p->info.typ->incmax == False)/1000));
             else
-              fprintf(fd, "0.0");
+              gen_val(fd, n+1, p->info.typ, nse, nsa, encoding);
             break;
           case Ttime:
-            {
-              char tmp[256];
-              time_t t = time(NULL), *p = &t;
-              strftime(tmp, 256, "%Y-%m-%dT%H:%M:%SZ", gmtime(p));
-              fprintf(fd, "%s", tmp);
-            }
+            gen_val(fd, n+1, p->info.typ, nse, nsa, encoding);
             break;
           case Tenum:
           case Tenumsc:
@@ -8599,8 +8573,10 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
                 fprintf(fd, "%s", xstring(p->info.val.s));
               else
                 gen_val(fd, n, p->info.typ, nse, nsa, encoding);
-              break;
             }
+            else if (!is_dynamic_array(p->info.typ))
+              gen_val(fd, n, p->info.typ, nse, nsa, encoding);
+            break;
           case Tstruct:
             if (!is_dynamic_array(p->info.typ))
               gen_val(fd, n, p->info.typ, nse, nsa, encoding);
@@ -8639,10 +8615,10 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
                       if (((Tnode*)p->info.typ->ref)->type == Tpointer
                           && (((Tnode*)((Tnode*)p->info.typ->ref)->ref)->type == Tclass
                             || ((Tnode*)((Tnode*)p->info.typ->ref)->ref)->type == Tstruct))
-                        gen_atts(fd, (Table*)((Tnode*)((Tnode*)p->info.typ->ref)->ref)->ref, nsa);
+                        gen_atts(fd, (Table*)((Tnode*)((Tnode*)p->info.typ->ref)->ref)->ref, nse, nsa, encoding);
                       else if (((Tnode*)p->info.typ->ref)->type == Tclass
                           || ((Tnode*)p->info.typ->ref)->type == Tstruct)
-                        gen_atts(fd, (Table*)((Tnode*)p->info.typ->ref)->ref, nsa);
+                        gen_atts(fd, (Table*)((Tnode*)p->info.typ->ref)->ref, nse, nsa, encoding);
                       else
                         fprintf(fd, ">");
                     }
@@ -8666,12 +8642,10 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
 }
 
 void
-gen_atts(FILE *fd, Table *t, const char *nsa)
+gen_atts(FILE *fd, Table *t, const char *nse, const char *nsa, const char *encoding)
 {
-  static unsigned long idnum = 0;
   Entry *q, *r;
   Tnode *p;
-  int i;
   for (; t; t = t->prev)
   {
     for (q = t->list; q; q = q->next)
@@ -8683,26 +8657,11 @@ gen_atts(FILE *fd, Table *t, const char *nsa)
           p = (Tnode*)q->info.typ->ref;
         else
           p = q->info.typ;
-        if (is_eq(q->sym->name, "id"))
-          fprintf(fd, "%lu", ++idnum); /* id="#" should be unique */
-        else if (is_external(p) && p->sym)
+        if (!gflag && is_eq(q->sym->name, "id"))
+          fprintf(fd, "_%lu", ++idnum); /* id="#" should be unique */
+        else if (p->sym && has_ns_eq("xsd", p->sym->name))
         {
-          if (!strcmp(p->sym->name, "xsd__boolean"))
-            fprintf(fd, "false");
-          else if (!strcmp(p->sym->name, "xsd__date"))
-            fprintf(fd, "1999-12-31");
-          else if (!strcmp(p->sym->name, "xsd__dateTime"))
-          {
-            char tmp[256];
-            time_t t = time(NULL), *p = &t;
-            strftime(tmp, 256, "%Y-%m-%dT%H:%M:%SZ", gmtime(p));
-            fprintf(fd, "%s", tmp);
-          }
-          else if (!strcmp(p->sym->name, "xsd__duration"))
-            fprintf(fd, "PT0S");
-          else if (!strcmp(p->sym->name, "xsd__time"))
-            fprintf(fd, "12:34:56.789Z");
-          fflush(fd);
+          gen_val(fd, 0, p, nse, nsa, encoding);
         }
         else
         {
@@ -8720,34 +8679,19 @@ gen_atts(FILE *fd, Table *t, const char *nsa)
             case Tullong:
               if (q->info.hasval || q->info.ptrval)
                 fprintf(fd, SOAP_LONG_FORMAT, q->info.val.i);
-              else if (q->info.typ->hasmin)
-                fprintf(fd, SOAP_LONG_FORMAT, (LONG64)q->info.typ->min + (q->info.typ->incmin == False));
               else
-                fprintf(fd, "0");
+                gen_val(fd, 0, p, nse, nsa, encoding);
               break;
             case Tfloat:
             case Tdouble:
             case Tldouble:
               if (q->info.hasval || q->info.ptrval)
                 fprintf(fd, "%g", q->info.val.r);
-              else if (q->info.typ->hasmin && q->info.typ->min > 0)
-                fprintf(fd, "%g", q->info.typ->min * (1 + (q->info.typ->incmin == False)/1000));
-              else if (q->info.typ->hasmax && q->info.typ->max > 0)
-                fprintf(fd, "%g", q->info.typ->max * (1 - (q->info.typ->incmax == False)/1000));
-              else if (q->info.typ->hasmin && q->info.typ->min < 0)
-                fprintf(fd, "%g", q->info.typ->min * (1 - (q->info.typ->incmin == False)/1000));
-              else if (q->info.typ->hasmax && q->info.typ->max < 0)
-                fprintf(fd, "%g", q->info.typ->max * (1 + (q->info.typ->incmax == False)/1000));
               else
-                fprintf(fd, "0.0");
+                gen_val(fd, 0, p, nse, nsa, encoding);
               break;
             case Ttime:
-              {
-                char tmp[256];
-                time_t T = time(NULL);
-                strftime(tmp, 256, "%Y-%m-%dT%H:%M:%SZ", gmtime(&T));
-                fprintf(fd, "%s", tmp);
-              }
+              gen_val(fd, 0, p, nse, nsa, encoding);
               break;
             case Tenum:
             case Tenumsc:
@@ -8762,10 +8706,8 @@ gen_atts(FILE *fd, Table *t, const char *nsa)
                   }
                 }
               }
-              else if (p->ref)
-                fprintf(fd, "%s", ns_remove2((((Table*)p->ref)->list)->sym->name, c_ident(p)));
               else
-                fprintf(fd, "0");
+                gen_val(fd, 0, p, nse, nsa, encoding);
               break;
             case Tpointer:
             case Treference:
@@ -8775,33 +8717,35 @@ gen_atts(FILE *fd, Table *t, const char *nsa)
               {
                 if ((q->info.hasval || q->info.ptrval) && q->info.val.s)
                   fprintf(fd, "%s", xstring(q->info.val.s));
-                else if (p->min > 0 && p->min < 10000)
-                  for (i = 0; i < (int)p->min; i++)
-                    fprintf(fd, "X");
+                else
+                  gen_val(fd, 0, p, nse, nsa, encoding);
               }
-              else if (is_stdstr(p))
+              else if (is_stdstr(p->ref))
               {
-                if (p->min > 0 && p->min < 10000)
-                  for (i = 0; i < (int)p->min; i++)
-                    fprintf(fd, "X");
+                if ((q->info.hasval || q->info.ptrval) && q->info.val.s)
+                  fprintf(fd, "%s", xstring(q->info.val.s));
+                else
+                  gen_val(fd, 0, p->ref, nse, nsa, encoding);
               }
               break;
+            case Tstruct:
             case Tclass:
               if (is_stdstr(p))
               {
                 if ((q->info.hasval || q->info.ptrval) && q->info.val.s)
                   fprintf(fd, "%s", xstring(q->info.val.s));
-                else if (p->min > 0 && p->min < 10000)
-                  for (i = 0; i < (int)p->min; i++)
-                    fprintf(fd, "X");
+                else
+                  gen_val(fd, 0, p, nse, nsa, encoding);
+              }
+              else
+              {
+                gen_val(fd, 0, p, nse, nsa, encoding);
               }
               break;
             default:
               break;
           }
         }
-        if (yflag)
-          fprintf(fd, " // %s //", c_type_id(q->info.typ, q->sym->name));
         fprintf(fd, "\"");
       }
     }
@@ -8819,8 +8763,17 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
   {
     if (is_fixedstring(p))
     {
-      for (i = 0; i < p->width / ((Tnode*)p->ref)->width - 1; i++)
-        fprintf(fd, "X");
+      LONG64 n = p->width / ((Tnode*)p->ref)->width - 1;
+      if (gflag)
+      {
+        fprintf(fd, "%%[[TEXT[" SOAP_LONG_FORMAT ":" SOAP_LONG_FORMAT "]]]%%", n, n);
+      }
+      else
+      {
+        for (i = 0; i < n; i++)
+          fprintf(fd, "X");
+      }
+      return;
     }
     else if (p->type == Tarray)
     {
@@ -8839,37 +8792,557 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         }
         fprintf(fd, "%*s", n, "");
       }
+      return;
     }
     else if ((q = is_dynamic_array(p)))
     {
-      if (!is_binary(p))
+      if (is_hexBinary(p))
+      {
+        if (gflag)
+        {
+          if (p->hasmin && p->hasmax)
+            fprintf(fd, "%%[[HEX[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+          else if (p->hasmin)
+            fprintf(fd, "%%[[HEX[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+          else if (p->hasmax)
+            fprintf(fd, "%%[[HEX[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "%%[[HEX]]%%");
+        }
+      }
+      else if (is_binary(p))
+      {
+        if (gflag)
+        {
+          if (p->hasmin && p->hasmax)
+            fprintf(fd, "%%[[BASE64[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+          else if (p->hasmin)
+            fprintf(fd, "%%[[BASE64[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+          else if (p->hasmax)
+            fprintf(fd, "%%[[BASE64[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "%%[[BASE64]]%%");
+        }
+      }
+      else
       {
         fprintf(fd, "\n%*s<%s>", n+1, "", q->sym->name[5]?q->sym->name+5:"item");
         gen_val(fd, n+1, q->info.typ, nse, nsa, encoding);
         fprintf(fd, "</%s>", q->sym->name[5]?q->sym->name+5:"item");
-        return;
       }
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__boolean"))
+    {
+      if (gflag)
+        fprintf(fd, "%%[[BOOL]]%%");
+      else
+        fprintf(fd, "false");
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__ENTITY") || has_restriction_base(p, "xsd__ENTITIES"))
+    {
+      if (gflag)
+      {
+        if (p->hasmin && p->hasmax)
+          fprintf(fd, "%%[[ENTITY[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+        else if (p->hasmin)
+          fprintf(fd, "%%[[ENTITY[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+        else if (p->hasmax)
+          fprintf(fd, "%%[[ENTITY[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+        else
+          fprintf(fd, "%%[[ENTITY]]%%");
+      }
+      else
+      {
+        if (p->min > 0 && p->min < 10000)
+          for (i = 0; i < (int)p->min; i++)
+            fprintf(fd, "X");
+      }
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__ID"))
+    {
+      if (gflag)
+      {
+        if (p->hasmin && p->hasmax)
+          fprintf(fd, "%%[[ID[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+        else if (p->hasmin)
+          fprintf(fd, "%%[[ID[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+        else if (p->hasmax)
+          fprintf(fd, "%%[[ID[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+        else
+          fprintf(fd, "%%[[ID]]%%");
+      }
+      else if (p->min > 0 && p->min < 10000)
+      {
+        for (i = 0; i < (int)p->min; i++)
+          fprintf(fd, "X");
+      }
+      else
+        fprintf(fd, "_%lu", ++idnum);
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__IDREF") || has_restriction_base(p, "xsd__IDREFS"))
+    {
+      if (gflag)
+      {
+        if (p->hasmin && p->hasmax)
+          fprintf(fd, "%%[[IDREF[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+        else if (p->hasmin)
+          fprintf(fd, "%%[[IDREF[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+        else if (p->hasmax)
+          fprintf(fd, "%%[[IDREF[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+        else
+          fprintf(fd, "%%[[IDREF]]%%");
+      }
+      else if (p->min > 0 && p->min < 10000)
+      {
+        for (i = 0; i < (int)p->min; i++)
+          fprintf(fd, "X");
+      }
+      else
+        fprintf(fd, "_%lu", ++idnum);
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__integer"))
+    {
+      if (gflag)
+        fprintf(fd, "%%[[INT64]]%%");
+      else
+        fprintf(fd, "0");
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__date"))
+    {
+      if (gflag)
+        fprintf(fd, "%%[[DATE]]%%");
+      else
+        fprintf(fd, "1999-12-31");
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__dateTime"))
+    {
+      if (gflag)
+      {
+        fprintf(fd, "%%[[DATETIME]]%%");
+      }
+      else
+      {
+        char tmp[256];
+        time_t T = time(NULL);
+        strftime(tmp, 256, "%Y-%m-%dT%H:%M:%SZ", gmtime(&T));
+        fprintf(fd, "%s", tmp);
+      }
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__decimal"))
+    {
+      if (gflag)
+        fprintf(fd, "%%[[DOUBLE]]%%");
+      else
+        fprintf(fd, "0.0");
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__duration"))
+    {
+      if (gflag)
+        fprintf(fd, "%%[[DURATION]]%%");
+      else
+        fprintf(fd, "PT0S");
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__language"))
+    {
+      if (gflag)
+      {
+        if (p->hasmin && p->hasmax)
+          fprintf(fd, "%%[[LANG[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+        else if (p->hasmin)
+          fprintf(fd, "%%[[LANG[%ld:2]]]%%", (long)p->min + (p->incmin == False));
+        else if (p->hasmax)
+          fprintf(fd, "%%[[LANG[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+        else
+          fprintf(fd, "%%[[LANG]]%%");
+      }
+      else
+      {
+        if (p->min > 0 && p->min < 10000)
+          for (i = 0; i < (int)p->min; i++)
+            fprintf(fd, "X");
+      }
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__Name"))
+    {
+      if (gflag)
+      {
+        if (p->hasmin && p->hasmax)
+          fprintf(fd, "%%[[NAME[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+        else if (p->hasmin)
+          fprintf(fd, "%%[[NAME[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+        else if (p->hasmax)
+          fprintf(fd, "%%[[NAME[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+        else
+          fprintf(fd, "%%[[NAME]]%%");
+      }
+      else
+      {
+        if (p->min > 0 && p->min < 10000)
+          for (i = 0; i < (int)p->min; i++)
+            fprintf(fd, "X");
+      }
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__NCName"))
+    {
+      if (gflag)
+      {
+        if (p->hasmin && p->hasmax)
+          fprintf(fd, "%%[[NCNAME[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+        else if (p->hasmin)
+          fprintf(fd, "%%[[NCNAME[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+        else if (p->hasmax)
+          fprintf(fd, "%%[[NCNAME[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+        else
+          fprintf(fd, "%%[[NCNAME]]%%");
+      }
+      else
+      {
+        if (p->min > 0 && p->min < 10000)
+          for (i = 0; i < (int)p->min; i++)
+            fprintf(fd, "X");
+      }
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__NMTOKEN") || has_restriction_base(p, "xsd__NMTOKENS"))
+    {
+      if (gflag)
+      {
+        if (p->hasmin && p->hasmax)
+          fprintf(fd, "%%[[NMTOKEN[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+        else if (p->hasmin)
+          fprintf(fd, "%%[[NMTOKEN[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+        else if (p->hasmax)
+          fprintf(fd, "%%[[NMTOKEN[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+        else
+          fprintf(fd, "%%[[NMTOKEN]]%%");
+      }
+      else
+      {
+        if (p->min > 0 && p->min < 10000)
+          for (i = 0; i < (int)p->min; i++)
+            fprintf(fd, "X");
+      }
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__negativeInteger"))
+    {
+      if (gflag)
+        fprintf(fd, "%%[[-9223372036854775808:-1]]%%");
+      else
+        fprintf(fd, "-1");
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__nonNegativeInteger"))
+    {
+      if (gflag)
+        fprintf(fd, "%%[[0:9223372036854775807]]%%");
+      else
+        fprintf(fd, "0");
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__nonPositiveInteger"))
+    {
+      if (gflag)
+        fprintf(fd, "%%[[-9223372036854775808:0]]%%");
+      else
+        fprintf(fd, "0");
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__positiveInteger"))
+    {
+      if (gflag)
+        fprintf(fd, "%%[[1:9223372036854775807]]%%");
+      else
+        fprintf(fd, "1");
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__time"))
+    {
+      if (gflag)
+        fprintf(fd, "%%[[TIME]]%%");
+      else
+        fprintf(fd, "12:34:56.789Z");
+      return;
+    }
+    else if (is_qname(p) || is_stdqname(p))
+    {
+      if (gflag)
+        fprintf(fd, "%%[[QNAME]]%%");
+      else
+        fprintf(fd, "xsd:string");
+      return;
     }
     switch (p->type)
     {
       case Tchar:
+        if (gflag)
+        {
+          if (p->hasmin && p->hasmax)
+            fprintf(fd, "%%[[%d:%d]]%%", (int)p->min + (p->incmin == False), (int)p->max - (p->incmax == False));
+          else if (p->hasmin)
+            fprintf(fd, "%%[[%d:127]]%%", (int)p->min + (p->incmin == False));
+          else if (p->hasmax)
+            fprintf(fd, "%%[[-128:%d]]%%", (int)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "%%[[INT8]]%%");
+        }
+        else
+        {
+          if (p->hasmin && p->min > 0)
+            fprintf(fd, "%d", (int)p->min + (p->incmin == False));
+          else if (p->hasmax && p->max < 0)
+            fprintf(fd, "%d", (int)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "0");
+        }
+        break;
       case Tshort:
+        if (gflag)
+        {
+          if (p->hasmin && p->hasmax)
+            fprintf(fd, "%%[[%d:%d]]%%", (int)p->min + (p->incmin == False), (int)p->max - (p->incmax == False));
+          else if (p->hasmin)
+            fprintf(fd, "%%[[%d:32767]]%%", (int)p->min + (p->incmin == False));
+          else if (p->hasmax)
+            fprintf(fd, "%%[[-32768:%d]]%%", (int)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "%%[[INT16]]%%");
+        }
+        else
+        {
+          if (p->hasmin && p->min > 0)
+            fprintf(fd, "%d", (int)p->min + (p->incmin == False));
+          else if (p->hasmax && p->max < 0)
+            fprintf(fd, "%d", (int)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "0");
+        }
+        break;
       case Tint:
       case Tlong:
+        if (gflag)
+        {
+          if (p->hasmin && p->hasmax)
+            fprintf(fd, "%%[[%ld:%ld]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+          else if (p->hasmin)
+            fprintf(fd, "%%[[%ld:2147483647]]%%", (long)p->min + (p->incmin == False));
+          else if (p->hasmax)
+            fprintf(fd, "%%[[-2147483648:%ld]]%%", (long)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "%%[[INT32]]%%");
+        }
+        else
+        {
+          if (p->hasmin && p->min > 0)
+            fprintf(fd, "%ld", (long)p->min + (p->incmin == False));
+          else if (p->hasmax && p->max < 0)
+            fprintf(fd, "%ld", (long)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "0");
+        }
+        break;
       case Tllong:
+        if (gflag)
+        {
+          if (p->hasmin && p->hasmax)
+            fprintf(fd, "%%[[" SOAP_LONG_FORMAT ":" SOAP_LONG_FORMAT "]]%%", (LONG64)p->min + (p->incmin == False), (LONG64)p->max - (p->incmax == False));
+          else if (p->hasmin)
+            fprintf(fd, "%%[[" SOAP_LONG_FORMAT ":9223372036854775807]]%%", (LONG64)p->min + (p->incmin == False));
+          else if (p->hasmax)
+            fprintf(fd, "%%[[-9223372036854775808:" SOAP_LONG_FORMAT "]]%%", (LONG64)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "%%[[INT64]]%%");
+        }
+        else
+        {
+          if (p->hasmin && p->min > 0)
+            fprintf(fd, SOAP_LONG_FORMAT, (LONG64)p->min + (p->incmin == False));
+          else if (p->hasmax && p->max < 0)
+            fprintf(fd, SOAP_LONG_FORMAT, (LONG64)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "0");
+        }
+        break;
       case Tuchar:
+        if (gflag)
+        {
+          if (p->hasmin && p->hasmax)
+            fprintf(fd, "%%[[%u:%u]]%%", (unsigned int)p->min + (p->incmin == False), (unsigned int)p->max - (p->incmax == False));
+          else if (p->hasmin)
+            fprintf(fd, "%%[[%u:255]]%%", (unsigned int)p->min + (p->incmin == False));
+          else if (p->hasmax)
+            fprintf(fd, "%%[[0:%u]]%%", (unsigned int)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "%%[[UINT8]]%%");
+        }
+        else
+        {
+          if (p->hasmin && p->min > 0)
+            fprintf(fd, "%u", (unsigned int)p->min + (p->incmin == False));
+          else if (p->hasmax && p->max < 0)
+            fprintf(fd, "%u", (unsigned int)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "0");
+        }
+        break;
       case Tushort:
+        if (gflag)
+        {
+          if (p->hasmin && p->hasmax)
+            fprintf(fd, "%%[[%u:%u]]%%", (unsigned int)p->min + (p->incmin == False), (unsigned int)p->max - (p->incmax == False));
+          else if (p->hasmin)
+            fprintf(fd, "%%[[%u:65535]]%%", (unsigned int)p->min + (p->incmin == False));
+          else if (p->hasmax)
+            fprintf(fd, "%%[[0:%u]]%%", (unsigned int)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "%%[[UINT16]]%%");
+        }
+        else
+        {
+          if (p->hasmin && p->min > 0)
+            fprintf(fd, "%u", (unsigned int)p->min + (p->incmin == False));
+          else if (p->hasmax && p->max < 0)
+            fprintf(fd, "%u", (unsigned int)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "0");
+        }
+        break;
       case Tuint:
       case Tulong:
+        if (gflag)
+        {
+          if (p->hasmin && p->hasmax)
+            fprintf(fd, "%%[[%lu:%lu]]%%", (unsigned long)p->min + (p->incmin == False), (unsigned long)p->max - (p->incmax == False));
+          else if (p->hasmin)
+            fprintf(fd, "%%[[%lu:4294967295]]%%", (unsigned long)p->min + (p->incmin == False));
+          else if (p->hasmax)
+            fprintf(fd, "%%[[0:%lu]]%%", (unsigned long)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "%%[[UINT32]]%%");
+        }
+        else
+        {
+          if (p->hasmin && p->min > 0)
+            fprintf(fd, "%lu", (unsigned long)p->min + (p->incmin == False));
+          else if (p->hasmax && p->max < 0)
+            fprintf(fd, "%lu", (unsigned long)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "0");
+        }
+        break;
       case Tullong:
-        fprintf(fd, "0");
+        if (gflag)
+        {
+          if (p->hasmin && p->hasmax)
+            fprintf(fd, "%%[[" SOAP_ULONG_FORMAT ":" SOAP_ULONG_FORMAT "]]%%", (ULONG64)p->min + (p->incmin == False), (ULONG64)p->max - (p->incmax == False));
+          else if (p->hasmin)
+            fprintf(fd, "%%[[" SOAP_ULONG_FORMAT ":18446744073709551615]]%%", (ULONG64)p->min + (p->incmin == False));
+          else if (p->hasmax)
+            fprintf(fd, "%%[[0:" SOAP_ULONG_FORMAT "]]%%", (ULONG64)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "%%[[UINT64]]%%");
+        }
+        else
+        {
+          if (p->hasmin && p->min > 0)
+            fprintf(fd, SOAP_ULONG_FORMAT, (ULONG64)p->min + (p->incmin == False));
+          else if (p->hasmax && p->max < 0)
+            fprintf(fd, SOAP_ULONG_FORMAT, (ULONG64)p->max - (p->incmax == False));
+          else
+            fprintf(fd, "0");
+        }
         break;
       case Tfloat:
+        if (gflag)
+        {
+          if (p->hasmin && p->hasmax && p->incmin && p->incmax)
+            fprintf(fd, "%%[[%E:%E]]%%", p->min, p->max);
+          else if (p->hasmin && p->hasmax && p->incmin)
+            fprintf(fd, "%%[[%E:%E)]%%", p->min, p->max);
+          else if (p->hasmin && p->hasmax && p->incmax)
+            fprintf(fd, "%%[(%E:%E]]%%", p->min, p->max);
+          else if (p->hasmin && p->hasmax)
+            fprintf(fd, "%%[(%E:%E)]%%", p->min, p->max);
+          else if (p->hasmin && p->incmin)
+            fprintf(fd, "%%[[%E:%E]]%%", p->min, FLT_MAX);
+          else if (p->hasmin)
+            fprintf(fd, "%%[(%E:%E]]%%", p->min, FLT_MAX);
+          else if (p->hasmax && p->incmax)
+            fprintf(fd, "%%[[%E:%E]]%%", -FLT_MAX, p->max);
+          else if (p->hasmax)
+            fprintf(fd, "%%[[%E:%E)]%%", -FLT_MAX, p->max);
+          else
+            fprintf(fd, "%%[[FLOAT]]%%");
+        }
+        else
+        {
+          if (p->hasmin && p->min > 0)
+            fprintf(fd, "%g", p->min * (1 + (p->incmin == False)/1000));
+          else if (p->hasmax && p->max > 0)
+            fprintf(fd, "%g", p->max * (1 - (p->incmax == False)/1000));
+          else if (p->hasmin && p->min < 0)
+            fprintf(fd, "%g", p->min * (1 - (p->incmin == False)/1000));
+          else if (p->hasmax && p->max < 0)
+            fprintf(fd, "%g", p->max * (1 + (p->incmax == False)/1000));
+          else
+            fprintf(fd, "0.0");
+        }
+        break;
       case Tdouble:
       case Tldouble:
-        fprintf(fd, "0.0");
+        if (gflag)
+        {
+          if (p->hasmin && p->hasmax && p->incmin && p->incmax)
+            fprintf(fd, "%%[[%lE:%lE]]%%", p->min, p->max);
+          else if (p->hasmin && p->hasmax && p->incmin)
+            fprintf(fd, "%%[[%lE:%lE)]%%", p->min, p->max);
+          else if (p->hasmin && p->hasmax && p->incmax)
+            fprintf(fd, "%%[(%lE:%lE]]%%", p->min, p->max);
+          else if (p->hasmin && p->hasmax)
+            fprintf(fd, "%%[(%lE:%lE)]%%", p->min, p->max);
+          else if (p->hasmin && p->incmin)
+            fprintf(fd, "%%[[%lE:%lE]]%%", p->min, DBL_MAX);
+          else if (p->hasmin)
+            fprintf(fd, "%%[(%lE:%lE]]%%", p->min, DBL_MAX);
+          else if (p->hasmax && p->incmax)
+            fprintf(fd, "%%[[%lE:%lE]]%%", -DBL_MAX, p->max);
+          else if (p->hasmax)
+            fprintf(fd, "%%[[%lE:%lE)]%%", -DBL_MAX, p->max);
+          else
+            fprintf(fd, "%%[[DOUBLE]]%%");
+        }
+        else
+        {
+          if (p->hasmin && p->min > 0)
+            fprintf(fd, "%g", p->min * (1 + (p->incmin == False)/1000));
+          else if (p->hasmax && p->max > 0)
+            fprintf(fd, "%g", p->max * (1 - (p->incmax == False)/1000));
+          else if (p->hasmin && p->min < 0)
+            fprintf(fd, "%g", p->min * (1 - (p->incmin == False)/1000));
+          else if (p->hasmax && p->max < 0)
+            fprintf(fd, "%g", p->max * (1 + (p->incmax == False)/1000));
+          else
+            fprintf(fd, "0.0");
+        }
         break;
       case Ttime:
+        if (gflag)
+        {
+          fprintf(fd, "%%[[DATETIME]]%%");
+        }
+        else
         {
           char tmp[256];
           time_t T = time(NULL);
@@ -8879,10 +9352,27 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         break;
       case Tenum:
       case Tenumsc:
-        if (p->ref && (q = ((Table*)p->ref)->list))
-          fprintf(fd, "%s", ns_remove2(q->sym->name, c_ident(p)));
+        if (gflag)
+        {
+          if (p->ref)
+          {
+            fprintf(fd, "%%[[");
+            for (q = ((Table*)p->ref)->list; q; q = q->next)
+            {
+              fprintf(fd, "%s", ns_remove2(q->sym->name, c_ident(p)));
+              if (q->next)
+                fprintf(fd, "][");
+            }
+            fprintf(fd, "]]%%");
+          }
+        }
         else
-          fprintf(fd, "0");
+        {
+          if (p->ref && (q = ((Table*)p->ref)->list))
+            fprintf(fd, "%s", ns_remove2(q->sym->name, c_ident(p)));
+          else
+            fprintf(fd, "0");
+        }
         break;
       case Tpointer:
       case Treference:
@@ -8890,15 +9380,23 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
       case Ttemplate:
         if (is_string(p) || is_wstring(p))
         {
-          if (p->min > 0 && p->min < 10000)
-            for (i = 0; i < (int)p->min; i++)
-              fprintf(fd, "X");
-        }
-        else if (is_stdstr(p))
-        {
-          if (p->min > 0 && p->min < 10000)
-            for (i = 0; i < (int)p->min; i++)
-              fprintf(fd, "X");
+          if (gflag)
+          {
+            if (p->hasmin && p->hasmax)
+              fprintf(fd, "%%[[TEXT[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+            else if (p->hasmin)
+              fprintf(fd, "%%[[TEXT[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+            else if (p->hasmax)
+              fprintf(fd, "%%[[TEXT[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+            else
+              fprintf(fd, "%%[[TEXT]]%%");
+          }
+          else
+          {
+            if (p->min > 0 && p->min < 10000)
+              for (i = 0; i < (int)p->min; i++)
+                fprintf(fd, "X");
+          }
         }
         else
           gen_val(fd, n, (Tnode*)p->ref, nse, nsa, encoding);
@@ -8909,9 +9407,23 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         nsa = ns_qualifiedAttribute(p);
         if (is_stdstr(p))
         {
-          if (p->min > 0 && p->min < 10000)
-            for (i = 0; i < (int)p->min; i++)
-              fprintf(fd, "X");
+          if (gflag)
+          {
+            if (p->hasmin && p->hasmax)
+              fprintf(fd, "%%[[TEXT[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+            else if (p->hasmin)
+              fprintf(fd, "%%[[TEXT[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+            else if (p->hasmax)
+              fprintf(fd, "%%[[TEXT[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+            else
+              fprintf(fd, "%%[[TEXT]]%%");
+          }
+          else
+          {
+            if (p->min > 0 && p->min < 10000)
+              for (i = 0; i < (int)p->min; i++)
+                fprintf(fd, "X");
+          }
         }
         else if (is_primclass(p))
         {
@@ -8957,8 +9469,12 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         }
         break;
       case Tunion:
-        if (((Table*)p->ref)->list)
+        if ((Table*)p->ref && ((Table*)p->ref)->list)
+        {
+          if (yflag)
+            fprintf(fd, "%*s<!-- %s -->\n", n, "", c_type(p));
           gen_field(fd, n, ((Table*)p->ref)->list, nse, nsa, encoding);
+        }
         break;
       default:
         break;
@@ -9585,6 +10101,8 @@ is_XML(Tnode *p)
 int
 is_stdXML(Tnode *p)
 {
+  if (is_synonym(p))
+    return (is_stdstring(p) || is_stdwstring(p)) && is_eq(p->synonym->name, "XML");
   return p->sym && (is_stdstring(p) || is_stdwstring(p)) && is_eq(p->sym->name, "XML");
 }
 
@@ -10119,7 +10637,7 @@ has_ns_eq(const char *ns, const char *s)
     s++;
   if (!ns)
   {
-    const char *t = strstr(s + 1, "__");
+    const char *t = *s ? strstr(s + 1, "__") : NULL;
     if (!t
         || (t[2] == 'x' && isxdigit(t[3]) && isxdigit(t[4]) && isxdigit(t[5]) && isxdigit(t[6]))
         || !strncmp(t+2, "DOT", 3)
@@ -10266,7 +10784,7 @@ prefix_of(const char *s)
     return NULL;
   while (*s == '_' || *s == ':')
     s++;
-  t = strstr(s + 1, "__");
+  t = *s ? strstr(s + 1, "__") : NULL;
   if (!t)
   {
     t = strchr(s, ':');
@@ -10375,8 +10893,8 @@ t_ident(Tnode *typ)
   const char *q;
   if (typ->extsym)
     return ident(typ->extsym->name);
-  if (typ->synonym)
-    return ident(typ->synonym->name);
+  if (typ->restriction)
+    return ident(typ->restriction->name);
   switch(typ->type)
   {
     case Tnone:
@@ -10853,7 +11371,7 @@ const char *
 ns_remove3(const char *tag, const char *type)
 {
   size_t n;
-  if (tag && type && !strncmp(tag, type, n = strlen(type)) && strlen(tag) > n + 2)
+  if (tag && type && !strncmp(tag, type, n = strlen(type)) && strlen(tag) > n + 2 && tag[n] == '_' && tag[n + 1] == '_')
     return tag + n + 2;
   return tag;
 }
@@ -10988,6 +11506,13 @@ base_type(Tnode *typ, const char *ns)
   int d;
   const char *s;
   char *t;
+  if (typ->restriction)
+  {
+    if (ns)
+      return ns_convert(typ->restriction->name);
+    else
+      return ns_remove(typ->restriction->name);
+  }
   if (is_string(typ) || is_wstring(typ) || is_stdstring(typ) || is_stdwstring(typ) || is_fixedstring(typ))
   {
     if (ns)
@@ -11014,13 +11539,6 @@ base_type(Tnode *typ, const char *ns)
     if (d)
       sprintf(t+strlen(t), "%dD", d);
     return t;
-  }
-  if (typ->synonym)
-  {
-    if (ns)
-      return ns_convert(typ->synonym->name);
-    else
-      return ns_remove(typ->synonym->name);
   }
   switch (typ->type)
   {
@@ -11798,7 +12316,9 @@ generate_type(Tnode *typ)
   else if (is_imported(typ) && (typ->type != Tint || typ->sym))
     return;
   if (is_typedef(typ) && (is_element(typ) || is_synonym(typ)))
-    fprintf(fhead, "\n/* %s is a typedef synonym for %s */", c_ident(typ), t_ident(typ));
+    fprintf(fhead, "\n/* %s is a typedef synonym of %s */", c_ident(typ), t_ident(typ));
+  else if (is_typedef(typ) && (is_element(typ) || is_restriction(typ)))
+    fprintf(fhead, "\n/* %s is a typedef restriction of %s */", c_ident(typ), t_ident(typ));
   if (is_primitive(typ) || is_string(typ) || is_wstring(typ))
   {
     if (!Qflag && is_external(typ) && namespaceid)
@@ -12823,7 +13343,7 @@ soap_instantiate(Tnode *typ)
 
   if (cflag)
   {
-    if ((is_typedef(typ) && !is_external(typ)) || is_synonym(typ))
+    if ((is_typedef(typ) && !is_external(typ)) || is_restriction(typ))
       fprintf(fhead, "\n#define soap_new_%s soap_new_%s\n", c_ident(typ), t_ident(typ));
     else
     {
@@ -12835,7 +13355,7 @@ soap_instantiate(Tnode *typ)
 
   if (typ->type != Tclass || !typ->sym || !is_eq(typ->sym->name, "xsd__QName") || is_imported(typ))
   {
-    if ((is_typedef(typ) && !is_external(typ)) || is_synonym(typ))
+    if ((is_typedef(typ) && !is_external(typ)) || is_restriction(typ))
     {
       fprintf(fhead, "\n\n#define %s_instantiate_%s %s_instantiate_%s\n", fprefix, c_ident(typ), fprefix, t_ident(typ));
       fprintf(fhead, "\n\n#define soap_new_%s soap_new_%s\n", c_ident(typ), t_ident(typ));
@@ -13099,7 +13619,7 @@ soap_dup(Tnode *typ)
     return;
   if (typ->type != Tclass || !(typ->sym && (is_stdstring(typ) || is_stdwstring(typ)) && is_eq(typ->sym->name, "xsd__QName")) || is_imported(typ))
   {
-    if ((is_typedef(typ) && !is_external(typ)) || is_synonym(typ))
+    if ((is_typedef(typ) && !is_external(typ)) || is_restriction(typ))
     {
       fprintf(fhead, "\n\n#define %s_dup_%s %s_dup_%s\n", fprefix, c_ident(typ), fprefix, t_ident(typ));
       return;
@@ -13466,7 +13986,7 @@ soap_del(Tnode *typ)
     return;
   if (typ->type != Tclass || !(typ->sym && (is_stdstring(typ) || is_stdwstring(typ)) && is_eq(typ->sym->name, "xsd__QName")) || is_imported(typ))
   {
-    if ((is_typedef(typ) && !is_external(typ)) || is_synonym(typ))
+    if ((is_typedef(typ) && !is_external(typ)) || is_restriction(typ))
     {
       fprintf(fhead, "\n\n#define %s_del_%s %s_del_%s\n", fprefix, c_ident(typ), fprefix, t_ident(typ));
       return;
@@ -13748,7 +14268,7 @@ soap_serialize(Tnode *typ)
   if (is_primitive(typ))
     return;
 
-  if (is_typedef(typ) && (is_template(typ) || is_element(typ) || is_synonym(typ) || is_external(typ) || is_imported(typ)) && (!is_external(typ) || is_volatile(typ)))
+  if (is_typedef(typ) && (is_template(typ) || is_element(typ) || is_restriction(typ) || is_external(typ) || is_imported(typ)) && (!is_external(typ) || is_volatile(typ)))
   {
     if (typ->type == Tclass && !is_stdstring(typ) && !is_stdwstring(typ) && !is_volatile(typ))
       fprintf(fhead, "\n\n#define soap_serialize_%s(soap, a) (a)->soap_serialize(soap)\n", c_ident(typ));
@@ -14249,7 +14769,7 @@ soap_default(Tnode* typ)
   if (typ->type == Tpointer && !is_string(typ) && !is_wstring(typ))
     return;
 
-  if (is_typedef(typ) && (is_template(typ) || is_element(typ) || is_synonym(typ) || is_external(typ) || is_imported(typ)) && (!is_external(typ) || is_volatile(typ)))
+  if (is_typedef(typ) && (is_template(typ) || is_element(typ) || is_restriction(typ) || is_external(typ) || is_imported(typ)) && (!is_external(typ) || is_volatile(typ)))
   {
     if (typ->type == Tclass && !is_stdstring(typ) && !is_stdwstring(typ) && !is_volatile(typ))
       fprintf(fhead, "\n\n#define soap_default_%s(soap, a) (a)->%s::soap_default(soap)\n", c_ident(typ), t_ident(typ));
@@ -15632,6 +16152,32 @@ int
 is_typedef(Tnode *typ)
 {
   return typ->sym && !is_transient(typ);
+}
+
+int
+is_restriction(Tnode *typ)
+{
+  return is_typedef(typ) && typ->restriction;
+}
+
+int
+has_restriction_base(Tnode *typ, const char *base)
+{
+  while (typ)
+  {
+    Entry *p;
+    if (typ->sym && is_eq(typ->sym->name, base))
+      return 1;
+    if (!typ->restriction)
+      break;
+    if (is_eq(typ->restriction->name, base))
+      return 1;
+    p = entry(typetable, typ->restriction);
+    if (!p)
+      break;
+    typ = p->info.typ;
+  }
+  return 0;
 }
 
 int

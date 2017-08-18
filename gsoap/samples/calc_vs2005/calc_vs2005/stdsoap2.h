@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.51
+        stdsoap2.h 2.8.52
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20851
+#define GSOAP_VERSION 20852
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -691,6 +691,10 @@ extern intmax_t __strtoull(const char*, char**, int);
 #  define SOAP_LOCALE_T locale_t
 #  define SOAP_LOCALE(soap) ((soap)->c_locale ? (soap)->c_locale : ((soap)->c_locale = newlocale(LC_ALL_MASK, "C", NULL)))
 #  define SOAP_FREELOCALE(soap) (void)((soap)->c_locale && (freelocale((soap)->c_locale), ((soap)->c_locale = NULL)))
+#  if defined(CYGWIN)
+#   undef HAVE_STRTOF_L /* Cygwin does not support strtof_l strtod_l */
+#   undef HAVE_STRTOD_L
+#  endif
 # endif
 #else
 # undef HAVE_STRTOF_L
@@ -1227,6 +1231,10 @@ extern "C" {
 # endif
 #endif
 
+#ifndef SOAP_MAXALLOCSIZE
+# define SOAP_MAXALLOCSIZE (0) /* max size that malloc() can handle, zero for no limit */
+#endif
+
 #ifndef SOAP_MAXLOGS
 # define SOAP_MAXLOGS     (3) /* max number of debug logs per struct soap environment */
 # define SOAP_INDEX_RECV  (0)
@@ -1266,7 +1274,8 @@ extern "C" {
 
 /* SOAP_MAXDIMESIZE: Trusted max size of inbound DIME data.
    Increase if necessary to allow larger attachments, or decrease when server
-   resources are limited.
+   resources are limited.  We do to deny senders to allocate 4GB at the
+   receiver without sending the whole 4GB.
 */
 #ifndef SOAP_MAXDIMESIZE
 # define SOAP_MAXDIMESIZE (8*1048576) /* 8 MB */

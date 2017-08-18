@@ -1691,7 +1691,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
       {
         if (simpleType.restriction->length && simpleType.restriction->length->value)
         {
-          fprintf(stream, "/// Length of this string is %s.\n", simpleType.restriction->length->value);
+          fprintf(stream, "/// Length of this content is %s.\n", simpleType.restriction->length->value);
           document(simpleType.restriction->length->annotation);
         }
         else
@@ -1709,7 +1709,7 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
           }
           if (a || b)
           {
-            fprintf(stream, "/// Length of this string is %s to %s.\n", a ? a : "0", b ? b : "unbounded");
+            fprintf(stream, "/// Length of this content is %s to %s.\n", a ? a : "0", b ? b : "unbounded");
           }
         }
         char format[16];

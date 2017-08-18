@@ -356,8 +356,9 @@ SOAPCPP2_NONAMESPACES =
 SOAPCPP2_NO_C_LOCALE = 
 STRIP = 
 VERSION = 2.8
+WITH_OPENSSL = 
 WSDL2H_EXTRA_FLAGS = -I/usr/local/opt/openssl/include -DWITH_OPENSSL -DWITH_GZIP
-WSDL2H_EXTRA_LIBS = -L/usr/local/opt/openssl/lib  ../plugin/httpda.c ../plugin/smdevp.c ../plugin/threads.c -lssl -lcrypto -lz
+WSDL2H_EXTRA_LIBS = -L/usr/local/opt/openssl/lib  -lssl -lcrypto -lz
 WSDL2H_IMPORTPATH = -DWSDL2H_IMPORT_PATH="\"${datarootdir}/gsoap/WS\""
 WSDL2H_SOAP_CPP_LIB = libgsoapssl++.a
 YACC = bison -y
@@ -422,7 +423,7 @@ AM_CXXFLAGS = $(SOAPCPP2_DEBUG) -D$(platform)
 AM_CFLAGS = $(SOAPCPP2_DEBUG) -D$(platform)
 
 # Install all soapcpp2 and wsdl2h files into ${prefix}/share/gsoap
-nobase_pkgdata_DATA = $(srcdir)/import/* $(srcdir)/plugin/* $(srcdir)/WS/* $(srcdir)/custom/* $(srcdir)/extras/*
+nobase_pkgdata_DATA = $(top_srcdir)/gsoap/import/* $(top_srcdir)/gsoap/plugin/* $(top_srcdir)/gsoap/WS/* $(top_srcdir)/gsoap/custom/* $(top_srcdir)/gsoap/extras/*
 lib_LIBRARIES = libgsoap.a libgsoap++.a libgsoapck.a libgsoapck++.a libgsoapssl.a libgsoapssl++.a
 libgsoap_a_SOURCES = stdsoap2.c dom.c
 libgsoap_a_CFLAGS = $(SOAPCPP2_DEBUG) $(SOAPCPP2_NONAMESPACES) $(SOAPCPP2_NO_C_LOCALE) $(SOAPCPP2_IPV6) -D$(platform)
@@ -1089,21 +1090,21 @@ uninstall-am: uninstall-includeHEADERS uninstall-libLIBRARIES \
 
 
 stdsoap2_ck.c: stdsoap2.cpp
-	$(LN_S) -f $(srcdir)/stdsoap2.cpp stdsoap2_ck.c
+	$(LN_S) -f $(top_srcdir)/gsoap/stdsoap2.cpp stdsoap2_ck.c
 
 stdsoap2_cpp.cpp: stdsoap2.cpp
-	$(LN_S) -f $(srcdir)/stdsoap2.cpp stdsoap2_cpp.cpp
+	$(LN_S) -f $(top_srcdir)/gsoap/stdsoap2.cpp stdsoap2_cpp.cpp
 
 stdsoap2_ck_cpp.cpp: stdsoap2.cpp
-	$(LN_S) -f $(srcdir)/stdsoap2.cpp stdsoap2_ck_cpp.cpp
+	$(LN_S) -f $(top_srcdir)/gsoap/stdsoap2.cpp stdsoap2_ck_cpp.cpp
 
 stdsoap2_ssl.c: stdsoap2.cpp
-	$(LN_S) -f $(srcdir)/stdsoap2.cpp stdsoap2_ssl.c
+	$(LN_S) -f $(top_srcdir)/gsoap/stdsoap2.cpp stdsoap2_ssl.c
 
 stdsoap2_ssl_cpp.cpp: stdsoap2.cpp
-	$(LN_S) -f $(srcdir)/stdsoap2.cpp stdsoap2_ssl_cpp.cpp
+	$(LN_S) -f $(top_srcdir)/gsoap/stdsoap2.cpp stdsoap2_ssl_cpp.cpp
 dom_cpp.cpp: dom.cpp
-	$(LN_S) -f $(srcdir)/dom.cpp dom_cpp.cpp
+	$(LN_S) -f $(top_srcdir)/gsoap/dom.cpp dom_cpp.cpp
 
 install-data-hook:
 	$(LN_S) -f $(top_builddir)/gsoap/src/soapcpp2 $(top_builddir)/gsoap/soapcpp2 || echo "ok, link already exists".
