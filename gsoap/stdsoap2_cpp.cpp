@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.52
+        stdsoap2.c[pp] 2.8.53
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20852
+#define GSOAP_LIB_VERSION 20853
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.52 2017-08-17 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.53 2017-08-29 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.52 2017-08-17 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.53 2017-08-29 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -1390,9 +1390,6 @@ soap_recv(struct soap *soap)
       int i;
       unsigned char tmp[12];
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DIME hdr for chunked DIME is in buffer\n"));
-      soap->count += soap->dime.buflen - soap->buflen;
-      if (soap->recv_maxlength && soap->count > soap->recv_maxlength)
-        return EOF;
       soap->buflen = soap->dime.buflen;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Skip padding (%ld bytes)\n", -(long)soap->dime.size&3));
       for (i = -(long)soap->dime.size&3; i > 0; i--)
@@ -1409,10 +1406,12 @@ soap_recv(struct soap *soap)
           if (soap_recv_raw(soap))
             return EOF;
       }
-      soap->dime.flags = tmp[0] & 0x7;
+      if ((tmp[0] & 0xF8) != SOAP_DIME_VERSION)
+	return soap->error = SOAP_DIME_MISMATCH;
+      soap->dime.flags = (tmp[0] & 0x7) | (tmp[1] & 0xF0);
       soap->dime.size = ((size_t)tmp[8] << 24) | ((size_t)tmp[9] << 16) | ((size_t)tmp[10] << 8) | ((size_t)tmp[11]);
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Get DIME chunk (%u bytes)\n", (unsigned int)soap->dime.size));
-      if (soap->dime.flags & SOAP_DIME_CF)
+      if ((soap->dime.flags & SOAP_DIME_CF))
       { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "More chunking\n"));
         soap->dime.chunksize = soap->dime.size;
         if (soap->buflen - soap->bufidx >= soap->dime.size)
@@ -1427,8 +1426,12 @@ soap_recv(struct soap *soap)
         soap->dime.buflen = 0;
         soap->dime.chunksize = 0;
       }
+      if ((soap->dime.flags & SOAP_DIME_ME))
+	soap->mode &= ~SOAP_ENC_DIME;
       soap->count = soap->buflen - soap->bufidx;
-      DBGLOG(TEST, SOAP_MESSAGE(fdebug, SOAP_ULONG_FORMAT " bytes remaining\n", soap->count));
+      if (soap->recv_maxlength && soap->count > soap->recv_maxlength)
+        return EOF;
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, SOAP_LONG_FORMAT " bytes remaining\n", soap->count));
       return SOAP_OK;
     }
     if (soap->dime.chunksize)
@@ -1442,7 +1445,7 @@ soap_recv(struct soap *soap)
       }
       else
         soap->dime.chunksize -= soap->buflen - soap->bufidx;
-      DBGLOG(TEST, SOAP_MESSAGE(fdebug,  "%lu bytes remaining, count= " SOAP_ULONG_FORMAT "\n", (unsigned long)(soap->buflen-soap->bufidx), soap->count));
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug,  "%lu bytes remaining, count = " SOAP_LONG_FORMAT "\n", (unsigned long)(soap->buflen-soap->bufidx), soap->count));
       return SOAP_OK;
     }
   }
@@ -8384,7 +8387,6 @@ soap_begin_count(struct soap *soap)
   soap_clr_attr(soap);
   soap_set_local_namespaces(soap);
 #ifndef WITH_LEANER
-  soap->dime.count = 0; /* count # of attachments */
   soap->dime.size = 0; /* accumulate total size of attachments */
   if (soap->fprepareinitsend && (soap->mode & SOAP_IO) != SOAP_IO_STORE && (soap->error = soap->fprepareinitsend(soap)) != SOAP_OK)
     return soap->error;
@@ -12735,7 +12737,7 @@ soap_peek_element(struct soap *soap)
     while (c != '=' && c != '>' && c != '/' && c > 32 && (int)c != EOF)
     { if (i > 1)
       { *s++ = (char)c;
-	i--;
+        i--;
       }
       c = soap_get1(soap);
     }
@@ -17031,7 +17033,7 @@ soap_getdimefield(struct soap *soap, size_t n)
         *s++ = (char)c;
       }
       if (n + 1 > n)
-	*s = '\0'; /* force NUL terminated */
+        *s = '\0'; /* force NUL terminated */
       soap->error = soap_move(soap, (size_t)(-(long)n&3));
       if (soap->error)
         return NULL;
@@ -17060,12 +17062,11 @@ soap_getdimehdr(struct soap *soap)
   if (!(soap->mode & SOAP_ENC_DIME))
     return soap->error = SOAP_DIME_END;
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Get DIME header\n"));
-  if (soap->dime.buflen || soap->dime.chunksize)
-  { if (soap_move(soap, soap->dime.size - soap_tell(soap)))
+  if (soap->dime.buflen)
+  { if (soap_move(soap, soap->dime.size - soap_tell(soap))
+     || soap_move(soap, (size_t)(-(long)soap->dime.size&3)))
       return soap->error = SOAP_CHK_EOF;
-    soap_unget(soap, soap_getchar(soap)); /* skip padding and get hdr */
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "... From chunked\n"));
-    return SOAP_OK;
   }
   s = (char*)tmp;
   for (i = 12; i > 0; i--)
@@ -17091,8 +17092,8 @@ soap_getdimehdr(struct soap *soap)
   soap->dime.type = soap_getdimefield(soap, typelen);
   if (!soap->dime.type && soap->error)
     return soap->error;
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DIME id='%s', type='%s', options='%s'\n", soap->dime.id ? soap->dime.id : SOAP_STR_EOS, soap->dime.type ? soap->dime.type : "", soap->dime.options ? soap->dime.options+4 : SOAP_STR_EOS));
-  if (soap->dime.flags & SOAP_DIME_ME)
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DIME flags=%x id='%s', type='%s', options='%s'\n", soap->dime.flags, soap->dime.id ? soap->dime.id : SOAP_STR_EOS, soap->dime.type ? soap->dime.type : "", soap->dime.options ? soap->dime.options+4 : SOAP_STR_EOS));
+  if ((soap->dime.flags & SOAP_DIME_ME))
     soap->mode &= ~SOAP_ENC_DIME;
   return SOAP_OK;
 }
@@ -17107,14 +17108,17 @@ SOAP_FMAC1
 int
 SOAP_FMAC2
 soap_getdime(struct soap *soap)
-{ while (soap->dime.flags & SOAP_DIME_CF)
-  { if (soap_getdimehdr(soap))
+{ if (soap_move(soap, (size_t)(((soap->dime.size+3)&(~3)) - soap_tell(soap))))
+    return soap->error = SOAP_EOF;
+  while ((soap->dime.flags & SOAP_DIME_CF))
+  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Next DIME chunk\n"));
+    if (soap_getdimehdr(soap))
       return soap->error;
-    if (soap_move(soap, soap->dime.size))
+    if (!(soap->dime.flags & SOAP_DIME_CF))
+      break;
+    if (soap_move(soap, (size_t)(((soap->dime.size+3)&(~3)))))
       return soap->error = SOAP_EOF;
   }
-  if (soap_move(soap, (size_t)(((soap->dime.size+3)&(~3)) - soap_tell(soap))))
-    return soap->error = SOAP_EOF;
   for (;;)
   { struct soap_multipart *content;
     if (soap_getdimehdr(soap))
@@ -17163,7 +17167,7 @@ end:
       soap->dime.type = type;
       soap->dime.options = options;
     }
-    else if (soap->dime.flags & SOAP_DIME_CF)
+    else if ((soap->dime.flags & SOAP_DIME_CF))
     { const char *id, *type, *options;
       id = soap->dime.id;
       type = soap->dime.type;
@@ -17194,11 +17198,14 @@ end:
         if (soap_getdimehdr(soap))
           return soap->error;
       }
-      soap->dime.size = soap->blist->size++; /* allocate one more byte in blist for the terminating '\0' */
+      soap->dime.size = soap->blist->size;
+      if (soap->dime.size + 1 > soap->dime.size)
+	soap->blist->size++; /* allocate one more byte in blist for the terminating '\0' */
       soap->dime.ptr = soap_save_block(soap, NULL, NULL, 0);
       if (!soap->dime.ptr)
         return soap->error;
-      soap->dime.ptr[soap->dime.size] = '\0'; /* make 0-terminated, just in case even though this is binary data */
+      if (soap->dime.size + 1 > soap->dime.size)
+	soap->dime.ptr[soap->dime.size] = '\0'; /* make 0-terminated, just in case even though this is binary data */
       soap->dime.id = id;
       soap->dime.type = type;
       soap->dime.options = options;
@@ -18002,6 +18009,7 @@ soap_begin_recv(struct soap *soap)
   soap->fform = NULL;
 #ifndef WITH_LEANER
   soap->dom = NULL;
+  soap->dime.count = 0;
   soap->dime.chunksize = 0;
   soap->dime.buflen = 0;
   soap->dime.list = NULL;
@@ -18243,7 +18251,7 @@ soap_begin_recv(struct soap *soap)
   if (soap->mode & SOAP_ENC_DIME)
   { if (soap_getdimehdr(soap))
       return soap->error;
-    if (soap->dime.flags & SOAP_DIME_CF)
+    if ((soap->dime.flags & SOAP_DIME_CF))
     { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Chunked DIME SOAP message\n"));
       soap->dime.chunksize = soap->dime.size;
       if (soap->buflen - soap->bufidx >= soap->dime.chunksize)
@@ -18294,7 +18302,7 @@ soap_envelope_begin_out(struct soap *soap)
       return soap->error;
   }
   if (soap->mode & SOAP_IO_LENGTH)
-    soap->dime.size = (size_t)soap->count;      /* DIME in MIME correction, soap->count is small */
+    soap->dime.size = (size_t)soap->count; /* DIME in MIME correction, soap->count is small */
   if (!(soap->mode & SOAP_IO_LENGTH) && (soap->mode & SOAP_ENC_DIME))
   { if (soap_putdimehdr(soap))
       return soap->error;
@@ -18742,7 +18750,11 @@ soap_connect_command(struct soap *soap, int http_command, const char *endpoints,
     s = strchr(endpoints, ' ');
     if (s)
     { size_t l = strlen(endpoints);
-      char *endpoint = (char*)SOAP_MALLOC(soap, l + 1);
+      char *endpoint = NULL;
+      if (SOAP_MAXALLOCSIZE == 0 || l <= SOAP_MAXALLOCSIZE)
+	endpoint = (char*)SOAP_MALLOC(soap, l + 1);
+      if (!endpoint)
+	return soap->error = SOAP_EOM;
       for (;;)
       { (void)soap_strncpy(endpoint, l + 1, endpoints, s - endpoints);
         endpoint[s - endpoints] = '\0';
@@ -20078,7 +20090,7 @@ int
 SOAP_FMAC2
 soap_register_plugin_arg(struct soap *soap, int (*fcreate)(struct soap*, struct soap_plugin*, void*), void *arg)
 { struct soap_plugin *p;
-  int r;
+  int err;
   p = (struct soap_plugin*)SOAP_MALLOC(soap, sizeof(struct soap_plugin));
   if (!p)
     return soap->error = SOAP_EOM;
@@ -20086,16 +20098,22 @@ soap_register_plugin_arg(struct soap *soap, int (*fcreate)(struct soap*, struct 
   p->data = NULL;
   p->fcopy = NULL;
   p->fdelete = NULL;
-  r = fcreate(soap, p, arg);
-  if (!r && p->fdelete)
-  { p->next = soap->plugins;
-    soap->plugins = p;
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Registered '%s' plugin\n", p->id));
+  err = fcreate(soap, p, arg);
+  if (!err && p->fdelete && p->id)
+  { if (!soap_lookup_plugin(soap, p->id))
+    { p->next = soap->plugins;
+      soap->plugins = p;
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Registered '%s' plugin\n", p->id));
+      return SOAP_OK;
+    }
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not register plugin '%s': plugin with the same ID already registered\n", p->id));
+    SOAP_FREE(soap, p);
     return SOAP_OK;
   }
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not register plugin '%s': plugin returned error %d (or fdelete callback not set)\n", p->id ? p->id : "?", r));
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not register plugin '%s': plugin returned error %d or plugin ID not set or fdelete callback not set\n", p->id ? p->id : "plugin ID not set", err));
   SOAP_FREE(soap, p);
-  return r;
+  soap->error = err ? err : SOAP_PLUGIN_ERROR;
+  return soap->error;
 }
 #endif
 

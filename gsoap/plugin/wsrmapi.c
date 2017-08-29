@@ -3690,10 +3690,7 @@ soap_wsrm_error(struct soap *soap, struct soap_wsrm_sequence *seq, enum wsrm__Fa
   DBGFUN1("soap_wsrm_error", "code=%s", code ? code : "(null)");
   data = (struct soap_wsrm_data*)soap_lookup_plugin(soap, soap_wsrm_id);
   if (data)
-  {
     data->state = SOAP_WSRM_OFF; /* disable caching */
-    data->seq = NULL;
-  }
   if (seq)
   {
     seq->fault = fault;

@@ -41,6 +41,15 @@ static void sigpipe_handler(int) { }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
+//      Indicator tags
+//
+////////////////////////////////////////////////////////////////////////////////
+
+#define REP "__REPEAT"
+#define SEL "__SELECT"
+
+////////////////////////////////////////////////////////////////////////////////
+//
 //      Command line options
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,14 +57,19 @@ static void sigpipe_handler(int) { }
 static const char   *act   = NULL;      // -aact
 static bool          blank = false;     // -b
 static bool          cont  = false;     // -c
-static bool          sind  = false;     // -i
-static bool          tind  = false;     // -j
-static ULONG64       max   = 255;       // -mmax
-static LONG64        len   = -1;        // -nlen
-static unsigned long prune = 0;         // -pnum
+static bool          iind  = false;     // -i
+static bool          jind  = false;     // -j
+static ULONG64       lmax  = 3;         // -lmax
+static ULONG64       mmax  = 255;       // -mmax
+static LONG64        nlen  = -1;        // -nlen
+static const char   *ofile = NULL;      // -ofile
+static unsigned long pperc = 100;       // -pperc
+static unsigned long qperc = 100;       // -qperc
 static long          seed  = 0;         // -rseed
-static int           sec   = 1;         // -ssec
+static int           tsec  = 1;         // -tsec
 static bool          verb  = false;     // -v
+static const char   *rep   = REP;       // -Rrep
+static const char   *sel   = SEL;       // -Ssel
 static const char   *ifile = NULL;      // [infile|-]
 static const char   *URL   = NULL;      // [URL]
 static unsigned long port  = 0;         // [port]
@@ -95,13 +109,13 @@ inline void gen_send_verb(struct soap *ctx, const char *t, const char *s, size_t
 
 inline void gen_indent(struct soap *ctx, size_t tab)
 {
-  if (sind)
+  if (iind)
   {
     gen_send(ctx, "\n", 1);
     for (size_t i = 0; i < tab; ++i)
       gen_send(ctx, " ", 1);
   }
-  else if (tind)
+  else if (jind)
   {
     gen_send(ctx, "\n", 1);
     for (size_t i = 0; i < tab; ++i)
@@ -128,7 +142,9 @@ static void test_server(struct soap *ctx, xsd__anyType& dom);
 static void test_client(struct soap *ctx, xsd__anyType& dom);
 static void gen_test(struct soap *ctx, xsd__anyType& dom);
 static void gen_random_test(struct soap *ctx, xsd__anyType& dom, size_t tab = 0);
+static void get_minmax(struct soap *ctx, xsd__anyType& dom, unsigned long& n, unsigned long& m);
 static void gen_value(struct soap *ctx, const char *s);
+static bool get_range(const char *s, unsigned long& n, unsigned long& m);
 static void gen_name(struct soap *ctx, ULONG64 n);
 static void gen_ncname(struct soap *ctx, ULONG64 n);
 static void gen_qname(struct soap *ctx, ULONG64 n);
@@ -180,53 +196,92 @@ int main(int argc, char **argv)
             case '?':
             case 'h':
               fprintf(stderr,
-                  "Usage: testmsgr [-aact] [-b] [-c] [-h] [-i] [-j] [-mmax] [-nlen] [-pnum] [-rseed] [-ssec] [-v] [infile|-] [URL|port]\n\n"
+                  "Usage: testmsgr [-aact] [-b] [-c] [-h] [-i] [-j] [-lmax] [-mmax] [-nlen] [-pperc] [-qperc] [-rseed] [-tsec] [-v] [-Rrep] [-Ssel] [infile|-] [URL|port]\n\n"
                   "-aact   use HTTP SOAP Action header value \"act\"\n"
-                  "-b      add random spacing to randomized values when using option -r\n"
+                  "-b      add random spacing to randomized values when using -r\n"
                   "-c      continue testing until the service endpoint fails\n"
                   "-h      display help message\n"
-                  "-i      indent XML with spaces when using option -r\n"
-                  "-j      indent XML with tabs when using option -r\n"
-                  "-mmax   max length of randomized text values generated (default is 255)\n"
+                  "-i      indent XML with spaces when using -r\n"
+                  "-j      indent XML with tabs when using -r\n"
+                  "-lmax   max number of randomized element repeats when using -r (default=3)\n"
+                  "-mmax   max length of randomized text values generated (default=255)\n"
                   "-nlen   display the server response up to len bytes\n"
-                  "-pnum   prune XML randomly with 1:num chance when using option -r\n"
+                  "-ofile  save to file\n"
+                  "-pperc  percentage XML kept when using -r (default=100)\n"
+                  "-qperc  percentage XML kept of optional indicators when using -r (default=100)\n"
                   "-rseed  randomize XML message templates (use soapcpp2 -g)\n"
-                  "-ssec   socket idle timeout seconds (default is one second)\n"
+                  "-tsec   socket idle timeout seconds (default=1)\n"
                   "-v      verbose mode\n"
+                  "-Rrep   set XML element repetition indicator tag (default=" REP ")\n"
+                  "-Ssel   set XML element selection indicator tag (default=" SEL ")\n"
                   "infile  XML message template\n"
                   "-       read XML from standard input\n"
                   "URL     endpoint URL of service to test\n"
                   "port    stand-alone server port for clients to test\n\n");
               exit(EXIT_SUCCESS);
             case 'i':
-              sind = true;
+              iind = true;
               break;
             case 'j':
-              tind = true;
+              jind = true;
+              break;
+            case 'l':
+              a++;
+              f = false;
+              if (*a)
+                lmax = soap_strtoull(a, NULL, 10);
+              else if (i < argc)
+                lmax = strtoull(argv[++i], NULL, 10);
               break;
             case 'm':
               a++;
               f = false;
               if (*a)
-                max = soap_strtoull(a, NULL, 10);
+                mmax = soap_strtoull(a, NULL, 10);
               else if (i < argc)
-                max = strtoull(argv[++i], NULL, 10);
+                mmax = strtoull(argv[++i], NULL, 10);
               break;
             case 'n':
               a++;
               f = false;
               if (*a)
-                len = soap_strtoll(a, NULL, 10);
+                nlen = soap_strtoll(a, NULL, 10);
               else if (i < argc)
-                len = strtoll(argv[++i], NULL, 10);
+                nlen = strtoll(argv[++i], NULL, 10);
+              break;
+            case 'o':
+              a++;
+              f = false;
+              if (*a)
+                ofile = a;
+              else if (i < argc)
+                ofile = argv[++i];
               break;
             case 'p':
               a++;
               f = false;
               if (*a)
-                prune = soap_strtoul(a, NULL, 10);
+                pperc = soap_strtoul(a, NULL, 10);
               else if (i < argc)
-                prune = strtoul(argv[++i], NULL, 10);
+                pperc = strtoul(argv[++i], NULL, 10);
+              if (pperc > 100)
+              {
+                fprintf(stderr, "testmsgr: -p option percentage value exceeds 100\n\n");
+                exit(EXIT_FAILURE);
+              }
+              break;
+            case 'q':
+              a++;
+              f = false;
+              if (*a)
+                qperc = soap_strtoul(a, NULL, 10);
+              else if (i < argc)
+                qperc = strtoul(argv[++i], NULL, 10);
+              if (qperc > 100)
+              {
+                fprintf(stderr, "testmsgr: -q option percentage value exceeds 100\n\n");
+                exit(EXIT_FAILURE);
+              }
               break;
             case 'r':
               a++;
@@ -240,12 +295,28 @@ int main(int argc, char **argv)
               a++;
               f = false;
               if (*a)
-                sec = soap_strtol(a, NULL, 10);
+                tsec = soap_strtol(a, NULL, 10);
               else if (i < argc)
-                sec = strtol(argv[++i], NULL, 10);
+                tsec = strtol(argv[++i], NULL, 10);
               break;
             case 'v':
               verb = true;
+              break;
+            case 'R':
+              a++;
+              f = false;
+              if (*a)
+                rep = a;
+              else if (i < argc)
+                rep = argv[++i];
+              break;
+            case 'S':
+              a++;
+              f = false;
+              if (*a)
+                sel = a;
+              else if (i < argc)
+                sel = argv[++i];
               break;
             default:
               fprintf(stderr, "testmsgr: Unknown option %s\n\n", a);
@@ -292,8 +363,8 @@ int main(int argc, char **argv)
 #endif
 
   soap *ctx = soap_new1(SOAP_IO_KEEPALIVE | SOAP_C_UTFSTRING | SOAP_DOM_ASIS);
-  ctx->send_timeout = sec;
-  ctx->recv_timeout = sec;
+  ctx->send_timeout = tsec;
+  ctx->recv_timeout = tsec;
 
   std::ifstream ifs;
 
@@ -313,6 +384,19 @@ int main(int argc, char **argv)
       }
       ctx->is = &ifs;
     }
+  }
+
+  std::ofstream ofs;
+
+  if (ofile)
+  {
+    ofs.open(ofile, std::ofstream::out);
+    if (!ofs.is_open())
+    {
+      fprintf(stderr, "testmsgr: Cannot open %s for writing\n", ofile);
+      exit(EXIT_FAILURE);
+    }
+    ctx->os = &ofs;
   }
 
   xsd__anyType dom(ctx);
@@ -342,6 +426,12 @@ int main(int argc, char **argv)
     test_server(ctx, dom);
   else
     test_client(ctx, dom);
+
+  if (ofile)
+  {
+    ctx->os = NULL;
+    ofs.close();
+  }
 
   soap_destroy(ctx);
   soap_end(ctx);
@@ -502,54 +592,144 @@ static void gen_test(struct soap *ctx, xsd__anyType& dom)
 
 static void gen_random_test(struct soap *ctx, xsd__anyType& dom, size_t tab)
 {
-  if (prune == 0 || gen_random() % prune > 0)
+  if (pperc == 100 || gen_random() % 100 < pperc)
   {
-    gen_indent(ctx, tab);
-    gen_send(ctx, "<");
-    gen_send(ctx, dom.tag());
-    for (xsd__anyAttribute::iterator i = dom.att_begin(); i != dom.att_end(); ++i)
+    xsd__anyType::iterator i = dom.elt_begin();
+    xsd__anyType::iterator end = dom.elt_end();
+
+    if (dom.tag() && !strcmp(dom.tag(), rep))
     {
-      if (prune == 0 || gen_random() % prune > 0 || !strncmp(i->tag(), "xml", 3))
+      unsigned long n, m;
+      get_minmax(ctx, dom, n, m);
+      if (m > lmax)
       {
-        gen_send(ctx, " ");
-        gen_send(ctx, i->tag());
-        const char *t = i->get_text();
-        if (t)
+        if (n > lmax)
+          m = n;
+        else
+          m = lmax;
+      }
+      for (unsigned long j = 0; j < m; ++j)
+      {
+        xsd__anyType::iterator k = i;
+        if (j < n || qperc == 100 || gen_random() % 100 < qperc)
         {
-          gen_send(ctx, "=\"");
-          gen_value(ctx, t);
-          gen_send(ctx, "\"");
+          while (k != end)
+            gen_random_test(ctx, *k++, tab);
+          if (dom.get_text())
+            gen_value(ctx, dom.get_text());
         }
       }
     }
-    gen_send(ctx, ">");
-
-    for (xsd__anyType::iterator i = dom.elt_begin(); i != dom.elt_end(); ++i)
-      if (i->tag())
-        gen_random_test(ctx, *i, tab + 1);
-
-    const char *t = dom.get_text();
-    if (t)
-      gen_value(ctx, t);
+    else if (dom.tag() && !strcmp(dom.tag(), sel))
+    {
+      for (unsigned long n = gen_random() % (unsigned long)dom.elt_size(); n > 0; --n)
+        ++i;
+      gen_random_test(ctx, *i, tab);
+    }
     else
-      gen_indent(ctx, tab);
+    {
+      const char *t = NULL;
 
-    gen_send(ctx, "</");
-    gen_send(ctx, dom.tag());
-    gen_send(ctx, ">");
+      if (i != end)
+        t = i->get_text();
+
+      if (!t || strcmp(t, "???") || qperc == 100 || gen_random() % 100 < qperc)
+      {
+        if (dom.tag())
+        {
+          gen_indent(ctx, tab);
+          gen_send(ctx, "<");
+          gen_send(ctx, dom.tag());
+
+          for (xsd__anyAttribute::iterator j = dom.att_begin(); j != dom.att_end(); ++j)
+          {
+            if (!strncmp(j->tag(), "xml", 3) || pperc == 100 || gen_random() % 100 < pperc)
+            {
+              const char *t = j->get_text();
+
+              if (!t || strncmp(t, "???", 3) || qperc == 100 || gen_random() % 100 < qperc)
+              {
+                gen_send(ctx, " ");
+                gen_send(ctx, j->tag());
+
+                if (t)
+                {
+                  gen_send(ctx, "=\"");
+                  gen_value(ctx, t);
+                  gen_send(ctx, "\"");
+                }
+              }
+            }
+          }
+
+          gen_send(ctx, ">");
+
+          while (i != end)
+            gen_random_test(ctx, *i++, tab + 1);
+
+          if (dom.get_text())
+            gen_value(ctx, dom.get_text());
+          else
+            gen_indent(ctx, tab);
+
+          gen_send(ctx, "</");
+          gen_send(ctx, dom.tag());
+          gen_send(ctx, ">");
+        }
+        else
+        {
+          t = dom.get_text();
+          if (t && strcmp(t, "???"))
+          {
+            gen_indent(ctx, tab);
+            gen_value(ctx, t);
+          }
+        }
+      }
+    }
   }
+}
+
+static void get_minmax(struct soap *ctx, xsd__anyType& dom, unsigned long& n, unsigned long& m)
+{
+  (void)ctx;
+  n = m = 1;
+  xsd__anyAttribute::iterator i;
+  i = dom.att_find("min");
+  if (i != dom.att_end())
+    n = soap_strtoul(i->get_text(), NULL, 10);
+  i = dom.att_find("max");
+  if (i != dom.att_end())
+  {
+    const char *t = i->get_text();
+    if (!strcmp(t, "unbounded"))
+      m = 4294967295;
+    else
+      m = soap_strtoul(i->get_text(), NULL, 10);
+  }
+  if (n > m)
+    m = n;
 }
 
 static void gen_value(struct soap *ctx, const char *s)
 {
+  if (!strncmp(s, "???", 3))
+  {
+    if (qperc < 100 && gen_random() % 100 >= qperc)
+      return;
+    s += 3;
+  }
+
   if (s[0] == '%' && s[1] == '[')
   {
     long x = gen_random();
+
     if (!strcmp(s, "%[[BOOL]]%"))
     {
       gen_send_verb(ctx, s, x % 2 ? "true" : "false");
       return;
     }
+
     if (!strcmp(s, "%[[INT8]]%") || !strcmp(s, "%[[BYTE]]%"))
     {
       char y;
@@ -571,6 +751,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[UINT8]]%") || !strcmp(s, "%[[UBYTE]]%"))
     {
       unsigned char y;
@@ -589,6 +770,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[INT16]]%") || !strcmp(s, "%[[SHORT]]%"))
     {
       short y;
@@ -610,6 +792,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[UINT16]]%") || !strcmp(s, "%[[USHORT]]%"))
     {
       unsigned short y;
@@ -628,6 +811,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[INT32]]%") || !strcmp(s, "%[[INT]]%"))
     {
       int y;
@@ -649,6 +833,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[UINT32]]%") || !strcmp(s, "%[[UINT]]%"))
     {
       unsigned int y;
@@ -667,6 +852,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[INT64]]%") || !strcmp(s, "%[[LONG]]%"))
     {
       LONG64 y;
@@ -688,6 +874,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[UINT64]]%") || !strcmp(s, "%[[ULONG]]%"))
     {
       ULONG64 y;
@@ -706,6 +893,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[FLOAT]]%"))
     {
       float y;
@@ -743,6 +931,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[DOUBLE]]%"))
     {
       double y;
@@ -780,6 +969,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[DATETIME]]%"))
     {
       time_t t = (time_t)x;
@@ -797,6 +987,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[DATE]]%"))
     {
       time_t t = (time_t)x;
@@ -819,6 +1010,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[TIME]]%"))
     {
       time_t t = (time_t)x;
@@ -833,6 +1025,7 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strcmp(s, "%[[DURATION]]%"))
     {
       int y;
@@ -850,16 +1043,13 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strncmp(s, "%[[HEX", 6))
     {
       if (s[6] == '[')
       {
-        char *r;
-        unsigned long n = soap_strtoul(s + 7, &r, 10);
-        unsigned long m = n;
-        if (r && *r == ':')
-          m = soap_strtoul(r + 1, &r, 10);
-        if (r && r[0] == ']' && r[1] == ']' && r[2] == ']' && r[3] == '%' && !r[4])
+        unsigned long n, m;
+        if (get_range(s + 7, n, m))
         {
           gen_hex(ctx, n + x % (m - n + 1));
           return;
@@ -874,43 +1064,40 @@ static void gen_value(struct soap *ctx, const char *s)
             return;
           case 1:
             x %= 16;
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_hex(ctx, x);
             return;
           case 2:
             x %= 256;
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_hex(ctx, x);
             return;
           case 3:
             x %= 65536;
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_hex(ctx, x);
             return;
           case 4:
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_hex(ctx, x);
             return;
           default:
-            gen_hex(ctx, max);
+            gen_hex(ctx, mmax);
             return;
         }
       }
     }
+
     if (!strncmp(s, "%[[BASE64", 9))
     {
       if (s[9] == '[')
       {
-        char *r;
-        unsigned long n = soap_strtoul(s + 10, &r, 10);
-        unsigned long m = n;
-        if (r && *r == ':')
-          m = soap_strtoul(r + 1, &r, 10);
-        if (r && r[0] == ']' && r[1] == ']' && r[2] == ']' && r[3] == '%' && !r[4])
+        unsigned long n, m;
+        if (get_range(s + 10, n, m))
         {
           gen_base64(ctx, n + x % (m - n + 1));
           return;
@@ -925,44 +1112,41 @@ static void gen_value(struct soap *ctx, const char *s)
             return;
           case 1:
             x %= 16;
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_base64(ctx, x);
             return;
           case 2:
             x %= 256;
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_base64(ctx, x);
             return;
           case 3:
             x %= 65536;
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_base64(ctx, x);
             return;
           case 4:
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_base64(ctx, x);
             return;
           default:
-            gen_base64(ctx, max);
+            gen_base64(ctx, mmax);
             return;
         }
       }
     }
+
     if (!strncmp(s, "%[[ENTITY", 9) || !strncmp(s, "%[[ID", 5) || !strncmp(s, "%[[IDREF", 8) || !strncmp(s, "%[[NAME", 7) || !strncmp(s, "%[[NCNAME", 9) || !strncmp(s, "%[[NMTOKEN", 10))
     {
       size_t i = s[4] == 'C' ? 9 : s[4] == 'M' ? 10 : s[3] == 'N' ? 7 : s[5] == 'R' ? 8 : s[3] == 'I' ? 5 : 9;
       if (s[i] == '[')
       {
-        char *r;
-        unsigned long n = soap_strtoul(s + i + 1, &r, 10);
-        unsigned long m = n;
-        if (r && *r == ':')
-          m = soap_strtoul(r + 1, &r, 10);
-        if (r && r[0] == ']' && r[1] == ']' && r[2] == ']' && r[3] == '%' && !r[4])
+        unsigned long n, m;
+        if (get_range(s + i + 1, n, m))
         {
           gen_name(ctx, n + x % (m - n + 1));
           return;
@@ -977,43 +1161,40 @@ static void gen_value(struct soap *ctx, const char *s)
             return;
           case 1:
             x %= 16;
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_name(ctx, x);
             return;
           case 2:
             x %= 256;
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_name(ctx, x);
             return;
           case 3:
             x %= 65536;
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_name(ctx, x);
             return;
           case 4:
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_name(ctx, x);
             return;
           default:
-            gen_name(ctx, max);
+            gen_name(ctx, mmax);
             return;
         }
       }
     }
+
     if (!strncmp(s, "%[[LANG", 7))
     {
       if (s[7] == '[')
       {
-        char *r;
-        unsigned long n = soap_strtoul(s + 8, &r, 10);
-        unsigned long m = n;
-        if (r && *r == ':')
-          m = soap_strtoul(r + 1, &r, 10);
-        if (r && r[0] == ']' && r[1] == ']' && r[2] == ']' && r[3] == '%' && !r[4])
+        unsigned long n, m;
+        if (get_range(s + 8, n, m))
         {
           gen_lang(ctx, x, n + x % (m - n + 1));
           return;
@@ -1032,6 +1213,7 @@ static void gen_value(struct soap *ctx, const char *s)
         }
       }
     }
+
     if (!strcmp(s, "%[[QNAME]]%"))
     {
       switch (x % 2)
@@ -1044,16 +1226,13 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
       }
     }
+
     if (!strncmp(s, "%[[TEXT", 7))
     {
       if (s[7] == '[')
       {
-        char *r;
-        unsigned long n = soap_strtoul(s + 8, &r, 10);
-        unsigned long m = n;
-        if (r && *r == ':')
-          m = soap_strtoul(r + 1, &r, 10);
-        if (r && r[0] == ']' && r[1] == ']' && r[2] == ']' && r[3] == '%' && !r[4])
+        unsigned long n, m;
+        if (get_range(s + 8, n, m))
         {
           gen_text(ctx, n + x % (m - n + 1));
           return;
@@ -1068,33 +1247,34 @@ static void gen_value(struct soap *ctx, const char *s)
             return;
           case 1:
             x %= 16;
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_text(ctx, x);
             return;
           case 2:
             x %= 256;
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_text(ctx, x);
             return;
           case 3:
             x %= 65536;
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_text(ctx, x);
             return;
           case 4:
-            if ((ULONG64)x > max)
-              x = (long)max;
+            if ((ULONG64)x > mmax)
+              x = (long)mmax;
             gen_text(ctx, x);
             return;
           default:
-            gen_text(ctx, max);
+            gen_text(ctx, mmax);
             return;
         }
       }
     }
+
     if ((s[2] == '[' || s[2] == '(') && strchr(s, ':'))
     {
       // inclusive or exclusive numeric range %[[N:M]]% %[(N:M)]% %[(N:M]]% %[[N:M)]%
@@ -1127,6 +1307,7 @@ static void gen_value(struct soap *ctx, const char *s)
         return;
       }
     }
+
     // enumeration %[[A][B][C]]%
     if (s[2] == '[' && strstr(s, "]["))
     {
@@ -1154,7 +1335,17 @@ static void gen_value(struct soap *ctx, const char *s)
       return;
     }
   }
+
   gen_send(ctx, s);
+}
+
+static bool get_range(const char *s, unsigned long& n, unsigned long& m)
+{
+  char *r;
+  m = n = soap_strtoul(s, &r, 10);
+  if (r && *r == ':')
+    m = soap_strtoul(r + 1, &r, 10);
+  return r && r[0] == ']' && r[1] == ']' && r[2] == ']' && r[3] == '%' && !r[4];
 }
 
 static void gen_name(struct soap *ctx, ULONG64 n)
@@ -1361,10 +1552,10 @@ static void receive_response(struct soap *ctx)
       c = soap_getchar(ctx);
       if ((int)c == EOF)
         break;
-      if (len < 0 || n <= (ULONG64)len)
+      if (nlen < 0 || n <= (ULONG64)nlen)
         putchar(c);
     }
-    if (len > 0 && n > (ULONG64)len)
+    if (nlen > 0 && n > (ULONG64)nlen)
       printf("\n---- cut ----\n...");
     printf("\n---- end ----\n\n");
   }

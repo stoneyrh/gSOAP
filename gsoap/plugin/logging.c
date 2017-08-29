@@ -9,6 +9,7 @@
 	Change logging destinations:
 		soap_set_logging_inbound(struct soap*, FILE*);
 		soap_set_logging_outbound(struct soap*, FILE*);
+	Turn logging off by passing NULL FILE* descriptor.
 
 	Obtain stats (sent and recv octet count, independent of log dest):
 		soap_get_logging_stats(soap, size_t *sent, size_t *recv);

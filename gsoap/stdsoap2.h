@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.52
+        stdsoap2.h 2.8.53
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20852
+#define GSOAP_VERSION 20853
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1820,7 +1820,7 @@ typedef soap_int32 soap_mode;
     { FILE *fdebug = soap->fdebug[SOAP_INDEX_##DBGFILE];\
       SYSTEMTIME _localTime;\
       ::GetLocalTime(&_localTime); \
-      fprintf(fdebug, "%02d%02d%02d %02d:%02d:%02d.%03d|", _localTime.wYear%100, _localTime.wMonth, _localTime.wDay, _localTime.wHour, _localTime.wMinute, _localTime.wSecond, _localTime.wMilliseconds);\
+      fprintf(fdebug, "%02d%02d%02d %02d:%02d:%02d.%03d|", (int)_localTime.wYear%100, (int)_localTime.wMonth, (int)_localTime.wDay, (int)_localTime.wHour, (int)_localTime.wMinute, (int)_localTime.wSecond, (int)_localTime.wMilliseconds);\
       CMD;\
       fflush(fdebug);\
     }\
@@ -1837,7 +1837,7 @@ typedef soap_int32 soap_mode;
       struct tm _tm;\
       gettimeofday(&_tv, NULL);\
       localtime_r(&_tv.tv_sec, &_tm);\
-      fprintf(fdebug, "%02d%02d%02d %02d:%02d:%02d.%06d|", _tm.tm_year%100, _tm.tm_mon+1, _tm.tm_mday, _tm.tm_hour, _tm.tm_min, _tm.tm_sec, _tv.tv_usec);\
+      fprintf(fdebug, "%02d%02d%02d %02d:%02d:%02d.%06ld|", (int)_tm.tm_year%100, (int)_tm.tm_mon+1, (int)_tm.tm_mday, (int)_tm.tm_hour, (int)_tm.tm_min, (int)_tm.tm_sec, (long)_tv.tv_usec);\
       CMD;\
       fflush(fdebug);\
     }\

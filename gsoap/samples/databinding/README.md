@@ -148,7 +148,7 @@ XSD facet      | maps to
 enumeration    | `enum`
 simpleContent  | class/struct wrapper with `__item` member
 complexContent | class/struct
-list           | `enum*` bitmask (`enum*` enumerates up to 64 bit masks)
+list           | `enum*` bitmask (`enum*` enumerates a bitmask up to 64 bits)
 extension      | class/struct inheritance/extension
 restriction    | `typedef` and class/struct inheritance/redeclaration
 length         | `typedef` with restricted content length annotation
@@ -2139,7 +2139,7 @@ Member | Notes
 `k`    | element must appear once, its value must be "K" (also note: instantiating `ns__record_with_fixed` assigns the fixed value "K")
 `l`    | element may appear once, if it does not appear it is not provided; if it does appear and it is empty, its value is "J"; if it does appear and it is not empty, its value must be "J" (also note: instantiating `ns__record_with_fixed` assigns NULL)
 
-@see Section [operations on classes and structs](#toxsd9-13).
+@see Section [operations on classes and structs](#toxsd9-14).
 
 🔝 [Back to table of contents](#)
 
@@ -2694,7 +2694,7 @@ struct ns__record
 };
 ```
 
-This class maps to a complexType in the soapcpp2-generated schema:
+This struct maps to a complexType in the soapcpp2-generated schema:
 
 <div class="alt">
 ```xml
@@ -2720,7 +2720,7 @@ struct ns__record
 };
 ```
 
-This class maps to a complexType in the soapcpp2-generated schema:
+This struct maps to a complexType in the soapcpp2-generated schema:
 
 <div class="alt">
 ```xml
@@ -2735,7 +2735,107 @@ This class maps to a complexType in the soapcpp2-generated schema:
 
 🔝 [Back to table of contents](#)
 
-### Tagged union members                                            {#toxsd9-10}
+### Sequencing with hidden members                                  {#toxsd9-10}
+
+A member becomes a hidden XML element, i.e. not visibly rendered in XML, when
+its name starts with a double underscore.  This makes it possible to sequence a
+collection of data members, basically by forming a sequence of elements that
+can be optional or repeated together.
+
+To create a sequence of members that are optional, use a pointer-based hidden
+member that is a struct with the collection of members to sequence:
+
+```cpp
+struct ns__record
+{
+  std::string   name;       // required name
+  struct __ns__optional
+  {
+    uint64_t    SSN;        // SSN in optional group
+    std::string phone;      // phone number in optional group
+  }            *__optional; // optional group
+};
+```
+
+Note that we used a hidden struct type `__ns__optional` which starts with a
+double underscore, because we do not want to define a new global type for the
+schema we generate.  We just need a unique name for a structure that sequences
+the two members.
+
+This struct maps to a complexType in the soapcpp2-generated schema:
+
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence>
+    <element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+    <sequence minOccurs="0" maxOccurs="1">
+      <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1"/>
+      <element name="phone" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+    </sequence>
+  </sequence>
+</complexType>
+```
+</div>
+
+Note that the `name` is a required element of the `record` complexType.  The
+`record` complexType has an optional sequence of `SSN` and `phone` elements.
+
+To create repetitions of a sequence of members, use an array as follows:
+
+```cpp
+struct ns__record
+{
+  std::string   name;        // required name
+  $int          sizeofarray; // size of group array
+  struct __ns__array
+  {
+    uint64_t    SSN;         // SSN in group
+    std::string phone;       // phone number in group
+  }            *__array;     // group array
+};
+```
+
+This struct maps to a complexType in the soapcpp2-generated schema:
+
+<div class="alt">
+```xml
+<complexType name="record">
+  <sequence>
+    <element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+    <sequence minOccurs="0" maxOccurs="unbounded">
+      <element name="SSN" type="xsd:unsignedLong" minOccurs="1" maxOccurs="1"/>
+      <element name="phone" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+    </sequence>
+  </sequence>
+</complexType>
+```
+</div>
+
+Note that the `name` is a required element of the `record` complexType.  The
+`record` complexType has a potentially unbounded sequence of `SSN` and `phone`
+elements.  You can specify array bounds instead of zero to unbounded, see
+[Container and array members and their occurrence constraints](#toxsd9-9).
+
+The XML value space consists of a sequence of SSN and phone elements:
+
+<div class="alt">
+```xml
+<ns:record>
+  <name>numbers</name>
+  <SSN>1234567890</SSN>
+  <phone>555-123-4567</phone>
+  <SSN>1987654320</SSN>
+  <phone>555-789-1234</phone>
+  <SSN>2345678901</SSN>
+  <phone>555-987-6543</phone>
+</ns:record>
+```
+</div>
+
+🔝 [Back to table of contents](#)
+
+### Tagged union members                                            {#toxsd9-11}
 
 A union member in a class or in a struct cannot be serialized unless a
 discriminating *variant selector* member is provided that tells the serializer
@@ -2751,7 +2851,7 @@ class ns__record
 {
  public:
   $int  xORnORs;    // variant selector with values SOAP_UNION_fieldname
-  union choice
+  union ns__choice
   {
     float x;
     int   n;
@@ -2764,9 +2864,9 @@ class ns__record
 The variant selector values are auto-generated based on the union name `choice`
 and the names of its members `x`, `n`, and `s`:
 
-- `xORnORs = SOAP_UNION_choice_x` when `u.x` is valid.
-- `xORnORs = SOAP_UNION_choice_n` when `u.n` is valid.
-- `xORnORs = SOAP_UNION_choice_s` when `u.s` is valid.
+- `xORnORs = SOAP_UNION_ns__choice_x` when `u.x` is valid.
+- `xORnORs = SOAP_UNION_ns__choice_n` when `u.n` is valid.
+- `xORnORs = SOAP_UNION_ns__choice_s` when `u.s` is valid.
 - `xORnORs = 0` when none are valid (should only be used with great care,
   because XSD validation may fail when content is required but absent).
 
@@ -2799,7 +2899,7 @@ class ns__record
   struct ns__data  // data with a choice of x, n, or s
   {
     $int  xORnORs; // variant selector with values SOAP_UNION_fieldname
-    union choice
+    union ns__choice
     {
       float x;
       int   n;
@@ -2820,7 +2920,7 @@ class ns__record
   struct ns__data   // data with a choice of x, n, or s
   {
     $int  xORnORs;  // variant selector with values SOAP_UNION_fieldname
-    union choice
+    union ns__choice
     {
       float x;
       int   n;
@@ -2871,20 +2971,21 @@ data element:
 ```
 </div>
 
-To remove the wrapping data element, simply rename the wrapping struct and
-member to `__data` to make this member invisible to the serializer with the
-double underscore prefix naming convention.  Also use a dynamic array instead
-of a STL container (you can use this in C with structs):
+To remove the wrapping data element, simply rename the wrapping struct to
+`__ns__data` and the member to `__data` to make this member invisible to the
+serializer.  The double underscore prefix naming convention is used for the
+struct name and member name.  Also use a dynamic array instead of a STL
+container (so you can also use this approach in C with structs):
 
 ```cpp
 class ns__record
 {
  public:
   $int  sizeOfdata; // size of dynamic array
-  struct __data     // contains choice of x, n, or s
+  struct __ns__data // contains choice of x, n, or s
   {
     $int  xORnORs;  // variant selector with values SOAP_UNION_fieldname
-    union choice
+    union ns__choice
     {
       float x;
       int   n;
@@ -2925,14 +3026,14 @@ elements:
 </div>
 
 Please note that structs, classes, and unions are unnested by soapcpp2 (as in
-the C standard of nested structs and unions).  Therefore, the `choice` union in
-the `ns__record` class is redeclared at the top level despite its nesting
-within the `ns__record` class.  This means that you will have to choose a
-unique name for each nested struct, class, and union.
+the C standard of nested structs and unions).  Therefore, the `ns__choice`
+union in the `ns__record` class is redeclared at the top level despite its
+nesting within the `ns__record` class.  This means that you will have to choose
+a unique name for each nested struct, class, and union.
 
 🔝 [Back to table of contents](#)
 
-### Tagged void pointer members                                     {#toxsd9-11}
+### Tagged void pointer members                                     {#toxsd9-12}
 
 To serialize data pointed to by `void*` requires run-time type information that
 tells the serializer what type of data to serialize by means of a *tagged void
@@ -3110,7 +3211,7 @@ a unique name for each nested struct, class, and union.
 
 🔝 [Back to table of contents](#)
 
-### Adding get and set methods                                      {#toxsd9-12}
+### Adding get and set methods                                      {#toxsd9-13}
 
 A public `get` method may be added to a class or struct, which will be
 triggered by the deserializer.  This method will be invoked right after the
@@ -3140,7 +3241,7 @@ To add these and othe rmethods to classes and structs with wsdl2h and
 
 🔝 [Back to table of contents](#)
 
-### Operations on classes and structs                               {#toxsd9-13}
+### Operations on classes and structs                               {#toxsd9-14}
 
 The following functions/macros are generated by soapcpp2 for each type `T`,
 which should make it easier to send, receive, and copy XML data in C and in
@@ -3298,7 +3399,7 @@ soapcpp2-generated schema:
   <complexContent>
     <restriction base="SOAP-ENC:Array">
       <sequence>
-	<element name="item" type="T" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        <element name="item" type="T" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
       </sequence>
       <attribute ref="SOAP-ENC:arrayType" WSDL:arrayType="ArrayOfT[]"/>
     </restriction>
@@ -3472,9 +3573,8 @@ name will suffice.
 
 You should place the `xsd__anyType` members at the end of the struct or class.
 This ensures that the DOM members are populated last as a "catch all".  A
-member name starting with double underscore is a wildcard member name and
-matches any XML tag.  These members are placed at the end of a struct or class
-automatically by soapcpp2.
+member name starting with double underscore is a wildcard member.  These
+members are placed at the end of a struct or class automatically by soapcpp2.
 
 An `#import "dom.h"` import is automatically added by wsdl2h with option `-d`
 to bind `xsd:anyType` to DOM nodes, and also to populate `xsd:any`,
@@ -3532,7 +3632,7 @@ the receiving end: without `xsd:type` attributes with type names, only base DOM
 objects are recognized and instantiated.
 
 Because C lacks OOP principles such as class inheritance and polymorphism, you
-will need to use the special [`void*` members](#toxsd9-11) to serialize data
+will need to use the special [`void*` members](#toxsd9-12) to serialize data
 pointed to by a `void*` member.
 
 To ensure that wsdl2h generates pointer-based `xsd__anyType` DOM nodes with
@@ -3809,7 +3909,7 @@ the soapcpp2-generated schema:
     <enumeration value="U"/>
     <enumeration value="Y">
       <annotation>
-	<documentation>A vowel, sometimes</documentation>
+        <documentation>A vowel, sometimes</documentation>
       </annotation>
     <enumeration/>
   </restriction>
@@ -3833,7 +3933,7 @@ when generating the service functions in C and C++ that use SOAP or REST.
 
 The gSOAP tools are not limited to SOAP.  The tools implement generic XML data
 bindings for SOAP, REST, and other uses of XML.  So you can read and write XML
-using the serializing [operations on classes and structs](#toxsd9-13).
+using the serializing [operations on classes and structs](#toxsd9-14).
 
 The following sections briefly explain the serialization rules with respect to
 the SOAP protocol for XML Web services.  A basic understanding of the SOAP
@@ -3943,18 +4043,18 @@ operation with parameters that are SOAP 1.1 encoded:
   <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
     <ns:DBupdate>
       <records SOAP-ENC:arrayType="ns:record[3]">
-	<item>
-	  <name href="#_1"/>
-	  <SSN>1234567890</SSN>
-	</item>
-	<item>
-	  <name>Jane</name>
-	  <SSN>1987654320</SSN>
-	</item>
-	<item>
-	  <name href="#_1"/>
-	  <SSN>2345678901</SSN>
-	</item>
+        <item>
+          <name href="#_1"/>
+          <SSN>1234567890</SSN>
+        </item>
+        <item>
+          <name>Jane</name>
+          <SSN>1987654320</SSN>
+        </item>
+        <item>
+          <name href="#_1"/>
+          <SSN>2345678901</SSN>
+        </item>
       </records>
     </ns:DBupdate>
     <id id="_1" xsi:type="xsd:string">Joe</id>
@@ -3982,9 +4082,9 @@ rendered as:
   <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
     <ns:DBupdate>
       <records SOAP-ENC:arrayType="ns:record[3]">
-	<item href="#id1"/>
-	<item href="#id2"/>
-	<item href="#id3"/>
+        <item href="#id1"/>
+        <item href="#id2"/>
+        <item href="#id3"/>
       </records>
     </ns:DBupdate>
     <id id="id1" xsi:type="ns:record">
@@ -4020,18 +4120,18 @@ graphs by setting the id attribute on the element that is referenced:
   <SOAP-ENV:Body>
     <ns:DBupdate SOAP-ENV:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
       <records SOAP-ENC:itemType="ns:record" SOAP-ENC:arraySize="3">
-	<item>
-	  <name SOAP-ENC:id="_1">Joe</name>
-	  <SSN>1234567890</SSN>
-	</item>
-	<item>
-	  <name>Jane</name>
-	  <SSN>1987654320</SSN>
-	</item>
-	<item>
-	  <name SOAP-ENC:ref="_1"/>
-	  <SSN>2345678901</SSN>
-	</item>
+        <item>
+          <name SOAP-ENC:id="_1">Joe</name>
+          <SSN>1234567890</SSN>
+        </item>
+        <item>
+          <name>Jane</name>
+          <SSN>1987654320</SSN>
+        </item>
+        <item>
+          <name SOAP-ENC:ref="_1"/>
+          <SSN>2345678901</SSN>
+        </item>
       </records>
     </ns:DBupdate>
   </SOAP-ENV:Body>
@@ -4099,7 +4199,7 @@ valid structures.  Deserialized data is put on the heap and managed by the
 gSOAP engine context `struct soap`, see also [memory management](#memory).
 
 You can read and write XML directly to a file or stream with the serializing
-[operations on classes and structs](#toxsd9-13).
+[operations on classes and structs](#toxsd9-14).
 
 To define and use XML Web service client and service operations, we can declare
 these operations in your gSOAP header file with the data binding interface for

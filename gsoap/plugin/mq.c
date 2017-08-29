@@ -146,7 +146,8 @@ message queue for each socket accepted and processed by a thread.
       soap_closesock(soap);
       continue;
     }
-    THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap);
+    while (THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap))
+      sleep(1);
   }
 
 void *process_request(void *tsoap)

@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.52 User Guide</title>
+<title>gSOAP 2.8.53 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.52 User Guide </h1>
+<h1 align="center">gSOAP 2.8.53 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Aug 18, 2017
+<h3 align="center">Aug 29, 2017
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -870,10 +870,23 @@ and install the binary as CGI. To install the CGI binary please consult your
 Web server documentation on how to deploy CGI applications.
 
 <div class="p"><!----></div>
-To run the server as a stand-alone iterative (non-multithreaded) server on port 8080:
+To run the server as a stand-alone iterative (non-multithreaded) server on port
+8080 until accept() timeout times out or an error occurs:
 <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
-<b>while</b>&nbsp;(server.run(8080) != SOAP_TCP_ERROR) <br />
+<b>if</b>&nbsp;(server.run(8080)) <br />
+&nbsp;&nbsp;&nbsp;server.soap_stream_fault(std::cerr);
+</td></tr></table><br></i>
+
+<div class="p"><!----></div>
+To run the server as a stand-alone iterative server on port 8080 while ignoring
+common errors until a TCP error occurs:
+<br><br><table border=0 width="100%" cellpadding="8" bgcolor="#B0D0B0"><tr><td><i>
+<b>while</b>&nbsp;(server.run(8080) != SOAP_OK) <br />
+{ <br />
+&nbsp;&nbsp;&nbsp;<b>if</b>(server.soap<tt>-&gt;</tt>error == SOAP_TCP_ERROR) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>break</b>; <br />
 &nbsp;&nbsp;&nbsp;server.soap_stream_fault(std::cerr); <br />
+}
 </td></tr></table><br></i>
 
 <div class="p"><!----></div>
@@ -16711,5 +16724,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 18 Aug 2017, 08:13.</small>
+version 4.00.<br />On 29 Aug 2017, 10:02.</small>
 </html>

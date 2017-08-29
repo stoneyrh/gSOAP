@@ -1208,15 +1208,22 @@ Version 2.8.51 (07/28/2017)
 - Additional stability and robustness improvements.
 - Fixed WinInet HTTP GET blocking issue resulting in EOF.
 
-Version 2.8.52 (08/18/2017) {#latest}
+Version 2.8.52 (08/18/2017)
 ---
 
 - Added testmsgr "Test Messenger" with documentation.  The Test Messenger application is used for functional and non-functional testing of Web services and clients.  The Test Messenger is located in samples/testmsgr.
-- Added `SOAP_MAXALLOCSIZE` macro to limit the size argument of `malloc()` calls, where zero means unlimited (default).
+- Added `SOAP_MAXALLOCSIZE` macro to limit the size argument of `malloc()` calls, where zero means unlimited (default).  Exceeding the limit results in `SOAP_EOM` (out of memory) errors.  Some systems raise signals or throw exceptions when the the size argument of `malloc()` exceeds a certain size.  To avoid signals and exceptions set the `SOAP_MAXALLOCSIZE` as needed.
 - Fixed 2.8.51 issue in parsing HTTP empty lines, fixed with: `if (i == len) /* empty line: end of HTTP/MIME header */`
 - Fixed WS-RM plugin blocking issue on fatal errors.
-- Improved use of STL containters: `#import "stl.h"` is no longer required.
+- Improved use of STL containers: `#import "stl.h"` is no longer required.
 - Improvements.
+
+Version 2.8.53 (08/29/2017) {#latest}
+---
+
+- Improved testmsgr "Test Messenger" to handle element repetitions, selections, and optional values for complete XML message randomization to test services and clients.  Updated soapcpp2 option `-g` to emit XML message templates with the new template indicators.
+- Updated plugin/threads.h to let `THREAD_CREATE` return 0 (OK) on Windows like pthreads, thereby making the `THREAD_CREATE` return value portable.
+- Fixed DIME receiver looping on specific malformed DIME headers.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

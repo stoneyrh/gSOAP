@@ -305,7 +305,12 @@ The server uses the following:
     {
       if (!soap_valid_socket(s = soap_accept(soap)))
         ... // error
-      THREAD_CREATE(&tid, (void*(*)(void*))&process_request, soap_copy(soap));
+      else
+      {
+        struct soap *tsoap = soap_copy(soap);
+        while (THREAD_CREATE(&tid, (void*(*)(void*))&process_request, (void*)tsoap))
+          sleep(1);
+      }
     }
     soap_destroy(soap);
     soap_end(soap);

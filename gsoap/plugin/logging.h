@@ -7,9 +7,10 @@
 	        #include "plugin/logging.h"
 		soap_register_plugin(soap, logging);
 
-	Change logging destinations:
+	Set of change logging destinations:
 		soap_set_logging_inbound(struct soap*, FILE*);
 		soap_set_logging_outbound(struct soap*, FILE*);
+	Turn logging off by passing NULL FILE* descriptor.
 
 	Obtain stats (sent and recv octet count):
 		soap_get_logging_stats(soap, size_t *sent, size_t *recv);

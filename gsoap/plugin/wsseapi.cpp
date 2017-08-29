@@ -1886,7 +1886,12 @@ The server uses the following:
     {
       if (!soap_valid_socket(s = soap_accept(soap)))
         ... // error
-      THREAD_CREATE(&tid, (void*(*)(void*))&process_request, soap_copy(soap));
+      else
+      {
+        struct soap *tsoap = soap_copy(soap);
+        while (THREAD_CREATE(&tid, (void*(*)(void*))&process_request, (void*)tsoap))
+          sleep(1);
+      }
     }
     soap_destroy(soap);
     soap_end(soap);
@@ -3897,10 +3902,10 @@ soap_wsse_verify_SignedInfo(struct soap *soap)
             }
             else if (strcmp(reference->Transforms->Transform[i].Algorithm, ds_envsigURI))
             {
-	      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Unsupported Transform Algorithm %s\n", reference->Transforms->Transform[i].Algorithm));
+              DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Unsupported Transform Algorithm %s\n", reference->Transforms->Transform[i].Algorithm));
               /* ignore application-specific Transforms
-		 return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, reference->Transforms->Transform[i].Algorithm);
-	      */
+                 return soap_wsse_fault(soap, wsse__UnsupportedAlgorithm, reference->Transforms->Transform[i].Algorithm);
+              */
             }
           }
         }

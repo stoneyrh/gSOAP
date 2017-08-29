@@ -190,6 +190,9 @@ int main(int argc, char **argv)
     soap->accept_timeout = -100000; /* 100ms timeout: do not block on accept */
     for (;;)
     { /* TCP accept (for UDP simply returns current socket) */
+#if !defined(WITH_UDP) && defined(THREADS_H)
+      struct soap *tsoap;
+#endif
       if (!soap_valid_socket(soap_accept(soap)))
       { if (soap->errnum)
           soap_print_fault(soap, stderr);
@@ -204,7 +207,9 @@ int main(int argc, char **argv)
 
       /* do not spawn threads for UDP, since accept() is a no-op for UDP */
 #if !defined(WITH_UDP) && defined(THREADS_H)
-      THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)soap_copy(soap));
+      tsoap = soap_copy(soap);
+      while (THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap))
+        sleep(1);
 #else
 #if !defined(WITH_UDP) && defined(WITH_OPENSSL)
       /* SSL accept */

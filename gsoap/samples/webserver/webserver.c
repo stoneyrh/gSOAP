@@ -1,9 +1,9 @@
 /*
-	webserver.c
+        webserver.c
 
-	Example stand-alone gSOAP Web server based on the gSOAP HTTP GET plugin.
-	This is a small but fully functional (embedded) Web server for serving
-	static and dynamic pages and SOAP/XML responses over HTTP/HTTPS.
+        Example stand-alone gSOAP Web server based on the gSOAP HTTP GET plugin.
+        This is a small but fully functional (embedded) Web server for serving
+        static and dynamic pages and SOAP/XML responses over HTTP/HTTPS.
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -32,103 +32,103 @@ engelen@genivia.com / engelen@acm.org
 A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 
-	The Web server handles HTTP GET requests to serve pages and HTTP POST
-	reguests to handle SOAP/XML messages. This example only implements
-	a simple calculator XML Web service for demonstration purposes (the
-	service responds with SOAP/XML).
+        The Web server handles HTTP GET requests to serve pages and HTTP POST
+        reguests to handle SOAP/XML messages. This example only implements
+        a simple calculator XML Web service for demonstration purposes (the
+        service responds with SOAP/XML).
 
-	HTTPS (SSL/TLS) connectivity is supported. However, some browsers do
-	not allow self-signed certificates. The example certificate server.pem
-	included here is self signed. You can import the cacert.pem certificate
-	into the browser to validate the web server.
+        HTTPS (SSL/TLS) connectivity is supported. However, some browsers do
+        not allow self-signed certificates. The example certificate server.pem
+        included here is self signed. You can import the cacert.pem certificate
+        into the browser to validate the web server.
 
-	This application requires Zlib and Pthreads (you can replace Pthreads
-	with another thread library, but you need to study the OpenSSL thread
-	changes in the OpenSSL documentation).
+        This application requires Zlib and Pthreads (you can replace Pthreads
+        with another thread library, but you need to study the OpenSSL thread
+        changes in the OpenSSL documentation).
 
-	On Unix/Linux, please enable SIGPIPE handling, see main function below.
-	SIGPIPE handling will avoid your server from termination when sockets
-	are disconnected by clients before the transaction was completed
-	(aka broken pipe).
+        On Unix/Linux, please enable SIGPIPE handling, see main function below.
+        SIGPIPE handling will avoid your server from termination when sockets
+        are disconnected by clients before the transaction was completed
+        (aka broken pipe).
 
-	Compile without OpenSSL:
-	soapcpp2 -c -n -popt opt.h
-	soapcpp2 -c webserver.h
-	Customize your COOKIE_DOMAIN in this file
-	gcc -DWITH_COOKIES -DWITH_ZLIB -o webserver webserver.c options.c plugin/httpget.c plugin/httpform.c plugin/logging.c stdsoap2.c soapC.c soapClient.c soapServer.c -lpthread -lz
+        Compile without OpenSSL:
+        soapcpp2 -c -n -popt opt.h
+        soapcpp2 -c webserver.h
+        Customize your COOKIE_DOMAIN in this file
+        gcc -DWITH_COOKIES -DWITH_ZLIB -o webserver webserver.c options.c plugin/httpget.c plugin/httpform.c plugin/logging.c stdsoap2.c soapC.c soapClient.c soapServer.c -lpthread -lz
 
-	Compile with OpenSSL (also enables HTTP Digest Authentication):
-	soapcpp2 -c -n -popt opt.h
-	soapcpp2 -c webserver.h
-	Customize your COOKIE_DOMAIN in this file
-	gcc -DWITH_OPENSSL -DWITH_COOKIES -DWITH_ZLIB -o webserver webserver.c options.c plugin/httpget.c plugin/httpform.c plugin/logging.c plugin/threads.c plugin/httpda.c plugin/md5evp.c stdsoap2.c soapC.c soapClient.c soapServer.c -lpthread -lz -lssl -lcrypto
+        Compile with OpenSSL (also enables HTTP Digest Authentication):
+        soapcpp2 -c -n -popt opt.h
+        soapcpp2 -c webserver.h
+        Customize your COOKIE_DOMAIN in this file
+        gcc -DWITH_OPENSSL -DWITH_COOKIES -DWITH_ZLIB -o webserver webserver.c options.c plugin/httpget.c plugin/httpform.c plugin/logging.c plugin/threads.c plugin/httpda.c plugin/md5evp.c stdsoap2.c soapC.c soapClient.c soapServer.c -lpthread -lz -lssl -lcrypto
 
-	Compile with GNUTLS:
-	soapcpp2 -c -n -popt opt.h
-	soapcpp2 -c webserver.h
-	Customize your COOKIE_DOMAIN in this file
-	gcc -DWITH_GNUTLS -DWITH_COOKIES -DWITH_ZLIB -o webserver webserver.c options.c plugin/httpget.c plugin/httpform.c plugin/logging.c stdsoap2.c soapC.c soapClient.c soapServer.c -lpthread -lz -lgnutls -lgcrypt
+        Compile with GNUTLS:
+        soapcpp2 -c -n -popt opt.h
+        soapcpp2 -c webserver.h
+        Customize your COOKIE_DOMAIN in this file
+        gcc -DWITH_GNUTLS -DWITH_COOKIES -DWITH_ZLIB -o webserver webserver.c options.c plugin/httpget.c plugin/httpform.c plugin/logging.c stdsoap2.c soapC.c soapClient.c soapServer.c -lpthread -lz -lgnutls -lgcrypt
 
-	Use (HTTP GET):
-	Compile the web server as explained above
-	Start the web server on an even numbered port (e.g. 8080):
-	> webserver 8080 &
-	Start a web browser and open a (localhost) location:
-	http://127.0.0.1:8080
-	and type userid 'admin' and passwd 'guest' to gain access
-	Open the location:
-	http://127.0.0.1:8080/calc.html
-	then enter an expression
-	Open the locations:
-	http://127.0.0.1:8080/test.html
-	http://127.0.0.1:8081/webserver.wsdl
+        Use (HTTP GET):
+        Compile the web server as explained above
+        Start the web server on an even numbered port (e.g. 8080):
+        > webserver 8080 &
+        Start a web browser and open a (localhost) location:
+        http://127.0.0.1:8080
+        and type userid 'admin' and passwd 'guest' to gain access
+        Open the location:
+        http://127.0.0.1:8080/calc.html
+        then enter an expression
+        Open the locations:
+        http://127.0.0.1:8080/test.html
+        http://127.0.0.1:8081/webserver.wsdl
 
-	Use (HTTPS GET):
-	Create the SSL certificate (see samples/ssl README and scripts)
-	Compile the web server with OpenSSL as explained above
-	Start the web server on an odd numbered port (e.g. 8081)
-	> webserver 8081 &
-	Actually, you can start two servers, one on 8080 and a secure one on
-	8081
-	Start a web browser and open a (localhost) location:
-	https://127.0.0.1:8081
-	and type userid 'admin' and passwd 'guest' to gain access
-	Open the location:
-	https://127.0.0.1:8081/calcform1.html
-	and enter an expression to calculate
-	Open the locations:
-	https://127.0.0.1:8081/test.html
-	https://127.0.0.1:8081/webserver.wsdl
+        Use (HTTPS GET):
+        Create the SSL certificate (see samples/ssl README and scripts)
+        Compile the web server with OpenSSL as explained above
+        Start the web server on an odd numbered port (e.g. 8081)
+        > webserver 8081 &
+        Actually, you can start two servers, one on 8080 and a secure one on
+        8081
+        Start a web browser and open a (localhost) location:
+        https://127.0.0.1:8081
+        and type userid 'admin' and passwd 'guest' to gain access
+        Open the location:
+        https://127.0.0.1:8081/calcform1.html
+        and enter an expression to calculate
+        Open the locations:
+        https://127.0.0.1:8081/test.html
+        https://127.0.0.1:8081/webserver.wsdl
 
-	Use (HTTP POST):
-	Serves SOAP/XML calculation requests
+        Use (HTTP POST):
+        Serves SOAP/XML calculation requests
 
-	Command-line options:
-	-z		enables compression
-	-c		enables chunking
-	-k		enables keep-alive
-	-i		enables non-threaded iterative server
-	-v		enables verbose mode
-	-o<num>		pool of <num> threads (cannot be used with option -i)
-			Note: interactive chunking/keep-alive settings cannot be
-			changed, unless the number of threads is interactively
-			changed to restart the pool
-			Note: <num>=0 specifies unlimited threads
-	-t<num>		sets I/O timeout value (seconds)
-	-s<num>		sets server timeout value (seconds)
-	-d<host>	sets cookie domain
-	-p<path>	sets cookie path
-	-l[none inbound outbound both]
-			enables logging
+        Command-line options:
+        -z              enables compression
+        -c              enables chunking
+        -k              enables keep-alive
+        -i              enables non-threaded iterative server
+        -v              enables verbose mode
+        -o<num>         pool of <num> threads (cannot be used with option -i)
+                        Note: interactive chunking/keep-alive settings cannot be
+                        changed, unless the number of threads is interactively
+                        changed to restart the pool
+                        Note: <num>=0 specifies unlimited threads
+        -t<num>         sets I/O timeout value (seconds)
+        -s<num>         sets server timeout value (seconds)
+        -d<host>        sets cookie domain
+        -p<path>        sets cookie path
+        -l[none inbound outbound both]
+                        enables logging
 
-	Requires options.h and options.c for command line option parsing and
-	for parsing interactive Web page options settings. The
-	default_options[] array defines application options, short-hands,
-	selection lists, and default values. See options.h for more details.
+        Requires options.h and options.c for command line option parsing and
+        for parsing interactive Web page options settings. The
+        default_options[] array defines application options, short-hands,
+        selection lists, and default values. See options.h for more details.
 */
 
 #include "soapH.h"
-#include "webserver.nsmap"	/* namespaces updated 4/4/13 */
+#include "webserver.nsmap"      /* namespaces updated 4/4/13 */
 #include "options.h"
 #include "httpget.h"
 #include "httppost.h"
@@ -136,19 +136,19 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "logging.h"
 #include "threads.h"
 #ifdef WITH_OPENSSL
-#include "httpda.h" 	/* optionally enable HTTP Digest Authentication */
+#include "httpda.h"     /* optionally enable HTTP Digest Authentication */
 #endif
-#include <signal.h>	/* need SIGPIPE */
+#include <signal.h>     /* need SIGPIPE */
 
 #define BACKLOG (100)
 
 #define AUTH_REALM "gSOAP Web Server Admin demo login: admin guest"
-#define AUTH_USERID "admin"	/* user ID to access admin pages */
-#define AUTH_PASSWD "guest"	/* user pw to access admin pages */
+#define AUTH_USERID "admin"     /* user ID to access admin pages */
+#define AUTH_PASSWD "guest"     /* user pw to access admin pages */
 
 /******************************************************************************\
  *
- *	Thread pool and request queue
+ *      Thread pool and request queue
  *
 \******************************************************************************/
 
@@ -157,15 +157,16 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 static int poolsize = 0;
 
-static int queue[MAX_QUEUE];
+static SOAP_SOCKET queue[MAX_QUEUE];
 static int head = 0, tail = 0;
 
-static MUTEX_TYPE queue_cs;
-static COND_TYPE queue_cv;
+static MUTEX_TYPE queue_lock;
+static COND_TYPE queue_notempty;
+static COND_TYPE queue_notfull;
 
 /******************************************************************************\
  *
- *	Program options
+ *      Program options
  *
 \******************************************************************************/
 
@@ -186,55 +187,55 @@ static const struct option default_options[] =
   { "d.cookieDomain", "host", 20, (char*)"127.0.0.1"},
   { "p.cookiePath", "path", 20, (char*)"/"},
   { "l.logging", "none inbound outbound both", },
-  { "", "port", },		/* takes the rest of command line args */
-  { NULL },			/* must be NULL terminated */
+  { "", "port", },              /* takes the rest of command line args */
+  { NULL },                     /* must be NULL terminated */
 };
 
 /* The numbering of these defines must correspond to the option order above */
-#define OPTION_z	0
-#define OPTION_c	1
-#define OPTION_k	2
-#define OPTION_i	3
-#define OPTION_v	4
-#define OPTION_o	5
-#define OPTION_t	6
-#define OPTION_s	7
-#define OPTION_d	8
-#define OPTION_p	9
-#define OPTION_l	10
-#define OPTION_port	11
+#define OPTION_z        0
+#define OPTION_c        1
+#define OPTION_k        2
+#define OPTION_i        3
+#define OPTION_v        4
+#define OPTION_o        5
+#define OPTION_t        6
+#define OPTION_s        7
+#define OPTION_d        8
+#define OPTION_p        9
+#define OPTION_l        10
+#define OPTION_port     11
 
 /******************************************************************************\
  *
- *	Static
+ *      Static
  *
 \******************************************************************************/
 
 static struct option *options = NULL;
 static time_t start;
-static int secure = 0;		/* =0: no SSL, =1: support SSL */
+static int secure = 0;          /* =0: no SSL, =1: support SSL */
 
 static const char *minutes[60] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 static const char *hours[24] = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"};
 
 /******************************************************************************\
  *
- *	Forward decls
+ *      Forward decls
  *
 \******************************************************************************/
 
 void server_loop(struct soap*);
-void *process_request(void*);	/* multi-threaded request handler */
-void *process_queue(void*);	/* multi-threaded request handler for pool */
-int enqueue(SOAP_SOCKET);
+void *process_request(void*);   /* multi-threaded request handler */
+void *process_queue(void*);     /* multi-threaded request handler for pool */
+void enqueue(SOAP_SOCKET);
 SOAP_SOCKET dequeue();
-int http_GET_handler(struct soap*);	/* HTTP httpget plugin GET handler */
-int http_PUT_handler(struct soap*);	/* HTTP httpost plugin handler for PUT (see table below) */
-int http_POST_handler(struct soap*);	/* HTTP httpost plugin handler for POST (see table below) */
-int http_DELETE_handler(struct soap*);	/* HTTP httpost plugin handler for DELETE (see table below) */
-int http_form_handler(struct soap*);	/* HTTP form handler */
-int check_authentication(struct soap*);	/* HTTP authentication check */
-int copy_file(struct soap*, const char*, const char*);	/* copy file as HTTP response */
+int http_GET_handler(struct soap*);     /* HTTP httpget plugin GET handler */
+int http_PUT_handler(struct soap*);     /* HTTP httpost plugin handler for PUT (see table below) */
+int http_POST_handler(struct soap*);    /* HTTP httpost plugin handler for POST (see table below) */
+int http_DELETE_handler(struct soap*);  /* HTTP httpost plugin handler for DELETE (see table below) */
+int http_form_handler(struct soap*);    /* HTTP form handler */
+int check_authentication(struct soap*); /* HTTP authentication check */
+int copy_file(struct soap*, const char*, const char*);  /* copy file as HTTP response */
 int calcget(struct soap*);
 int calcpost(struct soap*);
 int info(struct soap*);
@@ -246,7 +247,7 @@ void CRYPTO_thread_cleanup();
 
 /******************************************************************************\
  *
- *	PUT/POST/DELETE handlers for httppost plugin
+ *      PUT/POST/DELETE handlers for httppost plugin
  *
 \******************************************************************************/
 
@@ -259,7 +260,7 @@ struct http_post_handlers http_handlers[] = {
 
 /******************************************************************************\
  *
- *	Main
+ *      Main
  *
 \******************************************************************************/
 
@@ -320,13 +321,13 @@ int main(int argc, char **argv)
   */
   if (secure && soap_ssl_server_context(&soap,
     SOAP_SSL_DEFAULT,
-    "server.pem",	/* keyfile: see SSL docs on how to obtain this file */
-    "password",		/* password to read the key file */
-    NULL, 		/* cacert CA certificate, or ... */
-    NULL,		/* capath CA certificate path */
-    NULL, 		/* DH file (e.g. "dh2048.pem") or numeric DH param key len bits in string (e.g. "2048"), if NULL then use RSA */
-    NULL,		/* if randfile!=NULL: use a file with random data to seed randomness */ 
-    "webserver"		/* server identification for SSL session cache (must be a unique name) */
+    "server.pem",       /* keyfile: see SSL docs on how to obtain this file */
+    "password",         /* password to read the key file */
+    NULL,               /* cacert CA certificate, or ... */
+    NULL,               /* capath CA certificate path */
+    NULL,               /* DH file (e.g. "dh2048.pem") or numeric DH param key len bits in string (e.g. "2048"), if NULL then use RSA */
+    NULL,               /* if randfile!=NULL: use a file with random data to seed randomness */ 
+    "webserver"         /* server identification for SSL session cache (must be a unique name) */
   ))
   {
     soap_print_fault(&soap, stderr);
@@ -351,9 +352,9 @@ int main(int argc, char **argv)
     soap_print_fault(&soap, stderr);
 #endif
   /* Unix SIGPIPE, this is OS dependent (win does not need this) */
-  /* soap.accept_flags = SO_NOSIGPIPE; */ 	/* some systems like this */
-  /* soap.socket_flags = MSG_NOSIGNAL; */	/* others need this */
-  /* signal(SIGPIPE, sigpipe_handle); */	/* and some older Unix systems may require a sigpipe handler */
+  /* soap.accept_flags = SO_NOSIGPIPE; */       /* some systems like this */
+  /* soap.socket_flags = MSG_NOSIGNAL; */       /* others need this */
+  /* signal(SIGPIPE, sigpipe_handle); */        /* and some older Unix systems may require a sigpipe handler */
   master = soap_bind(&soap, NULL, port, BACKLOG);
   if (!soap_valid_socket(master))
   {
@@ -361,11 +362,13 @@ int main(int argc, char **argv)
     exit(1);
   }
   fprintf(stderr, "Port bind successful: master socket = %d\n", master);
-  MUTEX_SETUP(queue_cs);
-  COND_SETUP(queue_cv);
+  MUTEX_SETUP(queue_lock);
+  COND_SETUP(queue_notempty);
+  COND_SETUP(queue_notfull);
   server_loop(&soap);
-  COND_CLEANUP(queue_cv);
-  MUTEX_CLEANUP(queue_cs);
+  COND_CLEANUP(queue_notfull);
+  COND_CLEANUP(queue_notempty);
+  MUTEX_CLEANUP(queue_lock);
   free_options(options);
   soap_end(&soap);
   soap_done(&soap);
@@ -419,10 +422,7 @@ void server_loop(struct soap *soap)
       int job;
 
       for (job = 0; job < poolsize; job++)
-      {
-        while (enqueue(SOAP_INVALID_SOCKET) == SOAP_EOM)
-          sleep(1);
-      }
+        enqueue(SOAP_INVALID_SOCKET);
 
       for (job = 0; job < poolsize; job++)
       {
@@ -443,11 +443,11 @@ void server_loop(struct soap *soap)
       for (job = poolsize; job < newpoolsize; job++)
       {
         soap_thr[job] = soap_copy(soap);
-	if (!soap_thr[job])
-	  break;
+        if (!soap_thr[job])
+          break;
 
         soap_thr[job]->user = (void*)(long)job; /* int to ptr */
-	
+        
         fprintf(stderr, "Starting thread %d\n", job);
         THREAD_CREATE(&tids[job], (void*(*)(void*))process_queue, (void*)soap_thr[job]);
       }
@@ -470,7 +470,7 @@ void server_loop(struct soap *soap)
       {
         soap_print_fault(soap, stderr);
         fprintf(stderr, "Retry...\n");
-	continue;
+        continue;
       }
       fprintf(stderr, "gSOAP Web server timed out\n");
       break;
@@ -481,8 +481,7 @@ void server_loop(struct soap *soap)
 
     if (poolsize > 0)
     {
-      while (enqueue(sock) == SOAP_EOM)
-        sleep(1);
+      enqueue(sock);
     }
     else
     {
@@ -494,26 +493,27 @@ void server_loop(struct soap *soap)
       if (tsoap)
       {
         tsoap->user = (void*)(long)req;
-        THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap);
+        while (THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap))
+          sleep(1);
       }
       else
       {
 #if defined(WITH_OPENSSL) || defined(WITH_GNUTLS)
         if (secure && soap_ssl_accept(soap))
         {
-	  soap_print_fault(soap, stderr);
+          soap_print_fault(soap, stderr);
           fprintf(stderr, "SSL request failed, continue with next call...\n");
           soap_end(soap);
           continue;
         }
 #endif
-	/* Keep-alive: frequent EOF faults occur related to KA-timeouts:
+        /* Keep-alive: frequent EOF faults occur related to KA-timeouts:
            timeout: soap->error == SOAP_EOF && soap->errnum == 0
            error:   soap->error != SOAP_OK
         */
         if (soap_serve(soap) && (soap->error != SOAP_EOF || (soap->errnum != 0 && !(soap->omode & SOAP_IO_KEEPALIVE))))
-	{
-	  fprintf(stderr, "Request #%d completed with failure %d\n", req, soap->error);
+        {
+          fprintf(stderr, "Request #%d completed with failure %d\n", req, soap->error);
           soap_print_fault(soap, stderr);
         }
         else if (options[OPTION_v].selected)
@@ -530,8 +530,7 @@ void server_loop(struct soap *soap)
 
     for (job = 0; job < poolsize; job++)
     {
-      while (enqueue(SOAP_INVALID_SOCKET) == SOAP_EOM)
-        sleep(1);
+      enqueue(SOAP_INVALID_SOCKET);
     }
 
     for (job = 0; job < poolsize; job++)
@@ -546,7 +545,7 @@ void server_loop(struct soap *soap)
 
 /******************************************************************************\
  *
- *	Process dispatcher
+ *      Process dispatcher
  *
 \******************************************************************************/
 
@@ -587,7 +586,7 @@ void *process_request(void *soap)
 
 /******************************************************************************\
  *
- *	Thread pool (enabled with option -o<num>)
+ *      Thread pool (enabled with option -o<num>)
  *
 \******************************************************************************/
 
@@ -635,37 +634,29 @@ void *process_queue(void *soap)
   return NULL;
 }
 
-int enqueue(SOAP_SOCKET sock)
+void enqueue(SOAP_SOCKET sock)
 {
-  int status = SOAP_OK;
   int next;
   int ret;
 
-  if ((ret = MUTEX_LOCK(queue_cs)))
+  if ((ret = MUTEX_LOCK(queue_lock)))
     fprintf(stderr, "MUTEX_LOCK error %d\n", ret);
 
   next = (tail + 1) % MAX_QUEUE;
   if (head == next)
-  {
-    /* don't block on full queue, return SOAP_EOM */
-    status = SOAP_EOM;
-  }
-  else
-  {
-    queue[tail] = sock;
-    tail = next;
+    COND_WAIT(queue_notfull, queue_lock);
 
-    if (options[OPTION_v].selected)
-      fprintf(stderr, "enqueue(%d)\n", sock);
+  queue[tail] = sock;
+  tail = next;
 
-    if ((ret = COND_SIGNAL(queue_cv)))
-      fprintf(stderr, "COND_SIGNAL error %d\n", ret);
-  }
+  if (options[OPTION_v].selected)
+    fprintf(stderr, "enqueue(%d)\n", sock);
 
-  if ((ret = MUTEX_UNLOCK(queue_cs)))
+  if ((ret = COND_SIGNAL(queue_notempty)))
+    fprintf(stderr, "COND_SIGNAL error %d\n", ret);
+
+  if ((ret = MUTEX_UNLOCK(queue_lock)))
     fprintf(stderr, "MUTEX_UNLOCK error %d\n", ret);
-
-  return status;
 }
 
 SOAP_SOCKET dequeue()
@@ -673,11 +664,11 @@ SOAP_SOCKET dequeue()
   SOAP_SOCKET sock;
   int ret;
 
-  if ((ret = MUTEX_LOCK(queue_cs)))
+  if ((ret = MUTEX_LOCK(queue_lock)))
     fprintf(stderr, "MUTEX_LOCK error %d\n", ret);
 
-  while (head == tail)
-    if ((ret = COND_WAIT(queue_cv, queue_cs)))
+  if (head == tail)
+    if ((ret = COND_WAIT(queue_notempty, queue_lock)))
       fprintf(stderr, "COND_WAIT error %d\n", ret);
 
   sock = queue[head];
@@ -687,7 +678,10 @@ SOAP_SOCKET dequeue()
   if (options[OPTION_v].selected)
     fprintf(stderr, "dequeue(%d)\n", sock);
 
-  if ((ret = MUTEX_UNLOCK(queue_cs)))
+  if ((ret = COND_SIGNAL(queue_notfull)))
+    fprintf(stderr, "COND_SIGNAL error %d\n", ret);
+
+  if ((ret = MUTEX_UNLOCK(queue_lock)))
     fprintf(stderr, "MUTEX_UNLOCK error %d\n", ret);
 
   return sock;
@@ -695,7 +689,7 @@ SOAP_SOCKET dequeue()
 
 /******************************************************************************\
  *
- *	SOAP/XML handling: calculator example
+ *      SOAP/XML handling: calculator example
  *
 \******************************************************************************/
 
@@ -725,7 +719,7 @@ int ns__div(struct soap *soap, double a, double b, double *c)
 
 /******************************************************************************\
  *
- *	Server dummy methods to avoid link errors
+ *      Server dummy methods to avoid link errors
  *
 \******************************************************************************/
 
@@ -755,7 +749,7 @@ int ns__divResponse_(struct soap *soap, double a)
 
 /******************************************************************************\
  *
- *	HTTP GET handler for httpget plugin
+ *      HTTP GET handler for httpget plugin
  *
 \******************************************************************************/
 
@@ -828,7 +822,7 @@ int check_authentication(struct soap *soap)
 
 /******************************************************************************\
  *
- *	HTTP PUT handler for httppost plugin
+ *      HTTP PUT handler for httppost plugin
  *
 \******************************************************************************/
 
@@ -849,7 +843,7 @@ int http_PUT_handler(struct soap *soap)
 
 /******************************************************************************\
  *
- *	HTTP POST handler for httppost plugin
+ *      HTTP POST handler for httppost plugin
  *
 \******************************************************************************/
 
@@ -875,7 +869,7 @@ int http_POST_handler(struct soap *soap)
 
 /******************************************************************************\
  *
- *	HTTP DELETE handler for httppost plugin
+ *      HTTP DELETE handler for httppost plugin
  *
 \******************************************************************************/
 
@@ -892,7 +886,7 @@ int http_DELETE_handler(struct soap *soap)
 
 /******************************************************************************\
  *
- *	HTTP POST application/x-www-form-urlencoded handler for httpform plugin
+ *      HTTP POST application/x-www-form-urlencoded handler for httpform plugin
  *
 \******************************************************************************/
 
@@ -914,7 +908,7 @@ int http_form_handler(struct soap *soap)
 
 /******************************************************************************\
  *
- *	Copy static page
+ *      Copy static page
  *
 \******************************************************************************/
 
@@ -946,7 +940,7 @@ int copy_file(struct soap *soap, const char *name, const char *type)
 
 /******************************************************************************\
  *
- *	Example dynamic HTTP GET application/x-www-form-urlencoded calculator
+ *      Example dynamic HTTP GET application/x-www-form-urlencoded calculator
  *
 \******************************************************************************/
 
@@ -991,7 +985,7 @@ int calcget(struct soap *soap)
 
 /******************************************************************************\
  *
- *	Example dynamic HTTP POST application/x-www-form-urlencoded calculator
+ *      Example dynamic HTTP POST application/x-www-form-urlencoded calculator
  *
 \******************************************************************************/
 
@@ -1036,7 +1030,7 @@ int calcpost(struct soap *soap)
 
 /******************************************************************************\
  *
- *	Example dynamic HTTP POST multipart/form-data form-based calculator
+ *      Example dynamic HTTP POST multipart/form-data form-based calculator
  *
 \******************************************************************************/
 
@@ -1113,7 +1107,7 @@ int f__form2(struct soap *soap, struct f__formResponse *response)
 
 /******************************************************************************\
  *
- *	Dynamic Web server info page
+ *      Dynamic Web server info page
  *
 \******************************************************************************/
 
@@ -1374,7 +1368,7 @@ int html_hist(struct soap *soap, const char *title, size_t barwidth, size_t heig
 
 /******************************************************************************\
  *
- *	OpenSSL
+ *      OpenSSL
  *
 \******************************************************************************/
 
@@ -1430,7 +1424,7 @@ static unsigned long id_function()
 int CRYPTO_thread_setup()
 {
   int i;
-  mutex_buf = (MUTEX_TYPE*)malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
+  mutex_buf = (MUTEX_TYPE*)malloc(CRYPTO_num_locks() * sizeof(MUTEX_TYPE));
   if (!mutex_buf)
     return SOAP_EOM;
   for (i = 0; i < CRYPTO_num_locks(); i++)
@@ -1474,7 +1468,7 @@ void CRYPTO_thread_cleanup()
 
 /******************************************************************************\
  *
- *	SIGPIPE
+ *      SIGPIPE
  *
 \******************************************************************************/
 
