@@ -41,7 +41,8 @@ properties that make XML more suitable to achieve lossless C/C++ serialization.
 This document does not describe JSON (and JSON RPC/REST) in detail.  For more
 details, please visit <http://www.json.org>.
 
-This document describes both the C and C++/C++11 APIs, see table of contents.
+This document describes both the C and C++/C++11 XML-RPC and JSON library APIs,
+see table of contents.
 
 JSON/JSONPath and gSOAP                                               {#intro-1}
 -----------------------

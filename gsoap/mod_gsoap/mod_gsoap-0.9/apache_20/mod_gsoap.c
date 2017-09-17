@@ -43,7 +43,7 @@
 #include "http_protocol.h"
 #include "http_request.h"
 #include "util_script.h"
-#undef HAVE_TIMEGM		/* stop complaining */
+#undef HAVE_TIMEGM              /* stop complaining */
 #include "stdsoap2.h"           /* standard header for gsoap */
 #include "apache_gsoap.h"
 
@@ -208,7 +208,7 @@ SoapSharedLibrary_create(apr_pool_t *p)
  * }
  */
 /**
- *	@param pTempPool pool to use for allocating temporary objects (e.g. error message).
+ *      @param pTempPool pool to use for allocating temporary objects (e.g. error message).
  */
 static const char *
 SoapSharedLibrary_load(SoapSharedLibrary *This, apr_pool_t *pTempPool)
@@ -368,7 +368,7 @@ SoapSharedLibraries_loadAllLibraries(SoapSharedLibraries *This, apr_pool_t *pTem
             for (i = 0; i < This->m_pLibraries->nelts; i++)
             {
                 SoapSharedLibrary *pLib = SoapSharedLibraries_getLibrary(This, i);
-	        if (NULL != pLib && NULL == pLib->m_hLibrary)
+                if (NULL != pLib && NULL == pLib->m_hLibrary)
                 {
                     pszError = SoapSharedLibrary_load(pLib, pTempPool);
                     if (NULL == pszError)
@@ -422,12 +422,12 @@ SoapSharedLibraries_unloadAllLibraries(SoapSharedLibraries *This)
     for (i = 0; i < This->m_pLibraries->nelts && NULL == pszError; i++)
     {
         SoapSharedLibrary *pLib = SoapSharedLibraries_getLibrary(This, i);
-	if (NULL != pLib && NULL != pLib->m_hLibrary)
-	{
+        if (NULL != pLib && NULL != pLib->m_hLibrary)
+        {
             const char *pszErr = SoapSharedLibrary_unload(pLib);
             if (NULL == pszError)
-	    {
-	        pszError = pszErr;
+            {
+                pszError = pszErr;
             }
         }
     }
@@ -673,23 +673,26 @@ HTTPGet_SendWSDL(request_rec *r, const char *path)
     size_t l;
     /* GET wsdl file */
     if (!path || !r->parsed_uri.query || strcmp(r->parsed_uri.query, "wsdl"))
-    {    SendErrorMessage(r, "HTTP GET: not a ?wsdl request");
-	 return;
+    {
+        SendErrorMessage(r, "HTTP GET: not a ?wsdl request");
+        return;
     }
     l = strlen(path);
     file = (char*)malloc(l + 6);
-    if (file)
-    {   soap_strcpy(file, l + 6, path);
-	tmp = strstr(file, ".so");
-	if (tmp)
-	  soap_strcpy(tmp, 9, ".wsdl");
-	else
-	  soap_strcpy(file + l, 6, ".wsdl");
+    if (file == NULL)
+    {
+        soap_strcpy(file, l + 6, path);
+        tmp = strstr(file, ".so");
+        if (tmp)
+            soap_strcpy(tmp, 9, ".wsdl");
+        else
+            soap_strcpy(file + l, 6, ".wsdl");
         fd = fopen(file, "rb");
         free(file);
     }
-    if (!fd)
-    {   SendErrorMessage(r, "Error: 404 FILE NOT FOUND");
+    if (fd == NULL)
+    {
+        SendErrorMessage(r, "Error: 404 FILE NOT FOUND");
         return;
     }
     /* Calculate the size of file */
@@ -702,36 +705,42 @@ HTTPGet_SendWSDL(request_rec *r, const char *path)
     if (!tmp || n != size)
         SendErrorMessage(r, "HTTP GET error reading file");
     else
-    {   tmp[size] = '\0';
+    {
+        tmp[size] = '\0';
         r->content_type = "text/xml";
         ap_rputs(tmp, r);
     }
     fclose(fd);
     if (tmp)
-      free(tmp);
+        free(tmp);
     return;
 }
 
 static int
 send_header_to_gsoap(void *pvoid, const char *key, const char *value)
 {
-    gsoapRequestConfiguration *pRqConf = NULL;
     struct soap *psoap = (struct soap *)pvoid;
+    gsoapRequestConfiguration *pRqConf = NULL;
 
-    if (NULL != psoap)
+    if (NULL == psoap)
     {
-        pRqConf = getRequestConfiguration(psoap);
+      return 0;
     }
+
+    pRqConf = getRequestConfiguration(psoap);
+
     if (NULL == pRqConf)
     {
         return 0;
     }
+
     if (0 == strcasecmp(key, "SOAPAction") ||
-       0 == strcasecmp(key, "Content-Type") ||
-       0 == strcasecmp(key, "Status") || 0 == strcasecmp(key, "Content-Length"))
+	0 == strcasecmp(key, "Content-Type") ||
+	0 == strcasecmp(key, "Content-Length"))
     {
         psoap->fparsehdr(psoap, key, value);
     }
+
     return 1;
 }
 
@@ -745,7 +754,7 @@ http_post_header(struct soap *soap, const char *key, const char *value)
     gsoapRequestConfiguration *pRqConf = getRequestConfiguration(soap);
     request_rec *r = NULL == pRqConf ? NULL : pRqConf->r;
 
-    if (NULL != value)
+    if (NULL != key && NULL != value)
     {
         if (0 == strcasecmp(key, "SOAPAction"))
         {
@@ -760,6 +769,16 @@ http_post_header(struct soap *soap, const char *key, const char *value)
             ap_set_content_length(r, atoi(value));
         }
     }
+    else if (NULL != key)
+    {
+        if (0 == strncmp(key, "Status: ", 8))
+        {
+            int status = atoi(key + 8);
+            if (status > 200)
+              r->status = status;
+        }
+    }
+
     return SOAP_OK;
 }
 
@@ -783,7 +802,7 @@ frecv(struct soap *psoap, char *pBuf, apr_size_t len)
         }
         /*
          * Steven Elliott <selliott4@austin.rr.com>:
-         * It's not obvious from Apache documentation documentation how
+         * It's not obvious from Apache documentation how
          * exactly ap_get_client_block() should be called in both the chunked
          * and non-chunked cases.  In the chunked case r->remaining is zero,
          * so that can't be an upper bound to the number of bytes read.
@@ -895,6 +914,10 @@ set_callbacks(request_rec * r, gsoapRequestConfiguration * pRqConf, struct soap 
     {
         psoap->user = pRqConf;
     }
+    if (NULL != pIntf->fsoap_user_init)
+    {
+        (*pIntf->fsoap_user_init)(psoap, r);
+    }
 }
 
 /*
@@ -904,7 +927,7 @@ set_callbacks(request_rec * r, gsoapRequestConfiguration * pRqConf, struct soap 
  * * see.  (See mod_mime's SetHandler and AddHandler directives, and the      
  * * mod_info and mod_status examples, for more details.)                     
  * 
- * * Since content handlers are dumping data directly into the connexion      
+ * * Since content handlers are dumping data directly into the connection      
  * * (using the r*() routines, such as rputs() and rprintf()) without         
  * * intervention by other parts of the server, they need to make             
  * * sure any accumulated HTTP headers are sent first.  This is done by       
@@ -939,7 +962,7 @@ gsoap_handler(request_rec * r)
         return DECLINED;
 
     /*
-     * only handle POST requests 
+     * only handle POST and GET requests 
      */
     if (r->method_number != M_POST && r->method_number != M_GET)
         return DECLINED;
@@ -1027,8 +1050,8 @@ gsoap_handler(request_rec * r)
     /* we check whether this request is HTTP GET or not and handle the GET request */
     if (r->method_number == M_GET)
     {  
-	HTTPGet_SendWSDL(r, pConfig->m_pLibraries->m_pSOAPLibrary->m_pszPath);
-	return OK;
+        HTTPGet_SendWSDL(r, pConfig->m_pLibraries->m_pSOAPLibrary->m_pszPath);
+        return OK;
     }
 
     if (0 == nRet)
@@ -1047,7 +1070,7 @@ gsoap_handler(request_rec * r)
     if (NULL != pIntf->fsoap_init)
     {
         (*pIntf->fsoap_init)(psoap, r);
-	psoap->namespaces = pIntf->namespaces;
+        psoap->namespaces = pIntf->namespaces;
         set_callbacks(r, pRqConf, psoap);
         if (NULL != pIntf->fsoap_serve)
         {

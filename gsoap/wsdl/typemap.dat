@@ -544,6 +544,11 @@ s3	= "http://s3.amazonaws.com/doc/2006-03-01/"
 _s3__CreateBucketResponse = $ s3__CreateBucketResult* CreateBucketResponse;
 _s3__CopyObjectResponse   = $ s3__CopyObjectResult* CopyObjectResponse;
 
+#	Prefix bindings for Exchange Web Services
+
+ewsmsg  = "http://schemas.microsoft.com/exchange/services/2006/messages"
+ewstype = "http://schemas.microsoft.com/exchange/services/2006/types"
+
 #	Prefix binding for Mappoint Web services:
 
 mpt	= "http://s.mappoint.net/mappoint-30/"

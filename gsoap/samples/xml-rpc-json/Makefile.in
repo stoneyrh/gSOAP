@@ -89,7 +89,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = jsoncpp$(EXEEXT) json-GitHub$(EXEEXT) \
-	json-currentTime$(EXEEXT) xml-rpc-currentTime$(EXEEXT)
+	json-gdm$(EXEEXT) json-currentTime$(EXEEXT) \
+	xml-rpc-currentTime$(EXEEXT)
 subdir = gsoap/samples/xml-rpc-json
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -116,6 +117,13 @@ am_json_currentTime_OBJECTS = json-currentTime.$(OBJEXT) \
 	$(am__objects_3)
 json_currentTime_OBJECTS = $(am_json_currentTime_OBJECTS)
 json_currentTime_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1)
+am__objects_4 = json_gdm-soapC.$(OBJEXT)
+am_json_gdm_OBJECTS = json_gdm-json-GoogleDistanceMatrix.$(OBJEXT) \
+	json_gdm-xml-rpc.$(OBJEXT) json_gdm-json.$(OBJEXT) \
+	$(am__objects_1) $(am__objects_4)
+json_gdm_OBJECTS = $(am_json_gdm_OBJECTS)
+json_gdm_DEPENDENCIES = $(SOAP_CPP_LIB_SSL) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_jsoncpp_OBJECTS = jsoncpp.$(OBJEXT) xml-rpc.$(OBJEXT) \
 	json.$(OBJEXT) $(am__objects_1) $(am__objects_3)
 jsoncpp_OBJECTS = $(am_jsoncpp_OBJECTS)
@@ -172,9 +180,11 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(json_GitHub_SOURCES) $(json_currentTime_SOURCES) \
-	$(jsoncpp_SOURCES) $(xml_rpc_currentTime_SOURCES)
+	$(json_gdm_SOURCES) $(jsoncpp_SOURCES) \
+	$(xml_rpc_currentTime_SOURCES)
 DIST_SOURCES = $(json_GitHub_SOURCES) $(json_currentTime_SOURCES) \
-	$(jsoncpp_SOURCES) $(xml_rpc_currentTime_SOURCES)
+	$(json_gdm_SOURCES) $(jsoncpp_SOURCES) \
+	$(xml_rpc_currentTime_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -360,6 +370,9 @@ jsoncpp_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 json_GitHub_CPPFLAGS = -DWITH_OPENSSL -DWITH_GZIP
 json_GitHub_SOURCES = json-GitHub.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 json_GitHub_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
+json_gdm_CPPFLAGS = -DWITH_OPENSSL -DWITH_GZIP
+json_gdm_SOURCES = json-GoogleDistanceMatrix.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
+json_gdm_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
 json_currentTime_SOURCES = json-currentTime.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 json_currentTime_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 xml_rpc_currentTime_SOURCES = xml-rpc-currentTime.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
@@ -411,6 +424,10 @@ json-currentTime$(EXEEXT): $(json_currentTime_OBJECTS) $(json_currentTime_DEPEND
 	@rm -f json-currentTime$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(json_currentTime_OBJECTS) $(json_currentTime_LDADD) $(LIBS)
 
+json-gdm$(EXEEXT): $(json_gdm_OBJECTS) $(json_gdm_DEPENDENCIES) $(EXTRA_json_gdm_DEPENDENCIES) 
+	@rm -f json-gdm$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(json_gdm_OBJECTS) $(json_gdm_LDADD) $(LIBS)
+
 jsoncpp$(EXEEXT): $(jsoncpp_OBJECTS) $(jsoncpp_DEPENDENCIES) $(EXTRA_jsoncpp_DEPENDENCIES) 
 	@rm -f jsoncpp$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(jsoncpp_OBJECTS) $(jsoncpp_LDADD) $(LIBS)
@@ -431,6 +448,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json_GitHub-json.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json_GitHub-soapC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json_GitHub-xml-rpc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json_gdm-json-GoogleDistanceMatrix.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json_gdm-json.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json_gdm-soapC.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json_gdm-xml-rpc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jsoncpp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xml-rpc-currentTime.Po@am__quote@
@@ -507,6 +528,62 @@ json_GitHub-soapC.obj: soapC.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='soapC.cpp' object='json_GitHub-soapC.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_GitHub_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_GitHub-soapC.obj `if test -f 'soapC.cpp'; then $(CYGPATH_W) 'soapC.cpp'; else $(CYGPATH_W) '$(srcdir)/soapC.cpp'; fi`
+
+json_gdm-json-GoogleDistanceMatrix.o: json-GoogleDistanceMatrix.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_gdm-json-GoogleDistanceMatrix.o -MD -MP -MF $(DEPDIR)/json_gdm-json-GoogleDistanceMatrix.Tpo -c -o json_gdm-json-GoogleDistanceMatrix.o `test -f 'json-GoogleDistanceMatrix.cpp' || echo '$(srcdir)/'`json-GoogleDistanceMatrix.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/json_gdm-json-GoogleDistanceMatrix.Tpo $(DEPDIR)/json_gdm-json-GoogleDistanceMatrix.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='json-GoogleDistanceMatrix.cpp' object='json_gdm-json-GoogleDistanceMatrix.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_gdm-json-GoogleDistanceMatrix.o `test -f 'json-GoogleDistanceMatrix.cpp' || echo '$(srcdir)/'`json-GoogleDistanceMatrix.cpp
+
+json_gdm-json-GoogleDistanceMatrix.obj: json-GoogleDistanceMatrix.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_gdm-json-GoogleDistanceMatrix.obj -MD -MP -MF $(DEPDIR)/json_gdm-json-GoogleDistanceMatrix.Tpo -c -o json_gdm-json-GoogleDistanceMatrix.obj `if test -f 'json-GoogleDistanceMatrix.cpp'; then $(CYGPATH_W) 'json-GoogleDistanceMatrix.cpp'; else $(CYGPATH_W) '$(srcdir)/json-GoogleDistanceMatrix.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/json_gdm-json-GoogleDistanceMatrix.Tpo $(DEPDIR)/json_gdm-json-GoogleDistanceMatrix.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='json-GoogleDistanceMatrix.cpp' object='json_gdm-json-GoogleDistanceMatrix.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_gdm-json-GoogleDistanceMatrix.obj `if test -f 'json-GoogleDistanceMatrix.cpp'; then $(CYGPATH_W) 'json-GoogleDistanceMatrix.cpp'; else $(CYGPATH_W) '$(srcdir)/json-GoogleDistanceMatrix.cpp'; fi`
+
+json_gdm-xml-rpc.o: xml-rpc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_gdm-xml-rpc.o -MD -MP -MF $(DEPDIR)/json_gdm-xml-rpc.Tpo -c -o json_gdm-xml-rpc.o `test -f 'xml-rpc.cpp' || echo '$(srcdir)/'`xml-rpc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/json_gdm-xml-rpc.Tpo $(DEPDIR)/json_gdm-xml-rpc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xml-rpc.cpp' object='json_gdm-xml-rpc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_gdm-xml-rpc.o `test -f 'xml-rpc.cpp' || echo '$(srcdir)/'`xml-rpc.cpp
+
+json_gdm-xml-rpc.obj: xml-rpc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_gdm-xml-rpc.obj -MD -MP -MF $(DEPDIR)/json_gdm-xml-rpc.Tpo -c -o json_gdm-xml-rpc.obj `if test -f 'xml-rpc.cpp'; then $(CYGPATH_W) 'xml-rpc.cpp'; else $(CYGPATH_W) '$(srcdir)/xml-rpc.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/json_gdm-xml-rpc.Tpo $(DEPDIR)/json_gdm-xml-rpc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xml-rpc.cpp' object='json_gdm-xml-rpc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_gdm-xml-rpc.obj `if test -f 'xml-rpc.cpp'; then $(CYGPATH_W) 'xml-rpc.cpp'; else $(CYGPATH_W) '$(srcdir)/xml-rpc.cpp'; fi`
+
+json_gdm-json.o: json.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_gdm-json.o -MD -MP -MF $(DEPDIR)/json_gdm-json.Tpo -c -o json_gdm-json.o `test -f 'json.cpp' || echo '$(srcdir)/'`json.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/json_gdm-json.Tpo $(DEPDIR)/json_gdm-json.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='json.cpp' object='json_gdm-json.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_gdm-json.o `test -f 'json.cpp' || echo '$(srcdir)/'`json.cpp
+
+json_gdm-json.obj: json.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_gdm-json.obj -MD -MP -MF $(DEPDIR)/json_gdm-json.Tpo -c -o json_gdm-json.obj `if test -f 'json.cpp'; then $(CYGPATH_W) 'json.cpp'; else $(CYGPATH_W) '$(srcdir)/json.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/json_gdm-json.Tpo $(DEPDIR)/json_gdm-json.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='json.cpp' object='json_gdm-json.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_gdm-json.obj `if test -f 'json.cpp'; then $(CYGPATH_W) 'json.cpp'; else $(CYGPATH_W) '$(srcdir)/json.cpp'; fi`
+
+json_gdm-soapC.o: soapC.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_gdm-soapC.o -MD -MP -MF $(DEPDIR)/json_gdm-soapC.Tpo -c -o json_gdm-soapC.o `test -f 'soapC.cpp' || echo '$(srcdir)/'`soapC.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/json_gdm-soapC.Tpo $(DEPDIR)/json_gdm-soapC.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='soapC.cpp' object='json_gdm-soapC.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_gdm-soapC.o `test -f 'soapC.cpp' || echo '$(srcdir)/'`soapC.cpp
+
+json_gdm-soapC.obj: soapC.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT json_gdm-soapC.obj -MD -MP -MF $(DEPDIR)/json_gdm-soapC.Tpo -c -o json_gdm-soapC.obj `if test -f 'soapC.cpp'; then $(CYGPATH_W) 'soapC.cpp'; else $(CYGPATH_W) '$(srcdir)/soapC.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/json_gdm-soapC.Tpo $(DEPDIR)/json_gdm-soapC.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='soapC.cpp' object='json_gdm-soapC.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(json_gdm_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o json_gdm-soapC.obj `if test -f 'soapC.cpp'; then $(CYGPATH_W) 'soapC.cpp'; else $(CYGPATH_W) '$(srcdir)/soapC.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique

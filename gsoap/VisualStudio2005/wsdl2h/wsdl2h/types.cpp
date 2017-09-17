@@ -128,7 +128,6 @@ static const char *keywords[] =
   "signed",
   "size_t",
   "sizeof",
-  "soap",
   "static",
   "static_assert",
   "static_cast",
@@ -359,6 +358,9 @@ void Types::init()
   with_union = false;
   fake_union = false;
   knames.insert(keywords, keywords + sizeof(keywords)/sizeof(char*));
+  if (soap_context && *soap_context)
+    knames.insert(soap_context);
+  /* xsd:ur-type is deprecated
   if (cflag)
   {
     deftypemap["xsd__ur_type"] = "";
@@ -374,9 +376,10 @@ void Types::init()
   }
   else
   {
-    deftypemap["xsd__ur_type"] = "class xsd__ur_type { _XML __item; struct soap *soap; };";
+    deftypemap["xsd__ur_type"] = "class xsd__ur_type { _XML __item; };";
     usetypemap["xsd__ur_type"] = "xsd__ur_type";
   }
+  */
   if (cflag)
   {
     deftypemap["xsd__anyType"] = "";
@@ -394,8 +397,15 @@ void Types::init()
   {
     if (dflag)
       deftypemap["xsd__anyType"] = "";
+    else if (!soap_context || !*soap_context)
+      deftypemap["xsd__anyType"] = "class xsd__anyType { _XML __item; };";
     else
-      deftypemap["xsd__anyType"] = "class xsd__anyType { _XML __item; struct soap *soap; };";
+    {
+      size_t l = strlen(soap_context) + 51;
+      char *t = (char*)emalloc(l + 1);
+      (SOAP_SNPRINTF(t, l + 1, l), "class xsd__anyType { _XML __item; struct soap *%s; };", soap_context);
+      deftypemap["xsd__anyType"] = t;
+    }
     // xsd__anyType ia a base class: use pointer so can replace with any derived class
     usetypemap["xsd__anyType"] = "xsd__anyType*";
   }
@@ -427,7 +437,7 @@ void Types::init()
   }
   else
   {
-    deftypemap["xsd__base64Binary"] = "class xsd__base64Binary\n{\tunsigned char *__ptr;\n\tint __size;\n\tchar *id, *type, *options; // NOTE: non-NULL for DIME/MIME/MTOM XOP attachments only\n\tstruct soap *soap;\n};";
+    deftypemap["xsd__base64Binary"] = "class xsd__base64Binary\n{\tunsigned char *__ptr;\n\tint __size;\n\tchar *id, *type, *options; // NOTE: non-NULL for DIME/MIME/MTOM XOP attachments only\n};";
     usetypemap["xsd__base64Binary"] = "xsd__base64Binary";
   }
   if (cflag)
@@ -2771,12 +2781,13 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
   {
     if (!cflag
      && !(pflag && complexType.name)
-     && !soapflag)
+     && !soapflag
+     && soap_context
+     && *soap_context)
     {
       if (!complexType.complexContent || !complexType.complexContent->extension || !complexType.complexContent->extension->complexTypePtr())
       {
-        fprintf(stream, "/// A handle to the soap struct context that manages this instance when instantiated by a context or NULL otherwise (automatically set).\n");
-        fprintf(stream, pointerformat, "struct soap", "soap");
+        fprintf(stream, pointerformat, "struct soap", soap_context);
         fprintf(stream, ";\n");
       }
     }

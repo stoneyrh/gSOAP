@@ -41,7 +41,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "httpda.h"
 #endif
 
-#define WSDL2H_VERSION "2.8.53"
+#define WSDL2H_VERSION "2.8.54"
 
 #ifdef WIN32
 # pragma warning(disable : 4996)
@@ -108,6 +108,7 @@ extern int _flag,
 	   Pflag,
 	   Rflag,
 	   sflag,
+	   sflag,
 	   Uflag,
 	   uflag,
 	   vflag,
@@ -132,6 +133,7 @@ extern int proxy_port;
 
 extern const char *service_prefix;
 extern const char *schema_prefix;
+extern const char *soap_context;
 
 extern const char elementformat[];
 extern const char pointerformat[];

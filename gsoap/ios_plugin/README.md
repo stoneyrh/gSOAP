@@ -9,14 +9,17 @@ By Bethany Sanders, Robert van Engelen, Ning Xie, and Wei Zhang
 @section ios_overview Overview
 
 Consuming Web services on iOS (iPhone and iPad) platforms is increasingly in
-demand today.  Xcode does not have any built-in tools that make consuming XML
-Web services easy.  It typically requires knowledge of XML processing
-techniques to send XML SOAP or REST requests to the Web services and then parse
-the returning XML results.  The gSOAP toolkit provides an automated XML data
-binding toolkit for C and C++.  The toolkit can be used to develop XML Web
-service client applications to consuming Web services on iOS platforms such as
-iPhone and iPad.  Moreover, the plugin takes advantage of network connection
-offered by iOS SDK and supports 3G/4G/LTE, wifi and so on.
+demand today.  Xcode does not offer built-in tools that make consuming XML
+Web services easy.  This means that detailed knowledge of XML processing
+is required to send SOAP/XML and XML REST requests to the Web services and
+parse the XML response.  By contrast, the gSOAP toolkit offers an automated XML
+data binding toolkit for C and C++ to develop SOAP/XML Web services and
+clients.  You can also use the iOS plugin to consume XML-RPC and JSON Web
+services with the
+[XML-RPC & JSON/JSON-Path](https://www.genivia.com/doc/xml-rpc-json/html/index.html)
+plugin for gSOAP.  The plugin makes it easy to consume Web services on iOS
+platforms, such as iPhone and iPad.  Moreover, the plugin takes advantage of
+iOS network connectivity by supporting 3G/4G/LTE and wifi.
 
 To use the iOS plugin for development of client applications on iOS platforms,
 register the plugin with the gSOAP engine context as follows:
@@ -34,7 +37,7 @@ register the plugin with the gSOAP engine context as follows:
     soap_free(soap);    // free the context
 @endcode
 
-Or when using a C++ proxy class generate with soapcpp2 option -j:
+When coding in C++, it is recommended to generate C++ proxy classes with soapcpp2 option -j which are then used to instantiate proxy objects that manage the gSOAP engine context to register with the plugin as follows:
 
 @code
     #import "gsoapios.h"
@@ -47,8 +50,9 @@ Or when using a C++ proxy class generate with soapcpp2 option -j:
     proxy.destroy();
 @endcode
 
-There are no other plugin API calls necessary to make an XML Web service client
-application work with iOS.
+There are no other plugin API calls necessary to make a Web service client
+application work with iOS.  This means that you can develop iOS apps that
+consume complex SOAP/XML, XML REST, and JSON Web services.
 
 @section ios_start Getting Started
 
@@ -56,12 +60,13 @@ To start building Web services client applications for iPhone and/or iPad with
 gSOAP, you will need:
 
 - The [gSOAP toolkit](http://www.genivia.com/Products/downloads.html) version
-  2.8.34 or greater;
+  2.8.50 or greater;
 
 - Xcode with the iOS SDK installed.
 
 Developing Web services client applications on iOS is no different than
-developing these applications on another OS when you use this iOS Plugin.
+developing these applications on another OS with gSOAP when you use this iOS
+Plugin.
 
 The steps to create a client application on iOS:
 
@@ -82,7 +87,8 @@ The steps to create a client application on iOS:
   declarations for instructions on how to invoke services.
 
 All of the source code files should be of type Objective C++ source.  Mixing
-C files with C++ files will cause errors.
+C files with C++ files will cause errors.  Rename .c files to .cpp files as
+necessary.
 
 @section ios_cache_policy Specifying the Cache Policy
 
@@ -121,7 +127,7 @@ The available cache policies that can be specified are:
     }
 @endcode
 
-The default cache policy is NSURLRequestUseProtocolCachePolicy.
+The default cache policy is `NSURLRequestUseProtocolCachePolicy`.
 
 @section ios_timeout_interval Specifying a Timeout Interval
 
@@ -148,8 +154,8 @@ The default timeout is 60 seconds.
 
 @section ios_http_auth HTTP Authentication
 
-To support authentication when access is denied (HTTP 401 error) as the client
-tries to connect, enable HTTP authentication as follows.
+To support authentication when access is denied (HTTP 401 error) when the
+client tries to connect, enable HTTP authentication as follows.
 
 Basic authentication is simply enabled at the client-side by setting the
 `soap.userid` and `soap.passwd` strings to a username and password,
@@ -169,34 +175,40 @@ When using a generated C++ proxy class:
     porxy.soap->passwd = "somepass";
 @endcode
 
+Make sure to **never use Basic authentication without HTTPS**.  HTTPS must be
+used to ensure that Basic authentication is secure.
+
 @section ios_example Examples
 
 This section introduces four examples to demonstrate the development of client
-applications consuming Web services on iOS platforms such as iPhone and iPad
-using the gSOAP tools and the iOS plugin.
+applications consuming Web services on iOS platforms, such as iPhone and iPad,
+by using the gSOAP tools and the iOS plugin.
 
 The first example @ref ios_example_calc is a basic calculator client app.  The
 second example @ref ios_example_geoip is a web service that locates the country
-of a certain IP Adress. The  third example @ref ios_example_weather returns
+of a certain IP Adress. The third example @ref ios_example_weather returns
 weather results for well-known US cities, and the fourth example
 @ref ios_example_air shows information on every airport within a given country.
 
-We assume you already have had the experience in development of applications
-for iPhone and iPad using Xcode with iOS SDK installed.
+We assume you already have had some experience developing applications for
+iPhone and iPad using Xcode with iOS SDK installed.  Experience is not required
+to read on, but helpful in case you get lost in the details of the Xcode iOS
+SDK.
 
-Directions:
+General recommendations:
 
-- Rename the .m files to .mm files, if any;
+- Rename .m files to .mm files;
 
-- Generate a C++ proxy class using wsdl2h and soapcpp2 -j, which produces the
-  source code you will need to access the Web service;
+- Generate a C++ proxy class using soapcpp2 -j, which produces the source code
+  you will need to access the Web service;
 
-- Add stdsoap2.cpp and stdsoap2.h from the gSOAP package to your iOS project;
+- Add stdsoap2.cpp and stdsoap2.h from the gSOAP source code tree to your iOS
+  project;
 
 - Add gsoapios.h and gsoapios.mm that are part of the iOS plugin files to your
   iOS project;
 
-- In your client code create an engine context and register the iOS plugin.
+- In your client code register the iOS plugin.
 
 @subsection ios_example_calc Simple Calculator Example (C++)
 
@@ -423,11 +435,12 @@ A screen snapshot of the client is shown in Figure 2.
 
 @subsection ios_example_geoip GeoIPService Example (C++)
 
-GeoIPService is a live SOAP Web service that enables you to look up countries
-by IP address or by Context.
+[GeoIPService](http://www.webservicex.net/geoipservice.asmx?op=GetGeoIP) is a
+live SOAP Web service that enables you to look up countries by IP address or by
+Context.
 
 This example shows you how to develop a client application in C++ using gSOAP
-and the ios plugin, which consumes the GeoIPSerive on iOS using gSOAP.  The
+and the ios plugin, which consumes the GeoIPService on iOS using gSOAP.  The
 WSDL file for this service can be downloaded at the following link:
 
     http://www.webservicex.net/geoipservice.asmx?WSDL
@@ -452,7 +465,7 @@ tool from the command line on the URL of the WSDL and use option -o to specify
 the output file (alternatively, you can download the GeoIPService.wsdl file and
 use the local file instead of the URL):
 
-    wsdl2h -o GeoIPService.h 'http://www.webservicex.net/geoipservice.asmx?WSDL'
+    wsdl2h -o GeoIPService.h -Ngeoip 'http://www.webservicex.net/geoipservice.asmx?WSDL'
 
 This generates the GeoIPService.h service interface header file with service
 operation definitions and types for the operation's data.  By default, gSOAP
@@ -556,8 +569,8 @@ layer of protection of App Transport Security).
 
 @subsubsection ios_geoip_step_3 Step 3: Adding generated source stubs to the Xcode project
 
-Add the source files soapC.cpp, GeoIPServiceSoap12Proxy.cpp,
-GeoIPServiceSoap12Proxy.h, soapH.h, and soapStub.h generated in Step 1 of this
+Add the source files soapC.cpp, soapGeoIPServiceSoapProxy.cpp,
+soapGeoIPServiceSoapProxy.h, soapH.h, and soapStub.h generated in Step 1 of this
 tutorial to the project. Also add files stdsoap2.h and stdsoap2.cpp to the
 project from the gSOAP package and the iOS plugin files gsoapios.h and
 gsoapios.mm.
@@ -685,7 +698,7 @@ Then, implement the source file ViewController.mm as the following:
     @end
 @endcode
 
-A screen snapshot of the client is shown in Figure 4.
+An image of the app is shown in Figure 4.
 
 @image html geoip-result.png "Figure 4: Snapshot of the GeoIPServiceViewService result"
 
@@ -726,7 +739,7 @@ tool from the command line on the URL of the WSDL and use option -o to specify
 the output file (Alternatively, you can download the GlobalWeather.wsdl file
 and use the local file instead of the URL):
 
-    wsdl2h -o GeoIPService.h 'http://www.webservicex.net/globalweather.asmx?WSDL'
+    wsdl2h -o weather.h 'http://www.webservicex.net/globalweather.asmx?WSDL'
 
 This generates the weather.h service definition header file with service
 operation definitions and types for the operation's data.  By default, gSOAP

@@ -170,12 +170,12 @@ In addition, two C functions should be defined by your service code, namely
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     extern "C" {
     int mod_gsoap_init(void) {
-	// TODO: add your initialization code here 
-	return SOAP_OK;
+        // TODO: add your initialization code here 
+        return SOAP_OK;
     }
     int mod_gsoap_terminate(void) {
-	// TODO: add your termination code here
-	return SOAP_OK;
+        // TODO: add your termination code here
+        return SOAP_OK;
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

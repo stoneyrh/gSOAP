@@ -166,6 +166,7 @@ COMMAND LINE OPTIONS
         connect with authentication credentials (digest auth requires SSL)
 -R      generate REST operations for REST bindings in the WSDL
 -s      don't generate STL code (no std::string and no std::vector)
+-Sname  use name instead of 'soap' for the C++ class member with soap context
 -tfile  use type map file instead of the default file typemap.dat
 -u      don't generate unions
 -V      display the current version and exit

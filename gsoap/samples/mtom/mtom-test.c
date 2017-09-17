@@ -1,16 +1,16 @@
 /*
-	mtom-test.c
+        mtom-test.c
 
-	This application includes a MTOM test client and server. As a client
-	application, it fires four different base64 or MTOM attachments to the
-	server. As a server, it will respond to the messages by converting
-	base64 into MTOM attachments and vice versa.
+        This application includes a MTOM test client and server. As a client
+        application, it fires four different base64 or MTOM attachments to the
+        server. As a server, it will respond to the messages by converting
+        base64 into MTOM attachments and vice versa.
 
-	Usage (server):
-	$ mtom <port>
+        Usage (server):
+        $ mtom <port>
 
-	Usage (client):
-	$ mtom http://localhost:<port> "<message1>" "<message2>" "<message3>" ...
+        Usage (client):
+        $ mtom http://localhost:<port> "<message1>" "<message2>" "<message3>" ...
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
@@ -57,7 +57,8 @@ int main(int argc, char **argv)
 
 int cgi_serve()
 { /* CGI-style: serve request from stdin */
-  return soap_serve(soap_new1(SOAP_XML_INDENT | SOAP_ENC_MTOM)); /* enable MTOM XOP attachments (and XML indent) */
+  /* enable MTOM XOP attachments (and XML indent) */
+  return soap_serve(soap_new1(SOAP_XML_INDENT | SOAP_ENC_MTOM));
 }
 
 int run_serve(int port)
@@ -151,14 +152,14 @@ int run_tests(int argc, char **argv)
         else
         { int okay = 1;
           if (!multiple.x__EchoTest
-	   || multiple.x__EchoTest->__size != wrap.__size)
+           || multiple.x__EchoTest->__size != wrap.__size)
             okay = 0;
           else
           { for (i = 0; i < multiple.x__EchoTest->__size; ++i)
               if (multiple.x__EchoTest->Data[i].__union != SOAP_UNION_x__data_xop__Include
-	       || !multiple.x__EchoTest->Data[i].choice.xop__Include.__ptr
-	       || multiple.x__EchoTest->Data[i].choice.xop__Include.__size != wrap.Data[i].choice.base64.__size
-	       || strcmp((char*)multiple.x__EchoTest->Data[i].choice.xop__Include.__ptr, (char*)wrap.Data[i].choice.base64.__ptr))
+               || !multiple.x__EchoTest->Data[i].choice.xop__Include.__ptr
+               || multiple.x__EchoTest->Data[i].choice.xop__Include.__size != wrap.Data[i].choice.base64.__size
+               || strcmp((char*)multiple.x__EchoTest->Data[i].choice.xop__Include.__ptr, (char*)wrap.Data[i].choice.base64.__ptr))
                 okay = 0;
           }
           if (!okay)
@@ -181,13 +182,13 @@ int run_tests(int argc, char **argv)
             else
             { int okay = 1;
               if (!multiple.x__EchoTest
-	       || multiple.x__EchoTest->__size != wrap.__size)
+               || multiple.x__EchoTest->__size != wrap.__size)
                 okay = 0;
               else
               { for (i = 0; i < multiple.x__EchoTest->__size; ++i)
                   if (multiple.x__EchoTest->Data[i].__union != SOAP_UNION_x__data_base64
-		   || !multiple.x__EchoTest->Data[i].choice.base64.__ptr
-		   || multiple.x__EchoTest->Data[i].choice.base64.__size != wrap.Data[i].choice.xop__Include.__size || strcmp((char*)multiple.x__EchoTest->Data[i].choice.base64.__ptr, (char*)wrap.Data[i].choice.xop__Include.__ptr))
+                   || !multiple.x__EchoTest->Data[i].choice.base64.__ptr
+                   || multiple.x__EchoTest->Data[i].choice.base64.__size != wrap.Data[i].choice.xop__Include.__size || strcmp((char*)multiple.x__EchoTest->Data[i].choice.base64.__ptr, (char*)wrap.Data[i].choice.xop__Include.__ptr))
                     okay = 0;
               }
               if (!okay)
@@ -228,6 +229,8 @@ int m__EchoTestSingle(struct soap *soap, struct x__DataType *data, struct m__Ech
       response->x__Data->xmime5__contentType = data->choice.xop__Include.type;
       break;
     case SOAP_UNION_x__data_base64:
+      /* set MTOM/MIME attachments, if context is not already initialized with SOAP_ENC_MTOM */
+      soap_set_mode(soap, SOAP_ENC_MTOM | SOAP_ENC_MIME);
       /* convert base64Binary to MTOM attachment */
       response->x__Data->__union = SOAP_UNION_x__data_xop__Include;
       response->x__Data->choice.xop__Include.__ptr = data->choice.base64.__ptr;
@@ -270,6 +273,8 @@ int m__EchoTestMultiple(struct soap *soap, struct x__WrapperType *x__EchoTest, s
         response->x__EchoTest->Data[i].xmime5__contentType = x__EchoTest->Data[i].choice.xop__Include.type;
         break;
       case SOAP_UNION_x__data_base64:
+        /* set MTOM/MIME attachments, if context is not already initialized with SOAP_ENC_MTOM */
+        soap_set_mode(soap, SOAP_ENC_MTOM | SOAP_ENC_MIME); /* set MTOM/MIME attachments */
         /* convert base64Binary to MTOM attachment */
         response->x__EchoTest->Data[i].__union = SOAP_UNION_x__data_xop__Include;
         response->x__EchoTest->Data[i].choice.xop__Include.__ptr = x__EchoTest->Data[i].choice.base64.__ptr;

@@ -79,8 +79,8 @@ compiling, linking, and/or using OpenSSL is allowed.
         s = query(soap);
         while (s)
         {
-          char *key = query(soap, &s);
-          char *val = query(soap, &s);
+          char *key = query_key(soap, &s);
+          char *val = query_val(soap, &s);
           ...
         }
 

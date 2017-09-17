@@ -52,16 +52,16 @@
   <operation name="add">
     <SOAP:operation style="rpc" soapAction=""/>
     <input>
-          <SOAP:body use="encoded" namespace="urn:ssl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+          <SOAP:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:ssl"/>
     </input>
     <output>
-          <SOAP:body use="encoded" namespace="urn:ssl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+          <SOAP:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:ssl"/>
     </output>
   </operation>
 </binding>
 
 <service name="ssl">
-  <documentation>gSOAP 2.8.53 generated service definition</documentation>
+  <documentation>gSOAP 2.8.54 generated service definition</documentation>
   <port name="ssl" binding="tns:ssl">
     <SOAP:address location="https://localhost:18081"/>
   </port>

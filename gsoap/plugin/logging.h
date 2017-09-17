@@ -7,7 +7,7 @@
 	        #include "plugin/logging.h"
 		soap_register_plugin(soap, logging);
 
-	Set of change logging destinations:
+	Set or change logging destinations:
 		soap_set_logging_inbound(struct soap*, FILE*);
 		soap_set_logging_outbound(struct soap*, FILE*);
 	Turn logging off by passing NULL FILE* descriptor.

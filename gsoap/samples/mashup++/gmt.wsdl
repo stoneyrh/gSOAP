@@ -66,10 +66,10 @@
   <operation name="gmt">
     <SOAP:operation soapAction=""/>
     <input>
-          <SOAP:body parts="Body" use="literal"/>
+          <SOAP:body use="literal" parts="Body"/>
     </input>
     <output>
-          <SOAP:body parts="Body" use="literal"/>
+          <SOAP:body use="literal" parts="Body"/>
     </output>
   </operation>
 </binding>

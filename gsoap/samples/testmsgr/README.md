@@ -182,7 +182,7 @@ This produced a randomized SOAP/XML message to standard output from the
 to `1`.  Any seed value between 1 and 2147483647 can be specified with `-r`.
 Option `-i` displays the randomized XML with indentation.
 
-To randomly retain and omit optional elements and attributes, use option `-q`
+To randomly retain or discard optional elements and attributes, use option `-q`
 with a specified percentage to retain optional elements and attributes in the
 generated XML message:
 
@@ -263,14 +263,14 @@ random seed.  So if the service fails you can replicate the message with the
 random seed and option `-r` with this seed value.
 
 The Test Messenger application can also send pruned XML messages with option
-`-p`.  Pruning means that attributes and elements are randomly omitted, which
+`-p`.  Pruning means that attributes and elements are randomly discarded, which
 allows for testing the robustness of the service against incomplete and
 malformed SOAP/XML content:
 
-    ./testmsgr -c -p100 -r1 example.upload.req.xml http://localhost:8080
+    ./testmsgr -c -p80 -r1 example.upload.req.xml http://localhost:8080
 
-Option `-p100` means a one in 100 change that an attribute or element is
-omitted from the SOAP/XML template `example.upload.req.xml`.
+Option `-p80` means that 80% is retained and 20% of attributes and elements are
+randomly discarded from the SOAP/XML template `example.upload.req.xml`.
 
 When testing the auto-test echo service, the echo service displays failed
 requests and is silent for successful requests.
@@ -513,7 +513,7 @@ enumeration, or a numeric range.  Values are inserted with testmsgr option
 ### Optional values
 
 Element and attributes that are qualified as optional with `???` are randomly
-omitted with options `-r` and `-q`, where `-q` specifies the percentage of
+discared with options `-r` and `-q`, where `-q` specifies the percentage of
 elements and attributes that are retained in the generated XML message.  A zero
 percentage specified with `-q0` removes all optional values.  A value of 100
 specified with `-q100` retains all optional values (the default) in the

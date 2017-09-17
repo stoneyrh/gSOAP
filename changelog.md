@@ -1218,12 +1218,25 @@ Version 2.8.52 (08/18/2017)
 - Improved use of STL containers: `#import "stl.h"` is no longer required.
 - Improvements.
 
-Version 2.8.53 (08/29/2017) {#latest}
+Version 2.8.53 (08/29/2017)
 ---
 
 - Improved testmsgr "Test Messenger" to handle element repetitions, selections, and optional values for complete XML message randomization to test services and clients.  Updated soapcpp2 option `-g` to emit XML message templates with the new template indicators.
 - Updated plugin/threads.h to let `THREAD_CREATE` return 0 (OK) on Windows like pthreads, thereby making the `THREAD_CREATE` return value portable.
 - Fixed DIME receiver looping on specific malformed DIME headers.
+
+Version 2.8.54 (09/17/2017) {#latest}
+---
+
+- Added Google Map Directions and Distance Matrix API XML examples, updating and replacing the old gsoap/samples/googleapi example.
+- Added Google Map Distance Matrix API JSON example gsoap/xml-rpc-json/json-GoogleDistanceMatrix.cpp.
+- Added wsdl2h option `-S` to specify a name for the soap context member variable of generated classes (C++ only), use `-S ''` to remove the `soap` member variable.
+- Improved handling of empty SOAP Body responses by client applications using doc/lit style messaging, returns `SOAP_OK` instead of HTTP 200 error code.
+- Improved Apache module with new `IMPLEMENT_GSOAP_SERVER_INIT(user_func)` to specify a user-defined initialization function to initialize the soap context and register plugins, and service operation faults are now returned with proper HTTP status codes.
+- Improved Borland C++ builds.
+- Improved `soap_GET_Type` to close socket if connection does not use HTTP keep-alive.
+- Improved DIME/MTOM/MIME attachment handling and detection.
+- Improvements.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

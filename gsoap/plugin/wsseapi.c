@@ -624,7 +624,8 @@ using the `SOAP_XML_CANONICAL` flag:
     soap_register_plugin(soap, soap_wsse);
 @endcode
 
-To send messages with inclusive canonicalization, use: 
+To send messages with inclusive canonicalization, in addition to the
+`SOAP_XML_CANONICAL` flag also use: 
 
 @code
     soap_wsse_set_InclusiveNamespaces(soap, "*");
@@ -948,14 +949,18 @@ message is received (but not automatically in a sequence of one-way sends for
 example).
 
 @note
-It is generally known that QName content may lead to verification issues with
-canonicalization (`SOAP_XML_CANONICAL`), because XML processors may not
-recognize prefixes in QNames as visually utilized. With QName content and
-`SOAP_XML_CANONICAL` enabled, we should use
+It is generally known that QName content of elements and attribute values may
+lead to verification issues with exclusive canonicalization
+(`SOAP_XML_CANONICAL`), because XML processors may not recognize prefixes in
+such QName contexts as visually utilized. With QName content in elements and
+attributes and `SOAP_XML_CANONICAL` enabled, we should use
 `soap_wsse_set_InclusiveNamespaces(soap, "prefixlist")` to define which
 namespace prefixes (space-separated in the string) should be considered
-inclusive. For example, xsi:type attribute values are QNames with xsd types and
-other schema types.
+inclusive. For example, xsi:type attribute values are QNames with xsd types
+(and perhaps other types), meaning we should add "xsd" to the inclusive
+namespace prefix list with `soap_wsse_set_InclusiveNamespaces(soap, "xsd")`
+to ensure xsi:type="xsd:TYPE" attributes with QName content are properly signed
+and not susceptible to certain wrapping attacks.
 
 @note
 When signing parts of the body as outlined above, use `soap_wsse_sign`
@@ -1256,6 +1261,16 @@ The wsse plugin must be registered:
     struct soap *soap = soap_new1(SOAP_XML_CANONICAL);
     soap_register_plugin(soap, soap_wsse);
 @endcode
+
+To send messages with inclusive canonicalization, in addition to the
+`SOAP_XML_CANONICAL` flag also use: 
+
+@code
+    soap_wsse_set_InclusiveNamespaces(soap, "*");
+@endcode
+
+However, exclusive canonicalization is recommended over inclusive
+canonicalization, or no canonicalization at all.
 
 Flags to consider:
 
@@ -2618,6 +2633,8 @@ soap_wsse_add_UsernameTokenDigest_at(struct soap *soap, const char *id, const ch
   /* populate the remainder of the password, nonce, and created */
   security->UsernameToken->Password->Type = (char*)wsse_PasswordDigestURI;
   security->UsernameToken->Nonce = (struct wsse__EncodedString*)soap_malloc(soap, sizeof(struct wsse__EncodedString));
+  if (!security->UsernameToken->Nonce)
+    return soap->error = SOAP_EOM;
   soap_default_wsse__EncodedString(soap, security->UsernameToken->Nonce);
   security->UsernameToken->Nonce->__item = nonceBase64;
   security->UsernameToken->Nonce->EncodingType = (char*)wsse_Base64BinaryURI;
@@ -3193,14 +3210,19 @@ soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, unsigned 
     {
       reference->Transforms->__sizeTransform = 2;
       reference->Transforms->Transform = (ds__TransformType*)soap_malloc(soap, 2 * sizeof(ds__TransformType));
-      soap_default_ds__TransformType(soap, &reference->Transforms->Transform[1]);
-      reference->Transforms->Transform[1].Algorithm = (char*)ds_envsigURI;
+      if (reference->Transforms->Transform)
+      {
+        soap_default_ds__TransformType(soap, &reference->Transforms->Transform[1]);
+        reference->Transforms->Transform[1].Algorithm = (char*)ds_envsigURI;
+      }
     }
     else
     {
       reference->Transforms->__sizeTransform = 1;
       reference->Transforms->Transform = (ds__TransformType*)soap_malloc(soap, sizeof(ds__TransformType));
     }
+    if (!reference->Transforms->Transform)
+      return soap->error = SOAP_EOM;
     soap_default_ds__TransformType(soap, reference->Transforms->Transform);
     reference->Transforms->Transform->Algorithm = (char*)transform;
     /* populate the c14n:InclusiveNamespaces element */
@@ -3258,7 +3280,7 @@ soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, unsigned 
 @brief Adds SignedInfo element with SignatureMethod.
 @param soap context
 @param[in] method is the URI of the signature algorithm (e.g. ds_rsa_sha1)
-@param[in] canonical flag indicating that SignedInfo is signed in exc-c14n form
+@param[in] canonical flag indicating that SignedInfo is signed in exc-c14n form or in c14n when soap->c14ninclude == "*" (i.e. all prefixes are inclusive)
 @return SOAP_OK
 */
 SOAP_FMAC1
@@ -4169,6 +4191,8 @@ soap_wsse_add_KeyInfo_SecurityTokenReferenceURI(struct soap *soap, const char *U
   soap_default__wsse__SecurityTokenReference(soap, keyInfo->wsse__SecurityTokenReference);
   /* allocate Reference element */
   keyInfo->wsse__SecurityTokenReference->Reference = (_wsse__Reference*)soap_malloc(soap, sizeof(_wsse__Reference));
+  if (!keyInfo->wsse__SecurityTokenReference->Reference)
+    return soap->error = SOAP_EOM;
   soap_default__wsse__Reference(soap, keyInfo->wsse__SecurityTokenReference->Reference);
   /* populate the Reference element */
   keyInfo->wsse__SecurityTokenReference->Reference->URI = soap_strdup(soap, URI);
@@ -4667,10 +4691,14 @@ soap_wsse_add_EncryptedKey_encrypt_only(struct soap *soap, int alg, const char *
     return soap_wsse_fault(soap, wsse__InvalidSecurityToken, "Invalid certificate passed to soap_wsse_add_EncryptedKey_encrypt_only");
   /* start encryption engine, get the encrypted secret key */
   key = (unsigned char*)soap_malloc(soap, soap_mec_size(alg, pubk));
+  if (!key)
+    return soap->error = SOAP_EOM;
   if (data->mec)
     soap_mec_cleanup(soap, data->mec);
   else
     data->mec = (struct soap_mec_data*)SOAP_MALLOC(soap, sizeof(struct soap_mec_data));
+  if (!data->mec)
+    return soap->error = SOAP_EOM;
   if (soap_mec_begin(soap, data->mec, alg, pubk, key, &keylen))
   {
     EVP_PKEY_free(pubk);
@@ -4945,6 +4973,8 @@ soap_wsse_verify_EncryptedKey(struct soap *soap)
         soap_mec_cleanup(soap, data->mec);
       else
         data->mec = (struct soap_mec_data*)SOAP_MALLOC(soap, sizeof(struct soap_mec_data));
+      if (!data->mec)
+        return soap->error = SOAP_EOM;
       if (soap_mec_begin(soap, data->mec, data->deco_alg, (SOAP_MEC_KEY_TYPE*)data->deco_key, key, &keylen))
         return soap_wsse_fault(soap, wsse__FailedCheck, NULL);
     }
@@ -5166,9 +5196,9 @@ soap_wsse_add_saml1(struct soap *soap, const char *wsuId)
   if (security)
   {
     assertion = (saml1__AssertionType*)soap_malloc(soap, sizeof(saml1__AssertionType));
-    soap_default_saml1__AssertionType(soap, assertion);
     if (assertion)
     {
+      soap_default_saml1__AssertionType(soap, assertion);
       assertion->MajorVersion = (char*)"1";
       assertion->MinorVersion = (char*)"0";
       assertion->wsu__Id = soap_strdup(soap, wsuId);
@@ -5308,9 +5338,9 @@ soap_wsse_add_saml2(struct soap *soap, const char *wsuId)
   if (security)
   {
     assertion = (saml2__AssertionType*)soap_malloc(soap, sizeof(saml2__AssertionType));
-    soap_default_saml2__AssertionType(soap, assertion);
     if (assertion)
     {
+      soap_default_saml2__AssertionType(soap, assertion);
       assertion->Version = (char*)"2.0";
       assertion->wsu__Id = soap_strdup(soap, wsuId);
     }
@@ -5822,6 +5852,8 @@ static int
 soap_wsse_init(struct soap *soap, struct soap_wsse_data *data, const void *(*arg)(struct soap*, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen))
 {
   DBGFUN("soap_wsse_init");
+  if (!data)
+    return soap->error = SOAP_EOM;
   data->sigid = NULL;
   data->encid = NULL;
   data->prefixlist = NULL;
@@ -5866,8 +5898,7 @@ soap_wsse_copy(struct soap *soap, struct soap_plugin *dst, struct soap_plugin *s
   DBGFUN("soap_wsse_copy");
   *dst = *src;
   dst->data = (void*)SOAP_MALLOC(soap, sizeof(struct soap_wsse_data));
-  soap_wsse_init(soap, (struct soap_wsse_data*)dst->data, ((struct soap_wsse_data*)src->data)->security_token_handler);
-  return SOAP_OK;
+  return soap_wsse_init(soap, (struct soap_wsse_data*)dst->data, ((struct soap_wsse_data*)src->data)->security_token_handler);
 }
 
 /******************************************************************************/
@@ -7075,6 +7106,8 @@ soap_wsse_preparesend(struct soap *soap, const char *buf, size_t len)
       size_t l = strlen(soap->id);
       soap->event = SOAP_SEC_SIGN;
       digest = (struct soap_wsse_digest*)SOAP_MALLOC(soap, sizeof(struct soap_wsse_digest) + l + 1);
+      if (!digest)
+        return soap->error = SOAP_EOM;
       digest->next = data->digest;
       digest->done = 0;
       digest->level = soap->level;

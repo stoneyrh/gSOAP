@@ -68,6 +68,7 @@ int main(int argc, char **argv)
 
 #ifdef _POSIX_THREADS
   pthread_t tid;
+  void *arg;
 #endif
 
   if (!soap_valid_socket(soap_bind(ctx, NULL, port, BACKLOG)))
@@ -85,7 +86,9 @@ int main(int argc, char **argv)
     else
     {
 #ifdef _POSIX_THREADS
-      pthread_create(&tid, NULL, (void*(*)(void*))serve_request, (void*)soap_copy(ctx));
+      arg = (void*)soap_copy(ctx);
+      while (pthread_create(&tid, NULL, (void*(*)(void*))serve_request, arg))
+	sleep(1);
 #else
       serve_request(ctx);
 #endif
@@ -120,7 +123,7 @@ int serve_request(soap* ctx)
   
       if (!strcmp(m.name(), "currentTime.getCurrentTime"))
         // method name matches: first parameter of response is time
-        r[0] = time(0);
+        r[0] = (ULONG64)time(0);
       else
         // otherwise, set fault
         r.set_fault("Wrong method");

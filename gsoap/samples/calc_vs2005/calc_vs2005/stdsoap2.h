@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.53
+        stdsoap2.h 2.8.54
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20853
+#define GSOAP_VERSION 20854
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -65,6 +65,19 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #ifndef OPENSERVER
 # ifndef _REENTRANT
 #  define _REENTRANT
+# endif
+#endif
+
+#ifdef _WIN32
+# ifndef WIN32
+#  define WIN32
+# endif
+#endif
+
+/* for legacy purposes we use WIN32 macro, even when WIN64 is supported */
+#ifdef _WIN64
+# ifndef WIN32
+#  define WIN32
 # endif
 #endif
 
@@ -148,19 +161,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # endif
 #endif
 
-#ifdef _WIN32
-# ifndef WIN32
-#  define WIN32
-# endif
-#endif
-
-/* for legacy purposes we use WIN32 macro, even when WIN64 is supported */
-#ifdef _WIN64
-# ifndef WIN32
-#  define WIN32
-# endif
-#endif
-
 #ifdef _WIN32_WCE
 # ifndef UNDER_CE
 #  define UNDER_CE _WIN32_WCE
@@ -174,9 +174,17 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __BORLANDC__
-# ifdef __WIN32__
-#  ifndef WIN32
-#   define WIN32
+# ifdef __clang__
+#  ifdef _WIN32
+#   ifndef WIN32
+#    define WIN32
+#   endif
+#  endif
+# else
+#  ifdef __WIN32__
+#   ifndef WIN32
+#    define WIN32
+#   endif
 #  endif
 # endif
 #endif
@@ -254,27 +262,57 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_INTTYPES_H
 #  define HAVE_LOCALE_H
 # elif defined(WIN32)
-#  if _MSC_VER >= 1400
-#   define HAVE_SNPRINTF
+#  ifdef __BORLANDC__
+#   ifdef __clang__
+#    define HAVE_STRRCHR
+#    define HAVE_STRTOD
+#    define HAVE_SSCANF
+#    define HAVE_STRTOD_L
+#    define HAVE_STRTOL
+#    define HAVE_SYS_TIMEB_H
+#    define HAVE_FTIME
+#    define HAVE_GMTIME
+#    define HAVE_WCTOMB
+#    define HAVE_MBTOWC
+#    define SOAP_LONG_FORMAT "%lld"
+#    define SOAP_ULONG_FORMAT "%llu"
+#   else
+#    define HAVE_STRRCHR
+#    define HAVE_STRTOD
+#    define HAVE_SSCANF
+#    define HAVE_STRTOD_L
+#    define HAVE_STRTOL
+#    define HAVE_SYS_TIMEB_H
+#    define HAVE_FTIME
+#    define HAVE_GMTIME
+#    define HAVE_WCTOMB
+#    define HAVE_MBTOWC
+#    define SOAP_LONG_FORMAT "%I64d"
+#    define SOAP_ULONG_FORMAT "%I64u"
+#   endif
+#  else
+#   if _MSC_VER >= 1400
+#    define HAVE_SNPRINTF
+#   endif
+#   define HAVE_STRRCHR
+#   define HAVE_STRTOD
+#   define HAVE_SSCANF
+#   define HAVE_STRTOD_L
+#   define HAVE_STRTOL
+#   define HAVE_STRTOUL
+#   if _MSC_VER >= 1300
+#    define HAVE_STRTOLL         /* use _strtoi64 */
+#    define HAVE_STRTOULL        /* use _strtoui64 */
+#   endif
+#   define HAVE_SYS_TIMEB_H
+#   define HAVE_FTIME
+#   define HAVE_GMTIME
+#   define HAVE_WCTOMB
+#   define HAVE_MBTOWC
+#   define SOAP_LONG_FORMAT "%I64d"
+#   define SOAP_ULONG_FORMAT "%I64u"
+#   define HAVE_LOCALE_H
 #  endif
-#  define HAVE_STRRCHR
-#  define HAVE_STRTOD
-#  define HAVE_SSCANF
-#  define HAVE_STRTOD_L
-#  define HAVE_STRTOL
-#  define HAVE_STRTOUL
-#  if _MSC_VER >= 1300
-#   define HAVE_STRTOLL         /* use _strtoi64 */
-#   define HAVE_STRTOULL        /* use _strtoui64 */
-#  endif
-#  define HAVE_SYS_TIMEB_H
-#  define HAVE_FTIME
-#  define HAVE_GMTIME
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
-#  define SOAP_LONG_FORMAT "%I64d"
-#  define SOAP_ULONG_FORMAT "%I64u"
-#  define HAVE_LOCALE_H
 # elif defined(__APPLE__)
 #  define HAVE_POLL
 #  define HAVE_SNPRINTF
@@ -1649,7 +1687,7 @@ typedef soap_int32 soap_mode;
 #define SOAP_XML_INDENT         0x00002000      /* out: emit indented XML */
 #define SOAP_XML_IGNORENS       0x00004000      /* in:  ignore namespaces */
 #define SOAP_XML_DEFAULTNS      0x00008000      /* out: emit xmlns="..." */
-#define SOAP_XML_CANONICAL      0x00010000      /* out: C14N canonical XML */
+#define SOAP_XML_CANONICAL      0x00010000      /* out: exc-C14N exclusive canonical XML */
 #define SOAP_XML_TREE           0x00020000      /* in/out: XML tree (no id/ref) */
 #define SOAP_XML_NIL            0x00040000      /* out: all NULLs as xsi:nil */
 #define SOAP_XML_NOTYPE         0x00080000      /* out: do not add xsi:type */
@@ -1658,7 +1696,7 @@ typedef soap_int32 soap_mode;
 #define SOAP_DOM_NODE           0x00200000
 #define SOAP_DOM_ASIS           0x00400000
 
-#define SOAP_RESERVED           0x00800000      /* reserved for future use */
+#define SOAP_XML_CANONICAL_NA   0x00800000      /* out: (exc) C14N not QName aware */
 
 #define SOAP_C_NOIOB            0x01000000      /* don't fault on array index out of bounds (just ignore) */
 #define SOAP_C_UTFSTRING        0x02000000      /* (de)serialize strings with UTF8 content */
@@ -1769,7 +1807,7 @@ typedef soap_int32 soap_mode;
 # endif
 #endif
 
-#if (defined(__GNUC__) && (__GNUC__ <= 2) && !defined(__BORLANDC__)) || defined(__clang__) || defined(_AIX) || defined(AIX)
+#if (defined(__GNUC__) && (__GNUC__ <= 2)) || defined(__clang__) || defined(_AIX) || defined(AIX)
 /* old form w/o parenthesis */
 # ifndef SOAP_NEW
 #  define SOAP_NEW(type) new SOAP_NOTHROW type
@@ -1781,7 +1819,7 @@ typedef soap_int32 soap_mode;
 #  define SOAP_PLACEMENT_NEW(buf, type) new (buf) type
 # endif
 #else
-/* new form with parenthesis */
+/* new form with parenthesis for (type) but not type[n] */
 # ifndef SOAP_NEW
 #  define SOAP_NEW(type) new SOAP_NOTHROW (type)
 # endif
@@ -2243,7 +2281,7 @@ SOAP_FMAC1 struct soap_dom_element * SOAP_FMAC2 soap_dom_find_next(const struct 
 #endif
 
 #if defined(__cplusplus)
-}
+} /* extern "C" */
 #endif
 
 #ifndef WITH_LEANER
@@ -2966,7 +3004,7 @@ soap_wchar soap_get1(struct soap*);
  SOAP_FMAC1 unsigned long SOAP_FMAC2 soap_strtoul(const char*, char**, int);
 #endif
 
-#if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
+#if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__) && !defined(__BORLANDC__)
 # define soap_strtoll _strtoi64
 #elif defined(HAVE_STRTOLL) && !defined(soap_strtoll)
 # define soap_strtoll strtoll
@@ -2974,7 +3012,7 @@ soap_wchar soap_get1(struct soap*);
  SOAP_FMAC1 LONG64 SOAP_FMAC2 soap_strtoll(const char*, char**, int);
 #endif
 
-#if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
+#if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__) && !defined(__BORLANDC__)
 # define soap_strtoull _strtoui64
 #elif defined(HAVE_STRTOULL) && !defined(soap_strtoull)
 # define soap_strtoull strtoull
@@ -3499,7 +3537,7 @@ struct soap_block
       b = soap->blist;
     if (!b || !b->head)
       return;
-    ((T*)(b->head + 1))->T::~T();
+    ((T*)(b->head + 1))->~T();
     soap_pop_block(soap, b);
   }
   static void save(struct soap *soap, struct soap_blist *b, T *p)
@@ -3508,7 +3546,7 @@ struct soap_block
     for (T *q = (T*)soap_first_block(soap, b); q; q = (T*)soap_next_block(soap, b))
     { soap_update_pointers(soap, (const char*)p, (const char*)q, sizeof(T));
       *p++ = *q;
-      q->T::~T();
+      q->~T();
     }
     soap_end_block(soap, b);
   }
@@ -3516,7 +3554,7 @@ struct soap_block
   { if (!b)
       b = soap->blist;
     for (T *p = (T*)soap_first_block(soap, b); p; p = (T*)soap_next_block(soap, b))
-      p->T::~T();
+      p->~T();
     soap_end_block(soap, b);
   }
 };

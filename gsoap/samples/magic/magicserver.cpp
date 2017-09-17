@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include <unistd.h>
 #ifdef _POSIX_THREADS
-#include <pthread.h>    // use Pthreads
+#include <pthread.h>    // use Pthreads, NOTE: perhaps use gsoap/plugin/threads.h
 #endif
 
 #define BACKLOG (100)	// Max. request backlog
@@ -80,10 +80,13 @@ int main(int argc, char **argv)
   {
 #ifdef _POSIX_THREADS
     pthread_t tid;
+    void *arg;
 #endif
     SOAP_SOCKET m, s;
- // soap.accept_timeout = 60; // die if no requests are made within 1 minute
     int port = atoi(argv[1]);
+    soap.recv_timeout = soap.send_timeout = 5; // max socket idle time (sec)
+    soap.transfer_timeout = 10; // max transfer time (sec)
+    // soap.accept_timeout = 60; // die if no requests are made within 1 minute
     // register a HTTP GET handler
     soap.fget = http_get;
     m = soap_bind(&soap, NULL, port, 100);
@@ -103,9 +106,11 @@ int main(int argc, char **argv)
       }
       fprintf(stderr, "%d: accepted %d IP=%d.%d.%d.%d ... ", i, s, (int)(soap.ip>>24)&0xFF, (int)(soap.ip>>16)&0xFF, (int)(soap.ip>>8)&0xFF, (int)soap.ip&0xFF);
 #ifdef _POSIX_THREADS
-      pthread_create(&tid, NULL, (void*(*)(void*))process_request, (void*)soap_copy(&soap));
+      arg = (void*)soap_copy(&soap);
+      while (pthread_create(&tid, NULL, (void*(*)(void*))process_request, arg))
+	sleep(1);
 #else
-      soap_serve(&soap);	// process RPC skeletons
+      soap_serve(&soap);	// process request
       fprintf(stderr, "served\n");
       soap_destroy(&soap);
       soap_end(&soap);	// clean up 
@@ -267,13 +272,13 @@ vector& matrix::operator[](int i) const
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//	A HTTP GET Handler to display WSDL (magic.wsdl)
+//	A HTTP GET Handler to return WSDL (magic.wsdl)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
 int http_get(struct soap * soap)
 { FILE *fd = NULL;
-  char *s = strchr(soap->path, '?'); 
+  char *s = strchr(soap->path, '?');  // soap->path has the URL path of soap->endpoint
   if (!s || strcmp(s, "?wsdl")) 
     return SOAP_GET_METHOD; 
   fd = fopen("magic.wsdl", "rb"); // open WSDL file to copy 

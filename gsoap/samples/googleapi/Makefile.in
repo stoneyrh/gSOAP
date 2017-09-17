@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = googleapi$(EXEEXT)
+noinst_PROGRAMS = gdm$(EXEEXT) gdx$(EXEEXT)
 subdir = gsoap/samples/googleapi
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -102,12 +102,17 @@ CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am__objects_1 =
 am__objects_2 = soapC.$(OBJEXT)
-am__objects_3 = soapClient.$(OBJEXT) $(am__objects_2)
-am_googleapi_OBJECTS = googleapi.$(OBJEXT) $(am__objects_1) \
-	$(am__objects_3)
-googleapi_OBJECTS = $(am_googleapi_OBJECTS)
+am_gdm_OBJECTS = gdm.$(OBJEXT) $(am__objects_1) gdmC.$(OBJEXT) \
+	$(am__objects_2)
+gdm_OBJECTS = $(am_gdm_OBJECTS)
 am__DEPENDENCIES_1 =
-googleapi_DEPENDENCIES = $(SOAP_C_LIB) $(am__DEPENDENCIES_1)
+gdm_DEPENDENCIES = $(SOAP_CPP_LIB_SSL) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am_gdx_OBJECTS = gdx.$(OBJEXT) $(am__objects_1) gdmC.$(OBJEXT) \
+	$(am__objects_2)
+gdx_OBJECTS = $(am_gdx_OBJECTS)
+gdx_DEPENDENCIES = $(SOAP_CPP_LIB_SSL) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -124,6 +129,19 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_@AM_V@)
+am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
+am__v_CXX_0 = @echo "  CXX     " $@;
+am__v_CXX_1 = 
+CXXLD = $(CXX)
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
+AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
+am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
+am__v_CXXLD_0 = @echo "  CXXLD   " $@;
+am__v_CXXLD_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
@@ -136,8 +154,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(googleapi_SOURCES)
-DIST_SOURCES = $(googleapi_SOURCES)
+SOURCES = $(gdm_SOURCES) $(gdx_SOURCES)
+DIST_SOURCES = $(gdm_SOURCES) $(gdx_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -162,7 +180,7 @@ am__define_uniq_tagged_files = \
   done | $(am__uniquify_input)`
 ETAGS = etags
 CTAGS = ctags
-am__DIST_COMMON = $(srcdir)/../Makefile.c_rules \
+am__DIST_COMMON = $(srcdir)/../Makefile.cpp_rules \
 	$(srcdir)/../Makefile.defines $(srcdir)/Makefile.in \
 	$(top_srcdir)/depcomp $(top_srcdir)/mkinstalldirs
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -295,7 +313,7 @@ top_srcdir = @top_srcdir@
 
 ####### This is the input file for automake, which will generate Makefile.in ##########
 AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
-SOAPHEADER = googleapi.h
+SOAPHEADER = gdm.hpp
 AM_CFLAGS = -D$(platform)
 AM_CXXFLAGS = -D$(platform)
 SOAP = $(top_srcdir)/gsoap/src/soapcpp2
@@ -313,19 +331,23 @@ SOAP_CPP_SERVER = soapServer.cpp $(SOAP_CPP_CORE)
 SOAP_CPP_LIB = $(top_builddir)/gsoap/libgsoap++.a
 SOAP_CPP_LIB_CK = $(top_builddir)/gsoap/libgsoapck++.a
 SOAP_CPP_LIB_SSL = $(top_builddir)/gsoap/libgsoapssl++.a
-SOAP_C_SRC = $(SOAP_C_CLIENT) soapServer.c $(SOAP_H_FILES) $(SOAP_NS)
-LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
-BUILT_SOURCES = $(SOAP_C_SRC) 
-CLEANFILES = $(SOAP_C_SRC) *.req.xml *.res.xml *.nsmap *.xsd soapStub.h soapH.h soapC.c soapClient.c soapClientLib.c soapServer.c soapServerLib.c *~
-SOAP_NS = googleapi.nsmap googleapi.wsdl
-googleapi_SOURCES = googleapi.c $(SOAPHEADER) $(SOAP_C_CLIENT)
-googleapi_LDADD = $(SOAP_C_LIB) $(SAMPLE_EXTRA_LIBS)
+SOAP_CPP_SRC = $(SOAP_CPP_CLIENT) soapServer.cpp $(SOAP_H_FILES) $(SOAP_NS)
+LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
+BUILT_SOURCES = $(SOAP_CPP_SRC) 
+CLEANFILES = gdmStub.h gdmH.h gdmC.cpp soapStub.h soapH.h soapC.cpp *.nsmap *~
+SOAP_NS = gdm.nsmap
+gdm_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
+gdm_SOURCES = gdm.cpp $(SOAPHEADER) gdmC.cpp $(SOAP_CPP_CORE)
+gdm_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
+gdx_CFLAGS = -DWITH_OPENSSL -DWITH_GZIP
+gdx_SOURCES = gdx.cpp $(SOAPHEADER) gdmC.cpp $(SOAP_CPP_CORE)
+gdx_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/../Makefile.defines $(srcdir)/../Makefile.c_rules $(am__configure_deps)
+.SUFFIXES: .cpp .o .obj
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/../Makefile.defines $(srcdir)/../Makefile.cpp_rules $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -345,7 +367,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../Makefile.defines $(srcdir)/../Makefile.c_rules $(am__empty):
+$(srcdir)/../Makefile.defines $(srcdir)/../Makefile.cpp_rules $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
@@ -359,9 +381,13 @@ $(am__aclocal_m4_deps):
 clean-noinstPROGRAMS:
 	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
 
-googleapi$(EXEEXT): $(googleapi_OBJECTS) $(googleapi_DEPENDENCIES) $(EXTRA_googleapi_DEPENDENCIES) 
-	@rm -f googleapi$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(googleapi_OBJECTS) $(googleapi_LDADD) $(LIBS)
+gdm$(EXEEXT): $(gdm_OBJECTS) $(gdm_DEPENDENCIES) $(EXTRA_gdm_DEPENDENCIES) 
+	@rm -f gdm$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(gdm_OBJECTS) $(gdm_LDADD) $(LIBS)
+
+gdx$(EXEEXT): $(gdx_OBJECTS) $(gdx_DEPENDENCIES) $(EXTRA_gdx_DEPENDENCIES) 
+	@rm -f gdx$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(gdx_OBJECTS) $(gdx_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -369,25 +395,26 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/googleapi.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdmC.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapC.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/soapClient.Po@am__quote@
 
-.c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
+.cpp.o:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
-.c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+.cpp.obj:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -596,8 +623,11 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-$(SOAP_C_SRC) : $(SOAPHEADER)
-	$(SOAP) -cL -I$(top_srcdir)/gsoap/import:$(top_srcdir)/gsoap  $(SOAP_FLAGS) $(SOAPHEADER)
+$(SOAP_CPP_SRC) : $(SOAPHEADER)
+	$(SOAP) -L -I$(top_srcdir)/gsoap/import:$(top_srcdir)/gsoap $(SOAP_FLAGS) $(SOAPHEADER)
+
+$(SOAP_CPP_CORE):	env.h
+			$(SOAP) -I$(top_srcdir)/gsoap/import:$(top_srcdir)/gsoap $(SOAP_FLAGS) $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

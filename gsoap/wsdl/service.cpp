@@ -2599,10 +2599,10 @@ void Definitions::generate()
       else
         fprintf(stream, "class %s\n{ public:", (*fault).first);
       (*fault).second->generate(types, ";", false, true, false, true);
-      if (!cflag)
+      if (!cflag && soap_context && *soap_context)
       {
         fprintf(stream, "\n");
-        fprintf(stream, pointerformat, "struct soap", "soap");
+        fprintf(stream, pointerformat, "struct soap", soap_context);
         fprintf(stream, ";");
       }
       fprintf(stream, "\n};\n\n");
