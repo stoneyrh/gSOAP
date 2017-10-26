@@ -53,6 +53,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "soapH.h"
 
+static void * instantiate_xsd__string(struct soap*, int, const char*, const char*, size_t*);
+
+static int delete_xsd__string(struct soap_clist*);
+
+static void copy_xsd__string(struct soap*, int, int, void*, size_t, const void*, void**);
+
 void soap_serialize_xsd__string(struct soap *soap, QString const *a)
 {
   (void)soap; (void)a; /* appease -Wall -Werror */
@@ -84,10 +90,10 @@ QString *soap_in_xsd__string(struct soap *soap, char const *tag, QString *a, cha
     soap_revert(soap);
     return NULL;
   }
-  a = (QString*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__string, sizeof(QString), NULL, NULL, NULL, NULL);
+  a = (QString*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__string, sizeof(QString), NULL, NULL, instantiate_xsd__string, NULL);
   if (*soap->href)
   {
-    a = (QString*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__string, 0, sizeof(QString), 0, NULL, NULL);
+    a = (QString*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__string, 0, sizeof(QString), 0, copy_xsd__string, NULL);
   }
   else if (a)
   {
@@ -114,7 +120,6 @@ const char * soap_xsd__string2s(struct soap *soap, QString a)
 
 int soap_s2xsd__string(struct soap *soap, const char *s, QString *a)
 {
-  *a = QString::null;
   if (s)
   {
     if (soap->mode & SOAP_C_UTFSTRING)
@@ -122,5 +127,52 @@ int soap_s2xsd__string(struct soap *soap, const char *s, QString *a)
     else
       *a = QString::fromLatin1(s, (int)strlen(s));
   }
+  else
+  {
+    *a = QString::null;
+  }
   return soap->error;
+}
+
+static void * instantiate_xsd__string(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xsd__string(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+  struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_xsd__string, n, delete_xsd__string);
+  (void)type; (void)arrayType; /* appease -Wall -Werror */
+  if (!cp)
+    return NULL;
+  if (n < 0)
+  {	cp->ptr = SOAP_NEW(QString);
+    if (size)
+      *size = sizeof(QString);
+  }
+  else
+  {	cp->ptr = SOAP_NEW_ARRAY(QString, n);
+    if (size)
+      *size = n * sizeof(QString);
+  }
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+  if (!cp->ptr)
+    soap->error = SOAP_EOM;
+  return (QString*)cp->ptr;
+}
+
+static int delete_xsd__string(struct soap_clist *p)
+{
+  if (p->type == SOAP_TYPE_xsd__string)
+  {
+    if (p->size < 0)
+      SOAP_DELETE(static_cast<QString*>(p->ptr));
+    else
+      SOAP_DELETE_ARRAY(static_cast<QString*>(p->ptr));
+    return SOAP_OK;
+  }
+  return SOAP_ERR;
+}
+
+static void copy_xsd__string(struct soap *soap, int st, int tt, void *p, size_t index, const void *q, void **x)
+{
+  (void)soap; (void)st; (void)tt; (void)index; (void)x; /* appease -Wall -Werror */
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying QString %p -> %p\n", q, p));
+  *(QString*)p = *(QString*)q;
 }

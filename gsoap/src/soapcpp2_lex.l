@@ -86,7 +86,7 @@ static int hexchar(int*);
 static int octchar(int*);
 static void module(const char *name, const char *fullname);
 static void import(const char *file);
-static int magic(const char *name);
+static long magic(const char *name);
 %}
 BOM             \xEF\xBB\xBF
 ws              [ \t\v\r\f\n\x1A\xA0]
@@ -1078,9 +1078,9 @@ static void module(const char *name, const char *fullname)
   }
 }
 
-static int magic(const char *name)
+static long magic(const char *name)
 { size_t i;
-  int n;
+  long n;
   if (strlen(name) > 4)
     semerror("#module name length must not exceed four characters");
   n = 0;

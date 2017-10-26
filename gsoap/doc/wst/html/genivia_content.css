@@ -76,7 +76,7 @@ div.alt div.fragment {
 	border: 1px solid rgba(38, 91, 142, 0.5);
 	border-left: 10px solid #000;
 	background-color: #FAFAFA;
-	padding-left: 10px;
+	padding-left: 0px;
 	padding-right: 6px;
 	padding-top: 6px;
 	padding-bottom: 6px;
@@ -102,6 +102,10 @@ div.fragment {
 
 div.line {
         line-height: normal;
+}
+
+span.lineno {
+	display: none;
 }
 
 pre.fragment {

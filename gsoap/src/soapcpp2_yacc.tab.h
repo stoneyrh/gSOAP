@@ -236,7 +236,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 156 "soapcpp2_yacc.y"
+#line 154 "soapcpp2_yacc.y"
 {
   Symbol  *sym;
   LONG64  i;

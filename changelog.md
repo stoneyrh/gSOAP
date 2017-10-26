@@ -1225,7 +1225,7 @@ Version 2.8.53 (08/29/2017)
 - Updated plugin/threads.h to let `THREAD_CREATE` return 0 (OK) on Windows like pthreads, thereby making the `THREAD_CREATE` return value portable.
 - Fixed DIME receiver looping on specific malformed DIME headers.
 
-Version 2.8.54 (09/17/2017) {#latest}
+Version 2.8.54 (09/17/2017)
 ---
 
 - Added Google Map Directions and Distance Matrix API XML examples, updating and replacing the old gsoap/samples/googleapi example.
@@ -1237,6 +1237,14 @@ Version 2.8.54 (09/17/2017) {#latest}
 - Improved `soap_GET_Type` to close socket if connection does not use HTTP keep-alive.
 - Improved DIME/MTOM/MIME attachment handling and detection.
 - Improvements.
+
+Version 2.8.55 (10/26/2017) {#latest}
+---
+
+- Improved Test Messenger to generate and consume XML test messages with MTOM/MIME attachments.
+- Updated WinInet plugin.
+- Fixed deserialization of pointers to Qt types with the custom serializers `custom/qbytearray_base64.h`, `custom/qbytearray_hex.h`, `custom/qdate.h`, `custom/qstring.h`, and `custom/qtime.h`.
+- Fixed `WITH_NOIO` compilation errors (`close()` and/or `gettimeofday()` not found).
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

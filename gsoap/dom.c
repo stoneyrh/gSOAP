@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.54
+        DOM API v5 gSOAP 2.8.55
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20854
+#define GSOAP_LIB_VERSION 20855
 
 #include "stdsoap2.h"
 
@@ -78,12 +78,29 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_out_xsd__anyAttribute(struct soap*, const char*, 
 SOAP_FMAC3 struct soap_dom_attribute * SOAP_FMAC4 soap_get_xsd__anyAttribute(struct soap*, struct soap_dom_attribute*, const char*, const char*);
 SOAP_FMAC1 struct soap_dom_attribute * SOAP_FMAC2 soap_in_xsd__anyAttribute(struct soap*, const char*, struct soap_dom_attribute *, const char*);
 
+#ifdef SOAP_DOM_EXTERNAL_NAMESPACE
+
+namespace SOAP_DOM_EXTERNAL_NAMESPACE {
+
+#ifndef WITH_NOIDREF
+SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap*, const void*, int);
+#endif
+
+SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap*, int*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap*, const void*, const char*, int, int);
+SOAP_FMAC3 void * SOAP_FMAC4 soap_dupelement(struct soap*, const void*, int);
+SOAP_FMAC3 void SOAP_FMAC4 soap_delelement(const void*, int);
+
+}
+
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #ifndef WITH_NOIDREF
-SOAP_FMAC1 void SOAP_FMAC2 soap_markelement(struct soap*, const void*, int);
+SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap*, const void*, int);
 #endif
 
 SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap*, int*);
@@ -132,7 +149,14 @@ soap_serialize_xsd__anyType(struct soap *soap, const struct soap_dom_element *no
   if (node)
   {
     if (node->type && node->node)
+    {
+#ifdef SOAP_DOM_EXTERNAL_NAMESPACE
+      SOAP_DOM_EXTERNAL_NAMESPACE::soap_markelement(soap, node->node, node->type);
+      ::soap_markelement(soap, node->node, node->type);
+#else
       soap_markelement(soap, node->node, node->type);
+#endif
+    }
     else
     {
       const struct soap_dom_element *elt;
@@ -235,7 +259,22 @@ out_element(struct soap *soap, const struct soap_dom_element *node, const char *
         return soap->error;
       }
     }
-    (void)soap_putelement(soap, node->node, s ? s : name, 0, node->type);
+#ifdef SOAP_DOM_EXTERNAL_NAMESPACE
+    if (SOAP_DOM_EXTERNAL_NAMESPACE::soap_putelement(soap, node->node, s ? s : name, 0, node->type)
+     || ::soap_putelement(soap, node->node, s ? s : name, 0, node->type))
+    {
+      if (s)
+        SOAP_FREE(soap, s);
+      return soap->error;
+    }
+#else
+    if (soap_putelement(soap, node->node, s ? s : name, 0, node->type))
+    {
+      if (s)
+        SOAP_FREE(soap, s);
+      return soap->error;
+    }
+#endif
     if (s)
       SOAP_FREE(soap, s);
   }
@@ -602,7 +641,13 @@ soap_in_xsd__anyType(struct soap *soap, const char *tag, struct soap_dom_element
   if ((soap->mode & SOAP_DOM_NODE) || (!(soap->mode & SOAP_DOM_TREE) && *soap->id && (!type || strcmp(type, "xsd:anyType"))))
   {
     soap->mode = m;
+#ifdef SOAP_DOM_EXTERNAL_NAMESPACE
+    node->node = SOAP_DOM_EXTERNAL_NAMESPACE::soap_getelement(soap, &node->type);
+    if ((!node->node || !node->type) && soap->error == SOAP_TAG_MISMATCH)
+      node->node = ::soap_getelement(soap, &node->type);
+#else
     node->node = soap_getelement(soap, &node->type);
+#endif
     if (node->node && node->type)
     {
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM node contains type %d from xsi:type or matching element tag name\n", node->type));
@@ -763,7 +808,20 @@ soap_dup_xsd__anyType(struct soap *soap, struct soap_dom_element *d, const struc
   d->text = soap_strdup(soap, a->text);
   d->code = soap_strdup(soap, a->code);
   d->tail = soap_strdup(soap, a->tail);
+#ifdef SOAP_DOM_EXTERNAL_NAMESPACE
+  if (a->node)
+  {
+    d->node = SOAP_DOM_EXTERNAL_NAMESPACE::soap_dupelement(soap, a->node, a->type);
+    if (!d->node)
+      d->node = ::soap_dupelement(soap, a->node, a->type);
+  }
+  else
+  {
+    d->node = NULL;
+  }
+#else
   d->node = a->node ? soap_dupelement(soap, a->node, a->type) : NULL;
+#endif
   d->type = a->type;
   d->atts = soap_dup_xsd__anyAttribute(soap, NULL, a->atts);
   for (a = a->elts; a; a = a->next)
@@ -797,8 +855,16 @@ soap_del_xsd__anyType(const struct soap_dom_element *a)
       SOAP_FREE(NULL, a->code);
     if (a->tail)
       SOAP_FREE(NULL, a->tail);
+#ifdef SOAP_DOM_EXTERNAL_NAMESPACE
+    if (a->node)
+    {
+      SOAP_DOM_EXTERNAL_NAMESPACE::soap_delelement(a->node, a->type);
+      ::soap_delelement(a->node, a->type);
+    }
+#else
     if (a->node)
       soap_delelement(a->node, a->type);
+#endif
     if (a->atts)
     {
       soap_del_xsd__anyAttribute(a->atts);
@@ -1001,9 +1067,10 @@ soap_ns_to_set(struct soap *soap, const char *tag)
   if (!s)
     return NULL;
   n = s - tag;
-  for (p = soap->namespaces; p && p->id; p++)
-    if (!strncmp(p->id, tag, n) && !p->id[n])
-      return p->ns;
+  if (soap)
+    for (p = soap->namespaces; p && p->id; p++)
+      if (!strncmp(p->id, tag, n) && !p->id[n])
+        return p->ns;
   return NULL;
 }
 
@@ -1021,9 +1088,10 @@ soap_ns_to_get(struct soap *soap, const char *tag)
   if (!s)
     return "";
   n = s - tag;
-  for (p = soap->namespaces; p && p->id; p++)
-    if (!strncmp(p->id, tag, n) && !p->id[n])
-      return p->out ? p->out : p->ns;
+  if (soap)
+    for (p = soap->namespaces; p && p->id; p++)
+      if (!strncmp(p->id, tag, n) && !p->id[n])
+        return p->out ? p->out : p->ns;
   return "";
 }
 
@@ -1043,9 +1111,10 @@ soap_ns_to_find(struct soap *soap, const char *tag)
   if (*tag == '*')
     return NULL;
   n = s - tag;
-  for (p = soap->namespaces; p && p->id; p++)
-    if (!strncmp(p->id, tag, n) && !p->id[n])
-      return p->out ? p->out : p->ns;
+  if (soap)
+    for (p = soap->namespaces; p && p->id; p++)
+      if (!strncmp(p->id, tag, n) && !p->id[n])
+        return p->out ? p->out : p->ns;
   return NULL;
 }
 
@@ -1839,7 +1908,7 @@ soap_elt_is_false(const struct soap_dom_element *elt)
 /******************************************************************************/
 
 /**
-@brief Return integer value of numeric text of xsd__anyType DOM element node
+@brief Return integer value of numeric text of xsd__anyType DOM element node, requires non-NULL soap context in the DOM
 @param elt pointer to xsd__anyType DOM element node
 @return integer value or 0 if text is not numeric
 */
@@ -1861,7 +1930,7 @@ soap_elt_get_int(const struct soap_dom_element *elt)
 /******************************************************************************/
 
 /**
-@brief Return long integer value of numeric text of xsd__anyType DOM element node
+@brief Return long integer value of numeric text of xsd__anyType DOM element node, requires non-NULL soap context in the DOM
 @param elt pointer to xsd__anyType DOM element node
 @return long integer value or 0 if text is not numeric
 */
@@ -1883,7 +1952,7 @@ soap_elt_get_long(const struct soap_dom_element *elt)
 /******************************************************************************/
 
 /**
-@brief Return 64 bit integer value of numeric text of xsd__anyType DOM element node
+@brief Return 64 bit integer value of numeric text of xsd__anyType DOM element node, requires non-NULL soap context in the DOM
 @param elt pointer to xsd__anyType DOM element node
 @return 64 bit integer value or 0 if text is not numeric
 */
@@ -1905,7 +1974,7 @@ soap_elt_get_LONG64(const struct soap_dom_element *elt)
 /******************************************************************************/
 
 /**
-@brief Return double float value of decimal text of xsd__anyType DOM element node
+@brief Return double float value of decimal text of xsd__anyType DOM element node, requires non-NULL soap context in the DOM
 @param elt pointer to xsd__anyType DOM element node
 @return double float value or NaN if text is not numeric
 */
@@ -2483,7 +2552,7 @@ soap_att_is_false(const struct soap_dom_attribute *att)
 /******************************************************************************/
 
 /**
-@brief Return integer value of numeric text of xsd__anyAttribute DOM attribute node
+@brief Return integer value of numeric text of xsd__anyAttribute DOM attribute node, requires non-NULL soap context in the DOM
 @param att pointer to xsd__anyAttribute DOM attribute node
 @return integer value or 0 if text is not numeric
 */
@@ -2505,7 +2574,7 @@ soap_att_get_int(const struct soap_dom_attribute *att)
 /******************************************************************************/
 
 /**
-@brief Return long integer value of numeric text of xsd__anyAttribute DOM attribute node
+@brief Return long integer value of numeric text of xsd__anyAttribute DOM attribute node, requires non-NULL soap context in the DOM
 @param att pointer to xsd__anyAttribute DOM attribute node
 @return long integer value or 0 if text is not numeric
 */
@@ -2527,7 +2596,7 @@ soap_att_get_long(const struct soap_dom_attribute *att)
 /******************************************************************************/
 
 /**
-@brief Return 64 bit integer value of numeric text of xsd__anyAttribute DOM attribute node
+@brief Return 64 bit integer value of numeric text of xsd__anyAttribute DOM attribute node, requires non-NULL soap context in the DOM
 @param att pointer to xsd__anyAttribute DOM attribute node
 @return 64 bit integer value or 0 if text is not numeric
 */
@@ -2549,7 +2618,7 @@ soap_att_get_LONG64(const struct soap_dom_attribute *att)
 /******************************************************************************/
 
 /**
-@brief Return double float value of decimal text of xsd__anyAttribute DOM attribute node
+@brief Return double float value of decimal text of xsd__anyAttribute DOM attribute node, requires non-NULL soap context in the DOM
 @param att pointer to xsd__anyAttribute DOM attribute node
 @return double float value or NaN if text is not numeric
 */

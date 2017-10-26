@@ -53,6 +53,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "soapH.h"
 
+static void * instantiate_xsd__base64Binary(struct soap*, int, const char*, const char*, size_t*);
+
+static int delete_xsd__base64Binary(struct soap_clist*);
+
+static void copy_xsd__base64Binary(struct soap*, int, int, void*, size_t, const void*, void**);
+
 void soap_serialize_xsd__base64Binary(struct soap *soap, QByteArray const *a)
 {
   (void)soap; (void)a; /* appease -Wall -Werror */
@@ -84,10 +90,10 @@ QByteArray *soap_in_xsd__base64Binary(struct soap *soap, char const *tag, QByteA
     soap_revert(soap);
     return NULL;
   }
-  a = (QByteArray*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__base64Binary, sizeof(QByteArray), NULL, NULL, NULL, NULL);
+  a = (QByteArray*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__base64Binary, sizeof(QByteArray), NULL, NULL, instantiate_xsd__base64Binary, NULL);
   if (*soap->href)
   {
-    a = (QByteArray*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__base64Binary, 0, sizeof(QByteArray), 0, NULL, NULL);
+    a = (QByteArray*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__base64Binary, 0, sizeof(QByteArray), 0, copy_xsd__base64Binary, NULL);
   }
   else if (a)
   {
@@ -112,4 +118,47 @@ int soap_s2xsd__base64Binary(struct soap *soap, const char *s, QByteArray *a)
 {
   *a = QByteArray::fromBase64(s);
   return soap->error;
+}
+
+static void * instantiate_xsd__base64Binary(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xsd__base64Binary(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+  struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_xsd__base64Binary, n, delete_xsd__base64Binary);
+  (void)type; (void)arrayType; /* appease -Wall -Werror */
+  if (!cp)
+    return NULL;
+  if (n < 0)
+  {	cp->ptr = SOAP_NEW(QByteArray);
+    if (size)
+      *size = sizeof(QByteArray);
+  }
+  else
+  {	cp->ptr = SOAP_NEW_ARRAY(QByteArray, n);
+    if (size)
+      *size = n * sizeof(QByteArray);
+  }
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+  if (!cp->ptr)
+    soap->error = SOAP_EOM;
+  return (QByteArray*)cp->ptr;
+}
+
+static int delete_xsd__base64Binary(struct soap_clist *p)
+{
+  if (p->type == SOAP_TYPE_xsd__base64Binary)
+  {
+    if (p->size < 0)
+      SOAP_DELETE(static_cast<QByteArray*>(p->ptr));
+    else
+      SOAP_DELETE_ARRAY(static_cast<QByteArray*>(p->ptr));
+    return SOAP_OK;
+  }
+  return SOAP_ERR;
+}
+
+static void copy_xsd__base64Binary(struct soap *soap, int st, int tt, void *p, size_t index, const void *q, void **x)
+{
+  (void)soap; (void)st; (void)tt; (void)index; (void)x; /* appease -Wall -Werror */
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying QByteArray %p -> %p\n", q, p));
+  *(QByteArray*)p = *(QByteArray*)q;
 }

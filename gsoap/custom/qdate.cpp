@@ -53,6 +53,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "soapH.h"
 
+static void * instantiate_xsd__date(struct soap*, int, const char*, const char*, size_t*);
+
+static int delete_xsd__date(struct soap_clist*);
+
+static void copy_xsd__date(struct soap*, int, int, void*, size_t, const void*, void**);
+
 void soap_serialize_xsd__date(struct soap *soap, QDate const *a)
 {
   (void)soap; (void)a; /* appease -Wall -Werror */
@@ -84,10 +90,10 @@ QDate *soap_in_xsd__date(struct soap *soap, char const *tag, QDate *a, char cons
     soap_revert(soap);
     return NULL;
   }
-  a = (QDate*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__date, sizeof(QDate), NULL, NULL, NULL, NULL);
+  a = (QDate*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__date, sizeof(QDate), NULL, NULL, instantiate_xsd__date, NULL);
   if (*soap->href)
   {
-    a = (QDate*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__date, 0, sizeof(QDate), 0, NULL, NULL);
+    a = (QDate*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__date, 0, sizeof(QDate), 0, copy_xsd__date, NULL);
   }
   else if (a)
   {
@@ -101,7 +107,7 @@ QDate *soap_in_xsd__date(struct soap *soap, char const *tag, QDate *a, char cons
 
 const char * soap_xsd__date2s(struct soap *soap, QDate a)
 {
-  //YYYY-MM-DDZ
+  /* YYYY-MM-DDZ */
   if (!a.isValid())
     a = QDate(1, 1, 1);
   QString str = a.toString("yyyy-MM-ddZ");
@@ -165,4 +171,47 @@ int soap_s2xsd__date(struct soap *soap, const char *s, QDate *a)
     }
   }
   return soap->error;
+}
+
+static void * instantiate_xsd__date(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xsd__date(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+  struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_xsd__date, n, delete_xsd__date);
+  (void)type; (void)arrayType; /* appease -Wall -Werror */
+  if (!cp)
+    return NULL;
+  if (n < 0)
+  {	cp->ptr = SOAP_NEW(QDate);
+    if (size)
+      *size = sizeof(QDate);
+  }
+  else
+  {	cp->ptr = SOAP_NEW_ARRAY(QDate, n);
+    if (size)
+      *size = n * sizeof(QDate);
+  }
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+  if (!cp->ptr)
+    soap->error = SOAP_EOM;
+  return (QDate*)cp->ptr;
+}
+
+static int delete_xsd__date(struct soap_clist *p)
+{
+  if (p->type == SOAP_TYPE_xsd__date)
+  {
+    if (p->size < 0)
+      SOAP_DELETE(static_cast<QDate*>(p->ptr));
+    else
+      SOAP_DELETE_ARRAY(static_cast<QDate*>(p->ptr));
+    return SOAP_OK;
+  }
+  return SOAP_ERR;
+}
+
+static void copy_xsd__date(struct soap *soap, int st, int tt, void *p, size_t index, const void *q, void **x)
+{
+  (void)soap; (void)st; (void)tt; (void)index; (void)x; /* appease -Wall -Werror */
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying QDate %p -> %p\n", q, p));
+  *(QDate*)p = *(QDate*)q;
 }

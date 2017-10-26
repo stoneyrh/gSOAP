@@ -324,7 +324,12 @@ way, you get the best of both XML DOM and XML data bindings.
 Embedding serializable objects and data in DOM element nodes          {#intro-3}
 ------------------------------------------------------------
 
-To embed serializable data types we first declare these types in a header file
+C and C++ objects and types can be serialized and deserialized when embedded in
+a DOM node.
+
+### Defining serializable types                                     {#intro-3-1}
+
+To embed serializable data types we first define these types in a header file
 for soapcpp2 to generate the data binding code.  We also import `dom.h` from
 `gsoap/import` to use the DOM API:
 
@@ -335,7 +340,7 @@ for soapcpp2 to generate the data binding code.  We also import `dom.h` from
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is a very small example to illustrate the concept.  You can add
-declarations of data types to serialize.  If namespaces are used in the XML
+declarations of data types to serialize.  If XML namespaces are used in the XML
 document, then follow the naming conventions outlined in
 [XML Data Bindings: Colon notation versus name prefixing](http://www.genivia.com/doc/databinding/html/index.html#toxsd2).
 
@@ -413,6 +418,8 @@ and to parse and deserialize a `<t:time>` into a `time_t` value:
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+### Deserializing by XML element name or by type name               {#intro-3-2}
+
 With the `SOAP_DOM_NODE` flag set, there are two ways the C/C++ types are
 deserialized into DOM elements: by element tag name matching or by xsi:type
 matching:
@@ -433,6 +440,33 @@ deserialization, even when an `id` attribute is present in the XML payload.
 The default is to deserialze only when an `id` attribute is present in the XML
 payload.  This is to ensure that the SOAP encoding protocol deos not break when
 id-ref attibutes are used for multireferenced objects.
+
+### Using serializable types defined in C++ namespaces              {#intro-3-3}
+
+The C++ DOM API is unaware of serializable C++ types defined in C++ namespaces.
+The DOM API only "sees" globally defined types to serialize and deserialize.
+This can lead to errors when trying to serialize or deserialize an object in a
+DOM node that is defined in a C++ namespace.
+
+When a client or service application is built with C++ namespaces, either using
+soapcpp2 with option `-q` or with a `namespace` declaration in the .h interface
+header file for soapcpp2, then you should take care to compile the source code
+of the DOM API to check for types defined in an external namespace by compiling
+`dom.cpp` using `-DSOAP_DOM_EXTERNAL_NAMESPACE=namespace_name`.  Only one C++
+namespace name can be provided with this option.  If multiple C++ namespaces
+are used for serializable types then `dom.cpp` must be modified to invoke the
+following functions:
+
+- `name::soap_markelement()`
+- `name::soap_putelement()`
+- `name::soap_getelement()`
+- `name::soap_dupelement()`
+- `name::soap_delelement()`
+
+These should be added for each namespace `name` and added to the existing
+invocation of these with `SOAP_DOM_EXTERNAL_NAMESPACE::`.
+
+This feature is available for gSOAP 2.8.55 and greater.
 
 The domcpp command-line tool                                           {#domcpp}
 ============================

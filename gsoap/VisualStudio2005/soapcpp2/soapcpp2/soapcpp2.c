@@ -329,9 +329,9 @@ infile  header file to parse (if none reads stdin)\n\
             a++;
             g = 0;
             if (*a)
-              namespaceid = ns_cname(a, NULL);
+              set_namespace(ns_cname(a, NULL));
             else if (i < argc && argv[++i])
-              namespaceid = ns_cname(argv[i], NULL);
+              set_namespace(ns_cname(argv[i], NULL));
             else
               execerror("Option -q requires a namespace name");
             break;

@@ -42,7 +42,11 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifdef WITH_OPENSSL
+static const char *ckserver = "https://localhost:8080";
+#else
 static const char *ckserver = "http://localhost:8080";
+#endif
 
 // To access a stand-alone server on a port, use:
 // const char ckserver[] = "IP:PORT";
@@ -57,7 +61,22 @@ int main(int argc, char **argv)
   if (argc >= 2)
     ckserver = argv[1];
   soap_init(&soap);
-
+#ifdef WITH_OPENSSL
+  if (soap_ssl_client_context(&soap,
+    /* SOAP_SSL_NO_AUTHENTICATION, */ /* for encryption w/o authentication */
+    /* SOAP_SSL_DEFAULT | SOAP_SSL_SKIP_HOST_CHECK, */ /* if we don't want the host name checks since these will change from machine to machine */
+    SOAP_SSL_DEFAULT | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE, /* allow self-signed, expired, and certificates w/o CRL */
+    /* SOAP_SSL_DEFAULT, */ /* use SOAP_SSL_DEFAULT in production code */
+    NULL, 		/* keyfile (cert+key): required only when client must authenticate to server (see SSL docs to create this file) */
+    NULL, 		/* password to read the keyfile */
+    "cacert.pem",	/* optional cacert file to store trusted certificates, use cacerts.pem for all public certificates issued by common CAs */
+    NULL,		/* optional capath to directory with trusted certificates */
+    NULL		/* if randfile!=NULL: use a file with random data to seed randomness */ 
+  ))
+  { soap_print_fault(&soap, stderr);
+    exit(1);
+  }
+#endif
   // gSOAP's cookie handling is fully automatic at the client-side.
   // A database of cookies is kept and returned to the appropriate servers.
   // In this demo, the value (int) of the (invisible) cookie is returned as

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.54
+        stdsoap2.c[pp] 2.8.55
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20854
+#define GSOAP_LIB_VERSION 20855
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.54 2017-09-17 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.55 2017-10-26 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.54 2017-09-17 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.55 2017-10-26 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -6142,8 +6142,10 @@ int
 SOAP_FMAC2
 soap_force_closesock(struct soap *soap)
 { soap->keep_alive = 0;
-  if (soap_valid_socket(soap->socket))
-    return soap_closesocket(soap->socket);
+  if (soap_valid_socket(soap->socket) && soap->fclosesocket)
+  { soap->fclosesocket(soap, soap->socket);
+    soap->socket = SOAP_INVALID_SOCKET;
+  }
   return SOAP_OK;
 }
 #endif
@@ -7558,6 +7560,22 @@ soap_set_cookie_expire(struct soap *soap, const char *name, long maxage, const c
 SOAP_FMAC1
 int
 SOAP_FMAC2
+soap_set_cookie_secure(struct soap *soap, const char *name, const char *domain, const char *path)
+{ struct soap_cookie *p;
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Set cookie secure: cookie='%s' domain='%s' path='%s'\n", name, domain ? domain : "(null)", path ? path : "(null)"));
+  p = soap_cookie(soap, name, domain, path);
+  if (p)
+  { p->secure = 1;
+    p->modified = 1;
+    return SOAP_OK;
+  }
+  return SOAP_ERR;
+}
+/******************************************************************************/
+
+SOAP_FMAC1
+int
+SOAP_FMAC2
 soap_set_cookie_session(struct soap *soap, const char *name, const char *domain, const char *path)
 { struct soap_cookie *p;
   p = soap_cookie(soap, name, domain, path);
@@ -7667,8 +7685,7 @@ soap_putsetcookies(struct soap *soap)
        || soap->ssl
 #endif
          ))
-      {
-        soap_strcpy(s, 4096 - (s-tmp), ";Secure");
+      { soap_strcpy(s, 4096 - (s-tmp), ";Secure");
         s += strlen(s);
       }
       if (s-tmp < 4071)
@@ -7744,7 +7761,10 @@ soap_putcookies(struct soap *soap, const char *domain, const char *path, int sec
 #endif
       if (flag
           && (!q->path || !strncmp(q->path, path, strlen(q->path)))
-          && (!q->secure || secure))
+#ifndef WITH_INSECURE_COOKIES
+          && (!q->secure || secure)
+#endif
+         )
       { size_t n = 12;
         if (q->name)
           n += 3*strlen(q->name);
@@ -7766,6 +7786,7 @@ soap_putcookies(struct soap *soap, const char *domain, const char *path, int sec
         else if (s != tmp)
         { *s++ = ';';
         }
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Sending cookie %s=%s path=\"/%s\" domain=\"%s\"\n", q->name ? q->name : "(null)", q->value ? q->value : "(null)", q->path ? q->path : "(null)", q->domain ? q->domain : "(null)"));
         if (q->version != version && s-tmp < 4060)
         { (SOAP_SNPRINTF(s, 4096 - (s-tmp), 29), "$Version=%u;", q->version);
           version = q->version;
@@ -7948,7 +7969,10 @@ soap_getcookies(struct soap *soap, const char *val)
     else if (p && !soap_tag_cmp(tmp, "HttpOnly"))
     { s = soap_decode_val(tmp, sizeof(tmp), s);
     }
-    else
+    else if (p && !soap_tag_cmp(tmp, "Comment"))
+    { s = soap_decode_val(tmp, sizeof(tmp), s);
+    }
+    else if (*tmp)
     { if (p)
       { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Got environment cookie='%s' value='%s' domain='%s' path='%s' expire=%ld secure=%d\n", p->name, p->value ? p->value : "(null)", p->domain ? p->domain : "(null)", p->path ? p->path : "(null)", p->expire, p->secure));
         q = soap_set_cookie(soap, p->name, p->value, p->domain, p->path);
@@ -7975,7 +7999,7 @@ soap_getcookies(struct soap *soap, const char *val)
         if (SOAP_MAXALLOCSIZE <= 0 || l <= SOAP_MAXALLOCSIZE)
           p->name = (char*)SOAP_MALLOC(soap, l);
         if (p->name)
-          soap_memcpy((void*)p->name, l, (const void*)tmp, l);
+          soap_strcpy(p->name, l, tmp);
         s = soap_decode_val(tmp, sizeof(tmp), s);
         if (*tmp)
         { l = strlen(tmp) + 1;
@@ -9187,9 +9211,9 @@ soap_delete(struct soap *soap, void *p)
       { struct soap_clist *q = *cp;
         *cp = q->next;
         if (q->fdelete(q))
-        { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not dealloc data %p: deletion callback failed for object type %d\n", q->ptr, q->type));
+        { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not dealloc data %p: deletion callback failed for object type=%d\n", q->ptr, q->type));
 #ifdef SOAP_MEM_DEBUG
-          fprintf(stderr, "new(object type = %d) = %p not freed: deletion callback failed\n", q->type, q->ptr);
+          fprintf(stderr, "new(object type=%d) = %p not freed: deletion callback failed\n", q->type, q->ptr);
 #endif
         }
         SOAP_FREE(soap, q);
@@ -9205,9 +9229,9 @@ soap_delete(struct soap *soap, void *p)
       *cp = q->next;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Delete %p type=%d (cp=%p)\n", q->ptr, q->type, (void*)q));
       if (q->fdelete(q))
-      { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not dealloc data %p: deletion callback failed for object type %d\n", q->ptr, q->type));
+      { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not dealloc data %p: deletion callback failed for object type=%d\n", q->ptr, q->type));
 #ifdef SOAP_MEM_DEBUG
-        fprintf(stderr, "new(object type = %d) = %p not freed: deletion callback failed\n", q->type, q->ptr);
+        fprintf(stderr, "new(object type=%d) = %p not freed: deletion callback failed\n", q->type, q->ptr);
 #endif
       }
       SOAP_FREE(soap, q);
@@ -9888,8 +9912,8 @@ soap_end_recv(struct soap *soap)
   soap->dime.first = NULL;
   soap->dime.last = NULL;
   /* Check if MIME attachments and mime-post-check flag is set, if so call soap_resolve() and return */
-  if (soap->mode & SOAP_ENC_MIME)
-  { if (soap->mode & SOAP_MIME_POSTCHECK)
+  if ((soap->mode & SOAP_ENC_MIME))
+  { if ((soap->mode & SOAP_MIME_POSTCHECK))
     { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Post checking MIME attachments\n"));
       if (!soap->keep_alive)
         soap->keep_alive = -2; /* special case to keep alive */
@@ -11996,7 +12020,7 @@ soap_mark_lookup(struct soap *soap, const void *p, int t, struct soap_plist **pp
 { if (!soap)
     return NULL;
   if (mark || !(soap->mode & SOAP_XML_TREE))
-  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Mark lookup %p type %d\n", p, t));
+  { DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Mark lookup %p type=%d\n", p, t));
     if (!soap_pointer_lookup(soap, p, t, ppp))
     { if (!soap_pointer_enter(soap, p, NULL, 0, t, ppp))
         return NULL;
@@ -12248,13 +12272,6 @@ soap_element_end_in(struct soap *soap, const char *tag)
     c = soap_get(soap);
   if (c != SOAP_GT)
     return soap->error = SOAP_SYNTAX_ERROR;
-#ifndef WITH_LEAN
-#ifdef WITH_DOM
-  if (soap->feltendin)
-  { soap->level--;
-    return soap->error = soap->feltendin(soap, soap->tag, tag);
-  }
-#endif
   if (tag && (soap->mode & SOAP_XML_STRICT))
   { soap_pop_namespace(soap);
     if (soap_match_tag(soap, soap->tag, tag))
@@ -12262,6 +12279,18 @@ soap_element_end_in(struct soap *soap, const char *tag)
       return soap->error = SOAP_SYNTAX_ERROR;
     }
   }
+#ifndef WITH_LEAN
+#ifdef WITH_DOM
+  if (soap->feltendin)
+  { int err = soap->error;
+    soap->level--;
+    soap->error = soap->feltendin(soap, soap->tag, tag);
+    if (soap->error)
+      return soap->error;
+    soap->error = err; /* restore error */
+    return SOAP_OK;
+  }
+#endif
 #endif
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "End tag found (level=%u) '%s'='%s'\n", soap->level, soap->tag, tag ? tag : SOAP_STR_EOS));
   soap->level--;
@@ -18419,6 +18448,9 @@ soap_get_http_body(struct soap *soap, size_t *len)
   { if (!soap->length)
       return NULL;
   }
+  /* do not consume DIME or MIME attachments */
+  if ((soap->mode & SOAP_ENC_DIME) || (soap->mode & SOAP_ENC_MIME))
+    return NULL;
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Parsing HTTP body (mode=0x%x)\n", soap->mode));
 #ifdef WITH_FAST
   soap->labidx = 0;                     /* use look-aside buffer */

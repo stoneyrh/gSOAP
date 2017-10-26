@@ -361,7 +361,7 @@ For example:
 Options                                                               {#options}
 -------
 
-    testmsgr [-aact] [-b] [-c] [-h] [-i] [-j] [-lmax] [-mmax] [-nlen] [-ofile] [-pnum] [-qnum] [-rseed] [-tsec] [-v] [infile|-] [URL|port]
+    testmsgr [-aact] [-b] [-c] [-h] [-i] [-j] [-lmax] [-mmax] [-nlen] [-ofile] [-pnum] [-qnum] [-rseed] [-tsec] [-v] [-A] [-C] [-H] [-M] [infile|-] [URL|port]
 
 where the testmsgr command-line options are:
 
@@ -380,8 +380,12 @@ Option    | Description
 `-p perc` | percentage XML kept when using -r (default=100)
 `-q perc` | percentage XML kept of optional indicators when using -r (default=100)
 `-r seed` | randomize XML message templates (use soapcpp2 `-g`)
-`-t sec`  | socket idle timeout seconds (default is one second)
+`-t sec`  | socket idle timeout seconds (default=1)
 `-v`      | verbose mode
+`-A`      | use SOAP with MIME attachments (SwA)
+`-C`      | use HTTP chunked transfers
+`-H`      | add HTTP headers when no URL is specified
+`-M`      | use MTOM (application/xop+xml)
 `-R rep`  | set XML element sequence indicator tag (default=`__REPEAT`)
 `-S sel`  | set XML element selection indicator tag (default=`__SELECT`)
 `infile`  | XML message template
@@ -477,6 +481,35 @@ exchanged.
 ### `-v`
 
 Enable verbose mode.
+
+### `-A`
+
+Use SOAP with MIME attachments, also called SOAP with Attachments (SwA).
+This option generates a MIME message with SOAP Body and zero or more MIME
+attachments.  When combined with option `-r`, a MIME attachment is added for
+each element with binary content (base64Binary XML element) specified in the
+template with `%[[BASE64]]%`.  The template `%[[BASE64]]%` value is replaced
+with an `href` attribute referencing the MIME attachment with randomized
+content.
+
+### `-C`
+
+Use HTTP chunked transfers.
+
+### `-H`
+
+Add HTTP headers to the generated message even when no URL is specified on the
+command line.
+
+### `-M`
+
+Use MTOM (application/xop+xml) messaging.  This option generates a MIME message
+with SOAP Body and zero or more MTOM attachments in MIME format.  When combined
+with option `-r`, a MIME attachment is added for each element with binary
+content (base64Binary XML element) specified in the template with
+`%[[BASE64]]%`.  The template `%[[BASE64]]%` value is replaced with an
+`<xop:Include xmlns:xop="http://www.w3.org/2004/08/xop/include"/>` element with
+an `href` attribute referencing the MIME attachment with randomized content.
 
 ### `-R rep`
 

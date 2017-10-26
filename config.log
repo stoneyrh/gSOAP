@@ -30,8 +30,8 @@ Kernel configured for up to 8 processors.
 Processor type: x86_64h (Intel x86-64h Haswell)
 Processors active: 0 1 2 3 4 5 6 7
 Primary memory available: 16.00 gigabytes
-Default processor set: 507 tasks, 2190 threads, 8 processors
-Load average: 1.61, Mach factor: 6.37
+Default processor set: 406 tasks, 1810 threads, 8 processors
+Load average: 1.80, Mach factor: 6.19
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -94,7 +94,7 @@ configure:3168: found /usr/bin/g++
 configure:3179: result: g++
 configure:3206: checking for C++ compiler version
 configure:3215: g++ --version >&5
-Apple LLVM version 8.1.0 (clang-802.0.42)
+Apple LLVM version 9.0.0 (clang-900.0.38)
 Target: x86_64-apple-darwin16.7.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
@@ -102,7 +102,7 @@ Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-
 configure:3226: $? = 0
 configure:3215: g++ -v >&5
 Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
-Apple LLVM version 8.1.0 (clang-802.0.42)
+Apple LLVM version 9.0.0 (clang-900.0.38)
 Target: x86_64-apple-darwin16.7.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
@@ -152,7 +152,7 @@ configure:3856: found /usr/bin/gcc
 configure:3867: result: gcc
 configure:4096: checking for C compiler version
 configure:4105: gcc --version >&5
-Apple LLVM version 8.1.0 (clang-802.0.42)
+Apple LLVM version 9.0.0 (clang-900.0.38)
 Target: x86_64-apple-darwin16.7.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
@@ -160,7 +160,7 @@ Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-
 configure:4116: $? = 0
 configure:4105: gcc -v >&5
 Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
-Apple LLVM version 8.1.0 (clang-802.0.42)
+Apple LLVM version 9.0.0 (clang-900.0.38)
 Target: x86_64-apple-darwin16.7.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
@@ -204,8 +204,8 @@ configure:4614: checking lex library
 configure:4628: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in conftest-5229da.o
-      _main in conftest-5229da.o
+      _yylex in conftest-0de11a.o
+      _main in conftest-0de11a.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:4628: $? = 1
@@ -3797,7 +3797,7 @@ configure:4761: $? = 0
 configure:4775: gcc -E  conftest.c
 conftest.c:12:10: fatal error: 'ac_nonexistent.h' file not found
 #include <ac_nonexistent.h>
-         ^
+         ^~~~~~~~~~~~~~~~~~
 1 error generated.
 configure:4775: $? = 1
 configure: failed program was:
@@ -3819,7 +3819,7 @@ configure:4820: $? = 0
 configure:4834: gcc -E  conftest.c
 conftest.c:12:10: fatal error: 'ac_nonexistent.h' file not found
 #include <ac_nonexistent.h>
-         ^
+         ^~~~~~~~~~~~~~~~~~
 1 error generated.
 configure:4834: $? = 1
 configure: failed program was:
@@ -4024,7 +4024,7 @@ configure:5342: checking sys/inttypes.h usability
 configure:5342: gcc -c -Wno-deprecated-declarations  conftest.c >&5
 conftest.c:72:10: fatal error: 'sys/inttypes.h' file not found
 #include <sys/inttypes.h>
-         ^
+         ^~~~~~~~~~~~~~~~
 1 error generated.
 configure:5342: $? = 1
 configure: failed program was:
@@ -4105,7 +4105,7 @@ configure:5342: checking sys/inttypes.h presence
 configure:5342: gcc -E  conftest.c
 conftest.c:39:10: fatal error: 'sys/inttypes.h' file not found
 #include <sys/inttypes.h>
-         ^
+         ^~~~~~~~~~~~~~~~
 1 error generated.
 configure:5342: $? = 1
 configure: failed program was:
@@ -4209,7 +4209,7 @@ configure:5342: checking gnutls/gnutls.h usability
 configure:5342: gcc -c -Wno-deprecated-declarations  conftest.c >&5
 conftest.c:79:10: fatal error: 'gnutls/gnutls.h' file not found
 #include <gnutls/gnutls.h>
-         ^
+         ^~~~~~~~~~~~~~~~~
 1 error generated.
 configure:5342: $? = 1
 configure: failed program was:
@@ -4297,7 +4297,7 @@ configure:5342: checking gnutls/gnutls.h presence
 configure:5342: gcc -E  conftest.c
 conftest.c:46:10: fatal error: 'gnutls/gnutls.h' file not found
 #include <gnutls/gnutls.h>
-         ^
+         ^~~~~~~~~~~~~~~~~
 1 error generated.
 configure:5342: $? = 1
 configure: failed program was:
@@ -5160,7 +5160,7 @@ configure:6002: checking for gethostbyname_r
 configure:6002: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-3af4f9.o
+      _main in conftest-16f028.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:6002: $? = 1

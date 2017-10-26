@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">saml1.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Apr 5 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Sep 21 2017 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -230,6 +230,81 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a33d69fd9e40d2ebc02db50fe71708477"><td class="memItemLeft" align="right" valign="top">typedef enum <a class="el" href="saml1_8h.html#ab4a372b396525c4a5ff2ca1aad78eff2">saml1__DecisionType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a33d69fd9e40d2ebc02db50fe71708477">saml1__DecisionType</a></td></tr>
 <tr class="memdesc:a33d69fd9e40d2ebc02db50fe71708477"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typedef synonym for enum saml1__DecisionType.  <a href="#a33d69fd9e40d2ebc02db50fe71708477">More...</a><br /></td></tr>
 <tr class="separator:a33d69fd9e40d2ebc02db50fe71708477"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87f2c59ed212c1bce4d4eafaf9e62f5a"><td class="memItemLeft" align="right" valign="top">typedef char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a87f2c59ed212c1bce4d4eafaf9e62f5a">_saml1__AssertionIDReference</a></td></tr>
+<tr class="memdesc:a87f2c59ed212c1bce4d4eafaf9e62f5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AssertionIDReference of XSD type xs:NCName.  <a href="#a87f2c59ed212c1bce4d4eafaf9e62f5a">More...</a><br /></td></tr>
+<tr class="separator:a87f2c59ed212c1bce4d4eafaf9e62f5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56193a84cc96a113110c966de9b689bb"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____assertion_type.html">saml1__AssertionType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a56193a84cc96a113110c966de9b689bb">_saml1__Assertion</a></td></tr>
+<tr class="memdesc:a56193a84cc96a113110c966de9b689bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Assertion of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AssertionType.  <a href="#a56193a84cc96a113110c966de9b689bb">More...</a><br /></td></tr>
+<tr class="separator:a56193a84cc96a113110c966de9b689bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a999946275390edaf4342e3a27d56c007"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____conditions_type.html">saml1__ConditionsType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a999946275390edaf4342e3a27d56c007">_saml1__Conditions</a></td></tr>
+<tr class="memdesc:a999946275390edaf4342e3a27d56c007"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Conditions of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":ConditionsType.  <a href="#a999946275390edaf4342e3a27d56c007">More...</a><br /></td></tr>
+<tr class="separator:a999946275390edaf4342e3a27d56c007"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45a22e59e95f941c1b0ea21e75082cea"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____condition_abstract_type.html">saml1__ConditionAbstractType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a45a22e59e95f941c1b0ea21e75082cea">_saml1__Condition</a></td></tr>
+<tr class="memdesc:a45a22e59e95f941c1b0ea21e75082cea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Condition of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":ConditionAbstractType.  <a href="#a45a22e59e95f941c1b0ea21e75082cea">More...</a><br /></td></tr>
+<tr class="separator:a45a22e59e95f941c1b0ea21e75082cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33ef4b4e1e8d7873abc5b9ad1159b8c2"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____audience_restriction_condition_type.html">saml1__AudienceRestrictionConditionType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a33ef4b4e1e8d7873abc5b9ad1159b8c2">_saml1__AudienceRestrictionCondition</a></td></tr>
+<tr class="memdesc:a33ef4b4e1e8d7873abc5b9ad1159b8c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AudienceRestrictionCondition of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AudienceRestrictionConditionType.  <a href="#a33ef4b4e1e8d7873abc5b9ad1159b8c2">More...</a><br /></td></tr>
+<tr class="separator:a33ef4b4e1e8d7873abc5b9ad1159b8c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad312009c0d56b787edaaaaa7596edb8f"><td class="memItemLeft" align="right" valign="top">typedef char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#ad312009c0d56b787edaaaaa7596edb8f">_saml1__Audience</a></td></tr>
+<tr class="memdesc:ad312009c0d56b787edaaaaa7596edb8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Audience of XSD type xs:anyURI.  <a href="#ad312009c0d56b787edaaaaa7596edb8f">More...</a><br /></td></tr>
+<tr class="separator:ad312009c0d56b787edaaaaa7596edb8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a313758cd27a5d97d98811cedf2a21d8d"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____do_not_cache_condition_type.html">saml1__DoNotCacheConditionType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a313758cd27a5d97d98811cedf2a21d8d">_saml1__DoNotCacheCondition</a></td></tr>
+<tr class="memdesc:a313758cd27a5d97d98811cedf2a21d8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":DoNotCacheCondition of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":DoNotCacheConditionType.  <a href="#a313758cd27a5d97d98811cedf2a21d8d">More...</a><br /></td></tr>
+<tr class="separator:a313758cd27a5d97d98811cedf2a21d8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a684e5a61ad3bd6c8976e1c4c38dfe1c2"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____advice_type.html">saml1__AdviceType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a684e5a61ad3bd6c8976e1c4c38dfe1c2">_saml1__Advice</a></td></tr>
+<tr class="memdesc:a684e5a61ad3bd6c8976e1c4c38dfe1c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Advice of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AdviceType.  <a href="#a684e5a61ad3bd6c8976e1c4c38dfe1c2">More...</a><br /></td></tr>
+<tr class="separator:a684e5a61ad3bd6c8976e1c4c38dfe1c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12a55bfbe05bcfbfce2138aeae2b8cf6"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____statement_abstract_type.html">saml1__StatementAbstractType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a12a55bfbe05bcfbfce2138aeae2b8cf6">_saml1__Statement</a></td></tr>
+<tr class="memdesc:a12a55bfbe05bcfbfce2138aeae2b8cf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Statement of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":StatementAbstractType.  <a href="#a12a55bfbe05bcfbfce2138aeae2b8cf6">More...</a><br /></td></tr>
+<tr class="separator:a12a55bfbe05bcfbfce2138aeae2b8cf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56196e79a0467652cf2715c0d22f313c"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____subject_statement_abstract_type.html">saml1__SubjectStatementAbstractType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a56196e79a0467652cf2715c0d22f313c">_saml1__SubjectStatement</a></td></tr>
+<tr class="memdesc:a56196e79a0467652cf2715c0d22f313c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":SubjectStatement of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":SubjectStatementAbstractType.  <a href="#a56196e79a0467652cf2715c0d22f313c">More...</a><br /></td></tr>
+<tr class="separator:a56196e79a0467652cf2715c0d22f313c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a361cac370986c5f63ee02f4e37470427"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____subject_type.html">saml1__SubjectType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a361cac370986c5f63ee02f4e37470427">_saml1__Subject</a></td></tr>
+<tr class="memdesc:a361cac370986c5f63ee02f4e37470427"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Subject of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":SubjectType.  <a href="#a361cac370986c5f63ee02f4e37470427">More...</a><br /></td></tr>
+<tr class="separator:a361cac370986c5f63ee02f4e37470427"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ae9f4bc5f09b527b8a2f6b5f5923ca7"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____name_identifier_type.html">saml1__NameIdentifierType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a5ae9f4bc5f09b527b8a2f6b5f5923ca7">_saml1__NameIdentifier</a></td></tr>
+<tr class="memdesc:a5ae9f4bc5f09b527b8a2f6b5f5923ca7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":NameIdentifier of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":NameIdentifierType.  <a href="#a5ae9f4bc5f09b527b8a2f6b5f5923ca7">More...</a><br /></td></tr>
+<tr class="separator:a5ae9f4bc5f09b527b8a2f6b5f5923ca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7234206c8ac9be2fd50744d2ae63eb40"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____subject_confirmation_type.html">saml1__SubjectConfirmationType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a7234206c8ac9be2fd50744d2ae63eb40">_saml1__SubjectConfirmation</a></td></tr>
+<tr class="memdesc:a7234206c8ac9be2fd50744d2ae63eb40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":SubjectConfirmation of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":SubjectConfirmationType.  <a href="#a7234206c8ac9be2fd50744d2ae63eb40">More...</a><br /></td></tr>
+<tr class="separator:a7234206c8ac9be2fd50744d2ae63eb40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa450c078cdef14f8225a337d0b4d92a6"><td class="memItemLeft" align="right" valign="top">typedef _XML&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#aa450c078cdef14f8225a337d0b4d92a6">_saml1__SubjectConfirmationData</a></td></tr>
+<tr class="memdesc:aa450c078cdef14f8225a337d0b4d92a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":SubjectConfirmationData of XSD type xs:anyType.  <a href="#aa450c078cdef14f8225a337d0b4d92a6">More...</a><br /></td></tr>
+<tr class="separator:aa450c078cdef14f8225a337d0b4d92a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:addb3929272ea2d1103745328098951a2"><td class="memItemLeft" align="right" valign="top">typedef char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#addb3929272ea2d1103745328098951a2">_saml1__ConfirmationMethod</a></td></tr>
+<tr class="memdesc:addb3929272ea2d1103745328098951a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":ConfirmationMethod of XSD type xs:anyURI.  <a href="#addb3929272ea2d1103745328098951a2">More...</a><br /></td></tr>
+<tr class="separator:addb3929272ea2d1103745328098951a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7feb4a853588696dafd03fd419ec48c9"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____authentication_statement_type.html">saml1__AuthenticationStatementType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a7feb4a853588696dafd03fd419ec48c9">_saml1__AuthenticationStatement</a></td></tr>
+<tr class="memdesc:a7feb4a853588696dafd03fd419ec48c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AuthenticationStatement of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AuthenticationStatementType.  <a href="#a7feb4a853588696dafd03fd419ec48c9">More...</a><br /></td></tr>
+<tr class="separator:a7feb4a853588696dafd03fd419ec48c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2062efe03ce402c0945ba967f1f6df8e"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____subject_locality_type.html">saml1__SubjectLocalityType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a2062efe03ce402c0945ba967f1f6df8e">_saml1__SubjectLocality</a></td></tr>
+<tr class="memdesc:a2062efe03ce402c0945ba967f1f6df8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":SubjectLocality of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":SubjectLocalityType.  <a href="#a2062efe03ce402c0945ba967f1f6df8e">More...</a><br /></td></tr>
+<tr class="separator:a2062efe03ce402c0945ba967f1f6df8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6bcc85a03629ed4f0a6551913f15f06"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____authority_binding_type.html">saml1__AuthorityBindingType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#ac6bcc85a03629ed4f0a6551913f15f06">_saml1__AuthorityBinding</a></td></tr>
+<tr class="memdesc:ac6bcc85a03629ed4f0a6551913f15f06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AuthorityBinding of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AuthorityBindingType.  <a href="#ac6bcc85a03629ed4f0a6551913f15f06">More...</a><br /></td></tr>
+<tr class="separator:ac6bcc85a03629ed4f0a6551913f15f06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f929c10d54867166583d5e7174564df"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____authorization_decision_statement_type.html">saml1__AuthorizationDecisionStatementType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a3f929c10d54867166583d5e7174564df">_saml1__AuthorizationDecisionStatement</a></td></tr>
+<tr class="memdesc:a3f929c10d54867166583d5e7174564df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AuthorizationDecisionStatement of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AuthorizationDecisionStatementType.  <a href="#a3f929c10d54867166583d5e7174564df">More...</a><br /></td></tr>
+<tr class="separator:a3f929c10d54867166583d5e7174564df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8c09f9474ce013b228ab7962da867ad"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____action_type.html">saml1__ActionType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#aa8c09f9474ce013b228ab7962da867ad">_saml1__Action</a></td></tr>
+<tr class="memdesc:aa8c09f9474ce013b228ab7962da867ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Action of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":ActionType.  <a href="#aa8c09f9474ce013b228ab7962da867ad">More...</a><br /></td></tr>
+<tr class="separator:aa8c09f9474ce013b228ab7962da867ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0adefdefa8916dd4fbc37c1958b58006"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____evidence_type.html">saml1__EvidenceType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a0adefdefa8916dd4fbc37c1958b58006">_saml1__Evidence</a></td></tr>
+<tr class="memdesc:a0adefdefa8916dd4fbc37c1958b58006"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Evidence of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":EvidenceType.  <a href="#a0adefdefa8916dd4fbc37c1958b58006">More...</a><br /></td></tr>
+<tr class="separator:a0adefdefa8916dd4fbc37c1958b58006"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8eb8d55f9afd3a1f7b27d849badde2e5"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____attribute_statement_type.html">saml1__AttributeStatementType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a8eb8d55f9afd3a1f7b27d849badde2e5">_saml1__AttributeStatement</a></td></tr>
+<tr class="memdesc:a8eb8d55f9afd3a1f7b27d849badde2e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AttributeStatement of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AttributeStatementType.  <a href="#a8eb8d55f9afd3a1f7b27d849badde2e5">More...</a><br /></td></tr>
+<tr class="separator:a8eb8d55f9afd3a1f7b27d849badde2e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93a9048d65a5727617c92d5a73522b63"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____attribute_designator_type.html">saml1__AttributeDesignatorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a93a9048d65a5727617c92d5a73522b63">_saml1__AttributeDesignator</a></td></tr>
+<tr class="memdesc:a93a9048d65a5727617c92d5a73522b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AttributeDesignator of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AttributeDesignatorType.  <a href="#a93a9048d65a5727617c92d5a73522b63">More...</a><br /></td></tr>
+<tr class="separator:a93a9048d65a5727617c92d5a73522b63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c439c50a6c462758ad98ff2cb5764f9"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structsaml1_____attribute_type.html">saml1__AttributeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a5c439c50a6c462758ad98ff2cb5764f9">_saml1__Attribute</a></td></tr>
+<tr class="memdesc:a5c439c50a6c462758ad98ff2cb5764f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Attribute of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AttributeType.  <a href="#a5c439c50a6c462758ad98ff2cb5764f9">More...</a><br /></td></tr>
+<tr class="separator:a5c439c50a6c462758ad98ff2cb5764f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a897fb1dbdfcb1f446413b4ea228cc2a3"><td class="memItemLeft" align="right" valign="top">typedef _XML&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saml1_8h.html#a897fb1dbdfcb1f446413b4ea228cc2a3">_saml1__AttributeValue</a></td></tr>
+<tr class="memdesc:a897fb1dbdfcb1f446413b4ea228cc2a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AttributeValue of XSD type xs:anyType.  <a href="#a897fb1dbdfcb1f446413b4ea228cc2a3">More...</a><br /></td></tr>
+<tr class="separator:a897fb1dbdfcb1f446413b4ea228cc2a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -267,6 +342,356 @@ Enumerations</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Typedef Documentation</h2>
+<a class="anchor" id="aa8c09f9474ce013b228ab7962da867ad"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____action_type.html">saml1__ActionType</a> <a class="el" href="saml1_8h.html#aa8c09f9474ce013b228ab7962da867ad">_saml1__Action</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Action of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":ActionType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a684e5a61ad3bd6c8976e1c4c38dfe1c2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____advice_type.html">saml1__AdviceType</a> <a class="el" href="saml1_8h.html#a684e5a61ad3bd6c8976e1c4c38dfe1c2">_saml1__Advice</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Advice of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AdviceType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a56193a84cc96a113110c966de9b689bb"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____assertion_type.html">saml1__AssertionType</a> <a class="el" href="saml1_8h.html#a56193a84cc96a113110c966de9b689bb">_saml1__Assertion</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Assertion of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AssertionType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a87f2c59ed212c1bce4d4eafaf9e62f5a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef char* <a class="el" href="saml1_8h.html#a87f2c59ed212c1bce4d4eafaf9e62f5a">_saml1__AssertionIDReference</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AssertionIDReference of XSD type xs:NCName. </p>
+
+</div>
+</div>
+<a class="anchor" id="a5c439c50a6c462758ad98ff2cb5764f9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____attribute_type.html">saml1__AttributeType</a> <a class="el" href="saml1_8h.html#a5c439c50a6c462758ad98ff2cb5764f9">_saml1__Attribute</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Attribute of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AttributeType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a93a9048d65a5727617c92d5a73522b63"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____attribute_designator_type.html">saml1__AttributeDesignatorType</a> <a class="el" href="saml1_8h.html#a93a9048d65a5727617c92d5a73522b63">_saml1__AttributeDesignator</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AttributeDesignator of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AttributeDesignatorType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a8eb8d55f9afd3a1f7b27d849badde2e5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____attribute_statement_type.html">saml1__AttributeStatementType</a> <a class="el" href="saml1_8h.html#a8eb8d55f9afd3a1f7b27d849badde2e5">_saml1__AttributeStatement</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AttributeStatement of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AttributeStatementType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a897fb1dbdfcb1f446413b4ea228cc2a3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef _XML <a class="el" href="saml1_8h.html#a897fb1dbdfcb1f446413b4ea228cc2a3">_saml1__AttributeValue</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AttributeValue of XSD type xs:anyType. </p>
+
+</div>
+</div>
+<a class="anchor" id="ad312009c0d56b787edaaaaa7596edb8f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef char* <a class="el" href="saml1_8h.html#ad312009c0d56b787edaaaaa7596edb8f">_saml1__Audience</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Audience of XSD type xs:anyURI. </p>
+
+</div>
+</div>
+<a class="anchor" id="a33ef4b4e1e8d7873abc5b9ad1159b8c2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____audience_restriction_condition_type.html">saml1__AudienceRestrictionConditionType</a> <a class="el" href="saml1_8h.html#a33ef4b4e1e8d7873abc5b9ad1159b8c2">_saml1__AudienceRestrictionCondition</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AudienceRestrictionCondition of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AudienceRestrictionConditionType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a7feb4a853588696dafd03fd419ec48c9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____authentication_statement_type.html">saml1__AuthenticationStatementType</a> <a class="el" href="saml1_8h.html#a7feb4a853588696dafd03fd419ec48c9">_saml1__AuthenticationStatement</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AuthenticationStatement of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AuthenticationStatementType. </p>
+
+</div>
+</div>
+<a class="anchor" id="ac6bcc85a03629ed4f0a6551913f15f06"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____authority_binding_type.html">saml1__AuthorityBindingType</a> <a class="el" href="saml1_8h.html#ac6bcc85a03629ed4f0a6551913f15f06">_saml1__AuthorityBinding</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AuthorityBinding of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AuthorityBindingType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a3f929c10d54867166583d5e7174564df"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____authorization_decision_statement_type.html">saml1__AuthorizationDecisionStatementType</a> <a class="el" href="saml1_8h.html#a3f929c10d54867166583d5e7174564df">_saml1__AuthorizationDecisionStatement</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":AuthorizationDecisionStatement of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":AuthorizationDecisionStatementType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a45a22e59e95f941c1b0ea21e75082cea"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____condition_abstract_type.html">saml1__ConditionAbstractType</a> <a class="el" href="saml1_8h.html#a45a22e59e95f941c1b0ea21e75082cea">_saml1__Condition</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Condition of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":ConditionAbstractType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a999946275390edaf4342e3a27d56c007"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____conditions_type.html">saml1__ConditionsType</a> <a class="el" href="saml1_8h.html#a999946275390edaf4342e3a27d56c007">_saml1__Conditions</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Conditions of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":ConditionsType. </p>
+
+</div>
+</div>
+<a class="anchor" id="addb3929272ea2d1103745328098951a2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef char* <a class="el" href="saml1_8h.html#addb3929272ea2d1103745328098951a2">_saml1__ConfirmationMethod</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":ConfirmationMethod of XSD type xs:anyURI. </p>
+
+</div>
+</div>
+<a class="anchor" id="a313758cd27a5d97d98811cedf2a21d8d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____do_not_cache_condition_type.html">saml1__DoNotCacheConditionType</a> <a class="el" href="saml1_8h.html#a313758cd27a5d97d98811cedf2a21d8d">_saml1__DoNotCacheCondition</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":DoNotCacheCondition of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":DoNotCacheConditionType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a0adefdefa8916dd4fbc37c1958b58006"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____evidence_type.html">saml1__EvidenceType</a> <a class="el" href="saml1_8h.html#a0adefdefa8916dd4fbc37c1958b58006">_saml1__Evidence</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Evidence of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":EvidenceType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a5ae9f4bc5f09b527b8a2f6b5f5923ca7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____name_identifier_type.html">saml1__NameIdentifierType</a> <a class="el" href="saml1_8h.html#a5ae9f4bc5f09b527b8a2f6b5f5923ca7">_saml1__NameIdentifier</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":NameIdentifier of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":NameIdentifierType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a12a55bfbe05bcfbfce2138aeae2b8cf6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____statement_abstract_type.html">saml1__StatementAbstractType</a> <a class="el" href="saml1_8h.html#a12a55bfbe05bcfbfce2138aeae2b8cf6">_saml1__Statement</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Statement of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":StatementAbstractType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a361cac370986c5f63ee02f4e37470427"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____subject_type.html">saml1__SubjectType</a> <a class="el" href="saml1_8h.html#a361cac370986c5f63ee02f4e37470427">_saml1__Subject</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":Subject of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":SubjectType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a7234206c8ac9be2fd50744d2ae63eb40"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____subject_confirmation_type.html">saml1__SubjectConfirmationType</a> <a class="el" href="saml1_8h.html#a7234206c8ac9be2fd50744d2ae63eb40">_saml1__SubjectConfirmation</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":SubjectConfirmation of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":SubjectConfirmationType. </p>
+
+</div>
+</div>
+<a class="anchor" id="aa450c078cdef14f8225a337d0b4d92a6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef _XML <a class="el" href="saml1_8h.html#aa450c078cdef14f8225a337d0b4d92a6">_saml1__SubjectConfirmationData</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":SubjectConfirmationData of XSD type xs:anyType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a2062efe03ce402c0945ba967f1f6df8e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____subject_locality_type.html">saml1__SubjectLocalityType</a> <a class="el" href="saml1_8h.html#a2062efe03ce402c0945ba967f1f6df8e">_saml1__SubjectLocality</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":SubjectLocality of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":SubjectLocalityType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a56196e79a0467652cf2715c0d22f313c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structsaml1_____subject_statement_abstract_type.html">saml1__SubjectStatementAbstractType</a> <a class="el" href="saml1_8h.html#a56196e79a0467652cf2715c0d22f313c">_saml1__SubjectStatement</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "urn:oasis:names:tc:SAML:1.0:assertion":SubjectStatement of XSD type "urn:oasis:names:tc:SAML:1.0:assertion":SubjectStatementAbstractType. </p>
+
+</div>
+</div>
 <a class="anchor" id="ac7eb8a7ee49b2190eb28467b7fb6638b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -594,7 +1019,7 @@ Enumerations</h2></td></tr>
 Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Apr 5 2017 18:33:26 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Sep 21 2017 16:45:35 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

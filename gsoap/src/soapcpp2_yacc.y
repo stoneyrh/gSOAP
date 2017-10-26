@@ -88,8 +88,6 @@ Table *classtable = NULL,
       *booltable = NULL,
       *templatetable = NULL;
 
-const char *namespaceid = NULL;
-
 int     transient = 0;
 int     permission = 0;
 int     custom_header = 1;
@@ -265,7 +263,7 @@ s1      : /* empty */   {
                         }
         ;
 exts    : NAMESPACE ID '{' exts1 '}'
-                        { namespaceid = $2->name; }
+                        { set_namespace($2->name); }
         | exts1         { }
         ;
 exts1   : /* empty */   {

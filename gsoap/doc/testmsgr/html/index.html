@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">Test Messenger</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Aug 31 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Oct 26 2017 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -142,7 +142,7 @@ Client-side testing                                                   </h2>
 </pre><p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="options"></a>
 Options                                                               </h2>
-<pre class="fragment">testmsgr [-aact] [-b] [-c] [-h] [-i] [-j] [-lmax] [-mmax] [-nlen] [-ofile] [-pnum] [-qnum] [-rseed] [-tsec] [-v] [infile|-] [URL|port]
+<pre class="fragment">testmsgr [-aact] [-b] [-c] [-h] [-i] [-j] [-lmax] [-mmax] [-nlen] [-ofile] [-pnum] [-qnum] [-rseed] [-tsec] [-v] [-A] [-C] [-H] [-M] [infile|-] [URL|port]
 </pre><p>where the testmsgr command-line options are:</p>
 <table class="doxtable">
 <tr>
@@ -174,9 +174,17 @@ Options                                                               </h2>
 <tr>
 <td><code>-r seed</code> </td><td>randomize XML message templates (use soapcpp2 <code>-g</code>) </td></tr>
 <tr>
-<td><code>-t sec</code> </td><td>socket idle timeout seconds (default is one second) </td></tr>
+<td><code>-t sec</code> </td><td>socket idle timeout seconds (default=1) </td></tr>
 <tr>
 <td><code>-v</code> </td><td>verbose mode </td></tr>
+<tr>
+<td><code>-A</code> </td><td>use SOAP with MIME attachments (SwA) </td></tr>
+<tr>
+<td><code>-C</code> </td><td>use HTTP chunked transfers </td></tr>
+<tr>
+<td><code>-H</code> </td><td>add HTTP headers when no URL is specified </td></tr>
+<tr>
+<td><code>-M</code> </td><td>use MTOM (application/xop+xml) </td></tr>
 <tr>
 <td><code>-R rep</code> </td><td>set XML element sequence indicator tag (default=<code>__REPEAT</code>) </td></tr>
 <tr>
@@ -221,6 +229,14 @@ Options                                                               </h2>
 <p>Sets a socket idle timeout in seconds. The default is one second. A service is considered unresponsive when a socket timeout occurs while messages are exchanged.</p>
 <h3><code>-v</code></h3>
 <p>Enable verbose mode.</p>
+<h3><code>-A</code></h3>
+<p>Use SOAP with MIME attachments, also called SOAP with Attachments (SwA). This option generates a MIME message with SOAP Body and zero or more MIME attachments. When combined with option <code>-r</code>, a MIME attachment is added for each element with binary content (base64Binary XML element) specified in the template with <code>%[[BASE64]]%</code>. The template <code>%[[BASE64]]%</code> value is replaced with an <code>href</code> attribute referencing the MIME attachment with randomized content.</p>
+<h3><code>-C</code></h3>
+<p>Use HTTP chunked transfers.</p>
+<h3><code>-H</code></h3>
+<p>Add HTTP headers to the generated message even when no URL is specified on the command line.</p>
+<h3><code>-M</code></h3>
+<p>Use MTOM (application/xop+xml) messaging. This option generates a MIME message with SOAP Body and zero or more MTOM attachments in MIME format. When combined with option <code>-r</code>, a MIME attachment is added for each element with binary content (base64Binary XML element) specified in the template with <code>%[[BASE64]]%</code>. The template <code>%[[BASE64]]%</code> value is replaced with an <code>&lt;xop:Include xmlns:xop="http://www.w3.org/2004/08/xop/include"/&gt;</code> element with an <code>href</code> attribute referencing the MIME attachment with randomized content.</p>
 <h3><code>-R rep</code></h3>
 <p>Sets the XML element repetition indicator tag. The default is <code>__REPEAT</code>. See <a class="el" href="index.html#indicators">Element repetition and selection indicators </a>.</p>
 <h3><code>-S sel</code></h3>
@@ -302,7 +318,7 @@ Copyright                                                           </h1>
 Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Aug 31 2017 13:09:47 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Oct 26 2017 13:57:48 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

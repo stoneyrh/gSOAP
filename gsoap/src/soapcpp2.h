@@ -44,8 +44,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.54" /* Current version */
-# define GSOAP_VERSION 20854
+# define VERSION "2.8.55" /* Current version */
+# define GSOAP_VERSION 20855
 #endif
 
 #ifdef WIN32
@@ -396,6 +396,8 @@ extern Tnode *mktemplate(Tnode*, Symbol*);
 
 extern int is_transient(Tnode*);
 extern int is_response(Tnode*);
+
+extern void set_namespace(const char*);
 
 extern Table *typetable, *enumtable, *classtable, *booltable, *templatetable;
 

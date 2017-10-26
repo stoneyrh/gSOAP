@@ -48,6 +48,22 @@ int main(int argc, char **argv)
 { int m, s;
   struct soap soap;
   soap_init(&soap);
+#ifdef WITH_OPENSSL
+  if (soap_ssl_server_context(&soap,
+    SOAP_SSL_DEFAULT,	/* use SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION to verify clients: client must provide a key file e.g. "client.pem" and "password" */
+    "server.pem",	/* keyfile (cert+key): see README.txt to create this file */
+    "password",		/* password to read the private key in the key file */
+    "cacert.pem",	/* cacert file to store trusted certificates (to authenticate clients), see README.txt */
+    NULL,		/* capath */
+    "dh2048.pem",	/* DH file name or DH param key len bits in string (e.g. "2048"), if NULL then RSA with 2048 bits is used instead (bits defined by SOAP_SSL_RSA_BITS) */
+    NULL,		/* if randfile!=NULL: use a file with random data to seed randomness */ 
+    "sslserver"		/* server identification for SSL session cache (unique server name, e.g. use argv[0]) */
+  )
+  )
+  { soap_print_fault(&soap, stderr);
+    exit(1);
+  }
+#endif
   // cookie domain for CGI must be the current host name:
   // soap.cookie_domain = "www.cs.fsu.edu";
   // Cookie domain for stand-alone server:
@@ -74,8 +90,13 @@ int main(int argc, char **argv)
     for (int i = 1; ; i++)
     { s = soap_accept(&soap);
       if (s < 0)
-        exit(-1);
+        exit(1);
       fprintf(stderr, "%d: accepted %d IP=%d.%d.%d.%d ... ", i, s, (int)(soap.ip>>24)&0xFF, (int)(soap.ip>>16)&0xFF, (int)(soap.ip>>8)&0xFF, (int)soap.ip&0xFF);
+#ifdef WITH_OPENSSL
+      if (soap_ssl_accept(&soap))
+        soap_print_fault(&soap, stderr);
+      else
+#endif
       if (!soap_serve(&soap))
         fprintf(stderr, "served\n");
       else
@@ -115,6 +136,9 @@ int ck__demo(struct soap *soap, char **r)
   soap_set_cookie(soap, "demo", buf, NULL, NULL);
   // cookie expires in 5 seconds:
   soap_set_cookie_expire(soap, "demo", 5, NULL, NULL);
+#ifdef WITH_OPENSSL
+  soap_set_cookie_secure(soap, "demo", NULL, NULL);
+#endif
   if ((*r = (char*)soap_malloc(soap, strlen(buf)+1)))
     strcpy(*r, buf);
   return SOAP_OK;

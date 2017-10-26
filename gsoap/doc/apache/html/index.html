@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The Apache module for gSOAP</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sun Sep 17 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Sep 21 2017 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -142,10 +142,10 @@ Support").</p>
 <p>The <code>apxs</code> command is used to compile as follows, with the <code>-S CC=c++</code> option: </p><pre class="fragment">bin/apxs -a -c -S CC=c++ calcserver.cpp soapC.cpp soapcalcService.cpp stdsoap2.cpp
 chmod 755 .lib/calcserver.so
 </pre><p>This creates <code>.libs/calcserver.so</code> service module that is universally readable. Also make sure that <code>.libs/calcserver.so</code> is readable through the entire path, that is through <code>/home/username/apachegsoap/.libs</code>.</p>
-<p>The module should also be added to <code>httpd.conf</code>, as was explained above.</p>
+<p>After compilation, the new module should be added to <code>httpd.conf</code> as was explained above.</p>
 <p>When multiple service classes are defined, when <code>soapcpp2 -j</code> is applied to multiple <code>.h</code> files, then you have two options:</p>
 <ol type="1">
-<li>create an <code>.so</code> library for each service and add each module to <code>httpd.conf</code> with a new <code>Location</code> property.</li>
+<li>create an <code>.so</code> library for each service with the <code>apxs</code> command and add each module to <code>httpd.conf</code> with a new <code>Location</code> property.</li>
 <li>create one <code>.so</code> library with the services combined, all listening to the same service URL. Only one module is added to <code>httpd.conf</code> since the <code>Location</code> property is the same. Note that the <code>?wsdl</code> query is not as useful in this case, since we cannot publicize the service WSDLs combined.</li>
 </ol>
 <p>The second option requires C++ namespaces as explained in section "How to Chain
@@ -192,7 +192,7 @@ Further reading                                                    </h1>
 Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sun Sep 17 2017 10:14:08 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Sep 21 2017 10:42:14 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

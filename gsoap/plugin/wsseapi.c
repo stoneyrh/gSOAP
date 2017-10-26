@@ -409,17 +409,17 @@ verify that a token is signed by the signature of the Security header with:
 @code
     saml2__AssertionType *assertion2 = soap_wsse_get_saml2(soap);
     if (!assertion2 || soap_wsse_verify_element(soap, SOAP_NAMESPACE_OF_saml2, "Assertion") == 0)
-      ... error // no Assertion or Assertion not signed (zero Assertion elements signed)
+      ... error // no Assertion or Assertion not signed by WS-Security signature (zero Assertion elements signed)
 @endcode
 
-If the SAML token contains a signature and/or time range conditions then you
-should verify that the SAML token is valid after receiving it in a Security
-header block of a WS-Security message:
+If the SAML token received contains a signature and/or time range conditions
+then you should verify that the SAML token is valid after receiving it in a
+Security header block of a WS-Security message:
 
 @code
-    time_t now = time(NULL);
     if (saml2->saml2__Conditions)
     {
+      time_t now = time(NULL);
       if (saml2->saml2__Conditions->NotBefore && *saml2->saml2__Conditions->NotBefore > now)
         ... error // not valid yet
       if (saml2->saml2__Conditions->NotOnOrAfter && *saml2->saml2__Conditions->NotOnOrAfter <= now)
@@ -433,36 +433,59 @@ header block of a WS-Security message:
 The above assumes that a WS-Security message was received that was signed and
 decrypted (when applicable).
 
-To verify a SAML token that was created in memory with
-`int soap_wsse_add_saml1(struct soap*, const char *id)` or with
-`int soap_wsse_add_saml2(struct soap*, const char *id)` (see further below) or
-verify a SAML token that was received in a
-non-WS-Security message as XML payload, use the
-`int soap_wsse_verify_saml1(struct soap*, saml1__AssertionType *saml1)` or
-`int soap_wsse_verify_saml1(struct soap*, saml1__AssertionType *saml1)` function:
+@note The resolution of the dateTime values of `NotBefore` and `NotOnOrAfter`
+is determined by the clock resolution of `time_t`, which is usually seconds.
+To increase the resolution, edit `gsoap/import/saml2.h` and add
+`#import "custom/struct_timeval.h"`.  Then replace `time_t` in
+`gsoap/import/saml2.h` with `xsd__dateTime` to use `struct timeval`, which
+includes the time in seconds `tv_sec` and a microsecond offset `tv_usec`.
 
-@code
-    if (soap_wsse_verify_saml2(soap, saml2))
-      ... // error
-@endcode
-
-To add SAML 1.0 or SAML 2.0 assertions to the Security header block:
+To add a SAML token to the WS-Security headers, use
+`soap_wsse_add_saml1(struct soap*, const char *id)` or
+`soap_wsse_add_saml2(struct soap*, const char *id)`:
 
 @code
     time_t now = time(NULL);
     saml1__AssertionType *assertion1 = soap_wsse_add_saml1(soap, "SAML1");
+    if (!assertion1)
+      ... // error
     assertion1->IssueInstant = now;
     assertion1->Issuer = (char*)"MyCompany";
+    assertion1->saml1__Conditions = soap_new_saml1__ConditionsType(soap, -1);
+    if (!assertion1->saml1__Conditions)
+      ... // error
+    // valid from now for up to one hour
+    assertion1->saml1__Conditions->NotBefore = soap_new_dateTime(soap, -1)
+    if (!assertion1->saml1__Conditions->NotBefore)
+      ... // error
+    *assertion1->saml1__Conditions->NotBefore = now;
+    assertion1->saml1__Conditions->NotOnOrAfter = soap_new_dateTime(soap, -1)
+    if (!assertion1->saml1__Conditions->NotOnOrAfter)
+      ... // error
+    *assertion1->saml1__Conditions->NotOnOrAfter = now + 3600;
     ...
 @endcode
+
+and, respectively:
 
 @code
     time_t now = time(NULL);
     saml2__AssertionType *assertion2 = soap_wsse_add_saml2(soap, "SAML2");
+    if (!assertion2)
+      ... // error
     assertion2->IssueInstant = now;
     assertion2->saml2__Issuer = (struct saml2__NameIDType*)soap_malloc(soap, sizeof(struct saml2__NameIDType));
     soap_default_saml2__NameIDType(soap, assertion2->saml2__Issuer);
     assertion2->saml2__Issuer->__item = (char*)"MyCompany";
+    // valid from now for up to one hour
+    assertion2->saml2__Conditions->NotBefore = soap_new_dateTime(soap, -1)
+    if (!assertion2->saml2__Conditions->NotBefore)
+      ... // error
+    *assertion2->saml2__Conditions->NotBefore = now;
+    assertion2->saml2__Conditions->NotOnOrAfter = soap_new_dateTime(soap, -1)
+    if (!assertion2->saml2__Conditions->NotOnOrAfter)
+      ... // error
+    *assertion2->saml2__Conditions->NotOnOrAfter = now + 3600;
     ...
 @endcode
 
@@ -473,14 +496,25 @@ with a ds:Signature and X509 certificate added to the assertion to create an
 enveloped signature:
 
 @code
-    EVP_PKEY *rsa_private_key;
-    X509 *cert;
+    EVP_PKEY *rsa_private_key; // private key
+    X509 *cert;                // certificate (e.g. in "cacert.pem")
     ...
     saml2__AssertionType *assertion2 = soap_wsse_add_saml2(soap, "SAML2");
+    if (!assertion2)
+      ... // error
     ... // set SAML issuer, subject, conditions, statements, and attributes
     if (soap_wsse_sign_saml2(soap, assertion2, SOAP_SMD_SIGN_RSA_SHA256, private_key, 0, cert))
       ... error // could not sign and/or add cert to X509Data
+    soap->cafile = "cacert.pem"; // file that contains the public certificate
+    if (soap_wsse_verify_saml2(soap, assertion2))
+      ... error // coult not verify the signature, e.g. invalid key-certificate pair
 @endcode
+
+It is a good habit to verify a SAML token that was created in memory with
+`int soap_wsse_verify_saml1(struct soap*, saml1__AssertionType *saml1)` or
+`int soap_wsse_verify_saml2(struct soap*, saml2__AssertionType *saml2)` as
+shown.  This step is optional, but can be useful to detect if the private key
+and certificate are uncorrelated and should not be used.
 
 The private key and certificate values can be obtained as shown in Section
 @ref wsse_8_2a.
@@ -2197,6 +2231,8 @@ const char *c14n_wc_URI = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithC
 const char *exc_c14n_URI = "http://www.w3.org/2001/10/xml-exc-c14n#";
 const char *exc_c14n_wc_URI = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
 const char *wsu_URI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
+const char *saml1_URI = "urn:oasis:names:tc:SAML:1.0:assertion";
+const char *saml2_URI = "urn:oasis:names:tc:SAML:2.0:assertion";
 
 /******************************************************************************\
  *
@@ -4763,7 +4799,7 @@ soap_wsse_add_EncryptedKey_encrypt_only(struct soap *soap, int alg, const char *
 
 /**
 @fn int soap_wsse_verify_EncryptedKey(struct soap *soap)
-@brief Verifies the EncryptedKey header information (certificate validity requires soap->cacert to be set). Retrieves the decryption key from the token handler callback to decrypt the decryption key.
+@brief Verifies the EncryptedKey header information (certificate validity requires soap->cafile to be set). Retrieves the decryption key from the token handler callback to decrypt the decryption key.
 @param soap context
 @return SOAP_OK or error code
 */
@@ -5229,7 +5265,7 @@ soap_wsse_sign_saml1(struct soap *soap, saml1__AssertionType *assertion, int alg
   int err = SOAP_OK;
   if (!assertion)
     return SOAP_OK;
-  soap_set_omode(soap, SOAP_XML_CANONICAL);
+  soap_set_omode(soap, SOAP_XML_CANONICAL | SOAP_XML_CANONICAL_NA);
   soap_clr_omode(soap, SOAP_XML_INDENT);
   soap->version = 0;
   soap->encodingStyle = NULL;
@@ -5282,7 +5318,7 @@ soap_wsse_get_saml1(struct soap *soap)
 
 /**
 @fn int soap_wsse_verify_saml1(struct soap *soap, saml1__AssertionType *assertion)
-@brief Verifies the SAML 1.0 Assertion with its enveloped signature, requires soap->cacert specified.
+@brief Verifies the SAML 1.0 Assertion with its enveloped signature, requires soap->cafile to be set.
 @param soap context
 @param assertion SAML 1.0 assertion to verify
 @return SOAP_OK or error code
@@ -5298,7 +5334,7 @@ soap_wsse_verify_saml1(struct soap *soap, saml1__AssertionType *assertion)
   int err = SOAP_OK;
   _ds__Signature *signature = assertion->ds__Signature;
   assertion->ds__Signature = NULL;
-  soap_set_omode(soap, SOAP_XML_DOM);
+  soap_set_omode(soap, SOAP_XML_DOM | SOAP_XML_CANONICAL_NA);
   soap_clr_omode(soap, SOAP_XML_INDENT);
   soap->version = 0;
   soap->encodingStyle = NULL;
@@ -5370,7 +5406,7 @@ soap_wsse_sign_saml2(struct soap *soap, saml2__AssertionType *assertion, int alg
   int err = SOAP_OK;
   if (!assertion)
     return SOAP_OK;
-  soap_set_omode(soap, SOAP_XML_CANONICAL);
+  soap_set_omode(soap, SOAP_XML_CANONICAL | SOAP_XML_CANONICAL_NA);
   soap_clr_omode(soap, SOAP_XML_INDENT);
   soap->version = 0;
   soap->encodingStyle = NULL;
@@ -5422,7 +5458,7 @@ soap_wsse_get_saml2(struct soap *soap)
 
 /**
 @fn int soap_wsse_verify_saml2(struct soap *soap, saml2__AssertionType *assertion)
-@brief Verifies the SAML 2.0 Assertion with its enveloped signature, requires soap->cacert specified.
+@brief Verifies the SAML 2.0 Assertion with its enveloped signature, requires soap->cafile to be set.
 @param soap context
 @param assertion SAML 2.0 assertion to verify
 @return SOAP_OK or error code
@@ -5438,7 +5474,7 @@ soap_wsse_verify_saml2(struct soap *soap, saml2__AssertionType *assertion)
   int err = SOAP_OK;
   _ds__Signature *signature = assertion->ds__Signature;
   assertion->ds__Signature = NULL;
-  soap_set_omode(soap, SOAP_XML_DOM);
+  soap_set_omode(soap, SOAP_XML_DOM | SOAP_XML_CANONICAL_NA);
   soap_clr_omode(soap, SOAP_XML_INDENT);
   soap->version = 0;
   soap->encodingStyle = NULL;
@@ -6392,8 +6428,8 @@ soap_wsse_verify_body(struct soap *soap)
 @fn int soap_wsse_verify_with_signature(struct soap *soap, const ds__Signature *signature)
 @brief Verifies XML in DOM of a message that was parsed, using the provided signature, assuming dsig non-WS-Security usage scenarios, requires DOM of the XML message which is created automatically with WS-Security enabled.
 @param soap context
-@param signature points to signature structure or NULL
-@return SOAP_OK (signed) or SOAP_FAULT
+@param signature points to signature structure
+@return SOAP_OK (signed and verified) or error code
 */
 SOAP_FMAC1
 int

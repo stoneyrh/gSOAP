@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">wst__RequestedReferenceType Struct Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Apr 5 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Thu Sep 21 2017 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -82,10 +82,11 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>"http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestedReferenceType is a complexType. </p>
 <p>struct <a class="el" href="structwst_____requested_reference_type.html" title="&quot;http://docs.oasis-open.org/ws-sx/ws-trust/200512/&quot;:RequestedReferenceType is a complexType. ">wst__RequestedReferenceType</a> operations:</p><ul>
-<li>soap_default_wst__RequestedReferenceType(soap*, wst__RequestedReferenceType*) reset members to default</li>
-<li>int soap_read_wst__RequestedReferenceType(soap*, wst__RequestedReferenceType*) deserialize from a source</li>
-<li>int soap_write_wst__RequestedReferenceType(soap*, wst__RequestedReferenceType*) serialize to a sink</li>
-<li>wst__RequestedReferenceType* soap_dup_wst__RequestedReferenceType(soap*, wst__RequestedReferenceType* dst, wst__RequestedReferenceType &lt;em&gt;src) returns deep copy of <a class="el" href="structwst_____requested_reference_type.html" title="&quot;http://docs.oasis-open.org/ws-sx/ws-trust/200512/&quot;:RequestedReferenceType is a complexType. ">wst__RequestedReferenceType</a> src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)</li>
+<li>wst__RequestedReferenceType* soap_new_wst__RequestedReferenceType(struct soap*, int num) allocate and default initialize one or more values (array)</li>
+<li>soap_default_wst__RequestedReferenceType(struct soap*, wst__RequestedReferenceType*) default initialize members</li>
+<li>int soap_read_wst__RequestedReferenceType(struct soap*, wst__RequestedReferenceType*) deserialize from a source</li>
+<li>int soap_write_wst__RequestedReferenceType(struct soap*, wst__RequestedReferenceType*) serialize to a sink</li>
+<li>wst__RequestedReferenceType* soap_dup_wst__RequestedReferenceType(struct soap*, wst__RequestedReferenceType* dst, wst__RequestedReferenceType &lt;em&gt;src) returns deep copy of <a class="el" href="structwst_____requested_reference_type.html" title="&quot;http://docs.oasis-open.org/ws-sx/ws-trust/200512/&quot;:RequestedReferenceType is a complexType. ">wst__RequestedReferenceType</a> src into dst, copies the (cyclic) graph structure when a context is provided, or (cycle-pruned) tree structure with soap_set_mode(soap, SOAP_XML_TREE) (use soapcpp2 -Ec)</li>
 <li>soap_del_wst__RequestedReferenceType(<a class="el" href="structwst_____requested_reference_type.html" title="&quot;http://docs.oasis-open.org/ws-sx/ws-trust/200512/&quot;:RequestedReferenceType is a complexType. ">wst__RequestedReferenceType</a>) deep deletes <a class="el" href="structwst_____requested_reference_type.html" title="&quot;http://docs.oasis-open.org/ws-sx/ws-trust/200512/&quot;:RequestedReferenceType is a complexType. ">wst__RequestedReferenceType</a> data members, use only on dst after soap_dup_wst__RequestedReferenceType(NULL, wst__RequestedReferenceType *dst, wst__RequestedReferenceType *src) (use soapcpp2 -Ed) </li>
 </ul>
 </div><h2 class="groupheader">Member Data Documentation</h2>
@@ -113,7 +114,7 @@ Public Attributes</h2></td></tr>
 Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Apr 5 2017 18:33:27 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Thu Sep 21 2017 16:45:35 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

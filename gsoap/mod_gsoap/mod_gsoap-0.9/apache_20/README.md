@@ -309,13 +309,14 @@ This creates `.libs/calcserver.so` service module that is universally readable.
 Also make sure that `.libs/calcserver.so` is readable through the entire path,
 that is through `/home/username/apachegsoap/.libs`.
 
-The module should also be added to `httpd.conf`, as was explained above.
+After compilation, the new module should be added to `httpd.conf` as was
+explained above.
 
 When multiple service classes are defined, when `soapcpp2 -j` is applied to
 multiple `.h` files, then you have two options:
 
--# create an `.so` library for each service and add each module to `httpd.conf`
-   with a new `Location` property.
+-# create an `.so` library for each service with the `apxs` command and add
+   each module to `httpd.conf` with a new `Location` property.
 -# create one `.so` library with the services combined, all listening to the
    same service URL. Only one module is added to `httpd.conf` since the
    `Location` property is the same. Note that the `?wsdl` query is not as

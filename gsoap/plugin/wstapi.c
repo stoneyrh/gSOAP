@@ -195,7 +195,8 @@ NULL, `password` to authenticate or NULL, `saml1` if non-NULL, requests SAML
 received, `saml2` if non-NULL, requests SAML 2.0 and upon return points to a
 pointer that is set to the SAML 2.0 assertion received.
 
-Returns `SOAP_OK` on success with `saml1` or `saml2` set and verified.
+Returns `SOAP_OK` on success when the assertion could be verified, with `saml1`
+or `saml2` set.
 
 For example:
 
@@ -243,7 +244,7 @@ For example:
         {
           if (saml2->__union_AssertionType[i].saml2__Statement)
           {
-            // left out
+            // omitted from displaying
           }
           if (saml2->__union_AssertionType[i].saml2__AuthnStatement)
           {
@@ -255,7 +256,7 @@ For example:
           }
           if (saml2->__union_AssertionType[i].saml2__AuthzDecisionStatement)
           {
-            // left out
+            // omitted from displaying
           }
           if (saml2->__union_AssertionType[i].saml2__AttributeStatement)
           {
@@ -288,6 +289,18 @@ For example:
     soap_destroy(soap);
     soap_end(soap);
     soap_free(soap);
+@endcode
+
+This prints several of the assertion's properties, including the conditions
+under which the assertion is valid.  The `NotBefore` and `NotOnOrAfter`
+conditions can be checked against the current time as follows:
+
+@code
+    time_t now = time(NULL);
+    if (saml2->saml2__Conditions->NotBefore && *saml2->saml2__Conditions->NotBefore > now)
+      ... error // not valid yet
+    if (saml2->saml2__Conditions->NotOnOrAfter && *saml2->saml2__Conditions->NotOnOrAfter <= now)
+      ... error // expired
 @endcode
 
 @subsection wst_soap_wst_request_psha1_token
@@ -450,7 +463,7 @@ extern "C" {
 
 /**
 @fn int soap_wst_request_saml_token(struct soap *soap, const char *endpoint, int soapver, const char *applyto, const char *username, const char *password, saml1__AssertionType **saml1, saml2__AssertionType **saml2)
-@brief Request SAML 1.0 or SAML 2.0 token.
+@brief Request SAML 1.0 or SAML 2.0 token.  Verifies the SAML signature, which requires soap->cafile to be set.   Does not verify the conditions of the SAML token, such as NotBefore and NotOnOrAfter, which has to be done explicitly as shown in the documentation.
 @param soap context
 @param endpoint service endpoint URL (send to)
 @param soapver SOAP version 1 = SOAP 1.1, 2 = SOAP 1.2 (recommended)
@@ -520,11 +533,18 @@ soap_wst_request_saml_token(struct soap *soap, const char *endpoint, int soapver
     else if (saml2 && !strcmp(response.TokenType, "urn:oasis:names:tc:SAML:2.0:assertion"))
       *saml2 = response.RequestedSecurityToken->saml2__Assertion;
   }
-  /* verify assertion using the enveloped signature that contains a X509 certificate */
-  if (saml1 && *saml1 && soap_wsse_verify_with_signature(soap, (*saml1)->ds__Signature))
-    return soap->error;
-  if (saml2 && *saml2 && soap_wsse_verify_with_signature(soap, (*saml2)->ds__Signature))
-    return soap->error;
+  if (saml1 && *saml1)
+  {
+    /* verify assertion using the enveloped signature that contains a X509 certificate */
+    if (soap_wsse_verify_with_signature(soap, (*saml1)->ds__Signature))
+      return soap->error;
+  }
+  else if (saml2 && *saml2)
+  {
+    /* verify assertion using the enveloped signature that contains a X509 certificate */
+    if (soap_wsse_verify_with_signature(soap, (*saml2)->ds__Signature))
+      return soap->error;
+  }
   return SOAP_OK;
 }
 

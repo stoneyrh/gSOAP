@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.54
+        stdsoap2.h 2.8.55
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20854
+#define GSOAP_VERSION 20855
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -827,6 +827,18 @@ extern intmax_t __strtoull(const char*, char**, int);
   extern int h_errno;
 #endif
 
+#ifdef HAVE_GETTIMEOFDAY
+# ifndef WIN32
+#  ifdef VXWORKS
+#   ifdef _WRS_KERNEL
+#    include <sys/times.h>
+#   endif
+# else
+#   include <sys/time.h>                /* for timeval and gettimeofday() */
+#  endif
+# endif
+#endif
+
 #ifndef WITH_NOIO
 # ifndef WIN32
 #  ifndef PALM
@@ -850,8 +862,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #    ifdef _WRS_KERNEL
 #     include <sys/times.h>
 #    endif
-#   else
-#    include <sys/time.h>
 #   endif
 #   include <netinet/in.h>
 #   ifdef OS390
@@ -2053,10 +2063,14 @@ class soap_multipart_iterator
     { return (bool)(content == iter.content); }
   bool operator!=(const soap_multipart_iterator& iter) const
     { return (bool)(content != iter.content); }
-  struct soap_multipart &operator*() const
+  struct soap_multipart& operator*() const
     { return *content; }
-  soap_multipart_iterator &operator++()
+  struct soap_multipart *operator->() const
+    { return content; }
+  soap_multipart_iterator& operator++()
     { content = soap_next_multipart(content); return *this; }
+  soap_multipart_iterator operator++(int)
+    { soap_multipart_iterator iter(*this); content = soap_next_multipart(content); return iter; }
   soap_multipart_iterator() : content(NULL)
     { }
   soap_multipart_iterator(struct soap_multipart *p) : content(p)
@@ -3149,9 +3163,9 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_pointer_enter(struct soap*, const void *p, const 
 SOAP_FMAC1 int SOAP_FMAC2 soap_array_pointer_lookup(struct soap*, const void *p, const void *a, int n, int t, struct soap_plist**);
 #ifndef WITH_NOIDREF
 SOAP_FMAC1 int SOAP_FMAC2 soap_pointer_lookup_id(struct soap*, void *p, int t, struct soap_plist**);
-SOAP_FMAC1 int SOAP_FMAC2 soap_embed(struct soap *soap, const void *p, const void *a, int n, int type);
+SOAP_FMAC1 int SOAP_FMAC2 soap_embed(struct soap *soap, const void *p, const void *a, int n, int t);
 SOAP_FMAC1 struct soap_ilist* SOAP_FMAC2 soap_lookup(struct soap*, const char*);
-SOAP_FMAC1 struct soap_ilist* SOAP_FMAC2 soap_enter(struct soap*, const char*, int, size_t);
+SOAP_FMAC1 struct soap_ilist* SOAP_FMAC2 soap_enter(struct soap*, const char*, int t, size_t n);
 SOAP_FMAC1 int SOAP_FMAC2 soap_resolve(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_embedded(struct soap*, const void *p, int t);
 SOAP_FMAC1 int SOAP_FMAC2 soap_reference(struct soap*, const void *p, int t);
@@ -3204,7 +3218,7 @@ SOAP_FMAC1 void* SOAP_FMAC2 soap_id_forward(struct soap*, const char *id, void *
 SOAP_FMAC1 int SOAP_FMAC2 soap_id_nullify(struct soap*, const char*);
 #endif
 SOAP_FMAC1 void* SOAP_FMAC2 soap_id_enter(struct soap*, const char *id, void *p, int t, size_t n, const char *type, const char *arrayType, void *(*finstantiate)(struct soap*, int, const char*, const char*, size_t*), int (*fbase)(int, int));
-SOAP_FMAC1 void** SOAP_FMAC2 soap_id_smart(struct soap *soap, const char*, int, size_t);
+SOAP_FMAC1 void** SOAP_FMAC2 soap_id_smart(struct soap *soap, const char*, int t, size_t n);
 
 SOAP_FMAC1 size_t SOAP_FMAC2 soap_size(const int *, int);
 SOAP_FMAC1 size_t SOAP_FMAC2 soap_getsizes(const char *, int *, int);
@@ -3502,6 +3516,7 @@ SOAP_FMAC1 extern char* SOAP_FMAC2 soap_cookie_value(struct soap*, const char*, 
 SOAP_FMAC1 extern char* SOAP_FMAC2 soap_env_cookie_value(struct soap*, const char*, const char*, const char*);
 SOAP_FMAC1 extern time_t SOAP_FMAC2 soap_cookie_expire(struct soap*, const char*, const char*, const char*);
 SOAP_FMAC1 extern int SOAP_FMAC2 soap_set_cookie_expire(struct soap*, const char*, long, const char*, const char*);
+SOAP_FMAC1 extern int SOAP_FMAC2 soap_set_cookie_secure(struct soap*, const char*, const char*, const char*);
 SOAP_FMAC1 extern int SOAP_FMAC2 soap_set_cookie_session(struct soap*, const char*, const char*, const char*);
 SOAP_FMAC1 extern int SOAP_FMAC2 soap_clr_cookie_session(struct soap*, const char*, const char*, const char*);
 SOAP_FMAC1 extern void SOAP_FMAC2 soap_clr_cookie(struct soap*, const char*, const char*, const char*);

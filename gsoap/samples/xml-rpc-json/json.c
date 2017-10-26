@@ -869,11 +869,15 @@ bool json_eqv(const value& x, const value& y)
       {
         const _struct& s = x;
         const _struct& t = y;
-        _struct::iterator i = s.begin();
-        _struct::iterator j = t.begin();
-        for ( ; i != s.end(); ++i, ++j)
-          if (strcmp(i.name(), j.name()) || *i != *j)
-            return false;
+        for (_struct::iterator i = s.begin(); i != s.end(); ++i)
+	{
+	  _struct::iterator j;
+	  for (j = t.begin(); j != t.end(); ++j)
+	    if (!strcmp(i.name(), j.name()))
+	      break;
+	  if (j == t.end() || *i != *j)
+	    return false;
+	}
         return true;
       }
     case SOAP_TYPE__array:

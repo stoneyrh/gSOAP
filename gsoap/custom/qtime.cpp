@@ -53,6 +53,12 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 #include "soapH.h"
 
+static void * instantiate_xsd__time(struct soap*, int, const char*, const char*, size_t*);
+
+static int delete_xsd__time(struct soap_clist*);
+
+static void copy_xsd__time(struct soap*, int, int, void*, size_t, const void*, void**);
+
 void soap_serialize_xsd__time(struct soap *soap, QTime const *a)
 {
   (void)soap; (void)a; /* appease -Wall -Werror */
@@ -84,10 +90,10 @@ QTime *soap_in_xsd__time(struct soap *soap, char const *tag, QTime *a, char cons
     soap_revert(soap);
     return NULL;
   }
-  a = (QTime*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__time, sizeof(QTime), NULL, NULL, NULL, NULL);
+  a = (QTime*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__time, sizeof(QTime), NULL, NULL, instantiate_xsd__time, NULL);
   if (*soap->href)
   {
-    a = (QTime*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__time, 0, sizeof(QTime), 0, NULL, NULL);
+    a = (QTime*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__time, 0, sizeof(QTime), 0, copy_xsd__time, NULL);
   }
   else if (a)
   {
@@ -175,8 +181,8 @@ int soap_s2xsd__time(struct soap *soap, const char *s, QTime *a)
         }
         if (*t)
           return soap->error = SOAP_TYPE;
-        a->addSecs(-mins*60);
-        a->addSecs(-hrs*3600);
+        (void)a->addSecs(-mins*60);
+        (void)a->addSecs(-hrs*3600);
       }
       else if (*t != 'Z')
       {
@@ -190,4 +196,47 @@ int soap_s2xsd__time(struct soap *soap, const char *s, QTime *a)
     }
   }
   return soap->error;
+}
+
+static void * instantiate_xsd__time(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xsd__time(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+  struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_xsd__time, n, delete_xsd__time);
+  (void)type; (void)arrayType; /* appease -Wall -Werror */
+  if (!cp)
+    return NULL;
+  if (n < 0)
+  {	cp->ptr = SOAP_NEW(QTime);
+    if (size)
+      *size = sizeof(QTime);
+  }
+  else
+  {	cp->ptr = SOAP_NEW_ARRAY(QTime, n);
+    if (size)
+      *size = n * sizeof(QTime);
+  }
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+  if (!cp->ptr)
+    soap->error = SOAP_EOM;
+  return (QTime*)cp->ptr;
+}
+
+static int delete_xsd__time(struct soap_clist *p)
+{
+  if (p->type == SOAP_TYPE_xsd__time)
+  {
+    if (p->size < 0)
+      SOAP_DELETE(static_cast<QTime*>(p->ptr));
+    else
+      SOAP_DELETE_ARRAY(static_cast<QTime*>(p->ptr));
+    return SOAP_OK;
+  }
+  return SOAP_ERR;
+}
+
+static void copy_xsd__time(struct soap *soap, int st, int tt, void *p, size_t index, const void *q, void **x)
+{
+  (void)soap; (void)st; (void)tt; (void)index; (void)x; /* appease -Wall -Werror */
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying QTime %p -> %p\n", q, p));
+  *(QTime*)p = *(QTime*)q;
 }
