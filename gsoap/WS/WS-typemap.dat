@@ -436,10 +436,10 @@ _xenc__EncryptedKey = | xenc__EncryptedKeyType
 ################################################################################
 
 saml1__AssertionType = $\
-@char*                                wsu__Id                        1;	///< Optional attribute.
+@char*                                wsu__Id                        0;	///< Optional attribute.
 
 saml2__AssertionType = $\
-@char*                                wsu__Id                        1;	///< Optional attribute.
+@char*                                wsu__Id                        0;	///< Optional attribute.
 
 ################################################################################
 #

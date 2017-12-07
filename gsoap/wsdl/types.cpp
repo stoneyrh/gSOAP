@@ -35,6 +35,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 static char *getline(char *s, size_t n, FILE *fd);
 static const char *nonblank(const char *s);
+static bool isdelim(int c);
 static const char *fill(char *t, int n, const char *s, int e);
 static const char *utf8(char **t, const char *s, bool start);
 static const char *cstring(const char *s);
@@ -276,7 +277,10 @@ int Types::read(const char *file)
             if (*def)
             {
               if (strcmp(def, "..."))
+              {
                 deftypemap[s] = estrdup(def);
+                ctypemap[s] = ctype(def);
+              }
             }
             else
               deftypemap[s] = "";
@@ -447,6 +451,8 @@ void Types::init()
     else
       deftypemap["xsd__boolean"] = "enum xsd__boolean { xsd__boolean__false_, xsd__boolean__true_ };";
     usetypemap["xsd__boolean"] = "enum xsd__boolean";
+    defename("xsd__boolean", "false", false);
+    defename("xsd__boolean", "true", false);
   }
   else
   {
@@ -526,8 +532,13 @@ void Types::init()
   }
   if (cflag)
   {
-    deftypemap["SOAP_ENC__boolean"] = "enum SOAP_ENC__boolean { false_, true_ };";
+    if (eflag)
+      deftypemap["SOAP_ENC__boolean"] = "enum SOAP_ENC__boolean { false__, true__ };";
+    else
+      deftypemap["SOAP_ENC__boolean"] = "enum SOAP_ENC__boolean { SOAP_ENC__boolean__false_, SOAP_ENC__boolean__true_ };";
     usetypemap["SOAP_ENC__boolean"] = "enum SOAP_ENC__boolean";
+    defename("SOAP_ENC__boolean", "false", false);
+    defename("SOAP_ENC__boolean", "true", false);
   }
   else
   {
@@ -1093,8 +1104,13 @@ const char *Types::deftname(enum Type type, bool mk_pointer, bool is_pointer, co
         knames.insert(t);
       break;
     case CLASS:
+      knames.insert(t);
+      break;
     case TYPEDEF:
       knames.insert(t);
+      if (base)
+        ctypemap[t] = ctype(base);
+      break;
     default:
       break;
   }
@@ -1147,26 +1163,7 @@ const char *Types::ename(const char *type, const char *value, bool isqname)
     return fname(NULL, NULL, value, NULL, NOLOOKUP, isqname);
   const char *s = enames[Pair(type,value)];
   if (!s)
-  {
-    s = fname(NULL, NULL, value, &rnames, NOLOOKUP, isqname);
-    if (!eflag && type && *type)
-    {
-      // Add prefix to enum
-      if (!*s || (s[0] == '_' && s[1] == '\0'))
-        s = "_x0000";
-      size_t l = strlen(type) + strlen(s);
-      char *buf = (char*)emalloc(l + 3);
-      // _xXXXX is OK here
-      if (s[0] == '_' && s[1] != 'x' && strncmp(s, "_USCORE", 7))
-        (SOAP_SNPRINTF(buf, l + 3, l + 1), "%s_%s", type, s);
-      else
-        (SOAP_SNPRINTF(buf, l + 3, l + 2), "%s__%s", type, s);
-      s = buf;
-    }
-    else
-      rnames.insert(s);
-    enames[Pair(type,value)] = s;
-  }
+    return defename(type, value, isqname);
   return s;
 }
 
@@ -1313,6 +1310,30 @@ const char *Types::vname(const char *var)
   if (i != usetypemap.end())
     return (*i).second;
   return var;
+}
+
+// set enumeration value. URI/type refers to the enum simpleType.
+const char *Types::defename(const char *type, const char *value, bool isqname)
+{
+  const char *s = fname(NULL, NULL, value, &rnames, NOLOOKUP, isqname);
+  if (!eflag && type && *type)
+  {
+    // Add prefix to enum
+    if (!*s || (s[0] == '_' && s[1] == '\0'))
+      s = "_x0000";
+    size_t l = strlen(type) + strlen(s);
+    char *buf = (char*)emalloc(l + 3);
+    // _xXXXX is OK here
+    if (s[0] == '_' && s[1] != 'x' && strncmp(s, "_USCORE", 7))
+      (SOAP_SNPRINTF(buf, l + 3, l + 1), "%s_%s", type, s);
+    else
+      (SOAP_SNPRINTF(buf, l + 3, l + 2), "%s__%s", type, s);
+    s = buf;
+  }
+  else
+    rnames.insert(s);
+  enames[Pair(type,value)] = s;
+  return s;
 }
 
 // checks if nillable or minOccurs=0
@@ -1820,82 +1841,32 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
             fprintf(stream, "\"");
           }
           // add range info only when type is numeric
-          bool is_numeric_type = false, is_unsigned_type = false, is_long_type = false, is_double_type = false, is_float_type = false;
-          if (!strncmp(s, "signed ", 7))
-          {
-            s += 7;
-          }
-          else if (!strncmp(s, "unsigned ", 9))
-          {
-            s += 9;
-            is_unsigned_type = true;
-          }
-          if (!strncmp(s, "long ", 5))
-          {
-            s += 5;
-            is_long_type = true;
-          }
-          else if (!strncmp(s, "short ", 6))
-          {
-            s += 6;
-          }
-          if (!strncmp(s, "xsd__unsigned", 13))
-          {
-            s += 13;
-            is_unsigned_type = true;
-          }
-          else if (!strncmp(s, "xsd__", 5))
-          {
-            s += 5;
-          }
-          if (!strcmp(s, "float"))
-            is_numeric_type = is_float_type = true;
-          else if (!strcmp(s, "double"))
-            is_numeric_type = is_float_type = is_double_type = true;
-          else if (!strcmp(s, "bool")
-           || !strcmp(s, "byte")
-           || !strcmp(s, "Byte")
-           || !strcmp(s, "char")
-           || !strcmp(s, "int")
-           || !strcmp(s, "Int")
-           || !strcmp(s, "short")
-           || !strcmp(s, "Short"))
-            is_numeric_type = true;
-          else if (!strcmp(s, "LONG64")
-           || !strcmp(s, "long")
-           || !strcmp(s, "Long"))
-            is_numeric_type = is_long_type = true;
-          else if (!strcmp(s, "ULONG64"))
-            is_numeric_type = is_unsigned_type = is_long_type = true;
+          CType type = ctype(s);
           if (!anonymous && *format)
           {
-            if (is_double_type)
+            if (type == CTLONGDOUBLE)
             {
-              if (is_long_type)
-                fprintf(stream, " \"%%%sLf\"", format);
-              else
-                fprintf(stream, " \"%%%slf\"", format);
+              fprintf(stream, " \"%%%sLf\"", format);
             }
-            else if (is_float_type)
+            else if (type == CTFLOAT || type == CTDOUBLE)
             {
               fprintf(stream, " \"%%%sf\"", format);
             }
-            else if (is_numeric_type)
+            else if (type == CTINT)
             {
-              if (is_unsigned_type)
-              {
-                if (is_long_type)
-                  fprintf(stream, " \"%%%sllu\"", format);
-                else
-                  fprintf(stream, " \"%%%su\"", format);
-              }
-              else
-              {
-                if (is_long_type)
-                  fprintf(stream, " \"%%%slld\"", format);
-                else
-                  fprintf(stream, " \"%%%sd\"", format);
-              }
+              fprintf(stream, " \"%%%sd\"", format);
+            }
+            else if (type == CTUINT)
+            {
+              fprintf(stream, " \"%%%su\"", format);
+            }
+            else if (type == CTLONG)
+            {
+              fprintf(stream, " \"%%%slld\"", format);
+            }
+            else if (type == CTULONG)
+            {
+              fprintf(stream, " \"%%%sllu\"", format);
             }
           }
           if (!anonymous
@@ -1906,25 +1877,25 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
                 && simpleType.restriction->minLength
                 && simpleType.restriction->minLength->value)
             fprintf(stream, " %s", simpleType.restriction->minLength->value);
-          else if (is_float_type
+          else if ((type == CTFLOAT || type == CTDOUBLE || type == CTLONGDOUBLE)
                 && !anonymous
                 && simpleType.restriction->minInclusive
                 && simpleType.restriction->minInclusive->value
                 && is_float(simpleType.restriction->minInclusive->value))
             fprintf(stream, " %s", simpleType.restriction->minInclusive->value);
-          else if (is_numeric_type
+          else if ((type == CTINT || type == CTUINT || type == CTLONG || type == CTULONG)
                 && !anonymous
                 && simpleType.restriction->minInclusive
                 && simpleType.restriction->minInclusive->value
                 && is_integer(simpleType.restriction->minInclusive->value))
             fprintf(stream, " %s", simpleType.restriction->minInclusive->value);
-          else if (is_float_type
+          else if ((type == CTFLOAT || type == CTDOUBLE || type == CTLONGDOUBLE)
                 && !anonymous
                 && simpleType.restriction->minExclusive
                 && simpleType.restriction->minExclusive->value
                 && is_float(simpleType.restriction->minExclusive->value))
             fprintf(stream, " %s <", simpleType.restriction->minExclusive->value);
-          else if (is_numeric_type
+          else if ((type == CTINT || type == CTUINT || type == CTLONG || type == CTULONG)
                 && !anonymous
                 && simpleType.restriction->minExclusive
                 && simpleType.restriction->minExclusive->value
@@ -1948,25 +1919,25 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
                 && simpleType.restriction->maxLength
                 && simpleType.restriction->maxLength->value)
             fprintf(stream, " : %s", simpleType.restriction->maxLength->value);
-          else if (is_float_type
+          else if ((type == CTFLOAT || type == CTDOUBLE || type == CTLONGDOUBLE)
                 && !anonymous
                 && simpleType.restriction->maxInclusive
                 && simpleType.restriction->maxInclusive->value
                 && is_float(simpleType.restriction->maxInclusive->value))
             fprintf(stream, " : %s", simpleType.restriction->maxInclusive->value);
-          else if (is_numeric_type
+          else if ((type == CTINT || type == CTUINT || type == CTLONG || type == CTULONG)
                 && !anonymous
                 && simpleType.restriction->maxInclusive
                 && simpleType.restriction->maxInclusive->value
                 && is_integer(simpleType.restriction->maxInclusive->value))
             fprintf(stream, " : %s", simpleType.restriction->maxInclusive->value);
-          else if (is_float_type
+          else if ((type == CTFLOAT || type == CTDOUBLE || type == CTLONGDOUBLE)
                 && !anonymous
                 && simpleType.restriction->maxExclusive
                 && simpleType.restriction->maxExclusive->value
                 && is_float(simpleType.restriction->maxExclusive->value))
             fprintf(stream, " :< %s", simpleType.restriction->maxExclusive->value);
-          else if (is_numeric_type
+          else if ((type == CTINT || type == CTUINT || type == CTLONG || type == CTULONG)
                 && !anonymous
                 && simpleType.restriction->maxExclusive
                 && simpleType.restriction->maxExclusive->value
@@ -2810,8 +2781,9 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
   const char *default_ = attribute.default_;
   const char *default__ = attribute.default__;
   const char *fixed = attribute.fixed;
+  const char *fixed_ = attribute.fixed_;
   const char *nameURI = NULL, *typeURI = NULL, *nameprefix = NULL, *typeprefix = NULL;
-  bool is_optional = attribute.use != required && !default_ && !fixed;
+  bool is_optional = attribute.use != required && (!default_ || Dflag) && !fixed;
   document(attribute.annotation);
   if (!URI)
     URI = attribute.schemaPtr()->targetNamespace;
@@ -2848,8 +2820,11 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
     if (!fixed)
     {
       fixed = attribute.attributePtr()->fixed;
+      fixed_ = attribute.attributePtr()->fixed_;
     }
-    if (default_ || fixed)
+    if (default_)
+      is_optional = attribute.attributePtr()->use != required && (Dflag != 0);
+    else if (fixed)
       is_optional = false;
     else if (is_optional)
       is_optional = attribute.attributePtr()->use != required;
@@ -2920,23 +2895,22 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
     fprintf(stream, "/// Attribute \"%s\" has no type or ref: assuming string content.\n", name ? name : "");
     fprintf(stream, attributeformat, pname(is_optional, true, NULL, NULL, type), aname(NULL, nameURI, name));
   }
+  const char *s;
   switch (attribute.use)
   {
     case prohibited:
       fprintf(stream, " 0:0");
+      s = "Prohibited attribute";
       break;
     case required:
       fprintf(stream, " 1");
+      s = "Required attribute";
       break;
     default:
       fprintf(stream, " 0");
+      s = "Optional attribute";
       break;
   }
-  const char *s = "Optional attribute";
-  if (attribute.use == required)
-    s = "Required attribute";
-  else if (attribute.use == prohibited)
-    s = "Prohibited attribute";
   if (default_)
   {
     gendefault(typeURI ? typeURI : URI, type, name, attribute.simpleTypePtr(), default_, default__, "=");
@@ -2944,7 +2918,7 @@ void Types::gen(const char *URI, const xs__attribute& attribute)
   }
   else if (fixed)
   {
-    gendefault(typeURI ? typeURI : URI, type, name, attribute.simpleTypePtr(), fixed, fixed, "==");
+    gendefault(typeURI ? typeURI : URI, type, name, attribute.simpleTypePtr(), fixed, fixed_, "==");
     fprintf(stream, ";\t///< %s with fixed value=\"%s\".\n", s, fixed);
   }
   else
@@ -3141,6 +3115,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
   const char *default_ = element.default_;
   const char *default__ = element.default__;
   const char *fixed = element.fixed;
+  const char *fixed_ = element.fixed_;
   const char *min = minOccurs;
   const char *max = maxOccurs;
   bool nillable = element.nillable;
@@ -3189,6 +3164,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       if (!fixed)
       {
         fixed = element.elementPtr()->fixed;
+        fixed_ = element.elementPtr()->fixed_;
       }
     }
     if (!nillable)
@@ -3533,7 +3509,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     else if (fixed)
     {
       if ((!min || !strcmp(min, "0") || !strcmp(min, "1")) && (!max || !strcmp(max, "0") || !strcmp(max, "1"))) // min/maxOccurs <= "0"
-        gendefault(typeURI ? typeURI : URI, type, name, element.simpleTypePtr(), fixed, fixed, "==");
+        gendefault(typeURI ? typeURI : URI, type, name, element.simpleTypePtr(), fixed, fixed_, "==");
       fprintf(stream, ";\t///< %s with fixed value=\"%s\".\n", s, fixed);
     }
     else
@@ -4125,94 +4101,159 @@ void Types::gendefault(const char *URI, const char *type, const char *name, xs__
   }
   if (!t)
     return;
-  const char *s = NULL;
-  bool d = false;
-  MapOfStringToString::const_iterator i = deftypemap.find(t);
-  if (i != deftypemap.end())
+  switch (ctype(t))
   {
-    s = (*i).second;
-    if (s && !strncmp(s, "typedef ", 8))
-    {
-      s += 8;
-      d = true;
-    }
+    case CTNONE:
+      if (comment_nest == 0)
+	fprintf(stream, " /* @warning: cannot assign default/fixed value to this type */");
+      break;
+    case CTBOOL:
+    case CTINT:
+    case CTUINT:
+    case CTLONG:
+    case CTULONG:
+    case CTFLOAT:
+    case CTDOUBLE:
+    case CTLONGDOUBLE:
+      fprintf(stream, " %s %s", a, v);
+      break;
+    case CTENUM:
+      if ((v = enames[Pair(t, v)]))
+        fprintf(stream, " %s %s", a, v);
+      break;
+    case CTSTRING:
+    case CTWSTRING:
+      fprintf(stream, " %s \"%s\"", a, cstring(v));
+      break;
+    case CTQNAME:
+    case CTWQNAME:
+      fprintf(stream, " %s \"%s\"", a, cstring(q));
+      break;
+  }
+}
+
+CType Types::ctype(const char *t)
+{
+  MapOfStringToCType::const_iterator i = ctypemap.find(t);
+  if (i != ctypemap.end())
+    return (*i).second;
+  CType type = CTINT;
+  const char *s = NULL;
+  MapOfStringToString::const_iterator j = deftypemap.find(t);
+  if (j != deftypemap.end())
+  {
+    s = (*j).second;
+    if (s && !strncmp(s, "typedef", 7) && isdelim(s[7]))
+      s = nonblank(s + 7);
   }
   if (!s || !*s)
   {
-    i = usetypemap.find(t);
-    if (i != usetypemap.end())
-      s = (*i).second;
+    j = usetypemap.find(t);
+    if (j != usetypemap.end())
+      s = (*j).second;
     if (!s)
       s = t;
   }
-  if (!strncmp(s, "signed ", 7))
-    s += 7;
-  else if (!strncmp(s, "unsigned ", 9))
-    s += 9;
-  while (isspace(*s))
-    ++s;
-  if (!strncmp(s, "xsd__unsigned", 13))
-    s += 13;
-  else if (!strncmp(s, "xsd__", 5))
-    s += 5;
-  else if (!strncmp(s, "SOAP_ENC__unsigned", 18))
-    s += 18;
-  else if (!strncmp(s, "SOAP_ENC__", 10))
-    s += 10;
-  if (!strcmp(s, "bool")
-   || !strcmp(s, "boolean")
-   || !strcmp(s, "byte")
-   || !strcmp(s, "Byte")
-   || !strcmp(s, "char")
-   || !strcmp(s, "double")
-   || !strcmp(s, "float")
-   || !strcmp(s, "int")
-   || !strcmp(s, "Int")
-   || !strcmp(s, "long")
-   || !strcmp(s, "Long")
-   || !strcmp(s, "LONG64")
-   || !strcmp(s, "short")
-   || !strcmp(s, "Short")
-   || !strcmp(s, "ULONG64")
-   || (d && !strncmp(s, "bool ", 5))
-   || (d && !strncmp(s, "boolean ", 8))
-   || (d && !strncmp(s, "byte ", 5))
-   || (d && !strncmp(s, "Byte ", 5))
-   || (d && !strncmp(s, "char ", 5))
-   || (d && !strncmp(s, "double ", 7))
-   || (d && !strncmp(s, "float ", 6))
-   || (d && !strncmp(s, "int ", 4))
-   || (d && !strncmp(s, "Int ", 4))
-   || (d && !strncmp(s, "long ", 5))
-   || (d && !strncmp(s, "Long ", 5))
-   || (d && !strncmp(s, "LONG64 ", 7))
-   || (d && !strncmp(s, "short ", 6))
-   || (d && !strncmp(s, "Short ", 6))
-   || (d && !strncmp(s, "ULONG64 ", 8)))
-    fprintf(stream, " %s %s", a, v);
-  else if (!strncmp(s, "enum ", 5))
+  if (!strncmp(s, "const", 5) && isdelim(s[5]))
   {
-    s += 5;
-    while (isspace(*s))
-      ++s;
-    if (is_integer(s))
-      fprintf(stream, " %s %s", a, v);
-    else if (!*s)
-      fprintf(stream, " = 0");
-    else if ((v = enames[Pair(t, v)]))
-      fprintf(stream, " %s %s", a, v);
+    s = nonblank(s + 5);
   }
-  else if (!strncmp(s, "char", 4)
-        || !strncmp(s, "const char", 10)
-        || !strncmp(s, "_QName", 6)
-        || !strncmp(s, "_XML", 4)
-        || !strncmp(s, "wchar_t", 7)
-        || !strncmp(s, "const wchar_t", 13)
-        || !strncmp(s, "std::string", 11)
-        || !strncmp(s, "std::wstring", 12))
-    fprintf(stream, " %s \"%s\"", a, cstring(v));
-  else if (!strcmp(s, "xsd__QName") && q)     // QName
-    fprintf(stream, " %s \"%s\"", a, cstring(q));
+  if (!strncmp(s, "signed", 6) && isdelim(s[6]))
+  {
+    s = nonblank(s + 6);
+  }
+  else if (!strncmp(s, "unsigned", 8) && isdelim(s[8]))
+  {
+    s = nonblank(s + 8);
+    type = CTUINT;
+  }
+  if (!strncmp(s, "long", 4) && isdelim(s[4]))
+  {
+    s = nonblank(s + 4);
+    if (type == CTUINT)
+      type = CTULONG;
+    else
+      type = CTLONG;
+  }
+  else if (!strncmp(s, "short", 5) && isdelim(s[5]))
+  {
+    s = nonblank(s + 5);
+  }
+  if ((!strncmp(s, "char", 4) && isdelim(s[4]) && strchr(s, '*'))
+   || (!strncmp(s, "_XML", 4) && isdelim(s[4]))
+   || (!strncmp(s, "std::string", 11) && isdelim(s[11])))
+  {
+    if (!strncmp(t, "xsd__QName", 10))
+      type = CTQNAME;
+    else
+      type = CTSTRING;
+  }
+  else if ((!strncmp(s, "wchar_t", 7) && isdelim(s[7]) && strchr(s, '*'))
+        || (!strncmp(s, "std::wstring", 12) && isdelim(s[12])))
+  {
+    if (!strncmp(t, "xsd__QName", 10))
+      type = CTWQNAME;
+    else
+      type = CTWSTRING;
+  }
+  else if (!strncmp(s, "float", 5) && isdelim(s[5]))
+  {
+    type = CTFLOAT;
+  }
+  else if (!strncmp(s, "double", 6) && isdelim(s[6]))
+  {
+    if (type == CTLONG)
+      type = CTLONGDOUBLE;
+    else
+      type = CTDOUBLE;
+  }
+  else if (!strncmp(s, "bool", 4) && isdelim(s[4]))
+  {
+    type = CTBOOL;
+  }
+  else if (!strncmp(s, "enum", 4) && isdelim(s[4]))
+  {
+    type = CTENUM;
+  }
+  else if ((!strncmp(s, "char", 4) && isdelim(s[4]))
+        || (!strncmp(s, "int", 3) && isdelim(s[3]))
+        || (!strncmp(s, "int8_t", 6) && isdelim(s[6]))
+        || (!strncmp(s, "int16_t", 7) && isdelim(s[7]))
+        || (!strncmp(s, "int32_t", 7) && isdelim(s[7]))
+        || (!strncmp(s, "short", 5) && isdelim(s[5])))
+  {
+  }
+  else if ((!strncmp(s, "uint8_t", 7) && isdelim(s[7]))
+        || (!strncmp(s, "uint16_t", 8) && isdelim(s[8]))
+        || (!strncmp(s, "uint32_t", 8) && isdelim(s[8]))
+        || (!strncmp(s, "size_t", 6) && isdelim(s[6])))
+  {
+    type = CTUINT;
+  }
+  else if ((!strncmp(s, "LONG64", 6) && isdelim(s[6]))
+        || (!strncmp(s, "long", 4) && isdelim(s[4]))
+        || (!strncmp(s, "int64_t", 7) && isdelim(s[7])))
+  {
+    if (type == CTUINT)
+      type = CTULONG;
+    else
+      type = CTLONG;
+  }
+  else if ((!strncmp(s, "ULONG64", 7) && isdelim(s[7]))
+        || (!strncmp(s, "uint64_t", 8) && isdelim(s[8])))
+  {
+    type = CTULONG;
+  }
+  else if (!strncmp(s, "_QName", 6) && isdelim(s[6]))
+  {
+    type = CTQNAME;
+  }
+  else
+  {
+    type = CTNONE;
+  }
+  ctypemap[t] = type;
+  return type;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4257,6 +4298,11 @@ static char *getline(char *s, size_t n, FILE *fd)
   if (!*s && c == EOF)
     return NULL;
   return s;
+}
+
+static bool isdelim(int c)
+{
+  return c == '\0' || c == EOF || !isalnum(c);
 }
 
 static const char *nonblank(const char *s)

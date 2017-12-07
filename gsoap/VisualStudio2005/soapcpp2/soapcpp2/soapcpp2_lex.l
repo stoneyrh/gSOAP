@@ -94,9 +94,9 @@ digit           [0-9]
 alpha           ([a-zA-Z_\xA8\xAA\xAD\xAF\xB2\xB5\xB7\xB8\xB9\xBA\xBC\xBD\xBE]|[\xC0-\xFF][\x80-\xBF]*|\\u([0-9a-fA-F]{4}))
 id              (:?{alpha})(:?{alpha}|{digit}|::)*
 tag             `[^`\t\v\r\f\n>]+`
-int             {digit}+
-hex             0[xX][0-9a-fA-F]+
-num             {int}(\.{int}([Ee][+-]?{int})?|(\.{int})?[Ee][+-]?{int})
+int             {digit}+[lLuU]*
+hex             0[xX][0-9a-fA-F]+[lLuU]*
+num             {digit}+(\.{digit}+([Ee][+-]?{digit}+)?|(\.{digit}+)?[Ee][+-]?{digit}+)[fFlL]?|{digit}+[fF]
 chr             '(\\'|[^'\n])*'
 str             L?\"(\\\"|\\\n|[^"])*\"
 module          #{ws}*module{ws}+.*\n

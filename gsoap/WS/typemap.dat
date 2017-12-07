@@ -569,6 +569,30 @@ xmpp = "urn:broadband-forum-org:cwmp:xmppConnReq-1-0"
 bdc  = "urn:broadband-forum-org:ipdr:tr-232-1-0"
 ipdr = "http://www.ipdr.org/namespaces/ipdr"
 
+#	XMPP and jabber protocols (a selection)
+
+stream	= "http://etherx.jabber.org/streams"
+iqrpc	= "jabber:iq:rpc"
+xdata	= "jabber:x:data"
+iqlast	= "jabber:iq:last"
+
+#	XHTML prefix and recommended types
+
+xhtml = "http://www.w3.org/1999/xhtml"
+
+xhtml__Number = | unsigned int
+xhtml__Pixels = | unsigned int
+
+#	HL7 FHIR prefix
+#	When using FHIR you may want to use XHTML as a DOM instead of XML data
+#	binding resulting in lots of code, by uncommenting the following line:
+# xhtml = <http://www.w3.org/1999/xhtml>
+#       with this line uncommented, create an xhtml.h file with the following:
+= #import "dom.h"
+# typedef xsd__anyType _xhtml__div;
+
+fhir = "http://hl7.org/fhir"
+
 #	Prefix bindings for WhiteMesa interoperability testing round 2:
 
 i	= "http://soapinterop.org/"

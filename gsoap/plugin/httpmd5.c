@@ -129,7 +129,7 @@ static int http_md5_init(struct soap *soap, struct http_md5_data *data)
 static int http_md5_copy(struct soap *soap, struct soap_plugin *dst, struct soap_plugin *src)
 { *dst = *src;
   dst->data = (void*)SOAP_MALLOC(soap, sizeof(struct http_md5_data));
-  soap_memcpy((void*)dst->data, sizeof(struct http_md5_data), (const void*)src->data, sizeof(struct http_md5_data));
+  (void)soap_memcpy((void*)dst->data, sizeof(struct http_md5_data), (const void*)src->data, sizeof(struct http_md5_data));
   ((struct http_md5_data*)dst->data)->context = NULL;
   return SOAP_OK;
 }

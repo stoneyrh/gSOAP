@@ -240,7 +240,7 @@ main(int argc, char **argv)
 -y      include C/C++ type access information in sample XML messages\n\
 -z1     compatibility: generate old-style C++ service proxies and objects\n\
 -z2     compatibility with 2.7.x: omit XML output for NULL pointers\n\
--z3     compatibility with 2.8.30 and earlier: _param_N is indexed globally\n\
+-z3     compatibility with <= 2.8.30: _param_N indexing; nillable pointers\n\
 infile  header file to parse (if none reads stdin)\n\
 \n");
             exit(0);

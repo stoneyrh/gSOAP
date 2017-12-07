@@ -142,7 +142,10 @@ COMMAND LINE OPTIONS
 -a      generate indexed struct names for local elements with anonymous types
 -b	bi-directional operations to serve one-way response messages (duplex)
 -c      generate C source code
+-c++    generate C++ source code (default)
+-c++11  generate C++11 source code
 -d      use DOM to populate xs:any and xsd:anyType elements
+-D      make attribute members with default values optional with pointers
 -e      don't qualify enum names
 -f      generate flat C++ class hierarchy
 -g      generate global top-level element declarations
@@ -160,6 +163,7 @@ COMMAND LINE OPTIONS
 -P      don't create polymorphic types with C++ inheritance from xsd__anyType
 -p      create polymorphic types with C++ inheritance from base xsd__anyType
 -qname  use name for the C++ namespace for all service declarations
+-R      generate REST operations for REST bindings specified in a WSDL
 -rhost[:port[:uid:pwd]]
         connect via proxy host, port, and proxy credentials
 -r:uid:pwd
@@ -179,8 +183,8 @@ COMMAND LINE OPTIONS
 -z2     compatibility with 2.7.15: qualify element/attribute referenced members
 -z3     compatibility with 2.7.16 to 2.8.7: qualify element/attribute references
 -z4     compatibility up to 2.8.11: don't generate union structs in std::vector
--z5     compatibility up to 2.8.15
--z6     compatibility up to 2.8.17
+-z5     compatibility up to 2.8.15: don't include minor improvements
+-z6     compatibility up to 2.8.17: don't include minor improvements
 -_      don't generate _USCORE (replace with UNICODE _x005f)
 infile.wsdl infile.xsd http://www... list of input sources (if none use stdin)
 
@@ -191,15 +195,13 @@ See soapdoc2.pdf for documentation.
 INSTALLATION
 
 Use './configure' and 'make' in the root directory, as explained in the 
-installation instructions.
+installation instructions.  This builds 'wsdl2h' with all features enabled.
 
 To build 'wsdl2h' when autoconf/automake fail, use:
 
 	make -f MakefileManual
 
-ENABLING HTTPS SSL/TLS CONNECTIVITY AND HTTP DIGEST AUTHENTICATION
-
-To build 'wsdl2h' with secure features, use:
+To build 'wsdl2h' with secure features when `./configure' and 'make' fail, use:
 
 	make -f MakefileManual secure
 

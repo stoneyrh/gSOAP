@@ -467,7 +467,7 @@ int json_recv(struct soap *soap, struct value *v)
                     h = soap->tmpbuf;
                     for (i = 0; i < 4; i++)
                     {
-                      if ((c = soap_getchar(soap)) == EOF)
+                      if ((c = soap_getchar(soap)) == (int)EOF)
                         return soap->error = SOAP_EOF;
                       h[i] = c;
                     }
@@ -499,7 +499,7 @@ int json_recv(struct soap *soap, struct value *v)
                 else if ((c & 0x80) && !(soap->imode & SOAP_ENC_LATIN) && !(soap->imode & SOAP_C_UTFSTRING)) /* utf8 to ISO 8859-1 */
                 {
                   soap_wchar c1 = soap_getchar(soap);
-                  if (c1 == SOAP_EOF)
+                  if (c1 == (int)EOF)
                     return soap->error = SOAP_EOF;
                   if (c < 0xE0 && (c & 0x1F) <= 0x03)
                     *s++ = ((c & 0x1F) << 6) | (c1 & 0x3F);
@@ -531,7 +531,7 @@ int json_recv(struct soap *soap, struct value *v)
       {
         *s++ = c;
         c = soap_getchar(soap);
-      } while ((isalnum((int)c) || (int)c == '.' || (int)c == '+' || (int)c == '-') && s - soap->tmpbuf < (int)sizeof(soap->tmpbuf) - 1);
+      } while (c != (int)EOF && (isalnum((int)c) || (int)c == '.' || (int)c == '+' || (int)c == '-') && s - soap->tmpbuf < (int)sizeof(soap->tmpbuf) - 1);
       *s = '\0';
       soap_unget(soap, c);
       if (soap->tmpbuf[0] == '-' || isdigit(soap->tmpbuf[0]))
@@ -760,7 +760,7 @@ value json_add(const value& x, const value& y)
     {
       _struct s = x;
       _struct t = y;
-      _struct st;
+      _struct st(x.soap);
       for (_struct::iterator i = s.begin(); i != s.end(); ++i)
         st[i.name()] = *i;
       for (_struct::iterator i = t.begin(); i != t.end(); ++i)
@@ -773,7 +773,7 @@ value json_add(const value& x, const value& y)
       _array b = y;
       int n = a.size();
       int m = b.size();
-      _array ab;
+      _array ab(x.soap);
       ab.size(n + m);
       for (int i = 0; i < n; ++i)
         ab[i] = a[i];
@@ -856,12 +856,12 @@ bool json_eqv(const value& x, const value& y)
     case SOAP_TYPE__boolean:
     case SOAP_TYPE__i4:
     case SOAP_TYPE__int:
-      return value(x.soap, (_int)x == (_int)y);
+      return (_int)x == (_int)y;
     case SOAP_TYPE__double:
-      return value(x.soap, (_double)x == (_double)y);
+      return (_double)x == (_double)y;
     case SOAP_TYPE__string:
     case SOAP_TYPE__dateTime_DOTiso8601:
-      return value(x.soap, !strcmp((const char*)x, (const char*)y));
+      return !strcmp((const char*)x, (const char*)y);
     case SOAP_TYPE__struct:
       if (x.size() != y.size())
         return false;
@@ -870,14 +870,14 @@ bool json_eqv(const value& x, const value& y)
         const _struct& s = x;
         const _struct& t = y;
         for (_struct::iterator i = s.begin(); i != s.end(); ++i)
-	{
-	  _struct::iterator j;
-	  for (j = t.begin(); j != t.end(); ++j)
-	    if (!strcmp(i.name(), j.name()))
-	      break;
-	  if (j == t.end() || *i != *j)
-	    return false;
-	}
+        {
+          _struct::iterator j;
+          for (j = t.begin(); j != t.end(); ++j)
+            if (!strcmp(i.name(), j.name()))
+              break;
+          if (j == t.end() || *i != *j)
+            return false;
+        }
         return true;
       }
     case SOAP_TYPE__array:

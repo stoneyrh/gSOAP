@@ -40,6 +40,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 enum Type { NONE, CLASS, ENUM, STRUCT, TYPEDEF };
 
+enum CType { CTNONE, CTBOOL, CTINT, CTUINT, CTLONG, CTULONG, CTFLOAT, CTDOUBLE, CTLONGDOUBLE, CTENUM, CTSTRING, CTWSTRING, CTQNAME, CTWQNAME };
+
+typedef map<const char*, CType, ltstr> MapOfStringToCType;
+
 enum Lookup { NOLOOKUP, LOOKUP };
 
 class Types
@@ -50,6 +54,7 @@ class Types
     MapOfStringToString usetypemap;
     MapOfStringToString ptrtypemap;
     MapOfStringToString smptypemap;
+    MapOfStringToCType	ctypemap;
     MapOfPairToString	qnames;	// (URI,name) -> name
     MapOfStringToString	uris;	// URI -> prefix
     MapOfStringToNum	syms;	// prefix -> count (ns1, ns2, ...)
@@ -85,6 +90,7 @@ class Types
     const char *prefix(const char *name);
     const char *uri(const char *name);
     const char *deftname(enum Type type, bool mk_pointer, bool is_pointer, const char *prefix, const char *URI, const char *qname, const char *base);
+    const char *defename(const char *type, const char *value, bool isqname);
     bool is_defined(const char *prefix, const char *URI, const char *qname);
     bool is_nillable(const xs__element& element);
     bool is_choicetype(const char *prefix, const char *URI, const char *type);
@@ -115,6 +121,7 @@ class Types
     void modify(const char *name);
     const char *format(const char *text);
     void gendefault(const char *URI, const char *type, const char *name, xs__simpleType *p, const char *s, const char *q, const char *a);
+    CType ctype(const char *s);
 };
 
 #endif

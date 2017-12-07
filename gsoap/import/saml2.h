@@ -212,7 +212,7 @@ struct saml2__AssertionType
 /// Attribute "IssueInstant" of XSD type xs:dateTime.
    @time_t                               IssueInstant                   1;	///< Required attribute.
 /// Member declared in WS-typemap.dat
-   @char*                                wsu__Id                        1;	///< Optional attribute.
+   @char*                                wsu__Id                        0;	///< Optional attribute.
 };
 
 /// @brief "urn:oasis:names:tc:SAML:2.0:assertion":SubjectType is a complexType.

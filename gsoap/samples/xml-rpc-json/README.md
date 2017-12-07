@@ -770,10 +770,41 @@ We can stack-allocate local values as shown above.  To allocate a value on the
 heap that is managed by the engine context, use `new_value(ctx)`:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include "soapH.h"
+
+    soap *ctx = soap_new1(SOAP_C_UTFSTRING);  // new context
+
     value *v = new_value(ctx);
-    ...
+
     soap_destroy(ctx);  // delete all values
     soap_end(ctx);      // delete temp data
+    soap_free(ctx);     // free context
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Allocating values on the heap may throw `std::bad_alloc` exceptions, but
+allocating a context does not.  To safeguard your code use a try-catch:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    #include "soapH.h"
+
+    soap *ctx = soap_new1(SOAP_C_UTFSTRING);  // new context (does not throw)
+    if (ctx == NULL)
+      ...               // handle out-of-memory error
+
+    try {
+
+      value *v = new_value(ctx);
+      ...               // create other values
+
+    }
+    catch (std::bad_alloc& e)
+    {
+      ...               // handle out-of-memory error
+    }
+
+    soap_destroy(ctx);  // delete all values
+    soap_end(ctx);      // delete temp data
+    soap_free(ctx);     // free context
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can use wide strings with Unicode stored in UTF-8-formattted 8-bit `char`
@@ -1459,9 +1490,10 @@ To force reading and writing JSON in ISO 8859-1 format, use the
 
 Optionally use `SOAP_XML_INDENT` to indent XML and JSON.
 
-To parse JSON values from a file, it is recommended to set the `SOAP_ENC_PLAIN`
-context flag to prevent the parser from attempting to read a MIME or HTTP
-headers (HTTP headers are required with JSON-RPC):
+To parse JSON values from a file or any other non-HTTP source, it is
+recommended to set the `SOAP_ENC_PLAIN` context flag to prevent the parser from
+attempting to read a MIME or HTTP headers (HTTP headers are required with
+JSON-RPC):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
     soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT | SOAP_ENC_PLAIN);
@@ -1554,7 +1586,7 @@ To implement a JSON REST server for CGI (e.g. install in cgi-bin):
 
     int main()
     {
-      soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+      soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT | SOAP_ENC_PLAIN);
       value request(ctx), response(ctx);
       if (soap_begin_recv(ctx)
        || json_recv(ctx, request)
@@ -1578,6 +1610,9 @@ To implement a JSON REST server for CGI (e.g. install in cgi-bin):
       soap_free(ctx);
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that `SOAP_ENC_PLAIN` should be used with CGI, since we are reading from a
+non-HTTP source with CGI.  Do not use this flag with gSOAP stand-alone servers.
 
 Compile and link your code together with `soapC.cpp` (generated with
 `soapcpp2 -CSL xml-rpc.h`), `xml-rpc.cpp`, `json.cpp`, and `stdsoap2.cpp`.
@@ -1817,6 +1852,28 @@ file needs to be generated only once and for all.  It also references
 with `stdsoap2.cpp` and the auto-generated `soapC.cpp` XML-RPC serializers.
 Also compile and link `xml-rpc.cpp`.  For JSON, compile and link `json.cpp`.
 
+With the C API, allocating a context and values on the heap may return NULL
+when your system runs out of memory.  On most systems this is unlikely to
+happen, but to safeguard your code check for NULL returns as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    #include "soapH.h"
+
+    struct soap *ctx = soap_new1(SOAP_C_UTFSTRING);  /* new context */
+    if (ctx == NULL)
+      ...               /* out-of-memory error */
+
+    struct value *v = new_value(ctx);
+    if (v == NULL)
+      ...               /* out-of-memory error */
+
+    soap_end(ctx);      /* delete all values */
+    soap_free(ctx);     /* free context */
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Also, when enlarging structs and arrays by indexing them beyond their current
+content, the enlargement may fail and a NULL pointer is returned.
+
 You can use wide strings with Unicode stored in UTF-8-formattted 8-bit `char`
 strings.  For compatibility with XML-RPC serialization of UTF-8-encoded strings,
 we MUST use the `SOAP_C_UTFSTRING` flag to initialize the context with
@@ -1960,6 +2017,7 @@ The following functions can be used with arrays and structs (JSON objects):
     void set_struct(v)                         /* reset/create an empty struct */
     void set_size(v, int)                      /* reset/change array size or pre-allocate space */
     int has_size(v)                            /* returns array or struct size or 0 */
+    int is_empty(v)                            /* returns 1 if array or struct is empty or 0 */
     struct value *nth_value(v, int)            /* returns nth value in array or struct */
     struct value *value_at(v, const char*)     /* returns value at field in struct */
     struct value *value_atw(v, const wchar_t*) /* returns value at field in struct */
@@ -1988,6 +2046,7 @@ We have the following properties of this value:
     is_null(v) == false
     is_array(v) == true
     has_size(v) == 1
+    is_empty(v) == 0
     is_struct(nth_value(v, 0)) == true
     nth_at(nth_value(v, 0), "name") == 0
     is_string(value_at(nth_value(v, 0), "name")) == true
@@ -2228,9 +2287,10 @@ To force reading and writing JSON in ISO 8859-1 format, use the
 
 Optionally use `SOAP_XML_INDENT` to indent XML and JSON output.
 
-To parse JSON values from a file, it is recommended to set the `SOAP_ENC_PLAIN`
-context flag to prevent the parser from attempting to read a MIME or HTTP
-headers (HTTP headers are required with JSON-RPC):
+To parse JSON values from a file or from any other non-HTTP source, it is
+recommended to set the `SOAP_ENC_PLAIN` context flag to prevent the parser from
+attempting to read a MIME or HTTP headers (HTTP headers are required with
+JSON-RPC):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
     struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT | SOAP_ENC_PLAIN);
@@ -2244,7 +2304,7 @@ You can also read and write JSON data from/to NUL-terminated strings:
     #include "json.h"
     struct Namespace namespaces[] = {{NULL,NULL,NULL,NULL}};
 
-    struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+    struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT | SOAP_ENC_PLAIN);
     struct value *v = new_value(ctx);
 
     const char *cs = "[1, 2, 3]";
@@ -2394,7 +2454,7 @@ To use JSON REST on the client side, we use `json_call`:
     struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
     struct value *request = new_value(ctx);
     struct value response;
-    ... /* here we populate the request data to be send */
+    ... /* here we populate the request data to send */
     if (json_call(ctx, "endpoint URL", request, &response))
       ... /* error */
     ... /* use the response data */
@@ -2447,7 +2507,7 @@ To implement a JSON REST server for CGI (e.g. install in cgi-bin):
 
     int main()
     {
-      struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
+      struct soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT | SOAP_ENC_PLAIN);
       struct value *request = new_value(ctx);
       struct value *response = new_value(ctx);
       if (soap_begin_recv(ctx)
@@ -2471,6 +2531,9 @@ To implement a JSON REST server for CGI (e.g. install in cgi-bin):
       soap_free(ctx);
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that `SOAP_ENC_PLAIN` should be used with CGI, since we are reading from a
+non-HTTP source with CGI.  Do not use this flag with gSOAP stand-alone servers.
 
 Compile and link your code together with `soapC.c` (generated with
 `soapcpp2 -c -CSL xml-rpc.h`), `xml-rpc.c`, `json.c`, and `stdsoap2.c`.
@@ -2774,9 +2837,9 @@ forgiving, meaning that it parses the following extensions:
 - The parser admits hexadecimal integer values of the form `0xHHHH`.
 - Any additional trailing content after a valid JSON object or array is
   silently ignored.
-- To parse JSON data from files use the `SOAP_ENC_PLAIN` flag to set the
-  context, otherwise files containing just the JSON values `true`, `false`, and
-  `null` are not parsed.
+- To parse JSON data from files or from any other non-HTTP source use the
+  `SOAP_ENC_PLAIN` flag to set the context, otherwise files containing just the
+  JSON values `true`, `false`, and `null` are not parsed.
  
 Copyright                                                           {#copyright}
 =========

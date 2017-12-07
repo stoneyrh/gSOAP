@@ -296,7 +296,7 @@ int soap_http_body(struct soap *soap, char **buf, size_t *len)
     } while (c != (int)EOF);
     n = soap->lablen - k - 1;
     *buf = (char*)soap_malloc(soap, n + 1);
-    soap_memcpy(*buf, n + 1, soap->labbuf, n + 1);
+    (void)soap_memcpy(*buf, n + 1, soap->labbuf, n + 1);
     if (len)
       *len = n;
   }

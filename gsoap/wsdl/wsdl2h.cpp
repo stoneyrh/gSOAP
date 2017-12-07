@@ -61,6 +61,7 @@ int _flag = 0,
     bflag = 0,
     cflag = 0,
     c11flag = 0,
+    Dflag = 0,
     dflag = 0,
     eflag = 0,
     fflag = 0,
@@ -266,6 +267,9 @@ static void options(int argc, char **argv)
                 fprintf(stderr, "wsdl2h: Options -c and -q cannot be used together\n");
             }
             break;
+          case 'D':
+            Dflag = 1;
+            break;
           case 'd':
             dflag = 1;
             break;
@@ -466,7 +470,7 @@ static void options(int argc, char **argv)
             break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-M] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-Sname] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-D] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-M] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-Sname] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -b      bi-directional operations (duplex ops) added to serve one-way responses\n\
@@ -474,6 +478,7 @@ static void options(int argc, char **argv)
 -c++    generate C++ source code (default)\n\
 -c++11  generate C++11 source code\n\
 -d      use DOM to populate xs:any, xs:anyType, and xs:anyAttribute\n\
+-D      make attribute members with default values optional with pointers\n\
 -e      don't qualify enum names\n\
 -f      generate flat C++ class hierarchy\n\
 -g      generate global top-level element declarations\n\
@@ -511,8 +516,8 @@ static void options(int argc, char **argv)
 -z2     compatibility with 2.7.7 to 2.7.15: qualify element/attribute references\n\
 -z3     compatibility with 2.7.16 to 2.8.7: qualify element/attribute references\n\
 -z4     compatibility up to 2.8.11: don't generate union structs in std::vector\n\
--z5     compatibility up to 2.8.15\n\
--z6     compatibility up to 2.8.17\n\
+-z5     compatibility up to 2.8.15: don't include minor improvements\n\
+-z6     compatibility up to 2.8.17: don't include minor improvements\n\
 -_      don't generate _USCORE (replace with UNICODE _x005f)\n\
 infile.wsdl infile.xsd http://www... list of input sources (if none reads stdin)\n\
 \n");

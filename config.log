@@ -14,7 +14,7 @@ hostname = RE.fios-router.home
 uname -m = x86_64
 uname -r = 16.7.0
 uname -s = Darwin
-uname -v = Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-3789.70.16~2/RELEASE_X86_64
+uname -v = Darwin Kernel Version 16.7.0: Wed Oct  4 00:17:00 PDT 2017; root:xnu-3789.71.6~1/RELEASE_X86_64
 
 /usr/bin/uname -p = i386
 /bin/uname -X     = unknown
@@ -23,15 +23,15 @@ uname -v = Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-
 /usr/bin/arch -k       = unknown
 /usr/convex/getsysinfo = unknown
 /usr/bin/hostinfo      = Mach kernel version:
-	 Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-3789.70.16~2/RELEASE_X86_64
+	 Darwin Kernel Version 16.7.0: Wed Oct  4 00:17:00 PDT 2017; root:xnu-3789.71.6~1/RELEASE_X86_64
 Kernel configured for up to 8 processors.
 4 processors are physically available.
 8 processors are logically available.
 Processor type: x86_64h (Intel x86-64h Haswell)
 Processors active: 0 1 2 3 4 5 6 7
 Primary memory available: 16.00 gigabytes
-Default processor set: 406 tasks, 1810 threads, 8 processors
-Load average: 1.80, Mach factor: 6.19
+Default processor set: 455 tasks, 1998 threads, 8 processors
+Load average: 1.67, Mach factor: 6.32
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -204,8 +204,8 @@ configure:4614: checking lex library
 configure:4628: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in conftest-0de11a.o
-      _main in conftest-0de11a.o
+      _yylex in conftest-e3e5bc.o
+      _main in conftest-e3e5bc.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:4628: $? = 1
@@ -5160,7 +5160,7 @@ configure:6002: checking for gethostbyname_r
 configure:6002: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-16f028.o
+      _main in conftest-f94a3d.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:6002: $? = 1

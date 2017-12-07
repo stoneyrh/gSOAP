@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.55 User Guide</title>
+<title>gSOAP 2.8.56 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.55 User Guide </h1>
+<h1 align="center">gSOAP 2.8.56 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Oct 26, 2017
+<h3 align="center">Dec  7, 2017
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -5079,7 +5079,10 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td align="left"><i>-a</i>	</td><td align="left">generate indexed struct names for local elements with anonymous types </td></tr>
 <tr><td align="left"><i>-b</i>	</td><td align="left">bi-directional operations to serve one-way response messages (duplex)</td></tr>
 <tr><td align="left"><i>-c</i>	</td><td align="left">generate C source code </td></tr>
+<tr><td align="left"><i>-c++</i>      </td><td align="left">generate C++ source code </td></tr>
+<tr><td align="left"><i>-c++11</i>    </td><td align="left">generate C++11 source code </td></tr>
 <tr><td align="left"><i>-d</i>	</td><td align="left">use DOM to populate xs:any and xsd:anyType elements </td></tr>
+<tr><td align="left"><i>-D</i>        </td><td align="left">make attribute members with default values optional with pointers </td></tr>
 <tr><td align="left"><i>-e</i>	</td><td align="left">don't qualify enum names </td></tr>
 <tr><td align="left"></td><td align="left">This option is for backward compatibility with gSOAP 2.4.1 and earlier. </td></tr>
 <tr><td align="left"></td><td align="left">The option does not produce code that conforms to WS-I Basic Profile 1.0a. </td></tr>
@@ -5099,9 +5102,9 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td align="left"><i>-p</i>      </td><td align="left">create polymorphic types inherited from base <i>xsd__anyType</i> </td></tr>
 <tr><td align="left"></td><td align="left">This is automatically performed when WSDL contains polymorphic definitions </td></tr>
 <tr><td align="left"><i>-q name</i>	</td><td align="left">use <i>name</i> for the C++ namespace of all declarations </td></tr>
+<tr><td align="left"><i>-R</i>      </td><td align="left">generate REST operations for REST bindings in the WSDL </td></tr>
 <tr><td align="left"><i>-r host[:port[:uid:pwd]]</i>      </td><td align="left">connect via proxy host, port, and proxy credentials </td></tr>
 <tr><td align="left"><i>-r:uid:pwd</i>      </td><td align="left">connect with authentication credentials (digest auth requires SSL) </td></tr>
-<tr><td align="left"><i>-R</i>      </td><td align="left">generate REST operations for REST bindings in the WSDL </td></tr>
 <tr><td align="left"><i>-s</i>      </td><td align="left">don't generate STL code (no std::string and no std::vector) </td></tr>
 <tr><td align="left"><i>-t file</i>  </td><td align="left">use type map file instead of the default file typemap.dat </td></tr>
 <tr><td align="left"><i>-U</i>	</td><td align="left">map Unicode XML names to UTF8-encoded Unicode C/C++ identifiers </td></tr>
@@ -5116,8 +5119,8 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td align="left"><i>-z2</i>	</td><td align="left">compatibility with 2.7.15: qualify element/attribute referenced members</td></tr>
 <tr><td align="left"><i>-z3</i>     </td><td align="left">compatibility with 2.7.16 to 2.8.7: qualify element/attribute references</td></tr>
 <tr><td align="left"><i>-z4</i>     </td><td align="left">compatibility up to 2.8.11: don't generate union structs in std::vector </td></tr>
-<tr><td align="left"><i>-z5</i>     </td><td align="left">compatibility up to 2.8.15 </td></tr>
-<tr><td align="left"><i>-z6</i>     </td><td align="left">compatibility up to 2.8.17 </td></tr>
+<tr><td align="left"><i>-z5</i>     </td><td align="left">compatibility up to 2.8.15: don't include minor improvements </td></tr>
+<tr><td align="left"><i>-z6</i>     </td><td align="left">compatibility up to 2.8.17: don't include minor improvements </td></tr>
 <tr><td align="left"><i>-_</i>	</td><td align="left">don't generate <i>_USCORE</i> (replace with Unicode _x005f) </td></tr></table>
 
 </td></tr></table><br></span>
@@ -5403,7 +5406,7 @@ The <i>soapcpp2</i> source-to-source compiler supports the following command-lin
 <tr><td align="left"><i>-y</i>	</td><td align="left">include C/C++ type access information in sample XML messages </td></tr>
 <tr><td align="left"><i>-z1</i>	</td><td align="left">compatibility: generate old-style C++ service proxies and objects </td></tr>
 <tr><td align="left"><i>-z2</i>	</td><td align="left">compatibility with 2.7.x: omit XML output for NULL pointers </td></tr>
-<tr><td align="left"><i>-z3</i>	</td><td align="left">compatibility with 2.8.30 and earlier: _param_N is indexed globally </td></tr></table>
+<tr><td align="left"><i>-z3</i>	</td><td align="left">compatibility with <tt>&lt;=</tt> 2.8.30: <tt>_param_N</tt> indexing; nillable pointers </td></tr></table>
 
 </td></tr></table><br></span>
 For example
@@ -5788,8 +5791,8 @@ The following macros (<i>#define</i>s) can be used to enable certain optional fe
 <tr><td align="left"><i>WITH_OPENSSL</i>	</td><td align="left">enables OpenSSL, see Sections&nbsp;<a href="#sec:clientopenssl">19.24</a>&nbsp;<a href="#sec:serveropenssl">19.23</a> </td></tr>
 <tr><td align="left"><i>WITH_GNUTLS</i>	</td><td align="left">enables GNUTLS, see Sections&nbsp;<a href="#sec:clientopenssl">19.24</a>&nbsp;<a href="#sec:serveropenssl">19.23</a> </td></tr>
 <tr><td align="left"><i>WITH_IPV6</i>	</td><td align="left">enables IPv6 support (compile ALL sources with this macro set)</td></tr>
-<tr><td align="left"><i>WITH_IPV6_V6ONLY</i></td><td align="left">IPv6-only server option (compile ALL sources with this macro set)</td></tr>
-<tr><td align="left"><i>WITH_NO_IPV6_V6ONLY</i></td><td align="left">permits IPv4 and IPv6 (compile ALL sources with this macro set)</td></tr>
+<tr><td align="left"><i>WITH_IPV6_V6ONLY</i></td><td align="left">(deprecated, this is the default) IPv6-only server option </td></tr>
+<tr><td align="left"><i>WITH_NO_IPV6_V6ONLY</i></td><td align="left">(deprecated, use soap<tt>-&gt;</tt>bind_v6only = 1) permits IPv4 and IPv6 </td></tr>
 <tr><td align="left"><i>WITH_TCPFIN</i>	</td><td align="left">use TCP FIN after sends when socket is ready to close </td></tr>
 <tr><td align="left"><i>WITH_FASTCGI</i>	</td><td align="left">enables FastCGI, see Sections&nbsp;<a href="#sec:fastcgi">19.34</a> </td></tr>
 <tr><td align="left"><i>WITH_GZIP</i>	</td><td align="left">enables gzip and deflate compression, see Section&nbsp;<a href="#sec:compression">19.29</a> </td></tr>
@@ -14404,11 +14407,31 @@ seconds total.
 <div class="p"><!----></div>
 gSOAP's socket communications can be controlled with socket options and flags.
 The gSOAP run-time context <i><b>struct</b>&nbsp;soap</i> flags are:
-<i><b>int</b>&nbsp;soap.socket_flags</i> to control socket send() and recv() calls,
-<i><b>int</b>&nbsp;soap.connect_flags</i> to set client connection socket options,
-<i><b>int</b>&nbsp;soap.bind_flags</i> to set server-side port bind socket options,
-<i><b>int</b>&nbsp;soap.accept_flags</i> to set server-side request message accept
-socket options. See the manual pages of <i>send</i> and <i>recv</i> for
+
+<ul>
+<li> <i><b>int</b>&nbsp;soap.socket_flags</i> to set flags to the socket send() and recv() calls.
+<div class="p"><!----></div>
+</li>
+
+<li> <i><b>int</b>&nbsp;soap.connect_flags</i> to set client-side connection setsockopt() socket options.
+<div class="p"><!----></div>
+</li>
+
+<li> <i><b>int</b>&nbsp;soap.bind_flags</i> to set server-side port bind setsockopt() socket options.
+<div class="p"><!----></div>
+</li>
+
+<li> <i><b>int</b>&nbsp;soap.bind_ipv6only</i> set to 1 to set setsockopt() IPPROTO_IPV6 IPV6_V6ONLY.
+<div class="p"><!----></div>
+</li>
+
+<li> <i><b>int</b>&nbsp;soap.accept_flags</i> to set flags to the accept setsockopt() socket options.
+<div class="p"><!----></div>
+</li>
+</ul>
+
+<div class="p"><!----></div>
+See the manual pages of <i>send</i> and <i>recv</i> for
 <i>soap.socket_flags</i> values and see the manual pages of
 <i>setsockopt</i> for
 <i>soap.connect_flags</i>, <i>soap.bind_flags</i>, and
@@ -14416,6 +14439,8 @@ socket options. See the manual pages of <i>send</i> and <i>recv</i> for
 These <i>SO_</i> socket option flags (see <i>setsockopt</i> manual pages)
 can be bit-wise or-ed to set multiple
 socket options at once.
+
+<div class="p"><!----></div>
 The client-side flag <i>soap.connect_flags=SO_LINGER</i> is supported with values <i>l_onoff=1</i> and <i>l_linger=soap.linger_time</i>. The <i>soap.linger_time</i> determines the wait time (the time resolution is system dependent, though according to some experts only zero and nonzero values matter). The linger option can be used to manage the number of connections that remain in TIME_WAIT state at the server side.
 
 <div class="p"><!----></div>
@@ -16724,5 +16749,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 26 Oct 2017, 13:32.</small>
+version 4.00.<br />On  7 Dec 2017, 12:48.</small>
 </html>

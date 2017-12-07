@@ -3989,7 +3989,7 @@ soap_wsrm_copy(struct soap *soap, struct soap_plugin *p, struct soap_plugin *q)
   (void)soap;
   /* create local plugin data */
   p->data = (void*)SOAP_MALLOC(soap, sizeof(struct soap_wsrm_data));
-  soap_memcpy((void*)p->data, sizeof(struct soap_wsrm_data), (const void*)q->data, sizeof(struct soap_wsrm_data));
+  (void)soap_memcpy((void*)p->data, sizeof(struct soap_wsrm_data), (const void*)q->data, sizeof(struct soap_wsrm_data));
   ((struct soap_wsrm_data*)p->data)->state = SOAP_WSRM_OFF;
   ((struct soap_wsrm_data*)p->data)->seq = NULL;
   ((struct soap_wsrm_data*)p->data)->msg = NULL;
@@ -5036,7 +5036,7 @@ soap_wsrm_msg_append(struct soap *soap, struct soap_wsrm_data *data, const char 
     return soap->error = SOAP_EOM;
   }
   p->len = len;
-  soap_memcpy((void*)p->buf, len, (const void*)buf, len);
+  (void)soap_memcpy((void*)p->buf, len, (const void*)buf, len);
   p->next = NULL;
   if (!data->msg->list)
     data->msg->list = p;
@@ -5394,7 +5394,7 @@ soap_wsrm_msg_new(struct soap *soap, struct soap_wsrm_sequence *seq, ULONG64 num
       }
       if (seq->messages)
       {
-        soap_memcpy((void*)p, n * sizeof(struct soap_wsrm_message*), (const void*)seq->messages, seq->num * sizeof(struct soap_wsrm_message*));
+        (void)soap_memcpy((void*)p, n * sizeof(struct soap_wsrm_message*), (const void*)seq->messages, seq->num * sizeof(struct soap_wsrm_message*));
         free((void*)seq->messages);
       }
       seq->messages = p;

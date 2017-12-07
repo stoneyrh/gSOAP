@@ -55,7 +55,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 static void * instantiate_xsd__date(struct soap*, int, const char*, const char*, size_t*);
 
-static int delete_xsd__date(struct soap_clist*);
+static int delete_xsd__date(struct soap*, struct soap_clist*);
 
 static void copy_xsd__date(struct soap*, int, int, void*, size_t, const void*, void**);
 
@@ -176,17 +176,17 @@ int soap_s2xsd__date(struct soap *soap, const char *s, QDate *a)
 static void * instantiate_xsd__date(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xsd__date(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-  struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_xsd__date, n, delete_xsd__date);
+  struct soap_clist *cp = soap_link(soap, SOAP_TYPE_xsd__date, n, delete_xsd__date);
   (void)type; (void)arrayType; /* appease -Wall -Werror */
   if (!cp)
     return NULL;
   if (n < 0)
-  {	cp->ptr = SOAP_NEW(QDate);
+  {	cp->ptr = SOAP_NEW(soap, QDate);
     if (size)
       *size = sizeof(QDate);
   }
   else
-  {	cp->ptr = SOAP_NEW_ARRAY(QDate, n);
+  {	cp->ptr = SOAP_NEW_ARRAY(soap, QDate, n);
     if (size)
       *size = n * sizeof(QDate);
   }
@@ -196,14 +196,15 @@ static void * instantiate_xsd__date(struct soap *soap, int n, const char *type, 
   return (QDate*)cp->ptr;
 }
 
-static int delete_xsd__date(struct soap_clist *p)
+static int delete_xsd__date(struct soap *soap, struct soap_clist *p)
 {
+  (void)soap; /* appease -Wall -Werror */
   if (p->type == SOAP_TYPE_xsd__date)
   {
     if (p->size < 0)
-      SOAP_DELETE(static_cast<QDate*>(p->ptr));
+      SOAP_DELETE(soap, static_cast<QDate*>(p->ptr), QDate);
     else
-      SOAP_DELETE_ARRAY(static_cast<QDate*>(p->ptr));
+      SOAP_DELETE_ARRAY(soap, static_cast<QDate*>(p->ptr), QDate);
     return SOAP_OK;
   }
   return SOAP_ERR;

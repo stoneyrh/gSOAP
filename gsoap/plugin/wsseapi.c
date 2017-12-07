@@ -5668,7 +5668,7 @@ soap_wsse_session_verify(struct soap *soap, const char hash[SOAP_SMD_SHA1_SIZE],
     {
       session->next = soap_wsse_session;
       session->expired = expired;
-      soap_memcpy((void*)session->hash, sizeof(session->hash), (const void*)hash, SOAP_SMD_SHA1_SIZE);
+      (void)soap_memcpy((void*)session->hash, sizeof(session->hash), (const void*)hash, SOAP_SMD_SHA1_SIZE);
       soap_strcpy(session->nonce, l + 1, nonce);
       soap_wsse_session = session;
     }
@@ -5761,11 +5761,11 @@ soap_wsse_rand_nonce(char *nonce, size_t noncelen)
 {
   size_t i;
   soap_int32 r = (soap_int32)time(NULL);
-  soap_memcpy((void*)nonce, 4, (const void*)&r, 4);
+  (void)soap_memcpy((void*)nonce, 4, (const void*)&r, 4);
   for (i = 4; i < noncelen; i += 4)
   {
     r = soap_random;
-    soap_memcpy((void*)(nonce + i), 4, (const void*)&r, 4);
+    (void)soap_memcpy((void*)(nonce + i), 4, (const void*)&r, 4);
   }
 }
 
@@ -5826,8 +5826,8 @@ soap_psha1(struct soap *soap, const char hmac_key[16], const char *secret, size_
     else
       soap_smd_update(soap, &context, HA, SOAP_SMD_SHA1_SIZE);
     soap_smd_final(soap, &context, HA, NULL);
-    soap_memcpy((void*)buffer, SOAP_SMD_SHA1_SIZE + secretlen, (void*)HA, SOAP_SMD_SHA1_SIZE);
-    soap_memcpy((void*)(buffer + SOAP_SMD_SHA1_SIZE), secretlen, (void*)secret, secretlen);
+    (void)soap_memcpy((void*)buffer, SOAP_SMD_SHA1_SIZE + secretlen, (void*)HA, SOAP_SMD_SHA1_SIZE);
+    (void)soap_memcpy((void*)(buffer + SOAP_SMD_SHA1_SIZE), secretlen, (void*)secret, secretlen);
     soap_smd_init(soap, &context, SOAP_SMD_HMAC_SHA1, (void*)hmac_key, 16);
     soap_smd_update(soap, &context, buffer, SOAP_SMD_SHA1_SIZE + secretlen);
     soap_smd_final(soap, &context, temp, NULL);

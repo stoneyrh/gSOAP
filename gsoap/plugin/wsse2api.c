@@ -2367,7 +2367,7 @@ soap_wsse_session_verify(struct soap *soap, const char hash[SOAP_SMD_SHA1_SIZE],
     if (session)
     { session->next = soap_wsse_session;
       session->expired = expired;
-      soap_memcpy((void*)session->hash, sizeof(session->hash), (const void*)hash, SOAP_SMD_SHA1_SIZE);
+      (void)soap_memcpy((void*)session->hash, sizeof(session->hash), (const void*)hash, SOAP_SMD_SHA1_SIZE);
       soap_strcpy(session->nonce, l + 1, nonce);
       soap_wsse_session = session;
     }
@@ -2452,10 +2452,10 @@ calc_nonce(struct soap *soap, char nonce[SOAP_WSSE_NONCELEN])
 { int i;
   time_t r = time(NULL);
   (void)soap;
-  soap_memcpy((void*)nonce, SOAP_WSSE_NONCELEN, (const void*)&r, 4);
+  (void)soap_memcpy((void*)nonce, SOAP_WSSE_NONCELEN, (const void*)&r, 4);
   for (i = 4; i < SOAP_WSSE_NONCELEN; i += 4)
   { r = soap_random;
-    soap_memcpy((void*)nonce + i, 4, (const void*)&r, 4);
+    (void)soap_memcpy((void*)nonce + i, 4, (const void*)&r, 4);
   }
 }
 

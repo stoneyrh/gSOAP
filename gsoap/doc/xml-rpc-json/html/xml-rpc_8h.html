@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">xml-rpc.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Sep 7 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Wed Dec 6 2017 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -156,66 +156,69 @@ Functions</h2></td></tr>
 <tr class="memitem:ada27892570331f334c2622e5b6d371e1"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#ada27892570331f334c2622e5b6d371e1">value_atw</a> (struct <a class="el" href="structvalue.html">value</a> *v, const wchar_t *s)</td></tr>
 <tr class="memdesc:ada27892570331f334c2622e5b6d371e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns pointer to member value of a struct, coerces v to struct if needed.  <a href="#ada27892570331f334c2622e5b6d371e1">More...</a><br /></td></tr>
 <tr class="separator:ada27892570331f334c2622e5b6d371e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7db7ce88557cc6ff24476ff924f3e2f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#ab7db7ce88557cc6ff24476ff924f3e2f">nth_at</a> (struct <a class="el" href="structvalue.html">value</a> *v, const char *s)</td></tr>
-<tr class="memdesc:ab7db7ce88557cc6ff24476ff924f3e2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns the nth index of a name in a struct, &lt; 0 otherwise.  <a href="#ab7db7ce88557cc6ff24476ff924f3e2f">More...</a><br /></td></tr>
-<tr class="separator:ab7db7ce88557cc6ff24476ff924f3e2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7e9e461f9ac2ee305a2149fce7cddee"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#aa7e9e461f9ac2ee305a2149fce7cddee">nth_atw</a> (struct <a class="el" href="structvalue.html">value</a> *v, const wchar_t *s)</td></tr>
-<tr class="memdesc:aa7e9e461f9ac2ee305a2149fce7cddee"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns the nth index of a name in a struct, &lt; 0 otherwise.  <a href="#aa7e9e461f9ac2ee305a2149fce7cddee">More...</a><br /></td></tr>
-<tr class="separator:aa7e9e461f9ac2ee305a2149fce7cddee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab411755162f1d382ee4b06e9afa42ca3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#ab411755162f1d382ee4b06e9afa42ca3">nth_nth</a> (struct <a class="el" href="structvalue.html">value</a> *v, int n)</td></tr>
-<tr class="memdesc:ab411755162f1d382ee4b06e9afa42ca3"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns the nth index if an nth index in the array exists, &lt; 0 otherwise.  <a href="#ab411755162f1d382ee4b06e9afa42ca3">More...</a><br /></td></tr>
-<tr class="separator:ab411755162f1d382ee4b06e9afa42ca3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2855dca8d5186e4eef15f1e30a29916"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#af2855dca8d5186e4eef15f1e30a29916">nth_at</a> (const struct <a class="el" href="structvalue.html">value</a> *v, const char *s)</td></tr>
+<tr class="memdesc:af2855dca8d5186e4eef15f1e30a29916"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns the nth index of a name in a struct, &lt; 0 otherwise.  <a href="#af2855dca8d5186e4eef15f1e30a29916">More...</a><br /></td></tr>
+<tr class="separator:af2855dca8d5186e4eef15f1e30a29916"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75c655d6c8f4c1d724574c9d2ef9c656"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a75c655d6c8f4c1d724574c9d2ef9c656">nth_atw</a> (const struct <a class="el" href="structvalue.html">value</a> *v, const wchar_t *s)</td></tr>
+<tr class="memdesc:a75c655d6c8f4c1d724574c9d2ef9c656"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns the nth index of a name in a struct, &lt; 0 otherwise.  <a href="#a75c655d6c8f4c1d724574c9d2ef9c656">More...</a><br /></td></tr>
+<tr class="separator:a75c655d6c8f4c1d724574c9d2ef9c656"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a434cc3569bccca76d161c4b3b97a4d9c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a434cc3569bccca76d161c4b3b97a4d9c">nth_nth</a> (const struct <a class="el" href="structvalue.html">value</a> *v, int n)</td></tr>
+<tr class="memdesc:a434cc3569bccca76d161c4b3b97a4d9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns the nth index if an nth index in the array exists, &lt; 0 otherwise.  <a href="#a434cc3569bccca76d161c4b3b97a4d9c">More...</a><br /></td></tr>
+<tr class="separator:a434cc3569bccca76d161c4b3b97a4d9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d1e5a8876f8fc0f27449180847de769"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structmember.html">member</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a9d1e5a8876f8fc0f27449180847de769">nth_member</a> (struct <a class="el" href="structvalue.html">value</a> *v, int n)</td></tr>
-<tr class="memdesc:a9d1e5a8876f8fc0f27449180847de769"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns pointer to nth member (name and value) of a struct.  <a href="#a9d1e5a8876f8fc0f27449180847de769">More...</a><br /></td></tr>
+<tr class="memdesc:a9d1e5a8876f8fc0f27449180847de769"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns pointer to nth member (name and value) of a struct or NULL when not exists.  <a href="#a9d1e5a8876f8fc0f27449180847de769">More...</a><br /></td></tr>
 <tr class="separator:a9d1e5a8876f8fc0f27449180847de769"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4c5b08c29e341e61062389633c64743"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structvalue.html">value</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#ae4c5b08c29e341e61062389633c64743">nth_value</a> (struct <a class="el" href="structvalue.html">value</a> *v, int n)</td></tr>
 <tr class="memdesc:ae4c5b08c29e341e61062389633c64743"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns pointer to array element value at index n, coerces v to array with value at n if needed.  <a href="#ae4c5b08c29e341e61062389633c64743">More...</a><br /></td></tr>
 <tr class="separator:ae4c5b08c29e341e61062389633c64743"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4e8a1f12ef2b566cc50569001fca940"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#aa4e8a1f12ef2b566cc50569001fca940">is_null</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:aa4e8a1f12ef2b566cc50569001fca940"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is not set or assigned (JSON null)  <a href="#aa4e8a1f12ef2b566cc50569001fca940">More...</a><br /></td></tr>
-<tr class="separator:aa4e8a1f12ef2b566cc50569001fca940"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab980370d74096f35ed7c03d40da5421b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#ab980370d74096f35ed7c03d40da5421b">is_int</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:ab980370d74096f35ed7c03d40da5421b"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is a 32 or a 64 bit int.  <a href="#ab980370d74096f35ed7c03d40da5421b">More...</a><br /></td></tr>
-<tr class="separator:ab980370d74096f35ed7c03d40da5421b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32e1cd6673d46971611235857eae95cf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a32e1cd6673d46971611235857eae95cf">is_double</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:a32e1cd6673d46971611235857eae95cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is a 64 bit double floating point.  <a href="#a32e1cd6673d46971611235857eae95cf">More...</a><br /></td></tr>
-<tr class="separator:a32e1cd6673d46971611235857eae95cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe3a56ddfce5a20bf0947859eca37194"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#afe3a56ddfce5a20bf0947859eca37194">is_number</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:afe3a56ddfce5a20bf0947859eca37194"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is a number (int or float)  <a href="#afe3a56ddfce5a20bf0947859eca37194">More...</a><br /></td></tr>
-<tr class="separator:afe3a56ddfce5a20bf0947859eca37194"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a392a88727e8a46e6819433b477d80857"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a392a88727e8a46e6819433b477d80857">is_string</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:a392a88727e8a46e6819433b477d80857"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is a string.  <a href="#a392a88727e8a46e6819433b477d80857">More...</a><br /></td></tr>
-<tr class="separator:a392a88727e8a46e6819433b477d80857"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37adccbe9ebace8142c5f9e3c5a932a9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a37adccbe9ebace8142c5f9e3c5a932a9">is_bool</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:a37adccbe9ebace8142c5f9e3c5a932a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is a Boolean "true" or "false" value.  <a href="#a37adccbe9ebace8142c5f9e3c5a932a9">More...</a><br /></td></tr>
-<tr class="separator:a37adccbe9ebace8142c5f9e3c5a932a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23a4e8658b6c3f54a8ea9fcd3bd73ba8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a23a4e8658b6c3f54a8ea9fcd3bd73ba8">is_true</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:a23a4e8658b6c3f54a8ea9fcd3bd73ba8"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is Boolean "true".  <a href="#a23a4e8658b6c3f54a8ea9fcd3bd73ba8">More...</a><br /></td></tr>
-<tr class="separator:a23a4e8658b6c3f54a8ea9fcd3bd73ba8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77c2471c5bfcb253a94f5662a8b22f76"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a77c2471c5bfcb253a94f5662a8b22f76">is_false</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:a77c2471c5bfcb253a94f5662a8b22f76"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is Boolean "false".  <a href="#a77c2471c5bfcb253a94f5662a8b22f76">More...</a><br /></td></tr>
-<tr class="separator:a77c2471c5bfcb253a94f5662a8b22f76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71223486df0b4164e591da1a448b7b3a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a71223486df0b4164e591da1a448b7b3a">is_array</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:a71223486df0b4164e591da1a448b7b3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if array of values.  <a href="#a71223486df0b4164e591da1a448b7b3a">More...</a><br /></td></tr>
-<tr class="separator:a71223486df0b4164e591da1a448b7b3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a351b9deda4402c39ab1ef288f483f703"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a351b9deda4402c39ab1ef288f483f703">is_struct</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:a351b9deda4402c39ab1ef288f483f703"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if structure, a.k.a. a JSON object.  <a href="#a351b9deda4402c39ab1ef288f483f703">More...</a><br /></td></tr>
-<tr class="separator:a351b9deda4402c39ab1ef288f483f703"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5bad1d463d4d51f71e49b9b3e189168"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#ae5bad1d463d4d51f71e49b9b3e189168">is_dateTime</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:ae5bad1d463d4d51f71e49b9b3e189168"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if ISO 8601, always false for received JSON.  <a href="#ae5bad1d463d4d51f71e49b9b3e189168">More...</a><br /></td></tr>
-<tr class="separator:ae5bad1d463d4d51f71e49b9b3e189168"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab320f60f02810a8baa4f78a5576d3b15"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#ab320f60f02810a8baa4f78a5576d3b15">is_base64</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:ab320f60f02810a8baa4f78a5576d3b15"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if base64, always false for received JSON.  <a href="#ab320f60f02810a8baa4f78a5576d3b15">More...</a><br /></td></tr>
-<tr class="separator:ab320f60f02810a8baa4f78a5576d3b15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c006e0e0ea53fce5cbc6dd543b8127b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a9c006e0e0ea53fce5cbc6dd543b8127b">is_null</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:a9c006e0e0ea53fce5cbc6dd543b8127b"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is not set or assigned (JSON null)  <a href="#a9c006e0e0ea53fce5cbc6dd543b8127b">More...</a><br /></td></tr>
+<tr class="separator:a9c006e0e0ea53fce5cbc6dd543b8127b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa556973b4edbc381e75f6172655a7bdb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#aa556973b4edbc381e75f6172655a7bdb">is_int</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:aa556973b4edbc381e75f6172655a7bdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is a 32 or a 64 bit int.  <a href="#aa556973b4edbc381e75f6172655a7bdb">More...</a><br /></td></tr>
+<tr class="separator:aa556973b4edbc381e75f6172655a7bdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa68cb9d2950d826fcc0ce19cfe40c028"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#aa68cb9d2950d826fcc0ce19cfe40c028">is_double</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:aa68cb9d2950d826fcc0ce19cfe40c028"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is a 64 bit double floating point.  <a href="#aa68cb9d2950d826fcc0ce19cfe40c028">More...</a><br /></td></tr>
+<tr class="separator:aa68cb9d2950d826fcc0ce19cfe40c028"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26f8409f8dd1b093bea7dbd036392be0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a26f8409f8dd1b093bea7dbd036392be0">is_number</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:a26f8409f8dd1b093bea7dbd036392be0"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is a number (int or float)  <a href="#a26f8409f8dd1b093bea7dbd036392be0">More...</a><br /></td></tr>
+<tr class="separator:a26f8409f8dd1b093bea7dbd036392be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a243e9ce66455d2d5819e0db13ae0c104"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a243e9ce66455d2d5819e0db13ae0c104">is_string</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:a243e9ce66455d2d5819e0db13ae0c104"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is a string.  <a href="#a243e9ce66455d2d5819e0db13ae0c104">More...</a><br /></td></tr>
+<tr class="separator:a243e9ce66455d2d5819e0db13ae0c104"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a641eee093203fbd4a308e92b9eee1238"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a641eee093203fbd4a308e92b9eee1238">is_bool</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:a641eee093203fbd4a308e92b9eee1238"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is a Boolean "true" or "false" value.  <a href="#a641eee093203fbd4a308e92b9eee1238">More...</a><br /></td></tr>
+<tr class="separator:a641eee093203fbd4a308e92b9eee1238"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56a91404bf315af6dfe31786924dcd80"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a56a91404bf315af6dfe31786924dcd80">is_true</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:a56a91404bf315af6dfe31786924dcd80"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is Boolean "true".  <a href="#a56a91404bf315af6dfe31786924dcd80">More...</a><br /></td></tr>
+<tr class="separator:a56a91404bf315af6dfe31786924dcd80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab4f39a727533199bc25a0dd57e539e7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#aab4f39a727533199bc25a0dd57e539e7">is_false</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:aab4f39a727533199bc25a0dd57e539e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if value is Boolean "false".  <a href="#aab4f39a727533199bc25a0dd57e539e7">More...</a><br /></td></tr>
+<tr class="separator:aab4f39a727533199bc25a0dd57e539e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c966917360d8b05046f2625cc146176"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a5c966917360d8b05046f2625cc146176">is_array</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:a5c966917360d8b05046f2625cc146176"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if array of values.  <a href="#a5c966917360d8b05046f2625cc146176">More...</a><br /></td></tr>
+<tr class="separator:a5c966917360d8b05046f2625cc146176"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa520242cc045c4390b6e79d6e02b372d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#aa520242cc045c4390b6e79d6e02b372d">is_struct</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:aa520242cc045c4390b6e79d6e02b372d"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if structure, a.k.a. a JSON object.  <a href="#aa520242cc045c4390b6e79d6e02b372d">More...</a><br /></td></tr>
+<tr class="separator:aa520242cc045c4390b6e79d6e02b372d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06cf4ad42a3483b8a0da51f77aefa2bd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a06cf4ad42a3483b8a0da51f77aefa2bd">is_dateTime</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:a06cf4ad42a3483b8a0da51f77aefa2bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if ISO 8601, always false for received JSON.  <a href="#a06cf4ad42a3483b8a0da51f77aefa2bd">More...</a><br /></td></tr>
+<tr class="separator:a06cf4ad42a3483b8a0da51f77aefa2bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99a7e4bbd0637ef4e752896cf299cfb7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a99a7e4bbd0637ef4e752896cf299cfb7">is_base64</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:a99a7e4bbd0637ef4e752896cf299cfb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true if base64, always false for received JSON.  <a href="#a99a7e4bbd0637ef4e752896cf299cfb7">More...</a><br /></td></tr>
+<tr class="separator:a99a7e4bbd0637ef4e752896cf299cfb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4d39cc0904084cdc556be1b43146542"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#aa4d39cc0904084cdc556be1b43146542">set_struct</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
 <tr class="memdesc:aa4d39cc0904084cdc556be1b43146542"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function to create an empty struct.  <a href="#aa4d39cc0904084cdc556be1b43146542">More...</a><br /></td></tr>
 <tr class="separator:aa4d39cc0904084cdc556be1b43146542"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4923910fea4fc3bcb85ec655f1071a66"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a4923910fea4fc3bcb85ec655f1071a66">set_size</a> (struct <a class="el" href="structvalue.html">value</a> *v, int n)</td></tr>
 <tr class="memdesc:a4923910fea4fc3bcb85ec655f1071a66"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function set/allocate size of array.  <a href="#a4923910fea4fc3bcb85ec655f1071a66">More...</a><br /></td></tr>
 <tr class="separator:a4923910fea4fc3bcb85ec655f1071a66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd626f3d93d1ea851ea6defac4b4979f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#afd626f3d93d1ea851ea6defac4b4979f">has_size</a> (struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
-<tr class="memdesc:afd626f3d93d1ea851ea6defac4b4979f"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns the size of an array or struct.  <a href="#afd626f3d93d1ea851ea6defac4b4979f">More...</a><br /></td></tr>
-<tr class="separator:afd626f3d93d1ea851ea6defac4b4979f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12cc6102a5617ffba09d3a186289214f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#a12cc6102a5617ffba09d3a186289214f">has_size</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:a12cc6102a5617ffba09d3a186289214f"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns the size of an array or struct.  <a href="#a12cc6102a5617ffba09d3a186289214f">More...</a><br /></td></tr>
+<tr class="separator:a12cc6102a5617ffba09d3a186289214f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc4960a06b10ec7aef4892260c31f2fd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#adc4960a06b10ec7aef4892260c31f2fd">is_empty</a> (const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
+<tr class="memdesc:adc4960a06b10ec7aef4892260c31f2fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns true (1) if struct/array is empty or when value is not an struct/array, 0 otherwise.  <a href="#adc4960a06b10ec7aef4892260c31f2fd">More...</a><br /></td></tr>
+<tr class="separator:adc4960a06b10ec7aef4892260c31f2fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:addbe5187fa70ee2a97526986e14a7c61"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structparams.html">params</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xml-rpc_8h.html#addbe5187fa70ee2a97526986e14a7c61">new_params</a> (struct soap *soap)</td></tr>
 <tr class="memdesc:addbe5187fa70ee2a97526986e14a7c61"><td class="mdescLeft">&#160;</td><td class="mdescRight">C function returns pointer to new parameters for XML-RPC <a class="el" href="structmethod_call.html" title="Represents the &lt;methodCall&gt; element with &lt;methodName&gt; and request &lt;params&gt; for remote invocation...">methodCall</a>.  <a href="#addbe5187fa70ee2a97526986e14a7c61">More...</a><br /></td></tr>
 <tr class="separator:addbe5187fa70ee2a97526986e14a7c61"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -433,14 +436,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="afd626f3d93d1ea851ea6defac4b4979f"></a>
+<a class="anchor" id="a12cc6102a5617ffba09d3a186289214f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int has_size </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -525,14 +528,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a71223486df0b4164e591da1a448b7b3a"></a>
+<a class="anchor" id="a5c966917360d8b05046f2625cc146176"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_array </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -543,14 +546,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ab320f60f02810a8baa4f78a5576d3b15"></a>
+<a class="anchor" id="a99a7e4bbd0637ef4e752896cf299cfb7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_base64 </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -561,14 +564,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a37adccbe9ebace8142c5f9e3c5a932a9"></a>
+<a class="anchor" id="a641eee093203fbd4a308e92b9eee1238"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_bool </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -579,14 +582,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ae5bad1d463d4d51f71e49b9b3e189168"></a>
+<a class="anchor" id="a06cf4ad42a3483b8a0da51f77aefa2bd"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_dateTime </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -597,14 +600,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a32e1cd6673d46971611235857eae95cf"></a>
+<a class="anchor" id="aa68cb9d2950d826fcc0ce19cfe40c028"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_double </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -615,14 +618,32 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a77c2471c5bfcb253a94f5662a8b22f76"></a>
+<a class="anchor" id="adc4960a06b10ec7aef4892260c31f2fd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int is_empty </td>
+          <td>(</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>C function returns true (1) if struct/array is empty or when value is not an struct/array, 0 otherwise. </p>
+
+</div>
+</div>
+<a class="anchor" id="aab4f39a727533199bc25a0dd57e539e7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_false </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -633,14 +654,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ab980370d74096f35ed7c03d40da5421b"></a>
+<a class="anchor" id="aa556973b4edbc381e75f6172655a7bdb"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_int </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -651,14 +672,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aa4e8a1f12ef2b566cc50569001fca940"></a>
+<a class="anchor" id="a9c006e0e0ea53fce5cbc6dd543b8127b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_null </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -669,14 +690,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="afe3a56ddfce5a20bf0947859eca37194"></a>
+<a class="anchor" id="a26f8409f8dd1b093bea7dbd036392be0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_number </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -687,14 +708,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a392a88727e8a46e6819433b477d80857"></a>
+<a class="anchor" id="a243e9ce66455d2d5819e0db13ae0c104"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_string </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -705,14 +726,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a351b9deda4402c39ab1ef288f483f703"></a>
+<a class="anchor" id="aa520242cc045c4390b6e79d6e02b372d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_struct </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -723,14 +744,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a23a4e8658b6c3f54a8ea9fcd3bd73ba8"></a>
+<a class="anchor" id="a56a91404bf315af6dfe31786924dcd80"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="xml-rpc_8h.html#a7d938291b52a0161e5fae7b812697c00">_boolean</a> is_true </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
@@ -777,14 +798,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ab7db7ce88557cc6ff24476ff924f3e2f"></a>
+<a class="anchor" id="af2855dca8d5186e4eef15f1e30a29916"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int nth_at </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em>, </td>
         </tr>
         <tr>
@@ -805,14 +826,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aa7e9e461f9ac2ee305a2149fce7cddee"></a>
+<a class="anchor" id="a75c655d6c8f4c1d724574c9d2ef9c656"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int nth_atw </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em>, </td>
         </tr>
         <tr>
@@ -857,18 +878,18 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>C function returns pointer to nth member (name and value) of a struct. </p>
+<p>C function returns pointer to nth member (name and value) of a struct or NULL when not exists. </p>
 
 </div>
 </div>
-<a class="anchor" id="ab411755162f1d382ee4b06e9afa42ca3"></a>
+<a class="anchor" id="a434cc3569bccca76d161c4b3b97a4d9c"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int nth_nth </td>
           <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
+          <td class="paramtype">const struct <a class="el" href="structvalue.html">value</a> *&#160;</td>
           <td class="paramname"><em>v</em>, </td>
         </tr>
         <tr>
@@ -1071,7 +1092,7 @@ Functions</h2></td></tr>
 Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Sep 7 2017 12:42:38 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Wed Dec 6 2017 15:34:43 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

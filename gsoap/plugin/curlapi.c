@@ -471,9 +471,9 @@ static int soap_curl_connect_callback(struct soap *soap, const char *endpoint, c
   {
     if (soap_http_content_type(soap, SOAP_OK))
     {
-      soap_memmove(soap->tmpbuf+14, sizeof(soap->tmpbuf), soap->tmpbuf, sizeof(soap->tmpbuf)-14);
+      (void)soap_memmove(soap->tmpbuf+14, sizeof(soap->tmpbuf), soap->tmpbuf, sizeof(soap->tmpbuf)-14);
       soap->tmpbuf[sizeof(soap->tmpbuf)-1] = '\0';
-      soap_memcpy(soap->tmpbuf, sizeof(soap->tmpbuf), "Content-Type: ", 14);
+      (void)soap_memcpy(soap->tmpbuf, sizeof(soap->tmpbuf), "Content-Type: ", 14);
       data->hdr = curl_slist_append(data->hdr, soap->tmpbuf);
       curl_easy_setopt(data->curl, CURLOPT_HTTPHEADER, (void*)data->hdr);
     }
@@ -540,7 +540,7 @@ static int soap_curl_send_callback(struct soap *soap, const char *buf, size_t le
     blk = (char*)soap_push_block(soap, data->lst, len);
     if (!blk)
       return soap->error;
-    soap_memcpy((void*)blk, len, (const void*)buf, len);
+    (void)soap_memcpy((void*)blk, len, (const void*)buf, len);
   }
   return SOAP_OK;
 }
@@ -668,7 +668,7 @@ static size_t soap_curl_recv_callback(struct soap *soap, char *buf, size_t size)
   len = soap_block_size(soap, data->lst) - (data->ptr - data->blk);
   if (len > size)
     len = size;
-  soap_memcpy((void*)buf, size, (const void*)data->ptr, len);
+  (void)soap_memcpy((void*)buf, size, (const void*)data->ptr, len);
   data->ptr += len;
   if (data->ptr >= data->blk + soap_block_size(data->soap, data->lst))
   {
@@ -719,7 +719,7 @@ static size_t soap_curl_read_callback(void *buffer, size_t size, size_t nitems, 
   len = soap_block_size(soap, data->lst) - (data->ptr - data->blk);
   if (len > size * nitems)
     len = size * nitems;
-  soap_memcpy((void*)buffer, size * nitems, (const void*)data->ptr, len);
+  (void)soap_memcpy((void*)buffer, size * nitems, (const void*)data->ptr, len);
   data->ptr += len;
   if (data->ptr >= data->blk + soap_block_size(soap, data->lst))
   {
@@ -754,7 +754,7 @@ static size_t soap_curl_write_callback(void *buffer, size_t size, size_t nitems,
   s = (char*)soap_push_block(soap, data->lst, len);
   if (!s)
     return 0;
-  soap_memcpy((void*)s, len, buffer, len);
+  (void)soap_memcpy((void*)s, len, buffer, len);
   return len;
 }
 

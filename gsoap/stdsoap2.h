@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.55
+        stdsoap2.h 2.8.56
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20855
+#define GSOAP_VERSION 20856
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1807,6 +1807,14 @@ typedef soap_int32 soap_mode;
 # define SOAP_FREE(soap, ptr) free((void*)(ptr))
 #endif
 
+#ifndef SOAP_MALLOC_UNMANAGED           /* use libc malloc to alloc soap context with soap_new() */
+# define SOAP_MALLOC_UNMANAGED(size) malloc(size)
+#endif
+
+#ifndef SOAP_FREE_UNMANAGED             /* use libc free to free soap context with soap_free() */
+# define SOAP_FREE_UNMANAGED(ptr) free((void*)(ptr))
+#endif
+
 #ifndef SOAP_NOTHROW
 # if defined(__GNUC__) && (__GNUC__ <= 2)
 #  define SOAP_NOTHROW
@@ -1818,39 +1826,43 @@ typedef soap_int32 soap_mode;
 #endif
 
 #if (defined(__GNUC__) && (__GNUC__ <= 2)) || defined(__clang__) || defined(_AIX) || defined(AIX)
-/* old form w/o parenthesis */
+/* old form w/o parenthesis, soap context may be NULL */
 # ifndef SOAP_NEW
-#  define SOAP_NEW(type) new SOAP_NOTHROW type
+#  define SOAP_NEW(soap, type) new SOAP_NOTHROW type
 # endif
 # ifndef SOAP_NEW_ARRAY
-#  define SOAP_NEW_ARRAY(type, n) new SOAP_NOTHROW type[n]
+#  define SOAP_NEW_ARRAY(soap, type, n) new SOAP_NOTHROW type[n]
 # endif
 # ifndef SOAP_PLACEMENT_NEW
-#  define SOAP_PLACEMENT_NEW(buf, type) new (buf) type
+#  define SOAP_PLACEMENT_NEW(soap, buf, type) new (buf) type
 # endif
 #else
-/* new form with parenthesis for (type) but not type[n] */
+/* new form with parenthesis for (type) but not type[n], soap context may be NULL */
 # ifndef SOAP_NEW
-#  define SOAP_NEW(type) new SOAP_NOTHROW (type)
+#  define SOAP_NEW(soap, type) new SOAP_NOTHROW (type)
 # endif
 # ifndef SOAP_NEW_ARRAY
-#  define SOAP_NEW_ARRAY(type, n) new SOAP_NOTHROW type[n]
+#  define SOAP_NEW_ARRAY(soap, type, n) new SOAP_NOTHROW type[n]
 # endif
 # ifndef SOAP_PLACEMENT_NEW
-#  define SOAP_PLACEMENT_NEW(buf, type) new (buf) (type)
+#  define SOAP_PLACEMENT_NEW(soap, buf, type) new (buf) (type)
 # endif
 #endif
 
-#ifndef SOAP_NEW_COPY                   /* use C++ new operator for ::copy() */
-# define SOAP_NEW_COPY(clas) new SOAP_NOTHROW clas
+#ifndef SOAP_DELETE                     /* use C++ delete operator, soap context may be NULL */
+# define SOAP_DELETE(soap, obj, type) delete obj
 #endif
 
-#ifndef SOAP_DELETE                     /* use C++ delete operator */
-# define SOAP_DELETE(obj) delete obj
+#ifndef SOAP_DELETE_ARRAY               /* use C++ delete[] operator, soap context may be NULL */
+# define SOAP_DELETE_ARRAY(soap, obj, type) delete[] obj
 #endif
 
-#ifndef SOAP_DELETE_ARRAY               /* use C++ delete[] operator */
-# define SOAP_DELETE_ARRAY(obj) delete[] obj
+#ifndef SOAP_NEW_UNMANAGED              /* use C++ unmanaged new operator for soap_new() and soap::copy() */
+# define SOAP_NEW_UNMANAGED(soap) new SOAP_NOTHROW soap
+#endif
+
+#ifndef SOA_DELETE_UNMANAGED            /* use C++ unmanaged delete operator for soap_free() */
+# define SOAP_DELETE_UNMANAGED(soap) delete soap;
 #endif
 
 #ifdef SOAP_DEBUG
@@ -1953,6 +1965,9 @@ typedef soap_int32 soap_mode;
 /* UCS-4 requires 32 bits (0-7FFFFFFF, the sign bit is used by gSOAP to distinguish XML entities) */
 typedef soap_int32 soap_wchar;
 
+/* forward declaration */
+struct soap;
+
 /* namespace table row */
 struct Namespace
 { const char *id;
@@ -2020,7 +2035,7 @@ struct soap_clist
   void *ptr;
   int type;
   int size; /* array size */
-  int (*fdelete)(struct soap_clist*);
+  int (*fdelete)(struct soap*, struct soap_clist*);
 };
 
 /* attributes */
@@ -2621,6 +2636,7 @@ struct SOAP_CMAC soap
   int socket_flags;             /* user-definable socket recv() and send() flags, e.g. set to MSG_NOSIGNAL to disable sigpipe */
   int connect_flags;            /* user-definable connect() SOL_SOCKET sockopt flags, e.g. set to SO_DEBUG to debug socket */
   int bind_flags;               /* user-definable bind() SOL_SOCKET sockopt flags, e.g. set to SO_REUSEADDR to enable reuse */
+  int bind_v6only;              /* user-definable bind() IPPROTO_IPV6 socopt IPV6_V6ONLY (only with -DWITH_IPV6) */
   int accept_flags;             /* user-definable accept() SOL_SOCKET sockopt flags */
   int sndbuf;                   /* user-definable SO_SNFBUF setsockopt */
   int rcvbuf;                   /* user-definable SO_SNFBUF setsockopt */
@@ -3201,7 +3217,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_end_recv(struct soap*);
 
 SOAP_FMAC1 void* SOAP_FMAC2 soap_malloc(struct soap*, size_t);
 SOAP_FMAC1 void SOAP_FMAC2 soap_dealloc(struct soap*, void*);
-SOAP_FMAC1 struct soap_clist * SOAP_FMAC2 soap_link(struct soap*, void*, int, int, int (*fdelete)(struct soap_clist*));
+SOAP_FMAC1 struct soap_clist * SOAP_FMAC2 soap_link(struct soap*, int, int, int (*fdelete)(struct soap*, struct soap_clist*));
 SOAP_FMAC1 int SOAP_FMAC2 soap_unlink(struct soap*, const void*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_free_temp(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_del(struct soap*);
@@ -3512,6 +3528,7 @@ SOAP_FMAC1 const char* SOAP_FMAC2 soap_encode_url_string(struct soap*, const cha
 SOAP_FMAC1 void SOAP_FMAC2 soap_getcookies(struct soap *soap, const char *val);
 SOAP_FMAC1 extern struct soap_cookie* SOAP_FMAC2 soap_set_cookie(struct soap*, const char*, const char*, const char*, const char*);
 SOAP_FMAC1 extern struct soap_cookie* SOAP_FMAC2 soap_cookie(struct soap*, const char*, const char*, const char*);
+SOAP_FMAC1 extern struct soap_cookie* SOAP_FMAC2 soap_cookie_env(struct soap*, const char*, const char*, const char*, short);
 SOAP_FMAC1 extern char* SOAP_FMAC2 soap_cookie_value(struct soap*, const char*, const char*, const char*);
 SOAP_FMAC1 extern char* SOAP_FMAC2 soap_env_cookie_value(struct soap*, const char*, const char*, const char*);
 SOAP_FMAC1 extern time_t SOAP_FMAC2 soap_cookie_expire(struct soap*, const char*, const char*, const char*);
@@ -3544,7 +3561,7 @@ struct soap_block
       return NULL;
     T *p = (T*)soap_push_block_max(soap, b, sizeof(T));
     if (p)
-      SOAP_PLACEMENT_NEW(p, T);
+      SOAP_PLACEMENT_NEW(soap, p, T);
     return p;
   }
   static void pop(struct soap *soap, struct soap_blist *b)

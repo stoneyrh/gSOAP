@@ -55,7 +55,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 static void * instantiate_xsd__dateTime(struct soap*, int, const char*, const char*, size_t*);
 
-static int delete_xsd__dateTime(struct soap_clist*);
+static int delete_xsd__dateTime(struct soap*, struct soap_clist*);
 
 static void copy_xsd__dateTime(struct soap*, int, int, void*, size_t, const void*, void**);
 
@@ -227,17 +227,17 @@ int soap_s2xsd__dateTime(struct soap *soap, const char *s, QDateTime *a)
 static void * instantiate_xsd__dateTime(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_xsd__dateTime(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-  struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_xsd__dateTime, n, delete_xsd__dateTime);
+  struct soap_clist *cp = soap_link(soap, SOAP_TYPE_xsd__dateTime, n, delete_xsd__dateTime);
   (void)type; (void)arrayType; /* appease -Wall -Werror */
   if (!cp)
     return NULL;
   if (n < 0)
-  {	cp->ptr = SOAP_NEW(QDateTime);
+  {	cp->ptr = SOAP_NEW(soap, QDateTime);
     if (size)
       *size = sizeof(QDateTime);
   }
   else
-  {	cp->ptr = SOAP_NEW_ARRAY(QDateTime, n);
+  {	cp->ptr = SOAP_NEW_ARRAY(soap, QDateTime, n);
     if (size)
       *size = n * sizeof(QDateTime);
   }
@@ -247,14 +247,15 @@ static void * instantiate_xsd__dateTime(struct soap *soap, int n, const char *ty
   return (QDateTime*)cp->ptr;
 }
 
-static int delete_xsd__dateTime(struct soap_clist *p)
+static int delete_xsd__dateTime(struct soap *soap, struct soap_clist *p)
 {
+  (void)soap; /* appease -Wall -Werror */
   if (p->type == SOAP_TYPE_xsd__dateTime)
   {
     if (p->size < 0)
-      SOAP_DELETE(static_cast<QDateTime*>(p->ptr));
+      SOAP_DELETE(soap, static_cast<QDateTime*>(p->ptr), QDateTime);
     else
-      SOAP_DELETE_ARRAY(static_cast<QDateTime*>(p->ptr));
+      SOAP_DELETE_ARRAY(soap, static_cast<QDateTime*>(p->ptr), QDateTime);
     return SOAP_OK;
   }
   return SOAP_ERR;

@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.55
+        DOM API v5 gSOAP 2.8.56
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20855
+#define GSOAP_LIB_VERSION 20856
 
 #include "stdsoap2.h"
 
@@ -1006,7 +1006,7 @@ soap_push_prefix(struct soap *soap, const char *id, size_t n, const char *ns, in
         break;
       }
     }
-    soap_strncpy(soap->tag, sizeof(soap->tag), id, n);
+    (void)soap_strncpy(soap->tag, sizeof(soap->tag), id, n);
     id = soap->tag;
     soap->local_namespaces = NULL; /* do not permit a replacement id, when ns is in table */
   }
@@ -1203,7 +1203,7 @@ static struct soap_dom_element *new_element(struct soap *soap)
   if (elt)
   {
 #ifdef __cplusplus
-    SOAP_PLACEMENT_NEW(elt, soap_dom_element);
+    SOAP_PLACEMENT_NEW(soap, elt, soap_dom_element);
 #endif
     soap_default_xsd__anyType(soap, elt);
   }
@@ -1219,7 +1219,7 @@ static struct soap_dom_attribute *new_attribute(struct soap *soap)
   if (att)
   {
 #ifdef __cplusplus
-    SOAP_PLACEMENT_NEW(att, soap_dom_attribute);
+    SOAP_PLACEMENT_NEW(soap, att, soap_dom_attribute);
 #endif
     soap_default_xsd__anyAttribute(soap, att);
   }

@@ -137,7 +137,7 @@ represented by the struct ns__root (or class ns__root in C++):
   ...
   soap_default_ns__root(soap, &root);
   if (soap_get_connect(soap, endpoint, NULL)
-   || soap_read_ns__root(soap, &root))
+   || soap_get_ns__root(soap, &root, "root", NULL))
     ... // error
   soap_destroy(soap);
   soap_end(soap);
@@ -176,25 +176,27 @@ To extend a SOAP server with GET capability (see also samples/webserver):
 
   #include "plugin/httpget.h"	// also compile and link httpget.c
   ...
-  ... // run server
+  soap_serve(soap) // run server, see below
   ...
   int my_http_get_handler(struct soap *soap)
   { 
     // use soap_tag_cmp() for pattern matching:
     if (!soap_tag_cmp(soap->path, "*.html"))
     { soap->http_content = "text/html";
-      soap_response(soap, SOAP_FILE);
-      soap_send(soap, myhtml);
-      soap_end_send(soap);
+      if (soap_response(soap, SOAP_FILE)
+       || soap_send(soap, myhtml)
+       || soap_end_send(soap))
+	return soap->error;
       return SOAP_OK;
     }
     if (!soap_tag_cmp(soap->path, "*.xml"))
     { struct ns__root root;
       ... // populate root XML element
       soap->http_content = "text/xml";
-      soap_response(soap, SOAP_FILE);
-      soap_put_ns__root(soap, root, NULL, NULL);
-      soap_end_send(soap);
+      if (soap_response(soap, SOAP_FILE)
+       || soap_put_ns__root(soap, root, NULL, NULL)
+       || soap_end_send(soap))
+	return soap->error;
       return SOAP_OK;
     }
     return 404; // HTTP Not Found
@@ -213,9 +215,10 @@ To return JSON content, use:
     { value val(soap);
       ... // populate root XML element
       soap->http_content = "application/json";
-      soap_response(soap, SOAP_FILE);
-      json_send(soap, val);
-      soap_end_send(soap);
+      if (soap_response(soap, SOAP_FILE)
+       || json_send(soap, val)
+       || soap_end_send(soap))
+	return soap->error;
       return SOAP_OK;
     }
 
@@ -297,30 +300,68 @@ types:
   struct soap *soap = soap_new();
   soap_register_plugin_arg(&soap, http_post, handlers);
   ...
+  soap_serve(soap); // run server, see below
+  ...
   int jpg_handler(struct soap *soap)
   { char *buf;
     size_t len;
-    soap_http_body(soap, &buf, &len);
-    soap_response(soap, SOAP_OK);
-    soap_end_send(soap);
+    if (soap_http_body(soap, &buf, &len)
+     || soap_response(soap, SOAP_OK)
+     || soap_end_send(soap))
+      return soap->error;
     return SOAP_OK;
   }
   int image_handler(struct soap *soap)
   { char *buf;
     size_t len;
-    soap_http_body(soap, &buf, &len);
-    soap_response(soap, SOAP_HTML);
-    soap_send(soap, "<html>Image received</html>");
-    soap_end_send(soap);
+    if (soap_http_body(soap, &buf, &len)
+     || soap_response(soap, SOAP_HTML)
+     || soap_send(soap, "<html>Image received</html>")
+     || soap_end_send(soap))
+      return soap->error;
     return SOAP_OK;
   }
   int text_handler(struct soap *soap)
   { char *buf;
     size_t len;
     soap_http_body(soap, &buf, &len);
-    // use current soap->http_content from HTTP header as return HTTP type:
-    soap_response(soap, SOAP_FILE);
-    soap_send_raw(soap, buf, len);
-    soap_end_send(soap);
+    // set HTTP content header:
+    soap->http_content = "text/plain";
+    if (soap_response(soap, SOAP_FILE)
+     || soap_send_raw(soap, "Thanks!", 6)
+     || soap_end_send(soap))
+      return soap->error;
     return SOAP_OK;
   }
+
+If you do not use soapcpp2 to generate soap_serve(), then you will need the
+following replacement:
+
+  soap_serve(struct soap *soap)
+  {
+#ifndef WITH_FASTCGI
+    soap->keep_alive = soap->max_keep_alive + 1;
+#endif
+    do
+    {
+#ifndef WITH_FASTCGI
+      if (soap->keep_alive > 0 && soap->max_keep_alive > 0)
+	soap->keep_alive--;
+#endif
+      if (soap_begin_serve(soap))
+      {
+	if (soap->error >= SOAP_STOP)
+	  continue;
+	return soap->error;
+      }
+      soap_closesock(soap);
+#ifdef WITH_FASTCGI
+      soap_destroy(soap);
+      soap_end(soap);
+    } while (1);
+#else
+    } while (soap->keep_alive);
+#endif
+    return SOAP_OK;
+  }
+

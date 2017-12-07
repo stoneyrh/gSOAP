@@ -74,14 +74,14 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
         Start the web server on an even numbered port (e.g. 8080):
         > webserver 8080 &
         Start a web browser and open a (localhost) location:
-        http://127.0.0.1:8080
+        http://localhost:8080
         and type userid 'admin' and passwd 'guest' to gain access
         Open the location:
-        http://127.0.0.1:8080/calc.html
+        http://localhost:8080/calc.html
         then enter an expression
         Open the locations:
-        http://127.0.0.1:8080/test.html
-        http://127.0.0.1:8081/webserver.wsdl
+        http://localhost:8080/test.html
+        http://localhost:8081/webserver.wsdl
 
         Use (HTTPS GET):
         Create the SSL certificate (see samples/ssl README and scripts)
@@ -91,14 +91,14 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
         Actually, you can start two servers, one on 8080 and a secure one on
         8081
         Start a web browser and open a (localhost) location:
-        https://127.0.0.1:8081
+        https://localhost:8081
         and type userid 'admin' and passwd 'guest' to gain access
         Open the location:
-        https://127.0.0.1:8081/calcform1.html
+        https://localhost:8081/calcform1.html
         and enter an expression to calculate
         Open the locations:
-        https://127.0.0.1:8081/test.html
-        https://127.0.0.1:8081/webserver.wsdl
+        https://localhost:8081/test.html
+        https://localhost:8081/webserver.wsdl
 
         Use (HTTP POST):
         Serves SOAP/XML calculation requests
@@ -184,7 +184,7 @@ static const struct option default_options[] =
   { "o.pool", "threads", 6, (char*)"none"},
   { "t.ioTimeout", "seconds", 6, (char*)"5"},
   { "s.serverTimeout", "seconds", 6, (char*)"3600"},
-  { "d.cookieDomain", "host", 20, (char*)"127.0.0.1"},
+  { "d.cookieDomain", "host", 20, (char*)"localhost"},
   { "p.cookiePath", "path", 20, (char*)"/"},
   { "l.logging", "none inbound outbound both", },
   { "", "port", },              /* takes the rest of command line args */
@@ -285,10 +285,10 @@ int main(int argc, char **argv)
   if (port % 2)
     secure = 1;
   if (secure)
-    fprintf(stderr, "[Note: https://127.0.0.1:%d/test.html to test the server from browser]\n", port);
+    fprintf(stderr, "[Note: https://localhost:%d/test.html to test the server from browser]\n", port);
   else
-    fprintf(stderr, "[Note: http://127.0.0.1:%d/test.html to test the server from browser]\n", port);
-  fprintf(stderr, "[Note: http://127.0.0.1:%d for settings, login: '"AUTH_USERID"' and '"AUTH_PASSWD"']\n", port);
+    fprintf(stderr, "[Note: http://localhost:%d/test.html to test the server from browser]\n", port);
+  fprintf(stderr, "[Note: http://localhost:%d for settings, login: '"AUTH_USERID"' and '"AUTH_PASSWD"']\n", port);
   fprintf(stderr, "[Note: you should enable Linux/Unix SIGPIPE handlers to avoid broken pipe]\n");
 
   /* Init SSL (can skip or call multiple times, engien inits automatically) */
@@ -1199,7 +1199,7 @@ int info(struct soap *soap)
   if (html_form_options(soap, options))
     return soap->error;
   (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "\
-<h2>Function Tests</h2>\
+<h2>HTTP Functional Tests</h2>\
 <table border='0' cellspacing='0' cellpadding='0' bgcolor='#666666' nosave>\
 <tr height='10'><td height='10' background='bl.gif'></td><td height='10'><i>Function</i></td><td align='center' height='10'><i>Result</i></td><td height='10' background='obls.gif'></td></tr>\
 <tr><td background='bl.gif'></td><td>HTTP operational</td><td align='center' bgcolor='green'>YES</td><td width='10' background='ls.gif'></td></tr>\

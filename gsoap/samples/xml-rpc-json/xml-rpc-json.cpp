@@ -78,7 +78,7 @@ int main()
   v[0][1] = (int)v[0][1];     // convert string "2" to 32 bit int = 2
   v[0][2] = (LONG64)v[0][2];  // truncate 3.14 to 64 bit int = 3
   v[0].size(3);               // reset size to 3 to remove last entry
-  v[1]["name"] = "gSOAP";
+  v[1]["name"] = L"gSOAP © Genivia";
   v[1]["major"] = 2.9;
   v[1][L"©"] = 2016;
   v[1]["released"] = false;
@@ -99,6 +99,15 @@ int main()
     else if (i->is_int())
       *i = (int)*i + 1;
   }
+
+  // check without changing values
+  const value x = v;
+  const value y = x[7];
+  if (!y.is_array() || !y[0].is_string() || strcmp(y[0], "1"))
+    exit(1);
+  const value z = v[1]["name"];
+  std::wstring w = z;
+  std::cout << soap_wchar2s(ctx, w.c_str()) << std::endl;
 
   // print index, name, and value of structure v[1]
   for (value::const_iterator i = v[1].begin(); i != v[1].end(); ++i)

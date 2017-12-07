@@ -134,7 +134,7 @@ Grammar
    84      | error ID
    85      | error ','
 
-   86 farg: tspec ptrs arg arrayck occurs init
+   86 farg: tspec ptrs arg arrayck tag occurs init
 
    87 arg: /* empty */
    88    | ID
@@ -643,7 +643,7 @@ brinit (175)
 init (176)
     on left: 214 215 216, on right: 86 212
 tag (177)
-    on left: 217 218, on right: 34
+    on left: 217 218, on right: 34 86
 occurs (178)
     on left: 219 220 221 222 223, on right: 86
 bounds (179)
@@ -2578,6 +2578,7 @@ state 144
 
     ID   reduce using rule 97 (tspec)
     LNG  reduce using rule 97 (tspec)
+    TAG  reduce using rule 97 (tspec)
     ','  reduce using rule 97 (tspec)
     '='  reduce using rule 97 (tspec)
     ':'  reduce using rule 97 (tspec)
@@ -2653,6 +2654,7 @@ state 145
 
     ID   reduce using rule 96 (tspec)
     LNG  reduce using rule 96 (tspec)
+    TAG  reduce using rule 96 (tspec)
     ','  reduce using rule 96 (tspec)
     '='  reduce using rule 96 (tspec)
     ':'  reduce using rule 96 (tspec)
@@ -4613,7 +4615,7 @@ state 272
 
 state 273
 
-   86 farg: tspec . ptrs arg arrayck occurs init
+   86 farg: tspec . ptrs arg arrayck tag occurs init
 
     $default  reduce using rule 204 (ptrs)
 
@@ -5658,7 +5660,7 @@ state 324
 
 state 325
 
-   86 farg: tspec ptrs . arg arrayck occurs init
+   86 farg: tspec ptrs . arg arrayck tag occurs init
   205 ptrs: ptrs . '*'
   206     | ptrs . '&'
   207     | ptrs . AN
@@ -6446,7 +6448,7 @@ state 373
 
 state 374
 
-   86 farg: tspec ptrs arg . arrayck occurs init
+   86 farg: tspec ptrs arg . arrayck tag occurs init
 
     '['  shift, and go to state 238
 
@@ -7246,14 +7248,13 @@ state 412
 
 state 413
 
-   86 farg: tspec ptrs arg arrayck . occurs init
+   86 farg: tspec ptrs arg arrayck . tag occurs init
 
-    LNG  shift, and go to state 430
-    ':'  shift, and go to state 431
+    TAG  shift, and go to state 301
 
-    $default  reduce using rule 219 (occurs)
+    $default  reduce using rule 217 (tag)
 
-    occurs  go to state 432
+    tag  go to state 430
 
 
 state 414
@@ -7291,7 +7292,7 @@ state 416
     '~'     shift, and go to state 291
     '('     shift, and go to state 292
 
-    cexp  go to state 433
+    cexp  go to state 431
     oexp  go to state 294
     obex  go to state 295
     aexp  go to state 296
@@ -7319,7 +7320,7 @@ state 419
 
   213 brinit: '{' cexp . '}'
 
-    '}'  shift, and go to state 434
+    '}'  shift, and go to state 432
 
 
 state 420
@@ -7348,7 +7349,7 @@ state 423
   246 max: ':' .
   247    | ':' . '<'
 
-    '<'  shift, and go to state 435
+    '<'  shift, and go to state 433
 
     $default  reduce using rule 246 (max)
 
@@ -7370,7 +7371,7 @@ state 425
     '+'  shift, and go to state 425
     '-'  shift, and go to state 426
 
-    cdbl  go to state 436
+    cdbl  go to state 434
 
 
 state 426
@@ -7383,7 +7384,7 @@ state 426
     '+'  shift, and go to state 425
     '-'  shift, and go to state 426
 
-    cdbl  go to state 437
+    cdbl  go to state 435
 
 
 state 427
@@ -7391,13 +7392,13 @@ state 427
   225 bounds: nullptr patt cdbl . min
   226       | nullptr patt cdbl . minmax cdbl
 
-    ':'  shift, and go to state 438
-    '<'  shift, and go to state 439
+    ':'  shift, and go to state 436
+    '<'  shift, and go to state 437
 
     $default  reduce using rule 237 (min)
 
-    min     go to state 440
-    minmax  go to state 441
+    min     go to state 438
+    minmax  go to state 439
 
 
 state 428
@@ -7410,7 +7411,7 @@ state 428
     '+'  shift, and go to state 425
     '-'  shift, and go to state 426
 
-    cdbl  go to state 442
+    cdbl  go to state 440
 
 
 state 429
@@ -7422,76 +7423,58 @@ state 429
 
 state 430
 
-  220 occurs: LNG .
-  221       | LNG . ':'
-  222       | LNG . ':' LNG
+   86 farg: tspec ptrs arg arrayck tag . occurs init
 
-    ':'  shift, and go to state 443
+    LNG  shift, and go to state 441
+    ':'  shift, and go to state 442
 
-    $default  reduce using rule 220 (occurs)
+    $default  reduce using rule 219 (occurs)
+
+    occurs  go to state 443
 
 
 state 431
-
-  223 occurs: ':' . LNG
-
-    LNG  shift, and go to state 444
-
-
-state 432
-
-   86 farg: tspec ptrs arg arrayck occurs . init
-
-    '='  shift, and go to state 399
-    EQ   shift, and go to state 400
-
-    $default  reduce using rule 214 (init)
-
-    init  go to state 445
-
-
-state 433
 
   251 cexp: obex '?' qexp ':' cexp .
 
     $default  reduce using rule 251 (cexp)
 
 
-state 434
+state 432
 
   213 brinit: '{' cexp '}' .
 
     $default  reduce using rule 213 (brinit)
 
 
-state 435
+state 433
 
   247 max: ':' '<' .
 
     $default  reduce using rule 247 (max)
 
 
-state 436
+state 434
 
   235 cdbl: '+' cdbl .
 
     $default  reduce using rule 235 (cdbl)
 
 
-state 437
+state 435
 
   236 cdbl: '-' cdbl .
 
     $default  reduce using rule 236 (cdbl)
 
 
-state 438
+state 436
 
   238 min: ':' .
   241 minmax: ':' .
   243       | ':' . '<'
 
-    '<'  shift, and go to state 446
+    '<'  shift, and go to state 444
 
     LNG       reduce using rule 241 (minmax)
     DBL       reduce using rule 241 (minmax)
@@ -7501,7 +7484,7 @@ state 438
     $default  reduce using rule 238 (min)
 
 
-state 439
+state 437
 
   239 min: '<' . ':'
   240    | '<' .
@@ -7509,7 +7492,7 @@ state 439
   244       | '<' . ':' '<'
   245       | '<' .
 
-    ':'  shift, and go to state 447
+    ':'  shift, and go to state 445
 
     LNG       reduce using rule 245 (minmax)
     DBL       reduce using rule 245 (minmax)
@@ -7519,14 +7502,14 @@ state 439
     $default  reduce using rule 240 (min)
 
 
-state 440
+state 438
 
   225 bounds: nullptr patt cdbl min .
 
     $default  reduce using rule 225 (bounds)
 
 
-state 441
+state 439
 
   226 bounds: nullptr patt cdbl minmax . cdbl
 
@@ -7536,48 +7519,54 @@ state 441
     '+'  shift, and go to state 425
     '-'  shift, and go to state 426
 
-    cdbl  go to state 448
+    cdbl  go to state 446
 
 
-state 442
+state 440
 
   227 bounds: nullptr patt max cdbl .
 
     $default  reduce using rule 227 (bounds)
 
 
+state 441
+
+  220 occurs: LNG .
+  221       | LNG . ':'
+  222       | LNG . ':' LNG
+
+    ':'  shift, and go to state 447
+
+    $default  reduce using rule 220 (occurs)
+
+
+state 442
+
+  223 occurs: ':' . LNG
+
+    LNG  shift, and go to state 448
+
+
 state 443
 
-  221 occurs: LNG ':' .
-  222       | LNG ':' . LNG
+   86 farg: tspec ptrs arg arrayck tag occurs . init
 
-    LNG  shift, and go to state 449
+    '='  shift, and go to state 399
+    EQ   shift, and go to state 400
 
-    $default  reduce using rule 221 (occurs)
+    $default  reduce using rule 214 (init)
+
+    init  go to state 449
 
 
 state 444
-
-  223 occurs: ':' LNG .
-
-    $default  reduce using rule 223 (occurs)
-
-
-state 445
-
-   86 farg: tspec ptrs arg arrayck occurs init .
-
-    $default  reduce using rule 86 (farg)
-
-
-state 446
 
   243 minmax: ':' '<' .
 
     $default  reduce using rule 243 (minmax)
 
 
-state 447
+state 445
 
   239 min: '<' ':' .
   242 minmax: '<' ':' .
@@ -7593,18 +7582,35 @@ state 447
     $default  reduce using rule 239 (min)
 
 
-state 448
+state 446
 
   226 bounds: nullptr patt cdbl minmax cdbl .
 
     $default  reduce using rule 226 (bounds)
 
 
+state 447
+
+  221 occurs: LNG ':' .
+  222       | LNG ':' . LNG
+
+    LNG  shift, and go to state 451
+
+    $default  reduce using rule 221 (occurs)
+
+
+state 448
+
+  223 occurs: ':' LNG .
+
+    $default  reduce using rule 223 (occurs)
+
+
 state 449
 
-  222 occurs: LNG ':' LNG .
+   86 farg: tspec ptrs arg arrayck tag occurs init .
 
-    $default  reduce using rule 222 (occurs)
+    $default  reduce using rule 86 (farg)
 
 
 state 450
@@ -7612,3 +7618,10 @@ state 450
   244 minmax: '<' ':' '<' .
 
     $default  reduce using rule 244 (minmax)
+
+
+state 451
+
+  222 occurs: LNG ':' LNG .
+
+    $default  reduce using rule 222 (occurs)

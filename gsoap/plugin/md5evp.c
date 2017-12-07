@@ -80,7 +80,7 @@ int md5_handler(struct soap *soap, void **context, enum md5_action action, char 
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- MD5 Final %p --\n", ctx));
       DBGHEX(TEST, hash, size);
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n--"));
-      soap_memcpy((void*)buf, 16, (const void*)hash, 16);
+      (void)soap_memcpy((void*)buf, 16, (const void*)hash, 16);
       break;
     case MD5_DELETE:
       ctx = (EVP_MD_CTX*)*context;

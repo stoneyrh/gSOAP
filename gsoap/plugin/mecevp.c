@@ -624,7 +624,7 @@ soap_mec_start_alg(struct soap *soap, int alg, const unsigned char *key)
     }
     data->bufidx = soap->buflen - soap->bufidx;
     /* copy buf[bufidx..buflen-1] to data buf */
-    soap_memcpy((void*)data->buf, data->buflen, (const void*)(soap->buf + soap->bufidx), data->bufidx);
+    (void)soap_memcpy((void*)data->buf, data->buflen, (const void*)(soap->buf + soap->bufidx), data->bufidx);
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Alloc buf=%lu, copy %lu message bytes\n", (unsigned long)data->buflen, (unsigned long)data->bufidx));
     /* trigger ffilterrecv() */
     soap->bufidx = soap->buflen;
@@ -827,7 +827,7 @@ soap_mec_upd_enc(struct soap *soap, struct soap_mec_data *data, const char **s, 
     data->buf = (char*)SOAP_MALLOC(soap, m);
     if (t)
     {
-      soap_memcpy((void*)data->buf, (size_t)m, (const void*)t, data->bufidx); /* copy in-use part */
+      (void)soap_memcpy((void*)data->buf, (size_t)m, (const void*)t, data->bufidx); /* copy in-use part */
       SOAP_FREE(soap, t);
     }
   }
@@ -938,12 +938,12 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       data->buf = (char*)SOAP_MALLOC(soap, data->buflen);
       if (t)
       {
-        soap_memcpy((void*)data->buf, data->buflen, (const void*)t, data->bufidx); /* copy old */
+        (void)soap_memcpy((void*)data->buf, data->buflen, (const void*)t, data->bufidx); /* copy old */
         SOAP_FREE(soap, t);
       }
     }
     /* concat old + new */
-    soap_memcpy((void*)(data->buf + data->bufidx), data->buflen - data->bufidx, (const void*)*s, *n);
+    (void)soap_memcpy((void*)(data->buf + data->bufidx), data->buflen - data->bufidx, (const void*)*s, *n);
     *s = data->buf;
     *n += data->bufidx;
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Flush state n=%lu\n", (unsigned long)*n));
@@ -975,7 +975,7 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
     data->buf = (char*)SOAP_MALLOC(soap, data->buflen);
     if (t)
     {
-      soap_memcpy((void*)data->buf, data->buflen, (const void*)t, data->bufidx); /* copy old part */
+      (void)soap_memcpy((void*)data->buf, data->buflen, (const void*)t, data->bufidx); /* copy old part */
       SOAP_FREE(soap, t);
     }
   }
@@ -1021,8 +1021,8 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       data->rest = (char*)SOAP_MALLOC(soap, data->restlen);
     }
     data->restidx = l + rest;
-    soap_memcpy((void*)data->rest, data->restlen, (const void*)r, l);
-    soap_memcpy((void*)(data->rest + l), data->restlen - l, (const void*)*s, rest);
+    (void)soap_memcpy((void*)data->rest, data->restlen, (const void*)r, l);
+    (void)soap_memcpy((void*)(data->rest + l), data->restlen - l, (const void*)*s, rest);
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "--\n"));
     DBGMSG(TEST, data->rest, data->restidx);
     DBGLOG(TEST, SOAP_MESSAGE(fdebug, "\n--\n"));
@@ -1038,7 +1038,7 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       state = SOAP_MEC_STATE_IV;
     case SOAP_MEC_STATE_IV:
       /* get the IV data from buf[buflen-k] */
-      soap_memmove((void*)(data->buf + data->bufidx), data->buflen - data->bufidx, (const void*)(data->buf + data->buflen - k), m);
+      (void)soap_memmove((void*)(data->buf + data->bufidx), data->buflen - data->bufidx, (const void*)(data->buf + data->buflen - k), m);
       /* add to IV */
       data->bufidx += m;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Getting IV new size=%lu\n", data->bufidx));
@@ -1063,21 +1063,21 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
         {
           /* shift rest of data to cipher section */
           m = k = data->bufidx - EVP_CIPHER_iv_length(data->type);
-          soap_memmove((void*)(data->buf + data->buflen - k), m, (const void*)(data->buf + EVP_CIPHER_iv_length(data->type)), m);
+          (void)soap_memmove((void*)(data->buf + data->buflen - k), m, (const void*)(data->buf + EVP_CIPHER_iv_length(data->type)), m);
 #if (OPENSSL_VERSION_NUMBER >= 0x10002000L)
           if (data->alg & SOAP_MEC_GCM)
           {
             /* rotate the last 128 bits through tag[] buffer */
             if (m < sizeof(data->tag))
             {
-              soap_memcpy((void*)data->tag, sizeof(data->tag), (const void*)(data->buf + data->buflen - k), m);
+              (void)soap_memcpy((void*)data->tag, sizeof(data->tag), (const void*)(data->buf + data->buflen - k), m);
               data->taglen = m;
               m = 0;
             }
             else
             {
               m -= sizeof(data->tag);
-              soap_memcpy((void*)data->tag, sizeof(data->tag), (const void*)(data->buf + data->buflen - k + m), sizeof(data->tag));
+              (void)soap_memcpy((void*)data->tag, sizeof(data->tag), (const void*)(data->buf + data->buflen - k + m), sizeof(data->tag));
               data->taglen = sizeof(data->tag);
             }
             DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Init GCM tag with %lu bytes\n", (unsigned long)data->taglen));
@@ -1122,17 +1122,17 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Rotate GCM tag with %lu bytes\n", (unsigned long)data->taglen));
         k += data->taglen;
         m += data->taglen;
-        soap_memcpy((void*)(data->buf + data->buflen - k), k, (const void*)data->tag, data->taglen);
+        (void)soap_memcpy((void*)(data->buf + data->buflen - k), k, (const void*)data->tag, data->taglen);
         if (m < sizeof(data->tag))
         {
-          soap_memcpy((void*)data->tag, sizeof(data->tag), (const void*)(data->buf + data->buflen - k), m);
+          (void)soap_memcpy((void*)data->tag, sizeof(data->tag), (const void*)(data->buf + data->buflen - k), m);
           data->taglen = m;
           m = 0;
         }
         else
         {
           m -= sizeof(data->tag);
-          soap_memcpy((void*)data->tag, sizeof(data->tag), (const void*)(data->buf + data->buflen - k + m), sizeof(data->tag));
+          (void)soap_memcpy((void*)data->tag, sizeof(data->tag), (const void*)(data->buf + data->buflen - k + m), sizeof(data->tag));
           data->taglen = sizeof(data->tag);
         }
       }
@@ -1189,13 +1189,13 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
       if (data->restidx)
       {
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Append %lu bytes from rest\n", data->restidx));
-        soap_memcpy((void*)(data->buf + *n), data->buflen - *n, (const void*)data->rest, data->restidx);
+        (void)soap_memcpy((void*)(data->buf + *n), data->buflen - *n, (const void*)data->rest, data->restidx);
         *n += data->restidx;
       }
       if (k)
       {
         DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Append %lu bytes from input\n", k));
-        soap_memmove((void*)(data->buf + *n), data->buflen - *n, (const void*)t, k);
+        (void)soap_memmove((void*)(data->buf + *n), data->buflen - *n, (const void*)t, k);
         *n += k;
       }
       if (!(data->alg & SOAP_MEC_STORE))
@@ -1461,13 +1461,13 @@ soap_mec_filterrecv(struct soap *soap, char *buf, size_t *len, size_t maxlen)
   /* does the result fit in buf[maxlen]? */
   if (*len <= maxlen)
   {
-    soap_memcpy((void*)buf, maxlen, (const void*)s, *len); /* yes: copy data to buf[] */
+    (void)soap_memcpy((void*)buf, maxlen, (const void*)s, *len); /* yes: copy data to buf[] */
     data->bufidx = 0;
   }
   else
   {
-    soap_memcpy((void*)buf, maxlen, (const void*)s, maxlen); /* no: copy first part to buf[maxlen] */
-    soap_memmove((void*)data->buf, data->buflen, (const void*)(s + maxlen), *len - maxlen); /* shift rest to the left */
+    (void)soap_memcpy((void*)buf, maxlen, (const void*)s, maxlen); /* no: copy first part to buf[maxlen] */
+    (void)soap_memmove((void*)data->buf, data->buflen, (const void*)(s + maxlen), *len - maxlen); /* shift rest to the left */
     data->bufidx = *len - maxlen; /* keep rest of the data in s (data->buf) */
     *len = maxlen;
   }

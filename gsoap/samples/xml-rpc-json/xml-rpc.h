@@ -38,10 +38,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 ////////////////////////////////////////////////////////////////////////////////
 
 /// C/C++ function returns a pointer to a new value
-extern struct value *new_value(struct soap *soap);
+extern struct value * new_value(struct soap *soap);
 
 /// C/C++ function to init or reset a value, returns a pointer to this value
-extern struct value *init_value(struct soap *soap, struct value *v);
+extern struct value * init_value(struct soap *soap, struct value *v);
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -95,10 +95,10 @@ typedef int             _i4;
 typedef LONG64          _int;
 
 /// Scalar &lt;string&gt; element
-typedef char*           _string;
+typedef char *          _string;
 
 /// Scalar &lt;dateTime.iso8601&gt; element with ISO8601 date and time formatted string
-typedef char*           _dateTime_DOTiso8601;
+typedef char *          _dateTime_DOTiso8601;
 
 /// Represents the &lt;base64&gt; binary data element
 struct _base64
@@ -109,13 +109,13 @@ struct _base64
                         _base64(struct soap*);
                         _base64(struct soap*, int, unsigned char*);
   int                   size() const;   ///< byte size of data
-  unsigned char*        ptr();          ///< pointer to data
+  unsigned char *       ptr();          ///< pointer to data
   void                  size(int);      ///< set byte size of data
   void                  ptr(unsigned char*);///< set pointer to data
 
 // serializable content
  public:
-  unsigned char*        __ptr;          ///< pointer to raw binary data block
+  unsigned char *       __ptr;          ///< pointer to raw binary data block
   int                   __size;         ///< size of raw binary data block
 };
 
@@ -127,21 +127,24 @@ struct _struct
   typedef _struct_iterator       iterator;
   typedef _struct_const_iterator const_iterator;
                         _struct();
+                        _struct(const struct _struct&);
                         _struct(struct soap*);
                         _struct(struct soap*, int);
   extern bool           empty() const;  ///< true if struct is empty
   int                   size() const;   ///< number of accessors in struct
-  struct value&         operator[](int);///< struct index (negative to get from end)
+  struct value&         operator[](int) const;///< struct index (negative to get from end)
   struct value&         operator[](const char*);///< struct accessor
   struct value&         operator[](const wchar_t*);///< struct accessor
+  const struct value&   operator[](const char*) const;///< struct accessor
+  const struct value&   operator[](const wchar_t*) const;///< struct accessor
   _struct_iterator      begin() const;  ///< struct iterator begin
   _struct_iterator      end() const;    ///< struct iterator end
 
 // serializable content
  public:
   int                   __size;         ///< number of members
-  struct member*        member;         ///< pointer to member array
-  struct soap*          soap;           ///< ref to soap struct that manages this type
+  struct member *       member;         ///< pointer to member array
+  struct soap *         soap;           ///< ref to soap struct that manages this type
 };
 
 /// Represents the &lt;data&gt; element
@@ -150,7 +153,7 @@ struct data
 // serializable content
  public:
   int                   __size;         ///< number of array elements
-  struct value*         value;          ///< pointer to array elements
+  struct value *        value;          ///< pointer to array elements
 };
 
 /// Represents the &lt;array&gt; array of values element
@@ -161,12 +164,14 @@ struct _array
   typedef _array_iterator       iterator;
   typedef _array_const_iterator const_iterator;
                         _array();
+                        _array(const struct _array&);
                         _array(struct soap*);
                         _array(struct soap*, int);
   extern bool           empty() const;  ///< true if array is empty
   int                   size() const;   ///< number of array elements
   void                  size(int);      ///< (re)set number of array elements
   struct value&         operator[](int);///< array index (negative to get from end)
+  const struct value&   operator[](int) const;///< array index (negative to get from end)
   _array_iterator       begin() const;  ///< array iterator begin
   _array_iterator       end() const;    ///< array iterator end
  
@@ -189,6 +194,7 @@ struct value
   typedef value_iterator       iterator;
   typedef value_const_iterator const_iterator;
                         value();
+                        value(const struct value&);
                         value(struct soap*);
                         value(struct soap*, extern bool);
                         value(struct soap*, _i4);
@@ -222,17 +228,22 @@ struct value
   struct value&         operator[](const std::string&);   ///< struct access
   struct value&         operator[](const wchar_t*);       ///< struct access
   struct value&         operator[](const std::wstring&);  ///< struct access
+  const struct value&   operator[](int) const;                  ///< array/struct index (negative to get from end)
+  const struct value&   operator[](const char*) const;          ///< struct access
+  const struct value&   operator[](const std::string&) const;   ///< struct access
+  const struct value&   operator[](const wchar_t*) const;       ///< struct access
+  const struct value&   operator[](const std::wstring&) const;  ///< struct access
   extern bool           operator=(extern bool);
   _i4                   operator=(_i4);
   _int                  operator=(_int);
   _double               operator=(_double);
   ULONG64               operator=(ULONG64);
-  const char*           operator=(const char*);
-  char*                 operator=(char*);
-  char*                 operator=(const std::string&);
-  const char*           operator=(const wchar_t*);
-  char*                 operator=(wchar_t*);
-  char*                 operator=(const std::wstring&);
+  const char *          operator=(const char*);
+  char *                operator=(char*);
+  char *                operator=(const std::string&);
+  const char *          operator=(const wchar_t*);
+  char *                operator=(wchar_t*);
+  char *                operator=(const std::wstring&);
   struct _array&        operator=(const struct _array&);
   struct _struct&       operator=(const struct _struct&);
   struct _base64&       operator=(const struct _base64&);
@@ -263,9 +274,9 @@ struct value
 // serializable content
  public:
   int                   __type 0;       ///< optional SOAP_TYPE_X, where X is a type name
-  void*                 ref;            ///< ref to data
+  void *                ref;            ///< ref to data
   _string               __any;          ///< &lt;value&gt; string content in XML-RPC (not JSON), if any
-  struct soap*          soap;           ///< ref to soap struct that manages this type
+  struct soap *         soap;           ///< ref to soap struct that manages this type
 };
 
 /// Represents the &lt;member&gt; element of a &lt;struct&gt;
@@ -273,7 +284,7 @@ struct member
 { 
 // serializable content
  public:
-  char*                 name;           ///< struct accessor name
+  char *                name;           ///< struct accessor name
   struct value          value;          ///< struct accessor value
 };
 
@@ -296,14 +307,15 @@ struct params
   extern bool           empty() const;  ///< true if no parameters
   int                   size() const;   ///< number of parameters
   struct value&         operator[](int);///< parameter index (negative to get from end)
+  const struct value&   operator[](int) const;///< parameter index (negative to get from end)
   params_iterator       begin() const;  ///< parameter accessor iterator begin
   params_iterator       end() const;    ///< parameter accessor iterator end
 
 // serializable content
  public:
   int                   __size;         ///< number of parameters
-  struct param*         param;          ///< pointer to array of parameters
-  struct soap*          soap;           ///< ref to soap struct that manages this type
+  struct param *        param;          ///< pointer to array of parameters
+  struct soap *         soap;           ///< ref to soap struct that manages this type
 };
 
 /// Represents a &lt;param&gt; of the &lt;params&gt; of a &lt;methodCall&gt;
@@ -322,6 +334,7 @@ struct methodResponse
                         methodResponse();
                         methodResponse(struct soap*);
   struct value&         operator[](int);///< response parameter accessor index
+  const struct value&   operator[](int) const;///< response parameter accessor index
   struct value&         get_fault(void);///< get fault, if set
   struct value&         set_fault(const char*);///< set fault
   struct value&         set_fault(struct value&);///< set fault
@@ -330,9 +343,9 @@ struct methodResponse
 
 // serializable content
  public:
-  struct params*        params;         ///< response return parameters, if any
-  struct fault*         fault;          ///< response fault, if any
-  struct soap*          soap;           ///< ref to soap struct that manages this type
+  struct params *       params;         ///< response return parameters, if any
+  struct fault *        fault;          ///< response fault, if any
+  struct soap *         soap;           ///< ref to soap struct that manages this type
 };
   
 /// Represents the &lt;methodCall&gt; element with &lt;methodName&gt; and request &lt;params&gt; for remote invocation
@@ -340,7 +353,7 @@ struct methodCall
 {
 // private state info
  private:
-  char*                 methodEndpoint; ///< XML-RPC endpoint
+  char *                methodEndpoint; ///< XML-RPC endpoint
   struct methodResponse*methodResponse; ///< holds the response after the call
 
 // C++ function members, not available in C (when using stdsoap2 -c)
@@ -350,21 +363,22 @@ struct methodCall
                         methodCall(struct soap*, const char *endpoint, const char *methodname);
                         ///< instantiate with endpoint and method name
   struct value&         operator[](int);///< method parameter accessor index
+  const struct value&   operator[](int) const;///< method parameter accessor index
   struct params&        operator()();   ///< method invocation
   struct params&        operator()(const struct params&);
                         ///< method invocation with param list
   struct params&        response();     ///< get last response
   struct value&         fault();        ///< fault value of response
-  const char*           name() const;   ///< get method name
+  const char *          name() const;   ///< get method name
   int                   error() const;  ///< gSOAP error code
   int                   recv();         ///< receive call
   int                   send();         ///< send call
 
 // serializable content
  public:
-  char*                 methodName;     ///< name of the method
+  char *                methodName;     ///< name of the method
   struct params         params;         ///< input request parameters
-  struct soap*          soap;           ///< ref to soap struct that manages this type
+  struct soap *         soap;           ///< ref to soap struct that manages this type
 };
 
 /// Represents the &lt;fault&gt; container element with a value
@@ -406,55 +420,55 @@ extern struct value *value_at(struct value *v, const char *s);
 extern struct value *value_atw(struct value *v, const wchar_t *s);
 
 /// C function returns the nth index of a name in a struct, < 0 otherwise
-extern int nth_at(struct value *v, const char *s);
+extern int nth_at(const struct value *v, const char *s);
 
 /// C function returns the nth index of a name in a struct, < 0 otherwise
-extern int nth_atw(struct value *v, const wchar_t *s);
+extern int nth_atw(const struct value *v, const wchar_t *s);
 
 /// C function returns the nth index if an nth index in the array exists, < 0 otherwise
-extern int nth_nth(struct value *v, int n);
+extern int nth_nth(const struct value *v, int n);
 
-/// C function returns pointer to nth member (name and value) of a struct
+/// C function returns pointer to nth member (name and value) of a struct or NULL when not exists
 extern struct member *nth_member(struct value *v, int n);
 
 /// C function returns pointer to array element value at index n, coerces v to array with value at n if needed
 extern struct value *nth_value(struct value *v, int n);
 
 /// C function returns true if value is not set or assigned (JSON null)
-extern _boolean is_null(struct value *v);
+extern _boolean is_null(const struct value *v);
 
 /// C function returns true if value is a 32 or a 64 bit int
-extern _boolean is_int(struct value *v);
+extern _boolean is_int(const struct value *v);
 
 /// C function returns true if value is a 64 bit double floating point
-extern _boolean is_double(struct value *v);
+extern _boolean is_double(const struct value *v);
 
 /// C function returns true if value is a number (int or float)
-extern _boolean is_number(struct value *v);
+extern _boolean is_number(const struct value *v);
 
 /// C function returns true if value is a string
-extern _boolean is_string(struct value *v);
+extern _boolean is_string(const struct value *v);
 
 /// C function returns true if value is a Boolean "true" or "false" value
-extern _boolean is_bool(struct value *v);
+extern _boolean is_bool(const struct value *v);
 
 /// C function returns true if value is Boolean "true"
-extern _boolean is_true(struct value *v);
+extern _boolean is_true(const struct value *v);
 
 /// C function returns true if value is Boolean "false"
-extern _boolean is_false(struct value *v);
+extern _boolean is_false(const struct value *v);
 
 /// C function returns true if array of values
-extern _boolean is_array(struct value *v);
+extern _boolean is_array(const struct value *v);
 
 /// C function returns true if structure, a.k.a. a JSON object
-extern _boolean is_struct(struct value *v);
+extern _boolean is_struct(const struct value *v);
 
 /// C function returns true if ISO 8601, always false for received JSON
-extern _boolean is_dateTime(struct value *v);
+extern _boolean is_dateTime(const struct value *v);
 
 /// C function returns true if base64, always false for received JSON
-extern _boolean is_base64(struct value *v);
+extern _boolean is_base64(const struct value *v);
 
 /// C function to create an empty struct
 extern void set_struct(struct value *v);
@@ -463,7 +477,10 @@ extern void set_struct(struct value *v);
 extern void set_size(struct value *v, int n);
 
 /// C function returns the size of an array or struct
-extern int has_size(struct value *v);
+extern int has_size(const struct value *v);
+
+/// C function returns true (1) if struct/array is empty or when value is not an struct/array, 0 otherwise
+extern int is_empty(const struct value *v);
 
 ////////////////////////////////////////////////////////////////////////////////
 //
