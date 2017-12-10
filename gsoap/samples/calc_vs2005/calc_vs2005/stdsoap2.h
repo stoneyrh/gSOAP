@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.56
+        stdsoap2.h 2.8.57
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20856
+#define GSOAP_VERSION 20857
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1966,7 +1966,7 @@ typedef soap_int32 soap_mode;
 typedef soap_int32 soap_wchar;
 
 /* forward declaration */
-struct soap;
+struct SOAP_CMAC soap;
 
 /* namespace table row */
 struct Namespace
@@ -2180,7 +2180,6 @@ struct soap_xlist
 #ifndef WITH_LEANER
 
 /* dom.c[pp] functions (optional, compile and link dom.c[pp] */
-struct SOAP_CMAC soap;
 struct SOAP_CMAC soap_dom_element;
 struct SOAP_CMAC soap_dom_attribute;
 

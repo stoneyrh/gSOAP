@@ -1247,7 +1247,7 @@ Version 2.8.55 (10/26/2017)
 - Fixed deserialization of pointers to Qt types with the custom serializers `custom/qbytearray_base64.h`, `custom/qbytearray_hex.h`, `custom/qdate.h`, `custom/qstring.h`, and `custom/qtime.h`.
 - Fixed `WITH_NOIO` compilation errors (`close()` and/or `gettimeofday()` not found).
 
-Version 2.8.56 (12/07/2017) {#latest}
+Version 2.8.56 (12/07/2017)
 ---
 
 - Added new `soap::bind_v6only` context flag, replacing compile-time flag `WITH_IPV6_V6ONLY` (`soap->bind_v6only=1`) and `WITH_NO_IPV6_V6ONLY` (`soap->bind_v6only=0`).
@@ -1261,6 +1261,11 @@ Version 2.8.56 (12/07/2017) {#latest}
 - Fixed non-portable `isalnum()` call in JSON parser.
 - Fixed missing C++ custom serializer type object allocators (e.g. `gsoap/custom/qstring.cpp`), when pointers to custom serialized C++ types are used.
 - Fixed memory leak in JSON C++ API `json.cpp` struct/array append `operator+`.
+
+Version 2.8.57 (12/10/2017) {#latest}
+---
+
+- Fixed issues `WITH_IPV6_V6ONLY` compiler flag and new `soap::bind_v6only` runtime context flag.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 
