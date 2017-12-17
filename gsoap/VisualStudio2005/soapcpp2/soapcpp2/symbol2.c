@@ -17977,7 +17977,7 @@ soap_in(Tnode *typ)
     fprintf(fhead, "\n\n#define soap_s2%s(soap, s, a) soap_s2stdchar((soap), (s), (a), %d, %ld, %ld, %s)", c_ident(typ), property(typ), minlen(typ), maxlen(typ), pattern(typ));
   else if (is_stdwstring(typ))
     fprintf(fhead, "\n\n#define soap_s2%s(soap, s, a) soap_s2stdwchar((soap), (s), (a), %d, %ld, %ld, %s)", c_ident(typ), property(typ), minlen(typ), maxlen(typ), pattern(typ));
-  else if (is_typedef(typ) && (!is_external(typ) || is_volatile(typ)) && !is_qname(typ) && !is_stdqname(typ))
+  else if (is_typedef(typ) && typ->type <= Tstruct && (!is_external(typ) || is_volatile(typ)) && !is_qname(typ) && !is_stdqname(typ))
   {
     if (!is_synonym(typ) && (typ->hasmin || typ->hasmax || (typ->pattern && typ->pattern[0] != '%')))
     {
@@ -17990,14 +17990,24 @@ soap_in(Tnode *typ)
         fprintf(fout, "\n\tint err = soap_s2%s(soap, s, a);\n\tif (!err)\n\t{", t_ident(typ));
         if (typ->hasmin)
         {
-          if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
+          if (!cflag && (typ->type == Tclass || typ->type == Tstruct))
+          {
+            if (typ->min > 0)
+              fprintf(fout, "\n\t\tif ((*a)->size() %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->min);
+          }
+          else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
             fprintf(fout, "\n\t\tif (*a %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->min);
           else if (typ->min > 0 || typ->type < Tuchar || typ->type > Tullong)
             fprintf(fout, "\n\t\tif (*a %s " SOAP_LONG_FORMAT ")\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", (LONG64)typ->min);
         }
         if (typ->hasmax)
         {
-          if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
+          if (!cflag && (typ->type == Tclass || typ->type == Tstruct))
+          {
+            if (typ->max >= 0)
+              fprintf(fout, "\n\t\tif ((*a).size() %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->max);
+          }
+          else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
             fprintf(fout, "\n\t\tif (*a %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->max);
           else if (typ->max >= 0 || typ->type < Tuchar || typ->type > Tullong)
             fprintf(fout, "\n\t\tif (*a %s " SOAP_LONG_FORMAT ")\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", (LONG64)typ->max);
@@ -18072,14 +18082,24 @@ soap_in(Tnode *typ)
         fprintf(fout, "\n\ta = soap_in_%s(soap, tag, a, type);", t_ident(typ));
       if (typ->hasmin)
       {
-        if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
+        if (!cflag && (typ->type == Tclass || typ->type == Tstruct))
+        {
+          if (typ->min > 0)
+            fprintf(fout, "\n\tif (a && (*a).size() %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", typ->min);
+        }
+        else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
           fprintf(fout, "\n\tif (a && *a %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", typ->min);
         else if (typ->min > 0 || typ->type < Tuchar || typ->type > Tullong)
           fprintf(fout, "\n\tif (a && *a %s " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", (LONG64)typ->min);
       }
       if (typ->hasmax)
       {
-        if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
+        if (!cflag && (typ->type == Tclass || typ->type == Tstruct))
+        {
+          if (typ->max >= 0)
+            fprintf(fout, "\n\tif (a && (*a).size() %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", typ->max);
+        }
+        else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
           fprintf(fout, "\n\tif (a && *a %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", typ->max);
         else if (typ->max >= 0 || typ->type < Tuchar || typ->type > Tullong)
           fprintf(fout, "\n\tif (a && *a %s " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", (LONG64)typ->max);

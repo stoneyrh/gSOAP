@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.57
+        stdsoap2.h 2.8.58
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20857
+#define GSOAP_VERSION 20858
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -2056,7 +2056,7 @@ struct soap_cookie
   char *value;
   char *domain;
   char *path;
-  time_t expire;        /* client-side: local time to expire */
+  ULONG64 expire;       /* client-side: local time to expire (value cast to time_t) */
   long maxage;          /* server-side: seconds to expire */
   unsigned int version;
   short secure;
@@ -2757,7 +2757,7 @@ struct SOAP_CMAC soap
   short body;           /* HTTP or XML element has a body (1) or not (0) */
   unsigned int level;   /* XML nesting level */
 #ifndef WITH_LEAN
-  time_t start;         /* start time of send/recv */
+  ULONG64 start;        /* start time of send/recv (value cast to time_t) */
 #endif
   ULONG64 count;        /* message length counter */
   ULONG64 length;       /* message length as set by HTTP header */
