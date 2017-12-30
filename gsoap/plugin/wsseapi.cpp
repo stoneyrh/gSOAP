@@ -4299,7 +4299,7 @@ soap_wsse_get_KeyInfo_SecurityTokenReferenceValueType(struct soap *soap)
 
 /**
 @fn X509* soap_wsse_get_KeyInfo_SecurityTokenReferenceX509(struct soap *soap)
-@brief Returns a X509 certificate when referenced and present as a BinarySecurity token or when embedded in the signature KeyInfo. This call must be followed by an X509_free to deallocate the X509 certificate data.
+@brief Returns a X509 certificate when referenced and present as a BinarySecurity token or when embedded in the signature KeyIdentifier or KeyInfo element. This call must be followed by an X509_free to deallocate the X509 certificate data.
 @param soap context
 @return X509 object or NULL with wsse:SecurityTokenUnavailable fault
 */
@@ -4320,16 +4320,29 @@ soap_wsse_get_KeyInfo_SecurityTokenReferenceX509(struct soap *soap)
   }
   else if (!URI)
   {
+#if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
+    const unsigned char *der = NULL;
+#else
+    unsigned char *der = NULL;
+#endif
+    int derlen;
     ds__KeyInfoType *keyInfo = soap_wsse_KeyInfo(soap);
     if (keyInfo && keyInfo->X509Data && keyInfo->X509Data->X509Certificate)
     {
-#if (OPENSSL_VERSION_NUMBER >= 0x0090800fL)
-      const unsigned char *der;
-#else
-      unsigned char *der;
-#endif
-      int derlen;
+      DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Using X509 cert from KeyInfo to verify signature\n"));
       der = (unsigned char*)soap_base642s(soap, keyInfo->X509Data->X509Certificate, NULL, 0, &derlen);
+    }
+    else
+    {
+      const char *valueType = soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType(soap, keyInfo);
+      if (valueType && !strcmp(valueType, ds_hmac_sha1URI))
+      {
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Using X509 cert from KeyIdentifier to verify signature\n"));
+        der = (unsigned char*)soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifier(soap, keyInfo, &derlen);
+      }
+    }
+    if (der)
+    {
       cert = d2i_X509(NULL, &der, derlen);
       /* verify the certificate */
       if (cert && soap_wsse_verify_X509(soap, cert))

@@ -3409,7 +3409,8 @@ generate_schema(Table *t)
         fd = fopen(buf, "w");
         if (!fd)
           execerror("Cannot write nsmap file");
-        fprintf(fd, "\n#include \"%sH.h\"", prefix);
+        /* fprintf(fd, "\n#include \"%sH.h\"", prefix); better to leave to users to include this */
+        fprintf(fd, "\n#include \"stdsoap2.h\"\n/* This defines the global XML namespaces[] table to #include and compile */");
         if (nflag)
           fprintf(fd, "\nSOAP_NMAC struct Namespace %s_namespaces[] = ", prefix);
         else
@@ -3474,7 +3475,7 @@ generate_schema(Table *t)
           if (!fd)
             execerror("Cannot write to file");
           copyrightnote(fd, soapTester);
-          fprintf(fd, "\n/*\n   Stand-alone server auto-test code:\n   Takes request from standard input or over TCP/IP socket and returns\nresponse to standard output or socket\n\n   Compile:\n   cc soapTester.c soapServer.c soapC.c stdsoap2.c\n\n   Command line usage with redirect over stdin/out:\n   > ./a.out < SomeTest.req.xml\n   > ./a.out 12288 < SomeTest.req.xml\n     Note: 12288 = SOAP_XML_INDENT | SOAP_XML_STRICT (see codes in stdsoap2.h)\n   Command line usage to start server at port 8080:\n   > a.out 12288 8080\n*/\n\n#include \"");
+          fprintf(fd, "\n/*\n   Stand-alone server auto-test code:\n   Takes request from standard input or over TCP/IP socket and returns\nresponse to standard output or socket\n\n   Compile:\n   cc soapTester.c soapServer.c soapC.c stdsoap2.c\n\n   Command line usage with redirect over stdin/out:\n   > ./a.out < SomeTest.req.xml\n   > ./a.out 12288 < SomeTest.req.xml\n     Note: 12288 = SOAP_XML_INDENT | SOAP_XML_STRICT (see codes in stdsoap2.h)\n   Command line usage to start server at port 8080:\n   > a.out 12288 8080\n*/");
           if (iflag || jflag)
           {
             const char *sname;
@@ -3483,10 +3484,10 @@ generate_schema(Table *t)
             else
               sname = "";
             name1 = ns_cname(sname, "Service");
-            fprintf(fd, "%s%s%s.h\"\n\n#ifndef SOAP_DEFMAIN\n# define SOAP_DEFMAIN main\t/* redefine to use your own main() */\n#endif\n\nint SOAP_DEFMAIN(int argc, char **argv)\n{\n\t%s service(argc > 1 ? atoi(argv[1]) : 0);\n\tif (argc <= 2)\n\t\treturn service.serve();\n\twhile (service.run(atoi(argv[2])) != SOAP_OK && service.%serror != SOAP_TCP_ERROR)\n\t\tservice.soap_print_fault(stderr);\n\treturn 0;\n}\n", dirpath, prefix, name1, name1, iflag ? "" : "soap->");
+            fprintf(fd, "\n\n#include \"%s%s%s.h\"\n#include \"%s%s.nsmap\"\n\n\n\n#ifndef SOAP_DEFMAIN\n# define SOAP_DEFMAIN main\t/* redefine to use your own main() */\n#endif\n\nint SOAP_DEFMAIN(int argc, char **argv)\n{\n\t%s service(argc > 1 ? atoi(argv[1]) : 0);\n\tif (argc <= 2)\n\t\treturn service.serve();\n\twhile (service.run(atoi(argv[2])) != SOAP_OK && service.%serror != SOAP_TCP_ERROR)\n\t\tservice.soap_print_fault(stderr);\n\treturn 0;\n}\n", dirpath, prefix, name1, dirpath, nflag?prefix:ns_cname(name, NULL), name1, iflag ? "" : "soap->");
           }
           else
-            fprintf(fd, "%s%s.nsmap\"\n\n#ifndef SOAP_DEFMAIN\n# define SOAP_DEFMAIN main\t/* redefine to use your own main() */\n#endif\n\nint SOAP_DEFMAIN(int argc, char **argv)\n{\n\tstruct soap *soap = soap_new1(argc > 1 ? atoi(argv[1]) : 0);\n\tif (argc <= 2)\n\t\treturn %s_serve(soap);\n\tif (soap_valid_socket(soap_bind(soap, NULL, atoi(argv[2]), 100)))\n\t{\twhile (soap_valid_socket(soap_accept(soap)))\n\t\t{\tif (%s_serve(soap))\n\t\t\t\tsoap_print_fault(soap, stderr);\n\t\t\tsoap_destroy(soap);\n\t\t\tsoap_end(soap);\n\t\t}\n\t}\n\tsoap_destroy(soap);\n\tsoap_end(soap);\n\tsoap_free(soap);\n\treturn 0;\n}\n", dirpath, nflag?prefix:ns_cname(name, NULL), nflag?prefix:"soap", nflag?prefix:"soap");
+            fprintf(fd, "\n\n#include \"%s%sH.h\"\n#include \"%s%s.nsmap\"\n\n#ifndef SOAP_DEFMAIN\n# define SOAP_DEFMAIN main\t/* redefine to use your own main() */\n#endif\n\nint SOAP_DEFMAIN(int argc, char **argv)\n{\n\tstruct soap *soap = soap_new1(argc > 1 ? atoi(argv[1]) : 0);\n\tif (argc <= 2)\n\t\treturn %s_serve(soap);\n\tif (soap_valid_socket(soap_bind(soap, NULL, atoi(argv[2]), 100)))\n\t{\twhile (soap_valid_socket(soap_accept(soap)))\n\t\t{\tif (%s_serve(soap))\n\t\t\t\tsoap_print_fault(soap, stderr);\n\t\t\tsoap_destroy(soap);\n\t\t\tsoap_end(soap);\n\t\t}\n\t}\n\tsoap_destroy(soap);\n\tsoap_end(soap);\n\tsoap_free(soap);\n\treturn 0;\n}\n", dirpath, prefix, dirpath, nflag?prefix:ns_cname(name, NULL), nflag?prefix:"soap", nflag?prefix:"soap");
           for (method = t->list; method; method = method->next)
           {
             if (method->info.typ->type == Tfun && !(method->info.sto & Sextern))
@@ -13710,11 +13711,20 @@ soap_instantiate(Tnode *typ)
         }
       }
     }
-    fprintf(fhead, ")\n{\n\t%s = soap_new_%s(soap);\n\tif (_p)\n\t{\t", c_type_id(typ, "*_p"), c_ident(typ));
+    if (namespaceid && !is_external(typ))
+      fprintf(fhead, ")\n{\n\t%s = %s::soap_new_%s(soap);\n\tif (_p)\n\t{\t", c_type_id(typ, "*_p"), namespaceid, c_ident(typ));
+    else if (!is_external(typ))
+      fprintf(fhead, ")\n{\n\t%s = ::soap_new_%s(soap);\n\tif (_p)\n\t{\t", c_type_id(typ, "*_p"), c_ident(typ));
+    else
+      fprintf(fhead, ")\n{\n\t%s = soap_new_%s(soap);\n\tif (_p)\n\t{\t", c_type_id(typ, "*_p"), c_ident(typ));
     if (!is_external(typ))
     {
       if (typ->type == Tclass && !is_volatile(typ))
         fprintf(fhead, "_p->soap_default(soap);");
+      else if (namespaceid && !is_external(typ))
+        fprintf(fhead, "%s::soap_default_%s(soap, _p);", namespaceid, c_ident(typ));
+      else if (!is_external(typ))
+        fprintf(fhead, "::soap_default_%s(soap, _p);", c_ident(typ));
       else
         fprintf(fhead, "soap_default_%s(soap, _p);", c_ident(typ));
     }
@@ -13797,11 +13807,20 @@ soap_instantiate(Tnode *typ)
         }
       }
     }
-    fprintf(fhead, ")\n{\n\t%s = soap_new_%s(soap);\n\tif (_p)\n\t{\t", c_type_id(typ, "*_p"), c_ident(typ));
+    if (namespaceid && !is_external(typ))
+      fprintf(fhead, ")\n{\n\t%s = %s::soap_new_%s(soap);\n\tif (_p)\n\t{\t", c_type_id(typ, "*_p"), namespaceid, c_ident(typ));
+    else if (!is_external(typ))
+      fprintf(fhead, ")\n{\n\t%s = ::soap_new_%s(soap);\n\tif (_p)\n\t{\t", c_type_id(typ, "*_p"), c_ident(typ));
+    else
+      fprintf(fhead, ")\n{\n\t%s = soap_new_%s(soap);\n\tif (_p)\n\t{\t", c_type_id(typ, "*_p"), c_ident(typ));
     if (!is_external(typ))
     {
       if (typ->type == Tclass && !is_volatile(typ))
         fprintf(fhead, "_p->soap_default(soap);");
+      else if (namespaceid && !is_external(typ))
+        fprintf(fhead, "%s::soap_default_%s(soap, _p);", namespaceid, c_ident(typ));
+      else if (!is_external(typ))
+        fprintf(fhead, "::soap_default_%s(soap, _p);", c_ident(typ));
       else
         fprintf(fhead, "soap_default_%s(soap, _p);", c_ident(typ));
     }
@@ -15915,18 +15934,24 @@ soap_put(Tnode *typ)
         fprintf(fhead, "\n\n#ifndef soap_write_%s\n#define soap_write_%s(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || soap_put_%s(soap, data, \"%s\", \"%s\") || soap_end_send(soap), (soap)->error )\n#endif\n", c_ident(typ), c_ident(typ), c_ident(typ), xml_tag(typ), x);
       else if (namespaceid && !is_external(typ))
         fprintf(fhead, "\n\ninline int soap_write_%s(struct soap *soap, %s)\n{\n\tsoap_free_temp(soap);\n\tif (p)\n\t{\tif (soap_begin_send(soap) || %s::soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap))\n\t\t\treturn soap->error;\n\t}\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), namespaceid, c_ident(typ), xml_tag(typ), x);
+      else if (!is_external(typ))
+        fprintf(fhead, "\n\ninline int soap_write_%s(struct soap *soap, %s)\n{\n\tsoap_free_temp(soap);\n\tif (p)\n\t{\tif (soap_begin_send(soap) || ::soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap))\n\t\t\treturn soap->error;\n\t}\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), c_ident(typ), xml_tag(typ), x);
       else
         fprintf(fhead, "\n\ninline int soap_write_%s(struct soap *soap, %s)\n{\n\tsoap_free_temp(soap);\n\tif (p)\n\t{\tif (soap_begin_send(soap) || soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap))\n\t\t\treturn soap->error;\n\t}\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), c_ident(typ), xml_tag(typ), x);
       if (cflag)
         fprintf(fhead, "\n\n#ifndef soap_PUT_%s\n#define soap_PUT_%s(soap, URL, data) ( soap_free_temp(soap), soap_PUT(soap, URL, NULL, \"text/xml; charset=utf-8\") || soap_put_%s(soap, data, \"%s\", \"%s\") || soap_end_send(soap) || soap_recv_empty_response(soap), soap_closesock(soap) )\n#endif\n", c_ident(typ), c_ident(typ), c_ident(typ), xml_tag(typ), x);
       else if (namespaceid && !is_external(typ))
         fprintf(fhead, "\n\ninline int soap_PUT_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_PUT(soap, URL, NULL, \"text/xml; charset=utf-8\") || %s::soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap) || soap_recv_empty_response(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), namespaceid, c_ident(typ), xml_tag(typ), x);
+      else if (!is_external(typ))
+        fprintf(fhead, "\n\ninline int soap_PUT_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_PUT(soap, URL, NULL, \"text/xml; charset=utf-8\") || ::soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap) || soap_recv_empty_response(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), c_ident(typ), xml_tag(typ), x);
       else
         fprintf(fhead, "\n\ninline int soap_PUT_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_PUT(soap, URL, NULL, \"text/xml; charset=utf-8\") || soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap) || soap_recv_empty_response(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), c_ident(typ), xml_tag(typ), x);
       if (cflag)
         fprintf(fhead, "\n\n#ifndef soap_POST_send_%s\n#define soap_POST_send_%s(soap, URL, data) ( soap_free_temp(soap), ( soap_POST(soap, URL, NULL, \"text/xml; charset=utf-8\") || soap_put_%s(soap, data, \"%s\", \"%s\") || soap_end_send(soap) ) && soap_closesock(soap), (soap)->error )\n#endif\n", c_ident(typ), c_ident(typ), c_ident(typ), xml_tag(typ), x);
       else if (namespaceid && !is_external(typ))
         fprintf(fhead, "\n\ninline int soap_POST_send_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_POST(soap, URL, NULL, \"text/xml; charset=utf-8\") || %s::soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), namespaceid, c_ident(typ), xml_tag(typ), x);
+      else if (!is_external(typ))
+        fprintf(fhead, "\n\ninline int soap_POST_send_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_POST(soap, URL, NULL, \"text/xml; charset=utf-8\") || ::soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), c_ident(typ), xml_tag(typ), x);
       else
         fprintf(fhead, "\n\ninline int soap_POST_send_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_POST(soap, URL, NULL, \"text/xml; charset=utf-8\") || soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), c_ident(typ), xml_tag(typ), x);
     }
@@ -15936,18 +15961,24 @@ soap_put(Tnode *typ)
         fprintf(fhead, "\n\n#ifndef soap_write_%s\n#define soap_write_%s(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_%s(soap, data), 0) || soap_put_%s(soap, data, \"%s\", \"%s\") || soap_end_send(soap), (soap)->error )\n#endif\n", c_ident(typ), c_ident(typ), c_ident(typ), c_ident(typ), xml_tag(typ), x);
       else if (namespaceid && !is_external(typ))
         fprintf(fhead, "\n\ninline int soap_write_%s(struct soap *soap, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_begin_send(soap) || (%s::soap_serialize_%s(soap, p), 0) || %s::soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap))\n\t\t\treturn soap->error;\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), namespaceid, c_ident(typ), namespaceid, c_ident(typ), xml_tag(typ), x);
+      else if (!is_external(typ))
+        fprintf(fhead, "\n\ninline int soap_write_%s(struct soap *soap, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_begin_send(soap) || (::soap_serialize_%s(soap, p), 0) || ::soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap))\n\t\t\treturn soap->error;\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), c_ident(typ), c_ident(typ), xml_tag(typ), x);
       else
         fprintf(fhead, "\n\ninline int soap_write_%s(struct soap *soap, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_begin_send(soap) || (soap_serialize_%s(soap, p), 0) || soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap))\n\t\t\treturn soap->error;\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), c_ident(typ), c_ident(typ), xml_tag(typ), x);
       if (cflag)
         fprintf(fhead, "\n\n#ifndef soap_PUT_%s\n#define soap_PUT_%s(soap, URL, data) ( soap_free_temp(soap), soap_PUT(soap, URL, NULL, \"text/xml; charset=utf-8\") || (soap_serialize_%s(soap, data), 0) || soap_put_%s(soap, data, \"%s\", \"%s\") || soap_end_send(soap) || soap_recv_empty_response(soap), soap_closesock(soap) )\n#endif\n", c_ident(typ), c_ident(typ), c_ident(typ), c_ident(typ), xml_tag(typ), x);
       else if (namespaceid && !is_external(typ))
         fprintf(fhead, "\n\ninline int soap_PUT_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_PUT(soap, URL, NULL, \"text/xml; charset=utf-8\") || (%s::soap_serialize_%s(soap, p), 0) || %s::soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap) || soap_recv_empty_response(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), namespaceid, c_ident(typ), namespaceid, c_ident(typ), xml_tag(typ), x);
+      else if (!is_external(typ))
+        fprintf(fhead, "\n\ninline int soap_PUT_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_PUT(soap, URL, NULL, \"text/xml; charset=utf-8\") || (::soap_serialize_%s(soap, p), 0) || ::soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap) || soap_recv_empty_response(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), c_ident(typ), c_ident(typ), xml_tag(typ), x);
       else
         fprintf(fhead, "\n\ninline int soap_PUT_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_PUT(soap, URL, NULL, \"text/xml; charset=utf-8\") || (soap_serialize_%s(soap, p), 0) || soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap) || soap_recv_empty_response(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), c_ident(typ), c_ident(typ), xml_tag(typ), x);
       if (cflag)
         fprintf(fhead, "\n\n#ifndef soap_POST_send_%s\n#define soap_POST_send_%s(soap, URL, data) ( soap_free_temp(soap), ( soap_POST(soap, URL, NULL, \"text/xml; charset=utf-8\") || (soap_serialize_%s(soap, data), 0) || soap_put_%s(soap, data, \"%s\", \"%s\") || soap_end_send(soap) ) && soap_closesock(soap), (soap)->error )\n#endif\n", c_ident(typ), c_ident(typ), c_ident(typ), c_ident(typ), xml_tag(typ), x);
       else if (namespaceid && !is_external(typ))
         fprintf(fhead, "\n\ninline int soap_POST_send_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_POST(soap, URL, NULL, \"text/xml; charset=utf-8\") || (%s::soap_serialize_%s(soap, p), 0) || %s::soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), namespaceid, c_ident(typ), namespaceid, c_ident(typ), xml_tag(typ), x);
+      else if (!is_external(typ))
+        fprintf(fhead, "\n\ninline int soap_POST_send_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_POST(soap, URL, NULL, \"text/xml; charset=utf-8\") || (::soap_serialize_%s(soap, p), 0) || ::soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), c_ident(typ), c_ident(typ), xml_tag(typ), x);
       else
         fprintf(fhead, "\n\ninline int soap_POST_send_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_POST(soap, URL, NULL, \"text/xml; charset=utf-8\") || (soap_serialize_%s(soap, p), 0) || soap_put_%s(soap, p, \"%s\", \"%s\") || soap_end_send(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), c_ident(typ), c_ident(typ), xml_tag(typ), x);
     }
@@ -17905,6 +17936,8 @@ soap_get(Tnode *typ)
     {
       if (namespaceid && !is_external(typ))
         fprintf(fhead, "\n\ninline int soap_read_%s(struct soap *soap, %s)\n{\n\tif (p)\n\t{\tp->soap_default(soap);\n\t\tif (soap_begin_recv(soap) || %s::soap_get_%s(soap, p, NULL, NULL) == NULL || soap_end_recv(soap))\n\t\t\treturn soap->error;\n\t}\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), namespaceid, c_ident(typ));
+      else if (!is_external(typ))
+        fprintf(fhead, "\n\ninline int soap_read_%s(struct soap *soap, %s)\n{\n\tif (p)\n\t{\tp->soap_default(soap);\n\t\tif (soap_begin_recv(soap) || ::soap_get_%s(soap, p, NULL, NULL) == NULL || soap_end_recv(soap))\n\t\t\treturn soap->error;\n\t}\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), c_ident(typ));
       else
         fprintf(fhead, "\n\ninline int soap_read_%s(struct soap *soap, %s)\n{\n\tif (p)\n\t{\tp->soap_default(soap);\n\t\tif (soap_begin_recv(soap) || soap_get_%s(soap, p, NULL, NULL) == NULL || soap_end_recv(soap))\n\t\t\treturn soap->error;\n\t}\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), c_ident(typ));
     }
@@ -17914,6 +17947,8 @@ soap_get(Tnode *typ)
         fprintf(fhead, "\n\n#ifndef soap_read_%s\n#define soap_read_%s(soap, data) ( soap_begin_recv(soap) || !soap_get_%s(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)->error )\n#endif\n", c_ident(typ), c_ident(typ), c_ident(typ));
       else if (namespaceid && !is_external(typ))
         fprintf(fhead, "\n\ninline int soap_read_%s(struct soap *soap, %s)\n{\n\tif (p)\n\t{\tif (soap_begin_recv(soap) || %s::soap_get_%s(soap, p, NULL, NULL) == NULL || soap_end_recv(soap))\n\t\t\treturn soap->error;\n\t}\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), namespaceid, c_ident(typ));
+      else if (!is_external(typ))
+        fprintf(fhead, "\n\ninline int soap_read_%s(struct soap *soap, %s)\n{\n\tif (p)\n\t{\tif (soap_begin_recv(soap) || ::soap_get_%s(soap, p, NULL, NULL) == NULL || soap_end_recv(soap))\n\t\t\treturn soap->error;\n\t}\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), c_ident(typ));
       else
         fprintf(fhead, "\n\ninline int soap_read_%s(struct soap *soap, %s)\n{\n\tif (p)\n\t{\tif (soap_begin_recv(soap) || soap_get_%s(soap, p, NULL, NULL) == NULL || soap_end_recv(soap))\n\t\t\treturn soap->error;\n\t}\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), c_ident(typ));
     }
@@ -17923,6 +17958,8 @@ soap_get(Tnode *typ)
         fprintf(fhead, "\n\n#ifndef soap_read_%s\n#define soap_read_%s(soap, data) ( ((data) ? (soap_default_%s(soap, (data)), 0) : 0) || soap_begin_recv(soap) || !soap_get_%s(soap, (data), NULL, NULL) || soap_end_recv(soap), (soap)->error )\n#endif\n", c_ident(typ), c_ident(typ), c_ident(typ), c_ident(typ));
       else if (namespaceid && !is_external(typ))
         fprintf(fhead, "\n\ninline int soap_read_%s(struct soap *soap, %s)\n{\n\tif (p)\n\t{\t%s::soap_default_%s(soap, p);\n\t\tif (soap_begin_recv(soap) || %s::soap_get_%s(soap, p, NULL, NULL) == NULL || soap_end_recv(soap))\n\t\t\treturn soap->error;\n\t}\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), namespaceid, c_ident(typ), namespaceid, c_ident(typ));
+      else if (!is_external(typ))
+        fprintf(fhead, "\n\ninline int soap_read_%s(struct soap *soap, %s)\n{\n\tif (p)\n\t{\t::soap_default_%s(soap, p);\n\t\tif (soap_begin_recv(soap) || ::soap_get_%s(soap, p, NULL, NULL) == NULL || soap_end_recv(soap))\n\t\t\treturn soap->error;\n\t}\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), c_ident(typ), c_ident(typ));
       else
         fprintf(fhead, "\n\ninline int soap_read_%s(struct soap *soap, %s)\n{\n\tif (p)\n\t{\tsoap_default_%s(soap, p);\n\t\tif (soap_begin_recv(soap) || soap_get_%s(soap, p, NULL, NULL) == NULL || soap_end_recv(soap))\n\t\t\treturn soap->error;\n\t}\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), c_ident(typ), c_ident(typ));
     }
@@ -17930,12 +17967,16 @@ soap_get(Tnode *typ)
       fprintf(fhead, "\n\n#ifndef soap_GET_%s\n#define soap_GET_%s(soap, URL, data) ( soap_GET(soap, URL, NULL) || soap_read_%s(soap, (data)), soap_closesock(soap) )\n#endif\n", c_ident(typ), c_ident(typ), c_ident(typ));
     else if (namespaceid && !is_external(typ))
       fprintf(fhead, "\n\ninline int soap_GET_%s(struct soap *soap, const char *URL, %s)\n{\n\tif (soap_GET(soap, URL, NULL) || %s::soap_read_%s(soap, p) || soap_closesock(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), namespaceid, c_ident(typ));
+    else if (!is_external(typ))
+      fprintf(fhead, "\n\ninline int soap_GET_%s(struct soap *soap, const char *URL, %s)\n{\n\tif (soap_GET(soap, URL, NULL) || ::soap_read_%s(soap, p) || soap_closesock(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), c_ident(typ));
     else
       fprintf(fhead, "\n\ninline int soap_GET_%s(struct soap *soap, const char *URL, %s)\n{\n\tif (soap_GET(soap, URL, NULL) || soap_read_%s(soap, p) || soap_closesock(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), c_ident(typ));
     if (cflag)
       fprintf(fhead, "\n\n#ifndef soap_POST_recv_%s\n#define soap_POST_recv_%s(soap, data) ( soap_read_%s(soap, (data)) || soap_closesock(soap), (soap)->error )\n#endif\n", c_ident(typ), c_ident(typ), c_ident(typ));
     else if (namespaceid && !is_external(typ))
       fprintf(fhead, "\n\ninline int soap_POST_recv_%s(struct soap *soap, %s)\n{\n\tif (%s::soap_read_%s(soap, p) || soap_closesock(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), namespaceid, c_ident(typ));
+    else if (!is_external(typ))
+      fprintf(fhead, "\n\ninline int soap_POST_recv_%s(struct soap *soap, %s)\n{\n\tif (::soap_read_%s(soap, p) || soap_closesock(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), c_ident(typ));
     else
       fprintf(fhead, "\n\ninline int soap_POST_recv_%s(struct soap *soap, %s)\n{\n\tif (soap_read_%s(soap, p) || soap_closesock(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_id(typ, "*p"), c_ident(typ));
   }

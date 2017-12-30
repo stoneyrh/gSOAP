@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.58
+        stdsoap2.c[pp] 2.8.59
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20858
+#define GSOAP_LIB_VERSION 20859
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.58 2017-12-17 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.59 2017-12-30 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.58 2017-12-17 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.59 2017-12-30 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -6382,14 +6382,14 @@ SOAP_SOCKET
 SOAP_FMAC2
 soap_bind(struct soap *soap, const char *host, int port, int backlog)
 {
-#ifdef WITH_IPV6
+#if defined(WITH_IPV6)
   struct addrinfo *addrinfo = NULL;
   struct addrinfo hints;
   struct addrinfo res;
   int err;
+  int set = 1;
   int unset = 0;
-#endif
-#ifndef WITH_LEAN
+#elif !defined(WITH_LEAN)
   int set = 1;
 #endif
   if (soap_valid_socket(soap->master))
@@ -9466,7 +9466,7 @@ soap_begin_send(struct soap *soap)
 #ifndef WITH_LEAN
   if ((soap->mode & SOAP_IO_UDP))
   {
-    soap->mode &= SOAP_IO;
+    soap->mode &= ~SOAP_IO;
     soap->mode |= SOAP_IO_BUFFER;
     soap->mode |= SOAP_ENC_PLAIN;
     if (soap->count > sizeof(soap->buf))

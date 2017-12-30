@@ -1052,6 +1052,7 @@ soap_mec_upd_dec(struct soap *soap, struct soap_mec_data *data, const char **s, 
         {
           case SOAP_MEC_ENV_DEC:
             ok = EVP_OpenInit(data->ctx, data->type, data->key, data->keylen, (unsigned char*)data->buf, (EVP_PKEY*)data->pkey);
+            EVP_CIPHER_CTX_set_padding(data->ctx, 0); /* disable padding check when decrypting for interop */
             DBGLOG(TEST, SOAP_MESSAGE(fdebug, "EVP_OpenInit ok=%d\n", ok));
             break;
           case SOAP_MEC_DEC:

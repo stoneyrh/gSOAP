@@ -1267,12 +1267,18 @@ Version 2.8.57 (12/10/2017)
 
 - Fixed issues `WITH_IPV6_V6ONLY` compiler flag and new `soap::bind_v6only` runtime context flag.
 
-Version 2.8.57 (12/17/2017) {#latest}
+Version 2.8.58 (12/17/2017)
 ---
 
 - Improvements to prevent macro `USE_32BIT_TIME_T` to cause misaligned `soap` contexts, due to inconsistent size of `time_t`.
 - Improvements to support obsolete HTTP cookie formats.
 - Fixed Windows tools wsdl2h.exe and soapcpp2.exe "The application was unable to start correctly (0xc000007b)" error.
+
+Version 2.8.59 (12/30/2017) {#latest}
+---
+
+- Removed `#include soapH.h` from generated `.nsmap` file to promote transparency and to prevent accidental inclusions that may cause definition clashes when soapcpp2 option -q is used.
+- Fixed UDP message transport compression, compile flag `-DWITH_ZLIB` and runtime flag `SOAP_ENC_ZLIB`.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

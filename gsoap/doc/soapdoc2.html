@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.58 User Guide</title>
+<title>gSOAP 2.8.59 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.58 User Guide </h1>
+<h1 align="center">gSOAP 2.8.59 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Dec 17, 2017
+<h3 align="center">Dec 30, 2017
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -12175,8 +12175,8 @@ size <i>SOAP_BUFLEN</i>, which is 65536 by default, unless
 compiled with <i>WITH_LEAN</i> to support small-scale embedded systems.
 For UDP transport <i>SOAP_BUFLEN</i> must not exceed the maximum UDP packet size
 65536 (the size of datagram messages is constrained by the
-UDP packet size 2<sup>16</sup>=65536 as per UDP standard). You can use gzip compression
-to reduce the message size, but note that compressed SOAP-over-UDP is a
+UDP packet size 2<sup>16</sup>=65536 as per UDP standard). You can use compression with
+<i>SOAP_ENC_ZLIB</i> to reduce the message size, but note that compressed SOAP-over-UDP is a
 gSOAP-specific feature because it is not part of the SOAP-over-UDP
 specification.
 
@@ -16749,5 +16749,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 17 Dec 2017, 13:44.</small>
+version 4.00.<br />On 30 Dec 2017, 12:19.</small>
 </html>
