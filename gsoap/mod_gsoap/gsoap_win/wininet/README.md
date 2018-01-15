@@ -12,9 +12,10 @@ Overview                                                             {#overview}
 
 The WinInet plugin for gSOAP enables client applications (not servers) to
 communicate through Microsoft's WinInet API on Windows. This offers all of the
-advantages of WinInet managed through the `Internet Options` control panel of
-Windows, such as HTTP (proxy) authentication, TLS/SSL, and HTTP compression.
-Therefore, "if IE works, gSOAP works." since these options are shared by IE.
+advantages of WinInet-managed internet access through the `Internet Options`
+control panel of Windows, such as HTTP (proxy) authentication, TLS/SSL, and
+HTTP compression.  Therefore, "if IE works, gSOAP works." since these options
+are shared by IE.
 
 The WinInet project home is at <http://code.google.com/p/gsoapwininet>.
 

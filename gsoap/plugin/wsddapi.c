@@ -82,8 +82,8 @@ higher-level logic remains application-specific. Especially the mode of
 operation, ad-hoc or managed with a Discovery Proxy, depends on the application
 deployment and WS-Discovery support requirements.
 
-The following assumptions are made. A Client is an endpoint that searches for
-Target Service(s). A Target Service (TS) is and endpoint that makes itself
+The following assumptions are made. A Client (C) is an endpoint that searches for
+Target Service(s). A Target Service (TS) is a service endpoint that makes itself
 available for discovery. A Discovery Proxy (DP) is an endpoint that facilitates
 discovery of Target Services by Clients. The interfaces defined in the wsdd
 library can be used to implement Client, Target Service, and Discovery Proxy

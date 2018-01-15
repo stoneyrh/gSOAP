@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">C and C++ XML Data Bindings</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Aug 22 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Fri Jan 12 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -82,7 +82,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 </li>
 <li class="level2"><a href="#typemap3">Class/struct member additions                                        </a></li>
 <li class="level2"><a href="#typemap4">Replacing XSD types by equivalent alternatives                       </a></li>
-<li class="level2"><a href="#typemap5">The built-in typemap.dat variables $CONTAINER and $POINTER           </a></li>
+<li class="level2"><a href="#typemap5">The built-in typemap.dat variables $CONTAINER, $POINTER and $SIZE    </a></li>
 <li class="level2"><a href="#typemap6">User-defined content                                                 </a></li>
 </ul>
 </li>
@@ -419,7 +419,7 @@ xsd:duration</h3>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="qt"></a>
 Custom Qt serializers for XSD types                                        </h2>
-<p>The gSOAP distribution includes several custom serializers for Qt types. Also Qt container classes are supported, see <a href="#typemap5">the built-in typemap.dat variables $CONTAINER and $POINTER</a>.</p>
+<p>The gSOAP distribution includes several custom serializers for Qt types. Also Qt container classes are supported, see <a href="#typemap5">the built-in typemap.dat variables $CONTAINER, $POINTER and $SIZE</a>.</p>
 <p>This feature requires gSOAP 2.8.34 or higher and Qt 4.8 or higher.</p>
 <p>Each Qt custom serializer has an interface header file for soapcpp2 and a C++ implementation file to be compiled with your project.</p>
 <p>Other Qt primitive types that are Qt typedefs of C/C++ types do not require a custom serializer.</p>
@@ -469,21 +469,24 @@ Replacing XSD types by equivalent alternatives                       </h2>
 <dl class="section warning"><dt>Warning</dt><dd>Do not agressively replace types, because this can cause XML schema validation to fail when a value-type mismatch is encountered in the XML input. Therefore, only replace similar types with other similar types that are wider (e.g. <code>short</code> by <code>int</code> and <code>float</code> by <code>double</code>).</dd></dl>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="typemap5"></a>
-The built-in typemap.dat variables $CONTAINER and $POINTER           </h2>
-<p>The <code>typemap.dat</code> <code>$CONTAINER</code> variable defines the container to emit in the generated declarations, which is <code>std::vector</code> by default. For example, to emit <code>std::list</code> as the container in the wsdl2h-generated declarations: </p><pre class="fragment">$CONTAINER = std::list
-</pre><p>The <code>typemap.dat</code> <code>$POINTER</code> variable defines the smart pointer to emit in the generated declarations, which replaces the use of <code>*</code> pointers. For example: </p><pre class="fragment">$POINTER = std::shared_ptr
-</pre><p>Not all pointers in the generated output can be replaced by smart pointers. Regular pointers are still used as union members and for pointers to arrays of objects.</p>
+The built-in typemap.dat variables $CONTAINER, $POINTER and $SIZE    </h2>
+<p>The <code>typemap.dat</code> <code>$CONTAINER</code> variable defines the container type to use in the wsdl2h-generated declarations for C++, which is <code>std::vector</code> by default. For example, to use <code>std::list</code> as the container in the wsdl2h-generated declarations we add the following line to <code>typemap.dat</code>: </p><pre class="fragment">$CONTAINER = std::list
+</pre><p>Also a Qt container can be used instead of the default <code>std::vector</code>, for example <code>QVector</code>: </p><pre class="fragment">[
+#include &lt;QVector&gt;
+]
+$CONTAINER = QVector
+</pre><p>To remove containers, use wsdl2h option <code>-s</code>. This also removes <code>std::string</code>, but you can re-introduce <code>std::string</code> with <code>xsd__string = | std::string</code>.</p>
+<p>The <code>typemap.dat</code> <code>$POINTER</code> variable defines the smart pointer to use in the wsdl2h-generated declarations for C++, which replaces the use of <code>*</code> pointers. For example: </p><pre class="fragment">$POINTER = std::shared_ptr
+</pre><p>Not all pointers in the generated output are replaced by smart pointers by wsdl2h, such as pointers as union members and pointers as struct/class members that point to arrays of values.</p>
 <dl class="section note"><dt>Note</dt><dd>The standard smart pointer <code>std::shared_ptr</code> is generally safe to use. Other smart pointers such as <code>std::unique_ptr</code> and <code>std::auto_ptr</code> may cause compile-time errors when classes have smart pointer members but no copy constructor (a default copy constructor). A copy constructor is required for non-shared smart pointer copying or swapping.</dd></dl>
 <p>Alternatives to <code>std::shared_ptr</code> of the form <code>NAMESPACE::shared_ptr</code> can be assigned to <code>$POINTER</code> when the namespace <code>NAMESPACE</code> also implements <code>NAMESPACE::make_shared</code> and when the shared pointer class provides <code>reset()</code> and<code>get()</code> methods and the dereference operator. For example Boost <code>boost::shared_ptr</code>: </p><pre class="fragment">[
 #include &lt;boost/shared_ptr.hpp&gt;
 ]
 $POINTER = boost::shared_ptr
 </pre><p>The user-defined content between <code>[</code> and <code>]</code> ensures that we include the Boost header files that are needed to support <code>boost::shared_ptr</code> and <code>boost::make_shared</code>.</p>
-<p>A Qt container can be used instead of the default <code>std::vector</code>, for example <code>QVector</code>: </p><pre class="fragment">[
-#include &lt;QVector&gt;
-]
-$CONTAINER = QVector
-</pre><p>🔝 <a href="#">Back to table of contents</a></p>
+<p>The variable <code>$SIZE</code> defines the type of array sizes, which is <code>int</code> by default. For example, to change array size types to <code>size_t</code>: </p><pre class="fragment">$SIZE = size_t
+</pre><p>Permissible types are <code>int</code> and <code>size_t</code>. This variable does not affect the size of SOAP-encoded arrays, <code>xsd__hexBinary</code> and <code>xsd__base64Binary</code> types, which is always <code>int</code>.</p>
+<p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="typemap6"></a>
 User-defined content                                                 </h2>
 <p>Any other content to be generated by wsdl2h can be included in <code>typemap.dat</code> by enclosing it within brackets <code>[</code> and <code>]</code> anywhere in the <code>typemap.dat</code> file. Each of the two brackets MUST appear at the start of a new line.</p>
@@ -1683,10 +1686,10 @@ c++ -I../.. graph.cpp graphC.cpp -o graph -lgsoap++
 </div><!-- doc-content -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Aug 22 2017 18:15:32 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Fri Jan 12 2018 17:22:22 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

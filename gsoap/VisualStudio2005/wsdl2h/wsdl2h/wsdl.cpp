@@ -111,6 +111,7 @@ wsdl__definitions::wsdl__definitions()
   location = NULL;
   redirs = 0;
   appRef = NULL;
+  used = false;
 }
 
 wsdl__definitions::wsdl__definitions(struct soap *copy)
@@ -656,6 +657,22 @@ void wsdl__definitions::appPtr(wadl__application *app)
 wadl__application *wsdl__definitions::appPtr() const
 {
   return appRef;
+}
+
+void wsdl__definitions::mark()
+{
+  if (Oflag > 1 && !used)
+  {
+    used = true;
+    for (vector<wsdl__import>::iterator im = import.begin(); im != import.end(); ++im)
+      (*im).mark();
+    if (types)
+      types->mark();
+    if (appRef)
+      appRef->mark();
+    for (vector<wsdl__message>::iterator mg = message.begin(); mg != message.end(); ++mg)
+      (*mg).mark();
+  }
 }
 
 int wsdl__service::traverse(wsdl__definitions& definitions)
@@ -1431,6 +1448,13 @@ int wsdl__message::traverse(wsdl__definitions& definitions)
   return SOAP_OK;
 }
 
+void wsdl__message::mark()
+{
+  if (Oflag > 1)
+    for (vector<wsdl__part>::iterator i = part.begin(); i != part.end(); ++i)
+      (*i).mark();
+}
+
 wsdl__part::wsdl__part()
 {
   elementRef = NULL;
@@ -1607,6 +1631,19 @@ const char *wsdl__part::get_default() const
 const std::vector<char*>& wsdl__part::options() const
 {
   return option;
+}
+
+void wsdl__part::mark()
+{
+  if (Oflag > 1)
+  {
+    if (elementPtr())
+      elementPtr()->mark();
+    if (simpleTypePtr())
+      simpleTypePtr()->mark();
+    if (complexTypePtr())
+      complexTypePtr()->mark();
+  }
 }
 
 int wsdl__types::preprocess(wsdl__definitions& definitions)
@@ -1818,6 +1855,16 @@ int wsdl__types::traverse(wsdl__definitions& definitions)
   return SOAP_OK;
 }
 
+void wsdl__types::mark()
+{
+  if (Oflag > 1)
+  {
+    xs__schema::mark();
+    for (vector<xs__schema*>::iterator schema = xs__schema_.begin(); schema != xs__schema_.end(); ++schema)
+      (*schema)->mark();
+  }
+}
+
 int wsdl__import::preprocess(wsdl__definitions& definitions)
 {
   static map<const char*, wsdl__definitions*, ltstr> included;
@@ -1904,6 +1951,15 @@ wsdl__definitions *wsdl__import::definitionsPtr() const
 wsdl__import::wsdl__import()
 {
   definitionsRef = NULL;
+}
+
+void wsdl__import::mark()
+{
+  if (Oflag > 1)
+  {
+    if (definitionsRef)
+      definitionsRef->traverse();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

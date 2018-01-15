@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">wsdd.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Mar 1 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Fri Jan 5 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -108,7 +108,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">"http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ScopesType is a complexType with simpleContent.  <a href="structwsdd_____scopes_type.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structwsdd_____app_sequence_type.html">wsdd__AppSequenceType</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">"http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":AppSequenceType is a complexType with complexContent restriction of xs:anyType.  <a href="structwsdd_____app_sequence_type.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">"http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":AppSequenceType is a complexType with complexContent restriction of XSD type xs:anyType.  <a href="structwsdd_____app_sequence_type.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
@@ -163,16 +163,61 @@ Typedefs</h2></td></tr>
 <tr class="memdesc:a09cc4790c86f19b8c299c92470ea9d06"><td class="mdescLeft">&#160;</td><td class="mdescRight">"http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":UriListType is a simpleType containing a whitespace separated list of xs:anyURI.  <a href="#a09cc4790c86f19b8c299c92470ea9d06">More...</a><br /></td></tr>
 <tr class="separator:a09cc4790c86f19b8c299c92470ea9d06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab680e60884d820cc2bbe68c5f70bf3b1"><td class="memItemLeft" align="right" valign="top">typedef char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#ab680e60884d820cc2bbe68c5f70bf3b1">wsdd__FaultCodeOpenType</a></td></tr>
-<tr class="memdesc:ab680e60884d820cc2bbe68c5f70bf3b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">union of values "tns:FaultCodeType xs:QName"  <a href="#ab680e60884d820cc2bbe68c5f70bf3b1">More...</a><br /></td></tr>
+<tr class="memdesc:ab680e60884d820cc2bbe68c5f70bf3b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Union of values from member types "tns:FaultCodeType xs:QName".  <a href="#ab680e60884d820cc2bbe68c5f70bf3b1">More...</a><br /></td></tr>
 <tr class="separator:ab680e60884d820cc2bbe68c5f70bf3b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2a361a670868968207db3acc8376aef"><td class="memItemLeft" align="right" valign="top">typedef enum <a class="el" href="wsdd_8h.html#ae16f0c9379898c3e662515edde78a3cd">wsdd__FaultCodeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#ab2a361a670868968207db3acc8376aef">wsdd__FaultCodeType</a></td></tr>
 <tr class="memdesc:ab2a361a670868968207db3acc8376aef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typedef synonym for enum wsdd__FaultCodeType.  <a href="#ab2a361a670868968207db3acc8376aef">More...</a><br /></td></tr>
 <tr class="separator:ab2a361a670868968207db3acc8376aef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44ab9a4f8ea863a03ed1f55f857c6f53"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structwsdd_____hello_type.html">wsdd__HelloType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#a44ab9a4f8ea863a03ed1f55f857c6f53">_wsdd__Hello</a></td></tr>
+<tr class="memdesc:a44ab9a4f8ea863a03ed1f55f857c6f53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Hello of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":HelloType.  <a href="#a44ab9a4f8ea863a03ed1f55f857c6f53">More...</a><br /></td></tr>
+<tr class="separator:a44ab9a4f8ea863a03ed1f55f857c6f53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a432eb6cc4cb7f040426841d48b88875b"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structwsdd_____bye_type.html">wsdd__ByeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#a432eb6cc4cb7f040426841d48b88875b">_wsdd__Bye</a></td></tr>
+<tr class="memdesc:a432eb6cc4cb7f040426841d48b88875b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Bye of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ByeType.  <a href="#a432eb6cc4cb7f040426841d48b88875b">More...</a><br /></td></tr>
+<tr class="separator:a432eb6cc4cb7f040426841d48b88875b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa34c66d7471556163d53d3a906ec843c"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structwsdd_____probe_type.html">wsdd__ProbeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#aa34c66d7471556163d53d3a906ec843c">_wsdd__Probe</a></td></tr>
+<tr class="memdesc:aa34c66d7471556163d53d3a906ec843c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Probe of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ProbeType.  <a href="#aa34c66d7471556163d53d3a906ec843c">More...</a><br /></td></tr>
+<tr class="separator:aa34c66d7471556163d53d3a906ec843c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae745d33cdb3c6ce449fb08df3324b5a6"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structwsdd_____probe_matches_type.html">wsdd__ProbeMatchesType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#ae745d33cdb3c6ce449fb08df3324b5a6">_wsdd__ProbeMatches</a></td></tr>
+<tr class="memdesc:ae745d33cdb3c6ce449fb08df3324b5a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ProbeMatches of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ProbeMatchesType.  <a href="#ae745d33cdb3c6ce449fb08df3324b5a6">More...</a><br /></td></tr>
+<tr class="separator:ae745d33cdb3c6ce449fb08df3324b5a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f9dabe7a031ad9b56467f0f7d873fcf"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structwsdd_____resolve_type.html">wsdd__ResolveType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#a4f9dabe7a031ad9b56467f0f7d873fcf">_wsdd__Resolve</a></td></tr>
+<tr class="memdesc:a4f9dabe7a031ad9b56467f0f7d873fcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Resolve of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveType.  <a href="#a4f9dabe7a031ad9b56467f0f7d873fcf">More...</a><br /></td></tr>
+<tr class="separator:a4f9dabe7a031ad9b56467f0f7d873fcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f16a34737da6bf0d709c364a8c5906c"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structwsdd_____resolve_matches_type.html">wsdd__ResolveMatchesType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#a4f16a34737da6bf0d709c364a8c5906c">_wsdd__ResolveMatches</a></td></tr>
+<tr class="memdesc:a4f16a34737da6bf0d709c364a8c5906c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveMatches of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveMatchesType.  <a href="#a4f16a34737da6bf0d709c364a8c5906c">More...</a><br /></td></tr>
+<tr class="separator:a4f16a34737da6bf0d709c364a8c5906c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a184280afac7e2da87be531a1f8b2ddd0"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="wsdd_8h.html#a73a27fd2ed71ddbd12a541c95722dcf3">wsdd__QNameListType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#a184280afac7e2da87be531a1f8b2ddd0">_wsdd__Types</a></td></tr>
+<tr class="memdesc:a184280afac7e2da87be531a1f8b2ddd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Types of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":QNameListType.  <a href="#a184280afac7e2da87be531a1f8b2ddd0">More...</a><br /></td></tr>
+<tr class="separator:a184280afac7e2da87be531a1f8b2ddd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2eedfea948640f1b07145cfb5e35a0c0"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structwsdd_____scopes_type.html">wsdd__ScopesType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#a2eedfea948640f1b07145cfb5e35a0c0">_wsdd__Scopes</a></td></tr>
+<tr class="memdesc:a2eedfea948640f1b07145cfb5e35a0c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Scopes of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ScopesType.  <a href="#a2eedfea948640f1b07145cfb5e35a0c0">More...</a><br /></td></tr>
+<tr class="separator:a2eedfea948640f1b07145cfb5e35a0c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c1c6158ab0ccb57afc3f1af0ab5bb65"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="wsdd_8h.html#a09cc4790c86f19b8c299c92470ea9d06">wsdd__UriListType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#a9c1c6158ab0ccb57afc3f1af0ab5bb65">_wsdd__XAddrs</a></td></tr>
+<tr class="memdesc:a9c1c6158ab0ccb57afc3f1af0ab5bb65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":XAddrs of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":UriListType.  <a href="#a9c1c6158ab0ccb57afc3f1af0ab5bb65">More...</a><br /></td></tr>
+<tr class="separator:a9c1c6158ab0ccb57afc3f1af0ab5bb65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28f444f25ee2acce37af4127d1b37fbe"><td class="memItemLeft" align="right" valign="top">typedef unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#a28f444f25ee2acce37af4127d1b37fbe">_wsdd__MetadataVersion</a></td></tr>
+<tr class="memdesc:a28f444f25ee2acce37af4127d1b37fbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":MetadataVersion of XSD type xs:unsignedInt.  <a href="#a28f444f25ee2acce37af4127d1b37fbe">More...</a><br /></td></tr>
+<tr class="separator:a28f444f25ee2acce37af4127d1b37fbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fed534596ef7e8089e35c95404e9577"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="wsdd_8h.html#a09cc4790c86f19b8c299c92470ea9d06">wsdd__UriListType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#a4fed534596ef7e8089e35c95404e9577">_wsdd__SupportedMatchingRules</a></td></tr>
+<tr class="memdesc:a4fed534596ef7e8089e35c95404e9577"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":SupportedMatchingRules of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":UriListType.  <a href="#a4fed534596ef7e8089e35c95404e9577">More...</a><br /></td></tr>
+<tr class="separator:a4fed534596ef7e8089e35c95404e9577"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a179fe17a69fad49f67779164c646678e"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structwsdd_____security_type.html">wsdd__SecurityType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#a179fe17a69fad49f67779164c646678e">_wsdd__Security</a></td></tr>
+<tr class="memdesc:a179fe17a69fad49f67779164c646678e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Security of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":SecurityType.  <a href="#a179fe17a69fad49f67779164c646678e">More...</a><br /></td></tr>
+<tr class="separator:a179fe17a69fad49f67779164c646678e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c0a047206ec3aaa3d828708ffd181cd"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structwsdd_____sig_type.html">wsdd__SigType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#a6c0a047206ec3aaa3d828708ffd181cd">_wsdd__Sig</a></td></tr>
+<tr class="memdesc:a6c0a047206ec3aaa3d828708ffd181cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Sig of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":SigType.  <a href="#a6c0a047206ec3aaa3d828708ffd181cd">More...</a><br /></td></tr>
+<tr class="separator:a6c0a047206ec3aaa3d828708ffd181cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf073c7dfa857058e5d956e7c1456dec"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structwsdd_____app_sequence_type.html">wsdd__AppSequenceType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#adf073c7dfa857058e5d956e7c1456dec">_wsdd__AppSequence</a></td></tr>
+<tr class="memdesc:adf073c7dfa857058e5d956e7c1456dec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":AppSequence of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":AppSequenceType.  <a href="#adf073c7dfa857058e5d956e7c1456dec">More...</a><br /></td></tr>
+<tr class="separator:adf073c7dfa857058e5d956e7c1456dec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2266fa275ca0e6cd44cc269127ee2608"><td class="memItemLeft" align="right" valign="top">typedef char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#a2266fa275ca0e6cd44cc269127ee2608">_wsdd__Id</a></td></tr>
+<tr class="memdesc:a2266fa275ca0e6cd44cc269127ee2608"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level attribute "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Id of simpleType xs:ID.  <a href="#a2266fa275ca0e6cd44cc269127ee2608">More...</a><br /></td></tr>
+<tr class="separator:a2266fa275ca0e6cd44cc269127ee2608"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:ae16f0c9379898c3e662515edde78a3cd"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wsdd_8h.html#ae16f0c9379898c3e662515edde78a3cd">wsdd__FaultCodeType</a> { <a class="el" href="wsdd_8h.html#ae16f0c9379898c3e662515edde78a3cdaf66858450c12ea612f0d7fcf33937755">wsdd__MatchingRuleNotSupported</a>
- }<tr class="memdesc:ae16f0c9379898c3e662515edde78a3cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">"http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":FaultCodeType is a simpleType restriction of xs:QName.  <a href="wsdd_8h.html#ae16f0c9379898c3e662515edde78a3cd">More...</a><br /></td></tr>
+ }<tr class="memdesc:ae16f0c9379898c3e662515edde78a3cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">"http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":FaultCodeType is a simpleType restriction of XSD type xs:QName.  <a href="wsdd_8h.html#ae16f0c9379898c3e662515edde78a3cd">More...</a><br /></td></tr>
 </td></tr>
 <tr class="separator:ae16f0c9379898c3e662515edde78a3cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -202,6 +247,216 @@ Enumerations</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Typedef Documentation</h2>
+<a class="anchor" id="adf073c7dfa857058e5d956e7c1456dec"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structwsdd_____app_sequence_type.html">wsdd__AppSequenceType</a> <a class="el" href="wsdd_8h.html#adf073c7dfa857058e5d956e7c1456dec">_wsdd__AppSequence</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":AppSequence of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":AppSequenceType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a432eb6cc4cb7f040426841d48b88875b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structwsdd_____bye_type.html">wsdd__ByeType</a> <a class="el" href="wsdd_8h.html#a432eb6cc4cb7f040426841d48b88875b">_wsdd__Bye</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Bye of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ByeType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a44ab9a4f8ea863a03ed1f55f857c6f53"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structwsdd_____hello_type.html">wsdd__HelloType</a> <a class="el" href="wsdd_8h.html#a44ab9a4f8ea863a03ed1f55f857c6f53">_wsdd__Hello</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Hello of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":HelloType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a2266fa275ca0e6cd44cc269127ee2608"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef char* <a class="el" href="wsdd_8h.html#a2266fa275ca0e6cd44cc269127ee2608">_wsdd__Id</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level attribute "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Id of simpleType xs:ID. </p>
+
+</div>
+</div>
+<a class="anchor" id="a28f444f25ee2acce37af4127d1b37fbe"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef unsigned int <a class="el" href="wsdd_8h.html#a28f444f25ee2acce37af4127d1b37fbe">_wsdd__MetadataVersion</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":MetadataVersion of XSD type xs:unsignedInt. </p>
+
+</div>
+</div>
+<a class="anchor" id="aa34c66d7471556163d53d3a906ec843c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structwsdd_____probe_type.html">wsdd__ProbeType</a> <a class="el" href="wsdd_8h.html#aa34c66d7471556163d53d3a906ec843c">_wsdd__Probe</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Probe of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ProbeType. </p>
+
+</div>
+</div>
+<a class="anchor" id="ae745d33cdb3c6ce449fb08df3324b5a6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structwsdd_____probe_matches_type.html">wsdd__ProbeMatchesType</a> <a class="el" href="wsdd_8h.html#ae745d33cdb3c6ce449fb08df3324b5a6">_wsdd__ProbeMatches</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ProbeMatches of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ProbeMatchesType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a4f9dabe7a031ad9b56467f0f7d873fcf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structwsdd_____resolve_type.html">wsdd__ResolveType</a> <a class="el" href="wsdd_8h.html#a4f9dabe7a031ad9b56467f0f7d873fcf">_wsdd__Resolve</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Resolve of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a4f16a34737da6bf0d709c364a8c5906c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structwsdd_____resolve_matches_type.html">wsdd__ResolveMatchesType</a> <a class="el" href="wsdd_8h.html#a4f16a34737da6bf0d709c364a8c5906c">_wsdd__ResolveMatches</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveMatches of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ResolveMatchesType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a2eedfea948640f1b07145cfb5e35a0c0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structwsdd_____scopes_type.html">wsdd__ScopesType</a> <a class="el" href="wsdd_8h.html#a2eedfea948640f1b07145cfb5e35a0c0">_wsdd__Scopes</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Scopes of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":ScopesType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a179fe17a69fad49f67779164c646678e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structwsdd_____security_type.html">wsdd__SecurityType</a> <a class="el" href="wsdd_8h.html#a179fe17a69fad49f67779164c646678e">_wsdd__Security</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Security of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":SecurityType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a6c0a047206ec3aaa3d828708ffd181cd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structwsdd_____sig_type.html">wsdd__SigType</a> <a class="el" href="wsdd_8h.html#a6c0a047206ec3aaa3d828708ffd181cd">_wsdd__Sig</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Sig of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":SigType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a4fed534596ef7e8089e35c95404e9577"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="wsdd_8h.html#a09cc4790c86f19b8c299c92470ea9d06">wsdd__UriListType</a> <a class="el" href="wsdd_8h.html#a4fed534596ef7e8089e35c95404e9577">_wsdd__SupportedMatchingRules</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":SupportedMatchingRules of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":UriListType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a184280afac7e2da87be531a1f8b2ddd0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="wsdd_8h.html#a73a27fd2ed71ddbd12a541c95722dcf3">wsdd__QNameListType</a> <a class="el" href="wsdd_8h.html#a184280afac7e2da87be531a1f8b2ddd0">_wsdd__Types</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":Types of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":QNameListType. </p>
+
+</div>
+</div>
+<a class="anchor" id="a9c1c6158ab0ccb57afc3f1af0ab5bb65"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="wsdd_8h.html#a09cc4790c86f19b8c299c92470ea9d06">wsdd__UriListType</a> <a class="el" href="wsdd_8h.html#a9c1c6158ab0ccb57afc3f1af0ab5bb65">_wsdd__XAddrs</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Top-level root element "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":XAddrs of XSD type "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":UriListType. </p>
+
+</div>
+</div>
 <a class="anchor" id="a6907c0db82adca14f185ae81e6746f2a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -240,7 +495,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>union of values "tns:FaultCodeType xs:QName" </p>
+<p>Union of values from member types "tns:FaultCodeType xs:QName". </p>
 
 </div>
 </div>
@@ -437,7 +692,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>"http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":FaultCodeType is a simpleType restriction of xs:QName. </p>
+<p>"http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01":FaultCodeType is a simpleType restriction of XSD type xs:QName. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="ae16f0c9379898c3e662515edde78a3cdaf66858450c12ea612f0d7fcf33937755"></a>wsdd__MatchingRuleNotSupported&#160;</td><td class="fielddoc">
 <p>xs:QName value=""<a href="http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01">http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01</a>":MatchingRuleNotSupported" </p>
@@ -449,10 +704,10 @@ Enumerations</h2></td></tr>
 </div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Mar 1 2017 13:52:02 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Fri Jan 5 2018 13:35:39 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

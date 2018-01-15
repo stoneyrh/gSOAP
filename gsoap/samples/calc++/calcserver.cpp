@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     /* run iterative server on port until fatal error */
     if (calc.run(port))
     { calc.soap_stream_fault(std::cerr);
-      exit(-1);
+      exit(1);
     }
   }
   return 0;

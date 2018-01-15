@@ -102,6 +102,7 @@ class xs__element
         xs__simpleType                  *simpleTypeRef;         // traverse() finds type or = simpleType above
         xs__complexType                 *complexTypeRef;        // traverse() finds type or = complexType above
         std::vector<xs__element*>       substitutions;          // traverse() finds substitutionGroup elements
+        bool                            used;
   public:
                                         xs__element();
         int                             traverse(xs__schema&);
@@ -114,6 +115,7 @@ class xs__element
         xs__simpleType                  *simpleTypePtr() const;
         xs__complexType                 *complexTypePtr() const;
         const std::vector<xs__element*> *substitutionsPtr() const;
+        void                            mark();
 };
 
 enum xs__attribute_use { optional, prohibited, required, default_, fixed_ };
@@ -138,6 +140,7 @@ class xs__attribute
         xs__schema                      *schemaRef;             // schema to which this belongs
         xs__attribute                   *attributeRef;          // traverse() finds ref
         xs__simpleType                  *simpleTypeRef;         // traverse() finds type or = simpleType above
+        bool                            used;
   public:
                                         xs__attribute();
         int                             traverse(xs__schema&);
@@ -147,6 +150,7 @@ class xs__attribute
         xs__schema                      *schemaPtr() const;
         xs__attribute                   *attributePtr() const;
         xs__simpleType                  *simpleTypePtr() const;
+        void                            mark();
 };
 
 class xs__all
@@ -154,6 +158,7 @@ class xs__all
         std::vector<xs__element>        element;
   public:
         int                             traverse(xs__schema&);
+        void                            mark();
 };
 
 enum xs__processContents { strict, skip, lax };
@@ -169,6 +174,7 @@ class xs__any
         std::vector<xs__element>        element;
   public:
         int                             traverse(xs__schema&);
+        void                            mark();
 };
 
 class xs__contents
@@ -183,6 +189,7 @@ class xs__contents
         }                               __content;
   public:
         int                             traverse(xs__schema&);
+        void                            mark();
 };
 
 class xs__seqchoice
@@ -198,6 +205,7 @@ class xs__seqchoice
         int                             traverse(xs__schema&);
         void                            schemaPtr(xs__schema*);
         xs__schema                      *schemaPtr() const;
+        void                            mark();
 };
 
 class xs__group
@@ -213,6 +221,7 @@ class xs__group
   private:
         xs__schema                      *schemaRef;             // schema to which this belongs
         xs__group                       *groupRef;              // traverse() finds ref
+        bool                            used;
   public:
                                         xs__group();
         int                             traverse(xs__schema&);
@@ -220,6 +229,7 @@ class xs__group
         void                            groupPtr(xs__group*);
         xs__schema                      *schemaPtr() const;
         xs__group                       *groupPtr() const;
+        void                            mark();
 };
 
 class xs__anyAttribute
@@ -239,6 +249,7 @@ class xs__attributeGroup
   private:
         xs__schema                      *schemaRef;
         xs__attributeGroup              *attributeGroupRef;
+        bool                            used;
   public:
                                         xs__attributeGroup();
         int                             traverse(xs__schema&);
@@ -246,6 +257,7 @@ class xs__attributeGroup
         void                            attributeGroupPtr(xs__attributeGroup*);
         xs__schema                      *schemaPtr() const;
         xs__attributeGroup              *attributeGroupPtr() const;
+        void                            mark();
 };
 
 class xs__enumeration
@@ -270,6 +282,7 @@ class xs__simpleContent
         xs__restriction                 *restriction;   // choice
   public:
         int                             traverse(xs__schema&);
+        void                            mark();
 };
 
 class xs__simpleType
@@ -284,12 +297,15 @@ class xs__simpleType
   private:
         xs__schema                      *schemaRef;
         int                             level;
+        bool                            used;
   public:
                                         xs__simpleType();
         int                             traverse(xs__schema&);
         void                            schemaPtr(xs__schema*);
         xs__schema                      *schemaPtr() const;
         int                             baseLevel();
+        void                            mark();
+        bool                            is_used() const;
 };
 
 class xs__extension
@@ -314,6 +330,7 @@ class xs__extension
         void                            complexTypePtr(xs__complexType*);
         xs__simpleType                  *simpleTypePtr() const;
         xs__complexType                 *complexTypePtr() const;
+        void                            mark();
 };
 
 class xs__length
@@ -359,6 +376,8 @@ class xs__restriction
   private:
         xs__simpleType                  *simpleTypeRef;         // traverse() finds type
         xs__complexType                 *complexTypeRef;        // traverse() finds type
+        xs__simpleType                  *simpleArrayTypeRef;    // traverse() finds type
+        xs__complexType                 *complexArrayTypeRef;   // traverse() finds type
   public:
                                         xs__restriction();
         int                             traverse(xs__schema&);
@@ -366,6 +385,9 @@ class xs__restriction
         void                            complexTypePtr(xs__complexType*);
         xs__simpleType                  *simpleTypePtr() const;
         xs__complexType                 *complexTypePtr() const;
+        xs__simpleType                  *simpleArrayTypePtr() const;
+        xs__complexType                 *complexArrayTypePtr() const;
+        void                            mark();
 };
 
 class xs__list
@@ -380,6 +402,7 @@ class xs__list
         int                             traverse(xs__schema&);
         void                            itemTypePtr(xs__simpleType*);
         xs__simpleType                  *itemTypePtr() const;
+        void                            mark();
 };
 
 class xs__union
@@ -388,6 +411,7 @@ class xs__union
         std::vector<xs__simpleType>     simpleType;
   public:
         int                             traverse(xs__schema&);
+        void                            mark();
 };
 
 class xs__complexContent
@@ -398,6 +422,7 @@ class xs__complexContent
         xs__annotation                  *annotation;
   public:
         int                             traverse(xs__schema&);
+        void                            mark();
 };
 
 class xs__complexType
@@ -423,12 +448,15 @@ class xs__complexType
   private:
         xs__schema                      *schemaRef;
         int                             level;
+        bool                            used;
   public:
                                         xs__complexType();
         int                             traverse(xs__schema&);
         void                            schemaPtr(xs__schema*);
         xs__schema                      *schemaPtr() const;
         int                             baseLevel();
+        void                            mark();
+        bool                            is_used() const;
 };
 
 class xs__import
@@ -444,6 +472,7 @@ class xs__import
         int                             traverse(xs__schema&);
         void                            schemaPtr(xs__schema*);
         xs__schema                      *schemaPtr() const;
+        void                            mark();
 };
 
 class xs__include
@@ -522,6 +551,7 @@ class xs__schema
         SetOfString                     builtinTypeSet;
         SetOfString                     builtinElementSet;
         SetOfString                     builtinAttributeSet;
+        bool                            used;
   public:
                                         xs__schema();
                                         xs__schema(struct soap*);
@@ -545,6 +575,7 @@ class xs__schema
         const SetOfString&              builtinElements() const;
         const SetOfString&              builtinAttributes() const;
         bool                            empty() const;
+        void                            mark();
         friend ostream&                 operator<<(ostream&, const xs__schema&);
         friend istream&                 operator>>(istream&, xs__schema&);
 };

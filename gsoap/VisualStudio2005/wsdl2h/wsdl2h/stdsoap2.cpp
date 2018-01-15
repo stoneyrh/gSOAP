@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.59
+        stdsoap2.c[pp] 2.8.60
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20859
+#define GSOAP_LIB_VERSION 20860
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.59 2017-12-30 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.60 2018-01-15 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.59 2017-12-30 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.60 2018-01-15 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -6788,6 +6788,7 @@ SOAP_FMAC2
 soap_closesock(struct soap *soap)
 {
   int status = soap->error;
+  soap->part = SOAP_END;
 #ifndef WITH_LEANER
   if (status && status < 200) /* attachment state is not to be trusted */
   {
@@ -9410,7 +9411,7 @@ soap_begin_count(struct soap *soap)
   soap->position = 0;
   soap->mustUnderstand = 0;
   soap->encoding = 0;
-  soap->part = SOAP_BEGIN;
+  soap->part = SOAP_BEGIN_SEND;
   soap->event = 0;
   soap->evlev = 0;
   soap->idnum = 0;
@@ -9540,7 +9541,6 @@ soap_begin_send(struct soap *soap)
   soap->position = 0;
   soap->mustUnderstand = 0;
   soap->encoding = 0;
-  soap->part = SOAP_BEGIN;
   soap->event = 0;
   soap->evlev = 0;
   soap->idnum = 0;
@@ -9599,7 +9599,7 @@ soap_begin_send(struct soap *soap)
     ERR_clear_error();
 #endif
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Begin send phase (socket=%d mode=0x%x count=" SOAP_ULONG_FORMAT ")\n", (int)soap->socket, soap->mode, soap->count));
-  soap->part = SOAP_BEGIN;
+  soap->part = SOAP_BEGIN_SEND;
 #ifndef WITH_LEANER
   if (soap->fprepareinitsend && (soap->mode & SOAP_IO) == SOAP_IO_STORE && (soap->error = soap->fprepareinitsend(soap)) != SOAP_OK)
     return soap->error;
@@ -13652,7 +13652,7 @@ soap_element_end_in(struct soap *soap, const char *tag)
     {
       for (; *s; s++)
         if (!soap_coblank((soap_wchar)*s))
-          return soap->error = SOAP_SYNTAX_ERROR; /* reject mixed content before ending tag */
+          return soap->error = SOAP_END_TAG; /* reject mixed content before ending tag */
     }
     soap->dom->code = t; /* restore XML code */
   }
@@ -13672,7 +13672,7 @@ soap_element_end_in(struct soap *soap, const char *tag)
       if (!soap_coblank(c))
       {
         if ((soap->mode & SOAP_XML_STRICT))
-          return soap->error = SOAP_SYNTAX_ERROR; /* reject mixed content before ending tag */
+          return soap->error = SOAP_END_TAG; /* reject mixed content before ending tag */
         if (c == SOAP_LT)
           n++;
         else if (c == '/')
@@ -14490,7 +14490,10 @@ soap_peek_element(struct soap *soap)
 #endif
       }
       if (tp->visible)
+      {
+        DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Duplicate attribute in %s\n", soap->tag));
         return soap->error = SOAP_SYNTAX_ERROR; /* redefined (duplicate) attribute */
+      }
       tp->visible = 2; /* seen this attribute w/ value */
       do
       {
@@ -17354,6 +17357,7 @@ int
 SOAP_FMAC2
 soap_s2QName(struct soap *soap, const char *s, char **t, long minlen, long maxlen, const char *pattern)
 {
+  *t = NULL;
   if (s)
   {
     const char *r = soap_QName(soap, s, minlen, maxlen, pattern);
@@ -17374,6 +17378,7 @@ int
 SOAP_FMAC2
 soap_s2stdQName(struct soap *soap, const char *s, std::string *t, long minlen, long maxlen, const char *pattern)
 {
+  t->clear();
   if (s)
   {
     const char *r = soap_QName(soap, s, minlen, maxlen, pattern);
@@ -20271,7 +20276,7 @@ soap_begin_recv(struct soap *soap)
   soap->ahead = 0;
   soap->peeked = 0;
   soap->level = 0;
-  soap->part = SOAP_BEGIN;
+  soap->part = SOAP_BEGIN_RECV;
   soap->body = 1;
   soap->count = 0;
   soap->length = 0;
@@ -21769,6 +21774,9 @@ soap_set_fault(struct soap *soap)
         *s = soap_set_validation_fault(soap, "missing SOAP message", NULL);
       else
         *s = soap_set_validation_fault(soap, "missing element", NULL);
+      break;
+    case SOAP_END_TAG:
+      *s = soap_set_validation_fault(soap, "ending tag expected", NULL);
       break;
     case SOAP_MUSTUNDERSTAND:
       *c = "SOAP-ENV:MustUnderstand";

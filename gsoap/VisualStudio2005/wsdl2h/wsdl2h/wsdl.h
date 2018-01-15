@@ -65,6 +65,7 @@ class wsdl__import
         int                             traverse(wsdl__definitions&);
         void                            definitionsPtr(wsdl__definitions*);
         wsdl__definitions               *definitionsPtr() const;
+        void                            mark();
 };
 
 class wsdl__types : public xs__schema                           // WSDL 2.0 <types> inlined schema
@@ -74,6 +75,7 @@ class wsdl__types : public xs__schema                           // WSDL 2.0 <typ
   public:
         int                             preprocess(wsdl__definitions&);
         int                             traverse(wsdl__definitions&);
+        void                            mark();
 };
 
 class wsdl__part
@@ -110,6 +112,7 @@ class wsdl__part
         bool                            is_repeating() const;
         const char*                     get_default() const;
         const std::vector<char*>&       options() const;
+        void                            mark();
 };
 
 class wsdl__message
@@ -121,6 +124,7 @@ class wsdl__message
         std::vector<wsdl__part>         part;                   // <wsdl:part>*
   public:
         int                             traverse(wsdl__definitions&);
+        void                            mark();
 };
 
 class wsdl__ioput
@@ -377,6 +381,7 @@ class wsdl__definitions
         SetOfString                     builtinElementSet;
         SetOfString                     builtinAttributeSet;
         wadl__application               *appRef;
+        bool                            used;
   public:
                                         wsdl__definitions();
                                         wsdl__definitions(struct soap*);
@@ -403,6 +408,7 @@ class wsdl__definitions
         const SetOfString&              builtinAttributes() const;
         void                            appPtr(wadl__application*);
         wadl__application*              appPtr() const;
+        void                            mark();
         friend ostream&                 operator<<(ostream&, const wsdl__definitions&);
         friend istream&                 operator>>(istream&, wsdl__definitions&);
 };

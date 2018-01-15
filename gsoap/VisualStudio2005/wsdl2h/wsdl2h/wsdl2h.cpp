@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -71,6 +71,7 @@ int _flag = 0,
     kflag = 0,
     mflag = 0,
     Mflag = 0,
+    Oflag = 0,
     pflag = 0,
     Pflag = 0,
     Rflag = 0,
@@ -130,12 +131,12 @@ const char anonformat[]                = "    %-35s%s_%s%s";
 const char sizeparaformat[]            = "   $%-35s __size%s%s";
 const char pointertemplateparaformat[] = "    %s<%-21s>*%s%s%s";
 
-const char copyrightnotice[] = "\n**  The gSOAP WSDL/WADL/XSD processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2017 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool and its generated software are released under the GPL.\n**  ----------------------------------------------------------------------------\n**  A commercial use license is available from Genivia Inc., contact@genivia.com\n**  ----------------------------------------------------------------------------\n\n";
+const char copyrightnotice[] = "\n**  The gSOAP WSDL/WADL/XSD processor for C and C++, wsdl2h release " WSDL2H_VERSION "\n**  Copyright (C) 2000-2018 Robert van Engelen, Genivia Inc.\n**  All Rights Reserved. This product is provided \"as is\", without any warranty.\n**  The wsdl2h tool and its generated software are released under the GPL.\n**  ----------------------------------------------------------------------------\n**  A commercial use license is available from Genivia Inc., contact@genivia.com\n**  ----------------------------------------------------------------------------\n\n";
 
 const char licensenotice[]   = "\
 --------------------------------------------------------------------------------\n\
 gSOAP XML Web services tools\n\
-Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
+Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
 The wsdl2h tool and its generated software are released under the GPL.\n\
 This software is released under the GPL with the additional exemption that\n\
 compiling, linking, and/or using OpenSSL is allowed.\n\
@@ -182,7 +183,22 @@ int main(int argc, char **argv)
     exit(1);
   }
   definitions.traverse();
+  if (Oflag > 1)
+    definitions.mark();
   def.compile(definitions);
+  if (Oflag > 1)
+  {
+    if (def.types.omitted)
+    {
+      fprintf(stderr, "\nOptimization (-O2): removed type definitions of %zu unused schema components\n", def.types.omitted);
+      if (pflag)
+        fprintf(stderr, "\nWarning: option -O2 removed type definitions that may be used as xsd__anyType derivatives by type extension inheritance (enabled by default with option -p), use option -P to disable type derivation from xsd__anyType\n");
+    }
+    else
+    {
+      fprintf(stderr, "\nOptimization (-O2): no unused schema components found and removed\n");
+    }
+  }
   if (outfile)
   {
     fclose(stream);
@@ -333,6 +349,8 @@ static void options(int argc, char **argv)
             break;
           case 'o':
             a++;
+            if (outfile)
+              fprintf(stderr, "wsdl2h: Option -o specified twice\n");
             g = 0;
             if (*a)
               outfile = a;
@@ -340,6 +358,18 @@ static void options(int argc, char **argv)
               outfile = argv[i];
             else
               fprintf(stderr, "wsdl2h: Option -o requires an output file argument\n");
+            break;
+          case 'O':
+            a++;
+            if (Oflag)
+              fprintf(stderr, "wsdl2h: Option -O specified twice\n");
+            g = 0;
+            if (*a)
+              Oflag = soap_strtol(a, NULL, 10);
+            else if (i < argc && argv[++i])
+              Oflag = soap_strtol(argv[i], NULL, 10);
+            else
+              fprintf(stderr, "wsdl2h: Option -O requires 1 or 2\n");
             break;
           case 'p':
             pflag = 1;
@@ -460,6 +490,8 @@ static void options(int argc, char **argv)
             break;
           case 'z':
             a++;
+            if (zflag)
+              fprintf(stderr, "wsdl2h: Option -z specified twice\n");
             g = 0;
             if (*a)
               zflag = soap_strtol(a, NULL, 10);
@@ -470,7 +502,7 @@ static void options(int argc, char **argv)
             break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-D] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-M] [-N name] [-n name] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-Sname] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-D] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-M] [-N name] [-n name] [-O1|-O2] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-Sname] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -b      bi-directional operations (duplex ops) added to serve one-way responses\n\
@@ -492,6 +524,8 @@ static void options(int argc, char **argv)
 -M      suppress error \"must understand element with wsdl:required='true'\"\n\
 -Nname  use name for service prefixes to produce a service for each binding\n\
 -nname  use name as the base namespace prefix instead of 'ns'\n\
+-O1     optimize by omitting duplicate choice/sequence members\n\
+-O2     optimize -O1 and omit unused schema types (unreachable from roots)\n\
 -ofile  output to file\n\
 -P      don't create polymorphic types inherited from xsd__anyType\n\
 -p      create polymorphic types inherited from base xsd__anyType\n\
@@ -518,6 +552,7 @@ static void options(int argc, char **argv)
 -z4     compatibility up to 2.8.11: don't generate union structs in std::vector\n\
 -z5     compatibility up to 2.8.15: don't include minor improvements\n\
 -z6     compatibility up to 2.8.17: don't include minor improvements\n\
+-z7     compatibility up to 2.8.59: don't generate std::vector of class of union\n\
 -_      don't generate _USCORE (replace with UNICODE _x005f)\n\
 infile.wsdl infile.xsd http://www... list of input sources (if none reads stdin)\n\
 \n");

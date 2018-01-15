@@ -5,7 +5,7 @@
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -1841,7 +1841,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       }
     }
   }
-  // produce built-in primitive types, limited to the ones that are used only
+  // produce built-in primitive types
   banner("Built-in Schema Types and Top-Level Elements and Attributes");
   // define xsd:anyType first, if used
   if (!cflag && !dflag && pflag)
@@ -1955,7 +1955,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       types.knames.insert(s);
     }
   }
-  // produce built-in primitive elements, limited to the ones that are used only
+  // produce built-in primitive elements
   if (vflag)
     fprintf(stderr, "\nGenerating built-in elements\n");
   for (SetOfString::const_iterator j = definitions.builtinElements().begin(); j != definitions.builtinElements().end(); ++j)
@@ -2023,7 +2023,7 @@ void Definitions::compile(const wsdl__definitions& definitions)
       types.deftname(TYPEDEF, false, false, "_", NULL, *j, s);
     }
   }
-  // produce built-in primitive attributes, limited to the ones that are used only
+  // produce built-in primitive attributes
   if (vflag)
     fprintf(stderr, "\nGenerating built-in attributes\n");
   for (SetOfString::const_iterator k = definitions.builtinAttributes().begin(); k != definitions.builtinAttributes().end(); ++k)
@@ -2109,7 +2109,9 @@ void Definitions::compile(const wsdl__definitions& definitions)
         if (!(*element).type && !(*element).abstract)
         {
           if ((*element).complexTypePtr())
+          {
             types.define((*schema4)->targetNamespace, (*element).name, *(*element).complexTypePtr());
+          }
           else if (!(*element).simpleTypePtr())
           {
             fprintf(stream, "/// @brief Top-level root element \"%s\":%s.\n", (*schema4)->targetNamespace, (*element).name);
@@ -4042,7 +4044,7 @@ static void ident()
    DO NOT INCLUDE THIS FILE DIRECTLY INTO YOUR PROJECT BUILDS\n\
    USE THE soapcpp2-GENERATED SOURCE CODE FILES FOR YOUR PROJECT BUILDS\n\n\
 gSOAP XML Web services tools\n\
-Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
+Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc. All Rights Reserved.\n\
 This program is released under the GPL with the additional exemption that\n\
 compiling, linking, and/or using OpenSSL is allowed.\n\
 --------------------------------------------------------------------------------\n\

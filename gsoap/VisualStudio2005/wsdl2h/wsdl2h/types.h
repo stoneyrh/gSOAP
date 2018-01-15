@@ -62,18 +62,19 @@ class Types
     SetOfString		onames;	// service operator names
     MapOfPairToString	enames;	// enum symbolic names
     VectorOfString	scope;	// de-anonymizer stack
-    int snum; // struct name index, TODO: consider map of URI to count per URI
-    int unum; // union name index, TODO: consider map of URI to count per URI
-    int gnum; // enum name index, TODO: consider map of URI to count per URI
-    bool with_union;
-    bool fake_union;
+    int                 snum;   // struct name index, TODO: consider map of URI to count per URI
+    int                 unum;   // union name index, TODO: consider map of URI to count per URI
+    int                 gnum;   // enum name index, TODO: consider map of URI to count per URI
+    bool                with_union;
+    bool                fake_union;
+    size_t              omitted; // number of -O2 removed types
     Types();
     void init();
     int read(const char *file);
   private:
     const char *fname(const char *prefix, const char *URI, const char *qname, SetOfString *reserved, enum Lookup lookup, bool isqname);
   public:
-    const char *aname(const char *prefix, const char *URI, const char *qname);
+    const char *aname(const char *prefix, const char *URI, const char *qname, SetOfString *reserved = NULL);
     const char *wname(const char *prefix, const char *URI, const char *qname);
     const char *cname(const char *prefix, const char *URI, const char *qname);
     const char *tname(const char *prefix, const char *URI, const char *qname);
@@ -97,26 +98,26 @@ class Types
     bool is_ptr(const char *prefix, const char *URI, const char *type);
     void dump(FILE*);
     void define(const char *URI, const char *name, const xs__complexType&);
-    void gen(const char *URI, const vector<xs__attribute>&);
-    void gen(const char *URI, const vector<xs__attributeGroup>&);
-    void gen(const char *URI, const vector<xs__all>&);
-    void gen(const char *URI, const vector<xs__element>&, const char *minOccurs, const char *maxOccurs);
-    void gen(const char *URI, const vector<xs__group>&);
+    void gen(const char *URI, const vector<xs__attribute>&, SetOfString&);
+    void gen(const char *URI, const vector<xs__attributeGroup>&, SetOfString&);
+    void gen(const char *URI, const vector<xs__all>&, SetOfString&);
+    void gen(const char *URI, const vector<xs__element>&, const char *minOccurs, const char *maxOccurs, SetOfString&);
+    void gen(const char *URI, const vector<xs__group>&, SetOfString&);
     void gen(const char *URI, const vector<xs__any>&);
-    void gen(const char *URI, const vector<xs__contents>&);
+    void gen(const char *URI, const vector<xs__contents>&, SetOfString&);
     void gen(const char *URI, const char *name, const xs__simpleType&, bool anonymous, bool nested_restriction);
     void gen(const char *URI, const char *name, const xs__complexType&, bool anonymous);
-    void gen(const char *URI, const xs__attribute&);
-    void gen(const char *URI, const xs__all&, const char *minOccurs, const char *maxOccurs);
-    void gen(const char *URI, const xs__seqchoice&, const char *minOccurs, const char *maxOccurs);
-    void gen(const char *URI, const char *name, const xs__seqchoice&, const char *minOccurs, const char *maxOccurs);
-    void gen(const char *URI, const xs__element&, bool substok, const char *minOccurs, const char *maxOccurs);
-    void gen(const char *URI, const xs__group&, const char *minOccurs, const char *maxOccurs);
+    void gen(const char *URI, const xs__attribute&, SetOfString&);
+    void gen(const char *URI, const xs__all&, const char *minOccurs, const char *maxOccurs, SetOfString&);
+    void gen(const char *URI, const xs__seqchoice&, const char *minOccurs, const char *maxOccurs, SetOfString&);
+    void gen(const char *URI, const char *name, const xs__seqchoice&, const char *minOccurs, const char *maxOccurs, SetOfString&);
+    void gen(const char *URI, const xs__element&, bool substok, const char *minOccurs, const char *maxOccurs, SetOfString&);
+    void gen(const char *URI, const xs__group&, const char *minOccurs, const char *maxOccurs, SetOfString&);
     void gen(const char *URI, const xs__any&, const char *minOccurs, const char *maxOccurs);
     void gen(const char *URI, const xs__anyAttribute&);
     void gen_inh(const char *URI, const xs__complexType *complexType, bool anonymous);
     void gen_soap_array(const char *t, const char *item, const char *type);
-    void gen_substitutions(const char *URI, const xs__element &element);
+    void gen_substitutions(const char *URI, const xs__element &element, SetOfString&);
     void document(const xs__annotation*);
     void modify(const char *name);
     const char *format(const char *text);

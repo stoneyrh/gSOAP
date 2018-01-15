@@ -73,6 +73,7 @@ xs__schema::xs__schema()
   updated = false;
   location = NULL;
   redirs = 0;
+  used = false;
 }
 
 xs__schema::xs__schema(struct soap *copy)
@@ -670,6 +671,22 @@ bool xs__schema::empty() const
   return include.empty() && redefine.empty() && override_.empty() && attribute.empty() && element.empty() && group.empty() && attributeGroup.empty() && simpleType.empty() && complexType.empty(); // empty except for <xs:import>
 }
 
+void xs__schema::mark()
+{
+  if (Oflag > 1 && !used)
+  {
+    used = true;
+    for (vector<xs__import>::iterator im = import.begin(); im != import.end(); ++im)
+      (*im).mark();
+    // start with root of usage: use top-level attributes
+    for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+      (*at).mark();
+    // start with root of usage: use top-level elements
+    for (vector<xs__element>::iterator el = element.begin(); el != element.end(); ++el)
+      (*el).mark();
+  }
+}
+
 xs__include::xs__include()
 {
   schemaLocation = NULL;
@@ -1088,11 +1105,19 @@ xs__schema *xs__import::schemaPtr() const
   return schemaRef;
 }
 
+void xs__import::mark()
+{
+  if (Oflag > 1)
+    if (schemaPtr())
+      schemaPtr()->mark();
+}
+
 xs__attribute::xs__attribute()
 {
   schemaRef = NULL;
   attributeRef = NULL;
   simpleTypeRef = NULL;
+  used = false;
 }
 
 int xs__attribute::traverse(xs__schema &schema)
@@ -1198,6 +1223,7 @@ int xs__attribute::traverse(xs__schema &schema)
         schema.builtinAttribute(ref);
       else if (!Wflag)
         cerr << "\nWarning: could not find the referenced attribute '" << (name ? name : "") << "' ref '" << ref << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+      /* moved to restriction::traverse()
       if (wsdl__arrayType)
       {
         char *arrayType = soap_strdup(schema.soap, wsdl__arrayType);
@@ -1207,6 +1233,7 @@ int xs__attribute::traverse(xs__schema &schema)
         if (is_builtin_qname(arrayType))
           schema.builtinType(arrayType);
       }
+      */
     }
     else if (type)
     {
@@ -1249,6 +1276,18 @@ xs__simpleType *xs__attribute::simpleTypePtr() const
   return simpleTypeRef;
 }
 
+void xs__attribute::mark()
+{
+  if (Oflag > 1 && !used)
+  {
+    used = true;
+    if (attributePtr())
+      attributePtr()->mark();
+    if (simpleTypePtr())
+      simpleTypePtr()->mark();
+  }
+}
+
 xs__element::xs__element()
 {
   schemaRef = NULL;
@@ -1273,6 +1312,7 @@ xs__element::xs__element()
   simpleType = NULL;
   complexType = NULL;
   unique = NULL;
+  used = false;
 }
 
 int xs__element::traverse(xs__schema &schema)
@@ -1540,10 +1580,25 @@ xs__complexType *xs__element::complexTypePtr() const
   return complexTypeRef;
 }
 
+void xs__element::mark()
+{
+  if (Oflag > 1 && !used)
+  {
+    used = true;
+    if (elementPtr())
+      elementPtr()->mark();
+    if (simpleTypePtr())
+      simpleTypePtr()->mark();
+    if (complexTypePtr())
+      complexTypePtr()->mark();
+  }
+}
+
 xs__simpleType::xs__simpleType()
 {
   schemaRef = NULL;
   level = 0;
+  used = false;
 }
 
 int xs__simpleType::traverse(xs__schema &schema)
@@ -1600,10 +1655,30 @@ int xs__simpleType::baseLevel()
   return level;
 }
 
+void xs__simpleType::mark()
+{
+  if (Oflag > 1 && !used)
+  {
+    used = true;
+    if (restriction)
+      restriction->mark();
+    else if (list)
+      list->mark();
+    else if (union_)
+      union_->mark();
+  }
+}
+
+bool xs__simpleType::is_used() const
+{
+  return used;
+}
+
 xs__complexType::xs__complexType()
 {
   schemaRef = NULL;
   level = 0;
+  used = false;
 }
 
 int xs__complexType::traverse(xs__schema &schema)
@@ -1702,6 +1777,37 @@ int xs__complexType::baseLevel()
   return level;
 }
 
+void xs__complexType::mark()
+{
+  if (Oflag > 1 && !used)
+  {
+    used = true;
+    if (simpleContent)
+      simpleContent->mark();
+    else if (complexContent)
+      complexContent->mark();
+    else if (all)
+      all->mark();
+    else if (choice)
+      choice->mark();
+    else if (sequence)
+      sequence->mark();
+    else if (group)
+      group->mark();
+    else if (any)
+      any->mark();
+    for (std::vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+      (*at).mark();
+    for (std::vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
+      (*ag).mark();
+  }
+}
+
+bool xs__complexType::is_used() const
+{
+  return used;
+}
+
 int xs__simpleContent::traverse(xs__schema &schema)
 {
   if (vflag)
@@ -1713,6 +1819,17 @@ int xs__simpleContent::traverse(xs__schema &schema)
   return SOAP_OK;
 }
 
+void xs__simpleContent::mark()
+{
+  if (Oflag > 1)
+  {
+    if (extension)
+      extension->mark();
+    else if (restriction)
+      restriction->mark();
+  }
+}
+
 int xs__complexContent::traverse(xs__schema &schema)
 {
   if (vflag)
@@ -1722,6 +1839,17 @@ int xs__complexContent::traverse(xs__schema &schema)
   else if (restriction)
     restriction->traverse(schema);
   return SOAP_OK;
+}
+
+void xs__complexContent::mark()
+{
+  if (Oflag > 1)
+  {
+    if (extension)
+      extension->mark();
+    else if (restriction)
+      restriction->mark();
+  }
 }
 
 xs__extension::xs__extension()
@@ -1849,6 +1977,29 @@ void xs__extension::complexTypePtr(xs__complexType *complexType)
   complexTypeRef = complexType;
 }
 
+void xs__extension::mark()
+{
+  if (Oflag > 1)
+  {
+    if (simpleTypePtr())
+      simpleTypePtr()->mark();
+    if (complexTypePtr())
+      complexTypePtr()->mark();
+    if (group)
+      group->mark();
+    else if (all)
+      all->mark();
+    else if (choice)
+      choice->mark();
+    else if (sequence)
+      sequence->mark();
+    for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+      (*at).mark();
+    for (vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
+      (*ag).mark();
+  }
+}
+
 xs__simpleType *xs__extension::simpleTypePtr() const
 {
   return simpleTypeRef;
@@ -1863,6 +2014,8 @@ xs__restriction::xs__restriction()
 {
   simpleTypeRef = NULL;
   complexTypeRef = NULL;
+  simpleArrayTypeRef = NULL;
+  complexArrayTypeRef = NULL;
 }
 
 int xs__restriction::traverse(xs__schema &schema)
@@ -1889,12 +2042,132 @@ int xs__restriction::traverse(xs__schema &schema)
       (*pn).traverse(schema);
   }
   for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+  {
     (*at).traverse(schema);
+    if ((*at).wsdl__arrayType)
+    {
+      char *arrayType = soap_strdup(schema.soap, (*at).wsdl__arrayType);
+      char *r = strchr(arrayType, '[');
+      if (r)
+        *r = '\0';
+#if 0
+      /* one work-around for incomplete schemas with SOAP arrays defined solely by wsdl:arrayType is to add sequence/element with type but this creates __ptritem */
+      if (!sequence)
+      {
+        cerr << "ADDED sequence/element for array\n";
+        sequence = soap_new_xs__seqchoice(schema.soap);
+        sequence->soap_default(schema.soap);
+        xs__contents ct;
+        ct.__union = SOAP_UNION_xs__union_content_element;
+        ct.__content.element = soap_new_xs__element(schema.soap);
+        ct.__content.element->soap_default(schema.soap);
+        ct.__content.element->name = soap_strdup(schema.soap, "item");
+        ct.__content.element->type = arrayType;
+        ct.__content.element->minOccurs = soap_strdup(schema.soap, "0");
+        ct.__content.element->maxOccurs = soap_strdup(schema.soap, "unbounded");
+        sequence->__contents.push_back(ct);
+        sequence->traverse(schema);
+      }
+#else
+      /* another way is to add simpleArrayTypeRef and complexArrayTypeRef */
+      const char *token = qname_token(arrayType, schema.targetNamespace);
+      simpleArrayTypeRef = NULL;
+      if (token)
+      {
+        for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
+        {
+          if ((*i).name && !strcmp((*i).name, token))
+          {
+            simpleArrayTypeRef = &(*i);
+            if (vflag)
+              cerr << "    Found restriction array type '" << (token ? token : "(null)") << "'" << endl;
+            break;
+          }
+        }
+      }
+      if (!simpleArrayTypeRef)
+      {
+        for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+        {
+          xs__schema *s = (*i).schemaPtr();
+          if (s)
+          {
+            token = qname_token(arrayType, s->targetNamespace);
+            if (token)
+            {
+              for (vector<xs__simpleType>::iterator j = s->simpleType.begin(); j != s->simpleType.end(); ++j)
+              {
+                if ((*j).name && !strcmp((*j).name, token))
+                {
+                  simpleArrayTypeRef = &(*j);
+                  if (vflag)
+                    cerr << "    Found restriction array type '" << (token ? token : "(null)") << "'" << endl;
+                  break;
+                }
+              }
+              if (simpleArrayTypeRef)
+                break;
+            }
+          }
+        }
+      }
+      token = qname_token(arrayType, schema.targetNamespace);
+      complexArrayTypeRef = NULL;
+      if (token)
+      {
+        for (vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
+        {
+          if ((*i).name && !strcmp((*i).name, token))
+          {
+            complexArrayTypeRef = &(*i);
+            if (vflag)
+              cerr << "    Found restriction array type '" << (token ? token : "(null)") << "'" << endl;
+            break;
+          }
+        }
+      }
+      if (!complexArrayTypeRef)
+      {
+        for (vector<xs__import>::const_iterator i = schema.import.begin(); i != schema.import.end(); ++i)
+        {
+          xs__schema *s = (*i).schemaPtr();
+          if (s)
+          {
+            token = qname_token(arrayType, s->targetNamespace);
+            if (token)
+            {
+              for (vector<xs__complexType>::iterator j = s->complexType.begin(); j != s->complexType.end(); ++j)
+              {
+                if ((*j).name && !strcmp((*j).name, token))
+                {
+                  complexArrayTypeRef = &(*j);
+                  if (vflag)
+                    cerr << "    Found restriction array type '" << (token ? token : "(null)") << "'" << endl;
+                  break;
+                }
+              }
+              if (complexArrayTypeRef)
+                break;
+            }
+          }
+        }
+      }
+      if (!simpleArrayTypeRef && !complexArrayTypeRef)
+      {
+        if (is_builtin_qname(arrayType))
+          schema.builtinType(arrayType);
+        else if (!Wflag)
+          cerr << "\nWarning: could not find restriction array type '" << arrayType << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
+      }
+#endif
+    }
+  }
   const char *token = qname_token(base, schema.targetNamespace);
   simpleTypeRef = NULL;
   if (token)
   {
     for (vector<xs__simpleType>::iterator i = schema.simpleType.begin(); i != schema.simpleType.end(); ++i)
+    {
       if ((*i).name && !strcmp((*i).name, token))
       {
         simpleTypeRef = &(*i);
@@ -1902,6 +2175,7 @@ int xs__restriction::traverse(xs__schema &schema)
           cerr << "    Found restriction base type '" << (token ? token : "(null)") << "'" << endl;
         break;
       }
+    }
   }
   if (!simpleTypeRef)
   {
@@ -1934,6 +2208,7 @@ int xs__restriction::traverse(xs__schema &schema)
   if (token)
   {
     for (vector<xs__complexType>::iterator i = schema.complexType.begin(); i != schema.complexType.end(); ++i)
+    {
       if ((*i).name && !strcmp((*i).name, token))
       {
         complexTypeRef = &(*i);
@@ -1941,6 +2216,7 @@ int xs__restriction::traverse(xs__schema &schema)
           cerr << "    Found restriction base type '" << (token ? token : "(null)") << "'" << endl;
         break;
       }
+    }
   }
   if (!complexTypeRef)
   {
@@ -1978,7 +2254,9 @@ int xs__restriction::traverse(xs__schema &schema)
         cerr << "\nWarning: could not find restriction base type '" << base << "' in schema '" << (schema.targetNamespace ? schema.targetNamespace : "(null)") << "'" << endl;
     }
     else if (!simpleType)
+    {
       cerr << "Restriction has no base" << endl;
+    }
   }
   return SOAP_OK;
 }
@@ -2001,6 +2279,45 @@ xs__simpleType *xs__restriction::simpleTypePtr() const
 xs__complexType *xs__restriction::complexTypePtr() const
 {
   return complexTypeRef;
+}
+
+xs__simpleType *xs__restriction::simpleArrayTypePtr() const
+{
+  return simpleArrayTypeRef;
+}
+
+xs__complexType *xs__restriction::complexArrayTypePtr() const
+{
+  return complexArrayTypeRef;
+}
+
+void xs__restriction::mark()
+{
+  if (Oflag > 1)
+  {
+    if (simpleTypePtr())
+      simpleTypePtr()->mark();
+    if (complexTypePtr())
+      complexTypePtr()->mark();
+    if (simpleArrayTypePtr())
+      simpleArrayTypePtr()->mark();
+    if (complexArrayTypePtr())
+      complexArrayTypePtr()->mark();
+    if (simpleType)
+      simpleType->mark();
+    if (attributeGroup)
+      attributeGroup->mark();
+    if (group)
+      group->mark();
+    else if (all)
+      all->mark();
+    else if (choice)
+      choice->mark();
+    else if (sequence)
+      sequence->mark();
+    for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+      (*at).mark();
+  }
 }
 
 xs__list::xs__list()
@@ -2077,6 +2394,17 @@ xs__simpleType *xs__list::itemTypePtr() const
   return itemTypeRef;
 }
 
+void xs__list::mark()
+{
+  if (Oflag > 1)
+  {
+    if (restriction)
+      restriction->mark();
+    for (vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
+      (*i).mark();
+  }
+}
+
 int xs__union::traverse(xs__schema &schema)
 {
   if (vflag)
@@ -2086,6 +2414,15 @@ int xs__union::traverse(xs__schema &schema)
   return SOAP_OK;
 }
 
+void xs__union::mark()
+{
+  if (Oflag > 1)
+  {
+    for (vector<xs__simpleType>::iterator i = simpleType.begin(); i != simpleType.end(); ++i)
+      (*i).mark();
+  }
+}
+
 int xs__all::traverse(xs__schema &schema)
 {
   if (vflag)
@@ -2093,6 +2430,13 @@ int xs__all::traverse(xs__schema &schema)
   for (vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
     (*i).traverse(schema);
   return SOAP_OK;
+}
+
+void xs__all::mark()
+{
+  if (Oflag > 1)
+    for (vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
+      (*i).mark();
 }
 
 int xs__contents::traverse(xs__schema &schema)
@@ -2123,6 +2467,36 @@ int xs__contents::traverse(xs__schema &schema)
   return SOAP_OK;
 }
 
+void xs__contents::mark()
+{
+  if (Oflag > 1)
+  {
+    switch (__union)
+    {
+      case SOAP_UNION_xs__union_content_element:
+        if (__content.element)
+          __content.element->mark();
+        break;
+      case SOAP_UNION_xs__union_content_group:
+        if (__content.group)
+          __content.group->mark();
+        break;
+      case SOAP_UNION_xs__union_content_choice:
+        if (__content.choice)
+          __content.choice->mark();
+        break;
+      case SOAP_UNION_xs__union_content_sequence:
+        if (__content.sequence)
+          __content.sequence->mark();
+        break;
+      case SOAP_UNION_xs__union_content_any:
+        if (__content.any)
+          __content.any->mark();
+        break;
+    }
+  }
+}
+
 xs__seqchoice::xs__seqchoice()
 {
   schemaRef = NULL;
@@ -2135,6 +2509,79 @@ int xs__seqchoice::traverse(xs__schema &schema)
   schemaRef = &schema;
   for (vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); ++c)
     (*c).traverse(schema);
+  if (Oflag)
+  {
+    SetOfString members;
+    for (vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); )
+    {
+      if ((*c).__union == SOAP_UNION_xs__union_content_sequence)
+      {
+        for (vector<xs__contents>::iterator c1 = (*c).__content.sequence->__contents.begin(); c1 != (*c).__content.sequence->__contents.end(); )
+        {
+          if ((*c1).__union == SOAP_UNION_xs__union_content_element)
+          {
+            xs__element *e = (*c1).__content.element;
+            if (e->elementPtr())
+            {
+              e = e->elementPtr();
+            }
+            if (e->name)
+            {
+              if (members.find(e->name) != members.end())
+              {
+                (*c).__content.sequence->__contents.erase(c1);
+                if (!Wflag)
+                  cerr << "\nOptimization (-O1): removed duplicate element '" << e->name << "' from nested choice/sequence" << endl;
+              }
+              else
+              {
+                members.insert(e->name);
+                ++c1;
+              }
+            }
+            else
+            {
+              ++c1;
+            }
+          }
+          else
+          {
+            ++c1;
+          }
+        }
+        ++c;
+      }
+      else if ((*c).__union == SOAP_UNION_xs__union_content_element)
+      {
+        xs__element *e = (*c).__content.element;
+        if (e->elementPtr())
+        {
+          e = e->elementPtr();
+        }
+        if (e->name)
+        {
+          if (members.find(e->name) != members.end())
+          {
+            __contents.erase(c);
+            cerr << "\nWarning: removed duplicate element '" << e->name << "' from nested xs:sequence/xs:choice" << endl;
+          }
+          else
+          {
+            members.insert(e->name);
+            ++c;
+          }
+        }
+        else
+        {
+          ++c;
+        }
+      }
+      else
+      {
+        ++c;
+      }
+    }
+  }
   return SOAP_OK;
 }
 
@@ -2148,10 +2595,18 @@ xs__schema *xs__seqchoice::schemaPtr() const
   return schemaRef;
 }
 
+void xs__seqchoice::mark()
+{
+  if (Oflag > 1)
+    for (vector<xs__contents>::iterator c = __contents.begin(); c != __contents.end(); ++c)
+      (*c).mark();
+}
+
 xs__attributeGroup::xs__attributeGroup()
 {
   schemaRef = NULL;
   attributeGroupRef = NULL;
+  used = false;
 }
 
 int xs__attributeGroup::traverse(xs__schema& schema)
@@ -2231,6 +2686,20 @@ xs__attributeGroup *xs__attributeGroup::attributeGroupPtr() const
   return attributeGroupRef;
 }
 
+void xs__attributeGroup::mark()
+{
+  if (Oflag > 1 && !used)
+  {
+    used = true;
+    if (attributeGroupPtr())
+      attributeGroupPtr()->mark();
+    for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+      (*at).mark();
+    for (vector<xs__attributeGroup>::iterator ag = attributeGroup.begin(); ag != attributeGroup.end(); ++ag)
+      (*ag).mark();
+  }
+}
+
 int xs__any::traverse(xs__schema &schema)
 {
   if (vflag)
@@ -2240,10 +2709,18 @@ int xs__any::traverse(xs__schema &schema)
   return SOAP_OK;
 }
 
+void xs__any::mark()
+{
+  if (Oflag > 1)
+    for (vector<xs__element>::iterator i = element.begin(); i != element.end(); ++i)
+      (*i).mark();
+}
+
 xs__group::xs__group()
 {
   schemaRef = NULL;
   groupRef = NULL;
+  used = false;
 }
 
 int xs__group::traverse(xs__schema &schema)
@@ -2253,9 +2730,9 @@ int xs__group::traverse(xs__schema &schema)
   schemaRef = &schema;
   if (all)
     all->traverse(schema);
-  else if (choice)
+  if (choice)
     choice->traverse(schema);
-  else if (sequence)
+  if (sequence)
     sequence->traverse(schema);
   groupRef = NULL;
   if (ref)
@@ -2325,6 +2802,22 @@ void xs__group::groupPtr(xs__group *group)
 xs__group* xs__group::groupPtr() const
 {
   return groupRef;
+}
+
+void xs__group::mark()
+{
+  if (Oflag > 1 && !used)
+  {
+    used = true;
+    if (groupPtr())
+      groupPtr()->mark();
+    if (all)
+      all->mark();
+    if (choice)
+      choice->mark();
+    if (sequence)
+      sequence->mark();
+  }
 }
 
 int xs__enumeration::traverse(xs__schema &schema)

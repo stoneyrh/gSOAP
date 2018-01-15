@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.59
+        stdsoap2.h 2.8.60
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20859
+#define GSOAP_VERSION 20860
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1618,8 +1618,9 @@ typedef soap_int32 soap_status;
 #define SOAP_LEVEL                      50
 #define SOAP_FIXED                      51
 #define SOAP_EMPTY                      52
+#define SOAP_END_TAG                    53
 
-#define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_TYPE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_LEVEL || (e) == SOAP_PATTERN || (e) == SOAP_NULL || (e) == SOAP_HREF || (e) == SOAP_FIXED || (e) == SOAP_EMPTY)
+#define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_TYPE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_LEVEL || (e) == SOAP_PATTERN || (e) == SOAP_NULL || (e) == SOAP_HREF || (e) == SOAP_FIXED || (e) == SOAP_EMPTY) || (e) == SOAP_END_TAG
 
 #define soap_soap_error_check(e) ((e) == SOAP_CLI_FAULT || (e) == SOAP_SVR_FAULT || (e) == SOAP_VERSIONMISMATCH || (e) == SOAP_MUSTUNDERSTAND || (e) == SOAP_FAULT || (e) == SOAP_NO_METHOD)
 
@@ -1756,15 +1757,16 @@ typedef soap_int32 soap_mode;
 
 /* parts */
 
-#define SOAP_BEGIN              0
-#define SOAP_IN_ENVELOPE        2
-#define SOAP_IN_HEADER          3
-#define SOAP_END_HEADER         4
-#define SOAP_NO_BODY            5
-#define SOAP_IN_BODY            6
-#define SOAP_END_BODY           7
-#define SOAP_END_ENVELOPE       8
-#define SOAP_END                9
+#define SOAP_END                0
+#define SOAP_BEGIN_SEND         1
+#define SOAP_BEGIN_RECV         2
+#define SOAP_IN_ENVELOPE        3
+#define SOAP_IN_HEADER          4
+#define SOAP_END_HEADER         5
+#define SOAP_NO_BODY            6
+#define SOAP_IN_BODY            7
+#define SOAP_END_BODY           8
+#define SOAP_END_ENVELOPE       9
 
 /* events */
 

@@ -50,7 +50,7 @@ int main(int argc, char **argv)
   { m = soap_bind(&soap, NULL, atoi(argv[1]), 100);
     if (!soap_valid_socket(m))
     { soap_print_fault(&soap, stderr);
-      exit(-1);
+      exit(1);
     }
     fprintf(stderr, "Socket connection successful: master socket = %d\n", m);
     for ( ; ; )
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
       fprintf(stderr, "Socket connection successful: slave socket = %d\n", s);
       if (!soap_valid_socket(s))
       { soap_print_fault(&soap, stderr);
-        exit(-1);
+        exit(1);
       } 
       soap_serve(&soap);
       soap_end(&soap);

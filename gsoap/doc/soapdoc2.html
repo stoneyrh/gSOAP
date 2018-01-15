@@ -16,13 +16,13 @@
 
 
 
-<title>gSOAP 2.8.59 User Guide</title>
+<title>gSOAP 2.8.60 User Guide</title>
     
-<h1 align="center">gSOAP 2.8.59 User Guide </h1>
+<h1 align="center">gSOAP 2.8.60 User Guide </h1>
 
 <h3 align="center">Robert van Engelen <br />Genivia Inc <br /><a href="https://www.genivia.com">www.genivia.com</a></h3>
 
-<h3 align="center">Dec 30, 2017
+<h3 align="center">Jan 15, 2018
 <br />&nbsp; <br /><a href="soapdoc2.pdf"><font color="#0000FF"><b>[This document is also available in PDF format]</b></font></a></h3>
  <br><br><table border=0 width="100%" cellpadding="8" bgcolor="#D0D0D0"><tr><td><span class="roman">
 
@@ -5097,6 +5097,8 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td align="left"><i>-m</i>	</td><td align="left">use xsd.h module to import primitive types </td></tr>
 <tr><td align="left"><i>-N name</i>	</td><td align="left">use <i>name</i> for service prefixes to produce a service for each binding </td></tr>
 <tr><td align="left"><i>-n name</i>	</td><td align="left">use <i>name</i> as the base namespace prefix name instead of <i>ns</i> </td></tr>
+<tr><td align="left"><i>-O1</i>     </td><td align="left">optimize by omitting duplicate choice/sequence members </td></tr>
+<tr><td align="left"><i>-O2</i>     </td><td align="left">optimize <i>-O1</i> and omit unused schema types (unreachable from roots) </td></tr>
 <tr><td align="left"><i>-o file</i>  </td><td align="left">output to file </td></tr>
 <tr><td align="left"><i>-P</i>      </td><td align="left">don't create polymorphic types inherited from <i>xsd__anyType</i> </td></tr>
 <tr><td align="left"><i>-p</i>      </td><td align="left">create polymorphic types inherited from base <i>xsd__anyType</i> </td></tr>
@@ -5121,6 +5123,7 @@ The <i>wsdl2h</i> command-line options are:
 <tr><td align="left"><i>-z4</i>     </td><td align="left">compatibility up to 2.8.11: don't generate union structs in std::vector </td></tr>
 <tr><td align="left"><i>-z5</i>     </td><td align="left">compatibility up to 2.8.15: don't include minor improvements </td></tr>
 <tr><td align="left"><i>-z6</i>     </td><td align="left">compatibility up to 2.8.17: don't include minor improvements </td></tr>
+<tr><td align="left"><i>-z7</i>     </td><td align="left">compatibility up to 2.8.59: don't generate std::vector of class of union </td></tr>
 <tr><td align="left"><i>-_</i>	</td><td align="left">don't generate <i>_USCORE</i> (replace with Unicode _x005f) </td></tr></table>
 
 </td></tr></table><br></span>
@@ -16749,5 +16752,5 @@ in ns.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 30 Dec 2017, 12:19.</small>
+version 4.00.<br />On 15 Jan 2018, 13:35.</small>
 </html>

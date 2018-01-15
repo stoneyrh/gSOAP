@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The CURL plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Fri Jun 16 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Fri Jan 5 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -45,13 +45,17 @@
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#curl_1">CURL plugin setup</a></li>
+<ul><li class="level1"><a href="#curl_0">Overview</a></li>
+<li class="level1"><a href="#curl_1">CURL plugin setup</a></li>
 <li class="level1"><a href="#curl_2">Configuration and settings</a></li>
 <li class="level1"><a href="#curl_3">SOAP client example</a></li>
 <li class="level1"><a href="#curl_4">JSON REST example</a></li>
 </ul>
 </div>
-<div class="textblock"><h1><a class="anchor" id="curl_1"></a>
+<div class="textblock"><h1><a class="anchor" id="curl_0"></a>
+Overview</h1>
+<p>The CURL plugin for gSOAP provides a bridge for the gSOAP engine to use libcurl for internet communications. While gSOAP provides a full HTTP stack, libcurl can be used to support additional protocols and features by replacing gSOAP's HTTP stack.</p>
+<h1><a class="anchor" id="curl_1"></a>
 CURL plugin setup</h1>
 <p>To use the CURL plugin:</p><ol type="1">
 <li>Add <code>#include "plugin/curlapi.h"</code> to your client-side code and compile your code together with <code><a class="el" href="curlapi_8c.html">plugin/curlapi.c</a></code>. Link your code with libcurl.</li>
@@ -87,10 +91,10 @@ JSON REST example</h1>
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Fri Jun 16 2017 16:15:54 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Fri Jan 5 2018 11:14:31 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

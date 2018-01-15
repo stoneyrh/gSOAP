@@ -52,6 +52,13 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 [TOC]
 
+@section curl_0 Overview
+
+The CURL plugin for gSOAP provides a bridge for the gSOAP engine to use libcurl
+for internet communications.  While gSOAP provides a full HTTP stack, libcurl
+can be used to support additional protocols and features by replacing gSOAP's
+HTTP stack.
+
 @section curl_1 CURL plugin setup
 
 To use the CURL plugin:

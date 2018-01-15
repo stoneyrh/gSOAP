@@ -159,6 +159,8 @@ COMMAND LINE OPTIONS
 -M      suppress error "must understand element with wsdl:required='true'"
 -Nname  use name for service prefixes to produce a service for each binding
 -nname  use name as the base namespace prefix instead of 'ns'
+-O1     optimize by omitting duplicate choice/sequence members
+-O2     optimize -O1 and omit unused schema types (unreachable from roots)
 -ofile  output to file
 -P      don't create polymorphic types with C++ inheritance from xsd__anyType
 -p      create polymorphic types with C++ inheritance from base xsd__anyType
@@ -185,6 +187,7 @@ COMMAND LINE OPTIONS
 -z4     compatibility up to 2.8.11: don't generate union structs in std::vector
 -z5     compatibility up to 2.8.15: don't include minor improvements
 -z6     compatibility up to 2.8.17: don't include minor improvements
+-z7     compatibility up to 2.8.59: don't generate std::vector of class of union
 -_      don't generate _USCORE (replace with UNICODE _x005f)
 infile.wsdl infile.xsd http://www... list of input sources (if none use stdin)
 

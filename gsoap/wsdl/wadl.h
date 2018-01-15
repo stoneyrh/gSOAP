@@ -104,6 +104,7 @@ class wadl__param
         xs__simpleType*                  simpleTypePtr() const;
         void                             complexTypePtr(xs__complexType*);
         xs__complexType*                 complexTypePtr() const;
+        void                             mark();
 };
 
 class wadl__include
@@ -141,6 +142,7 @@ class wadl__representation
         const wadl__representation*      representationPtr() const;
         void                             elementPtr(xs__element*);
         xs__element*                     elementPtr() const;
+        void                             mark();
 };
 
 class wadl__request
@@ -150,6 +152,7 @@ class wadl__request
         std::vector<wadl__representation> representation;
   public:
         int                              traverse(wsdl__definitions&);
+        void                             mark();
 };
 
 class wadl__response : public wadl__request
@@ -172,6 +175,7 @@ class wadl__method
         int                              traverse(wsdl__definitions&);
         void                             methodPtr(wadl__method*);
         const wadl__method*              methodPtr() const;
+        void                             mark();
 };
 
 class __wadl__method_resource_choice
@@ -227,4 +231,5 @@ class wadl__application
   public:
         int                              preprocess(wsdl__definitions&);
         int                              traverse(wsdl__definitions&);
+        void                             mark();
 };

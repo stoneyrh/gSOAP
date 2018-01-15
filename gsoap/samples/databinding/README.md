@@ -561,7 +561,7 @@ Custom Qt serializers for XSD types                                        {#qt}
 
 The gSOAP distribution includes several custom serializers for Qt types.  Also
 Qt container classes are supported, see
-[the built-in typemap.dat variables $CONTAINER and $POINTER](#typemap5).
+[the built-in typemap.dat variables $CONTAINER, $POINTER and $SIZE](#typemap5).
 
 This feature requires gSOAP 2.8.34 or higher and Qt 4.8 or higher.
 
@@ -682,23 +682,36 @@ Therefore, only replace similar types with other similar types that are wider
 
 🔝 [Back to table of contents](#)
 
-The built-in typemap.dat variables $CONTAINER and $POINTER           {#typemap5}
-----------------------------------------------------------
+The built-in typemap.dat variables $CONTAINER, $POINTER and $SIZE    {#typemap5}
+-----------------------------------------------------------------
 
-The `typemap.dat` `$CONTAINER` variable defines the container to emit in the
-generated declarations, which is `std::vector` by default.  For example, to emit
-`std::list` as the container in the wsdl2h-generated declarations:
+The `typemap.dat` `$CONTAINER` variable defines the container type to use in
+the wsdl2h-generated declarations for C++, which is `std::vector` by default.
+For example, to use `std::list` as the container in the wsdl2h-generated
+declarations we add the following line to `typemap.dat`:
 
     $CONTAINER = std::list
 
-The `typemap.dat` `$POINTER` variable defines the smart pointer to emit in the
-generated declarations, which replaces the use of `*` pointers.  For example:
+Also a Qt container can be used instead of the default `std::vector`, for
+example `QVector`:
+
+    [
+    #include <QVector>
+    ]
+    $CONTAINER = QVector
+
+To remove containers, use wsdl2h option `-s`.  This also removes `std::string`,
+but you can re-introduce `std::string` with `xsd__string = | std::string`.
+
+The `typemap.dat` `$POINTER` variable defines the smart pointer to use in the
+wsdl2h-generated declarations for C++, which replaces the use of `*` pointers.
+For example:
 
     $POINTER = std::shared_ptr
 
-Not all pointers in the generated output can be replaced by smart pointers.
-Regular pointers are still used as union members and for pointers to arrays of
-objects.
+Not all pointers in the generated output are replaced by smart pointers by
+wsdl2h, such as pointers as union members and pointers as struct/class members
+that point to arrays of values.
 
 @note The standard smart pointer `std::shared_ptr` is generally safe to use.
 Other smart pointers such as `std::unique_ptr` and `std::auto_ptr` may cause
@@ -721,13 +734,14 @@ The user-defined content between `[` and `]` ensures that we include the Boost
 header files that are needed to support `boost::shared_ptr` and
 `boost::make_shared`.
 
-A Qt container can be used instead of the default `std::vector`, for example
-`QVector`:
+The variable `$SIZE` defines the type of array sizes, which is `int` by
+default.  For example, to change array size types to `size_t`:
 
-    [
-    #include <QVector>
-    ]
-    $CONTAINER = QVector
+    $SIZE = size_t
+
+Permissible types are `int` and `size_t`.  This variable does not affect the
+size of SOAP-encoded arrays, `xsd__hexBinary` and `xsd__base64Binary` types,
+which is always `int`.
 
 🔝 [Back to table of contents](#)
 

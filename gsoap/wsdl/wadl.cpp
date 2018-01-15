@@ -70,6 +70,17 @@ int wadl__application::traverse(wsdl__definitions& definitions)
   return SOAP_OK;
 }
 
+void wadl__application::mark()
+{
+  if (Oflag > 1)
+  {
+    for (std::vector<wadl__representation>::iterator i4 = representation.begin(); i4 != representation.end(); ++i4)
+      (*i4).mark();
+    for (std::vector<wadl__param>::iterator i5 = param.begin(); i5 != param.end(); ++i5)
+      (*i5).mark();
+  }
+}
+
 int wadl__grammars::preprocess(wsdl__definitions& definitions)
 {
   if (vflag)
@@ -262,6 +273,17 @@ xs__complexType *wadl__param::complexTypePtr() const
   return complexTypeRef;
 }
 
+void wadl__param::mark()
+{
+  if (Oflag > 1)
+  {
+    if (simpleTypePtr())
+      simpleTypePtr()->mark();
+    if (complexTypePtr())
+      complexTypePtr()->mark();
+  }
+}
+
 wadl__representation::wadl__representation()
 {
   representationRef = NULL;
@@ -355,6 +377,15 @@ xs__element *wadl__representation::elementPtr() const
   return elementRef;
 }
 
+void wadl__representation::mark()
+{
+  if (Oflag > 1)
+  {
+    if (elementPtr())
+      elementPtr()->mark();
+  }
+}
+
 int wadl__request::traverse(wsdl__definitions& definitions)
 {
   for (std::vector<wadl__param>::iterator i = param.begin(); i != param.end(); ++i)
@@ -362,6 +393,17 @@ int wadl__request::traverse(wsdl__definitions& definitions)
   for (std::vector<wadl__representation>::iterator j = representation.begin(); j != representation.end(); ++j)
     (*j).traverse(definitions);
   return SOAP_OK;
+}
+
+void wadl__request::mark()
+{
+  if (Oflag > 1)
+  {
+    for (std::vector<wadl__param>::iterator i = param.begin(); i != param.end(); ++i)
+      (*i).mark();
+    for (std::vector<wadl__representation>::iterator j = representation.begin(); j != representation.end(); ++j)
+      (*j).mark();
+  }
 }
 
 wadl__method::wadl__method()
@@ -413,6 +455,17 @@ void wadl__method::methodPtr(wadl__method *method)
 const wadl__method *wadl__method::methodPtr() const
 {
   return methodRef;
+}
+
+void wadl__method::mark()
+{
+  if (Oflag > 1)
+  {
+    if (request)
+      request->mark();
+    for (std::vector<wadl__response>::iterator i = response.begin(); i != response.end(); ++i)
+      (*i).mark();
+  }
 }
 
 int __wadl__method_resource_choice::traverse(wsdl__definitions& definitions)

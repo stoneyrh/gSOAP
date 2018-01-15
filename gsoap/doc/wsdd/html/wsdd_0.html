@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WS-Discovery plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Mar 1 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Fri Jan 5 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -64,7 +64,7 @@ WS-Discovery Setup</h1>
 <li>(Re-)compile and link stdsoap2.c/pp or libgsoap, (dom.c/.cpp when needed), <a class="el" href="wsddapi_8c.html">wsddapi.c</a>, <a class="el" href="wsaapi_8c.html">wsaapi.c</a> and the soapcpp2-generated source files. Compile and link with plugin/threads.c when needed.</li>
 </ol>
 <p>The material in this document pertains to the WS-Discovery protocol and model and assumes that the reader is familiar with the WS-Discovery protocol, its terms and definitions, and the WS-Discovery model. This document describes the WS-Discovery interface to invoke and handle WS-Discovery events, while the higher-level logic remains application-specific. Especially the mode of operation, ad-hoc or managed with a Discovery Proxy, depends on the application deployment and WS-Discovery support requirements.</p>
-<p>The following assumptions are made. A Client is an endpoint that searches for Target Service(s). A Target Service (TS) is and endpoint that makes itself available for discovery. A Discovery Proxy (DP) is an endpoint that facilitates discovery of Target Services by Clients. The interfaces defined in the wsdd library can be used to implement Client, Target Service, and Discovery Proxy operations.</p>
+<p>The following assumptions are made. A Client (C) is an endpoint that searches for Target Service(s). A Target Service (TS) is a service endpoint that makes itself available for discovery. A Discovery Proxy (DP) is an endpoint that facilitates discovery of Target Services by Clients. The interfaces defined in the wsdd library can be used to implement Client, Target Service, and Discovery Proxy operations.</p>
 <p>WS-Discovery ad-hoc and managed modes are supported by the wsdd library. In an ad-hoc mode discovery messages are sent multicast and response messages are sent unicast. In a managed mode discovery messages are sent unicast to a Discovery Proxy.</p>
 <dl class="section note"><dt>Note</dt><dd>The wsdl2h tool uses typemap.dat to auto-generate a gSOAP service definitions header file that imports <a class="el" href="wsdd_8h.html">wsdd.h</a> to support WS-Discovery 1.1 with WS-Addressing 2005/08. The tool imports wsdd10.h to support WS-Discovery 1.0 with WS-Addressing 2004/08. To use WS-Discovery 1.0 with WS-Addressing 2005/08, you will need to change typemap.dat to let wsdl2h import wsdd5.h (see comments in typemap.dat).</dd></dl>
 <h1><a class="anchor" id="wsdd_2"></a>
@@ -132,10 +132,10 @@ Miscellaneous</h1>
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Mar 1 2017 13:52:02 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Fri Jan 5 2018 13:35:40 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>
