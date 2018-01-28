@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #ifndef WSDDAPI_H
 #define WSDDAPI_H
 
-#include "wsaapi.h"     /* also includes soapH.h, change wsaapi.h if needed */
+#include "wsaapi.h"     /* also includes soapH.h, see wsaapi.h if you are using a different fileH.h */
 #include "threads.h"    /* threads and locks from plugin/threads.h */
 
 /******************************************************************************\

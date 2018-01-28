@@ -131,7 +131,6 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgdatadir)" \
 	"$(DESTDIR)$(includedir)"
 LIBRARIES = $(lib_LIBRARIES)
-AR = ar
 ARFLAGS = cru
 AM_V_AR = $(am__v_AR_$(V))
 am__v_AR_ = $(am__v_AR_$(AM_DEFAULT_VERBOSITY))
@@ -293,6 +292,7 @@ am__relativize = \
 ACLOCAL = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing aclocal-1.15
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
+AR = ar
 AUTOCONF = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing autoconf
 AUTOHEADER = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing autoheader
 AUTOMAKE = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing automake-1.15

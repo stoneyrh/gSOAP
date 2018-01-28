@@ -51,7 +51,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #ifndef WSRMAPI_H
 #define WSRMAPI_H
 
-#include "wsaapi.h"	/* also includes stdsoap2.h, soapH.h */
+#include "wsaapi.h"     /* also includes soapH.h, see wsaapi.h if you are using a different fileH.h */
 #include "threads.h"	/* mutex for sequence database */
 
 #ifdef __cplusplus

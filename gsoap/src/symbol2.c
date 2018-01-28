@@ -6779,7 +6779,7 @@ gen_object_header(FILE *fd, Table *table, Symbol *ns, const char *name)
   fprintf(fd, "\n        /// Initializer used by constructors");
   fprintf(fd, "\n        virtual void %s_init(soap_mode imode, soap_mode omode);", name);
   fprintf(fd, "\n        /// Return a copy that has a new managing context with the same engine state");
-  fprintf(fd, "\n        virtual %s *copy() SOAP_PURE_VIRTUAL;", name);
+  fprintf(fd, "\n        virtual %s *copy() SOAP_PURE_VIRTUAL_COPY;", name);
   fprintf(fd, "\n        /// Copy assignment");
   fprintf(fd, "\n        %s& operator=(const %s&);", name, name);
   fprintf(fd, "\n        /// Close connection (normally automatic)");
@@ -8383,7 +8383,7 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
     {
       return;
     }
-    if (n >= 8 && p->info.typ->type == Tpointer && p->info.nillable && !is_string(p->info.typ) && !is_wstring(p->info.typ))
+    if (n >= 8 && (p->info.typ->type == Tpointer || is_smart(p->info.typ)) && p->info.nillable && !is_string(p->info.typ) && !is_wstring(p->info.typ))
     {
       gen_element_begin(fd, n, ns_add(p, nse), NULL);
       if (xmlns)
@@ -8513,7 +8513,7 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
         }
         fflush(fd);
       }
-      else if ((p->info.typ->type == Tpointer || p->info.typ->type == Treference || p->info.typ->type == Trvalueref) && (q = is_dynamic_array((Tnode*)p->info.typ->ref)) && !is_binary((Tnode*)p->info.typ->ref))
+      else if ((p->info.typ->type == Tpointer || is_smart(p->info.typ) || p->info.typ->type == Treference || p->info.typ->type == Trvalueref) && (q = is_dynamic_array((Tnode*)p->info.typ->ref)) && !is_binary((Tnode*)p->info.typ->ref))
       {
         if (!eflag && (has_ns((Tnode*)p->info.typ->ref) || is_untyped((Tnode*)p->info.typ->ref)))
         {
@@ -8565,7 +8565,7 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
         else if (is_anyType(p->info.typ))
           fprintf(fd, "%*s<!-- extensibility element(s) -->\n", n, "");
       }
-      else if ((p->info.typ->type == Tpointer || p->info.typ->type == Treference || p->info.typ->type == Trvalueref)
+      else if ((p->info.typ->type == Tpointer || is_smart(p->info.typ) || p->info.typ->type == Treference || p->info.typ->type == Trvalueref)
           && (((Tnode*)p->info.typ->ref)->type == Tstruct || ((Tnode*)p->info.typ->ref)->type == Tclass))
       {
         if (!is_invisible(p->sym->name))
@@ -8586,11 +8586,11 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
           gen_element_begin(fd, n, ns_add(p, nse), p);
           if (xmlns)
             gen_xmlns(fd, 0);
-          if (p->info.typ->type == Tpointer || p->info.typ->type == Treference || is_smart(p->info.typ))
+          if (p->info.typ->type == Tpointer || is_smart(p->info.typ) || p->info.typ->type == Treference || is_smart(p->info.typ))
             ref = p->info.typ->ref;
           if (ref->type == Ttemplate)
           {
-            if (((Tnode*)ref->ref)->type == Tpointer
+            if ((((Tnode*)ref->ref)->type == Tpointer || is_smart((Tnode*)ref->ref))
                 && (((Tnode*)((Tnode*)ref->ref)->ref)->type == Tclass
                   || ((Tnode*)((Tnode*)ref->ref)->ref)->type == Tstruct))
               gen_atts(fd, (Table*)((Tnode*)((Tnode*)ref->ref)->ref)->ref, nse, nsa, encoding);
@@ -8741,7 +8741,7 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
             {
               gen_val(fd, n, p->info.typ, nse, nsa, encoding, opt);
             }
-            else
+            else if (!is_dynamic_array(p->info.typ->ref))
             {
               if (is_smart(p->info.typ))
               {
@@ -8768,7 +8768,7 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
                       gen_element_begin(fd, n, ns_add(p, nse), p);
                       if (p->info.typ->type == Ttemplate)
                       {
-                        if (((Tnode*)p->info.typ->ref)->type == Tpointer
+                        if ((((Tnode*)p->info.typ->ref)->type == Tpointer || is_smart((Tnode*)p->info.typ->ref))
                             && (((Tnode*)((Tnode*)p->info.typ->ref)->ref)->type == Tclass
                               || ((Tnode*)((Tnode*)p->info.typ->ref)->ref)->type == Tstruct))
                           gen_atts(fd, (Table*)((Tnode*)((Tnode*)p->info.typ->ref)->ref)->ref, nse, nsa, encoding);
@@ -8817,7 +8817,7 @@ gen_atts(FILE *fd, Table *t, const char *nse, const char *nsa, const char *encod
       if (q->info.sto & Sattribute && !is_invisible(q->sym->name) && q->info.maxOccurs != 0)
       {
         fprintf(fd, " %s=\"", ns_add(q, nsa));
-        if ((q->info.typ->type == Tpointer || q->info.typ->type == Treference || q->info.typ->type == Trvalueref || q->info.typ->type == Ttemplate) && !is_string(q->info.typ) && !is_wstring(q->info.typ))
+        if ((q->info.typ->type == Tpointer || is_smart(q->info.typ) || q->info.typ->type == Treference || q->info.typ->type == Trvalueref || q->info.typ->type == Ttemplate) && !is_string(q->info.typ) && !is_wstring(q->info.typ))
           p = (Tnode*)q->info.typ->ref;
         else
           p = q->info.typ;
@@ -14675,7 +14675,11 @@ soap_serialize(Tnode *typ)
     if (typ->type == Tclass && !is_stdstring(typ) && !is_stdwstring(typ) && !is_volatile(typ))
       fprintf(fhead, "\n\n#define soap_serialize_%s(soap, a) (a)->soap_serialize(soap)\n", c_ident(typ));
     else
+    {
+      if (typ->type == Tstruct && is_element(typ)) /* don't permit for typedef'd elements, see soap_put() */
+        fprintf(fhead, "\nSOAP_FMAC3 void SOAP_FMAC4 soap_serialize_%s(struct soap*, const %s);", t_ident(typ), c_type_id(typ, "*"));
       fprintf(fhead, "\n\n#define soap_serialize_%s soap_serialize_%s\n", c_ident(typ), t_ident(typ));
+    }
     return;
   }
   if ((p = is_dynamic_array(typ)))
@@ -15973,7 +15977,7 @@ soap_put(Tnode *typ)
   if (typ->type == Ttemplate || typ->type == Tunion)
     return;
 
-  if (is_typedef(typ) && (is_template(typ) || is_element(typ) || is_synonym(typ) || is_external(typ) || is_imported(typ)) && (!is_external(typ) || is_volatile(typ)))
+  if (is_typedef(typ) && (is_template(typ) /*|| is_element(typ) don't permit for typedef'd elements */ || is_synonym(typ) || is_external(typ) || is_imported(typ)) && (!is_external(typ) || is_volatile(typ)))
   {
     fprintf(fhead, "\n\n#define soap_put_%s soap_put_%s\n", c_ident(typ), t_ident(typ));
     fprintf(fhead, "\n\n#define soap_write_%s soap_write_%s\n", c_ident(typ), t_ident(typ));
@@ -16011,7 +16015,7 @@ soap_put(Tnode *typ)
   if ((typ->type != Tpointer || is_string(typ) || is_wstring(typ)) && typ->type != Tarray && typ->type != Treference && typ->type != Trvalueref && !is_template(typ) && !is_anyAttribute(typ))
   {
     const char *x = xsi_type_u(typ);
-    if (typ->type == Tclass && !is_external(typ) && !is_volatile(typ) && !is_typedef(typ))
+    if (typ->type == Tclass && !is_external(typ) && !is_volatile(typ) && (!is_typedef(typ) || is_element(typ) /* don't permit for typedef'd elements, see above */))
     {
       fprintf(fhead, "\n\ninline int soap_write_%s(struct soap *soap, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_begin_send(soap) || (p->soap_serialize(soap), 0) || p->soap_put(soap, \"%s\", p->soap_type() == %s ? \"%s\" : NULL) || soap_end_send(soap))\n\t\treturn soap->error;\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), xml_tag(typ), soap_type(typ), x);
       fprintf(fhead, "\n\ninline int soap_PUT_%s(struct soap *soap, const char *URL, %s)\n{\n\tsoap_free_temp(soap);\n\tif (soap_PUT(soap, URL, NULL, \"text/xml; charset=utf-8\") || (p->soap_serialize(soap), 0) || p->soap_put(soap, \"%s\", p->soap_type() == %s ? \"%s\" : NULL) || soap_end_send(soap) || soap_recv_empty_response(soap))\n\t\treturn soap_closesock(soap);\n\treturn SOAP_OK;\n}", c_ident(typ), c_type_constptr_id(typ, "const*p"), xml_tag(typ), soap_type(typ), x);

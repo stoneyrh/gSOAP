@@ -241,6 +241,7 @@ distcleancheck_listfiles = find . -type f -print
 ACLOCAL = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing aclocal-1.15
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
+AR = ar
 AUTOCONF = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing autoconf
 AUTOHEADER = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing autoheader
 AUTOMAKE = ${SHELL} /Users/engelen/Projects/gsoap/packages/gsoap-2.8/missing automake-1.15

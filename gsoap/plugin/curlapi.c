@@ -423,7 +423,12 @@ soap_curl_reset(struct soap *soap)
   struct soap_curl_data *data = (struct soap_curl_data*)soap_lookup_plugin(soap, soap_curl_id);
   DBGFUN("soap_curl_reset");
   if (data)
+  {
+    if (data->lst)
+      soap_end_block(soap, data->lst);
+    data->lst = NULL;
     data->active = 0;
+  }
 }
 
 /******************************************************************************\
@@ -515,10 +520,9 @@ static int soap_curl_connect_callback(struct soap *soap, const char *endpoint, c
   soap->omode |= SOAP_IO_BUFFER; /* buffer the output */
   soap->omode |= SOAP_ENC_PLAIN; /* no HTTP headers */
   soap->omode &= ~SOAP_ENC_ZLIB;
-  /* store data sent by engine in a blist */
-  if (!soap_alloc_block(soap))
+  /* store data sent by engine in an isolated blist */
+  if (!(data->lst = soap_alloc_block(soap)))
     return soap->error;
-  data->lst = soap->blist;
   soap->blist = soap->blist->next;
   /* activate callbacks */
   data->active = 1;
@@ -563,6 +567,7 @@ static int soap_curl_prepare_init_recv_callback(struct soap *soap)
   struct soap_curl_data *data = (struct soap_curl_data*)soap_lookup_plugin(soap, soap_curl_id);
   long status;
   const char *s = NULL;
+  CURLcode res;
   DBGFUN("soap_curl_prepare_init_recv_callback");
   if (!data || !data->curl)
     return soap->error = SOAP_PLUGIN_ERROR;
@@ -591,7 +596,7 @@ static int soap_curl_prepare_init_recv_callback(struct soap *soap)
   }
   data->hdr = curl_slist_append(data->hdr, "Expect:"); /* remove Expect: 100 */
   curl_easy_setopt(data->curl, CURLOPT_HTTPHEADER, (void*)data->hdr);
-  CURLcode res = curl_easy_perform(data->curl);
+  res = curl_easy_perform(data->curl);
   if (data->hdr)
     curl_slist_free_all(data->hdr);
   data->hdr = NULL;
@@ -756,8 +761,13 @@ static size_t soap_curl_write_callback(void *buffer, size_t size, size_t nitems,
   size_t len = size * nitems;
   char *s;
   DBGFUN2("soap_curl_write_callback", "size=%zu", size, "nitems=%zu", nitems);
-  if (!data->lst && !(data->lst = soap_alloc_block(soap)))
-    return 0;
+  if (!data->lst)
+  {
+    /* store data received in an isolated blist */
+    if (!(data->lst = soap_alloc_block(soap)))
+      return 0;
+    soap->blist = soap->blist->next;
+  }
   s = (char*)soap_push_block(soap, data->lst, len);
   if (!s)
     return 0;

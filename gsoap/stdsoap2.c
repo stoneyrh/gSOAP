@@ -1,10 +1,10 @@
 /*
-        stdsoap2.c[pp] 2.8.60
+        stdsoap2.c[pp] 2.8.61
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20860
+#define GSOAP_LIB_VERSION 20861
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.60 2018-01-15 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.61 2018-01-27 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.60 2018-01-15 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.61 2018-01-27 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -2201,8 +2201,7 @@ int
 SOAP_FMAC2
 soap_puthex(struct soap *soap, const unsigned char *s, int n)
 {
-  char d[2];
-  int i;
+  char d[2 * SOAP_BINARY_BUFLEN], *p = d;
 #ifdef WITH_DOM
   if ((soap->mode & SOAP_XML_DOM) && soap->dom)
   {
@@ -2212,15 +2211,22 @@ soap_puthex(struct soap *soap, const unsigned char *s, int n)
     return SOAP_OK;
   }
 #endif
-  for (i = 0; i < n; i++)
+  for (; n > 0; n--)
   {
     int m = *s++;
-    d[0] = (char)((m >> 4) + (m > 159 ? '7' : '0'));
+    p[0] = (char)((m >> 4) + (m > 159 ? '7' : '0'));
     m &= 0x0F;
-    d[1] = (char)(m + (m > 9 ? '7' : '0'));
-    if (soap_send_raw(soap, d, 2))
-      return soap->error;
+    p[1] = (char)(m + (m > 9 ? '7' : '0'));
+    p += 2;
+    if (p - d == sizeof(d))
+    {
+      if (soap_send_raw(soap, d, sizeof(d)))
+        return soap->error;
+      p = d;
+    }
   }
+  if (p != d && soap_send_raw(soap, d, p - d))
+    return soap->error;
   return SOAP_OK;
 }
 #endif
@@ -2365,9 +2371,7 @@ int
 SOAP_FMAC2
 soap_putbase64(struct soap *soap, const unsigned char *s, int n)
 {
-  int i;
-  unsigned long m;
-  char d[4];
+  char d[4 * SOAP_BINARY_BUFLEN], *p = d;
   if (!s)
     return SOAP_OK;
 #ifdef WITH_DOM
@@ -2381,28 +2385,36 @@ soap_putbase64(struct soap *soap, const unsigned char *s, int n)
 #endif
   for (; n > 2; n -= 3, s += 3)
   {
-    m = s[0];
-    m = (m << 8) | s[1];
-    m = (m << 8) | s[2];
-    for (i = 4; i > 0; m >>= 6)
-      d[--i] = soap_base64o[m & 0x3F];
-    if (soap_send_raw(soap, d, 4))
-      return soap->error;
+    p[0] = soap_base64o[(s[0] & 0xFC) >> 2];
+    p[1] = soap_base64o[((s[0] & 0x03) << 4) | ((s[1] & 0xF0) >> 4)];
+    p[2] = soap_base64o[((s[1] & 0x0F) << 2) | ((s[2] & 0xC0) >> 6)];
+    p[3] = soap_base64o[s[2] & 0x3F];
+    p += 4;
+    if (p - d == sizeof(d))
+    {
+      if (soap_send_raw(soap, d, sizeof(d)))
+        return soap->error;
+      p = d;
+    }
   }
-  if (n > 0)
+  if (n == 2)
   {
-    m = 0;
-    for (i = 0; i < n; i++)
-      m = (m << 8) | *s++;
-    for (; i < 3; i++)
-      m <<= 8;
-    for (i++; i > 0; m >>= 6)
-      d[--i] = soap_base64o[m & 0x3F];
-    for (i = 3; i > n; i--)
-      d[i] = '=';
-    if (soap_send_raw(soap, d, 4))
-      return soap->error;
+    p[0] = soap_base64o[(s[0] & 0xFC) >> 2];
+    p[1] = soap_base64o[((s[0] & 0x03) << 4) | ((s[1] & 0xF0) >> 4)];
+    p[2] = soap_base64o[(s[1] & 0x0F) << 2];
+    p[3] = '=';
+    p += 4;
   }
+  else if (n == 1)
+  {
+    p[0] = soap_base64o[(s[0] & 0xFC) >> 2];
+    p[1] = soap_base64o[(s[0] & 0x03) << 4];
+    p[2] = '=';
+    p[3] = '=';
+    p += 4;
+  }
+  if (p != d && soap_send_raw(soap, d, p - d))
+    return soap->error;
   return SOAP_OK;
 }
 #endif
@@ -6518,7 +6530,7 @@ soap_bind(struct soap *soap, const char *host, int port, int backlog)
   if (bind(soap->master, res.ai_addr, (int)res.ai_addrlen))
   {
     soap->errnum = soap_socket_errno(soap->master);
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not bind to host\n"));
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not bind to host, bind failed\n"));
     soap_closesock(soap);
     soap_set_receiver_error(soap, tcp_error(soap), "bind failed in soap_bind()", SOAP_TCP_ERROR);
     return SOAP_INVALID_SOCKET;
@@ -6543,7 +6555,7 @@ soap_bind(struct soap *soap, const char *host, int port, int backlog)
   if (bind(soap->master, &soap->peer.addr, (int)soap->peerlen))
   {
     soap->errnum = soap_socket_errno(soap->master);
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not bind to host\n"));
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not bind to host, bind failed\n"));
     soap_closesock(soap);
     soap_set_receiver_error(soap, tcp_error(soap), "bind failed in soap_bind()", SOAP_TCP_ERROR);
     return SOAP_INVALID_SOCKET;
@@ -6552,7 +6564,7 @@ soap_bind(struct soap *soap, const char *host, int port, int backlog)
   if (!(soap->omode & SOAP_IO_UDP) && listen(soap->master, backlog))
   {
     soap->errnum = soap_socket_errno(soap->master);
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not bind to host\n"));
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Could not bind to host, listen failed\n"));
     soap_closesock(soap);
     soap_set_receiver_error(soap, tcp_error(soap), "listen failed in soap_bind()", SOAP_TCP_ERROR);
     return SOAP_INVALID_SOCKET;
@@ -7047,18 +7059,18 @@ soap_done(struct soap *soap)
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Free logfiles\n"));
   for (i = 0; i < SOAP_MAXLOGS; i++)
   {
+    soap_close_logfile(soap, i);
     if (soap->logfile[i])
     {
-      SOAP_FREE(soap, soap->logfile[i]);
+      SOAP_FREE_UNMANAGED(soap->logfile[i]);
       soap->logfile[i] = NULL;
     }
-    soap_close_logfile(soap, i);
   }
-  soap->state = SOAP_NONE;
 #endif
 #ifdef SOAP_MEM_DEBUG
   soap_free_mht(soap);
 #endif
+  soap->state = SOAP_NONE;
 }
 #endif
 
@@ -7358,7 +7370,6 @@ http_parse_header(struct soap *soap, const char *key, const char *val)
   }
   else if (!soap_tag_cmp(key, "Connection"))
   {
-
     if (!soap_tag_cmp(val, "close"))
       soap->keep_alive = 0;
   }
@@ -11324,13 +11335,12 @@ soap_set_logfile(struct soap *soap, int i, const char *logfile)
   char *t = NULL;
   soap_close_logfile(soap, i);
   s = soap->logfile[i];
-  soap->logfile[i] = logfile;
   if (s)
-    SOAP_FREE(soap, s);
+    SOAP_FREE_UNMANAGED(s);
   if (logfile)
   {
     size_t l = strlen(logfile) + 1;
-    t = (char*)SOAP_MALLOC(soap, l);
+    t = (char*)SOAP_MALLOC_UNMANAGED(l);
     if (t)
       (void)soap_memcpy((void*)t, l, (const void*)logfile, l);
   }
@@ -14756,14 +14766,14 @@ soap_ignore(struct soap *soap)
         case '/':
           if (n > 0)
           {
-            c = soap_getchar(soap);
+            c = soap_get0(soap);
             if (c == '>')
               n--;
           }
           break;
         default:
           if ((int)c == EOF)
-            goto end;
+            return soap->error = SOAP_EOF;
       }
     }
 end:
@@ -18334,7 +18344,7 @@ strftime(char *buf, size_t len, const char *format, const struct tm *pT)
 
 /******************************************************************************/
 
-#ifndef WITH_LEAN
+#if !defined(WITH_LEAN) || defined(WITH_COOKIES)
 SOAP_FMAC1
 time_t
 SOAP_FMAC2
@@ -20514,7 +20524,7 @@ soap_begin_recv(struct soap *soap)
         return soap->error = r;
     }
 #endif
-    if (soap_get0(soap) == (int)EOF)
+    if (!soap->body || soap_get0(soap) == (int)EOF)
     {
       if (soap->status == 0)
         return soap->error = SOAP_NO_DATA; /* server side expects data */
@@ -22703,7 +22713,7 @@ soap_lookup_plugin(struct soap *soap, const char *id)
 soap::soap()
 {
   soap_init(this);
-  /* no logs to prevent DEBUG mode leaks when the user unnecessarily calls a soap_init() on this context */
+  /* no logs to prevent DEBUG mode leaks when the user calls a soap_init() on this context */
   soap_set_test_logfile(this, NULL);
   soap_set_sent_logfile(this, NULL);
   soap_set_recv_logfile(this, NULL);

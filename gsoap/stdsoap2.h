@@ -1,10 +1,10 @@
 /*
-        stdsoap2.h 2.8.60
+        stdsoap2.h 2.8.61
 
         gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20860
+#define GSOAP_VERSION 20861
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -641,12 +641,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 # endif
 #endif
 
-#ifdef WITH_LEAN
-# ifdef WITH_COOKIES
-#  error "Cannot build WITH_LEAN code WITH_COOKIES enabled"
-# endif
-#endif
-
 #if !defined(__cplusplus)
 /* allowing empty struct/union in C is a GNU extension */
 # if !defined(__GNU__) && !defined(__GNUC__)
@@ -659,10 +653,15 @@ extern intmax_t __strtoull(const char*, char**, int);
 # pragma clang diagnostic ignored "-Wvariadic-macros" 
 #endif 
 
-#ifdef WITH_PURE_VIRTUAL
+#if defined(WITH_PURE_VIRTUAL)
 # define SOAP_PURE_VIRTUAL = 0
+# define SOAP_PURE_VIRTUAL_COPY = 0
+#elif defined(WITH_DEFAULT_VIRTUAL)
+# define SOAP_PURE_VIRTUAL { return SOAP_NO_METHOD; }
+# define SOAP_PURE_VIRTUAL_COPY
 #else
 # define SOAP_PURE_VIRTUAL
+# define SOAP_PURE_VIRTUAL_COPY
 #endif
 
 /* older OpenVMS TCP/IP stacks cannot handle 65536 bytes */
@@ -670,6 +669,11 @@ extern intmax_t __strtoull(const char*, char**, int);
 # ifndef SOAP_BUFLEN
 #  define SOAP_BUFLEN (65535)
 # endif
+#endif
+
+/* small buffer, to accelerate base64 and hex binary output */
+#ifndef SOAP_BINARY_BUFLEN
+# define SOAP_BINARY_BUFLEN (128)
 #endif
 
 /* if we have locale.h then we should use it WITH_C_LOCALE enabled to avoid decimal point conversion issues */
@@ -1620,7 +1624,7 @@ typedef soap_int32 soap_status;
 #define SOAP_EMPTY                      52
 #define SOAP_END_TAG                    53
 
-#define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_TYPE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_LEVEL || (e) == SOAP_PATTERN || (e) == SOAP_NULL || (e) == SOAP_HREF || (e) == SOAP_FIXED || (e) == SOAP_EMPTY) || (e) == SOAP_END_TAG
+#define soap_xml_error_check(e) ((e) == SOAP_TAG_MISMATCH || (e) == SOAP_NO_TAG || (e) == SOAP_SYNTAX_ERROR || (e) == SOAP_NAMESPACE || (e) == SOAP_TYPE || (e) == SOAP_DUPLICATE_ID || (e) == SOAP_MISSING_ID || (e) == SOAP_REQUIRED || (e) == SOAP_PROHIBITED || (e) == SOAP_OCCURS || (e) == SOAP_LENGTH || (e) == SOAP_LEVEL || (e) == SOAP_PATTERN || (e) == SOAP_NULL || (e) == SOAP_HREF || (e) == SOAP_FIXED || (e) == SOAP_EMPTY || (e) == SOAP_END_TAG)
 
 #define soap_soap_error_check(e) ((e) == SOAP_CLI_FAULT || (e) == SOAP_SVR_FAULT || (e) == SOAP_VERSIONMISMATCH || (e) == SOAP_MUSTUNDERSTAND || (e) == SOAP_FAULT || (e) == SOAP_NO_METHOD)
 
@@ -2051,7 +2055,7 @@ struct soap_attribute
   char name[1]; /* the actual name string flows into the allocated region below this struct */
 };
 
-#ifndef WITH_LEAN
+#if !defined(WITH_LEAN) || defined(WITH_COOKIES)
 struct soap_cookie
 { struct soap_cookie *next;
   char *name;
@@ -2840,11 +2844,11 @@ struct SOAP_CMAC soap
   const char *wsuid;            /* space-separated string of element tags */
   const char *c14nexclude;      /* space-separated string of prefixes for c14n exclusion */
   const char *c14ninclude;      /* space-separated string of prefixes for c14n inclusion */
+#endif
   struct soap_cookie *cookies;
   const char *cookie_domain;
   const char *cookie_path;
   int cookie_max;
-#endif
 #ifndef WITH_NOIO
   unsigned int ipv6_multicast_if; /* in_addr_t in6addr->sin6_scope_id IPv6 value */
   char* ipv4_multicast_if; /* IP_MULTICAST_IF IPv4 setsockopt interface_addr */
@@ -3455,6 +3459,9 @@ SOAP_FMAC1 char** SOAP_FMAC2 soap_inliteral(struct soap*, const char *tag, char 
 
 #ifndef WITH_LEAN
 SOAP_FMAC1 time_t* SOAP_FMAC2 soap_indateTime(struct soap*, const char *tag, time_t *p, const char *, int);
+#endif
+
+#if !defined(WITH_LEAN) || defined(WITH_COOKIES)
 SOAP_FMAC1 time_t SOAP_FMAC2 soap_timegm(struct tm*);
 #endif
 

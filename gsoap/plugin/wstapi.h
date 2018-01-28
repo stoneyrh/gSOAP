@@ -51,8 +51,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #ifndef WSTAPI_H
 #define WSTAPI_H
 
-#include "wsaapi.h"     /* also includes stdsoap2.h, soapH.h (replace with soapcpp2-generated *H.h file) */
-#include "wsseapi.h"
+#include "wsaapi.h"     /* also includes soapH.h, see wsaapi.h if you are using a different fileH.h */
+#include "wsseapi.h"    /* also includes soapH.h, see wsseapi.h if you are using a different fileH.h */
 #include "smdevp.h"     /* digest algos */
 #include "threads.h"    /* mutex for sequence database */
 
