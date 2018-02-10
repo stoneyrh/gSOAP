@@ -60,7 +60,13 @@ int md5_handler(struct soap *soap, void **context, enum md5_action action, char 
   { case MD5_INIT:
       soap_ssl_init();
       if (!*context)
-      { *context = (void*)SOAP_MALLOC(soap, sizeof(EVP_MD_CTX));
+      {
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+        *context = (void*)SOAP_MALLOC(soap, sizeof(EVP_MD_CTX));
+        EVP_MD_CTX_init((EVP_MD_CTX*)*context);
+#else
+        *context = EVP_MD_CTX_new();
+#endif
         EVP_MD_CTX_init((EVP_MD_CTX*)*context);
       }
       ctx = (EVP_MD_CTX*)*context;
@@ -86,8 +92,13 @@ int md5_handler(struct soap *soap, void **context, enum md5_action action, char 
       ctx = (EVP_MD_CTX*)*context;
       DBGLOG(TEST, SOAP_MESSAGE(fdebug, "-- MD5 Delete %p --\n", ctx));
       if (ctx)
-      { EVP_MD_CTX_cleanup(ctx);
+      {
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+        EVP_MD_CTX_cleanup(ctx);
         SOAP_FREE(soap, ctx);
+#else
+        EVP_MD_CTX_free(ctx);
+#endif
       }
       *context = NULL;
   }

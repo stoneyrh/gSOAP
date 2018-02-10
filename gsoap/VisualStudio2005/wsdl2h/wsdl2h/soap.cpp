@@ -273,3 +273,10 @@ xs__element *wsoap__header::elementPtr() const
 {
   return elementRef;
 }
+
+void wsoap__header::mark()
+{
+  if (Oflag > 1)
+    if (elementPtr())
+      elementPtr()->mark();
+}

@@ -361,6 +361,7 @@ void Types::init()
   gnum = 1;
   with_union = false;
   fake_union = false;
+  total = 0;
   omitted = 0;
   knames.insert(keywords, keywords + sizeof(keywords)/sizeof(char*));
   if (soap_context && *soap_context)
@@ -1501,11 +1502,15 @@ void Types::gen(const char *URI, const char *name, const xs__simpleType& simpleT
     name = simpleType.name;
   else if (!nested_restriction)
     prefix = "_";
-  if (!anonymous && Oflag > 1 && !simpleType.is_used())
+  if (!anonymous)
   {
-    fprintf(stream, "// Optimization: simpleType \"%s\":%s is not used and was removed\n\n", URI, name ? name : "");
-    ++omitted;
-    return;
+    ++total;
+    if (Oflag > 1 && !simpleType.is_used())
+    {
+      fprintf(stream, "// Optimization: simpleType \"%s\":%s is not used and was removed\n\n", URI, name ? name : "");
+      ++omitted;
+      return;
+    }
   }
   if (!anonymous)
   {
@@ -2245,11 +2250,15 @@ void Types::gen(const char *URI, const char *name, const xs__complexType& comple
     name = complexType.name;
   else
     prefix = "_";
-  if (!anonymous && Oflag > 1 && !complexType.is_used())
+  if (!anonymous)
   {
-    fprintf(stream, "// Optimization: complexType \"%s\":%s is not used and was removed\n\n", URI, name ? name : "");
-    ++omitted;
-    return;
+    ++total;
+    if (Oflag > 1 && !complexType.is_used())
+    {
+      fprintf(stream, "// Optimization: complexType \"%s\":%s is not used and was removed\n\n", URI, name ? name : "");
+      ++omitted;
+      return;
+    }
   }
   if (anonymous && name)
   {
@@ -3297,7 +3306,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       if (cflag || sflag)
       {
         fprintf(stream, "/// Size of array of %s is %s..%s.\n", s, min ? min : "1", max);
-        fprintf(stream, sizeformat, vname("$SIZE"), aname(NULL, NULL, name, &members));
+        fprintf(stream, sizeformat, vname("$SIZE"), aname(NULL, NULL, name));
         fprintf(stream, " %s", fake_union ? "0" : min ? min : "1");
         if (is_integer(max))
           fprintf(stream, ":%s", max);
@@ -3340,7 +3349,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       if (cflag || sflag)
       {
         fprintf(stream, "/// Size of %s array is %s..%s.\n", name, min ? min : "1", max);
-        fprintf(stream, sizeformat, vname("$SIZE"), aname(NULL, NULL, name, &members));
+        fprintf(stream, sizeformat, vname("$SIZE"), aname(NULL, NULL, name));
         fprintf(stream, " %s", fake_union ? "0" : min ? min : "1");
         if (is_integer(max))
           fprintf(stream, ":%s", max);
@@ -3393,7 +3402,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
       if (cflag || sflag)
       {
         fprintf(stream, "/// Size of %s array is %s..%s.\n", name, min ? min : "1", max);
-        fprintf(stream, sizeformat, vname("$SIZE"), aname(NULL, NULL, name, &members));
+        fprintf(stream, sizeformat, vname("$SIZE"), aname(NULL, NULL, name));
         fprintf(stream, " %s", fake_union ? "0" : min ? min : "1");
         if (is_integer(max))
           fprintf(stream, ":%s", max);
@@ -3474,7 +3483,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
     {
       if (cflag || sflag)
       {
-        fprintf(stream, sizeformat, vname("$SIZE"), aname(NULL, NULL, name, &members));
+        fprintf(stream, sizeformat, vname("$SIZE"), aname(NULL, NULL, name));
         fprintf(stream, " %s", fake_union ? "0" : min ? min : "1");
         if (is_integer(max))
           fprintf(stream, ":%s", max);

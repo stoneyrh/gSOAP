@@ -67,7 +67,8 @@ class Types
     int                 gnum;   // enum name index, TODO: consider map of URI to count per URI
     bool                with_union;
     bool                fake_union;
-    size_t              omitted; // number of -O2 removed types
+    size_t              total; // total number of types
+    size_t              omitted; // number of -O removed types
     Types();
     void init();
     int read(const char *file);

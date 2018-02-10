@@ -678,12 +678,14 @@ void xs__schema::mark()
     used = true;
     for (vector<xs__import>::iterator im = import.begin(); im != import.end(); ++im)
       (*im).mark();
-    // start with root of usage: use top-level attributes
-    for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
-      (*at).mark();
-    // start with root of usage: use top-level elements
-    for (vector<xs__element>::iterator el = element.begin(); el != element.end(); ++el)
-      (*el).mark();
+    // -O2: start with root of usage: use top-level attributes
+    if (Oflag < 3)
+      for (vector<xs__attribute>::iterator at = attribute.begin(); at != attribute.end(); ++at)
+        (*at).mark();
+    // -O2 and -O3: start with root of usage: use top-level elements
+    if (Oflag < 4)
+      for (vector<xs__element>::iterator el = element.begin(); el != element.end(); ++el)
+        (*el).mark();
   }
 }
 
@@ -1288,6 +1290,11 @@ void xs__attribute::mark()
   }
 }
 
+bool xs__attribute::is_used() const
+{
+  return used;
+}
+
 xs__element::xs__element()
 {
   schemaRef = NULL;
@@ -1471,7 +1478,7 @@ int xs__element::traverse(xs__schema &schema)
             elt->soap_default(schema.soap);
             elt->name = name;
             elt->form = form;
-            elt->elementPtr(this); // create element ref in substitutionsGroup
+            elt->elementPtr(this); // create element ref in substitutionGroup
             elt->schemaPtr(schemaPtr());
             elt->targetNamespace = NULL;
           }
@@ -1501,7 +1508,7 @@ int xs__element::traverse(xs__schema &schema)
                 elt->soap_default(schema.soap);
                 elt->name = name;
                 elt->form = form;
-                elt->elementPtr(this); // create element ref in substitutionsGroup
+                elt->elementPtr(this); // create element ref in substitutionGroup
                 elt->schemaPtr(schemaPtr());
                 elt->targetNamespace = NULL;
               }
@@ -1591,7 +1598,15 @@ void xs__element::mark()
       simpleTypePtr()->mark();
     if (complexTypePtr())
       complexTypePtr()->mark();
+    for (std::vector<xs__element*>::iterator i = substitutions.begin(); i != substitutions.end(); ++i)
+      if ((*i)->elementPtr())
+        (*i)->elementPtr()->mark();
   }
+}
+
+bool xs__element::is_used() const
+{
+  return used;
 }
 
 xs__simpleType::xs__simpleType()
@@ -2531,7 +2546,7 @@ int xs__seqchoice::traverse(xs__schema &schema)
               {
                 (*c).__content.sequence->__contents.erase(c1);
                 if (!Wflag)
-                  cerr << "\nOptimization (-O1): removed duplicate element '" << e->name << "' from nested choice/sequence" << endl;
+                  cerr << "\nOptimization: removed duplicate element '" << e->name << "' from nested choice/sequence" << endl;
               }
               else
               {
@@ -2563,7 +2578,7 @@ int xs__seqchoice::traverse(xs__schema &schema)
           if (members.find(e->name) != members.end())
           {
             __contents.erase(c);
-            cerr << "\nWarning: removed duplicate element '" << e->name << "' from nested xs:sequence/xs:choice" << endl;
+            cerr << "\nOptimization: removed duplicate element '" << e->name << "' from nested xs:sequence/xs:choice" << endl;
           }
           else
           {

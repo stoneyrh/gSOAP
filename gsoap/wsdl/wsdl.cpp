@@ -670,8 +670,12 @@ void wsdl__definitions::mark()
       types->mark();
     if (appRef)
       appRef->mark();
+    for (vector<wsdl__portType>::iterator pt = interface_.begin(); pt != interface_.end(); ++pt)
+      (*pt).mark();
     for (vector<wsdl__message>::iterator mg = message.begin(); mg != message.end(); ++mg)
       (*mg).mark();
+    for (vector<wsdl__binding>::iterator bg = binding.begin(); bg != binding.end(); ++bg)
+      (*bg).mark();
   }
 }
 
@@ -873,6 +877,13 @@ wsdl__portType *wsdl__binding::portTypePtr() const
   return portTypeRef;
 }
 
+void wsdl__binding::mark()
+{
+  if (Oflag > 1)
+    for (vector<wsdl__ext_operation>::iterator i = operation.begin(); i != operation.end(); ++i)
+      (*i).mark();
+}
+
 wsdl__ext_operation::wsdl__ext_operation()
 {
   operationRef = NULL;
@@ -1022,6 +1033,17 @@ wsdl__operation *wsdl__ext_operation::operationPtr() const
   return operationRef;
 }
 
+void wsdl__ext_operation::mark()
+{
+  if (Oflag > 1)
+  {
+    if (input)
+      input->mark();
+    if (output)
+      output->mark();
+  }
+}
+
 int wsdl__ext_ioput::traverse(wsdl__definitions& definitions)
 {
   if (vflag)
@@ -1037,6 +1059,13 @@ int wsdl__ext_ioput::traverse(wsdl__definitions& definitions)
   if (wsp__PolicyReference_)
     wsp__PolicyReference_->traverse(definitions);
   return SOAP_OK;
+}
+
+void wsdl__ext_ioput::mark()
+{
+  if (Oflag > 1)
+    for (std::vector<wsoap__header>::iterator sh = wsoap__header_.begin(); sh != wsoap__header_.end(); ++sh)
+      (*sh).mark();
 }
 
 wsdl__ext_fault::wsdl__ext_fault()
@@ -1120,6 +1149,17 @@ wsdl__definitions *wsdl__portType::definitionsPtr() const
   return definitionsRef;
 }
 
+void wsdl__portType::mark()
+{
+  if (Oflag > 1)
+  {
+    for (std::vector<wsdl__fault>::iterator ft = fault.begin(); ft != fault.end(); ++ft)
+      (*ft).mark();
+    for (std::vector<wsdl__operation>::iterator op = operation.begin(); op != operation.end(); ++op)
+      (*op).mark();
+  }
+}
+
 int wsdl__operation::traverse(wsdl__definitions& definitions)
 {
   if (vflag)
@@ -1148,6 +1188,31 @@ int wsdl__operation::traverse(wsdl__definitions& definitions)
   if (wsp__PolicyReference_)
     wsp__PolicyReference_->traverse(definitions);
   return SOAP_OK;
+}
+
+void wsdl__operation::mark()
+{
+  if (Oflag > 1)
+  {
+    if (__union1 == SOAP_UNION_wsdl__union_ioput_input)
+      if (__ioput1.input)
+        __ioput1.input->mark();
+    if (__union1 == SOAP_UNION_wsdl__union_ioput_output)
+      if (__ioput1.output)
+        __ioput1.output->mark();
+    if (__union2 == SOAP_UNION_wsdl__union_ioput_input)
+      if (__ioput2.input)
+        __ioput2.input->mark();
+    if (__union2 == SOAP_UNION_wsdl__union_ioput_output)
+      if (__ioput2.output)
+        __ioput2.output->mark();
+    for (vector<wsdl__fault>::iterator i = fault.begin(); i != fault.end(); ++i)
+      (*i).mark();
+    for (vector<wsdl__fault>::iterator fi = infault.begin(); fi != infault.end(); ++fi)
+      (*fi).mark();
+    for (vector<wsdl__fault>::iterator fo = outfault.begin(); fo != outfault.end(); ++fo)
+      (*fo).mark();
+  }
 }
 
 wsdl__ioput::wsdl__ioput()
@@ -1263,6 +1328,13 @@ void wsdl__ioput::elementPtr(xs__element *element)
 xs__element *wsdl__ioput::elementPtr() const
 {
   return elementRef;
+}
+
+void wsdl__ioput::mark()
+{
+  if (Oflag > 1)
+    if (elementPtr())
+      elementPtr()->mark();
 }
 
 wsdl__fault::wsdl__fault()
@@ -1433,6 +1505,13 @@ void wsdl__fault::elementPtr(xs__element *element)
 xs__element *wsdl__fault::elementPtr() const
 {
   return elementRef;
+}
+
+void wsdl__fault::mark()
+{
+  if (Oflag > 1)
+    if (elementPtr())
+      elementPtr()->mark();
 }
 
 int wsdl__message::traverse(wsdl__definitions& definitions)
@@ -1958,7 +2037,7 @@ void wsdl__import::mark()
   if (Oflag > 1)
   {
     if (definitionsRef)
-      definitionsRef->traverse();
+      definitionsRef->mark();
   }
 }
 

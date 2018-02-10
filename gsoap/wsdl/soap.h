@@ -139,6 +139,7 @@ class wsoap__header
   	int				traverse(wsdl__definitions&);
 	void				elementPtr(xs__element*);
 	xs__element			*elementPtr() const;
+        void                            mark();
 };
 
 

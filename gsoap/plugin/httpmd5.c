@@ -82,7 +82,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 extern "C" {
 #endif
 
-const char http_md5_id[13] = HTTP_MD5_ID;
+const char http_md5_id[18] = HTTP_MD5_ID;
 
 static int http_md5_init(struct soap *soap, struct http_md5_data *data);
 static int http_md5_copy(struct soap *soap, struct soap_plugin *dst, struct soap_plugin *src);

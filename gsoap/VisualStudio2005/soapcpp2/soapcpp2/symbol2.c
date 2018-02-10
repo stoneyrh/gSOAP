@@ -8393,19 +8393,33 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
     }
     if (n >= 16)
     {
-      fprintf(fd, "%*s<!-- WARNING max depth of 16 levels exceeded: schema may incorrectly define infinitely large documents in recursion over mandatory elements with minOccurs>0 -->\n", n, "");
+      fprintf(fd, "%*s<!-- WARNING max depth of 16 levels exceeded: schema may incorrectly define indefinitely large documents in recursion over required elements with minOccurs>0 -->\n", n, "");
       return;
     }
     if (yflag)
       fprintf(fd, "%*s<!-- %s -->\n", n, "", c_type_id(p->info.typ, p->sym->name));
-    if (gflag && is_container(p->info.typ))
+    if (is_container(p->info.typ))
     {
-      fprintf(fd, "%*s<__REPEAT min=\"" SOAP_LONG_FORMAT "\"", n, "", p->info.minOccurs);
-      if (p->info.maxOccurs > 1)
-        fprintf(fd, " max=\"" SOAP_LONG_FORMAT "\"", p->info.maxOccurs);
-      else
-        fprintf(fd, " max=\"unbounded\"");
-      fprintf(fd, ">\n");
+      if (gflag)
+      {
+        fprintf(fd, "%*s<__REPEAT min=\"" SOAP_LONG_FORMAT "\"", n, "", p->info.minOccurs);
+        if (p->info.maxOccurs > 1)
+          fprintf(fd, " max=\"" SOAP_LONG_FORMAT "\"", p->info.maxOccurs);
+        else
+          fprintf(fd, " max=\"unbounded\"");
+        fprintf(fd, ">\n");
+      }
+      else if (yflag)
+      {
+        fprintf(fd, "%*s<!-- a repetition of " SOAP_LONG_FORMAT, n, "", p->info.minOccurs);
+        if (p->info.maxOccurs == p->info.minOccurs && p->info.maxOccurs > 1)
+          fprintf(fd, " of the following");
+        else if (p->info.maxOccurs > 1)
+          fprintf(fd, " to " SOAP_LONG_FORMAT " of the following", p->info.maxOccurs);
+        else
+          fprintf(fd, " or more of the following");
+        fprintf(fd, " -->\n");
+      }
       opt = 0;
     }
     if (is_soap12(encoding) && (p->info.sto & Sreturn) && (nse || has_ns_eq(NULL, p->sym->name)) && !is_literal(encoding))
@@ -8478,6 +8492,8 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
             gen_xmlns(fd, 0);
           gen_atts(fd, (Table*)p->info.typ->ref, nse, nsa, encoding);
           gen_val(fd, n, p->info.typ, nse, nsa, encoding, 0);
+          if (!is_invisible(p->sym->name))
+            fprintf(fd, "%*s", n, "");
         }
         else
         {
@@ -8497,19 +8513,16 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
           else
             *tmp = '\0';
           gen_element_array(fd, n, ns_add(p, nse));
-          i = q->info.minOccurs;
-          if (i < 2)
-            i = 2;
-          if (q->info.maxOccurs > 1 && i > q->info.maxOccurs)
-            i = q->info.maxOccurs;
+          i = q->info.minOccurs < 100000 ? q->info.minOccurs : 100000;
+          if (i < 1)
+            i = 1;
           if (is_soap12(encoding))
             fprintf(fd, " SOAP-ENC:itemType=\"%s\" SOAP-ENC:arraySize=\"" SOAP_LONG_FORMAT "%s\"", wsdl_type(q->info.typ, ""), i, tmp);
           else if (!is_literal(encoding))
             fprintf(fd, " SOAP-ENC:arrayType=\"%s[" SOAP_LONG_FORMAT "%s]\"", wsdl_type(q->info.typ, ""), i, tmp);
           fprintf(fd, ">");
-          while (i--)
-            gen_val(fd, n, p->info.typ, nse, nsa, encoding, 0);
-          fprintf(fd, "\n%*s", n, "");
+          gen_val(fd, n, p->info.typ, nse, nsa, encoding, 0);
+          fprintf(fd, "%*s", n, "");
         }
         fflush(fd);
       }
@@ -8522,6 +8535,8 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
             gen_xmlns(fd, 0);
           gen_atts(fd, (Table*)((Tnode*)p->info.typ->ref)->ref, nse, nsa, encoding);
           gen_val(fd, n, (Tnode*)p->info.typ->ref, nse, nsa, encoding, 0);
+          if (!is_invisible(p->sym->name))
+            fprintf(fd, "%*s", n, "");
         }
         else
         {
@@ -8538,19 +8553,16 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
           else
             *tmp = '\0';
           gen_element_array(fd, n, ns_add(p, nse));
-          i = q->info.minOccurs;
-          if (i < 2)
-            i = 2;
-          if (q->info.maxOccurs > 1 && i > q->info.maxOccurs)
-            i = q->info.maxOccurs;
+          i = q->info.minOccurs < 100000 ? q->info.minOccurs : 100000;
+          if (i < 1)
+            i = 1;
           if (is_soap12(encoding))
             fprintf(fd, " SOAP-ENC:itemType=\"%s\" SOAP-ENC:arraySize=\"" SOAP_LONG_FORMAT "%s\"", wsdl_type(((Table*)((Tnode*)p->info.typ->ref)->ref)->list->info.typ, ""), i, tmp);
           else if (!is_literal(encoding))
             fprintf(fd, " SOAP-ENC:arrayType=\"%s[" SOAP_LONG_FORMAT "%s]\"", wsdl_type(((Table*)((Tnode*)p->info.typ->ref)->ref)->list->info.typ, ""), i, tmp);
           fprintf(fd, ">");
-          while (i--)
-            gen_val(fd, n, (Tnode*)p->info.typ->ref, nse, nsa, encoding, 0);
-          fprintf(fd, "\n%*s", n, "");
+          gen_val(fd, n, (Tnode*)p->info.typ->ref, nse, nsa, encoding, 0);
+          fprintf(fd, "%*s", n, "");
         }
       }
       else if (p->info.typ->type == Tstruct || p->info.typ->type == Tclass)
@@ -8749,11 +8761,9 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
               }
               else
               {
-                i = p->info.minOccurs;
-                if (i < 2)
-                  i = 2;
-                if (p->info.maxOccurs > 1 && i > p->info.maxOccurs)
-                  i = p->info.maxOccurs;
+                i = p->info.minOccurs < 100000 ? p->info.minOccurs : 100000;
+                if (i == 0)
+                  i = 1;
               }
               do
               {
@@ -8930,16 +8940,16 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
   {
     if (is_fixedstring(p))
     {
-      LONG64 n = p->width / ((Tnode*)p->ref)->width - 1;
+      LONG64 k = p->width / ((Tnode*)p->ref)->width - 1;
       if (gflag)
       {
         if (opt)
           fprintf(fd, "???");
-        fprintf(fd, "%%[[TEXT[" SOAP_LONG_FORMAT ":" SOAP_LONG_FORMAT "]]]%%", n, n);
+        fprintf(fd, "%%[[TEXT[" SOAP_LONG_FORMAT ":" SOAP_LONG_FORMAT "]]]%%", k, k);
       }
       else
       {
-        for (i = 0; i < n; i++)
+        for (i = 0; i < k; i++)
           fprintf(fd, "X");
       }
       return;
@@ -8961,14 +8971,9 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         }
         else
         {
-          if (i > 100000) /* SOAP_MAXOCCURS */
-            i = 100000;
-          for (; i > 0; i--)
-          {
-            fprintf(fd, "%*s<item>", n+1, "");
-            gen_val(fd, n+1, (Tnode*)p->ref, nse, nsa, encoding, 0);
-            fprintf(fd, "</item>\n");
-          }
+          fprintf(fd, "%*s<item>", n+1, "");
+          gen_val(fd, n+1, (Tnode*)p->ref, nse, nsa, encoding, 0);
+          fprintf(fd, "</item>\n");
         }
         fprintf(fd, "%*s", n, "");
       }
@@ -9010,20 +9015,38 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
       }
       else
       {
+        LONG64 k = q->info.minOccurs < 100000 ? q->info.minOccurs : 100000;
+        if (k == 0 && q->info.maxOccurs > 0)
+          k = 1;
         if (gflag)
         {
-          fprintf(fd, "%*s<__REPEAT min=\"" SOAP_LONG_FORMAT "\"", n, "", q->info.minOccurs);
+          fprintf(fd, "\n%*s<__REPEAT min=\"" SOAP_LONG_FORMAT "\"", n+1, "", q->info.minOccurs);
           if (q->info.maxOccurs > 1)
             fprintf(fd, " max=\"" SOAP_LONG_FORMAT "\"", q->info.maxOccurs);
           else
             fprintf(fd, " max=\"unbounded\"");
           fprintf(fd, ">\n");
+          k = 1;
         }
-        fprintf(fd, "\n%*s<%s>", n+1, "", q->sym->name[5]?q->sym->name+5:"item");
-        gen_val(fd, n+1, q->info.typ, nse, nsa, encoding, 0);
-        fprintf(fd, "</%s>", q->sym->name[5]?q->sym->name+5:"item");
+        else if (yflag)
+        {
+          fprintf(fd, "\n%*s<!-- a repetition of " SOAP_LONG_FORMAT, n+1, "", q->info.minOccurs);
+          if (q->info.maxOccurs == q->info.minOccurs && q->info.maxOccurs > 1)
+            fprintf(fd, " of the following");
+          else if (q->info.maxOccurs > 1)
+            fprintf(fd, " to " SOAP_LONG_FORMAT " of the following", q->info.maxOccurs);
+          else
+            fprintf(fd, " or more of the following");
+          fprintf(fd, " -->\n");
+        }
+        for (i = 0; i < k; ++i)
+        {
+          fprintf(fd, "%*s<%s>", n+1, "", q->sym->name[5]?q->sym->name+5:"item");
+          gen_val(fd, n+1, q->info.typ, nse, nsa, encoding, 0);
+          fprintf(fd, "</%s>\n", q->sym->name[5]?q->sym->name+5:"item");
+        }
         if (gflag)
-          fprintf(fd, "%*s</__REPEAT>\n", n, "");
+          fprintf(fd, "%*s</__REPEAT>\n", n+1, "");
       }
       return;
     }
@@ -9036,7 +9059,9 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         fprintf(fd, "%%[[BOOL]]%%");
       }
       else
+      {
         fprintf(fd, "false");
+      }
       return;
     }
     else if (has_restriction_base(p, "xsd__ENTITY") || has_restriction_base(p, "xsd__ENTITIES"))
@@ -9056,7 +9081,7 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
       }
       else
       {
-        if (p->min > 0 && p->min < 10000)
+        if (p->min > 0 && p->min < 100000)
           for (i = 0; i < (int)p->min; i++)
             fprintf(fd, "X");
       }
@@ -9077,13 +9102,15 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         else
           fprintf(fd, "%%[[ID]]%%");
       }
-      else if (p->min > 0 && p->min < 10000)
+      else if (p->min > 0 && p->min < 100000)
       {
         for (i = 0; i < (int)p->min; i++)
           fprintf(fd, "X");
       }
       else
+      {
         fprintf(fd, "_%lu", ++idnum);
+      }
       return;
     }
     else if (has_restriction_base(p, "xsd__IDREF") || has_restriction_base(p, "xsd__IDREFS"))
@@ -9101,13 +9128,15 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         else
           fprintf(fd, "%%[[IDREF]]%%");
       }
-      else if (p->min > 0 && p->min < 10000)
+      else if (p->min > 0 && p->min < 100000)
       {
         for (i = 0; i < (int)p->min; i++)
           fprintf(fd, "X");
       }
       else
+      {
         fprintf(fd, "_%lu", ++idnum);
+      }
       return;
     }
     else if (has_restriction_base(p, "xsd__integer"))
@@ -9131,7 +9160,9 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         fprintf(fd, "%%[[DATE]]%%");
       }
       else
+      {
         fprintf(fd, "1999-12-31");
+      }
       return;
     }
     else if (has_restriction_base(p, "xsd__dateTime"))
@@ -9160,7 +9191,9 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         fprintf(fd, "%%[[DOUBLE]]%%");
       }
       else
+      {
         fprintf(fd, "0.0");
+      }
       return;
     }
     else if (has_restriction_base(p, "xsd__duration"))
@@ -9172,7 +9205,9 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         fprintf(fd, "%%[[DURATION]]%%");
       }
       else
+      {
         fprintf(fd, "PT0S");
+      }
       return;
     }
     else if (has_restriction_base(p, "xsd__language"))
@@ -9192,7 +9227,7 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
       }
       else
       {
-        if (p->min > 0 && p->min < 10000)
+        if (p->min > 0 && p->min < 100000)
           for (i = 0; i < (int)p->min; i++)
             fprintf(fd, "X");
       }
@@ -9215,7 +9250,7 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
       }
       else
       {
-        if (p->min > 0 && p->min < 10000)
+        if (p->min > 0 && p->min < 100000)
           for (i = 0; i < (int)p->min; i++)
             fprintf(fd, "X");
       }
@@ -9238,7 +9273,7 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
       }
       else
       {
-        if (p->min > 0 && p->min < 10000)
+        if (p->min > 0 && p->min < 100000)
           for (i = 0; i < (int)p->min; i++)
             fprintf(fd, "X");
       }
@@ -9261,7 +9296,7 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
       }
       else
       {
-        if (p->min > 0 && p->min < 10000)
+        if (p->min > 0 && p->min < 100000)
           for (i = 0; i < (int)p->min; i++)
             fprintf(fd, "X");
       }
@@ -9276,7 +9311,9 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         fprintf(fd, "%%[[-9223372036854775808:-1]]%%");
       }
       else
+      {
         fprintf(fd, "-1");
+      }
       return;
     }
     else if (has_restriction_base(p, "xsd__nonNegativeInteger"))
@@ -9288,7 +9325,9 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         fprintf(fd, "%%[[0:9223372036854775807]]%%");
       }
       else
+      {
         fprintf(fd, "0");
+      }
       return;
     }
     else if (has_restriction_base(p, "xsd__nonPositiveInteger"))
@@ -9300,7 +9339,9 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         fprintf(fd, "%%[[-9223372036854775808:0]]%%");
       }
       else
+      {
         fprintf(fd, "0");
+      }
       return;
     }
     else if (has_restriction_base(p, "xsd__positiveInteger"))
@@ -9312,7 +9353,9 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         fprintf(fd, "%%[[1:9223372036854775807]]%%");
       }
       else
+      {
         fprintf(fd, "1");
+      }
       return;
     }
     else if (has_restriction_base(p, "xsd__time"))
@@ -9324,7 +9367,9 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         fprintf(fd, "%%[[TIME]]%%");
       }
       else
+      {
         fprintf(fd, "12:34:56.789Z");
+      }
       return;
     }
     else if (is_qname(p) || is_stdqname(p))
@@ -9336,7 +9381,9 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         fprintf(fd, "%%[[QNAME]]%%");
       }
       else
+      {
         fprintf(fd, "xsd:string");
+      }
       return;
     }
     switch (p->type)
@@ -9674,13 +9721,15 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           }
           else
           {
-            if (p->min > 0 && p->min < 10000)
+            if (p->min > 0 && p->min < 100000)
               for (i = 0; i < (int)p->min; i++)
                 fprintf(fd, "X");
           }
         }
         else
+        {
           gen_val(fd, n, (Tnode*)p->ref, nse, nsa, encoding, opt);
+        }
         break;
       case Tclass:
       case Tstruct:
@@ -9703,7 +9752,7 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           }
           else
           {
-            if (p->min > 0 && p->min < 10000)
+            if (p->min > 0 && p->min < 100000)
               for (i = 0; i < (int)p->min; i++)
                 fprintf(fd, "X");
           }
@@ -9779,14 +9828,23 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
                 }
                 else
                 {
-                  i = q->info.minOccurs;
-                  if (i < 2)
-                    i = 2;
-                  if (q->info.maxOccurs > 1 && i > q->info.maxOccurs)
-                    i = q->info.maxOccurs;
-                  do
+                  if (yflag)
+                  {
+                    fprintf(fd, "%*s<!-- a repetition of " SOAP_LONG_FORMAT, n+1, "", q->info.minOccurs);
+                    if (q->info.maxOccurs == q->info.minOccurs && q->info.maxOccurs > 1)
+                      fprintf(fd, " of the following");
+                    else if (q->info.maxOccurs > 1)
+                      fprintf(fd, " to " SOAP_LONG_FORMAT " of the following", q->info.maxOccurs);
+                    else
+                      fprintf(fd, " or more of the following");
+                    fprintf(fd, " -->\n");
                     gen_field(fd, n+1, q->next, nse1, nsa, encoding, 0, 0);
-                  while (--i);
+                  }
+                  i = q->info.minOccurs < 100000 ? q->info.minOccurs : 100000;
+                  if (i < 1)
+                    i = 1;
+                  for (; i > 0; --i)
+                    gen_field(fd, n+1, q->next, nse1, nsa, encoding, 0, 0);
                 }
                 q = q->next;
               }
@@ -9809,6 +9867,13 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           }
           else
           {
+            if (yflag)
+            {
+              fprintf(fd, "%*s<!-- a selection of elements", n, "");
+              for (q = ((Table*)p->ref)->list; q; q = q->next)
+                fprintf(fd, " <%s>,", ns_add(q, nse));
+              fprintf(fd, " of which only the first choice is used here -->\n");
+            }
             gen_field(fd, n, ((Table*)p->ref)->list, nse, nsa, encoding, 0, 0);
           }
         }
@@ -18127,7 +18192,7 @@ soap_in(Tnode *typ)
           if (!cflag && (typ->type == Tclass || typ->type == Tstruct))
           {
             if (typ->min > 0)
-              fprintf(fout, "\n\t\tif ((*a)->size() %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->min);
+              fprintf(fout, "\n\t\tif (a->size() %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->min);
           }
           else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
             fprintf(fout, "\n\t\tif (*a %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->min);
@@ -18139,7 +18204,7 @@ soap_in(Tnode *typ)
           if (!cflag && (typ->type == Tclass || typ->type == Tstruct))
           {
             if (typ->max >= 0)
-              fprintf(fout, "\n\t\tif ((*a).size() %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->max);
+              fprintf(fout, "\n\t\tif (a->size() %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->max);
           }
           else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
             fprintf(fout, "\n\t\tif (*a %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->max);
@@ -18219,7 +18284,7 @@ soap_in(Tnode *typ)
         if (!cflag && (typ->type == Tclass || typ->type == Tstruct))
         {
           if (typ->min > 0)
-            fprintf(fout, "\n\tif (a && (*a).size() %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", typ->min);
+            fprintf(fout, "\n\tif (a && a->size() %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", typ->min);
         }
         else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
           fprintf(fout, "\n\tif (a && *a %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", typ->min);
@@ -18231,7 +18296,7 @@ soap_in(Tnode *typ)
         if (!cflag && (typ->type == Tclass || typ->type == Tstruct))
         {
           if (typ->max >= 0)
-            fprintf(fout, "\n\tif (a && (*a).size() %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", typ->max);
+            fprintf(fout, "\n\tif (a && a->size() %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", typ->max);
         }
         else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
           fprintf(fout, "\n\tif (a && *a %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", typ->max);

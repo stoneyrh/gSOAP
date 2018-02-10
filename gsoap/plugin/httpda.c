@@ -947,6 +947,13 @@ http_da_prepareinitsend(struct soap *soap)
       if ((soap->mode & SOAP_IO) == SOAP_IO_CHUNK)
         soap->mode |= SOAP_IO_LENGTH;
     }
+    else
+    {
+      if (soap->fpreparesend == http_da_preparesend)
+      {
+        soap->fpreparesend = data->fpreparesend;
+      }
+    }
   }
 
   if (data->fprepareinitsend)

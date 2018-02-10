@@ -148,6 +148,7 @@ class wsdl__ioput
         wsdl__message                   *messagePtr() const;
         void                            elementPtr(xs__element*);
         xs__element                     *elementPtr() const;
+        void                            mark();
 };
 
 class wsdl__fault
@@ -172,6 +173,7 @@ class wsdl__fault
         wsdl__message                   *messagePtr() const;
         void                            elementPtr(xs__element*);
         xs__element                     *elementPtr() const;
+        void                            mark();
 };
 
 class wsdl__operation
@@ -196,6 +198,7 @@ class wsdl__operation
         std::vector<wsdl__fault>        outfault;               // <wsdl:outfault>* WSDL 2.0
   public:
         int                             traverse(wsdl__definitions&);
+        void                            mark();
 };
 
 class wsdl__portType                    // ... and WSDL 2.0 interface
@@ -215,6 +218,7 @@ class wsdl__portType                    // ... and WSDL 2.0 interface
         int                             traverse(wsdl__definitions&);
         void                            definitionsPtr(wsdl__definitions*);
         wsdl__definitions               *definitionsPtr() const;
+        void                            mark();
 };      
 
 class wsdl__ext_ioput                   // binding extensibility element
@@ -236,6 +240,7 @@ class wsdl__ext_ioput                   // binding extensibility element
         std::vector<whttp__header>      whttp__header_;         // <whttp:header>* WSDL 2.0
   public:
         int                             traverse(wsdl__definitions&);
+        void                            mark();
 };
 
 class wsdl__ext_fault                   // binding extensibility element
@@ -284,6 +289,7 @@ class wsdl__ext_operation               // binding extensibility element
         int                             traverse(wsdl__definitions&, wsdl__portType*);
         void                            operationPtr(wsdl__operation*);
         wsdl__operation                 *operationPtr() const;
+        void                            mark();
 };
 
 class wsdl__binding
@@ -312,6 +318,7 @@ class wsdl__binding
         int                             traverse(wsdl__definitions&);
         void                            portTypePtr(wsdl__portType*);
         wsdl__portType                  *portTypePtr() const;
+        void                            mark();
 };
 
 class wsdl__port                        // ... and WSDL 2.0 endpoint

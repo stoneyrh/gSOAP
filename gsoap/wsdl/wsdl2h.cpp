@@ -190,13 +190,13 @@ int main(int argc, char **argv)
   {
     if (def.types.omitted)
     {
-      fprintf(stderr, "\nOptimization (-O2): removed type definitions of %zu unused schema components\n", def.types.omitted);
+      fprintf(stderr, "\nOptimization (-O%d): removed %zu definitions of unused schema components (%.1f%%)\n", Oflag, def.types.omitted, 100.0*def.types.omitted/def.types.total);
       if (pflag)
-        fprintf(stderr, "\nWarning: option -O2 removed type definitions that may be used as xsd__anyType derivatives by type extension inheritance (enabled by default with option -p), use option -P to disable type derivation from xsd__anyType\n");
+        fprintf(stderr, "\nWarning: option -O%d removed type definitions that may be used as xsd__anyType derivatives by type extension inheritance (enabled by default with option -p), use option -P to disable type derivation from xsd__anyType\n", Oflag);
     }
     else
     {
-      fprintf(stderr, "\nOptimization (-O2): no unused schema components found and removed\n");
+      fprintf(stderr, "\nOptimization (-O%d): no unused schema components found\n", Oflag);
     }
   }
   if (outfile)
@@ -369,7 +369,7 @@ static void options(int argc, char **argv)
             else if (i < argc && argv[++i])
               Oflag = soap_strtol(argv[i], NULL, 10);
             else
-              fprintf(stderr, "wsdl2h: Option -O requires 1 or 2\n");
+              fprintf(stderr, "wsdl2h: Option -O requires an argument number\n");
             break;
           case 'p':
             pflag = 1;
@@ -502,7 +502,7 @@ static void options(int argc, char **argv)
             break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-D] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-M] [-N name] [-n name] [-O1|-O2] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-Sname] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-D] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-M] [-N name] [-n name] [-O1|-O2|-O3] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-Sname] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -b      bi-directional operations (duplex ops) added to serve one-way responses\n\
@@ -526,6 +526,8 @@ static void options(int argc, char **argv)
 -nname  use name as the base namespace prefix instead of 'ns'\n\
 -O1     optimize by omitting duplicate choice/sequence members\n\
 -O2     optimize -O1 and omit unused schema types (unreachable from roots)\n\
+-O3     optimize -O2 and omit unused schema root attributes\n\
+-O4     optimize -O3 and omit unused schema root elements (use only with WSDLs)\n\
 -ofile  output to file\n\
 -P      don't create polymorphic types inherited from xsd__anyType\n\
 -p      create polymorphic types inherited from base xsd__anyType\n\

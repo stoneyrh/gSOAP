@@ -103,7 +103,7 @@ The threads.h and threads.c code define the following portable API:
 #if defined(WIN32)
 # define THREAD_TYPE		HANDLE
 # define THREAD_ID		GetCurrentThreadId()
-# define THREAD_CREATE(x,y,z)	((*(x) = (HANDLE)_beginthread((_beginthread_proc_type)(y), 8*4096, (z))) == (HANDLE)-1L)
+# define THREAD_CREATE(x,y,z)	((*(x) = (HANDLE)_beginthread((void(__cdecl*)(void*))(y), 8*4096, (z))) == (HANDLE)-1L)
 # define THREAD_DETACH(x)	
 # define THREAD_JOIN(x)		WaitForSingleObject((x), INFINITE)
 # define THREAD_EXIT		_endthread()

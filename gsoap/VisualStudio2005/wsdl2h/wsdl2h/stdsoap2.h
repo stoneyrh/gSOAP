@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.61
+        stdsoap2.h 2.8.62
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20861
+#define GSOAP_VERSION 20862
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -464,6 +464,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 #   define HAVE_STRTOD_L
 #   define HAVE_SSCANF_L
 #   define HAVE_LOCALE_H
+#   define HAVE_XLOCALE_H
 #  endif
 # elif defined(TRU64)
 #  define HAVE_SNPRINTF
@@ -1831,7 +1832,18 @@ typedef soap_int32 soap_mode;
 # endif
 #endif
 
-#if (defined(__GNUC__) && (__GNUC__ <= 2)) || defined(__clang__) || defined(_AIX) || defined(AIX)
+#if defined(__BORLANDC__) && !defined(__clang__)
+/* Embarcadero Classic compiler special case */
+# ifndef SOAP_NEW
+#  define SOAP_NEW(soap, type) new SOAP_NOTHROW (type)
+# endif
+# ifndef SOAP_NEW_ARRAY
+#  define SOAP_NEW_ARRAY(soap, type, n) new SOAP_NOTHROW (type[n])
+# endif
+# ifndef SOAP_PLACEMENT_NEW
+#  define SOAP_PLACEMENT_NEW(soap, buf, type) new (buf) (type)
+# endif
+#elif (defined(__GNUC__) && (__GNUC__ <= 2)) || defined(__clang__) || defined(_AIX) || defined(AIX)
 /* old form w/o parenthesis, soap context may be NULL */
 # ifndef SOAP_NEW
 #  define SOAP_NEW(soap, type) new SOAP_NOTHROW type
@@ -1864,7 +1876,13 @@ typedef soap_int32 soap_mode;
 #endif
 
 #ifndef SOAP_NEW_UNMANAGED              /* use C++ unmanaged new operator for soap_new() and soap::copy() */
-# define SOAP_NEW_UNMANAGED(soap) new SOAP_NOTHROW soap
+# if defined(__BORLANDC__) && !defined(__clang__)
+#  define SOAP_NEW_UNMANAGED(soap) new SOAP_NOTHROW (soap)
+# elif (defined(__GNUC__) && (__GNUC__ <= 2)) || defined(__clang__) || defined(_AIX) || defined(AIX)
+#  define SOAP_NEW_UNMANAGED(soap) new SOAP_NOTHROW soap
+# else
+#  define SOAP_NEW_UNMANAGED(soap) new SOAP_NOTHROW (soap)
+# endif
 #endif
 
 #ifndef SOA_DELETE_UNMANAGED            /* use C++ unmanaged delete operator for soap_free() */

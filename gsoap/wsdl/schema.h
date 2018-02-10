@@ -116,6 +116,7 @@ class xs__element
         xs__complexType                 *complexTypePtr() const;
         const std::vector<xs__element*> *substitutionsPtr() const;
         void                            mark();
+        bool                            is_used() const;
 };
 
 enum xs__attribute_use { optional, prohibited, required, default_, fixed_ };
@@ -151,6 +152,7 @@ class xs__attribute
         xs__attribute                   *attributePtr() const;
         xs__simpleType                  *simpleTypePtr() const;
         void                            mark();
+        bool                            is_used() const;
 };
 
 class xs__all
