@@ -1023,8 +1023,19 @@ static void gen_value(struct soap *ctx, const char *s)
       }
     }
 
-    if (!strcmp(s, "%[[FLOAT]]%"))
+    if (!strcmp(s, "%[[FLOAT]]%") || !strncmp(s, "%[[FLOAT%", 9))
     {
+      char buf[16];
+      const char *format = ctx->float_format;
+      if (s[8] == '%')
+      {
+        // get %D.F format string
+        size_t i = 0;
+        for (const char *r = s + 8; *r != ']' && i < sizeof(buf) - 1; ++r)
+          buf[i++] = *r;
+        buf[i] = '\0';
+        format = buf;
+      }
       float y;
       switch (x % 10)
       {
@@ -1045,24 +1056,35 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
         case 5:
           y = -FLT_MAX;
-          (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), ctx->float_format, y);
+          (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), format, y);
           gen_send_verb(ctx, s, ctx->tmpbuf);
           return;
         case 6:
           y = FLT_MAX;
-          (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), ctx->float_format, y);
+          (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), format, y);
           gen_send_verb(ctx, s, ctx->tmpbuf);
           return;
         default:
           y = (float)x/(float)0xFFFF;
-          (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), ctx->float_format, y);
+          (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), format, y);
           gen_send_verb(ctx, s, ctx->tmpbuf);
           return;
       }
     }
 
-    if (!strcmp(s, "%[[DOUBLE]]%"))
+    if (!strcmp(s, "%[[DOUBLE]]%") || !strncmp(s, "%[[DOUBLE%", 10))
     {
+      char buf[16];
+      const char *format = ctx->double_format;
+      if (s[9] == '%')
+      {
+        // get %D.F format string
+        size_t i = 0;
+        for (const char *r = s + 9; *r != ']' && i < sizeof(buf) - 1; ++r)
+          buf[i++] = *r;
+        buf[i] = '\0';
+        format = buf;
+      }
       double y;
       switch (x % 10)
       {
@@ -1083,17 +1105,17 @@ static void gen_value(struct soap *ctx, const char *s)
           return;
         case 5:
           y = -DBL_MAX;
-          (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), ctx->double_format, y);
+          (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), format, y);
           gen_send_verb(ctx, s, ctx->tmpbuf);
           return;
         case 6:
           y = DBL_MAX;
-          (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), ctx->double_format, y);
+          (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), format, y);
           gen_send_verb(ctx, s, ctx->tmpbuf);
           return;
         default:
           y = (double)x/(double)0xFFFF;
-          (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), ctx->double_format, y);
+          (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), format, y);
           gen_send_verb(ctx, s, ctx->tmpbuf);
           return;
       }
@@ -1410,8 +1432,19 @@ static void gen_value(struct soap *ctx, const char *s)
       char *r;
       double n = strtod(s + 3, &r);
       double m = n;
+      char buf[16];
+      const char *format = ctx->double_format;
       if (r && *r == ':')
         m = strtod(r + 1, &r);
+      if (r && *r == '%')
+      {
+        // get %D.F format string after the range: %[[N:M%D.F]]%, %[(N:M%D.F]]%, %[[N:M%D.F)]%, %[(N:M%D.F)]%
+        size_t i = 0;
+        for (; *r && *r != ')' && *r != ']' && i < sizeof(buf) - 1; ++r)
+          buf[i++] = *r;
+        buf[i] = '\0';
+        format = buf;
+      }
       bool isint = !strchr(s, '.');
       if (r && (r[0] == ']' || r[0] == ')') && r[1] == ']' && r[2] == '%' && !r[3] &&
           ( (isint && s[2] == '(' && r[0] == ')' && n + 1 < m) ||
@@ -1431,7 +1464,7 @@ static void gen_value(struct soap *ctx, const char *s)
             break;
           x = gen_random();
         }
-        (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), ctx->double_format, y);
+        (SOAP_SNPRINTF(ctx->tmpbuf, sizeof(ctx->tmpbuf), 24), format, y);
         gen_send_verb(ctx, s, ctx->tmpbuf);
         return;
       }

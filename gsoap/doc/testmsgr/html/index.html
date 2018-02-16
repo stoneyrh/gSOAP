@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">Test Messenger</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Oct 26 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue Feb 13 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -256,14 +256,16 @@ Placeholder values                                                </h2>
 <h3>Enumeration templates</h3>
 <p><code>%[[A][B][C]]%</code> specifies a choice of values <code>A</code>, <code>B</code> or <code>C</code>. The values can be anything but should not contain <code>][</code> or <code>]]%</code>. For example:</p>
 <div class="alt"> <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;<span class="keywordtype">process</span> <span class="keyword">completed</span>=<span class="stringliteral">&quot;%[[false][true]]%&quot;</span>/&gt;</div></div><!-- fragment --> </div><p>where <code>completed="%[[false][true]]%"</code> enumerates the values <code>false</code> and <code>true</code>. Note that this enumeration is identical to the <code>%[[BOOL]]%</code> placeholder type.</p>
-<h3>Numeric range templates</h3>
+<h3>Numeric range and precision templates</h3>
 <p>A numeric range is integer-valued when the lower bound <code>N</code> and upper bound <code>M</code> are integer. Otherwise, the numeric range values are floating point. For example, <code>%[[0:10]]%</code> speficies a range of integer values whereas <code>%[[0.0:10.0]]%</code> specifies a range of floating point values. The bounds of a numeric range can be made exlusive by using <code>(</code> and <code>)</code> instead of <code>[</code> and <code>]</code>.</p>
 <p><code>%[[N:M]]%</code> specifies a range of integer or float values between <code>N</code> and <code>M</code>.</p>
 <p><code>%[[N:M)]%</code> specifies a range of integer or float values between <code>N</code> and <code>M</code> (exclusive).</p>
 <p><code>%[(N:M]]%</code> specifies a range of integer or float values between <code>N</code> (exclusive) and <code>M</code>.</p>
 <p><code>%[(N:M)]%</code> specifies a range of integer or float values between <code>N</code> (exclusive) and <code>M</code> (exclusive).</p>
 <p>For example:</p>
-<div class="alt"> <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;<span class="keywordtype">price</span>&gt;%[(0.00:100000.00]]%&lt;/<span class="keywordtype">price</span>&gt;</div></div><!-- fragment --> </div><p>where 0.00 is excluded from the float value range and <code>100000.00</code> is the inclusive maximum.</p>
+<div class="alt"> <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;<span class="keywordtype">price</span>&gt;%[(0.00:100000.00]]%&lt;/<span class="keywordtype">price</span>&gt;</div></div><!-- fragment --> </div><p>where 0.00 is excluded from the float value range and <code>100000.00</code> is the inclusive maximum of the numeric range.</p>
+<p>A decimal precision is specified with a printf-based format string, such as <code>%.2f</code> to indicate 2 decimal places after the decimal period should be used. The decimal precision is added to the range in the template. For example, <code>%[[0.0:999.0%.2f]]%</code> specifies a floating point range between 0.00 and 999.00 with 2 decimal places after the period. The total field width (total digits) can be specified with <code>%[[0.0:999.0%6.2f]]%</code> for example.</p>
+<p>The precision of a "limitless" floating point and double precision floating point numeric precision is specified with <code>%[[FLOAT%.2e]]%</code> and <code>%[[DOUBLE%.2e]]%</code> respectively. This produces numeric values within the range of the specified type formatted according to the specified printf-format string.</p>
 <h3>Primitive XSD type templates</h3>
 <p><code>%[[BASE64]]%</code> and length-restricted <code>%[[BASE64[N:M]]]%</code> specify xsd:base64Binary XSD values. The length restriction <code>N:M</code> specifies the range of base64-encoded bytes.</p>
 <p><code>%[[BOOL]]%</code> specifies xsd:boolean XSD values.</p>
@@ -315,10 +317,10 @@ Copyright                                                           </h1>
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Oct 26 2017 13:57:48 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue Feb 13 2018 16:37:47 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

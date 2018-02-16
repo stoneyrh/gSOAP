@@ -161,6 +161,7 @@ Node       tmp, c;
   Storage sto;
   Node    rec;
   Entry   *e;
+  IR      ir;
 }
 
 /* pragmas */
@@ -198,7 +199,7 @@ Node       tmp, c;
 %type   <sym> id sc arg name
 %type   <s> tag patt
 %type   <i> nullptr utype
-%type   <r> cdbl
+%type   <ir> value
 /* expressions and statements */
 %type   <rec> expr cexp oexp obex aexp abex rexp lexp pexp brinit init spec tspec ptrs array arrayck texpf texp qexp occurs bounds min minmax max
 /* terminals */
@@ -376,27 +377,31 @@ dclr    : ptrs ID arrayck tag bounds brinit
                               {
                                 p->info.typ->hasmin = $5.hasmin;
                                 p->info.typ->incmin = $5.incmin;
-                                p->info.typ->min = $5.min;
+                                p->info.typ->imin = $5.imin;
+                                p->info.typ->rmin = $5.rmin;
                                 p->info.typ->synonym = NULL;
                               }
                               else
                               {
                                 p->info.typ->hasmin = $3.typ->hasmin;
                                 p->info.typ->incmin = $3.typ->incmin;
-                                p->info.typ->min = $3.typ->min;
+                                p->info.typ->imin = $3.typ->imin;
+                                p->info.typ->rmin = $3.typ->rmin;
                               }
                               if ($5.hasmax)
                               {
                                 p->info.typ->hasmax = $5.hasmax;
                                 p->info.typ->incmax = $5.incmax;
-                                p->info.typ->max = $5.max;
+                                p->info.typ->imax = $5.imax;
+                                p->info.typ->rmax = $5.rmax;
                                 p->info.typ->synonym = NULL;
                               }
                               else
                               {
                                 p->info.typ->hasmax = $3.typ->hasmax;
                                 p->info.typ->incmax = $3.typ->incmax;
-                                p->info.typ->max = $3.typ->max;
+                                p->info.typ->imax = $3.typ->imax;
+                                p->info.typ->rmax = $3.typ->rmax;
                               }
                               if (p->info.typ->property == 1)
                                 p->info.typ->property = $3.typ->property;
@@ -451,10 +456,10 @@ dclr    : ptrs ID arrayck tag bounds brinit
                                       $6.typ->type == Tenumsc)
                                   {
                                     sp->val = p->info.val.i = $6.val.i;
-                                    if ((t->hasmin && t->min > (double)$6.val.i) ||
-                                        (t->hasmin && !t->incmin && t->min == (double)$6.val.i) ||
-                                        (t->hasmax && t->max < (double)$6.val.i) ||
-                                        (t->hasmax && !t->incmax && t->max == (double)$6.val.i))
+                                    if ((t->hasmin && t->imin > $6.val.i) ||
+                                        (t->hasmin && !t->incmin && t->imin == $6.val.i) ||
+                                        (t->hasmax && t->imax < $6.val.i) ||
+                                        (t->hasmax && !t->incmax && t->imax == $6.val.i))
                                       semerror("initialization constant outside value range");
                                   }
                                   else
@@ -472,19 +477,19 @@ dclr    : ptrs ID arrayck tag bounds brinit
                                       $6.typ->type == Tldouble)
                                   {
                                     p->info.val.r = $6.val.r;
-                                    if ((t->hasmin && t->min > $6.val.r) ||
-                                        (t->hasmin && !t->incmin && t->min == $6.val.r) ||
-                                        (t->hasmax && t->max < $6.val.r) ||
-                                        (t->hasmax && !t->incmax && t->max == $6.val.r))
+                                    if ((t->hasmin && t->rmin > $6.val.r) ||
+                                        (t->hasmin && !t->incmin && t->rmin == $6.val.r) ||
+                                        (t->hasmax && t->rmax < $6.val.r) ||
+                                        (t->hasmax && !t->incmax && t->rmax == $6.val.r))
                                       semerror("initialization constant outside value range");
                                   }
                                   else if ($6.typ->type == Tint)
                                   {
                                     p->info.val.r = (double)$6.val.i;
-                                    if ((t->hasmin && t->min > (double)$6.val.i) ||
-                                        (t->hasmin && !t->incmin && t->min == (double)$6.val.i) ||
-                                        (t->hasmax && t->max < (double)$6.val.i) ||
-                                        (t->hasmax && !t->incmax && t->max == (double)$6.val.i))
+                                    if ((t->hasmin && t->imin > $6.val.i) ||
+                                        (t->hasmin && !t->incmin && t->imin == $6.val.i) ||
+                                        (t->hasmax && t->imax < $6.val.i) ||
+                                        (t->hasmax && !t->incmax && t->imax == $6.val.i))
                                       semerror("initialization constant outside value range");
                                   }
                                   else
@@ -815,10 +820,10 @@ farg    : tspec ptrs arg arrayck tag occurs init
                                     $7.typ->type == Tenumsc)
                                 {
                                   sp->val = p->info.val.i = $7.val.i;
-                                  if ((t->hasmin && t->min > (double)$7.val.i) ||
-                                      (t->hasmin && !t->incmin && t->min == (double)$7.val.i) ||
-                                      (t->hasmax && t->max < (double)$7.val.i) ||
-                                      (t->hasmax && !t->incmax && t->max == (double)$7.val.i))
+                                  if ((t->hasmin && t->imin > $7.val.i) ||
+                                      (t->hasmin && !t->incmin && t->imin == $7.val.i) ||
+                                      (t->hasmax && t->imax < $7.val.i) ||
+                                      (t->hasmax && !t->incmax && t->imax == $7.val.i))
                                     semerror("initialization constant outside value range");
                                 }
                                 else
@@ -836,19 +841,19 @@ farg    : tspec ptrs arg arrayck tag occurs init
                                     $7.typ->type == Tldouble)
                                 {
                                   p->info.val.r = $7.val.r;
-                                  if ((t->hasmin && t->min > $7.val.r) ||
-                                      (t->hasmin && !t->incmin && t->min == $7.val.r) ||
-                                      (t->hasmax && t->max < $7.val.r) ||
-                                      (t->hasmax && !t->incmax && t->max == $7.val.r))
+                                  if ((t->hasmin && t->rmin > $7.val.r) ||
+                                      (t->hasmin && !t->incmin && t->rmin == $7.val.r) ||
+                                      (t->hasmax && t->rmax < $7.val.r) ||
+                                      (t->hasmax && !t->incmax && t->rmax == $7.val.r))
                                     semerror("initialization constant outside value range");
                                 }
                                 else if ($7.typ->type == Tint)
                                 {
                                   p->info.val.r = (double)$7.val.i;
-                                  if ((t->hasmin && t->min > (double)$7.val.i) ||
-                                      (t->hasmin && !t->incmin && t->min == (double)$7.val.i) ||
-                                      (t->hasmax && t->max < (double)$7.val.i) ||
-                                      (t->hasmax && !t->incmax && t->max == (double)$7.val.i))
+                                  if ((t->hasmin && t->imin > $7.val.i) ||
+                                      (t->hasmin && !t->incmin && t->imin == $7.val.i) ||
+                                      (t->hasmax && t->imax < $7.val.i) ||
+                                      (t->hasmax && !t->incmax && t->imax == $7.val.i))
                                     semerror("initialization constant outside value range");
                                 }
                                 else
@@ -2047,8 +2052,10 @@ occurs  : /* empty */   {
                           $$.maxOccurs = 1;
                           $$.hasmin = False;
                           $$.hasmax = False;
-                          $$.min = 0.0;
-                          $$.max = 0.0;
+                          $$.imin = 0;
+                          $$.imax = 0;
+                          $$.rmin = 0.0;
+                          $$.rmax = 0.0;
                           $$.incmin = True;
                           $$.incmax = True;
                           $$.pattern = NULL;
@@ -2060,8 +2067,10 @@ occurs  : /* empty */   {
                             $$.minOccurs = -1;
                           $$.hasmin = False;
                           $$.hasmax = False;
-                          $$.min = 0.0;
-                          $$.max = 0.0;
+                          $$.imin = 0;
+                          $$.imax = 0;
+                          $$.rmin = 0.0;
+                          $$.rmax = 0.0;
                           $$.incmin = True;
                           $$.incmax = True;
                           $$.pattern = NULL;
@@ -2073,8 +2082,10 @@ occurs  : /* empty */   {
                             $$.minOccurs = -1;
                           $$.hasmin = False;
                           $$.hasmax = False;
-                          $$.min = 0.0;
-                          $$.max = 0.0;
+                          $$.imin = 0;
+                          $$.imax = 0;
+                          $$.rmin = 0.0;
+                          $$.rmax = 0.0;
                           $$.incmin = True;
                           $$.incmax = True;
                           $$.pattern = NULL;
@@ -2094,8 +2105,10 @@ occurs  : /* empty */   {
                           }
                           $$.hasmin = False;
                           $$.hasmax = False;
-                          $$.min = 0.0;
-                          $$.max = 0.0;
+                          $$.imin = 0;
+                          $$.imax = 0;
+                          $$.rmin = 0.0;
+                          $$.rmax = 0.0;
                           $$.incmin = True;
                           $$.incmax = True;
                           $$.pattern = NULL;
@@ -2110,8 +2123,10 @@ occurs  : /* empty */   {
                           }
                           $$.hasmin = False;
                           $$.hasmax = False;
-                          $$.min = 0.0;
-                          $$.max = 0.0;
+                          $$.imin = 0;
+                          $$.imax = 0;
+                          $$.rmin = 0.0;
+                          $$.rmax = 0.0;
                           $$.incmin = True;
                           $$.incmax = True;
                           $$.pattern = NULL;
@@ -2123,36 +2138,40 @@ bounds  : nullptr patt
                           $$.hasmax = False;
                           $$.minOccurs = -1;
                           $$.maxOccurs = 1;
-                          $$.min = 0.0;
-                          $$.max = 0.0;
+                          $$.imin = 0;
+                          $$.imax = 0;
+                          $$.rmin = 0.0;
+                          $$.rmax = 0.0;
                           $$.incmin = True;
                           $$.incmax = True;
                           $$.nillable = $1;
                           $$.pattern = $2;
                         }
-        | nullptr patt cdbl min
+        | nullptr patt value min
                         {
                           $$.hasmin = True;
                           $$.hasmax = False;
                           $$.incmin = $4.incmin;
                           $$.incmax = $4.incmax;
-                          $$.minOccurs = (LONG64)$3;
+                          $$.minOccurs = $3.i;
                           $$.maxOccurs = 1;
                           if ($$.minOccurs < 0)
                             $$.minOccurs = -1;
-                          $$.min = $3;
-                          $$.max = 0.0;
+                          $$.imin = $3.i;
+                          $$.imax = 0;
+                          $$.rmin = $3.r;
+                          $$.rmax = 0.0;
                           $$.nillable = $1;
                           $$.pattern = $2;
                         }
-        | nullptr patt cdbl minmax cdbl
+        | nullptr patt value minmax value
                         {
                           $$.hasmin = True;
                           $$.hasmax = True;
                           $$.incmin = $4.incmin;
                           $$.incmax = $4.incmax;
-                          $$.minOccurs = (LONG64)$3;
-                          $$.maxOccurs = (LONG64)$5;
+                          $$.minOccurs = $3.i;
+                          $$.maxOccurs = $5.i;
                           if ($$.minOccurs < 0 || $$.maxOccurs < 0)
                           {
                             $$.minOccurs = -1;
@@ -2163,25 +2182,29 @@ bounds  : nullptr patt
                             $$.minOccurs = -1;
                             $$.maxOccurs = 1;
                           }
-                          $$.min = $3;
-                          $$.max = $5;
+                          $$.imin = $3.i;
+                          $$.imax = $5.i;
+                          $$.rmin = $3.r;
+                          $$.rmax = $5.r;
                           $$.nillable = $1;
                           $$.pattern = $2;
                         }
-        | nullptr patt max cdbl {
+        | nullptr patt max value {
                           $$.hasmin = False;
                           $$.hasmax = True;
                           $$.incmin = $3.incmin;
                           $$.incmax = $3.incmax;
                           $$.minOccurs = -1;
-                          $$.maxOccurs = (LONG64)$4;
+                          $$.maxOccurs = $4.i;
                           if ($$.maxOccurs < 0)
                           {
                             $$.minOccurs = -1;
                             $$.maxOccurs = 1;
                           }
-                          $$.min = 0.0;
-                          $$.max = $4;
+                          $$.imin = 0;
+                          $$.imax = $4.i;
+                          $$.rmin = 0.0;
+                          $$.rmax = $4.r;
                           $$.nillable = $1;
                           $$.pattern = $2;
                         }
@@ -2192,11 +2215,11 @@ nullptr : /* empty */   { $$ = zflag >= 1 && zflag <= 3; /* False, unless versio
 patt    : /* empty */   { $$ = NULL; }
         | STR           { $$ = $1; }
         ;
-cdbl    : DBL           { $$ = $1; }
-        | LNG           { $$ = (double)$1; }
-        | CHR           { $$ = (double)$1; }
-        | '+' cdbl      { $$ = +$2; }
-        | '-' cdbl      { $$ = -$2; }
+value   : DBL           { $$.i = $$.r = $1; }
+        | LNG           { $$.r = $$.i = $1; }
+        | CHR           { $$.r = $$.i = $1; }
+        | '+' value     { $$.i = +$2.i; $$.r = +$$.r; }
+        | '-' value     { $$.i = -$2.i; $$.r = -$$.r; }
         ;
 min     : /* empty */   { $$.incmin = $$.incmax = True; }
         | ':'           { $$.incmin = $$.incmax = True; }

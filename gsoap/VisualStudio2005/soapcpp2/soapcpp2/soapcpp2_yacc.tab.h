@@ -247,9 +247,10 @@ typedef union YYSTYPE
   Storage sto;
   Node    rec;
   Entry   *e;
+  IR      ir;
 }
 /* Line 1529 of yacc.c.  */
-#line 253 "soapcpp2_yacc.tab.h"
+#line 254 "soapcpp2_yacc.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

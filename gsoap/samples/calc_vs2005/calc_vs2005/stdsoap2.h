@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.62
+        stdsoap2.h 2.8.63
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20862
+#define GSOAP_VERSION 20863
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1876,16 +1876,10 @@ typedef soap_int32 soap_mode;
 #endif
 
 #ifndef SOAP_NEW_UNMANAGED              /* use C++ unmanaged new operator for soap_new() and soap::copy() */
-# if defined(__BORLANDC__) && !defined(__clang__)
-#  define SOAP_NEW_UNMANAGED(soap) new SOAP_NOTHROW (soap)
-# elif (defined(__GNUC__) && (__GNUC__ <= 2)) || defined(__clang__) || defined(_AIX) || defined(AIX)
-#  define SOAP_NEW_UNMANAGED(soap) new SOAP_NOTHROW soap
-# else
-#  define SOAP_NEW_UNMANAGED(soap) new SOAP_NOTHROW (soap)
-# endif
+# define SOAP_NEW_UNMANAGED(soap) new SOAP_NOTHROW soap
 #endif
 
-#ifndef SOA_DELETE_UNMANAGED            /* use C++ unmanaged delete operator for soap_free() */
+#ifndef SOAP_DELETE_UNMANAGED           /* use C++ unmanaged delete operator for soap_free() */
 # define SOAP_DELETE_UNMANAGED(soap) delete soap;
 #endif
 

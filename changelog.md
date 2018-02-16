@@ -1307,5 +1307,11 @@ Version 2.8.62 (2/10/2018) {#latest}
 - Improved soapcpp2 options `-g` and `-y`, may be used together to generate sample XML messages.
 - Fixed Borland C++ compilation issue.
 
+Version 2.8.63 (2/14/2018) {#latest}
+---
+
+- Improved Test Messenger, easy randomized testing of Web Services (samples/testmsgr).
+- Other minor improvements.
+
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

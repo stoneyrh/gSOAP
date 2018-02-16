@@ -672,8 +672,10 @@ mktype(Type type, void *ref, int width)
   p->hasmax = False;
   p->incmin = True;
   p->incmax = True;
-  p->min = 0.0;
-  p->max = 0.0;
+  p->imin = 0;
+  p->imax = 0;
+  p->rmin = 0.0;
+  p->rmax = 0.0;
   p->property = 1;
   p->pattern = NULL;
   p->num = typeNO++;
@@ -714,8 +716,10 @@ mksymtype(Tnode *typ, Symbol *sym)
   p->hasmax = False;
   p->incmin = True;
   p->incmax = True;
-  p->min = 0.0;
-  p->max = 0.0;
+  p->imin = 0;
+  p->imax = 0;
+  p->rmin = 0.0;
+  p->rmax = 0.0;
   property_pattern(p, sym->name);
   p->num = typeNO++;
   Tptr[typ->type] = p;
@@ -755,8 +759,10 @@ mktemplate(Tnode *typ, Symbol *id)
   p->hasmax = False;
   p->incmin = True;
   p->incmax = True;
-  p->min = 0.0;
-  p->max = 0.0;
+  p->imin = 0;
+  p->imax = 0;
+  p->rmin = 0.0;
+  p->rmax = 0.0;
   p->property = 1;
   p->pattern = NULL;
   p->num = typeNO++;
@@ -2958,42 +2964,42 @@ generate_header(Table *t)
               if (p->info.typ->type >= Tfloat && p->info.typ->type <= Tldouble)
               {
                 if (p->info.typ->incmin)
-                  fprintf(freport, "\n- greater than or equal to %lG\n", p->info.typ->min);
+                  fprintf(freport, "\n- greater than or equal to %.16lG\n", p->info.typ->rmin);
                 else
-                  fprintf(freport, "\n- greater than %lG\n", p->info.typ->min);
+                  fprintf(freport, "\n- greater than %.16lG\n", p->info.typ->rmin);
               }
               else if (p->info.typ->type >= Tchar && p->info.typ->type <= Tullong)
               {
                 if (p->info.typ->incmin)
-                  fprintf(freport, "\n- greater than or equal to " SOAP_LONG_FORMAT "\n", (LONG64)p->info.typ->min);
+                  fprintf(freport, "\n- greater than or equal to " SOAP_LONG_FORMAT "\n", p->info.typ->imin);
                 else
-                  fprintf(freport, "\n- greater than " SOAP_LONG_FORMAT "\n", (LONG64)p->info.typ->min);
+                  fprintf(freport, "\n- greater than " SOAP_LONG_FORMAT "\n", p->info.typ->imin);
               }
-              else if (p->info.typ->hasmax && p->info.typ->max >= 0 && p->info.typ->incmin && p->info.typ->incmax && p->info.typ->min == p->info.typ->max)
-                fprintf(freport, "\n- equal to " SOAP_LONG_FORMAT " characters in length\n", (LONG64)p->info.typ->min);
+              else if (p->info.typ->hasmax && p->info.typ->imax >= 0 && p->info.typ->incmin && p->info.typ->incmax && p->info.typ->imin == p->info.typ->imax)
+                fprintf(freport, "\n- equal to " SOAP_LONG_FORMAT " characters in length\n", p->info.typ->imin);
               else
-                fprintf(freport, "\n- longer than or equal to " SOAP_LONG_FORMAT " characters in length\n", (LONG64)p->info.typ->min);
+                fprintf(freport, "\n- longer than or equal to " SOAP_LONG_FORMAT " characters in length\n", p->info.typ->imin);
             }
             if (p->info.typ->hasmax)
             {
               if (p->info.typ->type >= Tfloat && p->info.typ->type <= Tldouble)
               {
                 if (p->info.typ->incmax)
-                  fprintf(freport, "\n- less than or equal to %lG\n", p->info.typ->max);
+                  fprintf(freport, "\n- less than or equal to %.16lG\n", p->info.typ->rmax);
                 else
-                  fprintf(freport, "\n- less than %lG\n", p->info.typ->max);
+                  fprintf(freport, "\n- less than %.16lG\n", p->info.typ->rmax);
               }
               else if (p->info.typ->type >= Tchar && p->info.typ->type <= Tullong)
               {
                 if (p->info.typ->incmax)
-                  fprintf(freport, "\n- less than or equal to " SOAP_LONG_FORMAT "\n", (LONG64)p->info.typ->max);
+                  fprintf(freport, "\n- less than or equal to " SOAP_LONG_FORMAT "\n", p->info.typ->imax);
                 else
-                  fprintf(freport, "\n- less than " SOAP_LONG_FORMAT "\n", (LONG64)p->info.typ->max);
+                  fprintf(freport, "\n- less than " SOAP_LONG_FORMAT "\n", p->info.typ->imax);
               }
-              else if (p->info.typ->hasmax && p->info.typ->max >= 0 && p->info.typ->incmin && p->info.typ->incmax && p->info.typ->min == p->info.typ->max)
+              else if (p->info.typ->hasmax && p->info.typ->imax >= 0 && p->info.typ->incmin && p->info.typ->incmax && p->info.typ->imin == p->info.typ->imax)
                 ;
               else
-                fprintf(freport, "\n- shorter than or equal to " SOAP_LONG_FORMAT " characters in length\n", (LONG64)p->info.typ->min);
+                fprintf(freport, "\n- shorter than or equal to " SOAP_LONG_FORMAT " characters in length\n", p->info.typ->imin);
             }
           }
           fprintf(freport, "\n\n");
@@ -4436,7 +4442,7 @@ default_value(Entry *e)
       case Tfloat:
       case Tdouble:
       case Tldouble:
-        sprintf(buf, "%g", e->info.val.r);
+        sprintf(buf, "%.17lG", e->info.val.r);
         break;
       case Ttime:
         break; /* should get value? */
@@ -4476,24 +4482,24 @@ default_value(Entry *e)
       case Tulong:
       case Tullong:
       case Tsize:
-        if (p->hasmin && p->min > 0)
-          sprintf(buf, "%d", (int)p->min + (p->incmin == False));
-        else if (p->hasmax && p->max < 0)
-          sprintf(buf, "%d", (int)p->max - (p->incmax == False));
+        if (p->hasmin && p->imin > 0)
+          sprintf(buf, SOAP_LONG_FORMAT, p->imin + (p->incmin == False));
+        else if (p->hasmax && p->imax < 0)
+          sprintf(buf, SOAP_LONG_FORMAT, p->imax - (p->incmax == False));
         else
           strcpy(buf, "0");
         break;
       case Tfloat:
       case Tdouble:
       case Tldouble:
-        if (p->hasmin && p->min > 0)
-          sprintf(buf, "%g", p->min * (1 + (p->incmin == False)/1000));
-        else if (p->hasmax && p->max > 0)
-          sprintf(buf, "%g", p->max * (1 - (p->incmax == False)/1000));
-        else if (p->hasmin && p->min < 0)
-          sprintf(buf, "%g", p->min * (1 - (p->incmin == False)/1000));
-        else if (p->hasmax && p->max < 0)
-          sprintf(buf, "%g", p->max * (1 + (p->incmax == False)/1000));
+        if (p->hasmin && p->rmin > 0)
+          sprintf(buf, "%.17lG", p->rmin * (1 + (p->incmin == False)/1000));
+        else if (p->hasmax && p->rmax > 0)
+          sprintf(buf, "%.17lG", p->rmax * (1 - (p->incmax == False)/1000));
+        else if (p->hasmin && p->rmin < 0)
+          sprintf(buf, "%.17lG", p->rmin * (1 - (p->incmin == False)/1000));
+        else if (p->hasmax && p->rmax < 0)
+          sprintf(buf, "%.17lG", p->rmax * (1 + (p->incmax == False)/1000));
         else
           strcpy(buf, "0");
         break;
@@ -4547,7 +4553,7 @@ set_default_value(Entry *e)
       case Tfloat:
       case Tdouble:
       case Tldouble:
-        sprintf(buf, " %s=\"%g\"", a, e->info.val.r);
+        sprintf(buf, " %s=\"%.17lG\"", a, e->info.val.r);
         break;
       case Ttime:
         break; /* should get value? */
@@ -4739,16 +4745,16 @@ gen_schema(FILE *fd, Table *t, const char *ns1, const char *ns, int all, const c
               if (p->info.typ->type >= Tfloat && p->info.typ->type <= Tldouble)
               {
                 if (p->info.typ->incmin)
-                  fprintf(fd, "        <minInclusive value=\"%lG\"/>\n", p->info.typ->min);
+                  fprintf(fd, "        <minInclusive value=\"%.16lG\"/>\n", p->info.typ->rmin);
                 else
-                  fprintf(fd, "        <minExclusive value=\"%lG\"/>\n", p->info.typ->min);
+                  fprintf(fd, "        <minExclusive value=\"%.16lG\"/>\n", p->info.typ->rmin);
               }
               else
               {
                 if (p->info.typ->incmin)
-                  fprintf(fd, "        <minInclusive value=\"" SOAP_LONG_FORMAT "\"/>\n", (LONG64)p->info.typ->min);
+                  fprintf(fd, "        <minInclusive value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->imin);
                 else
-                  fprintf(fd, "        <minExclusive value=\"" SOAP_LONG_FORMAT "\"/>\n", (LONG64)p->info.typ->min);
+                  fprintf(fd, "        <minExclusive value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->imin);
               }
             }
             if (!is_synonym(p->info.typ) && p->info.typ->hasmax)
@@ -4756,38 +4762,38 @@ gen_schema(FILE *fd, Table *t, const char *ns1, const char *ns, int all, const c
               if (p->info.typ->type >= Tfloat && p->info.typ->type <= Tldouble)
               {
                 if (p->info.typ->incmax)
-                  fprintf(fd, "        <maxInclusive value=\"%lG\"/>\n", p->info.typ->max);
+                  fprintf(fd, "        <maxInclusive value=\"%.16lG\"/>\n", p->info.typ->rmax);
                 else
-                  fprintf(fd, "        <maxExclusive value=\"%lG\"/>\n", p->info.typ->max);
+                  fprintf(fd, "        <maxExclusive value=\"%.16lG\"/>\n", p->info.typ->rmax);
               }
               else
               {
                 if (p->info.typ->incmax)
-                  fprintf(fd, "        <maxInclusive value=\"" SOAP_LONG_FORMAT "\"/>\n", (LONG64)p->info.typ->max);
+                  fprintf(fd, "        <maxInclusive value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->imax);
                 else
-                  fprintf(fd, "        <maxExclusive value=\"" SOAP_LONG_FORMAT "\"/>\n", (LONG64)p->info.typ->max);
+                  fprintf(fd, "        <maxExclusive value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->imax);
               }
             }
           }
           else
           {
-            if (!is_synonym(p->info.typ) && p->info.typ->hasmax && p->info.typ->max >= 0 && p->info.typ->incmin && p->info.typ->incmax && p->info.typ->min == p->info.typ->max)
-              fprintf(fd, "        <length value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->max);
+            if (!is_synonym(p->info.typ) && p->info.typ->hasmax && p->info.typ->imax >= 0 && p->info.typ->incmin && p->info.typ->incmax && p->info.typ->imin == p->info.typ->imax)
+              fprintf(fd, "        <length value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->imax);
             else
             {
-              if (!is_synonym(p->info.typ) && p->info.typ->hasmin && p->info.typ->min >= 0)
+              if (!is_synonym(p->info.typ) && p->info.typ->hasmin && p->info.typ->imin >= 0)
               {
                 if (p->info.typ->incmin)
-                  fprintf(fd, "        <minLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->min);
+                  fprintf(fd, "        <minLength value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->imin);
                 else
-                  fprintf(fd, "        <minLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->min + 1);
+                  fprintf(fd, "        <minLength value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->imin + 1);
               }
-              if (!is_synonym(p->info.typ) && p->info.typ->hasmax && p->info.typ->max >= 0)
+              if (!is_synonym(p->info.typ) && p->info.typ->hasmax && p->info.typ->imax >= 0)
               {
                 if (p->info.typ->incmax)
-                  fprintf(fd, "        <maxLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->max);
+                  fprintf(fd, "        <maxLength value=\"" SOAP_LONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->imax);
                 else
-                  fprintf(fd, "        <maxLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->max - 1);
+                  fprintf(fd, "        <maxLength value=\"" SOAP_LONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->imax - 1);
               }
             }
           }
@@ -4798,19 +4804,19 @@ gen_schema(FILE *fd, Table *t, const char *ns1, const char *ns, int all, const c
           fprintf(fd, "    <simpleType name=\"%s\">", ns_remove(p->sym->name));
           gen_type_documentation(fd, p, ns);
           fprintf(fd, "      <restriction base=\"%s\">\n", base_type(p->info.typ, ns1));
-          if (!is_synonym(p->info.typ) && p->info.typ->hasmin && p->info.typ->min >= 0)
+          if (!is_synonym(p->info.typ) && p->info.typ->hasmin && p->info.typ->imin >= 0)
           {
             if (p->info.typ->incmin)
-              fprintf(fd, "        <minLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->min);
+              fprintf(fd, "        <minLength value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->imin);
             else
-              fprintf(fd, "        <minLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->min + 1);
+              fprintf(fd, "        <minLength value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->imin + 1);
           }
-          if (!is_synonym(p->info.typ) && p->info.typ->hasmax && p->info.typ->max >= 0)
+          if (!is_synonym(p->info.typ) && p->info.typ->hasmax && p->info.typ->imax >= 0)
           {
             if (p->info.typ->incmax)
-              fprintf(fd, "        <maxLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->max);
+              fprintf(fd, "        <maxLength value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->imax);
             else
-              fprintf(fd, "        <maxLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)p->info.typ->max - 1);
+              fprintf(fd, "        <maxLength value=\"" SOAP_LONG_FORMAT "\"/>\n", p->info.typ->imax - 1);
           }
           else
             fprintf(fd, "        <maxLength value=\"%d\"/>\n", get_dimension(p->info.typ) - 1);
@@ -5004,23 +5010,23 @@ gen_schema_type(FILE *fd, Table *t, Entry *p, const char *ns1, const char *ns, i
           fprintf(fd, "      <restriction base=\"xsd:hexBinary\">\n");
         else
           fprintf(fd, "      <restriction base=\"xsd:base64Binary\">\n");
-        if (typ->hasmax && typ->max >= 0 && typ->incmin && typ->incmax && typ->min == typ->max)
-          fprintf(fd, "        <length value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)typ->min);
+        if (typ->hasmax && typ->imax >= 0 && typ->incmin && typ->incmax && typ->imin == typ->imax)
+          fprintf(fd, "        <length value=\"" SOAP_LONG_FORMAT "\"/>\n", typ->imin);
         else
         {
-          if (typ->hasmin && typ->min >= 0)
+          if (typ->hasmin && typ->imin >= 0)
           {
             if (typ->incmin)
-              fprintf(fd, "        <minLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)typ->min);
+              fprintf(fd, "        <minLength value=\"" SOAP_LONG_FORMAT "\"/>\n", typ->imin);
             else
-              fprintf(fd, "        <minLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)typ->min + 1);
+              fprintf(fd, "        <minLength value=\"" SOAP_LONG_FORMAT "\"/>\n", typ->imin + 1);
           }
-          if (typ->hasmax && typ->max >= 0)
+          if (typ->hasmax && typ->imax >= 0)
           {
             if (typ->incmax)
-              fprintf(fd, "        <maxLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)typ->max);
+              fprintf(fd, "        <maxLength value=\"" SOAP_LONG_FORMAT "\"/>\n", typ->imax);
             else
-              fprintf(fd, "        <maxLength value=\"" SOAP_ULONG_FORMAT "\"/>\n", (ULONG64)typ->max - 1);
+              fprintf(fd, "        <maxLength value=\"" SOAP_LONG_FORMAT "\"/>\n", typ->imax - 1);
           }
         }
         fprintf(fd, "      </restriction>\n    </simpleType>\n");
@@ -8642,7 +8648,7 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
           case Tdouble:
           case Tldouble:
             if (p->info.hasval || p->info.ptrval)
-              fprintf(fd, "%g", p->info.val.r);
+              fprintf(fd, "%.16lG", p->info.val.r);
             else
               gen_val(fd, n+1, p->info.typ, nse, nsa, encoding, opt);
             break;
@@ -8699,7 +8705,7 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
                   case Tfloat:
                   case Tdouble:
                   case Tldouble:
-                    fprintf(fd, "%g", p->info.val.r);
+                    fprintf(fd, "%.16lG", p->info.val.r);
                     break;
                   case Tenum:
                   case Tenumsc:
@@ -8860,7 +8866,7 @@ gen_atts(FILE *fd, Table *t, const char *nse, const char *nsa, const char *encod
             case Tdouble:
             case Tldouble:
               if (q->info.hasval || q->info.ptrval)
-                fprintf(fd, "%g", q->info.val.r);
+                fprintf(fd, "%.16lG", q->info.val.r);
               else
                 gen_val(fd, 0, p, nse, nsa, encoding, q->info.minOccurs == 0);
               break;
@@ -8988,11 +8994,11 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           if (opt)
             fprintf(fd, "???");
           if (p->hasmin && p->hasmax)
-            fprintf(fd, "%%[[HEX[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[HEX[%ld:%ld]]]%%", minlen(p), maxlen(p));
           else if (p->hasmin)
-            fprintf(fd, "%%[[HEX[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+            fprintf(fd, "%%[[HEX[%ld:2147483647]]]%%", minlen(p));
           else if (p->hasmax)
-            fprintf(fd, "%%[[HEX[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[HEX[0:%ld]]]%%", maxlen(p));
           else
             fprintf(fd, "%%[[HEX]]%%");
         }
@@ -9004,11 +9010,11 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           if (opt)
             fprintf(fd, "???");
           if (p->hasmin && p->hasmax)
-            fprintf(fd, "%%[[BASE64[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[BASE64[%ld:%ld]]]%%", minlen(p), maxlen(p));
           else if (p->hasmin)
-            fprintf(fd, "%%[[BASE64[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+            fprintf(fd, "%%[[BASE64[%ld:2147483647]]]%%", minlen(p));
           else if (p->hasmax)
-            fprintf(fd, "%%[[BASE64[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[BASE64[0:%ld]]]%%", maxlen(p));
           else
             fprintf(fd, "%%[[BASE64]]%%");
         }
@@ -9071,18 +9077,18 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         if (opt)
           fprintf(fd, "???");
         if (p->hasmin && p->hasmax)
-          fprintf(fd, "%%[[ENTITY[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[ENTITY[%ld:%ld]]]%%", minlen(p), maxlen(p));
         else if (p->hasmin)
-          fprintf(fd, "%%[[ENTITY[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+          fprintf(fd, "%%[[ENTITY[%ld:2147483647]]]%%", minlen(p));
         else if (p->hasmax)
-          fprintf(fd, "%%[[ENTITY[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[ENTITY[0:%ld]]]%%", maxlen(p));
         else
           fprintf(fd, "%%[[ENTITY]]%%");
       }
       else
       {
-        if (p->min > 0 && p->min < 100000)
-          for (i = 0; i < (int)p->min; i++)
+        if (p->imin > 0 && p->imin < 100000)
+          for (i = 0; i < (int)p->imin; i++)
             fprintf(fd, "X");
       }
       return;
@@ -9094,17 +9100,17 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         if (opt)
           fprintf(fd, "???");
         if (p->hasmin && p->hasmax)
-          fprintf(fd, "%%[[ID[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[ID[%ld:%ld]]]%%", minlen(p), maxlen(p));
         else if (p->hasmin)
-          fprintf(fd, "%%[[ID[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+          fprintf(fd, "%%[[ID[%ld:2147483647]]]%%", minlen(p));
         else if (p->hasmax)
-          fprintf(fd, "%%[[ID[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[ID[0:%ld]]]%%", maxlen(p));
         else
           fprintf(fd, "%%[[ID]]%%");
       }
-      else if (p->min > 0 && p->min < 100000)
+      else if (p->imin > 0 && p->imin < 100000)
       {
-        for (i = 0; i < (int)p->min; i++)
+        for (i = 0; i < (int)p->imin; i++)
           fprintf(fd, "X");
       }
       else
@@ -9120,17 +9126,17 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         if (opt)
           fprintf(fd, "???");
         if (p->hasmin && p->hasmax)
-          fprintf(fd, "%%[[IDREF[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[IDREF[%ld:%ld]]]%%", minlen(p), maxlen(p));
         else if (p->hasmin)
-          fprintf(fd, "%%[[IDREF[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+          fprintf(fd, "%%[[IDREF[%ld:2147483647]]]%%", minlen(p));
         else if (p->hasmax)
-          fprintf(fd, "%%[[IDREF[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[IDREF[0:%ld]]]%%", maxlen(p));
         else
           fprintf(fd, "%%[[IDREF]]%%");
       }
-      else if (p->min > 0 && p->min < 100000)
+      else if (p->imin > 0 && p->imin < 100000)
       {
-        for (i = 0; i < (int)p->min; i++)
+        for (i = 0; i < (int)p->imin; i++)
           fprintf(fd, "X");
       }
       else
@@ -9217,18 +9223,18 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         if (opt)
           fprintf(fd, "???");
         if (p->hasmin && p->hasmax)
-          fprintf(fd, "%%[[LANG[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[LANG[%ld:%ld]]]%%", minlen(p), maxlen(p));
         else if (p->hasmin)
-          fprintf(fd, "%%[[LANG[%ld:2]]]%%", (long)p->min + (p->incmin == False));
+          fprintf(fd, "%%[[LANG[%ld:2]]]%%", minlen(p));
         else if (p->hasmax)
-          fprintf(fd, "%%[[LANG[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[LANG[0:%ld]]]%%", maxlen(p));
         else
           fprintf(fd, "%%[[LANG]]%%");
       }
       else
       {
-        if (p->min > 0 && p->min < 100000)
-          for (i = 0; i < (int)p->min; i++)
+        if (p->imin > 0 && p->imin < 100000)
+          for (i = 0; i < (int)p->imin; i++)
             fprintf(fd, "X");
       }
       return;
@@ -9240,18 +9246,18 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         if (opt)
           fprintf(fd, "???");
         if (p->hasmin && p->hasmax)
-          fprintf(fd, "%%[[NAME[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[NAME[%ld:%ld]]]%%", minlen(p), maxlen(p));
         else if (p->hasmin)
-          fprintf(fd, "%%[[NAME[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+          fprintf(fd, "%%[[NAME[%ld:2147483647]]]%%", minlen(p));
         else if (p->hasmax)
-          fprintf(fd, "%%[[NAME[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[NAME[0:%ld]]]%%", maxlen(p));
         else
           fprintf(fd, "%%[[NAME]]%%");
       }
       else
       {
-        if (p->min > 0 && p->min < 100000)
-          for (i = 0; i < (int)p->min; i++)
+        if (p->imin > 0 && p->imin < 100000)
+          for (i = 0; i < (int)p->imin; i++)
             fprintf(fd, "X");
       }
       return;
@@ -9263,18 +9269,18 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         if (opt)
           fprintf(fd, "???");
         if (p->hasmin && p->hasmax)
-          fprintf(fd, "%%[[NCNAME[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[NCNAME[%ld:%ld]]]%%", minlen(p), maxlen(p));
         else if (p->hasmin)
-          fprintf(fd, "%%[[NCNAME[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+          fprintf(fd, "%%[[NCNAME[%ld:2147483647]]]%%", minlen(p));
         else if (p->hasmax)
-          fprintf(fd, "%%[[NCNAME[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[NCNAME[0:%ld]]]%%", maxlen(p));
         else
           fprintf(fd, "%%[[NCNAME]]%%");
       }
       else
       {
-        if (p->min > 0 && p->min < 100000)
-          for (i = 0; i < (int)p->min; i++)
+        if (p->imin > 0 && p->imin < 100000)
+          for (i = 0; i < (int)p->imin; i++)
             fprintf(fd, "X");
       }
       return;
@@ -9286,18 +9292,18 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         if (opt)
           fprintf(fd, "???");
         if (p->hasmin && p->hasmax)
-          fprintf(fd, "%%[[NMTOKEN[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[NMTOKEN[%ld:%ld]]]%%", minlen(p), maxlen(p));
         else if (p->hasmin)
-          fprintf(fd, "%%[[NMTOKEN[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+          fprintf(fd, "%%[[NMTOKEN[%ld:2147483647]]]%%", minlen(p));
         else if (p->hasmax)
-          fprintf(fd, "%%[[NMTOKEN[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+          fprintf(fd, "%%[[NMTOKEN[0:%ld]]]%%", maxlen(p));
         else
           fprintf(fd, "%%[[NMTOKEN]]%%");
       }
       else
       {
-        if (p->min > 0 && p->min < 100000)
-          for (i = 0; i < (int)p->min; i++)
+        if (p->imin > 0 && p->imin < 100000)
+          for (i = 0; i < (int)p->imin; i++)
             fprintf(fd, "X");
       }
       return;
@@ -9394,20 +9400,20 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           if (opt)
             fprintf(fd, "???");
           if (p->hasmin && p->hasmax)
-            fprintf(fd, "%%[[%d:%d]]%%", (int)p->min + (p->incmin == False), (int)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[%d:%d]]%%", (int)p->imin + (p->incmin == False), (int)p->imax - (p->incmax == False));
           else if (p->hasmin)
-            fprintf(fd, "%%[[%d:127]]%%", (int)p->min + (p->incmin == False));
+            fprintf(fd, "%%[[%d:127]]%%", (int)p->imin + (p->incmin == False));
           else if (p->hasmax)
-            fprintf(fd, "%%[[-128:%d]]%%", (int)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[-128:%d]]%%", (int)p->imax - (p->incmax == False));
           else
             fprintf(fd, "%%[[INT8]]%%");
         }
         else
         {
-          if (p->hasmin && p->min > 0)
-            fprintf(fd, "%d", (int)p->min + (p->incmin == False));
-          else if (p->hasmax && p->max < 0)
-            fprintf(fd, "%d", (int)p->max - (p->incmax == False));
+          if (p->hasmin && p->imin > 0)
+            fprintf(fd, "%d", (int)p->imin + (p->incmin == False));
+          else if (p->hasmax && p->imax < 0)
+            fprintf(fd, "%d", (int)p->imax - (p->incmax == False));
           else
             fprintf(fd, "0");
         }
@@ -9418,20 +9424,20 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           if (opt)
             fprintf(fd, "???");
           if (p->hasmin && p->hasmax)
-            fprintf(fd, "%%[[%d:%d]]%%", (int)p->min + (p->incmin == False), (int)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[%d:%d]]%%", (int)p->imin + (p->incmin == False), (int)p->imax - (p->incmax == False));
           else if (p->hasmin)
-            fprintf(fd, "%%[[%d:32767]]%%", (int)p->min + (p->incmin == False));
+            fprintf(fd, "%%[[%d:32767]]%%", (int)p->imin + (p->incmin == False));
           else if (p->hasmax)
-            fprintf(fd, "%%[[-32768:%d]]%%", (int)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[-32768:%d]]%%", (int)p->imax - (p->incmax == False));
           else
             fprintf(fd, "%%[[INT16]]%%");
         }
         else
         {
-          if (p->hasmin && p->min > 0)
-            fprintf(fd, "%d", (int)p->min + (p->incmin == False));
-          else if (p->hasmax && p->max < 0)
-            fprintf(fd, "%d", (int)p->max - (p->incmax == False));
+          if (p->hasmin && p->imin > 0)
+            fprintf(fd, "%d", (int)p->imin + (p->incmin == False));
+          else if (p->hasmax && p->imax < 0)
+            fprintf(fd, "%d", (int)p->imax - (p->incmax == False));
           else
             fprintf(fd, "0");
         }
@@ -9443,20 +9449,20 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           if (opt)
             fprintf(fd, "???");
           if (p->hasmin && p->hasmax)
-            fprintf(fd, "%%[[%ld:%ld]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[%ld:%ld]]%%", (long)p->imin + (p->incmin == False), (long)p->imax - (p->incmax == False));
           else if (p->hasmin)
-            fprintf(fd, "%%[[%ld:2147483647]]%%", (long)p->min + (p->incmin == False));
+            fprintf(fd, "%%[[%ld:2147483647]]%%", (long)p->imin + (p->incmin == False));
           else if (p->hasmax)
-            fprintf(fd, "%%[[-2147483648:%ld]]%%", (long)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[-2147483648:%ld]]%%", (long)p->imax - (p->incmax == False));
           else
             fprintf(fd, "%%[[INT32]]%%");
         }
         else
         {
-          if (p->hasmin && p->min > 0)
-            fprintf(fd, "%ld", (long)p->min + (p->incmin == False));
-          else if (p->hasmax && p->max < 0)
-            fprintf(fd, "%ld", (long)p->max - (p->incmax == False));
+          if (p->hasmin && p->imin > 0)
+            fprintf(fd, "%ld", (long)p->imin + (p->incmin == False));
+          else if (p->hasmax && p->imax < 0)
+            fprintf(fd, "%ld", (long)p->imax - (p->incmax == False));
           else
             fprintf(fd, "0");
         }
@@ -9467,20 +9473,20 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           if (opt)
             fprintf(fd, "???");
           if (p->hasmin && p->hasmax)
-            fprintf(fd, "%%[[" SOAP_LONG_FORMAT ":" SOAP_LONG_FORMAT "]]%%", (LONG64)p->min + (p->incmin == False), (LONG64)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[" SOAP_LONG_FORMAT ":" SOAP_LONG_FORMAT "]]%%", p->imin + (p->incmin == False), p->imax - (p->incmax == False));
           else if (p->hasmin)
-            fprintf(fd, "%%[[" SOAP_LONG_FORMAT ":9223372036854775807]]%%", (LONG64)p->min + (p->incmin == False));
+            fprintf(fd, "%%[[" SOAP_LONG_FORMAT ":9223372036854775807]]%%", p->imin + (p->incmin == False));
           else if (p->hasmax)
-            fprintf(fd, "%%[[-9223372036854775808:" SOAP_LONG_FORMAT "]]%%", (LONG64)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[-9223372036854775808:" SOAP_LONG_FORMAT "]]%%", p->imax - (p->incmax == False));
           else
             fprintf(fd, "%%[[INT64]]%%");
         }
         else
         {
-          if (p->hasmin && p->min > 0)
-            fprintf(fd, SOAP_LONG_FORMAT, (LONG64)p->min + (p->incmin == False));
-          else if (p->hasmax && p->max < 0)
-            fprintf(fd, SOAP_LONG_FORMAT, (LONG64)p->max - (p->incmax == False));
+          if (p->hasmin && p->imin > 0)
+            fprintf(fd, SOAP_LONG_FORMAT, p->imin + (p->incmin == False));
+          else if (p->hasmax && p->imax < 0)
+            fprintf(fd, SOAP_LONG_FORMAT, p->imax - (p->incmax == False));
           else
             fprintf(fd, "0");
         }
@@ -9491,20 +9497,20 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           if (opt)
             fprintf(fd, "???");
           if (p->hasmin && p->hasmax)
-            fprintf(fd, "%%[[%u:%u]]%%", (unsigned int)p->min + (p->incmin == False), (unsigned int)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[%u:%u]]%%", (unsigned int)p->imin + (p->incmin == False), (unsigned int)p->imax - (p->incmax == False));
           else if (p->hasmin)
-            fprintf(fd, "%%[[%u:255]]%%", (unsigned int)p->min + (p->incmin == False));
+            fprintf(fd, "%%[[%u:255]]%%", (unsigned int)p->imin + (p->incmin == False));
           else if (p->hasmax)
-            fprintf(fd, "%%[[0:%u]]%%", (unsigned int)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[0:%u]]%%", (unsigned int)p->imax - (p->incmax == False));
           else
             fprintf(fd, "%%[[UINT8]]%%");
         }
         else
         {
-          if (p->hasmin && p->min > 0)
-            fprintf(fd, "%u", (unsigned int)p->min + (p->incmin == False));
-          else if (p->hasmax && p->max < 0)
-            fprintf(fd, "%u", (unsigned int)p->max - (p->incmax == False));
+          if (p->hasmin && p->imin > 0)
+            fprintf(fd, "%u", (unsigned int)p->imin + (p->incmin == False));
+          else if (p->hasmax && p->imax < 0)
+            fprintf(fd, "%u", (unsigned int)p->imax - (p->incmax == False));
           else
             fprintf(fd, "0");
         }
@@ -9515,20 +9521,20 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           if (opt)
             fprintf(fd, "???");
           if (p->hasmin && p->hasmax)
-            fprintf(fd, "%%[[%u:%u]]%%", (unsigned int)p->min + (p->incmin == False), (unsigned int)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[%u:%u]]%%", (unsigned int)p->imin + (p->incmin == False), (unsigned int)p->imax - (p->incmax == False));
           else if (p->hasmin)
-            fprintf(fd, "%%[[%u:65535]]%%", (unsigned int)p->min + (p->incmin == False));
+            fprintf(fd, "%%[[%u:65535]]%%", (unsigned int)p->imin + (p->incmin == False));
           else if (p->hasmax)
-            fprintf(fd, "%%[[0:%u]]%%", (unsigned int)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[0:%u]]%%", (unsigned int)p->imax - (p->incmax == False));
           else
             fprintf(fd, "%%[[UINT16]]%%");
         }
         else
         {
-          if (p->hasmin && p->min > 0)
-            fprintf(fd, "%u", (unsigned int)p->min + (p->incmin == False));
-          else if (p->hasmax && p->max < 0)
-            fprintf(fd, "%u", (unsigned int)p->max - (p->incmax == False));
+          if (p->hasmin && p->imin > 0)
+            fprintf(fd, "%u", (unsigned int)p->imin + (p->incmin == False));
+          else if (p->hasmax && p->imax < 0)
+            fprintf(fd, "%u", (unsigned int)p->imax - (p->incmax == False));
           else
             fprintf(fd, "0");
         }
@@ -9540,20 +9546,20 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           if (opt)
             fprintf(fd, "???");
           if (p->hasmin && p->hasmax)
-            fprintf(fd, "%%[[%lu:%lu]]%%", (unsigned long)p->min + (p->incmin == False), (unsigned long)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[%lu:%lu]]%%", (unsigned long)p->imin + (p->incmin == False), (unsigned long)p->imax - (p->incmax == False));
           else if (p->hasmin)
-            fprintf(fd, "%%[[%lu:4294967295]]%%", (unsigned long)p->min + (p->incmin == False));
+            fprintf(fd, "%%[[%lu:4294967295]]%%", (unsigned long)p->imin + (p->incmin == False));
           else if (p->hasmax)
-            fprintf(fd, "%%[[0:%lu]]%%", (unsigned long)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[0:%lu]]%%", (unsigned long)p->imax - (p->incmax == False));
           else
             fprintf(fd, "%%[[UINT32]]%%");
         }
         else
         {
-          if (p->hasmin && p->min > 0)
-            fprintf(fd, "%lu", (unsigned long)p->min + (p->incmin == False));
-          else if (p->hasmax && p->max < 0)
-            fprintf(fd, "%lu", (unsigned long)p->max - (p->incmax == False));
+          if (p->hasmin && p->imin > 0)
+            fprintf(fd, "%lu", (unsigned long)p->imin + (p->incmin == False));
+          else if (p->hasmax && p->imax < 0)
+            fprintf(fd, "%lu", (unsigned long)p->imax - (p->incmax == False));
           else
             fprintf(fd, "0");
         }
@@ -9564,20 +9570,20 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           if (opt)
             fprintf(fd, "???");
           if (p->hasmin && p->hasmax)
-            fprintf(fd, "%%[[" SOAP_ULONG_FORMAT ":" SOAP_ULONG_FORMAT "]]%%", (ULONG64)p->min + (p->incmin == False), (ULONG64)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[" SOAP_ULONG_FORMAT ":" SOAP_ULONG_FORMAT "]]%%", (ULONG64)p->imin + (p->incmin == False), (ULONG64)p->imax - (p->incmax == False));
           else if (p->hasmin)
-            fprintf(fd, "%%[[" SOAP_ULONG_FORMAT ":18446744073709551615]]%%", (ULONG64)p->min + (p->incmin == False));
+            fprintf(fd, "%%[[" SOAP_ULONG_FORMAT ":18446744073709551615]]%%", (ULONG64)p->imin + (p->incmin == False));
           else if (p->hasmax)
-            fprintf(fd, "%%[[0:" SOAP_ULONG_FORMAT "]]%%", (ULONG64)p->max - (p->incmax == False));
+            fprintf(fd, "%%[[0:" SOAP_ULONG_FORMAT "]]%%", (ULONG64)p->imax - (p->incmax == False));
           else
             fprintf(fd, "%%[[UINT64]]%%");
         }
         else
         {
-          if (p->hasmin && p->min > 0)
-            fprintf(fd, SOAP_ULONG_FORMAT, (ULONG64)p->min + (p->incmin == False));
-          else if (p->hasmax && p->max < 0)
-            fprintf(fd, SOAP_ULONG_FORMAT, (ULONG64)p->max - (p->incmax == False));
+          if (p->hasmin && p->imin > 0)
+            fprintf(fd, SOAP_ULONG_FORMAT, (ULONG64)p->imin + (p->incmin == False));
+          else if (p->hasmax && p->imax < 0)
+            fprintf(fd, SOAP_ULONG_FORMAT, (ULONG64)p->imax - (p->incmax == False));
           else
             fprintf(fd, "0");
         }
@@ -9585,37 +9591,38 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
       case Tfloat:
         if (gflag)
         {
+          const char *pattern = p->pattern && *p->pattern == '%' ? p->pattern : "";
           if (opt)
             fprintf(fd, "???");
           if (p->hasmin && p->hasmax && p->incmin && p->incmax)
-            fprintf(fd, "%%[[%E:%E]]%%", p->min, p->max);
+            fprintf(fd, "%%[[%.8E:%.8E%s]]%%", p->rmin, p->rmax, pattern);
           else if (p->hasmin && p->hasmax && p->incmin)
-            fprintf(fd, "%%[[%E:%E)]%%", p->min, p->max);
+            fprintf(fd, "%%[[%.8E:%.8E%s)]%%", p->rmin, p->rmax, pattern);
           else if (p->hasmin && p->hasmax && p->incmax)
-            fprintf(fd, "%%[(%E:%E]]%%", p->min, p->max);
+            fprintf(fd, "%%[(%.8E:%.8E%s]]%%", p->rmin, p->rmax, pattern);
           else if (p->hasmin && p->hasmax)
-            fprintf(fd, "%%[(%E:%E)]%%", p->min, p->max);
+            fprintf(fd, "%%[(%.8E:%.8E%s)]%%", p->rmin, p->rmax, pattern);
           else if (p->hasmin && p->incmin)
-            fprintf(fd, "%%[[%E:%E]]%%", p->min, FLT_MAX);
+            fprintf(fd, "%%[[%.8E:%.8E%s]]%%", p->rmin, FLT_MAX, pattern);
           else if (p->hasmin)
-            fprintf(fd, "%%[(%E:%E]]%%", p->min, FLT_MAX);
+            fprintf(fd, "%%[(%.8E:%.8E%s]]%%", p->rmin, FLT_MAX, pattern);
           else if (p->hasmax && p->incmax)
-            fprintf(fd, "%%[[%E:%E]]%%", -FLT_MAX, p->max);
+            fprintf(fd, "%%[[%.8E:%.8E%s]]%%", -FLT_MAX, p->rmax, pattern);
           else if (p->hasmax)
-            fprintf(fd, "%%[[%E:%E)]%%", -FLT_MAX, p->max);
+            fprintf(fd, "%%[[%.8E:%.8E%s)]%%", -FLT_MAX, p->rmax, pattern);
           else
-            fprintf(fd, "%%[[FLOAT]]%%");
+            fprintf(fd, "%%[[FLOAT%s]]%%", pattern);
         }
         else
         {
-          if (p->hasmin && p->min > 0)
-            fprintf(fd, "%g", p->min * (1 + (p->incmin == False)/1000));
-          else if (p->hasmax && p->max > 0)
-            fprintf(fd, "%g", p->max * (1 - (p->incmax == False)/1000));
-          else if (p->hasmin && p->min < 0)
-            fprintf(fd, "%g", p->min * (1 - (p->incmin == False)/1000));
-          else if (p->hasmax && p->max < 0)
-            fprintf(fd, "%g", p->max * (1 + (p->incmax == False)/1000));
+          if (p->hasmin && p->rmin > 0)
+            fprintf(fd, "%.9lG", p->rmin * (1 + (p->incmin == False)/1000));
+          else if (p->hasmax && p->rmax > 0)
+            fprintf(fd, "%.9lG", p->rmax * (1 - (p->incmax == False)/1000));
+          else if (p->hasmin && p->rmin < 0)
+            fprintf(fd, "%.9lG", p->rmin * (1 - (p->incmin == False)/1000));
+          else if (p->hasmax && p->rmax < 0)
+            fprintf(fd, "%.9lG", p->rmax * (1 + (p->incmax == False)/1000));
           else
             fprintf(fd, "0.0");
         }
@@ -9624,37 +9631,38 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
       case Tldouble:
         if (gflag)
         {
+          const char *pattern = p->pattern && *p->pattern == '%' ? p->pattern : "";
           if (opt)
             fprintf(fd, "???");
           if (p->hasmin && p->hasmax && p->incmin && p->incmax)
-            fprintf(fd, "%%[[%lE:%lE]]%%", p->min, p->max);
+            fprintf(fd, "%%[[%.16lE:%.16lE%s]]%%", p->rmin, p->rmax, pattern);
           else if (p->hasmin && p->hasmax && p->incmin)
-            fprintf(fd, "%%[[%lE:%lE)]%%", p->min, p->max);
+            fprintf(fd, "%%[[%.16lE:%.16lE%s)]%%", p->rmin, p->rmax, pattern);
           else if (p->hasmin && p->hasmax && p->incmax)
-            fprintf(fd, "%%[(%lE:%lE]]%%", p->min, p->max);
+            fprintf(fd, "%%[(%.16lE:%.16lE%s]]%%", p->rmin, p->rmax, pattern);
           else if (p->hasmin && p->hasmax)
-            fprintf(fd, "%%[(%lE:%lE)]%%", p->min, p->max);
+            fprintf(fd, "%%[(%.16lE:%.16lE%s)]%%", p->rmin, p->rmax, pattern);
           else if (p->hasmin && p->incmin)
-            fprintf(fd, "%%[[%lE:%lE]]%%", p->min, DBL_MAX);
+            fprintf(fd, "%%[[%.16lE:%.16lE%s]]%%", p->rmin, DBL_MAX, pattern);
           else if (p->hasmin)
-            fprintf(fd, "%%[(%lE:%lE]]%%", p->min, DBL_MAX);
+            fprintf(fd, "%%[(%.16lE:%.16lE%s]]%%", p->rmin, DBL_MAX, pattern);
           else if (p->hasmax && p->incmax)
-            fprintf(fd, "%%[[%lE:%lE]]%%", -DBL_MAX, p->max);
+            fprintf(fd, "%%[[%.16lE:%.16lE%s]]%%", -DBL_MAX, p->rmax, pattern);
           else if (p->hasmax)
-            fprintf(fd, "%%[[%lE:%lE)]%%", -DBL_MAX, p->max);
+            fprintf(fd, "%%[[%.16lE:%.16lE%s)]%%", -DBL_MAX, p->rmax, pattern);
           else
-            fprintf(fd, "%%[[DOUBLE]]%%");
+            fprintf(fd, "%%[[DOUBLE%s]]%%", pattern);
         }
         else
         {
-          if (p->hasmin && p->min > 0)
-            fprintf(fd, "%g", p->min * (1 + (p->incmin == False)/1000));
-          else if (p->hasmax && p->max > 0)
-            fprintf(fd, "%g", p->max * (1 - (p->incmax == False)/1000));
-          else if (p->hasmin && p->min < 0)
-            fprintf(fd, "%g", p->min * (1 - (p->incmin == False)/1000));
-          else if (p->hasmax && p->max < 0)
-            fprintf(fd, "%g", p->max * (1 + (p->incmax == False)/1000));
+          if (p->hasmin && p->rmin > 0)
+            fprintf(fd, "%.17lG", p->rmin * (1 + (p->incmin == False)/1000));
+          else if (p->hasmax && p->rmax > 0)
+            fprintf(fd, "%.17lG", p->rmax * (1 - (p->incmax == False)/1000));
+          else if (p->hasmin && p->rmin < 0)
+            fprintf(fd, "%.17lG", p->rmin * (1 - (p->incmin == False)/1000));
+          else if (p->hasmax && p->rmax < 0)
+            fprintf(fd, "%.17lG", p->rmax * (1 + (p->incmax == False)/1000));
           else
             fprintf(fd, "0.0");
         }
@@ -9711,18 +9719,18 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
             if (opt)
               fprintf(fd, "???");
             if (p->hasmin && p->hasmax)
-              fprintf(fd, "%%[[TEXT[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+              fprintf(fd, "%%[[TEXT[%ld:%ld]]]%%", minlen(p), maxlen(p));
             else if (p->hasmin)
-              fprintf(fd, "%%[[TEXT[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+              fprintf(fd, "%%[[TEXT[%ld:2147483647]]]%%", minlen(p));
             else if (p->hasmax)
-              fprintf(fd, "%%[[TEXT[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+              fprintf(fd, "%%[[TEXT[0:%ld]]]%%", maxlen(p));
             else
               fprintf(fd, "%%[[TEXT]]%%");
           }
           else
           {
-            if (p->min > 0 && p->min < 100000)
-              for (i = 0; i < (int)p->min; i++)
+            if (p->imin > 0 && p->imin < 100000)
+              for (i = 0; i < (int)p->imin; i++)
                 fprintf(fd, "X");
           }
         }
@@ -9742,18 +9750,18 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
             if (opt)
               fprintf(fd, "???");
             if (p->hasmin && p->hasmax)
-              fprintf(fd, "%%[[TEXT[%ld:%ld]]]%%", (long)p->min + (p->incmin == False), (long)p->max - (p->incmax == False));
+              fprintf(fd, "%%[[TEXT[%ld:%ld]]]%%", minlen(p), maxlen(p));
             else if (p->hasmin)
-              fprintf(fd, "%%[[TEXT[%ld:2147483647]]]%%", (long)p->min + (p->incmin == False));
+              fprintf(fd, "%%[[TEXT[%ld:2147483647]]]%%", minlen(p));
             else if (p->hasmax)
-              fprintf(fd, "%%[[TEXT[0:%ld]]]%%", (long)p->max - (p->incmax == False));
+              fprintf(fd, "%%[[TEXT[0:%ld]]]%%", maxlen(p));
             else
               fprintf(fd, "%%[[TEXT]]%%");
           }
           else
           {
-            if (p->min > 0 && p->min < 100000)
-              for (i = 0; i < (int)p->min; i++)
+            if (p->imin > 0 && p->imin < 100000)
+              for (i = 0; i < (int)p->imin; i++)
                 fprintf(fd, "X");
           }
         }
@@ -16360,21 +16368,25 @@ is_body(Tnode *typ)
 long
 minlen(Tnode *typ)
 {
-  if (!typ->hasmin || typ->min < 0 || typ->min > 2147483647)
+  if (!typ->hasmin || typ->imin < 0)
     return 0;
+  if (typ->imin > 2147483647)
+    return 2147483647;
   if (typ->incmin)
-    return (long)typ->min;
-  return (long)typ->min + 1;
+    return (long)typ->imin;
+  return (long)typ->imin + 1;
 }
 
 long
 maxlen(Tnode *typ)
 {
-  if (!typ->hasmax || typ->max < 0 || typ->max > 2147483647)
+  if (!typ->hasmax || typ->imax < 0)
     return -1;
+  if (typ->imax > 2147483647)
+    return 2147483647;
   if (typ->incmax)
-    return (long)typ->max;
-  return (long)typ->max - 1;
+    return (long)typ->imax;
+  return (long)typ->imax - 1;
 }
 
 const char*
@@ -18191,25 +18203,27 @@ soap_in(Tnode *typ)
         {
           if (!cflag && (typ->type == Tclass || typ->type == Tstruct))
           {
-            if (typ->min > 0)
-              fprintf(fout, "\n\t\tif (a->size() %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->min);
+            long min = minlen(typ);
+            if (min > 0)
+              fprintf(fout, "\n\t\tif (a->size() < %ld)\n\t\t\treturn soap->error = SOAP_LENGTH;", min);
           }
           else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
-            fprintf(fout, "\n\t\tif (*a %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->min);
-          else if (typ->min > 0 || typ->type < Tuchar || typ->type > Tullong)
-            fprintf(fout, "\n\t\tif (*a %s " SOAP_LONG_FORMAT ")\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", (LONG64)typ->min);
+            fprintf(fout, "\n\t\tif (*a %s %.17lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->rmin);
+          else if (typ->imin > 0 || typ->type < Tuchar || typ->type > Tullong)
+            fprintf(fout, "\n\t\tif (*a %s " SOAP_LONG_FORMAT ")\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->imin);
         }
         if (typ->hasmax)
         {
           if (!cflag && (typ->type == Tclass || typ->type == Tstruct))
           {
-            if (typ->max >= 0)
-              fprintf(fout, "\n\t\tif (a->size() %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->max);
+            long max = maxlen(typ);
+            if (max >= 0)
+              fprintf(fout, "\n\t\tif (a->size() > %ld)\n\t\t\treturn soap->error = SOAP_LENGTH;", max);
           }
           else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
-            fprintf(fout, "\n\t\tif (*a %s %lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->max);
-          else if (typ->max >= 0 || typ->type < Tuchar || typ->type > Tullong)
-            fprintf(fout, "\n\t\tif (*a %s " SOAP_LONG_FORMAT ")\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", (LONG64)typ->max);
+            fprintf(fout, "\n\t\tif (*a %s %.17lG)\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->rmax);
+          else if (typ->imax >= 0 || typ->type < Tuchar || typ->type > Tullong)
+            fprintf(fout, "\n\t\tif (*a %s " SOAP_LONG_FORMAT ")\n\t\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->imax);
         }
       }
       fprintf(fout, "\n\t}\n\treturn err;\n}");
@@ -18283,25 +18297,27 @@ soap_in(Tnode *typ)
       {
         if (!cflag && (typ->type == Tclass || typ->type == Tstruct))
         {
-          if (typ->min > 0)
-            fprintf(fout, "\n\tif (a && a->size() %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", typ->min);
+          long min = minlen(typ);
+          if (min > 0)
+            fprintf(fout, "\n\tif (a && a->size() < %ld)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", min);
         }
         else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
-          fprintf(fout, "\n\tif (a && *a %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", typ->min);
-        else if (typ->min > 0 || typ->type < Tuchar || typ->type > Tullong)
-          fprintf(fout, "\n\tif (a && *a %s " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", (LONG64)typ->min);
+          fprintf(fout, "\n\tif (a && *a %s %.17lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", typ->rmin);
+        else if (typ->imin > 0 || typ->type < Tuchar || typ->type > Tullong)
+          fprintf(fout, "\n\tif (a && *a %s " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmin ? "<" : "<=", typ->imin);
       }
       if (typ->hasmax)
       {
         if (!cflag && (typ->type == Tclass || typ->type == Tstruct))
         {
-          if (typ->max >= 0)
-            fprintf(fout, "\n\tif (a && a->size() %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", typ->max);
+          long max = maxlen(typ);
+          if (max >= 0)
+            fprintf(fout, "\n\tif (a && a->size() > %ld)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", max);
         }
         else if ((typ->type >= Tfloat && typ->type <= Tldouble) || is_external(typ))
-          fprintf(fout, "\n\tif (a && *a %s %lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", typ->max);
-        else if (typ->max >= 0 || typ->type < Tuchar || typ->type > Tullong)
-          fprintf(fout, "\n\tif (a && *a %s " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", (LONG64)typ->max);
+          fprintf(fout, "\n\tif (a && *a %s %.17lG)\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", typ->rmax);
+        else if (typ->imax >= 0 || typ->type < Tuchar || typ->type > Tullong)
+          fprintf(fout, "\n\tif (a && *a %s " SOAP_LONG_FORMAT ")\n\t{\tsoap->error = SOAP_LENGTH;\n\t\treturn NULL;\n\t}", typ->incmax ? ">" : ">=", typ->imax);
       }
     }
     fprintf(fout, "\n\treturn a;\n}");
@@ -20208,9 +20224,17 @@ soap_in_Darray(Tnode *typ)
       fprintf(fout, "\n\ta->__ptr = (unsigned char*)soap_base642s(soap, s, NULL, 0, &a->__size);");
     fprintf(fout, "\n\tif (!a->__ptr)\n\t\treturn soap->error;");
     if (typ->hasmin)
-      fprintf(fout, "\n\tif (a->__size %s %lG)\n\t\treturn soap->error = SOAP_LENGTH;", typ->incmin ? "<" : "<=", typ->min);
+    {
+      long min = minlen(typ);
+      if (min > 0)
+        fprintf(fout, "\n\tif (a->__size < %ld)\n\t\treturn soap->error = SOAP_LENGTH;", min);
+    }
     if (typ->hasmax)
-      fprintf(fout, "\n\tif (a->__size %s %lG)\n\t\treturn soap->error = SOAP_LENGTH;", typ->incmax ? ">" : ">=", typ->max);
+    {
+      long max = maxlen(typ);
+      if (max >= 0)
+        fprintf(fout, "\n\tif (a->__size > %ld)\n\t\treturn soap->error = SOAP_LENGTH;", max);
+    }
     fprintf(fout, "\n\treturn SOAP_OK;\n}");
   }
 
@@ -20278,9 +20302,17 @@ soap_in_Darray(Tnode *typ)
     }
     fprintf(fout, "\n\t\tif ((!a->__ptr && soap->error) || soap_element_end_in(soap, tag))\n\t\t\treturn NULL;");
     if (typ->hasmin)
-      fprintf(fout, "\n\t\tif (a->__size %s %lG)\n\t\t{\tsoap->error = SOAP_LENGTH;\n\t\t\treturn NULL;\n\t\t}", typ->incmin ? "<" : "<=", typ->min);
+    {
+      long min = minlen(typ);
+      if (min > 0)
+        fprintf(fout, "\n\t\tif (a->__size < %ld)\n\t\t{\tsoap->error = SOAP_LENGTH;\n\t\t\treturn NULL;\n\t\t}", min);
+    }
     if (typ->hasmax)
-      fprintf(fout, "\n\t\tif (a->__size %s %lG)\n\t\t{\tsoap->error = SOAP_LENGTH;\n\t\t\treturn NULL;\n\t\t}", typ->incmax ? ">" : ">=", typ->max);
+    {
+      long max = maxlen(typ);
+      if (max >= 0)
+        fprintf(fout, "\n\t\tif (a->__size > %ld)\n\t\t{\tsoap->error = SOAP_LENGTH;\n\t\t\treturn NULL;\n\t\t}", max);
+    }
   }
   else
   {

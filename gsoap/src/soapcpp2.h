@@ -44,8 +44,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.62" /* Current version */
-# define GSOAP_VERSION 20862
+# define VERSION "2.8.63" /* Current version */
+# define GSOAP_VERSION 20863
 #endif
 
 #ifdef WIN32
@@ -249,8 +249,10 @@ typedef struct Tnode
         Bool            hasmax;
         Bool            incmin;
         Bool            incmax;
-        double          min;
-        double          max;
+        LONG64          imin;
+        LONG64          imax;
+        double          rmin;
+        double          rmax;
         int             property;
         const char      *pattern;
 } Tnode;
@@ -296,6 +298,11 @@ typedef struct FNinfo {
         Table   *args;
 } FNinfo;
 
+typedef struct IR {
+        LONG64 i;
+        double r;
+} IR;
+
 typedef struct Node {
         Tnode           *typ;
         Storage         sto;
@@ -308,8 +315,10 @@ typedef struct Node {
         Bool            incmax;
         LONG64          minOccurs;
         LONG64          maxOccurs;
-        double          min;
-        double          max;
+        LONG64          imin;
+        LONG64          imax;
+        double          rmin;
+        double          rmax;
         Bool            nillable;
         int             property;
         const char      *pattern;

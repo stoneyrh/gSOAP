@@ -590,7 +590,7 @@ anything but should not contain `][` or `]]%`.  For example:
 where `completed="%[[false][true]]%"` enumerates the values `false` and `true`.
 Note that this enumeration is identical to the `%[[BOOL]]%` placeholder type.
 
-### Numeric range templates
+### Numeric range and precision templates
 
 A numeric range is integer-valued when the lower bound `N` and upper bound `M`
 are integer.  Otherwise, the numeric range values are floating point.  For
@@ -615,7 +615,20 @@ For example:
 </div>
 
 where 0.00 is excluded from the float value range and `100000.00` is the
-inclusive maximum.
+inclusive maximum of the numeric range.
+
+A decimal precision is specified with a printf-based format string, such as
+`%.2f` to indicate 2 decimal places after the decimal period should be used.
+The decimal precision is added to the range in the template.  For example,
+`%[[0.0:999.0%.2f]]%` specifies a floating point range between 0.00 and 999.00
+with 2 decimal places after the period.  The total field width (total digits)
+can be specified with `%[[0.0:999.0%6.2f]]%` for example.
+
+The precision of a "limitless" floating point and double precision floating
+point numeric precision is specified with `%[[FLOAT%.2e]]%` and
+`%[[DOUBLE%.2e]]%` respectively.  This produces numeric values within the range
+of the specified type formatted according to the specified printf-format
+string.
 
 ### Primitive XSD type templates
 

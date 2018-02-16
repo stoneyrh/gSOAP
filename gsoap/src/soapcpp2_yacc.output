@@ -306,9 +306,9 @@ Grammar
   223       | ':' LNG
 
   224 bounds: nullptr patt
-  225       | nullptr patt cdbl min
-  226       | nullptr patt cdbl minmax cdbl
-  227       | nullptr patt max cdbl
+  225       | nullptr patt value min
+  226       | nullptr patt value minmax value
+  227       | nullptr patt max value
 
   228 nullptr: /* empty */
   229        | null
@@ -316,11 +316,11 @@ Grammar
   230 patt: /* empty */
   231     | STR
 
-  232 cdbl: DBL
-  233     | LNG
-  234     | CHR
-  235     | '+' cdbl
-  236     | '-' cdbl
+  232 value: DBL
+  233      | LNG
+  234      | CHR
+  235      | '+' value
+  236      | '-' value
 
   237 min: /* empty */
   238    | ':'
@@ -652,7 +652,7 @@ nullptr (180)
     on left: 228 229, on right: 224 225 226 227
 patt (181)
     on left: 230 231, on right: 224 225 226 227
-cdbl (182)
+value (182)
     on left: 232 233 234 235 236, on right: 225 226 227 235 236
 min (183)
     on left: 237 238 239 240, on right: 225
@@ -6320,9 +6320,9 @@ state 357
 state 358
 
   224 bounds: nullptr . patt
-  225       | nullptr . patt cdbl min
-  226       | nullptr . patt cdbl minmax cdbl
-  227       | nullptr . patt max cdbl
+  225       | nullptr . patt value min
+  226       | nullptr . patt value minmax value
+  227       | nullptr . patt max value
 
     STR  shift, and go to state 404
 
@@ -7179,9 +7179,9 @@ state 404
 state 405
 
   224 bounds: nullptr patt .
-  225       | nullptr patt . cdbl min
-  226       | nullptr patt . cdbl minmax cdbl
-  227       | nullptr patt . max cdbl
+  225       | nullptr patt . value min
+  226       | nullptr patt . value minmax value
+  227       | nullptr patt . max value
 
     LNG  shift, and go to state 420
     DBL  shift, and go to state 421
@@ -7193,8 +7193,8 @@ state 405
 
     $default  reduce using rule 224 (bounds)
 
-    cdbl  go to state 427
-    max   go to state 428
+    value  go to state 427
+    max    go to state 428
 
 
 state 406
@@ -7325,23 +7325,23 @@ state 419
 
 state 420
 
-  233 cdbl: LNG .
+  233 value: LNG .
 
-    $default  reduce using rule 233 (cdbl)
+    $default  reduce using rule 233 (value)
 
 
 state 421
 
-  232 cdbl: DBL .
+  232 value: DBL .
 
-    $default  reduce using rule 232 (cdbl)
+    $default  reduce using rule 232 (value)
 
 
 state 422
 
-  234 cdbl: CHR .
+  234 value: CHR .
 
-    $default  reduce using rule 234 (cdbl)
+    $default  reduce using rule 234 (value)
 
 
 state 423
@@ -7363,7 +7363,7 @@ state 424
 
 state 425
 
-  235 cdbl: '+' . cdbl
+  235 value: '+' . value
 
     LNG  shift, and go to state 420
     DBL  shift, and go to state 421
@@ -7371,12 +7371,12 @@ state 425
     '+'  shift, and go to state 425
     '-'  shift, and go to state 426
 
-    cdbl  go to state 434
+    value  go to state 434
 
 
 state 426
 
-  236 cdbl: '-' . cdbl
+  236 value: '-' . value
 
     LNG  shift, and go to state 420
     DBL  shift, and go to state 421
@@ -7384,13 +7384,13 @@ state 426
     '+'  shift, and go to state 425
     '-'  shift, and go to state 426
 
-    cdbl  go to state 435
+    value  go to state 435
 
 
 state 427
 
-  225 bounds: nullptr patt cdbl . min
-  226       | nullptr patt cdbl . minmax cdbl
+  225 bounds: nullptr patt value . min
+  226       | nullptr patt value . minmax value
 
     ':'  shift, and go to state 436
     '<'  shift, and go to state 437
@@ -7403,7 +7403,7 @@ state 427
 
 state 428
 
-  227 bounds: nullptr patt max . cdbl
+  227 bounds: nullptr patt max . value
 
     LNG  shift, and go to state 420
     DBL  shift, and go to state 421
@@ -7411,7 +7411,7 @@ state 428
     '+'  shift, and go to state 425
     '-'  shift, and go to state 426
 
-    cdbl  go to state 440
+    value  go to state 440
 
 
 state 429
@@ -7456,16 +7456,16 @@ state 433
 
 state 434
 
-  235 cdbl: '+' cdbl .
+  235 value: '+' value .
 
-    $default  reduce using rule 235 (cdbl)
+    $default  reduce using rule 235 (value)
 
 
 state 435
 
-  236 cdbl: '-' cdbl .
+  236 value: '-' value .
 
-    $default  reduce using rule 236 (cdbl)
+    $default  reduce using rule 236 (value)
 
 
 state 436
@@ -7504,14 +7504,14 @@ state 437
 
 state 438
 
-  225 bounds: nullptr patt cdbl min .
+  225 bounds: nullptr patt value min .
 
     $default  reduce using rule 225 (bounds)
 
 
 state 439
 
-  226 bounds: nullptr patt cdbl minmax . cdbl
+  226 bounds: nullptr patt value minmax . value
 
     LNG  shift, and go to state 420
     DBL  shift, and go to state 421
@@ -7519,12 +7519,12 @@ state 439
     '+'  shift, and go to state 425
     '-'  shift, and go to state 426
 
-    cdbl  go to state 446
+    value  go to state 446
 
 
 state 440
 
-  227 bounds: nullptr patt max cdbl .
+  227 bounds: nullptr patt max value .
 
     $default  reduce using rule 227 (bounds)
 
@@ -7584,7 +7584,7 @@ state 445
 
 state 446
 
-  226 bounds: nullptr patt cdbl minmax cdbl .
+  226 bounds: nullptr patt value minmax value .
 
     $default  reduce using rule 226 (bounds)
 
