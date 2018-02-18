@@ -47,9 +47,11 @@ from WSDLs), use soapcpp2 with option `-g`:
 The soapcpp2 tool generates sample messages for the service operations defined
 in `file.h`.  Option `-g` changes the sample message to message templates that
 contain placeholders of the form `%[...]%`.  A leading `???` qualifier
-indicates optional elements and attributes.  Repeated elements are indicated
-and enclosed as child elements in `<__REPEAT>` ... `</__REPEAT>`.  Element
-selections are indicated and enclosed in `<__SELECT>` ... `</__SELECT>`.
+indicates optional elements and attributes.  Repeated elements and/or CDATA is
+indicated and enclosed in `<__REPEAT>`...`</__REPEAT>`.  Element selections
+are indicated and enclosed as child elements in `<__SELECT>`...`</__SELECT>`.
+Element permutations are enclosed as child elements in
+`<__PERMUTE>`...`</__PERMUTE>`.
 
 A placeholder value `%[...]%` specifies an XSD-related type, enumeration, or
 numeric range.  These placeholders are populated by the Test Messenger using
@@ -361,37 +363,40 @@ For example:
 Options                                                               {#options}
 -------
 
-    testmsgr [-aact] [-b] [-c] [-h] [-i] [-j] [-lmax] [-mmax] [-nlen] [-ofile] [-pnum] [-qnum] [-rseed] [-tsec] [-v] [-A] [-C] [-H] [-M] [infile|-] [URL|port]
+    testmsgr [-aact] [-b] [-c] [-dnum] [-f] [-h] [-i] [-j] [-lmax] [-mmax] [-nlen] [-ofile] [-pnum] [-qnum] [-rseed] [-tsec] [-v] [-A] [-C] [-H] [-M] [-Pper] [-Rrep] [-Ssel] [infile|-] [URL|port]
 
 where the testmsgr command-line options are:
 
 Option    | Description
 --------- | --------------------------------------------------------------------
-`-a act`  | use HTTP SOAP Action header value `"act"`
+`-a act`  | add a HTTP SOAP Action header value `"act"`
 `-b`      | add random spacing to randomized values when using `-r`
-`-c`      | continue testing until the service endpoint fails
+`-c`      | continuous testing until the service endpoint fails, when using a URL
+`-d num`  | test a service endpoint `num` times or until it fails, when using a URL
+`-f`      | exit on any HTTP error or SOAP fault when using `-c` or `-d`
 `-h`      | display help message
 `-i`      | indent XML with spaces when using `-r`
 `-j`      | indent XML with tabs when using `-r`
-`-l max`  | max number of randomized element repeats (default is 3)
-`-m max`  | max length of randomized text values generated (default is 255)
+`-l max`  | max number of randomized element repeats when using `-r` (default is 3)
+`-m max`  | max length of randomized text values generated (default is 10)
 `-n len`  | display the server response up to len bytes
-`-o file` | save to file
-`-p perc` | percentage XML kept when using -r (default=100)
-`-q perc` | percentage XML kept of optional indicators when using -r (default=100)
-`-r seed` | randomize XML message templates (use soapcpp2 `-g`)
-`-t sec`  | socket idle timeout seconds (default=1)
+`-o file` | save to file instead of stdout
+`-p perc` | percentage of XML kept in general when using -r (default=100)
+`-q perc` | percentage of XML kept of optional/repeated indicators when using -r (default=100)
+`-r seed` | randomize XML from XML message templates (use soapcpp2 `-g`)
+`-t sec`  | socket idle timeout seconds (default=1), to test response time
 `-v`      | verbose mode
-`-A`      | use SOAP with MIME attachments (SwA)
-`-C`      | use HTTP chunked transfers
+`-A`      | enable SOAP with MIME attachments (SwA)
+`-C`      | enable HTTP chunked transfers
 `-H`      | add HTTP headers when no URL is specified
-`-M`      | use MTOM (application/xop+xml)
-`-R rep`  | set XML element sequence indicator tag (default=`__REPEAT`)
+`-M`      | enable MTOM (application/xop+xml)
+`-P per`  | set XML element permutation indicator tag (default=`__PERMUTE`)
+`-R rep`  | set XML element repetition indicator tag (default=`__REPEAT`)
 `-S sel`  | set XML element selection indicator tag (default=`__SELECT`)
-`infile`  | XML message template
-`-`       | read XML from standard input
+`infile`  | XML message or XML message template with indicator annotations
+`-`       | read XML message or XML message template from standard input
 `URL`     | endpoint URL of service to test
-`port`    | stand-alone server port for clients to test
+`port`    | stand-alone server port for clients to test against
 
 More specifically, `infile` is an SOAP/XML message file (or message template
 file), `-` specifies that the message should be read from standard input, and
@@ -412,8 +417,19 @@ Add random blank spacing to randomized values when using option `-r`.
 
 ### `-c`
 
-Continue testing of a service until the service fails, i.e. until the server at
-the specified endpoint URL becomes unresposive.
+Continuous testing of a service endpoint until the service fails, i.e. until
+the server at the specified endpoint URL becomes unresponsive.
+
+### `-d num`
+
+Test a service endpoint `num` times or until the service fails, i.e. until the
+server at the specified endpoint URL becomes unresponsive.
+
+### `-f`
+
+Exit on any HTTP error or on any SOAP fault by the service endpoint when using
+option `-c` or `-d num`, instead of continuing until the specified endpoint URL
+becomes unresponsive.
 
 ### `-h`
 
@@ -429,9 +445,9 @@ Indent XML with tabs when using option `-r`.
 
 ### `-l max`
 
-Specifies the max number of randomized element repetitions for `__SEQ` and
-`__SEL` with min and max indicators, when using option `-r`.  The default is 3.
-The maximum value that can be specified is 18446744073709551615.
+Specifies the max number of randomized element repetitions for `__REPEAT` and
+`__SELECT` with min and max indicators, when using option `-r`.  The default is
+3.  The maximum value that can be specified is 18446744073709551615.
 
 ### `-m max`
 
@@ -511,6 +527,11 @@ content (base64Binary XML element) specified in the template with
 `<xop:Include xmlns:xop="http://www.w3.org/2004/08/xop/include"/>` element with
 an `href` attribute referencing the MIME attachment with randomized content.
 
+### `-P per`
+
+Sets the XML element permutation indicator tag.  The default is `__PERMUTE`.
+See \ref indicators.
+
 ### `-R rep`
 
 Sets the XML element repetition indicator tag.  The default is `__REPEAT`.
@@ -541,7 +562,7 @@ Placeholder values                                                {#placeholder}
 Templates may contain placeholder values.  Placeholder values may start with
 `???` meaning the value is optional, followed by the placeholder value type, an
 enumeration, or a numeric range.  Values are inserted with testmsgr option
-`-r`.
+`-r seed`.
 
 ### Optional values
 
@@ -646,12 +667,12 @@ of base64-encoded bytes.
 
 `%[[DURATION]]%` specifies xsd:duration XSD values.
 
+`%[[ENTITY]]%` and length-restricted `%[[ENTITY[N:M]]]%` specify xsd:ENTITY XSD
+values.  The range `N:M` specifies the number of characters.
+
 `%[[HEX]]%` and length-restricted `%[[HEX[N:M]]]%` specify xsd:hexBinary XSD
 values.  The length restriction `N:M` specifies the range of encoded bytes, not
 the number of hexadecimal characters.
-
-`%[[ENTITY]]%` and length-restricted `%[[ENTITY[N:M]]]%` specify xsd:ENTITY XSD
-values.  The range `N:M` specifies the number of characters.
 
 `%[[ID]]%` and length-restricted `%[[ID[N:M]]]%` specify xsd:ID XSD values.
 The range `N:M` specifies the number of characters.
@@ -680,13 +701,16 @@ values.  The range `N:M` specifies the number of characters.
 `%[[NMTOKEN]]%` and length-restricted `%[[NMTOKEN[N:M]]]%` specify xsd:NMTOKEN
 XSD values.  The range `N:M` specifies the number of characters.
 
+`%[[QNAME]]%` specifies xsd:QName XSD values.
+
 `%[[TEXT]]%` and length-restricted `%[[TEXT[N:M]]]%` specify xsd:string,
 xsd:normalizedString, xsd:anyURI, xsd:NOTATION, and xsd:token XSD values.  The
 range `N:M` specifies the number of characters.
 
 `%[[TIME]]%` specifies xsd:time XSD values.
 
-`%[[QNAME]]%` specifies xsd:QName XSD values.
+`%[[TOKEN]]%` and length-restricted `%[[TOKEN[N:M]]]%` specify xsd:token
+XSD values.  The range `N:M` specifies the number of characters.
 
 `%[[UINT8]]%` and `%[[UBYTE]]%` specify xsd:unsignedByte XSD values.
 
@@ -696,29 +720,36 @@ range `N:M` specifies the number of characters.
 
 `%[[UINT64]]%` and `%[[ULONG]]%` specify xsd:unsignedLong XSD values.
 
+`%[[URI]]%` specifies xsd:anyURI XSD values.
+
 🔝 [Back to table of contents](#)
 
-Element repetition and selection indicators                        {#indicators}
--------------------------------------------
+Element repetition, selection and permutation indicators           {#indicators}
+--------------------------------------------------------
 
-Two special XML elements `__REPEAT` and `__SELECT` in message templates
-indicate XML element repetitions and selections, respectively.  These elements
-are processed by the Test Messenger to generate child elements, after which the
-`__REPEAT` and `__SELECT` XML elements are removed from the generated
-randomized XML messages.
+Three special XML elements `__REPEAT`, `__SELECT` and `__PERMUTE` in message
+templates indicate XML element repetitions and selections, respectively.  These
+elements are processed by the Test Messenger to generate child elements, after
+which the `__REPEAT`, `__SELECT` and `__PERMUTE` XML elements are removed from
+the generated randomized XML messages.
+
+These indicators require testmsgr option `-r seed`.
 
 ### Repetition
 
-Child elements of the `__REPEAT` indicator element are repeated within a range
-specified by `min` and `max` attributes of the `__REPEAT` element.  The `min`
-and `max` attributes are optional and default to 1 when omitted.  Option `-q`
-controls the percentage of child elements that are generated within the range.
-A zero percentage specified with `-q0` generates the minimum number of child
-elements.  A value of 100 specified with `-q100` generates the maximum number
-of child elements.  The maximum number of child elements (randomly) generated
-is bounded by option `-l` (default is 3).  Therefore, the maximum number of
-child elements is the greater of attribute `min` and the lesser of attribute
-`max` and the value *lmax* specified with option `-l`:
+Child elements and/or CDATA text in the `__REPEAT` indicator element are
+repeated within a range specified by `min` and `max` attributes of the
+`__REPEAT` element.  The `min` and `max` attributes are optional and default to
+1 when omitted.
+
+Option `-q` of testmsgr controls the percentage of child elements that are
+generated within the range.  A zero percentage specified with `-q0` generates
+the minimum number of child elements.  A value of 100 specified with `-q100`
+generates the maximum number of child elements.  The maximum number of child
+elements (randomly) generated is bounded by option `-l` (default is 3).
+Therefore, the maximum number of child elements is the greater of attribute
+`min` and the lesser of attribute `max` and the value *lmax* specified with
+option `-l`:
 
 > *min <= n <= maximum(min, minimum(max, lmax))*
 
@@ -742,9 +773,49 @@ average 50% of the elements kept between 2 (the `min` minimum) and 10 elements
 (the maximum specified by `-l10`), i.e. 6 elements on average.  Each `item`
 element has a random integer value.
 
+Multiple child elements can be repeated as a group, which may include mixed
+CDATA content of any type, for example:
+
+<div class="alt">
+```xml
+<__REPEAT min="0" max="10">
+  <product>%[[TOKEN]]%</product>
+  <number>???%[[INT32]]%</number>
+  %[[HEX]]%
+</__REPEAT>
+```
+</div>
+
+This repeats `<product>` with optional `<number>` up to 10 times, with mixed
+hexadecimal text included.
+
+Note that the `???` qualifier can be used with child elements to make them
+optional in repetitions as shown in the example.
+
+The testmsgr tool recognizes SOAP 1.1/1.2 arrays with array type and size
+attributes.  These attributes are automatically changed in the randomized XML
+output. The array element should have one or more nested `__REPEAT` indicators.
+Consider for example the following 2D array:
+
+<div class="alt">
+```xml
+<arrayOfFloat xsi:type="SOAP-ENC:Array" SOAP-ENC:arrayType="float[1,1]">
+  <__REPEAT min="0" max="4">
+  <__REPEAT min="0" max="8">
+    <item>%[[FLOAT]]%</item>
+  </__REPEAT>
+  </__REPEAT>
+</arrayOfFloat>
+```
+</div>
+
+The `SOAP-ENC:arrayType` attribute array dimension values are automatically
+adjusted in the XML output by testmsgr depending on the number of `item`
+elements generated.
+
 ### Selection
 
-One child element of the `__SELECT` indicator element is randomly and uniformly
+One child element of the `__SELECT` indicator element is uniform randomly
 selected as an XML element for the generated randomized XML message.
 
 For example, to select one element from the three choices of elements `A`, `B`
@@ -764,11 +835,33 @@ The generated XML message has either an `A` element with an integer value, a
 `B` element with a floating point value, or a `C` element with a text value.
 
 Note that the `???` qualifier can be used with child elements to make them
-optional.
+optional in selections.
+
+### Permutation
+
+Child element of the `__PERMUTE` indicator element are uniform randomly
+permuted in the generated randomized XML message.
+
+For example, elements `A`, `B` or `C` are permuted with:
+
+<div class="alt">
+```xml
+<__PERMUTE>
+  <A>%[[INT32]]%</A>
+  <B>%[[FLOAT]]%</B>
+  <C>%[[TEXT]]%</C>
+</__PERMUTE>
+```
+</div>
+
+The generated XML message has `A`, `B` and `C` elements produced in any order.
+
+Note that the `???` qualifier can be used with child elements to make them
+optional in permutations.
 
 🔝 [Back to table of contents](#)
 
 Copyright                                                           {#copyright}
 =========
 
-Copyright (c) 2017, Robert van Engelen, Genivia Inc. All rights reserved.
+Copyright (c) 2018, Robert van Engelen, Genivia Inc. All rights reserved.

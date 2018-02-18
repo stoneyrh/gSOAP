@@ -9021,17 +9021,21 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
       }
       else
       {
+        int d = get_Darraydims(p);
         LONG64 k = q->info.minOccurs < 100000 ? q->info.minOccurs : 100000;
         if (k == 0 && q->info.maxOccurs > 0)
           k = 1;
         if (gflag)
         {
-          fprintf(fd, "\n%*s<__REPEAT min=\"" SOAP_LONG_FORMAT "\"", n+1, "", q->info.minOccurs);
-          if (q->info.maxOccurs > 1)
-            fprintf(fd, " max=\"" SOAP_LONG_FORMAT "\"", q->info.maxOccurs);
-          else
-            fprintf(fd, " max=\"unbounded\"");
-          fprintf(fd, ">\n");
+          for (i = 0; i < d; i++)
+          {
+            fprintf(fd, "\n%*s<__REPEAT min=\"" SOAP_LONG_FORMAT "\"", n+1, "", q->info.minOccurs);
+            if (q->info.maxOccurs > 1)
+              fprintf(fd, " max=\"" SOAP_LONG_FORMAT "\"", q->info.maxOccurs);
+            else
+              fprintf(fd, " max=\"unbounded\"");
+            fprintf(fd, ">\n");
+          }
           k = 1;
         }
         else if (yflag)
@@ -9052,7 +9056,22 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           fprintf(fd, "</%s>\n", q->sym->name[5]?q->sym->name+5:"item");
         }
         if (gflag)
-          fprintf(fd, "%*s</__REPEAT>\n", n+1, "");
+          for (i = 0; i < d; i++)
+            fprintf(fd, "%*s</__REPEAT>\n", n+1, "");
+      }
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__anyURI"))
+    {
+      if (gflag)
+      {
+        if (opt)
+          fprintf(fd, "???");
+        fprintf(fd, "%%[[URI]]%%");
+      }
+      else
+      {
+        fprintf(fd, "http://www.example.com/schema/anyURI");
       }
       return;
     }
@@ -9299,6 +9318,29 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
           fprintf(fd, "%%[[NMTOKEN[0:%ld]]]%%", maxlen(p));
         else
           fprintf(fd, "%%[[NMTOKEN]]%%");
+      }
+      else
+      {
+        if (p->imin > 0 && p->imin < 100000)
+          for (i = 0; i < (int)p->imin; i++)
+            fprintf(fd, "X");
+      }
+      return;
+    }
+    else if (has_restriction_base(p, "xsd__token") || has_restriction_base(p, "xsd__token"))
+    {
+      if (gflag)
+      {
+        if (opt)
+          fprintf(fd, "???");
+        if (p->hasmin && p->hasmax)
+          fprintf(fd, "%%[[TOKEN[%ld:%ld]]]%%", minlen(p), maxlen(p));
+        else if (p->hasmin)
+          fprintf(fd, "%%[[TOKEN[%ld:2147483647]]]%%", minlen(p));
+        else if (p->hasmax)
+          fprintf(fd, "%%[[TOKEN[0:%ld]]]%%", maxlen(p));
+        else
+          fprintf(fd, "%%[[TOKEN]]%%");
       }
       else
       {
@@ -9690,14 +9732,26 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
             fprintf(fd, "???");
           if (p->ref)
           {
-            fprintf(fd, "%%[[");
-            for (q = ((Table*)p->ref)->list; q; q = q->next)
+            q = ((Table*)p->ref)->list;
+            if (q)
             {
-              fprintf(fd, "%s", ns_remove2(q->sym->name, c_ident(p)));
-              if (q->next)
-                fprintf(fd, "][");
+              if (!q->next)
+              {
+                fprintf(fd, "%s", ns_remove2(q->sym->name, c_ident(p)));
+              }
+              else
+              {
+                fprintf(fd, "%%[[");
+                while (q)
+                {
+                  fprintf(fd, "%s", ns_remove2(q->sym->name, c_ident(p)));
+                  if (q->next)
+                    fprintf(fd, "][");
+                  q = q->next;
+                }
+                fprintf(fd, "]]%%");
+              }
             }
-            fprintf(fd, "]]%%");
           }
         }
         else
@@ -9836,6 +9890,7 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
                 }
                 else
                 {
+                  LONG64 j;
                   if (yflag)
                   {
                     fprintf(fd, "%*s<!-- a repetition of " SOAP_LONG_FORMAT, n+1, "", q->info.minOccurs);
@@ -9848,10 +9903,10 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
                     fprintf(fd, " -->\n");
                     gen_field(fd, n+1, q->next, nse1, nsa, encoding, 0, 0);
                   }
-                  i = q->info.minOccurs < 100000 ? q->info.minOccurs : 100000;
-                  if (i < 1)
-                    i = 1;
-                  for (; i > 0; --i)
+                  j = q->info.minOccurs < 100000 ? q->info.minOccurs : 100000;
+                  if (j < 1)
+                    j = 1;
+                  for (; j > 0; --j)
                     gen_field(fd, n+1, q->next, nse1, nsa, encoding, 0, 0);
                 }
                 q = q->next;

@@ -5130,17 +5130,17 @@ yyreduce:
 
   case 233:
 #line 2218 "soapcpp2_yacc.y"
-    { (yyval.ir).i = (yyval.ir).r = (yyvsp[(1) - (1)].r); ;}
+    { (yyval.ir).i = (LONG64)((yyval.ir).r = (yyvsp[(1) - (1)].r)); ;}
     break;
 
   case 234:
 #line 2219 "soapcpp2_yacc.y"
-    { (yyval.ir).r = (yyval.ir).i = (yyvsp[(1) - (1)].i); ;}
+    { (yyval.ir).r = (double)((yyval.ir).i = (yyvsp[(1) - (1)].i)); ;}
     break;
 
   case 235:
 #line 2220 "soapcpp2_yacc.y"
-    { (yyval.ir).r = (yyval.ir).i = (yyvsp[(1) - (1)].c); ;}
+    { (yyval.ir).r = (double)((yyval.ir).i = (yyvsp[(1) - (1)].c)); ;}
     break;
 
   case 236:

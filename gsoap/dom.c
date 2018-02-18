@@ -1321,7 +1321,7 @@ soap_elt_set_w(struct soap_dom_element *elt, const char *ns, const wchar_t *tag)
 /******************************************************************************/
 
 /**
-@brief Populate xsd__anyType DOM element node with an attribute node
+@brief Populate xsd__anyType DOM element node with an attribute node, if the attribute does not already exists
 @param elt pointer to xsd__anyType DOM element to populate
 @param ns namespace URI string or NULL of attribute
 @param tag (un)qualified tag name string of attribute
@@ -1342,7 +1342,7 @@ soap_att(struct soap_dom_element *elt, const char *ns, const char *tag)
 /******************************************************************************/
 
 /**
-@brief Populate xsd__anyType DOM element node with an attribute node
+@brief Populate xsd__anyType DOM element node with an attribute node, if the attribute does not already exists
 @param elt pointer to xsd__anyType DOM element to populate
 @param ns namespace URI string or NULL of attribute
 @param tag (un)qualified tag name wide string of attribute
@@ -2241,7 +2241,7 @@ soap_att_set_w(struct soap_dom_attribute *att, const char *ns, const wchar_t *ta
 /******************************************************************************/
 
 /**
-@brief Add an attribute node to an xsd__anyAttribute DOM attribute node to create or extend an attribute list
+@brief Add an attribute node to an xsd__anyAttribute DOM attribute node, if the attribute does not already exists, to create or extend an attribute list
 @param att pointer to xsd__anyAttribute DOM attribute
 @param ns namespace URI string or NULL of attribute
 @param tag (un)qualified tag name string of attribute
@@ -2275,7 +2275,7 @@ soap_att_add(struct soap_dom_attribute *att, const char *ns, const char *tag)
 /******************************************************************************/
 
 /**
-@brief Add an attribute node to an xsd__anyAttribute DOM attribute node to create or extend an attribute list
+@brief Add an attribute node to an xsd__anyAttribute DOM attribute node, if the attribute does not already exists, to create or extend an attribute list
 @param att pointer to xsd__anyAttribute DOM attribute
 @param ns namespace URI string or NULL of attribute
 @param tag (un)qualified tag name wide string of attribute
@@ -4088,26 +4088,26 @@ struct soap_dom_element
   */
   template<class T> soap_dom_element& operator=(T *obj);
   /**
-  @brief Populate this xsd__anyType DOM element node with an attribute node, same as att(NULL, tag)
+  @brief Populate this xsd__anyType DOM element node with an attribute node, same as att(NULL, tag), if the attribute does not already exists
   @param tag (un)qualified tag name string of attribute
   @return reference to xsd__anyAttribute attribute node (new attribute node if none matches)
   */
   soap_dom_attribute& att(const char *tag);
   /**
-  @brief Populate this xsd__anyType DOM element node with an attribute node, same as att(NULL, tag)
+  @brief Populate this xsd__anyType DOM element node with an attribute node, same as att(NULL, tag), if the attribute does not already exists
   @param tag (un)qualified tag name wide string of attribute
   @return reference to xsd__anyAttribute attribute node (new attribute node if none matches)
   */
   soap_dom_attribute& att(const wchar_t *tag);
   /**
-  @brief Populate this xsd__anyType DOM element node with an attribute node
+  @brief Populate this xsd__anyType DOM element node with an attribute node, if the attribute does not already exists
   @param ns namespace URI string or NULL of attribute
   @param tag (un)qualified tag name string of attribute
   @return reference to xsd__anyAttribute attribute node (new attribute node if none matches)
   */
   soap_dom_attribute& att(const char *ns, const char *tag);
   /**
-  @brief Populate this xsd__anyType DOM element node with an attribute node
+  @brief Populate this xsd__anyType DOM element node with an attribute node, if the attribute does not already exists
   @param ns namespace URI string or NULL of attribute
   @param tag (un)qualified tag name wide string of attribute
   @return reference to xsd__anyAttribute attribute node (new attribute node if none matches)

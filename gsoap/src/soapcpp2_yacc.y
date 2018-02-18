@@ -2215,9 +2215,9 @@ nullptr : /* empty */   { $$ = zflag >= 1 && zflag <= 3; /* False, unless versio
 patt    : /* empty */   { $$ = NULL; }
         | STR           { $$ = $1; }
         ;
-value   : DBL           { $$.i = $$.r = $1; }
-        | LNG           { $$.r = $$.i = $1; }
-        | CHR           { $$.r = $$.i = $1; }
+value   : DBL           { $$.i = (LONG64)($$.r = $1); }
+        | LNG           { $$.r = (double)($$.i = $1); }
+        | CHR           { $$.r = (double)($$.i = $1); }
         | '+' value     { $$.i = +$2.i; $$.r = +$$.r; }
         | '-' value     { $$.i = -$2.i; $$.r = -$$.r; }
         ;
