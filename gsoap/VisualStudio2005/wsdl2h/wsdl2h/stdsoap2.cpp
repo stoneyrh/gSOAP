@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.63
+        stdsoap2.c[pp] 2.8.64
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20863
+#define GSOAP_LIB_VERSION 20864
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.63 2018-02-17 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.64 2018-03-02 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.63 2018-02-17 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.64 2018-03-02 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -210,14 +210,16 @@ static int ssl_password(char*, int, int, void *);
 static int soap_ssl_init_done = 0;
 static int ssl_auth_init(struct soap*);
 static const char *ssl_verify(struct soap *soap, const char *host);
-# if defined(HAVE_PTHREAD_H)
-#  include <pthread.h>
-   /* make GNUTLS thread safe with pthreads */
-   GCRY_THREAD_OPTION_PTHREAD_IMPL;
-# elif defined(HAVE_PTH_H)
-   #include <pth.h>
-   /* make GNUTLS thread safe with PTH */
-   GCRY_THREAD_OPTION_PTH_IMPL;
+# if GNUTLS_VERSION_NUMBER < 0x020b00
+#  if defined(HAVE_PTHREAD_H)
+#   include <pthread.h>
+    /* make GNUTLS thread safe with pthreads */
+    GCRY_THREAD_OPTION_PTHREAD_IMPL;
+#  elif defined(HAVE_PTH_H)
+    #include <pth.h>
+    /* make GNUTLS thread safe with PTH */
+    GCRY_THREAD_OPTION_PTH_IMPL;
+#  endif
 # endif
 #endif
 
@@ -3957,9 +3959,11 @@ soap_ssl_server_context(struct soap *soap, unsigned short flags, const char *key
   }
   else
   {
+#if GNUTLS_VERSION_NUMBER < 0x030300
     if (!soap->rsa_params)
       gnutls_rsa_params_init(&soap->rsa_params);
     gnutls_rsa_params_generate2(soap->rsa_params, SOAP_SSL_RSA_BITS);
+#endif
   }
   if (soap->session)
   {
@@ -4080,7 +4084,9 @@ soap_ssl_crl(struct soap *soap, const char *crlfile)
         return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read CRL PEM file", SOAP_SSL_ERROR);
   }
   else
+  {
     soap->crlfile = crlfile; /* activate later when xcred is available */
+  }
 #endif
   return SOAP_OK;
 }
@@ -4129,15 +4135,19 @@ soap_ssl_init()
     }
 #endif
 #ifdef WITH_GNUTLS
-# if defined(HAVE_PTHREAD_H)
+# if GNUTLS_VERSION_NUMBER < 0x020b00
+#  if defined(HAVE_PTHREAD_H)
     gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread);
-# elif defined(HAVE_PTH_H)
+#  elif defined(HAVE_PTH_H)
     gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pth);
-# endif
+#  endif
     gcry_control(GCRYCTL_ENABLE_QUICK_RANDOM, 0);
     gcry_control(GCRYCTL_DISABLE_SECMEM, 0);
     gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0); /* libgcrypt init done */
+# endif
+# if GNUTLS_VERSION_NUMBER < 0x030300
     gnutls_global_init();
+# endif
 #endif
   }
 }
@@ -4435,11 +4445,17 @@ ssl_auth_init(struct soap *soap)
 #endif
 #ifdef WITH_GNUTLS
   int ret;
+  char priority[80];
+  soap_strcpy(priority, sizeof(priority), "PERFORMANCE");
   if (!soap_ssl_init_done)
     soap_ssl_init();
   if (!soap->xcred)
   {
-    gnutls_certificate_allocate_credentials(&soap->xcred);
+    if (gnutls_certificate_allocate_credentials(&soap->xcred) != GNUTLS_E_SUCCESS)
+      return soap_set_receiver_error(soap, "SSL/TLS error", "Can't allocate credentials or trust", SOAP_SSL_ERROR);
+#if GNUTLS_VERSION_NUMBER >= 0x030300
+    gnutls_certificate_set_x509_system_trust(soap->xcred);
+#endif
     if (soap->cafile)
     {
       if (gnutls_certificate_set_x509_trust_file(soap->xcred, soap->cafile, GNUTLS_X509_FMT_PEM) < 0)
@@ -4452,7 +4468,7 @@ ssl_auth_init(struct soap *soap)
     }
     if (soap->keyfile)
     {
-      if (gnutls_certificate_set_x509_key_file(soap->xcred, soap->keyfile, soap->keyfile, GNUTLS_X509_FMT_PEM) < 0) /* Assumes that key and cert(s) are concatenated in the keyfile */
+      if (gnutls_certificate_set_x509_key_file2(soap->xcred, soap->keyfile, soap->keyfile, GNUTLS_X509_FMT_PEM, soap->password, GNUTLS_PKCS_PKCS12_3DES | GNUTLS_PKCS_PKCS12_ARCFOUR | GNUTLS_PKCS_PKCS12_RC2_40 | GNUTLS_PKCS_PBES2_AES_128 | GNUTLS_PKCS_PBES2_AES_192 | GNUTLS_PKCS_PBES2_AES_256 | GNUTLS_PKCS_PBES2_DES) < 0) /* Assumes that key and cert(s) are concatenated in the keyfile and the key is encrypted with one of these algorithms */
         return soap_set_receiver_error(soap, "SSL/TLS error", "Can't read private key PEM file", SOAP_SSL_ERROR);
     }
   }
@@ -4462,7 +4478,7 @@ ssl_auth_init(struct soap *soap)
     if (soap->cafile || soap->crlfile || soap->keyfile)
     {
       ret = gnutls_priority_set_direct(soap->session, "PERFORMANCE", NULL);
-      if (ret < 0)
+      if (ret != GNUTLS_E_SUCCESS)
         return soap_set_receiver_error(soap, soap_ssl_error(soap, ret), "SSL/TLS set priority error", SOAP_SSL_ERROR);
       gnutls_credentials_set(soap->session, GNUTLS_CRD_CERTIFICATE, soap->xcred);
     }
@@ -4470,8 +4486,9 @@ ssl_auth_init(struct soap *soap)
     {
       if (!soap->acred)
         gnutls_anon_allocate_client_credentials(&soap->acred);
-      gnutls_init(&soap->session, GNUTLS_CLIENT);
-      gnutls_priority_set_direct(soap->session, "PERFORMANCE:+ANON-DH:!ARCFOUR-128", NULL);
+      ret = gnutls_priority_set_direct(soap->session, "PERFORMANCE:+ANON-DH:!ARCFOUR-128", NULL);
+      if (ret != GNUTLS_E_SUCCESS)
+        return soap_set_receiver_error(soap, soap_ssl_error(soap, ret), "SSL/TLS set priority error", SOAP_SSL_ERROR);
       gnutls_credentials_set(soap->session, GNUTLS_CRD_ANON, soap->acred);
     }
   }
@@ -4479,9 +4496,11 @@ ssl_auth_init(struct soap *soap)
   {
     if (!soap->keyfile)
       return soap_set_receiver_error(soap, "SSL/TLS error", "No key file: anonymous server authentication not supported in this release", SOAP_SSL_ERROR);
+#if GNUTLS_VERSION_NUMBER < 0x030300
     if ((soap->ssl_flags & SOAP_SSL_RSA) && soap->rsa_params)
       gnutls_certificate_set_rsa_export_params(soap->xcred, soap->rsa_params);
-    else if (soap->dh_params)
+#endif
+    if (!(soap->ssl_flags & SOAP_SSL_RSA) && soap->dh_params)
       gnutls_certificate_set_dh_params(soap->xcred, soap->dh_params);
     if (!soap->cache)
       gnutls_priority_init(&soap->cache, "NORMAL", NULL);
@@ -4491,6 +4510,7 @@ ssl_auth_init(struct soap *soap)
     if ((soap->ssl_flags & SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION))
       gnutls_certificate_server_set_request(soap->session, GNUTLS_CERT_REQUEST);
     gnutls_session_enable_compatibility_mode(soap->session);
+# if GNUTLS_VERSION_NUMBER < 0x030300
     if ((soap->ssl_flags & SOAP_SSLv3))
     {
       int protocol_priority[] = { GNUTLS_SSL3, 0 };
@@ -4527,6 +4547,28 @@ ssl_auth_init(struct soap *soap)
       if (gnutls_protocol_set_priority(soap->session, protocol_priority) != GNUTLS_E_SUCCESS)
         return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set TLSv1 protocols", SOAP_SSL_ERROR);
     }
+#else
+    if ((soap->ssl_flags & SOAP_SSLv3))
+    {
+      if (gnutls_priority_set_direct(soap->session, "NORMAL:-VERS-TLS-ALL:-VERS-DTLS-ALL", NULL) != GNUTLS_E_SUCCESS)
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set SSLv3 protocol", SOAP_SSL_ERROR);
+    }
+    else if ((soap->ssl_flags & SOAP_TLSv1_0))
+    {
+      if (gnutls_priority_set_direct(soap->session, "NORMAL:-VERS-TLS1.1:-VERS-TLS-TLS1.2", NULL) != GNUTLS_E_SUCCESS)
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set TLSv1.0 protocol", SOAP_SSL_ERROR);
+    }
+    else if ((soap->ssl_flags & SOAP_TLSv1_1))
+    {
+      if (gnutls_priority_set_direct(soap->session, "NORMAL:-VERS-TLS1.0:-VERS-TLS-TLS1.2", NULL) != GNUTLS_E_SUCCESS)
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set TLSv1.1 protocol", SOAP_SSL_ERROR);
+    }
+    else if ((soap->ssl_flags & SOAP_TLSv1_2))
+    {
+      if (gnutls_priority_set_direct(soap->session, "NORMAL:-VERS-TLS1.0:-VERS-TLS-TLS1.1", NULL) != GNUTLS_E_SUCCESS)
+        return soap_set_receiver_error(soap, "SSL/TLS error", "Can't set TLSv1.2 protocol", SOAP_SSL_ERROR);
+    }
+#endif
   }
 #endif
 #ifdef WITH_SYSTEMSSL
@@ -7021,11 +7063,13 @@ soap_done(struct soap *soap)
       gnutls_dh_params_deinit(soap->dh_params);
       soap->dh_params = NULL;
     }
+# if GNUTLS_VERSION_NUMBER < 0x030300
     if (soap->rsa_params)
     {
       gnutls_rsa_params_deinit(soap->rsa_params);
       soap->rsa_params = NULL;
     }
+#endif
   }
   if (soap->session)
   {
@@ -12507,7 +12551,7 @@ soap_element(struct soap *soap, const char *tag, int id, const char *type)
       /* non-nested wsu:Id found: clear xmlns, re-emit them for exc-c14n */
       for (np = soap->nlist; np; np = np->next)
       {
-        int p = soap_tagsearch(soap->c14ninclude, np->id) != NULL;
+        int p = soap->c14ninclude ? *soap->c14ninclude == '+' || soap_tagsearch(soap->c14ninclude, np->id) != NULL : 0;
         if (np->index == 2 || p)
         {
           struct soap_nlist *np1 = soap_push_ns(soap, np->id, np->ns, 1, 0);
@@ -17808,13 +17852,14 @@ soap_wstring(struct soap *soap, const char *s, int flag, long minlen, long maxle
         {
 #ifdef WITH_REPLACE_ILLEGAL_UTF8
           soap_wchar c1, c2, c3;
-          c1 = (unsigned char)*s++;
+          c1 = (unsigned char)*s;
           if (c <= 0xC1 || (c1 & 0xC0) != 0x80)
           {
             c = SOAP_UNKNOWN_UNICODE_CHAR;
           }
           else
           {
+            ++s;
             c1 &= 0x3F;
             if (c < 0xE0)
             {
@@ -17822,13 +17867,14 @@ soap_wstring(struct soap *soap, const char *s, int flag, long minlen, long maxle
             }
             else
             {
-              c2 = (unsigned char)*s++;
+              c2 = (unsigned char)*s;
               if ((c == 0xE0 && c1 < 0x20) || (c2 & 0xC0) != 0x80)
               {
                 c = SOAP_UNKNOWN_UNICODE_CHAR;
               }
               else
               {
+                ++s;
                 c2 &= 0x3F;
                 if (c < 0xF0)
                 {
@@ -17836,43 +17882,74 @@ soap_wstring(struct soap *soap, const char *s, int flag, long minlen, long maxle
                 }
                 else
                 {
-                  c3 = (unsigned char)*s++;
+                  c3 = (unsigned char)*s;
                   if ((c == 0xF0 && c1 < 0x10) || (c == 0xF4 && c1 >= 0x10) || c >= 0xF5 || (c3 & 0xC0) != 0x80)
+                  {
                     c = SOAP_UNKNOWN_UNICODE_CHAR;
+                  }
                   else
+                  {
+                    ++s;
                     c = (((c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | (c3 & 0x3F));
+                  }
                 }
               }
             }
           }
 #else
           soap_wchar c1, c2, c3, c4;
-          c1 = (unsigned char)*s++ & 0x3F;
-          if (c < 0xE0)
+          c1 = (unsigned char)*s;
+          if (c1)
           {
-            c = (wchar_t)(((soap_wchar)(c & 0x1F) << 6) | c1);
-          }
-          else
-          {
-            c2 = (unsigned char)*s++ & 0x3F;
-            if (c < 0xF0)
+            s++;
+            c1 &= 0x3F;
+            if (c < 0xE0)
             {
-              c = (wchar_t)(((soap_wchar)(c & 0x0F) << 12) | (c1 << 6) | c2);
+              c = (wchar_t)(((soap_wchar)(c & 0x1F) << 6) | c1);
             }
             else
             {
-              c3 = (unsigned char)*s++ & 0x3F;
-              if (c < 0xF8)
+              c2 = (unsigned char)*s;
+              if (c2)
               {
-                c = (wchar_t)(((soap_wchar)(c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | c3);
-              }
-              else
-              {
-                c4 = (unsigned char)*s++ & 0x3F;
-                if (c < 0xFC)
-                  c = (wchar_t)(((soap_wchar)(c & 0x03) << 24) | (c1 << 18) | (c2 << 12) | (c3 << 6) | c4);
+                s++;
+                c2 &= 0x3F;
+                if (c < 0xF0)
+                {
+                  c = (wchar_t)(((soap_wchar)(c & 0x0F) << 12) | (c1 << 6) | c2);
+                }
                 else
-                  c = (wchar_t)(((soap_wchar)(c & 0x01) << 30) | (c1 << 24) | (c2 << 18) | (c3 << 12) | (c4 << 6) | (unsigned char)(*s++ & 0x3F));
+                {
+                  c3 = (unsigned char)*s;
+                  if (c3)
+                  {
+                    s++;
+                    c3 &= 0x3F;
+                    if (c < 0xF8)
+                    {
+                      c = (wchar_t)(((soap_wchar)(c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | c3);
+                    }
+                    else
+                    {
+                      c4 = (unsigned char)*s;
+                      if (c4)
+                      {
+                        s++;
+                        c4 &= 0x3F;
+                        if (c < 0xFC)
+                        {
+                          c = (wchar_t)(((soap_wchar)(c & 0x03) << 24) | (c1 << 18) | (c2 << 12) | (c3 << 6) | c4);
+                        }
+                        else
+                        {
+                          c = (wchar_t)(((soap_wchar)(c & 0x01) << 30) | (c1 << 24) | (c2 << 18) | (c3 << 12) | (c4 << 6) | (unsigned char)(*s & 0x3F));
+                          if (*s)
+                            s++;
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -21192,7 +21269,7 @@ soap_try_connect_command(struct soap *soap, int http_command, const char *endpoi
     {
       soap->error = SOAP_OK;
 #ifndef WITH_LEAN
-      if (!strncmp(endpoint, "soap.udp:", 9))
+      if (!strncmp(endpoint, "soap.udp:", 9) || !strncmp(endpoint, "udp:", 4))
       {
         soap->omode |= SOAP_IO_UDP;
       }

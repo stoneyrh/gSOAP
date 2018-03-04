@@ -1298,7 +1298,7 @@ Version 2.8.61 (1/27/2018)
 - Fixed a glitch in soapcpp2 to generate `soap_write_T` functions for `typedef ... T` types that represent XML elements.
 - Fixed double free in CURL plugin.
 
-Version 2.8.62 (2/10/2018) {#latest}
+Version 2.8.62 (2/10/2018)
 ---
 
 - Added wsdl2h options `-O3` and `-O4` to aggressively optimize WSDLs internally by "schema slicing": `-O3` applies `-O2` and also removes unused root attributes, `-O4` applies `-O3` and also removes unused root elements.  It only makes sense to use `-O4` with one or more WSDLs (and XSDs that are imported by the WSDL), because all schema components will be removed from XSDs that are not used by WSDLs.
@@ -1307,11 +1307,19 @@ Version 2.8.62 (2/10/2018) {#latest}
 - Improved soapcpp2 options `-g` and `-y`, may be used together to generate sample XML messages.
 - Fixed Borland C++ compilation issue.
 
-Version 2.8.63 (2/17/2018) {#latest}
+Version 2.8.63 (2/17/2018)
 ---
 
 - Improved Test Messenger: easy randomized testing of Web Services; added `__PERMUTE` indicator and automatic handling of SOAP 1.1/1.2 array dimension adjustments (`arrayType` and `arraySize` attributes), among other improvements.
 - Minor improvements.
+
+Version 2.8.64 (3/05/2018) {#latest}
+---
+
+- Upgraded TLS/SSL engine to support GNUTLS 3.3.0 and greater. To use the GNUTLS library in place of OpenSSL run `./configure --enable=gnutls` and compile all source code with `-DWITH_GNUTLS` instead of `-DWITH_OPENSSL`.
+- Improved Test Messenger with new options `-d num` and `-u`, where `-dnum` specifies the number of iterations to hit a server with test messages, and `-u` includes Unicode characters in randomized content. Other usability improvements and a bug fix.
+- Improved WSSE WS-Security plugin and added documentation section with clarifications on how the plugin defends against signature wrapping attacks when you perform signature verification function calls.
+- Updated `xlocale.h` inclusion for GNU Linux, again. Some Red Hat Linux versions require `xlocale.h` in order to compile stdsoap2.c/stdsoap2.cpp and should therefore be compiled with the new compilation flag `-DWITH_INCLUDE_XLOCALE_H`, or by using `./configure --enable-xlocale`, to force the inclusion of `xlocale.h`.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

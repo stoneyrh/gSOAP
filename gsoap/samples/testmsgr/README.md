@@ -363,7 +363,7 @@ For example:
 Options                                                               {#options}
 -------
 
-    testmsgr [-aact] [-b] [-c] [-dnum] [-f] [-h] [-i] [-j] [-lmax] [-mmax] [-nlen] [-ofile] [-pnum] [-qnum] [-rseed] [-tsec] [-v] [-A] [-C] [-H] [-M] [-Pper] [-Rrep] [-Ssel] [infile|-] [URL|port]
+    testmsgr [-aact] [-b] [-c] [-dnum] [-f] [-h] [-i] [-j] [-lmax] [-mmax] [-nlen] [-ofile] [-pnum] [-qnum] [-rseed] [-tsec] [-v] [-A] [-C] [-H] [-M] [-Oopt] [-Pper] [-Rrep] [-Ssel] [infile|-] [URL|port]
 
 where the testmsgr command-line options are:
 
@@ -390,9 +390,10 @@ Option    | Description
 `-C`      | enable HTTP chunked transfers
 `-H`      | add HTTP headers when no URL is specified
 `-M`      | enable MTOM (application/xop+xml)
-`-P per`  | set XML element permutation indicator tag (default=`__PERMUTE`)
-`-R rep`  | set XML element repetition indicator tag (default=`__REPEAT`)
-`-S sel`  | set XML element selection indicator tag (default=`__SELECT`)
+`-O opt`  | set the XML optional value indicator (default="???")
+`-P per`  | set the XML element permutation indicator tag (default=`__PERMUTE`)
+`-R rep`  | set the XML element repetition indicator tag (default=`__REPEAT`)
+`-S sel`  | set the XML element selection indicator tag (default=`__SELECT`)
 `infile`  | XML message or XML message template with indicator annotations
 `-`       | read XML message or XML message template from standard input
 `URL`     | endpoint URL of service to test
@@ -527,6 +528,11 @@ content (base64Binary XML element) specified in the template with
 `<xop:Include xmlns:xop="http://www.w3.org/2004/08/xop/include"/>` element with
 an `href` attribute referencing the MIME attachment with randomized content.
 
+### `-O opt`
+
+Sets the XML optional value indicator.  The default is `???`.
+See \ref indicators.
+
 ### `-P per`
 
 Sets the XML element permutation indicator tag.  The default is `__PERMUTE`.
@@ -597,7 +603,11 @@ value, `<name>???%[[TEXT]]%</name>` is an optional element with text,
 `<data lang="%[[LANG]]%">???</data>` is an optional empty element with an
 attribute.
 
-### Enumeration templates
+### Enumeration placeholders
+
+Enumeration placeholders can be used anywhere a value is expected and is used
+to provide an enumeration of possible values to choose from for element and
+attributes.
 
 `%[[A][B][C]]%` specifies a choice of values `A`, `B` or `C`.  The values can be
 anything but should not contain `][` or `]]%`.  For example:
@@ -611,7 +621,37 @@ anything but should not contain `][` or `]]%`.  For example:
 where `completed="%[[false][true]]%"` enumerates the values `false` and `true`.
 Note that this enumeration is identical to the `%[[BOOL]]%` placeholder type.
 
-### Numeric range and precision templates
+### Pattern placeholders
+
+Pattern placeholders can be used anywhere a value is expected and is used to
+provide a pattern to generate randomized values.
+
+A pattern placeholder <tt>%[['pattern']]%</tt> specifies a pattern in the usual XML
+regular expression syntax, for example:
+
+<div class="alt">
+```xml
+<process PID="%[['id[0-9]+']]%"/>
+```
+</div>
+
+A quote (') in the pattern should be escaped with a backslash as in \', which
+the soapcpp2 tool automatically converts with option `-g` to produce pattern
+facets.
+
+The length of the generated string may be constrained with
+<tt>%[['pattern'[N:M]]]%</tt>. The range `N:M` specifies the number of characters.
+
+@note Unicode character classes specified with `\p{C}` are not yet supported in
+gSOAP versions 2.8.62-2.8.64.
+
+@warning Length constraints `N:M` in <tt>%[['pattern'[N:M]]]%</tt> should be
+viable given the pattern's inherent minimum and maximum lengths.  For example,
+<tt>%[['[a-z]+'[0:10]]]%</tt> is viable, but <tt>%[['id[0-9]{3}'[0:3]]]%</tt>
+is not viable.  There is a possibility that the generated pattern does not meet
+the `[N:M]` constraints provided.
+
+### Numeric range and precision placeholders
 
 A numeric range is integer-valued when the lower bound `N` and upper bound `M`
 are integer.  Otherwise, the numeric range values are floating point.  For
@@ -651,7 +691,7 @@ point numeric precision is specified with `%[[FLOAT%.2e]]%` and
 of the specified type formatted according to the specified printf-format
 string.
 
-### Primitive XSD type templates
+### Primitive XSD type value placeholders
 
 `%[[BASE64]]%` and length-restricted `%[[BASE64[N:M]]]%` specify
 xsd:base64Binary XSD values.  The length restriction `N:M` specifies the range

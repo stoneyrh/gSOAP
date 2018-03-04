@@ -9434,6 +9434,32 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
       }
       return;
     }
+    if (p->pattern && *p->pattern != '%')
+    {
+      if (gflag)
+      {
+        const char *s;
+        if (opt)
+          fprintf(fd, "???");
+        fprintf(fd, "%%[['");
+        for (s = p->pattern; *s; s++)
+        {
+          if (*s == '\'')
+            fprintf(fd, "\\'");
+          else
+            fprintf(fd, "%c", *s);
+        }
+        if (p->hasmin && p->hasmax)
+          fprintf(fd, "'[%ld:%ld]]]%%", minlen(p), maxlen(p));
+        else if (p->hasmin)
+          fprintf(fd, "'[%ld:2147483647]]]%%", minlen(p));
+        else if (p->hasmax)
+          fprintf(fd, "'[0:%ld]]]%%", maxlen(p));
+        else
+          fprintf(fd, "']]%%");
+        return;
+      }
+    }
     switch (p->type)
     {
       case Tchar:
@@ -11314,7 +11340,7 @@ soap_union_member(Tnode *typ, Entry *p)
   const char *t = c_ident(typ);
   const char *n = ident(p->sym->name);
   char *s;
-  if (namespaceid)
+  if (namespaceid && (zflag == 0 || zflag > 3))
   {
     s = (char*)emalloc(strlen(t) + strlen(n) + strlen(namespaceid) + 14);
     strcpy(s, "SOAP_UNION_");

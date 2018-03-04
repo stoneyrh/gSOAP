@@ -230,14 +230,19 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_KeyInfo_SecurityTokenReferenceEmbedded(s
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_add_EncryptedData_KeyInfo_KeyName(struct soap *soap, const char *keyname);
 
+#ifdef SOAP_NAMESPACE_OF_saml1
 SOAP_FMAC1 saml1__AssertionType * SOAP_FMAC2 soap_wsse_add_saml1(struct soap *soap, const char *wsuId);
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_sign_saml1(struct soap *soap, saml1__AssertionType *assertion, int alg, const void *key, int keylen, X509 *cert);
 SOAP_FMAC1 saml1__AssertionType * SOAP_FMAC2 soap_wsse_get_saml1(struct soap *soap);
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_saml1(struct soap *soap, saml1__AssertionType *saml1);
+#endif
+
+#ifdef SOAP_NAMESPACE_OF_saml2
 SOAP_FMAC1 saml2__AssertionType * SOAP_FMAC2 soap_wsse_add_saml2(struct soap *soap, const char *wsuId);
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_sign_saml2(struct soap *soap, saml2__AssertionType *assertion, int alg, const void *key, int keylen, X509 *cert);
 SOAP_FMAC1 saml2__AssertionType * SOAP_FMAC2 soap_wsse_get_saml2(struct soap *soap);
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_verify_saml2(struct soap *soap, saml2__AssertionType *saml2);
+#endif
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_sender_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);
 SOAP_FMAC1 int SOAP_FMAC2 soap_wsse_receiver_fault_subcode(struct soap *soap, const char *faultsubcode, const char *faultstring, const char *faultdetail);

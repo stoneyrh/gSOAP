@@ -666,7 +666,8 @@ To send messages with inclusive canonicalization, in addition to the
 @endcode
 
 However, exclusive canonicalization is recommended over inclusive
-canonicalization, or no canonicalization at all.
+canonicalization, or no canonicalization at all.  WS Basic Security profile 1.0
+requires exclusive canonicalization.
 
 Flags to consider:
 
@@ -994,7 +995,9 @@ inclusive. For example, xsi:type attribute values are QNames with xsd types
 (and perhaps other types), meaning we should add "xsd" to the inclusive
 namespace prefix list with `soap_wsse_set_InclusiveNamespaces(soap, "xsd")`
 to ensure xsi:type="xsd:TYPE" attributes with QName content are properly signed
-and not susceptible to certain wrapping attacks.
+and not susceptible to certain wrapping attacks.  A quick way to include all
+prefixes in the signed contents and thereby thwart signature wrapping attacks
+is to use `soap_wsse_set_InclusiveNamespaces(soap, "+")`.
 
 @note
 When signing parts of the body as outlined above, use `soap_wsse_sign`
@@ -1152,9 +1155,12 @@ message, use:
     soap->capath = "dir/to/certs"; // and/or point to CA certs directory
     soap->crlfile = "revoked.pem"; // use CRL (optional)
     ... // client call
-    if (soap_wsse_verify_element(soap, "namespaceURI", "tag") > 0)
-      ... // at least one element with matching tag and namespace is signed
+    if (soap_wsse_verify_element(soap, "namespaceURI", "tag") == 1)
+      ... // only one element with matching tag and namespace is signed
 @endcode
+
+The `soap_wsse_verify_element` function returns the number of matching elements
+signed.
 
 The signed element nesting rules are obeyed, so if the matching element is a
 descendent of a signed element, it is signed as well.
@@ -1304,7 +1310,8 @@ To send messages with inclusive canonicalization, in addition to the
 @endcode
 
 However, exclusive canonicalization is recommended over inclusive
-canonicalization, or no canonicalization at all.
+canonicalization, or no canonicalization at all.  WS Basic Security profile 1.0
+requires exclusive canonicalization.
 
 Flags to consider:
 
@@ -2086,26 +2093,69 @@ include additional details.
 
 @section wsse_13 Some Limitations
 
-- Encryption of simple content (CDATA content) with
-  `soap_wsse_add_EncryptedKey_encrypt_only` is not supported. Encrypt the
-  entire SOAP Body or encrypt elements with complex content (complexType and
-  complexContent elements that have sub elements).
+- Encryption of simple content (CDATA content) directly with
+  `soap_wsse_add_EncryptedKey_encrypt_only` is not supported.  You can encrypt
+  elements with complex content (complexType and complexContent elements that
+  have sub elements).  Decryption is not limited to elements with complex
+  content.
 
 - Encryption is performed after signing (likewise, signatures are verified
-  after decryption). Signing after encryption is not supported in the current
+  after decryption).  Signing after encryption is not supported in the current
   plugin release.  It is generally known that it is safer to perform encryption
-  after signing and not vice versa.
+  after signing as the WSSE plugin performs, and not vice versa.
 
 - Signing and encrypting XML containing QName content may lead to verification
-  issues, because the W3C C14N canonicalization protocol has known limitations
-  with QName content normalization.  Prefixes in QNames may be ignored,
-  possibly resulting in missing xmlns bindings). Use
-  `soap_wsse_set_InclusiveNamespaces(soap, "prefixlist")` to define which
-  namespace prefixes (space-separated in the string) should be considered
-  inclusive. All prefixes used in QName content should be listed. The WSSE
-  engine recognizes xsi:type, SOAP-ENC:arrayType, SOAP-ENC:itemType attribute
-  QNames. Therefore, soapcpp2 option `-t` is always safe to use, but a non-gSOAP
-  receiver may still fail.
+  issues, because the W3C C14N exclusive canonicalization protocol has known
+  limitations with QName content normalization.  In fact, not signing the
+  prefix bindings as in C14N exclusive canonicalization is a security risk,
+  because the prefix-URI binding can be modified when placed at an ancestor
+  node that is not included in the signed XML content.  Use
+  `soap_wsse_set_InclusiveNamespaces(soap, "prefixlist")` to define all
+  namespace prefixes (space-separated in the string) that should be considered
+  inclusive. All prefixes used in QName content should be listed to mitigate
+  the security risks outlined. The WSSE engine recognizes xsi:type,
+  SOAP-ENC:arrayType, SOAP-ENC:itemType attribute QNames. Therefore, soapcpp2
+  option `-t` is always safe to use, but a non-gSOAP receiver may still fail.
+
+@section wsse_14 Defending Against Signature Wrapping Attacks
+
+Signature wrapping attacks exploit a vulnerability in the XML DSig standard by
+tricking the signature verifier to verify the signature of the signed content
+but when this content is moved to a different place in the XML document, for
+example where the content is ignored.  In this attack, a signed XML element
+identified with an `id` attribute is moved in the document and replaced with an
+unsigned replacement element with aribitrary content that the attacker created
+and the receiver will use instead.  We refer to online articles and
+publications on signature wrapping attacks for more details.
+
+To defend against signature wrapping attacks, we recommend to sign the SOAP
+Body instead of individual elements of the SOAP Body.  A receiver must verify
+that the SOAP Body received is indeed signed and verify that other parts of the
+message such as critical SOAP Headers are signed.  You can do this on the
+receiving end by calling `soap_wsse_verify_body(soap)` and check that the
+return value is nonzero.  This prevents signature wrapping attacks on the SOAP
+Body.  If individual element(s) of the SOAP Body must be signed instead of the
+body itself, then make sure to use call
+`soap_wsse_verify_element(soap, "namespaceURI", "tag")` on the receiving end
+and check that the return value is nonzero to verify that all elements matching
+the namespaceURI and tag are signed.
+
+If SOAP Headers are signed such as the timestamp and username token then make
+sure to verify that the timestamp was indeed signed by calling
+`soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp")`
+and check that the return value is nonzero. Likewise, to verify that the
+usernameToken authentication credentials are signed, call
+`soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "UsernameToken")`
+and check that the return value is nonzero.
+
+To prevent signature wrapping attacks on XML namespace prefixes used in QNames,
+which are vulnerable when the prefix is bound to a namespace URI in an
+ancester node to the signed content, use
+`soap_wsse_set_InclusiveNamespaces(soap, "prefixlist")`.  This makes the
+namespace prefixes in the list (space-separated in the string) inclusive.
+Use `soap_wsse_set_InclusiveNamespaces(soap, "+")` to automatically add all
+prefixes defined in the namespace table (i.e. the .nsmap file) to the inclusive
+namespace list (this requires gSOAP 2.8.64 or greater).
 
 @section wsse_wsc WS-SecureConversation and WS-Trust
 
@@ -3268,7 +3318,31 @@ soap_wsse_add_SignedInfo_Reference(struct soap *soap, const char *URI, unsigned 
       if (!reference->Transforms->Transform->c14n__InclusiveNamespaces)
         return soap->error = SOAP_EOM;
       soap_default__c14n__InclusiveNamespaces(soap, reference->Transforms->Transform->c14n__InclusiveNamespaces);
-      reference->Transforms->Transform->c14n__InclusiveNamespaces->PrefixList = (char*)prefixlist;
+      if (*prefixlist == '+')
+      {
+        struct Namespace *ns = soap->local_namespaces;
+        size_t n = 0;
+        char *p;
+        for (ns = soap->local_namespaces; ns && ns->id; ns++)
+          n += strlen(ns->id) + 1;
+        reference->Transforms->Transform->c14n__InclusiveNamespaces->PrefixList = p = (char*)soap_malloc(soap, n);
+        if (p)
+        {
+          for (ns = soap->local_namespaces; ns && ns->id; )
+          {
+            strcpy(p, ns->id);
+            p += strlen(p);
+            ns++;
+            if (ns->id)
+              *p++ = ' ';
+          }
+          *p = '\0';
+        }
+      }
+      else
+      {
+        reference->Transforms->Transform->c14n__InclusiveNamespaces->PrefixList = (char*)prefixlist;
+      }
     }
   }
   /* populate the DigestMethod element */
@@ -5228,6 +5302,8 @@ soap_wsse_add_EncryptedData_KeyInfo_KeyName(struct soap *soap, const char *keyna
  *
 \******************************************************************************/
 
+#ifdef SOAP_NAMESPACE_OF_saml1
+
 /**
 @fn saml1__AssertionType *soap_wsse_add_saml1(struct soap *soap, const char *wsuId)
 @brief Adds SAML 1.0 Assertion to the wsse:Security header block, default initialized with wsu:Id set to enable signing of the assertion.
@@ -5364,11 +5440,15 @@ soap_wsse_verify_saml1(struct soap *soap, saml1__AssertionType *assertion)
   return err;
 }
 
+#endif
+
 /******************************************************************************\
  *
  *      wsse:Security/saml2:Assertion
  *
 \******************************************************************************/
+
+#ifdef SOAP_NAMESPACE_OF_saml2
 
 /**
 @fn saml2__AssertionType *soap_wsse_add_saml2(struct soap *soap, const char *wsuId)
@@ -5503,6 +5583,8 @@ soap_wsse_verify_saml2(struct soap *soap, saml2__AssertionType *assertion)
   assertion->ds__Signature = signature;
   return err;
 }
+
+#endif
 
 /******************************************************************************\
  *
@@ -6280,11 +6362,11 @@ soap_wsse_verify_done(struct soap *soap)
 
 /**
 @fn size_t soap_wsse_verify_element(struct soap *soap, const char *URI, const char *tag)
-@brief Post-checks the presence of signed element(s). Does not verify the signature of these elements, which is done with @ref soap_wsse_verify_auto.
+@brief Post-checks the presence of signed element(s), returns the number of matching elements signed or zero when none found or if one or more matching elements are not signed. Does not verify the signature of these elements, which is done with @ref soap_wsse_verify_auto.
 @param soap context
 @param URI namespace of element(s)
 @param tag name of element(s)
-@return number of matching elements signed.
+@return number of matching elements that are signed or 0 if no matching elements found or if one or more non-signed matching elements were found (0 is returned to prevent signature wrapping attacks).
 
 This function does not actually verify the signature of each element, but
 checks whether the elements are signed and thus their integrity is preserved.
@@ -6357,8 +6439,22 @@ soap_wsse_verify_element(struct soap *soap, const char *URI, const char *tag)
             elt = elt->next;
         }
       }
-      else
+      else if (elt->name && ((!elt->nstr && !URI) || (elt->nstr && URI && !strcmp(elt->nstr, URI))))
+      {
+        const char *s = strchr(elt->name, ':');
+        if (s)
+          s++;
+        else
+          s = elt->name;
+        /* found an unsigned matching element */
+        if (!strcmp(s, tag))
+          return 0;
         elt = soap_dom_next_element(elt, NULL);
+      }
+      else
+      {
+        elt = soap_dom_next_element(elt, NULL);
+      }
     }
   }
   return count;
@@ -6427,10 +6523,10 @@ soap_wsse_verify_body(struct soap *soap)
     else if (soap->local_namespaces->ns)
       ns = soap->local_namespaces->ns;
   }
-  /* We don't know if we're using SOAP 1.1 or 1.2, so assume it is 1.2 */
+  /* If we don't know if we're using SOAP 1.1 or 1.2, then assume it is 1.2 */
   if (!ns)
     ns = "http://www.w3.org/2003/05/soap-envelope";
-  if (soap_wsse_verify_element(soap, ns, "Body") > 0)
+  if (soap_wsse_verify_element(soap, ns, "Body") == 1)
     return SOAP_OK;
   return soap_wsse_sender_fault(soap, "Message body not signed", NULL);
 }

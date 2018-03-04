@@ -187,8 +187,8 @@ typedef struct _wsse__SecurityTokenReference
 /// Imported element _wsse__Security from typemap WS/WS-typemap.dat.
 #import "xenc.h"
 #import "wsc.h"
-#import "saml1.h"
-#import "saml2.h"
+#import "saml1.h" // remove this line to disable SAML1 and reduce generated code size
+#import "saml2.h" // remove this line to disable SAML2 and reduce generated code size
 typedef struct _wsse__Security
 {	struct _wsu__Timestamp*			wsu__Timestamp;
 	struct _wsse__UsernameToken*		UsernameToken;
@@ -197,8 +197,8 @@ typedef struct _wsse__Security
 	struct _xenc__ReferenceList*		xenc__ReferenceList;
 	struct wsc__SecurityContextTokenType*	wsc__SecurityContextToken;
 	struct ds__SignatureType*		ds__Signature;
-	struct saml1__AssertionType*		saml1__Assertion;
-	struct saml2__AssertionType*		saml2__Assertion;
+	struct saml1__AssertionType*		saml1__Assertion; // remove this line to disable SAML1 and reduce generated code size
+	struct saml2__AssertionType*		saml2__Assertion; // remove this line to disable SAML2 and reduce generated code size
 	@char*					SOAP_ENV__actor;
 	@char*					SOAP_ENV__role;
 } _wsse__Security;

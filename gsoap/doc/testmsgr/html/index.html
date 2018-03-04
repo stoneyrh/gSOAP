@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">Test Messenger</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sun Feb 18 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Fri Mar 2 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -142,7 +142,7 @@ Client-side testing                                                   </h2>
 </pre><p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="options"></a>
 Options                                                               </h2>
-<pre class="fragment">testmsgr [-aact] [-b] [-c] [-dnum] [-f] [-h] [-i] [-j] [-lmax] [-mmax] [-nlen] [-ofile] [-pnum] [-qnum] [-rseed] [-tsec] [-v] [-A] [-C] [-H] [-M] [-Pper] [-Rrep] [-Ssel] [infile|-] [URL|port]
+<pre class="fragment">testmsgr [-aact] [-b] [-c] [-dnum] [-f] [-h] [-i] [-j] [-lmax] [-mmax] [-nlen] [-ofile] [-pnum] [-qnum] [-rseed] [-tsec] [-v] [-A] [-C] [-H] [-M] [-Oopt] [-Pper] [-Rrep] [-Ssel] [infile|-] [URL|port]
 </pre><p>where the testmsgr command-line options are:</p>
 <table class="doxtable">
 <tr>
@@ -190,11 +190,13 @@ Options                                                               </h2>
 <tr>
 <td><code>-M</code> </td><td>enable MTOM (application/xop+xml) </td></tr>
 <tr>
-<td><code>-P per</code> </td><td>set XML element permutation indicator tag (default=<code>__PERMUTE</code>) </td></tr>
+<td><code>-O opt</code> </td><td>set the XML optional value indicator (default="???") </td></tr>
 <tr>
-<td><code>-R rep</code> </td><td>set XML element repetition indicator tag (default=<code>__REPEAT</code>) </td></tr>
+<td><code>-P per</code> </td><td>set the XML element permutation indicator tag (default=<code>__PERMUTE</code>) </td></tr>
 <tr>
-<td><code>-S sel</code> </td><td>set XML element selection indicator tag (default=<code>__SELECT</code>) </td></tr>
+<td><code>-R rep</code> </td><td>set the XML element repetition indicator tag (default=<code>__REPEAT</code>) </td></tr>
+<tr>
+<td><code>-S sel</code> </td><td>set the XML element selection indicator tag (default=<code>__SELECT</code>) </td></tr>
 <tr>
 <td><code>infile</code> </td><td>XML message or XML message template with indicator annotations </td></tr>
 <tr>
@@ -249,6 +251,8 @@ Options                                                               </h2>
 <p>Add HTTP headers to the generated message even when no URL is specified on the command line.</p>
 <h3><code>-M</code></h3>
 <p>Use MTOM (application/xop+xml) messaging. This option generates a MIME message with SOAP Body and zero or more MTOM attachments in MIME format. When combined with option <code>-r</code>, a MIME attachment is added for each element with binary content (base64Binary XML element) specified in the template with <code>%[[BASE64]]%</code>. The template <code>%[[BASE64]]%</code> value is replaced with an <code>&lt;xop:Include xmlns:xop="http://www.w3.org/2004/08/xop/include"/&gt;</code> element with an <code>href</code> attribute referencing the MIME attachment with randomized content.</p>
+<h3><code>-O opt</code></h3>
+<p>Sets the XML optional value indicator. The default is <code>???</code>. See <a class="el" href="index.html#indicators">Element repetition, selection and permutation indicators </a>.</p>
 <h3><code>-P per</code></h3>
 <p>Sets the XML element permutation indicator tag. The default is <code>__PERMUTE</code>. See <a class="el" href="index.html#indicators">Element repetition, selection and permutation indicators </a>.</p>
 <h3><code>-R rep</code></h3>
@@ -267,10 +271,18 @@ Placeholder values                                                </h2>
 <p>Element and attributes that are qualified as optional with <code>???</code> are randomly discared with options <code>-r</code> and <code>-q</code>, where <code>-q</code> specifies the percentage of elements and attributes that are retained in the generated XML message. A zero percentage specified with <code>-q0</code> removes all optional values. A value of 100 specified with <code>-q100</code> retains all optional values (the default) in the generated XML message.</p>
 <p>The <code>???</code> qualifier may appear after the opening tag of an element (i.e. in front of the element value or child elements) and in attribute values. For example:</p>
 <div class="alt"> <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;<span class="keywordtype">ns:record</span> <span class="keyword">xmlns:ns</span>=<span class="stringliteral">&quot;urn:example&quot;</span> <span class="keyword">id</span>=<span class="stringliteral">&quot;???[[INT32]]%&quot;</span>&gt;</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;  &lt;<span class="keywordtype">name</span>&gt;???%[[<span class="keyword">TEXT</span>]]%&lt;/<span class="keywordtype">name</span>&gt;</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;  &lt;<span class="keywordtype">info</span>&gt;???</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;    &lt;<span class="keywordtype">phone</span>&gt;%[[<span class="keyword">TEXT</span>[1:20]]]%&lt;/<span class="keywordtype">phone</span>&gt;</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    &lt;<span class="keywordtype">email</span>&gt;%[[<span class="keyword">TEXT</span>[1:40]]]%&lt;/<span class="keywordtype">email</span>&gt;</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;  &lt;/<span class="keywordtype">info</span>&gt;</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;  &lt;<span class="keywordtype">data</span> <span class="keyword">lang</span>=<span class="stringliteral">&quot;%[[LANG]]%&quot;</span>&gt;???&lt;/<span class="keywordtype">data</span>&gt;</div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;&lt;/<span class="keywordtype">ns:record</span>&gt;</div></div><!-- fragment --> </div><p>where <code>id="???%[[INT32]]"</code> is an optional attribute with a 32-bit integer value, <code>&lt;name&gt;???%[[TEXT]]%&lt;/name&gt;</code> is an optional element with text, <code>&lt;contact&gt;???</code> is an optional element with subelements, and <code>&lt;data lang="%[[LANG]]%"&gt;???&lt;/data&gt;</code> is an optional empty element with an attribute.</p>
-<h3>Enumeration templates</h3>
+<h3>Enumeration placeholders</h3>
+<p>Enumeration placeholders can be used anywhere a value is expected and is used to provide an enumeration of possible values to choose from for element and attributes.</p>
 <p><code>%[[A][B][C]]%</code> specifies a choice of values <code>A</code>, <code>B</code> or <code>C</code>. The values can be anything but should not contain <code>][</code> or <code>]]%</code>. For example:</p>
 <div class="alt"> <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;<span class="keywordtype">process</span> <span class="keyword">completed</span>=<span class="stringliteral">&quot;%[[false][true]]%&quot;</span>/&gt;</div></div><!-- fragment --> </div><p>where <code>completed="%[[false][true]]%"</code> enumerates the values <code>false</code> and <code>true</code>. Note that this enumeration is identical to the <code>%[[BOOL]]%</code> placeholder type.</p>
-<h3>Numeric range and precision templates</h3>
+<h3>Pattern placeholders</h3>
+<p>Pattern placeholders can be used anywhere a value is expected and is used to provide a pattern to generate randomized values.</p>
+<p>A pattern placeholder <code>%[['pattern']]%</code> specifies a pattern in the usual XML regular expression syntax, for example:</p>
+<div class="alt"> <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;<span class="keywordtype">process</span> <span class="keyword">PID</span>=<span class="stringliteral">&quot;%[[&#39;id[0-9]+&#39;]]%&quot;</span>/&gt;</div></div><!-- fragment --> </div><p>A quote (') in the pattern should be escaped with a backslash as in \', which the soapcpp2 tool automatically converts with option <code>-g</code> to produce pattern facets.</p>
+<p>The length of the generated string may be constrained with <code>%[['pattern'[N:M]]]%</code>. The range <code>N:M</code> specifies the number of characters.</p>
+<dl class="section note"><dt>Note</dt><dd>Unicode character classes specified with <code>\p{C}</code> are not yet supported in gSOAP versions 2.8.62-2.8.64.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Length constraints <code>N:M</code> in <code>%[['pattern'[N:M]]]%</code> should be viable given the pattern's inherent minimum and maximum lengths. For example, <code>%[['[a-z]+'[0:10]]]%</code> is viable, but <code>%[['id[0-9]{3}'[0:3]]]%</code> is not viable. There is a possibility that the generated pattern does not meet the <code>[N:M]</code> constraints provided.</dd></dl>
+<h3>Numeric range and precision placeholders</h3>
 <p>A numeric range is integer-valued when the lower bound <code>N</code> and upper bound <code>M</code> are integer. Otherwise, the numeric range values are floating point. For example, <code>%[[0:10]]%</code> speficies a range of integer values whereas <code>%[[0.0:10.0]]%</code> specifies a range of floating point values. The bounds of a numeric range can be made exlusive by using <code>(</code> and <code>)</code> instead of <code>[</code> and <code>]</code>.</p>
 <p><code>%[[N:M]]%</code> specifies a range of integer or float values between <code>N</code> and <code>M</code>.</p>
 <p><code>%[[N:M)]%</code> specifies a range of integer or float values between <code>N</code> and <code>M</code> (exclusive).</p>
@@ -280,7 +292,7 @@ Placeholder values                                                </h2>
 <div class="alt"> <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;<span class="keywordtype">price</span>&gt;%[(0.00:100000.00]]%&lt;/<span class="keywordtype">price</span>&gt;</div></div><!-- fragment --> </div><p>where 0.00 is excluded from the float value range and <code>100000.00</code> is the inclusive maximum of the numeric range.</p>
 <p>A decimal precision is specified with a printf-based format string, such as <code>%.2f</code> to indicate 2 decimal places after the decimal period should be used. The decimal precision is added to the range in the template. For example, <code>%[[0.0:999.0%.2f]]%</code> specifies a floating point range between 0.00 and 999.00 with 2 decimal places after the period. The total field width (total digits) can be specified with <code>%[[0.0:999.0%6.2f]]%</code> for example.</p>
 <p>The precision of a "limitless" floating point and double precision floating point numeric precision is specified with <code>%[[FLOAT%.2e]]%</code> and <code>%[[DOUBLE%.2e]]%</code> respectively. This produces numeric values within the range of the specified type formatted according to the specified printf-format string.</p>
-<h3>Primitive XSD type templates</h3>
+<h3>Primitive XSD type value placeholders</h3>
 <p><code>%[[BASE64]]%</code> and length-restricted <code>%[[BASE64[N:M]]]%</code> specify xsd:base64Binary XSD values. The length restriction <code>N:M</code> specifies the range of base64-encoded bytes.</p>
 <p><code>%[[BOOL]]%</code> specifies xsd:boolean XSD values.</p>
 <p><code>%[[DATE]]%</code> specifies xsd:date XSD values.</p>
@@ -348,7 +360,7 @@ Copyright                                                           </h1>
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sun Feb 18 2018 15:43:28 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Fri Mar 2 2018 10:42:46 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

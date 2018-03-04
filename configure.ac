@@ -191,6 +191,23 @@ else
 fi
 AC_SUBST(SOAPCPP2_NONAMESPACES)
 
+# the enable-xlocale option adds the -DWITH_INCLUDE_XLOCALE_H to the
+# library compilation thus forcing the inclusion of xlocale.h
+AC_ARG_ENABLE(xlocale,
+              [AC_HELP_STRING([--enable-xlocale],
+                              [compile library with forced inclusion of xlocale.h])],
+              [with_xlocale="$enable_xl"],
+              [with_xlocale="no"])
+
+AC_MSG_CHECKING(for enable xlocale usage in library)
+if test "x$with_xlocale" = "xyes"; then
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+  SOAPCPP2_INCLUDE_XLOCALE="-DWITH_INCLUDE_XLOCALE_H"
+fi
+AC_SUBST(SOAPCPP2_INCLUDE_XLOCALE)
+
 # the disable-c-locale option adds the -DWITH_NO_C_LOCALE to the
 # library compilation thus disabling the use of the C locale usage
 AC_ARG_ENABLE(c-locale,

@@ -52,7 +52,7 @@ Note:
 The wsse.h, wsu.h, ds.h, xenc.h c14n.h files are located in 'import'.
 The smdevp.*, mecevp.* and wsseapi.* files are located in 'plugin'.
 
-Usage: wssedemo abcdehiklmnopstxyz [port]
+Usage: wssedemo abcdefghiklmnopqstxyz [port]
 
 with options:
 
@@ -71,6 +71,7 @@ m use GCM with AES
 n canonicalize XML (exclusive C14N, recommended!)
 o use rsa-oaep-mgf1p with AES256 CBC
 p add prefixlist for c14n:InclusiveNamespaces/PrefixList for canonical XML interop
+q add prefixlist for c14n:InclusiveNamespaces/PrefixList with all namespace prefixes to thwart attacks on prefix bindings
 s server (stand-alone)
 t use plain-text passwords (password digest by default)
 x use plain XML (no HTTP header), client only
@@ -268,6 +269,8 @@ int main(int argc, char **argv)
       soap_set_omode(soap, SOAP_XML_CANONICAL);
     if (strchr(argv[1], 'p'))
       soap_wsse_set_InclusiveNamespaces(soap, "ns1");
+    if (strchr(argv[1], 'q'))
+      soap_wsse_set_InclusiveNamespaces(soap, "+");
     if (strchr(argv[1], 'l'))
       soap_wsse_set_InclusiveNamespaces(soap, "*");
     if (strchr(argv[1], 'a'))
@@ -546,7 +549,8 @@ int main(int argc, char **argv)
       if (addsig)
       {
 	soap_wsse_set_wsu_id(soap, "ns1:add");
-	soap_wsse_sign_only(soap, "User ns1:add");
+        /* should sign the timestamp, usernameToken, certificate, and ns1:add */
+	soap_wsse_sign_only(soap, "Time User X509Token ns1:add");
       }
 
       /* invoke the server. You can choose add, sub, mul, or div operations
@@ -619,6 +623,12 @@ int ns1__add(struct soap *soap, double a, double b, double *result)
     soap_wsse_add_KeyInfo_SecurityTokenReferenceX509(soap, "#X509Token");
     soap_wsse_sign_body(soap, SOAP_SMD_SIGN_RSA_SHA256, rsa_privk, 0);
     return err;
+  }
+  if (soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp") == 0
+   || soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "UsernameToken") == 0)
+  {
+    soap_wsse_delete_Security(soap);
+    return soap_sender_fault(soap, "Timestamp and/or usernameToken not signed", NULL);
   }
   if (soap_wsse_verify_element(soap, "http://www.genivia.com/schemas/wssetest.xsd", "add") == 0)
   {
@@ -725,6 +735,12 @@ int ns1__sub(struct soap *soap, double a, double b, double *result)
     soap_wsse_delete_Security(soap);
     return soap->error;
   }
+  if (soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp") == 0
+   || soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "UsernameToken") == 0)
+  {
+    soap_wsse_delete_Security(soap);
+    return soap_sender_fault(soap, "Timestamp and/or usernameToken not signed", NULL);
+  }
   if (soap_wsse_verify_element(soap, "http://www.genivia.com/schemas/wssetest.xsd", "sub") == 0)
   {
     soap_wsse_delete_Security(soap);
@@ -765,6 +781,12 @@ int ns1__mul(struct soap *soap, double a, double b, double *result)
   {
     soap_wsse_delete_Security(soap);
     return soap->error;
+  }
+  if (soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp") == 0
+   || soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "UsernameToken") == 0)
+  {
+    soap_wsse_delete_Security(soap);
+    return soap_sender_fault(soap, "Timestamp and/or usernameToken not signed", NULL);
   }
   if (soap_wsse_verify_element(soap, "http://www.genivia.com/schemas/wssetest.xsd", "mul") == 0)
   {
@@ -807,6 +829,12 @@ int ns1__div(struct soap *soap, double a, double b, double *result)
   {
     soap_wsse_delete_Security(soap);
     return soap->error;
+  }
+  if (soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp") == 0
+   || soap_wsse_verify_element(soap, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "UsernameToken") == 0)
+  {
+    soap_wsse_delete_Security(soap);
+    return soap_sender_fault(soap, "Timestamp and/or usernameToken not signed", NULL);
   }
   if (soap_wsse_verify_element(soap, "http://www.genivia.com/schemas/wssetest.xsd", "div") == 0)
   {

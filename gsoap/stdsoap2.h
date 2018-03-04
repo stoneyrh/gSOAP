@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.63
+        stdsoap2.h 2.8.64
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20863
+#define GSOAP_VERSION 20864
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -464,7 +464,6 @@ extern intmax_t __strtoull(const char*, char**, int);
 #   define HAVE_STRTOD_L
 #   define HAVE_SSCANF_L
 #   define HAVE_LOCALE_H
-#   define HAVE_XLOCALE_H
 #  endif
 # elif defined(TRU64)
 #  define HAVE_SNPRINTF
@@ -721,6 +720,11 @@ extern intmax_t __strtoull(const char*, char**, int);
 # endif
 #endif
 
+/* force inclusion of xlocale.h */
+#if defined(WITH_INCLUDE_XLOCALE_H) && !defined(HAVE_XLOCALE_H)
+# define HAVE_XLOCALE_H
+#endif
+
 #ifdef WITH_C_LOCALE
 # include <locale.h>
 # if defined(WIN32) && !defined(CYGWIN)
@@ -959,7 +963,10 @@ extern intmax_t __strtoull(const char*, char**, int);
 #ifdef WITH_GNUTLS
 # include <gnutls/gnutls.h>
 # include <gnutls/x509.h>
-# include <gcrypt.h>
+# if GNUTLS_VERSION_NUMBER < 0x020b00
+/* deprecated since GNUTLS 2.11.0 */
+#  include <gcrypt.h>
+# endif
 # ifndef HAVE_PTHREAD_H
 #  ifdef _POSIX_THREADS
 #   define HAVE_PTHREAD_H /* make GNUTLS thread safe */
@@ -2921,7 +2928,7 @@ struct SOAP_CMAC soap
   char session_host[SOAP_TAGLEN];
   int session_port;
 #ifdef SOAP_LOCALE_T
-  SOAP_LOCALE_T c_locale;       /* set to C locale by default, if this does not compile use -DWITH_NO_C_LOCALE */
+  SOAP_LOCALE_T c_locale;       /* if this does not compile use -DWITH_INCLUDE_XLOCALE_H, or use -DWITH_NO_C_LOCALE to disable locale support */
 #else
   void *c_locale;
 #endif

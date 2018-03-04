@@ -642,6 +642,7 @@ WITH_OPENSSL_FALSE
 WITH_OPENSSL_TRUE
 SOAPCPP2_IPV6
 SOAPCPP2_NO_C_LOCALE
+SOAPCPP2_INCLUDE_XLOCALE
 SOAPCPP2_NONAMESPACES
 WSDL2H_IMPORTPATH
 SOAPCPP2_IMPORTPATH
@@ -765,6 +766,7 @@ enable_silent_rules
 enable_dependency_tracking
 enable_debug
 enable_namespaces
+enable_xlocale
 enable_c_locale
 enable_ipv6
 with_zlib
@@ -1413,6 +1415,7 @@ Optional Features:
                           speeds up one-time build
   --enable-debug	  add debug symbols for debugging
   --disable-namespaces    compile library without namespaces
+  --enable-xlocale        compile library with forced inclusion of xlocale.h
   --disable-c-locale      compile library without c locale usage
   --enable-ipv6           compile library with IPv6 support
   --disable-ssl           build without SSL/TLS
@@ -6227,6 +6230,28 @@ else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
   SOAPCPP2_NONAMESPACES="-DWITH_NONAMESPACES" ##define to remove nsmap link dependence
+fi
+
+
+# the enable-xlocale option adds the -DWITH_INCLUDE_XLOCALE_H to the
+# library compilation thus forcing the inclusion of xlocale.h
+# Check whether --enable-xlocale was given.
+if test "${enable_xlocale+set}" = set; then :
+  enableval=$enable_xlocale; with_xlocale="$enable_xl"
+else
+  with_xlocale="no"
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for enable xlocale usage in library" >&5
+$as_echo_n "checking for enable xlocale usage in library... " >&6; }
+if test "x$with_xlocale" = "xyes"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  SOAPCPP2_INCLUDE_XLOCALE="-DWITH_INCLUDE_XLOCALE_H"
 fi
 
 
