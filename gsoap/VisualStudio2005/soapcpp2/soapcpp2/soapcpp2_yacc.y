@@ -2218,8 +2218,8 @@ patt    : /* empty */   { $$ = NULL; }
 value   : DBL           { $$.i = (LONG64)($$.r = $1); }
         | LNG           { $$.r = (double)($$.i = $1); }
         | CHR           { $$.r = (double)($$.i = $1); }
-        | '+' value     { $$.i = +$2.i; $$.r = +$$.r; }
-        | '-' value     { $$.i = -$2.i; $$.r = -$$.r; }
+        | '+' value     { $$.i = +$2.i; $$.r = +$2.r; }
+        | '-' value     { $$.i = -$2.i; $$.r = -$2.r; }
         ;
 min     : /* empty */   { $$.incmin = $$.incmax = True; }
         | ':'           { $$.incmin = $$.incmax = True; }

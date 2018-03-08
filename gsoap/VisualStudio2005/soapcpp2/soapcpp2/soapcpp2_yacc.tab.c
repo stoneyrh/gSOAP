@@ -5145,12 +5145,12 @@ yyreduce:
 
   case 236:
 #line 2221 "soapcpp2_yacc.y"
-    { (yyval.ir).i = +(yyvsp[(2) - (2)].ir).i; (yyval.ir).r = +(yyval.ir).r; ;}
+    { (yyval.ir).i = +(yyvsp[(2) - (2)].ir).i; (yyval.ir).r = +(yyvsp[(2) - (2)].ir).r; ;}
     break;
 
   case 237:
 #line 2222 "soapcpp2_yacc.y"
-    { (yyval.ir).i = -(yyvsp[(2) - (2)].ir).i; (yyval.ir).r = -(yyval.ir).r; ;}
+    { (yyval.ir).i = -(yyvsp[(2) - (2)].ir).i; (yyval.ir).r = -(yyvsp[(2) - (2)].ir).r; ;}
     break;
 
   case 238:
