@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.65
+        stdsoap2.h 2.8.66
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20865
+#define GSOAP_VERSION 20866
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -887,6 +887,10 @@ extern intmax_t __strtoull(const char*, char**, int);
 # define SOAP_WINSOCKINT int
 #else
 # define SOAP_WINSOCKINT size_t
+#endif
+
+#ifdef WIN32
+# undef WITH_SELF_PIPE
 #endif
 
 #if defined(WITH_IPV6_V6ONLY) || defined(WITH_NO_IPV6_V6ONLY)
@@ -2662,6 +2666,9 @@ struct SOAP_CMAC soap
   int bind_flags;               /* user-definable bind() SOL_SOCKET sockopt flags, e.g. set to SO_REUSEADDR to enable reuse */
   int bind_v6only;              /* user-definable bind() IPPROTO_IPV6 socopt IPV6_V6ONLY (only with -DWITH_IPV6) */
   int accept_flags;             /* user-definable accept() SOL_SOCKET sockopt flags */
+#ifdef WITH_SELF_PIPE
+  int pipe_fd[2];               /* self pipe trick file descriptors used to close the select call from another thread */
+#endif
   int sndbuf;                   /* user-definable SO_SNFBUF setsockopt */
   int rcvbuf;                   /* user-definable SO_SNFBUF setsockopt */
   unsigned short linger_time;   /* user-definable linger time for SO_LINGER option */
@@ -3286,6 +3293,9 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_begin(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_end(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_delete(struct soap*, void*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_delegate_deletion(struct soap*, struct soap*);
+#ifdef WITH_SELF_PIPE
+SOAP_FMAC1 void SOAP_FMAC2 soap_close_connection(struct soap*);
+#endif
 
 /* API functions available with DEBUG or SOAP_DEBUG defined: */
 SOAP_FMAC1 void SOAP_FMAC2 soap_set_recv_logfile(struct soap*, const char*);

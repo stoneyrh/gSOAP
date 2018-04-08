@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.65
+        stdsoap2.c[pp] 2.8.66
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20865
+#define GSOAP_LIB_VERSION 20866
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.65 2018-03-08 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.66 2018-04-09 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.65 2018-03-08 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.66 2018-04-09 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -274,6 +274,7 @@ static const char *soap_strerror(struct soap*);
 #define SOAP_TCP_SELECT_SND 0x2
 #define SOAP_TCP_SELECT_ERR 0x4
 #define SOAP_TCP_SELECT_ALL 0x7
+#define SOAP_TCP_SELECT_PIP 0x8
 
 #if defined(WIN32)
   #define SOAP_SOCKBLOCK(fd) \
@@ -1056,7 +1057,16 @@ frecv(struct soap *soap, char *s, size_t n)
       {
         for (;;)
         {
+#ifdef WITH_SELF_PIPE
+          r = tcp_select(soap, sk, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR | SOAP_TCP_SELECT_PIP, soap->recv_timeout);
+          if (r & SOAP_TCP_SELECT_PIP) /* abort if data is pending on pipe */
+          {
+            DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Connection closed by self pipe\n"));
+            return 0;
+          }
+#else
           r = tcp_select(soap, sk, SOAP_TCP_SELECT_RCV | SOAP_TCP_SELECT_ERR, soap->recv_timeout);
+#endif
           if (r > 0)
             break;
           if (!r)
@@ -5547,7 +5557,17 @@ again:
         for (;;)
         {
           int r;
+#ifdef WITH_SELF_PIPE
+          r = tcp_select(soap, sk, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_PIP, soap->connect_timeout);
+          if (r & SOAP_TCP_SELECT_PIP)
+          {
+            DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Connection closed by self pipe\n"));
+            soap->fclosesocket(soap, sk);
+            return SOAP_INVALID_SOCKET;
+          }
+#else
           r = tcp_select(soap, sk, SOAP_TCP_SELECT_SND, soap->connect_timeout);
+#endif
           if (r > 0)
             break;
           if (!r)
@@ -5776,22 +5796,22 @@ again:
             s = tcp_select(soap, sk, SOAP_TCP_SELECT_SND | SOAP_TCP_SELECT_ERR, -100000);
           if (s < 0)
           {
-            DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL_connect/select error in tcp_connect\n"));
-            soap_set_receiver_error(soap, soap_ssl_error(soap, r), "SSL_connect failed in tcp_connect()", SOAP_TCP_ERROR);
+            DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL_connect() select error in tcp_connect\n"));
+            soap_set_receiver_error(soap, soap_ssl_error(soap, r), "SSL_connect() select error in tcp_connect()", SOAP_TCP_ERROR);
             soap->fclosesocket(soap, sk);
             return soap->socket = SOAP_INVALID_SOCKET;
           }
           if (s == 0 && retries-- <= 0)
           {
             DBGLOG(TEST, SOAP_MESSAGE(fdebug, "SSL/TLS connect timeout\n"));
-            soap_set_receiver_error(soap, "Timeout", "SSL_connect failed in tcp_connect()", SOAP_TCP_ERROR);
+            soap_set_receiver_error(soap, "Timeout", "SSL_connect() failed in tcp_connect()", SOAP_TCP_ERROR);
             soap->fclosesocket(soap, sk);
             return soap->socket = SOAP_INVALID_SOCKET;
           }
         }
         else
         {
-          soap_set_receiver_error(soap, soap_ssl_error(soap, r), "SSL_connect error in tcp_connect()", SOAP_SSL_ERROR);
+          soap_set_receiver_error(soap, soap_ssl_error(soap, r), "SSL_connect() error in tcp_connect()", SOAP_SSL_ERROR);
           soap->fclosesocket(soap, sk);
           return soap->socket = SOAP_INVALID_SOCKET;
         }
@@ -6204,6 +6224,15 @@ tcp_select(struct soap *soap, SOAP_SOCKET sk, int flags, int timeout)
   do
   {
     rfd = sfd = efd = NULL;
+#ifdef WITH_SELF_PIPE
+    if (flags & SOAP_TCP_SELECT_PIP)
+    {
+      rfd = &fd[0];
+      FD_ZERO(rfd);
+      FD_SET(soap->pipe_fd[0], rfd);
+    }
+    else
+#endif
     if (flags & SOAP_TCP_SELECT_RCV)
     {
       rfd = &fd[0];
@@ -6232,7 +6261,11 @@ tcp_select(struct soap *soap, SOAP_SOCKET sk, int flags, int timeout)
       tv.tv_sec = 1;
       tv.tv_usec = 0;
     }
+#ifdef WITH_SELF_PIPE
+    r = select((int) (sk > soap->pipe_fd[0] ? sk : soap->pipe_fd[0]) + 1, rfd, sfd, efd, &tv);
+#else
     r = select((int)sk + 1, rfd, sfd, efd, &tv);
+#endif
     if (r < 0 && (soap->errnum = soap_socket_errno(sk)) == SOAP_EINTR && eintr > 0)
     {
       eintr--;
@@ -6250,6 +6283,23 @@ tcp_select(struct soap *soap, SOAP_SOCKET sk, int flags, int timeout)
       r |= SOAP_TCP_SELECT_SND;
     if ((flags & SOAP_TCP_SELECT_ERR) && FD_ISSET(sk, efd))
       r |= SOAP_TCP_SELECT_ERR;
+#ifdef WITH_SELF_PIPE
+    if ((flags & SOAP_TCP_SELECT_PIP) && FD_ISSET(soap->pipe_fd[0], rfd))
+    {
+      char ch;
+      for (;;)
+      {
+        if (read(soap->pipe_fd[0], &ch, 1) == -1)
+        {
+          if (soap_socket_errno(soap->pipe_fd[0]) == SOAP_EAGAIN)
+            break;
+          DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Self pipe read error\n"));
+          return -1;
+        }
+      }
+      r |= SOAP_TCP_SELECT_PIP;
+    }
+#endif
   }
   else if (r == 0)
     soap->errnum = 0;
@@ -6894,6 +6944,18 @@ soap_force_closesock(struct soap *soap)
 
 /******************************************************************************/
 
+#ifdef WITH_SELF_PIPE
+SOAP_FMAC1
+void
+SOAP_FMAC2
+soap_close_connection(struct soap *soap)
+{
+  write(soap->pipe_fd[1], "1", 1);
+}
+#endif
+
+/******************************************************************************/
+
 #ifndef WITH_NOIO
 #ifndef PALM_2
 SOAP_FMAC1
@@ -7110,6 +7172,10 @@ soap_done(struct soap *soap)
       soap->logfile[i] = NULL;
     }
   }
+#endif
+#ifdef WITH_SELF_PIPE
+  close(soap->pipe_fd[0]);
+  close(soap->pipe_fd[1]);
 #endif
 #ifdef SOAP_MEM_DEBUG
   soap_free_mht(soap);
@@ -11795,6 +11861,11 @@ soap_versioning(soap_init)(struct soap *soap, soap_mode imode, soap_mode omode)
   soap_set_sent_logfile(soap, "SENT.log");
   soap_set_recv_logfile(soap, "RECV.log");
 #endif
+#endif
+#ifdef WITH_SELF_PIPE
+  pipe(soap->pipe_fd);
+  SOAP_SOCKNONBLOCK(soap->pipe_fd[0]);
+  SOAP_SOCKNONBLOCK(soap->pipe_fd[1]);
 #endif
   soap->version = 0;
   soap->imode = imode;

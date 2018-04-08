@@ -1156,8 +1156,6 @@ const char *Types::deftname(enum Type type, bool mk_pointer, bool is_pointer, co
     ptrtypemap[t] = s;
   if (is_pointer)
     smptypemap[t] = s;
-  if (base)
-    deftypemap[t] = base;
   if (vflag)
     cerr <<  "Defined '" << t << "' ('" << qname << "' in namespace '" << (URI ? URI : prefix ? prefix : "") << "') as '" << s << "'" << endl;
   return t;
@@ -3075,7 +3073,7 @@ void Types::gen(const char *URI, const xs__seqchoice& sequence, const char *minO
       s = t;
     if (max && strcmp(max, "1"))
     {
-      if (cflag || sflag || zflag == 2)
+      if (cflag || sflag || (zflag && zflag <= 2))
       {
         fprintf(stream, sizeformat, vname("$SIZE"), s + 1);
         if (!fake_union && min)
@@ -3109,8 +3107,10 @@ void Types::gen(const char *URI, const xs__seqchoice& sequence, const char *minO
   {
     if (max && strcmp(max, "1"))
     {
-      if (cflag || sflag || zflag == 2)
+      if (cflag || sflag || (zflag && zflag <= 2))
+      {
         fprintf(stream, pointerformat, "}", s);
+      }
       else
       {
         fprintf(stream, elementformat, "}>", s);

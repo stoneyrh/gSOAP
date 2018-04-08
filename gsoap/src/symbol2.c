@@ -6667,11 +6667,11 @@ gen_proxy_code(FILE *fd, Table *table, Symbol *ns, const char *name)
   if (iflag)
   {
     fprintf(fd, "\n\n%s *%s::copy()\n{\t%s *dup = SOAP_NEW_UNMANAGED(%s(*(struct soap*)%s));\n\treturn dup;\n}", name, name, name, name, soap);
-    fprintf(fd, "\n\n%s& %s::operator=(const %s& rhs)\n{\tsoap_copy_context(this, &rhs);\n\tthis->soap_endpoint = rhs.soap_endpoint;\n\treturn *this;\n}", name, name, name);
+    fprintf(fd, "\n\n%s& %s::operator=(const %s& rhs)\n{\tsoap_done(this);\n\tsoap_copy_context(this, &rhs);\n\tthis->soap_endpoint = rhs.soap_endpoint;\n\treturn *this;\n}", name, name, name);
   }
   else
   {
-    fprintf(fd, "\n\n%s *%s::copy()\n{\t%s *dup = SOAP_NEW_UNMANAGED(%s);\n\tif (dup)\n\t\tsoap_copy_context(dup->soap, this->soap);\n\treturn dup;\n}", name, name, name, name);
+    fprintf(fd, "\n\n%s *%s::copy()\n{\t%s *dup = SOAP_NEW_UNMANAGED(%s);\n\tif (dup)\n\t{\tsoap_done(dup->soap);\n\t\tsoap_copy_context(dup->soap, this->soap);\n\t}\n\treturn dup;\n}", name, name, name, name);
     fprintf(fd, "\n\n%s& %s::operator=(const %s& rhs)\n{\tif (this->soap != rhs.soap)\n\t{\tif (this->soap_own)\n\t\t\tsoap_free(this->soap);\n\t\tthis->soap = rhs.soap;\n\t\tthis->soap_own = false;\n\t\tthis->soap_endpoint = rhs.soap_endpoint;\n\t}\n\treturn *this;\n}", name, name, name);
   }
   fprintf(fd, "\n\nvoid %s::destroy()\n{\tsoap_destroy(%s);\n\tsoap_end(%s);\n}", name, soap, soap);
@@ -7331,7 +7331,7 @@ gen_call_method(FILE *fd, Entry *method, const char *name)
     if (iflag)
       fprintf(fd, "\n{\tstruct soap *soap = this;\n");
     else
-      fprintf(fd, "\n{\tstruct soap *soap = this->soap;\n");
+      fprintf(fd, "\n{\n");
   }
   else
   {
@@ -7529,7 +7529,7 @@ gen_call_method(FILE *fd, Entry *method, const char *name)
       if (iflag)
         fprintf(fd, "\n{\tstruct soap *soap = this;\n");
       else
-        fprintf(fd, "\n{\tstruct soap *soap = this->soap;\n");
+        fprintf(fd, "\n{\n");
       fprintf(fd, "\n\tstruct %s *%s = &tmp;", ident(method->sym->name), ident(result->sym->name));
     }
     else
@@ -7946,11 +7946,11 @@ gen_object_code(FILE *fd, Table *table, Symbol *ns, const char *name)
   if (iflag)
   {
     fprintf(fd, "\n\n#ifndef WITH_PURE_VIRTUAL\n%s *%s::copy()\n{\t%s *dup = SOAP_NEW_UNMANAGED(%s(*(struct soap*)%s));\n\treturn dup;\n}\n#endif", name, name, name, name, soap);
-    fprintf(fd, "\n\n%s& %s::operator=(const %s& rhs)\n{\tsoap_copy_context(this, &rhs);\n\treturn *this;\n}", name, name, name);
+    fprintf(fd, "\n\n%s& %s::operator=(const %s& rhs)\n{\tsoap_done(this);\n\tsoap_copy_context(this, &rhs);\n\treturn *this;\n}", name, name, name);
   }
   else
   {
-    fprintf(fd, "\n\n#ifndef WITH_PURE_VIRTUAL\n%s *%s::copy()\n{\t%s *dup = SOAP_NEW_UNMANAGED(%s);\n\tif (dup)\n\t\tsoap_copy_context(dup->soap, this->soap);\n\treturn dup;\n}\n#endif", name, name, name, name);
+    fprintf(fd, "\n\n#ifndef WITH_PURE_VIRTUAL\n%s *%s::copy()\n{\t%s *dup = SOAP_NEW_UNMANAGED(%s);\n\tif (dup)\n\t{\tsoap_done(dup->soap);\n\t\tsoap_copy_context(dup->soap, this->soap);\n\t}\n\treturn dup;\n}\n#endif", name, name, name, name);
     fprintf(fd, "\n\n%s& %s::operator=(const %s& rhs)\n{\tif (this->soap != rhs.soap)\n\t{\tif (this->soap_own)\n\t\t\tsoap_free(this->soap);\n\t\tthis->soap = rhs.soap;\n\t\tthis->soap_own = false;\n\t}\n\treturn *this;\n}", name, name, name);
   }
   fprintf(fd, "\n\nint %s::soap_close_socket()\n{\treturn soap_closesock(%s);\n}", name, soap);

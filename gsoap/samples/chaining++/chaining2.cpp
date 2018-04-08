@@ -94,7 +94,9 @@ int Calc::calcService::mul(double a, double b, double *r)
 }
 
 int Calc::calcService::div(double a, double b, double *r)
-{ *r = a / b;
+{ if (b == 0)
+    return soap_sender_fault(soap, "Division by zero", NULL);
+  *r = a / b;
   return SOAP_OK;
 }
 
