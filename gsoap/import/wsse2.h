@@ -32,6 +32,7 @@
  *                                                                            *
 \******************************************************************************/
 
+#define SOAP_NAMESPACE_OF_wsse	"http://schemas.xmlsoap.org/ws/2002/12/secext"
 //gsoap wsse  schema import: 		http://schemas.xmlsoap.org/ws/2002/12/secext
 //gsoap wsse  schema namespace2:	http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd
 //gsoap wsse  schema elementForm:	qualified

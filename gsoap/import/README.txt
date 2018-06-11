@@ -26,8 +26,10 @@ wsdd5.h		WS-Discovery 1.0 schema with WS-Addressing 2005/08
 wsdd10.h	WS-Discovery 1.0 schema with WS-Addressing 2004/08
 wsdx.h		WS-Discovery 1.0/1.1 operations (see plugin/wsddapi.c)
 wsc.h		WS-SecureConversation
-wst.h		WS-Trust schema definitions
-wstx.h		WS-Trust operations (see plugin/wstapi.c)
+wst.h		WS-Trust 2005/12 schema definitions
+wst2.h		WS-Trust 2005/02 schema definitions
+wstx.h		WS-Trust 2005/12 operations (see plugin/wstapi.c)
+wstx2.h		WS-Trust 2005/02 operations (see plugin/wstapi.c)
 wsu.h		Utility
 xlink.h		Xlink bindings
 xmlmime.h	XML MIME bindings

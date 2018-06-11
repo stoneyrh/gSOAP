@@ -1,7 +1,13 @@
 /*
         wsc2.h
-	Copied from wsc.h
 
+	WS-SecureConversation 2005/02
+        Generated with:
+        wsdl2h -cex -o wsc.h -t WS/WS-typemap.dat WS/WS-SecureConversation.xsd
+
+        - Removed //gsoapopt
+        - Changed //gsoap wsc schema namespace directive to import directive
+        - Changed wsc namespace URI to http://schemas.xmlsoap.org/ws/2005/02/sc
         - Changed #import "wsse2.h"
 */
 

@@ -78,6 +78,7 @@ int soap_ns__method(struct soap *soap, ...)
  *                                                                            *
 \******************************************************************************/
 
+#define SOAP_NAMESPACE_OF_wsa	"http://schemas.xmlsoap.org/ws/2004/08/addressing"
 //gsoap wsa   schema import:	http://schemas.xmlsoap.org/ws/2004/08/addressing
 //gsoap wsa   schema elementForm:	qualified
 //gsoap wsa   schema attributeForm:	unqualified

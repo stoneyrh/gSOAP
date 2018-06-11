@@ -1260,7 +1260,7 @@ compile(Table *table)
         fprintf(fout, "\n\tswitch (type)\n\t{");
         fflush(fout);
         out_defs();
-        fprintf(fout, "\n\tcase 0:\n\t\treturn SOAP_OK;\n\t}\n\tDBGLOG(TEST, SOAP_MESSAGE(fdebug, \"soap_putelement '%%s' failed for type %%d in %s\\n\", tag ? tag : \"\", type));", pathsoapC);
+        fprintf(fout, "\n\tcase 0:\n\t\treturn SOAP_OK;\n\t}\n\tDBGLOG(TEST, SOAP_MESSAGE(fdebug, \"soap_putelement '%%s' failed for type %%d in %s\\n\", tag ? tag : \"\", type));", cstring(pathsoapC, 0));
         fprintf(fout, "\n\treturn soap_element_empty(soap, tag); /* unknown type to serialize */\n}");
         if (!cflag && !namespaceid)
           fprintf(fout, "\n#ifdef __cplusplus\n}\n#endif");

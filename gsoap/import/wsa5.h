@@ -47,6 +47,7 @@
  *                                                                            *
 \******************************************************************************/
 
+#define SOAP_NAMESPACE_OF_wsa5	"http://www.w3.org/2005/08/addressing"
 //gsoap wsa5  schema import:		http://www.w3.org/2005/08/addressing
 //gsoap wsa5  schema namespace2:	http://schemas.xmlsoap.org/ws/2004/08/addressing
 //gsoap wsa5  schema elementForm:	qualified

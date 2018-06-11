@@ -1,12 +1,13 @@
 /*
         wsc.h
 
-	WS-SecureConversation 2005/12
+	WS-SecureConversation 2005/12, also accepts 2005/02
         Generated with:
         wsdl2h -cex -o wsc.h -t WS/WS-typemap.dat WS/WS-SecureConversation.xsd
 
         - Removed //gsoapopt
         - Changed //gsoap wsc schema namespace directive to import directive
+        - Added //gsoap wsc schema namespace2 directive
 */
 
 /******************************************************************************\
@@ -34,6 +35,7 @@
 
 #define SOAP_NAMESPACE_OF_wsc	"http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512"
 //gsoap wsc   schema import:	http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512
+//gsoap wsc   schema namespace2:	http://schemas.xmlsoap.org/ws/2005/02/sc
 //gsoap wsc   schema elementForm:	qualified
 //gsoap wsc   schema attributeForm:	unqualified
 

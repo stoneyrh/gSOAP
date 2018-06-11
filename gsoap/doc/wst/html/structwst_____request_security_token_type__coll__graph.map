@@ -1,6 +1,7 @@
 <map id="wst__RequestSecurityTokenType" name="wst__RequestSecurityTokenType">
-<area shape="rect" id="node2" href="$structwst_____entropy_type.html" title="Imported complexType &quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:EntropyType from typemap &quot;WS..." alt="" coords="20,99,151,127"/>
-<area shape="rect" id="node4" href="$structwst_____binary_secret_type.html" title="&quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:BinarySecretType is a complexType with simpleCont..." alt="" coords="5,6,165,34"/>
-<area shape="rect" id="node6" href="$struct__wsp_____applies_to__.html" title="_wsp__AppliesTo_" alt="" coords="175,99,307,127"/>
-<area shape="rect" id="node8" href="$structwst_____binary_exchange_type.html" title="&quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:BinaryExchangeType is a complexType with simpleCo..." alt="" coords="332,99,513,127"/>
+<area shape="rect" id="node2" href="$structwst_____entropy_type.html" title="Imported complexType &quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:EntropyType from typemap &quot;WS..." alt="" coords="17,95,122,121"/>
+<area shape="rect" id="node3" href="$structwst_____binary_secret_type.html" title="&quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:BinarySecretType is a complexType with simpleCont..." alt="" coords="5,5,133,32"/>
+<area shape="rect" id="node4" href="$structwst_____authenticator_type.html" title="Imported complexType &quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:AuthenticatorType from typem..." alt="" coords="146,95,275,121"/>
+<area shape="rect" id="node5" href="$struct__wsp_____applies_to__.html" title="_wsp__AppliesTo_" alt="" coords="300,95,407,121"/>
+<area shape="rect" id="node6" href="$structwst_____binary_exchange_type.html" title="&quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:BinaryExchangeType is a complexType with simpleCo..." alt="" coords="431,95,574,121"/>
 </map>

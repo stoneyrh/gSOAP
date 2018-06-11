@@ -43,6 +43,7 @@
  *                                                                            *
 \******************************************************************************/
 
+#define SOAP_NAMESPACE_OF_wsa3	"http://schemas.xmlsoap.org/ws/2003/03/addressing"
 //gsoap wsa3  schema import:	http://schemas.xmlsoap.org/ws/2003/03/addressing
 //gsoap wsa3  schema elementForm:	qualified
 //gsoap wsa3  schema attributeForm:	unqualified

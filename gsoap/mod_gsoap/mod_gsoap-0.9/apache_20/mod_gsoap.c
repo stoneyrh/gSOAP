@@ -679,7 +679,7 @@ HTTPGet_SendWSDL(request_rec *r, const char *path)
     }
     l = strlen(path);
     file = (char*)malloc(l + 6);
-    if (file == NULL)
+    if (file != NULL)
     {
         soap_strcpy(file, l + 6, path);
         tmp = strstr(file, ".so");

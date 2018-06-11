@@ -1326,12 +1326,19 @@ Version 2.8.65 (3/8/2018)
 
 - Corrected an issue in soapcpp2 to parse negative floating range bounds declared in typedefs.
 
-Version 2.8.66 (4/9/2018) {#latest}
+Version 2.8.66 (4/9/2018)
 ---
 
 - Added `soap_close_connection()` to close a connection from another thread.
 - Fixed C++ proxy and server class `copy()` and `operator=()` methods to prevent a possible memory leak which may occur in certain usage scenarios.
 - Fixed an issue in wsdl2h, generating an incorrect simpleType element name that leads to a soapcpp2 error.  The element has a local simpleType restriction of a simpleType with the same name as the element type, where this simpleType in turn is a restriction.
+
+Version 2.8.67 (6/11/2018) {#latest}
+---
+- Changed `typemap.dat` to disable `xsd__duration` custom serializer by default, meaning that `xsd__duration` is serialized as a string by default. To serialize `xsd__duration` as an integer with the `gsoap/custom/duration.c` custom serializer e.g. in ONVIF, please re-enable the `xsd__duration` custom serializer by removing the `#` comment from the `xsd__duration` specification in `typemap.dat`.
+- Fixed an issue where the 64 bit integer types `LONG64` and `ULONG64` and their serializers would be downcast to to 32 bit when compiling C code with newer GCC versions, due to `__STDC_VERSION__` no longer being defined by the compiler.
+- Fixed Apache module URL query `?wsdl` handling.
+- Fixed `gsoap/custom/qstring.cpp` deserializer, converts XML entities to/from chars.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

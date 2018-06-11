@@ -54,6 +54,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "wsaapi.h"     /* also includes soapH.h, see wsaapi.h if you are using a different fileH.h */
 #include "wsseapi.h"    /* also includes soapH.h, see wsseapi.h if you are using a different fileH.h */
 #include "smdevp.h"     /* digest algos */
+#include "mecevp.h"     /* encryption algos */
 #include "threads.h"    /* mutex for sequence database */
 
 extern const char *soap_wst_rst_action;
@@ -66,6 +67,7 @@ extern "C" {
 #endif
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_wst_request_saml_token(struct soap *soap, const char *endpoint, int soapver, const char *applyto, const char *username, const char *password, saml1__AssertionType **saml1, saml2__AssertionType **saml2);
+
 SOAP_FMAC1 int SOAP_FMAC2 soap_wst_request_psha1_token(struct soap *soap, const char *endpoint, int soapver, const char *applyto, const char *username, const char *password, char *psha1, size_t psha1len);
 
 #ifdef __cplusplus
@@ -73,6 +75,8 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_wst_request_psha1_token(struct soap *soap, const 
 #endif
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_call___wst__RequestSecurityToken(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct wst__RequestSecurityTokenType *wst__RequestSecurityToken, struct wst__RequestSecurityTokenResponseType *wst__RequestSecurityTokenResponse);
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_call___wst__RequestSecurityTokenResponse(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct wst__RequestSecurityTokenResponseType *wst__RequestSecurityTokenResponse, struct wst__RequestSecurityTokenResponseCollectionType *wst__RequestSecurityTokenResponseCollection);
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_call___wst__RequestSecurityTokenCollection(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct wst__RequestSecurityTokenCollectionType *wst__RequestSecurityTokenCollection, struct wst__RequestSecurityTokenResponseCollectionType *wst__RequestSecurityTokenResponseCollection);
 

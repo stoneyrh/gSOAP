@@ -224,8 +224,8 @@
 #       Uncomment the line below to use LONG64 int for xsd:duration instead of
 #       mapping xsd:duration to string (in milliseconds precision).
 #       Then rerun wsdl2h and also compile and link custom/duration.c.
-
-xsd__duration = #import "custom/duration.h" | xsd__duration
+#
+# xsd__duration = #import "custom/duration.h" | xsd__duration
 
 #       Uncomment the line below to use C++11 std::chrono::nanoseconds for
 #       xsd:duration instead of mapping xsd:duration to string.

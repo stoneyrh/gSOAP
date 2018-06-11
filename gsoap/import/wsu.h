@@ -35,6 +35,7 @@ Modified by Robert van Engelen:
  *                                                                            *
 \******************************************************************************/
 
+#define SOAP_NAMESPACE_OF_wsu	"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
 //gsoap wsu   schema import:	http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd
 //gsoap wsu   schema elementForm:	qualified
 //gsoap wsu   schema attributeForm:	unqualified

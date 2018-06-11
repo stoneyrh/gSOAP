@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">wst__RequestSecurityTokenType Struct Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Sep 21 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sat Jun 9 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -64,10 +64,11 @@ Collaboration diagram for wst__RequestSecurityTokenType:</div>
 <div class="dyncontent">
 <div class="center"><img src="structwst_____request_security_token_type__coll__graph.png" border="0" usemap="#wst_____request_security_token_type_coll__map" alt="Collaboration graph"/></div>
 <map name="wst_____request_security_token_type_coll__map" id="wst_____request_security_token_type_coll__map">
-<area shape="rect" id="node2" href="structwst_____entropy_type.html" title="Imported complexType &quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:EntropyType from typemap &quot;WS..." alt="" coords="20,99,151,127"/>
-<area shape="rect" id="node4" href="structwst_____binary_secret_type.html" title="&quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:BinarySecretType is a complexType with simpleCont..." alt="" coords="5,6,165,34"/>
-<area shape="rect" id="node6" href="struct__wsp_____applies_to__.html" title="_wsp__AppliesTo_" alt="" coords="175,99,307,127"/>
-<area shape="rect" id="node8" href="structwst_____binary_exchange_type.html" title="&quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:BinaryExchangeType is a complexType with simpleCo..." alt="" coords="332,99,513,127"/>
+<area shape="rect" id="node2" href="structwst_____entropy_type.html" title="Imported complexType &quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:EntropyType from typemap &quot;WS..." alt="" coords="17,95,122,121"/>
+<area shape="rect" id="node3" href="structwst_____binary_secret_type.html" title="&quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:BinarySecretType is a complexType with simpleCont..." alt="" coords="5,5,133,32"/>
+<area shape="rect" id="node4" href="structwst_____authenticator_type.html" title="Imported complexType &quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:AuthenticatorType from typem..." alt="" coords="146,95,275,121"/>
+<area shape="rect" id="node5" href="struct__wsp_____applies_to__.html" title="_wsp__AppliesTo_" alt="" coords="300,95,407,121"/>
+<area shape="rect" id="node6" href="structwst_____binary_exchange_type.html" title="&quot;http://docs.oasis&#45;open.org/ws&#45;sx/ws&#45;trust/200512/&quot;:BinaryExchangeType is a complexType with simpleCo..." alt="" coords="431,95,574,121"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -98,6 +99,9 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ad61c5875d4e47b3fde7c64841d4467c6"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structwst_____binary_exchange_type.html">wst__BinaryExchangeType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structwst_____request_security_token_type.html#ad61c5875d4e47b3fde7c64841d4467c6">BinaryExchange</a></td></tr>
 <tr class="memdesc:ad61c5875d4e47b3fde7c64841d4467c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Member declared in WS/WS-typemap.dat.  <a href="#ad61c5875d4e47b3fde7c64841d4467c6">More...</a><br /></td></tr>
 <tr class="separator:ad61c5875d4e47b3fde7c64841d4467c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a747196b1f3aa22bd300f3536aa635779"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structwst_____authenticator_type.html">wst__AuthenticatorType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structwst_____request_security_token_type.html#a747196b1f3aa22bd300f3536aa635779">Authenticator</a></td></tr>
+<tr class="memdesc:a747196b1f3aa22bd300f3536aa635779"><td class="mdescLeft">&#160;</td><td class="mdescRight">Member declared in WS/WS-typemap.dat.  <a href="#a747196b1f3aa22bd300f3536aa635779">More...</a><br /></td></tr>
+<tr class="separator:a747196b1f3aa22bd300f3536aa635779"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Imported simpleType "http://docs.oasis-open.org/ws-sx/ws-trust/200512/":RequestTypeOpenEnum from typemap "WS/WS-typemap.dat". </p>
@@ -143,6 +147,20 @@ Public Attributes</h2></td></tr>
 <li>soap_del_wst__RequestSecurityTokenType(<a class="el" href="structwst_____request_security_token_type.html" title="Imported simpleType &quot;http://docs.oasis-open.org/ws-sx/ws-trust/200512/&quot;:RequestTypeOpenEnum from type...">wst__RequestSecurityTokenType</a>) deep deletes <a class="el" href="structwst_____request_security_token_type.html" title="Imported simpleType &quot;http://docs.oasis-open.org/ws-sx/ws-trust/200512/&quot;:RequestTypeOpenEnum from type...">wst__RequestSecurityTokenType</a> data members, use only on dst after soap_dup_wst__RequestSecurityTokenType(NULL, wst__RequestSecurityTokenType *dst, wst__RequestSecurityTokenType *src) (use soapcpp2 -Ed) </li>
 </ul>
 </div><h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="a747196b1f3aa22bd300f3536aa635779"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structwst_____authenticator_type.html">wst__AuthenticatorType</a>* wst__RequestSecurityTokenType::Authenticator</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Member declared in WS/WS-typemap.dat. </p>
+
+</div>
+</div>
 <a class="anchor" id="ad61c5875d4e47b3fde7c64841d4467c6"></a>
 <div class="memitem">
 <div class="memproto">
@@ -278,10 +296,10 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Sep 21 2017 16:45:35 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sat Jun 9 2018 10:03:21 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

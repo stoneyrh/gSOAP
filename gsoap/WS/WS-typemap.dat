@@ -158,6 +158,8 @@ wst__RequestSecurityTokenType = $\
     unsigned int*                        KeySize;
 wst__RequestSecurityTokenType = $\
     struct wst__BinaryExchangeType*      BinaryExchange;
+wst__RequestSecurityTokenType = $\
+    struct wst__AuthenticatorType*       Authenticator;
 
 wst__RequestSecurityTokenResponseType = $\
     struct wst__RequestedSecurityTokenType* RequestedSecurityToken;
@@ -165,6 +167,8 @@ wst__RequestSecurityTokenResponseType = $\
     struct wst__RequestedReferenceType*  RequestedAttachedReference;
 wst__RequestSecurityTokenResponseType = $\
     struct wst__RequestedReferenceType*  RequestedUnattachedReference;
+wst__RequestSecurityTokenResponseType = $\
+    struct wst__RequestedProofTokenType* RequestedProofToken;
 wst__RequestSecurityTokenResponseType = $\
     char*                                KeyType;
 wst__RequestSecurityTokenResponseType = $\
@@ -174,7 +178,16 @@ wst__RequestSecurityTokenResponseType = $\
 wst__RequestSecurityTokenResponseType = $\
     wst__EntropyType*                    Entropy;
 wst__RequestSecurityTokenResponseType = $\
+    struct wst__LifetimeType*            Lifetime;
+wst__RequestSecurityTokenResponseType = $\
+    unsigned int*                        KeySize;
+wst__RequestSecurityTokenResponseType = $\
     struct wst__BinaryExchangeType*      BinaryExchange;
+wst__RequestSecurityTokenResponseType = $\
+    struct wst__AuthenticatorType*       Authenticator;
+
+wst__RequestedProofTokenType = $\
+    struct xenc__EncryptedKeyType*       xenc__EncryptedKey;
 
 # WS-Trust with SAML 1.0 and 2.0:
 wst__RequestedSecurityTokenType =\
@@ -184,6 +197,7 @@ typedef struct wst__RequestedSecurityTokenType\n\
 {	saml1__AssertionType *saml1__Assertion;\n\
 	saml2__AssertionType *saml2__Assertion;\n\
         _wsse__SecurityTokenReference *wsse__SecurityTokenReference;\n\
+        struct wsc__SecurityContextTokenType *wsc__SecurityContextToken;\n\
 } wst__RequestedSecurityTokenType;
 
 wst__EntropyType =\

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.66
+        stdsoap2.h 2.8.67
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20866
+#define GSOAP_VERSION 20867
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -756,7 +756,7 @@ extern intmax_t __strtoull(const char*, char**, int);
 # define int32_t int
 # define int64_t long long
 # define LONG64 long long
-# define ULONG64 long long
+# define ULONG64 unsigned long long
 # define DBL_PINFTY (1.1579208923716189e77)
 # undef HAVE_WCTOMB
 # undef HAVE_MBTOWC
@@ -1067,6 +1067,7 @@ extern "C" {
 #endif
 
 #if defined(SYMBIAN)
+# warning "Symbian build: removing 64 bit integer support"
 # define LONG64 long
 # define ULONG64 unsigned LONG64
 # ifndef SOAP_LONG_FORMAT
@@ -1075,17 +1076,6 @@ extern "C" {
 # ifndef SOAP_ULONG_FORMAT
 #  define SOAP_ULONG_FORMAT "%lu"
 # endif
-#elif !defined(__cplusplus) && defined(__STDC__) && !defined(__STDC_VERSION__) /* C90? */
-# define LONG64 long
-# define ULONG64 unsigned LONG64
-# ifndef SOAP_LONG_FORMAT
-#  define SOAP_LONG_FORMAT "%ld"
-# endif
-# ifndef SOAP_ULONG_FORMAT
-#  define SOAP_ULONG_FORMAT "%lu"
-# endif
-# define soap_strtoll soap_strtol
-# define soap_strtoull soap_strtoul
 #elif !defined(WIN32) || defined(CYGWIN) || defined(__GLIBC__) || defined(__GNU__) || defined(__GNUC__)
 # ifndef LONG64
 #  if defined(HAVE_INTTYPES_H)

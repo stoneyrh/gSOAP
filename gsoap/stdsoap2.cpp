@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.66
+        stdsoap2.c[pp] 2.8.67
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20866
+#define GSOAP_LIB_VERSION 20867
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.66 2018-04-09 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.67 2018-05-17 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.66 2018-04-09 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.67 2018-05-17 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -6225,20 +6225,23 @@ tcp_select(struct soap *soap, SOAP_SOCKET sk, int flags, int timeout)
   {
     rfd = sfd = efd = NULL;
 #ifdef WITH_SELF_PIPE
-    if (flags & SOAP_TCP_SELECT_PIP)
+    if ((flags & SOAP_TCP_SELECT_PIP) || (flags & SOAP_TCP_SELECT_RCV))
     {
       rfd = &fd[0];
       FD_ZERO(rfd);
-      FD_SET(soap->pipe_fd[0], rfd);
+      if (flags & SOAP_TCP_SELECT_PIP)
+        FD_SET(soap->pipe_fd[0], rfd);
+      if (flags & SOAP_TCP_SELECT_RCV)
+        FD_SET(sk, rfd);
     }
-    else
-#endif
+#else
     if (flags & SOAP_TCP_SELECT_RCV)
     {
       rfd = &fd[0];
       FD_ZERO(rfd);
       FD_SET(sk, rfd);
     }
+#endif
     if (flags & SOAP_TCP_SELECT_SND)
     {
       sfd = &fd[1];

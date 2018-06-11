@@ -85,8 +85,8 @@ at the end of the options:
 
 */
 
-#include "wsaapi.h"
 #include "wstapi.h"
+#include "wsaapi.h"
 #include "wsseapi.h"
 #include "wst.nsmap"
 
@@ -502,6 +502,20 @@ __wst__RequestSecurityToken(struct soap *soap, struct wst__RequestSecurityTokenT
   response->RequestType = request->RequestType;
   response->KeyType = request->KeyType;
   return soap_wsa_reply(soap, NULL, soap_wst_rstr_action);
+}
+
+SOAP_FMAC5
+int
+SOAP_FMAC6
+__wst__RequestSecurityTokenResponse(struct soap *soap, struct wst__RequestSecurityTokenResponseType *request, struct wst__RequestSecurityTokenResponseCollectionType *response)
+{ 
+  (void)soap;
+  (void)request;
+  (void)response;
+
+  /* service logic goes here to populate RSTRC */
+
+  return soap_wsa_reply(soap, NULL, soap_wst_rstrc_action);
 }
 
 SOAP_FMAC5

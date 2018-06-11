@@ -104,7 +104,8 @@ The smdevp engine wraps the EVP API with three new functions:
 - @ref soap_smd_init    to initialize the engine
 - @ref soap_smd_update  to update the state with a message part
 - @ref soap_smd_final   to compute the digest, signature, or verify a signature
-                        and deallocate the engine
+                        and to deallocate the engine
+- @ref soap_smd_cleanup to deallocate the engine
 
 A higher-level interface for computing (signed) message digests over
 messages produced by the gSOAP engine is defined by two new functions:
@@ -592,7 +593,7 @@ soap_smd_update(struct soap *soap, struct soap_smd_data *data, const char *buf, 
 
 /**
 @fn int soap_smd_final(struct soap *soap, struct soap_smd_data *data, char *buf, int *len)
-@brief Finalizes (signed) digest computation and returns digest or signature.
+@brief Finalizes (signed) digest computation, delete context and returns digest or signature.
 @param soap context
 @param[in,out] data smdevp engine context
 @param[in] buf contains signature for verification (SOAP_SMD_VRFY algorithms)
@@ -642,21 +643,38 @@ soap_smd_final(struct soap *soap, struct soap_smd_data *data, char *buf, int *le
       *len = (int)n;
   }
   /* cleanup */
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
-  if ((data->alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
-    HMAC_CTX_cleanup((HMAC_CTX*)data->ctx);
-  else
-    EVP_MD_CTX_cleanup((EVP_MD_CTX*)data->ctx);
-  SOAP_FREE(soap, data->ctx);
-#else
-  if ((data->alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
-    HMAC_CTX_free((HMAC_CTX*)data->ctx);
-  else
-    EVP_MD_CTX_free((EVP_MD_CTX*)data->ctx);
-#endif
-  data->ctx = NULL;
+  soap_smd_cleanup(soap, data);
   /* check and return */
   return soap_smd_check(soap, data, ok, "soap_smd_final() failed");
+}
+
+/**
+@fn void soap_smd_cleanup(struct soap *soap, struct soap_smd_data *data)
+@brief Clear (signed) digest computation and delete context
+@param soap context
+@param[in,out] data smdevp engine context
+*/
+SOAP_FMAC1
+void
+SOAP_FMAC2
+soap_smd_cleanup(struct soap *soap, struct soap_smd_data *data)
+{
+  if (data->ctx)
+  {
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+    if ((data->alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
+      HMAC_CTX_cleanup((HMAC_CTX*)data->ctx);
+    else
+      EVP_MD_CTX_cleanup((EVP_MD_CTX*)data->ctx);
+    SOAP_FREE(soap, data->ctx);
+#else
+    if ((data->alg & SOAP_SMD_ALGO) == SOAP_SMD_HMAC)
+      HMAC_CTX_free((HMAC_CTX*)data->ctx);
+    else
+      EVP_MD_CTX_free((EVP_MD_CTX*)data->ctx);
+#endif
+    data->ctx = NULL;
+  }
 }
 
 /******************************************************************************\

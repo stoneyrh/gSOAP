@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">wstapi.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Sep 21 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sat Jun 9 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -61,6 +61,7 @@
 <div class="textblock"><code>#include &quot;wsaapi.h&quot;</code><br />
 <code>#include &quot;wsseapi.h&quot;</code><br />
 <code>#include &quot;smdevp.h&quot;</code><br />
+<code>#include &quot;mecevp.h&quot;</code><br />
 <code>#include &quot;threads.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for wstapi.h:</div>
@@ -86,6 +87,8 @@ Functions</h2></td></tr>
 <tr class="separator:ad85eb228db132f10a8fc69f75365a67d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaaac1021056bd418c229a22adfc5973f"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC5 int SOAP_FMAC6&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wstapi_8h.html#aaaac1021056bd418c229a22adfc5973f">soap_call___wst__RequestSecurityToken</a> (struct soap *soap, const char *soap_endpoint, const char *soap_action, struct <a class="el" href="structwst_____request_security_token_type.html">wst__RequestSecurityTokenType</a> *wst__RequestSecurityToken, struct <a class="el" href="structwst_____request_security_token_response_type.html">wst__RequestSecurityTokenResponseType</a> *wst__RequestSecurityTokenResponse)</td></tr>
 <tr class="separator:aaaac1021056bd418c229a22adfc5973f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad40a79181a22c02eeb695449b51720d6"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC5 int SOAP_FMAC6&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wstapi_8h.html#ad40a79181a22c02eeb695449b51720d6">soap_call___wst__RequestSecurityTokenResponse</a> (struct soap *soap, const char *soap_endpoint, const char *soap_action, struct <a class="el" href="structwst_____request_security_token_response_type.html">wst__RequestSecurityTokenResponseType</a> *wst__RequestSecurityTokenResponse, struct <a class="el" href="structwst_____request_security_token_response_collection_type.html">wst__RequestSecurityTokenResponseCollectionType</a> *wst__RequestSecurityTokenResponseCollection)</td></tr>
+<tr class="separator:ad40a79181a22c02eeb695449b51720d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade98feec559a1001fb775746323f7b8d"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC5 int SOAP_FMAC6&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wstapi_8h.html#ade98feec559a1001fb775746323f7b8d">soap_call___wst__RequestSecurityTokenCollection</a> (struct soap *soap, const char *soap_endpoint, const char *soap_action, struct <a class="el" href="structwst_____request_security_token_collection_type.html">wst__RequestSecurityTokenCollectionType</a> *wst__RequestSecurityTokenCollection, struct <a class="el" href="structwst_____request_security_token_response_collection_type.html">wst__RequestSecurityTokenResponseCollectionType</a> *wst__RequestSecurityTokenResponseCollection)</td></tr>
 <tr class="separator:ade98feec559a1001fb775746323f7b8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -172,6 +175,50 @@ Variables</h2></td></tr>
           <td></td>
           <td class="paramtype">struct <a class="el" href="structwst_____request_security_token_collection_type.html">wst__RequestSecurityTokenCollectionType</a> *&#160;</td>
           <td class="paramname"><em>wst__RequestSecurityTokenCollection</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structwst_____request_security_token_response_collection_type.html">wst__RequestSecurityTokenResponseCollectionType</a> *&#160;</td>
+          <td class="paramname"><em>wst__RequestSecurityTokenResponseCollection</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ad40a79181a22c02eeb695449b51720d6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SOAP_FMAC5 int SOAP_FMAC6 soap_call___wst__RequestSecurityTokenResponse </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>soap_endpoint</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>soap_action</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structwst_____request_security_token_response_type.html">wst__RequestSecurityTokenResponseType</a> *&#160;</td>
+          <td class="paramname"><em>wst__RequestSecurityTokenResponse</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -397,10 +444,10 @@ Variables</h2></td></tr>
 </div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Sep 21 2017 16:45:35 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sat Jun 9 2018 10:03:21 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

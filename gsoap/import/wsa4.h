@@ -42,6 +42,7 @@
  *                                                                            *
 \******************************************************************************/
 
+#define SOAP_NAMESPACE_OF_wsa4	"http://schemas.xmlsoap.org/ws/2004/03/addressing"
 //gsoap wsa4  schema import:	http://schemas.xmlsoap.org/ws/2004/03/addressing
 //gsoap wsa4  schema elementForm:	qualified
 //gsoap wsa4  schema attributeForm:	unqualified
