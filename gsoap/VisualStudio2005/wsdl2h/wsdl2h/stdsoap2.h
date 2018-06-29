@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.67
+        stdsoap2.h 2.8.68
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20867
+#define GSOAP_VERSION 20868
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -2168,7 +2168,7 @@ enum soap_mime_encoding
 /* DIME/MIME multipart list */
 struct soap_multipart
 { struct soap_multipart *next;
-  char *ptr;                            /* points to raw data content */
+  const char *ptr;                      /* points to raw data content */
   size_t size;                          /* size of data content */
   const char *id;                       /* DIME/MIME content ID or form data name */
   const char *type;                     /* DIME/MIME type (MIME type format) */
@@ -3530,8 +3530,8 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_set_dime(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_set_mime(struct soap*, const char *boundary, const char *start);
 SOAP_FMAC1 void SOAP_FMAC2 soap_clr_dime(struct soap*);
 SOAP_FMAC1 void SOAP_FMAC2 soap_clr_mime(struct soap*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_set_dime_attachment(struct soap*, char *ptr, size_t size, const char *type, const char *id, unsigned short optype, const char *option);
-SOAP_FMAC1 int SOAP_FMAC2 soap_set_mime_attachment(struct soap*, char *ptr, size_t size, enum soap_mime_encoding encoding, const char *type, const char *id, const char *location, const char *description);
+SOAP_FMAC1 int SOAP_FMAC2 soap_set_dime_attachment(struct soap*, const char *ptr, size_t size, const char *type, const char *id, unsigned short optype, const char *option);
+SOAP_FMAC1 int SOAP_FMAC2 soap_set_mime_attachment(struct soap*, const char *ptr, size_t size, enum soap_mime_encoding encoding, const char *type, const char *id, const char *location, const char *description);
 SOAP_FMAC1 void SOAP_FMAC2 soap_post_check_mime_attachments(struct soap *soap);
 SOAP_FMAC1 int SOAP_FMAC2 soap_check_mime_attachments(struct soap *soap);
 SOAP_FMAC1 struct soap_multipart* SOAP_FMAC2 soap_get_mime_attachment(struct soap *soap, void *handle);

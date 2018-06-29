@@ -3417,7 +3417,7 @@ generate_schema(Table *t)
         fd = fopen(buf, "w");
         if (!fd)
           execerror("Cannot write nsmap file");
-        /* fprintf(fd, "\n#include \"%sH.h\"", prefix); better to leave to users to include this */
+        /* fprintf(fd, "\n#include \"%sH.h\"", prefix); better to leave to users to include this, so use stdsoap2.h instead: */
         fprintf(fd, "\n#include \"stdsoap2.h\"\n/* This defines the global XML namespaces[] table to #include and compile */");
         if (nflag)
           fprintf(fd, "\nSOAP_NMAC struct Namespace %s_namespaces[] = ", prefix);
@@ -3588,7 +3588,8 @@ generate_schema(Table *t)
     fd = fopen(buf, "w");
     if (!fd)
       execerror("Cannot write nsmap file");
-    fprintf(fd, "\n#include \"%sH.h\"", prefix);
+    /* fprintf(fd, "\n#include \"%sH.h\"", prefix); better to leave to users to include this, so use stdsoap2.h instead: */
+    fprintf(fd, "\n#include \"stdsoap2.h\"\n/* This defines the global XML namespaces[] table to #include and compile */");
     if (nflag)
       fprintf(fd, "\nSOAP_NMAC struct Namespace %s_namespaces[] = ", prefix);
     else

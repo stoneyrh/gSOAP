@@ -73,6 +73,20 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_xsd__dateTime(struct soap *soap, struc
 
 SOAP_FMAC3 const char * SOAP_FMAC4 soap_xsd__dateTime2s(struct soap *soap, const struct tm a)
 {
+  if (a.tm_isdst > 0)
+  {
+    struct tm b = a;
+    time_t t;
+    b.tm_isdst = 0;
+    t = soap_timegm(&b) - 3600;
+#ifdef HAVE_GMTIME_R
+    gmtime_r(&t, &b);
+#else
+    b = *gmtime(&t);
+#endif
+    strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%SZ", &b);
+    return soap->tmpbuf;
+  }
   strftime(soap->tmpbuf, sizeof(soap->tmpbuf), "%Y-%m-%dT%H:%M:%SZ", &a);
   return soap->tmpbuf;
 }

@@ -74,6 +74,7 @@ p add prefixlist for c14n:InclusiveNamespaces/PrefixList for canonical XML inter
 q add prefixlist for c14n:InclusiveNamespaces/PrefixList with all namespace prefixes to thwart attacks on prefix bindings
 s server (stand-alone)
 t use plain-text passwords (password digest by default)
+u use MTOM format with one MIME attachment
 x use plain XML (no HTTP header), client only
 y buffered sends (experimental, disabled - not critical to use)
 z enable compression
@@ -139,6 +140,7 @@ int enc = 0;    /* encryption */
 int oaep = 0;   /* use Rsa-oaep-mgf1p with AES256 CBC */
 int aes = 0;    /* use AES256 instead of DES */
 int gcm = 0;    /* use AES with GCM instead of CBC mode (requires OpenSSL 1.0.2) */
+int mtom = 0;   /* use MTOM format with attachment (not signed or encrypted) */
 
 /** Optional user-defined key lookup function, see WSSE docs */
 static const void *token_handler(struct soap *soap, int *alg, const char *keyname, const unsigned char *keyid, int keyidlen, int *keylen)
@@ -297,6 +299,11 @@ int main(int argc, char **argv)
       addsig = 1;
     if (strchr(argv[1], 'b'))
       nobody = 1;
+    if (strchr(argv[1], 'u'))
+    {
+      soap_set_omode(soap, SOAP_ENC_MTOM | SOAP_ENC_DIME); /* this forces MTOM attachment format, to test */
+      mtom = 1;
+    }
     if (strchr(argv[1], 'x'))
       nohttp = 1;
     if (strchr(argv[1], 'z'))
@@ -552,6 +559,10 @@ int main(int argc, char **argv)
         /* should sign the timestamp, usernameToken, certificate, and ns1:add */
 	soap_wsse_sign_only(soap, "Time User X509Token ns1:add");
       }
+
+      /* optionally use mtom attachments, which are not signed or encypted, here we add a simple message */
+      if (mtom)
+        soap_set_mime_attachment(soap, "Hello World", 11, SOAP_MIME_NONE, "text/text", "ID", "location", "description");
 
       /* invoke the server. You can choose add, sub, mul, or div operations
        * that show different security aspects (intentional message rejections)

@@ -14,7 +14,7 @@ hostname = RE.local
 uname -m = x86_64
 uname -r = 16.7.0
 uname -s = Darwin
-uname -v = Darwin Kernel Version 16.7.0: Tue Jan 30 11:27:06 PST 2018; root:xnu-3789.73.11~1/RELEASE_X86_64
+uname -v = Darwin Kernel Version 16.7.0: Fri Apr 27 17:59:46 PDT 2018; root:xnu-3789.73.13~1/RELEASE_X86_64
 
 /usr/bin/uname -p = i386
 /bin/uname -X     = unknown
@@ -23,15 +23,15 @@ uname -v = Darwin Kernel Version 16.7.0: Tue Jan 30 11:27:06 PST 2018; root:xnu-
 /usr/bin/arch -k       = unknown
 /usr/convex/getsysinfo = unknown
 /usr/bin/hostinfo      = Mach kernel version:
-	 Darwin Kernel Version 16.7.0: Tue Jan 30 11:27:06 PST 2018; root:xnu-3789.73.11~1/RELEASE_X86_64
+	 Darwin Kernel Version 16.7.0: Fri Apr 27 17:59:46 PDT 2018; root:xnu-3789.73.13~1/RELEASE_X86_64
 Kernel configured for up to 8 processors.
 4 processors are physically available.
 8 processors are logically available.
 Processor type: x86_64h (Intel x86-64h Haswell)
 Processors active: 0 1 2 3 4 5 6 7
 Primary memory available: 16.00 gigabytes
-Default processor set: 426 tasks, 2172 threads, 8 processors
-Load average: 2.01, Mach factor: 5.98
+Default processor set: 484 tasks, 1937 threads, 8 processors
+Load average: 1.44, Mach factor: 6.55
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -55,6 +55,7 @@ PATH: /Applications/Wireshark.app/Contents/MacOS
 PATH: /usr/X11R6/bin
 PATH: /Users/engelen/bin
 PATH: /usr/local/bin
+PATH: /Users/engelen/Library/Python/2.7/bin
 PATH: /usr/X11R6/bin
 PATH: /Users/engelen/bin
 PATH: /usr/local/bin
@@ -208,8 +209,8 @@ configure:4618: checking lex library
 configure:4632: gcc -o conftest -g -O2   conftest.c   >&5
 Undefined symbols for architecture x86_64:
   "_yywrap", referenced from:
-      _yylex in conftest-d20223.o
-      _main in conftest-d20223.o
+      _yylex in conftest-a1b2b2.o
+      _main in conftest-a1b2b2.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:4632: $? = 1
@@ -5167,7 +5168,7 @@ configure:6099: checking for gethostbyname_r
 configure:6099: gcc -o conftest -Wno-deprecated-declarations   conftest.c  >&5
 Undefined symbols for architecture x86_64:
   "_gethostbyname_r", referenced from:
-      _main in conftest-8c515b.o
+      _main in conftest-fc0bd3.o
 ld: symbol(s) not found for architecture x86_64
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:6099: $? = 1
@@ -5450,8 +5451,8 @@ config.status:1333: cd gsoap/samples/gmt       && sed -e '/# am--include-marker/
 make: Nothing to be done for `am--depfiles'.
 config.status:1338: $? = 0
 config.status:1333: cd gsoap/samples/googleapi       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
-/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/Gmu8Usdn:645: warning: overriding commands for target `soapC.cpp'
-/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/Gmu8Usdn:642: warning: ignoring old commands for target `soapC.cpp'
+/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmxNcs5W:645: warning: overriding commands for target `soapC.cpp'
+/var/folders/7t/y2r1g93d2b94c8dkhn_w4c9w0000gn/T/GmxNcs5W:642: warning: ignoring old commands for target `soapC.cpp'
 make: Nothing to be done for `am--depfiles'.
 config.status:1338: $? = 0
 config.status:1333: cd gsoap/samples/hello       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
