@@ -126,19 +126,19 @@ int xs__schema::preprocess()
     (*im).preprocess(*this); // read schema and recurse over <import>
   for (vector<xs__include>::iterator in = include.begin(); in != include.end(); ++in)
   {
-    (*in).preprocess(*this); // read schema and recurse over <include>
+    (*in).preprocess(*this); // read schema and recurse over <include>, <override> and <redefine>
     if ((*in).schemaPtr())
       insert(*(*in).schemaPtr());
   }
   for (vector<xs__override>::iterator ov = override_.begin(); ov != override_.end(); ++ov)
   {
-    (*ov).preprocess(*this); // read schema and recurse over <override>
+    (*ov).preprocess(*this); // read schema and recurse over <include>, <override> and <redefine>
     if ((*ov).schemaPtr())
       insert(*(*ov).schemaPtr());
   }
   for (vector<xs__redefine>::iterator re = redefine.begin(); re != redefine.end(); ++re)
   {
-    (*re).preprocess(*this); // read schema and recurse over <redefine>
+    (*re).preprocess(*this); // read schema and recurse over <redefine>, <override> and <redefine>
     if ((*re).schemaPtr())
       insert(*(*re).schemaPtr());
   }
@@ -243,7 +243,7 @@ int xs__schema::insert(xs__schema& schema)
       element.back().schemaPtr(this);
     }
   }
-  // insert groups, but only add groups with new name (no conflict check)
+  // insert groups, but only add groups with new name (no conflict warning)
   for (vector<xs__group>::const_iterator gp = schema.group.begin(); gp != schema.group.end(); ++gp)
   {
     found = false;
@@ -264,7 +264,7 @@ int xs__schema::insert(xs__schema& schema)
       group.back().schemaPtr(this);
     }
   }
-  // insert attributeGroups, but only add attributeGroups with new name (no conflict check)
+  // insert attributeGroups, but only add attributeGroups with new name (no conflict warning)
   for (vector<xs__attributeGroup>::const_iterator ag = schema.attributeGroup.begin(); ag != schema.attributeGroup.end(); ++ag)
   {
     found = false;
@@ -285,7 +285,7 @@ int xs__schema::insert(xs__schema& schema)
       attributeGroup.back().schemaPtr(this);
     }
   }
-  // insert simpleTypes, but only add simpleTypes with new name (no conflict check)
+  // insert simpleTypes, but only add simpleTypes with new name (no conflict warning)
   for (vector<xs__simpleType>::const_iterator st = schema.simpleType.begin(); st != schema.simpleType.end(); ++st)
   {
     found = false;
@@ -306,7 +306,7 @@ int xs__schema::insert(xs__schema& schema)
       simpleType.back().schemaPtr(this);
     }
   }
-  // insert complexTypes, but only add complexTypes with new name (no conflict check)
+  // insert complexTypes, but only add complexTypes with new name (no conflict warning)
   for (vector<xs__complexType>::const_iterator ct = schema.complexType.begin(); ct != schema.complexType.end(); ++ct)
   {
     found = false;
@@ -794,11 +794,67 @@ int xs__redefine::preprocess(xs__schema &schema)
             if ((*g).name && !strcmp((*gp).name, (*g).name))
             {
               if ((*g).all)
+              {
                 (*gp).all = (*g).all;
-              if ((*g).choice)
-                (*gp).choice = (*g).choice;
-              if ((*g).sequence)
-                (*gp).sequence = (*g).sequence;
+              }
+              else if ((*g).choice && (*gp).choice)
+              {
+                xs__seqchoice& s = *(*gp).choice;
+                (*gp).choice = soap_new_xs__seqchoice(schema.soap);
+                for (vector<xs__contents>::iterator c = (*g).choice->__contents.begin(); c != (*g).choice->__contents.end(); )
+                {
+                  if ((*c).__union == SOAP_UNION_xs__union_content_element)
+                  {
+                    (*gp).choice->__contents.push_back(*c);
+                    ++c;
+                  }
+                  else if ((*c).__union == SOAP_UNION_xs__union_content_group)
+                  {
+                    if ((*c).__content.group->ref)
+                    {
+                      const char *token = qname_token((*c).__content.group->ref, schema.targetNamespace);
+                      if (token && !strcmp((*gp).name, token))
+                        for (vector<xs__contents>::const_iterator d = s.__contents.begin(); d != s.__contents.end(); ++d)
+                          if ((*d).__union == SOAP_UNION_xs__union_content_element)
+                            (*gp).choice->__contents.push_back(*d);
+                      (*g).choice->__contents.erase(c);
+                    }
+                  }
+                  else
+                  {
+                    ++c;
+                  }
+                }
+              }
+              else if ((*g).sequence && (*gp).sequence)
+              {
+                xs__seqchoice& s = *(*gp).sequence;
+                (*gp).sequence = soap_new_xs__seqchoice(schema.soap);
+                for (vector<xs__contents>::iterator c = (*g).sequence->__contents.begin(); c != (*g).sequence->__contents.end(); )
+                {
+                  if ((*c).__union == SOAP_UNION_xs__union_content_element)
+                  {
+                    (*gp).sequence->__contents.push_back(*c);
+                    ++c;
+                  }
+                  else if ((*c).__union == SOAP_UNION_xs__union_content_group)
+                  {
+                    if ((*c).__content.group->ref)
+                    {
+                      const char *token = qname_token((*c).__content.group->ref, schema.targetNamespace);
+                      if (token && !strcmp((*gp).name, token))
+                        for (vector<xs__contents>::const_iterator d = s.__contents.begin(); d != s.__contents.end(); ++d)
+                          if ((*d).__union == SOAP_UNION_xs__union_content_element)
+                            (*gp).sequence->__contents.push_back(*d);
+                      (*g).sequence->__contents.erase(c);
+                    }
+                  }
+                  else
+                  {
+                    ++c;
+                  }
+                }
+              }
               break;
             }
           }
@@ -844,13 +900,15 @@ int xs__redefine::preprocess(xs__schema &schema)
           {
             if ((*s).name && !strcmp((*st).name, (*s).name))
             {
-              *st = *s; // TODO would it be too crude to simply replace all content?
+              char *base = (*st).restriction ? (*st).restriction->base : (char*)"xs:string";
+              *st = *s;
+              (*st).restriction->base = base;
               break;
             }
           }
         }
       }
-      // redefine complexType by extension
+      // redefine complexType by extension/restriction
       for (vector<xs__complexType>::iterator ct = schemaRef->complexType.begin(); ct != schemaRef->complexType.end(); ++ct)
       {
         if ((*ct).name)
@@ -859,18 +917,102 @@ int xs__redefine::preprocess(xs__schema &schema)
           {
             if ((*c).name && !strcmp((*ct).name, (*c).name))
             {
-              if ((*c).complexContent && (*c).complexContent->extension && (*c).complexContent->extension->sequence && qname_token((*c).complexContent->extension->base, schemaRef->targetNamespace))
+              if ((*c).complexContent && (*c).complexContent->extension && qname_token((*c).complexContent->extension->base, schemaRef->targetNamespace))
               {
-                if (!(*ct).sequence)
-                  (*ct).sequence = (*c).complexContent->extension->sequence;
+                if ((*ct).all && (*c).complexContent->extension->all)
+                {
+                  (*ct).all->element.insert((*ct).all->element.end(), (*c).complexContent->extension->all->element.begin(), (*c).complexContent->extension->all->element.end()); 
+                }
+                else if ((*ct).choice && (*c).complexContent->extension->choice)
+                {
+                  (*ct).choice->__contents.insert((*ct).choice->__contents.end(), (*c).complexContent->extension->choice->__contents.begin(), (*c).complexContent->extension->choice->__contents.end()); 
+                }
+                else if ((*ct).sequence && (*c).complexContent->extension->sequence)
+                {
+                  (*ct).sequence->__contents.insert((*ct).sequence->__contents.end(), (*c).complexContent->extension->sequence->__contents.begin(), (*c).complexContent->extension->sequence->__contents.end()); 
+                }
+                else if ((*ct).group && (*c).complexContent->extension->group)
+                {
+                  if ((*ct).group->sequence && (*c).complexContent->extension->group->sequence)
+                    (*ct).group->sequence->__contents.insert((*ct).group->sequence->__contents.end(), (*c).complexContent->extension->group->sequence->__contents.begin(), (*c).complexContent->extension->group->sequence->__contents.end()); 
+                }
+                else if ((*ct).complexContent && (*ct).complexContent->extension)
+                {
+                  if ((*ct).complexContent->extension->all && (*c).complexContent->extension->all)
+                  {
+                    (*ct).complexContent->extension->all->element.insert((*ct).complexContent->extension->all->element.end(), (*c).complexContent->extension->all->element.begin(), (*c).complexContent->extension->all->element.end()); 
+                  }
+                  else if ((*ct).complexContent->extension->choice && (*c).complexContent->extension->choice)
+                  {
+                    (*ct).complexContent->extension->choice->__contents.insert((*ct).complexContent->extension->choice->__contents.end(), (*c).complexContent->extension->choice->__contents.begin(), (*c).complexContent->extension->choice->__contents.end()); 
+                  }
+                  else if ((*ct).complexContent->extension->sequence && (*c).complexContent->extension->sequence)
+                  {
+                    (*ct).complexContent->extension->sequence->__contents.insert((*ct).complexContent->extension->sequence->__contents.end(), (*c).complexContent->extension->sequence->__contents.begin(), (*c).complexContent->extension->sequence->__contents.end()); 
+                  }
+                  else if ((*ct).complexContent->extension->group && (*c).complexContent->extension->group)
+                  {
+                    if ((*ct).complexContent->extension->group->sequence && (*c).complexContent->extension->group->sequence)
+                      (*ct).complexContent->extension->group->sequence->__contents.insert((*ct).complexContent->extension->group->sequence->__contents.end(), (*c).complexContent->extension->group->sequence->__contents.begin(), (*c).complexContent->extension->group->sequence->__contents.end()); 
+                  }
+                  else
+                  {
+                    (*ct).complexContent->extension->all = (*c).complexContent->extension->all;
+                    (*ct).complexContent->extension->choice = (*c).complexContent->extension->choice;
+                    (*ct).complexContent->extension->sequence = (*c).complexContent->extension->sequence;
+                    (*ct).complexContent->extension->group = (*c).complexContent->extension->group;
+                  }
+                }
+                else if ((*ct).complexContent && (*ct).complexContent->restriction)
+                {
+                  if ((*ct).complexContent->restriction->all && (*c).complexContent->extension->all)
+                  {
+                    (*ct).complexContent->restriction->all->element.insert((*ct).complexContent->restriction->all->element.end(), (*c).complexContent->extension->all->element.begin(), (*c).complexContent->extension->all->element.end()); 
+                  }
+                  else if ((*ct).complexContent->restriction->choice && (*c).complexContent->extension->choice)
+                  {
+                    (*ct).complexContent->restriction->choice->__contents.insert((*ct).complexContent->restriction->choice->__contents.end(), (*c).complexContent->extension->choice->__contents.begin(), (*c).complexContent->extension->choice->__contents.end()); 
+                  }
+                  else if ((*ct).complexContent->restriction->sequence && (*c).complexContent->extension->sequence)
+                  {
+                    (*ct).complexContent->restriction->sequence->__contents.insert((*ct).complexContent->restriction->sequence->__contents.end(), (*c).complexContent->extension->sequence->__contents.begin(), (*c).complexContent->extension->sequence->__contents.end()); 
+                  }
+                  else if ((*ct).complexContent->restriction->group && (*c).complexContent->extension->group)
+                  {
+                    if ((*ct).complexContent->restriction->group->sequence && (*c).complexContent->restriction->group->sequence)
+                      (*ct).complexContent->restriction->group->sequence->__contents.insert((*ct).complexContent->restriction->group->sequence->__contents.end(), (*c).complexContent->extension->group->sequence->__contents.begin(), (*c).complexContent->extension->group->sequence->__contents.end()); 
+                  }
+                  else
+                  {
+                    (*ct).complexContent->restriction->all = (*c).complexContent->extension->all;
+                    (*ct).complexContent->restriction->choice = (*c).complexContent->extension->choice;
+                    (*ct).complexContent->restriction->sequence = (*c).complexContent->extension->sequence;
+                    (*ct).complexContent->restriction->group = (*c).complexContent->extension->group;
+                  }
+                }
                 else
                 {
-                  for (std::vector<xs__contents>::const_iterator e = (*c).complexContent->extension->sequence->__contents.begin(); e != (*c).complexContent->extension->sequence->__contents.end(); ++e)
-                    (*ct).sequence->__contents.push_back(*e);
+                  (*ct).all = (*c).complexContent->extension->all;
+                  (*ct).choice = (*c).complexContent->extension->choice;
+                  (*ct).sequence = (*c).complexContent->extension->sequence;
+                  (*ct).group = (*c).complexContent->extension->group;
                 }
+                (*ct).attribute.insert((*ct).attribute.begin(), (*c).complexContent->extension->attribute.begin(), (*c).complexContent->extension->attribute.end());
               }
-              else if (!Wflag)
-                fprintf(stderr, "\nWarning: redefining complexType \"%s\" in schema \"%s\" by extension requires an extension base\n", (*ct).name, schemaRef->targetNamespace ? schemaRef->targetNamespace : "(null)");
+              else if ((*c).complexContent && (*c).complexContent->restriction && qname_token((*c).complexContent->restriction->base, schemaRef->targetNamespace))
+              {
+                (*ct).all = (*c).complexContent->restriction->all;
+                (*ct).choice = (*c).complexContent->restriction->choice;
+                (*ct).sequence = (*c).complexContent->restriction->sequence;
+                (*ct).group = (*c).complexContent->restriction->group;
+                (*ct).attribute = (*c).complexContent->restriction->attribute;
+                (*ct).complexContent = NULL;
+              }
+              else
+              {
+                if (!Wflag)
+                  fprintf(stderr, "\nWarning: redefining complexType \"%s\" in schema \"%s\" by extension requires an extension base\n", (*ct).name, schemaRef->targetNamespace ? schemaRef->targetNamespace : "(null)");
+              }
               break;
             }
           }
@@ -2514,6 +2656,9 @@ void xs__contents::mark()
 
 xs__seqchoice::xs__seqchoice()
 {
+  minOccurs = NULL;
+  maxOccurs = NULL;
+  annotation = NULL;
   schemaRef = NULL;
 }
 

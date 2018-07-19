@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.68
+        stdsoap2.c[pp] 2.8.69
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20868
+#define GSOAP_LIB_VERSION 20869
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.68 2018-06-28 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.69 2018-07-18 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.68 2018-06-28 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.69 2018-07-18 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -12570,8 +12570,8 @@ soap_utilize_ns(struct soap *soap, const char *tag, short isearly)
   }
   else if (n && strncmp(tag, "xml", 3))
   {
-    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Utilizing '%s' at level %u\n", tag, soap->level + isearly));
     char *t = NULL;
+    DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Utilizing '%s' at level %u\n", tag, soap->level + isearly));
     n++;
     if (SOAP_MAXALLOCSIZE <= 0 || n <= SOAP_MAXALLOCSIZE)
       t = (char*)SOAP_MALLOC(soap, n);

@@ -1337,14 +1337,20 @@ Version 2.8.67 (6/11/2018)
 ---
 
 - Changed `typemap.dat` to disable `xsd__duration` custom serializer by default, meaning that `xsd__duration` is serialized as a string by default. To serialize `xsd__duration` as an integer with the `gsoap/custom/duration.c` custom serializer e.g. in ONVIF, please re-enable the `xsd__duration` custom serializer by removing the `#` comment from the `xsd__duration` specification in `typemap.dat`.
-- Fixed an issue where the 64 bit integer types `LONG64` and `ULONG64` and their serializers would be downcast to to 32 bit when compiling C code with newer GCC versions, due to `__STDC_VERSION__` no longer being defined by the compiler.
+- Fixed an issue where the 64 bit integer types `LONG64` and `ULONG64` and their serializers would be downcast to 32 bit when compiling C code with newer GCC versions, due to `__STDC_VERSION__` no longer being defined by the compiler.
 - Fixed Apache module URL query `?wsdl` handling.
 - Fixed `gsoap/custom/qstring.cpp` deserializer, converts XML entities to/from chars.
 
-Version 2.8.68 (6/29/2018) {#latest}
+Version 2.8.68 (6/29/2018)
 ---
 
 - Minor improvements.
+
+Version 2.8.69 (7/18/2018) {#latest}
+---
+
+- Improved *`xs:redefine`* processing, fixing the remaining "circular group reference" warnings.
+- Improved XML sample message generation.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

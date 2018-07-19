@@ -659,6 +659,7 @@ void
 SOAP_FMAC2
 soap_smd_cleanup(struct soap *soap, struct soap_smd_data *data)
 {
+  (void)soap;
   if (data->ctx)
   {
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L)

@@ -3478,7 +3478,7 @@ void Types::gen(const char *URI, const xs__element& element, bool substok, const
   }
   else if (name)
   {
-    fprintf(stream, "/// Element \"%s\" has no type or ref (empty or with XML content).\n", name ? name : "");
+    fprintf(stream, "/// Element \"%s\" has no type or ref (empty or with literal XML content).\n", name ? name : "");
     if (max && strcmp(max, "1")) // maxOccurs != "1"
     {
       if (cflag || sflag)

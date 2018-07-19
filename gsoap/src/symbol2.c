@@ -8386,11 +8386,7 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
   int d;
   if (!(p->info.sto & (Sattribute | Sconst | Sprivate | Sprotected)) && !is_transient(p->info.typ) && p->info.typ->type != Tfun && strncmp(p->sym->name, "__size", 6) && strncmp(p->sym->name, "__type", 6) && !is_choice(p))
   {
-    if (n >= 8 && !is_string(p->info.typ) && p->info.minOccurs <= 0)
-    {
-      return;
-    }
-    if (n >= 8 && (p->info.typ->type == Tpointer || is_smart(p->info.typ)) && p->info.nillable && !is_string(p->info.typ) && !is_wstring(p->info.typ))
+    if (n > 8 && (p->info.typ->type == Tpointer || is_smart(p->info.typ)) && p->info.nillable && !is_string(p->info.typ) && !is_wstring(p->info.typ))
     {
       gen_element_begin(fd, n, ns_add(p, nse), NULL);
       if (xmlns)
@@ -8398,6 +8394,8 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
       fprintf(fd, " xsi:nil=\"true\"/>\n");
       return;
     }
+    if (n > 8 && opt && !is_string(p->info.typ) && !is_wstring(p->info.typ))
+      return;
     if (n >= 16)
     {
       fprintf(fd, "%*s<!-- WARNING max depth of 16 levels exceeded: schema may incorrectly define indefinitely large documents in recursion over required elements with minOccurs>0 -->\n", n, "");
@@ -8528,7 +8526,7 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
           else if (!is_literal(encoding))
             fprintf(fd, " SOAP-ENC:arrayType=\"%s[" SOAP_LONG_FORMAT "%s]\"", wsdl_type(q->info.typ, ""), i, tmp);
           fprintf(fd, ">");
-          gen_val(fd, n, p->info.typ, nse, nsa, encoding, 0);
+          gen_val(fd, n, p->info.typ, nse, nsa, encoding, q->info.minOccurs == 0);
           fprintf(fd, "%*s", n, "");
         }
         fflush(fd);
@@ -8568,7 +8566,7 @@ gen_field(FILE *fd, int n, Entry *p, const char *nse, const char *nsa, const cha
           else if (!is_literal(encoding))
             fprintf(fd, " SOAP-ENC:arrayType=\"%s[" SOAP_LONG_FORMAT "%s]\"", wsdl_type(((Table*)((Tnode*)p->info.typ->ref)->ref)->list->info.typ, ""), i, tmp);
           fprintf(fd, ">");
-          gen_val(fd, n, (Tnode*)p->info.typ->ref, nse, nsa, encoding, 0);
+          gen_val(fd, n, (Tnode*)p->info.typ->ref, nse, nsa, encoding, q->info.minOccurs == 0);
           fprintf(fd, "%*s", n, "");
         }
       }
@@ -9024,7 +9022,7 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
       {
         int d = get_Darraydims(p);
         LONG64 k = q->info.minOccurs < 100000 ? q->info.minOccurs : 100000;
-        if (k == 0 && q->info.maxOccurs > 0)
+        if (k < 1 && (q->info.maxOccurs > 0 || q->info.maxOccurs < 0))
           k = 1;
         if (gflag)
         {
@@ -9053,7 +9051,7 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
         for (i = 0; i < k; ++i)
         {
           fprintf(fd, "%*s<%s>", n+1, "", q->sym->name[5]?q->sym->name+5:"item");
-          gen_val(fd, n+1, q->info.typ, nse, nsa, encoding, 0);
+          gen_val(fd, n+1, q->info.typ, nse, nsa, encoding, q->info.maxOccurs == 0);
           fprintf(fd, "</%s>\n", q->sym->name[5]?q->sym->name+5:"item");
         }
         if (gflag)
@@ -9928,18 +9926,19 @@ gen_val(FILE *fd, int n, Tnode *p, const char *nse, const char *nsa, const char 
                     else
                       fprintf(fd, " or more of the following");
                     fprintf(fd, " -->\n");
-                    gen_field(fd, n+1, q->next, nse1, nsa, encoding, 0, 0);
                   }
                   j = q->info.minOccurs < 100000 ? q->info.minOccurs : 100000;
-                  if (j < 1)
+                  if (j < 1 && (q->info.maxOccurs > 0 || q->info.maxOccurs < 0))
                     j = 1;
                   for (; j > 0; --j)
-                    gen_field(fd, n+1, q->next, nse1, nsa, encoding, 0, 0);
+                    gen_field(fd, n+1, q->next, nse1, nsa, encoding, q->info.minOccurs == 0 && (opt || !is_invisible(p->id->name)), 0);
                 }
                 q = q->next;
               }
               else
-                gen_field(fd, n+1, q, nse1, nsa, encoding, q->info.minOccurs == 0, 0);
+              {
+                gen_field(fd, n+1, q, nse1, nsa, encoding, q->info.minOccurs == 0 && (opt || !is_invisible(p->id->name)), 0);
+              }
             }
           }
           fprintf(fd, "%*s", n, "");
