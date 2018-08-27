@@ -96,7 +96,7 @@ QDate *soap_in_xsd__date(struct soap *soap, char const *tag, QDate *a, char cons
     return NULL;
   }
   a = (QDate*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__date, sizeof(QDate), NULL, NULL, instantiate_xsd__date, NULL);
-  if (*soap->href)
+  if (*soap->href == '#')
   {
     a = (QDate*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__date, 0, sizeof(QDate), 0, copy_xsd__date, NULL);
   }
@@ -115,7 +115,7 @@ const char * soap_xsd__date2s(struct soap *soap, QDate a)
   /* YYYY-MM-DDZ */
   if (!a.isValid())
     a = QDate(1, 1, 1);
-  QString str = a.toString("yyyy-MM-ddZ");
+  QString str = a.toString(QString::fromAscii("yyyy-MM-ddZ"));
   QByteArray ba = str.toLatin1();
   soap_strcpy(soap->tmpbuf, qstrlen(ba)+1, ba.constData());
   return soap->tmpbuf;

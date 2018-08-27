@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">smdevp.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon May 14 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sat Aug 25 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -252,8 +252,11 @@ Functions</h2></td></tr>
 <tr class="memdesc:a1f9631955eabdcf338d0178d2d90ea50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates (signed) digest computation with message part.  <a href="#a1f9631955eabdcf338d0178d2d90ea50">More...</a><br /></td></tr>
 <tr class="separator:a1f9631955eabdcf338d0178d2d90ea50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d7f8b4fdcfe0afc13fef37fd8c46f5d"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 int SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#a8d7f8b4fdcfe0afc13fef37fd8c46f5d">soap_smd_final</a> (struct soap *soap, struct <a class="el" href="structsoap__smd__data.html">soap_smd_data</a> *data, char *buf, int *len)</td></tr>
-<tr class="memdesc:a8d7f8b4fdcfe0afc13fef37fd8c46f5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalizes (signed) digest computation and returns digest or signature.  <a href="#a8d7f8b4fdcfe0afc13fef37fd8c46f5d">More...</a><br /></td></tr>
+<tr class="memdesc:a8d7f8b4fdcfe0afc13fef37fd8c46f5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalizes (signed) digest computation, delete context and returns digest or signature.  <a href="#a8d7f8b4fdcfe0afc13fef37fd8c46f5d">More...</a><br /></td></tr>
 <tr class="separator:a8d7f8b4fdcfe0afc13fef37fd8c46f5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9e72ee00dc73151cb712fd5416c8d05"><td class="memItemLeft" align="right" valign="top">SOAP_FMAC1 void SOAP_FMAC2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="smdevp_8h.html#ae9e72ee00dc73151cb712fd5416c8d05">soap_smd_cleanup</a> (struct soap *soap, struct <a class="el" href="structsoap__smd__data.html">soap_smd_data</a> *data)</td></tr>
+<tr class="memdesc:ae9e72ee00dc73151cb712fd5416c8d05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear (signed) digest computation and delete context.  <a href="#ae9e72ee00dc73151cb712fd5416c8d05">More...</a><br /></td></tr>
+<tr class="separator:ae9e72ee00dc73151cb712fd5416c8d05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a class="anchor" id="a34b5d027c5246f52939fcaf90f60f976"></a>
@@ -1252,6 +1255,41 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ae9e72ee00dc73151cb712fd5416c8d05"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void soap_smd_cleanup </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct <a class="el" href="structsoap__smd__data.html">soap_smd_data</a> *&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clear (signed) digest computation and delete context. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">data</td><td>smdevp engine context </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a8f18dbae37de8942e080d45dd3480a7b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1333,7 +1371,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Finalizes (signed) digest computation and returns digest or signature. </p>
+<p>Finalizes (signed) digest computation, delete context and returns digest or signature. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">soap</td><td>context </td></tr>
@@ -1500,7 +1538,7 @@ Functions</h2></td></tr>
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon May 14 2018 21:30:25 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sat Aug 25 2018 13:26:08 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

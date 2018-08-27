@@ -6523,11 +6523,15 @@ gen_proxy_header(FILE *fd, Table *table, Symbol *ns, const char *name)
   {
     fprintf(fd, "\n        /// Construct proxy given a managing context");
     fprintf(fd, "\n        %s(const struct soap&);", name);
+    fprintf(fd, "\n        /// Construct proxy given a managing context and endpoint URL");
+    fprintf(fd, "\n        %s(const struct soap&, const char *endpoint);", name);
   }
   else
   {
     fprintf(fd, "\n        /// Construct proxy given a shared managing context");
     fprintf(fd, "\n        %s(struct soap*);", name);
+    fprintf(fd, "\n        /// Construct proxy given a shared managing context and endpoint URL");
+    fprintf(fd, "\n        %s(struct soap*, const char *endpoint);", name);
   }
   fprintf(fd, "\n        /// Constructor taking an endpoint URL");
   fprintf(fd, "\n        %s(const char *endpoint);", name);
@@ -6645,6 +6649,7 @@ gen_proxy_code(FILE *fd, Table *table, Symbol *ns, const char *name)
     fprintf(fd, "\n\n%s::%s() : soap(SOAP_IO_DEFAULT)\n{\t%s_init(SOAP_IO_DEFAULT, SOAP_IO_DEFAULT);\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(const %s& rhs)\n{\tsoap_copy_context(this, &rhs);\n\tthis->soap_endpoint = rhs.soap_endpoint;\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(const struct soap &_soap) : soap(_soap)\n{ }", name, name);
+    fprintf(fd, "\n\n%s::%s(const struct soap &_soap, const char *endpoint) : soap(_soap)\n{\n\tsoap_endpoint = endpoint;\n}", name, name);
     fprintf(fd, "\n\n%s::%s(const char *endpoint) : soap(SOAP_IO_DEFAULT)\n{\t%s_init(SOAP_IO_DEFAULT, SOAP_IO_DEFAULT);\n\tsoap_endpoint = endpoint;\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(soap_mode iomode) : soap(iomode)\n{\t%s_init(iomode, iomode);\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(const char *endpoint, soap_mode iomode) : soap(iomode)\n{\t%s_init(iomode, iomode);\n\tsoap_endpoint = endpoint;\n}", name, name, name);
@@ -6656,6 +6661,7 @@ gen_proxy_code(FILE *fd, Table *table, Symbol *ns, const char *name)
     fprintf(fd, "\n\n%s::%s()\n{\tthis->soap = soap_new();\n\tthis->soap_own = true;\n\t%s_init(SOAP_IO_DEFAULT, SOAP_IO_DEFAULT);\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(const %s& rhs)\n{\tthis->soap = rhs.soap;\n\tthis->soap_own = false;\n\tthis->soap_endpoint = rhs.soap_endpoint;\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(struct soap *_soap)\n{\tthis->soap = _soap;\n\tthis->soap_own = false;\n\t%s_init(_soap->imode, _soap->omode);\n}", name, name, name);
+    fprintf(fd, "\n\n%s::%s(struct soap *_soap, const char *endpoint)\n{\tthis->soap = _soap;\n\tthis->soap_own = false;\n\t%s_init(_soap->imode, _soap->omode);\n\tsoap_endpoint = endpoint;\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(const char *endpoint)\n{\tthis->soap = soap_new();\n\tthis->soap_own = true;\n\t%s_init(SOAP_IO_DEFAULT, SOAP_IO_DEFAULT);\n\tsoap_endpoint = endpoint;\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(soap_mode iomode)\n{\tthis->soap = soap_new();\n\tthis->soap_own = true;\n\t%s_init(iomode, iomode);\n}", name, name, name);
     fprintf(fd, "\n\n%s::%s(const char *endpoint, soap_mode iomode)\n{\tthis->soap = soap_new();\n\tthis->soap_own = true;\n\t%s_init(iomode, iomode);\n\tsoap_endpoint = endpoint;\n}", name, name, name);
@@ -6764,6 +6770,8 @@ gen_object_header(FILE *fd, Table *table, Symbol *ns, const char *name)
   {
     fprintf(fd, "\n        /// Construct service given a managing context");
     fprintf(fd, "\n        %s(const struct soap&);", name);
+    fprintf(fd, "\n        /// Construct service given a managing context and endpoint");
+    fprintf(fd, "\n        %s(const struct soap&, const char *endpoint);", name);
   }
   else
   {

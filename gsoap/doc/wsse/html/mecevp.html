@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The mecevp streaming message encryption and decryption engine</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon May 14 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sat Aug 25 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -48,16 +48,16 @@
 <div class="textblock"><p>The gSOAP mecevp engine encrypts and decrypts messages using the EVP interface of OpenSSL. It supports envelope encryption/decryption with public and private RSA keys and symmetric encryption with shared secret keys. Streaming and buffered message encryption modes are supported.</p>
 <p>An encryption and decryption algorithm and mode is selected with one of the following:</p>
 <ul>
-<li><a class="el" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a> envelope encryption with triple DES CBC</li>
+<li><a class="el" href="mecevp_8h.html#a8976847eff9cf2faebc7697e0d596047">SOAP_MEC_ENV_ENC_DES_CBC</a> envelope encryption with triple DES EDE CBC</li>
 <li><a class="el" href="mecevp_8h.html#aab870a983b1ea7cf45884462d2c3502b">SOAP_MEC_ENV_ENC_AES256_CBC</a> envelope encryption with AES256 CBC</li>
 <li><a class="el" href="mecevp_8h.html#a239ab02045baa8901ab2dd0d99698713">SOAP_MEC_ENV_ENC_AES256_GCM</a> envelope authenticated encryption with AES256 GCM</li>
-<li><a class="el" href="mecevp_8h.html#ae8f63ce4ee6492f0b07949d301eda7d6">SOAP_MEC_ENC_DES_CBC</a> symmetric encryption with triple DES CBC</li>
+<li><a class="el" href="mecevp_8h.html#ae8f63ce4ee6492f0b07949d301eda7d6">SOAP_MEC_ENC_DES_CBC</a> symmetric encryption with triple DES EDE CBC</li>
 <li><a class="el" href="mecevp_8h.html#aeb9a2bf88cf42f85a4ace0d3cc4a1508">SOAP_MEC_ENC_AES256_CBC</a> symmetric encryption with AES256 CBC</li>
 <li><a class="el" href="mecevp_8h.html#ab4b4ac089f92d93113ee8129dc895e61">SOAP_MEC_ENC_AES256_GCM</a> symmetric authenticated encryption with AES256 GCM</li>
-<li><a class="el" href="mecevp_8h.html#a533b28fdec1dba756bdd69dea83ad244">SOAP_MEC_ENV_DEC_DES_CBC</a> envelope decryption with triple DES CBC</li>
+<li><a class="el" href="mecevp_8h.html#a533b28fdec1dba756bdd69dea83ad244">SOAP_MEC_ENV_DEC_DES_CBC</a> envelope decryption with triple DES EDE CBC</li>
 <li><a class="el" href="mecevp_8h.html#a614a07a8c4fa0aa814e1009033403b84">SOAP_MEC_ENV_DEC_AES256_CBC</a> envelope decryption with AES256 CBC</li>
 <li><a class="el" href="mecevp_8h.html#a86d91a11d9401b4bd0bb86d3b0478fca">SOAP_MEC_ENV_DEC_AES256_GCM</a> envelope authenticated decryption with AES256 GCM</li>
-<li><a class="el" href="mecevp_8h.html#a9226364c4bf1cd277c417cd4d2706561">SOAP_MEC_DEC_DES_CBC</a> symmetric decryption with triple DES CBC</li>
+<li><a class="el" href="mecevp_8h.html#a9226364c4bf1cd277c417cd4d2706561">SOAP_MEC_DEC_DES_CBC</a> symmetric decryption with triple DES EDE CBC</li>
 <li><a class="el" href="mecevp_8h.html#a7151041a3f95a45edce0660f0fbcea44">SOAP_MEC_DEC_AES256_CBC</a> symmetric decryption with AES256 CBC</li>
 <li><a class="el" href="mecevp_8h.html#ab3853c4ab88cd32c4ba6058335f76fdf">SOAP_MEC_DEC_AES256_GCM</a> symmetric authenticated decryption with AES256 GCM</li>
 </ul>
@@ -71,7 +71,7 @@
 <ul>
 <li><a class="el" href="mecevp_8c.html#a6144725452c8086c7b1807f6310ff79d">soap_mec_init</a> to initialize the engine</li>
 <li><a class="el" href="mecevp_8c.html#a8c447a82872a919bb1935f34b849c1c4">soap_mec_update</a> to encrypt/decrypt a message part</li>
-<li><a class="el" href="mecevp_8c.html#aaa93413bd3e4136fe87a067821cfed53">soap_mec_final</a> to finalize encryption/decryption</li>
+<li><a class="el" href="mecevp_8c.html#aaa93413bd3e4136fe87a067821cfed53">soap_mec_final</a> to finalize encryption/decryption, does not deallocate tne engine and buffers</li>
 <li><a class="el" href="mecevp_8c.html#a81ba68931cefa8b7a0f246d99e31e3ed">soap_mec_cleanup</a> to deallocate the engine and buffers</li>
 </ul>
 <p>All cipher data is written and read in base64 format.</p>
@@ -100,7 +100,7 @@
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon May 14 2018 21:30:25 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sat Aug 25 2018 13:26:08 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

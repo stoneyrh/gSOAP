@@ -72,7 +72,7 @@ void soap_serialize_xsd__string(struct soap *soap, QString const *a)
 void soap_default_xsd__string(struct soap *soap, QString *a)
 {
   (void)soap; /* appease -Wall -Werror */
-  *a = QString::null;
+  *a = QString();
 }
 
 int soap_out_xsd__string(struct soap *soap, char const *tag, int id, QString const *a, char const *type)
@@ -96,14 +96,19 @@ QString *soap_in_xsd__string(struct soap *soap, char const *tag, QString *a, cha
     return NULL;
   }
   a = (QString*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__string, sizeof(QString), NULL, NULL, instantiate_xsd__string, NULL);
-  if (*soap->href)
+  if (*soap->href == '#')
   {
     a = (QString*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__string, 0, sizeof(QString), 0, copy_xsd__string, NULL);
   }
-  else if (a)
+  else if (a && soap->body)
   {
     if (soap_s2xsd__string(soap, soap_string_in(soap, 1, -1, -1, NULL), a))
       return NULL;
+  }
+  else if (tag && *tag == '-')
+  {
+    soap->error = SOAP_NO_TAG;
+    return NULL;
   }
   if (soap->body && soap_element_end_in(soap, tag))
     return NULL;
@@ -134,7 +139,7 @@ int soap_s2xsd__string(struct soap *soap, const char *s, QString *a)
   }
   else
   {
-    *a = QString::null;
+    *a = QString();
   }
   return soap->error;
 }

@@ -108,7 +108,7 @@ You will also need:
 - `gsoap/plugin/mecevp.c` compile and link this file (C and C++).
 - compile all sources with `-DWITH_OPENSSL -DWITH_DOM`.
 - if you have zlib installed, compile all sources also with `-DWITH_GZIP`.
-- link with `-lssl -lcrypto -lz -gsoapssl++` (or `-lgsoapssl` for C, or compile `stdsoap2.cpp` for C++ and `stdsoap2.c` for C).
+- link with `-lssl -lcrypto -lz -lgsoapssl++` (or `-lgsoapssl` for C, or compile `stdsoap2.cpp` for C++ and `stdsoap2.c` for C).
 
 The gSOAP header file (generated with wsdl2h, and containing the data binding
 interface for soapcpp2) should import wsse.h (or the older 2002 version

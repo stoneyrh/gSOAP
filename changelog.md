@@ -1346,11 +1346,18 @@ Version 2.8.68 (6/29/2018)
 
 - Minor improvements.
 
-Version 2.8.69 (7/18/2018) {#latest}
+Version 2.8.69 (7/18/2018)
 ---
 
 - Improved *`xs:redefine`* processing, fixing the remaining "circular group reference" warnings.
 - Improved XML sample message generation.
+
+Version 2.8.70 (8/27/2018) {#latest}
+---
+
+- Renewed the PEM files for the SSL examples included with gSOAP.
+- Updated `typemap.dat` for ONVIF and upgraded `wsdd10.h` (WS-Discovery 1.0 with WS-Addressing 2004/08) to `wsdd5.h` (WS-Discovery 1.0 with WS-Addressing 2005/08).
+- Fixed a deserialization issue with Qt `QString` used in a wrapper class (as `__item` member), when the wrapper class is used in a container, such as `std::vector`.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

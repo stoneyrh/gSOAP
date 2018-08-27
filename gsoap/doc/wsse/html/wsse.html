@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The WS-Security plugin</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon May 14 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sat Aug 25 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -96,7 +96,7 @@ Security Header</h1>
 <li><code><a class="el" href="mecevp_8c.html">gsoap/plugin/mecevp.c</a></code> compile and link this file (C and C++).</li>
 <li>compile all sources with <code>-DWITH_OPENSSL -DWITH_DOM</code>.</li>
 <li>if you have zlib installed, compile all sources also with <code>-DWITH_GZIP</code>.</li>
-<li>link with <code>-lssl -lcrypto -lz -gsoapssl++</code> (or <code>-lgsoapssl</code> for C, or compile <code>stdsoap2.cpp</code> for C++ and <code>stdsoap2.c</code> for C).</li>
+<li>link with <code>-lssl -lcrypto -lz -lgsoapssl++</code> (or <code>-lgsoapssl</code> for C, or compile <code>stdsoap2.cpp</code> for C++ and <code>stdsoap2.c</code> for C).</li>
 </ul>
 <p>The gSOAP header file (generated with wsdl2h, and containing the data binding interface for soapcpp2) should import <a class="el" href="wsse_8h.html">wsse.h</a> (or the older 2002 version wsse2.h):</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#import &quot;<a class="code" href="wsse_8h.html">wsse.h</a>&quot;</span></div></div><!-- fragment --><p>The wsdl2h tool adds the necessary imports to the generated header file if the WSDL declares the use of WS-Security. If not, you may have to add the import manually before running soapcpp2.</p>
@@ -442,13 +442,14 @@ WS-SecureConversation and WS-Trust</h1>
 <p>To use a WS-SecureConversation security context token (SCT) with WS-Security:</p>
 <div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *identifier = <span class="stringliteral">&quot;...&quot;</span>;</div><div class="line"><a class="code" href="wsseapi_8h.html#a4941ccab15e473e979ff4b3a926c04bb">soap_wsse_add_SecurityContextToken</a>(soap, <span class="stringliteral">&quot;SCT&quot;</span>, identifier);</div></div><!-- fragment --><p>In this example a context has been established and the secret that is identified by the 'identifier' string is known to both parties. This secret is used to sign the message body. The "SCT" is a wsu:Id, which is used as a reference to sign the token.</p>
 <p>To compute PSHA1 with base64 input strings <code>client_secret_base64</code> and <code>server_secret_base64</code> to output a base64-encoded <code>psha1[0..psha1len-1]</code> string <code>psha1_base64</code>:</p>
-<div class="fragment"><div class="line"><span class="keywordtype">int</span> psha1len = 32; <span class="comment">// or greater</span></div><div class="line"><span class="keywordtype">int</span> n, m;</div><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *client_secret = soap_base642s(soap, client_secret_base64, NULL, 0, &amp;n);</div><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *server_secret = soap_base642s(soap, server_secret_base64, NULL, 0, &amp;m);</div><div class="line"><span class="keywordtype">char</span> psha1[psha1len];</div><div class="line"><span class="keywordtype">char</span> *psha1_base64;</div><div class="line"><span class="keywordflow">if</span> (n != 16)</div><div class="line">  .. error <span class="comment">// HMAC key is 16 bytes</span></div><div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#ac50a99453ce725c252c8d5efb89438c6">soap_psha1</a>(soap, client_secret, server_secret, m, psha1, psha1len))</div><div class="line">  .. error <span class="comment">// insufficient memory</span></div><div class="line">psha1_base64 = soap_s2base64(soap, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*)psha1, NULL, psha1len);</div></div><!-- fragment --> </div></div><!-- contents -->
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> psha1len = 32; <span class="comment">// or greater</span></div><div class="line"><span class="keywordtype">int</span> n, m;</div><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *client_secret = soap_base642s(soap, client_secret_base64, NULL, 0, &amp;n);</div><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *server_secret = soap_base642s(soap, server_secret_base64, NULL, 0, &amp;m);</div><div class="line"><span class="keywordtype">char</span> psha1[psha1len];</div><div class="line"><span class="keywordtype">char</span> *psha1_base64;</div><div class="line"><span class="keywordflow">if</span> (<a class="code" href="wsseapi_8h.html#aee50650d9e56ddcb3cc647aea887e950">soap_psha1</a>(soap, client_secret, n, server_secret, m, psha1, psha1len))</div><div class="line">  .. error <span class="comment">// insufficient memory</span></div><div class="line">psha1_base64 = soap_s2base64(soap, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*)psha1, NULL, psha1len);</div></div><!-- fragment --><p>Similarly, PSHA256 can be computed by calling <code><a class="el" href="wsseapi_8c.html#af56856f125fe7b2d6354bab596c3d4e4">soap_psha256()</a></code>. </p>
+</div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon May 14 2018 21:30:25 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sat Aug 25 2018 13:26:08 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

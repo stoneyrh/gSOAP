@@ -96,7 +96,7 @@ QTime *soap_in_xsd__time(struct soap *soap, char const *tag, QTime *a, char cons
     return NULL;
   }
   a = (QTime*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__time, sizeof(QTime), NULL, NULL, instantiate_xsd__time, NULL);
-  if (*soap->href)
+  if (*soap->href == '#')
   {
     a = (QTime*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__time, 0, sizeof(QTime), 0, copy_xsd__time, NULL);
   }
@@ -115,7 +115,7 @@ const char * soap_xsd__time2s(struct soap *soap, QTime a)
   //hh:mm:ss.zzzZ
   if (!a.isValid())
     a = QTime(0, 0, 0, 0);
-  QString str = a.toString("HH:mm:ss.zzzZ");
+  QString str = a.toString(QString::fromAscii("HH:mm:ss.zzzZ"));
   QByteArray ba = str.toLatin1();
   soap_strcpy(soap->tmpbuf, qstrlen(ba)+1, ba.constData());
   return soap->tmpbuf;

@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">File Members</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon May 14 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sat Aug 25 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -355,9 +355,20 @@
 <li>soap_out_xsd__anyType()
 : <a class="el" href="wsseapi_8h.html#a1fe8a0ccbd31b383d426bb0b6f4c3fd3">wsseapi.h</a>
 </li>
+<li>soap_p_hash()
+: <a class="el" href="wsseapi_8c.html#a82a529d1b8150a95ac79da211098446a">wsseapi.c</a>
+</li>
+<li>soap_pmd5()
+: <a class="el" href="wsseapi_8h.html#ae95b7215b798e73af6dc867c12392c83">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#ae95b7215b798e73af6dc867c12392c83">wsseapi.c</a>
+</li>
 <li>soap_psha1()
-: <a class="el" href="wsseapi_8h.html#ac50a99453ce725c252c8d5efb89438c6">wsseapi.h</a>
-, <a class="el" href="wsseapi_8c.html#ac50a99453ce725c252c8d5efb89438c6">wsseapi.c</a>
+: <a class="el" href="wsseapi_8h.html#aee50650d9e56ddcb3cc647aea887e950">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#aee50650d9e56ddcb3cc647aea887e950">wsseapi.c</a>
+</li>
+<li>soap_psha256()
+: <a class="el" href="wsseapi_8h.html#af56856f125fe7b2d6354bab596c3d4e4">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#af56856f125fe7b2d6354bab596c3d4e4">wsseapi.c</a>
 </li>
 <li>SOAP_SMD_ALGO
 : <a class="el" href="smdevp_8h.html#a34b5d027c5246f52939fcaf90f60f976">smdevp.h</a>
@@ -368,6 +379,10 @@
 </li>
 <li>soap_smd_check()
 : <a class="el" href="smdevp_8c.html#a89e6e669161a3023489f7d2a4b154ea8">smdevp.c</a>
+</li>
+<li>soap_smd_cleanup()
+: <a class="el" href="smdevp_8h.html#ae9e72ee00dc73151cb712fd5416c8d05">smdevp.h</a>
+, <a class="el" href="smdevp_8c.html#a60c2bf254b7ed372f31c1da3de594c64">smdevp.c</a>
 </li>
 <li>SOAP_SMD_DGST
 : <a class="el" href="smdevp_8h.html#aab243d86234da2ad7e13692c70867be2">smdevp.h</a>
@@ -624,24 +639,24 @@
 , <a class="el" href="wsseapi_8c.html#a2c119a05c4589c64f74bf84abd909f5b">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_BinarySecurityTokenX509()
-: <a class="el" href="wsseapi_8c.html#a7b21fef322d466bc833fac910e042c9d">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a53075fb3cec4ec4e70fb11850fecb401">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a53075fb3cec4ec4e70fb11850fecb401">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a7b21fef322d466bc833fac910e042c9d">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_DataReferenceURI()
 : <a class="el" href="wsseapi_8h.html#acbd56e9f4e7da00b1db51bca3e4f226b">wsseapi.h</a>
 , <a class="el" href="wsseapi_8c.html#a6aa27f1d46d867f9da64a5c97d1df88b">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_EncryptedData_KeyInfo_KeyName()
-: <a class="el" href="wsseapi_8c.html#ad471b1977fa3a8b52e0309dda70c4439">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a0569043138de574a8f61f45b608971ad">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a0569043138de574a8f61f45b608971ad">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#ad471b1977fa3a8b52e0309dda70c4439">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_EncryptedKey()
 : <a class="el" href="wsseapi_8h.html#a1ba85a8b14587cff0865ebc3e5e9e340">wsseapi.h</a>
 , <a class="el" href="wsseapi_8c.html#ac5c3bbbfcac11fa34ec5240b21aa1cfe">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_EncryptedKey_DataReferenceURI()
-: <a class="el" href="wsseapi_8c.html#a90ae84d8977d79bf113ee339089f257f">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#aeec61121d56b2cf85e48997376c0b50a">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#aeec61121d56b2cf85e48997376c0b50a">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a90ae84d8977d79bf113ee339089f257f">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_EncryptedKey_encrypt_only()
 : <a class="el" href="wsseapi_8h.html#adef816d148bd8b1ce1c5a3d023712779">wsseapi.h</a>
@@ -656,24 +671,24 @@
 , <a class="el" href="wsseapi_8c.html#a261980c98d545dbb9ea60a3a627ebfd1">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_KeyInfo_SecurityTokenReferenceEmbedded()
-: <a class="el" href="wsseapi_8c.html#ad73ed0f6b9dfe26e00d791f510648394">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a8fcf5947eb011d73b6a6b1308123a536">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a8fcf5947eb011d73b6a6b1308123a536">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#ad73ed0f6b9dfe26e00d791f510648394">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_KeyInfo_SecurityTokenReferenceKeyIdentifier()
 : <a class="el" href="wsseapi_8h.html#a83ad7822556d691020209fa12d1c79a7">wsseapi.h</a>
 , <a class="el" href="wsseapi_8c.html#a0a9887fdded8cb54ecc26310b61d06e8">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_KeyInfo_SecurityTokenReferenceURI()
-: <a class="el" href="wsseapi_8c.html#a81a9e6f835d704f23fbd219d9cf0dbbd">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#aa1557c59801a0c3e4a77c1cb56cc2d9e">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#aa1557c59801a0c3e4a77c1cb56cc2d9e">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a81a9e6f835d704f23fbd219d9cf0dbbd">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_KeyInfo_SecurityTokenReferenceX509()
 : <a class="el" href="wsseapi_8h.html#a72df80abd1d36cea516feda3a84672cf">wsseapi.h</a>
 , <a class="el" href="wsseapi_8c.html#a5a3b1c7949de75e41e6f5ef40af28405">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_KeyInfo_X509Certificate()
-: <a class="el" href="wsseapi_8c.html#ae65d924dea471cf9d3d2200fde1b88ca">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#abe67a8a00c79480f83078c04ab2d1fc3">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#abe67a8a00c79480f83078c04ab2d1fc3">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#ae65d924dea471cf9d3d2200fde1b88ca">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_Security()
 : <a class="el" href="wsseapi_8h.html#acdc56c76c1a39c3e6191580d491f9b8e">wsseapi.h</a>
@@ -688,24 +703,24 @@
 , <a class="el" href="wsseapi_8c.html#a2d736de799a863833004449ec2e1dc41">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_Signature()
-: <a class="el" href="wsseapi_8c.html#a944759428bc8c41878856749a25d5061">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a7bef911f7276f37c393172d9bf875ffd">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a7bef911f7276f37c393172d9bf875ffd">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a944759428bc8c41878856749a25d5061">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_SignatureValue()
 : <a class="el" href="wsseapi_8h.html#a7399c40e0019bc1ae797fccf92f81fc7">wsseapi.h</a>
 , <a class="el" href="wsseapi_8c.html#a78b8fc98863f42c8a03dfb865ef98d62">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_SignedInfo()
-: <a class="el" href="wsseapi_8c.html#a339003d61a7c400a13de2cf1d943957c">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a0a0471df1dd7192cd6541c9eb5d58512">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a0a0471df1dd7192cd6541c9eb5d58512">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a339003d61a7c400a13de2cf1d943957c">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_SignedInfo_Reference()
 : <a class="el" href="wsseapi_8h.html#a2f987fb35c08ea173e81fdf27e599b87">wsseapi.h</a>
 , <a class="el" href="wsseapi_8c.html#a1895318456fd2fd1b1fa7626dbd08194">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_SignedInfo_SignatureMethod()
-: <a class="el" href="wsseapi_8c.html#a4f16c50f5e559f69eb5c724b171eb4e9">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a398f98d62dfba91d04cff19230fb6722">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a398f98d62dfba91d04cff19230fb6722">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a4f16c50f5e559f69eb5c724b171eb4e9">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_Timestamp()
 : <a class="el" href="wsseapi_8h.html#a71fe27aee76db1d0a635afe106d8b109">wsseapi.h</a>
@@ -720,8 +735,8 @@
 , <a class="el" href="wsseapi_8c.html#a3786d1b35bbbb43b6e6b6c840ebe3c57">wsseapi.c</a>
 </li>
 <li>soap_wsse_add_UsernameTokenText()
-: <a class="el" href="wsseapi_8c.html#ad85b1bb86f3640e92755065370afae67">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a37f32e51bceabf2e2823516a1737548f">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a37f32e51bceabf2e2823516a1737548f">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#ad85b1bb86f3640e92755065370afae67">wsseapi.c</a>
 </li>
 <li>soap_wsse_BinarySecurityToken()
 : <a class="el" href="wsseapi_8h.html#aaff2b8d3e40827341ac0382cd501c04b">wsseapi.h</a>
@@ -738,19 +753,19 @@
 , <a class="el" href="wsseapi_8c.html#a370bea41564f3a49c1c558e174c4f2c0">wsseapi.c</a>
 </li>
 <li>soap_wsse_decrypt_begin()
-: <a class="el" href="wsseapi_8c.html#ab530de67e3c9066ee0cdd7f663892d09">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a0ac666e655fe29580b7f8bb393a76b59">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a0ac666e655fe29580b7f8bb393a76b59">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#ab530de67e3c9066ee0cdd7f663892d09">wsseapi.c</a>
 </li>
 <li>soap_wsse_decrypt_end()
-: <a class="el" href="wsseapi_8h.html#a1862170fdd18b54ab832347308d23019">wsseapi.h</a>
-, <a class="el" href="wsseapi_8c.html#a62e0925dc51548c6969d7696b0473a98">wsseapi.c</a>
+: <a class="el" href="wsseapi_8c.html#a62e0925dc51548c6969d7696b0473a98">wsseapi.c</a>
+, <a class="el" href="wsseapi_8h.html#a1862170fdd18b54ab832347308d23019">wsseapi.h</a>
 </li>
 <li>soap_wsse_delete()
 : <a class="el" href="wsseapi_8c.html#a67455a9af65734dc71fa3e3bf66a6738">wsseapi.c</a>
 </li>
 <li>soap_wsse_delete_EncryptedKey()
-: <a class="el" href="wsseapi_8c.html#a71cd6b8266415f2b7df3baa923d726b6">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#ad276cfcbd007515a6dce80c646e23ef5">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#ad276cfcbd007515a6dce80c646e23ef5">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a71cd6b8266415f2b7df3baa923d726b6">wsseapi.c</a>
 </li>
 <li>soap_wsse_delete_Security()
 : <a class="el" href="wsseapi_8h.html#ac06c7021592b2aaca50f73e0de9dec7c">wsseapi.h</a>
@@ -773,40 +788,40 @@
 : <a class="el" href="wsseapi_8c.html#a04ac9993d22e7b868135f9b7ebcca8e0">wsseapi.c</a>
 </li>
 <li>soap_wsse_encrypt()
-: <a class="el" href="wsseapi_8c.html#adf71cb7ebf72f0cf640822b980cb45c7">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#ae783dfb65a01ad8d8e6e7ca1e5b3d805">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#ae783dfb65a01ad8d8e6e7ca1e5b3d805">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#adf71cb7ebf72f0cf640822b980cb45c7">wsseapi.c</a>
 </li>
 <li>soap_wsse_encrypt_begin()
-: <a class="el" href="wsseapi_8c.html#a9fd10a08c6ccb9df7b2de24251eaa8fa">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#adcd40e09c2849899d0dafa03ba6e5b4c">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#adcd40e09c2849899d0dafa03ba6e5b4c">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a9fd10a08c6ccb9df7b2de24251eaa8fa">wsseapi.c</a>
 </li>
 <li>soap_wsse_encrypt_body()
 : <a class="el" href="wsseapi_8h.html#ac12c951db671e4e29810d0f0ae7f1b63">wsseapi.h</a>
 , <a class="el" href="wsseapi_8c.html#ac9a76a00be69c537e2207c004beb151f">wsseapi.c</a>
 </li>
 <li>soap_wsse_encrypt_end()
-: <a class="el" href="wsseapi_8c.html#a2bfc0ed29076cc4d53496d692986728b">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a67d96a5fbfb37797a1223155957111cb">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a67d96a5fbfb37797a1223155957111cb">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a2bfc0ed29076cc4d53496d692986728b">wsseapi.c</a>
 </li>
 <li>soap_wsse_encrypt_only()
-: <a class="el" href="wsseapi_8c.html#a6d2332b0cd71a2a1ce9cd35c44622b93">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a3c417c369946561cbf72566349041805">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a3c417c369946561cbf72566349041805">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a6d2332b0cd71a2a1ce9cd35c44622b93">wsseapi.c</a>
 </li>
 <li>soap_wsse_EncryptedKey()
 : <a class="el" href="wsseapi_8c.html#a1a8858d83960ca4c82e42d11b1ecb91f">wsseapi.c</a>
 , <a class="el" href="wsseapi_8h.html#af597e92f133a6076523c46cb3dd879cd">wsseapi.h</a>
 </li>
 <li>soap_wsse_fault()
-: <a class="el" href="wsseapi_8c.html#a8e22277e9dc7b4b51b86a8aac8b8d3a8">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#af333975761fe6c00031a223a2036311b">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#af333975761fe6c00031a223a2036311b">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a8e22277e9dc7b4b51b86a8aac8b8d3a8">wsseapi.c</a>
 </li>
 <li>soap_wsse_get_BinarySecurityToken()
-: <a class="el" href="wsseapi_8c.html#a2578bb9006ce44fa01134ac2c2713087">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a7496da1dd76aa06e6657365b5c7dd76d">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a7496da1dd76aa06e6657365b5c7dd76d">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a2578bb9006ce44fa01134ac2c2713087">wsseapi.c</a>
 </li>
 <li>soap_wsse_get_BinarySecurityTokenX509()
-: <a class="el" href="wsseapi_8c.html#a2f07b7567deb503fc526e0822179b24c">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a2ec22f47b0c66b62ef3c96d8f7b31436">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a2ec22f47b0c66b62ef3c96d8f7b31436">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a2f07b7567deb503fc526e0822179b24c">wsseapi.c</a>
 </li>
 <li>soap_wsse_get_KeyInfo_KeyName()
 : <a class="el" href="wsseapi_8c.html#afc01049b0a3895f569258f21220916ba">wsseapi.c</a>
@@ -817,20 +832,20 @@
 , <a class="el" href="wsseapi_8c.html#a3ecae7743d2f29b815d2500701baaf99">wsseapi.c</a>
 </li>
 <li>soap_wsse_get_KeyInfo_SecurityTokenReferenceKeyIdentifierValueType()
-: <a class="el" href="wsseapi_8c.html#a9607d8622caac3820ad2e248305a360d">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#ad3162057a523357a05c9916ba272c139">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#ad3162057a523357a05c9916ba272c139">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a9607d8622caac3820ad2e248305a360d">wsseapi.c</a>
 </li>
 <li>soap_wsse_get_KeyInfo_SecurityTokenReferenceURI()
-: <a class="el" href="wsseapi_8h.html#a0564dbedcbf4e6404c51d14db61db5cb">wsseapi.h</a>
-, <a class="el" href="wsseapi_8c.html#a40aabeb5096d0585f36e99ecf9dfa126">wsseapi.c</a>
+: <a class="el" href="wsseapi_8c.html#a40aabeb5096d0585f36e99ecf9dfa126">wsseapi.c</a>
+, <a class="el" href="wsseapi_8h.html#a0564dbedcbf4e6404c51d14db61db5cb">wsseapi.h</a>
 </li>
 <li>soap_wsse_get_KeyInfo_SecurityTokenReferenceValueType()
-: <a class="el" href="wsseapi_8c.html#ab74a0c186d8b7280e37078c8e34cfee3">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a53165ba9f316163972af9a839a84da1f">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a53165ba9f316163972af9a839a84da1f">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#ab74a0c186d8b7280e37078c8e34cfee3">wsseapi.c</a>
 </li>
 <li>soap_wsse_get_KeyInfo_SecurityTokenReferenceX509()
-: <a class="el" href="wsseapi_8c.html#a326e7d6c0bcd580f05c3b5d290c0219f">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#aa35a9b6b69417f40c248cdae560a3dfc">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#aa35a9b6b69417f40c248cdae560a3dfc">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a326e7d6c0bcd580f05c3b5d290c0219f">wsseapi.c</a>
 </li>
 <li>soap_wsse_get_KeyInfo_SecurityTokenReferenceX509Data()
 : <a class="el" href="wsseapi_8c.html#abc09a6ea17d37582276193e1455352d9">wsseapi.c</a>
@@ -849,13 +864,13 @@
 , <a class="el" href="wsseapi_8c.html#ab563eaf37df9e509d47ffc40ebba0d60">wsseapi.c</a>
 </li>
 <li>soap_wsse_id
-: <a class="el" href="wsseapi_8c.html#a08c28b1011e1b370838312729cca9c01">wsseapi.c</a>
+: <a class="el" href="wsseapi_8h.html#af798c8221c5bdc2e45bd27a52e02c79f">wsseapi.h</a>
 </li>
 <li>SOAP_WSSE_ID
 : <a class="el" href="wsseapi_8h.html#a263bd9819133fc1daccc34458c991ff9">wsseapi.h</a>
 </li>
 <li>soap_wsse_id
-: <a class="el" href="wsseapi_8h.html#af798c8221c5bdc2e45bd27a52e02c79f">wsseapi.h</a>
+: <a class="el" href="wsseapi_8c.html#a08c28b1011e1b370838312729cca9c01">wsseapi.c</a>
 </li>
 <li>soap_wsse_ids()
 : <a class="el" href="wsseapi_8c.html#afc8b4d1dad450f636113ada6960f6316">wsseapi.c</a>
@@ -864,11 +879,11 @@
 : <a class="el" href="wsseapi_8h.html#ae6f973cd88cca2187640822dc86fcd9e">wsseapi.h</a>
 </li>
 <li>soap_wsse_init()
-: <a class="el" href="wsseapi_8c.html#aa1001021a4615e48f7b0a1455423f443">wsseapi.c</a>
+: <a class="el" href="wsseapi_8c.html#a61b2f63ef7252b89e63a83988d3100b1">wsseapi.c</a>
 </li>
 <li>soap_wsse_KeyInfo()
-: <a class="el" href="wsseapi_8h.html#afd81efa4868e56854ec3552252641711">wsseapi.h</a>
-, <a class="el" href="wsseapi_8c.html#a0f5908929eb93e92ab69d5b0561fa70f">wsseapi.c</a>
+: <a class="el" href="wsseapi_8c.html#a0f5908929eb93e92ab69d5b0561fa70f">wsseapi.c</a>
+, <a class="el" href="wsseapi_8h.html#afd81efa4868e56854ec3552252641711">wsseapi.h</a>
 </li>
 <li>SOAP_WSSE_MAX_REF
 : <a class="el" href="wsseapi_8c.html#a5c6f8145831c10a4dbd0465a923908c6">wsseapi.c</a>
@@ -900,20 +915,20 @@
 , <a class="el" href="wsseapi_8c.html#a21e51cf7bdaf6d0f5cc529efba28fa50">wsseapi.c</a>
 </li>
 <li>soap_wsse_receiver_fault_subcode()
-: <a class="el" href="wsseapi_8c.html#a7664a7a5431caf670938d7c29ba3a923">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a5cec82648247163c63a28d624b2b9fe8">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a5cec82648247163c63a28d624b2b9fe8">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a7664a7a5431caf670938d7c29ba3a923">wsseapi.c</a>
 </li>
 <li>soap_wsse_Security()
-: <a class="el" href="wsseapi_8c.html#a3a51d2b0d1632e4ecfd69b340805ff98">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#ae7775b49a0cd57c7cf85db7bb18b034d">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#ae7775b49a0cd57c7cf85db7bb18b034d">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a3a51d2b0d1632e4ecfd69b340805ff98">wsseapi.c</a>
 </li>
 <li>soap_wsse_sender_fault()
 : <a class="el" href="wsseapi_8c.html#a816dcaad02ea3d7741539692e67fd438">wsseapi.c</a>
 , <a class="el" href="wsseapi_8h.html#a0e7d820ea5bf71efb136bb7f0ffbb71f">wsseapi.h</a>
 </li>
 <li>soap_wsse_sender_fault_subcode()
-: <a class="el" href="wsseapi_8c.html#ac243be39e8b0e09821d37e270cf09e0c">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#aac4234bd51599c36aec7bf7888191fb0">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#aac4234bd51599c36aec7bf7888191fb0">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#ac243be39e8b0e09821d37e270cf09e0c">wsseapi.c</a>
 </li>
 <li>soap_wsse_session
 : <a class="el" href="wsseapi_8c.html#a777b5d06409128e7bcb97703b4f40f06">wsseapi.c</a>
@@ -936,12 +951,12 @@
 , <a class="el" href="wsseapi_8h.html#ad6a0b722a052aaa7652cba5245f78b5f">wsseapi.h</a>
 </li>
 <li>soap_wsse_set_wsu_id()
-: <a class="el" href="wsseapi_8c.html#a5aecbf5ab1b06aee118f149189a4008b">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a9582748dda80d0307e253f1a86c0c454">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a5aecbf5ab1b06aee118f149189a4008b">wsseapi.c</a>
 </li>
 <li>soap_wsse_sign()
-: <a class="el" href="wsseapi_8h.html#aa3ac2afb86a25ec1e1d8e4515133e9ad">wsseapi.h</a>
-, <a class="el" href="wsseapi_8c.html#ac32b553c40688b8b1126eff0877d9e27">wsseapi.c</a>
+: <a class="el" href="wsseapi_8c.html#ac32b553c40688b8b1126eff0877d9e27">wsseapi.c</a>
+, <a class="el" href="wsseapi_8h.html#aa3ac2afb86a25ec1e1d8e4515133e9ad">wsseapi.h</a>
 </li>
 <li>soap_wsse_sign_body()
 : <a class="el" href="wsseapi_8h.html#ab653754f1a287ba06bd808cf89548c38">wsseapi.h</a>
@@ -960,32 +975,32 @@
 , <a class="el" href="wsseapi_8c.html#a28d9925ef23d911ad5f125f2f3c461e8">wsseapi.c</a>
 </li>
 <li>soap_wsse_Timestamp()
-: <a class="el" href="wsseapi_8c.html#a1e1e66c48396cb8c3f0416bdf19f0e39">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a04c4d2e02fd8580ff632410f918f7796">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a04c4d2e02fd8580ff632410f918f7796">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a1e1e66c48396cb8c3f0416bdf19f0e39">wsseapi.c</a>
 </li>
 <li>soap_wsse_UsernameToken()
-: <a class="el" href="wsseapi_8c.html#a0b840da9c3dd8e21cf47511137d24aa7">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#ae74d27ca59d97961711a038b7188ceb6">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#ae74d27ca59d97961711a038b7188ceb6">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a0b840da9c3dd8e21cf47511137d24aa7">wsseapi.c</a>
 </li>
 <li>soap_wsse_verify_auto()
-: <a class="el" href="wsseapi_8h.html#a7321b451910e1d3887b328f03de92f34">wsseapi.h</a>
-, <a class="el" href="wsseapi_8c.html#aba1ed2878f44b2c4efac24cd89ff30bf">wsseapi.c</a>
+: <a class="el" href="wsseapi_8c.html#aba1ed2878f44b2c4efac24cd89ff30bf">wsseapi.c</a>
+, <a class="el" href="wsseapi_8h.html#a7321b451910e1d3887b328f03de92f34">wsseapi.h</a>
 </li>
 <li>soap_wsse_verify_body()
 : <a class="el" href="wsseapi_8h.html#a5ccbce0f1a4a8f103e921a918f932a20">wsseapi.h</a>
 , <a class="el" href="wsseapi_8c.html#a3d4776f82441af7b0f924ca539fea2ba">wsseapi.c</a>
 </li>
 <li>soap_wsse_verify_digest()
-: <a class="el" href="wsseapi_8c.html#af8f6656759577f22984a84d1b81cbefa">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#acf1c213ea26a2286f9c0457849bd6290">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#acf1c213ea26a2286f9c0457849bd6290">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#af8f6656759577f22984a84d1b81cbefa">wsseapi.c</a>
 </li>
 <li>soap_wsse_verify_done()
 : <a class="el" href="wsseapi_8h.html#a07db8f284ab2bb564248999fe02d0169">wsseapi.h</a>
 , <a class="el" href="wsseapi_8c.html#a017a4e7f4da6242584f9300fa5a9b877">wsseapi.c</a>
 </li>
 <li>soap_wsse_verify_element()
-: <a class="el" href="wsseapi_8h.html#a3fbe81de521579f026dd1ba8e81c59c1">wsseapi.h</a>
-, <a class="el" href="wsseapi_8c.html#a5e158e7c3e97c336b25bdcbb3598ce01">wsseapi.c</a>
+: <a class="el" href="wsseapi_8c.html#a5e158e7c3e97c336b25bdcbb3598ce01">wsseapi.c</a>
+, <a class="el" href="wsseapi_8h.html#a3fbe81de521579f026dd1ba8e81c59c1">wsseapi.h</a>
 </li>
 <li>soap_wsse_verify_EncryptedKey()
 : <a class="el" href="wsseapi_8h.html#afcfdd54e7c220fb90e11c75da3bbbe88">wsseapi.h</a>
@@ -1003,28 +1018,28 @@
 , <a class="el" href="wsseapi_8h.html#aeb0afd01a5036e4f1314a3cfe8575bd5">wsseapi.h</a>
 </li>
 <li>soap_wsse_verify_Signature()
-: <a class="el" href="wsseapi_8h.html#a1267cd7ba1fa1dc0f38fd75f74503308">wsseapi.h</a>
-, <a class="el" href="wsseapi_8c.html#a2d0c2eecf85eb259d3d1cc3b511af646">wsseapi.c</a>
+: <a class="el" href="wsseapi_8c.html#a2d0c2eecf85eb259d3d1cc3b511af646">wsseapi.c</a>
+, <a class="el" href="wsseapi_8h.html#a1267cd7ba1fa1dc0f38fd75f74503308">wsseapi.h</a>
 </li>
 <li>soap_wsse_verify_SignatureValue()
-: <a class="el" href="wsseapi_8h.html#a8ab7e709b0423cd68d3fec96b3db3734">wsseapi.h</a>
-, <a class="el" href="wsseapi_8c.html#a0832138e9a2d9059fb38c466c4f6971b">wsseapi.c</a>
+: <a class="el" href="wsseapi_8c.html#a0832138e9a2d9059fb38c466c4f6971b">wsseapi.c</a>
+, <a class="el" href="wsseapi_8h.html#a8ab7e709b0423cd68d3fec96b3db3734">wsseapi.h</a>
 </li>
 <li>soap_wsse_verify_SignedInfo()
-: <a class="el" href="wsseapi_8h.html#a75b7ca484637dfc49143546072dd5f4b">wsseapi.h</a>
-, <a class="el" href="wsseapi_8c.html#af2d517616d063ced383f78e82395bf9c">wsseapi.c</a>
+: <a class="el" href="wsseapi_8c.html#af2d517616d063ced383f78e82395bf9c">wsseapi.c</a>
+, <a class="el" href="wsseapi_8h.html#a75b7ca484637dfc49143546072dd5f4b">wsseapi.h</a>
 </li>
 <li>soap_wsse_verify_Timestamp()
-: <a class="el" href="wsseapi_8h.html#a98422cde0e2b7b14d65212f7061101fa">wsseapi.h</a>
-, <a class="el" href="wsseapi_8c.html#a1788006a119b3d4ad7fc11d12d6a880d">wsseapi.c</a>
+: <a class="el" href="wsseapi_8c.html#a1788006a119b3d4ad7fc11d12d6a880d">wsseapi.c</a>
+, <a class="el" href="wsseapi_8h.html#a98422cde0e2b7b14d65212f7061101fa">wsseapi.h</a>
 </li>
 <li>soap_wsse_verify_with_signature()
-: <a class="el" href="wsseapi_8h.html#a9683d6e2780bf1d679e191ea18591cbc">wsseapi.h</a>
-, <a class="el" href="wsseapi_8c.html#a9683d6e2780bf1d679e191ea18591cbc">wsseapi.c</a>
+: <a class="el" href="wsseapi_8c.html#a9683d6e2780bf1d679e191ea18591cbc">wsseapi.c</a>
+, <a class="el" href="wsseapi_8h.html#a9683d6e2780bf1d679e191ea18591cbc">wsseapi.h</a>
 </li>
 <li>soap_wsse_verify_X509()
-: <a class="el" href="wsseapi_8c.html#a7db9cedae6a5b1fbd3c3ed8db30ff72b">wsseapi.c</a>
-, <a class="el" href="wsseapi_8h.html#a8f5879e7d5bd3580ea400ccd1982d747">wsseapi.h</a>
+: <a class="el" href="wsseapi_8h.html#a8f5879e7d5bd3580ea400ccd1982d747">wsseapi.h</a>
+, <a class="el" href="wsseapi_8c.html#a7db9cedae6a5b1fbd3c3ed8db30ff72b">wsseapi.c</a>
 </li>
 </ul>
 </div><!-- contents -->
@@ -1033,7 +1048,7 @@
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon May 14 2018 21:30:26 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sat Aug 25 2018 13:26:12 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

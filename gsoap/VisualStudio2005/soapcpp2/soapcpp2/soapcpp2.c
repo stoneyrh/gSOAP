@@ -232,7 +232,7 @@ main(int argc, char **argv)
 -r      generate soapReadme.md report\n\
 -s      generate deserialization code with strict XML validation checks\n\
 -t      generate code for fully xsi:type typed SOAP/XML messaging\n\
--u      uncomment comments in WSDL/schema output by suppressing XML comments\n\
+-u      uncomment WSDL/schema output by suppressing XML comments\n\
 -V      display the current version and exit\n\
 -v      verbose output\n\
 -w      don't generate WSDL and schema files\n\

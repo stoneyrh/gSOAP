@@ -57,6 +57,9 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #else
 # include "soapH.h"	/* or manually replace with soapcpp2-generated *H.h file */
 #endif
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)) && QT_CONFIG(timezone)
+# include <QTimeZone>
+#endif
 
 static void * instantiate_xsd__dateTime(struct soap*, int, const char*, const char*, size_t*);
 
@@ -96,7 +99,7 @@ QDateTime *soap_in_xsd__dateTime(struct soap *soap, char const *tag, QDateTime *
     return NULL;
   }
   a = (QDateTime*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__dateTime, sizeof(QDateTime), NULL, NULL, instantiate_xsd__dateTime, NULL);
-  if (*soap->href)
+  if (*soap->href == '#')
   {
     a = (QDateTime*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__dateTime, 0, sizeof(QDateTime), 0, copy_xsd__dateTime, NULL);
   }
@@ -214,8 +217,12 @@ int soap_s2xsd__dateTime(struct soap *soap, const char *s, QDateTime *a)
         }
         if (*t)
           return soap->error = SOAP_TYPE;
-        (void)a->addSecs(-mins*60);
-        (void)a->addSecs(-hrs*3600);
+        int offsetSeconds = mins*60 + hrs*3600;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)) && QT_CONFIG(timezone)
+        a->setTimeZone(QTimeZone(offsetSeconds));
+#else
+        *a = a->addSecs(offsetSeconds);
+#endif
       }
       else if (*t != 'Z')
         return soap->error = SOAP_TYPE;

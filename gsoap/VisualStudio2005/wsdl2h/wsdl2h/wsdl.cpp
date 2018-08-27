@@ -204,7 +204,11 @@ int wsdl__definitions::read(const char *cwd, const char *loc)
 #else
     if (!strncmp(loc, "https://", 8))
     {
+#ifdef WIN32
+      fprintf(stderr, "\nCannot connect to https site: SSL/TLS support not enabled in this version. Visit https://www.genivia.com/downloads.html to download the secure version of wsdl2h.exe that supports SSL/TLS to connect to https sites.\n");
+#else
       fprintf(stderr, "\nCannot connect to https site: SSL/TLS support not enabled, please rebuild wsdl2h with SSL/TLS enabled using 'make secure' or download the WSDL/WADL and XSD files and rerun wsdl2h on these files directly by specifying the file names on the command line.\n");
+#endif
       exit(1);
     }
     else if (!strncmp(loc, "http://", 7))

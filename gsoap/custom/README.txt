@@ -35,6 +35,16 @@ The xsd:dateTime parsers are more permissive to accept alternative ISO8601
 formats. To restrict xsd:dateTime formats to the XSD standard, use the
 SOAP_XML_STRICT flag.
 
+Qt vector
+---------
+
+Containers are serializable when declared in a .h specification file for
+soapcpp2 as a template class. Therefore, to use Qt vectors, all you have to do
+is declare in the specification file for soapcpp2:
+
+#include <QVector>
+template <class T> class QVector;
+
 C VERSUS C++
 ------------
 

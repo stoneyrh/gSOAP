@@ -139,9 +139,6 @@ periodically polling the port as shown:
       soap_print_fault(soap, stderr);
       exit(0);
     }
-
-    soap_wsdd_listen(soap, -1000); // listen for messages for 1 ms
-
     soap_wsdd_listen(soap, -1000); // listen for messages for 1 ms
     ...
 @endcode
@@ -359,8 +356,6 @@ separately on wsdd.h (or wsdd5.h or wsdd10.h for WS-Discovery 1.0) by:
 
     soapcpp2 -a -L -pwsdd -Iimport import/wsdd.h
     
-This generates wsddService.cpp and wsddClient.cpp, which should be compiled together with the rest of your project code. Then change wsddapi.h to use `#include "wsddH.h"`.
-
 Now with this approach you must chain the service operations at the server side
 as follows:
 
@@ -384,9 +379,7 @@ Then change wsddapi.h to use `#include "wsddH.h"` and compile and link the
 generated wsddClient.cpp code with your project.
 
 For server-side projects, also compile and link the generated wsddServer.cpp
-code.
-
-You will need to implement the @ref wsdd_2.
+code.  You will also need to implement the @ref wsdd_2.
 
 Because WS-Addressing may relay faults to a FaultTo service, when implementing
 a service you will also have to define a SOAP Fault service operation to accept

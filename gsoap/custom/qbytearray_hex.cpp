@@ -96,11 +96,11 @@ QByteArray *soap_in_xsd__hexBinary(struct soap *soap, char const *tag, QByteArra
     return NULL;
   }
   a = (QByteArray*)soap_id_enter(soap, soap->id, a, SOAP_TYPE_xsd__hexBinary, sizeof(QByteArray), NULL, NULL, instantiate_xsd__hexBinary, NULL);
-  if (*soap->href)
+  if (*soap->href == '#')
   {
     a = (QByteArray*)soap_id_forward(soap, soap->href, a, 0, SOAP_TYPE_xsd__hexBinary, 0, sizeof(QByteArray), 0, copy_xsd__hexBinary, NULL);
   }
-  else if (a)
+  else if (a && soap->body)
   {
     if (soap_s2xsd__hexBinary(soap, soap_string_in(soap, 0, -1, -1, NULL), a))
       return NULL;

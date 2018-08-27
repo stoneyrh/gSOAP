@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.69
+        stdsoap2.c[pp] 2.8.70
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20869
+#define GSOAP_LIB_VERSION 20870
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.69 2018-07-18 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.70 2018-08-27 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.69 2018-07-18 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.70 2018-08-27 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -13818,7 +13818,7 @@ soap_element_end_in(struct soap *soap, const char *tag)
   n = sizeof(soap->tag);
   while ((c = soap_get(soap)) > 32)
   {
-    if (n > 0)
+    if (n > 1)
     {
       *s++ = (char)c;
       n--;
