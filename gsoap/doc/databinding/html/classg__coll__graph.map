@@ -1,3 +1,5 @@
 <map id="g" name="g">
-<area shape="rect" id="node2" href="$class_graph.html" title="Graph" alt="" coords="4,6,61,34"/>
+<area shape="rect" id="node2" href="$class_graph.html" title="Graph" alt="" coords="52,95,111,121"/>
+<area shape="rect" id="node3" href="$classstd_1_1vector.html" title="std::vector\&lt; Graph * \&gt;" alt="" coords="5,5,157,32"/>
+<area shape="rect" id="node4" href="$classstd_1_1vector.html" title="std::vector\&lt; g:Graph * \&gt;" alt="" coords="135,95,299,121"/>
 </map>

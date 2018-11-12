@@ -57,7 +57,7 @@ xs__schema::xs__schema()
   soap_register_plugin(soap, http_da);
 #endif
 #ifdef WITH_OPENSSL
-  soap_ssl_client_context(soap, SOAP_SSL_NO_AUTHENTICATION, NULL, NULL, NULL, NULL, NULL);
+  soap_ssl_client_context(soap, SOAP_SSL_NO_AUTHENTICATION | SOAP_SSLv3_TLSv1, NULL, NULL, NULL, NULL, NULL);
 #endif
   soap_set_namespaces(soap, namespaces);
   soap_default(soap);

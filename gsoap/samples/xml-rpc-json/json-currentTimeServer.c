@@ -61,38 +61,36 @@ int main(int argc, char **argv)
      || json_recv(ctx, &request)
      || soap_end_recv(ctx))
     {
-      soap_send_fault(ctx);
+      json_send_fault(ctx);
     }
     else
     {
-      struct value *response = new_value(ctx);
-
       /* if the name matches: set response to time, else error */
       if (is_string(&request) && !strcmp(*string_of(&request), "getCurrentTime"))
       {
+        struct value *response = new_value(ctx);
         *dateTime_of(response) = soap_dateTime2s(ctx, time(0));
+        /* set the http content type */
+        ctx->http_content = "application/json; charset=utf-8";
+        /* send the response */
+        if (soap_response(ctx, SOAP_FILE)
+         || json_send(ctx, response)
+         || soap_end_send(ctx))
+          soap_print_fault(ctx, stderr);
       }
       else
       {
-        *string_of(value_at(response, "fault")) = "Wrong method";
-        *value_at(response, "detail") = request;
+        /* JSON error as per Google JSON Style Guide */
+        json_send_error(ctx, 400, "Wrong method", *string_of(&request));
       }
-      /* set the http content type */
-      ctx->http_content = "application/json; charset=utf-8";
-      /* send the response */
-      if (soap_begin_count(ctx)
-       || ((ctx->mode & SOAP_IO_LENGTH) && json_send(ctx, response))
-       || soap_end_count(ctx)
-       || soap_response(ctx, SOAP_FILE)
-       || json_send(ctx, response)
-       || soap_end_send(ctx))
-        soap_send_fault(ctx);
     }
     soap_destroy(ctx);
     soap_end(ctx);
     soap_free(ctx);
     return 0;
   }
+
+  /* multi-threaded stand-alone server on port specified by the command-line argument */
 
   port = atoi(argv[1]);
 
@@ -102,16 +100,33 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  ctx->send_timeout = 10;
-  ctx->recv_timeout = 10;
+  soap_set_mode(ctx, SOAP_IO_KEEPALIVE); /* enable HTTP keep-alive, which is optional */
+
+  ctx->send_timeout = 10; /* 10 sec max socket idle time */
+  ctx->recv_timeout = 10; /* 10 sec max socket idle time */
+  ctx->transfer_timeout = 30; /* 30 sec message transfer timeout */
 
   while (1)
   {
     THREAD_TYPE tid;
-    if (!soap_valid_socket(soap_accept(ctx)))
+    if (soap_valid_socket(soap_accept(ctx)))
+    {
+      struct soap *cpy = soap_copy(ctx);
+      if (!cpy)
+        soap_closesock(ctx);
+      else
+        while (THREAD_CREATE(&tid, (void*(*)(void*))&serve_request, (void*)cpy))
+          sleep(1);
+    }
+    else if (ctx->errnum == 0) /* accept timed out, quit looping */
+    {
+      break;
+    }
+    else /* accept failed, try again after 5 seconds */
+    {
       soap_print_fault(ctx, stderr);
-    else
-      THREAD_CREATE(&tid, (void*(*)(void*))serve_request, (void*)soap_copy(ctx));
+      sleep(5);
+    }
   }
 
   soap_destroy(ctx);
@@ -139,29 +154,26 @@ int serve_request(struct soap* ctx)
     if (soap_begin_recv(ctx)
      || json_recv(ctx, request)
      || soap_end_recv(ctx))
-      soap_send_fault(ctx);
+    {
+      json_send_fault(ctx);
+    }
     else
     {
-      struct value *response = new_value(ctx);
-  
       if (is_string(request) && !strcmp(*string_of(request), "getCurrentTime"))
       {
+        struct value *response = new_value(ctx);
         *dateTime_of(response) = soap_dateTime2s(ctx, time(0));
+        ctx->http_content = "application/json; charset=utf-8";
+        if (soap_response(ctx, SOAP_FILE)
+         || json_send(ctx, response)
+         || soap_end_send(ctx))
+          soap_print_fault(ctx, stderr);
       }
       else
       {
-        *string_of(value_at(response, "fault")) = "Wrong method";
-        *value_at(response, "detail") = *request;
+        /* JSON error as per Google JSON Style Guide */
+        json_send_error(ctx, 400, "Wrong method", *string_of(request));
       }
-
-      ctx->http_content = "application/json; charset=utf-8";
-      if (soap_begin_count(ctx)
-       || ((ctx->mode & SOAP_IO_LENGTH) && json_send(ctx, response))
-       || soap_end_count(ctx)
-       || soap_response(ctx, SOAP_FILE)
-       || json_send(ctx, response)
-       || soap_end_send(ctx))
-        soap_send_fault(ctx);
     }
     /* close (keep-alive may keep socket open when client supports it) */
     soap_closesock(ctx);

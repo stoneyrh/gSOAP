@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">json.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Wed Dec 6 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sat Nov 10 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -68,6 +68,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a066bbc2f0263928a94b30d65320f9945"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="json_8h.html#a066bbc2f0263928a94b30d65320f9945">json_error</a> (struct soap *soap, struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
 <tr class="memdesc:a066bbc2f0263928a94b30d65320f9945"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set value to JSON error property given the context's error code, as per Google JSON Style Guide.  <a href="#a066bbc2f0263928a94b30d65320f9945">More...</a><br /></td></tr>
 <tr class="separator:a066bbc2f0263928a94b30d65320f9945"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6aa4b933cac792280e0a7844d346cf01"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="json_8h.html#a6aa4b933cac792280e0a7844d346cf01">json_send_fault</a> (struct soap *soap)</td></tr>
+<tr class="memdesc:a6aa4b933cac792280e0a7844d346cf01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Respond with a JSON error when an internal fault occurred (i.e. soap-&gt;error is nonzero), as per Google JSON Style Guide.  <a href="#a6aa4b933cac792280e0a7844d346cf01">More...</a><br /></td></tr>
+<tr class="separator:a6aa4b933cac792280e0a7844d346cf01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e7cde2a9cf69f2ba6a16049c95225a0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="json_8h.html#a7e7cde2a9cf69f2ba6a16049c95225a0">json_send_error</a> (struct soap *soap, int status, const char *message, const char *details)</td></tr>
+<tr class="memdesc:a7e7cde2a9cf69f2ba6a16049c95225a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send JSON error back to the client using the specified HTTP status code and a message and details, as per Google JSON Style Guide.  <a href="#a7e7cde2a9cf69f2ba6a16049c95225a0">More...</a><br /></td></tr>
+<tr class="separator:a7e7cde2a9cf69f2ba6a16049c95225a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0b41e1415944a28b8ef92dc98be8c50"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="json_8h.html#ae0b41e1415944a28b8ef92dc98be8c50">json_write</a> (struct soap *soap, const struct <a class="el" href="structvalue.html">value</a> *v)</td></tr>
 <tr class="memdesc:ae0b41e1415944a28b8ef92dc98be8c50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write JSON value to the context's output (socket, stream, FILE, or string)  <a href="#ae0b41e1415944a28b8ef92dc98be8c50">More...</a><br /></td></tr>
 <tr class="separator:ae0b41e1415944a28b8ef92dc98be8c50"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -122,7 +128,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Client-side JSON REST call to endpoint URL with optional in and out values (POST with in/out, GET with out, PUT with in, DELETE without in/out), returns SOAP_OK or HTTP code </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Client-side JSON REST call to endpoint URL with optional in and out values (POST with in/out, GET with out, PUT with in, DELETE without in/out), returns SOAP_OK or HTTP status code </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td>context that manages IO </td></tr>
     <tr><td class="paramname">endpoint</td><td>URL of the JSON REST/RPC service </td></tr>
@@ -131,7 +137,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or error code with out set to the JSON error property </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>SOAP_OK or HTTP status code or an error code with out set to the JSON error property when the error was returned by the server </dd></dl>
 
 </div>
 </div>
@@ -279,6 +285,81 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a7e7cde2a9cf69f2ba6a16049c95225a0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int json_send_error </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>status</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>message</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>details</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Send JSON error back to the client using the specified HTTP status code and a message and details, as per Google JSON Style Guide. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context with soap-&gt;error set </td></tr>
+    <tr><td class="paramname">status</td><td>HTTP error status code or SOAP_OK (0) </td></tr>
+    <tr><td class="paramname">message</td><td>error message </td></tr>
+    <tr><td class="paramname">details</td><td>error detail or NULL </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>error code </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6aa4b933cac792280e0a7844d346cf01"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int json_send_fault </td>
+          <td>(</td>
+          <td class="paramtype">struct soap *&#160;</td>
+          <td class="paramname"><em>soap</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Respond with a JSON error when an internal fault occurred (i.e. soap-&gt;error is nonzero), as per Google JSON Style Guide. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">soap</td><td>context with soap-&gt;error set </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>error code </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a8ec9df865c21e0c3e0b9d863afe27df2"></a>
 <div class="memitem">
 <div class="memproto">
@@ -354,10 +435,10 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Wed Dec 6 2017 15:34:43 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sat Nov 10 2018 14:27:12 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

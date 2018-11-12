@@ -1,12 +1,12 @@
 /*
         httpform.c
 
-        gSOAP HTTP POST application/x-www-form-urlencoded plugin.
+        gSOAP HTTP POST application/x-www-form-urlencoded data plugin.
 
-        Requires linkage with httpget.c (for query_key and query_val)
+        Requires linkage with httpget.c (for soap_query_key and soap_query_val)
 
-        Note: multipart/related and multipart/form-data are already handled in
-        gSOAP.
+        Note: multipart/related and multipart/form-data are handled in gSOAP as
+        MIME attachments.
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2008, Robert van Engelen, Genivia Inc., All Rights Reserved.
@@ -68,18 +68,18 @@ compiling, linking, and/or using OpenSSL is allowed.
 
         To parse form data in the handler, use:
 
-        char *s = form(soap);
+        char *s = soap_get_form(soap);
         while (s)
         {
-          char *key = query_key(soap, &s); // decode next form string key
-          char *val = query_val(soap, &s); // decode next form string value (if any)
+          char *key = soap_query_key(soap, &s); // decode next form string key
+          char *val = soap_query_val(soap, &s); // decode next form string value (if any)
           ...
         }
 
-        The form() function reads an HTTP body and stores it in an internal
-        buffer that is returned as a char*. This buffer can be used to process
-        HTTP POST body content. The query_key/val functions simply extract
-        key-value pairs from this buffer.
+        The soap_get_form() function reads an HTTP body and stores it in an
+        internal buffer that is returned as a char*. This buffer can be used to
+        process HTTP POST body content. The soap_query_key/val functions simply
+        extract key-value pairs from this buffer.
 
         The handler should also produce a valid HTTP response, for example:
         soap_response(soap, SOAP_HTML); // use this to return HTML ...
@@ -111,12 +111,13 @@ int http_form(struct soap *soap, struct soap_plugin *p, void *arg)
   p->id = http_form_id;
   p->data = (void*)malloc(sizeof(struct http_form_data));
   p->fdelete = http_form_delete;
-  if (p->data)
-    if (http_form_init(soap, (struct http_form_data*)p->data, (int (*)(struct soap*))arg))
-    {
-      free(p->data); /* error: could not init */
-      return SOAP_EOM; /* return error */
-    }
+  if (!p->data)
+    return SOAP_EOM;
+  if (http_form_init(soap, (struct http_form_data*)p->data, (int (*)(struct soap*))arg))
+  {
+    free(p->data); /* error: could not init */
+    return SOAP_EOM; /* return error */
+  }
   return SOAP_OK;
 }
 
@@ -157,73 +158,92 @@ static int http_form_parse_header(struct soap *soap, const char *key, const char
   return data->fparsehdr(soap, key, val); /* parse HTTP header */
 }
 
-char* form(struct soap *soap)
+char * soap_get_form(struct soap *soap)
 {
-  char *s = NULL;
-  /* It is unlikely chunked and/or compressed POST forms are sent by browsers, but we need to handle them */
-  if ((soap->mode & SOAP_IO) == SOAP_IO_CHUNK
-#ifdef WITH_ZLIB
-   || soap->zlib_in != SOAP_ZLIB_NONE
-#endif
-   )
+  char *s;
+  ULONG64 k = soap->length;
+  /* check HTTP body, return "" if none */
+  if (!k && !(soap->mode & SOAP_ENC_ZLIB) && (soap->mode & SOAP_IO) != SOAP_IO_CHUNK)
+    return soap_strdup(soap, "?");
+  /* do not consume DIME or MIME attachments */
+  if ((soap->mode & SOAP_ENC_DIME))
   {
-    soap_wchar c = EOF;
-    soap->labidx = 0;
-    if (soap_append_lab(soap, "?", 1))
-      return NULL;
-    do
+    soap->error = SOAP_DIME_ERROR;
+    return NULL;
+  }
+  if ((soap->mode & SOAP_ENC_MIME))
+  {
+    soap->error = SOAP_MIME_ERROR;
+    return NULL;
+  }
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Parsing HTTP body (mode=0x%x)\n", soap->mode));
+  if (k && !(soap->mode & SOAP_ENC_ZLIB))
+  {
+    char *t;
+    /* http content length != 0 and uncompressed body */
+    if ((SOAP_MAXALLOCSIZE != 0 && k > SOAP_MAXALLOCSIZE) || k > (ULONG64)((size_t)-3))
     {
-      size_t k;
-      if (soap_append_lab(soap, NULL, 0))
-        return NULL;
-      s = soap->labbuf + soap->labidx;
-      k = soap->lablen - soap->labidx;
-      soap->labidx = soap->lablen;
-      while (k--)
+      soap->error = SOAP_EOM;
+      return NULL;
+    }
+    s = t = (char*)soap_malloc(soap, (size_t)k + 2);
+    if (s)
+    {
+      size_t i;
+      *t++ = '?';
+      for (i = 0; i < k; i++)
       {
-        c = soap_getchar(soap);
-        if (c == (int)EOF)
+        soap_wchar c = soap_get1(soap);
+        if ((int)c == EOF)
           break;
-        *s++ = c;
+        *t++ = (char)(c & 0xFF);
       }
-    } while (c != (int)EOF);
-    *s = '\0';
-    s = soap->labbuf;
+      *t = '\0';
+    }
+    else
+    {
+      soap->error = SOAP_EOM;
+      return NULL;
+    }
   }
   else
   {
-    if (soap->length)
+    size_t i, l = 0;
+    if (soap_alloc_block(soap) == NULL)
+      return NULL;
+    s = (char*)soap_push_block(soap, NULL, 1);
+    if (!s)
+      return NULL;
+    *s = '?';
+    for (;;)
     {
-      if (soap->length > 0x7FFFFFFF - 2)
-      {
-        soap->error = SOAP_EOM;
+      size_t k = SOAP_BLKLEN;
+      s = (char*)soap_push_block(soap, NULL, k);
+      if (!s)
         return NULL;
-      }
-      s = (char*)soap_malloc(soap, soap->length + 2);
-      if (s)
+      for (i = 0; i < k; i++)
       {
-        char *t = s;
-        ULONG64 i;
-        *t++ = '?';
-        for (i = soap->length; i; i--)
+        soap_wchar c;
+        l++;
+        if (l == 0)
         {
-          soap_wchar c;
-          c = soap_getchar(soap);
-          if (c == (int)EOF)
-          {
-            soap->error = SOAP_EOF;
-            return NULL;
-          }
-          *t++ = c;
+          soap->error = SOAP_EOM;
+          return NULL;
         }
-        *t = '\0';
+        c = soap_get1(soap);
+        if ((int)c == EOF)
+          goto end;
+        *s++ = (char)(c & 0xFF);
       }
     }
+end:
+    *s = '\0';
+    soap_size_block(soap, NULL, i + 1);
+    s = soap_save_block(soap, NULL, NULL, 0);
   }
-  soap_end_recv(soap);
   return s;
 }
-
+  
 /******************************************************************************/
 
 #ifdef __cplusplus

@@ -76,11 +76,11 @@ compiling, linking, and/or using OpenSSL is allowed.
         To get query string key-value pairs within a service routine, use:
 
         char *s;
-        s = query(soap);
+        s = soap_query(soap);
         while (s)
         {
-          char *key = query_key(soap, &s);
-          char *val = query_val(soap, &s);
+          char *key = soap_query_key(soap, &s);
+          char *val = soap_query_val(soap, &s);
           ...
         }
 
@@ -122,8 +122,9 @@ compiling, linking, and/or using OpenSSL is allowed.
         soap_end(&soap);
         soap_done(&soap);
 
-        The soap_get_http_body() function above moves HTTP body content into a
-        buffer.
+        The soap_get_http_body() function above returns the HTTP body content
+        as a string.
+        
 */
 
 #include "httpget.h"
@@ -144,12 +145,13 @@ int http_get(struct soap *soap, struct soap_plugin *p, void *arg)
   p->data = (void*)malloc(sizeof(struct http_get_data));
   /* p->fcopy = http_get_copy; obsolete, see note with http_get_copy() */
   p->fdelete = http_get_delete;
-  if (p->data)
-    if (http_get_init(soap, (struct http_get_data*)p->data, (int (*)(struct soap*))arg))
-    {
-      free(p->data); /* error: could not init */
-      return SOAP_EOM; /* return error */
-    }
+  if (!p->data)
+    return SOAP_EOM;
+  if (http_get_init(soap, (struct http_get_data*)p->data, (int (*)(struct soap*))arg))
+  {
+    free(p->data); /* error: could not init */
+    return SOAP_EOM; /* return error */
+  }
   return SOAP_OK;
 }
 
@@ -160,9 +162,9 @@ static int http_get_init(struct soap *soap, struct http_get_data *data, int (*ha
   data->stat_get = 0;
   data->stat_post = 0;
   data->stat_fail = 0;
-  memset((void*)data->min, 0, sizeof(data->min));
-  memset((void*)data->hour, 0, sizeof(data->hour));
-  memset((void*)data->day, 0, sizeof(data->day));
+  memset((void*)data->hist_min, 0, sizeof(data->hist_min));
+  memset((void*)data->hist_hour, 0, sizeof(data->hist_hour));
+  memset((void*)data->hist_day, 0, sizeof(data->hist_day));
   soap->fparse = http_get_parse; /* replace HTTP header parser callback with ours */
   return SOAP_OK;
 }
@@ -198,21 +200,26 @@ static int http_get_parse(struct soap *soap)
   pT = localtime(&t);
 #endif
   /* updates should be in mutex, but we don't mind some inaccuracy in the count to preserve performance */
-  data->day[pT->tm_yday]++;
-  data->day[(pT->tm_yday + 1) % 365] = 0;
-  data->hour[pT->tm_hour]++;
-  data->hour[(pT->tm_hour + 1) % 24] = 0;
-  data->min[pT->tm_min]++;
-  data->min[(pT->tm_min + 1) % 60] = 0;
+  data->hist_day[pT->tm_yday]++;
+  data->hist_day[(pT->tm_yday + 1) % 365] = 0;
+  data->hist_hour[pT->tm_hour]++;
+  data->hist_hour[(pT->tm_hour + 1) % 24] = 0;
+  data->hist_min[pT->tm_min]++;
+  data->hist_min[(pT->tm_min + 1) % 60] = 0;
 #endif
   soap->error = data->fparse(soap); /* parse HTTP header */
-  if (soap->error == SOAP_OK)
+  if (soap->error == SOAP_OK || soap->error == SOAP_STOP || soap->error == SOAP_FORM)
   {
     /* update should be in mutex, but we don't mind some inaccuracy in the count */
     data->stat_post++;
   }
-  else if (soap->error == SOAP_GET_METHOD && data->fget)
+  else if (soap->error == SOAP_GET_METHOD)
   {
+    if (!data->fget)
+    {
+      data->stat_fail++;
+      return soap->error;
+    }
     soap->error = SOAP_OK;
     soap->error = data->fget(soap); /* call user-defined HTTP GET handler */
     if (soap->error)
@@ -223,7 +230,7 @@ static int http_get_parse(struct soap *soap)
     }
     /* update should be in mutex, but we don't mind some inaccuracy in the count */
     data->stat_get++;
-    return SOAP_STOP; /* stop processing the request and do not return SOAP Fault */
+    return soap->error = SOAP_STOP; /* stop processing the request and do not return SOAP Fault */
   }
   else
   {
@@ -235,17 +242,37 @@ static int http_get_parse(struct soap *soap)
 
 /******************************************************************************/
 
+void soap_get_stats(struct soap *soap, size_t *stat_get, size_t *stat_post, size_t *stat_fail, size_t **hist_min, size_t **hist_hour, size_t **hist_day)
+{
+  struct http_get_data *data = (struct http_get_data*)soap_lookup_plugin(soap, http_get_id);
+  if (!data)
+    return;
+  if (stat_get)
+    *stat_get = data->stat_get;
+  if (stat_post)
+    *stat_post = data->stat_post;
+  if (stat_fail)
+    *stat_fail = data->stat_fail;
+  if (hist_min)
+    *hist_min = data->hist_min;
+  if (hist_hour)
+    *hist_hour = data->hist_hour;
+  if (hist_day)
+    *hist_day = data->hist_day;
+}
+
+/* deprecated: use soap_GET instead */
 int soap_get_connect(struct soap *soap, const char *endpoint, const char *action)
 {
   return soap_GET(soap, endpoint, action);
 }
 
-char *query(struct soap *soap)
+char *soap_query(struct soap *soap)
 {
   return strchr(soap->path, '?');
 }
 
-char *query_key(struct soap *soap, char **s)
+char *soap_query_key(struct soap *soap, char **s)
 {
   char *t = *s;
   (void)soap;
@@ -257,7 +284,7 @@ char *query_key(struct soap *soap, char **s)
   return *s = NULL;
 }
 
-char *query_val(struct soap *soap, char **s)
+char *soap_query_val(struct soap *soap, char **s)
 {
   char *t = *s;
   (void)soap;

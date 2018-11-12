@@ -43,21 +43,25 @@ static int plugin_send(struct soap *soap, const char *buf, size_t len);
 static size_t plugin_recv(struct soap *soap, char *buf, size_t len);
 
 int plugin(struct soap *soap, struct soap_plugin *p, void *arg)
-{ p->id = plugin_id;
+{
+  p->id = plugin_id;
   p->data = (void*)malloc(sizeof(struct plugin_data));
   /* optional: define fcopy() operation. When defined, fdelete() will be called for every copy of the plugin created with fcopy(), when NOT defined, fdelete() will only be called on the original non-copied plugin */
   p->fcopy = plugin_copy;
   p->fdelete = plugin_delete;
-  if (p->data)
-    if (plugin_init(soap, (struct plugin_data*)p->data))
-    { free(p->data); /* error: could not init */
-      return SOAP_EOM; /* return error */
-    }
+  if (!p->data)
+    return SOAP_EOM;
+  if (plugin_init(soap, (struct plugin_data*)p->data))
+  {
+    free(p->data); /* error: could not init */
+    return SOAP_EOM; /* return error */
+  }
   return SOAP_OK;
 }
 
 static int plugin_init(struct soap *soap, struct plugin_data *data)
-{ data->fsend = soap->fsend; /* save old recv callback */
+{
+  data->fsend = soap->fsend; /* save old recv callback */
   data->frecv = soap->frecv; /* save old send callback */
   soap->fsend = plugin_send; /* replace send callback with ours */
   soap->frecv = plugin_recv; /* replace recv callback with ours */
@@ -65,24 +69,28 @@ static int plugin_init(struct soap *soap, struct plugin_data *data)
 }
 
 static int plugin_copy(struct soap *soap, struct soap_plugin *dst, struct soap_plugin *src)
-{ if (!(dst->data = (struct plugin_data*)malloc(sizeof(struct plugin_data))))
+{
+  if (!(dst->data = (struct plugin_data*)malloc(sizeof(struct plugin_data))))
     return SOAP_EOM;
   *dst->data = *src->data;
   return SOAP_OK;
 }
 
 static void plugin_delete(struct soap *soap, struct soap_plugin *p)
-{ free(p->data); /* free allocated plugin data. If fcopy() is not set, then this function is not called for all copies of the plugin created with soap_copy(). In this example, the fcopy() callback can be safely omitted. When omitted, the plugin data is shared by the soap copies created with soap_copy() */
+{
+  free(p->data); /* free allocated plugin data. If fcopy() is not set, then this function is not called for all copies of the plugin created with soap_copy(). In this example, the fcopy() callback can be safely omitted. When omitted, the plugin data is shared by the soap copies created with soap_copy() */
 }
 
 static int plugin_send(struct soap *soap, const char *buf, size_t len)
-{ struct plugin_data *data = (struct plugin_data*)soap_lookup_plugin(soap, plugin_id);
+{
+  struct plugin_data *data = (struct plugin_data*)soap_lookup_plugin(soap, plugin_id);
   fwrite(buf, len, 1, stderr);
   return data->fsend(soap, buf, len); /* pass data on to old send callback */
 }
 
 static size_t plugin_recv(struct soap *soap, char *buf, size_t len)
-{ struct plugin_data *data = (struct plugin_data*)soap_lookup_plugin(soap, plugin_id);
+{
+  struct plugin_data *data = (struct plugin_data*)soap_lookup_plugin(soap, plugin_id);
   size_t res = data->frecv(soap, buf, len); /* get data from old recv callback */
   fwrite(buf, res, 1, stderr);
   return res;

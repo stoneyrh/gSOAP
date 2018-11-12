@@ -4,10 +4,10 @@ DISTRIBUTION NOTES
 To install gSOAP, unpack the archive. You will get the following files:
 
 README.txt	read this first
-LICENSE.txt	licensing information, please read
+LICENSE.txt	licensing information for users of the GPLv2 open source version
 INSTALL.txt	installation instructions
 NOTES.txt	this file
-license.pdf	gSOAP public license APPLICABLE TO SOME PARTS, see LICENSE.txt
+license.pdf	gSOAP public license applicable to some parts of the software
 factsheet.pdf	Quick overview of facts and features
 
 The 'gsoap' folder contains essential source code for the run-time libraries:

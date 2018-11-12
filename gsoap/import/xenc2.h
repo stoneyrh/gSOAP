@@ -158,7 +158,6 @@ struct xenc__CipherDataType
     char*                                CipherValue                   ;
 /// Element reference "http://www.w3.org/2001/04/xmlenc#":CipherReference.
     struct xenc__CipherReferenceType*    CipherReference               ;
-;
 //  END OF CHOICE
 };
 
@@ -168,7 +167,6 @@ struct xenc__CipherReferenceType
 /// CHOICE OF ELEMENTS <xs:choice>
 /// Element Transforms of type "http://www.w3.org/2001/04/xmlenc#":TransformsType.
     struct xenc__TransformsType*         Transforms                    ;
-;
 //  END OF CHOICE
 /// Attribute URI of type xs:anyURI.
    @char*                                URI                            1;	///< Required attribute.

@@ -44,8 +44,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #include "error2.h"
 
 #ifndef VERSION
-# define VERSION "2.8.70" /* Current version */
-# define GSOAP_VERSION 20870
+# define VERSION "2.8.71" /* Current version */
+# define GSOAP_VERSION 20871
 #endif
 
 #ifdef WIN32
@@ -435,7 +435,6 @@ extern int gflag;
 extern int iflag;
 extern int jflag;
 extern int mflag;
-extern int nflag;
 extern int nflag;
 extern int lflag;
 extern int Lflag;

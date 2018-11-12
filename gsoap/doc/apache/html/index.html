@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The Apache module for gSOAP</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Thu Sep 21 2017 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue Oct 2 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -68,15 +68,15 @@ Overview                                                             </h1>
 Installation                                                          </h1>
 <p>First download the <a href="https://httpd.apache.org">Apache httpd</a> source code and install the httpd server in a new directory, say <code>apachegsoap</code>: </p><pre class="fragment">mkdir apachegsoap
 cd apachegsoap
-tar -xjf httpd-2.4.27.tar.bz2
-cd httpd-2.4.27
+tar -xjf httpd-2.4.35.tar.bz2
+cd httpd-2.4.35
 ./configure --prefix=`pwd`/.. --with-mpm=worker --enable-mods-shared=most
 make -j4
 make install
 </pre><p>If configure fails with "error: APR not found" or "error: APR-util not found", download and install the <a href="http://apr.apache.org">Apache Portable Runtime</a> (APR).</p>
 <p>To use the Apache extension mechanism, your platform has to support the DSO feature and your Apache <code>httpd</code> binary has to be built with the <code>mod_so</code> module. The <code>apxs</code> tool automatically complains if this is not the case. You can check this yourself by manually running the <code>httpd -l</code> command (installed locally in <code>apachegsoap/bin</code> with the instructions above): </p><pre class="fragment">cd apachegsoap
 bin/httpd -l
-</pre><p>The module <code>mod_so</code> should be on the displayed list of modules.</p>
+</pre><p>The module <code>mod_so.c</code> should be on the displayed list of modules.</p>
 <p>Next, we will build and install <code>mod_gsoap</code> for Apache 2.x and up. The source code files are located under <code>gsoap/mod_gsoap/mod_gsoap-0.9/apache_20</code> and include <code><a class="el" href="apache__gsoap_8h.html">apache_gsoap.h</a></code>, <code><a class="el" href="mod__gsoap_8c.html">mod_gsoap.c</a></code>, and a Visual Studio project file <code>mod_gsoap.vcproj</code>.</p>
 <p>To compile <code>mod_gsoap</code>, execute: </p><pre class="fragment">cd /path/to/gsoap/installation/gsoap/mod_gsoap/mod_gsoap-0.9/apache_20
 ln -s ../../../stdsoap2.h .
@@ -95,9 +95,9 @@ cp /path/to/gsoap/installation/gsoap/mod_gsoap/mod_gsoap-0.9/apache_20/apache_gs
 </pre><p>Next, edit <code>calcserver.c</code> by removing <code>main()</code> and replace it with <code><a class="el" href="apache__gsoap_8h.html#a044247a029c4997b5b22bba46d3ef233">IMPLEMENT_GSOAP_SERVER()</a></code> as follows:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="apache__gsoap_8h.html">apache_gsoap.h</a>&quot;</span></div><div class="line"><a class="code" href="apache__gsoap_8h.html#a044247a029c4997b5b22bba46d3ef233">IMPLEMENT_GSOAP_SERVER</a>() <span class="comment">/* replaces main() { ... } */</span></div></div><!-- fragment --><p>To initialize the engine context with flags and/or plugins, see <a class="el" href="index.html#plugins">Initialization and plugins </a>.</p>
 <p>Then compile and build the service: </p><pre class="fragment">soapcpp2 -c -SL -wx calc.h
-bin/apxs -a -c calcserver.c soapC.c soapServer.c stdsoap2.c
+sudo $HOME/apachegsoap/bin/apxs -a -c calcserver.c soapC.c soapServer.c stdsoap2.c
 chmod 755 .libs/calcserver.so
-</pre><p>Again, the <code>apxs</code> command should be on your path or located in <code>apachegsoap/bin</code> where we installed httpd. Make sure to use <code>$HOME/apachegsoap/bin/apxs</code> if multiple httpd versions are installed.</p>
+</pre><p>Again, the <code>apxs</code> command should be on your path or located in <code>apachegsoap/bin</code> where we installed httpd. Make sure to use <code>$HOME/apachegsoap/bin/apxs</code> as shown above if multiple httpd versions are installed.</p>
 <p>This creates <code>.libs/calcserver.so</code> service module that is universally readable. Also make sure that <code>.libs/calcserver.so</code> is readable through the entire path, that is through <code>/home/username/apachegsoap/.libs</code> where <code>username</code> is your user account name.</p>
 <p>If you have installed source files in other directories, then you will need to add appropriate <code>-I</code> and <code>-L</code> options with the <code>apxs</code> command shown above.</p>
 <p>To deploy the service, we will need to add our module with its properties to <code>httpd.conf</code> (for example we can add it at the end): </p><pre class="fragment">&lt;IfModule mod_gsoap.c&gt;
@@ -120,6 +120,14 @@ cc -o calcclient calcclient.c soapC.c soapClient.c stdsoap2.c
 </pre><p>and run it: </p><pre class="fragment">./calcclient add 2 3
 result = 5
 </pre><p>To let clients access the WSDL of a service, you can use the query <code>?wsdl</code> as part of the URL such as <code><a href="http://localhost:9080/soap?wsdl">http://localhost:9080/soap?wsdl</a></code> to pull the file <code>calc.wsdl</code> from the current location of the service. To do so, copy the <code>calc.wsdl</code> file there to make it available to the Apache server.</p>
+<p>Deployment of multiple modules is possible since gSOAP 2.8.71, by specifying multiple <code>&lt;Location&gt;</code> entries in <code>&lt;IfModule <a class="el" href="mod__gsoap_8c.html">mod_gsoap.c</a>&gt;</code> in <code>httpd.conf</code>, one for each service. The change in gSOAP 2.8.71 modified function <code><a class="el" href="mod__gsoap_8c.html#a92fdc1d0e66a6382210db6e843e69f73">SoapSharedLibrary_load</a></code> in <code><a class="el" href="mod__gsoap_8c.html">mod_gsoap.c</a></code> as follows to resolve linking symbols locally:</p>
+<div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">int</span> nFlags = RTLD_LAZY | RTLD_LOCAL; <span class="comment">// was RTLD_LAZY | RTLD_GLOBAL</span></div></div><!-- fragment --><p>Alternatively, if one module links against equally-named symbols coming from another module, then it is recommended to pass a version info file to the linker, instructing it to make all symbols local, except for the Apache module table instance. The version file (e.g. <code>myapachegsoap.ver</code>) looks something like this: </p><pre class="fragment">VERS_1.0 {
+  global:
+    myapachegsoap_module;
+  local:
+    *;
+};
+</pre><p>This file is then passed to the linker with option <code>-Wl,myapachegsoapv.ver</code>.</p>
 <h1><a class="anchor" id="plugins"></a>
 Initialization and plugins                                            </h1>
 <p>By replacing <code>main()</code> with <code><a class="el" href="apache__gsoap_8h.html#a044247a029c4997b5b22bba46d3ef233">IMPLEMENT_GSOAP_SERVER()</a></code>, several functions are implemented that are used by the Apache module for gSOAP. These functions include <code><a class="el" href="apache__gsoap_8h.html#a09db8c18a5744c942c93ac87876cbff1">apache_default_soap_init()</a></code> to initialize a newly constructed context.</p>
@@ -128,7 +136,7 @@ Initialization and plugins                                            </h1>
 <p>Your can include multiple registrations of plugins as needed.</p>
 <h1><a class="anchor" id="libraries"></a>
 Dynamic libraries                                                   </h1>
-<p>If you are using dynamic libraries to deploy services with <code>mod_gsoap</code>, then those should be closed propertly to avoid memory leaks. To do so add:</p>
+<p>If you are using dynamic libraries to deploy services with <code>mod_gsoap</code>, then those should be closed properly to avoid memory leaks. To do so add the following line:</p>
 <div class="fragment"><div class="line">dlclose(pConfig-&gt;m_pLibraries-&gt;m_pSOAPLibrary-&gt;m_hLibrary);</div></div><!-- fragment --><p>at the end of the <code><a class="el" href="mod__gsoap_8c.html#a169e2de583e9017593f873dcf1f2173b">gsoap_handler()</a></code> function in <code><a class="el" href="mod__gsoap_8c.html">mod_gsoap.c</a></code>.</p>
 <h1><a class="anchor" id="classes"></a>
 Building C++ services from service classes                            </h1>
@@ -189,10 +197,10 @@ Further reading                                                    </h1>
 </div></div><!-- contents -->
 <hr class="footer">
 <address class="footer">
-Copyright (C) 2017, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Thu Sep 21 2017 10:42:14 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue Oct 2 2018 16:16:40 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

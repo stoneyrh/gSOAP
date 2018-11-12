@@ -59,7 +59,7 @@ class Message
     const char *documentation;
     const char *ext_documentation;
     vector<const wsp__Policy*> policy;
-    void generate(Types&, const char *sep, bool anonymous, bool remark, bool response, bool optional);
+    void generate(Types&, const char *sep, bool anonymous, bool remark, bool response, bool optional, bool rest);
 };
 
 typedef map<const char*, Message*, ltstr> MapOfStringToMessage;
@@ -71,6 +71,7 @@ class Operation
     const char *URI;
     const char *name;
     const char *mep;			// WSDL 2.0
+    bool is_rest;
     const char *protocol;
     soap__styleChoice style;
     const char *parameterOrder;

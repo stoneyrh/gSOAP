@@ -147,7 +147,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 154 "soapcpp2_yacc.y" /* yacc.c:1916  */
+#line 145 "soapcpp2_yacc.y" /* yacc.c:1916  */
 
   Symbol  *sym;
   LONG64  i;

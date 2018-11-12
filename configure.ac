@@ -179,7 +179,7 @@ AC_SUBST(WSDL2H_IMPORTPATH)
 AC_ARG_ENABLE(namespaces,
               [AC_HELP_STRING([--disable-namespaces],
                               [compile library without namespaces])],
-              [with_namespaces="$enable_ns"],
+              [with_namespaces="$enable_namespaces"],
               [with_namespaces="yes"])
 
 AC_MSG_CHECKING(for disable namespaces in library)
@@ -196,15 +196,15 @@ AC_SUBST(SOAPCPP2_NONAMESPACES)
 AC_ARG_ENABLE(xlocale,
               [AC_HELP_STRING([--enable-xlocale],
                               [compile library with forced inclusion of xlocale.h])],
-              [with_xlocale="$enable_xl"],
+              [with_xlocale="$enable_xlocale"],
               [with_xlocale="no"])
 
 AC_MSG_CHECKING(for enable xlocale usage in library)
 if test "x$with_xlocale" = "xyes"; then
   AC_MSG_RESULT(yes)
+  SOAPCPP2_INCLUDE_XLOCALE="-DWITH_INCLUDE_XLOCALE_H"
 else
   AC_MSG_RESULT(no)
-  SOAPCPP2_INCLUDE_XLOCALE="-DWITH_INCLUDE_XLOCALE_H"
 fi
 AC_SUBST(SOAPCPP2_INCLUDE_XLOCALE)
 
@@ -213,7 +213,7 @@ AC_SUBST(SOAPCPP2_INCLUDE_XLOCALE)
 AC_ARG_ENABLE(c-locale,
               [AC_HELP_STRING([--disable-c-locale],
                               [compile library without c locale usage])],
-              [with_no_c_locale="$enable_cl"],
+              [with_no_c_locale="$enable_c_locale"],
               [with_no_c_locale="yes"])
 
 AC_MSG_CHECKING(for disable c locale usage in library)
@@ -236,11 +236,28 @@ AC_ARG_ENABLE(ipv6,
 AC_MSG_CHECKING(for enable ipv6 in library)
 if test "x$with_ipv6" = "xyes"; then
   AC_MSG_RESULT(yes)
-  SOAPCPP2_IPV6="-DWITH_IPV6 -DWITH_NO_IPV6_V6ONLY" ##define to add IPv6 support
+  SOAPCPP2_IPV6="-DWITH_IPV6" ##define to add IPv6 support
 else
   AC_MSG_RESULT(no)
 fi
 AC_SUBST(SOAPCPP2_IPV6)
+
+# the enable-ipv6-v6only option adds the -DWITH_IPV6_V6ONLY to the
+# library compilation thus enabling IPv6 without remapping IPv4 to IPv6
+AC_ARG_ENABLE(ipv6-v6only,
+              [AC_HELP_STRING([--enable-ipv6-v6only],
+                              [compile library with IPv6-v6only support])],
+              [with_ipv6_v6only="$enable_ipv6_v6only"],
+              [with_ipv6_v6only="no"])
+
+AC_MSG_CHECKING(for enable ipv6-v6only in library)
+if test "x$with_ipv6_v6only" = "xyes"; then
+  AC_MSG_RESULT(yes)
+  SOAPCPP2_IPV6_V6ONLY="-DWITH_IPV6_V6ONLY"
+else
+  AC_MSG_RESULT(no)
+fi
+AC_SUBST(SOAPCPP2_IPV6_V6ONLY)
 
 # the zlib installation prefix path
 AC_ARG_WITH([zlib],
@@ -258,7 +275,7 @@ AC_ARG_WITH([openssl],
 AC_ARG_ENABLE(ssl,
               [AC_HELP_STRING([--disable-ssl],
                               [build without SSL/TLS])],
-              [with_openssl="$enable_openssl"],
+              [with_openssl="$enable_ssl"],
               [with_openssl="yes"])
 
 # the enable-gnutls option enables GNUTLS in favor of OpenSSL

@@ -66,17 +66,19 @@ struct http_get_data
   size_t stat_get;  /* HTTP GET usage statistics */
   size_t stat_post; /* HTTP POST usage statistics */
   size_t stat_fail; /* HTTP failure statistics */
-  size_t min[60]; /* Hits by the minute */
-  size_t hour[24]; /* Hits by the hour */
-  size_t day[366]; /* Hits by day */
+  size_t hist_min[60]; /* Hits by the minute */
+  size_t hist_hour[24]; /* Hits by the hour */
+  size_t hist_day[366]; /* Hits by day */
 };
 
 int http_get(struct soap*, struct soap_plugin*, void*);
 int soap_get_connect(struct soap*, const char*, const char*);
 
-char *query(struct soap*);
-char *query_key(struct soap*, char**);
-char *query_val(struct soap*, char**);
+void soap_get_stats(struct soap *soap, size_t *stat_get, size_t *stat_post, size_t *stat_fail, size_t **hist_min, size_t **hist_hour, size_t **hist_day);
+
+char *soap_query(struct soap*);
+char *soap_query_key(struct soap*, char**);
+char *soap_query_val(struct soap*, char**);
 
 int soap_encode_string(const char*, char*, size_t);
 const char* soap_decode_string(char*, size_t, const char*);

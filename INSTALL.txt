@@ -206,6 +206,7 @@ The ./configure command takes the following configuration options:
 
 --enable-samples also builds the examples
 --enable-ipv6 builds the library with IPv6 support (-DWITH_IPV6)
+--enable-ipv6-v6only builds the library with IPv6 support (-DWITH_IPV6_V6ONLY)
 --disable-ssl removes all dependences on OpenSSL from the tools and libraries
 --enable-gnutls replaces the dependence on OpenSSL by GNU TLS (-DWITH_GNUTLS)
 --enable-debug builds the software (-DDEBUG) to produce audit logs (slow!)

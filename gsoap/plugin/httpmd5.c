@@ -102,11 +102,12 @@ int http_md5(struct soap *soap, struct soap_plugin *p, void *arg)
   p->data = (void*)SOAP_MALLOC(soap, sizeof(struct http_md5_data));
   p->fcopy = http_md5_copy;
   p->fdelete = http_md5_delete;
-  if (p->data)
-    if (http_md5_init(soap, (struct http_md5_data*)p->data))
-    { SOAP_FREE(soap, p->data); /* error: could not init */
-      return SOAP_EOM; /* return error */
-    }
+  if (!p->data)
+    return SOAP_EOM;
+  if (http_md5_init(soap, (struct http_md5_data*)p->data))
+  { SOAP_FREE(soap, p->data); /* error: could not init */
+    return SOAP_EOM; /* return error */
+  }
   return SOAP_OK;
 }
 

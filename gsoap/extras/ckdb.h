@@ -18,7 +18,8 @@
 
 /* struct cookie must be a mirror image of struct soap_cookie in stdsoap2.h */
 struct cookie
-{ struct cookie *next;
+{
+  struct cookie *next;
   char *name;
   char *value;
   char *domain;

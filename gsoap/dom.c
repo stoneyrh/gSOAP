@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.70
+        DOM API v5 gSOAP 2.8.71
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20870
+#define GSOAP_LIB_VERSION 20871
 
 #include "stdsoap2.h"
 
@@ -980,7 +980,8 @@ soap_push_prefix(struct soap *soap, const char *id, size_t n, const char *ns, in
         for (np = soap->nlist; np; np = np->next)
         {
           DBGLOG(TEST, SOAP_MESSAGE(fdebug, "DOM find binding %s = '%s' level = %d index = %d\n", np->id, np->ns, np->level, np->index));
-          i++;
+          if (np->level)
+            i++;
         }
         (SOAP_SNPRINTF(soap->tag, sizeof(soap->tag), sizeof(SOAP_DOMID_FORMAT) + 20), SOAP_DOMID_FORMAT, i);
         id = soap->tag;
@@ -3294,7 +3295,7 @@ soap_dom_call(struct soap *soap, const char *endpoint, const char *action, const
 #endif
       (void)soap_end_recv(soap);
     }
-    else if (soap->error == SOAP_NO_DATA || soap->error == 200 || soap->error == 202)
+    else if (soap->error == SOAP_NO_DATA || soap->error == 200 || soap->error == 201 || soap->error == 202)
       soap->error = SOAP_OK;
     return soap_closesock(soap);
   }

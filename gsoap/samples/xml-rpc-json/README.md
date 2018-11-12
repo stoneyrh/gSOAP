@@ -1,6 +1,6 @@
 
-XML-RPC & JSON/JSONPath                                              {#mainpage}
-=======================
+XML-RPC/JSON and jsoncpp                                             {#mainpage}
+========================
 
 [TOC]
 
@@ -44,8 +44,8 @@ details, please visit <http://www.json.org>.
 This document describes both the C and C++/C++11 XML-RPC and JSON library APIs,
 see table of contents.
 
-JSON/JSONPath and gSOAP                                               {#intro-1}
------------------------
+JSON and gSOAP                                                       {#intro-1}
+--------------
 
 The gSOAP JSON API is compact and lightweight.  It is straightforward to write
 JSON RPC and JSON REST code.  For example, a JSON REST call in C++:
@@ -54,23 +54,25 @@ JSON RPC and JSON REST code.  For example, a JSON REST call in C++:
     #include "json.h"
     int main()
     {
-      soap *ctx = soap_new1(SOAP_C_UTFSTRING);  // set up context to manage memory
+      soap *ctx = soap_new1(SOAP_C_UTFSTRING);    // set up context to manage memory
       const char *endpoint = "http://www.cs.fsu.edu/~engelen/currentTimeJSON.cgi";
-      value req(ctx), res(ctx);                 // new JSON values req and res
-      req = "getCurrentTime";                   // request current time
-      json_call(ctx,                            // make a call (POST)
-          endpoint,                             // the service endpoint URL
-          req,                                  // value with the request string
-          res)                                  // response, if call is OK
+      value req(ctx), res(ctx);                   // new JSON values req and res
+      req = "getCurrentTime";                     // request current time
+      json_call(ctx,                              // make a call (POST)
+          endpoint,                               // the service endpoint URL
+          req,                                    // value with the request string
+          res)                                    // response, if call is OK
       );
-      if (ctx->error) ...                       // handle IO error
-      cout << "Current time = " << res << endl; // JSON response to cout
+      if (ctx->error)
+        ...                                       // handle IO error or HTTP status code
+      else
+        cout << "Current time = " << res << endl; // JSON response to cout
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For more details on JSON-RPC and JSON REST operations, see [JSON-RPC](#cpp-rpc).
+For more details on JSON-RPC and JSON REST operations, see \ref cpp-rpc.
 
-To compile this example see the [List of C++ files](#cpp-files).
+To compile this example see the \ref cpp-files.
 
 Furthermore, to help you quickly develop C/C++ JSON code, we offer a code
 generator **jsoncpp** with the gSOAP package (version 2.8.26 and up).  You can
@@ -215,7 +217,7 @@ with jsoncpp as follows:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let's apply this query to the `store.json` file that you can find in section
-[JSONPath by example](#jsoncpp-4):
+\ref jsoncpp-4:
 
     ./query < store.json
 
@@ -1202,11 +1204,11 @@ deallocated with:
 Additional C++ examples are located in `gsoap/samples/xml-rpc-json`:
 
 - `xml-rpc-currentTime.cpp`:            XML-RPC C++ client, also uses JSON
-- `xml-rpc-currentTimeServer.cpp`:      XML-RPC C++ server
+- `xml-rpc-currentTimeServer.cpp`:      XML-RPC C++ server (CGI and multi-threaded stand-alone)
 - `xml-rpc-weblogs.cpp`:                XML-RPC C++ client
 - `xml-rpc-json.cpp`:                   XML-RPC to/from JSON example
 - `json-currentTime.cpp`:               JSON REST C++ client
-- `json-currentTimeServer.cpp`:         JSON REST C++ server
+- `json-currentTimeServer.cpp`:         JSON REST C++ server (CGI and multi-threaded stand-alone)
 - `json-GitHub.cpp`:                    JSON REST C++ client for GitHub API v3
 
 C++ XML-RPC client example                                             {#cpp-cl}
@@ -1452,7 +1454,7 @@ To display values in JSON format or to parse JSON data, use the `json.h` and
 `json.cpp` JSON serializers in combination with `xml-rpc.cpp` and the
 auto-generated `soapH.h` and `soapC.cpp`.  It is also possible to send and
 receive JSON data over HTTP as JSON REST operations, but this requires some
-more coding (see [JSON over HTTP](#cpp-jr) below).
+more coding (see \ref cpp-jr below).
 
 Because the internal data is the same for XML-RPC and JSON, You can write data
 in XML-RPC or in JSON format.  You can also parse XML-RPC data and write to JSON
@@ -1509,11 +1511,11 @@ lost when serializing to JSON:
 
 - XML-RPC uses a base64 type to exchange raw binary data.  The base64 data is
   converted to a string with base64 content by the JSON serializer.
-  See also [JSON and Base64](#base64).
+  See also \ref base64.
 
 - XML-RPC has a dateTime type, JSON does not.  The JSON serializer converts the
   dateTime type to a dateTime-formatted string.
-  See also [JSON and ISO 8601 DateTime](#dateTime).
+  See also \ref dateTime.
 
 See the section on C++ examples on how to populate and retrieve C++ data.
 
@@ -1561,7 +1563,9 @@ Besides `json_call`, there are other JSON API functions:
   POST, GET, PUT, DELETE call, returns `SOAP_OK` or error code.
   POST method: pass both `in` and `out`.  GET method: pass a NULL to `in`.  PUT
   method: pass a NULL to `out`.  DELETE method: pass both NULL to `in` and
-  `out`.
+  `out`.  `SOAP_OK` is returned for POST and GET methods upon success.  An HTTP
+  status code of 200 (OK) or 202 (Accepted) is returned for PUT and DELETE
+  methods upon success.
 
 - `int json_write(soap *ctx, const value *v)` writes JSON value to current
   file, socket, or stream.  Returns `SOAP_OK` or error.  Set file/socket file
@@ -1591,18 +1595,20 @@ To implement a JSON REST server for CGI (e.g. install in cgi-bin):
       if (soap_begin_recv(ctx)
        || json_recv(ctx, request)
        || soap_end_recv(ctx))
-        soap_send_fault(ctx);
+      {
+        json_send_fault(ctx); // return a JSON-formatted fault
+      }
       else
       {
         ... // use the 'request' value
         ... // set the 'response' value
         // set http content type
         ctx->http_content = "application/json; charset=utf-8";
-        // send http header and body
+        // send http header 200 OK and JSON response
         if (soap_response(ctx, SOAP_FILE)
          || json_send(ctx, response)
          || soap_end_send(ctx))
-          soap_print_fault(ctx, stdout);
+          soap_closesock(ctx);
       }
       // dealloc all
       soap_destroy(ctx);
@@ -1611,22 +1617,96 @@ To implement a JSON REST server for CGI (e.g. install in cgi-bin):
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that `SOAP_ENC_PLAIN` should be used with CGI, since we are reading from a
-non-HTTP source with CGI.  Do not use this flag with gSOAP stand-alone servers.
-
-Compile and link your code together with `soapC.cpp` (generated with
-`soapcpp2 -CSL xml-rpc.h`), `xml-rpc.cpp`, `json.cpp`, and `stdsoap2.cpp`.
-
 The above server works with CGI, which is rather slow and stateless.  A
 stand-alone JSON REST server is recommended.  You can also use the Apache and
 IIS plugins for gSOAP to deploy JSON REST services.  See the
 [documentation](https://www.genivia.com/docs.html).
 
+Note that we use `json_send_fault()` instead of `soap_send_fault()` when an
+internal error occurred, since we want the error to be reported in JSON format
+as per Google JSON Style Guide.  For application-specific errors, we use
+`json_send_error()` as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    if (some application error occurred)
+      json_send_error(ctx, 400, "Error message", "Error details");
+    else
+      ... // send the response
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can specify an HTTP error code such as 400 in this case, which means that a
+HTTP 400 Bad Request is returned to the client.
+
+The `json_send_error()` function is a convenient shortcut to return an error
+message with an HTTP error code.  To return a JSON response with a HTTP error
+code use the following:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    int status = 400; // HTTP 400 Bad Request
+    soap->http_content = "application/json; charset=utf-8";
+    if (soap_response(soap, SOAP_FILE + status)
+     || json_send(soap, v)
+     || soap_end_send(soap))
+      soap_closesock(soap);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The code for a stand-alone server is the same, except that we call `soap_bind()`
+and `soap_accept()` to serve requests on a port.  Here is a simple iterative
+server serving requests on port 8080:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    // create an allocation context
+    soap *ctx = soap_new1(SOAP_IO_KEEPALIVE | SOAP_C_UTFSTRING);
+    // bind to port 8080
+    if (!soap_valid_socket(soap_bind(ctx, NULL, 8080, 100)))
+      ... // error, stop
+    // accept messages in server loop
+    for (;;)
+    {
+      if (!soap_valid_socket(soap_accept(ctx)))
+        ... // error, stop
+      value request(ctx), response(ctx);
+      if (soap_begin_recv(ctx)
+       || json_recv(ctx, request)
+       || soap_end_recv(ctx))
+      {
+        json_send_fault(ctx); // return a JSON-formatted fault
+      }
+      else
+      {
+        ... // use the 'request' value
+        ... // set the 'response' value
+        // set http content type
+        ctx->http_content = "application/json; charset=utf-8";
+        // send http header 200 OK and JSON response
+        if (soap_response(ctx, SOAP_FILE)
+         || json_send(ctx, response)
+         || soap_end_send(ctx))
+          soap_closesock(ctx);
+      }
+      // dealloc all
+      soap_destroy(ctx);
+      soap_end(ctx);
+    }
+    soap_free(ctx);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that `SOAP_ENC_PLAIN` should be used with CGI, since we are reading from a
+non-HTTP source with CGI.  We do not use this flag with gSOAP stand-alone servers.
+Iterative stand-alone services are not performant and may block requests.  We
+recommend stand-alone multi-threaded services.
+
+Compile and link your code together with `soapC.cpp` (generated with
+`soapcpp2 -CSL xml-rpc.h`), `xml-rpc.cpp`, `json.cpp`, and `stdsoap2.cpp`.
+
 For C++ client and server examples, please see the gSOAP package content
 `gsoap/samples/xml-rpc-json`:
 
 - `json-currentTime.cpp`:               JSON REST C++ client
-- `json-currentTimeServer.cpp`:         JSON REST C++ server (CGI and stand-alone)
+- `json-currentTimeServer.cpp`:         JSON REST C++ server (CGI and multi-threaded stand-alone)
+
+The presentation in this section concerned stand-alone JSON REST services.  To
+combine SOAP/XML with JSON REST services, see \ref soap for details.
 
 C++ JSON-RPC clients and servers                                      {#cpp-rpc}
 --------------------------------
@@ -2148,7 +2228,7 @@ deallocated with:
 Additional examples are located in `gsoap/samples/xml-rpc-json`:
 
 - `json-currentTime.c`                  JSON REST C client
-- `json-currentTimeServer.c`            JSON REST C server
+- `json-currentTimeServer.c`            JSON REST C server (CGI and multi-threaded stand-alone)
 - `json-GitHub.c`:                      JSON C client for GitHub API v3
 - `xml-rpc-currentTime.c`               XML-RPC C client
 - `xml-rpc-weblogs.c`                   XML-RPC C client
@@ -2283,7 +2363,7 @@ For example, to read and write JSON data from/to a file descriptor:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To force reading and writing JSON in ISO 8859-1 format, use the
-`SOAP_ENC_LATIN` flag to set the context (not recommended).
+`SOAP_ENC_LATIN` flag to initialize the context (not recommended).
 
 Optionally use `SOAP_XML_INDENT` to indent XML and JSON output.
 
@@ -2332,11 +2412,11 @@ lost when serializing to JSON:
 
 - XML-RPC uses a base64 type to exchange raw binary data.  The base64 data is
   converted to a string with base64 content by the JSON serializer.
-  See also [JSON and Base64](#base64).
+  See also \ref base64.
 
 - XML-RPC has a dateTime type, JSON does not.  The JSON serializer converts the
   dateTime type to a dateTime-formatted string.
-  See also [JSON and ISO 8601 DateTime](#dateTime).
+  See also \ref dateTime.
 
 Strings are stored and exchanged in UTF-8 format in 8-bit strings (i.e. `char*`
 strings) with the `SOAP_C_UTFSTRING` flag.  Wide strings (i.e. `wchar_t*`
@@ -2354,7 +2434,7 @@ To read JSON from a string and write JSON to a string, we suggest to use gSOAP
     ctx->is = NULL;     /* stop reading from string */
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can set the contex output string pointer `ctx->os` to point to the `const
+You can set the context output string pointer `ctx->os` to point to the `const
 char*` string that you want to be set.  This string will point to the JSON data
 created by the engine and managed by the context as follows:
 
@@ -2478,7 +2558,9 @@ Besides `json_call`, there are other JSON API functions:
   value *out)` makes a POST, GET, PUT, DELETE call, returns `SOAP_OK` or error
   code.  POST method: pass both `in` and `out`.  GET method: pass a NULL to
   `in`.  PUT method: pass a NULL to `out`.  DELETE method: pass both NULL to `in`
-  and `out`.
+  and `out`.  `SOAP_OK` is returned for POST and GET methods upon success.  An
+  HTTP status code of 200 (OK) or 202 (Accepted) is returned for PUT and DELETE
+  methods upon success.
 
 - `int json_write(struct soap *ctx, const struct value *v)` Writes JSON value
   to current file or socket.  Returns `SOAP_OK` or error.  Set current
@@ -2513,18 +2595,20 @@ To implement a JSON REST server for CGI (e.g. install in cgi-bin):
       if (soap_begin_recv(ctx)
        || json_recv(ctx, request)
        || soap_end_recv(ctx))
-        soap_send_fault(ctx);
+      {
+        json_send_fault(ctx); // return a JSON-formatted fault
+      }
       else
       {
         ... // use the 'request' value
         ... // set the 'response' value
         // set http content type
         ctx->http_content = "application/json; charset=utf-8";
-        // send http header and body
+        // send http header 200 OK and JSON response
         if (soap_response(ctx, SOAP_FILE)
          || json_send(ctx, response)
          || soap_end_send(ctx))
-          soap_print_fault(ctx, stdout);
+          soap_closesock(ctx);
       }
       // dealloc all
       soap_end(ctx);
@@ -2532,22 +2616,96 @@ To implement a JSON REST server for CGI (e.g. install in cgi-bin):
     }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that `SOAP_ENC_PLAIN` should be used with CGI, since we are reading from a
-non-HTTP source with CGI.  Do not use this flag with gSOAP stand-alone servers.
-
-Compile and link your code together with `soapC.c` (generated with
-`soapcpp2 -c -CSL xml-rpc.h`), `xml-rpc.c`, `json.c`, and `stdsoap2.c`.
-
 The above server works with CGI, which is rather slow and stateless.  A
 stand-alone JSON REST server is recommended.  You can also use the Apache and
 IIS plugins for gSOAP to deploy JSON REST services.  See the
 [documentation](https://www.genivia.com/docs.html).
 
+Note that we use `json_send_fault()` instead of `soap_send_fault()` when an
+internal error occurred, since we want the error to be reported in JSON format
+as per Google JSON Style Guide.  For application-specific errors, we use
+`json_send_error()` as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    if (some application error occurred)
+      json_send_error(ctx, 400, "Error message", "Error details");
+    else
+      ... // send the response
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can specify an HTTP error code such as 400 in this case, which means that a
+HTTP 400 Bad Request is returned to the client.
+
+The `json_send_error()` function is a convenient shortcut to return an error
+message with an HTTP error code.  To return a JSON response with a HTTP error
+code use the following:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    int status = 400; // HTTP 400 Bad Request
+    soap->http_content = "application/json; charset=utf-8";
+    if (soap_response(soap, SOAP_FILE + status)
+     || json_send(soap, v)
+     || soap_end_send(soap))
+      soap_closesock(soap);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The code for a stand-alone server is the same, except that we call `soap_bind()`
+and `soap_accept()` to serve requests on a port.  Here is a simple iterative
+server serving requests on port 8080:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    // create an allocation context
+    struct soap *ctx = soap_new1(SOAP_IO_KEEPALIVE | SOAP_C_UTFSTRING);
+    // bind to port 8080
+    if (!soap_valid_socket(soap_bind(ctx, NULL, 8080, 100)))
+      ... // error, stop
+    // accept messages in server loop
+    for (;;)
+    {
+      struct value *request = new_value(ctx);
+      struct value *response = new_value(ctx);
+      if (!soap_valid_socket(soap_accept(ctx)))
+        ... // error, stop
+      if (soap_begin_recv(ctx)
+       || json_recv(ctx, request)
+       || soap_end_recv(ctx))
+      {
+        json_send_fault(ctx); // return a JSON-formatted fault
+      }
+      else
+      {
+        ... // use the 'request' value
+        ... // set the 'response' value
+        // set http content type
+        ctx->http_content = "application/json; charset=utf-8";
+        // send http header 200 OK and JSON response
+        if (soap_response(ctx, SOAP_FILE)
+         || json_send(ctx, response)
+         || soap_end_send(ctx))
+          soap_closesock(ctx);
+      }
+      // dealloc all
+      soap_end(ctx);
+    }
+    soap_free(ctx);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that `SOAP_ENC_PLAIN` should be used with CGI, since we are reading from a
+non-HTTP source with CGI.  Do not use this flag with gSOAP stand-alone servers.
+Iterative stand-alone services are not performant and may block requests.  We
+recommend stand-alone multi-threaded services.
+
+Compile and link your code together with `soapC.c` (generated with
+`soapcpp2 -c -CSL xml-rpc.h`), `xml-rpc.c`, `json.c`, and `stdsoap2.c`.
+
 For client and server examples, please see the gSOAP package content in
 `gsoap/samples/xml-rpc-json`:
 
 - `json-currentTime.c`                  JSON REST C client
-- `json-currentTimeServer.c`            JSON REST C server (CGI and stand-alone)
+- `json-currentTimeServer.c`            JSON REST C server (CGI and multi-threaded stand-alone)
+
+The presentation in this section concerned stand-alone JSON REST services.  To
+combine SOAP/XML with JSON REST services, see \ref soap for details.
 
 C JSON-RPC clients and servers                                          {#c-rpc}
 ------------------------------
@@ -2657,14 +2815,13 @@ gSOAP package.
 Miscellaneous                                                            {#misc}
 =============
 
-Compiling XML-RPC/JSON together with gSOAP XML data binding code      {#json-cc}
+Compiling XML-RPC/JSON together with gSOAP SOAP services and XML      {#json-cc}
 ----------------------------------------------------------------
 
 To use JSON (and XML-RPC) with other gSOAP XML data binding code requires a few
 simple steps to ensure that your project compiles cleanly.
 
-For C++, arguably the best option is to [move the JSON types and operations
-into a C++ namespace](#json-ns).
+For C++, arguably the best option is to \ref json-ns.
 
 We present three methods that you can follow.  These methods follow different
 strategies to compile a combined set of files with JSON (and XML-RPC) types and
@@ -2706,8 +2863,7 @@ soapcpp2 for your other .h file:
 
 Make sure to use `#include "json.h"` in your code.
 
-The JSON C++ API is in the `json` C++ namespace.  See also [move the JSON types
-and operations into a C++ namespace](#json-ns).
+The JSON C++ API is in the `json` C++ namespace.  See also \ref json-ns.
 
 ### Method 3: soapcpp2 -pjson
 
@@ -2732,6 +2888,139 @@ Make sure to use `#include "json.h"` in your code.
 
 This method also works in C++, but it is recommended to use the second method
 for C++ applications.
+
+Serving JSON and SOAP requests on the same server port                   {#soap}
+------------------------------------------------------
+
+SOAP requests are served using the usual `soap_serve()` call generated by
+soapcpp2 given an interface header file with SOAP/XML Web service definitions.
+
+We can also serve JSON requests on the same port by using the gSOAP HTTP POST
+plugin.  This plugin serves non-SOAP requests when `soap_serve()` is called by
+capturing the HTTP content type of the request and also handles PUT, PATCH and
+DELETE requests.  The httpget plugin is located in `gsoap/plugin/httppost.h`
+and `gsoap/plugin/httppost.c`.
+
+The plugin captures POST requests that have a content type matching a content
+type entry specified in a table of POST, PUT, PATCH and DELETE handlers.  Each
+entry in this table specifies a content type of a POST request with the
+function to invoke that will handle it.  We can also specify generic POST, PUT,
+PATCH and DELETE request handlers in this table:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    struct http_post_handlers my_handlers[] = {
+      { "application/json",   json_handler },
+      { "application/json;*", json_handler },
+      { "POST",               generic_POST_handler },
+      { "PUT",                generic_PUT_handler },
+      { "PATCH",              generic_PATCH_handler },
+      { "DELETE",             generic_DELETE_handler },
+      { NULL }
+    };
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that `*` can be used as a wildcard, in this case we use `*` to also capture
+`"application/json; charset=utf-8"` content type variations.
+
+To register the plugin:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    #include "plugin/httppost.h"
+
+    struct soap *ctx = soap_new();
+    soap_register_plugin_arg(ctx, http_post, my_handlers);
+    ...
+    soap_serve(ctx); // serve SOAP and other POST/PUT/PATCH/DELETE requests
+    ...
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The handlers in the example `my_handlers` table given above are used by the
+plugin to dispatch the request.  If a non-SOAP or non-POST request is made, the
+handler in the table that matches the HTTP content type of the request is
+invoked.  Also generic POST, PUT, PATCH and DELETE handlers can be optionally
+specified.
+
+A handler in the `my_handlers` table is a function that takes the context and
+returns `SOAP_OK` or an error code.  Here is an example `json_handler` in C:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    int json_handler(struct soap *ctx)
+    {
+      struct value *request = new_value(ctx);
+      struct value *response = new_value(ctx);
+      if (json_recv(ctx, request) || soap_end_recv(ctx))
+        return json_send_fault(ctx); // return a JSON-formatted fault
+      ... // use the 'request' value
+      ... // set the 'response' value
+      // set http content type
+      ctx->http_content = "application/json; charset=utf-8";
+      // send http header 200 OK and JSON response
+      if (soap_response(ctx, SOAP_FILE)
+       || json_send(ctx, response)
+       || soap_end_send(ctx))
+        soap_closesock(ctx);
+      return SOAP_OK;
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that we use `json_send_fault()` instead of `soap_send_fault()` when an
+internal error occurred, since we want the error to be reported in JSON format
+as per Google JSON Style Guide.  For application-specific errors, we use
+`json_send_error()` as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    if (some application error occurred)
+      json_send_error(ctx, 400, "Error message", "Error details");
+    else
+      ... // send the response
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can specify an HTTP error code such as 400 in this case, which means that a
+HTTP 400 Bad Request is returned to the client.
+
+The `json_send_error()` function is a convenient shortcut to return an error
+message with an HTTP error code.  To return a JSON response with a HTTP error
+code use the following:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    int status = 400; // HTTP 400 Bad Request
+    soap->http_content = "application/json; charset=utf-8";
+    if (soap_response(soap, SOAP_FILE + status)
+     || json_send(soap, v)
+     || soap_end_send(soap))
+      soap_closesock(soap);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A `generic_POST_handler` should be similar to the above.  The HTTP content type
+of the request is stored in the `http_content` string variable of the context.
+
+A `generic_PUT_handler` and `generic_PATCH_handler` should not return a
+response message but should call `soap_send_empty_response()` instead.
+Likewise, these handlers should return a HTTP status code instead of calling
+`json_send_error()` since the HTTP body should be empty:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+    int generic_PUT_handler(struct soap *ctx)
+    {
+      struct value *request = new_value(ctx);
+      if (!ctx->http_content || soap_tag_cmp(ctx->http_content, "application/json*"))
+      {
+        return 400; // HTTP Bad Request
+      }
+      if (json_recv(ctx, request) || soap_end_recv(ctx))
+        return 400; // HTTP Bad Request
+      ... // use the 'request' value
+      // send http header 200 OK and empty http body
+      return soap_send_empty_response(ctx);
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `soap_tag_cmp()` function is similar to `strcmp()` but it is case
+insensitive and supports `*` (any number of characters) and `-` (any single
+character) wildcards.
+
+To compile your server application that serves JSON and SOAP requests, see
+\ref json-cc.
 
 Floating point format                                                      {#fp}
 ---------------------
@@ -2838,8 +3127,8 @@ forgiving, meaning that it parses the following extensions:
 - Any additional trailing content after a valid JSON object or array is
   silently ignored.
 - To parse JSON data from files or from any other non-HTTP source use the
-  `SOAP_ENC_PLAIN` flag to set the context, otherwise files containing just the
-  JSON values `true`, `false`, and `null` are not parsed.
+  `SOAP_ENC_PLAIN` flag to initialize the context, otherwise files containing
+  just the JSON values `true`, `false`, and `null` are not parsed.
  
 Copyright                                                           {#copyright}
 =========

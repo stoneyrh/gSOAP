@@ -9,7 +9,7 @@ var classa____address =
     [ "soap_out", "classa____address.html#ad27b13bebc12d3567f021365f5cc334f", null ],
     [ "soap_put", "classa____address.html#a561d03863d4734307af9ec8b5f74cc0c", null ],
     [ "soap_serialize", "classa____address.html#a52a64ca5ebb8b2b39b9be96008dd871e", null ],
-    [ "soap_type", "classa____address.html#a4e37b7a15384e0eeab00e375cfd13cb2", null ],
+    [ "soap_type", "classa____address.html#a13d26d2c28f0fb2bf637d3f172009f92", null ],
     [ "address_instantiate_a__address", "classa____address.html#afa4020535d146d3faeb21bf4d92f74fd", null ],
     [ "city", "classa____address.html#ae01f2cee8f0d164badd4607712a28fdb", null ],
     [ "country", "classa____address.html#a6be04bb9578933b4ca12213416530096", null ],

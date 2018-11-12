@@ -1,6 +1,6 @@
 
-XML DOM & XPath                                                      {#mainpage}
-===============
+XML DOM API and domcpp                                               {#mainpage}
+======================
 
 [TOC]
 

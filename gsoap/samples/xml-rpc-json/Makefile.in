@@ -90,7 +90,7 @@ build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = jsoncpp$(EXEEXT) json-GitHub$(EXEEXT) \
 	json-gdm$(EXEEXT) json-currentTime$(EXEEXT) \
-	xml-rpc-currentTime$(EXEEXT)
+	json-currentTimeServer$(EXEEXT) xml-rpc-currentTime$(EXEEXT)
 subdir = gsoap/samples/xml-rpc-json
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -117,6 +117,12 @@ am_json_currentTime_OBJECTS = json-currentTime.$(OBJEXT) \
 	$(am__objects_3)
 json_currentTime_OBJECTS = $(am_json_currentTime_OBJECTS)
 json_currentTime_DEPENDENCIES = $(SOAP_CPP_LIB) $(am__DEPENDENCIES_1)
+am_json_currentTimeServer_OBJECTS = json-currentTimeServer.$(OBJEXT) \
+	xml-rpc.$(OBJEXT) json.$(OBJEXT) $(am__objects_1) \
+	$(am__objects_3)
+json_currentTimeServer_OBJECTS = $(am_json_currentTimeServer_OBJECTS)
+json_currentTimeServer_DEPENDENCIES = $(SOAP_CPP_LIB) \
+	$(am__DEPENDENCIES_1)
 am__objects_4 = json_gdm-soapC.$(OBJEXT)
 am_json_gdm_OBJECTS = json_gdm-json-GoogleDistanceMatrix.$(OBJEXT) \
 	json_gdm-xml-rpc.$(OBJEXT) json_gdm-json.$(OBJEXT) \
@@ -150,7 +156,8 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/json-currentTime.Po \
-	./$(DEPDIR)/json.Po ./$(DEPDIR)/json_GitHub-json-GitHub.Po \
+	./$(DEPDIR)/json-currentTimeServer.Po ./$(DEPDIR)/json.Po \
+	./$(DEPDIR)/json_GitHub-json-GitHub.Po \
 	./$(DEPDIR)/json_GitHub-json.Po \
 	./$(DEPDIR)/json_GitHub-soapC.Po \
 	./$(DEPDIR)/json_GitHub-xml-rpc.Po \
@@ -190,11 +197,11 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(json_GitHub_SOURCES) $(json_currentTime_SOURCES) \
-	$(json_gdm_SOURCES) $(jsoncpp_SOURCES) \
-	$(xml_rpc_currentTime_SOURCES)
+	$(json_currentTimeServer_SOURCES) $(json_gdm_SOURCES) \
+	$(jsoncpp_SOURCES) $(xml_rpc_currentTime_SOURCES)
 DIST_SOURCES = $(json_GitHub_SOURCES) $(json_currentTime_SOURCES) \
-	$(json_gdm_SOURCES) $(jsoncpp_SOURCES) \
-	$(xml_rpc_currentTime_SOURCES)
+	$(json_currentTimeServer_SOURCES) $(json_gdm_SOURCES) \
+	$(jsoncpp_SOURCES) $(xml_rpc_currentTime_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -287,6 +294,7 @@ SOAPCPP2_DEBUG = @SOAPCPP2_DEBUG@
 SOAPCPP2_IMPORTPATH = @SOAPCPP2_IMPORTPATH@
 SOAPCPP2_INCLUDE_XLOCALE = @SOAPCPP2_INCLUDE_XLOCALE@
 SOAPCPP2_IPV6 = @SOAPCPP2_IPV6@
+SOAPCPP2_IPV6_V6ONLY = @SOAPCPP2_IPV6_V6ONLY@
 SOAPCPP2_NONAMESPACES = @SOAPCPP2_NONAMESPACES@
 SOAPCPP2_NO_C_LOCALE = @SOAPCPP2_NO_C_LOCALE@
 STRIP = @STRIP@
@@ -387,6 +395,8 @@ json_gdm_SOURCES = json-GoogleDistanceMatrix.cpp xml-rpc.cpp json.cpp $(SOAPHEAD
 json_gdm_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
 json_currentTime_SOURCES = json-currentTime.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 json_currentTime_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
+json_currentTimeServer_SOURCES = json-currentTimeServer.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
+json_currentTimeServer_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 xml_rpc_currentTime_SOURCES = xml-rpc-currentTime.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 xml_rpc_currentTime_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 all: $(BUILT_SOURCES)
@@ -436,6 +446,10 @@ json-currentTime$(EXEEXT): $(json_currentTime_OBJECTS) $(json_currentTime_DEPEND
 	@rm -f json-currentTime$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(json_currentTime_OBJECTS) $(json_currentTime_LDADD) $(LIBS)
 
+json-currentTimeServer$(EXEEXT): $(json_currentTimeServer_OBJECTS) $(json_currentTimeServer_DEPENDENCIES) $(EXTRA_json_currentTimeServer_DEPENDENCIES) 
+	@rm -f json-currentTimeServer$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(json_currentTimeServer_OBJECTS) $(json_currentTimeServer_LDADD) $(LIBS)
+
 json-gdm$(EXEEXT): $(json_gdm_OBJECTS) $(json_gdm_DEPENDENCIES) $(EXTRA_json_gdm_DEPENDENCIES) 
 	@rm -f json-gdm$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(json_gdm_OBJECTS) $(json_gdm_LDADD) $(LIBS)
@@ -455,6 +469,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json-currentTime.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json-currentTimeServer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json_GitHub-json-GitHub.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json_GitHub-json.Po@am__quote@ # am--include-marker
@@ -732,6 +747,7 @@ clean-am: clean-generic clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/json-currentTime.Po
+	-rm -f ./$(DEPDIR)/json-currentTimeServer.Po
 	-rm -f ./$(DEPDIR)/json.Po
 	-rm -f ./$(DEPDIR)/json_GitHub-json-GitHub.Po
 	-rm -f ./$(DEPDIR)/json_GitHub-json.Po
@@ -791,6 +807,7 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/json-currentTime.Po
+	-rm -f ./$(DEPDIR)/json-currentTimeServer.Po
 	-rm -f ./$(DEPDIR)/json.Po
 	-rm -f ./$(DEPDIR)/json_GitHub-json-GitHub.Po
 	-rm -f ./$(DEPDIR)/json_GitHub-json.Po

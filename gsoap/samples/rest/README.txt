@@ -6,12 +6,13 @@ Every type Type with data binding name Name has the following REST operations:
 
   int soap_GET_Name(struct soap *soap, const char *URL, Type *p)
   int soap_PUT_Name(struct soap *soap, const char *URL, const Type *p)
+  int soap_PATCH_Name(struct soap *soap, const char *URL, const Type *p)
   int soap_POST_send_Name(struct soap *soap, const char *URL, const Type *p)
   int soap_POST_recv_Name(struct soap *soap, Type *p)
 
-These are GET and PUT methods to read/write a value Type in XML.  The POST
-method has a send phase and a receive phase.  After a POST send, a POST receive
-MUST be executed (may be with a different type).
+These are GET and PUT/PATCH methods to read/write a value Type in XML.  The
+POST method has a send phase and a receive phase.  After a POST send, a POST
+receive MUST be executed (may be with a different type).
 
 There is also a DELETE:
 
@@ -32,7 +33,7 @@ Additional REST Examples based on WSDL
   calcrest.c		REST-based calculator client and CGI server in C
   httpgettest.h		demonstrates HTTP GET hook
   httpgettest.c
-  httpposttest.h	demonstrates HTTP POST/PUT/DELETE hooks
+  httpposttest.h	demonstrates HTTP POST/PUT/PATCH/DELETE hooks
   httpposttest.c
 
 REST-Based Calculator
@@ -55,6 +56,7 @@ HTTP REST Hooks
 
   soap::fget(struct soap*)	HTTP GET
   soap::fput(struct soap*)	HTTP PUT
+  soap::fpatch(struct soap*)	HTTP PATCH
   soap::fdel(struct soap*)	HTTP DELETE
   soap::fopt(struct soap*)	HTTP OPTIONS
   soap::fhead(struct soap*)	HTTP HEAD
@@ -63,7 +65,7 @@ HTTP REST Hooks
   The hook should return SOAP_OK or HTTP error code.
 
 2. HTTP REST via plugins: plugins are available for enhanced support for HTTP
-   REST GET and POST/PUT/DELETE. See below.
+   REST GET and POST/PUT/PATCH/DELETE. See below.
 
 3. In addition, XML can be serialized and deserialized over sockets, file FD,
    and C++ streams. See also the wsdl2h tool output .h file section "XML Data
@@ -74,7 +76,7 @@ REST support is provided by the following plugins (plugin directory):
 
   httpget.h	HTTP GET
   httpget.c
-  httppost.h	HTTP POST/PUT/DELETE
+  httppost.h	HTTP POST/PUT/PATCH/DELETE
   httppost.c
   httpform.h	HTTP POST application/x-www-form-urlencoded
   httpform.c

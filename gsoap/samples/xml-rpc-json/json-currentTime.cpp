@@ -44,8 +44,9 @@ using namespace std;
 int main()
 {
   soap *ctx = soap_new1(SOAP_C_UTFSTRING | SOAP_XML_INDENT);
-  ctx->send_timeout = 10; // 10 sec, stop if server is not accepting msg
-  ctx->recv_timeout = 10; // 10 sec, stop if server does not respond in time
+  ctx->send_timeout = 5; // 5 sec max socket send idle time
+  ctx->recv_timeout = 5; // 5 sec max socket recv idle time
+  ctx->transfer_timeout = 30; // 30 sec message transfer timeout
 
   value request(ctx), response(ctx);
 

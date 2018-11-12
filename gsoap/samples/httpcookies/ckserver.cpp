@@ -122,8 +122,9 @@ int main(int argc, char **argv)
 
 int ck__demo(struct soap *soap, char **r)
 { int n;
-  char *s, buf[16];
-  // The host and path are set by soap_cookie_domain and soap_cookie_path
+  const char *s;
+  char buf[16];
+  // The host and path are set by soap.cookie_domain and soap.cookie_path
   // which MUST be the current domain and path of the CGI app or stand-alone
   // server in order to accept cookies intended for this service
   s = soap_cookie_value(soap, "demo", NULL, NULL);

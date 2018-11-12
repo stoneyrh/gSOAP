@@ -52,6 +52,23 @@ namespace json {
 extern int json_error(struct soap *soap, struct value *v);
 
 /**
+@brief Respond with a JSON error when an internal fault occurred (i.e. soap->error is nonzero), as per Google JSON Style Guide
+@param soap context with soap->error set
+@return error code
+*/
+extern int json_send_fault(struct soap *soap);
+
+/**
+@brief Send JSON error back to the client using the specified HTTP status code and a message and details, as per Google JSON Style Guide
+@param soap context with soap->error set
+@param status HTTP error status code or SOAP_OK (0)
+@param message error message
+@param details error detail or NULL
+@return error code
+*/
+extern int json_send_error(struct soap *soap, int status, const char *message, const char *details);
+
+/**
 @brief Write JSON value to the context's output (socket, stream, FILE, or string)
 @param soap context that manages IO
 @param v value to write
@@ -95,12 +112,12 @@ extern int json_recv(struct soap *soap, value& v);
 extern std::istream& operator>>(std::istream&, value&);
 #endif
 
-/** Client-side JSON REST call to endpoint URL with optional in and out values (POST with in/out, GET with out, PUT with in, DELETE without in/out), returns SOAP_OK or HTTP code
+/** Client-side JSON REST call to endpoint URL with optional in and out values (POST with in/out, GET with out, PUT with in, DELETE without in/out), returns SOAP_OK or HTTP status code
 @param soap context that manages IO
 @param endpoint URL of the JSON REST/RPC service
 @param in value to send, or NULL (when non-NULL: PUT or POST, when NULL: GET or DELETE)
 @param out value to receive, or NULL (when non-NULL: GET or POST, when NULL: PUT or DELETE)
-@return SOAP_OK or error code with out set to the JSON error property
+@return SOAP_OK or HTTP status code or an error code with out set to the JSON error property when the error was returned by the server
 */
 extern int json_call(struct soap *soap, const char *endpoint, const struct value *in, struct value *out);
 

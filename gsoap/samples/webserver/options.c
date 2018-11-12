@@ -137,10 +137,10 @@ int parse_options(int argc, char **argv, struct option *options)
 }
 
 void query_options(struct soap *soap, struct option *options)
-{ char *s = query(soap); /* get arguments from query string */
+{ char *s = soap_query(soap); /* get arguments from query string */
   while (s)
-  { char *key = query_key(soap, &s); /* decode next query string key */
-    char *val = query_val(soap, &s); /* decode next query string value */
+  { char *key = soap_query_key(soap, &s); /* decode next query string key */
+    char *val = soap_query_val(soap, &s); /* decode next query string value */
     if (key)
       set_option(key, val, options);
   }

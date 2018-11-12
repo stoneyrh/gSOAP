@@ -41,8 +41,8 @@ install the httpd server in a new directory, say `apachegsoap`:
 
     mkdir apachegsoap
     cd apachegsoap
-    tar -xjf httpd-2.4.27.tar.bz2
-    cd httpd-2.4.27
+    tar -xjf httpd-2.4.35.tar.bz2
+    cd httpd-2.4.35
     ./configure --prefix=`pwd`/.. --with-mpm=worker --enable-mods-shared=most
     make -j4
     make install
@@ -60,7 +60,7 @@ locally in `apachegsoap/bin` with the instructions above):
     cd apachegsoap
     bin/httpd -l
 
-The module `mod_so` should be on the displayed list of modules.
+The module `mod_so.c` should be on the displayed list of modules.
 
 Next, we will build and install `mod_gsoap` for Apache 2.x and up. The source
 code files are located under `gsoap/mod_gsoap/mod_gsoap-0.9/apache_20` and
@@ -111,12 +111,13 @@ To initialize the engine context with flags and/or plugins, see \ref plugins.
 Then compile and build the service:
 
     soapcpp2 -c -SL -wx calc.h
-    bin/apxs -a -c calcserver.c soapC.c soapServer.c stdsoap2.c
+    sudo $HOME/apachegsoap/bin/apxs -a -c calcserver.c soapC.c soapServer.c stdsoap2.c
     chmod 755 .libs/calcserver.so
 
 Again, the `apxs` command should be on your path or located in
 `apachegsoap/bin` where we installed httpd.  Make sure to use
-`$HOME/apachegsoap/bin/apxs` if multiple httpd versions are installed.
+`$HOME/apachegsoap/bin/apxs` as shown above if multiple httpd versions are
+installed.
 
 This creates `.libs/calcserver.so` service module that is universally readable.
 Also make sure that `.libs/calcserver.so` is readable through the entire path,
@@ -185,6 +186,31 @@ part of the URL such as `http://localhost:9080/soap?wsdl` to pull the file
 `calc.wsdl` from the current location of the service. To do so, copy the
 `calc.wsdl` file there to make it available to the Apache server.
 
+Deployment of multiple modules is possible since gSOAP 2.8.71, by specifying
+multiple `<Location>` entries in `<IfModule mod_gsoap.c>` in `httpd.conf`, one
+for each service.  The change in gSOAP 2.8.71 modified function
+`::SoapSharedLibrary_load` in `mod_gsoap.c` as follows to resolve linking
+symbols locally:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+    const int nFlags = RTLD_LAZY | RTLD_LOCAL; // was RTLD_LAZY | RTLD_GLOBAL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Alternatively, if one module links against equally-named symbols coming from
+another module, then it is recommended to pass a version info file to the
+linker, instructing it to make all symbols local, except for the Apache module
+table instance.  The version file (e.g. `myapachegsoap.ver`) looks something
+like this:
+
+    VERS_1.0 {
+      global:
+        myapachegsoap_module;
+      local:
+        *;
+    };
+
+This file is then passed to the linker with option `-Wl,myapachegsoapv.ver`.
+
 
 Initialization and plugins                                            {#plugins}
 ==========================
@@ -227,7 +253,7 @@ Dynamic libraries                                                   {#libraries}
 =================
 
 If you are using dynamic libraries to deploy services with `mod_gsoap`, then
-those should be closed propertly to avoid memory leaks. To do so add:
+those should be closed properly to avoid memory leaks. To do so add the following line:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
     dlclose(pConfig->m_pLibraries->m_pSOAPLibrary->m_hLibrary);

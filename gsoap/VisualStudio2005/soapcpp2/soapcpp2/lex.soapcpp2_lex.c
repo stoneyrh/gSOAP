@@ -3087,12 +3087,17 @@ static void option(void)
                         break;
         for (; yytext[i]; i++)
                 switch (yytext[i])
-                {       case 'a':
+                {
+                        case 'a':
                                 aflag = 1;
+                                break;
+                        case 'A':
+                                Aflag = 1;
                                 break;
                         case 'c':
                                 if (yytext[i+1] == '+' && yytext[i+2] == '+')
-                                {       i += 2;
+                                {
+                                        i += 2;
                                         if (yytext[i+1] == '1' && yytext[i+2] == '1')
                                         {
                                                 i += 2;
@@ -3101,22 +3106,33 @@ static void option(void)
                                         cflag = 0;
                                 }
                                 else
-                                  cflag = 1;
+                                {
+                                        cflag = 1;
+                                }
                                 break;
                         case 'e':
                                 eflag = 1;
                                 break;
+                        case 'i':
+                                iflag = 1;
+                                break;
+                        case 'j':
+                                jflag = 1;
+                                break;
                         case 'n':
                                 nflag = 1;
                                 break;
-                        case 'l':
-                                lflag = 1;
+                        case 's':
+                                sflag = 1;
                                 break;
                         case 't':
                                 tflag = 1;
                                 break;
                         case 'w':
                                 wflag = 1;
+                                break;
+                        case 'x':
+                                xflag = 1;
                                 break;
                         default:
                                 if (yytext[i] < 32 || yytext[i] == '/')

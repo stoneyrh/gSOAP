@@ -640,6 +640,7 @@ WSDL2H_EXTRA_FLAGS
 WITH_OPENSSL
 WITH_OPENSSL_FALSE
 WITH_OPENSSL_TRUE
+SOAPCPP2_IPV6_V6ONLY
 SOAPCPP2_IPV6
 SOAPCPP2_NO_C_LOCALE
 SOAPCPP2_INCLUDE_XLOCALE
@@ -769,6 +770,7 @@ enable_namespaces
 enable_xlocale
 enable_c_locale
 enable_ipv6
+enable_ipv6_v6only
 with_zlib
 with_openssl
 enable_ssl
@@ -1418,6 +1420,7 @@ Optional Features:
   --enable-xlocale        compile library with forced inclusion of xlocale.h
   --disable-c-locale      compile library without c locale usage
   --enable-ipv6           compile library with IPv6 support
+  --enable-ipv6-v6only    compile library with IPv6-v6only support
   --disable-ssl           build without SSL/TLS
   --enable-gnutls         build with GNUTLS SSL/TLS
   --enable-samples	  enable compile for the gsoap samples
@@ -6215,7 +6218,7 @@ WSDL2H_IMPORTPATH="-DWSDL2H_IMPORT_PATH=\"\\\"${datadir}/gsoap/WS\\\"\""
 # library compilation thus disabling namespaces
 # Check whether --enable-namespaces was given.
 if test "${enable_namespaces+set}" = set; then :
-  enableval=$enable_namespaces; with_namespaces="$enable_ns"
+  enableval=$enable_namespaces; with_namespaces="$enable_namespaces"
 else
   with_namespaces="yes"
 fi
@@ -6237,7 +6240,7 @@ fi
 # library compilation thus forcing the inclusion of xlocale.h
 # Check whether --enable-xlocale was given.
 if test "${enable_xlocale+set}" = set; then :
-  enableval=$enable_xlocale; with_xlocale="$enable_xl"
+  enableval=$enable_xlocale; with_xlocale="$enable_xlocale"
 else
   with_xlocale="no"
 fi
@@ -6248,10 +6251,10 @@ $as_echo_n "checking for enable xlocale usage in library... " >&6; }
 if test "x$with_xlocale" = "xyes"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
+  SOAPCPP2_INCLUDE_XLOCALE="-DWITH_INCLUDE_XLOCALE_H"
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-  SOAPCPP2_INCLUDE_XLOCALE="-DWITH_INCLUDE_XLOCALE_H"
 fi
 
 
@@ -6259,7 +6262,7 @@ fi
 # library compilation thus disabling the use of the C locale usage
 # Check whether --enable-c-locale was given.
 if test "${enable_c_locale+set}" = set; then :
-  enableval=$enable_c_locale; with_no_c_locale="$enable_cl"
+  enableval=$enable_c_locale; with_no_c_locale="$enable_c_locale"
 else
   with_no_c_locale="yes"
 fi
@@ -6292,7 +6295,29 @@ $as_echo_n "checking for enable ipv6 in library... " >&6; }
 if test "x$with_ipv6" = "xyes"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-  SOAPCPP2_IPV6="-DWITH_IPV6 -DWITH_NO_IPV6_V6ONLY" ##define to add IPv6 support
+  SOAPCPP2_IPV6="-DWITH_IPV6" ##define to add IPv6 support
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+# the enable-ipv6-v6only option adds the -DWITH_IPV6_V6ONLY to the
+# library compilation thus enabling IPv6 without remapping IPv4 to IPv6
+# Check whether --enable-ipv6-v6only was given.
+if test "${enable_ipv6_v6only+set}" = set; then :
+  enableval=$enable_ipv6_v6only; with_ipv6_v6only="$enable_ipv6_v6only"
+else
+  with_ipv6_v6only="no"
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for enable ipv6-v6only in library" >&5
+$as_echo_n "checking for enable ipv6-v6only in library... " >&6; }
+if test "x$with_ipv6_v6only" = "xyes"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+  SOAPCPP2_IPV6_V6ONLY="-DWITH_IPV6_V6ONLY"
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
@@ -6318,7 +6343,7 @@ fi
 # the disable-ssl option removes the dependence on OpenSSL
 # Check whether --enable-ssl was given.
 if test "${enable_ssl+set}" = set; then :
-  enableval=$enable_ssl; with_openssl="$enable_openssl"
+  enableval=$enable_ssl; with_openssl="$enable_ssl"
 else
   with_openssl="yes"
 fi

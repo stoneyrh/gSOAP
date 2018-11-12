@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">address.h File Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Fri Jan 12 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Mon Nov 12 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -35,6 +35,7 @@
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -69,7 +70,7 @@ $(document).ready(function(){initNavTree('address_8h.html','');});
 <div class="title">address.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#import &quot;stlvector.h&quot;</code><br />
+<div class="textblock"><code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for address.h:</div>
 <div class="dyncontent">
@@ -80,17 +81,18 @@ Include dependency graph for address.h:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstd_1_1vector.html">std::vector&lt; T &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classa____address.html">a__address</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An address information item.  <a href="classa____address.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">"urn:address-book-example":address is a complexType.  <a href="classa____address.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class__a____address__book.html">_a__address_book</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The root element of the address book schema.  <a href="class__a____address__book.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Top-level root element "urn:address-book-example":address-book.  <a href="class__a____address__book.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a521c5fc2bc13a63a8c9aa3bc1b9233f4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="address_8h.html#a521c5fc2bc13a63a8c9aa3bc1b9233f4">SOAP_NAMESPACE_OF_a</a>&#160;&#160;&#160;&quot;urn:address-book-example&quot;</td></tr>
-<tr class="memdesc:a521c5fc2bc13a63a8c9aa3bc1b9233f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">An example address book schema.  <a href="#a521c5fc2bc13a63a8c9aa3bc1b9233f4">More...</a><br /></td></tr>
 <tr class="separator:a521c5fc2bc13a63a8c9aa3bc1b9233f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
@@ -124,7 +126,7 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="address_stub_8h.html#a0563f96a962989dec10c451b2dde83bea5007e4f22415c19cd7e174b5a5129c79">a__ISO_country__se</a> = 9, 
 <a class="el" href="address_stub_8h.html#a0563f96a962989dec10c451b2dde83bea7e128e383484d3ff5b09f1afd8820951">a__ISO_country__us</a> = 10
 <br />
- }<tr class="memdesc:a0563f96a962989dec10c451b2dde83be"><td class="mdescLeft">&#160;</td><td class="mdescRight">ISO country codes (limited to just a few for this example) Note: enum values are prefixed with 'a__ISO_country' to avoid name clashes, please use wsdl2h option -e to omit this prefix.  <a href="address_8h.html#a0563f96a962989dec10c451b2dde83be">More...</a><br /></td></tr>
+ }<tr class="memdesc:a0563f96a962989dec10c451b2dde83be"><td class="mdescLeft">&#160;</td><td class="mdescRight">"urn:address-book-example":ISO-country is a simpleType restriction of XSD type xs:string.  <a href="address_8h.html#a0563f96a962989dec10c451b2dde83be">More...</a><br /></td></tr>
 </td></tr>
 <tr class="separator:a0563f96a962989dec10c451b2dde83be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -138,10 +140,13 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>An example address book schema. </p>
-
-<p>Definition at line <a class="el" href="address_8h_source.html#l00116">116</a> of file <a class="el" href="address_8h_source.html">address.h</a>.</p>
+<pre><blockquote class="doxtable">
+<p>
+  An example address book schema
+</p>
+</blockquote>
+</pre> 
+<p>Definition at line <a class="el" href="address_8h_source.html#l00131">131</a> of file <a class="el" href="address_8h_source.html">address.h</a>.</p>
 
 </div>
 </div>
@@ -156,8 +161,13 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>ISO country codes (limited to just a few for this example) Note: enum values are prefixed with 'a__ISO_country' to avoid name clashes, please use wsdl2h option -e to omit this prefix. </p>
-<p>"urn:address-book-example":ISO-country is a simpleType restriction of xs:string. </p>
+<p>"urn:address-book-example":ISO-country is a simpleType restriction of XSD type xs:string. </p>
+<pre><blockquote class="doxtable">
+<p>
+  ISO country codes (limited to just a few for this example)
+</p>
+</blockquote>
+</pre> <dl class="section note"><dt>Note</dt><dd>The enum values are prefixed with "a__ISO_country__" to prevent name clashes: use wsdl2h option -e to omit this prefix or use option -c++11 for scoped enumerations </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a0563f96a962989dec10c451b2dde83bea721d71db3ae02cc1f1dff5e886ed9d77"></a>a__ISO_country__be&#160;</td><td class="fielddoc">
 <p>xs:string value="be" </p>
@@ -216,7 +226,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="address_8h_source.html#l00152">152</a> of file <a class="el" href="address_8h_source.html">address.h</a>.</p>
+<p>Definition at line <a class="el" href="address_8h_source.html#l00169">169</a> of file <a class="el" href="address_8h_source.html">address.h</a>.</p>
 
 </div>
 </div>
@@ -227,7 +237,7 @@ Enumerations</h2></td></tr>
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Fri Jan 12 2018 17:22:22 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Mon Nov 12 2018 09:04:50 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

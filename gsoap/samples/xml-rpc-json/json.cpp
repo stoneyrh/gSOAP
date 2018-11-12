@@ -69,8 +69,8 @@ int json_error(struct soap *soap, struct value *v)
   {
     const char *s, *t;
     soap_set_fault(soap);
-    s = *soap_faultstring(soap);
-    t = soap_check_faultdetail(soap);
+    s = soap_fault_string(soap);
+    t = soap_fault_detail(soap);
     /* set JSON error property (Google JSON Style Guide) */
 #ifdef __cplusplus
     (*v)["error"]["code"] = soap->error;
@@ -91,6 +91,53 @@ int json_error(struct soap *soap, struct value *v)
 #endif
   }
   return soap->error;
+}
+
+int json_send_fault(struct soap *soap)
+{
+  int status = soap->error;
+  struct value *v;
+  if (status == SOAP_OK || status == SOAP_STOP)
+    return soap_closesock(soap);
+  if (status >= 200 && status < 300)
+    return soap_send_empty_response(soap, status);
+  if (status < 400)
+    status = 500;
+  v = new_value(soap);
+  json_error(soap, v);
+  soap->http_content = "application/json; charset=utf-8";
+  if (soap_response(soap, SOAP_FILE + status)
+   || json_send(soap, v)
+   || soap_end_send(soap))
+    return soap_closesock(soap);
+  return soap_closesock(soap);
+}
+
+int json_send_error(struct soap *soap, int status, const char *message, const char *details)
+{
+  struct value *v = new_value(soap);
+  if (status < 200 || status > 599)
+    status = 0;
+  /* set JSON error property (Google JSON Style Guide) */
+#ifdef __cplusplus
+  (*v)["error"]["code"] = status;
+  if (message)
+    (*v)["error"]["message"] = message;
+  if (details)
+    (*v)["error"]["errors"][0]["message"] = details;
+#else
+  *int_of(value_at(value_at(v, "error"), "code")) = status;
+  if (message)
+    *string_of(value_at(value_at(v, "error"), "message")) = soap_strdup(soap, message);
+  if (details)
+    *string_of(value_at(nth_value(value_at(value_at(v, "error"), "errors"), 0), "message")) = soap_strdup(soap, details);
+#endif
+  soap->http_content = "application/json; charset=utf-8";
+  if (soap_response(soap, SOAP_FILE + status)
+   || json_send(soap, v)
+   || soap_end_send(soap))
+    return soap_closesock(soap);
+  return soap_closesock(soap);
 }
 
 /******************************************************************************\
@@ -598,7 +645,12 @@ int json_call(struct soap *soap, const char *endpoint, const struct value *in, s
    || soap_begin_recv(soap)
    || json_recv(soap, out)
    || soap_end_recv(soap))
-    json_error(soap, out);
+  {
+    if (out)
+      json_error(soap, out);
+    else if (soap->error == SOAP_NO_DATA || soap->error == 200 || soap->error == 201 || soap->error == 202)
+      soap->error = SOAP_OK;
+  }
   return soap_closesock(soap);
 }
 

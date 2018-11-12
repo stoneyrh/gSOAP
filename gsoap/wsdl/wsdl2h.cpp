@@ -502,7 +502,7 @@ static void options(int argc, char **argv)
             break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-D] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-m] [-M] [-N name] [-n name] [-O1|-O2|-O3] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-Sname] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
+            fprintf(stderr, "Usage: wsdl2h [-a] [-b] [-c|-c++|-c++11] [-D] [-d] [-e] [-f] [-g] [-h] [-I path] [-i] [-j] [-k] [-l] [-M] [-m] [-N name] [-n name] [-O1|-O2|-O3] [-P|-p] [-q name] [-R] [-r proxyhost[:port[:uid:pwd]]] [-r:userid:passwd] [-s] [-Sname] [-t typemapfile] [-U] [-u] [-V] [-v] [-w] [-W] [-x] [-y] [-z#] [-_] [-o outfile.h] infile.wsdl infile.xsd http://www... ...\n\n");
             fprintf(stderr, "\
 -a      generate indexed struct names for local elements with anonymous types\n\
 -b      bi-directional operations (duplex ops) added to serve one-way responses\n\
@@ -520,8 +520,8 @@ static void options(int argc, char **argv)
 -j      don't generate SOAP_ENV__Header and SOAP_ENV__Detail definitions\n\
 -k      don't generate SOAP_ENV__Header mustUnderstand qualifiers\n\
 -l      display license information\n\
--m      use xsd.h module to import primitive types\n\
 -M      suppress error \"must understand element with wsdl:required='true'\"\n\
+-m      use xsd.h module to import primitive types\n\
 -Nname  use name for service prefixes to produce a service for each binding\n\
 -nname  use name as the base namespace prefix instead of 'ns'\n\
 -O1     optimize by omitting duplicate choice/sequence members\n\
@@ -540,7 +540,7 @@ static void options(int argc, char **argv)
 -s      don't generate STL code (no std::string and no std::vector)\n\
 -Sname  use name instead of 'soap' for the C++ class members with soap contexts\n\
 -tfile  use type map file instead of the default file typemap.dat\n\
--U      allow UTF8-encoded Unicode C/C++ identifiers when mapping XML tag names\n\
+-U      allow UTF-8-encoded Unicode C/C++ identifiers when mapping XML tag names\n\
 -u      don't generate unions\n\
 -V      display the current version and exit\n\
 -v      verbose output\n\

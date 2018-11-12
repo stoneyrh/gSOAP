@@ -423,13 +423,6 @@ int main(int argc, char **argv)
   {
     int run;
     char endpoint[80];
-    /* ns1:test data */
-    struct ns1__add a;
-    struct ns1__sub b;
-    a.a = 123;
-    a.b = 456;
-    b.a = 789;
-    b.b = -99999;
 
     /* client sends messages to stdout or to a server port */
     if (port)

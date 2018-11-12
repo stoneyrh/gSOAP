@@ -14,13 +14,13 @@
 	The Initial Developer of the Original Code is Robert A. van Engelen.
 	Copyright (C) 2000-2002 Robert A. van Engelen. All Rights Reserved.
 
-1. Compile ckdb.h:
-   soapcpp2 -cpckdb ckdb.h
-2. Compile ckdb.c:
-   gcc -DWITH_COOKIES -DWITH_NOGLOBAL -c ckdb.c
-3. Compile and link with main program, e.g. ckdbtest.c:
-   soapcpp2 -c ckdbtest.h
-   gcc -DWITH_COOKIES ckdbtest.c ckdb.o stdsoap2.c soapC.c soapClient.c
+        1. Compile ckdb.h:
+           soapcpp2 -cpckdb ckdb.h
+        2. Compile ckdb.c:
+           cc -DWITH_COOKIES -DWITH_NOGLOBAL -c ckdb.c
+        3. Compile and link with main program, e.g. ckdbtest.c:
+           soapcpp2 -c ckdbtest.h
+           cc -DWITH_COOKIES ckdbtest.c ckdb.o stdsoap2.c soapC.c soapClient.c
 
 */
 
@@ -32,13 +32,15 @@
 #include "ckdbC.c"
 
 int soap_save_cookies(struct soap *soap, const char *pathname)
-{ int socket = soap->socket;
-  int sendfd = soap->sendfd;
+{
+  SOAP_SOCKET socket = soap->socket;
+  SOAP_SOCKET sendfd = soap->sendfd;
   soap_begin(soap);
-  soap->socket = -1;	/* make sure plain I/O is used */
+  soap->socket = SOAP_INVALID_SOCKET;	/* make sure plain I/O is used */
   soap->sendfd = open(pathname, O_CREAT|O_TRUNC|O_WRONLY, S_IREAD|S_IWRITE);
   if (soap->sendfd >= 0)
-  { soap_serialize_cookie(soap, (struct cookie*)soap->cookies);
+  {
+    soap_serialize_cookie(soap, (struct cookie*)soap->cookies);
     soap_begin_send(soap);
     soap_put_cookie(soap, (struct cookie*)soap->cookies, "jar", NULL);
     soap_end_send(soap);
@@ -53,27 +55,32 @@ int soap_save_cookies(struct soap *soap, const char *pathname)
 }
 
 int soap_load_cookies(struct soap *soap, const char *pathname)
-{ int socket = soap->socket;
-  int recvfd = soap->recvfd;
+{
+  SOAP_SOCKET socket = soap->socket;
+  SOAP_SOCKET recvfd = soap->recvfd;
   soap_begin(soap);
-  soap->socket = -1;	/* make sure plain I/O is used */
+  soap->socket = SOAP_INVALID_SOCKET;	/* make sure plain I/O is used */
   soap->recvfd = open(pathname, O_RDONLY);
   if (soap->recvfd >= 0)
-  { if (soap_begin_recv(soap))
-    { close(soap->recvfd);
+  {
+    if (soap_begin_recv(soap))
+    {
+      close(soap->recvfd);
       soap->socket = socket;
       soap->recvfd = recvfd;
       return soap->error;
     }
     soap->cookies = (struct soap_cookie*)soap_get_cookie(soap, NULL, "jar", NULL);
     if (!soap->cookies && soap->error)
-    { close(soap->recvfd);
+    {
+      close(soap->recvfd);
       soap->socket = socket;
       soap->recvfd = recvfd;
       return soap->error;
     }
     if (soap_end_recv(soap))
-    { close(soap->recvfd);
+    {
+      close(soap->recvfd);
       soap->socket = socket;
       soap->recvfd = recvfd;
       return soap->error;

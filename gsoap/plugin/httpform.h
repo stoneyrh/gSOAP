@@ -57,19 +57,20 @@ compiling, linking, and/or using OpenSSL is allowed.
 extern "C" {
 #endif
 
-#define HTTP_FORM_ID "SOAP-HTTP-FORM/1.1" /* plugin identification */
+#define HTTP_FORM_ID "SOAP-HTTP-FORM/1.2" /* plugin identification */
 
 extern const char http_form_id[];
 
 /* This is the local plugin data shared among all copies of the soap struct: */
 struct http_form_data
-{ int (*fparsehdr)(struct soap*, const char*, const char*); /* to save and call the internal HTTP header parser */
+{
+  int (*fparsehdr)(struct soap*, const char*, const char*); /* to save and call the internal HTTP header parser */
   int (*handler)(struct soap*);
 };
 
 int http_form(struct soap*, struct soap_plugin*, void*);
 
-char *form(struct soap*);
+char * soap_get_form(struct soap*);
 
 #ifdef __cplusplus
 }

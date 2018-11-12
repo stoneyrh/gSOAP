@@ -477,7 +477,7 @@ void server_loop(struct soap *soap)
     }
 
     if (options[OPTION_v].selected)
-      fprintf(stderr, "Request #%d accepted on socket %d connected from IP %d.%d.%d.%d\n", req, sock, (int)(soap->ip>>24)&0xFF, (int)(soap->ip>>16)&0xFF, (int)(soap->ip>>8)&0xFF, (int)soap->ip&0xFF);
+      fprintf(stderr, "Request #%d accepted on socket %d connected from %s IPv4=%d.%d.%d.%d or IPv6=%.8x%.8x%.8x%.8x\n", req, sock, soap->host, (int)(soap->ip>>24)&0xFF, (int)(soap->ip>>16)&0xFF, (int)(soap->ip>>8)&0xFF, (int)soap->ip&0xFF, soap->ip6[0], soap->ip6[1], soap->ip6[2], soap->ip6[3]);
 
     if (poolsize > 0)
     {
@@ -947,10 +947,10 @@ int copy_file(struct soap *soap, const char *name, const char *type)
 int calcget(struct soap *soap)
 { int o = 0, a = 0, b = 0, val;
   char buf[256];
-  char *s = query(soap); /* get argument string from URL ?query string */
+  char *s = soap_query(soap); /* get argument string from URL ?query string */
   while (s)
-  { char *key = query_key(soap, &s); /* decode next query string key */
-    char *val = query_val(soap, &s); /* decode next query string value (if any) */
+  { char *key = soap_query_key(soap, &s); /* decode next query string key */
+    char *val = soap_query_val(soap, &s); /* decode next query string value (if any) */
     if (key && val)
     { if (!strcmp(key, "o"))
         o = val[0];
@@ -992,10 +992,10 @@ int calcget(struct soap *soap)
 int calcpost(struct soap *soap)
 { int o = 0, a = 0, b = 0, val;
   char buf[256];
-  char *s = form(soap); /* get form data from body */
+  char *s = soap_get_form(soap); /* get form data from body */
   while (s)
-  { char *key = query_key(soap, &s); /* decode next key */
-    char *val = query_val(soap, &s); /* decode next value (if any) */
+  { char *key = soap_query_key(soap, &s); /* decode next key */
+    char *val = soap_query_val(soap, &s); /* decode next value (if any) */
     if (key && val)
     { if (!strcmp(key, "o"))
         o = val[0];
@@ -1112,12 +1112,13 @@ int f__form2(struct soap *soap, struct f__formResponse *response)
 \******************************************************************************/
 
 int info(struct soap *soap)
-{ struct http_get_data *getdata;
+{ size_t stat_get, stat_post, stat_fail, *hist_min, *hist_hour, *hist_day;
   size_t stat_sent, stat_recv;
   const char *t0, *t1, *t2, *t3, *t4, *t5, *t6, *t7;
   char buf[4096]; /* buffer large enough to hold parts of HTML content */
   struct soap_plugin *p;
   time_t now = time(NULL), elapsed = now - start;
+  struct tm T;
   query_options(soap, options);
   if (soap->omode & SOAP_IO_KEEPALIVE)
     t0 = "<td align='center' bgcolor='green'>YES</td>";
@@ -1178,9 +1179,9 @@ int info(struct soap *soap)
 </head>\
 <body bgcolor='#FFFFFF'>\
 <h1>gSOAP Web Server Administration</h1>\
-<p/>Server endpoint=%s client agent IP=%d.%d.%d.%d\
+<p/>Server endpoint=%s client agent %s with IPv4=%d.%d.%d.%d or IPv6=%.8x%.8x%.8x%.8x\
 <h2>Registered Plugins</h2>\
-", soap->endpoint, (int)(soap->ip>>24)&0xFF, (int)(soap->ip>>16)&0xFF, (int)(soap->ip>>8)&0xFF, (int)soap->ip&0xFF);
+", soap->endpoint, soap->host, (int)(soap->ip>>24)&0xFF, (int)(soap->ip>>16)&0xFF, (int)(soap->ip>>8)&0xFF, (int)soap->ip&0xFF, soap->ip6[0], soap->ip6[1], soap->ip6[2], soap->ip6[3]);
   if (soap_send(soap, buf))
     return soap->error;
   for (p = soap->plugins; p; p = p->next)
@@ -1215,37 +1216,32 @@ int info(struct soap *soap)
 </table>", t0, t1, t2, t3, t4, t5, t6, t7);
   if (soap_send(soap, buf))
     return soap->error;
-  getdata = (struct http_get_data*)soap_lookup_plugin(soap, http_get_id);
+  soap_get_stats(soap, &stat_get, &stat_post, &stat_fail, &hist_min, &hist_hour, &hist_day);
   soap_get_logging_stats(soap, &stat_sent, &stat_recv);
   soap_send(soap, "<h2>Usage Statistics</h2>");
-  if (getdata)
-  { html_hbar(soap, "HTTP&nbsp;GET", 120, getdata->stat_get, 0x0000FF);
-    html_hbar(soap, "HTTP&nbsp;POST", 120, getdata->stat_post, 0x00FF00);
-    html_hbar(soap, "HTTP&nbsp;FAIL", 120, getdata->stat_fail, 0xFF0000);
-  }
+  html_hbar(soap, "HTTP&nbsp;GET", 120, stat_get, 0x0000FF);
+  html_hbar(soap, "HTTP&nbsp;POST", 120, stat_post, 0x00FF00);
+  html_hbar(soap, "HTTP&nbsp;FAIL", 120, stat_fail, 0xFF0000);
   html_hbar(soap, "SENT(kB)", 120, stat_sent/1024, 0x00FFFF);
   html_hbar(soap, "RECV(kB)", 120, stat_recv/1024, 0x00FFFF);
   if (elapsed > 0)
   { html_hbar(soap, "SENT(kB/s)", 120, stat_sent/elapsed/1024, 0x00FFFF);
     html_hbar(soap, "RECV(kB/s)", 120, stat_recv/elapsed/1024, 0x00FFFF);
   }
-  if (getdata)
-  { struct tm T;
-    T.tm_min = 99;
-    T.tm_hour = 99;
-    T.tm_yday = 999;
+  T.tm_min = 99;
+  T.tm_hour = 99;
+  T.tm_yday = 999;
 #ifdef HAVE_LOCALTIME_R
-    localtime_r(&now, &T);
+  localtime_r(&now, &T);
 #else
-    T = *localtime(&now);
+  T = *localtime(&now);
 #endif
-    soap_send(soap, "<h2>Requests by the Minute</h2>");
-    html_hist(soap, "Minute", 12, 0, 60, minutes, getdata->min, T.tm_min);
-    soap_send(soap, "<h2>Requests by the Hour</h2>");
-    html_hist(soap, "Hour", 30, 0, 24, hours, getdata->hour, T.tm_hour);
-    soap_send(soap, "<h2>Requests by Day of the Year</h2>");
-    html_hist(soap, "Day", 2, 0, 365, NULL, getdata->day, T.tm_yday);
-  }
+  soap_send(soap, "<h2>Requests by the Minute</h2>");
+  html_hist(soap, "Minute", 12, 0, 60, minutes, hist_min, T.tm_min);
+  soap_send(soap, "<h2>Requests by the Hour</h2>");
+  html_hist(soap, "Hour", 30, 0, 24, hours, hist_hour, T.tm_hour);
+  soap_send(soap, "<h2>Requests by Day of the Year</h2>");
+  html_hist(soap, "Day", 2, 0, 365, NULL, hist_day, T.tm_yday);
   soap_send(soap, "\
 <p/>This page will automatically reload every minute to refresh the statistics.\
 <br/><br/><br/><img src='favicon.gif' align='absmiddle'>Powered by gSOAP\

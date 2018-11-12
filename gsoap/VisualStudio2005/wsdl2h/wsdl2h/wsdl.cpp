@@ -90,7 +90,7 @@ wsdl__definitions::wsdl__definitions()
   soap_register_plugin(soap, http_da);
 #endif
 #ifdef WITH_OPENSSL
-  soap_ssl_client_context(soap, SOAP_SSL_NO_AUTHENTICATION, NULL, NULL, NULL, NULL, NULL);
+  soap_ssl_client_context(soap, SOAP_SSL_NO_AUTHENTICATION | SOAP_SSLv3_TLSv1, NULL, NULL, NULL, NULL, NULL);
 #endif
   soap_set_namespaces(soap, namespaces);
   soap_default(soap);
@@ -2014,7 +2014,11 @@ int wsdl__import::traverse(wsdl__definitions& definitions)
       else
         definitionsRef->targetNamespace = definitions.targetNamespace;
     }
-    return definitionsRef->traverse();
+    definitionsRef->traverse();
+    // collect imported artifacts into parent collections
+    definitions.builtinTypes(definitionsRef->builtinTypes());
+    definitions.builtinElements(definitionsRef->builtinElements());
+    definitions.builtinAttributes(definitionsRef->builtinAttributes());
   }
   return SOAP_OK;
 }

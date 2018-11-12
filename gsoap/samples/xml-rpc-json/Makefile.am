@@ -3,7 +3,7 @@
 ## you have all needed files, that a GNU package needs
 AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 
-noinst_PROGRAMS = jsoncpp json-GitHub json-gdm json-currentTime xml-rpc-currentTime
+noinst_PROGRAMS = jsoncpp json-GitHub json-gdm json-currentTime json-currentTimeServer xml-rpc-currentTime
 SOAPHEADER = xml-rpc.h
 
 include ../Makefile.defines
@@ -23,6 +23,9 @@ json_gdm_LDADD = $(SOAP_CPP_LIB_SSL) $(SAMPLE_EXTRA_LIBS) $(SAMPLE_SSL_LIBS)
 
 json_currentTime_SOURCES = json-currentTime.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 json_currentTime_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
+
+json_currentTimeServer_SOURCES = json-currentTimeServer.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
+json_currentTimeServer_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)
 
 xml_rpc_currentTime_SOURCES = xml-rpc-currentTime.cpp xml-rpc.cpp json.cpp $(SOAPHEADER) $(SOAP_CPP_CORE)
 xml_rpc_currentTime_LDADD = $(SOAP_CPP_LIB) $(SAMPLE_EXTRA_LIBS)

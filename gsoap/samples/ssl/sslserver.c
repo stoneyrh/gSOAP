@@ -59,9 +59,7 @@ void sigpipe_handle(int);
 
 int main()
 { SOAP_SOCKET m;
-#if defined(_POSIX_THREADS) || defined(_SC_THREADS)
-  pthread_t tid;
-#endif
+  THREAD_TYPE tid;
   struct soap soap, *tsoap;
   /* Init SSL (can skip or call multiple times, engien inits automatically) */
   soap_ssl_init();
@@ -133,11 +131,7 @@ int main()
     { soap_closesock(&soap);
       continue;
     }
-#if defined(_POSIX_THREADS) || defined(_SC_THREADS)
-    pthread_create(&tid, NULL, (void*(*)(void*))&process_request, tsoap);
-#else
-    process_request(tsoap);
-#endif
+    THREAD_CREATE(&tid, (void*(*)(void*))&process_request, tsoap);
   }
   soap_destroy(&soap);
   soap_end(&soap);
@@ -148,9 +142,7 @@ int main()
 
 void *process_request(struct soap *soap)
 {
-#if defined(_POSIX_THREADS) || defined(_SC_THREADS)
-  pthread_detach(pthread_self());
-#endif
+  THREAD_DETACH(THREAD_ID);
   if (soap_ssl_accept(soap) != SOAP_OK)
   { /* when soap_ssl_accept() fails, socket is closed and SSL data reset */
     soap_print_fault(soap, stderr);
@@ -171,7 +163,9 @@ void *process_request(struct soap *soap)
 \******************************************************************************/
 
 int ns__add(struct soap *soap, double a, double b, double *result)
-{ *result = a + b;
+{
+  (void)soap;
+  *result = a + b;
   return SOAP_OK;
 } 
 

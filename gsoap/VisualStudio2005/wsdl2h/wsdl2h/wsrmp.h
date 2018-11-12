@@ -52,7 +52,7 @@ class wsrmp__Timeout
 class wsrmp__RMAssertion : public wsp__Assertion
 { public:
   wsrmp__Timeout *InactivityTimeout;
-  wsrmp__Timeout *BaseRetransmissionInterval;;
+  wsrmp__Timeout *BaseRetransmissionInterval;
   wsrmp__Timeout *AcknowledgementInterval;
   char           *ExponentialBackoff;
 // TODO: WCF netrmp extension elements go here, as necessary
@@ -66,7 +66,7 @@ class wsrmp5__Timeout
 class wsrmp5__RMAssertion : public wsp__Assertion
 { public:
   wsrmp5__Timeout *InactivityTimeout;
-  wsrmp5__Timeout *BaseRetransmissionInterval;;
+  wsrmp5__Timeout *BaseRetransmissionInterval;
   wsrmp5__Timeout *AcknowledgementInterval;
   char           *ExponentialBackoff;
 // TODO: WCF netrmp extension elements go here, as necessary

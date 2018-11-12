@@ -142,12 +142,10 @@ message queue for each socket accepted and processed by a thread.
     THREAD_TYPE tid;
     struct soap *tsoap = soap_copy(soap);
     if (!tsoap)
-    {
       soap_closesock(soap);
-      continue;
-    }
-    while (THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap))
-      sleep(1);
+    else
+      while (THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap))
+        sleep(1);
   }
 
 void *process_request(void *tsoap)
@@ -269,13 +267,12 @@ soap_mq(struct soap *soap, struct soap_plugin *p, void *arg)
   /* register the destructor */
   p->fdelete = soap_mq_delete;
   /* if OK then initialize */
-  if (p->data)
+  if (!p->data)
+    return SOAP_EOM;
+  if (soap_mq_init(soap, (struct soap_mq_data*)p->data))
   {
-    if (soap_mq_init(soap, (struct soap_mq_data*)p->data))
-    {
-      SOAP_FREE(soap, p->data); /* error: could not init */
-      return SOAP_EOM; /* return error */
-    }
+    SOAP_FREE(soap, p->data); /* error: could not init */
+    return SOAP_EOM; /* return error */
   }
   return SOAP_OK;
 }

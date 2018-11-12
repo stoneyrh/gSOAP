@@ -1,5 +1,6 @@
 var address_8h =
 [
+    [ "vector", "classstd_1_1vector.html", null ],
     [ "a__address", "classa____address.html", "classa____address" ],
     [ "_a__address_book", "class__a____address__book.html", "class__a____address__book" ],
     [ "SOAP_NAMESPACE_OF_a", "address_8h.html#a521c5fc2bc13a63a8c9aa3bc1b9233f4", null ],

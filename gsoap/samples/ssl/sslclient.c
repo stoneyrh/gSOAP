@@ -93,7 +93,7 @@ int main()
   { soap_print_fault(&soap, stderr);
     exit(1);
   }
-  /* code below enables CRL, may need SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE when certs have no CRL */
+  /* code below enables CRL, may need SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE when certs have no CRL resulting in a warning/error */
   if (soap_ssl_crl(&soap, "")
   )
   { soap_print_fault(&soap, stderr);

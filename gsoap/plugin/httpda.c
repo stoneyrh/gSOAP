@@ -535,13 +535,12 @@ http_da(struct soap *soap, struct soap_plugin *p, void *arg)
   p->data = (void*)SOAP_MALLOC(soap, sizeof(struct http_da_data));
   p->fcopy = http_da_copy;
   p->fdelete = http_da_delete;
-  if (p->data)
+  if (!p->data)
+    return SOAP_EOM;
+  if (http_da_init(soap, (struct http_da_data*)p->data, (int*)arg))
   {
-    if (http_da_init(soap, (struct http_da_data*)p->data, (int*)arg))
-    {
-      SOAP_FREE(soap, p->data);
-      return SOAP_EOM;
-    }
+    SOAP_FREE(soap, p->data);
+    return SOAP_EOM;
   }
   return SOAP_OK;
 }
@@ -607,8 +606,7 @@ http_da_delete(struct soap *soap, struct soap_plugin *p)
 {
   if (((struct http_da_data*)p->data)->smd_data.ctx)
     soap_smd_final(soap, &((struct http_da_data*)p->data)->smd_data, NULL, NULL);
-  if (p->data)
-    SOAP_FREE(soap, p->data);
+  SOAP_FREE(soap, p->data);
 }
 
 /******************************************************************************\

@@ -9,7 +9,7 @@ var class_graph =
     [ "soap_out", "class_graph.html#a54002692219dd6241179790b650dc1da", null ],
     [ "soap_put", "class_graph.html#a1c813bdf388bf3299e1afbc9c5596c71", null ],
     [ "soap_serialize", "class_graph.html#a2a5475b71f6e7b35ec92c40ef2f3d43e", null ],
-    [ "soap_type", "class_graph.html#a3b8fc12c63ae488db417c40cf91d5e35", null ],
+    [ "soap_type", "class_graph.html#a9f245a7fc233df56ca7209b3ed87a2ec", null ],
     [ "graph_instantiate_Graph", "class_graph.html#ab7fe651704c47083590ab38adf4cae94", null ],
     [ "edges", "class_graph.html#a9f2aaa1325baa7df2e9c4bf5485ed32a", null ]
 ];

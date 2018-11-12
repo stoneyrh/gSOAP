@@ -53,8 +53,8 @@ int __ns5__dtx(struct soap *soap, _XML x, struct _ns3__commingtotown *response)
   struct soap *csoap = soap_copy(soap);
   struct _ns1__gmt gmt;
   struct _ns1__gmtResponse gmtResponse;
-  struct tm tm;
-  time_t *now, xmas;
+  struct tm tm, ptm;
+  time_t now, xmas;
   double sec, days;
 
   if (soap_call___ns4__gmt(csoap, "http://www.cs.fsu.edu/~engelen/gmtlitserver.cgi", NULL, &gmt, &gmtResponse))
@@ -66,23 +66,20 @@ int __ns5__dtx(struct soap *soap, _XML x, struct _ns3__commingtotown *response)
 
   now = gmtResponse.param_1;
 
-  if (!now)
-    return soap_receiver_fault(soap, "Could not retrieve current time", NULL);
-
   memset(&tm, 0, sizeof(struct tm));
   tm.tm_mday = 25;
   tm.tm_mon = 11;
-  tm.tm_year = gmtime(now)->tm_year; /* this year */
+  tm.tm_year = gmtime(&now)->tm_year; /* this year */
 
   xmas = soap_timegm(&tm);
 
-  if (xmas < *now)
+  if (xmas < now)
   {
     tm.tm_year++; /* xmas just passed, go to next year */
     xmas = soap_timegm(&tm);
   }
 
-  sec = difftime(xmas, *now);
+  sec = difftime(xmas, now);
   
   if (soap_call_ns2__div(csoap, NULL, NULL, sec, 86400, &days))
   {

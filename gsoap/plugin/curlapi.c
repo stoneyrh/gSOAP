@@ -335,13 +335,12 @@ soap_curl(struct soap *soap, struct soap_plugin *p, void *arg)
   p->data = (void*)SOAP_MALLOC(soap, sizeof(struct soap_curl_data));
   p->fcopy = NULL;
   p->fdelete = soap_curl_delete;
-  if (p->data)
+  if (!p->data)
+    return SOAP_EOM;
+  if (soap_curl_init(soap, (struct soap_curl_data*)p->data, (CURL*)arg))
   {
-    if (soap_curl_init(soap, (struct soap_curl_data*)p->data, (CURL*)arg))
-    {
-      SOAP_FREE(soap, p->data);
-      return SOAP_EOM;
-    }
+    SOAP_FREE(soap, p->data);
+    return SOAP_EOM;
   }
   return SOAP_OK;
 }

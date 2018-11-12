@@ -3659,9 +3659,9 @@ soap_wsrm_check_fault(struct soap *soap, enum wsrm__FaultCodes *fault, const cha
 {
   if (soap->error && soap->fault && soap->fault->SOAP_ENV__Code)
   {
-    const char *code = soap_check_faultsubcode(soap);
+    const char *code = soap_fault_subcode(soap);
     if (info)
-      *info = soap_check_faultdetail(soap);
+      *info = soap_fault_detail(soap);
     if (code)
       return soap_s2wsrm__FaultCodes(soap, code, fault);
   }
@@ -3926,13 +3926,12 @@ soap_wsrm(struct soap *soap, struct soap_plugin *p, void *arg)
   /* register the destructor */
   p->fdelete = soap_wsrm_delete;
   /* if OK then initialize */
-  if (p->data)
+  if (!p->data)
+    return SOAP_EOM;
+  if (soap_wsrm_init(soap, (struct soap_wsrm_data*)p->data, arg))
   {
-    if (soap_wsrm_init(soap, (struct soap_wsrm_data*)p->data, arg))
-    {
-      SOAP_FREE(soap, p->data); /* error: could not init */
-      return SOAP_EOM; /* return error */
-    }
+    SOAP_FREE(soap, p->data); /* error: could not init */
+    return SOAP_EOM; /* return error */
   }
   return SOAP_OK;
 }
@@ -3989,6 +3988,8 @@ soap_wsrm_copy(struct soap *soap, struct soap_plugin *p, struct soap_plugin *q)
   (void)soap;
   /* create local plugin data */
   p->data = (void*)SOAP_MALLOC(soap, sizeof(struct soap_wsrm_data));
+  if (!p->data)
+    return SOAP_EOM;
   (void)soap_memcpy((void*)p->data, sizeof(struct soap_wsrm_data), (const void*)q->data, sizeof(struct soap_wsrm_data));
   ((struct soap_wsrm_data*)p->data)->state = SOAP_WSRM_OFF;
   ((struct soap_wsrm_data*)p->data)->seq = NULL;
@@ -4009,8 +4010,7 @@ static void
 soap_wsrm_delete(struct soap *soap, struct soap_plugin *p)
 {
   (void)soap;
-  if (p->data)
-    SOAP_FREE(soap, p->data);
+  SOAP_FREE(soap, p->data);
 }
 
 /******************************************************************************\

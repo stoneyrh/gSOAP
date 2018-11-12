@@ -150,7 +150,7 @@ Versions 1.3.2 and 2.1.2 (4/15/2002)
 Versions 1.3.3 and 2.1.3 (4/27/2002)
 ---
 - Added `mustUnderstand` declaration qualifier for SOAP Header processing.
-- Added `soap.actor` attribute for SOAP Header processing.
+- Added `soap::actor` attribute for SOAP Header processing.
 - Added method-header-part directive to identify methods with header message associations (WSDL requirement).
 - Added bitmask (de)serialization.
 - Added FastCGI support.
@@ -984,7 +984,7 @@ Version 2.8.27 (12/7/2015)
 Version 2.8.28 (02/01/2016)
 ---
 - Added new **domcpp** code generator that takes an XML sample document and renders it in XML DOM API code for C or C++. Can also convert XPath to XML DOM API code with option `-p`. The domcpp tool is located in `gsoap/samples/dom` with the XML DOM samples.
-- Added many new API functions to a fully redisigned XML DOM API v5 for C and C++ with new DOM API documentation.  The redesigned DOM API v5 is mostly backward compatible to DOM API v4, but with DOM string `data` members changed to `text` members.  Many API functions are added to define a clean interface without having to use the DOM structure data members.  The `soap_dom_next_element()` function now takes a second parameter that is an element pointer to stop deep traversal at (use NULL for old behavior).  See updated [XML DOM and XPath](https://www.genivia.com/doc/dom/html) documentation for details.
+- Added many new API functions to a fully redesigned XML DOM API v5 for C and C++ with new DOM API documentation.  The redesigned DOM API v5 is mostly backward compatible to DOM API v4, but with DOM string `data` members changed to `text` members.  Many API functions are added to define a clean interface without having to use the DOM structure data members.  The `soap_dom_next_element()` function now takes a second parameter that is an element pointer to stop deep traversal at (use NULL for old behavior).  See updated [XML DOM and XPath](https://www.genivia.com/doc/dom/html) documentation for details.
 - Added C serialization to/from strings with new C `soap` struct members `const char *soap::is` input string to parse from and `const char **soap:os` pointer to string that is set by the engine to point to the output.  Note that C++ code is unchanged and the `soap::is` and `soap::os` are still members pointers to `istream` and `ostream` streams (use `std::stringstream` for input/output from/to strings).
 - Added JSON API C function `set_size` to set/change array sizes and JSON API C function `set_struct` to create an empty JSON object.
 - Improved jsoncpp command line tool to generate JSONPath C code and improved overall to generate more compact code.
@@ -1033,7 +1033,7 @@ Version 2.8.31 (05/1/2016)
 ---
 
 - Added engine context `sndbuf` and `rcvbuf` attributes to (re)set `setsockopt` values for `SO_SNDBUF` and `SO_RCVBUF`, respectively.  Default value is `SOAP_BUFLEN`, same as engine's internal message buffer size.  Setting to zero forces the engine to omit the `setsockopt` `SO_SNDBUF` and `SOAP_RCVBUF` calls, which for example can be used to enable TCP buffer autotuning with Linux (Linux 2.4 and up).
-- Added "http://userid:passwd@domain/path" userinfo syntax for HTTP Basic and NTLM authentication, i.e. this automatically sets `soap->userid` and `soap->passwd` from the userinfo and also sets `soap->authrealm` to the domain if not already set. HTTP Basic authentication is not recommended without secure https. For NTLM authentication, set `soap->ntlm_challenge = ""` to proceed immediately with NTLM instead of Basic authentication.
+- Added "http://userid:passwd@domain/path" userinfo syntax for HTTP Basic and NTLM authentication, i.e. this automatically sets `soap::userid` and `soap::passwd` from the userinfo and also sets `soap::authrealm` to the domain if not already set. HTTP Basic authentication is not recommended without secure https. For NTLM authentication, set `soap::ntlm_challenge = ""` to proceed immediately with NTLM instead of Basic authentication.
 - Improved strengthening of `SOAP_XML_STRICT` and the soapcpp2 `-s` flag to reject all extra (non-deserializable) XML and character data by the parser and deserializers.
 - Improved client-side certificate checking (DNS or IP, and wildcards).
 - Improved soapcpp2 option `-t` and `//gsoap ns schema typed: y` directive that force the addition of *`xsi:type`* attributes to XML content except for types whose type names are prefixed with an underscore (i.e. root elements w/o type as per wsdl2h data bindings rules).
@@ -1087,7 +1087,7 @@ Version 2.8.35 (09/19/2016)
 - Added auto-generation of new C functions `T * soap_new_T(struct soap*, int n)` to allocate and default initialize one (or more with `n>1`) value(s) of type `T`. Uses `soap_malloc(soap, n * sizeof(T))` and applies `soap_default_T(struct soap*, T*)` to each value allocated.
 - Added WS-Trust wst extensible framework with SAML 1.0/2.0 tokens, PSHA1 algorithm, and an example WS-Trust client and server to request, create, sign, and verify SAML 2.0 tokens.
 - Changed `soap_new_block` to `soap_alloc_block` in stdsoap2.h and in the gsoap libs to prevent potential name clashes with generated code for a `block` type.
-- Improved UDP connectivity with WS-Discovery to reuse current socket connection, i.e. preventing premature socket close when `soap->socket` is the `soap->master` socket.
+- Improved UDP connectivity with WS-Discovery to reuse current socket connection, i.e. preventing premature socket close when `soap::socket` is the `soap::master` socket.
 - Fixed wsdl2h option `-u` to prevent a deserialization issue that occurs in the specific case of an *`<xs:any>`* within a *`<xs:choice maxOccurs="unbounded">`*.
 
 Version 2.8.36 (09/21/2016)
@@ -1152,7 +1152,7 @@ Version 2.8.44 upd (03/04/2017)
 
 - Improved windows portability and stability.
 - Fixed WS-Discovery `soap_wsdd_listen` memory cleanup on timeouts.
-- Fixed `soap->os` saved message string NUL termination (a problem in C code, not in C++).
+- Fixed `soap::os` saved message string NUL termination (a problem in C code, not in C++).
 - Fixed Cygwin and MinGW missing xlocale.h error.
 
 Version 2.8.45 upd (04/07/2017)
@@ -1166,7 +1166,7 @@ Version 2.8.46 (05/16/2017)
 ---
 
 - Improved WS-Trust API, updated import/wst.h, import/saml1.h, import/saml2.h and import/wsdd.h definitions.
-- Added `soap.client_interface` string to set the client IP address interface with `inet_pton()` (not generally available on windows).
+- Added `soap::client_interface` string to set the client IP address interface with `inet_pton()` (not generally available on windows).
 - Fixes for minor issues, improvements.
 
 Version 2.8.47 (06/07/2017)
@@ -1180,7 +1180,7 @@ Version 2.8.48 upd (06/21/2017)
 ---
 
 - Improved element and attribute `default` and `fixed` value validation.  Changed the code generation by wsdl2h slightly for optional elements with default values.  This fixes an issue when an optional element is omitted in XML and becomes indistinguishable from an empty element because in both cases a default value is assigned.  An omitted optional element has no default value.  New XML validation error codes `SOAP_FIXED` and `SOAP_EMPTY`.
-- Added `soap->transfer_timeout` max transfer timeout, to use in combination with `soap->send_timeout` and `soap->recv_timeout`.
+- Added `soap::transfer_timeout` max transfer timeout, to use in combination with `soap::send_timeout` and `soap::recv_timeout`.
 - Fixed a potential vulnerability that may be exposed with a large and specific XML message over 2 GB in size.  After receiving this 2 GB message, a buffer overflow can cause an open unsecured application to crash or malfunction.  Clients communicating with HTTPS with trusted servers are not affected.
 
 Version 2.8.49 upd (07/28/2017,07/28/2017)
@@ -1196,7 +1196,7 @@ Version 2.8.50 upd (07/23/2017,07/28/2017)
 ---
 
 - Added samples/atom Atom 1.0 XML REST example.
-- Added `soap->recv_maxlength` to change the limit on the length of messages received.  Default is 2GB max.  Greater lengths are possible, but at your own risk.  It is recommended for services deployed in uncontrolled environments to use the [Apache module](https://www.genivia.com/doc/apache/html/index.html) and [ISAPI extension](https://www.genivia.com/doc/isapi/html/index.html), see the gSOAP [tutorial](https://www.genivia.com/tutorials.html) and [documentation](https://www.genivia.com/docs.html).
+- Added `soap::recv_maxlength` to change the limit on the length of messages received.  Default is 2GB max.  Greater lengths are possible, but at your own risk.  It is recommended for services deployed in uncontrolled environments to use the [Apache module](https://www.genivia.com/doc/apache/html/index.html) and [ISAPI extension](https://www.genivia.com/doc/isapi/html/index.html), see the gSOAP [tutorial](https://www.genivia.com/tutorials.html) and [documentation](https://www.genivia.com/docs.html).
 - Removed client-side `SOAP_PURE_VIRTUAL` from `copy()` in the code generated by soapcpp2 for options `-i` and `-j`.
 - Updated memory deallocation of `soap_del_xsd__anyAttribute`.
 - Updated the callback function signatures of `fpost` and `fresponse`.
@@ -1250,7 +1250,7 @@ Version 2.8.55 (10/26/2017)
 Version 2.8.56 (12/07/2017)
 ---
 
-- Added new `soap::bind_v6only` context flag, replacing compile-time flag `WITH_IPV6_V6ONLY` (`soap->bind_v6only=1`) and `WITH_NO_IPV6_V6ONLY` (`soap->bind_v6only=0`).
+- Added new `soap::bind_v6only` context flag, replacing compile-time flag `WITH_IPV6_V6ONLY` (`soap::bind_v6only=1`) and `WITH_NO_IPV6_V6ONLY` (`soap::bind_v6only=0`).
 - Added wsdl2h option `-D` to make attribute members with default values optional by adding pointers to member types, so assigning a NULL to an attribute member is identical to assigning the default value, this flag does not affect deserializing from XML (i.e. the default value is set when attribute is missing).
 - Improved wsdl2h code generation for struct/class members with default/fixed values.
 - Improved JSON and XML-RPC C and C++ APIs.
@@ -1352,12 +1352,37 @@ Version 2.8.69 (7/18/2018)
 - Improved *`xs:redefine`* processing, fixing the remaining "circular group reference" warnings.
 - Improved XML sample message generation.
 
-Version 2.8.70 (8/27/2018) {#latest}
+Version 2.8.70 (8/27/2018)
 ---
 
 - Renewed the PEM files for the SSL examples included with gSOAP.
 - Updated `typemap.dat` for ONVIF and upgraded `wsdd10.h` (WS-Discovery 1.0 with WS-Addressing 2004/08) to `wsdd5.h` (WS-Discovery 1.0 with WS-Addressing 2005/08).
 - Fixed a deserialization issue with Qt `QString` used in a wrapper class (as `__item` member), when the wrapper class is used in a container, such as `std::vector`.
+
+Version 2.8.71 (11/12/2018) {#latest}
+---
+
+- Improved user guide and added API documentation modules.
+- Added TLSv3 support with OpenSSL 1.1.1.
+- Added `./configure --enable-ipv6-v6only` option to build the libraries with `-DWITH_IPV6_V6ONLY`
+- Added HTTP PATCH support.
+- Added `soap::bearer` string for HTTP authorization with bearer tokens, assign the token value at the client side, the string contains the token value at the server side.
+- Added `json_send_fault` to use in place of SOAP `soap_send_fault` calls, and `json_send_error` to use in place of SOAP `soap_sender_fault` calls.  Use `soap_send_fault` when an internal server-side error occurred and `soap_send_error` for the server to respond with an error message.
+- Updated SSL/TLS options for `soap_ssl_client_context` and `soap_ssl_server_context` to allow combinations of `SOAP_TLSv1_0`, `SOAP_TLSv1_1`, `SOAP_TLSv1_2`, `SOAP_TLSv1_3` protocols (v1.3 only available with OpenSSL 1.1.1 and greater), a change from the single TLS protocol flag.
+- Updated Apache mod gSOAP to set the client IP `soap::ip` and host `soap::host` values.
+- Improved `soap_response` with `SOAP_FILE` parameter: it is now possible to return a HTTP status code with `SOAP_FILE + code` which returns the given http status code (200 to 599) with the http content type.
+- Improved `json_call` performance.
+- Improved `soap_close_connection` enabled with `-DWITH_SELF_PIPE`.
+- Improved `soap_get_http_body` memory use.
+- Changed `soap_get_http_body` to return "" (empty string) when no HTTP body is detected instead of NULL, to distinguish receiving an empty HTTP body (returning "") from errors (returning NULL with `soap::error` set).
+- Changed Apache mod gSOAP `mod_gsoap.c` to use `RTLD_LOCAL` instead of `RTLD_GLOBAL` to permit multiple concurrent gSOAP modules to be loaded in Apache 2 with dlopen.
+- Renamed the `SOCKET_CLOSE_ON_EXIT` macro to `WITH_SOCKET_CLOSE_ON_EXIT`.
+- Renamed the `query` functions of the HTTP GET plugin gsoap/plugin/httpget.c to `soap_query`, `soap_query_key`, `soap_query_val`.
+- Renamed the `form` function of the HTTP POST form plugin gsoap/plugin/httpform.cto `soap_get_form`.
+- Fixed `-DWITH_INCLUDE_XLOCALE_H` and `configure` script: the problem caused build failures on Linux.  It is possible to force the use of `xlocale.h` with `./configure --enable-xlocale` but only use this when necessary, when `locale_t` is not declared.
+- Fixed C14N-related WS-Security signature issue introduced in 2.8.28, which in most cases made no difference but could lead to a signature validation failure.
+- Fixed soapcpp2 code generation issue for single- and multi-dimensional fixed-size arrays.
+- Fixed wsdl2h missing built-in XSD type when multiple WSDLs are imported.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -60,9 +60,9 @@ int aflag = 0;          /* when set, use value of SOAP Action to dispatch method
 int Aflag = 0;          /* when set, require SOAP Action to dispatch method at server side */
 int bflag = 0;          /* when set, serialize byte arrays char[N] as string */
 int eflag = 0;          /* when set, use SOAP RPC encoding by default */
-int Ecflag = 0;         /* when set, generate extra routines for data copying (soap_dup_X) */
-int Edflag = 0;         /* when set, generate extra routines for data deletion (soap_del_X) */
-int Etflag = 0;         /* when set, generate data traversal/walker routines */
+int Ecflag = 0;         /* when set, generate extra functions for data copying (soap_dup_X) */
+int Edflag = 0;         /* when set, generate extra functions for data deletion (soap_del_X) */
+int Etflag = 0;         /* when set, generate data traversal/walker functions */
 unsigned long fflag = 0;/* multi-file split for each bundle of -fN defs */
 int gflag = 0;          /* when set, generate XML sample messages in template format */
 int iflag = 0;          /* when set, generate new style proxy/object classes inherited from soap struct */
@@ -197,7 +197,7 @@ main(int argc, char **argv)
             break;
           case '?':
           case 'h':
-            fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-Ecdt] [-L] [-a] [-A] [-b] [-c|-c++|-c++11] [-d path] [-e] [-f N] [-g] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-l] [-m] [-n] [-p name] [-Q name] [-q name] [-r] [-s] [-t] [-u] [-V] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
+            fprintf(stderr, "Usage: soapcpp2 [-0|-1|-2] [-C|-S] [-T] [-Ecdt] [-L] [-A] [-a] [-b] [-c|-c++|-c++11] [-d path] [-e] [-f N] [-g] [-h] [-i] [-I path" SOAP_PATHSEP "path" SOAP_PATHSEP "...] [-l] [-m] [-n] [-p name] [-Q name] [-q name] [-r] [-s] [-t] [-u] [-V] [-v] [-w] [-x] [-y] [-z#] [infile]\n\n");
             fprintf(stderr, "\
 -1      generate SOAP 1.1 bindings\n\
 -2      generate SOAP 1.2 bindings\n\
@@ -205,12 +205,12 @@ main(int argc, char **argv)
 -C      generate client-side code only\n\
 -S      generate server-side code only\n\
 -T      generate server auto-test code\n\
--Ec     generate extra routines for deep copying\n\
--Ed     generate extra routines for deep deletion\n\
--Et     generate extra routines for data traversals with walker functions\n\
+-Ec     generate extra functions for deep copying\n\
+-Ed     generate extra functions for deep deletion\n\
+-Et     generate extra functions for data traversals with walker functions\n\
 -L      don't generate soapClientLib/soapServerLib\n\
--a      use SOAPAction with WS-Addressing to invoke server-side operations\n\
--A      require SOAPAction to invoke server-side operations\n\
+-A      require HTTP SOAPAction to invoke server-side operations\n\
+-a      use HTTP SOAPAction with WS-Addressing to invoke server-side operations\n\
 -b      serialize byte arrays char[N] as string\n\
 -c      generate C source code\n\
 -c++    generate C++ source code (default)\n\

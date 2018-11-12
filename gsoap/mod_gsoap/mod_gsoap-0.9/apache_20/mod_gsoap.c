@@ -232,7 +232,7 @@ SoapSharedLibrary_load(SoapSharedLibrary *This, apr_pool_t *pTempPool)
 
     }
 #else
-    const int nFlags = RTLD_LAZY | RTLD_GLOBAL;
+    const int nFlags = RTLD_LAZY | RTLD_LOCAL; /* RTLD_LOCAL allows multiple mod_gsoap modules to be concurrently loaded, was: RTLD_GLOBAL; */
 
     This->m_hLibrary = (void *)DLOPEN(This->m_pszPath, nFlags);
     pszError = dlerror();
@@ -331,7 +331,8 @@ SoapSharedLibraries_addLibrary(SoapSharedLibraries *This, SoapSharedLibrary *pLi
     }
 }
 
-static const char * SoapSharedLibraries_getEntryPoints(SoapSharedLibraries *This, SoapSharedLibrary *pLib, apr_pool_t *pTempPool, request_rec *r)
+static const char * 
+SoapSharedLibraries_getEntryPoints(SoapSharedLibraries *This, SoapSharedLibrary *pLib, apr_pool_t *pTempPool, request_rec *r)
 {
     /*
      * now we also pass the request record 
@@ -797,6 +798,39 @@ frecv(struct soap *psoap, char *pBuf, apr_size_t len)
         r = pRqConf->r;
         if (!pRqConf->headers_received)
         {
+#if 0       /* useragent_ip is available since Apache 2.4 but preferred over client_ip */
+            char *s = r->useragent_ip;
+#else
+            char *s = r->connection ? r->connection->client_ip : NULL;
+#endif
+            psoap->ip = 0;
+            *psoap->host = '\0';
+            if (s)
+            {
+              int i;
+              soap_strcpy(psoap->host, sizeof(psoap->host), s);
+              if (strchr(s, '.'))
+              {
+                /* client IP is IPv4 formatted */
+                for (i = 0; i < 4 && *s; i++)
+                {
+                  psoap->ip = (psoap->ip << 8) + (unsigned int)soap_strtoul(s, &s, 10);
+                  if (*s)
+                    s++;
+                }
+              }
+#ifndef WIN32
+              else /* THIS BRANCH CAN BE REMOVED IF inet_pton() IS NOT AVAILABLE SUCH AS ON WINDOWS */
+              {
+                /* client IP is IPv6 formatted */
+                struct in6_addr result;
+                if (inet_pton(AF_INET6, s, &result) == 1)
+                  for (i = 0; i < 16; i++)
+                    psoap->ip6[i/4] = (psoap->ip6[i/4] << 8) + result.s6_addr[i];
+              }
+#endif
+            }
+
             apr_table_do(send_header_to_gsoap, psoap, r->headers_in, NULL);
             pRqConf->headers_received = TRUE;
         }
