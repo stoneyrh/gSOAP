@@ -3102,7 +3102,8 @@ generate_header(Table *t)
         if (!(p->info.sto & Sstatic))
           fprintf(fheader, "extern ");
         fprintf(fheader, "%s", c_storage(p->info.sto));
-        fprintf(fheader, "%s;", c_type_id(p->info.typ, p->sym->name));
+        fprintf(fheader, "%s", c_type_id(p->info.typ, p->sym->name));
+        fprintf(fheader, "%s;", c_init(p));
       }
     }
   }
@@ -12436,6 +12437,7 @@ c_init_a(Entry *e, const char *a)
       case Tint:
       case Tuint:
       case Ttime:
+      case Tsize:
         sprintf(buf, "%s" SOAP_LONG_FORMAT, a, e->info.val.i);
         break;
       case Tlong:
@@ -12448,7 +12450,6 @@ c_init_a(Entry *e, const char *a)
         sprintf(buf, "%s" SOAP_LONG_FORMAT "LL", a, e->info.val.i);
         break;
       case Tullong:
-      case Tsize:
         sprintf(buf, "%s" SOAP_LONG_FORMAT "ULL", a, e->info.val.i);
         break;
       case Tfloat:

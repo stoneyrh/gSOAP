@@ -6697,7 +6697,7 @@ soap_accept(struct soap *soap)
       memset(&hints, 0, sizeof(struct addrinfo));
       hints.ai_family = PF_UNSPEC;
       hints.ai_socktype = SOCK_STREAM;
-      hints.ai_flags = AI_DEFAULT | AI_NUMERICHOST | AI_NUMERICSERV;
+      hints.ai_flags = AI_NUMERICHOST | AI_NUMERICSERV;
       getnameinfo(&soap->peer.addr, n, soap->host, sizeof(soap->host), port, sizeof(port), NI_NUMERICHOST | NI_NUMERICSERV);
       soap->ip = 0;
       soap->ip6[0] = 0;

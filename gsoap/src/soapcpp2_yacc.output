@@ -136,7 +136,7 @@ Grammar
 
    88 farg: tspec ptrs arg
 
-   89 arg: arrayck
+   89 arg: arrayck init
    90    | ID arrayck tag occurs init
 
    91 sym: ID tag init
@@ -662,7 +662,7 @@ arrayck (179)
 brinit (180)
     on left: 220 221, on right: 36
 init (181)
-    on left: 222 223 224, on right: 90 91 220
+    on left: 222 223 224, on right: 89 90 91 220
 tag (182)
     on left: 225 226, on right: 36 90 91
 occurs (183)
@@ -2260,8 +2260,10 @@ State 145
 
     ID   reduce using rule 100 (tspec)
     ','  reduce using rule 100 (tspec)
+    '='  reduce using rule 100 (tspec)
     AN   reduce using rule 100 (tspec)
     '&'  reduce using rule 100 (tspec)
+    EQ   reduce using rule 100 (tspec)
     '>'  reduce using rule 100 (tspec)
     '*'  reduce using rule 100 (tspec)
     '['  reduce using rule 100 (tspec)
@@ -2335,8 +2337,10 @@ State 146
 
     ID   reduce using rule 99 (tspec)
     ','  reduce using rule 99 (tspec)
+    '='  reduce using rule 99 (tspec)
     AN   reduce using rule 99 (tspec)
     '&'  reduce using rule 99 (tspec)
+    EQ   reduce using rule 99 (tspec)
     '>'  reduce using rule 99 (tspec)
     '*'  reduce using rule 99 (tspec)
     '['  reduce using rule 99 (tspec)
@@ -7486,9 +7490,14 @@ State 420
 
 State 421
 
-   89 arg: arrayck .
+   89 arg: arrayck . init
 
-    $default  reduce using rule 89 (arg)
+    '='  shift, and go to state 202
+    EQ   shift, and go to state 203
+
+    $default  reduce using rule 222 (init)
+
+    init  go to state 435
 
 
 State 422
@@ -7511,7 +7520,7 @@ State 422
     '~'     shift, and go to state 272
     '('     shift, and go to state 273
 
-    cexp  go to state 435
+    cexp  go to state 436
     oexp  go to state 275
     obex  go to state 276
     aexp  go to state 277
@@ -7549,18 +7558,18 @@ State 426
   234       | nullptr patt . value minmax value
   235       | nullptr patt . max value
 
-    LNG  shift, and go to state 436
-    DBL  shift, and go to state 437
-    CHR  shift, and go to state 438
-    ':'  shift, and go to state 439
-    '<'  shift, and go to state 440
-    '+'  shift, and go to state 441
-    '-'  shift, and go to state 442
+    LNG  shift, and go to state 437
+    DBL  shift, and go to state 438
+    CHR  shift, and go to state 439
+    ':'  shift, and go to state 440
+    '<'  shift, and go to state 441
+    '+'  shift, and go to state 442
+    '-'  shift, and go to state 443
 
     $default  reduce using rule 232 (bounds)
 
-    value  go to state 443
-    max    go to state 444
+    value  go to state 444
+    max    go to state 445
 
 
 State 427
@@ -7602,7 +7611,7 @@ State 432
 
   209 abstract: '=' . LNG
 
-    LNG  shift, and go to state 445
+    LNG  shift, and go to state 446
 
 
 State 433
@@ -7620,161 +7629,168 @@ State 434
 
     $default  reduce using rule 225 (tag)
 
-    tag  go to state 446
+    tag  go to state 447
 
 
 State 435
 
-  221 brinit: '{' cexp . '}'
+   89 arg: arrayck init .
 
-    '}'  shift, and go to state 447
+    $default  reduce using rule 89 (arg)
 
 
 State 436
+
+  221 brinit: '{' cexp . '}'
+
+    '}'  shift, and go to state 448
+
+
+State 437
 
   241 value: LNG .
 
     $default  reduce using rule 241 (value)
 
 
-State 437
+State 438
 
   240 value: DBL .
 
     $default  reduce using rule 240 (value)
 
 
-State 438
+State 439
 
   242 value: CHR .
 
     $default  reduce using rule 242 (value)
 
 
-State 439
+State 440
 
   254 max: ':' .
   255    | ':' . '<'
 
-    '<'  shift, and go to state 448
+    '<'  shift, and go to state 449
 
     $default  reduce using rule 254 (max)
 
 
-State 440
+State 441
 
   256 max: '<' .
 
     $default  reduce using rule 256 (max)
 
 
-State 441
+State 442
 
   243 value: '+' . value
 
-    LNG  shift, and go to state 436
-    DBL  shift, and go to state 437
-    CHR  shift, and go to state 438
-    '+'  shift, and go to state 441
-    '-'  shift, and go to state 442
-
-    value  go to state 449
-
-
-State 442
-
-  244 value: '-' . value
-
-    LNG  shift, and go to state 436
-    DBL  shift, and go to state 437
-    CHR  shift, and go to state 438
-    '+'  shift, and go to state 441
-    '-'  shift, and go to state 442
+    LNG  shift, and go to state 437
+    DBL  shift, and go to state 438
+    CHR  shift, and go to state 439
+    '+'  shift, and go to state 442
+    '-'  shift, and go to state 443
 
     value  go to state 450
 
 
 State 443
 
-  233 bounds: nullptr patt value . min
-  234       | nullptr patt value . minmax value
+  244 value: '-' . value
 
-    ':'  shift, and go to state 451
-    '<'  shift, and go to state 452
+    LNG  shift, and go to state 437
+    DBL  shift, and go to state 438
+    CHR  shift, and go to state 439
+    '+'  shift, and go to state 442
+    '-'  shift, and go to state 443
 
-    $default  reduce using rule 245 (min)
-
-    min     go to state 453
-    minmax  go to state 454
+    value  go to state 451
 
 
 State 444
 
-  235 bounds: nullptr patt max . value
+  233 bounds: nullptr patt value . min
+  234       | nullptr patt value . minmax value
 
-    LNG  shift, and go to state 436
-    DBL  shift, and go to state 437
-    CHR  shift, and go to state 438
-    '+'  shift, and go to state 441
-    '-'  shift, and go to state 442
+    ':'  shift, and go to state 452
+    '<'  shift, and go to state 453
 
-    value  go to state 455
+    $default  reduce using rule 245 (min)
+
+    min     go to state 454
+    minmax  go to state 455
 
 
 State 445
+
+  235 bounds: nullptr patt max . value
+
+    LNG  shift, and go to state 437
+    DBL  shift, and go to state 438
+    CHR  shift, and go to state 439
+    '+'  shift, and go to state 442
+    '-'  shift, and go to state 443
+
+    value  go to state 456
+
+
+State 446
 
   209 abstract: '=' LNG .
 
     $default  reduce using rule 209 (abstract)
 
 
-State 446
+State 447
 
    90 arg: ID arrayck tag . occurs init
 
-    LNG  shift, and go to state 456
-    ':'  shift, and go to state 457
+    LNG  shift, and go to state 457
+    ':'  shift, and go to state 458
 
     $default  reduce using rule 227 (occurs)
 
-    occurs  go to state 458
+    occurs  go to state 459
 
 
-State 447
+State 448
 
   221 brinit: '{' cexp '}' .
 
     $default  reduce using rule 221 (brinit)
 
 
-State 448
+State 449
 
   255 max: ':' '<' .
 
     $default  reduce using rule 255 (max)
 
 
-State 449
+State 450
 
   243 value: '+' value .
 
     $default  reduce using rule 243 (value)
 
 
-State 450
+State 451
 
   244 value: '-' value .
 
     $default  reduce using rule 244 (value)
 
 
-State 451
+State 452
 
   246 min: ':' .
   249 minmax: ':' .
   251       | ':' . '<'
 
-    '<'  shift, and go to state 459
+    '<'  shift, and go to state 460
 
     LNG       reduce using rule 249 (minmax)
     DBL       reduce using rule 249 (minmax)
@@ -7784,7 +7800,7 @@ State 451
     $default  reduce using rule 246 (min)
 
 
-State 452
+State 453
 
   247 min: '<' . ':'
   248    | '<' .
@@ -7792,7 +7808,7 @@ State 452
   252       | '<' . ':' '<'
   253       | '<' .
 
-    ':'  shift, and go to state 460
+    ':'  shift, and go to state 461
 
     LNG       reduce using rule 253 (minmax)
     DBL       reduce using rule 253 (minmax)
@@ -7802,52 +7818,52 @@ State 452
     $default  reduce using rule 248 (min)
 
 
-State 453
+State 454
 
   233 bounds: nullptr patt value min .
 
     $default  reduce using rule 233 (bounds)
 
 
-State 454
+State 455
 
   234 bounds: nullptr patt value minmax . value
 
-    LNG  shift, and go to state 436
-    DBL  shift, and go to state 437
-    CHR  shift, and go to state 438
-    '+'  shift, and go to state 441
-    '-'  shift, and go to state 442
+    LNG  shift, and go to state 437
+    DBL  shift, and go to state 438
+    CHR  shift, and go to state 439
+    '+'  shift, and go to state 442
+    '-'  shift, and go to state 443
 
-    value  go to state 461
+    value  go to state 462
 
 
-State 455
+State 456
 
   235 bounds: nullptr patt max value .
 
     $default  reduce using rule 235 (bounds)
 
 
-State 456
+State 457
 
   228 occurs: LNG .
   229       | LNG . ':'
   230       | LNG . ':' LNG
 
-    ':'  shift, and go to state 462
+    ':'  shift, and go to state 463
 
     $default  reduce using rule 228 (occurs)
 
 
-State 457
+State 458
 
   231 occurs: ':' . LNG
 
-    LNG  shift, and go to state 463
+    LNG  shift, and go to state 464
 
 
-State 458
+State 459
 
    90 arg: ID arrayck tag occurs . init
 
@@ -7856,23 +7872,23 @@ State 458
 
     $default  reduce using rule 222 (init)
 
-    init  go to state 464
+    init  go to state 465
 
 
-State 459
+State 460
 
   251 minmax: ':' '<' .
 
     $default  reduce using rule 251 (minmax)
 
 
-State 460
+State 461
 
   247 min: '<' ':' .
   250 minmax: '<' ':' .
   252       | '<' ':' . '<'
 
-    '<'  shift, and go to state 465
+    '<'  shift, and go to state 466
 
     LNG       reduce using rule 250 (minmax)
     DBL       reduce using rule 250 (minmax)
@@ -7882,45 +7898,45 @@ State 460
     $default  reduce using rule 247 (min)
 
 
-State 461
+State 462
 
   234 bounds: nullptr patt value minmax value .
 
     $default  reduce using rule 234 (bounds)
 
 
-State 462
+State 463
 
   229 occurs: LNG ':' .
   230       | LNG ':' . LNG
 
-    LNG  shift, and go to state 466
+    LNG  shift, and go to state 467
 
     $default  reduce using rule 229 (occurs)
 
 
-State 463
+State 464
 
   231 occurs: ':' LNG .
 
     $default  reduce using rule 231 (occurs)
 
 
-State 464
+State 465
 
    90 arg: ID arrayck tag occurs init .
 
     $default  reduce using rule 90 (arg)
 
 
-State 465
+State 466
 
   252 minmax: '<' ':' '<' .
 
     $default  reduce using rule 252 (minmax)
 
 
-State 466
+State 467
 
   230 occurs: LNG ':' LNG .
 

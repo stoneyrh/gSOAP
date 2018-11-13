@@ -3721,11 +3721,12 @@ A more in-depth presentation of C/C++ XML data bindings in gSOAP is documented i
 
 🔝 [Back to table of contents](#)
 
-### Mapping XML schema to C/C++ with wsdl2h  {#wsdl2h}
+### Converting WSDL, WADL, and XML schema to C/C++ with wsdl2h  {#wsdl2h}
 
-The wsdl2h tool takes WSDL and XSD files or URLs to WSDL and XSD and generates an interface header file with the command:
+The wsdl2h tool takes WSDL, WADL, and XSD files or URLs to WSDL, WADL, and XSD
+and generates an interface header file with the command:
 
-     wsdl2h [options] WSDL and XSD files or URLs...
+     wsdl2h [options] WSDL WADL and XSD files or URLs...
 
 The WSDL 1.1 and 2.0 standards are supported and WADL. If you have any trouble
 with wsdl2h being able to process WSDLs and XSD files or URLs, then please

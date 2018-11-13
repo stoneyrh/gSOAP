@@ -99,7 +99,8 @@ static void       mkscope(Table*, int),
 static int        integer(Tnode*),
                   real(Tnode*),
                   numeric(Tnode*);
-static void       add_soap(void),
+static void       set_value(Entry *p, Tnode *t, Node *n),
+                  add_soap(void),
                   add_XML(void),
                   add_qname(void),
                   add_header(void),
@@ -409,6 +410,8 @@ dclr    : ptrs ID arrayck tag bounds brinit
                                 p->info.typ->pattern = $3.typ->pattern;
                               }
                             }
+                            if ($6.hasval)
+                              set_value(p, $3.typ, &$6);
                             $2->token = TYPE;
                           }
                           else
@@ -418,123 +421,9 @@ dclr    : ptrs ID arrayck tag bounds brinit
                             p->info.typ = $3.typ;
                             p->info.sto = (Storage)((int)$3.sto | permission);
                             if ($6.hasval)
-                            {
-                              Tnode *t = $3.typ;
-                              p->info.hasval = True;
-                              p->info.ptrval = False;
-                              p->info.fixed = $6.fixed;
-                              if (is_smart(t) || (t->type == Tpointer && !is_string(t) && !is_wstring(t)))
-                              {
-                                p->info.hasval = False;
-                                p->info.ptrval = True;
-                                t = t->ref;
-                              }
-                              switch (t->type)
-                              {
-                                case Tchar:
-                                case Tuchar:
-                                case Tshort:
-                                case Tushort:
-                                case Tint:
-                                case Tuint:
-                                case Tlong:
-                                case Tulong:
-                                case Tllong:
-                                case Tullong:
-                                case Tenum:
-                                case Tenumsc:
-                                case Ttime:
-                                  if ($6.typ->type == Tint ||
-                                      $6.typ->type == Tchar ||
-                                      $6.typ->type == Tenum ||
-                                      $6.typ->type == Tenumsc)
-                                  {
-                                    sp->val = p->info.val.i = $6.val.i;
-                                    if ((t->hasmin && t->imin > $6.val.i) ||
-                                        (t->hasmin && !t->incmin && t->imin == $6.val.i) ||
-                                        (t->hasmax && t->imax < $6.val.i) ||
-                                        (t->hasmax && !t->incmax && t->imax == $6.val.i))
-                                      semerror("initialization constant outside value range");
-                                  }
-                                  else
-                                  {
-                                    semerror("type error in initialization constant");
-                                    p->info.hasval = False;
-                                    p->info.ptrval = False;
-                                  }
-                                  break;
-                                case Tfloat:
-                                case Tdouble:
-                                case Tldouble:
-                                  if ($6.typ->type == Tfloat ||
-                                      $6.typ->type == Tdouble ||
-                                      $6.typ->type == Tldouble)
-                                  {
-                                    p->info.val.r = $6.val.r;
-                                    if ((t->hasmin && t->rmin > $6.val.r) ||
-                                        (t->hasmin && !t->incmin && t->rmin == $6.val.r) ||
-                                        (t->hasmax && t->rmax < $6.val.r) ||
-                                        (t->hasmax && !t->incmax && t->rmax == $6.val.r))
-                                      semerror("initialization constant outside value range");
-                                  }
-                                  else if ($6.typ->type == Tint)
-                                  {
-                                    p->info.val.r = (double)$6.val.i;
-                                    if ((t->hasmin && t->imin > $6.val.i) ||
-                                        (t->hasmin && !t->incmin && t->imin == $6.val.i) ||
-                                        (t->hasmax && t->imax < $6.val.i) ||
-                                        (t->hasmax && !t->incmax && t->imax == $6.val.i))
-                                      semerror("initialization constant outside value range");
-                                  }
-                                  else
-                                  {
-                                    semerror("type error in initialization constant");
-                                    p->info.hasval = False;
-                                    p->info.ptrval = False;
-                                  }
-                                  break;
-                                default:
-                                  if (t->type == Tpointer &&
-                                      (((Tnode*)t->ref)->type == Tchar ||
-                                       ((Tnode*)t->ref)->type == Twchar) &&
-                                      $6.typ->type == Tpointer &&
-                                      ((Tnode*)$6.typ->ref)->type == Tchar)
-                                    p->info.val.s = $6.val.s;
-                                  else if (bflag &&
-                                      t->type == Tarray &&
-                                      ((Tnode*)t->ref)->type == Tchar &&
-                                      $6.typ->type == Tpointer &&
-                                      ((Tnode*)$6.typ->ref)->type == Tchar)
-                                  {
-                                    if (t->width / ((Tnode*)t->ref)->width - 1 < (int)strlen($6.val.s))
-                                    {
-                                      semerror("char[] initialization constant too long");
-                                      p->info.val.s = "";
-                                    }
-                                    else
-                                    {
-                                      p->info.val.s = $6.val.s;
-                                    }
-
-                                  }
-                                  else if (t->id == lookup("std::string") ||
-                                      t->id == lookup("std::wstring"))
-                                  {
-                                    p->info.val.s = $6.val.s;
-                                  }
-                                  else
-                                  {
-                                    semerror("type error in initialization constant");
-                                    p->info.hasval = False;
-                                    p->info.ptrval = False;
-                                  }
-                                  break;
-                              }
-                            }
+                              set_value(p, $3.typ, &$6);
                             else
-                            {
                               p->info.val.i = sp->val;
-                            }
                             if ($5.minOccurs < 0)
                             {
                               if ($6.hasval ||
@@ -778,7 +667,7 @@ fargs   : farg          { }
 farg    : tspec ptrs arg
                         { }
         ;
-arg     : arrayck       {
+arg     : arrayck init {
                           if (sp->table->level != PARAM)
                             p = enter(sp->table, gensymidx("param", (int)++sp->val));
                           else if (eflag || zflag == 0 || zflag > 3)
@@ -790,6 +679,8 @@ arg     : arrayck       {
                           p->info.typ = $1.typ;
                           p->info.sto = $1.sto;
                           p->info.offset = sp->offset;
+                          if ($2.hasval)
+                            set_value(p, $1.typ, &$2);
                           if (((int)$1.sto & (int)Sextern))
                             p->level = GLOBAL;
                           else if (sp->grow)
@@ -829,104 +720,9 @@ arg     : arrayck       {
                             p->info.minOccurs = $4.minOccurs;
                           }
                           p->info.maxOccurs = $4.maxOccurs;
-                          if ($5.hasval)
-                          {
-                            Tnode *t = $2.typ;
-                            p->info.hasval = True;
-                            p->info.ptrval = False;
-                            p->info.fixed = $5.fixed;
-                            if (is_smart(t) || (t->type == Tpointer && !is_string(t) && !is_wstring(t)))
-                            {
-                              p->info.hasval = False;
-                              p->info.ptrval = True;
-                              t = t->ref;
-                            }
-                            switch (t->type)
-                            {
-                              case Tchar:
-                              case Tuchar:
-                              case Tshort:
-                              case Tushort:
-                              case Tint:
-                              case Tuint:
-                              case Tlong:
-                              case Tulong:
-                              case Tenum:
-                              case Tenumsc:
-                              case Ttime:
-                                if ($5.typ->type == Tint ||
-                                    $5.typ->type == Tchar ||
-                                    $5.typ->type == Tenum ||
-                                    $5.typ->type == Tenumsc)
-                                {
-                                  sp->val = p->info.val.i = $5.val.i;
-                                  if ((t->hasmin && t->imin > $5.val.i) ||
-                                      (t->hasmin && !t->incmin && t->imin == $5.val.i) ||
-                                      (t->hasmax && t->imax < $5.val.i) ||
-                                      (t->hasmax && !t->incmax && t->imax == $5.val.i))
-                                    semerror("initialization constant outside value range");
-                                }
-                                else
-                                {
-                                  semerror("type error in initialization constant");
-                                  p->info.hasval = False;
-                                  p->info.ptrval = False;
-                                }
-                                break;
-                              case Tfloat:
-                              case Tdouble:
-                              case Tldouble:
-                                if ($5.typ->type == Tfloat ||
-                                    $5.typ->type == Tdouble ||
-                                    $5.typ->type == Tldouble)
-                                {
-                                  p->info.val.r = $5.val.r;
-                                  if ((t->hasmin && t->rmin > $5.val.r) ||
-                                      (t->hasmin && !t->incmin && t->rmin == $5.val.r) ||
-                                      (t->hasmax && t->rmax < $5.val.r) ||
-                                      (t->hasmax && !t->incmax && t->rmax == $5.val.r))
-                                    semerror("initialization constant outside value range");
-                                }
-                                else if ($5.typ->type == Tint)
-                                {
-                                  p->info.val.r = (double)$5.val.i;
-                                  if ((t->hasmin && t->imin > $5.val.i) ||
-                                      (t->hasmin && !t->incmin && t->imin == $5.val.i) ||
-                                      (t->hasmax && t->imax < $5.val.i) ||
-                                      (t->hasmax && !t->incmax && t->imax == $5.val.i))
-                                    semerror("initialization constant outside value range");
-                                }
-                                else
-                                {
-                                  semerror("type error in initialization constant");
-                                  p->info.hasval = False;
-                                  p->info.ptrval = False;
-                                }
-                                break;
-                              default:
-                                if (t->type == Tpointer &&
-                                    (((Tnode*)t->ref)->type == Tchar ||
-                                     ((Tnode*)t->ref)->type == Twchar) &&
-                                    $5.typ->type == Tpointer &&
-                                    ((Tnode*)$5.typ->ref)->type == Tchar)
-                                {
-                                  p->info.val.s = $5.val.s;
-                                }
-                                else if (t->id == lookup("std::string") ||
-                                    t->id == lookup("std::wstring"))
-                                {
-                                  p->info.val.s = $5.val.s;
-                                }
-                                else
-                                {
-                                  semerror("type error in initialization constant");
-                                  p->info.hasval = False;
-                                  p->info.ptrval = False;
-                                }
-                                break;
-                            }
-                          }
                           p->info.offset = sp->offset;
+                          if ($5.hasval)
+                            set_value(p, $2.typ, &$5);
                           if (((int)$2.sto & (int)Sextern))
                             p->level = GLOBAL;
                           else if (sp->grow)
@@ -2678,6 +2474,124 @@ static int
 numeric(Tnode *typ)
 {
   return integer(typ) || real(typ);
+}
+
+static void
+set_value(Entry *p, Tnode *t, Node *n)
+{
+  p->info.hasval = True;
+  p->info.ptrval = False;
+  p->info.fixed = n->fixed;
+  if (is_smart(t) || (t->type == Tpointer && !is_string(t) && !is_wstring(t)))
+  {
+    p->info.hasval = False;
+    p->info.ptrval = True;
+    t = t->ref;
+  }
+  switch (t->type)
+  {
+    case Tchar:
+    case Tuchar:
+    case Tshort:
+    case Tushort:
+    case Tint:
+    case Tuint:
+    case Tlong:
+    case Tulong:
+    case Tllong:
+    case Tullong:
+    case Tenum:
+    case Tenumsc:
+    case Ttime:
+    case Tsize:
+      if (n->typ->type == Tint ||
+          n->typ->type == Tchar ||
+          n->typ->type == Tenum ||
+          n->typ->type == Tenumsc)
+      {
+        sp->val = p->info.val.i = n->val.i;
+        if ((t->hasmin && t->imin > n->val.i) ||
+            (t->hasmin && !t->incmin && t->imin == n->val.i) ||
+            (t->hasmax && t->imax < n->val.i) ||
+            (t->hasmax && !t->incmax && t->imax == n->val.i))
+          semerror("initialization constant outside value range");
+      }
+      else
+      {
+        semerror("type error in initialization constant");
+        p->info.hasval = False;
+        p->info.ptrval = False;
+      }
+      break;
+    case Tfloat:
+    case Tdouble:
+    case Tldouble:
+      if (n->typ->type == Tfloat ||
+          n->typ->type == Tdouble ||
+          n->typ->type == Tldouble)
+      {
+        p->info.val.r = n->val.r;
+        if ((t->hasmin && t->rmin > n->val.r) ||
+            (t->hasmin && !t->incmin && t->rmin == n->val.r) ||
+            (t->hasmax && t->rmax < n->val.r) ||
+            (t->hasmax && !t->incmax && t->rmax == n->val.r))
+          semerror("initialization constant outside value range");
+      }
+      else if (n->typ->type == Tint)
+      {
+        p->info.val.r = (double)n->val.i;
+        if ((t->hasmin && t->imin > n->val.i) ||
+            (t->hasmin && !t->incmin && t->imin == n->val.i) ||
+            (t->hasmax && t->imax < n->val.i) ||
+            (t->hasmax && !t->incmax && t->imax == n->val.i))
+          semerror("initialization constant outside value range");
+      }
+      else
+      {
+        semerror("type error in initialization constant");
+        p->info.hasval = False;
+        p->info.ptrval = False;
+      }
+      break;
+    default:
+      if (t->type == Tpointer &&
+          (((Tnode*)t->ref)->type == Tchar ||
+           ((Tnode*)t->ref)->type == Twchar) &&
+          n->typ->type == Tpointer &&
+          ((Tnode*)n->typ->ref)->type == Tchar)
+      {
+        p->info.val.s = n->val.s;
+      }
+      else if (bflag &&
+               t->type == Tarray &&
+               ((Tnode*)t->ref)->type == Tchar &&
+               n->typ->type == Tpointer &&
+               ((Tnode*)n->typ->ref)->type == Tchar)
+      {
+        if (t->width / ((Tnode*)t->ref)->width - 1 < (int)strlen(n->val.s))
+        {
+          semerror("char[] initialization constant too long");
+          p->info.val.s = "";
+        }
+        else
+        {
+          p->info.val.s = n->val.s;
+        }
+
+      }
+      else if (t->id == lookup("std::string") ||
+               t->id == lookup("std::wstring"))
+      {
+        p->info.val.s = n->val.s;
+      }
+      else
+      {
+        semerror("type error in initialization constant");
+        p->info.hasval = False;
+        p->info.ptrval = False;
+      }
+      break;
+  }
 }
 
 /**************************************\
