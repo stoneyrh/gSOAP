@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 
 int main(int argc, char **argv)
 {
-  struct soap *ctx = soap_new1(SOAP_XML_STRICT);
+  struct soap *ctx = soap_new1(SOAP_XML_INDENT | SOAP_XML_STRICT);
   CURL *curl;
   struct Person p;
 
@@ -60,6 +60,9 @@ int main(int argc, char **argv)
   curl_global_init(CURL_GLOBAL_ALL);
   /* create curl handle and set options */
   curl = curl_easy_init();
+  /* optionally use chunking (SOAP_IO_CHUNK) and compression (SOAP_ENC_ZLIB)
+     though this will write_Person chunked and compressed too, so not enabled here */
+  /* soap_set_mode(ctx, SOAP_IO_CHUNK); */
   /* register the soap_curl plugin */
   soap_register_plugin_arg(ctx, soap_curl, curl);
   /* or you can simply call w/o setting up a curl handle (the plugin uses a temporary handle):
@@ -87,7 +90,6 @@ int main(int argc, char **argv)
   else
     soap_write_Person(ctx, &p); // default stdout
 
-  // need to change the content-type to text/xml
   printf("\nPOST\n");
   if (soap_POST_send_Person(ctx, "http://localhost:8080/person.xml", &p)
    || soap_POST_recv_Person(ctx, &p))

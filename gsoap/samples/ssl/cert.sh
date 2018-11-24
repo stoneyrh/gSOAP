@@ -4,9 +4,9 @@ if [ "$#" = 1 ]
 then
 
   echo "* This utility create certificate ${1}.pem signed by the root CA:"
-  echo "  ${1}cert.pem - public key (CA-signed certificate to be shared)"
-  echo "  ${1}key.pem  - private key (keep this secret)"
-  echo "  ${1}.pem     - private key bundled with certificates (keep secret)"
+  echo "*  ${1}cert.pem - public key (CA-signed certificate to be shared)"
+  echo "*  ${1}key.pem  - private key (keep this secret)"
+  echo "*  ${1}.pem     - private key bundled with certificates (keep secret)"
   echo "* Distribute the CA root cacert.pem (and/or ${1}cert.pem when needed)"
   echo "* Before using this utility, create a root CA root.pem using root.sh"
   echo "* Keep ${1}.pem key file secret: store locally with client/server app"

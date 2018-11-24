@@ -1,7 +1,7 @@
 /*
         webserver.c
 
-        Example stand-alone gSOAP Web server based on the gSOAP HTTP GET plugin.
+        Example stand-alone gSOAP Web server based on gSOAP plugins.
         This is a small but fully functional (embedded) Web server for serving
         static and dynamic pages and SOAP/XML responses over HTTP/HTTPS.
 
@@ -598,7 +598,8 @@ void *process_queue(void *soap)
   {
     tsoap->socket = dequeue();
     if (!soap_valid_socket(tsoap->socket))
-    { if (options[OPTION_v].selected)
+    {
+      if (options[OPTION_v].selected)
         fprintf(stderr, "Thread %d terminating\n", (int)(long)tsoap->user);
       break;
     }
@@ -760,7 +761,8 @@ int http_GET_handler(struct soap *soap)
     soap_set_omode(soap, SOAP_IO_STORE); */ /* if not chunking we MUST buffer entire content when returning HTML pages to determine content length */
 #ifdef WITH_ZLIB
   if (options[OPTION_z].selected && soap->zlib_out == SOAP_ZLIB_GZIP) /* client accepts gzip */
-  { soap_set_omode(soap, SOAP_ENC_ZLIB); /* we can compress content (gzip) */
+  {
+    soap_set_omode(soap, SOAP_ENC_ZLIB); /* we can compress content (gzip) */
     soap->z_level = 9; /* best compression */
   }
   else
@@ -788,7 +790,8 @@ int http_GET_handler(struct soap *soap)
   if (!strncmp(soap->path, "/calc?", 6))
     return calcget(soap);
   if (!strncmp(soap->path, "/genivia", 8))
-  { (SOAP_SNPRINTF(soap->endpoint, sizeof(soap->endpoint), strlen(soap->path) + 10), "http://genivia.com%s", soap->path + 8); /* redirect */
+  {
+    (SOAP_SNPRINTF(soap->endpoint, sizeof(soap->endpoint), strlen(soap->path) + 10), "http://genivia.com%s", soap->path + 8); /* redirect */
     return 307; /* Temporary Redirect */
   }
   /* Check requestor's authentication: */
@@ -805,13 +808,16 @@ int http_GET_handler(struct soap *soap)
 }
 
 int check_authentication(struct soap *soap)
-{ if (soap->userid && soap->passwd)
-  { if (!strcmp(soap->userid, AUTH_USERID) && !strcmp(soap->passwd, AUTH_PASSWD))
+{
+  if (soap->userid && soap->passwd)
+  {
+    if (!strcmp(soap->userid, AUTH_USERID) && !strcmp(soap->passwd, AUTH_PASSWD))
       return SOAP_OK;
   }
 #ifdef HTTPDA_H
   else if (soap->authrealm && soap->userid)
-  { if (!strcmp(soap->authrealm, AUTH_REALM) && !strcmp(soap->userid, AUTH_USERID))
+  {
+    if (!strcmp(soap->authrealm, AUTH_REALM) && !strcmp(soap->userid, AUTH_USERID))
       if (!http_da_verify_get(soap, (char*)AUTH_PASSWD))
         return SOAP_OK;
   }
@@ -836,6 +842,7 @@ int http_PUT_handler(struct soap *soap)
   {
     /* in this example we actually do not save the data as a file person.xml, but we could! */
     const char *data = soap_get_http_body(soap, NULL);
+    (void)soap_end_recv(soap);
     return 202; /* HTTP accepted */
   }
   return 404; /* HTTP not found */
@@ -856,12 +863,13 @@ int http_POST_handler(struct soap *soap)
 #endif
   /* Use soap->path (from request URL) to determine request: */
   if (options[OPTION_v].selected)
-    fprintf(stderr, "HTTP POST Request: %s\n", soap->endpoint);
+    fprintf(stderr, "HTTP Request: %s\n", soap->endpoint);
   /* Note: soap->path always starts with '/' */
   if (!strcmp(soap->path, "/person.xml"))
   {
     /* in this example we actually do not save the data as a file person.xml, but we could! */
     const char *data = soap_get_http_body(soap, NULL);
+    (void)soap_end_recv(soap);
     return copy_file(soap, "person.xml", "text/xml");
   }
   return 404; /* HTTP not found */
@@ -913,23 +921,27 @@ int http_form_handler(struct soap *soap)
 \******************************************************************************/
 
 int copy_file(struct soap *soap, const char *name, const char *type)
-{ FILE *fd;
+{
+  FILE *fd;
   size_t r;
   fd = fopen(name, "rb"); /* open file to copy */
   if (!fd)
     return 404; /* return HTTP not found */
   soap->http_content = type;
   if (soap_response(soap, SOAP_FILE)) /* OK HTTP response header */
-  { soap_end_send(soap);
+  {
+    soap_end_send(soap);
     fclose(fd);
     return soap->error;
   }
   for (;;)
-  { r = fread(soap->tmpbuf, 1, sizeof(soap->tmpbuf), fd);
+  {
+    r = fread(soap->tmpbuf, 1, sizeof(soap->tmpbuf), fd);
     if (!r)
       break;
     if (soap_send_raw(soap, soap->tmpbuf, r))
-    { soap_end_send(soap);
+    {
+      soap_end_send(soap);
       fclose(fd);
       return soap->error;
     }
@@ -945,14 +957,17 @@ int copy_file(struct soap *soap, const char *name, const char *type)
 \******************************************************************************/
 
 int calcget(struct soap *soap)
-{ int o = 0, a = 0, b = 0, val;
+{
+  int o = 0, a = 0, b = 0, val;
   char buf[256];
   char *s = soap_query(soap); /* get argument string from URL ?query string */
   while (s)
-  { char *key = soap_query_key(soap, &s); /* decode next query string key */
+  {
+    char *key = soap_query_key(soap, &s); /* decode next query string key */
     char *val = soap_query_val(soap, &s); /* decode next query string value (if any) */
     if (key && val)
-    { if (!strcmp(key, "o"))
+    {
+      if (!strcmp(key, "o"))
         o = val[0];
       else if (!strcmp(key, "a"))
         a = strtol(val, NULL, 10);
@@ -961,7 +976,8 @@ int calcget(struct soap *soap)
     }
   }
   switch (o)
-  { case 'a':
+  {
+    case 'a':
       val = a + b;
       break;
     case 's':
@@ -990,14 +1006,17 @@ int calcget(struct soap *soap)
 \******************************************************************************/
 
 int calcpost(struct soap *soap)
-{ int o = 0, a = 0, b = 0, val;
+{
+  int o = 0, a = 0, b = 0, val;
   char buf[256];
   char *s = soap_get_form(soap); /* get form data from body */
   while (s)
-  { char *key = soap_query_key(soap, &s); /* decode next key */
+  {
+    char *key = soap_query_key(soap, &s); /* decode next key */
     char *val = soap_query_val(soap, &s); /* decode next value (if any) */
     if (key && val)
-    { if (!strcmp(key, "o"))
+    {
+      if (!strcmp(key, "o"))
         o = val[0];
       else if (!strcmp(key, "a"))
         a = strtol(val, NULL, 10);
@@ -1006,7 +1025,8 @@ int calcpost(struct soap *soap)
     }
   }
   switch (o)
-  { case 'a':
+  {
+    case 'a':
       val = a + b;
       break;
     case 's':
@@ -1035,12 +1055,15 @@ int calcpost(struct soap *soap)
 \******************************************************************************/
 
 int f__form1(struct soap *soap)
-{ int o = 0, a = 0, b = 0, val;
+{
+  int o = 0, a = 0, b = 0, val;
   char buf[256];
   struct soap_multipart *content;
   for (content = soap->mime.list; content; content = content->next)
-  { if (content->id && content->ptr)
-    { /* may have to check content->encoding to convert data when necessary! */
+  {
+    if (content->id && content->ptr)
+    {
+      /* may have to check content->encoding to convert data when necessary! */
       if (!strcmp(content->id, "o"))
         o = content->ptr[0];
       else if (!strcmp(content->id, "a"))
@@ -1050,7 +1073,8 @@ int f__form1(struct soap *soap)
     }
   }
   switch (o)
-  { case 'a':
+  {
+    case 'a':
       val = a + b;
       break;
     case 's':
@@ -1073,11 +1097,14 @@ int f__form1(struct soap *soap)
 }
 
 int f__form2(struct soap *soap, struct f__formResponse *response)
-{ int o = 0, a = 0, b = 0;
+{
+  int o = 0, a = 0, b = 0;
   struct soap_multipart *content;
   for (content = soap->mime.list; content; content = content->next)
-  { if (content->id && content->ptr)
-    { /* may have to check content->encoding to convert data when necessary! */
+  {
+    if (content->id && content->ptr)
+    {
+      /* may have to check content->encoding to convert data when necessary! */
       if (!strcmp(content->id, "o"))
         o = content->ptr[0];
       else if (!strcmp(content->id, "a"))
@@ -1087,7 +1114,8 @@ int f__form2(struct soap *soap, struct f__formResponse *response)
     }
   }
   switch (o)
-  { case 'a':
+  {
+    case 'a':
       response->result = a + b;
       break;
     case 's':
@@ -1112,7 +1140,8 @@ int f__form2(struct soap *soap, struct f__formResponse *response)
 \******************************************************************************/
 
 int info(struct soap *soap)
-{ size_t stat_get, stat_post, stat_fail, *hist_min, *hist_hour, *hist_day;
+{
+  size_t stat_get, stat_post, stat_fail, *hist_min, *hist_hour, *hist_day;
   size_t stat_sent, stat_recv;
   const char *t0, *t1, *t2, *t3, *t4, *t5, *t6, *t7;
   char buf[4096]; /* buffer large enough to hold parts of HTML content */
@@ -1136,26 +1165,30 @@ int info(struct soap *soap)
   t2 = "<td align='center' bgcolor='blue'>N/A</td>";
 #endif
   if (secure)
-  { t3 = "<td align='center' bgcolor='green'>YES</td>";
+  {
+    t3 = "<td align='center' bgcolor='green'>YES</td>";
     if (soap->imode & SOAP_ENC_SSL)
       t4 = "<td align='center' bgcolor='green'>PASS</td>";
     else
       t4 = "<td align='center' bgcolor='red'>FAIL</td>";
   }
   else
-  { t3 = "<td align='center' bgcolor='red'>NO</td>";
+  {
+    t3 = "<td align='center' bgcolor='red'>NO</td>";
     t4 = "<td align='center' bgcolor='blue'>N/A</td>";
   }
 #ifdef WITH_ZLIB
   if (options[OPTION_z].selected)
-  { t5 = "<td align='center' bgcolor='green'>YES</td>";
+  {
+    t5 = "<td align='center' bgcolor='green'>YES</td>";
     if (soap->omode & SOAP_ENC_ZLIB)
       t6 = "<td align='center' bgcolor='green'>PASS</td>";
     else
       t6 = "<td align='center' bgcolor='yellow'>WAIT</td>";
   }
   else
-  { t5 = "<td align='center' bgcolor='red'>NO</td>";
+  {
+    t5 = "<td align='center' bgcolor='red'>NO</td>";
     t6 = "<td align='center' bgcolor='blue'>N/A</td>";
   }
 #else
@@ -1185,7 +1218,8 @@ int info(struct soap *soap)
   if (soap_send(soap, buf))
     return soap->error;
   for (p = soap->plugins; p; p = p->next)
-  { if (soap_send(soap, p->id)
+  {
+    if (soap_send(soap, p->id)
      || soap_send(soap, "<br/>"))
       return soap->error;
   }
@@ -1225,7 +1259,8 @@ int info(struct soap *soap)
   html_hbar(soap, "SENT(kB)", 120, stat_sent/1024, 0x00FFFF);
   html_hbar(soap, "RECV(kB)", 120, stat_recv/1024, 0x00FFFF);
   if (elapsed > 0)
-  { html_hbar(soap, "SENT(kB/s)", 120, stat_sent/elapsed/1024, 0x00FFFF);
+  {
+    html_hbar(soap, "SENT(kB/s)", 120, stat_sent/elapsed/1024, 0x00FFFF);
     html_hbar(soap, "RECV(kB/s)", 120, stat_recv/elapsed/1024, 0x00FFFF);
   }
   T.tm_min = 99;
@@ -1251,12 +1286,15 @@ int info(struct soap *soap)
 }
 
 static size_t html_scaled(char *buf, size_t max, size_t len)
-{ if (len > 1000000)
-  { (SOAP_SNPRINTF(buf, max, 39), "%.2f&#183;10<sup>6</sup>", (float)len/1000000.0);
+{
+  if (len > 1000000)
+  {
+    (SOAP_SNPRINTF(buf, max, 39), "%.2f&#183;10<sup>6</sup>", (float)len/1000000.0);
     return len / 1000000;
   }
   if (len > 1000)
-  { (SOAP_SNPRINTF(buf, max, 39), "%.2f&#183;10<sup>3</sup>", (float)len/1000.0);
+  {
+    (SOAP_SNPRINTF(buf, max, 39), "%.2f&#183;10<sup>3</sup>", (float)len/1000.0);
     return len / 1000;
   }
   (SOAP_SNPRINTF(buf, max, 20), "%lu", (unsigned long)len);
@@ -1264,7 +1302,8 @@ static size_t html_scaled(char *buf, size_t max, size_t len)
 }
 
 int html_hbar(struct soap *soap, const char *title, size_t pix, size_t len, unsigned long color)
-{ char buf[4096]; /* buffer large enough to hold parts of HTML content */
+{
+  char buf[4096]; /* buffer large enough to hold parts of HTML content */
   char lab[40];
   len = html_scaled(lab, sizeof(lab), len);
   (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "\
@@ -1290,17 +1329,20 @@ int html_hbar(struct soap *soap, const char *title, size_t pix, size_t len, unsi
 }
 
 int html_hist(struct soap *soap, const char *title, size_t barwidth, size_t height, size_t num, const char **key, size_t *val, size_t highlight)
-{ char buf[4096]; /* buffer large enough to hold HTML content */
+{
+  char buf[4096]; /* buffer large enough to hold HTML content */
   char lab[40];
   size_t i, max;
   float scale;
   max = 0;
   for (i = 0; i < num; i++)
-  { if (val[i] > max)
+  {
+    if (val[i] > max)
       max = val[i];
   }
   if (height < 20)
-  { height = max;
+  {
+    height = max;
     if (height < 20)
       height = 20;
     else if (height > 256)
@@ -1320,7 +1362,8 @@ int html_hist(struct soap *soap, const char *title, size_t barwidth, size_t heig
   if (soap_send(soap, buf))
     return soap->error;
   for (i = 0; i < num; i++)
-  { unsigned long bar = (scale * val[i] + 0.5);
+  {
+    unsigned long bar = (scale * val[i] + 0.5);
     if (bar >= 1)
       (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "\
 <td bgcolor='#FFFFFF'><a onmouseover=\"window.status='%lu';return true\" onmouseout=\"window.status='';return true\" href='#%s'><img src='top.gif' alt='' width='%lu' height='1' align='bottom' border='0'><br><img src='bar.gif' alt='' width='%lu' height='%lu' align='bottom' border='0'></a></td>", (unsigned long)i, title && strlen(title) < 80 ? title : "", (unsigned long)barwidth, (unsigned long)barwidth, bar - 1);
@@ -1340,7 +1383,8 @@ int html_hist(struct soap *soap, const char *title, size_t barwidth, size_t heig
   if (soap_send(soap, buf))
     return soap->error;
   for (i = 0; i < num; i++)
-  { (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "<td%s>%s</td>", (i == highlight) ? " bgcolor='#777777'" : "", key ? key[i] : "<img src='bar.gif'>");
+  {
+    (SOAP_SNPRINTF(buf, sizeof(buf), 4095), "<td%s>%s</td>", (i == highlight) ? " bgcolor='#777777'" : "", key ? key[i] : "<img src='bar.gif'>");
     if (soap_send(soap, buf))
       return soap->error;
   }
@@ -1454,7 +1498,8 @@ void CRYPTO_thread_cleanup()
 /* OpenSSL not used */
 
 int CRYPTO_thread_setup()
-{ return SOAP_OK;
+{
+  return SOAP_OK;
 }
 
 void CRYPTO_thread_cleanup()

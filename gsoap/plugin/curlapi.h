@@ -57,7 +57,7 @@ extern "C" {
 #endif
 
 /** Plugin identification for plugin registry */
-#define SOAP_CURL_ID "SOAP-CURL/1.1"
+#define SOAP_CURL_ID "SOAP-CURL/1.2"
 
 /** Plugin identification for plugin registry */
 extern const char soap_curl_id[];

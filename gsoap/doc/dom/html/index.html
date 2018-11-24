@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">XML DOM API and domcpp</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat Nov 10 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Wed Nov 14 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -55,7 +55,7 @@
 </li>
 </ul>
 </li>
-<li class="level1"><a href="#domcpp">The domcpp command-line tool                                           </a><ul><li class="level2"><a href="#domcpp-1">Compiling the domcpp command                                         </a></li>
+<li class="level1"><a href="#domcpp">The domcpp command-line tool                                           </a><ul><li class="level2"><a href="#domcpp-1">Building and installing domcpp                                       </a></li>
 <li class="level2"><a href="#domcpp-2">Command-line options                                                 </a></li>
 <li class="level2"><a href="#domcpp-3">XPath syntax support for domcpp                                      </a></li>
 <li class="level2"><a href="#domcpp-4">XPath by example                                                     </a></li>
@@ -168,15 +168,16 @@ The domcpp command-line tool                                           </h1>
 <p>The domcpp command produces high-quality, readable and reusable source code. The generated code can be readily used in your projects to populate XML data and retrieve XML data, thereby saving you substantial time and effort to write DOM API code in C or C++.</p>
 <p>The domcpp command-line tool generates C or C++ source code to populate a DOM node graph with the XML data given in an XML file. The command also has an option <code>-i</code> to generate source code to inspect parsed XML by using an XML file as a generic template for this code. And option <code>-p</code> generates efficient source code for XPath queries. Even stand-alone XPath query filter applications can be auto-generated with option <code>-m</code> (for main).</p>
 <h2><a class="anchor" id="domcpp-1"></a>
-Compiling the domcpp command                                         </h2>
+Building and installing domcpp                                       </h2>
 <p>You will find domcpp and the XML DOM examples in the gSOAP package in <code>gsoap/samples/dom</code>.</p>
 <p>To build domcpp, <a href="http://www.genivia.com/downloads.html">install gSOAP</a> and build domcpp as follows: </p><pre class="fragment">cd gsoap/samples/dom
 make domcpp
 </pre><p>This builds the command-line tool domcpp in <code>gsoap/samples/dom</code> from where you can use it and/or copy it for use with your projects.</p>
-<p>If you do not have the samples built, you can use soapcpp2 (or soapcpp2.exe in <code>gsoap/bin/win32</code>) from the command line to generate the C++ code required for domcpp: </p><pre class="fragment">cd gsoap/samples/dom
+<p>If you do not have the samples built, you can use soapcpp2 from the command line to generate the C++ code required for domcpp: </p><pre class="fragment">cd gsoap/samples/dom
 soapcpp2 -CSL ../../import/dom.h
 c++ -I../.. -o domcpp domcpp.cpp soapC.cpp ../../dom.cpp ../../stdsoap2.cpp
 </pre><p>This builds the domcpp command-line tool.</p>
+<p>For users of Windows, visit <a href="http://www.genivia.com/downloads.html">download and installation</a> to download <code>domcpp.exe</code>.</p>
 <h2><a class="anchor" id="domcpp-2"></a>
 Command-line options                                                 </h2>
 <p>The domcpp command takes several options and an optional XML input file: </p><pre class="fragment">domcpp [-c] [-e] [-f%fmt] [-h] [-i] [-l] [-m] [-M] [-n] [-O] [-ofile] [-ppath] [-rroot] [-xcode] [-y] [infile]
@@ -696,7 +697,7 @@ Copyright                                                           </h1>
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat Nov 10 2018 14:27:27 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Wed Nov 14 2018 10:17:48 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

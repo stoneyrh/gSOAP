@@ -64,7 +64,7 @@ int Ecflag = 0;         /* when set, generate extra functions for data copying (
 int Edflag = 0;         /* when set, generate extra functions for data deletion (soap_del_X) */
 int Etflag = 0;         /* when set, generate data traversal/walker functions */
 unsigned long fflag = 0;/* multi-file split for each bundle of -fN defs */
-int gflag = 0;          /* when set, generate XML sample messages in template format */
+int gflag = 0;          /* when set, generate XML sample messages in template format for testmsgr */
 int iflag = 0;          /* when set, generate new style proxy/object classes inherited from soap struct */
 int jflag = 0;          /* when set, generate new style proxy/object classes */
 int mflag = 0;          /* when set, generate code that requires array/binary classes to explicitly remove malloced array */
@@ -218,7 +218,7 @@ main(int argc, char **argv)
 -dpath  use path to save files\n\
 -e      generate SOAP RPC encoding style bindings (also use -1 or -2)\n\
 -fN     multiple soapC files, with N serializer definitions per file (N>=10)\n\
--g      generate XML sample messages in template format\n\
+-g      generate XML sample messages in template format for testmsgr\n\
 -h      display help info\n\
 -Ipath  use path(s) for #import (paths separated with '" SOAP_PATHSEP "')\n\
 -i      generate C++ service proxies and objects inherited from soap struct\n\
@@ -230,7 +230,7 @@ main(int argc, char **argv)
 -Qname  use name as the C++ namespace for decls, including custom serializers\n\
 -qname  use name as the C++ namespace for decls, excluding custom serializers\n\
 -r      generate soapReadme.md report\n\
--s      generate deserialization code with strict XML validation checks\n\
+-s      generate stub and skeleton functions with strict XML validation checks\n\
 -t      generate code for fully xsi:type typed SOAP/XML messaging\n\
 -u      uncomment WSDL/schema output by suppressing XML comments\n\
 -V      display the current version and exit\n\

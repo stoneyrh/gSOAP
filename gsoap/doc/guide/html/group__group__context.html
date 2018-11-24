@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">Context with engine state</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Nov 12 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sat Nov 24 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -1015,7 +1015,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Copy a string to managed memory. </p>
-<p>This function copies the specified wide string to managed memory. Returns a copy of the string or NULL when the specified string is NULL or when the function failed to allocate memory.</p>
+<p>This function copies the specified wide string to memory managed by the specified context. Returns a copy of the string or NULL when the specified string is NULL or when the function failed to allocate memory.</p>
 <dl class="section user"><dt>Example:</dt><dd></dd></dl>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;soapH.h&quot;</span></div><div class="line"><span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga87c20488b2dc680aaa7689b1d024989c">soap_new</a>();</div><div class="line"><span class="comment">// allocate and assign a string in memory managed by the context</span></div><div class="line"><span class="keywordtype">char</span> *s = <a class="code" href="group__group__context.html#ga41747ef145667bdff9c66cdd2bc86653">soap_strdup</a>(soap, <span class="stringliteral">&quot;Hello&quot;</span>);</div><div class="line">... <span class="comment">// send and receive messages etc.</span></div><div class="line"><a class="code" href="group__group__context.html#gaf7d0176161e9def36981e24faa1913d9">soap_destroy</a>(soap); <span class="comment">// delete managed C++ objects</span></div><div class="line"><a class="code" href="group__group__context.html#ga81a009ae1ea825a05e5241e2b7a8ece9">soap_end</a>(soap);     <span class="comment">// delete managed memory</span></div><div class="line"><a class="code" href="group__group__context.html#ga57108ca4681186e58b5b189c3528f10a">soap_free</a>(soap);    <span class="comment">// free the context</span></div></div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><code><a class="el" href="group__group__context.html#gaba556710e010feeb2211ed43b5bf059c" title="Allocate a block of heap memory managed by the specified soap context. ">soap_malloc</a></code>, <code><a class="el" href="group__group__context.html#ga7fe9c27b0f0eac077bc13caf816fbba8" title="Copy a wide string to managed memory. ">soap_wstrdup</a></code>, <code><a class="el" href="group__group__context.html#ga643bb3cdc192ec0dc1a8448498dab401" title="Unlink a block of heap memory managed by the specified soap context, to release the memory explicitly...">soap_unlink</a></code>, <code><a class="el" href="group__group__context.html#gaa959ff61609f7b324527e88655c2377f" title="Delegate the deletion of all managed objects and data from the specified soap context to another soap...">soap_delegate_deletion</a></code>, <code><a class="el" href="group__group__context.html#gaf7d0176161e9def36981e24faa1913d9" title="Delete all dynamically-allocated C++ objects managed by the specified soap context. ">soap_destroy</a></code>, <code><a class="el" href="group__group__context.html#ga81a009ae1ea825a05e5241e2b7a8ece9" title="Delete all data from heap memory managed by the specified soap context and release the freed memory b...">soap_end</a></code>.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>copy of string or NULL when the specified string is NULL or on failure to allocate (out of memory) </dd></dl>
@@ -1111,7 +1111,7 @@ Functions</h2></td></tr>
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Nov 12 2018 09:30:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sat Nov 24 2018 10:10:04 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

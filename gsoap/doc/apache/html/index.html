@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">The Apache module for gSOAP</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Oct 2 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Fri Nov 16 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -134,6 +134,7 @@ Initialization and plugins                                            </h1>
 <p>With gSOAP 2.8.54 and greater we can add our own initialization function to initialize the context. By doing so we can set context flags and register plugins. To define our own initialization function we use <code><a class="el" href="apache__gsoap_8h.html#aa9f6f697cc5fd4ab9e8692c3a97e4a74">IMPLEMENT_GSOAP_SERVER_INIT(init_func)</a></code> instead of <code><a class="el" href="apache__gsoap_8h.html#a044247a029c4997b5b22bba46d3ef233">IMPLEMENT_GSOAP_SERVER()</a></code>:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;plugin/logging.h&quot;</span></div><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="apache__gsoap_8h.html">apache_gsoap.h</a>&quot;</span></div><div class="line"><span class="keywordtype">void</span> mod_gsoap_init(<span class="keyword">struct</span> soap *soap, request_rec *r)</div><div class="line">{</div><div class="line">  FILE *fdi = fopen(<span class="stringliteral">&quot;/tmp/INBOUNDAUDIT.log&quot;</span>, <span class="stringliteral">&quot;a&quot;</span>);</div><div class="line">  FILE *fdo = fopen(<span class="stringliteral">&quot;/tmp/OUTBOUNDAUDIT.log&quot;</span>, <span class="stringliteral">&quot;a&quot;</span>);</div><div class="line">  soap_set_mode(soap, SOAP_XML_INDENT | SOAP_ENC_MTOM);</div><div class="line">  soap_register_plugin(soap, logging);</div><div class="line">  soap_set_logging_inbound(soap, fdi);</div><div class="line">  soap_set_logging_outbound(soap, fdo);</div><div class="line">}</div><div class="line"><a class="code" href="apache__gsoap_8h.html#aa9f6f697cc5fd4ab9e8692c3a97e4a74">IMPLEMENT_GSOAP_SERVER_INIT</a>(mod_gsoap_init) <span class="comment">/* replaces main() { ... } */</span></div></div><!-- fragment --><p>This enables XML indentation, MTOM attachments, and saves the audit logs of inbound and outbound messages (note that messages are not frequently flushed to the log files by the logging plugin, meaning the logs may appear incomplete until you stop httpd to close these files). The gsoap/plugin/logging.h and logging.c files are located in the gSOAP source code tree. Add logging.c to the apxs command to compile the source code files.</p>
 <p>Your can include multiple registrations of plugins as needed.</p>
+<dl class="section warning"><dt>Warning</dt><dd>Do not use any of the <code>SOAP_IO</code> flags to initialize or set the context, such as <code>SOAP_IO_KEEPALIVE</code> and <code>SOAP_IO_CHUNK</code>.</dd></dl>
 <h1><a class="anchor" id="libraries"></a>
 Dynamic libraries                                                   </h1>
 <p>If you are using dynamic libraries to deploy services with <code>mod_gsoap</code>, then those should be closed properly to avoid memory leaks. To do so add the following line:</p>
@@ -200,7 +201,7 @@ Further reading                                                    </h1>
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Oct 2 2018 16:16:40 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Fri Nov 16 2018 15:50:50 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

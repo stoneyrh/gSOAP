@@ -571,6 +571,7 @@ wstop   = "http://docs.oasis-open.org/wsn/t-1"
 
 #       TR-069 recommended prefixes
 
+cwmp = "urn:dslforum-org:cwmp-1-1"
 cwmp = "urn:dslforum-org:cwmp-1-2"
 lwn  = "urn:broadband-forum-org:cwmp:lwnotif-1-0"
 dm   = "urn:broadband-forum-org:cwmp:datamodel-1-5"

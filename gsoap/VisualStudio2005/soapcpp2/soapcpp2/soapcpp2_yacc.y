@@ -738,22 +738,20 @@ sym     : ID tag init   {
                           p->info.typ = mkint();
                           p->info.sto = permission;
 			  p->tag = $2;
+                          p->info.hasval = True;
+                          p->info.ptrval = False;
+                          p->info.fixed = $3.fixed;
+                          p->info.val.i = sp->val;
                           if ($3.hasval)
                           {
-                            p->info.hasval = True;
-                            p->info.ptrval = False;
-                            p->info.fixed = $3.fixed;
-                            sp->val = p->info.val.i = $3.val.i;
+                            set_value(p, p->info.typ, &$3);
+                            sp->val = p->info.val.i;
                           }
                           if (sp->mask)
                             sp->val <<= 1;
                           else
                             sp->val++;
                           p->info.offset = sp->offset;
-                          if (sp->grow)
-                            sp->offset += p->info.typ->width;
-                          else if (p->info.typ->width > sp->offset)
-                            sp->offset = p->info.typ->width;
                           sp->entry = p;
                         }
         ;
@@ -2604,7 +2602,7 @@ static void
 add_fault(void)
 {
   Table *t;
-  Entry *p1, *p2, *p3, *p4;
+  Entry *p1, *p2, *p3, *p4, *p5;
   Symbol *s1, *s2, *s3, *s4;
   imported = NULL;
   s1 = lookup("SOAP_ENV__Code");
@@ -2628,6 +2626,32 @@ add_fault(void)
     p2 = enter(t, lookup("SOAP_ENV__Subcode"));
     p2->info.typ = mkpointer(p1->info.typ);
     p2->info.minOccurs = 0;
+  }
+  else
+  {
+    t = p1->info.typ->ref;
+    p2 = entry(t, lookup("SOAP_ENV__Value"));
+    if (!p2)
+    {
+      sprintf(errbuf, "SOAP_ENV__Value member missing in SOAP_ENV__Code declared at %s:%d", p1->filename, p1->lineno);
+      semerror(errbuf);
+    }
+    else if (p2->info.typ != qname)
+    {
+      sprintf(errbuf, "SOAP_ENV__Value member of SOAP_ENV__Code is not a _QName type declared at %s:%d", p2->filename, p2->lineno);
+      semerror(errbuf);
+    }
+    p2 = entry(t, lookup("SOAP_ENV__Subcode"));
+    if (!p2)
+    {
+      sprintf(errbuf, "SOAP_ENV__Subcode member missing in SOAP_ENV__Code declared at %s:%d", p1->filename, p1->lineno);
+      semerror(errbuf);
+    }
+    else if (p2->info.typ->type != Tpointer || (Tnode*)p2->info.typ->ref != p1->info.typ)
+    {
+      sprintf(errbuf, "SOAP_ENV__Subcode member of SOAP_ENV__Code is not a SOAP_ENV__Subcode * type declared at %s:%d", p2->filename, p2->lineno);
+      semerror(errbuf);
+    }
   }
   s2 = lookup("SOAP_ENV__Detail");
   p2 = entry(classtable, s2);
@@ -2674,6 +2698,21 @@ add_fault(void)
     p3->info.typ = mkstring();
     p3->info.minOccurs = 0;
   }
+  else
+  {
+    t = p4->info.typ->ref;
+    p3 = entry(t, lookup("SOAP_ENV__Text"));
+    if (!p3)
+    {
+      sprintf(errbuf, "SOAP_ENV__Text member missing in SOAP_ENV__Reason declared at %s:%d", p4->filename, p4->lineno);
+      semerror(errbuf);
+    }
+    else if (!is_string(p3->info.typ))
+    {
+      sprintf(errbuf, "SOAP_ENV__Text member of SOAP_ENV__Reason is not a char * type declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+  }
   s3 = lookup("SOAP_ENV__Fault");
   p3 = entry(classtable, s3);
   if (!p3 || !p3->info.typ->ref)
@@ -2689,33 +2728,115 @@ add_fault(void)
     {
       p3->info.typ->ref = t;
     }
-    p3 = enter(t, lookup("faultcode"));
-    p3->info.typ = qname;
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("faultstring"));
-    p3->info.typ = mkstring();
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("faultactor"));
-    p3->info.typ = mkstring();
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("detail"));
-    p3->info.typ = mkpointer(p2->info.typ);
-    p3->info.minOccurs = 0;
-    p3 = enter(t, s1);
-    p3->info.typ = mkpointer(p1->info.typ);
-    p3->info.minOccurs = 0;
-    p3 = enter(t, s4);
-    p3->info.typ = mkpointer(p4->info.typ);
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("SOAP_ENV__Node"));
-    p3->info.typ = mkstring();
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("SOAP_ENV__Role"));
-    p3->info.typ = mkstring();
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("SOAP_ENV__Detail"));
-    p3->info.typ = mkpointer(p2->info.typ);
-    p3->info.minOccurs = 0;
+    p5 = enter(t, lookup("faultcode"));
+    p5->info.typ = qname;
+    p5->info.minOccurs = 0;
+    p5 = enter(t, lookup("faultstring"));
+    p5->info.typ = mkstring();
+    p5->info.minOccurs = 0;
+    p5 = enter(t, lookup("faultactor"));
+    p5->info.typ = mkstring();
+    p5->info.minOccurs = 0;
+    p5 = enter(t, lookup("detail"));
+    p5->info.typ = mkpointer(p2->info.typ);
+    p5->info.minOccurs = 0;
+    p5 = enter(t, s1);
+    p5->info.typ = mkpointer(p1->info.typ);
+    p5->info.minOccurs = 0;
+    p5 = enter(t, s4);
+    p5->info.typ = mkpointer(p4->info.typ);
+    p5->info.minOccurs = 0;
+    p5 = enter(t, lookup("SOAP_ENV__Node"));
+    p5->info.typ = mkstring();
+    p5->info.minOccurs = 0;
+    p5 = enter(t, lookup("SOAP_ENV__Role"));
+    p5->info.typ = mkstring();
+    p5->info.minOccurs = 0;
+    p5 = enter(t, lookup("SOAP_ENV__Detail"));
+    p5->info.typ = mkpointer(p2->info.typ);
+    p5->info.minOccurs = 0;
+  }
+  else
+  {
+    t = p3->info.typ->ref;
+    p5 = entry(t, lookup("faultcode"));
+    if (!p5)
+    {
+      sprintf(errbuf, "faultcode member missing in SOAP_ENV__Fault declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+    else if (p5->info.typ != qname)
+    {
+      sprintf(errbuf, "faultcode member of SOAP_ENV__Fault is not a _QName type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, lookup("faultstring"));
+    if (!p5)
+    {
+      sprintf(errbuf, "faultstring member missing in SOAP_ENV__Fault declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+    else if (!is_string(p5->info.typ))
+    {
+      sprintf(errbuf, "faultstring member of SOAP_ENV__Fault is not a char * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, lookup("faultdetail"));
+    if (p5 && (p5->info.typ->type != Tpointer || (Tnode*)p5->info.typ->ref != p2->info.typ))
+    {
+      sprintf(errbuf, "faultdetail member of SOAP_ENV__Fault is not a SOAP_ENV__Detail * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, s1);
+    if (!p5)
+    {
+      sprintf(errbuf, "SOAP_ENV__Code member missing in SOAP_ENV__Fault declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+    else if (p5->info.typ->type != Tpointer || (Tnode*)p5->info.typ->ref != p1->info.typ)
+    {
+      sprintf(errbuf, "SOAP_ENV__Code member of SOAP_ENV__Fault is not a SOAP_ENV__Code * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, s4);
+    if (!p5)
+    {
+      sprintf(errbuf, "SOAP_ENV__Reason member missing in SOAP_ENV__Fault declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+    else if (p5->info.typ->type != Tpointer || (Tnode*)p5->info.typ->ref != p4->info.typ)
+    {
+      sprintf(errbuf, "SOAP_ENV__Reason member of SOAP_ENV__Fault is not a SOAP_ENV__Reason * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, lookup("SOAP_ENV__Node"));
+    if (!p5)
+    {
+      sprintf(errbuf, "SOAP_ENV__Node member missing in SOAP_ENV__Fault declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+    else if (!is_string(p5->info.typ))
+    {
+      sprintf(errbuf, "SOAP_ENV__Node member of SOAP_ENV__Fault is not a char * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, lookup("SOAP_ENV__Role"));
+    if (!p5)
+    {
+      sprintf(errbuf, "SOAP_ENV__Role member missing in SOAP_ENV__Fault declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+    else if (!is_string(p5->info.typ))
+    {
+      sprintf(errbuf, "SOAP_ENV__Role member of SOAP_ENV__Fault is not a char * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, lookup("SOAP_ENV__Detail"));
+    if (p5 && (p5->info.typ->type != Tpointer || (Tnode*)p5->info.typ->ref != p2->info.typ))
+    {
+      sprintf(errbuf, "SOAP_ENV__Detail member of SOAP_ENV__Fault is not a SOAP_ENV__Detail * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
   }
 }
 

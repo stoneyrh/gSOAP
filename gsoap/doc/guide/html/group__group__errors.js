@@ -23,6 +23,7 @@ var group__group__errors =
     [ "SOAP_HREF", "group__group__errors.html#ga6cd5d130ef1d431f0596edf4084acb07", null ],
     [ "SOAP_HTTP_ERROR", "group__group__errors.html#gad04b91a2b60f648f97fd226cb2b43b51", null ],
     [ "soap_http_error_check", "group__group__errors.html#ga4c10eeefec04f4e4a92f1ffeb3317785", null ],
+    [ "SOAP_HTTP_METHOD", "group__group__errors.html#ga7f0daf7a83ff107406f8726139338cbb", null ],
     [ "SOAP_IOB", "group__group__errors.html#ga4bf925c17a1c81e99de6bfdb7d85c19a", null ],
     [ "SOAP_LENGTH", "group__group__errors.html#gada50f79e7b120b498bd05426a424e4af", null ],
     [ "SOAP_LEVEL", "group__group__errors.html#ga960d32bcdfd9d166d78b19a0885b61d8", null ],

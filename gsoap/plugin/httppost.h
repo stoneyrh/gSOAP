@@ -57,7 +57,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 extern "C" {
 #endif
 
-#define HTTP_POST_ID "SOAP-HTTP-POST/1.2" /* plugin identification */
+#define HTTP_POST_ID "SOAP-HTTP-POST/2.0" /* plugin identification */
 
 extern const char http_post_id[];
 

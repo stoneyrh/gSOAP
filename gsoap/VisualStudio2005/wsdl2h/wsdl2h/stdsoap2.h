@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.71
+        stdsoap2.h 2.8.72
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20871
+#define GSOAP_VERSION 20872
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1681,9 +1681,9 @@ typedef int soap_http_command;
 #define SOAP_PUT                2003    /* PUT request */
 #define SOAP_PATCH              2004    /* PATCH request */
 #define SOAP_DEL                2005    /* DELETE request */
-#define SOAP_CONNECT            2006    /* CONNECT request */
-#define SOAP_HEAD               2007    /* HEAD request */
-#define SOAP_OPTIONS            2008    /* OPTIONS request */
+#define SOAP_HEAD               2006    /* HEAD request */
+#define SOAP_OPTIONS            2007    /* OPTIONS request */
+#define SOAP_CONNECT            2008    /* CONNECT request */
 
 /* gSOAP DIME */
 
@@ -1836,7 +1836,7 @@ typedef unsigned short soap_ssl_flags;
 #endif
 
 #ifndef SOAP_MALLOC                     /* use libc malloc */
-# define SOAP_MALLOC(soap, size) malloc(size)
+# define SOAP_MALLOC(soap, size) malloc((size))
 #endif
 
 #ifndef SOAP_FREE                       /* use libc free */
@@ -1844,7 +1844,7 @@ typedef unsigned short soap_ssl_flags;
 #endif
 
 #ifndef SOAP_MALLOC_UNMANAGED           /* use libc malloc to alloc soap context with soap_new() */
-# define SOAP_MALLOC_UNMANAGED(size) malloc(size)
+# define SOAP_MALLOC_UNMANAGED(size) malloc((size))
 #endif
 
 #ifndef SOAP_FREE_UNMANAGED             /* use libc free to free soap context with soap_free() */
@@ -1909,7 +1909,7 @@ typedef unsigned short soap_ssl_flags;
 #endif
 
 #ifndef SOAP_DELETE_UNMANAGED           /* use C++ unmanaged delete operator for soap_free() */
-# define SOAP_DELETE_UNMANAGED(soap) delete soap;
+# define SOAP_DELETE_UNMANAGED(soap) delete soap
 #endif
 
 #ifdef SOAP_DEBUG
@@ -2724,13 +2724,13 @@ struct SOAP_CMAC soap
   struct soap_blist *blist;     /* block allocation stack */
   struct soap_clist *clist;     /* class instance allocation list */
   void *alist;                  /* memory allocation (malloc) list */
-  short shaky;                  /* objects in reallocatable containers are on shaky grounds */
 #if !defined(WITH_LEANER) || !defined(WITH_NOIDREF)
   struct soap_ilist *iht[SOAP_IDHASH];
 #endif
   struct soap_plist *pht[SOAP_PTRHASH];
   struct soap_pblk *pblk;       /* plist block allocation */
   short pidx;                   /* plist block allocation */
+  short shaky;                  /* objects in reallocatable containers are on shaky grounds */
   struct SOAP_ENV__Header *header;
   struct SOAP_ENV__Fault *fault;
   int idnum;
@@ -2773,7 +2773,6 @@ struct SOAP_CMAC soap
   int (*fignore)(struct soap*, const char*);
   int (*fserveloop)(struct soap*);
   void *(*fplugin)(struct soap*, const char*);
-  void *(*fmalloc)(struct soap*, size_t);
 #ifndef WITH_LEANER
   int (*fsvalidate)(struct soap*, const char*, const char*);
   int (*fwvalidate)(struct soap*, const char*, const wchar_t*);
@@ -2845,11 +2844,11 @@ struct SOAP_CMAC soap
   char arrayType[SOAP_TAGLEN];
   char arraySize[SOAP_TAGLEN];
   char arrayOffset[SOAP_TAGLEN];
-  short other;
-  short root;
   int position;
   int positions[SOAP_MAXDIMS];
   struct soap_attribute *attributes;    /* attribute list */
+  short other;
+  short root;
   short encoding;       /* when set, output encodingStyle */
   short mustUnderstand; /* a mustUnderstand element was parsed or is output */
   short null;           /* parsed XML is xsi:nil */
@@ -2891,7 +2890,7 @@ struct SOAP_CMAC soap
   const char *cors_methods;     /* CORS Allow-Methods header returned by server */
   const char *cors_headers;     /* CORS Allow-Headers header returned by server */
   const char *x_frame_options;  /* "DENY", "SAMEORIGIN" (default), or "ALLOW-FROM uri" */
-  int status;                   /* -1 when request, else error code to be returned by server */
+  int status;                   /* HTTP status code, HTTP method, or other error code */
   int error;
   int errmode;
   int errnum;
@@ -3162,13 +3161,13 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_request(struct soap *soap);
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_header(struct soap*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_fault(struct soap*);
-SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultcode(struct soap*);
-SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultsubcode(struct soap*);
-SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultstring(struct soap*);
-SOAP_FMAC3 const char** SOAP_FMAC4 soap_faultdetail(struct soap*);
-SOAP_FMAC3 const char* SOAP_FMAC4 soap_fault_subcode(struct soap*);
-SOAP_FMAC3 const char* SOAP_FMAC4 soap_fault_string(struct soap*);
-SOAP_FMAC3 const char* SOAP_FMAC4 soap_fault_detail(struct soap*);
+SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultcode(struct soap*);
+SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultsubcode(struct soap*);
+SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultstring(struct soap*);
+SOAP_FMAC3 const char ** SOAP_FMAC4 soap_faultdetail(struct soap*);
+SOAP_FMAC3 const char * SOAP_FMAC4 soap_fault_subcode(struct soap*);
+SOAP_FMAC3 const char * SOAP_FMAC4 soap_fault_string(struct soap*);
+SOAP_FMAC3 const char * SOAP_FMAC4 soap_fault_detail(struct soap*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serializefault(struct soap*);
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_serializeheader(struct soap*);
@@ -3428,6 +3427,7 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_update_pointers(struct soap *soap, const char *d
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_begin_out(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_end_out(struct soap*);
 
+SOAP_FMAC1 int SOAP_FMAC2 soap_has_http_body(struct soap*);
 SOAP_FMAC1 char * SOAP_FMAC2 soap_get_http_body(struct soap*, size_t *len);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_begin_in(struct soap*);

@@ -648,7 +648,7 @@ int json_call(struct soap *soap, const char *endpoint, const struct value *in, s
   {
     if (out)
       json_error(soap, out);
-    else if (soap->error == SOAP_NO_DATA || soap->error == 200 || soap->error == 201 || soap->error == 202)
+    else if (soap->error == 200 || soap->error == 201 || soap->error == 202)
       soap->error = SOAP_OK;
   }
   return soap_closesock(soap);

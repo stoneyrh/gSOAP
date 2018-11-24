@@ -25,11 +25,11 @@ public:
 	mod_gsoap_interface& operator=(const mod_gsoap_interface&); ///< assignment operator
 	bool linked() const; 
 public:
-    isapi_gsoap_server_fn fsoap_init;
-    isapi_gsoap_server_fn fsoap_serve;
-    isapi_soap_delete_fn  fsoap_delete;
-    isapi_gsoap_server_fn fsoap_done;
-    isapi_gsoap_server_fn fsoap_end;
+        isapi_gsoap_server_fn fsoap_init;
+        isapi_gsoap_server_fn fsoap_serve;
+        isapi_soap_delete_fn  fsoap_delete;
+        isapi_gsoap_server_fn fsoap_done;
+        isapi_gsoap_server_fn fsoap_end;
 	isapi_soap_register_plugin_fn fsoap_register_plugin_arg;
 	isapi_soap_lookup_plugin_fn fsoap_lookup_plugin;
 	mod_gsoap_init_fn fmod_gsoap_init;

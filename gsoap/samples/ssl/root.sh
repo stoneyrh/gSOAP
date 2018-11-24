@@ -3,8 +3,8 @@
 # Create the self-signed root CA and root's certificate: root.pem cacert.pem
 
 echo "* This utility creates a self-signed private root CA and public certificate:"
-echo "  root.pem   - private root CA (keep this secret)"
-echo "  cacert.pem - public CA certificate (shared)"
+echo "*  root.pem   - private root CA (keep this secret)"
+echo "*  cacert.pem - public CA certificate (shared)"
 echo "* Distribute the cacert.pem to clients to authenticate your server"
 echo "* Use root.pem to sign certificates using the cert.sh utility"
 echo "*"

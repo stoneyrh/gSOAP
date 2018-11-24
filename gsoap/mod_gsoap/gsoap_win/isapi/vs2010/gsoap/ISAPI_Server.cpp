@@ -216,14 +216,17 @@ void SoapTransaction::BuildHeaders() {
     s << crlf;
     _request_header = s.str();
 }
+
 BOOL ISAPI_Server::GetExtensionVersion(HSE_VERSION_INFO *pVer) {
     lstrcpyn((LPSTR) pVer->lpszExtensionDesc, "WebWare SOAP ISAPI extension", HSE_MAX_EXT_DLL_NAME_LEN);
     return TRUE;
 }
+
 BOOL ISAPI_Server::TerminateExtension(DWORD) {
     ISAPI_SoapServerFactory::instance()->shutdown();
     return TRUE;
 }
+
 /* forwards the real work to soap_serve */
 static DWORD serve(
     const mod_gsoap_interface *pInterface, 
@@ -233,16 +236,14 @@ static DWORD serve(
 {
     assert(NULL != pInterface && pInterface->linked());
 
-    struct soap *soap = (struct soap*)malloc(sizeof(struct soap));
+    struct soap soap;
 
-    assert(NULL != soap);
-
-    (*pInterface->fsoap_init)(soap);
-    SoapTransaction trans(soap);
+    (*pInterface->fsoap_init)(&soap);
+    SoapTransaction trans(&soap);
     if (NULL != pInterface->fsoap_register_plugin_arg) {
-        (*pInterface->fsoap_register_plugin_arg)(soap, mod_gsoap_plugin, (void *)&trans);
+        (*pInterface->fsoap_register_plugin_arg)(&soap, mod_gsoap_plugin, (void *)&trans);
     }
-    //soap->user = &trans;
+    //soap.user = &trans;
     trans._interface = pInterface;
     trans._istream = &is;
     trans._request = &req;
@@ -252,30 +253,27 @@ static DWORD serve(
 
 #ifdef WITH_ZLIB
     //    always allow gzip in -- but only allow it out if the client can handle it
-    soap_set_imode(soap, SOAP_ENC_ZLIB);     
-
-    string    str = req.getContentHeaders()["Accept-Encoding"];
+    soap_set_imode(&soap, SOAP_ENC_ZLIB);     
+    string str = req.getContentHeaders()["Accept-Encoding"];
     if (strstr(str.c_str(), "gzip"))
     {    
-        soap_set_omode(soap, SOAP_ENC_ZLIB);         
-        http_post_header(soap, "Content-Encoding", "gzip" );    
+        soap_set_omode(&soap, SOAP_ENC_ZLIB);         
+        http_post_header(&soap, "Content-Encoding", "gzip" );    
     }
-
 #endif
 
     // set callback functions:
-    soap->frecv = frecv;
-    soap->fsend = fsend;
-    soap->fresponse = http_response;
-    soap->fposthdr = http_post_header;
+    soap.frecv = frecv;
+    soap.fsend = fsend;
+    soap.fresponse = http_response;
+    soap.fposthdr = http_post_header;
 
-    (*pInterface->fsoap_serve)(soap);
+    (*pInterface->fsoap_serve)(&soap);
     if (NULL != pInterface->fsoap_delete) {
-        (*pInterface->fsoap_delete)(soap, NULL);
+        (*pInterface->fsoap_delete)(&soap, NULL);
     }
-    (*pInterface->fsoap_end)(soap);
-    (*pInterface->fsoap_done)(soap);
-    free(soap);
+    (*pInterface->fsoap_end)(&soap);
+    (*pInterface->fsoap_done)(&soap);
 
     return trans._dwReturnCode;
 }

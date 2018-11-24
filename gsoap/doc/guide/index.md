@@ -155,6 +155,36 @@ be interpreted as described in RFC-2119.
 
 🔝 [Back to table of contents](#)
 
+# API documentation modules                             {#start-modules}
+
+The API documentation is broken down into the following functional
+documentation [modules](modules.html) that drill down into the lower-level API
+of macros, functions, context and context variables, plugins and more:
+
+<table class="directory">
+<tr id="row_0_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__debug.html" target="_self">Debugging and logging</a></td><td class="desc">This module defines compile-time flags and functions for run-time debugging and logging </td></tr>
+<tr id="row_1_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__with.html" target="_self">WITH_MACRO compile-time flags</a></td><td class="desc">This module defines the <code>WITH_MACRO</code> compile-time flags to configure the engine build </td></tr>
+<tr id="row_2_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__soap.html" target="_self">SOAP_MACRO compile-time values</a></td><td class="desc">This module defines the <code>SOAP_MACRO</code> compile-time values to configure the engine build </td></tr>
+<tr id="row_3_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__flags.html" target="_self">SOAP_MACRO run-time flags</a></td><td class="desc">This module defines the <code>SOAP_MACRO</code> run-time <code><a class="el" href="group__group__flags.html#ga72b0491c9cbf2071f0c96c7d29b719bb" title="The soap_mode flags to initialize the soap context, flags can be combined with | (bit-wise or) ...">soap_mode</a></code> flags to set the engine mode </td></tr>
+<tr id="row_4_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__errors.html" target="_self">SOAP_MACRO run-time error codes</a></td><td class="desc">This module defines the <code>SOAP_MACRO</code> run-time <code><a class="el" href="group__group__errors.html#gac0eadf8f72bacb5b41b750beaeca0444" title="Status and error codes are int values, a zero value or SOAP_OK (0) means no error, nonzero means error. ">soap_status</a></code> error codes returned by functions and stored in <code><a class="el" href="structsoap.html#ab85f5d42702963d13ea540bd9876e6d2" title="The soap context soap_status (int) error code of the last operation or SOAP_OK (zero) ...">soap::error</a></code> </td></tr>
+<tr id="row_5_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__context.html" target="_self">Context with engine state</a></td><td class="desc">This module defines the <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context structure with the engine state and functions to allocate, initialize, copy and delete contexts </td></tr>
+<tr id="row_6_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__callbacks.html" target="_self">Callback functions</a></td><td class="desc">This module defines the callback functions of the <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context to modify its behavior, as is done by plugins </td></tr>
+<tr id="row_7_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__ssl.html" target="_self">SSL/TLS context and functions</a></td><td class="desc">This module defines functions to set the SSL/TLS context for HTTPS and WS-Security </td></tr>
+<tr id="row_8_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__io.html" target="_self">HTTP and IO functions</a></td><td class="desc">This module defines functions for HTTP operations and functions for receiving and sending data </td></tr>
+<tr id="row_9_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__cookies.html" target="_self">HTTP cookie functions</a></td><td class="desc">This module defines functions to set and get HTTP cookies at the server side </td></tr>
+<tr id="row_10_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__s2s.html" target="_self">Conversion functions</a></td><td class="desc">This module defines conversion functions of values of various types to and from strings </td></tr>
+<tr id="row_11_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__namespace.html" target="_self">XML namespace tables</a></td><td class="desc">This module defines the <code><a class="el" href="struct_namespace.html" title="Structure of each row in a namespace table. ">Namespace</a></code> XML namespace structure and function to activate a table </td></tr>
+<tr id="row_12_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__header.html" target="_self">Header structure and functions</a></td><td class="desc">This module defines the <code><a class="el" href="struct_s_o_a_p___e_n_v_____header.html" title="SOAP Header structure generated by wsdl2h and soapcpp2. ">SOAP_ENV__Header</a></code> structure and <code><a class="el" href="group__group__header.html#ga08d35d1900a1982fdde6f78e43fc9635" title="If soap::header is NULL then allocate SOAP_ENV__Header header and set soap::header to point to it...">soap_header</a></code> function to allocate the header </td></tr>
+<tr id="row_13_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__fault.html" target="_self">Fault structure and functions</a></td><td class="desc">This module defines the <code><a class="el" href="struct_s_o_a_p___e_n_v_____fault.html" title="SOAP Fault structure generated by soapcpp2. ">SOAP_ENV__Fault</a></code> structure and functions to set and get fault information </td></tr>
+<tr id="row_14_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__dime.html" target="_self">DIME attachment functions</a></td><td class="desc">This module defines functions to set and get DIME attachments </td></tr>
+<tr id="row_15_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__mime.html" target="_self">MIME attachment functions</a></td><td class="desc">This module defines functions to set and get MIME/MTOM attachments </td></tr>
+<tr id="row_16_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__plugin.html" target="_self">Plugins and plugin registry functions</a></td><td class="desc">This module defines plugin registry functions to register plugins </td></tr>
+<tr id="row_17_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__threads.html" target="_self">Thread and mutex functions</a></td><td class="desc">This module defines portable thread and mutex functions </td></tr>
+<tr id="row_18_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__misc.html" target="_self">Miscellaneous functions</a></td><td class="desc">This module defines other useful functions </td></tr>
+</table>
+
+🔝 [Back to table of contents](#)
+
 # Getting started                                                      {#start}
 
 To start using gSOAP, you will need:
@@ -663,35 +693,6 @@ See <https://www.genivia.com/dev.html> for additional
 introductory examples of SOAP/XML, XML REST and JSON applications in C and C++.
 See <https://www.genivia.com/examples> and the gSOAP source code package
 <i>`gsoap/samples`</i> for more examples.
-
-🔝 [Back to table of contents](#)
-
-# API documentation modules                             {#start-modules}
-
-The API documentation is broken down into the following functional documentation
-[modules](modules.html), which are described on separate pages:
-
-<table class="directory">
-<tr id="row_0_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__debug.html" target="_self">Debugging and logging</a></td><td class="desc">This module defines compile-time flags and functions for run-time debugging and logging </td></tr>
-<tr id="row_1_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__with.html" target="_self">WITH_MACRO compile-time flags</a></td><td class="desc">This module defines the <code>WITH_MACRO</code> compile-time flags to configure the engine build </td></tr>
-<tr id="row_2_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__soap.html" target="_self">SOAP_MACRO compile-time values</a></td><td class="desc">This module defines the <code>SOAP_MACRO</code> compile-time values to configure the engine build </td></tr>
-<tr id="row_3_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__flags.html" target="_self">SOAP_MACRO run-time flags</a></td><td class="desc">This module defines the <code>SOAP_MACRO</code> run-time <code><a class="el" href="group__group__flags.html#ga72b0491c9cbf2071f0c96c7d29b719bb" title="The soap_mode flags to initialize the soap context, flags can be combined with | (bit-wise or) ...">soap_mode</a></code> flags to set the engine mode </td></tr>
-<tr id="row_4_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__errors.html" target="_self">SOAP_MACRO run-time error codes</a></td><td class="desc">This module defines the <code>SOAP_MACRO</code> run-time <code><a class="el" href="group__group__errors.html#gac0eadf8f72bacb5b41b750beaeca0444" title="Status and error codes are int values, a zero value or SOAP_OK (0) means no error, nonzero means error. ">soap_status</a></code> error codes returned by functions and stored in <code><a class="el" href="structsoap.html#ab85f5d42702963d13ea540bd9876e6d2" title="The soap context soap_status (int) error code of the last operation or SOAP_OK (zero) ...">soap::error</a></code> </td></tr>
-<tr id="row_5_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__context.html" target="_self">Context with engine state</a></td><td class="desc">This module defines the <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context structure with the engine state and functions to allocate, initialize, copy and delete contexts </td></tr>
-<tr id="row_6_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__callbacks.html" target="_self">Callback functions</a></td><td class="desc">This module defines the callback functions of the <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context to modify its behavior, as is done by plugins </td></tr>
-<tr id="row_7_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__ssl.html" target="_self">SSL/TLS context and functions</a></td><td class="desc">This module defines functions to set the SSL/TLS context for HTTPS and WS-Security </td></tr>
-<tr id="row_8_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__io.html" target="_self">HTTP and IO functions</a></td><td class="desc">This module defines functions for HTTP operations and functions for receiving and sending data </td></tr>
-<tr id="row_9_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__cookies.html" target="_self">HTTP cookie functions</a></td><td class="desc">This module defines functions to set and get HTTP cookies at the server side </td></tr>
-<tr id="row_10_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__s2s.html" target="_self">Conversion functions</a></td><td class="desc">This module defines conversion functions of values of various types to and from strings </td></tr>
-<tr id="row_11_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__namespace.html" target="_self">XML namespace tables</a></td><td class="desc">This module defines the <code><a class="el" href="struct_namespace.html" title="Structure of each row in a namespace table. ">Namespace</a></code> XML namespace structure and function to activate a table </td></tr>
-<tr id="row_12_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__header.html" target="_self">Header structure and functions</a></td><td class="desc">This module defines the <code><a class="el" href="struct_s_o_a_p___e_n_v_____header.html" title="SOAP Header structure generated by wsdl2h and soapcpp2. ">SOAP_ENV__Header</a></code> structure and <code><a class="el" href="group__group__header.html#ga08d35d1900a1982fdde6f78e43fc9635" title="If soap::header is NULL then allocate SOAP_ENV__Header header and set soap::header to point to it...">soap_header</a></code> function to allocate the header </td></tr>
-<tr id="row_13_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__fault.html" target="_self">Fault structure and functions</a></td><td class="desc">This module defines the <code><a class="el" href="struct_s_o_a_p___e_n_v_____fault.html" title="SOAP Fault structure generated by soapcpp2. ">SOAP_ENV__Fault</a></code> structure and functions to set and get fault information </td></tr>
-<tr id="row_14_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__dime.html" target="_self">DIME attachment functions</a></td><td class="desc">This module defines functions to set and get DIME attachments </td></tr>
-<tr id="row_15_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__mime.html" target="_self">MIME attachment functions</a></td><td class="desc">This module defines functions to set and get MIME/MTOM attachments </td></tr>
-<tr id="row_16_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__plugin.html" target="_self">Plugins and plugin registry functions</a></td><td class="desc">This module defines plugin registry functions to register plugins </td></tr>
-<tr id="row_17_"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__threads.html" target="_self">Thread and mutex functions</a></td><td class="desc">This module defines portable thread and mutex functions </td></tr>
-<tr id="row_18_" class="even"><td class="entry"><span style="width:16px;display:inline-block;"></span><a class="el" href="group__group__misc.html" target="_self">Miscellaneous functions</a></td><td class="desc">This module defines other useful functions </td></tr>
-</table>
 
 🔝 [Back to table of contents](#)
 
@@ -2624,7 +2625,7 @@ The following example illustrates the use of threads to improve the quality of s
             fprintf(stderr, "Thread %d accepts socket %d connection from IP %d.%d.%d.%d\n", i, s, (soap.ip>>24)&0xFF, (soap.ip>>16)&0xFF, (soap.ip>>8)&0xFF, soap.ip&0xFF); 
             tsoap = soap_copy(&soap); // make a copy 
             if (!tsoap) 
-              soap_force_close(soap);
+              soap_force_closesock(soap);
             else
               while (THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap))
                 sleep(1); // failed, try again
@@ -2724,7 +2725,7 @@ The following example limits the number of concurrent threads to reduce the mach
               else // recycle threaded soap contexts
               {
                 // optionally, we can cancel the current thread when stuck on IO:
-                // soap_close_connection(soap_thr[i]); // requires compiling with -DWITH_SELF_PIPE
+                // soap_close_connection(soap_thr[i]); // requires compiling 2.8.71 or greater with -DWITH_SELF_PIPE
                 THREAD_JOIN(tid[i]); 
                 fprintf(stderr, "Thread %d completed\n", i); 
                 soap_destroy(soap_thr[i]);            // delete allocated class instances of thread 
@@ -5084,7 +5085,7 @@ option      | result
 `-Ec`       | generate extra functions for deep copying
 `-Ed`       | generate extra functions for deep deletion
 `-Et`       | generate extra functions for data traversals with walker functions
-`-L`        | don't generate soapClientLib and soapServerLib
+`-L`        | don't generate `soapClientLib` and `soapServerLib`
 `-A`        | require HTTP SOAPAction header to invoke server-side operations
 `-a`        | use HTTP SOAPAction header with WS-Addressing to invoke server-side operations
 `-b`        | serialize byte arrays `char[N]` as string
@@ -5093,8 +5094,8 @@ option      | result
 `-c++11`    | generate C++ source code optimized for C++11 (compile with `-std=c++11`)
 `-d path`   | use path to save files
 `-e`        | generate SOAP RPC encoding style bindings (also use `-1` or `-2`)
-`-f N`      | multiple soapC files, with N serializer definitions per file (N>=10)
-`-g`        | generate XML sample messages in template format
+`-f N`      | multiple `soapC` files, with N serializer definitions per file (N>=10)
+`-g`        | generate XML sample messages in template format for [testmsgr](../../testmsgr/html/index.html)
 `-h`        | display help info
 `-I path`   | use path(s) for `#import` (paths separated with `:`)
 `-i`        | generate C++ service proxies and objects inherited from soap struct
@@ -5106,7 +5107,7 @@ option      | result
 `-Q name`   | use name as the C++ namespace for declarations, including custom serializers
 `-q name`   | use name as the C++ namespace for declarations, excluding custom serializers
 `-r`        | generate soapReadme.md report
-`-s`        | generate deserialization code with strict XML validation checks
+`-s`        | generate stub and skeleton functions with strict XML validation checks
 `-t`        | generate code for fully `xsi:type` typed SOAP/XML messaging
 `-u`        | uncomment WSDL/schema output by suppressing XML comments
 `-V`        | display the current version and exit
@@ -7745,7 +7746,10 @@ This specifies a fixed-size array part of the `struct Example`. The serialized o
 ~~~
 </div>
 
-Any deserialized items of an array that do not "fit" in the fixed size array are ignored by the deserializer when the `#SOAP_C_NOIOB` flag is set, otherwise `#SOAP_IOB` errors will be generated by the deserializer.
+Any deserialized items of an array that do not fit in the fixed size array,
+i.e. are out of bounds, are ignored by the deserializer when the
+`#SOAP_C_NOIOB` flag is set, otherwise `#SOAP_IOB` errors will be generated by
+the deserializer.
 
 🔝 [Back to table of contents](#)
 
@@ -10414,7 +10418,7 @@ fill the entire buffer `buf` for all chunks except the last.  For the last it re
 
 🔝 [Back to table of contents](#)
 
-# SOAP/XML over UDP        {#udp}
+# SOAP/XML over UDP        {#UDP}
 
 UDP is a simple, unreliable datagram protocol: UDP sockets are connectionless.
 UDP address formats are identical to those used by TCP.  In particular UDP
@@ -10427,7 +10431,8 @@ address"; this address is network interface dependent.
 Client-side messages with SOAP-over-UDP endpoint URLs
 (`soap.udp://...`) are automatically transmitted as datagrams.
 Server-side applications should set the `#SOAP_IO_UDP` mode flag to
-accept UDP requests, e.g. using `::soap_init1` or `::soap_set_mode`.
+accept UDP requests, e.g. using `::soap_new1`, `::soap_init1`, or
+`::soap_set_mode`.
 
 The maximum message length for datagram packets is restricted by the buffer
 size `#SOAP_BUFLEN`, which is 65536 by default, unless
@@ -10851,7 +10856,7 @@ define                       | result
 `#WITH_CASEINSENSITIVETAGS`  | enables case insensitive XML parsing 
 `#WITH_SOCKET_CLOSE_ON_EXIT` | prevents a server port from staying in listening mode after exit by internally setting `fcntl(sock, F_SETFD, FD_CLOEXEC)` 
 `#WITH_TCPFIN`               | enables TCP FIN after sends when socket is ready to close 
-`#WITH_SELF_PIPE`            | enables a "self pipe" to enable the `::soap_close_connection` function
+`#WITH_SELF_PIPE`            | enables a "self pipe" to enable the `::soap_close_connection` function (gSOAP 2.8.71 or greater)
 
 The following subset of macros are defined in the API documentation Module \ref group_soap.  These macros are used to enable or disable features as specified below, by compiling source code files with compiler option <b>`-D`</b> to set the macro:
 
@@ -11080,6 +11085,7 @@ Error code                  | Description
 `#SOAP_GET_METHOD`          | An HTTP GET request was received by the service but the GET request callback `soap::fget` is not implemented, see Sections \ref get and \ref callback 
 `#SOAP_HREF`                | Reference to object in XML identified by its id attribute is incompatible with the object referred to by the ref or href attribute (applicable to SOAP multi-ref encoding and `#SOAP_XML_GRAPH` serialization) 
 `#SOAP_HTTP_ERROR`          | An unspecified HTTP error occurred 
+`#SOAP_HTTP_METHOD`         | An HTTP request was received by the service that cannot be handled
 `#SOAP_IOB`                 | SOAP array index out of bounds 
 `#SOAP_LENGTH`              | XML element or attribute length validation error or `#SOAP_MAXLENGTH` exceeded
 `#SOAP_LEVEL`               | XML nesting depth level exceeds `#SOAP_MAXLEVEL`
@@ -12234,6 +12240,8 @@ This callback is called after each successful completion of a server operation i
 
 This callback can be used to override memory allocation and management done by `::soap_malloc` in C.  Memory allocated via this callback will not be managed and not be automatically released by the engine.  Instead, the application using this callback should release allocated memory.  All allocations done by `::soap_malloc` are replaced with a call to `::soap::fmalloc`.  However, no other allocations, such as `::soap_new` and `soap_new_T` for C++ classes `T` are affected, because objects are allocated differently.  This callback is therefore not useful for C++ applications.  Returns a pointer to dynamically allocated memory or NULL on failure to allocate.  No built-in function is assigned to `::soap::fmalloc`.
 
+@warning Deprecated since 2.8.72.  Define `#SOAP_MALLOC` and `#SOAP_FREE` instead.
+
 ### user variable
 
 A `void* ::soap::user` variable is available to pass user-defined data to the callbacks.
@@ -12726,7 +12734,7 @@ each thread handles the client connection:
           fprintf(stderr, "Accepts socket %d connection from IP %d.%d.%d.%d\n", s, (int)(soap.ip>>24)&0xFF, (int)(soap.ip>>16)&0xFF, (int)(soap.ip>>8)&0xFF, (int)soap.ip&0xFF); 
           tsoap = soap_copy(&soap); 
           if (!tsoap)
-            soap_force_close(soap);
+            soap_force_closesock(soap);
           else
             while (THREAD_CREATE(&tid, (void*(*)(void*))process_request, (void*)tsoap))
               sleep(1); // failed, try again
@@ -12787,7 +12795,9 @@ that need it.
 ## HTTP chunked transfer encoding        {#chunked}
 
 Outbound HTTP messages are not chunked unless the
-`#SOAP_IO_CHUNK` flag is enabled.
+`#SOAP_IO_CHUNK` flag is enabled.  Chunking may improve the speed of message
+sending with HTTP, because the message length does not need to be determined in
+advance for the HTTP content length header.
 
 🔝 [Back to table of contents](#)
 
@@ -13167,7 +13177,7 @@ seconds total.
 
 ## Closing connections by force {#forceclose}
 
-To close a socket connection by force, you can use `soap_force_close(soap)`, which closes the connection regardless if keep-alive is active.  By contrast, `soap_closesock(soap)` only closes the connection when keep-alive is not active.
+To close a socket connection by force, you can use `soap_force_closesock(soap)`, which closes the connection regardless if keep-alive is active.  By contrast, `soap_closesock(soap)` only closes the connection when keep-alive is not active.
 
 To force-close a connection from another thread, compile stdsoap2.c or stdsoap2.cpp and your project source code with `#WITH_SELF_PIPE` to enable this feature.  Use `soap_close_connection(soap)` on the `::soap` context that must close.  You can make this call from another thread and pass the `::soap` context to this function of the thread that must close connections.
 
@@ -13301,7 +13311,7 @@ multi-threaded stand-alone SOAP Web Service:
         } 
         tsoap = soap_copy(soap);
         if (!tsoap) 
-          soap_force_close(soap);
+          soap_force_closesock(soap);
         else
           while (THREAD_CREATE(&tid, (void*(*)(void*))&process_request, (void*)tsoap))
             sleep(1); /* failed, try again */
@@ -13388,7 +13398,7 @@ the server to authenticate to the client.
 
 Since release version 2.8.20, SSL v3 is disabled. To enable SSL v3 together with
 TLS 1.0 and higher, use `#SOAP_SSLv3_TLSv1` with `::soap_ssl_server_context`.
-To use TLS 1.1 and 1.2 use `SOAP_TLSv_1_1 | SOAP_TLSv_1_2`. To use TLS 1.2 only
+To use TLS 1.1 and 1.2 use `SOAP_TLSv1_1 | SOAP_TLSv1_2`. To use TLS 1.2 only
 use `#SOAP_TLSv1_2`. To use SSL v3 only use `#SOAP_SSLv3`.
 
 The `cacert` file and `capath` are optional. Either one can be specified when
@@ -13504,7 +13514,7 @@ Other client-side SSL options are `#SOAP_SSL_SKIP_HOST_CHECK` to skip the host n
 
 For systems based on Microsoft windows, the WinInet module can be used instead, see `mod_gsoap/gsoap_win/wininet`.
 
-Since release version 2.8.20 SSL v3 is disabled. To enable SSL v3 together with TLS 1.0 and higher, use `#SOAP_SSLv3_TLSv1` with `::soap_ssl_server_context`. To use TLS 1.1 and 1.2 use `SOAP_TLSv_1_1 | SOAP_TLSv_1_2`. To use TLS 1.2 only use `#SOAP_TLSv1_2`. To use SSL v3 only use `#SOAP_SSLv3`.
+Since release version 2.8.20 SSL v3 is disabled. To enable SSL v3 together with TLS 1.0 and higher, use `#SOAP_SSLv3_TLSv1` with `::soap_ssl_server_context`. To use TLS 1.1 and 1.2 use `SOAP_TLSv1_1 | SOAP_TLSv1_2`. To use TLS 1.2 only use `#SOAP_TLSv1_2`. To use SSL v3 only use `#SOAP_SSLv3`.
 
 To disable server authentication for testing purposes, use the following:
 
@@ -14103,7 +14113,9 @@ This is automated with <b>`wsdl2h -qname`</b> option <b>`-qname`</b>.
 Or by creating libraries in C for the client/server objects as explained in
 subsequent sections
 
-Both approaches are demonstrated by example in the gSOAP distribution, the <i>`gsoap/samples/link`</i> (C only) and <i>`gsoap/samples/link++`</i> (C++ with C++ namespaces) examples.
+Both approaches are demonstrated by examples in the gSOAP source code
+distribution package, the <i>`gsoap/samples/link`</i> (C only) and
+<i>`gsoap/samples/link++`</i> (C++ with C++ namespaces) examples.
 
 🔝 [Back to table of contents](#)
 
@@ -14167,22 +14179,35 @@ combines all service definitions. However, the approach presented in this
 section is useful when creating (dynamic) libraries for client and server
 objects, such as DLLs as described in Section \ref dll .
 
-Do not link <i>`soapClientLib.cpp`</i> or <i>`soapServerLib.cpp`</i> together with <i>`soapC.cpp`</i>, <i>`soapClient.cpp`</i>, and <i>`soapServer.cpp`</i>. The library versions already include all of the necessary definitions.
+@note One major disadvantage of the approach presented here is that the serializer
+functions are no longer accessible in the user's source code, because
+serializers will be converted to static functions (to be used by the generated
+stub and skeleton functions only).  For example, functions such as
+`soap_new_T`, `soap_default_T`, `soap_write_T`, `soap_read_T`, `soap_put_T`,
+and `soap_get_T` cannot be used any longer.
 
-To build multiple libraries in the same project directory, you can define a C++
-namespace in your header file with <b>`soapcpp2 -qname`</b> option <b>`-qname`</b> (see Section \ref codenamespace ) or you
-can use <b>`soapcpp2 -c -pname`</b> option <b>`-pname`</b> for C to rename the generated
-<i>`soapClientLib.c`</i> and <i>`soapServerLib.c`</i> (and associated) files. The
-<b>`-pname`</b> option specifies the file <i>`name`</i> prefix to replace the <i>`soap`</i> file name
-prefix.
+Using C++ namespaces is a better alternative when building applications in C++
+that combine multiple clients and services.  To build multiple libraries,
+you can define a C++ namespace in your header file with
+<b>`soapcpp2 -qname`</b> option <b>`-qname`</b>, see Section \ref codenamespace
+for details.
 
-The engine does not define SOAP Header and Fault serializers that the engine needs.  We therefore
-add SOAP Header and Fault serializers, which are compiled
-separately as follows.
-First, create a new header file <i>`env.h`</i> with the SOAP Header
-`::SOAP_ENV__Header` and SOAP Fault `::SOAP_ENV__Fault` structures, including `::SOAP_ENV__Detail` if this structure contains members that are serialized as fault details.  You can
-leave this header file empty if you want to use the default SOAP Header and
-Fault.  However, if SOAP Headers are required then you cannot leave the `::SOAP_ENV__Header` structure empty.  For example, the WS-Addressing and WS-Security plugins require SOAP Headers which can be imported by adding `#import "wsa5.h"` and `#import "wsse.h"`, respectively to <i>`env.h`</i>. Then compile this header file with:
+For C, you can use <b>`soapcpp2 -c -pname`</b> option <b>`-pname`</b> to
+rename the generated <i>`soapClientLib.c`</i> and <i>`soapServerLib.c`</i> (and
+associated) files. The <b>`-pname`</b> option specifies the file <i>`name`</i>
+prefix to replace the <i>`soap`</i> file name prefix.
+
+The engine does not define SOAP Header and Fault serializers that the engine
+needs.  We therefore add SOAP Header and Fault serializers, which are compiled
+separately as follows.  First, create a new header file <i>`env.h`</i> with the
+SOAP Header `::SOAP_ENV__Header` and SOAP Fault `::SOAP_ENV__Fault` structures,
+including `::SOAP_ENV__Detail` if this structure contains members that are
+serialized as fault details.  You can leave this header file empty if you want
+to use the default SOAP Header and Fault.  However, if SOAP Headers are
+required then you cannot leave the `::SOAP_ENV__Header` structure empty.  For
+example, the WS-Addressing and WS-Security plugins require SOAP Headers which
+can be imported by adding `#import "wsa5.h"` and `#import "wsse.h"`,
+respectively to <i>`env.h`</i>. Then compile this header file with:
 
      soapcpp2 -penv env.h
 
@@ -14193,11 +14218,15 @@ You should then compile the <i>`gsoap/stdsoap2.cpp`</i> library with the compile
 
      c++ -DWITH_NONAMESPACES -c stdsoap2.cpp
 
-This omits the reference to the global namespaces table, which is nowhere
-to be defined since we will use XML namespaces for each client/service separately. Therefore, you must explicitly set the
-namespaces value of the `::soap` context in your code every time after initialization of the `::soap` context with the `soap_set_namespaces(struct soap*, const struct Namespace*)` function.
+This omits the reference to the global namespaces table, which is nowhere to be
+defined since we will use XML namespaces for each client/service separately.
+Therefore, you must explicitly set the namespaces value of the `::soap` context
+in your code every time after initialization of the `::soap` context with the
+`soap_set_namespaces(struct soap*, const struct Namespace*)` function.
 
-For example, suppose we have two clients defined in header files <i>`client1.h`</i> and <i>`client2.h`</i>. We first generate the <i>`envH.h`</i> file for the SOAP Header and Fault definitions:
+For example, suppose we have two clients defined in header files
+<i>`client1.h`</i> and <i>`client2.h`</i>. We first generate the
+<i>`envH.h`</i> file for the SOAP Header and Fault definitions:
 
      soapcpp2 -c -penv env.h
 
@@ -14226,19 +14255,24 @@ The source code of your application should include the generated <i>`envH.h`</i>
     ... // make Client 2 invocations
 ~~~
 
-It is important to use <b>`soapcpp2 -n`</b> option <b>`-n`</b>, see Section \ref soapcpp2options, to rename the namespace tables so we can include them all without running into redefinitions.
+It is important to use <b>`soapcpp2 -n`</b> option <b>`-n`</b>, see Section
+\ref soapcpp2options, to rename the namespace tables so we can include them all
+without running into redefinitions.
 
-Note: Link conflicts may still occur in the unlikely situation that identical service operation names are defined in
-two or more stub or skeleton functions when these methods share the same XML namespace prefix.  You may have to use C++ code
-namespaces to avoid these link conflicts or rename the namespace prefixes used by the service operation defined in the header files.
+@note Link conflicts may still occur in the unlikely situation that identical
+service operation names are defined in two or more stub or skeleton functions
+when these methods share the same XML namespace prefix.
 
 🔝 [Back to table of contents](#)
 
 ### C++ examples   {#example13}
 
-As an example we will build a Delayed Stock Quote client library and a Currency Exchange Rate client library.
+As an example we will build a Delayed Stock Quote client library and a Currency
+Exchange Rate client library.
 
-First, we create an empty header file <i>`env.h`</i>, which may be empty or should contain SOAP Header and Fault definitions as explained in Section \ref dylibs, and compile it as follows:
+First, we create an empty header file <i>`env.h`</i>, which may be empty or
+should contain SOAP Header and Fault definitions as explained in Section \ref
+dylibs, and compile it as follows:
 
      soapcpp2 -penv env.h
      c++ -c envC.cpp
@@ -14247,9 +14281,13 @@ We also compile <i>`gsoap/stdsoap2.cpp`</i> without namespaces:
 
      c++ -c -DWITH_NONAMESPACES stdsoap2.cpp
 
-If you do not use `#WITH_NONAMESPACES` then you will get an unresolved link error for the global `namespaces` table. You can define a dummy table to avoid having to recompile <i>`gsoap/stdsoap2.cpp`</i>.
+If you do not use `#WITH_NONAMESPACES` then you will get an unresolved link
+error for the global `namespaces` table. You can define a dummy table to avoid
+having to recompile <i>`gsoap/stdsoap2.cpp`</i>.
 
-Second, we create the Delayed Stock Quote header file specification, which may be obtained using the WSDL importer. If you want to use C++ namespaces then you need to manually add the `namespace` declaration to the generated header file:
+Second, we create the Delayed Stock Quote header file specification, which may
+be obtained using the WSDL importer. If you want to use C++ namespaces then you
+need to manually add the `namespace` declaration to the generated header file:
 
 ~~~{.cpp}
     namespace quote {

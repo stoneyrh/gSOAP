@@ -281,8 +281,8 @@ For the full list of testmsgr options, see \ref options.
 
 🔝 [Back to table of contents](#)
 
-Installing testmsgr                                                     {#build}
-===================
+Building and installing testmsgr                                        {#build}
+================================
 
 To build testmsgr, [install gSOAP](http://www.genivia.com/downloads.html) and
 build testmsgr as follows:
@@ -293,15 +293,18 @@ build testmsgr as follows:
 This builds the command-line tool testmsgr in `gsoap/samples/testmsgr` from where you
 can use it and/or copy it for use with your projects.
 
-If you do not have the samples built, you can use soapcpp2 (or soapcpp2.exe
-in `gsoap/bin/win32`) from the command line to generate the C++ code required
-for testmsgr:
+If you do not have the samples built, you can use soapcpp2 from the command
+line to generate the C++ code required for testmsgr:
 
     cd gsoap/samples/testmsgr
     soapcpp2 -CSL ../../import/dom.h
     c++ -I../.. -o testmsgr testmsgr.cpp soapC.cpp ../../dom.cpp ../../stdsoap2.cpp
 
 This builds the testmsgr command-line tool.
+
+For users of Windows, visit
+[download and installation](http://www.genivia.com/downloads.html) to download
+`testmsgr.exe`.
 
 🔝 [Back to table of contents](#)
 

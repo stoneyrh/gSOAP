@@ -4,12 +4,12 @@ var NAVTREE =
     [ "Introduction", "index.html#intro", null ],
     [ "Notational conventions", "index.html#conventions", null ],
     [ "Tooling characteristics", "index.html#features", null ],
+    [ "API documentation modules", "index.html#start-modules", null ],
     [ "Getting started", "index.html#start", [
       [ "Where to find examples", "index.html#start-examples", null ],
       [ "Creating a SOAP/XML client application", "index.html#start-client", null ],
       [ "Creating a SOAP/XML service application", "index.html#start-service", null ]
     ] ],
-    [ "API documentation modules", "index.html#start-modules", null ],
     [ "Introduction to XML data bindings", "index.html#databindings", null ],
     [ "A quick user guide", "index.html#guide", [
       [ "How to build Web API clients", "index.html#client", [
@@ -45,7 +45,7 @@ var NAVTREE =
       ] ],
       [ "Asynchronous one-way message passing", "index.html#oneway1", null ],
       [ "How to use XML serializers to save and load application data", "index.html#bindings", [
-        [ "Mapping XML schema to C/C++ with wsdl2h", "index.html#wsdl2h", null ],
+        [ "Converting WSDL, WADL, and XML schema to C/C++ with wsdl2h", "index.html#wsdl2h", null ],
         [ "Mapping C/C++ to XML schema with soapcpp2", "index.html#soapcpp2mapping", null ],
         [ "Serializing C/C++ data to XML", "index.html#serialize", null ],
         [ "Example", "index.html#example9", null ],
@@ -155,7 +155,7 @@ var NAVTREE =
       [ "Redirecting inbound MIME/MTOM streams based on SOAP body content", "index.html#MTOMpoststreaming", null ],
       [ "Streaming chunked MIME/MTOM", "index.html#mimechunking", null ]
     ] ],
-    [ "SOAP/XML over UDP", "index.html#udp", [
+    [ "SOAP/XML over UDP", "index.html#UDP", [
       [ "Using WS-Addressing with SOAP-over-UDP", "index.html#wsaudp", [
         [ "Client-side one-way UDP unicast", "index.html#unicast", null ],
         [ "Client-side one-way UDP multicast", "index.html#multicast", null ],
@@ -278,10 +278,10 @@ var NAVTREEINDEX =
 [
 "annotated.html",
 "group__group__dime.html#ga466502a32af0672d589e919a7c882a57",
-"group__group__flags.html#gaf7cbb692f85f8633c4efc66dfae41e9e",
-"group__group__soap.html#ga2ad35599c611417132d6b0a9b6870652",
-"index.html#MTOMstreaming",
-"structsoap.html#a1579bd8bd106afc9a906a673ca473046"
+"group__group__flags.html#gaf1d4d4fb1293cbb0b7278e1f24ac2cb9",
+"group__group__s2s.html#gac263a15330f17ac7e71a3e3ff3214f5d",
+"group__group__with.html#ga93604d4f98eeeedcc7af19ff83192308",
+"index.html#wsaudp"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

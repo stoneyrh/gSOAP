@@ -1359,7 +1359,7 @@ Version 2.8.70 (8/27/2018)
 - Updated `typemap.dat` for ONVIF and upgraded `wsdd10.h` (WS-Discovery 1.0 with WS-Addressing 2004/08) to `wsdd5.h` (WS-Discovery 1.0 with WS-Addressing 2005/08).
 - Fixed a deserialization issue with Qt `QString` used in a wrapper class (as `__item` member), when the wrapper class is used in a container, such as `std::vector`.
 
-Version 2.8.71 (11/12/2018) {#latest}
+Version 2.8.71 (11/12/2018)
 ---
 
 - Improved user guide and added API documentation modules.
@@ -1376,13 +1376,22 @@ Version 2.8.71 (11/12/2018) {#latest}
 - Improved `soap_get_http_body` memory use.
 - Changed `soap_get_http_body` to return "" (empty string) when no HTTP body is detected instead of NULL, to distinguish receiving an empty HTTP body (returning "") from errors (returning NULL with `soap::error` set).
 - Changed Apache mod gSOAP `mod_gsoap.c` to use `RTLD_LOCAL` instead of `RTLD_GLOBAL` to permit multiple concurrent gSOAP modules to be loaded in Apache 2 with dlopen.
+- Renamed the `soap_check_faultX` functions to `soap_fault_X` functions: `soap_check_faultstring` is replaced by `soap_fault_string`, `soap_check_faultdetail` is replaced by `soap_fault_detail`, `soap_check_faultsubcode` is replaced by `soap_fault_subcode`.
 - Renamed the `SOCKET_CLOSE_ON_EXIT` macro to `WITH_SOCKET_CLOSE_ON_EXIT`.
 - Renamed the `query` functions of the HTTP GET plugin gsoap/plugin/httpget.c to `soap_query`, `soap_query_key`, `soap_query_val`.
 - Renamed the `form` function of the HTTP POST form plugin gsoap/plugin/httpform.cto `soap_get_form`.
 - Fixed `-DWITH_INCLUDE_XLOCALE_H` and `configure` script: the problem caused build failures on Linux.  It is possible to force the use of `xlocale.h` with `./configure --enable-xlocale` but only use this when necessary, when `locale_t` is not declared.
 - Fixed C14N-related WS-Security signature issue introduced in 2.8.28, which in most cases made no difference but could lead to a signature validation failure.
 - Fixed soapcpp2 code generation issue for single- and multi-dimensional fixed-size arrays.
-- Fixed wsdl2h missing built-in XSD type when multiple WSDLs are imported.
+- Fixed wsdl2h missing built-in XSD types when multiple WSDLs are imported.
+
+Version 2.8.72 (11/24/2018) {#latest}
+---
+
+- Improved the HTTP GET `http_get` and HTTP POST `http_post` plugins, handling of a HTTP POST request that has an empty body is now supported.
+- Updated user guide, corrected `soap_rand_uuid` description: string returned is stored in a temporary buffer, not stored in managed memory.
+- Fixed spurious constant initialization problem for `enum` types in soapcpp2-generated code, the problem was introduced with soapcpp2 2.8.71 C/C++ grammar expansion.
+- Fixed a CURL plugin issue that prevented PUT and DELETE methods to work properly.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

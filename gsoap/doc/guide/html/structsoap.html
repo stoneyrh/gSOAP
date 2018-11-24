@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">soap Struct Reference</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Nov 12 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sat Nov 24 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -109,10 +109,10 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a2ba5188ff4e8d734652a55a11842e79c"><td class="mdescLeft">&#160;</td><td class="mdescRight">OpenSSL context pointer.  <a href="#a2ba5188ff4e8d734652a55a11842e79c">More...</a><br /></td></tr>
 <tr class="separator:a2ba5188ff4e8d734652a55a11842e79c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39daa19f039aebc76b8c4b6bf933570a"><td class="memItemLeft" align="right" valign="top">short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap.html#a39daa19f039aebc76b8c4b6bf933570a">version</a></td></tr>
-<tr class="memdesc:a39daa19f039aebc76b8c4b6bf933570a"><td class="mdescLeft">&#160;</td><td class="mdescRight">SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2) usually determined from the SOAP message received or this is set with <code><a class="el" href="group__group__context.html#ga7c0a034b54cd46ee06ce1253e5a40467" title="Set SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2) ">soap_set_version</a></code>  <a href="#a39daa19f039aebc76b8c4b6bf933570a">More...</a><br /></td></tr>
+<tr class="memdesc:a39daa19f039aebc76b8c4b6bf933570a"><td class="mdescLeft">&#160;</td><td class="mdescRight">SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2)  <a href="#a39daa19f039aebc76b8c4b6bf933570a">More...</a><br /></td></tr>
 <tr class="separator:a39daa19f039aebc76b8c4b6bf933570a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b86360871d347d0a5f18a231fa82dc8"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap.html#a6b86360871d347d0a5f18a231fa82dc8">encodingStyle</a></td></tr>
-<tr class="memdesc:a6b86360871d347d0a5f18a231fa82dc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable <em><code>SOAP-ENV:encodingStyle</code></em> URI value, pre-defined by the engine depending on the SOAP protocol version used, setting this to NULL means no SOAP encodingStyle, setting this to "" means that the engine will set the encodingStyle URI according to the SOAP version used.  <a href="#a6b86360871d347d0a5f18a231fa82dc8">More...</a><br /></td></tr>
+<tr class="memdesc:a6b86360871d347d0a5f18a231fa82dc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable <em><code>SOAP-ENV:encodingStyle</code></em> URI value.  <a href="#a6b86360871d347d0a5f18a231fa82dc8">More...</a><br /></td></tr>
 <tr class="separator:a6b86360871d347d0a5f18a231fa82dc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abda4ccd0d64f76eb57145cc4890c87b2"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap.html#abda4ccd0d64f76eb57145cc4890c87b2">actor</a></td></tr>
 <tr class="memdesc:abda4ccd0d64f76eb57145cc4890c87b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable <em><code>SOAP-ENV:actor</code></em> (SOAP 1.1) or <em><code>SOAP-ENV:role</code></em> (SOAP 1.2) attribute value of all <em><code>SOAP-ENV:mustUnderstand</code></em> attributed header elements.  <a href="#abda4ccd0d64f76eb57145cc4890c87b2">More...</a><br /></td></tr>
@@ -127,10 +127,10 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a3d93ba968bb58373f5884177a7ec0d83"><td class="mdescLeft">&#160;</td><td class="mdescRight">HTTP keep-alive flag (-1) and counter (&gt;0)  <a href="#a3d93ba968bb58373f5884177a7ec0d83">More...</a><br /></td></tr>
 <tr class="separator:a3d93ba968bb58373f5884177a7ec0d83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a400a1663c7b747b84fa17100e10e3eb9"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap.html#a400a1663c7b747b84fa17100e10e3eb9">c14ninclude</a></td></tr>
-<tr class="memdesc:a400a1663c7b747b84fa17100e10e3eb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable string to control the XML namespace prefixes that are subject to XML canonicalization with the <code><a class="el" href="group__group__flags.html#ga757fa32433be64f8c228b1ecce727815" title="soap_mode XML output flag value to send XML messages in exclusive canonical format, use with the soap::c14ninclude and soap::c14nexclude strings to control the prefixes that are subject to canonicalization by including or excluding specific prefixes ">SOAP_XML_CANONICAL</a></code> output mode flag, specified by space-separated prefixes in the string, or <code>*</code> to specify that all prefixes are inclusive, or NULL when unused.  <a href="#a400a1663c7b747b84fa17100e10e3eb9">More...</a><br /></td></tr>
+<tr class="memdesc:a400a1663c7b747b84fa17100e10e3eb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable string to control the XML namespace prefixes that are subject to XML canonicalization with the <code><a class="el" href="group__group__flags.html#ga757fa32433be64f8c228b1ecce727815" title="soap_mode XML output flag value to send XML messages in exclusive canonical format as per W3C XML C14...">SOAP_XML_CANONICAL</a></code> output mode flag, specified by space-separated prefixes in the string, or <code>*</code> to specify that all prefixes are inclusive, or NULL when unused.  <a href="#a400a1663c7b747b84fa17100e10e3eb9">More...</a><br /></td></tr>
 <tr class="separator:a400a1663c7b747b84fa17100e10e3eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd294a7412902194179ec31c2d0200ef"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap.html#afd294a7412902194179ec31c2d0200ef">c14nexclude</a></td></tr>
-<tr class="memdesc:afd294a7412902194179ec31c2d0200ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable string to control the XML namespace prefixes that are subject to XML canonicalization with <code><a class="el" href="group__group__flags.html#ga757fa32433be64f8c228b1ecce727815" title="soap_mode XML output flag value to send XML messages in exclusive canonical format, use with the soap::c14ninclude and soap::c14nexclude strings to control the prefixes that are subject to canonicalization by including or excluding specific prefixes ">SOAP_XML_CANONICAL</a></code> output mode flag, specified by space-separated prefixes in the string, or NULL when unused.  <a href="#afd294a7412902194179ec31c2d0200ef">More...</a><br /></td></tr>
+<tr class="memdesc:afd294a7412902194179ec31c2d0200ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-definable string to control the XML namespace prefixes that are subject to XML canonicalization with <code><a class="el" href="group__group__flags.html#ga757fa32433be64f8c228b1ecce727815" title="soap_mode XML output flag value to send XML messages in exclusive canonical format as per W3C XML C14...">SOAP_XML_CANONICAL</a></code> output mode flag, specified by space-separated prefixes in the string, or NULL when unused.  <a href="#afd294a7412902194179ec31c2d0200ef">More...</a><br /></td></tr>
 <tr class="separator:afd294a7412902194179ec31c2d0200ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec65c0198db5df4bef7afd2df29ff88d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsoap.html#aec65c0198db5df4bef7afd2df29ff88d">status</a></td></tr>
 <tr class="memdesc:aec65c0198db5df4bef7afd2df29ff88d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context HTTP status code received (100 to 599) or the HTTP method to use for sending a message as <code><a class="el" href="group__group__io.html#ga41f39e73106f1a2283ae3aa65698050f" title="HTTP POST command code. ">SOAP_POST</a></code>, <code><a class="el" href="group__group__io.html#ga4c291263eadcefa290e90c64e632ae47" title="HTTP POST command code with custom content type. ">SOAP_POST_FILE</a></code>, <code><a class="el" href="group__group__io.html#ga0f6661cfe8eff845600e7a75a2f46701" title="HTTP PATCH command code with custom content type. ">SOAP_PATCH</a></code>, <code><a class="el" href="group__group__io.html#ga3abcdd760843c4bdc56c19b85453ed04" title="HTTP GET command code. ">SOAP_GET</a></code>, <code><a class="el" href="group__group__io.html#ga32a114ef8df190363b9c3ad37bcb6335" title="HTTP PUT command code with custom content type. ">SOAP_PUT</a></code>, <code><a class="el" href="group__group__io.html#ga32a114ef8df190363b9c3ad37bcb6335" title="HTTP PUT command code with custom content type. ">SOAP_PUT</a></code>, <code><a class="el" href="group__group__io.html#ga6e1b491acf772e88f64909ee5baae18d" title="HTTP DEL command code. ">SOAP_DEL</a></code>, <code><a class="el" href="group__group__io.html#gaaf0409312a4af954ee5b183b92967e0b" title="HTTP CONNECT command code. ">SOAP_CONNECT</a></code>, <code><a class="el" href="group__group__io.html#ga31ba86b35e83440e4047b021add6fe2c" title="HTTP HEAD command code. ">SOAP_HEAD</a></code>, <code><a class="el" href="group__group__io.html#gab85d36efa8017c3d328289e25318fb18" title="HTTP OPTIONS command code. ">SOAP_OPTIONS</a></code>  <a href="#aec65c0198db5df4bef7afd2df29ff88d">More...</a><br /></td></tr>
@@ -880,7 +880,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable string to control the XML namespace prefixes that are subject to XML canonicalization with <code><a class="el" href="group__group__flags.html#ga757fa32433be64f8c228b1ecce727815" title="soap_mode XML output flag value to send XML messages in exclusive canonical format, use with the soap::c14ninclude and soap::c14nexclude strings to control the prefixes that are subject to canonicalization by including or excluding specific prefixes ">SOAP_XML_CANONICAL</a></code> output mode flag, specified by space-separated prefixes in the string, or NULL when unused. </p>
+<p>User-definable string to control the XML namespace prefixes that are subject to XML canonicalization with <code><a class="el" href="group__group__flags.html#ga757fa32433be64f8c228b1ecce727815" title="soap_mode XML output flag value to send XML messages in exclusive canonical format as per W3C XML C14...">SOAP_XML_CANONICAL</a></code> output mode flag, specified by space-separated prefixes in the string, or NULL when unused. </p>
 
 </div>
 </div>
@@ -894,7 +894,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable string to control the XML namespace prefixes that are subject to XML canonicalization with the <code><a class="el" href="group__group__flags.html#ga757fa32433be64f8c228b1ecce727815" title="soap_mode XML output flag value to send XML messages in exclusive canonical format, use with the soap::c14ninclude and soap::c14nexclude strings to control the prefixes that are subject to canonicalization by including or excluding specific prefixes ">SOAP_XML_CANONICAL</a></code> output mode flag, specified by space-separated prefixes in the string, or <code>*</code> to specify that all prefixes are inclusive, or NULL when unused. </p>
+<p>User-definable string to control the XML namespace prefixes that are subject to XML canonicalization with the <code><a class="el" href="group__group__flags.html#ga757fa32433be64f8c228b1ecce727815" title="soap_mode XML output flag value to send XML messages in exclusive canonical format as per W3C XML C14...">SOAP_XML_CANONICAL</a></code> output mode flag, specified by space-separated prefixes in the string, or <code>*</code> to specify that all prefixes are inclusive, or NULL when unused. </p>
 
 </div>
 </div>
@@ -1182,7 +1182,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>User-definable <em><code>SOAP-ENV:encodingStyle</code></em> URI value, pre-defined by the engine depending on the SOAP protocol version used, setting this to NULL means no SOAP encodingStyle, setting this to "" means that the engine will set the encodingStyle URI according to the SOAP version used. </p>
+<p>User-definable <em><code>SOAP-ENV:encodingStyle</code></em> URI value. </p>
+<p>This URI string value is pre-defined by the engine depending on the SOAP protocol version used, setting this to NULL means no SOAP encodingStyle, setting this to "" means that the engine will set the encodingStyle URI according to the SOAP version used.</p>
+<dl class="section see"><dt>See also</dt><dd><code><a class="el" href="structsoap.html#a39daa19f039aebc76b8c4b6bf933570a" title="SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2) ">soap::version</a></code>, <code><a class="el" href="group__group__context.html#ga7c0a034b54cd46ee06ce1253e5a40467" title="Set SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2) ">soap_set_version</a></code>. </dd></dl>
 
 </div>
 </div>
@@ -2161,7 +2163,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2) usually determined from the SOAP message received or this is set with <code><a class="el" href="group__group__context.html#ga7c0a034b54cd46ee06ce1253e5a40467" title="Set SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2) ">soap_set_version</a></code> </p>
+<p>SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2) </p>
+<p>The SOAP version is determined from the SOAP or XML message received. The version is automatically set before sending messages when SOAP 1.1 or SOAP 1.2 namespaces are defined in the <code><a class="el" href="struct_namespace.html" title="Structure of each row in a namespace table. ">Namespace</a></code> table or when SOAP namespaces are omitted from the table. The version can be explicitly set or overruled by calling <code><a class="el" href="group__group__context.html#ga7c0a034b54cd46ee06ce1253e5a40467" title="Set SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2) ">soap_set_version</a></code>.</p>
+<dl class="section see"><dt>See also</dt><dd><code><a class="el" href="structsoap.html#a6b86360871d347d0a5f18a231fa82dc8" title="User-definable SOAP-ENV:encodingStyle URI value. ">soap::encodingStyle</a></code>, <code><a class="el" href="group__group__context.html#ga7c0a034b54cd46ee06ce1253e5a40467" title="Set SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2) ">soap_set_version</a></code>. </dd></dl>
 
 </div>
 </div>
@@ -2172,7 +2176,7 @@ Public Attributes</h2></td></tr>
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Nov 12 2018 09:30:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sat Nov 24 2018 10:10:04 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

@@ -60,10 +60,8 @@ compiling, linking, and/or using OpenSSL is allowed.
           { "application/json",   json_handler },
           { "application/json;*", json_handler },
           { "image/jpg",          jpeg_handler },
-          { "image/*",            image_handler },
           { "text/html",          html_handler },
-          { "text/*",             text_handler },
-          { "text/*;*",           text_handler },
+          { "text/html;*",        html_handler },
           { "POST",               generic_POST_handler },
           { "PUT",                generic_PUT_handler },
           { "PATCH",              generic_PATCH_handler },
@@ -72,7 +70,15 @@ compiling, linking, and/or using OpenSSL is allowed.
         };
 
         Note that '*' can be used as a wildcard and some media types may have
-        optional parameters (after ';') that should be captured with a '*'.
+        optional parameters (after ';') that should be captured with a '*':
+
+          { "image*",            image_handler },
+          { "text*",             text_handler },
+          { "text*;*",           text_handler },
+
+        In the above, to be more accurate, we should use a slash / between
+        image and the wildcard * (which is not shown in the table above due to
+        compilers throwing a fit at the / and * combo).
 
         Each handler is a function that takes the soap context as a parameter
         and returns SOAP_OK or an error code.
@@ -221,15 +227,12 @@ static int http_post_parse_header(struct soap *soap, const char *key, const char
     return SOAP_PLUGIN_ERROR;
   if (data->fparsehdr(soap, key, val)) /* parse HTTP header */
     return soap->error;
-  if (!soap_tag_cmp(key, "Content-Type"))
+  if (!soap_tag_cmp(key, "Content-Type")) /* check content type */
   {
-    /* check content type */
-    soap->fform = http_lookup_handler(soap, val, data);
-    if (!soap->fform)
-      soap->fform = http_lookup_handler(soap, "POST", data);
-    if (soap->fform)
-      return SOAP_FORM; /* calls soap->fform after processing the HTTP header */
+      soap->fform = http_lookup_handler(soap, val, data);
   }
+  if (!soap->fform)
+    soap->fform = http_lookup_handler(soap, "POST", data);
   return soap->error;
 }
 
@@ -250,35 +253,38 @@ static http_handler_t http_lookup_handler(struct soap *soap, const char *type, s
 
 static int http_fput(struct soap *soap)
 {
+  int (*fform)(struct soap*);
   struct http_post_data *data = (struct http_post_data*)soap_lookup_plugin(soap, http_post_id);
   if (!data)
     return SOAP_PLUGIN_ERROR;
-  soap->fform = http_lookup_handler(soap, "PUT", data);
-  if (soap->fform)
-    return SOAP_FORM;
-  return 405;
+  fform = http_lookup_handler(soap, "PUT", data);
+  if (fform)
+    return fform(soap);
+  return data->fput(soap);
 }
 
 static int http_fpatch(struct soap *soap)
 {
+  int (*fform)(struct soap*);
   struct http_post_data *data = (struct http_post_data*)soap_lookup_plugin(soap, http_post_id);
   if (!data)
     return SOAP_PLUGIN_ERROR;
-  soap->fform = http_lookup_handler(soap, "PATCH", data);
-  if (soap->fform)
-    return SOAP_FORM;
-  return 405;
+  fform = http_lookup_handler(soap, "PATCH", data);
+  if (fform)
+    return fform(soap);
+  return data->fpatch(soap);
 }
 
 static int http_fdel(struct soap *soap)
 {
+  int (*fform)(struct soap*);
   struct http_post_data *data = (struct http_post_data*)soap_lookup_plugin(soap, http_post_id);
   if (!data)
     return SOAP_PLUGIN_ERROR;
-  soap->fform = http_lookup_handler(soap, "DELETE", data);
-  if (soap->fform)
-    return SOAP_STOP;
-  return 405;
+  fform = http_lookup_handler(soap, "DELETE", data);
+  if (fform)
+    return fform(soap);
+  return data->fdel(soap);
 }
 
 /******************************************************************************/

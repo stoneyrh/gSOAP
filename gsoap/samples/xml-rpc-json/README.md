@@ -274,8 +274,8 @@ JSON file as a generic template for this code.  And option `-p` generates
 efficient source code for JSONPath queries.  Even stand-alone JSONPath query
 filter applications can be auto-generated with option `-m` (for main).
 
-Compiling the jsoncpp command                                       {#jsoncpp-1}
------------------------------
+Building and installing jsoncpp                                     {#jsoncpp-1}
+-------------------------------
 
 You will find jsoncpp and the XML-RPC/JSON examples in the gSOAP package in
 `gsoap/samples/xml-rpc-json`.
@@ -289,15 +289,19 @@ jsoncpp as follows:
 This builds the command-line tool jsoncpp in `gsoap/samples/xml-rpc-json` from
 where you can use it and/or copy it for use with your projects.
 
-If you do not have the samples built, you can use soapcpp2 (or soapcpp2.exe
-in `gsoap/bin/win32`) from the command line to generate the C++ code required
-to compile jsoncpp and that is also required by the C++ JSON API components:
+If you do not have the samples built, you can use soapcpp2 from the command
+line to generate the C++ code required to compile jsoncpp and that is also
+required by the C++ JSON API components:
 
     cd gsoap/samples/xml-rpc-json
     soapcpp2 -CSL xml-rpc.h
     c++ -I../.. -o jsoncpp jsoncpp.cpp json.cpp xml-rpc.cpp soapC.cpp ../../stdsoap2.cpp
 
 This builds the jsoncpp command-line tool.
+
+For users of Windows, visit
+[download and installation](http://www.genivia.com/downloads.html) to download
+`jsoncpp.exe`.
 
 Command-line options                                                {#jsoncpp-2}
 --------------------

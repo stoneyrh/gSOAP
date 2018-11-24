@@ -1,11 +1,17 @@
 /*
 
-cacerts.h
+        cacerts.h
 
-Store CA certificates in memory for optimizations and/or stand-alone clients.
+        Stores CA certificates in memory to replace the use of cacerts.pem
+
+        Simply replace the call to soap_ssl_client_context() with a call to:
+
+        soap_ssl_client_cacerts(soap);
+
+        No cacerts.pem file is needed.
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2009, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -20,7 +26,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2009, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -45,28 +51,6 @@ compiling, linking, and/or using OpenSSL is allowed.
 --------------------------------------------------------------------------------
 A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
-
-	Usage:
-
-	The soap_ssl_client_cacerts(struct soap*) function replaces
-	soap_ssl_client_context(). The new function uses the internal CA
-	certificate store to authenticate servers. The
-	soap_ssl_client_cacerts() function should be called just once to set up
-	the CA certificate chain.
-
-	Compile and link cacerts.c with your project.
-
-	Example:
-
-	struct soap *soap = soap_new();
-	if (soap_ssl_client_cacerts(soap)
-	 || soap_call_ns__myMethod(soap, "https://..." ...) != SOAP_OK)
-	{ soap_print_fault(soap, stderr);
-	  exit(1);
-	}
-	else
-	  ... // all OK
-
 */
 
 #ifndef WITH_OPENSSL

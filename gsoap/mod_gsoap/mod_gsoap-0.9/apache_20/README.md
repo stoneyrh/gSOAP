@@ -248,6 +248,9 @@ to the apxs command to compile the source code files.
 
 Your can include multiple registrations of plugins as needed.
 
+@warning Do not use any of the `SOAP_IO` flags to initialize or set the
+context, such as `SOAP_IO_KEEPALIVE` and `SOAP_IO_CHUNK`.
+
 
 Dynamic libraries                                                   {#libraries}
 =================

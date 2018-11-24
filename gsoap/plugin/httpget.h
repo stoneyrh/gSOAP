@@ -55,7 +55,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 extern "C" {
 #endif
 
-#define HTTP_GET_ID "SOAP-HTTP-GET/1.1" /* plugin identification */
+#define HTTP_GET_ID "SOAP-HTTP-GET/2.0" /* plugin identification */
 
 extern const char http_get_id[];
 

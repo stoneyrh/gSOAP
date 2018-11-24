@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.71
+        DOM API v5 gSOAP 2.8.72
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20871
+#define GSOAP_LIB_VERSION 20872
 
 #include "stdsoap2.h"
 
@@ -820,7 +820,7 @@ soap_dup_xsd__anyType(struct soap *soap, struct soap_dom_element *d, const struc
     d->node = NULL;
   }
 #else
-  d->node = a->node ? soap_dupelement(soap, a->node, a->type) : NULL;
+  d->node = soap_dupelement(soap, a->node, a->type);
 #endif
   d->type = a->type;
   d->atts = soap_dup_xsd__anyAttribute(soap, NULL, a->atts);
@@ -862,8 +862,7 @@ soap_del_xsd__anyType(const struct soap_dom_element *a)
       ::soap_delelement(a->node, a->type);
     }
 #else
-    if (a->node)
-      soap_delelement(a->node, a->type);
+    soap_delelement(a->node, a->type);
 #endif
     if (a->atts)
     {
@@ -3295,7 +3294,7 @@ soap_dom_call(struct soap *soap, const char *endpoint, const char *action, const
 #endif
       (void)soap_end_recv(soap);
     }
-    else if (soap->error == SOAP_NO_DATA || soap->error == 200 || soap->error == 201 || soap->error == 202)
+    else if (soap->error == 200 || soap->error == 201 || soap->error == 202)
       soap->error = SOAP_OK;
     return soap_closesock(soap);
   }

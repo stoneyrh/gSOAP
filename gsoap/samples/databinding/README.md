@@ -813,8 +813,9 @@ of the form:
 
 where `arg1`, `arg2`, ..., `argn` are formal argument declarations of the input
 and `result` is a formal argument for the output, which must be a pointer or
-reference to the result object to be populated.  More information can be found
-in the [gSOAP user guide.](http://www.genivia.com/doc/soapdoc2.html)
+reference to the result object to be populated.  More information on declaring
+and implementing service operation functions can be found in the
+[gSOAP user guide.](../../guide/html/index.html)
 
 🔝 [Back to table of contents](#)
 
@@ -1563,8 +1564,7 @@ schema:
 </div>
 
 Pattern restrictions are validated by the parser for inbound XML data only if
-the `soap::fsvalidate` and `soap::fwvalidate` callbacks are defined, see the
-[gSOAP user guide.](http://www.genivia.com/doc/soapdoc2.html)
+the `soap::fsvalidate` and `soap::fwvalidate` callbacks are defined.
 
 Exclusive length bounds can be used with strings:
 
@@ -3411,13 +3411,13 @@ C++:
    file descriptor `int soap::sendfd)` or to a stream via `std::ostream
    *soap::os` (C++ only) or saves into a NUL-terminated string by setting
    `const char **soap::os` to a string pointer to be set (C only).  Returns
-   `SOAP_OK` on success or an error code, also stored in `soap->error`.
+   `SOAP_OK` on success or an error code, also stored in `soap::error`.
 
 - `int soap_read_T(struct soap*, T*)` reads an instance of `T` from a file via
    file descriptor `int soap::recvfd)` or from a stream via `std::istream
    *soap::is` (C++ only) or reads from a NUL-termianted string `const char
    *soap::is` (C only).  Returns `SOAP_OK` on success or an error code, also
-   stored in `soap->error`.
+   stored in `soap::error`.
 
 - `void soap_default_T(struct soap*, T*)` sets an instance `T` to its default
   value, resetting members of a struct to their initial values (for classes we
@@ -3729,7 +3729,7 @@ preferred and declared as follows:
 ~~~
 
 Attachments are beyond the scope of this article.  See the
-[gSOAP user guide](http://www.genivia.com/doc/soapdoc2.html) for more details.
+[gSOAP user guide.](../../guide/html/index.html) for more details.
 
 🔝 [Back to table of contents](#)
 
@@ -4520,14 +4520,14 @@ if you set any of these context variables in a client or server application
 then you should reset them to NULL to ensure that socket communications are not
 blocked.
 
-@note The use of `soap->is` and `soap->os` in C requires gSOAP 2.8.28 or greater.
+@note The use of `soap::is` and `soap::os` in C requires gSOAP 2.8.28 or greater.
 
 In the following sections, we present more details on how to read and write to
 files and streams, and use string buffers as sources and sinks for XML data.
 
 In addition, you can set IO callback functions to handle IO at a lower level.
-
-For more details, see the [gSOAP user guide.](http://www.genivia.com/doc/soapdoc2.html)
+For more details on defining your own callback functions, see the
+[gSOAP user guide.](../../guide/html/index.html)
 
 🔝 [Back to table of contents](#)
 
@@ -4612,7 +4612,7 @@ For C++ we recommend to use `std::stringstream` objects from the
     std::string s = ss.str(); // string with XML
 ~~~
 
-For C we can use `soap->is` and `soap->os` to point to strings of XML content
+For C we can use `soap::is` and `soap::os` to point to strings of XML content
 as follows (this requires gSOAP 2.8.28 or later):
 
 ~~~{.cpp}
@@ -4629,12 +4629,12 @@ as follows (this requires gSOAP 2.8.28 or later):
     ... = cs; // string with XML (do not free(cs): managed by the context and freed with soap_end())
 ~~~
 
-The type of `soap->os` is a pointer to a `const char*` string.  The pointer is
+The type of `soap::os` is a pointer to a `const char*` string.  The pointer is
 set by the managing `soap` context to point to the XML data that is stored on
 the context-managed heap.
 
-For earlier gSOAP versions we recommend to use IO callbacks `soap->frecv` and
-`soap->fsend`, see the [gSOAP user guide.](http://www.genivia.com/doc/soapdoc2.html)
+For earlier gSOAP versions we recommend to use IO callbacks `soap::frecv` and
+`soap::fsend`, see the [gSOAP user guide.](../../guide/html/index.html).
 
 🔝 [Back to table of contents](#)
 
@@ -4671,8 +4671,8 @@ allocate and initialize data of type `T` on the managed heap:
 
 This function returns an array of length `n` of type `T` data that is default
 initialized (by internally calling `soap_malloc(soap, n * sizeof(T))` and then
-`soap_default_T(soap, T*)` on each array value).  Use `n=1` to allocate and
-initialize a single value.
+`soap_default_T(soap, T*)` on each array value).  Use a negative value or `n=1`
+to allocate and initialize a single value.
 
 The `soap_malloc` function is a wrapper around `malloc`, but which also permits
 the `soap` context to track all heap allocations for collective deletion
@@ -4958,7 +4958,7 @@ allocation is tracked by the `soap` context for collective deletion with
 `soap_end(soap)` for everything else.
 
 You should only use `soap_malloc(struct soap*, size_t len)` to allocate
-primitive types, but `soap_new_T()` is preferred.  The auto-generated `T *
+primitive types, but `soap_new_T` is preferred.  The auto-generated `T *
 soap_new_T(struct soap*)` returns data allocated on the managed heap for type
 `T`.  The data is mass-deleted with `soap_destroy(soap)` followed by
 `soap_end(soap)`.
@@ -4968,8 +4968,8 @@ are never raised by the engine and serializers when data is allocated, unless
 `SOAP_NOTHROW` (set to `(std::nothrow)`) is redefined to permit `new` to throw
 exceptions.
 
-There are four variations of `soap_new_T()` to allocate data of type `T` that
-soapcpp2 auto-generates:
+There are four variations of `soap_new_T` functions to allocate data of type
+`T` that soapcpp2 auto-generates:
 
 - `T * soap_new_T(struct soap*)` returns a new instance of `T` that is default
   initialized.  For classes, initialization is internally performed using the

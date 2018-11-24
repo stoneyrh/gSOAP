@@ -483,8 +483,8 @@ as a generic template for this code.  And option `-p` generates efficient
 source code for XPath queries.  Even stand-alone XPath query filter
 applications can be auto-generated with option `-m` (for main).
 
-Compiling the domcpp command                                         {#domcpp-1}
-----------------------------
+Building and installing domcpp                                       {#domcpp-1}
+------------------------------
 
 You will find domcpp and the XML DOM examples in the gSOAP package in
 `gsoap/samples/dom`.
@@ -498,15 +498,18 @@ build domcpp as follows:
 This builds the command-line tool domcpp in `gsoap/samples/dom` from where you
 can use it and/or copy it for use with your projects.
 
-If you do not have the samples built, you can use soapcpp2 (or soapcpp2.exe
-in `gsoap/bin/win32`) from the command line to generate the C++ code required
-for domcpp:
+If you do not have the samples built, you can use soapcpp2 from the command
+line to generate the C++ code required for domcpp:
 
     cd gsoap/samples/dom
     soapcpp2 -CSL ../../import/dom.h
     c++ -I../.. -o domcpp domcpp.cpp soapC.cpp ../../dom.cpp ../../stdsoap2.cpp
 
 This builds the domcpp command-line tool.
+
+For users of Windows, visit
+[download and installation](http://www.genivia.com/downloads.html) to download
+`domcpp.exe`.
 
 Command-line options                                                 {#domcpp-2}
 --------------------

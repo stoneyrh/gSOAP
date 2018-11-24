@@ -644,28 +644,28 @@ static const yytype_uint16 yyrline[] =
      503,   504,   505,   506,   507,   508,   509,   510,   511,   512,
      513,   514,   515,   516,   517,   518,   519,   520,   521,   533,
      555,   589,   650,   652,   653,   655,   656,   658,   662,   667,
-     670,   692,   735,   769,   770,   777,   779,   787,   792,   833,
-     885,   892,   897,   938,   990,   991,   992,   993,   994,   995,
-     996,   997,   998,   999,  1000,  1001,  1002,  1003,  1004,  1005,
-    1006,  1007,  1008,  1009,  1019,  1045,  1071,  1094,  1098,  1126,
-    1150,  1171,  1199,  1224,  1245,  1272,  1299,  1308,  1317,  1331,
-    1345,  1362,  1380,  1410,  1477,  1483,  1488,  1492,  1498,  1504,
-    1510,  1517,  1522,  1547,  1552,  1579,  1584,  1609,  1627,  1646,
-    1668,  1691,  1696,  1702,  1703,  1704,  1705,  1706,  1707,  1708,
-    1718,  1722,  1724,  1725,  1726,  1728,  1730,  1731,  1732,  1741,
-    1742,  1744,  1752,  1761,  1768,  1769,  1771,  1780,  1781,  1782,
-    1783,  1784,  1785,  1786,  1787,  1788,  1789,  1790,  1791,  1792,
-    1794,  1795,  1800,  1801,  1802,  1804,  1805,  1806,  1807,  1810,
-    1811,  1813,  1814,  1816,  1817,  1825,  1830,  1836,  1837,  1855,
-    1860,  1875,  1876,  1891,  1895,  1909,  1924,  1925,  1927,  1940,
-    1955,  1970,  1993,  2012,  2027,  2044,  2069,  2089,  2090,  2092,
-    2093,  2095,  2096,  2097,  2098,  2099,  2101,  2102,  2103,  2104,
-    2106,  2107,  2108,  2109,  2110,  2112,  2113,  2114,  2123,  2124,
-    2127,  2133,  2136,  2139,  2143,  2145,  2148,  2151,  2153,  2156,
-    2157,  2158,  2159,  2160,  2161,  2162,  2163,  2164,  2165,  2166,
-    2167,  2168,  2169,  2170,  2171,  2172,  2175,  2181,  2187,  2200,
-    2201,  2212,  2217,  2224,  2227,  2228,  2237,  2243,  2249,  2255,
-    2261,  2267
+     670,   692,   735,   767,   768,   775,   777,   785,   790,   831,
+     883,   890,   895,   936,   988,   989,   990,   991,   992,   993,
+     994,   995,   996,   997,   998,   999,  1000,  1001,  1002,  1003,
+    1004,  1005,  1006,  1007,  1017,  1043,  1069,  1092,  1096,  1124,
+    1148,  1169,  1197,  1222,  1243,  1270,  1297,  1306,  1315,  1329,
+    1343,  1360,  1378,  1408,  1475,  1481,  1486,  1490,  1496,  1502,
+    1508,  1515,  1520,  1545,  1550,  1577,  1582,  1607,  1625,  1644,
+    1666,  1689,  1694,  1700,  1701,  1702,  1703,  1704,  1705,  1706,
+    1716,  1720,  1722,  1723,  1724,  1726,  1728,  1729,  1730,  1739,
+    1740,  1742,  1750,  1759,  1766,  1767,  1769,  1778,  1779,  1780,
+    1781,  1782,  1783,  1784,  1785,  1786,  1787,  1788,  1789,  1790,
+    1792,  1793,  1798,  1799,  1800,  1802,  1803,  1804,  1805,  1808,
+    1809,  1811,  1812,  1814,  1815,  1823,  1828,  1834,  1835,  1853,
+    1858,  1873,  1874,  1889,  1893,  1907,  1922,  1923,  1925,  1938,
+    1953,  1968,  1991,  2010,  2025,  2042,  2067,  2087,  2088,  2090,
+    2091,  2093,  2094,  2095,  2096,  2097,  2099,  2100,  2101,  2102,
+    2104,  2105,  2106,  2107,  2108,  2110,  2111,  2112,  2121,  2122,
+    2125,  2131,  2134,  2137,  2141,  2143,  2146,  2149,  2151,  2154,
+    2155,  2156,  2157,  2158,  2159,  2160,  2161,  2162,  2163,  2164,
+    2165,  2166,  2167,  2168,  2169,  2170,  2173,  2179,  2185,  2198,
+    2199,  2210,  2215,  2222,  2225,  2226,  2235,  2241,  2247,  2253,
+    2259,  2265
 };
 #endif
 
@@ -2941,67 +2941,65 @@ yyreduce:
                           p->info.typ = mkint();
                           p->info.sto = permission;
 			  p->tag = (yyvsp[-1].s);
+                          p->info.hasval = True;
+                          p->info.ptrval = False;
+                          p->info.fixed = (yyvsp[0].rec).fixed;
+                          p->info.val.i = sp->val;
                           if ((yyvsp[0].rec).hasval)
                           {
-                            p->info.hasval = True;
-                            p->info.ptrval = False;
-                            p->info.fixed = (yyvsp[0].rec).fixed;
-                            sp->val = p->info.val.i = (yyvsp[0].rec).val.i;
+                            set_value(p, p->info.typ, &(yyvsp[0].rec));
+                            sp->val = p->info.val.i;
                           }
                           if (sp->mask)
                             sp->val <<= 1;
                           else
                             sp->val++;
                           p->info.offset = sp->offset;
-                          if (sp->grow)
-                            sp->offset += p->info.typ->width;
-                          else if (p->info.typ->width > sp->offset)
-                            sp->offset = p->info.typ->width;
                           sp->entry = p;
                         }
-#line 2963 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 2961 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 93:
-#line 769 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 767 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 2969 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 2967 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 94:
-#line 771 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 769 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = mkmethod(tmp.typ, sp->table);
                           transient &= ~1;
                           exitscope();
                         }
-#line 2979 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 2977 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 95:
-#line 778 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 776 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 2985 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 2983 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 96:
-#line 780 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 778 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 2991 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 2989 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 97:
-#line 787 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 785 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = (yyvsp[0].typ);
                           (yyval.rec).sto = Snone;
                           sp->node = (yyval.rec);
                         }
-#line 3001 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 2999 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 98:
-#line 792 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 790 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = (yyvsp[0].rec).typ;
                           (yyval.rec).sto = (Storage)((int)(yyvsp[-1].sto) | (int)(yyvsp[0].rec).sto);
@@ -3043,11 +3041,11 @@ yyreduce:
                           if (((int)(yyvsp[-1].sto) & (int)Sextern))
                             transient = 0;
                         }
-#line 3047 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3045 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 99:
-#line 833 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 831 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((yyvsp[-1].typ)->type == Tint)
                             switch ((yyvsp[0].rec).typ->type)
@@ -3099,11 +3097,11 @@ yyreduce:
                           (yyval.rec).sto = (yyvsp[0].rec).sto;
                           sp->node = (yyval.rec);
                         }
-#line 3103 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3101 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 100:
-#line 885 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 883 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = mkint();
                           (yyval.rec).sto = (yyvsp[0].sto);
@@ -3111,21 +3109,21 @@ yyreduce:
                           if (((int)(yyvsp[0].sto) & (int)Sextern))
                             transient = 0;
                         }
-#line 3115 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3113 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 101:
-#line 892 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 890 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = (yyvsp[0].typ);
                           (yyval.rec).sto = Snone;
                           sp->node = (yyval.rec);
                         }
-#line 3125 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3123 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 102:
-#line 897 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 895 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = (yyvsp[0].rec).typ;
                           (yyval.rec).sto = (Storage)((int)(yyvsp[-1].sto) | (int)(yyvsp[0].rec).sto);
@@ -3167,11 +3165,11 @@ yyreduce:
                           if (((int)(yyvsp[-1].sto) & (int)Sextern))
                             transient = 0;
                         }
-#line 3171 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3169 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 103:
-#line 938 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 936 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((yyvsp[-1].typ)->type == Tint)
                             switch ((yyvsp[0].rec).typ->type)
@@ -3223,125 +3221,125 @@ yyreduce:
                           (yyval.rec).sto = (yyvsp[0].rec).sto;
                           sp->node = (yyval.rec);
                         }
-#line 3227 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3225 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 104:
-#line 990 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 988 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkvoid(); }
-#line 3233 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3231 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 105:
-#line 991 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 989 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkbool(); }
-#line 3239 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3237 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 106:
-#line 992 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 990 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkchar(); }
-#line 3245 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3243 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 107:
-#line 993 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 991 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkwchart(); }
-#line 3251 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3249 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 108:
-#line 994 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 992 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkshort(); }
-#line 3257 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3255 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 109:
-#line 995 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 993 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkint(); }
-#line 3263 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3261 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 110:
-#line 996 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 994 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mklong(); }
-#line 3269 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3267 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 111:
-#line 997 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 995 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkllong(); }
-#line 3275 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3273 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 112:
-#line 998 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 996 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkullong(); }
-#line 3281 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3279 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 113:
-#line 999 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 997 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mksize(); }
-#line 3287 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3285 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 114:
-#line 1000 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 998 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkfloat(); }
-#line 3293 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3291 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 115:
-#line 1001 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 999 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkdouble(); }
-#line 3299 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3297 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 116:
-#line 1002 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1000 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkint(); }
-#line 3305 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3303 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 117:
-#line 1003 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1001 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkuint(); }
-#line 3311 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3309 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 118:
-#line 1004 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1002 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkuchar(); }
-#line 3317 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3315 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 119:
-#line 1005 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1003 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkushort(); }
-#line 3323 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3321 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 120:
-#line 1006 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1004 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkuint(); }
-#line 3329 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3327 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 121:
-#line 1007 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1005 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mkulong(); }
-#line 3335 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3333 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 122:
-#line 1008 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1006 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.typ) = mktimet(); }
-#line 3341 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3339 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 123:
-#line 1010 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1008 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if (!(p = entry(templatetable, (yyvsp[0].sym))))
                           {
@@ -3351,11 +3349,11 @@ yyreduce:
                           }
                           (yyval.typ) = p->info.typ;
                         }
-#line 3355 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3353 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 124:
-#line 1020 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1018 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           sym = gensym("_Struct");
                           sprintf(errbuf, "anonymous class will be named '%s'", sym->name);
@@ -3381,11 +3379,11 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3385 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3383 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 125:
-#line 1046 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1044 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(classtable, (yyvsp[-3].e)->sym)) && p->info.typ->ref)
                           {
@@ -3411,11 +3409,11 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3415 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3413 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 126:
-#line 1072 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1070 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           p = reenter(classtable, (yyvsp[-5].e)->sym);
                           if (!(yyvsp[-3].e))
@@ -3438,20 +3436,20 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3442 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3440 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 127:
-#line 1094 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1092 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyvsp[0].e)->info.typ->id = (yyvsp[0].e)->sym;
                           (yyval.typ) = (yyvsp[0].e)->info.typ;
                         }
-#line 3451 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3449 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 128:
-#line 1099 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1097 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           sym = gensym("_Struct");
                           sprintf(errbuf, "anonymous struct will be named '%s'", sym->name);
@@ -3479,11 +3477,11 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3483 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3481 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 129:
-#line 1127 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1125 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(classtable, (yyvsp[-3].e)->sym)) && p->info.typ->ref)
                           {
@@ -3507,11 +3505,11 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3511 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3509 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 130:
-#line 1150 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1148 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(classtable, (yyvsp[0].sym))))
                           {
@@ -3533,11 +3531,11 @@ yyreduce:
                             p->info.typ->id = (yyvsp[0].sym);
                           }
                         }
-#line 3537 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3535 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 131:
-#line 1172 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1170 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           sym = gensym("_Union");
                           sprintf(errbuf, "anonymous union will be named '%s'", sym->name);
@@ -3565,11 +3563,11 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3569 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3567 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 132:
-#line 1200 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1198 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(classtable, (yyvsp[-3].e)->sym)) && p->info.typ->ref)
                           {
@@ -3594,11 +3592,11 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3598 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3596 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 133:
-#line 1224 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1222 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(classtable, (yyvsp[0].sym))))
                           {
@@ -3620,11 +3618,11 @@ yyreduce:
                             p->info.typ->id = (yyvsp[0].sym);
                           }
                         }
-#line 3624 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3622 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 134:
-#line 1246 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1244 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           sym = gensym("_Enum");
                           sprintf(errbuf, "anonymous enum will be named '%s'", sym->name);
@@ -3651,11 +3649,11 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3655 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3653 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 135:
-#line 1273 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1271 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           sym = gensym("_Enum");
                           sprintf(errbuf, "anonymous enum will be named '%s'", sym->name);
@@ -3682,11 +3680,11 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3686 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3684 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 136:
-#line 1300 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1298 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(enumtable, (yyvsp[-5].e)->sym)))
                             if (!p->info.typ->ref)
@@ -3695,11 +3693,11 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3699 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3697 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 137:
-#line 1309 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1307 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(enumtable, (yyvsp[-5].e)->sym)))
                             if (!p->info.typ->ref)
@@ -3708,11 +3706,11 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3712 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3710 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 138:
-#line 1318 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1316 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(enumtable, (yyvsp[-5].e)->sym)))
                           {
@@ -3726,11 +3724,11 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3730 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3728 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 139:
-#line 1332 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1330 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(enumtable, (yyvsp[-5].e)->sym)))
                           {
@@ -3744,11 +3742,11 @@ yyreduce:
                           (yyval.typ) = p->info.typ;
                           exitscope();
                         }
-#line 3748 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3746 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 140:
-#line 1345 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1343 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(enumtable, (yyvsp[0].sym))))
                           {
@@ -3766,11 +3764,11 @@ yyreduce:
                             p->info.typ->id = (yyvsp[0].sym);
                           }
                         }
-#line 3770 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3768 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 141:
-#line 1362 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1360 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(enumtable, (yyvsp[0].sym))))
                           {
@@ -3789,11 +3787,11 @@ yyreduce:
                             (yyvsp[0].sym)->token = TYPE;
                           }
                         }
-#line 3793 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3791 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 142:
-#line 1380 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1378 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(typetable, (yyvsp[0].sym))))
                           {
@@ -3824,11 +3822,11 @@ yyreduce:
                             (yyval.typ) = mkint();
                           }
                         }
-#line 3828 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3826 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 143:
-#line 1411 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1409 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(templatetable, (yyvsp[-3].sym))))
                           {
@@ -3895,89 +3893,89 @@ yyreduce:
                             (yyval.typ) = mkint();
                           }
                         }
-#line 3899 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3897 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 144:
-#line 1478 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1476 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           sprintf(errbuf, "undeclared '%s'", (yyvsp[-1].sym)->name);
                           synerror(errbuf);
                           (yyval.typ) = mkint();
                         }
-#line 3909 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3907 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 145:
-#line 1483 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1481 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           sprintf(errbuf, "perhaps trying to use a template with an undefined type parameter '%s'?", (yyvsp[-1].sym)->name);
                           synerror(errbuf);
                           (yyval.typ) = mkint();
                         }
-#line 3919 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3917 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 146:
-#line 1488 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1486 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           synerror("perhaps trying to use an undefined template or template with a non-type template parameter? Declare 'template <typename T> class name'");
                           (yyval.typ) = mkint();
                         }
-#line 3928 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3926 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 147:
-#line 1493 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1491 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           synerror("malformed class definition (use spacing around ':' to separate derived : base)");
                           yyerrok;
                           (yyval.typ) = mkint();
                         }
-#line 3938 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3936 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 148:
-#line 1499 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1497 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           synerror("malformed struct definition");
                           yyerrok;
                           (yyval.typ) = mkint();
                         }
-#line 3948 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3946 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 149:
-#line 1505 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1503 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           synerror("malformed union definition");
                           yyerrok;
                           (yyval.typ) = mkint();
                         }
-#line 3958 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3956 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 150:
-#line 1511 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1509 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           synerror("malformed enum definition");
                           yyerrok;
                           (yyval.typ) = mkint();
                         }
-#line 3968 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3966 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 151:
-#line 1517 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1515 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           sp->table->sym = (yyvsp[-1].e)->sym;
                           (yyval.e) = (yyvsp[-1].e);
                         }
-#line 3977 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 3975 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 152:
-#line 1522 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1520 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(classtable, (yyvsp[0].sym))))
                           {
@@ -4002,20 +4000,20 @@ yyreduce:
                           }
                           (yyval.e) = p;
                         }
-#line 4006 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4004 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 153:
-#line 1547 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1545 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           sp->table->sym = (yyvsp[-1].e)->sym;
                           (yyval.e) = (yyvsp[-1].e);
                         }
-#line 4015 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4013 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 154:
-#line 1552 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1550 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(classtable, (yyvsp[0].sym))))
                           {
@@ -4042,20 +4040,20 @@ yyreduce:
                           (yyvsp[0].sym)->token = TYPE;
                           (yyval.e) = p;
                         }
-#line 4046 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4044 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 155:
-#line 1579 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1577 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           sp->table->sym = (yyvsp[-1].e)->sym;
                           (yyval.e) = (yyvsp[-1].e);
                         }
-#line 4055 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4053 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 156:
-#line 1584 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1582 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(classtable, (yyvsp[0].sym))))
                           {
@@ -4080,11 +4078,11 @@ yyreduce:
                           }
                           (yyval.e) = p;
                         }
-#line 4084 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4082 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 157:
-#line 1609 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1607 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(enumtable, (yyvsp[-1].sym))))
                           {
@@ -4102,11 +4100,11 @@ yyreduce:
                           p->info.typ->width = (int)(yyvsp[0].i);
                           (yyval.e) = p;
                         }
-#line 4106 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4104 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 158:
-#line 1627 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1625 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(enumtable, (yyvsp[-1].sym))))
                           {
@@ -4125,11 +4123,11 @@ yyreduce:
                           (yyvsp[-1].sym)->token = TYPE;
                           (yyval.e) = p;
                         }
-#line 4129 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4127 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 159:
-#line 1647 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1645 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(enumtable, (yyvsp[-1].sym))))
                           {
@@ -4150,11 +4148,11 @@ yyreduce:
                           }
                           (yyval.e) = p;
                         }
-#line 4154 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4152 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 160:
-#line 1669 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1667 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((p = entry(enumtable, (yyvsp[-1].sym))))
                           {
@@ -4176,67 +4174,67 @@ yyreduce:
                           (yyvsp[-1].sym)->token = TYPE;
                           (yyval.e) = p;
                         }
-#line 4180 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4178 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 161:
-#line 1691 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1689 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.sym) = (yyvsp[0].sym);
                           if (!c11flag)
                             semwarn("To use scoped enumerations (enum class) you should also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
                         }
-#line 4190 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4188 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 162:
-#line 1696 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1694 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.sym) = (yyvsp[0].sym);
                           if (!c11flag)
                             semwarn("To use scoped enumerations (enum class) you must also use wsdl2h and soapcpp2 with option -c++11 or -c++14");
                         }
-#line 4200 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4198 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 163:
-#line 1702 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1700 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.i) = 1; }
-#line 4206 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4204 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 164:
-#line 1703 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1701 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.i) = 4; }
-#line 4212 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4210 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 165:
-#line 1704 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1702 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.i) = 2; }
-#line 4218 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4216 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 166:
-#line 1705 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1703 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.i) = 4; }
-#line 4224 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4222 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 167:
-#line 1706 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1704 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.i) = 4; }
-#line 4230 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4228 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 168:
-#line 1707 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1705 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.i) = 8; }
-#line 4236 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4234 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 169:
-#line 1708 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1706 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.i) = 4;
                           p = entry(typetable, (yyvsp[0].sym));
@@ -4247,62 +4245,62 @@ yyreduce:
                           else
                             (yyval.i) = p->info.typ->width;
                         }
-#line 4251 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4249 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 170:
-#line 1718 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1716 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           semerror("enum underlying type must be one of int8_t, int16_t, int32_t, int64_t");
                           (yyval.i) = 4;
                         }
-#line 4260 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4258 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 171:
-#line 1722 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1720 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.i) = 4; /* 4 = enum */ }
-#line 4266 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4264 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 172:
-#line 1724 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1722 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { }
-#line 4272 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4270 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 173:
-#line 1725 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1723 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { }
-#line 4278 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4276 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 174:
-#line 1726 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1724 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { }
-#line 4284 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4282 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 175:
-#line 1729 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1727 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.e) = (yyvsp[0].e); }
-#line 4290 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4288 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 176:
-#line 1730 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1728 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.e) = (yyvsp[0].e); }
-#line 4296 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4294 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 177:
-#line 1731 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1729 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.e) = (yyvsp[0].e); }
-#line 4302 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4300 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 178:
-#line 1732 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1730 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.e) = entry(classtable, (yyvsp[0].sym));
                           if (!(yyval.e))
@@ -4312,23 +4310,23 @@ yyreduce:
                               (yyval.e) = p;
                           }
                         }
-#line 4316 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4314 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 179:
-#line 1741 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1739 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.e) = entry(classtable, (yyvsp[0].sym)); }
-#line 4322 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4320 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 180:
-#line 1742 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1740 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.e) = entry(classtable, (yyvsp[0].sym)); }
-#line 4328 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4326 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 181:
-#line 1744 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1742 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if (transient <= -2)
                             transient = 0;
@@ -4336,11 +4334,11 @@ yyreduce:
                           enterscope(mktable(NULL), 0);
                           sp->entry = NULL;
                         }
-#line 4340 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4338 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 182:
-#line 1752 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1750 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if (transient <= -2)
                             transient = 0;
@@ -4349,34 +4347,34 @@ yyreduce:
                           sp->entry = NULL;
                           sp->grow = False;
                         }
-#line 4353 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4351 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 183:
-#line 1761 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1759 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           enterscope(mktable(NULL), 0);
                           sp->entry = NULL;
                           sp->mask = True;
                           sp->val = 1;
                         }
-#line 4364 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4362 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 184:
-#line 1768 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1766 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { }
-#line 4370 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4368 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 185:
-#line 1769 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1767 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { }
-#line 4376 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4374 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 186:
-#line 1771 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1769 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if (sp->table->level == INTERNAL)
                             transient |= 1;
@@ -4385,177 +4383,177 @@ yyreduce:
                           sp->entry = NULL;
                           sp->table->level = PARAM;
                         }
-#line 4389 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4387 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 187:
-#line 1780 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1778 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sauto; }
-#line 4395 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4393 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 188:
-#line 1781 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1779 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sregister; }
-#line 4401 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4399 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 189:
-#line 1782 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1780 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sstatic; }
-#line 4407 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4405 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 190:
-#line 1783 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1781 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sexplicit; }
-#line 4413 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4411 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 191:
-#line 1784 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1782 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sextern; transient = 1; }
-#line 4419 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4417 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 192:
-#line 1785 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1783 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Stypedef; }
-#line 4425 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4423 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 193:
-#line 1786 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1784 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Svirtual; }
-#line 4431 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4429 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 194:
-#line 1787 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1785 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sconst; }
-#line 4437 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4435 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 195:
-#line 1788 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1786 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sfinal; }
-#line 4443 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4441 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 196:
-#line 1789 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1787 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Soverride; }
-#line 4449 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4447 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 197:
-#line 1790 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1788 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sfriend; }
-#line 4455 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4453 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 198:
-#line 1791 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1789 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sinline; }
-#line 4461 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4459 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 199:
-#line 1793 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1791 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = SmustUnderstand; }
-#line 4467 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4465 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 200:
-#line 1794 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1792 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sreturn; }
-#line 4473 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4471 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 201:
-#line 1795 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1793 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.sto) = Sattribute;
                           if (eflag)
                             semwarn("SOAP RPC encoding does not support XML attributes");
                         }
-#line 4483 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4481 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 202:
-#line 1800 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1798 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sspecial; }
-#line 4489 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4487 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 203:
-#line 1801 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1799 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sextern; transient = -2; }
-#line 4495 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4493 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 204:
-#line 1802 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1800 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Smutable; transient = -4; }
-#line 4501 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4499 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 205:
-#line 1804 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1802 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Snone; }
-#line 4507 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4505 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 206:
-#line 1805 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1803 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = (Storage)((int)(yyvsp[-1].sto) | (int)Sconstobj); }
-#line 4513 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4511 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 207:
-#line 1806 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1804 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = (Storage)((int)(yyvsp[-1].sto) | (int)Sfinal); }
-#line 4519 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4517 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 208:
-#line 1808 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1806 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = (Storage)((int)(yyvsp[-1].sto) | (int)Soverride); }
-#line 4525 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4523 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 209:
-#line 1810 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1808 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Snone; }
-#line 4531 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4529 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 210:
-#line 1811 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1809 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Sabstract; }
-#line 4537 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4535 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 211:
-#line 1813 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1811 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Snone; }
-#line 4543 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4541 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 212:
-#line 1814 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1812 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.sto) = Svirtual; }
-#line 4549 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4547 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 213:
-#line 1816 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1814 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = tmp = sp->node; }
-#line 4555 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4553 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 214:
-#line 1817 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1815 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           /* handle const pointers, such as const char* */
                           if (((int)tmp.sto & (int)Sconst))
@@ -4564,37 +4562,37 @@ yyreduce:
                           tmp.typ->transient = transient;
                           (yyval.rec) = tmp;
                         }
-#line 4568 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4566 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 215:
-#line 1825 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1823 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           tmp.typ = mkreference(tmp.typ);
                           tmp.typ->transient = transient;
                           (yyval.rec) = tmp;
                         }
-#line 4578 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4576 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 216:
-#line 1830 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1828 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           tmp.typ = mkrvalueref(tmp.typ);
                           tmp.typ->transient = transient;
                           (yyval.rec) = tmp;
                         }
-#line 4588 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4586 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 217:
-#line 1836 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1834 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = tmp; }
-#line 4594 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4592 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 218:
-#line 1838 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1836 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if (!bflag && (yyvsp[0].rec).typ->type == Tchar)
                           {
@@ -4612,20 +4610,20 @@ yyreduce:
                           }
                           (yyval.rec).sto = (yyvsp[0].rec).sto;
                         }
-#line 4616 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4614 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 219:
-#line 1855 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1853 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = mkpointer((yyvsp[0].rec).typ); /* zero size array = pointer */
                           (yyval.rec).sto = (yyvsp[0].rec).sto;
                         }
-#line 4625 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4623 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 220:
-#line 1860 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1858 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((yyvsp[0].rec).typ->type == Tstruct || (yyvsp[0].rec).typ->type == Tclass)
                           {
@@ -4640,17 +4638,17 @@ yyreduce:
                           }
                           (yyval.rec) = (yyvsp[0].rec);
                         }
-#line 4644 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4642 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 221:
-#line 1875 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1873 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 4650 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4648 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 222:
-#line 1876 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1874 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((yyvsp[-1].rec).hasval)
                           {
@@ -4665,20 +4663,20 @@ yyreduce:
                             semerror("initialization expression not constant");
                           }
                         }
-#line 4669 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4667 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 223:
-#line 1891 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1889 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).hasval = False;
                           (yyval.rec).fixed = False;
                         }
-#line 4678 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4676 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 224:
-#line 1895 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1893 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((yyvsp[0].rec).hasval)
                           {
@@ -4693,11 +4691,11 @@ yyreduce:
                             semerror("initialization expression not constant");
                           }
                         }
-#line 4697 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4695 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 225:
-#line 1909 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1907 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((yyvsp[0].rec).hasval)
                           {
@@ -4712,23 +4710,23 @@ yyreduce:
                             semerror("initialization expression not constant");
                           }
                         }
-#line 4716 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4714 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 226:
-#line 1924 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1922 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.s) = NULL; }
-#line 4722 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4720 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 227:
-#line 1925 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1923 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.s) = (yyvsp[0].s); }
-#line 4728 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4726 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 228:
-#line 1927 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1925 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).minOccurs = -1;
                           (yyval.rec).maxOccurs = 1;
@@ -4742,11 +4740,11 @@ yyreduce:
                           (yyval.rec).incmax = True;
                           (yyval.rec).pattern = NULL;
                         }
-#line 4746 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4744 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 229:
-#line 1940 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1938 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).minOccurs = (yyvsp[0].i);
                           (yyval.rec).maxOccurs = 1;
@@ -4762,11 +4760,11 @@ yyreduce:
                           (yyval.rec).incmax = True;
                           (yyval.rec).pattern = NULL;
                         }
-#line 4766 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4764 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 230:
-#line 1955 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1953 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).minOccurs = (yyvsp[-1].i);
                           (yyval.rec).maxOccurs = 1;
@@ -4782,11 +4780,11 @@ yyreduce:
                           (yyval.rec).incmax = True;
                           (yyval.rec).pattern = NULL;
                         }
-#line 4786 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4784 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 231:
-#line 1970 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1968 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).minOccurs = (yyvsp[-2].i);
                           (yyval.rec).maxOccurs = (yyvsp[0].i);
@@ -4810,11 +4808,11 @@ yyreduce:
                           (yyval.rec).incmax = True;
                           (yyval.rec).pattern = NULL;
                         }
-#line 4814 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4812 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 232:
-#line 1993 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 1991 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).minOccurs = -1;
                           (yyval.rec).maxOccurs = (yyvsp[0].i);
@@ -4833,11 +4831,11 @@ yyreduce:
                           (yyval.rec).incmax = True;
                           (yyval.rec).pattern = NULL;
                         }
-#line 4837 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4835 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 233:
-#line 2013 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2011 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).hasmin = False;
                           (yyval.rec).hasmax = False;
@@ -4852,11 +4850,11 @@ yyreduce:
                           (yyval.rec).nillable = (yyvsp[-1].i);
                           (yyval.rec).pattern = (yyvsp[0].s);
                         }
-#line 4856 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4854 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 234:
-#line 2028 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2026 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).hasmin = True;
                           (yyval.rec).hasmax = False;
@@ -4873,11 +4871,11 @@ yyreduce:
                           (yyval.rec).nillable = (yyvsp[-3].i);
                           (yyval.rec).pattern = (yyvsp[-2].s);
                         }
-#line 4877 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4875 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 235:
-#line 2045 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2043 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).hasmin = True;
                           (yyval.rec).hasmax = True;
@@ -4902,11 +4900,11 @@ yyreduce:
                           (yyval.rec).nillable = (yyvsp[-4].i);
                           (yyval.rec).pattern = (yyvsp[-3].s);
                         }
-#line 4906 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4904 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 236:
-#line 2069 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2067 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).hasmin = False;
                           (yyval.rec).hasmax = True;
@@ -4926,330 +4924,330 @@ yyreduce:
                           (yyval.rec).nillable = (yyvsp[-3].i);
                           (yyval.rec).pattern = (yyvsp[-2].s);
                         }
-#line 4930 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4928 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 237:
-#line 2089 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2087 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.i) = zflag >= 1 && zflag <= 3; /* False, unless version 2.8.30 or earlier */ }
-#line 4936 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4934 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 238:
-#line 2090 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2088 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.i) = True; }
-#line 4942 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4940 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 239:
-#line 2092 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2090 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.s) = NULL; }
-#line 4948 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4946 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 240:
-#line 2093 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2091 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.s) = (yyvsp[0].s); }
-#line 4954 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4952 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 241:
-#line 2095 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2093 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.ir).i = (LONG64)((yyval.ir).r = (yyvsp[0].r)); }
-#line 4960 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4958 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 242:
-#line 2096 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2094 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.ir).r = (double)((yyval.ir).i = (yyvsp[0].i)); }
-#line 4966 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4964 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 243:
-#line 2097 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2095 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.ir).r = (double)((yyval.ir).i = (yyvsp[0].c)); }
-#line 4972 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4970 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 244:
-#line 2098 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2096 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.ir).i = +(yyvsp[0].ir).i; (yyval.ir).r = +(yyvsp[0].ir).r; }
-#line 4978 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4976 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 245:
-#line 2099 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2097 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.ir).i = -(yyvsp[0].ir).i; (yyval.ir).r = -(yyvsp[0].ir).r; }
-#line 4984 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4982 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 246:
-#line 2101 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2099 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).incmin = (yyval.rec).incmax = True; }
-#line 4990 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4988 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 247:
-#line 2102 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2100 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).incmin = (yyval.rec).incmax = True; }
-#line 4996 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 4994 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 248:
-#line 2103 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2101 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).incmin = False; (yyval.rec).incmax = True; }
-#line 5002 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5000 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 249:
-#line 2104 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2102 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).incmin = False; (yyval.rec).incmax = True; }
-#line 5008 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5006 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 250:
-#line 2106 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2104 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).incmin = (yyval.rec).incmax = True; }
-#line 5014 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5012 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 251:
-#line 2107 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2105 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).incmin = False; (yyval.rec).incmax = True; }
-#line 5020 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5018 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 252:
-#line 2108 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2106 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).incmin = True; (yyval.rec).incmax = False; }
-#line 5026 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5024 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 253:
-#line 2109 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2107 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).incmin = False; (yyval.rec).incmax = False; }
-#line 5032 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5030 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 254:
-#line 2110 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2108 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).incmin = False; (yyval.rec).incmax = False; }
-#line 5038 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5036 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 255:
-#line 2112 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2110 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).incmin = (yyval.rec).incmax = True; }
-#line 5044 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5042 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 256:
-#line 2113 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2111 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).incmin = True; (yyval.rec).incmax = False; }
-#line 5050 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5048 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 257:
-#line 2114 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2112 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).incmin = True; (yyval.rec).incmax = False; }
-#line 5056 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5054 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 258:
-#line 2123 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2121 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 5062 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5060 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 259:
-#line 2124 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2122 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 5068 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5066 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 260:
-#line 2128 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2126 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = (yyvsp[-2].rec).typ;
                           (yyval.rec).sto = Snone;
                           (yyval.rec).hasval = False;
                         }
-#line 5078 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5076 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 262:
-#line 2136 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2134 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 5084 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5082 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 263:
-#line 2139 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2137 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).hasval = False;
                           (yyval.rec).typ = mkint();
                         }
-#line 5093 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5091 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 264:
-#line 2143 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2141 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 5099 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5097 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 265:
-#line 2145 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2143 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 5105 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5103 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 266:
-#line 2148 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2146 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec).hasval = False;
                           (yyval.rec).typ = mkint();
                         }
-#line 5113 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5111 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 267:
-#line 2151 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2149 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 5119 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5117 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 268:
-#line 2153 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2151 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 5125 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5123 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 269:
-#line 2156 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2154 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = iop("|", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5131 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5129 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 270:
-#line 2157 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2155 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = iop("^", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5137 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5135 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 271:
-#line 2158 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2156 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = iop("&", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5143 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5141 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 272:
-#line 2159 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2157 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = relop("==", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5149 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5147 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 273:
-#line 2160 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2158 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = relop("!=", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5155 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5153 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 274:
-#line 2161 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2159 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = relop("<", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5161 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5159 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 275:
-#line 2162 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2160 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = relop("<=", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5167 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5165 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 276:
-#line 2163 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2161 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = relop(">", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5173 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5171 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 277:
-#line 2164 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2162 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = relop(">=", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5179 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5177 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 278:
-#line 2165 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2163 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = iop("<<", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5185 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5183 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 279:
-#line 2166 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2164 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = iop(">>", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5191 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5189 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 280:
-#line 2167 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2165 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = op("+", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5197 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5195 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 281:
-#line 2168 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2166 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = op("-", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5203 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5201 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 282:
-#line 2169 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2167 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = op("*", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5209 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5207 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 283:
-#line 2170 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2168 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = op("/", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5215 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5213 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 284:
-#line 2171 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2169 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = iop("%", (yyvsp[-2].rec), (yyvsp[0].rec)); }
-#line 5221 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5219 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 285:
-#line 2172 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2170 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 5227 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5225 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 286:
-#line 2175 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2173 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((yyvsp[0].rec).hasval)
                             (yyval.rec).val.i = !(yyvsp[0].rec).val.i;
                           (yyval.rec).typ = (yyvsp[0].rec).typ;
                           (yyval.rec).hasval = (yyvsp[0].rec).hasval;
                         }
-#line 5238 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5236 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 287:
-#line 2181 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2179 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((yyvsp[0].rec).hasval)
                             (yyval.rec).val.i = ~(yyvsp[0].rec).val.i;
                           (yyval.rec).typ = (yyvsp[0].rec).typ;
                           (yyval.rec).hasval = (yyvsp[0].rec).hasval;
                         }
-#line 5249 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5247 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 288:
-#line 2187 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2185 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((yyvsp[0].rec).hasval)
                           {
@@ -5263,17 +5261,17 @@ yyreduce:
                           (yyval.rec).typ = (yyvsp[0].rec).typ;
                           (yyval.rec).hasval = (yyvsp[0].rec).hasval;
                         }
-#line 5267 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5265 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 289:
-#line 2200 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2198 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 5273 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5271 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 290:
-#line 2201 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2199 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if ((yyvsp[0].rec).typ->type == Tpointer)
                             (yyval.rec).typ = (Tnode*)(yyvsp[0].rec).typ->ref;
@@ -5285,44 +5283,44 @@ yyreduce:
                           (yyval.rec).sto = Snone;
                           (yyval.rec).hasval = False;
                         }
-#line 5289 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5287 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 291:
-#line 2212 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2210 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = mkpointer((yyvsp[0].rec).typ);
                           (yyval.rec).sto = Snone;
                           (yyval.rec).hasval = False;
                         }
-#line 5299 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5297 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 292:
-#line 2218 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2216 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).hasval = True;
                           (yyval.rec).fixed = False;
                           (yyval.rec).typ = mkint();
                           (yyval.rec).val.i = (yyvsp[-1].rec).typ->width;
                         }
-#line 5310 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5308 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 293:
-#line 2224 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2222 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[0].rec); }
-#line 5316 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5314 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 294:
-#line 2227 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2225 "soapcpp2_yacc.y" /* yacc.c:1663  */
     { (yyval.rec) = (yyvsp[-1].rec); }
-#line 5322 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5320 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 295:
-#line 2228 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2226 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           if (!(p = enumentry((yyvsp[0].sym))))
                             p = undefined((yyvsp[0].sym));
@@ -5332,77 +5330,77 @@ yyreduce:
                           (yyval.rec).typ = p->info.typ;
                           (yyval.rec).val = p->info.val;
                         }
-#line 5336 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5334 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 296:
-#line 2237 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2235 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = mkint();
                           (yyval.rec).hasval = True;
                           (yyval.rec).fixed = False;
                           (yyval.rec).val.i = (yyvsp[0].i);
                         }
-#line 5347 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5345 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 297:
-#line 2243 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2241 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = mkfloat();
                           (yyval.rec).hasval = True;
                           (yyval.rec).fixed = False;
                           (yyval.rec).val.r = (yyvsp[0].r);
                         }
-#line 5358 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5356 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 298:
-#line 2249 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2247 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = mkchar();
                           (yyval.rec).hasval = True;
                           (yyval.rec).fixed = False;
                           (yyval.rec).val.i = (yyvsp[0].c);
                         }
-#line 5369 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5367 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 299:
-#line 2255 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2253 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = mkstring();
                           (yyval.rec).hasval = True;
                           (yyval.rec).fixed = False;
                           (yyval.rec).val.s = (yyvsp[0].s);
                         }
-#line 5380 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5378 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 300:
-#line 2261 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2259 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = mkbool();
                           (yyval.rec).hasval = True;
                           (yyval.rec).fixed = False;
                           (yyval.rec).val.i = 0;
                         }
-#line 5391 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5389 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
   case 301:
-#line 2267 "soapcpp2_yacc.y" /* yacc.c:1663  */
+#line 2265 "soapcpp2_yacc.y" /* yacc.c:1663  */
     {
                           (yyval.rec).typ = mkbool();
                           (yyval.rec).hasval = True;
                           (yyval.rec).fixed = False;
                           (yyval.rec).val.i = 1;
                         }
-#line 5402 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5400 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
     break;
 
 
-#line 5406 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
+#line 5404 "soapcpp2_yacc.tab.c" /* yacc.c:1663  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -5630,7 +5628,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 2275 "soapcpp2_yacc.y" /* yacc.c:1907  */
+#line 2273 "soapcpp2_yacc.y" /* yacc.c:1907  */
 
 
 int
@@ -5963,7 +5961,7 @@ static void
 add_fault(void)
 {
   Table *t;
-  Entry *p1, *p2, *p3, *p4;
+  Entry *p1, *p2, *p3, *p4, *p5;
   Symbol *s1, *s2, *s3, *s4;
   imported = NULL;
   s1 = lookup("SOAP_ENV__Code");
@@ -5987,6 +5985,32 @@ add_fault(void)
     p2 = enter(t, lookup("SOAP_ENV__Subcode"));
     p2->info.typ = mkpointer(p1->info.typ);
     p2->info.minOccurs = 0;
+  }
+  else
+  {
+    t = p1->info.typ->ref;
+    p2 = entry(t, lookup("SOAP_ENV__Value"));
+    if (!p2)
+    {
+      sprintf(errbuf, "SOAP_ENV__Value member missing in SOAP_ENV__Code declared at %s:%d", p1->filename, p1->lineno);
+      semerror(errbuf);
+    }
+    else if (p2->info.typ != qname)
+    {
+      sprintf(errbuf, "SOAP_ENV__Value member of SOAP_ENV__Code is not a _QName type declared at %s:%d", p2->filename, p2->lineno);
+      semerror(errbuf);
+    }
+    p2 = entry(t, lookup("SOAP_ENV__Subcode"));
+    if (!p2)
+    {
+      sprintf(errbuf, "SOAP_ENV__Subcode member missing in SOAP_ENV__Code declared at %s:%d", p1->filename, p1->lineno);
+      semerror(errbuf);
+    }
+    else if (p2->info.typ->type != Tpointer || (Tnode*)p2->info.typ->ref != p1->info.typ)
+    {
+      sprintf(errbuf, "SOAP_ENV__Subcode member of SOAP_ENV__Code is not a SOAP_ENV__Subcode * type declared at %s:%d", p2->filename, p2->lineno);
+      semerror(errbuf);
+    }
   }
   s2 = lookup("SOAP_ENV__Detail");
   p2 = entry(classtable, s2);
@@ -6033,6 +6057,21 @@ add_fault(void)
     p3->info.typ = mkstring();
     p3->info.minOccurs = 0;
   }
+  else
+  {
+    t = p4->info.typ->ref;
+    p3 = entry(t, lookup("SOAP_ENV__Text"));
+    if (!p3)
+    {
+      sprintf(errbuf, "SOAP_ENV__Text member missing in SOAP_ENV__Reason declared at %s:%d", p4->filename, p4->lineno);
+      semerror(errbuf);
+    }
+    else if (!is_string(p3->info.typ))
+    {
+      sprintf(errbuf, "SOAP_ENV__Text member of SOAP_ENV__Reason is not a char * type declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+  }
   s3 = lookup("SOAP_ENV__Fault");
   p3 = entry(classtable, s3);
   if (!p3 || !p3->info.typ->ref)
@@ -6048,33 +6087,115 @@ add_fault(void)
     {
       p3->info.typ->ref = t;
     }
-    p3 = enter(t, lookup("faultcode"));
-    p3->info.typ = qname;
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("faultstring"));
-    p3->info.typ = mkstring();
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("faultactor"));
-    p3->info.typ = mkstring();
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("detail"));
-    p3->info.typ = mkpointer(p2->info.typ);
-    p3->info.minOccurs = 0;
-    p3 = enter(t, s1);
-    p3->info.typ = mkpointer(p1->info.typ);
-    p3->info.minOccurs = 0;
-    p3 = enter(t, s4);
-    p3->info.typ = mkpointer(p4->info.typ);
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("SOAP_ENV__Node"));
-    p3->info.typ = mkstring();
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("SOAP_ENV__Role"));
-    p3->info.typ = mkstring();
-    p3->info.minOccurs = 0;
-    p3 = enter(t, lookup("SOAP_ENV__Detail"));
-    p3->info.typ = mkpointer(p2->info.typ);
-    p3->info.minOccurs = 0;
+    p5 = enter(t, lookup("faultcode"));
+    p5->info.typ = qname;
+    p5->info.minOccurs = 0;
+    p5 = enter(t, lookup("faultstring"));
+    p5->info.typ = mkstring();
+    p5->info.minOccurs = 0;
+    p5 = enter(t, lookup("faultactor"));
+    p5->info.typ = mkstring();
+    p5->info.minOccurs = 0;
+    p5 = enter(t, lookup("detail"));
+    p5->info.typ = mkpointer(p2->info.typ);
+    p5->info.minOccurs = 0;
+    p5 = enter(t, s1);
+    p5->info.typ = mkpointer(p1->info.typ);
+    p5->info.minOccurs = 0;
+    p5 = enter(t, s4);
+    p5->info.typ = mkpointer(p4->info.typ);
+    p5->info.minOccurs = 0;
+    p5 = enter(t, lookup("SOAP_ENV__Node"));
+    p5->info.typ = mkstring();
+    p5->info.minOccurs = 0;
+    p5 = enter(t, lookup("SOAP_ENV__Role"));
+    p5->info.typ = mkstring();
+    p5->info.minOccurs = 0;
+    p5 = enter(t, lookup("SOAP_ENV__Detail"));
+    p5->info.typ = mkpointer(p2->info.typ);
+    p5->info.minOccurs = 0;
+  }
+  else
+  {
+    t = p3->info.typ->ref;
+    p5 = entry(t, lookup("faultcode"));
+    if (!p5)
+    {
+      sprintf(errbuf, "faultcode member missing in SOAP_ENV__Fault declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+    else if (p5->info.typ != qname)
+    {
+      sprintf(errbuf, "faultcode member of SOAP_ENV__Fault is not a _QName type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, lookup("faultstring"));
+    if (!p5)
+    {
+      sprintf(errbuf, "faultstring member missing in SOAP_ENV__Fault declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+    else if (!is_string(p5->info.typ))
+    {
+      sprintf(errbuf, "faultstring member of SOAP_ENV__Fault is not a char * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, lookup("faultdetail"));
+    if (p5 && (p5->info.typ->type != Tpointer || (Tnode*)p5->info.typ->ref != p2->info.typ))
+    {
+      sprintf(errbuf, "faultdetail member of SOAP_ENV__Fault is not a SOAP_ENV__Detail * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, s1);
+    if (!p5)
+    {
+      sprintf(errbuf, "SOAP_ENV__Code member missing in SOAP_ENV__Fault declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+    else if (p5->info.typ->type != Tpointer || (Tnode*)p5->info.typ->ref != p1->info.typ)
+    {
+      sprintf(errbuf, "SOAP_ENV__Code member of SOAP_ENV__Fault is not a SOAP_ENV__Code * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, s4);
+    if (!p5)
+    {
+      sprintf(errbuf, "SOAP_ENV__Reason member missing in SOAP_ENV__Fault declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+    else if (p5->info.typ->type != Tpointer || (Tnode*)p5->info.typ->ref != p4->info.typ)
+    {
+      sprintf(errbuf, "SOAP_ENV__Reason member of SOAP_ENV__Fault is not a SOAP_ENV__Reason * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, lookup("SOAP_ENV__Node"));
+    if (!p5)
+    {
+      sprintf(errbuf, "SOAP_ENV__Node member missing in SOAP_ENV__Fault declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+    else if (!is_string(p5->info.typ))
+    {
+      sprintf(errbuf, "SOAP_ENV__Node member of SOAP_ENV__Fault is not a char * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, lookup("SOAP_ENV__Role"));
+    if (!p5)
+    {
+      sprintf(errbuf, "SOAP_ENV__Role member missing in SOAP_ENV__Fault declared at %s:%d", p3->filename, p3->lineno);
+      semerror(errbuf);
+    }
+    else if (!is_string(p5->info.typ))
+    {
+      sprintf(errbuf, "SOAP_ENV__Role member of SOAP_ENV__Fault is not a char * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
+    p5 = entry(t, lookup("SOAP_ENV__Detail"));
+    if (p5 && (p5->info.typ->type != Tpointer || (Tnode*)p5->info.typ->ref != p2->info.typ))
+    {
+      sprintf(errbuf, "SOAP_ENV__Detail member of SOAP_ENV__Fault is not a SOAP_ENV__Detail * type declared at %s:%d", p5->filename, p5->lineno);
+      semerror(errbuf);
+    }
   }
 }
 

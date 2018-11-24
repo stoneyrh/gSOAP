@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">Miscellaneous functions</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Mon Nov 12 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Sat Nov 24 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -180,7 +180,9 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns a randomized unique UUID string. </p>
-<p>This function returns a randomized unique UUID string with the specified prefix if non-NULL. The string is managed by the context and deallocated with <code><a class="el" href="group__group__context.html#ga81a009ae1ea825a05e5241e2b7a8ece9" title="Delete all data from heap memory managed by the specified soap context and release the freed memory b...">soap_end</a></code>. Returns NULL when an error occurred and sets <code><a class="el" href="structsoap.html#ab85f5d42702963d13ea540bd9876e6d2" title="The soap context soap_status (int) error code of the last operation or SOAP_OK (zero) ...">soap::error</a></code>, such as <code><a class="el" href="group__group__errors.html#ga9fd637076afcd330401f2cd0a71fe729" title="A soap_status error code: out of memory. ">SOAP_EOM</a></code>.</p><dl class="section return"><dt>Returns</dt><dd>randomized UUID or NULL when an error occurred. </dd></dl>
+<p>This function returns a randomized unique UUID string stored in a temporary buffer. The UUID string starts with the specified prefix if non-NULL.</p>
+<dl class="section user"><dt>Example:</dt><dd></dd></dl>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga87c20488b2dc680aaa7689b1d024989c">soap_new</a>();</div><div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span> *uuid = <a class="code" href="group__group__context.html#ga41747ef145667bdff9c66cdd2bc86653">soap_strdup</a>(soap, <a class="code" href="group__group__misc.html#ga5fcf3c8f6f4bc6d5e6efd7a92ceaf399">soap_rand_uuid</a>(soap, NULL));</div><div class="line">...</div></div><!-- fragment --><dl class="section return"><dt>Returns</dt><dd>randomized UUID string stored in a temporary buffer </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">soap</td><td><code><a class="el" href="structsoap.html" title="Context with the engine state. ">soap</a></code> context </td></tr>
@@ -234,7 +236,7 @@ Functions</h2></td></tr>
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Mon Nov 12 2018 09:30:41 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Sat Nov 24 2018 10:10:04 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

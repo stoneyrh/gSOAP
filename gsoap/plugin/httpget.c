@@ -138,6 +138,7 @@ const char http_get_id[] = HTTP_GET_ID;
 static int http_get_init(struct soap *soap, struct http_get_data *data, int (*handler)(struct soap*));
 static void http_get_delete(struct soap *soap, struct soap_plugin *p);
 static int http_get_parse(struct soap *soap);
+static int http_get_handler(struct soap *soap);
 
 int http_get(struct soap *soap, struct soap_plugin *p, void *arg)
 {
@@ -166,6 +167,7 @@ static int http_get_init(struct soap *soap, struct http_get_data *data, int (*ha
   memset((void*)data->hist_hour, 0, sizeof(data->hist_hour));
   memset((void*)data->hist_day, 0, sizeof(data->hist_day));
   soap->fparse = http_get_parse; /* replace HTTP header parser callback with ours */
+  soap->fget = http_get_handler; /* replace HTTP GET callback with ours */
   return SOAP_OK;
 }
 
@@ -208,36 +210,35 @@ static int http_get_parse(struct soap *soap)
   data->hist_min[(pT->tm_min + 1) % 60] = 0;
 #endif
   soap->error = data->fparse(soap); /* parse HTTP header */
-  if (soap->error == SOAP_OK || soap->error == SOAP_STOP || soap->error == SOAP_FORM)
+  if (!soap->error)
   {
-    /* update should be in mutex, but we don't mind some inaccuracy in the count */
-    data->stat_post++;
-  }
-  else if (soap->error == SOAP_GET_METHOD)
-  {
-    if (!data->fget)
-    {
-      data->stat_fail++;
-      return soap->error;
-    }
-    soap->error = SOAP_OK;
-    soap->error = data->fget(soap); /* call user-defined HTTP GET handler */
-    if (soap->error)
-    {
-      /* update should be in mutex, but we don't mind some inaccuracy in the count */
-      data->stat_fail++;
-      return soap->error;
-    }
-    /* update should be in mutex, but we don't mind some inaccuracy in the count */
-    data->stat_get++;
-    return soap->error = SOAP_STOP; /* stop processing the request and do not return SOAP Fault */
+    if (soap->status == SOAP_POST)
+      data->stat_post++; /* update should be in mutex, but we don't mind some inaccuracy in the count */
   }
   else
   {
-    /* update should be in mutex, but we don't mind some inaccuracy in the count */
-    data->stat_fail++;
+    data->stat_fail++; /* update should be in mutex, but we don't mind some inaccuracy in the count */
   }
   return soap->error;
+}
+
+/******************************************************************************/
+
+static int http_get_handler(struct soap *soap)
+{
+  struct http_get_data *data = (struct http_get_data*)soap_lookup_plugin(soap, http_get_id);
+  if (!data)
+    return SOAP_PLUGIN_ERROR;
+  soap->error = data->fget(soap); /* call user-defined HTTP GET handler */
+  if (soap->error)
+  {
+    /* update should be in mutex, but we don't mind some inaccuracy in the count */
+    data->stat_fail++;
+    return soap->error;
+  }
+  /* update should be in mutex, but we don't mind some inaccuracy in the count */
+  data->stat_get++;
+  return SOAP_OK;
 }
 
 /******************************************************************************/

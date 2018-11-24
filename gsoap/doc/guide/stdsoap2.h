@@ -75,19 +75,19 @@ The API features are grouped by the following [modules](modules.html):
 @brief This module defines compile-time flags and functions for run-time debugging and logging
 
 This module defines the following compile-time flags and functions to specify log files:
-`#DEBUG`
-`#SOAP_DEBUG`
-`#DEBUG_STAMP`
-`#SOAP_MEM_DEBUG`
-`::soap_set_recv_logfile`
-`::soap_set_sent_logfile`
-`::soap_set_test_logfile`
+- `#DEBUG`
+- `#SOAP_DEBUG`
+- `#DEBUG_STAMP`
+- `#SOAP_MEM_DEBUG`
+- `::soap_set_recv_logfile`
+- `::soap_set_sent_logfile`
+- `::soap_set_test_logfile`
 
 Alternatively, the `::logging` plugin can be used without setting `#DEBUG` to efficiently log messages and collect statistics:
-`::soap_set_logging_inbound`
-`::soap_set_logging_outbound`
-`::soap_get_logging_stats`
-`::soap_reset_logging_stats`
+- `::soap_set_logging_inbound`
+- `::soap_set_logging_outbound`
+- `::soap_get_logging_stats`
+- `::soap_reset_logging_stats`
 
 @{
 */
@@ -334,41 +334,41 @@ int logging(struct soap*, struct soap_plugin*, void*);
 @brief This module defines the `WITH_MACRO` compile-time flags to configure the engine build
 
 This module defines the following compile-time flags to configure the engine build:
-`#SOAPDEFS_H`
-`#WITH_SOAPDEFS_H`
-`#WITH_COMPAT`
-`#WITH_LEAN`
-`#WITH_LEANER`
-`#WITH_FAST`
-`#WITH_COOKIES`
-`#WITH_INSECURE_COOKIES`
-`#WITH_IPV6`
-`#WITH_IPV6_V6ONLY`
-`#WITH_OPENSSL`
-`#WITH_GNUTLS`
-`#WITH_GZIP`
-`#WITH_ZLIB`
-`#WITH_NTLM`
-`#WITH_C_LOCALE`
-`#WITH_NO_C_LOCALE`
-`#WITH_INCLUDE_XLOCALE_H`
-`#WITH_DOM`
-`#WITH_REPLACE_ILLEGAL_UTF8`
-`#WITH_FASTCGI`
-`#WITH_NOIO`
-`#WITH_NOIDREF`
-`#WITH_NOHTTP`
-`#WITH_NOZONE`
-`#WITH_NOEMPTYSTRUCT`
-`#WITH_NOGLOBAL`
-`#WITH_NONAMESPACES`
-`#WITH_CDATA`
-`#WITH_PURE_VIRTUAL`
-`#WITH_DEFAULT_VIRTUAL`
-`#WITH_CASEINSENSITIVETAGS`
-`#WITH_SOCKET_CLOSE_ON_EXIT`
-`#WITH_TCPFIN`
-`#WITH_SELF_PIPE`
+- `#SOAPDEFS_H`
+- `#WITH_SOAPDEFS_H`
+- `#WITH_COMPAT`
+- `#WITH_LEAN`
+- `#WITH_LEANER`
+- `#WITH_FAST`
+- `#WITH_COOKIES`
+- `#WITH_INSECURE_COOKIES`
+- `#WITH_IPV6`
+- `#WITH_IPV6_V6ONLY`
+- `#WITH_OPENSSL`
+- `#WITH_GNUTLS`
+- `#WITH_GZIP`
+- `#WITH_ZLIB`
+- `#WITH_NTLM`
+- `#WITH_C_LOCALE`
+- `#WITH_NO_C_LOCALE`
+- `#WITH_INCLUDE_XLOCALE_H`
+- `#WITH_DOM`
+- `#WITH_REPLACE_ILLEGAL_UTF8`
+- `#WITH_FASTCGI`
+- `#WITH_NOIO`
+- `#WITH_NOIDREF`
+- `#WITH_NOHTTP`
+- `#WITH_NOZONE`
+- `#WITH_NOEMPTYSTRUCT`
+- `#WITH_NOGLOBAL`
+- `#WITH_NONAMESPACES`
+- `#WITH_CDATA`
+- `#WITH_PURE_VIRTUAL`
+- `#WITH_DEFAULT_VIRTUAL`
+- `#WITH_CASEINSENSITIVETAGS`
+- `#WITH_SOCKET_CLOSE_ON_EXIT`
+- `#WITH_TCPFIN`
+- `#WITH_SELF_PIPE`
 
 @{
 */
@@ -422,7 +422,7 @@ Alternatively, set `#SOAPDEFS_H` to the header file name to include in your buil
 - HTTP authentication with `::soap::userid` and `::soap::passwd`
 - HTTP chunked transfers `#SOAP_IO_CHUNK` except HTTP chunked input
 - HTTP compression `#SOAP_ENC_ZLIB` except HTTP compressed input
-- canonical XML `#SOAP_XML_CANONICAL`
+- canonical XML `#SOAP_XML_CANONICAL`, `#SOAP_XML_CANONICAL_NA`
 - timeouts `::soap::connect_timeout`, `::soap::send_timeout`, `::soap::recv_timeout` and `::soap::transfer_timeout`
 - socket flags `::soap::socket_flags`, `::soap::connect_flags`, `::soap::bind_flags`, `::soap::accept_flags`
 - `time_t` serialization as `xsd__dateTime` (use a string to store the date and time instead)
@@ -444,7 +444,7 @@ Alternatively, set `#SOAPDEFS_H` to the header file name to include in your buil
 - HTTP authentication with `::soap::userid` and `::soap::passwd`
 - HTTP chunked transfers `#SOAP_IO_CHUNK` except HTTP chunked input
 - HTTP compression `#SOAP_ENC_ZLIB` except HTTP compressed input
-- canonical XML `#SOAP_XML_CANONICAL`
+- canonical XML `#SOAP_XML_CANONICAL`, `#SOAP_XML_CANONICAL_NA`
 - timeouts `::soap::connect_timeout`, `::soap::send_timeout`, `::soap::recv_timeout` and `::soap::transfer_timeout`
 - socket flags `::soap::socket_flags`, `::soap::connect_flags`, `::soap::bind_flags`, `::soap::accept_flags`
 - `time_t` serialization as `xsd__dateTime` (use a string to store the date and time instead)
@@ -813,12 +813,12 @@ Applications developed with soapcpp2 options `-i` or `-j` assign a namespace tab
 ~~~{.cpp}
 #include "soapH.h"
 struct Namespace my_namespaces[] = {
-  {"SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/*soap-envelope",      NULL},
-  {"SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", "http://www.w3.org/*soap-encoding",      NULL},
-  {"xsi",      "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*XMLSchema-instance", NULL},
-  {"xsd",      "http://www.w3.org/2001/XMLSchema",          "http://www.w3.org/*XMLSchema",          NULL},
-  {"ns",       "http://tempuri.org/ns.xsd",                 NULL,                                    NULL},
-  {NULL,       NULL,                                        NULL,                                    NULL}
+  { "SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/*soap-envelope",      NULL },
+  { "SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", "http://www.w3.org/*soap-encoding",      NULL },
+  { "xsi",      "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*XMLSchema-instance", NULL },
+  { "xsd",      "http://www.w3.org/2001/XMLSchema",          "http://www.w3.org/*XMLSchema",          NULL },
+  { "ns",       "http://tempuri.org/ns.xsd",                 NULL,                                    NULL },
+  { NULL,       NULL,                                        NULL,                                    NULL }
 };
 struct soap *soap = soap_new();
 soap_set_namespaces(soap, my_namespaces);
@@ -1032,53 +1032,67 @@ To use `::soap_close_connection` from another thread to terminate a thread that 
 @brief This module defines the `SOAP_MACRO` compile-time values to configure the engine build
 
 This module defines the following macros with values to configure the engine build:
-`#SOAP_NOTHROW`
-`#SOAP_BUFLEN`
-`#SOAP_HDRLEN`
-`#SOAP_TAGLEN`
-`#SOAP_TMPLEN`
-`#SOAP_MAXALLOCSIZE`
-`#SOAP_MAXARRAYSIZE`
-`#SOAP_MAXDIMESIZE`
-`#SOAP_MAXEINTR`
-`#SOAP_MAXINFLATESIZE`
-`#SOAP_MAXKEEPALIVE`
-`#SOAP_MAXLENGTH`
-`#SOAP_MAXLEVEL`
-`#SOAP_MAXOCCURS`
-`#SOAP_MINDEFLATERATIO`
-`#SOAP_PURE_VIRTUAL`
-`#SOAP_SSL_RSA_BITS`
-`#SOAP_UNKNOWN_CHAR`
-`#SOAP_UNKNOWN_UNICODE_CHAR`
-`#SOAP_LONG_FORMAT`
-`#SOAP_ULONG_FORMAT`
-`#SOAP_SOCKET`
-`#SOAP_SOCKLEN_T`
-`#SOAP_INVALID_SOCKET`
-`#soap_valid_socket`
+- `#SOAP_NOTHROW`
+- `#SOAP_BUFLEN`
+- `#SOAP_HDRLEN`
+- `#SOAP_TAGLEN`
+- `#SOAP_TMPLEN`
+- `#SOAP_MAXALLOCSIZE`
+- `#SOAP_MAXARRAYSIZE`
+- `#SOAP_MAXDIMESIZE`
+- `#SOAP_MAXEINTR`
+- `#SOAP_MAXINFLATESIZE`
+- `#SOAP_MAXKEEPALIVE`
+- `#SOAP_MAXLENGTH`
+- `#SOAP_MAXLEVEL`
+- `#SOAP_MAXOCCURS`
+- `#SOAP_MINDEFLATERATIO`
+- `#SOAP_PURE_VIRTUAL`
+- `#SOAP_SSL_RSA_BITS`
+- `#SOAP_UNKNOWN_CHAR`
+- `#SOAP_UNKNOWN_UNICODE_CHAR`
+- `#SOAP_LONG_FORMAT`
+- `#SOAP_ULONG_FORMAT`
+- `#SOAP_SOCKET`
+- `#SOAP_SOCKLEN_T`
+- `#SOAP_INVALID_SOCKET`
+- `#soap_valid_socket`
 
-`#LONG64`
-`#ULONG64`
+Integer and float type macros:
+- `#LONG64`
+- `#ULONG64`
+- `#FLT_NAN`
+- `#FLT_PINFTY`
+- `#FLT_NINFTY`
+- `#DBL_NAN`
+- `#DBL_PINFTY`
+- `#DBL_NINFTY`
+- `#soap_isnan`
+- `#soap_isinf`
 
-`#FLT_NAN`
-`#FLT_PINFTY`
-`#FLT_NINFTY`
-`#DBL_NAN`
-`#DBL_PINFTY`
-`#DBL_NINFTY`
-`#soap_isnan`
-`#soap_isinf`
+Macros for heap allocation:
+- `#SOAP_MALLOC`
+- `#SOAP_FREE`
+- `#SOAP_NEW`
+- `#SOAP_NEW_ARRAY`
+- `#SOAP_PLACEMENT_NEW`
+- `#SOAP_DELETE`
+- `#SOAP_DELETE_ARRAY`
+- `#SOAP_MALLOC_UNMANAGED`
+- `#SOAP_FREE_UNMANAGED`
+- `#SOAP_NEW_UNMANAGED`
+- `#SOAP_DELETE_UNMANAGED`
 
-`#SOAP_STD_EXPORTS`
-`#SOAP_FMAC1`
-`#SOAP_FMAC2`
-`#SOAP_FMAC3`
-`#SOAP_FMAC4`
-`#SOAP_FMAC5`
-`#SOAP_FMAC6`
-`#SOAP_CMAC`
-`#SOAP_NMAC`
+DLL and API export related macros:
+- `#SOAP_STD_EXPORTS`
+- `#SOAP_FMAC1`
+- `#SOAP_FMAC2`
+- `#SOAP_FMAC3`
+- `#SOAP_FMAC4`
+- `#SOAP_FMAC5`
+- `#SOAP_FMAC6`
+- `#SOAP_CMAC`
+- `#SOAP_NMAC`
 
 @{
 */
@@ -1264,6 +1278,40 @@ This type is also available as a valid type to use in the .h file for soapcpp2.
 /// Macro that returns true if the floating point value is infinity
 #define soap_isinf(x)
 
+/// User-definable macro to override malloc() for context-managed heap allocation (excluding C++ class instances, see `#SOAP_NEW`)
+#define SOAP_MALLOC(soap, size) malloc((size))
+
+/// User-definable macro to override free() for context-managed heap allocation (excluding C++ class instances, see `#SOAP_DELETE`)
+#define SOAP_FREE(soap, ptr) free((void*)(ptr))
+
+/// User-definable macro to override malloc() for unmanaged heap allocation
+#define SOAP_MALLOC_UNMANAGED(soap, size) malloc((size))
+
+/// User-definable macro to override free() for unmanaged heap allocation
+#define SOAP_FREE_UNMANAGED(soap, ptr) free((void*)(ptr))
+
+/// User-definable macro to override C++ new
+#define SOAP_NEW(soap, type) new SOAP_NOTHROW (type)
+
+/// User-definable macro to override C++ new for arrays
+#define SOAP_NEW_ARRAY(soap, type, n) new SOAP_NOTHROW type[n]
+
+/// User-definable macro to override C++ placement new
+#define SOAP_PLACEMENT_NEW(soap, buf, type) new (buf) (type)
+
+/// User-definable macro to override C++ delete
+#define SOAP_DELETE(soap, obj, type) delete obj
+
+/// User-definable macro to override C++ delete for arrays
+#define SOAP_DELETE_ARRAY(soap, obj, type) delete[] obj
+
+/// User-definable macro to override C++ new for unmanaged allocation of the soap context
+#define SOAP_NEW_UNMANAGED(soap) new SOAP_NOTHROW soap
+
+/// User-definable macro to override C++ delete for unmanaged deallocation of the soap context
+#define SOAP_DELETE_UNMANAGED(soap) delete soap
+
+
 /// User-definable macro to enable Windows DLL builds
 /**
 This macro when set exports global functions and classes by defining `#SOAP_FMAC1`, `#SOAP_FMAC3`, `#SOAP_FMAC5`, and `#SOAP_CMAC` to `__declspec(dllexport)`.
@@ -1366,42 +1414,43 @@ SOAP_NMAC struct Namespace namespaces[] = { ... };
 @brief This module defines the `SOAP_MACRO` run-time `::soap_mode` flags to set the engine mode
 
 This module defines the following `::soap_mode` flags:
-`#SOAP_C_MBSTRING`
-`#SOAP_C_NILSTRING`
-`#SOAP_C_NOIOB`
-`#SOAP_C_UTFSTRING`
-`#SOAP_DOM_ASIS`
-`#SOAP_DOM_NODE`
-`#SOAP_DOM_TREE`
-`#SOAP_ENC`
-`#SOAP_ENC_DIME`
-`#SOAP_ENC_LATIN`
-`#SOAP_ENC_MIME`
-`#SOAP_ENC_MTOM`
-`#SOAP_ENC_PLAIN`
-`#SOAP_ENC_SSL`
-`#SOAP_ENC_XML`
-`#SOAP_ENC_ZLIB`
-`#SOAP_IO`
-`#SOAP_IO_BUFFER`
-`#SOAP_IO_CHUNK`
-`#SOAP_IO_FLUSH`
-`#SOAP_IO_KEEPALIVE`
-`#SOAP_IO_LENGTH`
-`#SOAP_IO_STORE`
-`#SOAP_IO_UDP`
-`#SOAP_MIME_POSTCHECK`
-`#SOAP_SEC_WSUID`
-`#SOAP_XML_CANONICAL`
-`#SOAP_XML_DEFAULTNS`
-`#SOAP_XML_DOM`
-`#SOAP_XML_GRAPH`
-`#SOAP_XML_IGNORENS`
-`#SOAP_XML_INDENT`
-`#SOAP_XML_NIL`
-`#SOAP_XML_NOTYPE`
-`#SOAP_XML_STRICT`
-`#SOAP_XML_TREE`
+- `#SOAP_C_MBSTRING`
+- `#SOAP_C_NILSTRING`
+- `#SOAP_C_NOIOB`
+- `#SOAP_C_UTFSTRING`
+- `#SOAP_DOM_ASIS`
+- `#SOAP_DOM_NODE`
+- `#SOAP_DOM_TREE`
+- `#SOAP_ENC`
+- `#SOAP_ENC_DIME`
+- `#SOAP_ENC_LATIN`
+- `#SOAP_ENC_MIME`
+- `#SOAP_ENC_MTOM`
+- `#SOAP_ENC_PLAIN`
+- `#SOAP_ENC_SSL`
+- `#SOAP_ENC_XML`
+- `#SOAP_ENC_ZLIB`
+- `#SOAP_IO`
+- `#SOAP_IO_BUFFER`
+- `#SOAP_IO_CHUNK`
+- `#SOAP_IO_FLUSH`
+- `#SOAP_IO_KEEPALIVE`
+- `#SOAP_IO_LENGTH`
+- `#SOAP_IO_STORE`
+- `#SOAP_IO_UDP`
+- `#SOAP_MIME_POSTCHECK`
+- `#SOAP_SEC_WSUID`
+- `#SOAP_XML_CANONICAL`
+- `#SOAP_XML_CANONICAL_NA`
+- `#SOAP_XML_DEFAULTNS`
+- `#SOAP_XML_DOM`
+- `#SOAP_XML_GRAPH`
+- `#SOAP_XML_IGNORENS`
+- `#SOAP_XML_INDENT`
+- `#SOAP_XML_NIL`
+- `#SOAP_XML_NOTYPE`
+- `#SOAP_XML_STRICT`
+- `#SOAP_XML_TREE`
 
 @{
 */
@@ -1409,42 +1458,43 @@ This module defines the following `::soap_mode` flags:
 /// The `::soap_mode` flags to initialize the `::soap` context, flags can be combined with `|` (bit-wise or)
 /**
 The `::soap_mode` flags are:
-`#SOAP_C_MBSTRING`
-`#SOAP_C_NILSTRING`
-`#SOAP_C_NOIOB`
-`#SOAP_C_UTFSTRING`
-`#SOAP_DOM_ASIS`
-`#SOAP_DOM_NODE`
-`#SOAP_DOM_TREE`
-`#SOAP_ENC`
-`#SOAP_ENC_DIME`
-`#SOAP_ENC_LATIN`
-`#SOAP_ENC_MIME`
-`#SOAP_ENC_MTOM`
-`#SOAP_ENC_PLAIN`
-`#SOAP_ENC_SSL`
-`#SOAP_ENC_XML`
-`#SOAP_ENC_ZLIB`
-`#SOAP_IO`
-`#SOAP_IO_BUFFER`
-`#SOAP_IO_CHUNK`
-`#SOAP_IO_FLUSH`
-`#SOAP_IO_KEEPALIVE`
-`#SOAP_IO_LENGTH`
-`#SOAP_IO_STORE`
-`#SOAP_IO_UDP`
-`#SOAP_MIME_POSTCHECK`
-`#SOAP_SEC_WSUID`
-`#SOAP_XML_CANONICAL`
-`#SOAP_XML_DEFAULTNS`
-`#SOAP_XML_DOM`
-`#SOAP_XML_GRAPH`
-`#SOAP_XML_IGNORENS`
-`#SOAP_XML_INDENT`
-`#SOAP_XML_NIL`
-`#SOAP_XML_NOTYPE`
-`#SOAP_XML_STRICT`
-`#SOAP_XML_TREE`
+- `#SOAP_C_MBSTRING`
+- `#SOAP_C_NILSTRING`
+- `#SOAP_C_NOIOB`
+- `#SOAP_C_UTFSTRING`
+- `#SOAP_DOM_ASIS`
+- `#SOAP_DOM_NODE`
+- `#SOAP_DOM_TREE`
+- `#SOAP_ENC`
+- `#SOAP_ENC_DIME`
+- `#SOAP_ENC_LATIN`
+- `#SOAP_ENC_MIME`
+- `#SOAP_ENC_MTOM`
+- `#SOAP_ENC_PLAIN`
+- `#SOAP_ENC_SSL`
+- `#SOAP_ENC_XML`
+- `#SOAP_ENC_ZLIB`
+- `#SOAP_IO`
+- `#SOAP_IO_BUFFER`
+- `#SOAP_IO_CHUNK`
+- `#SOAP_IO_FLUSH`
+- `#SOAP_IO_KEEPALIVE`
+- `#SOAP_IO_LENGTH`
+- `#SOAP_IO_STORE`
+- `#SOAP_IO_UDP`
+- `#SOAP_MIME_POSTCHECK`
+- `#SOAP_SEC_WSUID`
+- `#SOAP_XML_CANONICAL`
+- `#SOAP_XML_CANONICAL_NA`
+- `#SOAP_XML_DEFAULTNS`
+- `#SOAP_XML_DOM`
+- `#SOAP_XML_GRAPH`
+- `#SOAP_XML_IGNORENS`
+- `#SOAP_XML_INDENT`
+- `#SOAP_XML_NIL`
+- `#SOAP_XML_NOTYPE`
+- `#SOAP_XML_STRICT`
+- `#SOAP_XML_TREE`
 */
 typedef int soap_mode;
 
@@ -1469,7 +1519,9 @@ if ((soap->omode & SOAP_IO) == SOAP_IO_CHUNK)
 
 /// `::soap_mode` IO output flag value to store messages temporarily before transmission, e.g. to determine message length for transmission over HTTP instead of chunking or two-phase message sends, do not combine this flag with `#SOAP_IO_FLUSH`, `#SOAP_IO_BUFFER`, `#SOAP_IO_CHUNK`
 /**
-@note `#SOAP_IO_CHUNK` is preferable to use compared to this `#SOAP_IO_STORE` mode, because `#SOAP_IO_STORE` requires more memory and increases response time latency due to the overhead of storing the entire message before transmission.
+When set as input-mode flag, forces all messages sent to be temporarily stored before transmission.  When set as output-mode flag, forces only the next message to be temporarily stored before transmission.
+
+@note `#SOAP_IO_CHUNK` is preferable over `#SOAP_IO_STORE`, because `#SOAP_IO_STORE` requires more memory and increases response time latency due to the overhead of storing the entire message before transmission.
 
 @par Example:
 
@@ -1501,14 +1553,21 @@ struct soap *soap = soap_new1(SOAP_IO_CHUNK); // enable HTTP chunking
 #include "soapH.h"
 struct soap *soap = soap_new1(SOAP_IO_UDP); // use UDP
 ~~~
+
+@see \ref UDP.
 */
 #define SOAP_IO_UDP
 
 /// `::soap_mode` IO output flag value to calculate message length when sending a message without transmission (for internal use only)
+/**
+@see `::soap_begin_count`, `::soap_end_count`.
+*/
 #define SOAP_IO_LENGTH
 
 /// `::soap_mode` IO output flag value to keep the socket connection alive for `#SOAP_MAXKEEPALIVE` message exchanges per connection (100 by default), enabling HTTP keep-alive connection persistence
 /**
+@warning Do not use `#SOAP_IO_KEEPALIVE` with CGI and FastCGI applications.
+
 @par Example:
 
 ~~~{.cpp}
@@ -1516,6 +1575,8 @@ struct soap *soap = soap_new1(SOAP_IO_UDP); // use UDP
 struct soap *soap = soap_new1(SOAP_IO_KEEPALIVE); // enable HTTP keep-alive
 soap->max_keep_alive = 50;                        // 50 max keep-alive exchanges (SOAP_MAXKEEPALIVE by default)
 ~~~
+
+@see `::soap::keep_alive`, `::soap::max_keep_alive`, `#SOAP_MAXKEEPALIVE`.
 */
 #define SOAP_IO_KEEPALIVE
 
@@ -1546,23 +1607,23 @@ struct soap *soap = soap_new1(SOAP_ENC_PLAIN); // no HTTP
 ~~~{.cpp}
 #include "soapH.h"
 struct soap *soap = soap_new();
-struct _xop__Include data;                               // here we're using gsoap/import/xop.h to store a blob of raw data
-data.__ptr = (unsigned char*)soap_malloc(soap, 1024);    // allocate 1024 bytes on the managed heap
-memcpy(data.__ptr, image_data);                          // copy an image (or we could just assign to data.__ptr)
-data.__size = 1024;                                      // 1024 bytes of data
-data.id = soap_rand_uuid(soap, "uuid:");                 // attachment id (optional, can use NULL)
-data.type = "image/png";                                 // attachment type
-data.options = soap_dime_option(soap, 0, "Picture.png"); // DIME option 0 = "Picture.png" to store file name
+struct _xop__Include data;                                  // here we're using gsoap/import/xop.h to store a blob of raw data
+data.__ptr = (unsigned char*)soap_malloc(soap, 1024);       // allocate 1024 bytes on the managed heap
+memcpy(data.__ptr, image_data);                             // copy an image (or we could just assign to data.__ptr)
+data.__size = 1024;                                         // 1024 bytes of data
+data.id = soap_strdup(soap, soap_rand_uuid(soap, "uuid:")); // attachment id (optional, can use NULL)
+data.type = "image/png";                                    // attachment type
+data.options = soap_dime_option(soap, 0, "Picture.png");    // DIME option 0 = "Picture.png" to store file name
 ... // add data to the message and then send it, which will transmit the data as an attachment
 ~~~
 
 ~~~{.cpp}
 #include "soapH.h"
 struct soap *soap = soap_new();
-unsigned char *ptr = (unsigned char*)image_data;      // image data to attach
-size_t size = 1024;                                   // 1024 bytes of data
-const char *id = soap_rand_uuid(soap, "uuid:");       // attachment id (optional, can use NULL)
-const char *type = "image/png";                       // attachment type
+unsigned char *ptr = (unsigned char*)image_data;                   // image data to attach
+size_t size = 1024;                                                // 1024 bytes of data
+const char *id = soap_strdup(soap, soap_rand_uuid(soap, "uuid:")); // attachment id (optional, can use NULL)
+const char *type = "image/png";                                    // attachment type
 if (soap_set_dime_attachment(soap, ptr, size, type, id, 0, "Picture.png"))
   ... // error attaching
 ... // send a message, image is attached
@@ -1571,6 +1632,8 @@ if (soap_set_dime_attachment(soap, ptr, size, type, id, 0, "Picture.png"))
 The `#SOAP_ENC_DIME` flag is automatically set when attachments are present in the message to be sent or when a message with DIME attachments is received and does not need to be set explicitly.
 
 DIME attachment sizes are limited to `#SOAP_MAXDIMESIZE`, which is a compile-time constant that can be changed.
+
+@see `#SOAP_ENC_MIME`, `#SOAP_ENC_DIME`, \ref DIME.
 */
 #define SOAP_ENC_DIME
 
@@ -1582,29 +1645,31 @@ The MTOM specification requires SOAP 1.2.
 
 ~~~{.cpp}
 #include "soapH.h"
-struct soap *soap = soap_new1(SOAP_ENC_MIME);         // enable MIME attachments, not DIME or MTOM
-struct _xop__Include data;                            // here we're using gsoap/import/xop.h to store a blob of raw data
-data.__ptr = (unsigned char*)soap_malloc(soap, 1024); // allocate 1024 bytes on the managed heap
-memcpy(data.__ptr, image_data);                       // copy an image (or we could just assign to data.__ptr)
-data.__size = 1024;                                   // 1024 bytes of data
-data.id = soap_rand_uuid(soap, "uuid:");              // attachment id (optional, can use NULL)
-data.type = "image/png";                              // attachment type
-data.options = "Picture";                             // attachment description
+struct soap *soap = soap_new1(SOAP_ENC_MIME);               // enable MIME attachments, not DIME or MTOM
+struct _xop__Include data;                                  // here we're using gsoap/import/xop.h to store a blob of raw data
+data.__ptr = (unsigned char*)soap_malloc(soap, 1024);       // allocate 1024 bytes on the managed heap
+memcpy(data.__ptr, image_data);                             // copy an image (or we could just assign to data.__ptr)
+data.__size = 1024;                                         // 1024 bytes of data
+data.id = soap_strdup(soap, soap_rand_uuid(soap, "uuid:")); // attachment id (optional, can use NULL)
+data.type = "image/png";                                    // attachment type
+data.options = "Picture";                                   // attachment description
 ... // add data to the message and then send it
 ~~~
 
 ~~~{.cpp}
 #include "soapH.h"
-struct soap *soap = soap_new1(SOAP_ENC_MIME);         // enable MIME attachments, not DIME or MTOM
-unsigned char *ptr = (unsigned char*)image_data;      // image data to attach
-size_t size = 1024;                                   // 1024 bytes of data
-const char *id = soap_rand_uuid(soap, "uuid:");       // attachment id (optional, can use NULL)
-const char *type = "image/png";                       // attachment type
+struct soap *soap = soap_new1(SOAP_ENC_MIME);                      // enable MIME attachments, not DIME or MTOM
+unsigned char *ptr = (unsigned char*)image_data;                   // image data to attach
+size_t size = 1024;                                                // 1024 bytes of data
+const char *id = soap_strdup(soap, soap_rand_uuid(soap, "uuid:")); // attachment id (optional, can use NULL)
+const char *type = "image/png";                                    // attachment type
 if (soap_set_mime_attachment(soap, ptr, size, SOAP_MIME_BINARY, type, id, "No location", "Picture))
   ... // error attaching
 ... // send a message, image is attached
 soap_clr_mime(soap);
 ~~~
+
+@see `#SOAP_ENC_DIME`, `#SOAP_ENC_MTOM`, \ref MIME.
 */
 #define SOAP_ENC_MIME
 
@@ -1614,29 +1679,31 @@ soap_clr_mime(soap);
 
 ~~~{.cpp}
 #include "soapH.h"
-struct soap *soap = soap_new1(SOAP_ENC_MTOM);         // enable MTOM attachments, not DIME
-struct _xop__Include data;                            // here we're using gsoap/import/xop.h to store a blob of raw data
-data.__ptr = (unsigned char*)soap_malloc(soap, 1024); // allocate 1024 bytes on the managed heap
-memcpy(data.__ptr, image_data);                       // copy an image (or we could just assign to data.__ptr)
-data.__size = 1024;                                   // 1024 bytes of data
-data.id = soap_rand_uuid(soap, "uuid:");              // attachment id (optional, can use NULL)
-data.type = "image/png";                              // attachment type
-data.options = "Picture";                             // attachment description
+struct soap *soap = soap_new1(SOAP_ENC_MTOM);               // enable MTOM attachments, not DIME
+struct _xop__Include data;                                  // here we're using gsoap/import/xop.h to store a blob of raw data
+data.__ptr = (unsigned char*)soap_malloc(soap, 1024);       // allocate 1024 bytes on the managed heap
+memcpy(data.__ptr, image_data);                             // copy an image (or we could just assign to data.__ptr)
+data.__size = 1024;                                         // 1024 bytes of data
+data.id = soap_strdup(soap, soap_rand_uuid(soap, "uuid:")); // attachment id (optional, can use NULL)
+data.type = "image/png";                                    // attachment type
+data.options = "Picture";                                   // attachment description
 ... // add data to the message and then send it
 ~~~
 
 ~~~{.cpp}
 #include "soapH.h"
-struct soap *soap = soap_new1(SOAP_ENC_MTOM);         // enable MTOM attachments, not DIME
-unsigned char *ptr = (unsigned char*)image_data;      // image data to attach
-size_t size = 1024;                                   // 1024 bytes of data
-const char *id = soap_rand_uuid(soap, "uuid:");       // attachment id (optional, can use NULL)
-const char *type = "image/png";                       // attachment type
+struct soap *soap = soap_new1(SOAP_ENC_MTOM);                      // enable MTOM attachments, not DIME
+unsigned char *ptr = (unsigned char*)image_data;                   // image data to attach
+size_t size = 1024;                                                // 1024 bytes of data
+const char *id = soap_strdup(soap, soap_rand_uuid(soap, "uuid:")); // attachment id (optional, can use NULL)
+const char *type = "image/png";                                    // attachment type
 if (soap_set_mime_attachment(soap, ptr, size, SOAP_MIME_BINARY, type, id, "No location", "Picture))
   ... // error attaching
 ... // send a message, image is attached
 soap_clr_mime(soap);
 ~~~
+
+@see `#SOAP_ENC_DIME`, `#SOAP_ENC_MIME`, \ref MTOM.
 */
 #define SOAP_ENC_MTOM
 
@@ -1656,12 +1723,16 @@ struct soap *soap = soap_new1(SOAP_ENC_ZLIB); // HTTP compression
 
 /// `::soap_mode` XML input flag value to enable strict XML validation of messages received, not recommended for SOAP RPC encoding style messaging, but SOAP document/literal style messages can be validated
 /**
+Alternatively, use <i>`soapcpp2 -s`</i> to generate stub and skeleton functions that perform strict XML validation checks.
+
 @par Example:
 
 ~~~{.cpp}
 #include "soapH.h"
 struct soap *soap = soap_new1(SOAP_XML_STRICT); // strict XML validation
 ~~~
+
+@see `#WITH_REPLACE_ILLEGAL_UTF8`, `#SOAP_UNKNOWN_UNICODE_CHAR`.
 */
 #define SOAP_XML_STRICT
 
@@ -1682,23 +1753,23 @@ struct soap *soap = soap_new1(SOAP_XML_INDENT); // indent XML
 
 ~~~{.cpp}
 #include "soapH.h"
-struct soap *soap = soap_new1(SOAP_XML_IGNORENS); // ignore XML namespaces
+struct soap *soap = soap_new1(SOAP_XML_IGNORENS); // ignore xmlns bindings in XML
 ~~~
 */
 #define SOAP_XML_IGNORENS
 
-/// `::soap_mode` XML output flag value to send XML messages with XML default namespaces for elements instead of namespace qualified elements
+/// `::soap_mode` XML output flag value to send XML messages with XML default namespaces for elements instead of namespace-qualified elements
 /**
 @par Example:
 
 ~~~{.cpp}
 #include "soapH.h"
-struct soap *soap = soap_new1(SOAP_XML_DEFAULTNS); // use XML default namespaces
+struct soap *soap = soap_new1(SOAP_XML_DEFAULTNS); // use XML default namespaces with xmlns="..."
 ~~~
 */
 #define SOAP_XML_DEFAULTNS
 
-/// `::soap_mode` XML output flag value to send XML messages in exclusive canonical format, use with the `::soap::c14ninclude` and `::soap::c14nexclude` strings to control the prefixes that are subject to canonicalization by including or excluding specific prefixes
+/// `::soap_mode` XML output flag value to send XML messages in exclusive canonical format as per W3C XML C14N standards, use with the `::soap::c14ninclude` and `::soap::c14nexclude` strings to control the prefixes that are subject to canonicalization by including or excluding specific prefixes
 /**
 @par Example:
 
@@ -1707,8 +1778,28 @@ struct soap *soap = soap_new1(SOAP_XML_DEFAULTNS); // use XML default namespaces
 struct soap *soap = soap_new1(SOAP_XML_CANONICAL); // XML canonicalization
 soap->c14ninclude = "*";                           // make all prefixes inclusive, i.e. inclusive canonicalization
 ~~~
+
+@note Because the W3C XML C14N (canonicalization) standard does not cover QName values, inclusive and exclusive C14N appears to be broken when QNames are used.  XML C14N retains xmlns bindings of utilized elements and attributes only, which means that xmlns bindings for prefixes in QNames may be lost in the canonicalization process.  The gSOAP toolkit implements XML C14N with QName normalization to prevent this loss.  Losing xmlns bindings for QName prefixes not only invalidates XML messages, but may also lead to incorrectly bound prefixes to xmlns bindings used in the outer scope of the canonicalized XML.  This poses a security threat when malicious xmlns bindings are placed in the outer scope to capture unbound QName prefix bindings.  The `#SOAP_XML_CANONICAL_NA` mode flag omits QName canonicalization.
+
+@see `#SOAP_XML_CANONICAL_NA`.
 */
 #define SOAP_XML_CANONICAL
+
+/// `::soap_mode` XML output flag value to send XML messages in exclusive canonical format as per W3C XML C14N standards, use with the `::soap::c14ninclude` and `::soap::c14nexclude` strings to control the prefixes that are subject to canonicalization by including or excluding specific prefixes
+/**
+Must be used in combination with `#SOAP_XML_CANONICAL_NA` to emit XML in canonical form such that namespace prefixes in QName values are ignored.  Recommended is to only use `#SOAP_XML_CANONICAL` which is more secure, see the `#SOAP_XML_CANONICAL` notes.
+
+@par Example:
+
+~~~{.cpp}
+#include "soapH.h"
+struct soap *soap = soap_new1(SOAP_XML_CANONICAL | SOAP_XML_CANONICAL_NA);
+soap->c14ninclude = "*"; // make all prefixes inclusive, i.e. inclusive canonicalization
+~~~
+
+@see `#SOAP_XML_CANONICAL`.
+*/
+#define SOAP_XML_CANONICAL_NA
 
 /// `::soap_mode` XML input/output flag value to serialize C/C++ data structures as XML trees without id-href or id-ref multi-references, duplicates co-referenced data in the XML output and automatically breaks data structure cycles to prevent infinite serialization loops, ignores id and href/ref reference attributes in messages received, this flag is the opposite of `#SOAP_XML_GRAPH`
 /**
@@ -1720,6 +1811,8 @@ struct soap *soap = soap_new1(SOAP_XML_TREE); // no id-href and id-ref multi-ref
 ~~~
 
 @note This mode flag is always active when the engine is compiled with `#WITH_NOIDREF`.
+
+@see `#SOAP_XML_GRAPH`, `#WITH_NOIDREF`.
 */
 #define SOAP_XML_TREE
 
@@ -1733,6 +1826,8 @@ struct soap *soap = soap_new1(SOAP_XML_GRAPH); // id-ref multi-reference seriali
 ~~~
 
 @note This mode flag is not usable when the engine is compiled with `#WITH_NOIDREF`.
+
+@see `#SOAP_XML_TREE`.
 */
 #define SOAP_XML_GRAPH
 
@@ -1742,7 +1837,7 @@ struct soap *soap = soap_new1(SOAP_XML_GRAPH); // id-ref multi-reference seriali
 
 ~~~{.cpp}
 #include "soapH.h"
-struct soap *soap = soap_new1(SOAP_XML_NIL); // emit NULL pointers as empty elements with <i>`xsi:nil="true"`</i>
+struct soap *soap = soap_new1(SOAP_XML_NIL); // emit NULL pointers as empty elements with xsi:nil="true"
 ~~~
 */
 #define SOAP_XML_NIL
@@ -1842,13 +1937,25 @@ This example requires the soapC.cpp source code generated with soapcpp2 from <i>
 */
 #define SOAP_DOM_TREE
 
-/// `::soap_mode` C-related input flag value to ignore SOAP array items that are out of bounds, instead of producing `#SOAP_IOB` errors
+/// `::soap_mode` C-related input flag value to ignore array items that are out of bounds when deserializing fixed-size arrays, instead of producing `#SOAP_IOB` errors
 /**
 @par Example:
 
 ~~~{.cpp}
+struct ns__webmethodResponse
+{
+  float coordinates[3];
+};
+int ns__webmethod(float x, struct ns__webmethodResponse *out);
+~~~
+
+~~~{.cpp}
 #include "soapH.h"
 struct soap *soap = soap_new1(SOAP_C_NOIOB);
+struct ns__webmethodResponse result;
+... //
+if (soap_call_ns__webmethod(soap, 3, &result))
+  ... // deserializing more than 3 array items does not produce a SOAP_IOB error here
 ~~~
 */
 #define SOAP_C_NOIOB
@@ -1919,6 +2026,7 @@ The `#SOAP_OK` (zero) and nonzero error codes are returned by functions and are 
 `#SOAP_HDR`
 `#SOAP_HREF`
 `#SOAP_HTTP_ERROR`
+`#SOAP_HTTP_METHOD`
 `#SOAP_IOB`
 `#SOAP_LENGTH`
 `#SOAP_LEVEL`
@@ -2109,6 +2217,9 @@ This error code is also caught by `::soap_http_error_check`.
 @see `::soap::fdel`.
 */
 #define SOAP_DEL_METHOD
+
+/// A `::soap_status` error code: an HTTP request was received by the service that cannot be handled.
+#define SOAP_HTTP_METHOD
 
 /// A `::soap_status` error code: HTTP header line is too long, exceeding `#SOAP_HDRLEN` size
 #define SOAP_HDR
@@ -2356,7 +2467,7 @@ This error code is also caught by `::soap_zlib_error_check`.
 #define soap_http_error_check(e) \
 ((e) == SOAP_HTTP_ERROR || \
  (e) == SOAP_NO_DATA || \
- ((e) >= SOAP_GET_METHOD && (e) <= SOAP_HEAD_METHOD) || \
+ ((e) >= SOAP_GET_METHOD && (e) <= SOAP_HTTP_METHOD) || \
  ((e) >= 100 && (e) < 600))
 
 /// Check for DIME protocol errors, returns true if the specified `::soap_status` error code is a DIME protocol error
@@ -2528,9 +2639,19 @@ struct soap {
   @see `::soap_ssl_server_context`, `::soap_ssl_client_context`.
   */
   SSL_CTX *ctx;
-  /// SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2) usually determined from the SOAP message received or this is set with `::soap_set_version`
+  /// SOAP version (0 = no SOAP, 1 = SOAP 1.1, 2 = SOAP 1.2)
+  /**
+  The SOAP version is determined from the SOAP or XML message received.  The version is automatically set before sending messages when SOAP 1.1 or SOAP 1.2 namespaces are defined in the `::Namespace` table or when SOAP namespaces are omitted from the table.  The version can be explicitly set or overruled by calling `::soap_set_version`.
+
+  @see `::soap::encodingStyle`, `::soap_set_version`.
+  */
   short version;
-  /// User-definable <i>`SOAP-ENV:encodingStyle`</i> URI value, pre-defined by the engine depending on the SOAP protocol version used, setting this to NULL means no SOAP encodingStyle, setting this to "" means that the engine will set the encodingStyle URI according to the SOAP version used
+  /// User-definable <i>`SOAP-ENV:encodingStyle`</i> URI value
+  /**
+  This URI string value is pre-defined by the engine depending on the SOAP protocol version used, setting this to NULL means no SOAP encodingStyle, setting this to "" means that the engine will set the encodingStyle URI according to the SOAP version used.
+
+  @see `::soap::version`, `::soap_set_version`.
+  */
   const char *encodingStyle;
   /// User-definable <i>`SOAP-ENV:actor`</i> (SOAP 1.1) or <i>`SOAP-ENV:role`</i> (SOAP 1.2) attribute value of all <i>`SOAP-ENV:mustUnderstand`</i> attributed header elements
   /**
@@ -4051,6 +4172,8 @@ struct soap {
   @ingroup group_callbacks
   This callback can be used to override memory allocation and management done by `::soap_malloc` in C.  Memory allocated via this callback will not be managed and not be automatically released by the engine.  Instead, the application using this callback should release allocated memory.  All allocations done by `::soap_malloc` are replaced with a call to `::soap::fmalloc`.  However, no other allocations, such as `::soap_new` and `soap_new_T` for C++ classes, are affected.  This callback is therefore not useful for C++ applications.  Returns a pointer to dynamically allocated memory or NULL on failure to allocate.  No built-in function is assigned to `::soap::fmalloc`.
 
+  @warning Deprecated since 2.8.72.  Define `#SOAP_MALLOC` and `#SOAP_FREE` instead.
+
   @param soap `::soap` context
   @param size number of bytes to allocate
   @returns pointer to allocated memory or NULL on failure to allocate (out of memory)
@@ -4082,12 +4205,12 @@ struct soap {
   soap->fdimeread = dime_read;
   soap->fdimereadclose = dime_read_close;
 
-  struct _xop__Include data;                               // here we're using gsoap/import/xop.h to store a blob of raw data
-  data.__ptr = "Picture.png";                              // file name to open for streaming with dime_read_open
-  data.__size = 1024;                                      // file has 1024 bytes of data
-  data.id = soap_rand_uuid(soap, "uuid:");                 // attachment id (optional, can use NULL)
-  data.type = "image/png";                                 // attachment type
-  data.options = soap_dime_option(soap, 0, "Picture.png"); // DIME option 0 = "Picture.png" to store file name
+  struct _xop__Include data;                                  // here we're using gsoap/import/xop.h to store a blob of raw data
+  data.__ptr = "Picture.png";                                 // file name to open for streaming with dime_read_open
+  data.__size = 1024;                                         // file has 1024 bytes of data
+  data.id = soap_strdup(soap, soap_rand_uuid(soap, "uuid:")); // attachment id (optional, can use NULL)
+  data.type = "image/png";                                    // attachment type
+  data.options = soap_dime_option(soap, 0, "Picture.png");    // DIME option 0 = "Picture.png" to store file name
   ... // add data to the message and then send it, which will stream the DIME attachment content from Picture.png
   ~~~
 
@@ -4117,12 +4240,12 @@ struct soap {
   ~~~{.cpp}
   struct soap *soap = soap_new1(SOAP_IO_CHUNK);
 
-  struct _xop__Include data;                               // here we're using gsoap/import/xop.h to store a blob of raw data
-  data.__ptr = "Picture.png";                              // file name to open for streaming with dime_read_open
-  data.__size = 0;                                         // zero size means chunked DIME attachments are sent
-  data.id = soap_rand_uuid(soap, "uuid:");                 // attachment id (optional, can use NULL)
-  data.type = "image/png";                                 // attachment type
-  data.options = soap_dime_option(soap, 0, "Picture.png"); // DIME option 0 = "Picture.png" to store file name
+  struct _xop__Include data;                                  // here we're using gsoap/import/xop.h to store a blob of raw data
+  data.__ptr = "Picture.png";                                 // file name to open for streaming with dime_read_open
+  data.__size = 0;                                            // zero size means chunked DIME attachments are sent
+  data.id = soap_strdup(soap, soap_rand_uuid(soap, "uuid:")); // attachment id (optional, can use NULL)
+  data.type = "image/png";                                    // attachment type
+  data.options = soap_dime_option(soap, 0, "Picture.png");    // DIME option 0 = "Picture.png" to store file name
   ... // add data to the message and then send it, which will stream the DIME attachment content from Picture.png
   ~~~
 
@@ -4256,12 +4379,12 @@ struct soap {
   soap->fmimeread = mime_read;
   soap->fmimereadclose = mime_read_close;
 
-  struct _xop__Include data;               // here we're using gsoap/import/xop.h to store a blob of raw data
-  data.__ptr = "Picture.png";              // file name to open for streaming with mime_read_open
-  data.__size = 1024;                      // file has 1024 bytes of data
-  data.id = soap_rand_uuid(soap, "uuid:"); // attachment id (optional, can use NULL)
-  data.type = "image/png";                 // attachment type
-  data.options = "Picture.png";            // we store the file name with the attachment description
+  struct _xop__Include data;                                  // here we're using gsoap/import/xop.h to store a blob of raw data
+  data.__ptr = "Picture.png";                                 // file name to open for streaming with mime_read_open
+  data.__size = 1024;                                         // file has 1024 bytes of data
+  data.id = soap_strdup(soap, soap_rand_uuid(soap, "uuid:")); // attachment id (optional, can use NULL)
+  data.type = "image/png";                                    // attachment type
+  data.options = "Picture.png";                               // we store the file name with the attachment description
   ... // add data to the message and then send it, which will stream the MIME/MTOM attachment content from Picture.png
   ~~~
 
@@ -4270,12 +4393,12 @@ struct soap {
   ~~~{.cpp}
   struct soap *soap = soap_new1(SOAP_IO_CHUNK);
 
-  struct _xop__Include data;               // here we're using gsoap/import/xop.h to store a blob of raw data
-  data.__ptr = "Picture.png";              // file name to open for streaming with dime_read_open
-  data.__size = 0;                         // zero size means chunked MIME/MTOM attachments are sent
-  data.id = soap_rand_uuid(soap, "uuid:"); // attachment id (optional, can use NULL)
-  data.type = "image/png";                 // attachment type
-  data.options = "Picture.png";            // we store the file name with the attachment description
+  struct _xop__Include data;                                  // here we're using gsoap/import/xop.h to store a blob of raw data
+  data.__ptr = "Picture.png";                                 // file name to open for streaming with dime_read_open
+  data.__size = 0;                                            // zero size means chunked MIME/MTOM attachments are sent
+  data.id = soap_strdup(soap, soap_rand_uuid(soap, "uuid:")); // attachment id (optional, can use NULL)
+  data.type = "image/png";                                    // attachment type
+  data.options = "Picture.png";                               // we store the file name with the attachment description
   ... // add data to the message and then send it, which will stream the MIME/MTOM attachment content from Picture.png
   ~~~
 
@@ -4880,7 +5003,7 @@ void * soap_malloc(
 
 /// Copy a string to managed memory
 /**
-This function copies the specified wide string to managed memory.  Returns a copy of the string or NULL when the specified string is NULL or when the function failed to allocate memory.
+This function copies the specified wide string to memory managed by the specified context.  Returns a copy of the string or NULL when the specified string is NULL or when the function failed to allocate memory.
 
 @par Example:
 
@@ -5150,40 +5273,64 @@ To pass user-specified data to callbacks and plugins, assign a value to the `::s
 /// SSL/TLS (HTTPS) client and server context flags for `::soap_ssl_client_context` and `::soap_ssl_server_context`, respectively, flags can be combined with `|` (bit-wise or)
 /**
 The SSL/TLS flags are:
-`#SOAP_SSL_DEFAULT`
-`#SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE`
-`#SOAP_SSL_NO_AUTHENTICATION`
-`#SOAP_SSL_NO_DEFAULT_CA_PATH`
-`#SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION`
-`#SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION`
-`#SOAP_SSL_RSA`
-`#SOAP_SSL_SKIP_HOST_CHECK`
-`#SOAP_SSLv3_TLSv1`
-`#SOAP_SSLv3`
-`#SOAP_TLSv1_0`
-`#SOAP_TLSv1_1`
-`#SOAP_TLSv1_2`
-`#SOAP_TLSv1_3`
-`#SOAP_TLSv1`
+- `#SOAP_SSL_DEFAULT`
+- `#SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE`
+- `#SOAP_SSL_NO_AUTHENTICATION`
+- `#SOAP_SSL_NO_DEFAULT_CA_PATH`
+- `#SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION`
+- `#SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION`
+- `#SOAP_SSL_RSA`
+- `#SOAP_SSL_SKIP_HOST_CHECK`
+- `#SOAP_SSLv3_TLSv1`
+- `#SOAP_SSLv3`
+- `#SOAP_TLSv1`
+- `#SOAP_TLSv1_0`
+- `#SOAP_TLSv1_1`
+- `#SOAP_TLSv1_2`
+- `#SOAP_TLSv1_3`
 */
 typedef unsigned short soap_ssl_flags;
 
 /// `::soap_ssl_flags` flag with `#SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION` and `#SOAP_TLSv1` enabled by default
+/**
+@see `::soap_ssl_server_context`, `::soap_ssl_client_context`.
+*/
 #define SOAP_SSL_DEFAULT (SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION | SOAP_TLSv1)
 
 /// `::soap_ssl_flags` flag value to allow self-signed and expired certificates and those without CRL to be used for authentication
+/**
+@see `::soap_ssl_server_context`, `::soap_ssl_client_context`.
+*/
 #define SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE
 
-/// `::soap_ssl_flags` flag value to disable authentication of the peer, should be used sparingly such as for testing
+/// `::soap_ssl_flags` flag value to disable authentication of the peer
+/**
+This flag should be used sparingly such as for testing only.
+
+@see `::soap_ssl_server_context`, `::soap_ssl_client_context`.
+*/
 #define SOAP_SSL_NO_AUTHENTICATION
 
-/// `::soap_ssl_flags` flag value to disable `SSL_CTX_set_default_verify_paths`
+/// `::soap_ssl_flags` flag value to prevent OpenSSL from calling `SSL_CTX_set_default_verify_paths`
+/**
+@see `::soap_ssl_server_context`, `::soap_ssl_client_context`.
+*/
 #define SOAP_SSL_NO_DEFAULT_CA_PATH
 
 /// `::soap_ssl_flags` flag for servers to require clients to authenticate to servers during the HTTPS handshake
+/**
+This flag requires clients connected to the server to authenticate to the server.  The `::soap_ssl_server_context` must specify `cafile` and/or `capath` parameters with certificates (CA root and/or server certificates) to authenticate clients.
+
+@see `::soap_ssl_server_context`.
+*/
 #define SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION
 
 /// `::soap_ssl_flags` flag for clients to require servers to authenticate to clients during the HTTPS handshake
+/**
+This flag requires connected servers to authenticate to the client.  The `::soap_ssl_client_context` must specify `cafile` and/or `capath` parameters with certificates (CA root and/or server certificates) to authenticate the server.
+
+@see `::soap_ssl_client_context`.
+*/
 #define SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION
 
 /// `::soap_ssl_flags` flag value to use RSA instead of DH (automatically set when no DH parameter is specified)
@@ -5193,24 +5340,59 @@ typedef unsigned short soap_ssl_flags;
 #define SOAP_SSL_SKIP_HOST_CHECK
 
 /// `::soap_ssl_flags` flag value to enable SSL v3 but disable TLS, should be used for legacy purposes only
+/**
+This flag can be used in combination with other SSL and TLS protocol flags, using `|` (bit-wise or).
+
+@see `#SOAP_SSLv3`, `#SOAP_SSLv3_TLSv1`, `#SOAP_TLSv1`, `#SOAP_TLSv1_0`, `#SOAP_TLSv1_1`, `#SOAP_TLSv1_2`, `#SOAP_TLSv1_3`.
+*/
 #define SOAP_SSLv3
 
 /// `::soap_ssl_flags` flag value to enable both SSL v3 and TLS 1 (TLS 1.0 to max)
+/**
+This flag can be used in combination with other SSL and TLS protocol flags, using `|` (bit-wise or).
+
+@see `#SOAP_SSLv3`, `#SOAP_SSLv3_TLSv1`, `#SOAP_TLSv1`, `#SOAP_TLSv1_0`, `#SOAP_TLSv1_1`, `#SOAP_TLSv1_2`, `#SOAP_TLSv1_3`.
+*/
 #define SOAP_SSLv3_TLSv1
 
 /// `::soap_ssl_flags` flag value to enable TLS v1 (TLS 1.0 and higher) and to disable SSL v3
+/**
+This flag can be used in combination with other SSL and TLS protocol flags, using `|` (bit-wise or).
+
+@see `#SOAP_SSLv3`, `#SOAP_SSLv3_TLSv1`, `#SOAP_TLSv1`, `#SOAP_TLSv1_0`, `#SOAP_TLSv1_1`, `#SOAP_TLSv1_2`, `#SOAP_TLSv1_3`.
+*/
 #define SOAP_TLSv1
 
 /// `::soap_ssl_flags` flag value to enable TLS 1.0
+/**
+This flag can be used in combination with other SSL and TLS protocol flags, using `|` (bit-wise or).
+
+@see `#SOAP_SSLv3`, `#SOAP_SSLv3_TLSv1`, `#SOAP_TLSv1`, `#SOAP_TLSv1_0`, `#SOAP_TLSv1_1`, `#SOAP_TLSv1_2`, `#SOAP_TLSv1_3`.
+*/
 #define SOAP_TLSv1_0
 
 /// `::soap_ssl_flags` flag value to enable TLS 1.1
+/**
+This flag can be used in combination with other SSL and TLS protocol flags, using `|` (bit-wise or).
+
+@see `#SOAP_SSLv3`, `#SOAP_SSLv3_TLSv1`, `#SOAP_TLSv1`, `#SOAP_TLSv1_0`, `#SOAP_TLSv1_1`, `#SOAP_TLSv1_2`, `#SOAP_TLSv1_3`.
+*/
 #define SOAP_TLSv1_1
 
 /// `::soap_ssl_flags` flag value to enable TLS 1.2
+/**
+This flag can be used in combination with other SSL and TLS protocol flags, using `|` (bit-wise or).
+
+@see `#SOAP_SSLv3`, `#SOAP_SSLv3_TLSv1`, `#SOAP_TLSv1`, `#SOAP_TLSv1_0`, `#SOAP_TLSv1_1`, `#SOAP_TLSv1_2`, `#SOAP_TLSv1_3`.
+*/
 #define SOAP_TLSv1_2
 
 /// `::soap_ssl_flags` flag value to enable TLS 1.3
+/**
+This flag can be used in combination with other SSL and TLS protocol flags, using `|` (bit-wise or).
+
+@see `#SOAP_SSLv3`, `#SOAP_SSLv3_TLSv1`, `#SOAP_TLSv1`, `#SOAP_TLSv1_0`, `#SOAP_TLSv1_1`, `#SOAP_TLSv1_2`, `#SOAP_TLSv1_3`.
+*/
 #define SOAP_TLSv1_3
 
 /// Initialize the SSL/TLS library
@@ -5233,13 +5415,13 @@ void soap_ssl_noinit(void)
 
 /// Initialize the server-side SSL/TLS context
 /**
-This function initializes the server-side SSL/TLS context of OpenSSL or GNUTLS library.  The `flags` parameter initializes the context with a combination of `::soap_ssl_flags`.  The `keyfile` parameter when non-NULL is the server's private key PEM file, typically concatenated with its certificate in the PEM file.  The `password` parameter when non-NULL is used to unlock the password-protected private key in the key file.  The `cafile` parameter when non-NULL is used to authenticate clients when the `#SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION` flag is used and contains the client or CA certificate(s).  Alternatively, a directory name `capath` can be specified to point to a directory with the certificate(s).  The `dhfile` parameter when non-NULL is a file with DH parameters to use DH instead of RSA.  Alternatively, the `dhfile` parameter can be a numeric string value greater than 512 to let the engine generate the DH parameters, which can take a while.  The `randfile` parameter when non-NULL can be used to seed the PRNG using the specified file with random data.  The `sid` parameter when non-NULL is used for server-side session caching using a specified unique name per server.  Returns `#SOAP_OK` or a `::soap_status` error code.
+This function initializes the server-side SSL/TLS context of OpenSSL or GNUTLS library.  The `flags` parameter initializes the context with a combination of `::soap_ssl_flags`.  The `keyfile` parameter when non-NULL is the server's private key PEM file, typically concatenated with its certificate in the PEM file.  The `password` parameter when non-NULL is used to unlock the password-protected private key in the key file.  The `cafile` parameter when non-NULL is used to authenticate clients when the `#SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION` flag is used and contains the client or CA certificate(s).  Alternatively, a directory name `capath` can be specified to point to a directory with the certificate(s).  The `dhfile` parameter when non-NULL is a file with DH parameters to use DH instead of RSA.  Alternatively, the `dhfile` parameter can be a numeric string value greater than 512 to let the engine generate the DH parameters, but beware this can take a while to execute.  The `randfile` parameter when non-NULL can be used to seed the PRNG using the specified file with random data.  The `sid` parameter when non-NULL is used for server-side session caching using a specified unique name per server.  Returns `#SOAP_OK` or a `::soap_status` error code.
 
 All strings passed to this function except `sid` must be persistent in memory until the SSL/TLS context is implicitly deleted when the `::soap` context is deleted.
 
 All OpenSSL versions prior to 1.1.0 require mutex locks to be explicitly set up in your code for multi-threaded applications by calling `CRYPTO_thread_setup()` and `CRYPTO_thread_cleanup()`.
 
-After `::soap_ssl_server_context` initialization you can select a specific cipher list using `SSL_CTX_set_cipher_list(soap->ctx, "...")`.  When client authentication is required with CRLs, you can use `::soap_ssl_crl` to specify a CRL file and to use any CRLs provided with SSL/TLS handshakes.
+After `::soap_ssl_server_context` initialization you can select a specific cipher list using OpenSSL function `SSL_CTX_set_cipher_list(soap->ctx, "...")`.  When client authentication is required with CRLs, you can use `::soap_ssl_crl` to specify a CRL file and to use any CRLs provided with SSL/TLS handshakes.
 
 @par Examples:
 
@@ -5266,14 +5448,14 @@ if (soap_ssl_server_context(soap,
 #include "soapH.h"
 struct soap *soap = soap_new();
 if (soap_ssl_server_context(soap,
-      SOAP_SSL_TLSv_1_1 | SOAP_SSL_TLSv_1_2,
+      SOAP_TLSv1_1 | SOAP_TLSv1_2,
       "server.pem",
       "password",
       NULL,
       NULL,
+      "1024",
       NULL,
-      NULL,
-      soap_rand_uuid(soap, NULL)
+      "my_unique_server_id123"
       ))
 {
   soap_print_fault(soap, stderr);
@@ -5290,15 +5472,16 @@ if (soap_ssl_server_context(soap,
       "password",
       "cacert.pem",
       NULL,
-      "1024",
       NULL,
-      "my_unique_server_id123"
+      NULL,
+      soap_rand_uuid(soap, NULL)
       )
  || soap_ssl_crl(soap, "crl.pem"))
 {
   soap_print_fault(soap, stderr);
   exit(EXIT_FAILURE);
 }
+SSL_CTX_set_cipher_list(soap->ctx, "HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4:!DH");
 ~~~
 
 @note Requires compilation with `#WITH_OPENSSL` or `#WITH_GNUTLS`.
@@ -5324,7 +5507,7 @@ This function initializes the client-side SSL/TLS context of the OpenSSL or GNUT
 
 All strings passed to this function must be persistent in memory until the SSL/TLS context is implicitly deleted when the `::soap` context is deleted.
 
-After `::soap_ssl_client_context` initialization you can select a specific cipher list using `SSL_CTX_set_cipher_list(soap->ctx, "...")`.  When authentication requires the use of CRLs, you can use `::soap_ssl_crl` to specify a CRL file and to use any CRLs provided with SSL/TLS handshakes.
+After `::soap_ssl_client_context` initialization you can select a specific cipher list using OpenSSL function `SSL_CTX_set_cipher_list(soap->ctx, "...")`.  When authentication requires the use of CRLs, you can use `::soap_ssl_crl` to specify a CRL file and to use any CRLs provided with SSL/TLS handshakes.
 
 All OpenSSL versions prior to 1.1.0 require mutex locks to be explicitly set up in your code for multi-threaded applications by calling `CRYPTO_thread_setup()` and `CRYPTO_thread_cleanup()`.
 
@@ -5368,7 +5551,7 @@ if (soap_ssl_client_context(soap,
 #include "soapH.h"
 struct soap *soap = soap_new();
 if (soap_ssl_client_context(soap,
-      SOAP_SSL_TLSv_1_1 | SOAP_SSL_TLSv_1_2,
+      SOAP_TLSv1_1 | SOAP_TLSv1_2,
       "client.pem",
       "password",
       NULL,
@@ -5655,6 +5838,7 @@ This module defines the following client-side functions:
 - `::soap_GET`
 - `::soap_PUT`
 - `::soap_PATCH`
+- `::soap_POST`
 - `::soap_DELETE`
 - `::soap_connect_command`
 - `::soap_connect`
@@ -5669,7 +5853,6 @@ This module defines the following server-side functions:
 - `::soap_serve_request` (generated by soapcpp2)
 - `::soap_response`
 - `::soap_send_empty_response`
-- `::soap_send_fault`
 
 This module defines the following input/output functions:
 - `::soap_begin_recv`
@@ -5683,10 +5866,26 @@ This module defines the following input/output functions:
 - `::soap_close_connection`
 - `::soap_send`
 - `::soap_send_raw`
+- `::soap_has_http_body`
 - `::soap_get_http_body`
 - `::soap_getline`
 - `::soap_get0`
 - `::soap_get1`
+
+This module defines the following SOAP message input/output functions:
+- `::soap_envelope_begin_in`
+- `::soap_envelope_end_in`
+- `::soap_envelope_begin_out`
+- `::soap_envelope_end_out`
+- `::soap_body_begin_in`
+- `::soap_body_end_in`
+- `::soap_body_begin_out`
+- `::soap_body_end_out`
+- `::soap_recv_fault`
+- `::soap_send_fault`
+- `::soap_recv_header`
+- `::soap_putheader`
+- `::soap_serializeheader`
 
 This module defines three HTTP-related plugins;
 - `::http_get` HTTP GET plugin for server-side handling of HTTP GET requests by stand-alone servers as a more capable alternative to setting the `::soap::fget` callback.
@@ -6646,7 +6845,7 @@ int soap_end_send(struct soap *soap) ///< `::soap` context
 
 /// Initialize context to count message length for sending
 /**
-This function is used to determine the HTTP content length.  This is done by sending the message after calling this function to update `::soap::count`.  HTTP requires either the HTTP content length header or HTTP transfer encoding chunked with `#SOAP_IO_CHUNK`.  Alternatively, the mode of the context can be set to `#SOAP_IO_STORE` to buffer the entire message in memory to determine the message content length.
+This function is used to determine the HTTP content length.  This is done by sending the message after calling this function to update `::soap::count`.  To activate message length counting the `#SOAP_IO_LENGTH` mode is enabled, which prevents the message from being sent by not passing the data to the (internal) `::soap::fsend` callback.  HTTP requires either the HTTP content length header or HTTP transfer encoding chunked with `#SOAP_IO_CHUNK`.  Alternatively, the mode of the context can be set to `#SOAP_IO_STORE` to buffer the entire message in memory to determine the message content length.
 
 @par Examples:
 
@@ -6748,7 +6947,7 @@ int soap_end_count(struct soap *soap) ///< `::soap` context
 
 /// Close the socket connection
 /**
-This function should be called to close `::soap::socket`.  The socket is closed and `::soap::socket` is set to `#SOAP_INVALID_SOCKET` if the socket is valid, keep-alive is not enabled and not currently active, i.e. the socket is closed when `::soap::socket` != `#SOAP_INVALID_SOCKET` and `::soap::keep_alive` == 0.  This function may be called multiple times without issues.  This function is called in the server and client-side code generated by soapcpp2.  Returns the current value of `::soap::error` to propagate the error state.
+This function should be called to close `::soap::socket`.  The socket is closed and `::soap::socket` is set to `#SOAP_INVALID_SOCKET` if the socket is valid, keep-alive is not enabled and not currently active, i.e. the socket is closed when `::soap::socket` != `#SOAP_INVALID_SOCKET` and `::soap::keep_alive` == 0.  Therefore, this function keeps the socket connection open when keep-alive is currently active.  This function may be called multiple times but closes the socket just once if the socket connection was open.  This function is called in the server and client-side code generated by soapcpp2.  Returns the current value of `::soap::error` to propagate the error state.
 
 @see `::soap_force_closesock`, `::soap_close_connection`.
 */
@@ -6758,7 +6957,7 @@ int soap_closesock(struct soap *soap) ///< `::soap` context
 
 /// Forcibly close the socket connection
 /**
-This function should be called to force closing `::soap::socket`.  The socket is closed and `::soap::socket` is set to `#SOAP_INVALID_SOCKET` if the socket is valid.  This function may be called multiple times without issues.  Returns `#SOAP_OK` or a `::soap_status` error code.
+This function should be called to force closing `::soap::socket` when `#SOAP_IO_KEEPALIVE` is used.  When `#SOAP_IO_KEEPALIVE` is used the socket will stay open for a maximum of `#SOAP_MAXKEEPALIVE` message exchanges, even when `::soap_closesock` is called.  By calling this function the socket is forcibly closed, even when keep-alive is currently active, and `::soap::socket` is set to `#SOAP_INVALID_SOCKET`.  This function may be called multiple times but closes the socket just once if the socket connection was open.  Returns `#SOAP_OK` or a `::soap_status` error code.
 
 @see `::soap_closesock`, `::soap_close_connection`.
 */
@@ -6852,7 +7051,7 @@ void *process_request(struct soap *soap)
 }
 ~~~
 
-@note Requires compilation with `#WITH_SELF_PIPE` and nonzero `::soap::recv_timeout` and `::soap::send_timeout` timeout values.
+@note Requires gSOAP 2.8.71 or greater, compilation with `#WITH_SELF_PIPE`, and nonzero `::soap::recv_timeout` and `::soap::send_timeout` timeout values.
 
 @see `::soap_closesock`, `::soap_force_closesock`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`.
 */
@@ -6884,9 +7083,19 @@ int soap_send_raw(
   /// @returns `#SOAP_OK` or a `::soap_status` error code
   ;
 
-/// Get the HTTP body as a string
+/// Check if HTTP body message is not empty
 /**
-This function parses an HTTP body into a string.  This function should be called immediately after calling `::soap_begin_recv`.  Note that `::soap_begin_recv` is called at the server side before a HTTP callback is called, such as `::soap::fput` and `::soap::fpatch`.  Callbacks and the `::http_post` HTTP POST plugin handlers should therefore not call `::soap_begin_recv`.  Also, `::soap_begin_recv` is called at the client side by HTTP functions such as `::soap_GET`, after which the HTTP body can then be retrieved with `::soap_get_http_body`.  This function reads input from from `::soap::is` when non-NULL, or `::soap::socket` when valid, or from `::soap::recvfd`, and sets the `len` pointer parameter to the length of the string read if `len` is not NULL.  After calling this function, `::soap_end_recv` should be called.  Returns the HTTP body as a string allocated in managed memory or returns "" (empty string, since version 2.8.71 or returns NULL for previous versions) when no HTTP message body is present or NULL when an error occurred and sets `::soap::error`.
+This function returns nonzero if an HTTP message body is present, zero otherwise.  This function should be called immediately after calling `::soap_begin_recv`.  Note that `::soap_begin_recv` is called at the server side before a HTTP callback is called, such as `::soap::fput` and `::soap::fpatch`.  Callbacks and the `::http_post` HTTP POST plugin handlers should therefore not call `::soap_begin_recv`.  Also, `::soap_begin_recv` is called at the client side by HTTP functions such as `::soap_GET`, after which the HTTP body can then be checked with `::soap_has_http_body` and retrieved with `::soap_get_http_body`.
+
+@see \ref group_callbacks, `::soap_begin_recv`, `::soap_end_recv`, `::soap_get_http_body`, `::soap_GET`, `::soap_POST`, `::soap::fput`, `::soap::fpatch`, `::http_post`.
+*/
+int soap_has_http_body(struct soap *soap) ///< `::soap` context
+  /// @returns nonzero if an HTTP body is present, zero otherwise
+  ;
+
+/// Get the HTTP body message as a string
+/**
+This function parses an HTTP body message into a string, whether or not an HTTP body message is present.  This function should be called immediately after calling `::soap_begin_recv`.  Note that `::soap_begin_recv` is called at the server side before a HTTP callback is called, such as `::soap::fput` and `::soap::fpatch`.  Callbacks and the `::http_post` HTTP POST plugin handlers should therefore not call `::soap_begin_recv`.  Also, `::soap_begin_recv` is called at the client side by HTTP functions such as `::soap_GET`, after which the HTTP body can then be then be checked with `::soap_has_http_body` and retrieved with `::soap_get_http_body`.  This function reads input from from `::soap::is` when non-NULL, or `::soap::socket` when valid, or from `::soap::recvfd`, and sets the `len` pointer parameter to the length of the string read if `len` is not NULL.  After calling this function, `::soap_end_recv` should be called.  Returns the HTTP body as a string allocated in managed memory or returns "" (empty string, since version 2.8.71 or returns NULL for previous versions) when no HTTP message body is present or NULL when an error occurred and sets `::soap::error`.
 
 @par Examples:
 
@@ -6926,7 +7135,7 @@ int my_put(struct soap *soap)
 }
 ~~~
 
-@see \ref group_callbacks, `::soap_begin_recv`, `::soap_end_recv`, `::soap_GET`, `::soap_POST`, `::soap::fput`, `::soap::fpatch`, `::http_post`.
+@see \ref group_callbacks, `::soap_begin_recv`, `::soap_end_recv`, `::soap_has_http_body`, `::soap_GET`, `::soap_POST`, `::soap::fput`, `::soap::fpatch`, `::http_post`.
 */
 char * soap_get_http_body(
     struct soap *soap, ///< `::soap` context
@@ -7033,12 +7242,73 @@ int soap_send_empty_response(
   /// @returns `#SOAP_STOP`
   ;
 
+/// Parse the XML <i>`<SOAP-ENV:Envelope>`</i> element opening tag if present
+int soap_envelope_begin_in(struct soap *soap) ///< `::soap` context
+  ;
+
+/// Parse the XML <i>`</SOAP-ENV:Envelope>`</i> element closing tag if present
+int soap_envelope_end_in(struct soap *soap) ///< `::soap` context
+  /// @returns `#SOAP_OK` or a `::soap_status` error code
+  ;
+
+/// Emit the XML <i>`<SOAP-ENV:Envelope>`</i> element opening tag if `::soap::version` is nonzero
+int soap_envelope_begin_out(struct soap *soap) ///< `::soap` context
+  /// @returns `#SOAP_OK` or a `::soap_status` error code
+  ;
+/// Emit the XML <i>`</SOAP-ENV:Envelope>`</i> element closing tag if `::soap::version` is nonzero
+int soap_envelope_end_out(struct soap *soap) ///< `::soap` context
+  /// @returns `#SOAP_OK` or a `::soap_status` error code
+  ;
+/// Parse the XML <i>`<SOAP-ENV:Body>`</i> element opening tag if present
+int soap_body_begin_in(struct soap *soap) ///< `::soap` context
+  /// @returns `#SOAP_OK` or a `::soap_status` error code
+  ;
+/// Parse the XML <i>`</SOAP-ENV:Body>`</i> element closing tag if present
+int soap_body_end_in(struct soap *soap) ///< `::soap` context
+  /// @returns `#SOAP_OK` or a `::soap_status` error code
+  ;
+/// Emit the XML <i>`<SOAP-ENV:Body>`</i> element opening tag if `::soap::version` is nonzero
+int soap_body_begin_out(struct soap *soap) ///< `::soap` context
+  /// @returns `#SOAP_OK` or a `::soap_status` error code
+  ;
+/// Emit the XML <i>`</SOAP-ENV:Body>`</i> element closing tag if `::soap::version` is nonzero
+int soap_body_end_out(struct soap *soap) ///< `::soap` context
+  /// @returns `#SOAP_OK` or a `::soap_status` error code
+  ;
+
+/// Parse and deserialize the SOAP Fault
+/**
+This function parses and deserializes the SOAP Fault such that `::soap::fault` points to a `::SOAP_ENV__Fault` structure.  If the specified `check` parameter is nonzero, this function attempts to parse the SOAP Fault that may be present (it checks), but if no <i>`SOAP-ENV:Fault`</i> element is present returns `#SOAP_OK`.  If the specified `check` parameter is zero, this function parses the SOAP Fault that is expected to be present, but if <i>`SOAP-ENV:Fault`</i> element is present returns the HTTP error code received (when between 300 and 599) or the `::soap::error` code.
+*/
+int soap_recv_fault(
+    struct soap *soap, ///< `::soap` context
+    int check)         ///< flag to check or expect a SOAP Fault
+  /// @returns a nonzero `::soap_status` error code
+  ;
+
 /// Return an HTTP error with a SOAP Fault message from a service
 /**
 This function sends an error response back to the client and is used at the server side by `::soap_serve` after an error occurred to propagate the fault to the client.  This function sends to `::soap::socket` when valid, or to `::soap::os` when non-NULL, or to `::soap::sendfd`.
 */
 int soap_send_fault(struct soap *soap) ///< `::soap` context
   /// @returns the value of `::soap::error`, a nonzero error code
+  ;
+
+/// Parse and deserialize the SOAP Header
+/**
+This function parses and deserializes the SOAP Header such that `::soap::header` points to a `::SOAP_ENV__Header` structure.
+*/
+int soap_recv_header(struct soap *soap) ///< `::soap` context
+  /// @returns `#SOAP_OK` or a `::soap_status` error code
+  ;
+
+/// Emit the SOAP Header pointed to by `::soap::header`
+int soap_putheader(struct soap *soap) ///< `::soap` context
+  /// @returns `#SOAP_OK` or a `::soap_status` error code
+  ;
+
+/// Serialize the SOAP Header pointed to by `::soap::header` before emitting it with `::soap_putheader`
+void soap_serializeheader(struct soap *soap) ///< `::soap` context
   ;
 
 /// The HTTP GET plugin registration function
@@ -8646,7 +8916,7 @@ int main()
   struct xsd__base64Binary data, result;
   data.__ptr = ...;  // points to binary image data to send
   data.__size = ...; // size of the image data to send
-  data.id = soap_rand_uuid(soap, NULL);
+  data.id = soap_strdup(soap, soap_rand_uuid(soap, NULL));
   data.type = "image/jpg";
   data.options = "A picture";
   if (soap_call_ns__webmethod(soap, endpoint, NULL, &data, &result))
@@ -8764,7 +9034,7 @@ int main()
   struct xsd__hexBinary data, result;
   data.__ptr = ...;  // points to binary image data to send
   data.__size = ...; // size of the image data to send
-  data.id = soap_rand_uuid(soap, NULL);
+  data.id = soap_strdup(soap, soap_rand_uuid(soap, NULL));
   data.type = "image/jpg";
   data.options = "A picture";
   if (soap_call_ns__webmethod(soap, endpoint, NULL, &data, &result))
@@ -8930,7 +9200,7 @@ int main()
   struct xsd__base64Binary data, result;
   data.__ptr = ...;  // points to binary image data to send
   data.__size = ...; // size of the image data to send
-  data.id = soap_rand_uuid(soap, NULL);
+  data.id = soap_strdup(soap, soap_rand_uuid(soap, NULL));
   data.type = "image/jpg";
   data.options = "A picture";
   if (soap_call_ns__webmethod(soap, endpoint, NULL, &data, &result))
@@ -9815,12 +10085,20 @@ void soap_begin(struct soap *soap) ///< `::soap` context
 
 /// Returns a randomized unique UUID string
 /**
-This function returns a randomized unique UUID string with the specified prefix if non-NULL.  The string is managed by the context and deallocated with `::soap_end`.  Returns NULL when an error occurred and sets `::soap::error`, such as `#SOAP_EOM`.
+This function returns a randomized unique UUID string stored in a temporary buffer.  The UUID string starts with the specified prefix if non-NULL.
+
+@par Example:
+
+~~~{.cpp}
+struct soap *soap = soap_new();
+const char *uuid = soap_strdup(soap, soap_rand_uuid(soap, NULL));
+...
+~~~
 */
 const char * soap_rand_uuid(
     struct soap *soap,  ///< `::soap` context
     const char *prefix) ///< prefix string or NULL
-  /// @returns randomized UUID or NULL when an error occurred.
+  /// @returns randomized UUID string stored in a temporary buffer
   ;
 
 /// Compare string to a pattern

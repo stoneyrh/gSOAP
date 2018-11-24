@@ -27,6 +27,7 @@ var group__group__flags =
     [ "SOAP_MIME_POSTCHECK", "group__group__flags.html#gadb423f812cfca44836963916db7771ea", null ],
     [ "SOAP_SEC_WSUID", "group__group__flags.html#gaed5c7edd755ab544aa01d49c87118d46", null ],
     [ "SOAP_XML_CANONICAL", "group__group__flags.html#ga757fa32433be64f8c228b1ecce727815", null ],
+    [ "SOAP_XML_CANONICAL_NA", "group__group__flags.html#ga9d9c51e90e17b0e56d819803a68268cf", null ],
     [ "SOAP_XML_DEFAULTNS", "group__group__flags.html#gaabf4437aeb9a8ae91bfbc3cdce538a6b", null ],
     [ "SOAP_XML_DOM", "group__group__flags.html#gaf16803276fca85d51698e5371a37b34e", null ],
     [ "SOAP_XML_GRAPH", "group__group__flags.html#gaf3ce7bc1679e665ac6b23da56510f645", null ],
