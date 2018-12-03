@@ -1385,13 +1385,26 @@ Version 2.8.71 (11/12/2018)
 - Fixed soapcpp2 code generation issue for single- and multi-dimensional fixed-size arrays.
 - Fixed wsdl2h missing built-in XSD types when multiple WSDLs are imported.
 
-Version 2.8.72 (11/24/2018) {#latest}
+Version 2.8.72 (11/24/2018)
 ---
 
 - Improved the HTTP GET `http_get` and HTTP POST `http_post` plugins, handling of a HTTP POST request that has an empty body is now supported.
 - Updated user guide, corrected `soap_rand_uuid` description: string returned is stored in a temporary buffer, not stored in managed memory.
 - Fixed spurious constant initialization problem for `enum` types in soapcpp2-generated code, the problem was introduced with soapcpp2 2.8.71 C/C++ grammar expansion.
 - Fixed a CURL plugin issue that prevented PUT and DELETE methods to work properly.
+
+Version 2.8.73 (12/3/2018) {#latest}
+---
+
+- Implemented a work around an OpenSSL bug that may cause `SSL_get_error()` to crash in `soap_ssl_accept()`.  The crash depends on the configuration used.  See [advisories](https://www.genivia.com/advisory.html) for details.
+- Improved `soap_ssl_accept()` timeout settings to improve the performance of gSOAP stand-alone HTTPS servers.
+- Renamed `soap_get_http_body()` to `soap_http_get_body()` to avoid name clashes with soapcpp2-generated `soap_get_T` functions.
+- Renamed `soap_get_form()` to `soap_http_get_form()` to avoid name clashes with soapcpp2-generated `soap_get_T` functions.
+- Renamed `soap_get_mime_attachment()` to `soap_recv_mime_attachment()` to avoid name clashes with soapcpp2-generated `soap_get_T` functions.
+- Renamed `soap_get_stats()` to `soap_http_get_stats()` of the httpget plugin to avoid name clashes with soapcpp2-generated `soap_get_T` functions.
+- Renamed `soap_get_logging_stats()` to `soap_logging_stats()` of the logging plugin to avoid name clashes with soapcpp2-generated `soap_get_T` functions.
+- Moved `soap_http_get_form()`, `soap_query()`, `soap_query_key()`, and `soap_query_val()` functions from the httpget and httpform plugin APIs to the stdsoap2.c[pp] library API.  No project rebuilds should be necessary when using these plugins with this upgrade.
+- Updated `gsoap/samples/webserver` example and documentation with improved job queueing when the thread pool option is used.
 
 [![To top](https://www.genivia.com/images/go-up.png) To top](changelog.html)
 

@@ -5,7 +5,7 @@ var group__group__debug =
     [ "SOAP_DEBUG", "group__group__debug.html#gafb8f9e482dad215431176d379369344c", null ],
     [ "SOAP_MEM_DEBUG", "group__group__debug.html#gab9e34ba8fb127ddf35b3d66bd14fc683", null ],
     [ "logging", "group__group__debug.html#gac637945d0869d91a4b00dc1ddaced537", null ],
-    [ "soap_get_logging_stats", "group__group__debug.html#gae0c468aaab0d7e3ee40ad1903da7b69e", null ],
+    [ "soap_logging_stats", "group__group__debug.html#ga628bfc4b7a6ba4bef23bea4787ef5f5d", null ],
     [ "soap_reset_logging_stats", "group__group__debug.html#ga4965a2d58aec4ae3983ae73fc711df60", null ],
     [ "soap_set_logging_inbound", "group__group__debug.html#gaa04b3b63c8ba47da5673fbafe385e9ad", null ],
     [ "soap_set_logging_outbound", "group__group__debug.html#ga08a67e8989dc849602b61e438a7f86e2", null ],

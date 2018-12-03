@@ -209,7 +209,7 @@ main(int argc, char **argv)
 -Ed     generate extra functions for deep deletion\n\
 -Et     generate extra functions for data traversals with walker functions\n\
 -L      don't generate soapClientLib/soapServerLib\n\
--A      require HTTP SOAPAction to invoke server-side operations\n\
+-A      require HTTP SOAPAction headers to invoke server-side operations\n\
 -a      use HTTP SOAPAction with WS-Addressing to invoke server-side operations\n\
 -b      serialize byte arrays char[N] as string\n\
 -c      generate C source code\n\

@@ -86,7 +86,7 @@ This module defines the following compile-time flags and functions to specify lo
 Alternatively, the `::logging` plugin can be used without setting `#DEBUG` to efficiently log messages and collect statistics:
 - `::soap_set_logging_inbound`
 - `::soap_set_logging_outbound`
-- `::soap_get_logging_stats`
+- `::soap_logging_stats`
 - `::soap_reset_logging_stats`
 
 @{
@@ -246,7 +246,7 @@ fclose(fd);
 
 @note This function is declared and defined in <i>`gsoap/plugin/logging.h`</i> and <i>`gsoap/plugin/logging.c`</i> and requires the `::logging` plugin and does not require `#DEBUG`.
 
-@see `::soap_set_logging_outbound`, `::soap_get_logging_stats`, `::soap_reset_logging_stats`.
+@see `::soap_set_logging_outbound`, `::soap_logging_stats`, `::soap_reset_logging_stats`.
 */
 void soap_set_logging_inbound(
     struct soap *soap, ///< `::soap` context
@@ -273,7 +273,7 @@ fclose(fd);
 
 @note This function is declared and defined in <i>`gsoap/plugin/logging.h`</i> and <i>`gsoap/plugin/logging.c`</i> and requires the `::logging` plugin and does not require `#DEBUG`.
 
-@see `::soap_set_logging_inbound`, `::soap_get_logging_stats`, `::soap_reset_logging_stats`.
+@see `::soap_set_logging_inbound`, `::soap_logging_stats`, `::soap_reset_logging_stats`.
 */
 void soap_set_logging_outbound(
     struct soap *soap, ///< `::soap` context
@@ -293,7 +293,7 @@ struct soap *soap = soap_new();
 soap_register_plugin(soap, logging);
 ... // send and receive messages
 size_t sent, recv;
-soap_get_logging_stats(soap, &sent, &recv);
+soap_logging_stats(soap, &sent, &recv);
 printf("Bytes sent = %zu bytes received = %zu\n", sent, recv);
 soap_reset_logging_stats(soap);
 ~~~
@@ -302,7 +302,7 @@ soap_reset_logging_stats(soap);
 
 @see `::soap_set_logging_inbound`, `::soap_set_logging_outbound`, `::soap_reset_logging_stats`.
 */
-void soap_get_logging_stats(
+void soap_logging_stats(
     struct soap *soap, ///< `::soap` context
     size_t *sent,      ///< pointer to variable to assign
     size_t *recv)      ///< pointer to variable to assign
@@ -314,7 +314,7 @@ This function resets the recorded messaging statistics.
 
 @note This function is declared and defined in <i>`gsoap/plugin/logging.h`</i> and <i>`gsoap/plugin/logging.c`</i> and requires the `::logging` plugin and does not require `#DEBUG`.
 
-@see `::soap_set_logging_inbound`, `::soap_set_logging_outbound`, `::soap_get_logging_stats`.
+@see `::soap_set_logging_inbound`, `::soap_set_logging_outbound`, `::soap_logging_stats`.
 */
 void soap_reset_logging_stats(struct soap *soap) ///< `::soap` context
   ;
@@ -323,7 +323,7 @@ void soap_reset_logging_stats(struct soap *soap) ///< `::soap` context
 /**
 The logging plugin API is declared and defined in <i>`gsoap/plugin/logging.h`</i> and <i>`gsoap/plugin/logging.c`</i>.
 
-@see `::soap_set_logging_inbound`, `::soap_set_logging_outbound`, `::soap_get_logging_stats`, `::soap_reset_logging_stats`.
+@see `::soap_set_logging_inbound`, `::soap_set_logging_outbound`, `::soap_logging_stats`, `::soap_reset_logging_stats`.
 */
 int logging(struct soap*, struct soap_plugin*, void*);
 
@@ -528,7 +528,7 @@ Use `::soap::bind_inet6` and `::soap::bind_v6only` at runtime to configure port 
 struct soap *soap = soap_new();
 soap->bind_inet6 = 1;  // to use AF_INET6 instead of PF_UNSPEC
 soap->bind_v6only = 1; // to setsockopt IPPROTO_IPV6 IPV6_V6ONLY
-if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
   ...
 ~~~
 
@@ -548,7 +548,7 @@ Alternatively, compile with `#WITH_IPV6` and set `::soap::bind_v6only` at runtim
 struct soap *soap = soap_new();
 soap->bind_inet6 = 1;  // to use AF_INET6 instead of PF_UNSPEC
 soap->bind_v6only = 1; // to setsockopt IPPROTO_IPV6 IPV6_V6ONLY
-if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
   ...
 ~~~
 
@@ -937,7 +937,7 @@ class MyService : public exampleService {
 };
 int main()
 {
-  return MyService().run(8080);
+  return MyService().run(PORTNUM);
 }
 ~~~
 
@@ -979,7 +979,7 @@ class MyService : public exampleService {
 };
 int main()
 {
-  return MyService().run(8080);
+  return MyService().run(PORTNUM);
 }
 ~~~
 */
@@ -2141,7 +2141,7 @@ This error code is also caught by `::soap_xml_error_check`.
 
 /// A `::soap_status` error code: unexpected end of file, no input, transmission interrupted or timed out (same value as EOF)
 /**
-The `#SOAP_EOF` error indicates a transmission error.  Use `::soap::errnum` to determine the source of the error, which is set to the value of `errno` when the error occurred.  When a transmission timeout occurred, because `::soap::recv_timeout` and/or `::soap::send_timeout` are nonzero, the value of `::soap::errnum` was set to zero to distinguish timeouts from errors.
+The `#SOAP_EOF` error indicates a transmission error.  Use `::soap::errnum` to determine the source of the error, which is set to the value of `errno` of the failure when the error occurred.  When a transmission timeout occurred, because `::soap::recv_timeout` and/or `::soap::send_timeout` are nonzero, the value of `::soap::errnum` was set to zero to distinguish timeouts from errors.
 
 @par Example:
 
@@ -2483,13 +2483,13 @@ This error code is also caught by `::soap_zlib_error_check`.
    (e) == SOAP_MIME_HREF || \
    (e) == SOAP_MIME_END)
 
-/// Check for TCP protocol errors, returns true if the specified error code is a TCP error, when true use `::soap::errnum` to retrieve the `errno` value to determine the cause
+/// Check for TCP protocol errors, returns true if the specified error code is a TCP error, when true use `::soap::errnum` to retrieve the `errno` value of the failure to determine the cause
 #define soap_tcp_error_check(e) ((e) == SOAP_EOF || (e) == SOAP_TCP_ERROR)
 
-/// Check for UDP protocol errors, returns true if the specified error code is a UDP error, when true use `::soap::errnum` to retrieve the `errno` value to determine the cause
+/// Check for UDP protocol errors, returns true if the specified error code is a UDP error, when true use `::soap::errnum` to retrieve the `errno` value of the failure to determine the cause
 #define soap_udp_error_check(e) ((e) == SOAP_EOF || (e) == SOAP_UDP_ERROR)
 
-/// Check for SSL/TLS protocol errors, returns true if the specified error code is a SSL/TLS error, when true use `::soap::errnum` to retrieve the `errno` value to determine the cause
+/// Check for SSL/TLS protocol errors, returns true if the specified error code is a SSL/TLS error, when true use `::soap::errnum` to retrieve the `errno` value of the failure to determine the cause
 #define soap_ssl_error_check(e) ((e) == SOAP_SSL_ERROR)
 
 /// Check for zlib library errors, returns true if the specified error code is a zlib error
@@ -2693,23 +2693,34 @@ struct soap {
   soap->max_keep_alive = 50;                        // 50 max keep-alive exchanges (SOAP_MAXKEEPALIVE by default)
   ~~~
 
-  @see `::soap_serve`.
+  @see `#SOAP_IO_KEEPALIVE`, `::soap_serve`, `::soap::keep_alive`.
   */
   int max_keep_alive;
-  /// HTTP keep-alive flag (-1) and counter (>0)
+  /// HTTP keep-alive flag (try to enable when -1, disabled when 0) and counter (enabled when >0)
   /**
-  @see `::soap_serve`.
+  @see `#SOAP_IO_KEEPALIVE`, `::soap_serve`, `::soap_closesock`, `::soap::max_keep_alive`.
   */
   int keep_alive;
   /// User-definable string to control the XML namespace prefixes that are subject to XML canonicalization with the `#SOAP_XML_CANONICAL` output mode flag, specified by space-separated prefixes in the string, or `*` to specify that all prefixes are inclusive, or NULL when unused
   const char *c14ninclude;
   /// User-definable string to control the XML namespace prefixes that are subject to XML canonicalization with `#SOAP_XML_CANONICAL` output mode flag, specified by space-separated prefixes in the string, or NULL when unused
   const char *c14nexclude;
-  /// The `::soap` context HTTP status code received (100 to 599) or the HTTP method to use for sending a message as `#SOAP_POST`, `#SOAP_POST_FILE`, `#SOAP_PATCH`, `#SOAP_GET`, `#SOAP_PUT`, `#SOAP_PUT`, `#SOAP_DEL`, `#SOAP_CONNECT`, `#SOAP_HEAD`, `#SOAP_OPTIONS`
+  /// The `::soap` context HTTP status code received at the client side (100 to 599), HTTP header method received at the server side (`#SOAP_POST`, `#SOAP_PATCH`, `#SOAP_GET`, `#SOAP_PUT`, `#SOAP_DEL`, `#SOAP_HEAD`, `#SOAP_OPTIONS`), or the HTTP method to use for sending a message with `::soap_connect_command` or with `::soap_response` (`#SOAP_POST`, `#SOAP_POST_FILE`, `#SOAP_PATCH`, `#SOAP_GET`, `#SOAP_PUT`, `#SOAP_PUT`, `#SOAP_DEL`, `#SOAP_CONNECT`, `#SOAP_HEAD`, `#SOAP_OPTIONS`)
+  /**
+  @see `::soap_connect_command`, `::soap_GET`, `::soap_PUT`, `::soap_PATCH`, `::soap_POST`, `::soap_DELETE`, `::soap_response`.
+  */
   int status;
   /// The `::soap` context `::soap_status` (int) error code of the last operation or `#SOAP_OK` (zero)
+  /**
+  @see `::soap_status`, `::soap::errnum`.
+  */
   int error;
-  /// The `::soap` context `errno` value of the last operation when `::soap::error` != `#SOAP_OK`, when `::soap::errnum` is zero and `::soap::error` == `#SOAP_EOF` the transmission has timed out
+  /// The `errno` value of the last failed IO operation
+  /**
+  The `::soap::errnum` value is set to the value or `errno` when a `#SOAP_EOF` or `#SOAP_TCP_ERROR` error occurred.  This allows for reporting the error condition with `::soap_print_fault`, `::soap_stream_fault`, and `::soap_sprint_fault`.  For the `#SOAP_EOF` error, `::soap::errnum` is set to zero when IO operations timed out, when a client's connection attempt to a server timed out, or when a server-side `::soap_accept` timed out.
+
+  @see `::soap::error`, `::soap::connect_timeout`, `::soap::accept_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`.
+  */
   int errnum;
   /// The `::soap::header` points to a `::SOAP_ENV__Header` structure with the SOAP Header that was received or that can be populated by the user to be sent, or NULL when no SOAP Header is present
   /**
@@ -2936,6 +2947,8 @@ struct soap {
   soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
   soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
   ~~~
+
+  @see `::soap::error`, `::soap::errnum`, `::soap::connect_timeout`, `::soap::accept_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::recv_maxlength`.
   */
   int transfer_timeout;         /* user-definable, when > 0, sets socket total transfer timeout in seconds, < 0 in usec */
   /// User-definable timeout to receive a packet of data, positive timeout values are seconds, negative timeout values are microseconds, zero means no timeout (0 by default)
@@ -2948,6 +2961,8 @@ struct soap {
   soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
   soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
   ~~~
+
+  @see `::soap::error`, `::soap::errnum`, `::soap::connect_timeout`, `::soap::accept_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`.
   */
   int recv_timeout;
   /// User-definable timeout to send a packet of data, positive timeout values are seconds, negative timeout values are microseconds, zero means no timeout (0 by default)
@@ -2960,6 +2975,8 @@ struct soap {
   soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
   soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
   ~~~
+
+  @see `::soap::error`, `::soap::errnum`, `::soap::connect_timeout`, `::soap::accept_timeout`, `::soap::recv_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`.
   */
   int send_timeout;
   /// User-definable timeout when waiting to connect to a server at the client-side, positive timeout values are seconds, negative timeout values are microseconds, zero means no timeout (0 by default)
@@ -2990,6 +3007,8 @@ struct soap {
     soap_free(soap);
   }
   ~~~
+
+  @see `::soap::error`, `::soap::errnum`, `::soap::accept_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`.
   */
   int connect_timeout;
   /// User-definable timeout when waiting to accept a request from a client at the server-side with `::soap_accept` (or the C++ service class `accept` method), positive timeout values are seconds, negative timeout values are microseconds, zero means no timeout (0 by default)
@@ -3005,7 +3024,7 @@ struct soap {
     soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
     soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
     soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
-    if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+    if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
     {
       while (1)
       {
@@ -3030,6 +3049,8 @@ struct soap {
     soap_free(soap);
   }
   ~~~
+
+  @see `::soap::error`, `::soap::errnum`, `::soap::connect_timeout`, `::soap::recv_timeout`, `::soap::send_timeout`, `::soap::transfer_timeout`, `::soap::recv_maxlength`.
   */
   int accept_timeout;
   /// User-definable maximum XML and JSON nesting level permitted, initially set to `#SOAP_MAXLEVEL` (10000 by default)
@@ -3040,6 +3061,8 @@ struct soap {
   struct soap *soap = soap_new();
   soap->maxlevel = 10; // limit XML nesting depth to 10 (10000 by default)
   ~~~
+
+  @see `::soap::recv_maxlength`, `::soap::maxlength`, `::soap::maxoccurs`.
   */
   unsigned int maxlevel;
   /// User-definable maximum string length parsed from XML and JSON, initially set to `#SOAP_MAXLENGTH`, zero or negative means unlimited (0 by default)
@@ -3052,6 +3075,8 @@ struct soap {
   struct soap *soap = soap_new();
   soap->maxlength = 256; // limit string lengths to 256 characters (unlimited by default)
   ~~~
+
+  @see `::soap::recv_maxlength`, `::soap::maxlevel`, `::soap::maxoccurs`.
   */
   long maxlength;
   /// User-definable maximum array and container size (maximum item occurrence constraint) as parsed from XML and JSON, except when specifie XML schema validation constraints permit greater sizes, initially set to `#SOAP_MAXOCCURS` (100000 by default)
@@ -3064,6 +3089,8 @@ struct soap {
   struct soap *soap = soap_new();
   soap->maxoccurs = 100; // limit arrays and containers to 100 items (100000 by default)
   ~~~
+
+  @see `::soap::recv_maxlength`, `::soap::maxlevel`, `::soap::maxlength`.
   */
   size_t maxoccurs;
   /// User-definable socket `send` and `recv` flags, for example assign `MSG_NOSIGNAL` to disable sigpipe (0 by default)
@@ -3089,6 +3116,8 @@ struct soap {
 
   signal(SIGPIPE, sigpipe_handle);
   ~~~
+
+  @see `::soap::connect_flags`, `::soap::bind_flags`, `::soap::accept_flags`.
   */
   int socket_flags;
   /// User-definable `setsockopt` level `SOL_SOCKET` flags when connecting `::soap::socket` to a server (0 by default)
@@ -3105,6 +3134,8 @@ struct soap {
   struct soap *soap = soap_new();
   soap->connect_flags = SO_BROADCAST;
   ~~~
+
+  @see `::soap::socket_flags`, `::soap::bind_flags`, `::soap::accept_flags`.
   */
   int connect_flags;
   /// User-definable `setsockopt` level `SOL_SOCKET` flags when binding `::soap::master` socket (0 by default)
@@ -3114,11 +3145,11 @@ struct soap {
   ~~~{.cpp}
   struct soap *soap = soap_new();
   soap->bind_flags = SO_REUSEADDR; // immediate port reuse when binding
-  if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100))
+  if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG))
     ... // success
   ~~~
 
-  @see `#WITH_IPV6`, `#WITH_IPV6_V6ONLY`, `#SOAP_IO_UDP`, `::soap::bind_inet6`, `::soap::bind_v6only`, `::soap::rcvbuf`, `::soap::sndbuf`, `::soap::master`.
+  @see `::soap::socket_flags`, `::soap::connect_flags`, `::soap::accept_flags`, `#WITH_IPV6`, `#WITH_IPV6_V6ONLY`, `#SOAP_IO_UDP`, `::soap::bind_inet6`, `::soap::bind_v6only`, `::soap::rcvbuf`, `::soap::sndbuf`, `::soap::master`.
   */
   int bind_flags;
   /// User-definable flag, when nonzero uses `AF_INET6` instead of `PF_UNSPEC` when binding the `::soap::master` socket in `::soap_bind` (or the C++ service class `bind` method), to remap IPv4 to IPv6 addresses, meaningful only when used with `#WITH_IPV6`
@@ -3130,7 +3161,7 @@ struct soap {
   struct soap *soap = soap_new();
   soap->bind_inet6 = 1;
   soap->bind_v6only = 1;
-  if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)) // IPv6 address binding
+  if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)) // IPv6 address binding
     ... // success
   ~~~
 
@@ -3148,7 +3179,7 @@ struct soap {
   struct soap *soap = soap_new();
   soap->bind_inet6 = 1;
   soap->bind_v6only = 1;
-  if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)) // IPv6 address binding
+  if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)) // IPv6 address binding
     ... // success
   ~~~
 
@@ -3179,6 +3210,8 @@ struct soap {
 
   signal(SIGPIPE, sigpipe_handle);
   ~~~
+
+  @see `::soap::socket_flags`, `::soap::connect_flags`, `::soap::bind_flags`.
   */
   int accept_flags;
   /// User-definable linger time value, requires the `SO_LINGER` `setsockopt` flag value to be assigned to `::soap::socket_flags`
@@ -3224,15 +3257,17 @@ struct soap {
   soap->tcp_keep_cnt = 5;     // maximum number of keepalive probes TCP should send before dropping the connection
   ~~~
 
-  HTTP keep-alive with TCP `SO_KEEPALIVE` is enabled with:
+  HTTP keep-alive together with TCP `SO_KEEPALIVE` is enabled with:
 
   ~~~{.cpp}
   struct soap *soap = soap_new1(SOAP_IO_KEEPALIVE); // enable HTTP keep-alive
-  soap->max_keep_alive = 50;  // 50 max keep-alive exchanges (SOAP_MAXKEEPALIVE by default)
+  soap->max_keep_alive = 50;  // 50 max keep-alive exchanges for SOAP_IO_KEEPALIVE (SOAP_MAXKEEPALIVE by default)
   soap->tcp_keep_idle = 30;   // time in seconds the connection needs to remain idle before TCP starts sending keepalive probes
   soap->tcp_keep_intvl = 120; // time in seconds between individual keepalive probes
   soap->tcp_keep_cnt = 5;     // maximum number of keepalive probes TCP should send before dropping the connection
   ~~~
+
+  @see `#SOAP_IO_KEEPALIVE`, `::soap::tcp_keep_idle`, `::soap::tcp_keep_intvl` and `::soap::tcp_keep_cnt`.
   */
   int tcp_keep_alive;
   /// User-definable value to set `TCP_KEEPIDLE` `setsockopt` (0 by default)
@@ -3257,7 +3292,7 @@ struct soap {
   soap->tcp_keep_cnt = 5;     // maximum number of keepalive probes TCP should send before dropping the connection
   ~~~
 
-  @see `::soap::tcp_keep_intvl` and `::soap::tcp_keep_cnt`.
+  @see `::soap::tcp_keep_alive`, `::soap::tcp_keep_intvl` and `::soap::tcp_keep_cnt`.
   */
   unsigned int tcp_keep_idle;
   /// User-definable value to set `TCP_KEEPINTVL` `setsockopt` (0 by default)
@@ -3282,7 +3317,7 @@ struct soap {
   soap->tcp_keep_cnt = 5;     // maximum number of keepalive probes TCP should send before dropping the connection
   ~~~
 
-  @see `::soap::tcp_keep_idle` and `::soap::tcp_keep_cnt`.
+  @see `::soap::tcp_keep_alive`, `::soap::tcp_keep_idle` and `::soap::tcp_keep_cnt`.
   */
   unsigned int tcp_keep_intvl;
   /// User-definable value to set `TCP_KEEPCNT` `setsockopt` (0 by default)
@@ -3307,7 +3342,7 @@ struct soap {
   soap->tcp_keep_cnt = 5;     // maximum number of keepalive probes TCP should send before dropping the connection
   ~~~
 
-  @see `::soap::tcp_keep_idle` and `::soap::tcp_keep_intvl`.
+  @see `::soap::tcp_keep_alive`, `::soap::tcp_keep_idle` and `::soap::tcp_keep_intvl`.
   */
   unsigned int tcp_keep_cnt;
   /* in_addr_t in6addr->sin6_scope_id IPv6 value */
@@ -3346,6 +3381,35 @@ struct soap {
   @see `#SOAP_IO_UDP`, `::soap::ipv6_multicast_if`, `::soap::ipv4_multicast_if`.
   */
   unsigned char ipv4_multicast_ttl;
+  /// User-definable client port to bind to when connecting, when non-negative
+  /**
+  When non-negative, executes a `bind` with this port number before connecting to a server.  The value is reset to -1 after connecting successfully or unsuccessfully to the server.
+
+  @see `::soap::client_interface`.
+  */
+  int client_port;
+  /// User-definable client address to use when connecting, when non-NULL
+  /**
+  When non-NULL, sets the client address before connecting to a server.  The value is reset to NULL after connecting successfully or unsuccessfully to the server.
+
+  @see `::soap::client_port`.
+  */
+  const char *client_interface;
+  /// User-definable compression level for gzip compression (0=none, 1=fast to 9=best) default level is 6
+  /**
+  @see `#WITH_GZIP`, `#WITH_ZLIB`, `#SOAP_ENC_ZLIB`, `::soap::z_ratio_in`, `::soap::z_ratio_out`.
+  */
+  unsigned short z_level;
+  /// The compression ratio = compressed.size/uncompressed.size of the compressed message received
+  /**
+  @see `#WITH_GZIP`, `#WITH_ZLIB`, `#SOAP_ENC_ZLIB`, `::soap::z_level`, `::soap::z_ratio_out`.
+  */
+  float z_ratio_in;
+  /// The compression ratio = compressed.size/uncompressed.size of the compressed message sent
+  /**
+  @see `#WITH_GZIP`, `#WITH_ZLIB`, `#SOAP_ENC_ZLIB`, `::soap::z_level`, `::soap::z_ratio_in`.
+  */
+  float z_ratio_out;
   /// User-definable HTTP authorization bearer token value to be sent by the client, server side receives this string when the client sends authorization bearer
   /**
   @par Example:
@@ -3451,17 +3515,17 @@ struct soap {
   }
   ~~~
 
-  @see `::soap_ssl_client_context`, `::soap::bearer`, `::soap::ntlm_challenge`, `::soap::http_extra_header`, `::soap::proxy_userid`, `::soap::proxy_passwd` and the [HTTP digest plugin](../../httpda/html/httpda.html) documentation.
+  @see `::soap::passwd`, `::soap::authrealm`, `::soap_ssl_client_context`, `::soap::bearer`, `::soap::ntlm_challenge`, `::soap::http_extra_header`, `::soap::proxy_userid`, `::soap::proxy_passwd` and the [HTTP digest plugin](../../httpda/html/httpda.html) documentation.
   */
   const char *userid;
   /// User-definable HTTP and NTLM authorization password string required for HTTP basic and NTLM authentication by the client, server side receives this string when the client uses HTTP basic authentication
   /**
-  @see `::soap::userid`.
+  @see `::soap::userid`, `::soap::authrealm`.
   */
   const char *passwd;
   /// The HTTP and NTLM authorization realm/domain string received by the client with the `WWW-Authenticate` or `Proxy-Authenticate` HTTP headers, user-definable on the server side to send a `WWW-Authenticate` header to require authentication (service operation should return 401 to respond with "Unauthorized"), also serves as NTLM domain value
   /**
-  @see `::soap::userid`.
+  @see `::soap::userid`, `::soap::passwd`.
   */
   const char *authrealm;
   /// User-definable NTLM authentication challenge key string
@@ -3548,7 +3612,7 @@ struct soap {
   @see `::soap::proxy_host`.
   */
   const char *proxy_passwd;
-  /// The `X-Forwarding-For` HTTP header string value
+  /// The `X-Forwarding-For` HTTP header string value received
   const char *proxy_from;
   /// The IPv4 address in numeric form of the client as received on the server side by `::soap_accept` (or the C++ service class `accept` method), possibly set to zero when `#WITH_IPV6` is used
   /**
@@ -3561,7 +3625,7 @@ struct soap {
     struct soap *soap = soap_new();
     soap->accept_timeout = 3600;                // exit loop when no request arrives in one hour
     ... // context initializations
-    if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+    if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
     {
       while (1)
       {
@@ -3602,7 +3666,7 @@ struct soap {
     struct soap *soap = soap_new();
     soap->accept_timeout = 3600;                // exit loop when no request arrives in one hour
     ... // context initializations
-    if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+    if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
     {
       while (1)
       {
@@ -4748,7 +4812,7 @@ int main()
   service.soap->bind_flags = SO_REUSEADDR; // immediate port reuse
   service.soap->accept_timeout = 3600;     // let soap_accept time out after 1 hour
   ... // further initialize service.soap
-  if (soap_valid_socket(service.bind(NULL, 8080, 100)))
+  if (soap_valid_socket(service.bind(NULL, PORTNUM, BACKLOG)))
   {
     while (1)
     {
@@ -4798,7 +4862,7 @@ int main()
   soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
   soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
   soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
-  if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+  if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
   {
     while (1)
     {
@@ -5629,7 +5693,7 @@ int main()
   soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
   soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
   soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
-  if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+  if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
   {
     while (1)
     {
@@ -5667,7 +5731,7 @@ int main()
   soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
   soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
   soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
-  if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+  if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
   {
     while (1)
     {
@@ -5866,8 +5930,8 @@ This module defines the following input/output functions:
 - `::soap_close_connection`
 - `::soap_send`
 - `::soap_send_raw`
-- `::soap_has_http_body`
-- `::soap_get_http_body`
+- `::soap_http_has_body`
+- `::soap_http_get_body`
 - `::soap_getline`
 - `::soap_get0`
 - `::soap_get1`
@@ -5912,7 +5976,7 @@ char *response = NULL;
 size_t response_len;
 if (soap_GET(soap, "http://www.example.com/API/GET", NULL)
  || soap_begin_recv(soap)
- || (response = soap_get_http_body(soap, &response_len)) != NULL
+ || (response = soap_http_get_body(soap, &response_len)) != NULL
  || soap_end_recv(soap))
   soap_print_fault(soap, stderr);
 else
@@ -5930,7 +5994,7 @@ int soap_GET(struct soap *soap, ///< `::soap` context
 
 /// HTTP PUT content to server
 /**
-This function connects to the server specified by the `endpoint` URL string, using HTTP PUT and the HTTP SOAP Action header specified by the `action` string (or NULL).  The HTTP content type of the data sent to the server is specified by `type`.  If the mode is not `#SOAP_IO_CHUNK` (preferred) or `#SOAP_IO_STORE` then this function sets the mode of the context to `#SOAP_IO_STORE` to compute the HTTP content length.  Upon successful completion, messages can be sent to the server and an empty response should be received by calling `::soap_recv_empty_response`.  Returns `#SOAP_OK` or a `::soap_status` error code.
+This function connects to the server specified by the `endpoint` URL string, using HTTP PUT and the HTTP SOAP Action header specified by the `action` string (or NULL).  The HTTP content type of the data sent to the server is specified by `type`.  If the mode is not `#SOAP_IO_CHUNK` (preferred) or `#SOAP_IO_STORE` then this function temporarily sets the mode of the context to `#SOAP_IO_STORE` to compute the HTTP content length.  Upon successful completion, messages can be sent to the server and an empty response should be received by calling `::soap_recv_empty_response`.  Returns `#SOAP_OK` or a `::soap_status` error code.
 
 This function is used by the soapcpp2-generated `soap_PUT_T` functions for types `T` to HTTP PUT the XML serialized value of type `T` to a server.
 
@@ -5961,7 +6025,7 @@ int soap_PUT(
 
 /// HTTP PATCH content to server
 /**
-This function connects to the server specified by the `endpoint` URL string, using HTTP PATCH and the HTTP SOAP Action header specified by the `action` string (or NULL).  The HTTP content type of the data sent to the server is specified by `type`.  If the mode is not `#SOAP_IO_CHUNK` (preferred) or `#SOAP_IO_STORE` then this function sets the mode of the context to `#SOAP_IO_STORE` to compute the HTTP content length.  Upon successful completion, messages can be sent to the server and an empty response should be received by calling `::soap_recv_empty_response`.  Returns `#SOAP_OK` or a `::soap_status` error code.
+This function connects to the server specified by the `endpoint` URL string, using HTTP PATCH and the HTTP SOAP Action header specified by the `action` string (or NULL).  The HTTP content type of the data sent to the server is specified by `type`.  If the mode is not `#SOAP_IO_CHUNK` (preferred) or `#SOAP_IO_STORE` then this function temporarily sets the mode of the context to `#SOAP_IO_STORE` to compute the HTTP content length.  Upon successful completion, messages can be sent to the server and an empty response should be received by calling `::soap_recv_empty_response`.  Returns `#SOAP_OK` or a `::soap_status` error code.
 
 This function is used by the soapcpp2-generated `soap_PATCH_T` functions for types `T` to HTTP PATCH the XML serialized value of type `T` to a server.
 
@@ -5992,7 +6056,7 @@ int soap_PATCH(
 
 /// HTTP POST content to server
 /**
-This function connects to the server specified by the `endpoint` URL string, using HTTP POST and the HTTP SOAP Action header specified by the `action` string (or NULL).  The HTTP content type of the data sent to the server is specified by `type`.  If the mode is not `#SOAP_IO_CHUNK` (preferred) or `#SOAP_IO_STORE` then this function sets the mode of the context to `#SOAP_IO_STORE` to compute the HTTP content length.  Upon successful completion, messages can be sent to and received from the server.  Returns `#SOAP_OK` or a `::soap_status` error code.
+This function connects to the server specified by the `endpoint` URL string, using HTTP POST and the HTTP SOAP Action header specified by the `action` string (or NULL).  The HTTP content type of the data sent to the server is specified by `type`.  If the mode is not `#SOAP_IO_CHUNK` (preferred) or `#SOAP_IO_STORE` then this function temporarily sets the mode of the context to `#SOAP_IO_STORE` to compute the HTTP content length.  Upon successful completion, messages can be sent to and received from the server.  Returns `#SOAP_OK` or a `::soap_status` error code.
 
 This function is used by the soapcpp2-generated `soap_POST_send_T` functions for types `T` to HTTP POST the XML serialized value of type `T` to a server.  Use `soap_POST_recv_T` to receive a HTTP POST response deserialized into a value of (another) type `T`.
 
@@ -6007,7 +6071,7 @@ if (soap_POST(soap, "http://www.example.com/API/POST", NULL, "application/json; 
  || soap_send(soap, "{ \"title\": \"Example\", \"doc\": \"Some text\" }\n")
  || soap_end_send(soap)
  || soap_begin_recv(soap)
- || (response = soap_get_http_body(soap, &response_len)) != NULL
+ || (response = soap_http_get_body(soap, &response_len)) != NULL
  || soap_end_recv(soap))
   soap_print_fault(soap, stderr);
 else
@@ -6079,7 +6143,7 @@ if (soap_connect_command(soap, endpoint, NULL, SOAP_POST)
  || soap_send(soap, "<doc title=\"Example\">Some text</doc>\n")
  || soap_end_send(soap)
  || soap_begin_recv(soap)
- || (response = soap_get_http_body(soap, &response_len)) != NULL
+ || (response = soap_http_get_body(soap, &response_len)) != NULL
  || soap_end_recv(soap))
   soap_print_fault(soap, stderr);
 else
@@ -6096,12 +6160,12 @@ size_t response_len;
 // HTTP POST request, here we compute the content length instead of chunked transfer with SOAP_IO_CHUNK or storing the entire message with SOAP_IO_STORE
 if (soap_begin_count(soap)
  || soap_send(soap, request)
- || soap_end_send(soap)
+ || soap_end_count(soap)
  || soap_connect_command(soap, endpoint, NULL, SOAP_POST)
  || soap_send(soap, request)
  || soap_end_send(soap)
  || soap_begin_recv(soap)
- || (response = soap_get_http_body(soap, &response_len)) != NULL
+ || (response = soap_http_get_body(soap, &response_len)) != NULL
  || soap_end_recv(soap))
   soap_print_fault(soap, stderr);
 else
@@ -6129,7 +6193,7 @@ if (soap_connect_command(soap, "http://www.example.com/API/POST", NULL, SOAP_POS
  || soap_send(soap, "{ \"title\": \"Example\", \"doc\": \"Some text\" }\n")
  || soap_end_send(soap)
  || soap_begin_recv(soap)
- || (response = soap_get_http_body(soap, &response_len)) != NULL
+ || (response = soap_http_get_body(soap, &response_len)) != NULL
  || soap_end_recv(soap))
   soap_print_fault(soap, stderr);
 else
@@ -6152,7 +6216,7 @@ char *response = NULL;
 size_t response_len;
 if (soap_connect_command(soap, "http://www.example.com/API/GET", NULL, SOAP_GET)
  || soap_begin_recv(soap)
- || (response = soap_get_http_body(soap, &response_len)) != NULL
+ || (response = soap_http_get_body(soap, &response_len)) != NULL
  || soap_end_recv(soap))
   soap_print_fault(soap, stderr);
 else
@@ -6254,7 +6318,7 @@ if (soap_connect_command(soap, "http://www.example.com/API/POST", NULL, SOAP_POS
  || soap_send(soap, "{ \"title\": \"Example\", \"doc\": \"Some text\" }\n")
  || soap_end_send(soap)
  || soap_begin_recv(soap)
- || (response = soap_get_http_body(soap, &response_len)) != NULL
+ || (response = soap_http_get_body(soap, &response_len)) != NULL
  || soap_end_recv(soap))
   soap_print_fault(soap, stderr);
 else
@@ -6277,7 +6341,7 @@ if (soap_begin_count(soap)
  || soap_send(soap, request)
  || soap_end_send(soap)
  || soap_begin_recv(soap)
- || (response = soap_get_http_body(soap, &response_len)) != NULL
+ || (response = soap_http_get_body(soap, &response_len)) != NULL
  || soap_end_recv(soap))
   soap_print_fault(soap, stderr);
 else
@@ -6310,7 +6374,7 @@ if (soap_connect(soap, endpoint, NULL)
  || soap_send(soap, "<doc title=\"Example\">Some text</doc>\n")
  || soap_end_send(soap)
  || soap_begin_recv(soap)
- || (response = soap_get_http_body(soap, &response_len)) != NULL
+ || (response = soap_http_get_body(soap, &response_len)) != NULL
  || soap_end_recv(soap))
   soap_print_fault(soap, stderr);
 else
@@ -6329,7 +6393,9 @@ int soap_connect(
 
 /// Bind and listen to a port
 /**
-This function binds to the specified port and starts listening for client requests.  The `host` parameter when non-NULL is the name of the host on which this service runs.  The `port` parameter is the port number to bind, which must not be in use by another service.  The call may also fail if the port was recently in use by this service.  Use `SO_REUSEADDR` with `::soap::bind_flags` to immediately reuse the port, but use this option with caution.  The `backlog` parameter is used with `listen` which defines the maximum length for the queue of pending connections.  If a connection request arrives with the queue full, the client may receive an error with an indication of `ECONNREFUSED`.  Alternatively, if the underlying protocol supports retransmission, the request may be ignored so that retries may succeed.  Returns the `::soap::master` socket bound to the port or the invalid socket handle `#SOAP_INVALID_SOCKET` when an error occurred.
+This function binds to the specified port and starts listening for client requests.  The `host` parameter when non-NULL is the name of the host on which this service runs.  The `port` parameter is the port number to bind, which must not be in use by another service.  The call may also fail if the port was recently in use by this service.  Use `SO_REUSEADDR` with `::soap::bind_flags` to immediately reuse the port, but use this option with caution to prevent "port stealing" attacks.  The `backlog` parameter is used with `listen`, which defines the maximum length for the queue of pending connections.  If a connection request arrives with the queue full, the client may receive an error with an indication of `ECONNREFUSED` or a connection reset.  Alternatively, if the underlying protocol supports retransmission, the request may be ignored so that retries may succeed.  Returns the `::soap::master` socket bound to the port or the invalid socket handle `#SOAP_INVALID_SOCKET` when an error occurred.
+
+@note A small `backlog` value should be used with iterative (i.e. non-multi-threaded) servers to improve fairness among connecting clients, recommended is a `backlog` value of 1 or 2 or greater but not greater than 10.  Also short `::soap::recv_timeout` and `::soap::send_timeout` values of a few seconds at the most should be used to prevent clients from using connections for long by terminating unacceptably slow message exchanges that exceed the timeout thresholds.  In the worst case, a connecting client may have to wait `backlog` * (`::soap::recv_timeout` + `::soap::send_timeout`) seconds to have the connection accepted by an iterative server when the backlog queue is full, or even longer when message sizes are very large, e.g. several MBs, requiring multiple message data packet exchanges.  Larger `backlog` values can be safely used with multi-threaded servers, such as 10 to 128, where 128 is a typical maximum on most operating systems.  The actual value does not matter when connections are accepted as soon as they arrive by `::soap_accept` and then handled by threads executing `::soap_ssl_accept` (for HTTPS) and `::soap_serve`.
 
 This function effectively deployes a stand-alone server on the specified port.  There are three other alternatives for deploying services:
 - CGI and FastCGI, see `#WITH_FASTCGI`.
@@ -6349,7 +6415,7 @@ int main()
   soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
   soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
   soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
-  if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+  if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
   {
     while (1)
     {
@@ -6387,7 +6453,7 @@ int main()
   soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
   soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
   soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
-  if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+  if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
   {
     while (1)
     {
@@ -6434,7 +6500,7 @@ SOAP_SOCKET soap_bind(
     struct soap *soap, ///< `::soap` context
     const char *host,  ///< name of the host or NULL
     int port,          ///< port number to bind
-    int backlog)       ///< maximum queue length
+    int backlog)       ///< maximum queue length of pending requests
   /// @returns the `::soap::master` socket value or `#SOAP_INVALID_SOCKET` when an error occurred (check the return value with `#soap_valid_socket`)
   ;
 
@@ -6454,7 +6520,7 @@ int main()
   soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
   soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
   soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
-  if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+  if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
   {
     while (1)
     {
@@ -6492,7 +6558,7 @@ int main()
   soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
   soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
   soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
-  if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+  if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
   {
     while (1)
     {
@@ -6622,7 +6688,7 @@ soap->accept_timeout = 3600;                // exit loop when no request arrives
 soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
 soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
 soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
-if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
 {
   while (1)
   {
@@ -6855,15 +6921,12 @@ struct soap *soap = soap_new();
 char *response = NULL;
 size_t response_len;
 const char *request = "{ \"title\": \"Example\", \"doc\": \"Some text\" }\n";
-// HTTP POST request, here we compute the content length instead of chunked transfer with SOAP_IO_CHUNK or storing the entire message with SOAP_IO_STORE
-if (soap_begin_count(soap)
- || soap_send(soap, request)
- || soap_end_count(soap)
- || soap_POST(soap, "http://www.example.com/API/POST", NULL, "application/json; charset=utf-8")
+// HTTP POST request, soap_POST stores the entire message with SOAP_IO_STORE to determine HTTP content length
+if (soap_POST(soap, "http://www.example.com/API/POST", NULL, "application/json; charset=utf-8")
  || soap_send(soap, request)
  || soap_end_send(soap)
  || soap_begin_recv(soap)
- || (response = soap_get_http_body(soap, &response_len)) != NULL
+ || (response = soap_http_get_body(soap, &response_len)) != NULL
  || soap_end_recv(soap))
   soap_print_fault(soap, stderr);
 else
@@ -6904,7 +6967,7 @@ if (soap_POST(soap, "http://www.example.com/API/POST", NULL, "application/json; 
  || soap_send(soap, request)
  || soap_end_send(soap)
  || soap_begin_recv(soap)
- || (response = soap_get_http_body(soap, &response_len)) != NULL
+ || (response = soap_http_get_body(soap, &response_len)) != NULL
  || soap_end_recv(soap))
   soap_print_fault(soap, stderr);
 else
@@ -6947,7 +7010,7 @@ int soap_end_count(struct soap *soap) ///< `::soap` context
 
 /// Close the socket connection
 /**
-This function should be called to close `::soap::socket`.  The socket is closed and `::soap::socket` is set to `#SOAP_INVALID_SOCKET` if the socket is valid, keep-alive is not enabled and not currently active, i.e. the socket is closed when `::soap::socket` != `#SOAP_INVALID_SOCKET` and `::soap::keep_alive` == 0.  Therefore, this function keeps the socket connection open when keep-alive is currently active.  This function may be called multiple times but closes the socket just once if the socket connection was open.  This function is called in the server and client-side code generated by soapcpp2.  Returns the current value of `::soap::error` to propagate the error state.
+This function should be called to close `::soap::socket`.  The socket is closed and `::soap::socket` is set to `#SOAP_INVALID_SOCKET` if the socket is valid, keep-alive is not enabled and not currently active, i.e. the socket is closed when `::soap::socket` != `#SOAP_INVALID_SOCKET` and `::soap::keep_alive` == 0.  Therefore, this function keeps the socket connection open when keep-alive is currently active.  This function may be called multiple times but closes the socket just once if the socket connection was open.  This function is called in the server and client-side code generated by soapcpp2.  Returns the current value of `::soap::error` to propagate the error state when used as `return soap_closesock(soap);`.
 
 @see `::soap_force_closesock`, `::soap_close_connection`.
 */
@@ -6957,12 +7020,12 @@ int soap_closesock(struct soap *soap) ///< `::soap` context
 
 /// Forcibly close the socket connection
 /**
-This function should be called to force closing `::soap::socket` when `#SOAP_IO_KEEPALIVE` is used.  When `#SOAP_IO_KEEPALIVE` is used the socket will stay open for a maximum of `#SOAP_MAXKEEPALIVE` message exchanges, even when `::soap_closesock` is called.  By calling this function the socket is forcibly closed, even when keep-alive is currently active, and `::soap::socket` is set to `#SOAP_INVALID_SOCKET`.  This function may be called multiple times but closes the socket just once if the socket connection was open.  Returns `#SOAP_OK` or a `::soap_status` error code.
+This function immediately closes `::soap::socket` and should only be used when `::soap_closesock` does not suffice.  By contrast, `::soap_closesock` gently finalizes the SSL connection, and when `::soap::keep_alive` == 0 calls `shutdown` and `close` on `::soap::socket`.  By calling `::soap_force_closesock` the socket is forcibly closed immediately and `::soap::socket` is set to `#SOAP_INVALID_SOCKET`, even when keep-alive is currently active.  This function may be called multiple times but closes the socket just once if the socket connection was open.  Returns the current value of `::soap::error` to propagate the error state when used as `return soap_force_closesock(soap);`.
 
 @see `::soap_closesock`, `::soap_close_connection`.
 */
 int soap_force_closesock(struct soap *soap) ///< `::soap` context
-  /// @returns `#SOAP_OK` or a `::soap_status` error code
+  /// @returns the value of `::soap::error` (`#SOAP_OK` or a `::soap_status` error code)
   ;
 
 /// Close the connection of the specified context using a self-pipe
@@ -6983,7 +7046,7 @@ soap->accept_timeout = 3600;                // exit loop when no request arrives
 soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
 soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
 soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
-if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
 {
   while (1)
   {
@@ -7085,17 +7148,17 @@ int soap_send_raw(
 
 /// Check if HTTP body message is not empty
 /**
-This function returns nonzero if an HTTP message body is present, zero otherwise.  This function should be called immediately after calling `::soap_begin_recv`.  Note that `::soap_begin_recv` is called at the server side before a HTTP callback is called, such as `::soap::fput` and `::soap::fpatch`.  Callbacks and the `::http_post` HTTP POST plugin handlers should therefore not call `::soap_begin_recv`.  Also, `::soap_begin_recv` is called at the client side by HTTP functions such as `::soap_GET`, after which the HTTP body can then be checked with `::soap_has_http_body` and retrieved with `::soap_get_http_body`.
+This function returns nonzero if an HTTP message body is present, zero otherwise.  This function should be called immediately after calling `::soap_begin_recv`.  Note that `::soap_begin_recv` is called at the server side before a HTTP callback is called, such as `::soap::fput` and `::soap::fpatch`.  Callbacks and the `::http_post` HTTP POST plugin handlers should therefore not call `::soap_begin_recv`.  Also, `::soap_begin_recv` is called at the client side by HTTP functions such as `::soap_GET`, after which the HTTP body can then be checked with `::soap_http_has_body` and retrieved with `::soap_http_get_body`.
 
-@see \ref group_callbacks, `::soap_begin_recv`, `::soap_end_recv`, `::soap_get_http_body`, `::soap_GET`, `::soap_POST`, `::soap::fput`, `::soap::fpatch`, `::http_post`.
+@see \ref group_callbacks, `::soap_begin_recv`, `::soap_end_recv`, `::soap_http_get_body`, `::soap_GET`, `::soap_POST`, `::soap::fput`, `::soap::fpatch`, `::http_post`.
 */
-int soap_has_http_body(struct soap *soap) ///< `::soap` context
+int soap_http_has_body(struct soap *soap) ///< `::soap` context
   /// @returns nonzero if an HTTP body is present, zero otherwise
   ;
 
 /// Get the HTTP body message as a string
 /**
-This function parses an HTTP body message into a string, whether or not an HTTP body message is present.  This function should be called immediately after calling `::soap_begin_recv`.  Note that `::soap_begin_recv` is called at the server side before a HTTP callback is called, such as `::soap::fput` and `::soap::fpatch`.  Callbacks and the `::http_post` HTTP POST plugin handlers should therefore not call `::soap_begin_recv`.  Also, `::soap_begin_recv` is called at the client side by HTTP functions such as `::soap_GET`, after which the HTTP body can then be then be checked with `::soap_has_http_body` and retrieved with `::soap_get_http_body`.  This function reads input from from `::soap::is` when non-NULL, or `::soap::socket` when valid, or from `::soap::recvfd`, and sets the `len` pointer parameter to the length of the string read if `len` is not NULL.  After calling this function, `::soap_end_recv` should be called.  Returns the HTTP body as a string allocated in managed memory or returns "" (empty string, since version 2.8.71 or returns NULL for previous versions) when no HTTP message body is present or NULL when an error occurred and sets `::soap::error`.
+This function parses an HTTP body message into a string, whether or not an HTTP body message is present.  This function should be called immediately after calling `::soap_begin_recv`.  Note that `::soap_begin_recv` is called at the server side before a HTTP callback is called, such as `::soap::fput` and `::soap::fpatch`.  Callbacks and the `::http_post` HTTP POST plugin handlers should therefore not call `::soap_begin_recv`.  Also, `::soap_begin_recv` is called at the client side by HTTP functions such as `::soap_GET`, after which the HTTP body can then be then be checked with `::soap_http_has_body` and retrieved with `::soap_http_get_body`.  This function reads input from from `::soap::is` when non-NULL, or `::soap::socket` when valid, or from `::soap::recvfd`, and sets the `len` pointer parameter to the length of the string read if `len` is not NULL.  After calling this function, `::soap_end_recv` should be called.  Returns the HTTP body as a string allocated in managed memory or returns "" (empty string, since version 2.8.71 or returns NULL for previous versions) when no HTTP message body is present or NULL when an error occurred and sets `::soap::error`.
 
 @par Examples:
 
@@ -7108,7 +7171,7 @@ int main()
   size_t response_len;
   if (soap_GET(soap, "http://www.example.com/API/GET", NULL)
    || soap_begin_recv(soap)
-   || (response = soap_get_http_body(soap, &response_len)) != NULL
+   || (response = soap_http_get_body(soap, &response_len)) != NULL
    || soap_end_recv(soap))
     soap_print_fault(soap, stderr);
   else
@@ -7128,16 +7191,16 @@ int main()
 int my_put(struct soap *soap)
 {
   size_t len;
-  char *message = soap_get_http_body(soap, &len);
+  char *message = soap_http_get_body(soap, &len);
   soap_end_recv(soap);
   ... // use the message data
   return soap_send_empty_response(soap, 202); // HTTP 202 Accepted
 }
 ~~~
 
-@see \ref group_callbacks, `::soap_begin_recv`, `::soap_end_recv`, `::soap_has_http_body`, `::soap_GET`, `::soap_POST`, `::soap::fput`, `::soap::fpatch`, `::http_post`.
+@see \ref group_callbacks, `::soap_begin_recv`, `::soap_end_recv`, `::soap_http_has_body`, `::soap_GET`, `::soap_POST`, `::soap::fput`, `::soap::fpatch`, `::http_post`.
 */
-char * soap_get_http_body(
+char * soap_http_get_body(
     struct soap *soap, ///< `::soap` context
     size_t *len)       ///< pointer to the length variable to assign or NULL
   /// @returns HTTP body as a string or NULL when an error occurred
@@ -7159,7 +7222,7 @@ typedef int32_t soap_wchar;
 
 /// Get next byte without consuming it
 /**
-This function returns the next byte on the input without consuming it, i.e. peeks one byte ahead.  Reads a byte from `::soap::is` when non-NULL, or from `::soap::socket` when valid, or from `::soap::recvfd`.  Returns the next byte or EOF when an error occurred and sets `::soap::error` to a `::soap_status` value and `::soap::errnum` to the `errno` value.
+This function returns the next byte on the input without consuming it, i.e. peeks one byte ahead.  Reads a byte from `::soap::is` when non-NULL, or from `::soap::socket` when valid, or from `::soap::recvfd`.  Returns the next byte or EOF when an error occurred and sets `::soap::error` to a `::soap_status` value and `::soap::errnum` to the `errno` value of the failure.
 */
 soap_wchar soap_get0(struct soap *soap) ///< `::soap` context
   /// @returns byte read or EOF when an error occurred
@@ -7167,7 +7230,7 @@ soap_wchar soap_get0(struct soap *soap) ///< `::soap` context
 
 /// Get next byte
 /**
-This function returns the next byte on the input.  Reads a byte from `::soap::is` when non-NULL, or from `::soap::socket` when valid, or from `::soap::recvfd`.  Returns the next byte or EOF when an error occurred and sets `::soap::error` to a `::soap_status` value and `::soap::errnum` to the `errno` value.
+This function returns the next byte on the input.  Reads a byte from `::soap::is` when non-NULL, or from `::soap::socket` when valid, or from `::soap::recvfd`.  Returns the next byte or EOF when an error occurred and sets `::soap::error` to a `::soap_status` value and `::soap::errnum` to the `errno` value of the failure.
 */
 soap_wchar soap_get1(struct soap *soap) ///< `::soap` context
   /// @returns byte read or EOF when an error occurred
@@ -7203,7 +7266,7 @@ int main()
 int my_put(struct soap *soap)
 {
   size_t len;
-  char *message = soap_get_http_body(soap, &len);
+  char *message = soap_http_get_body(soap, &len);
   soap_end_recv(soap);
   ... // use the message data
   return soap_send_empty_response(soap, 202); // HTTP 202 Accepted
@@ -7351,7 +7414,7 @@ int http_get_handler(struct soap *soap)
 }
 ~~~
 
-@see `::soap_get_stats`, `::soap_query`.
+@see `::soap_http_get_stats`, `::soap_query`.
 */
 int http_get(struct soap*, struct soap_plugin*, void*);
 
@@ -7371,7 +7434,7 @@ int main()
 {
   struct soap *soap = soap_new();
   soap_register_plugin_arg(soap, http_get, http_get_handler);
-  if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+  if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
   {
     while (1)
     {
@@ -7390,7 +7453,7 @@ int main()
       {
         break;
       }
-      soap_get_stats(soap, &stat_get, &stat_post, &stat_fail, &hist_min, &hist_hour, &hist_day);
+      soap_http_get_stats(soap, &stat_get, &stat_post, &stat_fail, &hist_min, &hist_hour, &hist_day);
       // show the number of GET, POST, and failures
       printf("\n#GET = %d #POST = %d failures = %d", stat_get, stat_post, stat_fail);
       // show the stats collected per hour
@@ -7408,7 +7471,7 @@ int main()
 }
 ~~~
 */
-void soap_get_stats(
+void soap_http_get_stats(
     struct soap *soap,  ///< `::soap` context
     size_t *stat_get,   ///< points to a variable to assign the number of GET requests
     size_t *stat_post,  ///< points to a variable to assign the number of POST requests
@@ -7436,7 +7499,7 @@ int main()
 {
   struct soap *soap = soap_new();
   soap_register_plugin_arg(soap, http_get, http_get_handler);
-  if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+  if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
   {
     while (1)
     {
@@ -7500,9 +7563,9 @@ int ns__webmethod(struct soap *soap, ...)
 }
 ~~~
 
-@see `::soap_query_key`, `::soap_query_val`, `::soap_get_stats`.
+@see `::soap_query_key`, `::soap_query_val`, `::soap_http_get_stats`.
 */
-char *soap_query(struct soap *soap) ///< `::soap` context
+char * soap_query(struct soap *soap) ///< `::soap` context
   ;
 
 /// Extract the next query string key at the server side with the `::http_get` plugin
@@ -7527,7 +7590,7 @@ while (query)
 
 @see `::soap_query`, `::soap_query_val`.
 */
-char *soap_query_key(
+char * soap_query_key(
     struct soap *soap, ///< `::soap` context
     char **query)      ///< points to the string returned by soap_query and soap_query_val
   /// @returns query string key
@@ -7555,7 +7618,7 @@ while (query)
 
 @see `::soap_query`, `::soap_query_key`.
 */
-char *soap_query_val(
+char * soap_query_val(
     struct soap *soap, ///< `::soap` context
     char **query)      ///< points to the string returned by soap_query and soap_query_key
   /// @returns query string value or NULL
@@ -7599,7 +7662,7 @@ int image_post_handler(struct soap *soap)
    || (soap->http_content && soap_tag_cmp(soap->http_content, "image/gif")))
     return 404;
   // get HTTP POST message body
-  buf = soap_get_http_body(soap, &len);
+  buf = soap_http_get_body(soap, &len);
   if (!buf)
     return 400; // HTTP 400 Bad Request
   (void)soap_end_recv(soap);
@@ -7622,7 +7685,7 @@ int generic_PUT_handler(struct soap *soap)
    || (soap->http_content && soap_tag_cmp(soap->http_content, "image/gif")))
     return 404;
   // get HTTP PUT message body
-  buf = soap_get_http_body(soap, &len);
+  buf = soap_http_get_body(soap, &len);
   if (!buf)
     return 400; // HTTP 400 Bad Request
   (void)soap_end_recv(soap);
@@ -7657,7 +7720,7 @@ int http_form_handler(struct soap *soap)
   if (!strncmp(soap->path, "/API/FORM", 9))
   {
     // get the application/x-www-form-urlencoded data
-    char *form = soap_get_form(soap); 
+    char *form = soap_http_get_form(soap); 
     while (form)
     {
       // get next key=val pair
@@ -7676,7 +7739,7 @@ int http_form_handler(struct soap *soap)
 }
 ~~~
 
-@see `::soap_get_form`, `::http_get`, `::soap_query_key`, `::soap_query_val`.
+@see `::soap_http_get_form`, `::http_get`, `::soap_query_key`, `::soap_query_val`.
 */
 int http_form(struct soap*, struct soap_plugin*, void*);
 
@@ -7688,7 +7751,7 @@ This function parses an HTTP body with application/x-www-form-urlencoded data in
 
 @see `::http_form`.
 */
-char * soap_get_form(struct soap *soap) ///< `::soap` context
+char * soap_http_get_form(struct soap *soap) ///< `::soap` context
   ;
 
 /** @} */
@@ -9415,9 +9478,9 @@ void soap_clr_mime(struct soap *soap) ///< `::soap` context
 
 /// Enable post-processing of MIME/MTOM attachments
 /**
-This function enables post-processing of MTOM/MIME attachments received.  This means that the presence of MIME/MTOM attachments must be explicitly checked and retrieved by calling `::soap_check_mime_attachments` and when successul `::soap_get_mime_attachment` should be called to retrieve each attachment.
+This function enables post-processing of MTOM/MIME attachments received.  This means that the presence of MIME/MTOM attachments must be explicitly checked and retrieved by calling `::soap_check_mime_attachments` and when successul `::soap_recv_mime_attachment` should be called to retrieve each attachment.
 
-If attachments are not referenced by the SOAP/XML message received, then normallly an error will be produced to indicate that attachments exist that were not converted into binary `::xsd__base64Binary` or `::_xop__Include` structures (i.e. deserialized from the message by resolving references to MIME/MTOM attachments).  This error can be avoided by using `::soap_post_check_mime_attachments` to indicate that attachments may appear that cannot be automatically resolved and should be handled explicitly by calling `::soap_check_mime_attachments` and `::soap_get_mime_attachment`.
+If attachments are not referenced by the SOAP/XML message received, then normallly an error will be produced to indicate that attachments exist that were not converted into binary `::xsd__base64Binary` or `::_xop__Include` structures (i.e. deserialized from the message by resolving references to MIME/MTOM attachments).  This error can be avoided by using `::soap_post_check_mime_attachments` to indicate that attachments may appear that cannot be automatically resolved and should be handled explicitly by calling `::soap_check_mime_attachments` and `::soap_recv_mime_attachment`.
 
 @par Examples:
 
@@ -9439,7 +9502,7 @@ int main()
       int n = 0;
       do
       {
-        struct soap_multipart *attachment = soap_get_mime_attachment(soap, NULL);
+        struct soap_multipart *attachment = soap_recv_mime_attachment(soap, NULL);
         ++n;
         printf("Part %d:\n", n);
         printf("ptr        =%p\n", attachment->ptr);
@@ -9500,7 +9563,7 @@ int main()
 }
 ~~~
 
-@see `::soap_check_mime_attachments`, `::soap_get_mime_attachment`, `::soap::fmimewriteopen`, `::soap::fmimewrite`, `::soap::fmimewriteclose`.
+@see `::soap_check_mime_attachments`, `::soap_recv_mime_attachment`, `::soap::fmimewriteopen`, `::soap::fmimewrite`, `::soap::fmimewriteclose`.
 */
 int soap_post_check_mime_attachments(struct soap *soap) ///< `::soap` context
   /// @returns `#SOAP_OK` or a `::soap_status` error code
@@ -9529,7 +9592,7 @@ struct soap_mime {
 
 /// DIME/MIME/MTOM attachment data received by the engine
 /**
-@see `::soap_post_check_mime_attachments`, `::soap_check_mime_attachments`, `::soap_get_mime_attachment`.
+@see `::soap_post_check_mime_attachments`, `::soap_check_mime_attachments`, `::soap_recv_mime_attachment`.
 */
 struct soap_multipart {
   struct soap_multipart *next;      ///< next attachment in the linked list
@@ -9551,7 +9614,7 @@ This function parses an attachment and invokes the MIME callbacks when set.  The
 
 @see `::soap_post_check_mime_attachments`, `::soap_check_mime_attachments`.
 */
-struct soap_multipart * soap_get_mime_attachment(
+struct soap_multipart * soap_recv_mime_attachment(
     struct soap *soap, ///< `::soap` context
     void *handle)      ///< a handle to pass to the callbacks
   /// @returns MIME attachment data or NULL if no more attachments were found
@@ -9779,7 +9842,7 @@ soap->accept_timeout = 3600;                // exit loop when no request arrives
 soap->send_timeout = soap_recv_timeout = 5; // 5 seconds max socket stall time (unlimited by default)
 soap->transfer_timeout = 30;                // 30 seconds max message transfer time (unlimited by default)
 soap->recv_maxlength = 1048576;             // limit messages received to 1MB (2GB by default)
-if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+if (soap_valid_socket(soap_bind(soap, NULL, PORTNUM, BACKLOG)))
 {
   while (1)
   {

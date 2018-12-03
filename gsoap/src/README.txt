@@ -109,8 +109,8 @@ COMMAND LINE OPTIONS
 -Ed	generate extra functions for deep deletion
 -Et     generate extra functions for data traversals with walker functions
 -L	don't generate soapClientLib/soapServerLib
+-A	require SOAPAction headers to invoke server-side operations
 -a	use SOAPAction with WS-Addressing to invoke server-side operations
--A	require SOAPAction to invoke server-side operations
 -b	serialize byte arrays char[N] as string
 -c      generate C source code
 -c++    generate C++ source code (default)

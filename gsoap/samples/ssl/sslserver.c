@@ -58,7 +58,8 @@ void sigpipe_handle(int);
 \******************************************************************************/
 
 int main()
-{ SOAP_SOCKET m;
+{
+  SOAP_SOCKET m;
   THREAD_TYPE tid;
   struct soap soap, *tsoap;
   /* Init SSL (can skip or call multiple times, engien inits automatically) */
@@ -68,7 +69,8 @@ int main()
   signal(SIGPIPE, sigpipe_handle);
   /* set up lSSL ocks */
   if (CRYPTO_thread_setup())
-  { fprintf(stderr, "Cannot setup thread mutex for OpenSSL\n");
+  {
+    fprintf(stderr, "Cannot setup thread mutex for OpenSSL\n");
     exit(1);
   }
   /* init gsoap context and SSL */
@@ -99,27 +101,32 @@ int main()
     "sslserver"		/* server identification for SSL session cache (unique server name, e.g. use argv[0]) */
   )
   )
-  { soap_print_fault(&soap, stderr);
+  {
+    soap_print_fault(&soap, stderr);
     exit(1);
   }
   /* enable CRL, may need SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE when certs have no CRL
   if (soap_ssl_crl(&soap, ""))
-  { soap_print_fault(&soap, stderr);
+  {
+    soap_print_fault(&soap, stderr);
     exit(1);
   }
   */
   soap.accept_timeout = 60;	/* server times out after 1 minute inactivity */
-  soap.send_timeout = soap.recv_timeout = 30;	/* if I/O stalls, then timeout after 30 seconds */
+  soap.send_timeout = soap.recv_timeout = 10;	/* max I/O idle time is 10 seconds */
   m = soap_bind(&soap, NULL, 18081, 100);
   if (!soap_valid_socket(m))
-  { soap_print_fault(&soap, stderr);
+  {
+    soap_print_fault(&soap, stderr);
     exit(1);
   }
   fprintf(stderr, "Bind successful: socket = %d\n", m);
   for (;;)
-  { SOAP_SOCKET s = soap_accept(&soap);
+  {
+    SOAP_SOCKET s = soap_accept(&soap);
     if (!soap_valid_socket(s))
-    { if (soap.errnum)
+    {
+      if (soap.errnum)
         soap_print_fault(&soap, stderr);
       else
         fprintf(stderr, "Server timed out (timeout set to %d seconds)\n", soap.accept_timeout);
@@ -128,10 +135,12 @@ int main()
     fprintf(stderr, "Socket %d connection from IP %d.%d.%d.%d\n", s, (int)(soap.ip>>24)&0xFF, (int)(soap.ip>>16)&0xFF, (int)(soap.ip>>8)&0xFF, (int)soap.ip&0xFF);
     tsoap = soap_copy(&soap);
     if (!tsoap)
-    { soap_closesock(&soap);
+    {
+      soap_closesock(&soap);
       continue;
     }
-    THREAD_CREATE(&tid, (void*(*)(void*))&process_request, tsoap);
+    while (THREAD_CREATE(&tid, (void*(*)(void*))&process_request, tsoap))
+      sleep(1);
   }
   soap_destroy(&soap);
   soap_end(&soap);
@@ -144,13 +153,17 @@ void *process_request(struct soap *soap)
 {
   THREAD_DETACH(THREAD_ID);
   if (soap_ssl_accept(soap) != SOAP_OK)
-  { /* when soap_ssl_accept() fails, socket is closed and SSL data reset */
+  {
+    /* when soap_ssl_accept() fails, socket is closed and SSL data reset */
     soap_print_fault(soap, stderr);
-    fprintf(stderr, "SSL request failed, continue with next call...\n");
+    fprintf(stderr, "SSL request failed, continue with next...\n");
   }
   else
+  {
     soap_serve(soap);
-  soap_destroy(soap); /* for C++ */
+    fprintf(stderr, "SSL request served, continue with next...\n");
+  }
+  soap_destroy(soap);
   soap_end(soap);
   soap_free(soap);
   return NULL;
@@ -261,7 +274,8 @@ void CRYPTO_thread_cleanup()
 /* OpenSSL not used, e.g. GNUTLS is used */
 
 int CRYPTO_thread_setup()
-{ return SOAP_OK;
+{
+  return SOAP_OK;
 }
 
 void CRYPTO_thread_cleanup()

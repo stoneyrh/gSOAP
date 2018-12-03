@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">SOAP_MACRO run-time flags</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Sat Nov 24 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Mon Dec 3 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -547,7 +547,7 @@ Typedefs</h2></td></tr>
 <p><code><a class="el" href="group__group__flags.html#ga72b0491c9cbf2071f0c96c7d29b719bb" title="The soap_mode flags to initialize the soap context, flags can be combined with | (bit-wise or) ...">soap_mode</a></code> IO output flag value to keep the socket connection alive for <code><a class="el" href="group__group__soap.html#ga9750ea0479df8aa88e06f6a148b2a670" title="User-definable maximum iterations in the server-side soap_serve loop (or the C++ service class serve ...">SOAP_MAXKEEPALIVE</a></code> message exchanges per connection (100 by default), enabling HTTP keep-alive connection persistence </p>
 <dl class="section warning"><dt>Warning</dt><dd>Do not use <code><a class="el" href="group__group__flags.html#ga0a4635737732c912058ff4dba668c1b2" title="soap_mode IO output flag value to keep the socket connection alive for SOAP_MAXKEEPALIVE message exch...">SOAP_IO_KEEPALIVE</a></code> with CGI and FastCGI applications.</dd></dl>
 <dl class="section user"><dt>Example:</dt><dd></dd></dl>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;soapH.h&quot;</span></div><div class="line"><span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga51cde138234ed7ec8c4e25bdf6418658">soap_new1</a>(<a class="code" href="group__group__flags.html#ga0a4635737732c912058ff4dba668c1b2">SOAP_IO_KEEPALIVE</a>); <span class="comment">// enable HTTP keep-alive</span></div><div class="line">soap-&gt;<a class="code" href="structsoap.html#a1d7aca6ac1d62302102c17508a8b0ec0">max_keep_alive</a> = 50;                        <span class="comment">// 50 max keep-alive exchanges (SOAP_MAXKEEPALIVE by default)</span></div></div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><code><a class="el" href="structsoap.html#a3d93ba968bb58373f5884177a7ec0d83" title="HTTP keep-alive flag (-1) and counter (&gt;0) ">soap::keep_alive</a></code>, <code><a class="el" href="structsoap.html#a1d7aca6ac1d62302102c17508a8b0ec0" title="User-definable maximum number of keep-alive message exchanges per connection (SOAP_MAXKEEPALIVE by de...">soap::max_keep_alive</a></code>, <code><a class="el" href="group__group__soap.html#ga9750ea0479df8aa88e06f6a148b2a670" title="User-definable maximum iterations in the server-side soap_serve loop (or the C++ service class serve ...">SOAP_MAXKEEPALIVE</a></code>. </dd></dl>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;soapH.h&quot;</span></div><div class="line"><span class="keyword">struct </span>soap *soap = <a class="code" href="group__group__context.html#ga51cde138234ed7ec8c4e25bdf6418658">soap_new1</a>(<a class="code" href="group__group__flags.html#ga0a4635737732c912058ff4dba668c1b2">SOAP_IO_KEEPALIVE</a>); <span class="comment">// enable HTTP keep-alive</span></div><div class="line">soap-&gt;<a class="code" href="structsoap.html#a1d7aca6ac1d62302102c17508a8b0ec0">max_keep_alive</a> = 50;                        <span class="comment">// 50 max keep-alive exchanges (SOAP_MAXKEEPALIVE by default)</span></div></div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><code><a class="el" href="structsoap.html#a3d93ba968bb58373f5884177a7ec0d83" title="HTTP keep-alive flag (try to enable when -1, disabled when 0) and counter (enabled when &gt;0) ...">soap::keep_alive</a></code>, <code><a class="el" href="structsoap.html#a1d7aca6ac1d62302102c17508a8b0ec0" title="User-definable maximum number of keep-alive message exchanges per connection (SOAP_MAXKEEPALIVE by de...">soap::max_keep_alive</a></code>, <code><a class="el" href="group__group__soap.html#ga9750ea0479df8aa88e06f6a148b2a670" title="User-definable maximum iterations in the server-side soap_serve loop (or the C++ service class serve ...">SOAP_MAXKEEPALIVE</a></code>. </dd></dl>
 
 </div>
 </div>
@@ -864,7 +864,7 @@ Typedefs</h2></td></tr>
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Sat Nov 24 2018 10:10:04 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Mon Dec 3 2018 14:48:21 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

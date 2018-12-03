@@ -22,6 +22,8 @@ var group__group__context =
       [ "buflen", "structsoap.html#a0b72b2e13d73dd568d845143822d29d8", null ],
       [ "c14nexclude", "structsoap.html#afd294a7412902194179ec31c2d0200ef", null ],
       [ "c14ninclude", "structsoap.html#a400a1663c7b747b84fa17100e10e3eb9", null ],
+      [ "client_interface", "structsoap.html#aa66026bcd099d88d44c985b49928a05d", null ],
+      [ "client_port", "structsoap.html#a9b424c2622c9f8e4284eba0e6c74e67c", null ],
       [ "connect_flags", "structsoap.html#a52a22fafc369b3a54fb0d16f53158794", null ],
       [ "connect_timeout", "structsoap.html#af32b5f3975eac2bd1202571515859163", null ],
       [ "cookie_domain", "structsoap.html#af2ecfbae740da7839a0c5c96eb65db2a", null ],
@@ -148,7 +150,10 @@ var group__group__context =
       [ "transfer_timeout", "structsoap.html#afcf1d236d052579122f785d7639c43c7", null ],
       [ "user", "structsoap.html#a8eb35c04359a567c0b5e2664f3f94d5b", null ],
       [ "userid", "structsoap.html#a2ede02095d98942f4c220fd17b495703", null ],
-      [ "version", "structsoap.html#a39daa19f039aebc76b8c4b6bf933570a", null ]
+      [ "version", "structsoap.html#a39daa19f039aebc76b8c4b6bf933570a", null ],
+      [ "z_level", "structsoap.html#a9fae46446ebcb1a51417f2c0c1db31f8", null ],
+      [ "z_ratio_in", "structsoap.html#a6cc15a11a897cde81f4303866df747ac", null ],
+      [ "z_ratio_out", "structsoap.html#ab9d0aab0f89e2109ba02ca460c219541", null ]
     ] ],
     [ "soap_clr_imode", "group__group__context.html#ga0e789bd6c2f76609aec0c9f93d121e4c", null ],
     [ "soap_clr_mode", "group__group__context.html#ga06f769f80bcea7beb2ebffd0a40fc521", null ],

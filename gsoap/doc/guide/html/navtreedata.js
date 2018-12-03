@@ -236,6 +236,7 @@ var NAVTREE =
         [ "DOM API", "index.html#dom", null ],
         [ "The message logging plugin", "index.html#loggingplugin", null ],
         [ "RESTful server-side API with the HTTP GET plugin", "index.html#RESTfulserverGET", null ],
+        [ "RESTful server-side API with the HTTP POST plugin", "index.html#RESTfulservicePOST", null ],
         [ "The HTTP digest authentication plugin", "index.html#httpdaplugin", null ],
         [ "The HTTP sessions plugin", "index.html#sessionsplugin", null ],
         [ "The Apache module plugin", "index.html#apacheplugin", null ],
@@ -255,7 +256,7 @@ var NAVTREE =
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", null ],
-        [ "Variables", "functions_vars.html", null ],
+        [ "Variables", "functions_vars.html", "functions_vars" ],
         [ "Typedefs", "functions_type.html", null ]
       ] ]
     ] ],
@@ -277,11 +278,11 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"group__group__dime.html#ga466502a32af0672d589e919a7c882a57",
-"group__group__flags.html#gaf1d4d4fb1293cbb0b7278e1f24ac2cb9",
-"group__group__s2s.html#gac263a15330f17ac7e71a3e3ff3214f5d",
-"group__group__with.html#ga93604d4f98eeeedcc7af19ff83192308",
-"index.html#wsaudp"
+"group__group__debug.html#ga245426f6e253f0d00529a2b72447b956",
+"group__group__flags.html#gabdb47a4b2321c119055eff7db3ecd7e6",
+"group__group__s2s.html#ga6da39f8ce07f4a3de37de6c5ce33ed83",
+"group__group__with.html#ga24620333a812a36ed84902ff3d897ff6",
+"index.html#start"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

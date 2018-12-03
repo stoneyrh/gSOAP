@@ -1,7 +1,7 @@
 /*
         dom.c[pp]
 
-        DOM API v5 gSOAP 2.8.72
+        DOM API v5 gSOAP 2.8.73
 
         See gsoap/doc/dom/html/index.html for the new DOM API v5 documentation
         Also located in /gsoap/samples/dom/README.md
@@ -50,7 +50,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 */
 
 /** Compatibility requirement with gSOAP engine version */
-#define GSOAP_LIB_VERSION 20872
+#define GSOAP_LIB_VERSION 20873
 
 #include "stdsoap2.h"
 
@@ -3290,7 +3290,7 @@ soap_dom_call(struct soap *soap, const char *endpoint, const char *action, const
     if (!soap_begin_recv(soap))
     {
 #ifndef WITH_LEAN
-      (void)soap_get_http_body(soap, NULL);
+      (void)soap_http_get_body(soap, NULL);
 #endif
       (void)soap_end_recv(soap);
     }

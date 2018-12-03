@@ -1,5 +1,5 @@
 /*
-        stdsoap2.h 2.8.72
+        stdsoap2.h 2.8.73
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_VERSION 20872
+#define GSOAP_VERSION 20873
 
 #ifdef WITH_SOAPDEFS_H
 # include "soapdefs.h"          /* include user-defined stuff in soapdefs.h */
@@ -1761,24 +1761,24 @@ typedef soap_int32 soap_mode;
 
 /* SSL client/server authentication settings */
 
-#define SOAP_SSL_NO_AUTHENTICATION              0x0000  /* no authentication */
-#define SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION  0x0001  /* client requires server to authenticate */
-#define SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION  0x0002  /* server requires client to authenticate */
-#define SOAP_SSL_SKIP_HOST_CHECK                0x0004  /* client skips common name check against host name */
-#define SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE      0x0008  /* allow self-signed and expired certificates and those w/o CRL */
-#define SOAP_SSL_NO_DEFAULT_CA_PATH             0x0010  /* don't use SSL_CTX_set_default_verify_paths */
-#define SOAP_SSL_RSA                            0x0020  /* use RSA */
-#define SOAP_SSLv3                              0x0080  /* enable SSL v3 */
-#define SOAP_TLSv1_0                            0x0100  /* enable TLS v1.0 */
-#define SOAP_TLSv1_1                            0x0200  /* enable TLS v1.1 */
-#define SOAP_TLSv1_2                            0x0400  /* enable TLS v1.2 */
-#define SOAP_TLSv1_3                            0x0800  /* enable TLS v1.3 */
+#define SOAP_SSL_NO_AUTHENTICATION              (0x0000)  /* no authentication */
+#define SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION  (0x0001)  /* client requires server to authenticate */
+#define SOAP_SSL_REQUIRE_CLIENT_AUTHENTICATION  (0x0002)  /* server requires client to authenticate */
+#define SOAP_SSL_SKIP_HOST_CHECK                (0x0004)  /* client skips common name check against host name */
+#define SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE      (0x0008)  /* allow self-signed and expired certificates and those w/o CRL */
+#define SOAP_SSL_NO_DEFAULT_CA_PATH             (0x0010)  /* don't use SSL_CTX_set_default_verify_paths */
+#define SOAP_SSL_RSA                            (0x0020)  /* use RSA */
+#define SOAP_SSLv3                              (0x0080)  /* enable SSL v3 */
+#define SOAP_TLSv1_0                            (0x0100)  /* enable TLS v1.0 */
+#define SOAP_TLSv1_1                            (0x0200)  /* enable TLS v1.1 */
+#define SOAP_TLSv1_2                            (0x0400)  /* enable TLS v1.2 */
+#define SOAP_TLSv1_3                            (0x0800)  /* enable TLS v1.3 */
 #define SOAP_TLSv1                              (SOAP_TLSv1_0 | SOAP_TLSv1_1 | SOAP_TLSv1_2 | SOAP_TLSv1_3)
 #define SOAP_SSLv3_TLSv1                        (SOAP_SSLv3 | SOAP_TLSv1)
 
 #define SOAP_SSL_CLIENT                         0x8000  /* client context flag for internal use */
 
-#define SOAP_SSL_DEFAULT                        (SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION | SOAP_TLSv1)
+#define SOAP_SSL_DEFAULT                        SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION
  
 typedef unsigned short soap_ssl_flags;
 
@@ -3188,7 +3188,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_connect(struct soap*, const char*, const char*);
 SOAP_FMAC1 SOAP_SOCKET SOAP_FMAC2 soap_bind(struct soap*, const char*, int, int);
 SOAP_FMAC1 SOAP_SOCKET SOAP_FMAC2 soap_accept(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_accept(struct soap*);
-SOAP_FMAC1 const char * SOAP_FMAC2 soap_ssl_error(struct soap*, int);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_ssl_error(struct soap*, int ret, int err);
 SOAP_FMAC1 int SOAP_FMAC2 soap_ssl_crl(struct soap*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_poll(struct soap*);
 
@@ -3229,10 +3229,17 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_send_raw(struct soap*, const char*, size_t);
 SOAP_FMAC1 int SOAP_FMAC2 soap_recv_raw(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_recv(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_send(struct soap*, const char*);
+
+#ifndef WITH_LEANER
 SOAP_FMAC1 int SOAP_FMAC2 soap_send2(struct soap*, const char*, const char*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_send3(struct soap*, const char*, const char*, const char*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_send_key(struct soap*, const char*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_send_val(struct soap*, const char*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_query_send_key(struct soap*, const char*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_query_send_val(struct soap*, const char*);
+SOAP_FMAC1 char * SOAP_FMAC2 soap_query(struct soap*);
+SOAP_FMAC1 char * SOAP_FMAC2 soap_query_key(struct soap*, char**);
+SOAP_FMAC1 char * SOAP_FMAC2 soap_query_val(struct soap*, char**);
+SOAP_FMAC1 const char * SOAP_FMAC2 soap_query_decode(char*, size_t, const char*);
+#endif
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_pututf8(struct soap*, unsigned long);
 SOAP_FMAC1 soap_wchar SOAP_FMAC2 soap_getutf8(struct soap*);
@@ -3427,8 +3434,10 @@ SOAP_FMAC1 void SOAP_FMAC2 soap_update_pointers(struct soap *soap, const char *d
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_begin_out(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_end_out(struct soap*);
 
-SOAP_FMAC1 int SOAP_FMAC2 soap_has_http_body(struct soap*);
-SOAP_FMAC1 char * SOAP_FMAC2 soap_get_http_body(struct soap*, size_t *len);
+SOAP_FMAC1 int SOAP_FMAC2 soap_http_has_body(struct soap*);
+SOAP_FMAC1 char * SOAP_FMAC2 soap_http_get_body(struct soap*, size_t *len);
+SOAP_FMAC1 char * SOAP_FMAC2 soap_http_get_form(struct soap*);
+SOAP_FMAC1 char * SOAP_FMAC2 soap_http_get_body_prefix(struct soap*, size_t *len, const char *prefix);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_begin_in(struct soap*);
 SOAP_FMAC1 int SOAP_FMAC2 soap_envelope_end_in(struct soap*);
@@ -3589,7 +3598,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_set_dime_attachment(struct soap*, const char *ptr
 SOAP_FMAC1 int SOAP_FMAC2 soap_set_mime_attachment(struct soap*, const char *ptr, size_t size, enum soap_mime_encoding encoding, const char *type, const char *id, const char *location, const char *description);
 SOAP_FMAC1 void SOAP_FMAC2 soap_post_check_mime_attachments(struct soap *soap);
 SOAP_FMAC1 int SOAP_FMAC2 soap_check_mime_attachments(struct soap *soap);
-SOAP_FMAC1 struct soap_multipart* SOAP_FMAC2 soap_get_mime_attachment(struct soap *soap, void *handle);
+SOAP_FMAC1 struct soap_multipart* SOAP_FMAC2 soap_recv_mime_attachment(struct soap *soap, void *handle);
 SOAP_FMAC1 int SOAP_FMAC2 soap_match_cid(struct soap*, const char*, const char*);
 SOAP_FMAC1 const char* SOAP_FMAC2 soap_rand_uuid(struct soap*, const char*);
 #endif

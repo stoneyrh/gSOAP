@@ -3363,7 +3363,7 @@ void Operation::generate(Types& types, Service& service)
       fprintf(stream, serviceformat, prefix, "method-encoding", method_name, output->encodingStyle);
     else
       fprintf(stream, serviceformat, prefix, "method-encoding", method_name, "encoded");
-    if (output && output->action && *output->action)
+    if (output->action && *output->action)
       fprintf(stream, serviceformat, prefix, "method-action", method_name, output->action);
     else if (action)
     {
@@ -3463,7 +3463,7 @@ void Operation::generate(Types& types, Service& service)
       fprintf(stream, serviceformat, prefix, "method-encoding", method_name, output->encodingStyle);
     else
       fprintf(stream, serviceformat, prefix, "method-encoding", method_name, "encoded");
-    if (output && output->action && *output->action)
+    if (output->action && *output->action)
       fprintf(stream, serviceformat, prefix, "method-action", method_name, output->action);
     else if (action)
     {
@@ -3564,7 +3564,7 @@ void Operation::generate(Types& types, Service& service)
     if (protocol)
       fprintf(stream, serviceformat, prefix, "method-protocol", method_name, protocol);
     if (input->content && input->content->type)
-      fprintf(stream, serviceformat, prefix, "method-mime-type", method_name, input->content->type);
+      fprintf(stream, serviceformat, prefix, "method-input-mime-type", method_name, input->content->type);
     else if (style == document)
       fprintf(stream, serviceformat, prefix, "method-style", method_name, "document");
     else

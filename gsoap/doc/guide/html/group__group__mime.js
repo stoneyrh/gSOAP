@@ -29,8 +29,8 @@ var group__group__mime =
     ] ],
     [ "soap_check_mime_attachments", "group__group__mime.html#gaf2cb661a31f0cc431a3738125ddedb8f", null ],
     [ "soap_clr_mime", "group__group__mime.html#ga81cedb24670ebda48a79679d4682211f", null ],
-    [ "soap_get_mime_attachment", "group__group__mime.html#ga6f3307d43aeaad6d782290ecc2ccc144", null ],
     [ "soap_post_check_mime_attachments", "group__group__mime.html#ga57cf2a958b2ce6e957895642cd4c0966", null ],
+    [ "soap_recv_mime_attachment", "group__group__mime.html#ga117fe70b589a08a9fa9ad06c3f5bd009", null ],
     [ "soap_set_mime", "group__group__mime.html#ga9180e5ba634b20305b755b410045d9ee", null ],
     [ "soap_set_mime_attachment", "group__group__mime.html#ga39e5da4f375e8030b8cbddaf0a2a8e6e", null ]
 ];

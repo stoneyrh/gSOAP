@@ -23,7 +23,7 @@
      <td>
       <div style="float: right; font-size: 18px; font-weight: bold;">C and C++ XML Data Bindings</div>
       <br>
-      <div style="float: right; font-size: 10px;">updated Tue Nov 20 2018 by Robert van Engelen</div>
+      <div style="float: right; font-size: 10px;">updated Tue Nov 27 2018 by Robert van Engelen</div>
      </td>
      <td width="10%">&nbsp;</td>
     </tr>
@@ -1360,7 +1360,7 @@ Service method directives                                        </h2>
 <li>To set the type of MIME/MTOM attachments used with SOAP protocols. Multiple attachment types can be declared for a SOAP service operation, i.e. adds definitions/binding/operation/input/MIME:multipartRelated/MIME:part/MIME:content/@type for each type specified.</li>
 <li>To set the MIME type of a REST operation. This replaces XML declared in WSDL by definitions/binding/operation/(input|output)/MIME:mimeXml with MIME:content/@type. Use <code>application/x-www-form-urlencoded</code> with REST POST and PUT protocols to send encoded form data automatically instead of XML. Only primitive type values can be transmitted with form data, such as numbers and strings, i.e. only types that are legal to use as <a href="#toxsd9-5">attributes members</a>.</li>
 </ol>
-<p>Use <code>method-input-mime-type</code> and <code>method-output-mime-type</code> to differentiate the attachment types between SOAP request and response messages.</p>
+<p>Use <code>method-input-mime-type</code> and <code>method-output-mime-type</code> to differentiate the attachment types between request and response messages.</p>
 <p>🔝 <a href="#">Back to table of contents</a></p>
 <h2><a class="anchor" id="directives-3"></a>
 Schema directives                                                </h2>
@@ -1728,7 +1728,7 @@ c++ -I../.. graph.cpp graphC.cpp -o graph -lgsoap++
 Copyright (C) 2018, Robert van Engelen, Genivia Inc., All Rights Reserved.
 </address>
 <address class="footer"><small>
-Converted on Tue Nov 20 2018 20:18:12 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
+Converted on Tue Nov 27 2018 10:23:12 by <a target="_blank" href="http://www.doxygen.org/index.html">Doxygen</a> 1.8.11</small></address>
 <br>
 <div style="height: 246px; background: #DBDBDB;">
 </body>

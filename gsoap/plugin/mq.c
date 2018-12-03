@@ -386,7 +386,7 @@ soap_mq_get(struct soap *soap, struct soap_mq_queue *mq)
   }
   msg->next = NULL;
   soap_copy_context(&msg->soap, soap);
-  msg->buf = soap_get_http_body(soap, &msg->len);
+  msg->buf = soap_http_get_body(soap, &msg->len);
   if (soap_end_recv(soap))
     return NULL;
   if (!msg->buf)

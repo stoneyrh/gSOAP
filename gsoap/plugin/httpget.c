@@ -115,14 +115,14 @@ compiling, linking, and/or using OpenSSL is allowed.
          || soap_begin_recv(&soap))
           ... connect/recv error ...
         else
-          buf = soap_get_http_body(&soap, &len);
+          buf = soap_http_get_body(&soap, &len);
         soap_end_recv(&soap);
         ... process data in buf[0..len-1]
         soap_destroy(&soap);
         soap_end(&soap);
         soap_done(&soap);
 
-        The soap_get_http_body() function above returns the HTTP body content
+        The soap_http_get_body() function above returns the HTTP body content
         as a string.
         
 */
@@ -243,7 +243,7 @@ static int http_get_handler(struct soap *soap)
 
 /******************************************************************************/
 
-void soap_get_stats(struct soap *soap, size_t *stat_get, size_t *stat_post, size_t *stat_fail, size_t **hist_min, size_t **hist_hour, size_t **hist_day)
+void soap_http_get_stats(struct soap *soap, size_t *stat_get, size_t *stat_post, size_t *stat_fail, size_t **hist_min, size_t **hist_hour, size_t **hist_day)
 {
   struct http_get_data *data = (struct http_get_data*)soap_lookup_plugin(soap, http_get_id);
   if (!data)
@@ -263,114 +263,10 @@ void soap_get_stats(struct soap *soap, size_t *stat_get, size_t *stat_post, size
 }
 
 /* deprecated: use soap_GET instead */
-int soap_get_connect(struct soap *soap, const char *endpoint, const char *action)
+int soap_http_get_connect(struct soap *soap, const char *endpoint, const char *action)
 {
   return soap_GET(soap, endpoint, action);
 }
-
-char *soap_query(struct soap *soap)
-{
-  return strchr(soap->path, '?');
-}
-
-char *soap_query_key(struct soap *soap, char **s)
-{
-  char *t = *s;
-  (void)soap;
-  if (t && *t)
-  {
-    *s = (char*)soap_decode_string(t, strlen(t), t + 1);
-    return t;
-  }
-  return *s = NULL;
-}
-
-char *soap_query_val(struct soap *soap, char **s)
-{
-  char *t = *s;
-  (void)soap;
-  if (t && *t == '=')
-  {
-    *s = (char*)soap_decode_string(t, strlen(t), t + 1);
-    return t;
-  }
-  return NULL;
-}
-
-int soap_encode_string(const char *s, char *t, size_t len)
-{
-  int c;
-  size_t n = len;
-  while ((c = *s++) && n-- > 1)
-  {
-    if (c == ' ') 
-      *t++ = '+';
-    else if (c == '!'
-          || c == '$'
-          || (c >= '(' && c <= '.')
-          || (c >= '0' && c <= '9')
-          || (c >= 'A' && c <= 'Z')
-          || c == '_'
-          || (c >= 'a' && c <= 'z'))
-      *t++ = (char)c;
-    else if (n > 2)
-    {
-      *t++ = '%';
-      *t++ = (char)((c >> 4) + (c > 159 ? '7' : '0'));
-      c &= 0xF;
-      *t++ = (char)(c + (c > 9 ? '7' : '0'));
-      n -= 2;
-    }
-    else
-      break;
-  }
-  *t = '\0';
-  return len - n;
-}
-
-const char* soap_decode_string(char *buf, size_t len, const char *val)
-{
-  const char *s;
-  char *t;
-  for (s = val; *s; s++)
-    if (*s != ' ' && *s != '=')
-      break;
-  if (*s == '"')
-  {
-    t = buf;
-    s++;
-    while (*s && *s != '"' && --len)
-      *t++ = *s++;
-    *t = '\0';
-    do s++;
-    while (*s && *s != '&' && *s != '=');
-  }
-  else
-  {
-    t = buf;
-    while (*s && *s != '&' && *s != '=' && --len)
-    {
-      switch (*s)
-      {
-        case '+':
-          *t++ = ' ';
-        case ' ':
-          s++;
-          break;
-        case '%':
-          *t++ = ((s[1] >= 'A' ? (s[1]&0x7) + 9 : s[1] - '0') << 4) + (s[2] >= 'A' ? (s[2]&0x7) + 9 : s[2] - '0');
-          s += 3;
-          break;
-        default:
-          *t++ = *s++;
-      }
-    }
-    *t = '\0';
-  }
-  return s;
-}
-
-/******************************************************************************/
 
 #ifdef __cplusplus
 }

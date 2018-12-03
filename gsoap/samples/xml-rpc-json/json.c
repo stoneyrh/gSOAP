@@ -103,6 +103,7 @@ int json_send_fault(struct soap *soap)
     return soap_send_empty_response(soap, status);
   if (status < 400)
     status = 500;
+  soap->keep_alive = 0; /* error: close connection by disabling keep-alive */
   v = new_value(soap);
   json_error(soap, v);
   soap->http_content = "application/json; charset=utf-8";

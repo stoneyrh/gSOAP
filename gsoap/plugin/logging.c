@@ -12,7 +12,7 @@
 	Turn logging off by passing NULL FILE* descriptor.
 
 	To obtain stats (sent and recv byte count):
-		soap_get_logging_stats(soap, size_t *sent, size_t *recv);
+		soap_logging_stats(soap, size_t *sent, size_t *recv);
         where sent and recv will be set to the number of bytes sent (outbound)
         and received (inbound) in total, respectively.  The stats are collected
         even when inbound and outbound logging is turned off.
@@ -125,7 +125,7 @@ soap_set_logging_outbound(struct soap *soap, FILE *fd)
 SOAP_FMAC1
 void
 SOAP_FMAC2
-soap_get_logging_stats(struct soap *soap, size_t *sent, size_t *recv)
+soap_logging_stats(struct soap *soap, size_t *sent, size_t *recv)
 {
   struct logging_data *data = (struct logging_data*)soap_lookup_plugin(soap, logging_id);
   if (data)

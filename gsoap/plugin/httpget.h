@@ -55,13 +55,14 @@ compiling, linking, and/or using OpenSSL is allowed.
 extern "C" {
 #endif
 
-#define HTTP_GET_ID "SOAP-HTTP-GET/2.0" /* plugin identification */
+#define HTTP_GET_ID "SOAP-HTTP-GET/2.1" /* plugin identification */
 
 extern const char http_get_id[];
 
 /* This is the local plugin data shared among all copies of the soap struct: */
 struct http_get_data
-{ int (*fparse)(struct soap*); /* to save and call the internal HTTP header parser */
+{
+  int (*fparse)(struct soap*); /* to save and call the internal HTTP header parser */
   int (*fget)(struct soap*); /* user-defined server-side HTTP GET handler */
   size_t stat_get;  /* HTTP GET usage statistics */
   size_t stat_post; /* HTTP POST usage statistics */
@@ -72,16 +73,9 @@ struct http_get_data
 };
 
 int http_get(struct soap*, struct soap_plugin*, void*);
-int soap_get_connect(struct soap*, const char*, const char*);
+int soap_http_get_connect(struct soap*, const char*, const char*);
 
-void soap_get_stats(struct soap *soap, size_t *stat_get, size_t *stat_post, size_t *stat_fail, size_t **hist_min, size_t **hist_hour, size_t **hist_day);
-
-char *soap_query(struct soap*);
-char *soap_query_key(struct soap*, char**);
-char *soap_query_val(struct soap*, char**);
-
-int soap_encode_string(const char*, char*, size_t);
-const char* soap_decode_string(char*, size_t, const char*);
+void soap_http_get_stats(struct soap *soap, size_t *stat_get, size_t *stat_post, size_t *stat_fail, size_t **hist_min, size_t **hist_hour, size_t **hist_day);
 
 #ifdef __cplusplus
 }

@@ -502,6 +502,18 @@ wstService::RequestSecurityToken(struct wst__RequestSecurityTokenType *request, 
 }
 
 int
+wstService::RequestSecurityTokenResponse(struct wst__RequestSecurityTokenResponseType *request, struct wst__RequestSecurityTokenResponseCollectionType *response)
+{ 
+  (void)soap;
+  (void)request;
+  (void)response;
+
+  /* service logic goes here to populate RSTRC */
+
+  return soap_wsa_reply(soap, NULL, soap_wst_rstrc_action);
+}
+
+int
 wstService::RequestSecurityTokenCollection(struct wst__RequestSecurityTokenCollectionType *request, struct wst__RequestSecurityTokenResponseCollectionType *response)
 { 
   (void)soap;

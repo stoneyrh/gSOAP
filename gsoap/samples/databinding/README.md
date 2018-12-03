@@ -4056,7 +4056,7 @@ The `method-mime-type` property serves two purposes:
    [attributes members](#toxsd9-5).  
 
 Use `method-input-mime-type` and `method-output-mime-type` to differentiate the
-attachment types between SOAP request and response messages.
+attachment types between request and response messages.
 
 🔝 [Back to table of contents](#)
 

@@ -3,8 +3,6 @@
 
         gSOAP HTTP POST application/x-www-form-urlencoded data plugin.
 
-        Requires linkage with httpget.c (for soap_query_key and soap_query_val)
-
         Note: multipart/related and multipart/form-data are handled in gSOAP as
         MIME attachments.
 
@@ -68,7 +66,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 
         To parse form data in the handler, use:
 
-        char *s = soap_get_form(soap);
+        char *s = soap_http_get_form(soap);
         while (s)
         {
           char *key = soap_query_key(soap, &s); // decode next form string key
@@ -76,7 +74,7 @@ compiling, linking, and/or using OpenSSL is allowed.
           ...
         }
 
-        The soap_get_form() function reads an HTTP body and stores it in an
+        The soap_http_get_form() function reads an HTTP body and stores it in an
         internal buffer that is returned as a char*. This buffer can be used to
         process HTTP POST body content. The soap_query_key/val functions simply
         extract key-value pairs from this buffer.
@@ -158,92 +156,6 @@ static int http_form_parse_header(struct soap *soap, const char *key, const char
   return data->fparsehdr(soap, key, val); /* parse HTTP header */
 }
 
-char * soap_get_form(struct soap *soap)
-{
-  char *s;
-  ULONG64 k = soap->length;
-  /* check HTTP body, return "" if none */
-  if (!k && !(soap->mode & SOAP_ENC_ZLIB) && (soap->mode & SOAP_IO) != SOAP_IO_CHUNK)
-    return soap_strdup(soap, "?");
-  /* do not consume DIME or MIME attachments */
-  if ((soap->mode & SOAP_ENC_DIME))
-  {
-    soap->error = SOAP_DIME_ERROR;
-    return NULL;
-  }
-  if ((soap->mode & SOAP_ENC_MIME))
-  {
-    soap->error = SOAP_MIME_ERROR;
-    return NULL;
-  }
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Parsing HTTP body (mode=0x%x)\n", soap->mode));
-  if (k && !(soap->mode & SOAP_ENC_ZLIB))
-  {
-    char *t;
-    /* http content length != 0 and uncompressed body */
-    if ((SOAP_MAXALLOCSIZE != 0 && k > SOAP_MAXALLOCSIZE) || k > (ULONG64)((size_t)-3))
-    {
-      soap->error = SOAP_EOM;
-      return NULL;
-    }
-    s = t = (char*)soap_malloc(soap, (size_t)k + 2);
-    if (s)
-    {
-      size_t i;
-      *t++ = '?';
-      for (i = 0; i < k; i++)
-      {
-        soap_wchar c = soap_get1(soap);
-        if ((int)c == EOF)
-          break;
-        *t++ = (char)(c & 0xFF);
-      }
-      *t = '\0';
-    }
-    else
-    {
-      soap->error = SOAP_EOM;
-      return NULL;
-    }
-  }
-  else
-  {
-    size_t i, l = 0;
-    if (soap_alloc_block(soap) == NULL)
-      return NULL;
-    s = (char*)soap_push_block(soap, NULL, 1);
-    if (!s)
-      return NULL;
-    *s = '?';
-    for (;;)
-    {
-      size_t k = SOAP_BLKLEN;
-      s = (char*)soap_push_block(soap, NULL, k);
-      if (!s)
-        return NULL;
-      for (i = 0; i < k; i++)
-      {
-        soap_wchar c;
-        l++;
-        if (l == 0)
-        {
-          soap->error = SOAP_EOM;
-          return NULL;
-        }
-        c = soap_get1(soap);
-        if ((int)c == EOF)
-          goto end;
-        *s++ = (char)(c & 0xFF);
-      }
-    }
-end:
-    *s = '\0';
-    soap_size_block(soap, NULL, i + 1);
-    s = soap_save_block(soap, NULL, NULL, 0);
-  }
-  return s;
-}
-  
 /******************************************************************************/
 
 #ifdef __cplusplus

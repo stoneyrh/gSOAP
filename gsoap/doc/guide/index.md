@@ -115,7 +115,7 @@ be interpreted as described in RFC-2119.
 * **XML**: implements a fast schema-specific XML pull parser that does not
   require intermediate storage of XML in a DOM to deserialize data.
 
-* **HTTP**: HTTP 1.0/1.1/2.0 (2.0 requires gSOAP versions 2.8.72 and
+* **HTTP**: HTTP 1.0/1.1/2.0 (HTTP 2.0 requires gSOAP versions 2.8.74 and
   greater), IPv4 and IPv6, HTTPS (with OpenSSL or GNUTLS), cookies,
   authentication, Zlib deflate and gzip compression, and connecting through
   HTTP proxies.
@@ -2508,13 +2508,13 @@ For example:
     int main() 
     {
       struct soap *soap = soap_new1(SOAP_XML_INDENT);
-      soap->send_timeout = 10; // 10 seconds max socket delay 
-      soap->recv_timeout = 10; // 10 seconds max socket delay 
+      soap->send_timeout = 10;     // 10 seconds max socket delay 
+      soap->recv_timeout = 10;     // 10 seconds max socket delay 
       soap->accept_timeout = 3600; // server stops after 1 hour of inactivity 
-      soap->max_keep_alive = 100; // max keep-alive sequence 
+      soap->max_keep_alive = 100;  // max keep-alive sequence 
       // soap_ssl_server_context(soap, ...); // call when HTTPS is used
-      SOAP_SOCKET m, s; // master and slave sockets 
-      m = soap_bind(soap, NULL, 18083, 100); 
+      SOAP_SOCKET m, s;                      // master and slave sockets 
+      m = soap_bind(soap, NULL, 18083, 1);   // backlog=1 for iterative servers 
       if (!soap_valid_socket(m)) 
       {
         soap_print_fault(soap, stderr); 
@@ -2548,7 +2548,7 @@ The `::soap_serve` dispatcher handles one request or multiple requests when HTTP
 
 The gSOAP functions that are frequently used for server-side coding are:
 
-* `soap_bind(struct soap *soap, char *host, int port, int backlog)` binds `::soap::master` socket to the specified port and host name (or NULL for the current machine), using a backlog queue size, returns master socket. We check the return value with `#soap_valid_socket`
+* `soap_bind(struct soap *soap, char *host, int port, int backlog)` binds `::soap::master` socket to the specified port and host name (or NULL for the current machine), using a backlog queue size of pending requests, returns master socket. We check the return value with `#soap_valid_socket`.  The backlog queue size should be small, say 1 or 2, for iterative (not multi-threaded) stand-alone servers to improve fairness among connecting clients.
 
 * `soap_accept(struct soap *soap)` returns `#SOAP_SOCKET` socket `::soap::socket` when connected.  We check the return value with `#soap_valid_socket`.
 
@@ -2590,7 +2590,7 @@ The following example illustrates the use of threads to improve the quality of s
     #include "soapH.h" 
     #include "ns.nsmap"
     #include "plugin/threads.h"
-    #define BACKLOG (100) // Max request backlog 
+    #define BACKLOG (100) // Max request backlog of pending requests
 
     int main(int argc, char **argv) 
     {
@@ -2678,7 +2678,7 @@ The following example limits the number of concurrent threads to reduce the mach
     #include "soapH.h" 
     #include "ns.nsmap"
     #include "plugin/threads.h" 
-    #define BACKLOG (100) // Max request backlog 
+    #define BACKLOG (100) // Max request backlog of pending requests
     #define MAX_THR (10)  // Max threads to serve requests 
 
     int main(int argc, char **argv) 
@@ -2774,17 +2774,20 @@ The advantage of the code shown above is that the machine cannot be overloaded w
     #include "soapH.h" 
     #include "ns.nsmap"
     #include "plugin/threads.h"
-    #define BACKLOG (100)   // Max. request backlog 
-    #define MAX_THR (10) // Size of thread pool 
+
+    #define BACKLOG (100)    // Max. request backlog of pending requests
+    #define MAX_THR (64)     // Size of thread pool 
     #define MAX_QUEUE (1000) // Max. size of request queue 
 
-    SOAP_SOCKET queue[MAX_QUEUE]; // The global request queue of sockets 
-    int head = 0, tail = 0; // Queue head and tail 
     void *process_queue(void*); 
     int enqueue(SOAP_SOCKET); 
     SOAP_SOCKET dequeue(); 
-    MUTEX_TYPE queue_cs; 
-    COND_TYPE queue_cv; 
+
+    static SOAP_SOCKET queue[MAX_QUEUE]; // The global request queue of sockets 
+    static int head = 0, tail = 0;
+    static MUTEX_TYPE queue_lock;    // mutex for queue ops critical sections
+    static COND_TYPE queue_notempty; // condition variable when queue is empty
+    static COND_TYPE queue_notfull;  // condition variable when queue is full
 
     int main(int argc, char **argv) 
     {
@@ -2807,8 +2810,9 @@ The advantage of the code shown above is that the machine cannot be overloaded w
         if (!soap_valid_socket(m)) 
           exit(EXIT_FAILURE); 
         fprintf(stderr, "Socket connection successful %d\n", m); 
-        MUTEX_SETUP(queue_cs); 
-        COND_SETUP(queue_cv); 
+        MUTEX_SETUP(queue_lock); 
+        COND_SETUP(queue_notempty); 
+        COND_SETUP(queue_notfull); 
         for (i = 0; i < MAX_THR; i++) 
         {
           soap_thr[i] = soap_copy(&soap); 
@@ -2822,8 +2826,7 @@ The advantage of the code shown above is that the machine cannot be overloaded w
           if (soap_valid_socket(s)) 
           {
             fprintf(stderr, "Thread %d accepts socket %d connection from IP %d.%d.%d.%d\n", i, s, (soap.ip>>24)&0xFF, (soap.ip>>16)&0xFF, (soap.ip>>8)&0xFF, soap.ip&0xFF); 
-            while (enqueue(s) == SOAP_EOM) 
-              sleep(1); // failed, try again
+            enqueue(s);
           }
           else if (soap.errnum) // accept failed, try again after 1 second
           {
@@ -2837,10 +2840,7 @@ The advantage of the code shown above is that the machine cannot be overloaded w
           } 
         } 
         for (i = 0; i < MAX_THR; i++) 
-        {
-          while (enqueue(SOAP_INVALID_SOCKET) == SOAP_EOM) 
-            sleep(1); // failed, try again
-        } 
+          enqueue(SOAP_INVALID_SOCKET);
         for (i = 0; i < MAX_THR; i++) 
         {
           fprintf(stderr, "Waiting for thread %d to terminate... ", i); 
@@ -2848,8 +2848,9 @@ The advantage of the code shown above is that the machine cannot be overloaded w
           fprintf(stderr, "terminated\n"); 
           soap_free(soap_thr[i]); 
         } 
-        MUTEX_CLEANUP(queue_cs); 
-        COND_CLEANUP(queue_cv); 
+        COND_CLEANUP(queue_notfull); 
+        COND_CLEANUP(queue_notempty); 
+        MUTEX_CLEANUP(queue_lock); 
       } 
       soap_destroy(&soap);
       soap_end(&soap);
@@ -2873,37 +2874,32 @@ The advantage of the code shown above is that the machine cannot be overloaded w
       return NULL; 
     } 
 
-    int enqueue(SOAP_SOCKET sock) 
+    /* add job (socket with pending request) to queue */
+    void enqueue(SOAP_SOCKET s)
     {
-      int status = SOAP_OK; 
-      int next; 
-      MUTEX_LOCK(queue_cs); 
-      next = tail + 1; 
-      if (next >= MAX_QUEUE) 
-        next = 0; 
-      if (next == head) 
-        status = SOAP_EOM; 
-      else 
-      {
-        queue[tail] = sock; 
-        tail = next; 
-        COND_SIGNAL(queue_cv); 
-      } 
-      MUTEX_UNLOCK(queue_cs); 
-      return status; 
-    } 
+      int next;
+      MUTEX_LOCK(queue_lock);
+      next = (tail + 1) % MAX_QUEUE;
+      if (next == head)
+        COND_WAIT(queue_notfull, queue_lock);
+      jobs[tail] = s;
+      tail = next;
+      COND_SIGNAL(queue_notempty);
+      MUTEX_UNLOCK(queue_lock);
+    }
 
-    SOAP_SOCKET dequeue() 
+    /* remove job (socket with request) from queue */
+    SOAP_SOCKET dequeue()
     {
-      SOAP_SOCKET sock; 
-      MUTEX_LOCK(queue_cs); 
-      while (head == tail) 
-        COND_WAIT(queue_cv, queue_cs); 
-      sock = queue[head++]; 
-      if (head >= MAX_QUEUE) 
-        head = 0; 
-      MUTEX_UNLOCK(queue_cs); 
-      return sock; 
+      SOAP_SOCKET s;
+      MUTEX_LOCK(queue_lock);
+      if (head == tail)
+        COND_WAIT(queue_notempty, queue_lock);
+      s = jobs[head];
+      head = (head + 1) % MAX_QUEUE;
+      COND_SIGNAL(queue_notfull);
+      MUTEX_UNLOCK(queue_lock);
+      return s;
     }
 
     // ... the service operations are defined here ...
@@ -2911,7 +2907,6 @@ The advantage of the code shown above is that the machine cannot be overloaded w
 
 For this multi-threaded application the <i>`gsoap/plugin/threads.h`</i> and
 <i>`gsoap/plugin/threads.c`</i> portable threads and mutex API is used.
-
 
 🔝 [Back to table of contents](#)
 
@@ -3235,7 +3230,7 @@ Chaining the services is also simpler to implement since we use one `::soap` con
       Abc::soapABCService abc(soap); // generated with soapcpp2 -j -S -qAbc 
       Uvw::soapUVWService uvw(soap); // generated with soapcpp2 -j -S -qUvw 
       Xyz::soapXYZService xyz(soap); // generated with soapcpp2 -j -S -qXyz 
-      if (!soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+      if (!soap_valid_socket(soap_bind(soap, NULL, 8080, BACKLOG)))
         exit(EXIT_FAILURE);
       while (1)
       {
@@ -4099,7 +4094,7 @@ The following extra functions are generated by soapcpp2 for deep copying and del
   (non-smart) pointers pointing to the same data).  Can be safely used after
   `soap_dup(NULL)` to delete the deep copy.  Does not delete the object itself.
 
-The following initializing and finalizing functions should be used before and after calling lower-level IO functions such as `::soap_send`, `::soap_send_raw`, `::soap::get0`, `::soap::get1`, and `::soap_get_http_body` (this is not needed when calling the `soap_read_T` and `soap_write_T` functions):
+The following initializing and finalizing functions should be used before and after calling lower-level IO functions such as `::soap_send`, `::soap_send_raw`, `::soap_get0`, `::soap_get1`, and `::soap_http_get_body` (this is not needed when calling the `soap_read_T` and `soap_write_T` functions):
 
 * `int soap_begin_send(struct soap*)`    start a sending phase.
 
@@ -5086,8 +5081,8 @@ option      | result
 `-Ed`       | generate extra functions for deep deletion
 `-Et`       | generate extra functions for data traversals with walker functions
 `-L`        | don't generate `soapClientLib` and `soapServerLib`
-`-A`        | require HTTP SOAPAction header to invoke server-side operations
-`-a`        | use HTTP SOAPAction header with WS-Addressing to invoke server-side operations
+`-A`        | require HTTP SOAPAction headers to invoke server-side operations
+`-a`        | use HTTP SOAPAction headers with WS-Addressing to invoke server-side operations
 `-b`        | serialize byte arrays `char[N]` as string
 `-c`        | generate C source code
 `-c++`      | generate C++ source code (default)
@@ -5277,7 +5272,7 @@ See Section \ref param  on how to change the declaration if the service response
 With SOAP messaging the request and response XML messages are placed in the
 <i>`SOAP-ENV:Envelope`</i> and <i>`SOAP-ENV:Body`</i> elements.  SOAP 1.1
 document/literal messaging is the default messaging mode in gSOAP, which are
-modified to SOAP or REST with `//gsoap <prefix> service method-protocol:`</i>
+modified to SOAP or REST with <i>`//gsoap <prefix> service method-protocol:`</i>
 directives, see Section \ref directives.
 
 The soapcpp2 tool generates a client stub function for the service
@@ -9965,8 +9960,8 @@ To generate multipartRelated bindings in the WSDL file indicating the use of MIM
 ~~~
 
 This directive directive can be repeated for each attachment you want to
-associate with a method's request and response message.  see also Section \ref
-directives .
+associate with a method's request and response message.  see also Section
+\ref directives .
 
 For example:
 
@@ -10332,12 +10327,12 @@ accept or reject them.
 The explicit MIME/MTOM streaming mechanism consists of three API functions:
 
 * `void soap_post_check_mime_attachments(struct soap *soap)` 
-  This function enables post-processing of MIME/MTOM attachments received.  This means that the presence of MIME/MTOM attachments must be explicitly checked and retrieved by calling `::soap_check_mime_attachments` and when successful `::soap_get_mime_attachment` should be called to retrieve each attachment.
+  This function enables post-processing of MIME/MTOM attachments received.  This means that the presence of MIME/MTOM attachments must be explicitly checked and retrieved by calling `::soap_check_mime_attachments` and when successful `::soap_recv_mime_attachment` should be called to retrieve each attachment.
 
 * `int soap_check_mime_attachments(struct soap *soap)`
   This function checks the presence of a MIME/MTOM attachment after calling a service operation by returning nonzero when attachments are present.  Returns nonzero if attachments are present.  Requires `::soap_post_check_mime_attachments`.
 
-* `struct soap_multipart *soap_get_mime_attachment(struct soap *soap, void *handle)` 
+* `struct soap_multipart *soap_recv_mime_attachment(struct soap *soap, void *handle)` 
 This function parses an attachment and invokes the MIME callbacks when set.  The `handle` parameter is passed to `fmimewriteopen`.  The handle may contain any data that is extracted from the SOAP message body to guide the redirection of the stream in the callbacks.  Returns a struct with a `char *ptr` member that contains the handle value returned by the `fmimewriteopen` callback, and `char *id`, `char *type`, and `char *description` member variables with the MIME id, type, and description info when present in the attachment.
 
 Example client in C:
@@ -10358,7 +10353,7 @@ Example client in C:
         {
           ... // get data 'handle' from SOAP response and pass to callbacks 
           ... // set the fmime callbacks, if needed 
-          struct soap_multipart *content = soap_get_mime_attachment(soap, (void*)handle); 
+          struct soap_multipart *content = soap_recv_mime_attachment(soap, (void*)handle); 
           printf("Received attachment with id=%s and type=%s\n", content->id?content->id:"", content->type?content->type:""); 
         } while (content); 
         if (soap->error) 
@@ -10390,7 +10385,7 @@ The server-side service operations are implemented as usual, but with additional
         {
           ... // get data 'handle' from SOAP request and pass to callbacks 
           ... // set the fmime callbacks, if needed 
-          struct soap_multipart *content = soap_get_mime_attachment(soap, (void*)handle); 
+          struct soap_multipart *content = soap_recv_mime_attachment(soap, (void*)handle); 
           printf("Received attachment with id=%s and type=%s\n", content->id?content->id:"", content->type?content->type:""); 
         } while (content); 
         if (soap->error) 
@@ -10719,7 +10714,7 @@ discussed in Section \ref wsaudp .
       soap_init1(&soap, SOAP_IO_UDP); // must set UDP flag 
       soap_register_plugin(&soap, soap_wsa);
       // bind to host (NULL = current host) and port: 
-      if (!soap_valid_socket(soap_bind(&soap, host, port, 100))) 
+      if (!soap_valid_socket(soap_bind(&soap, host, port, BACKLOG))) 
       {
         soap_print_fault(&soap, stderr); 
         exit(EXIT_FAILURE); 
@@ -10798,7 +10793,7 @@ groups you are interested in:
       struct ip_mreq mcast; 
       soap_init1(&soap, SOAP_IO_UDP); 
       soap_register_plugin(&soap, soap_wsa);
-      if (!soap_valid_socket(soap_bind(&soap, host, port, 100))) 
+      if (!soap_valid_socket(soap_bind(&soap, host, port, BACKLOG))) 
       {
         soap_print_fault(&soap, stderr); 
         exit(EXIT_FAILURE); 
@@ -11050,7 +11045,7 @@ The `setsockopt` level `SOL_SOCKET` option `SO_KEEPALIVE` is set when keep-alive
     soap->tcp_keep_cnt = 5;     // maximum number of keepalive probes TCP should send before dropping the connection
 ~~~
 
-For UDP messaging, use `#SOAP_IO_UDP`.  See also Section \ref udp.  The context flags that can be set at the client side for UDP messaging are `::soap::ipv4_multicast_if`, `::soap::ipv4_multicast_ttl`, and `::soap::ipv6_multicast_if`:
+For UDP messaging, use `#SOAP_IO_UDP`.  See also Section \ref UDP.  The context flags that can be set at the client side for UDP messaging are `::soap::ipv4_multicast_if`, `::soap::ipv4_multicast_ttl`, and `::soap::ipv6_multicast_if`:
 
 context flag                 | result
 ---------------------------- | ------
@@ -11421,7 +11416,7 @@ To log messages more efficiently, use the `::logging` plugin.
 
 From the perspective of the C/C++ language, a few C/C++ language features are not supported by gSOAP and these features cannot be used in an interface header file for soapcpp2.
 
-* STL: the soapcpp2 tool supports the serialization of C++ strings `std::string` and `std::wstring` (see Section \ref strings ) and the containers `std::deque`, `std::list`, `std::vector`, and `std::set`, (see Section \ref templates ).  Also `std::shared_ptr`, `std::unique_ptr`, and `std::auto_ptr` are supported.
+* STL: the soapcpp2 tool supports the serialization of C++ strings `std::string` and `std::wstring` and the containers `std::deque`, `std::list`, `std::vector`, and `std::set`, (see Section \ref templates ).  Also `std::shared_ptr`, `std::unique_ptr`, and `std::auto_ptr` are supported.  Other STL types are not serializable.
 
 * Templates: the soapcpp2 tool assumes that templates classes have only one template parameter type and these templates are containers of values of this template parameter type.  This template class should define `begin()`, `end()`, `size()`, `clear()`, and `insert()` methods.
 
@@ -11666,7 +11661,7 @@ The `method-mime-type` property serves two purposes:
    attributes members.
 
 Use `method-input-mime-type` and `method-output-mime-type` to differentiate the
-attachment types between SOAP request and response messages.
+attachment types between request and response messages.
 
 🔝 [Back to table of contents](#)
 
@@ -13194,7 +13189,7 @@ The `::soap` context flags are:
 
 * `::soap::bind_flags` to set server-side `setsockopt` `SOL_SOCKET` socket options when executing `::soap_bind`.
 
-* `::soap::bind_ipv6only` set to 1 to set `setsockopt` `IPPROTO_IPV6` `IPV6_V6ONLY`.
+* `::soap::bind_v6only` set to 1 to set `setsockopt` `IPPROTO_IPV6` `IPV6_V6ONLY`.
 
 * `::soap::accept_flags` to set flags to the `setsockopt` socket options when executing `::soap_accept`.
 
@@ -13287,7 +13282,7 @@ multi-threaded stand-alone SOAP Web Service:
         soap_print_fault(soap, stderr); 
         exit(EXIT_FAILURE); 
       } 
-      m = soap_bind(soap, NULL, 18000, 100); /* use port 18000 */
+      m = soap_bind(soap, NULL, 18000, BACKLOG); /* use port 18000 */
       if (!soap_valid_socket(m)) 
       {
         soap_print_fault(soap, stderr); 
@@ -13916,7 +13911,7 @@ The following example server adopts cookies for session control:
       } 
       else 
       {
-        m = soap_bind(&soap, NULL, atoi(argv[1]), 100); 
+        m = soap_bind(&soap, NULL, atoi(argv[1]), 1); // backlog=1 for iterative servers
         if (!soap_valid_socket(m)) 
           exit(EXIT_FAILURE); 
         for (int i = 1; ; i++) 
@@ -14566,7 +14561,7 @@ To serve both the quote and rate services on the same port, we chain the service
 
 ~~~{.cpp}
     struct soap *soap = soap_new(); 
-    if (soap_valid_socket(soap_bind(soap, NULL, 8080, 100)))
+    if (soap_valid_socket(soap_bind(soap, NULL, 8080, 1))) // backlog=1 for iterative servers
     {
       while (1)
       {
@@ -14950,7 +14945,7 @@ at <https://www.genivia.com/doc>.  A number of example plugins are included in
 the gSOAP package's <i>`gsoap/plugin`</i> directory. Some of these plugins are
 discussed in the next sections.
 
-See also API documentation Module \ref group_plugins.
+See also API documentation Module \ref group_plugin .
 
 🔝 [Back to table of contents](#)
 
@@ -14991,7 +14986,7 @@ To enable the plugin in your code, register the plugin and set the streams as fo
     ... // process messages
     soap_set_logging_inbound(soap, NULL); // disable logging 
     soap_set_logging_outbound(soap, NULL); // disable logging 
-    soap_get_logging_stats(soap, &bytes_out, &bytes_in);
+    soap_logging_stats(soap, &bytes_out, &bytes_in);
     ... //
     soap_reset_logging_stats(soap);
 ~~~
@@ -15090,7 +15085,7 @@ To receive any HTTP Body data into a buffer, use:
       char *response = NULL; 
       size_t response_len;
       if (soap_GET(soap, endpoint, NULL)
-       || (response = soap_get_http_body(soap, &response_len)) == NULL
+       || (response = soap_http_get_body(soap, &response_len)) == NULL
        || soap_end_recv(&soap))
         ... // error
       else
@@ -15105,7 +15100,7 @@ See also `::http_get`.
 
 🔝 [Back to table of contents](#)
 
-### RESTful server-side API with the HTTP POST plugin   {#RESTfulservicePOST)
+### RESTful server-side API with the HTTP POST plugin   {#RESTfulservicePOST}
 
 Server-side use of RESTful HTTP POST, PUT, PATCH, and DELETE operations are supported
 with the `::http_post` HTTP POST plugin <i>`gsoap/plugin/httppost.c`</i>.
@@ -15148,7 +15143,7 @@ An example image handler that checks the specific image type:
       // if necessary, check type in soap->http_content 
       if (soap->http_content && !soap_tag_cmp(soap->http_content, "image/gif") 
         return 404; // HTTP error 404 
-      if ((buf = soap_get_http_body(soap, &len)) == NULL)
+      if ((buf = soap_http_get_body(soap, &len)) == NULL)
         return soap->error; 
       // ... now process image in buf 
       // reply with empty HTTP 200 OK response: 
@@ -15182,7 +15177,7 @@ For client applications to use HTTP POST, use the `::soap_POST` operation:
      || soap_end_send(soap)) 
      ... // error
     if (soap_begin_recv(&soap) 
-     || (buf = soap_get_http_body(soap, &len)) == NULL
+     || (buf = soap_http_get_body(soap, &len)) == NULL
      || soap_end_recv(&soap)) 
       ... // error
     // ... use buf[0..len-1] 
@@ -15497,7 +15492,7 @@ defined and linked:
 These event handlers will be invoked when inbound WS-Discovery messages arrive using:
 
 ~~~{.cpp}
-    if (!soap_valid_socket(soap_bind(soap, NULL, port, 100))) 
+    if (!soap_valid_socket(soap_bind(soap, NULL, port, BACKLOG))) 
       ... // error 
     if (soap_wsdd_listen(soap, timeout)) 
       ... // error

@@ -47,7 +47,7 @@ int main(int argc, char **argv)
   if (argc < 2)
     soap_serve(&soap);	/* serve as CGI application */
   else
-  { m = soap_bind(&soap, NULL, atoi(argv[1]), 100);
+  { m = soap_bind(&soap, NULL, atoi(argv[1]), 1);
     if (!soap_valid_socket(m))
     { soap_print_fault(&soap, stderr);
       exit(1);

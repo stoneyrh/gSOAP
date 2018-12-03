@@ -47,14 +47,16 @@ void CRYPTO_thread_cleanup();
 void sigpipe_handle(int);
 
 int main()
-{ struct soap soap;
+{
+  struct soap soap;
   double a, b, result;
   /* Init SSL (can skip or call multiple times, engien inits automatically) */
   soap_ssl_init();
   /* soap_ssl_noinit(); call this first if SSL is initialized elsewhere */
   /* set up lSSL ocks */
   if (CRYPTO_thread_setup())
-  { fprintf(stderr, "Cannot setup thread mutex for OpenSSL\n");
+  {
+    fprintf(stderr, "Cannot setup thread mutex for OpenSSL\n");
     exit(1);
   }
   a = 10.0;
@@ -90,22 +92,24 @@ int main()
     NULL,		/* optional capath to directory with trusted certificates */
     NULL		/* if randfile!=NULL: use a file with random data to seed randomness */ 
   ))
-  { soap_print_fault(&soap, stderr);
+  {
+    soap_print_fault(&soap, stderr);
     exit(1);
   }
   /* code below enables CRL, may need SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE when certs have no CRL resulting in a warning/error */
   if (soap_ssl_crl(&soap, "")
   )
-  { soap_print_fault(&soap, stderr);
+  {
+    soap_print_fault(&soap, stderr);
     exit(1);
   }
-  soap.connect_timeout = 60;	/* try to connect for 1 minute */
-  soap.send_timeout = soap.recv_timeout = 30;	/* if I/O stalls, then timeout after 30 seconds */
+  soap.connect_timeout = 30;	/* try to connect for up to 30 seconds */
+  soap.send_timeout = soap.recv_timeout = 10;	/* max I/O idle time is 10 seconds */
   if (soap_call_ns__add(&soap, server, "", a, b, &result) == SOAP_OK)
     fprintf(stdout, "Result: %f + %f = %f\n", a, b, result);
   else
     soap_print_fault(&soap, stderr);
-  soap_destroy(&soap); /* C++ */
+  soap_destroy(&soap);
   soap_end(&soap);
   soap_done(&soap);
   CRYPTO_thread_cleanup();
@@ -204,7 +208,8 @@ void CRYPTO_thread_cleanup()
 /* OpenSSL not used, e.g. GNUTLS is used */
 
 int CRYPTO_thread_setup()
-{ return SOAP_OK;
+{
+  return SOAP_OK;
 }
 
 void CRYPTO_thread_cleanup()

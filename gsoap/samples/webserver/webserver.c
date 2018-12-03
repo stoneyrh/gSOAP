@@ -269,6 +269,7 @@ int main(int argc, char **argv)
   struct soap soap;
   SOAP_SOCKET master;
   int port = 0;
+  int backlog = BACKLOG;
 
   start = time(NULL);
 
@@ -280,6 +281,8 @@ int main(int argc, char **argv)
     port = atol(options[OPTION_port].value);
   if (!port)
     port = 8080;
+  if (options[OPTION_i].selected)
+    backlog = 1;
   fprintf(stderr, "Starting Web server on port %d\n", port);
   /* if the port is an odd number, the Web server uses HTTPS only */
   if (port % 2)
@@ -295,7 +298,7 @@ int main(int argc, char **argv)
   soap_ssl_init();
   /* soap_ssl_noinit(); call this first if SSL is initialized elsewhere */
 
-  soap_init2(&soap, SOAP_IO_KEEPALIVE, SOAP_IO_DEFAULT);
+  soap_init(&soap);
 
   /* set up lSSL ocks */
   if (CRYPTO_thread_setup())
@@ -355,7 +358,7 @@ int main(int argc, char **argv)
   /* soap.accept_flags = SO_NOSIGPIPE; */       /* some systems like this */
   /* soap.socket_flags = MSG_NOSIGNAL; */       /* others need this */
   /* signal(SIGPIPE, sigpipe_handle); */        /* and some older Unix systems may require a sigpipe handler */
-  master = soap_bind(&soap, NULL, port, BACKLOG);
+  master = soap_bind(&soap, NULL, port, backlog);
   if (!soap_valid_socket(master))
   {
     soap_print_fault(&soap, stderr);
@@ -429,7 +432,6 @@ void server_loop(struct soap *soap)
         fprintf(stderr, "Waiting for thread %d to terminate...\n", job);
         THREAD_JOIN(tids[job]);
         fprintf(stderr, "Thread %d has stopped\n", job);
-        soap_done(soap_thr[job]);
         free(soap_thr[job]);
       }
 
@@ -449,7 +451,8 @@ void server_loop(struct soap *soap)
         soap_thr[job]->user = (void*)(long)job; /* int to ptr */
         
         fprintf(stderr, "Starting thread %d\n", job);
-        THREAD_CREATE(&tids[job], (void*(*)(void*))process_queue, (void*)soap_thr[job]);
+        while (THREAD_CREATE(&tids[job], (void*(*)(void*))process_queue, (void*)soap_thr[job]))
+          sleep(1);
       }
 
       poolsize = job;
@@ -574,7 +577,9 @@ void *process_request(void *soap)
     soap_print_fault(tsoap, stderr);
   }
   else if (options[OPTION_v].selected)
+  {
     fprintf(stderr, "Thread %d completed\n", (int)(long)tsoap->user);
+  }
 
   soap_destroy(tsoap);
   soap_end(tsoap);
@@ -640,12 +645,13 @@ void enqueue(SOAP_SOCKET sock)
   int next;
   int ret;
 
-  if ((ret = MUTEX_LOCK(queue_lock)))
+  if ((ret = MUTEX_LOCK(queue_lock)) != 0)
     fprintf(stderr, "MUTEX_LOCK error %d\n", ret);
 
   next = (tail + 1) % MAX_QUEUE;
-  if (head == next)
-    COND_WAIT(queue_notfull, queue_lock);
+  while (head == next)
+    if ((ret = COND_WAIT(queue_notfull, queue_lock)) != 0)
+      fprintf(stderr, "COND_WAIT error %d\n", ret);
 
   queue[tail] = sock;
   tail = next;
@@ -653,7 +659,7 @@ void enqueue(SOAP_SOCKET sock)
   if (options[OPTION_v].selected)
     fprintf(stderr, "enqueue(%d)\n", sock);
 
-  if ((ret = COND_SIGNAL(queue_notempty)))
+  if ((ret = COND_SIGNAL(queue_notempty)) != 0)
     fprintf(stderr, "COND_SIGNAL error %d\n", ret);
 
   if ((ret = MUTEX_UNLOCK(queue_lock)))
@@ -665,11 +671,11 @@ SOAP_SOCKET dequeue()
   SOAP_SOCKET sock;
   int ret;
 
-  if ((ret = MUTEX_LOCK(queue_lock)))
+  if ((ret = MUTEX_LOCK(queue_lock)) != 0)
     fprintf(stderr, "MUTEX_LOCK error %d\n", ret);
 
-  if (head == tail)
-    if ((ret = COND_WAIT(queue_notempty, queue_lock)))
+  while (head == tail)
+    if ((ret = COND_WAIT(queue_notempty, queue_lock)) != 0)
       fprintf(stderr, "COND_WAIT error %d\n", ret);
 
   sock = queue[head];
@@ -841,7 +847,7 @@ int http_PUT_handler(struct soap *soap)
   if (!strcmp(soap->path, "/person.xml"))
   {
     /* in this example we actually do not save the data as a file person.xml, but we could! */
-    const char *data = soap_get_http_body(soap, NULL);
+    const char *data = soap_http_get_body(soap, NULL);
     (void)soap_end_recv(soap);
     return 202; /* HTTP accepted */
   }
@@ -868,7 +874,7 @@ int http_POST_handler(struct soap *soap)
   if (!strcmp(soap->path, "/person.xml"))
   {
     /* in this example we actually do not save the data as a file person.xml, but we could! */
-    const char *data = soap_get_http_body(soap, NULL);
+    const char *data = soap_http_get_body(soap, NULL);
     (void)soap_end_recv(soap);
     return copy_file(soap, "person.xml", "text/xml");
   }
@@ -1009,7 +1015,7 @@ int calcpost(struct soap *soap)
 {
   int o = 0, a = 0, b = 0, val;
   char buf[256];
-  char *s = soap_get_form(soap); /* get form data from body */
+  char *s = soap_http_get_form(soap); /* get form data from body */
   while (s)
   {
     char *key = soap_query_key(soap, &s); /* decode next key */
@@ -1250,8 +1256,8 @@ int info(struct soap *soap)
 </table>", t0, t1, t2, t3, t4, t5, t6, t7);
   if (soap_send(soap, buf))
     return soap->error;
-  soap_get_stats(soap, &stat_get, &stat_post, &stat_fail, &hist_min, &hist_hour, &hist_day);
-  soap_get_logging_stats(soap, &stat_sent, &stat_recv);
+  soap_http_get_stats(soap, &stat_get, &stat_post, &stat_fail, &hist_min, &hist_hour, &hist_day);
+  soap_logging_stats(soap, &stat_sent, &stat_recv);
   soap_send(soap, "<h2>Usage Statistics</h2>");
   html_hbar(soap, "HTTP&nbsp;GET", 120, stat_get, 0x0000FF);
   html_hbar(soap, "HTTP&nbsp;POST", 120, stat_post, 0x00FF00);

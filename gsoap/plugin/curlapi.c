@@ -371,7 +371,7 @@ soap_curl(struct soap *soap, struct soap_plugin *p, void *arg)
 }
 
 /**
-@fn int soap_wsa_init(struct soap *soap, struct soap_wsa_data *data)
+@fn int soap_curl_init(struct soap *soap, struct soap_wsa_data *data)
 @brief Initializes plugin data.
 @param soap context
 @param[in,out] data plugin data
@@ -646,7 +646,7 @@ static int soap_curl_prepare_init_recv_callback(struct soap *soap)
     return SOAP_OK;
   }
   /* read HTTP body for error details and return HTTP error */
-  return soap_set_receiver_error(soap, "HTTP Error", soap_get_http_body(soap, NULL), soap->status);
+  return soap_set_receiver_error(soap, "HTTP Error", soap_http_get_body(soap, NULL), soap->status);
 }
 
 /**

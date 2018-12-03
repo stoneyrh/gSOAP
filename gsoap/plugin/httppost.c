@@ -94,7 +94,7 @@ compiling, linking, and/or using OpenSSL is allowed.
         soap_done(&soap); // detach plugin (calls plugin->fdelete)
 
         A POST handler function is triggered by the media type in the
-        http_post_handlers table. Use http_get_http_body() as below to retrieve
+        http_post_handlers table. Use http_http_get_body() as below to retrieve
         HTTP POST body data:
 
         int image_handler(struct soap *soap)
@@ -104,7 +104,7 @@ compiling, linking, and/or using OpenSSL is allowed.
           // if necessary, check type in soap->http_content
           if (soap->http_content && soap_tag_cmp(soap->http_content, "image/gif"))
             return 404;
-          buf = soap_get_http_body(soap, &len);
+          buf = soap_http_get_body(soap, &len);
           if (!buf)
             return soap->error;
           soap_end_recv(soap);
@@ -307,10 +307,10 @@ int soap_delete_connect(struct soap *soap, const char *endpoint)
   return soap_DELETE(soap, endpoint);
 }
 
-/* deprecated: use soap_get_http_body instead */
+/* deprecated: use soap_http_get_body instead */
 int soap_http_body(struct soap *soap, char **buf, size_t *len)
 {
-  *buf = soap_get_http_body(soap, len);
+  *buf = soap_http_get_body(soap, len);
   if (*buf)
     return SOAP_OK;
   return soap->error;
