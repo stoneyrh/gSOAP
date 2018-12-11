@@ -442,6 +442,7 @@ int xs__schema::read(const char *cwd, const char *loc)
       if (soap_connect_command(soap, SOAP_GET, location, NULL))
       {
         fprintf(stderr, "\n\nError: connection failed\n");
+        soap_print_fault(soap, stderr);
         exit(1);
       }
       fprintf(stderr, " connected, receiving...\n");
@@ -463,6 +464,7 @@ int xs__schema::read(const char *cwd, const char *loc)
       if (soap_connect_command(soap, SOAP_GET, location, NULL))
       {
         fprintf(stderr, "\n\nError: connection failed\n");
+        soap_print_fault(soap, stderr);
         exit(1);
       }
       fprintf(stderr, " connected, receiving...\n");
@@ -733,13 +735,10 @@ int xs__include::preprocess(xs__schema &schema)
           if (!Wflag)
           {
             if (schemaRef->targetNamespace)
-              fprintf(stderr, "\nWarning: attempt to include schema with mismatching targetNamespace '%s' in schema '%s', assigning targetNamespace '%s'\n", schemaRef->targetNamespace, schema.targetNamespace, schema.targetNamespace);
+              fprintf(stderr, "\nWarning: attempt to include schema with mismatching targetNamespace '%s' into schema namespace '%s', assigning targetNamespace '%s'\n", schemaRef->targetNamespace, schema.targetNamespace, schema.targetNamespace);
             else
-              fprintf(stderr, "\nWarning: attempt to include chameleon schema with no targetNamespace in schema '%s', assigning targetNamespace '%s'\n", schema.targetNamespace, schema.targetNamespace);
+              fprintf(stderr, "\nWarning: attempt to include chameleon schema with no targetNamespace into schema namespace '%s', assigning targetNamespace '%s'\n", schema.targetNamespace, schema.targetNamespace);
           }
-          schemaRef->targetNamespace = schema.targetNamespace;
-          schemaRef->elementFormDefault = schema.elementFormDefault;
-          schemaRef->attributeFormDefault = schema.attributeFormDefault;
         }
       }
       else

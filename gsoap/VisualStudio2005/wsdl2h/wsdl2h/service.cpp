@@ -3781,9 +3781,9 @@ void Message::generate(Types& types, const char *sep, bool anonymous, bool remar
             {
               type = (*part).elementPtr()->name;
               prefix = "_";
-              if ((*part).elementPtr()->schemaPtr())
-                typeURI = (*part).elementPtr()->schemaPtr()->targetNamespace;
             }
+            if ((*part).elementPtr()->schemaPtr())
+              typeURI = (*part).elementPtr()->schemaPtr()->targetNamespace;
             if ((*part).elementPtr()->xmime__expectedContentTypes)
               fprintf(stream, "    /// MTOM attachment with content types %s\n", (*part).elementPtr()->xmime__expectedContentTypes);
             if (response)
@@ -3823,16 +3823,17 @@ void Message::generate(Types& types, const char *sep, bool anonymous, bool remar
         else if ((*part).type)
         {
           bool unqual = (style == rpc && use == encoded) && remark;
-          const char *nameURI = NULL;
+          const char *nameURI = NULL, *typeURI = NULL;
+          if ((*part).simpleTypePtr() && (*part).simpleTypePtr()->schemaPtr())
+            typeURI = (*part).simpleTypePtr()->schemaPtr()->targetNamespace;
+          else if ((*part).complexTypePtr() && (*part).complexTypePtr()->schemaPtr())
+            typeURI = (*part).complexTypePtr()->schemaPtr()->targetNamespace;
           if (style == document && use == literal && !is_rest)
           {
             if (remark && !Wflag)
               fprintf(stderr, "\nWarning: wsdl:definitions/message/part/@type schema type for part/@name=\"%s\" makes the name ambiguous, the document/literal wrapped pattern requires part/@element\n", (*part).name);
             /* enable this to add the schema namespace prefix, but this won't work for primitive XSD types for example
-            if ((*part).simpleTypePtr() && (*part).simpleTypePtr()->schemaPtr())
-              nameURI = (*part).simpleTypePtr()->schemaPtr()->targetNamespace;
-            else if ((*part).complexTypePtr() && (*part).complexTypePtr()->schemaPtr())
-              nameURI = (*part).complexTypePtr()->schemaPtr()->targetNamespace;
+            nameURI = typeURI;
             */
           }
           if (response)
@@ -3840,10 +3841,10 @@ void Message::generate(Types& types, const char *sep, bool anonymous, bool remar
             const char *t;
             bool flag = false;
             if (!zflag || zflag > 6)
-              t = types.tnamenoptr(NULL, NULL, (*part).type);
+              t = types.tnamenoptr(NULL, typeURI, (*part).type);
             else
             {
-              t = types.tname(NULL, NULL, (*part).type);
+              t = types.tname(NULL, typeURI, (*part).type);
               flag = (strchr(t, '*') && strcmp(t, "char*") && strcmp(t, "char *"));
             }
             if (unqual)
@@ -3855,7 +3856,7 @@ void Message::generate(Types& types, const char *sep, bool anonymous, bool remar
           }
           else
           {
-            const char *t = types.pname((optional || (*part).is_optional()) && !(*part).is_repeating(), false, NULL, NULL, (*part).type);
+            const char *t = types.pname((optional || (*part).is_optional()) && !(*part).is_repeating(), false, NULL, typeURI, (*part).type);
             if ((*part).is_repeating())
             {
               if (cflag)

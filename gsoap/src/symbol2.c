@@ -7317,7 +7317,7 @@ gen_report_req_params(Tnode *typ)
             fprintf(freport, ", %s", c_type_id(Eptr->info.typ, Eptr->sym->name));
           else
             fprintf(freport, ", %s", c_type_id(Eptr->info.typ, Eptr->sym->name));
-          if (derclass)
+          if (derclass && Eptr->info.typ->type != Tarray)
             fprintf(freport, "__%d", derclass);
         }
       }
@@ -7354,7 +7354,7 @@ gen_report_set_params(Tnode *typ)
           fprintf(freport, ", %s", c_type_id(Eptr->info.typ, Eptr->sym->name));
         else
           fprintf(freport, ", %s", c_type_id(Eptr->info.typ, Eptr->sym->name));
-        if (derclass)
+        if (derclass && Eptr->info.typ->type != Tarray)
           fprintf(freport, "__%d", derclass);
       }
     }
@@ -12679,7 +12679,7 @@ c_type_id(Tnode *typ, const char *name)
   if (!typ)
     return "NULL";
   id = ident(name);
-  switch(typ->type)
+  switch (typ->type)
   {
     case Tnone:
       return id;
@@ -14139,7 +14139,7 @@ soap_instantiate(Tnode *typ)
               fprintf(fhead, ",\n\t%s", c_type_id(Eptr->info.typ, Eptr->sym->name));
             else
               fprintf(fhead, ",\n\t%s", c_type_id(Eptr->info.typ, Eptr->sym->name));
-            if (derclass)
+            if (derclass && Eptr->info.typ->type != Tarray)
               fprintf(fhead, "__%d", derclass);
           }
         }
@@ -14208,7 +14208,7 @@ soap_instantiate(Tnode *typ)
               fprintf(fhead, "\n\t\t_p->%s::%s = %s", ident(Tptr->sym->name), ident(Eptr->sym->name), ident(Eptr->sym->name));
             else
               fprintf(fhead, "\n\t\t_p->%s = %s", ident(Eptr->sym->name), ident(Eptr->sym->name));
-            if (derclass)
+            if (derclass && Eptr->info.typ->type != Tarray)
               fprintf(fhead, "__%d", derclass);
             if (Eptr->info.typ->type == Tarray)
               fprintf(fhead, "[i];");
@@ -14245,7 +14245,7 @@ soap_instantiate(Tnode *typ)
             fprintf(fhead, ",\n\t%s", c_type_id(Eptr->info.typ, Eptr->sym->name));
           else
             fprintf(fhead, ",\n\t%s", c_type_id(Eptr->info.typ, Eptr->sym->name));
-          if (derclass)
+          if (derclass && Eptr->info.typ->type != Tarray)
             fprintf(fhead, "__%d", derclass);
         }
       }
@@ -14306,7 +14306,7 @@ soap_instantiate(Tnode *typ)
             fprintf(fhead, "\n\t\t_p->%s::%s = %s", ident(Tptr->sym->name), ident(Eptr->sym->name), ident(Eptr->sym->name));
           else
             fprintf(fhead, "\n\t\t_p->%s = %s", ident(Eptr->sym->name), ident(Eptr->sym->name));
-          if (derclass)
+          if (derclass && Eptr->info.typ->type != Tarray)
             fprintf(fhead, "__%d", derclass);
           if (Eptr->info.typ->type == Tarray)
             fprintf(fhead, "[i];");

@@ -1,5 +1,5 @@
 /*
-        stdsoap2.c[pp] 2.8.73
+        stdsoap2.c[pp] 2.8.74
 
         gSOAP runtime engine
 
@@ -52,7 +52,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#define GSOAP_LIB_VERSION 20873
+#define GSOAP_LIB_VERSION 20874
 
 #ifdef AS400
 # pragma convert(819)   /* EBCDIC to ASCII */
@@ -86,10 +86,10 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #ifdef __cplusplus
-SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.73 2018-12-03 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.cpp ver 2.8.74 2018-12-11 00:00:00 GMT")
 extern "C" {
 #else
-SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.73 2018-12-03 00:00:00 GMT")
+SOAP_SOURCE_STAMP("@(#) stdsoap2.c ver 2.8.74 2018-12-11 00:00:00 GMT")
 #endif
 
 /* 8bit character representing unknown character entity or multibyte data */
@@ -874,7 +874,7 @@ soap_flush(struct soap *soap)
 #endif
   soap->bufidx = 0;
 #ifdef WITH_ZLIB
-  if ((soap->mode & SOAP_ENC_ZLIB))
+  if ((soap->mode & SOAP_ENC_ZLIB) && soap->d_stream)
   {
     soap->d_stream->next_in = (Byte*)soap->buf;
     soap->d_stream->avail_in = (unsigned int)n;
@@ -9589,10 +9589,10 @@ soap_begin_count(struct soap *soap)
 #endif
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Begin count phase (socket=%d mode=0x%x count=" SOAP_ULONG_FORMAT ")\n", (int)soap->socket, (unsigned int)soap->mode, soap->count));
 #ifndef WITH_LEANER
-  return soap_begin_attachments(soap);
-#else
-  return SOAP_OK;
+  if ((soap->mode & SOAP_IO_LENGTH))
+    return soap_begin_attachments(soap);
 #endif
+  return SOAP_OK;
 }
 
 /******************************************************************************/
@@ -11030,7 +11030,7 @@ soap_end_send_flush(struct soap *soap)
     if (soap_flush(soap))
 #ifdef WITH_ZLIB
     {
-      if (soap->mode & SOAP_ENC_ZLIB && soap->zlib_state == SOAP_ZLIB_DEFLATE)
+      if ((soap->mode & SOAP_ENC_ZLIB) && soap->zlib_state == SOAP_ZLIB_DEFLATE)
       {
         soap->zlib_state = SOAP_ZLIB_NONE;
         deflateEnd(soap->d_stream);

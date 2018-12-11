@@ -113,7 +113,7 @@ int main()
   }
   */
   soap.accept_timeout = 60;	/* server times out after 1 minute inactivity */
-  soap.send_timeout = soap.recv_timeout = 10;	/* max I/O idle time is 10 seconds */
+  soap.send_timeout = soap.recv_timeout = 5;	/* max I/O idle time is 5 seconds */
   m = soap_bind(&soap, NULL, 18081, 100);
   if (!soap_valid_socket(m))
   {
